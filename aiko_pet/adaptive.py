@@ -90,15 +90,22 @@ class AdaptiveMemory:
             busy_seconds=_hours(payload.get("busy_seconds")),
             present_seconds=_hours(payload.get("present_seconds")),
             observed_days=_hours(payload.get("observed_days")),
-            last_slot_key=last_slot if isinstance(last_slot, str) and len(last_slot) <= 20 else "",
+            last_slot_key=(
+                last_slot if isinstance(last_slot, str) and len(last_slot) <= 20
+                else ""
+            ),
             profile_day=day if isinstance(day, str) and len(day) == 10 else "",
             strain=clamp(payload.get("strain")),
             settled_work=clamp(payload.get("settled_work"), high=1.0),
             session_seconds=clamp(payload.get("session_seconds"), high=172_800.0),
             rest_seconds=clamp(payload.get("rest_seconds"), high=172_800.0),
-            last_session_seconds=clamp(payload.get("last_session_seconds"), high=172_800.0),
+            last_session_seconds=clamp(
+                payload.get("last_session_seconds"), high=172_800.0,
+            ),
             last_work_wall=clamp(payload.get("last_work_wall"), high=4_000_000_000.0),
-            last_contact_wall=clamp(payload.get("last_contact_wall"), high=4_000_000_000.0),
+            last_contact_wall=clamp(
+                payload.get("last_contact_wall"), high=4_000_000_000.0,
+            ),
             last_seen_wall=clamp(payload.get("last_seen_wall"), high=4_000_000_000.0),
         )
 

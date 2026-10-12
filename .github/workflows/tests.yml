@@ -32,6 +32,21 @@ jobs:
             aiko_pet/need_decay.py aiko_pet/pet_lifecycle.py \
             tests/test_friendship_policy.py tests/test_care_actions.py \
             tests/test_pet_lifecycle.py
+      - name: Enforce PEP 8 line lengths in adaptive and dialogue modules
+        run: |
+          python -m ruff check --select E501 \
+            aiko_pet/adaptive.py aiko_pet/adaptive_policy.py \
+            aiko_pet/dialogue.py aiko_pet/dialogue_events.py \
+            aiko_pet/reaction_playback.py aiko_pet/movement.py \
+            tests/test_adaptive_policy.py tests/test_dialogue_events.py \
+            tests/test_spontaneous_events.py
+      - name: Install static typing tool
+        run: python -m pip install mypy==1.18.2
+      - name: Type-check new headless core policies
+        run: |
+          python -m mypy --strict --follow-imports=silent \
+            aiko_pet/adaptive_policy.py aiko_pet/dialogue_events.py \
+            aiko_pet/movement.py aiko_pet/reaction_playback.py
       - name: Install graphical test dependencies
         run: |
           sudo apt-get update

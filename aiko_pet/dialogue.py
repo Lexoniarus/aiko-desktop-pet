@@ -60,7 +60,9 @@ class AikoMind:
         self._last_social_comment = float("-inf")
         self._last_affection_comment = float("-inf")
 
-    def set_situation(self, situation: Behaviour | None, *, now: float | None = None) -> None:
+    def set_situation(
+        self, situation: Behaviour | None, *, now: float | None = None,
+    ) -> None:
         """Remember an observed work session, never infer unseen work."""
         previous = self.situation
         self.situation = situation
@@ -84,9 +86,17 @@ class AikoMind:
             return "asleep"
         if now < self.irritated_until:
             return "irritated"
-        if self.situation is not None and self.situation.strain >= 75 and state.energy <= 55:
+        if (
+            self.situation is not None
+            and self.situation.strain >= 75
+            and state.energy <= 55
+        ):
             return "tired"
-        if self.situation is not None and self.situation.strain >= 60 and state.mood <= 48:
+        if (
+            self.situation is not None
+            and self.situation.strain >= 60
+            and state.mood <= 48
+        ):
             return "withdrawn"
         if state.energy <= 25:
             return "tired"
@@ -156,7 +166,8 @@ class AikoMind:
             if state.satiety >= 95:
                 return "feed_full", tone
             if context.meal and (
-                context.day_key != state.meals_date or context.meal not in state.meals_today
+                context.day_key != state.meals_date
+                or context.meal not in state.meals_today
             ):
                 return "feed_meal", tone
             return "feed_snack", tone

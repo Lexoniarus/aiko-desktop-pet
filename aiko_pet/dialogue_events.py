@@ -14,13 +14,24 @@ from .domain import PetState
 from .routine import TimeContext
 
 ClickButton = Literal["left", "right"]
+ClickEvent = Literal[
+    "sleep_click",
+    "click_during_work", "click_work_repeat", "click_work_boundary",
+    "click_last_word", "click_after_work", "click_withdrawn",
+    "click_sleepy", "click_flustered", "click_lonely",
+    "click_affection_low", "click_night", "click_close", "click_at_ease",
+    "click_reserved", "click_left", "click_right",
+    "click_notice_playful", "click_notice_withdrawn", "click_notice",
+    "click_tease", "click_withdrawn_boundary", "click_weary",
+    "rapid_click", "click_tease_more", "click_boundary",
+]
 
 
 @dataclass(frozen=True)
 class ClickDecision:
     """Selected catalogue event and the previous irritation side effect."""
 
-    event: str | None
+    event: ClickEvent | None
     irritates: bool = False
 
 
@@ -45,6 +56,7 @@ def choose_click_reaction(
     tired = state.energy <= 26 or (
         situation is not None and situation.strain >= 72
     )
+    event: ClickEvent
 
     if busy:
         if click_count <= 2:
