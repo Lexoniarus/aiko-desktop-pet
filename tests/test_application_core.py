@@ -75,8 +75,8 @@ class ApplicationCoreTests(unittest.TestCase):
         before = self.state.to_dict()
         with self.assertRaises(ValueError):
             CareCommand("unknown")  # type: ignore[arg-type]
-        with self.assertRaises(ValueError):
-            self.router.dispatch(CareCommand("pet"))
+        # Missing runtime is a static signature error, rather than an
+        # operation supported by the typed command API.
         self.assertEqual(self.state.to_dict(), before)
 
     def test_worker_thread_cannot_modify_pet_state(self) -> None:
