@@ -19,6 +19,7 @@ from .adaptive import AdaptiveRoutine, Observation
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
 from .application.hover_projection import project_hover
+from .application.status_projection import project_status
 from .ui.hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .application.router import ApplicationRouter
 from .animation import (
@@ -45,6 +46,7 @@ from .asset_paths import (
 from .ui.action_toolbar import ActionToolbar
 from .ui.settings_popup import SettingsPopup
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
+from .ui.status_contracts import StatusActions, StatusSnapshot
 from .ui.status_panel import StatusPanel
 
 FRAME_WIDTH = 128
@@ -560,11 +562,38 @@ class DesktopPet:
         self._walk_remaining = 0
         self._save()
 
+    def _status_snapshot(self) -> StatusSnapshot:
+        from .system_activity import ComputerSnapshot
+
+        reading = (
+            self.activity_monitor.latest()
+            if self.settings.observe_computer else ComputerSnapshot()
+        )
+        return project_status(
+            self.state, self.context, self.mind,
+            self.adaptive.current, reading,
+            observe_computer=self.settings.observe_computer,
+            now=time.monotonic(),
+        )
+
+    def _status_closed(self) -> None:
+        self.status_panel = None
+
     def open_status(self) -> None:
         if self.status_panel is not None:
             self._overlay_stack.restore()
             return
-        self.status_panel = StatusPanel(self)
+        self.status_panel = StatusPanel(
+            self.root,
+            snapshot=self._status_snapshot,
+            anchor=self._hover_anchor,
+            actions=StatusActions(
+                interact=self.interact,
+                quit=self.quit,
+                closed=self._status_closed,
+            ),
+            always_on_top=self.settings.always_on_top,
+        )
         self._overlay_stack.restore()
 
     def _refresh_status(self) -> None:

@@ -2,30 +2,33 @@
 
 from __future__ import annotations
 
-import time
 import tkinter as tk
 from functools import partial
-from typing import TYPE_CHECKING
+from typing import Callable
 
-from ..dialogue import EMOTION_LABELS
-from ..system_activity import percent_label
-
-if TYPE_CHECKING:
-    from ..gui import DesktopPet
+from .hover_contracts import HoverAnchor
+from .status_contracts import StatusActions, StatusSnapshot
 
 class StatusPanel:
     """Optional normal utility window (not part of the transparent hitbox)."""
 
-    def __init__(self, pet: DesktopPet) -> None:
-        self.pet = pet
-        self.window = tk.Toplevel(pet.root)
+    def __init__(
+        self, root: tk.Tk, *, snapshot: Callable[[], StatusSnapshot],
+        anchor: Callable[[], HoverAnchor], actions: StatusActions,
+        always_on_top: bool,
+    ) -> None:
+        self.root = root
+        self._snapshot = snapshot
+        self._anchor = anchor
+        self._actions = actions
+        self.window = tk.Toplevel(root)
         self.window.title("Aiko · Status")
         self.window.resizable(False, False)
         self.window.configure(bg="#202733")
-        self.window.attributes("-topmost", pet.settings.always_on_top)
+        self.window.attributes("-topmost", always_on_top)
         self.window.protocol("WM_DELETE_WINDOW", self.close)
         self.window.bind("<Escape>", lambda _event: self.close())
-        self.window.bind("<Control-q>", lambda _event: pet.quit())
+        self.window.bind("<Control-q>", lambda _event: self._actions.quit())
         title = tk.Label(
             self.window, text="AIKO", font=("Segoe UI", 17, "bold"),
             fg="#b0e7fb", bg="#202733",
@@ -96,20 +99,20 @@ class StatusPanel:
             ("feed", "Füttern"), ("play", "Spielen"), ("pet", "Streicheln"),
         ):
             tk.Button(
-                buttons, text=label, command=partial(pet.interact, action),
+                buttons, text=label, command=partial(actions.interact, action),
                 fg="#ffffff", bg="#39495e", activeforeground="#ffffff",
                 activebackground="#51627a", relief="flat", padx=9, pady=5,
                 font=("Segoe UI", 9),
             ).pack(side="left", padx=3)
         for action, label in (("talk", "Reden"), ("energy_drink", "Energy Drink +10")):
             tk.Button(
-                buttons, text=label, command=partial(pet.interact, action),
+                buttons, text=label, command=partial(actions.interact, action),
                 fg="#ffffff", bg="#39495e", activeforeground="#ffffff",
                 activebackground="#51627a", relief="flat", padx=8, pady=5,
                 font=("Segoe UI", 9),
             ).pack(side="left", padx=3)
         self.sleep_button = tk.Button(
-            self.window, text="", command=partial(pet.interact, "sleep"),
+            self.window, text="", command=partial(actions.interact, "sleep"),
             fg="#ffffff", bg="#344352", relief="flat", pady=5,
             activeforeground="#ffffff", activebackground="#536274",
             font=("Segoe UI", 9),
@@ -118,70 +121,41 @@ class StatusPanel:
         self.refresh()
         self.window.update_idletasks()
         x = max(0, min(
-            pet.root.winfo_screenwidth() - self.window.winfo_reqwidth(),
-            pet.root.winfo_x() - self.window.winfo_reqwidth() - 8,
+            root.winfo_screenwidth() - self.window.winfo_reqwidth(),
+            root.winfo_x() - self.window.winfo_reqwidth() - 8,
         ))
         if x == 0:
             x = min(
-                pet.root.winfo_screenwidth() - self.window.winfo_reqwidth(),
-                pet.root.winfo_x() + pet.width + 8,
+                root.winfo_screenwidth() - self.window.winfo_reqwidth(),
+                root.winfo_x() + self._anchor().width + 8,
             )
         y = max(0, min(
-            pet.root.winfo_screenheight() - self.window.winfo_reqheight() - 40,
-            pet.root.winfo_y(),
+            root.winfo_screenheight() - self.window.winfo_reqheight() - 40,
+            root.winfo_y(),
         ))
         self.window.geometry(f"+{x}+{y}")
 
     def refresh(self) -> None:
-        state = self.pet.state
-        context = self.pet.context
-        self.today.configure(text=context.label)
-        self.next_event.configure(text=context.schedule_line)
-        self.hint.configure(text=state.mood_hint(context))
-        emotion = self.pet.mind.emotion(state, time.monotonic())
-        self.emotion_label.configure(text=f"Stimmung: {EMOTION_LABELS[emotion]}")
-        self.sleep_button.configure(text="Wecken" if state.sleeping else "Schlafen")
-        if self.pet.settings.observe_computer:
-            snapshot = self.pet.activity_monitor.latest()
-            line = (f"CPU {percent_label(snapshot.cpu)}  ·  "
-                    f"GPU {percent_label(snapshot.gpu)}  ·  "
-                    f"RAM {percent_label(snapshot.ram)}")
-        else:
-            line = "Rechnerbeobachtung deaktiviert"
-        if self.hardware_label.cget("text") != line:
-            self.hardware_label.configure(text=line)
-        behaviour = self.pet.adaptive.current
-        if self.pet.settings.observe_computer and behaviour is not None:
-            labels = {
-                "working": "Konzentriert bei der Arbeit",
-                "recovering": "Nach der Arbeit zur Ruhe kommen",
-                "resting": "Eine ruhige Pause genießen",
-                "present": "Wach und aufmerksam",
-                "wandering": "Zeit für mich",
-            }
-            description = labels.get(behaviour.mode, "Ich bin hier")
-            if behaviour.expectation_confident:
-                description += " · eingespielter Tagesrhythmus"
-            line = (f"Mein Rhythmus: {description} · "
-                    f"Beanspruchung {behaviour.strain:.0f}/100")
-            if behaviour.uptime_hours is not None:
-                line += f" · Rechnerlaufzeit {behaviour.uptime_hours:.1f} h"
-        else:
-            line = (
-                "Mein Rhythmus: lernt noch"
-                if self.pet.settings.observe_computer else ""
-            )
-        if self.life_label.cget("text") != line:
-            self.life_label.configure(text=line)
+        """Render values from a detached status snapshot."""
+        view = self._snapshot()
+        self.today.configure(text=view.today)
+        self.next_event.configure(text=view.next_event)
+        self.hint.configure(text=view.hint)
+        self.emotion_label.configure(text=view.emotion)
+        self.sleep_button.configure(text=view.sleep_label)
+        if self.hardware_label.cget("text") != view.hardware_line:
+            self.hardware_label.configure(text=view.hardware_line)
+        if self.life_label.cget("text") != view.activity_line:
+            self.life_label.configure(text=view.activity_line)
         for name in self.bars:
-            number = getattr(state, name)
+            number = view.need_value(name)
             bar, rect, label = self.bars[name]
             bar.coords(rect, 0, 0, round(130 * number / 100), 13)
-            label.configure(
-                text=f"{number:.0f}%" +
-                (f" · Lv {state.friendship_level}" if name == "friendship" else ""),
-            )
+            value = f"{number:.0f}%"
+            if name == "friendship":
+                value += f" · Lv {view.friendship_level}"
+            label.configure(text=value)
 
     def close(self) -> None:
         self.window.destroy()
-        self.pet.status_panel = None
+        self._actions.closed()
