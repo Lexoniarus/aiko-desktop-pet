@@ -53,3 +53,39 @@ jobs:
           sudo apt-get install -y xvfb python3-tk
       - name: Run all unit and GUI tests
         run: xvfb-run -a python -m unittest discover -s tests -q
+
+  windows-smoke:
+    name: Windows headless boundaries
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Import all desktop components on Windows
+        run: python -c "import aiko_pet.gui, aiko_pet.desktop_input, aiko_pet.window_stack, aiko_pet.taskbar"
+      - name: Check Windows desktop boundaries without opening GUI windows
+        shell: pwsh
+        run: |
+          $patterns = @(
+            "test_taskbar.py",
+            "test_window_stack.py",
+            "test_desktop_input.py",
+            "test_gaze.py",
+            "test_entrypoints_env.py",
+            "test_storage.py",
+            "test_motion_animation.py",
+            "test_reaction_playback.py",
+            "test_adaptive_policy.py",
+            "test_dialogue_events.py",
+            "test_spontaneous_events.py",
+            "test_friendship_policy.py",
+            "test_care_actions.py",
+            "test_pet_lifecycle.py"
+          )
+          foreach ($pattern in $patterns) {
+            python -m unittest discover -s tests -p $pattern -q
+            if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+            }
+          }

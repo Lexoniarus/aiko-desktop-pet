@@ -12,6 +12,8 @@ the desktop runtime has been exercised on Windows after the final commit.
 - Ruff E501: refactored domain, adaptive, dialogue and focused test modules
 - Mypy: strict type checks of headless movement, reaction, click-event
   selection and adaptive-policy modules
+- Windows-hosted CI: import desktop modules and execute headless tests for
+  taskbar placement, z-order, mouse input, gaze and related domain policies
 - No state JSON schema changes or bundled runtime dependency changes
 
 ## Windows 10/11 manual smoke checks — still required
@@ -41,5 +43,6 @@ Do not move, rewrite or delete the production save at
 
 ## Gate
 
-Only the user can approve merging the Draft PR into main. A successful
-Linux CI does not verify real Windows taskbar APIs, z-order or GPU readings.
+Only the user can approve merging the Draft PR into main. Linux/Xvfb and
+Windows-hosted headless CI do not replace the user's interactive Windows
+check of actual taskbar APIs, focus behavior, window layering or GPU readings.
