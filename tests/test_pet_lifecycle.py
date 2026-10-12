@@ -64,6 +64,16 @@ class NeedDecayTests(unittest.TestCase):
 
 
 class PetTimelineTests(unittest.TestCase):
+    def test_save_keys_still_match_original_schema(self) -> None:
+        expected = {
+            "satiety", "mood", "energy", "social", "affection", "friendship",
+            "friendship_day", "friendship_gained_today", "care_types_today",
+            "care_last_rewards", "sleeping", "updated_at", "meals_date",
+            "meals_today", "sleep_origin", "auto_sleep_night", "nap_until",
+            "auto_nap_day",
+        }
+        self.assertEqual(set(PetState().to_dict()), expected)
+
     def test_legacy_constants_are_preserved(self) -> None:
         self.assertEqual(MAX_CATCHUP_SECONDS, POLICY_CATCHUP)
         self.assertEqual(MAX_LIVE_EFFORT_SECONDS, POLICY_LIVE_WINDOW)

@@ -56,6 +56,7 @@ def apply_daily_routine(
     interrupt_nap: bool = False,
     effort: float | None = None,
 ) -> None:
+    """Apply manual/routine sleep and daytime nap policy at a local instant."""
     record._roll_meals(context)
     stamp = context.local.timestamp()
     if record.sleep_origin == "nap" and (
@@ -88,6 +89,7 @@ def apply_daily_routine(
         record.sleep_origin = "nap"
         record.nap_until = stamp + 45 * 60
         record.auto_nap_day = context.day_key
+
 
 def advance_pet_time(
     record: PetTimeline,

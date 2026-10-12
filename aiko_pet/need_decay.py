@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Protocol
 
 from .routine import TimeContext
-from .value_rules import bounded
+from .value_rules import clamp_need_value
 
 
 class NeedValues(Protocol):
@@ -25,12 +25,13 @@ def apply_need_decay(
     context: TimeContext | None,
     effort: float | None = None,
 ) -> None:
+    """Update needs using the original sleeping and workload-dependent rates."""
     if record.sleeping:
-        record.satiety = bounded(record.satiety - hours * 1.4)
-        record.mood = bounded(record.mood + hours * 0.5)
-        record.energy = bounded(record.energy + hours * 22.0)
-        record.social = bounded(record.social - hours * 0.35)
-        record.affection = bounded(record.affection - hours * 0.25)
+        record.satiety = clamp_need_value(record.satiety - hours * 1.4)
+        record.mood = clamp_need_value(record.mood + hours * 0.5)
+        record.energy = clamp_need_value(record.energy + hours * 22.0)
+        record.social = clamp_need_value(record.social - hours * 0.35)
+        record.affection = clamp_need_value(record.affection - hours * 0.25)
         return
     # A relaxed rhythm; weekends are slightly gentler, no obligations.
     if context is None:
@@ -62,8 +63,8 @@ def apply_need_decay(
         mood_rate -= 0.7
     if record.affection < 20:
         mood_rate -= 0.8
-    record.satiety = bounded(record.satiety - hours * satiety_rate)
-    record.mood = bounded(record.mood + hours * mood_rate)
-    record.energy = bounded(record.energy - hours * energy_rate)
-    record.social = bounded(record.social - hours * social_rate)
-    record.affection = bounded(record.affection - hours * affection_rate)
+    record.satiety = clamp_need_value(record.satiety - hours * satiety_rate)
+    record.mood = clamp_need_value(record.mood + hours * mood_rate)
+    record.energy = clamp_need_value(record.energy - hours * energy_rate)
+    record.social = clamp_need_value(record.social - hours * social_rate)
+    record.affection = clamp_need_value(record.affection - hours * affection_rate)

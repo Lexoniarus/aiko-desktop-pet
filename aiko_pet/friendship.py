@@ -6,7 +6,7 @@ import math
 from typing import Protocol
 
 from .routine import context_at
-from .value_rules import bounded
+from .value_rules import clamp_need_value
 
 FRIENDSHIP_REWARD_INTERVAL = 12 * 60
 FRIENDSHIP_DAILY_CAP = 5.0
@@ -67,7 +67,7 @@ def award_friendship_for_care(
     )
     if gain <= 0:
         return
-    record.friendship = bounded(record.friendship + gain)
+    record.friendship = clamp_need_value(record.friendship + gain)
     record.friendship_gained_today += gain
     record.care_last_rewards[action] = stamp
     if first_time:

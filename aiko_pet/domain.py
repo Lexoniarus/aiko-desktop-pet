@@ -1,4 +1,4 @@
-"""Pure care rules for Aiko, with an optional gentle daily rhythm."""
+"""Persisted pet state and stable API for separately tested domain rules."""
 
 from __future__ import annotations
 
@@ -214,7 +214,11 @@ class PetState:
 
     def mood_hint(self, context: TimeContext | None = None) -> str:
         if self.sleeping:
-            return "Aiko schläft gerade ... gute Nacht." if context and context.night else "Aiko ruht sich aus."
+            return (
+                "Aiko schläft gerade ... gute Nacht."
+                if context and context.night
+                else "Aiko ruht sich aus."
+            )
         if self.satiety < 20:
             return "Ein kleiner Snack wäre schön ..."
         if self.energy < 20:

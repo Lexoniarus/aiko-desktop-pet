@@ -22,33 +22,29 @@ third-party packages. Keep German runtime text and English documentation.
    sprite timing and visual decisions. The former `_tick()` now coordinates
    named lifecycle, taskbar, sprite, emote, dialogue and overlay update methods.
    `DesktopPet` still applies Tk geometry and interaction side effects. The
-   remaining reaction/scheduling logic can be extracted in later slices.
+   additional runtime scheduling can be extracted in later slices.
    Separate pure decisions from Tkinter side effects; introduce typed
    interfaces only where they make components replaceable and testable.
 3. **Reaction playback (implemented):** `ReactionPlayer` now owns ordered
    emote/text cues, timer cancellation, generation guards and follow-up
    scheduling. The GUI injects Tk callbacks and remains responsible for actual
    rendering. Need-dependent idle emote choice is a pure function.
-4. **Domain and dialogue (in progress): `friendship.py` owns the
-   independent daily-cap, meaningful-care and variety-bonus policy; the
-   persisted `PetState` still retains its original attribute names and schema.
-   `value_rules.py` centralizes safe persisted-number normalization.
-   `care_actions.py` now implements the six existing care actions behind a
-   typed `CareState` boundary; `PetState.interact()` remains the stable API.
-   `need_decay.py` now implements the existing awake/sleep drain formulas.
-   `pet_lifecycle.py` owns bounded time catch-up and daily sleep/nap decisions,
-   while `PetState.advance()` remains the backwards-compatible entry point.
-   ** The authored German dialogue
-   catalogue, validation, and weighted selection now live in
-   `dialogue_catalog.py`, while `AikoMind` owns conversational decisions.
-   `ComputerVoice` now also lives in `computer_voice.py`, keeping hardware
-   narration separate from conversation state. `dialogue.py` preserves the
-   original public imports. Split distinct rules for pet care, friendship,
-   adaptive work/rest rhythms, and dialogue selection without changing state
-   semantics. Preserve existing `state.json` schema and fallback behaviors.
-5. **Infrastructure and quality:** Keep Windows API, monitor access, and
-   persistence behind explicit boundaries; add focused linting, formatting,
-   typing checks and regression tests after establishing a measured baseline.
+4. **Domain and dialogue (implemented):** `friendship.py` owns the daily
+   cap, useful-care rewards and variety bonus. `care_actions.py` owns all
+   six care actions behind a typed `CareState` interface. `need_decay.py`
+   calculates established need-decay rates; `pet_lifecycle.py` applies
+   local sleep/nap rules and bounded time catch-up. `value_rules.py`
+   normalizes potentially malformed saved values. `PetState` keeps its
+   existing public methods and serialized keys; no save-file migration.
+   Authored German dialogue parsing and weighted rotation live in
+   `dialogue_catalog.py`; `AikoMind` still decides when to speak.
+   Hardware-effort event selection lives in `computer_voice.py` and
+   `dialogue.py` continues re-exporting legacy public names.
+5. **Infrastructure and quality (in progress):** Windows API, monitor access,
+   and persistence are already in dedicated modules. Ruff linting runs over
+   all Python source files, and E501 line-length checking is enforced for the
+   newly refactored domain modules and their focused tests. Further static
+   typing checks and formatting gates can be introduced incrementally.
 
 ## Change safety
 

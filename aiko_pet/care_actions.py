@@ -11,7 +11,7 @@ from typing import Protocol
 
 from .friendship import CARE_PRIMARY_NEED
 from .routine import MEAL_NAMES, TimeContext, context_at
-from .value_rules import bounded
+from .value_rules import clamp_need_value
 
 
 class CareState(Protocol):
@@ -52,17 +52,17 @@ def apply_care_action(
     _wake_for_care(state, stamp)
 
     if action == "energy_drink":
-        state.energy = bounded(state.energy + 10.0)
+        state.energy = clamp_need_value(state.energy + 10.0)
         return "...Oh. Das hat geholfen."
 
     need_before = getattr(state, CARE_PRIMARY_NEED[action])
     if action == "talk":
-        return _talk(state, stamp, need_before)
+        return _apply_conversation(state, stamp, need_before)
     if action == "feed":
-        return _feed(state, stamp, need_before)
+        return _apply_feeding(state, stamp, need_before)
     if action == "play":
-        return _play(state, stamp, need_before)
-    return _pet(state, stamp, need_before)
+        return _apply_playtime(state, stamp, need_before)
+    return _apply_petting(state, stamp, need_before)
 
 
 def _toggle_manual_sleep(state: CareState, stamp: float) -> str:
@@ -85,40 +85,40 @@ def _wake_for_care(state: CareState, stamp: float) -> None:
         state.auto_sleep_night = context.night_key
 
 
-def _talk(state: CareState, stamp: float, need_before: float) -> str:
-    state.social = bounded(state.social + 26)
-    state.mood = bounded(state.mood + 5)
-    state.energy = bounded(state.energy - 1)
+def _apply_conversation(state: CareState, stamp: float, need_before: float) -> str:
+    state.social = clamp_need_value(state.social + 26)
+    state.mood = clamp_need_value(state.mood + 5)
+    state.energy = clamp_need_value(state.energy - 1)
     state._credit_friendship("talk", stamp, need_before)
     return "...Du möchtest reden? Ich höre zu."
 
 
-def _feed(state: CareState, stamp: float, need_before: float) -> str:
+def _apply_feeding(state: CareState, stamp: float, need_before: float) -> str:
     context = context_at(stamp)
     state._roll_meals(context)
-    state.satiety = bounded(state.satiety + 27)
-    state.social = bounded(state.social + 1)
+    state.satiety = clamp_need_value(state.satiety + 27)
+    state.social = clamp_need_value(state.social + 1)
     state._credit_friendship("feed", stamp, need_before)
     if context.meal is not None and context.meal not in state.meals_today:
         state.meals_today.append(context.meal)
-        state.mood = bounded(state.mood + 5)
+        state.mood = clamp_need_value(state.mood + 5)
         return f"Danke für das {MEAL_NAMES[context.meal].lower()}!"
-    state.mood = bounded(state.mood + 3)
+    state.mood = clamp_need_value(state.mood + 3)
     return "Mhm ... ein kleiner Snack!"
 
 
-def _play(state: CareState, stamp: float, need_before: float) -> str:
-    state.mood = bounded(state.mood + 23)
-    state.energy = bounded(state.energy - 9)
-    state.satiety = bounded(state.satiety - 4)
-    state.social = bounded(state.social + 12)
+def _apply_playtime(state: CareState, stamp: float, need_before: float) -> str:
+    state.mood = clamp_need_value(state.mood + 23)
+    state.energy = clamp_need_value(state.energy - 9)
+    state.satiety = clamp_need_value(state.satiety - 4)
+    state.social = clamp_need_value(state.social + 12)
     state._credit_friendship("play", stamp, need_before)
     return "Heh ... das war gut!"
 
 
-def _pet(state: CareState, stamp: float, need_before: float) -> str:
-    state.affection = bounded(state.affection + 25)
-    state.mood = bounded(state.mood + 6)
-    state.social = bounded(state.social + 2)
+def _apply_petting(state: CareState, stamp: float, need_before: float) -> str:
+    state.affection = clamp_need_value(state.affection + 25)
+    state.mood = clamp_need_value(state.mood + 6)
+    state.social = clamp_need_value(state.social + 2)
     state._credit_friendship("pet", stamp, need_before)
     return "... Das ist angenehm."

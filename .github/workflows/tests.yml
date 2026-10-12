@@ -24,6 +24,14 @@ jobs:
         run: python -m pip install ruff==0.13.2
       - name: Run Ruff lint checks
         run: python -m ruff check aiko_pet tests main.py
+      - name: Enforce PEP 8 line lengths in refactored domain
+        run: |
+          python -m ruff check --select E501 \
+            aiko_pet/domain.py aiko_pet/friendship.py \
+            aiko_pet/value_rules.py aiko_pet/care_actions.py \
+            aiko_pet/need_decay.py aiko_pet/pet_lifecycle.py \
+            tests/test_friendship_policy.py tests/test_care_actions.py \
+            tests/test_pet_lifecycle.py
       - name: Install graphical test dependencies
         run: |
           sudo apt-get update
