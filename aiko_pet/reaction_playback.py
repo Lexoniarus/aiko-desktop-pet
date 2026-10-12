@@ -110,10 +110,11 @@ class ReactionPlayer:
             reaction.text,
             max(duration_ms, reaction.followup_delay_ms + 200),
         )
-        if reaction.followup_text:
+        followup_text = reaction.followup_text
+        if followup_text:
             self._pending_timer = self._schedule(
                 reaction.followup_delay_ms,
-                lambda: self._show_followup(generation, reaction.followup_text),
+                lambda: self._show_followup(generation, followup_text),
             )
 
     def _advance(self, generation: int, index: int) -> None:
