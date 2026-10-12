@@ -7,7 +7,6 @@ gaze sprites and exposes her care actions in a mouse-hover toolbar.
 from __future__ import annotations
 
 import random
-import sys
 import time
 import tkinter as tk
 from dataclasses import replace
@@ -35,7 +34,11 @@ from .reaction_sequence import Cue, EMOTES as EMOTES
 from .reaction_playback import ReactionPlayer, choose_idle_emote
 from .storage import StateStore
 from .system_activity import ActivityMonitor
-from .taskbar import TaskbarTrack, locate_primary_taskbar
+from .taskbar import TaskbarTrack
+from .ui.desktop_window import (
+    DesktopWindow, FRAME_WIDTH as FRAME_WIDTH,
+    FRAME_HEIGHT as FRAME_HEIGHT, MAGENTA as MAGENTA,
+)
 from .window_stack import WindowStack
 from .asset_paths import (
     ASSETS as ASSETS,
@@ -48,10 +51,7 @@ from .ui.settings_popup import SettingsPopup
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
 from .ui.status_panel import StatusPanel
 
-FRAME_WIDTH = 128
-FRAME_HEIGHT = 208
 TICK_MILLISECONDS = 140
-MAGENTA = "#ff00ff"
 
 
 
@@ -64,30 +64,15 @@ class DesktopPet:
         self.state, self.settings = self.store.load()
         self.adaptive = AdaptiveRoutine(self.store.load_memory())
         self.context: TimeContext = context_at(time.time())
-        self.root = tk.Tk()
+        self._window = DesktopWindow(self.settings)
+        self.root = self._window.root
+        self.canvas = self._window.canvas
+        self.background = self._window.background
         self._speech_font = (
-            "Kenney Mini" if "Kenney Mini" in set(tkfont.families(root=self.root))
+            "Kenney Mini"
+            if "Kenney Mini" in set(tkfont.families(root=self.root))
             else "Segoe UI"
         )
-        # A mapped Tk root briefly appears at (0, 0) before its first geometry.
-        # Keep it invisible until the real taskbar coordinates are applied.
-        self.root.withdraw()
-        self._placed = False
-        self.root.title("Aiko Desktop Pet")
-        self.root.overrideredirect(True)
-        self.root.configure(bg=MAGENTA if sys.platform == "win32" else "#202733")
-        if sys.platform == "win32":
-            # Windows colorkey: transparent margins around the PNGs are not a box.
-            self.root.wm_attributes("-transparentcolor", MAGENTA)
-        self.root.wm_attributes("-topmost", self.settings.always_on_top)
-        self.background = MAGENTA if sys.platform == "win32" else "#202733"
-        self.width = FRAME_WIDTH * self.settings.scale
-        self.height = FRAME_HEIGHT * self.settings.scale
-        self.canvas = tk.Canvas(
-            self.root, width=self.width, height=self.height,
-            bg=self.background, borderwidth=0, highlightthickness=0,
-        )
-        self.canvas.pack()
         self._last_tick = time.monotonic()
         self._last_track_check = self._last_tick
         self._action_until = 0.0
@@ -191,9 +176,6 @@ class DesktopPet:
             ),
         )
         self._last_stack_check = self._last_tick
-        self.track: TaskbarTrack = locate_primary_taskbar(
-            self.root.winfo_screenwidth(), self.root.winfo_screenheight(),
-        )
         self._setup_events()
         self._place_initially()
         self.root.update_idletasks()
@@ -202,6 +184,30 @@ class DesktopPet:
         self.activity_monitor.start()
         self._scheduled_greeting = self.root.after(460, self._greet_on_start)
         self._scheduled_tick = self.root.after(TICK_MILLISECONDS, self._tick)
+
+    @property
+    def track(self) -> TaskbarTrack:
+        return self._window.track
+
+    @track.setter
+    def track(self, value: TaskbarTrack) -> None:
+        self._window.track = value
+
+    @property
+    def width(self) -> int:
+        return self._window.width
+
+    @property
+    def height(self) -> int:
+        return self._window.height
+
+    @property
+    def _placed(self) -> bool:
+        return self._window.placed
+
+    @_placed.setter
+    def _placed(self, value: bool) -> None:
+        self._window.placed = value
 
     @property
     def _last_spoken(self) -> float:
@@ -335,21 +341,11 @@ class DesktopPet:
         self.root.protocol("WM_DELETE_WINDOW", self.quit)
 
     def _place_initially(self) -> None:
-        if self.settings.x is None:
-            x = self.track.left + round((self.track.right - self.track.left) * 0.75)
-        else:
-            x = self.settings.x  # Older save data: keep x, ignore obsolete y.
-        self._place_x(x)
+        self._place_x(self._window.initial_x())
 
     def _place_x(self, x: float) -> None:
-        new_x = self.track.clamp_x(x, self.width)
-        new_y = self.track.sprite_y(self.settings.scale)
-        if (new_x, new_y) == (self.settings.x, self.settings.y) and self._placed:
+        if not self._window.place_x(x):
             return
-        self.settings.x = new_x
-        self.settings.y = new_y
-        self.root.geometry(f"{self.width}x{self.height}+{new_x}+{new_y}")
-        self._placed = True
         if self.toolbar is not None and self.toolbar.visible:
             self.toolbar.place()
         self._move_bubble()
@@ -594,10 +590,8 @@ class DesktopPet:
     def toggle_scale(self) -> None:
         original_center = (self.settings.x or 0) + self.width / 2
         self.settings.scale = 2 if self.settings.scale == 1 else 1
-        self.width = FRAME_WIDTH * self.settings.scale
-        self.height = FRAME_HEIGHT * self.settings.scale
+        self._window.resize()
         self._animated.reload_sprites()
-        self.canvas.config(width=self.width, height=self.height)
         self._last_sprite_key = None
         self._gaze_sector = None
         self._placed = False  # Force Tk geometry update even at unchanged x/y.
@@ -739,11 +733,7 @@ class DesktopPet:
         """Reposition Aiko only when taskbar geometry actually changes."""
         if now - self._last_track_check >= 4.0:
             self._last_track_check = now
-            new_track = locate_primary_taskbar(
-                self.root.winfo_screenwidth(), self.root.winfo_screenheight(),
-            )
-            if new_track != self.track:
-                self.track = new_track
+            if self._window.update_track():
                 self._place_x(self.settings.x or self.track.left)
 
     def _render_current_sprite(
