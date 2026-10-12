@@ -1,89 +1,60 @@
-# Aiko Desktop Pet v0.11 – Tamagotchi-Kern
+# v0.11 — Tamagotchi care, social need, and friendship
 
-## Rolle und Abgrenzung
+This is the original v0.11 feature specification. **v0.12 subsequently added affection as a separate need and revised care balance and friendship rewards**; refer to the v0.12 document for current mechanics.
 
-Aiko ist die Personifizierung des Computers, **keine** Figur mit Academy- oder
-Character-Chronicles-Tagesplan. Die Uhrzeit, die echte Nutzung und ihr
-adaptiver Rhythmus aus v0.9 bleiben erhalten. Computerarbeit ist für Aiko
-eigene Anstrengung. Die Hardwarebezeichnungen werden **nicht** automatisch
-Teil ihres gesprochenen Dialogs.
+## Role and separation of concerns
 
-## Vier Bedürfnisse und eine Beziehung
+Aiko personifies her computer. She has no Academy timetable or Character Chronicles story obligations. Her time of day and real workload, plus the adaptive routine introduced in v0.9, still matter.
 
-| Wert | Zweck | Verlauf | Pflege |
+Aiko experiences computer work as her own exertion without narrating technical CPU/GPU/RAM names in her character voice.
+
+## Four short-term needs and a relationship (v0.11)
+
+| Value | Meaning | Natural progression | Main care |
 | --- | --- | --- | --- |
-| Sättigung | Nahrung, kurzlebiges Bedürfnis | sinkt im Wachzustand und etwas im Schlaf | Füttern (+27) |
-| Laune | momentanes Wohlbefinden | Tagesphase, soziale Unterversorgung und Arbeit | Spielen (+23), Streicheln (+9), Reden (+5), Füttern (+3/+5) |
-| Energie | momentane Wachheit | sinkt im Wachzustand, steigt beim Schlafen | Schlaf (+22 Punkte/Stunde), Energy Drink (+10 Punkte pro Klick) |
-| Sozial | Wunsch nach Kontakt mit der Person am PC | sinkt bei längerem Alleinsein langsam; wenig im Schlaf | Reden (+26), Spielen (+18), Streicheln (+12); Füttern nur +1 |
-| Freundschaft | Langfristige Beziehung zum User | **kein** regelmäßiger Abbau, kein Rechenlastfaktor | sinnvolle Versorgung über mehrere Tage, max. +7 Punkte/Tag |
+| Satiety | Hunger and food | Decreases while awake, slightly during sleep | Feed (+27) |
+| Mood | Current well-being | Influenced by day phase, deprivation, and work | Play (+23), pet (+9 in v0.11), talk (+5), food (+3/+5) |
+| Energy | Awake versus exhausted | Decreases during activity, regenerates in sleep | Sleep (+22 points/h), energy drink (+10 points/use) |
+| Social | Desire for contact with the user | Gradual decline during long solitude; minor decline in sleep | Talk (+26), play (+18 in v0.11), pet (+12 in v0.11); food only +1 |
+| Friendship | Long-term trust | No passive decline or workload multiplier | Meaningful care across multiple days; v0.11 cap +7/day |
 
-Alle Werte liegen zwischen 0 und 100. **Freundschaft** erhält zusätzlich
-einen sichtbaren Level 1–10, berechnet aus dem Wert; sie ist kein Bedarf,
-der regelmäßig wieder aufgefüllt werden muss. Ein neuer Spielstand startet
-mit 15 Punkten (Level 2); ältere Saves behalten ihre bisherigen drei Werte
-und erhalten für die neuen Felder kompatible Defaults.
+Every value is between 0 and 100. Friendship also has a visible **level from 1 to 10**. It is not a need that must be refilled periodically. A new game starts with 15 friendship points (level 2); old save files keep their previously existing values and get compatible defaults for added fields.
 
-Die Aktionen sind in der Hover-Leiste und im Statusfenster verfügbar.
-**Reden** ist eine explizite soziale Interaktion. Ein Energy Drink gibt
-**genau zehn Prozentpunkte Energie**, auch mehrfach direkt hintereinander,
-bis maximal 100. Schlafen bleibt erhalten. „Spielen“ verbraucht weiterhin
-Energie (-9) und Sättigung (-4). Reden benötigt minimal Energie (-1).
+All care buttons are available in the hover panel and the detail window. Talk is a distinct interaction. An energy drink restores **exactly 10 energy points** each time and may be repeated up to 100. Sleeping remains available. Playing consumes 9 energy and 4 satiety; talking consumes 1 energy.
 
-## Was die Rechnerlast macht
+## Workload and need decay
 
-Die vorhandene Schätzung `workload_intensity()` bewertet vor allem aktive
-CPU-/GPU-Nutzung; belegter RAM trägt nur wenig als zusätzlicher Druck bei.
-Wir interpretieren RAM-Belegung **nicht** als Beleg für tatsächliche Arbeit.
+`workload_intensity()` estimates active computer work primarily from CPU and GPU utilization, with relatively little influence from memory pressure. High allocated RAM is **not** proof of high computation.
 
-Während einer aktiven, bekannten Arbeitsphase verändert sich die normale
-Versorgungsrate. Bei nahezu maximaler Last (Intensität 1,0) gilt im Wachzustand
-ungefähr:
+During active **measured** workload, the ordinary awake need rates change. At near-maximal intensity (1.0), the v0.11 implementation approximated:
 
-- Sättigungsabnahme: **1,95×** der jeweiligen Grundrate
-- Laune: zusätzlich **-2,1 Punkte/Stunde**
-- Energie: zusätzlich **-2,8 Punkte/Stunde**
-- Sozial: nur leicht schneller, nicht mit Computerarbeit verwechseln
+- Satiety decline: **1.95×** its base rate.
+- Mood: an additional **−2.1 points per hour**.
+- Energy: an additional **−2.8 points per hour**.
+- Social: only a slight additional effect, because heavy computer work is not the same as loneliness.
 
-Die normalen, von Uhrzeit und Wochentag abhängigen Werte bleiben bestehen.
-Für unbekannte Hardwarewerte (oder bei deaktivierter Rechnerbeobachtung)
-gelten ausschließlich die Grundraten. Ein aktuelles Sample darf maximal
-**30 Sekunden** rückwirkend beeinflussen. Nach dem Programmstart, nach einem
-Ruhezustand oder über einen mehrstündigen Abstand werden keine ungemessenen
-Laststunden erfunden. Im Schlaf wird trotz möglicher Telemetrie keine
-Wachenergie verbraucht.
+Baseline rates still depend on local time and weekday. Missing telemetry uses the baseline; a measurement is applied for at most **30 seconds** of eligible recent time. Startup, sleep/resume, and prolonged observation gaps must not create fictional hours at maximum load. Sleeping does not consume awake energy simply because telemetry is available.
 
-## Freundschaft und Verhalten
+## Friendship and character
 
-- Freundschaft wächst durch gepflegte Interaktionen, **nicht** durch eine
-  starre Uhr, pure Uptime oder fortgesetzte Klickserien.
-- Dieselbe Pflegeaktion vergibt höchstens einmal alle **12 Minuten** einen
-  Freundschaftszuwachs. Insgesamt maximal **7 Punkte pro lokalem Kalendertag**.
-  Wiederholte Pflege kann weiterhin Sättigung/Laune/Energie/Sozial verbessern.
-- Bei geringer sozialer Versorgung ändert Aiko ihren Blick auf Kontakte:
-  ihre Dialoge werden eher zurückhaltend, gelegentlich dankbar für Gesellschaft.
-  Sie wird dadurch nicht alle paar Minuten aufdringlich: Spontane Hinweise
-  auf fehlenden Kontakt kommen frühestens alle 20 Minuten.
-- Bei wachsender Freundschaft kann sie vertrauter und trocken-frecher sein,
-  zum Beispiel bei Klicks, einem Gespräch, beim Streicheln und der Rückkehr.
-- Diese Effekte sind **situationsabhängig**: Müdigkeit, Gereiztheit und echte
-  Rechenarbeit behalten Vorrang vor einer fröhlichen Freundschaftsreaktion.
+- Friendship rises through care, not the clock, pure uptime, or rapid ordinary clicks.
+- In v0.11, the same care action could grant friendship at most once every **12 minutes** and the total daily award was at most **7 points**. Repeated care still replenished needs.
+- Low social well-being changes Aiko's tone: she may be more reserved or quietly grateful for company, without begging for attention. Spontaneous social-need remarks have at least a **20-minute** interval.
+- Greater friendship makes some click, talk, pet, and return responses warmer or more teasing.
+- Real tiredness, irritation, workload, and time of day still outrank indiscriminate cheerful responses.
 
-## Speichern, Datenschutz, Kompatibilität
+## Persistence and privacy
 
-Alle neuen Werte und die kleinen Freigabe-Zeitstempel für Freundschaft
-werden in der bestehenden `%LOCALAPPDATA%\AikoDesktopPet\state.json`
-(`version: 1`) abgelegt. Es gibt keine zusätzliche Datenbank, Cloud oder
-KI-API. Das adaptive Wochenprofil und die bestehende Fensterkapselung bleiben
-unverändert. Rohe CPU-/GPU-/RAM-Zeitreihen, Programmnamen, Fenstertitel und
-Tastatureingaben werden nicht in diesen Spielstand geschrieben.
+New needs and friendship reward timestamps are stored in the existing atomic JSON save:
 
-## Grenzen dieser Ausbaustufe
+```text
+%LOCALAPPDATA%\AikoDesktopPet\state.json
+```
 
-Der Dialogkatalog wurde für **Reden**, **Energy Drink**, Sozialmangel und
-hohe Vertrautheit erweitert. Für sämtliche Situationen gibt es weiterhin
-nicht unbegrenzt neue Animationen: Wir verwenden die vorhandenen 73 Sprites.
-Die fachliche Balance ist ein erster Entwurf. Insbesondere Langzeitpflege
-auf echten Windows-Rechnern muss im Alltag beobachtet und ggf. nachjustiert
-werden. Das automatische Windows-Auslesen der Auslastung ist in der
-Linux-Testumgebung nicht direkt messbar.
+Storage remains `version: 1` with no second database or external service. The adaptive weekly profile and window management continue unchanged. The save does not record raw CPU/GPU/RAM time-series, process names, window titles, or keystrokes.
+
+## Known limitations
+
+This release added dialogue for talking, energy drinks, lack of social contact, and growing trust, but there were still no dedicated sprites for every activity. The 73 existing sprites remained the source of visual gestures.
+
+Care balance was provisional pending real-world Windows long-term observation. Actual Windows telemetry could not be validated directly in the Linux test environment. See [v0.12](TAMAGOTCHI_KERN_V012.md) for subsequent balancing changes.

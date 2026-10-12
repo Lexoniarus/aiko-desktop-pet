@@ -1,44 +1,31 @@
-# Aiko Desktop Pet v0.12 – Tests und Abnahmehinweise
+# Test report and acceptance notes — Aiko Desktop Pet v0.12
 
-## Technischer Stand
+## Baseline and test execution
 
-Basis: unverändertes v0.11-ZIP, vor den Änderungen ausgepackt.
-Baseline: `xvfb-run -a python -m unittest discover -s tests -q`:
-**195 Tests, alle bestanden.**
+The unmodified v0.11 archive was extracted before changes. Baseline command:
 
-v0.12: derselbe Befehl:
-**220 Tests, alle bestanden.**
+```bash
+xvfb-run -a python -m unittest discover -s tests -q
+```
 
-Darin enthalten: bestehende GUI-/Fensterverwaltungs-, Dialog-, Sprite-,
-Tages- und Systemlast-Tests sowie 25 neue Tests für Zuwendung,
-Freundschaft, alte Spielstände, Dialogereignisse und GUI.
+- **v0.11 baseline: 195 tests passed.**
+- **v0.12: 220 tests passed**, including 25 additional affection, friendship, migration, dialogue, and GUI tests.
 
-Separat geprüft: vollständiges Sprite-Inventar (73 unveränderte PNGs),
-JSON-Katalog (404 gültige Dialogeinträge), Tkinter-GUI im virtuellen
-Linux-X11-Display und tatsächlicher Screenshot mit den sechs Balken.
+Existing GUI/window, dialogue, sprite, routine, and system-load coverage was retained. Separate checks confirmed the **73 unchanged PNG sprites**, a valid catalog of **404 dialogue entries**, and an actual Tkinter rendering under virtual Linux/X11 with six gauges.
 
-## Abgedeckte Fälle
+## Covered cases
 
-- Streicheln ist eigenständig: +25 Zuwendung, +6 Laune, +2 Sozial,
-  kein Energiebonus.
-- Spielen, Reden, Füttern und Energy Drink erfüllen jeweils andere Bedürfnisse.
-- Bekannte hohe CPU-/GPU-Last verstärkt die bestehenden Belastungsraten,
-  aber **nicht** den Zuwendungsabbau oder den Abbau von Freundschaft.
-- Zuwendung sinkt langsam bei Wachheit und im Schlaf; bei geringer
-  Zuwendung wirkt ihre Stimmung etwas zurückhaltender.
-- Freundschaft steigt bei wirksamer Versorgung und abwechslungsreicher
-  Pflege, nicht beim Klicken auf bereits volle Bedürfnisse.
-- Belohnungssperre, Tagesmaximum, neuer Tag, Energy-Drink-Spam.
-- v0.11-Spielstand ohne Zuwendung: alte Werte und Einstellungen erhalten;
-  neue Zuwendung = 75; Neustart und erneutes Speichern funktionieren.
-- Defekte Speicherwerte werden geklemmt oder ignoriert.
-- Zwei Reihen mit sechs Statuswerten im Hover, Balken füllen bei 100 %
-  ihre tatsächliche Pixelbreite; Status-Details und Menüs bleiben bedienbar.
-- Neue Sprechblasen nutzen nur vorhandene Sprite-Animationen.
+- Petting has a distinct function: **+25 affection, +6 mood, +2 social, no energy bonus**.
+- Playing, talking, feeding, and energy drinks maintain separate primary needs.
+- Verified CPU/GPU work affects ordinary consumption but **not** the direct affection or friendship rate.
+- Affection decreases gradually while awake and at a smaller rate during sleep; low affection can influence Aiko's tone.
+- Friendship rewards meaningful care and different helpful care types, not already-full stats or click spam.
+- Cooldowns, local calendar-day reward caps, energy-drink repetition, and a new day.
+- Migration from v0.11 saves without affection: preserve old stats/settings and initialize affection to 75.
+- Malformed stored values are clamped or ignored safely.
+- Two rows of six hover values and accurate 100%-width bars; detail UI and menus remain usable.
+- New speech events use only available animation assets.
 
-## Grenzen
+## Limits of verification
 
-Der Test erfolgte unter Linux/Xvfb. Win32-spezifisches Topmost-Verhalten,
-Browser-Mikrofon-Overlay und die echte NVIDIA-Telemetrie wurden hier nicht
-auf echter Windows-Hardware reproduziert. Sie sind im Code unverändert,
-müssen aber beim praktischen Einsatz weiter geprüft werden.
+The tests ran under Linux/Xvfb. Real Win32 topmost behavior, microphone overlays, and NVIDIA telemetry could not be reproduced on actual Windows hardware in that environment. Those integrations remained unchanged and still need practical Windows verification.

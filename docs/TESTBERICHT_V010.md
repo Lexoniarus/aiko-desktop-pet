@@ -1,10 +1,10 @@
-# Testbericht – Aiko Desktop Pet v0.10
+# Test report — Aiko Desktop Pet v0.10
 
-**Ausgangsbasis:** Original-ZIP `Aiko_Desktop_Pet_Adaptiver_Rhythmus_v0_9.zip`
-(vollständig und isoliert entpackt); bestehende Datei- und Speicherstruktur
-beibehalten. Keine Änderungen am Repository eines anderen Projekts.
+## Starting point
 
-## Prüfungen
+The archived `Aiko_Desktop_Pet_Adaptiver_Rhythmus_v0_9.zip` release was extracted in isolation and retained its files and save structure. Other project repositories were not changed.
+
+## Automated tests
 
 ```text
 xvfb-run -a python -m unittest discover -s tests -q
@@ -14,44 +14,33 @@ Ran 167 tests in 10.281s
 OK
 ```
 
-Auch ohne grafisches Display lassen sich die reinen Domain-Tests unter
-Python ausführen; Tk-GUI-Tests benötigen einen verfügbaren Display-Server.
+Pure domain tests can run without a display. Tk GUI tests need a graphical display server.
 
-Der Testumfang umfasst unter anderem:
+The suite covered:
 
-- Alte v0.9-Funktionen und Speicherstandskompatibilität.
-- 72-Stunden- und mehrwöchige Routine-Simulationen, Uhrzeit und Nachtarbeit.
-- Mehrstufige Klickfolgen bei normaler, guter und niedriger Laune.
-- Klicken während echter Lastphasen und Rückbezug nach Entlastung.
-- Keine erfundenen Erinnerungen nach einer kurzen Lastspitze.
-- Einmalige späte Reflexion nach längerer Arbeit, danach normale Ruhe.
-- Unerwartete Arbeit nur nach hinreichend belastbarem Lernprofil.
-- Zweiteilige Sprechblasen, Abbrechen des Nachsatzes bei neuer Reaktion
-  oder bewusstem Schweigen.
-- Vorhandene Animationsassets sowie UI-Verhalten der Fenster und Statusleiste.
+- Regression of v0.9 behavior and old-save compatibility.
+- 72-hour and multi-week usage simulations, local clock, and nighttime computation.
+- Progressive click reactions in neutral, high, and low moods.
+- Repeated interruption during observed high workload and contextual callbacks afterward.
+- No invented history after a brief workload spike.
+- A one-time delayed reflection after confirmed extended work, followed by ordinary rest.
+- Unexpected activity only when a sufficiently trained rhythm baseline exists.
+- Two-part speech bubbles, cancellation on interruption, and intentional silence.
+- Existing animation assets, window management, and status panel interaction.
 
-**Sprite-Prüfung:** 73 PNG-Dateien sind gegenüber v0.9 per SHA-256
-vollständig identisch geblieben.
+The **73 PNG sprites remained SHA-256-identical** to v0.9.
 
-**Dialoge:** 339 primäre Aussagen in 67 Ereigniskategorien,
-109 davon mit optionalem zweiten Satz. 40 generischere Alttexte entfernt,
-zentral genutzte Originaltexte redaktionell überarbeitet, neue Texte
-für Klick-/Arbeits-/Ruhefolgen ergänzt. Texte werden nicht generiert.
+The edited dialogue catalog contained **339 primary entries across 67 event categories**, of which 109 supported an optional second line. Forty less-specific earlier entries were removed and core lines revised; new contextual reactions were handwritten, not generated at runtime.
 
-## Visueller Probelauf
+## Visual verification
 
-Die reale Tk-Anwendung wurde in einer virtuellen Linux-Anzeige geöffnet;
-`vorschau/Aiko_v0_10_Klickreaktion.png` und
-`vorschau/Aiko_v0_10_Nachsatz.png` sind tatsächliche Screenshots der
-Originalsprites und der App, nicht künstlich erzeugte Illustrationen.
-Sie zeigen das Nacheinander zweier Sprechblasen über Aikos Kopf.
-Die Windows-Taskleiste wurde hier nicht nachgestellt.
+The real Tk application was launched under a virtual Linux display. Screenshots at `vorschau/Aiko_v0_10_Klickreaktion.png` and `vorschau/Aiko_v0_10_Nachsatz.png` depict the actual app and original sprites, including sequential bubble text. They are not synthetic mockups. A native Windows taskbar was not part of that display.
 
-## Noch nicht unter Windows verifiziert
+## Not verified on Windows
 
-- Win32-Z-Order bei Browser-Mikrofoneingabe.
-- Tatsächliche NVIDIA-Telemetrie und GPU-intensiver Dauerbetrieb.
-- Subjektive Qualität der Dialoge nach mehreren Tagen Nutzung.
-- Timing und Lesbarkeit bei unterschiedlicher Windows-DPI-Skalierung.
+- Win32 stacking during browser microphone input.
+- Real NVIDIA telemetry or sustained GPU-intensive computation.
+- Subjective dialogue quality after days of ordinary use.
+- Timing and readability at different Windows DPI scale factors.
 
-Diese offenen Punkte werden nicht als bestandene Windows-Tests ausgegeben.
+Automated Linux tests do not establish that these Windows-specific cases have passed.

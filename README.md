@@ -1,65 +1,72 @@
 # Aiko Desktop Pet
 
-**Aiko ist die Chibi-Personifizierung deines Rechners.** Sie lebt auf der Windows-Taskleiste, läuft gelegentlich umher, beobachtet die Maus und reagiert auf Interaktionen und Rechneraktivität. Sie ist eher ruhig, ein bisschen awkward und manchmal trocken-frech – abhängig von Stimmung, Energie und Erlebnissen.
+**Aiko is a small, expressive Chibi personification of your computer.** She lives near the Windows taskbar, walks around, follows the cursor, develops needs and friendships, and reacts to both your attention and the work her computer is doing.
 
-**Aktuelle Version: v0.13** · lokal, kostenlos nutzbar, ohne KI-API, Konto oder Cloud.
+**Current release: v0.13** · Windows 10/11 · Python 3.11+ · no account, AI inference service, subscription, or cloud connection required.
 
-![Aiko mit Kenney-Sci-fi-Statusleiste und Emote](vorschau/Aiko_v0_13_SciFi_und_Sprechblase.png)
+![Aiko with the Kenney sci-fi status panel and an emote](vorschau/Aiko_v0_13_SciFi_und_Sprechblase.png)
 
-[Reaktionsfolge als GIF ansehen](vorschau/Aiko_v0_13_Reaktionsablauf.gif)
+[Watch an actual emote → dialogue → emote sequence](vorschau/Aiko_v0_13_Reaktionsablauf.gif)
 
-## Was Aiko kann
+> **Language:** The game interface and Aiko's spoken text bubbles are currently in **German**. All project documentation is in **English**.
 
-- **Desktop-Pet:** Positioniert sich an der Taskleiste, läuft, springt, winkt und verfolgt den Mauszeiger auf dem Bildschirm.
-- **Tamagotchi:** Fünf Bedürfnisse: Sättigung, Laune, Energie, Sozial und Zuwendung; dazu ein langfristiges Freundschaftslevel.
-- **Pflege:** Füttern, Spielen, Reden, Streicheln, Schlafen und Energy Drink (+10 Energiepunkte pro Anwendung).
-- **Persönlichkeit:** Situative deutsche Dialoge mit Stimmung, Tageszeit, Erinnerung, Wiederholungssperre und eskalierenden Klickreaktionen.
-- **Emote-Sequenzen:** Emote → Text → eventuell Nachsatz → Emote; immer nacheinander im selben Anzeigeplatz.
-- **Adaptive Aktivität:** Reagiert auf beobachtete CPU-/GPU-Arbeit und berücksichtigt RAM, Tages- und Wochenrhythmus sowie erlernte Gewohnheiten. Rechnerlaufzeit ist nicht dasselbe wie aktive Arbeitszeit.
-- **UI:** Verschiebbare Kenney-Sci-fi-Statusleiste mit sechs Anzeigen, Hover-Aktionen und unabhängiger Sprechblase.
+## Features
 
-## Unter Windows starten
+- **Desktop companion:** Aiko walks along the taskbar, jumps, waves, and follows the mouse with 16 directional gaze sprites.
+- **Tamagotchi-style care:** Five short-term needs—satiety, mood, energy, social interaction, and affection—plus a long-term friendship level.
+- **Care actions:** Feed, play, talk, pet, sleep/wake, and an energy drink that restores 10 energy points per use.
+- **Personality:** Handwritten German dialogue responds to mood, time of day, recent events, repeated clicks, and interruptions. Aiko is observant, reserved, subtly sarcastic, and occasionally awkwardly funny.
+- **Expression sequences:** Context-specific Kenney emotes and speech appear **in sequence**, never simultaneously: emote → text → optional follow-up → emote.
+- **Adaptive activity:** Aiko distinguishes running time from actual work, observes CPU/GPU activity and memory signals, and gradually learns locally aggregated weekly usage patterns.
+- **Movable sci-fi panel:** Six status indicators, care buttons, a settings menu, and an independently positioned speech bubble. The panel appears on hover and can be dragged elsewhere.
 
-**Voraussetzungen:** Windows 10/11 und Python 3.11 oder neuer mit Tkinter.
+## Run on Windows
 
-1. [Code als ZIP herunterladen](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip) und in einen lokalen Ordner entpacken.
-2. `Aiko_starten.bat` doppelklicken.
-3. Mit der Maus über Aiko fahren, um die Pflegeaktionen und Werte zu sehen.
-4. Bei Problemen `Aiko_starten_debug.bat` verwenden, um Fehlermeldungen anzuzeigen.
+**Requirements:** Windows 10 or 11 and Python 3.11 or later with Tkinter.
 
-Zusätzliche Python-Laufzeitpakete sind nicht erforderlich. Eine lokale Schrift **Kenney Mini** wird automatisch verwendet, falls sie installiert ist; ansonsten Segoe UI. Schriftdateien werden nicht im Repository mitgeliefert.
+1. [Download the repository as a ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip) and extract it to a local folder.
+2. Double-click `Aiko_starten.bat`.
+3. Hover over Aiko to view needs and care actions.
+4. If startup fails, run `Aiko_starten_debug.bat` to see console errors.
 
-Der Spielstand liegt unter `%LOCALAPPDATA%\AikoDesktopPet\state.json` und ist **nicht** Teil des Repositorys. Ein Versionswechsel übernimmt den bisherigen Spielstand.
+No additional Python packages are required to run the game. If **Kenney Mini** is already installed locally, the application can use it; otherwise it falls back to Segoe UI. Font files are not distributed in this repository.
+
+Saved progress is stored outside the repository at `%LOCALAPPDATA%\AikoDesktopPet\state.json`; upgrades preserve existing saves.
 
 ## Tests
+
+Run the unit and graphical tests in an environment with a display:
 
 ```bash
 python -m unittest discover -s tests -q
 ```
 
-GUI-Tests brauchen eine grafische Anzeige; unter Linux können sie über Xvfb laufen:
+On Linux, a virtual X11 display can be used:
 
 ```bash
 xvfb-run -a python -m unittest discover -s tests -q
 ```
 
-Die automatisierten Tests wurden mit v0.13 unter Xvfb/Linux geprüft (231 Tests). Ein vollständiger manueller Langzeittest aller Windows-Fenster- und GPU-Sonderfälle steht aus.
+The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** replace real Windows testing of taskbar positioning, window layering, microphone overlays, GPU telemetry, or long-term balance. GitHub Actions runs the test suite for commits and pull requests.
 
-## Projektstruktur
+## Project structure
 
-| Pfad | Inhalt |
-|---|---|
-| `aiko_pet/` | Domain, Desktop-Fenster, Rechneraktivität, Routinen, Interaktionen und Dialoge |
-| `aiko_pet/assets/frames/` | 73 Chibi-Originalsprites |
-| `aiko_pet/assets/emotes/` | Kenney-Emotes für aufeinanderfolgende Reaktionen |
-| `aiko_pet/assets/kenney_ui/` | Kenney-basierte Panel- und Button-Grafiken |
-| `aiko_pet/data/` | Deutscher Dialogkatalog |
-| `tests/` | Unit- und GUI-Tests |
-| `docs/` | Verhaltensmodelle, Pflegebalance und Entwicklungsnotizen |
-| `vorschau/` | Screenshots und GIFs der echten Anwendung |
+| Location | Purpose |
+| --- | --- |
+| `aiko_pet/` | Domain model, GUI, hardware activity, routines, memory, reactions, and dialogue |
+| `aiko_pet/assets/frames/` | 73 original Aiko character animation frames |
+| `aiko_pet/assets/emotes/` | Kenney pixel emotes |
+| `aiko_pet/assets/kenney_ui/` | Kenney-based sci-fi panels and controls |
+| `aiko_pet/data/dialogues.de.json` | German dialogue catalog; intentionally not translated |
+| `tests/` | Unit and GUI tests |
+| `docs/` | English technical documentation, history, and test reports |
+| `vorschau/` | Real application screenshots and GIF previews |
 
-## Lizenz und Assets
+## Licensing and attribution
 
-Der **Programmcode** steht unter [MIT](LICENSE). Die verwendeten UI- und Emote-Grafiken von [Kenney](https://kenney.nl/) stehen unter [CC0 1.0](LICENSES/KENNEY_CC0.md). Aikos eigene Charaktergrafiken haben einen **separaten Rechtevorbehalt**; siehe [ASSETS.md](ASSETS.md). Öffentliches Repository bedeutet nicht, dass die Charaktergrafiken automatisch frei weiterlizenziert sind.
+- **Project source code and project-authored Aiko image assets** are offered under the [MIT License](LICENSE), to the extent the project author controls licensable rights in them.
+- The Aiko sprite artwork was made using OpenAI image-generation tools in the creator's Codex-based asset workflow. The sprites are **not** subject to a separate invented “OpenAI image license.” See [ASSETS.md](ASSETS.md) for provenance and limitations.
+- **Kenney Emote Pack** and **Kenney UI Pack: Sci-fi** assets are made available under **CC0 1.0**. The creator obtained them through a purchased Kenney All-in-1 bundle. Credit is optional under CC0 and is gladly provided here: **Assets by [Kenney](https://kenney.nl/)**. See [Kenney credits](LICENSES/KENNEY_CC0.md).
+- **Fonts** are not bundled; locally installed fonts retain their own terms.
 
-Aiko Desktop Pet ist ein eigenständiges Hobbyprojekt und benötigt weder ComfyReview noch Character Chronicles.
+Aiko Desktop Pet is an independent hobby project and does not require ComfyReview or Character Chronicles.
