@@ -70,6 +70,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.movement.remaining_distance = 12
         result = self.anim.maybe_walk(time.monotonic() + 1000, 0.25)
         self.assertEqual(result, "running-right")
+        assert self.settings.x is not None
         self.assertGreater(self.settings.x, 100)
         self.assertEqual(self.anim.movement.remaining_distance, 0)
 
