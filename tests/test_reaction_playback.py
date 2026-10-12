@@ -56,6 +56,11 @@ class ReactionPlayerTests(unittest.TestCase):
     def note_spoken(self) -> None:
         self.spoken_count += 1
 
+    def active_token(self) -> str:
+        token = self.player.pending_timer
+        assert token is not None
+        return token
+
     def test_plain_reaction_preserves_followup_delay_and_animation(self) -> None:
         reaction = Reaction(
             "id", "Oh.", "waiting", "click_left",
@@ -64,7 +69,7 @@ class ReactionPlayerTests(unittest.TestCase):
         self.player.play(reaction)
         self.assertEqual(self.actions, [("waiting", 1.625)])
         self.assertEqual(self.rendered, [("text", "Oh.", 2600)])
-        token = self.player.pending_timer
+        token = self.active_token()
         self.assertEqual(self.scheduler.callbacks[token][0], 600)
         self.scheduler.fire(token)
         self.assertEqual(self.rendered[-1], ("text", "Das war unerwartet.", 2600))
@@ -78,9 +83,9 @@ class ReactionPlayerTests(unittest.TestCase):
         )
         self.player.play(reaction, 1700)
         self.assertEqual([item[0] for item in self.rendered], ["emote"])
-        self.assertEqual(self.scheduler.callbacks[self.player.pending_timer][0], 700)
+        self.assertEqual(self.scheduler.callbacks[self.active_token()][0], 700)
         for _ in range(3):
-            self.scheduler.fire(self.player.pending_timer)
+            self.scheduler.fire(self.active_token())
         self.assertEqual(
             [(kind, text) for kind, text, _ in self.rendered],
             [
@@ -90,14 +95,14 @@ class ReactionPlayerTests(unittest.TestCase):
                 ("emote", "heart"),
             ],
         )
-        self.scheduler.fire(self.player.pending_timer)
+        self.scheduler.fire(self.active_token())
         self.assertEqual(self.player.cues, ())
         self.assertIsNone(self.player.pending_timer)
 
     def test_new_reaction_cancels_stale_followup(self) -> None:
         first = Reaction("old", "Alt.", "idle", "click_left", "Zu alt.", 600)
         self.player.play(first)
-        stale = self.player.pending_timer
+        stale = self.active_token()
         stale_callback = self.scheduler.callbacks[stale][1]
         self.player.play(Reaction("new", "Neu.", "idle", "click_right"))
         self.assertIn(stale, self.scheduler.cancelled)
@@ -110,7 +115,7 @@ class ReactionPlayerTests(unittest.TestCase):
         self.player.play(
             Reaction("old", "Alt.", "idle", "click_left", None, 900, "question"),
         )
-        old = self.player.pending_timer
+        old = self.active_token()
         stale_callback = self.scheduler.callbacks[old][1]
         self.player.play(Reaction("new", "Neu.", "idle", "click_right"))
         stale_callback()
@@ -131,7 +136,7 @@ class ReactionPlayerTests(unittest.TestCase):
         self.player.play(
             Reaction("id", "Hallo.", "idle", "click_left", "Später.", 600),
         )
-        token = self.player.pending_timer
+        token = self.active_token()
         self.closed = True
         self.scheduler.fire(token)
         self.assertEqual(len(self.rendered), 1)

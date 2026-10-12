@@ -5,31 +5,50 @@ from datetime import datetime
 
 from aiko_pet.adaptive import AdaptiveMemory, AdaptiveRoutine, Observation
 from aiko_pet.adaptive_policy import (
+    ActivityMode,
     SleepOptions,
     determine_activity_mode,
     determine_sleep_options,
 )
 
 
-def mode(**changes: object) -> str:
-    fields = dict(
-        effort=0.1, settled_work=0.1,
-        last_session_seconds=0.0, last_work_wall=0.0,
-        rest_seconds=0.0, present=None, wall_time=1000.0,
+def mode(
+    *,
+    effort: float | None = 0.1,
+    settled_work: float = 0.1,
+    last_session_seconds: float = 0.0,
+    last_work_wall: float = 0.0,
+    rest_seconds: float = 0.0,
+    present: bool | None = None,
+    wall_time: float = 1000.0,
+) -> ActivityMode:
+    return determine_activity_mode(
+        effort=effort, settled_work=settled_work,
+        last_session_seconds=last_session_seconds,
+        last_work_wall=last_work_wall, rest_seconds=rest_seconds,
+        present=present, wall_time=wall_time,
     )
-    fields.update(changes)
-    return determine_activity_mode(**fields)
 
 
-def sleep(**changes: object) -> SleepOptions:
-    fields = dict(
-        mode="present", energy=75.0,
-        sleeping=False, manual_sleep=False, night=False,
-        effort=0.1, idle_seconds=0.0, present=True,
-        rest_seconds=0.0, expected_effort=None,
+def sleep(
+    *,
+    mode: ActivityMode = "present",
+    energy: float = 75.0,
+    sleeping: bool = False,
+    manual_sleep: bool = False,
+    night: bool = False,
+    effort: float | None = 0.1,
+    idle_seconds: float | None = 0.0,
+    present: bool | None = True,
+    rest_seconds: float = 0.0,
+    expected_effort: float | None = None,
+) -> SleepOptions:
+    return determine_sleep_options(
+        mode=mode, energy=energy, sleeping=sleeping,
+        manual_sleep=manual_sleep, night=night, effort=effort,
+        idle_seconds=idle_seconds, present=present,
+        rest_seconds=rest_seconds, expected_effort=expected_effort,
     )
-    fields.update(changes)
-    return determine_sleep_options(**fields)
 
 
 class ActivityModeTests(unittest.TestCase):

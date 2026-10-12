@@ -8,6 +8,7 @@ from datetime import datetime
 from unittest.mock import patch
 
 from aiko_pet.adaptive import Behaviour
+from aiko_pet.adaptive_policy import ActivityMode
 from aiko_pet.dialogue import AikoMind
 from aiko_pet.domain import PetState
 from aiko_pet.routine import context_at
@@ -17,7 +18,7 @@ def context(hour: int = 15):
     return context_at(datetime(2026, 10, 12, hour).timestamp())
 
 
-def scenario(*, mode: str = "working", duration: float = 300):
+def scenario(*, mode: ActivityMode = "working", duration: float = 300):
     return Behaviour(
         mode=mode, strain=45, effort=0.9,
         expected_effort=None, expectation_confident=False,

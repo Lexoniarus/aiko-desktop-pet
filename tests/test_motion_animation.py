@@ -1,6 +1,7 @@
 """Headless regression tests for walking and sprite frame decisions."""
 
 import unittest
+from dataclasses import replace
 from unittest.mock import patch
 
 from aiko_pet.animation import (
@@ -42,17 +43,21 @@ class FrameClockTests(unittest.TestCase):
 
 
 class PassiveAnimationTests(unittest.TestCase):
-    def select(self, **overrides: object) -> SpriteSelection:
-        settings = dict(
-            gaze_direction=None,
-            observing_computer=False,
-            computer_busy=False,
-            energy=75.0,
-            mood=75.0,
-            satiety=75.0,
+    def select(
+        self, *,
+        gaze_direction: int | None = None,
+        observing_computer: bool = False,
+        computer_busy: bool = False,
+        energy: float = 75.0,
+        mood: float = 75.0,
+        satiety: float = 75.0,
+    ) -> SpriteSelection:
+        return choose_passive_animation(
+            gaze_direction=gaze_direction,
+            observing_computer=observing_computer,
+            computer_busy=computer_busy,
+            energy=energy, mood=mood, satiety=satiety,
         )
-        settings.update(overrides)
-        return choose_passive_animation(**settings)
 
     def test_gaze_overrides_busy_and_low_needs(self) -> None:
         self.assertEqual(
@@ -84,19 +89,19 @@ class WalkControllerTests(unittest.TestCase):
         self.track = TaskbarTrack(left=0, right=800, ground_y=800)
 
     def conditions(self, **overrides: object) -> WalkConditions:
-        values = dict(
+        defaults = WalkConditions(
             now=15.0, elapsed_seconds=0.25, x=300,
             track=self.track, sprite_width=128, energy=80,
             auto_walk=True, sleeping=False, attention_active=False,
             toolbar_visible=False, observing_computer=False,
             computer_busy=False, quiet_period=False,
         )
-        values.update(overrides)
-        return WalkConditions(**values)
+        return replace(defaults, **overrides)
 
     def test_walk_right_and_complete_using_actual_displacement(self) -> None:
         self.walker.remaining_distance = 2.0
         step = self.walker.plan_step(self.conditions())
+        assert step is not None
         self.assertEqual(step.animation, "running-right")
         self.assertEqual(step.pixels, 2.0)
         self.assertTrue(self.walker.record_displacement(2.0))
@@ -105,6 +110,7 @@ class WalkControllerTests(unittest.TestCase):
     def test_walk_left_and_stop_at_clamped_screen_edge(self) -> None:
         self.walker.remaining_distance = -10
         step = self.walker.plan_step(self.conditions(x=0))
+        assert step is not None
         self.assertEqual(step.animation, "running-left")
         self.assertLess(step.pixels, 0)
         self.assertTrue(self.walker.record_displacement(0))
@@ -112,14 +118,12 @@ class WalkControllerTests(unittest.TestCase):
 
     def test_bursts_are_bounded_by_elapsed_time(self) -> None:
         self.walker.remaining_distance = 100
-        self.assertEqual(
-            self.walker.plan_step(self.conditions(elapsed_seconds=0.25)).pixels,
-            16,
-        )
-        self.assertEqual(
-            self.walker.plan_step(self.conditions(elapsed_seconds=0)).pixels,
-            1,
-        )
+        first = self.walker.plan_step(self.conditions(elapsed_seconds=0.25))
+        second = self.walker.plan_step(self.conditions(elapsed_seconds=0))
+        assert first is not None
+        assert second is not None
+        self.assertEqual(first.pixels, 16)
+        self.assertEqual(second.pixels, 1)
 
     def test_work_delays_next_walk_and_cancels_movement(self) -> None:
         self.walker.remaining_distance = 100
@@ -148,6 +152,7 @@ class WalkControllerTests(unittest.TestCase):
             "aiko_pet.movement.random.randint", return_value=100,
         ):
             step = self.walker.plan_step(self.conditions(x=0, quiet_period=True))
+        assert step is not None
         self.assertEqual(step.animation, "running-right")
         self.assertEqual(self.walker.remaining_distance, 100)
         self.assertEqual(self.walker.next_walk_at, 35)

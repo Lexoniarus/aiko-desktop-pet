@@ -3,17 +3,20 @@
 from __future__ import annotations
 
 import unittest
+from typing import cast
 from datetime import datetime
 
 from aiko_pet.adaptive import Behaviour
-from aiko_pet.dialogue_events import ClickDecision, choose_click_reaction
+from aiko_pet.dialogue_events import (
+    ClickButton, ClickDecision, choose_click_reaction,
+)
 from aiko_pet.domain import PetState
 from aiko_pet.routine import context_at
 
 
 def decision(
     *,
-    button: str = "left",
+    button: ClickButton = "left",
     count: int = 1,
     state: PetState | None = None,
     situation: Behaviour | None = None,
@@ -100,7 +103,7 @@ class ClickDecisionTests(unittest.TestCase):
 
     def test_invalid_mouse_button_is_rejected(self) -> None:
         with self.assertRaises(ValueError):
-            decision(button="middle")
+            decision(button=cast(ClickButton, "middle"))
 
 
 if __name__ == "__main__":
