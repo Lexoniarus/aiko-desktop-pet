@@ -58,6 +58,47 @@ Notification text is presentation data, never HTML, Python or a program
 command. Priority is preserved for a future attention/interrupt policy.
 The current UI only presents one message when no other conversation is active.
 
+## Adapter boundary and security
+
+A future HTTP or IPC adapter must run separately from Tk event handling:
+
+1. Authenticate and authorize the external caller. Bind its identity as the
+   trusted `source` argument; a supplied `source` field is rejected.
+2. Validate event `version`, `type`, `id`, `title`, `message` and
+   `priority`. Oversized strings, control characters, unsupported versions
+   and unknown fields are rejected before entering the inbox.
+3. Map the `NotificationReceipt.status` values (`accepted`, `duplicate`,
+   `full`) to transport-specific acknowledgements.
+4. Apply a separate adapter-side body limit, per-caller rate limit, origin
+   allowlist and authentication. Bind local HTTP to loopback only unless the
+   user deliberately configures an alternative.
+5. No notification callback may call Tk, pet-care mutation or arbitrary
+   computer processes. The desktop tick alone may consume and display data.
+
+The current inbox uses arrival order and stores priority metadata. A later
+attention policy may choose to defer or prioritize without changing the wire
+contract, but must preserve the non-interrupting default and bounded queue.
+
+## Possible read-side API (not implemented)
+
+Some integrations may eventually request read-only status (e.g. needs,
+availability or current activity). Build this through a dedicated typed
+`PetStatusSnapshot` query handler instead of exposing `PetState` or Tk
+objects directly. Snapshot reads must cross the owner-thread boundary or use
+an immutable, thread-safe cache. Do not expose application names, window
+titles or unapproved personal activity details.
+
+## Pending architecture cleanup
+
+- Break the remaining `DesktopPet` coordinator into a desktop shell,
+  runtime scheduler and injected presentation ports.
+- Replace `ActionToolbar` and `StatusPanel` references to the entire
+  desktop host with narrow view models and callbacks.
+- Migrate flat domain/monitoring modules into package directories gradually,
+  retaining compatibility imports throughout.
+- Consider an outbound application event stream only when a consumer exists.
+  A general-purpose event bus is intentionally not introduced prematurely.
+
 ## Migration safety
 
 Existing entrypoints, stored JSON schema, dialogue catalogue, and user-facing

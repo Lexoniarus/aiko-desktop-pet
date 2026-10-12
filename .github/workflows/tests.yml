@@ -89,7 +89,9 @@ jobs:
             "test_spontaneous_events.py",
             "test_friendship_policy.py",
             "test_care_actions.py",
-            "test_pet_lifecycle.py"
+            "test_pet_lifecycle.py",
+            "test_application_core.py",
+            "test_adaptive_models.py"
           )
           foreach ($pattern in $patterns) {
             python -m unittest discover -s tests -p $pattern -q

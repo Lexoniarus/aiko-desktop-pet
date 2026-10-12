@@ -64,7 +64,11 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 
 | Location | Purpose |
 | --- | --- |
-| `aiko_pet/` | Domain model, GUI, hardware activity, routines, memory, reactions, and dialogue |
+| `aiko_pet/application/` | Typed use cases, command routing and bounded integration notifications |
+| `aiko_pet/ui/` | Tk widgets and independent speech/emote presentation |
+| `aiko_pet/adaptive.py` + `adaptive_models.py` | Runtime learning controller and serializable data contracts |
+| `aiko_pet/gui.py` | Existing desktop shell; additional decomposition remains planned |
+| `aiko_pet/` | Existing domain, local Windows APIs, storage, dialogue and monitoring |
 | `aiko_pet/assets/frames/` | 73 original Aiko character animation frames |
 | `aiko_pet/assets/emotes/` | Kenney pixel emotes |
 | `aiko_pet/assets/kenney_ui/` | Kenney-based sci-fi panels and controls |

@@ -15,6 +15,9 @@ the desktop runtime has been exercised on Windows after the final commit.
   with zero errors and warnings as the target
 - Windows-hosted CI: import desktop modules and execute headless tests for
   taskbar placement, z-order, mouse input, gaze and related domain policies
+- Headless application integration tests: command routing, notification
+  validation, idempotent bounded queue, cross-thread care prohibition and
+  non-interrupting Tk presentation. No local HTTP port exists yet.
 - No state JSON schema changes or bundled runtime dependency changes
 
 ## Windows 10/11 manual smoke checks — still required

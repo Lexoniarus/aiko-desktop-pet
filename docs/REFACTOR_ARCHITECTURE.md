@@ -11,51 +11,33 @@ third-party packages. Keep German runtime text and English documentation.
 
 ## Refactor stages
 
-1. **UI separation (first slice):** Move the three existing Tkinter widgets
-   (`StatusPanel`, `ActionToolbar`, `SettingsPopup`) out of `gui.py` to
-   `aiko_pet/ui/`. They keep their public names and can still be imported from
-   `aiko_pet.gui` while callers migrate. Asset directories are defined once
-   in `asset_paths.py`. This first step deliberately preserves access to the
-   existing `DesktopPet` coordinator and its behavior.
-2. **Application orchestration (in progress):** A headless `WalkController`,
-   `FrameClock` and passive animation priority selector now own motion planning,
-   sprite timing and visual decisions. The former `_tick()` now coordinates
-   named lifecycle, taskbar, sprite, emote, dialogue and overlay update methods.
-   `DesktopPet` still applies Tk geometry and interaction side effects. The
-   additional runtime scheduling can be extracted in later slices.
-   Separate pure decisions from Tkinter side effects; introduce typed
-   interfaces only where they make components replaceable and testable.
-3. **Desktop presentation (in progress):** `ui/speech_presenter.py` now
-   owns Tk speech/emote bubbles, cached icon assets and display timeouts.
-   `DesktopPet` delegates drawing via compatibility methods; the view
-   receives only a geometry provider and z-order callback, never PetState
-   or the application router.
-3. **Reaction playback (implemented):** `ReactionPlayer` now owns ordered
-   emote/text cues, timer cancellation, generation guards and follow-up
-   scheduling. The GUI injects Tk callbacks and remains responsible for actual
-   rendering. Need-dependent idle emote choice is a pure function.
-4. **Adaptive model boundary (implemented):** `adaptive_models.py` now
-   owns the durable 168-slot learning profile, observation and behaviour DTOs.
-   `adaptive.py` retains the decision orchestrator and re-exports its old
-   public model names to avoid breaking saved-state and UI integrations.
-4. **Domain and dialogue (implemented):** `friendship.py` owns the daily
-   cap, useful-care rewards and variety bonus. `care_actions.py` owns all
-   six care actions behind a typed `CareState` interface. `need_decay.py`
-   calculates established need-decay rates; `pet_lifecycle.py` applies
-   local sleep/nap rules and bounded time catch-up. `value_rules.py`
-   normalizes potentially malformed saved values. `PetState` keeps its
-   existing public methods and serialized keys; no save-file migration.
-   Authored German dialogue parsing and weighted rotation live in
-   `dialogue_catalog.py`; `AikoMind` still decides when to speak.
-   Hardware-effort event selection lives in `computer_voice.py` and
-   `dialogue.py` continues re-exporting legacy public names.
-5. **Infrastructure and quality (in progress):** Windows API, monitor access,
-   and persistence are already in dedicated modules. Ruff linting runs over
-   all Python source files, and E501 line-length checks cover the entire
-   application plus tool modules. Strict Mypy checks cover the full
-   application, and Pyright enforces typing across application, tools and
-   tests. Windows manual smoke acceptance is tracked in
-   docs/REFACTOR_ACCEPTANCE.md and is not yet completed.
+1. **UI separation (implemented):** `StatusPanel`, `ActionToolbar` and
+   `SettingsPopup` live in `aiko_pet/ui/`; old imports remain compatible.
+2. **Application commands and integration ingress (implemented):**
+   `aiko_pet/application/` contains typed care/notification commands,
+   the care use-case controller, owner-thread router and bounded inbox.
+   Tk care buttons use this command route today. Future authenticated
+   adapters can publish validated *data* without obtaining desktop internals.
+   See [integration architecture](INTEGRATION_ARCHITECTURE.md).
+3. **Runtime orchestration (partially implemented):** `WalkController`,
+   `FrameClock`, passive animation selection and the `ReactionPlayer`
+   separate decisions/timing from Tk. `DesktopPet._tick()` is a named
+   coordinator but the desktop shell is still larger than desired.
+4. **Tk presentation (partially implemented):** `ui/speech_presenter.py`
+   owns speech/emote windows and presentation timers without pet/domain
+   imports. The existing GUI forwards its legacy speech APIs to it.
+   The toolbar/status widgets still need narrower host interfaces.
+5. **Pet and adaptive domain (implemented):** Care, friendship, bounded
+   time progression and decay are separate policies. `adaptive_models.py`
+   owns persisted memory/observation contracts, with `adaptive.py`
+   orchestrating learning; legacy names and save-file fields remain valid.
+6. **Dialogue (implemented):** Written dialogue catalogue, work-related
+   comments, mouse-click decisions and spontaneous topics are independent
+   of the GUI. The authored German text is untouched.
+7. **Quality (continuous):** Ruff, PEP 8/E501, strict mypy across the
+   application, Pyright across application *and tests*, Python 3.11/3.13
+   Linux/Xvfb GUI tests, and Windows-hosted headless checks are mandatory.
+   The final interactive Windows smoke check remains outstanding.
 
 ## Change safety
 
