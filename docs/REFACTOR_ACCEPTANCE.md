@@ -10,8 +10,9 @@ the desktop runtime has been exercised on Windows after the final commit.
 - Python 3.11 and 3.13: complete unittest suite using Xvfb, including Tk GUI tests
 - Ruff: existing project-wide lint rules
 - Ruff E501: refactored domain, adaptive, dialogue and focused test modules
-- Mypy: strict type checks of headless movement, reaction, click-event
-  selection and adaptive-policy modules
+- Mypy: strict type checks of the full application and headless policies
+- Pyright: mandatory checks of all application modules and all Python tests,
+  with zero errors and warnings as the target
 - Windows-hosted CI: import desktop modules and execute headless tests for
   taskbar placement, z-order, mouse input, gaze and related domain policies
 - No state JSON schema changes or bundled runtime dependency changes
