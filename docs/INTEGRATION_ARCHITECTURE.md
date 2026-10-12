@@ -92,8 +92,9 @@ titles or unapproved personal activity details.
 
 - Break the remaining `DesktopPet` coordinator into a desktop shell,
   runtime scheduler and injected presentation ports.
-- Replace `ActionToolbar` and `StatusPanel` references to the entire
-  desktop host with narrow view models and callbacks.
+- The hover/status/settings widgets **already** use immutable view models
+  and narrow callbacks, with a separate `HoverUi` owner; guard this direction
+  against new direct `DesktopPet` references in future changes.
 - Migrate flat domain/monitoring modules into package directories gradually,
   retaining compatibility imports throughout.
 - Consider an outbound application event stream only when a consumer exists.
@@ -103,10 +104,11 @@ titles or unapproved personal activity details.
 
 Existing entrypoints, stored JSON schema, dialogue catalogue, and user-facing
 care methods remain in place. The new application components live alongside
-the old modules as an incremental dependency cutover. Future work can replace
-direct `DesktopPet` references from Tk widgets with narrow UI ports and
-separate sprite/speech/window coordination from `gui.py`. No migrations or
-extra runtime libraries are necessary.
+the old modules as an incremental dependency cutover. The animated character
+is now `AnimatedPet`, the accessory-window owner is `HoverUi`, and the
+desktop shell `DesktopPet` connects them through narrowly scoped callback
+ports. View snapshots are produced by `DesktopViewSource`, not by the Tk
+windows themselves. No migrations or extra runtime libraries are necessary.
 
 
 # Application-boundary cutover

@@ -65,9 +65,12 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | Location | Purpose |
 | --- | --- |
 | `aiko_pet/application/` | Typed use cases, command routing and bounded integration notifications |
-| `aiko_pet/ui/` | Tk widgets and independent speech/emote presentation |
+| `aiko_pet/ui/animated_pet.py` | The animated character: sprites, gaze and movement |
+| `aiko_pet/ui/hover_ui.py` | Independent owner of the hover, status and settings windows |
+| `aiko_pet/ui/` | Independent Tk views plus speech/emote presenter and typed callback contracts |
+| `aiko_pet/application/read_models.py` | Immutable utility-window view models |
 | `aiko_pet/adaptive.py` + `adaptive_models.py` | Runtime learning controller and serializable data contracts |
-| `aiko_pet/gui.py` | Existing desktop shell; additional decomposition remains planned |
+| `aiko_pet/gui.py` | Compatibility façade and desktop composition root; further reduction planned |
 | `aiko_pet/` | Existing domain, local Windows APIs, storage, dialogue and monitoring |
 | `aiko_pet/assets/frames/` | 73 original Aiko character animation frames |
 | `aiko_pet/assets/emotes/` | Kenney pixel emotes |

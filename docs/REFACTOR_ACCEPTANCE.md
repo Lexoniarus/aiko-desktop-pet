@@ -25,7 +25,9 @@ the desktop runtime has been exercised on Windows after the final commit.
 1. Launch with Aiko_starten.bat, then with python main.py in debug mode;
    ensure no startup exception and no unexpected black/opaque sprite box.
 2. Hover: show the sci-fi panel, six needs and six care buttons;
-   drag, hide, reopen and reset the panel.
+   drag, hide, reopen and reset the panel. Check the standalone status
+   window and settings popup, including toggles, backdrop clicks and
+   the hover bridge beside the animated character.
 3. Walk: confirm left/right movement, taskbar grounding, cursor gaze, and
    stopping while the panel is open. Disable and re-enable auto-walk.
 4. Reactions: click slowly and in bursts; confirm deliberate silence is
