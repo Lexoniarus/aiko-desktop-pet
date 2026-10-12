@@ -581,6 +581,19 @@ class DesktopPet:
     def _refresh_status(self) -> None:
         self._hover.refresh_status()
 
+    @property
+    def _bubble(self) -> tk.Toplevel | None:
+        """Compatibility view; the speech presenter owns the real widget."""
+        return self._speech.bubble
+
+    @property
+    def _bubble_timeout(self) -> str | None:
+        return self._speech.pending_timer
+
+    @property
+    def _emote_images(self) -> dict[str, tk.PhotoImage]:
+        return self._speech.emote_images
+
     def _move_bubble(self) -> None:
         self._speech.move()
 
