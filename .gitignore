@@ -12,14 +12,14 @@ venv/
 .env.*
 !.env.example
 
-# Editors
+# Editors / operating systems
 .idea/
 .vscode/
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Local saves / logs
+# Local saves and diagnostics
 state.json
 *.log
 logs/
@@ -27,7 +27,7 @@ logs/
 *.sqlite3
 *.db
 
-# Exports / fonts / builds
+# Exported packages / optional fonts
 *.ttf
 *.otf
 *.zip

@@ -1,0 +1,111 @@
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from aiko_pet.domain import PetState
+from aiko_pet.storage import PetSettings, StateStore
+
+
+class StateStoreTests(unittest.TestCase):
+    def setUp(self):
+        self.folder = tempfile.TemporaryDirectory()
+        self.addCleanup(self.folder.cleanup)
+        self.store = StateStore(Path(self.folder.name) / "nested" / "state.json")
+
+    def test_no_save_starts_fresh(self):
+        pet, settings = self.store.load(now=123)
+        self.assertEqual(pet.updated_at, 123)
+        self.assertEqual(pet.satiety, 75)
+        self.assertEqual(settings.scale, 1)
+
+    def test_save_and_load_roundtrip(self):
+        pet = PetState(satiety=88, mood=62, energy=44, sleeping=True, updated_at=100)
+        settings = PetSettings(x=155, y=190, scale=2, always_on_top=False, auto_walk=False)
+        self.store.save(pet, settings)
+        loaded, other = self.store.load(now=100)
+        self.assertEqual(loaded.satiety, 88)
+        self.assertTrue(loaded.sleeping)
+        self.assertEqual(other, settings)
+        self.assertEqual(json.loads(self.store.path.read_text())["version"], 1)
+        self.assertEqual(list(self.store.path.parent.glob("*.tmp")), [])
+
+    def test_existing_v02_save_is_migrated_without_losing_needs(self):
+        from datetime import datetime
+
+        timestamp = datetime(2026, 10, 12, 12).astimezone().timestamp()
+        self.store.path.parent.mkdir(parents=True, exist_ok=True)
+        self.store.path.write_text(json.dumps({
+            "version": 1,
+            "pet": {
+                "satiety": 42, "mood": 63, "energy": 88,
+                "sleeping": False, "updated_at": timestamp,
+            },
+            "settings": {"x": 400, "scale": 2, "auto_walk": False},
+        }))
+        pet, settings = self.store.load(now=timestamp)
+        self.assertEqual((pet.satiety, pet.mood, pet.energy), (42, 63, 88))
+        self.assertEqual(settings.x, 400)
+        self.assertEqual(settings.scale, 2)
+        self.assertFalse(settings.auto_walk)
+        self.assertTrue(settings.auto_routine)
+        self.assertTrue(settings.follow_cursor)
+        self.assertTrue(settings.spontaneous_talk)
+        self.assertEqual(pet.meals_today, [])
+
+    def test_corrupted_json_is_ignored(self):
+        self.store.path.parent.mkdir(parents=True)
+        self.store.path.write_text("{not-json")
+        pet, settings = self.store.load(now=100)
+        self.assertEqual(pet.satiety, 75)
+        self.assertIsNone(settings.x)
+
+    def test_future_version_uses_defaults(self):
+        self.store.path.parent.mkdir(parents=True)
+        self.store.path.write_text('{"version": 999, "pet": {"mood":0}}')
+        pet, _settings = self.store.load(now=100)
+        self.assertEqual(pet.mood, 75)
+
+    def test_malformed_settings_are_rejected(self):
+        settings = PetSettings.from_dict({
+            "x": True, "y": 9999999, "scale": 55,
+            "always_on_top": False, "auto_walk": False,
+        })
+        self.assertIsNone(settings.x)
+        self.assertIsNone(settings.y)
+        self.assertEqual(settings.scale, 1)
+        self.assertFalse(settings.always_on_top)
+        self.assertFalse(settings.auto_walk)
+
+    def test_hardware_monitor_preference_is_optional_and_persisted(self):
+        old = PetSettings.from_dict({"scale": 1})
+        self.assertTrue(old.observe_computer)
+        self.store.save(PetState(updated_at=100),
+                        PetSettings(observe_computer=False))
+        _pet, settings = self.store.load(now=100)
+        self.assertFalse(settings.observe_computer)
+        saved = json.loads(self.store.path.read_text(encoding="utf-8"))
+        self.assertFalse(saved["settings"]["observe_computer"])
+        self.assertNotIn("cpu", saved)
+        self.assertNotIn("gpu", saved)
+        self.assertNotIn("ram", saved)
+
+    def test_toolbar_location_is_optional_and_survives_restart(self):
+        self.assertIsNone(PetSettings.from_dict({"scale": 1}).toolbar_x)
+        settings = PetSettings(toolbar_x=77, toolbar_y=130)
+        self.store.save(PetState(updated_at=100), settings)
+        _, loaded = self.store.load(now=100)
+        self.assertEqual((loaded.toolbar_x, loaded.toolbar_y), (77, 130))
+        invalid = PetSettings.from_dict({"toolbar_x": True, "toolbar_y": 70000})
+        self.assertIsNone(invalid.toolbar_x)
+        self.assertIsNone(invalid.toolbar_y)
+
+    def test_chatter_preference_persists_in_the_v03_save_schema(self):
+        pet = PetState(updated_at=100)
+        self.store.save(pet, PetSettings(spontaneous_talk=False))
+        _pet, settings = self.store.load(now=100)
+        self.assertFalse(settings.spontaneous_talk)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,0 +1,4 @@
+# Text is normalized to LF in the repository; binary assets remain untouched.
+* text=auto
+*.png -text
+*.gif -text

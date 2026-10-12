@@ -1,9 +1,9 @@
-# Kenney – CC0 1.0
+# Kenney-Assets – CC0 1.0
 
-Verwendete Asset-Packs: **Emote Pack (1.0)** und **UI Pack: Sci-fi (2.0)** von [Kenney](https://kenney.nl/).
+Quelle: [Kenney](https://kenney.nl/), Emote Pack (1.0) und UI Pack: Sci-fi (2.0, 19.08.2024).
 
-Die Original-Lizenzdateien bezeichnen die Grafiken als **Creative Commons Zero (CC0 1.0)**, verwendbar für private, schulische und kommerzielle Projekte. Eine Quellenangabe ist freiwillig, aber willkommen.
+Die mit den Original-Packs gelieferten `License.txt`-Dateien kennzeichnen die Grafiken als **Creative Commons Zero (CC0)**. Laut Kenney sind sie in persönlichen, schulischen und kommerziellen Projekten nutzbar; eine Namensnennung ist optional.
 
-Lizenz: https://creativecommons.org/publicdomain/zero/1.0/
+CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
 
-Diese Freigabe betrifft **nicht** Aikos Originalsprites oder separat bereitgestellte Schriftdateien. Siehe [ASSETS.md](../ASSETS.md).
+Dieser Hinweis betrifft nur die Kenney-Grafiken, **nicht** die Aiko-Originalsprites oder gesonderte Schriftarten. Siehe [ASSETS.md](../ASSETS.md).

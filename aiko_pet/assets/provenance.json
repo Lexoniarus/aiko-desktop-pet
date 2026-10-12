@@ -1,0 +1,28 @@
+{
+  "source_asset": "Aiko_Pet_Arbeitsstand.zip / final/spritesheet-extended.png",
+  "source_atlas_sha256": "7d0c71d24df651a2ed0533cb68fd9a03ac63a5697592a418a8fdb71a7e95c9ff",
+  "frame_counts": {
+    "idle": 6,
+    "running-right": 8,
+    "running-left": 8,
+    "waving": 4,
+    "jumping": 5,
+    "failed": 8,
+    "waiting": 6,
+    "running": 6,
+    "review": 6,
+    "look": 16
+  },
+  "crop_from_original_pixels": [
+    32,
+    0,
+    160,
+    208
+  ],
+  "size": [
+    128,
+    208
+  ],
+  "alpha_threshold": 128,
+  "note": "Sämtliche bestehenden Frames sind erhalten; es wurden keine neuen Posen generiert."
+}
