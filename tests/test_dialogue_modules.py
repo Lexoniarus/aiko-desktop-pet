@@ -42,6 +42,7 @@ class DialogueModulesTests(unittest.TestCase):
         context = context_at(1760281200)
         result = book.choose("greeting", "calm", context, 100.0)
         self.assertIsInstance(result, dialogue.Reaction)
+        assert result is not None
         self.assertEqual(result.text, "Hallo!")
 
     def test_line_parser_rejects_non_mapping_input(self) -> None:

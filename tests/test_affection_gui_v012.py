@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from aiko_pet.gui import DesktopPet
+from aiko_pet.ui.action_toolbar import ActionToolbar
 from aiko_pet.storage import StateStore
 
 
@@ -28,8 +29,14 @@ class AffectionGuiTests(unittest.TestCase):
         self.app._on_enter()
         self.app.root.update_idletasks()
 
+    @property
+    def toolbar(self) -> ActionToolbar:
+        bar = self.app.toolbar
+        assert bar is not None
+        return bar
+
     def test_six_hud_bars_stay_in_two_rows_and_fill_at_100_percent(self):
-        toolbar = self.app.toolbar
+        toolbar = self.toolbar
         self.assertEqual(len(toolbar.NEEDS), 6)
         self.assertEqual(len(toolbar.needs), 6)
         for key in toolbar.needs:
@@ -48,33 +55,34 @@ class AffectionGuiTests(unittest.TestCase):
         self.app.state.social = 15
         self.app.state.energy = 44
         self.app.state.mood = 20
-        self.app.toolbar.buttons["pet"].invoke()
+        self.toolbar.buttons["pet"].invoke()
         self.assertAlmostEqual(self.app.state.affection, 35, places=2)
         self.assertAlmostEqual(self.app.state.energy, 44, places=2)
         self.assertAlmostEqual(self.app.state.social, 17, places=2)
         self.assertAlmostEqual(self.app.state.mood, 26, places=2)
-        self.app.toolbar.refresh()
-        self.assertIn("35%", self.app.toolbar.needs["affection"][2].cget("text"))
+        self.toolbar.refresh()
+        self.assertIn("35%", self.toolbar.needs["affection"][2].cget("text"))
 
     def test_separate_status_shows_affection_and_existing_controls(self):
         self.app.open_status()
         panel = self.app.status_panel
+        assert panel is not None
         self.assertEqual(len(panel.bars), 6)
         self.app.state.affection = 46
         self.app.state.friendship = 93
         panel.refresh()
         self.assertIn("46%", panel.bars["affection"][2].cget("text"))
         self.assertIn("Lv 10", panel.bars["friendship"][2].cget("text"))
-        self.assertIsNotNone(self.app.toolbar.settings_button)
+        self.assertIsNotNone(self.toolbar.settings_button)
 
     def test_existing_menu_drag_and_hide_remain_operational(self):
-        self.app.toolbar.settings_button.invoke()
+        self.toolbar.settings_button.invoke()
         self.assertIsNotNone(self.app.settings_popup)
         self.app._dismiss_if_outside(-999, -999)
-        self.assertFalse(self.app.toolbar.visible)
+        self.assertFalse(self.toolbar.visible)
         self.assertIsNone(self.app.settings_popup)
         self.app._on_enter()
-        self.assertTrue(self.app.toolbar.visible)
+        self.assertTrue(self.toolbar.visible)
 
 
 if __name__ == "__main__":

@@ -73,7 +73,9 @@ class FollowupGuiTests(unittest.TestCase):
         self.app._react(Reaction("test", "Aiko", "waving", "click_left",
                                  "...Immer noch Aiko", 600))
         self.app.root.update_idletasks()
-        self.assertTrue(self.app.toolbar.visible)
+        bar = self.app.toolbar
+        assert bar is not None
+        self.assertTrue(bar.visible)
         self.assertIn(self.app.root, self.app._overlay_windows())
         self.assertIn(self.app._bubble, self.app._overlay_windows())
         self.pass_delay()

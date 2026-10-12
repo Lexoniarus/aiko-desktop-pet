@@ -37,7 +37,9 @@ class AdaptiveGuiTests(unittest.TestCase):
              patch("aiko_pet.gui.idle_seconds_windows", return_value=0):
             self.app._observe_adaptive(now + 0.1, time.time())
             self.assertIsNotNone(self.app.adaptive.current)
-            self.assertTrue(self.app.adaptive.current.focused)
+            observed = self.app.adaptive.current
+            assert observed is not None
+            self.assertTrue(observed.focused)
             self.assertIs(self.app.mind.situation, self.app.adaptive.current)
             previous = self.app.adaptive.current
             self.app._observe_adaptive(now + 5, time.time() + 5)
@@ -50,7 +52,9 @@ class AdaptiveGuiTests(unittest.TestCase):
         with patch.object(self.app.activity_monitor, "latest", return_value=snap), \
              patch("aiko_pet.gui.idle_seconds_windows", return_value=220):
             self.app._observe_adaptive(now + 0.2, time.time())
-        self.assertTrue(self.app.adaptive.current.focused)
+        observed = self.app.adaptive.current
+        assert observed is not None
+        self.assertTrue(observed.focused)
         self.assertEqual(sum(self.app.adaptive.memory.hour_seconds), 0)
         self.app.settings.learn_rhythm = True
         self.app.adaptive.memory.hour_seconds[9] = 40
@@ -62,8 +66,11 @@ class AdaptiveGuiTests(unittest.TestCase):
 
     def test_settings_popup_exposes_learning_and_reset_controls(self):
         self.app._on_enter()
-        self.app.toolbar.settings_button.invoke()
+        bar = self.app.toolbar
+        assert bar is not None
+        bar.settings_button.invoke()
         popup = self.app.settings_popup
+        assert popup is not None
         self.assertIn("learn_rhythm", popup.values)
         text = [child.cget("text") for child in
                 popup.window.winfo_children()[0].winfo_children()
@@ -79,6 +86,7 @@ class AdaptiveGuiTests(unittest.TestCase):
             self.app._observe_adaptive(now + 0.1, time.time())
             self.app.open_status()
             panel = self.app.status_panel
+            assert panel is not None
             self.assertIn("Mein Rhythmus:", panel.life_label.cget("text"))
             self.assertIn("Beanspruchung", panel.life_label.cget("text"))
             panel.close()
