@@ -18,6 +18,7 @@ class GlobalMouseClicks:
     """Report a new system-wide left/right click, including short taps."""
 
     def __init__(self, reader: Callable[[int], int] | None = None) -> None:
+        self._reader: Callable[[int], int] | None
         if reader is not None:
             self._reader = reader
         elif sys.platform == "win32":
@@ -34,13 +35,16 @@ class GlobalMouseClicks:
         if self._reader is None:
             return False
         try:
-            states = tuple(
-                int(self._reader(button)) & 0xFFFF
-                for button in (VK_LBUTTON, VK_RBUTTON)
+            states = (
+                int(self._reader(VK_LBUTTON)) & 0xFFFF,
+                int(self._reader(VK_RBUTTON)) & 0xFFFF,
             )
         except (AttributeError, OSError, ValueError):
             return False
-        downs = tuple(bool(state & 0x8000) for state in states)
+        downs = (
+            bool(states[0] & 0x8000),
+            bool(states[1] & 0x8000),
+        )
         previous = self._previous_down
         self._previous_down = downs
         if previous is None:

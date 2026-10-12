@@ -251,7 +251,10 @@ class HardwareSampler:
                      "--query-gpu=utilization.gpu,memory.used,memory.total",
                      "--format=csv,noheader,nounits"],
                     capture_output=True, text=True, timeout=2.0, check=False,
-                    creationflags=(subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0),
+                    creationflags=(
+                        int(getattr(subprocess, "CREATE_NO_WINDOW", 0))
+                        if sys.platform == "win32" else 0
+                    ),
                 )
                 if result.returncode == 0:
                     gpu, gpu_memory = parse_nvidia_reading(result.stdout)

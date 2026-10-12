@@ -110,8 +110,11 @@ def advance_pet_time(
     if not math.isfinite(now):
         return
     elapsed = max(0.0, min(MAX_CATCHUP_SECONDS, now - record.updated_at))
-    if (type(effort) not in (int, float) or not math.isfinite(effort)
-            or not 0.0 <= effort <= 1.0):
+    if type(effort) not in (int, float):
+        effort = None
+    elif effort is not None and (
+        not math.isfinite(effort) or not 0.0 <= effort <= 1.0
+    ):
         effort = None
     known_since = now - min(elapsed, MAX_LIVE_EFFORT_SECONDS)
     if not auto_routine:

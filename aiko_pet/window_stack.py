@@ -12,7 +12,7 @@ import ctypes
 import sys
 import time
 from ctypes import wintypes
-from typing import Callable, Iterable, Protocol
+from typing import Callable, Iterable, Protocol, Sequence, cast
 
 
 class Window(Protocol):
@@ -26,9 +26,37 @@ class Window(Protocol):
 
 
 class NativeWindowOps(Protocol):
-    def is_covered(self, root: Window, owned: list[Window]) -> bool: ...
+    def is_covered(self, root: Window, owned: Sequence[Window]) -> bool: ...
 
     def raise_without_focus(self, window: Window) -> bool: ...
+
+
+class Win32WindowApi(Protocol):
+    """Only Win32 calls used by Aiko, independently mockable in tests."""
+
+    def GetAncestor(self, hwnd: int, flag: int) -> object: ...
+
+    def GetWindow(self, hwnd: int, flag: int) -> object: ...
+
+    def GetWindowRect(self, hwnd: int, rect_pointer: object) -> bool: ...
+
+    def GetWindowLongW(self, hwnd: int, index: int) -> int: ...
+
+    def IsWindowVisible(self, hwnd: int) -> bool: ...
+
+    def IsIconic(self, hwnd: int) -> bool: ...
+
+    def SetWindowPos(
+        self, hwnd: int, after: int, x: int, y: int,
+        width: int, height: int, flags: int,
+    ) -> bool: ...
+
+
+class _CtypesFunctionSignature(Protocol):
+    """Writable ctypes function attributes used only at the FFI boundary."""
+
+    argtypes: list[object]
+    restype: object
 
 
 class _Rect(ctypes.Structure):
@@ -54,38 +82,51 @@ class WindowsWindowOps:
     SWP_NOOWNERZORDER = 0x0200
     MOVE_FLAGS = SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOOWNERZORDER
 
-    def __init__(self, user32: object | None = None) -> None:
+    def __init__(self, user32: Win32WindowApi | None = None) -> None:
         if user32 is None:
             if sys.platform != "win32":
                 raise RuntimeError("Win32 window management requires Windows")
-            user32 = ctypes.WinDLL("user32", use_last_error=True)
-            self._configure_win32_types(user32)
-        self.user32 = user32
+            native_library = ctypes.WinDLL("user32", use_last_error=True)
+            self._configure_win32_types(native_library)
+            user32 = cast(Win32WindowApi, native_library)
+        self.user32: Win32WindowApi = user32
 
     @staticmethod
     def _configure_win32_types(api: object) -> None:
-        # Explicit pointer types are essential for 64-bit HWND values.
-        api.GetAncestor.argtypes = [wintypes.HWND, wintypes.UINT]
-        api.GetAncestor.restype = wintypes.HWND
-        api.GetWindow.argtypes = [wintypes.HWND, wintypes.UINT]
-        api.GetWindow.restype = wintypes.HWND
-        api.GetWindowRect.argtypes = [wintypes.HWND, ctypes.POINTER(_Rect)]
-        api.GetWindowRect.restype = wintypes.BOOL
-        api.GetWindowLongW.argtypes = [wintypes.HWND, ctypes.c_int]
-        api.GetWindowLongW.restype = wintypes.LONG
-        api.IsWindowVisible.argtypes = [wintypes.HWND]
-        api.IsWindowVisible.restype = wintypes.BOOL
-        api.IsIconic.argtypes = [wintypes.HWND]
-        api.IsIconic.restype = wintypes.BOOL
-        api.SetWindowPos.argtypes = [
-            wintypes.HWND, wintypes.HWND, ctypes.c_int, ctypes.c_int,
-            ctypes.c_int, ctypes.c_int, wintypes.UINT,
-        ]
-        api.SetWindowPos.restype = wintypes.BOOL
+        """Apply pointer-safe signatures to the dynamically loaded DLL."""
+        # ctypes exposes DLL functions dynamically. The cast is isolated
+        # here; application code accesses only the Win32WindowApi protocol.
+        signatures: tuple[tuple[str, list[object], object], ...] = (
+            ("GetAncestor", [wintypes.HWND, wintypes.UINT], wintypes.HWND),
+            ("GetWindow", [wintypes.HWND, wintypes.UINT], wintypes.HWND),
+            (
+                "GetWindowRect", [wintypes.HWND, ctypes.POINTER(_Rect)],
+                wintypes.BOOL,
+            ),
+            ("GetWindowLongW", [wintypes.HWND, ctypes.c_int], wintypes.LONG),
+            ("IsWindowVisible", [wintypes.HWND], wintypes.BOOL),
+            ("IsIconic", [wintypes.HWND], wintypes.BOOL),
+            (
+                "SetWindowPos",
+                [
+                    wintypes.HWND, wintypes.HWND, ctypes.c_int, ctypes.c_int,
+                    ctypes.c_int, ctypes.c_int, wintypes.UINT,
+                ],
+                wintypes.BOOL,
+            ),
+        )
+        for name, argument_types, return_type in signatures:
+            function = cast(_CtypesFunctionSignature, getattr(api, name))
+            function.argtypes = argument_types
+            function.restype = return_type
 
     @staticmethod
     def _handle(value: object) -> int:
-        return int(getattr(value, "value", value) or 0)
+        """Normalize Win32 handles returned as integers or ctypes pointers."""
+        if isinstance(value, int):
+            return value
+        pointed_value = getattr(value, "value", None)
+        return pointed_value if isinstance(pointed_value, int) else 0
 
     def hwnd(self, window: Window) -> int:
         if not window.winfo_exists():
@@ -106,7 +147,7 @@ class WindowsWindowOps:
             and a.top < b.bottom and b.top < a.bottom
         )
 
-    def is_covered(self, root: Window, owned: list[Window]) -> bool:
+    def is_covered(self, root: Window, owned: Sequence[Window]) -> bool:
         """True if a *foreign* visible overlapping window outranks the sprite.
 
         Ignore our other Tk windows (notably the speech bubble). The topmost

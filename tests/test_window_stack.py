@@ -118,6 +118,11 @@ class WindowStackUnitTests(unittest.TestCase):
         self.assertTrue(self.stack.restore())
         self.assertEqual([call[0] for call in self.user32.calls], [201, 202])
 
+    def test_native_handle_normalization_accepts_ctypes_pointer(self):
+        self.assertEqual(self.api._handle(ctypes.c_void_p(123)), 123)
+        self.assertEqual(self.api._handle(None), 0)
+        self.assertEqual(self.api._handle(ctypes.c_void_p(None)), 0)
+
     def test_hwnd_resolution_uses_top_level_wrapper_not_inner_tk_handle(self):
         self.assertEqual(self.api.hwnd(self.pet), 201)
 
