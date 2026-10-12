@@ -19,12 +19,9 @@ from .adaptive import AdaptiveRoutine
 from .application.activity import ActivityCallbacks, ActivityCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
-from .application.hover_projection import project_hover
-from .application.status_projection import project_status
-from .application.settings_projection import project_settings
-from .ui.hover_contracts import HoverAnchor, HoverSnapshot
 from .ui.hover_ui import HoverUi, HoverUiPorts
 from .application.router import ApplicationRouter
+from .application.read_models import DesktopViewSource
 from .animation import (
     FRAME_COUNTS as FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
     FrameClock,
@@ -49,7 +46,6 @@ from .ui.action_toolbar import ActionToolbar
 from .ui.animated_pet import AnimatedPet, AnimatedPorts
 from .ui.settings_popup import SettingsPopup
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
-from .ui.status_contracts import StatusSnapshot
 from .ui.status_panel import StatusPanel
 
 FRAME_WIDTH = 128
@@ -170,13 +166,19 @@ class DesktopPet:
         self._overlay_stack = WindowStack(
             self._overlay_windows, enabled=self.settings.always_on_top,
         )
+        self._views = DesktopViewSource(
+            self.state, self.settings, self.mind, self.adaptive,
+            self.activity_monitor,
+            context=lambda: self.context,
+            sprite_size=lambda: (self.width, self.height),
+        )
         self._hover = HoverUi(
             self.root, self.canvas,
             HoverUiPorts(
-                hover_snapshot=self._hover_snapshot,
-                status_snapshot=self._status_snapshot,
-                settings_snapshot=lambda: project_settings(self.settings),
-                anchor=self._hover_anchor,
+                hover_snapshot=self._views.hover,
+                status_snapshot=self._views.status,
+                settings_snapshot=self._views.settings_view,
+                anchor=self._views.anchor,
                 care=self.interact,
                 open_sprite_hover=self._on_enter,
                 record_contact=self._record_hover_contact,
@@ -331,20 +333,6 @@ class DesktopPet:
         if self.toolbar is not None and self.toolbar.visible:
             self.toolbar.place()
         self._move_bubble()
-
-    def _hover_snapshot(self) -> HoverSnapshot:
-        return project_hover(
-            self.state, self.context, self.activity_monitor.latest(),
-            observe_computer=self.settings.observe_computer,
-        )
-
-    def _hover_anchor(self) -> HoverAnchor:
-        return HoverAnchor(
-            x=self.settings.x or 0, y=self.settings.y or 0,
-            width=self.width, height=self.height,
-            pinned_x=self.settings.toolbar_x,
-            pinned_y=self.settings.toolbar_y,
-        )
 
     def _save_hover_position(
         self, x: int | None, y: int | None,
@@ -614,20 +602,6 @@ class DesktopPet:
         self._place_x((self.track.left + self.track.right - self.width) / 2)
         self._walk_remaining = 0
         self._save()
-
-    def _status_snapshot(self) -> StatusSnapshot:
-        from .system_activity import ComputerSnapshot
-
-        reading = (
-            self.activity_monitor.latest()
-            if self.settings.observe_computer else ComputerSnapshot()
-        )
-        return project_status(
-            self.state, self.context, self.mind,
-            self.adaptive.current, reading,
-            observe_computer=self.settings.observe_computer,
-            now=time.monotonic(),
-        )
 
     def open_status(self) -> None:
         self._hover.open_status()
