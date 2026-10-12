@@ -17,6 +17,8 @@ from ..system_activity import ComputerSnapshot, workload_intensity
 class ActivityReadings(Protocol):
     def latest(self) -> ComputerSnapshot: ...
 
+    def set_enabled(self, enabled: bool) -> None: ...
+
 
 @dataclass(frozen=True, slots=True)
 class ActivityCallbacks:
@@ -55,6 +57,17 @@ class ActivityCoordinator:
         self.last_hardware_sample = 0.0
         self.last_adaptive_sample = 0.0
         self.pending_computer_line: tuple[str, float] | None = None
+
+    def set_observation_enabled(self, enabled: bool) -> None:
+        """Stop or restart measured workload and clear old session readings."""
+        self.settings.observe_computer = bool(enabled)
+        self.monitor.set_enabled(self.settings.observe_computer)
+        self.voice.reset_samples()
+        self.last_hardware_sample = 0.0
+        self.last_adaptive_sample = 0.0
+        self.pending_computer_line = None
+        if not enabled:
+            self.mind.set_situation(None)
 
     def interrupt_nap(self) -> bool:
         behaviour = self.adaptive.current

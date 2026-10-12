@@ -64,6 +64,11 @@ class SpeechPresenter:
             window.wm_attributes("-transparentcolor", self._transparent_color)
         return window
 
+    def set_topmost(self, enabled: bool) -> None:
+        """Apply the user's stacking preference to the active bubble."""
+        if self.bubble is not None:
+            self.bubble.wm_attributes("-topmost", enabled)
+
     def move(self) -> None:
         """Place speech above Aiko's head, never above the hover toolbar."""
         bubble = self.bubble

@@ -86,6 +86,17 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertEqual(self.cursor_events, ["cursor_far"])
         self.assertEqual(self.anim.last_pointer_move, 1000.0)
 
+    def test_visual_settings_are_owned_by_animated_character(self) -> None:
+        self.anim.movement.remaining_distance = 30
+        self.anim.set_auto_walk(False, now=500)
+        self.assertFalse(self.settings.auto_walk)
+        self.assertEqual(self.anim.movement.remaining_distance, 0)
+        self.assertGreater(self.anim.movement.next_walk_at, 500)
+        self.anim.gaze_sector = 3
+        self.anim.set_follow_cursor(False)
+        self.assertFalse(self.settings.follow_cursor)
+        self.assertIsNone(self.anim.gaze_sector)
+
     def test_scale_reload_keeps_frame_identity(self) -> None:
         self.settings.scale = 2
         self.anim.reload_sprites()

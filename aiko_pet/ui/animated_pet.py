@@ -135,6 +135,16 @@ class AnimatedPet:
             sprites[state] = frames
         return sprites
 
+    def set_auto_walk(self, enabled: bool, now: float) -> None:
+        """Walking configuration belongs to the character's movement owner."""
+        self.settings.auto_walk = bool(enabled)
+        self.movement.remaining_distance = 0
+        self.movement.next_walk_at = now + random.uniform(2.5, 5)
+
+    def set_follow_cursor(self, enabled: bool) -> None:
+        self.settings.follow_cursor = bool(enabled)
+        self.gaze_sector = None
+
     def reload_sprites(self) -> None:
         """Apply a new visual scale without touching care or hover state."""
         self.sprites = self.load_sprites()

@@ -55,6 +55,10 @@ class AttentionCoordinator:
     def reschedule_comment(self, now: float) -> None:
         self.next_comment = now + random.uniform(180.0, 360.0)
 
+    def set_spontaneous_talk(self, enabled: bool, now: float) -> None:
+        self.settings.spontaneous_talk = bool(enabled)
+        self.reschedule_comment(now)
+
     def should_greet(self, now: float) -> bool:
         return (
             self.settings.spontaneous_talk

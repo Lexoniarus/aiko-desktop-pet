@@ -75,6 +75,10 @@ class DesktopWindow:
         self.placed = True
         return True
 
+    def set_topmost(self, enabled: bool) -> None:
+        """Control the character window's stack without touching other views."""
+        self.root.wm_attributes("-topmost", enabled)
+
     def resize(self) -> None:
         """Resize host; frame assets remain the AnimatedPet's responsibility."""
         self.width = FRAME_WIDTH * self.settings.scale

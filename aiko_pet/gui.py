@@ -524,26 +524,14 @@ class DesktopPet:
     def set_topmost(self, value: bool) -> None:
         self.settings.always_on_top = bool(value)
         self._overlay_stack.enabled = self.settings.always_on_top
-        self.root.wm_attributes("-topmost", self.settings.always_on_top)
-        if self.toolbar is not None:
-            self.toolbar.window.wm_attributes("-topmost", self.settings.always_on_top)
-        if self.status_panel is not None:
-            self.status_panel.window.wm_attributes(
-                "-topmost", self.settings.always_on_top,
-            )
-        if self._bubble is not None:
-            self._bubble.wm_attributes("-topmost", self.settings.always_on_top)
-        if self.settings_popup is not None:
-            self.settings_popup.window.wm_attributes(
-                "-topmost", self.settings.always_on_top,
-            )
+        self._window.set_topmost(self.settings.always_on_top)
+        self._hover.set_topmost(self.settings.always_on_top)
+        self._speech.set_topmost(self.settings.always_on_top)
         self._overlay_stack.restore()
         self._save()
 
     def set_auto_walk(self, value: bool) -> None:
-        self.settings.auto_walk = bool(value)
-        self._walk_remaining = 0
-        self._next_walk = time.monotonic() + random.uniform(2.5, 5)
+        self._animated.set_auto_walk(value, time.monotonic())
         self._save()
 
     def set_auto_routine(self, enabled: bool) -> None:
@@ -556,13 +544,11 @@ class DesktopPet:
         self._save()
 
     def set_follow_cursor(self, enabled: bool) -> None:
-        self.settings.follow_cursor = bool(enabled)
-        self._gaze_sector = None
+        self._animated.set_follow_cursor(enabled)
         self._save()
 
     def set_spontaneous_talk(self, enabled: bool) -> None:
-        self.settings.spontaneous_talk = bool(enabled)
-        self._attention.reschedule_comment(time.monotonic())
+        self._attention.set_spontaneous_talk(enabled, time.monotonic())
         self._save()
 
     def set_learn_rhythm(self, enabled: bool) -> None:
@@ -575,14 +561,7 @@ class DesktopPet:
         self._save()
 
     def set_observe_computer(self, enabled: bool) -> None:
-        self.settings.observe_computer = bool(enabled)
-        self.activity_monitor.set_enabled(self.settings.observe_computer)
-        self.computer_voice.reset_samples()
-        self._last_hardware_sample = 0.0
-        self._last_adaptive_sample = 0.0
-        self._pending_computer_line = None
-        if not enabled:
-            self.mind.set_situation(None)
+        self._activity.set_observation_enabled(enabled)
         if self.toolbar is not None:
             self.toolbar.refresh()
         self._save()

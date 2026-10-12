@@ -131,6 +131,12 @@ class HoverUi:
         )
         self._ports.restore_stack()
 
+    def set_topmost(self, enabled: bool) -> None:
+        """Update only utility windows owned by this component."""
+        for window in (self.toolbar, self.status_panel, self.settings_popup):
+            if window is not None:
+                window.window.wm_attributes("-topmost", enabled)
+
     def refresh_status(self) -> None:
         if self.status_panel is not None:
             self.status_panel.refresh()
