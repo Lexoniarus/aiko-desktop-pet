@@ -13,6 +13,11 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
+from .adaptive_policy import (
+    ActivityMode,
+    determine_activity_mode,
+    determine_sleep_options,
+)
 from .routine import TimeContext, context_at
 
 SLOTS = 7 * 24
@@ -120,7 +125,7 @@ class AdaptiveMemory:
 class Behaviour:
     """Interpretation, not a speech line. Consumers select real sprites."""
 
-    mode: str
+    mode: ActivityMode
     strain: float
     effort: float | None
     expected_effort: float | None
@@ -202,20 +207,14 @@ class AdaptiveRoutine:
         self.memory.last_slot_key = ""
         self.memory.profile_day = ""
 
-    def observe(self, observation: Observation, monotonic: float,
-                *, energy: float, sleeping: bool,
-                manual_sleep: bool = False, learn: bool = True) -> Behaviour:
-        if not math.isfinite(monotonic):
-            raise ValueError("monotonic clock must be finite")
-        current = observation.wall_time
-        context = context_at(current)
-        if learn:
-            self._age_profile(context.day_key)
-        last = self._previous_mono
-        if last is None and self.memory.last_seen_wall:
-            # Aiko wasn't observing while the application was closed. Don't
-            # claim idle time or work then, and don't preserve days-old effort.
-            unseen = current - self.memory.last_seen_wall
+    def _elapsed_observation_seconds(
+        self, wall_time: float, monotonic: float,
+    ) -> tuple[float | None, float]:
+        """Reset stale sessions and ignore suspend/debugger time jumps."""
+        previous = self._previous_mono
+        if previous is None and self.memory.last_seen_wall:
+            # Offline time is never interpreted as observed work or idle time.
+            unseen = wall_time - self.memory.last_seen_wall
             if unseen > 1800:
                 self.memory.session_seconds = 0.0
                 self.memory.rest_seconds = 0.0
@@ -224,107 +223,157 @@ class AdaptiveRoutine:
                 self.memory.last_work_wall = 0.0
             if unseen > 6 * 3600:
                 self.memory.strain = min(self.memory.strain, 35.0)
-        dt = 0.0 if last is None else monotonic - last
-        if not 0 <= dt <= 120:
-            dt = 0.0  # Resume from suspend, debugging pause, reboot.
-        dt = min(MAX_OBSERVATION_SECONDS, dt)
+        elapsed = 0.0 if previous is None else monotonic - previous
+        if not 0 <= elapsed <= 120:
+            elapsed = 0.0
+        elapsed = min(MAX_OBSERVATION_SECONDS, elapsed)
         self._previous_mono = monotonic
-        self._previous_wall = current
-        self.memory.last_seen_wall = current
-        effort = observation.effort
-        present = (observation.idle_seconds < 300
-                   if observation.idle_seconds is not None else None)
+        self._previous_wall = wall_time
+        self.memory.last_seen_wall = wall_time
+        return previous, elapsed
 
-        if effort is not None:
-            # 40s smoothing to reject single 6s transient spikes.
-            alpha = 1.0 - math.exp(-dt / 40.0)
-            if last is None:
-                self.memory.settled_work = effort
-            else:
-                self.memory.settled_work += alpha * (
-                    effort - self.memory.settled_work
-                )
-            self.memory.settled_work = clamp(self.memory.settled_work, high=1.0)
-            if dt > 0:
-                if effort >= 0.65:
-                    self.memory.strain += (effort - 0.45) * dt / 3600 * 55
-                else:
-                    self.memory.strain -= max(0.15, 0.65 - effort) * dt / 3600 * 38
-                self.memory.strain = clamp(self.memory.strain)
-                if effort >= 0.65:
-                    self.memory.session_seconds = min(
-                        172_800, self.memory.session_seconds + dt,
-                    )
-                    self.memory.last_work_wall = current
-                    self.memory.rest_seconds = 0.0
-                elif effort < 0.33:
-                    if self.memory.session_seconds > 0:
-                        self.memory.last_session_seconds = self.memory.session_seconds
-                        self.memory.session_seconds = 0.0
-                    if present is False:
-                        self.memory.rest_seconds = min(
-                            172_800, self.memory.rest_seconds + dt,
-                        )
-                    else:
-                        self.memory.rest_seconds = 0.0
-                else:
-                    self.memory.rest_seconds = 0.0
-        # A missing CPU/GPU reading cannot contribute fictitious busy/idle time.
-        if learn and dt > 0 and effort is not None:
-            slot = self._slot(context)
-            self.memory.hour_seconds[slot] += dt
-            self.memory.busy_seconds[slot] += dt * effort
-            if present is True:
-                self.memory.present_seconds[slot] += dt
-            key = f"{context.day_key}:{context.local.hour:02d}"
-            if key != self.memory.last_slot_key:
-                self.memory.observed_days[slot] += 1.0
-                self.memory.last_slot_key = key
-        expected, confident = self.expected_effort(context) if learn else (None, False)
-        current_effort = self.memory.settled_work if effort is not None else None
-        # Moderate work should not count as rest. At high current load Aiko is
-        # working, even if the user is absent or the local clock says midnight.
-        working = effort is not None and (
-            effort >= 0.75 or self.memory.settled_work >= 0.59
-        )
-        if working:
-            mode = "working"
-        elif (self.memory.last_session_seconds >= 120
-              and 0 <= current - self.memory.last_work_wall <= 180):
-            mode = "recovering"
-        elif self.memory.rest_seconds >= 300:
-            mode = "resting"
-        elif present is True:
-            mode = "present"
+    def _update_workload_memory(
+        self,
+        effort: float | None,
+        *,
+        elapsed: float,
+        previous: float | None,
+        wall_time: float,
+        present: bool | None,
+    ) -> None:
+        """Smooth work effort and accumulate bounded session/rest exposure."""
+        if effort is None:
+            return
+        alpha = 1.0 - math.exp(-elapsed / 40.0)
+        if previous is None:
+            self.memory.settled_work = effort
         else:
-            mode = "wandering"
-        # Bedtime is a bias, not a mandatory shutdown. Aiko may also doze after
-        # prolonged unattended calm if she is genuinely short on energy.
-        late = context.night
-        enough_quiet = not working and (
-            (effort is None or effort < 0.38) and
-            (observation.idle_seconds is None or observation.idle_seconds >= 180)
+            self.memory.settled_work += alpha * (
+                effort - self.memory.settled_work
+            )
+        self.memory.settled_work = clamp(self.memory.settled_work, high=1.0)
+        if elapsed <= 0:
+            return
+        if effort >= 0.65:
+            self.memory.strain += (effort - 0.45) * elapsed / 3600 * 55
+        else:
+            self.memory.strain -= (
+                max(0.15, 0.65 - effort) * elapsed / 3600 * 38
+            )
+        self.memory.strain = clamp(self.memory.strain)
+        if effort >= 0.65:
+            self.memory.session_seconds = min(
+                172_800, self.memory.session_seconds + elapsed,
+            )
+            self.memory.last_work_wall = wall_time
+            self.memory.rest_seconds = 0.0
+        elif effort < 0.33:
+            if self.memory.session_seconds > 0:
+                self.memory.last_session_seconds = self.memory.session_seconds
+                self.memory.session_seconds = 0.0
+            if present is False:
+                self.memory.rest_seconds = min(
+                    172_800, self.memory.rest_seconds + elapsed,
+                )
+            else:
+                self.memory.rest_seconds = 0.0
+        else:
+            self.memory.rest_seconds = 0.0
+
+    def _record_hourly_exposure(
+        self,
+        context: TimeContext,
+        *,
+        elapsed: float,
+        effort: float | None,
+        present: bool | None,
+        learn: bool,
+    ) -> None:
+        """Persist aggregates only for actually observed, readable samples."""
+        if not learn or elapsed <= 0 or effort is None:
+            return
+        slot = self._slot(context)
+        self.memory.hour_seconds[slot] += elapsed
+        self.memory.busy_seconds[slot] += elapsed * effort
+        if present is True:
+            self.memory.present_seconds[slot] += elapsed
+        key = f"{context.day_key}:{context.local.hour:02d}"
+        if key != self.memory.last_slot_key:
+            self.memory.observed_days[slot] += 1.0
+            self.memory.last_slot_key = key
+
+    def observe(
+        self,
+        observation: Observation,
+        monotonic: float,
+        *,
+        energy: float,
+        sleeping: bool,
+        manual_sleep: bool = False,
+        learn: bool = True,
+    ) -> Behaviour:
+        """Update measured memory, classify activity and decide rest options."""
+        if not math.isfinite(monotonic):
+            raise ValueError("monotonic clock must be finite")
+        wall_time = observation.wall_time
+        context = context_at(wall_time)
+        if learn:
+            self._age_profile(context.day_key)
+        previous, elapsed = self._elapsed_observation_seconds(
+            wall_time, monotonic,
         )
-        can_sleep = ((late and not working and
-                      (enough_quiet or energy <= 17)) or
-                     (energy <= 23 and self.memory.rest_seconds >= 1800))
-        should_wake = (not manual_sleep and sleeping and
-                       (working or (not late and present is True)))
-        # A learned quiet window makes a daytime nap plausible; low-energy
-        # safety fallback also works before weeks of profile observations.
-        can_nap = (not late and present is False and not working and
-                   self.memory.rest_seconds >= 900 and
-                   (energy <= 18 or (energy <= 35 and expected is not None
-                                     and expected < 0.32)))
+        effort = observation.effort
+        present = (
+            observation.idle_seconds < 300
+            if observation.idle_seconds is not None else None
+        )
+        self._update_workload_memory(
+            effort,
+            elapsed=elapsed,
+            previous=previous,
+            wall_time=wall_time,
+            present=present,
+        )
+        self._record_hourly_exposure(
+            context, elapsed=elapsed, effort=effort, present=present, learn=learn,
+        )
+        expected, confident = (
+            self.expected_effort(context) if learn else (None, False)
+        )
+        mode = determine_activity_mode(
+            effort=effort,
+            settled_work=self.memory.settled_work,
+            last_session_seconds=self.memory.last_session_seconds,
+            last_work_wall=self.memory.last_work_wall,
+            rest_seconds=self.memory.rest_seconds,
+            present=present,
+            wall_time=wall_time,
+        )
+        sleep_options = determine_sleep_options(
+            mode=mode,
+            energy=energy,
+            sleeping=sleeping,
+            manual_sleep=manual_sleep,
+            night=context.night,
+            effort=effort,
+            idle_seconds=observation.idle_seconds,
+            present=present,
+            rest_seconds=self.memory.rest_seconds,
+            expected_effort=expected,
+        )
         result = Behaviour(
-            mode=mode, strain=self.memory.strain, effort=current_effort,
-            expected_effort=expected, expectation_confident=confident,
+            mode=mode,
+            strain=self.memory.strain,
+            effort=self.memory.settled_work if effort is not None else None,
+            expected_effort=expected,
+            expectation_confident=confident,
             present=present,
             uptime_hours=observation.uptime_hours,
             prolonged_work_seconds=self.memory.session_seconds,
             rest_seconds=self.memory.rest_seconds,
-            can_sleep=can_sleep, should_wake=should_wake,
-            can_nap=can_nap,
+            can_sleep=sleep_options.can_sleep,
+            should_wake=sleep_options.should_wake,
+            can_nap=sleep_options.can_nap,
         )
         self._last_result = result
         return result
