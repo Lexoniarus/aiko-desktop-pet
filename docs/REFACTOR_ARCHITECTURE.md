@@ -25,10 +25,14 @@ third-party packages. Keep German runtime text and English documentation.
    remaining reaction/scheduling logic can be extracted in later slices.
    Separate pure decisions from Tkinter side effects; introduce typed
    interfaces only where they make components replaceable and testable.
-3. **Domain and dialogue:** Split distinct rules for pet care, friendship,
+3. **Reaction playback (implemented):** `ReactionPlayer` now owns ordered
+   emote/text cues, timer cancellation, generation guards and follow-up
+   scheduling. The GUI injects Tk callbacks and remains responsible for actual
+   rendering. Need-dependent idle emote choice is a pure function.
+4. **Domain and dialogue:** Split distinct rules for pet care, friendship,
    adaptive work/rest rhythms, and dialogue selection without changing state
    semantics. Preserve existing `state.json` schema and fallback behaviors.
-4. **Infrastructure and quality:** Keep Windows API, monitor access, and
+5. **Infrastructure and quality:** Keep Windows API, monitor access, and
    persistence behind explicit boundaries; add focused linting, formatting,
    typing checks and regression tests after establishing a measured baseline.
 

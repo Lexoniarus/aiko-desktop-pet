@@ -26,7 +26,8 @@ from .dialogue import AikoMind, ComputerVoice, Reaction
 from .gaze import gaze_sector
 from .movement import WalkConditions, WalkController
 from .routine import TimeContext, context_at
-from .reaction_sequence import Cue, EMOTES, compose_cues
+from .reaction_sequence import Cue, EMOTES
+from .reaction_playback import ReactionPlayer, choose_idle_emote
 from .storage import StateStore
 from .system_activity import ActivityMonitor, workload_intensity
 from .taskbar import TaskbarTrack, locate_primary_taskbar
@@ -115,9 +116,15 @@ class DesktopPet:
         self._attention_until = -100.0
         self._bubble: tk.Toplevel | None = None
         self._bubble_timeout: str | None = None
-        self._followup_timeout: str | None = None
-        self._speech_generation = 0
-        self._reaction_cues: tuple[Cue, ...] = ()
+        self._reaction_player = ReactionPlayer(
+            schedule=self.root.after,
+            cancel_timer=self.root.after_cancel,
+            display_emote=self._show_emote,
+            display_text=self.say,
+            start_action=self._start_action,
+            mark_spoken=self._mark_reaction_spoken,
+            is_closed=lambda: self._closed,
+        )
         self._emote_images: dict[str, tk.PhotoImage] = {}
         self.toolbar: ActionToolbar | None = None
         self.status_panel: StatusPanel | None = None
@@ -240,12 +247,25 @@ class DesktopPet:
             ), 3300,
         )
 
+    @property
+    def _followup_timeout(self) -> str | None:
+        """Compatibility view of the playback scheduler's pending timer."""
+        return self._reaction_player.pending_timer
+
+    @property
+    def _speech_generation(self) -> int:
+        return self._reaction_player.generation
+
+    @property
+    def _reaction_cues(self) -> tuple[Cue, ...]:
+        return self._reaction_player.cues
+
+    def _mark_reaction_spoken(self) -> None:
+        self._last_spoken = time.monotonic()
+
     def _cancel_followup(self) -> None:
-        if self._followup_timeout is not None:
-            self.root.after_cancel(self._followup_timeout)
-            self._followup_timeout = None
-        self._speech_generation += 1
-        self._reaction_cues = ()
+        """Cancel an older reaction, including every pending follow-up."""
+        self._reaction_player.cancel()
 
     def _react_to_click(self, reaction: Reaction | None) -> None:
         if reaction is None:
@@ -260,65 +280,10 @@ class DesktopPet:
         self._react(reaction, 2800)
 
     def _react(self, reaction: Reaction | None, duration_ms: int = 2600) -> None:
-        if reaction is None:
-            return
-        self._cancel_followup()
-        generation = self._speech_generation
-        if not self.state.sleeping and reaction.animation != "idle":
-            self._start_action(reaction.animation, min(2.0, duration_ms / 1600))
-        self._last_spoken = time.monotonic()
-        if reaction.emote_before is not None or reaction.emote_after is not None:
-            self._reaction_cues = compose_cues(
-                reaction.text, before=reaction.emote_before,
-                followup=reaction.followup_text,
-                after=reaction.emote_after,
-                minimum_text_ms=max(1700, duration_ms - 500),
-            )
-            self._advance_reaction(generation, 0)
-            return
-        # Backward-compatible plain speech and self-correction sequences.
-        self.say(reaction.text, max(duration_ms, reaction.followup_delay_ms + 200))
-        if reaction.followup_text:
-            self._followup_timeout = self.root.after(
-                reaction.followup_delay_ms,
-                lambda: self._show_followup(generation, reaction.followup_text),
-            )
-
-    def _advance_reaction(self, generation: int, index: int) -> None:
-        """Replace the previous visual beat; no emote/text overlap."""
-        self._followup_timeout = None
-        if self._closed or generation != self._speech_generation:
-            return
-        if index >= len(self._reaction_cues):
-            self._reaction_cues = ()
-            return
-        cue = self._reaction_cues[index]
-        if cue.kind == "emote":
-            self._show_emote(cue.content, cue.duration_ms)
-        else:
-            self.say(cue.content, cue.duration_ms)
-        self._last_spoken = time.monotonic()
-        if index + 1 < len(self._reaction_cues):
-            self._followup_timeout = self.root.after(
-                cue.duration_ms,
-                lambda: self._advance_reaction(generation, index + 1),
-            )
-        else:
-            self._followup_timeout = self.root.after(
-                cue.duration_ms, lambda: self._complete_reaction(generation),
-            )
-
-    def _complete_reaction(self, generation: int) -> None:
-        self._followup_timeout = None
-        if generation == self._speech_generation:
-            self._reaction_cues = ()
-
-    def _show_followup(self, generation: int, text: str) -> None:
-        self._followup_timeout = None
-        if self._closed or generation != self._speech_generation:
-            return
-        self.say(text, 2600)
-        self._last_spoken = time.monotonic()
+        """Delegate the timeline; the GUI only renders visual effects."""
+        self._reaction_player.play(
+            reaction, duration_ms, animate=not self.state.sleeping,
+        )
 
     def _pointer_in_pet_or_toolbar(self, px: int, py: int) -> bool:
         under = self.root.winfo_containing(px, py)
@@ -602,18 +567,12 @@ class DesktopPet:
         """Occasional unspoken state, never interrupting an existing scene."""
         if self._bubble is not None or self._followup_timeout is not None:
             return
-        if self.state.energy < 20:
-            emote = "sleeps"
-        elif self.state.satiety < 18:
-            emote = "drops"
-        elif self.state.mood < 18:
-            emote = "faceSad"
-        elif self.state.affection < 18:
-            emote = "heart"
-        elif self.state.mood > 88:
-            emote = "star"
-        else:
-            emote = "idea"
+        emote = choose_idle_emote(
+            energy=self.state.energy,
+            satiety=self.state.satiety,
+            mood=self.state.mood,
+            affection=self.state.affection,
+        )
         self._show_emote(emote, 1100)
 
     def say(self, phrase: str, duration_ms: int = 1800) -> None:
