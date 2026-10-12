@@ -139,7 +139,7 @@ class AdaptiveBehaviourTests(unittest.TestCase):
                                energy=70, sleeping=False)
         long_job = AdaptiveRoutine()
         for tick in range(121):
-            result_long = long_job.observe(
+            long_job.observe(
                 Observation(start + tick * 30, 0.97, 0), tick * 30,
                 energy=70, sleeping=False,
             )
@@ -152,7 +152,7 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         start = local_stamp("2026-10-12", 20)
         engine = AdaptiveRoutine()
         for tick in range(100):
-            view = engine.observe(Observation(start + tick * 30, 0.99, 0),
+            engine.observe(Observation(start + tick * 30, 0.99, 0),
                                   tick * 30, energy=80, sleeping=False)
         final_situation = engine.current
         assert final_situation is not None
@@ -201,7 +201,7 @@ class AdaptiveBehaviourTests(unittest.TestCase):
                        energy=29, sleeping=False)
         clock += 30
         for tick in range(1, 34):
-            view = engine.observe(
+            engine.observe(
                 Observation(next_monday + tick * 30, 0.04, 4000), clock,
                 energy=29, sleeping=False,
             )
