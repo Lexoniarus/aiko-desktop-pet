@@ -10,7 +10,7 @@ import sys
 import tkinter as tk
 
 from ..storage import PetSettings
-from ..taskbar import TaskbarTrack, locate_primary_taskbar
+from ..taskbar import locate_primary_taskbar
 
 FRAME_WIDTH = 128
 FRAME_HEIGHT = 208

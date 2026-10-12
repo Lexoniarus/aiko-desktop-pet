@@ -2,6 +2,7 @@
 
 import tempfile
 import time
+from datetime import datetime
 import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -12,6 +13,7 @@ from aiko_pet.ui.action_toolbar import ActionToolbar
 from aiko_pet.ui.settings_popup import SettingsPopup
 from aiko_pet.ui.status_panel import StatusPanel
 from aiko_pet.storage import StateStore
+from aiko_pet.routine import context_at
 
 
 class TaskbarPetGuiTests(unittest.TestCase):
@@ -416,6 +418,10 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertEqual(self.app.root.winfo_y(), self.app.settings.y)
 
     def test_left_and_right_click_open_voice_reactions(self):
+        # Dialogue expectations are daytime-specific, never test local time.
+        self.app.context = context_at(
+            datetime(2026, 10, 12, 15, 0).timestamp(),
+        )
         self.assertIn("_on_click_left", str(self.app.canvas.bind("<Button-1>")))
         self.assertIn("_on_click_right", str(self.app.canvas.bind("<Button-3>")))
         self.app._on_click_left()
