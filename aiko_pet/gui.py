@@ -20,6 +20,7 @@ from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
 from .application.hover_projection import project_hover
 from .application.status_projection import project_status
+from .application.settings_projection import project_settings
 from .ui.hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .application.router import ApplicationRouter
 from .animation import (
@@ -47,6 +48,7 @@ from .ui.action_toolbar import ActionToolbar
 from .ui.settings_popup import SettingsPopup
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
 from .ui.status_contracts import StatusActions, StatusSnapshot
+from .ui.settings_contracts import SettingsActions
 from .ui.status_panel import StatusPanel
 
 FRAME_WIDTH = 128
@@ -415,12 +417,52 @@ class DesktopPet:
     def _show_menu(self, event: tk.Event) -> None:
         self.toggle_settings_menu(event.x_root, event.y_root)
 
+    def _settings_closed(self) -> None:
+        self.settings_popup = None
+        self._menu_is_open = False
+        self._last_hover = time.monotonic()
+
+    def _set_popup_option(self, name: str, value: bool) -> None:
+        setters = {
+            "always_on_top": self.set_topmost,
+            "auto_walk": self.set_auto_walk,
+            "auto_routine": self.set_auto_routine,
+            "follow_cursor": self.set_follow_cursor,
+            "spontaneous_talk": self.set_spontaneous_talk,
+            "observe_computer": self.set_observe_computer,
+            "learn_rhythm": self.set_learn_rhythm,
+        }
+        setter = setters.get(name)
+        if setter is None:
+            raise ValueError(f"Unknown setting: {name}")
+        setter(value)
+
+    def _toolbar_top(self) -> int | None:
+        return (
+            self.toolbar.window.winfo_rooty()
+            if self.toolbar is not None else None
+        )
+
     def toggle_settings_menu(self, x: int, y: int) -> None:
         if self.settings_popup is not None:
             self.settings_popup.close()
             return
         self._on_enter()
-        self.settings_popup = SettingsPopup(self, x, y)
+        self.settings_popup = SettingsPopup(
+            self.root, x, y,
+            snapshot=project_settings(self.settings),
+            actions=SettingsActions(
+                open_status=self.open_status,
+                toggle_scale=self.toggle_scale,
+                set_option=self._set_popup_option,
+                forget_rhythm=self.forget_rhythm,
+                reset_toolbar=self.reset_toolbar_position,
+                center=self.center, quit=self.quit,
+                closed=self._settings_closed,
+            ),
+            toolbar_y=self._toolbar_top,
+            always_on_top=self.settings.always_on_top,
+        )
         self._menu_is_open = True
         self._overlay_stack.restore()
 
