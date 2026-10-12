@@ -6,6 +6,7 @@ widgets, notification adapters or network services. All host effects use ports.
 
 from __future__ import annotations
 
+import math
 import random
 import time
 import tkinter as tk
@@ -40,12 +41,11 @@ class AnimatedPorts:
     track: Callable[[], TaskbarTrack]
     toolbar_visible: Callable[[], bool]
     place_x: Callable[[float], None]
-    attention_until: Callable[[], float]
-    last_pointer_move: Callable[[], float]
     last_spoken: Callable[[], float]
     action_until: Callable[[], float]
     action_state: Callable[[], str]
     walk_pause: Callable[[float], None]
+    cursor_reaction: Callable[[str, float], None]
 
 
 class AnimatedPet:
@@ -69,6 +69,13 @@ class AnimatedPet:
             next_walk_at=time.monotonic() + random.uniform(3.0, 8.0),
         )
         self.gaze_sector: int | None = None
+        self._previous_pointer: tuple[int, int] | None = None
+        self.last_pointer_move = -100.0
+        self.last_attention = -100.0
+        self.attention_until = -100.0
+        self.next_cursor_line = (
+            time.monotonic() + random.uniform(200.0, 420.0)
+        )
         self.sprites = self.load_sprites()
         self.image_item = self.canvas.create_image(
             0, 0, anchor="nw", image=self.sprites["idle"][0],
@@ -110,6 +117,44 @@ class AnimatedPet:
         )
         self.canvas.itemconfigure(self.image_item, image=frames[index])
 
+    def observe_pointer(self, now: float) -> tuple[int, int]:
+        """Observe only pointer positions, not keys or application content."""
+        pointer = (
+            self.root.winfo_pointerx(), self.root.winfo_pointery(),
+        )
+        moved = (
+            self._previous_pointer is not None
+            and pointer != self._previous_pointer
+        )
+        if moved:
+            self.last_pointer_move = now
+            if now - self.last_attention >= 6.0:
+                self.last_attention = now
+                self.attention_until = now + 1.0
+            if (
+                self.settings.spontaneous_talk
+                and self.settings.follow_cursor
+                and now >= self.next_cursor_line
+                and now - self.ports.last_spoken() > 100
+                and not self.state.sleeping
+                and not self.ports.toolbar_visible()
+                and random.random() < 0.08
+            ):
+                eye_x = (self.settings.x or 0) + 63 * self.settings.scale
+                eye_y = (self.settings.y or 0) + 82 * self.settings.scale
+                distance = math.hypot(
+                    pointer[0] - eye_x, pointer[1] - eye_y,
+                )
+                event = (
+                    "cursor_far"
+                    if distance > self.root.winfo_screenwidth() * 0.6
+                    else "cursor_follow"
+                )
+                self.ports.cursor_reaction(event, now)
+                self.next_cursor_line = now + random.uniform(280, 590)
+        self._previous_pointer = pointer
+        return pointer
+
     def gaze_direction(self, pointer: tuple[int, int]) -> int | None:
         if not self.settings.follow_cursor:
             self.gaze_sector = None
@@ -138,7 +183,7 @@ class AnimatedPet:
             energy=self.state.energy,
             auto_walk=self.settings.auto_walk,
             sleeping=self.state.sleeping,
-            attention_active=now < self.ports.attention_until(),
+            attention_active=now < self.attention_until,
             toolbar_visible=self.ports.toolbar_visible(),
             observing_computer=self.settings.observe_computer,
             computer_busy=busy,
@@ -172,7 +217,7 @@ class AnimatedPet:
             if moving is not None:
                 self.show_frame(moving, now)
                 return
-            if now - self.ports.last_pointer_move() < 4.0:
+            if now - self.last_pointer_move < 4.0:
                 look = self.gaze_direction(pointer)
             else:
                 look = None

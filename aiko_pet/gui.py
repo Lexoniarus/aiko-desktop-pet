@@ -6,7 +6,6 @@ gaze sprites and exposes her care actions in a mouse-hover toolbar.
 
 from __future__ import annotations
 
-import math
 import random
 import sys
 import time
@@ -124,12 +123,11 @@ class DesktopPet:
                     self.toolbar is not None and self.toolbar.visible
                 ),
                 place_x=self._place_x,
-                attention_until=lambda: self._attention_until,
-                last_pointer_move=lambda: self._last_pointer_move,
                 last_spoken=lambda: self._last_spoken,
                 action_until=lambda: self._action_until,
                 action_state=lambda: self._action_state,
                 walk_pause=self._on_walk_pause,
+                cursor_reaction=self._on_cursor_reaction,
             ),
         )
         self._closed = False
@@ -137,12 +135,7 @@ class DesktopPet:
         self._scheduled_greeting: str | None = None
         self._last_spoken = -1000.0
         self._next_comment = self._last_saved + random.uniform(180.0, 360.0)
-        self._next_cursor_line = self._last_saved + random.uniform(200.0, 420.0)
         self._next_idle_emote = self._last_saved + random.uniform(70.0, 170.0)
-        self._previous_pointer: tuple[int, int] | None = None
-        self._last_pointer_move = -100.0
-        self._last_attention = -100.0
-        self._attention_until = -100.0
         self._speech = SpeechPresenter(
             root=self.root,
             anchor=lambda: SpeechAnchor(
@@ -650,34 +643,12 @@ class DesktopPet:
         return self._animated.gaze_direction(pointer)
 
     def _observe_pointer(self, now: float) -> tuple[int, int]:
-        pointer = (self.root.winfo_pointerx(), self.root.winfo_pointery())
-        moved = self._previous_pointer is not None and pointer != self._previous_pointer
-        if moved:
-            self._last_pointer_move = now
-            # A short curious glance must not stop walking indefinitely.
-            if now - self._last_attention >= 6.0:
-                self._last_attention = now
-                self._attention_until = now + 1.0
-            if (
-                self.settings.spontaneous_talk
-                and self.settings.follow_cursor
-                and now >= self._next_cursor_line
-                and now - self._last_spoken > 100
-                and not self.state.sleeping
-                and (self.toolbar is None or not self.toolbar.visible)
-                and random.random() < 0.08
-            ):
-                eye_x = (self.settings.x or 0) + 63 * self.settings.scale
-                eye_y = (self.settings.y or 0) + 82 * self.settings.scale
-                distance = math.hypot(pointer[0] - eye_x, pointer[1] - eye_y)
-                event = (
-                    "cursor_far" if distance > self.root.winfo_screenwidth() * 0.6
-                    else "cursor_follow"
-                )
-                self._react(self.mind.say_event(event, self.state, self.context, now))
-                self._next_cursor_line = now + random.uniform(280, 590)
-        self._previous_pointer = pointer
-        return pointer
+        return self._animated.observe_pointer(now)
+
+    def _on_cursor_reaction(self, event: str, now: float) -> None:
+        self._react(self.mind.say_event(
+            event, self.state, self.context, now,
+        ))
 
     @property
     def _walk_remaining(self) -> float:
