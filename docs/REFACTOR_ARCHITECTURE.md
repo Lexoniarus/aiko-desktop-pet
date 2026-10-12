@@ -25,6 +25,11 @@ third-party packages. Keep German runtime text and English documentation.
    additional runtime scheduling can be extracted in later slices.
    Separate pure decisions from Tkinter side effects; introduce typed
    interfaces only where they make components replaceable and testable.
+3. **Desktop presentation (in progress):** `ui/speech_presenter.py` now
+   owns Tk speech/emote bubbles, cached icon assets and display timeouts.
+   `DesktopPet` delegates drawing via compatibility methods; the view
+   receives only a geometry provider and z-order callback, never PetState
+   or the application router.
 3. **Reaction playback (implemented):** `ReactionPlayer` now owns ordered
    emote/text cues, timer cancellation, generation guards and follow-up
    scheduling. The GUI injects Tk callbacks and remains responsible for actual

@@ -35,9 +35,14 @@ from .storage import StateStore
 from .system_activity import ActivityMonitor, workload_intensity
 from .taskbar import TaskbarTrack, locate_primary_taskbar
 from .window_stack import WindowStack
-from .asset_paths import ASSETS, EMOTE_ASSETS, SCI_FI_UI as SCI_FI_UI
+from .asset_paths import (
+    ASSETS,
+    EMOTE_ASSETS as EMOTE_ASSETS,
+    SCI_FI_UI as SCI_FI_UI,
+)
 from .ui.action_toolbar import ActionToolbar
 from .ui.settings_popup import SettingsPopup
+from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
 from .ui.status_panel import StatusPanel
 
 FRAME_WIDTH = 128
@@ -120,8 +125,17 @@ class DesktopPet:
         self._last_pointer_move = -100.0
         self._last_attention = -100.0
         self._attention_until = -100.0
-        self._bubble: tk.Toplevel | None = None
-        self._bubble_timeout: str | None = None
+        self._speech = SpeechPresenter(
+            root=self.root,
+            anchor=lambda: SpeechAnchor(
+                x=self.settings.x or 0, y=self.settings.y or 0,
+                width=self.width,
+            ),
+            font_name=self._speech_font,
+            always_on_top=lambda: self.settings.always_on_top,
+            restore_stack=lambda: self._overlay_stack.restore(),
+            transparent_color=MAGENTA,
+        )
         self._reaction_player = ReactionPlayer(
             schedule=self.root.after,
             cancel_timer=self.root.after_cancel,
@@ -131,7 +145,6 @@ class DesktopPet:
             mark_spoken=self._mark_reaction_spoken,
             is_closed=lambda: self._closed,
         )
-        self._emote_images: dict[str, tk.PhotoImage] = {}
         self.toolbar: ActionToolbar | None = None
         self.status_panel: StatusPanel | None = None
         self._overlay_stack = WindowStack(
@@ -520,58 +533,24 @@ class DesktopPet:
         if self.status_panel is not None:
             self.status_panel.refresh()
 
+    @property
+    def _bubble(self) -> tk.Toplevel | None:
+        """Legacy GUI access; the speech presenter owns the native window."""
+        return self._speech.bubble
+
+    @property
+    def _bubble_timeout(self) -> str | None:
+        return self._speech.pending_timer
+
+    @property
+    def _emote_images(self) -> dict[str, tk.PhotoImage]:
+        return self._speech.emote_images
+
     def _move_bubble(self) -> None:
-        if self._bubble is None:
-            return
-        self._bubble.update_idletasks()
-        width, height = self._bubble.winfo_reqwidth(), self._bubble.winfo_reqheight()
-        screen_w = self.root.winfo_screenwidth()
-        screen_h = self.root.winfo_screenheight()
-        pet_x = self.settings.x or 0
-        pet_y = self.settings.y or 0
-        # The speech bubble belongs to Aiko, never to the status/hover bar.
-        x = pet_x + (self.width - width) // 2
-        y = pet_y - height - 7
-        if y < 0:  # Taskbar at top: speak beside her head instead.
-            y = pet_y + 4
-            x = pet_x + self.width + 5
-            if x + width > screen_w:
-                x = pet_x - width - 5
-        x = max(0, min(x, max(0, screen_w - width)))
-        y = max(0, min(y, max(0, screen_h - height)))
-        self._bubble.geometry(f"+{x}+{y}")
-        # Moving a speech bubble must never lift it independently of Aiko.
+        self._speech.move()
 
     def _show_emote(self, emote: str, duration_ms: int = 900) -> None:
-        """A single pixel emote, in exactly the same slot as speech bubbles."""
-        if emote not in EMOTES:
-            raise ValueError(f"Unsupported emote: {emote}")
-        self._hide_bubble()
-        bubble = tk.Toplevel(self.root)
-        bubble.withdraw()
-        bubble.overrideredirect(True)
-        transparent = MAGENTA if sys.platform == "win32" else "#202733"
-        bubble.configure(bg=transparent)
-        bubble.wm_attributes("-topmost", self.settings.always_on_top)
-        if sys.platform == "win32":
-            bubble.wm_attributes("-toolwindow", True)
-            bubble.wm_attributes("-transparentcolor", MAGENTA)
-        if emote not in self._emote_images:
-            path = EMOTE_ASSETS / f"emote_{emote}.png"
-            if not path.is_file():
-                bubble.destroy()
-                raise FileNotFoundError(f"Missing emote: {path}")
-            original = tk.PhotoImage(file=str(path))
-            self._emote_images[emote] = original.zoom(3)
-        tk.Label(
-            bubble, image=self._emote_images[emote],
-            bg=transparent, borderwidth=0, highlightthickness=0,
-        ).pack()
-        self._bubble = bubble
-        self._move_bubble()
-        bubble.deiconify()
-        self._overlay_stack.restore()
-        self._bubble_timeout = self.root.after(duration_ms, self._hide_bubble)
+        self._speech.show_emote(emote, duration_ms)
 
     def _idle_emote(self) -> None:
         """Occasional unspoken state, never interrupting an existing scene."""
@@ -586,46 +565,10 @@ class DesktopPet:
         self._show_emote(emote, 1100)
 
     def say(self, phrase: str, duration_ms: int = 1800) -> None:
-        self._hide_bubble()
-        bubble = tk.Toplevel(self.root)
-        bubble.withdraw()
-        bubble.overrideredirect(True)
-        transparent = MAGENTA if sys.platform == "win32" else "#202733"
-        bubble.configure(bg=transparent)
-        bubble.wm_attributes("-topmost", self.settings.always_on_top)
-        if sys.platform == "win32":
-            bubble.wm_attributes("-toolwindow", True)
-            bubble.wm_attributes("-transparentcolor", MAGENTA)
-        frame = tk.Frame(bubble, bg="#53687e", bd=0)
-        frame.pack()
-        tk.Label(
-            frame, text=phrase, font=(self._speech_font, 9), wraplength=235,
-            bg="#f0f6fa", fg="#243247", justify="center",
-            padx=12, pady=8,
-        ).pack(padx=1, pady=1)
-        # Two-color, pixel-style speech bubble tail; visible even for short text.
-        tail = tk.Canvas(
-            bubble, width=20, height=11, bg=transparent,
-            highlightthickness=0, borderwidth=0,
-        )
-        tail.pack()
-        tail.create_polygon(
-            2, 0, 18, 0, 10, 10, fill="#f0f6fa",
-            outline="#53687e", width=1,
-        )
-        self._bubble = bubble
-        self._move_bubble()
-        bubble.deiconify()
-        self._overlay_stack.restore()
-        self._bubble_timeout = self.root.after(duration_ms, self._hide_bubble)
+        self._speech.show_text(phrase, duration_ms)
 
     def _hide_bubble(self) -> None:
-        if self._bubble_timeout is not None:
-            self.root.after_cancel(self._bubble_timeout)
-            self._bubble_timeout = None
-        if self._bubble is not None:
-            self._bubble.destroy()
-            self._bubble = None
+        self._speech.hide()
 
     def _gaze_direction(self, pointer: tuple[int, int]) -> int | None:
         if not self.settings.follow_cursor:
