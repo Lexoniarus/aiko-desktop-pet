@@ -20,6 +20,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install Ruff quality tool
+        run: python -m pip install ruff==0.13.2
+      - name: Run Ruff lint checks
+        run: python -m ruff check aiko_pet tests main.py
       - name: Install graphical test dependencies
         run: |
           sudo apt-get update
