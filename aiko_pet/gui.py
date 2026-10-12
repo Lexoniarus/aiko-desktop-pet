@@ -18,6 +18,8 @@ from tkinter import messagebox
 from .adaptive import AdaptiveRoutine, Observation
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
+from .application.hover_projection import project_hover
+from .ui.hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .application.router import ApplicationRouter
 from .animation import (
     FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
@@ -226,6 +228,29 @@ class DesktopPet:
             self.toolbar.place()
         self._move_bubble()
 
+    def _hover_snapshot(self) -> HoverSnapshot:
+        return project_hover(
+            self.state, self.context, self.activity_monitor.latest(),
+            observe_computer=self.settings.observe_computer,
+        )
+
+    def _hover_anchor(self) -> HoverAnchor:
+        return HoverAnchor(
+            x=self.settings.x or 0, y=self.settings.y or 0,
+            width=self.width, height=self.height,
+            pinned_x=self.settings.toolbar_x,
+            pinned_y=self.settings.toolbar_y,
+        )
+
+    def _save_hover_position(
+        self, x: int | None, y: int | None,
+    ) -> None:
+        self.settings.toolbar_x = x
+        self.settings.toolbar_y = y
+        if x is not None:
+            self._last_hover = time.monotonic()
+        self._save()
+
     def _on_enter(self, _event: tk.Event | None = None) -> None:
         now = time.monotonic()
         # Only the first Enter after a long absence gets a welcome back;
@@ -239,7 +264,20 @@ class DesktopPet:
         self._walk_remaining = 0
         self._next_walk = now + random.uniform(3.0, 6.0)
         if self.toolbar is None:
-            self.toolbar = ActionToolbar(self)
+            self.toolbar = ActionToolbar(
+                self.root,
+                snapshot=self._hover_snapshot,
+                anchor=self._hover_anchor,
+                actions=HoverActions(
+                    interact=self.interact,
+                    open_status=self.open_status,
+                    open_settings=self.toggle_settings_menu,
+                    save_position=self._save_hover_position,
+                    move_speech=self._move_bubble,
+                    restore_stack=self._overlay_stack.restore,
+                ),
+                always_on_top=self.settings.always_on_top,
+            )
         self.toolbar.show()
         self._react(reaction, 2800)
 

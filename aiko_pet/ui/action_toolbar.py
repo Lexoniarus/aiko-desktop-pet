@@ -3,17 +3,13 @@
 from __future__ import annotations
 
 import sys
-import time
 import tkinter as tk
 from functools import partial
 from tkinter import font as tkfont
-from typing import TYPE_CHECKING, Callable
+from typing import Callable
 
 from ..asset_paths import KENNEY_UI_DIR
-from ..system_activity import percent_label, workload_description
-
-if TYPE_CHECKING:
-    from ..gui import DesktopPet
+from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 
 class ActionToolbar:
     """Kenney sci-fi hover status; all six controls remain clickable."""
@@ -31,9 +27,17 @@ class ActionToolbar:
     TEXT = "#414B5F"
     SUBTEXT = "#617189"
 
-    def __init__(self, pet: DesktopPet) -> None:
-        self.pet = pet
-        self.window = tk.Toplevel(pet.root)
+    def __init__(
+        self, root: tk.Tk, *, snapshot: Callable[[], HoverSnapshot],
+        anchor: Callable[[], HoverAnchor], actions: HoverActions,
+        always_on_top: bool,
+    ) -> None:
+        self.root = root
+        self._snapshot = snapshot
+        self._anchor = anchor
+        self._actions = actions
+        self._current = snapshot()
+        self.window = tk.Toplevel(root)
         self.window.withdraw()
         self.window.overrideredirect(True)
         self.window.configure(bg="#8E9CB1")
@@ -41,7 +45,7 @@ class ActionToolbar:
         # supplied Kenney Mini font is used only if installed on Windows;
         # font files are not packaged with Aiko.
         try:
-            available_fonts = set(tkfont.families(root=pet.root))
+            available_fonts = set(tkfont.families(root=root))
         except tk.TclError:
             available_fonts = set()
         self.font_family = (
@@ -54,7 +58,7 @@ class ActionToolbar:
         self._header_image = tk.PhotoImage(
             file=str(KENNEY_UI_DIR / "toolbar_banner.png"),
         )
-        self.window.wm_attributes("-topmost", pet.settings.always_on_top)
+        self.window.wm_attributes("-topmost", always_on_top)
         if sys.platform == "win32":
             self.window.wm_attributes("-toolwindow", True)
 
@@ -118,9 +122,9 @@ class ActionToolbar:
             ("sleep", "Schlafen", extra_row),
         ):
             self.buttons[action] = self._button(
-                parent, title, partial(self.pet.interact, action),
+                parent, title, partial(actions.interact, action),
             )
-        self._button(extra_row, "Status", pet.open_status)
+        self._button(extra_row, "Status", actions.open_status)
         self.settings_button = self._button(extra_row, "⋯", self._open_settings)
 
         self.hardware = tk.Label(
@@ -160,7 +164,7 @@ class ActionToolbar:
         # A normal Toplevel popover is predictable on Windows: native Tk menus
         # can fail to emit Unmap, leaving a permanent hover/menu lock.
         button = self.settings_button
-        self.pet.toggle_settings_menu(
+        self._actions.open_settings(
             button.winfo_rootx() + button.winfo_width(),
             button.winfo_rooty(),
         )
@@ -175,43 +179,35 @@ class ActionToolbar:
         actual_width = width if width is not None else bar.winfo_width()
         if actual_width <= 1:
             actual_width = bar.winfo_reqwidth()
-        amount = max(0.0, min(100.0, getattr(self.pet.state, key)))
+        amount = max(0.0, min(100.0, self._current.need_value(key)))
         bar.coords(rect, 0, 0, round(actual_width * amount / 100), 10)
 
     def refresh(self) -> None:
-        desired = "Wecken" if self.pet.state.sleeping else "Schlafen"
-        feed_label = self.pet.state.feed_label(self.pet.context)
+        """Refresh only the immutable presentation values."""
+        view = self._snapshot()
+        self._current = view
         changed = False
         for widget, value in (
-            (self.buttons["sleep"], desired),
-            (self.buttons["feed"], feed_label),
-            (self.today, f"{self.pet.context.label}   ↔ Ziehen"),
+            (self.buttons["sleep"], view.sleep_label),
+            (self.buttons["feed"], view.feed_label),
+            (self.today, view.header),
         ):
             if widget.cget("text") != value:
                 widget.configure(text=value)
                 changed = True
         for key, title, _color in self.NEEDS:
-            amount = max(0, min(100, getattr(self.pet.state, key)))
+            amount = max(0, min(100, view.need_value(key)))
             _bar, _rect, label = self.needs[key]
             text = f"{title}  {amount:.0f}%"
             if key == "friendship":
-                text = f"{title}  {amount:.0f}% · Lv {self.pet.state.friendship_level}"
+                text = f"{title}  {amount:.0f}% · Lv {view.friendship_level}"
             if label.cget("text") != text:
                 label.configure(text=text)
             self._resize_need(key)
-        reading = self.pet.activity_monitor.latest()
-        if self.pet.settings.observe_computer:
-            hardware_line = (
-                f"MEIN RECHNER   CPU {percent_label(reading.cpu)}"
-                f"   ·   GPU {percent_label(reading.gpu)}"
-                f"   ·   RAM {percent_label(reading.ram)}"
-            )
-            work_line = workload_description(reading)
-        else:
-            hardware_line = "Rechnerbeobachtung deaktiviert"
-            work_line = ""
-        for widget, value in ((self.hardware, hardware_line),
-                              (self.workload, work_line)):
+        for widget, value in (
+            (self.hardware, view.hardware_line),
+            (self.workload, view.workload_line),
+        ):
             if widget.cget("text") != value:
                 widget.configure(text=value)
                 changed = True
@@ -227,15 +223,16 @@ class ActionToolbar:
 
     def contains_bridge(self, px: int, py: int) -> bool:
         """Tolerate the small horizontal or vertical gap to the sprite."""
-        if not self.visible or self.pet.settings.toolbar_x is not None:
+        anchor = self._anchor()
+        if not self.visible or anchor.pinned_x is not None:
             return False
         x, y = self.window.winfo_rootx(), self.window.winfo_rooty()
         width, height = self.window.winfo_width(), self.window.winfo_height()
-        pet_x, pet_y = self.pet.root.winfo_rootx(), self.pet.root.winfo_rooty()
-        pet_right = pet_x + self.pet.width
+        pet_x, pet_y = self.root.winfo_rootx(), self.root.winfo_rooty()
+        pet_right = pet_x + anchor.width
         bar_right = x + width
         top = max(y, pet_y)
-        bottom = min(y + height, pet_y + self.pet.height)
+        bottom = min(y + height, pet_y + anchor.height)
         if top <= bottom:
             if bar_right <= pet_x:
                 return bar_right - 3 <= px <= pet_x + 5 and top <= py <= bottom
@@ -254,20 +251,16 @@ class ActionToolbar:
         self.window.update_idletasks()
         width = self.window.winfo_reqwidth()
         height = self.window.winfo_reqheight()
-        screen_width = self.pet.root.winfo_screenwidth()
-        screen_height = self.pet.root.winfo_screenheight()
-        if (
-            self.pet.settings.toolbar_x is not None
-            and self.pet.settings.toolbar_y is not None
-        ):
-            x, y = self.pet.settings.toolbar_x, self.pet.settings.toolbar_y
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        anchor = self._anchor()
+        if anchor.pinned_x is not None and anchor.pinned_y is not None:
+            x, y = anchor.pinned_x, anchor.pinned_y
         else:
-            pet_x = self.pet.settings.x or 0
-            pet_y = self.pet.settings.y or 0
-            right_x = pet_x + self.pet.width + 10
-            left_x = pet_x - width - 10
+            right_x = anchor.x + anchor.width + 10
+            left_x = anchor.x - width - 10
             x = right_x if right_x + width <= screen_width else left_x
-            y = pet_y + max(0, (self.pet.height - height) // 2)
+            y = anchor.y + max(0, (anchor.height - height) // 2)
         x = max(0, min(round(x), max(0, screen_width - width)))
         y = max(0, min(round(y), max(0, screen_height - height)))
         placement = x, y, width, height
@@ -287,40 +280,29 @@ class ActionToolbar:
             return
         px, py, x, y = self._drag_origin
         width, height = self.window.winfo_width(), self.window.winfo_height()
-        screen_w = self.pet.root.winfo_screenwidth()
-        screen_h = self.pet.root.winfo_screenheight()
+        screen_w = self.root.winfo_screenwidth()
+        screen_h = self.root.winfo_screenheight()
         new_x = max(0, min(x + event.x_root - px, max(0, screen_w - width)))
         new_y = max(0, min(y + event.y_root - py, max(0, screen_h - height)))
         self.window.geometry(f"+{new_x}+{new_y}")
         self._last_placement = (new_x, new_y, width, height)
-        self.pet._move_bubble()
+        self._actions.move_speech()
 
     def _drag_end(self, _event: tk.Event) -> None:
         if self._drag_origin is None:
             return
-        # The window manager may not have acknowledged our last geometry
-        # request before ButtonRelease; save the requested, clamped position.
         position = self._last_placement
-        self.pet.settings.toolbar_x = (
-            position[0] if position is not None
-            else self.window.winfo_rootx()
-        )
-        self.pet.settings.toolbar_y = (
-            position[1] if position is not None
-            else self.window.winfo_rooty()
-        )
+        x = position[0] if position is not None else self.window.winfo_rootx()
+        y = position[1] if position is not None else self.window.winfo_rooty()
         self._drag_origin = None
         self._dragging = False
-        self.pet._last_hover = time.monotonic()
-        self.pet._save()
+        self._actions.save_position(x, y)
 
     def reset_position(self) -> None:
-        self.pet.settings.toolbar_x = None
-        self.pet.settings.toolbar_y = None
+        self._actions.save_position(None, None)
         self._last_placement = None
         if self.visible:
             self.place()
-        self.pet._save()
 
     def show(self) -> None:
         if self.visible:
@@ -329,8 +311,8 @@ class ActionToolbar:
         self.place()
         self.window.deiconify()
         self.visible = True
-        self.pet._move_bubble()
-        self.pet._overlay_stack.restore()
+        self._actions.move_speech()
+        self._actions.restore_stack()
 
     def hide(self) -> None:
         if not self.visible:
@@ -339,7 +321,7 @@ class ActionToolbar:
         self.window.withdraw()
         # Window managers may discard pending movements during withdrawal.
         self._last_placement = None
-        self.pet._move_bubble()
+        self._actions.move_speech()
 
     def close(self) -> None:
         self.window.destroy()
