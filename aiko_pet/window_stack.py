@@ -142,7 +142,9 @@ class WindowsWindowOps:
 
     @staticmethod
     def _overlaps(a: _Rect, b: _Rect) -> bool:
-        return (
+        # ctypes structure fields are dynamic; bool() restores the declared
+        # predicate type without changing Windows rectangle comparisons.
+        return bool(
             a.left < b.right and b.left < a.right
             and a.top < b.bottom and b.top < a.bottom
         )

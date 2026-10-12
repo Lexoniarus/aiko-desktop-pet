@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install diagnostic tools
-        run: python -m pip install mypy==1.18.2 pyright
+        run: python -m pip install mypy==1.18.2 pyright Pillow==11.3.0
       - name: Analyze entire application with Pyright
         continue-on-error: true
         run: python -m pyright --project pyrightconfig.json
