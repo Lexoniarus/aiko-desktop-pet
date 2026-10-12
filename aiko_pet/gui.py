@@ -15,7 +15,8 @@ from dataclasses import replace
 from tkinter import font as tkfont
 from tkinter import messagebox
 
-from .adaptive import AdaptiveRoutine, Observation
+from .adaptive import AdaptiveRoutine
+from .application.activity import ActivityCallbacks, ActivityCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
 from .application.hover_projection import project_hover
@@ -37,7 +38,7 @@ from .routine import TimeContext, context_at
 from .reaction_sequence import Cue, EMOTES as EMOTES
 from .reaction_playback import ReactionPlayer, choose_idle_emote
 from .storage import StateStore
-from .system_activity import ActivityMonitor, workload_intensity
+from .system_activity import ActivityMonitor
 from .taskbar import TaskbarTrack, locate_primary_taskbar
 from .window_stack import WindowStack
 from .asset_paths import (
@@ -113,9 +114,19 @@ class DesktopPet:
         self.activity_monitor.set_enabled(self.settings.observe_computer)
         self._mouse_clicks = GlobalMouseClicks()
         self._mouse_clicks.clicked()  # establish a baseline before showing UI
-        self._last_hardware_sample = 0.0
-        self._last_adaptive_sample = 0.0
-        self._pending_computer_line: tuple[str, float] | None = None
+        self._activity = ActivityCoordinator(
+            self.state, self.settings, self.mind, self.adaptive,
+            self.computer_voice, self.activity_monitor,
+            ActivityCallbacks(
+                read_idle_seconds=lambda: idle_seconds_windows(),
+                start_review=lambda now: self._start_action(
+                    "review", 1.4, started_at=now,
+                ),
+                react=self._react,
+                action_until=lambda: self._action_until,
+                last_spoken=lambda: self._last_spoken,
+            ),
+        )
         self._closed = False
         self._scheduled_tick: str | None = None
         self._scheduled_greeting: str | None = None
@@ -213,6 +224,32 @@ class DesktopPet:
 
     def _record_hover_contact(self, now: float) -> None:
         self.mind.last_contact = now
+
+    @property
+    def _last_hardware_sample(self) -> float:
+        return self._activity.last_hardware_sample
+
+    @_last_hardware_sample.setter
+    def _last_hardware_sample(self, value: float) -> None:
+        self._activity.last_hardware_sample = value
+
+    @property
+    def _last_adaptive_sample(self) -> float:
+        return self._activity.last_adaptive_sample
+
+    @_last_adaptive_sample.setter
+    def _last_adaptive_sample(self, value: float) -> None:
+        self._activity.last_adaptive_sample = value
+
+    @property
+    def _pending_computer_line(self) -> tuple[str, float] | None:
+        return self._activity.pending_computer_line
+
+    @_pending_computer_line.setter
+    def _pending_computer_line(
+        self, value: tuple[str, float] | None,
+    ) -> None:
+        self._activity.pending_computer_line = value
 
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
@@ -725,103 +762,36 @@ class DesktopPet:
         self.canvas.itemconfigure(self.image_item, image=frames[frame_index])
 
     def _react_to_computer(self, now: float) -> None:
-        """React to new load measurements in seconds, without interrupting care."""
-        if not self.settings.observe_computer:
-            self._pending_computer_line = None
-            return
-        snapshot = self.activity_monitor.latest()
-        if snapshot.measured_at > self._last_hardware_sample:
-            self._last_hardware_sample = snapshot.measured_at
-            event = self.computer_voice.observe_change(snapshot, now)
-            if event and self.settings.spontaneous_talk and not self.state.sleeping:
-                self._pending_computer_line = (event, now)
-                if now >= self._action_until:
-                    self._start_action("review", 1.4, started_at=now)
-        if self._pending_computer_line is None:
-            return
-        event, observed_at = self._pending_computer_line
-        if (
-            now - observed_at > 25
-            or not self.settings.spontaneous_talk
-            or self.state.sleeping
-        ):
-            self._pending_computer_line = None
-        elif now >= self._action_until and now - self._last_spoken >= 7:
-            response = self.mind.computer_event(
-                event, self.state, self.context, now,
-            )
-            self._pending_computer_line = None
-            if response is not None:
-                self._react(response, 3400)
-                self.computer_voice.last_voice_at = now
+        self._activity.react_to_computer(now, self.context)
 
     def _interrupt_nap(self) -> bool:
-        behaviour = self.adaptive.current
-        return bool(self.settings.observe_computer and behaviour is not None
-                    and behaviour.should_wake)
+        return self._activity.interrupt_nap()
 
     def _allow_nap(self) -> bool:
-        behaviour = self.adaptive.current
-        return bool(self.settings.observe_computer and behaviour is not None
-                    and behaviour.can_nap)
+        return self._activity.allow_nap()
 
     def _allow_bedtime(self) -> bool | None:
-        if not self.settings.observe_computer or self.adaptive.current is None:
-            return None  # Keep the compatible v0.8 fallback.
-        return self.adaptive.current.can_sleep
+        return self._activity.allow_bedtime()
 
     def _live_effort(self) -> float | None:
-        """Fresh local telemetry only. Never charge Aiko for unseen work."""
-        if not self.settings.observe_computer:
-            return None
-        sample = self.activity_monitor.latest()
-        age = time.monotonic() - sample.measured_at
-        if not 0 <= age <= 18:
-            return None
-        return workload_intensity(sample)
+        return self._activity.live_effort()
 
     def _observe_adaptive(self, now: float, stamp: float) -> None:
-        if not self.settings.observe_computer:
-            return
-        snapshot = self.activity_monitor.latest()
-        if snapshot.measured_at <= self._last_adaptive_sample:
-            return
-        if snapshot.measured_at <= 0 or now - snapshot.measured_at > 25:
-            return
-        self._last_adaptive_sample = snapshot.measured_at
-        observed = self.adaptive.observe(
-            Observation(
-                wall_time=stamp,
-                effort=workload_intensity(snapshot),
-                idle_seconds=idle_seconds_windows(),
-                uptime_hours=snapshot.uptime_hours,
-            ),
-            now, energy=self.state.energy, sleeping=self.state.sleeping,
-            manual_sleep=self.state.sleep_origin == "manual",
-            learn=self.settings.learn_rhythm,
-        )
-        self.mind.set_situation(observed, now=now)
+        self._activity.observe_adaptive(now, stamp)
 
     def _advance_pet_lifecycle(self, now: float, wall_time: float) -> None:
-        """Apply the elapsed care simulation and period-change reactions."""
-        was_sleeping = self.state.sleeping
-        previous_period = (self.context.day_key, self.context.period)
-        self._observe_adaptive(now, wall_time)
-        self.state.advance(
-            wall_time, auto_routine=self.settings.auto_routine,
-            allow_bedtime=self._allow_bedtime(),
-            allow_nap=self._allow_nap(),
-            interrupt_nap=self._interrupt_nap(),
-            effort=self._live_effort(),
+        progress = self._activity.advance_lifecycle(
+            now, wall_time, self.context,
         )
-        self.context = context_at(wall_time)
-        current_period = (self.context.day_key, self.context.period)
-        if current_period != previous_period:
+        self.context = progress.context
+        if progress.period_changed:
             if self.toolbar is not None:
                 self.toolbar.refresh()
-            if self.settings.spontaneous_talk and self.state.sleeping != was_sleeping:
+            if self.settings.spontaneous_talk and progress.sleep_changed:
                 event = "sleep" if self.state.sleeping else "wake"
-                self._react(self.mind.say_event(event, self.state, self.context, now))
+                self._react(self.mind.say_event(
+                    event, self.state, self.context, now,
+                ))
 
     def _refresh_taskbar_track(self, now: float) -> None:
         """Reposition Aiko only when taskbar geometry actually changes."""
