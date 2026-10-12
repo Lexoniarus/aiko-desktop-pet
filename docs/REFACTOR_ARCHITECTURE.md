@@ -34,6 +34,10 @@ third-party packages. Keep German runtime text and English documentation.
    emote/text cues, timer cancellation, generation guards and follow-up
    scheduling. The GUI injects Tk callbacks and remains responsible for actual
    rendering. Need-dependent idle emote choice is a pure function.
+4. **Adaptive model boundary (implemented):** `adaptive_models.py` now
+   owns the durable 168-slot learning profile, observation and behaviour DTOs.
+   `adaptive.py` retains the decision orchestrator and re-exports its old
+   public model names to avoid breaking saved-state and UI integrations.
 4. **Domain and dialogue (implemented):** `friendship.py` owns the daily
    cap, useful-care rewards and variety bonus. `care_actions.py` owns all
    six care actions behind a typed `CareState` interface. `need_decay.py`
