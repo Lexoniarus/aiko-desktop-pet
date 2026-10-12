@@ -91,25 +91,25 @@ class PetTimelineTests(unittest.TestCase):
                 self.assertEqual(old.to_dict(), new.to_dict())
 
     def test_catchup_is_bounded_without_routine(self) -> None:
-        state = PetState(updated_at=1000.0)
-        advance_pet_time(state, 1000.0 + 86400.0 * 7)
+        state = PetState(updated_at=local_stamp())
+        advance_pet_time(state, local_stamp() + 86400.0 * 7)
         self.assertEqual(state.satiety, 51.0)
         self.assertEqual(state.mood, 59.0)
         self.assertAlmostEqual(state.energy, 57.4)
 
     def test_telemetry_is_not_extrapolated_across_offline_hours(self) -> None:
-        calm = PetState(updated_at=1000.0)
-        working = PetState(updated_at=1000.0)
-        advance_pet_time(calm, 4600.0, effort=None)
-        advance_pet_time(working, 4600.0, effort=1.0)
+        calm = PetState(updated_at=local_stamp())
+        working = PetState(updated_at=local_stamp())
+        advance_pet_time(calm, local_stamp() + 3600.0, effort=None)
+        advance_pet_time(working, local_stamp() + 3600.0, effort=1.0)
         self.assertGreater(calm.satiety - working.satiety, 0)
         self.assertLess(calm.satiety - working.satiety, 0.1)
 
     def test_boolean_effort_is_not_accepted_as_telemetry(self) -> None:
-        first = PetState(updated_at=1000.0)
-        second = PetState(updated_at=1000.0)
-        advance_pet_time(first, 4600.0, effort=True)
-        advance_pet_time(second, 4600.0, effort=None)
+        first = PetState(updated_at=local_stamp())
+        second = PetState(updated_at=local_stamp())
+        advance_pet_time(first, local_stamp() + 3600.0, effort=True)
+        advance_pet_time(second, local_stamp() + 3600.0, effort=None)
         self.assertEqual(first.to_dict(), second.to_dict())
 
     def test_automatic_sleep_can_be_prevented_by_work(self) -> None:

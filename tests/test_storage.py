@@ -2,9 +2,14 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from datetime import datetime
 
 from aiko_pet.domain import PetState
 from aiko_pet.storage import PetSettings, StateStore
+
+
+# Early-epoch timestamps are not universally supported by Windows localtime.
+SAMPLE_TIMESTAMP = datetime(2026, 10, 12, 12).astimezone().timestamp()
 
 
 class StateStoreTests(unittest.TestCase):
@@ -20,10 +25,10 @@ class StateStoreTests(unittest.TestCase):
         self.assertEqual(settings.scale, 1)
 
     def test_save_and_load_roundtrip(self):
-        pet = PetState(satiety=88, mood=62, energy=44, sleeping=True, updated_at=100)
+        pet = PetState(satiety=88, mood=62, energy=44, sleeping=True, updated_at=SAMPLE_TIMESTAMP)
         settings = PetSettings(x=155, y=190, scale=2, always_on_top=False, auto_walk=False)
         self.store.save(pet, settings)
-        loaded, other = self.store.load(now=100)
+        loaded, other = self.store.load(now=SAMPLE_TIMESTAMP)
         self.assertEqual(loaded.satiety, 88)
         self.assertTrue(loaded.sleeping)
         self.assertEqual(other, settings)
@@ -56,14 +61,14 @@ class StateStoreTests(unittest.TestCase):
     def test_corrupted_json_is_ignored(self):
         self.store.path.parent.mkdir(parents=True)
         self.store.path.write_text("{not-json")
-        pet, settings = self.store.load(now=100)
+        pet, settings = self.store.load(now=SAMPLE_TIMESTAMP)
         self.assertEqual(pet.satiety, 75)
         self.assertIsNone(settings.x)
 
     def test_future_version_uses_defaults(self):
         self.store.path.parent.mkdir(parents=True)
         self.store.path.write_text('{"version": 999, "pet": {"mood":0}}')
-        pet, _settings = self.store.load(now=100)
+        pet, _settings = self.store.load(now=SAMPLE_TIMESTAMP)
         self.assertEqual(pet.mood, 75)
 
     def test_malformed_settings_are_rejected(self):
@@ -80,9 +85,9 @@ class StateStoreTests(unittest.TestCase):
     def test_hardware_monitor_preference_is_optional_and_persisted(self):
         old = PetSettings.from_dict({"scale": 1})
         self.assertTrue(old.observe_computer)
-        self.store.save(PetState(updated_at=100),
+        self.store.save(PetState(updated_at=SAMPLE_TIMESTAMP),
                         PetSettings(observe_computer=False))
-        _pet, settings = self.store.load(now=100)
+        _pet, settings = self.store.load(now=SAMPLE_TIMESTAMP)
         self.assertFalse(settings.observe_computer)
         saved = json.loads(self.store.path.read_text(encoding="utf-8"))
         self.assertFalse(saved["settings"]["observe_computer"])
@@ -93,17 +98,17 @@ class StateStoreTests(unittest.TestCase):
     def test_toolbar_location_is_optional_and_survives_restart(self):
         self.assertIsNone(PetSettings.from_dict({"scale": 1}).toolbar_x)
         settings = PetSettings(toolbar_x=77, toolbar_y=130)
-        self.store.save(PetState(updated_at=100), settings)
-        _, loaded = self.store.load(now=100)
+        self.store.save(PetState(updated_at=SAMPLE_TIMESTAMP), settings)
+        _, loaded = self.store.load(now=SAMPLE_TIMESTAMP)
         self.assertEqual((loaded.toolbar_x, loaded.toolbar_y), (77, 130))
         invalid = PetSettings.from_dict({"toolbar_x": True, "toolbar_y": 70000})
         self.assertIsNone(invalid.toolbar_x)
         self.assertIsNone(invalid.toolbar_y)
 
     def test_chatter_preference_persists_in_the_v03_save_schema(self):
-        pet = PetState(updated_at=100)
+        pet = PetState(updated_at=SAMPLE_TIMESTAMP)
         self.store.save(pet, PetSettings(spontaneous_talk=False))
-        _pet, settings = self.store.load(now=100)
+        _pet, settings = self.store.load(now=SAMPLE_TIMESTAMP)
         self.assertFalse(settings.spontaneous_talk)
 
 
