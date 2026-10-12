@@ -7,47 +7,23 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
+from .friendship import (
+    CARE_FRIENDSHIP_GAIN as CARE_FRIENDSHIP_GAIN,
+    CARE_PRIMARY_NEED as CARE_PRIMARY_NEED,
+    FRIENDSHIP_DAILY_CAP as FRIENDSHIP_DAILY_CAP,
+    FRIENDSHIP_NEED_THRESHOLD as FRIENDSHIP_NEED_THRESHOLD,
+    FRIENDSHIP_REWARD_INTERVAL as FRIENDSHIP_REWARD_INTERVAL,
+    FRIENDSHIP_VARIETY_BONUS as FRIENDSHIP_VARIETY_BONUS,
+    LEGACY_REWARD_ACTIONS as LEGACY_REWARD_ACTIONS,
+    award_friendship_for_care,
+)
 from .routine import MEAL_NAMES, TimeContext, context_at
+from .value_rules import bounded as bounded, clamp_saved_time as clamp_saved_time
 
 MAX_CATCHUP_SECONDS = 8 * 60 * 60
 SIMULATION_STEP_SECONDS = 300
 # Live telemetry is never projected across a restart/suspend or offline gap.
 MAX_LIVE_EFFORT_SECONDS = 30.0
-FRIENDSHIP_REWARD_INTERVAL = 12 * 60
-FRIENDSHIP_DAILY_CAP = 5.0
-# Only care addressing a genuine need can slowly build the relationship.
-CARE_FRIENDSHIP_GAIN = {
-    "feed": 0.9, "play": 1.0, "pet": 1.0, "talk": 1.0,
-}
-CARE_PRIMARY_NEED = {
-    "feed": "satiety", "play": "mood",
-    "pet": "affection", "talk": "social",
-}
-FRIENDSHIP_NEED_THRESHOLD = 80.0
-FRIENDSHIP_VARIETY_BONUS = 0.35
-# Keep legacy history during migration, but these no longer earn friendship.
-LEGACY_REWARD_ACTIONS = ("energy_drink", "sleep")
-
-
-def clamp_saved_time(value: Any) -> float:
-    try:
-        number = float(value)
-    except (TypeError, ValueError, OverflowError):
-        return 0.0
-    return number if math.isfinite(number) and 0 <= number <= 4_000_000_000 else 0.0
-
-
-def bounded(value: Any, default: float = 75.0) -> float:
-    """Convert malformed saved values to a safe 0..100 number."""
-    try:
-        result = float(value)
-    except (TypeError, ValueError, OverflowError):
-        return default
-    if not math.isfinite(result):
-        return default
-    return max(0.0, min(100.0, result))
-
-
 @dataclass
 class PetState:
     satiety: float = 75.0
@@ -307,38 +283,8 @@ class PetState:
     def _credit_friendship(
         self, action: str, stamp: float, need_before: float,
     ) -> None:
-        """Reward diverse, useful care, never repeated clicks on full needs."""
-        if (action not in CARE_FRIENDSHIP_GAIN or not math.isfinite(stamp)
-                or stamp <= 0):
-            return
-        context = context_at(stamp)
-        if self.friendship_day != context.day_key:
-            self.friendship_day = context.day_key
-            self.friendship_gained_today = 0.0
-            self.care_types_today = []
-        if need_before > FRIENDSHIP_NEED_THRESHOLD:
-            return
-        last = self.care_last_rewards.get(action)
-        if last is not None and stamp - last < FRIENDSHIP_REWARD_INTERVAL:
-            # Also reject a backwards-running system clock for this action.
-            return
-        remaining = max(0.0, FRIENDSHIP_DAILY_CAP - self.friendship_gained_today)
-        first_time = action not in self.care_types_today
-        variety = (
-            FRIENDSHIP_VARIETY_BONUS
-            if first_time and self.care_types_today else 0.0
-        )
-        gain = min(
-            remaining, CARE_FRIENDSHIP_GAIN[action] + variety,
-            100.0 - self.friendship,
-        )
-        if gain <= 0:
-            return
-        self.friendship = bounded(self.friendship + gain)
-        self.friendship_gained_today += gain
-        self.care_last_rewards[action] = stamp
-        if first_time:
-            self.care_types_today.append(action)
+        """Delegate relationship rewards without changing state semantics."""
+        award_friendship_for_care(self, action, stamp, need_before)
 
     def interact(self, action: str, *, now: float | None = None) -> str:
         """Apply six distinct care effects; friendship rewards useful care."""

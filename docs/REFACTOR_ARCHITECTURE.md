@@ -29,7 +29,11 @@ third-party packages. Keep German runtime text and English documentation.
    emote/text cues, timer cancellation, generation guards and follow-up
    scheduling. The GUI injects Tk callbacks and remains responsible for actual
    rendering. Need-dependent idle emote choice is a pure function.
-4. **Domain and dialogue (in progress):** The authored German dialogue
+4. **Domain and dialogue (in progress): `friendship.py` owns the
+   independent daily-cap, meaningful-care and variety-bonus policy; the
+   persisted `PetState` still retains its original attribute names and schema.
+   `value_rules.py` centralizes safe persisted-number normalization.
+   ** The authored German dialogue
    catalogue, validation, and weighted selection now live in
    `dialogue_catalog.py`, while `AikoMind` owns conversational decisions.
    `ComputerVoice` now also lives in `computer_voice.py`, keeping hardware
