@@ -38,7 +38,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
     @property
     def toolbar(self) -> ActionToolbar:
         """Require the toolbar created by the test's hover interaction."""
-        toolbar = self.toolbar
+        toolbar = self.app.toolbar
         assert toolbar is not None
         return toolbar
 
