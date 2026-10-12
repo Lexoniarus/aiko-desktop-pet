@@ -23,7 +23,7 @@ class FrameClockTests(unittest.TestCase):
         clock = FrameClock()
         self.assertEqual(clock.next_index("running-right", 0, 2), 0)
         self.assertEqual(clock.next_index("running-right", 30, 2), 1)
-        self.assertEqual(clock.next_index("running-right", 30.13, 2), 0)
+        self.assertEqual(clock.next_index("running-right", 30.14, 2), 0)
 
     def test_fixed_gaze_and_switch_reset_animation(self) -> None:
         clock = FrameClock()

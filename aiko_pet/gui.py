@@ -838,29 +838,19 @@ class DesktopPet:
         )
         self.mind.set_situation(observed, now=now)
 
-    def _tick(self) -> None:
-        if self._closed:
-            return
-        # Tests and future manual refresh calls must not accumulate another
-        # pending animation timer alongside the regularly scheduled one.
-        if self._scheduled_tick is not None:
-            self.root.after_cancel(self._scheduled_tick)
-            self._scheduled_tick = None
-        now = time.monotonic()
-        dt = max(0.0, min(0.5, now - self._last_tick))
-        self._last_tick = now
-        stamp = time.time()
+    def _advance_pet_lifecycle(self, now: float, wall_time: float) -> None:
+        """Apply the elapsed care simulation and period-change reactions."""
         was_sleeping = self.state.sleeping
         previous_period = (self.context.day_key, self.context.period)
-        self._observe_adaptive(now, stamp)
+        self._observe_adaptive(now, wall_time)
         self.state.advance(
-            stamp, auto_routine=self.settings.auto_routine,
+            wall_time, auto_routine=self.settings.auto_routine,
             allow_bedtime=self._allow_bedtime(),
             allow_nap=self._allow_nap(),
             interrupt_nap=self._interrupt_nap(),
             effort=self._live_effort(),
         )
-        self.context = context_at(stamp)
+        self.context = context_at(wall_time)
         current_period = (self.context.day_key, self.context.period)
         if current_period != previous_period:
             if self.toolbar is not None:
@@ -868,6 +858,9 @@ class DesktopPet:
             if self.settings.spontaneous_talk and self.state.sleeping != was_sleeping:
                 event = "sleep" if self.state.sleeping else "wake"
                 self._react(self.mind.say_event(event, self.state, self.context, now))
+
+    def _refresh_taskbar_track(self, now: float) -> None:
+        """Reposition Aiko only when taskbar geometry actually changes."""
         if now - self._last_track_check >= 4.0:
             self._last_track_check = now
             new_track = locate_primary_taskbar(
@@ -876,17 +869,18 @@ class DesktopPet:
             if new_track != self.track:
                 self.track = new_track
                 self._place_x(self.settings.x or self.track.left)
-        self._poll_desktop_click()
-        self._refresh_hover(now)
-        self._react_to_computer(now)
-        pointer = self._observe_pointer(now)
+
+    def _render_current_sprite(
+        self, now: float, elapsed_seconds: float, pointer: tuple[int, int],
+    ) -> None:
+        """Choose a movement/action/passive sprite, then render its frame."""
         if self.state.sleeping:
             self._walk_remaining = 0
             self._show_frame("idle", now, fixed=2)
         elif now < self._action_until:
             self._show_frame(self._action_state, now)
         else:
-            movement = self._maybe_walk(now, dt)
+            movement = self._maybe_walk(now, elapsed_seconds)
             if movement is not None:
                 self._show_frame(movement, now)
             else:
@@ -897,17 +891,27 @@ class DesktopPet:
                 else:
                     look_direction = None
                     self._gaze_sector = None
-                if look_direction is not None:
-                    self._show_frame("look", now, fixed=look_direction)
-                elif (self.settings.observe_computer
-                      and self.activity_monitor.latest().is_busy()):
-                    self._show_frame("review", now)
-                elif self.state.energy < 10 or self.state.mood < 10:
-                    self._show_frame("failed", now)
-                elif self.state.satiety < 20 or self.state.energy < 24:
-                    self._show_frame("waiting", now)
-                else:
-                    self._show_frame("idle", now)
+                # Keep hardware sampling lazy: looking at the cursor has
+                # precedence and previously skipped this monitor read.
+                computer_busy = (
+                    self.activity_monitor.latest().is_busy()
+                    if look_direction is None and self.settings.observe_computer
+                    else False
+                )
+                animation = choose_passive_animation(
+                    gaze_direction=look_direction,
+                    observing_computer=self.settings.observe_computer,
+                    computer_busy=computer_busy,
+                    energy=self.state.energy,
+                    mood=self.state.mood,
+                    satiety=self.state.satiety,
+                )
+                self._show_frame(
+                    animation.animation, now, fixed=animation.fixed_frame,
+                )
+
+    def _maybe_show_idle_emote(self, now: float) -> None:
+        """Run occasional nonverbal reactions only while Aiko is free."""
         if now >= self._next_idle_emote:
             self._next_idle_emote = now + random.uniform(85, 190)
             if (
@@ -918,6 +922,9 @@ class DesktopPet:
             ):
                 self._start_action(random.choice(("waiting", "review", "idle")), 1.6)
                 self._idle_emote()
+
+    def _maybe_speak_spontaneously(self, now: float) -> None:
+        """Run the next spontaneous dialogue slot without interrupting care."""
         if now >= self._next_comment:
             self._next_comment = now + random.uniform(175, 360)
             if (
@@ -938,6 +945,9 @@ class DesktopPet:
                         self.state, self.context, now,
                     )
                 self._react(response, 3600)
+
+    def _refresh_overlays_and_autosave(self, now: float) -> None:
+        """Refresh visible panels, window layering and periodic persistence."""
         if self.toolbar is not None and self.toolbar.visible:
             self.toolbar.refresh()
         self._refresh_status()
@@ -948,6 +958,29 @@ class DesktopPet:
             self._overlay_stack.maintain()
         if now - self._last_saved >= 55:
             self._save()
+
+    def _tick(self) -> None:
+        """Coordinate one desktop update; behavior is owned by small methods."""
+        if self._closed:
+            return
+        # A manual test refresh must not create a second scheduled timer.
+        if self._scheduled_tick is not None:
+            self.root.after_cancel(self._scheduled_tick)
+            self._scheduled_tick = None
+        now = time.monotonic()
+        dt = max(0.0, min(0.5, now - self._last_tick))
+        self._last_tick = now
+        stamp = time.time()
+        self._advance_pet_lifecycle(now, stamp)
+        self._refresh_taskbar_track(now)
+        self._poll_desktop_click()
+        self._refresh_hover(now)
+        self._react_to_computer(now)
+        pointer = self._observe_pointer(now)
+        self._render_current_sprite(now, dt, pointer)
+        self._maybe_show_idle_emote(now)
+        self._maybe_speak_spontaneously(now)
+        self._refresh_overlays_and_autosave(now)
         if not self._closed:
             self._scheduled_tick = self.root.after(TICK_MILLISECONDS, self._tick)
 
