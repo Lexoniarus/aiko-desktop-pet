@@ -5,9 +5,8 @@ from __future__ import annotations
 import json
 import random
 import tempfile
-import time
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 from aiko_pet.dialogue import AikoMind, DialogueBook

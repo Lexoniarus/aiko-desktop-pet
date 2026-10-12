@@ -18,6 +18,7 @@ from .adaptive import Behaviour
 from .domain import PetState
 from .routine import TimeContext
 from .reaction_sequence import EMOTES
+from .system_activity import ComputerSnapshot
 
 CATALOGUE = Path(__file__).resolve().parent / "data" / "dialogues.de.json"
 ANIMATIONS = frozenset({"idle", "waiting", "review", "failed", "waving", "jumping"})

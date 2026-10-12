@@ -10,8 +10,6 @@ import random
 import re
 import unittest
 from datetime import datetime
-from pathlib import Path
-from tempfile import TemporaryDirectory
 
 from aiko_pet.adaptive import Behaviour
 from aiko_pet.dialogue import AikoMind, CATALOGUE, DialogueBook, Line

@@ -407,7 +407,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertIsNone(self.app._bubble)
 
     def test_chatter_switch_suppresses_autonomous_lines(self):
-        from unittest.mock import Mock, patch
+        from unittest.mock import patch
         self.app.set_spontaneous_talk(False)
         now = time.monotonic()
         self.app._next_comment = now - 1

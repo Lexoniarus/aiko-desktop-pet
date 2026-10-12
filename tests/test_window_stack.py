@@ -2,7 +2,6 @@
 
 import ctypes
 import unittest
-from unittest.mock import Mock
 
 from aiko_pet.window_stack import WindowStack, WindowsWindowOps, _Rect
 

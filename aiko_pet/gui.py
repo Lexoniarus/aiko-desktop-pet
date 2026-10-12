@@ -26,7 +26,7 @@ from .storage import StateStore
 from .system_activity import ActivityMonitor, workload_intensity
 from .taskbar import TaskbarTrack, locate_primary_taskbar
 from .window_stack import WindowStack
-from .asset_paths import ASSETS, EMOTE_ASSETS, SCI_FI_UI
+from .asset_paths import ASSETS, EMOTE_ASSETS, SCI_FI_UI as SCI_FI_UI
 from .ui.action_toolbar import ActionToolbar
 from .ui.settings_popup import SettingsPopup
 from .ui.status_panel import StatusPanel

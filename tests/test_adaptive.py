@@ -2,20 +2,19 @@
 
 import ctypes
 import json
-import math
 import tempfile
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock, patch
 
 from aiko_pet.adaptive import (
     SLOTS, AdaptiveMemory, AdaptiveRoutine, Observation,
 )
-from aiko_pet.dialogue import AikoMind, DialogueBook
+from aiko_pet.dialogue import AikoMind
 from aiko_pet.domain import PetState
 from aiko_pet.routine import context_at
-from aiko_pet.storage import PetSettings, StateStore
+from aiko_pet.storage import StateStore
 from aiko_pet.desktop_input import idle_seconds_windows
 
 
