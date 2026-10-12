@@ -10,6 +10,7 @@ from typing import Callable
 
 from ..asset_paths import KENNEY_UI_DIR
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
+from .hover_geometry import HoverGeometry, Rect
 
 class ActionToolbar:
     """Kenney sci-fi hover status; all six controls remain clickable."""
@@ -222,27 +223,21 @@ class ActionToolbar:
                 and y <= py < y + self.window.winfo_height())
 
     def contains_bridge(self, px: int, py: int) -> bool:
-        """Tolerate the small horizontal or vertical gap to the sprite."""
-        anchor = self._anchor()
-        if not self.visible or anchor.pinned_x is not None:
+        if not self.visible:
             return False
-        x, y = self.window.winfo_rootx(), self.window.winfo_rooty()
-        width, height = self.window.winfo_width(), self.window.winfo_height()
-        pet_x, pet_y = self.root.winfo_rootx(), self.root.winfo_rooty()
-        pet_right = pet_x + anchor.width
-        bar_right = x + width
-        top = max(y, pet_y)
-        bottom = min(y + height, pet_y + anchor.height)
-        if top <= bottom:
-            if bar_right <= pet_x:
-                return bar_right - 3 <= px <= pet_x + 5 and top <= py <= bottom
-            if pet_right <= x:
-                return pet_right - 5 <= px <= x + 3 and top <= py <= bottom
-        left = max(x, pet_x)
-        right = min(bar_right, pet_right)
-        if left <= right:
-            return left <= px <= right and y + height - 3 <= py <= pet_y + 10
-        return False
+        anchor = self._anchor()
+        return HoverGeometry.bridge(
+            px, py,
+            Rect(
+                self.window.winfo_rootx(), self.window.winfo_rooty(),
+                self.window.winfo_width(), self.window.winfo_height(),
+            ),
+            Rect(
+                self.root.winfo_rootx(), self.root.winfo_rooty(),
+                anchor.width, anchor.height,
+            ),
+            pinned=anchor.pinned_x is not None,
+        )
 
     def place(self) -> None:
         """Dragged panel stays put; default stays beside Aiko's head."""
@@ -251,18 +246,10 @@ class ActionToolbar:
         self.window.update_idletasks()
         width = self.window.winfo_reqwidth()
         height = self.window.winfo_reqheight()
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
-        anchor = self._anchor()
-        if anchor.pinned_x is not None and anchor.pinned_y is not None:
-            x, y = anchor.pinned_x, anchor.pinned_y
-        else:
-            right_x = anchor.x + anchor.width + 10
-            left_x = anchor.x - width - 10
-            x = right_x if right_x + width <= screen_width else left_x
-            y = anchor.y + max(0, (anchor.height - height) // 2)
-        x = max(0, min(round(x), max(0, screen_width - width)))
-        y = max(0, min(round(y), max(0, screen_height - height)))
+        x, y = HoverGeometry.placement(
+            self._anchor(), width, height,
+            self.root.winfo_screenwidth(), self.root.winfo_screenheight(),
+        )
         placement = x, y, width, height
         if placement != self._last_placement:
             self.window.geometry(f"+{x}+{y}")
@@ -278,12 +265,13 @@ class ActionToolbar:
     def _drag_motion(self, event: tk.Event) -> None:
         if self._drag_origin is None:
             return
-        px, py, x, y = self._drag_origin
         width, height = self.window.winfo_width(), self.window.winfo_height()
-        screen_w = self.root.winfo_screenwidth()
-        screen_h = self.root.winfo_screenheight()
-        new_x = max(0, min(x + event.x_root - px, max(0, screen_w - width)))
-        new_y = max(0, min(y + event.y_root - py, max(0, screen_h - height)))
+        new_x, new_y = HoverGeometry.dragged(
+            self._drag_origin,
+            (event.x_root, event.y_root),
+            (width, height),
+            (self.root.winfo_screenwidth(), self.root.winfo_screenheight()),
+        )
         self.window.geometry(f"+{new_x}+{new_y}")
         self._last_placement = (new_x, new_y, width, height)
         self._actions.move_speech()
