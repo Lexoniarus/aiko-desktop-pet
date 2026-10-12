@@ -20,6 +20,7 @@ from .dialogue_catalog import (
     PERIODS as PERIODS,
     Reaction as Reaction,
 )
+from .dialogue_events import ClickButton, choose_click_reaction
 from .domain import PetState
 from .routine import TimeContext
 from .computer_voice import ComputerVoice as ComputerVoice
@@ -109,8 +110,10 @@ class AikoMind:
         return self.book.choose(event, tone or self.emotion(state, now), context, now)
 
     def click(
-        self, button: str, state: PetState, context: TimeContext, now: float,
+        self, button: ClickButton, state: PetState, context: TimeContext,
+        now: float,
     ) -> Reaction | None:
+        """Track one click and request the context-appropriate dialogue event."""
         if button not in ("left", "right"):
             raise ValueError("Unknown mouse button")
         self.last_contact = now
@@ -122,68 +125,25 @@ class AikoMind:
             return self.say_event("sleep_click", state, context, now)
 
         busy = self.situation is not None and self.situation.focused
-        cheerful = state.mood >= 82 and state.energy >= 45 and not busy
-        withdrawn = state.mood <= 28 and not busy
-        tired = state.energy <= 26 or (
-            self.situation is not None and self.situation.strain >= 72
-        )
         if busy:
             self._work_interruptions += 1
-            if count <= 2:
-                event = "click_during_work"
-            elif count <= 4:
-                event = "click_work_repeat"
-            elif count <= 6:
-                event = "click_work_boundary"
-            elif count == 7:
-                event = "click_last_word"
-            else:
-                return None  # Not every provocation deserves a speech bubble.
-        elif count == 1 and now < self._recovery_until:
-            event = "click_after_work"
-        elif count <= 2:
-            if withdrawn:
-                event = "click_withdrawn"
-            elif tired:
-                event = "click_sleepy"
-            elif self._last_care_action == "pet" and now - self._last_care_at < 50:
-                event = "click_flustered"
-            elif state.social <= 23:
-                event = "click_lonely"
-            elif state.affection <= 23:
-                event = "click_affection_low"
-            elif context.night and not cheerful:
-                event = "click_night"
-            elif (state.friendship >= 72 and state.mood >= 60
-                  and state.affection >= 40):
-                event = "click_close"
-            elif (state.affection >= 85 and state.friendship >= 40
-                  and state.mood >= 60):
-                event = "click_at_ease"
-            elif state.friendship < 12:
-                event = "click_reserved"
-            else:
-                event = "click_left" if button == "left" else "click_right"
-        elif count == 3:
-            event = ("click_notice_playful" if cheerful else
-                     "click_notice_withdrawn" if withdrawn else "click_notice")
-        elif count <= 5:
-            event = ("click_tease" if cheerful else
-                     "click_withdrawn_boundary" if withdrawn else
-                     "click_weary" if tired else "rapid_click")
-        elif withdrawn and count >= 7:
+        decision = choose_click_reaction(
+            button=button,
+            click_count=count,
+            state=state,
+            context=context,
+            situation=self.situation,
+            recovering=now < self._recovery_until,
+            recently_petted=(
+                self._last_care_action == "pet"
+                and now - self._last_care_at < 50
+            ),
+        )
+        if decision.event is None:
             return None
-        elif withdrawn and count == 6:
-            event = "click_last_word"
-        elif count <= 7:
-            event = "click_tease_more" if cheerful else "click_boundary"
-        elif count == 8:
-            event = "click_last_word"
-        else:
-            return None
-        if count >= 4 and not cheerful:
+        if decision.irritates:
             self.irritated_until = max(self.irritated_until, now + 13.0)
-        return self.say_event(event, state, context, now)
+        return self.say_event(decision.event, state, context, now)
 
     def care_event(
         self, action: str, state: PetState, context: TimeContext, now: float,
