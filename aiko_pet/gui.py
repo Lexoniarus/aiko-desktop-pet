@@ -169,7 +169,7 @@ class DesktopPet:
                 if (frame.width(), frame.height()) != (FRAME_WIDTH, FRAME_HEIGHT):
                     raise ValueError(f"Invalid sprite dimensions: {path}")
                 if self.settings.scale == 2:
-                    frame = frame.zoom(2, 2)
+                    frame = frame.zoom(2)
                 frames.append(frame)
             sprites[state] = frames
         return sprites
@@ -552,7 +552,7 @@ class DesktopPet:
                 bubble.destroy()
                 raise FileNotFoundError(f"Missing emote: {path}")
             original = tk.PhotoImage(file=str(path))
-            self._emote_images[emote] = original.zoom(3, 3)
+            self._emote_images[emote] = original.zoom(3)
         tk.Label(
             bubble, image=self._emote_images[emote],
             bg=transparent, borderwidth=0, highlightthickness=0,

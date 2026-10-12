@@ -16,6 +16,8 @@ from pathlib import Path
 from PIL import Image
 
 FRAME_WIDTH, FRAME_HEIGHT = 192, 208
+# Explicit 8-bit palette is unambiguous for Pillow's Image.point() typing.
+ALPHA_THRESHOLD_TABLE = [255 if alpha >= 128 else 0 for alpha in range(256)]
 CROP = (32, 0, 160, 208)
 FRAME_COUNTS = {
     "idle": 6,
@@ -50,7 +52,7 @@ def extract(zip_path: Path, dest: Path) -> None:
             cell = cell.crop(CROP)
             # Windows chroma-key transparency works best with 0/255 alpha.
             # Soft alpha edges on pixel-adjacent art would leave magenta halos.
-            alpha = cell.getchannel("A").point(lambda a: 255 if a >= 128 else 0)
+            alpha = cell.getchannel("A").point(ALPHA_THRESHOLD_TABLE)
             cell.putalpha(alpha)
             cell.save(directory / f"{i:02d}.png", optimize=True)
 
