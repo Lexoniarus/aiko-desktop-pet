@@ -33,6 +33,8 @@ third-party packages. Keep German runtime text and English documentation.
    independent daily-cap, meaningful-care and variety-bonus policy; the
    persisted `PetState` still retains its original attribute names and schema.
    `value_rules.py` centralizes safe persisted-number normalization.
+   `care_actions.py` now implements the six existing care actions behind a
+   typed `CareState` boundary; `PetState.interact()` remains the stable API.
    ** The authored German dialogue
    catalogue, validation, and weighted selection now live in
    `dialogue_catalog.py`, while `AikoMind` owns conversational decisions.

@@ -7,6 +7,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
+from .care_actions import apply_care_action
 from .friendship import (
     CARE_FRIENDSHIP_GAIN as CARE_FRIENDSHIP_GAIN,
     CARE_PRIMARY_NEED as CARE_PRIMARY_NEED,
@@ -287,64 +288,8 @@ class PetState:
         award_friendship_for_care(self, action, stamp, need_before)
 
     def interact(self, action: str, *, now: float | None = None) -> str:
-        """Apply six distinct care effects; friendship rewards useful care."""
-        stamp = time.time() if now is None else now
-        if action == "sleep":
-            self.sleeping = not self.sleeping
-            self.sleep_origin = "manual" if self.sleeping else ""
-            if not self.sleeping and context_at(stamp).night:
-                self.auto_sleep_night = context_at(stamp).night_key
-            return "Zzz ... gute Nacht." if self.sleeping else "Oh ... schon Morgen?"
-        if action not in {"feed", "play", "pet", "talk", "energy_drink"}:
-            raise ValueError(f"Unknown action: {action}")
-        if action == "play" and self.energy < 8:
-            return "Ich bin gerade zu müde zum Spielen."
-        if action == "energy_drink" and self.energy >= 100:
-            return "Ich bin schon voll. Mehr passt gerade nicht rein."
-        if self.sleeping:
-            self.sleeping = False
-            self.sleep_origin = ""
-            self.nap_until = 0.0
-            context = context_at(stamp)
-            if context.night:
-                # Drinking/feeding at night shouldn't trigger auto-bedtime
-                # again one GUI frame later.
-                self.auto_sleep_night = context.night_key
-        if action == "energy_drink":
-            self.energy = bounded(self.energy + 10.0)
-            return "...Oh. Das hat geholfen."
-        need_before = getattr(self, CARE_PRIMARY_NEED[action])
-        if action == "talk":
-            self.social = bounded(self.social + 26)
-            self.mood = bounded(self.mood + 5)
-            self.energy = bounded(self.energy - 1)
-            self._credit_friendship(action, stamp, need_before)
-            return "...Du möchtest reden? Ich höre zu."
-        if action == "feed":
-            ctx = context_at(stamp)
-            self._roll_meals(ctx)
-            self.satiety = bounded(self.satiety + 27)
-            self.social = bounded(self.social + 1)
-            self._credit_friendship(action, stamp, need_before)
-            if ctx.meal is not None and ctx.meal not in self.meals_today:
-                self.meals_today.append(ctx.meal)
-                self.mood = bounded(self.mood + 5)
-                return f"Danke für das {MEAL_NAMES[ctx.meal].lower()}!"
-            self.mood = bounded(self.mood + 3)
-            return "Mhm ... ein kleiner Snack!"
-        if action == "play":
-            self.mood = bounded(self.mood + 23)
-            self.energy = bounded(self.energy - 9)
-            self.satiety = bounded(self.satiety - 4)
-            self.social = bounded(self.social + 12)
-            self._credit_friendship(action, stamp, need_before)
-            return "Heh ... das war gut!"
-        # Petting offers affection; it is neither a game nor an energy drink.
-        self.affection = bounded(self.affection + 25)
-        self.mood = bounded(self.mood + 6)
-        self.social = bounded(self.social + 2)
-        self._credit_friendship(action, stamp, need_before)
-        return "... Das ist angenehm."
+        """Apply one care action and return the unchanged German fallback."""
+        return apply_care_action(self, action, now=now)
 
     def feed_label(self, context: TimeContext) -> str:
         if context.meal and (
