@@ -17,7 +17,10 @@ third-party packages. Keep German runtime text and English documentation.
    `aiko_pet.gui` while callers migrate. Asset directories are defined once
    in `asset_paths.py`. This first step deliberately preserves access to the
    existing `DesktopPet` coordinator and its behavior.
-2. **Application orchestration:** Extract frame selection, walking decisions,
+2. **Application orchestration (in progress):** A headless `WalkController`,
+   `FrameClock` and passive animation priority selector now own motion planning,
+   sprite timing and visual decisions. `DesktopPet` still applies Tk geometry,
+   rendering and interaction side effects. Extract frame selection, walking decisions,
    reactions, and scheduling from the monolithic `DesktopPet` class.
    Separate pure decisions from Tkinter side effects; introduce typed
    interfaces only where they make components replaceable and testable.

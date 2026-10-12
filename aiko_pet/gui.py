@@ -16,10 +16,15 @@ from tkinter import font as tkfont
 from tkinter import messagebox
 
 from .adaptive import AdaptiveRoutine, Observation
+from .animation import (
+    FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
+    FrameClock, choose_passive_animation,
+)
 from .config import load_env_file
 from .desktop_input import GlobalMouseClicks, idle_seconds_windows
 from .dialogue import AikoMind, ComputerVoice, Reaction
 from .gaze import gaze_sector
+from .movement import WalkConditions, WalkController
 from .routine import TimeContext, context_at
 from .reaction_sequence import Cue, EMOTES, compose_cues
 from .storage import StateStore
@@ -35,29 +40,7 @@ FRAME_WIDTH = 128
 FRAME_HEIGHT = 208
 TICK_MILLISECONDS = 140
 MAGENTA = "#ff00ff"
-FRAME_COUNTS = {
-    "idle": 6,
-    "running-right": 8,
-    "running-left": 8,
-    "waving": 4,
-    "jumping": 5,
-    "failed": 8,
-    "waiting": 6,
-    "running": 6,
-    "review": 6,
-    "look": 16,
-}
-FRAME_TIMINGS = {
-    "idle": 0.38,
-    "running-left": 0.13,
-    "running-right": 0.13,
-    "waving": 0.22,
-    "jumping": 0.18,
-    "failed": 0.33,
-    "waiting": 0.42,
-    "running": 0.22,
-    "review": 0.3,
-}
+
 
 
 class DesktopPet:
@@ -97,15 +80,14 @@ class DesktopPet:
         self.image_item = self.canvas.create_image(
             0, 0, anchor="nw", image=self.sprites["idle"][0],
         )
-        self._last_sprite_key: tuple[str, int | None] | None = None
-        self._frame_index = 0
-        self._frame_started = time.monotonic()
+        self._frame_clock = FrameClock(started_at=time.monotonic())
         self._last_tick = time.monotonic()
         self._last_track_check = self._last_tick
         self._action_until = 0.0
         self._action_state = "idle"
-        self._walk_remaining = 0.0
-        self._next_walk = time.monotonic() + random.uniform(3.0, 8.0)
+        self._movement = WalkController(
+            next_walk_at=time.monotonic() + random.uniform(3.0, 8.0),
+        )
         self._last_saved = time.monotonic()
         self.mind = AikoMind(started_at=self._last_saved)
         self.computer_voice = ComputerVoice()
@@ -720,48 +702,50 @@ class DesktopPet:
         self._previous_pointer = pointer
         return pointer
 
+    @property
+    def _walk_remaining(self) -> float:
+        """Legacy control surface: walking state now belongs to WalkController."""
+        return self._movement.remaining_distance
+
+    @_walk_remaining.setter
+    def _walk_remaining(self, value: float) -> None:
+        self._movement.remaining_distance = value
+
+    @property
+    def _next_walk(self) -> float:
+        return self._movement.next_walk_at
+
+    @_next_walk.setter
+    def _next_walk(self, value: float) -> None:
+        self._movement.next_walk_at = value
+
     def _maybe_walk(self, now: float, dt: float) -> str | None:
+        """Apply a planned horizontal step; only Tkinter moves the window."""
         observed = self.adaptive.current
         busy = (observed.focused if observed is not None
                 else self.activity_monitor.latest().is_busy())
-        if self.settings.observe_computer and busy:
-            # While Aiko is doing computer work, she concentrates in place.
-            # Keeping review/idle animations costs no new artwork.
-            self._walk_remaining = 0
-            self._next_walk = max(self._next_walk, now + 2)
+        conditions = WalkConditions(
+            now=now,
+            elapsed_seconds=dt,
+            x=self.settings.x or 0,
+            track=self.track,
+            sprite_width=self.width,
+            energy=self.state.energy,
+            auto_walk=self.settings.auto_walk,
+            sleeping=self.state.sleeping,
+            attention_active=now < self._attention_until,
+            toolbar_visible=self.toolbar is not None and self.toolbar.visible,
+            observing_computer=self.settings.observe_computer,
+            computer_busy=busy,
+            quiet_period=bool(observed is not None and observed.quiet),
+        )
+        step = self._movement.plan_step(conditions)
+        if step is None:
             return None
-        if (
-            not self.settings.auto_walk
-            or self.state.sleeping
-            or now < self._attention_until
-            or (self.toolbar is not None and self.toolbar.visible)
-        ):
-            self._walk_remaining = 0
-            return None
-        if self._walk_remaining == 0 and now >= self._next_walk:
-            slower = bool(observed is not None and observed.quiet)
-            self._next_walk = now + (random.uniform(12, 24) if slower
-                                    else random.uniform(4, 9))
-            if self.state.energy >= 20:
-                x = self.settings.x or 0
-                limit = self.track.right - self.width
-                if x <= self.track.left + 80:
-                    direction = 1
-                elif x >= limit - 80:
-                    direction = -1
-                else:
-                    direction = random.choice((-1, 1))
-                self._walk_remaining = direction * random.randint(100, 320)
-        if self._walk_remaining == 0:
-            return None
-        direction = 1 if self._walk_remaining > 0 else -1
-        pixels = direction * min(abs(self._walk_remaining), max(1.0, 64 * dt))
         old_x = self.settings.x or 0
-        self._place_x(old_x + pixels)
-        moved = (self.settings.x or 0) - old_x
-        self._walk_remaining -= moved
-        if moved == 0 or abs(self._walk_remaining) < 1:
-            self._walk_remaining = 0
+        self._place_x(old_x + step.pixels)
+        displacement = (self.settings.x or 0) - old_x
+        if self._movement.record_displacement(displacement):
             if (
                 self.settings.spontaneous_talk
                 and now - self._last_spoken > 130
@@ -770,19 +754,15 @@ class DesktopPet:
                 self._react(self.mind.say_event(
                     "walk_pause", self.state, self.context, now,
                 ))
-        return "running-right" if direction > 0 else "running-left"
+        return step.animation
 
     def _show_frame(self, state: str, now: float, *, fixed: int | None = None) -> None:
-        key = (state, fixed)
-        if key != self._last_sprite_key:
-            self._last_sprite_key = key
-            self._frame_index = 0
-            self._frame_started = now
-        elif fixed is None and now - self._frame_started >= FRAME_TIMINGS.get(state, 0.3):
-            self._frame_index = (self._frame_index + 1) % len(self.sprites[state])
-            self._frame_started = now
-        image = self.sprites[state][fixed if fixed is not None else self._frame_index]
-        self.canvas.itemconfigure(self.image_item, image=image)
+        """Render the next chosen frame without owning animation timing."""
+        frames = self.sprites[state]
+        frame_index = self._frame_clock.next_index(
+            state, now, len(frames), fixed=fixed,
+        )
+        self.canvas.itemconfigure(self.image_item, image=frames[frame_index])
 
     def _react_to_computer(self, now: float) -> None:
         """React to new load measurements in seconds, without interrupting care."""
