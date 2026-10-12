@@ -21,7 +21,8 @@ from .application.controller import CareController, CareRuntime
 from .application.hover_projection import project_hover
 from .application.status_projection import project_status
 from .application.settings_projection import project_settings
-from .ui.hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
+from .ui.hover_contracts import HoverAnchor, HoverSnapshot
+from .ui.hover_ui import HoverUi, HoverUiPorts
 from .application.router import ApplicationRouter
 from .animation import (
     FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
@@ -47,8 +48,7 @@ from .asset_paths import (
 from .ui.action_toolbar import ActionToolbar
 from .ui.settings_popup import SettingsPopup
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
-from .ui.status_contracts import StatusActions, StatusSnapshot
-from .ui.settings_contracts import SettingsActions
+from .ui.status_contracts import StatusSnapshot
 from .ui.status_panel import StatusPanel
 
 FRAME_WIDTH = 128
@@ -111,8 +111,6 @@ class DesktopPet:
         self.computer_voice = ComputerVoice()
         self.activity_monitor = activity_monitor or ActivityMonitor()
         self.activity_monitor.set_enabled(self.settings.observe_computer)
-        self._menu_is_open = False
-        self.settings_popup: SettingsPopup | None = None
         self._mouse_clicks = GlobalMouseClicks()
         self._mouse_clicks.clicked()  # establish a baseline before showing UI
         self._last_hardware_sample = 0.0
@@ -125,7 +123,6 @@ class DesktopPet:
         self._next_comment = self._last_saved + random.uniform(180.0, 360.0)
         self._next_cursor_line = self._last_saved + random.uniform(200.0, 420.0)
         self._next_idle_emote = self._last_saved + random.uniform(70.0, 170.0)
-        self._last_hover = -100.0
         self._gaze_sector: int | None = None
         self._previous_pointer: tuple[int, int] | None = None
         self._last_pointer_move = -100.0
@@ -151,10 +148,30 @@ class DesktopPet:
             mark_spoken=self._mark_reaction_spoken,
             is_closed=lambda: self._closed,
         )
-        self.toolbar: ActionToolbar | None = None
-        self.status_panel: StatusPanel | None = None
         self._overlay_stack = WindowStack(
             self._overlay_windows, enabled=self.settings.always_on_top,
+        )
+        self._hover = HoverUi(
+            self.root, self.canvas,
+            HoverUiPorts(
+                hover_snapshot=self._hover_snapshot,
+                status_snapshot=self._status_snapshot,
+                settings_snapshot=lambda: project_settings(self.settings),
+                anchor=self._hover_anchor,
+                care=self.interact,
+                open_sprite_hover=self._on_enter,
+                record_contact=self._record_hover_contact,
+                save_position=self._save_hover_position,
+                set_option=self._set_popup_option,
+                toggle_scale=self.toggle_scale,
+                forget_rhythm=self.forget_rhythm,
+                reset_toolbar=self.reset_toolbar_position,
+                center=self.center,
+                quit=self.quit,
+                move_speech=self._move_bubble,
+                restore_stack=self._overlay_stack.restore,
+                always_on_top=lambda: self.settings.always_on_top,
+            ),
         )
         self._last_stack_check = self._last_tick
         self.track: TaskbarTrack = locate_primary_taskbar(
@@ -168,6 +185,34 @@ class DesktopPet:
         self.activity_monitor.start()
         self._scheduled_greeting = self.root.after(460, self._greet_on_start)
         self._scheduled_tick = self.root.after(TICK_MILLISECONDS, self._tick)
+
+    @property
+    def toolbar(self) -> ActionToolbar | None:
+        """Public compatibility view of the independent hover window."""
+        return self._hover.toolbar
+
+    @property
+    def status_panel(self) -> StatusPanel | None:
+        return self._hover.status_panel
+
+    @property
+    def settings_popup(self) -> SettingsPopup | None:
+        return self._hover.settings_popup
+
+    @property
+    def _menu_is_open(self) -> bool:
+        return self._hover.menu_is_open
+
+    @property
+    def _last_hover(self) -> float:
+        return self._hover.last_hover
+
+    @_last_hover.setter
+    def _last_hover(self, value: float) -> None:
+        self._hover.last_hover = value
+
+    def _record_hover_contact(self, now: float) -> None:
+        self.mind.last_contact = now
 
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
@@ -267,22 +312,7 @@ class DesktopPet:
         self._last_hover = now
         self._walk_remaining = 0
         self._next_walk = now + random.uniform(3.0, 6.0)
-        if self.toolbar is None:
-            self.toolbar = ActionToolbar(
-                self.root,
-                snapshot=self._hover_snapshot,
-                anchor=self._hover_anchor,
-                actions=HoverActions(
-                    interact=self.interact,
-                    open_status=self.open_status,
-                    open_settings=self.toggle_settings_menu,
-                    save_position=self._save_hover_position,
-                    move_speech=self._move_bubble,
-                    restore_stack=self._overlay_stack.restore,
-                ),
-                always_on_top=self.settings.always_on_top,
-            )
-        self.toolbar.show()
+        self._hover.show_toolbar()
         self._react(reaction, 2800)
 
     def _on_click_left(self, _event: tk.Event | None = None) -> None:
@@ -347,32 +377,10 @@ class DesktopPet:
         )
 
     def _pointer_in_pet_or_toolbar(self, px: int, py: int) -> bool:
-        under = self.root.winfo_containing(px, py)
-        over_pet = under is self.root or under is self.canvas
-        over_toolbar = (
-            self.toolbar is not None and
-            (self.toolbar.contains_pointer(px, py)
-             or self.toolbar.contains_bridge(px, py))
-        )
-        return bool(over_pet or over_toolbar)
+        return self._hover.pointer_inside(px, py)
 
     def _dismiss_if_outside(self, px: int, py: int) -> None:
-        """One click anywhere else closes temporary controls immediately."""
-        if self.toolbar is not None and self.toolbar._dragging:
-            return
-        over_ui = self._pointer_in_pet_or_toolbar(px, py)
-        over_popup = (
-            self.settings_popup is not None
-            and self.settings_popup.contains_pointer(px, py)
-        )
-        if self.settings_popup is not None and not over_popup and not over_ui:
-            self.settings_popup.close()
-        if (
-            self.toolbar is not None
-            and self.toolbar.visible
-            and not (over_ui or over_popup)
-        ):
-            self.toolbar.hide()
+        self._hover.dismiss_outside(px, py)
 
     def _on_tk_press(self, event: tk.Event) -> None:
         # Tk covers clicks inside Aiko's own windows; the Windows mouse-state
@@ -392,35 +400,10 @@ class DesktopPet:
         )
 
     def _refresh_hover(self, now: float) -> None:
-        if self.toolbar is not None and self.toolbar._dragging:
-            self._last_hover = now
-            return
-        if self.settings_popup is not None:
-            return  # User is actively using her settings popover.
-        px, py = self.root.winfo_pointerx(), self.root.winfo_pointery()
-        if self._pointer_in_pet_or_toolbar(px, py):
-            self._last_hover = now
-            under = self.root.winfo_containing(px, py)
-            if under in (self.root, self.canvas) and (
-                self.toolbar is None or not self.toolbar.visible
-            ):
-                self._on_enter()
-            self.mind.last_contact = now
-        elif (
-            self.toolbar is not None and self.toolbar.visible
-            and now - self._last_hover >= (
-                2.0 if self.settings.toolbar_x is not None else 0.9
-            )
-        ):
-            self.toolbar.hide()
+        self._hover.refresh_hover(now)
 
     def _show_menu(self, event: tk.Event) -> None:
         self.toggle_settings_menu(event.x_root, event.y_root)
-
-    def _settings_closed(self) -> None:
-        self.settings_popup = None
-        self._menu_is_open = False
-        self._last_hover = time.monotonic()
 
     def _set_popup_option(self, name: str, value: bool) -> None:
         setters = {
@@ -437,34 +420,8 @@ class DesktopPet:
             raise ValueError(f"Unknown setting: {name}")
         setter(value)
 
-    def _toolbar_top(self) -> int | None:
-        return (
-            self.toolbar.window.winfo_rooty()
-            if self.toolbar is not None else None
-        )
-
     def toggle_settings_menu(self, x: int, y: int) -> None:
-        if self.settings_popup is not None:
-            self.settings_popup.close()
-            return
-        self._on_enter()
-        self.settings_popup = SettingsPopup(
-            self.root, x, y,
-            snapshot=project_settings(self.settings),
-            actions=SettingsActions(
-                open_status=self.open_status,
-                toggle_scale=self.toggle_scale,
-                set_option=self._set_popup_option,
-                forget_rhythm=self.forget_rhythm,
-                reset_toolbar=self.reset_toolbar_position,
-                center=self.center, quit=self.quit,
-                closed=self._settings_closed,
-            ),
-            toolbar_y=self._toolbar_top,
-            always_on_top=self.settings.always_on_top,
-        )
-        self._menu_is_open = True
-        self._overlay_stack.restore()
+        self._hover.toggle_settings(x, y)
 
     def _poll_desktop_click(self) -> None:
         if self._mouse_clicks.clicked():
@@ -618,42 +575,11 @@ class DesktopPet:
             now=time.monotonic(),
         )
 
-    def _status_closed(self) -> None:
-        self.status_panel = None
-
     def open_status(self) -> None:
-        if self.status_panel is not None:
-            self._overlay_stack.restore()
-            return
-        self.status_panel = StatusPanel(
-            self.root,
-            snapshot=self._status_snapshot,
-            anchor=self._hover_anchor,
-            actions=StatusActions(
-                interact=self.interact,
-                quit=self.quit,
-                closed=self._status_closed,
-            ),
-            always_on_top=self.settings.always_on_top,
-        )
-        self._overlay_stack.restore()
+        self._hover.open_status()
 
     def _refresh_status(self) -> None:
-        if self.status_panel is not None:
-            self.status_panel.refresh()
-
-    @property
-    def _bubble(self) -> tk.Toplevel | None:
-        """Legacy GUI access; the speech presenter owns the native window."""
-        return self._speech.bubble
-
-    @property
-    def _bubble_timeout(self) -> str | None:
-        return self._speech.pending_timer
-
-    @property
-    def _emote_images(self) -> dict[str, tk.PhotoImage]:
-        return self._speech.emote_images
+        self._hover.refresh_status()
 
     def _move_bubble(self) -> None:
         self._speech.move()
@@ -1062,9 +988,7 @@ class DesktopPet:
         self._hide_bubble()
         if self.settings_popup is not None:
             self.settings_popup.close()
-        if self.toolbar is not None:
-            self.toolbar.close()
-            self.toolbar = None
+        self._hover.close_toolbar()
         if self.status_panel is not None:
             self.status_panel.close()
         self.root.destroy()
