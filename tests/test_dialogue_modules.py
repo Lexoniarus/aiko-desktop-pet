@@ -33,12 +33,16 @@ class DialogueModulesTests(unittest.TestCase):
         self.assertTrue(all(line.animation in ANIMATIONS for line in book.lines))
 
     def test_selected_reaction_remains_same_public_type(self) -> None:
-        book = DialogueBook.from_file(rng=random.Random(8))
-        line = book.lines[0]
+        line = Line(
+            id="smoke", event="greeting", text="Hallo!",
+            animation="idle", moods=(), periods=(), weekdays=(),
+            weight=1, cooldown_seconds=0.0,
+        )
+        book = DialogueBook((line,), rng=random.Random(8))
         context = context_at(1760281200)
-        result = book.choose(line.event, "calm", context, 100.0)
-        if result is not None:
-            self.assertIsInstance(result, dialogue.Reaction)
+        result = book.choose("greeting", "calm", context, 100.0)
+        self.assertIsInstance(result, dialogue.Reaction)
+        self.assertEqual(result.text, "Hallo!")
 
     def test_line_parser_rejects_non_mapping_input(self) -> None:
         with self.assertRaises(ValueError):

@@ -32,8 +32,9 @@ third-party packages. Keep German runtime text and English documentation.
 4. **Domain and dialogue (in progress):** The authored German dialogue
    catalogue, validation, and weighted selection now live in
    `dialogue_catalog.py`, while `AikoMind` owns conversational decisions.
-   `dialogue.py` preserves the original public imports. Split distinct rules
-   for pet care, friendship,
+   `ComputerVoice` now also lives in `computer_voice.py`, keeping hardware
+   narration separate from conversation state. `dialogue.py` preserves the
+   original public imports. Split distinct rules for pet care, friendship,
    adaptive work/rest rhythms, and dialogue selection without changing state
    semantics. Preserve existing `state.json` schema and fallback behaviors.
 5. **Infrastructure and quality:** Keep Windows API, monitor access, and
