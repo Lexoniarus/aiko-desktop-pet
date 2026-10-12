@@ -47,6 +47,8 @@ jobs:
           python -m mypy --strict --follow-imports=silent \
             aiko_pet/adaptive_policy.py aiko_pet/dialogue_events.py \
             aiko_pet/movement.py aiko_pet/reaction_playback.py
+      - name: Enforce PEP 8 line lengths across application and tools
+        run: python -m ruff check --select E501 aiko_pet main.py tools
       - name: Install whole-application typing dependencies
         run: python -m pip install mypy==1.18.2 pyright Pillow==11.3.0
       - name: Enforce strict typing across the entire application

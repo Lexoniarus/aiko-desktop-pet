@@ -119,7 +119,11 @@ class StateStore:
              *, adaptive: AdaptiveMemory | None = None) -> None:
         """Don't leave a half-written save on power loss or interruption."""
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        payload = {"version": SCHEMA_VERSION, "pet": pet.to_dict(), "settings": settings.to_dict()}
+        payload = {
+            "version": SCHEMA_VERSION,
+            "pet": pet.to_dict(),
+            "settings": settings.to_dict(),
+        }
         if adaptive is not None:
             payload["adaptive"] = adaptive.to_dict()
         temporary: str | None = None

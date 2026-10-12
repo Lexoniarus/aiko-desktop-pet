@@ -47,7 +47,11 @@ class SettingsPopup:
             ("auto_routine", "Automatischer Tagesrhythmus", pet.set_auto_routine),
             ("follow_cursor", "Maus beobachten", pet.set_follow_cursor),
             ("spontaneous_talk", "Von selbst sprechen", pet.set_spontaneous_talk),
-            ("observe_computer", "Rechnerauslastung beobachten", pet.set_observe_computer),
+            (
+                "observe_computer",
+                "Rechnerauslastung beobachten",
+                pet.set_observe_computer,
+            ),
             ("learn_rhythm", "Meinen Rhythmus kennenlernen", pet.set_learn_rhythm),
         )
         for setting, label, setter in options:
@@ -90,9 +94,10 @@ class SettingsPopup:
         setter(variable.get())
 
     @staticmethod
-    def _button(parent: tk.Widget, title: str,
-                command: Callable[[], None],
-                *, side: Literal["left", "right", "top", "bottom"] = "top") -> tk.Button:
+    def _button(
+        parent: tk.Widget, title: str, command: Callable[[], None], *,
+        side: Literal["left", "right", "top", "bottom"] = "top",
+    ) -> tk.Button:
         button = tk.Button(
             parent, text=title, command=command, bg="#314158",
             fg="#edf5fe", activebackground="#506a89",
@@ -115,7 +120,10 @@ class SettingsPopup:
 
     def contains_pointer(self, px: int, py: int) -> bool:
         x, y = self.window.winfo_rootx(), self.window.winfo_rooty()
-        return x <= px < x + self.window.winfo_width() and y <= py < y + self.window.winfo_height()
+        return (
+            x <= px < x + self.window.winfo_width()
+            and y <= py < y + self.window.winfo_height()
+        )
 
     def close(self) -> None:
         if self.pet.settings_popup is self:

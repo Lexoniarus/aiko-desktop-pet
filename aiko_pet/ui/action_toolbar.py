@@ -51,7 +51,9 @@ class ActionToolbar:
             key: tk.PhotoImage(file=str(KENNEY_UI_DIR / f"button_{key}.png"))
             for key in ("regular", "wide", "small")
         }
-        self._header_image = tk.PhotoImage(file=str(KENNEY_UI_DIR / "toolbar_banner.png"))
+        self._header_image = tk.PhotoImage(
+            file=str(KENNEY_UI_DIR / "toolbar_banner.png"),
+        )
         self.window.wm_attributes("-topmost", pet.settings.always_on_top)
         if sys.platform == "win32":
             self.window.wm_attributes("-toolwindow", True)
@@ -254,7 +256,10 @@ class ActionToolbar:
         height = self.window.winfo_reqheight()
         screen_width = self.pet.root.winfo_screenwidth()
         screen_height = self.pet.root.winfo_screenheight()
-        if self.pet.settings.toolbar_x is not None and self.pet.settings.toolbar_y is not None:
+        if (
+            self.pet.settings.toolbar_x is not None
+            and self.pet.settings.toolbar_y is not None
+        ):
             x, y = self.pet.settings.toolbar_x, self.pet.settings.toolbar_y
         else:
             pet_x = self.pet.settings.x or 0
@@ -296,8 +301,14 @@ class ActionToolbar:
         # The window manager may not have acknowledged our last geometry
         # request before ButtonRelease; save the requested, clamped position.
         position = self._last_placement
-        self.pet.settings.toolbar_x = position[0] if position is not None else self.window.winfo_rootx()
-        self.pet.settings.toolbar_y = position[1] if position is not None else self.window.winfo_rooty()
+        self.pet.settings.toolbar_x = (
+            position[0] if position is not None
+            else self.window.winfo_rootx()
+        )
+        self.pet.settings.toolbar_y = (
+            position[1] if position is not None
+            else self.window.winfo_rooty()
+        )
         self._drag_origin = None
         self._dragging = False
         self.pet._last_hover = time.monotonic()

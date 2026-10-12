@@ -86,7 +86,10 @@ class TimeContext:
 
     @property
     def label(self) -> str:
-        return f"{WEEKDAYS[self.local.weekday()]} · {self.local:%H:%M} · {self.activity}"
+        return (
+            f"{WEEKDAYS[self.local.weekday()]} · "
+            f"{self.local:%H:%M} · {self.activity}"
+        )
 
     @property
     def schedule_line(self) -> str:

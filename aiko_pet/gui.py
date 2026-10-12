@@ -306,7 +306,11 @@ class DesktopPet:
         )
         if self.settings_popup is not None and not over_popup and not over_ui:
             self.settings_popup.close()
-        if self.toolbar is not None and self.toolbar.visible and not (over_ui or over_popup):
+        if (
+            self.toolbar is not None
+            and self.toolbar.visible
+            and not (over_ui or over_popup)
+        ):
             self.toolbar.hide()
 
     def _on_tk_press(self, event: tk.Event) -> None:
@@ -343,7 +347,9 @@ class DesktopPet:
             self.mind.last_contact = now
         elif (
             self.toolbar is not None and self.toolbar.visible
-            and now - self._last_hover >= (2.0 if self.settings.toolbar_x is not None else 0.9)
+            and now - self._last_hover >= (
+                2.0 if self.settings.toolbar_x is not None else 0.9
+            )
         ):
             self.toolbar.hide()
 
@@ -413,7 +419,9 @@ class DesktopPet:
         if self.toolbar is not None:
             self.toolbar.window.wm_attributes("-topmost", self.settings.always_on_top)
         if self.status_panel is not None:
-            self.status_panel.window.wm_attributes("-topmost", self.settings.always_on_top)
+            self.status_panel.window.wm_attributes(
+                "-topmost", self.settings.always_on_top,
+            )
         if self._bubble is not None:
             self._bubble.wm_attributes("-topmost", self.settings.always_on_top)
         if self.settings_popup is not None:
@@ -739,7 +747,11 @@ class DesktopPet:
         if self._pending_computer_line is None:
             return
         event, observed_at = self._pending_computer_line
-        if now - observed_at > 25 or not self.settings.spontaneous_talk or self.state.sleeping:
+        if (
+            now - observed_at > 25
+            or not self.settings.spontaneous_talk
+            or self.state.sleeping
+        ):
             self._pending_computer_line = None
         elif now >= self._action_until and now - self._last_spoken >= 7:
             response = self.mind.computer_event(

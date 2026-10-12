@@ -22,7 +22,9 @@ EMOTIONS = frozenset({
     "asleep", "irritated", "tired", "hungry", "withdrawn", "warm", "playful", "calm",
     "lonely", "seeking_affection",
 })
-PERIODS = frozenset({"night", "breakfast", "quiet", "lunch", "free", "dinner", "evening"})
+PERIODS = frozenset({
+    "night", "breakfast", "quiet", "lunch", "free", "dinner", "evening",
+})
 
 EMOTION_LABELS = {
     "asleep": "Schläfrig",
@@ -151,7 +153,9 @@ class DialogueBook:
         self.recent: deque[str] = deque(maxlen=6)
 
     @classmethod
-    def from_file(cls, file: Path = CATALOGUE, *, rng: random.Random | None = None) -> DialogueBook:
+    def from_file(
+        cls, file: Path = CATALOGUE, *, rng: random.Random | None = None,
+    ) -> DialogueBook:
         data = json.loads(file.read_text(encoding="utf-8"))
         if data.get("catalogue_version") != 1 or data.get("language") != "de":
             raise ValueError("Unsupported dialogue catalogue version")
@@ -162,18 +166,25 @@ class DialogueBook:
     def choose(
         self, event: str, emotion: str, context: TimeContext, now: float,
     ) -> Reaction | None:
-        candidates = [line for line in self.lines if line.event == event and line.matches(emotion, context)]
+        candidates = [
+            line for line in self.lines
+            if line.event == event and line.matches(emotion, context)
+        ]
         if not candidates:
             return None
         fresh = [
             line for line in candidates
             if line.id not in self.recent
-            and now - self.last_used.get(line.id, float("-inf")) >= line.cooldown_seconds
+            and (
+                now - self.last_used.get(line.id, float("-inf"))
+                >= line.cooldown_seconds
+            )
         ]
         if not fresh:
             fresh = [line for line in candidates if line.id not in self.recent]
         if not fresh:
-            fresh = [line for line in candidates if line.id != (self.recent[-1] if self.recent else "")]
+            last_used_id = self.recent[-1] if self.recent else ""
+            fresh = [line for line in candidates if line.id != last_used_id]
         if not fresh:
             fresh = candidates
         weights = [line.score(emotion, context) for line in fresh]

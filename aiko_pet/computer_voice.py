@@ -120,7 +120,8 @@ class ComputerVoice:
         return None
 
     def maybe_event(self, snapshot: "ComputerSnapshot", now: float) -> str | None:
-        if now - max(self.last_voice_at, self.last_change_at) < self.MIN_SECONDS_BETWEEN:
+        since_last = now - max(self.last_voice_at, self.last_change_at)
+        if since_last < self.MIN_SECONDS_BETWEEN:
             return None
         if snapshot.measured_at <= 0 or now - snapshot.measured_at > 65:
             return None

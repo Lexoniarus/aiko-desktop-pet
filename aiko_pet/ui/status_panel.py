@@ -92,7 +92,9 @@ class StatusPanel:
 
         buttons = tk.Frame(self.window, bg="#202733")
         buttons.pack(padx=13, pady=(14, 10))
-        for action, label in (("feed", "Füttern"), ("play", "Spielen"), ("pet", "Streicheln")):
+        for action, label in (
+            ("feed", "Füttern"), ("play", "Spielen"), ("pet", "Streicheln"),
+        ):
             tk.Button(
                 buttons, text=label, command=partial(pet.interact, action),
                 fg="#ffffff", bg="#39495e", activeforeground="#ffffff",
@@ -165,7 +167,10 @@ class StatusPanel:
             if behaviour.uptime_hours is not None:
                 line += f" · Rechnerlaufzeit {behaviour.uptime_hours:.1f} h"
         else:
-            line = "Mein Rhythmus: lernt noch" if self.pet.settings.observe_computer else ""
+            line = (
+                "Mein Rhythmus: lernt noch"
+                if self.pet.settings.observe_computer else ""
+            )
         if self.life_label.cget("text") != line:
             self.life_label.configure(text=line)
         for name in self.bars:

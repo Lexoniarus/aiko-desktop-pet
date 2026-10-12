@@ -42,8 +42,8 @@ third-party packages. Keep German runtime text and English documentation.
    `dialogue.py` continues re-exporting legacy public names.
 5. **Infrastructure and quality (in progress):** Windows API, monitor access,
    and persistence are already in dedicated modules. Ruff linting runs over
-   all Python source files, and E501 line-length checks include domain,
-   adaptive and dialogue modules. Strict Mypy checks cover the full
+   all Python source files, and E501 line-length checks cover the entire
+   application plus tool modules. Strict Mypy checks cover the full
    application, and Pyright enforces typing across application, tools and
    tests. Windows manual smoke acceptance is tracked in
    docs/REFACTOR_ACCEPTANCE.md and is not yet completed.
