@@ -361,6 +361,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app._walk_remaining = 140
         state = self.app._maybe_walk(time.monotonic(), .15)
         self.assertEqual(state, "running-right")
+        assert self.app.settings.x is not None
         self.assertGreater(self.app.settings.x, original_x)
         self.assertEqual(self.app.settings.y, original_y)
         self.app._on_enter()

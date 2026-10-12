@@ -132,17 +132,26 @@ class VoiceTests(unittest.TestCase):
         self.assertIsNone(workload_intensity(ComputerSnapshot()))
         self.assertEqual(workload_intensity(reading(cpu=0, gpu=0)), 0.0)
         high_gpu = reading(cpu=10, gpu=96, ram=50)
-        self.assertGreater(workload_intensity(high_gpu), 0.9)
+        gpu_effort = workload_intensity(high_gpu)
+        assert gpu_effort is not None
+        self.assertGreater(gpu_effort, 0.9)
         self.assertTrue(high_gpu.is_busy())
         # Memory occupancy is not active computation by itself.
         idle_but_occupied = reading(cpu=8, gpu=4, ram=96)
         self.assertFalse(idle_but_occupied.is_busy())
-        self.assertLess(workload_intensity(idle_but_occupied), 0.3)
+        idle_effort = workload_intensity(idle_but_occupied)
+        assert idle_effort is not None
+        self.assertLess(idle_effort, 0.3)
         # Pressure still contributes when the computer is already working.
-        self.assertGreater(
-            workload_intensity(reading(cpu=63, gpu=12, ram=96)),
-            workload_intensity(reading(cpu=63, gpu=12, ram=40)),
+        memory_pressure = workload_intensity(
+            reading(cpu=63, gpu=12, ram=96),
         )
+        less_pressure = workload_intensity(
+            reading(cpu=63, gpu=12, ram=40),
+        )
+        assert memory_pressure is not None
+        assert less_pressure is not None
+        self.assertGreater(memory_pressure, less_pressure)
         for snap in (high_gpu, idle_but_occupied):
             self.assertNotIn("GPU", workload_description(snap))
             self.assertNotIn("RAM", workload_description(snap))

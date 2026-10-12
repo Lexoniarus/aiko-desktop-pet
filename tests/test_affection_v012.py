@@ -92,7 +92,8 @@ class MeaningfulFriendshipTests(unittest.TestCase):
         for action, value in (("feed", "satiety"), ("pet", "affection"),
                               ("talk", "social"), ("play", "mood")):
             with self.subTest(action=action):
-                state = PetState(energy=60, **{value: 100})
+                state = PetState(energy=60)
+                setattr(state, value, 100)
                 state.interact(action, now=stamp())
                 self.assertEqual(state.friendship, 15)
 
