@@ -1,0 +1,7 @@
+{
+  "include": ["aiko_pet", "main.py", "tools", "tests"],
+  "exclude": ["aiko_pet/assets", "aiko_pet/data"],
+  "pythonVersion": "3.11",
+  "typeCheckingMode": "standard",
+  "reportMissingTypeStubs": "none"
+}
