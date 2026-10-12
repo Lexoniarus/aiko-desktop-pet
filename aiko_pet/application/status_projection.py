@@ -7,7 +7,7 @@ from ..dialogue import AikoMind, EMOTION_LABELS
 from ..domain import PetState
 from ..routine import TimeContext
 from ..system_activity import ComputerSnapshot, percent_label
-from ..ui.status_contracts import StatusSnapshot
+from .view_models import StatusSnapshot
 
 
 def project_status(

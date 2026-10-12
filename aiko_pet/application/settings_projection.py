@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from ..storage import PetSettings
-from ..ui.settings_contracts import SettingsSnapshot
+from .view_models import SettingsSnapshot
 
 
 def project_settings(settings: PetSettings) -> SettingsSnapshot:

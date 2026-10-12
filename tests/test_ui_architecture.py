@@ -46,6 +46,19 @@ class UiDependencyRules(unittest.TestCase):
                 }
                 self.assertNotIn("DesktopPet", names)
 
+    def test_application_never_depends_on_ui_implementations(self) -> None:
+        for path in (ROOT / "application").glob("*.py"):
+            with self.subTest(module=path.name):
+                tree = ast.parse(path.read_text("utf-8"))
+                for node in ast.walk(tree):
+                    if not isinstance(node, ast.ImportFrom):
+                        continue
+                    name = node.module or ""
+                    self.assertFalse(
+                        name == "ui" or name.startswith("ui.")
+                        or name.startswith("aiko_pet.ui."),
+                    )
+
     def test_application_services_never_import_tkinter(self) -> None:
         for relative in APPLICATION_SERVICES:
             with self.subTest(module=relative):

@@ -1,21 +1,11 @@
-"""Options and actions allowed to the standalone settings popover."""
+"""Settings callback capabilities and backwards-compatible snapshot import."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Callable
 
-
-@dataclass(frozen=True, slots=True)
-class SettingsSnapshot:
-    scale: int
-    options: tuple[tuple[str, bool], ...]
-
-    def value(self, key: str) -> bool:
-        for name, value in self.options:
-            if name == key:
-                return value
-        raise KeyError(key)
+from ..application.view_models import SettingsSnapshot as SettingsSnapshot
 
 
 @dataclass(frozen=True, slots=True)

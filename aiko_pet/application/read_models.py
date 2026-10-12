@@ -15,9 +15,9 @@ from ..domain import PetState
 from ..routine import TimeContext
 from ..storage import PetSettings
 from ..system_activity import ComputerSnapshot
-from ..ui.hover_contracts import HoverAnchor, HoverSnapshot
-from ..ui.settings_contracts import SettingsSnapshot
-from ..ui.status_contracts import StatusSnapshot
+from .view_models import (
+    HoverAnchor, HoverSnapshot, SettingsSnapshot, StatusSnapshot,
+)
 from .hover_projection import project_hover
 from .settings_projection import project_settings
 from .status_projection import project_status

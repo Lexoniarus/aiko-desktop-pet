@@ -9,7 +9,7 @@ from ..system_activity import (
     percent_label,
     workload_description,
 )
-from ..ui.hover_contracts import HoverSnapshot
+from .view_models import HoverSnapshot
 
 
 def project_hover(
