@@ -46,7 +46,7 @@ class CareActionRulesTests(unittest.TestCase):
         self.assertEqual(state.satiety, 100.0)
 
     def test_meal_credit_is_awarded_only_once_per_window(self) -> None:
-        meal_time = stamp(hour=12)
+        meal_time = stamp(hour=13)
         ctx = context_at(meal_time)
         self.assertIsNotNone(ctx.meal)
         state = PetState(updated_at=meal_time)
@@ -73,7 +73,7 @@ class CareActionRulesTests(unittest.TestCase):
         self.assertEqual(state.energy, 100)
 
     def test_manual_sleep_and_user_care_do_not_lose_night_override(self) -> None:
-        night_time = stamp(hour=23)
+        night_time = datetime(2026, 10, 12, 23, 45).timestamp()
         context = context_at(night_time)
         self.assertTrue(context.night)
         state = PetState(updated_at=night_time)
