@@ -121,7 +121,7 @@ class ClickStoryTests(unittest.TestCase):
         self.state.sleeping = True
         for i in range(12):
             r = self.mind.click("left", self.state, self.context, 30+i)
-        assert r is not None
+            assert r is not None
             self.assertEqual(r.event, "sleep_click")
         self.assertTrue(self.state.sleeping)
         self.assertEqual(self.mind.irritated_until, -1)
