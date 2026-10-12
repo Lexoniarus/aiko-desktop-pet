@@ -25,9 +25,20 @@
 **Requirements:** Windows 10 or 11 and Python 3.11 or later with Tkinter.
 
 1. [Download the repository as a ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip) and extract it to a local folder.
-2. Double-click `Aiko_starten.bat`.
+2. Double-click `Aiko_starten.bat`, or run `python main.py` in a terminal
+   from the project folder. You can also use `python -m aiko_pet`.
 3. Hover over Aiko to view needs and care actions.
 4. If startup fails, run `Aiko_starten_debug.bat` to see console errors.
+
+### Optional local .env configuration
+
+No environment file is required, and there are no API keys or secrets.
+If you want to choose a different save-file path, copy `.env.example` to `.env`
+and set `AIKO_SAVE_PATH` to the desired file (not just a directory). All three
+entry points use the same optional configuration. Existing operating-system
+environment variables take precedence. Without an override, saves remain at
+`%LOCALAPPDATA%\AikoDesktopPet\state.json` on Windows.
+The `.env` file is ignored by Git and is never published.
 
 No additional Python packages are required to run the game. If **Kenney Mini** is already installed locally, the application can use it; otherwise it falls back to Segoe UI. Font files are not distributed in this repository.
 

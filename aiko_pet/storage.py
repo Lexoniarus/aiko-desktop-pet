@@ -18,6 +18,12 @@ SCHEMA_VERSION = 1
 
 
 def default_save_path() -> Path:
+    custom_path = os.environ.get("AIKO_SAVE_PATH", "").strip()
+    if custom_path:
+        candidate = Path(os.path.expandvars(os.path.expanduser(custom_path)))
+        if not candidate.is_absolute():
+            candidate = Path(__file__).resolve().parents[1] / candidate
+        return candidate
     if sys.platform == "win32":
         base = Path(os.environ.get("LOCALAPPDATA") or Path.home() / "AppData" / "Local")
     else:

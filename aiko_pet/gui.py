@@ -18,6 +18,7 @@ from tkinter import messagebox
 from typing import Callable
 
 from .adaptive import AdaptiveRoutine, Observation
+from .config import load_env_file
 from .desktop_input import GlobalMouseClicks, idle_seconds_windows
 from .dialogue import AikoMind, ComputerVoice, EMOTION_LABELS, Reaction
 from .gaze import gaze_sector
@@ -1607,6 +1608,7 @@ class DesktopPet:
 
 
 def main() -> None:
+    load_env_file()
     app = DesktopPet()
     app.run()
 
