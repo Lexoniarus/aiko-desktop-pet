@@ -26,14 +26,13 @@ from .ui.hover_contracts import HoverAnchor, HoverSnapshot
 from .ui.hover_ui import HoverUi, HoverUiPorts
 from .application.router import ApplicationRouter
 from .animation import (
-    FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
-    FrameClock, choose_passive_animation,
+    FRAME_COUNTS as FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
+    FrameClock,
 )
 from .config import load_env_file
 from .desktop_input import GlobalMouseClicks, idle_seconds_windows
 from .dialogue import AikoMind, ComputerVoice, Reaction
-from .gaze import gaze_sector
-from .movement import WalkConditions, WalkController
+from .movement import WalkController
 from .routine import TimeContext, context_at
 from .reaction_sequence import Cue, EMOTES as EMOTES
 from .reaction_playback import ReactionPlayer, choose_idle_emote
@@ -42,11 +41,12 @@ from .system_activity import ActivityMonitor
 from .taskbar import TaskbarTrack, locate_primary_taskbar
 from .window_stack import WindowStack
 from .asset_paths import (
-    ASSETS,
+    ASSETS as ASSETS,
     EMOTE_ASSETS as EMOTE_ASSETS,
     SCI_FI_UI as SCI_FI_UI,
 )
 from .ui.action_toolbar import ActionToolbar
+from .ui.animated_pet import AnimatedPet, AnimatedPorts
 from .ui.settings_popup import SettingsPopup
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
 from .ui.status_contracts import StatusSnapshot
@@ -92,18 +92,10 @@ class DesktopPet:
             bg=self.background, borderwidth=0, highlightthickness=0,
         )
         self.canvas.pack()
-        self.sprites = self._load_sprites()
-        self.image_item = self.canvas.create_image(
-            0, 0, anchor="nw", image=self.sprites["idle"][0],
-        )
-        self._frame_clock = FrameClock(started_at=time.monotonic())
         self._last_tick = time.monotonic()
         self._last_track_check = self._last_tick
         self._action_until = 0.0
         self._action_state = "idle"
-        self._movement = WalkController(
-            next_walk_at=time.monotonic() + random.uniform(3.0, 8.0),
-        )
         self._last_saved = time.monotonic()
         self.mind = AikoMind(started_at=self._last_saved)
         self.application = ApplicationRouter(
@@ -127,6 +119,23 @@ class DesktopPet:
                 last_spoken=lambda: self._last_spoken,
             ),
         )
+        self._animated = AnimatedPet(
+            self.root, self.canvas, self.state, self.settings,
+            self.adaptive, self.activity_monitor,
+            AnimatedPorts(
+                track=lambda: self.track,
+                toolbar_visible=lambda: (
+                    self.toolbar is not None and self.toolbar.visible
+                ),
+                place_x=self._place_x,
+                attention_until=lambda: self._attention_until,
+                last_pointer_move=lambda: self._last_pointer_move,
+                last_spoken=lambda: self._last_spoken,
+                action_until=lambda: self._action_until,
+                action_state=lambda: self._action_state,
+                walk_pause=self._on_walk_pause,
+            ),
+        )
         self._closed = False
         self._scheduled_tick: str | None = None
         self._scheduled_greeting: str | None = None
@@ -134,7 +143,6 @@ class DesktopPet:
         self._next_comment = self._last_saved + random.uniform(180.0, 360.0)
         self._next_cursor_line = self._last_saved + random.uniform(200.0, 420.0)
         self._next_idle_emote = self._last_saved + random.uniform(70.0, 170.0)
-        self._gaze_sector: int | None = None
         self._previous_pointer: tuple[int, int] | None = None
         self._last_pointer_move = -100.0
         self._last_attention = -100.0
@@ -251,6 +259,30 @@ class DesktopPet:
     ) -> None:
         self._activity.pending_computer_line = value
 
+    @property
+    def _movement(self) -> WalkController:
+        return self._animated.movement
+
+    @property
+    def _frame_clock(self) -> FrameClock:
+        return self._animated.frame_clock
+
+    @property
+    def sprites(self) -> dict[str, list[tk.PhotoImage]]:
+        return self._animated.sprites
+
+    @property
+    def image_item(self) -> int:
+        return self._animated.image_item
+
+    @property
+    def _gaze_sector(self) -> int | None:
+        return self._animated.gaze_sector
+
+    @_gaze_sector.setter
+    def _gaze_sector(self, value: int | None) -> None:
+        self._animated.gaze_sector = value
+
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
         windows: list[tk.Tk | tk.Toplevel] = [self.root]
@@ -265,21 +297,7 @@ class DesktopPet:
         return windows
 
     def _load_sprites(self) -> dict[str, list[tk.PhotoImage]]:
-        sprites: dict[str, list[tk.PhotoImage]] = {}
-        for state, count in FRAME_COUNTS.items():
-            frames: list[tk.PhotoImage] = []
-            for i in range(count):
-                path = ASSETS / state / f"{i:02d}.png"
-                if not path.is_file():
-                    raise FileNotFoundError(f"Missing sprite: {path}")
-                frame = tk.PhotoImage(file=str(path))
-                if (frame.width(), frame.height()) != (FRAME_WIDTH, FRAME_HEIGHT):
-                    raise ValueError(f"Invalid sprite dimensions: {path}")
-                if self.settings.scale == 2:
-                    frame = frame.zoom(2)
-                frames.append(frame)
-            sprites[state] = frames
-        return sprites
+        return self._animated.load_sprites()
 
     def _setup_events(self) -> None:
         # The care controls stay in the hover bar, but mouse clicks now
@@ -574,9 +592,8 @@ class DesktopPet:
         self.settings.scale = 2 if self.settings.scale == 1 else 1
         self.width = FRAME_WIDTH * self.settings.scale
         self.height = FRAME_HEIGHT * self.settings.scale
-        self.sprites = self._load_sprites()
+        self._animated.reload_sprites()
         self.canvas.config(width=self.width, height=self.height)
-        self.canvas.itemconfigure(self.image_item, image=self.sprites["idle"][0])
         self._last_sprite_key = None
         self._gaze_sector = None
         self._placed = False  # Force Tk geometry update even at unchanged x/y.
@@ -656,18 +673,7 @@ class DesktopPet:
         self._speech.hide()
 
     def _gaze_direction(self, pointer: tuple[int, int]) -> int | None:
-        if not self.settings.follow_cursor:
-            self._gaze_sector = None
-            return None
-        eyes_x = self.root.winfo_x() + 63 * self.settings.scale
-        eyes_y = self.root.winfo_y() + 82 * self.settings.scale
-        # Tk pointer coordinates are absolute screen coordinates, even when
-        # hovering another application's window or a second monitor.
-        self._gaze_sector = gaze_sector(
-            eyes_x, eyes_y, *pointer,
-            scale=self.settings.scale, previous=self._gaze_sector,
-        )
-        return self._gaze_sector
+        return self._animated.gaze_direction(pointer)
 
     def _observe_pointer(self, now: float) -> tuple[int, int]:
         pointer = (self.root.winfo_pointerx(), self.root.winfo_pointery())
@@ -716,50 +722,18 @@ class DesktopPet:
     def _next_walk(self, value: float) -> None:
         self._movement.next_walk_at = value
 
-    def _maybe_walk(self, now: float, dt: float) -> str | None:
-        """Apply a planned horizontal step; only Tkinter moves the window."""
-        observed = self.adaptive.current
-        busy = (observed.focused if observed is not None
-                else self.activity_monitor.latest().is_busy())
-        conditions = WalkConditions(
-            now=now,
-            elapsed_seconds=dt,
-            x=self.settings.x or 0,
-            track=self.track,
-            sprite_width=self.width,
-            energy=self.state.energy,
-            auto_walk=self.settings.auto_walk,
-            sleeping=self.state.sleeping,
-            attention_active=now < self._attention_until,
-            toolbar_visible=self.toolbar is not None and self.toolbar.visible,
-            observing_computer=self.settings.observe_computer,
-            computer_busy=busy,
-            quiet_period=bool(observed is not None and observed.quiet),
-        )
-        step = self._movement.plan_step(conditions)
-        if step is None:
-            return None
-        old_x = self.settings.x or 0
-        self._place_x(old_x + step.pixels)
-        displacement = (self.settings.x or 0) - old_x
-        if self._movement.record_displacement(displacement):
-            if (
-                self.settings.spontaneous_talk
-                and now - self._last_spoken > 130
-                and random.random() < 0.23
-            ):
-                self._react(self.mind.say_event(
-                    "walk_pause", self.state, self.context, now,
-                ))
-        return step.animation
+    def _on_walk_pause(self, now: float) -> None:
+        self._react(self.mind.say_event(
+            "walk_pause", self.state, self.context, now,
+        ))
 
-    def _show_frame(self, state: str, now: float, *, fixed: int | None = None) -> None:
-        """Render the next chosen frame without owning animation timing."""
-        frames = self.sprites[state]
-        frame_index = self._frame_clock.next_index(
-            state, now, len(frames), fixed=fixed,
-        )
-        self.canvas.itemconfigure(self.image_item, image=frames[frame_index])
+    def _maybe_walk(self, now: float, dt: float) -> str | None:
+        return self._animated.maybe_walk(now, dt)
+
+    def _show_frame(
+        self, state: str, now: float, *, fixed: int | None = None,
+    ) -> None:
+        self._animated.show_frame(state, now, fixed=fixed)
 
     def _react_to_computer(self, now: float) -> None:
         self._activity.react_to_computer(now, self.context)
@@ -807,42 +781,7 @@ class DesktopPet:
     def _render_current_sprite(
         self, now: float, elapsed_seconds: float, pointer: tuple[int, int],
     ) -> None:
-        """Choose a movement/action/passive sprite, then render its frame."""
-        if self.state.sleeping:
-            self._walk_remaining = 0
-            self._show_frame("idle", now, fixed=2)
-        elif now < self._action_until:
-            self._show_frame(self._action_state, now)
-        else:
-            movement = self._maybe_walk(now, elapsed_seconds)
-            if movement is not None:
-                self._show_frame(movement, now)
-            else:
-                # Follow movement anywhere on the virtual desktop; after a
-                # few seconds of stillness, go back to ordinary idle sprites.
-                if now - self._last_pointer_move < 4.0:
-                    look_direction = self._gaze_direction(pointer)
-                else:
-                    look_direction = None
-                    self._gaze_sector = None
-                # Keep hardware sampling lazy: looking at the cursor has
-                # precedence and previously skipped this monitor read.
-                computer_busy = (
-                    self.activity_monitor.latest().is_busy()
-                    if look_direction is None and self.settings.observe_computer
-                    else False
-                )
-                animation = choose_passive_animation(
-                    gaze_direction=look_direction,
-                    observing_computer=self.settings.observe_computer,
-                    computer_busy=computer_busy,
-                    energy=self.state.energy,
-                    mood=self.state.mood,
-                    satiety=self.state.satiety,
-                )
-                self._show_frame(
-                    animation.animation, now, fixed=animation.fixed_frame,
-                )
+        self._animated.render(now, elapsed_seconds, pointer)
 
     def _maybe_show_idle_emote(self, now: float) -> None:
         """Run occasional nonverbal reactions only while Aiko is free."""

@@ -7,7 +7,6 @@ widgets, notification adapters or network services. All host effects use ports.
 from __future__ import annotations
 
 import random
-import sys
 import time
 import tkinter as tk
 from dataclasses import dataclass
