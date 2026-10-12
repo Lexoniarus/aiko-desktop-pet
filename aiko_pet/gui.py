@@ -16,6 +16,7 @@ from tkinter import messagebox
 
 from .adaptive import AdaptiveRoutine
 from .application.activity import ActivityCallbacks, ActivityCoordinator
+from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
 from .ui.hover_ui import HoverUi, HoverUiPorts
@@ -133,9 +134,11 @@ class DesktopPet:
         self._closed = False
         self._scheduled_tick: str | None = None
         self._scheduled_greeting: str | None = None
-        self._last_spoken = -1000.0
-        self._next_comment = self._last_saved + random.uniform(180.0, 360.0)
-        self._next_idle_emote = self._last_saved + random.uniform(70.0, 170.0)
+        self._attention = AttentionCoordinator(
+            self.state, self.settings, self.mind, self.computer_voice,
+            self.activity_monitor, self.application,
+            started_at=self._last_saved,
+        )
         self._speech = SpeechPresenter(
             root=self.root,
             anchor=lambda: SpeechAnchor(
@@ -199,6 +202,30 @@ class DesktopPet:
         self.activity_monitor.start()
         self._scheduled_greeting = self.root.after(460, self._greet_on_start)
         self._scheduled_tick = self.root.after(TICK_MILLISECONDS, self._tick)
+
+    @property
+    def _last_spoken(self) -> float:
+        return self._attention.last_spoken
+
+    @_last_spoken.setter
+    def _last_spoken(self, value: float) -> None:
+        self._attention.last_spoken = value
+
+    @property
+    def _next_comment(self) -> float:
+        return self._attention.next_comment
+
+    @_next_comment.setter
+    def _next_comment(self, value: float) -> None:
+        self._attention.next_comment = value
+
+    @property
+    def _next_idle_emote(self) -> float:
+        return self._attention.next_idle_emote
+
+    @_next_idle_emote.setter
+    def _next_idle_emote(self, value: float) -> None:
+        self._attention.next_idle_emote = value
 
     @property
     def toolbar(self) -> ActionToolbar | None:
@@ -364,15 +391,11 @@ class DesktopPet:
         self._react_to_click(self.mind.click("right", self.state, self.context, now))
 
     def _greet_on_start(self) -> None:
-        # A startup hello must never interrupt an immediate user interaction.
-        if (not self.settings.spontaneous_talk or
-                time.monotonic() - self._last_spoken < 15):
+        if not self._attention.should_greet(time.monotonic()):
             return
-        self._react(
-            self.mind.say_event(
-                "greeting", self.state, self.context, time.monotonic(),
-            ), 3300,
-        )
+        self._react(self.mind.say_event(
+            "greeting", self.state, self.context, time.monotonic(),
+        ), 3300)
 
     @property
     def _followup_timeout(self) -> str | None:
@@ -388,7 +411,7 @@ class DesktopPet:
         return self._reaction_player.cues
 
     def _mark_reaction_spoken(self) -> None:
-        self._last_spoken = time.monotonic()
+        self._attention.mark_spoken(time.monotonic())
 
     def _cancel_followup(self) -> None:
         """Cancel an older reaction, including every pending follow-up."""
@@ -543,7 +566,7 @@ class DesktopPet:
 
     def set_spontaneous_talk(self, enabled: bool) -> None:
         self.settings.spontaneous_talk = bool(enabled)
-        self._next_comment = time.monotonic() + random.uniform(180, 360)
+        self._attention.reschedule_comment(time.monotonic())
         self._save()
 
     def set_learn_rhythm(self, enabled: bool) -> None:
@@ -729,61 +752,37 @@ class DesktopPet:
         self._animated.render(now, elapsed_seconds, pointer)
 
     def _maybe_show_idle_emote(self, now: float) -> None:
-        """Run occasional nonverbal reactions only while Aiko is free."""
-        if now >= self._next_idle_emote:
-            self._next_idle_emote = now + random.uniform(85, 190)
-            if (
-                not self.state.sleeping
-                and now >= self._action_until
-                and self._walk_remaining == 0
-                and (self.toolbar is None or not self.toolbar.visible)
-            ):
-                self._start_action(random.choice(("waiting", "review", "idle")), 1.6)
-                self._idle_emote()
+        """An independent policy decides whether Aiko is free for a gesture."""
+        animation = self._attention.idle_animation(
+            now, action_until=self._action_until,
+            walking=self._walk_remaining != 0,
+            toolbar_visible=bool(self.toolbar and self.toolbar.visible),
+        )
+        if animation is not None:
+            self._start_action(animation, 1.6)
+            self._idle_emote()
 
     def _maybe_speak_spontaneously(self, now: float) -> None:
-        """Run the next spontaneous dialogue slot without interrupting care."""
-        if now >= self._next_comment:
-            self._next_comment = now + random.uniform(175, 360)
-            if (
-                self.settings.spontaneous_talk
-                and not self.state.sleeping
-                and (self.toolbar is None or not self.toolbar.visible)
-                and now - self._last_spoken >= 85
-            ):
-                activity_event = self.computer_voice.maybe_event(
-                    self.activity_monitor.latest(), now,
-                )
-                if activity_event is not None:
-                    response = self.mind.computer_event(
-                        activity_event, self.state, self.context, now,
-                    )
-                else:
-                    response = self.mind.spontaneous_event(
-                        self.state, self.context, now,
-                    )
-                self._react(response, 3600)
+        decision = self._attention.spontaneous(
+            now, self.context,
+            toolbar_visible=bool(self.toolbar and self.toolbar.visible),
+        )
+        if decision.due:
+            self._react(decision.reaction, 3600)
 
     def _present_pending_notification(self, now: float) -> None:
-        """Drain at most one external event without interrupting Aiko.
-
-        Only this Tk event-loop method may turn queued notification data into
-        desktop widgets. Untrusted senders cannot call this renderer directly.
-        """
-        if (
-            self.state.sleeping
-            or now < self._action_until
-            or now - self._last_spoken < 3
-            or self._bubble is not None
-            or self.settings_popup is not None
-            or (self.toolbar is not None and self.toolbar.visible)
-        ):
-            return
-        notification = self.application.next_notification()
+        """The Tk event loop alone turns queued data into rendered text."""
+        notification = self._attention.next_notification(
+            now,
+            action_until=self._action_until,
+            bubble_visible=self._bubble is not None,
+            popup_visible=self.settings_popup is not None,
+            toolbar_visible=bool(self.toolbar and self.toolbar.visible),
+        )
         if notification is None:
             return
         self.say(f"{notification.title}: {notification.message}", 3500)
-        self._last_spoken = now
+        self._attention.mark_spoken(now)
 
     def _refresh_overlays_and_autosave(self, now: float) -> None:
         """Refresh visible panels, window layering and periodic persistence."""
