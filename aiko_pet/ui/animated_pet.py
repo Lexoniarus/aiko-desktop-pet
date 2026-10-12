@@ -14,24 +14,58 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Protocol
 
-from ..adaptive import AdaptiveRoutine
 from ..animation import (
     FRAME_COUNTS, FrameClock, choose_passive_animation,
 )
 from ..asset_paths import ASSETS
-from ..domain import PetState
 from ..gaze import gaze_sector
 from ..movement import WalkConditions, WalkController
-from ..storage import PetSettings
-from ..system_activity import ComputerSnapshot
 from ..taskbar import TaskbarTrack
 
 FRAME_WIDTH = 128
 FRAME_HEIGHT = 208
 
 
+class BusyReading(Protocol):
+    def is_busy(self) -> bool: ...
+
+
 class ActivityReadings(Protocol):
-    def latest(self) -> ComputerSnapshot: ...
+    def latest(self) -> BusyReading: ...
+
+
+class CareVisuals(Protocol):
+    """A read-only view of needs used by sprite presentation."""
+
+    energy: float
+    mood: float
+    satiety: float
+    sleeping: bool
+
+
+class CharacterSettings(Protocol):
+    """Presentation choices without exposing the settings repository."""
+
+    scale: int
+    x: int | None
+    y: int | None
+    follow_cursor: bool
+    auto_walk: bool
+    observe_computer: bool
+    spontaneous_talk: bool
+
+
+class FocusState(Protocol):
+    @property
+    def focused(self) -> bool: ...
+
+    @property
+    def quiet(self) -> bool: ...
+
+
+class FocusReadings(Protocol):
+    @property
+    def current(self) -> FocusState | None: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,8 +87,8 @@ class AnimatedPet:
 
     def __init__(
         self, root: tk.Tk, canvas: tk.Canvas,
-        state: PetState, settings: PetSettings,
-        adaptive: AdaptiveRoutine, monitor: ActivityReadings,
+        state: CareVisuals, settings: CharacterSettings,
+        adaptive: FocusReadings, monitor: ActivityReadings,
         ports: AnimatedPorts,
     ) -> None:
         self.root = root

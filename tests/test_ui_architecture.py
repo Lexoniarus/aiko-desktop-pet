@@ -59,6 +59,25 @@ class UiDependencyRules(unittest.TestCase):
                         or name.startswith("aiko_pet.ui."),
                     )
 
+    def test_character_and_native_window_require_only_typed_ports(self) -> None:
+        forbidden = {
+            "storage", "domain", "adaptive", "adaptive_models",
+            "system_activity",
+        }
+        for relative in ("ui/animated_pet.py", "ui/desktop_window.py"):
+            with self.subTest(module=relative):
+                tree = ast.parse((ROOT / relative).read_text("utf-8"))
+                direct = [
+                    node.module or ""
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.ImportFrom)
+                ]
+                self.assertFalse(
+                    forbidden.intersection({
+                        name.rsplit(".", 1)[-1] for name in direct
+                    }),
+                )
+
     def test_application_services_never_import_tkinter(self) -> None:
         for relative in APPLICATION_SERVICES:
             with self.subTest(module=relative):

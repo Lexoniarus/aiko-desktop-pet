@@ -8,8 +8,7 @@ from __future__ import annotations
 
 import sys
 import tkinter as tk
-
-from ..storage import PetSettings
+from typing import Protocol
 from ..taskbar import locate_primary_taskbar
 
 FRAME_WIDTH = 128
@@ -17,10 +16,19 @@ FRAME_HEIGHT = 208
 MAGENTA = "#ff00ff"
 
 
+class WindowSettings(Protocol):
+    """Only the mutable placement fields required by a desktop window."""
+
+    x: int | None
+    y: int | None
+    scale: int
+    always_on_top: bool
+
+
 class DesktopWindow:
     """Own one character window and its taskbar-relative geometry."""
 
-    def __init__(self, settings: PetSettings) -> None:
+    def __init__(self, settings: WindowSettings) -> None:
         self.settings = settings
         self.root = tk.Tk()
         self.root.withdraw()
