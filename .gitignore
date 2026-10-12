@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Editors
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local saves / logs
+state.json
+*.log
+logs/
+*.sqlite
+*.sqlite3
+*.db
+
+# Exports / fonts / builds
+*.ttf
+*.otf
+*.zip
+*.7z
+*.exe
+*.msi
+build/
+dist/
