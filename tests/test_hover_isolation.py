@@ -64,7 +64,7 @@ class IndependentHoverTests(unittest.TestCase):
         self.state.energy = 14
         self.panel.refresh()
         self.assertIn("14%", self.panel.needs["energy"][2].cget("text"))
-        self.assertIn("CPU 42%", self.panel.hardware.cget("text"))
+        self.assertIn("CPU 42 %", self.panel.hardware.cget("text"))
 
     def test_saved_drag_and_reset_flow_through_callback(self) -> None:
         self.panel._last_placement = (25, 35, 330, 205)

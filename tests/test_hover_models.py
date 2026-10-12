@@ -17,7 +17,7 @@ class HoverModelTests(unittest.TestCase):
         )
         state.affection = 95
         self.assertEqual(model.need_value("affection"), 40)
-        self.assertIn("CPU 80%", model.hardware_line)
+        self.assertIn("CPU 80 %", model.hardware_line)
         with self.assertRaises(KeyError):
             model.need_value("unknown")
 
