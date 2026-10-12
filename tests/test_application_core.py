@@ -52,6 +52,7 @@ class ApplicationCoreTests(unittest.TestCase):
     def test_care_uses_pre_action_tone_and_preserves_state_schema(self) -> None:
         initial_keys = set(self.state.to_dict())
         self.state.affection = 10.0
+        self.state.updated_at = runtime().wall_time
         result = self.router.dispatch(CareCommand("pet"), runtime=runtime())
         self.assertEqual(self.state.affection, 35.0)
         self.assertEqual(result.context.day_key, "2026-10-13")
@@ -62,7 +63,7 @@ class ApplicationCoreTests(unittest.TestCase):
 
     def test_care_matches_prior_pet_dialogue_order(self) -> None:
         rt = runtime()
-        state = PetState(social=10.0)
+        state = PetState(social=10.0, updated_at=rt.wall_time)
         mind = AikoMind(rng=random.Random(12))
         controller = CareController(state, mind, AdaptiveRoutine())
         outcome = controller.execute(CareCommand("talk"), rt)

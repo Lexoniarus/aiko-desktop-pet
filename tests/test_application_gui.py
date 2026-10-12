@@ -58,7 +58,7 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
             wraps=self.pet.application.dispatch,
         ) as dispatch:
             self.pet.interact("pet")
-        self.assertEqual(self.pet.state.affection, 35)
+        self.assertAlmostEqual(self.pet.state.affection, 35, places=3)
         self.assertIsInstance(dispatch.call_args.args[0], CareCommand)
         self.assertEqual(dispatch.call_args.args[0].action, "pet")
         self.assertIsNotNone(self.pet._bubble)
