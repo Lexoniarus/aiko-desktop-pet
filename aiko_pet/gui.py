@@ -15,6 +15,7 @@ from tkinter import messagebox
 
 from .adaptive import AdaptiveRoutine
 from .application.activity import ActivityCallbacks, ActivityCoordinator
+from .desktop.compatibility import DesktopCompatibility
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
@@ -55,7 +56,7 @@ TICK_MILLISECONDS = 140
 
 
 
-class DesktopPet:
+class DesktopPet(DesktopCompatibility):
     def __init__(
         self, *, store: StateStore | None = None,
         activity_monitor: ActivityMonitor | None = None,
@@ -185,131 +186,8 @@ class DesktopPet:
         self._scheduled_greeting = self.root.after(460, self._greet_on_start)
         self._scheduled_tick = self.root.after(TICK_MILLISECONDS, self._tick)
 
-    @property
-    def track(self) -> TaskbarTrack:
-        return self._window.track
-
-    @track.setter
-    def track(self, value: TaskbarTrack) -> None:
-        self._window.track = value
-
-    @property
-    def width(self) -> int:
-        return self._window.width
-
-    @property
-    def height(self) -> int:
-        return self._window.height
-
-    @property
-    def _placed(self) -> bool:
-        return self._window.placed
-
-    @_placed.setter
-    def _placed(self, value: bool) -> None:
-        self._window.placed = value
-
-    @property
-    def _last_spoken(self) -> float:
-        return self._attention.last_spoken
-
-    @_last_spoken.setter
-    def _last_spoken(self, value: float) -> None:
-        self._attention.last_spoken = value
-
-    @property
-    def _next_comment(self) -> float:
-        return self._attention.next_comment
-
-    @_next_comment.setter
-    def _next_comment(self, value: float) -> None:
-        self._attention.next_comment = value
-
-    @property
-    def _next_idle_emote(self) -> float:
-        return self._attention.next_idle_emote
-
-    @_next_idle_emote.setter
-    def _next_idle_emote(self, value: float) -> None:
-        self._attention.next_idle_emote = value
-
-    @property
-    def toolbar(self) -> ActionToolbar | None:
-        """Public compatibility view of the independent hover window."""
-        return self._hover.toolbar
-
-    @property
-    def status_panel(self) -> StatusPanel | None:
-        return self._hover.status_panel
-
-    @property
-    def settings_popup(self) -> SettingsPopup | None:
-        return self._hover.settings_popup
-
-    @property
-    def _menu_is_open(self) -> bool:
-        return self._hover.menu_is_open
-
-    @property
-    def _last_hover(self) -> float:
-        return self._hover.last_hover
-
-    @_last_hover.setter
-    def _last_hover(self, value: float) -> None:
-        self._hover.last_hover = value
-
     def _record_hover_contact(self, now: float) -> None:
         self.mind.last_contact = now
-
-    @property
-    def _last_hardware_sample(self) -> float:
-        return self._activity.last_hardware_sample
-
-    @_last_hardware_sample.setter
-    def _last_hardware_sample(self, value: float) -> None:
-        self._activity.last_hardware_sample = value
-
-    @property
-    def _last_adaptive_sample(self) -> float:
-        return self._activity.last_adaptive_sample
-
-    @_last_adaptive_sample.setter
-    def _last_adaptive_sample(self, value: float) -> None:
-        self._activity.last_adaptive_sample = value
-
-    @property
-    def _pending_computer_line(self) -> tuple[str, float] | None:
-        return self._activity.pending_computer_line
-
-    @_pending_computer_line.setter
-    def _pending_computer_line(
-        self, value: tuple[str, float] | None,
-    ) -> None:
-        self._activity.pending_computer_line = value
-
-    @property
-    def _movement(self) -> WalkController:
-        return self._animated.movement
-
-    @property
-    def _frame_clock(self) -> FrameClock:
-        return self._animated.frame_clock
-
-    @property
-    def sprites(self) -> dict[str, list[tk.PhotoImage]]:
-        return self._animated.sprites
-
-    @property
-    def image_item(self) -> int:
-        return self._animated.image_item
-
-    @property
-    def _gaze_sector(self) -> int | None:
-        return self._animated.gaze_sector
-
-    @_gaze_sector.setter
-    def _gaze_sector(self, value: int | None) -> None:
-        self._animated.gaze_sector = value
 
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
@@ -323,9 +201,6 @@ class DesktopPet:
         if self.settings_popup is not None:
             windows.append(self.settings_popup.window)
         return windows
-
-    def _load_sprites(self) -> dict[str, list[tk.PhotoImage]]:
-        return self._animated.load_sprites()
 
     def _setup_events(self) -> None:
         # The care controls stay in the hover bar, but mouse clicks now
@@ -393,19 +268,6 @@ class DesktopPet:
             "greeting", self.state, self.context, time.monotonic(),
         ), 3300)
 
-    @property
-    def _followup_timeout(self) -> str | None:
-        """Compatibility view of the playback scheduler's pending timer."""
-        return self._reaction_player.pending_timer
-
-    @property
-    def _speech_generation(self) -> int:
-        return self._reaction_player.generation
-
-    @property
-    def _reaction_cues(self) -> tuple[Cue, ...]:
-        return self._reaction_player.cues
-
     def _mark_reaction_spoken(self) -> None:
         self._attention.mark_spoken(time.monotonic())
 
@@ -431,12 +293,6 @@ class DesktopPet:
             reaction, duration_ms, animate=not self.state.sleeping,
         )
 
-    def _pointer_in_pet_or_toolbar(self, px: int, py: int) -> bool:
-        return self._hover.pointer_inside(px, py)
-
-    def _dismiss_if_outside(self, px: int, py: int) -> None:
-        self._hover.dismiss_outside(px, py)
-
     def _on_tk_press(self, event: tk.Event) -> None:
         # Tk covers clicks inside Aiko's own windows; the Windows mouse-state
         # poll below also catches clicks in other applications.
@@ -453,9 +309,6 @@ class DesktopPet:
         self._dismiss_if_outside(
             self.root.winfo_pointerx(), self.root.winfo_pointery(),
         )
-
-    def _refresh_hover(self, now: float) -> None:
-        self._hover.refresh_hover(now)
 
     def _show_menu(self, event: tk.Event) -> None:
         self.toggle_settings_menu(event.x_root, event.y_root)
@@ -474,9 +327,6 @@ class DesktopPet:
         if setter is None:
             raise ValueError(f"Unknown setting: {name}")
         setter(value)
-
-    def toggle_settings_menu(self, x: int, y: int) -> None:
-        self._hover.toggle_settings(x, y)
 
     def _poll_desktop_click(self) -> None:
         if self._mouse_clicks.clicked():
@@ -592,31 +442,6 @@ class DesktopPet:
         self._walk_remaining = 0
         self._save()
 
-    def open_status(self) -> None:
-        self._hover.open_status()
-
-    def _refresh_status(self) -> None:
-        self._hover.refresh_status()
-
-    @property
-    def _bubble(self) -> tk.Toplevel | None:
-        """Compatibility view; the speech presenter owns the real widget."""
-        return self._speech.bubble
-
-    @property
-    def _bubble_timeout(self) -> str | None:
-        return self._speech.pending_timer
-
-    @property
-    def _emote_images(self) -> dict[str, tk.PhotoImage]:
-        return self._speech.emote_images
-
-    def _move_bubble(self) -> None:
-        self._speech.move()
-
-    def _show_emote(self, emote: str, duration_ms: int = 900) -> None:
-        self._speech.show_emote(emote, duration_ms)
-
     def _idle_emote(self) -> None:
         """Occasional unspoken state, never interrupting an existing scene."""
         if self._bubble is not None or self._followup_timeout is not None:
@@ -629,70 +454,15 @@ class DesktopPet:
         )
         self._show_emote(emote, 1100)
 
-    def say(self, phrase: str, duration_ms: int = 1800) -> None:
-        self._speech.show_text(phrase, duration_ms)
-
-    def _hide_bubble(self) -> None:
-        self._speech.hide()
-
-    def _gaze_direction(self, pointer: tuple[int, int]) -> int | None:
-        return self._animated.gaze_direction(pointer)
-
-    def _observe_pointer(self, now: float) -> tuple[int, int]:
-        return self._animated.observe_pointer(now)
-
     def _on_cursor_reaction(self, event: str, now: float) -> None:
         self._react(self.mind.say_event(
             event, self.state, self.context, now,
         ))
 
-    @property
-    def _walk_remaining(self) -> float:
-        """Legacy control surface: walking state now belongs to WalkController."""
-        return self._movement.remaining_distance
-
-    @_walk_remaining.setter
-    def _walk_remaining(self, value: float) -> None:
-        self._movement.remaining_distance = value
-
-    @property
-    def _next_walk(self) -> float:
-        return self._movement.next_walk_at
-
-    @_next_walk.setter
-    def _next_walk(self, value: float) -> None:
-        self._movement.next_walk_at = value
-
     def _on_walk_pause(self, now: float) -> None:
         self._react(self.mind.say_event(
             "walk_pause", self.state, self.context, now,
         ))
-
-    def _maybe_walk(self, now: float, dt: float) -> str | None:
-        return self._animated.maybe_walk(now, dt)
-
-    def _show_frame(
-        self, state: str, now: float, *, fixed: int | None = None,
-    ) -> None:
-        self._animated.show_frame(state, now, fixed=fixed)
-
-    def _react_to_computer(self, now: float) -> None:
-        self._activity.react_to_computer(now, self.context)
-
-    def _interrupt_nap(self) -> bool:
-        return self._activity.interrupt_nap()
-
-    def _allow_nap(self) -> bool:
-        return self._activity.allow_nap()
-
-    def _allow_bedtime(self) -> bool | None:
-        return self._activity.allow_bedtime()
-
-    def _live_effort(self) -> float | None:
-        return self._activity.live_effort()
-
-    def _observe_adaptive(self, now: float, stamp: float) -> None:
-        self._activity.observe_adaptive(now, stamp)
 
     def _advance_pet_lifecycle(self, now: float, wall_time: float) -> None:
         progress = self._activity.advance_lifecycle(
@@ -714,11 +484,6 @@ class DesktopPet:
             self._last_track_check = now
             if self._window.update_track():
                 self._place_x(self.settings.x or self.track.left)
-
-    def _render_current_sprite(
-        self, now: float, elapsed_seconds: float, pointer: tuple[int, int],
-    ) -> None:
-        self._animated.render(now, elapsed_seconds, pointer)
 
     def _maybe_show_idle_emote(self, now: float) -> None:
         """An independent policy decides whether Aiko is free for a gesture."""
