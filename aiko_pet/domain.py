@@ -18,13 +18,18 @@ from .friendship import (
     LEGACY_REWARD_ACTIONS as LEGACY_REWARD_ACTIONS,
     award_friendship_for_care,
 )
-from .routine import MEAL_NAMES, TimeContext, context_at
+from .need_decay import apply_need_decay
+from .pet_lifecycle import (
+    MAX_CATCHUP_SECONDS as MAX_CATCHUP_SECONDS,
+    MAX_LIVE_EFFORT_SECONDS as MAX_LIVE_EFFORT_SECONDS,
+    SIMULATION_STEP_SECONDS as SIMULATION_STEP_SECONDS,
+    advance_pet_time,
+    apply_daily_routine,
+)
+from .routine import MEAL_NAMES, TimeContext
 from .value_rules import bounded as bounded, clamp_saved_time as clamp_saved_time
 
-MAX_CATCHUP_SECONDS = 8 * 60 * 60
-SIMULATION_STEP_SECONDS = 300
-# Live telemetry is never projected across a restart/suspend or offline gap.
-MAX_LIVE_EFFORT_SECONDS = 30.0
+
 @dataclass
 class PetState:
     satiety: float = 75.0
@@ -150,136 +155,45 @@ class PetState:
             self.meals_date = context.day_key
             self.meals_today = []
 
-    def _apply_clock(self, context: TimeContext, *,
-                     allow_bedtime: bool = True,
-                     allow_nap: bool = False,
-                     interrupt_nap: bool = False,
-                effort: float | None = None) -> None:
-        self._roll_meals(context)
-        stamp = context.local.timestamp()
-        if self.sleep_origin == "nap" and (
-            stamp >= self.nap_until or interrupt_nap
-        ):
-            self.sleeping = False
-            self.sleep_origin = ""
-            self.nap_until = 0.0
-        if not allow_bedtime and self.sleep_origin == "routine":
-            # Aiko cannot remain automatically asleep during real computer work.
-            self.sleeping = False
-            self.sleep_origin = ""
-            self.auto_sleep_night = ""
-        if context.night and allow_bedtime:
-            if self.sleep_origin == "nap":
-                self.sleep_origin = "routine"
-                self.nap_until = 0.0
-                self.auto_sleep_night = context.night_key
-            if self.auto_sleep_night != context.night_key:
-                self.auto_sleep_night = context.night_key
-                if not self.sleeping:
-                    self.sleeping = True
-                    self.sleep_origin = "routine"
-        elif self.sleeping and self.sleep_origin == "routine":
-            self.sleeping = False
-            self.sleep_origin = ""
-        elif (not context.night and allow_nap and not self.sleeping
-              and self.auto_nap_day != context.day_key):
-            self.sleeping = True
-            self.sleep_origin = "nap"
-            self.nap_until = stamp + 45 * 60
-            self.auto_nap_day = context.day_key
-
-    def _decay(self, hours: float, context: TimeContext | None,
-               effort: float | None = None) -> None:
-        if self.sleeping:
-            self.satiety = bounded(self.satiety - hours * 1.4)
-            self.mood = bounded(self.mood + hours * 0.5)
-            self.energy = bounded(self.energy + hours * 22.0)
-            self.social = bounded(self.social - hours * 0.35)
-            self.affection = bounded(self.affection - hours * 0.25)
-            return
-        # A relaxed rhythm; weekends are slightly gentler, no obligations.
-        if context is None:
-            satiety_rate, mood_rate, energy_rate = 3.0, -2.0, 2.2
-        else:
-            satiety_rate = 4.0 if context.meal is not None else 2.4
-            mood_rate = (
-                0.3 if context.weekend and context.period in ("free", "evening")
-                else -0.4 if context.period == "quiet"
-                else -0.9
-            )
-            energy_rate = (
-                1.1 if context.weekend and context.period == "free"
-                else 1.5 if context.period == "quiet"
-                else 2.0
-            )
-        # CPU/GPU effort is *her* observed work. RAM use alone adds only
-        # small pressure upstream. Missing telemetry means normal decay.
-        intensity = 0.0 if effort is None else max(
-            0.0, min(1.0, (effort - 0.15) / 0.85),
+    def _apply_clock(
+        self,
+        context: TimeContext,
+        *,
+        allow_bedtime: bool = True,
+        allow_nap: bool = False,
+        interrupt_nap: bool = False,
+        effort: float | None = None,
+    ) -> None:
+        """Apply the clock policy, preserving existing PetState callers."""
+        apply_daily_routine(
+            self, context, allow_bedtime=allow_bedtime,
+            allow_nap=allow_nap, interrupt_nap=interrupt_nap,
+            effort=effort,
         )
-        satiety_rate *= 1.0 + 0.95 * intensity
-        mood_rate -= 2.1 * intensity
-        energy_rate += 2.8 * intensity
-        social_rate = 1.8 + 0.35 * intensity
-        # Affection is emotional care, not CPU/GPU usage and not conversation.
-        affection_rate = 1.35
-        if self.social < 20:
-            mood_rate -= 0.7
-        if self.affection < 20:
-            mood_rate -= 0.8
-        self.satiety = bounded(self.satiety - hours * satiety_rate)
-        self.mood = bounded(self.mood + hours * mood_rate)
-        self.energy = bounded(self.energy - hours * energy_rate)
-        self.social = bounded(self.social - hours * social_rate)
-        self.affection = bounded(self.affection - hours * affection_rate)
 
-    def advance(self, now: float, *, auto_routine: bool = False,
-                allow_bedtime: bool | None = None,
-                allow_nap: bool = False,
-                interrupt_nap: bool = False,
-                effort: float | None = None) -> None:
-        """Catch up at most eight hours, including local day/night transitions.
+    def _decay(
+        self, hours: float, context: TimeContext | None,
+        effort: float | None = None,
+    ) -> None:
+        """Update needs at their established rates."""
+        apply_need_decay(self, hours, context, effort=effort)
 
-        For old saves, plain time decay stays available. With a routine enabled,
-        simulate the most recent eight hours in short intervals so time offline
-        overnight does not behave like eight waking hours.
-        """
-        if not math.isfinite(now):
-            return
-        elapsed = max(0.0, min(MAX_CATCHUP_SECONDS, now - self.updated_at))
-        if (type(effort) not in (int, float) or not math.isfinite(effort)
-                or not 0.0 <= effort <= 1.0):
-            effort = None
-        known_since = now - min(elapsed, MAX_LIVE_EFFORT_SECONDS)
-        if not auto_routine:
-            if effort is None:
-                self._decay(elapsed / 3600.0, None)
-            else:
-                unseen_seconds = max(0.0, known_since - (now - elapsed))
-                self._decay(unseen_seconds / 3600.0, None)
-                self._decay((now - known_since) / 3600.0, None, effort)
-            self._roll_meals(context_at(now))
-        else:
-            cursor = now - elapsed
-            while cursor < now:
-                next_cursor = min(now, cursor + SIMULATION_STEP_SECONDS)
-                if effort is not None and cursor < known_since < next_cursor:
-                    next_cursor = known_since
-                context = context_at((cursor + next_cursor) / 2)
-                self._apply_clock(
-                    context, allow_bedtime=allow_bedtime is not False,
-                    allow_nap=allow_nap, interrupt_nap=interrupt_nap,
-                )
-                self._decay(
-                    (next_cursor - cursor) / 3600, context,
-                    effort if cursor >= known_since else None,
-                )
-                cursor = next_cursor
-            self._apply_clock(
-                context_at(now), allow_bedtime=allow_bedtime is not False,
-                allow_nap=allow_nap,
-            )
-        self.updated_at = now
+    def advance(
+        self,
+        now: float,
+        *,
+        auto_routine: bool = False,
+        allow_bedtime: bool | None = None,
+        allow_nap: bool = False,
+        interrupt_nap: bool = False,
+        effort: float | None = None,
+    ) -> None:
+        """Advance Aiko's needs, day rhythm and sleep state."""
+        advance_pet_time(
+            self, now,
+            auto_routine=auto_routine, allow_bedtime=allow_bedtime,
+            allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
+        )
 
     def _credit_friendship(
         self, action: str, stamp: float, need_before: float,

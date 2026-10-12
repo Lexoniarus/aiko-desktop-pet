@@ -35,6 +35,9 @@ third-party packages. Keep German runtime text and English documentation.
    `value_rules.py` centralizes safe persisted-number normalization.
    `care_actions.py` now implements the six existing care actions behind a
    typed `CareState` boundary; `PetState.interact()` remains the stable API.
+   `need_decay.py` now implements the existing awake/sleep drain formulas.
+   `pet_lifecycle.py` owns bounded time catch-up and daily sleep/nap decisions,
+   while `PetState.advance()` remains the backwards-compatible entry point.
    ** The authored German dialogue
    catalogue, validation, and weighted selection now live in
    `dialogue_catalog.py`, while `AikoMind` owns conversational decisions.
