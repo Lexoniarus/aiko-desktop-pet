@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 import tkinter as tk
+from functools import partial
 from typing import TYPE_CHECKING
 
 from ..dialogue import EMOTION_LABELS
@@ -93,20 +94,20 @@ class StatusPanel:
         buttons.pack(padx=13, pady=(14, 10))
         for action, label in (("feed", "Füttern"), ("play", "Spielen"), ("pet", "Streicheln")):
             tk.Button(
-                buttons, text=label, command=lambda a=action: pet.interact(a),
+                buttons, text=label, command=partial(pet.interact, action),
                 fg="#ffffff", bg="#39495e", activeforeground="#ffffff",
                 activebackground="#51627a", relief="flat", padx=9, pady=5,
                 font=("Segoe UI", 9),
             ).pack(side="left", padx=3)
         for action, label in (("talk", "Reden"), ("energy_drink", "Energy Drink +10")):
             tk.Button(
-                buttons, text=label, command=lambda a=action: pet.interact(a),
+                buttons, text=label, command=partial(pet.interact, action),
                 fg="#ffffff", bg="#39495e", activeforeground="#ffffff",
                 activebackground="#51627a", relief="flat", padx=8, pady=5,
                 font=("Segoe UI", 9),
             ).pack(side="left", padx=3)
         self.sleep_button = tk.Button(
-            self.window, text="", command=lambda: pet.interact("sleep"),
+            self.window, text="", command=partial(pet.interact, "sleep"),
             fg="#ffffff", bg="#344352", relief="flat", pady=5,
             activeforeground="#ffffff", activebackground="#536274",
             font=("Segoe UI", 9),

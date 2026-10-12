@@ -5,7 +5,8 @@ from __future__ import annotations
 import sys
 import time
 import tkinter as tk
-from typing import TYPE_CHECKING, Callable
+from functools import partial
+from typing import TYPE_CHECKING, Callable, Literal
 
 if TYPE_CHECKING:
     from ..gui import DesktopPet
@@ -36,10 +37,10 @@ class SettingsPopup:
         self._button(header, "×", self.close, side="right")
         self.values: dict[str, tk.BooleanVar] = {}
         self._button(frame, "Status und Aktionen ...",
-                     lambda: self._invoke(pet.open_status))
+                     partial(self._invoke, pet.open_status))
         self._button(frame, "Größe: 2× (Pixel)" if pet.settings.scale == 1
                      else "Größe: 1× (klein)",
-                     lambda: self._invoke(pet.toggle_scale))
+                     partial(self._invoke, pet.toggle_scale))
         options = (
             ("always_on_top", "Immer im Vordergrund", pet.set_topmost),
             ("auto_walk", "An der Taskleiste laufen", pet.set_auto_walk),
@@ -54,7 +55,7 @@ class SettingsPopup:
             self.values[setting] = state
             check = tk.Checkbutton(
                 frame, text=label, variable=state,
-                command=lambda variable=state, change=setter: change(variable.get()),
+                command=partial(self._apply_setting, state, setter),
                 bg="#233042", fg="#edf5fe", selectcolor="#314158",
                 activebackground="#314158", activeforeground="#ffffff",
                 anchor="w", padx=9, pady=4, font=("Segoe UI", 9),
@@ -62,10 +63,10 @@ class SettingsPopup:
             )
             check.pack(fill="x", padx=7)
         self._button(frame, "Gelerntes Tagesmuster löschen",
-                     lambda: self._invoke(pet.forget_rhythm))
+                     partial(self._invoke, pet.forget_rhythm))
         self._button(frame, "Leiste wieder neben Aiko",
-                     lambda: self._invoke(pet.reset_toolbar_position))
-        self._button(frame, "Zur Taskleistenmitte", lambda: self._invoke(pet.center))
+                     partial(self._invoke, pet.reset_toolbar_position))
+        self._button(frame, "Zur Taskleistenmitte", partial(self._invoke, pet.center))
         self._button(frame, "Beenden", self._quit)
         self.window.update_idletasks()
         width, height = self.window.winfo_reqwidth(), self.window.winfo_reqheight()
@@ -82,8 +83,16 @@ class SettingsPopup:
         self.window.deiconify()
 
     @staticmethod
+    def _apply_setting(
+        variable: tk.BooleanVar, setter: Callable[[bool], None],
+    ) -> None:
+        """Apply checkbox changes through their injected setting callback."""
+        setter(variable.get())
+
+    @staticmethod
     def _button(parent: tk.Widget, title: str,
-                command: Callable[[], None], *, side: str = "top") -> tk.Button:
+                command: Callable[[], None],
+                *, side: Literal["left", "right", "top", "bottom"] = "top") -> tk.Button:
         button = tk.Button(
             parent, text=title, command=command, bg="#314158",
             fg="#edf5fe", activebackground="#506a89",

@@ -5,6 +5,7 @@ from __future__ import annotations
 import sys
 import time
 import tkinter as tk
+from functools import partial
 from tkinter import font as tkfont
 from typing import TYPE_CHECKING, Callable
 
@@ -96,8 +97,7 @@ class ActionToolbar:
             bar.pack(fill="x", pady=(3, 3))
             self.needs[key] = (bar, rect, label)
             bar.bind(
-                "<Configure>",
-                lambda event, need=key: self._resize_need(need, event.width),
+                "<Configure>", partial(self._on_need_resize, key),
             )
 
         actions_frame = tk.Frame(outer, bg=self.BACKGROUND)
@@ -116,7 +116,7 @@ class ActionToolbar:
             ("sleep", "Schlafen", extra_row),
         ):
             self.buttons[action] = self._button(
-                parent, title, lambda selected=action: self.pet.interact(selected),
+                parent, title, partial(self.pet.interact, action),
             )
         self._button(extra_row, "Status", pet.open_status)
         self.settings_button = self._button(extra_row, "⋯", self._open_settings)
@@ -162,6 +162,10 @@ class ActionToolbar:
             button.winfo_rootx() + button.winfo_width(),
             button.winfo_rooty(),
         )
+
+    def _on_need_resize(self, key: str, event: tk.Event) -> None:
+        """Resize the actual Tk progress canvas for a named need."""
+        self._resize_need(key, event.width)
 
     def _resize_need(self, key: str, width: int | None = None) -> None:
         """Fill the *actual displayed* canvas, not its nominal requested width."""
