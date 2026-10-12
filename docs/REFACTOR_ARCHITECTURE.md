@@ -33,12 +33,13 @@ third-party packages. Keep German runtime text and English documentation.
    `application/activity.py` owns hardware observations, adaptive rhythm,
    and sleep-related decisions without Tk; GUI uses callback ports.
 6. **Desktop composition (in progress):** `DesktopPet` in `gui.py`
-   remains the compatibility façade and composition root, connecting
-   independent animated character, utility UI, presentation and domain.
-   This is **not** the animated character object. `gui.py` is still large
-   (about 875 lines at this milestone), primarily because of bootstrap,
-   callback adapters, legacy APIs and the main update loop. Split these
-   further only through behavior-preserving, tested slices.
+   connects the actual animated character (`AnimatedPet`), native window
+   (`DesktopWindow`), independent hover UI (`HoverUi`) and application core.
+   `AttentionCoordinator` owns idle/spontaneous/notification timing.
+   The old GUI-private methods now live as typed forwards in
+   `desktop/compatibility.py`. The composition module is about 608 lines
+   rather than 875, but scheduling and shutdown still need extraction.
+   See [the full architecture audit](ARCHITECTURE_AUDIT_20261013.md).
 7. **Pet and adaptive domain (implemented):** Care, friendship, bounded
    time progression and decay are separate policies. `adaptive_models.py`
    owns persisted memory/observation contracts, with `adaptive.py`

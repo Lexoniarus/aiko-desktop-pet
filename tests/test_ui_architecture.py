@@ -15,16 +15,15 @@ UTILITY_VIEWS = (
     "ui/hover_ui.py",
 )
 
-APPLICATION_SERVICES = (
-    "application/controller.py",
-    "application/router.py",
-    "application/activity.py",
-    "application/read_models.py",
-    "application/inbox.py",
-)
-
 
 class UiDependencyRules(unittest.TestCase):
+    def test_gui_composition_root_stays_bounded(self) -> None:
+        source = (ROOT / "gui.py").read_text("utf-8")
+        self.assertLessEqual(
+            len(source.splitlines()), 650,
+            "Move feature behavior to its owning object rather than gui.py",
+        )
+
     def test_utility_windows_do_not_import_desktop_or_domain(self) -> None:
         forbidden = {
             "gui", "domain", "adaptive", "storage",
@@ -79,9 +78,9 @@ class UiDependencyRules(unittest.TestCase):
                 )
 
     def test_application_services_never_import_tkinter(self) -> None:
-        for relative in APPLICATION_SERVICES:
-            with self.subTest(module=relative):
-                tree = ast.parse((ROOT / relative).read_text("utf-8"))
+        for path in (ROOT / "application").glob("*.py"):
+            with self.subTest(module=path.name):
+                tree = ast.parse(path.read_text("utf-8"))
                 imported = [
                     name.name for node in ast.walk(tree)
                     if isinstance(node, ast.Import)

@@ -90,8 +90,9 @@ titles or unapproved personal activity details.
 
 ## Pending architecture cleanup
 
-- Break the remaining `DesktopPet` coordinator into a desktop shell,
-  runtime scheduler and injected presentation ports.
+- Finish separating the desktop runtime scheduler and shutdown policy from
+  `gui.py`. Previous private GUI forwards now live in the typed
+  `desktop/compatibility.py` adapter, not in the application core.
 - The hover/status/settings widgets **already** use immutable view models
   and narrow callbacks, with a separate `HoverUi` owner; guard this direction
   against new direct `DesktopPet` references in future changes.
