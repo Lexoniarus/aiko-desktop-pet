@@ -29,7 +29,7 @@ from .dialogue import AikoMind, ComputerVoice, Reaction
 from .gaze import gaze_sector
 from .movement import WalkConditions, WalkController
 from .routine import TimeContext, context_at
-from .reaction_sequence import Cue, EMOTES
+from .reaction_sequence import Cue, EMOTES as EMOTES
 from .reaction_playback import ReactionPlayer, choose_idle_emote
 from .storage import StateStore
 from .system_activity import ActivityMonitor, workload_intensity
