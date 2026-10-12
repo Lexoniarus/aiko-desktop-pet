@@ -25,6 +25,7 @@ from .domain import PetState
 from .routine import TimeContext
 from .computer_voice import ComputerVoice as ComputerVoice
 
+
 class AikoMind:
     """Situational reactions with a short, decaying social memory.
 
@@ -232,66 +233,78 @@ class AikoMind:
             event = "return_close" if state.friendship >= 72 else "return"
         return self.say_event(event, state, context, now)
 
-    def spontaneous_event(
+    def _choose_idle_topic(self, state: PetState, context: TimeContext) -> str:
+        """Select a grounded idle topic using the existing weighted rotation."""
+        events = ["idle", "idle", "idle", "idle"]
+        if state.friendship >= 78 and state.mood >= 55:
+            events.append("close_thought")
+        if context.period in ("breakfast", "quiet"):
+            events.append("morning")
+        if context.period == "lunch":
+            events.append("midday")
+        if context.period == "evening":
+            events.append("evening")
+        if context.night:
+            events.append("night")
+        if context.weekend:
+            events.append("weekend")
+        if context.local.weekday() == 0:
+            events.append("monday")
+        if context.local.weekday() == 4:
+            events.append("friday")
+        return self.rng.choice(events)
+
+    def _select_spontaneous_event(
         self, state: PetState, context: TimeContext, now: float,
-    ) -> Reaction | None:
-        """Choose an observed situation; no imagined apps or off-screen story."""
-        if state.sleeping:
-            return None
+    ) -> str:
+        """Prioritize real needs, measured work and recently observed rest."""
         tone = self.emotion(state, now)
         situation = self.situation
         if tone == "hungry":
-            event = "hungry"
-        elif tone == "lonely" and not (situation and situation.focused):
-            # Missing company matters, but a permanently running PC must not
-            # nag the user every five minutes for social attention.
+            return "hungry"
+        if tone == "lonely" and not (situation and situation.focused):
+            # Quiet repeated reminders without suppressing other thoughts.
             if now - self._last_social_comment >= 20 * 60:
-                event = "social_low"
                 self._last_social_comment = now
-            else:
-                event = "idle"
-        elif tone == "seeking_affection" and not (situation and situation.focused):
-            # A need for reassurance is distinct from wanting to talk.
+                return "social_low"
+            return "idle"
+        if tone == "seeking_affection" and not (situation and situation.focused):
             if now - self._last_affection_comment >= 25 * 60:
-                event = "affection_low"
                 self._last_affection_comment = now
-            else:
-                event = "idle"
-        elif tone == "tired" and not (situation and situation.focused):
-            event = "tired"
-        elif situation is not None and situation.focused:
-            if context.night and (situation.strain >= 35 or state.energy <= 45):
-                event = "work_late"
-            elif situation.prolonged_work_seconds >= 20 * 60:
-                event = "work_long_thought"
-            else:
-                event = "work_concentrating"
-        elif (situation is not None and self._last_work_duration >= 20 * 60
-              and not self._postwork_thought_spoken
-              and 60 <= now - self._last_work_finished_at <= 480):
-            event = "after_work_thought"
+                return "affection_low"
+            return "idle"
+        if tone == "tired" and not (situation and situation.focused):
+            return "tired"
+        if situation is not None and situation.focused:
+            if context.night and (
+                situation.strain >= 35 or state.energy <= 45
+            ):
+                return "work_late"
+            if situation.prolonged_work_seconds >= 20 * 60:
+                return "work_long_thought"
+            return "work_concentrating"
+        if (
+            situation is not None
+            and self._last_work_duration >= 20 * 60
+            and not self._postwork_thought_spoken
+            and 60 <= now - self._last_work_finished_at <= 480
+        ):
             self._postwork_thought_spoken = True
-        elif situation is not None and situation.mode == "resting":
-            event = "quiet_alone" if situation.present is False else "quiet_together"
-        elif tone in ("withdrawn", "irritated"):
-            event = "low_mood"
-        else:
-            events = ["idle", "idle", "idle", "idle"]
-            if state.friendship >= 78 and state.mood >= 55:
-                events.append("close_thought")
-            if context.period in ("breakfast", "quiet"):
-                events.append("morning")
-            if context.period == "lunch":
-                events.append("midday")
-            if context.period == "evening":
-                events.append("evening")
-            if context.night:
-                events.append("night")
-            if context.weekend:
-                events.append("weekend")
-            if context.local.weekday() == 0:
-                events.append("monday")
-            if context.local.weekday() == 4:
-                events.append("friday")
-            event = self.rng.choice(events)
+            return "after_work_thought"
+        if situation is not None and situation.mode == "resting":
+            return (
+                "quiet_alone" if situation.present is False
+                else "quiet_together"
+            )
+        if tone in ("withdrawn", "irritated"):
+            return "low_mood"
+        return self._choose_idle_topic(state, context)
+
+    def spontaneous_event(
+        self, state: PetState, context: TimeContext, now: float,
+    ) -> Reaction | None:
+        """Speak about actual observations, without imagined applications."""
+        if state.sleeping:
+            return None
+        event = self._select_spontaneous_event(state, context, now)
         return self.say_event(event, state, context, now)
