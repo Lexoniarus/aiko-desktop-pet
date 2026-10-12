@@ -69,16 +69,25 @@ class IncomingNotification:
         title = payload.get("title")
         message = payload.get("message")
         priority = payload.get("priority", "normal")
-        if not all(isinstance(value, str) for value in (
-            identifier, title, message, priority,
-        )):
+        if (
+            not isinstance(identifier, str)
+            or not isinstance(title, str)
+            or not isinstance(message, str)
+            or not isinstance(priority, str)
+        ):
             raise ValueError("Notification fields must be text")
-        if priority not in ("low", "normal", "high"):
+        if priority == "low":
+            normalized_priority: NotificationPriority = "low"
+        elif priority == "normal":
+            normalized_priority = "normal"
+        elif priority == "high":
+            normalized_priority = "high"
+        else:
             raise ValueError("Unsupported notification priority")
         return cls(
             event_id=identifier,
             source=authenticated_source,
             title=title,
             message=message,
-            priority=priority,
+            priority=normalized_priority,
         )
