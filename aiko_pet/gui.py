@@ -24,18 +24,18 @@ from .application.router import ApplicationRouter
 from .application.read_models import DesktopViewSource
 from .animation import (
     FRAME_COUNTS as FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
-    FrameClock,
+    FrameClock as FrameClock,
 )
 from .config import load_env_file
 from .desktop_input import GlobalMouseClicks, idle_seconds_windows
 from .dialogue import AikoMind, ComputerVoice, Reaction
-from .movement import WalkController
+from .movement import WalkController as WalkController
 from .routine import TimeContext, context_at
-from .reaction_sequence import Cue, EMOTES as EMOTES
+from .reaction_sequence import Cue as Cue, EMOTES as EMOTES
 from .reaction_playback import ReactionPlayer, choose_idle_emote
 from .storage import StateStore
 from .system_activity import ActivityMonitor
-from .taskbar import TaskbarTrack
+from .taskbar import TaskbarTrack as TaskbarTrack
 from .ui.desktop_window import (
     DesktopWindow, FRAME_WIDTH as FRAME_WIDTH,
     FRAME_HEIGHT as FRAME_HEIGHT, MAGENTA as MAGENTA,
@@ -46,11 +46,11 @@ from .asset_paths import (
     EMOTE_ASSETS as EMOTE_ASSETS,
     SCI_FI_UI as SCI_FI_UI,
 )
-from .ui.action_toolbar import ActionToolbar
+from .ui.action_toolbar import ActionToolbar as ActionToolbar
 from .ui.animated_pet import AnimatedPet, AnimatedPorts
-from .ui.settings_popup import SettingsPopup
+from .ui.settings_popup import SettingsPopup as SettingsPopup
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
-from .ui.status_panel import StatusPanel
+from .ui.status_panel import StatusPanel as StatusPanel
 
 TICK_MILLISECONDS = 140
 

@@ -12,7 +12,6 @@ import tkinter as tk
 from ..animation import FrameClock
 from ..application.activity import ActivityCoordinator
 from ..application.attention import AttentionCoordinator
-from ..dialogue import Reaction
 from ..movement import WalkController
 from ..reaction_playback import ReactionPlayer
 from ..reaction_sequence import Cue
