@@ -1,365 +1,141 @@
-# Aiko Desktop Pet v0.13 – Kenney Sci-fi UI und echte Emote-Folgen
+# Aiko Desktop Pet — historical release notes (v0.2–v0.13)
 
-**Neu:** Beim Hover erscheint eine neu gestaltete, Kenney-Sci-fi-inspirierte
-Statusleiste mit allen sechs Tamagotchi-Werten und den bisherigen Aktionen.
-Der blaue Panelkopf und die hellen Schaltflächen greifen das echte `Sample.png`
-aus deiner Dropbox auf; die Leiste bleibt frei verschiebbar und ausblendbar.
+This document records how the desktop pet evolved. It is **historical documentation**, not a replacement for the current README or source code. Later versions supersede earlier care formulas and dialogue counts.
 
-**Reaktionen:** Echte Kenney-Pixel-Emotes erscheinen **nacheinander** mit Aikos
-Texten, z. B. `? → „...Oh. Du schon wieder.“ → ♥`. Bei Reaktionen mit Nachsatz
-folgen die Texte ebenfalls nacheinander. Die Emotes hängen von der Bedeutung
-der Situation ab, nicht von einem zufälligen Effekt. Schnell wiederholte Klicks
-unterbrechen alte Sequenzen sauber und überspringen nötigenfalls das
-Einleitungs-Emote, damit die Antwort sichtbar bleibt.
-
-**Schrift:** Falls `Kenney Mini` bereits auf deinem Windows-System installiert
-ist, verwendet Aiko sie. Sonst läuft sie mit Segoe UI. Fontdateien sind nicht
-im ZIP enthalten; verwende zum Installieren deine eigene Kopie.
-
-**Erhalten:** Der gesamte v0.12-Tamagotchi-Kern, das Lernen des Tagesrhythmus,
-alle 73 Originalsprites, der Spielstand, die Rechnerbeobachtung und die
-Fensterverwaltung. Keine neue Laufzeitabhängigkeit, keine Cloud, keine KI.
-
-**Installation:** Vorige Version beenden, dieses ZIP in einen neuen Ordner
-entpacken, `Aiko_starten.bat` starten (Windows 10/11, Python 3.11+ mit Tk).
-
-**Vorschau:** `vorschau/Aiko_v0_13_Reaktionsablauf.gif` zeigt die echten
-aufeinanderfolgenden Stadien. Einzelbilder und das Sample sind beigelegt.
-
-Details zu Assetquellen, Emote-Semantik und Grenzen:
-`docs/KENNEY_UI_UND_EMOTES_V013.md`.
+The game interface and Aiko's character dialogue remain **German**. Project documentation is maintained in **English**.
 
 ---
 
-# Aiko Desktop Pet v0.12 – Zuwendung und Freundschaft
-
-**Neu:** Sechs Anzeigen in Hover-Leiste und Statusfenster:
-**Sättigung · Laune · Energie · Sozial · Zuwendung · Freundschaft** (Level 1–10).
-Zuwendung ist ein eigenes kurzfristiges Bedürfnis, das Streicheln mit
-+25 Punkten erfüllt. Streicheln gibt zusätzlich +6 Laune und +2 Sozial,
-**keine** Energie. Spielen und Reden erfüllen weiterhin getrennte Bedürfnisse.
-
-- **Freundschaft** wächst nur durch sinnvolle Pflege, wenn das primäre Bedürfnis
-  vor der Aktion ≤80 % beträgt; abwechslungsreiche Pflege gibt einen kleinen
-  Bonus. Maximal +5 Punkte/Tag, eine Belohnung pro Aktion/12 Minuten.
-  Energy Drinks und Schlafen sind nicht mehr zum Freundschaftsfarmen nutzbar.
-- **Rechnerlast:** Sättigung, Laune und Energie bleiben von tatsächlicher Arbeit
-  abhängig; Zuwendung sinkt sanft und unabhängig von CPU/GPU-Last.
-- **Persönlichkeit:** Sozialmangel und Zuwendungsmangel werden unterschieden;
-  es gibt eigene zurückhaltend-awkward Kommentare zu Nähe, Distanz und
-  Streicheln. Bereits vorhandene Animationen und Fensterverwaltung bleiben.
-- **Migration:** v0.11-Saves werden automatisch ergänzt (Zuwendung = 75),
-  Freundschaft und alle bisherigen Bedürfnis-/Einstellungswerte bleiben erhalten.
-
-**Installieren:** Vorige Aiko beenden, ZIP in einen neuen Ordner entpacken,
-`Aiko_starten.bat` starten (Windows 10/11, Python 3.11+ mit Tkinter).
-Keine externen Laufzeitpakete, keine Cloud, keine KI-API. Das Spiel speichert
-weiter unter `%LOCALAPPDATA%\AikoDesktopPet\state.json`.
-
-**Tests:** 220 automatisierte Tests unter Linux/Xvfb bestanden; realer
-Windows-Langzeittest noch offen. Technische Erläuterung:
-`docs/TAMAGOTCHI_KERN_V012.md`, Testbericht: `docs/TESTBERICHT_V012.md`.
-
-**Vorschau:** `vorschau/Aiko_v0_12_Zuwendung.png` (Originalsprites,
-beispielhafte Werte).
-
----
-
-# Aiko Desktop Pet v0.11 – Tamagotchi-Kern und Freundschaft
-
-**Aiko ist dein personifizierter Rechner in Chibi-Form.** v0.11 ergänzt
-zur vorhandenen v0.10-Persönlichkeit die neuen Bedürfnisse und eine
-langsam wachsende Beziehung, ohne Taskleisten-Fensterverwaltung,
-Originalsprites oder den adaptiven Tagesrhythmus auszutauschen.
-
-## Neu: fünf Anzeigen, sechs Aktionen
-
-In der Maus-Hover-Leiste und im Statusfenster stehen jetzt:
-**Sättigung · Laune · Energie · Sozial · Freundschaft (Level 1–10)**.
-Freundschaft ist langfristig; die anderen vier Werte sind kurzlebige Bedürfnisse.
-
-- **Reden** (+26 Sozial, +5 Laune, -1 Energie) ist eine eigenständige
-  Interaktion. Auch Spielen und Streicheln fördern soziale Nähe.
-- **Energy Drink +10** steigert die Energie pro Klick um **10 Prozentpunkte**,
-  direkt beliebig oft wiederholbar bis maximal 100. Schlafen bleibt möglich.
-- Freundschaft steigt durch Versorgung langsam an. Mehrfaches Auslösen der
-  gleichen Aktion in Sekunden erhöht sie nicht immer weiter: maximal einmal
-  je Aktion/12 Minuten und höchstens 7 Punkte am Tag.
-- Aikos Äußerungen und ihr Verhalten berücksichtigen den sozialen Bedarf und
-  die bereits erreichte Vertrautheit, ohne den Grundcharakter zu verändern.
-- Bei nachgewiesener hoher CPU-/GPU-Arbeit sinken Sättigung und Laune schneller;
-  auch Energie wird stärker beansprucht. RAM allein ist kein Maß für Arbeit.
-  **Unbekannte Zeiten werden nicht als Hochlast angerechnet.**
-- 49 neue Dialogzeilen in 14 zusätzlichen Kategorien; nur vorhandene
-  Originalanimationen werden verwendet. Das HUD bleibt verschiebbar.
-
-**Installieren:** Die alte Aiko vollständig beenden, ZIP in einen neuen
-Ordner entpacken und `Aiko_starten.bat` ausführen. Benötigt Windows 10/11,
-Python 3.11+ mit Tkinter, keine externen Laufzeitpakete.
-Dein bisheriger Spielstand unter
-`%LOCALAPPDATA%\AikoDesktopPet\state.json` wird weiterverwendet.
-
-**Tests:** 195 Unit- und GUI-Tests mit einer virtuellen Linux-Anzeige bestanden.
-Ein echter Windows-Langzeittest (insbesondere Taskleiste, NVIDIA-Messung,
-Fokus und Balance über mehrere Tage) steht noch aus.
-
-Details zu Formeln, Grenzen, Beziehungslogik und Datenspeicherung:
-`docs/TAMAGOTCHI_KERN_V011.md`. Testbericht: `docs/TESTBERICHT_V011.md`.
-
----
-
-# Aiko Desktop Pet v0.10 – ihre Persönlichkeit wird erlebbar
-
-Ein kleines **lokales** Windows-Desktop-Pet mit 73 Originalsprites.
-Aiko ist der personifizierte Rechner: ruhig, aufmerksam, gelegentlich
-unfreiwillig komisch, manchmal trocken-frech – abhängig von ihrer Stimmung.
-Sie hat eigene Bedürfnisse, einen adaptiven Tagesrhythmus und lebt an der
-Taskleiste. **Kein Academy-Alltag, keine KI, keine Cloud.**
-
-## Neu in v0.10: Zusammenhängende Reaktionen
-
-- **Klickfolgen statt Wiederholungsroulette:** Aiko merkt innerhalb kurzer
-  Zeit, wenn du sie mehrfach anklickst. Aus Aufmerksamkeit wird je nach
-  Verfassung Necken, genervtes Abgrenzen oder bei Übertreibung bewusstes
-  Schweigen. Nach einer Pause normalisiert sich das Verhalten.
-- **Ein und dasselbe Ereignis, verschiedene Bedeutungen:** Gute Laune,
-  Müdigkeit, Pflege, Uhrzeit, Arbeitsbelastung und die vorigen Interaktionen
-  beeinflussen, was sie sagt. Besonders beim konzentrierten Arbeiten
-  reagiert sie anders als bei Freizeit.
-- **Kleine soziale Erinnerung:** Wird sie während einer nachgewiesenen
-  intensiven Berechnung mehrfach unterbrochen, kann sie das nach dem
-  Arbeitsende aufgreifen. Ein langer Arbeitstag erhält nur dann einen
-  passenden Abschluss, wenn die Dauer tatsächlich beobachtet wurde.
-- **Subtiler „awkward-funny“-Humor:** Einige Dialoge kommen in zwei kurzen
-  aufeinanderfolgenden Sprechblasen. Sie redet sich gelegentlich um Kopf
-  und Kragen, korrigiert sich oder lässt einfach eine Pause stehen.
-- **Redaktionelle Überarbeitung:** 40 schwächere alte Einträge entfernt,
-  zentrale Standardformulierungen neu geschrieben und situative Varianten
-  ergänzt. Aktuell 339 Sprechblasen-Auslöser, teilweise mit Nachsatz.
-  Es gibt bewusst auch ganz schlichte, ruhige Aussagen.
-- **Keine erfundenen Rechnererlebnisse:** Laufzeit ist nicht Wachzeit.
-  Aussagen über Belastung, ungewöhnliche Arbeitszeiten oder Unterbrechungen
-  benötigen reale Beobachtungen. Rohdaten über Apps oder Eingaben werden
-  nicht gesammelt.
-
-**Bestand erhalten:** v0.9-Tagesrhythmus und lokales Wochenprofil,
-Pflegewerte, Taskleistenlauf, Mausverfolgung, verschiebbare Hover-/Statusleiste,
-Fenster-Z-Order und Spielstand bleiben kompatibel. Beim Windows-Test
-muss sich besonders die Interaktion während einer Browser-Spracheingabe
-bewähren; sie wurde hier nur in einer virtuellen Linux-Oberfläche getestet.
-
-Dokumentation mit konkreten Szenarien: `docs/REAKTIONEN_V010.md`.
-Der Prüfumfang steht unter `docs/TESTBERICHT_V010.md`.
-
-**Automatischer Prüfstand:** Alle 167 vorhandenen und neuen Tests unter
-Linux/Xvfb bestanden, inklusive Reaktionseskalation, Langzeitarbeit, Rückbezug,
-Nachsatz-Timing, Stummschaltung und früherem Speicherschema. Die persönliche
-Wirkung der Dialoge muss im Alltag geprüft werden.
-
-## Installation unter Windows
-
-1. Die bisherige Aiko komplett beenden.
-2. Dieses ZIP in einen **neuen Ordner** entpacken.
-3. `Aiko_starten.bat` starten (Python 3.11+ notwendig, keine weiteren
-   Pakete für die Laufzeit).
-4. Der bisherige Spielstand in `%LOCALAPPDATA%\AikoDesktopPet\state.json`
-   wird weiterverwendet.
-
-Für eine Konsolenansicht bei Problemen gibt es `Aiko_starten_debug.bat`.
-
----
-
-## Historischer Stand: v0.9 (übernommen)
-
-Ein kleines **lokales** Desktop-Tamagotchi für Windows 10/11 mit Aikos
-73 originalen Chibi-Sprites. Aiko lebt am Taskleistenrand, schaut dem
-Mauszeiger hinterher, hat Bedürfnisse und spricht in kurzen deutschen
-Sprechblasen. Die Geschichtenwelt und der Academy-Alltag spielen hier
-**keine Rolle**. Kein Konto, keine Cloud, keine KI-API.
-
-## Neu in Version 0.9: Aiko entwickelt einen eigenen Alltag
-
-**Auf v0.8 aufgebaut, ohne Fenster- oder Sprite-Umbau.** Aiko lernt langsam,
-zu welchen Tages- und Wochenzeiten **ihr Rechner** gewöhnlich gefordert wird
-und wann Ruhe herrscht. Die eigene Tageszeit bleibt wichtig; eine lange
-Windows-Laufzeit ist kein Beleg für ununterbrochene Arbeit.
-
-- **Aktuelle Beschäftigung:** Arbeiten, nach einer Arbeitsphase erholen,
-  ruhen, aufmerksam sein oder herumstreifen. Anhaltende Last erzeugt eine
-  langsam veränderliche Beanspruchung; vorübergehende Spitzen wirken schwächer.
-- **Anpassbarer Schlaf:** Aiko bleibt bei realer hoher Rechnerarbeit auch
-  nachts wach und schläft bei Entlastung. Ein seltener kurzer Mittagsschlaf
-  bei niedriger Energie ist möglich. Manuelle Schlafentscheidungen bleiben
-  gültig. Die Pflegewerte werden nicht direkt aus CPU-Prozenten berechnet.
-- **Lernendes Wochenprofil:** verdichtete Statistik nach Stunde und Wochentag,
-  allmähliche Anpassung über mehrere Wochen. Keine schnellen Umstellungen
-  nach einer ungewöhnlichen Nacht.
-- **Kontrolle:** Lernen in den Einstellungen abschaltbar; neues **„Gelerntes
-  Tagesmuster löschen“**. Die Live-Reaktion funktioniert ohne Lernen weiter.
-- **Statusfenster:** zeigt Aikos aktuelle Beschäftigung, Beanspruchung und
-  separat die gemeldete Windows-Laufzeit. Das Hover-Fenster und seine
-  drei Bedürfnisbalken bleiben unverändert.
-
-**Noch nicht geändert:** Der Dialogkatalog mit seinen 236 Aussagen,
-Click-Eskalation und Sprite-Animationen. Die neue Gedächtnisschicht ist das
-Fundament für einen gesonderten, anspruchsvolleren Dialog- und
-Reaktions-Slice. Sie behauptet noch nicht, dass Aiko komplett neue Gespräche
-führen kann.
-
-### Verhalten bei dauerhaft eingeschaltetem PC
-
-Der Rechner kann viele Tage laufen, ohne dass Aiko automatisch tagelang wach
-ist. Nachts im Leerlauf kann sie schlafen, aber sie unterbricht keine aktuelle
-starke Berechnung nur wegen einer Uhrzeit. Die lokale Nutzungsstatistik merkt
-sich langsam wiederkehrende Aktivitätsfenster. Sie zählt keinen Windows-
-Ruhemodus und keine mehrstündige App-Pause als beobachtete Arbeitsstunden.
-
-**Teststand v0.9:** 147 Unit- und Tk-GUI-Tests unter Linux/Xvfb erfolgreich,
-inklusive 72-Stunden-Simulation, mehrwöchigem Lernprofil, alter Speicherstände,
-Ruhephasen, Tagesaktivität und Live-Oberflächeneinstellungen. Die konkrete
-Windows-Langzeitnutzung und `GetLastInputInfo` sind auf diesem Rechner nicht
-real ausführbar und müssen unter Windows geprüft werden.
-
-Vertiefung und fachliche Grenzen: `docs/ADAPTIVER_RHYTHMUS.md`.
-
----
-
-## Bestehende Version 0.8: gemeinsame Fenstersteuerung
-
-Die Fensterreihenfolge hält Aiko mit ihrer Sprechblase sichtbar.
-
-**Fehlerbehebung der Fensterreihenfolge (Z-Order) unter Windows:**
-
-- Aiko, Status-/Aktionsleiste, Sprechblase und Einstellungen besitzen nun
-  eine gemeinsame, zentral verwaltete Vordergrund-Reihenfolge.
-- Eine neue Sprechblase wird nicht mehr **allein** per `lift()` nach vorne
-  gezogen, besonders nicht bei jeder Bewegung von Aiko.
-- Unter Windows prüft die App circa alle 1,5 Sekunden, ob ein fremdes,
-  sichtbares Fenster über Aiko liegt, während „Immer im Vordergrund“ aktiv
-  ist. Nur bei tatsächlich erkannter Überdeckung korrigiert sie die
-  Fensterreihenfolge; zusätzliche Reparaturen sind auf mindestens drei
-  Sekunden Abstand begrenzt.
-- Für die Korrektur wird die Windows-Funktion `SetWindowPos` mit
-  `SWP_NOACTIVATE` verwendet. Dadurch wird der Browser nicht absichtlich
-  deaktiviert, und Aiko fordert keinen Tastaturfokus an. Der echte
-  Mikrofon-Fokuswechsel ist bislang nicht auf Windows verifiziert.
-- Ist „Immer im Vordergrund“ deaktiviert, findet **keine** automatische
-  Wiederherstellung der Vordergrundreihenfolge statt.
-- Die Leiste bleibt verschiebbar und ausblendbar; Statusanzeigen,
-  Tagesrhythmus, Dialoge, Bedürfnisse und Originalsprites sind unverändert.
-
-**Windows-Praxistest:**
-
-1. Aiko starten; `⋯` → **Immer im Vordergrund** aktivieren.
-2. Bei eingeblendeter Sprechblase im Browser die Mikrofon-/Diktierfunktion
-   verwenden; dabei beobachten, ob Aiko hinter den Browser rutscht.
-3. Den Browser währenddessen weiter bedienen: Die Korrektur soll ihm weder
-   Tastatur- noch Mikrofonfokus wegnehmen.
-4. Die Leiste verschieben, ein-/ausblenden, Status und Einstellungen öffnen.
-   Alle UI-Teile sollten sichtbar und bedienbar bleiben.
-
-**Prüfstand:** 120 Unit- und Tk-GUI-Tests auf Linux/Xvfb bestanden;
-Win32-Z-Order und nichtaktivierendes Anheben mit API-Simulationen getestet.
-Noch **nicht** auf einem echten Windows-System getestet. Insbesondere
-browser- oder systemeigene Always-on-top-Overlays können besondere Regeln
-haben, die ein echter Praxistest aufdecken muss.
-
-## Änderungen aus Version 0.7
-
-**Arbeit statt Messwert-Kommentar:** Aiko verkörpert den Rechner. Sie
-bekommt mit, wenn sie zunehmend gefordert wird, sich längere Zeit stark
-konzentrieren muss und danach wieder Luft hat. Sie nennt in ihren
-Sprechblasen **keine CPU, GPU, RAM oder technischen Kennzahlen**. Sie
-formuliert kurze eigene Eindrücke im Ton ihres Character Sheets.
-
-- 236 handgeschriebene Dialogzeilen in 37 Ereigniskategorien. Darunter
-  69 neu verfasste Sätze über ihr Arbeitsgefühl und 28 sprachlich
-  überarbeitete ältere Kommentare.
-- Ein kurzes Belastungshoch erzeugt **keinen** Erschöpfungskommentar.
-  Erst nach ungefähr 18 Sekunden anhaltender hoher Last kann sie
-  reagieren wie „Uff. ...Das hatte es wirklich in sich.“.
-- Technisch werden CPU und GPU als Hauptsignal berücksichtigt.
-  Hohe RAM-/VRAM-Belegung trägt vorsichtig als Zusatzbelastung bei;
-  belegter Arbeitsspeicher allein ist **nicht** gleich aktive Arbeit.
-- Die Rechnerwerte können in der Status-/Aktionsleiste weiterhin direkt
-  als Prozentzahlen abgelesen werden. Ihre eigene Statuszeile lautet
-  dagegen z. B. „Ich habe ordentlich zu tun.“.
-
-**Sprechblasen folgen Aiko:** Der Text erscheint über ihrem Kopf,
-**nicht** über der Aktionsleiste. Aiko kann weiter auf der Taskleiste
-herumlaufen; die Blase bewegt sich mit. Beim kurzen Spruch steht Aiko
-ruhig. Ist oberhalb kein Platz, wird die Blase seitlich an ihren Kopf
-gelegt.
-
-**Status-/Aktionsleiste ist verschiebbar:**
-
-1. Mit der Maus über Aiko fahren: Die Leiste erscheint automatisch.
-2. Die obere Zeile mit Wochentag/Uhrzeit bei gedrückter **linker Maustaste**
-   ziehen und an der gewünschten Stelle loslassen.
-3. Die Position wird gespeichert. Ein Klick außerhalb schließt die Leiste;
-   beim nächsten Hover über Aiko erscheint sie wieder am gewählten Ort.
-4. Über **`⋯` → „Leiste wieder neben Aiko“** wird die Position zurückgesetzt.
-
-Die Leiste erscheint standardmäßig **rechts oder links neben Aiko**, statt
-ihre Sprechblase zu verdecken. Beim Verlassen verschwindet sie nach einer
-kurzen Verzögerung (an einer frei gewählten Position nach ca. zwei
-Sekunden, damit du sie mit der Maus erreichen kannst). Ein Klick außerhalb
-schließt sie sofort. Sättigung, Laune und Energie bleiben im Hover sichtbar.
-
-Das separat über **Status** geöffnete Detailfenster funktioniert weiterhin
-wie ein normales Windows-Fenster und bleibt bis zum Schließen offen.
-
-## Installation und Start
-
-1. Vorherige Aiko-Version schließen.
-2. ZIP in einen **neuen Ordner** entpacken (nicht direkt im ZIP starten).
-3. Windows 10 oder 11 und Python **3.11 oder neuer mit Tkinter** verwenden.
-4. **`Aiko_starten.bat`** doppelklicken. Bei Problemen
-   `Aiko_starten_debug.bat` starten.
-
-Für den normalen Start sind keine externen Python-Pakete nötig; eine
-fertige `.exe` liegt nicht bei. Spielstände aus v0.1–v0.8 bleiben erhalten:
-
-`%LOCALAPPDATA%\AikoDesktopPet\state.json`
-
-Die optionale Panelposition und der neue aggregierte `adaptive`-Abschnitt
-liegen im bisherigen Format (`version: 1`). CPU/GPU/RAM-Rohwerte werden
-nicht gespeichert.
-
-## Computerbeobachtung und Privatsphäre
-
-- CPU und RAM: Windows-System-APIs; GPU: optional NVIDIA `nvidia-smi`.
-- GPU ohne verfügbare NVIDIA-Abfrage wird als **„–“** angezeigt, nicht
-  als ausgedachte Null. Andere GPUs sind noch nicht angebunden.
-- Hintergrundmessung ungefähr alle **sechs Sekunden**, CPU/GPU über zwei
-  Samples geglättet. Es werden keine Prozessnamen, Fenstertitel, Dateien
-  oder Tastatureingaben ausgelesen, keine Daten versendet.
-- In den Einstellungen lässt sich die Rechnerbeobachtung deaktivieren.
-  Die Bedürfniswerte werden von der Auslastung nicht beeinflusst.
-- Aiko wird bei hoher Belastung ruhiger und nutzt vorhandene `review`-
-  Frames; es wurden keine neuen oder erfundenen Animationsassets ergänzt.
-
-## Tests und Einschränkungen
-
-```bat
-py -m unittest discover -s tests -v
-```
-
-Die Entwicklungsumgebung hat für Version 0.8 **120 Unit- und Tk-GUI-Tests** unter
-Linux/Xvfb bestanden. Geprüft wurden u. a. anhaltende und kurze
-Belastung, die Dialoge ohne technische Kennzahlen, die Positionierung
-der Blase über Aiko, Verschieben und Speichern der Leiste, Auto-Hide,
-Einstellungen und bestehende Pflegeaktionen.
-
-**Noch nicht auf einem echten Windows-PC getestet:** Windows-Overlay-
-Transparenz, globales Wegklicken, NVIDIA-Lastwerte und Maushandhabung beim
-Ziehen der Leiste. Auch die tatsächlichen Reaktionsintervalle hängen
-von den Messwerten und der Hardware ab. Die unter `vorschau/` gezeigten
-CPU-/GPU-/RAM-Werte sind für den GUI-Test simuliert.
-
-## Optionaler Windows-EXE-Build
+## v0.13 — Kenney sci-fi panel and sequential emotes
+
+**Interface:** The hover panel was redesigned using visual elements and the layout language of Kenney's **UI Pack: Sci-fi**. A blue header, light controls, and six need/relationship indicators match the supplied `Sample.png` reference. The panel remains movable, remembers its position, and hides as before.
+
+**Expressions:** Kenney pixel emotes play as part of one sequential reaction, for example `question → text → heart`. Optional follow-up speech also appears in order rather than in parallel. Emotes are selected by contextual meaning rather than random decoration. Rapid clicks cancel the previous sequence and may skip an introductory emote so the actual response is visible.
+
+**Font:** The UI uses **Kenney Mini** only if installed on Windows; otherwise it falls back to Segoe UI. No font binary is distributed.
+
+**Unchanged:** v0.12 Tamagotchi care, the adaptive rhythm, all 73 original sprite frames, local saves, hardware observation, and window management. No new runtime dependency, cloud service, or AI inference.
+
+**Preview:** `vorschau/Aiko_v0_13_Reaktionsablauf.gif` shows the actual sequence. See [v0.13 emote/UI design](KENNEY_UI_UND_EMOTES_V013.md) for more.
+
+## v0.12 — affection as a distinct need
+
+The hover and detailed status panels now display **six values**: satiety, mood, energy, social, affection, and friendship (levels 1–10). Affection represents being cared for and is refilled mainly by **petting**.
+
+Petting now grants **+25 affection, +6 mood, +2 social, and no energy**. Playing and talking retain distinct purposes.
+
+Friendship grows from **meaningful care** only when the action's primary target need was at most 80 beforehand. Varied helpful care receives a modest bonus. The same care action can grant friendship at most every **12 minutes**, with a daily cap of **5 points**. Energy drinks and sleeping do not directly award friendship.
+
+Workload still influences satiety, mood, and energy; affection is not drained faster simply because CPU/GPU are busy. Low affection and low social connection trigger different, reserved character responses.
+
+Old saves are migrated without losing earlier stats or friendship: affection starts at **75** when newly introduced. All 73 sprites and window management remain unchanged.
+
+**Tests:** 220 passed under Linux/Xvfb, not a full native Windows endurance test. See [v0.12 core](TAMAGOTCHI_KERN_V012.md) and [test report](TESTBERICHT_V012.md).
+
+## v0.11 — social need, energy drinks, and friendship
+
+Aiko gained a distinct **social** need, a friendship score and level, and more deliberate care actions.
+
+- **Talk:** +26 social, +5 mood, −1 energy.
+- **Energy drink:** +10 energy per click, repeatable up to 100.
+- **Play:** +23 mood, consumes 9 energy and 4 satiety.
+- **Feed:** +27 satiety with a small mood bonus.
+- **Friendship:** increased gradually through care, originally limited to one reward per action every 12 minutes and **7 points per day**. That rule was revised in v0.12.
+- **Computer utilization:** confirmed intense CPU/GPU work increased satiety consumption and energy/mood drain. High reserved RAM alone was not treated as work; unobserved hours were not charged retroactively.
+
+Social deprivation and growing trust influence Aiko's dialogue without overriding tiredness, irritation, or real workload. The interface used five gauges at that point.
+
+**Tests:** 195 passed on Linux/Xvfb. See [v0.11 core](TAMAGOTCHI_KERN_V011.md) and [test report](TESTBERICHT_V011.md).
+
+## v0.10 — linked reactions and an awkward sense of humor
+
+v0.10 used the adaptive foundation to make Aiko less like a random quote generator.
+
+- Click bursts progress from acknowledgment to curiosity, dry teasing, growing irritation, a final reply, and sometimes **deliberate silence**.
+- The sequence changes with mood, tiredness, time of day, and measured ongoing work.
+- After repeated interruptions during **verified prolonged work**, Aiko can refer to the interruptions after the work ends. Short spikes do not create fictional long-work memories.
+- Some reactions contain a delayed second sentence: she can pause, correct herself, or reveal an awkward thought.
+- Canceled follow-ups do not reappear later. Silence clears the bubble.
+- Forty generic earlier entries were removed. At this point the catalog contained **339 primary entries** across 67 categories, with 109 supporting a second line.
+
+The taskbar, local save, gaze, and multi-window system were kept intact.
+
+**Tests:** 167 passed under Linux/Xvfb. See [reactions](REAKTIONEN_V010.md) and [test report](TESTBERICHT_V010.md).
+
+## v0.9 — adaptive routine and local usage learning
+
+Aiko began slowly learning when the computer is usually busy and when it is quiet, without treating **Windows uptime as uninterrupted work or wakefulness**.
+
+- Occupation state: working, recovering, resting, present, or wandering.
+- Short work spikes influence Aiko less than sustained computation.
+- At night she can stay awake to work, then sleep during actual quiet periods, even if Windows has been running for days.
+- A short daytime nap can occur when needed, within a bounded duration.
+- An aggregated, local **168-bucket** weekday/hour profile gradually learns recurring patterns over multiple weeks; unusual single days do not immediately rewrite her habits.
+- Settings allow monitoring and habit learning to be disabled independently; the learned profile can be cleared without deleting her care state.
+
+This release intentionally deferred the complete dialogue overhaul, retaining the earlier response set. It preserved window management and save compatibility.
+
+**Tests:** 147 passed, including simulations of 72-hour uptime, overnight work, naps, and learning over several weeks. See [adaptive routine](ADAPTIVER_RHYTHMUS.md).
+
+## v0.8 — central window stacking and focus behavior
+
+The Windows Z-order system was unified so Aiko, her bubble, the status/action panel, and settings are managed together.
+
+- Showing or moving a bubble no longer calls `lift()` on that window alone.
+- When “always on top” is enabled, a Windows check runs approximately every **1.5 seconds** and repairs a genuine occlusion, with rate limits.
+- The repair uses Win32 `SetWindowPos` with `SWP_NOACTIVATE` to avoid stealing keyboard focus from a browser or microphone session.
+- Disabling “always on top” disables these automatic topmost repairs.
+- The panel remains draggable and hideable, and saved progress and dialogue logic are unchanged.
+
+A native Windows test involving browser speech recognition is still important; the original Linux tests simulated key Win32 paths.
+
+**Tests:** 120 passed on Linux/Xvfb.
+
+## v0.7 — subjective workload and a movable status panel
+
+Aiko is **the voice of the computer**, not a component monitor reading CPU/GPU/RAM numbers aloud. She describes her subjective effort.
+
+- Measured CPU/GPU work is the main workload signal; memory pressure contributes cautiously.
+- Longer work phases and actual recovery can trigger context-appropriate remarks. A quick spike must not trigger an exaggerated exhaustion story.
+- Hardware values can still appear as diagnostics in the status panel, while dialogue remains personal and character-specific.
+- The speech bubble is attached to Aiko's head, **not** to the movable status panel.
+- The status/action panel can be dragged by its header, keeps its position locally, appears on hover, and hides when dismissed. The user can reset it to Aiko's side through settings.
+- The existing sprite collection provides reactions; unavailable animations are not invented.
+
+The original v0.7 catalog had 236 lines across 37 events after edits. These figures are historical; later releases expanded and reshaped the catalog.
+
+## Earlier versions — v0.2 through v0.6
+
+| Version | Main milestone |
+| --- | --- |
+| **v0.2** | Taskbar-bound movement, hover care controls, and automatic wandering replaced free dragging. |
+| **v0.3** | Time-of-day and weekday awareness; full-desktop cursor tracking without the earlier distance cutoff. Some early Academy-themed rules were removed later. |
+| **v0.4** | Expanded handwritten dialogue, mood-aware reactions, spontaneous comments, and startup positioning improvements; fictional Academy obligations removed. |
+| **v0.5** | Local CPU/GPU/RAM observation and five-digit status access; first attempts at reactions to system work. |
+| **v0.6** | Fixed bar-fill geometry, hover/popup dismissal, settings accessibility, and response timing for large workload changes. |
+
+The concept gradually shifted from a simple animated companion to a Tamagotchi-like **personification of the user's own machine** with a private daily rhythm, long-term care, and restrained character humor.
+
+## Windows installation and persistence
+
+Requirements: Windows 10/11, Python 3.11 or later, and Tkinter.
+
+1. Close the currently running Aiko.
+2. Extract the downloaded ZIP rather than launching from inside it.
+3. Start `Aiko_starten.bat`. Use `Aiko_starten_debug.bat` to view error output.
+4. Saved progress under `%LOCALAPPDATA%\AikoDesktopPet\state.json` is carried forward.
+
+No extra runtime Python package, account, cloud service, or paid model API is required. An optional Windows EXE can be built with PyInstaller:
 
 ```bat
 py -m pip install pyinstaller
 py -m PyInstaller --noconfirm --clean --onefile --windowed --name AikoDesktopPet --add-data "aiko_pet\assets;aiko_pet\assets" --add-data "aiko_pet\data;aiko_pet\data" Aiko_Pet.pyw
 ```
+
+## Privacy and platform limitations
+
+System observations use Windows APIs and optional local NVIDIA `nvidia-smi`. They do **not** collect raw keystrokes, open documents, browser contents, process lists, or window titles. No data is transmitted to a remote server. Unsupported sensors are shown as unavailable, not silently filled with fictional zeroes.
+
+The majority of automated GUI acceptance was performed under Linux/Xvfb. That does not fully validate Windows transparency, taskbar alignment, browser microphone focus/overlays, NVIDIA telemetry, or high-DPI behavior. Actual Windows practice is still required.
+
+For current behavior and setup, refer to the [README](../README.md), not historical mechanics from an older release.

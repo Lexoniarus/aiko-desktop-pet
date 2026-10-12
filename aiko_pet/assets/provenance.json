@@ -13,16 +13,8 @@
     "review": 6,
     "look": 16
   },
-  "crop_from_original_pixels": [
-    32,
-    0,
-    160,
-    208
-  ],
-  "size": [
-    128,
-    208
-  ],
+  "crop_from_original_pixels": [32, 0, 160, 208],
+  "size": [128, 208],
   "alpha_threshold": 128,
-  "note": "Sämtliche bestehenden Frames sind erhalten; es wurden keine neuen Posen generiert."
+  "note": "All existing frames were retained; no new poses were generated during sprite extraction."
 }

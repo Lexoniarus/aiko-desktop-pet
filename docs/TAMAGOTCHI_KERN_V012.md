@@ -1,87 +1,68 @@
-# Aiko Desktop Pet v0.12 – Zuwendung und Freundschaft
+# v0.12 — affection, differentiated care, and friendship
 
-## Zweck und Persönlichkeit
+## Design goal
 
-Aiko ist der personifizierte Rechner in Chibi-Form. Sie hat fünf kurzfristige
-Bedürfnisse und eine dauerhafte Beziehung zu dem Menschen, der sie versorgt.
-Es gibt keine Academy- oder Character-Chronicles-Alltagspflichten. Rechnerlast
-ist ihre eigene Arbeit, aber **nicht automatisch fehlende Zuwendung**.
+Aiko is a Chibi personification of the computer. She has **five short-term care needs** and one lasting relationship with the user who looks after her. No Academy or Character Chronicles commitments are simulated.
 
-## Sechs Anzeigen, fünf Bedürfnisse
+Computer workload is experienced as her own work, but **does not automatically mean she is receiving less affection**.
 
-| Wert | Bedeutung | Hauptpflege | Verlauf |
+## Six gauges: five needs and friendship
+
+| Value | What it means | Primary care | Progression |
 | --- | --- | --- | --- |
-| Sättigung | Hunger | Füttern | sinkt bei hoher Rechenarbeit schneller |
-| Laune | momentanes Wohlbefinden | Spielen | reagiert auf Arbeit, Tageszeit und Unterversorgung |
-| Energie | körperliche Wachheit | Schlafen / Energy Drink | sinkt bei Arbeit schneller; Schlaf regeneriert |
-| Sozial | Gespräch und gemeinsame Aktivität | Reden | sinkt langsam, auch nachts geringfügig |
-| **Zuwendung** | wahrgenommene Nähe, Geborgenheit und kleine Gesten | **Streicheln** | sinkt wach um 1,35 Punkte/h, im Schlaf um 0,25 Punkte/h |
-| **Freundschaft** | langfristige Vertrautheit (Level 1–10) | hilfreiche, abwechslungsreiche Pflege | **kein** passiver Abbau |
+| **Satiety** | Hunger | Feeding | Depletes faster with intensive computer work |
+| **Mood** | Immediate well-being | Playing | Responds to workload, day phase, and unmet needs |
+| **Energy** | Wakefulness and fatigue | Sleep / energy drink | Depletes faster at work and regenerates during sleep |
+| **Social** | Conversation and shared activity | Talking | Depletes slowly; a small amount during the night |
+| **Affection** | Feeling noticed, supported, and safe | Petting | Depletes at about **1.35 points/h awake** and **0.25 points/h asleep** |
+| **Friendship** | Long-term familiarity (levels 1–10) | Meaningful, varied care | **No passive decline** |
 
-Alle Werte liegen bei 0–100. Ein neues Spiel beginnt bei 75 Punkten pro
-kurzfristigem Bedürfnis und 15 Freundschaft (Level 2). Alte Spielstände
-behalten alle bisher gespeicherten Werte. Neu hinzugekommene Zuwendung
-startet bei bestehenden Spielständen mit 75 Punkten.
+All values range from 0 to 100. A new game starts with **75 points per short-term need** and 15 friendship points (level 2). Existing saves preserve every previously stored value. New affection starts at 75 for migrated saves.
 
-## Pflege-Balance
+## Care balance
 
-| Aktion | Primärer Effekt | Weitere Effekte |
+| Action | Primary effect | Side effects |
 | --- | --- | --- |
-| Füttern | +27 Sättigung | +3 Laune (Snack), +5 bei erster passender Mahlzeit; +1 Sozial |
-| Spielen | +23 Laune | +12 Sozial, -9 Energie, -4 Sättigung (zu müde: keine Aktion) |
-| Reden | +26 Sozial | +5 Laune, -1 Energie |
-| Streicheln | **+25 Zuwendung** | +6 Laune, +2 Sozial, **kein Energiebonus** |
-| Energy Drink | **+10 Energie** | beliebig wiederholbar bis 100; kein direkter Freundschaftsbonus |
-| Schlafen | +22 Energie/h | toggle Schlafen/Wecken, normale Tages-/Nachtlogik |
+| Feed | +27 satiety | +3 mood for a snack or +5 for the first eligible meal; +1 social |
+| Play | +23 mood | +12 social, −9 energy, −4 satiety; unavailable when too tired |
+| Talk | +26 social | +5 mood, −1 energy |
+| Pet | **+25 affection** | +6 mood, +2 social, **no energy bonus** |
+| Energy drink | **+10 energy** | Repeatable until 100; no direct friendship reward |
+| Sleep | +22 energy/h | Sleep/wake toggle governed by normal day/night logic |
 
-Die normale Auslastungsregel aus v0.11 bleibt erhalten: Beobachtete
-CPU-/GPU-Arbeit erhöht den Sättigungsverbrauch (bis etwa 1,95-fach),
-verstärkt Launeverlust und Energieverbrauch. Zuwendung wird dadurch
-**nicht** direkt schneller abgebaut; Sozial reagiert nur leicht.
-Unbeobachtete Stunden werden niemals als Hochlast angenommen.
+Measured high CPU/GPU activity continues the v0.11 rules: it can raise satiety drain to roughly **1.95×** and increase mood and energy loss. Affection does **not** directly decline faster because of utilization; social decline is affected only modestly. Unobserved time is never treated as confirmed high load.
 
-## Langsame Freundschaft statt Klick-Farming
+## Friendship: gradual trust instead of button farming
 
-Freundschaft ist keine weitere Versorgungsleiste. Sie wächst durch
-angemessene Pflege nur dann, wenn der **primäre Bedürfniswert vor der
-Aktion höchstens 80** betrug: Sättigung bei Füttern, Laune bei Spielen,
-Sozial bei Reden, Zuwendung bei Streicheln. Pflege funktioniert immer
-(sofern die Aktion ausführbar ist), auch wenn sie kein Vertrauen mehr gibt.
+Friendship differs from ordinary replenishable needs. A meaningful care action can grant friendship only when its **primary target need was at most 80 before the action**:
 
-- Ein sinnvoller Pflegeschritt gibt typischerweise 0,9–1,0 Freundschaftspunkte.
-- Eine erstmals an diesem Tag zusätzlich versorgte **andere** Bedürfnisart
-  gibt einmalig +0,35 Punkte extra.
-- Dieselbe Aktion bringt höchstens alle 12 Minuten erneut Freundschaft
-  **und nur dann**, wenn das entsprechende Bedürfnis wieder unter der Schwelle ist.
-- Höchstens **5,0 Punkte pro lokalem Tag**, niemals mehr als 100 insgesamt.
-- Energy Drink und Schlafknopf steigern **nicht direkt** die Freundschaft.
-- Ein Tag Pause und Hintergrundarbeit verringern die Freundschaft **nicht**.
+- Feed checks satiety.
+- Play checks mood.
+- Talk checks social.
+- Pet checks affection.
 
-Die bisherige Freundschaft und die alten historischen Belohnungszeitpunkte
-bleiben beim Import erhalten. Die Tagesobergrenze wird für v0.12 angepasst;
-damit wird kein bereits verdienter Freundschaftswert rückgängig gemacht.
+Care still works when friendship points are not granted.
 
-## Auswirkungen auf Aikos Verhalten
+- Meaningful care typically gives **0.9–1.0 friendship points**.
+- The first additional care type introduced in a day grants a one-time **+0.35** diversity bonus.
+- The same action can award friendship at most once every **12 minutes**, and only if the need qualifies again.
+- The maximum award is **5.0 points per local calendar day**, with an overall friendship cap of 100.
+- Energy drinks and sleep/wake do **not** directly grant friendship.
+- Inactivity and background work do **not** passively reduce friendship.
 
-- Bei wenig Sozialkontakt: Gesellschaft wird wichtig; eigene `social_low`-
-  Dialoge bleiben mit längerer Wiederholungspause aktiv.
-- Bei wenig Zuwendung: Sie wirkt zurückhaltender und kann eine kleine Geste
-  vermissen; eigene Klick-/Streichelreaktionen, andere Texte als bei Sozialmangel.
-- Bei hoher Zuwendung und gewachsener Freundschaft: Sie kann gelassener und
-  leicht unbeholfen-freundlich auf Klicks reagieren.
-- Hunger, Müdigkeit, Rechenarbeit, Gereiztheit und ihre tatsächliche Tageszeit
-  behalten Vorrang. Sie muss nicht ständig etwas sagen.
+Existing friendship points and historical award timestamps are retained during migration. The new daily limit does not retroactively remove earned progress.
 
-v0.12 ergänzt 16 handgeschriebene Aussagen in vier Ereigniskategorien.
-Die vorhandenen 73 Spriteframes, das Hover-Verhalten, die verschiebbare
-Leiste und die zentrale Z-Order-Verwaltung bleiben erhalten.
+## Character reactions
 
-## Datenschutz und technische Kompatibilität
+- Low social contact: Aiko might appreciate company and use `social_low` reactions with long cooldowns.
+- Low affection: she can become more reserved or miss a small caring gesture, with **different** dialogue than social deprivation.
+- High affection plus friendship: she may respond more warmly, calmly, or awkwardly to a click or pet.
+- Hunger, exhaustion, verified computer work, irritation, and the actual time of day still have priority. She does not have to speak constantly.
 
-Die neuen Werte `affection` und `care_types_today` stehen im bereits
-vorhandenen JSON-Spielstand unter
-`%LOCALAPPDATA%\AikoDesktopPet\state.json` (Schema `version: 1`).
-Keine eigene Datenbank, keine KI-API, kein Kontozwang und keine zusätzliche
-Laufzeitbibliothek. Es werden keine Rohdaten zu Apps, Tastatureingaben oder
-Browserinhalten abgelegt. Die Balance ist eine erste, bewusst nachvollziehbare
-Regelbasis und kann später nach Windows-Langzeittests feinjustiert werden.
+This release added **16 handwritten dialogue entries in four event categories**. The existing 73 sprites, the movable hover panel, window stacking, and adaptive rhythm remained intact.
+
+## Privacy and compatibility
+
+The fields `affection` and `care_types_today` were added to the existing JSON save at `%LOCALAPPDATA%\AikoDesktopPet\state.json` while maintaining schema `version: 1`.
+
+There is no extra database, cloud account, AI API, or new runtime package. The saved data contains no raw application activity, typed text, or browser content. Balancing remains intentionally simple and testable pending extended Windows play sessions.

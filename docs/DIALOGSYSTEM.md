@@ -1,128 +1,91 @@
-# Aiko v0.7: Ereignisse, Emotionen, Animationen
+# Dialogue, events, emotions, and animation — original v0.7 design
 
-## Charaktertreue
+This file documents the **v0.7 dialogue foundation**. Some quantities and behaviors have changed in later releases; for current Tamagotchi balancing and emote sequencing, also see the v0.10–v0.13 documentation.
 
-Grundlage ist Aikos eigenes Character Sheet: konzentriert, präzise,
-beobachtend, vorsichtig mit Nähe, verletzlich ohne Theatralik, subtil
-spöttisch, in vertrauten Momenten leise zugewandt. Ihre Aussagen sind
-kurz, eher trocken und absichtsvoll. **Keine erzwungene Niedlichkeit, kein
-ständiges Reden und kein Rollenspiel im Character-Chronicles-Setting.**
+## Character voice
 
-## Technische Zuständigkeiten
+Aiko's character sheet describes someone observant, precise, reserved about intimacy, sensitive without melodrama, and quietly sarcastic. In trusted moments she shows affection without becoming loud. Statements are generally short, dry, and deliberate.
 
-- `routine.py`: Uhrzeit/Wochentag, Mahlzeiten und Schlafphasen ohne
-  Story-Rollen oder externe Tagesaktivitäten.
-- `domain.py`: Bedürfnisse, Versorgung und Schlafzustand.
-- `dialogue.py`: Emotionsableitung (`AikoMind`) und gewichtete Auswahl
-  (`DialogueBook`). Keine UI-Abhängigkeit, keine externen Dienste.
-- `data/dialogues.de.json`: 236 editierbare Zeilen, pro Satz `id`, `event`,
-  `text`, `moods`, `periods`, `weekdays`, `animation`, `weight` und
-  `cooldown_seconds`.
-- `system_activity.py`: lokale CPU/RAM/Uptime-Erfassung, optionale NVIDIA-GPU-Abfrage auf eigenem Thread; keine Inhalte oder Apps.
-- `gui.py`: Ereignisauslösung, 1×/2×-Originalsprite-Rendering,
-  Sprechblasen und optionale autonome Kommentare.
+Avoid forced cuteness, nonstop conversation, and any Academy or Character Chronicles roleplay. In later releases, the desktop version also developed an awkwardly funny streak.
 
-## Priorität bei Emotionen
+## Component responsibilities
 
-1. Schlafend (nur ruhige Reaktionen, Klicks wecken sie nicht automatisch).
-2. Durch schnelles Klicken kurzfristig gereizt (13 Sekunden).
-3. Energie ≤ 25 → müde.
-4. Sättigung ≤ 25 → hungrig.
-5. Laune ≤ 28 → zurückgezogen.
-6. Kurz nach positiver Versorgung → zugewandt (45–70 Sekunden).
-7. Hohe Laune (≥ 82) und genügend Energie (≥ 45) → verspielt.
-8. Sonst → gelassen.
+- `routine.py`: local clock, weekdays, meals, and sleep windows without external fictional obligations.
+- `domain.py`: needs, care actions, and sleep state.
+- `dialogue.py`: emotion derivation in `AikoMind` and weighted selection in `DialogueBook`; neither depends on the GUI or external services.
+- `data/dialogues.de.json`: editable **German** dialogue with fields such as `id`, `event`, `text`, `moods`, `periods`, `weekdays`, `animation`, `weight`, and `cooldown_seconds`. The catalog has expanded since the original 236 entries.
+- `system_activity.py`: local CPU/RAM/uptime and optional NVIDIA GPU observations, collected without reading files or applications.
+- `gui.py`: event dispatch, sprite rendering, speech bubbles, and optional autonomous comments.
 
-Vor einer Versorgung wird die Emotion eingefroren, **damit z. B. Hunger**
-beim anschließenden Füttern noch Einfluss auf Aikos Antwort hat. Danach
-werden die Werte normal aktualisiert.
+## Original emotion precedence (v0.7)
 
-## Dialogereignisse
+1. Sleeping: limited quiet responses; ordinary clicks do not force wake-up.
+2. Temporarily irritated after a rapid click burst.
+3. Energy at or below 25: tired.
+4. Satiety at or below 25: hungry.
+5. Mood at or below 28: withdrawn.
+6. Shortly after a positive care action: receptive or affectionate.
+7. Mood at or above 82 and energy at or above 45: playful.
+8. Otherwise: calm.
 
-| Quelle | JSON-`event` | Hinweise |
-|---|---|---|
-| Start | `greeting` | Gewichtung nach Tagesphase/Wochenende |
-| Klicks | `click_left`, `click_right` | Eigenständige Reaktionen, ohne Pflege-Effekt |
-| 4 schnelle Klicks in 5 s | `rapid_click` | Kurze Gereiztheit statt immer derselben Reaktion |
-| Klick im Schlaf | `sleep_click` | Aiko bleibt schlafend |
-| Pflege | `pet`, `play`, `play_tired` | Vorherige Stimmung wird berücksichtigt |
-| Essen | `feed_meal`, `feed_snack`, `feed_full` | Mahlzeit, Snack, satt |
-| Schlaf/Wecken | `sleep`, `wake` | Automatisch oder Button |
-| Kontakt nach 25 min | `return` | Nur bei der nächsten echten Annäherung |
-| Mausbewegung | `cursor_follow`, `cursor_far` | Selten, separater Cooldown |
-| Bewegungsende | `walk_pause` | Selten; niemals erzwungen |
-| Zeitgesteuert | `idle`, `hungry`, `tired`, `low_mood`, `morning`, `midday`, `evening`, `night`, `weekend`, `monday`, `friday` | Ruhig und zurückhaltend |
+Later releases added social needs, affection, friendship, and multi-stage click reactions. The values above record the earlier rule set rather than override current code.
 
-### Rechner als Aikos eigenes Arbeitsgefühl (v0.7)
+Aiko's mood is sampled **before** a care action so her response to being fed, for example, can still reflect her hunger even though satiety rises immediately.
 
-`ComputerVoice` liest **nur lokale Auslastungs-Snapshots** und leitet daraus
-Aikos Anstrengung ab. CPU-/GPU-Last tragen das Hauptsignal. RAM- und
-Grafikspeicherbelegung sind lediglich zusätzliche Drucksignale; viel
-reservierter Speicher bedeutet nicht automatisch viel aktive Arbeit.
-Unbekannte Messwerte bleiben unbekannt. Auf Windows wird ungefähr alle
-6 Sekunden im Hintergrund gemessen (CPU/GPU über zwei Samples geglättet).
+## Core dialogue events
 
-Dialoge greifen **niemals** auf konkrete Hardwarebegriffe zurück, sondern
-beschreiben ihre eigene Erfahrung. Neu sind die Ereignisse:
+| Trigger | Examples of `event` | Notes |
+| --- | --- | --- |
+| Startup | `greeting` | Weighted by time of day and weekday |
+| Left/right mouse click | `click_left`, `click_right` | Does not provide care by itself |
+| Repeated clicking | `rapid_click` (original) | Later releases add escalation and deliberate silence |
+| Click while sleeping | `sleep_click` | Does not automatically wake her |
+| Care | `pet`, `play`, `play_tired` | Pre-action state affects speech |
+| Food | `feed_meal`, `feed_snack`, `feed_full` | Meals versus snacks versus already full |
+| Sleep | `sleep`, `wake` | Manual or automatic |
+| Return after an absence | `return` | Triggered only by an actual re-approach |
+| Cursor | `cursor_follow`, `cursor_far` | Rare, with cooldown |
+| Stopping a walk | `walk_pause` | Rare and optional |
+| Timed context | `idle`, `hungry`, `tired`, `low_mood`, `morning`, `midday`, `evening`, `night`, `weekend`, `monday`, `friday` | Reserved, nonintrusive observations |
 
-| Ereignis | Bedeutung |
-|---|---|
-| `computer_effort_rising` | Die Arbeit nimmt merklich zu |
-| `computer_effort_heavy` | Hohe Last ist länger vorhanden |
-| `computer_effort_peak` | Besonders hohe Last hält an |
-| `computer_effort_easing` | Die Arbeit wird leichter |
-| `computer_effort_recovered` | Erholung nach andauernder Belastung |
-| `computer_effort_recovered_peak` | Erleichterung nach intensiver langer Phase |
-| `computer_effort_rest` | Längere ruhige Phase |
-| `computer_effort_steady` | Gleichmäßig mit Arbeit beschäftigt |
-| `computer_uptime` | Schon eine Weile wach |
+## The computer's workload as Aiko's own effort
 
-Erst nach mindestens **18 Sekunden** hoher Last kommt ein Kommentar wie
-„Uff. ...Das hatte es wirklich in sich.“ infrage. Bei kurzen Spitzen ist
-solch ein Satz **nicht** zulässig. Die Reihenfolge berücksichtigt frische
-Messungen, Mindestabstände von rund 18 Sekunden für normale Veränderungen,
-bevorzugte Erholungskommentare und den Vorrang direkter Nutzeraktionen.
-Spontane Hardwaredialoge sind zusätzlich selten und haben mehrminütige
-Pausen. Die verbesserte Reaktionsqualität hängt von realen Lastverläufen ab;
-keine Messung wird als bestimmtes Programm oder erledigte Aufgabe erfunden.
+`ComputerVoice` converts local hardware measurements to subjective exertion. CPU/GPU are primary signals; RAM/VRAM allocation only modestly indicates memory pressure. Reserved memory alone is not proof of actual work. Missing values remain unknown.
 
-Die Hover-Leiste zeigt weiterhin rohe CPU/GPU/RAM-Werte zur Kontrolle,
-aber die subjektive Zeile ist etwa „Ich habe ordentlich zu tun.“.
-Sensorwerte werden nur lokal genutzt und nicht gespeichert. Hohe Last
-verschlechtert nicht ihre Tamagotchi-Bedürfnisse, beeinflusst aber ihre
-Bewegung und die bereits vorhandenen `review`-Frames.
+On Windows, samples are taken around every **six seconds**, with smoothing of two samples for CPU/GPU. Aiko **does not say technical component names in her speech**; those values may still be shown numerically in the status panel.
 
-Die **Sprechblase** ist ausschließlich relativ zu Aiko positioniert.
-Die Status-/Aktionsleiste ist als separates Fenster am Kopfbereich ziehbar,
-merkt sich ihre Position lokal und erscheint durch Hover; beim Wegklicken
-verschwindet sie. Sie wird standardmäßig neben Aiko gezeigt. Über `⋯` kann
-sie wieder neben Aiko zurückgesetzt werden.
+| Event | Interpretation |
+| --- | --- |
+| `computer_effort_rising` | Work is increasing |
+| `computer_effort_heavy` | Sustained high workload |
+| `computer_effort_peak` | A sustained demanding peak |
+| `computer_effort_easing` | Work is becoming easier |
+| `computer_effort_recovered` | Relief after confirmed work |
+| `computer_effort_recovered_peak` | Relief after a prolonged intense interval |
+| `computer_effort_rest` | A long quiet spell |
+| `computer_effort_steady` | Consistently occupied |
+| `computer_uptime` | Context from how long the PC has been running |
 
-Eine JSON-Zeile mit leeren `moods`, `periods` oder `weekdays` ist für diese
-Dimension allgemein gültig. Spezifisch passende Zeilen werden höher
-gewichtet. Der Selector meidet die letzten sechs Äußerungen, respektiert
-Zeilen-Cooldowns, und fällt erst bei Erschöpfung auf weniger strenge
-Wiederholungsvermeidung zurück.
+The design requires a real sustained workload before expressing major exhaustion; short spikes must not be treated as lengthy completed tasks. The original minimum was approximately **18 seconds** of sustained high load, combined with per-event spacing and longer cooldowns for spontaneous remarks.
 
-## Zugeordnete Sprite-Gruppen
+Her status line may summarize her own experience; diagnostics may display CPU/GPU/RAM percentages. No measurement identifies the active program or user intent.
 
-`idle`, `waiting`, `review`, `waving`, `jumping`, `failed` werden für
-Sprechreaktionen verwendet. `running-left`, `running-right`, `running` sind
-Bewegungsframes; `look` sind **16 feste Blickrichtungsframes**. Letztere
-werden als Cursor-Orientierung verwendet, nicht als zufällige Animation.
+**Historical note:** v0.7 used workload to affect behavior and sprite choices, not the Tamagotchi need decay. Measured workload began affecting satiety, mood, and energy in v0.11.
 
-`feed_meal` verwendet beispielsweise `review`: eine sinnvolle Pause,
-**keine echte Essbewegung**. Bei Schlafen fehlt bislang ein Schlafsprite;
-die UI verwendet einen vorhandenen ruhigen Idle-Frame.
+## Speech bubbles and movable status panel
 
-## Qualitätsgrundlagen
+Speech belongs directly to Aiko's head, not to her movable status panel. The panel appears on hover, can be dragged by its header, remembers its position, and hides when dismissed or after moving away. The separate detailed status window remains independent.
 
-Alle Dialogzeilen müssen einen eindeutigen Schlüssel und eine auflösbare
-Spritegruppe besitzen. Kein Triggertyp darf auf Bilder referenzieren, die
-nicht im ausgelieferten Spritesatz existieren. Einfache Einheiten-/GUI-Tests
-prüfen u. a. den Katalog, Auswahl, Emotionspriorität, wiederholte Klicks,
-Verlaufswechsel, UI-Bubble, Startposition und Speicherkompatibilität.
+A catalog entry with empty `moods`, `periods`, or `weekdays` matches any value on that axis. Specific matches receive higher weights. Selection avoids the last several lines where possible, honors cooldowns, and falls back gracefully when all candidates are temporarily restricted.
 
-Eine spätere weitere Ausbaustufe könnte zunächst **neue Originalsprites**
-für Essen, Schlafen, Ärger und Streicheln ergänzen. Sie sind für v0.7
-absichtlich nicht vorausgesetzt.
+## Supported sprite groups
+
+`idle`, `waiting`, `review`, `waving`, `jumping`, and `failed` can accompany dialogue. `running-left`, `running-right`, and `running` depict movement; `look` contains **16 directional frames** and is used for cursor tracking rather than random animation.
+
+A meal may be represented by a thoughtful pause, **not** a fictional eating animation. Similarly, the current sprite set does not contain a dedicated sleep, anger, or petting animation.
+
+## Quality expectations
+
+All dialogue IDs must be unique, all referenced animation groups must exist, and no event should depend on an unavailable sprite. Automated domain/GUI tests validate selection, state priority, click history, session transitions, bubbles, placement, and save migration.
+
+Additional specialized sprite animations remain optional future work, not a claim about the current 73 frames.

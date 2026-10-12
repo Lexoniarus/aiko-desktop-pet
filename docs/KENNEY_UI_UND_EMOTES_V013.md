@@ -1,67 +1,45 @@
-# Aiko Desktop Pet v0.13 – Sci-fi-Oberfläche und Emote-Sequenzen
+# v0.13 — Kenney sci-fi interface and sequential emotes
 
-## Verbindliches Interaktionsprinzip
+## Interaction contract
 
-Ein Emote ist **kein zweites paralleles Fenster zum Text**, sondern ein
-aufeinanderfolgender Ausdrucksschritt derselben Reaktion.
+An emote is **not** an extra bubble shown next to Aiko's dialogue. It is a timed expressive step in **the same reaction sequence**.
 
-Mögliche Abläufe:
+Examples:
 
-- `Fragezeichen → Text → Herz` (verlegene, freundliche Klickreaktion)
-- `Ausrufezeichen → Text` (Überraschung, Belastungsanstieg)
-- `Herz → Text → Textnachsatz → Herz` (Zuwendung, awkward Kommentar)
-- `Text` (normale, zurückhaltende Reaktion ohne Emote)
-- `Emote` allein in seltenen wortlosen Idle-Momenten, niemals zeitgleich
-  mit einer Textsequenz.
+- `question emote → text → heart emote` for a surprised, slightly awkward friendly click;
+- `exclamation emote → text` for a sudden interruption or workload increase;
+- `heart → text → optional follow-up text → heart` for an affectionate moment;
+- `text only` for an understated reply;
+- `emote only` for occasional wordless idle observations.
 
-**Ein Anzeigeplatz:** Bei jedem Abschnitt wird das vorige Emote oder der vorige
-Text entfernt, bevor der nächste Abschnitt angezeigt wird. Nur Aikos vorhandene
-sprechblasenartige Toplevel-Oberfläche wird dafür genutzt. Der interne
-Generation-Zähler verhindert, dass verspätete Timer aus unterbrochenen
-Reaktionen wieder erscheinen. Nutzerklicks unterbrechen den laufenden Ablauf;
-bei schnellen Klickserien wird das eröffnende Emote übersprungen, damit
-Aikos eigentliche Antwort nicht dauerhaft verdrängt wird.
+**One presentation slot:** Each step fully replaces the previous emote or text before the next begins. The existing speech-bubble-like Tk Toplevel is reused rather than opening multiple simultaneous bubbles. A generation counter prevents delayed callbacks from canceled sequences from reappearing.
 
-Die Stufen werden ausdrücklich über `emote_before` und `emote_after` im
-bestehenden Dialogkatalog pro Eintrag festgelegt. Es werden **keine zufälligen
-Emotes unabhängig von der Bedeutung** über einem Satz angezeigt.
-Die bisherigen nachfolgenden, selbstkorrigierenden Kommentare bleiben erhalten.
+A new user interaction interrupts the current sequence. During rapid click bursts, the introductory emote may be skipped so Aiko does not endlessly restart the first visual cue without reaching her actual response.
 
-## Herkunft der Assets
+The dialogue catalog assigns `emote_before` and `emote_after` for semantically appropriate sequences; emotes are **not attached at random**. Existing two-part, self-correcting speech remains supported.
 
-Die Dateien stammen aus der vom Nutzer benannten Dropbox:
+## Source material
 
-- `/Kenney Game Assets All-in-1 3.4.0/2D assets/Emote Pack/PNG/Pixel/Style 1`
-- `/Kenney Game Assets All-in-1 3.4.0/UI assets/UI Pack - Sci-fi/PNG`
-- Referenzlayout: `UI Pack - Sci-fi/Sample.png` (im Ordner `vorschau/`)
+The user supplied the following paths from a purchased Kenney Game Assets All-in-1 3.4.0 bundle:
 
-Die verwendeten Kenney-Packs stehen laut den beiden mitgelieferten
-`License.txt` unter **CC0 1.0**. Angewandt werden 15 unveränderte
-Emote-Pixelgrafiken und ein kleines Set bestehender bzw. aus ihnen abgeleiteter
-Sci-fi-Panel- und Button-Bilder. Der Rest des umfangreichen Asset-Packs ist
-nicht nötig und wird nicht mitgeliefert. Aikos 73 eigene Sprites bleiben
-unverändert.
+- `2D assets/Emote Pack/PNG/Pixel/Style 1`
+- `UI assets/UI Pack - Sci-fi/PNG`
+- Reference layout: `UI Pack - Sci-fi/Sample.png` (sample also retained in `vorschau/`).
 
-## Typografie
+The shipped assets include **15 unchanged pixel emotes** and a small selection of Kenney-based sci-fi panels and buttons; the rest of the complete bundle is intentionally not included. Aiko's **73 original character sprites** are unchanged.
 
-Die vom Nutzer bereitgestellte Schrift `Kenney Mini` wird automatisch gewählt,
-**falls sie lokal unter Windows installiert ist**. Andernfalls verwendet
-Aiko `Segoe UI`. Die Schriftdatei ist aus Lizenz-/Bereitstellungsgründen **nicht
-im Projekt-ZIP enthalten**; vor dem Start kann der Nutzer seine eigene Kopie
-unter Windows installieren. Keine Schriftdatei wird aus dem System extrahiert
-oder weitergegeben.
+The included Kenney license files identify both asset packs as **CC0 1.0**, regardless of their purchase as part of the All-in-1 bundle. Voluntary attribution is included in [ASSETS.md](../ASSETS.md) and [LICENSES/KENNEY_CC0.md](../LICENSES/KENNEY_CC0.md).
 
-## UI-Rückwärtskompatibilität
+## Typography
 
-Erhalten bleiben: sechs Tamagotchi-Werte, die Pflegeaktionen, `Status`, `⋯`,
-verschiebbares Hover-Panel, dessen Position und Auto-Ausblenden, getrennte
-Sprechblase über Aiko, zentrale Windows-Z-Order-Steuerung, vorhandene
-Stimmung und Tageslogik, Rechnerauslastung und `%LOCALAPPDATA%`-Speicherstand.
+The user-supplied **Kenney Mini** font is selected automatically **only if already installed on Windows**. Otherwise Aiko uses Segoe UI. Font binaries are not included in the repository; the user can install a separately obtained copy according to its applicable terms.
 
-## Bekannte Grenzen
+## UI compatibility
 
-- Visuelle GUI-Tests laufen unter Xvfb/Linux; die tatsächliche Windows-11-
-  Fensterreihenfolge bei Browser-Spracherkennung benötigt Praxistests.
-- Ohne lokal installierte Kenney-Mini-Schrift wird Segoe UI angezeigt.
-- Emotes sind nur kurzfristige Äußerungscues; sie ersetzen weder Text noch
-  neue Charakteranimationssprites.
+All six Tamagotchi indicators, care actions, `Status` and `⋯`, the draggable hover panel, its saved position and auto-hide, an independently attached bubble above Aiko, Windows window stacking, daily habits, and the `%LOCALAPPDATA%` save file remain available.
+
+## Known limitations
+
+- The automated GUI tests run under Linux/Xvfb; real Windows 11 window stacking during browser microphone input still warrants testing.
+- Without a locally installed Kenney Mini font, the UI uses Segoe UI.
+- Emotes are short expression cues rather than replacements for actual animation sprites.
