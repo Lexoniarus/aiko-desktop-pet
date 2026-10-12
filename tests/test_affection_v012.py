@@ -9,10 +9,16 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-from aiko_pet.dialogue import AikoMind, DialogueBook, EMOTION_LABELS
+from aiko_pet.dialogue import AikoMind, DialogueBook, EMOTION_LABELS, Reaction
 from aiko_pet.domain import FRIENDSHIP_DAILY_CAP, PetState
 from aiko_pet.routine import context_at
 from aiko_pet.storage import PetSettings, StateStore
+
+
+def require_reaction(value: Reaction | None) -> Reaction:
+    """Fail immediately if an expected authored dialogue is unavailable."""
+    assert value is not None, "Expected a dialogue reaction"
+    return value
 
 
 def stamp(day: str = "2026-10-12", hour: int = 12) -> float:
@@ -209,7 +215,7 @@ class AffectionDialogueTests(unittest.TestCase):
         state = PetState(social=70, affection=12)
         self.assertEqual(self.mind.emotion(state, 50), "seeking_affection")
         self.assertEqual(EMOTION_LABELS["seeking_affection"], "Wünscht Zuwendung")
-        self.assertEqual(self.mind.click("left", state, self.context, 50).event,
+        self.assertEqual(require_reaction(self.mind.click("left", state, self.context, 50)).event,
                          "click_affection_low")
         self.assertEqual(self.mind.care_event("pet", state, self.context, 55)[0],
                          "pet_needs_affection")
@@ -219,30 +225,30 @@ class AffectionDialogueTests(unittest.TestCase):
     def test_existing_social_shortage_still_has_own_priority(self):
         state = PetState(social=10, affection=10)
         self.assertEqual(self.mind.emotion(state, 50), "lonely")
-        self.assertEqual(self.mind.click("left", state, self.context, 50).event,
+        self.assertEqual(require_reaction(self.mind.click("left", state, self.context, 50)).event,
                          "click_lonely")
 
     def test_feeling_cared_for_can_make_aiko_more_at_ease(self):
         state = PetState(affection=95, friendship=55, mood=73, social=78)
         self.assertEqual(
-            self.mind.click("left", state, self.context, 50).event,
+            require_reaction(self.mind.click("left", state, self.context, 50)).event,
             "click_at_ease",
         )
         reserved = AikoMind(rng=random.Random(12))
         state.affection = 50
         self.assertEqual(
-            reserved.click("left", state, self.context, 50).event,
+            require_reaction(reserved.click("left", state, self.context, 50)).event,
             "click_left",
         )
 
     def test_affection_spontaneous_hint_has_long_cooldown(self):
         state = PetState(affection=8)
-        self.assertEqual(self.mind.spontaneous_event(
-            state, self.context, 60).event, "affection_low")
-        self.assertEqual(self.mind.spontaneous_event(
-            state, self.context, 61).event, "idle")
-        self.assertEqual(self.mind.spontaneous_event(
-            state, self.context, 60 + 26 * 60).event, "affection_low")
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(
+            state, self.context, 60)).event, "affection_low")
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(
+            state, self.context, 61)).event, "idle")
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(
+            state, self.context, 60 + 26 * 60)).event, "affection_low")
 
     def test_dialogues_all_use_existing_sprites_and_grounded_topics(self):
         lines = [line for line in DialogueBook.from_file().lines
