@@ -5,7 +5,7 @@ open firewall port, web endpoint, message broker or external permissions exist.
 
 ## Dependency direction
 
-\`\`\`text
+```text
 future browser/IPC adapter -> validated NotificationCommand --+
                                                        +-------v-------+
 Tkinter toolbar/buttons -> CareCommand ---------------->|ApplicationRouter|
@@ -19,7 +19,7 @@ Tkinter toolbar/buttons -> CareCommand ---------------->|ApplicationRouter|
                                   CareOutcome                             UI thread polls
                                       |                                         |
                                   Tk presenter <------------------------------+
-\`\`\`
+```
 
 - **Care commands:** UI supplies trusted clock and real workload conditions.
   The controller owns the existing sequence: advance needs, note interaction,
@@ -36,7 +36,7 @@ Tkinter toolbar/buttons -> CareCommand ---------------->|ApplicationRouter|
 
 ## Future payload shape (not a running endpoint)
 
-\`\`\`json
+```json
 {
   "version": 1,
   "type": "notification.created",
@@ -45,11 +45,11 @@ Tkinter toolbar/buttons -> CareCommand ---------------->|ApplicationRouter|
   "message": "Dein Termin beginnt in 10 Minuten.",
   "priority": "normal"
 }
-\`\`\`
+```
 
 The adapter MUST authenticate and authorize the sender, then call
-\`IncomingNotification.from_payload(payload, authenticated_source=identity)\`.
-It must not trust a user-supplied \`source\`. It should apply request body size,
+`IncomingNotification.from_payload(payload, authenticated_source=identity)`.
+It must not trust a user-supplied `source`. It should apply request body size,
 rate and origin limits, loopback binding by default, and protect against
 browser cross-origin / cross-site request abuse. The application inbox does
 not provide network authentication.
@@ -63,6 +63,23 @@ The current UI only presents one message when no other conversation is active.
 Existing entrypoints, stored JSON schema, dialogue catalogue, and user-facing
 care methods remain in place. The new application components live alongside
 the old modules as an incremental dependency cutover. Future work can replace
-direct \`DesktopPet\` references from Tk widgets with narrow UI ports and
-separate sprite/speech/window coordination from \`gui.py\`. No migrations or
+direct `DesktopPet` references from Tk widgets with narrow UI ports and
+separate sprite/speech/window coordination from `gui.py`. No migrations or
 extra runtime libraries are necessary.
+
+
+# Application-boundary cutover
+
+- Package `aiko_pet/application/` contains typed care and notification
+  commands, future integration events, an owner-thread command router, and a
+  bounded, thread-safe notification inbox.
+- `DesktopPet.interact()` now submits `CareCommand` and receives a
+  `CareOutcome`. The controller owns domain/dialogue sequencing; the GUI
+  still presents text, refreshes widgets and saves locally.
+- External notification data uses `IncomingNotification.from_payload(...,
+  authenticated_source=...)`. The adapter is responsible for authenticating
+  and authorizing the source (not provided in this change).
+- `DesktopPet._tick()` drains at most one message when not sleeping,
+  speaking, running an action or actively using controls. No separate
+  application thread ever manipulates Tk windows.
+- No HTTP endpoint, browser extension, WebSocket or daemon is started here.

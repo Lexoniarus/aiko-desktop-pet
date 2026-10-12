@@ -16,6 +16,9 @@ from tkinter import font as tkfont
 from tkinter import messagebox
 
 from .adaptive import AdaptiveRoutine, Observation
+from .application.commands import CareCommand
+from .application.controller import CareController, CareRuntime
+from .application.router import ApplicationRouter
 from .animation import (
     FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
     FrameClock, choose_passive_animation,
@@ -91,6 +94,9 @@ class DesktopPet:
         )
         self._last_saved = time.monotonic()
         self.mind = AikoMind(started_at=self._last_saved)
+        self.application = ApplicationRouter(
+            CareController(self.state, self.mind, self.adaptive),
+        )
         self.computer_voice = ComputerVoice()
         self.activity_monitor = activity_monitor or ActivityMonitor()
         self.activity_monitor.set_enabled(self.settings.observe_computer)
@@ -381,32 +387,28 @@ class DesktopPet:
         self._next_walk = now + duration + random.uniform(2.5, 5)
 
     def interact(self, action: str) -> None:
+        """Run a care command through the shared application boundary."""
         stamp = time.time()
         now = time.monotonic()
-        self.state.advance(
-            stamp, auto_routine=self.settings.auto_routine,
-            allow_bedtime=self._allow_bedtime(),
-            allow_nap=self._allow_nap(),
-            interrupt_nap=self._interrupt_nap(),
-            effort=self._live_effort(),
+        result = self.application.dispatch(
+            CareCommand.from_action(action),
+            runtime=CareRuntime(
+                wall_time=stamp,
+                monotonic_time=now,
+                auto_routine=self.settings.auto_routine,
+                allow_bedtime=self._allow_bedtime(),
+                allow_nap=self._allow_nap(),
+                interrupt_nap=self._interrupt_nap(),
+                effort=self._live_effort(),
+            ),
         )
-        self.adaptive.note_interaction(stamp)
-        self.context = context_at(stamp)
-        event, previous_emotion = self.mind.care_event(
-            action, self.state, self.context, now,
-        )
-        fallback = self.state.interact(action, now=stamp)
-        if event not in ("play_tired", "energy_drink_full"):
-            self.mind.after_care(action, now)
-        response = self.mind.say_event(
-            event, self.state, self.context, now, tone=previous_emotion,
-        )
-        if response is None:
+        self.context = result.context
+        if result.reaction is None:
             # A fallback must not be overwritten by an older, queued aside.
             self._cancel_followup()
-            self.say(fallback, 2450)
+            self.say(result.fallback_text, 2450)
         else:
-            self._react(response, 2900)
+            self._react(result.reaction, 2900)
         if self.toolbar is not None:
             self.toolbar.refresh()
         self._refresh_status()
@@ -917,6 +919,27 @@ class DesktopPet:
                     )
                 self._react(response, 3600)
 
+    def _present_pending_notification(self, now: float) -> None:
+        """Drain at most one external event without interrupting Aiko.
+
+        Only this Tk event-loop method may turn queued notification data into
+        desktop widgets. Untrusted senders cannot call this renderer directly.
+        """
+        if (
+            self.state.sleeping
+            or now < self._action_until
+            or now - self._last_spoken < 3
+            or self._bubble is not None
+            or self.settings_popup is not None
+            or (self.toolbar is not None and self.toolbar.visible)
+        ):
+            return
+        notification = self.application.next_notification()
+        if notification is None:
+            return
+        self.say(f"{notification.title}: {notification.message}", 3500)
+        self._last_spoken = now
+
     def _refresh_overlays_and_autosave(self, now: float) -> None:
         """Refresh visible panels, window layering and periodic persistence."""
         if self.toolbar is not None and self.toolbar.visible:
@@ -951,6 +974,7 @@ class DesktopPet:
         self._render_current_sprite(now, dt, pointer)
         self._maybe_show_idle_emote(now)
         self._maybe_speak_spontaneously(now)
+        self._present_pending_notification(now)
         self._refresh_overlays_and_autosave(now)
         if not self._closed:
             self._scheduled_tick = self.root.after(TICK_MILLISECONDS, self._tick)
@@ -976,6 +1000,7 @@ class DesktopPet:
         if self._closed:
             return
         self._closed = True
+        self.application.close()
         for scheduled in (self._scheduled_tick, self._scheduled_greeting):
             if scheduled is not None:
                 self.root.after_cancel(scheduled)

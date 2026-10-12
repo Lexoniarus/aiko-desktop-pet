@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, TypeAlias
+from typing import Literal, TypeAlias, cast
 
 from .events import IncomingNotification
 
@@ -24,6 +24,14 @@ class CareCommand:
     def __post_init__(self) -> None:
         if self.action not in CARE_ACTIONS:
             raise ValueError(f"Unsupported care action: {self.action}")
+
+    @classmethod
+    def from_action(cls, action: str) -> CareCommand:
+        """Check a UI string before converting it to a typed care command."""
+        if action not in CARE_ACTIONS:
+            raise ValueError(f"Unsupported care action: {action}")
+        return cls(cast(CareAction, action))
+
 
 
 @dataclass(frozen=True, slots=True)
