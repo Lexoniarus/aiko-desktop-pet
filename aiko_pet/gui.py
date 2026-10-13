@@ -65,6 +65,12 @@ from .ui.status_panel import StatusPanel as StatusPanel
 
 
 class DesktopPet(DesktopCompatibility):
+    """Compose one desktop session; keep historical public GUI entrypoints.
+
+    Character, settings, input, window and simulation behavior belong to
+    their respective components, not to a second state stored on this shell.
+    """
+
     _overlay_stack: WindowStack
 
     def __init__(

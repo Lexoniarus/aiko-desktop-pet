@@ -85,7 +85,9 @@ python -m unittest discover -s tests -q
 
 GUI tests require a display; on Linux use `xvfb-run -a python -m unittest discover -s tests -q`. [GitHub Actions](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml) runs Python 3.11/3.13 under Linux/Xvfb, Windows headless regressions, Ruff, strict Mypy and Pyright. Real Windows window behavior was also checked by the project maintainer during the October 2026 refactor.
 
-See [Contributing](CONTRIBUTING.md), [development workflow](docs/GITHUB_WORKFLOW.md), and [historical release/feature notes](docs/HISTORY_0_2_TO_0_13.md).
+See [Contributing](CONTRIBUTING.md), the [current change history](CHANGELOG.md),
+[development workflow](docs/GITHUB_WORKFLOW.md), and
+[historical feature notes](docs/HISTORY_0_2_TO_0_13.md).
 
 ## Artwork, fonts and licensing
 
@@ -94,4 +96,9 @@ See [Contributing](CONTRIBUTING.md), [development workflow](docs/GITHUB_WORKFLOW
 - **Kenney Emote Pack and UI Pack: Sci-fi** artwork is [CC0 1.0](LICENSES/KENNEY_CC0.md), with voluntary credit to [Kenney](https://kenney.nl/).
 - **Font binaries are not shipped** and are not relicensed by this project.
 
-Please consult [ASSETS.md](ASSETS.md) for provenance, attribution and limitations. Aiko Desktop Pet is an independent project, separate from ComfyReview and Character Chronicles.
+Please consult [ASSETS.md](ASSETS.md) for provenance, attribution and limitations.
+Security and private vulnerability reporting are explained in
+[SECURITY.md](SECURITY.md).
+
+Aiko Desktop Pet is an independent project, separate from ComfyReview and
+Character Chronicles.

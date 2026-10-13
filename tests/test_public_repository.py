@@ -10,8 +10,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCAL_MARKDOWN = (
-    "README.md", "CONTRIBUTING.md", "ASSETS.md",
-    "docs/ARCHITECTURE.md", "docs/MEDIA_GALLERY.md",
+    "README.md", "CONTRIBUTING.md", "CHANGELOG.md", "SECURITY.md",
+    "ASSETS.md", "docs/ARCHITECTURE.md", "docs/MEDIA_GALLERY.md",
     "docs/GITHUB_WORKFLOW.md", "docs/REFACTOR_ACCEPTANCE.md",
 )
 LOCAL_LINK = re.compile(r"\]\(([^)]+)\)")
@@ -52,6 +52,8 @@ class PublicRepositoryTests(unittest.TestCase):
         self.assertIn("docs/MEDIA_GALLERY.md", readme)
         self.assertIn("docs/ARCHITECTURE.md", readme)
         self.assertIn("CONTRIBUTING.md", readme)
+        self.assertIn("CHANGELOG.md", readme)
+        self.assertIn("SECURITY.md", readme)
 
     def test_gallery_accounts_for_every_checked_in_preview(self) -> None:
         gallery = (
@@ -118,6 +120,7 @@ class PublicRepositoryTests(unittest.TestCase):
     def test_developer_documentation_and_ci_are_present(self) -> None:
         for path in (
             "docs/ARCHITECTURE.md", "CONTRIBUTING.md",
+            "CHANGELOG.md", "SECURITY.md",
             ".github/ISSUE_TEMPLATE/bug_report.yml",
             ".github/ISSUE_TEMPLATE/feature_request.yml",
             ".github/PULL_REQUEST_TEMPLATE.md",

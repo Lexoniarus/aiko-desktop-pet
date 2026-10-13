@@ -16,7 +16,8 @@ flowchart TB
     Widgets["ui/ — Tkinter character and windows"]
     Desktop["desktop/ — timers, input, native Windows adapters"]
     Infra["infrastructure/ — hardware and JSON storage"]
-    Ports["telemetry.py + application/ports.py — data/reading contracts"]
+    Telemetry["telemetry.py — immutable measurement values"]
+    Ports["application/ports.py — data/reading interfaces"]
 
     Shell --> App
     Shell --> Presentation
@@ -26,15 +27,22 @@ flowchart TB
     App --> Domain
     App --> Mind
     App --> Ports
+    Ports --> Telemetry
+    Infra --> Telemetry
     Presentation --> App
     Presentation --> Domain
     Presentation --> Mind
     Widgets --> Presentation
     Desktop --> Widgets
-    Infra --> Ports
+    Infra -. "structurally satisfies reader ports" .-> Ports
 ```
 
-The diagram highlights major relationships; the checked-in tests enforce additional import rules. Platform-level coordination intentionally happens in the desktop shell. It is not a completely acyclic hierarchy of services independent from their composition root: only *module import cycles* and forbidden inward dependencies are prevented.
+The solid arrows highlight major code dependencies; the dotted provider-to-port
+relationship represents structural compatibility, **not** an import from
+infrastructure into the application. The checked-in tests enforce
+additional import rules. Platform-level coordination intentionally happens
+in the desktop shell; the architecture does not pretend to eliminate
+all runtime coupling between composed services.
 
 ## State and business rules
 

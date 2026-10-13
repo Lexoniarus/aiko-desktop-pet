@@ -49,7 +49,9 @@ A real Windows smoke test is required for window focus, transparency, taskbar pl
 
 Never commit a personal `.env`, tokens, save files, raw activity logs, privately obtained assets, fonts or build artifacts. Check `git diff --cached` in addition to the exclusions in `.gitignore`. Tests must use isolated temporary save paths and must not overwrite `%LOCALAPPDATA%\AikoDesktopPet\state.json`.
 
-Please avoid attaching unredacted system logs, window titles or personal file paths to public issues. For sensitive vulnerabilities, contact the maintainer privately through the available GitHub security/contact channels rather than posting exploit details publicly.
+Please avoid attaching unredacted system logs, window titles or personal file paths to public issues. For sensitive vulnerabilities, follow the
+[security reporting policy](SECURITY.md) rather than posting exploit
+details publicly.
 
 ## Artwork and documentation
 

@@ -43,7 +43,7 @@ The [curated gallery](docs/MEDIA_GALLERY.md) distinguishes actual application
 screenshots, sprite animation previews, historical builds and third-party
 Kenney layout references.
 
-The original source spritesheet identified by `assets/provenance.json` is
+The original source spritesheet identified by `aiko_pet/assets/provenance.json` is
 not shipped in this repository. The checked-in animation frames can be
 used as supplied; the manifest documents their origin and extraction,
 but it does not by itself reproduce the original asset-generation workflow.

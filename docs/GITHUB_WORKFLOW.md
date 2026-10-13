@@ -16,6 +16,21 @@ The default branch is `main`. The first public feature baseline was v0.13; the c
 
 The one-off upload helper used for initial publication is **not part of the maintained repository**. Development should use normal Git and pull requests, not a script that copies a local folder and pushes directly to `main`.
 
+## Public repository metadata
+
+GitHub's **About** description, topics and social preview are configured
+in repository settings, not in the code files. Suggested description:
+
+> Local-first Windows desktop pet with Tamagotchi care, adaptive workload
+> reactions and hand-written German dialogue.
+
+Suggested topics: `desktop-pet`, `tamagotchi`, `python`, `tkinter`,
+`windows`, `chibi`, `pixel-art`.
+
+Use a real Aiko application screenshot as the social preview if one is
+configured. These metadata fields may require a maintainer to edit them
+in the GitHub UI; a README edit alone does not populate them.
+
 ## Scope and security
 
 Do not commit local `.env` settings, tokens, activity traces, save files, logs, private data, font binaries or built installers. `.gitignore` provides baseline exclusions but cannot replace review of the staged diff.
@@ -32,4 +47,7 @@ Do not modify the user's existing save as part of a test or cleanup. Tests shoul
 - Hardware sampling and domain mutations have separate owners. Domain state changes must be testable without opening a desktop window.
 - Keep authored German runtime/dialogue copy in German; technical docs, code identifiers and development messages are in English.
 
-See [current architecture](ARCHITECTURE.md), [historical refactor audit](ARCHITECTURE_AUDIT_20261013.md), [asset licensing](../ASSETS.md) and [test status](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml).
+See [current architecture](ARCHITECTURE.md),
+[historical refactor audit](ARCHITECTURE_AUDIT_20261013.md),
+[asset licensing](../ASSETS.md), [security policy](../SECURITY.md),
+and [test status](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml).
