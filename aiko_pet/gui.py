@@ -57,6 +57,8 @@ from .ui.status_panel import StatusPanel as StatusPanel
 
 
 class DesktopPet(DesktopCompatibility):
+    _overlay_stack: WindowStack
+
     def __init__(
         self, *, store: StateStore | None = None,
         activity_monitor: ActivityMonitor | None = None,
