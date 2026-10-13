@@ -87,6 +87,55 @@ class FrameClockTests(unittest.TestCase):
         self.assertAlmostEqual(clock.progress_seconds(now, timings), 1.413)
 
 
+class CurrentClipPacingTests(unittest.TestCase):
+    def test_all_live_clips_use_one_fixed_frame_hold(self) -> None:
+        from aiko_pet.infrastructure.character_assets import (
+            load_character_catalog,
+        )
+
+        catalog = load_character_catalog()
+        self.assertEqual(len(catalog.clips), 13)
+        for name, clip in catalog.clips.items():
+            if name == "look":
+                self.assertEqual(len(clip.frames), 16)
+                continue
+            with self.subTest(clip=name):
+                self.assertEqual(clip.timings, (160,) * 8)
+                clock = FrameClock()
+                self.assertEqual(
+                    clock.next_index(name, 0.0, clip.timings, loop=clip.loop),
+                    0,
+                )
+                self.assertEqual(clock.next_delay_ms, 160)
+                for expected_index in range(1, 8):
+                    now = clock.frame_started_at + 0.160
+                    self.assertEqual(
+                        clock.next_index(name, now, clip.timings,
+                                         loop=clip.loop),
+                        expected_index,
+                    )
+                    self.assertEqual(clock.next_delay_ms, 160)
+                end = clock.frame_started_at + 0.160
+                last = clock.next_index(
+                    name, end, clip.timings, loop=clip.loop,
+                )
+                if clip.loop:
+                    self.assertEqual(last, 0)
+                    self.assertFalse(clock.finished)
+                    self.assertEqual(clock.next_delay_ms, 160)
+                else:
+                    self.assertEqual(last, 7)
+                    self.assertTrue(clock.finished)
+                    self.assertIsNone(clock.next_delay_ms)
+
+    def test_delayed_callback_never_skips_a_frame(self) -> None:
+        clock = FrameClock()
+        timings = (160,) * 8
+        self.assertEqual(clock.next_index("waving", 0, timings), 0)
+        self.assertEqual(clock.next_index("waving", .8, timings), 1)
+        self.assertEqual(clock.next_delay_ms, 160)
+
+
 class PassiveAnimationTests(unittest.TestCase):
     def select(
         self, *,
@@ -136,7 +185,7 @@ class WalkControllerTests(unittest.TestCase):
     def conditions(self, **overrides: object) -> WalkConditions:
         defaults = WalkConditions(
             now=15.0, elapsed_seconds=0.25, x=300,
-            speed_pixels_per_second=68 / 1.413, stride_pixels=68,
+            speed_pixels_per_second=68 / 1.28, stride_pixels=68,
             track=self.track, sprite_width=128, energy=80,
             auto_walk=True, sleeping=False, attention_active=False,
             toolbar_visible=False, observing_computer=False,
@@ -168,7 +217,7 @@ class WalkControllerTests(unittest.TestCase):
         second = self.walker.plan_step(self.conditions(elapsed_seconds=0))
         assert first is not None
         assert second is not None
-        self.assertAlmostEqual(first.pixels, 68 / 1.413 * .25)
+        self.assertAlmostEqual(first.pixels, 68 / 1.28 * .25)
         self.assertEqual(second.pixels, 0)
 
     def test_work_delays_next_walk_and_cancels_movement(self) -> None:
@@ -222,7 +271,7 @@ class WalkControllerTests(unittest.TestCase):
                         new_x - x, now=n * .004,
                     ))
                     x = new_x
-                self.assertAlmostEqual(abs(x - 300), 68 / 1.413, delta=.5)
+                self.assertAlmostEqual(abs(x - 300), 68 / 1.28, delta=.5)
                 self.assertGreater(abs(walker.remaining_distance), 50)
 
     def test_complete_pause_starts_at_actual_finish_even_after_long_walk(self) -> None:

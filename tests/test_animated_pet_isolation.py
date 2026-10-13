@@ -94,7 +94,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
 
     def test_short_frames_advance_without_a_desktop_simulation_tick(self) -> None:
         self.anim.begin_action("waving", time.monotonic())
-        self.root.after(95, self.root.quit)
+        self.root.after(195, self.root.quit)
         self.root.mainloop()
         self.assertEqual(self.anim.frame_clock.active_key, ("waving", None))
         self.assertGreaterEqual(self.anim.frame_clock.frame_index, 1)

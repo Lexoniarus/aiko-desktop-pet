@@ -17,9 +17,8 @@ class CharacterCatalogTests(unittest.TestCase):
         catalog = load_character_catalog()
         self.assertEqual(sum(len(c.frames) for c in catalog.clips.values()), 112)
         self.assertNotIn("running", catalog.clips)
-        self.assertEqual(catalog.clips["idle"].timings,
-                         (1180, 110, 60, 50, 70, 70, 140, 840))
-        self.assertEqual(catalog.clips["eat"].duration_seconds, 2.3)
+        self.assertEqual(catalog.clips["idle"].timings, (160,) * 8)
+        self.assertEqual(catalog.clips["eat"].duration_seconds, 1.28)
         self.assertFalse(catalog.clips["eat"].loop)
         self.assertTrue(catalog.clips["sleep"].loop)
         self.assertEqual(catalog.clips["eat"].frames[3].events, ("bite",))
@@ -27,22 +26,34 @@ class CharacterCatalogTests(unittest.TestCase):
         self.assertEqual(catalog.clips["attack"].frames[3].events,
                          ("attack_release",))
 
-    def test_effective_profiles_keep_source_timings_and_frame_order(self) -> None:
-        data = json.loads((ASSET_ROOT / 'animations.json').read_text('utf-8'))
-        for clip in data['animations']:
-            name = clip['state']
-            if name in ('idle', 'waiting', 'review'):
-                self.assertEqual(sum(f['duration_ms'] for f in clip['frames']), 2520)
-                self.assertEqual([f['duration_ms'] for f in clip['frames'][1:-1]],
-                                 [f['source_duration_ms']
-                                  for f in clip['frames'][1:-1]])
-            if name in ('running-left', 'running-right'):
-                self.assertEqual([f['duration_ms'] for f in clip['frames']],
-                                 [160] * 7 + [293])
-            if name != 'look':
-                self.assertEqual([f['file'].rsplit('/', 1)[1]
-                                  for f in clip['frames']],
-                                 [f'{i:02d}.png' for i in range(8)])
+    def test_uniform_pacing_preserves_original_source_frame_metadata(self) -> None:
+        data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
+        policy = json.loads(
+            (ASSET_ROOT / "animation_timing.json").read_text("utf-8"),
+        )
+        duration = policy["regular_frame_duration_ms"]
+        self.assertEqual(duration, 160)
+        self.assertEqual(len(data["animations"]), 13)
+        for clip in data["animations"]:
+            name = clip["state"]
+            if name == "look":
+                self.assertEqual(len(clip["frames"]), 16)
+                continue
+            frames = clip["frames"]
+            with self.subTest(animation=name):
+                self.assertEqual(len(frames), 8)
+                self.assertEqual(
+                    [frame["duration_ms"] for frame in frames],
+                    [duration] * 8,
+                )
+                self.assertTrue(all(
+                    type(frame["source_duration_ms"]) is int
+                    for frame in frames
+                ))
+                self.assertEqual(
+                    [frame["file"].rsplit("/", 1)[1] for frame in frames],
+                    [f"{i:02d}.png" for i in range(8)],
+                )
 
     def _write_catalog(self, root: Path, data: dict[str, Any]) -> None:
         for clip in data["animations"]:
@@ -52,14 +63,24 @@ class CharacterCatalogTests(unittest.TestCase):
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.touch()
         (root / "animations.json").write_text(json.dumps(data), encoding="utf-8")
+        (root / "animation_timing.json").write_bytes(
+            (ASSET_ROOT / "animation_timing.json").read_bytes(),
+        )
 
     def test_corrupt_metadata_and_escaping_paths_are_rejected(self) -> None:
-        for broken in ("duration", "path", "loop", "return_to", "gaze"):
+        for broken in (
+            "duration", "uneven", "count", "path", "loop", "return_to",
+            "gaze",
+        ):
             with self.subTest(broken=broken), tempfile.TemporaryDirectory() as folder:
                 data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
                 entry = data["animations"][0]
                 if broken == "duration":
                     entry["frames"][0]["duration_ms"] = 0
+                elif broken == "uneven":
+                    entry["frames"][2]["duration_ms"] += 1
+                elif broken == "count":
+                    entry["frames"].pop()
                 elif broken == "path":
                     entry["frames"][0]["file"] = "../outside.png"
                 elif broken == "loop":
