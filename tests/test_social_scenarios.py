@@ -10,13 +10,18 @@ import random
 import re
 import unittest
 from datetime import datetime
-from pathlib import Path
-from tempfile import TemporaryDirectory
 
 from aiko_pet.adaptive import Behaviour
-from aiko_pet.dialogue import AikoMind, CATALOGUE, DialogueBook, Line
+from aiko_pet.adaptive_policy import ActivityMode
+from aiko_pet.dialogue import AikoMind, CATALOGUE, DialogueBook, Line, Reaction
 from aiko_pet.domain import PetState
 from aiko_pet.routine import context_at
+
+
+def require_reaction(value: Reaction | None) -> Reaction:
+    """Fail immediately if an expected authored dialogue is unavailable."""
+    assert value is not None, "Expected a dialogue reaction"
+    return value
 
 
 def clock(hour=15, day="2026-10-12"):
@@ -24,7 +29,7 @@ def clock(hour=15, day="2026-10-12"):
     return context_at(dt.timestamp())
 
 
-def scene(*, mode="working", duration=1800, strain=35, effort=0.88,
+def scene(*, mode: ActivityMode = "working", duration=1800, strain=35, effort=0.88,
           expected=None, confident=False, present=True, rest=0,
           uptime=24):
     return Behaviour(
@@ -55,7 +60,7 @@ class ClickStoryTests(unittest.TestCase):
         )
         self.assertEqual(self.mind.emotion(self.state, 30), "irritated")
         self.assertEqual(
-            self.mind.click("right", self.state, self.context, 50).event,
+            require_reaction(self.mind.click("right", self.state, self.context, 50)).event,
             "click_right",
         )
         self.assertEqual(self.mind.emotion(self.state, 50), "calm")
@@ -63,8 +68,10 @@ class ClickStoryTests(unittest.TestCase):
     def test_good_mood_turns_provocation_into_playful_teasing(self):
         self.state.mood = 94
         self.state.energy = 90
-        events = [self.mind.click("left", self.state, self.context, 50+i)
-                  for i in range(8)]
+        events = [
+            require_reaction(self.mind.click("left", self.state, self.context, 50+i))
+            for i in range(8)
+        ]
         self.assertEqual([r.event for r in events], [
             "click_left", "click_left", "click_notice_playful",
             "click_tease", "click_tease", "click_tease_more",
@@ -75,17 +82,17 @@ class ClickStoryTests(unittest.TestCase):
     def test_low_energy_and_recent_care_change_early_clicks(self):
         self.state.energy = 19
         self.assertEqual(
-            self.mind.click("left", self.state, self.context, 20).event,
+            require_reaction(self.mind.click("left", self.state, self.context, 20)).event,
             "click_sleepy",
         )
         new_mind = AikoMind(rng=random.Random(1))
         new_mind.after_care("pet", 30)
         self.assertEqual(
-            new_mind.click("left", PetState(), self.context, 35).event,
+            require_reaction(new_mind.click("left", PetState(), self.context, 35)).event,
             "click_flustered",
         )
         self.assertEqual(
-            new_mind.click("left", PetState(), self.context, 100).event,
+            require_reaction(new_mind.click("left", PetState(), self.context, 100)).event,
             "click_left",
         )
 
@@ -101,8 +108,10 @@ class ClickStoryTests(unittest.TestCase):
 
     def test_calm_night_clicks_know_time_without_claiming_work(self):
         night = clock(hour=2)
-        reactions = [self.mind.click("left", self.state, night, 20+i)
-                     for i in range(3)]
+        reactions = [
+            require_reaction(self.mind.click("left", self.state, night, 20+i))
+            for i in range(3)
+        ]
         self.assertEqual([r.event for r in reactions],
                          ["click_night", "click_night", "click_notice"])
         self.assertTrue(all("CPU" not in r.text and "GPU" not in r.text
@@ -112,13 +121,14 @@ class ClickStoryTests(unittest.TestCase):
         self.state.sleeping = True
         for i in range(12):
             r = self.mind.click("left", self.state, self.context, 30+i)
+            assert r is not None
             self.assertEqual(r.event, "sleep_click")
         self.assertTrue(self.state.sleeping)
         self.assertEqual(self.mind.irritated_until, -1)
 
     def test_work_interruption_and_recovery_payoff(self):
         self.mind.set_situation(scene(duration=150), now=20)
-        events = [self.mind.click("right", self.state, self.context, 23+i).event
+        events = [require_reaction(self.mind.click("right", self.state, self.context, 23+i)).event
                   for i in range(7)]
         self.assertEqual(events, ["click_during_work", "click_during_work",
                                   "click_work_repeat", "click_work_repeat",
@@ -130,13 +140,15 @@ class ClickStoryTests(unittest.TestCase):
         finish = self.mind.computer_event(
             "computer_effort_recovered_peak", self.state, self.context, 41,
         )
+        assert finish is not None
         self.assertEqual(finish.event, "work_finished_interrupted")
-        self.assertEqual(self.mind.click("left", self.state, self.context, 65).event,
+        self.assertEqual(require_reaction(self.mind.click("left", self.state, self.context, 65)).event,
                          "click_after_work")
         # A second recovery observation cannot reuse the same interruptions.
         later = self.mind.computer_event(
             "computer_effort_recovered", self.state, self.context, 70,
         )
+        assert later is not None
         self.assertEqual(later.event, "computer_effort_recovered")
 
     def test_long_session_generates_contextual_after_work_thought_once(self):
@@ -146,13 +158,14 @@ class ClickStoryTests(unittest.TestCase):
         event = self.mind.computer_event(
             "computer_effort_recovered_peak", self.state, self.context, 505,
         )
+        assert event is not None
         self.assertEqual(event.event, "work_finished_long")
-        self.assertEqual(self.mind.spontaneous_event(
-            self.state, self.context, 760).event, "after_work_thought")
-        self.assertNotEqual(self.mind.spontaneous_event(
-            self.state, self.context, 770).event, "after_work_thought")
-        self.assertNotEqual(self.mind.spontaneous_event(
-            self.state, self.context, 1500).event, "after_work_thought")
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(
+            self.state, self.context, 760)).event, "after_work_thought")
+        self.assertNotEqual(require_reaction(self.mind.spontaneous_event(
+            self.state, self.context, 770)).event, "after_work_thought")
+        self.assertNotEqual(require_reaction(self.mind.spontaneous_event(
+            self.state, self.context, 1500)).event, "after_work_thought")
 
     def test_no_fake_work_recovery_after_short_spike(self):
         self.mind.set_situation(scene(duration=8), now=500)
@@ -162,6 +175,7 @@ class ClickStoryTests(unittest.TestCase):
                                       effort=0.1), now=507)
         event = self.mind.computer_event(
             "computer_effort_recovered", self.state, self.context, 508)
+        assert event is not None
         self.assertNotIn(event.event, ("work_finished_long",
                                        "work_finished_interrupted"))
 
@@ -171,49 +185,53 @@ class ClickStoryTests(unittest.TestCase):
                                  effort=0.69), now=100)
         reaction = mind.computer_event("computer_effort_heavy",
                                        self.state, self.context, 102)
+        assert reaction is not None
         self.assertEqual(reaction.event, "work_unexpected")
         mind.set_situation(scene(expected=0.09, confident=False,
                                  effort=0.69), now=120)
         reaction = mind.computer_event("computer_effort_heavy",
                                        self.state, self.context, 122)
+        assert reaction is not None
         self.assertEqual(reaction.event, "computer_effort_heavy")
 
     def test_night_work_and_actual_overnight_rest_differ(self):
         night = clock(hour=2)
         self.mind.set_situation(scene(strain=66, effort=0.9), now=400)
-        self.assertEqual(self.mind.spontaneous_event(
-            self.state, night, 405).event, "work_late")
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(
+            self.state, night, 405)).event, "work_late")
         self.mind.set_situation(scene(mode="resting", duration=0, strain=3,
                                       effort=0.08, present=False, rest=6*3600,
                                       uptime=120), now=410)
         # A long effort may leave one reflective thought, but the memory is
         # bounded; later quiet is simply quiet, not phantom continued work.
-        self.assertEqual(self.mind.spontaneous_event(
-            self.state, night, 600).event, "after_work_thought")
-        self.assertEqual(self.mind.spontaneous_event(
-            self.state, night, 1200).event, "quiet_alone")
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(
+            self.state, night, 600)).event, "after_work_thought")
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(
+            self.state, night, 1200)).event, "quiet_alone")
         uptime = self.mind.computer_event(
             "computer_uptime", self.state, night, 605,
         )
+        assert uptime is not None
         self.assertEqual(uptime.event, "computer_uptime_grounded")
         self.assertNotIn("CPU", uptime.text)
 
     def test_return_respects_work_and_observed_recent_recovery(self):
         self.mind.set_situation(scene(), now=30)
-        self.assertEqual(self.mind.return_to_pet(
-            self.state, self.context, 30*60).event, "return_working")
+        self.assertEqual(require_reaction(self.mind.return_to_pet(
+            self.state, self.context, 30*60)).event, "return_working")
         self.mind.set_situation(scene(mode="recovering", duration=0,
                                       effort=0.08), now=1810)
         self.assertEqual(self.mind.return_to_pet(
             self.state, self.context, 30*60+10), None)
         # No unobserved absence is invented during a 10 second gap.
         self.mind.last_contact = 0
-        self.assertEqual(self.mind.return_to_pet(
-            self.state, self.context, 1820).event, "return_after_work")
+        self.assertEqual(require_reaction(self.mind.return_to_pet(
+            self.state, self.context, 1820)).event, "return_after_work")
 
     def test_unavailable_situation_does_not_invent_usage(self):
         self.mind.set_situation(None)
         reaction = self.mind.spontaneous_event(self.state, self.context, 100)
+        assert reaction is not None
         self.assertNotIn(reaction.event, (
             "work_concentrating", "work_late", "work_long_thought",
             "work_finished_long", "return_working",

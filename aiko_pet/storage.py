@@ -1,141 +1,20 @@
-"""Versioned, atomic local JSON persistence for the desktop pet."""
+"""Legacy persistence import path; real JSON repository lives in infrastructure.
+
+The shim preserves external imports without implementing a parallel StateStore.
+"""
 
 from __future__ import annotations
 
-import json
-import os
-import sys
-import tempfile
-import time
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any
+import json as json
+import os as os
+import sys as sys
+import tempfile as tempfile
+import time as time
+from pathlib import Path as Path
 
-from .adaptive import AdaptiveMemory
-from .domain import PetState
-
-SCHEMA_VERSION = 1
-
-
-def default_save_path() -> Path:
-    custom_path = os.environ.get("AIKO_SAVE_PATH", "").strip()
-    if custom_path:
-        candidate = Path(os.path.expandvars(os.path.expanduser(custom_path)))
-        if not candidate.is_absolute():
-            candidate = Path(__file__).resolve().parents[1] / candidate
-        return candidate
-    if sys.platform == "win32":
-        base = Path(os.environ.get("LOCALAPPDATA") or Path.home() / "AppData" / "Local")
-    else:
-        base = Path(os.environ.get("XDG_DATA_HOME") or Path.home() / ".local" / "share")
-    return base / "AikoDesktopPet" / "state.json"
-
-
-@dataclass
-class PetSettings:
-    x: int | None = None
-    y: int | None = None
-    scale: int = 1
-    always_on_top: bool = True
-    auto_walk: bool = True
-    auto_routine: bool = True
-    follow_cursor: bool = True
-    spontaneous_talk: bool = True
-    observe_computer: bool = True
-    learn_rhythm: bool = True
-    toolbar_x: int | None = None
-    toolbar_y: int | None = None
-
-    @classmethod
-    def from_dict(cls, payload: Any) -> PetSettings:
-        if not isinstance(payload, dict):
-            return cls()
-
-        def coordinate(value: Any) -> int | None:
-            if type(value) is not int:  # bool isn't a coordinate
-                return None
-            return value if -20_000 <= value <= 20_000 else None
-
-        return cls(
-            x=coordinate(payload.get("x")),
-            y=coordinate(payload.get("y")),
-            scale=2 if payload.get("scale") == 2 else 1,
-            always_on_top=payload.get("always_on_top") is not False,
-            auto_walk=payload.get("auto_walk") is not False,
-            auto_routine=payload.get("auto_routine") is not False,
-            follow_cursor=payload.get("follow_cursor") is not False,
-            spontaneous_talk=payload.get("spontaneous_talk") is not False,
-            observe_computer=payload.get("observe_computer") is not False,
-            learn_rhythm=payload.get("learn_rhythm") is not False,
-            toolbar_x=coordinate(payload.get("toolbar_x")),
-            toolbar_y=coordinate(payload.get("toolbar_y")),
-        )
-
-    def to_dict(self) -> dict[str, int | bool | None]:
-        return {
-            "x": self.x,
-            "y": self.y,
-            "scale": self.scale,
-            "always_on_top": self.always_on_top,
-            "auto_walk": self.auto_walk,
-            "auto_routine": self.auto_routine,
-            "follow_cursor": self.follow_cursor,
-            "spontaneous_talk": self.spontaneous_talk,
-            "observe_computer": self.observe_computer,
-            "learn_rhythm": self.learn_rhythm,
-            "toolbar_x": self.toolbar_x,
-            "toolbar_y": self.toolbar_y,
-        }
-
-
-class StateStore:
-    def __init__(self, path: Path | None = None) -> None:
-        self.path = path or default_save_path()
-
-    def load(self, *, now: float | None = None) -> tuple[PetState, PetSettings]:
-        current = time.time() if now is None else now
-        try:
-            payload = json.loads(self.path.read_text(encoding="utf-8"))
-        except (FileNotFoundError, ValueError, OSError, UnicodeError):
-            return PetState(updated_at=current), PetSettings()
-        if not isinstance(payload, dict) or payload.get("version") != SCHEMA_VERSION:
-            return PetState(updated_at=current), PetSettings()
-        pet = PetState.from_dict(payload.get("pet"), now=current)
-        settings = PetSettings.from_dict(payload.get("settings"))
-        pet.advance(current, auto_routine=settings.auto_routine)
-        return pet, settings
-
-    def load_memory(self) -> AdaptiveMemory:
-        """Old v0.8 saves have no learning payload and remain valid."""
-        try:
-            payload = json.loads(self.path.read_text(encoding="utf-8"))
-        except (FileNotFoundError, ValueError, OSError, UnicodeError):
-            return AdaptiveMemory()
-        if not isinstance(payload, dict) or payload.get("version") != SCHEMA_VERSION:
-            return AdaptiveMemory()
-        return AdaptiveMemory.from_dict(payload.get("adaptive"))
-
-    def save(self, pet: PetState, settings: PetSettings,
-             *, adaptive: AdaptiveMemory | None = None) -> None:
-        """Don't leave a half-written save on power loss or interruption."""
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        payload = {"version": SCHEMA_VERSION, "pet": pet.to_dict(), "settings": settings.to_dict()}
-        if adaptive is not None:
-            payload["adaptive"] = adaptive.to_dict()
-        temporary: str | None = None
-        try:
-            with tempfile.NamedTemporaryFile(
-                mode="w", encoding="utf-8", newline="\n", prefix=".aiko-",
-                suffix=".tmp", dir=self.path.parent, delete=False
-            ) as file:
-                temporary = file.name
-                json.dump(payload, file, indent=2, ensure_ascii=False, allow_nan=False)
-                file.flush()
-                os.fsync(file.fileno())
-            os.replace(temporary, self.path)
-        finally:
-            if temporary is not None:
-                try:
-                    Path(temporary).unlink(missing_ok=True)
-                except OSError:
-                    pass
+from .infrastructure.persistence import (
+    SCHEMA_VERSION as SCHEMA_VERSION,
+    PetSettings as PetSettings,
+    StateStore as StateStore,
+    default_save_path as default_save_path,
+)

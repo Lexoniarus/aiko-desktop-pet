@@ -20,9 +20,121 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install Ruff quality tool
+        run: python -m pip install ruff==0.13.2
+      - name: Run Ruff lint checks
+        run: python -m ruff check aiko_pet tests main.py
+      - name: Enforce PEP 8 line lengths in refactored domain
+        run: |
+          python -m ruff check --select E501 \
+            aiko_pet/pet/state.py aiko_pet/pet/friendship.py \
+            aiko_pet/pet/value_rules.py aiko_pet/pet/care_actions.py \
+            aiko_pet/pet/need_decay.py aiko_pet/pet/lifecycle.py \
+            aiko_pet/pet/routine.py \
+            tests/test_friendship_policy.py tests/test_care_actions.py \
+            tests/test_pet_lifecycle.py tests/test_domain_transitions.py \
+            tests/test_presentation_boundary.py tests/test_pet_package_layout.py \
+            tests/test_persistence_package.py aiko_pet/infrastructure/persistence.py
+      - name: Enforce PEP 8 line lengths in adaptive and dialogue modules
+        run: |
+          python -m ruff check --select E501 \
+            aiko_pet/personality/adaptive.py \
+            aiko_pet/personality/adaptive_policy.py \
+            aiko_pet/personality/adaptive_models.py \
+            aiko_pet/personality/mind.py aiko_pet/personality/catalog.py \
+            aiko_pet/personality/click_policy.py \
+            aiko_pet/personality/workload_events.py \
+            aiko_pet/personality/work_episode.py \
+            aiko_pet/personality/reaction_sequence.py \
+            aiko_pet/presentation/reaction_playback.py \
+            aiko_pet/presentation/animation.py aiko_pet/presentation/gaze.py \
+            aiko_pet/presentation/movement.py aiko_pet/desktop/geometry.py \
+            aiko_pet/desktop/taskbar.py aiko_pet/desktop/global_input.py \
+            aiko_pet/desktop/window_stack.py \
+            tests/test_adaptive_policy.py tests/test_dialogue_events.py \
+            tests/test_spontaneous_events.py \
+            tests/test_personality_package.py tests/test_computer_voice_modules.py \
+            tests/test_desktop_package_layout.py \
+            tests/test_desktop_runtime.py tests/test_desktop_preferences.py \
+            tests/test_desktop_focus_timers.py \
+            tests/test_final_architecture_audit.py tests/test_dependency_graph.py
+      - name: Install static typing tool
+        run: python -m pip install mypy==1.18.2
+      - name: Type-check new headless core policies
+        run: |
+          python -m mypy --strict --follow-imports=silent \
+            aiko_pet/adaptive_policy.py aiko_pet/dialogue_events.py \
+            aiko_pet/movement.py aiko_pet/reaction_playback.py
+      - name: Enforce PEP 8 line lengths across application and tools
+        run: python -m ruff check --select E501 aiko_pet main.py tools
+      - name: Install whole-application typing dependencies
+        run: python -m pip install mypy==1.18.2 pyright Pillow==11.3.0
+      - name: Enforce strict typing across the entire application
+        run: python -m mypy --strict --no-incremental aiko_pet main.py tools
+      - name: Enforce repository-wide Pyright checks (including tests)
+        run: python -m pyright --project pyrightconfig.json
       - name: Install graphical test dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb python3-tk
       - name: Run all unit and GUI tests
         run: xvfb-run -a python -m unittest discover -s tests -q
+
+  windows-smoke:
+    name: Windows headless boundaries
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Import all desktop components on Windows
+        run: python -c "import aiko_pet.gui, aiko_pet.desktop_input, aiko_pet.window_stack, aiko_pet.taskbar"
+      - name: Check Windows desktop boundaries without opening GUI windows
+        shell: pwsh
+        run: |
+          $patterns = @(
+            "test_taskbar.py",
+            "test_window_stack.py",
+            "test_desktop_input.py",
+            "test_gaze.py",
+            "test_entrypoints_env.py",
+            "test_storage.py",
+            "test_session_restoration.py",
+            "test_settings_model.py",
+            "test_motion_animation.py",
+            "test_reaction_playback.py",
+            "test_adaptive_policy.py",
+            "test_dialogue_events.py",
+            "test_spontaneous_events.py",
+            "test_friendship_policy.py",
+            "test_care_actions.py",
+            "test_pet_lifecycle.py",
+            "test_domain_transitions.py",
+            "test_pet_package_layout.py",
+            "test_personality_package.py",
+            "test_desktop_package_layout.py",
+            "test_persistence_package.py",
+            "test_final_architecture_audit.py",
+            "test_dependency_graph.py",
+            "test_computer_voice_modules.py",
+            "test_application_core.py",
+            "test_adaptive_models.py",
+            "test_ui_architecture.py",
+            "test_presentation_boundary.py",
+            "test_desktop_runtime.py",
+            "test_desktop_preferences.py",
+            "test_desktop_focus_timers.py",
+            "test_desktop_persistence.py",
+            "test_desktop_maintenance.py",
+            "test_attention_policy.py",
+            "test_hardware_providers.py",
+            "test_system_activity.py",
+            "test_desktop_lifecycle.py"
+          )
+          foreach ($pattern in $patterns) {
+            python -m unittest discover -s tests -p $pattern -q
+            if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+            }
+          }

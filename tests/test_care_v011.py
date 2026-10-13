@@ -5,15 +5,20 @@ from __future__ import annotations
 import json
 import random
 import tempfile
-import time
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
-from aiko_pet.dialogue import AikoMind, DialogueBook
+from aiko_pet.dialogue import AikoMind, DialogueBook, Reaction
 from aiko_pet.domain import MAX_LIVE_EFFORT_SECONDS, PetState
 from aiko_pet.routine import context_at
 from aiko_pet.storage import PetSettings, StateStore
+
+
+def require_reaction(value: Reaction | None) -> Reaction:
+    """Fail immediately if an expected authored dialogue is unavailable."""
+    assert value is not None, "Expected a dialogue reaction"
+    return value
 
 
 def timestamp(day: str = "2026-10-12", hour: int = 12) -> float:
@@ -219,21 +224,21 @@ class SocialDialogueTests(unittest.TestCase):
     def test_social_deficit_is_distinct_emotion_and_dialogue(self):
         state = PetState(social=15)
         self.assertEqual(self.mind.emotion(state, 50), "lonely")
-        self.assertEqual(self.mind.spontaneous_event(
-            state, self.context, 50).event, "social_low")
-        self.assertEqual(self.mind.spontaneous_event(
-            state, self.context, 55).event, "idle")
-        self.assertEqual(self.mind.spontaneous_event(
-            state, self.context, 55 + 20 * 60).event, "social_low")
-        self.assertEqual(self.mind.click(
-            "left", state, self.context, 60).event, "click_lonely")
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(
+            state, self.context, 50)).event, "social_low")
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(
+            state, self.context, 55)).event, "idle")
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(
+            state, self.context, 55 + 20 * 60)).event, "social_low")
+        self.assertEqual(require_reaction(self.mind.click(
+            "left", state, self.context, 60)).event, "click_lonely")
         self.assertEqual(self.mind.care_event(
             "talk", state, self.context, 62)[0], "talk_lonely")
 
     def test_new_friendship_dialogues_are_conditioned(self):
         state = PetState(friendship=88, social=78, mood=74)
-        self.assertEqual(self.mind.click(
-            "left", state, self.context, 40).event, "click_close")
+        self.assertEqual(require_reaction(self.mind.click(
+            "left", state, self.context, 40)).event, "click_close")
         self.assertEqual(self.mind.care_event(
             "pet", state, self.context, 100)[0], "pet_close")
         self.assertEqual(self.mind.care_event(

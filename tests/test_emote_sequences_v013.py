@@ -80,7 +80,8 @@ class EmoteTkTests(unittest.TestCase):
             self.pet._scheduled_greeting = None
         self.pet.settings.auto_routine = False
         self.pet.state.sleeping = False
-        self.pet._scheduled_tick and self.pet.root.after_cancel(self.pet._scheduled_tick)
+        if self.pet._scheduled_tick is not None:
+            self.pet.root.after_cancel(self.pet._scheduled_tick)
         self.pet._scheduled_tick = None
 
     def progress(self, milliseconds: int) -> None:

@@ -64,7 +64,42 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 
 | Location | Purpose |
 | --- | --- |
-| `aiko_pet/` | Domain model, GUI, hardware activity, routines, memory, reactions, and dialogue |
+| `aiko_pet/application/` | Typed use cases, command routing and bounded integration notifications |
+| `aiko_pet/application/settings.py` | Runtime preferences independent of JSON persistence |
+| `aiko_pet/application/session.py` | Startup restoration and bounded catch-up for existing saves |
+| `aiko_pet/infrastructure/persistence.py` | Version-one atomic JSON state repository and save-path discovery |
+| `aiko_pet/storage.py` | Backwards-compatible import shim for the persistence API |
+| `aiko_pet/ui/animated_pet.py` | The animated character: sprites, gaze and movement |
+| `aiko_pet/ui/hover_ui.py` | Independent owner of the hover, status and settings windows |
+| `aiko_pet/ui/` | Independent Tk views plus speech/emote presenter and typed callback contracts |
+| `aiko_pet/application/read_snapshot.py` | Immutable, language-neutral pet read snapshot |
+| `aiko_pet/application/ports.py` | Structural hardware-reading capabilities for application services |
+| `aiko_pet/presentation/` | German UI copy, canonical display models, hover/status/settings projections and legacy view adapters |
+| `aiko_pet/application/view_models.py` | Legacy import bridge for presentation contracts |
+| `aiko_pet/application/read_models.py` | Legacy view-source alias; presentation owns the implementation |
+| `aiko_pet/desktop/runtime.py` | Ordered Tk tick phases through explicit `DesktopTickPorts` |
+| `aiko_pet/desktop/taskbar.py` | Windows taskbar discovery and fallback placement |
+| `aiko_pet/desktop/geometry.py` | Pure TaskbarTrack value and sprite grounding |
+| `aiko_pet/desktop/window_stack.py` | Native window stacking without focus stealing |
+| `aiko_pet/desktop/global_input.py` | Read-only OS idle/click observation without hooks |
+| `aiko_pet/desktop/preferences.py` | Owns coordinated desktop setting and geometry effects |
+| `aiko_pet/desktop/persistence.py` | Writes current state and tracks autosave timing |
+| `aiko_pet/desktop/maintenance.py` | Bounded taskbar and z-order checks |
+| `aiko_pet/desktop/input.py` | Tk bindings, global mouse/focus input and cancellable focus timers |
+| `aiko_pet/desktop/lifecycle.py` | Ordered startup and shutdown of desktop resources |
+| `aiko_pet/desktop/compatibility.py` | Typed forwards for older desktop calls |
+| `aiko_pet/personality/` | Adaptive observations, authored dialogue catalogue, AikoMind, work episodes and workload event detection |
+| `aiko_pet/adaptive.py` and `dialogue.py` | Compatibility imports for personality models |
+| `aiko_pet/gui.py` | Component assembly and remaining desktop callback adapters |
+| `aiko_pet/telemetry.py` | Immutable workload sample and hardware-independent effort calculation |
+| `aiko_pet/infrastructure/hardware/` | CPU/RAM/uptime providers, NVIDIA parsing, sampler and background monitor |
+| `aiko_pet/system_activity.py` | Backward-compatible hardware imports (no extra logic) |
+| `aiko_pet/presentation/reaction_playback.py` | Ordered speech/emote playback and cancellable timers |
+| `aiko_pet/presentation/animation.py`, `movement.py`, `gaze.py` | Pure sprite timing, direction and walking plans |
+| `aiko_pet/pet/state.py` | PetState aggregate and its authorized mutations |
+| `aiko_pet/pet/` | Care, needs, friendship, daily routine, time progression and value validation |
+| `aiko_pet/domain.py` and other old pet modules | Public compatibility imports pointing at the single pet implementation |
+| `aiko_pet/` | Existing domain, storage and offline dialogue policies |
 | `aiko_pet/assets/frames/` | 73 original Aiko character animation frames |
 | `aiko_pet/assets/emotes/` | Kenney pixel emotes |
 | `aiko_pet/assets/kenney_ui/` | Kenney-based sci-fi panels and controls |

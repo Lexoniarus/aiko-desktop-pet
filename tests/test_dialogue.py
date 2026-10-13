@@ -9,10 +9,16 @@ from tempfile import TemporaryDirectory
 from pathlib import Path
 
 from aiko_pet.dialogue import (
-    AikoMind, ANIMATIONS, CATALOGUE, DialogueBook, EMOTION_LABELS, Line,
+    AikoMind, ANIMATIONS, CATALOGUE, DialogueBook, EMOTION_LABELS, Line, Reaction,
 )
 from aiko_pet.domain import PetState
 from aiko_pet.routine import context_at
+
+
+def require_reaction(value: Reaction | None) -> Reaction:
+    """Fail immediately if an expected authored dialogue is unavailable."""
+    assert value is not None, "Expected a dialogue reaction"
+    return value
 
 
 def ctx(day='2026-10-12', hour=15):
@@ -50,7 +56,7 @@ class VoiceCatalogueTests(unittest.TestCase):
 
     def test_rotation_avoids_immediately_repeating_with_fresh_lines(self):
         ids = [
-            self.book.choose('click_left', 'calm', self.context, 100 + i).line_id
+            require_reaction(self.book.choose('click_left', 'calm', self.context, 100 + i)).line_id
             for i in range(6)
         ]
         self.assertEqual(len(ids), len(set(ids)))
@@ -102,15 +108,17 @@ class EmotionTests(unittest.TestCase):
         self.assertTrue(all(EMOTION_LABELS.values()))
 
     def test_rising_click_pressure_changes_reaction(self):
-        events = [self.mind.click('left', self.state, self.context, t).event for t in (11, 12, 13, 14)]
+        events = [require_reaction(self.mind.click('left', self.state, self.context, t)).event for t in (11, 12, 13, 14)]
         self.assertEqual(events, ['click_left', 'click_left', 'click_notice', 'rapid_click'])
         self.assertEqual(self.mind.emotion(self.state, 15), 'irritated')
-        self.assertEqual(self.mind.click('right', self.state, self.context, 30).event, 'click_right')
+        self.assertEqual(require_reaction(self.mind.click('right', self.state, self.context, 30)).event, 'click_right')
         self.assertEqual(self.mind.emotion(self.state, 30), 'calm')
 
     def test_both_mouse_buttons_have_distinct_speech_triggers(self):
         left = self.mind.click('left', self.state, self.context, 20)
         right = self.mind.click('right', self.state, self.context, 22)
+        assert left is not None
+        assert right is not None
         self.assertEqual(left.event, 'click_left')
         self.assertEqual(right.event, 'click_right')
         self.assertNotEqual(left.text, right.text)
@@ -118,6 +126,7 @@ class EmotionTests(unittest.TestCase):
     def test_sleep_click_does_not_wake(self):
         self.state.sleeping = True
         reaction = self.mind.click('left', self.state, self.context, 20)
+        assert reaction is not None
         self.assertEqual(reaction.event, 'sleep_click')
         self.assertTrue(self.state.sleeping)
 
@@ -147,6 +156,7 @@ class EmotionTests(unittest.TestCase):
     def test_return_triggers_only_after_absence(self):
         self.assertIsNone(self.mind.return_to_pet(self.state, self.context, 100))
         reaction = self.mind.return_to_pet(self.state, self.context, 100 + 26*60)
+        assert reaction is not None
         self.assertEqual(reaction.event, 'return')
         self.assertIsNone(self.mind.return_to_pet(self.state, self.context, 100 + 27*60))
         self.state.sleeping = True
@@ -159,9 +169,9 @@ class EmotionTests(unittest.TestCase):
         self.assertIsNotNone(self.mind.spontaneous_event(self.state, self.context, 31))
 
     def test_hungry_tired_and_low_mood_have_specific_comments(self):
-        self.assertEqual(self.mind.spontaneous_event(PetState(satiety=5), self.context, 10).event, 'hungry')
-        self.assertEqual(self.mind.spontaneous_event(PetState(energy=5), self.context, 20).event, 'tired')
-        self.assertEqual(self.mind.spontaneous_event(PetState(mood=5), self.context, 30).event, 'low_mood')
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(PetState(satiety=5), self.context, 10)).event, 'hungry')
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(PetState(energy=5), self.context, 20)).event, 'tired')
+        self.assertEqual(require_reaction(self.mind.spontaneous_event(PetState(mood=5), self.context, 30)).event, 'low_mood')
 
 
 if __name__ == '__main__':

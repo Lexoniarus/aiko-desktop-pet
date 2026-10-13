@@ -2,20 +2,19 @@
 
 import ctypes
 import json
-import math
 import tempfile
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock, patch
 
 from aiko_pet.adaptive import (
     SLOTS, AdaptiveMemory, AdaptiveRoutine, Observation,
 )
-from aiko_pet.dialogue import AikoMind, DialogueBook
+from aiko_pet.dialogue import AikoMind
 from aiko_pet.domain import PetState
 from aiko_pet.routine import context_at
-from aiko_pet.storage import PetSettings, StateStore
+from aiko_pet.storage import StateStore
 from aiko_pet.desktop_input import idle_seconds_windows
 
 
@@ -48,7 +47,9 @@ class AdaptiveBehaviourTests(unittest.TestCase):
                 observed_night_sleep = True
         self.assertTrue(observed_night_sleep)
         self.assertGreater(state.energy, 40)
-        self.assertLess(view.strain, 70)
+        final_situation = engine.current
+        assert final_situation is not None
+        self.assertLess(final_situation.strain, 70)
         self.assertGreater(engine.memory.hour_seconds[10], 0)
         self.assertLess(engine.memory.strain, 70)
 
@@ -138,21 +139,25 @@ class AdaptiveBehaviourTests(unittest.TestCase):
                                energy=70, sleeping=False)
         long_job = AdaptiveRoutine()
         for tick in range(121):
-            result_long = long_job.observe(
+            long_job.observe(
                 Observation(start + tick * 30, 0.97, 0), tick * 30,
                 energy=70, sleeping=False,
             )
         self.assertLess(result.strain, 1)
-        self.assertGreater(result_long.strain, result.strain + 20)
+        sustained_situation = long_job.current
+        assert sustained_situation is not None
+        self.assertGreater(sustained_situation.strain, result.strain + 20)
 
     def test_one_abnormal_day_does_not_change_the_long_term_profile(self):
         start = local_stamp("2026-10-12", 20)
         engine = AdaptiveRoutine()
         for tick in range(100):
-            view = engine.observe(Observation(start + tick * 30, 0.99, 0),
+            engine.observe(Observation(start + tick * 30, 0.99, 0),
                                   tick * 30, energy=80, sleeping=False)
-        self.assertFalse(view.expectation_confident)
-        self.assertIsNone(view.expected_effort)
+        final_situation = engine.current
+        assert final_situation is not None
+        self.assertFalse(final_situation.expectation_confident)
+        self.assertIsNone(final_situation.expected_effort)
 
     def test_profile_learns_repeated_weekday_hour_slowly(self):
         start = local_stamp("2026-10-12", 20)
@@ -171,6 +176,9 @@ class AdaptiveBehaviourTests(unittest.TestCase):
                 )
                 clock += 30
             clock += 300
+        reading = engine.current
+        assert reading is not None
+        assert reading.expected_effort is not None
         self.assertTrue(reading.expectation_confident)
         self.assertAlmostEqual(reading.expected_effort, 0.88, places=2)
 
@@ -193,14 +201,17 @@ class AdaptiveBehaviourTests(unittest.TestCase):
                        energy=29, sleeping=False)
         clock += 30
         for tick in range(1, 34):
-            view = engine.observe(
+            engine.observe(
                 Observation(next_monday + tick * 30, 0.04, 4000), clock,
                 energy=29, sleeping=False,
             )
             clock += 30
-        self.assertTrue(view.expectation_confident)
-        self.assertTrue(view.can_nap)
-        self.assertLess(view.expected_effort, .32)
+        current = engine.current
+        assert current is not None
+        assert current.expected_effort is not None
+        self.assertTrue(current.expectation_confident)
+        self.assertTrue(current.can_nap)
+        self.assertLess(current.expected_effort, .32)
 
     def test_uptime_is_context_and_never_converted_to_strain(self):
         start = local_stamp("2026-10-12", 13)
@@ -342,7 +353,9 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         fake.kernel32.GetTickCount = tick_count
         with patch("aiko_pet.desktop_input.sys.platform", "win32"), \
              patch("aiko_pet.desktop_input.ctypes.windll", fake, create=True):
-            self.assertAlmostEqual(idle_seconds_windows(), 1.024)
+            elapsed = idle_seconds_windows()
+            assert elapsed is not None
+            self.assertAlmostEqual(elapsed, 1.024)
 
     def test_idle_reading_unavailable_outside_windows(self):
         with patch("aiko_pet.desktop_input.sys.platform", "linux"):
