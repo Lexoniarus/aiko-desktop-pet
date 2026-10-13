@@ -2,6 +2,28 @@
 
 These images are the **actual Aiko Desktop Pet visuals checked into the repository**. They are not newly generated design mockups. Unless otherwise marked, screenshots show the Tkinter application at the indicated historical feature baseline.
 
+## Rock–Paper–Scissors minigame (feature-branch capture)
+
+The player input panel contains the three hand buttons, a highlighted
+**player-only reveal**, local session counters for rounds/wins/losses/draws,
+and a Close button. Aiko reveals only **her own hand** through her original
+character bubble, followed by her own emote, animation and result line.
+The player score is never narrated by Aiko.
+
+![Aiko's hand in her character bubble, the player's hand in the player panel](../vorschau/Aiko_RPS_Aufgedeckt.png)
+
+![The running Aiko minigame: opening, countdown, reveal, reactions and scores](../vorschau/Aiko_RPS_Spielablauf.gif)
+
+- [Opening view](../vorschau/Aiko_RPS_Start.png)
+- [Separate reveal](../vorschau/Aiko_RPS_Aufgedeckt.png)
+- [Scores after two completed rounds](../vorschau/Aiko_RPS_Punktestand.png)
+
+These are **captured from the real Tk application under Linux/Xvfb**.
+They are reproducible with
+[`tools/capture_rock_paper_scissors_media.py`](../tools/capture_rock_paper_scissors_media.py)
+and are not presented as captures of a native Windows desktop.
+The historical screenshots and GIFs below are retained without modification.
+
 ## Current Aiko Anime character
 
 ![The new Aiko Anime character on the Windows taskbar beside the care panel](../vorschau/Aiko_Anime_Runtime.png)

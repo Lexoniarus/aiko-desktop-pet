@@ -12,6 +12,20 @@
 
 *Maintainer-provided runtime capture with the new character artwork. Interface and Aiko's authored dialogue are in German; project documentation is in English.*
 
+## Play with Aiko (Rock–Paper–Scissors)
+
+Aiko's character bubble shows **only her own choice** and her reactions.
+The independent, always-open Kenney-styled player panel shows **your selected
+hand**, the round counter, your wins, Aiko's wins and draws. The counters belong
+only to the currently opened minigame window and are never saved.
+
+![Rock–Paper–Scissors with the separate player panel and Aiko's actual speech bubble](vorschau/Aiko_RPS_Aufgedeckt.png)
+
+![Captured minigame countdown, separate hand reveal, animated reaction and local score](vorschau/Aiko_RPS_Spielablauf.gif)
+
+*Real Tk application frames captured on Linux/Xvfb for the minigame branch,
+not a Windows desktop screenshot. Historical Aiko captures remain below.*
+
 ## See Aiko in action
 
 ![A real three-step sequence: question emote, spoken response, heart emote](vorschau/Aiko_v0_13_Reaktionsablauf.gif)

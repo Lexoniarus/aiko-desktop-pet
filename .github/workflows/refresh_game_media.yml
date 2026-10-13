@@ -1,0 +1,47 @@
+name: Capture Rock Paper Scissors media
+
+on:
+  push:
+    branches:
+      - feature/rock-paper-scissors-game
+    paths:
+      - tools/capture_rock_paper_scissors_media.py
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    name: Real application screenshots and GIF
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offscreen display and developer screenshot dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb x11-xserver-utils python3-tk
+          python -m pip install Pillow==11.3.0
+      - name: Capture Tk windows from the running desktop pet
+        run: |
+          xvfb-run -a -s "-screen 0 1366x900x24" \
+            sh -c 'xsetroot -solid "#202733" && python tools/capture_rock_paper_scissors_media.py'
+      - name: Commit captured preview files to this feature branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            vorschau/Aiko_RPS_Start.png \
+            vorschau/Aiko_RPS_Aufgedeckt.png \
+            vorschau/Aiko_RPS_Punktestand.png \
+            vorschau/Aiko_RPS_Spielablauf.gif
+          if git diff --cached --quiet; then
+            echo "Screenshots and GIFs are already current."
+          else
+            git commit -m "docs(media): refresh real Aiko minigame screenshots and GIF"
+            git push origin HEAD:feature/rock-paper-scissors-game
+          fi
