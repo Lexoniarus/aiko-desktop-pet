@@ -17,6 +17,7 @@ STILLS = (
 ANIMATIONS = {
     "Aiko_Current_Reaction_Sequence.gif": (1160, 768),
     "Aiko_Current_Animations.gif": (224, 246),
+    "Aiko_Current_Ambient_Blink_And_Glance.gif": (1160, 768),
 }
 
 
@@ -41,9 +42,11 @@ class CurrentGalleryTests(unittest.TestCase):
                 self.assertEqual(sample[:6], b"GIF89a")
                 self.assertEqual(struct.unpack("<HH", sample[6:10]), size)
                 frames = sample.count(b"\x21\xf9\x04")
-                self.assertGreaterEqual(
-                    frames, 4 if "Reaction" in name else 80,
+                minimum = (
+                    80 if name == "Aiko_Current_Animations.gif"
+                    else 4
                 )
+                self.assertGreaterEqual(frames, minimum)
 
     def test_all_new_stills_are_distinct(self) -> None:
         payloads = [

@@ -37,8 +37,10 @@ they are not native Windows screenshots.*
 ![The current Anime character reacting with question emote, two dialogue lines and heart emote](vorschau/Aiko_Current_Reaction_Sequence.gif)
 
 This reaction sequence uses the **current character sprites, speech presenter and
-Kenney emotes**. The latest sprite animation preview includes all 112 runtime
-poses: [Watch Aiko's current animations](vorschau/Aiko_Current_Animations.gif).
+Kenney emotes**. A separate [idle behavior preview](vorschau/Aiko_Current_Ambient_Blink_And_Glance.gif)
+shows intermittent complete blinks, resting gaps and autonomous gaze without
+mouse movement. The sprite-only [animation catalog](vorschau/Aiko_Current_Animations.gif)
+includes all 112 runtime poses.
 
 [Browse the refreshed current screenshots, UI states and GIFs →](docs/MEDIA_GALLERY.md)
 
@@ -47,7 +49,7 @@ preview gallery.
 
 ## What she does
 
-- **Lives on your desktop.** Short, slower taskbar walks with 1–3 minute pauses, calm blinking, jumping, waving, resting and 16-direction cursor gaze.
+- **Lives on your desktop.** Short, slower taskbar walks with 1–3 minute pauses, intermittent blinking, spontaneous glances, jumping, waving, resting and 16-direction cursor gaze.
 - **Needs a little care.** Feed, play Rock–Paper–Scissors, talk, pet, sleep/wake or offer an energy drink. From full satiety, about an hour awake brings her to 67–70%, making a snack useful. Other needs develop more slowly across the day, with occasional friendly requests.
 - **Has her own voice.** Handwritten German reactions vary with mood, time, repeated clicks, interruptions and recent interactions. Emotes, text and optional follow-ups play in sequence.
 - **Notices actual workload.** Local CPU/GPU and memory observations inform her working/resting behavior, without inventing the application or task you are using. Missing sensors remain unknown.

@@ -42,15 +42,19 @@ Original imported artwork is not cropped or overwritten. Preparation uses
 `python tools/prepare_character_assets.py`; Pillow is required only for that
 build step, not for running the desktop app.
 
-All twelve regular eight-frame clips now use a shared **160 ms per frame**
-profile (6.25 FPS, 1.28 seconds per eight-frame cycle). No regular animation
-has an intentionally longer or shorter frame; the sixteen cursor-direction
-poses remain static images selected by mouse position, not an animation loop.
-The global frame hold is specified once in
+All twelve normal clips contain exactly eight frames and use **even frame
+intervals inside each clip**, with activity-specific tempos. The walking
+clips retain 160 ms per frame (1.28 seconds per stride cycle). Other
+activities, such as waving or sleeping, have distinct speeds. Each idle
+blink finishes all eight frames and then rests on a neutral pose for a
+short randomized gap; occasional autonomous glances reuse the sixteen
+static directional gaze poses without mouse movement.
+
+All individual clip tempos are configured centrally in
 [`aiko_pet/assets/animation_timing.json`](aiko_pet/assets/animation_timing.json)
-and enforced both by asset preparation and at runtime. The original per-frame
-values are preserved separately as `source_duration_ms` for provenance.
-The source artwork, frame ordering, and PNGs are unchanged.
+and validated by the exporter and runtime loader. Historical durations
+are retained as `source_duration_ms` for provenance. Artwork, anchors,
+frame events and PNGs are unchanged.
 
 OpenAI assigns its rights in generated output, if any, to the user to the extent
 permitted by applicable law. This does not establish that every generated image

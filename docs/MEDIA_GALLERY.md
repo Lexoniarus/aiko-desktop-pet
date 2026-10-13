@@ -56,16 +56,29 @@ deterministically for reproducible stills and GIF timing.
 | Feeding and dedicated eating animation | [Feeding](../vorschau/Aiko_Current_Care_Feed.png) |
 | Sleeping and breathing animation | [Sleeping](../vorschau/Aiko_Current_Care_Sleep.png) |
 
+## Current idle behavior: rest, blink, look around
+
+![Aiko rests, performs a complete eight-frame blink, pauses, then looks around without moving the mouse](../vorschau/Aiko_Current_Ambient_Blink_And_Glance.gif)
+
+This captures the **actual Tk character widget** under Linux/Xvfb, with
+controlled presentation cues and encoded hold intervals. It demonstrates
+an independent neutral rest between complete blinks and a brief stationary
+gaze change. The GIF is a reproducible UI preview, **not a live Windows FPS
+measurement**. Ordinary walking and already-existing spontaneous German
+comments are governed by their own independent attention policies.
+
 ## Current 112-pose sprite animation preview
 
 ![All current Aiko runtime sprite frames across the 12 clips and 16 gaze directions](../vorschau/Aiko_Current_Animations.gif)
 
 This is an **asset preview**, not an additional desktop screenshot. It uses
-the runtime `aiko_pet/assets/frames/` PNG files and their uniform effective
-durations in `aiko_pet/assets/animations.json`. Every eight-frame clip uses
-the shared policy defined by `aiko_pet/assets/animation_timing.json`
-(160 ms per frame); the sixteen mouse-following poses are static selections.
-The imported source art is unmodified.
+the runtime `aiko_pet/assets/frames/` PNG files and their effective
+activity-specific frame holds from `aiko_pet/assets/animations.json`. Each
+eight-frame clip uses one constant interval, but different clips may have
+different speeds (see `aiko_pet/assets/animation_timing.json`). This
+sprite-only catalog GIF does not include the neutral gaps between real idle
+blinks. The sixteen gaze poses are static direction selections, not a
+sixteen-frame looping animation. Source artwork is unchanged.
 
 ## Rock–Paper–Scissors (merged into main)
 
