@@ -213,7 +213,8 @@ class TelemetryEffortTests(unittest.TestCase):
             point = start + n * 6
             idle.advance(point, effort=0.03)
             working.advance(point, effort=0.95)
-        self.assertLess(working.satiety, idle.satiety)
+            if n == 600:  # Compare hunger before both values reach their floor.
+                self.assertLess(working.satiety, idle.satiety)
         self.assertLess(working.mood, idle.mood)
         self.assertLess(working.energy, idle.energy)
         self.assertEqual(working.friendship, 40)

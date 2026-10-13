@@ -77,7 +77,7 @@ The application never imports Tkinter or native system monitor implementations.
 
 Concrete widgets belong under `ui/`:
 
-- `AnimatedPet` draws Aiko and delegates animation-frame, gaze and walking calculations to pure presentation policies. Its cancellable frame timer honors individual image hold durations independently of the 140 ms simulation tick. Late callbacks show the next pose rather than skipping ahead, extending one-shot deadlines as needed. Walking positions update at most every 33 ms while simulation and hardware decisions retain their original tick. One-shot care actions return to idle; sleep plays the breathing loop.
+- `AnimatedPet` draws Aiko and delegates animation-frame, gaze and walking calculations to pure presentation policies. Its cancellable frame timer honors individual image hold durations independently of the 140 ms simulation tick. Late callbacks show every pose, extending one-shot deadlines as needed. Nominal 33 ms motion callbacks consume authored frame progress: each walking cycle covers 68 pixels per scale unit, including under delayed callbacks. Fractional motion is retained; only actual bounds end a blocked walk. Full 60–180 second pauses start after completed walks or blocking activities. One-shot care actions return to idle; sleep plays the breathing loop.
 - `HoverUi` controls the toolbar, status window and settings popup independently from the animated character.
 - `SpeechPresenter` manages the existing speech/emote overlay.
 - `ActionToolbar` owns one cohesive widget, including its six bars, buttons, drag handling and visibility lifecycle.
@@ -94,7 +94,7 @@ Concrete widgets belong under `ui/`:
 - `DesktopLifecycle` controls startup/shutdown ordering.
 - `desktop/taskbar.py` and `window_stack.py` own Windows-specific taskbar discovery and z-order operations; `desktop/geometry.py` contains pure taskbar value calculations.
 
-`infrastructure/character_assets.py` reads the prepared character catalog into immutable `presentation/character.py` contracts before Tk widgets are constructed. Full-width frames and visible ground anchors preserve the wider sleeping pose. `tools/prepare_character_assets.py` produces runtime PNGs with the existing Windows alpha threshold while retaining all source files in the separate asset bundle. Attack is cataloged but has no trigger. See [asset licensing](../ASSETS.md).
+`infrastructure/character_assets.py` reads the prepared character catalog into immutable `presentation/character.py` contracts before Tk widgets are constructed. Full-width frames and visible ground anchors preserve the wider sleeping pose. `tools/prepare_character_assets.py` retains the selected rebuild inputs and produces binary-alpha runtime PNGs. Runtime metadata records source durations alongside the calm 2.52-second ambient and 1.413-second walking profiles. Attack is cataloged but has no trigger. See [asset licensing](../ASSETS.md).
 
 Hardware implementation details live in `infrastructure/hardware/`. `telemetry.ComputerSnapshot` is immutable and shared by the provider and application layers. The sampler uses local OS APIs and optional bounded NVIDIA tooling.
 
@@ -103,7 +103,10 @@ Hardware implementation details live in `infrastructure/hardware/`. `telemetry.C
 `infrastructure/persistence.py — StateStore` is the only implementation of the version-one atomic local JSON repository. The default Windows file is `%LOCALAPPDATA%\AikoDesktopPet\state.json`. The sole optional environment override, `AIKO_SAVE_PATH`, selects another **file path**. No `.env` is required.
 
 - Storage decodes/writes data but does not simulate elapsed pet time.
-- The application applies bounded restoration, need decay and saved-state advancement.
+  - The application restores saved values without offline catch-up. A shared
+    `ActiveSessionClock` consumes each interval once across ticks, care, settings
+    and saving. Windows uses unbiased interrupt time; Linux uses CLOCK_MONOTONIC.
+    Standby and closed sessions do not consume needs or restore energy.
 - Tests use temporary save files, never the user's production save.
 - No cloud, login, browser integration, microphone listener or network service is started.
 

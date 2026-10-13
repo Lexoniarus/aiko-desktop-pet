@@ -6,6 +6,17 @@ no separate downloadable installer or published GitHub Release.
 
 ## Unreleased — Aiko Anime assets and playback
 
+- Restore calm 2.52-second ambient cycles and slower 1.413-second walking.
+  Preserve all eight poses and source timings. Walk two to four cycles, then
+  rest for 60–180 seconds; fractional motion no longer ends walks prematurely.
+- Use one suspend-excluding session clock across ticks, care, settings and
+  saving. Preserve save values on reopen without offline decay or recovery.
+- Set waking hourly decay to 30 satiety, 4 mood, 6 energy, 8 social and 6
+  affection points, with bounded measured-load additions. Retain sleep recovery,
+  care effects and friendship limits. Add non-interrupting friendly care requests.
+- Fix the Pillow 11.3 strict-type boundary and explicit Win32 scalar conversions.
+  Make GUI mapping and repeated-local-hour test fixtures portable on Windows/DST.
+
 - Track only the 134 original inputs needed to rebuild the selected character
   export, with SHA-256 inventory and separate restricted asset terms. Ignore
   the other 813 archive members. Preparation code remains MIT; Kenney stays CC0.
@@ -14,7 +25,7 @@ no separate downloadable installer or published GitHub Release.
 - Decode typed animation metadata, play authored frame timings independently
   of the desktop tick, show every pose under delayed callbacks, extend one-shot
   deadlines and cancel timers on shutdown. Walking positions update every
-  33 ms independently of the slower simulation tick.
+  33 ms independently of the unchanged 140 ms simulation tick.
 - Bind feeding to eating, petting to its own action and sleep to the breathing
   loop; preserve dialogue, care rules and version-one saves.
 - Retain attack artwork, hand layers and overlay anchors without an attack

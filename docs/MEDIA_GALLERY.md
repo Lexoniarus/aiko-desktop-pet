@@ -10,7 +10,8 @@ This unmodified runtime screenshot was supplied by the project maintainer after
 checking the new character integration. The current artwork contains twelve
 eight-frame clips and sixteen static gaze directions, for 112 character poses.
 Eating, petting and sleeping have dedicated animations; attack artwork is
-stored for future use. Frame timing comes from the imported animation manifests.
+stored for future use. Runtime timing applies a calm ambient/walking profile;
+the original per-frame durations remain recorded in the runtime manifests.
 
 ## Historical v0.13 feature baseline
 

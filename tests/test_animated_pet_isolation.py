@@ -13,6 +13,7 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.desktop.geometry import TaskbarTrack
+from aiko_pet.presentation.movement import WalkController
 from aiko_pet.ui.animated_pet import AnimatedPet, AnimatedPorts
 
 
@@ -146,6 +147,33 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.set_follow_cursor(False)
         self.assertFalse(self.settings.follow_cursor)
         self.assertIsNone(self.anim.gaze_sector)
+
+    def test_late_frames_still_move_one_stride_per_cycle_at_both_sizes(self) -> None:
+        for scale in (1, 2):
+            for direction, name in ((1, 'running-right'), (-1, 'running-left')):
+                with self.subTest(scale=scale, direction=direction):
+                    self.settings.scale = scale
+                    self.settings.x = 100 if direction > 0 else 400
+                    start_x = self.settings.x
+                    self.anim.reload_sprites()
+                    now = time.monotonic()
+                    self.anim.movement = WalkController(next_walk_at=now + 100)
+                    self.anim.movement.remaining_distance = 1000 * direction
+                    self.anim.frame_clock.reset()
+                    self.anim.show_frame(name, now)
+                    frames = [0]
+                    for duration in self.anim.assets.clips[name].timings:
+                        now = self.anim.frame_clock.frame_started_at + duration / 1000 + .1
+                        # Simulate Tk consuming the scheduled callback first.
+                        assert self.anim._frame_timer is not None
+                        self.root.after_cancel(self.anim._frame_timer)
+                        with patch('aiko_pet.ui.animated_pet.time.monotonic',
+                                   return_value=now):
+                            self.anim._advance_frame(name, None,
+                                                     self.anim._frame_generation)
+                        frames.append(self.anim.frame_clock.frame_index)
+                    self.assertEqual(frames, list(range(8)) + [0])
+                    self.assertEqual(self.settings.x, start_x + 68 * scale * direction)
 
     def test_scale_reload_keeps_frame_identity(self) -> None:
         self.settings.scale = 2

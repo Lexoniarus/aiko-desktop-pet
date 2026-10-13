@@ -45,7 +45,7 @@ class CareGuiV11Tests(unittest.TestCase):
         for key in self.toolbar.needs:
             setattr(self.app.state, key, 100)
         self.toolbar.refresh()
-        self.app.root.update_idletasks()
+        self.app.root.update()
         for key, (canvas, rect, label) in self.toolbar.needs.items():
             self.assertEqual(canvas.coords(rect)[2], canvas.winfo_width())
             self.assertIn("100%", label.cget("text"))

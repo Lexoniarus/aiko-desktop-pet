@@ -4,7 +4,7 @@ import ctypes
 import json
 import tempfile
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -163,7 +163,8 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         engine = AdaptiveRoutine()
         clock = 0
         for week in range(5):
-            target = start + week * 7 * 86400
+            # Keep the same local weekday/hour across the October DST boundary.
+            target = (datetime.fromtimestamp(start) + timedelta(weeks=week)).timestamp()
             # No hidden extrapolation during one week's gap.
             engine.observe(Observation(target, 0.88, 0), clock,
                            energy=80, sleeping=False)

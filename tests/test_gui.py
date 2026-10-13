@@ -193,7 +193,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.state.affection = 100
         self.app.state.friendship = 100
         self.app._on_enter()
-        self.app.root.update_idletasks()
+        self.app.root.update()
         self.toolbar.refresh()
         for key, _title, _color in self.toolbar.NEEDS:
             bar, rect, text = self.toolbar.needs[key]
@@ -311,6 +311,8 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app._attention.last_spoken = -9999999
         self.toolbar.hide()
         self.app.settings.spontaneous_talk = True
+        self.app._speech.hide()
+        self.app._action_until = 0
         with (
             patch.object(self.app.activity_monitor, "latest", return_value=
                          ComputerSnapshot(cpu=92, gpu=15, ram=55,
@@ -319,6 +321,9 @@ class TaskbarPetGuiTests(unittest.TestCase):
                          return_value="computer_effort_steady"),
         ):
             self.app._tick()
+            # Work observations can start a review gesture. Speech waits for it.
+            self.app._action_until = 0
+            self.app._maybe_speak_spontaneously(now + 2)
         self.assertTrue(self.app.mind.book.recent[-1].startswith("computer_effort_steady-"))
 
     def test_load_change_updates_visible_voice_and_reaction_with_hover_open(self):
@@ -360,6 +365,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         original_y = self.app.settings.y
         original_x = self.app.settings.x
         assert original_x is not None
+        self.app._animated.maybe_walk(time.monotonic(), 0)
         self.app._animated.movement.remaining_distance = 140
         state = self.app._animated.maybe_walk(time.monotonic(), .15)
         self.assertEqual(state, "running-right")

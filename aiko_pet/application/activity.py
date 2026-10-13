@@ -15,6 +15,7 @@ from ..pet.routine import TimeContext, context_at
 from .settings import PetSettings
 from ..telemetry import workload_intensity
 from .ports import ComputerObservation
+from .active_time import ActiveSessionClock
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,6 +44,7 @@ class ActivityCoordinator:
         mind: AikoMind, adaptive: AdaptiveRoutine,
         voice: WorkloadEventDetector, monitor: ComputerObservation,
         callbacks: ActivityCallbacks,
+        *, clock: ActiveSessionClock,
     ) -> None:
         self.state = state
         self.settings = settings
@@ -51,6 +53,7 @@ class ActivityCoordinator:
         self.workload_events = voice
         self.monitor = monitor
         self.callbacks = callbacks
+        self._clock = clock
         self.last_hardware_sample = 0.0
         self.last_adaptive_sample = 0.0
         self.pending_computer_line: tuple[str, float] | None = None
@@ -126,6 +129,7 @@ class ActivityCoordinator:
             allow_nap=self.allow_nap(),
             interrupt_nap=self.interrupt_nap(),
             effort=self.live_effort(),
+            elapsed_seconds=self._clock.consume(),
         )
 
     def advance_lifecycle(

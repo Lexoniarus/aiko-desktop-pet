@@ -19,6 +19,7 @@ from .settings import PetSettings
 from .ports import ComputerReadings
 from .events import IncomingNotification
 from .router import ApplicationRouter
+from .care_requests import choose_care_request
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,6 +45,7 @@ class AttentionCoordinator:
         self.monitor = monitor
         self.router = router
         self.last_spoken = -1000.0
+        self.next_care_request = started_at
         self.next_comment = started_at + random.uniform(180.0, 360.0)
         self.next_idle_emote = started_at + random.uniform(70.0, 170.0)
         self.next_cursor_line = started_at + random.uniform(200.0, 420.0)
@@ -109,18 +111,30 @@ class AttentionCoordinator:
     def spontaneous(
         self, now: float, context: TimeContext, *,
         toolbar_visible: bool,
+        action_until: float = 0.0, bubble_visible: bool = False,
+        popup_visible: bool = False,
     ) -> SpontaneousChoice:
         """Select measured-effort or personal dialogue when allowed."""
-        if now < self.next_comment:
-            return SpontaneousChoice(False)
-        self.next_comment = now + random.uniform(175.0, 360.0)
         if (
             not self.settings.spontaneous_talk
             or self.state.sleeping
             or toolbar_visible
+            or bubble_visible or popup_visible or now < action_until
             or now - self.last_spoken < 85
         ):
             return SpontaneousChoice(False)
+        request = choose_care_request(self.state)
+        if (
+            request is not None and now >= self.next_care_request
+            and not self.mind.recently_cared_for(now)
+        ):
+            reaction = self.mind.say_event(request, self.state, context, now)
+            if reaction is not None:
+                self.next_care_request = now + 30 * 60
+                return SpontaneousChoice(True, reaction)
+        if now < self.next_comment:
+            return SpontaneousChoice(False)
+        self.next_comment = now + random.uniform(175.0, 360.0)
         event = self.workload_events.maybe_event(self.monitor.latest(), now)
         reaction = (
             self.mind.computer_event(event, self.state, context, now)

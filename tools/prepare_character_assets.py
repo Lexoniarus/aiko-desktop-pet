@@ -42,7 +42,7 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
         image.save(path, optimize=True)
         hashes[relative.as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
         expected.add(path.resolve())
-        return bounds[3]
+        return int(bounds[3])
 
     for item in catalog["animations"]:
         # The desktop uses directional walking; the generic clip has no caller.
@@ -54,6 +54,17 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
         entry["source_anchor"] = entry["anchor"]
         ground = 0
         for index, frame in enumerate(entry["frames"]):
+            frame["source_duration_ms"] = frame["duration_ms"]
+            if state in ("idle", "waiting", "review"):
+                if index == 0:
+                    frame["duration_ms"] += 900
+                elif index == len(entry["frames"]) - 1:
+                    original_total = sum(
+                        f["source_duration_ms"] for f in entry["frames"]
+                    )
+                    frame["duration_ms"] += 2520 - original_total - 900
+            elif state in ("running-left", "running-right"):
+                frame["duration_ms"] = round(frame["duration_ms"] * 4 / 3)
             relative = Path("frames") / state / f"{index:02d}.png"
             ground = max(ground, copy_frame(
                 original.parent / frame["file"], relative,
@@ -98,6 +109,7 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
         "frame_counts": counts, "size": [192, 208], "alpha_threshold": 128,
         "license": "../../assets/aiko-anime-8-frames/LICENSE.md",
         "preparation": "Full-width copies; binary alpha; visible ground anchors",
+        "timing_profile": "2520ms ambient; 1413ms walk; original times retained",
         "runtime_sha256": hashes,
     }
     for name, data in (("animations.json", runtime), ("provenance.json", provenance)):

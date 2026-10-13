@@ -88,9 +88,8 @@ class DesktopPreferenceTests(unittest.TestCase):
             ),
         ):
             self.prefs.set_option("auto_routine", False)
-        advance.assert_called_once_with(
-            1_781_000_000.0, auto_routine=False,
-        )
+        advance.assert_not_called()
+        self.activity.advance_state.assert_called_once_with(1_781_000_000.0)
         self.assertFalse(self.settings.auto_routine)
         self.assertEqual(len(self.contexts), 1)
         self.hover.refresh_status.assert_called_once()
@@ -143,7 +142,7 @@ class DesktopPreferenceTests(unittest.TestCase):
     def test_center_stops_walking_without_touching_hover(self) -> None:
         self.prefs.center()
         self.assertEqual(self.positions, [486.0])
-        self.assertEqual(self.animated.movement.remaining_distance, 0)
+        self.animated.movement.interrupt.assert_called_once_with()
         self.assertEqual(self.saves, 1)
 
 

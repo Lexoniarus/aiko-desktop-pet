@@ -15,7 +15,7 @@ def cpu_windows_times() -> tuple[int, int] | None:
         _fields_ = [("low", ctypes.c_uint32), ("high", ctypes.c_uint32)]
 
         def ticks(self) -> int:
-            return (self.high << 32) | self.low
+            return (int(self.high) << 32) | int(self.low)
 
     idle, kernel, user = FileTime(), FileTime(), FileTime()
     try:
@@ -77,8 +77,8 @@ def memory_windows_percent() -> float | None:
             return None
         if not status.total_phys:
             return None
-        return round(100 * (status.total_phys - status.avail_phys) /
-                     status.total_phys, 1)
+        return round(100 * (int(status.total_phys) - int(status.avail_phys)) /
+                     int(status.total_phys), 1)
     except (AttributeError, OSError, ValueError):
         return None
 
@@ -104,7 +104,7 @@ def uptime_hours() -> float | None:
             # milliseconds since Windows boot; does not inspect user activity.
             function = ctypes.windll.kernel32.GetTickCount64
             function.restype = ctypes.c_uint64
-            return round(function() / 3_600_000, 2)
+            return round(int(function()) / 3_600_000, 2)
         except (AttributeError, OSError, ValueError):
             return None
     if sys.platform.startswith("linux"):

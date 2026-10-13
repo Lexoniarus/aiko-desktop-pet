@@ -6,7 +6,6 @@ gaze sprites and exposes her care actions in a mouse-hover toolbar.
 
 from __future__ import annotations
 
-import random
 import time
 import tkinter as tk
 from dataclasses import replace
@@ -25,6 +24,8 @@ from .desktop.maintenance import DesktopMaintenance
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
+from .application.active_time import ActiveSessionClock
+from .infrastructure.active_time import active_uptime_seconds
 from .ui.hover_ui import HoverUi, HoverUiPorts
 from .application.router import ApplicationRouter
 from .presentation.read_models import DesktopPresentation
@@ -107,8 +108,9 @@ class DesktopPet:
             self.store, self.state, self.settings, self.adaptive,
         )
         self.mind = AikoMind(started_at=self._persistence.last_saved)
+        active_clock = ActiveSessionClock(active_uptime_seconds)
         self.application = ApplicationRouter(
-            CareController(self.state, self.mind, self.adaptive),
+            CareController(self.state, self.mind, self.adaptive, clock=active_clock),
         )
         self.workload_events = WorkloadEventDetector()
         self.activity_monitor = activity_monitor or ActivityMonitor()
@@ -125,6 +127,7 @@ class DesktopPet:
                 action_until=lambda: self._action_until,
                 last_spoken=lambda: self._attention.last_spoken,
             ),
+            clock=active_clock,
         )
         self._animated = AnimatedPet(
             self.root, self.canvas, self.state, self.settings,
@@ -302,8 +305,7 @@ class DesktopPet:
             if was_hidden else None
         )
         self._hover.last_hover = now
-        self._animated.movement.remaining_distance = 0
-        self._animated.movement.next_walk_at = now + random.uniform(3.0, 6.0)
+        self._animated.movement.interrupt()
         self._hover.show_toolbar()
         self._react(reaction, 2800)
 
@@ -380,8 +382,6 @@ class DesktopPet:
         self._action_state = state
         self._action_until = now + duration
         self._animated.begin_action(state, now)
-        self._animated.movement.remaining_distance = 0
-        self._animated.movement.next_walk_at = now + duration + random.uniform(2.5, 5)
 
     def _extend_action(self, deadline: float) -> None:
         self._action_until = max(self._action_until, deadline)
@@ -522,6 +522,9 @@ class DesktopPet:
         decision = self._attention.spontaneous(
             now, self.context,
             toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
+            action_until=self._action_until,
+            bubble_visible=self._speech.bubble is not None,
+            popup_visible=self._hover.settings_popup is not None,
         )
         if decision.due:
             self._react(decision.reaction, 3600)

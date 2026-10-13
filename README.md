@@ -22,8 +22,8 @@
 
 ## What she does
 
-- **Lives on your desktop.** Animated taskbar walking, jumping, waving, resting and 16-direction cursor gaze.
-- **Needs a little care.** Feed, play, talk, pet, sleep/wake or offer an energy drink. Five short-term needs and a separate, gradually earned friendship level influence her behavior.
+- **Lives on your desktop.** Short, slower taskbar walks with 1–3 minute pauses, calm blinking, jumping, waving, resting and 16-direction cursor gaze.
+- **Needs a little care.** Feed, play, talk, pet, sleep/wake or offer an energy drink. From full satiety, about an hour awake brings her to 67–70%, making a snack useful. Other needs develop more slowly across the day, with occasional friendly requests.
 - **Has her own voice.** Handwritten German reactions vary with mood, time, repeated clicks, interruptions and recent interactions. Emotes, text and optional follow-ups play in sequence.
 - **Notices actual workload.** Local CPU/GPU and memory observations inform her working/resting behavior, without inventing the application or task you are using. Missing sensors remain unknown.
 - **Learns a gentle rhythm.** Locally aggregated activity evidence helps her adapt to regular working and resting periods.
@@ -60,6 +60,12 @@ By default, Aiko stores progress outside the repository at:
 Aiko runs locally. The current application does **not** send telemetry to a server, start an HTTP service, require a subscription or call an external AI inference API.
 
 Her workload observations are drawn from local CPU/GPU utilization, memory pressure, uptime and user-idle timing. They do not inspect files, process/application names, browser content, typed text or microphone input. Optional NVIDIA sampling uses local OS tooling. Learned rhythm summaries and pet progress are stored locally in the save file.
+
+Needs use time within the running session. Closing Aiko or suspending the PC
+freezes needs and recovery; reopening does not catch up the missing interval.
+Sleep inside a running session retains gentle need decay and energy recovery.
+The real clock still determines meals and daily routine. Friendship remains a
+separate, slowly earned bond with the existing daily limits.
 
 Disable **Observe computer** or **Learn rhythm** individually from the settings panel if you do not want those behaviors. See [adaptive behavior notes](docs/ADAPTIVER_RHYTHMUS.md) for details and historical design context.
 

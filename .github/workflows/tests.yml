@@ -97,6 +97,8 @@ jobs:
           $patterns = @(
             "test_taskbar.py",
             "test_character_assets.py",
+            "test_active_time.py",
+            "test_care_requests.py",
             "test_assets.py",
             "test_window_stack.py",
             "test_desktop_input.py",

@@ -66,7 +66,7 @@ class AffectionNeedTests(unittest.TestCase):
             idle.advance(point, effort=0.0)
             working.advance(point, effort=1.0)
         self.assertAlmostEqual(idle.affection, working.affection)
-        self.assertAlmostEqual(idle.affection, 55 - 2 * 1.35, places=2)
+        self.assertAlmostEqual(idle.affection, 55 - 2 * 6, places=2)
         self.assertLess(working.energy, idle.energy)
         self.assertLess(working.satiety, idle.satiety)
 

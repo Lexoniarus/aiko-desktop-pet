@@ -22,6 +22,10 @@ typed runtime catalog in `aiko_pet/assets/animations.json`. Rebuild these with
 width and applies the existing binary-alpha policy for Windows transparency;
 the original imported images remain unchanged.
 
+Runtime metadata records original frame durations as `source_duration_ms` and
+applies the application's 2.52-second ambient and 1.413-second walking profile.
+Other clips retain their source timing; no original manifests are modified.
+
 See [the asset terms](LICENSE.md) for the new artwork's restricted reuse.
 Application and preparation code remain MIT; Kenney artwork remains CC0.
 [IMPORT_MANIFEST.json](IMPORT_MANIFEST.json) records the source ZIP checksum,

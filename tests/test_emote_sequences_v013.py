@@ -159,7 +159,7 @@ class EmoteTkTests(unittest.TestCase):
         self.pet._on_enter()
         bar = self.pet._hover.toolbar
         assert bar is not None
-        self.pet.root.update_idletasks()
+        self.pet.root.update()
         self.assertTrue(bar.today.cget('image'))
         self.assertTrue(bar.buttons['feed'].cget('image'))
         self.assertEqual(len(bar.needs),6)
@@ -169,7 +169,7 @@ class EmoteTkTests(unittest.TestCase):
         for key in bar.needs:
             self.pet.state.__dict__[key] = 100
         bar.refresh()
-        self.pet.root.update_idletasks()
+        self.pet.root.update()
         self.assertTrue(all(bar.needs[k][0].coords(bar.needs[k][1])[2]
                             == bar.needs[k][0].winfo_width() for k in bar.needs))
 

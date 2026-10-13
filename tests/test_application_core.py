@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import random
 import unittest
+from aiko_pet.application.active_time import ActiveSessionClock
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
@@ -45,7 +46,8 @@ class ApplicationCoreTests(unittest.TestCase):
         self.mind = AikoMind(rng=random.Random(8))
         self.adaptive = AdaptiveRoutine()
         self.router = ApplicationRouter(
-            CareController(self.state, self.mind, self.adaptive),
+            CareController(self.state, self.mind, self.adaptive,
+                           clock=ActiveSessionClock(lambda: 0.0)),
             NotificationInbox(capacity=2),
         )
 
@@ -65,7 +67,8 @@ class ApplicationCoreTests(unittest.TestCase):
         rt = runtime()
         state = PetState(social=10.0, updated_at=rt.wall_time)
         mind = AikoMind(rng=random.Random(12))
-        controller = CareController(state, mind, AdaptiveRoutine())
+        controller = CareController(state, mind, AdaptiveRoutine(),
+                                    clock=ActiveSessionClock(lambda: 0.0))
         outcome = controller.execute(CareCommand("talk"), rt)
         self.assertEqual(state.social, 36.0)
         self.assertIsNotNone(outcome.reaction)

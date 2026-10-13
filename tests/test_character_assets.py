@@ -18,7 +18,7 @@ class CharacterCatalogTests(unittest.TestCase):
         self.assertEqual(sum(len(c.frames) for c in catalog.clips.values()), 112)
         self.assertNotIn("running", catalog.clips)
         self.assertEqual(catalog.clips["idle"].timings,
-                         (280, 110, 60, 50, 70, 70, 140, 320))
+                         (1180, 110, 60, 50, 70, 70, 140, 840))
         self.assertEqual(catalog.clips["eat"].duration_seconds, 2.3)
         self.assertFalse(catalog.clips["eat"].loop)
         self.assertTrue(catalog.clips["sleep"].loop)
@@ -26,6 +26,23 @@ class CharacterCatalogTests(unittest.TestCase):
         self.assertEqual(len(catalog.clips["look"].frames), 16)
         self.assertEqual(catalog.clips["attack"].frames[3].events,
                          ("attack_release",))
+
+    def test_effective_profiles_keep_source_timings_and_frame_order(self) -> None:
+        data = json.loads((ASSET_ROOT / 'animations.json').read_text('utf-8'))
+        for clip in data['animations']:
+            name = clip['state']
+            if name in ('idle', 'waiting', 'review'):
+                self.assertEqual(sum(f['duration_ms'] for f in clip['frames']), 2520)
+                self.assertEqual([f['duration_ms'] for f in clip['frames'][1:-1]],
+                                 [f['source_duration_ms']
+                                  for f in clip['frames'][1:-1]])
+            if name in ('running-left', 'running-right'):
+                self.assertEqual([f['duration_ms'] for f in clip['frames']],
+                                 [160] * 7 + [293])
+            if name != 'look':
+                self.assertEqual([f['file'].rsplit('/', 1)[1]
+                                  for f in clip['frames']],
+                                 [f'{i:02d}.png' for i in range(8)])
 
     def _write_catalog(self, root: Path, data: dict[str, Any]) -> None:
         for clip in data["animations"]:

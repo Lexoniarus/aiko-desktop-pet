@@ -187,6 +187,10 @@ class AikoMind:
             self.irritated_until = -1.0
             self.clicks.clear()
 
+    def recently_cared_for(self, now: float) -> bool:
+        """Give accepted care three minutes before another gentle request."""
+        return self._last_care_at >= 0 and now - self._last_care_at < 180
+
     def computer_event(
         self, event: str, state: PetState, context: TimeContext, now: float,
     ) -> Reaction | None:

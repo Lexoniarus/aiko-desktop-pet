@@ -63,14 +63,14 @@ class SessionRestorationTests(unittest.TestCase):
         self.assertEqual(restored_settings.to_dict(), settings.to_dict())
         self.assertTrue(self.store.load_session(now=NOW).restored_from_save)
 
-    def test_existing_save_is_advanced_once_by_application(self) -> None:
+    def test_existing_save_freezes_closed_time_and_resets_anchor(self) -> None:
         saved = PetState(satiety=75, updated_at=NOW - 3600)
         self.store.save(saved, PetSettings(auto_routine=False))
         with patch.object(PetState, "advance", autospec=True) as advance:
             state, settings, _memory = self.restore()
-        advance.assert_called_once_with(
-            state, NOW, auto_routine=settings.auto_routine,
-        )
+        advance.assert_not_called()
+        self.assertEqual(state.satiety, 75)
+        self.assertEqual(state.updated_at, NOW)
 
     def test_saved_elapsed_time_and_adaptive_memory_are_preserved(self) -> None:
         saved = PetState(satiety=65, energy=40, updated_at=NOW - 3600)
@@ -87,21 +87,20 @@ class SessionRestorationTests(unittest.TestCase):
             actual, restored_settings, adaptive_memory = self.restore()
         reader.assert_called_once()
         expected = PetState.from_dict(saved.to_dict(), now=NOW)
-        expected.advance(NOW, auto_routine=settings.auto_routine)
+        expected.updated_at = NOW
         self.assertEqual(actual.to_dict(), expected.to_dict())
         self.assertEqual(restored_settings.to_dict(), settings.to_dict())
         self.assertEqual(adaptive_memory.hour_seconds[42], 32.5)
         self.assertEqual(self.store.load(now=NOW)[0].updated_at, NOW - 3600)
 
-    def test_saved_auto_routine_setting_controls_startup_catchup(self) -> None:
+    def test_saved_auto_routine_setting_does_not_create_offline_recovery(self) -> None:
         saved = PetState(energy=30, updated_at=NOW - 1800)
         settings = PetSettings(auto_routine=True)
         self.store.save(saved, settings)
         with patch.object(PetState, "advance", autospec=True) as advance:
             state, restored_settings, _memory = self.restore()
-        advance.assert_called_once_with(
-            state, NOW, auto_routine=True,
-        )
+        advance.assert_not_called()
+        self.assertEqual(state.energy, 30)
         self.assertTrue(restored_settings.auto_routine)
 
     def test_old_version_one_save_without_adaptive_data_still_loads(self) -> None:

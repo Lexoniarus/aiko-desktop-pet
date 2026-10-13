@@ -54,12 +54,19 @@ class FrameClock:
         self.finished = False
         self.next_delay_ms: int | None = None
         self.end_time = started_at
+        self._completed_ms = 0
 
     def reset(self) -> None:
         """Restart even when two consecutive actions select the same clip."""
         self.active_key = None
         self.finished = False
         self.next_delay_ms = None
+        self._completed_ms = 0
+
+    def progress_seconds(self, now: float, timings: tuple[int, ...]) -> float:
+        """Authored progress; a late callback cannot consume unseen frames."""
+        elapsed = max(0.0, (now - self.frame_started_at) * 1000)
+        return (self._completed_ms + min(elapsed, timings[self.frame_index])) / 1000
 
     def next_index(
         self, animation: str, now: float, timings: tuple[int, ...], *,
@@ -75,6 +82,7 @@ class FrameClock:
             self.frame_index = 0
             self.frame_started_at = now
             self.finished = False
+            self._completed_ms = 0
         if fixed is not None:
             self.frame_index = fixed
             self.next_delay_ms = None
@@ -82,6 +90,7 @@ class FrameClock:
             return fixed
         elapsed = max(0.0, (now - self.frame_started_at) * 1000)
         if not self.finished and elapsed + 1e-6 >= timings[self.frame_index]:
+            self._completed_ms += timings[self.frame_index]
             if self.frame_index + 1 < len(timings):
                 self.frame_index += 1
             elif loop:

@@ -42,6 +42,11 @@ Original imported artwork is not cropped or overwritten. Preparation uses
 `python tools/prepare_character_assets.py`; Pillow is required only for that
 build step, not for running the desktop app.
 
+The runtime timing profile extends the open poses of idle, waiting and review
+to 2.52-second cycles, and walking to 1.413 seconds. Each animated runtime frame
+records `source_duration_ms` alongside its effective `duration_ms`; source
+manifests and PNGs are unchanged. Other clips retain the authored durations.
+
 OpenAI assigns its rights in generated output, if any, to the user to the extent
 permitted by applicable law. This does not establish that every generated image
 is unique or copyright-protected. The asset notice covers only licensable rights

@@ -54,7 +54,7 @@ class DailyRoutineTests(unittest.TestCase):
         state.advance(local_time("2026-10-13", 7, 45), auto_routine=True)
         self.assertFalse(state.sleeping)
         self.assertGreater(state.energy, 90)
-        self.assertGreater(state.satiety, 60)
+        self.assertGreater(state.satiety, 50)
 
     def test_manual_wake_stays_respected_until_next_night(self):
         state = PetState(updated_at=local_time("2026-10-12", 23, 20))
@@ -89,20 +89,20 @@ class DailyRoutineTests(unittest.TestCase):
         self.assertEqual(state.feed_label(context_at(local_time("2026-10-18", 9, 20))), "Frühstück")
         self.assertEqual(state.meals_today, [])
 
-    def test_weekend_free_time_changes_rates(self):
+    def test_weekend_keeps_hourly_care_rhythm(self):
         weekday = PetState(updated_at=local_time("2026-10-12", 14), mood=50)
         weekend = PetState(updated_at=local_time("2026-10-17", 15), mood=50)
         weekday.advance(local_time("2026-10-12", 16), auto_routine=True)
         weekend.advance(local_time("2026-10-17", 17), auto_routine=True)
-        self.assertLess(weekday.mood, 50)
-        self.assertGreater(weekend.mood, 50)
-        self.assertLess(weekday.energy, weekend.energy)
+        self.assertLess(weekend.mood, 50)
+        self.assertAlmostEqual(weekend.mood, weekday.mood)
+        self.assertAlmostEqual(weekday.energy, weekend.energy)
 
     def test_auto_routine_can_be_switched_off(self):
         state = PetState(updated_at=local_time("2026-10-12", 22, 55))
         state.advance(local_time("2026-10-12", 23, 15), auto_routine=False)
         self.assertFalse(state.sleeping)
-        self.assertEqual(state.energy, 75 - 2.2 / 3)
+        self.assertEqual(state.energy, 75 - 6 / 3)
 
     def test_legacy_sleep_is_treated_as_manual(self):
         state = PetState.from_dict({"sleeping": True, "updated_at": local_time("2026-10-12", 9)})

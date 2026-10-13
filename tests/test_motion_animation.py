@@ -70,6 +70,22 @@ class FrameClockTests(unittest.TestCase):
         with self.assertRaises(IndexError):
             clock.next_index("look", 0, (1000,) * 16, fixed=16)
 
+    def test_motion_progress_tracks_shown_frames_during_late_callbacks(self) -> None:
+        clock = FrameClock()
+        timings = (160,) * 7 + (293,)
+        clock.next_index('running-right', 0, timings)
+        self.assertAlmostEqual(clock.progress_seconds(.5, timings), .16)
+        clock.next_index('running-right', .5, timings)
+        self.assertAlmostEqual(clock.progress_seconds(.5, timings), .16)
+        now = .5
+        for duration in timings[1:]:
+            now = clock.frame_started_at + duration / 1000 + .1
+            before = clock.progress_seconds(now, timings)
+            clock.next_index('running-right', now, timings)
+            self.assertAlmostEqual(clock.progress_seconds(now, timings), before)
+        self.assertEqual(clock.frame_index, 0)
+        self.assertAlmostEqual(clock.progress_seconds(now, timings), 1.413)
+
 
 class PassiveAnimationTests(unittest.TestCase):
     def select(
@@ -120,6 +136,7 @@ class WalkControllerTests(unittest.TestCase):
     def conditions(self, **overrides: object) -> WalkConditions:
         defaults = WalkConditions(
             now=15.0, elapsed_seconds=0.25, x=300,
+            speed_pixels_per_second=68 / 1.413, stride_pixels=68,
             track=self.track, sprite_width=128, energy=80,
             auto_walk=True, sleeping=False, attention_active=False,
             toolbar_visible=False, observing_computer=False,
@@ -133,7 +150,7 @@ class WalkControllerTests(unittest.TestCase):
         assert step is not None
         self.assertEqual(step.animation, "running-right")
         self.assertEqual(step.pixels, 2.0)
-        self.assertTrue(self.walker.record_displacement(2.0))
+        self.assertTrue(self.walker.record_displacement(2.0, now=15))
         self.assertEqual(self.walker.remaining_distance, 0.0)
 
     def test_walk_left_and_stop_at_clamped_screen_edge(self) -> None:
@@ -142,7 +159,7 @@ class WalkControllerTests(unittest.TestCase):
         assert step is not None
         self.assertEqual(step.animation, "running-left")
         self.assertLess(step.pixels, 0)
-        self.assertTrue(self.walker.record_displacement(0))
+        self.assertTrue(self.walker.record_displacement(0, now=15, blocked=True))
         self.assertEqual(self.walker.remaining_distance, 0)
 
     def test_bursts_are_bounded_by_elapsed_time(self) -> None:
@@ -151,7 +168,7 @@ class WalkControllerTests(unittest.TestCase):
         second = self.walker.plan_step(self.conditions(elapsed_seconds=0))
         assert first is not None
         assert second is not None
-        self.assertEqual(first.pixels, 16)
+        self.assertAlmostEqual(first.pixels, 68 / 1.413 * .25)
         self.assertEqual(second.pixels, 0)
 
     def test_work_delays_next_walk_and_cancels_movement(self) -> None:
@@ -160,7 +177,9 @@ class WalkControllerTests(unittest.TestCase):
             self.conditions(observing_computer=True, computer_busy=True),
         ))
         self.assertEqual(self.walker.remaining_distance, 0)
-        self.assertEqual(self.walker.next_walk_at, 17)
+        with patch("aiko_pet.presentation.movement.random.uniform", return_value=90):
+            self.assertIsNone(self.walker.plan_step(self.conditions(now=100)))
+        self.assertEqual(self.walker.next_walk_at, 190)
 
     def test_hover_and_manual_disabled_walk_cancel_distance(self) -> None:
         for settings in ({"toolbar_visible": True}, {"auto_walk": False},
@@ -171,21 +190,55 @@ class WalkControllerTests(unittest.TestCase):
                 self.assertEqual(self.walker.remaining_distance, 0)
 
     def test_energy_defers_walk_but_sets_next_departure(self) -> None:
-        with patch("aiko_pet.presentation.movement.random.uniform", return_value=6):
+        with patch("aiko_pet.presentation.movement.random.uniform", return_value=90):
             self.assertIsNone(self.walker.plan_step(self.conditions(energy=19)))
-        self.assertEqual(self.walker.next_walk_at, 21)
+        self.assertEqual(self.walker.next_walk_at, 105)
         self.assertEqual(self.walker.remaining_distance, 0)
 
     def test_edge_direction_and_quiet_interval(self) -> None:
         with (
             patch("aiko_pet.presentation.movement.random.uniform", return_value=20),
-            patch("aiko_pet.presentation.movement.random.randint", return_value=100),
+            patch("aiko_pet.presentation.movement.random.randint", return_value=2),
         ):
             step = self.walker.plan_step(self.conditions(x=0, quiet_period=True))
         assert step is not None
         self.assertEqual(step.animation, "running-right")
-        self.assertEqual(self.walker.remaining_distance, 100)
-        self.assertEqual(self.walker.next_walk_at, 35)
+        self.assertEqual(self.walker.remaining_distance, 136)
+        self.assertEqual(self.walker.next_walk_at, float("inf"))
+
+    def test_subpixel_motion_survives_short_callbacks_in_both_directions(self) -> None:
+        for direction in (-1, 1):
+            with self.subTest(direction=direction):
+                walker = WalkController(next_walk_at=100)
+                walker.remaining_distance = 100 * direction
+                x = 300
+                for n in range(250):
+                    step = walker.plan_step(self.conditions(
+                        now=n * .004, elapsed_seconds=.004, x=x,
+                    ))
+                    assert step is not None
+                    new_x = round(x + step.pixels)
+                    self.assertFalse(walker.record_displacement(
+                        new_x - x, now=n * .004,
+                    ))
+                    x = new_x
+                self.assertAlmostEqual(abs(x - 300), 68 / 1.413, delta=.5)
+                self.assertGreater(abs(walker.remaining_distance), 50)
+
+    def test_complete_pause_starts_at_actual_finish_even_after_long_walk(self) -> None:
+        self.walker.remaining_distance = 2
+        self.walker.plan_step(self.conditions(now=100))
+        with patch("aiko_pet.presentation.movement.random.uniform", return_value=90):
+            self.assertTrue(self.walker.record_displacement(2, now=100))
+        self.assertEqual(self.walker.next_walk_at, 190)
+        self.assertIsNone(self.walker.plan_step(self.conditions(now=189)))
+
+    def test_brief_pointer_attention_does_not_restart_an_idle_pause(self) -> None:
+        self.assertIsNone(self.walker.plan_step(self.conditions(
+            now=9, attention_active=True,
+        )))
+        self.assertEqual(self.walker.next_walk_at, 10)
+        self.assertIsNotNone(self.walker.plan_step(self.conditions(now=15)))
 
 
 if __name__ == "__main__":

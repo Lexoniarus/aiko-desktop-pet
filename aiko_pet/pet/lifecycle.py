@@ -106,11 +106,15 @@ def plan_pet_time(
     *,
     auto_routine: bool = False,
     effort: float | None = None,
+    elapsed_seconds: float | None = None,
 ) -> tuple[SimulationStep, ...] | None:
     """Plan the old bounded catch-up, never projecting stale telemetry."""
     if not math.isfinite(now):
         return None
-    elapsed = max(0.0, min(MAX_CATCHUP_SECONDS, now - updated_at))
+    duration = now - updated_at if elapsed_seconds is None else elapsed_seconds
+    if not math.isfinite(duration):
+        return None
+    elapsed = max(0.0, min(MAX_CATCHUP_SECONDS, duration))
     if type(effort) not in (int, float):
         effort = None
     elif effort is not None and (

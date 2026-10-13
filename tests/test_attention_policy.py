@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import random
 import unittest
+from aiko_pet.application.active_time import ActiveSessionClock
 from unittest.mock import patch
 
 from aiko_pet.personality.adaptive import AdaptiveRoutine
@@ -32,7 +33,8 @@ class AttentionPolicyTests(unittest.TestCase):
         self.mind = AikoMind(rng=random.Random(7))
         self.voice = WorkloadEventDetector(rng=random.Random(8))
         self.router = ApplicationRouter(
-            CareController(self.state, self.mind, AdaptiveRoutine()),
+            CareController(self.state, self.mind, AdaptiveRoutine(),
+                           clock=ActiveSessionClock(lambda: 0.0)),
         )
         self.attention = AttentionCoordinator(
             self.state, self.settings, self.mind, self.voice,

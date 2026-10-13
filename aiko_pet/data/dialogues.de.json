@@ -5311,6 +5311,94 @@
       "followup_delay_ms": 1550,
       "emote_before": "question",
       "emote_after": "heart"
+    },
+    {
+      "id": "care_request_feed-01",
+      "event": "care_request_feed",
+      "text": "Ein kleiner Snack wäre gerade schön.",
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 1800,
+      "moods": [],
+      "periods": [],
+      "weekdays": []
+    },
+    {
+      "id": "care_request_feed-02",
+      "event": "care_request_feed",
+      "text": "Hast du vielleicht eine Kleinigkeit für mich?",
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 1800,
+      "moods": [],
+      "periods": [],
+      "weekdays": []
+    },
+    {
+      "id": "care_request_talk-01",
+      "event": "care_request_talk",
+      "text": "Magst du mir kurz Gesellschaft leisten?",
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 1800,
+      "moods": [],
+      "periods": [],
+      "weekdays": []
+    },
+    {
+      "id": "care_request_talk-02",
+      "event": "care_request_talk",
+      "text": "Eine kleine Plauderei wäre schön.",
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 1800,
+      "moods": [],
+      "periods": [],
+      "weekdays": []
+    },
+    {
+      "id": "care_request_pet-01",
+      "event": "care_request_pet",
+      "text": "Ein bisschen Streicheln wäre angenehm.",
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 1800,
+      "moods": [],
+      "periods": [],
+      "weekdays": []
+    },
+    {
+      "id": "care_request_pet-02",
+      "event": "care_request_pet",
+      "text": "Magst du mir kurz etwas Zuwendung schenken?",
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 1800,
+      "moods": [],
+      "periods": [],
+      "weekdays": []
+    },
+    {
+      "id": "care_request_play-01",
+      "event": "care_request_play",
+      "text": "Ein kleines Spiel würde mir guttun.",
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 1800,
+      "moods": [],
+      "periods": [],
+      "weekdays": []
+    },
+    {
+      "id": "care_request_play-02",
+      "event": "care_request_play",
+      "text": "Hast du Lust, kurz mit mir zu spielen?",
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 1800,
+      "moods": [],
+      "periods": [],
+      "weekdays": []
     }
   ]
 }

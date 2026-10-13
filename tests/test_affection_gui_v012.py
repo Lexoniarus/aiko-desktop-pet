@@ -42,7 +42,7 @@ class AffectionGuiTests(unittest.TestCase):
         for key in toolbar.needs:
             setattr(self.app.state, key, 100)
         toolbar.refresh()
-        self.app.root.update_idletasks()
+        self.app.root.update()
         toolbar.refresh()
         for key, (bar, rect, label) in toolbar.needs.items():
             self.assertEqual(bar.coords(rect)[2], bar.winfo_width(), key)

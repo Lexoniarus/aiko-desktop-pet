@@ -100,9 +100,10 @@ class AnimatedPet:
         self._active_action: str | None = None
         self._stopped = False
         self._last_motion_at = time.monotonic()
+        self._walk_progress = 0.0
         self.frame_clock = FrameClock(started_at=time.monotonic())
         self.movement = WalkController(
-            next_walk_at=time.monotonic() + random.uniform(3.0, 8.0),
+            next_walk_at=time.monotonic() + random.uniform(60.0, 180.0),
         )
         self.gaze_sector: int | None = None
         self._previous_pointer: tuple[int, int] | None = None
@@ -138,8 +139,8 @@ class AnimatedPet:
     def set_auto_walk(self, enabled: bool, now: float) -> None:
         """Walking configuration belongs to the character's movement owner."""
         self.settings.auto_walk = bool(enabled)
-        self.movement.remaining_distance = 0
-        self.movement.next_walk_at = now + random.uniform(2.5, 5)
+        self.movement.interrupt()
+        self.movement.pause(now)
 
     def set_follow_cursor(self, enabled: bool) -> None:
         self.settings.follow_cursor = bool(enabled)
@@ -155,12 +156,14 @@ class AnimatedPet:
         """Start a new visual action, including repeated actions of one kind."""
         self.frame_clock.reset()
         self._active_action = state
+        self.movement.interrupt()
         self.show_frame(state, now)
 
     def cancel_action(self, now: float) -> None:
         """Interrupt the previous visual when entering or leaving sleep."""
         self.frame_clock.reset()
         self._active_action = None
+        self.movement.interrupt()
         self.show_frame("sleep" if self.state.sleeping else "idle", now)
 
     def show_frame(
@@ -172,6 +175,7 @@ class AnimatedPet:
         walking = state in ("running-left", "running-right")
         if walking and self.frame_clock.active_key != (state, fixed):
             self._last_motion_at = now
+            self._walk_progress = 0.0
         index = self.frame_clock.next_index(
             state, now, clip.timings, fixed=fixed, loop=clip.loop,
         )
@@ -210,7 +214,11 @@ class AnimatedPet:
         self._frame_timer = None
         now = time.monotonic()
         if state in ("running-left", "running-right"):
-            elapsed = max(0.0, min(.05, now - self._last_motion_at))
+            progress = self.frame_clock.progress_seconds(
+                now, self.assets.clips[state].timings,
+            )
+            elapsed = max(0.0, progress - self._walk_progress)
+            self._walk_progress = progress
             self._last_motion_at = now
             moving = self.maybe_walk(now, elapsed)
             if moving is None or self.movement.remaining_distance == 0:
@@ -272,6 +280,11 @@ class AnimatedPet:
         step = self.movement.plan_step(WalkConditions(
             now=now,
             elapsed_seconds=dt,
+            speed_pixels_per_second=(
+                68 * self.settings.scale
+                / self.assets.clips["running-left"].duration_seconds
+            ),
+            stride_pixels=68 * self.settings.scale,
             x=self.settings.x or 0,
             track=self.ports.track(),
             sprite_width=FRAME_WIDTH * self.settings.scale,
@@ -291,7 +304,13 @@ class AnimatedPet:
         old_x = self.settings.x or 0
         self.ports.place_x(old_x + step.pixels)
         delta = (self.settings.x or 0) - old_x
-        if self.movement.record_displacement(delta):
+        track = self.ports.track()
+        blocked = (
+            (step.pixels < 0 and (self.settings.x or 0) <= track.left)
+            or (step.pixels > 0 and (self.settings.x or 0)
+                >= track.right - FRAME_WIDTH * self.settings.scale)
+        )
+        if self.movement.record_displacement(delta, now=now, blocked=blocked):
             self.ports.walk_finished(now)
         return step.animation
 
@@ -300,7 +319,7 @@ class AnimatedPet:
     ) -> None:
         """Draw one state with unchanged sleep/action/gaze precedence."""
         if self.state.sleeping:
-            self.movement.remaining_distance = 0
+            self.movement.interrupt()
             self._active_action = None
             self.show_frame("sleep", now)
         elif (
