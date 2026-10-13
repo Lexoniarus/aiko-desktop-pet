@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -32,9 +33,10 @@ class DesktopPersistenceTests(unittest.TestCase):
         self.assertFalse(self.persistence.due(154))
         self.assertTrue(self.persistence.due(155))
         self.assertIsNone(self.persistence.save())
-        loaded, settings = self.store.load(now=self.stamp)
-        self.assertEqual(loaded.to_dict(), self.state.to_dict())
-        self.assertEqual(settings.to_dict(), self.settings.to_dict())
+        saved = json.loads(self.store.path.read_text(encoding="utf-8"))
+        self.assertEqual(saved["version"], 1)
+        self.assertEqual(saved["pet"], self.state.to_dict())
+        self.assertEqual(saved["settings"], self.settings.to_dict())
 
     def test_save_does_not_advance_domain_state(self) -> None:
         self.state.updated_at = self.stamp - 3600
