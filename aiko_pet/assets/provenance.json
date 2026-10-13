@@ -23,7 +23,7 @@
   "alpha_threshold": 128,
   "license": "../../assets/aiko-anime-8-frames/LICENSE.md",
   "preparation": "Full-width copies; binary alpha; visible ground anchors",
-  "timing_profile": "2520ms ambient; 1413ms walk; original times retained",
+  "timing_profile": "Even frame holds within each eight-frame clip; activity-specific tempos; ambient blink gaps are separate; 16 static gaze poses; original times retained",
   "runtime_sha256": {
     "frames/idle/00.png": "8526c24231ac2fa2c878908f8317e058829e45081f7935dba8b7c8ad03a14bd5",
     "frames/idle/01.png": "1a127a672e8c8812817062d8a8eba54f9879806ebc5f79d5f0a95520aa29dca3",

@@ -10,6 +10,8 @@ from typing import Any
 
 from PIL import Image
 
+from aiko_pet.presentation.animation_timing import load_timing_policy
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets/aiko-anime-8-frames/aiko-anime-compact/animations-8"
 DESTINATION = ROOT / "aiko_pet/assets"
@@ -19,6 +21,7 @@ ALPHA_THRESHOLD = [255 if alpha >= 128 else 0 for alpha in range(256)]
 def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
     """Replace only the character frame tree, retaining untouched source art."""
     catalog = json.loads((source / "catalog.json").read_text(encoding="utf-8"))
+    policy = load_timing_policy(destination)
     frame_root = (destination / "frames").resolve()
     if not frame_root.is_relative_to(destination.resolve()):
         raise ValueError("Invalid runtime frame destination")
@@ -51,20 +54,14 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
         original = source / item["manifest"]
         entry = json.loads(original.read_text(encoding="utf-8"))
         state = entry["state"]
+        if len(entry["frames"]) != policy.regular_frames:
+            raise ValueError(f"Expected eight animation frames: {state}")
         entry["source_anchor"] = entry["anchor"]
         ground = 0
         for index, frame in enumerate(entry["frames"]):
             frame["source_duration_ms"] = frame["duration_ms"]
-            if state in ("idle", "waiting", "review"):
-                if index == 0:
-                    frame["duration_ms"] += 900
-                elif index == len(entry["frames"]) - 1:
-                    original_total = sum(
-                        f["source_duration_ms"] for f in entry["frames"]
-                    )
-                    frame["duration_ms"] += 2520 - original_total - 900
-            elif state in ("running-left", "running-right"):
-                frame["duration_ms"] = round(frame["duration_ms"] * 4 / 3)
+            # A clip's own eight holds are equal, independently of its peers.
+            frame["duration_ms"] = policy.duration_for(state)
             relative = Path("frames") / state / f"{index:02d}.png"
             ground = max(ground, copy_frame(
                 original.parent / frame["file"], relative,
@@ -91,6 +88,8 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
             "file": relative.as_posix(), "duration_ms": 1000,
             "degrees_clockwise_from_up": frame["degrees_clockwise_from_up"],
         })
+    if len(gaze_frames) != policy.gaze_directions:
+        raise ValueError("Expected sixteen gaze poses")
     animations.append({
         "state": "look", "loop": True, "anchor": [96, ground],
         "frames": gaze_frames, "return_to": "idle",
@@ -109,7 +108,11 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
         "frame_counts": counts, "size": [192, 208], "alpha_threshold": 128,
         "license": "../../assets/aiko-anime-8-frames/LICENSE.md",
         "preparation": "Full-width copies; binary alpha; visible ground anchors",
-        "timing_profile": "2520ms ambient; 1413ms walk; original times retained",
+        "timing_profile": (
+            "Even frame holds within each eight-frame clip; "
+            "activity-specific tempos; ambient blink gaps are separate; "
+            "16 static gaze poses; original times retained"
+        ),
         "runtime_sha256": hashes,
     }
     for name, data in (("animations.json", runtime), ("provenance.json", provenance)):

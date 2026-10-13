@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "regular_frames": 8,
+  "gaze_directions": 16,
+  "frame_duration_ms": {
+    "idle": 160,
+    "running-right": 160,
+    "running-left": 160,
+    "waving": 90,
+    "jumping": 105,
+    "failed": 150,
+    "waiting": 315,
+    "review": 315,
+    "sleep": 320,
+    "petting": 300,
+    "eat": 290,
+    "attack": 215
+  }
+}

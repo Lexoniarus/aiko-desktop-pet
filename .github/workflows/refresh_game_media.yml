@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/rock-paper-scissors-game
+      - fix/uniform-animation-frame-pacing
     paths:
       - tools/capture_current_gallery.py
       - tools/capture_rock_paper_scissors_media.py
@@ -13,6 +14,7 @@ on:
       - aiko_pet/presentation/**
       - aiko_pet/assets/frames/**
       - aiko_pet/assets/animations.json
+      - aiko_pet/assets/animation_timing.json
 
 permissions:
   contents: write
@@ -51,6 +53,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "The current gallery has not changed."
           else
-            git commit -m "docs(media): replace old character and UI previews with current captures"
-            git push origin HEAD:feature/rock-paper-scissors-game
+            git commit -m "docs(media): refresh current Aiko animations and captures"
+            git push origin HEAD:"$GITHUB_REF_NAME"
           fi

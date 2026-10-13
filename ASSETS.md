@@ -42,10 +42,25 @@ Original imported artwork is not cropped or overwritten. Preparation uses
 `python tools/prepare_character_assets.py`; Pillow is required only for that
 build step, not for running the desktop app.
 
-The runtime timing profile extends the open poses of idle, waiting and review
-to 2.52-second cycles, and walking to 1.413 seconds. Each animated runtime frame
-records `source_duration_ms` alongside its effective `duration_ms`; source
-manifests and PNGs are unchanged. Other clips retain the authored durations.
+All twelve normal clips contain exactly eight frames and use **even frame
+intervals inside each clip**, with activity-specific tempos. The walking
+clips retain 160 ms per frame (1.28 seconds per stride cycle). Other
+activities, such as waving or sleeping, have distinct speeds. Each idle
+blink finishes all eight frames and then rests on a neutral pose for a
+short randomized 3–8-second gap. During that gap, a cached Tk-only image
+warp sways Aiko's head and upper shoulders by at most one source pixel while
+keeping her lower legs and feet perfectly stationary. The same subtle sway
+is applied **relative to whichever of the sixteen look directions is currently
+displayed** (including mouse-selected gaze), so it does not snap between
+different head orientations. The technique produces no new source artwork,
+does not use Pillow at runtime, and does not alter the real eight-frame
+blinking sequence.
+
+All individual clip tempos are configured centrally in
+[`aiko_pet/assets/animation_timing.json`](aiko_pet/assets/animation_timing.json)
+and validated by the exporter and runtime loader. Historical durations
+are retained as `source_duration_ms` for provenance. Artwork, anchors,
+frame events and PNGs are unchanged.
 
 OpenAI assigns its rights in generated output, if any, to the user to the extent
 permitted by applicable law. This does not establish that every generated image

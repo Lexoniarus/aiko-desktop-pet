@@ -8,6 +8,7 @@ from types import MappingProxyType
 from typing import Any
 
 from ..asset_paths import ASSET_ROOT
+from ..presentation.animation_timing import load_timing_policy
 from ..presentation.character import (
     AnimationClip, AnimationFrame, CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH,
 )
@@ -27,6 +28,7 @@ def _file(root: Path, value: Any) -> Path:
 def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
     """Validate the complete catalog before the desktop creates its widgets."""
     data = json.loads((root / "animations.json").read_text(encoding="utf-8"))
+    policy = load_timing_policy(root)
     if not isinstance(data, dict) or data.get("frame_size") != [
         FRAME_WIDTH, FRAME_HEIGHT,
     ]:
@@ -70,6 +72,12 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
             frames.append(AnimationFrame(
                 _file(root, frame.get("file")), duration, tuple(events),
             ))
+        if name != "look":
+            if len(frames) != policy.regular_frames:
+                raise ValueError(f"{name} must have eight animation frames")
+            frame_ms = policy.duration_for(name)
+            if any(frame.duration_ms != frame_ms for frame in frames):
+                raise ValueError(f"{name} has non-uniform frame timing")
         return_to = entry.get("return_to", "idle")
         if not isinstance(return_to, str):
             raise ValueError("Invalid return animation")
@@ -79,7 +87,7 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
     for required in ("idle", "sleep", "eat", "petting", "look"):
         if required not in clips:
             raise ValueError(f"Missing required animation: {required}")
-    if len(clips["look"].frames) != 16:
+    if len(clips["look"].frames) != policy.gaze_directions:
         raise ValueError("Cursor gaze requires sixteen direction poses")
     if any(clip.return_to not in clips for clip in clips.values()):
         raise ValueError("Unknown return animation")

@@ -94,7 +94,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
 
     def test_short_frames_advance_without_a_desktop_simulation_tick(self) -> None:
         self.anim.begin_action("waving", time.monotonic())
-        self.root.after(95, self.root.quit)
+        self.root.after(195, self.root.quit)
         self.root.mainloop()
         self.assertEqual(self.anim.frame_clock.active_key, ("waving", None))
         self.assertGreaterEqual(self.anim.frame_clock.frame_index, 1)
@@ -189,6 +189,111 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.set_game_mode(False)
         self.assertNotEqual(self.anim.frame_clock.active_key, ("jumping", None))
         self.assertIsNotNone(self.anim.gaze_direction((99999, -99999)))
+
+    def test_idle_blinks_once_then_holds_a_neutral_pose(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.observe_computer = False
+        self.settings.follow_cursor = False
+        now = time.monotonic()
+        self.anim._ambient.next_blink_at = now - 1
+        self.anim._ambient.next_glance_at = now + 200
+        self.anim.render(now, 0, (0, 0))
+        self.assertTrue(self.anim._ambient.blinking)
+        self.assertEqual(self.anim.frame_clock.active_key, ("idle", None))
+        observed = [self.anim.frame_clock.frame_index]
+        for _ in range(8):
+            elapsed = self.anim.assets.clips["idle"].timings[0] / 1000
+            step = self.anim.frame_clock.frame_started_at + elapsed + .001
+            self.anim.show_frame("idle", step)
+            if self.anim._ambient.blinking:
+                observed.append(self.anim.frame_clock.frame_index)
+        self.assertEqual(observed, list(range(8)))
+        self.assertFalse(self.anim._ambient.blinking)
+        self.assertEqual(self.anim.frame_clock.active_key, ("idle", 0))
+        self.assertIsNone(self.anim._frame_timer)
+        self.anim.render(now + 2.0, 0, (0, 0))
+        self.assertEqual(self.anim.frame_clock.active_key, ("idle", 0))
+
+    def test_aiko_looks_around_even_when_the_pointer_stays_still(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.observe_computer = False
+        now = time.monotonic()
+        self.anim._ambient.next_blink_at = now + 200
+        self.anim._ambient.next_glance_at = now - 1
+        self.anim.render(now, 0, (0, 0))
+        active = self.anim.frame_clock.active_key
+        assert active is not None
+        self.assertEqual(active[0], "look")
+        self.assertIn(active[1], (2, 3, 4, 12, 13, 14))
+        self.assertIsNone(self.anim._frame_timer)
+        self.anim.render(self.anim._ambient._glance_until + .1, 0, (0, 0))
+        self.assertEqual(self.anim.frame_clock.active_key, ("idle", 0))
+
+    def test_spontaneous_glance_never_overrides_sleep_or_game(self) -> None:
+        now = time.monotonic()
+        self.anim.set_game_mode(True)
+        self.anim._ambient.next_glance_at = now - 1
+        self.anim.render(now, 0, (0, 0))
+        self.assertEqual(self.anim.frame_clock.active_key, ("waiting", None))
+        self.anim.set_game_mode(False)
+        self.state.sleeping = True
+        self.anim._ambient.next_glance_at = now - 1
+        self.anim.render(now + 1, 0, (0, 0))
+        self.assertEqual(self.anim.frame_clock.active_key, ("sleep", None))
+
+    def test_idle_rest_moves_head_without_moving_sprite_anchor(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.follow_cursor = False
+        self.settings.observe_computer = False
+        now = time.monotonic()
+        self.anim._ambient.suspend(now)
+        self.anim._ambient.next_blink_at = now + 200
+        self.anim._ambient.next_glance_at = now + 200
+        self.anim.render(now, 0, (0, 0))
+        image_item = self.anim.image_item
+        initial = self.canvas.itemcget(image_item, "image")
+        canvas_coords = self.canvas.coords(image_item)
+        self.anim.render(now + .85, 0, (0, 0))
+        changed = self.canvas.itemcget(image_item, "image")
+        self.assertNotEqual(initial, changed)
+        self.assertEqual(self.canvas.coords(image_item), canvas_coords)
+        self.assertEqual(self.anim.frame_clock.active_key, ("idle", 0))
+        self.assertIsNone(self.anim._frame_timer)
+
+    def test_still_mouse_gaze_preserves_direction_but_moves_head(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.observe_computer = False
+        now = time.monotonic()
+        self.anim._ambient.suspend(now)
+        self.anim.last_pointer_move = now
+        pointer = (99999, 20)
+        self.anim.render(now, 0, pointer)
+        old_key = self.anim.frame_clock.active_key
+        assert old_key is not None
+        self.assertEqual(old_key[0], "look")
+        original = self.canvas.itemcget(self.anim.image_item, "image")
+        self.anim.render(now + .85, 0, pointer)
+        self.assertEqual(self.anim.frame_clock.active_key, old_key)
+        self.assertNotEqual(
+            self.canvas.itemcget(self.anim.image_item, "image"), original,
+        )
+
+    def test_reload_at_double_scale_discards_old_sway_images(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.follow_cursor = False
+        now = time.monotonic()
+        self.anim._ambient.suspend(now)
+        self.anim._ambient.next_blink_at = now + 100
+        self.anim._ambient.next_glance_at = now + 100
+        self.anim.render(now + .85, 0, (0, 0))
+        self.assertTrue(self.anim._rest_renderer._variants)
+        self.settings.scale = 2
+        self.anim.reload_sprites()
+        self.assertEqual(self.anim.sprites["idle"][0].width(), 384)
+        self.assertTrue(all(
+            image.width() == 384
+            for image in self.anim._rest_renderer._variants.values()
+        ))
 
     def test_scale_reload_keeps_frame_identity(self) -> None:
         self.settings.scale = 2
