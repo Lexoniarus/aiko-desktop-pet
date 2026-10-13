@@ -13,6 +13,9 @@ from collections.abc import Callable, Sequence
 from .animation import SpriteSelection
 
 _DIRECTIONS = (2, 3, 4, 12, 13, 14)
+# Eight gentle steps give a 3.36-second rocking cycle at 420 ms per step.
+_SWAY_OFFSETS = (0, 1, 2, 1, 0, -1, -2, -1)
+_SWAY_STEP_SECONDS = 0.42
 
 
 class AmbientDirector:
@@ -26,6 +29,7 @@ class AmbientDirector:
         self._between = between
         self._direction = direction
         self._blink_active = False
+        self._motion_started_at = started_at
         self._glance_frame: int | None = None
         self._glance_until = started_at
         self.next_blink_at = started_at + self._between(5.0, 11.0)
@@ -35,13 +39,21 @@ class AmbientDirector:
     def blinking(self) -> bool:
         return self._blink_active
 
-    def suspend(self, now: float) -> None:
-        """Cancel ambient activity while sleeping, walking or interacting."""
+    def suspend(self, now: float, *, keep_pose_motion: bool = False) -> None:
+        """Cancel autonomous cues; keep subtle sway under cursor gaze."""
+        if not keep_pose_motion:
+            self._motion_started_at = now
         self._blink_active = False
         self._glance_frame = None
         self._glance_until = now
         self.next_blink_at = now + self._between(5.0, 11.0)
         self.next_glance_at = now + self._between(22.0, 46.0)
+
+    def motion_offset(self, now: float) -> int:
+        """Head sway relative to the selected pose, not the whole character."""
+        elapsed = max(0.0, now - self._motion_started_at)
+        step = int(elapsed / _SWAY_STEP_SECONDS) % len(_SWAY_OFFSETS)
+        return _SWAY_OFFSETS[step]
 
     def choose(self, now: float) -> SpriteSelection:
         """Return one stable look pose, active blink or neutral idle rest."""
@@ -71,4 +83,5 @@ class AmbientDirector:
         """A full eight-frame blink ended; do not immediately repeat it."""
         if self._blink_active:
             self._blink_active = False
+            self._motion_started_at = now
             self.next_blink_at = now + self._between(5.0, 11.0)

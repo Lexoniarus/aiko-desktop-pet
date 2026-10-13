@@ -20,6 +20,7 @@ from ..presentation.ambient import AmbientDirector
 from ..presentation.character import CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH
 from ..presentation.gaze import gaze_sector
 from ..presentation.movement import WalkConditions, WalkController
+from .rest_pose_renderer import RestPoseRenderer
 from ..desktop.geometry import TaskbarTrack, FOOT_BASELINE
 
 
@@ -114,6 +115,7 @@ class AnimatedPet:
         self.last_attention = -100.0
         self.attention_until = -100.0
         self.sprites = self.load_sprites()
+        self._rest_renderer = RestPoseRenderer(root)
         self.image_item = self.canvas.create_image(
             0, 0, anchor="nw", image=self.sprites["idle"][0],
         )
@@ -163,6 +165,7 @@ class AnimatedPet:
     def reload_sprites(self) -> None:
         """Replace scaled images while preserving the active playback clock."""
         self.sprites = self.load_sprites()
+        self._rest_renderer.clear()
         state, fixed = self.frame_clock.active_key or ("idle", None)
         self.show_frame(state, time.monotonic(), fixed=fixed)
 
@@ -213,7 +216,15 @@ class AnimatedPet:
             (FRAME_WIDTH // 2 - clip.anchor[0]) * self.settings.scale,
             (FOOT_BASELINE - clip.anchor[1]) * self.settings.scale,
         )
-        self.canvas.itemconfigure(self.image_item, image=self.sprites[state][index])
+        image = self.sprites[state][index]
+        if (state == "idle" and fixed == 0) or (
+            state == "look" and fixed is not None
+        ):
+            image = self._rest_renderer.resolve(
+                image, offset=self._ambient.motion_offset(now),
+                scale=self.settings.scale,
+            )
+        self.canvas.itemconfigure(self.image_item, image=image)
         if self._frame_timer is not None:
             self.root.after_cancel(self._frame_timer)
             self._frame_timer = None
@@ -407,7 +418,12 @@ class AnimatedPet:
             if choice.animation == "idle" and choice.fixed_frame is None:
                 choice = self._ambient.choose(now)
             else:
-                self._ambient.suspend(now)
+                self._ambient.suspend(
+                    now, keep_pose_motion=(
+                        choice.animation == "look"
+                        and choice.fixed_frame is not None
+                    ),
+                )
             self.show_frame(
                 choice.animation, now, fixed=choice.fixed_frame,
             )
