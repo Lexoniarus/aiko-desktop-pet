@@ -127,8 +127,12 @@ class FinalArchitectureTests(unittest.TestCase):
         adaptive = AdaptiveRoutine()
         reading = ComputerSnapshot(cpu=83, measured_at=1000.0)
         monitor = FakeMonitor(reading)
-        context = lambda: context_at(datetime(2026, 10, 12, 13).timestamp())
-        sprite_size = lambda: (256, 416)
+        def context():
+            return context_at(datetime(2026, 10, 12, 13).timestamp())
+
+        def sprite_size():
+            return 256, 416
+
         old = DesktopViewSource(
             state, settings, mind, adaptive, monitor,
             context=context, sprite_size=sprite_size,
