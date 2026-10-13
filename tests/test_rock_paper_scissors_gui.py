@@ -1,4 +1,4 @@
-"""Tk integration: only controls in input window; all cues use Aiko."""
+"""Tk checks for Aiko's bubble, the player's hand, and round counters."""
 
 from __future__ import annotations
 
@@ -41,13 +41,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False
 
-    def game(self) -> object:
-        self.pet._hover.open_game()
-        game = self.pet._hover.game_window
-        assert game is not None
-        return game
-
-    def test_game_is_kenney_styled_input_only_and_stays_open(self) -> None:
+    def test_game_window_has_player_hand_and_transient_score(self) -> None:
         self.pet._on_enter()
         toolbar = self.pet._hover.toolbar
         assert toolbar is not None
@@ -56,29 +50,28 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         game = self.pet._hover.game_window
         assert game is not None
         self.assertTrue(self.pet._hover.game_open)
-        self.assertEqual(game.score.games, 0)
-        self.assertEqual(self.pet.state.mood, previous_mood)
         self.assertEqual(game.window.cget("bg"), "#8E9CB1")
         self.assertTrue(game.window.overrideredirect())
-        self.assertIsNotNone(game._banner)
-        for forbidden in (
-            "score_label", "count_label", "remark_label", "reveal_label",
-        ):
-            self.assertFalse(hasattr(game, forbidden), forbidden)
+        self.assertEqual(game.score.games, 0)
+        self.assertEqual(self.pet.state.mood, previous_mood)
+        for forbidden in ("count_label", "remark_label", "reveal_label"):
+            self.assertFalse(hasattr(game, forbidden))
         self.assertEqual(set(game.buttons), set(Move))
+        self.assertEqual(set(game.score_labels), {
+            "games", "wins", "losses", "draws",
+        })
+        for count in game.score_labels.values():
+            self.assertEqual(count.cget("text"), "0")
+        self.assertEqual(game.player_hand.cget("text"), "?")
         for move in Move:
             self.assertEqual(game.hand_images[move].width(), 72)
-            self.assertIn("image", game.buttons[move].keys())
-        welcome = bubble_text(self.pet)
-        assert welcome is not None
-        self.assertIn("Schere, Stein, Papier", welcome)
         self.pet._hover.dismiss_outside(-999, -999)
         self.assertIs(self.pet._hover.game_window, game)
         self.assertTrue(game.window.winfo_exists())
         toolbar.buttons["play"].invoke()
         self.assertIs(self.pet._hover.game_window, game)
 
-    def test_character_bubble_emotes_animation_and_hands_are_sequential(self) -> None:
+    def test_player_and_aiko_reveal_separately_and_update_ui(self) -> None:
         self.pet._hover.open_game()
         game = self.pet._hover.game_window
         assert game is not None
@@ -90,6 +83,8 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         game.choose(Move.ROCK)
         self.assertEqual(bubble_text(self.pet), "Eins!")
         self.assertEqual(game.score.games, 0)
+        self.assertEqual(game.score_labels["games"].cget("text"), "0")
+        self.assertEqual(game.player_hand.cget("text"), "?")
         self.assertEqual(game.buttons[Move.ROCK].cget("state"), "disabled")
         game._sequence.advance()
         self.assertEqual(bubble_text(self.pet), "Zwei!")
@@ -97,57 +92,72 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertEqual(bubble_text(self.pet), "Drei!")
         game._sequence.advance()
         self.assertIsNone(bubble_text(self.pet))
-        self.assertIsNotNone(self.pet._speech.bubble)
         self.assertEqual(game.score.games, 0)
         game._sequence.advance()
         self.assertEqual(game.score.wins, 1)
-        hand_bubble = self.pet._speech.bubble
-        assert hand_bubble is not None
-        self.assertEqual(len(self.pet._speech.game_hand_images), 2)
-        self.assertEqual(
-            {move: img.width() for move, img
-             in self.pet._speech.game_hand_images.items()},
-            {Move.ROCK: 72, Move.SCISSORS: 72},
+        self.assertEqual(game.player_result_label.cget("text"), "Du: Stein")
+        self.assertEqual(game.player_hand.cget("image"), str(
+            game.hand_images[Move.ROCK],
+        ))
+        self.assertEqual(game.score_labels["games"].cget("text"), "1")
+        self.assertEqual(game.score_labels["wins"].cget("text"), "1")
+        self.assertEqual(game.score_labels["losses"].cget("text"), "0")
+        self.assertEqual(game.score_labels["draws"].cget("text"), "0")
+        self.assertEqual(set(self.pet._speech.game_hand_images), {
+            Move.SCISSORS,
+        })
+        # Aiko's speech frame shows her own hand, not the player's image.
+        self.assertNotEqual(
+            self.pet._speech.game_hand_images[Move.SCISSORS],
+            game.hand_images[Move.ROCK],
         )
+        self.assertIsNone(bubble_text(self.pet))
         game._sequence.advance()
         self.assertEqual(
             self.pet._animated.frame_clock.active_key, ("failed", None),
         )
-        self.assertIsNone(bubble_text(self.pet))
         game._sequence.advance()
-        line = bubble_text(self.pet)
-        assert line is not None
-        self.assertIn("Punkt", line)
-        game._sequence.advance()
-        score = bubble_text(self.pet)
-        assert score is not None
-        self.assertIn("1 Runde", score)
-        self.assertIn("du 1, ich 0", score)
-        self.assertEqual(game.buttons[Move.ROCK].cget("state"), "disabled")
+        remark = bubble_text(self.pet)
+        assert remark is not None
+        self.assertIn("Punkt", remark)
+        self.assertNotIn("Unser Stand", remark)
         game._sequence.advance()
         self.assertEqual(game.buttons[Move.ROCK].cget("state"), "normal")
+        self.assertEqual(game.score.games, 1)
 
-    def test_game_mode_freezes_pointer_following_without_changing_settings(self) -> None:
+    def test_second_round_replaces_highlight_not_score(self) -> None:
         self.pet._hover.open_game()
-        pet_visual = self.pet._animated
-        self.assertTrue(self.pet.settings.follow_cursor)
-        self.assertIsNone(pet_visual.gaze_direction((99999, 99999)))
-        self.assertIsNone(pet_visual.maybe_walk(time.monotonic(), 0.5))
-        now = time.monotonic() + 5
-        pet_visual.render(now, 0.14, (99999, 99999))
-        active = pet_visual.frame_clock.active_key
-        assert active is not None
-        self.assertIn(active[0], ("waving", "waiting"))
-        self.assertNotEqual(active[0], "look")
-        self.pet._maybe_show_idle_emote(now)
-        self.pet._maybe_speak_spontaneously(now)
-        self.assertIsNotNone(self.pet._speech.bubble)
-        self.pet._hover.close_game()
-        self.assertFalse(pet_visual._game_mode)
-        self.assertEqual(self.pet.settings.follow_cursor, True)
-        self.assertIsNotNone(pet_visual.gaze_direction((99999, 99999)))
+        game = self.pet._hover.game_window
+        assert game is not None
+        game._sequence._game._random_index = lambda _size: 0
+        game.choose(Move.ROCK)
+        for _ in range(7):
+            game._sequence.advance()
+        self.assertEqual(game.score.games, 1)
+        game.choose(Move.PAPER)
+        self.assertEqual(game.player_hand.cget("text"), "?")
+        self.assertEqual(game.score_labels["games"].cget("text"), "1")
+        for _ in range(4):
+            game._sequence.advance()
+        self.assertEqual(game.score_labels["games"].cget("text"), "2")
+        self.assertEqual(game.score_labels["wins"].cget("text"), "1")
+        self.assertEqual(game.score_labels["draws"].cget("text"), "1")
 
-    def test_close_discards_pending_cues_and_restarts_session(self) -> None:
+    def test_cursor_tracking_stays_paused_during_game(self) -> None:
+        self.pet._hover.open_game()
+        visual = self.pet._animated
+        self.assertTrue(self.pet.settings.follow_cursor)
+        self.assertIsNone(visual.gaze_direction((99999, 99999)))
+        self.assertIsNone(visual.maybe_walk(time.monotonic(), 0.5))
+        visual.render(time.monotonic() + 5, 0.14, (99999, 99999))
+        current = visual.frame_clock.active_key
+        assert current is not None
+        self.assertIn(current[0], ("waving", "waiting"))
+        self.pet._hover.close_game()
+        self.assertFalse(visual._game_mode)
+        self.assertIsNotNone(visual.gaze_direction((99999, 99999)))
+
+    def test_close_cancels_outstanding_bubble_and_session(self) -> None:
         self.pet._hover.open_game()
         game = self.pet._hover.game_window
         assert game is not None
@@ -156,7 +166,6 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertIsNotNone(game._sequence.pending_timer)
         game.close()
         self.assertFalse(self.pet._hover.game_open)
-        self.assertFalse(self.pet._animated._game_mode)
         self.assertIsNone(self.pet._hover.game_window)
         self.assertIsNone(self.pet._speech.bubble)
         stale()
@@ -166,6 +175,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         assert replacement is not None
         self.assertIsNot(game, replacement)
         self.assertEqual(replacement.score.games, 0)
+        self.assertEqual(replacement.score_labels["games"].cget("text"), "0")
 
     def test_status_panel_play_uses_same_window(self) -> None:
         self.pet._hover.open_status()

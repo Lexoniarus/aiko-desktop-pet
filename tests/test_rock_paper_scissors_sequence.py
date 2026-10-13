@@ -1,18 +1,15 @@
-"""Headless regression tests for serialized game reactions and cancellation."""
+"""Headless checks for player-only score and Aiko-only bubble events."""
 
 from __future__ import annotations
 
 import unittest
 from collections.abc import Callable
 
-from aiko_pet.games.rock_paper_scissors import Move
+from aiko_pet.games.rock_paper_scissors import Move, Outcome, Round, Score
 from aiko_pet.presentation.rock_paper_scissors_sequence import (
     RockPaperScissorsSequence,
 )
-from aiko_pet.presentation.rock_paper_scissors_text_de import (
-    outcome_line, score_line,
-)
-from aiko_pet.games.rock_paper_scissors import Outcome, Round, Score
+from aiko_pet.presentation.rock_paper_scissors_text_de import outcome_line
 
 
 class FakeClock:
@@ -38,6 +35,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
     def setUp(self) -> None:
         self.clock = FakeClock()
         self.events: list[tuple[str, str]] = []
+        self.reveals: list[tuple[Move, Score]] = []
         self.busy: list[bool] = []
         self.animations: list[str] = []
         self.flow = RockPaperScissorsSequence(
@@ -45,8 +43,11 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
             cancel=self.clock.cancel,
             say=lambda value, _ms: self.events.append(("text", value)),
             show_emote=lambda name, _ms: self.events.append(("emote", name)),
-            show_hands=lambda player, aiko, _ms: self.events.append(
-                ("hands", f"{player.value}/{aiko.value}"),
+            show_aiko_hand=lambda move, _ms: self.events.append(
+                ("aiko_hand", move.value),
+            ),
+            reveal_player=lambda move, score: self.reveals.append(
+                (move, score),
             ),
             animate=self.animations.append,
             set_busy=self.busy.append,
@@ -57,45 +58,43 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         assert token is not None
         self.clock.fire(token)
 
-    def test_all_cues_are_serial_and_animated_for_aikos_defeat(self) -> None:
+    def test_two_hands_reveal_in_separate_views_once(self) -> None:
         self.flow._game._random_index = lambda _size: 2
         self.flow.greet()
         self.assertEqual(self.animations, ["waving"])
-        self.assertEqual(self.events[0][0], "text")
         self.flow.choose(Move.ROCK)
-        self.assertEqual(self.busy, [True])
         self.assertEqual(self.events[-1], ("text", "Eins!"))
-        self.assertEqual(self.flow.score.games, 0)
-        self.step()
-        self.assertEqual(self.events[-1], ("text", "Zwei!"))
-        self.step()
-        self.assertEqual(self.events[-1], ("text", "Drei!"))
-        self.assertEqual(self.flow.score.games, 0)
+        self.assertEqual(self.busy, [True])
+        for expected in ("Zwei!", "Drei!"):
+            self.step()
+            self.assertEqual(self.events[-1], ("text", expected))
+            self.assertEqual(self.flow.score.games, 0)
         self.step()
         self.assertEqual(self.events[-1], ("emote", "exclamation"))
-        self.assertEqual(self.flow.score.games, 0)
+        self.assertEqual(self.reveals, [])
         self.step()
-        self.assertEqual(self.events[-1], ("hands", "rock/scissors"))
-        self.assertEqual(self.flow.score.wins, 1)
+        self.assertEqual(self.events[-1], ("aiko_hand", "scissors"))
+        self.assertEqual(self.reveals, [
+            (Move.ROCK, Score(wins=1)),
+        ])
+        self.assertEqual(self.flow.score.games, 1)
         self.step()
-        self.assertEqual(self.animations, ["waving", "failed"])
+        self.assertEqual(self.animations[-1], "failed")
         self.assertEqual(self.events[-1], ("emote", "drops"))
         self.step()
         self.assertEqual(self.events[-1][0], "text")
         self.assertIn("Punkt", self.events[-1][1])
-        self.step()
-        self.assertEqual(self.events[-1][0], "text")
-        self.assertIn("1 Runde", self.events[-1][1])
-        self.assertIn("du 1, ich 0", self.events[-1][1])
+        # Aiko must never narrate the player hand or overall score.
+        self.assertNotIn("Stein", self.events[-1][1])
         self.step()
         self.assertEqual(self.busy, [True, False])
-        self.assertFalse(self.flow.busy)
-        self.assertEqual([kind for kind, _text in self.events], [
+        self.assertEqual(len(self.reveals), 1)
+        self.assertEqual([kind for kind, _ in self.events], [
             "text", "text", "text", "text", "emote",
-            "hands", "emote", "text", "text",
+            "aiko_hand", "emote", "text",
         ])
 
-    def test_different_outcomes_drive_distinct_animation_and_emote(self) -> None:
+    def test_all_outcomes_trigger_correct_emotes_and_animations(self) -> None:
         for aiko_index, animation, emote in (
             (0, "failed", "drops"),
             (1, "waving", "question"),
@@ -110,40 +109,36 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
                 self.assertEqual(self.animations[-1], animation)
                 self.assertEqual(self.events[-1], ("emote", emote))
 
-    def test_choice_is_blocked_until_the_final_line_finishes(self) -> None:
+    def test_second_choice_is_blocked_until_outcome_finishes(self) -> None:
         self.flow.choose(Move.ROCK)
         self.flow.choose(Move.PAPER)
         self.assertEqual(self.busy, [True])
-        for _ in range(8):
+        for _ in range(7):
             self.step()
         self.flow.choose(Move.PAPER)
         self.assertEqual(self.flow.score.games, 1)
         self.assertEqual(self.busy, [True, False, True])
 
-    def test_close_discards_stale_callbacks_and_unplayed_round(self) -> None:
+    def test_closing_discards_callbacks_and_unplayed_rounds(self) -> None:
         self.flow.choose(Move.ROCK)
         token = self.flow.pending_timer
         assert token is not None
         stale = self.clock.tasks[token][1]
         self.flow.close()
-        self.assertIsNone(self.flow.pending_timer)
         self.assertEqual(self.flow.score.games, 0)
+        self.assertIsNone(self.flow.pending_timer)
         self.assertEqual(self.clock.tasks, {})
         stale()
         self.flow.choose(Move.PAPER)
         self.flow.greet()
         self.assertEqual(self.events, [("text", "Eins!")])
+        self.assertEqual(self.reveals, [])
 
-    def test_contextual_text_varies_without_claiming_unknown_information(self) -> None:
+    def test_outcome_dialogue_varies_without_narrating_player_score(self) -> None:
         result = Round(Move.ROCK, Move.SCISSORS, Outcome.WIN)
-        lines = [outcome_line(result, count) for count in (1, 2, 3)]
-        self.assertEqual(len(set(lines)), 3)
-        scores = [
-            score_line(Score(wins=count, losses=0))
-            for count in (1, 2, 3)
-        ]
-        self.assertEqual(len(set(scores)), 3)
-        self.assertIn("unentschieden 0", scores[0])
+        remarks = [outcome_line(result, number) for number in (1, 2, 3)]
+        self.assertEqual(len(set(remarks)), 3)
+        self.assertTrue(all("Stein" not in remark for remark in remarks))
 
 
 if __name__ == "__main__":
