@@ -51,7 +51,9 @@ class RockPaperScissorsWindow:
 
         title_font = self.skin.font
         self.hand_images = {
-            move: tk.PhotoImage(master=root, file=str(GAME_HANDS_DIR / f"{move.value}.png"))
+            move: tk.PhotoImage(
+                master=root, file=str(GAME_HANDS_DIR / f"{move.value}.png"),
+            )
             for move, _label in _MOVES
         }
 
