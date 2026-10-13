@@ -4,7 +4,11 @@ Aiko Desktop Pet is maintained as a source repository. The dates below describe
 verified GitHub milestones, **not** packaged Windows releases. There is currently
 no separate downloadable installer or published GitHub Release.
 
-## In review — Public repository polish (PR #3)
+## 2026-10-13 — Public repository polish (PR #3)
+
+[PR #3](https://github.com/Lexoniarus/aiko-desktop-pet/pull/3)
+updates public documentation and repository hygiene without changing Aiko's
+runtime behavior, sprite assets, or save format.
 
 - Reorganize the README around the running application, getting started,
   privacy, contribution and asset attribution.
@@ -18,8 +22,6 @@ no separate downloadable installer or published GitHub Release.
   issue/PR templates.
 - Clarify historical documents and pin developer-only static analysis tooling.
 - Document security disclosure and validate the public repository with tests.
-
-These changes are proposed until PR #3 is reviewed and merged.
 
 ## 2026-10-13 — Modular OOP architecture merged (PR #2)
 

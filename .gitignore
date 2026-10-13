@@ -37,6 +37,8 @@ desktop.ini
 *~
 
 # Local saves, experimental databases and diagnostic logs
+# Includes the example save directory from .env.example.
+local-data/
 state.json
 *.sqlite
 *.sqlite3

@@ -109,7 +109,8 @@ class PublicRepositoryTests(unittest.TestCase):
     def test_ignored_private_data_and_removed_publisher(self) -> None:
         ignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
         for pattern in (
-            ".env", ".env.*", "!.env.example", "state.json", "*.sqlite",
+            ".env", ".env.*", "!.env.example", "local-data/",
+            "state.json", "*.sqlite",
             ".mypy_cache/", ".ruff_cache/", ".pyright/", "htmlcov/",
             "*.ttf", "*.otf", "*.exe", "*.log",
         ):
