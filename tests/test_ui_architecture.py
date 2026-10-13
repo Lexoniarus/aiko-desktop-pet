@@ -58,6 +58,32 @@ class UiDependencyRules(unittest.TestCase):
                         or name.startswith("aiko_pet.ui."),
                     )
 
+    def test_application_never_imports_concrete_persistence(self) -> None:
+        for path in (ROOT / "application").glob("*.py"):
+            with self.subTest(module=path.name):
+                tree = ast.parse(path.read_text("utf-8"))
+                imported = [
+                    node.module or ""
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.ImportFrom)
+                ] + [
+                    alias.name
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.Import)
+                    for alias in node.names
+                ]
+                self.assertNotIn("storage", imported)
+                self.assertNotIn("aiko_pet.storage", imported)
+
+    def test_state_store_cannot_advance_pet_time(self) -> None:
+        tree = ast.parse((ROOT / "storage.py").read_text("utf-8"))
+        self.assertFalse(any(
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "advance"
+            for node in ast.walk(tree)
+        ))
+
     def test_character_and_native_window_require_only_typed_ports(self) -> None:
         forbidden = {
             "storage", "domain", "adaptive", "adaptive_models",

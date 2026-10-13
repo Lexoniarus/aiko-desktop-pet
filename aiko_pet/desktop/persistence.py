@@ -11,7 +11,8 @@ from typing import Callable
 
 from ..adaptive import AdaptiveRoutine
 from ..domain import PetState
-from ..storage import PetSettings, StateStore
+from ..application.settings import PetSettings
+from ..storage import StateStore
 
 AUTOSAVE_SECONDS = 55
 

@@ -13,7 +13,7 @@ from typing import Protocol
 from ..dialogue import AikoMind, ComputerVoice, Reaction
 from ..domain import PetState
 from ..routine import TimeContext
-from ..storage import PetSettings
+from .settings import PetSettings
 from ..system_activity import ComputerSnapshot
 from .events import IncomingNotification
 from .router import ApplicationRouter

@@ -70,6 +70,23 @@ third-party packages. Keep German runtime text and English documentation.
    Linux/Xvfb GUI tests, and Windows-hosted headless checks are mandatory.
    The final interactive Windows smoke check remains outstanding.
 
+## Session restoration and runtime settings
+
+- `application/settings.py` owns the mutable `PetSettings` preference model.
+  It is not part of JSON persistence. Its existing serialized fields and
+  defaults remain unchanged; `storage.PetSettings` is a legacy type alias.
+- `storage.StateStore.load_session()` decodes the complete saved state,
+  preferences and adaptive memory in one read, returning `LoadedPetData`.
+  The repository never calls `PetState.advance()`. The old `load()` and
+  `load_memory()` entrypoints remain available for legacy consumers.
+- `application/session.py` owns `PetSessionRestorer` and its
+  `SavedPetReader` protocol. Only a valid existing version-one save receives
+  the original bounded time advancement; a missing, corrupt or unsupported
+  save starts fresh without an immediate simulation step.
+- Application modules no longer import the concrete `storage` module.
+  Persisted JSON schema version, save location, legacy defaults, assets and
+  language policy do not change.
+
 ## Change safety
 
 - `main` is untouched until a reviewed merge.

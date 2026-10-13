@@ -13,7 +13,7 @@ from ..adaptive import AdaptiveRoutine
 from ..dialogue import AikoMind
 from ..domain import PetState
 from ..routine import TimeContext
-from ..storage import PetSettings
+from .settings import PetSettings
 from ..system_activity import ComputerSnapshot
 from .view_models import (
     HoverAnchor, HoverSnapshot, SettingsSnapshot, StatusSnapshot,

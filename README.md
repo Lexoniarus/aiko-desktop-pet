@@ -65,13 +65,16 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | Location | Purpose |
 | --- | --- |
 | `aiko_pet/application/` | Typed use cases, command routing and bounded integration notifications |
+| `aiko_pet/application/settings.py` | Runtime preferences independent of JSON persistence |
+| `aiko_pet/application/session.py` | Startup restoration and bounded catch-up for existing saves |
+| `aiko_pet/storage.py` | Versioned JSON decoding/encoding with legacy settings exports |
 | `aiko_pet/ui/animated_pet.py` | The animated character: sprites, gaze and movement |
 | `aiko_pet/ui/hover_ui.py` | Independent owner of the hover, status and settings windows |
 | `aiko_pet/ui/` | Independent Tk views plus speech/emote presenter and typed callback contracts |
 | `aiko_pet/application/view_models.py` | Immutable view model contracts |
 | `aiko_pet/application/read_models.py` | Constructs read-only utility snapshots |
 | `aiko_pet/desktop/runtime.py` | Owns the update phases and Tk timers |
-| `aiko_pet/desktop/persistence.py` | Save/catch-up and autosave timing |
+| `aiko_pet/desktop/persistence.py` | Writes current state and tracks autosave timing |
 | `aiko_pet/desktop/maintenance.py` | Bounded taskbar and z-order checks |
 | `aiko_pet/desktop/input.py` | Tk bindings and global mouse/focus input |
 | `aiko_pet/desktop/lifecycle.py` | Ordered startup and shutdown of desktop resources |

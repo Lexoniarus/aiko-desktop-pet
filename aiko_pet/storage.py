@@ -7,11 +7,12 @@ import os
 import sys
 import tempfile
 import time
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .adaptive import AdaptiveMemory
+from .adaptive_models import AdaptiveMemory
+from .application.session import LoadedPetData
+from .application.settings import PetSettings as PetSettings
 from .domain import PetState
 
 SCHEMA_VERSION = 1
@@ -31,87 +32,47 @@ def default_save_path() -> Path:
     return base / "AikoDesktopPet" / "state.json"
 
 
-@dataclass
-class PetSettings:
-    x: int | None = None
-    y: int | None = None
-    scale: int = 1
-    always_on_top: bool = True
-    auto_walk: bool = True
-    auto_routine: bool = True
-    follow_cursor: bool = True
-    spontaneous_talk: bool = True
-    observe_computer: bool = True
-    learn_rhythm: bool = True
-    toolbar_x: int | None = None
-    toolbar_y: int | None = None
-
-    @classmethod
-    def from_dict(cls, payload: Any) -> PetSettings:
-        if not isinstance(payload, dict):
-            return cls()
-
-        def coordinate(value: Any) -> int | None:
-            if type(value) is not int:  # bool isn't a coordinate
-                return None
-            return value if -20_000 <= value <= 20_000 else None
-
-        return cls(
-            x=coordinate(payload.get("x")),
-            y=coordinate(payload.get("y")),
-            scale=2 if payload.get("scale") == 2 else 1,
-            always_on_top=payload.get("always_on_top") is not False,
-            auto_walk=payload.get("auto_walk") is not False,
-            auto_routine=payload.get("auto_routine") is not False,
-            follow_cursor=payload.get("follow_cursor") is not False,
-            spontaneous_talk=payload.get("spontaneous_talk") is not False,
-            observe_computer=payload.get("observe_computer") is not False,
-            learn_rhythm=payload.get("learn_rhythm") is not False,
-            toolbar_x=coordinate(payload.get("toolbar_x")),
-            toolbar_y=coordinate(payload.get("toolbar_y")),
-        )
-
-    def to_dict(self) -> dict[str, int | bool | None]:
-        return {
-            "x": self.x,
-            "y": self.y,
-            "scale": self.scale,
-            "always_on_top": self.always_on_top,
-            "auto_walk": self.auto_walk,
-            "auto_routine": self.auto_routine,
-            "follow_cursor": self.follow_cursor,
-            "spontaneous_talk": self.spontaneous_talk,
-            "observe_computer": self.observe_computer,
-            "learn_rhythm": self.learn_rhythm,
-            "toolbar_x": self.toolbar_x,
-            "toolbar_y": self.toolbar_y,
-        }
-
-
 class StateStore:
     def __init__(self, path: Path | None = None) -> None:
         self.path = path or default_save_path()
 
-    def load(self, *, now: float | None = None) -> tuple[PetState, PetSettings]:
-        current = time.time() if now is None else now
+    def _read_payload(self) -> dict[str, Any] | None:
+        """Return only supported versioned JSON, without advancing the pet."""
         try:
             payload = json.loads(self.path.read_text(encoding="utf-8"))
         except (FileNotFoundError, ValueError, OSError, UnicodeError):
-            return PetState(updated_at=current), PetSettings()
+            return None
         if not isinstance(payload, dict) or payload.get("version") != SCHEMA_VERSION:
-            return PetState(updated_at=current), PetSettings()
-        pet = PetState.from_dict(payload.get("pet"), now=current)
-        settings = PetSettings.from_dict(payload.get("settings"))
-        pet.advance(current, auto_routine=settings.auto_routine)
-        return pet, settings
+            return None
+        return payload
+
+    def load_session(self, *, now: float | None = None) -> LoadedPetData:
+        """Read the complete session in one I/O operation, without simulation."""
+        current = time.time() if now is None else now
+        payload = self._read_payload()
+        if payload is None:
+            return LoadedPetData(
+                state=PetState(updated_at=current),
+                settings=PetSettings(),
+                adaptive_memory=AdaptiveMemory(),
+                restored_from_save=False,
+            )
+        return LoadedPetData(
+            state=PetState.from_dict(payload.get("pet"), now=current),
+            settings=PetSettings.from_dict(payload.get("settings")),
+            adaptive_memory=AdaptiveMemory.from_dict(payload.get("adaptive")),
+            restored_from_save=True,
+        )
+
+    def load(self, *, now: float | None = None) -> tuple[PetState, PetSettings]:
+        """Legacy load API: decode saved fields but never advance game time."""
+        loaded = self.load_session(now=now)
+        return loaded.state, loaded.settings
 
     def load_memory(self) -> AdaptiveMemory:
-        """Old v0.8 saves have no learning payload and remain valid."""
-        try:
-            payload = json.loads(self.path.read_text(encoding="utf-8"))
-        except (FileNotFoundError, ValueError, OSError, UnicodeError):
-            return AdaptiveMemory()
-        if not isinstance(payload, dict) or payload.get("version") != SCHEMA_VERSION:
+        """Legacy adaptive-memory reader, preserving pre-profile saves."""
+        payload = self._read_payload()
+        if payload is None:
             return AdaptiveMemory()
         return AdaptiveMemory.from_dict(payload.get("adaptive"))
 

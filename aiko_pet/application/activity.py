@@ -10,7 +10,7 @@ from ..adaptive import AdaptiveRoutine, Observation
 from ..dialogue import AikoMind, ComputerVoice, Reaction
 from ..domain import PetState
 from ..routine import TimeContext, context_at
-from ..storage import PetSettings
+from .settings import PetSettings
 from ..system_activity import ComputerSnapshot, workload_intensity
 
 

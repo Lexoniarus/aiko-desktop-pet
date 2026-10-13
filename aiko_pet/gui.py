@@ -13,7 +13,7 @@ from dataclasses import replace
 from tkinter import font as tkfont
 from tkinter import messagebox
 
-from .adaptive import AdaptiveRoutine
+from .application.session import PetSessionRestorer
 from .application.activity import ActivityCallbacks, ActivityCoordinator
 from .desktop.compatibility import DesktopCompatibility
 from .desktop.runtime import (
@@ -68,8 +68,10 @@ class DesktopPet(DesktopCompatibility):
         activity_monitor: ActivityMonitor | None = None,
     ) -> None:
         self.store = store or StateStore()
-        self.state, self.settings = self.store.load()
-        self.adaptive = AdaptiveRoutine(self.store.load_memory())
+        session = PetSessionRestorer(self.store).restore()
+        self.state = session.state
+        self.settings = session.settings
+        self.adaptive = session.adaptive
         self.context: TimeContext = context_at(time.time())
         self._window = DesktopWindow(self.settings)
         self.root = self._window.root

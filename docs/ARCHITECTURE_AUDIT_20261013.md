@@ -20,6 +20,9 @@ isolated to `refactor/oop-modular-architecture`.
 | Hover layout and drag rules | `ui/hover_geometry.py` |
 | Legacy GUI method compatibility | `desktop/compatibility.py` |
 | Tick timers and update phases | `desktop/runtime.py` |
+| Save decoding and atomic JSON writes | `storage.py` |
+| Runtime preferences and compatibility exports | `application/settings.py`, `storage.py` |
+| Startup restoration and valid-save time catch-up | `application/session.py` |
 | State serialization and autosave cadence | `desktop/persistence.py` |
 | Taskbar/window stack checks | `desktop/maintenance.py` |
 | Tk/global mouse and focus input | `desktop/input.py` |
@@ -38,6 +41,9 @@ compatibility adapter remains separate; these forwards are not removed
 complexity. Timers, serialization, taskbar/stack polling, and input binding
 now belong to testable, cohesive desktop services. Domain time advancement
 is owned by `ActivityCoordinator`, including the pre-save catch-up.
+Initial catch-up for an existing saved session is now performed by
+`PetSessionRestorer` rather than `StateStore`; the repository performs only
+JSON decoding/encoding and preserves legacy import names.
 Startup and shutdown
 are now ordered by `DesktopLifecycle` rather than duplicated in the
 composition root.
@@ -68,6 +74,14 @@ directly instead of using inherited compatibility getters and presenters.
 The compatibility adapter remains available to old callers and to the
 existing private runtime-stage forwards; it is **not** a destination for new
 features.
+
+## Startup session ownership — implemented
+
+`application/settings.py` owns `PetSettings` and `application/session.py`
+owns `PetSessionRestorer` through the `SavedPetReader` port. `StateStore`
+loads saved values without advancing them. Only valid prior saves are
+advanced in the application. The existing JSON schema, defaults and
+legacy import compatibility remain unchanged.
 
 ## Remaining work, by priority (not yet implemented)
 

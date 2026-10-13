@@ -1,8 +1,8 @@
-"""Create immutable settings presentation values from persistence settings."""
+"""Create immutable settings presentation values from runtime preferences."""
 
 from __future__ import annotations
 
-from ..storage import PetSettings
+from .settings import PetSettings
 from .view_models import SettingsSnapshot
 
 

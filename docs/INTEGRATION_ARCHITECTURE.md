@@ -97,6 +97,10 @@ titles or unapproved personal activity details.
 - `ActivityCoordinator` owns pet time progression during desktop ticks and
   before persistence; `DesktopPersistence` writes the supplied state without
   advancing the pet or choosing sleep policy.
+- `PetSessionRestorer` performs startup catch-up for valid existing saves
+  using the `SavedPetReader` port. `PetSettings` is owned by the application
+  settings module, and `StateStore` only decodes/encodes JSON data. Neither
+  application component imports the storage implementation.
 - The hover/status/settings widgets **already** use immutable view models
   and narrow callbacks, with a separate `HoverUi` owner; guard this direction
   against new direct `DesktopPet` references in future changes.

@@ -21,6 +21,10 @@ the desktop runtime has been exercised on Windows after the final commit.
 - Desktop runtime tests cover tick ordering and shutdown timer cancellation,
   persistence and disk-error handling, taskbar/overlay check intervals and
   Tk/global-input dispatch.
+- Startup tests verify that restored saves receive exactly one bounded
+  catch-up, while fresh or corrupt saves keep their original defaults;
+  settings and adaptive memory retain the version-one JSON contract.
+- Application import guards prevent a direct dependency on `storage.py`.
 - Work-episode regression tests cover confirmed versus missing activity,
   repeated interruption, unexpected work and one-time recovery reflections.
 - Lifecycle tests cover the original startup, shutdown and repeated-close

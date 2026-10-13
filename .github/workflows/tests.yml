@@ -82,6 +82,8 @@ jobs:
             "test_gaze.py",
             "test_entrypoints_env.py",
             "test_storage.py",
+            "test_session_restoration.py",
+            "test_settings_model.py",
             "test_motion_animation.py",
             "test_reaction_playback.py",
             "test_adaptive_policy.py",
