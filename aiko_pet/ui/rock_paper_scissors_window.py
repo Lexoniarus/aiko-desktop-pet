@@ -64,7 +64,8 @@ class RockPaperScissorsWindow:
             self.window, bg=_BG, highlightthickness=2,
             highlightbackground="#E9ECF5", bd=0,
         )
-        outer.pack(padx=3, pady=3)
+        # Keep the layout filling the fixed shell during widget updates.
+        outer.pack(fill="both", expand=True, padx=3, pady=3)
         header = tk.Label(
             outer, text="AIKO · SPIELEN", image=self._banner,
             compound="center", font=(title_font, 10, "bold"),
@@ -105,14 +106,19 @@ class RockPaperScissorsWindow:
             bg=_PANEL, fg=_TEXT, font=(title_font, 10, "bold"),
         )
         self.result_title.pack(pady=(8, 2))
-        hand_slot = tk.Frame(self.result_panel, bg=_PANEL, height=84)
-        hand_slot.pack(fill="x", padx=8)
-        hand_slot.pack_propagate(False)
-        self.player_hand = tk.Label(
-            hand_slot, text="?", bg=_PANEL, fg=_MUTED,
-            font=(title_font, 22, "bold"), compound="center",
+        # Fixed pixel canvas: changing '?' to an image cannot shrink it.
+        self.player_hand = tk.Canvas(
+            self.result_panel, width=120, height=96, bg=_PANEL,
+            bd=0, highlightthickness=0, relief="flat",
         )
-        self.player_hand.pack(fill="both", expand=True)
+        self.player_hand.pack(padx=8)
+        self._hand_image_item = self.player_hand.create_image(
+            60, 48, anchor="center", state="hidden",
+        )
+        self._hand_question_item = self.player_hand.create_text(
+            60, 48, text="?", fill=_MUTED, font=(title_font, 22, "bold"),
+        )
+        self._last_revealed: Move | None = None
         self.player_result_label = tk.Label(
             self.result_panel, text="Noch keine Runde gespielt",
             bg=_PANEL, fg=_MUTED, font=(title_font, 9),
@@ -168,7 +174,8 @@ class RockPaperScissorsWindow:
             root.winfo_rooty() - height // 2,
             root.winfo_screenheight() - height - 45,
         ))
-        self.window.geometry(f"+{x}+{y}")
+        # Fix both dimensions; borderless Tk must not reflow on reveal.
+        self.window.geometry(f"{width}x{height}+{x}+{y}")
         self.window.deiconify()
 
     @property
@@ -187,13 +194,23 @@ class RockPaperScissorsWindow:
 
     def _clear_player_result(self) -> None:
         self.result_panel.configure(highlightbackground="#A6B9CD")
-        self.player_hand.configure(text="?", image="")
-        self.player_result_label.configure(text="Warten auf Aiko ...")
+        if self._last_revealed is None:
+            self.player_result_label.configure(text="Warten auf Aiko ...")
+        else:
+            # The previous full hand remains visible during a new countdown.
+            self.player_result_label.configure(
+                text=f"Letzte Hand: {_MOVE_NAMES[self._last_revealed]}",
+            )
 
     def reveal_player(self, move: Move, score: Score) -> None:
-        """Highlight only the human hand and maintain the local scoreboard."""
-        self.player_hand.configure(
-            image=self.hand_images[move], text="",
+        """Keep the complete hand PNG visible at its original pixel size."""
+        self._last_revealed = move
+        self.player_hand.itemconfigure(
+            self._hand_image_item, image=self.hand_images[move],
+            state="normal",
+        )
+        self.player_hand.itemconfigure(
+            self._hand_question_item, state="hidden",
         )
         self.result_panel.configure(highlightbackground=_ACCENT)
         self.player_result_label.configure(text=f"Du: {_MOVE_NAMES[move]}")
