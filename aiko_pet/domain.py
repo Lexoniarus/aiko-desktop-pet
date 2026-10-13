@@ -21,6 +21,9 @@ from .pet.state import (
     apply_daily_routine as apply_daily_routine,
     bounded as bounded,
     clamp_saved_time as clamp_saved_time,
+)
+
+from .pet.routine import (
     MEAL_NAMES as MEAL_NAMES,
     TimeContext as TimeContext,
 )
