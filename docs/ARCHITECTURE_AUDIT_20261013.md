@@ -1,7 +1,8 @@
 # Aiko architecture audit — 2026-10-13
 
-**Status:** Incremental refactor, not final Windows acceptance. Work is
-isolated to `refactor/oop-modular-architecture`.
+**Status:** Final architecture review on the refactor branch.
+The user reported successful native Windows usage on 2026-10-13; no
+independent per-item test log is available. Merge approval is separate.
 
 ## Ownership and module boundaries
 
@@ -118,9 +119,12 @@ only structural hardware-reading ports. `SettingKey` is shared by the
 settings UI and the desktop setting dispatcher.
 
 The old `application.view_models` import path re-exports unchanged view
-types, while the three old application projections remain callable as
-legacy compatibility interfaces. The `PetState` and `TimeContext` German
-helpers are retained for older callers but unused in live UI presentation.
+types. The legacy hover/status/settings projection paths now only forward
+to `presentation.legacy`, removing duplicate localized formatting.
+The historical `DesktopViewSource` is a thin `DesktopPresentation`
+subclass preserving its constructor and public component references.
+The `PetState` and `TimeContext` German helpers remain callable for
+older consumers but unused in live UI presentation.
 Schedule descriptions embedded in `TimeContext` remain an identified
 later compatibility cutover; their values were not changed here.
 
@@ -192,9 +196,9 @@ source module moves under infrastructure.
    dialogue coordination, mood priorities, click/care selections and the
    separately testable spontaneous topic policy. No dialogue text was edited.
 4. **Implemented:** the pet, personality, native desktop and pure sprite
-   policies are packaged by responsibility, without introducing a
-   dependency from behavior into Tk. Next audit remaining compatibility
-   surfaces before requesting native Windows approval.
+   policies are packaged by responsibility. The final audit consolidates
+   legacy display wrappers and checks import cycles and package boundaries.
+   Native Windows operation was reported successful by the user.
 5. Review remaining widget construction in the 320-line `action_toolbar.py`.
    Pure geometry was extracted; further splits require cohesive widgets.
 
@@ -210,6 +214,31 @@ as a prerequisite for the code-structure refactor.
   reverse imports. Pure policy modules may not call aggregate-private
   mutators; the aggregate may not use mutable legacy adapters.
   `gui.py` still has an explicit 600-line limit.
-- Manual real Windows tests remain a merge prerequisite.
+- Native Windows testing was reported successful on 2026-10-13;
+  this is user acceptance, not independently collected test evidence.
+- Merge still requires explicit user authorization.
 
 **No merge, schema change, asset change or local save rewrite.**
+
+## Step 6 closure: dependency review and compatibility exceptions
+
+Canonical pet and personality code remains independent of UI, application
+coordination and native desktop providers. Active application modules use
+typed ports and domain values, not presentation or infrastructure imports.
+Five deprecated application-side view modules now re-export a single
+presentation implementation instead of maintaining duplicate UI formatting.
+Static tests check import cycles, layer boundaries and legacy class identity.
+
+The `DesktopCompatibility` façade is still inherited by `DesktopPet`:
+older GUI tests and consumers use its forwarded properties and functions.
+The live tick scheduler no longer relies on it. Removing this public
+compatibility layer would be a separate API change.
+
+`ActionToolbar` owns one cohesive Tk view with need bars, buttons, drag
+handling and visibility lifecycle. No size-driven split is necessary.
+German `PetState` and `TimeContext` display conveniences remain legacy
+API methods; production text is owned by `presentation/text_de.py`.
+
+The user confirmed the Windows application works normally on 2026-10-13.
+This confirmation is recorded without claiming that ChatGPT observed the
+test. The refactor remains a Draft PR and no merge was performed.

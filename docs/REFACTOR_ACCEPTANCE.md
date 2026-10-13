@@ -2,8 +2,11 @@
 
 Target branch: refactor/oop-modular-architecture
 
-This refactor is NOT merged into main until automated checks pass and
-the desktop runtime has been exercised on Windows after the final commit.
+The refactor is not merged into main. The user reported successful native
+Windows operation on 2026-10-13 at the package-refactor stage.
+The final audit only consolidates legacy presentation entrypoints,
+uses canonical imports and adds static tests and documentation.
+A merge remains subject to explicit user authorization.
 
 ## Automated checks (GitHub Actions)
 
@@ -53,9 +56,10 @@ the desktop runtime has been exercised on Windows after the final commit.
 - Lifecycle tests cover the original startup, shutdown and repeated-close
   order without opening a real Windows desktop. Provider tests cover
   CPU deltas, optional NVIDIA measurements, GPU timeout and legacy imports.
+- Import-cycle, package-layer and legacy presentation compatibility checks
 - No state JSON schema changes or bundled runtime dependency changes
 
-## Windows 10/11 manual smoke checks — still required
+## Windows 10/11 manual smoke checks — user-reported acceptance
 
 1. Launch with Aiko_starten.bat, then with python main.py in debug mode;
    ensure no startup exception and no unexpected black/opaque sprite box.
@@ -78,13 +82,17 @@ the desktop runtime has been exercised on Windows after the final commit.
 8. Save/load: record six need values, friendship progress and toolbar position;
    restart and confirm the saved values and preferences return.
 9. Quit and restart several times; inspect console for callback exceptions
-   or windows left open. A manual failure blocks merge.
+   or windows left open.
+
+These items remain the regression reference checklist. The user confirmed
+that Aiko operates normally under Windows on 2026-10-13. This is not a
+claim that each item was individually witnessed or logged by the assistant.
 
 Do not move, rewrite or delete the production save at
 %LOCALAPPDATA%\AikoDesktopPet\state.json merely to run the smoke checks.
 
 ## Gate
 
-Only the user can approve merging the Draft PR into main. Linux/Xvfb and
-Windows-hosted headless CI do not replace the user's interactive Windows
-check of actual taskbar APIs, focus behavior, window layering or GPU readings.
+Only the user can approve merging the Draft PR into main. The native
+Windows acceptance reported by the user is separate from merge approval.
+Automated Linux/Xvfb and Windows-headless checks are independent evidence.

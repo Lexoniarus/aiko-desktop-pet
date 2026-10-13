@@ -160,8 +160,9 @@ care methods remain in place. The new application components live alongside
 the old modules as an incremental dependency cutover. The animated character
 is now `AnimatedPet`, the accessory-window owner is `HoverUi`, and the
 desktop shell `DesktopPet` connects them through narrowly scoped callback
-ports. View snapshots are produced by `DesktopViewSource`, not by the Tk
-windows themselves. No migrations or extra runtime libraries are necessary.
+ports. View snapshots are produced by `DesktopPresentation`, not the Tk
+windows themselves. `DesktopViewSource` is a legacy presentation subclass.
+No migrations or extra runtime libraries are necessary.
 
 
 # Application-boundary cutover

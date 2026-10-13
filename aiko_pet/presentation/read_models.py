@@ -20,7 +20,7 @@ from ..telemetry import ComputerSnapshot
 from .contracts import (
     HoverAnchor, HoverSnapshot, SettingsSnapshot, StatusSnapshot,
 )
-from .projections import project_hover, project_status
+from .projections import project_hover, project_settings, project_status
 
 
 class DesktopPresentation:
@@ -61,18 +61,7 @@ class DesktopPresentation:
         )
 
     def settings_view(self) -> SettingsSnapshot:
-        return SettingsSnapshot(
-            scale=self._settings.scale,
-            options=(
-                ("always_on_top", self._settings.always_on_top),
-                ("auto_walk", self._settings.auto_walk),
-                ("auto_routine", self._settings.auto_routine),
-                ("follow_cursor", self._settings.follow_cursor),
-                ("spontaneous_talk", self._settings.spontaneous_talk),
-                ("observe_computer", self._settings.observe_computer),
-                ("learn_rhythm", self._settings.learn_rhythm),
-            ),
-        )
+        return project_settings(self._settings)
 
     def anchor(self) -> HoverAnchor:
         width, height = self._sprite_size()

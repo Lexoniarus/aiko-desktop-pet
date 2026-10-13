@@ -1,21 +1,8 @@
-"""Create immutable settings presentation values from runtime preferences."""
+"""Deprecated settings projection import; the implementation is presentation.
+
+Application preference data remains owned by application/settings.py.
+"""
 
 from __future__ import annotations
 
-from .settings import PetSettings
-from .view_models import SettingsSnapshot
-
-
-def project_settings(settings: PetSettings) -> SettingsSnapshot:
-    return SettingsSnapshot(
-        scale=settings.scale,
-        options=(
-            ("always_on_top", settings.always_on_top),
-            ("auto_walk", settings.auto_walk),
-            ("auto_routine", settings.auto_routine),
-            ("follow_cursor", settings.follow_cursor),
-            ("spontaneous_talk", settings.spontaneous_talk),
-            ("observe_computer", settings.observe_computer),
-            ("learn_rhythm", settings.learn_rhythm),
-        ),
-    )
+from ..presentation.legacy import project_settings as project_settings

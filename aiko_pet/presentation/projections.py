@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from ..personality.adaptive_models import Behaviour
 from ..application.read_snapshot import PetReadSnapshot
+from ..application.settings import PetSettings
 from ..personality.catalog import EMOTION_LABELS
 from ..pet.routine import TimeContext
 from ..telemetry import ComputerSnapshot
-from .contracts import HoverSnapshot, StatusSnapshot
+from .contracts import HoverSnapshot, SettingsSnapshot, StatusSnapshot
 from .text_de import (
     describe_workload, format_day_label, format_feed_label,
     format_mood_hint, format_percent, format_schedule_line,
@@ -90,4 +91,20 @@ def project_status(
         activity_line=activity,
         needs=pet.needs,
         friendship_level=pet.friendship_level,
+    )
+
+
+def project_settings(settings: PetSettings) -> SettingsSnapshot:
+    """Produce one authoritative desktop preferences view for every caller."""
+    return SettingsSnapshot(
+        scale=settings.scale,
+        options=(
+            ("always_on_top", settings.always_on_top),
+            ("auto_walk", settings.auto_walk),
+            ("auto_routine", settings.auto_routine),
+            ("follow_cursor", settings.follow_cursor),
+            ("spontaneous_talk", settings.spontaneous_talk),
+            ("observe_computer", settings.observe_computer),
+            ("learn_rhythm", settings.learn_rhythm),
+        ),
     )

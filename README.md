@@ -74,9 +74,9 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/ui/` | Independent Tk views plus speech/emote presenter and typed callback contracts |
 | `aiko_pet/application/read_snapshot.py` | Immutable, language-neutral pet read snapshot |
 | `aiko_pet/application/ports.py` | Structural hardware-reading capabilities for application services |
-| `aiko_pet/presentation/` | German desktop copy, display models, hover/status projections and geometry |
+| `aiko_pet/presentation/` | German UI copy, canonical display models, hover/status/settings projections and legacy view adapters |
 | `aiko_pet/application/view_models.py` | Legacy import bridge for presentation contracts |
-| `aiko_pet/application/read_models.py` | Constructs read-only utility snapshots |
+| `aiko_pet/application/read_models.py` | Legacy view-source alias; presentation owns the implementation |
 | `aiko_pet/desktop/runtime.py` | Ordered Tk tick phases through explicit `DesktopTickPorts` |
 | `aiko_pet/desktop/taskbar.py` | Windows taskbar discovery and fallback placement |
 | `aiko_pet/desktop/geometry.py` | Pure TaskbarTrack value and sprite grounding |

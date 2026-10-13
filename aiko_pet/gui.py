@@ -45,7 +45,7 @@ from .pet.routine import TimeContext, context_at
 from .personality.reaction_sequence import Cue as Cue, EMOTES as EMOTES
 from .presentation.reaction_playback import ReactionPlayer, choose_idle_emote
 from .infrastructure.persistence import StateStore
-from .system_activity import ActivityMonitor
+from .infrastructure.hardware.monitor import ActivityMonitor
 from .desktop.geometry import TaskbarTrack as TaskbarTrack
 from .ui.desktop_window import (
     DesktopWindow, FRAME_WIDTH as FRAME_WIDTH,

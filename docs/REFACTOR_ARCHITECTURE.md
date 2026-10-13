@@ -27,8 +27,8 @@ third-party packages. Keep German runtime text and English documentation.
 4. **Independent utility GUI (implemented):** `ui/hover_ui.py` owns the
    lifecycle of `ActionToolbar`, `StatusPanel` and `SettingsPopup`.
    Each window consumes immutable views and explicit action callbacks, not
-   the whole `DesktopPet`. `application/read_models.py` projects local
-   domain and monitor values into the view snapshots.
+   the whole `DesktopPet`. `presentation/read_models.py` converts semantic
+   pet and monitor snapshots into desktop view models.
 5. **Speech and activity presentation (implemented):**
    `ui/speech_presenter.py` owns speech/emote windows and hide timers.
    `application/activity.py` owns adaptive rhythm and sleep-related
@@ -37,7 +37,7 @@ third-party packages. Keep German runtime text and English documentation.
    separate modules under `infrastructure/hardware/`;
    `system_activity.py` re-exports the old public names without
    housing another implementation.
-6. **Desktop composition (in progress):** `DesktopPet` in `gui.py`
+6. **Desktop composition (implemented, legacy façade retained):** `DesktopPet`
    assembles `AnimatedPet`, `DesktopWindow`, `HoverUi` and the application.
    `DesktopRuntime` receives explicit `DesktopTickPorts` rather than
    assuming a shell with inherited private phase methods. It still owns
@@ -74,7 +74,8 @@ third-party packages. Keep German runtime text and English documentation.
 9. **Quality (continuous):** Ruff, PEP 8/E501, strict mypy across the
    application, Pyright across application *and tests*, Python 3.11/3.13
    Linux/Xvfb GUI tests, and Windows-hosted headless checks are mandatory.
-   The final interactive Windows smoke check remains outstanding.
+   Native Windows operation was reported successful by the user on
+   2026-10-13; there is no independent item-by-item test log.
 
 ## Session restoration and runtime settings
 
@@ -125,11 +126,13 @@ third-party packages. Keep German runtime text and English documentation.
   `presentation/projections.py` to format German desktop copy. Pure
   `presentation/text_de.py` preserves all existing labels without
   making UI widgets depend on the mutable pet.
-- Previous `application/hover_projection.py`,
-  `application/status_projection.py` and `application/read_models.py`
-  remain as legacy entrypoints for old callers and test compatibility.
-  They are no longer wired into the main desktop UI. Remove them only
-  after explicit import compatibility cutover.
+- The previous `application/hover_projection.py`,
+  `application/status_projection.py`,
+  `application/settings_projection.py` and
+  `application/read_models.py` are import-only legacy entrypoints.
+  Their canonical implementation is `presentation/legacy.py`,
+  preserving historical signatures and public view-source references.
+  Only `presentation/` formats the actual desktop display models.
 - Settings commands use the typed `SettingKey` keys end-to-end.
   Unsupported names still raise `ValueError` in the desktop adapter.
 - The original German `PetState` and `TimeContext` display methods are
@@ -210,6 +213,25 @@ third-party packages. Keep German runtime text and English documentation.
   default and XDG alternatives are unchanged.
 - `PetSessionRestorer` still applies existing-save catch-up in the
   application. No startup policy moved back into infrastructure.
+
+## Final dependency review and legacy transition
+
+- New static tests cover import cycles and package boundaries. The legacy
+  application view paths are import-only re-exports rather than duplicate
+  text/geometry implementations.
+- The old `DesktopViewSource` class is a `DesktopPresentation` subclass
+  retaining its constructor and public component references. The active
+  desktop and lifecycle import their hardware monitor canonically.
+- `DesktopCompatibility` remains for existing callers; it does not
+  participate in the runtime tick contract. Its final removal would require
+  a separately approved breaking compatibility change.
+- `ActionToolbar` construction, need bars, dragging and window visibility
+  remain cohesive; splitting by line count alone is not justified.
+- Localized domain convenience methods on `PetState` and `TimeContext`
+  remain legacy APIs. Only `presentation/text_de.py` generates the
+  production status and hover copy.
+- The user confirmed native Windows operation on 2026-10-13. The final
+  cleanup changes legacy access, imports and checks, not Tk rendering.
 
 ## Change safety
 
