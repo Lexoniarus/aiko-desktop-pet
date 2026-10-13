@@ -1,32 +1,53 @@
-# GitHub development workflow
+# Development workflow
 
-Repository: https://github.com/Lexoniarus/aiko-desktop-pet
+This describes **how to contribute now** to [Aiko Desktop Pet](https://github.com/Lexoniarus/aiko-desktop-pet), not how its original sources were first uploaded.
 
-Default branch: `main`. Initial published project baseline: **v0.13**.
+The default branch is `main`. The first public feature baseline was v0.13; the completed object-oriented architecture refactor was merged via [PR #2](https://github.com/Lexoniarus/aiko-desktop-pet/pull/2) on October 13, 2026.
 
-## Initial publication
+## Work on a branch
 
-The initial release was imported with `Auf_GitHub_veroeffentlichen.bat`. Its PowerShell implementation clones the existing `main` branch into a temporary directory, stages the prepared project, checks the staged diff, and creates a normal commit. It does **not** rewrite history or use force-push.
+1. Fetch the latest `main` and inspect the current HEAD before making edits.
+2. Create a focused branch such as `feature/…`, `fix/…` or `chore/…`.
+3. Make a cohesive change with tests for altered behavior and use descriptive, English commit messages.
+4. Run the relevant tests and type/lint checks (see [CONTRIBUTING.md](../CONTRIBUTING.md)).
+5. Open a pull request targeting `main`, review its diff, and wait for green CI.
+6. Run a real Windows smoke test for changes affecting transparent windows, focus, taskbar geometry, dragging, timers or GPU telemetry.
+7. Merge only after review. Never force-push or replace the history of `main`.
 
-The upload helper is retained only for historical reproducibility; normal future development should use a Git checkout and feature branches instead.
+The one-off upload helper used for initial publication is **not part of the maintained repository**. Development should use normal Git and pull requests, not a script that copies a local folder and pushes directly to `main`.
 
-## Development guidelines
+## Public repository metadata
 
-1. Confirm the current remote branch and commit before making changes.
-2. Create a focused `feature/*` or `fix/*` branch.
-3. Keep each change scoped, with tests for altered behavior.
-4. Run `python -m unittest discover -s tests -q`; GUI tests need a display (for example Xvfb on Linux).
-5. Open a pull request to `main` and review CI results and the diff.
-6. Validate Windows-specific behavior manually before calling those cases verified.
+GitHub's **About** description, topics and social preview are configured
+in repository settings, not in the code files. Suggested description:
 
-Never commit local saves, private information, font binaries, system logs, authentication tokens, caches, or generated build output. The project's `.gitignore` excludes common local artifacts.
+> Local-first Windows desktop pet with Tamagotchi care, adaptive workload
+> reactions and hand-written German dialogue.
 
-## Source and asset licenses
+Suggested topics: `desktop-pet`, `tamagotchi`, `python`, `tkinter`,
+`windows`, `chibi`, `pixel-art`.
 
-The project's code and creator-controlled rights in Aiko artwork are offered under [MIT](../LICENSE). Kenney graphics remain CC0, with voluntary creator credit. Fonts are not redistributed.
+Use a real Aiko application screenshot as the social preview if one is
+configured. These metadata fields may require a maintainer to edit them
+in the GitHub UI; a README edit alone does not populate them.
 
-For details see [ASSETS.md](../ASSETS.md) and [LICENSES/KENNEY_CC0.md](../LICENSES/KENNEY_CC0.md).
+## Scope and security
 
-## Language policy
+Do not commit local `.env` settings, tokens, activity traces, save files, logs, private data, font binaries or built installers. `.gitignore` provides baseline exclusions but cannot replace review of the staged diff.
 
-All project documentation, including README, license explanations, development notes, and test reports, is written in **English**. Runtime UI text and Aiko's dialogue remain **German**.
+Only `AIKO_SAVE_PATH` is currently recognized by `.env.example`; no API credentials or cloud configuration are needed. The default local save file lives at `%LOCALAPPDATA%\AikoDesktopPet\state.json`.
+
+Do not modify the user's existing save as part of a test or cleanup. Tests should use temporary paths. Maintain the current version-one JSON format unless a migration has been explicitly designed.
+
+## Contracts
+
+- Canonical code is organized under `pet/`, `personality/`, `application/`, `presentation/`, `ui/`, `desktop/` and `infrastructure/`.
+- Preserve the documented public compatibility import paths while clients still depend on them.
+- Application code must not manipulate Tk widgets or depend on concrete hardware providers.
+- Hardware sampling and domain mutations have separate owners. Domain state changes must be testable without opening a desktop window.
+- Keep authored German runtime/dialogue copy in German; technical docs, code identifiers and development messages are in English.
+
+See [current architecture](ARCHITECTURE.md),
+[historical refactor audit](ARCHITECTURE_AUDIT_20261013.md),
+[asset licensing](../ASSETS.md), [security policy](../SECURITY.md),
+and [test status](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml).

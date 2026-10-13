@@ -1,0 +1,39 @@
+name: Feature request
+description: Propose a focused, testable improvement to Aiko.
+title: "[Feature] "
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What would this improve for Aiko's users?
+      description: Describe the use case before proposing an implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What should Aiko do?
+      description: Include examples of visible behavior and any optional settings.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Most relevant area
+      options:
+        - Character animation and visual behavior
+        - Personality and authored dialogue
+        - Care, friendship and time progression
+        - Local workload and adaptive routine
+        - Desktop and Windows UI
+        - Documentation and artwork
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints or alternatives
+      description: Note compatibility, privacy or platform concerns if relevant.
+    validations:
+      required: false

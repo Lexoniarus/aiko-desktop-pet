@@ -101,6 +101,11 @@ class AikoMind:
         self, event: str, state: PetState, context: TimeContext, now: float,
         *, tone: str | None = None,
     ) -> Reaction | None:
+        """Select a dialogue reaction; speech rendering belongs to the UI.
+
+        The historical name is retained for public callers. This method
+        neither speaks audio nor opens a text bubble.
+        """
         return self.book.choose(event, tone or self.emotion(state, now), context, now)
 
     def click(

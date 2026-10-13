@@ -1,12 +1,16 @@
-# Refactor acceptance — Aiko Desktop Pet
+# Historical OOP refactor acceptance — October 2026
 
-Target branch: refactor/oop-modular-architecture
+> **Archived acceptance record.** The architecture refactor was merged into
+> `main` via [PR #2](https://github.com/Lexoniarus/aiko-desktop-pet/pull/2)
+> on 2026-10-13 at commit
+> [073e7a4](https://github.com/Lexoniarus/aiko-desktop-pet/commit/073e7a43551f0b29abe5d04b760c6324230e4be8).
+> See [the current architecture](ARCHITECTURE.md) and the
+> [latest CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml)
+> for living documentation.
 
-The refactor is not merged into main. The user reported successful native
-Windows operation on 2026-10-13 at the package-refactor stage.
-The final audit only consolidates legacy presentation entrypoints,
-uses canonical imports and adds static tests and documentation.
-A merge remains subject to explicit user authorization.
+The following checks describe the completed refactor validation.
+The project maintainer reported successful native Windows operation
+on 2026-10-13. Detailed item-by-item manual test logs were not collected.
 
 ## Automated checks (GitHub Actions)
 
@@ -91,8 +95,13 @@ claim that each item was individually witnessed or logged by the assistant.
 Do not move, rewrite or delete the production save at
 %LOCALAPPDATA%\AikoDesktopPet\state.json merely to run the smoke checks.
 
-## Gate
+## Completed merge gate
 
-Only the user can approve merging the Draft PR into main. The native
-Windows acceptance reported by the user is separate from merge approval.
-Automated Linux/Xvfb and Windows-headless checks are independent evidence.
+The maintainer gave explicit approval, and PR #2 was merged on
+2026-10-13. The post-merge `main` CI run
+[38382796398](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38382796398)
+completed successfully: 486 Linux/Xvfb tests on each of Python 3.11 and 3.13,
+plus 257 Windows-headless tests.
+
+This historical record is not an instruction to reopen or merge PR #2 again.
+Future changes need their own review and, where relevant, Windows testing.

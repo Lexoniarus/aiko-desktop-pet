@@ -1,38 +1,55 @@
-# Python
+# Local Python environments, caches, type-checker state and test output
 __pycache__/
 *.py[cod]
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
-htmlcov/
 .venv/
 venv/
+env/
+.tox/
+.nox/
+.pytest_cache/
+.hypothesis/
+.mypy_cache/
+.pyright/
+.ruff_cache/
+.dmypy.json
+.dmypy.json.*
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Per-user configuration; only the documented, non-secret template is tracked
 .env
 .env.*
 !.env.example
 
-# Editors / operating systems
+# Editors, desktop metadata and temporary files
 .idea/
 .vscode/
 .DS_Store
 Thumbs.db
 desktop.ini
+*.swp
+*.swo
+*~
 
-# Local saves and diagnostics
+# Local saves, experimental databases and diagnostic logs
+# Includes the example save directory from .env.example.
+local-data/
 state.json
-*.log
-logs/
 *.sqlite
 *.sqlite3
 *.db
+*.log
+logs/
 
-# Exported packages / optional fonts
+# External fonts and generated distributions are not source assets
 *.ttf
 *.otf
 *.zip
 *.7z
 *.exe
 *.msi
-build/
-dist/
