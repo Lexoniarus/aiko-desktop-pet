@@ -14,7 +14,9 @@ import time
 import tkinter as tk
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw, ImageGrab
+from PIL import Image, ImageDraw
+
+from tools.media_crop import CapturedFrame, capture_screen, save_sequence
 
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.gui import DesktopPet
@@ -23,7 +25,8 @@ from aiko_pet.personality.catalog import Reaction
 
 ROOT = Path(__file__).resolve().parents[1]
 PREVIEWS = ROOT / "vorschau"
-CAPTURE_BOUNDS = (100, 130, 1260, 898)
+# Capture the complete Xvfb screen and derive a safe crop from mapped Tk
+# window geometry; fixed rectangles used to clip the left side of the toolbar.
 STILLS = (
     "Aiko_Current_Hover.png",
     "Aiko_Current_Hover_Moved.png",
@@ -50,23 +53,18 @@ def settle(pet: DesktopPet) -> None:
     time.sleep(0.07)
 
 
-def live_capture(pet: DesktopPet, name: str) -> Image.Image:
-    """Record real application pixels, not a re-created interface rendering."""
+def live_capture(pet: DesktopPet, name: str) -> CapturedFrame:
+    """Save the real, fully visible Tk windows with a small even border."""
     if name not in STILLS:
         raise ValueError(f"Unknown gallery capture: {name}")
     settle(pet)
-    if not pet.root.winfo_ismapped():
-        raise RuntimeError("Aiko's actual desktop character is not visible")
-    image: Image.Image = ImageGrab.grab(bbox=CAPTURE_BOUNDS).convert("RGB")
-    if image.size != (1160, 768):
-        raise RuntimeError("Unexpected gallery screenshot dimensions")
-    background = Image.new("RGB", image.size, "#202733")
-    if ImageChops.difference(image, background).getbbox() is None:
-        raise RuntimeError("The screenshot contains only the empty desktop")
-    image.save(PREVIEWS / name)
-    print(f"Captured current UI: {name}")
-    return image
-
+    frame = capture_screen(pet.root)
+    frame.save_png(PREVIEWS / name)
+    print(
+        f"Captured {name} at {frame.cropped().width}×"
+        f"{frame.cropped().height}, including all mapped windows"
+    )
+    return frame
 
 def advance_reaction(pet: DesktopPet, index: int) -> None:
     """Advance the actual reaction player to a specific visible cue for media."""
@@ -106,12 +104,12 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     ambient.next_glance_at = now + 200
     pet._animated.render(now, 0, (0, 0))
 
-    frames: list[Image.Image] = []
+    frames: list[CapturedFrame] = []
     durations: list[int] = []
 
     def add_frame(duration_ms: int) -> None:
         settle(pet)
-        frames.append(ImageGrab.grab(bbox=CAPTURE_BOUNDS).convert("RGB"))
+        frames.append(capture_screen(pet.root))
         durations.append(duration_ms)
 
     # Capture the calmer one-pixel sway through the real Tk widget;
@@ -159,11 +157,7 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     for phase in range(8):
         pet._animated.render(back_at + phase * .42 + .01, 0, (0, 0))
         add_frame(420)
-    frames[0].save(
-        PREVIEWS / AMBIENT_GIF, save_all=True,
-        append_images=frames[1:],
-        duration=durations, loop=0, optimize=True, disposal=2,
-    )
+    save_sequence(frames, durations, PREVIEWS / AMBIENT_GIF)
     print(
         f"Captured {len(frames)} real ambient UI frames: {AMBIENT_GIF}"
     )
@@ -184,7 +178,9 @@ def capture_ui() -> None:
             if pet._runtime.scheduled_greeting is not None:
                 pet.root.after_cancel(pet._runtime.scheduled_greeting)
                 pet._runtime.scheduled_greeting = None
-            pet._place_x(610)
+            # Leave enough space for the entire left-anchored hover panel
+            # instead of publishing a clipped toolbar at the screen edge.
+            pet._place_x(850)
             pet._on_enter()
             hover = pet._hover
             bar = hover.toolbar
@@ -245,11 +241,9 @@ def capture_ui() -> None:
                 pet, "Aiko_Current_Reaction_Emote_End.png",
             ))
             pet._reaction_player.cancel()
-            reaction_frames[0].save(
-                PREVIEWS / REACTION_GIF, save_all=True,
-                append_images=reaction_frames[1:],
-                duration=[800, 2400, 2250, 1150],
-                loop=0, disposal=2, optimize=True,
+            save_sequence(
+                reaction_frames, [800, 2400, 2250, 1150],
+                PREVIEWS / REACTION_GIF,
             )
             print(f"Captured four real reaction cues: {REACTION_GIF}")
 
