@@ -91,6 +91,9 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     pet._action_state = "idle"
     pet._reaction_player.cancel()
     pet._speech.hide()
+    # Stop the normal tick: scripted capture timestamps must not be
+    # overridden by a real-time desktop render between GIF frames.
+    pet._runtime.stop()
     if pet._hover.toolbar is not None:
         pet._hover.toolbar.hide()
     pet.settings.auto_walk = False
@@ -111,7 +114,11 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
         frames.append(ImageGrab.grab(bbox=CAPTURE_BOUNDS).convert("RGB"))
         durations.append(duration_ms)
 
-    add_frame(4000)
+    # The neutral pose is no longer a multi-second frozen screenshot:
+    # record eight tiny sways while the feet stay at the same anchor.
+    for phase in range(8):
+        pet._animated.render(now + phase * .42 + .01, 0, (0, 0))
+        add_frame(420)
     ambient.next_blink_at = time.monotonic() - 1
     pet._animated.render(time.monotonic(), 0, (0, 0))
     if not ambient.blinking:
@@ -126,7 +133,11 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     pet._animated.show_frame("idle", at + clip.timings[-1] / 1000 + .002)
     if ambient.blinking or pet._animated.frame_clock.active_key != ("idle", 0):
         raise RuntimeError("Idle blink did not return to the neutral pose")
-    add_frame(4200)
+    # Resume slow motion after all eight blink frames, not during them.
+    rest_at = ambient._motion_started_at
+    for phase in range(8):
+        pet._animated.render(rest_at + phase * .42 + .01, 0, (0, 0))
+        add_frame(420)
 
     ambient.next_glance_at = time.monotonic() - 1
     ambient.next_blink_at = time.monotonic() + 200
@@ -135,10 +146,19 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
         raise RuntimeError("Missing autonomous look")
     if pet._animated.frame_clock.active_key[0] != "look":
         raise RuntimeError("Autonomous look used the wrong sprite set")
-    add_frame(1650)
+    # Hold the same lateral look sprite while its head subtly rocks.
+    look_at = time.monotonic()
+    for phase in range(3):
+        pet._animated.render(look_at + phase * .42, 0, (0, 0))
+        add_frame(420)
+        key = pet._animated.frame_clock.active_key
+        if key is None or key[0] != "look":
+            raise RuntimeError("Autonomous gaze ended before micro-motion")
     ambient.suspend(time.monotonic())
-    pet._animated.show_frame("idle", time.monotonic(), fixed=0)
-    add_frame(3000)
+    back_at = time.monotonic()
+    for phase in range(8):
+        pet._animated.render(back_at + phase * .42 + .01, 0, (0, 0))
+        add_frame(420)
     frames[0].save(
         PREVIEWS / AMBIENT_GIF, save_all=True,
         append_images=frames[1:],
