@@ -67,9 +67,10 @@ class MediaCropTests(unittest.TestCase):
             save_sequence(frames, (100, 140), path)
             with Image.open(path) as gif:
                 self.assertEqual(gif.size, (223, 150))
-                self.assertEqual(gif.n_frames, 2)
                 gif.seek(1)
                 self.assertEqual(gif.size, (223, 150))
+                with self.assertRaises(EOFError):
+                    gif.seek(2)
 
     def test_clipped_window_rejected_instead_of_hidden_by_crop(self) -> None:
         for box in ((-1, 30, 100, 100), (30, 30, 281, 100)):
