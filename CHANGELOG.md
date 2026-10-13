@@ -4,6 +4,21 @@ Aiko Desktop Pet is maintained as a source repository. The dates below describe
 verified GitHub milestones, **not** packaged Windows releases. There is currently
 no separate downloadable installer or published GitHub Release.
 
+## Unreleased — Remove obsolete import and desktop adapters
+
+- Review repository consumers and remove 25 flat-module forwarding files,
+  five old application view modules, the legacy presentation adapter and
+  the desktop compatibility facade (32 files in total).
+- Migrate behavior tests to canonical packages and component owners; remove
+  tests whose sole purpose was keeping old imports or attributes alive.
+- Remove the `ComputerVoice` alias, the `DesktopPet.computer_voice` attribute
+  and unused compatibility re-exports from the desktop bootstrap.
+- Update CI import/type-check commands and enforce application boundaries
+  without exceptions for the removed view modules.
+- Document [import migration](docs/ARCHITECTURE.md#import-migration).
+  Existing launchers, version-one saves, artwork and dialogue are preserved.
+  External Python code using retired paths or desktop attributes must migrate.
+
 ## 2026-10-13 — Public repository polish (PR #3)
 
 [PR #3](https://github.com/Lexoniarus/aiko-desktop-pet/pull/3)
@@ -55,6 +70,7 @@ feature baseline is not a GitHub Release tag or a claim of an installer build.
 
 ## Compatibility approach
 
-Historical module paths and public methods are retained where consumers may
-still use them. A future change that breaks these interfaces or the JSON save
-schema needs explicit migration instructions and new regression tests.
+The current source uses canonical package imports. Retired module paths and
+desktop forwarding attributes are documented in the import migration table.
+Version-one save compatibility is retained; changes to callable interfaces or
+the JSON schema require explicit migration instructions and regression tests.

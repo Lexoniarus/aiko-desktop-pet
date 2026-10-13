@@ -1,6 +1,8 @@
 import unittest
 
-from aiko_pet.domain import MAX_CATCHUP_SECONDS, PetState, bounded
+from aiko_pet.pet.lifecycle import MAX_CATCHUP_SECONDS
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.value_rules import bounded
 
 
 class PetStateTests(unittest.TestCase):

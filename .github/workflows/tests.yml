@@ -64,8 +64,8 @@ jobs:
       - name: Type-check new headless core policies
         run: |
           python -m mypy --strict --follow-imports=silent \
-            aiko_pet/adaptive_policy.py aiko_pet/dialogue_events.py \
-            aiko_pet/movement.py aiko_pet/reaction_playback.py
+            aiko_pet/personality/adaptive_policy.py aiko_pet/personality/click_policy.py \
+            aiko_pet/presentation/movement.py aiko_pet/presentation/reaction_playback.py
       - name: Enforce PEP 8 line lengths across application and tools
         run: python -m ruff check --select E501 aiko_pet main.py tools
       - name: Install whole-application typing dependencies
@@ -90,7 +90,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Import all desktop components on Windows
-        run: python -c "import aiko_pet.gui, aiko_pet.desktop_input, aiko_pet.window_stack, aiko_pet.taskbar"
+        run: python -c "import aiko_pet.gui, aiko_pet.desktop.global_input, aiko_pet.desktop.window_stack, aiko_pet.desktop.taskbar"
       - name: Check Windows desktop boundaries without opening GUI windows
         shell: pwsh
         run: |
@@ -98,6 +98,7 @@ jobs:
             "test_taskbar.py",
             "test_window_stack.py",
             "test_desktop_input.py",
+            "test_desktop_boundary.py",
             "test_gaze.py",
             "test_entrypoints_env.py",
             "test_storage.py",

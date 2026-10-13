@@ -6,24 +6,24 @@ import unittest
 from dataclasses import FrozenInstanceError
 from datetime import datetime
 
-from aiko_pet.care_actions import (
+from aiko_pet.pet.care_actions import (
     CareTransition,
     apply_care_action,
     plan_care_action,
 )
-from aiko_pet.domain import PetState
-from aiko_pet.friendship import (
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.friendship import (
     award_friendship_for_care,
     calculate_friendship_reward,
 )
-from aiko_pet.need_decay import apply_need_decay, calculate_need_decay
-from aiko_pet.pet_lifecycle import (
+from aiko_pet.pet.need_decay import apply_need_decay, calculate_need_decay
+from aiko_pet.pet.lifecycle import (
     advance_pet_time,
     apply_daily_routine,
     calculate_daily_routine,
     plan_pet_time,
 )
-from aiko_pet.routine import context_at
+from aiko_pet.pet.routine import context_at
 
 START = datetime(2026, 10, 12, 12).timestamp()
 

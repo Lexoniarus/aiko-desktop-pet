@@ -109,8 +109,8 @@ titles or unapproved personal activity details.
   dedicated services under `desktop/`. The runtime consumes named
   `DesktopTickPorts` callbacks instead of inheriting private GUI stages;
   `DesktopPreferences` coordinates setting effects without duplicate state.
-  The typed forwards in `desktop/compatibility.py` remain only for
-  historical callers and must not be used by new integrations.
+  The old desktop forwarding facade has been removed; integrations must
+  use typed application contracts rather than private desktop components.
 - `ActivityCoordinator` owns pet time progression during desktop ticks and
   before persistence; `DesktopPersistence` writes the supplied state without
   advancing the pet or choosing sleep policy.
@@ -121,8 +121,9 @@ titles or unapproved personal activity details.
 - The hover/status/settings widgets **already** use immutable view models
   and narrow callbacks, with a separate `HoverUi` owner; guard this direction
   against new direct `DesktopPet` references in future changes.
-- Migrate flat domain/monitoring modules into package directories gradually,
-  retaining compatibility imports throughout.
+- Canonical domain/monitoring packages are the only import owners. The old
+  forwarding modules have been removed; see the current architecture guide
+  for the import migration table.
 - Consider an outbound application event stream only when a consumer exists.
   A general-purpose event bus is intentionally not introduced prematurely.
 
@@ -131,7 +132,7 @@ titles or unapproved personal activity details.
 Adaptive observations, conversation decisions, workload event detection
 and work-session context now have explicit canonical modules in
 `aiko_pet/personality/`. The detector's descriptive English name is
-`WorkloadEventDetector`; old `ComputerVoice` imports are aliases.
+`WorkloadEventDetector`; the old `ComputerVoice` alias has been removed.
 Presentation-owned cue scheduling lives in
 `presentation/reaction_playback.py`. Neither the API contract nor any
 German authored responses have changed.
@@ -147,8 +148,8 @@ integration or network access were added.
 
 ## Persistence infrastructure contract
 
-`infrastructure/persistence.py` owns the only state JSON repository;
-`storage.py` is a legacy import façade. Application session restoration
+`infrastructure/persistence.py` owns the only state JSON repository.
+Application session restoration
 consumes its typed load port and keeps bounded time catch-up outside
 the repository. Old save path precedence and version-one schema are
 preserved, including relative environment-variable overrides.
@@ -156,12 +157,14 @@ preserved, including relative environment-variable overrides.
 ## Migration safety
 
 Existing entrypoints, stored JSON schema, dialogue catalogue, and user-facing
-care methods remain in place. The new application components live alongside
-the old modules as an incremental dependency cutover. The animated character
+care methods remain in place. Obsolete module paths and the desktop forwarding
+facade have been removed after the repository usage review; external Python
+callers should follow [the import migration table](ARCHITECTURE.md#import-migration).
+The animated character
 is now `AnimatedPet`, the accessory-window owner is `HoverUi`, and the
 desktop shell `DesktopPet` connects them through narrowly scoped callback
 ports. View snapshots are produced by `DesktopPresentation`, not the Tk
-windows themselves. `DesktopViewSource` is a legacy presentation subclass.
+windows themselves. The old `DesktopViewSource` adapter has been removed.
 No migrations or extra runtime libraries are necessary.
 
 

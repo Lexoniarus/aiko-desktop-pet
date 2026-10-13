@@ -16,10 +16,9 @@ from tkinter import messagebox
 from .application.session import PetSessionRestorer
 from .application.settings import SettingKey
 from .application.activity import ActivityCallbacks, ActivityCoordinator
-from .desktop.compatibility import DesktopCompatibility
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import (
-    DesktopRuntime, DesktopTickPorts, TICK_MILLISECONDS as TICK_MILLISECONDS,
+    DesktopRuntime, DesktopTickPorts,
 )
 from .desktop.persistence import DesktopPersistence
 from .desktop.maintenance import DesktopMaintenance
@@ -29,10 +28,6 @@ from .application.controller import CareController, CareRuntime
 from .ui.hover_ui import HoverUi, HoverUiPorts
 from .application.router import ApplicationRouter
 from .presentation.read_models import DesktopPresentation
-from .presentation.animation import (
-    FRAME_COUNTS as FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
-    FrameClock as FrameClock,
-)
 from .config import load_env_file
 from .desktop.global_input import idle_seconds_windows
 from .desktop.input import DesktopInput, DesktopInputActions
@@ -40,32 +35,20 @@ from .desktop.lifecycle import DesktopLifecycle
 from .personality.mind import AikoMind
 from .personality.workload_events import WorkloadEventDetector
 from .personality.catalog import Reaction
-from .presentation.movement import WalkController as WalkController
 from .pet.routine import TimeContext, context_at
-from .personality.reaction_sequence import Cue as Cue, EMOTES as EMOTES
 from .presentation.reaction_playback import ReactionPlayer, choose_idle_emote
 from .infrastructure.persistence import StateStore
 from .infrastructure.hardware.monitor import ActivityMonitor
-from .desktop.geometry import TaskbarTrack as TaskbarTrack
 from .ui.desktop_window import (
-    DesktopWindow, FRAME_WIDTH as FRAME_WIDTH,
-    FRAME_HEIGHT as FRAME_HEIGHT, MAGENTA as MAGENTA,
+    DesktopWindow, MAGENTA,
 )
 from .desktop.window_stack import WindowStack
-from .asset_paths import (
-    ASSETS as ASSETS,
-    EMOTE_ASSETS as EMOTE_ASSETS,
-    SCI_FI_UI as SCI_FI_UI,
-)
-from .ui.action_toolbar import ActionToolbar as ActionToolbar
 from .ui.animated_pet import AnimatedPet, AnimatedPorts
-from .ui.settings_popup import SettingsPopup as SettingsPopup
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
-from .ui.status_panel import StatusPanel as StatusPanel
 
 
-class DesktopPet(DesktopCompatibility):
-    """Compose one desktop session; keep historical public GUI entrypoints.
+class DesktopPet:
+    """Compose one desktop session from its owning components.
 
     Character, settings, input, window and simulation behavior belong to
     their respective components, not to a second state stored on this shell.
@@ -126,7 +109,6 @@ class DesktopPet(DesktopCompatibility):
             CareController(self.state, self.mind, self.adaptive),
         )
         self.workload_events = WorkloadEventDetector()
-        self.computer_voice = self.workload_events  # Legacy public attribute.
         self.activity_monitor = activity_monitor or ActivityMonitor()
         self.activity_monitor.set_enabled(self.settings.observe_computer)
         self._activity = ActivityCoordinator(
@@ -548,7 +530,7 @@ class DesktopPet(DesktopCompatibility):
             self._save()
 
     def _tick(self) -> None:
-        """Compatibility entrypoint; DesktopRuntime owns phase ordering."""
+        """Run the desktop scheduler, which owns update phase ordering."""
         self._runtime.tick()
 
     def _save(self) -> None:

@@ -5,10 +5,12 @@ from __future__ import annotations
 import tkinter as tk
 import unittest
 
-from aiko_pet.application.hover_projection import project_hover
-from aiko_pet.domain import PetState
-from aiko_pet.routine import context_at
-from aiko_pet.system_activity import ComputerSnapshot
+from aiko_pet.application.read_snapshot import snapshot_pet
+
+from aiko_pet.presentation.projections import project_hover
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import context_at
+from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.action_toolbar import ActionToolbar
 from aiko_pet.ui.hover_contracts import HoverActions, HoverAnchor
 
@@ -37,7 +39,7 @@ class IndependentHoverTests(unittest.TestCase):
         self.panel = ActionToolbar(
             self.root,
             snapshot=lambda: project_hover(
-                self.state, context_at(1_781_000_000),
+                snapshot_pet(self.state), context_at(1_781_000_000),
                 ComputerSnapshot(cpu=42), observe_computer=True,
             ),
             anchor=lambda: self.anchor,

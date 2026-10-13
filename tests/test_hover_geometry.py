@@ -2,7 +2,7 @@
 
 import unittest
 
-from aiko_pet.application.view_models import HoverAnchor
+from aiko_pet.presentation.contracts import HoverAnchor
 from aiko_pet.ui.hover_geometry import HoverGeometry, Rect
 
 

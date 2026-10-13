@@ -3,8 +3,8 @@
 import unittest
 from datetime import datetime
 
-from aiko_pet.domain import PetState
-from aiko_pet.routine import context_at
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import context_at
 
 
 def local_time(day, hour, minute=0):

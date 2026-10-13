@@ -41,7 +41,6 @@ class AttentionCoordinator:
         self.settings = settings
         self.mind = mind
         self.workload_events = voice
-        self.voice = voice  # Historical attribute for existing consumers.
         self.monitor = monitor
         self.router = router
         self.last_spoken = -1000.0

@@ -4,13 +4,13 @@ import unittest
 from dataclasses import replace
 from unittest.mock import patch
 
-from aiko_pet.animation import (
+from aiko_pet.presentation.animation import (
     FrameClock,
     SpriteSelection,
     choose_passive_animation,
 )
-from aiko_pet.movement import WalkConditions, WalkController
-from aiko_pet.taskbar import TaskbarTrack
+from aiko_pet.presentation.movement import WalkConditions, WalkController
+from aiko_pet.desktop.geometry import TaskbarTrack
 
 
 class FrameClockTests(unittest.TestCase):
@@ -142,14 +142,14 @@ class WalkControllerTests(unittest.TestCase):
                 self.assertEqual(self.walker.remaining_distance, 0)
 
     def test_energy_defers_walk_but_sets_next_departure(self) -> None:
-        with patch("aiko_pet.movement.random.uniform", return_value=6):
+        with patch("aiko_pet.presentation.movement.random.uniform", return_value=6):
             self.assertIsNone(self.walker.plan_step(self.conditions(energy=19)))
         self.assertEqual(self.walker.next_walk_at, 21)
         self.assertEqual(self.walker.remaining_distance, 0)
 
     def test_edge_direction_and_quiet_interval(self) -> None:
-        with patch("aiko_pet.movement.random.uniform", return_value=20), patch(
-            "aiko_pet.movement.random.randint", return_value=100,
+        with patch("aiko_pet.presentation.movement.random.uniform", return_value=20), patch(
+            "aiko_pet.presentation.movement.random.randint", return_value=100,
         ):
             step = self.walker.plan_step(self.conditions(x=0, quiet_period=True))
         assert step is not None

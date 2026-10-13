@@ -6,10 +6,11 @@ import tkinter as tk
 import unittest
 from pathlib import Path
 
-from aiko_pet.dialogue import CATALOGUE, DialogueBook, Line, Reaction
-from aiko_pet.gui import DesktopPet, EMOTE_ASSETS, SCI_FI_UI
-from aiko_pet.reaction_sequence import EMOTES, Cue, compose_cues
-from aiko_pet.storage import StateStore
+from aiko_pet.personality.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.gui import DesktopPet
+from aiko_pet.asset_paths import EMOTE_ASSETS, SCI_FI_UI
+from aiko_pet.personality.reaction_sequence import EMOTES, Cue, compose_cues
+from aiko_pet.infrastructure.persistence import StateStore
 
 
 class EmoteDomainTests(unittest.TestCase):
@@ -75,29 +76,29 @@ class EmoteTkTests(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         self.pet = DesktopPet(store=StateStore(Path(temp.name) / 'state.json'))
         self.addCleanup(self.pet.quit)
-        if self.pet._scheduled_greeting:
-            self.pet.root.after_cancel(self.pet._scheduled_greeting)
-            self.pet._scheduled_greeting = None
+        if self.pet._runtime.scheduled_greeting:
+            self.pet.root.after_cancel(self.pet._runtime.scheduled_greeting)
+            self.pet._runtime.scheduled_greeting = None
         self.pet.settings.auto_routine = False
         self.pet.state.sleeping = False
-        if self.pet._scheduled_tick is not None:
-            self.pet.root.after_cancel(self.pet._scheduled_tick)
-        self.pet._scheduled_tick = None
+        if self.pet._runtime.scheduled_tick is not None:
+            self.pet.root.after_cancel(self.pet._runtime.scheduled_tick)
+        self.pet._runtime.scheduled_tick = None
 
     def progress(self, milliseconds: int) -> None:
         time.sleep(milliseconds/1000)
         self.pet.root.update()
 
     def is_emote(self) -> bool:
-        if not self.pet._bubble:
+        if not self.pet._speech.bubble:
             return False
-        first = self.pet._bubble.winfo_children()[0]
+        first = self.pet._speech.bubble.winfo_children()[0]
         return isinstance(first, tk.Label) and bool(first.cget('image'))
 
     def bubble_text(self) -> str | None:
-        if not self.pet._bubble or self.is_emote():
+        if not self.pet._speech.bubble or self.is_emote():
             return None
-        return self.pet._bubble.winfo_children()[0].winfo_children()[0].cget('text')
+        return self.pet._speech.bubble.winfo_children()[0].winfo_children()[0].cget('text')
 
     def test_three_beats_replace_each_other_and_never_overlap(self):
         reaction = Reaction('test','...Oh.', 'idle', 'click_left',
@@ -113,7 +114,7 @@ class EmoteTkTests(unittest.TestCase):
         self.assertTrue(self.is_emote())
         self.assertEqual(len(self.pet._overlay_windows()), 2)
         self.progress(950)
-        self.assertIsNone(self.pet._bubble)
+        self.assertIsNone(self.pet._speech.bubble)
 
     def test_multiple_speech_lines_and_visual_after(self):
         reaction = Reaction('test','Oh.', 'waiting', 'click_left',
@@ -136,7 +137,7 @@ class EmoteTkTests(unittest.TestCase):
         self.assertEqual(self.bubble_text(), 'Jetzt hier.')
         self.progress(800)
         self.assertEqual(self.bubble_text(), 'Jetzt hier.')
-        self.assertIsNone(self.pet._followup_timeout)
+        self.assertIsNone(self.pet._reaction_player.pending_timer)
 
     def test_rapid_click_burst_does_not_stick_on_intro_emotes(self):
         reaction = Reaction('rapid','Ich höre dich.', 'idle', 'rapid_click',
@@ -149,14 +150,14 @@ class EmoteTkTests(unittest.TestCase):
         self.pet._react(Reaction('x','Ich rede.', 'idle','click_left'))
         self.pet._idle_emote()
         self.assertEqual(self.bubble_text(), 'Ich rede.')
-        self.pet._hide_bubble()
+        self.pet._speech.hide()
         self.pet.state.mood=3
         self.pet._idle_emote()
         self.assertTrue(self.is_emote())
 
     def test_hud_uses_kenney_assets_and_keeps_six_values(self):
         self.pet._on_enter()
-        bar = self.pet.toolbar
+        bar = self.pet._hover.toolbar
         assert bar is not None
         self.pet.root.update_idletasks()
         self.assertTrue(bar.today.cget('image'))

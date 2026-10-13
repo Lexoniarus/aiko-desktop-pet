@@ -5,8 +5,8 @@ from __future__ import annotations
 import unittest
 from collections.abc import Callable
 
-from aiko_pet.dialogue import Reaction
-from aiko_pet.reaction_playback import ReactionPlayer, choose_idle_emote
+from aiko_pet.personality.catalog import Reaction
+from aiko_pet.presentation.reaction_playback import ReactionPlayer, choose_idle_emote
 
 
 class FakeScheduler:

@@ -75,7 +75,7 @@ The source is organized by responsibility rather than by window or feature versi
 | `aiko_pet/desktop/` | Tk runtime, native Windows window/input handling and preferences |
 | `aiko_pet/infrastructure/` | Hardware providers and versioned local JSON persistence |
 
-The bootstrap is `aiko_pet/gui.py`. Former flat-module paths remain as compatibility imports, not parallel implementations. [Architecture and dependency rules →](docs/ARCHITECTURE.md)
+The bootstrap is `aiko_pet/gui.py`. Imports use the owning packages directly; obsolete flat-module paths have been removed. See the architecture guide for the import migration table. [Architecture and dependency rules →](docs/ARCHITECTURE.md)
 
 ### Tests
 

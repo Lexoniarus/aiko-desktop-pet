@@ -7,13 +7,15 @@ import unittest
 from unittest.mock import patch
 from types import SimpleNamespace
 
-import aiko_pet.system_activity as activity
-from aiko_pet.dialogue import ComputerVoice, DialogueBook
-from aiko_pet.system_activity import (
-    ActivityMonitor, ComputerSnapshot, HardwareSampler, load_percent,
-    parse_nvidia_reading, percent_label, workload_description,
-    workload_intensity,
-)
+from aiko_pet.infrastructure.hardware import os_sensors as activity
+from aiko_pet.personality.workload_events import WorkloadEventDetector
+from aiko_pet.personality.catalog import DialogueBook
+from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
+from aiko_pet.telemetry import ComputerSnapshot, workload_intensity
+from aiko_pet.infrastructure.hardware.sampler import HardwareSampler
+from aiko_pet.infrastructure.hardware.os_sensors import load_percent
+from aiko_pet.infrastructure.hardware.nvidia import parse_nvidia_reading
+from aiko_pet.infrastructure.hardware.metrics import percent_label, workload_description
 
 
 def reading(**kwargs):
@@ -169,10 +171,10 @@ class VoiceTests(unittest.TestCase):
         ]
         for values, expected in cases:
             with self.subTest(values=values):
-                self.assertEqual(ComputerVoice.classify(reading(**values)), expected)
+                self.assertEqual(WorkloadEventDetector.classify(reading(**values)), expected)
 
     def test_brief_gpu_spike_must_not_claim_exhaustion(self):
-        voice = ComputerVoice()
+        voice = WorkloadEventDetector()
         self.assertIsNone(voice.observe_change(reading(cpu=8, gpu=10), 1000))
         self.assertEqual(voice.observe_change(
             ComputerSnapshot(cpu=12, gpu=96, measured_at=1006), 1006,
@@ -185,7 +187,7 @@ class VoiceTests(unittest.TestCase):
         ))
 
     def test_sustained_heavy_gpu_load_has_distinct_after_work_reaction(self):
-        voice = ComputerVoice()
+        voice = WorkloadEventDetector()
         self.assertIsNone(voice.observe_change(reading(cpu=7, gpu=5, ram=42), 1000))
         self.assertEqual(voice.observe_change(ComputerSnapshot(
             cpu=9, gpu=95, ram=42, measured_at=1006,
@@ -208,7 +210,7 @@ class VoiceTests(unittest.TestCase):
         ), 1036))
 
     def test_gradual_rampdown_still_remembers_recent_heavy_phase(self):
-        voice = ComputerVoice()
+        voice = WorkloadEventDetector()
         voice.observe_change(reading(cpu=5, gpu=5), 1000)
         voice.observe_change(ComputerSnapshot(cpu=80, measured_at=1006), 1006)
         voice.observe_change(ComputerSnapshot(cpu=85, measured_at=1024), 1024)
@@ -218,7 +220,7 @@ class VoiceTests(unittest.TestCase):
         ), 1036), "computer_effort_recovered")
 
     def test_initial_high_workload_is_not_ignored(self):
-        voice = ComputerVoice()
+        voice = WorkloadEventDetector()
         snap = ComputerSnapshot(cpu=16, gpu=97, ram=52, measured_at=1000)
         self.assertEqual(voice.observe_change(snap, 1000), "computer_effort_rising")
         self.assertIsNone(voice.observe_change(snap, 1001))
@@ -231,14 +233,14 @@ class VoiceTests(unittest.TestCase):
         ):
             before, after = values
             with self.subTest(after=after):
-                voice = ComputerVoice()
+                voice = WorkloadEventDetector()
                 voice.observe_change(ComputerSnapshot(**before, measured_at=1000), 1000)
                 self.assertEqual(voice.observe_change(
                     ComputerSnapshot(**after, measured_at=1006), 1006),
                     "computer_effort_rising")
 
     def test_stale_duplicate_or_unknown_samples_are_ignored(self):
-        voice = ComputerVoice()
+        voice = WorkloadEventDetector()
         self.assertIsNone(voice.observe_change(ComputerSnapshot(), 1100))
         self.assertIsNone(voice.observe_change(ComputerSnapshot(
             cpu=95, measured_at=1000,
@@ -258,7 +260,7 @@ class VoiceTests(unittest.TestCase):
         ), 1120), "computer_effort_rising")
 
     def test_spontaneous_voice_is_bounded_and_stale_cannot_speak(self):
-        voice = ComputerVoice(rng=random.Random(1))
+        voice = WorkloadEventDetector(rng=random.Random(1))
         self.assertIsNone(voice.maybe_event(ComputerSnapshot(cpu=95), 1000))
         self.assertIsNone(voice.maybe_event(reading(cpu=95), 1100))
         self.assertEqual(voice.maybe_event(reading(cpu=95), 1000),

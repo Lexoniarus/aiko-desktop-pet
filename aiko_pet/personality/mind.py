@@ -1,7 +1,6 @@
 """Situational dialogue decisions for Aiko's offline desktop personality.
 
-The authored dialogue catalogue and its validation live in dialogue_catalog.
-Legacy module exports remain available to callers importing aiko_pet.dialogue.
+The authored dialogue catalogue and its validation live in personality.catalog.
 """
 
 from __future__ import annotations
@@ -23,7 +22,6 @@ from .catalog import (
 from .click_policy import ClickButton, choose_click_reaction
 from ..pet.state import PetState
 from ..pet.routine import TimeContext
-from .workload_events import ComputerVoice as ComputerVoice
 from .work_episode import WorkEpisodeMemory
 
 

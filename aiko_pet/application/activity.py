@@ -49,7 +49,6 @@ class ActivityCoordinator:
         self.mind = mind
         self.adaptive = adaptive
         self.workload_events = voice
-        self.voice = voice  # Historical attribute for existing consumers.
         self.monitor = monitor
         self.callbacks = callbacks
         self.last_hardware_sample = 0.0

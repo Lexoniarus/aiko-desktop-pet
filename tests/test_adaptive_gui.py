@@ -8,8 +8,8 @@ from unittest.mock import patch
 import tkinter as tk
 
 from aiko_pet.gui import DesktopPet
-from aiko_pet.storage import StateStore
-from aiko_pet.system_activity import ComputerSnapshot
+from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.telemetry import ComputerSnapshot
 
 
 class AdaptiveGuiTests(unittest.TestCase):
@@ -35,14 +35,14 @@ class AdaptiveGuiTests(unittest.TestCase):
         snap = ComputerSnapshot(cpu=94, ram=40, measured_at=now)
         with patch.object(self.app.activity_monitor, "latest", return_value=snap), \
              patch("aiko_pet.gui.idle_seconds_windows", return_value=0):
-            self.app._observe_adaptive(now + 0.1, time.time())
+            self.app._activity.observe_adaptive(now + 0.1, time.time())
             self.assertIsNotNone(self.app.adaptive.current)
             observed = self.app.adaptive.current
             assert observed is not None
             self.assertTrue(observed.focused)
             self.assertIs(self.app.mind.situation, self.app.adaptive.current)
             previous = self.app.adaptive.current
-            self.app._observe_adaptive(now + 5, time.time() + 5)
+            self.app._activity.observe_adaptive(now + 5, time.time() + 5)
             self.assertIs(self.app.adaptive.current, previous)
 
     def test_learning_switch_does_not_disable_live_load_or_forget_data(self):
@@ -51,7 +51,7 @@ class AdaptiveGuiTests(unittest.TestCase):
         snap = ComputerSnapshot(gpu=98, ram=55, measured_at=now)
         with patch.object(self.app.activity_monitor, "latest", return_value=snap), \
              patch("aiko_pet.gui.idle_seconds_windows", return_value=220):
-            self.app._observe_adaptive(now + 0.2, time.time())
+            self.app._activity.observe_adaptive(now + 0.2, time.time())
         observed = self.app.adaptive.current
         assert observed is not None
         self.assertTrue(observed.focused)
@@ -66,10 +66,10 @@ class AdaptiveGuiTests(unittest.TestCase):
 
     def test_settings_popup_exposes_learning_and_reset_controls(self):
         self.app._on_enter()
-        bar = self.app.toolbar
+        bar = self.app._hover.toolbar
         assert bar is not None
         bar.settings_button.invoke()
-        popup = self.app.settings_popup
+        popup = self.app._hover.settings_popup
         assert popup is not None
         self.assertIn("learn_rhythm", popup.values)
         text = [child.cget("text") for child in
@@ -83,9 +83,9 @@ class AdaptiveGuiTests(unittest.TestCase):
         now = time.monotonic()
         snap = ComputerSnapshot(cpu=92, ram=40, measured_at=now)
         with patch.object(self.app.activity_monitor, "latest", return_value=snap):
-            self.app._observe_adaptive(now + 0.1, time.time())
-            self.app.open_status()
-            panel = self.app.status_panel
+            self.app._activity.observe_adaptive(now + 0.1, time.time())
+            self.app._hover.open_status()
+            panel = self.app._hover.status_panel
             assert panel is not None
             self.assertIn("Mein Rhythmus:", panel.life_label.cget("text"))
             self.assertIn("Beanspruchung", panel.life_label.cget("text"))

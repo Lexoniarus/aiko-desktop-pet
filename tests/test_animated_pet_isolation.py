@@ -7,11 +7,11 @@ import tkinter as tk
 import unittest
 from unittest.mock import patch
 
-from aiko_pet.adaptive import AdaptiveRoutine
-from aiko_pet.domain import PetState
-from aiko_pet.storage import PetSettings
-from aiko_pet.system_activity import ComputerSnapshot
-from aiko_pet.taskbar import TaskbarTrack
+from aiko_pet.personality.adaptive import AdaptiveRoutine
+from aiko_pet.pet.state import PetState
+from aiko_pet.application.settings import PetSettings
+from aiko_pet.telemetry import ComputerSnapshot
+from aiko_pet.desktop.geometry import TaskbarTrack
 from aiko_pet.ui.animated_pet import AnimatedPet, AnimatedPorts
 
 

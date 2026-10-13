@@ -11,33 +11,20 @@ from unittest.mock import patch
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.persistence import (
-    SCHEMA_VERSION, StateStore, default_save_path,
+    StateStore, default_save_path,
 )
 from aiko_pet.pet.state import PetState
-from aiko_pet.storage import (
-    SCHEMA_VERSION as LegacyVersion,
-    PetSettings as LegacySettings,
-    StateStore as LegacyStore,
-    default_save_path as legacy_save_path,
-)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class PersistencePackageTests(unittest.TestCase):
-    def test_legacy_repository_imports_preserve_exact_types(self) -> None:
-        self.assertIs(LegacyStore, StateStore)
-        self.assertIs(LegacySettings, PetSettings)
-        self.assertIs(legacy_save_path, default_save_path)
-        self.assertEqual(LegacyVersion, SCHEMA_VERSION)
-        self.assertEqual(SCHEMA_VERSION, 1)
-
     def test_relative_save_override_is_still_based_on_repository_root(self) -> None:
         with patch.dict(os.environ, {"AIKO_SAVE_PATH": "test-saves/local.json"}):
             self.assertEqual(
                 default_save_path(), ROOT / "test-saves" / "local.json",
             )
-            self.assertEqual(legacy_save_path(), default_save_path())
 
     def test_absolute_save_override_does_not_change(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

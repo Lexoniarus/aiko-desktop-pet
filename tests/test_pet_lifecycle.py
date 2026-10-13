@@ -6,19 +6,16 @@ import unittest
 from dataclasses import dataclass
 from datetime import datetime
 
-from aiko_pet.domain import (
-    MAX_CATCHUP_SECONDS,
-    MAX_LIVE_EFFORT_SECONDS,
-    PetState,
-)
-from aiko_pet.need_decay import apply_need_decay
-from aiko_pet.pet_lifecycle import (
+from aiko_pet.pet.lifecycle import MAX_CATCHUP_SECONDS, MAX_LIVE_EFFORT_SECONDS
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.need_decay import apply_need_decay
+from aiko_pet.pet.lifecycle import (
     MAX_CATCHUP_SECONDS as POLICY_CATCHUP,
     MAX_LIVE_EFFORT_SECONDS as POLICY_LIVE_WINDOW,
     advance_pet_time,
     apply_daily_routine,
 )
-from aiko_pet.routine import context_at
+from aiko_pet.pet.routine import context_at
 
 
 @dataclass

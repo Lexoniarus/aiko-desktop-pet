@@ -7,14 +7,14 @@ import unittest
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-from aiko_pet.adaptive import AdaptiveRoutine
+from aiko_pet.personality.adaptive import AdaptiveRoutine
 from aiko_pet.application.commands import CareCommand, NotificationCommand
 from aiko_pet.application.controller import CareController, CareRuntime
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.application.inbox import NotificationInbox
 from aiko_pet.application.router import ApplicationRouter
-from aiko_pet.dialogue import AikoMind
-from aiko_pet.domain import PetState
+from aiko_pet.personality.mind import AikoMind
+from aiko_pet.pet.state import PetState
 
 
 def runtime(*, wall_time: float | None = None) -> CareRuntime:

@@ -6,17 +6,18 @@ import random
 import unittest
 from unittest.mock import patch
 
-from aiko_pet.adaptive import AdaptiveRoutine
+from aiko_pet.personality.adaptive import AdaptiveRoutine
 from aiko_pet.application.attention import AttentionCoordinator
 from aiko_pet.application.commands import NotificationCommand
 from aiko_pet.application.controller import CareController
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.application.router import ApplicationRouter
-from aiko_pet.dialogue import AikoMind, ComputerVoice
-from aiko_pet.domain import PetState
-from aiko_pet.routine import context_at
-from aiko_pet.storage import PetSettings
-from aiko_pet.system_activity import ComputerSnapshot
+from aiko_pet.personality.mind import AikoMind
+from aiko_pet.personality.workload_events import WorkloadEventDetector
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import context_at
+from aiko_pet.application.settings import PetSettings
+from aiko_pet.telemetry import ComputerSnapshot
 
 
 class StaticReadings:
@@ -29,7 +30,7 @@ class AttentionPolicyTests(unittest.TestCase):
         self.state = PetState()
         self.settings = PetSettings()
         self.mind = AikoMind(rng=random.Random(7))
-        self.voice = ComputerVoice(rng=random.Random(8))
+        self.voice = WorkloadEventDetector(rng=random.Random(8))
         self.router = ApplicationRouter(
             CareController(self.state, self.mind, AdaptiveRoutine()),
         )

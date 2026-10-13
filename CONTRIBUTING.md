@@ -40,7 +40,7 @@ CI pins Ruff and Mypy and verifies source and tests with Pyright. Consult [the w
 - **Typed application ports:** do not import or manipulate Tk from `application/` or put OS sensors in the pet domain.
 - **UI ownership:** `AnimatedPet` handles character animation; `HoverUi` handles accessory windows. Coordinate through named callbacks.
 - **Save compatibility:** preserve the version-one save schema and `AIKO_SAVE_PATH` behavior unless migration is explicitly designed.
-- **Legacy public imports:** do not delete compatibility shims or rename public entrypoints without a migration and regression coverage.
+- **Canonical imports:** import classes and functions from their owning packages. Removed flat-module paths and desktop forwarding attributes are listed in [the migration guide](docs/ARCHITECTURE.md#import-migration). Keep regression coverage and document changes to callable interfaces.
 - **Language:** technical docs and code identifiers in English; authored UI text and Aiko's dialogue remain in German.
 
 A real Windows smoke test is required for window focus, transparency, taskbar placement, mouse handling, reaction timers or GPU sampling changes.

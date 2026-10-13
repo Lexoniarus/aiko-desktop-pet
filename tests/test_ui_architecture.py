@@ -166,14 +166,6 @@ class UiDependencyRules(unittest.TestCase):
                         for name in imports),
                 )
 
-    def test_system_activity_remains_only_compatibility_exports(self) -> None:
-        source = (ROOT / "system_activity.py").read_text("utf-8")
-        self.assertLessEqual(len(source.splitlines()), 50)
-        tree = ast.parse(source)
-        self.assertFalse(any(
-            isinstance(node, (ast.ClassDef, ast.FunctionDef))
-            for node in tree.body
-        ))
 
     def test_domain_policies_never_call_pet_private_methods(self) -> None:
         forbidden = {
@@ -280,14 +272,6 @@ class UiDependencyRules(unittest.TestCase):
                 ):
                     self.assertNotIn(expression, source)
 
-    def test_view_contract_compatibility_has_no_parallel_classes(self) -> None:
-        tree = ast.parse(
-            (ROOT / "application/view_models.py").read_text("utf-8"),
-        )
-        self.assertFalse(any(
-            isinstance(node, ast.ClassDef)
-            for node in tree.body
-        ))
 
     def test_runtime_consumes_named_ports_not_legacy_private_stages(self) -> None:
         source = (ROOT / "desktop/runtime.py").read_text("utf-8")
@@ -377,24 +361,6 @@ class UiDependencyRules(unittest.TestCase):
         self.assertNotIn("from ..taskbar import", sprite)
         self.assertNotIn("from ..taskbar import", desktop_window)
 
-    def test_native_platform_behaviour_has_one_package_owner(self) -> None:
-        for relative in (
-            "taskbar.py", "window_stack.py", "desktop_input.py",
-            "animation.py", "gaze.py", "movement.py",
-        ):
-            with self.subTest(module=relative):
-                tree = ast.parse((ROOT / relative).read_text("utf-8"))
-                self.assertFalse(any(
-                    isinstance(node, (ast.ClassDef, ast.FunctionDef))
-                    for node in tree.body
-                ))
-
-    def test_legacy_state_store_has_no_duplicate_repository(self) -> None:
-        tree = ast.parse((ROOT / "storage.py").read_text("utf-8"))
-        self.assertFalse(any(
-            isinstance(node, (ast.ClassDef, ast.FunctionDef))
-            for node in tree.body
-        ))
 
     def test_application_services_never_import_tkinter(self) -> None:
         for path in (ROOT / "application").glob("*.py"):

@@ -1,18 +1,13 @@
-"""Application-owned preference model and legacy import compatibility."""
+"""Application-owned preferences preserve saved defaults and validation."""
 
 from __future__ import annotations
 
 import unittest
 
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.storage import PetSettings as LegacyPetSettings
 
 
 class PetSettingsModelTests(unittest.TestCase):
-    def test_legacy_storage_import_keeps_exact_type_identity(self) -> None:
-        self.assertIs(LegacyPetSettings, PetSettings)
-        self.assertIsInstance(LegacyPetSettings(), PetSettings)
-
     def test_existing_settings_schema_and_defaults_are_unchanged(self) -> None:
         settings = PetSettings()
         self.assertEqual(

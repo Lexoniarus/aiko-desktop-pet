@@ -9,11 +9,11 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.adaptive_models import AdaptiveMemory
+from aiko_pet.personality.adaptive_models import AdaptiveMemory
 from aiko_pet.application.session import PetSessionRestorer
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.domain import PetState
-from aiko_pet.storage import StateStore
+from aiko_pet.pet.state import PetState
+from aiko_pet.infrastructure.persistence import StateStore
 
 # Choose a fixed local afternoon; DST and CI host timezone must not matter.
 NOW = datetime(2026, 10, 12, 15).astimezone().timestamp()

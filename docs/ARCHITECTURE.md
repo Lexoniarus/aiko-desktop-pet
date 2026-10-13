@@ -2,7 +2,7 @@
 
 Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tkinter and prepared PNG artwork. The program requires no remote services or inference model at runtime. This document describes the **current code structure**, not the original v0.7–v0.13 implementation history.
 
-The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Some public imports from earlier versions are retained for compatibility.
+The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Imports point directly to the packages that own each responsibility.
 
 ## Dependency overview
 
@@ -53,7 +53,7 @@ all runtime coupling between composed services.
 - `friendship.py`: relationship gains, cooldowns and daily limits.
 - `lifecycle.py` and `routine.py`: bounded catch-up, sleep and daily schedule.
 
-**`personality/mind.py — AikoMind`** selects reactions and maintains short-term conversational context. It does not display windows or speak through an audio device. `WorkloadEventDetector` in `personality/workload_events.py` converts observed load changes into event keys; `ComputerVoice` remains a historical alias, not another detector. Authored dialogue is stored in `aiko_pet/data/dialogues.de.json`.
+**`personality/mind.py — AikoMind`** selects reactions and maintains short-term conversational context. It does not display windows or speak through an audio device. `WorkloadEventDetector` in `personality/workload_events.py` converts observed load changes into event keys; The historical `ComputerVoice` alias has been removed. Authored dialogue is stored in `aiko_pet/data/dialogues.de.json`.
 
 **`personality/adaptive.py`** learns coarse local daily patterns from observations. Unknown hardware readings do not become fabricated activity. No application names, process titles or content are collected for this version.
 
@@ -107,11 +107,58 @@ Hardware implementation details live in `infrastructure/hardware/`. `telemetry.C
 
 See [privacy and installation](../README.md#privacy-and-local-data) and [integration design](INTEGRATION_ARCHITECTURE.md) for future, explicitly unimplemented extension points.
 
-## Public compatibility policy
+## Import migration
 
-Earlier paths including `aiko_pet/domain.py`, `dialogue.py`, `adaptive.py`, `storage.py`, `system_activity.py`, `taskbar.py` and `application/read_models.py` re-export their canonical implementations. These are deliberate migration paths: they must not grow a second implementation.
+The 2026-10-13 repository usage review found no runtime consumers of the 25
+flat-module forwarding files or the five old application view modules.
+Their imports were confined to tests and forwarding modules. `DesktopPet`
+inherited `DesktopCompatibility`, but its live code already accessed the
+owning components directly. `presentation/legacy.py` only supported the old
+view modules and their tests. These 32 files have been removed, and the
+behavior tests now exercise their canonical owners directly.
 
-`DesktopPet` still inherits `DesktopCompatibility` so older tests and consumers can read legacy attributes. The regular update scheduler does **not** rely on those forwards. Removing the façade, renaming public methods such as `AikoMind.say_event()` or changing persisted data requires a dedicated compatibility review rather than cosmetic renaming.
+The source launchers (`main.py`, `Aiko_Pet.pyw`, `python -m aiko_pet` and both
+Windows batch files) use `aiko_pet.gui.main` and require no import migration.
+Version-one JSON saves, save-path configuration, sprites and authored dialogue
+are unchanged. The repository review cannot establish whether unknown external
+Python code imports the removed paths; such callers need the mappings below.
+
+| Removed path under `aiko_pet` | Canonical owner |
+| --- | --- |
+| `domain` | `pet.state.PetState`; care/friendship/time constants and functions in their respective `pet` policy modules |
+| `care_actions`, `friendship`, `need_decay`, `routine`, `value_rules` | Modules of the same name under `pet` |
+| `pet_lifecycle` | `pet.lifecycle` |
+| `adaptive`, `adaptive_models`, `adaptive_policy`, `work_episode`, `reaction_sequence` | Modules of the same name under `personality` |
+| `dialogue` | `personality.mind.AikoMind` and `personality.catalog` types |
+| `dialogue_catalog`, `dialogue_events` | `personality.catalog`, `personality.click_policy` |
+| `computer_voice`; `ComputerVoice` alias | `personality.workload_events.WorkloadEventDetector` |
+| `animation`, `gaze`, `movement`, `reaction_playback` | Modules of the same name under `presentation` |
+| `desktop_input` | `desktop.global_input` |
+| `taskbar` | `desktop.taskbar` and `desktop.geometry.TaskbarTrack` |
+| `window_stack` | `desktop.window_stack` |
+| `storage` | `infrastructure.persistence.StateStore`; settings in `application.settings` |
+| `system_activity` | Providers in `infrastructure.hardware`; shared snapshots/effort in `telemetry` |
+| `application.view_models` | `presentation.contracts` |
+| `application.hover_projection`, `status_projection`, `settings_projection` | `presentation.projections` |
+| `application.read_models`; `presentation.legacy.DesktopViewSource` | `presentation.read_models.DesktopPresentation` |
+| `desktop.compatibility.DesktopCompatibility` | Owning `DesktopPet` components; no replacement facade |
+
+Hover/status projectors accept `application.read_snapshot.snapshot_pet(state)`
+instead of a mutable `PetState`. The status projector accepts the selected
+emotion string rather than an `AikoMind` and timestamp. `DesktopPresentation`
+provides desktop views without exposing the old public component handles.
+
+Legacy desktop accesses such as `pet.toolbar`, `pet._bubble`, `pet.say()` and
+`pet._walk_remaining` have been retired. Desktop composition and integration
+tests use `pet._hover`, `pet._speech` and `pet._animated` respectively. These
+are implementation components, not a new public integration API. Future
+external adapters should use the typed application boundary.
+
+Unused widget, asset and policy re-exports from `gui.py` have also been
+removed; import them from `ui`, `asset_paths`, `presentation` or `desktop`.
+The application uses `workload_events`, not the old `computer_voice` attribute.
+Existing domain convenience methods and version-one data decoding remain
+outside this module-import cleanup.
 
 ## Testing and contribution
 
@@ -120,7 +167,7 @@ GitHub Actions checks:
 - Full Python 3.11 and 3.13 unit/Tk suites under Linux/Xvfb.
 - Windows-hosted headless checks for native boundary logic.
 - Ruff, PEP 8 line lengths, strict Mypy and Pyright.
-- Domain invariants, legacy class identity, immutable read data, import boundaries, and absence of module import cycles.
+- Domain invariants, immutable read data, import boundaries without legacy exceptions, and absence of module import cycles.
 
 Native Windows layering, transparent-window and taskbar behavior must also be tested interactively for relevant changes. The October 2026 OOP refactor passed its full automated checks and received maintainer-reported Windows acceptance before [PR #2](https://github.com/Lexoniarus/aiko-desktop-pet/pull/2) merged.
 

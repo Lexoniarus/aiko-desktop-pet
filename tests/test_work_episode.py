@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import unittest
 
-from aiko_pet.adaptive_models import Behaviour
-from aiko_pet.work_episode import WorkEpisodeMemory
+from aiko_pet.personality.adaptive_models import Behaviour
+from aiko_pet.personality.work_episode import WorkEpisodeMemory
 
 
 def scene(
@@ -13,7 +13,7 @@ def scene(
     confidence: bool = False, expectation: float | None = None,
 ) -> Behaviour:
     # The observed activity mode is a test fixture, never a made-up history.
-    from aiko_pet.adaptive_policy import ActivityMode
+    from aiko_pet.personality.adaptive_policy import ActivityMode
     from typing import cast
 
     return Behaviour(

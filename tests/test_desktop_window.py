@@ -5,7 +5,7 @@ from __future__ import annotations
 import tkinter as tk
 import unittest
 
-from aiko_pet.storage import PetSettings
+from aiko_pet.application.settings import PetSettings
 from aiko_pet.ui.desktop_window import DesktopWindow
 
 

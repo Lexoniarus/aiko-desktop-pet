@@ -5,7 +5,8 @@ import struct
 import unittest
 from pathlib import Path
 
-from aiko_pet.gui import FRAME_COUNTS, FRAME_HEIGHT, FRAME_WIDTH
+from aiko_pet.presentation.animation import FRAME_COUNTS
+from aiko_pet.ui.desktop_window import FRAME_HEIGHT, FRAME_WIDTH
 
 
 class AssetContractTests(unittest.TestCase):

@@ -2,7 +2,7 @@
 
 import unittest
 
-from aiko_pet.gaze import gaze_sector
+from aiko_pet.presentation.gaze import gaze_sector
 
 
 class GlobalGazeTests(unittest.TestCase):

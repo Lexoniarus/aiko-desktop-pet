@@ -5,9 +5,9 @@ from __future__ import annotations
 import unittest
 from datetime import datetime
 
-from aiko_pet.care_actions import apply_care_action
-from aiko_pet.domain import PetState
-from aiko_pet.routine import context_at
+from aiko_pet.pet.care_actions import apply_care_action
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import context_at
 
 
 def stamp(hour: int = 16) -> float:

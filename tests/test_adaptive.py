@@ -8,14 +8,13 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from aiko_pet.adaptive import (
-    SLOTS, AdaptiveMemory, AdaptiveRoutine, Observation,
-)
-from aiko_pet.dialogue import AikoMind
-from aiko_pet.domain import PetState
-from aiko_pet.routine import context_at
-from aiko_pet.storage import StateStore
-from aiko_pet.desktop_input import idle_seconds_windows
+from aiko_pet.personality.adaptive_models import SLOTS, AdaptiveMemory, Observation
+from aiko_pet.personality.adaptive import AdaptiveRoutine
+from aiko_pet.personality.mind import AikoMind
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import context_at
+from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.desktop.global_input import idle_seconds_windows
 
 
 def local_stamp(day, hour, minute=0):
@@ -335,8 +334,8 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         fake = Mock()
         fake.user32.GetLastInputInfo.side_effect = set_last_input
         fake.kernel32.GetTickCount = tick_count
-        with patch("aiko_pet.desktop_input.sys.platform", "win32"), \
-             patch("aiko_pet.desktop_input.ctypes.windll", fake, create=True):
+        with patch("aiko_pet.desktop.global_input.sys.platform", "win32"), \
+             patch("aiko_pet.desktop.global_input.ctypes.windll", fake, create=True):
             self.assertEqual(idle_seconds_windows(), 5.0)
 
     def test_win32_idle_wraparound_is_unsigned(self):
@@ -351,14 +350,14 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         fake = Mock()
         fake.user32.GetLastInputInfo.side_effect = set_last_input
         fake.kernel32.GetTickCount = tick_count
-        with patch("aiko_pet.desktop_input.sys.platform", "win32"), \
-             patch("aiko_pet.desktop_input.ctypes.windll", fake, create=True):
+        with patch("aiko_pet.desktop.global_input.sys.platform", "win32"), \
+             patch("aiko_pet.desktop.global_input.ctypes.windll", fake, create=True):
             elapsed = idle_seconds_windows()
             assert elapsed is not None
             self.assertAlmostEqual(elapsed, 1.024)
 
     def test_idle_reading_unavailable_outside_windows(self):
-        with patch("aiko_pet.desktop_input.sys.platform", "linux"):
+        with patch("aiko_pet.desktop.global_input.sys.platform", "linux"):
             self.assertIsNone(idle_seconds_windows())
 
 

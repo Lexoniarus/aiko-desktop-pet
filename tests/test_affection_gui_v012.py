@@ -7,7 +7,7 @@ from pathlib import Path
 
 from aiko_pet.gui import DesktopPet
 from aiko_pet.ui.action_toolbar import ActionToolbar
-from aiko_pet.storage import StateStore
+from aiko_pet.infrastructure.persistence import StateStore
 
 
 class AffectionGuiTests(unittest.TestCase):
@@ -31,7 +31,7 @@ class AffectionGuiTests(unittest.TestCase):
 
     @property
     def toolbar(self) -> ActionToolbar:
-        bar = self.app.toolbar
+        bar = self.app._hover.toolbar
         assert bar is not None
         return bar
 
@@ -64,8 +64,8 @@ class AffectionGuiTests(unittest.TestCase):
         self.assertIn("35%", self.toolbar.needs["affection"][2].cget("text"))
 
     def test_separate_status_shows_affection_and_existing_controls(self):
-        self.app.open_status()
-        panel = self.app.status_panel
+        self.app._hover.open_status()
+        panel = self.app._hover.status_panel
         assert panel is not None
         self.assertEqual(len(panel.bars), 6)
         self.app.state.affection = 46
@@ -77,10 +77,10 @@ class AffectionGuiTests(unittest.TestCase):
 
     def test_existing_menu_drag_and_hide_remain_operational(self):
         self.toolbar.settings_button.invoke()
-        self.assertIsNotNone(self.app.settings_popup)
-        self.app._dismiss_if_outside(-999, -999)
+        self.assertIsNotNone(self.app._hover.settings_popup)
+        self.app._hover.dismiss_outside(-999, -999)
         self.assertFalse(self.toolbar.visible)
-        self.assertIsNone(self.app.settings_popup)
+        self.assertIsNone(self.app._hover.settings_popup)
         self.app._on_enter()
         self.assertTrue(self.toolbar.visible)
 

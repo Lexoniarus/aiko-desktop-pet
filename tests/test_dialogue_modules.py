@@ -5,30 +5,21 @@ from __future__ import annotations
 import random
 import unittest
 
-from aiko_pet import dialogue
-from aiko_pet.dialogue_catalog import (
+from aiko_pet.personality.mind import AikoMind
+from aiko_pet.personality.catalog import (
     ANIMATIONS,
     CATALOGUE,
-    EMOTION_LABELS,
     DialogueBook,
     Line,
     Reaction,
 )
-from aiko_pet.routine import context_at
-from aiko_pet.work_episode import WorkEpisodeMemory
+from aiko_pet.pet.routine import context_at
+from aiko_pet.personality.work_episode import WorkEpisodeMemory
 
 
 class DialogueModulesTests(unittest.TestCase):
-    def test_legacy_imports_resolve_to_catalogue_types(self) -> None:
-        self.assertIs(dialogue.Line, Line)
-        self.assertIs(dialogue.Reaction, Reaction)
-        self.assertIs(dialogue.DialogueBook, DialogueBook)
-        self.assertIs(dialogue.ANIMATIONS, ANIMATIONS)
-        self.assertIs(dialogue.CATALOGUE, CATALOGUE)
-        self.assertIs(dialogue.EMOTION_LABELS, EMOTION_LABELS)
-
     def test_aiko_mind_owns_independent_work_episode_memory(self) -> None:
-        mind = dialogue.AikoMind(rng=random.Random(12))
+        mind = AikoMind(rng=random.Random(12))
         self.assertIsInstance(mind.work, WorkEpisodeMemory)
         self.assertEqual(mind.work.interruptions, 0)
 
@@ -47,7 +38,7 @@ class DialogueModulesTests(unittest.TestCase):
         book = DialogueBook((line,), rng=random.Random(8))
         context = context_at(1760281200)
         result = book.choose("greeting", "calm", context, 100.0)
-        self.assertIsInstance(result, dialogue.Reaction)
+        self.assertIsInstance(result, Reaction)
         assert result is not None
         self.assertEqual(result.text, "Hallo!")
 

@@ -3,18 +3,12 @@
 from __future__ import annotations
 
 import ast
+import importlib
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = ROOT / "aiko_pet"
-
-# Old public entrypoints are imports only; active application use cases must
-# not depend on presentation, desktop widgets or concrete providers.
-COMPATIBILITY_APPLICATION_MODULES = frozenset({
-    "hover_projection.py", "status_projection.py",
-    "settings_projection.py", "read_models.py", "view_models.py",
-})
 
 
 def module_name(path: Path) -> str:
@@ -67,6 +61,11 @@ def internal_dependencies(
 
 
 class PackageDependencyTests(unittest.TestCase):
+    def test_all_package_modules_import_without_starting_the_desktop(self) -> None:
+        for path in SOURCES.rglob("*.py"):
+            with self.subTest(module=module_name(path)):
+                importlib.import_module(module_name(path))
+
     def test_all_internal_module_imports_form_an_acyclic_graph(self) -> None:
         files = tuple(SOURCES.rglob("*.py"))
         names = frozenset(module_name(path) for path in files)
@@ -96,12 +95,10 @@ class PackageDependencyTests(unittest.TestCase):
         for name in sorted(names):
             visit(name)
 
-    def test_compatibility_application_imports_are_explicitly_scoped(
+    def test_application_imports_never_depend_on_outer_layers(
         self,
     ) -> None:
         for path in (SOURCES / "application").glob("*.py"):
-            if path.name in COMPATIBILITY_APPLICATION_MODULES:
-                continue
             with self.subTest(module=path.name):
                 tree = ast.parse(path.read_text("utf-8"))
                 for node in ast.walk(tree):

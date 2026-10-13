@@ -8,11 +8,17 @@ from datetime import datetime
 from tempfile import TemporaryDirectory
 from pathlib import Path
 
-from aiko_pet.dialogue import (
-    AikoMind, ANIMATIONS, CATALOGUE, DialogueBook, EMOTION_LABELS, Line, Reaction,
+from aiko_pet.personality.mind import AikoMind
+from aiko_pet.personality.catalog import (
+    ANIMATIONS,
+    CATALOGUE,
+    DialogueBook,
+    EMOTION_LABELS,
+    Line,
+    Reaction,
 )
-from aiko_pet.domain import PetState
-from aiko_pet.routine import context_at
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import context_at
 
 
 def require_reaction(value: Reaction | None) -> Reaction:
