@@ -117,11 +117,10 @@ class DesktopPet(DesktopCompatibility):
                     self.toolbar is not None and self.toolbar.visible
                 ),
                 place_x=self._place_x,
-                last_spoken=lambda: self._last_spoken,
                 action_until=lambda: self._action_until,
                 action_state=lambda: self._action_state,
-                walk_pause=self._on_walk_pause,
-                cursor_reaction=self._on_cursor_reaction,
+                walk_finished=self._on_walk_finished,
+                cursor_moved=self._on_cursor_moved,
             ),
         )
         self._closed = False
@@ -464,15 +463,23 @@ class DesktopPet(DesktopCompatibility):
         )
         self._show_emote(emote, 1100)
 
-    def _on_cursor_reaction(self, event: str, now: float) -> None:
-        self._react(self.mind.say_event(
-            event, self.state, self.context, now,
-        ))
+    def _on_cursor_moved(
+        self, distance: float, screen_width: int, now: float,
+    ) -> None:
+        event = self._attention.cursor_moved(
+            distance, screen_width, now,
+            toolbar_visible=bool(self.toolbar and self.toolbar.visible),
+        )
+        if event is not None:
+            self._react(self.mind.say_event(
+                event, self.state, self.context, now,
+            ))
 
-    def _on_walk_pause(self, now: float) -> None:
-        self._react(self.mind.say_event(
-            "walk_pause", self.state, self.context, now,
-        ))
+    def _on_walk_finished(self, now: float) -> None:
+        if self._attention.walk_finished(now):
+            self._react(self.mind.say_event(
+                "walk_pause", self.state, self.context, now,
+            ))
 
     def _advance_pet_lifecycle(self, now: float, wall_time: float) -> None:
         progress = self._activity.advance_lifecycle(

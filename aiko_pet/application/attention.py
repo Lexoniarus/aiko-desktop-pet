@@ -48,6 +48,7 @@ class AttentionCoordinator:
         self.last_spoken = -1000.0
         self.next_comment = started_at + random.uniform(180.0, 360.0)
         self.next_idle_emote = started_at + random.uniform(70.0, 170.0)
+        self.next_cursor_line = started_at + random.uniform(200.0, 420.0)
 
     def mark_spoken(self, now: float) -> None:
         self.last_spoken = now
@@ -63,6 +64,33 @@ class AttentionCoordinator:
         return (
             self.settings.spontaneous_talk
             and now - self.last_spoken >= 15
+        )
+
+    def cursor_moved(
+        self, distance: float, screen_width: int, now: float, *,
+        toolbar_visible: bool,
+    ) -> str | None:
+        """Choose a rare cursor remark from an observed movement."""
+        if (
+            not self.settings.spontaneous_talk
+            or not self.settings.follow_cursor
+            or now < self.next_cursor_line
+            or now - self.last_spoken <= 100
+            or self.state.sleeping
+            or toolbar_visible
+        ):
+            return None
+        if random.random() >= 0.08:
+            return None
+        self.next_cursor_line = now + random.uniform(280.0, 590.0)
+        return "cursor_far" if distance > screen_width * 0.6 else "cursor_follow"
+
+    def walk_finished(self, now: float) -> bool:
+        """Allow the character to comment occasionally after a completed walk."""
+        return bool(
+            self.settings.spontaneous_talk
+            and now - self.last_spoken > 130
+            and random.random() < 0.23
         )
 
     def idle_animation(

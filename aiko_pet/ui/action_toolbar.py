@@ -141,6 +141,11 @@ class ActionToolbar:
         self.visible = False
         self._last_placement: tuple[int, int, int, int] | None = None
 
+    @property
+    def dragging(self) -> bool:
+        """Whether the toolbar is being moved by the user."""
+        return self._dragging
+
     def _button(
         self, parent: tk.Widget, text: str, command: Callable[[], None],
     ) -> tk.Button:

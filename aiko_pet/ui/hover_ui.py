@@ -156,7 +156,7 @@ class HoverUi:
 
     def dismiss_outside(self, x: int, y: int) -> None:
         toolbar = self.toolbar
-        if toolbar is not None and toolbar._dragging:
+        if toolbar is not None and toolbar.dragging:
             return
         over_ui = self.pointer_inside(x, y)
         popup = self.settings_popup
@@ -171,7 +171,7 @@ class HoverUi:
 
     def refresh_hover(self, now: float) -> None:
         toolbar = self.toolbar
-        if toolbar is not None and toolbar._dragging:
+        if toolbar is not None and toolbar.dragging:
             self.last_hover = now
             return
         if self.settings_popup is not None:

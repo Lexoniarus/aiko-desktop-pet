@@ -36,7 +36,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.canvas.pack()
         self.state = PetState()
         self.settings = PetSettings(x=100, y=500)
-        self.cursor_events: list[str] = []
+        self.cursor_samples: list[tuple[float, int, float]] = []
         self.anim = AnimatedPet(
             self.root, self.canvas,
             self.state, self.settings,
@@ -45,12 +45,11 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                 track=lambda: TaskbarTrack(0, 800, 800),
                 toolbar_visible=lambda: False,
                 place_x=self._place_x,
-                last_spoken=lambda: -1000.0,
                 action_until=lambda: 0.0,
                 action_state=lambda: "idle",
-                walk_pause=lambda _now: None,
-                cursor_reaction=lambda event, _now: (
-                    self.cursor_events.append(event)
+                walk_finished=lambda _now: None,
+                cursor_moved=lambda distance, width, now: (
+                    self.cursor_samples.append((distance, width, now))
                 ),
             ),
         )
@@ -74,16 +73,17 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertGreater(self.settings.x, 100)
         self.assertEqual(self.anim.movement.remaining_distance, 0)
 
-    def test_cursor_attention_only_emits_an_event(self) -> None:
-        self.anim.next_cursor_line = 0
+    def test_cursor_motion_emits_observation_without_dialogue_policy(self) -> None:
         with (
             patch.object(self.root, "winfo_pointerx", side_effect=[10, 99999]),
             patch.object(self.root, "winfo_pointery", side_effect=[20, -99999]),
-            patch("aiko_pet.ui.animated_pet.random.random", return_value=0.01),
         ):
             self.anim.observe_pointer(900.0)
             self.anim.observe_pointer(1000.0)
-        self.assertEqual(self.cursor_events, ["cursor_far"])
+        self.assertEqual(len(self.cursor_samples), 1)
+        distance, width, now = self.cursor_samples[0]
+        self.assertGreater(distance, width * 0.6)
+        self.assertEqual(now, 1000.0)
         self.assertEqual(self.anim.last_pointer_move, 1000.0)
 
     def test_visual_settings_are_owned_by_animated_character(self) -> None:

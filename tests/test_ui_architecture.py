@@ -77,6 +77,15 @@ class UiDependencyRules(unittest.TestCase):
                     }),
                 )
 
+    def test_character_does_not_choose_commentary_events(self) -> None:
+        source = (ROOT / "ui/animated_pet.py").read_text("utf-8")
+        for token in (
+            "cursor_far", "cursor_follow", "walk_pause",
+            "next_cursor_line", "random.random(",
+        ):
+            with self.subTest(token=token):
+                self.assertNotIn(token, source)
+
     def test_desktop_runtime_services_do_not_import_domain(self) -> None:
         forbidden = {"gui", "domain", "adaptive", "storage", "dialogue"}
         for relative in (

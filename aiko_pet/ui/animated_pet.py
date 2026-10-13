@@ -52,7 +52,7 @@ class CharacterSettings(Protocol):
     follow_cursor: bool
     auto_walk: bool
     observe_computer: bool
-    spontaneous_talk: bool
+
 
 
 class FocusState(Protocol):
@@ -75,11 +75,10 @@ class AnimatedPorts:
     track: Callable[[], TaskbarTrack]
     toolbar_visible: Callable[[], bool]
     place_x: Callable[[float], None]
-    last_spoken: Callable[[], float]
     action_until: Callable[[], float]
     action_state: Callable[[], str]
-    walk_pause: Callable[[float], None]
-    cursor_reaction: Callable[[str, float], None]
+    walk_finished: Callable[[float], None]
+    cursor_moved: Callable[[float, int, float], None]
 
 
 class AnimatedPet:
@@ -107,9 +106,6 @@ class AnimatedPet:
         self.last_pointer_move = -100.0
         self.last_attention = -100.0
         self.attention_until = -100.0
-        self.next_cursor_line = (
-            time.monotonic() + random.uniform(200.0, 420.0)
-        )
         self.sprites = self.load_sprites()
         self.image_item = self.canvas.create_image(
             0, 0, anchor="nw", image=self.sprites["idle"][0],
@@ -175,27 +171,12 @@ class AnimatedPet:
             if now - self.last_attention >= 6.0:
                 self.last_attention = now
                 self.attention_until = now + 1.0
-            if (
-                self.settings.spontaneous_talk
-                and self.settings.follow_cursor
-                and now >= self.next_cursor_line
-                and now - self.ports.last_spoken() > 100
-                and not self.state.sleeping
-                and not self.ports.toolbar_visible()
-                and random.random() < 0.08
-            ):
-                eye_x = (self.settings.x or 0) + 63 * self.settings.scale
-                eye_y = (self.settings.y or 0) + 82 * self.settings.scale
-                distance = math.hypot(
-                    pointer[0] - eye_x, pointer[1] - eye_y,
-                )
-                event = (
-                    "cursor_far"
-                    if distance > self.root.winfo_screenwidth() * 0.6
-                    else "cursor_follow"
-                )
-                self.ports.cursor_reaction(event, now)
-                self.next_cursor_line = now + random.uniform(280, 590)
+            eye_x = (self.settings.x or 0) + 63 * self.settings.scale
+            eye_y = (self.settings.y or 0) + 82 * self.settings.scale
+            distance = math.hypot(pointer[0] - eye_x, pointer[1] - eye_y)
+            self.ports.cursor_moved(
+                distance, self.root.winfo_screenwidth(), now,
+            )
         self._previous_pointer = pointer
         return pointer
 
@@ -239,12 +220,7 @@ class AnimatedPet:
         self.ports.place_x(old_x + step.pixels)
         delta = (self.settings.x or 0) - old_x
         if self.movement.record_displacement(delta):
-            if (
-                self.settings.spontaneous_talk
-                and now - self.ports.last_spoken() > 130
-                and random.random() < 0.23
-            ):
-                self.ports.walk_pause(now)
+            self.ports.walk_finished(now)
         return step.animation
 
     def render(
