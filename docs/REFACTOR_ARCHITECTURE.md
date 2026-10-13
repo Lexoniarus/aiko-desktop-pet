@@ -33,8 +33,9 @@ third-party packages. Keep German runtime text and English documentation.
    `application/activity.py` owns adaptive rhythm and sleep-related
    decisions without Tk; GUI uses callback ports. Sensor readings, native
    providers, NVIDIA CSV parsing and the background monitor are now
-   separate hardware modules; `system_activity.py` re-exports the
-   old public names without housing another implementation.
+   separate modules under `infrastructure/hardware/`;
+   `system_activity.py` re-exports the old public names without
+   housing another implementation.
 6. **Desktop composition (in progress):** `DesktopPet` in `gui.py`
    connects the actual animated character (`AnimatedPet`), native window
    (`DesktopWindow`), independent hover UI (`HoverUi`) and application core.

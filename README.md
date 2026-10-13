@@ -78,11 +78,7 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/desktop/compatibility.py` | Typed forwards for older desktop calls |
 | `aiko_pet/adaptive.py` + `adaptive_models.py` | Runtime learning controller and serializable data contracts |
 | `aiko_pet/gui.py` | Desktop component assembly; startup and shutdown delegated |
-| `aiko_pet/system_metrics.py` | Immutable sensor readings and effort classification |
-| `aiko_pet/system_os.py` | Windows/Linux native CPU, RAM and uptime providers |
-| `aiko_pet/system_nvidia.py` | Optional NVIDIA executable discovery and GPU parsing |
-| `aiko_pet/hardware_sampler.py` | Collects and smooths sensor readings in the worker |
-| `aiko_pet/activity_monitor.py` | Background sampler and thread-safe cached snapshots |
+| `aiko_pet/infrastructure/hardware/` | CPU/RAM/uptime providers, NVIDIA parsing, sampler and background monitor |
 | `aiko_pet/system_activity.py` | Backward-compatible hardware imports (no extra logic) |
 | `aiko_pet/` | Existing domain, storage and offline dialogue policies |
 | `aiko_pet/assets/frames/` | 73 original Aiko character animation frames |

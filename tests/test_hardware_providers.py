@@ -7,11 +7,13 @@ import unittest
 from unittest.mock import patch
 
 import aiko_pet.system_activity as activity
-from aiko_pet.activity_monitor import ActivityMonitor
-from aiko_pet.hardware_sampler import HardwareSampler
-from aiko_pet.system_metrics import ComputerSnapshot, workload_intensity
-from aiko_pet.system_nvidia import parse_nvidia_reading
-from aiko_pet.system_os import load_percent
+from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
+from aiko_pet.infrastructure.hardware.sampler import HardwareSampler
+from aiko_pet.infrastructure.hardware.metrics import (
+    ComputerSnapshot, workload_intensity,
+)
+from aiko_pet.infrastructure.hardware.nvidia import parse_nvidia_reading
+from aiko_pet.infrastructure.hardware.os_sensors import load_percent
 
 
 class SensorBoundaryTests(unittest.TestCase):
@@ -29,16 +31,16 @@ class SensorBoundaryTests(unittest.TestCase):
             stdout="90, 6144, 12288\n20, 100, 400\n", stderr="",
         )
         with (
-            patch("aiko_pet.hardware_sampler.nvidia_executable",
+            patch("aiko_pet.infrastructure.hardware.sampler.nvidia_executable",
                   return_value="fake-nvidia"),
-            patch("aiko_pet.hardware_sampler.sys.platform", "linux"),
-            patch("aiko_pet.hardware_sampler.cpu_linux_times",
+            patch("aiko_pet.infrastructure.hardware.sampler.sys.platform", "linux"),
+            patch("aiko_pet.infrastructure.hardware.sampler.cpu_linux_times",
                   side_effect=[(50, 100), (70, 200)]),
-            patch("aiko_pet.hardware_sampler.memory_linux_percent",
+            patch("aiko_pet.infrastructure.hardware.sampler.memory_linux_percent",
                   return_value=38.5),
-            patch("aiko_pet.hardware_sampler.uptime_hours",
+            patch("aiko_pet.infrastructure.hardware.sampler.uptime_hours",
                   return_value=8.25),
-            patch("aiko_pet.hardware_sampler.subprocess.run",
+            patch("aiko_pet.infrastructure.hardware.sampler.subprocess.run",
                   return_value=result) as runner,
         ):
             sampler = HardwareSampler()
@@ -55,9 +57,9 @@ class SensorBoundaryTests(unittest.TestCase):
 
     def test_absent_gpu_and_unsupported_system_never_fabricate_zero(self) -> None:
         with (
-            patch("aiko_pet.hardware_sampler.nvidia_executable",
+            patch("aiko_pet.infrastructure.hardware.sampler.nvidia_executable",
                   return_value=None),
-            patch("aiko_pet.hardware_sampler.sys.platform", "other"),
+            patch("aiko_pet.infrastructure.hardware.sampler.sys.platform", "other"),
         ):
             result = HardwareSampler().sample()
         self.assertIsNone(result.cpu)

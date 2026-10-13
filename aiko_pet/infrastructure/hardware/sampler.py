@@ -7,12 +7,12 @@ import sys
 import time
 from collections import deque
 
-from .system_metrics import ComputerSnapshot
-from .system_os import (
+from .metrics import ComputerSnapshot
+from .os_sensors import (
     cpu_linux_times, cpu_windows_times, load_percent,
     memory_linux_percent, memory_windows_percent, uptime_hours,
 )
-from .system_nvidia import nvidia_executable, parse_nvidia_reading
+from .nvidia import nvidia_executable, parse_nvidia_reading
 
 
 class HardwareSampler:

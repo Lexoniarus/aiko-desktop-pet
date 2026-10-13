@@ -94,8 +94,11 @@ class UiDependencyRules(unittest.TestCase):
 
     def test_sensor_modules_are_not_tk_or_browser_adapters(self) -> None:
         providers = (
-            "system_metrics.py", "system_os.py", "system_nvidia.py",
-            "hardware_sampler.py", "activity_monitor.py",
+            "infrastructure/hardware/metrics.py",
+            "infrastructure/hardware/os_sensors.py",
+            "infrastructure/hardware/nvidia.py",
+            "infrastructure/hardware/sampler.py",
+            "infrastructure/hardware/monitor.py",
         )
         for relative in providers:
             with self.subTest(provider=relative):

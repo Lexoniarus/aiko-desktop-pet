@@ -23,11 +23,11 @@ isolated to `refactor/oop-modular-architecture`.
 | Taskbar/window stack checks | `desktop/maintenance.py` |
 | Tk/global mouse and focus input | `desktop/input.py` |
 | Desktop startup/shutdown resource sequence | `desktop/lifecycle.py` |
-| Hardware readings and effort classification | `system_metrics.py` |
-| Windows/Linux OS sensors | `system_os.py` |
-| NVIDIA discovery and CSV parsing | `system_nvidia.py` |
-| CPU/GPU smoothing and bounded GPU call | `hardware_sampler.py` |
-| Background worker and cached readings | `activity_monitor.py` |
+| Hardware readings and effort | `infrastructure/hardware/metrics.py` |
+| Windows/Linux OS sensors | `infrastructure/hardware/os_sensors.py` |
+| NVIDIA discovery and CSV parsing | `infrastructure/hardware/nvidia.py` |
+| CPU/GPU smoothing and bounded GPU call | `infrastructure/hardware/sampler.py` |
+| Background worker and cached readings | `infrastructure/hardware/monitor.py` |
 | Legacy sensor import compatibility | `system_activity.py` |
 | Component composition and remaining GUI adapters | `gui.py` |
 
@@ -68,11 +68,10 @@ adapter is **not** a destination for new features.
    mouse/focus binding and ordered desktop startup/shutdown. The lifecycle
    owns existing resources but contains no care/dialogue policy.
 2. **Implemented:** the former 337-line `system_activity.py` is now
-   only the compatibility façade. Sensor contracts (`system_metrics.py`),
-   OS sensors (`system_os.py`), NVIDIA discovery/parsing
-   (`system_nvidia.py`), smoothing (`hardware_sampler.py`) and the
-   independent background worker (`activity_monitor.py`) have separate
-   owners. All existing public sensor imports are preserved.
+   only the compatibility façade. The implementation lives in
+   `infrastructure/hardware/`, separated into immutable readings,
+   Windows/Linux OS sensors, NVIDIA discovery/parsing, CPU/GPU sampling
+   and the independent background monitor. Public imports are preserved.
 3. Review the 322-line `dialogue.py` for behaviorally meaningful division.
    Preserve German authored phrases, event priority and quiet behavior.
 4. Gradually package flat domain files. Because the import path
