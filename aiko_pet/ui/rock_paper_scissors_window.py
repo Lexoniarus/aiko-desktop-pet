@@ -124,9 +124,11 @@ class RockPaperScissorsWindow:
         self._sequence.greet()
 
     def _set_busy(self, busy: bool) -> None:
-        state = "disabled" if busy else "normal"
         for button in self.buttons.values():
-            button.configure(state=state)
+            if busy:
+                button.configure(state="disabled")
+            else:
+                button.configure(state="normal")
 
     def choose(self, move: Move) -> None:
         if not self._closed:
