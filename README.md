@@ -8,9 +8,12 @@
 
 **Windows 10/11 · Python 3.11+ · local-first · no cloud account or AI API.**
 
-![The current Aiko Anime character and six-gauge care panel in the running Windows application](vorschau/Aiko_Anime_Runtime.png)
+![The current Aiko Anime character and the current Kenney sci-fi hover panel](vorschau/Aiko_Current_Hover.png)
 
-*Maintainer-provided runtime capture with the new character artwork. Interface and Aiko's authored dialogue are in German; project documentation is in English.*
+*Actual Tk application capture on Linux/Xvfb from this development branch (not
+a native Windows desktop screenshot). The current 112-pose Anime character,
+Kenney panel, and German dialogue are shown together. Documentation is in
+English.*
 
 ## Play with Aiko (Rock–Paper–Scissors)
 
@@ -23,21 +26,26 @@ only to the currently opened minigame window and are never saved.
 
 ![Captured minigame countdown, separate hand reveal, animated reaction and local score](vorschau/Aiko_RPS_Spielablauf.gif)
 
-*Real Tk application frames captured on Linux/Xvfb for the minigame branch,
-not a Windows desktop screenshot. Historical Aiko captures remain below.*
+*These are current feature-branch captures of the actual Tk application on
+Linux/Xvfb; they are not native Windows screenshots.*
 
 ## See Aiko in action
 
-![A real three-step sequence: question emote, spoken response, heart emote](vorschau/Aiko_v0_13_Reaktionsablauf.gif)
+![The current Anime character reacting with question emote, two dialogue lines and heart emote](vorschau/Aiko_Current_Reaction_Sequence.gif)
 
-*Historical capture with the previous character artwork, showing the reaction sequence.*
+This reaction sequence uses the **current character sprites, speech presenter and
+Kenney emotes**. The latest sprite animation preview includes all 112 runtime
+poses: [Watch Aiko's current animations](vorschau/Aiko_Current_Animations.gif).
 
-[More real screenshots, sprite animations and earlier versions →](docs/MEDIA_GALLERY.md)
+[Browse the refreshed current screenshots, UI states and GIFs →](docs/MEDIA_GALLERY.md)
+
+Historical v0.7–v0.13 artwork remains in Git history, not in the current
+preview gallery.
 
 ## What she does
 
 - **Lives on your desktop.** Short, slower taskbar walks with 1–3 minute pauses, calm blinking, jumping, waving, resting and 16-direction cursor gaze.
-- **Needs a little care.** Feed, play, talk, pet, sleep/wake or offer an energy drink. From full satiety, about an hour awake brings her to 67–70%, making a snack useful. Other needs develop more slowly across the day, with occasional friendly requests.
+- **Needs a little care.** Feed, play Rock–Paper–Scissors, talk, pet, sleep/wake or offer an energy drink. From full satiety, about an hour awake brings her to 67–70%, making a snack useful. Other needs develop more slowly across the day, with occasional friendly requests.
 - **Has her own voice.** Handwritten German reactions vary with mood, time, repeated clicks, interruptions and recent interactions. Emotes, text and optional follow-ups play in sequence.
 - **Notices actual workload.** Local CPU/GPU and memory observations inform her working/resting behavior, without inventing the application or task you are using. Missing sensors remain unknown.
 - **Learns a gentle rhythm.** Locally aggregated activity evidence helps her adapt to regular working and resting periods.
@@ -48,7 +56,7 @@ This source builds on the **v0.13 feature baseline and modular OOP refactor**, w
 ## Getting started
 
 1. Install **Python 3.11 or newer** on Windows 10 or 11, including Tkinter (normally part of the standard Windows Python installer).
-2. [Download the current source ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip), extract it, and open the extracted folder.
+2. [Download the stable `main` source ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip), or use the [unmerged minigame feature ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/feature/rock-paper-scissors-game.zip) to try the preview features shown here. Extract the folder.
 3. Double-click `Aiko_starten.bat`, or open a terminal in that folder and run:
 
    ```powershell

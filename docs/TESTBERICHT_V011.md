@@ -23,7 +23,7 @@ The v0.11 suite passed **195 tests** before final packaging, including the previ
 
 ## Visual inspection
 
-`vorschau/Aiko_v0_11_Tamagotchi.png` shows the actual Tkinter UI with original sprites under a simulated 1366×768 Linux desktop. Illustrative status values were injected; the preview is **not** a capture of real Windows hardware metrics.
+The historical [v0.11 Tamagotchi screenshot](https://github.com/Lexoniarus/aiko-desktop-pet/blob/f41e8aab58e6a93bd2675d0fd1f1adc3bed9b345/vorschau/Aiko_v0_11_Tamagotchi.png) in Git history shows the actual Tkinter UI with its original sprites under a simulated 1366×768 Linux desktop. Illustrative status values were injected; it was **not** a capture of real Windows hardware metrics. The current screenshot gallery uses the new Aiko artwork and UI instead.
 
 All five gauges used the same grid and filled the available width when at 100%.
 

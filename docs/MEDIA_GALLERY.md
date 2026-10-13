@@ -1,95 +1,101 @@
-# Screenshots and animation gallery
+# Current Aiko Desktop Pet media gallery
 
-These images are the **actual Aiko Desktop Pet visuals checked into the repository**. They are not newly generated design mockups. Unless otherwise marked, screenshots show the Tkinter application at the indicated historical feature baseline.
+All application screenshots and interaction GIFs displayed here were captured
+from **the current Tk application running under Linux/Xvfb**, not rendered as
+design mockups or represented as native Windows desktop screenshots.
+The application targets Windows 10/11, and native Windows visual acceptance
+remains separate. The runtime sprite preview is assembled solely from
+the current 112 prepared character frames and their real timing manifest.
 
-## Rock–Paper–Scissors minigame (feature-branch capture)
+Older v0.7–v0.13 screenshots and the earlier 73-frame character GIF have been
+retired from the current `vorschau/` directory. They remain in
+[Git history at the pre-gallery-replacement commit](https://github.com/Lexoniarus/aiko-desktop-pet/tree/f41e8aab58e6a93bd2675d0fd1f1adc3bed9b345/vorschau)
+for historical comparison, not as present-day screenshots.
 
-The player input panel contains the three hand buttons, a highlighted
-**player-only reveal**, local session counters for rounds/wins/losses/draws,
-and a Close button. Aiko reveals only **her own hand** through her original
-character bubble, followed by her own emote, animation and result line.
-The player score is never narrated by Aiko.
+## Current Aiko character and Kenney interface
 
-![Aiko's hand in her character bubble, the player's hand in the player panel](../vorschau/Aiko_RPS_Aufgedeckt.png)
+![Current Aiko Anime character beside the six-gauge hover toolbar](../vorschau/Aiko_Current_Hover.png)
 
-![The running Aiko minigame: opening, countdown, reveal, reactions and scores](../vorschau/Aiko_RPS_Spielablauf.gif)
+The current 112-pose Anime character stands beside the light Kenney Sci-Fi
+hover toolbar, with the existing independent character speech bubble.
+The panel can be dragged separately from Aiko.
 
-- [Opening view](../vorschau/Aiko_RPS_Start.png)
-- [Separate reveal](../vorschau/Aiko_RPS_Aufgedeckt.png)
-- [Scores after two completed rounds](../vorschau/Aiko_RPS_Punktestand.png)
+![Draggable hover toolbar after a real toolbar drag](../vorschau/Aiko_Current_Hover_Moved.png)
 
-These are **captured from the real Tk application under Linux/Xvfb**.
-They are reproducible with
-[`tools/capture_rock_paper_scissors_media.py`](../tools/capture_rock_paper_scissors_media.py)
-and are not presented as captures of a native Windows desktop.
-The historical screenshots and GIFs below are retained without modification.
+![Character-attached speech bubble with the current Anime character](../vorschau/Aiko_Current_Dialog.png)
 
-## Current Aiko Anime character
+## Current status and settings
 
-![The new Aiko Anime character on the Windows taskbar beside the care panel](../vorschau/Aiko_Anime_Runtime.png)
+![Six-gauge status panel beside the current character](../vorschau/Aiko_Current_Status.png)
 
-This unmodified runtime screenshot was supplied by the project maintainer after
-checking the new character integration. The current artwork contains twelve
-eight-frame clips and sixteen static gaze directions, for 112 character poses.
-Eating, petting and sleeping have dedicated animations; attack artwork is
-stored for future use. Runtime timing applies a calm ambient/walking profile;
-the original per-frame durations remain recorded in the runtime manifests.
+![Actual settings popup using the current adapted Kenney UI](../vorschau/Aiko_Current_Settings.png)
 
-## Historical v0.13 feature baseline
+These are actual Tk utility windows. Values may be illustrative from the
+temporary capture session; they are not claimed as real Windows device metrics.
 
-### Aiko and the sci-fi care panel
+## Sequential expressions, current character and emote skin
 
-![Aiko alongside the German sci-fi hover panel and speech bubble](../vorschau/Aiko_v0_13_Dialog_Mitte.png)
+![Aiko's current question emote, speech and heart emote played sequentially](../vorschau/Aiko_Current_Reaction_Sequence.gif)
 
-Six gauges show Aiko's five short-term needs and longer-term friendship. The panel appears on hover; Aiko's speech bubble is an independent overlay.
+The sequence is presented through Aiko's existing ReactionPlayer and
+SpeechPresenter. The capture script advances the real reaction cues
+deterministically for reproducible stills and GIF timing.
 
-### A reaction in three steps
+| Cue | Current application still |
+| --- | --- |
+| Opening question emote | [Question emote](../vorschau/Aiko_Current_Reaction_Emote_Start.png) |
+| Initial dialogue | [First line](../vorschau/Aiko_Current_Reaction_First_Line.png) |
+| Follow-up line | [Follow-up](../vorschau/Aiko_Current_Reaction_Followup.png) |
+| Closing heart emote | [Heart emote](../vorschau/Aiko_Current_Reaction_Emote_End.png) |
 
-![An actual question emote followed by Aiko's line and a heart emote](../vorschau/Aiko_v0_13_Reaktionsablauf.gif)
+## Current Tamagotchi care visuals
 
-This GIF demonstrates a **sequential**, not simultaneous, emote → text → emote presentation. A new interaction can cancel a pending follow-up.
+| Interaction | Actual current Tk screenshot |
+| --- | --- |
+| Petting and affection emote | [Petting](../vorschau/Aiko_Current_Care_Pet.png) |
+| Feeding and dedicated eating animation | [Feeding](../vorschau/Aiko_Current_Care_Feed.png) |
+| Sleeping and breathing animation | [Sleeping](../vorschau/Aiko_Current_Care_Sleep.png) |
 
-### Three captured stages
+## Current 112-pose sprite animation preview
 
-![Three stills: question, text and heart emote](../vorschau/Aiko_v0_13_Emote_Text_Emote.png)
+![All current Aiko runtime sprite frames across the 12 clips and 16 gaze directions](../vorschau/Aiko_Current_Animations.gif)
 
-Separate source captures: [start emote](../vorschau/Aiko_v0_13_Emote_Start.png), [dialogue](../vorschau/Aiko_v0_13_Dialog_Mitte.png), [final emote](../vorschau/Aiko_v0_13_Emote_Abschluss.png), and [care panel with bubble](../vorschau/Aiko_v0_13_SciFi_und_Sprechblase.png).
+This is an **asset preview**, not an additional desktop screenshot. It uses
+the runtime `aiko_pet/assets/frames/` PNG files and effective durations in
+`aiko_pet/assets/animations.json`. The imported source art is unmodified.
 
-## Original character animation preview
+## Rock–Paper–Scissors (feature branch)
 
-![Aiko's original sprite animations, shown against a neutral background](../vorschau/Original-Animationen.gif)
+The player window shows **only the player's own hand**, round count, player
+wins, Aiko wins and draws. Aiko's character bubble displays only **her**
+hand, emotes and contextual reactions. The player panel stays open until
+closed, and its counters are never persisted.
 
-This historical GIF shows the previous 73-frame character artwork rather than
-the full desktop UI. The current 112-pose character set is documented in
-[ASSETS.md](../ASSETS.md) and the
-[runtime provenance manifest](../aiko_pet/assets/provenance.json).
+![Aiko's hand in her character bubble, with the player's hand highlighted in the player panel](../vorschau/Aiko_RPS_Aufgedeckt.png)
 
-## Earlier UI and interaction history
+![The actual current minigame including countdown, distinct reveals and session scoreboard](../vorschau/Aiko_RPS_Spielablauf.gif)
 
-The following images document historical versions; they are **not** illustrations of the latest panel styling.
+- [Game opening](../vorschau/Aiko_RPS_Start.png)
+- [Both distinct reveal surfaces](../vorschau/Aiko_RPS_Aufgedeckt.png)
+- [Two rounds and local scores](../vorschau/Aiko_RPS_Punktestand.png)
 
-| Feature baseline | Screenshot | Context |
-| --- | --- | --- |
-| v0.7 | [Speech and hover toolbar](../vorschau/Aiko_v0_7_Sprechblase_und_Leiste.png) | Early speech/toolbar separation |
-| v0.7 | [Moved toolbar](../vorschau/Aiko_v0_7_Leiste_verschoben.png) | Independent drag position |
-| v0.10 | [Click reaction](../vorschau/Aiko_v0_10_Klickreaktion.png) | Interactive dialogue |
-| v0.10 | [Follow-up](../vorschau/Aiko_v0_10_Nachsatz.png) | A later dialogue beat |
-| v0.11 | [Tamagotchi panel](../vorschau/Aiko_v0_11_Tamagotchi.png) | Older care/status layout |
-| v0.12 | [Affection](../vorschau/Aiko_v0_12_Zuwendung.png) | Sixth gauge: affection plus friendship |
+## Capture provenance and reference material
 
-## Third-party design reference
+The captures are reproducible using the developer-only
+[`tools/capture_current_gallery.py`](../tools/capture_current_gallery.py)
+and
+[`tools/capture_rock_paper_scissors_media.py`](../tools/capture_rock_paper_scissors_media.py).
+GitHub Actions runs the actual Tk app under Xvfb and commits the result to the
+feature branch. Pillow is a development tool for screenshots/GIF encoding only.
 
-[Kenney Sci-fi Sample reference](../vorschau/Kenney_SciFi_Sample_Referenz.png) is the **Kenney sample/reference layout**, *not* a screenshot of Aiko. It remains in the source history to document the inspiration for the adapted sci-fi UI.
+The original third-party
+[Kenney Sci-Fi sample layout](references/Kenney_SciFi_Sample_Referenz.png)
+is archived as a **design reference**, not advertised as a current Aiko UI
+screenshot.
 
-## Asset attribution and reuse
-
-The current Aiko Anime artwork has
-[restricted reuse terms](../assets/aiko-anime-8-frames/LICENSE.md); historical
-captures show the earlier MIT sprite release. UI screenshots also contain
-Kenney graphics. The respective provenance and license boundaries are explained
-in [ASSETS.md](../ASSETS.md),
-[Kenney's CC0 notice](../LICENSES/KENNEY_CC0.md) and
-[the sprite provenance manifest](../aiko_pet/assets/provenance.json).
-Optional fonts are not bundled.
-
-The unmodified screenshot/animation filenames under `vorschau/` are retained for compatibility with existing links and historical documents.
+Aiko's current character art has
+[restricted reuse terms](../assets/aiko-anime-8-frames/LICENSE.md).
+Kenney UI/emotes remain CC0 and the game hand illustrations remain CC BY 4.0.
+See [artwork and screenshot provenance](../ASSETS.md),
+[Kenney's notice](../LICENSES/KENNEY_CC0.md), and
+[Twemoji's notice](../LICENSES/TWEMOJI_CC_BY_4.md).

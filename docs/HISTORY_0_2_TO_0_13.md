@@ -16,7 +16,7 @@ The game interface and Aiko's character dialogue remain **German**. Project docu
 
 **Unchanged:** v0.12 Tamagotchi care, the adaptive rhythm, all 73 original sprite frames, local saves, hardware observation, and window management. No new runtime dependency, cloud service, or AI inference.
 
-**Preview:** `vorschau/Aiko_v0_13_Reaktionsablauf.gif` shows the actual sequence. See [v0.13 emote/UI design](KENNEY_UI_UND_EMOTES_V013.md) for more.
+**Historical preview:** The original [v0.13 reaction GIF](https://github.com/Lexoniarus/aiko-desktop-pet/blob/f41e8aab58e6a93bd2675d0fd1f1adc3bed9b345/vorschau/Aiko_v0_13_Reaktionsablauf.gif) remains in Git history. It intentionally no longer appears in the [current screenshot gallery](MEDIA_GALLERY.md). See [v0.13 emote/UI design](KENNEY_UI_UND_EMOTES_V013.md) for more.
 
 ## v0.12 — affection as a distinct need
 

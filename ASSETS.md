@@ -98,13 +98,22 @@ The user-supplied `Kenney Mini.ttf` is **not distributed** with the project. Aik
 
 ## 5. Screenshots and previews
 
-Historical images in `vorschau/` show the earlier MIT sprite artwork with
-Kenney UI/emotes. The maintainer-supplied `vorschau/Aiko_Anime_Runtime.png` and
-the included source poses show the restricted Aiko Anime artwork.
-Their depicted components retain their respective licenses.
-The [curated gallery](docs/MEDIA_GALLERY.md) distinguishes actual application
-screenshots, sprite animation previews, historical builds and third-party
-Kenney layout references.
+The active `vorschau/` directory now contains **only captures of the current
+Aiko Anime/Tk UI and minigame**, plus a GIF preview of all 112 current runtime
+sprite poses. Real UI screenshots and reaction GIFs are captured on Linux/Xvfb
+from the running application by
+[`tools/capture_current_gallery.py`](tools/capture_current_gallery.py) and
+[`tools/capture_rock_paper_scissors_media.py`](tools/capture_rock_paper_scissors_media.py).
+The sprite-only GIF composites the current prepared PNG assets using their
+checked-in frame timings and is identified separately from live UI footage.
+
+The older v0.7–v0.13 screenshots, previous 73-frame animation GIF, and original
+maintainer-provided Windows image remain accessible in Git history, including
+[`main` at f41e8aa](https://github.com/Lexoniarus/aiko-desktop-pet/tree/f41e8aab58e6a93bd2675d0fd1f1adc3bed9b345/vorschau).
+The third-party Kenney design sample is preserved separately under
+[`docs/references/`](docs/references/Kenney_SciFi_Sample_Referenz.png).
+The new captures retain the original sprite and UI asset licenses.
+See the [current media gallery](docs/MEDIA_GALLERY.md).
 
 All inputs needed to rebuild the prepared runtime frames are included in the
 selected source export. Unused archive material is excluded from the public

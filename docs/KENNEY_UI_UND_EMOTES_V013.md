@@ -24,7 +24,7 @@ The user supplied the following paths from a purchased Kenney Game Assets All-in
 
 - `2D assets/Emote Pack/PNG/Pixel/Style 1`
 - `UI assets/UI Pack - Sci-fi/PNG`
-- Reference layout: `UI Pack - Sci-fi/Sample.png` (sample also retained in `vorschau/`).
+- Reference layout: `UI Pack - Sci-fi/Sample.png` (the third-party sample is stored separately at [`docs/references/Kenney_SciFi_Sample_Referenz.png`](references/Kenney_SciFi_Sample_Referenz.png), not mixed with current application screenshots).
 
 The shipped assets include **15 unchanged pixel emotes** and a small selection of Kenney-based sci-fi panels and buttons; the rest of the complete bundle is intentionally not included. Aiko's **73 original character sprites** are unchanged.
 

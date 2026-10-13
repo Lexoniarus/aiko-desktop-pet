@@ -34,7 +34,7 @@ The edited dialogue catalog contained **339 primary entries across 67 event cate
 
 ## Visual verification
 
-The real Tk application was launched under a virtual Linux display. Screenshots at `vorschau/Aiko_v0_10_Klickreaktion.png` and `vorschau/Aiko_v0_10_Nachsatz.png` depict the actual app and original sprites, including sequential bubble text. They are not synthetic mockups. A native Windows taskbar was not part of that display.
+The real Tk application was launched under a virtual Linux display. The original [v0.10 click reaction](https://github.com/Lexoniarus/aiko-desktop-pet/blob/f41e8aab58e6a93bd2675d0fd1f1adc3bed9b345/vorschau/Aiko_v0_10_Klickreaktion.png) and [follow-up](https://github.com/Lexoniarus/aiko-desktop-pet/blob/f41e8aab58e6a93bd2675d0fd1f1adc3bed9b345/vorschau/Aiko_v0_10_Nachsatz.png) remain available in Git history. They show the authentic historical sprite and were not mockups. The active preview directory now shows the current character; these old captures are not presented as modern UI. A native Windows taskbar was not part of the original test display.
 
 ## Not verified on Windows
 

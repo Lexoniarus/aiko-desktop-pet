@@ -48,12 +48,15 @@ class PublicRepositoryTests(unittest.TestCase):
                         f"{relative} has missing file: {path}",
                     )
 
-    def test_readme_uses_current_runtime_capture_and_historical_animation(
+    def test_readme_uses_only_current_aiko_capture_and_animation(
         self,
     ) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("vorschau/Aiko_Anime_Runtime.png", readme)
-        self.assertIn("vorschau/Aiko_v0_13_Reaktionsablauf.gif", readme)
+        self.assertIn("vorschau/Aiko_Current_Hover.png", readme)
+        self.assertIn("vorschau/Aiko_Current_Reaction_Sequence.gif", readme)
+        self.assertIn("vorschau/Aiko_Current_Animations.gif", readme)
+        self.assertNotIn("vorschau/Aiko_v0_", readme)
+        self.assertNotIn("vorschau/Aiko_Anime_Runtime.png", readme)
         self.assertIn("docs/MEDIA_GALLERY.md", readme)
         self.assertIn("docs/ARCHITECTURE.md", readme)
         self.assertIn("CONTRIBUTING.md", readme)
@@ -79,6 +82,22 @@ class PublicRepositoryTests(unittest.TestCase):
                     self.assertGreater(height, 0)
                 else:
                     self.assertIn(sample[:6], (b"GIF87a", b"GIF89a"))
+
+    def test_active_preview_directory_contains_no_legacy_skin(self) -> None:
+        active = ROOT / "vorschau"
+        for asset in active.iterdir():
+            if not asset.is_file() or asset.suffix.lower() not in {
+                ".png", ".gif",
+            }:
+                continue
+            with self.subTest(asset=asset.name):
+                self.assertTrue(
+                    asset.name.startswith(("Aiko_Current_", "Aiko_RPS_")),
+                    f"An outdated UI or sprite preview is still active: {asset}",
+                )
+        self.assertTrue(
+            (ROOT / "docs/references/Kenney_SciFi_Sample_Referenz.png").is_file(),
+        )
 
     def test_provenance_matches_actual_sprite_frames(self) -> None:
         manifest = json.loads(
