@@ -175,6 +175,50 @@ class UiDependencyRules(unittest.TestCase):
             for node in tree.body
         ))
 
+    def test_domain_policies_never_call_pet_private_methods(self) -> None:
+        forbidden = {
+            "_roll_meals", "_apply_clock", "_decay", "_credit_friendship",
+        }
+        for relative in (
+            "care_actions.py", "friendship.py",
+            "need_decay.py", "pet_lifecycle.py",
+        ):
+            with self.subTest(policy=relative):
+                tree = ast.parse((ROOT / relative).read_text("utf-8"))
+                calls = {
+                    node.func.attr
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Attribute)
+                }
+                self.assertFalse(calls.intersection(forbidden))
+
+    def test_pet_aggregate_does_not_call_mutating_legacy_adapters(self) -> None:
+        source = (ROOT / "domain.py").read_text("utf-8")
+        tree = ast.parse(source)
+        state = next(
+            node for node in tree.body
+            if isinstance(node, ast.ClassDef) and node.name == "PetState"
+        )
+        calls = {
+            node.func.id
+            for node in ast.walk(state)
+            if isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+        }
+        forbidden = {
+            "apply_care_action", "apply_need_decay",
+            "award_friendship_for_care", "advance_pet_time",
+        }
+        self.assertFalse(calls.intersection(forbidden))
+        for policy in (
+            "plan_care_action", "calculate_need_decay",
+            "calculate_friendship_reward", "plan_pet_time",
+            "calculate_daily_routine",
+        ):
+            with self.subTest(policy=policy):
+                self.assertIn(policy, calls)
+
     def test_application_services_never_import_tkinter(self) -> None:
         for path in (ROOT / "application").glob("*.py"):
             with self.subTest(module=path.name):

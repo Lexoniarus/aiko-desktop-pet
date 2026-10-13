@@ -25,6 +25,9 @@ the desktop runtime has been exercised on Windows after the final commit.
   catch-up, while fresh or corrupt saves keep their original defaults;
   settings and adaptive memory retain the version-one JSON contract.
 - Application import guards prevent a direct dependency on `storage.py`.
+- Domain-transition tests check immutable policies, pet-owned mutations,
+  backwards-compatible care and timeline APIs, old friendship rewards,
+  sleep behavior, rejected actions and bounded work telemetry.
 - Work-episode regression tests cover confirmed versus missing activity,
   repeated interruption, unexpected work and one-time recovery reflections.
 - Lifecycle tests cover the original startup, shutdown and repeated-close

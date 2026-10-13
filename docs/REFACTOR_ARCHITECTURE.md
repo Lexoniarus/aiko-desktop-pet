@@ -55,10 +55,15 @@ third-party packages. Keep German runtime text and English documentation.
    already constructed desktop resources. The composition module is about
    roughly 581 lines rather than 608 (formerly 875).
    See [the full architecture audit](ARCHITECTURE_AUDIT_20261013.md).
-7. **Pet and adaptive domain (implemented):** Care, friendship, bounded
-   time progression and decay are separate policies. `adaptive_models.py`
+7. **Pet and adaptive domain (implemented):** `PetState` now owns all
+   care, needs, friendship and daily-routine state transitions.
+   `care_actions.py`, `need_decay.py`, `friendship.py` and
+   `pet_lifecycle.py` calculate immutable transitions or bounded
+   simulation steps, without calling private methods on external records.
+   Their existing module-level mutation APIs remain as legacy adapters to
+   the aggregate or independent record adapters. `adaptive_models.py`
    owns persisted memory/observation contracts, with `adaptive.py`
-   orchestrating learning; legacy names and save-file fields remain valid.
+   orchestrating learning; save fields and public names remain valid.
 8. **Dialogue (implemented):** Written dialogue catalogue, mouse-click
    decisions and spontaneous topics are independent of the GUI.
    `work_episode.py` now owns the short-lived, observed work interruptions,
@@ -86,6 +91,21 @@ third-party packages. Keep German runtime text and English documentation.
 - Application modules no longer import the concrete `storage` module.
   Persisted JSON schema version, save location, legacy defaults, assets and
   language policy do not change.
+
+## Domain aggregate and transition decisions
+
+- `PetState` is the one persisted mutable pet aggregate. Its `interact()`,
+  `advance()` and `apply_daily_routine()` methods own state updates.
+- Immutable `CareTransition`, `NeedLevels`, `FriendshipTransition`,
+  `RoutineTransition` and `SimulationStep` are calculated by separate
+  stateless policy modules, without changing the input pet.
+- Legacy `apply_care_action()`, `apply_need_decay()`,
+  `award_friendship_for_care()`, `apply_daily_routine()` and
+  `advance_pet_time()` remain available for existing consumers.
+- The existing German `mood_hint()` and `feed_label()` methods remain
+  compatibility APIs for now. Their presentation responsibilities should
+  move with the read-model/projection boundary in the next architecture step,
+  without creating a domain-to-UI import cycle.
 
 ## Change safety
 

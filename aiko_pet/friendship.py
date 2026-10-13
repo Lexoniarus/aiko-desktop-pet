@@ -1,8 +1,9 @@
-"""Friendship reward policy with no GUI or persistence dependencies."""
+"""Pure friendship reward policy with an adapter for the legacy record API."""
 
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
 from typing import Protocol
 
 from .routine import context_at
@@ -25,7 +26,7 @@ LEGACY_REWARD_ACTIONS = ("energy_drink", "sleep")
 
 
 class FriendshipRecord(Protocol):
-    """Mutable fields that the reward policy needs from a relationship."""
+    """Readable relationship fields needed to evaluate a care reward."""
 
     friendship: float
     friendship_day: str
@@ -34,41 +35,79 @@ class FriendshipRecord(Protocol):
     care_last_rewards: dict[str, float]
 
 
+@dataclass(frozen=True, slots=True)
+class FriendshipTransition:
+    """Complete immutable result of one eligible friendship evaluation."""
+
+    friendship: float
+    day: str
+    gained_today: float
+    care_types: tuple[str, ...]
+    last_rewards: tuple[tuple[str, float], ...]
+
+
+def calculate_friendship_reward(
+    record: FriendshipRecord,
+    action: str,
+    stamp: float,
+    need_before: float,
+) -> FriendshipTransition | None:
+    """Decide new relationship values without mutating a record."""
+    if (
+        action not in CARE_FRIENDSHIP_GAIN
+        or not math.isfinite(stamp) or stamp <= 0
+    ):
+        return None
+    context = context_at(stamp)
+    day = record.friendship_day
+    gained = record.friendship_gained_today
+    types = list(record.care_types_today)
+    rewards = dict(record.care_last_rewards)
+    friendship = record.friendship
+    if day != context.day_key:
+        day = context.day_key
+        gained = 0.0
+        types = []
+    if need_before <= FRIENDSHIP_NEED_THRESHOLD:
+        last = rewards.get(action)
+        if last is None or stamp - last >= FRIENDSHIP_REWARD_INTERVAL:
+            remaining = max(0.0, FRIENDSHIP_DAILY_CAP - gained)
+            first_time = action not in types
+            variety = (
+                FRIENDSHIP_VARIETY_BONUS
+                if first_time and types else 0.0
+            )
+            gain = min(
+                remaining, CARE_FRIENDSHIP_GAIN[action] + variety,
+                100.0 - friendship,
+            )
+            if gain > 0:
+                friendship = clamp_need_value(friendship + gain)
+                gained += gain
+                rewards[action] = stamp
+                if first_time:
+                    types.append(action)
+    return FriendshipTransition(
+        friendship=friendship,
+        day=day,
+        gained_today=gained,
+        care_types=tuple(types),
+        last_rewards=tuple(rewards.items()),
+    )
+
+
 def award_friendship_for_care(
     record: FriendshipRecord,
     action: str,
     stamp: float,
     need_before: float,
 ) -> None:
-    """Reward diverse, useful care, never repeated clicks on full needs."""
-    if (action not in CARE_FRIENDSHIP_GAIN or not math.isfinite(stamp)
-            or stamp <= 0):
+    """Legacy mutable-record adapter; PetState owns applying its own changes."""
+    change = calculate_friendship_reward(record, action, stamp, need_before)
+    if change is None:
         return
-    context = context_at(stamp)
-    if record.friendship_day != context.day_key:
-        record.friendship_day = context.day_key
-        record.friendship_gained_today = 0.0
-        record.care_types_today = []
-    if need_before > FRIENDSHIP_NEED_THRESHOLD:
-        return
-    last = record.care_last_rewards.get(action)
-    if last is not None and stamp - last < FRIENDSHIP_REWARD_INTERVAL:
-        # Also reject a backwards-running system clock for this action.
-        return
-    remaining = max(0.0, FRIENDSHIP_DAILY_CAP - record.friendship_gained_today)
-    first_time = action not in record.care_types_today
-    variety = (
-        FRIENDSHIP_VARIETY_BONUS
-        if first_time and record.care_types_today else 0.0
-    )
-    gain = min(
-        remaining, CARE_FRIENDSHIP_GAIN[action] + variety,
-        100.0 - record.friendship,
-    )
-    if gain <= 0:
-        return
-    record.friendship = clamp_need_value(record.friendship + gain)
-    record.friendship_gained_today += gain
-    record.care_last_rewards[action] = stamp
-    if first_time:
-        record.care_types_today.append(action)
+    record.friendship = change.friendship
+    record.friendship_day = change.day
+    record.friendship_gained_today = change.gained_today
+    record.care_types_today = list(change.care_types)
+    record.care_last_rewards = dict(change.last_rewards)

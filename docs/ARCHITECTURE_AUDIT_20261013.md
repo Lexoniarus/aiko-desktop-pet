@@ -7,7 +7,9 @@ isolated to `refactor/oop-modular-architecture`.
 
 | Responsibility | Implemented owner |
 | --- | --- |
-| Domain care and friendship | `application/controller.py` + domain rules |
+| Domain state mutation owner | `domain.PetState` aggregate |
+| Pure care, needs, friendship and routine decisions | `care_actions.py`, `need_decay.py`, `friendship.py`, `pet_lifecycle.py` |
+| Care use-case coordination | `application/controller.py` |
 | Incoming app/browser notifications | `application/router.py` and `inbox.py` |
 | Comment timing, cursor/walk decisions and presentation interruption | `application/attention.py` |
 | Workload, adaptive routine and pet time advancement | `application/activity.py` |
@@ -83,6 +85,20 @@ loads saved values without advancing them. Only valid prior saves are
 advanced in the application. The existing JSON schema, defaults and
 legacy import compatibility remain unchanged.
 
+## Domain transition ownership — implemented
+
+`PetState` now drives its own `interact()` and `advance()` operations,
+using calculated `CareTransition`, `NeedLevels`, `FriendshipTransition`,
+`RoutineTransition` and `SimulationStep` values. No policy calls private
+methods of the aggregate to mutate it. Stateless domain decision modules
+remain separately testable. Legacy module-level action and timeline APIs are
+kept as compatibility adapters, without changing persistence schema.
+
+A limited presentation concern remains: `PetState.mood_hint()` and
+`PetState.feed_label()` provide German display copy. Relocate their
+production use at the application/UI projection boundary in the next step,
+while preserving public callers and dependency direction.
+
 ## Remaining work, by priority (not yet implemented)
 
 1. **Implemented:** timer scheduling, autosave, taskbar/stack inspection,
@@ -113,7 +129,9 @@ as a prerequisite for the code-structure refactor.
 - GUI tests on Python 3.11 and 3.13 under Linux/Xvfb.
 - Windows-hosted headless tests and desktop module imports.
 - AST architecture checks prevent application-to-UI and UI-to-domain
-  reverse imports. `gui.py` now has an explicit 600-line limit.
+  reverse imports. Pure policy modules may not call aggregate-private
+  mutators; the aggregate may not use mutable legacy adapters.
+  `gui.py` still has an explicit 600-line limit.
 - Manual real Windows tests remain a merge prerequisite.
 
 **No merge, schema change, asset change or local save rewrite.**

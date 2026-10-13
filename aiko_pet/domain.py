@@ -7,7 +7,11 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
-from .care_actions import apply_care_action
+from .care_actions import (
+    apply_care_action as apply_care_action,
+    plan_care_action,
+    resolve_care_time,
+)
 from .friendship import (
     CARE_FRIENDSHIP_GAIN as CARE_FRIENDSHIP_GAIN,
     CARE_PRIMARY_NEED as CARE_PRIMARY_NEED,
@@ -16,17 +20,23 @@ from .friendship import (
     FRIENDSHIP_REWARD_INTERVAL as FRIENDSHIP_REWARD_INTERVAL,
     FRIENDSHIP_VARIETY_BONUS as FRIENDSHIP_VARIETY_BONUS,
     LEGACY_REWARD_ACTIONS as LEGACY_REWARD_ACTIONS,
-    award_friendship_for_care,
+    calculate_friendship_reward,
+    award_friendship_for_care as award_friendship_for_care,
 )
-from .need_decay import apply_need_decay
+from .need_decay import (
+    NeedLevels, apply_need_decay as apply_need_decay,
+    calculate_need_decay,
+)
 from .pet_lifecycle import (
     MAX_CATCHUP_SECONDS as MAX_CATCHUP_SECONDS,
     MAX_LIVE_EFFORT_SECONDS as MAX_LIVE_EFFORT_SECONDS,
     SIMULATION_STEP_SECONDS as SIMULATION_STEP_SECONDS,
-    advance_pet_time,
-    apply_daily_routine,
+    advance_pet_time as advance_pet_time,
+    apply_daily_routine as apply_daily_routine,
+    calculate_daily_routine,
+    plan_pet_time,
 )
-from .routine import MEAL_NAMES, TimeContext
+from .routine import MEAL_NAMES, TimeContext, context_at
 from .value_rules import bounded as bounded, clamp_saved_time as clamp_saved_time
 
 
@@ -155,6 +165,35 @@ class PetState:
             self.meals_date = context.day_key
             self.meals_today = []
 
+    def _set_needs(self, values: NeedLevels) -> None:
+        """Commit validated need values together inside the pet aggregate."""
+        self.satiety = values.satiety
+        self.mood = values.mood
+        self.energy = values.energy
+        self.social = values.social
+        self.affection = values.affection
+
+    def apply_daily_routine(
+        self,
+        context: TimeContext,
+        *,
+        allow_bedtime: bool = True,
+        allow_nap: bool = False,
+        interrupt_nap: bool = False,
+        effort: float | None = None,
+    ) -> None:
+        """Apply an evaluated sleep transition without exposing private hooks."""
+        self._roll_meals(context)
+        transition = calculate_daily_routine(
+            self, context, allow_bedtime=allow_bedtime,
+            allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
+        )
+        self.sleeping = transition.sleeping
+        self.sleep_origin = transition.sleep_origin
+        self.nap_until = transition.nap_until
+        self.auto_sleep_night = transition.auto_sleep_night
+        self.auto_nap_day = transition.auto_nap_day
+
     def _apply_clock(
         self,
         context: TimeContext,
@@ -164,19 +203,18 @@ class PetState:
         interrupt_nap: bool = False,
         effort: float | None = None,
     ) -> None:
-        """Apply the clock policy, preserving existing PetState callers."""
-        apply_daily_routine(
-            self, context, allow_bedtime=allow_bedtime,
-            allow_nap=allow_nap, interrupt_nap=interrupt_nap,
-            effort=effort,
+        """Legacy private entrypoint; new rules use apply_daily_routine."""
+        self.apply_daily_routine(
+            context, allow_bedtime=allow_bedtime,
+            allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
         )
 
     def _decay(
         self, hours: float, context: TimeContext | None,
         effort: float | None = None,
     ) -> None:
-        """Update needs at their established rates."""
-        apply_need_decay(self, hours, context, effort=effort)
+        """Apply the result of pure need-decay rules inside the aggregate."""
+        self._set_needs(calculate_need_decay(self, hours, context, effort))
 
     def advance(
         self,
@@ -188,22 +226,68 @@ class PetState:
         interrupt_nap: bool = False,
         effort: float | None = None,
     ) -> None:
-        """Advance Aiko's needs, day rhythm and sleep state."""
-        advance_pet_time(
-            self, now,
-            auto_routine=auto_routine, allow_bedtime=allow_bedtime,
-            allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
+        """Execute bounded time steps, keeping mutation inside PetState."""
+        steps = plan_pet_time(
+            self.updated_at, now, auto_routine=auto_routine, effort=effort,
         )
+        if steps is None:
+            return
+        if not auto_routine:
+            for step in steps:
+                self._decay(step.hours, None, step.effort)
+            self._roll_meals(context_at(now))
+        else:
+            for step in steps:
+                if step.context is None:
+                    continue
+                self.apply_daily_routine(
+                    step.context, allow_bedtime=allow_bedtime is not False,
+                    allow_nap=allow_nap, interrupt_nap=interrupt_nap,
+                )
+                self._decay(step.hours, step.context, step.effort)
+            self.apply_daily_routine(
+                context_at(now), allow_bedtime=allow_bedtime is not False,
+                allow_nap=allow_nap,
+            )
+        self.updated_at = now
 
     def _credit_friendship(
         self, action: str, stamp: float, need_before: float,
     ) -> None:
-        """Delegate relationship rewards without changing state semantics."""
-        award_friendship_for_care(self, action, stamp, need_before)
+        """Apply an immutable friendship decision to owned reward fields."""
+        transition = calculate_friendship_reward(
+            self, action, stamp, need_before,
+        )
+        if transition is None:
+            return
+        self.friendship = transition.friendship
+        self.friendship_day = transition.day
+        self.friendship_gained_today = transition.gained_today
+        self.care_types_today = list(transition.care_types)
+        self.care_last_rewards = dict(transition.last_rewards)
 
     def interact(self, action: str, *, now: float | None = None) -> str:
-        """Apply one care action and return the unchanged German fallback."""
-        return apply_care_action(self, action, now=now)
+        """Commit one care transition and its friendship reward atomically."""
+        stamp = resolve_care_time(now)
+        transition = plan_care_action(self, action, now=stamp)
+        if not transition.changed:
+            return transition.response
+        self._set_needs(transition.needs)
+        self.sleeping = transition.sleeping
+        self.sleep_origin = transition.sleep_origin
+        self.nap_until = transition.nap_until
+        self.auto_sleep_night = transition.auto_sleep_night
+        if (
+            self.meals_date != transition.meals_date
+            or tuple(self.meals_today) != transition.meals_today
+        ):
+            self.meals_date = transition.meals_date
+            self.meals_today = list(transition.meals_today)
+        if transition.reward_action is not None:
+            self._credit_friendship(
+                transition.reward_action, stamp, transition.need_before,
+            )
+        return transition.response
 
     def feed_label(self, context: TimeContext) -> str:
         if context.meal and (
