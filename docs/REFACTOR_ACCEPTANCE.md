@@ -21,6 +21,9 @@ the desktop runtime has been exercised on Windows after the final commit.
 - Desktop runtime tests cover tick ordering and shutdown timer cancellation,
   persistence and disk-error handling, taskbar/overlay check intervals and
   Tk/global-input dispatch.
+- Lifecycle tests cover the original startup, shutdown and repeated-close
+  order without opening a real Windows desktop. Provider tests cover
+  CPU deltas, optional NVIDIA measurements, GPU timeout and legacy imports.
 - No state JSON schema changes or bundled runtime dependency changes
 
 ## Windows 10/11 manual smoke checks — still required
@@ -39,7 +42,8 @@ the desktop runtime has been exercised on Windows after the final commit.
 5. Care: try feeding, playing, petting, talking, energy drink and sleep/wake.
    Verify values, friendship rewards and cooldowns remain sane.
 6. Activity: turn observation off/on and check Aiko's workload reaction,
-   idle/working animations and overnight sleep behavior.
+   idle/working animations and overnight sleep behavior. Check that GPU
+   readings remain optional on machines without NVIDIA tooling.
 7. Windows overlays: move another application's foreground window over Aiko;
    check speech, panel and popup layers without unwanted focus stealing.
 8. Save/load: record six need values, friendship progress and toolbar position;

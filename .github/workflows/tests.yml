@@ -96,7 +96,10 @@ jobs:
             "test_desktop_runtime.py",
             "test_desktop_persistence.py",
             "test_desktop_maintenance.py",
-            "test_attention_policy.py"
+            "test_attention_policy.py",
+            "test_hardware_providers.py",
+            "test_system_activity.py",
+            "test_desktop_lifecycle.py"
           )
           foreach ($pattern in $patterns) {
             python -m unittest discover -s tests -p $pattern -q

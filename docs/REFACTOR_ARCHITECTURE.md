@@ -30,8 +30,11 @@ third-party packages. Keep German runtime text and English documentation.
    domain and monitor values into the view snapshots.
 5. **Speech and activity presentation (implemented):**
    `ui/speech_presenter.py` owns speech/emote windows and hide timers.
-   `application/activity.py` owns hardware observations, adaptive rhythm,
-   and sleep-related decisions without Tk; GUI uses callback ports.
+   `application/activity.py` owns adaptive rhythm and sleep-related
+   decisions without Tk; GUI uses callback ports. Sensor readings, native
+   providers, NVIDIA CSV parsing and the background monitor are now
+   separate hardware modules; `system_activity.py` re-exports the
+   old public names without housing another implementation.
 6. **Desktop composition (in progress):** `DesktopPet` in `gui.py`
    connects the actual animated character (`AnimatedPet`), native window
    (`DesktopWindow`), independent hover UI (`HoverUi`) and application core.
@@ -41,8 +44,9 @@ third-party packages. Keep German runtime text and English documentation.
    update loop and timers; `desktop/persistence.py` owns serialization
    and autosave intervals; `desktop/maintenance.py` owns taskbar/stack
    polling; `desktop/input.py` owns Tk and global mouse input.
-   The composition module is about 571 lines rather than 608 (formerly
-   875), with startup/shutdown still awaiting a final separate cutover.
+   `desktop/lifecycle.py` now owns the ordered startup/shutdown of
+   already constructed desktop resources. The composition module is about
+   569 lines rather than 608 (formerly 875).
    See [the full architecture audit](ARCHITECTURE_AUDIT_20261013.md).
 7. **Pet and adaptive domain (implemented):** Care, friendship, bounded
    time progression and decay are separate policies. `adaptive_models.py`

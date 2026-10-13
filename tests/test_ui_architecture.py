@@ -92,6 +92,36 @@ class UiDependencyRules(unittest.TestCase):
                 }
                 self.assertFalse(modules.intersection(forbidden))
 
+    def test_sensor_modules_are_not_tk_or_browser_adapters(self) -> None:
+        providers = (
+            "system_metrics.py", "system_os.py", "system_nvidia.py",
+            "hardware_sampler.py", "activity_monitor.py",
+        )
+        for relative in providers:
+            with self.subTest(provider=relative):
+                tree = ast.parse((ROOT / relative).read_text("utf-8"))
+                imports = [
+                    node.module or "" for node in ast.walk(tree)
+                    if isinstance(node, ast.ImportFrom)
+                ] + [
+                    alias.name for node in ast.walk(tree)
+                    if isinstance(node, ast.Import)
+                    for alias in node.names
+                ]
+                self.assertFalse(
+                    any(name.startswith(("tkinter", "aiko_pet.ui"))
+                        for name in imports),
+                )
+
+    def test_system_activity_remains_only_compatibility_exports(self) -> None:
+        source = (ROOT / "system_activity.py").read_text("utf-8")
+        self.assertLessEqual(len(source.splitlines()), 50)
+        tree = ast.parse(source)
+        self.assertFalse(any(
+            isinstance(node, (ast.ClassDef, ast.FunctionDef))
+            for node in tree.body
+        ))
+
     def test_application_services_never_import_tkinter(self) -> None:
         for path in (ROOT / "application").glob("*.py"):
             with self.subTest(module=path.name):

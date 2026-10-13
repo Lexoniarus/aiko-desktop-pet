@@ -22,13 +22,22 @@ isolated to `refactor/oop-modular-architecture`.
 | Save catch-up and autosave cadence | `desktop/persistence.py` |
 | Taskbar/window stack checks | `desktop/maintenance.py` |
 | Tk/global mouse and focus input | `desktop/input.py` |
-| Component composition and remaining startup/shutdown | `gui.py` |
+| Desktop startup/shutdown resource sequence | `desktop/lifecycle.py` |
+| Hardware readings and effort classification | `system_metrics.py` |
+| Windows/Linux OS sensors | `system_os.py` |
+| NVIDIA discovery and CSV parsing | `system_nvidia.py` |
+| CPU/GPU smoothing and bounded GPU call | `hardware_sampler.py` |
+| Background worker and cached readings | `activity_monitor.py` |
+| Legacy sensor import compatibility | `system_activity.py` |
+| Component composition and remaining GUI adapters | `gui.py` |
 
 The original `gui.py` mixed all those responsibilities and measured 875
 lines. The composition shell is now about 571 lines. The legacy
 compatibility adapter remains separate; these forwards are not removed
 complexity. Timers, auto-saving, taskbar/stack polling, and input binding
-now belong to testable, cohesive desktop services.
+now belong to testable, cohesive desktop services. Startup and shutdown
+are now ordered by `DesktopLifecycle` rather than duplicated in the
+composition root.
 
 ## Dependency rule
 
@@ -55,12 +64,15 @@ adapter is **not** a destination for new features.
 
 ## Remaining work, by priority (not yet implemented)
 
-1. **Implemented:** ordered desktop update timers, autosave cadence,
-   taskbar/stack polling and mouse/focus event binding. Startup/shutdown
-   composition remains, and should not be moved to a new god object.
-2. Split the 337-line `system_activity.py` along hardware-provider and
-   sampler responsibilities. Keep Windows/Linux implementations testable
-   without rewriting their published API.
+1. **Implemented:** timer scheduling, autosave, taskbar/stack inspection,
+   mouse/focus binding and ordered desktop startup/shutdown. The lifecycle
+   owns existing resources but contains no care/dialogue policy.
+2. **Implemented:** the former 337-line `system_activity.py` is now
+   only the compatibility façade. Sensor contracts (`system_metrics.py`),
+   OS sensors (`system_os.py`), NVIDIA discovery/parsing
+   (`system_nvidia.py`), smoothing (`hardware_sampler.py`) and the
+   independent background worker (`activity_monitor.py`) have separate
+   owners. All existing public sensor imports are preserved.
 3. Review the 322-line `dialogue.py` for behaviorally meaningful division.
    Preserve German authored phrases, event priority and quiet behavior.
 4. Gradually package flat domain files. Because the import path
