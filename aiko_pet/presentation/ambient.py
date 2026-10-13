@@ -13,9 +13,11 @@ from collections.abc import Callable, Sequence
 from .animation import SpriteSelection
 
 _DIRECTIONS = (2, 3, 4, 12, 13, 14)
-# Eight gentle steps give a 3.36-second rocking cycle at 420 ms per step.
-_SWAY_OFFSETS = (0, 1, 2, 1, 0, -1, -2, -1)
+# Repeating positions make the one-pixel sway gentler and less busy.
+# Eight phases still form a 3.36-second cycle at 420 ms per phase.
+_SWAY_OFFSETS = (0, 0, 1, 1, 0, 0, -1, -1)
 _SWAY_STEP_SECONDS = 0.42
+_BLINK_GAP_SECONDS = (3.0, 8.0)
 
 
 class AmbientDirector:
@@ -32,7 +34,7 @@ class AmbientDirector:
         self._motion_started_at = started_at
         self._glance_frame: int | None = None
         self._glance_until = started_at
-        self.next_blink_at = started_at + self._between(5.0, 11.0)
+        self.next_blink_at = started_at + self._between(*_BLINK_GAP_SECONDS)
         self.next_glance_at = started_at + self._between(22.0, 46.0)
 
     @property
@@ -46,7 +48,7 @@ class AmbientDirector:
         self._blink_active = False
         self._glance_frame = None
         self._glance_until = now
-        self.next_blink_at = now + self._between(5.0, 11.0)
+        self.next_blink_at = now + self._between(*_BLINK_GAP_SECONDS)
         self.next_glance_at = now + self._between(22.0, 46.0)
 
     def motion_offset(self, now: float) -> int:
@@ -84,4 +86,4 @@ class AmbientDirector:
         if self._blink_active:
             self._blink_active = False
             self._motion_started_at = now
-            self.next_blink_at = now + self._between(5.0, 11.0)
+            self.next_blink_at = now + self._between(*_BLINK_GAP_SECONDS)

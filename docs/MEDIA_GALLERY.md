@@ -62,7 +62,7 @@ deterministically for reproducible stills and GIF timing.
 
 This captures the **actual Tk character widget** under Linux/Xvfb, with
 controlled presentation cues and encoded hold intervals. The neutral
-resting posture now includes a slow, very small head/shoulder sway,
+resting posture now includes a slow, at-most-one-source-pixel head/shoulder sway,
 not a frozen sprite or a whole-character bob. When Aiko looks around,
 the sway is derived from **that same directional sprite** while the feet
 remain still. The sequence demonstrates one complete eight-frame blink

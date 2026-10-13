@@ -27,7 +27,7 @@ class RestPoseRendererTests(unittest.TestCase):
         original = tk.PhotoImage(master=self.root, width=192, height=208)
         original.put("#ff0000", to=(85, 40, 106, 105))
         original.put("#00ff00", to=(85, 181, 106, 202))
-        moved = self.render.resolve(original, offset=2, scale=1)
+        moved = self.render.resolve(original, offset=1, scale=1)
         self.assertIsNot(moved, original)
         self.assertTrue(moved.transparency_get(85, 55))
         self.assertFalse(moved.transparency_get(87, 55))
@@ -83,7 +83,7 @@ class RestPoseRendererTests(unittest.TestCase):
 
     def test_rejects_out_of_range_motion_or_wrong_dimensions(self) -> None:
         original = tk.PhotoImage(master=self.root, width=192, height=208)
-        for value in (3, -3):
+        for value in (2, -2):
             with self.assertRaises(ValueError):
                 self.render.resolve(original, offset=value, scale=1)
         with self.assertRaises(ValueError):

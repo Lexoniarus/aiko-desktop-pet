@@ -27,8 +27,8 @@ class RestPoseRenderer:
         offset: int, scale: int,
     ) -> tk.PhotoImage:
         """Move hair/head slightly while keeping leg and foot pixels fixed."""
-        if not -2 <= offset <= 2:
-            raise ValueError("A rest-pose offset must be within two pixels")
+        if not -1 <= offset <= 1:
+            raise ValueError("A rest-pose offset must be within one pixel")
         if scale not in (1, 2):
             raise ValueError("Invalid sprite scale")
         if offset == 0:

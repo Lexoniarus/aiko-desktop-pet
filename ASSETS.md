@@ -47,8 +47,8 @@ intervals inside each clip**, with activity-specific tempos. The walking
 clips retain 160 ms per frame (1.28 seconds per stride cycle). Other
 activities, such as waving or sleeping, have distinct speeds. Each idle
 blink finishes all eight frames and then rests on a neutral pose for a
-short randomized gap. During that gap, a cached Tk-only image warp sways
-Aiko's head and upper shoulders by up to two unscaled source pixels while
+short randomized 3–8-second gap. During that gap, a cached Tk-only image
+warp sways Aiko's head and upper shoulders by at most one source pixel while
 keeping her lower legs and feet perfectly stationary. The same subtle sway
 is applied **relative to whichever of the sixteen look directions is currently
 displayed** (including mouse-selected gaze), so it does not snap between

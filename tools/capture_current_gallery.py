@@ -114,8 +114,8 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
         frames.append(ImageGrab.grab(bbox=CAPTURE_BOUNDS).convert("RGB"))
         durations.append(duration_ms)
 
-    # The neutral pose is no longer a multi-second frozen screenshot:
-    # record eight tiny sways while the feet stay at the same anchor.
+    # Capture the calmer one-pixel sway through the real Tk widget;
+    # the feet and the selected gaze sprite remain anchored.
     for phase in range(8):
         pet._animated.render(now + phase * .42 + .01, 0, (0, 0))
         add_frame(420)

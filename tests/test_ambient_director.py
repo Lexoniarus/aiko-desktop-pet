@@ -23,7 +23,23 @@ class AmbientDirectorTests(unittest.TestCase):
         self.policy.finish_blink(108)
         self.assertFalse(self.policy.blinking)
         self.assertEqual(self.policy.choose(109), SpriteSelection("idle", 0))
-        self.assertEqual(self.policy.choose(113), SpriteSelection("idle"))
+        self.assertEqual(self.policy.choose(110), SpriteSelection("idle", 0))
+        self.assertEqual(self.policy.choose(111), SpriteSelection("idle"))
+
+    def test_blink_gaps_allow_three_to_eight_seconds(self) -> None:
+        self.assertEqual(self.policy.next_blink_at, 103.0)
+        self.assertEqual(self.policy.choose(102.99), SpriteSelection("idle", 0))
+        self.assertEqual(self.policy.choose(103), SpriteSelection("idle"))
+        self.policy.finish_blink(104.28)
+        self.assertEqual(self.policy.next_blink_at, 107.28)
+
+        longest = AmbientDirector(
+            100.0, between=lambda _low, high: high,
+            direction=lambda options: options[0],
+        )
+        self.assertEqual(longest.next_blink_at, 108.0)
+        longest.suspend(200.0)
+        self.assertEqual(longest.next_blink_at, 208.0)
 
     def test_independent_glance_uses_one_static_direction_then_rests(self) -> None:
         self.policy.next_blink_at = 1000.0
@@ -52,14 +68,15 @@ class AmbientDirectorTests(unittest.TestCase):
             self.policy.motion_offset(100 + index * .42 + .01)
             for index in range(9)
         ]
-        self.assertEqual(offsets, [0, 1, 2, 1, 0, -1, -2, -1, 0])
+        self.assertEqual(offsets, [0, 0, 1, 1, 0, 0, -1, -1, 0])
+        self.assertLessEqual(max(map(abs, offsets)), 1)
 
     def test_current_gaze_keeps_motion_clock_while_actions_reset_it(self) -> None:
         self.policy.suspend(101, keep_pose_motion=True)
-        self.assertEqual(self.policy.motion_offset(101), 2)
+        self.assertEqual(self.policy.motion_offset(101), 1)
         self.policy.suspend(101)
         self.assertEqual(self.policy.motion_offset(101), 0)
-        self.assertEqual(self.policy.motion_offset(101 + .85), 2)
+        self.assertEqual(self.policy.motion_offset(101 + .85), 1)
         self.policy.next_blink_at = 103
         self.policy.choose(105)
         self.assertTrue(self.policy.blinking)
