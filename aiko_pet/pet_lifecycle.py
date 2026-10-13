@@ -157,7 +157,7 @@ class PetTimeline(Protocol):
 
 
 class RoutineActor(Protocol):
-    def apply_daily_routine(
+    def update_daily_routine(
         self,
         context: TimeContext,
         *,
@@ -178,7 +178,7 @@ def apply_daily_routine(
     effort: float | None = None,
 ) -> None:
     """Legacy adapter to the aggregate's explicit calendar operation."""
-    record.apply_daily_routine(
+    record.update_daily_routine(
         context, allow_bedtime=allow_bedtime,
         allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
     )

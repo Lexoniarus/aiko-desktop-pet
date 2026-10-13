@@ -173,7 +173,7 @@ class PetState:
         self.social = values.social
         self.affection = values.affection
 
-    def apply_daily_routine(
+    def update_daily_routine(
         self,
         context: TimeContext,
         *,
@@ -203,8 +203,8 @@ class PetState:
         interrupt_nap: bool = False,
         effort: float | None = None,
     ) -> None:
-        """Legacy private entrypoint; new rules use apply_daily_routine."""
-        self.apply_daily_routine(
+        """Legacy private entrypoint; new rules use update_daily_routine."""
+        self.update_daily_routine(
             context, allow_bedtime=allow_bedtime,
             allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
         )
@@ -240,12 +240,12 @@ class PetState:
             for step in steps:
                 if step.context is None:
                     continue
-                self.apply_daily_routine(
+                self.update_daily_routine(
                     step.context, allow_bedtime=allow_bedtime is not False,
                     allow_nap=allow_nap, interrupt_nap=interrupt_nap,
                 )
                 self._decay(step.hours, step.context, step.effort)
-            self.apply_daily_routine(
+            self.update_daily_routine(
                 context_at(now), allow_bedtime=allow_bedtime is not False,
                 allow_nap=allow_nap,
             )

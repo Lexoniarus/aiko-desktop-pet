@@ -95,7 +95,7 @@ third-party packages. Keep German runtime text and English documentation.
 ## Domain aggregate and transition decisions
 
 - `PetState` is the one persisted mutable pet aggregate. Its `interact()`,
-  `advance()` and `apply_daily_routine()` methods own state updates.
+  `advance()` and `update_daily_routine()` methods own state updates.
 - Immutable `CareTransition`, `NeedLevels`, `FriendshipTransition`,
   `RoutineTransition` and `SimulationStep` are calculated by separate
   stateless policy modules, without changing the input pet.

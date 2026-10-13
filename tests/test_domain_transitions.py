@@ -92,6 +92,7 @@ class DomainTransitionTests(unittest.TestCase):
                     state = PetState(
                         satiety=60, mood=40, energy=50,
                         social=15, affection=18, sleeping=sleeping,
+                        sleep_origin="manual" if sleeping else "",
                         updated_at=START,
                     )
                     reference = PetState.from_dict(state.to_dict(), now=START)
@@ -142,7 +143,7 @@ class DomainTransitionTests(unittest.TestCase):
         context = context_at(START + 12 * 3600)
         current = PetState(updated_at=START)
         reference = PetState(updated_at=START)
-        current.apply_daily_routine(context, allow_bedtime=True)
+        current.update_daily_routine(context, allow_bedtime=True)
         apply_daily_routine(reference, context, allow_bedtime=True)
         self.assertEqual(current.to_dict(), reference.to_dict())
 
