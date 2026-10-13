@@ -40,7 +40,7 @@ class WindowDrag:
                 ("<ButtonRelease-1>", self.finish),
             )
         }
-        handle.configure(cursor="fleur")
+        handle.configure({"cursor": "fleur"})
 
     @property
     def dragging(self) -> bool:
