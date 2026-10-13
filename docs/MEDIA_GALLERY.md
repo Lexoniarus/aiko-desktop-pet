@@ -61,8 +61,11 @@ deterministically for reproducible stills and GIF timing.
 ![All current Aiko runtime sprite frames across the 12 clips and 16 gaze directions](../vorschau/Aiko_Current_Animations.gif)
 
 This is an **asset preview**, not an additional desktop screenshot. It uses
-the runtime `aiko_pet/assets/frames/` PNG files and effective durations in
-`aiko_pet/assets/animations.json`. The imported source art is unmodified.
+the runtime `aiko_pet/assets/frames/` PNG files and their uniform effective
+durations in `aiko_pet/assets/animations.json`. Every eight-frame clip uses
+the shared policy defined by `aiko_pet/assets/animation_timing.json`
+(160 ms per frame); the sixteen mouse-following poses are static selections.
+The imported source art is unmodified.
 
 ## Rock–Paper–Scissors (merged into main)
 

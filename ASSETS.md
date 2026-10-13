@@ -42,10 +42,15 @@ Original imported artwork is not cropped or overwritten. Preparation uses
 `python tools/prepare_character_assets.py`; Pillow is required only for that
 build step, not for running the desktop app.
 
-The runtime timing profile extends the open poses of idle, waiting and review
-to 2.52-second cycles, and walking to 1.413 seconds. Each animated runtime frame
-records `source_duration_ms` alongside its effective `duration_ms`; source
-manifests and PNGs are unchanged. Other clips retain the authored durations.
+All twelve regular eight-frame clips now use a shared **160 ms per frame**
+profile (6.25 FPS, 1.28 seconds per eight-frame cycle). No regular animation
+has an intentionally longer or shorter frame; the sixteen cursor-direction
+poses remain static images selected by mouse position, not an animation loop.
+The global frame hold is specified once in
+[`aiko_pet/assets/animation_timing.json`](aiko_pet/assets/animation_timing.json)
+and enforced both by asset preparation and at runtime. The original per-frame
+values are preserved separately as `source_duration_ms` for provenance.
+The source artwork, frame ordering, and PNGs are unchanged.
 
 OpenAI assigns its rights in generated output, if any, to the user to the extent
 permitted by applicable law. This does not establish that every generated image

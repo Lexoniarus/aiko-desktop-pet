@@ -55,6 +55,37 @@ class CharacterCatalogTests(unittest.TestCase):
                     [f"{i:02d}.png" for i in range(8)],
                 )
 
+    def test_tempo_is_configurable_through_the_shared_policy(self) -> None:
+        """A different valid tempo works only when all clips agree with it."""
+        data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
+        for clip in data["animations"]:
+            if clip["state"] != "look":
+                for frame in clip["frames"]:
+                    frame["duration_ms"] = 200
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            self._write_catalog(root, data)
+            config = root / "animation_timing.json"
+            profile = json.loads(config.read_text("utf-8"))
+            profile["regular_frame_duration_ms"] = 200
+            config.write_text(json.dumps(profile), encoding="utf-8")
+            catalog = load_character_catalog(root)
+            self.assertEqual(catalog.clips["waving"].timings, (200,) * 8)
+            self.assertEqual(catalog.clips["running-left"].duration_seconds, 1.6)
+
+    def test_timing_policy_rejects_invalid_hold_values(self) -> None:
+        data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
+        for invalid in (0, -1, "160", 39, 1001):
+            with self.subTest(value=invalid), tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                self._write_catalog(root, data)
+                path = root / "animation_timing.json"
+                config = json.loads(path.read_text("utf-8"))
+                config["regular_frame_duration_ms"] = invalid
+                path.write_text(json.dumps(config), encoding="utf-8")
+                with self.assertRaises(ValueError):
+                    load_character_catalog(root)
+
     def _write_catalog(self, root: Path, data: dict[str, Any]) -> None:
         for clip in data["animations"]:
             for frame in clip["frames"]:
