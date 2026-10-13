@@ -10,8 +10,11 @@ ROOT = Path(__file__).resolve().parents[1] / "aiko_pet"
 
 UTILITY_VIEWS = (
     "ui/action_toolbar.py",
-    "ui/status_panel.py",
-    "ui/settings_popup.py",
+    "ui/settings_window.py",
+    "ui/toolbar_details.py",
+    "ui/skin.py",
+    "ui/window_drag.py",
+    "ui/rock_paper_scissors_window.py",
     "ui/hover_ui.py",
 )
 

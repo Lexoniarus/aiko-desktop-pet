@@ -65,7 +65,7 @@ Some original domain convenience methods still return German text, such as `PetS
 - `ApplicationRouter` accepts owner-thread care commands and validated, bounded incoming notifications. An external HTTP or IPC server is **not implemented**.
 - `ActivityCoordinator` consumes hardware samples and coordinates adaptive observations and elapsed-time pet state.
 - `AttentionCoordinator` controls spontaneous lines, non-interrupting notifications and idle gestures.
-- `PetSessionRestorer` restores saved data through a narrow reader port and performs catch-up only for a valid existing save.
+- `PetSessionRestorer` restores saved data through a narrow reader port without offline catch-up; the new running session receives a fresh time anchor.
 - `PetReadSnapshot` is an immutable, language-neutral copy for presentation and potential future read-only adapters.
 - `application/ports.py` describes capabilities such as `ComputerReadings`, not concrete OS drivers.
 
@@ -78,9 +78,9 @@ The application never imports Tkinter or native system monitor implementations.
 Concrete widgets belong under `ui/`:
 
 - `AnimatedPet` draws Aiko and delegates animation-frame, gaze and walking calculations to pure presentation policies. Its cancellable `FrameClock` gives all eight frames of **each clip** identical holds while allowing distinct activity-appropriate clip tempos, separately from the 140 ms application tick. An independent `AmbientDirector` schedules occasional complete idle blinks, resting gaps and pointer-free glances without adding new animation loops. Its slow micro-motion phase drives a cached `RestPoseRenderer` for neutral and selected directional poses: the head/shoulder pixels shift by at most one source pixel with a gradual shoulder taper, while feet remain at fixed coordinates. This uses Tk PhotoImage composition without Pillow at runtime or extra authored sprites. Late callbacks retain every authored frame instead of skipping ahead, extending one-shot deadlines as needed. Nominal 33 ms movement callbacks consume elapsed walking frame progress: each walking cycle still covers 68 pixels per scale unit, including under delayed callbacks. Fractional motion is retained; only actual bounds end a blocked walk. Full 60–180 second pauses start after completed walks or blocking activities. One-shot care actions return to idle; sleep plays the breathing loop. Sixteen static gaze poses are selected by cursor sector and are exempt from the frame-clock rate.
-- `HoverUi` controls the toolbar, status window and settings popup independently from the animated character.
+- `HoverUi` owns one pinnable toolbar, one persistent `SettingsWindow` and the minigame window, independently from the animated character. It distinguishes active control use from idle window visibility.
 - `SpeechPresenter` manages the existing speech/emote overlay.
-- `ActionToolbar` owns one cohesive widget, including its six bars, buttons, drag handling and visibility lifecycle.
+- `ActionToolbar` owns one care/status widget with six bars, care buttons and expandable `ToolbarDetails`; the separate status window is removed. `HoverUi` alone owns the visibility pin. `AikoSkin` and `WindowDrag` are composed by the toolbar, settings and minigame rather than duplicated. See [the UI window contract](UI_WINDOW_CONTRACT.md).
 
 `presentation/reaction_playback.py` performs the timed emote → text → optional follow-up sequence with cancellation.
 

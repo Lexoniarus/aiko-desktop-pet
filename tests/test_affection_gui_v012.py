@@ -63,24 +63,26 @@ class AffectionGuiTests(unittest.TestCase):
         self.toolbar.refresh()
         self.assertIn("35%", self.toolbar.needs["affection"][2].cget("text"))
 
-    def test_separate_status_shows_affection_and_existing_controls(self):
+    def test_pinned_status_shows_affection_and_existing_controls(self):
+        before = self.toolbar
         self.app._hover.open_status()
-        panel = self.app._hover.status_panel
-        assert panel is not None
-        self.assertEqual(len(panel.bars), 6)
+        self.assertIs(self.toolbar, before)
+        self.assertTrue(self.app._hover.keep_open)
+        self.assertEqual(len(self.toolbar.needs), 6)
         self.app.state.affection = 46
         self.app.state.friendship = 93
-        panel.refresh()
-        self.assertIn("46%", panel.bars["affection"][2].cget("text"))
-        self.assertIn("Lv 10", panel.bars["friendship"][2].cget("text"))
+        self.toolbar.refresh()
+        self.assertIn("46%", self.toolbar.needs["affection"][2].cget("text"))
+        self.assertIn("Lv 10", self.toolbar.needs["friendship"][2].cget("text"))
         self.assertIsNotNone(self.toolbar.settings_button)
 
-    def test_existing_menu_drag_and_hide_remain_operational(self):
+    def test_settings_survive_toolbar_hide_and_reopen(self):
         self.toolbar.settings_button.invoke()
-        self.assertIsNotNone(self.app._hover.settings_popup)
+        settings = self.app._hover.settings_window
+        self.assertIsNotNone(settings)
         self.app._hover.dismiss_outside(-999, -999)
         self.assertFalse(self.toolbar.visible)
-        self.assertIsNone(self.app._hover.settings_popup)
+        self.assertIs(self.app._hover.settings_window, settings)
         self.app._on_enter()
         self.assertTrue(self.toolbar.visible)
 

@@ -1,4 +1,4 @@
-"""The hover view operates with no DesktopPet, game or monitor references."""
+"""The hover view operates without DesktopPet or direct game references."""
 
 from __future__ import annotations
 
@@ -6,7 +6,6 @@ import tkinter as tk
 import unittest
 
 from aiko_pet.application.read_snapshot import snapshot_pet
-
 from aiko_pet.presentation.projections import project_hover
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
@@ -45,10 +44,9 @@ class IndependentHoverTests(unittest.TestCase):
             anchor=lambda: self.anchor,
             actions=HoverActions(
                 interact=self.events.append,
-                open_status=lambda: self.events.append("status"),
+                toggle_pin=lambda: self.events.append("pin"),
                 open_settings=lambda _x, _y: self.events.append("settings"),
-                save_position=save,
-                move_speech=lambda: None,
+                save_position=save, move_speech=lambda: None,
                 restore_stack=lambda: True,
             ),
             always_on_top=False,
@@ -60,7 +58,8 @@ class IndependentHoverTests(unittest.TestCase):
         self.panel.buttons["pet"].invoke()
         self.panel.buttons["talk"].invoke()
         self.panel.settings_button.invoke()
-        self.assertEqual(self.events, ["pet", "talk", "settings"])
+        self.panel.pin_button.invoke()
+        self.assertEqual(self.events, ["pet", "talk", "settings", "pin"])
 
     def test_rendering_updates_from_snapshot_not_game_object(self) -> None:
         self.state.energy = 14
@@ -69,9 +68,7 @@ class IndependentHoverTests(unittest.TestCase):
         self.assertIn("CPU 42 %", self.panel.hardware.cget("text"))
 
     def test_saved_drag_and_reset_flow_through_callback(self) -> None:
-        self.panel._last_placement = (25, 35, 330, 205)
-        self.panel._drag_origin = (1, 2, 3, 4)
-        self.panel._drag_end(tk.Event())
+        self.panel._drag_dropped(25, 35)
         self.assertEqual(self.positions[-1], (25, 35))
         self.panel.reset_position()
         self.assertEqual(self.positions[-1], (None, None))

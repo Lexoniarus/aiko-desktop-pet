@@ -4,6 +4,22 @@ Aiko Desktop Pet is maintained as a source repository. The dates below describe
 verified GitHub milestones, **not** packaged Windows releases. There is currently
 no separate downloadable installer or published GitHub Release.
 
+## Unreleased — Pinnable toolbar and persistent settings
+
+- Keep one care/status toolbar; replace the redundant status window with an
+  optional session-local visibility pin and expandable inline status details.
+- Make settings a persistent, independently movable Kenney-styled window.
+  Outside clicks and preference changes no longer close it; explicit reopen
+  focuses the existing instance. Remember its position within the session.
+- Share root-local AikoSkin images/styles and title-only WindowDrag behavior
+  between toolbar, settings and the existing minigame. Preserve game mechanics.
+- Separate active control use from visibility so idle open windows do not
+  permanently suppress autonomous behavior or queued notifications.
+- Migrate affected tests, lifecycle wiring and the gallery capture script.
+  Preserve version-one saves, approved artwork and authored dialogue.
+- Full CI and native Windows acceptance remain pending for the prepared patch;
+  see [the window contract](docs/UI_WINDOW_CONTRACT.md).
+
 ## Unreleased — Aiko Anime assets and playback
 
 - Restore calm 2.52-second ambient cycles and slower 1.413-second walking.

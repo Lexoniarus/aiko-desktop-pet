@@ -198,12 +198,12 @@ def capture_ui() -> None:
             drag_start = tk.Event()
             drag_start.x_root = bar.window.winfo_rootx() + 24
             drag_start.y_root = bar.window.winfo_rooty() + 12
-            bar._drag_start(drag_start)
+            bar._drag.start(drag_start)
             drag_end = tk.Event()
             drag_end.x_root = drag_start.x_root - 140
             drag_end.y_root = drag_start.y_root - 40
-            bar._drag_motion(drag_end)
-            bar._drag_end(drag_end)
+            bar._drag.move(drag_end)
+            bar._drag.finish(drag_end)
             live_capture(pet, "Aiko_Current_Hover_Moved.png")
             bar.reset_position()
 
@@ -250,17 +250,18 @@ def capture_ui() -> None:
             pet._speech.hide()
             hover.show_toolbar()
             hover.open_status()
-            if hover.status_panel is None:
-                raise RuntimeError("The status view did not open")
+            if bar.details is None:
+                raise RuntimeError("The inline status details are missing")
+            bar.toggle_details()
             live_capture(pet, "Aiko_Current_Status.png")
-            hover.status_panel.close()
+            bar.toggle_details()
 
             hover.show_toolbar()
             bar.settings_button.invoke()
-            if hover.settings_popup is None:
+            if hover.settings_window is None:
                 raise RuntimeError("The settings view did not open")
             live_capture(pet, "Aiko_Current_Settings.png")
-            hover.settings_popup.close()
+            hover.settings_window.close()
 
             hover.show_toolbar()
             pet.interact("pet")

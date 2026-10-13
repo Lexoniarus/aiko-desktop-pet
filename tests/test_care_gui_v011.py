@@ -51,28 +51,27 @@ class CareGuiV11Tests(unittest.TestCase):
             self.assertIn("100%", label.cget("text"))
         self.assertIn("Lv 10", self.toolbar.needs["friendship"][2].cget("text"))
 
-    def test_social_and_energy_actions_work_without_opening_status(self):
-        self.assertIsNone(self.app._hover.status_panel)
+    def test_social_and_energy_actions_work_without_pinning(self):
+        self.assertFalse(self.app._hover.keep_open)
         self.app.state.social = 9
         self.app.state.energy = 12
         self.toolbar.buttons["talk"].invoke()
         self.assertAlmostEqual(self.app.state.social, 35, places=2)
         self.toolbar.buttons["energy_drink"].invoke()
-        self.assertAlmostEqual(self.app.state.energy, 21, places=2)  # talk -1, drink +10
-        self.assertIsNone(self.app._hover.status_panel)
+        self.assertAlmostEqual(self.app.state.energy, 21, places=2)
+        self.assertFalse(self.app._hover.keep_open)
         self.toolbar.refresh()
         self.assertIn("35%", self.toolbar.needs["social"][2].cget("text"))
 
-    def test_relationship_and_needs_in_status_window(self):
+    def test_relationship_and_needs_in_pinned_toolbar(self):
         self.app._hover.open_status()
-        panel = self.app._hover.status_panel
-        assert panel is not None
-        self.assertEqual(set(panel.bars), {
+        self.assertTrue(self.app._hover.keep_open)
+        self.assertEqual(set(self.toolbar.needs), {
             "satiety", "mood", "energy", "social", "affection", "friendship",
         })
         self.app.state.friendship = 85
-        panel.refresh()
-        self.assertIn("Lv 9", panel.bars["friendship"][2].cget("text"))
+        self.toolbar.refresh()
+        self.assertIn("Lv 9", self.toolbar.needs["friendship"][2].cget("text"))
 
     def test_lagged_or_disabled_hardware_has_no_live_effort(self):
         snapshot = ComputerSnapshot(cpu=97, gpu=88, measured_at=time.monotonic())
@@ -87,13 +86,15 @@ class CareGuiV11Tests(unittest.TestCase):
         with patch.object(self.app.activity_monitor, "latest", return_value=stale):
             self.assertIsNone(self.app._activity.live_effort())
 
-    def test_toolbar_keeps_old_popup_and_hide_behavior(self):
+    def test_settings_lifetime_is_independent_of_toolbar(self):
         self.toolbar.settings_button.invoke()
-        self.assertTrue(self.app._hover.menu_is_open)
-        self.assertIsNotNone(self.app._hover.settings_popup)
+        window = self.app._hover.settings_window
+        assert window is not None
         self.app._hover.dismiss_outside(-999, -999)
         self.assertFalse(self.toolbar.visible)
-        self.assertIsNone(self.app._hover.settings_popup)
+        self.assertIs(self.app._hover.settings_window, window)
+        window.close()
+        self.assertIsNone(self.app._hover.settings_window)
 
 
 if __name__ == "__main__":

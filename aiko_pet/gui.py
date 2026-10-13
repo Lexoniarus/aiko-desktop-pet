@@ -135,9 +135,7 @@ class DesktopPet:
             self.adaptive, self.activity_monitor,
             AnimatedPorts(
                 track=lambda: self._window.track,
-                toolbar_visible=lambda: (
-                    self._hover.toolbar is not None and self._hover.toolbar.visible
-                ),
+                toolbar_visible=lambda: self._hover.interaction_active,
                 place_x=self._place_x,
                 action_until=lambda: self._action_until,
                 action_state=lambda: self._action_state,
@@ -224,7 +222,7 @@ class DesktopPet:
                 enter=self._on_enter,
                 left_click=self._on_click_left,
                 right_click=self._on_click_right,
-                show_menu=self._hover.toggle_settings,
+                show_menu=self._hover.open_settings,
                 dismiss_outside=self._hover.dismiss_outside,
                 open_status=self._hover.open_status,
                 quit=self.quit,
@@ -272,14 +270,12 @@ class DesktopPet:
         windows: list[tk.Tk | tk.Toplevel] = [self.root]
         if self._hover.toolbar is not None and self._hover.toolbar.visible:
             windows.append(self._hover.toolbar.window)
-        if self._hover.status_panel is not None:
-            windows.append(self._hover.status_panel.window)
         if self._hover.game_window is not None:
             windows.append(self._hover.game_window.window)
         if self._speech.bubble is not None:
             windows.append(self._speech.bubble)
-        if self._hover.settings_popup is not None:
-            windows.append(self._hover.settings_popup.window)
+        if self._hover.settings_window is not None:
+            windows.append(self._hover.settings_window.window)
         return windows
 
     def _setup_events(self) -> None:
@@ -484,7 +480,7 @@ class DesktopPet:
     ) -> None:
         event = self._attention.cursor_moved(
             distance, screen_width, now,
-            toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
+            toolbar_visible=self._hover.interaction_active,
         )
         if event is not None:
             self._react(self.mind.say_event(
@@ -521,7 +517,7 @@ class DesktopPet:
         animation = self._attention.idle_animation(
             now, action_until=self._action_until,
             walking=self._animated.movement.remaining_distance != 0,
-            toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
+            toolbar_visible=self._hover.interaction_active,
         )
         if animation is not None:
             self._start_action(animation, 1.6)
@@ -532,10 +528,10 @@ class DesktopPet:
             return
         decision = self._attention.spontaneous(
             now, self.context,
-            toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
+            toolbar_visible=self._hover.interaction_active,
             action_until=self._action_until,
             bubble_visible=self._speech.bubble is not None,
-            popup_visible=self._hover.settings_popup is not None,
+            popup_visible=self._hover.settings_engaged,
         )
         if decision.due:
             self._react(decision.reaction, 3600)
@@ -548,8 +544,8 @@ class DesktopPet:
             now,
             action_until=self._action_until,
             bubble_visible=self._speech.bubble is not None,
-            popup_visible=self._hover.settings_popup is not None,
-            toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
+            popup_visible=self._hover.settings_engaged,
+            toolbar_visible=self._hover.interaction_active,
         )
         if notification is None:
             return
@@ -561,6 +557,7 @@ class DesktopPet:
         if self._hover.toolbar is not None and self._hover.toolbar.visible:
             self._hover.toolbar.refresh()
         self._hover.refresh_status()
+        self._hover.refresh_settings()
         self._maintenance.refresh_stack(now)
         if self._persistence.due(now):
             self._save()

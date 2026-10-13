@@ -6,11 +6,12 @@ import sys
 import tkinter as tk
 from collections.abc import Callable
 from functools import partial
-from tkinter import font as tkfont
 
-from ..asset_paths import GAME_HANDS_DIR, KENNEY_UI_DIR
+from ..asset_paths import GAME_HANDS_DIR
 from ..games.rock_paper_scissors import Move, Score
 from ..presentation.rock_paper_scissors_sequence import RockPaperScissorsSequence
+from .skin import AikoSkin
+from .window_drag import WindowDrag
 
 _BG = "#D7DCE8"
 _TEXT = "#414B5F"
@@ -34,47 +35,32 @@ class RockPaperScissorsWindow:
         emote: Callable[[str, int], None],
         hand: Callable[[Move, int], None],
         animate: Callable[[str], None], always_on_top: bool,
+        skin: AikoSkin | None = None,
     ) -> None:
         self._on_closed = on_closed
         self._closed = False
-        self._drag_origin: tuple[int, int, int, int] | None = None
+        self.skin = skin if skin is not None else AikoSkin(root)
         self.window = tk.Toplevel(root)
         self.window.withdraw()
         self.window.overrideredirect(True)
-        self.window.configure(bg="#8E9CB1")
+        self.window.configure(bg=self.skin.border)
         self.window.wm_attributes("-topmost", always_on_top)
         if sys.platform == "win32":
             self.window.wm_attributes("-toolwindow", True)
         self.window.bind("<Escape>", lambda _event: self.close())
 
-        fonts = set(tkfont.families(root=root))
-        title_font = "Kenney Mini" if "Kenney Mini" in fonts else "Segoe UI"
-        self._banner = tk.PhotoImage(
-            file=str(KENNEY_UI_DIR / "toolbar_banner.png"),
-        )
-        self._close_image = tk.PhotoImage(
-            file=str(KENNEY_UI_DIR / "button_regular.png"),
-        )
+        title_font = self.skin.font
         self.hand_images = {
-            move: tk.PhotoImage(file=str(GAME_HANDS_DIR / f"{move.value}.png"))
+            move: tk.PhotoImage(master=root, file=str(GAME_HANDS_DIR / f"{move.value}.png"))
             for move, _label in _MOVES
         }
 
-        outer = tk.Frame(
-            self.window, bg=_BG, highlightthickness=2,
-            highlightbackground="#E9ECF5", bd=0,
-        )
+        outer = self.skin.frame(self.window)
         # Keep the layout filling the fixed shell during widget updates.
         outer.pack(fill="both", expand=True, padx=3, pady=3)
-        header = tk.Label(
-            outer, text="AIKO · SPIELEN", image=self._banner,
-            compound="center", font=(title_font, 10, "bold"),
-            fg="#FFFFFF", bg=_ACCENT, padx=14, cursor="fleur",
-        )
+        header = self.skin.header(outer, "AIKO · SPIELEN")
         header.pack(fill="x")
-        header.bind("<ButtonPress-1>", self._drag_start)
-        header.bind("<B1-Motion>", self._drag_motion)
-        header.bind("<ButtonRelease-1>", self._drag_end)
+        self._drag = WindowDrag(self.window, header)
 
         tk.Label(
             outer, text="Wähle deine Hand", bg=_BG, fg=_TEXT,
@@ -148,13 +134,7 @@ class RockPaperScissorsWindow:
             count.pack(padx=6, pady=(1, 5))
             self.score_labels[key] = count
 
-        self.close_button = tk.Button(
-            outer, text="Schließen", image=self._close_image,
-            compound="center", font=(title_font, 9),
-            bg=_BG, fg=_TEXT, activeforeground="#0B6DAA",
-            activebackground=_BG, bd=0, relief="flat",
-            highlightthickness=0, cursor="hand2", command=self.close,
-        )
+        self.close_button = self.skin.button(outer, "Schließen", self.close)
         self.close_button.pack(anchor="e", padx=13, pady=(0, 9))
         self._sequence = RockPaperScissorsSequence(
             schedule=self.window.after, cancel=self.window.after_cancel,
@@ -230,33 +210,11 @@ class RockPaperScissorsWindow:
     def set_topmost(self, enabled: bool) -> None:
         self.window.wm_attributes("-topmost", enabled)
 
-    def _drag_start(self, event: tk.Event) -> None:
-        self._drag_origin = (
-            event.x_root, event.y_root,
-            self.window.winfo_rootx(), self.window.winfo_rooty(),
-        )
-
-    def _drag_motion(self, event: tk.Event) -> None:
-        origin = self._drag_origin
-        if origin is None:
-            return
-        x = origin[2] + event.x_root - origin[0]
-        y = origin[3] + event.y_root - origin[1]
-        x = max(0, min(
-            x, self.window.winfo_screenwidth() - self.window.winfo_width(),
-        ))
-        y = max(0, min(
-            y, self.window.winfo_screenheight() - self.window.winfo_height(),
-        ))
-        self.window.geometry(f"+{x}+{y}")
-
-    def _drag_end(self, _event: tk.Event) -> None:
-        self._drag_origin = None
-
     def close(self) -> None:
         if self._closed:
             return
         self._closed = True
         self._sequence.close()
+        self._drag.close()
         self.window.destroy()
         self._on_closed()

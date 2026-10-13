@@ -30,9 +30,6 @@ class DesktopLifecycleTests(unittest.TestCase):
         hover = MagicMock(spec=HoverUi)
         reaction = MagicMock(spec=ReactionPlayer)
         speech = MagicMock(spec=SpeechPresenter)
-        hover.settings_popup = None
-        hover.status_panel = None
-
         for mock, name, label in (
             (inputs, "initialize", "input"),
             (root, "update_idletasks", "layout"),
@@ -46,6 +43,8 @@ class DesktopLifecycleTests(unittest.TestCase):
             (monitor, "stop", "monitor-stop"),
             (reaction, "cancel", "cancel-reactions"),
             (speech, "hide", "hide-speech"),
+            (hover, "close_game", "close-game"),
+            (hover, "close_settings", "close-settings"),
             (hover, "close_toolbar", "close-toolbar"),
             (root, "destroy", "destroy"),
         ):
@@ -54,13 +53,11 @@ class DesktopLifecycleTests(unittest.TestCase):
             )
         self.hover = hover
         self.lifecycle = DesktopLifecycle(
-            root=cast(tk.Tk, root),
-            inputs=cast(DesktopInput, inputs),
+            root=cast(tk.Tk, root), inputs=cast(DesktopInput, inputs),
             runtime=cast(DesktopRuntime, runtime),
             monitor=cast(ActivityMonitor, monitor),
             application=cast(ApplicationRouter, app),
-            overlays=cast(WindowStack, stack),
-            hover=cast(HoverUi, hover),
+            overlays=cast(WindowStack, stack), hover=cast(HoverUi, hover),
             reaction=cast(ReactionPlayer, reaction),
             speech=cast(SpeechPresenter, speech),
             place_initially=lambda: self.calls.append("place"),
@@ -77,19 +74,13 @@ class DesktopLifecycleTests(unittest.TestCase):
         ])
 
     def test_shutdown_preserves_cleanup_order_and_is_idempotent(self) -> None:
-        popup = MagicMock()
-        status = MagicMock()
-        popup.close.side_effect = lambda: self.calls.append("popup-close")
-        status.close.side_effect = lambda: self.calls.append("status-close")
-        self.hover.settings_popup = popup
-        self.hover.status_panel = status
         self.lifecycle.stop()
         self.lifecycle.stop()
         self.assertEqual(self.calls, [
             "app-close", "runtime-stop", "animation-stop",
             "input-stop", "monitor-stop", "save",
-            "cancel-reactions", "hide-speech", "popup-close",
-            "close-toolbar", "status-close", "destroy",
+            "cancel-reactions", "hide-speech", "close-game",
+            "close-settings", "close-toolbar", "destroy",
         ])
 
     def test_shutdown_prevents_late_startup(self) -> None:

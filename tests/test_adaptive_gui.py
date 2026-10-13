@@ -64,32 +64,29 @@ class AdaptiveGuiTests(unittest.TestCase):
         self.app.forget_rhythm()
         self.assertEqual(sum(self.store.load_memory().hour_seconds), 0)
 
-    def test_settings_popup_exposes_learning_and_reset_controls(self):
+    def test_settings_window_exposes_learning_and_reset_controls(self):
         self.app._on_enter()
         bar = self.app._hover.toolbar
         assert bar is not None
         bar.settings_button.invoke()
-        popup = self.app._hover.settings_popup
-        assert popup is not None
-        self.assertIn("learn_rhythm", popup.values)
-        text = [child.cget("text") for child in
-                popup.window.winfo_children()[0].winfo_children()
-                if isinstance(child, tk.Button)]
-        self.assertTrue(any("Tagesmuster" in label for label in text))
-        popup.close()
+        window = self.app._hover.settings_window
+        assert window is not None
+        self.assertIn("learn_rhythm", window.values)
+        self.assertIn("Tagesmuster", window.forget_button.cget("text"))
+        window.close()
 
-    def test_status_shows_activity_memory_without_changing_overlay(self):
+    def test_status_details_show_activity_memory_without_extra_window(self):
         self.app.adaptive.memory.strain = 64
         now = time.monotonic()
         snap = ComputerSnapshot(cpu=92, ram=40, measured_at=now)
         with patch.object(self.app.activity_monitor, "latest", return_value=snap):
             self.app._activity.observe_adaptive(now + 0.1, time.time())
             self.app._hover.open_status()
-            panel = self.app._hover.status_panel
-            assert panel is not None
-            self.assertIn("Mein Rhythmus:", panel.life_label.cget("text"))
-            self.assertIn("Beanspruchung", panel.life_label.cget("text"))
-            panel.close()
+            bar = self.app._hover.toolbar
+            assert bar is not None and bar.details is not None
+            bar.toggle_details()
+            self.assertIn("Mein Rhythmus:", bar.details.text("activity_line"))
+            self.assertIn("Beanspruchung", bar.details.text("activity_line"))
 
     def test_monitored_state_persists_without_changing_window_position(self):
         original = self.app.settings.x, self.app.settings.y

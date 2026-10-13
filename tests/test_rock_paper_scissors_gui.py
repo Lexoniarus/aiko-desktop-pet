@@ -230,11 +230,11 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertEqual(replacement.score.games, 0)
         self.assertEqual(replacement.score_labels["games"].cget("text"), "0")
 
-    def test_status_panel_play_uses_same_window(self) -> None:
+    def test_pinned_toolbar_play_uses_same_window(self) -> None:
         self.pet._hover.open_status()
-        panel = self.pet._hover.status_panel
+        panel = self.pet._hover.toolbar
         assert panel is not None
-        panel._actions.interact("play")
+        panel.buttons["play"].invoke()
         self.assertTrue(self.pet._hover.game_open)
         game = self.pet._hover.game_window
         assert game is not None

@@ -72,11 +72,6 @@ class DesktopLifecycle:
         self._reaction.cancel()
         self._speech.hide()
         self._hover.close_game()
-        popup = self._hover.settings_popup
-        if popup is not None:
-            popup.close()
+        self._hover.close_settings()
         self._hover.close_toolbar()
-        status = self._hover.status_panel
-        if status is not None:
-            status.close()
         self._root.destroy()

@@ -1,3 +1,8 @@
+> Window UI cutover: the checked-in settings/status captures predate the
+> persistent settings and single pinnable toolbar until the capture workflow
+> is rerun. `Aiko_Current_Status.png` then shows inline toolbar details, not
+> a separate window. See [the window contract](UI_WINDOW_CONTRACT.md).
+
 # Current Aiko Desktop Pet media gallery
 
 All application screenshots and interaction GIFs displayed here were captured

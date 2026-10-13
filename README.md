@@ -55,9 +55,13 @@ preview gallery.
 - **Has her own voice.** Handwritten German reactions vary with mood, time, repeated clicks, interruptions and recent interactions. Emotes, text and optional follow-ups play in sequence.
 - **Notices actual workload.** Local CPU/GPU and memory observations inform her working/resting behavior, without inventing the application or task you are using. Missing sensors remain unknown.
 - **Learns a gentle rhythm.** Locally aggregated activity evidence helps her adapt to regular working and resting periods.
-- **Stays out of the way.** A draggable sci-fi hover toolbar, independent status/settings windows and a separate speech bubble.
+- **Stays out of the way.** One draggable sci-fi care toolbar with an optional visibility pin, inline status details, persistent settings and a separate speech bubble. See the [window contract](docs/UI_WINDOW_CONTRACT.md).
 
 This source builds on the **v0.13 feature baseline and modular OOP refactor**, with a new 112-pose Aiko Anime character set, per-frame timing, and dedicated eating, petting and sleeping animations. Attack artwork is stored for later use. It is a source project; there is currently no separate packaged Windows installer or published GitHub Release.
+
+> UI update: the settings and status screenshots require regeneration after
+> the persistent-window cutover. The current behavior is described in the
+> [window contract](docs/UI_WINDOW_CONTRACT.md).
 
 ## Getting started
 
@@ -107,7 +111,7 @@ The source is organized by responsibility rather than by window or feature versi
 | `aiko_pet/personality/` | Dialogue selection, personality, adaptive habits and workload events |
 | `aiko_pet/application/` | Typed use cases, attention/activity coordination and read contracts |
 | `aiko_pet/presentation/` | German UI text, visual policies and reaction playback |
-| `aiko_pet/ui/` | Tkinter character, hover, status, settings and speech widgets |
+| `aiko_pet/ui/` | Tkinter character, one pinnable care toolbar, persistent settings, speech and shared window components |
 | `aiko_pet/desktop/` | Tk runtime, native Windows window/input handling and preferences |
 | `aiko_pet/infrastructure/` | Hardware providers and versioned local JSON persistence |
 

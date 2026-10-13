@@ -1,4 +1,4 @@
-"""Explicit hover callbacks; legacy view-model imports remain compatible."""
+"""Explicit commands and immutable read values for the single care toolbar."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ class HoverActions:
     """Only the capabilities a hover panel is allowed to call."""
 
     interact: Callable[[str], None]
-    open_status: Callable[[], None]
+    toggle_pin: Callable[[], None]
     open_settings: Callable[[int, int], None]
     save_position: Callable[[int | None, int | None], None]
     move_speech: Callable[[], None]

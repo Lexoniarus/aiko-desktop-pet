@@ -114,12 +114,12 @@ titles or unapproved personal activity details.
 - `ActivityCoordinator` owns pet time progression during desktop ticks and
   before persistence; `DesktopPersistence` writes the supplied state without
   advancing the pet or choosing sleep policy.
-- `PetSessionRestorer` performs startup catch-up for valid existing saves
+- `PetSessionRestorer` restores existing saves without offline catch-up
   using the `SavedPetReader` port. `PetSettings` is owned by the application
   settings module, and `StateStore` only decodes/encodes JSON data. Neither
   application component imports the storage implementation.
-- The hover/status/settings widgets **already** use immutable view models
-  and narrow callbacks, with a separate `HoverUi` owner; guard this direction
+- The care toolbar, inline status details and persistent settings window
+  use immutable view models and narrow callbacks through `HoverUi`; guard this direction
   against new direct `DesktopPet` references in future changes.
 - Canonical domain/monitoring packages are the only import owners. The old
   forwarding modules have been removed; see the current architecture guide
@@ -150,8 +150,8 @@ integration or network access were added.
 
 `infrastructure/persistence.py` owns the only state JSON repository.
 Application session restoration
-consumes its typed load port and keeps bounded time catch-up outside
-the repository. Old save path precedence and version-one schema are
+consumes its typed load port without offline catch-up. Active-session time
+progression stays outside the repository. Old save path precedence and version-one schema are
 preserved, including relative environment-variable overrides.
 
 ## Migration safety

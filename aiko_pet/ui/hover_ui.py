@@ -1,8 +1,4 @@
-"""Own hover, status and settings windows separately from animated Aiko.
-
-The desktop shell supplies small presentation snapshots and action callbacks.
-This controller handles only Tk window lifecycle, pointer tracking and layout.
-"""
+"""Own toolbar visibility and independent utility-window lifetimes."""
 
 from __future__ import annotations
 
@@ -12,15 +8,14 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ..application.settings import SettingKey
-
 from .action_toolbar import ActionToolbar
 from .game_speech import GameSpeech
 from .rock_paper_scissors_window import RockPaperScissorsWindow
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .settings_contracts import SettingsActions, SettingsSnapshot
-from .settings_popup import SettingsPopup
-from .status_contracts import StatusActions, StatusSnapshot
-from .status_panel import StatusPanel
+from .settings_window import SettingsWindow
+from ..presentation.contracts import StatusSnapshot
+from .skin import AikoSkin
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,7 +43,7 @@ class HoverUiPorts:
 
 
 class HoverUi:
-    """Independent owner of the hover panel and its accessory windows."""
+    """One visibility owner; an open utility window is not a modal menu."""
 
     def __init__(
         self, root: tk.Tk, canvas: tk.Canvas, ports: HoverUiPorts,
@@ -56,15 +51,42 @@ class HoverUi:
         self.root = root
         self.canvas = canvas
         self._ports = ports
+        self._skin = AikoSkin(root)
         self.toolbar: ActionToolbar | None = None
-        self.status_panel: StatusPanel | None = None
-        self.settings_popup: SettingsPopup | None = None
+        self.settings_window: SettingsWindow | None = None
         self.game_window: RockPaperScissorsWindow | None = None
+        self._settings_position: tuple[int, int] | None = None
+        self._keep_open = False
         self.last_hover = -100.0
+
+    @property
+    def keep_open(self) -> bool:
+        """Session-local visibility pin, independent of position and topmost."""
+        return self._keep_open
 
     @property
     def game_open(self) -> bool:
         return self.game_window is not None
+
+    @property
+    def settings_engaged(self) -> bool:
+        window = self.settings_window
+        return window is not None and window.interacting(
+            self.root.winfo_pointerx(), self.root.winfo_pointery(),
+            time.monotonic(),
+        )
+
+    @property
+    def interaction_active(self) -> bool:
+        """Mapped/pinned windows alone must not suppress autonomous behavior."""
+        toolbar = self.toolbar
+        using_toolbar = toolbar is not None and toolbar.visible and (
+            toolbar.dragging or not self._keep_open
+            or self.pointer_inside(
+                self.root.winfo_pointerx(), self.root.winfo_pointery(),
+            )
+        )
+        return bool(using_toolbar or self.settings_engaged)
 
     def _interact(self, action: str) -> None:
         if action == "play":
@@ -86,7 +108,6 @@ class HoverUi:
                 button.configure(state="normal" if enabled else "disabled")
 
     def open_game(self) -> None:
-        """One independent minigame window for the current play session."""
         if self.game_window is not None:
             self.game_window.focus()
             self._ports.restore_stack()
@@ -100,6 +121,7 @@ class HoverUi:
                 hand=self._ports.game_speech.hand,
                 animate=self._ports.game_speech.animate,
                 always_on_top=self._ports.always_on_top(),
+                skin=self._skin,
             )
         except Exception:
             self._ports.game_speech.stop()
@@ -112,132 +134,108 @@ class HoverUi:
         if self.game_window is not None:
             self.game_window.close()
 
-    @property
-    def menu_is_open(self) -> bool:
-        return self.settings_popup is not None
-
     def show_toolbar(self) -> None:
         if self.toolbar is None:
             self.toolbar = ActionToolbar(
-                self.root,
-                snapshot=self._ports.hover_snapshot,
+                self.root, snapshot=self._ports.hover_snapshot,
+                status_snapshot=self._ports.status_snapshot,
                 anchor=self._ports.anchor,
                 actions=HoverActions(
-                    interact=self._interact,
-                    open_status=self.open_status,
-                    open_settings=self.toggle_settings,
+                    interact=self._interact, toggle_pin=self.toggle_pin,
+                    open_settings=self.open_settings,
                     save_position=self._ports.save_position,
                     move_speech=self._ports.move_speech,
                     restore_stack=self._ports.restore_stack,
                 ),
-                always_on_top=self._ports.always_on_top(),
+                always_on_top=self._ports.always_on_top(), skin=self._skin,
             )
+        self.toolbar.set_pinned(self._keep_open)
         self.toolbar.show()
         self._set_care_buttons_enabled(not self.game_open)
 
-    def _toolbar_top(self) -> int | None:
-        return (
-            self.toolbar.window.winfo_rooty()
-            if self.toolbar is not None else None
-        )
+    def toggle_pin(self) -> None:
+        self._keep_open = not self._keep_open
+        self.last_hover = time.monotonic()
+        self.show_toolbar()
+
+    def open_status(self) -> None:
+        """F2 reveals and pins the same toolbar, never a second status window."""
+        self._keep_open = True
+        self.show_toolbar()
+        if self.toolbar is not None:
+            self.toolbar.focus()
+        self._ports.restore_stack()
 
     def _settings_closed(self) -> None:
-        self.settings_popup = None
-        self.last_hover = time.monotonic()
+        if self.settings_window is not None:
+            self._settings_position = self.settings_window.position
+        self.settings_window = None
 
-    def toggle_settings(self, x: int, y: int) -> None:
-        if self.settings_popup is not None:
-            self.settings_popup.close()
+    def open_settings(self, x: int, y: int) -> None:
+        if self.settings_window is not None:
+            self.settings_window.refresh()
+            self.settings_window.focus()
+            self._ports.restore_stack()
             return
-        self._ports.open_sprite_hover()
-        self.settings_popup = SettingsPopup(
-            self.root, x, y,
-            snapshot=self._ports.settings_snapshot(),
+        self.settings_window = SettingsWindow(
+            self.root, x, y, snapshot=self._ports.settings_snapshot,
             actions=SettingsActions(
-                open_status=self.open_status,
                 toggle_scale=self._ports.toggle_scale,
                 set_option=self._ports.set_option,
                 forget_rhythm=self._ports.forget_rhythm,
                 reset_toolbar=self._ports.reset_toolbar,
-                center=self._ports.center,
-                quit=self._ports.quit,
+                center=self._ports.center, quit=self._ports.quit,
                 closed=self._settings_closed,
             ),
-            toolbar_y=self._toolbar_top,
             always_on_top=self._ports.always_on_top(),
+            skin=self._skin, position=self._settings_position,
         )
+        self.settings_window.focus()
         self._ports.restore_stack()
 
-    def _status_closed(self) -> None:
-        self.status_panel = None
-
-    def open_status(self) -> None:
-        if self.status_panel is not None:
-            self._ports.restore_stack()
-            return
-        self.status_panel = StatusPanel(
-            self.root,
-            snapshot=self._ports.status_snapshot,
-            anchor=self._ports.anchor,
-            actions=StatusActions(
-                interact=self._interact,
-                quit=self._ports.quit,
-                closed=self._status_closed,
-            ),
-            always_on_top=self._ports.always_on_top(),
-        )
-        self._ports.restore_stack()
+    def close_settings(self) -> None:
+        if self.settings_window is not None:
+            self.settings_window.close()
 
     def set_topmost(self, enabled: bool) -> None:
-        """Update only utility windows owned by this component."""
-        for window in (
-            self.toolbar, self.status_panel, self.settings_popup,
-            self.game_window,
-        ):
+        for window in (self.toolbar, self.settings_window, self.game_window):
             if window is not None:
                 window.window.wm_attributes("-topmost", enabled)
 
     def refresh_status(self) -> None:
-        if self.status_panel is not None:
-            self.status_panel.refresh()
+        """Status is now an optional section of the existing toolbar."""
+        if self.toolbar is not None:
+            self.toolbar.refresh_details()
+
+    def refresh_settings(self) -> None:
+        if self.settings_window is not None:
+            self.settings_window.refresh()
 
     def pointer_inside(self, x: int, y: int) -> bool:
         widget = self.root.winfo_containing(x, y)
         over_sprite = widget is self.root or widget is self.canvas
         toolbar = self.toolbar
-        over_toolbar = (
-            toolbar is not None
-            and (
-                toolbar.contains_pointer(x, y)
-                or toolbar.contains_bridge(x, y)
-            )
+        over_toolbar = toolbar is not None and (
+            toolbar.contains_pointer(x, y) or toolbar.contains_bridge(x, y)
         )
         return bool(over_sprite or over_toolbar)
 
-    def dismiss_outside(self, x: int, y: int) -> None:
+    def _auto_hide_toolbar(self) -> None:
         toolbar = self.toolbar
-        if toolbar is not None and toolbar.dragging:
-            return
-        over_ui = self.pointer_inside(x, y)
-        popup = self.settings_popup
-        over_popup = popup is not None and popup.contains_pointer(x, y)
-        if popup is not None and not over_popup and not over_ui:
-            popup.close()
-        if (
-            toolbar is not None and toolbar.visible
-            and not (over_ui or over_popup)
-        ):
+        if toolbar is not None and not self._keep_open and not toolbar.dragging:
             toolbar.hide()
+
+    def dismiss_outside(self, x: int, y: int) -> None:
+        """Only the transient toolbar participates in outside-click dismissal."""
+        if not self.pointer_inside(x, y):
+            self._auto_hide_toolbar()
 
     def refresh_hover(self, now: float) -> None:
         toolbar = self.toolbar
         if toolbar is not None and toolbar.dragging:
             self.last_hover = now
             return
-        if self.settings_popup is not None:
-            return
-        x = self.root.winfo_pointerx()
-        y = self.root.winfo_pointery()
+        x, y = self.root.winfo_pointerx(), self.root.winfo_pointery()
         if self.pointer_inside(x, y):
             self.last_hover = now
             widget = self.root.winfo_containing(x, y)
@@ -251,9 +249,10 @@ class HoverUi:
                 2.0 if self._ports.anchor().pinned_x is not None else 0.9
             )
         ):
-            toolbar.hide()
+            self._auto_hide_toolbar()
 
     def close_toolbar(self) -> None:
         if self.toolbar is not None:
             self.toolbar.close()
             self.toolbar = None
+        self._keep_open = False

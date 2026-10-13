@@ -1,19 +1,22 @@
-"""Movable Tkinter hover toolbar with the Kenney sci-fi skin."""
+"""The single movable care/status toolbar in the shared Kenney skin."""
 
 from __future__ import annotations
 
 import sys
 import tkinter as tk
 from functools import partial
-from tkinter import font as tkfont
 from typing import Callable
 
-from ..asset_paths import KENNEY_UI_DIR
+from ..presentation.contracts import StatusSnapshot
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .hover_geometry import HoverGeometry, Rect
+from .skin import AikoSkin
+from .toolbar_details import ToolbarDetails
+from .window_drag import WindowDrag
+
 
 class ActionToolbar:
-    """Kenney sci-fi hover status; all six controls remain clickable."""
+    """Render care, pin state and optional details; HoverUi owns visibility."""
 
     NEEDS = (
         ("satiety", "Sättigung", "#f5bd7a"),
@@ -24,76 +27,46 @@ class ActionToolbar:
         ("friendship", "Freundschaft", "#ffb9c2"),
     )
     BAR_WIDTH = 92
-    BACKGROUND = "#D7DCE8"
-    TEXT = "#414B5F"
-    SUBTEXT = "#617189"
 
     def __init__(
         self, root: tk.Tk, *, snapshot: Callable[[], HoverSnapshot],
         anchor: Callable[[], HoverAnchor], actions: HoverActions,
-        always_on_top: bool,
+        always_on_top: bool, skin: AikoSkin | None = None,
+        status_snapshot: Callable[[], StatusSnapshot] | None = None,
     ) -> None:
         self.root = root
         self._snapshot = snapshot
         self._anchor = anchor
         self._actions = actions
         self._current = snapshot()
+        self.skin = skin if skin is not None else AikoSkin(root)
+        self.font_family = self.skin.font
         self.window = tk.Toplevel(root)
         self.window.withdraw()
         self.window.overrideredirect(True)
-        self.window.configure(bg="#8E9CB1")
-        # Assets are pre-rendered with Kenney CC0 tiles. The optional user-
-        # supplied Kenney Mini font is used only if installed on Windows;
-        # font files are not packaged with Aiko.
-        try:
-            available_fonts = set(tkfont.families(root=root))
-        except tk.TclError:
-            available_fonts = set()
-        self.font_family = (
-            "Kenney Mini" if "Kenney Mini" in available_fonts else "Segoe UI"
-        )
-        self._button_images = {
-            key: tk.PhotoImage(file=str(KENNEY_UI_DIR / f"button_{key}.png"))
-            for key in ("regular", "wide", "small")
-        }
-        self._header_image = tk.PhotoImage(
-            file=str(KENNEY_UI_DIR / "toolbar_banner.png"),
-        )
+        self.window.configure(bg=self.skin.border)
         self.window.wm_attributes("-topmost", always_on_top)
         if sys.platform == "win32":
             self.window.wm_attributes("-toolwindow", True)
-
-        outer = tk.Frame(
-            self.window, bg=self.BACKGROUND, highlightthickness=2,
-            highlightbackground="#E9ECF5", bd=0,
+        outer = self.skin.frame(self.window)
+        outer.pack(fill="both", expand=True, padx=3, pady=3)
+        self.today = self.skin.header(outer, "")
+        self.today.pack(fill="x")
+        self._drag = WindowDrag(
+            self.window, self.today, moved=actions.move_speech,
+            dropped=self._drag_dropped,
         )
-        outer.pack(padx=3, pady=3)
-        self.today = tk.Label(
-            outer, text="", image=self._header_image, compound="center",
-            font=(self.font_family, 10, "bold"),
-            fg="#FFFFFF", bg="#2998D4", anchor="w", padx=14, pady=0,
-        )
-        self.today.pack(side="top", fill="x")
-        # Drag by the title area, not by the care buttons.
-        self._drag_origin: tuple[int, int, int, int] | None = None
-        self._dragging = False
-        self.today.configure(cursor="fleur")
-        self.today.bind("<ButtonPress-1>", self._drag_start)
-        self.today.bind("<B1-Motion>", self._drag_motion)
-        self.today.bind("<ButtonRelease-1>", self._drag_end)
-
-        # Two compact rows keep all six values visible on smaller desktops.
-        needs_frame = tk.Frame(outer, bg=self.BACKGROUND)
+        needs_frame = tk.Frame(outer, bg=self.skin.background)
         needs_frame.pack(fill="x", padx=7, pady=(1, 5))
         self.needs: dict[str, tuple[tk.Canvas, int, tk.Label]] = {}
         for column in range(3):
             needs_frame.columnconfigure(column, weight=1, uniform="needs")
-        for i, (key, title, color) in enumerate(self.NEEDS):
-            cell = tk.Frame(needs_frame, bg=self.BACKGROUND)
+        for i, (key, _title, color) in enumerate(self.NEEDS):
+            cell = tk.Frame(needs_frame, bg=self.skin.background)
             cell.grid(row=i // 3, column=i % 3, sticky="ew", padx=3, pady=2)
             label = tk.Label(
                 cell, text="", font=(self.font_family, 9), width=20,
-                fg=self.TEXT, bg=self.BACKGROUND, anchor="w",
+                fg=self.skin.text, bg=self.skin.background, anchor="w",
             )
             label.pack(anchor="w")
             bar = tk.Canvas(
@@ -103,15 +76,12 @@ class ActionToolbar:
             rect = bar.create_rectangle(0, 0, 1, 10, outline="", fill=color)
             bar.pack(fill="x", pady=(3, 3))
             self.needs[key] = (bar, rect, label)
-            bar.bind(
-                "<Configure>", partial(self._on_need_resize, key),
-            )
-
-        actions_frame = tk.Frame(outer, bg=self.BACKGROUND)
+            bar.bind("<Configure>", partial(self._on_need_resize, key))
+        actions_frame = tk.Frame(outer, bg=self.skin.background)
         actions_frame.pack(fill="x", padx=5)
-        actions_row = tk.Frame(actions_frame, bg=self.BACKGROUND)
+        actions_row = tk.Frame(actions_frame, bg=self.skin.background)
         actions_row.pack(fill="x")
-        extra_row = tk.Frame(actions_frame, bg=self.BACKGROUND)
+        extra_row = tk.Frame(actions_frame, bg=self.skin.background)
         extra_row.pack(fill="x")
         self.buttons: dict[str, tk.Button] = {}
         for action, title, parent in (
@@ -125,50 +95,73 @@ class ActionToolbar:
             self.buttons[action] = self._button(
                 parent, title, partial(actions.interact, action),
             )
-        self._button(extra_row, "Status", actions.open_status)
+        self.pin_button = self._button(
+            extra_row, "Offen halten", actions.toggle_pin,
+        )
         self.settings_button = self._button(extra_row, "⋯", self._open_settings)
-
         self.hardware = tk.Label(
             outer, text="", font=(self.font_family, 8),
-            fg=self.SUBTEXT, bg=self.BACKGROUND, anchor="w", padx=10, pady=3,
+            fg=self.skin.muted, bg=self.skin.background,
+            anchor="w", padx=10, pady=3,
         )
         self.hardware.pack(fill="x")
         self.workload = tk.Label(
             outer, text="", font=(self.font_family, 8),
-            fg=self.TEXT, bg=self.BACKGROUND, anchor="w", padx=10, pady=3,
+            fg=self.skin.text, bg=self.skin.background,
+            anchor="w", padx=10, pady=3,
         )
         self.workload.pack(fill="x")
+        self.details: ToolbarDetails | None = None
+        self.details_button: tk.Button | None = None
+        self._details_open = False
+        if status_snapshot is not None:
+            self.details_button = self.skin.button(
+                outer, "Details anzeigen", self.toggle_details, size="wide",
+            )
+            self.details_button.pack(anchor="w", padx=9, pady=(0, 4))
+            self.details = ToolbarDetails(outer, self.skin, status_snapshot)
         self.visible = False
         self._last_placement: tuple[int, int, int, int] | None = None
 
     @property
     def dragging(self) -> bool:
-        """Whether the toolbar is being moved by the user."""
-        return self._dragging
+        return self._drag.dragging
+
+    def set_pinned(self, enabled: bool) -> None:
+        """Display the controller's state without keeping a second pin flag."""
+        self.pin_button.configure(
+            text="Pin lösen" if enabled else "Offen halten",
+            fg=self.skin.accent if enabled else self.skin.text,
+        )
+
+    def toggle_details(self) -> None:
+        if self.details is None or self.details_button is None:
+            return
+        self._details_open = not self._details_open
+        if self._details_open:
+            self.details.refresh()
+            self.details.frame.pack(fill="x", padx=9, pady=(0, 8))
+        else:
+            self.details.frame.pack_forget()
+        self.details_button.configure(
+            text="Details verbergen" if self._details_open else "Details anzeigen",
+        )
+        if self.visible:
+            self.place()
+
+    def refresh_details(self) -> None:
+        if self._details_open and self.details is not None:
+            self.details.refresh()
 
     def _button(
         self, parent: tk.Widget, text: str, command: Callable[[], None],
     ) -> tk.Button:
-        if text == "⋯":
-            image = self._button_images["small"]
-        elif len(text) > 13:
-            image = self._button_images["wide"]
-        else:
-            image = self._button_images["regular"]
-        button = tk.Button(
-            parent, text=text, command=command,
-            image=image, compound="center", font=(self.font_family, 9),
-            fg="#344256", bg=self.BACKGROUND,
-            activeforeground="#0B6DAA", activebackground=self.BACKGROUND,
-            bd=0, relief="flat", padx=0, pady=0,
-            highlightthickness=0, cursor="hand2",
-        )
+        size = "small" if text == "⋯" else "wide" if len(text) > 13 else "regular"
+        button = self.skin.button(parent, text, command, size=size)
         button.pack(side="left", padx=2, pady=4)
         return button
 
     def _open_settings(self) -> None:
-        # A normal Toplevel popover is predictable on Windows: native Tk menus
-        # can fail to emit Unmap, leaving a permanent hover/menu lock.
         button = self.settings_button
         self._actions.open_settings(
             button.winfo_rootx() + button.winfo_width(),
@@ -176,11 +169,9 @@ class ActionToolbar:
         )
 
     def _on_need_resize(self, key: str, event: tk.Event) -> None:
-        """Resize the actual Tk progress canvas for a named need."""
         self._resize_need(key, event.width)
 
     def _resize_need(self, key: str, width: int | None = None) -> None:
-        """Fill the *actual displayed* canvas, not its nominal requested width."""
         bar, rect, _label = self.needs[key]
         actual_width = width if width is not None else bar.winfo_width()
         if actual_width <= 1:
@@ -189,7 +180,6 @@ class ActionToolbar:
         bar.coords(rect, 0, 0, round(actual_width * amount / 100), 10)
 
     def refresh(self) -> None:
-        """Refresh only the immutable presentation values."""
         view = self._snapshot()
         self._current = view
         changed = False
@@ -197,6 +187,8 @@ class ActionToolbar:
             (self.buttons["sleep"], view.sleep_label),
             (self.buttons["feed"], view.feed_label),
             (self.today, view.header),
+            (self.hardware, view.hardware_line),
+            (self.workload, view.workload_line),
         ):
             if widget.cget("text") != value:
                 widget.configure(text=value)
@@ -206,17 +198,11 @@ class ActionToolbar:
             _bar, _rect, label = self.needs[key]
             text = f"{title}  {amount:.0f}%"
             if key == "friendship":
-                text = f"{title}  {amount:.0f}% · Lv {view.friendship_level}"
+                text += f" · Lv {view.friendship_level}"
             if label.cget("text") != text:
                 label.configure(text=text)
             self._resize_need(key)
-        for widget, value in (
-            (self.hardware, view.hardware_line),
-            (self.workload, view.workload_line),
-        ):
-            if widget.cget("text") != value:
-                widget.configure(text=value)
-                changed = True
+        self.refresh_details()
         if changed and self.visible:
             self.place()
 
@@ -245,8 +231,7 @@ class ActionToolbar:
         )
 
     def place(self) -> None:
-        """Dragged panel stays put; default stays beside Aiko's head."""
-        if self._dragging:
+        if self.dragging:
             return
         self.window.update_idletasks()
         width = self.window.winfo_reqwidth()
@@ -260,35 +245,10 @@ class ActionToolbar:
             self.window.geometry(f"+{x}+{y}")
             self._last_placement = placement
 
-    def _drag_start(self, event: tk.Event) -> None:
-        self._dragging = True
-        self._drag_origin = (
-            event.x_root, event.y_root,
-            self.window.winfo_rootx(), self.window.winfo_rooty(),
+    def _drag_dropped(self, x: int, y: int) -> None:
+        self._last_placement = (
+            x, y, self.window.winfo_width(), self.window.winfo_height(),
         )
-
-    def _drag_motion(self, event: tk.Event) -> None:
-        if self._drag_origin is None:
-            return
-        width, height = self.window.winfo_width(), self.window.winfo_height()
-        new_x, new_y = HoverGeometry.dragged(
-            self._drag_origin,
-            (event.x_root, event.y_root),
-            (width, height),
-            (self.root.winfo_screenwidth(), self.root.winfo_screenheight()),
-        )
-        self.window.geometry(f"+{new_x}+{new_y}")
-        self._last_placement = (new_x, new_y, width, height)
-        self._actions.move_speech()
-
-    def _drag_end(self, _event: tk.Event) -> None:
-        if self._drag_origin is None:
-            return
-        position = self._last_placement
-        x = position[0] if position is not None else self.window.winfo_rootx()
-        y = position[1] if position is not None else self.window.winfo_rooty()
-        self._drag_origin = None
-        self._dragging = False
         self._actions.save_position(x, y)
 
     def reset_position(self) -> None:
@@ -307,14 +267,19 @@ class ActionToolbar:
         self._actions.move_speech()
         self._actions.restore_stack()
 
+    def focus(self) -> None:
+        self.show()
+        self.window.lift()
+        self.window.focus_set()
+
     def hide(self) -> None:
         if not self.visible:
             return
         self.visible = False
         self.window.withdraw()
-        # Window managers may discard pending movements during withdrawal.
         self._last_placement = None
         self._actions.move_speech()
 
     def close(self) -> None:
+        self._drag.close()
         self.window.destroy()

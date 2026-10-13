@@ -10,8 +10,7 @@ import tkinter as tk
 
 from aiko_pet.gui import DesktopPet
 from aiko_pet.ui.action_toolbar import ActionToolbar
-from aiko_pet.ui.settings_popup import SettingsPopup
-from aiko_pet.ui.status_panel import StatusPanel
+from aiko_pet.ui.settings_window import SettingsWindow
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.routine import context_at
 
@@ -45,16 +44,10 @@ class TaskbarPetGuiTests(unittest.TestCase):
         return toolbar
 
     @property
-    def popup(self) -> SettingsPopup:
-        popup = self.app._hover.settings_popup
-        assert popup is not None
-        return popup
-
-    @property
-    def status(self) -> StatusPanel:
-        panel = self.app._hover.status_panel
-        assert panel is not None
-        return panel
+    def settings_window(self) -> SettingsWindow:
+        result = self.app._hover.settings_window
+        assert result is not None
+        return result
 
     @property
     def bubble(self) -> tk.Toplevel:
@@ -80,7 +73,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
             child.cget("text") for child in extra_row.winfo_children()
             if "text" in child.keys()
         ]
-        self.assertIn("Status", extra_labels)
+        self.assertIn("Offen halten", extra_labels)
         bar.buttons["feed"].invoke()
         self.assertGreater(self.app.state.satiety, 75)
         bar.buttons["sleep"].invoke()
@@ -92,7 +85,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
     def test_needs_are_visible_and_updated_in_hover_without_status_popup(self):
         self.app._on_enter()
         bar = self.toolbar
-        self.assertIsNone(self.app._hover.status_panel)
+        self.assertFalse(hasattr(self.app._hover, "status_panel"))
         self.assertEqual(set(bar.needs), {"satiety", "mood", "energy",
                                            "social", "affection", "friendship"})
         for key, _title, _color in bar.NEEDS:
@@ -135,55 +128,30 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertTrue(self.app.settings.observe_computer)
         self.assertIn("CPU", self.toolbar.hardware.cget("text"))
 
-    def test_popup_can_open_toggle_and_close_repeatedly(self):
-        self.app._on_enter()
-        bar = self.toolbar
-        bar.settings_button.invoke()
-        self.app.root.update_idletasks()
-        self.assertTrue(self.app._hover.menu_is_open)
-        self.assertIsNotNone(self.app._hover.settings_popup)
-        self.assertTrue(self.popup.window.winfo_ismapped())
-        popup = self.popup
-        self.assertTrue(bar.visible)
-        # The popup is an actual set of live controls, not a dead native menu.
-        popup.values["auto_walk"].set(False)
-        for widget in popup.window.winfo_children()[0].winfo_children():
-            if isinstance(widget, tk.Checkbutton) and widget.cget("text") == "An der Taskleiste laufen":
-                widget.invoke()  # flips the variable to True again
-                break
-        self.assertTrue(self.app.settings.auto_walk)
-        popup.close()
-        self.assertFalse(self.app._hover.menu_is_open)
-        bar.settings_button.invoke()
-        self.assertIsNotNone(self.app._hover.settings_popup)
-        bar.settings_button.invoke()
-        self.assertIsNone(self.app._hover.settings_popup)
-        self.assertFalse(self.app._hover.menu_is_open)
-
-    def test_click_outside_closes_toolbar_and_settings_immediately(self):
+    def test_settings_open_update_and_refocus_existing(self):
         self.app._on_enter()
         self.toolbar.settings_button.invoke()
-        self.assertIsNotNone(self.app._hover.settings_popup)
-        with (
-            patch.object(self.app._input.mouse, "clicked", return_value=True),
-            patch.object(self.app.root, "winfo_pointerx", return_value=-999),
-            patch.object(self.app.root, "winfo_pointery", return_value=-999),
-            patch.object(self.app.root, "winfo_containing", return_value=None),
-        ):
-            self.app._poll_desktop_click()
-        self.assertIsNone(self.app._hover.settings_popup)
-        self.assertFalse(self.app._hover.menu_is_open)
-        self.assertFalse(self.toolbar.visible)
+        window = self.settings_window
+        self.assertTrue(window.window.winfo_ismapped())
+        window.values["auto_walk"].set(False)
+        window.checkbuttons["auto_walk"].invoke()
+        self.assertTrue(self.app.settings.auto_walk)
+        self.toolbar.settings_button.invoke()
+        self.assertIs(self.settings_window, window)
+        window.close()
+        self.assertIsNone(self.app._hover.settings_window)
+
+    def test_outside_click_only_hides_unpinned_toolbar(self):
         self.app._on_enter()
-        self.assertTrue(self.toolbar.visible)
-        with (
-            patch.object(self.app._input.mouse, "clicked", return_value=True),
-            patch.object(self.app.root, "winfo_pointerx", return_value=-999),
-            patch.object(self.app.root, "winfo_pointery", return_value=-999),
-            patch.object(self.app.root, "winfo_containing", return_value=None),
-        ):
-            self.app._poll_desktop_click()
+        self.toolbar.settings_button.invoke()
+        settings = self.settings_window
+        self.app._hover.dismiss_outside(-999, -999)
         self.assertFalse(self.toolbar.visible)
+        self.assertIs(self.app._hover.settings_window, settings)
+        self.app._hover.show_toolbar()
+        self.toolbar.pin_button.invoke()
+        self.app._hover.dismiss_outside(-999, -999)
+        self.assertTrue(self.toolbar.visible)
 
     def test_all_100_percent_need_bars_fill_real_display_width(self):
         self.app.state.satiety = 100
@@ -254,18 +222,18 @@ class TaskbarPetGuiTests(unittest.TestCase):
         start = tk.Event()
         start.x_root = original[0] + 20
         start.y_root = original[1] + 20
-        bar._drag_start(start)
-        self.assertTrue(bar._dragging)
+        bar._drag.start(start)
+        self.assertTrue(bar.dragging)
         # Even a click outside while actively dragging must not dismiss it.
         self.app._hover.dismiss_outside(-999, -999)
         self.assertTrue(bar.visible)
         motion = tk.Event()
         motion.x_root = start.x_root + 25
         motion.y_root = start.y_root - 15
-        bar._drag_motion(motion)
+        bar._drag.move(motion)
         bar.window.update_idletasks()
-        bar._drag_end(start)
-        self.assertFalse(bar._dragging)
+        bar._drag.finish(start)
+        self.assertFalse(bar.dragging)
         position = (self.app.settings.toolbar_x, self.app.settings.toolbar_y)
         self.assertNotEqual(position, original)
         bar.hide()
@@ -481,11 +449,13 @@ class TaskbarPetGuiTests(unittest.TestCase):
             self.app._greet_on_start()
             spoken.assert_not_called()
 
-    def test_status_shows_current_emotional_state(self):
+    def test_status_details_show_emotion_in_toolbar(self):
         self.app._hover.open_status()
+        self.toolbar.toggle_details()
         self.app.state.energy = 8
-        self.status.refresh()
-        self.assertIn("Müde", self.status.emotion_label.cget("text"))
+        self.toolbar.refresh()
+        assert self.toolbar.details is not None
+        self.assertIn("Müde", self.toolbar.details.text("emotion"))
 
     def test_scaling_keeps_feet_on_taskbar(self):
         self.app.toggle_scale()
@@ -528,18 +498,17 @@ class TaskbarPetGuiTests(unittest.TestCase):
             )
             focus.assert_not_called()
 
-    def test_settings_menu_and_status_follow_sprite_in_layer_order(self):
+    def test_settings_and_toolbar_stay_in_window_stack(self):
         self.app._overlay_stack._backend = spy = Mock()
         spy.raise_without_focus.return_value = True
         self.app._on_enter()
         self.toolbar.settings_button.invoke()
-        self.assertIsNotNone(self.app._hover.settings_popup)
         self.assertIs(spy.raise_without_focus.call_args.args[0],
-                      self.popup.window)
-        self.popup.close()
+                      self.settings_window.window)
+        self.settings_window.close()
         self.app._hover.open_status()
         self.assertIs(spy.raise_without_focus.call_args.args[0],
-                      self.status.window)
+                      self.toolbar.window)
 
     def test_no_restack_while_windows_are_in_healthy_order(self):
         self.app._overlay_stack._backend = spy = Mock()

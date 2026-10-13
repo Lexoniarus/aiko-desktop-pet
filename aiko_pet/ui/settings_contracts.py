@@ -1,4 +1,4 @@
-"""Settings callback capabilities and backwards-compatible snapshot import."""
+"""Narrow setting commands; the window never owns application preferences."""
 
 from __future__ import annotations
 
@@ -6,13 +6,11 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ..application.settings import SettingKey
-
 from ..presentation.contracts import SettingsSnapshot as SettingsSnapshot
 
 
 @dataclass(frozen=True, slots=True)
 class SettingsActions:
-    open_status: Callable[[], None]
     toggle_scale: Callable[[], None]
     set_option: Callable[[SettingKey, bool], None]
     forget_rhythm: Callable[[], None]
