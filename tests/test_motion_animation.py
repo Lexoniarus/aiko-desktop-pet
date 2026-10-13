@@ -272,7 +272,11 @@ class WalkControllerTests(unittest.TestCase):
                     ))
                     x = new_x
                 self.assertAlmostEqual(abs(x - 300), 68 / 1.28, delta=.5)
-                self.assertGreater(abs(walker.remaining_distance), 50)
+                # New 1.28s walking cycles cover 53.125 px in one second.
+                self.assertAlmostEqual(
+                    abs(walker.remaining_distance), 100 - 68 / 1.28,
+                    delta=1.0,
+                )
 
     def test_complete_pause_starts_at_actual_finish_even_after_long_walk(self) -> None:
         self.walker.remaining_distance = 2
