@@ -64,6 +64,7 @@ class DesktopLifecycle:
         self._stopped = True
         self._application.close()
         self._runtime.stop()
+        self._inputs.stop()
         self._monitor.stop()
         self._save()
         self._reaction.cancel()

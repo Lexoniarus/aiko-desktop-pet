@@ -106,9 +106,11 @@ titles or unapproved personal activity details.
 ## Pending architecture cleanup
 
 - Desktop scheduling, state serialization and ordered shutdown now have
-  dedicated services under `desktop/`. The typed forwards in
-  `desktop/compatibility.py` exist only for legacy callers; new features
-  must not depend on that façade.
+  dedicated services under `desktop/`. The runtime consumes named
+  `DesktopTickPorts` callbacks instead of inheriting private GUI stages;
+  `DesktopPreferences` coordinates setting effects without duplicate state.
+  The typed forwards in `desktop/compatibility.py` remain only for
+  historical callers and must not be used by new integrations.
 - `ActivityCoordinator` owns pet time progression during desktop ticks and
   before persistence; `DesktopPersistence` writes the supplied state without
   advancing the pet or choosing sleep policy.

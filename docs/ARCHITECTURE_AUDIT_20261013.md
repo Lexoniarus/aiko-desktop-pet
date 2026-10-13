@@ -23,13 +23,14 @@ isolated to `refactor/oop-modular-architecture`.
 | Speech and ordered emotes | `ui/speech_presenter.py`, `reaction_playback.py` |
 | Hover layout and drag rules | `ui/hover_geometry.py` |
 | Legacy GUI method compatibility | `desktop/compatibility.py` |
-| Tick timers and update phases | `desktop/runtime.py` |
+| Tick timers and update phases | `desktop/runtime.py` (`DesktopTickPorts`) |
+| Desktop preference effects | `desktop/preferences.py` |
 | Save decoding and atomic JSON writes | `storage.py` |
 | Runtime preferences and compatibility exports | `application/settings.py`, `storage.py` |
 | Startup restoration and valid-save time catch-up | `application/session.py` |
 | State serialization and autosave cadence | `desktop/persistence.py` |
 | Taskbar/window stack checks | `desktop/maintenance.py` |
-| Tk/global mouse and focus input | `desktop/input.py` |
+| Tk/global mouse and focus input | `desktop/input.py` (cancellable FocusOut) |
 | Desktop startup/shutdown resource sequence | `desktop/lifecycle.py` |
 | Hardware readings and effort | `infrastructure/hardware/metrics.py` |
 | Windows/Linux OS sensors | `infrastructure/hardware/os_sensors.py` |
@@ -40,11 +41,12 @@ isolated to `refactor/oop-modular-architecture`.
 | Component composition and remaining GUI adapters | `gui.py` |
 
 The original `gui.py` mixed all those responsibilities and measured 875
-lines. The composition shell is now about 581 lines. The legacy
-compatibility adapter remains separate; these forwards are not removed
-complexity. Timers, serialization, taskbar/stack polling, and input binding
-now belong to testable, cohesive desktop services. Domain time advancement
-is owned by `ActivityCoordinator`, including the pre-save catch-up.
+lines. The composition shell is now about 572 lines. The legacy
+compatibility adapter still exists, but the active desktop scheduler no longer
+calls its private forwarding methods. Timer ordering, persistence,
+taskbar/stack checks, input and setting effects now have explicit owners.
+Domain time advancement is owned by `ActivityCoordinator`, including
+the pre-save catch-up.
 Initial catch-up for an existing saved session is now performed by
 `PetSessionRestorer` rather than `StateStore`; the repository performs only
 JSON decoding/encoding and preserves legacy import names.
@@ -75,9 +77,10 @@ re-export the exact application view-model classes.
 Only the `gui.py` bootstrap connects these components. The shell now reads
 the owned hover, animated character, speech, timing and taskbar components
 directly instead of using inherited compatibility getters and presenters.
-The compatibility adapter remains available to old callers and to the
-existing private runtime-stage forwards; it is **not** a destination for new
-features.
+The compatibility adapter remains available to old callers. The runtime
+receives typed, named `DesktopTickPorts` composed in `gui.py` instead of
+using compatibility forwards as its tick stage surface. New features must
+not depend on the old façade.
 
 ## Startup session ownership — implemented
 
@@ -117,6 +120,19 @@ legacy compatibility interfaces. The `PetState` and `TimeContext` German
 helpers are retained for older callers but unused in live UI presentation.
 Schedule descriptions embedded in `TimeContext` remain an identified
 later compatibility cutover; their values were not changed here.
+
+## Desktop runtime and preference ownership — implemented
+
+The scheduler now owns only bounded time deltas, phase ordering and timer IDs.
+Every dependency is exposed as a named `DesktopTickPorts` callback; it does
+not accept the desktop shell or look up inherited private methods.
+`DesktopPreferences` coordinates setting changes and position/scale
+effects against their existing owners, rather than replicating state.
+`DesktopInput` cancels delayed FocusOut callbacks on ordered shutdown.
+
+The old `DesktopPet` façade remains intentionally inherited for legacy
+consumers and tests; it does not drive normal runtime scheduling. Removing it
+requires separate evidence that every existing entrypoint can be maintained.
 
 ## Remaining work, by priority (not yet implemented)
 

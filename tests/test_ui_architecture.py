@@ -289,6 +289,50 @@ class UiDependencyRules(unittest.TestCase):
             for node in tree.body
         ))
 
+    def test_runtime_consumes_named_ports_not_legacy_private_stages(self) -> None:
+        source = (ROOT / "desktop/runtime.py").read_text("utf-8")
+        self.assertIn("class DesktopTickPorts:", source)
+        self.assertIn("ports.advance_lifecycle(", source)
+        self.assertIn("ports.render_character(", source)
+        for legacy in (
+            "stages._advance_pet_lifecycle", "stages._refresh_hover",
+            "stages._render_current_sprite", "stages._closed",
+        ):
+            with self.subTest(method=legacy):
+                self.assertNotIn(legacy, source)
+
+    def test_desktop_gui_wires_runtime_without_self_as_stage_object(self) -> None:
+        source = (ROOT / "gui.py").read_text("utf-8")
+        self.assertIn("DesktopTickPorts(", source)
+        self.assertIn("DesktopPreferences(", source)
+        self.assertNotIn("DesktopRuntime(\n            self,", source)
+        self.assertNotIn("self.settings.always_on_top =", source)
+        self.assertNotIn("self.settings.auto_routine =", source)
+        self.assertNotIn("self._window.resize()", source)
+
+    def test_preference_owner_has_no_dialogue_or_save_implementation(self) -> None:
+        source = (ROOT / "desktop/preferences.py").read_text("utf-8")
+        tree = ast.parse(source)
+        imports = [
+            node.module or ""
+            for node in ast.walk(tree)
+            if isinstance(node, ast.ImportFrom)
+        ]
+        self.assertFalse(any(
+            "storage" in name or "gui" in name
+            or "dialogue" in name
+            for name in imports
+        ))
+        self.assertNotIn("DesktopPet", source)
+        self.assertIn("class DesktopPreferences:", source)
+
+    def test_input_owns_and_cancels_delayed_focus_callbacks(self) -> None:
+        input_source = (ROOT / "desktop/input.py").read_text("utf-8")
+        lifecycle = (ROOT / "desktop/lifecycle.py").read_text("utf-8")
+        self.assertIn("self._focus_timers", input_source)
+        self.assertIn("self.root.after_cancel(", input_source)
+        self.assertIn("self._inputs.stop()", lifecycle)
+
     def test_application_services_never_import_tkinter(self) -> None:
         for path in (ROOT / "application").glob("*.py"):
             with self.subTest(module=path.name):

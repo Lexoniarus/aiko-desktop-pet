@@ -42,6 +42,7 @@ class DesktopLifecycleTests(unittest.TestCase):
             (runtime, "start", "runtime-start"),
             (app, "close", "app-close"),
             (runtime, "stop", "runtime-stop"),
+            (inputs, "stop", "input-stop"),
             (monitor, "stop", "monitor-stop"),
             (reaction, "cancel", "cancel-reactions"),
             (speech, "hide", "hide-speech"),
@@ -84,7 +85,7 @@ class DesktopLifecycleTests(unittest.TestCase):
         self.lifecycle.stop()
         self.lifecycle.stop()
         self.assertEqual(self.calls, [
-            "app-close", "runtime-stop", "monitor-stop", "save",
+            "app-close", "runtime-stop", "input-stop", "monitor-stop", "save",
             "cancel-reactions", "hide-speech", "popup-close",
             "close-toolbar", "status-close", "destroy",
         ])

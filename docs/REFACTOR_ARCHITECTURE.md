@@ -38,22 +38,21 @@ third-party packages. Keep German runtime text and English documentation.
    `system_activity.py` re-exports the old public names without
    housing another implementation.
 6. **Desktop composition (in progress):** `DesktopPet` in `gui.py`
-   connects the actual animated character (`AnimatedPet`), native window
-   (`DesktopWindow`), independent hover UI (`HoverUi`) and application core.
-   `AttentionCoordinator` owns idle, cursor, walk-comment, spontaneous and
-   notification timing.
-   The old GUI-private methods remain as typed forwards in
-   `desktop/compatibility.py` for existing consumers. The desktop shell
-   now reads component-owned state and invokes presentation methods directly,
-   rather than going through the legacy forwarding façade.
-   `desktop/runtime.py` now owns the ordered update loop and timers; `desktop/persistence.py` only writes state
-   and tracks autosave intervals. `application/activity.py` advances pet time
-   during ticks and immediately before saving. `desktop/maintenance.py` owns
-   taskbar/stack
-   polling; `desktop/input.py` owns Tk and global mouse input.
-   `desktop/lifecycle.py` now owns the ordered startup/shutdown of
-   already constructed desktop resources. The composition module is about
-   roughly 581 lines rather than 608 (formerly 875).
+   assembles `AnimatedPet`, `DesktopWindow`, `HoverUi` and the application.
+   `DesktopRuntime` receives explicit `DesktopTickPorts` rather than
+   assuming a shell with inherited private phase methods. It still owns
+   the original phase ordering and Tk tick/greeting timers.
+   `desktop/preferences.py` now owns the cross-component consequences
+   of setting toggles, scaling, centering and toolbar placement; the shell
+   exposes short compatibility forwards.
+   `desktop/input.py` owns Tk/global mouse input and its delayed focus
+   timers, which `desktop/lifecycle.py` cancels before Tk teardown.
+   `desktop/persistence.py` saves supplied state while
+   `application/activity.py` advances pet time during ticks and saves.
+   `desktop/maintenance.py` owns taskbar/stack intervals.
+   The old façade `desktop/compatibility.py` is retained for historical
+   callers but is no longer the runtime-stage provider. The composition
+   shell is approximately 572 lines versus 875 before the audit.
    See [the full architecture audit](ARCHITECTURE_AUDIT_20261013.md).
 7. **Pet and adaptive domain (implemented):** `PetState` now owns all
    care, needs, friendship and daily-routine state transitions.
@@ -135,6 +134,25 @@ third-party packages. Keep German runtime text and English documentation.
   call them. The current `TimeContext.activity` and
   `TimeContext.next_activity` still contain existing German schedule labels.
   Those legacy schedule values can be separated in a later cutover.
+
+## Desktop session and runtime phase ownership
+
+- `DesktopTickPorts` declares named capabilities such as
+  `advance_lifecycle`, `observe_pointer`, `render_character`,
+  `refresh_hover` and `refresh_overlays_and_save`. The runtime
+  never depends on `DesktopPet`, `DesktopCompatibility`, game state or Tk.
+- `DesktopPreferences` coordinates already-owned settings effects without
+  retaining another preference state. The desktop entrypoints `set_topmost`,
+  `set_auto_walk`, `set_auto_routine`, `toggle_scale`, `center` and
+  `reset_toolbar_position` remain available for legacy callers.
+- `DesktopInput` tracks its own delayed FocusOut callback IDs.
+  `DesktopLifecycle.stop()` cancels them before the Tk root is destroyed.
+- The historical `DesktopCompatibility` façade still exists and the
+  `DesktopPet` shell still inherits it for existing tests/consumers.
+  That inheritance is not used by the active runtime, and final facade
+  retirement needs a separate compatibility review.
+- Internal domain state, German dialogue, sprite assets, settings keys,
+  save JSON v1 and Tk phase ordering are unchanged.
 
 ## Change safety
 

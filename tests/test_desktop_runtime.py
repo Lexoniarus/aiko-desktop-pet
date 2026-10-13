@@ -5,7 +5,9 @@ from __future__ import annotations
 import unittest
 from collections.abc import Callable
 
-from aiko_pet.desktop.runtime import DesktopRuntime, TICK_MILLISECONDS
+from aiko_pet.desktop.runtime import (
+    DesktopRuntime, DesktopTickPorts, TICK_MILLISECONDS,
+)
 
 
 class FakeStages:
@@ -76,8 +78,24 @@ class DesktopRuntimeTests(unittest.TestCase):
             self.scheduled[key] = (milliseconds, callback)
             return key
 
+        self.ports = DesktopTickPorts(
+            is_closed=lambda: self.stages._closed,
+            request_tick=self.stages._tick,
+            greet=self.stages._greet_on_start,
+            advance_lifecycle=self.stages._advance_pet_lifecycle,
+            refresh_taskbar=self.stages._refresh_taskbar_track,
+            poll_desktop_clicks=self.stages._poll_desktop_click,
+            refresh_hover=self.stages._refresh_hover,
+            observe_computer=self.stages._react_to_computer,
+            observe_pointer=self.stages._observe_pointer,
+            render_character=self.stages._render_current_sprite,
+            show_idle_emote=self.stages._maybe_show_idle_emote,
+            speak_spontaneously=self.stages._maybe_speak_spontaneously,
+            present_notification=self.stages._present_pending_notification,
+            refresh_overlays_and_save=self.stages._refresh_overlays_and_autosave,
+        )
         self.runtime = DesktopRuntime(
-            self.stages,
+            self.ports,
             schedule=schedule,
             cancel=self.cancelled.append,
             monotonic=lambda: self.now,

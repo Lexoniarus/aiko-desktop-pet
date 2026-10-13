@@ -76,14 +76,15 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/presentation/` | German desktop copy, display models, hover/status projections and geometry |
 | `aiko_pet/application/view_models.py` | Legacy import bridge for presentation contracts |
 | `aiko_pet/application/read_models.py` | Constructs read-only utility snapshots |
-| `aiko_pet/desktop/runtime.py` | Owns the update phases and Tk timers |
+| `aiko_pet/desktop/runtime.py` | Ordered Tk tick phases through explicit `DesktopTickPorts` |
+| `aiko_pet/desktop/preferences.py` | Owns coordinated desktop setting and geometry effects |
 | `aiko_pet/desktop/persistence.py` | Writes current state and tracks autosave timing |
 | `aiko_pet/desktop/maintenance.py` | Bounded taskbar and z-order checks |
-| `aiko_pet/desktop/input.py` | Tk bindings and global mouse/focus input |
+| `aiko_pet/desktop/input.py` | Tk bindings, global mouse/focus input and cancellable focus timers |
 | `aiko_pet/desktop/lifecycle.py` | Ordered startup and shutdown of desktop resources |
 | `aiko_pet/desktop/compatibility.py` | Typed forwards for older desktop calls |
 | `aiko_pet/adaptive.py` + `adaptive_models.py` | Runtime learning controller and serializable data contracts |
-| `aiko_pet/gui.py` | Desktop component assembly; startup and shutdown delegated |
+| `aiko_pet/gui.py` | Component assembly and remaining desktop callback adapters |
 | `aiko_pet/telemetry.py` | Immutable workload sample and hardware-independent effort calculation |
 | `aiko_pet/infrastructure/hardware/` | CPU/RAM/uptime providers, NVIDIA parsing, sampler and background monitor |
 | `aiko_pet/system_activity.py` | Backward-compatible hardware imports (no extra logic) |

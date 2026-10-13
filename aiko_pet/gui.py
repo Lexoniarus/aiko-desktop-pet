@@ -17,8 +17,9 @@ from .application.session import PetSessionRestorer
 from .application.settings import SettingKey
 from .application.activity import ActivityCallbacks, ActivityCoordinator
 from .desktop.compatibility import DesktopCompatibility
+from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import (
-    DesktopRuntime, TICK_MILLISECONDS as TICK_MILLISECONDS,
+    DesktopRuntime, DesktopTickPorts, TICK_MILLISECONDS as TICK_MILLISECONDS,
 )
 from .desktop.persistence import DesktopPersistence
 from .desktop.maintenance import DesktopMaintenance
@@ -84,7 +85,28 @@ class DesktopPet(DesktopCompatibility):
             else "Segoe UI"
         )
         self._runtime = DesktopRuntime(
-            self, schedule=self.root.after, cancel=self.root.after_cancel,
+            DesktopTickPorts(
+                is_closed=lambda: self._closed,
+                request_tick=self._tick,
+                greet=self._greet_on_start,
+                advance_lifecycle=self._advance_pet_lifecycle,
+                refresh_taskbar=lambda now: self._maintenance.refresh_track(now),
+                poll_desktop_clicks=lambda: self._input.poll_global_click(),
+                refresh_hover=lambda now: self._hover.refresh_hover(now),
+                observe_computer=lambda now: self._activity.react_to_computer(
+                    now, self.context,
+                ),
+                observe_pointer=lambda now: self._animated.observe_pointer(now),
+                render_character=lambda now, elapsed, pointer: (
+                    self._animated.render(now, elapsed, pointer)
+                ),
+                show_idle_emote=self._maybe_show_idle_emote,
+                speak_spontaneously=self._maybe_speak_spontaneously,
+                present_notification=self._present_pending_notification,
+                refresh_overlays_and_save=self._refresh_overlays_and_autosave,
+            ),
+            schedule=self.root.after,
+            cancel=self.root.after_cancel,
         )
         self._action_until = 0.0
         self._action_state = "idle"
@@ -204,6 +226,23 @@ class DesktopPet(DesktopCompatibility):
                 closed=lambda: self._closed,
             ),
         )
+        self._preferences = DesktopPreferences(
+            settings=self.settings,
+            state=self.state,
+            adaptive=self.adaptive,
+            activity=self._activity,
+            attention=self._attention,
+            animated=self._animated,
+            window=self._window,
+            hover=self._hover,
+            speech=self._speech,
+            overlay_stack=self._overlay_stack,
+            ports=DesktopPreferencePorts(
+                place_x=self._place_x,
+                save=self._save,
+                set_context=self._set_context,
+            ),
+        )
         self._lifecycle = DesktopLifecycle(
             root=self.root,
             inputs=self._input,
@@ -248,14 +287,14 @@ class DesktopPet(DesktopCompatibility):
             self._hover.toolbar.place()
         self._speech.move()
 
+    def _set_context(self, context: TimeContext) -> None:
+        """Update the session's current local-time snapshot."""
+        self.context = context
+
     def _save_hover_position(
         self, x: int | None, y: int | None,
     ) -> None:
-        self.settings.toolbar_x = x
-        self.settings.toolbar_y = y
-        if x is not None:
-            self._hover.last_hover = time.monotonic()
-        self._save()
+        self._preferences.record_toolbar_position(x, y)
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
         now = time.monotonic()
@@ -329,19 +368,8 @@ class DesktopPet(DesktopCompatibility):
         self._input.on_menu(event)
 
     def _set_popup_option(self, name: SettingKey, value: bool) -> None:
-        setters = {
-            "always_on_top": self.set_topmost,
-            "auto_walk": self.set_auto_walk,
-            "auto_routine": self.set_auto_routine,
-            "follow_cursor": self.set_follow_cursor,
-            "spontaneous_talk": self.set_spontaneous_talk,
-            "observe_computer": self.set_observe_computer,
-            "learn_rhythm": self.set_learn_rhythm,
-        }
-        setter = setters.get(name)
-        if setter is None:
-            raise ValueError(f"Unknown setting: {name}")
-        setter(value)
+        """Preserve the public desktop callback while routing to its owner."""
+        self._preferences.set_option(name, value)
 
     def _poll_desktop_click(self) -> None:
         self._input.poll_global_click()
@@ -384,77 +412,37 @@ class DesktopPet(DesktopCompatibility):
         self._save()
 
     def set_topmost(self, value: bool) -> None:
-        self.settings.always_on_top = bool(value)
-        self._overlay_stack.enabled = self.settings.always_on_top
-        self._window.set_topmost(self.settings.always_on_top)
-        self._hover.set_topmost(self.settings.always_on_top)
-        self._speech.set_topmost(self.settings.always_on_top)
-        self._overlay_stack.restore()
-        self._save()
+        self._preferences.set_topmost(value)
 
     def set_auto_walk(self, value: bool) -> None:
-        self._animated.set_auto_walk(value, time.monotonic())
-        self._save()
+        self._preferences.set_auto_walk(value)
 
     def set_auto_routine(self, enabled: bool) -> None:
-        self.settings.auto_routine = bool(enabled)
-        self.state.advance(time.time(), auto_routine=self.settings.auto_routine)
-        self.context = context_at(time.time())
-        if self._hover.toolbar is not None:
-            self._hover.toolbar.refresh()
-        self._hover.refresh_status()
-        self._save()
+        self._preferences.set_auto_routine(enabled)
 
     def set_follow_cursor(self, enabled: bool) -> None:
-        self._animated.set_follow_cursor(enabled)
-        self._save()
+        self._preferences.set_follow_cursor(enabled)
 
     def set_spontaneous_talk(self, enabled: bool) -> None:
-        self._attention.set_spontaneous_talk(enabled, time.monotonic())
-        self._save()
+        self._preferences.set_spontaneous_talk(enabled)
 
     def set_learn_rhythm(self, enabled: bool) -> None:
-        self.settings.learn_rhythm = bool(enabled)
-        self._save()
+        self._preferences.set_learn_rhythm(enabled)
 
     def forget_rhythm(self) -> None:
-        self.adaptive.forget_profile()
-        self._hover.refresh_status()
-        self._save()
+        self._preferences.forget_rhythm()
 
     def set_observe_computer(self, enabled: bool) -> None:
-        self._activity.set_observation_enabled(enabled)
-        if self._hover.toolbar is not None:
-            self._hover.toolbar.refresh()
-        self._save()
+        self._preferences.set_observe_computer(enabled)
 
     def toggle_scale(self) -> None:
-        original_center = (self.settings.x or 0) + self._window.width / 2
-        self.settings.scale = 2 if self.settings.scale == 1 else 1
-        self._window.resize()
-        self._animated.reload_sprites()
-        self._animated.gaze_sector = None
-        self._window.placed = False  # Force Tk geometry update even at unchanged x/y.
-        self._place_x(original_center - self._window.width / 2)
-        if self._hover.toolbar is not None and self._hover.toolbar.visible:
-            self._hover.toolbar.place()
-        self._save()
+        self._preferences.toggle_scale()
 
     def reset_toolbar_position(self) -> None:
-        if self._hover.toolbar is not None:
-            self._hover.toolbar.reset_position()
-        else:
-            self.settings.toolbar_x = None
-            self.settings.toolbar_y = None
-            self._save()
+        self._preferences.reset_toolbar_position()
 
     def center(self) -> None:
-        track = self._window.track
-        self._place_x(
-            (track.left + track.right - self._window.width) / 2,
-        )
-        self._animated.movement.remaining_distance = 0
-        self._save()
+        self._preferences.center()
 
     def _idle_emote(self) -> None:
         """Occasional unspoken state, never interrupting an existing scene."""

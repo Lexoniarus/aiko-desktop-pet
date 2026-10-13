@@ -39,6 +39,8 @@ class DesktopInput:
         self.canvas = canvas
         self.actions = actions
         self.mouse = mouse if mouse is not None else GlobalMouseClicks()
+        self._focus_timers: set[str] = set()
+        self._stopped = False
 
     def initialize(self) -> None:
         """Baseline global button state before installing interactive handlers."""
@@ -61,20 +63,39 @@ class DesktopInput:
         self.actions.dismiss_outside(event.x_root, event.y_root)
 
     def on_focus_out(self, _event: tk.Event) -> None:
-        if not self.actions.closed():
-            self.root.after(100, self.dismiss_after_focus_loss)
+        """Keep delayed focus checks cancellable during window teardown."""
+        if self._stopped or self.actions.closed():
+            return
+        scheduled: str | None = None
+
+        def dismiss() -> None:
+            if scheduled is not None:
+                self._focus_timers.discard(scheduled)
+            self.dismiss_after_focus_loss()
+
+        scheduled = self.root.after(100, dismiss)
+        self._focus_timers.add(scheduled)
 
     def dismiss_after_focus_loss(self) -> None:
         """Fall back to mouse location if a foreign window gained focus."""
-        if self.actions.closed():
+        if self._stopped or self.actions.closed():
             return
         self.actions.dismiss_outside(
             self.root.winfo_pointerx(), self.root.winfo_pointery(),
         )
 
+    def stop(self) -> None:
+        """Cancel outstanding Tk focus callbacks before destroying the root."""
+        if self._stopped:
+            return
+        self._stopped = True
+        for scheduled in tuple(self._focus_timers):
+            self.root.after_cancel(scheduled)
+        self._focus_timers.clear()
+
     def poll_global_click(self) -> None:
         """Catch clicks on foreign windows missed by Tk's ButtonPress."""
-        if self.mouse.clicked():
+        if not self._stopped and self.mouse.clicked():
             self.actions.dismiss_outside(
                 self.root.winfo_pointerx(), self.root.winfo_pointery(),
             )

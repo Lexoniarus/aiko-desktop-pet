@@ -67,6 +67,22 @@ class DesktopInputTests(unittest.TestCase):
         self.input.on_menu(event)
         self.assertEqual(self.events, ["dismiss:25:39", "menu:25:39"])
 
+    def test_focus_timers_are_cancelled_before_root_teardown(self) -> None:
+        self.input.initialize()
+        self.input.on_focus_out(tk.Event())
+        self.input.on_focus_out(tk.Event())
+        self.assertEqual(len(self.input._focus_timers), 2)
+        pending = tuple(self.input._focus_timers)
+        for timer in pending:
+            self.assertIn(timer, self.root.tk.call("after", "info"))
+        self.input.stop()
+        self.input.stop()
+        self.assertEqual(self.input._focus_timers, set())
+        for timer in pending:
+            self.assertNotIn(timer, self.root.tk.call("after", "info"))
+        self.input.on_focus_out(tk.Event())
+        self.assertEqual(self.input._focus_timers, set())
+
     def test_global_click_and_closed_focus_are_separate(self) -> None:
         self.input.poll_global_click()
         self.assertEqual(self.events, [])

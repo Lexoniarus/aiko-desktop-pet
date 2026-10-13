@@ -1,64 +1,51 @@
-"""Bounded, deterministic desktop update scheduler.
+"""Deterministic desktop scheduler driven by explicit, named phase ports.
 
-Owns Tk timer IDs and update ordering. Each stage is supplied by a narrow
-protocol; no pet state, sprite or browser transport is imported.
+The scheduler owns timer IDs and tick ordering, but receives no DesktopPet,
+legacy private-method façade, UI widgets or domain state.
 """
 
 from __future__ import annotations
 
 import time
-from typing import Callable, Protocol
+from dataclasses import dataclass
+from typing import Callable
 
 TICK_MILLISECONDS = 140
 
 
-class TickStages(Protocol):
-    _closed: bool
+@dataclass(frozen=True, slots=True)
+class DesktopTickPorts:
+    """Capabilities needed by the desktop update scheduler, not an object API."""
 
-    def _tick(self) -> None: ...
-
-    def _greet_on_start(self) -> None: ...
-
-    def _advance_pet_lifecycle(
-        self, now: float, wall_time: float,
-    ) -> None: ...
-
-    def _refresh_taskbar_track(self, now: float) -> None: ...
-
-    def _poll_desktop_click(self) -> None: ...
-
-    def _refresh_hover(self, now: float) -> None: ...
-
-    def _react_to_computer(self, now: float) -> None: ...
-
-    def _observe_pointer(self, now: float) -> tuple[int, int]: ...
-
-    def _render_current_sprite(
-        self, now: float, elapsed_seconds: float, pointer: tuple[int, int],
-    ) -> None: ...
-
-    def _maybe_show_idle_emote(self, now: float) -> None: ...
-
-    def _maybe_speak_spontaneously(self, now: float) -> None: ...
-
-    def _present_pending_notification(self, now: float) -> None: ...
-
-    def _refresh_overlays_and_autosave(self, now: float) -> None: ...
+    is_closed: Callable[[], bool]
+    request_tick: Callable[[], None]
+    greet: Callable[[], None]
+    advance_lifecycle: Callable[[float, float], None]
+    refresh_taskbar: Callable[[float], None]
+    poll_desktop_clicks: Callable[[], None]
+    refresh_hover: Callable[[float], None]
+    observe_computer: Callable[[float], None]
+    observe_pointer: Callable[[float], tuple[int, int]]
+    render_character: Callable[[float, float, tuple[int, int]], None]
+    show_idle_emote: Callable[[float], None]
+    speak_spontaneously: Callable[[float], None]
+    present_notification: Callable[[float], None]
+    refresh_overlays_and_save: Callable[[float], None]
 
 
 class DesktopRuntime:
-    """Advance each phase once; never own or modify domain/application state."""
+    """Advance ordered phases once per tick and own all its Tk timer IDs."""
 
     def __init__(
         self,
-        stages: TickStages,
+        ports: DesktopTickPorts,
         *,
         schedule: Callable[[int, Callable[[], None]], str],
         cancel: Callable[[str], None],
         monotonic: Callable[[], float] = time.monotonic,
         wall_time: Callable[[], float] = time.time,
     ) -> None:
-        self._stages = stages
+        self._ports = ports
         self._schedule = schedule
         self._cancel = cancel
         self._monotonic = monotonic
@@ -68,21 +55,22 @@ class DesktopRuntime:
         self.scheduled_greeting: str | None = None
 
     def start(self) -> None:
-        """Start desktop timers after all components have been assembled."""
-        if self._stages._closed:
+        """Schedule the first tick and greeting only for an open desktop."""
+        if self._ports.is_closed():
             return
         if self.scheduled_tick is not None:
             return
         self.scheduled_greeting = self._schedule(
-            460, self._stages._greet_on_start,
+            460, self._ports.greet,
         )
         self.scheduled_tick = self._schedule(
-            TICK_MILLISECONDS, self._stages._tick,
+            TICK_MILLISECONDS, self._ports.request_tick,
         )
 
     def tick(self) -> None:
-        """Preserve original phase ordering and manual-test timer cancellation."""
-        if self._stages._closed:
+        """Preserve original stage order and bounded sprite delta time."""
+        ports = self._ports
+        if ports.is_closed():
             return
         if self.scheduled_tick is not None:
             self._cancel(self.scheduled_tick)
@@ -91,25 +79,24 @@ class DesktopRuntime:
         elapsed = max(0.0, min(0.5, now - self.last_tick))
         self.last_tick = now
         timestamp = self._wall_time()
-        stages = self._stages
-        stages._advance_pet_lifecycle(now, timestamp)
-        stages._refresh_taskbar_track(now)
-        stages._poll_desktop_click()
-        stages._refresh_hover(now)
-        stages._react_to_computer(now)
-        pointer = stages._observe_pointer(now)
-        stages._render_current_sprite(now, elapsed, pointer)
-        stages._maybe_show_idle_emote(now)
-        stages._maybe_speak_spontaneously(now)
-        stages._present_pending_notification(now)
-        stages._refresh_overlays_and_autosave(now)
-        if not stages._closed:
+        ports.advance_lifecycle(now, timestamp)
+        ports.refresh_taskbar(now)
+        ports.poll_desktop_clicks()
+        ports.refresh_hover(now)
+        ports.observe_computer(now)
+        pointer = ports.observe_pointer(now)
+        ports.render_character(now, elapsed, pointer)
+        ports.show_idle_emote(now)
+        ports.speak_spontaneously(now)
+        ports.present_notification(now)
+        ports.refresh_overlays_and_save(now)
+        if not ports.is_closed():
             self.scheduled_tick = self._schedule(
-                TICK_MILLISECONDS, stages._tick,
+                TICK_MILLISECONDS, ports.request_tick,
             )
 
     def stop(self) -> None:
-        """Cancel both startup and update timers once, including on shutdown."""
+        """Cancel both timer families, including pending startup greeting."""
         for scheduled in (self.scheduled_tick, self.scheduled_greeting):
             if scheduled is not None:
                 self._cancel(scheduled)

@@ -18,9 +18,13 @@ the desktop runtime has been exercised on Windows after the final commit.
 - Headless application integration tests: command routing, notification
   validation, idempotent bounded queue, cross-thread care prohibition and
   non-interrupting Tk presentation. No local HTTP port exists yet.
-- Desktop runtime tests cover tick ordering and shutdown timer cancellation,
+- Desktop runtime tests cover typed phase ordering, exact timer cancellation,
   persistence and disk-error handling, taskbar/overlay check intervals and
   Tk/global-input dispatch.
+- Desktop preference tests validate original window z-order, centering, scale,
+  toolbar position and feature toggles against the existing owners.
+- FocusOut regression tests verify all deferred input callbacks are cancelled
+  before Tk teardown, including simulated callbacks that fire too late.
 - Startup tests verify that restored saves receive exactly one bounded
   catch-up, while fresh or corrupt saves keep their original defaults;
   settings and adaptive memory retain the version-one JSON contract.
