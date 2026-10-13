@@ -97,6 +97,7 @@ def record_media() -> None:
             game._sequence.advance()
             frame(700)  # Excitement emote
             game._sequence.advance()
+            # Both independently owned hands are now fully visible.
             revealed = capture(pet)
             revealed.save(MEDIA_DIR / "Aiko_RPS_Aufgedeckt.png")
             frames.append(revealed)
