@@ -88,7 +88,7 @@ class DesktopPet(DesktopCompatibility):
         self._persistence = DesktopPersistence(
             self.store, self.state, self.settings, self.adaptive,
         )
-        self.mind = AikoMind(started_at=self._last_saved)
+        self.mind = AikoMind(started_at=self._persistence.last_saved)
         self.application = ApplicationRouter(
             CareController(self.state, self.mind, self.adaptive),
         )
@@ -105,16 +105,16 @@ class DesktopPet(DesktopCompatibility):
                 ),
                 react=self._react,
                 action_until=lambda: self._action_until,
-                last_spoken=lambda: self._last_spoken,
+                last_spoken=lambda: self._attention.last_spoken,
             ),
         )
         self._animated = AnimatedPet(
             self.root, self.canvas, self.state, self.settings,
             self.adaptive, self.activity_monitor,
             AnimatedPorts(
-                track=lambda: self.track,
+                track=lambda: self._window.track,
                 toolbar_visible=lambda: (
-                    self.toolbar is not None and self.toolbar.visible
+                    self._hover.toolbar is not None and self._hover.toolbar.visible
                 ),
                 place_x=self._place_x,
                 action_until=lambda: self._action_until,
@@ -127,13 +127,13 @@ class DesktopPet(DesktopCompatibility):
         self._attention = AttentionCoordinator(
             self.state, self.settings, self.mind, self.computer_voice,
             self.activity_monitor, self.application,
-            started_at=self._last_saved,
+            started_at=self._persistence.last_saved,
         )
         self._speech = SpeechPresenter(
             root=self.root,
             anchor=lambda: SpeechAnchor(
                 x=self.settings.x or 0, y=self.settings.y or 0,
-                width=self.width,
+                width=self._window.width,
             ),
             font_name=self._speech_font,
             always_on_top=lambda: self.settings.always_on_top,
@@ -143,8 +143,8 @@ class DesktopPet(DesktopCompatibility):
         self._reaction_player = ReactionPlayer(
             schedule=self.root.after,
             cancel_timer=self.root.after_cancel,
-            display_emote=self._show_emote,
-            display_text=self.say,
+            display_emote=self._speech.show_emote,
+            display_text=self._speech.show_text,
             start_action=self._start_action,
             mark_spoken=self._mark_reaction_spoken,
             is_closed=lambda: self._closed,
@@ -155,16 +155,16 @@ class DesktopPet(DesktopCompatibility):
         self._maintenance = DesktopMaintenance(
             check_taskbar=self._window.update_track,
             reposition=lambda: self._place_x(
-                self.settings.x or self.track.left,
+                self.settings.x or self._window.track.left,
             ),
             maintain_stack=self._overlay_stack.maintain,
-            started_at=self._last_tick,
+            started_at=self._runtime.last_tick,
         )
         self._views = DesktopViewSource(
             self.state, self.settings, self.mind, self.adaptive,
             self.activity_monitor,
             context=lambda: self.context,
-            sprite_size=lambda: (self.width, self.height),
+            sprite_size=lambda: (self._window.width, self._window.height),
         )
         self._hover = HoverUi(
             self.root, self.canvas,
@@ -183,7 +183,7 @@ class DesktopPet(DesktopCompatibility):
                 reset_toolbar=self.reset_toolbar_position,
                 center=self.center,
                 quit=self.quit,
-                move_speech=self._move_bubble,
+                move_speech=self._speech.move,
                 restore_stack=self._overlay_stack.restore,
                 always_on_top=lambda: self.settings.always_on_top,
             ),
@@ -194,9 +194,9 @@ class DesktopPet(DesktopCompatibility):
                 enter=self._on_enter,
                 left_click=self._on_click_left,
                 right_click=self._on_click_right,
-                show_menu=self.toggle_settings_menu,
-                dismiss_outside=self._dismiss_if_outside,
-                open_status=self.open_status,
+                show_menu=self._hover.toggle_settings,
+                dismiss_outside=self._hover.dismiss_outside,
+                open_status=self._hover.open_status,
                 quit=self.quit,
                 closed=lambda: self._closed,
             ),
@@ -222,14 +222,14 @@ class DesktopPet(DesktopCompatibility):
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
         windows: list[tk.Tk | tk.Toplevel] = [self.root]
-        if self.toolbar is not None and self.toolbar.visible:
-            windows.append(self.toolbar.window)
-        if self.status_panel is not None:
-            windows.append(self.status_panel.window)
-        if self._bubble is not None:
-            windows.append(self._bubble)
-        if self.settings_popup is not None:
-            windows.append(self.settings_popup.window)
+        if self._hover.toolbar is not None and self._hover.toolbar.visible:
+            windows.append(self._hover.toolbar.window)
+        if self._hover.status_panel is not None:
+            windows.append(self._hover.status_panel.window)
+        if self._speech.bubble is not None:
+            windows.append(self._speech.bubble)
+        if self._hover.settings_popup is not None:
+            windows.append(self._hover.settings_popup.window)
         return windows
 
     def _setup_events(self) -> None:
@@ -241,9 +241,9 @@ class DesktopPet(DesktopCompatibility):
     def _place_x(self, x: float) -> None:
         if not self._window.place_x(x):
             return
-        if self.toolbar is not None and self.toolbar.visible:
-            self.toolbar.place()
-        self._move_bubble()
+        if self._hover.toolbar is not None and self._hover.toolbar.visible:
+            self._hover.toolbar.place()
+        self._speech.move()
 
     def _save_hover_position(
         self, x: int | None, y: int | None,
@@ -251,21 +251,21 @@ class DesktopPet(DesktopCompatibility):
         self.settings.toolbar_x = x
         self.settings.toolbar_y = y
         if x is not None:
-            self._last_hover = time.monotonic()
+            self._hover.last_hover = time.monotonic()
         self._save()
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
         now = time.monotonic()
         # Only the first Enter after a long absence gets a welcome back;
         # repeatedly refreshing hover must not spam the same response.
-        was_hidden = self.toolbar is None or not self.toolbar.visible
+        was_hidden = self._hover.toolbar is None or not self._hover.toolbar.visible
         reaction = (
             self.mind.return_to_pet(self.state, self.context, now)
             if was_hidden else None
         )
-        self._last_hover = now
-        self._walk_remaining = 0
-        self._next_walk = now + random.uniform(3.0, 6.0)
+        self._hover.last_hover = now
+        self._animated.movement.remaining_distance = 0
+        self._animated.movement.next_walk_at = now + random.uniform(3.0, 6.0)
         self._hover.show_toolbar()
         self._react(reaction, 2800)
 
@@ -299,7 +299,7 @@ class DesktopPet(DesktopCompatibility):
         if reaction is None:
             # Deliberate silence must not be followed by a stale second line.
             self._cancel_followup()
-            self._hide_bubble()
+            self._speech.hide()
             return
         # During rapid tapping, skip the opening icon so the actual response
         # remains visible instead of resetting the same 700ms cue forever.
@@ -349,8 +349,8 @@ class DesktopPet(DesktopCompatibility):
         now = time.monotonic() if started_at is None else started_at
         self._action_state = state
         self._action_until = now + duration
-        self._walk_remaining = 0
-        self._next_walk = now + duration + random.uniform(2.5, 5)
+        self._animated.movement.remaining_distance = 0
+        self._animated.movement.next_walk_at = now + duration + random.uniform(2.5, 5)
 
     def interact(self, action: str) -> None:
         """Run a care command through the shared application boundary."""
@@ -362,22 +362,22 @@ class DesktopPet(DesktopCompatibility):
                 wall_time=stamp,
                 monotonic_time=now,
                 auto_routine=self.settings.auto_routine,
-                allow_bedtime=self._allow_bedtime(),
-                allow_nap=self._allow_nap(),
-                interrupt_nap=self._interrupt_nap(),
-                effort=self._live_effort(),
+                allow_bedtime=self._activity.allow_bedtime(),
+                allow_nap=self._activity.allow_nap(),
+                interrupt_nap=self._activity.interrupt_nap(),
+                effort=self._activity.live_effort(),
             ),
         )
         self.context = result.context
         if result.reaction is None:
             # A fallback must not be overwritten by an older, queued aside.
             self._cancel_followup()
-            self.say(result.fallback_text, 2450)
+            self._speech.show_text(result.fallback_text, 2450)
         else:
             self._react(result.reaction, 2900)
-        if self.toolbar is not None:
-            self.toolbar.refresh()
-        self._refresh_status()
+        if self._hover.toolbar is not None:
+            self._hover.toolbar.refresh()
+        self._hover.refresh_status()
         self._save()
 
     def set_topmost(self, value: bool) -> None:
@@ -397,9 +397,9 @@ class DesktopPet(DesktopCompatibility):
         self.settings.auto_routine = bool(enabled)
         self.state.advance(time.time(), auto_routine=self.settings.auto_routine)
         self.context = context_at(time.time())
-        if self.toolbar is not None:
-            self.toolbar.refresh()
-        self._refresh_status()
+        if self._hover.toolbar is not None:
+            self._hover.toolbar.refresh()
+        self._hover.refresh_status()
         self._save()
 
     def set_follow_cursor(self, enabled: bool) -> None:
@@ -416,44 +416,49 @@ class DesktopPet(DesktopCompatibility):
 
     def forget_rhythm(self) -> None:
         self.adaptive.forget_profile()
-        self._refresh_status()
+        self._hover.refresh_status()
         self._save()
 
     def set_observe_computer(self, enabled: bool) -> None:
         self._activity.set_observation_enabled(enabled)
-        if self.toolbar is not None:
-            self.toolbar.refresh()
+        if self._hover.toolbar is not None:
+            self._hover.toolbar.refresh()
         self._save()
 
     def toggle_scale(self) -> None:
-        original_center = (self.settings.x or 0) + self.width / 2
+        original_center = (self.settings.x or 0) + self._window.width / 2
         self.settings.scale = 2 if self.settings.scale == 1 else 1
         self._window.resize()
         self._animated.reload_sprites()
-        self._last_sprite_key = None
-        self._gaze_sector = None
-        self._placed = False  # Force Tk geometry update even at unchanged x/y.
-        self._place_x(original_center - self.width / 2)
-        if self.toolbar is not None and self.toolbar.visible:
-            self.toolbar.place()
+        self._animated.gaze_sector = None
+        self._window.placed = False  # Force Tk geometry update even at unchanged x/y.
+        self._place_x(original_center - self._window.width / 2)
+        if self._hover.toolbar is not None and self._hover.toolbar.visible:
+            self._hover.toolbar.place()
         self._save()
 
     def reset_toolbar_position(self) -> None:
-        if self.toolbar is not None:
-            self.toolbar.reset_position()
+        if self._hover.toolbar is not None:
+            self._hover.toolbar.reset_position()
         else:
             self.settings.toolbar_x = None
             self.settings.toolbar_y = None
             self._save()
 
     def center(self) -> None:
-        self._place_x((self.track.left + self.track.right - self.width) / 2)
-        self._walk_remaining = 0
+        track = self._window.track
+        self._place_x(
+            (track.left + track.right - self._window.width) / 2,
+        )
+        self._animated.movement.remaining_distance = 0
         self._save()
 
     def _idle_emote(self) -> None:
         """Occasional unspoken state, never interrupting an existing scene."""
-        if self._bubble is not None or self._followup_timeout is not None:
+        if (
+            self._speech.bubble is not None
+            or self._reaction_player.pending_timer is not None
+        ):
             return
         emote = choose_idle_emote(
             energy=self.state.energy,
@@ -461,14 +466,14 @@ class DesktopPet(DesktopCompatibility):
             mood=self.state.mood,
             affection=self.state.affection,
         )
-        self._show_emote(emote, 1100)
+        self._speech.show_emote(emote, 1100)
 
     def _on_cursor_moved(
         self, distance: float, screen_width: int, now: float,
     ) -> None:
         event = self._attention.cursor_moved(
             distance, screen_width, now,
-            toolbar_visible=bool(self.toolbar and self.toolbar.visible),
+            toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
         )
         if event is not None:
             self._react(self.mind.say_event(
@@ -487,8 +492,8 @@ class DesktopPet(DesktopCompatibility):
         )
         self.context = progress.context
         if progress.period_changed:
-            if self.toolbar is not None:
-                self.toolbar.refresh()
+            if self._hover.toolbar is not None:
+                self._hover.toolbar.refresh()
             if self.settings.spontaneous_talk and progress.sleep_changed:
                 event = "sleep" if self.state.sleeping else "wake"
                 self._react(self.mind.say_event(
@@ -502,8 +507,8 @@ class DesktopPet(DesktopCompatibility):
         """An independent policy decides whether Aiko is free for a gesture."""
         animation = self._attention.idle_animation(
             now, action_until=self._action_until,
-            walking=self._walk_remaining != 0,
-            toolbar_visible=bool(self.toolbar and self.toolbar.visible),
+            walking=self._animated.movement.remaining_distance != 0,
+            toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
         )
         if animation is not None:
             self._start_action(animation, 1.6)
@@ -512,7 +517,7 @@ class DesktopPet(DesktopCompatibility):
     def _maybe_speak_spontaneously(self, now: float) -> None:
         decision = self._attention.spontaneous(
             now, self.context,
-            toolbar_visible=bool(self.toolbar and self.toolbar.visible),
+            toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
         )
         if decision.due:
             self._react(decision.reaction, 3600)
@@ -522,20 +527,20 @@ class DesktopPet(DesktopCompatibility):
         notification = self._attention.next_notification(
             now,
             action_until=self._action_until,
-            bubble_visible=self._bubble is not None,
-            popup_visible=self.settings_popup is not None,
-            toolbar_visible=bool(self.toolbar and self.toolbar.visible),
+            bubble_visible=self._speech.bubble is not None,
+            popup_visible=self._hover.settings_popup is not None,
+            toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
         )
         if notification is None:
             return
-        self.say(f"{notification.title}: {notification.message}", 3500)
+        self._speech.show_text(f"{notification.title}: {notification.message}", 3500)
         self._attention.mark_spoken(now)
 
     def _refresh_overlays_and_autosave(self, now: float) -> None:
         """Refresh visible panels, window layering and periodic persistence."""
-        if self.toolbar is not None and self.toolbar.visible:
-            self.toolbar.refresh()
-        self._refresh_status()
+        if self._hover.toolbar is not None and self._hover.toolbar.visible:
+            self._hover.toolbar.refresh()
+        self._hover.refresh_status()
         # Focus changes from browser voice input can reorder foreign topmost
         # windows. Repair only after an actual overlapping z-order loss.
         self._maintenance.refresh_stack(now)

@@ -33,7 +33,7 @@ isolated to `refactor/oop-modular-architecture`.
 | Component composition and remaining GUI adapters | `gui.py` |
 
 The original `gui.py` mixed all those responsibilities and measured 875
-lines. The composition shell is now about 576 lines. The legacy
+lines. The composition shell is now about 581 lines. The legacy
 compatibility adapter remains separate; these forwards are not removed
 complexity. Timers, serialization, taskbar/stack polling, and input binding
 now belong to testable, cohesive desktop services. Domain time advancement
@@ -62,8 +62,12 @@ animated character and native window now use structural typing protocols
 instead of importing specific domain models. Old UI snapshot imports
 re-export the exact application view-model classes.
 
-Only the `gui.py` bootstrap connects these components. The typed legacy
-adapter is **not** a destination for new features.
+Only the `gui.py` bootstrap connects these components. The shell now reads
+the owned hover, animated character, speech, timing and taskbar components
+directly instead of using inherited compatibility getters and presenters.
+The compatibility adapter remains available to old callers and to the
+existing private runtime-stage forwards; it is **not** a destination for new
+features.
 
 ## Remaining work, by priority (not yet implemented)
 
