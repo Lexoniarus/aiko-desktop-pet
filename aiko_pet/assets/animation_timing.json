@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "regular_frames": 8,
+  "regular_frame_duration_ms": 160,
+  "gaze_directions": 16
+}

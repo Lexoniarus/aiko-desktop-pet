@@ -27,6 +27,20 @@ def _file(root: Path, value: Any) -> Path:
 def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
     """Validate the complete catalog before the desktop creates its widgets."""
     data = json.loads((root / "animations.json").read_text(encoding="utf-8"))
+    policy = json.loads(
+        (root / "animation_timing.json").read_text(encoding="utf-8"),
+    )
+    if not isinstance(policy, dict):
+        raise ValueError("Invalid animation timing policy")
+    frame_ms = policy.get("regular_frame_duration_ms")
+    if (
+        policy.get("version") != 1
+        or policy.get("regular_frames") != 8
+        or policy.get("gaze_directions") != 16
+        or type(frame_ms) is not int
+        or not 40 <= frame_ms <= 1000
+    ):
+        raise ValueError("Invalid uniform animation timing policy")
     if not isinstance(data, dict) or data.get("frame_size") != [
         FRAME_WIDTH, FRAME_HEIGHT,
     ]:
@@ -70,6 +84,11 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
             frames.append(AnimationFrame(
                 _file(root, frame.get("file")), duration, tuple(events),
             ))
+        if name != "look":
+            if len(frames) != policy["regular_frames"]:
+                raise ValueError(f"{name} must have eight animation frames")
+            if any(frame.duration_ms != frame_ms for frame in frames):
+                raise ValueError(f"{name} has non-uniform frame timing")
         return_to = entry.get("return_to", "idle")
         if not isinstance(return_to, str):
             raise ValueError("Invalid return animation")
@@ -79,7 +98,7 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
     for required in ("idle", "sleep", "eat", "petting", "look"):
         if required not in clips:
             raise ValueError(f"Missing required animation: {required}")
-    if len(clips["look"].frames) != 16:
+    if len(clips["look"].frames) != policy["gaze_directions"]:
         raise ValueError("Cursor gaze requires sixteen direction poses")
     if any(clip.return_to not in clips for clip in clips.values()):
         raise ValueError("Unknown return animation")
