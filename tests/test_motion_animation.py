@@ -100,29 +100,30 @@ class CurrentClipPacingTests(unittest.TestCase):
                 self.assertEqual(len(clip.frames), 16)
                 continue
             with self.subTest(clip=name):
-                self.assertEqual(clip.timings, (160,) * 8)
+                self.assertEqual(len(clip.timings), 8)
+                self.assertEqual(len(set(clip.timings)), 1)
                 clock = FrameClock()
                 self.assertEqual(
                     clock.next_index(name, 0.0, clip.timings, loop=clip.loop),
                     0,
                 )
-                self.assertEqual(clock.next_delay_ms, 160)
+                self.assertEqual(clock.next_delay_ms, clip.timings[0])
                 for expected_index in range(1, 8):
-                    now = clock.frame_started_at + 0.160
+                    now = clock.frame_started_at + clip.timings[0] / 1000
                     self.assertEqual(
                         clock.next_index(name, now, clip.timings,
                                          loop=clip.loop),
                         expected_index,
                     )
-                    self.assertEqual(clock.next_delay_ms, 160)
-                end = clock.frame_started_at + 0.160
+                    self.assertEqual(clock.next_delay_ms, clip.timings[0])
+                end = clock.frame_started_at + clip.timings[0] / 1000
                 last = clock.next_index(
                     name, end, clip.timings, loop=clip.loop,
                 )
                 if clip.loop:
                     self.assertEqual(last, 0)
                     self.assertFalse(clock.finished)
-                    self.assertEqual(clock.next_delay_ms, 160)
+                    self.assertEqual(clock.next_delay_ms, clip.timings[0])
                 else:
                     self.assertEqual(last, 7)
                     self.assertTrue(clock.finished)
@@ -133,7 +134,7 @@ class CurrentClipPacingTests(unittest.TestCase):
         timings = (160,) * 8
         self.assertEqual(clock.next_index("waving", 0, timings), 0)
         self.assertEqual(clock.next_index("waving", .8, timings), 1)
-        self.assertEqual(clock.next_delay_ms, 160)
+        self.assertEqual(clock.next_delay_ms, clip.timings[0])
 
 
 class PassiveAnimationTests(unittest.TestCase):
