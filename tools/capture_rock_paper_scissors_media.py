@@ -19,7 +19,7 @@ from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 
 
-SCREENSHOT_BOX = (160, 220, 1120, 898)
+SCREENSHOT_BOX = (160, 180, 1260, 898)
 MEDIA_DIR = Path(__file__).resolve().parents[1] / "vorschau"
 
 
@@ -33,7 +33,7 @@ def present(pet: DesktopPet) -> None:
 def capture(pet: DesktopPet) -> Image.Image:
     present(pet)
     image: Image.Image = ImageGrab.grab(bbox=SCREENSHOT_BOX).convert("RGB")
-    if image.size != (960, 678):
+    if image.size != (1100, 718):
         raise RuntimeError("The desktop capture has unexpected dimensions")
     return image
 
