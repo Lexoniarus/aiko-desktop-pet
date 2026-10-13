@@ -14,6 +14,7 @@ from typing import Callable
 from ..application.settings import SettingKey
 
 from .action_toolbar import ActionToolbar
+from .game_speech import GameSpeech
 from .rock_paper_scissors_window import RockPaperScissorsWindow
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .settings_contracts import SettingsActions, SettingsSnapshot
@@ -43,6 +44,7 @@ class HoverUiPorts:
     move_speech: Callable[[], None]
     restore_stack: Callable[[], bool]
     always_on_top: Callable[[], bool]
+    game_speech: GameSpeech
 
 
 class HoverUi:
@@ -67,22 +69,40 @@ class HoverUi:
     def _interact(self, action: str) -> None:
         if action == "play":
             self.open_game()
-        else:
+        elif not self.game_open:
             self._ports.care(action)
 
     def _game_closed(self) -> None:
         self.game_window = None
+        self._ports.game_speech.stop()
         self.last_hover = time.monotonic()
+        self._set_care_buttons_enabled(True)
+
+    def _set_care_buttons_enabled(self, enabled: bool) -> None:
+        if self.toolbar is None:
+            return
+        for name, button in self.toolbar.buttons.items():
+            if name != "play":
+                button.configure(state="normal" if enabled else "disabled")
 
     def open_game(self) -> None:
         """One independent minigame window for the current play session."""
         if self.game_window is not None:
             self.game_window.focus()
+            self._ports.restore_stack()
             return
-        self.game_window = RockPaperScissorsWindow(
-            self.root, on_closed=self._game_closed,
-            always_on_top=self._ports.always_on_top(),
-        )
+        self._ports.game_speech.start()
+        try:
+            self.game_window = RockPaperScissorsWindow(
+                self.root, on_closed=self._game_closed,
+                speak=self._ports.game_speech.say,
+                always_on_top=self._ports.always_on_top(),
+            )
+        except Exception:
+            self._ports.game_speech.stop()
+            raise
+        self._set_care_buttons_enabled(False)
+        self.game_window.greet()
         self._ports.restore_stack()
 
     def close_game(self) -> None:
@@ -110,6 +130,7 @@ class HoverUi:
                 always_on_top=self._ports.always_on_top(),
             )
         self.toolbar.show()
+        self._set_care_buttons_enabled(not self.game_open)
 
     def _toolbar_top(self) -> int | None:
         return (

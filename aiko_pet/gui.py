@@ -27,6 +27,7 @@ from .application.controller import CareController, CareRuntime
 from .application.active_time import ActiveSessionClock
 from .infrastructure.active_time import active_uptime_seconds
 from .ui.hover_ui import HoverUi, HoverUiPorts
+from .ui.game_speech import GameSpeech
 from .application.router import ApplicationRouter
 from .presentation.read_models import DesktopPresentation
 from .config import load_env_file
@@ -209,6 +210,10 @@ class DesktopPet:
                 move_speech=self._speech.move,
                 restore_stack=self._overlay_stack.restore,
                 always_on_top=lambda: self.settings.always_on_top,
+                game_speech=GameSpeech(
+                    self._reaction_player, self._speech,
+                    self._mark_reaction_spoken,
+                ),
             ),
         )
         self._input = DesktopInput(
@@ -299,8 +304,6 @@ class DesktopPet:
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
         now = time.monotonic()
-        # Only the first Enter after a long absence gets a welcome back;
-        # repeatedly refreshing hover must not spam the same response.
         was_hidden = self._hover.toolbar is None or not self._hover.toolbar.visible
         reaction = (
             self.mind.return_to_pet(self.state, self.context, now)
@@ -338,13 +341,13 @@ class DesktopPet:
         self._reaction_player.cancel()
 
     def _react_to_click(self, reaction: Reaction | None) -> None:
+        if self._hover.game_open:
+            return
         if reaction is None:
             # Deliberate silence must not be followed by a stale second line.
             self._cancel_followup()
             self._speech.hide()
             return
-        # During rapid tapping, skip the opening icon so the actual response
-        # remains visible instead of resetting the same 700ms cue forever.
         if len(self.mind.clicks) >= 3 and reaction.emote_before is not None:
             reaction = replace(reaction, emote_before=None)
         self._react(reaction, 2800)
@@ -418,8 +421,7 @@ class DesktopPet:
             else:
                 self._start_action(visual, 0.0)
         if reaction is None:
-            # A fallback must not be overwritten by an older, queued aside.
-            self._cancel_followup()
+                self._cancel_followup()
             self._speech.show_text(result.fallback_text, 2450)
         else:
             self._react(reaction, 2900)
@@ -558,8 +560,6 @@ class DesktopPet:
         if self._hover.toolbar is not None and self._hover.toolbar.visible:
             self._hover.toolbar.refresh()
         self._hover.refresh_status()
-        # Focus changes from browser voice input can reorder foreign topmost
-        # windows. Repair only after an actual overlapping z-order loss.
         self._maintenance.refresh_stack(now)
         if self._persistence.due(now):
             self._save()
