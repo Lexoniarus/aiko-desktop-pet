@@ -267,6 +267,8 @@ class DesktopPet:
             windows.append(self._hover.toolbar.window)
         if self._hover.status_panel is not None:
             windows.append(self._hover.status_panel.window)
+        if self._hover.game_window is not None:
+            windows.append(self._hover.game_window.window)
         if self._speech.bubble is not None:
             windows.append(self._speech.bubble)
         if self._hover.settings_popup is not None:
@@ -349,6 +351,8 @@ class DesktopPet:
 
     def _react(self, reaction: Reaction | None, duration_ms: int = 2600) -> None:
         """Delegate the timeline; the GUI only renders visual effects."""
+        if self._hover.game_open:
+            return
         self._reaction_player.play(
             reaction, duration_ms, animate=not self.state.sleeping,
         )
@@ -509,6 +513,8 @@ class DesktopPet:
 
     def _maybe_show_idle_emote(self, now: float) -> None:
         """An independent policy decides whether Aiko is free for a gesture."""
+        if self._hover.game_open:
+            return
         animation = self._attention.idle_animation(
             now, action_until=self._action_until,
             walking=self._animated.movement.remaining_distance != 0,
@@ -519,6 +525,8 @@ class DesktopPet:
             self._idle_emote()
 
     def _maybe_speak_spontaneously(self, now: float) -> None:
+        if self._hover.game_open:
+            return
         decision = self._attention.spontaneous(
             now, self.context,
             toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
@@ -531,6 +539,8 @@ class DesktopPet:
 
     def _present_pending_notification(self, now: float) -> None:
         """The Tk event loop alone turns queued data into rendered text."""
+        if self._hover.game_open:
+            return
         notification = self._attention.next_notification(
             now,
             action_until=self._action_until,

@@ -14,6 +14,7 @@ from typing import Callable
 from ..application.settings import SettingKey
 
 from .action_toolbar import ActionToolbar
+from .rock_paper_scissors_window import RockPaperScissorsWindow
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .settings_contracts import SettingsActions, SettingsSnapshot
 from .settings_popup import SettingsPopup
@@ -56,7 +57,37 @@ class HoverUi:
         self.toolbar: ActionToolbar | None = None
         self.status_panel: StatusPanel | None = None
         self.settings_popup: SettingsPopup | None = None
+        self.game_window: RockPaperScissorsWindow | None = None
         self.last_hover = -100.0
+
+    @property
+    def game_open(self) -> bool:
+        return self.game_window is not None
+
+    def _interact(self, action: str) -> None:
+        if action == "play":
+            self.open_game()
+        else:
+            self._ports.care(action)
+
+    def _game_closed(self) -> None:
+        self.game_window = None
+        self.last_hover = time.monotonic()
+
+    def open_game(self) -> None:
+        """One independent minigame window for the current play session."""
+        if self.game_window is not None:
+            self.game_window.focus()
+            return
+        self.game_window = RockPaperScissorsWindow(
+            self.root, on_closed=self._game_closed,
+            always_on_top=self._ports.always_on_top(),
+        )
+        self._ports.restore_stack()
+
+    def close_game(self) -> None:
+        if self.game_window is not None:
+            self.game_window.close()
 
     @property
     def menu_is_open(self) -> bool:
@@ -69,7 +100,7 @@ class HoverUi:
                 snapshot=self._ports.hover_snapshot,
                 anchor=self._ports.anchor,
                 actions=HoverActions(
-                    interact=self._ports.care,
+                    interact=self._interact,
                     open_status=self.open_status,
                     open_settings=self.toggle_settings,
                     save_position=self._ports.save_position,
@@ -125,7 +156,7 @@ class HoverUi:
             snapshot=self._ports.status_snapshot,
             anchor=self._ports.anchor,
             actions=StatusActions(
-                interact=self._ports.care,
+                interact=self._interact,
                 quit=self._ports.quit,
                 closed=self._status_closed,
             ),
@@ -135,7 +166,10 @@ class HoverUi:
 
     def set_topmost(self, enabled: bool) -> None:
         """Update only utility windows owned by this component."""
-        for window in (self.toolbar, self.status_panel, self.settings_popup):
+        for window in (
+            self.toolbar, self.status_panel, self.settings_popup,
+            self.game_window,
+        ):
             if window is not None:
                 window.window.wm_attributes("-topmost", enabled)
 
