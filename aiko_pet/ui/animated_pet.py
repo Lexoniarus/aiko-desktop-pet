@@ -16,6 +16,7 @@ from typing import Callable, Protocol
 from ..presentation.animation import (
     FrameClock, choose_passive_animation,
 )
+from ..presentation.ambient import AmbientDirector
 from ..presentation.character import CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH
 from ..presentation.gaze import gaze_sector
 from ..presentation.movement import WalkConditions, WalkController
@@ -102,6 +103,7 @@ class AnimatedPet:
         self._last_motion_at = time.monotonic()
         self._walk_progress = 0.0
         self.frame_clock = FrameClock(started_at=time.monotonic())
+        self._ambient = AmbientDirector(started_at=time.monotonic())
         self.movement = WalkController(
             next_walk_at=time.monotonic() + random.uniform(60.0, 180.0),
         )
@@ -166,6 +168,7 @@ class AnimatedPet:
 
     def begin_action(self, state: str, now: float) -> None:
         """Start a new visual action, including repeated actions of one kind."""
+        self._ambient.suspend(now)
         self.frame_clock.reset()
         self._active_action = state
         self.movement.interrupt()
@@ -173,6 +176,7 @@ class AnimatedPet:
 
     def cancel_action(self, now: float) -> None:
         """Interrupt the previous visual when entering or leaving sleep."""
+        self._ambient.suspend(now)
         self.frame_clock.reset()
         self._active_action = None
         self.movement.interrupt()
@@ -184,6 +188,17 @@ class AnimatedPet:
         if self._stopped:
             return
         clip = self.assets.clips[state]
+        # End a complete idle blink after frame 7, then hold neutral frame 0
+        # until the ambient policy schedules another one. No frame is skipped.
+        if (
+            state == "idle" and fixed is None and self._ambient.blinking
+            and self.frame_clock.active_key == ("idle", None)
+            and self.frame_clock.frame_index == len(clip.frames) - 1
+            and now - self.frame_clock.frame_started_at
+                >= clip.timings[-1] / 1000 - 1e-6
+        ):
+            self._ambient.finish_blink(now)
+            fixed = 0
         walking = state in ("running-left", "running-right")
         if walking and self.frame_clock.active_key != (state, fixed):
             self._last_motion_at = now
@@ -339,6 +354,7 @@ class AnimatedPet:
     ) -> None:
         """Draw one state with unchanged sleep/action/gaze precedence."""
         if self._game_mode:
+            self._ambient.suspend(now)
             if (
                 self._active_action is not None
                 and not self.assets.clips[self._active_action].loop
@@ -349,6 +365,7 @@ class AnimatedPet:
                 self.show_frame("waiting", now)
             return
         if self.state.sleeping:
+            self._ambient.suspend(now)
             self.movement.interrupt()
             self._active_action = None
             self.show_frame("sleep", now)
@@ -356,13 +373,16 @@ class AnimatedPet:
             self._active_action is not None
             and not self.assets.clips[self._active_action].loop
         ):
+            self._ambient.suspend(now)
             self.show_frame(self._active_action, now)
         elif now < self.ports.action_until():
+            self._ambient.suspend(now)
             self.show_frame(self.ports.action_state(), now)
         else:
             self._active_action = None
             moving = self.maybe_walk(now, 0)
             if moving is not None:
+                self._ambient.suspend(now)
                 self.show_frame(moving, now)
                 return
             if now - self.last_pointer_move < 4.0:
@@ -384,6 +404,10 @@ class AnimatedPet:
                 mood=self.state.mood,
                 satiety=self.state.satiety,
             )
+            if choice.animation == "idle" and choice.fixed_frame is None:
+                choice = self._ambient.choose(now)
+            else:
+                self._ambient.suspend(now)
             self.show_frame(
                 choice.animation, now, fixed=choice.fixed_frame,
             )
