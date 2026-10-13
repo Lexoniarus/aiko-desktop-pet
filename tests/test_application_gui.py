@@ -63,6 +63,21 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.assertEqual(dispatch.call_args.args[0].action, "pet")
         self.assertIsNotNone(self.pet._bubble)
 
+    def test_save_advances_in_application_before_disk_write(self) -> None:
+        steps: list[str] = []
+        with (
+            patch.object(
+                self.pet._activity, "advance_state",
+                side_effect=lambda _stamp: steps.append("advance"),
+            ),
+            patch.object(
+                self.pet._persistence, "save",
+                side_effect=lambda: steps.append("write"),
+            ),
+        ):
+            self.pet._save()
+        self.assertEqual(steps, ["advance", "write"])
+
     def test_browser_notification_only_displays_when_undisturbed(self) -> None:
         self.pet.say("Schon am Reden", 4000)
         response = self.pet.application.dispatch(

@@ -86,6 +86,21 @@ class UiDependencyRules(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertNotIn(token, source)
 
+    def test_hover_uses_public_dragging_contract(self) -> None:
+        source = (ROOT / "ui/hover_ui.py").read_text("utf-8")
+        self.assertNotIn("toolbar._dragging", source)
+
+    def test_persistence_never_advances_domain_state(self) -> None:
+        tree = ast.parse(
+            (ROOT / "desktop/persistence.py").read_text("utf-8"),
+        )
+        self.assertFalse(any(
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "advance"
+            for node in ast.walk(tree)
+        ))
+
     def test_desktop_runtime_services_do_not_import_domain(self) -> None:
         forbidden = {"gui", "domain", "adaptive", "storage", "dialogue"}
         for relative in (

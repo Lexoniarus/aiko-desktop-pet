@@ -9,8 +9,8 @@ isolated to `refactor/oop-modular-architecture`.
 | --- | --- |
 | Domain care and friendship | `application/controller.py` + domain rules |
 | Incoming app/browser notifications | `application/router.py` and `inbox.py` |
-| Comment timing and interruption | `application/attention.py` |
-| Workload and adaptive routine | `application/activity.py` |
+| Comment timing, cursor/walk decisions and interruption | `application/attention.py` |
+| Workload, adaptive routine and pet time advancement | `application/activity.py` |
 | Immutable view data | `application/view_models.py` and `read_models.py` |
 | Animated character and walking | `ui/animated_pet.py` |
 | Taskbar geometry and transparent root | `ui/desktop_window.py` |
@@ -19,7 +19,7 @@ isolated to `refactor/oop-modular-architecture`.
 | Hover layout and drag rules | `ui/hover_geometry.py` |
 | Legacy GUI method compatibility | `desktop/compatibility.py` |
 | Tick timers and update phases | `desktop/runtime.py` |
-| Save catch-up and autosave cadence | `desktop/persistence.py` |
+| State serialization and autosave cadence | `desktop/persistence.py` |
 | Taskbar/window stack checks | `desktop/maintenance.py` |
 | Tk/global mouse and focus input | `desktop/input.py` |
 | Desktop startup/shutdown resource sequence | `desktop/lifecycle.py` |
@@ -32,10 +32,12 @@ isolated to `refactor/oop-modular-architecture`.
 | Component composition and remaining GUI adapters | `gui.py` |
 
 The original `gui.py` mixed all those responsibilities and measured 875
-lines. The composition shell is now about 571 lines. The legacy
+lines. The composition shell is now about 576 lines. The legacy
 compatibility adapter remains separate; these forwards are not removed
-complexity. Timers, auto-saving, taskbar/stack polling, and input binding
-now belong to testable, cohesive desktop services. Startup and shutdown
+complexity. Timers, serialization, taskbar/stack polling, and input binding
+now belong to testable, cohesive desktop services. Domain time advancement
+is owned by `ActivityCoordinator`, including the pre-save catch-up.
+Startup and shutdown
 are now ordered by `DesktopLifecycle` rather than duplicated in the
 composition root.
 
@@ -77,7 +79,7 @@ adapter is **not** a destination for new features.
 4. Gradually package flat domain files. Because the import path
    `aiko_pet.domain` is in use, migrate only with an explicit compatibility
    cutover and regression tests; do not create decorative empty folders.
-5. Review remaining widget construction in the 316-line `action_toolbar.py`.
+5. Review remaining widget construction in the 320-line `action_toolbar.py`.
    Pure geometry was extracted; further splits require cohesive widgets.
 
 Do not introduce a new HTTP server, AI backend or speculative event bus

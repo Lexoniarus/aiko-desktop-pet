@@ -20,9 +20,10 @@ third-party packages. Keep German runtime text and English documentation.
    adapters can publish validated *data* without obtaining desktop internals.
    See [integration architecture](INTEGRATION_ARCHITECTURE.md).
 3. **Animated pet (implemented):** `ui/animated_pet.py` owns the visible
-   character, sprite frames, gaze, cursor attention and horizontal walking.
+   character, sprite frames, gaze, pointer observation and horizontal walking.
    Movement planning uses `WalkController`, animation timing uses
-   `FrameClock`; the object has no `DesktopPet` or hover imports.
+   `FrameClock`; comment timing and selection belong to
+   `AttentionCoordinator`, not to the character UI.
 4. **Independent utility GUI (implemented):** `ui/hover_ui.py` owns the
    lifecycle of `ActionToolbar`, `StatusPanel` and `SettingsPopup`.
    Each window consumes immutable views and explicit action callbacks, not
@@ -39,15 +40,18 @@ third-party packages. Keep German runtime text and English documentation.
 6. **Desktop composition (in progress):** `DesktopPet` in `gui.py`
    connects the actual animated character (`AnimatedPet`), native window
    (`DesktopWindow`), independent hover UI (`HoverUi`) and application core.
-   `AttentionCoordinator` owns idle/spontaneous/notification timing.
+   `AttentionCoordinator` owns idle, cursor, walk-comment, spontaneous and
+   notification timing.
    The old GUI-private methods now live as typed forwards in
    `desktop/compatibility.py`. `desktop/runtime.py` now owns the ordered
-   update loop and timers; `desktop/persistence.py` owns serialization
-   and autosave intervals; `desktop/maintenance.py` owns taskbar/stack
+   update loop and timers; `desktop/persistence.py` only writes state
+   and tracks autosave intervals. `application/activity.py` advances pet time
+   during ticks and immediately before saving. `desktop/maintenance.py` owns
+   taskbar/stack
    polling; `desktop/input.py` owns Tk and global mouse input.
    `desktop/lifecycle.py` now owns the ordered startup/shutdown of
    already constructed desktop resources. The composition module is about
-   569 lines rather than 608 (formerly 875).
+   roughly 576 lines rather than 608 (formerly 875).
    See [the full architecture audit](ARCHITECTURE_AUDIT_20261013.md).
 7. **Pet and adaptive domain (implemented):** Care, friendship, bounded
    time progression and decay are separate policies. `adaptive_models.py`

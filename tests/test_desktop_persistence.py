@@ -13,20 +13,6 @@ from aiko_pet.domain import PetState
 from aiko_pet.storage import PetSettings, StateStore
 
 
-class FakeReadings:
-    def _allow_bedtime(self) -> bool | None:
-        return None
-
-    def _allow_nap(self) -> bool:
-        return False
-
-    def _interrupt_nap(self) -> bool:
-        return False
-
-    def _live_effort(self) -> float | None:
-        return None
-
-
 class DesktopPersistenceTests(unittest.TestCase):
     def setUp(self) -> None:
         folder = tempfile.TemporaryDirectory()
@@ -38,9 +24,8 @@ class DesktopPersistenceTests(unittest.TestCase):
         self.clock = 100.0
         self.persistence = DesktopPersistence(
             self.store, self.state, self.settings,
-            AdaptiveRoutine(), FakeReadings(),
+            AdaptiveRoutine(),
             monotonic=lambda: self.clock,
-            wall_time=lambda: self.stamp,
         )
 
     def test_writes_existing_schema_only_after_bound_time(self) -> None:
@@ -50,6 +35,13 @@ class DesktopPersistenceTests(unittest.TestCase):
         loaded, settings = self.store.load(now=self.stamp)
         self.assertEqual(loaded.to_dict(), self.state.to_dict())
         self.assertEqual(settings.to_dict(), self.settings.to_dict())
+
+    def test_save_does_not_advance_domain_state(self) -> None:
+        self.state.updated_at = self.stamp - 3600
+        with patch.object(self.state, "advance") as progression:
+            self.assertIsNone(self.persistence.save())
+        progression.assert_not_called()
+        self.assertEqual(self.state.updated_at, self.stamp - 3600)
 
     def test_failure_returns_error_but_retains_original_timer_semantics(self) -> None:
         with patch.object(self.store, "save", side_effect=OSError("disk")):

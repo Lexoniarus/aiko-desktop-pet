@@ -86,7 +86,7 @@ class DesktopPet(DesktopCompatibility):
         self._action_until = 0.0
         self._action_state = "idle"
         self._persistence = DesktopPersistence(
-            self.store, self.state, self.settings, self.adaptive, self,
+            self.store, self.state, self.settings, self.adaptive,
         )
         self.mind = AikoMind(started_at=self._last_saved)
         self.application = ApplicationRouter(
@@ -547,7 +547,8 @@ class DesktopPet(DesktopCompatibility):
         self._runtime.tick()
 
     def _save(self) -> None:
-        """Show persistence failures; disk I/O and catch-up live elsewhere."""
+        """Advance application state before writing it; report I/O failures."""
+        self._activity.advance_state(time.time())
         failure = self._persistence.save()
         if failure is not None:
             messagebox.showwarning(

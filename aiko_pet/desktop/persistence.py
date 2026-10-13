@@ -1,13 +1,13 @@
-"""State serialization and timed autosaves independently of Tkinter.
+"""Save already-advanced pet state and manage autosave cadence.
 
-The desktop UI decides only how to display returned disk-write failures.
-The normal domain advance and unchanged JSON schema stay in this service.
+Pet time progression belongs to the application layer; writing a snapshot
+never alters needs, daily rhythm, or the unchanged JSON schema.
 """
 
 from __future__ import annotations
 
 import time
-from typing import Callable, Protocol
+from typing import Callable
 
 from ..adaptive import AdaptiveRoutine
 from ..domain import PetState
@@ -16,48 +16,27 @@ from ..storage import PetSettings, StateStore
 AUTOSAVE_SECONDS = 55
 
 
-class SaveReadings(Protocol):
-    def _allow_bedtime(self) -> bool | None: ...
-
-    def _allow_nap(self) -> bool: ...
-
-    def _interrupt_nap(self) -> bool: ...
-
-    def _live_effort(self) -> float | None: ...
-
-
 class DesktopPersistence:
-    """Catch up the pet, write its existing save, and track the next due time."""
+    """Persist the supplied state and track the next due save time."""
 
     def __init__(
         self,
         store: StateStore, state: PetState, settings: PetSettings,
-        adaptive: AdaptiveRoutine, readings: SaveReadings, *,
+        adaptive: AdaptiveRoutine, *,
         monotonic: Callable[[], float] = time.monotonic,
-        wall_time: Callable[[], float] = time.time,
     ) -> None:
         self._store = store
         self._state = state
         self._settings = settings
         self._adaptive = adaptive
-        self._readings = readings
         self._monotonic = monotonic
-        self._wall_time = wall_time
         self.last_saved = monotonic()
 
     def due(self, now: float) -> bool:
         return now - self.last_saved >= AUTOSAVE_SECONDS
 
     def save(self) -> OSError | None:
-        """Preserve old advancement and update the time even after I/O error."""
-        self._state.advance(
-            self._wall_time(),
-            auto_routine=self._settings.auto_routine,
-            allow_bedtime=self._readings._allow_bedtime(),
-            allow_nap=self._readings._allow_nap(),
-            interrupt_nap=self._readings._interrupt_nap(),
-            effort=self._readings._live_effort(),
-        )
+        """Write the current state and update timing even after I/O error."""
         failure: OSError | None = None
         try:
             self._store.save(

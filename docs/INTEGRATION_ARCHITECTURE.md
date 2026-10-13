@@ -90,9 +90,13 @@ titles or unapproved personal activity details.
 
 ## Pending architecture cleanup
 
-- Finish separating the desktop runtime scheduler and shutdown policy from
-  `gui.py`. Previous private GUI forwards now live in the typed
-  `desktop/compatibility.py` adapter, not in the application core.
+- Desktop scheduling, state serialization and ordered shutdown now have
+  dedicated services under `desktop/`. The typed forwards in
+  `desktop/compatibility.py` exist only for legacy callers; new features
+  must not depend on that façade.
+- `ActivityCoordinator` owns pet time progression during desktop ticks and
+  before persistence; `DesktopPersistence` writes the supplied state without
+  advancing the pet or choosing sleep policy.
 - The hover/status/settings widgets **already** use immutable view models
   and narrow callbacks, with a separate `HoverUi` owner; guard this direction
   against new direct `DesktopPet` references in future changes.

@@ -121,13 +121,8 @@ class ActivityCoordinator:
         )
         self.mind.set_situation(behaviour, now=now)
 
-    def advance_lifecycle(
-        self, now: float, wall_time: float, previous: TimeContext,
-    ) -> TimeProgress:
-        """Apply observed activity before time, preserving sleep transitions."""
-        was_sleeping = self.state.sleeping
-        previous_period = (previous.day_key, previous.period)
-        self.observe_adaptive(now, wall_time)
+    def advance_state(self, wall_time: float) -> None:
+        """Apply time and current workload without recording new observations."""
         self.state.advance(
             wall_time, auto_routine=self.settings.auto_routine,
             allow_bedtime=self.allow_bedtime(),
@@ -135,6 +130,15 @@ class ActivityCoordinator:
             interrupt_nap=self.interrupt_nap(),
             effort=self.live_effort(),
         )
+
+    def advance_lifecycle(
+        self, now: float, wall_time: float, previous: TimeContext,
+    ) -> TimeProgress:
+        """Apply observed activity before time, preserving sleep transitions."""
+        was_sleeping = self.state.sleeping
+        previous_period = (previous.day_key, previous.period)
+        self.observe_adaptive(now, wall_time)
+        self.advance_state(wall_time)
         context = context_at(wall_time)
         return TimeProgress(
             context=context,
