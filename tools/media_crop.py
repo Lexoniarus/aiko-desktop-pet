@@ -26,8 +26,9 @@ def framed_bounds(
     """Return the smallest safe box covering every actual window.
 
     A requested window may never be partially outside the physical capture.
-    A margin on each side provides a visual breathing space and ensures that
-    a clipped window is not silently published as a complete screenshot.
+    A margin on each side provides visual breathing space. A window may
+    legitimately touch the taskbar/screen edge; in this case PIL supplies
+    only neutral black padding outside the photographed desktop.
     """
     width, height = screen_size
     if not windows or width < 1 or height < 1 or padding < 0:
@@ -35,8 +36,8 @@ def framed_bounds(
     for left, top, right, bottom in windows:
         if (
             right <= left or bottom <= top
-            or left < padding or top < padding
-            or right > width - padding or bottom > height - padding
+            or left < 0 or top < 0
+            or right > width or bottom > height
         ):
             raise ValueError(
                 "A visible Tk window would be cut off by the screen edge: "
@@ -66,17 +67,20 @@ class CapturedFrame:
         chosen = self.crop_box if box is None else box
         left, top, right, bottom = chosen
         if (
-            left < 0 or top < 0
-            or right > self.desktop.width or bottom > self.desktop.height
+            left < -PADDING or top < -PADDING
+            or right > self.desktop.width + PADDING
+            or bottom > self.desktop.height + PADDING
             or right <= left or bottom <= top
         ):
-            raise ValueError("Crop rectangle is outside the captured desktop")
+            raise ValueError("Crop rectangle exceeds the safe desktop padding")
         if any(
             win[0] < left or win[1] < top
             or win[2] > right or win[3] > bottom
             for win in self.window_boxes
         ):
             raise ValueError("The crop would cut off an application window")
+        # PIL fills only the requested outer margin with black; it never
+        # changes or resizes any pixel from a visible application window.
         return self.desktop.crop(chosen)
 
     def save_png(self, path: Path) -> None:
