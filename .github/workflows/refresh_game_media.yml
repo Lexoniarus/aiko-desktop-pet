@@ -29,7 +29,7 @@ jobs:
       - name: Capture Tk windows from the running desktop pet
         run: |
           xvfb-run -a -s "-screen 0 1366x900x24" \
-            sh -c 'xsetroot -solid "#202733" && python tools/capture_rock_paper_scissors_media.py'
+            sh -c 'xsetroot -solid "#202733" && python -m tools.capture_rock_paper_scissors_media'
       - name: Commit captured preview files to this feature branch only
         run: |
           git config user.name "github-actions[bot]"
