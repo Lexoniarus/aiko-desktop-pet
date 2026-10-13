@@ -24,6 +24,7 @@ from ..ui.hover_ui import HoverUi
 from ..ui.settings_popup import SettingsPopup
 from ..ui.speech_presenter import SpeechPresenter
 from ..ui.status_panel import StatusPanel
+from .runtime import DesktopRuntime
 
 
 class DesktopCompatibility:
@@ -36,8 +37,33 @@ class DesktopCompatibility:
     _attention: AttentionCoordinator
     _speech: SpeechPresenter
     _reaction_player: ReactionPlayer
+    _runtime: DesktopRuntime
     context: TimeContext
 
+
+    @property
+    def _last_tick(self) -> float:
+        return self._runtime.last_tick
+
+    @_last_tick.setter
+    def _last_tick(self, value: float) -> None:
+        self._runtime.last_tick = value
+
+    @property
+    def _scheduled_tick(self) -> str | None:
+        return self._runtime.scheduled_tick
+
+    @_scheduled_tick.setter
+    def _scheduled_tick(self, value: str | None) -> None:
+        self._runtime.scheduled_tick = value
+
+    @property
+    def _scheduled_greeting(self) -> str | None:
+        return self._runtime.scheduled_greeting
+
+    @_scheduled_greeting.setter
+    def _scheduled_greeting(self, value: str | None) -> None:
+        self._runtime.scheduled_greeting = value
 
     @property
     def track(self) -> TaskbarTrack:

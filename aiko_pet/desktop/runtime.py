@@ -15,6 +15,8 @@ TICK_MILLISECONDS = 140
 class TickStages(Protocol):
     _closed: bool
 
+    def _tick(self) -> None: ...
+
     def _greet_on_start(self) -> None: ...
 
     def _advance_pet_lifecycle(

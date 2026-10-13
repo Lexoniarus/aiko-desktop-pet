@@ -16,6 +16,9 @@ from tkinter import messagebox
 from .adaptive import AdaptiveRoutine
 from .application.activity import ActivityCallbacks, ActivityCoordinator
 from .desktop.compatibility import DesktopCompatibility
+from .desktop.runtime import (
+    DesktopRuntime, TICK_MILLISECONDS as TICK_MILLISECONDS,
+)
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
@@ -52,9 +55,6 @@ from .ui.settings_popup import SettingsPopup as SettingsPopup
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
 from .ui.status_panel import StatusPanel as StatusPanel
 
-TICK_MILLISECONDS = 140
-
-
 
 class DesktopPet(DesktopCompatibility):
     def __init__(
@@ -74,7 +74,9 @@ class DesktopPet(DesktopCompatibility):
             if "Kenney Mini" in set(tkfont.families(root=self.root))
             else "Segoe UI"
         )
-        self._last_tick = time.monotonic()
+        self._runtime = DesktopRuntime(
+            self, schedule=self.root.after, cancel=self.root.after_cancel,
+        )
         self._last_track_check = self._last_tick
         self._action_until = 0.0
         self._action_state = "idle"
@@ -118,8 +120,6 @@ class DesktopPet(DesktopCompatibility):
             ),
         )
         self._closed = False
-        self._scheduled_tick: str | None = None
-        self._scheduled_greeting: str | None = None
         self._attention = AttentionCoordinator(
             self.state, self.settings, self.mind, self.computer_voice,
             self.activity_monitor, self.application,
@@ -183,8 +183,7 @@ class DesktopPet(DesktopCompatibility):
         self.root.deiconify()
         self._overlay_stack.restore()
         self.activity_monitor.start()
-        self._scheduled_greeting = self.root.after(460, self._greet_on_start)
-        self._scheduled_tick = self.root.after(TICK_MILLISECONDS, self._tick)
+        self._runtime.start()
 
     def _record_hover_contact(self, now: float) -> None:
         self.mind.last_contact = now
@@ -532,30 +531,8 @@ class DesktopPet(DesktopCompatibility):
             self._save()
 
     def _tick(self) -> None:
-        """Coordinate one desktop update; behavior is owned by small methods."""
-        if self._closed:
-            return
-        # A manual test refresh must not create a second scheduled timer.
-        if self._scheduled_tick is not None:
-            self.root.after_cancel(self._scheduled_tick)
-            self._scheduled_tick = None
-        now = time.monotonic()
-        dt = max(0.0, min(0.5, now - self._last_tick))
-        self._last_tick = now
-        stamp = time.time()
-        self._advance_pet_lifecycle(now, stamp)
-        self._refresh_taskbar_track(now)
-        self._poll_desktop_click()
-        self._refresh_hover(now)
-        self._react_to_computer(now)
-        pointer = self._observe_pointer(now)
-        self._render_current_sprite(now, dt, pointer)
-        self._maybe_show_idle_emote(now)
-        self._maybe_speak_spontaneously(now)
-        self._present_pending_notification(now)
-        self._refresh_overlays_and_autosave(now)
-        if not self._closed:
-            self._scheduled_tick = self.root.after(TICK_MILLISECONDS, self._tick)
+        """Compatibility entrypoint; DesktopRuntime owns phase ordering."""
+        self._runtime.tick()
 
     def _save(self) -> None:
         self.state.advance(
@@ -579,9 +556,7 @@ class DesktopPet(DesktopCompatibility):
             return
         self._closed = True
         self.application.close()
-        for scheduled in (self._scheduled_tick, self._scheduled_greeting):
-            if scheduled is not None:
-                self.root.after_cancel(scheduled)
+        self._runtime.stop()
         self.activity_monitor.stop()
         self._save()
         self._cancel_followup()
