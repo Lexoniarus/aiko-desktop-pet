@@ -38,8 +38,9 @@ they are not native Windows screenshots.*
 
 This reaction sequence uses the **current character sprites, speech presenter and
 Kenney emotes**. A separate [idle behavior preview](vorschau/Aiko_Current_Ambient_Blink_And_Glance.gif)
-shows intermittent complete blinks, resting gaps and autonomous gaze without
-mouse movement. The sprite-only [animation catalog](vorschau/Aiko_Current_Animations.gif)
+shows occasional complete blinks, **subtle pose-relative head motion between
+blinks**, and autonomous gaze without mouse movement. The feet stay anchored,
+including when Aiko looks to either side. The sprite-only [animation catalog](vorschau/Aiko_Current_Animations.gif)
 includes all 112 runtime poses.
 
 [Browse the refreshed current screenshots, UI states and GIFs →](docs/MEDIA_GALLERY.md)

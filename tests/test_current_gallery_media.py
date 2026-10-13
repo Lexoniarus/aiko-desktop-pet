@@ -44,7 +44,7 @@ class CurrentGalleryTests(unittest.TestCase):
                 frames = sample.count(b"\x21\xf9\x04")
                 minimum = (
                     80 if name == "Aiko_Current_Animations.gif"
-                    else 4
+                    else 20 if "Ambient" in name else 4
                 )
                 self.assertGreaterEqual(frames, minimum)
 

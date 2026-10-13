@@ -61,9 +61,14 @@ deterministically for reproducible stills and GIF timing.
 ![Aiko rests, performs a complete eight-frame blink, pauses, then looks around without moving the mouse](../vorschau/Aiko_Current_Ambient_Blink_And_Glance.gif)
 
 This captures the **actual Tk character widget** under Linux/Xvfb, with
-controlled presentation cues and encoded hold intervals. It demonstrates
-an independent neutral rest between complete blinks and a brief stationary
-gaze change. The GIF is a reproducible UI preview, **not a live Windows FPS
+controlled presentation cues and encoded hold intervals. The neutral
+resting posture now includes a slow, very small head/shoulder sway,
+not a frozen sprite or a whole-character bob. When Aiko looks around,
+the sway is derived from **that same directional sprite** while the feet
+remain still. The sequence demonstrates one complete eight-frame blink
+with gentle movement before, afterward and during a brief autonomous gaze.
+
+The GIF is a reproducible application UI preview, **not a live Windows FPS
 measurement**. Ordinary walking and already-existing spontaneous German
 comments are governed by their own independent attention policies.
 
