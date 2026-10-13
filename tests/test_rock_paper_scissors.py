@@ -32,7 +32,7 @@ class RockPaperScissorsTests(unittest.TestCase):
                     self.assertEqual(game.score.games, 1)
 
     def test_scores_accumulate_only_for_completed_rounds(self) -> None:
-        selections = iter((2, 0, 1, 0))
+        selections = iter((2, 1, 1, 0))
         game = RockPaperScissors(
             random_index=lambda _size: next(selections),
         )
