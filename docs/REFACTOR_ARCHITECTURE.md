@@ -1,6 +1,13 @@
-# Modular OOP refactor — working architecture
+# Historical design record — modular OOP refactor
 
-Work branch: `refactor/oop-modular-architecture` (from `main` at `6c4d2cf1`).
+> This is the October 2026 refactor **work history**, retained for context.
+> The work branch was merged through
+> [PR #2](https://github.com/Lexoniarus/aiko-desktop-pet/pull/2).
+> For the authoritative current module layout see
+> [ARCHITECTURE.md](ARCHITECTURE.md).
+
+Original base commit: `6c4d2cf1`. Final refactor commit: `e5821f5`.
+Merge commit on `main`: `073e7a4`.
 
 ## Goal and boundary
 
@@ -235,9 +242,9 @@ third-party packages. Keep German runtime text and English documentation.
 
 ## Change safety
 
-- `main` is untouched until a reviewed merge.
+- During the refactor, `main` was untouched until the reviewed PR #2 merge.
 - No asset regeneration, save-file migration or behavior change is part of the
   initial UI extraction.
 - Tests: `python -m unittest discover -s tests -q` (use Xvfb on Linux).
-- Review the full diff, rerun CI, and manually validate the taskbar/window
-  behavior on Windows before merge.
+- The final diff and CI were reviewed and the maintainer reported successful
+  Windows operation before the approved merge. These were historical gates.

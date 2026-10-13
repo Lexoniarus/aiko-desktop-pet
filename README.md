@@ -1,118 +1,97 @@
 # Aiko Desktop Pet
 
-**Aiko is a small, expressive Chibi personification of your computer.** She lives near the Windows taskbar, walks around, follows the cursor, develops needs and friendships, and reacts to both your attention and the work her computer is doing.
+**A small, expressive desktop companion that lives by your Windows taskbar.** Aiko is a chibi personification of your computer: she walks, notices your attention, reacts to measured work, and gradually develops a familiar routine and friendship with you.
 
-**Current release: v0.13** · Windows 10/11 · Python 3.11+ · no account, AI inference service, subscription, or cloud connection required.
+[![Tests](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-3873b3.svg)](#getting-started)
 
-![Aiko with the Kenney sci-fi status panel and an emote](vorschau/Aiko_v0_13_SciFi_und_Sprechblase.png)
+**Windows 10/11 · Python 3.11+ · local-first · no cloud account or AI API.**
 
-[Watch an actual emote → dialogue → emote sequence](vorschau/Aiko_v0_13_Reaktionsablauf.gif)
+![Aiko, her speech bubble and the six-gauge sci-fi care panel in the running application](vorschau/Aiko_v0_13_Dialog_Mitte.png)
 
-> **Language:** The game interface and Aiko's spoken text bubbles are currently in **German**. All project documentation is in **English**.
+*Real application capture. Interface and Aiko's authored dialogue are in German; project documentation is in English.*
 
-## Features
+## See Aiko in action
 
-- **Desktop companion:** Aiko walks along the taskbar, jumps, waves, and follows the mouse with 16 directional gaze sprites.
-- **Tamagotchi-style care:** Five short-term needs—satiety, mood, energy, social interaction, and affection—plus a long-term friendship level.
-- **Care actions:** Feed, play, talk, pet, sleep/wake, and an energy drink that restores 10 energy points per use.
-- **Personality:** Handwritten German dialogue responds to mood, time of day, recent events, repeated clicks, and interruptions. Aiko is observant, reserved, subtly sarcastic, and occasionally awkwardly funny.
-- **Expression sequences:** Context-specific Kenney emotes and speech appear **in sequence**, never simultaneously: emote → text → optional follow-up → emote.
-- **Adaptive activity:** Aiko distinguishes running time from actual work, observes CPU/GPU activity and memory signals, and gradually learns locally aggregated weekly usage patterns.
-- **Movable sci-fi panel:** Six status indicators, care buttons, a settings menu, and an independently positioned speech bubble. The panel appears on hover and can be dragged elsewhere.
+![A real three-step sequence: question emote, spoken response, heart emote](vorschau/Aiko_v0_13_Reaktionsablauf.gif)
 
-## Run on Windows
+[More real screenshots, sprite animations and earlier versions →](docs/MEDIA_GALLERY.md)
 
-**Requirements:** Windows 10 or 11 and Python 3.11 or later with Tkinter.
+## What she does
 
-1. [Download the repository as a ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip) and extract it to a local folder.
-2. Double-click `Aiko_starten.bat`, or run `python main.py` in a terminal
-   from the project folder. You can also use `python -m aiko_pet`.
-3. Hover over Aiko to view needs and care actions.
-4. If startup fails, run `Aiko_starten_debug.bat` to see console errors.
+- **Lives on your desktop.** Animated taskbar walking, jumping, waving, resting and 16-direction cursor gaze.
+- **Needs a little care.** Feed, play, talk, pet, sleep/wake or offer an energy drink. Five short-term needs and a separate, gradually earned friendship level influence her behavior.
+- **Has her own voice.** Handwritten German reactions vary with mood, time, repeated clicks, interruptions and recent interactions. Emotes, text and optional follow-ups play in sequence.
+- **Notices actual workload.** Local CPU/GPU and memory observations inform her working/resting behavior, without inventing the application or task you are using. Missing sensors remain unknown.
+- **Learns a gentle rhythm.** Locally aggregated activity evidence helps her adapt to regular working and resting periods.
+- **Stays out of the way.** A draggable sci-fi hover toolbar, independent status/settings windows and a separate speech bubble.
 
-### Optional local .env configuration
+This is the **v0.13 feature baseline with the completed modular OOP refactor on `main`**. It is a source project; there is currently no separate packaged Windows installer or published GitHub Release.
 
-No environment file is required, and there are no API keys or secrets.
-If you want to choose a different save-file path, copy `.env.example` to `.env`
-and set `AIKO_SAVE_PATH` to the desired file (not just a directory). All three
-entry points use the same optional configuration. Existing operating-system
-environment variables take precedence. Without an override, saves remain at
-`%LOCALAPPDATA%\AikoDesktopPet\state.json` on Windows.
-The `.env` file is ignored by Git and is never published.
+## Getting started
 
-No additional Python packages are required to run the game. If **Kenney Mini** is already installed locally, the application can use it; otherwise it falls back to Segoe UI. Font files are not distributed in this repository.
+1. Install **Python 3.11 or newer** on Windows 10 or 11, including Tkinter (normally part of the standard Windows Python installer).
+2. [Download the current source ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip), extract it, and open the extracted folder.
+3. Double-click `Aiko_starten.bat`, or open a terminal in that folder and run:
 
-Saved progress is stored outside the repository at `%LOCALAPPDATA%\AikoDesktopPet\state.json`; upgrades preserve existing saves.
+   ```powershell
+   py -m aiko_pet
+   ```
 
-## Tests
+4. Hover over Aiko to open the care panel. If the window fails to start, use `Aiko_starten_debug.bat` to keep the error output visible.
 
-Run the unit and graphical tests in an environment with a display:
+You can also run `python main.py` or `python -m aiko_pet`. **No `pip install` is required for normal use.** If the optional Kenney Mini font is already installed, Aiko can use it; otherwise she falls back to Segoe UI. Font files are not redistributed.
+
+### Saves and optional configuration
+
+By default, Aiko stores progress outside the repository at:
+
+```text
+%LOCALAPPDATA%\AikoDesktopPet\state.json
+```
+
+**No `.env` file is needed.** The only optional setting is `AIKO_SAVE_PATH`, which changes the save *file* location. To use it, copy [.env.example](.env.example) to a local `.env` and edit the value. An existing OS environment variable takes precedence. The template contains no secrets and should remain unmodified when no override is wanted.
+
+## Privacy and local data
+
+Aiko runs locally. The current application does **not** send telemetry to a server, start an HTTP service, require a subscription or call an external AI inference API.
+
+Her workload observations are drawn from local CPU/GPU utilization, memory pressure, uptime and user-idle timing. They do not inspect files, process/application names, browser content, typed text or microphone input. Optional NVIDIA sampling uses local OS tooling. Learned rhythm summaries and pet progress are stored locally in the save file.
+
+Disable **Observe computer** or **Learn rhythm** individually from the settings panel if you do not want those behaviors. See [adaptive behavior notes](docs/ADAPTIVER_RHYTHMUS.md) for details and historical design context.
+
+## For developers
+
+The source is organized by responsibility rather than by window or feature version:
+
+| Package | Owns |
+| --- | --- |
+| `aiko_pet/pet/` | The PetState aggregate, care rules, needs, friendship and daily routine |
+| `aiko_pet/personality/` | Dialogue selection, personality, adaptive habits and workload events |
+| `aiko_pet/application/` | Typed use cases, attention/activity coordination and read contracts |
+| `aiko_pet/presentation/` | German UI text, visual policies and reaction playback |
+| `aiko_pet/ui/` | Tkinter character, hover, status, settings and speech widgets |
+| `aiko_pet/desktop/` | Tk runtime, native Windows window/input handling and preferences |
+| `aiko_pet/infrastructure/` | Hardware providers and versioned local JSON persistence |
+
+The bootstrap is `aiko_pet/gui.py`. Former flat-module paths remain as compatibility imports, not parallel implementations. [Architecture and dependency rules →](docs/ARCHITECTURE.md)
+
+### Tests
 
 ```bash
 python -m unittest discover -s tests -q
 ```
 
-On Linux, a virtual X11 display can be used:
+GUI tests require a display; on Linux use `xvfb-run -a python -m unittest discover -s tests -q`. [GitHub Actions](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml) runs Python 3.11/3.13 under Linux/Xvfb, Windows headless regressions, Ruff, strict Mypy and Pyright. Real Windows window behavior was also checked by the project maintainer during the October 2026 refactor.
 
-```bash
-xvfb-run -a python -m unittest discover -s tests -q
-```
+See [Contributing](CONTRIBUTING.md), [development workflow](docs/GITHUB_WORKFLOW.md), and [historical release/feature notes](docs/HISTORY_0_2_TO_0_13.md).
 
-The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** replace real Windows testing of taskbar positioning, window layering, microphone overlays, GPU telemetry, or long-term balance. GitHub Actions runs the test suite for commits and pull requests.
+## Artwork, fonts and licensing
 
-## Project structure
+- **Project code** is under the [MIT License](LICENSE).
+- **Aiko character sprites** are generated/project-authored artwork; the creator offers the licensable rights they control under MIT, subject to the qualifications in [asset provenance](ASSETS.md).
+- **Kenney Emote Pack and UI Pack: Sci-fi** artwork is [CC0 1.0](LICENSES/KENNEY_CC0.md), with voluntary credit to [Kenney](https://kenney.nl/).
+- **Font binaries are not shipped** and are not relicensed by this project.
 
-| Location | Purpose |
-| --- | --- |
-| `aiko_pet/application/` | Typed use cases, command routing and bounded integration notifications |
-| `aiko_pet/application/settings.py` | Runtime preferences independent of JSON persistence |
-| `aiko_pet/application/session.py` | Startup restoration and bounded catch-up for existing saves |
-| `aiko_pet/infrastructure/persistence.py` | Version-one atomic JSON state repository and save-path discovery |
-| `aiko_pet/storage.py` | Backwards-compatible import shim for the persistence API |
-| `aiko_pet/ui/animated_pet.py` | The animated character: sprites, gaze and movement |
-| `aiko_pet/ui/hover_ui.py` | Independent owner of the hover, status and settings windows |
-| `aiko_pet/ui/` | Independent Tk views plus speech/emote presenter and typed callback contracts |
-| `aiko_pet/application/read_snapshot.py` | Immutable, language-neutral pet read snapshot |
-| `aiko_pet/application/ports.py` | Structural hardware-reading capabilities for application services |
-| `aiko_pet/presentation/` | German UI copy, canonical display models, hover/status/settings projections and legacy view adapters |
-| `aiko_pet/application/view_models.py` | Legacy import bridge for presentation contracts |
-| `aiko_pet/application/read_models.py` | Legacy view-source alias; presentation owns the implementation |
-| `aiko_pet/desktop/runtime.py` | Ordered Tk tick phases through explicit `DesktopTickPorts` |
-| `aiko_pet/desktop/taskbar.py` | Windows taskbar discovery and fallback placement |
-| `aiko_pet/desktop/geometry.py` | Pure TaskbarTrack value and sprite grounding |
-| `aiko_pet/desktop/window_stack.py` | Native window stacking without focus stealing |
-| `aiko_pet/desktop/global_input.py` | Read-only OS idle/click observation without hooks |
-| `aiko_pet/desktop/preferences.py` | Owns coordinated desktop setting and geometry effects |
-| `aiko_pet/desktop/persistence.py` | Writes current state and tracks autosave timing |
-| `aiko_pet/desktop/maintenance.py` | Bounded taskbar and z-order checks |
-| `aiko_pet/desktop/input.py` | Tk bindings, global mouse/focus input and cancellable focus timers |
-| `aiko_pet/desktop/lifecycle.py` | Ordered startup and shutdown of desktop resources |
-| `aiko_pet/desktop/compatibility.py` | Typed forwards for older desktop calls |
-| `aiko_pet/personality/` | Adaptive observations, authored dialogue catalogue, AikoMind, work episodes and workload event detection |
-| `aiko_pet/adaptive.py` and `dialogue.py` | Compatibility imports for personality models |
-| `aiko_pet/gui.py` | Component assembly and remaining desktop callback adapters |
-| `aiko_pet/telemetry.py` | Immutable workload sample and hardware-independent effort calculation |
-| `aiko_pet/infrastructure/hardware/` | CPU/RAM/uptime providers, NVIDIA parsing, sampler and background monitor |
-| `aiko_pet/system_activity.py` | Backward-compatible hardware imports (no extra logic) |
-| `aiko_pet/presentation/reaction_playback.py` | Ordered speech/emote playback and cancellable timers |
-| `aiko_pet/presentation/animation.py`, `movement.py`, `gaze.py` | Pure sprite timing, direction and walking plans |
-| `aiko_pet/pet/state.py` | PetState aggregate and its authorized mutations |
-| `aiko_pet/pet/` | Care, needs, friendship, daily routine, time progression and value validation |
-| `aiko_pet/domain.py` and other old pet modules | Public compatibility imports pointing at the single pet implementation |
-| `aiko_pet/` | Existing domain, storage and offline dialogue policies |
-| `aiko_pet/assets/frames/` | 73 original Aiko character animation frames |
-| `aiko_pet/assets/emotes/` | Kenney pixel emotes |
-| `aiko_pet/assets/kenney_ui/` | Kenney-based sci-fi panels and controls |
-| `aiko_pet/data/dialogues.de.json` | German dialogue catalog; intentionally not translated |
-| `tests/` | Unit and GUI tests |
-| `docs/` | English technical documentation, history, and test reports |
-| `vorschau/` | Real application screenshots and GIF previews |
-
-## Licensing and attribution
-
-- **Project source code and project-authored Aiko image assets** are offered under the [MIT License](LICENSE), to the extent the project author controls licensable rights in them.
-- The Aiko sprite artwork was made using OpenAI image-generation tools in the creator's Codex-based asset workflow. The sprites are **not** subject to a separate invented “OpenAI image license.” See [ASSETS.md](ASSETS.md) for provenance and limitations.
-- **Kenney Emote Pack** and **Kenney UI Pack: Sci-fi** assets are made available under **CC0 1.0**. The creator obtained them through a purchased Kenney All-in-1 bundle. Credit is optional under CC0 and is gladly provided here: **Assets by [Kenney](https://kenney.nl/)**. See [Kenney credits](LICENSES/KENNEY_CC0.md).
-- **Fonts** are not bundled; locally installed fonts retain their own terms.
-
-Aiko Desktop Pet is an independent hobby project and does not require ComfyReview or Character Chronicles.
+Please consult [ASSETS.md](ASSETS.md) for provenance, attribution and limitations. Aiko Desktop Pet is an independent project, separate from ComfyReview and Character Chronicles.

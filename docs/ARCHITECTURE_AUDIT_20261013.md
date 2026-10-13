@@ -1,8 +1,13 @@
-# Aiko architecture audit — 2026-10-13
+# Historical architecture audit — 2026-10-13
 
-**Status:** Final architecture review on the refactor branch.
-The user reported successful native Windows usage on 2026-10-13; no
-independent per-item test log is available. Merge approval is separate.
+> This audit records the completed OOP refactor. It predates the
+> approved [PR #2 merge](https://github.com/Lexoniarus/aiko-desktop-pet/pull/2)
+> on 2026-10-13; refer to [current architecture](ARCHITECTURE.md)
+> for the maintained system description.
+
+**Historical verification:** The maintainer reported successful native
+Windows operation on 2026-10-13. An independent per-item manual test log
+was not provided. The refactor was subsequently merged into `main`.
 
 ## Ownership and module boundaries
 
@@ -218,7 +223,8 @@ as a prerequisite for the code-structure refactor.
   this is user acceptance, not independently collected test evidence.
 - Merge still requires explicit user authorization.
 
-**No merge, schema change, asset change or local save rewrite.**
+**At audit time:** No schema change, asset change or local save rewrite
+was performed. The later reviewed merge did not change these contracts.
 
 ## Step 6 closure: dependency review and compatibility exceptions
 
@@ -241,4 +247,5 @@ API methods; production text is owned by `presentation/text_de.py`.
 
 The user confirmed the Windows application works normally on 2026-10-13.
 This confirmation is recorded without claiming that ChatGPT observed the
-test. The refactor remains a Draft PR and no merge was performed.
+test. After this audit, the refactor received explicit merge approval and was
+merged into `main` as `073e7a4`. This report remains historical.

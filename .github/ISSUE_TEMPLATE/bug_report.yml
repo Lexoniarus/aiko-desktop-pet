@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a reproducible Aiko Desktop Pet problem.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting an issue. Do not include personal save files,
+        unredacted system logs, tokens or private window/document titles.
+        See CONTRIBUTING.md for testing and privacy guidance.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior, including any visible error.
+      placeholder: Aiko's toolbar disappears when ...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How can we reproduce it?
+      description: Provide steps and say whether it occurs every time.
+      placeholder: |
+        1. Start Aiko via ...
+        2. Open ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Windows and Python versions
+      placeholder: Windows 11, Python 3.13
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Optional redacted logs or screenshots
+      description: Remove local usernames, file paths and unrelated private content.
+    validations:
+      required: false
