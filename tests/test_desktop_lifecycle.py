@@ -7,7 +7,7 @@ import unittest
 from typing import cast
 from unittest.mock import MagicMock
 
-from aiko_pet.activity_monitor import ActivityMonitor
+from aiko_pet.system_activity import ActivityMonitor
 from aiko_pet.application.router import ApplicationRouter
 from aiko_pet.desktop.input import DesktopInput
 from aiko_pet.desktop.lifecycle import DesktopLifecycle
