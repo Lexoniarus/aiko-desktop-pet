@@ -1,42 +1,55 @@
-"""Deterministic, sequential minigame dialogue without a UI dependency.
+"""Time Aiko's spoken, illustrated and animated minigame reaction beats.
 
-The entire interaction is one presentation timeline: Aiko speaks to the
-existing character bubble, and the separate game view supplies only input.
+All cues are strictly sequential; window lifetime owns their cancellation.
 """
 
 from __future__ import annotations
 
-from typing import Callable
+from collections.abc import Callable
 
 from ..games.rock_paper_scissors import (
-    Move, RockPaperScissors, Round, Score,
+    Move, Outcome, RockPaperScissors, Round, Score,
 )
 from .rock_paper_scissors_text_de import (
-    countdown_line, hands_line, outcome_line, score_line, welcome_line,
+    countdown_line, outcome_line, score_line, welcome_line,
 )
 
-TimerCallback = Callable[[], None]
-ScheduleTimer = Callable[[int, TimerCallback], str]
+ScheduleTimer = Callable[[int, Callable[[], None]], str]
 CancelTimer = Callable[[str], None]
-Say = Callable[[str, int], None]
+DisplayText = Callable[[str, int], None]
+DisplayEmote = Callable[[str, int], None]
+DisplayHands = Callable[[Move, Move, int], None]
+PlayAnimation = Callable[[str], None]
 SetBusy = Callable[[bool], None]
+_REACTION_ASSETS: dict[Outcome, tuple[str, str]] = {
+    Outcome.WIN: ("failed", "drops"),
+    Outcome.LOSS: ("jumping", "star"),
+    Outcome.DRAW: ("waving", "question"),
+}
 
 
 class RockPaperScissorsSequence:
-    """Own the 1→2→3→hands→reaction→score timeline and its cancellation."""
+    """Own the entire 1→2→3→emote→reveal→reaction→score flow."""
 
-    COUNT_MS = 850
+    COUNT_MS = 800
+    EXCITEMENT_MS = 700
     HANDS_MS = 2300
-    REACTION_MS = 2400
-    SCORE_MS = 3300
+    REACTION_EMOTE_MS = 850
+    REACTION_MS = 2600
+    SCORE_MS = 3500
 
     def __init__(
         self, *, schedule: ScheduleTimer, cancel: CancelTimer,
-        say: Say, set_busy: SetBusy,
+        say: DisplayText, show_emote: DisplayEmote,
+        show_hands: DisplayHands, animate: PlayAnimation,
+        set_busy: SetBusy,
     ) -> None:
         self._schedule = schedule
         self._cancel = cancel
         self._say = say
+        self._show_emote = show_emote
+        self._show_hands = show_hands
+        self._animate = animate
         self._set_busy = set_busy
         self._game = RockPaperScissors()
         self._timer: str | None = None
@@ -58,23 +71,26 @@ class RockPaperScissorsSequence:
 
     def greet(self) -> None:
         if not self._closed:
-            self._say(welcome_line(), 4500)
+            self._animate("waving")
+            self._say(welcome_line(self.score.games), 4300)
 
     def choose(self, move: Move) -> None:
-        """Freeze both hands; do not mutate the score until after 'Drei'."""
         if self._closed or self.busy:
             return
         self._game.begin(move)
         self._set_busy(True)
         self._phase = 1
-        self._emit(countdown_line(1), self.COUNT_MS)
+        self._emit_text(countdown_line(1), self.COUNT_MS)
 
-    def _emit(self, phrase: str, duration_ms: int) -> None:
+    def _emit_text(self, phrase: str, duration_ms: int) -> None:
         self._say(phrase, duration_ms)
         self._timer = self._schedule(duration_ms, self.advance)
 
+    def _emit_emote(self, name: str, duration_ms: int) -> None:
+        self._show_emote(name, duration_ms)
+        self._timer = self._schedule(duration_ms, self.advance)
+
     def advance(self) -> None:
-        """Advance one and only one ordered speech cue."""
         if self._timer is not None:
             self._cancel(self._timer)
             self._timer = None
@@ -82,27 +98,40 @@ class RockPaperScissorsSequence:
             return
         if self._phase == 1:
             self._phase = 2
-            self._emit(countdown_line(2), self.COUNT_MS)
+            self._emit_text(countdown_line(2), self.COUNT_MS)
         elif self._phase == 2:
             self._phase = 3
-            self._emit(countdown_line(3), self.COUNT_MS)
+            self._emit_text(countdown_line(3), self.COUNT_MS)
         elif self._phase == 3:
-            self._result = self._game.reveal()
             self._phase = 4
-            self._emit(hands_line(self._result), self.HANDS_MS)
-        elif self._phase == 4 and self._result is not None:
+            self._emit_emote("exclamation", self.EXCITEMENT_MS)
+        elif self._phase == 4:
+            self._result = self._game.reveal()
             self._phase = 5
-            self._emit(outcome_line(self._result), self.REACTION_MS)
-        elif self._phase == 5:
+            self._show_hands(
+                self._result.player, self._result.aiko, self.HANDS_MS,
+            )
+            self._timer = self._schedule(self.HANDS_MS, self.advance)
+        elif self._phase == 5 and self._result is not None:
             self._phase = 6
-            self._emit(score_line(self._game.score), self.SCORE_MS)
-        elif self._phase == 6:
+            clip, emote = _REACTION_ASSETS[self._result.outcome]
+            self._animate(clip)
+            self._emit_emote(emote, self.REACTION_EMOTE_MS)
+        elif self._phase == 6 and self._result is not None:
+            self._phase = 7
+            self._emit_text(
+                outcome_line(self._result, self.score.games),
+                self.REACTION_MS,
+            )
+        elif self._phase == 7:
+            self._phase = 8
+            self._emit_text(score_line(self.score), self.SCORE_MS)
+        elif self._phase == 8:
             self._phase = 0
             self._result = None
             self._set_busy(False)
 
     def close(self) -> None:
-        """Never let a queued game line speak after the player exits."""
         if self._closed:
             return
         self._closed = True

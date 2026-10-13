@@ -8,16 +8,16 @@ from collections.abc import Callable
 from functools import partial
 from tkinter import font as tkfont
 
-from ..asset_paths import KENNEY_UI_DIR
+from ..asset_paths import GAME_HANDS_DIR, KENNEY_UI_DIR
 from ..games.rock_paper_scissors import Move, Score
 from ..presentation.rock_paper_scissors_sequence import RockPaperScissorsSequence
 
 _BG = "#D7DCE8"
 _TEXT = "#414B5F"
 _MOVES: tuple[tuple[Move, str], ...] = (
-    (Move.ROCK, "✊🏻  Stein"),
-    (Move.PAPER, "✋🏻  Papier"),
-    (Move.SCISSORS, "✌🏻  Schere"),
+    (Move.ROCK, "Stein"),
+    (Move.PAPER, "Papier"),
+    (Move.SCISSORS, "Schere"),
 )
 
 
@@ -26,7 +26,10 @@ class RockPaperScissorsWindow:
 
     def __init__(
         self, root: tk.Tk, *, on_closed: Callable[[], None],
-        speak: Callable[[str, int], None], always_on_top: bool,
+        speak: Callable[[str, int], None],
+        emote: Callable[[str, int], None],
+        hands: Callable[[Move, Move, int], None],
+        animate: Callable[[str], None], always_on_top: bool,
     ) -> None:
         self._on_closed = on_closed
         self._closed = False
@@ -44,9 +47,6 @@ class RockPaperScissorsWindow:
         title_font = "Kenney Mini" if "Kenney Mini" in fonts else "Segoe UI"
         self._banner = tk.PhotoImage(
             file=str(KENNEY_UI_DIR / "toolbar_banner.png"),
-        )
-        self._button_image = tk.PhotoImage(
-            file=str(KENNEY_UI_DIR / "button_wide.png"),
         )
         self._close_image = tk.PhotoImage(
             file=str(KENNEY_UI_DIR / "button_regular.png"),
@@ -74,13 +74,18 @@ class RockPaperScissorsWindow:
         choices = tk.Frame(outer, bg=_BG)
         choices.pack(padx=12, pady=(2, 10))
         self.buttons: dict[Move, tk.Button] = {}
+        self.hand_images = {
+            move: tk.PhotoImage(file=str(GAME_HANDS_DIR / f"{move.value}.png"))
+            for move, _label in _MOVES
+        }
         for move, label in _MOVES:
             button = tk.Button(
-                choices, text=label, image=self._button_image,
-                compound="center", font=("Segoe UI Emoji", 11),
+                choices, text=label, image=self.hand_images[move],
+                compound="top", font=(title_font, 9),
                 bg=_BG, fg=_TEXT, activeforeground="#0B6DAA",
-                activebackground=_BG, bd=0, relief="flat",
-                highlightthickness=0, cursor="hand2",
+                activebackground="#BED5E5", bd=1, relief="flat",
+                highlightthickness=1, highlightbackground="#B3C2D8",
+                padx=8, pady=5, cursor="hand2",
                 command=partial(self.choose, move),
             )
             button.pack(side="left", padx=3)
@@ -98,7 +103,8 @@ class RockPaperScissorsWindow:
         self._sequence = RockPaperScissorsSequence(
             schedule=self.window.after,
             cancel=self.window.after_cancel,
-            say=speak,
+            say=speak, show_emote=emote,
+            show_hands=hands, animate=animate,
             set_busy=self._set_busy,
         )
         self.window.update_idletasks()

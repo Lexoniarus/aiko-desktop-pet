@@ -213,6 +213,8 @@ class DesktopPet:
                 game_speech=GameSpeech(
                     self._reaction_player, self._speech,
                     self._mark_reaction_spoken,
+                    self._animated.set_game_mode,
+                    lambda name: self._start_action(name, 0),
                 ),
             ),
         )
@@ -344,8 +346,7 @@ class DesktopPet:
         if self._hover.game_open:
             return
         if reaction is None:
-            # Deliberate silence must not be followed by a stale second line.
-            self._cancel_followup()
+                self._cancel_followup()
             self._speech.hide()
             return
         if len(self.mind.clicks) >= 3 and reaction.emote_before is not None:

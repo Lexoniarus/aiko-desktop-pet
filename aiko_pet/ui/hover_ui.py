@@ -96,6 +96,9 @@ class HoverUi:
             self.game_window = RockPaperScissorsWindow(
                 self.root, on_closed=self._game_closed,
                 speak=self._ports.game_speech.say,
+                emote=self._ports.game_speech.emote,
+                hands=self._ports.game_speech.hands,
+                animate=self._ports.game_speech.animate,
                 always_on_top=self._ports.always_on_top(),
             )
         except Exception:

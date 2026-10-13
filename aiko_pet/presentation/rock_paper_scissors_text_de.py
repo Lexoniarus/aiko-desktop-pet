@@ -1,50 +1,65 @@
-"""German spoken lines for Aiko's Schere–Stein–Papier game.
+"""Characterful German minigame lines built entirely from observed outcomes.
 
-All wording belongs to the character bubble, never the input-only window.
+The only natural-language content here is what Aiko actually says in-game.
 """
 
 from __future__ import annotations
 
-from ..games.rock_paper_scissors import Move, Outcome, Round, Score
+from ..games.rock_paper_scissors import Outcome, Round, Score
 
-_HANDS = {
-    Move.ROCK: "✊🏻 Stein",
-    Move.PAPER: "✋🏻 Papier",
-    Move.SCISSORS: "✌🏻 Schere",
-}
+_WELCOME = (
+    "Na, eine Runde Schere, Stein, Papier? Zeig mal deine Hand!",
+    "Jetzt wird's ernst! Na gut ... was nimmst du?",
+    "Hehe, bereit für eine Revanche? Such dir eine Hand aus!",
+)
+_WIN = (
+    "Hmpf ... okay, der Punkt geht an dich. Diesmal!",
+    "Oh, erwischt! Du hast mich echt ausgetrickst.",
+    "Na toll ... das war eindeutig deine Runde.",
+)
+_LOSS = (
+    "Ha! Den Punkt schnapp ich mir!",
+    "Hehe, das lief doch ganz gut für mich!",
+    "Yes! ... Ähm, ich meine: gut gespielt!",
+)
+_DRAW = (
+    "Ha, dieselbe Hand! Wir sind wohl auf einer Wellenlänge.",
+    "Och, ein Gleichstand? Na, das lösen wir noch!",
+    "Unentschieden! Wir sollten's noch einmal versuchen.",
+)
 
 
-def welcome_line() -> str:
-    return "Oh, spielen wir Schere, Stein, Papier? Wähl deine Hand!"
+def welcome_line(rounds: int = 0) -> str:
+    return _WELCOME[rounds % len(_WELCOME)]
 
 
 def countdown_line(number: int) -> str:
-    """Three separate turns rather than a single composite count."""
+    """Three short, individually displayed countdown lines."""
     return {1: "Eins!", 2: "Zwei!", 3: "Drei!"}[number]
 
 
-def hands_line(result: Round) -> str:
-    return (
-        f"Du hast {_HANDS[result.player]}!\n"
-        f"Ich habe {_HANDS[result.aiko]}!"
-    )
-
-
-def outcome_line(result: Round) -> str:
-    return {
-        Outcome.WIN: "Hmpf ... du hast gewonnen! Gut gespielt!",
-        Outcome.LOSS: "Hehe, diesmal habe ich gewonnen!",
-        Outcome.DRAW: "Oh! Unentschieden! Wir denken wohl gleich.",
+def outcome_line(result: Round, games: int = 1) -> str:
+    lines = {
+        Outcome.WIN: _WIN,
+        Outcome.LOSS: _LOSS,
+        Outcome.DRAW: _DRAW,
     }[result.outcome]
+    return lines[(games - 1) % len(lines)]
 
 
 def score_line(score: Score) -> str:
-    """Every counter is spoken, with no scoreboard in the input window."""
+    """Speak the transient counters concisely, with varied phrasing."""
     rounds = "Runde" if score.games == 1 else "Runden"
-    person_wins = "Sieg" if score.wins == 1 else "Siege"
-    aiko_wins = "Sieg" if score.losses == 1 else "Siege"
-    return (
-        f"Unser Stand nach {score.games} {rounds}: "
-        f"Du hast {score.wins} {person_wins}, ich {score.losses} {aiko_wins}. "
-        f"Unentschieden: {score.draws}. Noch eine Runde?"
+    labels = (
+        f"du {score.wins}, ich {score.losses}, "
+        f"unentschieden {score.draws}"
     )
+    beginnings = (
+        f"Also, {score.games} {rounds} bisher: {labels}. "
+        "Noch mal?",
+        f"Moment, unser Zwischenstand nach {score.games} {rounds}: "
+        f"{labels}. Revanche?",
+        f"Okay, {score.games} {rounds} gespielt! {labels}. "
+        "Ich bin noch nicht fertig!",
+    )
+    return beginnings[(score.games - 1) % len(beginnings)]

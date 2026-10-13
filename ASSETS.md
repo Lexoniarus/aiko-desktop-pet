@@ -77,6 +77,21 @@ See [LICENSES/KENNEY_CC0.md](LICENSES/KENNEY_CC0.md) and the [CC0 1.0 legal text
 
 The repository's MIT notice does **not** replace Kenney's CC0 designation.
 
+### Twemoji hand icons — CC BY 4.0
+
+The Rock–Paper–Scissors input buttons and Aiko's game reveal bubble use
+three light-skin-tone Unicode emoji illustrations (U+270A U+1F3FB,
+U+270B U+1F3FB, U+270C U+1F3FB) from [Twemoji](https://github.com/jdecked/twemoji).
+The original SVG graphics were rasterized into optimized 72×72 PNGs to avoid
+monochrome and incomplete glyph rendering in Tkinter. No additional runtime
+renderer is required.
+
+Artwork is licensed under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
+Attribution: **Twemoji, by Twitter and contributors**. The graphics are not
+relicensed under the project's MIT license. Original graphics and license:
+[Twemoji graphics license](https://github.com/jdecked/twemoji/blob/main/LICENSE-GRAPHICS).
+See [LICENSES/TWEMOJI_CC_BY_4.md](LICENSES/TWEMOJI_CC_BY_4.md).
+
 ## 4. Optional fonts
 
 The user-supplied `Kenney Mini.ttf` is **not distributed** with the project. Aiko uses a compatible font already installed on the user's computer when available, or falls back to Segoe UI. Third-party fonts remain subject to their own terms; the project's MIT license does not relicense a font installed separately.
