@@ -15,6 +15,7 @@ from aiko_pet.dialogue_catalog import (
     Reaction,
 )
 from aiko_pet.routine import context_at
+from aiko_pet.work_episode import WorkEpisodeMemory
 
 
 class DialogueModulesTests(unittest.TestCase):
@@ -25,6 +26,11 @@ class DialogueModulesTests(unittest.TestCase):
         self.assertIs(dialogue.ANIMATIONS, ANIMATIONS)
         self.assertIs(dialogue.CATALOGUE, CATALOGUE)
         self.assertIs(dialogue.EMOTION_LABELS, EMOTION_LABELS)
+
+    def test_aiko_mind_owns_independent_work_episode_memory(self) -> None:
+        mind = dialogue.AikoMind(rng=random.Random(12))
+        self.assertIsInstance(mind.work, WorkEpisodeMemory)
+        self.assertEqual(mind.work.interruptions, 0)
 
     def test_catalogue_is_still_available_without_gui(self) -> None:
         self.assertTrue(CATALOGUE.is_file())

@@ -80,6 +80,7 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/gui.py` | Desktop component assembly; startup and shutdown delegated |
 | `aiko_pet/infrastructure/hardware/` | CPU/RAM/uptime providers, NVIDIA parsing, sampler and background monitor |
 | `aiko_pet/system_activity.py` | Backward-compatible hardware imports (no extra logic) |
+| `aiko_pet/work_episode.py` | Observed work episodes, interruptions and bounded recovery dialogue context |
 | `aiko_pet/` | Existing domain, storage and offline dialogue policies |
 | `aiko_pet/assets/frames/` | 73 original Aiko character animation frames |
 | `aiko_pet/assets/emotes/` | Kenney pixel emotes |

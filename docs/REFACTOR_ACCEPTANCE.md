@@ -21,6 +21,8 @@ the desktop runtime has been exercised on Windows after the final commit.
 - Desktop runtime tests cover tick ordering and shutdown timer cancellation,
   persistence and disk-error handling, taskbar/overlay check intervals and
   Tk/global-input dispatch.
+- Work-episode regression tests cover confirmed versus missing activity,
+  repeated interruption, unexpected work and one-time recovery reflections.
 - Lifecycle tests cover the original startup, shutdown and repeated-close
   order without opening a real Windows desktop. Provider tests cover
   CPU deltas, optional NVIDIA measurements, GPU timeout and legacy imports.

@@ -57,9 +57,12 @@ third-party packages. Keep German runtime text and English documentation.
    time progression and decay are separate policies. `adaptive_models.py`
    owns persisted memory/observation contracts, with `adaptive.py`
    orchestrating learning; legacy names and save-file fields remain valid.
-8. **Dialogue (implemented):** Written dialogue catalogue, work-related
-   comments, mouse-click decisions and spontaneous topics are independent
-   of the GUI. The authored German text is untouched.
+8. **Dialogue (implemented):** Written dialogue catalogue, mouse-click
+   decisions and spontaneous topics are independent of the GUI.
+   `work_episode.py` now owns the short-lived, observed work interruptions,
+   session endings and one-time recovery follow-up. `AikoMind` coordinates
+   event selection without duplicating work-episode memory. Authored
+   German dialogue text is untouched.
 9. **Quality (continuous):** Ruff, PEP 8/E501, strict mypy across the
    application, Pyright across application *and tests*, Python 3.11/3.13
    Linux/Xvfb GUI tests, and Windows-hosted headless checks are mandatory.

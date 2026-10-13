@@ -24,6 +24,7 @@ from .dialogue_events import ClickButton, choose_click_reaction
 from .domain import PetState
 from .routine import TimeContext
 from .computer_voice import ComputerVoice as ComputerVoice
+from .work_episode import WorkEpisodeMemory
 
 
 class AikoMind:
@@ -49,12 +50,7 @@ class AikoMind:
         self.warm_until = -1.0
         self.last_contact = started_at
         self.situation: Behaviour | None = None
-        self._work_interruptions = 0
-        self._last_work_duration = 0.0
-        self._recovery_until = -1.0
-        self._last_recovery_comment = -1.0
-        self._last_work_finished_at = -1.0
-        self._postwork_thought_spoken = False
+        self.work = WorkEpisodeMemory()
         self._last_care_action = ""
         self._last_care_at = -1.0
         self._last_social_comment = float("-inf")
@@ -66,20 +62,7 @@ class AikoMind:
         """Remember an observed work session, never infer unseen work."""
         previous = self.situation
         self.situation = situation
-        if situation is None:
-            self._work_interruptions = 0
-            self._recovery_until = -1.0
-        elif previous is not None and previous.focused and not situation.focused:
-            self._last_work_duration = previous.prolonged_work_seconds
-            if now is not None:
-                self._recovery_until = now + 110.0
-                self._last_work_finished_at = now
-                self._postwork_thought_spoken = False
-        elif previous is not None and not previous.focused and situation.focused:
-            # New work, new episode. Old clicks cannot count as interruptions.
-            self._work_interruptions = 0
-            self._recovery_until = -1.0
-            self._postwork_thought_spoken = False
+        self.work.observe(previous, situation, now=now)
 
     def emotion(self, state: PetState, now: float) -> str:
         if state.sleeping:
@@ -135,16 +118,14 @@ class AikoMind:
         if state.sleeping:
             return self.say_event("sleep_click", state, context, now)
 
-        busy = self.situation is not None and self.situation.focused
-        if busy:
-            self._work_interruptions += 1
+        self.work.note_click(self.situation)
         decision = choose_click_reaction(
             button=button,
             click_count=count,
             state=state,
             context=context,
             situation=self.situation,
-            recovering=now < self._recovery_until,
+            recovering=self.work.recovering(now),
             recently_petted=(
                 self._last_care_action == "pet"
                 and now - self._last_care_at < 50
@@ -207,24 +188,7 @@ class AikoMind:
         self, event: str, state: PetState, context: TimeContext, now: float,
     ) -> Reaction | None:
         """Interpret meaningful work transitions in the lived context."""
-        situation = self.situation
-        if event in ("computer_effort_rising", "computer_effort_heavy",
-                     "computer_effort_peak") and situation is not None:
-            if (situation.expectation_confident
-                    and situation.expected_effort is not None
-                    and situation.expected_effort < 0.3
-                    and (situation.effort or 0.0) >= 0.5):
-                event = "work_unexpected"
-        if event.startswith("computer_effort_recovered"):
-            if self._work_interruptions >= 2 and self._last_work_duration >= 18:
-                event = "work_finished_interrupted"
-            elif self._last_work_duration >= 20 * 60:
-                event = "work_finished_long"
-            self._recovery_until = now + 110.0
-            self._last_recovery_comment = now
-            self._last_work_finished_at = now
-            self._postwork_thought_spoken = False
-            self._work_interruptions = 0
+        event = self.work.interpret_event(event, self.situation, now)
         if event == "computer_uptime":
             event = "computer_uptime_grounded"
         return self.say_event(event, state, context, now)
@@ -238,7 +202,7 @@ class AikoMind:
             return None
         if self.situation is not None and self.situation.focused:
             event = "return_working"
-        elif now < self._recovery_until:
+        elif self.work.recovering(now):
             event = "return_after_work"
         else:
             event = "return_close" if state.friendship >= 72 else "return"
@@ -294,13 +258,7 @@ class AikoMind:
             if situation.prolonged_work_seconds >= 20 * 60:
                 return "work_long_thought"
             return "work_concentrating"
-        if (
-            situation is not None
-            and self._last_work_duration >= 20 * 60
-            and not self._postwork_thought_spoken
-            and 60 <= now - self._last_work_finished_at <= 480
-        ):
-            self._postwork_thought_spoken = True
+        if situation is not None and self.work.take_postwork_thought(now):
             return "after_work_thought"
         if situation is not None and situation.mode == "resting":
             return (

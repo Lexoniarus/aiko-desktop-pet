@@ -85,8 +85,8 @@ class SpontaneousEventsTests(unittest.TestCase):
             "work_long_thought",
         )
         self.mind.situation = scenario(mode="resting")
-        self.mind._last_work_duration = 2000
-        self.mind._last_work_finished_at = 1450
+        self.mind.work.last_work_duration = 2000
+        self.mind.work.last_work_finished_at = 1450
         self.assertEqual(
             self.mind._select_spontaneous_event(
                 PetState(), context(), 1510,

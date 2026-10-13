@@ -9,8 +9,9 @@ isolated to `refactor/oop-modular-architecture`.
 | --- | --- |
 | Domain care and friendship | `application/controller.py` + domain rules |
 | Incoming app/browser notifications | `application/router.py` and `inbox.py` |
-| Comment timing, cursor/walk decisions and interruption | `application/attention.py` |
+| Comment timing, cursor/walk decisions and presentation interruption | `application/attention.py` |
 | Workload, adaptive routine and pet time advancement | `application/activity.py` |
+| Verified work episode/recovery memory for dialogue | `work_episode.py` |
 | Immutable view data | `application/view_models.py` and `read_models.py` |
 | Animated character and walking | `ui/animated_pet.py` |
 | Taskbar geometry and transparent root | `ui/desktop_window.py` |
@@ -74,8 +75,11 @@ adapter is **not** a destination for new features.
    `infrastructure/hardware/`, separated into immutable readings,
    Windows/Linux OS sensors, NVIDIA discovery/parsing, CPU/GPU sampling
    and the independent background monitor. Public imports are preserved.
-3. Review the 322-line `dialogue.py` for behaviorally meaningful division.
-   Preserve German authored phrases, event priority and quiet behavior.
+3. **Implemented:** `dialogue.py` now delegates observed work episode
+   transitions, counted interruptions, unusual workload classification and
+   one-time recovery commentary to `work_episode.py`. `AikoMind` retains
+   dialogue coordination, mood priorities, click/care selections and the
+   separately testable spontaneous topic policy. No dialogue text was edited.
 4. Gradually package flat domain files. Because the import path
    `aiko_pet.domain` is in use, migrate only with an explicit compatibility
    cutover and regression tests; do not create decorative empty folders.
