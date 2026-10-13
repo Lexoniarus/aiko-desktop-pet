@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from ..adaptive_models import Behaviour
 from ..dialogue import AikoMind, EMOTION_LABELS
-from ..domain import PetState
-from ..routine import TimeContext
+from ..pet.state import PetState
+from ..pet.routine import TimeContext
 from ..system_activity import ComputerSnapshot, percent_label
 from .view_models import StatusSnapshot
 

@@ -15,7 +15,7 @@ from ..application.attention import AttentionCoordinator
 from ..movement import WalkController
 from ..reaction_playback import ReactionPlayer
 from ..reaction_sequence import Cue
-from ..routine import TimeContext
+from ..pet.routine import TimeContext
 from ..taskbar import TaskbarTrack
 from ..ui.action_toolbar import ActionToolbar
 from ..ui.animated_pet import AnimatedPet

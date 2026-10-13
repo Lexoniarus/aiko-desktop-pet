@@ -54,11 +54,11 @@ third-party packages. Keep German runtime text and English documentation.
    callers but is no longer the runtime-stage provider. The composition
    shell is approximately 572 lines versus 875 before the audit.
    See [the full architecture audit](ARCHITECTURE_AUDIT_20261013.md).
-7. **Pet and adaptive domain (implemented):** `PetState` now owns all
-   care, needs, friendship and daily-routine state transitions.
-   `care_actions.py`, `need_decay.py`, `friendship.py` and
-   `pet_lifecycle.py` calculate immutable transitions or bounded
-   simulation steps, without calling private methods on external records.
+7. **Pet and adaptive domain (implemented):** The real `PetState` owner,
+   immutable care/need/friendship transitions, daily routine and bounded
+   time progression now live together under `aiko_pet/pet/`.
+   The original flat imports are explicit legacy aliases, not duplicate
+   implementations. Stateless rules never mutate private aggregate state.
    Their existing module-level mutation APIs remain as legacy adapters to
    the aggregate or independent record adapters. `adaptive_models.py`
    owns persisted memory/observation contracts, with `adaptive.py`
@@ -153,6 +153,19 @@ third-party packages. Keep German runtime text and English documentation.
   retirement needs a separate compatibility review.
 - Internal domain state, German dialogue, sprite assets, settings keys,
   save JSON v1 and Tk phase ordering are unchanged.
+
+## Package migration: canonical pet context
+
+- `pet/state.py` owns the only `PetState`. Its care/needs/friendship
+  rules, routine/time planning and validations live alongside it.
+- Old imports (`domain`, `care_actions`, `friendship`,
+  `need_decay`, `pet_lifecycle`, `routine`, `value_rules`)
+  now re-export the **identical** classes and functions for prior users.
+- Runtime consumers reference the canonical pet context directly.
+  There are no additional persisted objects, schemas or backfilled
+  history. This is a package migration, not a simulation change.
+- Further personality/desktop ownership moves happen as separate,
+  testable packages after this pet cutover.
 
 ## Change safety
 

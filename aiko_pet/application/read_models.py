@@ -11,8 +11,8 @@ from typing import Callable
 
 from ..adaptive import AdaptiveRoutine
 from ..dialogue import AikoMind
-from ..domain import PetState
-from ..routine import TimeContext
+from ..pet.state import PetState
+from ..pet.routine import TimeContext
 from .settings import PetSettings
 from ..telemetry import ComputerSnapshot
 from .ports import ComputerReadings

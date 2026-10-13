@@ -7,7 +7,7 @@ Legacy PetState/TimeContext helpers retain their original public API.
 from __future__ import annotations
 
 from ..application.read_snapshot import PetReadSnapshot
-from ..routine import MEAL_NAMES, WEEKDAYS, TimeContext
+from ..pet.routine import MEAL_NAMES, WEEKDAYS, TimeContext
 from ..telemetry import ComputerSnapshot, workload_intensity
 
 

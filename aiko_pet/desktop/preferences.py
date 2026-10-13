@@ -14,8 +14,8 @@ from ..adaptive import AdaptiveRoutine
 from ..application.activity import ActivityCoordinator
 from ..application.attention import AttentionCoordinator
 from ..application.settings import PetSettings, SettingKey
-from ..domain import PetState
-from ..routine import TimeContext, context_at
+from ..pet.state import PetState
+from ..pet.routine import TimeContext, context_at
 from ..ui.animated_pet import AnimatedPet
 from ..ui.desktop_window import DesktopWindow
 from ..ui.hover_ui import HoverUi

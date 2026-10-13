@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from .reaction_sequence import EMOTES
-from .routine import TimeContext
+from .pet.routine import TimeContext
 
 CATALOGUE = Path(__file__).resolve().parent / "data" / "dialogues.de.json"
 ANIMATIONS = frozenset({"idle", "waiting", "review", "failed", "waving", "jumping"})

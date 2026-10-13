@@ -10,7 +10,7 @@ import time
 from typing import Callable
 
 from ..adaptive import AdaptiveRoutine
-from ..domain import PetState
+from ..pet.state import PetState
 from ..application.settings import PetSettings
 from ..storage import StateStore
 

@@ -13,7 +13,7 @@ from typing import Any
 from .adaptive_models import AdaptiveMemory
 from .application.session import LoadedPetData
 from .application.settings import PetSettings as PetSettings
-from .domain import PetState
+from .pet.state import PetState
 
 SCHEMA_VERSION = 1
 

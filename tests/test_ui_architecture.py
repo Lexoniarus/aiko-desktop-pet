@@ -180,8 +180,8 @@ class UiDependencyRules(unittest.TestCase):
             "_roll_meals", "_apply_clock", "_decay", "_credit_friendship",
         }
         for relative in (
-            "care_actions.py", "friendship.py",
-            "need_decay.py", "pet_lifecycle.py",
+            "pet/care_actions.py", "pet/friendship.py",
+            "pet/need_decay.py", "pet/lifecycle.py",
         ):
             with self.subTest(policy=relative):
                 tree = ast.parse((ROOT / relative).read_text("utf-8"))
@@ -194,7 +194,7 @@ class UiDependencyRules(unittest.TestCase):
                 self.assertFalse(calls.intersection(forbidden))
 
     def test_pet_aggregate_does_not_call_mutating_legacy_adapters(self) -> None:
-        source = (ROOT / "domain.py").read_text("utf-8")
+        source = (ROOT / "pet/state.py").read_text("utf-8")
         tree = ast.parse(source)
         state = next(
             node for node in tree.body

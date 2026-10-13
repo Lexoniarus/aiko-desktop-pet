@@ -21,8 +21,8 @@ from .dialogue_catalog import (
     Reaction as Reaction,
 )
 from .dialogue_events import ClickButton, choose_click_reaction
-from .domain import PetState
-from .routine import TimeContext
+from .pet.state import PetState
+from .pet.routine import TimeContext
 from .computer_voice import ComputerVoice as ComputerVoice
 from .work_episode import WorkEpisodeMemory
 

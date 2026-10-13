@@ -10,8 +10,8 @@ from dataclasses import dataclass
 from typing import Literal
 
 from .adaptive import Behaviour
-from .domain import PetState
-from .routine import TimeContext
+from .pet.state import PetState
+from .pet.routine import TimeContext
 
 ClickButton = Literal["left", "right"]
 ClickEvent = Literal[

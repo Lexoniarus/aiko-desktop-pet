@@ -12,7 +12,7 @@ from typing import Callable, Protocol
 
 from ..adaptive import AdaptiveRoutine
 from ..adaptive_models import AdaptiveMemory
-from ..domain import PetState
+from ..pet.state import PetState
 from .settings import PetSettings
 
 

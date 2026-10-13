@@ -6,8 +6,8 @@ from dataclasses import dataclass
 
 from ..adaptive import AdaptiveRoutine
 from ..dialogue import AikoMind, Reaction
-from ..domain import PetState
-from ..routine import TimeContext, context_at
+from ..pet.state import PetState
+from ..pet.routine import TimeContext, context_at
 from .commands import CareCommand
 
 

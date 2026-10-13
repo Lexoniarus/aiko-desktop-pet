@@ -89,9 +89,9 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/infrastructure/hardware/` | CPU/RAM/uptime providers, NVIDIA parsing, sampler and background monitor |
 | `aiko_pet/system_activity.py` | Backward-compatible hardware imports (no extra logic) |
 | `aiko_pet/work_episode.py` | Observed work episodes, interruptions and bounded recovery dialogue context |
-| `aiko_pet/domain.py` | PetState aggregate: sole owner of pet need, care, friendship and routine mutations |
-| `aiko_pet/care_actions.py` + `need_decay.py` | Pure care decisions and need-decay calculations |
-| `aiko_pet/friendship.py` + `pet_lifecycle.py` | Pure relationship and bounded timeline transition calculations |
+| `aiko_pet/pet/state.py` | PetState aggregate and its authorized mutations |
+| `aiko_pet/pet/` | Care, needs, friendship, daily routine, time progression and value validation |
+| `aiko_pet/domain.py` and other old pet modules | Public compatibility imports pointing at the single pet implementation |
 | `aiko_pet/` | Existing domain, storage and offline dialogue policies |
 | `aiko_pet/assets/frames/` | 73 original Aiko character animation frames |
 | `aiko_pet/assets/emotes/` | Kenney pixel emotes |

@@ -24,7 +24,7 @@ from .adaptive_policy import (
     determine_activity_mode,
     determine_sleep_options,
 )
-from .routine import TimeContext, context_at
+from .pet.routine import TimeContext, context_at
 
 
 class AdaptiveRoutine:

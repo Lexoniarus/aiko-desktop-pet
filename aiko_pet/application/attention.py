@@ -11,8 +11,8 @@ from dataclasses import dataclass
 
 
 from ..dialogue import AikoMind, ComputerVoice, Reaction
-from ..domain import PetState
-from ..routine import TimeContext
+from ..pet.state import PetState
+from ..pet.routine import TimeContext
 from .settings import PetSettings
 from .ports import ComputerReadings
 from .events import IncomingNotification

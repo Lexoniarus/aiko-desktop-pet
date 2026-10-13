@@ -7,8 +7,8 @@ isolated to `refactor/oop-modular-architecture`.
 
 | Responsibility | Implemented owner |
 | --- | --- |
-| Domain state mutation owner | `domain.PetState` aggregate |
-| Pure care, needs, friendship and routine decisions | `care_actions.py`, `need_decay.py`, `friendship.py`, `pet_lifecycle.py` |
+| Domain state mutation owner | `pet/state.py` (`PetState`) |
+| Pure care, needs, friendship and routine decisions | `pet/care_actions.py`, `pet/need_decay.py`, `pet/friendship.py`, `pet/lifecycle.py` |
 | Care use-case coordination | `application/controller.py` |
 | Incoming app/browser notifications | `application/router.py` and `inbox.py` |
 | Comment timing, cursor/walk decisions and presentation interruption | `application/attention.py` |
@@ -134,6 +134,15 @@ The old `DesktopPet` façade remains intentionally inherited for legacy
 consumers and tests; it does not drive normal runtime scheduling. Removing it
 requires separate evidence that every existing entrypoint can be maintained.
 
+## Canonical pet package — implemented
+
+The `aiko_pet/pet/` package owns the sole PetState implementation and its
+cohesive care, need, friendship, daily routine and value policies. Old
+flat-module paths are thin re-export shims with exact type identity.
+Application, presentation, storage and desktop consumers now import the
+canonical state/routine modules. Tests forbid policy dependencies on
+outer packages or independent legacy implementations.
+
 ## Remaining work, by priority (not yet implemented)
 
 1. **Implemented:** timer scheduling, autosave, taskbar/stack inspection,
@@ -149,9 +158,9 @@ requires separate evidence that every existing entrypoint can be maintained.
    one-time recovery commentary to `work_episode.py`. `AikoMind` retains
    dialogue coordination, mood priorities, click/care selections and the
    separately testable spontaneous topic policy. No dialogue text was edited.
-4. Gradually package flat domain files. Because the import path
-   `aiko_pet.domain` is in use, migrate only with an explicit compatibility
-   cutover and regression tests; do not create decorative empty folders.
+4. **In progress:** package the adaptive/dialogue and platform-native
+   components by responsibility, retaining identical public imports and
+   avoiding decorative folders.
 5. Review remaining widget construction in the 320-line `action_toolbar.py`.
    Pure geometry was extracted; further splits require cohesive widgets.
 

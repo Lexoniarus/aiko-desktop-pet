@@ -14,8 +14,8 @@ from ..application.ports import ComputerReadings
 from ..application.read_snapshot import snapshot_pet
 from ..application.settings import PetSettings
 from ..dialogue import AikoMind
-from ..domain import PetState
-from ..routine import TimeContext
+from ..pet.state import PetState
+from ..pet.routine import TimeContext
 from ..telemetry import ComputerSnapshot
 from .contracts import (
     HoverAnchor, HoverSnapshot, SettingsSnapshot, StatusSnapshot,

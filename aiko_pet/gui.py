@@ -39,7 +39,7 @@ from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
 from .dialogue import AikoMind, ComputerVoice, Reaction
 from .movement import WalkController as WalkController
-from .routine import TimeContext, context_at
+from .pet.routine import TimeContext, context_at
 from .reaction_sequence import Cue as Cue, EMOTES as EMOTES
 from .reaction_playback import ReactionPlayer, choose_idle_emote
 from .storage import StateStore

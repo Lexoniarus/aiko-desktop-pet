@@ -8,8 +8,8 @@ from typing import Callable
 
 from ..adaptive import AdaptiveRoutine, Observation
 from ..dialogue import AikoMind, ComputerVoice, Reaction
-from ..domain import PetState
-from ..routine import TimeContext, context_at
+from ..pet.state import PetState
+from ..pet.routine import TimeContext, context_at
 from .settings import PetSettings
 from ..telemetry import workload_intensity
 from .ports import ComputerObservation

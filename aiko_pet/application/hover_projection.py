@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from ..domain import PetState
-from ..routine import TimeContext
+from ..pet.state import PetState
+from ..pet.routine import TimeContext
 from ..system_activity import (
     ComputerSnapshot,
     percent_label,

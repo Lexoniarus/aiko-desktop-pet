@@ -27,12 +27,13 @@ jobs:
       - name: Enforce PEP 8 line lengths in refactored domain
         run: |
           python -m ruff check --select E501 \
-            aiko_pet/domain.py aiko_pet/friendship.py \
-            aiko_pet/value_rules.py aiko_pet/care_actions.py \
-            aiko_pet/need_decay.py aiko_pet/pet_lifecycle.py \
+            aiko_pet/pet/state.py aiko_pet/pet/friendship.py \
+            aiko_pet/pet/value_rules.py aiko_pet/pet/care_actions.py \
+            aiko_pet/pet/need_decay.py aiko_pet/pet/lifecycle.py \
+            aiko_pet/pet/routine.py \
             tests/test_friendship_policy.py tests/test_care_actions.py \
             tests/test_pet_lifecycle.py tests/test_domain_transitions.py \
-            tests/test_presentation_boundary.py
+            tests/test_presentation_boundary.py tests/test_pet_package_layout.py
       - name: Enforce PEP 8 line lengths in adaptive and dialogue modules
         run: |
           python -m ruff check --select E501 \
@@ -96,6 +97,7 @@ jobs:
             "test_care_actions.py",
             "test_pet_lifecycle.py",
             "test_domain_transitions.py",
+            "test_pet_package_layout.py",
             "test_application_core.py",
             "test_adaptive_models.py",
             "test_ui_architecture.py",
