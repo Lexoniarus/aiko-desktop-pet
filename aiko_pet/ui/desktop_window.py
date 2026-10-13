@@ -11,8 +11,10 @@ import tkinter as tk
 from typing import Protocol
 from ..desktop.taskbar import locate_primary_taskbar
 
-FRAME_WIDTH = 128
-FRAME_HEIGHT = 208
+from ..presentation.character import (
+    FRAME_WIDTH as FRAME_WIDTH, FRAME_HEIGHT as FRAME_HEIGHT,
+)
+
 MAGENTA = "#ff00ff"
 
 

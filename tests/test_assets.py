@@ -5,7 +5,8 @@ import struct
 import unittest
 from pathlib import Path
 
-from aiko_pet.gui import FRAME_COUNTS, FRAME_HEIGHT, FRAME_WIDTH
+from aiko_pet.presentation.animation import FRAME_COUNTS
+from aiko_pet.ui.desktop_window import FRAME_HEIGHT, FRAME_WIDTH
 
 
 class AssetContractTests(unittest.TestCase):
@@ -23,8 +24,8 @@ class AssetContractTests(unittest.TestCase):
                 w, h = struct.unpack(">II", data[16:24])
                 self.assertEqual((w, h), (FRAME_WIDTH, FRAME_HEIGHT))
                 found.append(file)
-        self.assertEqual(len(found), 73)
-        self.assertEqual(len(list((root / "frames").rglob("*.png"))), 73)
+        self.assertEqual(len(found), 112)
+        self.assertEqual(len(list((root / "frames").rglob("*.png"))), 112)
 
 
 if __name__ == "__main__":

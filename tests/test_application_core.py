@@ -4,17 +4,18 @@ from __future__ import annotations
 
 import random
 import unittest
+from aiko_pet.application.active_time import ActiveSessionClock
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-from aiko_pet.adaptive import AdaptiveRoutine
+from aiko_pet.personality.adaptive import AdaptiveRoutine
 from aiko_pet.application.commands import CareCommand, NotificationCommand
 from aiko_pet.application.controller import CareController, CareRuntime
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.application.inbox import NotificationInbox
 from aiko_pet.application.router import ApplicationRouter
-from aiko_pet.dialogue import AikoMind
-from aiko_pet.domain import PetState
+from aiko_pet.personality.mind import AikoMind
+from aiko_pet.pet.state import PetState
 
 
 def runtime(*, wall_time: float | None = None) -> CareRuntime:
@@ -45,7 +46,8 @@ class ApplicationCoreTests(unittest.TestCase):
         self.mind = AikoMind(rng=random.Random(8))
         self.adaptive = AdaptiveRoutine()
         self.router = ApplicationRouter(
-            CareController(self.state, self.mind, self.adaptive),
+            CareController(self.state, self.mind, self.adaptive,
+                           clock=ActiveSessionClock(lambda: 0.0)),
             NotificationInbox(capacity=2),
         )
 
@@ -65,7 +67,8 @@ class ApplicationCoreTests(unittest.TestCase):
         rt = runtime()
         state = PetState(social=10.0, updated_at=rt.wall_time)
         mind = AikoMind(rng=random.Random(12))
-        controller = CareController(state, mind, AdaptiveRoutine())
+        controller = CareController(state, mind, AdaptiveRoutine(),
+                                    clock=ActiveSessionClock(lambda: 0.0))
         outcome = controller.execute(CareCommand("talk"), rt)
         self.assertEqual(state.social, 36.0)
         self.assertIsNotNone(outcome.reaction)

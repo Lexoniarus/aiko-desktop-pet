@@ -1,4 +1,4 @@
-"""Sensor modules preserve the old API and keep GPU subprocesses optional."""
+"""Injected sensor providers keep GPU subprocesses optional."""
 
 from __future__ import annotations
 
@@ -6,25 +6,10 @@ import subprocess
 import unittest
 from unittest.mock import patch
 
-import aiko_pet.system_activity as activity
-from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
 from aiko_pet.infrastructure.hardware.sampler import HardwareSampler
-from aiko_pet.infrastructure.hardware.metrics import (
-    ComputerSnapshot, workload_intensity,
-)
-from aiko_pet.infrastructure.hardware.nvidia import parse_nvidia_reading
-from aiko_pet.infrastructure.hardware.os_sensors import load_percent
 
 
 class SensorBoundaryTests(unittest.TestCase):
-    def test_legacy_imports_are_exactly_the_new_public_types(self) -> None:
-        self.assertIs(activity.HardwareSampler, HardwareSampler)
-        self.assertIs(activity.ActivityMonitor, ActivityMonitor)
-        self.assertIs(activity.ComputerSnapshot, ComputerSnapshot)
-        self.assertIs(activity.workload_intensity, workload_intensity)
-        self.assertIs(activity.parse_nvidia_reading, parse_nvidia_reading)
-        self.assertIs(activity.load_percent, load_percent)
-
     def test_injected_os_and_nvidia_values_preserve_smoothing(self) -> None:
         result = subprocess.CompletedProcess(
             args=["fake-nvidia"], returncode=0,

@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from aiko_pet.config import load_env_file
-from aiko_pet.storage import default_save_path
+from aiko_pet.infrastructure.persistence import default_save_path
 
 ROOT = Path(__file__).resolve().parents[1]
 

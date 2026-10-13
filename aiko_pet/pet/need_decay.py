@@ -37,7 +37,7 @@ def calculate_need_decay(
     context: TimeContext | None,
     effort: float | None = None,
 ) -> NeedLevels:
-    """Calculate established awake/asleep decay without changing the record."""
+    """Hourly waking care rhythm; sleeping retains its gentle recovery rates."""
     if record.sleeping:
         return NeedLevels(
             satiety=clamp_need_value(record.satiety - hours * 1.4),
@@ -46,30 +46,16 @@ def calculate_need_decay(
             social=clamp_need_value(record.social - hours * 0.35),
             affection=clamp_need_value(record.affection - hours * 0.25),
         )
-    # A relaxed rhythm; weekends are slightly gentler, no obligations.
-    if context is None:
-        satiety_rate, mood_rate, energy_rate = 3.0, -2.0, 2.2
-    else:
-        satiety_rate = 4.0 if context.meal is not None else 2.4
-        mood_rate = (
-            0.3 if context.weekend and context.period in ("free", "evening")
-            else -0.4 if context.period == "quiet"
-            else -0.9
-        )
-        energy_rate = (
-            1.1 if context.weekend and context.period == "free"
-            else 1.5 if context.period == "quiet"
-            else 2.0
-        )
+    satiety_rate, mood_rate, energy_rate = 30.0, -4.0, 6.0
     # CPU/GPU effort is her observed work; unseen work is never invented.
     intensity = 0.0 if effort is None else max(
         0.0, min(1.0, (effort - 0.15) / 0.85),
     )
-    satiety_rate *= 1.0 + 0.95 * intensity
+    satiety_rate += 3.0 * intensity
     mood_rate -= 2.1 * intensity
     energy_rate += 2.8 * intensity
-    social_rate = 1.8 + 0.35 * intensity
-    affection_rate = 1.35
+    social_rate = 8.0 + 0.35 * intensity
+    affection_rate = 6.0
     if record.social < 20:
         mood_rate -= 0.7
     if record.affection < 20:

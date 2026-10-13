@@ -3,7 +3,7 @@
 import ctypes
 import unittest
 
-from aiko_pet.window_stack import WindowStack, WindowsWindowOps, _Rect
+from aiko_pet.desktop.window_stack import WindowStack, WindowsWindowOps, _Rect
 
 
 class WindowStub:
@@ -137,7 +137,7 @@ class WindowStackUnitTests(unittest.TestCase):
         # never fight it on every 140 ms animation tick.
         from unittest.mock import patch
 
-        with patch("aiko_pet.window_stack.time.monotonic", side_effect=[12, 13, 17]):
+        with patch("aiko_pet.desktop.window_stack.time.monotonic", side_effect=[12, 13, 17]):
             self.assertTrue(self.stack.maintain())
             count = len(self.user32.calls)
             self.assertFalse(self.stack.maintain())

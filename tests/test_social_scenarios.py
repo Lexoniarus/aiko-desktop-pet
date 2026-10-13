@@ -11,11 +11,12 @@ import re
 import unittest
 from datetime import datetime
 
-from aiko_pet.adaptive import Behaviour
-from aiko_pet.adaptive_policy import ActivityMode
-from aiko_pet.dialogue import AikoMind, CATALOGUE, DialogueBook, Line, Reaction
-from aiko_pet.domain import PetState
-from aiko_pet.routine import context_at
+from aiko_pet.personality.adaptive_models import Behaviour
+from aiko_pet.personality.adaptive_policy import ActivityMode
+from aiko_pet.personality.mind import AikoMind
+from aiko_pet.personality.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import context_at
 
 
 def require_reaction(value: Reaction | None) -> Reaction:

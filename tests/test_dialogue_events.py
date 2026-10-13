@@ -6,12 +6,14 @@ import unittest
 from typing import cast
 from datetime import datetime
 
-from aiko_pet.adaptive import Behaviour
-from aiko_pet.dialogue_events import (
-    ClickButton, ClickDecision, choose_click_reaction,
+from aiko_pet.personality.adaptive_models import Behaviour
+from aiko_pet.personality.click_policy import (
+    ClickButton,
+    ClickDecision,
+    choose_click_reaction,
 )
-from aiko_pet.domain import PetState
-from aiko_pet.routine import context_at
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import context_at
 
 
 def decision(

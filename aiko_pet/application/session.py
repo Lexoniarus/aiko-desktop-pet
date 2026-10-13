@@ -1,7 +1,7 @@
 """Restore a desktop pet session without coupling application code to disk I/O.
 
-The repository only decodes saved values. This application service applies
-bounded elapsed-time simulation for a successfully restored save.
+The repository only decodes saved values. This service preserves those values
+and resets the timestamp; closed sessions do not consume or recover needs.
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ class RestoredPetSession:
 
 
 class PetSessionRestorer:
-    """Apply original startup catch-up only when a valid save was recovered."""
+    """Restore values and anchor a fresh session without offline catch-up."""
 
     def __init__(
         self, reader: SavedPetReader, *,
@@ -54,10 +54,8 @@ class PetSessionRestorer:
     def restore(self) -> RestoredPetSession:
         now = self._wall_time()
         loaded = self._reader.load_session(now=now)
-        if loaded.restored_from_save:
-            loaded.state.advance(
-                now, auto_routine=loaded.settings.auto_routine,
-            )
+        # A closed application has no observed session time to consume.
+        loaded.state.updated_at = now
         return RestoredPetSession(
             state=loaded.state,
             settings=loaded.settings,

@@ -7,9 +7,9 @@ from pathlib import Path
 from unittest.mock import patch
 import tkinter as tk
 
-from aiko_pet.dialogue import Reaction
+from aiko_pet.personality.catalog import Reaction
 from aiko_pet.gui import DesktopPet
-from aiko_pet.storage import StateStore
+from aiko_pet.infrastructure.persistence import StateStore
 
 
 class FollowupGuiTests(unittest.TestCase):
@@ -28,16 +28,16 @@ class FollowupGuiTests(unittest.TestCase):
         self.addCleanup(self.app.quit)
         # Controlled speech tests should not be interrupted by the startup
         # greeting that normally runs asynchronously after the first frame.
-        if self.app._scheduled_greeting is not None:
-            self.app.root.after_cancel(self.app._scheduled_greeting)
-            self.app._scheduled_greeting = None
+        if self.app._runtime.scheduled_greeting is not None:
+            self.app.root.after_cancel(self.app._runtime.scheduled_greeting)
+            self.app._runtime.scheduled_greeting = None
         self.app.settings.auto_routine = False
         self.app.state.sleeping = False
 
     def text(self):
-        if self.app._bubble is None:
+        if self.app._speech.bubble is None:
             return None
-        return self.app._bubble.winfo_children()[0].winfo_children()[0].cget("text")
+        return self.app._speech.bubble.winfo_children()[0].winfo_children()[0].cget("text")
 
     def pass_delay(self):
         time.sleep(0.68)
@@ -49,7 +49,7 @@ class FollowupGuiTests(unittest.TestCase):
         self.assertEqual(self.text(), "Oh.")
         self.pass_delay()
         self.assertEqual(self.text(), "...Das war unerwartet.")
-        self.assertIsNone(self.app._followup_timeout)
+        self.assertIsNone(self.app._reaction_player.pending_timer)
 
     def test_new_reaction_cancels_old_followup(self):
         self.app._react(Reaction("test", "Erster Satz", "idle", "click_left",
@@ -63,21 +63,21 @@ class FollowupGuiTests(unittest.TestCase):
                                  "Das darf nicht kommen", 600))
         with patch.object(self.app.mind, "click", return_value=None):
             self.app._on_click_left()
-        self.assertIsNone(self.app._bubble)
+        self.assertIsNone(self.app._speech.bubble)
         self.pass_delay()
-        self.assertIsNone(self.app._bubble)
-        self.assertIsNone(self.app._followup_timeout)
+        self.assertIsNone(self.app._speech.bubble)
+        self.assertIsNone(self.app._reaction_player.pending_timer)
 
     def test_existing_window_stack_and_hover_are_preserved(self):
         self.app._on_enter()
         self.app._react(Reaction("test", "Aiko", "waving", "click_left",
                                  "...Immer noch Aiko", 600))
         self.app.root.update_idletasks()
-        bar = self.app.toolbar
+        bar = self.app._hover.toolbar
         assert bar is not None
         self.assertTrue(bar.visible)
         self.assertIn(self.app.root, self.app._overlay_windows())
-        self.assertIn(self.app._bubble, self.app._overlay_windows())
+        self.assertIn(self.app._speech.bubble, self.app._overlay_windows())
         self.pass_delay()
         self.assertEqual(self.text(), "...Immer noch Aiko")
 

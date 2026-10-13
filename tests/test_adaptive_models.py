@@ -1,29 +1,14 @@
-"""Legacy adaptive model imports remain valid after model separation."""
+"""Saved adaptive profiles decode safely without keeping raw history."""
 
 import unittest
 
-from aiko_pet.adaptive import (
-    AdaptiveMemory as LegacyAdaptiveMemory,
-    Behaviour as LegacyBehaviour,
-    Observation as LegacyObservation,
-    clamp as legacy_clamp,
-)
-from aiko_pet.adaptive_models import (
+from aiko_pet.personality.adaptive_models import (
     SLOTS,
     AdaptiveMemory,
-    Behaviour,
-    Observation,
-    clamp,
 )
 
 
 class AdaptiveModelBoundaryTests(unittest.TestCase):
-    def test_old_imports_are_exact_same_models(self) -> None:
-        self.assertIs(LegacyAdaptiveMemory, AdaptiveMemory)
-        self.assertIs(LegacyObservation, Observation)
-        self.assertIs(LegacyBehaviour, Behaviour)
-        self.assertIs(legacy_clamp, clamp)
-
     def test_corrupt_saved_profile_does_not_create_raw_history(self) -> None:
         restored = AdaptiveMemory.from_dict({
             "hour_seconds": [2, 3],

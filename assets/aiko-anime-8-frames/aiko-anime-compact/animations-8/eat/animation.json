@@ -1,0 +1,109 @@
+{
+  "state": "eat",
+  "loop": false,
+  "frame_size": [
+    192,
+    208
+  ],
+  "anchor": [
+    96,
+    196
+  ],
+  "frames": [
+    {
+      "food_anchor": [
+        96,
+        150
+      ],
+      "events": [],
+      "file": "frames/01.png",
+      "duration_ms": 350
+    },
+    {
+      "food_anchor": [
+        96,
+        132
+      ],
+      "events": [],
+      "file": "frames/02.png",
+      "duration_ms": 200
+    },
+    {
+      "food_anchor": [
+        96,
+        126
+      ],
+      "events": [
+        "bite_contact"
+      ],
+      "file": "frames/03.png",
+      "duration_ms": 240
+    },
+    {
+      "food_anchor": [
+        96,
+        132
+      ],
+      "events": [
+        "bite"
+      ],
+      "file": "frames/04.png",
+      "duration_ms": 180
+    },
+    {
+      "food_anchor": [
+        96,
+        132
+      ],
+      "events": [],
+      "file": "frames/05.png",
+      "duration_ms": 300
+    },
+    {
+      "food_anchor": [
+        96,
+        132
+      ],
+      "events": [],
+      "file": "frames/06.png",
+      "duration_ms": 300
+    },
+    {
+      "food_anchor": [
+        96,
+        150
+      ],
+      "events": [],
+      "file": "frames/07.png",
+      "duration_ms": 280
+    },
+    {
+      "food_anchor": [
+        96,
+        150
+      ],
+      "events": [],
+      "file": "frames/08.png",
+      "duration_ms": 450
+    }
+  ],
+  "total_ms": 2300,
+  "return_to": "idle",
+  "food_embedded": false,
+  "overlay": {
+    "coordinate_space": "frame_pixels_top_left",
+    "asset_pivot": [
+      0.5,
+      1.0
+    ],
+    "draw_order": "after_character",
+    "suggested_size_px": [
+      18,
+      12
+    ],
+    "anchor_name": "food_anchor",
+    "automatic_consumption": false
+  },
+  "original_total_ms": 2300,
+  "new_frame_count": 0
+}

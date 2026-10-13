@@ -225,10 +225,12 @@ class PetState:
         allow_nap: bool = False,
         interrupt_nap: bool = False,
         effort: float | None = None,
+        elapsed_seconds: float | None = None,
     ) -> None:
         """Execute bounded time steps, keeping mutation inside PetState."""
         steps = plan_pet_time(
             self.updated_at, now, auto_routine=auto_routine, effort=effort,
+            elapsed_seconds=elapsed_seconds,
         )
         if steps is None:
             return

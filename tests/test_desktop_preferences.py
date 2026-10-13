@@ -7,20 +7,20 @@ from types import SimpleNamespace
 from typing import cast
 from unittest.mock import MagicMock, patch
 
-from aiko_pet.adaptive import AdaptiveRoutine
+from aiko_pet.personality.adaptive import AdaptiveRoutine
 from aiko_pet.application.activity import ActivityCoordinator
 from aiko_pet.application.attention import AttentionCoordinator
 from aiko_pet.application.settings import PetSettings, SettingKey
 from aiko_pet.desktop.preferences import (
     DesktopPreferencePorts, DesktopPreferences,
 )
-from aiko_pet.domain import PetState
-from aiko_pet.routine import TimeContext
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import TimeContext
 from aiko_pet.ui.animated_pet import AnimatedPet
 from aiko_pet.ui.desktop_window import DesktopWindow
 from aiko_pet.ui.hover_ui import HoverUi
 from aiko_pet.ui.speech_presenter import SpeechPresenter
-from aiko_pet.window_stack import WindowStack
+from aiko_pet.desktop.window_stack import WindowStack
 
 
 class DesktopPreferenceTests(unittest.TestCase):
@@ -88,9 +88,8 @@ class DesktopPreferenceTests(unittest.TestCase):
             ),
         ):
             self.prefs.set_option("auto_routine", False)
-        advance.assert_called_once_with(
-            1_781_000_000.0, auto_routine=False,
-        )
+        advance.assert_not_called()
+        self.activity.advance_state.assert_called_once_with(1_781_000_000.0)
         self.assertFalse(self.settings.auto_routine)
         self.assertEqual(len(self.contexts), 1)
         self.hover.refresh_status.assert_called_once()
@@ -143,7 +142,7 @@ class DesktopPreferenceTests(unittest.TestCase):
     def test_center_stops_walking_without_touching_hover(self) -> None:
         self.prefs.center()
         self.assertEqual(self.positions, [486.0])
-        self.assertEqual(self.animated.movement.remaining_distance, 0)
+        self.animated.movement.interrupt.assert_called_once_with()
         self.assertEqual(self.saves, 1)
 
 

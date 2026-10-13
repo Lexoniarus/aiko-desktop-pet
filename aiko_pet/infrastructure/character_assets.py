@@ -1,0 +1,86 @@
+"""Decode prepared character metadata without creating Tk images or timers."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from types import MappingProxyType
+from typing import Any
+
+from ..asset_paths import ASSET_ROOT
+from ..presentation.character import (
+    AnimationClip, AnimationFrame, CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH,
+)
+
+
+def _file(root: Path, value: Any) -> Path:
+    if not isinstance(value, str) or not value:
+        raise ValueError("A sprite requires a relative file path")
+    path = (root / value).resolve()
+    if Path(value).is_absolute() or not path.is_relative_to(root.resolve()):
+        raise ValueError("Sprite path escapes its asset directory")
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    return path
+
+
+def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
+    """Validate the complete catalog before the desktop creates its widgets."""
+    data = json.loads((root / "animations.json").read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or data.get("frame_size") != [
+        FRAME_WIDTH, FRAME_HEIGHT,
+    ]:
+        raise ValueError("Unsupported character frame dimensions")
+    entries = data.get("animations")
+    if not isinstance(entries, list) or not entries:
+        raise ValueError("Missing character animations")
+    clips: dict[str, AnimationClip] = {}
+    for entry in entries:
+        if not isinstance(entry, dict):
+            raise ValueError("Invalid animation entry")
+        name, loop, anchor = (
+            entry.get("state"), entry.get("loop"), entry.get("anchor"),
+        )
+        if not isinstance(name, str) or not name or name in clips:
+            raise ValueError("Missing or duplicate animation name")
+        if type(loop) is not bool:
+            raise ValueError("Animation loop must be boolean")
+        if (
+            not isinstance(anchor, list) or len(anchor) != 2
+            or any(type(value) is not int for value in anchor)
+            or not 0 <= anchor[0] <= FRAME_WIDTH
+            or not 0 <= anchor[1] <= FRAME_HEIGHT
+        ):
+            raise ValueError("Invalid character anchor")
+        raw_frames = entry.get("frames")
+        if not isinstance(raw_frames, list) or not raw_frames:
+            raise ValueError("Animation requires frames")
+        frames: list[AnimationFrame] = []
+        for frame in raw_frames:
+            if not isinstance(frame, dict):
+                raise ValueError("Invalid animation frame")
+            duration = frame.get("duration_ms")
+            events = frame.get("events", [])
+            if type(duration) is not int or not 1 <= duration <= 60_000:
+                raise ValueError("Invalid frame duration")
+            if not isinstance(events, list) or any(
+                not isinstance(event, str) or not event for event in events
+            ):
+                raise ValueError("Invalid frame events")
+            frames.append(AnimationFrame(
+                _file(root, frame.get("file")), duration, tuple(events),
+            ))
+        return_to = entry.get("return_to", "idle")
+        if not isinstance(return_to, str):
+            raise ValueError("Invalid return animation")
+        clips[name] = AnimationClip(
+            name, tuple(frames), loop, (anchor[0], anchor[1]), return_to,
+        )
+    for required in ("idle", "sleep", "eat", "petting", "look"):
+        if required not in clips:
+            raise ValueError(f"Missing required animation: {required}")
+    if len(clips["look"].frames) != 16:
+        raise ValueError("Cursor gaze requires sixteen direction poses")
+    if any(clip.return_to not in clips for clip in clips.values()):
+        raise ValueError("Unknown return animation")
+    return CharacterCatalog(MappingProxyType(clips))

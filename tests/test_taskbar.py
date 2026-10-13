@@ -2,7 +2,8 @@
 
 import unittest
 
-from aiko_pet.taskbar import ABE_BOTTOM, TaskbarTrack, choose_track
+from aiko_pet.desktop.taskbar import ABE_BOTTOM, choose_track
+from aiko_pet.desktop.geometry import TaskbarTrack
 
 
 class TaskbarTrackTests(unittest.TestCase):

@@ -4,8 +4,9 @@ import unittest
 from pathlib import Path
 from datetime import datetime
 
-from aiko_pet.domain import PetState
-from aiko_pet.storage import PetSettings, StateStore
+from aiko_pet.pet.state import PetState
+from aiko_pet.application.settings import PetSettings
+from aiko_pet.infrastructure.persistence import StateStore
 
 
 # Early-epoch timestamps are not universally supported by Windows localtime.

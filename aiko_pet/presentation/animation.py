@@ -5,31 +5,14 @@ This module does not depend on Tkinter or the desktop window manager.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
-FRAME_COUNTS = {
-    "idle": 6,
-    "running-right": 8,
-    "running-left": 8,
-    "waving": 4,
-    "jumping": 5,
-    "failed": 8,
-    "waiting": 6,
-    "running": 6,
-    "review": 6,
-    "look": 16,
-}
-FRAME_TIMINGS = {
-    "idle": 0.38,
-    "running-left": 0.13,
-    "running-right": 0.13,
-    "waving": 0.22,
-    "jumping": 0.18,
-    "failed": 0.33,
-    "waiting": 0.42,
-    "running": 0.22,
-    "review": 0.3,
-}
+FRAME_COUNTS: dict[str, int] = dict.fromkeys((
+    "idle", "running-right", "running-left", "waving", "jumping", "failed",
+    "waiting", "review", "sleep", "petting", "eat", "attack",
+), 8)
+FRAME_COUNTS["look"] = 16
 
 
 @dataclass(frozen=True)
@@ -62,34 +45,68 @@ def choose_passive_animation(
 
 
 class FrameClock:
-    """Own frame progress while the GUI only renders the selected PNG."""
+    """Show every authored frame for its hold time without skipping late poses."""
 
     def __init__(self, *, started_at: float = 0.0) -> None:
         self.active_key: tuple[str, int | None] | None = None
         self.frame_index = 0
         self.frame_started_at = started_at
+        self.finished = False
+        self.next_delay_ms: int | None = None
+        self.end_time = started_at
+        self._completed_ms = 0
+
+    def reset(self) -> None:
+        """Restart even when two consecutive actions select the same clip."""
+        self.active_key = None
+        self.finished = False
+        self.next_delay_ms = None
+        self._completed_ms = 0
+
+    def progress_seconds(self, now: float, timings: tuple[int, ...]) -> float:
+        """Authored progress; a late callback cannot consume unseen frames."""
+        elapsed = max(0.0, (now - self.frame_started_at) * 1000)
+        return (self._completed_ms + min(elapsed, timings[self.frame_index])) / 1000
 
     def next_index(
-        self,
-        animation: str,
-        now: float,
-        frame_count: int,
-        *,
-        fixed: int | None = None,
+        self, animation: str, now: float, timings: tuple[int, ...], *,
+        fixed: int | None = None, loop: bool = True,
     ) -> int:
-        """Advance at most one frame per call, matching the former GUI timer."""
-        if frame_count < 1:
-            raise ValueError("An animation needs at least one frame")
-        if fixed is not None and not 0 <= fixed < frame_count:
+        if not timings or any(duration <= 0 for duration in timings):
+            raise ValueError("An animation needs positive frame durations")
+        if fixed is not None and not 0 <= fixed < len(timings):
             raise IndexError("Fixed animation frame is out of range")
         key = animation, fixed
         if key != self.active_key:
             self.active_key = key
             self.frame_index = 0
             self.frame_started_at = now
-        elif fixed is None and now - self.frame_started_at >= FRAME_TIMINGS.get(
-            animation, 0.3,
-        ):
-            self.frame_index = (self.frame_index + 1) % frame_count
+            self.finished = False
+            self._completed_ms = 0
+        if fixed is not None:
+            self.frame_index = fixed
+            self.next_delay_ms = None
+            self.end_time = now
+            return fixed
+        elapsed = max(0.0, (now - self.frame_started_at) * 1000)
+        if not self.finished and elapsed + 1e-6 >= timings[self.frame_index]:
+            self._completed_ms += timings[self.frame_index]
+            if self.frame_index + 1 < len(timings):
+                self.frame_index += 1
+            elif loop:
+                self.frame_index = 0
+            else:
+                self.finished = True
+            # Each newly displayed pose receives its full authored hold time.
             self.frame_started_at = now
-        return fixed if fixed is not None else self.frame_index
+            elapsed = 0.0
+        if self.finished:
+            self.next_delay_ms = None
+            self.end_time = now
+            return self.frame_index
+        remaining = timings[self.frame_index] - elapsed
+        self.next_delay_ms = max(1, math.ceil(remaining - 1e-6))
+        self.end_time = now + (
+            remaining + sum(timings[self.frame_index + 1:])
+        ) / 1000
+        return self.frame_index

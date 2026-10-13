@@ -2,7 +2,18 @@
 
 These images are the **actual Aiko Desktop Pet visuals checked into the repository**. They are not newly generated design mockups. Unless otherwise marked, screenshots show the Tkinter application at the indicated historical feature baseline.
 
-## Current v0.13 feature baseline
+## Current Aiko Anime character
+
+![The new Aiko Anime character on the Windows taskbar beside the care panel](../vorschau/Aiko_Anime_Runtime.png)
+
+This unmodified runtime screenshot was supplied by the project maintainer after
+checking the new character integration. The current artwork contains twelve
+eight-frame clips and sixteen static gaze directions, for 112 character poses.
+Eating, petting and sleeping have dedicated animations; attack artwork is
+stored for future use. Runtime timing applies a calm ambient/walking profile;
+the original per-frame durations remain recorded in the runtime manifests.
+
+## Historical v0.13 feature baseline
 
 ### Aiko and the sci-fi care panel
 
@@ -26,7 +37,10 @@ Separate source captures: [start emote](../vorschau/Aiko_v0_13_Emote_Start.png),
 
 ![Aiko's original sprite animations, shown against a neutral background](../vorschau/Original-Animationen.gif)
 
-This GIF shows character artwork rather than the full desktop UI. The 73 production frames in `aiko_pet/assets/frames/` remain the authoritative sprite assets.
+This historical GIF shows the previous 73-frame character artwork rather than
+the full desktop UI. The current 112-pose character set is documented in
+[ASSETS.md](../ASSETS.md) and the
+[runtime provenance manifest](../aiko_pet/assets/provenance.json).
 
 ## Earlier UI and interaction history
 
@@ -47,6 +61,13 @@ The following images document historical versions; they are **not** illustration
 
 ## Asset attribution and reuse
 
-Current UI screenshots may combine Aiko's project-authored image assets and graphics from the Kenney Emote/UI packs. The respective provenance and license boundaries are explained in [ASSETS.md](../ASSETS.md), [Kenney's CC0 notice](../LICENSES/KENNEY_CC0.md) and [the sprite provenance manifest](../aiko_pet/assets/provenance.json). Optional fonts are not bundled.
+The current Aiko Anime artwork has
+[restricted reuse terms](../assets/aiko-anime-8-frames/LICENSE.md); historical
+captures show the earlier MIT sprite release. UI screenshots also contain
+Kenney graphics. The respective provenance and license boundaries are explained
+in [ASSETS.md](../ASSETS.md),
+[Kenney's CC0 notice](../LICENSES/KENNEY_CC0.md) and
+[the sprite provenance manifest](../aiko_pet/assets/provenance.json).
+Optional fonts are not bundled.
 
 The unmodified screenshot/animation filenames under `vorschau/` are retained for compatibility with existing links and historical documents.

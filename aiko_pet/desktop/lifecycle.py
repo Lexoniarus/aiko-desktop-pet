@@ -28,7 +28,7 @@ class DesktopLifecycle:
         application: ApplicationRouter, overlays: WindowStack,
         hover: HoverUi, reaction: ReactionPlayer,
         speech: SpeechPresenter, place_initially: Callable[[], None],
-        save: Callable[[], None],
+        save: Callable[[], None], stop_animation: Callable[[], None],
     ) -> None:
         self._root = root
         self._inputs = inputs
@@ -41,6 +41,7 @@ class DesktopLifecycle:
         self._speech = speech
         self._place_initially = place_initially
         self._save = save
+        self._stop_animation = stop_animation
         self._started = False
         self._stopped = False
 
@@ -64,6 +65,7 @@ class DesktopLifecycle:
         self._stopped = True
         self._application.close()
         self._runtime.stop()
+        self._stop_animation()
         self._inputs.stop()
         self._monitor.stop()
         self._save()

@@ -85,9 +85,7 @@ class DesktopPreferences:
 
     def set_auto_routine(self, enabled: bool) -> None:
         self._settings.auto_routine = bool(enabled)
-        self._state.advance(
-            time.time(), auto_routine=self._settings.auto_routine,
-        )
+        self._activity.advance_state(time.time())
         self._ports.set_context(context_at(time.time()))
         if self._hover.toolbar is not None:
             self._hover.toolbar.refresh()
@@ -143,7 +141,7 @@ class DesktopPreferences:
         self._ports.place_x(
             (track.left + track.right - self._window.width) / 2,
         )
-        self._animated.movement.remaining_distance = 0
+        self._animated.movement.interrupt()
         self._ports.save()
 
     def record_toolbar_position(

@@ -9,10 +9,13 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-from aiko_pet.dialogue import AikoMind, DialogueBook, Reaction
-from aiko_pet.domain import MAX_LIVE_EFFORT_SECONDS, PetState
-from aiko_pet.routine import context_at
-from aiko_pet.storage import PetSettings, StateStore
+from aiko_pet.personality.mind import AikoMind
+from aiko_pet.personality.catalog import DialogueBook, Reaction
+from aiko_pet.pet.lifecycle import MAX_LIVE_EFFORT_SECONDS
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import context_at
+from aiko_pet.application.settings import PetSettings
+from aiko_pet.infrastructure.persistence import StateStore
 
 
 def require_reaction(value: Reaction | None) -> Reaction:
@@ -210,7 +213,8 @@ class TelemetryEffortTests(unittest.TestCase):
             point = start + n * 6
             idle.advance(point, effort=0.03)
             working.advance(point, effort=0.95)
-        self.assertLess(working.satiety, idle.satiety)
+            if n == 600:  # Compare hunger before both values reach their floor.
+                self.assertLess(working.satiety, idle.satiety)
         self.assertLess(working.mood, idle.mood)
         self.assertLess(working.energy, idle.energy)
         self.assertEqual(working.friendship, 40)

@@ -1,0 +1,688 @@
+{
+  "schema_version": 1,
+  "source_archive": "Aiko_Anime_8_Frames_Komplett.zip",
+  "source_archive_sha256": "50f2a755c07dce6bbd9f602c3c85daaeebcf407079fea54179eab831c8ae89b1",
+  "import_date": "2026-10-13",
+  "import_policy": "Only inputs used to rebuild the selected character export are tracked byte-for-byte; unused members remain local and ignored. No imported scripts executed.",
+  "original_file_count": 134,
+  "original_total_bytes": 3277965,
+  "runtime_catalog": "aiko-anime-compact/animations-8/catalog.json",
+  "runtime_integration": "Prepared runtime copies replace the old sprites; attack retained without a trigger",
+  "artwork_license": "LICENSE.md",
+  "preparation_script_license": "../../LICENSE",
+  "original_files": [
+    {
+      "path": "aiko-anime-compact/animations-8/attack/animation.json",
+      "bytes": 3356,
+      "sha256": "0eca3cc180e3d38325060863d424cf87a20666615a1b0310658198df8c181ee4"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/frames/01.png",
+      "bytes": 31256,
+      "sha256": "cf597835a59e405b5ec181540e31c4209641ac4fe5348b8f9c593d59419d0016"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/frames/02.png",
+      "bytes": 31909,
+      "sha256": "43b2f905b8f2a246b7c628a1e36ff57e73bbd2aaa6464451eb842fe28fff5f3a"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/frames/03.png",
+      "bytes": 33754,
+      "sha256": "43731603eaad5e3596dbb37b8d4b4bcd9754c72473e93b9a279e874eb975389b"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/frames/04.png",
+      "bytes": 32284,
+      "sha256": "380e00c13a334f1882dd74068d161af88e3dad80a865a4ab8c42a8737b2f0bd1"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/frames/05.png",
+      "bytes": 34204,
+      "sha256": "aa3c126cf19547c4bf7453da795e0787e624014e14ac3390ad0ce9c7983c7af6"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/frames/06.png",
+      "bytes": 33205,
+      "sha256": "41982eb246ae1c7ca4d585462af6e8073cc0dab3d1216d1ce7891e8634695303"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/frames/07.png",
+      "bytes": 33274,
+      "sha256": "18fe7cb81ddb766eac677b45f5aba06147e9293679c9d8fb3d13ec364c9f1217"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/frames/08.png",
+      "bytes": 32478,
+      "sha256": "d04bde6cdd9a6bef946783ec4521db19a5dd72a37f68bfcd86c9ebc0f2024b61"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/hand-foreground/01.png",
+      "bytes": 773,
+      "sha256": "5c249c25f3d3b6e1046236bff3b29123fb85a4e9c3ee3fbfed0539cc01f7ad25"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/hand-foreground/02.png",
+      "bytes": 1015,
+      "sha256": "71bf8f19be4d42dd529a4c68dbcc910cf3069e6ec66cef89a83c187574d25ab5"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/hand-foreground/03.png",
+      "bytes": 1308,
+      "sha256": "4c0251acf7fc79662c2e9f360cbe79bd200e55ff7002cdb5d8bc78c6aa7e538b"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/hand-foreground/04.png",
+      "bytes": 1103,
+      "sha256": "9b1701f7ee16aad721887db1b700bd427212dfded688262dba7d8d41df920f02"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/hand-foreground/05.png",
+      "bytes": 1061,
+      "sha256": "f2a78a0298614fa6251a285dbedd83b0d046fc6cd4423eb4db62aa7923226557"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/hand-foreground/06.png",
+      "bytes": 1138,
+      "sha256": "2b1b634b1db4c7327c101d34d055c20df0e2a801e357b28d754e8ce216981221"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/hand-foreground/07.png",
+      "bytes": 969,
+      "sha256": "28f3fec7bb1f533167f54d595bd19b43d323dc3eff97981b1e9e619b468e4eaa"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/attack/hand-foreground/08.png",
+      "bytes": 931,
+      "sha256": "355f0d1719e7b0879a7e4cb1fb3f8dce5b9404e2e32f1ffab24d4ad7ab5cd079"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/catalog.json",
+      "bytes": 1522,
+      "sha256": "cf5f81b3b2de20beb20dcc51a0e6547a8913d3e18eda3aa1bbdd11b7db1c929f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/eat/animation.json",
+      "bytes": 1741,
+      "sha256": "57d4c2c3c09c1e139c25a769239c7413438faf8a9b56d33063e5b769888a962f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/eat/frames/01.png",
+      "bytes": 31227,
+      "sha256": "b7ce669f69c02383d7e5e4e3277189af9ae04c81bea16ffbed185ba5f2090ac0"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/eat/frames/02.png",
+      "bytes": 31301,
+      "sha256": "e21fbb16467c892277d87a4a010bbe11be0c304b5ed117f96459ab08532db9b5"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/eat/frames/03.png",
+      "bytes": 31135,
+      "sha256": "9d473eb6c77b8745461920dba053464364b7de884b6a14f634482bddda6768c9"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/eat/frames/04.png",
+      "bytes": 31038,
+      "sha256": "41f7e9189c221f286022a961776c06a674e0745761079923a5c3f51ff5468e76"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/eat/frames/05.png",
+      "bytes": 32168,
+      "sha256": "91b4e0a32e022a46a9c9e17e32487f729e7eac3bb3861e72f7beac6f65515577"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/eat/frames/06.png",
+      "bytes": 31620,
+      "sha256": "9b065f2340526f6ebf9f3cb2c6950cb8ac6ed1250eb1299720529e727f52dd87"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/eat/frames/07.png",
+      "bytes": 31459,
+      "sha256": "86aa3a886733323041e8f859c9672bea58685aa37cba1967fc03780664c9ea40"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/eat/frames/08.png",
+      "bytes": 32491,
+      "sha256": "10a1f2f4f16073b7f6033bde051706c14aa02e92eafa8e552104393cdd47f031"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/failed/animation.json",
+      "bytes": 781,
+      "sha256": "0f33215e799deb063a82d03eb8b65583ae8be7dfb45d938482058317b0efa507"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/failed/frames/01.png",
+      "bytes": 27914,
+      "sha256": "42a16aaefaa1f5f49ff477c1d622d5ffb823a9bb3c4a3dc36796d3a67279f84f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/failed/frames/02.png",
+      "bytes": 27635,
+      "sha256": "0c643820dec7475c28b5b83475baf922d7678a0e5c004c32d896b20f6d7d156d"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/failed/frames/03.png",
+      "bytes": 26728,
+      "sha256": "bcfcb90596affdcfd5a04604e7221734607e71c714ebddf030f30bd65b36c085"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/failed/frames/04.png",
+      "bytes": 24664,
+      "sha256": "853c7416e160d9d92787247e1f5d0679d91a1b91460a7b4ddabf5e918aa0493c"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/failed/frames/05.png",
+      "bytes": 22809,
+      "sha256": "2be1737146d8f90e7c46bd0297cb7b3794f7320cf26bc7351d6b0703b07203ad"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/failed/frames/06.png",
+      "bytes": 27064,
+      "sha256": "8a47316ae81a2c9630646502b3061a274c7bc796d9d093535d7b35a61783844f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/failed/frames/07.png",
+      "bytes": 28490,
+      "sha256": "77252198eaa81fdc13cf81564da14cb77e0b26cf03984d652cbc91cdd8296a8a"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/failed/frames/08.png",
+      "bytes": 28650,
+      "sha256": "7813f7e52270af9ad54a93fee52fd4790e5c8c2498b81f44c58a8406b34b20ae"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/idle/animation.json",
+      "bytes": 774,
+      "sha256": "2c92ad1f531cdd266506c51b5bd9a6edfc47bf23bc73e78698ad5c368c4473e3"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/idle/frames/01.png",
+      "bytes": 28711,
+      "sha256": "dfdce94e6c9db36bb9ebd9a8c288afad6a68dc2d2922c9c5aa57d23e389c628f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/idle/frames/02.png",
+      "bytes": 28480,
+      "sha256": "5c9c6dd2dd9c889c6e3e808746bb3226677f9c34310b329e9f6cb384eb4e242a"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/idle/frames/03.png",
+      "bytes": 28227,
+      "sha256": "76c6bee062c616cc815d56dba3e680356f016fb7d205d091be1f7ed4757a334e"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/idle/frames/04.png",
+      "bytes": 27847,
+      "sha256": "6d2acfa4ecac47f106129a324a1f10bb825ae348ac0e7a933d4aa8cde2502103"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/idle/frames/05.png",
+      "bytes": 28299,
+      "sha256": "f2b6a5b2e28cafe166bda9eaa7780efd54bb2c1b30a4485ec6665a1fc6eabec8"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/idle/frames/06.png",
+      "bytes": 28221,
+      "sha256": "9abc105b73dd356df10606d43be696033b72ca485f1a14d7c1c71f77c08c44dd"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/idle/frames/07.png",
+      "bytes": 28390,
+      "sha256": "5945040b380f95f92130a331d9fa492a3377dd914c3a842e709956f0baa12bc9"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/idle/frames/08.png",
+      "bytes": 28516,
+      "sha256": "dfc71a9a010faf6193daabb6d701d7eeaebfb8fa3e3cac2b49ff9324eb223500"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/jumping/animation.json",
+      "bytes": 774,
+      "sha256": "79d758b74d405185e489715d488b0eafa3672e4cd29e94f2dc866edef4a20188"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/jumping/frames/01.png",
+      "bytes": 23339,
+      "sha256": "90799f0fc454e7c97ae3e98f38b43fd0a65245798ba79ca96fde06039c763005"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/jumping/frames/02.png",
+      "bytes": 23403,
+      "sha256": "efd39dbb4a69a0b62c6242022966c10496549d4bb3a1fd93a8f3546b59fed149"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/jumping/frames/03.png",
+      "bytes": 24135,
+      "sha256": "e68be617f49fed5ebd343f5446188d493242f86602eaff25c5f977aae0ff455c"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/jumping/frames/04.png",
+      "bytes": 25495,
+      "sha256": "7ea6d6f11a325360b4e2509a40c9544c8e896067c13c94a09bc1e662b2827311"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/jumping/frames/05.png",
+      "bytes": 24181,
+      "sha256": "c8c3d56fe9d32af7727bb235da4b71707a5cd721bbe0b7fff436ca95c925a35e"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/jumping/frames/06.png",
+      "bytes": 25212,
+      "sha256": "303f339bd196ca30304c5e1bc7b614d501cfd4138103c344e776aa9f4903a7a8"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/jumping/frames/07.png",
+      "bytes": 24005,
+      "sha256": "d7f735db3a5db02d8dd1b28a217065b8b604712a254c096d4814d1f859935a30"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/jumping/frames/08.png",
+      "bytes": 23892,
+      "sha256": "81d7d470cf2166f8dd33fe4a75b6ee690413d6bbe23780fc44dc1393f91f474f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/000.png",
+      "bytes": 27730,
+      "sha256": "fbad338c975db08ef5c741e9ff6c9d03b27b618dc1b4e78b94c100f467be8b05"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/022p5.png",
+      "bytes": 27438,
+      "sha256": "a1980c5986f9ea439200614270a34f92b006b9375587ef0f39aecdae6411220b"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/045.png",
+      "bytes": 27748,
+      "sha256": "c9fc18c3da408c6846f0a565087cd1847765c2207af1028bd49c1bdf05c4fa43"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/067p5.png",
+      "bytes": 27496,
+      "sha256": "edd58712dff38bad0cbfe9b8776862b68e0aeaa5957cac506d523269d6478750"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/090.png",
+      "bytes": 27079,
+      "sha256": "a66c90b018a0cc328836ba726488029c60f744ba3f13b8494d90181d9e6b121f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/112p5.png",
+      "bytes": 27096,
+      "sha256": "eed94170c2ca5ef8a2e5c581ff6a793edabd4618dc70993826d729cc6ce5f67a"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/135.png",
+      "bytes": 26718,
+      "sha256": "8c6a12142f6572f2d5155453ed5c87dff212ebb1eae64c82fa3e80fac8523e8f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/157p5.png",
+      "bytes": 25824,
+      "sha256": "8a48faf6ab6c956f3500dffac89b950da752e8a74aa58ff14ce7d30747c456b0"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/180.png",
+      "bytes": 26194,
+      "sha256": "c3d1084cfca88ebf00d9d20f5747edd3d70a9665f9f4ebce149544b84e93dfe0"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/202p5.png",
+      "bytes": 25987,
+      "sha256": "901266f7ea3c2a2d729ba3bd1341fe1781d4c34069a416ebe2e21ffe67ac6d7a"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/225.png",
+      "bytes": 26186,
+      "sha256": "57ecc3807b1db037b5cfa641d44a0c922d1c7ec736403300cb54817b860f5b78"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/247p5.png",
+      "bytes": 26034,
+      "sha256": "2887f472589a59a9b26f5d37ed6240d725d019134f4b68561f92d1a1258d64d3"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/270.png",
+      "bytes": 25936,
+      "sha256": "6d621c1d4e3e9d62886086b49962cd1c2a3bb65f584867b7b6a860226f16e635"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/292p5.png",
+      "bytes": 26136,
+      "sha256": "856ec952979cffbe6788d145c01515d9355fb69aefcef424da3603c67cfb463f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/315.png",
+      "bytes": 25958,
+      "sha256": "94114f3eeec1c7e51b700d7152da51a6ce4d201fca4dc8325e74443d7cbd414c"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/337p5.png",
+      "bytes": 26053,
+      "sha256": "794424a5974bf1343ea0ceab5fff00c76db7879bb95a5a4db30627f7500cd473"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/look-directions/directions.json",
+      "bytes": 2758,
+      "sha256": "220c9a43df7344587df19c2923d12cca9260a748443cc17828147a52f0e8a4d4"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/petting/animation.json",
+      "bytes": 816,
+      "sha256": "2510d8e0491e59feee4766b439b44a4d3760fe028f15947599cb8538bed597b2"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/petting/frames/01.png",
+      "bytes": 29071,
+      "sha256": "50ffd4085fe824b977a227239c74d329998d124f0da228791f13fa1074d178e7"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/petting/frames/02.png",
+      "bytes": 32426,
+      "sha256": "1bac3d21981b00670f16997c67e09a659ec7038451d7d1a7becbce2f7cf71a93"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/petting/frames/03.png",
+      "bytes": 30188,
+      "sha256": "d1860a9055d2a32058f930a80a3a5eaa682bac2e24d1f9b00001f0aba1bcb021"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/petting/frames/04.png",
+      "bytes": 30308,
+      "sha256": "bd8c4d00b8c4602b78e1e3cb573c91757408e9c5998b55a008f21b2b91f03c9c"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/petting/frames/05.png",
+      "bytes": 29841,
+      "sha256": "8a0cc5d9f67c7615583a2b430f04ee78423534b0129d651aa1cc127443c67ec6"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/petting/frames/06.png",
+      "bytes": 29723,
+      "sha256": "50ad09091baf4878c5fe6a5c478a74f81682bbee206a073d30812f59c3731fc2"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/petting/frames/07.png",
+      "bytes": 32394,
+      "sha256": "778e338f8de54b6c2b018f2e044aacc4f1052dc2bcbce3a3ccb32798cf05c7a2"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/petting/frames/08.png",
+      "bytes": 28714,
+      "sha256": "8c00ea976bbe65aca023e1f2a99185b87588f24f4974dea99e74c772a6b11b20"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/review/animation.json",
+      "bytes": 776,
+      "sha256": "205c19feb104e61a356616b979758a3876d24fb658786490f01bf4dff41c891b"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/review/frames/01.png",
+      "bytes": 28676,
+      "sha256": "c312abbef918c4a34bf55009d7d4d67b97b9049b0186802bd7759f18ac3eec0d"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/review/frames/02.png",
+      "bytes": 28243,
+      "sha256": "164ee3d436158bd2b19d227d2394e5543c5b111b890553ab5ef92e8fd34b822f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/review/frames/03.png",
+      "bytes": 25893,
+      "sha256": "4556887280e41f19e1938504d0019c8df850b5a2cef76136100b9074aaf703fd"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/review/frames/04.png",
+      "bytes": 28342,
+      "sha256": "f85a34400a1abd37cae2e85616344fadfd3c2ef39073cd4046b41c7247b869bb"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/review/frames/05.png",
+      "bytes": 28880,
+      "sha256": "4a6389f9761fa6aaebe56645a266e18dc9c525ad4f587bccde7a88aa79050209"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/review/frames/06.png",
+      "bytes": 27219,
+      "sha256": "8d4302a4b52f91d63cfea055b9e85e5bfe6ea96323aaa3e418db946c83a313d3"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/review/frames/07.png",
+      "bytes": 27635,
+      "sha256": "e94476fc86dfb2fcef09d1db317e936e8b69557f4480bb5529d72efe7c275273"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/review/frames/08.png",
+      "bytes": 28436,
+      "sha256": "6e26c4c001a98b28d316bfdf6abfe77270409917c370f4f9f100e1fa13a88f41"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-left/animation.json",
+      "bytes": 786,
+      "sha256": "29ea2d2456c47421d4afb8bb40f071ede8b295921c326db9c2763004979ff743"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-left/frames/01.png",
+      "bytes": 29154,
+      "sha256": "bd88feb307bd7f146a6a549999301361db0727cfac5542726b5feaa8f423042d"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-left/frames/02.png",
+      "bytes": 27259,
+      "sha256": "3387d9171c4340f22f5ceccb1e9ba666d5acfc203f0037367520ed1072ccc38a"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-left/frames/03.png",
+      "bytes": 27794,
+      "sha256": "a3e138f9441c78a92f9e1aed8e195e4bc81815a4a1c9a60f19e3938bb4c586f7"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-left/frames/04.png",
+      "bytes": 27221,
+      "sha256": "c7e216c908acfa95e3b83fa00ebaa9fb561624520ea9bacd27eb2c75248b7f33"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-left/frames/05.png",
+      "bytes": 29295,
+      "sha256": "cd00cd96231a0d5efe937703b0bf07d150ab49f377be503f0e32880cfda54fd5"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-left/frames/06.png",
+      "bytes": 27310,
+      "sha256": "42cf513b32f00ae0fbbdb9032fe59c27ded9d09e361a19daa653b11435431d96"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-left/frames/07.png",
+      "bytes": 27684,
+      "sha256": "4351892b7377bc4f26b0c6c996e7256eb035d29986fa39532b5ac97098a79c2d"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-left/frames/08.png",
+      "bytes": 26955,
+      "sha256": "555cf6ba42e34a01ddcf1943d8164e943a813ca71b8e5f5ef0a7a3dcb7a276e0"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-right/animation.json",
+      "bytes": 787,
+      "sha256": "de324e3dc1764af395859009e2576692251df4c32833b5152c8464eae8df11bf"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-right/frames/01.png",
+      "bytes": 29168,
+      "sha256": "cc86bf83804ec9a75175568c2f161809bd282e08f13b602fc68315d6a90c0135"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-right/frames/02.png",
+      "bytes": 27205,
+      "sha256": "9620d3946a21dcd5d1d34968921e706395a9138b94189ea8e5371afae283caa0"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-right/frames/03.png",
+      "bytes": 27795,
+      "sha256": "6c9f806af88ef62b4f14e01048c0b3215c30dbb48be2909f6a5c782fe90e7446"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-right/frames/04.png",
+      "bytes": 27245,
+      "sha256": "bbc3619655b20c4640ab1a2e3e321525fe1911107ef77782587dfb8b06e7c0f1"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-right/frames/05.png",
+      "bytes": 29224,
+      "sha256": "ead86b9e1b949acb6fbcd00881139cf0c91a0289abefc0b0e7fd23ff07f30295"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-right/frames/06.png",
+      "bytes": 27263,
+      "sha256": "fa7fc35dbc436f044fd551cfb5da72ffca07be34f91ca27d029915b3030669b9"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-right/frames/07.png",
+      "bytes": 27627,
+      "sha256": "bc9ec0d803f202c2dbaa3f7eb7ef18a9acbe2c81366a35162c435239e416e741"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/running-right/frames/08.png",
+      "bytes": 26861,
+      "sha256": "82132acce5f86a76bfc1f81f4aa2bf840c3eadac5bbc0028da3f59accb1b6c5f"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/sleep/animation.json",
+      "bytes": 788,
+      "sha256": "97b3153b316baf26926a3818b7d9f379fe9053c10f7949a2ffa72aebf0e7ffb0"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/sleep/frames/01.png",
+      "bytes": 38001,
+      "sha256": "55af52c9bbe309e928c3d65ddcd3b9b5507c37fbbfffde0a3a2b7a9067823edb"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/sleep/frames/02.png",
+      "bytes": 38229,
+      "sha256": "339b0b86abf7239b00c96659f8abe8602b3941c3da688058bc83decb99ba3ba6"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/sleep/frames/03.png",
+      "bytes": 38196,
+      "sha256": "cd0c2a86aa9f1929c47aaf18cf1cb812415891fe0087f8d69a626386b34c574c"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/sleep/frames/04.png",
+      "bytes": 38718,
+      "sha256": "ded97988b6386f41f761ba363517da7b7608707adc1477f3e9a1775ec4ce4225"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/sleep/frames/05.png",
+      "bytes": 38853,
+      "sha256": "bf3fdb62e57f5f339eac3afc0a803372c1979b72cfc236f8ca9be25a56460cff"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/sleep/frames/06.png",
+      "bytes": 39155,
+      "sha256": "6c8864b46da8c826888a549ddf8767ad071c1c9db6c52b22bb077d49eacc766d"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/sleep/frames/07.png",
+      "bytes": 38515,
+      "sha256": "6b81e809004c6fbed2eac04b28f5d0edf554def6880ff090539b48fcb48ffb6a"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/sleep/frames/08.png",
+      "bytes": 37976,
+      "sha256": "49847925ed28de55f89b83108d0699e35ee0b7540e568bcc639f0c20c997c1e4"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waiting/animation.json",
+      "bytes": 777,
+      "sha256": "b3a9c14b33b3e062e6873f49f4e507eadb8c0502576dcd92f064f855da2c9537"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waiting/frames/01.png",
+      "bytes": 28958,
+      "sha256": "96df868a85fb45dd79106e3b0c43bfcae1a19d014cb438fa2255f8615204a0ef"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waiting/frames/02.png",
+      "bytes": 29209,
+      "sha256": "094368c6ce7d355590b66a000dd244b0852f40ee4732fc87707c50e66bd62a35"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waiting/frames/03.png",
+      "bytes": 28623,
+      "sha256": "c3c0a87193b64d0552a6019765d2d0bd59da4d1170e8761c90470b6c5299bddd"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waiting/frames/04.png",
+      "bytes": 28738,
+      "sha256": "83f2246656720193140fa94ff1fd05bdd5a92a615247d126f8a8164067d50bfb"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waiting/frames/05.png",
+      "bytes": 28783,
+      "sha256": "934c7fdd6eff574c051f424f4fadd43304d455ac238fc5b8a67e25ea750c208b"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waiting/frames/06.png",
+      "bytes": 29320,
+      "sha256": "5e8124644de533ee21f15a6cf5422318935b3899de5beca3fcccfba12e485dd0"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waiting/frames/07.png",
+      "bytes": 28687,
+      "sha256": "095d5e3e4ad4be1e299050db1ef59d3326cecdb00caa5c237f163f6df8e7298b"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waiting/frames/08.png",
+      "bytes": 29010,
+      "sha256": "a0fa9f8b1446dad289212df50ffaf8e63e87896c2b42375207ff432e6ea546bf"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waving/animation.json",
+      "bytes": 772,
+      "sha256": "99bd0eb4881354c442d11dca2474a0bbf8d22592a7659981b7d4e46d2a19eb61"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waving/frames/01.png",
+      "bytes": 29140,
+      "sha256": "62405fc9d66395d832c420f3e1b4d17b5a57c4cfe35ece74ed67673c0e833ad7"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waving/frames/02.png",
+      "bytes": 28077,
+      "sha256": "ec322620940f84ee5e9f1fc30b7a8ed3983b38ba78dfcbcf4464203052fd0d1c"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waving/frames/03.png",
+      "bytes": 29084,
+      "sha256": "fec6f0a92e8064d722bc466de0605f7a34933d4598e6b364ee361dee2753bf69"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waving/frames/04.png",
+      "bytes": 28268,
+      "sha256": "e86f15467b60050bd211397b497f8d2df6e6d1bc9a5dc9d3188abedd5e1854a6"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waving/frames/05.png",
+      "bytes": 28950,
+      "sha256": "b171b84ba5fd823d71809b033ba4e940780e89bce518de1c51ac263d33f8eaa1"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waving/frames/06.png",
+      "bytes": 27776,
+      "sha256": "6dd44c21862628da9679d90541fd3d0886d48a19f664a97cc02ac12283824c66"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waving/frames/07.png",
+      "bytes": 27529,
+      "sha256": "d8b1f2ba94816b6c61522e7abdc1f2fd6b977b7c1f09de133c9f9de1c8431db9"
+    },
+    {
+      "path": "aiko-anime-compact/animations-8/waving/frames/08.png",
+      "bytes": 28892,
+      "sha256": "e811182325c54f407763fc21197ba67dec49bfe9637465449419b2846e123ec2"
+    }
+  ],
+  "archive_file_count": 947,
+  "archive_total_bytes": 165620643,
+  "excluded_original_file_count": 813
+}

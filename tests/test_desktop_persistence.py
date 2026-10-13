@@ -8,10 +8,11 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.adaptive import AdaptiveRoutine
+from aiko_pet.personality.adaptive import AdaptiveRoutine
 from aiko_pet.desktop.persistence import DesktopPersistence
-from aiko_pet.domain import PetState
-from aiko_pet.storage import PetSettings, StateStore
+from aiko_pet.pet.state import PetState
+from aiko_pet.application.settings import PetSettings
+from aiko_pet.infrastructure.persistence import StateStore
 
 
 class DesktopPersistenceTests(unittest.TestCase):

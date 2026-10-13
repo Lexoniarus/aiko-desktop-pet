@@ -7,7 +7,7 @@ SPRITE_FRAME_DIR = ASSET_ROOT / "frames"
 EMOTE_IMAGE_DIR = ASSET_ROOT / "emotes"
 KENNEY_UI_DIR = ASSET_ROOT / "kenney_ui"
 
-# Public aliases remain available through aiko_pet.gui for existing callers.
+# Asset names used by the concrete character and speech views.
 ASSETS = SPRITE_FRAME_DIR
 EMOTE_ASSETS = EMOTE_IMAGE_DIR
 SCI_FI_UI = KENNEY_UI_DIR

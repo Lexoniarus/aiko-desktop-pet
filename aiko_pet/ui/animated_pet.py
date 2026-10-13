@@ -11,19 +11,15 @@ import random
 import time
 import tkinter as tk
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Callable, Protocol
 
 from ..presentation.animation import (
-    FRAME_COUNTS, FrameClock, choose_passive_animation,
+    FrameClock, choose_passive_animation,
 )
-from ..asset_paths import ASSETS
+from ..presentation.character import CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH
 from ..presentation.gaze import gaze_sector
 from ..presentation.movement import WalkConditions, WalkController
-from ..desktop.geometry import TaskbarTrack
-
-FRAME_WIDTH = 128
-FRAME_HEIGHT = 208
+from ..desktop.geometry import TaskbarTrack, FOOT_BASELINE
 
 
 class BusyReading(Protocol):
@@ -79,6 +75,7 @@ class AnimatedPorts:
     action_state: Callable[[], str]
     walk_finished: Callable[[float], None]
     cursor_moved: Callable[[float, int, float], None]
+    extend_action: Callable[[float], None]
 
 
 class AnimatedPet:
@@ -88,7 +85,7 @@ class AnimatedPet:
         self, root: tk.Tk, canvas: tk.Canvas,
         state: CareVisuals, settings: CharacterSettings,
         adaptive: FocusReadings, monitor: ActivityReadings,
-        ports: AnimatedPorts,
+        ports: AnimatedPorts, *, assets: CharacterCatalog,
     ) -> None:
         self.root = root
         self.canvas = canvas
@@ -97,9 +94,16 @@ class AnimatedPet:
         self.adaptive = adaptive
         self.monitor = monitor
         self.ports = ports
+        self.assets = assets
+        self._frame_timer: str | None = None
+        self._frame_generation = 0
+        self._active_action: str | None = None
+        self._stopped = False
+        self._last_motion_at = time.monotonic()
+        self._walk_progress = 0.0
         self.frame_clock = FrameClock(started_at=time.monotonic())
         self.movement = WalkController(
-            next_walk_at=time.monotonic() + random.uniform(3.0, 8.0),
+            next_walk_at=time.monotonic() + random.uniform(60.0, 180.0),
         )
         self.gaze_sector: int | None = None
         self._previous_pointer: tuple[int, int] | None = None
@@ -110,14 +114,15 @@ class AnimatedPet:
         self.image_item = self.canvas.create_image(
             0, 0, anchor="nw", image=self.sprites["idle"][0],
         )
+        self.show_frame("idle", time.monotonic())
 
     def load_sprites(self) -> dict[str, list[tk.PhotoImage]]:
         """Load prepared frames at Aiko's current integer pixel scale."""
         sprites: dict[str, list[tk.PhotoImage]] = {}
-        for state, count in FRAME_COUNTS.items():
+        for state, clip in self.assets.clips.items():
             frames: list[tk.PhotoImage] = []
-            for i in range(count):
-                path: Path = ASSETS / state / f"{i:02d}.png"
+            for definition in clip.frames:
+                path = definition.file
                 if not path.is_file():
                     raise FileNotFoundError(f"Missing sprite: {path}")
                 frame = tk.PhotoImage(file=str(path))
@@ -134,28 +139,101 @@ class AnimatedPet:
     def set_auto_walk(self, enabled: bool, now: float) -> None:
         """Walking configuration belongs to the character's movement owner."""
         self.settings.auto_walk = bool(enabled)
-        self.movement.remaining_distance = 0
-        self.movement.next_walk_at = now + random.uniform(2.5, 5)
+        self.movement.interrupt()
+        self.movement.pause(now)
 
     def set_follow_cursor(self, enabled: bool) -> None:
         self.settings.follow_cursor = bool(enabled)
         self.gaze_sector = None
 
     def reload_sprites(self) -> None:
-        """Apply a new visual scale without touching care or hover state."""
+        """Replace scaled images while preserving the active playback clock."""
         self.sprites = self.load_sprites()
-        self.canvas.itemconfigure(
-            self.image_item, image=self.sprites["idle"][0],
-        )
+        state, fixed = self.frame_clock.active_key or ("idle", None)
+        self.show_frame(state, time.monotonic(), fixed=fixed)
+
+    def begin_action(self, state: str, now: float) -> None:
+        """Start a new visual action, including repeated actions of one kind."""
+        self.frame_clock.reset()
+        self._active_action = state
+        self.movement.interrupt()
+        self.show_frame(state, now)
+
+    def cancel_action(self, now: float) -> None:
+        """Interrupt the previous visual when entering or leaving sleep."""
+        self.frame_clock.reset()
+        self._active_action = None
+        self.movement.interrupt()
+        self.show_frame("sleep" if self.state.sleeping else "idle", now)
 
     def show_frame(
         self, state: str, now: float, *, fixed: int | None = None,
     ) -> None:
-        frames = self.sprites[state]
+        if self._stopped:
+            return
+        clip = self.assets.clips[state]
+        walking = state in ("running-left", "running-right")
+        if walking and self.frame_clock.active_key != (state, fixed):
+            self._last_motion_at = now
+            self._walk_progress = 0.0
         index = self.frame_clock.next_index(
-            state, now, len(frames), fixed=fixed,
+            state, now, clip.timings, fixed=fixed, loop=clip.loop,
         )
-        self.canvas.itemconfigure(self.image_item, image=frames[index])
+        if self._active_action == state and not clip.loop:
+            self.ports.extend_action(self.frame_clock.end_time)
+        self.canvas.coords(
+            self.image_item,
+            (FRAME_WIDTH // 2 - clip.anchor[0]) * self.settings.scale,
+            (FOOT_BASELINE - clip.anchor[1]) * self.settings.scale,
+        )
+        self.canvas.itemconfigure(self.image_item, image=self.sprites[state][index])
+        if self._frame_timer is not None:
+            self.root.after_cancel(self._frame_timer)
+            self._frame_timer = None
+        self._frame_generation += 1
+        generation = self._frame_generation
+        delay = self.frame_clock.next_delay_ms
+        if self.frame_clock.finished and self._active_action == state:
+            self._active_action = None
+            self.show_frame(clip.return_to, now)
+        elif delay is not None:
+            if walking:
+                motion_wait = max(1, math.ceil(
+                    33 - (now - self._last_motion_at) * 1000 - 1e-6,
+                ))
+                delay = min(delay, motion_wait)
+            self._frame_timer = self.root.after(
+                delay, lambda: self._advance_frame(state, fixed, generation),
+            )
+
+    def _advance_frame(
+        self, state: str, fixed: int | None, generation: int,
+    ) -> None:
+        if self._stopped or generation != self._frame_generation:
+            return
+        self._frame_timer = None
+        now = time.monotonic()
+        if state in ("running-left", "running-right"):
+            progress = self.frame_clock.progress_seconds(
+                now, self.assets.clips[state].timings,
+            )
+            elapsed = max(0.0, progress - self._walk_progress)
+            self._walk_progress = progress
+            self._last_motion_at = now
+            moving = self.maybe_walk(now, elapsed)
+            if moving is None or self.movement.remaining_distance == 0:
+                self.render(now, 0, self._previous_pointer or (0, 0))
+                return
+            state = moving
+        self.show_frame(state, now, fixed=fixed)
+
+    def stop(self) -> None:
+        """Cancel animation callbacks before the desktop destroys Tk."""
+        self._stopped = True
+        self._frame_generation += 1
+        if self._frame_timer is not None:
+            self.root.after_cancel(self._frame_timer)
+            self._frame_timer = None
 
     def observe_pointer(self, now: float) -> tuple[int, int]:
         """Observe only pointer positions, not keys or application content."""
@@ -171,7 +249,7 @@ class AnimatedPet:
             if now - self.last_attention >= 6.0:
                 self.last_attention = now
                 self.attention_until = now + 1.0
-            eye_x = (self.settings.x or 0) + 63 * self.settings.scale
+            eye_x = (self.settings.x or 0) + (FRAME_WIDTH // 2) * self.settings.scale
             eye_y = (self.settings.y or 0) + 82 * self.settings.scale
             distance = math.hypot(pointer[0] - eye_x, pointer[1] - eye_y)
             self.ports.cursor_moved(
@@ -184,7 +262,7 @@ class AnimatedPet:
         if not self.settings.follow_cursor:
             self.gaze_sector = None
             return None
-        eyes_x = self.root.winfo_x() + 63 * self.settings.scale
+        eyes_x = self.root.winfo_x() + (FRAME_WIDTH // 2) * self.settings.scale
         eyes_y = self.root.winfo_y() + 82 * self.settings.scale
         self.gaze_sector = gaze_sector(
             eyes_x, eyes_y, *pointer,
@@ -202,6 +280,11 @@ class AnimatedPet:
         step = self.movement.plan_step(WalkConditions(
             now=now,
             elapsed_seconds=dt,
+            speed_pixels_per_second=(
+                68 * self.settings.scale
+                / self.assets.clips["running-left"].duration_seconds
+            ),
+            stride_pixels=68 * self.settings.scale,
             x=self.settings.x or 0,
             track=self.ports.track(),
             sprite_width=FRAME_WIDTH * self.settings.scale,
@@ -216,10 +299,18 @@ class AnimatedPet:
         ))
         if step is None:
             return None
+        if step.pixels == 0:
+            return step.animation
         old_x = self.settings.x or 0
         self.ports.place_x(old_x + step.pixels)
         delta = (self.settings.x or 0) - old_x
-        if self.movement.record_displacement(delta):
+        track = self.ports.track()
+        blocked = (
+            (step.pixels < 0 and (self.settings.x or 0) <= track.left)
+            or (step.pixels > 0 and (self.settings.x or 0)
+                >= track.right - FRAME_WIDTH * self.settings.scale)
+        )
+        if self.movement.record_displacement(delta, now=now, blocked=blocked):
             self.ports.walk_finished(now)
         return step.animation
 
@@ -228,12 +319,19 @@ class AnimatedPet:
     ) -> None:
         """Draw one state with unchanged sleep/action/gaze precedence."""
         if self.state.sleeping:
-            self.movement.remaining_distance = 0
-            self.show_frame("idle", now, fixed=2)
+            self.movement.interrupt()
+            self._active_action = None
+            self.show_frame("sleep", now)
+        elif (
+            self._active_action is not None
+            and not self.assets.clips[self._active_action].loop
+        ):
+            self.show_frame(self._active_action, now)
         elif now < self.ports.action_until():
             self.show_frame(self.ports.action_state(), now)
         else:
-            moving = self.maybe_walk(now, elapsed)
+            self._active_action = None
+            moving = self.maybe_walk(now, 0)
             if moving is not None:
                 self.show_frame(moving, now)
                 return

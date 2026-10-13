@@ -1,0 +1,50 @@
+{
+  "state": "sleep",
+  "loop": true,
+  "frame_size": [
+    192,
+    208
+  ],
+  "anchor": [
+    96,
+    195
+  ],
+  "frames": [
+    {
+      "file": "frames/01.png",
+      "duration_ms": 480
+    },
+    {
+      "file": "frames/02.png",
+      "duration_ms": 190
+    },
+    {
+      "file": "frames/03.png",
+      "duration_ms": 190
+    },
+    {
+      "file": "frames/04.png",
+      "duration_ms": 420
+    },
+    {
+      "file": "frames/05.png",
+      "duration_ms": 240
+    },
+    {
+      "file": "frames/06.png",
+      "duration_ms": 240
+    },
+    {
+      "file": "frames/07.png",
+      "duration_ms": 420
+    },
+    {
+      "file": "frames/08.png",
+      "duration_ms": 380
+    }
+  ],
+  "total_ms": 2560,
+  "transition_included": false,
+  "original_total_ms": 2560,
+  "new_frame_count": 2
+}

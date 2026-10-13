@@ -6,19 +6,16 @@ import unittest
 from dataclasses import dataclass
 from datetime import datetime
 
-from aiko_pet.domain import (
-    MAX_CATCHUP_SECONDS,
-    MAX_LIVE_EFFORT_SECONDS,
-    PetState,
-)
-from aiko_pet.need_decay import apply_need_decay
-from aiko_pet.pet_lifecycle import (
+from aiko_pet.pet.lifecycle import MAX_CATCHUP_SECONDS, MAX_LIVE_EFFORT_SECONDS
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.need_decay import apply_need_decay
+from aiko_pet.pet.lifecycle import (
     MAX_CATCHUP_SECONDS as POLICY_CATCHUP,
     MAX_LIVE_EFFORT_SECONDS as POLICY_LIVE_WINDOW,
     advance_pet_time,
     apply_daily_routine,
 )
-from aiko_pet.routine import context_at
+from aiko_pet.pet.routine import context_at
 
 
 @dataclass
@@ -39,11 +36,11 @@ class NeedDecayTests(unittest.TestCase):
     def test_normal_waking_decay_does_not_require_pet_state(self) -> None:
         needs = Needs()
         apply_need_decay(needs, 1, context=None)
-        self.assertEqual(needs.satiety, 72.0)
-        self.assertEqual(needs.mood, 73.0)
-        self.assertAlmostEqual(needs.energy, 72.8)
-        self.assertEqual(needs.social, 73.2)
-        self.assertEqual(needs.affection, 73.65)
+        self.assertEqual(needs.satiety, 45.0)
+        self.assertEqual(needs.mood, 71.0)
+        self.assertAlmostEqual(needs.energy, 69.0)
+        self.assertEqual(needs.social, 67.0)
+        self.assertEqual(needs.affection, 69.0)
 
     def test_sleep_replenishes_energy_without_friendship_change(self) -> None:
         needs = Needs(sleeping=True, energy=40)
@@ -93,9 +90,9 @@ class PetTimelineTests(unittest.TestCase):
     def test_catchup_is_bounded_without_routine(self) -> None:
         state = PetState(updated_at=local_stamp())
         advance_pet_time(state, local_stamp() + 86400.0 * 7)
-        self.assertEqual(state.satiety, 51.0)
-        self.assertEqual(state.mood, 59.0)
-        self.assertAlmostEqual(state.energy, 57.4)
+        self.assertEqual(state.satiety, 0.0)
+        self.assertEqual(state.mood, 43.0)
+        self.assertAlmostEqual(state.energy, 27.0)
 
     def test_telemetry_is_not_extrapolated_across_offline_hours(self) -> None:
         calm = PetState(updated_at=local_stamp())

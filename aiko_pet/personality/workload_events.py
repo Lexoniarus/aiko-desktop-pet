@@ -132,7 +132,3 @@ class WorkloadEventDetector:
             return None
         self.last_voice_at = now
         return event
-
-
-# Historical import name: the detector does not synthesize spoken audio.
-ComputerVoice = WorkloadEventDetector

@@ -10,6 +10,7 @@ from ..personality.catalog import Reaction
 from ..pet.state import PetState
 from ..pet.routine import TimeContext, context_at
 from .commands import CareCommand
+from .active_time import ActiveSessionClock
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,10 +40,12 @@ class CareController:
 
     def __init__(
         self, state: PetState, mind: AikoMind, adaptive: AdaptiveRoutine,
+        *, clock: ActiveSessionClock,
     ) -> None:
         self._state = state
         self._mind = mind
         self._adaptive = adaptive
+        self._clock = clock
 
     def execute(self, command: CareCommand, runtime: CareRuntime) -> CareOutcome:
         """Preserve the original ordering of time, dialogue and care changes."""
@@ -53,6 +56,7 @@ class CareController:
             allow_nap=runtime.allow_nap,
             interrupt_nap=runtime.interrupt_nap,
             effort=runtime.effort,
+            elapsed_seconds=self._clock.consume(),
         )
         self._adaptive.note_interaction(runtime.wall_time)
         context = context_at(runtime.wall_time)

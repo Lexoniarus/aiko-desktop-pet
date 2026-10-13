@@ -19,7 +19,9 @@ from ..pet.routine import TimeContext
 CATALOGUE = (
     Path(__file__).resolve().parents[1] / "data" / "dialogues.de.json"
 )
-ANIMATIONS = frozenset({"idle", "waiting", "review", "failed", "waving", "jumping"})
+ANIMATIONS = frozenset({
+    "idle", "waiting", "review", "failed", "waving", "jumping", "eat", "petting",
+})
 EMOTIONS = frozenset({
     "asleep", "irritated", "tired", "hungry", "withdrawn", "warm", "playful", "calm",
     "lonely", "seeking_affection",

@@ -1,7 +1,6 @@
 """Situational dialogue decisions for Aiko's offline desktop personality.
 
-The authored dialogue catalogue and its validation live in dialogue_catalog.
-Legacy module exports remain available to callers importing aiko_pet.dialogue.
+The authored dialogue catalogue and its validation live in personality.catalog.
 """
 
 from __future__ import annotations
@@ -23,7 +22,6 @@ from .catalog import (
 from .click_policy import ClickButton, choose_click_reaction
 from ..pet.state import PetState
 from ..pet.routine import TimeContext
-from .workload_events import ComputerVoice as ComputerVoice
 from .work_episode import WorkEpisodeMemory
 
 
@@ -188,6 +186,10 @@ class AikoMind:
         if action == "sleep":
             self.irritated_until = -1.0
             self.clicks.clear()
+
+    def recently_cared_for(self, now: float) -> bool:
+        """Give accepted care three minutes before another gentle request."""
+        return self._last_care_at >= 0 and now - self._last_care_at < 180
 
     def computer_event(
         self, event: str, state: PetState, context: TimeContext, now: float,

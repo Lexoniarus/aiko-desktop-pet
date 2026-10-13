@@ -6,15 +6,61 @@ This repository includes original project content, AI-generated character artwor
 
 Unless a file identifies a different license, the project's own source code is distributed under the [MIT License](LICENSE). MIT permits copying, modification, redistribution, sublicensing, and commercial use, subject to preserving the required copyright and license notices. Public availability is not an additional usage restriction.
 
-## 2. Aiko character artwork and animation sprites — MIT
+## 2. Aiko character artwork — distinct old and new terms
 
-The **73 Aiko character animation frames** under `aiko_pet/assets/frames/` were prepared from the project's original generated artwork. According to the project creator, the artwork was produced with **OpenAI image-generation tools through a Codex-based generation workflow**, with subsequent selection, layout preparation, and sprite extraction.
+### Current Aiko Anime assets — restricted reuse
 
-The creator makes any **licensable rights the creator controls** in these project-authored image assets available under the project's [MIT License](LICENSE). These assets are therefore **not** subject to a separate proprietary reuse restriction in this repository.
+The runtime source export from `Aiko_Anime_8_Frames_Komplett.zip` is imported
+under [assets/aiko-anime-8-frames/](assets/aiko-anime-8-frames/IMPORT_README.md).
+Only the 134 original files needed to rebuild the selected character export
+are tracked, byte-for-byte: catalogs, manifests, pose images and attack hand
+layers. The other 813 archive members, including references, generation
+attempts, prompts and QA material, remain local and are ignored by Git.
+According to the project creator, the artwork was generated with ChatGPT image
+generation in an agent workflow.
 
-The technical provenance manifest is `aiko_pet/assets/provenance.json`. It identifies the source sheet, source hash, sprite counts, and cropping parameters. The extraction step did not invent additional character poses.
+The current desktop export has **112 character poses**: twelve eight-frame
+clips and sixteen cursor-gaze poses. Prepared full-width 192 × 208 copies live
+in `aiko_pet/assets/frames/`, with timing/anchor metadata in
+`aiko_pet/assets/animations.json` and hand foreground layers in
+`aiko_pet/assets/hand-foreground/`. Attack assets and optional overlay metadata
+are retained for future use; there is no attack trigger or bundled food,
+weapon or magic graphic in the current application.
 
-OpenAI's [Terms of Use](https://openai.com/policies/terms-of-use/) address ownership of generated output as between the user and OpenAI, to the extent permitted by applicable law. They do not impose a special “Codex desktop-pet sprite license” for these images. AI-generated output might not be unique or copyright-protected in every jurisdiction; this notice does not claim exclusivity over all generated content, imply endorsement by OpenAI, or grant rights the project creator does not possess.
+The new artwork and associated asset data are **excluded from the MIT license**.
+[The Aiko Anime asset terms](assets/aiko-anime-8-frames/LICENSE.md) permit
+use in Aiko Desktop Pet; other reuse and redistribution, including distributed
+forks carrying these assets, require Alex's prior, explicit, case-specific
+consent. Application and preparation code remain MIT. Kenney graphics remain
+CC0. Third-party rights and earlier licenses are not overridden.
+
+`IMPORT_MANIFEST.json` in the source-export directory records the ZIP hash and
+each included original file's path, byte size and SHA-256. The runtime provenance
+manifest records prepared-file hashes, full image dimensions and the existing
+128-threshold binary-alpha policy used for Windows color-key transparency.
+Original imported artwork is not cropped or overwritten. Preparation uses
+`python tools/prepare_character_assets.py`; Pillow is required only for that
+build step, not for running the desktop app.
+
+The runtime timing profile extends the open poses of idle, waiting and review
+to 2.52-second cycles, and walking to 1.413 seconds. Each animated runtime frame
+records `source_duration_ms` alongside its effective `duration_ms`; source
+manifests and PNGs are unchanged. Other clips retain the authored durations.
+
+OpenAI assigns its rights in generated output, if any, to the user to the extent
+permitted by applicable law. This does not establish that every generated image
+is unique or copyright-protected. The asset notice covers only licensable rights
+Alex actually controls. See the [European Terms of Use, Content section](https://openai.com/de-DE/policies/eu-terms-of-use/)
+and [service terms](https://openai.com/policies/service-terms/).
+
+### Previous 73-frame Aiko sprite set — earlier MIT release
+
+The previous sprite set was generated through a Codex-based OpenAI image
+workflow and prepared as 128 × 208 frames. It was explicitly released under
+MIT for the rights the creator controls. Replacing it with the new artwork
+**does not change that earlier MIT release**. The old files and notices remain
+available in Git history, for example the
+[pre-replacement source commit](https://github.com/Lexoniarus/aiko-desktop-pet/tree/3125ce1527e14390d4ae59f03a1891fdf5789ca6).
 
 ## 3. Kenney game assets — CC0 1.0
 
@@ -37,16 +83,18 @@ The user-supplied `Kenney Mini.ttf` is **not distributed** with the project. Aik
 
 ## 5. Screenshots and previews
 
-Images in `vorschau/` may contain both Aiko sprite art and Kenney UI/emotes.
-Their depicted components retain the license and provenance described above.
+Historical images in `vorschau/` show the earlier MIT sprite artwork with
+Kenney UI/emotes. The maintainer-supplied `vorschau/Aiko_Anime_Runtime.png` and
+the included source poses show the restricted Aiko Anime artwork.
+Their depicted components retain their respective licenses.
 The [curated gallery](docs/MEDIA_GALLERY.md) distinguishes actual application
 screenshots, sprite animation previews, historical builds and third-party
 Kenney layout references.
 
-The original source spritesheet identified by `aiko_pet/assets/provenance.json` is
-not shipped in this repository. The checked-in animation frames can be
-used as supplied; the manifest documents their origin and extraction,
-but it does not by itself reproduce the original asset-generation workflow.
+All inputs needed to rebuild the prepared runtime frames are included in the
+selected source export. Unused archive material is excluded from the public
+repository. The older source spritesheet was not shipped with the earlier
+73-frame release.
 
 ## 6. Language
 

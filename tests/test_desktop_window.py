@@ -5,7 +5,7 @@ from __future__ import annotations
 import tkinter as tk
 import unittest
 
-from aiko_pet.storage import PetSettings
+from aiko_pet.application.settings import PetSettings
 from aiko_pet.ui.desktop_window import DesktopWindow
 
 
@@ -39,7 +39,7 @@ class DesktopWindowTests(unittest.TestCase):
         self.settings.scale = 2
         self.window.resize()
         self.assertFalse(self.window.placed)
-        self.assertEqual((self.window.width, self.window.height), (256, 416))
+        self.assertEqual((self.window.width, self.window.height), (384, 416))
         self.assertTrue(self.window.place_x(self.settings.x or 0))
         self.assertEqual(self.settings.y, self.window.track.sprite_y(2))
 

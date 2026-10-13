@@ -6,7 +6,6 @@ gaze sprites and exposes her care actions in a mouse-hover toolbar.
 
 from __future__ import annotations
 
-import random
 import time
 import tkinter as tk
 from dataclasses import replace
@@ -16,23 +15,20 @@ from tkinter import messagebox
 from .application.session import PetSessionRestorer
 from .application.settings import SettingKey
 from .application.activity import ActivityCallbacks, ActivityCoordinator
-from .desktop.compatibility import DesktopCompatibility
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import (
-    DesktopRuntime, DesktopTickPorts, TICK_MILLISECONDS as TICK_MILLISECONDS,
+    DesktopRuntime, DesktopTickPorts,
 )
 from .desktop.persistence import DesktopPersistence
 from .desktop.maintenance import DesktopMaintenance
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
+from .application.active_time import ActiveSessionClock
+from .infrastructure.active_time import active_uptime_seconds
 from .ui.hover_ui import HoverUi, HoverUiPorts
 from .application.router import ApplicationRouter
 from .presentation.read_models import DesktopPresentation
-from .presentation.animation import (
-    FRAME_COUNTS as FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
-    FrameClock as FrameClock,
-)
 from .config import load_env_file
 from .desktop.global_input import idle_seconds_windows
 from .desktop.input import DesktopInput, DesktopInputActions
@@ -40,32 +36,21 @@ from .desktop.lifecycle import DesktopLifecycle
 from .personality.mind import AikoMind
 from .personality.workload_events import WorkloadEventDetector
 from .personality.catalog import Reaction
-from .presentation.movement import WalkController as WalkController
 from .pet.routine import TimeContext, context_at
-from .personality.reaction_sequence import Cue as Cue, EMOTES as EMOTES
 from .presentation.reaction_playback import ReactionPlayer, choose_idle_emote
+from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.persistence import StateStore
 from .infrastructure.hardware.monitor import ActivityMonitor
-from .desktop.geometry import TaskbarTrack as TaskbarTrack
 from .ui.desktop_window import (
-    DesktopWindow, FRAME_WIDTH as FRAME_WIDTH,
-    FRAME_HEIGHT as FRAME_HEIGHT, MAGENTA as MAGENTA,
+    DesktopWindow, MAGENTA,
 )
 from .desktop.window_stack import WindowStack
-from .asset_paths import (
-    ASSETS as ASSETS,
-    EMOTE_ASSETS as EMOTE_ASSETS,
-    SCI_FI_UI as SCI_FI_UI,
-)
-from .ui.action_toolbar import ActionToolbar as ActionToolbar
 from .ui.animated_pet import AnimatedPet, AnimatedPorts
-from .ui.settings_popup import SettingsPopup as SettingsPopup
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
-from .ui.status_panel import StatusPanel as StatusPanel
 
 
-class DesktopPet(DesktopCompatibility):
-    """Compose one desktop session; keep historical public GUI entrypoints.
+class DesktopPet:
+    """Compose one desktop session from its owning components.
 
     Character, settings, input, window and simulation behavior belong to
     their respective components, not to a second state stored on this shell.
@@ -83,6 +68,7 @@ class DesktopPet(DesktopCompatibility):
         self.settings = session.settings
         self.adaptive = session.adaptive
         self.context: TimeContext = context_at(time.time())
+        self._character_assets = load_character_catalog()
         self._window = DesktopWindow(self.settings)
         self.root = self._window.root
         self.canvas = self._window.canvas
@@ -122,11 +108,11 @@ class DesktopPet(DesktopCompatibility):
             self.store, self.state, self.settings, self.adaptive,
         )
         self.mind = AikoMind(started_at=self._persistence.last_saved)
+        active_clock = ActiveSessionClock(active_uptime_seconds)
         self.application = ApplicationRouter(
-            CareController(self.state, self.mind, self.adaptive),
+            CareController(self.state, self.mind, self.adaptive, clock=active_clock),
         )
         self.workload_events = WorkloadEventDetector()
-        self.computer_voice = self.workload_events  # Legacy public attribute.
         self.activity_monitor = activity_monitor or ActivityMonitor()
         self.activity_monitor.set_enabled(self.settings.observe_computer)
         self._activity = ActivityCoordinator(
@@ -141,6 +127,7 @@ class DesktopPet(DesktopCompatibility):
                 action_until=lambda: self._action_until,
                 last_spoken=lambda: self._attention.last_spoken,
             ),
+            clock=active_clock,
         )
         self._animated = AnimatedPet(
             self.root, self.canvas, self.state, self.settings,
@@ -155,7 +142,9 @@ class DesktopPet(DesktopCompatibility):
                 action_state=lambda: self._action_state,
                 walk_finished=self._on_walk_finished,
                 cursor_moved=self._on_cursor_moved,
+                extend_action=self._extend_action,
             ),
+            assets=self._character_assets,
         )
         self._closed = False
         self._attention = AttentionCoordinator(
@@ -264,6 +253,7 @@ class DesktopPet(DesktopCompatibility):
             speech=self._speech,
             place_initially=self._place_initially,
             save=self._save,
+            stop_animation=self._animated.stop,
         )
         self._lifecycle.start()
 
@@ -315,8 +305,7 @@ class DesktopPet(DesktopCompatibility):
             if was_hidden else None
         )
         self._hover.last_hover = now
-        self._animated.movement.remaining_distance = 0
-        self._animated.movement.next_walk_at = now + random.uniform(3.0, 6.0)
+        self._animated.movement.interrupt()
         self._hover.show_toolbar()
         self._react(reaction, 2800)
 
@@ -387,10 +376,15 @@ class DesktopPet(DesktopCompatibility):
         self, state: str, duration: float, *, started_at: float | None = None,
     ) -> None:
         now = time.monotonic() if started_at is None else started_at
+        clip = self._character_assets.clips[state]
+        if not clip.loop:
+            duration = clip.duration_seconds
         self._action_state = state
         self._action_until = now + duration
-        self._animated.movement.remaining_distance = 0
-        self._animated.movement.next_walk_at = now + duration + random.uniform(2.5, 5)
+        self._animated.begin_action(state, now)
+
+    def _extend_action(self, deadline: float) -> None:
+        self._action_until = max(self._action_until, deadline)
 
     def interact(self, action: str) -> None:
         """Run a care command through the shared application boundary."""
@@ -409,12 +403,22 @@ class DesktopPet(DesktopCompatibility):
             ),
         )
         self.context = result.context
-        if result.reaction is None:
+        if action == "sleep":
+            self._action_until = now
+            self._animated.cancel_action(now)
+        visual = {"feed": "eat", "pet": "petting"}.get(action)
+        reaction = result.reaction
+        if visual is not None and not self.state.sleeping:
+            if reaction is not None:
+                reaction = replace(reaction, animation=visual)
+            else:
+                self._start_action(visual, 0.0)
+        if reaction is None:
             # A fallback must not be overwritten by an older, queued aside.
             self._cancel_followup()
             self._speech.show_text(result.fallback_text, 2450)
         else:
-            self._react(result.reaction, 2900)
+            self._react(reaction, 2900)
         if self._hover.toolbar is not None:
             self._hover.toolbar.refresh()
         self._hover.refresh_status()
@@ -518,6 +522,9 @@ class DesktopPet(DesktopCompatibility):
         decision = self._attention.spontaneous(
             now, self.context,
             toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
+            action_until=self._action_until,
+            bubble_visible=self._speech.bubble is not None,
+            popup_visible=self._hover.settings_popup is not None,
         )
         if decision.due:
             self._react(decision.reaction, 3600)
@@ -548,7 +555,7 @@ class DesktopPet(DesktopCompatibility):
             self._save()
 
     def _tick(self) -> None:
-        """Compatibility entrypoint; DesktopRuntime owns phase ordering."""
+        """Run the desktop scheduler, which owns update phase ordering."""
         self._runtime.tick()
 
     def _save(self) -> None:

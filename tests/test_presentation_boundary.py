@@ -7,22 +7,15 @@ import unittest
 from dataclasses import FrozenInstanceError
 from datetime import datetime
 
-from aiko_pet.adaptive import AdaptiveRoutine
-from aiko_pet.application.hover_projection import project_hover as legacy_hover
+from aiko_pet.personality.adaptive import AdaptiveRoutine
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.application.status_projection import project_status as legacy_status
-from aiko_pet.application.view_models import (
-    HoverAnchor as LegacyHoverAnchor,
-    HoverSnapshot as LegacyHoverSnapshot,
-    SettingsSnapshot as LegacySettingsSnapshot,
-    StatusSnapshot as LegacyStatusSnapshot,
-)
-from aiko_pet.dialogue import AikoMind
-from aiko_pet.domain import PetState
+
+from aiko_pet.personality.mind import AikoMind
+from aiko_pet.pet.state import PetState
 from aiko_pet.infrastructure.hardware.metrics import ComputerSnapshot as SensorData
 from aiko_pet.presentation.contracts import (
-    HoverAnchor, HoverSnapshot, SettingsSnapshot, StatusSnapshot,
+    HoverAnchor,
 )
 from aiko_pet.presentation.projections import project_hover, project_status
 from aiko_pet.presentation.read_models import DesktopPresentation
@@ -30,8 +23,8 @@ from aiko_pet.presentation.text_de import (
     describe_workload, format_day_label, format_feed_label,
     format_mood_hint, format_percent, format_schedule_line,
 )
-from aiko_pet.routine import context_at
-from aiko_pet.system_activity import workload_description, percent_label
+from aiko_pet.pet.routine import context_at
+from aiko_pet.infrastructure.hardware.metrics import workload_description, percent_label
 from aiko_pet.telemetry import ComputerSnapshot, workload_intensity
 
 
@@ -48,18 +41,6 @@ class StaticMonitor:
 
 
 class PresentationBoundaryTests(unittest.TestCase):
-    def test_contracts_and_telemetry_preserve_type_identity(self) -> None:
-        from aiko_pet.system_activity import (
-            ComputerSnapshot as LegacyComputerSnapshot,
-        )
-
-        self.assertIs(HoverAnchor, LegacyHoverAnchor)
-        self.assertIs(HoverSnapshot, LegacyHoverSnapshot)
-        self.assertIs(StatusSnapshot, LegacyStatusSnapshot)
-        self.assertIs(SettingsSnapshot, LegacySettingsSnapshot)
-        self.assertIs(ComputerSnapshot, SensorData)
-        self.assertIs(ComputerSnapshot, LegacyComputerSnapshot)
-
     def test_snapshot_copies_mutable_pet_values(self) -> None:
         state = PetState(satiety=19, affection=28, meals_today=["breakfast"])
         snapshot = snapshot_pet(state)
@@ -119,7 +100,7 @@ class PresentationBoundaryTests(unittest.TestCase):
         for number in (None, 0, 50.4, 99.8, 150):
             self.assertEqual(format_percent(number), percent_label(number))
 
-    def test_hover_and_status_are_exactly_equal_to_old_projection(self) -> None:
+    def test_hover_and_status_keep_needs_and_observation_preferences(self) -> None:
         mind = AikoMind(rng=random.Random(9))
         states = (
             PetState(),
@@ -136,23 +117,37 @@ class PresentationBoundaryTests(unittest.TestCase):
                 for reading in readings:
                     for enabled in (True, False):
                         with self.subTest(stamp=stamp, enabled=enabled):
+                            before = state.to_dict()
                             copy = snapshot_pet(state)
-                            self.assertEqual(
-                                project_hover(copy, context, reading,
-                                              observe_computer=enabled),
-                                legacy_hover(state, context, reading,
-                                             observe_computer=enabled),
+                            hover = project_hover(
+                                copy, context, reading,
+                                observe_computer=enabled,
                             )
-                            self.assertEqual(
-                                project_status(
-                                    copy, context, mind.emotion(state, 1000),
-                                    None, reading, observe_computer=enabled,
-                                ),
-                                legacy_status(
-                                    state, context, mind, None, reading,
-                                    observe_computer=enabled, now=1000,
-                                ),
+                            status = project_status(
+                                copy, context, mind.emotion(state, 1000),
+                                None, reading, observe_computer=enabled,
                             )
+                            for key in (
+                                "satiety", "mood", "energy", "social",
+                                "affection", "friendship",
+                            ):
+                                self.assertEqual(
+                                    hover.need_value(key), getattr(state, key),
+                                )
+                                self.assertEqual(
+                                    status.need_value(key), getattr(state, key),
+                                )
+                            expected = "Wecken" if state.sleeping else "Schlafen"
+                            self.assertEqual(hover.sleep_label, expected)
+                            self.assertEqual(status.sleep_label, expected)
+                            if not enabled:
+                                self.assertEqual(hover.workload_line, "")
+                                self.assertEqual(status.activity_line, "")
+                                self.assertEqual(
+                                    hover.hardware_line,
+                                    "Rechnerbeobachtung deaktiviert",
+                                )
+                            self.assertEqual(state.to_dict(), before)
 
     def test_desktop_adapter_owns_only_read_projections_and_geometry(self) -> None:
         state = PetState(energy=39)

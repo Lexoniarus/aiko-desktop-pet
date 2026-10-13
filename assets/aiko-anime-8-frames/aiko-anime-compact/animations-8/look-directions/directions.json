@@ -1,0 +1,90 @@
+{
+  "frame_size": [
+    192,
+    208
+  ],
+  "count": 16,
+  "source": "unchanged original v2 atlas, exact RGBA crops",
+  "directions": [
+    {
+      "degrees_clockwise_from_up": 0.0,
+      "file": "000.png",
+      "sha256": "fbad338c975db08ef5c741e9ff6c9d03b27b618dc1b4e78b94c100f467be8b05"
+    },
+    {
+      "degrees_clockwise_from_up": 22.5,
+      "file": "022p5.png",
+      "sha256": "a1980c5986f9ea439200614270a34f92b006b9375587ef0f39aecdae6411220b"
+    },
+    {
+      "degrees_clockwise_from_up": 45.0,
+      "file": "045.png",
+      "sha256": "c9fc18c3da408c6846f0a565087cd1847765c2207af1028bd49c1bdf05c4fa43"
+    },
+    {
+      "degrees_clockwise_from_up": 67.5,
+      "file": "067p5.png",
+      "sha256": "edd58712dff38bad0cbfe9b8776862b68e0aeaa5957cac506d523269d6478750"
+    },
+    {
+      "degrees_clockwise_from_up": 90.0,
+      "file": "090.png",
+      "sha256": "a66c90b018a0cc328836ba726488029c60f744ba3f13b8494d90181d9e6b121f"
+    },
+    {
+      "degrees_clockwise_from_up": 112.5,
+      "file": "112p5.png",
+      "sha256": "eed94170c2ca5ef8a2e5c581ff6a793edabd4618dc70993826d729cc6ce5f67a"
+    },
+    {
+      "degrees_clockwise_from_up": 135.0,
+      "file": "135.png",
+      "sha256": "8c6a12142f6572f2d5155453ed5c87dff212ebb1eae64c82fa3e80fac8523e8f"
+    },
+    {
+      "degrees_clockwise_from_up": 157.5,
+      "file": "157p5.png",
+      "sha256": "8a48faf6ab6c956f3500dffac89b950da752e8a74aa58ff14ce7d30747c456b0"
+    },
+    {
+      "degrees_clockwise_from_up": 180.0,
+      "file": "180.png",
+      "sha256": "c3d1084cfca88ebf00d9d20f5747edd3d70a9665f9f4ebce149544b84e93dfe0"
+    },
+    {
+      "degrees_clockwise_from_up": 202.5,
+      "file": "202p5.png",
+      "sha256": "901266f7ea3c2a2d729ba3bd1341fe1781d4c34069a416ebe2e21ffe67ac6d7a"
+    },
+    {
+      "degrees_clockwise_from_up": 225.0,
+      "file": "225.png",
+      "sha256": "57ecc3807b1db037b5cfa641d44a0c922d1c7ec736403300cb54817b860f5b78"
+    },
+    {
+      "degrees_clockwise_from_up": 247.5,
+      "file": "247p5.png",
+      "sha256": "2887f472589a59a9b26f5d37ed6240d725d019134f4b68561f92d1a1258d64d3"
+    },
+    {
+      "degrees_clockwise_from_up": 270.0,
+      "file": "270.png",
+      "sha256": "6d621c1d4e3e9d62886086b49962cd1c2a3bb65f584867b7b6a860226f16e635"
+    },
+    {
+      "degrees_clockwise_from_up": 292.5,
+      "file": "292p5.png",
+      "sha256": "856ec952979cffbe6788d145c01515d9355fb69aefcef424da3603c67cfb463f"
+    },
+    {
+      "degrees_clockwise_from_up": 315.0,
+      "file": "315.png",
+      "sha256": "94114f3eeec1c7e51b700d7152da51a6ce4d201fca4dc8325e74443d7cbd414c"
+    },
+    {
+      "degrees_clockwise_from_up": 337.5,
+      "file": "337p5.png",
+      "sha256": "794424a5974bf1343ea0ceab5fff00c76db7879bb95a5a4db30627f7500cd473"
+    }
+  ]
+}

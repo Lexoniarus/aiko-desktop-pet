@@ -7,11 +7,11 @@ import unittest
 from datetime import datetime
 from unittest.mock import patch
 
-from aiko_pet.adaptive import Behaviour
-from aiko_pet.adaptive_policy import ActivityMode
-from aiko_pet.dialogue import AikoMind
-from aiko_pet.domain import PetState
-from aiko_pet.routine import context_at
+from aiko_pet.personality.adaptive_models import Behaviour
+from aiko_pet.personality.adaptive_policy import ActivityMode
+from aiko_pet.personality.mind import AikoMind
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.routine import context_at
 
 
 def context(hour: int = 15):

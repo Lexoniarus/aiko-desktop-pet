@@ -6,19 +6,12 @@ import unittest
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from aiko_pet.domain import (
-    CARE_PRIMARY_NEED,
-    FRIENDSHIP_DAILY_CAP,
-    PetState,
-    bounded,
-    clamp_saved_time,
-)
-from aiko_pet.friendship import (
-    CARE_PRIMARY_NEED as NEW_PRIMARY_NEED,
-    FRIENDSHIP_DAILY_CAP as NEW_DAILY_CAP,
+from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
+from aiko_pet.pet.state import PetState
+from aiko_pet.pet.value_rules import clamp_saved_time
+from aiko_pet.pet.friendship import (
     award_friendship_for_care,
 )
-from aiko_pet.value_rules import bounded as normalized_need
 
 
 @dataclass
@@ -35,11 +28,6 @@ def stamp(day: int = 12, hour: int = 12) -> float:
 
 
 class FriendshipPolicyTests(unittest.TestCase):
-    def test_legacy_imports_are_identical(self) -> None:
-        self.assertIs(CARE_PRIMARY_NEED, NEW_PRIMARY_NEED)
-        self.assertEqual(FRIENDSHIP_DAILY_CAP, NEW_DAILY_CAP)
-        self.assertIs(bounded, normalized_need)
-
     def test_first_useful_action_only_awards_friendship_once(self) -> None:
         relationship = Relationship()
         start = stamp()
