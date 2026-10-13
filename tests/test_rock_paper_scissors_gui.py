@@ -84,7 +84,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertIn("gewonnen", bubble_text(self.pet))  # type: ignore[operator]
         game._sequence.advance()
         self.assertIn("1 Runde", bubble_text(self.pet))  # type: ignore[operator]
-        self.assertIn("Du hast 1 Siege", bubble_text(self.pet))  # type: ignore[operator]
+        self.assertIn("Du hast 1 Sieg", bubble_text(self.pet))  # type: ignore[operator]
         self.assertEqual(game.buttons[Move.ROCK].cget("state"), "disabled")
         game._sequence.advance()
         self.assertEqual(game.buttons[Move.ROCK].cget("state"), "normal")

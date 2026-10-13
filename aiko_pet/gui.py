@@ -421,7 +421,7 @@ class DesktopPet:
             else:
                 self._start_action(visual, 0.0)
         if reaction is None:
-                self._cancel_followup()
+            self._cancel_followup()
             self._speech.show_text(result.fallback_text, 2450)
         else:
             self._react(reaction, 2900)

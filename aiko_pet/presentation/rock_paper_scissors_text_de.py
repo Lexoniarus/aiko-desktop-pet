@@ -41,8 +41,10 @@ def outcome_line(result: Round) -> str:
 def score_line(score: Score) -> str:
     """Every counter is spoken, with no scoreboard in the input window."""
     rounds = "Runde" if score.games == 1 else "Runden"
+    person_wins = "Sieg" if score.wins == 1 else "Siege"
+    aiko_wins = "Sieg" if score.losses == 1 else "Siege"
     return (
         f"Unser Stand nach {score.games} {rounds}: "
-        f"Du hast {score.wins} Siege, ich {score.losses}. "
+        f"Du hast {score.wins} {person_wins}, ich {score.losses} {aiko_wins}. "
         f"Unentschieden: {score.draws}. Noch eine Runde?"
     )
