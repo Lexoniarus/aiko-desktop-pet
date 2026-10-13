@@ -13,7 +13,10 @@ from .personality.adaptive import (
     SLOTS as SLOTS,
     _hours as _hours,
     clamp as clamp,
+)
+from .pet.routine import TimeContext as TimeContext, context_at as context_at
+
+from .personality.adaptive_policy import (
     determine_activity_mode as determine_activity_mode,
     determine_sleep_options as determine_sleep_options,
 )
-from .pet.routine import TimeContext as TimeContext, context_at as context_at
