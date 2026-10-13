@@ -37,8 +37,12 @@ third-party packages. Keep German runtime text and English documentation.
    (`DesktopWindow`), independent hover UI (`HoverUi`) and application core.
    `AttentionCoordinator` owns idle/spontaneous/notification timing.
    The old GUI-private methods now live as typed forwards in
-   `desktop/compatibility.py`. The composition module is about 608 lines
-   rather than 875, but scheduling and shutdown still need extraction.
+   `desktop/compatibility.py`. `desktop/runtime.py` now owns the ordered
+   update loop and timers; `desktop/persistence.py` owns serialization
+   and autosave intervals; `desktop/maintenance.py` owns taskbar/stack
+   polling; `desktop/input.py` owns Tk and global mouse input.
+   The composition module is about 571 lines rather than 608 (formerly
+   875), with startup/shutdown still awaiting a final separate cutover.
    See [the full architecture audit](ARCHITECTURE_AUDIT_20261013.md).
 7. **Pet and adaptive domain (implemented):** Care, friendship, bounded
    time progression and decay are separate policies. `adaptive_models.py`

@@ -92,7 +92,11 @@ jobs:
             "test_pet_lifecycle.py",
             "test_application_core.py",
             "test_adaptive_models.py",
-            "test_ui_architecture.py"
+            "test_ui_architecture.py",
+            "test_desktop_runtime.py",
+            "test_desktop_persistence.py",
+            "test_desktop_maintenance.py",
+            "test_attention_policy.py"
           )
           foreach ($pattern in $patterns) {
             python -m unittest discover -s tests -p $pattern -q

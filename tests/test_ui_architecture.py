@@ -20,7 +20,7 @@ class UiDependencyRules(unittest.TestCase):
     def test_gui_composition_root_stays_bounded(self) -> None:
         source = (ROOT / "gui.py").read_text("utf-8")
         self.assertLessEqual(
-            len(source.splitlines()), 650,
+            len(source.splitlines()), 600,
             "Move feature behavior to its owning object rather than gui.py",
         )
 
@@ -76,6 +76,21 @@ class UiDependencyRules(unittest.TestCase):
                         name.rsplit(".", 1)[-1] for name in direct
                     }),
                 )
+
+    def test_desktop_runtime_services_do_not_import_domain(self) -> None:
+        forbidden = {"gui", "domain", "adaptive", "storage", "dialogue"}
+        for relative in (
+            "desktop/runtime.py", "desktop/maintenance.py",
+            "desktop/input.py",
+        ):
+            with self.subTest(module=relative):
+                tree = ast.parse((ROOT / relative).read_text("utf-8"))
+                modules = {
+                    (node.module or "").rsplit(".", 1)[-1]
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.ImportFrom)
+                }
+                self.assertFalse(modules.intersection(forbidden))
 
     def test_application_services_never_import_tkinter(self) -> None:
         for path in (ROOT / "application").glob("*.py"):

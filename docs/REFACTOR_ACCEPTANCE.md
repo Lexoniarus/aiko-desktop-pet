@@ -18,6 +18,9 @@ the desktop runtime has been exercised on Windows after the final commit.
 - Headless application integration tests: command routing, notification
   validation, idempotent bounded queue, cross-thread care prohibition and
   non-interrupting Tk presentation. No local HTTP port exists yet.
+- Desktop runtime tests cover tick ordering and shutdown timer cancellation,
+  persistence and disk-error handling, taskbar/overlay check intervals and
+  Tk/global-input dispatch.
 - No state JSON schema changes or bundled runtime dependency changes
 
 ## Windows 10/11 manual smoke checks — still required

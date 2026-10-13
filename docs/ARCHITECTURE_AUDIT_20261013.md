@@ -18,12 +18,17 @@ isolated to `refactor/oop-modular-architecture`.
 | Speech and ordered emotes | `ui/speech_presenter.py`, `reaction_playback.py` |
 | Hover layout and drag rules | `ui/hover_geometry.py` |
 | Legacy GUI method compatibility | `desktop/compatibility.py` |
-| Component assembly and remaining tick | `gui.py` |
+| Tick timers and update phases | `desktop/runtime.py` |
+| Save catch-up and autosave cadence | `desktop/persistence.py` |
+| Taskbar/window stack checks | `desktop/maintenance.py` |
+| Tk/global mouse and focus input | `desktop/input.py` |
+| Component composition and remaining startup/shutdown | `gui.py` |
 
 The original `gui.py` mixed all those responsibilities and measured 875
-lines. It now has approximately 608 lines. The 278-line compatibility
-adapter contains *only typed forwarding*, not another implementation of
-care, dialogue, movement or presentation rules.
+lines. The composition shell is now about 571 lines. The legacy
+compatibility adapter remains separate; these forwards are not removed
+complexity. Timers, auto-saving, taskbar/stack polling, and input binding
+now belong to testable, cohesive desktop services.
 
 ## Dependency rule
 
@@ -50,8 +55,9 @@ adapter is **not** a destination for new features.
 
 ## Remaining work, by priority (not yet implemented)
 
-1. Move scheduled ticks, startup/shutdown and autosave cadence from the
-   desktop composition root to cohesive desktop runtime services.
+1. **Implemented:** ordered desktop update timers, autosave cadence,
+   taskbar/stack polling and mouse/focus event binding. Startup/shutdown
+   composition remains, and should not be moved to a new god object.
 2. Split the 337-line `system_activity.py` along hardware-provider and
    sampler responsibilities. Keep Windows/Linux implementations testable
    without rewriting their published API.
@@ -72,7 +78,7 @@ as a prerequisite for the code-structure refactor.
 - GUI tests on Python 3.11 and 3.13 under Linux/Xvfb.
 - Windows-hosted headless tests and desktop module imports.
 - AST architecture checks prevent application-to-UI and UI-to-domain
-  reverse imports. `gui.py` currently has an explicit 650-line limit.
+  reverse imports. `gui.py` now has an explicit 600-line limit.
 - Manual real Windows tests remain a merge prerequisite.
 
 **No merge, schema change, asset change or local save rewrite.**
