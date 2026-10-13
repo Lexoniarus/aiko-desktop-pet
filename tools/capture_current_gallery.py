@@ -40,6 +40,7 @@ STILLS = (
 )
 REACTION_GIF = "Aiko_Current_Reaction_Sequence.gif"
 ANIMATION_GIF = "Aiko_Current_Animations.gif"
+AMBIENT_GIF = "Aiko_Current_Ambient_Blink_And_Glance.gif"
 
 
 def settle(pet: DesktopPet) -> None:
@@ -74,6 +75,75 @@ def advance_reaction(pet: DesktopPet, index: int) -> None:
     if pending is not None:
         pet.root.after_cancel(pending)
     player._advance(player.generation, index)
+
+
+def capture_ambient_behavior(pet: DesktopPet) -> None:
+    """Record one real Tk idle blink with resting gaps and a spontaneous gaze.
+
+    Frame transitions are driven deterministically against the actual
+    AnimatedPet and Canvas; GIF hold times represent the intended pacing.
+    This is a test capture, not a wall-clock performance measurement.
+    """
+    if pet.state.sleeping:
+        pet.interact("sleep")
+    pet._reaction_player.cancel()
+    pet._speech.hide()
+    if pet._hover.toolbar is not None:
+        pet._hover.toolbar.hide()
+    pet.settings.auto_walk = False
+    pet.settings.follow_cursor = False
+    pet.settings.observe_computer = False
+    now = time.monotonic()
+    pet._animated.cancel_action(now)
+    ambient = pet._animated._ambient
+    ambient.next_blink_at = now + 200
+    ambient.next_glance_at = now + 200
+    pet._animated.render(now, 0, (0, 0))
+
+    frames: list[Image.Image] = []
+    durations: list[int] = []
+
+    def add_frame(duration_ms: int) -> None:
+        settle(pet)
+        frames.append(ImageGrab.grab(bbox=CAPTURE_BOUNDS).convert("RGB"))
+        durations.append(duration_ms)
+
+    add_frame(4000)
+    ambient.next_blink_at = time.monotonic() - 1
+    pet._animated.render(time.monotonic(), 0, (0, 0))
+    if not ambient.blinking:
+        raise RuntimeError("The real idle blink did not start")
+    clip = pet._animated.assets.clips["idle"]
+    add_frame(clip.timings[0])
+    for _ in range(1, 8):
+        at = pet._animated.frame_clock.frame_started_at
+        pet._animated.show_frame("idle", at + clip.timings[0] / 1000 + .002)
+        add_frame(clip.timings[0])
+    at = pet._animated.frame_clock.frame_started_at
+    pet._animated.show_frame("idle", at + clip.timings[-1] / 1000 + .002)
+    if ambient.blinking or pet._animated.frame_clock.active_key != ("idle", 0):
+        raise RuntimeError("Idle blink did not return to the neutral pose")
+    add_frame(4200)
+
+    ambient.next_glance_at = time.monotonic() - 1
+    ambient.next_blink_at = time.monotonic() + 200
+    pet._animated.render(time.monotonic(), 0, (0, 0))
+    if pet._animated.frame_clock.active_key is None:
+        raise RuntimeError("Missing autonomous look")
+    if pet._animated.frame_clock.active_key[0] != "look":
+        raise RuntimeError("Autonomous look used the wrong sprite set")
+    add_frame(1650)
+    ambient.suspend(time.monotonic())
+    pet._animated.show_frame("idle", time.monotonic(), fixed=0)
+    add_frame(3000)
+    frames[0].save(
+        PREVIEWS / AMBIENT_GIF, save_all=True,
+        append_images=frames[1:],
+        duration=durations, loop=0, optimize=True, disposal=2,
+    )
+    print(
+        f"Captured {len(frames)} real ambient UI frames: {AMBIENT_GIF}"
+    )
 
 
 def capture_ui() -> None:
@@ -184,6 +254,7 @@ def capture_ui() -> None:
             pet.interact("sleep")
             live_capture(pet, "Aiko_Current_Care_Sleep.png")
 
+            capture_ambient_behavior(pet)
             expected = {name for name in STILLS}
             missing = [name for name in expected if not (PREVIEWS / name).is_file()]
             if missing:
