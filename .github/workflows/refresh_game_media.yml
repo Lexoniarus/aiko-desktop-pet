@@ -1,12 +1,13 @@
-name: Refresh current Aiko preview gallery
+name: Capture and crop current Aiko preview gallery
 
 on:
   push:
     branches:
-      - feature/rock-paper-scissors-game
-      - fix/uniform-animation-frame-pacing
+      - main
+      - fix/crop-aiko-preview-media
     paths:
       - tools/capture_current_gallery.py
+      - tools/media_crop.py
       - tools/capture_rock_paper_scissors_media.py
       - .github/workflows/refresh_game_media.yml
       - aiko_pet/gui.py
@@ -21,7 +22,7 @@ permissions:
 
 jobs:
   capture:
-    name: Capture real Tk screenshots and current animations
+    name: Fully framed Tk screenshots and stable animations
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,6 +54,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "The current gallery has not changed."
           else
-            git commit -m "docs(media): refresh current Aiko animations and captures"
+            git commit -m "docs(media): refresh tightly framed current Aiko previews"
             git push origin HEAD:"$GITHUB_REF_NAME"
           fi
