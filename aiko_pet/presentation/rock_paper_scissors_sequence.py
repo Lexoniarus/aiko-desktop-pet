@@ -1,6 +1,8 @@
-"""Time Aiko's spoken, illustrated and animated minigame reaction beats.
+"""Schedule Aiko's character-led Rock–Paper–Scissors reaction beats.
 
-All cues are strictly sequential; window lifetime owns their cancellation.
+The player hand and transient counters belong to the input panel. Aiko's own
+hand, emotes and outcome reaction belong to the established character bubble.
+No Tk dependency lives here, and every pending cue is cancellable.
 """
 
 from __future__ import annotations
@@ -11,16 +13,18 @@ from ..games.rock_paper_scissors import (
     Move, Outcome, RockPaperScissors, Round, Score,
 )
 from .rock_paper_scissors_text_de import (
-    countdown_line, outcome_line, score_line, welcome_line,
+    countdown_line, outcome_line, welcome_line,
 )
 
 ScheduleTimer = Callable[[int, Callable[[], None]], str]
 CancelTimer = Callable[[str], None]
 DisplayText = Callable[[str, int], None]
 DisplayEmote = Callable[[str, int], None]
-DisplayHands = Callable[[Move, Move, int], None]
+DisplayAikoHand = Callable[[Move, int], None]
+RevealPlayer = Callable[[Move, Score], None]
 PlayAnimation = Callable[[str], None]
 SetBusy = Callable[[bool], None]
+
 _REACTION_ASSETS: dict[Outcome, tuple[str, str]] = {
     Outcome.WIN: ("failed", "drops"),
     Outcome.LOSS: ("jumping", "star"),
@@ -29,26 +33,27 @@ _REACTION_ASSETS: dict[Outcome, tuple[str, str]] = {
 
 
 class RockPaperScissorsSequence:
-    """Own the entire 1→2→3→emote→reveal→reaction→score flow."""
+    """Own the 1→2→3→reveal→emote→result timeline and its cancellation."""
 
     COUNT_MS = 800
     EXCITEMENT_MS = 700
-    HANDS_MS = 2300
+    HAND_MS = 2300
     REACTION_EMOTE_MS = 850
-    REACTION_MS = 2600
-    SCORE_MS = 3500
+    REACTION_MS = 2800
 
     def __init__(
         self, *, schedule: ScheduleTimer, cancel: CancelTimer,
         say: DisplayText, show_emote: DisplayEmote,
-        show_hands: DisplayHands, animate: PlayAnimation,
-        set_busy: SetBusy,
+        show_aiko_hand: DisplayAikoHand,
+        reveal_player: RevealPlayer,
+        animate: PlayAnimation, set_busy: SetBusy,
     ) -> None:
         self._schedule = schedule
         self._cancel = cancel
         self._say = say
         self._show_emote = show_emote
-        self._show_hands = show_hands
+        self._show_aiko_hand = show_aiko_hand
+        self._reveal_player = reveal_player
         self._animate = animate
         self._set_busy = set_busy
         self._game = RockPaperScissors()
@@ -106,12 +111,13 @@ class RockPaperScissorsSequence:
             self._phase = 4
             self._emit_emote("exclamation", self.EXCITEMENT_MS)
         elif self._phase == 4:
-            self._result = self._game.reveal()
+            result = self._game.reveal()
+            self._result = result
             self._phase = 5
-            self._show_hands(
-                self._result.player, self._result.aiko, self.HANDS_MS,
-            )
-            self._timer = self._schedule(self.HANDS_MS, self.advance)
+            # Both views reveal at the same instant, in their own owners.
+            self._reveal_player(result.player, self._game.score)
+            self._show_aiko_hand(result.aiko, self.HAND_MS)
+            self._timer = self._schedule(self.HAND_MS, self.advance)
         elif self._phase == 5 and self._result is not None:
             self._phase = 6
             clip, emote = _REACTION_ASSETS[self._result.outcome]
@@ -124,9 +130,6 @@ class RockPaperScissorsSequence:
                 self.REACTION_MS,
             )
         elif self._phase == 7:
-            self._phase = 8
-            self._emit_text(score_line(self.score), self.SCORE_MS)
-        elif self._phase == 8:
             self._phase = 0
             self._result = None
             self._set_busy(False)

@@ -147,46 +147,36 @@ class SpeechPresenter:
         )
         self._present(bubble, duration_ms)
 
-    def show_game_hands(
-        self, player: Move, aiko: Move, duration_ms: int = 2000,
+    def show_game_hand(
+        self, aiko: Move, duration_ms: int = 2300,
     ) -> None:
-        """Reveal both color hand images in Aiko's established speech bubble."""
-        if not isinstance(player, Move) or not isinstance(aiko, Move):
+        """Show only Aiko's own hand in the existing character bubble."""
+        if not isinstance(aiko, Move):
             raise ValueError("Unknown game hand")
-        for move in (player, aiko):
-            if move not in self.game_hand_images:
-                self.game_hand_images[move] = tk.PhotoImage(
-                    file=str(GAME_HANDS_DIR / f"{move.value}.png"),
-                )
+        if aiko not in self.game_hand_images:
+            self.game_hand_images[aiko] = tk.PhotoImage(
+                file=str(GAME_HANDS_DIR / f"{aiko.value}.png"),
+            )
         self.hide()
         bubble = self._new_window()
         frame = tk.Frame(bubble, bg="#53687e", bd=0)
         frame.pack()
         panel = tk.Frame(frame, bg="#f0f6fa")
         panel.pack(padx=1, pady=1)
+        names = {Move.ROCK: "Stein", Move.PAPER: "Papier",
+                 Move.SCISSORS: "Schere"}
         tk.Label(
-            panel, text="Und ... aufgedeckt!", bg="#f0f6fa", fg="#243247",
+            panel, text="Ich nehme ...", bg="#f0f6fa", fg="#243247",
             font=(self._font_name, 9, "bold"),
-        ).pack(padx=8, pady=(8, 2))
-        hands = tk.Frame(panel, bg="#f0f6fa")
-        hands.pack(padx=8, pady=(0, 8))
-        labels = {Move.ROCK: "Stein", Move.PAPER: "Papier",
-                  Move.SCISSORS: "Schere"}
-        for column, (title, move) in enumerate((("Du", player), ("Ich", aiko))):
-            cell = tk.Frame(hands, bg="#f0f6fa")
-            cell.grid(row=0, column=column, padx=10)
-            tk.Label(
-                cell, text=title, bg="#f0f6fa", fg="#243247",
-                font=(self._font_name, 9, "bold"),
-            ).pack()
-            tk.Label(
-                cell, image=self.game_hand_images[move], bg="#f0f6fa",
-                bd=0, highlightthickness=0,
-            ).pack()
-            tk.Label(
-                cell, text=labels[move], bg="#f0f6fa", fg="#243247",
-                font=(self._font_name, 9),
-            ).pack()
+        ).pack(padx=12, pady=(8, 1))
+        tk.Label(
+            panel, image=self.game_hand_images[aiko], bg="#f0f6fa",
+            bd=0, highlightthickness=0,
+        ).pack(padx=8)
+        tk.Label(
+            panel, text=names[aiko], bg="#f0f6fa", fg="#243247",
+            font=(self._font_name, 9),
+        ).pack(padx=12, pady=(1, 8))
         transparent = (
             self._transparent_color if sys.platform == "win32" else "#202733"
         )

@@ -40,9 +40,10 @@ class GameSpeech:
         self._mark_spoken()
         self._speech.show_emote(name, duration_ms)
 
-    def hands(self, player: Move, aiko: Move, duration_ms: int) -> None:
+    def hand(self, aiko: Move, duration_ms: int) -> None:
+        """Aiko reveals only her own hand; the player view owns its hand."""
         self._mark_spoken()
-        self._speech.show_game_hands(player, aiko, duration_ms)
+        self._speech.show_game_hand(aiko, duration_ms)
 
     def animate(self, name: str) -> None:
         self._animate_character(name)

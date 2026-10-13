@@ -1,4 +1,4 @@
-"""Kenney-styled minigame input panel; all dialogue stays with Aiko."""
+"""Kenney-styled player panel: input, private hand, and session scoreboard."""
 
 from __future__ import annotations
 
@@ -14,21 +14,25 @@ from ..presentation.rock_paper_scissors_sequence import RockPaperScissorsSequenc
 
 _BG = "#D7DCE8"
 _TEXT = "#414B5F"
+_MUTED = "#617189"
+_PANEL = "#E9ECF5"
+_ACCENT = "#2998D4"
 _MOVES: tuple[tuple[Move, str], ...] = (
     (Move.ROCK, "Stein"),
     (Move.PAPER, "Papier"),
     (Move.SCISSORS, "Schere"),
 )
+_MOVE_NAMES = dict(_MOVES)
 
 
 class RockPaperScissorsWindow:
-    """A permanent input-only panel matching the existing hover toolbar."""
+    """Permanent player-only panel sharing Aiko's existing hover styling."""
 
     def __init__(
         self, root: tk.Tk, *, on_closed: Callable[[], None],
         speak: Callable[[str, int], None],
         emote: Callable[[str, int], None],
-        hands: Callable[[Move, Move, int], None],
+        hand: Callable[[Move, int], None],
         animate: Callable[[str], None], always_on_top: bool,
     ) -> None:
         self._on_closed = on_closed
@@ -51,6 +55,11 @@ class RockPaperScissorsWindow:
         self._close_image = tk.PhotoImage(
             file=str(KENNEY_UI_DIR / "button_regular.png"),
         )
+        self.hand_images = {
+            move: tk.PhotoImage(file=str(GAME_HANDS_DIR / f"{move.value}.png"))
+            for move, _label in _MOVES
+        }
+
         outer = tk.Frame(
             self.window, bg=_BG, highlightthickness=2,
             highlightbackground="#E9ECF5", bd=0,
@@ -59,7 +68,7 @@ class RockPaperScissorsWindow:
         header = tk.Label(
             outer, text="AIKO · SPIELEN", image=self._banner,
             compound="center", font=(title_font, 10, "bold"),
-            fg="#FFFFFF", bg="#2998D4", padx=14, cursor="fleur",
+            fg="#FFFFFF", bg=_ACCENT, padx=14, cursor="fleur",
         )
         header.pack(fill="x")
         header.bind("<ButtonPress-1>", self._drag_start)
@@ -67,17 +76,12 @@ class RockPaperScissorsWindow:
         header.bind("<ButtonRelease-1>", self._drag_end)
 
         tk.Label(
-            outer, text="Deine Wahl", bg=_BG, fg=_TEXT,
+            outer, text="Wähle deine Hand", bg=_BG, fg=_TEXT,
             font=(title_font, 10, "bold"),
-        ).pack(padx=12, pady=(13, 3))
-
+        ).pack(padx=12, pady=(12, 3))
         choices = tk.Frame(outer, bg=_BG)
         choices.pack(padx=12, pady=(2, 10))
         self.buttons: dict[Move, tk.Button] = {}
-        self.hand_images = {
-            move: tk.PhotoImage(file=str(GAME_HANDS_DIR / f"{move.value}.png"))
-            for move, _label in _MOVES
-        }
         for move, label in _MOVES:
             button = tk.Button(
                 choices, text=label, image=self.hand_images[move],
@@ -91,6 +95,51 @@ class RockPaperScissorsWindow:
             button.pack(side="left", padx=3)
             self.buttons[move] = button
 
+        self.result_panel = tk.Frame(
+            outer, bg=_PANEL, highlightthickness=2,
+            highlightbackground="#A6B9CD",
+        )
+        self.result_panel.pack(fill="x", padx=12, pady=(0, 10))
+        self.result_title = tk.Label(
+            self.result_panel, text="Deine Hand",
+            bg=_PANEL, fg=_TEXT, font=(title_font, 10, "bold"),
+        )
+        self.result_title.pack(pady=(8, 2))
+        self.player_hand = tk.Label(
+            self.result_panel, text="?", bg=_PANEL, fg=_MUTED,
+            font=(title_font, 22, "bold"),
+            height=3, compound="center",
+        )
+        self.player_hand.pack()
+        self.player_result_label = tk.Label(
+            self.result_panel, text="Noch keine Runde gespielt",
+            bg=_PANEL, fg=_MUTED, font=(title_font, 9),
+        )
+        self.player_result_label.pack(pady=(2, 9))
+
+        score = tk.Frame(outer, bg=_BG)
+        score.pack(fill="x", padx=12, pady=(0, 8))
+        self.score_labels: dict[str, tk.Label] = {}
+        for column, (key, title) in enumerate((
+            ("games", "Runden"),
+            ("wins", "Deine Siege"),
+            ("losses", "Aikos Siege"),
+            ("draws", "Remis"),
+        )):
+            cell = tk.Frame(score, bg=_PANEL, bd=0)
+            cell.grid(row=0, column=column, padx=2, sticky="nsew")
+            score.grid_columnconfigure(column, weight=1)
+            tk.Label(
+                cell, text=title, bg=_PANEL, fg=_MUTED,
+                font=(title_font, 8),
+            ).pack(padx=4, pady=(5, 1))
+            count = tk.Label(
+                cell, text="0", bg=_PANEL, fg=_TEXT,
+                font=(title_font, 14, "bold"),
+            )
+            count.pack(padx=6, pady=(1, 5))
+            self.score_labels[key] = count
+
         self.close_button = tk.Button(
             outer, text="Schließen", image=self._close_image,
             compound="center", font=(title_font, 9),
@@ -99,18 +148,16 @@ class RockPaperScissorsWindow:
             highlightthickness=0, cursor="hand2", command=self.close,
         )
         self.close_button.pack(anchor="e", padx=13, pady=(0, 9))
-
         self._sequence = RockPaperScissorsSequence(
-            schedule=self.window.after,
-            cancel=self.window.after_cancel,
+            schedule=self.window.after, cancel=self.window.after_cancel,
             say=speak, show_emote=emote,
-            show_hands=hands, animate=animate,
-            set_busy=self._set_busy,
+            show_aiko_hand=hand,
+            reveal_player=self.reveal_player,
+            animate=animate, set_busy=self._set_busy,
         )
         self.window.update_idletasks()
-        width, height = (
-            self.window.winfo_reqwidth(), self.window.winfo_reqheight()
-        )
+        width = self.window.winfo_reqwidth()
+        height = self.window.winfo_reqheight()
         x = max(0, min(
             root.winfo_rootx() + root.winfo_width() + 12,
             root.winfo_screenwidth() - width,
@@ -136,8 +183,24 @@ class RockPaperScissorsWindow:
             else:
                 button.configure(state="normal")
 
+    def _clear_player_result(self) -> None:
+        self.result_panel.configure(highlightbackground="#A6B9CD")
+        self.player_hand.configure(text="?", image="")
+        self.player_result_label.configure(text="Warten auf Aiko ...")
+
+    def reveal_player(self, move: Move, score: Score) -> None:
+        """Highlight only the human hand and maintain the local scoreboard."""
+        self.player_hand.configure(
+            image=self.hand_images[move], text="",
+        )
+        self.result_panel.configure(highlightbackground=_ACCENT)
+        self.player_result_label.configure(text=f"Du: {_MOVE_NAMES[move]}")
+        for key, label in self.score_labels.items():
+            label.configure(text=str(getattr(score, key)))
+
     def choose(self, move: Move) -> None:
-        if not self._closed:
+        if not self._closed and not self._sequence.busy:
+            self._clear_player_result()
             self._sequence.choose(move)
 
     def focus(self) -> None:
@@ -172,7 +235,6 @@ class RockPaperScissorsWindow:
         self._drag_origin = None
 
     def close(self) -> None:
-        """Restore normal Aiko behavior even if a countdown is in progress."""
         if self._closed:
             return
         self._closed = True

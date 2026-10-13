@@ -1,11 +1,8 @@
-"""Characterful German minigame lines built entirely from observed outcomes.
-
-The only natural-language content here is what Aiko actually says in-game.
-"""
+"""Deterministic German dialogue for Aiko's own game reactions only."""
 
 from __future__ import annotations
 
-from ..games.rock_paper_scissors import Outcome, Round, Score
+from ..games.rock_paper_scissors import Outcome, Round
 
 _WELCOME = (
     "Na, eine Runde Schere, Stein, Papier? Zeig mal deine Hand!",
@@ -34,7 +31,6 @@ def welcome_line(rounds: int = 0) -> str:
 
 
 def countdown_line(number: int) -> str:
-    """Three short, individually displayed countdown lines."""
     return {1: "Eins!", 2: "Zwei!", 3: "Drei!"}[number]
 
 
@@ -45,21 +41,3 @@ def outcome_line(result: Round, games: int = 1) -> str:
         Outcome.DRAW: _DRAW,
     }[result.outcome]
     return lines[(games - 1) % len(lines)]
-
-
-def score_line(score: Score) -> str:
-    """Speak the transient counters concisely, with varied phrasing."""
-    rounds = "Runde" if score.games == 1 else "Runden"
-    labels = (
-        f"du {score.wins}, ich {score.losses}, "
-        f"unentschieden {score.draws}"
-    )
-    beginnings = (
-        f"Also, {score.games} {rounds} bisher: {labels}. "
-        "Noch mal?",
-        f"Moment, unser Zwischenstand nach {score.games} {rounds}: "
-        f"{labels}. Revanche?",
-        f"Okay, {score.games} {rounds} gespielt! {labels}. "
-        "Ich bin noch nicht fertig!",
-    )
-    return beginnings[(score.games - 1) % len(beginnings)]
