@@ -47,6 +47,25 @@ class AmbientDirectorTests(unittest.TestCase):
         self.assertGreater(self.policy.next_blink_at, 105.2)
         self.assertGreater(self.policy.next_glance_at, 105.2)
 
+    def test_slow_motion_continues_during_neutral_rest(self) -> None:
+        offsets = [
+            self.policy.motion_offset(100 + index * .42 + .01)
+            for index in range(9)
+        ]
+        self.assertEqual(offsets, [0, 1, 2, 1, 0, -1, -2, -1, 0])
+
+    def test_current_gaze_keeps_motion_clock_while_actions_reset_it(self) -> None:
+        self.policy.suspend(101, keep_pose_motion=True)
+        self.assertEqual(self.policy.motion_offset(101), 2)
+        self.policy.suspend(101)
+        self.assertEqual(self.policy.motion_offset(101), 0)
+        self.assertEqual(self.policy.motion_offset(101 + .85), 2)
+        self.policy.next_blink_at = 103
+        self.policy.choose(105)
+        self.assertTrue(self.policy.blinking)
+        self.policy.finish_blink(105.2)
+        self.assertEqual(self.policy.motion_offset(105.2), 0)
+
     def test_invalid_autonomous_direction_is_rejected(self) -> None:
         bad = AmbientDirector(
             0.0, between=lambda low, _high: low,

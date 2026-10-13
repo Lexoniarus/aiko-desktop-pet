@@ -241,6 +241,60 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.render(now + 1, 0, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("sleep", None))
 
+    def test_idle_rest_moves_head_without_moving_sprite_anchor(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.follow_cursor = False
+        self.settings.observe_computer = False
+        now = time.monotonic()
+        self.anim._ambient.suspend(now)
+        self.anim._ambient.next_blink_at = now + 200
+        self.anim._ambient.next_glance_at = now + 200
+        self.anim.render(now, 0, (0, 0))
+        image_item = self.anim.image_item
+        initial = self.canvas.itemcget(image_item, "image")
+        canvas_coords = self.canvas.coords(image_item)
+        self.anim.render(now + .85, 0, (0, 0))
+        changed = self.canvas.itemcget(image_item, "image")
+        self.assertNotEqual(initial, changed)
+        self.assertEqual(self.canvas.coords(image_item), canvas_coords)
+        self.assertEqual(self.anim.frame_clock.active_key, ("idle", 0))
+        self.assertIsNone(self.anim._frame_timer)
+
+    def test_still_mouse_gaze_preserves_direction_but_moves_head(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.observe_computer = False
+        now = time.monotonic()
+        self.anim._ambient.suspend(now)
+        self.anim.last_pointer_move = now
+        pointer = (99999, 20)
+        self.anim.render(now, 0, pointer)
+        old_key = self.anim.frame_clock.active_key
+        assert old_key is not None
+        self.assertEqual(old_key[0], "look")
+        original = self.canvas.itemcget(self.anim.image_item, "image")
+        self.anim.render(now + .85, 0, pointer)
+        self.assertEqual(self.anim.frame_clock.active_key, old_key)
+        self.assertNotEqual(
+            self.canvas.itemcget(self.anim.image_item, "image"), original,
+        )
+
+    def test_reload_at_double_scale_discards_old_sway_images(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.follow_cursor = False
+        now = time.monotonic()
+        self.anim._ambient.suspend(now)
+        self.anim._ambient.next_blink_at = now + 100
+        self.anim._ambient.next_glance_at = now + 100
+        self.anim.render(now + .85, 0, (0, 0))
+        self.assertTrue(self.anim._rest_renderer._variants)
+        self.settings.scale = 2
+        self.anim.reload_sprites()
+        self.assertEqual(self.anim.sprites["idle"][0].width(), 384)
+        self.assertTrue(all(
+            image.width() == 384
+            for image in self.anim._rest_renderer._variants.values()
+        ))
+
     def test_scale_reload_keeps_frame_identity(self) -> None:
         self.settings.scale = 2
         self.anim.reload_sprites()
