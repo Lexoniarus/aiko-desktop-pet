@@ -60,7 +60,7 @@ class DailyRoutineTests(unittest.TestCase):
         state = PetState(updated_at=local_time("2026-10-12", 23, 20))
         state.advance(local_time("2026-10-12", 23, 55), auto_routine=True)
         self.assertTrue(state.sleeping)
-        state.interact("sleep")
+        state.interact("sleep", now=local_time("2026-10-12", 23, 58))
         self.assertFalse(state.sleeping)
         state.advance(local_time("2026-10-13", 0, 10), auto_routine=True)
         self.assertFalse(state.sleeping)
