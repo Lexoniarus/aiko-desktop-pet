@@ -11,6 +11,8 @@ import tkinter as tk
 from dataclasses import dataclass
 from typing import Callable
 
+from ..application.settings import SettingKey
+
 from .action_toolbar import ActionToolbar
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .settings_contracts import SettingsActions, SettingsSnapshot
@@ -31,7 +33,7 @@ class HoverUiPorts:
     open_sprite_hover: Callable[[], None]
     record_contact: Callable[[float], None]
     save_position: Callable[[int | None, int | None], None]
-    set_option: Callable[[str, bool], None]
+    set_option: Callable[[SettingKey, bool], None]
     toggle_scale: Callable[[], None]
     forget_rhythm: Callable[[], None]
     reset_toolbar: Callable[[], None]

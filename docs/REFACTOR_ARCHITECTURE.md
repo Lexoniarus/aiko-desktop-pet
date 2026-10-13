@@ -107,6 +107,35 @@ third-party packages. Keep German runtime text and English documentation.
   move with the read-model/projection boundary in the next architecture step,
   without creating a domain-to-UI import cycle.
 
+## Application-read and presentation boundaries
+
+- `application/read_snapshot.py` defines immutable `PetReadSnapshot`,
+  carrying only needs, relationships and current state flags. Application
+  consumers never require formatted German labels or Tk widget geometry.
+- `telemetry.py` owns the immutable `ComputerSnapshot` value and effort
+  calculation. Application coordinators use `application/ports.py`
+  (`ComputerReadings` / `ComputerObservation`) instead of a concrete
+  hardware provider; old `system_activity` imports keep the same class.
+- `presentation/contracts.py` owns hover/status/settings view-model
+  classes and `HoverAnchor`. The previous `application/view_models.py`
+  path re-exports their exact types for backwards compatibility.
+- The production desktop now uses `presentation/read_models.py` and
+  `presentation/projections.py` to format German desktop copy. Pure
+  `presentation/text_de.py` preserves all existing labels without
+  making UI widgets depend on the mutable pet.
+- Previous `application/hover_projection.py`,
+  `application/status_projection.py` and `application/read_models.py`
+  remain as legacy entrypoints for old callers and test compatibility.
+  They are no longer wired into the main desktop UI. Remove them only
+  after explicit import compatibility cutover.
+- Settings commands use the typed `SettingKey` keys end-to-end.
+  Unsupported names still raise `ValueError` in the desktop adapter.
+- The original German `PetState` and `TimeContext` display methods are
+  still available for existing callers, but production presenters no longer
+  call them. The current `TimeContext.activity` and
+  `TimeContext.next_activity` still contain existing German schedule labels.
+  Those legacy schedule values can be separated in a later cutover.
+
 ## Change safety
 
 - `main` is untouched until a reviewed merge.

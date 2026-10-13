@@ -8,19 +8,15 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass
-from typing import Protocol
+
 
 from ..dialogue import AikoMind, ComputerVoice, Reaction
 from ..domain import PetState
 from ..routine import TimeContext
 from .settings import PetSettings
-from ..system_activity import ComputerSnapshot
+from .ports import ComputerReadings
 from .events import IncomingNotification
 from .router import ApplicationRouter
-
-
-class ComputerReadings(Protocol):
-    def latest(self) -> ComputerSnapshot: ...
 
 
 @dataclass(frozen=True, slots=True)

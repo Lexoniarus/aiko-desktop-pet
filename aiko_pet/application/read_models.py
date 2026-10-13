@@ -7,14 +7,15 @@ It reads current local domain objects only when a window requests a snapshot.
 from __future__ import annotations
 
 import time
-from typing import Callable, Protocol
+from typing import Callable
 
 from ..adaptive import AdaptiveRoutine
 from ..dialogue import AikoMind
 from ..domain import PetState
 from ..routine import TimeContext
 from .settings import PetSettings
-from ..system_activity import ComputerSnapshot
+from ..telemetry import ComputerSnapshot
+from .ports import ComputerReadings
 from .view_models import (
     HoverAnchor, HoverSnapshot, SettingsSnapshot, StatusSnapshot,
 )
@@ -23,16 +24,12 @@ from .settings_projection import project_settings
 from .status_projection import project_status
 
 
-class CachedComputerReadings(Protocol):
-    def latest(self) -> ComputerSnapshot: ...
-
-
 class DesktopViewSource:
     """Snapshot the live pet before data crosses into Tk utility windows."""
 
     def __init__(
         self, state: PetState, settings: PetSettings, mind: AikoMind,
-        adaptive: AdaptiveRoutine, monitor: CachedComputerReadings,
+        adaptive: AdaptiveRoutine, monitor: ComputerReadings,
         *, context: Callable[[], TimeContext],
         sprite_size: Callable[[], tuple[int, int]],
     ) -> None:
@@ -51,8 +48,6 @@ class DesktopViewSource:
         )
 
     def status(self) -> StatusSnapshot:
-        from ..system_activity import ComputerSnapshot
-
         reading = (
             self.monitor.latest()
             if self.settings.observe_computer else ComputerSnapshot()

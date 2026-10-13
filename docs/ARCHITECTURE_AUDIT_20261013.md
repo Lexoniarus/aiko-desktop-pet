@@ -14,7 +14,9 @@ isolated to `refactor/oop-modular-architecture`.
 | Comment timing, cursor/walk decisions and presentation interruption | `application/attention.py` |
 | Workload, adaptive routine and pet time advancement | `application/activity.py` |
 | Verified work episode/recovery memory for dialogue | `work_episode.py` |
-| Immutable view data | `application/view_models.py` and `read_models.py` |
+| Semantic application read data | `application/read_snapshot.py` |
+| Immutable German UI projection and geometry | `presentation/contracts.py`, `projections.py`, `read_models.py` |
+| Hardware sample contract and provider capabilities | `telemetry.py`, `application/ports.py` |
 | Animated character and walking | `ui/animated_pet.py` |
 | Taskbar geometry and transparent root | `ui/desktop_window.py` |
 | Hover, status and settings lifecycle | `ui/hover_ui.py` and UI views |
@@ -98,6 +100,23 @@ A limited presentation concern remains: `PetState.mood_hint()` and
 `PetState.feed_label()` provide German display copy. Relocate their
 production use at the application/UI projection boundary in the next step,
 while preserving public callers and dependency direction.
+
+## Presentation boundary — implemented, with compatibility shims
+
+The live desktop now uses `DesktopPresentation`, not the old application
+view source. It snapshots `PetState` into `PetReadSnapshot` and formats
+localized hover and status models in `presentation/`. `HoverAnchor` now
+belongs to the presentation contracts. Hardware telemetry is an immutable
+provider-neutral value in `telemetry.py`; application coordinators import
+only structural hardware-reading ports. `SettingKey` is shared by the
+settings UI and the desktop setting dispatcher.
+
+The old `application.view_models` import path re-exports unchanged view
+types, while the three old application projections remain callable as
+legacy compatibility interfaces. The `PetState` and `TimeContext` German
+helpers are retained for older callers but unused in live UI presentation.
+Schedule descriptions embedded in `TimeContext` remain an identified
+later compatibility cutover; their values were not changed here.
 
 ## Remaining work, by priority (not yet implemented)
 

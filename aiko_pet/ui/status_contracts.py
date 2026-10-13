@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
-from ..application.view_models import StatusSnapshot as StatusSnapshot
+from ..presentation.contracts import StatusSnapshot as StatusSnapshot
 
 
 @dataclass(frozen=True, slots=True)

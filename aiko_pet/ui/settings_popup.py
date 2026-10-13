@@ -7,6 +7,8 @@ import tkinter as tk
 from functools import partial
 from typing import Callable, Literal
 
+from ..application.settings import SettingKey
+
 from .settings_contracts import SettingsActions, SettingsSnapshot
 
 
@@ -50,7 +52,7 @@ class SettingsPopup:
             else "Größe: 1× (klein)",
             partial(self._invoke, actions.toggle_scale),
         )
-        labels = (
+        labels: tuple[tuple[SettingKey, str], ...] = (
             ("always_on_top", "Immer im Vordergrund"),
             ("auto_walk", "An der Taskleiste laufen"),
             ("auto_routine", "Automatischer Tagesrhythmus"),
@@ -95,7 +97,9 @@ class SettingsPopup:
         self.window.bind("<Escape>", lambda _event: self.close())
         self.window.deiconify()
 
-    def _apply_setting(self, name: str, variable: tk.BooleanVar) -> None:
+    def _apply_setting(
+        self, name: SettingKey, variable: tk.BooleanVar,
+    ) -> None:
         self._actions.set_option(name, variable.get())
 
     @staticmethod

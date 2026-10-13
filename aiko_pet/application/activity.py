@@ -4,20 +4,15 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Callable, Protocol
+from typing import Callable
 
 from ..adaptive import AdaptiveRoutine, Observation
 from ..dialogue import AikoMind, ComputerVoice, Reaction
 from ..domain import PetState
 from ..routine import TimeContext, context_at
 from .settings import PetSettings
-from ..system_activity import ComputerSnapshot, workload_intensity
-
-
-class ActivityReadings(Protocol):
-    def latest(self) -> ComputerSnapshot: ...
-
-    def set_enabled(self, enabled: bool) -> None: ...
+from ..telemetry import workload_intensity
+from .ports import ComputerObservation
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,7 +39,7 @@ class ActivityCoordinator:
     def __init__(
         self, state: PetState, settings: PetSettings,
         mind: AikoMind, adaptive: AdaptiveRoutine,
-        voice: ComputerVoice, monitor: ActivityReadings,
+        voice: ComputerVoice, monitor: ComputerObservation,
         callbacks: ActivityCallbacks,
     ) -> None:
         self.state = state

@@ -71,7 +71,10 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/ui/animated_pet.py` | The animated character: sprites, gaze and movement |
 | `aiko_pet/ui/hover_ui.py` | Independent owner of the hover, status and settings windows |
 | `aiko_pet/ui/` | Independent Tk views plus speech/emote presenter and typed callback contracts |
-| `aiko_pet/application/view_models.py` | Immutable view model contracts |
+| `aiko_pet/application/read_snapshot.py` | Immutable, language-neutral pet read snapshot |
+| `aiko_pet/application/ports.py` | Structural hardware-reading capabilities for application services |
+| `aiko_pet/presentation/` | German desktop copy, display models, hover/status projections and geometry |
+| `aiko_pet/application/view_models.py` | Legacy import bridge for presentation contracts |
 | `aiko_pet/application/read_models.py` | Constructs read-only utility snapshots |
 | `aiko_pet/desktop/runtime.py` | Owns the update phases and Tk timers |
 | `aiko_pet/desktop/persistence.py` | Writes current state and tracks autosave timing |
@@ -81,6 +84,7 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/desktop/compatibility.py` | Typed forwards for older desktop calls |
 | `aiko_pet/adaptive.py` + `adaptive_models.py` | Runtime learning controller and serializable data contracts |
 | `aiko_pet/gui.py` | Desktop component assembly; startup and shutdown delegated |
+| `aiko_pet/telemetry.py` | Immutable workload sample and hardware-independent effort calculation |
 | `aiko_pet/infrastructure/hardware/` | CPU/RAM/uptime providers, NVIDIA parsing, sampler and background monitor |
 | `aiko_pet/system_activity.py` | Backward-compatible hardware imports (no extra logic) |
 | `aiko_pet/work_episode.py` | Observed work episodes, interruptions and bounded recovery dialogue context |

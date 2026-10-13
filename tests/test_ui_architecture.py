@@ -219,6 +219,76 @@ class UiDependencyRules(unittest.TestCase):
             with self.subTest(policy=policy):
                 self.assertIn(policy, calls)
 
+    def test_live_desktop_uses_presentation_boundary(self) -> None:
+        source = (ROOT / "gui.py").read_text("utf-8")
+        self.assertIn("from .presentation.read_models import", source)
+        self.assertIn("DesktopPresentation(", source)
+        self.assertNotIn("from .application.read_models import", source)
+
+    def test_application_runtime_does_not_import_hardware_provider(self) -> None:
+        for module in (
+            "activity.py", "attention.py", "ports.py", "read_snapshot.py",
+        ):
+            with self.subTest(module=module):
+                tree = ast.parse(
+                    (ROOT / "application" / module).read_text("utf-8"),
+                )
+                names = [
+                    node.module or ""
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.ImportFrom)
+                ]
+                self.assertFalse(any(
+                    "infrastructure" in name
+                    or "system_activity" in name
+                    or "presentation" in name
+                    or ".ui." in name
+                    for name in names
+                ))
+
+    def test_presenters_do_not_import_tk_or_save_repositories(self) -> None:
+        for module in (ROOT / "presentation").glob("*.py"):
+            with self.subTest(module=module.name):
+                tree = ast.parse(module.read_text("utf-8"))
+                names = [
+                    node.module or ""
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.ImportFrom)
+                ] + [
+                    alias.name
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.Import)
+                    for alias in node.names
+                ]
+                self.assertFalse(any(
+                    name.startswith("tkinter") or name.endswith("storage")
+                    for name in names
+                ))
+
+    def test_production_text_is_not_read_from_pet_legacy_methods(self) -> None:
+        files = (
+            "presentation/projections.py",
+            "presentation/read_models.py",
+            "presentation/text_de.py",
+        )
+        for relative in files:
+            with self.subTest(module=relative):
+                source = (ROOT / relative).read_text("utf-8")
+                for expression in (
+                    ".mood_hint(", ".feed_label(", ".schedule_line",
+                    ".label", ".greeting(",
+                ):
+                    self.assertNotIn(expression, source)
+
+    def test_view_contract_compatibility_has_no_parallel_classes(self) -> None:
+        tree = ast.parse(
+            (ROOT / "application/view_models.py").read_text("utf-8"),
+        )
+        self.assertFalse(any(
+            isinstance(node, ast.ClassDef)
+            for node in tree.body
+        ))
+
     def test_application_services_never_import_tkinter(self) -> None:
         for path in (ROOT / "application").glob("*.py"):
             with self.subTest(module=path.name):

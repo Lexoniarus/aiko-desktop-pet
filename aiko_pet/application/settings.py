@@ -3,7 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
+
+
+SettingKey = Literal[
+    "always_on_top", "auto_walk", "auto_routine", "follow_cursor",
+    "spontaneous_talk", "observe_computer", "learn_rhythm",
+]
 
 
 @dataclass

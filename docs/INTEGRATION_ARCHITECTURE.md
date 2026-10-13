@@ -79,6 +79,21 @@ The current inbox uses arrival order and stores priority metadata. A later
 attention policy may choose to defer or prioritize without changing the wire
 contract, but must preserve the non-interrupting default and bounded queue.
 
+## Semantic read contracts
+
+The live desktop constructs an immutable, language-neutral
+`PetReadSnapshot` in `application/read_snapshot.py`. This is distinct from
+the existing German `HoverSnapshot` and `StatusSnapshot`, now owned by
+`presentation/contracts.py` and composed by `DesktopPresentation`.
+A future external adapter should expose only an authorized subset of the
+semantic snapshot rather than returning German desktop strings, local
+window geometry or unapproved computer-activity details.
+
+Application activity/attention policies use structural provider contracts
+in `application/ports.py`; `telemetry.ComputerSnapshot` is a shared
+hardware-independent value type. No new observer or network service was
+introduced.
+
 ## Possible read-side API (not implemented)
 
 Some integrations may eventually request read-only status (e.g. needs,

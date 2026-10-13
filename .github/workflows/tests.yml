@@ -32,6 +32,7 @@ jobs:
             aiko_pet/need_decay.py aiko_pet/pet_lifecycle.py \
             tests/test_friendship_policy.py tests/test_care_actions.py \
             tests/test_pet_lifecycle.py tests/test_domain_transitions.py
+            tests/test_presentation_boundary.py
       - name: Enforce PEP 8 line lengths in adaptive and dialogue modules
         run: |
           python -m ruff check --select E501 \
@@ -96,6 +97,7 @@ jobs:
             "test_application_core.py",
             "test_adaptive_models.py",
             "test_ui_architecture.py",
+            "test_presentation_boundary.py",
             "test_desktop_runtime.py",
             "test_desktop_persistence.py",
             "test_desktop_maintenance.py",

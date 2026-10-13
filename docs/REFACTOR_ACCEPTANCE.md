@@ -28,6 +28,12 @@ the desktop runtime has been exercised on Windows after the final commit.
 - Domain-transition tests check immutable policies, pet-owned mutations,
   backwards-compatible care and timeline APIs, old friendship rewards,
   sleep behavior, rejected actions and bounded work telemetry.
+- Presentation parity tests compare the new German hover/status formatting
+  against legacy projections across needs, moods, times and optional hardware.
+  Immutable pet/telemetry contracts and SettingsKey routing stay compatible.
+- New architecture guards check live presentation ownership, absence of
+  concrete infrastructure imports from application coordinators and
+  separation of localized text from the production pet read path.
 - Work-episode regression tests cover confirmed versus missing activity,
   repeated interruption, unexpected work and one-time recovery reflections.
 - Lifecycle tests cover the original startup, shutdown and repeated-close

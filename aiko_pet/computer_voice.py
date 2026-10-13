@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import random
 
-from .system_activity import ComputerSnapshot
+from .telemetry import ComputerSnapshot, workload_intensity
 
 class ComputerVoice:
     """Translate measured effort into Aiko's *subjective* working rhythm.
@@ -40,8 +40,6 @@ class ComputerVoice:
 
     def observe_change(self, snapshot: ComputerSnapshot, now: float) -> str | None:
         """Emit meaningful transitions only once per fresh hardware reading."""
-        from .system_activity import workload_intensity
-
         if snapshot.measured_at <= 0 or now - snapshot.measured_at > 25:
             return None
         previous = self._last_sample
@@ -105,7 +103,6 @@ class ComputerVoice:
 
     @staticmethod
     def classify(snapshot: "ComputerSnapshot") -> str | None:
-        from .system_activity import ComputerSnapshot, workload_intensity
         if not isinstance(snapshot, ComputerSnapshot):
             return None
         effort = workload_intensity(snapshot)

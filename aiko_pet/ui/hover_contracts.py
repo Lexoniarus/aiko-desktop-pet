@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
-from ..application.view_models import (
+from ..presentation.contracts import (
     HoverAnchor as HoverAnchor,
     HoverSnapshot as HoverSnapshot,
 )

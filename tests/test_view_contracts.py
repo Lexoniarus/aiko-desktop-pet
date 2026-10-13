@@ -1,4 +1,4 @@
-"""View models belong to the application; the UI re-exports old names."""
+"""Presentation contracts retain identity across old application imports."""
 
 import unittest
 from dataclasses import FrozenInstanceError

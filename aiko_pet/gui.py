@@ -14,6 +14,7 @@ from tkinter import font as tkfont
 from tkinter import messagebox
 
 from .application.session import PetSessionRestorer
+from .application.settings import SettingKey
 from .application.activity import ActivityCallbacks, ActivityCoordinator
 from .desktop.compatibility import DesktopCompatibility
 from .desktop.runtime import (
@@ -26,7 +27,7 @@ from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
 from .ui.hover_ui import HoverUi, HoverUiPorts
 from .application.router import ApplicationRouter
-from .application.read_models import DesktopViewSource
+from .presentation.read_models import DesktopPresentation
 from .animation import (
     FRAME_COUNTS as FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
     FrameClock as FrameClock,
@@ -162,7 +163,7 @@ class DesktopPet(DesktopCompatibility):
             maintain_stack=self._overlay_stack.maintain,
             started_at=self._runtime.last_tick,
         )
-        self._views = DesktopViewSource(
+        self._views = DesktopPresentation(
             self.state, self.settings, self.mind, self.adaptive,
             self.activity_monitor,
             context=lambda: self.context,
@@ -327,7 +328,7 @@ class DesktopPet(DesktopCompatibility):
     def _show_menu(self, event: tk.Event) -> None:
         self._input.on_menu(event)
 
-    def _set_popup_option(self, name: str, value: bool) -> None:
+    def _set_popup_option(self, name: SettingKey, value: bool) -> None:
         setters = {
             "always_on_top": self.set_topmost,
             "auto_walk": self.set_auto_walk,
