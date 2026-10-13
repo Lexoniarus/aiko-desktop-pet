@@ -12,14 +12,13 @@ import tempfile
 import time
 from pathlib import Path
 
-from PIL import Image, ImageGrab
+from tools.media_crop import CapturedFrame, capture_screen, save_sequence
 
 from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 
 
-SCREENSHOT_BOX = (160, 180, 1260, 898)
 MEDIA_DIR = Path(__file__).resolve().parents[1] / "vorschau"
 
 
@@ -30,13 +29,10 @@ def present(pet: DesktopPet) -> None:
     time.sleep(0.08)
 
 
-def capture(pet: DesktopPet) -> Image.Image:
+def capture(pet: DesktopPet) -> CapturedFrame:
+    """Capture all visible Tk windows before applying per-view framing."""
     present(pet)
-    image: Image.Image = ImageGrab.grab(bbox=SCREENSHOT_BOX).convert("RGB")
-    if image.size != (1100, 718):
-        raise RuntimeError("The desktop capture has unexpected dimensions")
-    return image
-
+    return capture_screen(pet.root)
 
 def assert_hand_fits(game: object) -> None:
     """Fail a capture if an actual hand is cropped or the slot changes size."""
@@ -97,7 +93,7 @@ def record_media() -> None:
                     f"{window.winfo_width()}x{window.winfo_height()}"
                 )
 
-            frames: list[Image.Image] = []
+            frames: list[CapturedFrame] = []
             durations: list[int] = []
 
             def frame(duration: int) -> None:
@@ -109,7 +105,7 @@ def record_media() -> None:
                 game.window.winfo_width(), game.window.winfo_height(),
             )
             opening = capture(pet)
-            opening.save(MEDIA_DIR / "Aiko_RPS_Start.png")
+            opening.save_png(MEDIA_DIR / "Aiko_RPS_Start.png")
             frames.append(opening)
             durations.append(1500)
 
@@ -131,7 +127,7 @@ def record_media() -> None:
             ) != expected_window:
                 raise RuntimeError("Minigame window shrank after the reveal")
             revealed = capture(pet)
-            revealed.save(MEDIA_DIR / "Aiko_RPS_Aufgedeckt.png")
+            revealed.save_png(MEDIA_DIR / "Aiko_RPS_Aufgedeckt.png")
             frames.append(revealed)
             durations.append(2100)
             game._sequence.advance()
@@ -158,16 +154,12 @@ def record_media() -> None:
             ) != expected_window:
                 raise RuntimeError("Minigame window shrank after second round")
             scoreboard = capture(pet)
-            scoreboard.save(MEDIA_DIR / "Aiko_RPS_Punktestand.png")
+            scoreboard.save_png(MEDIA_DIR / "Aiko_RPS_Punktestand.png")
             frames.append(scoreboard)
             durations.append(1700)
 
-            frames[0].save(
-                MEDIA_DIR / "Aiko_RPS_Spielablauf.gif",
-                save_all=True,
-                append_images=frames[1:],
-                loop=0, duration=durations, disposal=2,
-                optimize=True,
+            save_sequence(
+                frames, durations, MEDIA_DIR / "Aiko_RPS_Spielablauf.gif",
             )
             print(
                 f"Captured {len(frames)} application frames, "
