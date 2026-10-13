@@ -346,7 +346,7 @@ class DesktopPet:
         if self._hover.game_open:
             return
         if reaction is None:
-                self._cancel_followup()
+            self._cancel_followup()
             self._speech.hide()
             return
         if len(self.mind.clicks) >= 3 and reaction.emote_before is not None:
