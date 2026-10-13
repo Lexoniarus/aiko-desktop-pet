@@ -40,6 +40,7 @@ def capture(pet: DesktopPet) -> Image.Image:
 
 def record_media() -> None:
     """Drive the actual game callbacks; capture one frame for every cue."""
+    # Capture only the live sprite, player panel and Aiko's own bubble.
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="aiko-media-") as folder:
         pet = DesktopPet(
