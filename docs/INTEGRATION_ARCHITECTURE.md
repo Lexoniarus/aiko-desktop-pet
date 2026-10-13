@@ -145,6 +145,14 @@ planning are pure code in `presentation/`, consuming only immutable or
 explicitly typed desktop geometry. No hooks, key inspection, browser
 integration or network access were added.
 
+## Persistence infrastructure contract
+
+`infrastructure/persistence.py` owns the only state JSON repository;
+`storage.py` is a legacy import façade. Application session restoration
+consumes its typed load port and keeps bounded time catch-up outside
+the repository. Old save path precedence and version-one schema are
+preserved, including relative environment-variable overrides.
+
 ## Migration safety
 
 Existing entrypoints, stored JSON schema, dialogue catalogue, and user-facing

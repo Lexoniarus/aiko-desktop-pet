@@ -44,7 +44,7 @@ from .presentation.movement import WalkController as WalkController
 from .pet.routine import TimeContext, context_at
 from .personality.reaction_sequence import Cue as Cue, EMOTES as EMOTES
 from .presentation.reaction_playback import ReactionPlayer, choose_idle_emote
-from .storage import StateStore
+from .infrastructure.persistence import StateStore
 from .system_activity import ActivityMonitor
 from .desktop.geometry import TaskbarTrack as TaskbarTrack
 from .ui.desktop_window import (

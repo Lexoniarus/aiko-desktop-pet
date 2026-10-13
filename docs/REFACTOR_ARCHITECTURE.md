@@ -81,10 +81,11 @@ third-party packages. Keep German runtime text and English documentation.
 - `application/settings.py` owns the mutable `PetSettings` preference model.
   It is not part of JSON persistence. Its existing serialized fields and
   defaults remain unchanged; `storage.PetSettings` is a legacy type alias.
-- `storage.StateStore.load_session()` decodes the complete saved state,
+- `infrastructure.persistence.StateStore.load_session()` decodes saved state,
   preferences and adaptive memory in one read, returning `LoadedPetData`.
   The repository never calls `PetState.advance()`. The old `load()` and
   `load_memory()` entrypoints remain available for legacy consumers.
+  `storage.py` re-exports the exact canonical repository class.
 - `application/session.py` owns `PetSessionRestorer` and its
   `SavedPetReader` protocol. Only a valid existing version-one save receives
   the original bounded time advancement; a missing, corrupt or unsupported
@@ -198,6 +199,17 @@ third-party packages. Keep German runtime text and English documentation.
 - All six former root modules remain re-export compatibility shims.
   Legacy patches to the shared standard-library `random`, `time`,
   `sys` and `ctypes` modules still address those exact shared modules.
+
+## Canonical persistence infrastructure
+
+- `infrastructure/persistence.py` now owns versioned, atomic local JSON
+  storage and save-path resolution. `storage.py` is only a compatibility
+  re-export, so no second repository implementation exists.
+- Relative `AIKO_SAVE_PATH` overrides still resolve from the repository
+  root despite the module's deeper location. The Windows LOCALAPPDATA
+  default and XDG alternatives are unchanged.
+- `PetSessionRestorer` still applies existing-save catch-up in the
+  application. No startup policy moved back into infrastructure.
 
 ## Change safety
 

@@ -67,7 +67,8 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/application/` | Typed use cases, command routing and bounded integration notifications |
 | `aiko_pet/application/settings.py` | Runtime preferences independent of JSON persistence |
 | `aiko_pet/application/session.py` | Startup restoration and bounded catch-up for existing saves |
-| `aiko_pet/storage.py` | Versioned JSON decoding/encoding with legacy settings exports |
+| `aiko_pet/infrastructure/persistence.py` | Version-one atomic JSON state repository and save-path discovery |
+| `aiko_pet/storage.py` | Backwards-compatible import shim for the persistence API |
 | `aiko_pet/ui/animated_pet.py` | The animated character: sprites, gaze and movement |
 | `aiko_pet/ui/hover_ui.py` | Independent owner of the hover, status and settings windows |
 | `aiko_pet/ui/` | Independent Tk views plus speech/emote presenter and typed callback contracts |

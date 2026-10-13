@@ -28,7 +28,7 @@ isolated to `refactor/oop-modular-architecture`.
 | Legacy GUI method compatibility | `desktop/compatibility.py` |
 | Tick timers and update phases | `desktop/runtime.py` (`DesktopTickPorts`) |
 | Desktop preference effects | `desktop/preferences.py` |
-| Save decoding and atomic JSON writes | `storage.py` |
+| Save decoding and atomic JSON writes | `infrastructure/persistence.py` (`storage.py` compatibility alias) |
 | Runtime preferences and compatibility exports | `application/settings.py`, `storage.py` |
 | Startup restoration and valid-save time catch-up | `application/session.py` |
 | State serialization and autosave cadence | `desktop/persistence.py` |
@@ -167,6 +167,14 @@ Animation timing, gaze and walk planning are grouped in `presentation/`.
 Flat imports such as `taskbar`, `window_stack`, `desktop_input`,
 `animation`, `gaze` and `movement` remain re-export-only
 compatibility surfaces.
+
+## Persistence implementation package — implemented
+
+The sole JSON repository lives in `infrastructure/persistence.py`, with
+`storage.py` serving only the original import path. The loader still
+performs no game simulation, keeps JSON version 1, and computes relative
+overrides from the repository root rather than changing them when its
+source module moves under infrastructure.
 
 ## Remaining work, by priority (not yet implemented)
 

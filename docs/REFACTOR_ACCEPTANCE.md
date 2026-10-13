@@ -34,6 +34,9 @@ the desktop runtime has been exercised on Windows after the final commit.
 - Canonical personality package tests protect authored catalogue discovery,
   workload detector naming and legacy class identity, along with separation
   of dialogue policy from concrete desktop/UI/storage dependencies.
+- Infrastructure persistence tests verify original StateStore class
+  identity, JSON schema version one and unchanged absolute/relative
+  save-directory resolution.
 - Canonical pet package tests check exact identity of old imports and
   verify no outer-layer dependencies or duplicate PetState implementations.
 - Domain-transition tests check immutable policies, pet-owned mutations,

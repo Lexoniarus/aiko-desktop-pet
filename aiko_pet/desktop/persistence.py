@@ -12,7 +12,7 @@ from typing import Callable
 from ..personality.adaptive import AdaptiveRoutine
 from ..pet.state import PetState
 from ..application.settings import PetSettings
-from ..storage import StateStore
+from ..infrastructure.persistence import StateStore
 
 AUTOSAVE_SECONDS = 55
 

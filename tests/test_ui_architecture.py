@@ -76,7 +76,7 @@ class UiDependencyRules(unittest.TestCase):
                 self.assertNotIn("aiko_pet.storage", imported)
 
     def test_state_store_cannot_advance_pet_time(self) -> None:
-        tree = ast.parse((ROOT / "storage.py").read_text("utf-8"))
+        tree = ast.parse((ROOT / "infrastructure/persistence.py").read_text("utf-8"))
         self.assertFalse(any(
             isinstance(node, ast.Call)
             and isinstance(node.func, ast.Attribute)
@@ -388,6 +388,13 @@ class UiDependencyRules(unittest.TestCase):
                     isinstance(node, (ast.ClassDef, ast.FunctionDef))
                     for node in tree.body
                 ))
+
+    def test_legacy_state_store_has_no_duplicate_repository(self) -> None:
+        tree = ast.parse((ROOT / "storage.py").read_text("utf-8"))
+        self.assertFalse(any(
+            isinstance(node, (ast.ClassDef, ast.FunctionDef))
+            for node in tree.body
+        ))
 
     def test_application_services_never_import_tkinter(self) -> None:
         for path in (ROOT / "application").glob("*.py"):
