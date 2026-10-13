@@ -19,6 +19,7 @@ from .desktop.compatibility import DesktopCompatibility
 from .desktop.runtime import (
     DesktopRuntime, TICK_MILLISECONDS as TICK_MILLISECONDS,
 )
+from .desktop.persistence import DesktopPersistence
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
@@ -82,7 +83,9 @@ class DesktopPet(DesktopCompatibility):
         self._last_track_check = self._last_tick
         self._action_until = 0.0
         self._action_state = "idle"
-        self._last_saved = time.monotonic()
+        self._persistence = DesktopPersistence(
+            self.store, self.state, self.settings, self.adaptive, self,
+        )
         self.mind = AikoMind(started_at=self._last_saved)
         self.application = ApplicationRouter(
             CareController(self.state, self.mind, self.adaptive),
@@ -529,7 +532,7 @@ class DesktopPet(DesktopCompatibility):
         if now - self._last_stack_check >= 1.5:
             self._last_stack_check = now
             self._overlay_stack.maintain()
-        if now - self._last_saved >= 55:
+        if self._persistence.due(now):
             self._save()
 
     def _tick(self) -> None:
@@ -537,21 +540,12 @@ class DesktopPet(DesktopCompatibility):
         self._runtime.tick()
 
     def _save(self) -> None:
-        self.state.advance(
-            time.time(), auto_routine=self.settings.auto_routine,
-            allow_bedtime=self._allow_bedtime(),
-            allow_nap=self._allow_nap(),
-            interrupt_nap=self._interrupt_nap(),
-            effort=self._live_effort(),
-        )
-        try:
-            self.store.save(self.state, self.settings,
-                            adaptive=self.adaptive.memory)
-        except OSError as error:
+        """Show persistence failures; disk I/O and catch-up live elsewhere."""
+        failure = self._persistence.save()
+        if failure is not None:
             messagebox.showwarning(
-                "Aiko", f"Spielstand konnte nicht gespeichert werden:\n{error}",
+                "Aiko", f"Spielstand konnte nicht gespeichert werden:\n{failure}",
             )
-        self._last_saved = time.monotonic()
 
     def quit(self) -> None:
         if self._closed:

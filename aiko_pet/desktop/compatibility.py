@@ -25,6 +25,7 @@ from ..ui.settings_popup import SettingsPopup
 from ..ui.speech_presenter import SpeechPresenter
 from ..ui.status_panel import StatusPanel
 from .runtime import DesktopRuntime
+from .persistence import DesktopPersistence
 
 
 class DesktopCompatibility:
@@ -38,8 +39,17 @@ class DesktopCompatibility:
     _speech: SpeechPresenter
     _reaction_player: ReactionPlayer
     _runtime: DesktopRuntime
+    _persistence: DesktopPersistence
     context: TimeContext
 
+
+    @property
+    def _last_saved(self) -> float:
+        return self._persistence.last_saved
+
+    @_last_saved.setter
+    def _last_saved(self, value: float) -> None:
+        self._persistence.last_saved = value
 
     @property
     def _last_tick(self) -> float:
