@@ -105,12 +105,14 @@ class RockPaperScissorsWindow:
             bg=_PANEL, fg=_TEXT, font=(title_font, 10, "bold"),
         )
         self.result_title.pack(pady=(8, 2))
+        hand_slot = tk.Frame(self.result_panel, bg=_PANEL, height=84)
+        hand_slot.pack(fill="x", padx=8)
+        hand_slot.pack_propagate(False)
         self.player_hand = tk.Label(
-            self.result_panel, text="?", bg=_PANEL, fg=_MUTED,
-            font=(title_font, 22, "bold"),
-            height=3, compound="center",
+            hand_slot, text="?", bg=_PANEL, fg=_MUTED,
+            font=(title_font, 22, "bold"), compound="center",
         )
-        self.player_hand.pack()
+        self.player_hand.pack(fill="both", expand=True)
         self.player_result_label = tk.Label(
             self.result_panel, text="Noch keine Runde gespielt",
             bg=_PANEL, fg=_MUTED, font=(title_font, 9),
