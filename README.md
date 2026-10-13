@@ -77,6 +77,10 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/application/view_models.py` | Legacy import bridge for presentation contracts |
 | `aiko_pet/application/read_models.py` | Constructs read-only utility snapshots |
 | `aiko_pet/desktop/runtime.py` | Ordered Tk tick phases through explicit `DesktopTickPorts` |
+| `aiko_pet/desktop/taskbar.py` | Windows taskbar discovery and fallback placement |
+| `aiko_pet/desktop/geometry.py` | Pure TaskbarTrack value and sprite grounding |
+| `aiko_pet/desktop/window_stack.py` | Native window stacking without focus stealing |
+| `aiko_pet/desktop/global_input.py` | Read-only OS idle/click observation without hooks |
 | `aiko_pet/desktop/preferences.py` | Owns coordinated desktop setting and geometry effects |
 | `aiko_pet/desktop/persistence.py` | Writes current state and tracks autosave timing |
 | `aiko_pet/desktop/maintenance.py` | Bounded taskbar and z-order checks |
@@ -90,6 +94,7 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/infrastructure/hardware/` | CPU/RAM/uptime providers, NVIDIA parsing, sampler and background monitor |
 | `aiko_pet/system_activity.py` | Backward-compatible hardware imports (no extra logic) |
 | `aiko_pet/presentation/reaction_playback.py` | Ordered speech/emote playback and cancellable timers |
+| `aiko_pet/presentation/animation.py`, `movement.py`, `gaze.py` | Pure sprite timing, direction and walking plans |
 | `aiko_pet/pet/state.py` | PetState aggregate and its authorized mutations |
 | `aiko_pet/pet/` | Care, needs, friendship, daily routine, time progression and value validation |
 | `aiko_pet/domain.py` and other old pet modules | Public compatibility imports pointing at the single pet implementation |

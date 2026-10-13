@@ -368,6 +368,27 @@ class UiDependencyRules(unittest.TestCase):
                 ):
                     self.assertNotIn(original, source)
 
+    def test_native_desktop_adapters_are_not_owned_by_sprite_code(self) -> None:
+        sprite = (ROOT / "ui/animated_pet.py").read_text("utf-8")
+        desktop_window = (ROOT / "ui/desktop_window.py").read_text("utf-8")
+        self.assertIn("from ..presentation.movement import", sprite)
+        self.assertIn("from ..desktop.geometry import TaskbarTrack", sprite)
+        self.assertIn("from ..desktop.taskbar import", desktop_window)
+        self.assertNotIn("from ..taskbar import", sprite)
+        self.assertNotIn("from ..taskbar import", desktop_window)
+
+    def test_native_platform_behaviour_has_one_package_owner(self) -> None:
+        for relative in (
+            "taskbar.py", "window_stack.py", "desktop_input.py",
+            "animation.py", "gaze.py", "movement.py",
+        ):
+            with self.subTest(module=relative):
+                tree = ast.parse((ROOT / relative).read_text("utf-8"))
+                self.assertFalse(any(
+                    isinstance(node, (ast.ClassDef, ast.FunctionDef))
+                    for node in tree.body
+                ))
+
     def test_application_services_never_import_tkinter(self) -> None:
         for path in (ROOT / "application").glob("*.py"):
             with self.subTest(module=path.name):

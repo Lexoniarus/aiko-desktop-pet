@@ -19,7 +19,9 @@ isolated to `refactor/oop-modular-architecture`.
 | Immutable German UI projection and geometry | `presentation/contracts.py`, `projections.py`, `read_models.py` |
 | Hardware sample contract and provider capabilities | `telemetry.py`, `application/ports.py` |
 | Animated character and walking | `ui/animated_pet.py` |
-| Taskbar geometry and transparent root | `ui/desktop_window.py` |
+| Taskbar geometry and transparent root | `desktop/geometry.py`, `desktop/taskbar.py`, `ui/desktop_window.py` |
+| Windows z-order and native mouse observation | `desktop/window_stack.py`, `desktop/global_input.py` |
+| Sprite time, gaze and walk calculation | `presentation/animation.py`, `presentation/gaze.py`, `presentation/movement.py` |
 | Hover, status and settings lifecycle | `ui/hover_ui.py` and UI views |
 | Speech and ordered emotes | `ui/speech_presenter.py`, `presentation/reaction_playback.py` |
 | Hover layout and drag rules | `ui/hover_geometry.py` |
@@ -155,6 +157,17 @@ identity and behavior of the existing class.
 The catalogue remains in `data/dialogues.de.json`; its default path is
 explicitly anchored at the package root after the source file move.
 
+## Native desktop and visual policy ownership — implemented
+
+Real Windows discovery and window/keyboard-independent click sampling now
+live under `desktop/`. Pure `TaskbarTrack` geometry is separately
+implemented in `desktop/geometry.py`, permitting sprite layout code to
+depend on a value type rather than a native provider.
+Animation timing, gaze and walk planning are grouped in `presentation/`.
+Flat imports such as `taskbar`, `window_stack`, `desktop_input`,
+`animation`, `gaze` and `movement` remain re-export-only
+compatibility surfaces.
+
 ## Remaining work, by priority (not yet implemented)
 
 1. **Implemented:** timer scheduling, autosave, taskbar/stack inspection,
@@ -170,9 +183,10 @@ explicitly anchored at the package root after the source file move.
    one-time recovery commentary to `work_episode.py`. `AikoMind` retains
    dialogue coordination, mood priorities, click/care selections and the
    separately testable spontaneous topic policy. No dialogue text was edited.
-4. **In progress:** the pet and personality modules are packaged by
-   responsibility. Migrate the remaining native desktop and visual policy
-   modules without introducing a dependency from behavior into Tk.
+4. **Implemented:** the pet, personality, native desktop and pure sprite
+   policies are packaged by responsibility, without introducing a
+   dependency from behavior into Tk. Next audit remaining compatibility
+   surfaces before requesting native Windows approval.
 5. Review remaining widget construction in the 320-line `action_toolbar.py`.
    Pure geometry was extracted; further splits require cohesive widgets.
 

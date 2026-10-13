@@ -29,6 +29,8 @@ the desktop runtime has been exercised on Windows after the final commit.
   catch-up, while fresh or corrupt saves keep their original defaults;
   settings and adaptive memory retain the version-one JSON contract.
 - Application import guards prevent a direct dependency on `storage.py`.
+- Desktop module ownership tests verify exact legacy class identity, pure
+  taskbar geometry, and native-provider isolation from sprite policies.
 - Canonical personality package tests protect authored catalogue discovery,
   workload detector naming and legacy class identity, along with separation
   of dialogue policy from concrete desktop/UI/storage dependencies.

@@ -9,14 +9,14 @@ from __future__ import annotations
 
 import tkinter as tk
 
-from ..animation import FrameClock
+from ..presentation.animation import FrameClock
 from ..application.activity import ActivityCoordinator
 from ..application.attention import AttentionCoordinator
-from ..movement import WalkController
+from ..presentation.movement import WalkController
 from ..presentation.reaction_playback import ReactionPlayer
 from ..personality.reaction_sequence import Cue
 from ..pet.routine import TimeContext
-from ..taskbar import TaskbarTrack
+from .geometry import TaskbarTrack
 from ..ui.action_toolbar import ActionToolbar
 from ..ui.animated_pet import AnimatedPet
 from ..ui.desktop_window import DesktopWindow

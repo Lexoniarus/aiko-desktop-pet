@@ -184,6 +184,21 @@ third-party packages. Keep German runtime text and English documentation.
   `aiko_pet/data/`. No new model, audio generator, listener or API
   is introduced.
 
+## Native desktop and visual-policy package cutover
+
+- `desktop/geometry.py` owns the `TaskbarTrack` dataclass and taskbar
+  foot baseline, without Win32 or Tk calls.
+- `desktop/taskbar.py`, `desktop/window_stack.py` and
+  `desktop/global_input.py` own native Windows discovery, foreground
+  stacking and read-only global click/idle observation respectively.
+- `presentation/animation.py`, `presentation/gaze.py` and
+  `presentation/movement.py` own pure sprite timing and motion rules.
+  Presentation's movement planner depends only on pure desktop geometry,
+  never on native API access.
+- All six former root modules remain re-export compatibility shims.
+  Legacy patches to the shared standard-library `random`, `time`,
+  `sys` and `ctypes` modules still address those exact shared modules.
+
 ## Change safety
 
 - `main` is untouched until a reviewed merge.

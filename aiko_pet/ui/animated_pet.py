@@ -14,13 +14,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Protocol
 
-from ..animation import (
+from ..presentation.animation import (
     FRAME_COUNTS, FrameClock, choose_passive_animation,
 )
 from ..asset_paths import ASSETS
-from ..gaze import gaze_sector
-from ..movement import WalkConditions, WalkController
-from ..taskbar import TaskbarTrack
+from ..presentation.gaze import gaze_sector
+from ..presentation.movement import WalkConditions, WalkController
+from ..desktop.geometry import TaskbarTrack
 
 FRAME_WIDTH = 128
 FRAME_HEIGHT = 208

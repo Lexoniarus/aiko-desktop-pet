@@ -14,7 +14,7 @@ from ..presentation.reaction_playback import ReactionPlayer
 from ..system_activity import ActivityMonitor
 from ..ui.hover_ui import HoverUi
 from ..ui.speech_presenter import SpeechPresenter
-from ..window_stack import WindowStack
+from .window_stack import WindowStack
 from .input import DesktopInput
 from .runtime import DesktopRuntime
 

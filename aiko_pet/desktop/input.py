@@ -6,7 +6,7 @@ import tkinter as tk
 from dataclasses import dataclass
 from typing import Callable, Protocol
 
-from ..desktop_input import GlobalMouseClicks
+from .global_input import GlobalMouseClicks
 
 
 class MouseClicks(Protocol):

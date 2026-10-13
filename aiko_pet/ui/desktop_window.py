@@ -9,7 +9,7 @@ from __future__ import annotations
 import sys
 import tkinter as tk
 from typing import Protocol
-from ..taskbar import locate_primary_taskbar
+from ..desktop.taskbar import locate_primary_taskbar
 
 FRAME_WIDTH = 128
 FRAME_HEIGHT = 208

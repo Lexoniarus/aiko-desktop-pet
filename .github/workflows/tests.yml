@@ -45,10 +45,15 @@ jobs:
             aiko_pet/personality/workload_events.py \
             aiko_pet/personality/work_episode.py \
             aiko_pet/personality/reaction_sequence.py \
-            aiko_pet/presentation/reaction_playback.py aiko_pet/movement.py \
+            aiko_pet/presentation/reaction_playback.py \
+            aiko_pet/presentation/animation.py aiko_pet/presentation/gaze.py \
+            aiko_pet/presentation/movement.py aiko_pet/desktop/geometry.py \
+            aiko_pet/desktop/taskbar.py aiko_pet/desktop/global_input.py \
+            aiko_pet/desktop/window_stack.py \
             tests/test_adaptive_policy.py tests/test_dialogue_events.py \
             tests/test_spontaneous_events.py \
             tests/test_personality_package.py tests/test_computer_voice_modules.py \
+            tests/test_desktop_package_layout.py \
             tests/test_desktop_runtime.py tests/test_desktop_preferences.py \
             tests/test_desktop_focus_timers.py
       - name: Install static typing tool
@@ -106,6 +111,7 @@ jobs:
             "test_domain_transitions.py",
             "test_pet_package_layout.py",
             "test_personality_package.py",
+            "test_desktop_package_layout.py",
             "test_computer_voice_modules.py",
             "test_application_core.py",
             "test_adaptive_models.py",

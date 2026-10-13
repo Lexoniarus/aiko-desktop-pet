@@ -20,7 +20,7 @@ from ..ui.animated_pet import AnimatedPet
 from ..ui.desktop_window import DesktopWindow
 from ..ui.hover_ui import HoverUi
 from ..ui.speech_presenter import SpeechPresenter
-from ..window_stack import WindowStack
+from .window_stack import WindowStack
 
 
 @dataclass(frozen=True, slots=True)

@@ -29,29 +29,29 @@ from .application.controller import CareController, CareRuntime
 from .ui.hover_ui import HoverUi, HoverUiPorts
 from .application.router import ApplicationRouter
 from .presentation.read_models import DesktopPresentation
-from .animation import (
+from .presentation.animation import (
     FRAME_COUNTS as FRAME_COUNTS, FRAME_TIMINGS as FRAME_TIMINGS,
     FrameClock as FrameClock,
 )
 from .config import load_env_file
-from .desktop_input import idle_seconds_windows
+from .desktop.global_input import idle_seconds_windows
 from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
 from .personality.mind import AikoMind
 from .personality.workload_events import WorkloadEventDetector
 from .personality.catalog import Reaction
-from .movement import WalkController as WalkController
+from .presentation.movement import WalkController as WalkController
 from .pet.routine import TimeContext, context_at
 from .personality.reaction_sequence import Cue as Cue, EMOTES as EMOTES
 from .presentation.reaction_playback import ReactionPlayer, choose_idle_emote
 from .storage import StateStore
 from .system_activity import ActivityMonitor
-from .taskbar import TaskbarTrack as TaskbarTrack
+from .desktop.geometry import TaskbarTrack as TaskbarTrack
 from .ui.desktop_window import (
     DesktopWindow, FRAME_WIDTH as FRAME_WIDTH,
     FRAME_HEIGHT as FRAME_HEIGHT, MAGENTA as MAGENTA,
 )
-from .window_stack import WindowStack
+from .desktop.window_stack import WindowStack
 from .asset_paths import (
     ASSETS as ASSETS,
     EMOTE_ASSETS as EMOTE_ASSETS,

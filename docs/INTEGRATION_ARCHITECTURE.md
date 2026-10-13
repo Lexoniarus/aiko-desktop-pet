@@ -136,6 +136,15 @@ Presentation-owned cue scheduling lives in
 `presentation/reaction_playback.py`. Neither the API contract nor any
 German authored responses have changed.
 
+## Platform and visual-policy ownership
+
+Windows taskbar discovery, native window ordering and read-only global
+input sampling now live in `desktop/` and are no longer primary imports
+from the root package. Sprite frame timing, gaze and horizontal motion
+planning are pure code in `presentation/`, consuming only immutable or
+explicitly typed desktop geometry. No hooks, key inspection, browser
+integration or network access were added.
+
 ## Migration safety
 
 Existing entrypoints, stored JSON schema, dialogue catalogue, and user-facing
