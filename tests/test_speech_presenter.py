@@ -6,6 +6,7 @@ import tkinter as tk
 import unittest
 
 from aiko_pet.ui.speech_presenter import SpeechAnchor, SpeechPresenter
+from aiko_pet.games.rock_paper_scissors import Move
 
 
 class SpeechPresenterTests(unittest.TestCase):
@@ -59,6 +60,22 @@ class SpeechPresenterTests(unittest.TestCase):
             "text",
         ), "Nachher")
         self.assertFalse(bool(previous and previous.winfo_exists()))
+
+    def test_game_hands_use_color_assets_in_the_same_character_bubble(
+        self,
+    ) -> None:
+        self.presenter.show_game_hands(Move.ROCK, Move.PAPER, 2600)
+        bubble = self.presenter.bubble
+        assert bubble is not None
+        self.assertEqual(len(bubble.winfo_children()), 2)
+        self.assertEqual(set(self.presenter.game_hand_images), {
+            Move.ROCK, Move.PAPER,
+        })
+        for image in self.presenter.game_hand_images.values():
+            self.assertEqual(image.width(), 72)
+        self.assertIsNotNone(self.presenter.pending_timer)
+        self.presenter.show_text("Wieder normal", 2000)
+        self.assertIsNotNone(self.presenter.bubble)
 
     def test_missing_emote_is_rejected_before_hiding_speech(self) -> None:
         self.presenter.show_text("Bleibt", 2000)

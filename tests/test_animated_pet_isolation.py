@@ -175,6 +175,21 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                     self.assertEqual(frames, list(range(8)) + [0])
                     self.assertEqual(self.settings.x, start_x + 68 * scale * direction)
 
+    def test_game_mode_freezes_cursor_gaze_and_uses_existing_pose(self) -> None:
+        self.anim.set_game_mode(True)
+        self.assertIsNone(self.anim.gaze_direction((99999, -99999)))
+        self.assertIsNone(self.anim.maybe_walk(time.monotonic(), 0.3))
+        self.anim.observe_pointer(time.monotonic())
+        self.assertIsNone(self.anim.gaze_sector)
+        self.anim.render(time.monotonic(), .14, (99999, -99999))
+        self.assertEqual(self.anim.frame_clock.active_key, ("waiting", None))
+        self.anim.begin_action("jumping", time.monotonic())
+        self.anim.render(time.monotonic(), .14, (99999, -99999))
+        self.assertEqual(self.anim.frame_clock.active_key, ("jumping", None))
+        self.anim.set_game_mode(False)
+        self.assertNotEqual(self.anim.frame_clock.active_key, ("jumping", None))
+        self.assertIsNotNone(self.anim.gaze_direction((99999, -99999)))
+
     def test_scale_reload_keeps_frame_identity(self) -> None:
         self.settings.scale = 2
         self.anim.reload_sprites()
