@@ -34,6 +34,7 @@ from .animation import (
 from .config import load_env_file
 from .desktop_input import idle_seconds_windows
 from .desktop.input import DesktopInput, DesktopInputActions
+from .desktop.lifecycle import DesktopLifecycle
 from .dialogue import AikoMind, ComputerVoice, Reaction
 from .movement import WalkController as WalkController
 from .routine import TimeContext, context_at
@@ -201,13 +202,20 @@ class DesktopPet(DesktopCompatibility):
                 closed=lambda: self._closed,
             ),
         )
-        self._setup_events()
-        self._place_initially()
-        self.root.update_idletasks()
-        self.root.deiconify()
-        self._overlay_stack.restore()
-        self.activity_monitor.start()
-        self._runtime.start()
+        self._lifecycle = DesktopLifecycle(
+            root=self.root,
+            inputs=self._input,
+            runtime=self._runtime,
+            monitor=self.activity_monitor,
+            application=self.application,
+            overlays=self._overlay_stack,
+            hover=self._hover,
+            reaction=self._reaction_player,
+            speech=self._speech,
+            place_initially=self._place_initially,
+            save=self._save,
+        )
+        self._lifecycle.start()
 
     def _record_hover_contact(self, now: float) -> None:
         self.mind.last_contact = now
@@ -540,21 +548,11 @@ class DesktopPet(DesktopCompatibility):
             )
 
     def quit(self) -> None:
+        """Delegate ordered cleanup of all desktop session resources."""
         if self._closed:
             return
         self._closed = True
-        self.application.close()
-        self._runtime.stop()
-        self.activity_monitor.stop()
-        self._save()
-        self._cancel_followup()
-        self._hide_bubble()
-        if self.settings_popup is not None:
-            self.settings_popup.close()
-        self._hover.close_toolbar()
-        if self.status_panel is not None:
-            self.status_panel.close()
-        self.root.destroy()
+        self._lifecycle.stop()
 
     def run(self) -> None:
         self.root.mainloop()
