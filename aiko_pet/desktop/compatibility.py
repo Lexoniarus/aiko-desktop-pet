@@ -27,6 +27,7 @@ from ..ui.status_panel import StatusPanel
 from .runtime import DesktopRuntime
 from .persistence import DesktopPersistence
 from .maintenance import DesktopMaintenance
+from .input import DesktopInput, MouseClicks
 
 
 class DesktopCompatibility:
@@ -42,8 +43,13 @@ class DesktopCompatibility:
     _runtime: DesktopRuntime
     _persistence: DesktopPersistence
     _maintenance: DesktopMaintenance
+    _input: DesktopInput
     context: TimeContext
 
+
+    @property
+    def _mouse_clicks(self) -> MouseClicks:
+        return self._input.mouse
 
     @property
     def _last_track_check(self) -> float:

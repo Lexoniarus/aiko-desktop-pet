@@ -32,7 +32,8 @@ from .animation import (
     FrameClock as FrameClock,
 )
 from .config import load_env_file
-from .desktop_input import GlobalMouseClicks, idle_seconds_windows
+from .desktop_input import idle_seconds_windows
+from .desktop.input import DesktopInput, DesktopInputActions
 from .dialogue import AikoMind, ComputerVoice, Reaction
 from .movement import WalkController as WalkController
 from .routine import TimeContext, context_at
@@ -93,8 +94,6 @@ class DesktopPet(DesktopCompatibility):
         self.computer_voice = ComputerVoice()
         self.activity_monitor = activity_monitor or ActivityMonitor()
         self.activity_monitor.set_enabled(self.settings.observe_computer)
-        self._mouse_clicks = GlobalMouseClicks()
-        self._mouse_clicks.clicked()  # establish a baseline before showing UI
         self._activity = ActivityCoordinator(
             self.state, self.settings, self.mind, self.adaptive,
             self.computer_voice, self.activity_monitor,
@@ -189,6 +188,19 @@ class DesktopPet(DesktopCompatibility):
                 always_on_top=lambda: self.settings.always_on_top,
             ),
         )
+        self._input = DesktopInput(
+            self.root, self.canvas,
+            DesktopInputActions(
+                enter=self._on_enter,
+                left_click=self._on_click_left,
+                right_click=self._on_click_right,
+                show_menu=self.toggle_settings_menu,
+                dismiss_outside=self._dismiss_if_outside,
+                open_status=self.open_status,
+                quit=self.quit,
+                closed=lambda: self._closed,
+            ),
+        )
         self._setup_events()
         self._place_initially()
         self.root.update_idletasks()
@@ -214,17 +226,7 @@ class DesktopPet(DesktopCompatibility):
         return windows
 
     def _setup_events(self) -> None:
-        # The care controls stay in the hover bar, but mouse clicks now
-        # get their own expressive reactions. Shift+right-click opens settings.
-        self.canvas.bind("<Enter>", self._on_enter)
-        self.canvas.bind("<Button-1>", self._on_click_left)
-        self.canvas.bind("<Button-3>", self._on_click_right)
-        self.canvas.bind("<Shift-Button-3>", self._show_menu)
-        self.root.bind("<Control-q>", lambda _event: self.quit())
-        self.root.bind("<F2>", lambda _event: self.open_status())
-        self.root.bind_all("<ButtonPress>", self._on_tk_press, add="+")
-        self.root.bind_all("<FocusOut>", self._on_focus_out, add="+")
-        self.root.protocol("WM_DELETE_WINDOW", self.quit)
+        self._input.initialize()
 
     def _place_initially(self) -> None:
         self._place_x(self._window.initial_x())
@@ -305,24 +307,16 @@ class DesktopPet(DesktopCompatibility):
         )
 
     def _on_tk_press(self, event: tk.Event) -> None:
-        # Tk covers clicks inside Aiko's own windows; the Windows mouse-state
-        # poll below also catches clicks in other applications.
-        self._dismiss_if_outside(event.x_root, event.y_root)
+        self._input.on_tk_press(event)
 
-    def _on_focus_out(self, _event: tk.Event) -> None:
-        # Fallback for focus changes Tk receives while another app is clicked.
-        if not self._closed:
-            self.root.after(100, self._dismiss_after_focus_loss)
+    def _on_focus_out(self, event: tk.Event) -> None:
+        self._input.on_focus_out(event)
 
     def _dismiss_after_focus_loss(self) -> None:
-        if self._closed:
-            return
-        self._dismiss_if_outside(
-            self.root.winfo_pointerx(), self.root.winfo_pointery(),
-        )
+        self._input.dismiss_after_focus_loss()
 
     def _show_menu(self, event: tk.Event) -> None:
-        self.toggle_settings_menu(event.x_root, event.y_root)
+        self._input.on_menu(event)
 
     def _set_popup_option(self, name: str, value: bool) -> None:
         setters = {
@@ -340,10 +334,7 @@ class DesktopPet(DesktopCompatibility):
         setter(value)
 
     def _poll_desktop_click(self) -> None:
-        if self._mouse_clicks.clicked():
-            self._dismiss_if_outside(
-                self.root.winfo_pointerx(), self.root.winfo_pointery(),
-            )
+        self._input.poll_global_click()
 
     def _start_action(
         self, state: str, duration: float, *, started_at: float | None = None,
