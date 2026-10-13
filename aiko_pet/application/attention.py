@@ -10,7 +10,9 @@ import random
 from dataclasses import dataclass
 
 
-from ..dialogue import AikoMind, ComputerVoice, Reaction
+from ..personality.mind import AikoMind
+from ..personality.workload_events import WorkloadEventDetector
+from ..personality.catalog import Reaction
 from ..pet.state import PetState
 from ..pet.routine import TimeContext
 from .settings import PetSettings
@@ -32,13 +34,14 @@ class AttentionCoordinator:
 
     def __init__(
         self, state: PetState, settings: PetSettings, mind: AikoMind,
-        voice: ComputerVoice, monitor: ComputerReadings,
+        voice: WorkloadEventDetector, monitor: ComputerReadings,
         router: ApplicationRouter, *, started_at: float,
     ) -> None:
         self.state = state
         self.settings = settings
         self.mind = mind
-        self.voice = voice
+        self.workload_events = voice
+        self.voice = voice  # Historical attribute for existing consumers.
         self.monitor = monitor
         self.router = router
         self.last_spoken = -1000.0
@@ -119,7 +122,7 @@ class AttentionCoordinator:
             or now - self.last_spoken < 85
         ):
             return SpontaneousChoice(False)
-        event = self.voice.maybe_event(self.monitor.latest(), now)
+        event = self.workload_events.maybe_event(self.monitor.latest(), now)
         reaction = (
             self.mind.computer_event(event, self.state, context, now)
             if event is not None

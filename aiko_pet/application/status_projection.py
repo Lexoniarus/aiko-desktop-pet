@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from ..adaptive_models import Behaviour
-from ..dialogue import AikoMind, EMOTION_LABELS
+from ..personality.adaptive_models import Behaviour
+from ..personality.mind import AikoMind
+from ..personality.catalog import EMOTION_LABELS
 from ..pet.state import PetState
 from ..pet.routine import TimeContext
 from ..system_activity import ComputerSnapshot, percent_label

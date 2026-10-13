@@ -9,7 +9,7 @@ from __future__ import annotations
 import time
 from typing import Callable
 
-from ..adaptive import AdaptiveRoutine
+from ..personality.adaptive import AdaptiveRoutine
 from ..pet.state import PetState
 from ..application.settings import PetSettings
 from ..storage import StateStore

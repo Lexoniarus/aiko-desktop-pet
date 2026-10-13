@@ -13,8 +13,8 @@ from ..animation import FrameClock
 from ..application.activity import ActivityCoordinator
 from ..application.attention import AttentionCoordinator
 from ..movement import WalkController
-from ..reaction_playback import ReactionPlayer
-from ..reaction_sequence import Cue
+from ..presentation.reaction_playback import ReactionPlayer
+from ..personality.reaction_sequence import Cue
 from ..pet.routine import TimeContext
 from ..taskbar import TaskbarTrack
 from ..ui.action_toolbar import ActionToolbar

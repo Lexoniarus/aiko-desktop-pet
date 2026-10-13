@@ -10,7 +10,7 @@ import time
 from dataclasses import dataclass
 from typing import Callable
 
-from ..adaptive import AdaptiveRoutine
+from ..personality.adaptive import AdaptiveRoutine
 from ..application.activity import ActivityCoordinator
 from ..application.attention import AttentionCoordinator
 from ..application.settings import PetSettings, SettingKey

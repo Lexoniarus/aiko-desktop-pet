@@ -9,11 +9,11 @@ from __future__ import annotations
 import time
 from typing import Callable
 
-from ..adaptive import AdaptiveRoutine
+from ..personality.adaptive import AdaptiveRoutine
 from ..application.ports import ComputerReadings
 from ..application.read_snapshot import snapshot_pet
 from ..application.settings import PetSettings
-from ..dialogue import AikoMind
+from ..personality.mind import AikoMind
 from ..pet.state import PetState
 from ..pet.routine import TimeContext
 from ..telemetry import ComputerSnapshot

@@ -10,8 +10,8 @@ import time
 from dataclasses import dataclass
 from typing import Callable, Protocol
 
-from ..adaptive import AdaptiveRoutine
-from ..adaptive_models import AdaptiveMemory
+from ..personality.adaptive import AdaptiveRoutine
+from ..personality.adaptive_models import AdaptiveMemory
 from ..pet.state import PetState
 from .settings import PetSettings
 

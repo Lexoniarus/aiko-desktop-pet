@@ -13,14 +13,15 @@ isolated to `refactor/oop-modular-architecture`.
 | Incoming app/browser notifications | `application/router.py` and `inbox.py` |
 | Comment timing, cursor/walk decisions and presentation interruption | `application/attention.py` |
 | Workload, adaptive routine and pet time advancement | `application/activity.py` |
-| Verified work episode/recovery memory for dialogue | `work_episode.py` |
+| Adaptive learning, AikoMind, work/reaction event rules | `personality/` |
+| Verified work episode/recovery memory for dialogue | `personality/work_episode.py` |
 | Semantic application read data | `application/read_snapshot.py` |
 | Immutable German UI projection and geometry | `presentation/contracts.py`, `projections.py`, `read_models.py` |
 | Hardware sample contract and provider capabilities | `telemetry.py`, `application/ports.py` |
 | Animated character and walking | `ui/animated_pet.py` |
 | Taskbar geometry and transparent root | `ui/desktop_window.py` |
 | Hover, status and settings lifecycle | `ui/hover_ui.py` and UI views |
-| Speech and ordered emotes | `ui/speech_presenter.py`, `reaction_playback.py` |
+| Speech and ordered emotes | `ui/speech_presenter.py`, `presentation/reaction_playback.py` |
 | Hover layout and drag rules | `ui/hover_geometry.py` |
 | Legacy GUI method compatibility | `desktop/compatibility.py` |
 | Tick timers and update phases | `desktop/runtime.py` (`DesktopTickPorts`) |
@@ -143,6 +144,17 @@ Application, presentation, storage and desktop consumers now import the
 canonical state/routine modules. Tests forbid policy dependencies on
 outer packages or independent legacy implementations.
 
+## Canonical personality package — implemented
+
+`aiko_pet/personality/` owns Aiko's adaptive learning, dialogue policy,
+catalogue, click reaction selection, work-episode memory and the renamed
+`WorkloadEventDetector`. `presentation/reaction_playback.py` remains the
+independent owner of the timed visual response. Flat-module imports are
+only compatibility aliases, including `ComputerVoice`, preserving the
+identity and behavior of the existing class.
+The catalogue remains in `data/dialogues.de.json`; its default path is
+explicitly anchored at the package root after the source file move.
+
 ## Remaining work, by priority (not yet implemented)
 
 1. **Implemented:** timer scheduling, autosave, taskbar/stack inspection,
@@ -158,9 +170,9 @@ outer packages or independent legacy implementations.
    one-time recovery commentary to `work_episode.py`. `AikoMind` retains
    dialogue coordination, mood priorities, click/care selections and the
    separately testable spontaneous topic policy. No dialogue text was edited.
-4. **In progress:** package the adaptive/dialogue and platform-native
-   components by responsibility, retaining identical public imports and
-   avoiding decorative folders.
+4. **In progress:** the pet and personality modules are packaged by
+   responsibility. Migrate the remaining native desktop and visual policy
+   modules without introducing a dependency from behavior into Tk.
 5. Review remaining widget construction in the 320-line `action_toolbar.py`.
    Pure geometry was extracted; further splits require cohesive widgets.
 

@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..adaptive import AdaptiveRoutine
-from ..dialogue import AikoMind, Reaction
+from ..personality.adaptive import AdaptiveRoutine
+from ..personality.mind import AikoMind
+from ..personality.catalog import Reaction
 from ..pet.state import PetState
 from ..pet.routine import TimeContext, context_at
 from .commands import CareCommand

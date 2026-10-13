@@ -126,6 +126,16 @@ titles or unapproved personal activity details.
 - Consider an outbound application event stream only when a consumer exists.
   A general-purpose event bus is intentionally not introduced prematurely.
 
+## Personality and reaction ownership
+
+Adaptive observations, conversation decisions, workload event detection
+and work-session context now have explicit canonical modules in
+`aiko_pet/personality/`. The detector's descriptive English name is
+`WorkloadEventDetector`; old `ComputerVoice` imports are aliases.
+Presentation-owned cue scheduling lives in
+`presentation/reaction_playback.py`. Neither the API contract nor any
+German authored responses have changed.
+
 ## Migration safety
 
 Existing entrypoints, stored JSON schema, dialogue catalogue, and user-facing

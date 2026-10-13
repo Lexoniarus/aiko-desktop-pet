@@ -83,12 +83,13 @@ The v0.13 release passed **231 tests** under Linux/Xvfb. This does **not** repla
 | `aiko_pet/desktop/input.py` | Tk bindings, global mouse/focus input and cancellable focus timers |
 | `aiko_pet/desktop/lifecycle.py` | Ordered startup and shutdown of desktop resources |
 | `aiko_pet/desktop/compatibility.py` | Typed forwards for older desktop calls |
-| `aiko_pet/adaptive.py` + `adaptive_models.py` | Runtime learning controller and serializable data contracts |
+| `aiko_pet/personality/` | Adaptive observations, authored dialogue catalogue, AikoMind, work episodes and workload event detection |
+| `aiko_pet/adaptive.py` and `dialogue.py` | Compatibility imports for personality models |
 | `aiko_pet/gui.py` | Component assembly and remaining desktop callback adapters |
 | `aiko_pet/telemetry.py` | Immutable workload sample and hardware-independent effort calculation |
 | `aiko_pet/infrastructure/hardware/` | CPU/RAM/uptime providers, NVIDIA parsing, sampler and background monitor |
 | `aiko_pet/system_activity.py` | Backward-compatible hardware imports (no extra logic) |
-| `aiko_pet/work_episode.py` | Observed work episodes, interruptions and bounded recovery dialogue context |
+| `aiko_pet/presentation/reaction_playback.py` | Ordered speech/emote playback and cancellable timers |
 | `aiko_pet/pet/state.py` | PetState aggregate and its authorized mutations |
 | `aiko_pet/pet/` | Care, needs, friendship, daily routine, time progression and value validation |
 | `aiko_pet/domain.py` and other old pet modules | Public compatibility imports pointing at the single pet implementation |

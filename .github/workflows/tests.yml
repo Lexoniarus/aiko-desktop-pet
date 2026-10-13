@@ -37,11 +37,18 @@ jobs:
       - name: Enforce PEP 8 line lengths in adaptive and dialogue modules
         run: |
           python -m ruff check --select E501 \
-            aiko_pet/adaptive.py aiko_pet/adaptive_policy.py \
-            aiko_pet/dialogue.py aiko_pet/dialogue_events.py \
-            aiko_pet/reaction_playback.py aiko_pet/movement.py \
+            aiko_pet/personality/adaptive.py \
+            aiko_pet/personality/adaptive_policy.py \
+            aiko_pet/personality/adaptive_models.py \
+            aiko_pet/personality/mind.py aiko_pet/personality/catalog.py \
+            aiko_pet/personality/click_policy.py \
+            aiko_pet/personality/workload_events.py \
+            aiko_pet/personality/work_episode.py \
+            aiko_pet/personality/reaction_sequence.py \
+            aiko_pet/presentation/reaction_playback.py aiko_pet/movement.py \
             tests/test_adaptive_policy.py tests/test_dialogue_events.py \
             tests/test_spontaneous_events.py \
+            tests/test_personality_package.py tests/test_computer_voice_modules.py \
             tests/test_desktop_runtime.py tests/test_desktop_preferences.py \
             tests/test_desktop_focus_timers.py
       - name: Install static typing tool
@@ -98,6 +105,8 @@ jobs:
             "test_pet_lifecycle.py",
             "test_domain_transitions.py",
             "test_pet_package_layout.py",
+            "test_personality_package.py",
+            "test_computer_voice_modules.py",
             "test_application_core.py",
             "test_adaptive_models.py",
             "test_ui_architecture.py",

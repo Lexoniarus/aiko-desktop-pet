@@ -10,7 +10,9 @@ from aiko_pet.system_activity import ComputerSnapshot
 class ComputerVoiceModuleTests(unittest.TestCase):
     def test_legacy_import_still_refers_to_the_same_class(self) -> None:
         self.assertIs(LegacyComputerVoice, ComputerVoice)
-        self.assertEqual(ComputerVoice.__module__, "aiko_pet.computer_voice")
+        self.assertEqual(
+            ComputerVoice.__module__, "aiko_pet.personality.workload_events",
+        )
 
     def test_new_voice_retains_disabled_or_missing_telemetry_behavior(self) -> None:
         voice = ComputerVoice()

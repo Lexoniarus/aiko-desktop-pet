@@ -6,8 +6,10 @@ import time
 from dataclasses import dataclass
 from typing import Callable
 
-from ..adaptive import AdaptiveRoutine, Observation
-from ..dialogue import AikoMind, ComputerVoice, Reaction
+from ..personality.adaptive import AdaptiveRoutine, Observation
+from ..personality.mind import AikoMind
+from ..personality.workload_events import WorkloadEventDetector
+from ..personality.catalog import Reaction
 from ..pet.state import PetState
 from ..pet.routine import TimeContext, context_at
 from .settings import PetSettings
@@ -39,14 +41,15 @@ class ActivityCoordinator:
     def __init__(
         self, state: PetState, settings: PetSettings,
         mind: AikoMind, adaptive: AdaptiveRoutine,
-        voice: ComputerVoice, monitor: ComputerObservation,
+        voice: WorkloadEventDetector, monitor: ComputerObservation,
         callbacks: ActivityCallbacks,
     ) -> None:
         self.state = state
         self.settings = settings
         self.mind = mind
         self.adaptive = adaptive
-        self.voice = voice
+        self.workload_events = voice
+        self.voice = voice  # Historical attribute for existing consumers.
         self.monitor = monitor
         self.callbacks = callbacks
         self.last_hardware_sample = 0.0
@@ -57,7 +60,7 @@ class ActivityCoordinator:
         """Stop or restart measured workload and clear old session readings."""
         self.settings.observe_computer = bool(enabled)
         self.monitor.set_enabled(self.settings.observe_computer)
-        self.voice.reset_samples()
+        self.workload_events.reset_samples()
         self.last_hardware_sample = 0.0
         self.last_adaptive_sample = 0.0
         self.pending_computer_line = None
@@ -151,7 +154,7 @@ class ActivityCoordinator:
         sample = self.monitor.latest()
         if sample.measured_at > self.last_hardware_sample:
             self.last_hardware_sample = sample.measured_at
-            event = self.voice.observe_change(sample, now)
+            event = self.workload_events.observe_change(sample, now)
             if (
                 event and self.settings.spontaneous_talk
                 and not self.state.sleeping
@@ -178,4 +181,4 @@ class ActivityCoordinator:
             self.pending_computer_line = None
             if reaction is not None:
                 self.callbacks.react(reaction, 3400)
-                self.voice.last_voice_at = now
+                self.workload_events.last_voice_at = now

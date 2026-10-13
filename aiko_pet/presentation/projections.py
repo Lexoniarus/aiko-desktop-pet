@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from ..adaptive_models import Behaviour
+from ..personality.adaptive_models import Behaviour
 from ..application.read_snapshot import PetReadSnapshot
-from ..dialogue_catalog import EMOTION_LABELS
+from ..personality.catalog import EMOTION_LABELS
 from ..pet.routine import TimeContext
 from ..telemetry import ComputerSnapshot
 from .contracts import HoverSnapshot, StatusSnapshot

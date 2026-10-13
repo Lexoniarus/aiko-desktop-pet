@@ -37,11 +37,13 @@ from .config import load_env_file
 from .desktop_input import idle_seconds_windows
 from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
-from .dialogue import AikoMind, ComputerVoice, Reaction
+from .personality.mind import AikoMind
+from .personality.workload_events import WorkloadEventDetector
+from .personality.catalog import Reaction
 from .movement import WalkController as WalkController
 from .pet.routine import TimeContext, context_at
-from .reaction_sequence import Cue as Cue, EMOTES as EMOTES
-from .reaction_playback import ReactionPlayer, choose_idle_emote
+from .personality.reaction_sequence import Cue as Cue, EMOTES as EMOTES
+from .presentation.reaction_playback import ReactionPlayer, choose_idle_emote
 from .storage import StateStore
 from .system_activity import ActivityMonitor
 from .taskbar import TaskbarTrack as TaskbarTrack
@@ -117,12 +119,13 @@ class DesktopPet(DesktopCompatibility):
         self.application = ApplicationRouter(
             CareController(self.state, self.mind, self.adaptive),
         )
-        self.computer_voice = ComputerVoice()
+        self.workload_events = WorkloadEventDetector()
+        self.computer_voice = self.workload_events  # Legacy public attribute.
         self.activity_monitor = activity_monitor or ActivityMonitor()
         self.activity_monitor.set_enabled(self.settings.observe_computer)
         self._activity = ActivityCoordinator(
             self.state, self.settings, self.mind, self.adaptive,
-            self.computer_voice, self.activity_monitor,
+            self.workload_events, self.activity_monitor,
             ActivityCallbacks(
                 read_idle_seconds=lambda: idle_seconds_windows(),
                 start_review=lambda now: self._start_action(
@@ -150,7 +153,7 @@ class DesktopPet(DesktopCompatibility):
         )
         self._closed = False
         self._attention = AttentionCoordinator(
-            self.state, self.settings, self.mind, self.computer_voice,
+            self.state, self.settings, self.mind, self.workload_events,
             self.activity_monitor, self.application,
             started_at=self._persistence.last_saved,
         )

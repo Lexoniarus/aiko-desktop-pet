@@ -9,8 +9,8 @@ from __future__ import annotations
 import time
 from typing import Callable
 
-from ..adaptive import AdaptiveRoutine
-from ..dialogue import AikoMind
+from ..personality.adaptive import AdaptiveRoutine
+from ..personality.mind import AikoMind
 from ..pet.state import PetState
 from ..pet.routine import TimeContext
 from .settings import PetSettings

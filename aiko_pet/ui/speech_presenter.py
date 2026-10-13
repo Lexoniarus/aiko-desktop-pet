@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Callable
 
 from ..asset_paths import EMOTE_ASSETS
-from ..reaction_sequence import EMOTES
+from ..personality.reaction_sequence import EMOTES
 
 
 @dataclass(frozen=True, slots=True)

@@ -63,12 +63,14 @@ third-party packages. Keep German runtime text and English documentation.
    the aggregate or independent record adapters. `adaptive_models.py`
    owns persisted memory/observation contracts, with `adaptive.py`
    orchestrating learning; save fields and public names remain valid.
-8. **Dialogue (implemented):** Written dialogue catalogue, mouse-click
-   decisions and spontaneous topics are independent of the GUI.
-   `work_episode.py` now owns the short-lived, observed work interruptions,
-   session endings and one-time recovery follow-up. `AikoMind` coordinates
-   event selection without duplicating work-episode memory. Authored
-   German dialogue text is untouched.
+8. **Personality (implemented):** `aiko_pet/personality/` owns the
+   adaptive observation/learning models, dialogue catalogue, `AikoMind`,
+   click policy, work-episode memory and the event-only
+   `WorkloadEventDetector`. The misleading legacy name `ComputerVoice`
+   is still a type-identical alias. `personality/reaction_sequence.py`
+   describes validated dialogue cues, while the actual playback belongs
+   to `presentation/reaction_playback.py`. Authored German text and
+   reaction sequence timing are unchanged.
 9. **Quality (continuous):** Ruff, PEP 8/E501, strict mypy across the
    application, Pyright across application *and tests*, Python 3.11/3.13
    Linux/Xvfb GUI tests, and Windows-hosted headless checks are mandatory.
@@ -166,6 +168,21 @@ third-party packages. Keep German runtime text and English documentation.
   history. This is a package migration, not a simulation change.
 - Further personality/desktop ownership moves happen as separate,
   testable packages after this pet cutover.
+
+## Personality package and naming cutover
+
+- All adaptive state, dialogue selection, work-episode and workload-event
+  implementations live in `personality/`; legacy flat files re-export
+  these exact objects without duplicate state or rules.
+- `WorkloadEventDetector` is the accurate English class name. The
+  historical `ComputerVoice` import and `DesktopPet.computer_voice`
+  attribute still refer to the exact same detector.
+- `presentation/reaction_playback.py` owns playback, whereas
+  `personality/reaction_sequence.py` owns validated reaction cue data.
+  Old imports remain supported.
+- The authored JSON dialogue catalogue retains its exact path under
+  `aiko_pet/data/`. No new model, audio generator, listener or API
+  is introduced.
 
 ## Change safety
 

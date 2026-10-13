@@ -333,6 +333,41 @@ class UiDependencyRules(unittest.TestCase):
         self.assertIn("self.root.after_cancel(", input_source)
         self.assertIn("self._inputs.stop()", lifecycle)
 
+    def test_personality_code_has_no_ui_storage_or_native_imports(self) -> None:
+        for path in (ROOT / "personality").glob("*.py"):
+            with self.subTest(module=path.name):
+                tree = ast.parse(path.read_text("utf-8"))
+                for node in ast.walk(tree):
+                    if not isinstance(node, ast.ImportFrom):
+                        continue
+                    imported = node.module or ""
+                    if node.level >= 2:
+                        self.assertNotIn(
+                            imported.split(".", 1)[0],
+                            {"ui", "presentation", "desktop", "storage",
+                             "infrastructure"},
+                        )
+                names = {
+                    alias.name
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.Import)
+                    for alias in node.names
+                }
+                self.assertFalse(any(
+                    name.startswith(("tkinter", "ctypes", "subprocess"))
+                    for name in names
+                ))
+
+    def test_application_uses_canonical_personality_modules(self) -> None:
+        for path in (ROOT / "application").glob("*.py"):
+            with self.subTest(module=path.name):
+                source = path.read_text("utf-8")
+                for original in (
+                    "from ..adaptive import", "from ..dialogue import",
+                    "from ..adaptive_models import",
+                ):
+                    self.assertNotIn(original, source)
+
     def test_application_services_never_import_tkinter(self) -> None:
         for path in (ROOT / "application").glob("*.py"):
             with self.subTest(module=path.name):
