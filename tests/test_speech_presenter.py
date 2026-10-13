@@ -1,10 +1,11 @@
-"""GUI regression tests for the independent speech and emote presenter."""
+"""Tk regression tests for Aiko's original speech and game-hand overlays."""
 
 from __future__ import annotations
 
 import tkinter as tk
 import unittest
 
+from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.ui.speech_presenter import SpeechAnchor, SpeechPresenter
 
 
@@ -23,16 +24,14 @@ class SpeechPresenterTests(unittest.TestCase):
         self.anchor = SpeechAnchor(200, 500, 128)
         self.restacks: list[bool] = []
         self.presenter = SpeechPresenter(
-            root=self.root,
-            anchor=lambda: self.anchor,
-            font_name="Segoe UI",
-            always_on_top=lambda: False,
+            root=self.root, anchor=lambda: self.anchor,
+            font_name="Segoe UI", always_on_top=lambda: False,
             restore_stack=lambda: self.restacks.append(True),
         )
         self.addCleanup(self.root.destroy)
         self.addCleanup(self.presenter.hide)
 
-    def test_speech_is_rendered_as_plain_text_with_tail(self) -> None:
+    def test_speech_renders_plain_text_with_existing_tail(self) -> None:
         self.presenter.show_text("Hallo <b>Browser</b>!", 6000)
         bubble = self.presenter.bubble
         assert bubble is not None
@@ -55,12 +54,32 @@ class SpeechPresenterTests(unittest.TestCase):
         bubble = self.presenter.bubble
         assert bubble is not None
         self.assertIsNot(bubble, previous)
-        self.assertEqual(bubble.winfo_children()[0].winfo_children()[0].cget(
-            "text",
-        ), "Nachher")
+        self.assertEqual(
+            bubble.winfo_children()[0].winfo_children()[0].cget("text"),
+            "Nachher",
+        )
         self.assertFalse(bool(previous and previous.winfo_exists()))
 
-    def test_missing_emote_is_rejected_before_hiding_speech(self) -> None:
+    def test_aikos_game_bubble_shows_only_her_hand(self) -> None:
+        self.presenter.show_game_hand(Move.ROCK, 2600)
+        bubble = self.presenter.bubble
+        assert bubble is not None
+        self.assertEqual(len(bubble.winfo_children()), 2)
+        self.assertEqual(set(self.presenter.game_hand_images), {Move.ROCK})
+        self.assertEqual(self.presenter.game_hand_images[Move.ROCK].width(), 72)
+        frame = bubble.winfo_children()[0]
+        panel = frame.winfo_children()[0]
+        labels = [
+            str(child.cget("text")) for child in panel.winfo_children()
+            if isinstance(child, tk.Label)
+        ]
+        self.assertIn("Ich nehme ...", labels)
+        self.assertNotIn("Du", labels)
+        self.assertIsNotNone(self.presenter.pending_timer)
+        self.presenter.show_text("Wieder normal", 2000)
+        self.assertIsNotNone(self.presenter.bubble)
+
+    def test_missing_emote_does_not_hide_previous_speech(self) -> None:
         self.presenter.show_text("Bleibt", 2000)
         old = self.presenter.bubble
         with self.assertRaises(ValueError):

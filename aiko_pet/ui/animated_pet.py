@@ -106,6 +106,7 @@ class AnimatedPet:
             next_walk_at=time.monotonic() + random.uniform(60.0, 180.0),
         )
         self.gaze_sector: int | None = None
+        self._game_mode = False
         self._previous_pointer: tuple[int, int] | None = None
         self.last_pointer_move = -100.0
         self.last_attention = -100.0
@@ -145,6 +146,17 @@ class AnimatedPet:
     def set_follow_cursor(self, enabled: bool) -> None:
         self.settings.follow_cursor = bool(enabled)
         self.gaze_sector = None
+
+    def set_game_mode(self, enabled: bool) -> None:
+        """Pause gaze/walking and hold a forward-facing game pose."""
+        self._game_mode = bool(enabled)
+        self.gaze_sector = None
+        self._previous_pointer = None
+        self.last_pointer_move = -100.0
+        self.last_attention = -100.0
+        self.attention_until = -100.0
+        self.movement.interrupt()
+        self.cancel_action(time.monotonic())
 
     def reload_sprites(self) -> None:
         """Replace scaled images while preserving the active playback clock."""
@@ -240,6 +252,9 @@ class AnimatedPet:
         pointer = (
             self.root.winfo_pointerx(), self.root.winfo_pointery(),
         )
+        if self._game_mode:
+            self._previous_pointer = pointer
+            return pointer
         moved = (
             self._previous_pointer is not None
             and pointer != self._previous_pointer
@@ -259,6 +274,9 @@ class AnimatedPet:
         return pointer
 
     def gaze_direction(self, pointer: tuple[int, int]) -> int | None:
+        if self._game_mode:
+            self.gaze_sector = None
+            return None
         if not self.settings.follow_cursor:
             self.gaze_sector = None
             return None
@@ -272,6 +290,8 @@ class AnimatedPet:
 
     def maybe_walk(self, now: float, dt: float) -> str | None:
         """Plan horizontal motion and let the host apply taskbar geometry."""
+        if self._game_mode:
+            return None
         observed = self.adaptive.current
         busy = (
             observed.focused if observed is not None
@@ -318,6 +338,16 @@ class AnimatedPet:
         self, now: float, elapsed: float, pointer: tuple[int, int],
     ) -> None:
         """Draw one state with unchanged sleep/action/gaze precedence."""
+        if self._game_mode:
+            if (
+                self._active_action is not None
+                and not self.assets.clips[self._active_action].loop
+            ):
+                self.show_frame(self._active_action, now)
+            else:
+                self._active_action = None
+                self.show_frame("waiting", now)
+            return
         if self.state.sleeping:
             self.movement.interrupt()
             self._active_action = None

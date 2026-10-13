@@ -77,19 +77,43 @@ See [LICENSES/KENNEY_CC0.md](LICENSES/KENNEY_CC0.md) and the [CC0 1.0 legal text
 
 The repository's MIT notice does **not** replace Kenney's CC0 designation.
 
+### Twemoji hand icons — CC BY 4.0
+
+The Rock–Paper–Scissors input buttons and Aiko's game reveal bubble use
+three light-skin-tone Unicode emoji illustrations (U+270A U+1F3FB,
+U+270B U+1F3FB, U+270C U+1F3FB) from [Twemoji](https://github.com/jdecked/twemoji).
+The original SVG graphics were rasterized into optimized 72×72 PNGs to avoid
+monochrome and incomplete glyph rendering in Tkinter. No additional runtime
+renderer is required.
+
+Artwork is licensed under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
+Attribution: **Twemoji, by Twitter and contributors**. The graphics are not
+relicensed under the project's MIT license. Original graphics and license:
+[Twemoji graphics license](https://github.com/jdecked/twemoji/blob/main/LICENSE-GRAPHICS).
+See [LICENSES/TWEMOJI_CC_BY_4.md](LICENSES/TWEMOJI_CC_BY_4.md).
+
 ## 4. Optional fonts
 
 The user-supplied `Kenney Mini.ttf` is **not distributed** with the project. Aiko uses a compatible font already installed on the user's computer when available, or falls back to Segoe UI. Third-party fonts remain subject to their own terms; the project's MIT license does not relicense a font installed separately.
 
 ## 5. Screenshots and previews
 
-Historical images in `vorschau/` show the earlier MIT sprite artwork with
-Kenney UI/emotes. The maintainer-supplied `vorschau/Aiko_Anime_Runtime.png` and
-the included source poses show the restricted Aiko Anime artwork.
-Their depicted components retain their respective licenses.
-The [curated gallery](docs/MEDIA_GALLERY.md) distinguishes actual application
-screenshots, sprite animation previews, historical builds and third-party
-Kenney layout references.
+The active `vorschau/` directory now contains **only captures of the current
+Aiko Anime/Tk UI and minigame**, plus a GIF preview of all 112 current runtime
+sprite poses. Real UI screenshots and reaction GIFs are captured on Linux/Xvfb
+from the running application by
+[`tools/capture_current_gallery.py`](tools/capture_current_gallery.py) and
+[`tools/capture_rock_paper_scissors_media.py`](tools/capture_rock_paper_scissors_media.py).
+The sprite-only GIF composites the current prepared PNG assets using their
+checked-in frame timings and is identified separately from live UI footage.
+
+The older v0.7–v0.13 screenshots, previous 73-frame animation GIF, and original
+maintainer-provided Windows image remain accessible in Git history, including
+[`main` at f41e8aa](https://github.com/Lexoniarus/aiko-desktop-pet/tree/f41e8aab58e6a93bd2675d0fd1f1adc3bed9b345/vorschau).
+The third-party Kenney design sample is preserved separately under
+[`docs/references/`](docs/references/Kenney_SciFi_Sample_Referenz.png).
+The new captures retain the original sprite and UI asset licenses.
+See the [current media gallery](docs/MEDIA_GALLERY.md).
 
 All inputs needed to rebuild the prepared runtime frames are included in the
 selected source export. Unused archive material is excluded from the public

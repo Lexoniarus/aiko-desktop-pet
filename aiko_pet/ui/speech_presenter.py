@@ -8,7 +8,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-from ..asset_paths import EMOTE_ASSETS
+from ..asset_paths import EMOTE_ASSETS, GAME_HANDS_DIR
+from ..games.rock_paper_scissors import Move
 from ..personality.reaction_sequence import EMOTES
 
 
@@ -49,6 +50,7 @@ class SpeechPresenter:
         self.bubble: tk.Toplevel | None = None
         self.pending_timer: str | None = None
         self.emote_images: dict[str, tk.PhotoImage] = {}
+        self.game_hand_images: dict[Move, tk.PhotoImage] = {}
 
     def _new_window(self) -> tk.Toplevel:
         window = tk.Toplevel(self._root)
@@ -131,6 +133,50 @@ class SpeechPresenter:
             bg="#f0f6fa", fg="#243247", justify="center",
             padx=12, pady=8,
         ).pack(padx=1, pady=1)
+        transparent = (
+            self._transparent_color if sys.platform == "win32" else "#202733"
+        )
+        tail = tk.Canvas(
+            bubble, width=20, height=11, bg=transparent,
+            highlightthickness=0, borderwidth=0,
+        )
+        tail.pack()
+        tail.create_polygon(
+            2, 0, 18, 0, 10, 10, fill="#f0f6fa",
+            outline="#53687e", width=1,
+        )
+        self._present(bubble, duration_ms)
+
+    def show_game_hand(
+        self, aiko: Move, duration_ms: int = 2300,
+    ) -> None:
+        """Show only Aiko's own hand in the existing character bubble."""
+        if not isinstance(aiko, Move):
+            raise ValueError("Unknown game hand")
+        if aiko not in self.game_hand_images:
+            self.game_hand_images[aiko] = tk.PhotoImage(
+                file=str(GAME_HANDS_DIR / f"{aiko.value}.png"),
+            )
+        self.hide()
+        bubble = self._new_window()
+        frame = tk.Frame(bubble, bg="#53687e", bd=0)
+        frame.pack()
+        panel = tk.Frame(frame, bg="#f0f6fa")
+        panel.pack(padx=1, pady=1)
+        names = {Move.ROCK: "Stein", Move.PAPER: "Papier",
+                 Move.SCISSORS: "Schere"}
+        tk.Label(
+            panel, text="Ich nehme ...", bg="#f0f6fa", fg="#243247",
+            font=(self._font_name, 9, "bold"),
+        ).pack(padx=12, pady=(8, 1))
+        tk.Label(
+            panel, image=self.game_hand_images[aiko], bg="#f0f6fa",
+            bd=0, highlightthickness=0,
+        ).pack(padx=8)
+        tk.Label(
+            panel, text=names[aiko], bg="#f0f6fa", fg="#243247",
+            font=(self._font_name, 9),
+        ).pack(padx=12, pady=(1, 8))
         transparent = (
             self._transparent_color if sys.platform == "win32" else "#202733"
         )

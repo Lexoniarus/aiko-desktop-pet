@@ -27,6 +27,7 @@ from .application.controller import CareController, CareRuntime
 from .application.active_time import ActiveSessionClock
 from .infrastructure.active_time import active_uptime_seconds
 from .ui.hover_ui import HoverUi, HoverUiPorts
+from .ui.game_speech import GameSpeech
 from .application.router import ApplicationRouter
 from .presentation.read_models import DesktopPresentation
 from .config import load_env_file
@@ -209,6 +210,12 @@ class DesktopPet:
                 move_speech=self._speech.move,
                 restore_stack=self._overlay_stack.restore,
                 always_on_top=lambda: self.settings.always_on_top,
+                game_speech=GameSpeech(
+                    self._reaction_player, self._speech,
+                    self._mark_reaction_spoken,
+                    self._animated.set_game_mode,
+                    lambda name: self._start_action(name, 0),
+                ),
             ),
         )
         self._input = DesktopInput(
@@ -267,6 +274,8 @@ class DesktopPet:
             windows.append(self._hover.toolbar.window)
         if self._hover.status_panel is not None:
             windows.append(self._hover.status_panel.window)
+        if self._hover.game_window is not None:
+            windows.append(self._hover.game_window.window)
         if self._speech.bubble is not None:
             windows.append(self._speech.bubble)
         if self._hover.settings_popup is not None:
@@ -297,8 +306,6 @@ class DesktopPet:
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
         now = time.monotonic()
-        # Only the first Enter after a long absence gets a welcome back;
-        # repeatedly refreshing hover must not spam the same response.
         was_hidden = self._hover.toolbar is None or not self._hover.toolbar.visible
         reaction = (
             self.mind.return_to_pet(self.state, self.context, now)
@@ -336,19 +343,20 @@ class DesktopPet:
         self._reaction_player.cancel()
 
     def _react_to_click(self, reaction: Reaction | None) -> None:
+        if self._hover.game_open:
+            return
         if reaction is None:
-            # Deliberate silence must not be followed by a stale second line.
             self._cancel_followup()
             self._speech.hide()
             return
-        # During rapid tapping, skip the opening icon so the actual response
-        # remains visible instead of resetting the same 700ms cue forever.
         if len(self.mind.clicks) >= 3 and reaction.emote_before is not None:
             reaction = replace(reaction, emote_before=None)
         self._react(reaction, 2800)
 
     def _react(self, reaction: Reaction | None, duration_ms: int = 2600) -> None:
         """Delegate the timeline; the GUI only renders visual effects."""
+        if self._hover.game_open:
+            return
         self._reaction_player.play(
             reaction, duration_ms, animate=not self.state.sleeping,
         )
@@ -414,7 +422,6 @@ class DesktopPet:
             else:
                 self._start_action(visual, 0.0)
         if reaction is None:
-            # A fallback must not be overwritten by an older, queued aside.
             self._cancel_followup()
             self._speech.show_text(result.fallback_text, 2450)
         else:
@@ -509,6 +516,8 @@ class DesktopPet:
 
     def _maybe_show_idle_emote(self, now: float) -> None:
         """An independent policy decides whether Aiko is free for a gesture."""
+        if self._hover.game_open:
+            return
         animation = self._attention.idle_animation(
             now, action_until=self._action_until,
             walking=self._animated.movement.remaining_distance != 0,
@@ -519,6 +528,8 @@ class DesktopPet:
             self._idle_emote()
 
     def _maybe_speak_spontaneously(self, now: float) -> None:
+        if self._hover.game_open:
+            return
         decision = self._attention.spontaneous(
             now, self.context,
             toolbar_visible=bool(self._hover.toolbar and self._hover.toolbar.visible),
@@ -531,6 +542,8 @@ class DesktopPet:
 
     def _present_pending_notification(self, now: float) -> None:
         """The Tk event loop alone turns queued data into rendered text."""
+        if self._hover.game_open:
+            return
         notification = self._attention.next_notification(
             now,
             action_until=self._action_until,
@@ -548,8 +561,6 @@ class DesktopPet:
         if self._hover.toolbar is not None and self._hover.toolbar.visible:
             self._hover.toolbar.refresh()
         self._hover.refresh_status()
-        # Focus changes from browser voice input can reorder foreign topmost
-        # windows. Repair only after an actual overlapping z-order loss.
         self._maintenance.refresh_stack(now)
         if self._persistence.due(now):
             self._save()
