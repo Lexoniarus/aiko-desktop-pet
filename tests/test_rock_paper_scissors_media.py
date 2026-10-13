@@ -27,17 +27,21 @@ class RockPaperScissorsMediaTests(unittest.TestCase):
                 data = (MEDIA / name).read_bytes()
                 self.assertGreater(len(data), 10_000)
                 self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
-                self.assertEqual(
-                    struct.unpack(">II", data[16:24]), (1100, 718),
-                )
+                width, height = struct.unpack(">II", data[16:24])
+                self.assertGreaterEqual(width, 880)
+                self.assertLessEqual(width, 1040)
+                self.assertGreaterEqual(height, 510)
+                self.assertLessEqual(height, 650)
 
     def test_animation_is_a_real_multiframe_gif(self) -> None:
         data = (MEDIA / GIF).read_bytes()
         self.assertGreater(len(data), 30_000)
         self.assertIn(data[:6], (b"GIF87a", b"GIF89a"))
-        self.assertEqual(
-            struct.unpack("<HH", data[6:10]), (1100, 718),
-        )
+        width, height = struct.unpack("<HH", data[6:10])
+        self.assertGreaterEqual(width, 880)
+        self.assertLessEqual(width, 1040)
+        self.assertGreaterEqual(height, 510)
+        self.assertLessEqual(height, 650)
         self.assertGreaterEqual(data.count(b"\x21\xf9\x04"), 8)
 
     def test_reveal_and_session_score_are_distinct_captures(self) -> None:

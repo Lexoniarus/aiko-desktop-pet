@@ -119,6 +119,12 @@ sprite poses. Real UI screenshots and reaction GIFs are captured on Linux/Xvfb
 from the running application by
 [`tools/capture_current_gallery.py`](tools/capture_current_gallery.py) and
 [`tools/capture_rock_paper_scissors_media.py`](tools/capture_rock_paper_scissors_media.py).
+All application screenshots are freshly captured from the complete desktop,
+then cropped to the bounding union of the real mapped Tk windows with a
+24-pixel border; no content is rescaled. Animated UI previews use one fixed
+union crop throughout their frames. This avoids previous clipped hover
+controls, unnecessary black desktop space and moving GIF viewports.
+
 The sprite-only GIF composites the current prepared PNG assets using their
 checked-in frame timings and is identified separately from live UI footage.
 

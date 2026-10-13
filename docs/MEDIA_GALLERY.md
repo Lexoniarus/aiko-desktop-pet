@@ -100,6 +100,21 @@ closed, and its counters are never persisted.
 - [Both distinct reveal surfaces](../vorschau/Aiko_RPS_Aufgedeckt.png)
 - [Two rounds and local scores](../vorschau/Aiko_RPS_Punktestand.png)
 
+## Framing of the real application captures
+
+The active screenshots are **re-recorded from the complete 1366×900 Xvfb
+desktop**, not just cropped from the older partially cut-off pictures. The
+developer-only [framing utility](../tools/media_crop.py) finds the complete
+rectangles of Aiko and every visible Tk popup, then retains exactly that
+combined area with 24 pixels of surrounding breathing space. Captures
+are not enlarged or resampled. This also restores the formerly cropped
+left-hand hover controls and protects the bottom row at the taskbar edge.
+
+The real UI reaction and minigame GIFs are cropped using a **single shared
+union across all their frames**, so dialogue bubble changes cannot jump
+or resize the video viewport. The sprite-only catalog GIF deliberately
+remains at its original 224×246 asset-preview size.
+
 ## Capture provenance and reference material
 
 The captures are reproducible using the developer-only

@@ -15,9 +15,9 @@ STILLS = (
     "Status", "Settings", "Care_Pet", "Care_Feed", "Care_Sleep",
 )
 ANIMATIONS = {
-    "Aiko_Current_Reaction_Sequence.gif": (1160, 768),
-    "Aiko_Current_Animations.gif": (224, 246),
-    "Aiko_Current_Ambient_Blink_And_Glance.gif": (1160, 768),
+    "Aiko_Current_Reaction_Sequence.gif",
+    "Aiko_Current_Animations.gif",
+    "Aiko_Current_Ambient_Blink_And_Glance.gif",
 }
 
 
@@ -29,18 +29,29 @@ class CurrentGalleryTests(unittest.TestCase):
                 sample = path.read_bytes()
                 self.assertGreater(len(sample), 15_000)
                 self.assertEqual(sample[:8], b"\x89PNG\r\n\x1a\n")
-                self.assertEqual(
-                    struct.unpack(">II", sample[16:24]), (1160, 768),
-                )
+                width, height = struct.unpack(">II", sample[16:24])
+                # No fixed desktop rectangle; every mapped Tk window is
+                # fully framed with 24px breathing room, without resampling.
+                self.assertGreaterEqual(width, 250)
+                self.assertLessEqual(width, 1030)
+                self.assertGreaterEqual(height, 290)
+                self.assertLessEqual(height, 740)
 
     def test_reaction_and_112_pose_gifs_have_real_multiple_frames(self) -> None:
-        for name, size in ANIMATIONS.items():
+        for name in ANIMATIONS:
             path = PREVIEW / name
             with self.subTest(file=name):
                 sample = path.read_bytes()
                 self.assertGreater(len(sample), 40_000)
                 self.assertEqual(sample[:6], b"GIF89a")
-                self.assertEqual(struct.unpack("<HH", sample[6:10]), size)
+                width, height = struct.unpack("<HH", sample[6:10])
+                if name == "Aiko_Current_Animations.gif":
+                    self.assertEqual((width, height), (224, 246))
+                else:
+                    self.assertGreaterEqual(width, 200)
+                    self.assertLessEqual(width, 1030)
+                    self.assertGreaterEqual(height, 230)
+                    self.assertLessEqual(height, 740)
                 frames = sample.count(b"\x21\xf9\x04")
                 minimum = (
                     80 if name == "Aiko_Current_Animations.gif"
