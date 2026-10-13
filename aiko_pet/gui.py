@@ -20,6 +20,7 @@ from .desktop.runtime import (
     DesktopRuntime, TICK_MILLISECONDS as TICK_MILLISECONDS,
 )
 from .desktop.persistence import DesktopPersistence
+from .desktop.maintenance import DesktopMaintenance
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
@@ -80,7 +81,6 @@ class DesktopPet(DesktopCompatibility):
         self._runtime = DesktopRuntime(
             self, schedule=self.root.after, cancel=self.root.after_cancel,
         )
-        self._last_track_check = self._last_tick
         self._action_until = 0.0
         self._action_state = "idle"
         self._persistence = DesktopPersistence(
@@ -153,6 +153,14 @@ class DesktopPet(DesktopCompatibility):
         self._overlay_stack = WindowStack(
             self._overlay_windows, enabled=self.settings.always_on_top,
         )
+        self._maintenance = DesktopMaintenance(
+            check_taskbar=self._window.update_track,
+            reposition=lambda: self._place_x(
+                self.settings.x or self.track.left,
+            ),
+            maintain_stack=self._overlay_stack.maintain,
+            started_at=self._last_tick,
+        )
         self._views = DesktopViewSource(
             self.state, self.settings, self.mind, self.adaptive,
             self.activity_monitor,
@@ -181,7 +189,6 @@ class DesktopPet(DesktopCompatibility):
                 always_on_top=lambda: self.settings.always_on_top,
             ),
         )
-        self._last_stack_check = self._last_tick
         self._setup_events()
         self._place_initially()
         self.root.update_idletasks()
@@ -483,11 +490,7 @@ class DesktopPet(DesktopCompatibility):
                 ))
 
     def _refresh_taskbar_track(self, now: float) -> None:
-        """Reposition Aiko only when taskbar geometry actually changes."""
-        if now - self._last_track_check >= 4.0:
-            self._last_track_check = now
-            if self._window.update_track():
-                self._place_x(self.settings.x or self.track.left)
+        self._maintenance.refresh_track(now)
 
     def _maybe_show_idle_emote(self, now: float) -> None:
         """An independent policy decides whether Aiko is free for a gesture."""
@@ -529,9 +532,7 @@ class DesktopPet(DesktopCompatibility):
         self._refresh_status()
         # Focus changes from browser voice input can reorder foreign topmost
         # windows. Repair only after an actual overlapping z-order loss.
-        if now - self._last_stack_check >= 1.5:
-            self._last_stack_check = now
-            self._overlay_stack.maintain()
+        self._maintenance.refresh_stack(now)
         if self._persistence.due(now):
             self._save()
 

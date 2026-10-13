@@ -26,6 +26,7 @@ from ..ui.speech_presenter import SpeechPresenter
 from ..ui.status_panel import StatusPanel
 from .runtime import DesktopRuntime
 from .persistence import DesktopPersistence
+from .maintenance import DesktopMaintenance
 
 
 class DesktopCompatibility:
@@ -40,8 +41,25 @@ class DesktopCompatibility:
     _reaction_player: ReactionPlayer
     _runtime: DesktopRuntime
     _persistence: DesktopPersistence
+    _maintenance: DesktopMaintenance
     context: TimeContext
 
+
+    @property
+    def _last_track_check(self) -> float:
+        return self._maintenance.last_track_check
+
+    @_last_track_check.setter
+    def _last_track_check(self, value: float) -> None:
+        self._maintenance.last_track_check = value
+
+    @property
+    def _last_stack_check(self) -> float:
+        return self._maintenance.last_stack_check
+
+    @_last_stack_check.setter
+    def _last_stack_check(self, value: float) -> None:
+        self._maintenance.last_stack_check = value
 
     @property
     def _last_saved(self) -> float:
