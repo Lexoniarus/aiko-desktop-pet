@@ -64,7 +64,7 @@ This is an **asset preview**, not an additional desktop screenshot. It uses
 the runtime `aiko_pet/assets/frames/` PNG files and effective durations in
 `aiko_pet/assets/animations.json`. The imported source art is unmodified.
 
-## Rock–Paper–Scissors (feature branch)
+## Rock–Paper–Scissors (merged into main)
 
 The player window shows **only the player's own hand**, round count, player
 wins, Aiko wins and draws. Aiko's character bubble displays only **her**

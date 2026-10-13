@@ -10,10 +10,9 @@
 
 ![The current Aiko Anime character and the current Kenney sci-fi hover panel](vorschau/Aiko_Current_Hover.png)
 
-*Actual Tk application capture on Linux/Xvfb from this development branch (not
-a native Windows desktop screenshot). The current 112-pose Anime character,
-Kenney panel, and German dialogue are shown together. Documentation is in
-English.*
+*Actual Tk application capture on Linux/Xvfb (not a native Windows desktop
+screenshot). The current 112-pose Anime character, Kenney panel, and German
+dialogue are shown together. Documentation is in English.*
 
 ## Play with Aiko (Rock–Paper–Scissors)
 
@@ -22,12 +21,16 @@ The independent, always-open Kenney-styled player panel shows **your selected
 hand**, the round counter, your wins, Aiko's wins and draws. The counters belong
 only to the currently opened minigame window and are never saved.
 
+Other games, libraries and external data sources have been discussed only as
+**unapproved possibilities**, with **no selected next game or implementation
+order**. See the [minigame candidate catalogue and integration research](docs/MINIGAME_CANDIDATES.md).
+
 ![Rock–Paper–Scissors with the separate player panel and Aiko's actual speech bubble](vorschau/Aiko_RPS_Aufgedeckt.png)
 
 ![Captured minigame countdown, separate hand reveal, animated reaction and local score](vorschau/Aiko_RPS_Spielablauf.gif)
 
-*These are current feature-branch captures of the actual Tk application on
-Linux/Xvfb; they are not native Windows screenshots.*
+*These are captures of the actual Tk application on Linux/Xvfb;
+they are not native Windows screenshots.*
 
 ## See Aiko in action
 
@@ -56,7 +59,7 @@ This source builds on the **v0.13 feature baseline and modular OOP refactor**, w
 ## Getting started
 
 1. Install **Python 3.11 or newer** on Windows 10 or 11, including Tkinter (normally part of the standard Windows Python installer).
-2. [Download the stable `main` source ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip), or use the [unmerged minigame feature ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/feature/rock-paper-scissors-game.zip) to try the preview features shown here. Extract the folder.
+2. [Download the current `main` source ZIP](https://github.com/Lexoniarus/aiko-desktop-pet/archive/refs/heads/main.zip) and extract the folder. Rock–Paper–Scissors is already included in `main`.
 3. Double-click `Aiko_starten.bat`, or open a terminal in that folder and run:
 
    ```powershell
