@@ -40,10 +40,10 @@ class FakeStages:
         return self.pointer
 
     def _render_current_sprite(
-        self, now: float, elapsed: float, pointer: tuple[int, int],
+        self, now: float, elapsed_seconds: float, pointer: tuple[int, int],
     ) -> None:
         self.calls.append("sprite")
-        self.elapsed = elapsed
+        self.elapsed = elapsed_seconds
         assert pointer == self.pointer
 
     def _maybe_show_idle_emote(self, now: float) -> None:
