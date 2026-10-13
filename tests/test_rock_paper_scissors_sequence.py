@@ -97,9 +97,9 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
 
     def test_different_outcomes_drive_distinct_animation_and_emote(self) -> None:
         for aiko_index, animation, emote in (
-            (0, "jumping", "star"),
-            (1, "failed", "drops"),
-            (2, "waving", "question"),
+            (0, "failed", "drops"),
+            (1, "waving", "question"),
+            (2, "jumping", "star"),
         ):
             with self.subTest(aiko_index=aiko_index):
                 self.setUp()
