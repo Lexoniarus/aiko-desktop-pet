@@ -83,7 +83,7 @@ class WalkController:
         direction = 1 if self.remaining_distance > 0 else -1
         pixels = direction * min(
             abs(self.remaining_distance),
-            max(1.0, 64 * conditions.elapsed_seconds),
+            max(0.0, 64 * conditions.elapsed_seconds),
         )
         animation = "running-right" if direction > 0 else "running-left"
         return WalkStep(pixels=pixels, animation=animation)

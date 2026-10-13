@@ -4,6 +4,22 @@ Aiko Desktop Pet is maintained as a source repository. The dates below describe
 verified GitHub milestones, **not** packaged Windows releases. There is currently
 no separate downloadable installer or published GitHub Release.
 
+## Unreleased — Aiko Anime assets and playback
+
+- Track only the 134 original inputs needed to rebuild the selected character
+  export, with SHA-256 inventory and separate restricted asset terms. Ignore
+  the other 813 archive members. Preparation code remains MIT; Kenney stays CC0.
+- Replace the previous 73 runtime sprites with 112 full-width 192 × 208 poses.
+  Prepared Windows images preserve the source artwork and use binary alpha.
+- Decode typed animation metadata, play authored frame timings independently
+  of the desktop tick, show every pose under delayed callbacks, extend one-shot
+  deadlines and cancel timers on shutdown. Walking positions update every
+  33 ms independently of the slower simulation tick.
+- Bind feeding to eating, petting to its own action and sleep to the breathing
+  loop; preserve dialogue, care rules and version-one saves.
+- Retain attack artwork, hand layers and overlay anchors without an attack
+  trigger or new game mechanic.
+
 ## Unreleased — Remove obsolete import and desktop adapters
 
 - Review repository consumers and remove 25 flat-module forwarding files,

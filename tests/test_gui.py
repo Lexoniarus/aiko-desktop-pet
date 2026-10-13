@@ -409,7 +409,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertEqual(self.app.root.winfo_x(), self.app.settings.x)
         self.assertEqual(self.app.root.winfo_y(), self.app.settings.y)
         self.app._window.placed = False
-        self.app.root.geometry("128x208+0+0")
+        self.app.root.geometry("192x208+0+0")
         position = self.app.settings.x
         assert position is not None
         self.app._place_x(position)
@@ -485,7 +485,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.toggle_scale()
         self.assertEqual(self.app.settings.scale, 2)
         self.assertEqual(self.app.settings.y, self.app._window.track.sprite_y(2))
-        self.assertEqual(self.app._window.width, 256)
+        self.assertEqual(self.app._window.width, 384)
         self.app.toggle_scale()
         self.assertEqual(self.app.settings.scale, 1)
         self.assertEqual(self.app.settings.y, self.app._window.track.sprite_y(1))

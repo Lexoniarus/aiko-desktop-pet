@@ -55,6 +55,6 @@ details publicly.
 
 ## Artwork and documentation
 
-The 73 shipped Aiko frames and sourced Kenney graphics have distinct provenance/licensing conditions. See [ASSETS.md](ASSETS.md). Do not bundle separately installed font binaries. Avoid regenerating or replacing approved character art in ordinary code cleanups; document any intentional visual changes with before/after captures.
+The current 120-pose Aiko Anime set has restricted asset terms; project code remains MIT and Kenney graphics remain CC0. Distributed forks must obtain permission for the new character assets or replace them with appropriately licensed artwork. The older 73-frame MIT release is documented separately. See [ASSETS.md](ASSETS.md). Do not bundle separately installed font binaries. Avoid regenerating or replacing approved character art in ordinary code cleanups; document any intentional visual changes with before/after captures.
 
 New documentation should link to [the current architecture](docs/ARCHITECTURE.md). Keep historical feature reports clearly identified as historical rather than silently rewriting their old numbers.

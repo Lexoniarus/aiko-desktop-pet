@@ -1,0 +1,73 @@
+{
+  "animations": [
+    {
+      "state": "idle",
+      "manifest": "idle/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "running-right",
+      "manifest": "running-right/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "running-left",
+      "manifest": "running-left/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "waving",
+      "manifest": "waving/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "jumping",
+      "manifest": "jumping/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "failed",
+      "manifest": "failed/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "waiting",
+      "manifest": "waiting/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "running",
+      "manifest": "running/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "review",
+      "manifest": "review/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "sleep",
+      "manifest": "sleep/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "petting",
+      "manifest": "petting/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "eat",
+      "manifest": "eat/animation.json",
+      "frame_count": 8
+    },
+    {
+      "state": "attack",
+      "manifest": "attack/animation.json",
+      "frame_count": 8
+    }
+  ],
+  "look_directions": "look-directions/directions.json",
+  "animation_frames": 104,
+  "direction_poses": 16,
+  "total": 120
+}

@@ -1,0 +1,178 @@
+{
+  "state": "attack",
+  "loop": false,
+  "frame_size": [
+    192,
+    208
+  ],
+  "anchor": [
+    96,
+    196
+  ],
+  "frames": [
+    {
+      "weapon_anchor": [
+        123,
+        160
+      ],
+      "weapon_angle_deg": 45,
+      "spell_anchor": [
+        127,
+        160
+      ],
+      "events": [],
+      "hand_foreground": "hand-foreground/01.png",
+      "file": "frames/01.png",
+      "duration_ms": 400
+    },
+    {
+      "weapon_anchor": [
+        125,
+        122
+      ],
+      "weapon_angle_deg": 30,
+      "spell_anchor": [
+        129,
+        122
+      ],
+      "events": [],
+      "hand_foreground": "hand-foreground/02.png",
+      "file": "frames/02.png",
+      "duration_ms": 140
+    },
+    {
+      "weapon_anchor": [
+        142,
+        82
+      ],
+      "weapon_angle_deg": 15,
+      "spell_anchor": [
+        146,
+        82
+      ],
+      "events": [],
+      "hand_foreground": "hand-foreground/03.png",
+      "file": "frames/03.png",
+      "duration_ms": 160
+    },
+    {
+      "weapon_anchor": [
+        142,
+        135
+      ],
+      "weapon_angle_deg": 80,
+      "spell_anchor": [
+        146,
+        135
+      ],
+      "events": [
+        "attack_release"
+      ],
+      "hand_foreground": "hand-foreground/04.png",
+      "file": "frames/04.png",
+      "duration_ms": 90
+    },
+    {
+      "weapon_anchor": [
+        147,
+        146
+      ],
+      "weapon_angle_deg": 120,
+      "spell_anchor": [
+        151,
+        146
+      ],
+      "events": [],
+      "hand_foreground": "hand-foreground/05.png",
+      "file": "frames/05.png",
+      "duration_ms": 140
+    },
+    {
+      "weapon_anchor": [
+        126,
+        122
+      ],
+      "weapon_angle_deg": 45,
+      "spell_anchor": [
+        130,
+        122
+      ],
+      "events": [],
+      "hand_foreground": "hand-foreground/06.png",
+      "file": "frames/06.png",
+      "duration_ms": 150
+    },
+    {
+      "weapon_anchor": [
+        125,
+        160
+      ],
+      "weapon_angle_deg": 55,
+      "spell_anchor": [
+        129,
+        160
+      ],
+      "events": [],
+      "hand_foreground": "hand-foreground/07.png",
+      "file": "frames/07.png",
+      "duration_ms": 180
+    },
+    {
+      "weapon_anchor": [
+        123,
+        160
+      ],
+      "weapon_angle_deg": 45,
+      "spell_anchor": [
+        127,
+        160
+      ],
+      "events": [],
+      "hand_foreground": "hand-foreground/08.png",
+      "file": "frames/08.png",
+      "duration_ms": 450
+    }
+  ],
+  "total_ms": 1710,
+  "return_to": "idle",
+  "weapon_embedded": false,
+  "effects_embedded": false,
+  "attack_side": "screen_right",
+  "effect_direction": [
+    1,
+    0
+  ],
+  "overlays": {
+    "weapon": {
+      "anchor": "weapon_anchor",
+      "rotation": "weapon_angle_deg",
+      "rotation_convention": "clockwise;0=blade_up",
+      "asset_pivot": "asset_defined_grip_point",
+      "suggested_blade_length_px": 48,
+      "draw_order": [
+        "character",
+        "weapon",
+        "hand_foreground"
+      ]
+    },
+    "magic": {
+      "anchor": "spell_anchor",
+      "trigger_event": "attack_release",
+      "direction": [
+        1,
+        0
+      ],
+      "draw_order": "after_character"
+    },
+    "render_bounds_px": [
+      -48,
+      -48,
+      240,
+      256
+    ]
+  },
+  "release_event": "attack_release",
+  "release_frame": 4,
+  "original_total_ms": 1710,
+  "new_frame_count": 0
+}

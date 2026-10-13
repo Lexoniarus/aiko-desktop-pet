@@ -1,0 +1,936 @@
+{
+  "version": 1,
+  "frame_size": [
+    192,
+    208
+  ],
+  "animations": [
+    {
+      "state": "idle",
+      "loop": true,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        194
+      ],
+      "frames": [
+        {
+          "file": "frames/idle/00.png",
+          "duration_ms": 280
+        },
+        {
+          "file": "frames/idle/01.png",
+          "duration_ms": 110
+        },
+        {
+          "file": "frames/idle/02.png",
+          "duration_ms": 60
+        },
+        {
+          "file": "frames/idle/03.png",
+          "duration_ms": 50
+        },
+        {
+          "file": "frames/idle/04.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/idle/05.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/idle/06.png",
+          "duration_ms": 140
+        },
+        {
+          "file": "frames/idle/07.png",
+          "duration_ms": 320
+        }
+      ],
+      "return_to": "idle",
+      "total_ms": 1100,
+      "original_total_ms": 1100,
+      "new_frame_count": 2,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "running-right",
+      "loop": true,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        193
+      ],
+      "frames": [
+        {
+          "file": "frames/running-right/00.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-right/01.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-right/02.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-right/03.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-right/04.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-right/05.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-right/06.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-right/07.png",
+          "duration_ms": 220
+        }
+      ],
+      "return_to": "idle",
+      "total_ms": 1060,
+      "original_total_ms": 1060,
+      "new_frame_count": 0,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "running-left",
+      "loop": true,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        193
+      ],
+      "frames": [
+        {
+          "file": "frames/running-left/00.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-left/01.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-left/02.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-left/03.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-left/04.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-left/05.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-left/06.png",
+          "duration_ms": 120
+        },
+        {
+          "file": "frames/running-left/07.png",
+          "duration_ms": 220
+        }
+      ],
+      "return_to": "idle",
+      "total_ms": 1060,
+      "original_total_ms": 1060,
+      "new_frame_count": 0,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "waving",
+      "loop": false,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        194
+      ],
+      "frames": [
+        {
+          "file": "frames/waving/00.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/waving/01.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/waving/02.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/waving/03.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/waving/04.png",
+          "duration_ms": 50
+        },
+        {
+          "file": "frames/waving/05.png",
+          "duration_ms": 40
+        },
+        {
+          "file": "frames/waving/06.png",
+          "duration_ms": 50
+        },
+        {
+          "file": "frames/waving/07.png",
+          "duration_ms": 280
+        }
+      ],
+      "return_to": "idle",
+      "total_ms": 700,
+      "original_total_ms": 700,
+      "new_frame_count": 4,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "jumping",
+      "loop": false,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        194
+      ],
+      "frames": [
+        {
+          "file": "frames/jumping/00.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/jumping/01.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/jumping/02.png",
+          "duration_ms": 140
+        },
+        {
+          "file": "frames/jumping/03.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/jumping/04.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/jumping/05.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/jumping/06.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/jumping/07.png",
+          "duration_ms": 280
+        }
+      ],
+      "return_to": "idle",
+      "total_ms": 840,
+      "original_total_ms": 840,
+      "new_frame_count": 3,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "failed",
+      "loop": false,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        193
+      ],
+      "frames": [
+        {
+          "file": "frames/failed/00.png",
+          "duration_ms": 140
+        },
+        {
+          "file": "frames/failed/01.png",
+          "duration_ms": 140
+        },
+        {
+          "file": "frames/failed/02.png",
+          "duration_ms": 140
+        },
+        {
+          "file": "frames/failed/03.png",
+          "duration_ms": 140
+        },
+        {
+          "file": "frames/failed/04.png",
+          "duration_ms": 140
+        },
+        {
+          "file": "frames/failed/05.png",
+          "duration_ms": 140
+        },
+        {
+          "file": "frames/failed/06.png",
+          "duration_ms": 140
+        },
+        {
+          "file": "frames/failed/07.png",
+          "duration_ms": 240
+        }
+      ],
+      "return_to": "idle",
+      "total_ms": 1220,
+      "original_total_ms": 1220,
+      "new_frame_count": 0,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "waiting",
+      "loop": true,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        194
+      ],
+      "frames": [
+        {
+          "file": "frames/waiting/00.png",
+          "duration_ms": 150
+        },
+        {
+          "file": "frames/waiting/01.png",
+          "duration_ms": 80
+        },
+        {
+          "file": "frames/waiting/02.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/waiting/03.png",
+          "duration_ms": 80
+        },
+        {
+          "file": "frames/waiting/04.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/waiting/05.png",
+          "duration_ms": 150
+        },
+        {
+          "file": "frames/waiting/06.png",
+          "duration_ms": 150
+        },
+        {
+          "file": "frames/waiting/07.png",
+          "duration_ms": 260
+        }
+      ],
+      "return_to": "idle",
+      "total_ms": 1010,
+      "original_total_ms": 1010,
+      "new_frame_count": 2,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "review",
+      "loop": true,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        194
+      ],
+      "frames": [
+        {
+          "file": "frames/review/00.png",
+          "duration_ms": 150
+        },
+        {
+          "file": "frames/review/01.png",
+          "duration_ms": 80
+        },
+        {
+          "file": "frames/review/02.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/review/03.png",
+          "duration_ms": 150
+        },
+        {
+          "file": "frames/review/04.png",
+          "duration_ms": 80
+        },
+        {
+          "file": "frames/review/05.png",
+          "duration_ms": 70
+        },
+        {
+          "file": "frames/review/06.png",
+          "duration_ms": 150
+        },
+        {
+          "file": "frames/review/07.png",
+          "duration_ms": 280
+        }
+      ],
+      "return_to": "idle",
+      "total_ms": 1030,
+      "original_total_ms": 1030,
+      "new_frame_count": 2,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "sleep",
+      "loop": true,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        195
+      ],
+      "frames": [
+        {
+          "file": "frames/sleep/00.png",
+          "duration_ms": 480
+        },
+        {
+          "file": "frames/sleep/01.png",
+          "duration_ms": 190
+        },
+        {
+          "file": "frames/sleep/02.png",
+          "duration_ms": 190
+        },
+        {
+          "file": "frames/sleep/03.png",
+          "duration_ms": 420
+        },
+        {
+          "file": "frames/sleep/04.png",
+          "duration_ms": 240
+        },
+        {
+          "file": "frames/sleep/05.png",
+          "duration_ms": 240
+        },
+        {
+          "file": "frames/sleep/06.png",
+          "duration_ms": 420
+        },
+        {
+          "file": "frames/sleep/07.png",
+          "duration_ms": 380
+        }
+      ],
+      "total_ms": 2560,
+      "transition_included": false,
+      "original_total_ms": 2560,
+      "new_frame_count": 2,
+      "source_anchor": [
+        96,
+        195
+      ]
+    },
+    {
+      "state": "petting",
+      "loop": false,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        196
+      ],
+      "frames": [
+        {
+          "file": "frames/petting/00.png",
+          "duration_ms": 550
+        },
+        {
+          "file": "frames/petting/01.png",
+          "duration_ms": 180
+        },
+        {
+          "file": "frames/petting/02.png",
+          "duration_ms": 180
+        },
+        {
+          "file": "frames/petting/03.png",
+          "duration_ms": 220
+        },
+        {
+          "file": "frames/petting/04.png",
+          "duration_ms": 220
+        },
+        {
+          "file": "frames/petting/05.png",
+          "duration_ms": 220
+        },
+        {
+          "file": "frames/petting/06.png",
+          "duration_ms": 180
+        },
+        {
+          "file": "frames/petting/07.png",
+          "duration_ms": 650
+        }
+      ],
+      "total_ms": 2400,
+      "return_to": "idle",
+      "external_hand_embedded": true,
+      "original_total_ms": 2400,
+      "new_frame_count": 0,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "eat",
+      "loop": false,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        196
+      ],
+      "frames": [
+        {
+          "food_anchor": [
+            96,
+            150
+          ],
+          "events": [],
+          "file": "frames/eat/00.png",
+          "duration_ms": 350
+        },
+        {
+          "food_anchor": [
+            96,
+            132
+          ],
+          "events": [],
+          "file": "frames/eat/01.png",
+          "duration_ms": 200
+        },
+        {
+          "food_anchor": [
+            96,
+            126
+          ],
+          "events": [
+            "bite_contact"
+          ],
+          "file": "frames/eat/02.png",
+          "duration_ms": 240
+        },
+        {
+          "food_anchor": [
+            96,
+            132
+          ],
+          "events": [
+            "bite"
+          ],
+          "file": "frames/eat/03.png",
+          "duration_ms": 180
+        },
+        {
+          "food_anchor": [
+            96,
+            132
+          ],
+          "events": [],
+          "file": "frames/eat/04.png",
+          "duration_ms": 300
+        },
+        {
+          "food_anchor": [
+            96,
+            132
+          ],
+          "events": [],
+          "file": "frames/eat/05.png",
+          "duration_ms": 300
+        },
+        {
+          "food_anchor": [
+            96,
+            150
+          ],
+          "events": [],
+          "file": "frames/eat/06.png",
+          "duration_ms": 280
+        },
+        {
+          "food_anchor": [
+            96,
+            150
+          ],
+          "events": [],
+          "file": "frames/eat/07.png",
+          "duration_ms": 450
+        }
+      ],
+      "total_ms": 2300,
+      "return_to": "idle",
+      "food_embedded": false,
+      "overlay": {
+        "coordinate_space": "frame_pixels_top_left",
+        "asset_pivot": [
+          0.5,
+          1.0
+        ],
+        "draw_order": "after_character",
+        "suggested_size_px": [
+          18,
+          12
+        ],
+        "anchor_name": "food_anchor",
+        "automatic_consumption": false
+      },
+      "original_total_ms": 2300,
+      "new_frame_count": 0,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "attack",
+      "loop": false,
+      "frame_size": [
+        192,
+        208
+      ],
+      "anchor": [
+        96,
+        196
+      ],
+      "frames": [
+        {
+          "weapon_anchor": [
+            123,
+            160
+          ],
+          "weapon_angle_deg": 45,
+          "spell_anchor": [
+            127,
+            160
+          ],
+          "events": [],
+          "hand_foreground": "hand-foreground/attack/00.png",
+          "file": "frames/attack/00.png",
+          "duration_ms": 400
+        },
+        {
+          "weapon_anchor": [
+            125,
+            122
+          ],
+          "weapon_angle_deg": 30,
+          "spell_anchor": [
+            129,
+            122
+          ],
+          "events": [],
+          "hand_foreground": "hand-foreground/attack/01.png",
+          "file": "frames/attack/01.png",
+          "duration_ms": 140
+        },
+        {
+          "weapon_anchor": [
+            142,
+            82
+          ],
+          "weapon_angle_deg": 15,
+          "spell_anchor": [
+            146,
+            82
+          ],
+          "events": [],
+          "hand_foreground": "hand-foreground/attack/02.png",
+          "file": "frames/attack/02.png",
+          "duration_ms": 160
+        },
+        {
+          "weapon_anchor": [
+            142,
+            135
+          ],
+          "weapon_angle_deg": 80,
+          "spell_anchor": [
+            146,
+            135
+          ],
+          "events": [
+            "attack_release"
+          ],
+          "hand_foreground": "hand-foreground/attack/03.png",
+          "file": "frames/attack/03.png",
+          "duration_ms": 90
+        },
+        {
+          "weapon_anchor": [
+            147,
+            146
+          ],
+          "weapon_angle_deg": 120,
+          "spell_anchor": [
+            151,
+            146
+          ],
+          "events": [],
+          "hand_foreground": "hand-foreground/attack/04.png",
+          "file": "frames/attack/04.png",
+          "duration_ms": 140
+        },
+        {
+          "weapon_anchor": [
+            126,
+            122
+          ],
+          "weapon_angle_deg": 45,
+          "spell_anchor": [
+            130,
+            122
+          ],
+          "events": [],
+          "hand_foreground": "hand-foreground/attack/05.png",
+          "file": "frames/attack/05.png",
+          "duration_ms": 150
+        },
+        {
+          "weapon_anchor": [
+            125,
+            160
+          ],
+          "weapon_angle_deg": 55,
+          "spell_anchor": [
+            129,
+            160
+          ],
+          "events": [],
+          "hand_foreground": "hand-foreground/attack/06.png",
+          "file": "frames/attack/06.png",
+          "duration_ms": 180
+        },
+        {
+          "weapon_anchor": [
+            123,
+            160
+          ],
+          "weapon_angle_deg": 45,
+          "spell_anchor": [
+            127,
+            160
+          ],
+          "events": [],
+          "hand_foreground": "hand-foreground/attack/07.png",
+          "file": "frames/attack/07.png",
+          "duration_ms": 450
+        }
+      ],
+      "total_ms": 1710,
+      "return_to": "idle",
+      "weapon_embedded": false,
+      "effects_embedded": false,
+      "attack_side": "screen_right",
+      "effect_direction": [
+        1,
+        0
+      ],
+      "overlays": {
+        "weapon": {
+          "anchor": "weapon_anchor",
+          "rotation": "weapon_angle_deg",
+          "rotation_convention": "clockwise;0=blade_up",
+          "asset_pivot": "asset_defined_grip_point",
+          "suggested_blade_length_px": 48,
+          "draw_order": [
+            "character",
+            "weapon",
+            "hand_foreground"
+          ]
+        },
+        "magic": {
+          "anchor": "spell_anchor",
+          "trigger_event": "attack_release",
+          "direction": [
+            1,
+            0
+          ],
+          "draw_order": "after_character"
+        },
+        "render_bounds_px": [
+          -48,
+          -48,
+          240,
+          256
+        ]
+      },
+      "release_event": "attack_release",
+      "release_frame": 4,
+      "original_total_ms": 1710,
+      "new_frame_count": 0,
+      "source_anchor": [
+        96,
+        196
+      ]
+    },
+    {
+      "state": "look",
+      "loop": true,
+      "anchor": [
+        96,
+        194
+      ],
+      "frames": [
+        {
+          "file": "frames/look/00.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 0.0
+        },
+        {
+          "file": "frames/look/01.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 22.5
+        },
+        {
+          "file": "frames/look/02.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 45.0
+        },
+        {
+          "file": "frames/look/03.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 67.5
+        },
+        {
+          "file": "frames/look/04.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 90.0
+        },
+        {
+          "file": "frames/look/05.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 112.5
+        },
+        {
+          "file": "frames/look/06.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 135.0
+        },
+        {
+          "file": "frames/look/07.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 157.5
+        },
+        {
+          "file": "frames/look/08.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 180.0
+        },
+        {
+          "file": "frames/look/09.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 202.5
+        },
+        {
+          "file": "frames/look/10.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 225.0
+        },
+        {
+          "file": "frames/look/11.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 247.5
+        },
+        {
+          "file": "frames/look/12.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 270.0
+        },
+        {
+          "file": "frames/look/13.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 292.5
+        },
+        {
+          "file": "frames/look/14.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 315.0
+        },
+        {
+          "file": "frames/look/15.png",
+          "duration_ms": 1000,
+          "degrees_clockwise_from_up": 337.5
+        }
+      ],
+      "return_to": "idle"
+    }
+  ]
+}

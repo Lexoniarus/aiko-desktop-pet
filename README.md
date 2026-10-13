@@ -8,13 +8,15 @@
 
 **Windows 10/11 · Python 3.11+ · local-first · no cloud account or AI API.**
 
-![Aiko, her speech bubble and the six-gauge sci-fi care panel in the running application](vorschau/Aiko_v0_13_Dialog_Mitte.png)
+![The current Aiko Anime character and six-gauge care panel in the running Windows application](vorschau/Aiko_Anime_Runtime.png)
 
-*Real application capture. Interface and Aiko's authored dialogue are in German; project documentation is in English.*
+*Maintainer-provided runtime capture with the new character artwork. Interface and Aiko's authored dialogue are in German; project documentation is in English.*
 
 ## See Aiko in action
 
 ![A real three-step sequence: question emote, spoken response, heart emote](vorschau/Aiko_v0_13_Reaktionsablauf.gif)
+
+*Historical capture with the previous character artwork, showing the reaction sequence.*
 
 [More real screenshots, sprite animations and earlier versions →](docs/MEDIA_GALLERY.md)
 
@@ -27,7 +29,7 @@
 - **Learns a gentle rhythm.** Locally aggregated activity evidence helps her adapt to regular working and resting periods.
 - **Stays out of the way.** A draggable sci-fi hover toolbar, independent status/settings windows and a separate speech bubble.
 
-This is the **v0.13 feature baseline with the completed modular OOP refactor on `main`**. It is a source project; there is currently no separate packaged Windows installer or published GitHub Release.
+This source builds on the **v0.13 feature baseline and modular OOP refactor**, with a new 112-pose Aiko Anime character set, per-frame timing, and dedicated eating, petting and sleeping animations. Attack artwork is stored for later use. It is a source project; there is currently no separate packaged Windows installer or published GitHub Release.
 
 ## Getting started
 
@@ -92,7 +94,7 @@ See [Contributing](CONTRIBUTING.md), the [current change history](CHANGELOG.md),
 ## Artwork, fonts and licensing
 
 - **Project code** is under the [MIT License](LICENSE).
-- **Aiko character sprites** are generated/project-authored artwork; the creator offers the licensable rights they control under MIT, subject to the qualifications in [asset provenance](ASSETS.md).
+- **Current Aiko Anime character assets** have [restricted reuse terms](assets/aiko-anime-8-frames/LICENSE.md), separate from MIT. Use in Aiko Desktop Pet is allowed; other reuse and redistributed forks containing these assets require Alex's explicit consent. The previous sprite release retains its earlier MIT designation. See [asset provenance](ASSETS.md).
 - **Kenney Emote Pack and UI Pack: Sci-fi** artwork is [CC0 1.0](LICENSES/KENNEY_CC0.md), with voluntary credit to [Kenney](https://kenney.nl/).
 - **Font binaries are not shipped** and are not relicensed by this project.
 

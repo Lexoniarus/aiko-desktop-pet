@@ -77,7 +77,7 @@ The application never imports Tkinter or native system monitor implementations.
 
 Concrete widgets belong under `ui/`:
 
-- `AnimatedPet` draws Aiko and delegates animation-frame, gaze and walking calculations to pure presentation policies.
+- `AnimatedPet` draws Aiko and delegates animation-frame, gaze and walking calculations to pure presentation policies. Its cancellable frame timer honors individual image hold durations independently of the 140 ms simulation tick. Late callbacks show the next pose rather than skipping ahead, extending one-shot deadlines as needed. Walking positions update at most every 33 ms while simulation and hardware decisions retain their original tick. One-shot care actions return to idle; sleep plays the breathing loop.
 - `HoverUi` controls the toolbar, status window and settings popup independently from the animated character.
 - `SpeechPresenter` manages the existing speech/emote overlay.
 - `ActionToolbar` owns one cohesive widget, including its six bars, buttons, drag handling and visibility lifecycle.
@@ -93,6 +93,8 @@ Concrete widgets belong under `ui/`:
 - `DesktopInput` owns Tk bindings, global click checks and cancellable delayed focus callbacks.
 - `DesktopLifecycle` controls startup/shutdown ordering.
 - `desktop/taskbar.py` and `window_stack.py` own Windows-specific taskbar discovery and z-order operations; `desktop/geometry.py` contains pure taskbar value calculations.
+
+`infrastructure/character_assets.py` reads the prepared character catalog into immutable `presentation/character.py` contracts before Tk widgets are constructed. Full-width frames and visible ground anchors preserve the wider sleeping pose. `tools/prepare_character_assets.py` produces runtime PNGs with the existing Windows alpha threshold while retaining all source files in the separate asset bundle. Attack is cataloged but has no trigger. See [asset licensing](../ASSETS.md).
 
 Hardware implementation details live in `infrastructure/hardware/`. `telemetry.ComputerSnapshot` is immutable and shared by the provider and application layers. The sampler uses local OS APIs and optional bounded NVIDIA tooling.
 

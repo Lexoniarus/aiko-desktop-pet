@@ -53,3 +53,24 @@ logs/
 *.7z
 *.exe
 *.msi
+
+# Keep ZIP references, generation history and QA local. Track only rebuild inputs.
+/assets/aiko-anime-8-frames/**
+!/assets/aiko-anime-8-frames/LICENSE.md
+!/assets/aiko-anime-8-frames/IMPORT_README.md
+!/assets/aiko-anime-8-frames/IMPORT_MANIFEST.json
+!/assets/aiko-anime-8-frames/aiko-anime-compact/
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/catalog.json
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/*/
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/*/animation.json
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/*/frames/
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/*/frames/[0-9][0-9].png
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/attack/hand-foreground/
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/attack/hand-foreground/[0-9][0-9].png
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/look-directions/directions.json
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/look-directions/[0-9][0-9][0-9].png
+!/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/look-directions/[0-9][0-9][0-9]p5.png
+# Generic walking has no application caller; directional clips are used instead.
+/assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/running/
+/aiko_pet/assets/frames/running/

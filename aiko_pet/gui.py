@@ -37,6 +37,7 @@ from .personality.workload_events import WorkloadEventDetector
 from .personality.catalog import Reaction
 from .pet.routine import TimeContext, context_at
 from .presentation.reaction_playback import ReactionPlayer, choose_idle_emote
+from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.persistence import StateStore
 from .infrastructure.hardware.monitor import ActivityMonitor
 from .ui.desktop_window import (
@@ -66,6 +67,7 @@ class DesktopPet:
         self.settings = session.settings
         self.adaptive = session.adaptive
         self.context: TimeContext = context_at(time.time())
+        self._character_assets = load_character_catalog()
         self._window = DesktopWindow(self.settings)
         self.root = self._window.root
         self.canvas = self._window.canvas
@@ -137,7 +139,9 @@ class DesktopPet:
                 action_state=lambda: self._action_state,
                 walk_finished=self._on_walk_finished,
                 cursor_moved=self._on_cursor_moved,
+                extend_action=self._extend_action,
             ),
+            assets=self._character_assets,
         )
         self._closed = False
         self._attention = AttentionCoordinator(
@@ -246,6 +250,7 @@ class DesktopPet:
             speech=self._speech,
             place_initially=self._place_initially,
             save=self._save,
+            stop_animation=self._animated.stop,
         )
         self._lifecycle.start()
 
@@ -369,10 +374,17 @@ class DesktopPet:
         self, state: str, duration: float, *, started_at: float | None = None,
     ) -> None:
         now = time.monotonic() if started_at is None else started_at
+        clip = self._character_assets.clips[state]
+        if not clip.loop:
+            duration = clip.duration_seconds
         self._action_state = state
         self._action_until = now + duration
+        self._animated.begin_action(state, now)
         self._animated.movement.remaining_distance = 0
         self._animated.movement.next_walk_at = now + duration + random.uniform(2.5, 5)
+
+    def _extend_action(self, deadline: float) -> None:
+        self._action_until = max(self._action_until, deadline)
 
     def interact(self, action: str) -> None:
         """Run a care command through the shared application boundary."""
@@ -391,12 +403,22 @@ class DesktopPet:
             ),
         )
         self.context = result.context
-        if result.reaction is None:
+        if action == "sleep":
+            self._action_until = now
+            self._animated.cancel_action(now)
+        visual = {"feed": "eat", "pet": "petting"}.get(action)
+        reaction = result.reaction
+        if visual is not None and not self.state.sleeping:
+            if reaction is not None:
+                reaction = replace(reaction, animation=visual)
+            else:
+                self._start_action(visual, 0.0)
+        if reaction is None:
             # A fallback must not be overwritten by an older, queued aside.
             self._cancel_followup()
             self._speech.show_text(result.fallback_text, 2450)
         else:
-            self._react(result.reaction, 2900)
+            self._react(reaction, 2900)
         if self._hover.toolbar is not None:
             self._hover.toolbar.refresh()
         self._hover.refresh_status()

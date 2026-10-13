@@ -65,6 +65,7 @@ class DesktopLifecycleTests(unittest.TestCase):
             speech=cast(SpeechPresenter, speech),
             place_initially=lambda: self.calls.append("place"),
             save=lambda: self.calls.append("save"),
+            stop_animation=lambda: self.calls.append("animation-stop"),
         )
 
     def test_startup_maps_window_before_sampling_or_timers(self) -> None:
@@ -85,7 +86,8 @@ class DesktopLifecycleTests(unittest.TestCase):
         self.lifecycle.stop()
         self.lifecycle.stop()
         self.assertEqual(self.calls, [
-            "app-close", "runtime-stop", "input-stop", "monitor-stop", "save",
+            "app-close", "runtime-stop", "animation-stop",
+            "input-stop", "monitor-stop", "save",
             "cancel-reactions", "hide-speech", "popup-close",
             "close-toolbar", "status-close", "destroy",
         ])

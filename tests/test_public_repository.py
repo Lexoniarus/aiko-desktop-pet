@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import re
 import struct
 import unittest
@@ -12,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 LOCAL_MARKDOWN = (
     "README.md", "CONTRIBUTING.md", "CHANGELOG.md", "SECURITY.md",
     "ASSETS.md", "docs/ARCHITECTURE.md", "docs/MEDIA_GALLERY.md",
+    "assets/aiko-anime-8-frames/IMPORT_README.md",
+    "assets/aiko-anime-8-frames/LICENSE.md",
     "docs/GITHUB_WORKFLOW.md", "docs/REFACTOR_ACCEPTANCE.md",
 )
 LOCAL_LINK = re.compile(r"\]\(([^)]+)\)")
@@ -45,9 +48,11 @@ class PublicRepositoryTests(unittest.TestCase):
                         f"{relative} has missing file: {path}",
                     )
 
-    def test_readme_uses_a_real_close_framed_capture_and_animation(self) -> None:
+    def test_readme_uses_current_runtime_capture_and_historical_animation(
+        self,
+    ) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("vorschau/Aiko_v0_13_Dialog_Mitte.png", readme)
+        self.assertIn("vorschau/Aiko_Anime_Runtime.png", readme)
         self.assertIn("vorschau/Aiko_v0_13_Reaktionsablauf.gif", readme)
         self.assertIn("docs/MEDIA_GALLERY.md", readme)
         self.assertIn("docs/ARCHITECTURE.md", readme)
@@ -85,10 +90,47 @@ class PublicRepositoryTests(unittest.TestCase):
         for action, count in manifest["frame_counts"].items():
             with self.subTest(action=action):
                 self.assertEqual(len(tuple((frames / action).glob("*.png"))), count)
-        self.assertEqual(sum(manifest["frame_counts"].values()), 73)
+        self.assertEqual(sum(manifest["frame_counts"].values()), 112)
         self.assertEqual(
             len(tuple((ROOT / "aiko_pet/assets/emotes").glob("*.png"))), 15,
         )
+
+    def test_selected_source_export_matches_rebuild_inputs_and_hashes(
+        self,
+    ) -> None:
+        bundle = ROOT / "assets/aiko-anime-8-frames"
+        record = json.loads((bundle / "IMPORT_MANIFEST.json").read_text("utf-8"))
+        originals = record["original_files"]
+        self.assertEqual(len(originals), 134)
+        self.assertEqual(sum(item["bytes"] for item in originals),
+                         record["original_total_bytes"])
+        source = bundle / "aiko-anime-compact/animations-8"
+        catalog_file = source / "catalog.json"
+        catalog = json.loads(catalog_file.read_text("utf-8"))
+        inputs = {catalog_file}
+        for entry in catalog["animations"]:
+            if entry["state"] == "running":
+                continue
+            manifest = source / entry["manifest"]
+            inputs.add(manifest)
+            clip = json.loads(manifest.read_text("utf-8"))
+            for frame in clip["frames"]:
+                inputs.add(manifest.parent / frame["file"])
+                if "hand_foreground" in frame:
+                    inputs.add(manifest.parent / frame["hand_foreground"])
+        directions_file = source / catalog["look_directions"]
+        inputs.add(directions_file)
+        directions = json.loads(directions_file.read_text("utf-8"))
+        inputs.update(directions_file.parent / frame["file"]
+                      for frame in directions["directions"])
+        self.assertEqual({bundle / item["path"] for item in originals}, inputs)
+        for item in originals:
+            path = bundle / item["path"]
+            with self.subTest(path=item["path"]):
+                content = path.read_bytes()
+                self.assertEqual(len(content), item["bytes"])
+                self.assertEqual(hashlib.sha256(content).hexdigest(),
+                                 item["sha256"])
 
     def test_example_environment_is_optional_and_does_not_invent_keys(
         self,
