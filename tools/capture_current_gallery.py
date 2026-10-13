@@ -84,8 +84,11 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     AnimatedPet and Canvas; GIF hold times represent the intended pacing.
     This is a test capture, not a wall-clock performance measurement.
     """
-    if pet.state.sleeping:
-        pet.interact("sleep")
+    # This is a temporary media-only state. Clear previous scripted care
+    # deadlines so they cannot mask the passive idle director.
+    pet.state.sleeping = False
+    pet._action_until = 0.0
+    pet._action_state = "idle"
     pet._reaction_player.cancel()
     pet._speech.hide()
     if pet._hover.toolbar is not None:
