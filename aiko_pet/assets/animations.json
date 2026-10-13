@@ -205,42 +205,42 @@
       "frames": [
         {
           "file": "frames/waving/00.png",
-          "duration_ms": 160,
+          "duration_ms": 90,
           "source_duration_ms": 70
         },
         {
           "file": "frames/waving/01.png",
-          "duration_ms": 160,
+          "duration_ms": 90,
           "source_duration_ms": 70
         },
         {
           "file": "frames/waving/02.png",
-          "duration_ms": 160,
+          "duration_ms": 90,
           "source_duration_ms": 70
         },
         {
           "file": "frames/waving/03.png",
-          "duration_ms": 160,
+          "duration_ms": 90,
           "source_duration_ms": 70
         },
         {
           "file": "frames/waving/04.png",
-          "duration_ms": 160,
+          "duration_ms": 90,
           "source_duration_ms": 50
         },
         {
           "file": "frames/waving/05.png",
-          "duration_ms": 160,
+          "duration_ms": 90,
           "source_duration_ms": 40
         },
         {
           "file": "frames/waving/06.png",
-          "duration_ms": 160,
+          "duration_ms": 90,
           "source_duration_ms": 50
         },
         {
           "file": "frames/waving/07.png",
-          "duration_ms": 160,
+          "duration_ms": 90,
           "source_duration_ms": 280
         }
       ],
@@ -267,42 +267,42 @@
       "frames": [
         {
           "file": "frames/jumping/00.png",
-          "duration_ms": 160,
+          "duration_ms": 105,
           "source_duration_ms": 70
         },
         {
           "file": "frames/jumping/01.png",
-          "duration_ms": 160,
+          "duration_ms": 105,
           "source_duration_ms": 70
         },
         {
           "file": "frames/jumping/02.png",
-          "duration_ms": 160,
+          "duration_ms": 105,
           "source_duration_ms": 140
         },
         {
           "file": "frames/jumping/03.png",
-          "duration_ms": 160,
+          "duration_ms": 105,
           "source_duration_ms": 70
         },
         {
           "file": "frames/jumping/04.png",
-          "duration_ms": 160,
+          "duration_ms": 105,
           "source_duration_ms": 70
         },
         {
           "file": "frames/jumping/05.png",
-          "duration_ms": 160,
+          "duration_ms": 105,
           "source_duration_ms": 70
         },
         {
           "file": "frames/jumping/06.png",
-          "duration_ms": 160,
+          "duration_ms": 105,
           "source_duration_ms": 70
         },
         {
           "file": "frames/jumping/07.png",
-          "duration_ms": 160,
+          "duration_ms": 105,
           "source_duration_ms": 280
         }
       ],
@@ -329,42 +329,42 @@
       "frames": [
         {
           "file": "frames/failed/00.png",
-          "duration_ms": 160,
+          "duration_ms": 150,
           "source_duration_ms": 140
         },
         {
           "file": "frames/failed/01.png",
-          "duration_ms": 160,
+          "duration_ms": 150,
           "source_duration_ms": 140
         },
         {
           "file": "frames/failed/02.png",
-          "duration_ms": 160,
+          "duration_ms": 150,
           "source_duration_ms": 140
         },
         {
           "file": "frames/failed/03.png",
-          "duration_ms": 160,
+          "duration_ms": 150,
           "source_duration_ms": 140
         },
         {
           "file": "frames/failed/04.png",
-          "duration_ms": 160,
+          "duration_ms": 150,
           "source_duration_ms": 140
         },
         {
           "file": "frames/failed/05.png",
-          "duration_ms": 160,
+          "duration_ms": 150,
           "source_duration_ms": 140
         },
         {
           "file": "frames/failed/06.png",
-          "duration_ms": 160,
+          "duration_ms": 150,
           "source_duration_ms": 140
         },
         {
           "file": "frames/failed/07.png",
-          "duration_ms": 160,
+          "duration_ms": 150,
           "source_duration_ms": 240
         }
       ],
@@ -391,42 +391,42 @@
       "frames": [
         {
           "file": "frames/waiting/00.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 150
         },
         {
           "file": "frames/waiting/01.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 80
         },
         {
           "file": "frames/waiting/02.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 70
         },
         {
           "file": "frames/waiting/03.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 80
         },
         {
           "file": "frames/waiting/04.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 70
         },
         {
           "file": "frames/waiting/05.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 150
         },
         {
           "file": "frames/waiting/06.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 150
         },
         {
           "file": "frames/waiting/07.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 260
         }
       ],
@@ -453,42 +453,42 @@
       "frames": [
         {
           "file": "frames/review/00.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 150
         },
         {
           "file": "frames/review/01.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 80
         },
         {
           "file": "frames/review/02.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 70
         },
         {
           "file": "frames/review/03.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 150
         },
         {
           "file": "frames/review/04.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 80
         },
         {
           "file": "frames/review/05.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 70
         },
         {
           "file": "frames/review/06.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 150
         },
         {
           "file": "frames/review/07.png",
-          "duration_ms": 160,
+          "duration_ms": 315,
           "source_duration_ms": 280
         }
       ],
@@ -515,42 +515,42 @@
       "frames": [
         {
           "file": "frames/sleep/00.png",
-          "duration_ms": 160,
+          "duration_ms": 320,
           "source_duration_ms": 480
         },
         {
           "file": "frames/sleep/01.png",
-          "duration_ms": 160,
+          "duration_ms": 320,
           "source_duration_ms": 190
         },
         {
           "file": "frames/sleep/02.png",
-          "duration_ms": 160,
+          "duration_ms": 320,
           "source_duration_ms": 190
         },
         {
           "file": "frames/sleep/03.png",
-          "duration_ms": 160,
+          "duration_ms": 320,
           "source_duration_ms": 420
         },
         {
           "file": "frames/sleep/04.png",
-          "duration_ms": 160,
+          "duration_ms": 320,
           "source_duration_ms": 240
         },
         {
           "file": "frames/sleep/05.png",
-          "duration_ms": 160,
+          "duration_ms": 320,
           "source_duration_ms": 240
         },
         {
           "file": "frames/sleep/06.png",
-          "duration_ms": 160,
+          "duration_ms": 320,
           "source_duration_ms": 420
         },
         {
           "file": "frames/sleep/07.png",
-          "duration_ms": 160,
+          "duration_ms": 320,
           "source_duration_ms": 380
         }
       ],
@@ -577,42 +577,42 @@
       "frames": [
         {
           "file": "frames/petting/00.png",
-          "duration_ms": 160,
+          "duration_ms": 300,
           "source_duration_ms": 550
         },
         {
           "file": "frames/petting/01.png",
-          "duration_ms": 160,
+          "duration_ms": 300,
           "source_duration_ms": 180
         },
         {
           "file": "frames/petting/02.png",
-          "duration_ms": 160,
+          "duration_ms": 300,
           "source_duration_ms": 180
         },
         {
           "file": "frames/petting/03.png",
-          "duration_ms": 160,
+          "duration_ms": 300,
           "source_duration_ms": 220
         },
         {
           "file": "frames/petting/04.png",
-          "duration_ms": 160,
+          "duration_ms": 300,
           "source_duration_ms": 220
         },
         {
           "file": "frames/petting/05.png",
-          "duration_ms": 160,
+          "duration_ms": 300,
           "source_duration_ms": 220
         },
         {
           "file": "frames/petting/06.png",
-          "duration_ms": 160,
+          "duration_ms": 300,
           "source_duration_ms": 180
         },
         {
           "file": "frames/petting/07.png",
-          "duration_ms": 160,
+          "duration_ms": 300,
           "source_duration_ms": 650
         }
       ],
@@ -645,7 +645,7 @@
           ],
           "events": [],
           "file": "frames/eat/00.png",
-          "duration_ms": 160,
+          "duration_ms": 290,
           "source_duration_ms": 350
         },
         {
@@ -655,7 +655,7 @@
           ],
           "events": [],
           "file": "frames/eat/01.png",
-          "duration_ms": 160,
+          "duration_ms": 290,
           "source_duration_ms": 200
         },
         {
@@ -667,7 +667,7 @@
             "bite_contact"
           ],
           "file": "frames/eat/02.png",
-          "duration_ms": 160,
+          "duration_ms": 290,
           "source_duration_ms": 240
         },
         {
@@ -679,7 +679,7 @@
             "bite"
           ],
           "file": "frames/eat/03.png",
-          "duration_ms": 160,
+          "duration_ms": 290,
           "source_duration_ms": 180
         },
         {
@@ -689,7 +689,7 @@
           ],
           "events": [],
           "file": "frames/eat/04.png",
-          "duration_ms": 160,
+          "duration_ms": 290,
           "source_duration_ms": 300
         },
         {
@@ -699,7 +699,7 @@
           ],
           "events": [],
           "file": "frames/eat/05.png",
-          "duration_ms": 160,
+          "duration_ms": 290,
           "source_duration_ms": 300
         },
         {
@@ -709,7 +709,7 @@
           ],
           "events": [],
           "file": "frames/eat/06.png",
-          "duration_ms": 160,
+          "duration_ms": 290,
           "source_duration_ms": 280
         },
         {
@@ -719,7 +719,7 @@
           ],
           "events": [],
           "file": "frames/eat/07.png",
-          "duration_ms": 160,
+          "duration_ms": 290,
           "source_duration_ms": 450
         }
       ],
@@ -772,7 +772,7 @@
           "events": [],
           "hand_foreground": "hand-foreground/attack/00.png",
           "file": "frames/attack/00.png",
-          "duration_ms": 160,
+          "duration_ms": 215,
           "source_duration_ms": 400
         },
         {
@@ -788,7 +788,7 @@
           "events": [],
           "hand_foreground": "hand-foreground/attack/01.png",
           "file": "frames/attack/01.png",
-          "duration_ms": 160,
+          "duration_ms": 215,
           "source_duration_ms": 140
         },
         {
@@ -804,7 +804,7 @@
           "events": [],
           "hand_foreground": "hand-foreground/attack/02.png",
           "file": "frames/attack/02.png",
-          "duration_ms": 160,
+          "duration_ms": 215,
           "source_duration_ms": 160
         },
         {
@@ -822,7 +822,7 @@
           ],
           "hand_foreground": "hand-foreground/attack/03.png",
           "file": "frames/attack/03.png",
-          "duration_ms": 160,
+          "duration_ms": 215,
           "source_duration_ms": 90
         },
         {
@@ -838,7 +838,7 @@
           "events": [],
           "hand_foreground": "hand-foreground/attack/04.png",
           "file": "frames/attack/04.png",
-          "duration_ms": 160,
+          "duration_ms": 215,
           "source_duration_ms": 140
         },
         {
@@ -854,7 +854,7 @@
           "events": [],
           "hand_foreground": "hand-foreground/attack/05.png",
           "file": "frames/attack/05.png",
-          "duration_ms": 160,
+          "duration_ms": 215,
           "source_duration_ms": 150
         },
         {
@@ -870,7 +870,7 @@
           "events": [],
           "hand_foreground": "hand-foreground/attack/06.png",
           "file": "frames/attack/06.png",
-          "duration_ms": 160,
+          "duration_ms": 215,
           "source_duration_ms": 180
         },
         {
@@ -886,7 +886,7 @@
           "events": [],
           "hand_foreground": "hand-foreground/attack/07.png",
           "file": "frames/attack/07.png",
-          "duration_ms": 160,
+          "duration_ms": 215,
           "source_duration_ms": 450
         }
       ],
