@@ -62,7 +62,10 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         })
         for count in game.score_labels.values():
             self.assertEqual(count.cget("text"), "0")
-        self.assertEqual(game.player_hand.cget("text"), "?")
+        self.assertEqual(
+            game.player_hand.itemcget(game._hand_image_item, "state"),
+            "hidden",
+        )
         for move in Move:
             self.assertEqual(game.hand_images[move].width(), 72)
         self.pet._hover.dismiss_outside(-999, -999)
@@ -84,7 +87,10 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertEqual(bubble_text(self.pet), "Eins!")
         self.assertEqual(game.score.games, 0)
         self.assertEqual(game.score_labels["games"].cget("text"), "0")
-        self.assertEqual(game.player_hand.cget("text"), "?")
+        self.assertEqual(
+            game.player_hand.itemcget(game._hand_image_item, "state"),
+            "hidden",
+        )
         self.assertEqual(game.buttons[Move.ROCK].cget("state"), "disabled")
         game._sequence.advance()
         self.assertEqual(bubble_text(self.pet), "Zwei!")
@@ -96,9 +102,14 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         game._sequence.advance()
         self.assertEqual(game.score.wins, 1)
         self.assertEqual(game.player_result_label.cget("text"), "Du: Stein")
-        self.assertEqual(game.player_hand.cget("image"), str(
-            game.hand_images[Move.ROCK],
-        ))
+        self.assertEqual(
+            game.player_hand.itemcget(game._hand_image_item, "image"),
+            str(game.hand_images[Move.ROCK]),
+        )
+        self.assertEqual(
+            game.player_hand.itemcget(game._hand_image_item, "state"),
+            "normal",
+        )
         self.assertEqual(game.score_labels["games"].cget("text"), "1")
         self.assertEqual(game.score_labels["wins"].cget("text"), "1")
         self.assertEqual(game.score_labels["losses"].cget("text"), "0")
@@ -135,13 +146,55 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
             game._sequence.advance()
         self.assertEqual(game.score.games, 1)
         game.choose(Move.PAPER)
-        self.assertEqual(game.player_hand.cget("text"), "?")
+        self.assertEqual(
+            game.player_hand.itemcget(game._hand_image_item, "image"),
+            str(game.hand_images[Move.ROCK]),
+        )
+        self.assertEqual(
+            game.player_result_label.cget("text"), "Letzte Hand: Stein",
+        )
         self.assertEqual(game.score_labels["games"].cget("text"), "1")
         for _ in range(4):
             game._sequence.advance()
         self.assertEqual(game.score_labels["games"].cget("text"), "2")
         self.assertEqual(game.score_labels["wins"].cget("text"), "1")
         self.assertEqual(game.score_labels["draws"].cget("text"), "1")
+
+    def test_player_hand_cannot_shrink_or_clip_after_any_selection(self) -> None:
+        """Window size and canvas pixels remain fixed for the entire session."""
+        self.pet._hover.open_game()
+        game = self.pet._hover.game_window
+        assert game is not None
+        game.window.update_idletasks()
+        dimensions = (game.window.winfo_width(), game.window.winfo_height())
+        slot = (game.player_hand.winfo_width(), game.player_hand.winfo_height())
+        self.assertEqual(slot, (120, 96))
+
+        for move in (Move.ROCK, Move.PAPER, Move.SCISSORS):
+            game.choose(move)
+            game.window.update_idletasks()
+            self.assertEqual(
+                (game.window.winfo_width(), game.window.winfo_height()),
+                dimensions,
+            )
+            for _ in range(4):
+                game._sequence.advance()
+            game.window.update_idletasks()
+            bounds = game.player_hand.bbox(game._hand_image_item)
+            assert bounds is not None
+            left, top, right, bottom = bounds
+            self.assertGreaterEqual(left, 0)
+            self.assertGreaterEqual(top, 0)
+            self.assertEqual((right - left, bottom - top), (72, 72))
+            self.assertLessEqual(right, slot[0])
+            self.assertLessEqual(bottom, slot[1])
+            self.assertEqual(
+                (game.window.winfo_width(), game.window.winfo_height()),
+                dimensions,
+            )
+            for _ in range(3):
+                game._sequence.advance()
+            self.assertEqual(game.buttons[move].cget("state"), "normal")
 
     def test_cursor_tracking_stays_paused_during_game(self) -> None:
         self.pet._hover.open_game()

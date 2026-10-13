@@ -38,6 +38,29 @@ def capture(pet: DesktopPet) -> Image.Image:
     return image
 
 
+def assert_hand_fits(game: object) -> None:
+    """Fail a capture if an actual hand is cropped or the slot changes size."""
+    from aiko_pet.ui.rock_paper_scissors_window import RockPaperScissorsWindow
+
+    if not isinstance(game, RockPaperScissorsWindow):
+        raise RuntimeError("Expected a Rock–Paper–Scissors window")
+    game.window.update_idletasks()
+    bounds = game.player_hand.bbox(game._hand_image_item)
+    if bounds is None:
+        raise RuntimeError("Selected hand is missing")
+    left, top, right, bottom = bounds
+    width, height = (
+        game.player_hand.winfo_width(), game.player_hand.winfo_height(),
+    )
+    if not (
+        left >= 0 and top >= 0 and right <= width and bottom <= height
+        and right - left == 72 and bottom - top == 72
+    ):
+        raise RuntimeError(
+            f"Hand image clipped: {bounds} in {width}x{height} canvas",
+        )
+
+
 def record_media() -> None:
     """Drive the actual game callbacks; capture one frame for every cue."""
     # Capture only the live sprite, player panel and Aiko's own bubble.
@@ -81,6 +104,10 @@ def record_media() -> None:
                 frames.append(capture(pet))
                 durations.append(duration)
 
+            game.window.update_idletasks()
+            expected_window = (
+                game.window.winfo_width(), game.window.winfo_height(),
+            )
             opening = capture(pet)
             opening.save(MEDIA_DIR / "Aiko_RPS_Start.png")
             frames.append(opening)
@@ -98,6 +125,11 @@ def record_media() -> None:
             frame(700)  # Excitement emote
             game._sequence.advance()
             # Both independently owned hands are now fully visible.
+            assert_hand_fits(game)
+            if (
+                game.window.winfo_width(), game.window.winfo_height()
+            ) != expected_window:
+                raise RuntimeError("Minigame window shrank after the reveal")
             revealed = capture(pet)
             revealed.save(MEDIA_DIR / "Aiko_RPS_Aufgedeckt.png")
             frames.append(revealed)
@@ -120,6 +152,11 @@ def record_media() -> None:
             game._sequence.advance()
             frame(2400)
             game._sequence.advance()
+            assert_hand_fits(game)
+            if (
+                game.window.winfo_width(), game.window.winfo_height()
+            ) != expected_window:
+                raise RuntimeError("Minigame window shrank after second round")
             scoreboard = capture(pet)
             scoreboard.save(MEDIA_DIR / "Aiko_RPS_Punktestand.png")
             frames.append(scoreboard)
