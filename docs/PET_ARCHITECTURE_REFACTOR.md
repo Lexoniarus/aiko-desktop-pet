@@ -49,10 +49,29 @@ This is a work plan, not an implementation claim. Mark each step complete only a
   distinct canonical packages; existing compatibility imports remain.
 - Completed: cursor-attention history is a pure pet-owned object, while native
   pointer sampling is provided by DesktopInput.
-- Still pending: final composition-root cleanup, import audit, documentation
-  consistency and native interactive Windows smoke testing.
+- R5: the composition root now delegates movement, cursor attention, timed
+  actions, care presentations, spontaneous reactions, hover and click selection
+  to explicitly owned objects. Settings values are composed by `PetSettings`
+  without changing its flat save schema.
+- R6: canonical active imports are enforced by
+  `tests/test_canonical_import_paths.py`; existing architecture tests now
+  exercise actual canonical owners, rather than legacy import wrappers.
+- Still pending: interactive Windows smoke tests and final draft-PR approval.
+  Compatibility shims remain intentionally limited to existing clients/tests,
+  with no second business implementation.
 - Automated checks: draft PR #9 runs the Python 3.11/3.13 and Windows-headless
   matrix. CI success is evaluated per commit, not assumed for future commits.
+
+## Original R1–R6 acceptance ledger
+
+| Phase | Implementation | Verification |
+| --- | --- | --- |
+| R1 Mind | `pet/mind/` canonical PetMind, dialogue and adaptive modules | Existing dialogue/click tests + CI |
+| R2 Animation | `pet/animation/` pure policies, `ui/pet_view/` renderer | Frame/gaze tests + Windows visual smoke pending |
+| R3 Movement | `RandomWalkPlanner`, `WalkController`, `WalkDriver` | Walk timing/bounds tests + Windows smoke pending |
+| R4 UI | `ui/windows/`, `ui/common/`, `ui/view_models/` | Existing window and pin tests + Windows smoke pending |
+| R5 Orchestration | `ContactCoordinator`, presenters, action playback, composed preferences | Use-case/UI integration tests + CI |
+| R6 Consolidation | Canonical import audit and refreshed architecture docs | CI; no merge before native acceptance |
 
 ## Verification gates
 

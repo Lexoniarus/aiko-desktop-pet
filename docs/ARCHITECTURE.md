@@ -62,6 +62,7 @@ Some original domain convenience methods still return German text, such as `PetS
 ## Application layer
 
 - `CareController.execute()` advances pet time, coordinates the character's care event, applies the command and returns a presentation-independent `CareOutcome`.
+- `ContactCoordinator` coordinates intentional cursor entry, user clicks and startup greetings through UI effect ports. `PetMind` still chooses all authored dialogue.
 - `ApplicationRouter` accepts owner-thread care commands and validated, bounded incoming notifications. An external HTTP or IPC server is **not implemented**.
 - `ActivityCoordinator` consumes hardware samples and coordinates adaptive observations and elapsed-time pet state.
 - `AttentionCoordinator` controls spontaneous lines, non-interrupting notifications and idle gestures.
@@ -92,6 +93,10 @@ pointer-attention timestamps, not operating-system access.
   `FoodOverlay` renders the selected hand item without affecting nutrition.
 - `SpeechPresenter` and `ReactionPlayer` display timed text and emote cues.
   The pure need-based idle emote choice lives under `pet/animation/`.
+- `ActionPlayback` owns the current visual action state and deadline, not the
+  desktop shell. `CarePresenter` renders accepted care outcomes, including
+  held items, reactions and status refreshes. `AttentionPresenter` translates
+  approved spontaneous speech, idle gestures and notifications into visuals.
 
 `ui/windows/` owns `HoverUi`, the pinnable `ActionToolbar`, `FoodMenu`,
 `SettingsWindow`, and the rock-paper-scissors window. Controls are
@@ -114,6 +119,10 @@ not grow new business logic. See [UI window contract](UI_WINDOW_CONTRACT.md).
 
 - `DesktopRuntime` takes explicit `DesktopTickPorts` and owns the ordered 140 ms update cycle and timer IDs.
 - `DesktopPreferences` coordinates the consequences of option changes without a second settings model.
+- `application/settings.py` defines `PetSettings` as the single settings
+  aggregate, composing `PetBehaviorSettings` and `DesktopDisplaySettings`.
+  The historical flat properties and version-one JSON keys are preserved; no
+  preference value is duplicated between the two child objects.
 - `DesktopInput` owns Tk bindings, global click checks, pointer-coordinate sampling and cancellable delayed focus callbacks.
 - `DesktopLifecycle` controls startup/shutdown ordering.
 - `desktop/taskbar.py` and `window_stack.py` own Windows-specific taskbar discovery and z-order operations; `desktop/geometry.py` contains pure taskbar value calculations.
@@ -157,24 +166,24 @@ Python code imports the removed paths; such callers need the mappings below.
 | `domain` | `pet.state.PetState`; care/friendship/time constants and functions in their respective `pet` policy modules |
 | `care_actions`, `friendship`, `need_decay`, `routine`, `value_rules` | Modules of the same name under `pet` |
 | `pet_lifecycle` | `pet.lifecycle` |
-| `adaptive`, `adaptive_models`, `adaptive_policy`, `work_episode`, `reaction_sequence` | Modules of the same name under `personality` |
-| `dialogue` | `personality.mind.AikoMind` and `personality.catalog` types |
-| `dialogue_catalog`, `dialogue_events` | `personality.catalog`, `personality.click_policy` |
-| `computer_voice`; `ComputerVoice` alias | `personality.workload_events.WorkloadEventDetector` |
-| `animation`, `gaze`, `movement`, `reaction_playback` | Modules of the same name under `presentation` |
+| `adaptive`, `adaptive_models`, `adaptive_policy`, `work_episode`, `reaction_sequence` | Modules of the same name under `pet.mind` |
+| `dialogue` | `pet.mind.mind.PetMind` and `pet.mind.catalog` types |
+| `dialogue_catalog`, `dialogue_events` | `pet.mind.catalog`, `pet.mind.click_policy` |
+| `computer_voice`; `ComputerVoice` alias | `pet.mind.workload_events.WorkloadEventDetector` |
+| `animation`, `gaze`, `movement`, `reaction_playback` | `pet.animation`, `pet.movement`, `ui.pet_view.reaction_player` |
 | `desktop_input` | `desktop.global_input` |
 | `taskbar` | `desktop.taskbar` and `desktop.geometry.TaskbarTrack` |
 | `window_stack` | `desktop.window_stack` |
 | `storage` | `infrastructure.persistence.StateStore`; settings in `application.settings` |
 | `system_activity` | Providers in `infrastructure.hardware`; shared snapshots/effort in `telemetry` |
-| `application.view_models` | `presentation.contracts` |
-| `application.hover_projection`, `status_projection`, `settings_projection` | `presentation.projections` |
-| `application.read_models`; `presentation.legacy.DesktopViewSource` | `presentation.read_models.DesktopPresentation` |
+| `application.view_models` | `ui.view_models.contracts` |
+| `application.hover_projection`, `status_projection`, `settings_projection` | `ui.view_models.projections` |
+| `application.read_models`; `presentation.legacy.DesktopViewSource` | `ui.view_models.read_models.DesktopPresentation` |
 | `desktop.compatibility.DesktopCompatibility` | Owning `DesktopPet` components; no replacement facade |
 
 Hover/status projectors accept `application.read_snapshot.snapshot_pet(state)`
 instead of a mutable `PetState`. The status projector accepts the selected
-emotion string rather than an `AikoMind` and timestamp. `DesktopPresentation`
+emotion string rather than a `PetMind` object and timestamp. `DesktopPresentation`
 provides desktop views without exposing the old public component handles.
 
 Legacy desktop accesses such as `pet.toolbar`, `pet._bubble`, `pet.say()` and
@@ -184,10 +193,17 @@ are implementation components, not a new public integration API. Future
 external adapters should use the typed application boundary.
 
 Unused widget, asset and policy re-exports from `gui.py` have also been
-removed; import them from `ui`, `asset_paths`, `presentation` or `desktop`.
+removed; import them from their canonical `pet`, `ui`, `infrastructure`,
+`asset_paths` or `desktop` modules.
 The application uses `workload_events`, not the old `computer_voice` attribute.
 Existing domain convenience methods and version-one data decoding remain
 outside this module-import cleanup.
+
+The new `tests/test_canonical_import_paths.py` forbids production imports from
+`personality/`, `presentation/`, and the former top-level UI modules, while
+allowing temporary public compatibility exports. Canonical class/function
+implementations live at exactly one new location. Old aliases are not
+permission to add new dependencies or parallel implementations.
 
 
 ## Refactor branch status (October 14, 2026)
