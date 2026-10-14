@@ -44,10 +44,13 @@ Original imported artwork is not cropped or overwritten. Preparation uses
 `python tools/prepare_character_assets.py`; Pillow is required only for that
 build step, not for running the desktop app.
 
-All twelve normal clips contain exactly eight frames and use **even frame
-intervals inside each clip**, with activity-specific tempos. The walking
-clips retain 160 ms per frame (1.28 seconds per stride cycle). Other
-activities, such as waving or sleeping, have distinct speeds. Each idle
+All twelve normal clips retain exactly **eight source PNGs** each. The
+runtime can assign different hold times to each pose and replay selected
+source poses without creating duplicate PNGs; waving now uses a fourteen-step
+sequence for two friendly hand waves. Walking uses 190 ms per frame (a
+1.52-second stride cycle), and its real desktop travel remains synchronized.
+Waiting and review have longer neutral holds; sleep has a four-second
+breathing cycle. Attack timing is unchanged for future gameplay. Each idle
 blink finishes all eight frames and then rests on a neutral pose for a
 short randomized 3–8-second gap. During that gap, a cached Tk-only image
 warp sways Aiko's head and upper shoulders by at most one source pixel while
@@ -58,7 +61,7 @@ different head orientations. The technique produces no new source artwork,
 does not use Pillow at runtime, and does not alter the real eight-frame
 blinking sequence.
 
-All individual clip tempos are configured centrally in
+All pose tempos and optional replay orders are configured centrally in
 [`aiko_pet/assets/animation_timing.json`](aiko_pet/assets/animation_timing.json)
 and validated by the exporter and runtime loader. Historical durations
 are retained as `source_duration_ms` for provenance. Artwork, anchors,

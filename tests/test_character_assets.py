@@ -1,4 +1,4 @@
-"""Validate imported runtime clips and reject malformed catalog boundaries."""
+"""Validate runtime sprites, per-frame pacing and replay metadata."""
 
 from __future__ import annotations
 
@@ -13,39 +13,58 @@ from aiko_pet.infrastructure.character_assets import load_character_catalog
 
 
 class CharacterCatalogTests(unittest.TestCase):
-    def test_new_clips_keep_authored_timing_and_gaze_order(self) -> None:
+    def test_eight_source_sprites_with_independent_playback(self) -> None:
         catalog = load_character_catalog()
         self.assertEqual(sum(len(c.frames) for c in catalog.clips.values()), 112)
         self.assertNotIn("running", catalog.clips)
         self.assertEqual(catalog.clips["idle"].timings, (160,) * 8)
-        self.assertEqual(catalog.clips["eat"].duration_seconds, 2.32)
+        self.assertAlmostEqual(catalog.clips["eat"].duration_seconds, 3.59)
+        self.assertAlmostEqual(catalog.clips["waving"].duration_seconds, 1.895)
         self.assertFalse(catalog.clips["eat"].loop)
         self.assertTrue(catalog.clips["sleep"].loop)
         self.assertEqual(catalog.clips["eat"].frames[3].events, ("bite",))
         self.assertEqual(len(catalog.clips["look"].frames), 16)
-        self.assertEqual(catalog.clips["attack"].frames[3].events,
-                         ("attack_release",))
+        self.assertEqual(
+            catalog.clips["attack"].frames[3].events, ("attack_release",),
+        )
+        self.assertEqual(
+            catalog.clips["attack"].timings, (215,) * 8,
+        )
+        self.assertGreater(
+            catalog.clips["waiting"].duration_seconds,
+            catalog.clips["idle"].duration_seconds,
+        )
 
-    def test_uniform_pacing_preserves_original_source_frame_metadata(self) -> None:
+    def test_runtime_profile_matches_export_and_preserves_sources(self) -> None:
         data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
         policy = json.loads(
             (ASSET_ROOT / "animation_timing.json").read_text("utf-8"),
         )
         durations = policy["frame_duration_ms"]
-        self.assertEqual(durations["running-left"], 160)
+        self.assertEqual(policy["version"], 3)
+        self.assertEqual(durations["running-left"], [190] * 8)
         self.assertNotEqual(durations["sleep"], durations["waving"])
         self.assertEqual(len(data["animations"]), 13)
         for clip in data["animations"]:
             name = clip["state"]
             if name == "look":
                 self.assertEqual(len(clip["frames"]), 16)
+                self.assertNotIn("sequence", clip)
                 continue
             frames = clip["frames"]
             with self.subTest(animation=name):
                 self.assertEqual(len(frames), 8)
                 self.assertEqual(
                     [frame["duration_ms"] for frame in frames],
-                    [durations[name]] * 8,
+                    durations[name],
+                )
+                sequence = policy["frame_sequences"].get(
+                    name, list(range(8)),
+                )
+                self.assertEqual(clip["sequence"], sequence)
+                self.assertEqual(
+                    clip["playback_total_ms"],
+                    sum(durations[name][index] for index in sequence),
                 )
                 self.assertTrue(all(
                     type(frame["source_duration_ms"]) is int
@@ -56,50 +75,72 @@ class CharacterCatalogTests(unittest.TestCase):
                     [f"{i:02d}.png" for i in range(8)],
                 )
 
-    def test_tempo_is_configurable_through_the_shared_policy(self) -> None:
-        """A different valid tempo works only when all clips agree with it."""
+    def test_frame_tempo_is_configurable_through_shared_policy(self) -> None:
         data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
-        for clip in data["animations"]:
-            if clip["state"] == "waving":
-                for frame in clip["frames"]:
-                    frame["duration_ms"] = 200
+        for entry in data["animations"]:
+            if entry["state"] == "waving":
+                entry["frames"][1]["duration_ms"] = 205
+                order = entry["sequence"]
+                entry["playback_total_ms"] = sum(
+                    entry["frames"][index]["duration_ms"] for index in order
+                )
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
             self._write_catalog(root, data)
-            config = root / "animation_timing.json"
-            profile = json.loads(config.read_text("utf-8"))
-            profile["frame_duration_ms"]["waving"] = 200
-            config.write_text(json.dumps(profile), encoding="utf-8")
+            path = root / "animation_timing.json"
+            policy = json.loads(path.read_text("utf-8"))
+            policy["frame_duration_ms"]["waving"][1] = 205
+            path.write_text(json.dumps(policy), encoding="utf-8")
             catalog = load_character_catalog(root)
-            self.assertEqual(catalog.clips["waving"].timings, (200,) * 8)
-            self.assertEqual(catalog.clips["running-left"].duration_seconds, 1.28)
+            clip = catalog.clips["waving"]
+            self.assertEqual(clip.frames[1].duration_ms, 205)
+            self.assertEqual(clip.sprite_index(1), 1)
+            self.assertEqual(clip.timings[1], 205)
+            self.assertEqual(clip.timings[8], 115)
+            self.assertAlmostEqual(
+                catalog.clips["running-left"].duration_seconds, 1.52,
+            )
 
     def test_timing_policy_rejects_invalid_hold_values(self) -> None:
         data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
-        for invalid in (0, -1, "160", 39, 1001):
+        for invalid in (0, -1, "160", 39, 5001, True):
             with self.subTest(value=invalid), tempfile.TemporaryDirectory() as folder:
                 root = Path(folder)
                 self._write_catalog(root, data)
                 path = root / "animation_timing.json"
-                config = json.loads(path.read_text("utf-8"))
-                config["frame_duration_ms"]["idle"] = invalid
-                path.write_text(json.dumps(config), encoding="utf-8")
+                profile = json.loads(path.read_text("utf-8"))
+                profile["frame_duration_ms"]["idle"][0] = invalid
+                path.write_text(json.dumps(profile), encoding="utf-8")
                 with self.assertRaises(ValueError):
                     load_character_catalog(root)
 
-    def test_missing_or_extra_clip_timing_is_rejected(self) -> None:
+    def test_timing_policy_rejects_missing_or_extra_clips(self) -> None:
         data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
         for missing in (True, False):
             with self.subTest(missing=missing), tempfile.TemporaryDirectory() as folder:
                 root = Path(folder)
                 self._write_catalog(root, data)
-                config = root / "animation_timing.json"
-                profile = json.loads(config.read_text("utf-8"))
+                path = root / "animation_timing.json"
+                profile = json.loads(path.read_text("utf-8"))
                 if missing:
                     del profile["frame_duration_ms"]["idle"]
                 else:
-                    profile["frame_duration_ms"]["unknown"] = 160
-                config.write_text(json.dumps(profile), encoding="utf-8")
+                    profile["frame_duration_ms"]["unknown"] = [160] * 8
+                path.write_text(json.dumps(profile), encoding="utf-8")
+                with self.assertRaises(ValueError):
+                    load_character_catalog(root)
+
+    def test_replay_order_rejects_invalid_poses_and_missing_assets(self) -> None:
+        data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
+        for invalid in ([], list(range(7)), [0] * 8,
+                        [0, 1, 2, 3, 4, 5, 6, 8]):
+            with self.subTest(sequence=invalid), tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                self._write_catalog(root, data)
+                path = root / "animation_timing.json"
+                profile = json.loads(path.read_text("utf-8"))
+                profile["frame_sequences"]["waving"] = invalid
+                path.write_text(json.dumps(profile), encoding="utf-8")
                 with self.assertRaises(ValueError):
                     load_character_catalog(root)
 
@@ -110,22 +151,24 @@ class CharacterCatalogTests(unittest.TestCase):
                 if path.is_relative_to(root.resolve()):
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.touch()
-        (root / "animations.json").write_text(json.dumps(data), encoding="utf-8")
+        (root / "animations.json").write_text(
+            json.dumps(data), encoding="utf-8",
+        )
         (root / "animation_timing.json").write_bytes(
             (ASSET_ROOT / "animation_timing.json").read_bytes(),
         )
 
     def test_corrupt_metadata_and_escaping_paths_are_rejected(self) -> None:
         for broken in (
-            "duration", "uneven", "count", "path", "loop", "return_to",
-            "gaze",
+            "duration", "mismatch", "count", "path", "loop",
+            "return_to", "gaze", "sequence",
         ):
             with self.subTest(broken=broken), tempfile.TemporaryDirectory() as folder:
                 data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
                 entry = data["animations"][0]
                 if broken == "duration":
                     entry["frames"][0]["duration_ms"] = 0
-                elif broken == "uneven":
+                elif broken == "mismatch":
                     entry["frames"][2]["duration_ms"] += 1
                 elif broken == "count":
                     entry["frames"].pop()
@@ -135,6 +178,8 @@ class CharacterCatalogTests(unittest.TestCase):
                     entry["loop"] = "false"
                 elif broken == "return_to":
                     entry["return_to"] = "unknown"
+                elif broken == "sequence":
+                    entry["sequence"].pop()
                 else:
                     data["animations"][-1]["frames"].pop()
                 root = Path(folder)

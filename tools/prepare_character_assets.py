@@ -60,8 +60,8 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
         ground = 0
         for index, frame in enumerate(entry["frames"]):
             frame["source_duration_ms"] = frame["duration_ms"]
-            # A clip's own eight holds are equal, independently of its peers.
-            frame["duration_ms"] = policy.duration_for(state)
+            # Source PNGs stay unique; timing follows the per-pose policy.
+            frame["duration_ms"] = policy.duration_for(state, index)
             relative = Path("frames") / state / f"{index:02d}.png"
             ground = max(ground, copy_frame(
                 original.parent / frame["file"], relative,
@@ -72,6 +72,11 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
                 copy_frame(original.parent / frame["hand_foreground"], relative_hand)
                 frame["hand_foreground"] = relative_hand.as_posix()
         entry["anchor"] = [192 // 2, ground]
+        order = policy.sequence_for(state)
+        entry["sequence"] = list(order)
+        entry["playback_total_ms"] = sum(
+            policy.duration_for(state, index) for index in order
+        )
         animations.append(entry)
         counts[state] = len(entry["frames"])
     directions = json.loads(
@@ -109,9 +114,9 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
         "license": "../../assets/aiko-anime-8-frames/LICENSE.md",
         "preparation": "Full-width copies; binary alpha; visible ground anchors",
         "timing_profile": (
-            "Even frame holds within each eight-frame clip; "
-            "activity-specific tempos; ambient blink gaps are separate; "
-            "16 static gaze poses; original times retained"
+            "Per-pose holds and configurable replay sequences; "
+            "ambient blink gaps are separate; 16 static gaze poses; "
+            "original times retained; source PNGs unchanged"
         ),
         "runtime_sha256": hashes,
     }

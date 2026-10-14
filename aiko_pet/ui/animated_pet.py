@@ -223,7 +223,8 @@ class AnimatedPet:
             (FRAME_WIDTH // 2 - clip.anchor[0]) * self.settings.scale,
             (FOOT_BASELINE - clip.anchor[1]) * self.settings.scale,
         )
-        image = self.sprites[state][index]
+        source_index = clip.sprite_index(index)
+        image = self.sprites[state][source_index]
         if (state == "idle" and fixed == 0) or (
             state == "look" and fixed is not None
         ):
@@ -232,7 +233,9 @@ class AnimatedPet:
                 scale=self.settings.scale,
             )
         self.canvas.itemconfigure(self.image_item, image=image)
-        self.food_overlay.render(clip, clip.frames[index], scale=self.settings.scale)
+        self.food_overlay.render(
+            clip, clip.frames[source_index], scale=self.settings.scale,
+        )
         if self._frame_timer is not None:
             self.root.after_cancel(self._frame_timer)
             self._frame_timer = None

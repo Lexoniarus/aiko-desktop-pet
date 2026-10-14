@@ -88,14 +88,30 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
         if name != "look":
             if len(frames) != policy.regular_frames:
                 raise ValueError(f"{name} must have eight animation frames")
-            frame_ms = policy.duration_for(name)
-            if any(frame.duration_ms != frame_ms for frame in frames):
-                raise ValueError(f"{name} has non-uniform frame timing")
+            if tuple(frame.duration_ms for frame in frames) != policy.frame_ms[name]:
+                raise ValueError(f"{name} differs from configured frame timing")
+            order = entry.get("sequence")
+            if (
+                not isinstance(order, list)
+                or any(type(index) is not int for index in order)
+                or order != list(policy.sequence_for(name))
+            ):
+                raise ValueError(f"{name} has an invalid playback sequence")
+            playback_order = policy.sequence_for(name)
+            if entry.get("playback_total_ms") != sum(
+                frames[index].duration_ms for index in playback_order
+            ):
+                raise ValueError(f"{name} has an invalid playback duration")
+        else:
+            if "sequence" in entry:
+                raise ValueError("Look poses are fixed, not sequenced")
+            playback_order = ()
         return_to = entry.get("return_to", "idle")
         if not isinstance(return_to, str):
             raise ValueError("Invalid return animation")
         clips[name] = AnimationClip(
             name, tuple(frames), loop, (anchor[0], anchor[1]), return_to,
+            playback_order,
         )
     for required in ("idle", "sleep", "eat", "petting", "look"):
         if required not in clips:

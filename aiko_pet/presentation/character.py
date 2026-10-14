@@ -25,10 +25,21 @@ class AnimationClip:
     loop: bool
     anchor: tuple[int, int]
     return_to: str = "idle"
+    playback_order: tuple[int, ...] = ()
 
     @property
     def timings(self) -> tuple[int, ...]:
-        return tuple(frame.duration_ms for frame in self.frames)
+        return tuple(
+            self.frames[index].duration_ms for index in (
+                self.playback_order or tuple(range(len(self.frames)))
+            )
+        )
+
+    def sprite_index(self, playback_index: int) -> int:
+        """Map a playback step to its original sprite and overlay anchors."""
+        if self.playback_order:
+            return self.playback_order[playback_index]
+        return playback_index
 
     @property
     def duration_seconds(self) -> float:

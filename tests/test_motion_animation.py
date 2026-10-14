@@ -88,7 +88,7 @@ class FrameClockTests(unittest.TestCase):
 
 
 class CurrentClipPacingTests(unittest.TestCase):
-    def test_all_live_clips_use_one_fixed_frame_hold(self) -> None:
+    def test_each_clip_plays_all_authored_steps_in_order(self) -> None:
         from aiko_pet.infrastructure.character_assets import (
             load_character_catalog,
         )
@@ -98,36 +98,72 @@ class CurrentClipPacingTests(unittest.TestCase):
         for name, clip in catalog.clips.items():
             if name == "look":
                 self.assertEqual(len(clip.frames), 16)
+                self.assertEqual(len(clip.timings), 16)
                 continue
             with self.subTest(clip=name):
-                self.assertEqual(len(clip.timings), 8)
-                self.assertEqual(len(set(clip.timings)), 1)
+                self.assertEqual(len(clip.frames), 8)
+                self.assertGreaterEqual(len(clip.timings), 8)
+                self.assertEqual(len(clip.timings), len(clip.playback_order))
                 clock = FrameClock()
                 self.assertEqual(
-                    clock.next_index(name, 0.0, clip.timings, loop=clip.loop),
+                    clock.next_index(name, 0, clip.timings, loop=clip.loop),
                     0,
                 )
-                self.assertEqual(clock.next_delay_ms, clip.timings[0])
-                for expected_index in range(1, 8):
-                    now = clock.frame_started_at + clip.timings[0] / 1000
+                for index in range(1, len(clip.timings)):
+                    now = (clock.frame_started_at
+                           + clip.timings[index - 1] / 1000)
                     self.assertEqual(
                         clock.next_index(name, now, clip.timings,
                                          loop=clip.loop),
-                        expected_index,
+                        index,
                     )
-                    self.assertEqual(clock.next_delay_ms, clip.timings[0])
-                end = clock.frame_started_at + clip.timings[0] / 1000
+                    self.assertEqual(
+                        clock.next_delay_ms, clip.timings[index],
+                    )
+                    self.assertTrue(
+                        0 <= clip.sprite_index(index) < len(clip.frames),
+                    )
+                end = (clock.frame_started_at
+                       + clip.timings[-1] / 1000)
                 last = clock.next_index(
                     name, end, clip.timings, loop=clip.loop,
                 )
                 if clip.loop:
                     self.assertEqual(last, 0)
                     self.assertFalse(clock.finished)
-                    self.assertEqual(clock.next_delay_ms, clip.timings[0])
+                    self.assertEqual(
+                        clock.next_delay_ms, clip.timings[0],
+                    )
                 else:
-                    self.assertEqual(last, 7)
+                    self.assertEqual(last, len(clip.timings) - 1)
                     self.assertTrue(clock.finished)
                     self.assertIsNone(clock.next_delay_ms)
+
+    def test_waving_reuses_all_eight_pngs_for_two_waves(self) -> None:
+        from aiko_pet.infrastructure.character_assets import (
+            load_character_catalog,
+        )
+
+        clip = load_character_catalog().clips["waving"]
+        self.assertEqual(
+            clip.playback_order,
+            (0, 1, 2, 3, 4, 5, 4, 3, 4, 5, 4, 3, 6, 7),
+        )
+        self.assertEqual(len(clip.frames), 8)
+        self.assertAlmostEqual(clip.duration_seconds, 1.895)
+        self.assertEqual(clip.sprite_index(8), 4)
+        self.assertEqual(clip.sprite_index(13), 7)
+
+    def test_idle_and_attack_keep_original_playback(self) -> None:
+        from aiko_pet.infrastructure.character_assets import (
+            load_character_catalog,
+        )
+
+        clips = load_character_catalog().clips
+        self.assertEqual(clips["idle"].timings, (160,) * 8)
+        self.assertEqual(clips["attack"].timings, (215,) * 8)
+        for name in ("idle", "attack"):
+            self.assertEqual(clips[name].playback_order, tuple(range(8)))
 
     def test_delayed_callback_never_skips_a_frame(self) -> None:
         clock = FrameClock()
