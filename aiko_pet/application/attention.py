@@ -93,6 +93,26 @@ class AttentionCoordinator:
             and random.random() < 0.23
         )
 
+    def cursor_reaction(
+        self, distance: float, screen_width: int, now: float,
+        context: TimeContext, *, toolbar_visible: bool,
+    ) -> Reaction | None:
+        """Interpret existing cursor event keys before entering the UI."""
+        event = self.cursor_moved(
+            distance, screen_width, now, toolbar_visible=toolbar_visible,
+        )
+        if event is None:
+            return None
+        return self.mind.say_event(event, self.state, context, now)
+
+    def walk_reaction(
+        self, now: float, context: TimeContext,
+    ) -> Reaction | None:
+        """Convert completed walks into an already selected dialogue event."""
+        if not self.walk_finished(now):
+            return None
+        return self.mind.say_event("walk_pause", self.state, context, now)
+
     def idle_animation(
         self, now: float, *, action_until: float,
         walking: bool, toolbar_visible: bool,
