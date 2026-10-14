@@ -205,7 +205,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         visual.render(time.monotonic() + 5, 0.14, (99999, 99999))
         current = visual.frame_clock.active_key
         assert current is not None
-        self.assertIn(current[0], ("waving", "waiting"))
+        self.assertIn(current[0], ("waving-greeting", "waiting"))
         self.pet._hover.close_game()
         self.assertFalse(visual._game_mode)
         self.assertIsNotNone(visual.gaze_direction((99999, 99999)))
