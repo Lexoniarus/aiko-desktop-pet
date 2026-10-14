@@ -76,3 +76,7 @@ This is a work plan, not an implementation claim. Mark each step complete only a
 ## Verification gates
 
 Run Ruff, strict Mypy, Pyright, the complete Python 3.11/3.13 unit and Tk/Xvfb matrix and the project's Windows-native smoke checks. Verify in particular the merged item catalog, item sprites and cache tests, 1x/2x asset behaviour, hover/pin and the game window.
+
+Manual acceptance steps and a sign-off record are in
+[the Windows smoke checklist](PET_REFACTOR_WINDOWS_SMOKE.md).
+Until this record is filled by a Windows tester, PR #9 remains a draft.
