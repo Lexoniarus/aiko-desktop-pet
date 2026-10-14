@@ -45,6 +45,7 @@ from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
 from .ui.pet_view.reaction_player import ReactionPlayer
 from .ui.pet_view.attention_presenter import AttentionPresenter, AttentionViewPorts
+from .ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.persistence import StateStore
 from .infrastructure.hardware.monitor import ActivityMonitor
@@ -279,6 +280,20 @@ class DesktopPet:
                 ),
             ),
         )
+        self._care_view = CarePresenter(CareViewPorts(
+            set_item=lambda item: self._animated.set_food_overlay(item),
+            cancel_action=self._cancel_visual_action,
+            start_action=lambda animation, duration: self._start_action(
+                animation, duration,
+            ),
+            cancel_followup=self._cancel_followup,
+            react=lambda reaction, duration: self._react(reaction, duration),
+            show_text=lambda text, duration: self._speech.show_text(
+                text, duration,
+            ),
+            refresh_toolbar=self._refresh_care_toolbar,
+            refresh_status=lambda: self._hover.refresh_status(),
+        ))
         self._preferences = DesktopPreferences(
             settings=self.settings,
             state=self.state,
@@ -446,6 +461,16 @@ class DesktopPet:
         self._action_until = now + duration
         self._animated.begin_action(state, now)
 
+    def _cancel_visual_action(self, now: float) -> None:
+        """Reset an active visual before rendering the sleeping state."""
+        self._action_until = now
+        self._animated.cancel_action(now)
+
+    def _refresh_care_toolbar(self) -> None:
+        toolbar = self._hover.toolbar
+        if toolbar is not None:
+            toolbar.refresh()
+
     def _extend_action(self, deadline: float) -> None:
         self._action_until = max(self._action_until, deadline)
 
@@ -460,28 +485,9 @@ class DesktopPet:
             runtime=self._activity.care_runtime(stamp, now),
         )
         self.context = result.context
-        if result.consumed_item_id is not None:
-            self._animated.set_food_overlay(result.consumed_item_id)
-        if action == "sleep":
-            self._action_until = now
-            self._animated.cancel_action(now)
-        visual = {"feed": "eat", "energy_drink": "eat", "pet": "petting"}.get(action)
-        if visual == "eat" and result.consumed_item_id is None:
-            visual = None
-        reaction = result.reaction
-        if visual is not None and not self.state.sleeping:
-            if reaction is not None:
-                reaction = replace(reaction, animation=visual)
-            else:
-                self._start_action(visual, 0.0)
-        if reaction is None:
-            self._cancel_followup()
-            self._speech.show_text(result.fallback_text, 2450)
-        else:
-            self._react(reaction, 2900)
-        if self._hover.toolbar is not None:
-            self._hover.toolbar.refresh()
-        self._hover.refresh_status()
+        self._care_view.present(
+            action, result, now=now, sleeping=self.state.sleeping,
+        )
         self._save()
 
     def set_topmost(self, value: bool) -> None:
