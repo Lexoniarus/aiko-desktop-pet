@@ -6,14 +6,12 @@ from pathlib import Path
 from aiko_pet.pet.mind import PetMind
 from aiko_pet.pet.mind.cursor_attention import CursorAttention
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook
-from aiko_pet.personality.mind import AikoMind
-from aiko_pet.personality.catalog import DialogueBook as LegacyDialogueBook
 
 
 class PetMindBoundaryTests(unittest.TestCase):
-    def test_mind_and_catalogue_keep_existing_public_identity(self) -> None:
-        self.assertIs(PetMind, AikoMind)
-        self.assertIs(DialogueBook, LegacyDialogueBook)
+    def test_mind_and_catalogue_have_exact_canonical_owners(self) -> None:
+        self.assertEqual(PetMind.__module__, "aiko_pet.pet.mind.mind")
+        self.assertEqual(DialogueBook.__module__, "aiko_pet.pet.mind.catalog")
 
     def test_mind_owns_distinct_session_cursor_attention(self) -> None:
         first = PetMind()
