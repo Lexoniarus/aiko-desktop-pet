@@ -2,7 +2,9 @@
 
 import unittest
 
-from aiko_pet.presentation.reaction_playback import ReactionPlayer as LegacyPlayer
+from aiko_pet.presentation.reaction_playback import (
+    ReactionPlayer as LegacyPlayer,
+)
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
 
 

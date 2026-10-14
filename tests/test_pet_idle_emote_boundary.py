@@ -13,5 +13,11 @@ class IdleEmoteBoundaryTests(unittest.TestCase):
         self.assertIs(choose_idle_emote, legacy_choose_idle_emote)
 
     def test_need_priority(self) -> None:
-        self.assertEqual(choose_idle_emote(energy=0, satiety=0, mood=0, affection=0), "sleeps")
-        self.assertEqual(choose_idle_emote(energy=75, satiety=75, mood=90, affection=75), "star")
+        self.assertEqual(
+            choose_idle_emote(energy=0, satiety=0, mood=0, affection=0),
+            "sleeps",
+        )
+        self.assertEqual(
+            choose_idle_emote(energy=75, satiety=75, mood=90, affection=75),
+            "star",
+        )
