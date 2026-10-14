@@ -1,3 +1,8 @@
+> **Food update:** Aiko now has five selectable food items, an active-session
+> hunger/digestion model, a food-in-hand animation and independently observed
+> hardware/input activity factors. The editable balance table lives in
+> [`pet/food.py`](aiko_pet/pet/food.py); see [Food system](docs/FOOD_SYSTEM.md).
+
 # Aiko Desktop Pet
 
 **A small, expressive desktop companion that lives by your Windows taskbar.** Aiko is a chibi personification of your computer: she walks, notices your attention, reacts to measured work, and gradually develops a familiar routine and friendship with you.

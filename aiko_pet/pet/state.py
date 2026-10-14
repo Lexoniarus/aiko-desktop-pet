@@ -23,6 +23,7 @@ from .friendship import (
     calculate_friendship_reward,
     award_friendship_for_care as award_friendship_for_care,
 )
+from .food import FoodActivity, FoodId, FoodState, advance_food
 from .need_decay import (
     NeedLevels, apply_need_decay as apply_need_decay,
     calculate_need_decay,
@@ -60,6 +61,7 @@ class PetState:
     auto_sleep_night: str = ""  # prevents repeated bedtime after manual waking
     nap_until: float = 0.0
     auto_nap_day: str = ""
+    food: FoodState = field(default_factory=FoodState)
 
     @classmethod
     def from_dict(cls, value: Any, *, now: float | None = None) -> PetState:
@@ -112,6 +114,7 @@ class PetState:
             sleep_origin=origin,
             auto_sleep_night=night_key,
             nap_until=clamp_saved_time(value.get("nap_until")),
+            food=FoodState.from_dict(value.get("food")),
             auto_nap_day=value.get("auto_nap_day", "")
             if isinstance(value.get("auto_nap_day"), str)
             and len(value.get("auto_nap_day", "")) == 10 else "",
@@ -158,6 +161,7 @@ class PetState:
             "auto_sleep_night": self.auto_sleep_night,
             "nap_until": self.nap_until,
             "auto_nap_day": self.auto_nap_day,
+            "food": self.food.to_dict(),
         }
 
     def _roll_meals(self, context: TimeContext) -> None:
@@ -212,9 +216,21 @@ class PetState:
     def _decay(
         self, hours: float, context: TimeContext | None,
         effort: float | None = None,
+        food_activity: FoodActivity | None = None,
     ) -> None:
-        """Apply the result of pure need-decay rules inside the aggregate."""
-        self._set_needs(calculate_need_decay(self, hours, context, effort))
+        """Update nutrition and the other needs in one aggregate transition."""
+        food_progress = advance_food(
+            self.food, self.satiety, hours,
+            sleeping=self.sleeping,
+            activity=(
+                food_activity if food_activity is not None
+                else FoodActivity(hardware_load=effort or 0.0)
+            ),
+        )
+        self._set_needs(calculate_need_decay(
+            self, hours, context, effort, food_progress=food_progress,
+        ))
+        self.food = food_progress.food
 
     def advance(
         self,
@@ -226,6 +242,7 @@ class PetState:
         interrupt_nap: bool = False,
         effort: float | None = None,
         elapsed_seconds: float | None = None,
+        food_activity: FoodActivity | None = None,
     ) -> None:
         """Execute bounded time steps, keeping mutation inside PetState."""
         steps = plan_pet_time(
@@ -236,7 +253,7 @@ class PetState:
             return
         if not auto_routine:
             for step in steps:
-                self._decay(step.hours, None, step.effort)
+                self._decay(step.hours, None, step.effort, food_activity)
             self._roll_meals(context_at(now))
         else:
             for step in steps:
@@ -246,7 +263,7 @@ class PetState:
                     step.context, allow_bedtime=allow_bedtime is not False,
                     allow_nap=allow_nap, interrupt_nap=interrupt_nap,
                 )
-                self._decay(step.hours, step.context, step.effort)
+                self._decay(step.hours, step.context, step.effort, food_activity)
             self.update_daily_routine(
                 context_at(now), allow_bedtime=allow_bedtime is not False,
                 allow_nap=allow_nap,
@@ -268,10 +285,15 @@ class PetState:
         self.care_types_today = list(transition.care_types)
         self.care_last_rewards = dict(transition.last_rewards)
 
-    def interact(self, action: str, *, now: float | None = None) -> str:
+    def interact(
+        self, action: str, *, now: float | None = None,
+        food_id: FoodId | None = None,
+    ) -> str:
         """Commit one care transition and its friendship reward atomically."""
         stamp = resolve_care_time(now)
-        transition = plan_care_action(self, action, now=stamp)
+        transition = plan_care_action(
+            self, action, now=stamp, food_id=food_id,
+        )
         if not transition.changed:
             return transition.response
         self._set_needs(transition.needs)
@@ -279,6 +301,8 @@ class PetState:
         self.sleep_origin = transition.sleep_origin
         self.nap_until = transition.nap_until
         self.auto_sleep_night = transition.auto_sleep_night
+        if transition.food is not None:
+            self.food = transition.food
         if (
             self.meals_date != transition.meals_date
             or tuple(self.meals_today) != transition.meals_today

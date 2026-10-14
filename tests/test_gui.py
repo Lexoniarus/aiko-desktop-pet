@@ -75,6 +75,9 @@ class TaskbarPetGuiTests(unittest.TestCase):
         ]
         self.assertIn("Offen halten", extra_labels)
         bar.buttons["feed"].invoke()
+        menu = self.app._hover.food_menu
+        assert menu is not None
+        menu.buttons["onigiri"].invoke()
         self.assertGreater(self.app.state.satiety, 75)
         bar.buttons["sleep"].invoke()
         self.assertTrue(self.app.state.sleeping)

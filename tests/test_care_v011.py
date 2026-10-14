@@ -61,7 +61,7 @@ class NeedsAndBondTests(unittest.TestCase):
         state = PetState(social=8, satiety=10)
         state.interact("feed", now=timestamp())
         self.assertEqual(state.social, 9)
-        self.assertEqual(state.satiety, 37)
+        self.assertEqual(state.satiety, 40)
         state.interact("pet", now=timestamp() + 1)
         self.assertEqual(state.social, 11)
         self.assertEqual(state.affection, 100)
@@ -174,7 +174,7 @@ class TelemetryEffortTests(unittest.TestCase):
             point = start + step * 10
             calm.advance(point, effort=0.05)
             busy.advance(point, effort=1.0)
-        self.assertLess(busy.satiety, calm.satiety - 2.0)
+        self.assertLess(busy.satiety, calm.satiety - 1.2)
         self.assertLess(busy.mood, calm.mood - 1.5)
         self.assertLess(busy.energy, calm.energy - 2.0)
         self.assertAlmostEqual(busy.friendship, calm.friendship)

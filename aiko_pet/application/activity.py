@@ -10,7 +10,9 @@ from ..personality.adaptive import AdaptiveRoutine, Observation
 from ..personality.mind import AikoMind
 from ..personality.workload_events import WorkloadEventDetector
 from ..personality.catalog import Reaction
+from ..pet.food import FoodActivity
 from ..pet.state import PetState
+from .food_activity import FoodActivityHistory
 from ..pet.routine import TimeContext, context_at
 from .settings import PetSettings
 from ..telemetry import workload_intensity
@@ -27,6 +29,8 @@ class ActivityCallbacks:
     react: Callable[[Reaction, int], None]
     action_until: Callable[[], float]
     last_spoken: Callable[[], float]
+    read_pointer: Callable[[], tuple[int, int]] | None = None
+    read_mouse_buttons: Callable[[], tuple[bool, bool] | None] | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -57,6 +61,7 @@ class ActivityCoordinator:
         self.last_hardware_sample = 0.0
         self.last_adaptive_sample = 0.0
         self.pending_computer_line: tuple[str, float] | None = None
+        self.food_activity_history = FoodActivityHistory()
 
     def set_observation_enabled(self, enabled: bool) -> None:
         """Stop or restart measured workload and clear old session readings."""
@@ -121,15 +126,35 @@ class ActivityCoordinator:
         )
         self.mind.set_situation(behaviour, now=now)
 
+    def observed_food_activity(self) -> FoodActivity:
+        """Return recent measured work for a care command between ticks."""
+        return self.food_activity_history.current_food_activity(time.monotonic())
+
     def advance_state(self, wall_time: float) -> None:
-        """Apply time and current workload without recording new observations."""
+        """Sample real input and workload before progressing pet hunger."""
+        now = time.monotonic()
+        machine_load = self.live_effort()
+        self.food_activity_history.observe(
+            now=now,
+            pointer=(
+                self.callbacks.read_pointer()
+                if self.callbacks.read_pointer is not None else None
+            ),
+            input_idle_seconds=self.callbacks.read_idle_seconds(),
+            mouse_buttons_down=(
+                self.callbacks.read_mouse_buttons()
+                if self.callbacks.read_mouse_buttons is not None else None
+            ),
+            measured_hardware_load=machine_load,
+        )
         self.state.advance(
             wall_time, auto_routine=self.settings.auto_routine,
             allow_bedtime=self.allow_bedtime(),
             allow_nap=self.allow_nap(),
             interrupt_nap=self.interrupt_nap(),
-            effort=self.live_effort(),
+            effort=machine_load,
             elapsed_seconds=self._clock.consume(),
+            food_activity=self.food_activity_history.current_food_activity(now),
         )
 
     def advance_lifecycle(

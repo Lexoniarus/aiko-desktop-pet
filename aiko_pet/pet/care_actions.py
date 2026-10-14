@@ -11,6 +11,9 @@ import time
 from dataclasses import dataclass, replace
 from typing import Protocol
 
+from .food import (
+    DEFAULT_FOOD_ID, FOOD_CATALOG, FoodId, FoodState, eat_food,
+)
 from .friendship import CARE_PRIMARY_NEED
 from .need_decay import NeedLevels
 from .routine import MEAL_NAMES, context_at
@@ -31,12 +34,16 @@ class CareValues(Protocol):
     affection: float
     meals_date: str
     meals_today: list[str]
+    food: FoodState
 
 
 class CareState(CareValues, Protocol):
     """Legacy public action capability exposed by the pet aggregate."""
 
-    def interact(self, action: str, *, now: float | None = None) -> str: ...
+    def interact(
+        self, action: str, *, now: float | None = None,
+        food_id: FoodId | None = None,
+    ) -> str: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -54,16 +61,20 @@ class CareTransition:
     meals_today: tuple[str, ...]
     reward_action: str | None = None
     need_before: float = 0.0
+    food: FoodState | None = None
 
 
 def plan_care_action(
     state: CareValues, action: str, *, now: float,
+    food_id: FoodId | None = None,
 ) -> CareTransition:
     """Decide old care values, rejection and dialogue without any writes."""
     if action not in {
         "sleep", "feed", "play", "pet", "talk", "energy_drink",
     }:
         raise ValueError(f"Unknown action: {action}")
+    if food_id is not None and (action != "feed" or food_id not in FOOD_CATALOG):
+        raise ValueError("Food selection only accepts known feed items")
     unchanged = CareTransition(
         response="",
         changed=False,
@@ -161,38 +172,49 @@ def plan_care_action(
             ),
             response="... Das ist angenehm.",
         )
+    selected_food = food_id if food_id is not None else DEFAULT_FOOD_ID
+    profile = FOOD_CATALOG[selected_food]
+    intake = eat_food(state.food, state.satiety, selected_food)
+    if not intake.accepted:
+        return replace(unchanged, response="Ich bin schon satt. ...Wirklich.")
     context = context_at(now)
     meals_date = state.meals_date
     meals = list(state.meals_today)
     if meals_date != context.day_key:
         meals_date = context.day_key
         meals = []
-    first_meal = context.meal is not None and context.meal not in meals
+    first_meal = (
+        profile.category == "meal"
+        and context.meal is not None and context.meal not in meals
+    )
     if first_meal and context.meal is not None:
         meals.append(context.meal)
+    if intake.repetitive:
+        response = f"Schon wieder {profile.display_name}? ...Na gut."
+    elif first_meal and context.meal is not None:
+        response = f"Danke für das {MEAL_NAMES[context.meal].lower()}!"
+    else:
+        response = f"Mhm ... {profile.display_name}! Danke."
     return replace(
         result,
         meals_date=meals_date,
         meals_today=tuple(meals),
+        food=intake.food,
         needs=replace(
             result.needs,
-            satiety=clamp_need_value(state.satiety + 27),
+            satiety=intake.satiety,
             social=clamp_need_value(state.social + 1),
-            mood=clamp_need_value(state.mood + (5 if first_meal else 3)),
+            mood=clamp_need_value(state.mood + intake.mood_change),
         ),
-        response=(
-            f"Danke für das {MEAL_NAMES[context.meal].lower()}!"
-            if first_meal and context.meal is not None
-            else "Mhm ... ein kleiner Snack!"
-        ),
+        response=response,
     )
-
 
 def apply_care_action(
     state: CareState, action: str, *, now: float | None = None,
+    food_id: FoodId | None = None,
 ) -> str:
-    """Legacy adapter to the aggregate's public mutation operation."""
-    return state.interact(action, now=now)
+    """Compatibility adapter for the aggregate's public care operation."""
+    return state.interact(action, now=now, food_id=food_id)
 
 
 def resolve_care_time(now: float | None) -> float:

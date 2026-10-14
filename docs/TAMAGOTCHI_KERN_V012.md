@@ -1,3 +1,6 @@
+> Historical v0.12 baseline: the current feeding values, satiety decay and
+> hardware/input effects are documented in [FOOD_SYSTEM.md](FOOD_SYSTEM.md).
+
 # v0.12 — affection, differentiated care, and friendship
 
 ## Design goal

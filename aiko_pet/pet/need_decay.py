@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Protocol
 
+from .food import FoodActivity, FoodProgress, FoodState, advance_food
 from .routine import TimeContext
 from .value_rules import clamp_need_value
 
@@ -35,23 +36,32 @@ def calculate_need_decay(
     record: NeedValues,
     hours: float,
     context: TimeContext | None,
-    effort: float | None = None,
+    effort: float | None = None, *,
+    food_activity: FoodActivity | None = None,
+    food_progress: FoodProgress | None = None,
 ) -> NeedLevels:
-    """Hourly waking care rhythm; sleeping retains its gentle recovery rates."""
+    """Compute all needs while delegating hunger to the food policy."""
+    progress = food_progress if food_progress is not None else advance_food(
+        getattr(record, "food", FoodState()), record.satiety, hours,
+        sleeping=record.sleeping,
+        activity=(
+            food_activity if food_activity is not None
+            else FoodActivity(hardware_load=effort or 0.0)
+        ),
+    )
     if record.sleeping:
         return NeedLevels(
-            satiety=clamp_need_value(record.satiety - hours * 1.4),
+            satiety=progress.satiety,
             mood=clamp_need_value(record.mood + hours * 0.5),
             energy=clamp_need_value(record.energy + hours * 22.0),
             social=clamp_need_value(record.social - hours * 0.35),
             affection=clamp_need_value(record.affection - hours * 0.25),
         )
-    satiety_rate, mood_rate, energy_rate = 30.0, -4.0, 6.0
+    mood_rate, energy_rate = -4.0, 6.0
     # CPU/GPU effort is her observed work; unseen work is never invented.
     intensity = 0.0 if effort is None else max(
         0.0, min(1.0, (effort - 0.15) / 0.85),
     )
-    satiety_rate += 3.0 * intensity
     mood_rate -= 2.1 * intensity
     energy_rate += 2.8 * intensity
     social_rate = 8.0 + 0.35 * intensity
@@ -61,7 +71,7 @@ def calculate_need_decay(
     if record.affection < 20:
         mood_rate -= 0.8
     return NeedLevels(
-        satiety=clamp_need_value(record.satiety - hours * satiety_rate),
+        satiety=progress.satiety,
         mood=clamp_need_value(record.mood + hours * mood_rate),
         energy=clamp_need_value(record.energy - hours * energy_rate),
         social=clamp_need_value(record.social - hours * social_rate),
@@ -74,8 +84,20 @@ def apply_need_decay(
     context: TimeContext | None, effort: float | None = None,
 ) -> None:
     """Legacy mutable-record adapter; PetState applies calculations itself."""
-    next_values = calculate_need_decay(record, hours, context, effort)
+    food = getattr(record, "food", None)
+    food_progress = (
+        advance_food(
+            food, record.satiety, hours, sleeping=record.sleeping,
+            activity=FoodActivity(hardware_load=effort or 0.0),
+        )
+        if isinstance(food, FoodState) else None
+    )
+    next_values = calculate_need_decay(
+        record, hours, context, effort, food_progress=food_progress,
+    )
     record.satiety = next_values.satiety
+    if food_progress is not None:
+        setattr(record, "food", food_progress.food)
     record.mood = next_values.mood
     record.energy = next_values.energy
     record.social = next_values.social

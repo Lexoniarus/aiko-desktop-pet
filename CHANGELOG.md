@@ -1,3 +1,15 @@
+## Unreleased — Food, digestion and observed workload
+
+- Five selectable foods (Onigiri, Sandwich, Taiyaki, Apple, Dango) with
+  independent satiety gains, digestible reserves and repetition reactions.
+- New testable `pet/food.py` tuning constants and `FoodState` stored in the
+  optional `pet.food` field of the existing version-one save format.
+- Hunger progression uses actual active session time plus separate hardware
+  and user-input observations, not inferred tasks or offline uptime.
+- Food selector and smaller transparent sprite overlays follow per-frame
+  hand anchors of the eight-frame eat animation.
+- 24-hour nutrition, workload/privacy, persistence and GUI regression tests.
+
 # Project change history
 
 Aiko Desktop Pet is maintained as a source repository. The dates below describe

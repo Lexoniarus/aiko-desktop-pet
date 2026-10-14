@@ -17,7 +17,7 @@ class PetStateTests(unittest.TestCase):
     def test_normal_decay(self):
         state = PetState(updated_at=NOW + 1000)
         state.advance(NOW + 1000 + 3600)
-        self.assertAlmostEqual(state.satiety, 45)
+        self.assertAlmostEqual(state.satiety, 67)
         self.assertAlmostEqual(state.mood, 71)
         self.assertAlmostEqual(state.energy, 69)
 
@@ -30,7 +30,7 @@ class PetStateTests(unittest.TestCase):
     def test_offline_gap_is_capped(self):
         state = PetState(updated_at=NOW + 100)
         state.advance(NOW + 100 + MAX_CATCHUP_SECONDS * 9)
-        self.assertEqual(state.satiety, 0)
+        self.assertLessEqual(state.satiety, 12)
         self.assertEqual(state.updated_at, NOW + 100 + MAX_CATCHUP_SECONDS * 9)
 
     def test_clock_going_backwards_does_not_penalize(self):

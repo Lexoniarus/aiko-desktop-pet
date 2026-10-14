@@ -41,6 +41,11 @@ def project_hover(
         friendship_level=pet.friendship_level,
         hardware_line=hardware,
         workload_line=workload,
+        food_line=(
+            f"Zuletzt: {pet.last_food_id.capitalize()}"
+            f" · Sättigungspuffer: {pet.food_digest_minutes:.0f} Min."
+            if pet.last_food_id is not None else ""
+        ),
     )
 
 

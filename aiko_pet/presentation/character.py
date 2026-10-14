@@ -15,6 +15,7 @@ class AnimationFrame:
     file: Path
     duration_ms: int
     events: tuple[str, ...] = ()
+    food_anchor: tuple[int, int] | None = None
 
 
 @dataclass(frozen=True, slots=True)

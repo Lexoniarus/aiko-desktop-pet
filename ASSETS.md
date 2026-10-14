@@ -23,9 +23,11 @@ The current desktop export has **112 character poses**: twelve eight-frame
 clips and sixteen cursor-gaze poses. Prepared full-width 192 × 208 copies live
 in `aiko_pet/assets/frames/`, with timing/anchor metadata in
 `aiko_pet/assets/animations.json` and hand foreground layers in
-`aiko_pet/assets/hand-foreground/`. Attack assets and optional overlay metadata
-are retained for future use; there is no attack trigger or bundled food,
-weapon or magic graphic in the current application.
+`aiko_pet/assets/hand-foreground/`. Attack assets remain reserved for future use; there is no attack trigger
+or bundled weapon or magic graphic. The five **food overlay/menu PNGs**
+are now included in `aiko_pet/assets/food/`, prepared from the creator's
+separately retained transparent high-resolution food artwork at 98% of the
+intended hand-object size. See [Food system](docs/FOOD_SYSTEM.md).
 
 The new artwork and associated asset data are **excluded from the MIT license**.
 [The Aiko Anime asset terms](assets/aiko-anime-8-frames/LICENSE.md) permit

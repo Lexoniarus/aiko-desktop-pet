@@ -20,6 +20,7 @@ class HoverSnapshot:
     friendship_level: int
     hardware_line: str
     workload_line: str
+    food_line: str = ""
 
     def need_value(self, key: str) -> float:
         for name, value in self.needs:

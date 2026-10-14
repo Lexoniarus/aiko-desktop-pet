@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from ..personality.adaptive import AdaptiveRoutine
 from ..personality.mind import AikoMind
 from ..personality.catalog import Reaction
+from ..pet.food import FoodActivity, FOOD_BALANCE
 from ..pet.state import PetState
 from ..pet.routine import TimeContext, context_at
 from .commands import CareCommand
@@ -24,6 +25,7 @@ class CareRuntime:
     allow_nap: bool
     interrupt_nap: bool
     effort: float | None
+    food_activity: FoodActivity | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,6 +35,7 @@ class CareOutcome:
     fallback_text: str
     reaction: Reaction | None
     context: TimeContext
+    food_consumed: bool = False
 
 
 class CareController:
@@ -57,17 +60,25 @@ class CareController:
             interrupt_nap=runtime.interrupt_nap,
             effort=runtime.effort,
             elapsed_seconds=self._clock.consume(),
+            food_activity=runtime.food_activity,
         )
         self._adaptive.note_interaction(runtime.wall_time)
         context = context_at(runtime.wall_time)
         event, previous_emotion = self._mind.care_event(
             command.action, self._state, context, runtime.monotonic_time,
+            food_id=command.food_id,
         )
-        fallback = self._state.interact(command.action, now=runtime.wall_time)
+        food_consumed = (
+            command.action == "feed"
+            and self._state.satiety < FOOD_BALANCE.too_full_to_eat_threshold
+        )
+        fallback = self._state.interact(
+            command.action, now=runtime.wall_time, food_id=command.food_id,
+        )
         if event not in ("play_tired", "energy_drink_full"):
             self._mind.after_care(command.action, runtime.monotonic_time)
         reaction = self._mind.say_event(
             event, self._state, context, runtime.monotonic_time,
             tone=previous_emotion,
         )
-        return CareOutcome(fallback, reaction, context)
+        return CareOutcome(fallback, reaction, context, food_consumed)

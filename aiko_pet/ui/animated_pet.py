@@ -20,6 +20,7 @@ from ..presentation.ambient import AmbientDirector
 from ..presentation.character import CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH
 from ..presentation.gaze import gaze_sector
 from ..presentation.movement import WalkConditions, WalkController
+from .food_overlay import FoodOverlay
 from .rest_pose_renderer import RestPoseRenderer
 from ..desktop.geometry import TaskbarTrack, FOOT_BASELINE
 
@@ -119,6 +120,7 @@ class AnimatedPet:
         self.image_item = self.canvas.create_image(
             0, 0, anchor="nw", image=self.sprites["idle"][0],
         )
+        self.food_overlay = FoodOverlay(root, canvas, scale=self.settings.scale)
         self.show_frame("idle", time.monotonic())
 
     def load_sprites(self) -> dict[str, list[tk.PhotoImage]]:
@@ -166,8 +168,13 @@ class AnimatedPet:
         """Replace scaled images while preserving the active playback clock."""
         self.sprites = self.load_sprites()
         self._rest_renderer.clear()
+        self.food_overlay.reload(self.settings.scale)
         state, fixed = self.frame_clock.active_key or ("idle", None)
         self.show_frame(state, time.monotonic(), fixed=fixed)
+
+    def set_food_overlay(self, food_id: str) -> None:
+        """Select the held graphic without changing nutrition."""
+        self.food_overlay.select(food_id)
 
     def begin_action(self, state: str, now: float) -> None:
         """Start a new visual action, including repeated actions of one kind."""
@@ -225,6 +232,7 @@ class AnimatedPet:
                 scale=self.settings.scale,
             )
         self.canvas.itemconfigure(self.image_item, image=image)
+        self.food_overlay.render(clip, clip.frames[index], scale=self.settings.scale)
         if self._frame_timer is not None:
             self.root.after_cancel(self._frame_timer)
             self._frame_timer = None

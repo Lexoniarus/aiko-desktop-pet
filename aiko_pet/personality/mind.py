@@ -20,6 +20,7 @@ from .catalog import (
     Reaction as Reaction,
 )
 from .click_policy import ClickButton, choose_click_reaction
+from ..pet.food import DEFAULT_FOOD_ID, FoodId, is_repeated_food
 from ..pet.state import PetState
 from ..pet.routine import TimeContext
 from .work_episode import WorkEpisodeMemory
@@ -142,13 +143,17 @@ class AikoMind:
 
     def care_event(
         self, action: str, state: PetState, context: TimeContext, now: float,
+        *, food_id: FoodId | None = None,
     ) -> tuple[str, str]:
         """Return an event and the PRE-action tone of the care interaction."""
         self.last_contact = now
         tone = self.emotion(state, now)
         if action == "feed":
-            if state.satiety >= 95:
+            if state.satiety >= 96:
                 return "feed_full", tone
+            chosen = food_id if food_id is not None else DEFAULT_FOOD_ID
+            if is_repeated_food(state.food, chosen):
+                return "feed_repeat", tone
             if context.meal and (
                 context.day_key != state.meals_date
                 or context.meal not in state.meals_today

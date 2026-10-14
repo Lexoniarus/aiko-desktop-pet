@@ -83,12 +83,12 @@ class ActiveTimeTests(unittest.TestCase):
             NOW + 3600, 3600, False, None, False, False, None,
         ))
         activity.advance_state(NOW + 3600)  # Save at the same instant.
-        self.assertAlmostEqual(state.satiety, 70)
+        self.assertAlmostEqual(state.satiety, 92)
         activity.advance_state(NOW + 86400)  # Suspend/clock jump: uptime unchanged.
-        self.assertAlmostEqual(state.satiety, 70)
+        self.assertAlmostEqual(state.satiety, 92)
         uptime[0] += 60
         activity.advance_state(NOW + 86460)
-        self.assertAlmostEqual(state.satiety, 69.5)
+        self.assertAlmostEqual(state.satiety, 91.8667, places=3)
 
 
 class HourlyCareTests(unittest.TestCase):
@@ -97,7 +97,7 @@ class HourlyCareTests(unittest.TestCase):
                         affection=100, updated_at=NOW)
 
     def test_hourly_targets_with_continuously_observed_load(self) -> None:
-        for effort, expected in ((None, 70), (1., 67)):
+        for effort, expected in ((None, 92), (1., 90.4)):
             with self.subTest(effort=effort):
                 state = self.full_state()
                 for seconds in range(10, 3601, 10):
@@ -106,7 +106,7 @@ class HourlyCareTests(unittest.TestCase):
                 self.assertGreater(min(state.mood, state.energy, state.social,
                                        state.affection), 90)
                 state.interact('feed', now=NOW + 3600)
-                self.assertAlmostEqual(state.satiety, expected + 27)
+                self.assertAlmostEqual(state.satiety, 100)
 
     def test_eight_hour_care_day_stays_playable_and_bond_is_capped(self) -> None:
         state = self.full_state()

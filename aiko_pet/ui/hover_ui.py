@@ -10,6 +10,8 @@ from typing import Callable
 from ..application.settings import SettingKey
 from .action_toolbar import ActionToolbar
 from .game_speech import GameSpeech
+from .food_menu import FoodMenu
+from ..presentation.food_models import FoodId, food_choices
 from .rock_paper_scissors_window import RockPaperScissorsWindow
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .settings_contracts import SettingsActions, SettingsSnapshot
@@ -40,6 +42,7 @@ class HoverUiPorts:
     restore_stack: Callable[[], bool]
     always_on_top: Callable[[], bool]
     game_speech: GameSpeech
+    feed: Callable[[FoodId], None] | None = None
 
 
 class HoverUi:
@@ -55,6 +58,7 @@ class HoverUi:
         self.toolbar: ActionToolbar | None = None
         self.settings_window: SettingsWindow | None = None
         self.game_window: RockPaperScissorsWindow | None = None
+        self.food_menu: FoodMenu | None = None
         self._settings_position: tuple[int, int] | None = None
         self._keep_open = False
         self.last_hover = -100.0
@@ -86,13 +90,50 @@ class HoverUi:
                 self.root.winfo_pointerx(), self.root.winfo_pointery(),
             )
         )
-        return bool(using_toolbar or self.settings_engaged)
+        menu = self.food_menu
+        using_food = menu is not None and menu.contains_pointer(
+            self.root.winfo_pointerx(), self.root.winfo_pointery(),
+        )
+        return bool(using_toolbar or using_food or self.settings_engaged)
 
     def _interact(self, action: str) -> None:
         if action == "play":
             self.open_game()
+        elif action == "feed" and self._ports.feed is not None:
+            self.open_food_menu()
         elif not self.game_open:
             self._ports.care(action)
+
+    def _food_menu_closed(self) -> None:
+        self.food_menu = None
+
+    def _food_selected(self, food_id: FoodId) -> None:
+        if self._ports.feed is not None and not self.game_open:
+            self._ports.feed(food_id)
+
+    def open_food_menu(self) -> None:
+        """Reuse one selection window; no domain mutations before choice."""
+        if self.game_open:
+            return
+        if self.food_menu is not None:
+            self.food_menu.focus()
+            return
+        toolbar = self.toolbar
+        x = toolbar.window.winfo_rootx() if toolbar is not None else 200
+        y = (
+            toolbar.window.winfo_rooty() + toolbar.window.winfo_height()
+            if toolbar is not None else 200
+        )
+        self.food_menu = FoodMenu(
+            self.root, x, y, choices=food_choices(),
+            selected=self._food_selected, closed=self._food_menu_closed,
+            always_on_top=self._ports.always_on_top(), skin=self._skin,
+        )
+        self._ports.restore_stack()
+
+    def close_food_menu(self) -> None:
+        if self.food_menu is not None:
+            self.food_menu.close()
 
     def _game_closed(self) -> None:
         self.game_window = None
@@ -112,6 +153,7 @@ class HoverUi:
             self.game_window.focus()
             self._ports.restore_stack()
             return
+        self.close_food_menu()
         self._ports.game_speech.start()
         try:
             self.game_window = RockPaperScissorsWindow(
@@ -198,7 +240,10 @@ class HoverUi:
             self.settings_window.close()
 
     def set_topmost(self, enabled: bool) -> None:
-        for window in (self.toolbar, self.settings_window, self.game_window):
+        for window in (
+            self.toolbar, self.settings_window, self.game_window,
+            self.food_menu,
+        ):
             if window is not None:
                 window.window.wm_attributes("-topmost", enabled)
 
@@ -226,7 +271,11 @@ class HoverUi:
             toolbar.hide()
 
     def dismiss_outside(self, x: int, y: int) -> None:
-        """Only the transient toolbar participates in outside-click dismissal."""
+        """Outside clicks dismiss only transient controls, never settings."""
+        menu = self.food_menu
+        if menu is not None and not menu.contains_pointer(x, y):
+            if not self.pointer_inside(x, y):
+                menu.close()
         if not self.pointer_inside(x, y):
             self._auto_hide_toolbar()
 
@@ -252,6 +301,7 @@ class HoverUi:
             self._auto_hide_toolbar()
 
     def close_toolbar(self) -> None:
+        self.close_food_menu()
         if self.toolbar is not None:
             self.toolbar.close()
             self.toolbar = None

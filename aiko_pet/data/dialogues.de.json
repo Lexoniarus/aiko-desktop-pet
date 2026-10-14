@@ -5399,6 +5399,71 @@
       "moods": [],
       "periods": [],
       "weekdays": []
+    },
+    {
+      "id": "feed_repeat-01",
+      "event": "feed_repeat",
+      "text": "Schon wieder dasselbe? ...Du bist wirklich konsequent.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "eat",
+      "weight": 2,
+      "cooldown_seconds": 130,
+      "emote_before": "question",
+      "emote_after": "faceSad"
+    },
+    {
+      "id": "feed_repeat-02",
+      "event": "feed_repeat",
+      "text": "Ich mag es ja. Aber vielleicht morgen mal etwas anderes?",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "eat",
+      "weight": 2,
+      "cooldown_seconds": 130,
+      "emote_before": "question",
+      "emote_after": "faceSad"
+    },
+    {
+      "id": "feed_repeat-03",
+      "event": "feed_repeat",
+      "text": "...Du hast schon bemerkt, dass es auch andere Sachen gibt, oder?",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "eat",
+      "weight": 2,
+      "cooldown_seconds": 130,
+      "emote_before": "question",
+      "emote_after": "faceSad"
+    },
+    {
+      "id": "feed_repeat-04",
+      "event": "feed_repeat",
+      "text": "Na gut. Noch einmal. Aber beim nächsten Mal überraschen wir mich.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "eat",
+      "weight": 2,
+      "cooldown_seconds": 130,
+      "emote_before": "question",
+      "emote_after": "faceSad"
+    },
+    {
+      "id": "feed_repeat-05",
+      "event": "feed_repeat",
+      "text": "Du planst hoffentlich nicht, mich nur davon zu ernähren.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "eat",
+      "weight": 2,
+      "cooldown_seconds": 130,
+      "emote_before": "question",
+      "emote_after": "faceSad"
     }
   ]
 }

@@ -105,6 +105,12 @@ class ActionToolbar:
             anchor="w", padx=10, pady=3,
         )
         self.hardware.pack(fill="x")
+        self.food_info = tk.Label(
+            outer, text="", font=(self.font_family, 8),
+            fg=self.skin.muted, bg=self.skin.background,
+            anchor="w", padx=10, pady=2,
+        )
+        self.food_info.pack(fill="x")
         self.workload = tk.Label(
             outer, text="", font=(self.font_family, 8),
             fg=self.skin.text, bg=self.skin.background,
@@ -189,6 +195,7 @@ class ActionToolbar:
             (self.today, view.header),
             (self.hardware, view.hardware_line),
             (self.workload, view.workload_line),
+            (self.food_info, view.food_line),
         ):
             if widget.cget("text") != value:
                 widget.configure(text=value)

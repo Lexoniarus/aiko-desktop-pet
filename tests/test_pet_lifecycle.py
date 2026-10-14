@@ -36,7 +36,7 @@ class NeedDecayTests(unittest.TestCase):
     def test_normal_waking_decay_does_not_require_pet_state(self) -> None:
         needs = Needs()
         apply_need_decay(needs, 1, context=None)
-        self.assertEqual(needs.satiety, 45.0)
+        self.assertEqual(needs.satiety, 67.0)
         self.assertEqual(needs.mood, 71.0)
         self.assertAlmostEqual(needs.energy, 69.0)
         self.assertEqual(needs.social, 67.0)
@@ -67,7 +67,7 @@ class PetTimelineTests(unittest.TestCase):
             "friendship_day", "friendship_gained_today", "care_types_today",
             "care_last_rewards", "sleeping", "updated_at", "meals_date",
             "meals_today", "sleep_origin", "auto_sleep_night", "nap_until",
-            "auto_nap_day",
+            "auto_nap_day", "food",
         }
         self.assertEqual(set(PetState().to_dict()), expected)
 
@@ -90,7 +90,7 @@ class PetTimelineTests(unittest.TestCase):
     def test_catchup_is_bounded_without_routine(self) -> None:
         state = PetState(updated_at=local_stamp())
         advance_pet_time(state, local_stamp() + 86400.0 * 7)
-        self.assertEqual(state.satiety, 0.0)
+        self.assertLessEqual(state.satiety, 12.0)
         self.assertEqual(state.mood, 43.0)
         self.assertAlmostEqual(state.energy, 27.0)
 

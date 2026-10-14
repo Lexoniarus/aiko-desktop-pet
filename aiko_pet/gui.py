@@ -25,13 +25,16 @@ from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController, CareRuntime
 from .application.active_time import ActiveSessionClock
+from .pet.food import DEFAULT_FOOD_ID, FoodId
 from .infrastructure.active_time import active_uptime_seconds
 from .ui.hover_ui import HoverUi, HoverUiPorts
 from .ui.game_speech import GameSpeech
 from .application.router import ApplicationRouter
 from .presentation.read_models import DesktopPresentation
 from .config import load_env_file
-from .desktop.global_input import idle_seconds_windows
+from .desktop.global_input import (
+    idle_seconds_windows, mouse_buttons_down_windows,
+)
 from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
 from .personality.mind import AikoMind
@@ -127,6 +130,10 @@ class DesktopPet:
                 react=self._react,
                 action_until=lambda: self._action_until,
                 last_spoken=lambda: self._attention.last_spoken,
+                read_pointer=lambda: (
+                    self.root.winfo_pointerx(), self.root.winfo_pointery(),
+                ),
+                read_mouse_buttons=mouse_buttons_down_windows,
             ),
             clock=active_clock,
         )
@@ -196,6 +203,9 @@ class DesktopPet:
                 settings_snapshot=self._views.settings_view,
                 anchor=self._views.anchor,
                 care=self.interact,
+                feed=lambda selected: self.interact(
+                    "feed", food_id=selected,
+                ),
                 open_sprite_hover=self._on_enter,
                 record_contact=self._record_hover_contact,
                 save_position=self._save_hover_position,
@@ -272,6 +282,8 @@ class DesktopPet:
             windows.append(self._hover.toolbar.window)
         if self._hover.game_window is not None:
             windows.append(self._hover.game_window.window)
+        if self._hover.food_menu is not None:
+            windows.append(self._hover.food_menu.window)
         if self._speech.bubble is not None:
             windows.append(self._speech.bubble)
         if self._hover.settings_window is not None:
@@ -390,12 +402,14 @@ class DesktopPet:
     def _extend_action(self, deadline: float) -> None:
         self._action_until = max(self._action_until, deadline)
 
-    def interact(self, action: str) -> None:
+    def interact(
+        self, action: str, *, food_id: FoodId | None = None,
+    ) -> None:
         """Run a care command through the shared application boundary."""
         stamp = time.time()
         now = time.monotonic()
         result = self.application.dispatch(
-            CareCommand.from_action(action),
+            CareCommand.from_action(action, food_id=food_id),
             runtime=CareRuntime(
                 wall_time=stamp,
                 monotonic_time=now,
@@ -404,13 +418,18 @@ class DesktopPet:
                 allow_nap=self._activity.allow_nap(),
                 interrupt_nap=self._activity.interrupt_nap(),
                 effort=self._activity.live_effort(),
+                food_activity=self._activity.observed_food_activity(),
             ),
         )
         self.context = result.context
+        if result.food_consumed:
+            self._animated.set_food_overlay(food_id or DEFAULT_FOOD_ID)
         if action == "sleep":
             self._action_until = now
             self._animated.cancel_action(now)
         visual = {"feed": "eat", "pet": "petting"}.get(action)
+        if action == "feed" and not result.food_consumed:
+            visual = None
         reaction = result.reaction
         if visual is not None and not self.state.sleeping:
             if reaction is not None:

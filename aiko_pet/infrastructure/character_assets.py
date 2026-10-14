@@ -69,8 +69,21 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
                 not isinstance(event, str) or not event for event in events
             ):
                 raise ValueError("Invalid frame events")
+            raw_food_anchor = frame.get("food_anchor")
+            food_anchor: tuple[int, int] | None = None
+            if raw_food_anchor is not None:
+                if (
+                    not isinstance(raw_food_anchor, list)
+                    or len(raw_food_anchor) != 2
+                    or any(type(value) is not int for value in raw_food_anchor)
+                    or not 0 <= raw_food_anchor[0] <= FRAME_WIDTH
+                    or not 0 <= raw_food_anchor[1] <= FRAME_HEIGHT
+                ):
+                    raise ValueError("Invalid food hand anchor")
+                food_anchor = (raw_food_anchor[0], raw_food_anchor[1])
             frames.append(AnimationFrame(
                 _file(root, frame.get("file")), duration, tuple(events),
+                food_anchor=food_anchor,
             ))
         if name != "look":
             if len(frames) != policy.regular_frames:

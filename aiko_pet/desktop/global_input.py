@@ -75,3 +75,21 @@ def idle_seconds_windows() -> float | None:
         return elapsed_ms / 1000.0
     except (AttributeError, OSError, ValueError):
         return None
+
+
+def mouse_buttons_down_windows() -> tuple[bool, bool] | None:
+    """Read only current mouse-button states, never keyboard identities.
+
+    The high-bit state is used instead of the shared low-bit click latch.
+    No global hooks are installed and no click history is persisted.
+    """
+    if sys.platform != "win32":
+        return None
+    try:
+        user32 = ctypes.windll.user32
+        return (
+            bool(int(user32.GetAsyncKeyState(VK_LBUTTON)) & 0x8000),
+            bool(int(user32.GetAsyncKeyState(VK_RBUTTON)) & 0x8000),
+        )
+    except (AttributeError, OSError, ValueError):
+        return None

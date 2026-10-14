@@ -54,7 +54,7 @@ class CareActionRulesTests(unittest.TestCase):
         self.assertIn("Danke", first)
         self.assertEqual(state.meals_today, [ctx.meal])
         second = apply_care_action(state, "feed", now=meal_time + 1)
-        self.assertIn("Snack", second)
+        self.assertIn("satt", second)
         self.assertEqual(state.meals_today, [ctx.meal])
 
     def test_rejected_actions_leave_sleep_and_relationship_untouched(self) -> None:
