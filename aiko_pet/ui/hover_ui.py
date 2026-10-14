@@ -45,7 +45,7 @@ class HoverUiPorts:
     always_on_top: Callable[[], bool]
     game_speech: GameSpeech
     feed: Callable[[FoodId], None] | None = None
-    game_completed: Callable[[Score], None] | None = None
+    game_completed: Callable[[Score], object] | None = None
 
 
 class HoverUi:
