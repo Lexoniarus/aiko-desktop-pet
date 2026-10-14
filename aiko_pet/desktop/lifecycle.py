@@ -12,7 +12,7 @@ from typing import Callable
 from ..application.router import ApplicationRouter
 from ..presentation.reaction_playback import ReactionPlayer
 from ..infrastructure.hardware.monitor import ActivityMonitor
-from ..ui.hover_ui import HoverUi
+from ..ui.windows.hover_ui import HoverUi
 from ..ui.speech_presenter import SpeechPresenter
 from .window_stack import WindowStack
 from .input import DesktopInput

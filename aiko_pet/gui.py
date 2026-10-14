@@ -25,7 +25,7 @@ from .application.controller import CareController
 from .application.active_time import ActiveSessionClock
 from .pet.food import FoodId
 from .infrastructure.active_time import active_uptime_seconds
-from .ui.hover_ui import HoverUi, HoverUiPorts
+from .ui.windows.hover_ui import HoverUi, HoverUiPorts
 from .ui.windows.game_speech import GameSpeech
 from .application.game_experience import (
     GameExperienceCoordinator, experience_from_rock_paper_scissors,
