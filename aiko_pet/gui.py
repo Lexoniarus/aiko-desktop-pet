@@ -22,6 +22,8 @@ from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController
 from .application.contact import ContactCoordinator, ContactPorts
+from .application.cursor_observation import CursorObservation
+from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
 from .application.active_time import ActiveSessionClock
 from .pet.food import FoodId
 from .infrastructure.active_time import active_uptime_seconds
@@ -97,9 +99,12 @@ class DesktopPet:
                 observe_computer=lambda now: self._activity.react_to_computer(
                     now, self.context,
                 ),
-                observe_pointer=lambda now: self._animated.observe_pointer(now),
+                observe_pointer=lambda now: self._pointer_runtime.observe(now),
                 render_character=lambda now, elapsed, pointer: (
-                    self._animated.render(now, elapsed, pointer)
+                    self._animated.render(
+                        now, elapsed, pointer,
+                        attention=self.mind.cursor_attention.snapshot(),
+                    )
                 ),
                 show_idle_emote=self._maybe_show_idle_emote,
                 speak_spontaneously=self._maybe_speak_spontaneously,
@@ -118,6 +123,7 @@ class DesktopPet:
             self.store, self.state, self.settings, self.adaptive,
         )
         self.mind = PetMind(started_at=self._persistence.last_saved)
+        self._cursor_observation = CursorObservation(self.mind.cursor_attention)
         active_clock = ActiveSessionClock(active_uptime_seconds)
         self.application = ApplicationRouter(
             CareController(self.state, self.mind, self.adaptive, clock=active_clock),
@@ -156,12 +162,9 @@ class DesktopPet:
                 action_until=lambda: self._action_until,
                 action_state=lambda: self._action_state,
                 walk_finished=self._on_walk_finished,
-                cursor_moved=self._on_cursor_moved,
                 extend_action=self._extend_action,
-                pointer_sample=lambda: self._input.pointer_sample(),
             ),
             assets=self._character_assets,
-            cursor_attention=self.mind.cursor_attention,
         )
         self._closed = False
         self._attention = AttentionCoordinator(
@@ -237,7 +240,7 @@ class DesktopPet:
                 game_speech=GameSpeech(
                     self._reaction_player, self._speech,
                     self._mark_reaction_spoken,
-                    self._animated.set_game_mode,
+                    self._set_game_mode,
                     lambda name: self._start_action(name, 0),
                 ),
             ),
@@ -315,6 +318,14 @@ class DesktopPet:
             refresh_toolbar=self._refresh_care_toolbar,
             refresh_status=lambda: self._hover.refresh_status(),
         ))
+        self._pointer_runtime = PointerRuntime(
+            self._cursor_observation, PointerRuntimePorts(
+                sample=self._input.pointer_sample,
+                game_mode=lambda: self._animated.game_mode,
+                eyes=lambda: self._animated.cursor_eye_position,
+                on_motion=self._on_cursor_moved,
+            ),
+        )
         self._preferences = DesktopPreferences(
             settings=self.settings,
             state=self.state,
@@ -354,6 +365,10 @@ class DesktopPet:
             seconds=self._character_assets.clips["waving-greeting"].duration_seconds,
         )
         self._lifecycle.start()
+
+    def _set_game_mode(self, enabled: bool) -> None:
+        self._animated.set_game_mode(enabled)
+        self.mind.cursor_attention.reset()
 
     def _record_hover_contact(self, now: float) -> None:
         self._contact.record_contact(now)
@@ -552,9 +567,6 @@ class DesktopPet:
                 self._react(self.mind.say_event(
                     event, self.state, self.context, now,
                 ))
-
-    def _refresh_taskbar_track(self, now: float) -> None:
-        self._maintenance.refresh_track(now)
 
     def _maybe_show_idle_emote(self, now: float) -> None:
         self._attention_view.maybe_show_idle_emote(now)

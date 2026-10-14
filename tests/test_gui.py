@@ -57,7 +57,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
 
     def test_mind_owns_live_cursor_attention(self):
         self.assertIs(
-            self.app._animated._cursor_attention,
+            self.app._cursor_observation.attention,
             self.app.mind.cursor_attention,
         )
 

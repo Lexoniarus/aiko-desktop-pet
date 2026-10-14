@@ -14,6 +14,7 @@ from aiko_pet.application.settings import PetSettings
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.desktop.geometry import TaskbarTrack
 from aiko_pet.presentation.movement import WalkController
+from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
 from aiko_pet.ui.animated_pet import AnimatedPet, AnimatedPorts
 
 
@@ -38,7 +39,6 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.canvas.pack()
         self.state = PetState()
         self.settings = PetSettings(x=100, y=500)
-        self.cursor_samples: list[tuple[float, int, float]] = []
         self.action_deadlines: list[float] = []
         self.anim = AnimatedPet(
             self.root, self.canvas,
@@ -51,9 +51,6 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                 action_until=lambda: 0.0,
                 action_state=lambda: "idle",
                 walk_finished=lambda _now: None,
-                cursor_moved=lambda distance, width, now: (
-                    self.cursor_samples.append((distance, width, now))
-                ),
                 extend_action=self.action_deadlines.append,
             ),
             assets=load_character_catalog(),
@@ -81,18 +78,10 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertGreater(self.settings.x, 100)
         self.assertEqual(self.anim.movement.remaining_distance, 0)
 
-    def test_cursor_motion_emits_observation_without_dialogue_policy(self) -> None:
-        with (
-            patch.object(self.root, "winfo_pointerx", side_effect=[10, 99999]),
-            patch.object(self.root, "winfo_pointery", side_effect=[20, -99999]),
-        ):
-            self.anim.observe_pointer(900.0)
-            self.anim.observe_pointer(1000.0)
-        self.assertEqual(len(self.cursor_samples), 1)
-        distance, width, now = self.cursor_samples[0]
-        self.assertGreater(distance, width * 0.6)
-        self.assertEqual(now, 1000.0)
-        self.assertEqual(self.anim.last_pointer_move, 1000.0)
+    def test_renderer_does_not_own_cursor_observation(self) -> None:
+        self.assertFalse(hasattr(self.anim, "observe_pointer"))
+        self.assertFalse(hasattr(self.anim, "_cursor_attention"))
+        self.assertEqual(self.anim.cursor_eye_position, (196, 582))
 
     def test_short_frames_advance_without_a_desktop_simulation_tick(self) -> None:
         self.anim.begin_action("waving", time.monotonic())
@@ -203,7 +192,6 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.set_game_mode(True)
         self.assertIsNone(self.anim.gaze_direction((99999, -99999)))
         self.assertIsNone(self.anim.maybe_walk(time.monotonic(), 0.3))
-        self.anim.observe_pointer(time.monotonic())
         self.assertIsNone(self.anim.gaze_sector)
         self.anim.render(time.monotonic(), .14, (99999, -99999))
         self.assertEqual(self.anim.frame_clock.active_key, ("waiting", None))
@@ -289,9 +277,10 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.settings.observe_computer = False
         now = time.monotonic()
         self.anim._ambient.suspend(now)
-        self.anim.last_pointer_move = now
         pointer = (99999, 20)
-        self.anim.render(now, 0, pointer)
+        self.anim.render(
+            now, 0, pointer, attention=CursorAttentionSnapshot(now, -100.0),
+        )
         old_key = self.anim.frame_clock.active_key
         assert old_key is not None
         self.assertEqual(old_key[0], "look")

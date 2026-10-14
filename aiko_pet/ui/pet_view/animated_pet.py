@@ -6,7 +6,6 @@ widgets, notification adapters or network services. All host effects use ports.
 
 from __future__ import annotations
 
-import math
 import time
 import tkinter as tk
 from dataclasses import dataclass
@@ -19,7 +18,7 @@ from ...pet.animation.animation import (
 from ...pet.animation.ambient import AmbientDirector
 from ...pet.animation.character import CharacterCatalog, FRAME_WIDTH
 from ...pet.animation.gaze import gaze_sector
-from ...pet.mind.cursor_attention import CursorAttention
+from ...pet.mind.cursor_attention import CursorAttentionSnapshot
 from ...pet.movement import WalkController
 from .walk_driver import (
     ActivityReadings as ActivityReadings,
@@ -94,9 +93,7 @@ class AnimatedPorts:
     action_until: Callable[[], float]
     action_state: Callable[[], str]
     walk_finished: Callable[[float], None]
-    cursor_moved: Callable[[float, int, float], None]
     extend_action: Callable[[float], None]
-    pointer_sample: Callable[[], tuple[int, int, int]] | None = None
 
 
 class AnimatedPet:
@@ -107,7 +104,6 @@ class AnimatedPet:
         state: CareVisuals, settings: CharacterSettings,
         adaptive: FocusReadings, monitor: ActivityReadings,
         ports: AnimatedPorts, *, assets: CharacterCatalog,
-        cursor_attention: CursorAttention | None = None,
     ) -> None:
         self.root = root
         self.canvas = canvas
@@ -137,10 +133,8 @@ class AnimatedPet:
         )
         self.gaze_sector: int | None = None
         self._game_mode = False
-        self._cursor_attention = (
-            cursor_attention if cursor_attention is not None
-            else CursorAttention()
-        )
+        self._cursor_snapshot = CursorAttentionSnapshot(-100.0, -100.0)
+        self._last_render_pointer: tuple[int, int] = (0, 0)
         self._sprite_cache = CharacterSpriteCache(root, assets)
         self.sprites = self.load_sprites()
         self._rest_renderer = RestPoseRenderer(root)
@@ -155,21 +149,16 @@ class AnimatedPet:
         return self._sprite_cache.for_scale(self.settings.scale)
 
     @property
-    def last_pointer_move(self) -> float:
-        """Legacy read access while cursor attention has one owner."""
-        return self._cursor_attention.last_pointer_move
-
-    @last_pointer_move.setter
-    def last_pointer_move(self, value: float) -> None:
-        self._cursor_attention.last_pointer_move = value
+    def game_mode(self) -> bool:
+        return self._game_mode
 
     @property
-    def attention_until(self) -> float:
-        return self._cursor_attention.attention_until
-
-    @property
-    def last_attention(self) -> float:
-        return self._cursor_attention.last_attention
+    def cursor_eye_position(self) -> tuple[float, float]:
+        scale = self.settings.scale
+        return (
+            (self.settings.x or 0) + (FRAME_WIDTH // 2) * scale,
+            (self.settings.y or 0) + 82 * scale,
+        )
 
     @property
     def movement(self) -> WalkController:
@@ -192,7 +181,6 @@ class AnimatedPet:
         """Pause gaze/walking and hold a forward-facing game pose."""
         self._game_mode = bool(enabled)
         self.gaze_sector = None
-        self._cursor_attention.reset()
         self.movement.interrupt()
         self.cancel_action(time.monotonic())
 
@@ -304,7 +292,7 @@ class AnimatedPet:
             moving = self.maybe_walk(now, elapsed)
             if moving is None or self.movement.remaining_distance == 0:
                 self.render(
-                    now, 0, self._cursor_attention.previous_pointer or (0, 0),
+                    now, 0, self._last_render_pointer,
                 )
                 return
             state = moving
@@ -317,32 +305,6 @@ class AnimatedPet:
         if self._frame_timer is not None:
             self.root.after_cancel(self._frame_timer)
             self._frame_timer = None
-
-    def observe_pointer(self, now: float) -> tuple[int, int]:
-        """Observe only pointer positions, not keys or application content."""
-        sampler = self.ports.pointer_sample
-        if sampler is None:
-            pointer = (
-                self.root.winfo_pointerx(), self.root.winfo_pointery(),
-            )
-            screen_width = self.root.winfo_screenwidth()
-        else:
-            x, y, screen_width = sampler()
-            pointer = x, y
-        moved = self._cursor_attention.observe(
-            pointer, now, game_mode=self._game_mode,
-        )
-        if moved:
-            eye_x = (
-                (self.settings.x or 0)
-                + (FRAME_WIDTH // 2) * self.settings.scale
-            )
-            eye_y = (self.settings.y or 0) + 82 * self.settings.scale
-            distance = math.hypot(pointer[0] - eye_x, pointer[1] - eye_y)
-            self.ports.cursor_moved(
-                distance, screen_width, now,
-            )
-        return pointer
 
     def gaze_direction(self, pointer: tuple[int, int]) -> int | None:
         if self._game_mode:
@@ -363,13 +325,17 @@ class AnimatedPet:
         """Maintain the original sprite API while delegating desktop motion."""
         return self._walk_driver.step(
             now, dt, game_mode=self._game_mode,
-            attention_active=now < self.attention_until,
+            attention_active=now < self._cursor_snapshot.attention_until,
         )
 
     def render(
         self, now: float, elapsed: float, pointer: tuple[int, int],
+        *, attention: CursorAttentionSnapshot | None = None,
     ) -> None:
-        """Draw one state with unchanged sleep/action/gaze precedence."""
+        """Render an immutable cursor snapshot without mutating PetMind."""
+        self._last_render_pointer = pointer
+        if attention is not None:
+            self._cursor_snapshot = attention
         if self._game_mode:
             self._ambient.suspend(now)
             if (
@@ -402,7 +368,7 @@ class AnimatedPet:
                 self._ambient.suspend(now)
                 self.show_frame(moving, now)
                 return
-            if now - self.last_pointer_move < 4.0:
+            if now - self._cursor_snapshot.last_pointer_move < 4.0:
                 look = self.gaze_direction(pointer)
             else:
                 look = None
