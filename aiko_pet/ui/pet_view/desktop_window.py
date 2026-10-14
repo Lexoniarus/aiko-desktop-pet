@@ -19,12 +19,31 @@ MAGENTA = "#ff00ff"
 
 
 class WindowSettings(Protocol):
-    """Only the mutable placement fields required by a desktop window."""
+    """Writable window preferences, including property-backed settings."""
 
-    x: int | None
-    y: int | None
-    scale: int
-    always_on_top: bool
+    @property
+    def x(self) -> int | None: ...
+
+    @x.setter
+    def x(self, value: int | None) -> None: ...
+
+    @property
+    def y(self) -> int | None: ...
+
+    @y.setter
+    def y(self, value: int | None) -> None: ...
+
+    @property
+    def scale(self) -> int: ...
+
+    @scale.setter
+    def scale(self, value: int) -> None: ...
+
+    @property
+    def always_on_top(self) -> bool: ...
+
+    @always_on_top.setter
+    def always_on_top(self, value: bool) -> None: ...
 
 
 class DesktopWindow:

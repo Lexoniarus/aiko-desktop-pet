@@ -45,15 +45,43 @@ class CareVisuals(Protocol):
 
 
 class CharacterSettings(Protocol):
-    """Presentation choices without exposing the settings repository."""
+    """Writable character choices without depending on their storage."""
 
-    scale: int
-    x: int | None
-    y: int | None
-    follow_cursor: bool
-    auto_walk: bool
-    observe_computer: bool
+    @property
+    def scale(self) -> int: ...
 
+    @scale.setter
+    def scale(self, value: int) -> None: ...
+
+    @property
+    def x(self) -> int | None: ...
+
+    @x.setter
+    def x(self, value: int | None) -> None: ...
+
+    @property
+    def y(self) -> int | None: ...
+
+    @y.setter
+    def y(self, value: int | None) -> None: ...
+
+    @property
+    def follow_cursor(self) -> bool: ...
+
+    @follow_cursor.setter
+    def follow_cursor(self, value: bool) -> None: ...
+
+    @property
+    def auto_walk(self) -> bool: ...
+
+    @auto_walk.setter
+    def auto_walk(self, value: bool) -> None: ...
+
+    @property
+    def observe_computer(self) -> bool: ...
+
+    @observe_computer.setter
+    def observe_computer(self, value: bool) -> None: ...
 
 
 @dataclass(frozen=True, slots=True)

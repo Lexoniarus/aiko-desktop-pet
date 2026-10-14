@@ -38,10 +38,31 @@ class FocusReadings(Protocol):
 
 
 class WalkSettings(Protocol):
-    x: int | None
-    scale: int
-    auto_walk: bool
-    observe_computer: bool
+    """Mutable settings capabilities used to plan host movement."""
+
+    @property
+    def x(self) -> int | None: ...
+
+    @x.setter
+    def x(self, value: int | None) -> None: ...
+
+    @property
+    def scale(self) -> int: ...
+
+    @scale.setter
+    def scale(self, value: int) -> None: ...
+
+    @property
+    def auto_walk(self) -> bool: ...
+
+    @auto_walk.setter
+    def auto_walk(self, value: bool) -> None: ...
+
+    @property
+    def observe_computer(self) -> bool: ...
+
+    @observe_computer.setter
+    def observe_computer(self, value: bool) -> None: ...
 
 
 class WalkNeeds(Protocol):
