@@ -265,10 +265,18 @@ class DesktopPet:
                     self._animated.movement.remaining_distance != 0
                 ),
                 action_until=lambda: self._action_until,
-                start_action=self._start_action,
-                react=self._react,
-                show_emote=self._speech.show_emote,
-                show_text=self._speech.show_text,
+                start_action=lambda name, duration: self._start_action(
+                    name, duration,
+                ),
+                react=lambda reaction, duration: self._react(
+                    reaction, duration,
+                ),
+                show_emote=lambda emote, duration: self._speech.show_emote(
+                    emote, duration,
+                ),
+                show_text=lambda text, duration: self._speech.show_text(
+                    text, duration,
+                ),
             ),
         )
         self._preferences = DesktopPreferences(
