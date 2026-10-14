@@ -481,6 +481,11 @@ class DesktopPet:
     def _cancel_visual_action(self, now: float) -> None:
         self._action_playback.cancel_at(now)
 
+    def _refresh_care_toolbar(self) -> None:
+        toolbar = self._hover.toolbar
+        if toolbar is not None:
+            toolbar.refresh()
+
     def _extend_action(self, deadline: float) -> None:
         self._action_playback.extend(deadline)
 
