@@ -7,7 +7,7 @@ import tkinter as tk
 from functools import partial
 from typing import Callable
 
-from ...presentation.contracts import StatusSnapshot
+from ..view_models.contracts import StatusSnapshot
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .hover_geometry import HoverGeometry, Rect
 from ..common.skin import AikoSkin

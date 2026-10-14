@@ -7,7 +7,7 @@ import tkinter as tk
 from functools import partial
 from typing import Callable
 
-from ...presentation.food_models import FoodChoice, FoodChoiceId
+from ..view_models.food_models import FoodChoice, FoodChoiceId
 from ..common.skin import AikoSkin
 from ..common.window_drag import WindowDrag, bounded_position
 

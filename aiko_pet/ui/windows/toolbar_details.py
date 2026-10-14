@@ -5,7 +5,7 @@ from __future__ import annotations
 import tkinter as tk
 from typing import Callable
 
-from ...presentation.contracts import StatusSnapshot
+from ..view_models.contracts import StatusSnapshot
 from ..common.skin import AikoSkin
 
 

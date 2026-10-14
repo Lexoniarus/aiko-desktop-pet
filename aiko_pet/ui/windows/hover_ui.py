@@ -12,12 +12,12 @@ from .action_toolbar import ActionToolbar
 from .game_speech import GameSpeech
 from ...games.rock_paper_scissors import Score
 from .food_menu import FoodMenu
-from ...presentation.food_models import FoodChoiceId, food_choices
+from ..view_models.food_models import FoodChoiceId, food_choices
 from .rock_paper_scissors_window import RockPaperScissorsWindow
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .settings_contracts import SettingsActions, SettingsSnapshot
 from .settings_window import SettingsWindow
-from ...presentation.contracts import StatusSnapshot
+from ..view_models.contracts import StatusSnapshot
 from ..common.skin import AikoSkin
 
 

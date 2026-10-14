@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ...application.settings import SettingKey
-from ...presentation.contracts import SettingsSnapshot as SettingsSnapshot
+from ..view_models.contracts import SettingsSnapshot as SettingsSnapshot
 
 
 @dataclass(frozen=True, slots=True)
