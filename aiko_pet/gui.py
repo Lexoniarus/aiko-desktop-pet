@@ -47,11 +47,11 @@ from .presentation.reaction_playback import ReactionPlayer, choose_idle_emote
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.persistence import StateStore
 from .infrastructure.hardware.monitor import ActivityMonitor
-from .ui.desktop_window import (
+from .ui.pet_view.desktop_window import (
     DesktopWindow, MAGENTA,
 )
 from .desktop.window_stack import WindowStack
-from .ui.animated_pet import AnimatedPet, AnimatedPorts
+from .ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
 
 

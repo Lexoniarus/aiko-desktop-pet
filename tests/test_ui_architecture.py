@@ -92,7 +92,7 @@ class UiDependencyRules(unittest.TestCase):
             "storage", "domain", "adaptive", "adaptive_models",
             "system_activity",
         }
-        for relative in ("ui/animated_pet.py", "ui/desktop_window.py"):
+        for relative in ("ui/pet_view/animated_pet.py", "ui/pet_view/desktop_window.py"):
             with self.subTest(module=relative):
                 tree = ast.parse((ROOT / relative).read_text("utf-8"))
                 direct = [
@@ -107,7 +107,7 @@ class UiDependencyRules(unittest.TestCase):
                 )
 
     def test_character_does_not_choose_commentary_events(self) -> None:
-        source = (ROOT / "ui/animated_pet.py").read_text("utf-8")
+        source = (ROOT / "ui/pet_view/animated_pet.py").read_text("utf-8")
         for token in (
             "cursor_far", "cursor_follow", "walk_pause",
             "next_cursor_line", "random.random(",
@@ -356,11 +356,11 @@ class UiDependencyRules(unittest.TestCase):
                     self.assertNotIn(original, source)
 
     def test_native_desktop_adapters_are_not_owned_by_sprite_code(self) -> None:
-        sprite = (ROOT / "ui/animated_pet.py").read_text("utf-8")
-        desktop_window = (ROOT / "ui/desktop_window.py").read_text("utf-8")
-        self.assertIn("from ..pet.movement import", sprite)
-        self.assertIn("from ..desktop.geometry import TaskbarTrack", sprite)
-        self.assertIn("from ..desktop.taskbar import", desktop_window)
+        sprite = (ROOT / "ui/pet_view/animated_pet.py").read_text("utf-8")
+        desktop_window = (ROOT / "ui/pet_view/desktop_window.py").read_text("utf-8")
+        self.assertIn("from ...pet.movement import", sprite)
+        self.assertIn("from ...desktop.geometry import TaskbarTrack", sprite)
+        self.assertIn("from ...desktop.taskbar import", desktop_window)
         self.assertNotIn("from ..taskbar import", sprite)
         self.assertNotIn("from ..taskbar import", desktop_window)
 
