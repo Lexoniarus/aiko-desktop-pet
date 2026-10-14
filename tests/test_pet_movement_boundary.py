@@ -8,12 +8,11 @@ from pathlib import Path
 from aiko_pet.desktop.geometry import TaskbarTrack
 from aiko_pet.pet.movement import WalkConditions, WalkController
 from aiko_pet.pet.movement.random_walk import RandomWalkPlanner
-from aiko_pet.presentation.movement import WalkController as LegacyWalkController
 
 
 class PetMovementBoundaryTests(unittest.TestCase):
-    def test_canonical_controller_preserves_old_public_class(self) -> None:
-        self.assertIs(WalkController, LegacyWalkController)
+    def test_canonical_controller_has_one_pet_owner(self) -> None:
+        self.assertEqual(WalkController.__module__, "aiko_pet.pet.movement.controller")
 
     def test_domain_movement_has_no_native_adapter_imports(self) -> None:
         source = Path(__file__).resolve().parents[1] / "aiko_pet" / "pet" / "movement"
