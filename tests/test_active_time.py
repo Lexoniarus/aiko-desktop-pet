@@ -16,9 +16,9 @@ from aiko_pet.application.commands import CareCommand
 from aiko_pet.application.controller import CareController, CareRuntime
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.active_time import active_uptime_seconds
-from aiko_pet.personality.adaptive import AdaptiveRoutine
-from aiko_pet.personality.mind import AikoMind
-from aiko_pet.personality.workload_events import WorkloadEventDetector
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.mind import PetMind
+from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 
@@ -69,7 +69,7 @@ class ActiveTimeTests(unittest.TestCase):
         uptime = [0.]
         clock = ActiveSessionClock(lambda: uptime[0])
         state = PetState(satiety=100, updated_at=NOW)
-        mind, adaptive = AikoMind(), AdaptiveRoutine()
+        mind, adaptive = PetMind(), AdaptiveRoutine()
         activity = ActivityCoordinator(
             state, PetSettings(auto_routine=False), mind, adaptive,
             WorkloadEventDetector(), Monitor(),
