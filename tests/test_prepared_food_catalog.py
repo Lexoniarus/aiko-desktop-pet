@@ -7,7 +7,7 @@ import unittest
 
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.food import FOOD_CATALOG
-from aiko_pet.presentation.food_models import food_choices
+from aiko_pet.ui.view_models.food_models import food_choices
 
 
 class PreparedFoodCatalogTests(unittest.TestCase):

@@ -14,8 +14,8 @@ from aiko_pet.application.commands import NotificationCommand
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.ui.action_toolbar import ActionToolbar
-from aiko_pet.ui.settings_window import SettingsWindow
+from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from aiko_pet.ui.windows.settings_window import SettingsWindow
 
 
 class PersistentWindowTests(unittest.TestCase):

@@ -4,12 +4,12 @@ import unittest
 from dataclasses import replace
 from unittest.mock import patch
 
-from aiko_pet.presentation.animation import (
+from aiko_pet.pet.animation.animation import (
     FrameClock,
     SpriteSelection,
     choose_passive_animation,
 )
-from aiko_pet.presentation.movement import WalkConditions, WalkController
+from aiko_pet.pet.movement import WalkConditions, WalkController
 from aiko_pet.desktop.geometry import TaskbarTrack
 
 
@@ -270,7 +270,7 @@ class WalkControllerTests(unittest.TestCase):
             self.conditions(observing_computer=True, computer_busy=True),
         ))
         self.assertEqual(self.walker.remaining_distance, 0)
-        with patch("aiko_pet.presentation.movement.random.uniform", return_value=90):
+        with patch("aiko_pet.pet.movement.random_walk.random.uniform", return_value=90):
             self.assertIsNone(self.walker.plan_step(self.conditions(now=100)))
         self.assertEqual(self.walker.next_walk_at, 190)
 
@@ -283,15 +283,15 @@ class WalkControllerTests(unittest.TestCase):
                 self.assertEqual(self.walker.remaining_distance, 0)
 
     def test_energy_defers_walk_but_sets_next_departure(self) -> None:
-        with patch("aiko_pet.presentation.movement.random.uniform", return_value=90):
+        with patch("aiko_pet.pet.movement.random_walk.random.uniform", return_value=90):
             self.assertIsNone(self.walker.plan_step(self.conditions(energy=19)))
         self.assertEqual(self.walker.next_walk_at, 105)
         self.assertEqual(self.walker.remaining_distance, 0)
 
     def test_edge_direction_and_quiet_interval(self) -> None:
         with (
-            patch("aiko_pet.presentation.movement.random.uniform", return_value=20),
-            patch("aiko_pet.presentation.movement.random.randint", return_value=2),
+            patch("aiko_pet.pet.movement.random_walk.random.uniform", return_value=20),
+            patch("aiko_pet.pet.movement.random_walk.random.randint", return_value=2),
         ):
             step = self.walker.plan_step(self.conditions(x=0, quiet_period=True))
         assert step is not None
@@ -325,7 +325,7 @@ class WalkControllerTests(unittest.TestCase):
     def test_complete_pause_starts_at_actual_finish_even_after_long_walk(self) -> None:
         self.walker.remaining_distance = 2
         self.walker.plan_step(self.conditions(now=100))
-        with patch("aiko_pet.presentation.movement.random.uniform", return_value=90):
+        with patch("aiko_pet.pet.movement.random_walk.random.uniform", return_value=90):
             self.assertTrue(self.walker.record_displacement(2, now=100))
         self.assertEqual(self.walker.next_walk_at, 190)
         self.assertIsNone(self.walker.plan_step(self.conditions(now=189)))

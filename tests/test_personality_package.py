@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 
-from aiko_pet.personality import (
+from aiko_pet.pet.mind import (
     catalog,
 )
 

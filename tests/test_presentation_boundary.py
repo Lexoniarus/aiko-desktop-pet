@@ -7,19 +7,19 @@ import unittest
 from dataclasses import FrozenInstanceError
 from datetime import datetime
 
-from aiko_pet.personality.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
 
-from aiko_pet.personality.mind import AikoMind
+from aiko_pet.pet.mind.mind import PetMind
 from aiko_pet.pet.state import PetState
 from aiko_pet.infrastructure.hardware.metrics import ComputerSnapshot as SensorData
-from aiko_pet.presentation.contracts import (
+from aiko_pet.ui.view_models.contracts import (
     HoverAnchor,
 )
-from aiko_pet.presentation.projections import project_hover, project_status
-from aiko_pet.presentation.read_models import DesktopPresentation
-from aiko_pet.presentation.text_de import (
+from aiko_pet.ui.view_models.projections import project_hover, project_status
+from aiko_pet.ui.view_models.read_models import DesktopPresentation
+from aiko_pet.ui.view_models.text_de import (
     describe_workload, format_day_label, format_feed_label,
     format_mood_hint, format_percent, format_schedule_line,
 )
@@ -101,7 +101,7 @@ class PresentationBoundaryTests(unittest.TestCase):
             self.assertEqual(format_percent(number), percent_label(number))
 
     def test_hover_and_status_keep_needs_and_observation_preferences(self) -> None:
-        mind = AikoMind(rng=random.Random(9))
+        mind = PetMind(rng=random.Random(9))
         states = (
             PetState(),
             PetState(sleeping=True),
@@ -155,7 +155,7 @@ class PresentationBoundaryTests(unittest.TestCase):
             x=150, y=430, scale=2, toolbar_x=25, toolbar_y=35,
             observe_computer=True,
         )
-        mind = AikoMind(rng=random.Random(10))
+        mind = PetMind(rng=random.Random(10))
         readings = StaticMonitor(
             ComputerSnapshot(cpu=83, measured_at=100),
         )

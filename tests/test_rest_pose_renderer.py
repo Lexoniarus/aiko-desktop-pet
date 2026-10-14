@@ -5,7 +5,7 @@ from __future__ import annotations
 import tkinter as tk
 import unittest
 
-from aiko_pet.ui.rest_pose_renderer import RestPoseRenderer
+from aiko_pet.ui.pet_view.rest_pose_renderer import RestPoseRenderer
 
 
 class RestPoseRendererTests(unittest.TestCase):
