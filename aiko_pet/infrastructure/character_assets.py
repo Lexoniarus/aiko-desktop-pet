@@ -8,7 +8,8 @@ from types import MappingProxyType
 from typing import Any
 
 from ..asset_paths import ASSET_ROOT
-from ..presentation.animation_timing import VIRTUAL_CLIPS, load_timing_policy
+from ..pet.animation.timing import VIRTUAL_CLIPS
+from .animation_timing import load_timing_policy
 from ..pet.animation.character import (
     AnimationClip, AnimationFrame, CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH,
 )
