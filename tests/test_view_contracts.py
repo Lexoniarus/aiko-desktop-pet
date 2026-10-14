@@ -3,7 +3,7 @@
 import unittest
 from dataclasses import FrozenInstanceError
 
-from aiko_pet.presentation.contracts import (
+from aiko_pet.ui.view_models.contracts import (
     StatusSnapshot,
 )
 
