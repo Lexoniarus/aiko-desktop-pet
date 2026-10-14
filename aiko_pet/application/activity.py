@@ -18,6 +18,7 @@ from .settings import PetSettings
 from ..telemetry import workload_intensity
 from .ports import ComputerObservation
 from .active_time import ActiveSessionClock
+from .controller import CareRuntime
 
 
 @dataclass(frozen=True, slots=True)
@@ -103,6 +104,20 @@ class ActivityCoordinator:
         if not 0 <= age <= 18:
             return None
         return workload_intensity(reading)
+
+    def care_runtime(
+        self, wall_time: float, monotonic_time: float,
+    ) -> CareRuntime:
+        """Gather trusted activity context for care and completed games."""
+        return CareRuntime(
+            wall_time=wall_time, monotonic_time=monotonic_time,
+            auto_routine=self.settings.auto_routine,
+            allow_bedtime=self.allow_bedtime(),
+            allow_nap=self.allow_nap(),
+            interrupt_nap=self.interrupt_nap(),
+            effort=self.live_effort(),
+            food_activity=self.observed_food_activity(),
+        )
 
     def observe_adaptive(self, now: float, stamp: float) -> None:
         if not self.settings.observe_computer:

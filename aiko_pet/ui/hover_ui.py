@@ -148,6 +148,9 @@ class HoverUi:
             self._ports.game_speech.stop()
             self.last_hover = time.monotonic()
             self._set_care_buttons_enabled(True)
+            if self.toolbar is not None:
+                self.toolbar.refresh()
+            self.refresh_status()
 
     def _set_care_buttons_enabled(self, enabled: bool) -> None:
         if self.toolbar is None:

@@ -23,13 +23,12 @@ from .desktop.persistence import DesktopPersistence
 from .desktop.maintenance import DesktopMaintenance
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
-from .application.controller import CareController, CareRuntime
+from .application.controller import CareController
 from .application.active_time import ActiveSessionClock
 from .pet.food import DEFAULT_FOOD_ID, FoodId
 from .infrastructure.active_time import active_uptime_seconds
 from .ui.hover_ui import HoverUi, HoverUiPorts
 from .ui.game_speech import GameSpeech
-from .games.rock_paper_scissors import Score
 from .application.game_experience import (
     GameExperienceCoordinator, experience_from_rock_paper_scissors,
 )
@@ -214,7 +213,10 @@ class DesktopPet:
                 feed=lambda selected: self.interact(
                     "feed", food_id=selected,
                 ),
-                game_completed=self._on_game_completed,
+                game_completed=lambda score: self.application.complete_game(
+                    experience_from_rock_paper_scissors(score),
+                    runtime=self._activity.care_runtime(time.time(), time.monotonic()),
+                ),
                 open_sprite_hover=self._on_enter,
                 record_contact=self._record_hover_contact,
                 save_position=self._save_hover_position,
@@ -418,27 +420,6 @@ class DesktopPet:
     def _extend_action(self, deadline: float) -> None:
         self._action_until = max(self._action_until, deadline)
 
-    def _care_runtime(self, wall_time: float, now: float) -> CareRuntime:
-        """One observed time/context snapshot for all care use cases."""
-        return CareRuntime(
-            wall_time=wall_time, monotonic_time=now,
-            auto_routine=self.settings.auto_routine,
-            allow_bedtime=self._activity.allow_bedtime(),
-            allow_nap=self._activity.allow_nap(),
-            interrupt_nap=self._activity.interrupt_nap(),
-            effort=self._activity.live_effort(),
-            food_activity=self._activity.observed_food_activity(),
-        )
-
-    def _on_game_completed(self, score: Score) -> None:
-        """Only aggregate fun survives after the transient window closes."""
-        runtime = self._care_runtime(time.time(), time.monotonic())
-        experience = experience_from_rock_paper_scissors(score)
-        self.application.complete_game(experience, runtime=runtime)
-        if self._hover.toolbar is not None:
-            self._hover.toolbar.refresh()
-        self._hover.refresh_status()
-
     def interact(
         self, action: str, *, food_id: FoodId | None = None,
     ) -> None:
@@ -447,7 +428,7 @@ class DesktopPet:
         now = time.monotonic()
         result = self.application.dispatch(
             CareCommand.from_action(action, food_id=food_id),
-            runtime=self._care_runtime(stamp, now),
+            runtime=self._activity.care_runtime(stamp, now),
         )
         self.context = result.context
         if result.food_consumed:
