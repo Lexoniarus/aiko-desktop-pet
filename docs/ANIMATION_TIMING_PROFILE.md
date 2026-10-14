@@ -12,8 +12,12 @@ The single source of truth is `aiko_pet/assets/animation_timing.json` (version 3
   `0` through `7` per animation, even if a pose is replayed.
 - `frame_sequences`: optional list of source pose indices. Missing entries
   mean the ordinary `0,1,2,3,4,5,6,7` order.
-- The `waving` sequence revisits poses `3,4,5` for two hand waves while
-  retaining the original eight PNGs.
+- `waving` is the ordinary one-wave reaction with eight playback steps.
+- The derived `waving-greeting` action reuses the exact same eight PNGs and
+  pose durations, revisiting poses `3,4,5` for two hand waves.
+- The long action is reserved for explicit greetings (including the game's
+  welcome) and eventual farewells; casual dialogue and RPS draw reactions keep
+  the short `waving`. App shutdown currently has no farewell animation hook.
 - Longer last-pose holds in `waiting` and `review` provide quiet intervals
   between gestures. These are repeating ambient behaviors, not frame interpolation.
 
@@ -26,7 +30,8 @@ will own responsive combat timings independently.
 | --- | ---: | ---: |
 | Idle | 1.28 s | **1.28 s** |
 | Running right / left | 1.28 s | 1.52 s |
-| Waving | 0.72 s | 1.895 s (14 playback steps) |
+| Waving (single) | 0.72 s | 1.135 s (8 playback steps) |
+| Waving – greeting/farewell | — | 1.895 s (14 playback steps) |
 | Jumping (joy) | 0.84 s | 1.50 s |
 | Failed | 1.20 s | 2.47 s |
 | Waiting | 2.52 s | 4.57 s |
@@ -42,9 +47,11 @@ GUI callbacks; walking distance is derived from the actual walk clip duration.
 ## Rebuild and validation
 
 The checked-in runtime manifest (`aiko_pet/assets/animations.json`) mirrors
-this policy: each unique image retains its per-pose `duration_ms`, and the
-clip stores `sequence` and `playback_total_ms` separately. The loader rejects
-missing/mismatched policies and invalid references before loading the GUI.
+the source clips: each image retains its per-pose `duration_ms`, and each
+source clip stores `sequence` and `playback_total_ms`. The loader constructs
+`waving-greeting` from the existing `waving` frames and the validated timing
+policy without adding a thirteenth regular sprite set or duplicating Tk images.
+It rejects missing/mismatched policies and invalid references before loading.
 
 To regenerate after editing the profile, run:
 

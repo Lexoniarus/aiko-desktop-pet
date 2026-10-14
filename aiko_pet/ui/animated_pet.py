@@ -11,6 +11,7 @@ import random
 import time
 import tkinter as tk
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Callable, Protocol
 
 from ..presentation.animation import (
@@ -126,19 +127,23 @@ class AnimatedPet:
     def load_sprites(self) -> dict[str, list[tk.PhotoImage]]:
         """Load prepared frames at Aiko's current integer pixel scale."""
         sprites: dict[str, list[tk.PhotoImage]] = {}
+        cache: dict[Path, tk.PhotoImage] = {}
         for state, clip in self.assets.clips.items():
             frames: list[tk.PhotoImage] = []
             for definition in clip.frames:
                 path = definition.file
-                if not path.is_file():
-                    raise FileNotFoundError(f"Missing sprite: {path}")
-                frame = tk.PhotoImage(file=str(path))
-                if (frame.width(), frame.height()) != (
-                    FRAME_WIDTH, FRAME_HEIGHT,
-                ):
-                    raise ValueError(f"Invalid sprite dimensions: {path}")
-                if self.settings.scale == 2:
-                    frame = frame.zoom(2)
+                frame = cache.get(path)
+                if frame is None:
+                    if not path.is_file():
+                        raise FileNotFoundError(f"Missing sprite: {path}")
+                    frame = tk.PhotoImage(file=str(path))
+                    if (frame.width(), frame.height()) != (
+                        FRAME_WIDTH, FRAME_HEIGHT,
+                    ):
+                        raise ValueError(f"Invalid sprite dimensions: {path}")
+                    if self.settings.scale == 2:
+                        frame = frame.zoom(2)
+                    cache[path] = frame
                 frames.append(frame)
             sprites[state] = frames
         return sprites

@@ -8,7 +8,7 @@ from types import MappingProxyType
 from typing import Any
 
 from ..asset_paths import ASSET_ROOT
-from ..presentation.animation_timing import load_timing_policy
+from ..presentation.animation_timing import VIRTUAL_CLIPS, load_timing_policy
 from ..presentation.character import (
     AnimationClip, AnimationFrame, CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH,
 )
@@ -112,6 +112,14 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
         clips[name] = AnimationClip(
             name, tuple(frames), loop, (anchor[0], anchor[1]), return_to,
             playback_order,
+        )
+    for variant, source_name in VIRTUAL_CLIPS.items():
+        if variant in clips or source_name not in clips:
+            raise ValueError(f"Invalid playback variant: {variant}")
+        source = clips[source_name]
+        clips[variant] = AnimationClip(
+            variant, source.frames, source.loop, source.anchor,
+            source.return_to, policy.sequence_for(variant),
         )
     for required in ("idle", "sleep", "eat", "petting", "look"):
         if required not in clips:

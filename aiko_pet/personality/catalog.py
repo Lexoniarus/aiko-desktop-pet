@@ -20,7 +20,8 @@ CATALOGUE = (
     Path(__file__).resolve().parents[1] / "data" / "dialogues.de.json"
 )
 ANIMATIONS = frozenset({
-    "idle", "waiting", "review", "failed", "waving", "jumping", "eat", "petting",
+    "idle", "waiting", "review", "failed", "waving", "waving-greeting",
+    "jumping", "eat", "petting",
 })
 EMOTIONS = frozenset({
     "asleep", "irritated", "tired", "hungry", "withdrawn", "warm", "playful", "calm",

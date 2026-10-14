@@ -80,7 +80,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         assert game is not None
         self.assertTrue(self.pet._animated._game_mode)
         self.assertEqual(
-            self.pet._animated.frame_clock.active_key, ("waving", None),
+            self.pet._animated.frame_clock.active_key, ("waving-greeting", None),
         )
         game._sequence._game._random_index = lambda _size: 2
         game.choose(Move.ROCK)

@@ -46,8 +46,9 @@ build step, not for running the desktop app.
 
 All twelve normal clips retain exactly **eight source PNGs** each. The
 runtime can assign different hold times to each pose and replay selected
-source poses without creating duplicate PNGs; waving now uses a fourteen-step
-sequence for two friendly hand waves. Walking uses 190 ms per frame (a
+source poses without creating duplicate PNGs. Ordinary waving uses eight
+steps; the separate greeting/farewell replay uses fourteen steps for two
+friendly hand waves, using the same eight PNGs. Walking uses 190 ms per frame (a
 1.52-second stride cycle), and its real desktop travel remains synchronized.
 Waiting and review have longer neutral holds; sleep has a four-second
 breathing cycle. Attack timing is unchanged for future gameplay. Each idle

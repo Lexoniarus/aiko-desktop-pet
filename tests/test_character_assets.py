@@ -15,11 +15,22 @@ from aiko_pet.infrastructure.character_assets import load_character_catalog
 class CharacterCatalogTests(unittest.TestCase):
     def test_eight_source_sprites_with_independent_playback(self) -> None:
         catalog = load_character_catalog()
-        self.assertEqual(sum(len(c.frames) for c in catalog.clips.values()), 112)
+        self.assertEqual(len(catalog.clips), 14)
+        self.assertEqual(
+            len({frame.file for clip in catalog.clips.values()
+                 for frame in clip.frames}), 112,
+        )
         self.assertNotIn("running", catalog.clips)
         self.assertEqual(catalog.clips["idle"].timings, (160,) * 8)
         self.assertAlmostEqual(catalog.clips["eat"].duration_seconds, 3.59)
-        self.assertAlmostEqual(catalog.clips["waving"].duration_seconds, 1.895)
+        self.assertAlmostEqual(catalog.clips["waving"].duration_seconds, 1.135)
+        self.assertAlmostEqual(
+            catalog.clips["waving-greeting"].duration_seconds, 1.895,
+        )
+        self.assertIs(
+            catalog.clips["waving"].frames,
+            catalog.clips["waving-greeting"].frames,
+        )
         self.assertFalse(catalog.clips["eat"].loop)
         self.assertTrue(catalog.clips["sleep"].loop)
         self.assertEqual(catalog.clips["eat"].frames[3].events, ("bite",))
@@ -96,7 +107,10 @@ class CharacterCatalogTests(unittest.TestCase):
             self.assertEqual(clip.frames[1].duration_ms, 205)
             self.assertEqual(clip.sprite_index(1), 1)
             self.assertEqual(clip.timings[1], 205)
-            self.assertEqual(clip.timings[8], 115)
+            greeting = catalog.clips["waving-greeting"]
+            self.assertEqual(len(clip.timings), 8)
+            self.assertEqual(greeting.timings[8], 115)
+            self.assertEqual(greeting.timings[1], 205)
             self.assertAlmostEqual(
                 catalog.clips["running-left"].duration_seconds, 1.52,
             )
@@ -143,6 +157,18 @@ class CharacterCatalogTests(unittest.TestCase):
                 path.write_text(json.dumps(profile), encoding="utf-8")
                 with self.assertRaises(ValueError):
                     load_character_catalog(root)
+
+    def test_greeting_variant_is_required_by_the_timing_policy(self) -> None:
+        data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            self._write_catalog(root, data)
+            path = root / "animation_timing.json"
+            profile = json.loads(path.read_text("utf-8"))
+            del profile["frame_sequences"]["waving-greeting"]
+            path.write_text(json.dumps(profile), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                load_character_catalog(root)
 
     def _write_catalog(self, root: Path, data: dict[str, Any]) -> None:
         for clip in data["animations"]:

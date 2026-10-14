@@ -76,7 +76,7 @@ class RockPaperScissorsSequence:
 
     def greet(self) -> None:
         if not self._closed:
-            self._animate("waving")
+            self._animate("waving-greeting")
             self._say(welcome_line(self.score.games), 4300)
 
     def choose(self, move: Move) -> None:

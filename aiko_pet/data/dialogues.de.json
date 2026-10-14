@@ -9,7 +9,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "animation": "idle",
+      "animation": "waving-greeting",
       "weight": 1,
       "cooldown_seconds": 90,
       "followup_text": "Das klang nach mehr Erwartung, als ich hatte.",

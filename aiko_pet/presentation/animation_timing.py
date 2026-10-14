@@ -11,6 +11,10 @@ from typing import Mapping
 from .animation import FRAME_COUNTS
 
 REGULAR_CLIPS = frozenset(FRAME_COUNTS) - {"look"}
+# Playback-only actions reuse their source clip's PNGs and pose durations.
+VIRTUAL_CLIPS: Mapping[str, str] = MappingProxyType({
+    "waving-greeting": "waving",
+})
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,21 +51,24 @@ def load_timing_policy(root: Path) -> AnimationTimingPolicy:
         or not isinstance(holds, dict)
         or set(holds) != REGULAR_CLIPS
         or not isinstance(custom, dict)
-        or not set(custom).issubset(REGULAR_CLIPS)
+        or not set(custom).issubset(REGULAR_CLIPS | frozenset(VIRTUAL_CLIPS))
+        or not set(VIRTUAL_CLIPS).issubset(custom)
     ):
         raise ValueError("Invalid per-frame animation timing policy")
     frames: dict[str, tuple[int, ...]] = {}
     sequences: dict[str, tuple[int, ...]] = {}
     expected = set(range(8))
-    for state in REGULAR_CLIPS:
-        values = holds[state]
-        if (
-            not isinstance(values, list)
-            or len(values) != 8
-            or any(type(ms) is not int or not 40 <= ms <= 5000
-                   for ms in values)
-        ):
-            raise ValueError(f"Invalid frame durations: {state}")
+    for state in REGULAR_CLIPS | frozenset(VIRTUAL_CLIPS):
+        if state in REGULAR_CLIPS:
+            values = holds[state]
+            if (
+                not isinstance(values, list)
+                or len(values) != 8
+                or any(type(ms) is not int or not 40 <= ms <= 5000
+                       for ms in values)
+            ):
+                raise ValueError(f"Invalid frame durations: {state}")
+            frames[state] = tuple(values)
         raw_order = custom.get(state, list(range(8)))
         if (
             not isinstance(raw_order, list)
@@ -73,7 +80,6 @@ def load_timing_policy(root: Path) -> AnimationTimingPolicy:
             or raw_order[-1] != 7
         ):
             raise ValueError(f"Invalid playback sequence: {state}")
-        frames[state] = tuple(values)
         sequences[state] = tuple(raw_order)
     return AnimationTimingPolicy(
         regular_frames=8, gaze_directions=16,

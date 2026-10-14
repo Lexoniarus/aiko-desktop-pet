@@ -61,7 +61,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
     def test_two_hands_reveal_in_separate_views_once(self) -> None:
         self.flow._game._random_index = lambda _size: 2
         self.flow.greet()
-        self.assertEqual(self.animations, ["waving"])
+        self.assertEqual(self.animations, ["waving-greeting"])
         self.flow.choose(Move.ROCK)
         self.assertEqual(self.events[-1], ("text", "Eins!"))
         self.assertEqual(self.busy, [True])

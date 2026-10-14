@@ -94,7 +94,7 @@ class CurrentClipPacingTests(unittest.TestCase):
         )
 
         catalog = load_character_catalog()
-        self.assertEqual(len(catalog.clips), 13)
+        self.assertEqual(len(catalog.clips), 14)
         for name, clip in catalog.clips.items():
             if name == "look":
                 self.assertEqual(len(clip.frames), 16)
@@ -144,15 +144,22 @@ class CurrentClipPacingTests(unittest.TestCase):
             load_character_catalog,
         )
 
-        clip = load_character_catalog().clips["waving"]
+        catalog = load_character_catalog().clips
+        ordinary = catalog["waving"]
+        greeting = catalog["waving-greeting"]
+        self.assertEqual(ordinary.playback_order, tuple(range(8)))
+        self.assertEqual(len(ordinary.timings), 8)
+        self.assertAlmostEqual(ordinary.duration_seconds, 1.135)
         self.assertEqual(
-            clip.playback_order,
+            greeting.playback_order,
             (0, 1, 2, 3, 4, 5, 4, 3, 4, 5, 4, 3, 6, 7),
         )
-        self.assertEqual(len(clip.frames), 8)
-        self.assertAlmostEqual(clip.duration_seconds, 1.895)
-        self.assertEqual(clip.sprite_index(8), 4)
-        self.assertEqual(clip.sprite_index(13), 7)
+        self.assertIs(ordinary.frames, greeting.frames)
+        self.assertFalse(greeting.loop)
+        self.assertEqual(len(greeting.frames), 8)
+        self.assertAlmostEqual(greeting.duration_seconds, 1.895)
+        self.assertEqual(greeting.sprite_index(8), 4)
+        self.assertEqual(greeting.sprite_index(13), 7)
 
     def test_idle_and_attack_keep_original_playback(self) -> None:
         from aiko_pet.infrastructure.character_assets import (

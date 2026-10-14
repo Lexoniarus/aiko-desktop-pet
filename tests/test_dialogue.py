@@ -56,9 +56,30 @@ class VoiceCatalogueTests(unittest.TestCase):
             with self.subTest(event=event):
                 self.assertGreaterEqual(counts[event], 5)
 
-    def test_animation_mapping_is_existing_original_assets(self):
-        frames = Path(__file__).resolve().parents[1] / 'aiko_pet' / 'assets' / 'frames'
-        self.assertTrue(all((frames / x.animation / '00.png').is_file() for x in self.book.lines))
+    def test_animation_mapping_is_valid_for_source_and_replay_variants(self):
+        from aiko_pet.infrastructure.character_assets import (
+            load_character_catalog,
+        )
+
+        clips = load_character_catalog().clips
+        for line in self.book.lines:
+            with self.subTest(line=line.id):
+                self.assertIn(line.animation, clips)
+                self.assertTrue(all(
+                    frame.file.is_file() for frame in clips[line.animation].frames
+                ))
+        self.assertEqual(
+            clips["waving"].frames,
+            clips["waving-greeting"].frames,
+        )
+
+    def test_full_wave_only_appears_on_explicit_greeting_dialogue(self):
+        greeting = next(line for line in self.book.lines
+                        if line.id == "greeting-01")
+        casual = next(line for line in self.book.lines
+                      if line.id == "click_left-10")
+        self.assertEqual(greeting.animation, "waving-greeting")
+        self.assertEqual(casual.animation, "waving")
 
     def test_rotation_avoids_immediately_repeating_with_fresh_lines(self):
         ids = [

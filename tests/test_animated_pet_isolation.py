@@ -103,8 +103,8 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
 
     def test_waving_replay_displays_original_sprite_by_step(self) -> None:
         now = time.monotonic()
-        self.anim.begin_action("waving", now)
-        clip = self.anim.assets.clips["waving"]
+        self.anim.begin_action("waving-greeting", now)
+        clip = self.anim.assets.clips["waving-greeting"]
         self.assertEqual(len(clip.frames), 8)
         self.assertEqual(len(clip.timings), 14)
         for index in range(1, 9):
@@ -112,11 +112,15 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                 self.anim.frame_clock.frame_started_at
                 + clip.timings[index - 1] / 1000 + .001
             )
-            self.anim.show_frame("waving", next_at)
+            self.anim.show_frame("waving-greeting", next_at)
         self.assertEqual(self.anim.frame_clock.frame_index, 8)
         self.assertEqual(clip.sprite_index(8), 4)
         rendered = self.canvas.itemcget(self.anim.image_item, "image")
         self.assertEqual(rendered, str(self.anim.sprites["waving"][4]))
+        self.assertIs(
+            self.anim.sprites["waving"][4],
+            self.anim.sprites["waving-greeting"][4],
+        )
 
     def test_sleep_plays_the_full_width_breathing_clip(self) -> None:
         self.state.sleeping = True
