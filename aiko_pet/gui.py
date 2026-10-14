@@ -43,7 +43,8 @@ from .pet.mind import PetMind
 from .pet.mind.workload_events import WorkloadEventDetector
 from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
-from .presentation.reaction_playback import ReactionPlayer, choose_idle_emote
+from .presentation.reaction_playback import ReactionPlayer
+from .pet.animation.idle_emote import choose_idle_emote
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.persistence import StateStore
 from .infrastructure.hardware.monitor import ActivityMonitor
