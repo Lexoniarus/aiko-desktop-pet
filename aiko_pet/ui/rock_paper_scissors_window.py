@@ -11,7 +11,7 @@ from ..asset_paths import GAME_HANDS_DIR
 from ..games.rock_paper_scissors import Move, Score
 from ..presentation.rock_paper_scissors_sequence import RockPaperScissorsSequence
 from .skin import AikoSkin
-from .window_drag import WindowDrag
+from .common.window_drag import WindowDrag
 
 _BG = "#D7DCE8"
 _TEXT = "#414B5F"

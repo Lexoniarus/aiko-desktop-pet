@@ -12,7 +12,7 @@ from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .hover_geometry import HoverGeometry, Rect
 from .skin import AikoSkin
 from .toolbar_details import ToolbarDetails
-from .window_drag import WindowDrag
+from .common.window_drag import WindowDrag
 
 
 class ActionToolbar:

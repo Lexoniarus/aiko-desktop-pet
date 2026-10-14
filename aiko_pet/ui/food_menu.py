@@ -9,7 +9,7 @@ from typing import Callable
 
 from ..presentation.food_models import FoodChoice, FoodChoiceId
 from .skin import AikoSkin
-from .window_drag import WindowDrag, bounded_position
+from .common.window_drag import WindowDrag, bounded_position
 
 
 class FoodMenu:

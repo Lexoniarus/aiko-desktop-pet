@@ -11,7 +11,7 @@ from typing import Callable
 from ..application.settings import SettingKey
 from .settings_contracts import SettingsActions, SettingsSnapshot
 from .skin import AikoSkin
-from .window_drag import WindowDrag, bounded_position
+from .common.window_drag import WindowDrag, bounded_position
 
 
 class SettingsWindow:
