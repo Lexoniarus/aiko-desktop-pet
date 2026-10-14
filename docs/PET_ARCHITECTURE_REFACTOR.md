@@ -36,6 +36,24 @@ Canonical ownership:
 
 This is a work plan, not an implementation claim. Mark each step complete only after passing relevant automated checks.
 
+
+## Progress on the refactor branch
+
+- Completed: pure gaze, sprite metadata, frame/ambient policies, idle-emote
+  selection and JSON timing validation assigned to canonical owners.
+- Completed: `pet/mind/` is the canonical owner for PetMind, dialogue and
+  existing adaptive/workload policies (with transitional legacy forwards).
+- Completed: `pet/movement/` separates random departure planning from the
+  one movement controller; `ui/pet_view/walk_driver.py` handles host motion.
+- Completed: utility windows, pet-view renderers and UI view models have
+  distinct canonical packages; existing compatibility imports remain.
+- Completed: cursor-attention history is a pure pet-owned object, while native
+  pointer sampling is provided by DesktopInput.
+- Still pending: final composition-root cleanup, import audit, documentation
+  consistency and native interactive Windows smoke testing.
+- Automated checks: draft PR #9 runs the Python 3.11/3.13 and Windows-headless
+  matrix. CI success is evaluated per commit, not assumed for future commits.
+
 ## Verification gates
 
 Run Ruff, strict Mypy, Pyright, the complete Python 3.11/3.13 unit and Tk/Xvfb matrix and the project's Windows-native smoke checks. Verify in particular the merged item catalog, item sprites and cache tests, 1x/2x asset behaviour, hover/pin and the game window.
