@@ -11,11 +11,11 @@ from pathlib import Path
 
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.personality.mind import AikoMind
+from aiko_pet.pet.mind import PetMind
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 
-from aiko_pet.presentation.projections import (
+from aiko_pet.ui.view_models.projections import (
     project_hover, project_settings, project_status,
 )
 from aiko_pet.telemetry import ComputerSnapshot
@@ -53,8 +53,8 @@ class FinalArchitectureTests(unittest.TestCase):
                         f"{path.name} imports outer layer {name}",
                     )
 
-    def test_presentation_has_no_tk_provider_or_legacy_monitor_import(self) -> None:
-        for path in (ROOT / "presentation").glob("*.py"):
+    def test_canonical_ui_views_have_no_tk_or_native_imports(self) -> None:
+        for path in (ROOT / "ui/view_models").glob("*.py"):
             with self.subTest(module=path.name):
                 tree = ast.parse(path.read_text("utf-8"))
                 imports = [
@@ -79,7 +79,7 @@ class FinalArchitectureTests(unittest.TestCase):
         stamp = datetime(2026, 10, 12, 13).timestamp()
         context = context_at(stamp)
         state = PetState(satiety=10, mood=55)
-        mind = AikoMind(rng=random.Random(7))
+        mind = PetMind(rng=random.Random(7))
         reading = ComputerSnapshot(cpu=82, ram=55, measured_at=1000.0)
         for observing in (False, True):
             with self.subTest(observing=observing):

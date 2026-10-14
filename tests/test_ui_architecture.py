@@ -9,13 +9,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1] / "aiko_pet"
 
 UTILITY_VIEWS = (
-    "ui/action_toolbar.py",
-    "ui/settings_window.py",
-    "ui/toolbar_details.py",
-    "ui/skin.py",
-    "ui/window_drag.py",
-    "ui/rock_paper_scissors_window.py",
-    "ui/hover_ui.py",
+    "ui/windows/action_toolbar.py",
+    "ui/windows/settings_window.py",
+    "ui/windows/toolbar_details.py",
+    "ui/common/skin.py",
+    "ui/common/window_drag.py",
+    "ui/windows/rock_paper_scissors_window.py",
+    "ui/windows/hover_ui.py",
 )
 
 
@@ -116,7 +116,7 @@ class UiDependencyRules(unittest.TestCase):
                 self.assertNotIn(token, source)
 
     def test_hover_uses_public_dragging_contract(self) -> None:
-        source = (ROOT / "ui/hover_ui.py").read_text("utf-8")
+        source = (ROOT / "ui/windows/hover_ui.py").read_text("utf-8")
         self.assertNotIn("toolbar._dragging", source)
 
     def test_persistence_never_advances_domain_state(self) -> None:
@@ -241,24 +241,26 @@ class UiDependencyRules(unittest.TestCase):
                     for name in names
                 ))
 
-    def test_presenters_do_not_import_tk_or_save_repositories(self) -> None:
-        for module in (ROOT / "presentation").glob("*.py"):
-            with self.subTest(module=module.name):
-                tree = ast.parse(module.read_text("utf-8"))
-                names = [
-                    node.module or ""
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.ImportFrom)
-                ] + [
-                    alias.name
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.Import)
-                    for alias in node.names
-                ]
-                self.assertFalse(any(
-                    name.startswith("tkinter") or name.endswith("storage")
-                    for name in names
-                ))
+    def test_pure_policies_and_views_do_not_import_tk_or_storage(self) -> None:
+        for owner in ("ui/view_models", "pet/animation", "pet/movement"):
+            for module in (ROOT / owner).glob("*.py"):
+                with self.subTest(module=str(module.relative_to(ROOT))):
+                    tree = ast.parse(module.read_text("utf-8"))
+                    imports = [
+                        node.module or ""
+                        for node in ast.walk(tree)
+                        if isinstance(node, ast.ImportFrom)
+                    ] + [
+                        alias.name
+                        for node in ast.walk(tree)
+                        if isinstance(node, ast.Import)
+                        for alias in node.names
+                    ]
+                    self.assertFalse(any(
+                        name.startswith("tkinter") or name.endswith("storage")
+                        or "infrastructure" in name
+                        for name in imports
+                    ))
 
     def test_production_text_is_not_read_from_pet_legacy_methods(self) -> None:
         files = (
@@ -321,7 +323,7 @@ class UiDependencyRules(unittest.TestCase):
         self.assertIn("self._inputs.stop()", lifecycle)
 
     def test_personality_code_has_no_ui_storage_or_native_imports(self) -> None:
-        for path in (ROOT / "personality").glob("*.py"):
+        for path in (ROOT / "pet/mind").glob("*.py"):
             with self.subTest(module=path.name):
                 tree = ast.parse(path.read_text("utf-8"))
                 for node in ast.walk(tree):
@@ -358,7 +360,10 @@ class UiDependencyRules(unittest.TestCase):
     def test_native_desktop_adapters_are_not_owned_by_sprite_code(self) -> None:
         sprite = (ROOT / "ui/pet_view/animated_pet.py").read_text("utf-8")
         desktop_window = (ROOT / "ui/pet_view/desktop_window.py").read_text("utf-8")
-        self.assertIn("from ...pet.movement import", sprite)
+        driver = (ROOT / "ui/pet_view/walk_driver.py").read_text("utf-8")
+        self.assertIn("from ...pet.movement import", driver)
+        self.assertIn("WalkConditions(", driver)
+        self.assertNotIn("WalkConditions(", sprite)
         self.assertIn("from ...desktop.geometry import TaskbarTrack", sprite)
         self.assertIn("from ...desktop.taskbar import", desktop_window)
         self.assertNotIn("from ..taskbar import", sprite)
