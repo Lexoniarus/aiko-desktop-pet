@@ -216,7 +216,7 @@ class UiDependencyRules(unittest.TestCase):
 
     def test_live_desktop_uses_presentation_boundary(self) -> None:
         source = (ROOT / "gui.py").read_text("utf-8")
-        self.assertIn("from .presentation.read_models import", source)
+        self.assertIn("from .ui.view_models.read_models import", source)
         self.assertIn("DesktopPresentation(", source)
         self.assertNotIn("from .application.read_models import", source)
 
@@ -262,9 +262,9 @@ class UiDependencyRules(unittest.TestCase):
 
     def test_production_text_is_not_read_from_pet_legacy_methods(self) -> None:
         files = (
-            "presentation/projections.py",
-            "presentation/read_models.py",
-            "presentation/text_de.py",
+            "ui/view_models/projections.py",
+            "ui/view_models/read_models.py",
+            "ui/view_models/text_de.py",
         )
         for relative in files:
             with self.subTest(module=relative):

@@ -31,7 +31,7 @@ from .application.game_experience import (
     GameExperienceCoordinator, experience_from_rock_paper_scissors,
 )
 from .application.router import ApplicationRouter
-from .presentation.read_models import DesktopPresentation
+from .ui.view_models.read_models import DesktopPresentation
 from .config import load_env_file
 from .desktop.global_input import (
     idle_seconds_windows, mouse_buttons_down_windows,
