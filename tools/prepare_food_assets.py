@@ -30,7 +30,7 @@ def prepare_food(source: Path, output: Path) -> None:
     with Image.open(source) as raw:
         image = raw.convert("RGBA")
     solid = image.getchannel("A").point(
-        lambda alpha: 255 if alpha >= 24 else 0,
+        [255 if alpha >= 24 else 0 for alpha in range(256)],
     )
     bounds = solid.getbbox()
     if bounds is None:

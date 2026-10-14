@@ -6,7 +6,7 @@ import unittest
 from datetime import datetime
 
 from aiko_pet.pet.food import (
-    FOOD_BALANCE, FOOD_CATALOG, FoodActivity, FoodState,
+    FOOD_BALANCE, FOOD_CATALOG, FoodActivity, FoodId, FoodState,
     advance_food, eat_food, hunger_activity_multiplier, is_repeated_food,
 )
 from aiko_pet.pet.state import PetState
@@ -159,7 +159,7 @@ class FoodPolicyTests(unittest.TestCase):
         day = clock()
         pet = PetState(satiety=65, updated_at=day)
         lowest = 100.0
-        consumed = {
+        consumed: dict[int, FoodId] = {
             0: "onigiri", 3: "apple", 6: "sandwich",
             9: "taiyaki", 12: "onigiri",
         }
