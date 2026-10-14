@@ -8,7 +8,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Mapping
 
-from .animation import FRAME_COUNTS
+from ..pet.animation.animation import FRAME_COUNTS
 
 REGULAR_CLIPS = frozenset(FRAME_COUNTS) - {"look"}
 # Playback-only actions reuse their source clip's PNGs and pose durations.

@@ -14,10 +14,10 @@ from dataclasses import dataclass
 from typing import Callable, Protocol
 from collections.abc import Sequence
 
-from ..presentation.animation import (
+from ..pet.animation.animation import (
     FrameClock, choose_passive_animation,
 )
-from ..presentation.ambient import AmbientDirector
+from ..pet.animation.ambient import AmbientDirector
 from ..pet.animation.character import CharacterCatalog, FRAME_WIDTH
 from ..pet.animation.gaze import gaze_sector
 from ..pet.movement import WalkConditions, WalkController
