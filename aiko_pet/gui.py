@@ -46,6 +46,7 @@ from .pet.routine import TimeContext, context_at
 from .ui.pet_view.reaction_player import ReactionPlayer
 from .ui.pet_view.attention_presenter import AttentionPresenter, AttentionViewPorts
 from .ui.pet_view.care_presenter import CarePresenter, CareViewPorts
+from .ui.pet_view.action_playback import ActionPlayback
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.persistence import StateStore
 from .infrastructure.hardware.monitor import ActivityMonitor
@@ -108,8 +109,11 @@ class DesktopPet:
             schedule=self.root.after,
             cancel=self.root.after_cancel,
         )
-        self._action_until = 0.0
-        self._action_state = "idle"
+        self._action_playback = ActionPlayback(
+            self._character_assets,
+            begin=lambda state, now: self._animated.begin_action(state, now),
+            cancel=lambda now: self._animated.cancel_action(now),
+        )
         self._persistence = DesktopPersistence(
             self.store, self.state, self.settings, self.adaptive,
         )
@@ -450,29 +454,35 @@ class DesktopPet:
     def _poll_desktop_click(self) -> None:
         self._input.poll_global_click()
 
+    @property
+    def _action_state(self) -> str:
+        """Compatibility access to pet-view action playback state."""
+        return self._action_playback.state
+
+    @_action_state.setter
+    def _action_state(self, state: str) -> None:
+        self._action_playback.state = state
+
+    @property
+    def _action_until(self) -> float:
+        return self._action_playback.until
+
+    @_action_until.setter
+    def _action_until(self, deadline: float) -> None:
+        self._action_playback.until = deadline
+
     def _start_action(
         self, state: str, duration: float, *, started_at: float | None = None,
     ) -> None:
-        now = time.monotonic() if started_at is None else started_at
-        clip = self._character_assets.clips[state]
-        if not clip.loop:
-            duration = clip.duration_seconds
-        self._action_state = state
-        self._action_until = now + duration
-        self._animated.begin_action(state, now)
+        self._action_playback.start(
+            state, duration, started_at=started_at,
+        )
 
     def _cancel_visual_action(self, now: float) -> None:
-        """Reset an active visual before rendering the sleeping state."""
-        self._action_until = now
-        self._animated.cancel_action(now)
-
-    def _refresh_care_toolbar(self) -> None:
-        toolbar = self._hover.toolbar
-        if toolbar is not None:
-            toolbar.refresh()
+        self._action_playback.cancel_at(now)
 
     def _extend_action(self, deadline: float) -> None:
-        self._action_until = max(self._action_until, deadline)
+        self._action_playback.extend(deadline)
 
     def interact(
         self, action: str, *, food_id: FoodId | None = None,
