@@ -1,1 +1,3 @@
-"""Pet-owned situational memory, dialogue and adaptive behaviour policies."""
+"""Pet-owned perception-independent mind, dialogue and adaptive behaviour."""
+
+from .mind import PetMind as PetMind
