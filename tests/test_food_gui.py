@@ -100,7 +100,9 @@ class FoodGuiTests(unittest.TestCase):
         self.assertEqual(
             self.pet._animated.food_overlay.current_food_id, "energy_drink",
         )
-        self.assertEqual(self.pet._animated.frame_clock.active_key[0], "eat")
+        self.assertEqual(
+            self.pet._animated.frame_clock.active_key, ("eat", None),
+        )
 
     def test_full_energy_rejects_drink_without_eating_animation(self) -> None:
         self.pet.state.energy = 100
@@ -111,7 +113,7 @@ class FoodGuiTests(unittest.TestCase):
         menu.buttons["energy_drink"].invoke()
         self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
         self.assertNotEqual(
-            self.pet._animated.frame_clock.active_key[0], "eat",
+            self.pet._animated.frame_clock.active_key, ("eat", None),
         )
 
     def test_all_native_food_overlays_render_at_both_scales(self) -> None:
