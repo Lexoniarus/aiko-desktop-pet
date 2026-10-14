@@ -47,6 +47,7 @@ from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
 from .ui.pet_view.reaction_player import ReactionPlayer
 from .ui.pet_view.attention_presenter import AttentionPresenter, AttentionViewPorts
+from .desktop.attention_runtime import DesktopAttentionRuntime, AttentionRuntimePorts
 from .ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 from .ui.pet_view.action_playback import ActionPlayback
 from .infrastructure.character_assets import load_character_catalog
@@ -275,9 +276,21 @@ class DesktopPet:
                 closed=lambda: self._closed,
             ),
         )
-        self._attention_view = AttentionPresenter(
-            self._attention,
-            ports=AttentionViewPorts(
+        self._attention_view = AttentionPresenter(AttentionViewPorts(
+            start_action=lambda name, duration: self._start_action(
+                name, duration,
+            ),
+            react=lambda reaction, duration: self._react(reaction, duration),
+            show_emote=lambda emote, duration: self._speech.show_emote(
+                emote, duration,
+            ),
+            show_text=lambda text, duration: self._speech.show_text(
+                text, duration,
+            ),
+        ))
+        self._attention_runtime = DesktopAttentionRuntime(
+            self._attention, self._attention_view,
+            AttentionRuntimePorts(
                 context=lambda: self.context,
                 game_open=lambda: self._hover.game_open,
                 toolbar_active=lambda: self._hover.interaction_active,
@@ -290,18 +303,6 @@ class DesktopPet:
                     self._animated.movement.remaining_distance != 0
                 ),
                 action_until=lambda: self._action_until,
-                start_action=lambda name, duration: self._start_action(
-                    name, duration,
-                ),
-                react=lambda reaction, duration: self._react(
-                    reaction, duration,
-                ),
-                show_emote=lambda emote, duration: self._speech.show_emote(
-                    emote, duration,
-                ),
-                show_text=lambda text, duration: self._speech.show_text(
-                    text, duration,
-                ),
             ),
         )
         self._care_view = CarePresenter(CareViewPorts(
@@ -544,15 +545,15 @@ class DesktopPet:
         self._preferences.center()
 
     def _idle_emote(self) -> None:
-        self._attention_view.idle_emote()
+        self._attention_runtime.idle_emote()
 
     def _on_cursor_moved(
         self, distance: float, screen_width: int, now: float,
     ) -> None:
-        self._attention_view.cursor_moved(distance, screen_width, now)
+        self._attention_runtime.cursor_moved(distance, screen_width, now)
 
     def _on_walk_finished(self, now: float) -> None:
-        self._attention_view.walk_finished(now)
+        self._attention_runtime.walk_finished(now)
 
     def _advance_pet_lifecycle(self, now: float, wall_time: float) -> None:
         progress = self._activity.advance_lifecycle(
@@ -569,13 +570,13 @@ class DesktopPet:
                 ))
 
     def _maybe_show_idle_emote(self, now: float) -> None:
-        self._attention_view.maybe_show_idle_emote(now)
+        self._attention_runtime.maybe_show_idle_emote(now)
 
     def _maybe_speak_spontaneously(self, now: float) -> None:
-        self._attention_view.maybe_speak_spontaneously(now)
+        self._attention_runtime.maybe_speak_spontaneously(now)
 
     def _present_pending_notification(self, now: float) -> None:
-        self._attention_view.present_notification(now)
+        self._attention_runtime.present_notification(now)
 
     def _refresh_overlays_and_autosave(self, now: float) -> None:
         """Refresh visible panels, window layering and periodic persistence."""

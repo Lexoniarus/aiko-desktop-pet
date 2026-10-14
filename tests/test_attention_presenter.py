@@ -1,54 +1,35 @@
-"""Attention presentation preserves suppression and UI action boundaries."""
+"""The attention presenter only renders preselected effects."""
 
 import unittest
 from unittest.mock import Mock
 
-from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.attention_presenter import (
-    AttentionPresenter,
-    AttentionViewPorts,
+    AttentionPresenter, AttentionViewPorts,
 )
 
 
 class AttentionPresenterTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.policy = Mock()
-        self.policy.state = PetState()
-        self.policy.mind = Mock()
-        self.reactions: list[tuple[object, int]] = []
-        self.icons: list[tuple[str, int]] = []
-        self.ports = AttentionViewPorts(
-            context=Mock(),
-            game_open=lambda: False,
-            toolbar_active=lambda: False,
-            settings_engaged=lambda: False,
-            bubble_visible=lambda: False,
-            reaction_pending=lambda: False,
-            walking=lambda: False,
-            action_until=lambda: 0.0,
-            start_action=Mock(),
-            react=lambda reaction, ms: self.reactions.append((reaction, ms)),
-            show_emote=lambda icon, ms: self.icons.append((icon, ms)),
-            show_text=Mock(),
-        )
-        self.presenter = AttentionPresenter(self.policy, ports=self.ports)
+        self.react = Mock()
+        self.animate = Mock()
+        self.emote = Mock()
+        self.text = Mock()
+        self.presenter = AttentionPresenter(AttentionViewPorts(
+            start_action=self.animate, react=self.react,
+            show_emote=self.emote, show_text=self.text,
+        ))
 
-    def test_cursor_speech_uses_existing_decision(self) -> None:
+    def test_selected_reaction_is_forwarded_unchanged(self) -> None:
         reaction = Mock()
-        self.policy.cursor_moved.return_value = "cursor_follow"
-        self.policy.mind.say_event.return_value = reaction
-        self.presenter.cursor_moved(150.0, 1920, 100.0)
-        self.assertEqual(self.reactions, [(reaction, 2600)])
-        self.policy.cursor_moved.assert_called_once_with(
-            150.0, 1920, 100.0, toolbar_visible=False,
-        )
+        self.presenter.show_reaction(reaction, 2600)
+        self.react.assert_called_once_with(reaction, 2600)
 
-    def test_idle_emote_uses_pet_state_without_new_need_values(self) -> None:
-        self.policy.state.energy = 0
-        self.presenter.idle_emote()
-        self.assertEqual(self.icons, [("sleeps", 1100)])
+    def test_idle_animation_and_emote_have_independent_outputs(self) -> None:
+        self.presenter.show_animation("waiting", 1.6)
+        self.presenter.show_idle_emote("sleeps")
+        self.animate.assert_called_once_with("waiting", 1.6)
+        self.emote.assert_called_once_with("sleeps", 1100)
 
-    def test_no_notification_has_no_visual_effect(self) -> None:
-        self.policy.next_notification.return_value = None
-        self.presenter.present_notification(100.0)
-        self.policy.mark_spoken.assert_not_called()
+    def test_notification_text_is_not_interpreted(self) -> None:
+        self.presenter.show_notification("Kalender: Termin gleich.")
+        self.text.assert_called_once_with("Kalender: Termin gleich.", 3500)
