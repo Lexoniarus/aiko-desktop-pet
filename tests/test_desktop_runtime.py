@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import unittest
 from collections.abc import Callable
+from dataclasses import replace
 
 from aiko_pet.desktop.runtime import (
     DesktopRuntime, DesktopTickPorts, TICK_MILLISECONDS,
@@ -131,6 +132,24 @@ class DesktopRuntimeTests(unittest.TestCase):
             "notification", "maintenance",
         ])
         self.assertIsNotNone(self.runtime.scheduled_tick)
+
+    def test_transient_render_failure_does_not_end_tick_schedule(self) -> None:
+        attempts = 0
+
+        def render(now: float, elapsed: float, pointer: tuple[int, int]) -> None:
+            nonlocal attempts
+            attempts += 1
+            if attempts == 1:
+                raise RuntimeError("Tk rendering failed")
+            self.stages._render_current_sprite(now, elapsed, pointer)
+
+        self.runtime._ports = replace(self.ports, render_character=render)
+        self.runtime.start()
+        with self.assertRaisesRegex(RuntimeError, "Tk rendering failed"):
+            self.runtime.tick()
+        self.assertIsNotNone(self.runtime.scheduled_tick)
+        self.runtime.tick()
+        self.assertEqual(attempts, 2)
 
     def test_closed_desktop_never_starts_or_reschedules(self) -> None:
         self.stages._closed = True

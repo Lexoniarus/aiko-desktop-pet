@@ -33,6 +33,11 @@ testable. The food definition table `FOOD_CATALOG` is adjacent:
 | Taiyaki | Snack | +20 | 55 min | +4 |
 | Apple | Snack | +14 | 38 min | +3 |
 | Dango | Snack | +10 | 20 min | +2 |
+| Donut | Snack | +18 | 42 min | +4 |
+| Cookie | Snack | +12 | 30 min | +3 |
+| Melonpan | Snack | +29 | 85 min | +4 |
+| Cupcake | Snack | +17 | 46 min | +4 |
+| Dorayaki | Snack | +21 | 60 min | +4 |
 
 Reserve is consumed faster under combined activity and its defensive hunger
 effect progressively fades. Snacks do not reset
@@ -44,7 +49,7 @@ nutritional value or damage friendship. Aiko's scripted German
 Meals are *suggestions*, not a requirement at fixed wall-clock times. A
 proper meal in an existing breakfast/lunch/dinner time slot still marks that
 slot as eaten. The direct legacy `interact("feed")` chooses Onigiri by
-default; the current desktop toolbar displays the five-item food selector.
+default; the current desktop toolbar displays eleven food-and-drink choices.
 
 ## Hardware workload versus user input
 
@@ -80,19 +85,33 @@ hunger.
 
 ## Food graphics, scale and animation
 
-Five transparent 64 × 64 runtime food images live in
-`aiko_pet/assets/food/`. They were prepared from the separately kept
-original high-resolution character-compatible food assets with a **0.98
-object-scale factor** (two percent smaller), not by editing the original
-artwork. The selection window shows the prepared image at its native menu
-size. `ui/food_overlay.py` displays a smaller version on Aiko, using all
-eight frame-specific `food_anchor` coordinates already in
-`assets/animations.json`. The food graphic follows her hand for the full
-`eat` sequence; no food is permanently embedded in her animation frames.
+Ten food types and an Energy Drink appear in the selection window, laid out
+in two rows (up to six columns each). The menu icons are native transparent
+64 × 64 images in `aiko_pet/assets/items/icons/64/`. There are independent
+prepared **1× and native 2× PNGs** under
+`aiko_pet/assets/items/food/{1x,2x}/`, built from the high-resolution
+masters *outside the repository*. Runtime `ui/food_overlay.py` uses the
+single `items/items.json` manifest's scale-specific pivots to attach the
+chosen sprite to all eight source-frame `food_anchor` positions. It never
+zooms tiny food images to make 2× objects, and it doesn't re-load them when
+Aiko's character size changes.
 
-To regenerate from original assets when adjusting the two-percent size,
-use the developer-only `tools/prepare_food_assets.py --source DIR` script.
-Pillow is needed only for image preparation, not to run Aiko.
+The Energy Drink is a *drink choice, not a nutrition entry*: selecting it
+invokes the existing `energy_drink` care action, restoring up to ten energy
+points without adding satiety, digest reserve or fun. The old standalone
+toolbar button is removed. A full-energy refusal does not play the consumption
+animation. Its future mood-side-effect has deliberately **not yet been
+balanced or enabled**; Fun/Mood  rules remain unchanged.
+
+The existing five food images in `aiko_pet/assets/food/` remain available as
+legacy prepared references, but are not used by the current selector.
+
+The original full-resolution artwork stays outside GitHub. Offline
+preparation produces the two runtime scales and picker icons; item pivots
+live in the checked-in JSON manifest. The original
+`tools/prepare_food_assets.py` continues to cover the five historical
+64px images; it is not the generator for the new native 1×/2× collection.
+Pillow is never needed at runtime.
 
 ## Quality and further balancing
 

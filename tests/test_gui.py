@@ -60,8 +60,9 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertIsNotNone(self.app._hover.toolbar)
         bar = self.toolbar
         self.assertTrue(bar.visible)
-        self.assertEqual(set(bar.buttons), {"feed", "play", "pet", "sleep",
-                                             "talk", "energy_drink"})
+        self.assertEqual(
+            set(bar.buttons), {"feed", "play", "pet", "sleep", "talk"},
+        )
         action_row = bar.buttons["feed"].master
         labels = [
             child.cget("text") for child in action_row.winfo_children()

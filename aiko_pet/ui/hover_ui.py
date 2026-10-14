@@ -12,8 +12,7 @@ from .action_toolbar import ActionToolbar
 from .game_speech import GameSpeech
 from ..games.rock_paper_scissors import Score
 from .food_menu import FoodMenu
-from ..pet.food import FoodId
-from ..presentation.food_models import food_choices
+from ..presentation.food_models import FoodChoiceId, food_choices
 from .rock_paper_scissors_window import RockPaperScissorsWindow
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .settings_contracts import SettingsActions, SettingsSnapshot
@@ -44,7 +43,7 @@ class HoverUiPorts:
     restore_stack: Callable[[], bool]
     always_on_top: Callable[[], bool]
     game_speech: GameSpeech
-    feed: Callable[[FoodId], None] | None = None
+    feed: Callable[[FoodChoiceId], None] | None = None
     game_completed: Callable[[Score], object] | None = None
 
 
@@ -110,7 +109,7 @@ class HoverUi:
     def _food_menu_closed(self) -> None:
         self.food_menu = None
 
-    def _food_selected(self, food_id: FoodId) -> None:
+    def _food_selected(self, food_id: FoodChoiceId) -> None:
         if self._ports.feed is not None and not self.game_open:
             self._ports.feed(food_id)
 

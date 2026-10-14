@@ -1,0 +1,259 @@
+{
+  "version": 1,
+  "foods": [
+    {
+      "id": "onigiri",
+      "label": "Onigiri",
+      "variants": {
+        "1": {
+          "path": "food/1x/onigiri.png",
+          "pivot": [
+            15.5,
+            25
+          ]
+        },
+        "2": {
+          "path": "food/2x/onigiri.png",
+          "pivot": [
+            31,
+            50
+          ]
+        }
+      },
+      "icon": "icons/64/onigiri.png"
+    },
+    {
+      "id": "taiyaki",
+      "label": "Taiyaki",
+      "variants": {
+        "1": {
+          "path": "food/1x/taiyaki.png",
+          "pivot": [
+            19.5,
+            24
+          ]
+        },
+        "2": {
+          "path": "food/2x/taiyaki.png",
+          "pivot": [
+            39,
+            48
+          ]
+        }
+      },
+      "icon": "icons/64/taiyaki.png"
+    },
+    {
+      "id": "apple",
+      "label": "Apfel",
+      "variants": {
+        "1": {
+          "path": "food/1x/apple.png",
+          "pivot": [
+            13.5,
+            26
+          ]
+        },
+        "2": {
+          "path": "food/2x/apple.png",
+          "pivot": [
+            27.5,
+            53
+          ]
+        }
+      },
+      "icon": "icons/64/apple.png"
+    },
+    {
+      "id": "dango",
+      "label": "Dango",
+      "variants": {
+        "1": {
+          "path": "food/1x/dango.png",
+          "pivot": [
+            12,
+            28
+          ]
+        },
+        "2": {
+          "path": "food/2x/dango.png",
+          "pivot": [
+            24.5,
+            57
+          ]
+        }
+      },
+      "icon": "icons/64/dango.png"
+    },
+    {
+      "id": "sandwich",
+      "label": "Sandwich",
+      "variants": {
+        "1": {
+          "path": "food/1x/sandwich.png",
+          "pivot": [
+            16,
+            25
+          ]
+        },
+        "2": {
+          "path": "food/2x/sandwich.png",
+          "pivot": [
+            32,
+            49
+          ]
+        }
+      },
+      "icon": "icons/64/sandwich.png"
+    },
+    {
+      "id": "energy_drink",
+      "label": "Energy Drink",
+      "care_action": "energy_drink",
+      "variants": {
+        "1": {
+          "path": "food/1x/energy_drink.png",
+          "pivot": [
+            10,
+            35
+          ]
+        },
+        "2": {
+          "path": "food/2x/energy_drink.png",
+          "pivot": [
+            20,
+            70
+          ]
+        }
+      },
+      "icon": "icons/64/energy_drink.png"
+    },
+    {
+      "id": "donut",
+      "label": "Donut",
+      "variants": {
+        "1": {
+          "path": "food/1x/donut.png",
+          "pivot": [
+            18.5,
+            30
+          ]
+        },
+        "2": {
+          "path": "food/2x/donut.png",
+          "pivot": [
+            37,
+            60
+          ]
+        }
+      },
+      "icon": "icons/64/donut.png"
+    },
+    {
+      "id": "cookie",
+      "label": "Cookie",
+      "variants": {
+        "1": {
+          "path": "food/1x/cookie.png",
+          "pivot": [
+            16.5,
+            30
+          ]
+        },
+        "2": {
+          "path": "food/2x/cookie.png",
+          "pivot": [
+            33,
+            60
+          ]
+        }
+      },
+      "icon": "icons/64/cookie.png"
+    },
+    {
+      "id": "melonpan",
+      "label": "Melonpan",
+      "variants": {
+        "1": {
+          "path": "food/1x/melonpan.png",
+          "pivot": [
+            18.5,
+            29
+          ]
+        },
+        "2": {
+          "path": "food/2x/melonpan.png",
+          "pivot": [
+            37,
+            58
+          ]
+        }
+      },
+      "icon": "icons/64/melonpan.png"
+    },
+    {
+      "id": "cupcake",
+      "label": "Cupcake",
+      "variants": {
+        "1": {
+          "path": "food/1x/cupcake.png",
+          "pivot": [
+            14.5,
+            35
+          ]
+        },
+        "2": {
+          "path": "food/2x/cupcake.png",
+          "pivot": [
+            29,
+            70
+          ]
+        }
+      },
+      "icon": "icons/64/cupcake.png"
+    },
+    {
+      "id": "dorayaki",
+      "label": "Dorayaki",
+      "variants": {
+        "1": {
+          "path": "food/1x/dorayaki.png",
+          "pivot": [
+            18.5,
+            28
+          ]
+        },
+        "2": {
+          "path": "food/2x/dorayaki.png",
+          "pivot": [
+            37,
+            56
+          ]
+        }
+      },
+      "icon": "icons/64/dorayaki.png"
+    }
+  ],
+  "weapons": [
+    {
+      "id": "sword",
+      "label": "Schwert",
+      "variants": {
+        "1": {
+          "path": "weapons/1x/sword.png",
+          "pivot": [
+            17.96,
+            81.489
+          ]
+        },
+        "2": {
+          "path": "weapons/2x/sword.png",
+          "pivot": [
+            35.919,
+            162.979
+          ]
+        }
+      }
+    }
+  ]
+}

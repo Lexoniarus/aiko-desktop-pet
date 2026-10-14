@@ -7,8 +7,7 @@ import tkinter as tk
 from functools import partial
 from typing import Callable
 
-from ..pet.food import FoodId
-from ..presentation.food_models import FoodChoice
+from ..presentation.food_models import FoodChoice, FoodChoiceId
 from .skin import AikoSkin
 from .window_drag import WindowDrag, bounded_position
 
@@ -19,7 +18,7 @@ class FoodMenu:
     def __init__(
         self, root: tk.Tk, x: int, y: int, *,
         choices: tuple[FoodChoice, ...],
-        selected: Callable[[FoodId], None],
+        selected: Callable[[FoodChoiceId], None],
         closed: Callable[[], None],
         always_on_top: bool,
         skin: AikoSkin,
@@ -38,17 +37,22 @@ class FoodMenu:
         self.window.bind("<Escape>", lambda _event: self.close())
         outer = skin.frame(self.window)
         outer.pack(fill="both", expand=True, padx=3, pady=3)
-        header = skin.header(outer, "WAS MÖCHTEST DU ESSEN?")
+        header = skin.header(outer, "ESSEN & GETRÄNKE")
         header.pack(fill="x")
         self._drag = WindowDrag(self.window, header)
         body = tk.Frame(outer, bg=skin.background)
         body.pack(fill="both", expand=True, padx=9, pady=9)
         self.images: dict[str, tk.PhotoImage] = {}
         self.buttons: dict[str, tk.Button] = {}
-        for column, choice in enumerate(choices):
-            item = tk.Frame(body, bg=skin.panel, padx=5, pady=6)
-            item.grid(row=0, column=column, padx=3, sticky="nsew")
+        self.columns = min(6, len(choices))
+        for column in range(self.columns):
             body.columnconfigure(column, weight=1)
+        for index, choice in enumerate(choices):
+            item = tk.Frame(body, bg=skin.panel, padx=4, pady=5)
+            item.grid(
+                row=index // self.columns, column=index % self.columns,
+                padx=3, pady=3, sticky="nsew",
+            )
             image = (
                 tk.PhotoImage(master=root, file=str(choice.image_path))
                 if choice.image_path.is_file() else None
@@ -67,10 +71,9 @@ class FoodMenu:
             button.pack(fill="x")
             self.buttons[choice.id] = button
             tk.Label(
-                item, text=(
-                    f"+{choice.satiety_points:.0f} · {choice.category_label}"
-                ),
-                bg=skin.panel, fg=skin.muted,
+                item,
+                text=f"{choice.benefit_label} · {choice.category_label}",
+                bg=skin.panel, fg=skin.muted, wraplength=105,
                 font=(skin.font, 8),
             ).pack(pady=(1, 4))
         skin.button(outer, "Schließen", self.close).pack(
@@ -85,7 +88,7 @@ class FoodMenu:
         self.window.geometry(f"+{tx}+{ty}")
         self.window.deiconify()
 
-    def choose(self, food_id: FoodId) -> None:
+    def choose(self, food_id: FoodChoiceId) -> None:
         if self._closed:
             return
         self.close()

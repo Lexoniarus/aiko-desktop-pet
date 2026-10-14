@@ -17,9 +17,11 @@ def clock(hour: int = 8) -> float:
 
 
 class FoodPolicyTests(unittest.TestCase):
-    def test_all_five_foods_have_distinct_immediate_and_delayed_effects(self) -> None:
+    def test_all_ten_foods_have_distinct_immediate_and_delayed_effects(self) -> None:
         self.assertEqual(
-            set(FOOD_CATALOG), {"onigiri", "sandwich", "taiyaki", "apple", "dango"},
+            set(FOOD_CATALOG),
+            {"onigiri", "sandwich", "taiyaki", "apple", "dango",
+             "donut", "cookie", "melonpan", "cupcake", "dorayaki"},
         )
         immediate = {
             profile.instant_satiety_points for profile in FOOD_CATALOG.values()
@@ -27,8 +29,8 @@ class FoodPolicyTests(unittest.TestCase):
         reserves = {
             profile.digest_reserve_minutes for profile in FOOD_CATALOG.values()
         }
-        self.assertEqual(len(immediate), 5)
-        self.assertEqual(len(reserves), 5)
+        self.assertEqual(len(immediate), 10)
+        self.assertEqual(len(reserves), 10)
         self.assertGreater(
             FOOD_CATALOG["sandwich"].instant_satiety_points,
             FOOD_CATALOG["dango"].instant_satiety_points,

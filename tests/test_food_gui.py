@@ -32,7 +32,7 @@ class FoodGuiTests(unittest.TestCase):
         self.pet.state.sleeping = False
         self.pet._on_enter()
 
-    def test_selecting_one_of_five_foods_feeds_the_matching_item(self) -> None:
+    def test_selecting_from_eleven_foods_feeds_the_matching_item(self) -> None:
         bar = self.pet._hover.toolbar
         assert bar is not None
         bar.buttons["feed"].invoke()
@@ -40,9 +40,12 @@ class FoodGuiTests(unittest.TestCase):
         assert menu is not None
         self.assertEqual(
             set(menu.buttons),
-            {"onigiri", "sandwich", "taiyaki", "apple", "dango"},
+            {"onigiri", "sandwich", "taiyaki", "apple", "dango",
+             "donut", "cookie", "melonpan", "cupcake", "dorayaki",
+             "energy_drink"},
         )
-        self.assertEqual(len(menu.images), 5)
+        self.assertEqual(len(menu.images), 11)
+        self.assertEqual(menu.columns, 6)
         self.assertEqual(self.pet.state.satiety, 75)
         menu.buttons["apple"].invoke()
         self.assertIsNone(self.pet._hover.food_menu)
@@ -63,11 +66,12 @@ class FoodGuiTests(unittest.TestCase):
 
     def test_png_assets_are_64_pixels_and_have_alpha(self) -> None:
         choices = food_choices()
-        self.assertEqual(len(choices), 5)
+        self.assertEqual(len(choices), 11)
         for choice in choices:
             with self.subTest(food=choice.id):
                 self.assertEqual(
-                    choice.image_path.parent, ASSET_ROOT / "food",
+                    choice.image_path.parent,
+                    ASSET_ROOT / "items" / "icons" / "64",
                 )
                 self.assertTrue(choice.image_path.is_file())
                 image = tk.PhotoImage(
@@ -75,6 +79,79 @@ class FoodGuiTests(unittest.TestCase):
                 )
                 self.assertEqual((image.width(), image.height()), (64, 64))
                 self.assertTrue(image.transparency_get(0, 0))
+
+    def test_energy_drink_uses_energy_care_and_held_can_not_food(self) -> None:
+        bar = self.pet._hover.toolbar
+        assert bar is not None
+        self.pet.state.energy = 40
+        self.pet.state.satiety = 30
+        old_fun = self.pet.state.fun
+        old_food = self.pet.state.food
+        bar.buttons["feed"].invoke()
+        menu = self.pet._hover.food_menu
+        assert menu is not None
+        self.assertEqual(menu.buttons["energy_drink"].cget("text"), "Energy Drink")
+        menu.buttons["energy_drink"].invoke()
+        self.assertIsNone(self.pet._hover.food_menu)
+        self.assertGreater(self.pet.state.energy, 40)
+        self.assertLess(self.pet.state.satiety, 40)
+        self.assertEqual(self.pet.state.food, old_food)
+        self.assertAlmostEqual(self.pet.state.fun, old_fun, places=1)
+        self.assertEqual(
+            self.pet._animated.food_overlay.current_food_id, "energy_drink",
+        )
+        self.assertEqual(self.pet._animated.frame_clock.active_key[0], "eat")
+
+    def test_full_energy_rejects_drink_without_eating_animation(self) -> None:
+        self.pet.state.energy = 100
+        self.pet.state.satiety = 45
+        self.pet._hover.open_food_menu()
+        menu = self.pet._hover.food_menu
+        assert menu is not None
+        menu.buttons["energy_drink"].invoke()
+        self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
+        self.assertNotEqual(
+            self.pet._animated.frame_clock.active_key[0], "eat",
+        )
+
+    def test_all_native_food_overlays_render_at_both_scales(self) -> None:
+        overlay = self.pet._animated.food_overlay
+        for scale in (1, 2):
+            self.pet.settings.scale = scale
+            self.pet._window.resize()
+            self.pet._animated.reload_sprites()
+            for choice in food_choices():
+                with self.subTest(scale=scale, food=choice.id):
+                    self.pet._animated.set_food_overlay(choice.id)
+                    self.pet._animated.begin_action("eat", time.monotonic())
+                    self.assertEqual(
+                        self.pet.canvas.itemcget(overlay.item, "state"),
+                        "normal",
+                    )
+                    expected = overlay._images[(choice.id, scale)]
+                    actual = self.pet.canvas.itemcget(overlay.item, "image")
+                    self.assertEqual(actual, str(expected))
+                    self.pet._animated.show_frame(
+                        "idle", time.monotonic(), fixed=0,
+                    )
+                    self.assertEqual(
+                        self.pet.canvas.itemcget(overlay.item, "state"),
+                        "hidden",
+                    )
+
+    def test_switching_scale_does_not_interrupt_animation_timers(self) -> None:
+        self.pet._animated.set_food_overlay("cupcake")
+        self.pet._animated.begin_action("eat", time.monotonic())
+        clock = self.pet._animated.frame_clock
+        for scale in (2, 1, 2):
+            self.pet.settings.scale = scale
+            self.pet._window.resize()
+            self.pet._animated.reload_sprites()
+            self.assertIs(self.pet._animated.frame_clock, clock)
+            self.assertEqual(
+                self.pet._animated.food_overlay.current_food_id, "cupcake",
+            )
+            self.assertIsNotNone(self.pet._animated._frame_timer)
 
     def test_hand_overlay_uses_the_eight_authored_frame_anchors(self) -> None:
         animated = self.pet._animated
