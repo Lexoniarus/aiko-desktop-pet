@@ -68,42 +68,11 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
-    def test_legacy_packages_do_not_own_classes(self) -> None:
-        for folder in LEGACY_PACKAGES:
-            for path in (ROOT / folder).glob("*.py"):
-                with self.subTest(path=str(path.relative_to(ROOT))):
-                    tree = ast.parse(path.read_text("utf-8"))
-                    self.assertFalse(any(
-                        isinstance(node, ast.ClassDef)
-                        for node in tree.body
-                    ))
-
-# Explicit boundary suites deliberately verify that legacy public aliases
-# resolve to their one canonical owner. No ordinary behavior suite may rely on
-# these imports, so removing a compatibility facade is an isolated decision.
-COMPATIBILITY_TESTS = frozenset({
-    "test_game_window_ownership.py",
-    "test_hover_owner_boundary.py",
-    "test_pet_animation_contracts.py",
-    "test_pet_animation_policy_boundary.py",
-    "test_pet_animation_timing_boundary.py",
-    "test_pet_gaze_boundary.py",
-    "test_pet_idle_emote_boundary.py",
-    "test_pet_item_assets_boundary.py",
-    "test_pet_mind_boundary.py",
-    "test_pet_movement_boundary.py",
-    "test_pet_renderer_ownership.py",
-    "test_pet_speech_owner.py",
-    "test_pet_view_helpers.py",
-    "test_reaction_owner_boundary.py",
-    "test_ui_common_boundary.py",
-    "test_ui_control_owner_boundary.py",
-    "test_ui_skin_boundary.py",
-    "test_ui_view_contract_owner.py",
-    "test_ui_view_models_owner.py",
-    "test_ui_window_contracts_boundary.py",
-})
-
+    def test_old_packages_and_ui_alias_modules_were_removed(self) -> None:
+        for name in LEGACY_PACKAGES:
+            self.assertFalse((ROOT / name).exists())
+        for name in LEGACY_UI_MODULES:
+            self.assertFalse((ROOT / "ui" / f"{name}.py").exists())
 
 def imported_modules(source: Path) -> tuple[str, ...]:
     """Inspect both regular imports and from-imports without executing code."""
@@ -121,13 +90,10 @@ def imported_modules(source: Path) -> tuple[str, ...]:
 
 
 class LegacyBoundaryAuditTests(unittest.TestCase):
-    def test_tools_and_regular_tests_use_only_canonical_imports(self) -> None:
+    def test_tools_and_all_tests_use_only_canonical_imports(self) -> None:
         tests = ROOT.parent / "tests"
         tools = ROOT.parent / "tools"
-        candidates = tuple(tools.glob("*.py")) + tuple(
-            path for path in tests.glob("*.py")
-            if path.name not in COMPATIBILITY_TESTS
-        )
+        candidates = tuple(tools.glob("*.py")) + tuple(tests.glob("*.py"))
         for path in candidates:
             with self.subTest(module=path.name):
                 for module in imported_modules(path):
