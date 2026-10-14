@@ -5,6 +5,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
+@dataclass(frozen=True, slots=True)
+class CursorAttentionSnapshot:
+    """Immutable clock values used when rendering one frame."""
+
+    last_pointer_move: float
+    attention_until: float
+
+
 @dataclass(slots=True)
 class CursorAttention:
     """Track pointer changes and the original brief walk-attention window."""
@@ -20,6 +28,13 @@ class CursorAttention:
         self.last_pointer_move = -100.0
         self.last_attention = -100.0
         self.attention_until = -100.0
+
+    def snapshot(self) -> CursorAttentionSnapshot:
+        """Read the current attention window without exposing mutable state."""
+        return CursorAttentionSnapshot(
+            last_pointer_move=self.last_pointer_move,
+            attention_until=self.attention_until,
+        )
 
     def observe(
         self, pointer: tuple[int, int], now: float, *, game_mode: bool = False,
