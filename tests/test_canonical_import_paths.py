@@ -77,3 +77,61 @@ class CanonicalImportTests(unittest.TestCase):
                         isinstance(node, ast.ClassDef)
                         for node in tree.body
                     ))
+
+# Explicit boundary suites deliberately verify that legacy public aliases
+# resolve to their one canonical owner. No ordinary behavior suite may rely on
+# these imports, so removing a compatibility facade is an isolated decision.
+COMPATIBILITY_TESTS = frozenset({
+    "test_game_window_ownership.py",
+    "test_hover_owner_boundary.py",
+    "test_pet_animation_contracts.py",
+    "test_pet_animation_policy_boundary.py",
+    "test_pet_animation_timing_boundary.py",
+    "test_pet_gaze_boundary.py",
+    "test_pet_idle_emote_boundary.py",
+    "test_pet_item_assets_boundary.py",
+    "test_pet_mind_boundary.py",
+    "test_pet_movement_boundary.py",
+    "test_pet_renderer_ownership.py",
+    "test_pet_speech_owner.py",
+    "test_pet_view_helpers.py",
+    "test_reaction_owner_boundary.py",
+    "test_ui_common_boundary.py",
+    "test_ui_control_owner_boundary.py",
+    "test_ui_skin_boundary.py",
+    "test_ui_view_contract_owner.py",
+    "test_ui_view_models_owner.py",
+    "test_ui_window_contracts_boundary.py",
+})
+
+
+def imported_modules(source: Path) -> tuple[str, ...]:
+    """Inspect both regular imports and from-imports without executing code."""
+    syntax = ast.parse(source.read_text("utf-8"))
+    return tuple(
+        node.module or ""
+        for node in ast.walk(syntax)
+        if isinstance(node, ast.ImportFrom)
+    ) + tuple(
+        alias.name
+        for node in ast.walk(syntax)
+        if isinstance(node, ast.Import)
+        for alias in node.names
+    )
+
+
+class LegacyBoundaryAuditTests(unittest.TestCase):
+    def test_tools_and_regular_tests_use_only_canonical_imports(self) -> None:
+        tests = ROOT.parent / "tests"
+        tools = ROOT.parent / "tools"
+        candidates = tuple(tools.glob("*.py")) + tuple(
+            path for path in tests.glob("*.py")
+            if path.name not in COMPATIBILITY_TESTS
+        )
+        for path in candidates:
+            with self.subTest(module=path.name):
+                for module in imported_modules(path):
+                    self.assertFalse(
+                        legacy_target(module),
+                        f"{path.name} imports deprecated {module}",
+                    )
