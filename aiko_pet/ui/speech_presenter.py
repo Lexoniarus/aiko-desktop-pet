@@ -10,7 +10,7 @@ from typing import Callable
 
 from ..asset_paths import EMOTE_ASSETS, GAME_HANDS_DIR
 from ..games.rock_paper_scissors import Move
-from ..personality.reaction_sequence import EMOTES
+from ..pet.mind.reaction_sequence import EMOTES
 
 
 @dataclass(frozen=True, slots=True)

@@ -9,11 +9,11 @@ from __future__ import annotations
 import time
 from typing import Callable
 
-from ..personality.adaptive import AdaptiveRoutine
+from ..pet.mind.adaptive import AdaptiveRoutine
 from ..application.ports import ComputerReadings
 from ..application.read_snapshot import snapshot_pet
 from ..application.settings import PetSettings
-from ..personality.mind import AikoMind
+from ..pet.mind import PetMind
 from ..pet.state import PetState
 from ..pet.routine import TimeContext
 from ..telemetry import ComputerSnapshot
@@ -27,7 +27,7 @@ class DesktopPresentation:
     """Map domain snapshots to the three desktop windows on the owner thread."""
 
     def __init__(
-        self, state: PetState, settings: PetSettings, mind: AikoMind,
+        self, state: PetState, settings: PetSettings, mind: PetMind,
         adaptive: AdaptiveRoutine, monitor: ComputerReadings,
         *, context: Callable[[], TimeContext],
         sprite_size: Callable[[], tuple[int, int]],

@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from typing import Callable
 
-from ..personality.catalog import Reaction
-from ..personality.reaction_sequence import Cue, compose_cues
+from ..pet.mind.catalog import Reaction
+from ..pet.mind.reaction_sequence import Cue, compose_cues
 
 TimerCallback = Callable[[], None]
 ScheduleTimer = Callable[[int, TimerCallback], str]

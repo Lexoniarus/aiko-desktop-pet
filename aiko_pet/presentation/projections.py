@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from ..personality.adaptive_models import Behaviour
+from ..pet.mind.adaptive_models import Behaviour
 from ..application.read_snapshot import PetReadSnapshot
 from ..application.settings import PetSettings
-from ..personality.catalog import EMOTION_LABELS
+from ..pet.mind.catalog import EMOTION_LABELS
 from ..pet.routine import TimeContext
 from ..telemetry import ComputerSnapshot
 from .contracts import HoverSnapshot, SettingsSnapshot, StatusSnapshot

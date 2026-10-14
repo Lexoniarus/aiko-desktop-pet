@@ -39,9 +39,9 @@ from .desktop.global_input import (
 from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
 from .desktop.farewell import FarewellSequence
-from .personality.mind import AikoMind
-from .personality.workload_events import WorkloadEventDetector
-from .personality.catalog import Reaction
+from .pet.mind import PetMind
+from .pet.mind.workload_events import WorkloadEventDetector
+from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
 from .presentation.reaction_playback import ReactionPlayer, choose_idle_emote
 from .infrastructure.character_assets import load_character_catalog
@@ -113,7 +113,7 @@ class DesktopPet:
         self._persistence = DesktopPersistence(
             self.store, self.state, self.settings, self.adaptive,
         )
-        self.mind = AikoMind(started_at=self._persistence.last_saved)
+        self.mind = PetMind(started_at=self._persistence.last_saved)
         active_clock = ActiveSessionClock(active_uptime_seconds)
         self.application = ApplicationRouter(
             CareController(self.state, self.mind, self.adaptive, clock=active_clock),
