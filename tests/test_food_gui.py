@@ -7,6 +7,7 @@ import time
 import tkinter as tk
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.gui import DesktopPet
@@ -86,7 +87,7 @@ class FoodGuiTests(unittest.TestCase):
         self.pet.state.energy = 40
         self.pet.state.satiety = 30
         old_fun = self.pet.state.fun
-        old_food = self.pet.state.food
+        old_food_history = self.pet.state.food.recent_food_ids
         bar.buttons["feed"].invoke()
         menu = self.pet._hover.food_menu
         assert menu is not None
@@ -95,7 +96,10 @@ class FoodGuiTests(unittest.TestCase):
         self.assertIsNone(self.pet._hover.food_menu)
         self.assertGreater(self.pet.state.energy, 40)
         self.assertLess(self.pet.state.satiety, 40)
-        self.assertEqual(self.pet.state.food, old_food)
+        self.assertEqual(
+            self.pet.state.food.recent_food_ids, old_food_history,
+        )
+        self.assertEqual(self.pet.state.food.remaining_digest_minutes, 0)
         self.assertAlmostEqual(self.pet.state.fun, old_fun, places=1)
         self.assertEqual(
             self.pet._animated.food_overlay.current_food_id, "energy_drink",
@@ -110,7 +114,11 @@ class FoodGuiTests(unittest.TestCase):
         self.pet._hover.open_food_menu()
         menu = self.pet._hover.food_menu
         assert menu is not None
-        menu.buttons["energy_drink"].invoke()
+        with patch.object(
+            self.pet.application._care._clock, "consume",
+            return_value=0.0,
+        ):
+            menu.buttons["energy_drink"].invoke()
         self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
         self.assertNotEqual(
             self.pet._animated.frame_clock.active_key, ("eat", None),

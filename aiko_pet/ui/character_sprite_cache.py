@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import tkinter as tk
 from collections.abc import Sequence
+from pathlib import Path
 from typing import overload
 
 from ..presentation.character import CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH
@@ -18,10 +19,11 @@ class _ScaledFrames(Sequence[tk.PhotoImage]):
 
     def __init__(
         self, originals: tuple[tk.PhotoImage, ...], *, scale: int,
+        zoomed: dict[str, tk.PhotoImage],
     ) -> None:
         self._originals = originals
         self._scale = scale
-        self._zoomed: dict[int, tk.PhotoImage] = {}
+        self._zoomed = zoomed
 
     def __len__(self) -> int:
         return len(self._originals)
@@ -43,10 +45,11 @@ class _ScaledFrames(Sequence[tk.PhotoImage]):
         original = self._originals[index]
         if self._scale == 1:
             return original
-        image = self._zoomed.get(index)
+        key = str(original)
+        image = self._zoomed.get(key)
         if image is None:
             image = original.zoom(2)
-            self._zoomed[index] = image
+            self._zoomed[key] = image
         return image
 
 
@@ -55,20 +58,25 @@ class CharacterSpriteCache:
 
     def __init__(self, root: tk.Tk, catalog: CharacterCatalog) -> None:
         originals: dict[str, tuple[tk.PhotoImage, ...]] = {}
+        by_path: dict[Path, tk.PhotoImage] = {}
         for state, clip in catalog.clips.items():
             loaded: list[tk.PhotoImage] = []
             for definition in clip.frames:
                 path = definition.file
-                if not path.is_file():
-                    raise FileNotFoundError(f"Missing sprite: {path}")
-                frame = tk.PhotoImage(master=root, file=str(path))
-                if (frame.width(), frame.height()) != (
-                    FRAME_WIDTH, FRAME_HEIGHT,
-                ):
-                    raise ValueError(f"Invalid sprite dimensions: {path}")
+                frame = by_path.get(path)
+                if frame is None:
+                    if not path.is_file():
+                        raise FileNotFoundError(f"Missing sprite: {path}")
+                    frame = tk.PhotoImage(master=root, file=str(path))
+                    if (frame.width(), frame.height()) != (
+                        FRAME_WIDTH, FRAME_HEIGHT,
+                    ):
+                        raise ValueError(f"Invalid sprite dimensions: {path}")
+                    by_path[path] = frame
                 loaded.append(frame)
             originals[state] = tuple(loaded)
         self._originals = originals
+        self._shared_zoomed: dict[str, tk.PhotoImage] = {}
         self._views: dict[int, dict[str, Sequence[tk.PhotoImage]]] = {}
 
     def for_scale(self, scale: int) -> dict[str, Sequence[tk.PhotoImage]]:
@@ -76,7 +84,9 @@ class CharacterSpriteCache:
             raise ValueError("Character scale must be 1 or 2")
         if scale not in self._views:
             self._views[scale] = {
-                name: _ScaledFrames(frames, scale=scale)
+                name: _ScaledFrames(
+                    frames, scale=scale, zoomed=self._shared_zoomed,
+                )
                 for name, frames in self._originals.items()
             }
         return self._views[scale]
