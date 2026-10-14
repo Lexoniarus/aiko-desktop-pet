@@ -101,7 +101,7 @@ class PersistentWindowTests(unittest.TestCase):
             finish()
         self.assertTrue(self.pet._closed)
         self.assertIsNone(self.pet._farewell.pending_timer)
-        self.assertEqual(self.pet.root.winfo_exists(), 0)
+        self.assertTrue(self.pet._lifecycle._stopped)
 
     def test_direct_quit_cancels_pending_farewell(self) -> None:
         settings = self.settings()
