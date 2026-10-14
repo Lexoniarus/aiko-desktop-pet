@@ -13,6 +13,7 @@ from typing import Callable
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
+from ..pet.mind.click_policy import ClickButton
 from ..pet.routine import TimeContext
 from ..pet.state import PetState
 
@@ -62,7 +63,7 @@ class ContactCoordinator:
         self._ports.show_toolbar()
         self._ports.react(reaction, 2800)
 
-    def click(self, button: str) -> None:
+    def click(self, button: ClickButton) -> None:
         """Deliver an intentional click only after initiating hover."""
         self.enter()
         now = time.monotonic()
