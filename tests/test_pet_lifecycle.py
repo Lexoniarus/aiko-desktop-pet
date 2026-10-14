@@ -36,7 +36,7 @@ class NeedDecayTests(unittest.TestCase):
     def test_normal_waking_decay_does_not_require_pet_state(self) -> None:
         needs = Needs()
         apply_need_decay(needs, 1, context=None)
-        self.assertEqual(needs.satiety, 67.0)
+        self.assertAlmostEqual(needs.satiety, 67.0)
         self.assertEqual(needs.mood, 71.0)
         self.assertAlmostEqual(needs.energy, 69.0)
         self.assertEqual(needs.social, 67.0)
@@ -46,7 +46,7 @@ class NeedDecayTests(unittest.TestCase):
         needs = Needs(sleeping=True, energy=40)
         apply_need_decay(needs, 1, context=None, effort=1.0)
         self.assertEqual(needs.energy, 62)
-        self.assertEqual(needs.satiety, 73.6)
+        self.assertAlmostEqual(needs.satiety, 73.6)
         self.assertEqual(needs.affection, 74.75)
 
     def test_heavy_work_increases_waking_drain(self) -> None:

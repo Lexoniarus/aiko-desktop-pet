@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import sys
 import tkinter as tk
+from functools import partial
 from typing import Callable
 
-from ..presentation.food_models import FoodChoice, FoodId
+from ..pet.food import FoodId
+from ..presentation.food_models import FoodChoice
 from .skin import AikoSkin
 from .window_drag import WindowDrag, bounded_position
 
@@ -54,10 +56,9 @@ class FoodMenu:
             if image is not None:
                 self.images[choice.id] = image
             button = tk.Button(
-                item, text=choice.name, image=image,
-                compound="top", command=(
-                    lambda food_id=choice.id: self.choose(food_id)
-                ),
+                item, text=choice.name,
+                image=image if image is not None else "",
+                compound="top", command=partial(self.choose, choice.id),
                 font=(skin.font, 9), fg=skin.text,
                 bg=skin.panel, activebackground=skin.background,
                 activeforeground=skin.accent,

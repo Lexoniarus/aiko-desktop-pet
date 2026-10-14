@@ -11,7 +11,8 @@ from ..application.settings import SettingKey
 from .action_toolbar import ActionToolbar
 from .game_speech import GameSpeech
 from .food_menu import FoodMenu
-from ..presentation.food_models import FoodId, food_choices
+from ..pet.food import FoodId
+from ..presentation.food_models import food_choices
 from .rock_paper_scissors_window import RockPaperScissorsWindow
 from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .settings_contracts import SettingsActions, SettingsSnapshot
