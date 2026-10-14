@@ -9,11 +9,11 @@ from typing import Callable
 
 from ..application.settings import SettingKey
 from .windows.action_toolbar import ActionToolbar
-from .game_speech import GameSpeech
+from .windows.game_speech import GameSpeech
 from ..games.rock_paper_scissors import Score
 from .windows.food_menu import FoodMenu
 from ..presentation.food_models import FoodChoiceId, food_choices
-from .rock_paper_scissors_window import RockPaperScissorsWindow
+from .windows.rock_paper_scissors_window import RockPaperScissorsWindow
 from .windows.hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .windows.settings_contracts import SettingsActions, SettingsSnapshot
 from .windows.settings_window import SettingsWindow
