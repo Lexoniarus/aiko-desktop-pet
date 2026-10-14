@@ -41,7 +41,7 @@ from .desktop.global_input import (
 from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
 from .desktop.farewell import FarewellSequence
-from .pet.mind import PetMind
+from .infrastructure.character_mind import make_aiko_mind
 from .pet.mind.workload_events import WorkloadEventDetector
 from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
@@ -123,7 +123,7 @@ class DesktopPet:
         self._persistence = DesktopPersistence(
             self.store, self.state, self.settings, self.adaptive,
         )
-        self.mind = PetMind(started_at=self._persistence.last_saved)
+        self.mind = make_aiko_mind(started_at=self._persistence.last_saved)
         self._cursor_observation = CursorObservation(self.mind.cursor_attention)
         active_clock = ActiveSessionClock(active_uptime_seconds)
         self.application = ApplicationRouter(
