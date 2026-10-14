@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..personality.adaptive import AdaptiveRoutine
-from ..personality.mind import AikoMind
-from ..personality.catalog import Reaction
+from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind import PetMind
+from ..pet.mind.catalog import Reaction
 from ..pet.food import FoodActivity, FOOD_BALANCE, DEFAULT_FOOD_ID
 from ..pet.state import PetState
 from ..pet.routine import TimeContext, context_at
@@ -43,7 +43,7 @@ class CareController:
     """Coordinate existing pet and conversation rules without UI side effects."""
 
     def __init__(
-        self, state: PetState, mind: AikoMind, adaptive: AdaptiveRoutine,
+        self, state: PetState, mind: PetMind, adaptive: AdaptiveRoutine,
         *, clock: ActiveSessionClock,
     ) -> None:
         self._state = state

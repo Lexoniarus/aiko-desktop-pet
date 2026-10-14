@@ -6,10 +6,10 @@ import time
 from dataclasses import dataclass
 from typing import Callable
 
-from ..personality.adaptive import AdaptiveRoutine, Observation
-from ..personality.mind import AikoMind
-from ..personality.workload_events import WorkloadEventDetector
-from ..personality.catalog import Reaction
+from ..pet.mind.adaptive import AdaptiveRoutine, Observation
+from ..pet.mind import PetMind
+from ..pet.mind.workload_events import WorkloadEventDetector
+from ..pet.mind.catalog import Reaction
 from ..pet.food import FoodActivity
 from ..pet.state import PetState
 from .food_activity import FoodActivityHistory
@@ -46,7 +46,7 @@ class ActivityCoordinator:
 
     def __init__(
         self, state: PetState, settings: PetSettings,
-        mind: AikoMind, adaptive: AdaptiveRoutine,
+        mind: PetMind, adaptive: AdaptiveRoutine,
         voice: WorkloadEventDetector, monitor: ComputerObservation,
         callbacks: ActivityCallbacks,
         *, clock: ActiveSessionClock,

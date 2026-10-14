@@ -10,9 +10,9 @@ import random
 from dataclasses import dataclass
 
 
-from ..personality.mind import AikoMind
-from ..personality.workload_events import WorkloadEventDetector
-from ..personality.catalog import Reaction
+from ..pet.mind import PetMind
+from ..pet.mind.workload_events import WorkloadEventDetector
+from ..pet.mind.catalog import Reaction
 from ..pet.state import PetState
 from ..pet.routine import TimeContext
 from .settings import PetSettings
@@ -34,7 +34,7 @@ class AttentionCoordinator:
     """Own Aiko's attention clocks and non-interrupting notification rules."""
 
     def __init__(
-        self, state: PetState, settings: PetSettings, mind: AikoMind,
+        self, state: PetState, settings: PetSettings, mind: PetMind,
         voice: WorkloadEventDetector, monitor: ComputerReadings,
         router: ApplicationRouter, *, started_at: float,
     ) -> None:

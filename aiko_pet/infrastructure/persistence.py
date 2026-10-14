@@ -10,7 +10,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-from ..personality.adaptive_models import AdaptiveMemory
+from ..pet.mind.adaptive_models import AdaptiveMemory
 from ..application.session import LoadedPetData
 from ..application.settings import PetSettings as PetSettings
 from ..pet.state import PetState

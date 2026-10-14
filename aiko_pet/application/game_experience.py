@@ -9,8 +9,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..games.rock_paper_scissors import Score
-from ..personality.adaptive import AdaptiveRoutine
-from ..personality.mind import AikoMind
+from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind import PetMind
 from ..pet.fun import GameExperience
 from ..pet.state import PetState
 from .active_time import ActiveSessionClock
@@ -40,7 +40,7 @@ class GameExperienceCoordinator:
     """Owner-thread use case for completed games, independent of Tk windows."""
 
     def __init__(
-        self, state: PetState, mind: AikoMind, adaptive: AdaptiveRoutine, *,
+        self, state: PetState, mind: PetMind, adaptive: AdaptiveRoutine, *,
         clock: ActiveSessionClock,
     ) -> None:
         self._state = state
