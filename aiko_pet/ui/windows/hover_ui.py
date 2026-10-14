@@ -205,6 +205,10 @@ class HoverUi:
         self.toolbar.show()
         self._set_care_buttons_enabled(not self.game_open)
 
+    def note_sprite_hover(self, now: float) -> None:
+        """Keep hover timing with the owner of toolbar visibility."""
+        self.last_hover = now
+
     def toggle_pin(self) -> None:
         self._keep_open = not self._keep_open
         self.last_hover = time.monotonic()

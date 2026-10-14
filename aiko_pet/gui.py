@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import time
 import tkinter as tk
-from dataclasses import replace
 from tkinter import font as tkfont
 from tkinter import messagebox
 
@@ -22,6 +21,7 @@ from .desktop.maintenance import DesktopMaintenance
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController
+from .application.contact import ContactCoordinator, ContactPorts
 from .application.active_time import ActiveSessionClock
 from .pet.food import FoodId
 from .infrastructure.active_time import active_uptime_seconds
@@ -242,6 +242,23 @@ class DesktopPet:
                 ),
             ),
         )
+        self._contact = ContactCoordinator(
+            state=self.state, mind=self.mind, adaptive=self.adaptive,
+            ports=ContactPorts(
+                context=lambda: self.context,
+                toolbar_hidden=lambda: (
+                    self._hover.toolbar is None or not self._hover.toolbar.visible
+                ),
+                mark_hover=self._hover.note_sprite_hover,
+                interrupt_walk=lambda: self._animated.movement.interrupt(),
+                show_toolbar=lambda: self._hover.show_toolbar(),
+                game_open=lambda: self._hover.game_open,
+                cancel_followup=lambda: self._cancel_followup(),
+                hide_speech=lambda: self._speech.hide(),
+                react=lambda reaction, duration: self._react(reaction, duration),
+                should_greet=lambda now: self._attention.should_greet(now),
+            ),
+        )
         self._input = DesktopInput(
             self.root, self.canvas,
             DesktopInputActions(
@@ -339,7 +356,7 @@ class DesktopPet:
         self._lifecycle.start()
 
     def _record_hover_contact(self, now: float) -> None:
-        self.mind.last_contact = now
+        self._contact.record_contact(now)
 
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
@@ -379,35 +396,16 @@ class DesktopPet:
         self._preferences.record_toolbar_position(x, y)
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
-        now = time.monotonic()
-        was_hidden = self._hover.toolbar is None or not self._hover.toolbar.visible
-        reaction = (
-            self.mind.return_to_pet(self.state, self.context, now)
-            if was_hidden else None
-        )
-        self._hover.last_hover = now
-        self._animated.movement.interrupt()
-        self._hover.show_toolbar()
-        self._react(reaction, 2800)
+        self._contact.enter()
 
     def _on_click_left(self, _event: tk.Event | None = None) -> None:
-        self._on_enter()
-        now = time.monotonic()
-        self.adaptive.note_interaction(time.time())
-        self._react_to_click(self.mind.click("left", self.state, self.context, now))
+        self._contact.click("left")
 
     def _on_click_right(self, _event: tk.Event | None = None) -> None:
-        self._on_enter()
-        now = time.monotonic()
-        self.adaptive.note_interaction(time.time())
-        self._react_to_click(self.mind.click("right", self.state, self.context, now))
+        self._contact.click("right")
 
     def _greet_on_start(self) -> None:
-        if not self._attention.should_greet(time.monotonic()):
-            return
-        self._react(self.mind.say_event(
-            "greeting", self.state, self.context, time.monotonic(),
-        ), 3300)
+        self._contact.greet()
 
     def _mark_reaction_spoken(self) -> None:
         self._attention.mark_spoken(time.monotonic())
@@ -417,15 +415,7 @@ class DesktopPet:
         self._reaction_player.cancel()
 
     def _react_to_click(self, reaction: Reaction | None) -> None:
-        if self._hover.game_open:
-            return
-        if reaction is None:
-            self._cancel_followup()
-            self._speech.hide()
-            return
-        if len(self.mind.clicks) >= 3 and reaction.emote_before is not None:
-            reaction = replace(reaction, emote_before=None)
-        self._react(reaction, 2800)
+        self._contact.react_to_click(reaction)
 
     def _react(self, reaction: Reaction | None, duration_ms: int = 2600) -> None:
         """Delegate the timeline; the GUI only renders visual effects."""
