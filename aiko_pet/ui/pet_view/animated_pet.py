@@ -7,7 +7,6 @@ widgets, notification adapters or network services. All host effects use ports.
 from __future__ import annotations
 
 import math
-import random
 import time
 import tkinter as tk
 from dataclasses import dataclass
@@ -21,19 +20,19 @@ from ...pet.animation.ambient import AmbientDirector
 from ...pet.animation.character import CharacterCatalog, FRAME_WIDTH
 from ...pet.animation.gaze import gaze_sector
 from ...pet.mind.cursor_attention import CursorAttention
-from ...pet.movement import WalkConditions, WalkController
+from ...pet.movement import WalkController
+from .walk_driver import (
+    ActivityReadings as ActivityReadings,
+    BusyReading as BusyReading,
+    FocusReadings as FocusReadings,
+    FocusState as FocusState,
+    WalkDriver,
+    WalkDriverPorts,
+)
 from .food_overlay import FoodOverlay
 from .character_sprite_cache import CharacterSpriteCache
 from .rest_pose_renderer import RestPoseRenderer
 from ...desktop.geometry import TaskbarTrack, FOOT_BASELINE
-
-
-class BusyReading(Protocol):
-    def is_busy(self) -> bool: ...
-
-
-class ActivityReadings(Protocol):
-    def latest(self) -> BusyReading: ...
 
 
 class CareVisuals(Protocol):
@@ -55,19 +54,6 @@ class CharacterSettings(Protocol):
     auto_walk: bool
     observe_computer: bool
 
-
-
-class FocusState(Protocol):
-    @property
-    def focused(self) -> bool: ...
-
-    @property
-    def quiet(self) -> bool: ...
-
-
-class FocusReadings(Protocol):
-    @property
-    def current(self) -> FocusState | None: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -109,8 +95,15 @@ class AnimatedPet:
         self._walk_progress = 0.0
         self.frame_clock = FrameClock(started_at=time.monotonic())
         self._ambient = AmbientDirector(started_at=time.monotonic())
-        self.movement = WalkController(
-            next_walk_at=time.monotonic() + random.uniform(60.0, 180.0),
+        self._walk_driver = WalkDriver(
+            state=state, settings=settings, adaptive=adaptive, monitor=monitor,
+            walk_cycle_seconds=assets.clips["running-left"].duration_seconds,
+            ports=WalkDriverPorts(
+                track=ports.track,
+                toolbar_visible=ports.toolbar_visible,
+                place_x=ports.place_x,
+                walk_finished=ports.walk_finished,
+            ),
         )
         self.gaze_sector: int | None = None
         self._game_mode = False
@@ -145,11 +138,18 @@ class AnimatedPet:
     def last_attention(self) -> float:
         return self._cursor_attention.last_attention
 
+    @property
+    def movement(self) -> WalkController:
+        """Compatibility access to the driver-owned walking controller."""
+        return self._walk_driver.movement
+
+    @movement.setter
+    def movement(self, value: WalkController) -> None:
+        self._walk_driver.movement = value
+
     def set_auto_walk(self, enabled: bool, now: float) -> None:
-        """Walking configuration belongs to the character's movement owner."""
-        self.settings.auto_walk = bool(enabled)
-        self.movement.interrupt()
-        self.movement.pause(now)
+        """Delegate walking preferences to their movement owner."""
+        self._walk_driver.set_auto_walk(enabled, now)
 
     def set_follow_cursor(self, enabled: bool) -> None:
         self.settings.follow_cursor = bool(enabled)
@@ -321,50 +321,11 @@ class AnimatedPet:
         return self.gaze_sector
 
     def maybe_walk(self, now: float, dt: float) -> str | None:
-        """Plan horizontal motion and let the host apply taskbar geometry."""
-        if self._game_mode:
-            return None
-        observed = self.adaptive.current
-        busy = (
-            observed.focused if observed is not None
-            else self.monitor.latest().is_busy()
-        )
-        step = self.movement.plan_step(WalkConditions(
-            now=now,
-            elapsed_seconds=dt,
-            speed_pixels_per_second=(
-                68 * self.settings.scale
-                / self.assets.clips["running-left"].duration_seconds
-            ),
-            stride_pixels=68 * self.settings.scale,
-            x=self.settings.x or 0,
-            track=self.ports.track(),
-            sprite_width=FRAME_WIDTH * self.settings.scale,
-            energy=self.state.energy,
-            auto_walk=self.settings.auto_walk,
-            sleeping=self.state.sleeping,
+        """Maintain the original sprite API while delegating desktop motion."""
+        return self._walk_driver.step(
+            now, dt, game_mode=self._game_mode,
             attention_active=now < self.attention_until,
-            toolbar_visible=self.ports.toolbar_visible(),
-            observing_computer=self.settings.observe_computer,
-            computer_busy=busy,
-            quiet_period=bool(observed is not None and observed.quiet),
-        ))
-        if step is None:
-            return None
-        if step.pixels == 0:
-            return step.animation
-        old_x = self.settings.x or 0
-        self.ports.place_x(old_x + step.pixels)
-        delta = (self.settings.x or 0) - old_x
-        track = self.ports.track()
-        blocked = (
-            (step.pixels < 0 and (self.settings.x or 0) <= track.left)
-            or (step.pixels > 0 and (self.settings.x or 0)
-                >= track.right - FRAME_WIDTH * self.settings.scale)
         )
-        if self.movement.record_displacement(delta, now=now, blocked=blocked):
-            self.ports.walk_finished(now)
-        return step.animation
 
     def render(
         self, now: float, elapsed: float, pointer: tuple[int, int],
