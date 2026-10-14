@@ -230,6 +230,42 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertEqual(replacement.score.games, 0)
         self.assertEqual(replacement.score_labels["games"].cget("text"), "0")
 
+    def test_completed_round_awards_fun_once_when_window_closes(self) -> None:
+        self.pet._hover.open_game()
+        game = self.pet._hover.game_window
+        assert game is not None
+        before = self.pet.state.fun
+        game._sequence._game._random_index = lambda _size: 2
+        game.choose(Move.ROCK)
+        for _ in range(4):
+            game._sequence.advance()
+        self.assertEqual(game.score.games, 1)
+        self.assertEqual(self.pet.state.fun, before)
+        game.close()
+        awarded = self.pet.state.fun
+        self.assertGreater(awarded, before)
+        game.close()
+        self.assertEqual(self.pet.state.fun, awarded)
+        self.pet._hover.open_game()
+        again = self.pet._hover.game_window
+        assert again is not None
+        self.assertEqual(again.score.games, 0)
+        self.assertEqual(self.pet.state.fun, awarded)
+
+    def test_unrevealed_round_and_empty_window_give_no_fun(self) -> None:
+        self.pet._hover.open_game()
+        empty = self.pet._hover.game_window
+        assert empty is not None
+        before = self.pet.state.fun
+        empty.close()
+        self.assertEqual(self.pet.state.fun, before)
+        self.pet._hover.open_game()
+        pending = self.pet._hover.game_window
+        assert pending is not None
+        pending.choose(Move.PAPER)
+        pending.close()
+        self.assertEqual(self.pet.state.fun, before)
+
     def test_pinned_toolbar_play_uses_same_window(self) -> None:
         self.pet._hover.open_status()
         panel = self.pet._hover.toolbar

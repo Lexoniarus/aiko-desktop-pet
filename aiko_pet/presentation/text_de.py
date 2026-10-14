@@ -49,7 +49,7 @@ def format_mood_hint(
         return "...Etwas Gesellschaft wäre gerade schön."
     if pet.affection < 20:
         return "...Eine kleine Geste wäre gerade schön."
-    if pet.mood < 20:
+    if pet.fun < 20:
         return "Mir ist irgendwie langweilig ..."
     if context is not None:
         if context.meal and context.meal not in pet.meals_today:

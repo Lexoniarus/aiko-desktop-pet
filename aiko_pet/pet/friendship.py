@@ -16,7 +16,7 @@ CARE_FRIENDSHIP_GAIN = {
     "feed": 0.9, "play": 1.0, "pet": 1.0, "talk": 1.0,
 }
 CARE_PRIMARY_NEED = {
-    "feed": "satiety", "play": "mood",
+    "feed": "satiety", "play": "fun",
     "pet": "affection", "talk": "social",
 }
 FRIENDSHIP_NEED_THRESHOLD = 80.0

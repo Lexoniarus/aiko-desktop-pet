@@ -19,7 +19,7 @@ class ToolbarDetails:
         self._snapshot = snapshot
         self.frame = tk.Frame(parent, bg=skin.panel)
         self._labels: dict[str, tk.Label] = {}
-        for name in ("emotion", "hint", "next_event", "activity_line"):
+        for name in ("emotion", "hint", "fun_line", "next_event", "activity_line"):
             label = tk.Label(
                 self.frame, text="", bg=skin.panel, fg=skin.text,
                 font=(skin.font, 9), anchor="w", justify="left",

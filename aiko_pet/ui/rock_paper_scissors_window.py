@@ -30,7 +30,7 @@ class RockPaperScissorsWindow:
     """Permanent player-only panel sharing Aiko's existing hover styling."""
 
     def __init__(
-        self, root: tk.Tk, *, on_closed: Callable[[], None],
+        self, root: tk.Tk, *, on_closed: Callable[[Score], None],
         speak: Callable[[str, int], None],
         emote: Callable[[str, int], None],
         hand: Callable[[Move, int], None],
@@ -216,7 +216,8 @@ class RockPaperScissorsWindow:
         if self._closed:
             return
         self._closed = True
+        completed = self._sequence.score
         self._sequence.close()
         self._drag.close()
         self.window.destroy()
-        self._on_closed()
+        self._on_closed(completed)

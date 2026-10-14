@@ -62,6 +62,7 @@ class CareTransition:
     reward_action: str | None = None
     need_before: float = 0.0
     food: FoodState | None = None
+    mood_experience: float = 0.0
 
 
 def plan_care_action(
@@ -105,8 +106,13 @@ def plan_care_action(
             sleep_origin="manual" if sleeping else "",
             auto_sleep_night=night_key,
         )
-    if action == "play" and state.energy < 8:
-        return replace(unchanged, response="Ich bin gerade zu müde zum Spielen.")
+    if action == "play":
+        # A bare legacy care action cannot reward a game that was not played.
+        message = (
+            "Ich bin gerade zu müde zum Spielen." if state.energy < 8
+            else "Wähle ein Spiel aus, dann spielen wir!"
+        )
+        return replace(unchanged, response=message)
     if action == "energy_drink" and state.energy >= 100:
         return replace(
             unchanged, response="Ich bin schon voll. Mehr passt gerade nicht rein.",
@@ -144,22 +150,9 @@ def plan_care_action(
             needs=replace(
                 result.needs,
                 social=clamp_need_value(state.social + 26),
-                mood=clamp_need_value(state.mood + 5),
                 energy=clamp_need_value(state.energy - 1),
             ),
             response="...Du möchtest reden? Ich höre zu.",
-        )
-    if action == "play":
-        return replace(
-            result,
-            needs=replace(
-                result.needs,
-                mood=clamp_need_value(state.mood + 23),
-                energy=clamp_need_value(state.energy - 9),
-                satiety=clamp_need_value(state.satiety - 4),
-                social=clamp_need_value(state.social + 12),
-            ),
-            response="Heh ... das war gut!",
         )
     if action == "pet":
         return replace(
@@ -167,7 +160,6 @@ def plan_care_action(
             needs=replace(
                 result.needs,
                 affection=clamp_need_value(state.affection + 25),
-                mood=clamp_need_value(state.mood + 6),
                 social=clamp_need_value(state.social + 2),
             ),
             response="... Das ist angenehm.",
@@ -200,11 +192,11 @@ def plan_care_action(
         meals_date=meals_date,
         meals_today=tuple(meals),
         food=intake.food,
+        mood_experience=intake.mood_change,
         needs=replace(
             result.needs,
             satiety=intake.satiety,
             social=clamp_need_value(state.social + 1),
-            mood=clamp_need_value(state.mood + intake.mood_change),
         ),
         response=response,
     )

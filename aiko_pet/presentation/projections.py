@@ -96,6 +96,7 @@ def project_status(
         activity_line=activity,
         needs=pet.needs,
         friendship_level=pet.friendship_level,
+        fun_line=f"Spaß: {pet.fun:.0f} %",
     )
 
 

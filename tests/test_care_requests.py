@@ -26,7 +26,7 @@ class Monitor:
 
 class CareRequestTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.state = PetState(satiety=100, mood=100, social=100, affection=100)
+        self.state = PetState(satiety=100, mood=100, fun=100, social=100, affection=100)
         self.settings, self.mind = PetSettings(), AikoMind()
         router = ApplicationRouter(CareController(
             self.state, self.mind, AdaptiveRoutine(),
@@ -43,7 +43,7 @@ class CareRequestTests(unittest.TestCase):
         self.assertIsNone(choose_care_request(self.state))
         self.state.satiety = 70
         self.assertEqual(choose_care_request(self.state), 'care_request_feed')
-        self.state.social = self.state.affection = self.state.mood = 60
+        self.state.social = self.state.affection = self.state.fun = 60
         self.assertEqual(choose_care_request(self.state), 'care_request_talk')
         self.state.social = 100
         self.assertEqual(choose_care_request(self.state), 'care_request_pet')

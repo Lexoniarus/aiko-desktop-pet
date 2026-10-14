@@ -23,6 +23,7 @@ class PetReadSnapshot:
     meals_today: tuple[str, ...]
     last_food_id: str | None = None
     food_digest_minutes: float = 0.0
+    fun: float = 75.0
 
     @property
     def needs(self) -> tuple[tuple[str, float], ...]:
@@ -51,4 +52,5 @@ def snapshot_pet(state: PetState) -> PetReadSnapshot:
         meals_today=tuple(state.meals_today),
         last_food_id=state.food.last_food_id,
         food_digest_minutes=state.food.remaining_digest_minutes,
+        fun=state.fun,
     )

@@ -32,7 +32,6 @@ class CareActionRulesTests(unittest.TestCase):
         expected = {
             "talk": ("social", 100.0, "Du möchtest reden"),
             "pet": ("affection", 100.0, "angenehm"),
-            "play": ("mood", 98.0, "Heh"),
             "energy_drink": ("energy", 85.0, "geholfen"),
         }
         for action, (attribute, value, reply) in expected.items():
@@ -44,6 +43,9 @@ class CareActionRulesTests(unittest.TestCase):
         state = PetState(updated_at=moment)
         apply_care_action(state, "feed", now=moment)
         self.assertEqual(state.satiety, 100.0)
+        before = state.to_dict()
+        self.assertIn("Spiel", apply_care_action(state, "play", now=moment))
+        self.assertEqual(state.to_dict(), before)
 
     def test_meal_credit_is_awarded_only_once_per_window(self) -> None:
         meal_time = stamp(hour=13)

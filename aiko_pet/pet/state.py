@@ -24,6 +24,8 @@ from .friendship import (
     award_friendship_for_care as award_friendship_for_care,
 )
 from .food import FoodActivity, FoodId, FoodState, advance_food
+from .fun import GameExperience, advance_fun, calculate_game_session_fun
+from .mood import MoodFactors, calculate_mood_target, reflect_care_in_mood
 from .need_decay import (
     NeedLevels, apply_need_decay as apply_need_decay,
     calculate_need_decay,
@@ -62,6 +64,7 @@ class PetState:
     nap_until: float = 0.0
     auto_nap_day: str = ""
     food: FoodState = field(default_factory=FoodState)
+    fun: float = 75.0  # Entertainment need; mood is its consequence.
 
     @classmethod
     def from_dict(cls, value: Any, *, now: float | None = None) -> PetState:
@@ -115,6 +118,7 @@ class PetState:
             auto_sleep_night=night_key,
             nap_until=clamp_saved_time(value.get("nap_until")),
             food=FoodState.from_dict(value.get("food")),
+            fun=bounded(value.get("fun")),
             auto_nap_day=value.get("auto_nap_day", "")
             if isinstance(value.get("auto_nap_day"), str)
             and len(value.get("auto_nap_day", "")) == 10 else "",
@@ -162,6 +166,7 @@ class PetState:
             "nap_until": self.nap_until,
             "auto_nap_day": self.auto_nap_day,
             "food": self.food.to_dict(),
+            "fun": round(self.fun, 4),
         }
 
     def _roll_meals(self, context: TimeContext) -> None:
@@ -231,6 +236,30 @@ class PetState:
             self, hours, context, effort, food_progress=food_progress,
         ))
         self.food = food_progress.food
+        self.fun = advance_fun(self.fun, hours, sleeping=self.sleeping)
+
+    def _mood_target(self) -> float:
+        """Read current needs; mood itself never feeds any of them back."""
+        return calculate_mood_target(MoodFactors(
+            satiety=self.satiety, energy=self.energy, fun=self.fun,
+            social=self.social, affection=self.affection,
+            friendship=self.friendship,
+        ))
+
+    def record_game_experience(
+        self, experience: GameExperience, *, now: float,
+    ) -> float:
+        """Commit one finished minigame, retaining no session statistics."""
+        reward = calculate_game_session_fun(experience, self.fun)
+        if experience.completed_units == 0:
+            return 0.0
+        before = self.fun
+        self.fun = bounded(self.fun + reward.fun_points, 0.0)
+        self.energy = bounded(self.energy - reward.energy_cost, 0.0)
+        self.social = bounded(self.social + reward.social_gain, 0.0)
+        self._credit_friendship("play", now, before)
+        self.mood = reflect_care_in_mood(self.mood, self._mood_target())
+        return self.fun - before
 
     def advance(
         self,
@@ -313,6 +342,11 @@ class PetState:
             self._credit_friendship(
                 transition.reward_action, stamp, transition.need_before,
             )
+        if action in ("feed", "pet", "talk", "energy_drink"):
+            self.mood = reflect_care_in_mood(
+                self.mood, self._mood_target(),
+                experience_points=transition.mood_experience,
+            )
         return transition.response
 
     def feed_label(self, context: TimeContext) -> str:
@@ -337,7 +371,7 @@ class PetState:
             return "...Etwas Gesellschaft wäre gerade schön."
         if self.affection < 20:
             return "...Eine kleine Geste wäre gerade schön."
-        if self.mood < 20:
+        if self.fun < 20:
             return "Mir ist irgendwie langweilig ..."
         if context is not None:
             if context.meal and context.meal not in self.meals_today:

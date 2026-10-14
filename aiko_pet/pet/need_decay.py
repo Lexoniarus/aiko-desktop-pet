@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from typing import Protocol
 
 from .food import FoodActivity, FoodProgress, FoodState, advance_food
+from .fun import advance_fun
+from .mood import MoodFactors, advance_mood, calculate_mood_target
 from .routine import TimeContext
 from .value_rules import clamp_need_value
 
@@ -50,32 +52,37 @@ def calculate_need_decay(
         ),
     )
     if record.sleeping:
-        return NeedLevels(
-            satiety=progress.satiety,
-            mood=clamp_need_value(record.mood + hours * 0.5),
-            energy=clamp_need_value(record.energy + hours * 22.0),
-            social=clamp_need_value(record.social - hours * 0.35),
-            affection=clamp_need_value(record.affection - hours * 0.25),
+        energy = clamp_need_value(record.energy + hours * 22.0)
+        social = clamp_need_value(record.social - hours * 0.35)
+        affection = clamp_need_value(record.affection - hours * 0.25)
+        intensity = 0.0
+    else:
+        # Verified CPU/GPU work adds strain; fun itself is independent.
+        intensity = 0.0 if effort is None else max(
+            0.0, min(1.0, (effort - 0.15) / 0.85),
         )
-    mood_rate, energy_rate = -4.0, 6.0
-    # CPU/GPU effort is her observed work; unseen work is never invented.
-    intensity = 0.0 if effort is None else max(
-        0.0, min(1.0, (effort - 0.15) / 0.85),
+        energy = clamp_need_value(record.energy - hours * (
+            6.0 + 2.8 * intensity
+        ))
+        social = clamp_need_value(record.social - hours * (
+            8.0 + 0.35 * intensity
+        ))
+        affection = clamp_need_value(record.affection - hours * 6.0)
+    next_fun = advance_fun(
+        getattr(record, "fun", 75.0), hours, sleeping=record.sleeping,
     )
-    mood_rate -= 2.1 * intensity
-    energy_rate += 2.8 * intensity
-    social_rate = 8.0 + 0.35 * intensity
-    affection_rate = 6.0
-    if record.social < 20:
-        mood_rate -= 0.7
-    if record.affection < 20:
-        mood_rate -= 0.8
+    target = calculate_mood_target(MoodFactors(
+        satiety=progress.satiety, energy=energy, fun=next_fun,
+        social=social, affection=affection,
+        friendship=getattr(record, "friendship", 15.0),
+        workload_intensity=intensity,
+    ))
     return NeedLevels(
         satiety=progress.satiety,
-        mood=clamp_need_value(record.mood + hours * mood_rate),
-        energy=clamp_need_value(record.energy - hours * energy_rate),
-        social=clamp_need_value(record.social - hours * social_rate),
-        affection=clamp_need_value(record.affection - hours * affection_rate),
+        mood=advance_mood(
+            record.mood, target, hours, sleeping=record.sleeping,
+        ),
+        energy=energy, social=social, affection=affection,
     )
 
 
@@ -102,3 +109,7 @@ def apply_need_decay(
     record.energy = next_values.energy
     record.social = next_values.social
     record.affection = next_values.affection
+    if hasattr(record, "fun"):
+        setattr(record, "fun", advance_fun(
+            getattr(record, "fun"), hours, sleeping=record.sleeping,
+        ))

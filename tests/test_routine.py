@@ -94,7 +94,7 @@ class DailyRoutineTests(unittest.TestCase):
         weekend = PetState(updated_at=local_time("2026-10-17", 15), mood=50)
         weekday.advance(local_time("2026-10-12", 16), auto_routine=True)
         weekend.advance(local_time("2026-10-17", 17), auto_routine=True)
-        self.assertLess(weekend.mood, 50)
+        self.assertGreater(weekend.mood, 50)
         self.assertAlmostEqual(weekend.mood, weekday.mood)
         self.assertAlmostEqual(weekday.energy, weekend.energy)
 

@@ -10,6 +10,7 @@ from typing import Callable
 from ..application.settings import SettingKey
 from .action_toolbar import ActionToolbar
 from .game_speech import GameSpeech
+from ..games.rock_paper_scissors import Score
 from .food_menu import FoodMenu
 from ..pet.food import FoodId
 from ..presentation.food_models import food_choices
@@ -44,6 +45,7 @@ class HoverUiPorts:
     always_on_top: Callable[[], bool]
     game_speech: GameSpeech
     feed: Callable[[FoodId], None] | None = None
+    game_completed: Callable[[Score], None] | None = None
 
 
 class HoverUi:
@@ -136,11 +138,16 @@ class HoverUi:
         if self.food_menu is not None:
             self.food_menu.close()
 
-    def _game_closed(self) -> None:
-        self.game_window = None
-        self._ports.game_speech.stop()
-        self.last_hover = time.monotonic()
-        self._set_care_buttons_enabled(True)
+    def _game_closed(self, completed: Score) -> None:
+        """Pass real rounds to the application, then clear the transient UI."""
+        try:
+            if completed.games and self._ports.game_completed is not None:
+                self._ports.game_completed(completed)
+        finally:
+            self.game_window = None
+            self._ports.game_speech.stop()
+            self.last_hover = time.monotonic()
+            self._set_care_buttons_enabled(True)
 
     def _set_care_buttons_enabled(self, enabled: bool) -> None:
         if self.toolbar is None:

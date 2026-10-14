@@ -74,15 +74,16 @@ class DesktopLifecycle:
         if self._stopped:
             return
         self._stopped = True
-        self._application.close()
         self._runtime.stop()
-        self._stop_animation()
         self._inputs.stop()
+        # Finish any game while its reward router remains open, before saving.
+        self._hover.close_game()
+        self._application.close()
+        self._stop_animation()
         self._monitor.stop()
         self._save()
         self._reaction.cancel()
         self._speech.hide()
-        self._hover.close_game()
         self._hover.close_settings()
         self._hover.close_toolbar()
         self._root.destroy()

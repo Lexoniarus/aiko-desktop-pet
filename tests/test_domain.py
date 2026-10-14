@@ -18,7 +18,9 @@ class PetStateTests(unittest.TestCase):
         state = PetState(updated_at=NOW + 1000)
         state.advance(NOW + 1000 + 3600)
         self.assertAlmostEqual(state.satiety, 67)
-        self.assertAlmostEqual(state.mood, 71)
+        self.assertGreater(state.mood, 69)
+        self.assertLess(state.mood, 75)
+        self.assertAlmostEqual(state.fun, 72.4)
         self.assertAlmostEqual(state.energy, 69)
 
     def test_sleep_replenishes_energy(self):
@@ -39,12 +41,13 @@ class PetStateTests(unittest.TestCase):
         self.assertEqual(state.satiety, 75)
         self.assertEqual(state.updated_at, NOW + 4500)
 
-    def test_play_and_reactions(self):
+    def test_play_requires_an_actual_completed_game(self):
         state = PetState(satiety=99, mood=99, energy=10)
-        state.interact("play")
-        self.assertEqual((state.mood, state.energy, state.satiety), (100, 1, 95))
+        before = state.to_dict()
+        self.assertIn("Spiel", state.interact("play"))
+        self.assertEqual(state.to_dict(), before)
         self.assertIn("angenehm", state.interact("pet"))
-        self.assertEqual(state.mood, 100)
+        self.assertEqual(state.affection, 100)
 
     def test_play_when_exhausted_does_not_apply_cost(self):
         state = PetState(mood=20, energy=7)

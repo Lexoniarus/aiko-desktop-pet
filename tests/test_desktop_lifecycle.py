@@ -89,9 +89,9 @@ class DesktopLifecycleTests(unittest.TestCase):
         self.lifecycle.stop()
         self.lifecycle.stop()
         self.assertEqual(self.calls, [
-            "app-close", "runtime-stop", "animation-stop",
-            "input-stop", "monitor-stop", "save",
-            "cancel-reactions", "hide-speech", "close-game",
+            "runtime-stop", "input-stop", "close-game", "app-close",
+            "animation-stop", "monitor-stop", "save",
+            "cancel-reactions", "hide-speech",
             "close-settings", "close-toolbar", "destroy",
         ])
 

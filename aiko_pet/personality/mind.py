@@ -92,7 +92,7 @@ class AikoMind:
             return "seeking_affection"
         if now < self.warm_until:
             return "warm"
-        if state.mood >= 82 and state.energy >= 45:
+        if state.mood >= 82 and state.fun >= 45 and state.energy >= 45:
             return "playful"
         return "calm"
 

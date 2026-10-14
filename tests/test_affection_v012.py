@@ -12,6 +12,7 @@ from pathlib import Path
 from aiko_pet.personality.mind import AikoMind
 from aiko_pet.personality.catalog import DialogueBook, EMOTION_LABELS, Reaction
 from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
+from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
 from aiko_pet.application.settings import PetSettings
@@ -33,21 +34,31 @@ class AffectionNeedTests(unittest.TestCase):
         state = PetState(affection=30, mood=25, social=40, energy=50)
         state.interact("pet", now=stamp())
         self.assertEqual(state.affection, 55)
-        self.assertEqual(state.mood, 31)
+        self.assertGreater(state.mood, 25)
         self.assertEqual(state.social, 42)
         self.assertEqual(state.energy, 50)
 
-    def test_play_is_fun_and_company_but_does_not_refill_affection(self):
-        state = PetState(affection=17, mood=35, social=18, energy=50, satiety=50)
-        state.interact("play", now=stamp())
-        self.assertEqual((state.mood, state.social), (58, 30))
-        self.assertEqual((state.energy, state.satiety), (41, 46))
-        self.assertEqual(state.affection, 17)
+    def test_completed_play_is_fun_and_company_not_affection(self):
+        state = PetState(
+            affection=17, mood=35, social=18, energy=50,
+            satiety=50, fun=25,
+        )
+        state.record_game_experience(
+            GameExperience(
+                "rock_paper_scissors", 3, successful_units=2, setback_units=1,
+            ),
+            now=stamp(),
+        )
+        self.assertGreater(state.fun, 25)
+        self.assertGreater(state.social, 18)
+        self.assertLess(state.energy, 50)
+        self.assertEqual((state.affection, state.satiety), (17, 50))
 
     def test_talking_improves_social_not_affection(self):
         state = PetState(affection=21, social=19, mood=32)
         state.interact("talk", now=stamp())
-        self.assertEqual((state.social, state.mood), (45, 37))
+        self.assertEqual(state.social, 45)
+        self.assertGreater(state.mood, 32)
         self.assertEqual(state.affection, 21)
 
     def test_food_and_energy_drinks_do_not_refill_affection(self):
@@ -99,7 +110,7 @@ class AffectionNeedTests(unittest.TestCase):
 class MeaningfulFriendshipTests(unittest.TestCase):
     def test_care_on_an_already_full_primary_need_does_not_farm_trust(self):
         for action, value in (("feed", "satiety"), ("pet", "affection"),
-                              ("talk", "social"), ("play", "mood")):
+                              ("talk", "social"), ("play", "fun")):
             with self.subTest(action=action):
                 state = PetState(energy=60)
                 setattr(state, value, 100)
@@ -124,8 +135,12 @@ class MeaningfulFriendshipTests(unittest.TestCase):
         diverse = PetState(affection=20, mood=20, social=20, satiety=20, energy=70)
         repeated = PetState(affection=20, mood=20, social=20, satiety=20, energy=70)
         start = stamp()
-        for action in ("feed", "pet", "talk", "play"):
+        for action in ("feed", "pet", "talk"):
             diverse.interact(action, now=start)
+        diverse.record_game_experience(
+            GameExperience("rock_paper_scissors", 2, successful_units=1),
+            now=start,
+        )
         for i in range(4):
             repeated.affection = 20
             repeated.interact("pet", now=start + i * 15 * 60)
@@ -148,7 +163,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
             for action, attribute in (("feed", "satiety"),
                                       ("pet", "affection"),
                                       ("talk", "social"),
-                                      ("play", "mood")):
+                                      ("play", "fun")):
                 setattr(state, attribute, 20)
                 state.energy = 65
                 state.interact(action, now=start + 16 * 60 * i)

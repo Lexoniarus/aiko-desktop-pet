@@ -13,6 +13,8 @@ from .commands import (
 from .controller import CareController, CareOutcome, CareRuntime
 from .events import IncomingNotification
 from .inbox import NotificationInbox, NotificationReceipt
+from ..pet.fun import GameExperience
+from .game_experience import GameExperienceCoordinator, GameExperienceOutcome
 
 
 class ApplicationRouter:
@@ -24,8 +26,10 @@ class ApplicationRouter:
 
     def __init__(
         self, care: CareController, inbox: NotificationInbox | None = None,
+        *, game_experience: GameExperienceCoordinator | None = None,
     ) -> None:
         self._care = care
+        self._game_experience = game_experience
         self._inbox = inbox if inbox is not None else NotificationInbox()
         self._owner_thread = get_ident()
 
@@ -59,6 +63,15 @@ class ApplicationRouter:
                 raise ValueError("Care actions require trusted runtime context")
             return self._care.execute(command, runtime)
         raise TypeError("Unknown application command")
+
+    def complete_game(
+        self, experience: GameExperience, *, runtime: CareRuntime,
+    ) -> GameExperienceOutcome:
+        """Owner-thread game-neutral completion boundary."""
+        self._require_owner_thread()
+        if self._game_experience is None:
+            raise RuntimeError("No game experience coordinator is installed")
+        return self._game_experience.complete(experience, runtime)
 
     def next_notification(self) -> IncomingNotification | None:
         """Consume accepted data on the owner thread for safe presentation."""

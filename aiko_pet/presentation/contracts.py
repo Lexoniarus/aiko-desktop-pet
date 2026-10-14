@@ -50,6 +50,7 @@ class StatusSnapshot:
     activity_line: str
     needs: tuple[tuple[str, float], ...]
     friendship_level: int
+    fun_line: str = ""
 
     def need_value(self, key: str) -> float:
         for name, value in self.needs:

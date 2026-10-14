@@ -13,6 +13,6 @@ def choose_care_request(state: PetState) -> str | None:
         ("care_request_feed", state.satiety),
         ("care_request_talk", state.social),
         ("care_request_pet", state.affection),
-        ("care_request_play", state.mood),
+        ("care_request_play", state.fun),
     ), key=lambda item: item[1])
     return event if value <= 70 else None
