@@ -58,6 +58,17 @@ class DesktopLifecycle:
         self._monitor.start()
         self._runtime.start()
 
+    def prepare_farewell(self) -> None:
+        """Quiesce input and ambient effects while keeping the sprite alive."""
+        if self._stopped:
+            return
+        self._runtime.stop()
+        self._inputs.stop()
+        self._reaction.cancel()
+        self._hover.close_game()
+        self._hover.close_settings()
+        self._hover.close_toolbar()
+
     def stop(self) -> None:
         """Close background services before destroying any Tk-owned widget."""
         if self._stopped:

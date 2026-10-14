@@ -63,3 +63,15 @@ python -m unittest discover -s tests -q
 The rebuild requires Pillow; normal desktop runtime does not. When reviewing
 the visuals, adjust the **movement rhythm first**. Generate new in-between
 artwork only if a pose transition is still visibly jumpy at good timing.
+
+## Explicit farewell on Exit
+
+The **Beenden** action in the persistent settings window starts a
+non-blocking farewell: Aiko uses the existing `waving-greeting` sequence,
+shows `Ah, okay. Tschüss, mach's gut!` in her ordinary speech bubble,
+and closes only after the animation and a brief readable hold. The
+`FarewellSequence` timer is owned separately from Tk windows; old reactions,
+background ticks and settings/toolbar input are stopped first. Direct
+technical shutdown (`DesktopPet.quit`, such as root-window close or the
+root Ctrl+Q shortcut) continues to stop immediately and cancels any pending
+farewell timer. No new sprite artwork is required.

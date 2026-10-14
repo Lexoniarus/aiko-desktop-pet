@@ -56,11 +56,13 @@ class DesktopInput:
         self.root.protocol("WM_DELETE_WINDOW", self.actions.quit)
 
     def on_menu(self, event: tk.Event) -> None:
-        self.actions.show_menu(event.x_root, event.y_root)
+        if not self._stopped:
+            self.actions.show_menu(event.x_root, event.y_root)
 
     def on_tk_press(self, event: tk.Event) -> None:
         """Handle clicks inside Tk windows without losing focus to them."""
-        self.actions.dismiss_outside(event.x_root, event.y_root)
+        if not self._stopped:
+            self.actions.dismiss_outside(event.x_root, event.y_root)
 
     def on_focus_out(self, _event: tk.Event) -> None:
         """Keep delayed focus checks cancellable during window teardown."""
@@ -89,6 +91,12 @@ class DesktopInput:
         if self._stopped:
             return
         self._stopped = True
+        for event in (
+            "<Enter>", "<Button-1>", "<Button-3>", "<Shift-Button-3>",
+        ):
+            self.canvas.unbind(event)
+        self.root.unbind("<Control-q>")
+        self.root.unbind("<F2>")
         for scheduled in tuple(self._focus_timers):
             self.root.after_cancel(scheduled)
         self._focus_timers.clear()

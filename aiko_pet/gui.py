@@ -37,6 +37,7 @@ from .desktop.global_input import (
 )
 from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
+from .desktop.farewell import FarewellSequence
 from .personality.mind import AikoMind
 from .personality.workload_events import WorkloadEventDetector
 from .personality.catalog import Reaction
@@ -214,7 +215,7 @@ class DesktopPet:
                 forget_rhythm=self.forget_rhythm,
                 reset_toolbar=self.reset_toolbar_position,
                 center=self.center,
-                quit=self.quit,
+                quit=lambda: self._farewell.begin(),
                 move_speech=self._speech.move,
                 restore_stack=self._overlay_stack.restore,
                 always_on_top=lambda: self.settings.always_on_top,
@@ -269,6 +270,13 @@ class DesktopPet:
             place_initially=self._place_initially,
             save=self._save,
             stop_animation=self._animated.stop,
+        )
+        self._farewell = FarewellSequence(
+            schedule=self.root.after, cancel=self.root.after_cancel,
+            prepare=self._lifecycle.prepare_farewell,
+            animate=lambda: self._start_action("waving-greeting", 0),
+            say=self._speech.show_text, finish=self.quit,
+            seconds=self._character_assets.clips["waving-greeting"].duration_seconds,
         )
         self._lifecycle.start()
 
@@ -599,6 +607,7 @@ class DesktopPet:
         if self._closed:
             return
         self._closed = True
+        self._farewell.cancel()
         self._lifecycle.stop()
 
     def run(self) -> None:

@@ -73,6 +73,18 @@ class DesktopLifecycleTests(unittest.TestCase):
             "monitor-start", "runtime-start",
         ])
 
+    def test_prepare_farewell_keeps_root_alive_until_real_shutdown(self) -> None:
+        self.lifecycle.prepare_farewell()
+        self.assertEqual(self.calls, [
+            "runtime-stop", "input-stop", "cancel-reactions",
+            "close-game", "close-settings", "close-toolbar",
+        ])
+        self.assertNotIn("destroy", self.calls)
+        self.assertNotIn("save", self.calls)
+        self.lifecycle.stop()
+        self.assertEqual(self.calls.count("save"), 1)
+        self.assertEqual(self.calls.count("destroy"), 1)
+
     def test_shutdown_preserves_cleanup_order_and_is_idempotent(self) -> None:
         self.lifecycle.stop()
         self.lifecycle.stop()

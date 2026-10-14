@@ -60,6 +60,60 @@ class PersistentWindowTests(unittest.TestCase):
         self.pet.root.update_idletasks()
         return window
 
+    def test_settings_exit_waves_and_speaks_before_shutdown(self) -> None:
+        bar = self.toolbar()
+        settings = self.settings()
+        scheduled: list[tuple[int, object]] = []
+
+        def schedule(delay: int, callback: object) -> str:
+            scheduled.append((delay, callback))
+            return "test-farewell"
+
+        with patch.object(self.pet._farewell, "_schedule", side_effect=schedule):
+            settings.quit_button.invoke()
+            self.assertTrue(self.pet._farewell.active)
+            self.assertFalse(self.pet._closed)
+            self.assertEqual(len(scheduled), 1)
+            self.assertGreaterEqual(scheduled[0][0], 2600)
+            self.assertEqual(
+                self.pet._animated.frame_clock.active_key,
+                ("waving-greeting", None),
+            )
+            self.assertIsNone(self.pet._hover.settings_window)
+            self.assertIsNone(self.pet._hover.toolbar)
+            self.assertFalse(bar.window.winfo_exists())
+            self.assertIsNotNone(self.pet._speech.bubble)
+            self.assertTrue(self.pet._input._stopped)
+            bubble = self.pet._speech.bubble
+            assert bubble is not None
+            labels = [
+                child for frame in bubble.winfo_children()
+                for child in frame.winfo_children()
+                if isinstance(child, tk.Label)
+            ]
+            self.assertTrue(any(
+                "Tschüss" in str(label.cget("text")) for label in labels
+            ))
+            self.pet._farewell.begin()
+            self.assertEqual(len(scheduled), 1)
+            finish = scheduled[0][1]
+            assert callable(finish)
+            finish()
+        self.assertTrue(self.pet._closed)
+        self.assertIsNone(self.pet._farewell.pending_timer)
+        self.assertEqual(self.pet.root.winfo_exists(), 0)
+
+    def test_direct_quit_cancels_pending_farewell(self) -> None:
+        settings = self.settings()
+        settings.quit_button.invoke()
+        token = self.pet._farewell.pending_timer
+        assert token is not None
+        self.assertIn(token, self.pet.root.tk.call("after", "info"))
+        self.pet.quit()
+        self.assertTrue(self.pet._closed)
+        self.assertFalse(self.pet._farewell.active)
+        self.assertIsNone(self.pet._farewell.pending_timer)
+
     def test_pin_prevents_both_timeout_and_outside_click(self) -> None:
         bar = self.toolbar()
         bar.pin_button.invoke()

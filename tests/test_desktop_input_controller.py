@@ -83,6 +83,19 @@ class DesktopInputTests(unittest.TestCase):
         self.input.on_focus_out(tk.Event())
         self.assertEqual(self.input._focus_timers, set())
 
+    def test_stop_detaches_sprite_input_during_farewell(self) -> None:
+        self.input.initialize()
+        self.input.stop()
+        self.assertFalse(self.canvas.bind("<Enter>"))
+        self.assertFalse(self.canvas.bind("<Button-1>"))
+        self.assertFalse(self.canvas.bind("<Button-3>"))
+        self.assertFalse(self.canvas.bind("<Shift-Button-3>"))
+        event = tk.Event()
+        event.x_root, event.y_root = 25, 39
+        self.input.on_menu(event)
+        self.input.on_tk_press(event)
+        self.assertEqual(self.events, [])
+
     def test_global_click_and_closed_focus_are_separate(self) -> None:
         self.input.poll_global_click()
         self.assertEqual(self.events, [])
