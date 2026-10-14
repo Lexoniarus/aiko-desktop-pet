@@ -73,7 +73,9 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
 
     def test_movement_uses_injected_geometry_boundary(self) -> None:
         self.anim.movement.remaining_distance = 12
-        result = self.anim.maybe_walk(time.monotonic() + 1000, 0.25)
+        stride_seconds = self.anim.assets.clips["running-right"].duration_seconds
+        travel_seconds = 12 * stride_seconds / 68 + .03
+        result = self.anim.maybe_walk(time.monotonic() + 1000, travel_seconds)
         self.assertEqual(result, "running-right")
         assert self.settings.x is not None
         self.assertGreater(self.settings.x, 100)
@@ -121,7 +123,8 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         now = time.monotonic()
         self.anim.render(now, 0, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("sleep", None))
-        self.anim.show_frame("sleep", now + .5)
+        first_hold = self.anim.assets.clips["sleep"].timings[0] / 1000
+        self.anim.show_frame("sleep", now + first_hold + .01)
         self.assertEqual(self.anim.frame_clock.frame_index, 1)
         self.assertEqual(self.anim.sprites["sleep"][0].width(), 192)
 
