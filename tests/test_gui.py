@@ -61,6 +61,11 @@ class TaskbarPetGuiTests(unittest.TestCase):
             self.app.mind.cursor_attention,
         )
 
+    def test_attention_presentation_has_one_owning_component(self):
+        self.assertIs(
+            self.app._attention_view._attention, self.app._attention,
+        )
+
     def test_hover_toolbar_contains_every_care_action(self):
         self.app._on_enter()
         self.assertIsNotNone(self.app._hover.toolbar)

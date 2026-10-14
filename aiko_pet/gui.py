@@ -44,7 +44,7 @@ from .pet.mind.workload_events import WorkloadEventDetector
 from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
 from .ui.pet_view.reaction_player import ReactionPlayer
-from .pet.animation.idle_emote import choose_idle_emote
+from .ui.pet_view.attention_presenter import AttentionPresenter, AttentionViewPorts
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.persistence import StateStore
 from .infrastructure.hardware.monitor import ActivityMonitor
@@ -248,6 +248,27 @@ class DesktopPet:
                 open_status=self._hover.open_status,
                 quit=self.quit,
                 closed=lambda: self._closed,
+            ),
+        )
+        self._attention_view = AttentionPresenter(
+            self._attention,
+            ports=AttentionViewPorts(
+                context=lambda: self.context,
+                game_open=lambda: self._hover.game_open,
+                toolbar_active=lambda: self._hover.interaction_active,
+                settings_engaged=lambda: self._hover.settings_engaged,
+                bubble_visible=lambda: self._speech.bubble is not None,
+                reaction_pending=lambda: (
+                    self._reaction_player.pending_timer is not None
+                ),
+                walking=lambda: (
+                    self._animated.movement.remaining_distance != 0
+                ),
+                action_until=lambda: self._action_until,
+                start_action=self._start_action,
+                react=self._react,
+                show_emote=self._speech.show_emote,
+                show_text=self._speech.show_text,
             ),
         )
         self._preferences = DesktopPreferences(
@@ -489,37 +510,15 @@ class DesktopPet:
         self._preferences.center()
 
     def _idle_emote(self) -> None:
-        """Occasional unspoken state, never interrupting an existing scene."""
-        if (
-            self._speech.bubble is not None
-            or self._reaction_player.pending_timer is not None
-        ):
-            return
-        emote = choose_idle_emote(
-            energy=self.state.energy,
-            satiety=self.state.satiety,
-            mood=self.state.mood,
-            affection=self.state.affection,
-        )
-        self._speech.show_emote(emote, 1100)
+        self._attention_view.idle_emote()
 
     def _on_cursor_moved(
         self, distance: float, screen_width: int, now: float,
     ) -> None:
-        event = self._attention.cursor_moved(
-            distance, screen_width, now,
-            toolbar_visible=self._hover.interaction_active,
-        )
-        if event is not None:
-            self._react(self.mind.say_event(
-                event, self.state, self.context, now,
-            ))
+        self._attention_view.cursor_moved(distance, screen_width, now)
 
     def _on_walk_finished(self, now: float) -> None:
-        if self._attention.walk_finished(now):
-            self._react(self.mind.say_event(
-                "walk_pause", self.state, self.context, now,
-            ))
+        self._attention_view.walk_finished(now)
 
     def _advance_pet_lifecycle(self, now: float, wall_time: float) -> None:
         progress = self._activity.advance_lifecycle(
@@ -539,46 +538,13 @@ class DesktopPet:
         self._maintenance.refresh_track(now)
 
     def _maybe_show_idle_emote(self, now: float) -> None:
-        """An independent policy decides whether Aiko is free for a gesture."""
-        if self._hover.game_open:
-            return
-        animation = self._attention.idle_animation(
-            now, action_until=self._action_until,
-            walking=self._animated.movement.remaining_distance != 0,
-            toolbar_visible=self._hover.interaction_active,
-        )
-        if animation is not None:
-            self._start_action(animation, 1.6)
-            self._idle_emote()
+        self._attention_view.maybe_show_idle_emote(now)
 
     def _maybe_speak_spontaneously(self, now: float) -> None:
-        if self._hover.game_open:
-            return
-        decision = self._attention.spontaneous(
-            now, self.context,
-            toolbar_visible=self._hover.interaction_active,
-            action_until=self._action_until,
-            bubble_visible=self._speech.bubble is not None,
-            popup_visible=self._hover.settings_engaged,
-        )
-        if decision.due:
-            self._react(decision.reaction, 3600)
+        self._attention_view.maybe_speak_spontaneously(now)
 
     def _present_pending_notification(self, now: float) -> None:
-        """The Tk event loop alone turns queued data into rendered text."""
-        if self._hover.game_open:
-            return
-        notification = self._attention.next_notification(
-            now,
-            action_until=self._action_until,
-            bubble_visible=self._speech.bubble is not None,
-            popup_visible=self._hover.settings_engaged,
-            toolbar_visible=self._hover.interaction_active,
-        )
-        if notification is None:
-            return
-        self._speech.show_text(f"{notification.title}: {notification.message}", 3500)
-        self._attention.mark_spoken(now)
+        self._attention_view.present_notification(now)
 
     def _refresh_overlays_and_autosave(self, now: float) -> None:
         """Refresh visible panels, window layering and periodic persistence."""
