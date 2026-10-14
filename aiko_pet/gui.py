@@ -52,7 +52,7 @@ from .ui.pet_view.desktop_window import (
 )
 from .desktop.window_stack import WindowStack
 from .ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
-from .ui.speech_presenter import SpeechAnchor, SpeechPresenter
+from .ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
 
 
 class DesktopPet:

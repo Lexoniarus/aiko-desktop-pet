@@ -13,7 +13,7 @@ from ..application.router import ApplicationRouter
 from ..presentation.reaction_playback import ReactionPlayer
 from ..infrastructure.hardware.monitor import ActivityMonitor
 from ..ui.windows.hover_ui import HoverUi
-from ..ui.speech_presenter import SpeechPresenter
+from ..ui.pet_view.speech_presenter import SpeechPresenter
 from .window_stack import WindowStack
 from .input import DesktopInput
 from .runtime import DesktopRuntime

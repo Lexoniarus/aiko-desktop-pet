@@ -9,7 +9,7 @@ from collections.abc import Callable
 
 from ...games.rock_paper_scissors import Move
 from ...presentation.reaction_playback import ReactionPlayer
-from ..speech_presenter import SpeechPresenter
+from ..pet_view.speech_presenter import SpeechPresenter
 
 
 class GameSpeech:

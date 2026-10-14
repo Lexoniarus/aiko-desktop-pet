@@ -19,7 +19,7 @@ from ..pet.routine import TimeContext, context_at
 from ..ui.pet_view.animated_pet import AnimatedPet
 from ..ui.pet_view.desktop_window import DesktopWindow
 from ..ui.windows.hover_ui import HoverUi
-from ..ui.speech_presenter import SpeechPresenter
+from ..ui.pet_view.speech_presenter import SpeechPresenter
 from .window_stack import WindowStack
 
 
