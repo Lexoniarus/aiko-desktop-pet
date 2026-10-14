@@ -6,7 +6,7 @@ import tkinter as tk
 from typing import Callable
 
 from ..presentation.contracts import StatusSnapshot
-from .skin import AikoSkin
+from .common.skin import AikoSkin
 
 
 class ToolbarDetails:

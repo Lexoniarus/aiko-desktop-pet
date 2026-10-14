@@ -10,7 +10,7 @@ from functools import partial
 from ..asset_paths import GAME_HANDS_DIR
 from ..games.rock_paper_scissors import Move, Score
 from ..presentation.rock_paper_scissors_sequence import RockPaperScissorsSequence
-from .skin import AikoSkin
+from .common.skin import AikoSkin
 from .common.window_drag import WindowDrag
 
 _BG = "#D7DCE8"

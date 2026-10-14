@@ -18,7 +18,7 @@ from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
 from .settings_contracts import SettingsActions, SettingsSnapshot
 from .settings_window import SettingsWindow
 from ..presentation.contracts import StatusSnapshot
-from .skin import AikoSkin
+from .common.skin import AikoSkin
 
 
 @dataclass(frozen=True, slots=True)
