@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.personality.adaptive_models import AdaptiveMemory
+from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory
 from aiko_pet.application.session import PetSessionRestorer
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.pet.state import PetState

@@ -6,7 +6,7 @@ import tkinter as tk
 import unittest
 
 from aiko_pet.games.rock_paper_scissors import Move
-from aiko_pet.ui.speech_presenter import SpeechAnchor, SpeechPresenter
+from aiko_pet.ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
 
 
 class SpeechPresenterTests(unittest.TestCase):

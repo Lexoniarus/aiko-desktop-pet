@@ -8,8 +8,8 @@ from unittest.mock import patch
 from types import SimpleNamespace
 
 from aiko_pet.infrastructure.hardware import os_sensors as activity
-from aiko_pet.personality.workload_events import WorkloadEventDetector
-from aiko_pet.personality.catalog import DialogueBook
+from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
+from aiko_pet.pet.mind.catalog import DialogueBook
 from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
 from aiko_pet.telemetry import ComputerSnapshot, workload_intensity
 from aiko_pet.infrastructure.hardware.sampler import HardwareSampler

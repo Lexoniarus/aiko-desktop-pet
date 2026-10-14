@@ -6,9 +6,9 @@ import tkinter as tk
 import unittest
 from dataclasses import replace
 
-from aiko_pet.presentation.contracts import StatusSnapshot
-from aiko_pet.ui.skin import AikoSkin
-from aiko_pet.ui.toolbar_details import ToolbarDetails
+from aiko_pet.ui.view_models.contracts import StatusSnapshot
+from aiko_pet.ui.common.skin import AikoSkin
+from aiko_pet.ui.windows.toolbar_details import ToolbarDetails
 
 
 class ToolbarDetailTests(unittest.TestCase):

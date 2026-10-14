@@ -11,10 +11,10 @@ import re
 import unittest
 from datetime import datetime
 
-from aiko_pet.personality.adaptive_models import Behaviour
-from aiko_pet.personality.adaptive_policy import ActivityMode
-from aiko_pet.personality.mind import AikoMind
-from aiko_pet.personality.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.adaptive_models import Behaviour
+from aiko_pet.pet.mind.adaptive_policy import ActivityMode
+from aiko_pet.pet.mind.mind import PetMind
+from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
 
@@ -44,7 +44,7 @@ def scene(*, mode: ActivityMode = "working", duration=1800, strain=35, effort=0.
 
 class ClickStoryTests(unittest.TestCase):
     def setUp(self):
-        self.mind = AikoMind(rng=random.Random(21), started_at=0)
+        self.mind = PetMind(rng=random.Random(21), started_at=0)
         self.state = PetState()
         self.context = clock()
 
@@ -86,7 +86,7 @@ class ClickStoryTests(unittest.TestCase):
             require_reaction(self.mind.click("left", self.state, self.context, 20)).event,
             "click_sleepy",
         )
-        new_mind = AikoMind(rng=random.Random(1))
+        new_mind = PetMind(rng=random.Random(1))
         new_mind.after_care("pet", 30)
         self.assertEqual(
             require_reaction(new_mind.click("left", PetState(), self.context, 35)).event,
