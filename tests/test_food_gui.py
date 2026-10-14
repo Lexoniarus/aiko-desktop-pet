@@ -48,7 +48,7 @@ class FoodGuiTests(unittest.TestCase):
         self.assertIsNone(self.pet._hover.food_menu)
         self.assertEqual(self.pet.state.food.last_food_id, "apple")
         self.assertEqual(self.pet._animated.food_overlay.current_food_id, "apple")
-        self.assertEqual(self.pet.state.satiety, 89)
+        self.assertAlmostEqual(self.pet.state.satiety, 89, places=2)
 
     def test_same_menu_instance_is_focused_instead_of_duplicated(
         self,

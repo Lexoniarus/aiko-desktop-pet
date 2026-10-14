@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import fields
 
 from aiko_pet.application.food_activity import FoodActivityHistory
 
@@ -115,7 +116,7 @@ class FoodActivityHistoryTests(unittest.TestCase):
         self.assertFalse(hasattr(history, "keystrokes"))
         self.assertFalse(hasattr(history, "raw_events"))
         self.assertEqual(
-            set(vars(history._buckets[-1])),
+            {field.name for field in fields(history._buckets[-1])},
             {"index", "observed_seconds", "user_active_seconds",
              "hardware_work_seconds"},
         )
