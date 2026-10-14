@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import unittest
 
-from aiko_pet.presentation.ambient import AmbientDirector
-from aiko_pet.presentation.animation import SpriteSelection
+from aiko_pet.pet.animation.ambient import AmbientDirector
+from aiko_pet.pet.animation.animation import SpriteSelection
 
 
 class AmbientDirectorTests(unittest.TestCase):

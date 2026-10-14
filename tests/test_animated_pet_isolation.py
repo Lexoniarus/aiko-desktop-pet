@@ -8,14 +8,14 @@ import unittest
 from unittest.mock import patch
 
 from aiko_pet.infrastructure.character_assets import load_character_catalog
-from aiko_pet.personality.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.desktop.geometry import TaskbarTrack
-from aiko_pet.presentation.movement import WalkController
+from aiko_pet.pet.movement import WalkController
 from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
-from aiko_pet.ui.animated_pet import AnimatedPet, AnimatedPorts
+from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 
 
 class IdleMonitor:
@@ -180,7 +180,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                         # Simulate Tk consuming the scheduled callback first.
                         assert self.anim._frame_timer is not None
                         self.root.after_cancel(self.anim._frame_timer)
-                        with patch('aiko_pet.ui.animated_pet.time.monotonic',
+                        with patch('aiko_pet.ui.pet_view.animated_pet.time.monotonic',
                                    return_value=now):
                             self.anim._advance_frame(name, None,
                                                      self.anim._frame_generation)

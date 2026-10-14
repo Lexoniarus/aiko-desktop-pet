@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 from aiko_pet.gui import DesktopPet
-from aiko_pet.ui.action_toolbar import ActionToolbar
+from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.infrastructure.persistence import StateStore
 
 

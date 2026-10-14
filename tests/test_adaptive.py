@@ -8,9 +8,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from aiko_pet.personality.adaptive_models import SLOTS, AdaptiveMemory, Observation
-from aiko_pet.personality.adaptive import AdaptiveRoutine
-from aiko_pet.personality.mind import AikoMind
+from aiko_pet.pet.mind.adaptive_models import SLOTS, AdaptiveMemory, Observation
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.mind import PetMind
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
 from aiko_pet.infrastructure.persistence import StateStore
@@ -310,7 +310,7 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         self.assertEqual(restored.nap_until, 1_800_000_000)
 
     def test_work_pressure_affects_emotion_only_in_context(self):
-        mind = AikoMind()
+        mind = PetMind()
         base = PetState(mood=55, energy=45)
         start = local_stamp("2026-10-12", 13)
         self.assertEqual(mind.emotion(base, 123), "calm")

@@ -2,7 +2,7 @@
 
 import unittest
 
-from aiko_pet.personality.adaptive_models import (
+from aiko_pet.pet.mind.adaptive_models import (
     SLOTS,
     AdaptiveMemory,
 )
