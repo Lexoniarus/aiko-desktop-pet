@@ -358,7 +358,7 @@ class UiDependencyRules(unittest.TestCase):
     def test_native_desktop_adapters_are_not_owned_by_sprite_code(self) -> None:
         sprite = (ROOT / "ui/animated_pet.py").read_text("utf-8")
         desktop_window = (ROOT / "ui/desktop_window.py").read_text("utf-8")
-        self.assertIn("from ..presentation.movement import", sprite)
+        self.assertIn("from ..pet.movement import", sprite)
         self.assertIn("from ..desktop.geometry import TaskbarTrack", sprite)
         self.assertIn("from ..desktop.taskbar import", desktop_window)
         self.assertNotIn("from ..taskbar import", sprite)

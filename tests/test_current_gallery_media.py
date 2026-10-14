@@ -32,8 +32,9 @@ class CurrentGalleryTests(unittest.TestCase):
                 width, height = struct.unpack(">II", sample[16:24])
                 # No fixed desktop rectangle; every mapped Tk window is
                 # fully framed with 24px breathing room, without resampling.
+                # The merged settings view can reach 1090px in previews.
                 self.assertGreaterEqual(width, 250)
-                self.assertLessEqual(width, 1030)
+                self.assertLessEqual(width, 1150)
                 self.assertGreaterEqual(height, 290)
                 self.assertLessEqual(height, 740)
 

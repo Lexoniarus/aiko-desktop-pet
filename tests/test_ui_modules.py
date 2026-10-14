@@ -8,7 +8,7 @@ from aiko_pet.ui.action_toolbar import ActionToolbar
 from aiko_pet.ui.settings_window import SettingsWindow
 from aiko_pet.ui.toolbar_details import ToolbarDetails
 from aiko_pet.ui.skin import AikoSkin
-from aiko_pet.ui.window_drag import WindowDrag
+from aiko_pet.ui.common.window_drag import WindowDrag
 
 
 class UiModuleExtractionTests(unittest.TestCase):
@@ -22,7 +22,7 @@ class UiModuleExtractionTests(unittest.TestCase):
             (ActionToolbar, "action_toolbar"),
             (SettingsWindow, "settings_window"),
             (ToolbarDetails, "toolbar_details"),
-            (AikoSkin, "skin"), (WindowDrag, "window_drag"),
+            (AikoSkin, "skin"), (WindowDrag, "common.window_drag"),
         ):
             self.assertEqual(component.__module__, f"aiko_pet.ui.{module}")
 
