@@ -9,7 +9,7 @@ from types import MappingProxyType
 from typing import Any, Literal, Mapping, cast
 
 from ..asset_paths import ASSET_ROOT
-from ..presentation.item_assets import HandItem, ItemCatalog, ItemSprite
+from ..pet.animation.item_assets import HandItem, ItemCatalog, ItemSprite
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 

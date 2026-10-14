@@ -1,32 +1,7 @@
-"""Immutable contracts for independently rendered hand-held items."""
+"""Compatibility re-exports for immutable held-item sprite contracts."""
 
-from __future__ import annotations
-
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Literal, Mapping
-
-
-@dataclass(frozen=True, slots=True)
-class ItemSprite:
-    """A scale-specific PNG and its pivot in image pixels."""
-
-    path: Path
-    pivot: tuple[float, float]
-
-
-@dataclass(frozen=True, slots=True)
-class HandItem:
-    """One asset shared by picker/overlays, with native 1x and 2x sprites."""
-
-    key: str
-    label: str
-    icon: Path | None
-    sprites: Mapping[int, ItemSprite]
-    care_action: Literal["feed", "energy_drink"] | None = None
-
-
-@dataclass(frozen=True, slots=True)
-class ItemCatalog:
-    foods: Mapping[str, HandItem]
-    weapons: Mapping[str, HandItem]
+from ..pet.animation.item_assets import (
+    HandItem as HandItem,
+    ItemCatalog as ItemCatalog,
+    ItemSprite as ItemSprite,
+)
