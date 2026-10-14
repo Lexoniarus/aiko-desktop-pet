@@ -11,7 +11,7 @@ import tkinter as tk
 from typing import Protocol
 from ..desktop.taskbar import locate_primary_taskbar
 
-from ..presentation.character import (
+from ..pet.animation.character import (
     FRAME_WIDTH as FRAME_WIDTH, FRAME_HEIGHT as FRAME_HEIGHT,
 )
 

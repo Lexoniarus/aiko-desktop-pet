@@ -9,7 +9,7 @@ from typing import Any
 
 from ..asset_paths import ASSET_ROOT
 from ..presentation.animation_timing import VIRTUAL_CLIPS, load_timing_policy
-from ..presentation.character import (
+from ..pet.animation.character import (
     AnimationClip, AnimationFrame, CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH,
 )
 

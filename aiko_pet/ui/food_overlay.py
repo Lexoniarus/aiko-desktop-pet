@@ -10,7 +10,7 @@ import tkinter as tk
 
 from ..desktop.geometry import FOOT_BASELINE
 from ..infrastructure.item_assets import load_item_catalog
-from ..presentation.character import AnimationClip, AnimationFrame, FRAME_WIDTH
+from ..pet.animation.character import AnimationClip, AnimationFrame, FRAME_WIDTH
 
 
 class FoodOverlay:
