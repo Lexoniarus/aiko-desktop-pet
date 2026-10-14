@@ -40,9 +40,10 @@ events, taskbar positioning or visual sprite alignment.
   independently movable persistent window. Outside clicks, resizing and
   toolbar hiding do not close it. Invoking settings again focuses the same
   instance. Escape/Schließen closes it explicitly.
-- [ ] **Snack/food:** The menu opens without duplicates, eleven food choices
-  and the energy-drink action display their current graphics/labels, and
-  successful feeding uses the matching held-item overlay. Denied feeding
+- [ ] **Snack/food:** The menu opens without duplicates. All eleven
+  consumables (including the Energy Drink) display the current graphics and
+  labels. Successful feeding uses the matching held-item overlay.
+  Denied feeding
   or a full-energy drink never pretends an item was consumed.
 - [ ] **Scaling and item sprites:** Change scale 1× ↔ 2× during a normal
   session and after selecting food. Sprites, hand overlays, anchors and
