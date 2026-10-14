@@ -6,10 +6,10 @@ import tkinter as tk
 import unittest
 from pathlib import Path
 
-from aiko_pet.personality.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
 from aiko_pet.gui import DesktopPet
 from aiko_pet.asset_paths import EMOTE_ASSETS, SCI_FI_UI
-from aiko_pet.personality.reaction_sequence import EMOTES, Cue, compose_cues
+from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue, compose_cues
 from aiko_pet.infrastructure.persistence import StateStore
 
 

@@ -5,8 +5,8 @@ from __future__ import annotations
 import random
 import unittest
 
-from aiko_pet.personality.mind import AikoMind
-from aiko_pet.personality.catalog import (
+from aiko_pet.pet.mind.mind import PetMind
+from aiko_pet.pet.mind.catalog import (
     ANIMATIONS,
     CATALOGUE,
     DialogueBook,
@@ -14,12 +14,12 @@ from aiko_pet.personality.catalog import (
     Reaction,
 )
 from aiko_pet.pet.routine import context_at
-from aiko_pet.personality.work_episode import WorkEpisodeMemory
+from aiko_pet.pet.mind.work_episode import WorkEpisodeMemory
 
 
 class DialogueModulesTests(unittest.TestCase):
     def test_aiko_mind_owns_independent_work_episode_memory(self) -> None:
-        mind = AikoMind(rng=random.Random(12))
+        mind = PetMind(rng=random.Random(12))
         self.assertIsInstance(mind.work, WorkEpisodeMemory)
         self.assertEqual(mind.work.interruptions, 0)
 

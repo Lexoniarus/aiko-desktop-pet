@@ -7,7 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 import tkinter as tk
 
-from aiko_pet.personality.catalog import Reaction
+from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 

@@ -12,7 +12,7 @@ from unittest.mock import patch
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.presentation.food_models import food_choices
+from aiko_pet.ui.view_models.food_models import food_choices
 
 
 class FoodGuiTests(unittest.TestCase):

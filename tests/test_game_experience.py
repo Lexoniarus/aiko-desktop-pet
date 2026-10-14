@@ -12,8 +12,8 @@ from aiko_pet.application.game_experience import (
 )
 from aiko_pet.application.router import ApplicationRouter
 from aiko_pet.games.rock_paper_scissors import Score
-from aiko_pet.personality.adaptive import AdaptiveRoutine
-from aiko_pet.personality.mind import AikoMind
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.mind import PetMind
 from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.state import PetState
 
@@ -25,7 +25,7 @@ def timestamp() -> float:
 class GameExperienceTests(unittest.TestCase):
     def setUp(self) -> None:
         self.state = PetState(fun=35, updated_at=timestamp())
-        self.mind = AikoMind()
+        self.mind = PetMind()
         self.adaptive = AdaptiveRoutine()
         clock = ActiveSessionClock(lambda: 100.0)
         self.router = ApplicationRouter(
