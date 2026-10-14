@@ -21,9 +21,9 @@ from ..pet.animation.ambient import AmbientDirector
 from ..pet.animation.character import CharacterCatalog, FRAME_WIDTH
 from ..pet.animation.gaze import gaze_sector
 from ..pet.movement import WalkConditions, WalkController
-from .food_overlay import FoodOverlay
-from .character_sprite_cache import CharacterSpriteCache
-from .rest_pose_renderer import RestPoseRenderer
+from .pet_view.food_overlay import FoodOverlay
+from .pet_view.character_sprite_cache import CharacterSpriteCache
+from .pet_view.rest_pose_renderer import RestPoseRenderer
 from ..desktop.geometry import TaskbarTrack, FOOT_BASELINE
 
 
