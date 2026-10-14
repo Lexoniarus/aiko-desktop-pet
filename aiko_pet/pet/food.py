@@ -12,7 +12,10 @@ from typing import Any, Literal
 
 from .value_rules import clamp_need_value
 
-FoodId = Literal["onigiri", "sandwich", "taiyaki", "apple", "dango"]
+FoodId = Literal[
+    "onigiri", "sandwich", "taiyaki", "apple", "dango",
+    "donut", "cookie", "melonpan", "cupcake", "dorayaki",
+]
 FoodCategory = Literal["meal", "snack"]
 
 
@@ -45,7 +48,7 @@ FOOD_BALANCE = FoodBalance()
 
 @dataclass(frozen=True, slots=True)
 class FoodProfile:
-    """Easy-to-edit effects of one of Aiko's five food assets."""
+    """One editable nutrition profile, independent of visual sprites."""
 
     id: FoodId
     display_name: str
@@ -61,6 +64,11 @@ FOOD_CATALOG: dict[FoodId, FoodProfile] = {
     "taiyaki": FoodProfile("taiyaki", "Taiyaki", "snack", 20.0, 55.0, 4.0),
     "apple": FoodProfile("apple", "Apfel", "snack", 14.0, 38.0, 3.0),
     "dango": FoodProfile("dango", "Dango", "snack", 10.0, 20.0, 2.0),
+    "donut": FoodProfile("donut", "Donut", "snack", 18.0, 42.0, 4.0),
+    "cookie": FoodProfile("cookie", "Cookie", "snack", 12.0, 30.0, 3.0),
+    "melonpan": FoodProfile("melonpan", "Melonpan", "snack", 29.0, 85.0, 4.0),
+    "cupcake": FoodProfile("cupcake", "Cupcake", "snack", 17.0, 46.0, 4.0),
+    "dorayaki": FoodProfile("dorayaki", "Dorayaki", "snack", 21.0, 60.0, 4.0),
 }
 DEFAULT_FOOD_ID: FoodId = "onigiri"
 

@@ -1,48 +1,46 @@
-"""Small food assets follow the eat clip's per-frame hand anchors."""
+"""Use native 1x/2x prepared food sprites at the authored hand anchors.
+
+The image manifest is the sole source of pivot/size metadata. Feeding and
+energy-drink effects stay exclusively in the existing pet care layer.
+"""
 
 from __future__ import annotations
 
 import tkinter as tk
 
-from ..presentation.character import AnimationClip, AnimationFrame
-from ..presentation.food_models import FoodChoice, food_choices
-from ..presentation.character import FRAME_WIDTH
 from ..desktop.geometry import FOOT_BASELINE
+from ..infrastructure.item_assets import load_item_catalog
+from ..presentation.character import AnimationClip, AnimationFrame, FRAME_WIDTH
 
 
 class FoodOverlay:
-    """Own cached Tk images and one sprite-relative overlay canvas item."""
-
-    SOURCE_SUBSAMPLE = 3
-    # Source food PNGs were prepared at 98% of the original hand-object size.
+    """One Tk canvas item and reusable native-size sprite images."""
 
     def __init__(
-        self, root: tk.Tk, canvas: tk.Canvas, *,
-        scale: int,
-        choices: tuple[FoodChoice, ...] | None = None,
+        self, root: tk.Tk, canvas: tk.Canvas, *, scale: int,
     ) -> None:
-        self._root = root
         self._canvas = canvas
-        self._choices = choices if choices is not None else food_choices()
-        self._images: dict[str, tk.PhotoImage] = {}
+        self._foods = load_item_catalog().foods
+        self._images = {
+            (name, size): tk.PhotoImage(master=root, file=str(sprite.path))
+            for name, food in self._foods.items()
+            for size, sprite in food.sprites.items()
+        }
         self.current_food_id: str | None = None
-        self.item = canvas.create_image(
-            0, 0, anchor="s", state="hidden",
-        )
+        self.item = canvas.create_image(0, 0, anchor="nw", state="hidden")
         self.reload(scale)
 
     def reload(self, scale: int) -> None:
-        self._images.clear()
-        for food in self._choices:
-            if not food.image_path.is_file():
-                continue
-            source = tk.PhotoImage(master=self._root, file=str(food.image_path))
-            image = source.subsample(self.SOURCE_SUBSAMPLE)
-            self._images[food.id] = image if scale == 1 else image.zoom(scale)
+        """Switch scale without resampling or reloading image files."""
+        if scale not in (1, 2):
+            raise ValueError("Food overlay scale must be 1 or 2")
+        self._scale = scale
         self._canvas.itemconfigure(self.item, state="hidden")
 
     def select(self, food_id: str | None) -> None:
-        """Set only the visual selection; consumption is a domain operation."""
+        """Select a validated visual asset, never award any need."""
+        if food_id is not None and food_id not in self._foods:
+            raise ValueError(f"Unknown food overlay: {food_id}")
         self.current_food_id = food_id
         if food_id is None:
             self._canvas.itemconfigure(self.item, state="hidden")
@@ -51,13 +49,17 @@ class FoodOverlay:
         self, clip: AnimationClip, frame: AnimationFrame, *,
         scale: int,
     ) -> None:
-        image = self._images.get(self.current_food_id or "")
-        if clip.name != "eat" or frame.food_anchor is None or image is None:
+        item_id = self.current_food_id
+        if clip.name != "eat" or frame.food_anchor is None or item_id is None:
             self._canvas.itemconfigure(self.item, state="hidden")
             return
+        sprite = self._foods[item_id].sprites[scale]
+        image = self._images[(item_id, scale)]
         x = (FRAME_WIDTH // 2 - clip.anchor[0] + frame.food_anchor[0]) * scale
         y = (FOOT_BASELINE - clip.anchor[1] + frame.food_anchor[1]) * scale
-        self._canvas.coords(self.item, x, y)
+        self._canvas.coords(
+            self.item, round(x - sprite.pivot[0]), round(y - sprite.pivot[1]),
+        )
         self._canvas.itemconfigure(self.item, image=image, state="normal")
         self._canvas.tag_raise(self.item)
 

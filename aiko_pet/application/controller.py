@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from ..personality.adaptive import AdaptiveRoutine
 from ..personality.mind import AikoMind
 from ..personality.catalog import Reaction
-from ..pet.food import FoodActivity, FOOD_BALANCE
+from ..pet.food import FoodActivity, FOOD_BALANCE, DEFAULT_FOOD_ID
 from ..pet.state import PetState
 from ..pet.routine import TimeContext, context_at
 from .commands import CareCommand
@@ -36,6 +36,7 @@ class CareOutcome:
     reaction: Reaction | None
     context: TimeContext
     food_consumed: bool = False
+    consumed_item_id: str | None = None
 
 
 class CareController:
@@ -72,6 +73,9 @@ class CareController:
             command.action == "feed"
             and self._state.satiety < FOOD_BALANCE.too_full_to_eat_threshold
         )
+        drink_consumed = (
+            command.action == "energy_drink" and self._state.energy < 100
+        )
         fallback = self._state.interact(
             command.action, now=runtime.wall_time, food_id=command.food_id,
         )
@@ -81,4 +85,8 @@ class CareController:
             event, self._state, context, runtime.monotonic_time,
             tone=previous_emotion,
         )
-        return CareOutcome(fallback, reaction, context, food_consumed)
+        item_id = (
+            (command.food_id or DEFAULT_FOOD_ID) if food_consumed
+            else ("energy_drink" if drink_consumed else None)
+        )
+        return CareOutcome(fallback, reaction, context, food_consumed, item_id)

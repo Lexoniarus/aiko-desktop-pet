@@ -16,16 +16,14 @@ from .application.session import PetSessionRestorer
 from .application.settings import SettingKey
 from .application.activity import ActivityCallbacks, ActivityCoordinator
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
-from .desktop.runtime import (
-    DesktopRuntime, DesktopTickPorts,
-)
+from .desktop.runtime import DesktopRuntime, DesktopTickPorts
 from .desktop.persistence import DesktopPersistence
 from .desktop.maintenance import DesktopMaintenance
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.controller import CareController
 from .application.active_time import ActiveSessionClock
-from .pet.food import DEFAULT_FOOD_ID, FoodId
+from .pet.food import FoodId
 from .infrastructure.active_time import active_uptime_seconds
 from .ui.hover_ui import HoverUi, HoverUiPorts
 from .ui.game_speech import GameSpeech
@@ -211,7 +209,8 @@ class DesktopPet:
                 anchor=self._views.anchor,
                 care=self.interact,
                 feed=lambda selected: self.interact(
-                    "feed", food_id=selected,
+                    "energy_drink" if selected == "energy_drink" else "feed",
+                    food_id=None if selected == "energy_drink" else selected,
                 ),
                 game_completed=lambda score: self.application.complete_game(
                     experience_from_rock_paper_scissors(score),
@@ -431,13 +430,13 @@ class DesktopPet:
             runtime=self._activity.care_runtime(stamp, now),
         )
         self.context = result.context
-        if result.food_consumed:
-            self._animated.set_food_overlay(food_id or DEFAULT_FOOD_ID)
+        if result.consumed_item_id is not None:
+            self._animated.set_food_overlay(result.consumed_item_id)
         if action == "sleep":
             self._action_until = now
             self._animated.cancel_action(now)
-        visual = {"feed": "eat", "pet": "petting"}.get(action)
-        if action == "feed" and not result.food_consumed:
+        visual = {"feed": "eat", "energy_drink": "eat", "pet": "petting"}.get(action)
+        if visual == "eat" and result.consumed_item_id is None:
             visual = None
         reaction = result.reaction
         if visual is not None and not self.state.sleeping:

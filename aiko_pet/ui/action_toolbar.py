@@ -89,7 +89,6 @@ class ActionToolbar:
             ("play", "Spielen", actions_row),
             ("pet", "Streicheln", actions_row),
             ("talk", "Reden", actions_row),
-            ("energy_drink", "Energy Drink +10", extra_row),
             ("sleep", "Schlafen", extra_row),
         ):
             self.buttons[action] = self._button(

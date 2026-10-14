@@ -57,8 +57,12 @@ class CareGuiV11Tests(unittest.TestCase):
         self.app.state.energy = 12
         self.toolbar.buttons["talk"].invoke()
         self.assertAlmostEqual(self.app.state.social, 35, places=2)
-        self.toolbar.buttons["energy_drink"].invoke()
+        self.toolbar.buttons["feed"].invoke()
+        menu = self.app._hover.food_menu
+        assert menu is not None
+        menu.buttons["energy_drink"].invoke()
         self.assertAlmostEqual(self.app.state.energy, 21, places=2)
+        self.assertNotIn("energy_drink", self.toolbar.buttons)
         self.assertFalse(self.app._hover.keep_open)
         self.toolbar.refresh()
         self.assertIn("35%", self.toolbar.needs["social"][2].cget("text"))

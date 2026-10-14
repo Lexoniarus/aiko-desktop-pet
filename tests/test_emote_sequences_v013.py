@@ -164,8 +164,9 @@ class EmoteTkTests(unittest.TestCase):
         self.assertTrue(bar.buttons['feed'].cget('image'))
         self.assertEqual(len(bar.needs),6)
         self.assertTrue(all(name in bar.buttons for name in (
-            'feed','play','pet','talk','energy_drink','sleep',
+            'feed','play','pet','talk','sleep',
         )))
+        self.assertNotIn('energy_drink', bar.buttons)
         for key in bar.needs:
             self.pet.state.__dict__[key] = 100
         bar.refresh()

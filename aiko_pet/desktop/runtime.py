@@ -79,21 +79,24 @@ class DesktopRuntime:
         elapsed = max(0.0, min(0.5, now - self.last_tick))
         self.last_tick = now
         timestamp = self._wall_time()
-        ports.advance_lifecycle(now, timestamp)
-        ports.refresh_taskbar(now)
-        ports.poll_desktop_clicks()
-        ports.refresh_hover(now)
-        ports.observe_computer(now)
-        pointer = ports.observe_pointer(now)
-        ports.render_character(now, elapsed, pointer)
-        ports.show_idle_emote(now)
-        ports.speak_spontaneously(now)
-        ports.present_notification(now)
-        ports.refresh_overlays_and_save(now)
-        if not ports.is_closed():
-            self.scheduled_tick = self._schedule(
-                TICK_MILLISECONDS, ports.request_tick,
-            )
+        try:
+            ports.advance_lifecycle(now, timestamp)
+            ports.refresh_taskbar(now)
+            ports.poll_desktop_clicks()
+            ports.refresh_hover(now)
+            ports.observe_computer(now)
+            pointer = ports.observe_pointer(now)
+            ports.render_character(now, elapsed, pointer)
+            ports.show_idle_emote(now)
+            ports.speak_spontaneously(now)
+            ports.present_notification(now)
+            ports.refresh_overlays_and_save(now)
+        finally:
+            # Preserve the heartbeat while surfacing the original Tk error.
+            if not ports.is_closed():
+                self.scheduled_tick = self._schedule(
+                    TICK_MILLISECONDS, ports.request_tick,
+                )
 
     def stop(self) -> None:
         """Cancel both timer families, including pending startup greeting."""

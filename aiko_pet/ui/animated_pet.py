@@ -11,17 +11,18 @@ import random
 import time
 import tkinter as tk
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Callable, Protocol
+from collections.abc import Sequence
 
 from ..presentation.animation import (
     FrameClock, choose_passive_animation,
 )
 from ..presentation.ambient import AmbientDirector
-from ..presentation.character import CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH
+from ..presentation.character import CharacterCatalog, FRAME_WIDTH
 from ..presentation.gaze import gaze_sector
 from ..presentation.movement import WalkConditions, WalkController
 from .food_overlay import FoodOverlay
+from .character_sprite_cache import CharacterSpriteCache
 from .rest_pose_renderer import RestPoseRenderer
 from ..desktop.geometry import TaskbarTrack, FOOT_BASELINE
 
@@ -116,6 +117,7 @@ class AnimatedPet:
         self.last_pointer_move = -100.0
         self.last_attention = -100.0
         self.attention_until = -100.0
+        self._sprite_cache = CharacterSpriteCache(root, assets)
         self.sprites = self.load_sprites()
         self._rest_renderer = RestPoseRenderer(root)
         self.image_item = self.canvas.create_image(
@@ -124,29 +126,9 @@ class AnimatedPet:
         self.food_overlay = FoodOverlay(root, canvas, scale=self.settings.scale)
         self.show_frame("idle", time.monotonic())
 
-    def load_sprites(self) -> dict[str, list[tk.PhotoImage]]:
-        """Load prepared frames at Aiko's current integer pixel scale."""
-        sprites: dict[str, list[tk.PhotoImage]] = {}
-        cache: dict[Path, tk.PhotoImage] = {}
-        for state, clip in self.assets.clips.items():
-            frames: list[tk.PhotoImage] = []
-            for definition in clip.frames:
-                path = definition.file
-                frame = cache.get(path)
-                if frame is None:
-                    if not path.is_file():
-                        raise FileNotFoundError(f"Missing sprite: {path}")
-                    frame = tk.PhotoImage(file=str(path))
-                    if (frame.width(), frame.height()) != (
-                        FRAME_WIDTH, FRAME_HEIGHT,
-                    ):
-                        raise ValueError(f"Invalid sprite dimensions: {path}")
-                    if self.settings.scale == 2:
-                        frame = frame.zoom(2)
-                    cache[path] = frame
-                frames.append(frame)
-            sprites[state] = frames
-        return sprites
+    def load_sprites(self) -> dict[str, Sequence[tk.PhotoImage]]:
+        """Reuse originals and lazily zoom only requested 2x frames."""
+        return self._sprite_cache.for_scale(self.settings.scale)
 
     def set_auto_walk(self, enabled: bool, now: float) -> None:
         """Walking configuration belongs to the character's movement owner."""
