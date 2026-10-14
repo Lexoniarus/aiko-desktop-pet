@@ -27,6 +27,7 @@ from ..food import DEFAULT_FOOD_ID, FoodId, is_repeated_food
 from ..state import PetState as PetState
 from ..routine import TimeContext as TimeContext
 from .work_episode import WorkEpisodeMemory as WorkEpisodeMemory
+from .cursor_attention import CursorAttention
 
 
 class PetMind:
@@ -51,6 +52,7 @@ class PetMind:
         self.irritated_until = -1.0
         self.warm_until = -1.0
         self.last_contact = started_at
+        self.cursor_attention = CursorAttention()
         self.situation: Behaviour | None = None
         self.work = WorkEpisodeMemory()
         self._last_care_action = ""

@@ -55,6 +55,12 @@ class TaskbarPetGuiTests(unittest.TestCase):
         assert bubble is not None
         return bubble
 
+    def test_mind_owns_live_cursor_attention(self):
+        self.assertIs(
+            self.app._animated._cursor_attention,
+            self.app.mind.cursor_attention,
+        )
+
     def test_hover_toolbar_contains_every_care_action(self):
         self.app._on_enter()
         self.assertIsNotNone(self.app._hover.toolbar)

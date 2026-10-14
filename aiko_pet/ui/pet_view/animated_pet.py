@@ -79,6 +79,7 @@ class AnimatedPet:
         state: CareVisuals, settings: CharacterSettings,
         adaptive: FocusReadings, monitor: ActivityReadings,
         ports: AnimatedPorts, *, assets: CharacterCatalog,
+        cursor_attention: CursorAttention | None = None,
     ) -> None:
         self.root = root
         self.canvas = canvas
@@ -108,7 +109,10 @@ class AnimatedPet:
         )
         self.gaze_sector: int | None = None
         self._game_mode = False
-        self._cursor_attention = CursorAttention()
+        self._cursor_attention = (
+            cursor_attention if cursor_attention is not None
+            else CursorAttention()
+        )
         self._sprite_cache = CharacterSpriteCache(root, assets)
         self.sprites = self.load_sprites()
         self._rest_renderer = RestPoseRenderer(root)

@@ -156,6 +156,7 @@ class DesktopPet:
                 pointer_sample=lambda: self._input.pointer_sample(),
             ),
             assets=self._character_assets,
+            cursor_attention=self.mind.cursor_attention,
         )
         self._closed = False
         self._attention = AttentionCoordinator(
