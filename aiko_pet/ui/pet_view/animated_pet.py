@@ -68,6 +68,7 @@ class AnimatedPorts:
     walk_finished: Callable[[float], None]
     cursor_moved: Callable[[float, int, float], None]
     extend_action: Callable[[float], None]
+    pointer_sample: Callable[[], tuple[int, int, int]] | None = None
 
 
 class AnimatedPet:
@@ -287,9 +288,15 @@ class AnimatedPet:
 
     def observe_pointer(self, now: float) -> tuple[int, int]:
         """Observe only pointer positions, not keys or application content."""
-        pointer = (
-            self.root.winfo_pointerx(), self.root.winfo_pointery(),
-        )
+        sampler = self.ports.pointer_sample
+        if sampler is None:
+            pointer = (
+                self.root.winfo_pointerx(), self.root.winfo_pointery(),
+            )
+            screen_width = self.root.winfo_screenwidth()
+        else:
+            x, y, screen_width = sampler()
+            pointer = x, y
         moved = self._cursor_attention.observe(
             pointer, now, game_mode=self._game_mode,
         )
@@ -301,7 +308,7 @@ class AnimatedPet:
             eye_y = (self.settings.y or 0) + 82 * self.settings.scale
             distance = math.hypot(pointer[0] - eye_x, pointer[1] - eye_y)
             self.ports.cursor_moved(
-                distance, self.root.winfo_screenwidth(), now,
+                distance, screen_width, now,
             )
         return pointer
 

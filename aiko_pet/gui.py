@@ -48,9 +48,7 @@ from .pet.animation.idle_emote import choose_idle_emote
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.persistence import StateStore
 from .infrastructure.hardware.monitor import ActivityMonitor
-from .ui.pet_view.desktop_window import (
-    DesktopWindow, MAGENTA,
-)
+from .ui.pet_view.desktop_window import DesktopWindow, MAGENTA
 from .desktop.window_stack import WindowStack
 from .ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from .ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
@@ -155,6 +153,7 @@ class DesktopPet:
                 walk_finished=self._on_walk_finished,
                 cursor_moved=self._on_cursor_moved,
                 extend_action=self._extend_action,
+                pointer_sample=lambda: self._input.pointer_sample(),
             ),
             assets=self._character_assets,
         )
