@@ -10,7 +10,7 @@ import math
 from dataclasses import dataclass, field
 from typing import Any
 
-from .adaptive_policy import ActivityMode
+from .adaptive_policy import ActivityMode as ActivityMode
 
 SLOTS = 7 * 24
 MAX_OBSERVATION_SECONDS = 30.0

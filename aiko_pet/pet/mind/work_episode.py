@@ -6,7 +6,7 @@ component tracks only verified work transitions, interruptions and recovery.
 
 from __future__ import annotations
 
-from .adaptive_models import Behaviour
+from .adaptive_models import Behaviour as Behaviour
 
 
 class WorkEpisodeMemory:

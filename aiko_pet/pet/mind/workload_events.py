@@ -8,7 +8,10 @@ from __future__ import annotations
 
 import random
 
-from ...telemetry import ComputerSnapshot, workload_intensity
+from ...telemetry import (
+    ComputerSnapshot as ComputerSnapshot,
+    workload_intensity as workload_intensity,
+)
 
 class WorkloadEventDetector:
     """Translate measured effort into Aiko's *subjective* working rhythm.

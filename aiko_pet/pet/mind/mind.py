@@ -19,11 +19,14 @@ from .catalog import (
     PERIODS as PERIODS,
     Reaction as Reaction,
 )
-from .click_policy import ClickButton, choose_click_reaction
+from .click_policy import (
+    ClickButton as ClickButton,
+    choose_click_reaction as choose_click_reaction,
+)
 from ..food import DEFAULT_FOOD_ID, FoodId, is_repeated_food
-from ..state import PetState
-from ..routine import TimeContext
-from .work_episode import WorkEpisodeMemory
+from ..state import PetState as PetState
+from ..routine import TimeContext as TimeContext
+from .work_episode import WorkEpisodeMemory as WorkEpisodeMemory
 
 
 class PetMind:

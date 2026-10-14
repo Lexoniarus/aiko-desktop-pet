@@ -13,8 +13,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .reaction_sequence import EMOTES
-from ..routine import TimeContext
+from .reaction_sequence import EMOTES as EMOTES
+from ..routine import TimeContext as TimeContext
 
 CATALOGUE = (
     Path(__file__).resolve().parents[2] / "data" / "dialogues.de.json"

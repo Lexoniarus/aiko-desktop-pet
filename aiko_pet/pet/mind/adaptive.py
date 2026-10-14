@@ -21,8 +21,8 @@ from .adaptive_models import (
 )
 from .adaptive_policy import (
     ActivityMode as ActivityMode,
-    determine_activity_mode,
-    determine_sleep_options,
+    determine_activity_mode as determine_activity_mode,
+    determine_sleep_options as determine_sleep_options,
 )
 from ..routine import TimeContext, context_at
 
