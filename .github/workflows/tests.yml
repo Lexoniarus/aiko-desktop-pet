@@ -38,17 +38,18 @@ jobs:
       - name: Enforce PEP 8 line lengths in adaptive and dialogue modules
         run: |
           python -m ruff check --select E501 \
-            aiko_pet/personality/adaptive.py \
-            aiko_pet/personality/adaptive_policy.py \
-            aiko_pet/personality/adaptive_models.py \
-            aiko_pet/personality/mind.py aiko_pet/personality/catalog.py \
-            aiko_pet/personality/click_policy.py \
-            aiko_pet/personality/workload_events.py \
-            aiko_pet/personality/work_episode.py \
-            aiko_pet/personality/reaction_sequence.py \
-            aiko_pet/presentation/reaction_playback.py \
-            aiko_pet/presentation/animation.py aiko_pet/presentation/gaze.py \
-            aiko_pet/presentation/movement.py aiko_pet/desktop/geometry.py \
+            aiko_pet/pet/mind/adaptive.py \
+            aiko_pet/pet/mind/adaptive_policy.py \
+            aiko_pet/pet/mind/adaptive_models.py \
+            aiko_pet/pet/mind/mind.py aiko_pet/pet/mind/catalog.py \
+            aiko_pet/pet/mind/click_policy.py \
+            aiko_pet/pet/mind/workload_events.py \
+            aiko_pet/pet/mind/work_episode.py \
+            aiko_pet/pet/mind/reaction_sequence.py \
+            aiko_pet/ui/pet_view/reaction_player.py \
+            aiko_pet/pet/animation/animation.py aiko_pet/pet/animation/gaze.py \
+            aiko_pet/pet/movement/controller.py \
+            aiko_pet/pet/movement/random_walk.py aiko_pet/desktop/geometry.py \
             aiko_pet/desktop/taskbar.py aiko_pet/desktop/global_input.py \
             aiko_pet/desktop/window_stack.py \
             tests/test_adaptive_policy.py tests/test_dialogue_events.py \
@@ -64,8 +65,8 @@ jobs:
       - name: Type-check new headless core policies
         run: |
           python -m mypy --strict --follow-imports=silent \
-            aiko_pet/personality/adaptive_policy.py aiko_pet/personality/click_policy.py \
-            aiko_pet/presentation/movement.py aiko_pet/presentation/reaction_playback.py
+            aiko_pet/pet/mind/adaptive_policy.py aiko_pet/pet/mind/click_policy.py \
+            aiko_pet/pet/movement/controller.py aiko_pet/ui/pet_view/reaction_player.py
       - name: Enforce PEP 8 line lengths across application and tools
         run: python -m ruff check --select E501 aiko_pet main.py tools
       - name: Install whole-application typing dependencies
@@ -134,6 +135,11 @@ jobs:
             "test_desktop_focus_timers.py",
             "test_desktop_persistence.py",
             "test_desktop_maintenance.py",
+            "test_cursor_observation.py",
+            "test_pointer_runtime.py",
+            "test_desktop_attention_runtime.py",
+            "test_character_mind_injection.py",
+            "test_canonical_import_paths.py",
             "test_attention_policy.py",
             "test_hardware_providers.py",
             "test_system_activity.py",

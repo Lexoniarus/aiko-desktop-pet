@@ -115,10 +115,10 @@ class PackageDependencyTests(unittest.TestCase):
                                 "aiko_pet.desktop", "aiko_pet.infrastructure",
                             )))
 
-    def test_canonical_pet_and_personality_do_not_import_outer_layers(
+    def test_all_canonical_pet_subpackages_exclude_outer_layers(
         self,
     ) -> None:
-        for folder in ("pet", "personality"):
+        for folder in ("pet", "pet/mind", "pet/animation", "pet/movement"):
             for path in (SOURCES / folder).glob("*.py"):
                 with self.subTest(path=str(path.relative_to(SOURCES))):
                     tree = ast.parse(path.read_text("utf-8"))
