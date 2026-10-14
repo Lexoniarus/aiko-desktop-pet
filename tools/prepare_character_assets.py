@@ -10,7 +10,7 @@ from typing import Any
 
 from PIL import Image
 
-from aiko_pet.presentation.animation_timing import load_timing_policy
+from aiko_pet.infrastructure.animation_timing import load_timing_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets/aiko-anime-8-frames/aiko-anime-compact/animations-8"

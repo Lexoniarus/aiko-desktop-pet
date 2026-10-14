@@ -21,7 +21,7 @@ from tools.media_crop import CapturedFrame, capture_screen, save_sequence
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.personality.catalog import Reaction
+from aiko_pet.pet.mind.catalog import Reaction
 
 ROOT = Path(__file__).resolve().parents[1]
 PREVIEWS = ROOT / "vorschau"

@@ -36,7 +36,7 @@ def capture(pet: DesktopPet) -> CapturedFrame:
 
 def assert_hand_fits(game: object) -> None:
     """Fail a capture if an actual hand is cropped or the slot changes size."""
-    from aiko_pet.ui.rock_paper_scissors_window import RockPaperScissorsWindow
+    from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
 
     if not isinstance(game, RockPaperScissorsWindow):
         raise RuntimeError("Expected a Rock–Paper–Scissors window")
