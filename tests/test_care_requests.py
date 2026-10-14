@@ -11,9 +11,9 @@ from aiko_pet.application.care_requests import choose_care_request
 from aiko_pet.application.controller import CareController
 from aiko_pet.application.router import ApplicationRouter
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.personality.adaptive import AdaptiveRoutine
-from aiko_pet.personality.mind import AikoMind
-from aiko_pet.personality.workload_events import WorkloadEventDetector
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.mind import PetMind
+from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
@@ -27,7 +27,7 @@ class Monitor:
 class CareRequestTests(unittest.TestCase):
     def setUp(self) -> None:
         self.state = PetState(satiety=100, mood=100, fun=100, social=100, affection=100)
-        self.settings, self.mind = PetSettings(), AikoMind()
+        self.settings, self.mind = PetSettings(), PetMind()
         router = ApplicationRouter(CareController(
             self.state, self.mind, AdaptiveRoutine(),
             clock=ActiveSessionClock(lambda: 0.),

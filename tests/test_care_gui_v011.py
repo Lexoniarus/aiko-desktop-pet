@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.gui import DesktopPet
-from aiko_pet.ui.action_toolbar import ActionToolbar
+from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.telemetry import ComputerSnapshot
 

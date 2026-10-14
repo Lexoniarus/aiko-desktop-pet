@@ -2,7 +2,7 @@
 
 import unittest
 
-from aiko_pet.personality.workload_events import WorkloadEventDetector
+from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.telemetry import ComputerSnapshot
 
 

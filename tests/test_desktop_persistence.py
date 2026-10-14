@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.personality.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.desktop.persistence import DesktopPersistence
 from aiko_pet.pet.state import PetState
 from aiko_pet.application.settings import PetSettings
