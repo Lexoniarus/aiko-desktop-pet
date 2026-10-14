@@ -8,10 +8,10 @@ from functools import partial
 from typing import Callable
 
 from ..presentation.contracts import StatusSnapshot
-from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
-from .hover_geometry import HoverGeometry, Rect
+from .windows.hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
+from .windows.hover_geometry import HoverGeometry, Rect
 from .common.skin import AikoSkin
-from .toolbar_details import ToolbarDetails
+from .windows.toolbar_details import ToolbarDetails
 from .common.window_drag import WindowDrag
 
 

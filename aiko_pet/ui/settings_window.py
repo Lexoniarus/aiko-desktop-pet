@@ -9,7 +9,7 @@ from functools import partial
 from typing import Callable
 
 from ..application.settings import SettingKey
-from .settings_contracts import SettingsActions, SettingsSnapshot
+from .windows.settings_contracts import SettingsActions, SettingsSnapshot
 from .common.skin import AikoSkin
 from .common.window_drag import WindowDrag, bounded_position
 
