@@ -20,7 +20,7 @@ from ..presentation.animation import (
 from ..presentation.ambient import AmbientDirector
 from ..pet.animation.character import CharacterCatalog, FRAME_WIDTH
 from ..pet.animation.gaze import gaze_sector
-from ..presentation.movement import WalkConditions, WalkController
+from ..pet.movement import WalkConditions, WalkController
 from .food_overlay import FoodOverlay
 from .character_sprite_cache import CharacterSpriteCache
 from .rest_pose_renderer import RestPoseRenderer
