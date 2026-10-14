@@ -10,7 +10,7 @@ import tkinter as tk
 from typing import Callable
 
 from ..application.router import ApplicationRouter
-from ..presentation.reaction_playback import ReactionPlayer
+from ..ui.pet_view.reaction_player import ReactionPlayer
 from ..infrastructure.hardware.monitor import ActivityMonitor
 from ..ui.windows.hover_ui import HoverUi
 from ..ui.pet_view.speech_presenter import SpeechPresenter

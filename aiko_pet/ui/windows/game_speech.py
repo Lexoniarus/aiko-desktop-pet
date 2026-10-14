@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from ...games.rock_paper_scissors import Move
-from ...presentation.reaction_playback import ReactionPlayer
+from ..pet_view.reaction_player import ReactionPlayer
 from ..pet_view.speech_presenter import SpeechPresenter
 
 
