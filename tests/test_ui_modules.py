@@ -4,9 +4,9 @@ import unittest
 from pathlib import Path
 
 from aiko_pet.asset_paths import EMOTE_IMAGE_DIR, KENNEY_UI_DIR, SPRITE_FRAME_DIR
-from aiko_pet.ui.action_toolbar import ActionToolbar
-from aiko_pet.ui.settings_window import SettingsWindow
-from aiko_pet.ui.toolbar_details import ToolbarDetails
+from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from aiko_pet.ui.windows.settings_window import SettingsWindow
+from aiko_pet.ui.windows.toolbar_details import ToolbarDetails
 from aiko_pet.ui.common.skin import AikoSkin
 from aiko_pet.ui.common.window_drag import WindowDrag
 
@@ -19,9 +19,9 @@ class UiModuleExtractionTests(unittest.TestCase):
 
     def test_view_components_have_distinct_module_ownership(self) -> None:
         for component, module in (
-            (ActionToolbar, "action_toolbar"),
-            (SettingsWindow, "settings_window"),
-            (ToolbarDetails, "toolbar_details"),
+            (ActionToolbar, "windows.action_toolbar"),
+            (SettingsWindow, "windows.settings_window"),
+            (ToolbarDetails, "windows.toolbar_details"),
             (AikoSkin, "common.skin"), (WindowDrag, "common.window_drag"),
         ):
             self.assertEqual(component.__module__, f"aiko_pet.ui.{module}")
