@@ -68,7 +68,9 @@ class CarePresenterTests(unittest.TestCase):
     def test_existing_reaction_reuses_original_text_with_eat_animation(
         self,
     ) -> None:
-        reaction = Reaction(animation="idle", text="Hallo")
+        reaction = Reaction(
+            line_id="test-care", event="feed", text="Hallo", animation="idle",
+        )
         self.presenter.present(
             "energy_drink", self.outcome(reaction=reaction, item="energy_drink"),
             now=100.0, sleeping=False,
