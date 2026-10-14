@@ -19,7 +19,7 @@ from ..presentation.animation import (
 )
 from ..presentation.ambient import AmbientDirector
 from ..presentation.character import CharacterCatalog, FRAME_WIDTH
-from ..presentation.gaze import gaze_sector
+from ..pet.animation.gaze import gaze_sector
 from ..presentation.movement import WalkConditions, WalkController
 from .food_overlay import FoodOverlay
 from .character_sprite_cache import CharacterSpriteCache
