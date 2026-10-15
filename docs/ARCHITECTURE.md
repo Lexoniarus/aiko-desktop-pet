@@ -57,7 +57,12 @@ all runtime coupling between composed services.
 
 **`pet/mind/adaptive.py`** learns coarse local daily patterns from observations. Unknown hardware readings do not become fabricated activity. No application names, process titles or content are collected for this version.
 
-Some original domain convenience methods still return German text, such as `PetState.mood_hint()` and `TimeContext.greeting()`. They are retained for compatibility; **production status/hover copy** is formatted in `ui/view_models/text_de.py`.
+`PetState.mood_hint()` now returns a typed `MoodHint` key from
+`pet/status_hints.py`. The exact same pure policy works on the immutable
+`PetReadSnapshot`; only `ui/view_models/text_de.py` selects German mood
+wording. `PetState.due_meal()` returns a due meal ID, and the UI decides
+whether to display a meal name or "Snack". Historical time-context text helpers
+such as `TimeContext.greeting()` remain pending separate compatibility review.
 
 ## Application layer
 
@@ -108,10 +113,10 @@ No user-facing window owns PetState transitions. Actions are sent to the
 application boundary through named callbacks. The pet sprite and the utility
 windows are distinct UI owners even though both use Tkinter.
 
-`presentation/` now exists solely as a historical compatibility layer for
-older import paths. Runtime code should import directly from the owning
-`pet/`, `ui/`, or `infrastructure/` module; compatibility modules must
-not grow new business logic. See [UI window contract](UI_WINDOW_CONTRACT.md).
+`presentation/`, `personality/` and the former root-level `ui/*.py` widget
+forwarders have been **removed**. Runtime and tests import directly from the
+owning `pet/`, `ui/`, or `infrastructure/` module. See the
+[UI window contract](UI_WINDOW_CONTRACT.md).
 
 ## Desktop runtime and operating-system adapters
 
@@ -199,22 +204,24 @@ The application uses `workload_events`, not the old `computer_voice` attribute.
 Existing domain convenience methods and version-one data decoding remain
 outside this module-import cleanup.
 
-The new `tests/test_canonical_import_paths.py` forbids production imports from
-`personality/`, `presentation/`, and the former top-level UI modules, while
-allowing temporary public compatibility exports. Canonical class/function
-implementations live at exactly one new location. Old aliases are not
-permission to add new dependencies or parallel implementations.
+The `tests/test_canonical_import_paths.py` audit forbids references to
+removed `personality/`, `presentation/` and root-level UI module paths in
+production code, tools and tests. `tests/test_canonical_owner_identity.py`
+checks implementation ownership without reviving obsolete compatibility tests.
+There are no surviving import-forwarding packages for these historical paths.
 
 
-## Refactor branch status (October 14, 2026)
+## Refactor branch status (October 15, 2026)
 
 This structure is being validated on the draft `refactor/pet-domain-ui-boundaries`
 branch; the document becomes the maintained architecture after merge. The
 migration does **not** implement World, new emotion values, object detection,
 awareness, cursor fear, autonomous objects or drag-and-drop. Existing behavior,
-assets and save-format invariants remain the acceptance criteria. Legacy
-`presentation/`, `personality/` and `ui/` top-level forwards remain solely
-for compatibility until the final import audit.
+assets and save-format invariants remain the acceptance criteria. All historical `presentation/`, `personality/` and root-level UI import
+forwarders are removed. R2 animation-selection and R5 orchestration cleanup
+continues; R6 has consolidated typed mood hints, due-meal selection and
+single-assertion ownership tests. Relevant changes still require CI and
+final-commit Windows verification before merge.
 
 ## Testing and contribution
 

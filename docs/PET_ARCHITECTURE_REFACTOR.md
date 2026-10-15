@@ -37,39 +37,45 @@ Canonical ownership:
 This is a work plan, not an implementation claim. Mark each step complete only after passing relevant automated checks.
 
 
-## Progress on the refactor branch
+## Progress on the refactor branch (15 October 2026)
 
-- Completed: pure gaze, sprite metadata, frame/ambient policies, idle-emote
-  selection and JSON timing validation assigned to canonical owners.
-- Completed: `pet/mind/` is the canonical owner for PetMind, dialogue and
-  existing adaptive/workload policies (with transitional legacy forwards).
-- Completed: `pet/movement/` separates random departure planning from the
-  one movement controller; `ui/pet_view/walk_driver.py` handles host motion.
-- Completed: utility windows, pet-view renderers and UI view models have
-  distinct canonical packages; existing compatibility imports remain.
-- Completed: cursor-attention history is a pure pet-owned object, while native
-  pointer sampling is provided by DesktopInput.
-- R5: the composition root now delegates movement, cursor attention, timed
-  actions, care presentations, spontaneous reactions, hover and click selection
-  to explicitly owned objects. Settings values are composed by `PetSettings`
-  without changing its flat save schema.
-- R6: canonical active imports are enforced by
-  `tests/test_canonical_import_paths.py`; existing architecture tests now
-  exercise actual canonical owners, rather than legacy import wrappers.
-- Still pending: interactive Windows smoke tests and final draft-PR approval.
-  Compatibility shims remain intentionally limited to existing clients/tests,
-  with no second business implementation.
-- Automated checks: draft PR #9 runs the Python 3.11/3.13 and Windows-headless
-  matrix. CI success is evaluated per commit, not assumed for future commits.
+- **R1 canonical owners:** `pet/mind/` owns `PetMind`, dialogue and adaptive
+  policy; Aiko's authored catalogue is injected by the character factory.
+- **R2 in progress:** `pet/animation/` owns pure sprite timing, gaze, ambient
+  policies and now foreground priority selection
+  (`pet/animation/priority.py`). `AnimatedPet` still coordinates some
+  runtime conditions and Tk frame playback; finish that boundary separately.
+- **R3 done:** `pet/movement/` plans and executes bounded movement;
+  `ui/pet_view/walk_driver.py` connects it to the host.
+- **R4 done:** `ui/pet_view/`, `ui/windows/`, `ui/common/` and
+  `ui/view_models/` are the sole implementation owners.
+- **R5 in progress:** movement, cursor, care and spontaneous event handling
+  are delegated from the shell. Sleep/wake dialogue is now decided by
+  `AttentionCoordinator` and presented by `DesktopAttentionRuntime`.
+  Composition-root constructor wiring and remaining private adapters need
+  a final responsibility/usage review.
+- **R6 in progress:** the former `personality/`, `presentation/` and
+  root-level UI forwarding modules are **gone**; canonical-import checks
+  enforce their absence. `PetState.mood_hint()` now returns typed status keys,
+  and `PetState.due_meal()` returns meal IDs. German status copy is owned by
+  `ui/view_models/text_de.py`. Fourteen import-identity-only test files were
+  consolidated into one stronger canonical-owner matrix. Remaining historical
+  APIs and documentation must be audited before marking R6 complete.
+- **Windows acceptance:** on 15 October the maintainer reported the prior
+  branch's Windows behavior functional. Exact machine/DPI/tested SHA were not
+  recorded, and subsequent cleanup commits need a targeted recheck.
+- **CI:** Ruff, strict Mypy, Pyright, Python 3.11/3.13 and Windows-headless
+  tests are required for each candidate commit. Historical success is not
+  acceptance of newer commits; PR #9 stays a draft until final sign-off.
 
 ## Original R1–R6 acceptance ledger
 
 | Phase | Implementation | Verification |
 | --- | --- | --- |
 | R1 Mind | `pet/mind/` canonical PetMind, dialogue and adaptive modules | Existing dialogue/click tests + CI |
-| R2 Animation | `pet/animation/` pure policies, `ui/pet_view/` renderer | Frame/gaze tests + Windows visual smoke pending |
-| R3 Movement | `RandomWalkPlanner`, `WalkController`, `WalkDriver` | Walk timing/bounds tests + Windows smoke pending |
-| R4 UI | `ui/windows/`, `ui/common/`, `ui/view_models/` | Existing window and pin tests + Windows smoke pending |
+| R2 Animation | `pet/animation/` pure policies, `ui/pet_view/` renderer | Priority/frame/gaze tests + targeted Windows recheck |
+| R3 Movement | `RandomWalkPlanner`, `WalkController`, `WalkDriver` | Walk timing/bounds tests + reported Windows smoke |
+| R4 UI | `ui/windows/`, `ui/common/`, `ui/view_models/` | Existing window and pin tests + reported Windows smoke |
 | R5 Orchestration | `ContactCoordinator`, presenters, action playback, composed preferences | Use-case/UI integration tests + CI |
 | R6 Consolidation | Canonical import audit and refreshed architecture docs | CI; no merge before native acceptance |
 
@@ -79,4 +85,6 @@ Run Ruff, strict Mypy, Pyright, the complete Python 3.11/3.13 unit and Tk/Xvfb m
 
 Manual acceptance steps and a sign-off record are in
 [the Windows smoke checklist](PET_REFACTOR_WINDOWS_SMOKE.md).
-Until this record is filled by a Windows tester, PR #9 remains a draft.
+Keep PR #9 in draft until the final exact commit is tested on Windows and
+the acceptance record is completed. A prior reported successful test does not
+automatically cover later changes.

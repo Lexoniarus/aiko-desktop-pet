@@ -64,6 +64,13 @@ events, taskbar positioning or visual sprite alignment.
 
 ## Acceptance record
 
+Maintainer report, 15 October 2026: the refactor branch was tested
+interactively on Windows and its behavior was reported functional. The exact
+tested commit, Windows/DPI setup and individual checklist entries were not
+provided. This report is useful evidence, but is **not** a final per-commit
+sign-off for later R2/R5/R6 changes.
+
+
 - Exact branch commit:
 - Windows version and DPI/scaling:
 - Displays / taskbar configuration:
