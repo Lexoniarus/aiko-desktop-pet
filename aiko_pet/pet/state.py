@@ -15,9 +15,6 @@ from .friendship import (
     CARE_FRIENDSHIP_GAIN as CARE_FRIENDSHIP_GAIN,
     CARE_PRIMARY_NEED as CARE_PRIMARY_NEED,
     FRIENDSHIP_DAILY_CAP as FRIENDSHIP_DAILY_CAP,
-    FRIENDSHIP_NEED_THRESHOLD as FRIENDSHIP_NEED_THRESHOLD,
-    FRIENDSHIP_REWARD_INTERVAL as FRIENDSHIP_REWARD_INTERVAL,
-    FRIENDSHIP_VARIETY_BONUS as FRIENDSHIP_VARIETY_BONUS,
     LEGACY_REWARD_ACTIONS as LEGACY_REWARD_ACTIONS,
     calculate_friendship_reward,
 )
@@ -29,9 +26,6 @@ from .need_decay import (
     calculate_need_decay,
 )
 from .lifecycle import (
-    MAX_CATCHUP_SECONDS as MAX_CATCHUP_SECONDS,
-    MAX_LIVE_EFFORT_SECONDS as MAX_LIVE_EFFORT_SECONDS,
-    SIMULATION_STEP_SECONDS as SIMULATION_STEP_SECONDS,
     calculate_daily_routine,
     plan_pet_time,
 )
@@ -199,21 +193,6 @@ class PetState:
         self.nap_until = transition.nap_until
         self.auto_sleep_night = transition.auto_sleep_night
         self.auto_nap_day = transition.auto_nap_day
-
-    def _apply_clock(
-        self,
-        context: TimeContext,
-        *,
-        allow_bedtime: bool = True,
-        allow_nap: bool = False,
-        interrupt_nap: bool = False,
-        effort: float | None = None,
-    ) -> None:
-        """Legacy private entrypoint; new rules use update_daily_routine."""
-        self.update_daily_routine(
-            context, allow_bedtime=allow_bedtime,
-            allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
-        )
 
     def _decay(
         self, hours: float, context: TimeContext | None,

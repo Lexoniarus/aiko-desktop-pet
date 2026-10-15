@@ -126,6 +126,20 @@ class CanonicalImportTests(unittest.TestCase):
             with self.subTest(member=obsolete):
                 self.assertFalse(hasattr(TimeContext, obsolete))
 
+    def test_pet_state_no_longer_reexports_policy_tuning_constants(
+        self,
+    ) -> None:
+        from aiko_pet.pet import state
+
+        self.assertFalse(hasattr(state.PetState, "_apply_clock"))
+        for obsolete in (
+            "FRIENDSHIP_NEED_THRESHOLD", "FRIENDSHIP_REWARD_INTERVAL",
+            "FRIENDSHIP_VARIETY_BONUS", "MAX_CATCHUP_SECONDS",
+            "MAX_LIVE_EFFORT_SECONDS", "SIMULATION_STEP_SECONDS",
+        ):
+            with self.subTest(export=obsolete):
+                self.assertFalse(hasattr(state, obsolete))
+
     def test_pet_state_has_no_legacy_mutation_reexports(self) -> None:
         module = __import__("aiko_pet.pet.state", fromlist=["PetState"])
         for obsolete in (
