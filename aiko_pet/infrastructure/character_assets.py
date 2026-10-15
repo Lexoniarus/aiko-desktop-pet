@@ -2,16 +2,21 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any
 
 from ..asset_paths import ASSET_ROOT
-from ..presentation.animation_timing import VIRTUAL_CLIPS, load_timing_policy
-from ..presentation.character import (
-    AnimationClip, AnimationFrame, CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH,
+from ..pet.animation.character import (
+    FRAME_HEIGHT,
+    FRAME_WIDTH,
+    AnimationClip,
+    AnimationFrame,
+    CharacterCatalog,
 )
+from ..pet.animation.timing import VIRTUAL_CLIPS
+from ..pet.catalog_validation import load_json, object_fields
+from .animation_timing import load_timing_policy
 
 
 def _file(root: Path, value: Any) -> Path:
@@ -27,10 +32,17 @@ def _file(root: Path, value: Any) -> Path:
 
 def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
     """Validate the complete catalog before the desktop creates its widgets."""
-    data = json.loads((root / "animations.json").read_text(encoding="utf-8"))
+    data = object_fields(
+        load_json(root / "animations.json"),
+        ("version", "frame_size", "animations"),
+        context="animations",
+    )
+    if type(data["version"]) is not int or data["version"] != 1:
+        raise ValueError("Unsupported character catalog version")
     policy = load_timing_policy(root)
     if not isinstance(data, dict) or data.get("frame_size") != [
-        FRAME_WIDTH, FRAME_HEIGHT,
+        FRAME_WIDTH,
+        FRAME_HEIGHT,
     ]:
         raise ValueError("Unsupported character frame dimensions")
     entries = data.get("animations")
@@ -40,15 +52,44 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
     for entry in entries:
         if not isinstance(entry, dict):
             raise ValueError("Invalid animation entry")
+        object_fields(
+            entry,
+            ("state", "loop", "anchor", "frames"),
+            optional=(
+                "return_to",
+                "sequence",
+                "playback_total_ms",
+                "frame_size",
+                "source_anchor",
+                "total_ms",
+                "original_total_ms",
+                "new_frame_count",
+                "attack_side",
+                "effect_direction",
+                "effects_embedded",
+                "external_hand_embedded",
+                "food_embedded",
+                "overlay",
+                "overlays",
+                "release_event",
+                "release_frame",
+                "transition_included",
+                "weapon_embedded",
+            ),
+            context="animation entry",
+        )
         name, loop, anchor = (
-            entry.get("state"), entry.get("loop"), entry.get("anchor"),
+            entry.get("state"),
+            entry.get("loop"),
+            entry.get("anchor"),
         )
         if not isinstance(name, str) or not name or name in clips:
             raise ValueError("Missing or duplicate animation name")
         if type(loop) is not bool:
             raise ValueError("Animation loop must be boolean")
         if (
-            not isinstance(anchor, list) or len(anchor) != 2
+            not isinstance(anchor, list)
+            or len(anchor) != 2
             or any(type(value) is not int for value in anchor)
             or not 0 <= anchor[0] <= FRAME_WIDTH
             or not 0 <= anchor[1] <= FRAME_HEIGHT
@@ -61,6 +102,21 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
         for frame in raw_frames:
             if not isinstance(frame, dict):
                 raise ValueError("Invalid animation frame")
+            object_fields(
+                frame,
+                ("file", "duration_ms"),
+                optional=(
+                    "source_duration_ms",
+                    "events",
+                    "food_anchor",
+                    "hand_foreground",
+                    "degrees_clockwise_from_up",
+                    "spell_anchor",
+                    "weapon_anchor",
+                    "weapon_angle_deg",
+                ),
+                context=f"animation {name} frame",
+            )
             duration = frame.get("duration_ms")
             events = frame.get("events", [])
             if type(duration) is not int or not 1 <= duration <= 60_000:
@@ -81,10 +137,14 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
                 ):
                     raise ValueError("Invalid food hand anchor")
                 food_anchor = (raw_food_anchor[0], raw_food_anchor[1])
-            frames.append(AnimationFrame(
-                _file(root, frame.get("file")), duration, tuple(events),
-                food_anchor=food_anchor,
-            ))
+            frames.append(
+                AnimationFrame(
+                    _file(root, frame.get("file")),
+                    duration,
+                    tuple(events),
+                    food_anchor=food_anchor,
+                )
+            )
         if name != "look":
             if len(frames) != policy.regular_frames:
                 raise ValueError(f"{name} must have eight animation frames")
@@ -110,7 +170,11 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
         if not isinstance(return_to, str):
             raise ValueError("Invalid return animation")
         clips[name] = AnimationClip(
-            name, tuple(frames), loop, (anchor[0], anchor[1]), return_to,
+            name,
+            tuple(frames),
+            loop,
+            (anchor[0], anchor[1]),
+            return_to,
             playback_order,
         )
     for variant, source_name in VIRTUAL_CLIPS.items():
@@ -118,8 +182,12 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
             raise ValueError(f"Invalid playback variant: {variant}")
         source = clips[source_name]
         clips[variant] = AnimationClip(
-            variant, source.frames, source.loop, source.anchor,
-            source.return_to, policy.sequence_for(variant),
+            variant,
+            source.frames,
+            source.loop,
+            source.anchor,
+            source.return_to,
+            policy.sequence_for(variant),
         )
     for required in ("idle", "sleep", "eat", "petting", "look"):
         if required not in clips:

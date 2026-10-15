@@ -1,7 +1,6 @@
 """Pure daily-routine and bounded-time planning for the pet aggregate.
 
 Policies calculate transitions and time steps; PetState owns every mutation.
-Old module-level functions remain callable as public PetState method adapters.
 """
 
 from __future__ import annotations
@@ -10,12 +9,13 @@ import math
 from dataclasses import dataclass
 from typing import Protocol
 
+from .balance import BALANCE
 from .routine import TimeContext, context_at
 
-MAX_CATCHUP_SECONDS = 8 * 60 * 60
-SIMULATION_STEP_SECONDS = 300
+MAX_CATCHUP_SECONDS = BALANCE.integer("simulation", "maximum_catchup_seconds")
+SIMULATION_STEP_SECONDS = BALANCE.integer("simulation", "step_seconds")
 # Live telemetry is never projected across a restart/suspend or offline gap.
-MAX_LIVE_EFFORT_SECONDS = 30.0
+MAX_LIVE_EFFORT_SECONDS = BALANCE.number("simulation", "maximum_live_effort_seconds")
 
 
 class RoutineValues(Protocol):
@@ -84,12 +84,11 @@ def calculate_daily_routine(
         sleeping = False
         origin = ""
     elif (
-        not context.night and allow_nap and not sleeping
-        and nap_day != context.day_key
+        not context.night and allow_nap and not sleeping and nap_day != context.day_key
     ):
         sleeping = True
         origin = "nap"
-        nap_until = stamp + 45 * 60
+        nap_until = stamp + BALANCE.integer("simulation", "nap_seconds")
         nap_day = context.day_key
     return RoutineTransition(
         sleeping=sleeping,
@@ -117,9 +116,7 @@ def plan_pet_time(
     elapsed = max(0.0, min(MAX_CATCHUP_SECONDS, duration))
     if type(effort) not in (int, float):
         effort = None
-    elif effort is not None and (
-        not math.isfinite(effort) or not 0.0 <= effort <= 1.0
-    ):
+    elif effort is not None and (not math.isfinite(effort) or not 0.0 <= effort <= 1.0):
         effort = None
     known_since = now - min(elapsed, MAX_LIVE_EFFORT_SECONDS)
     if not auto_routine:
@@ -136,70 +133,12 @@ def plan_pet_time(
         next_cursor = min(now, cursor + SIMULATION_STEP_SECONDS)
         if effort is not None and cursor < known_since < next_cursor:
             next_cursor = known_since
-        steps.append(SimulationStep(
-            hours=(next_cursor - cursor) / 3600.0,
-            context=context_at((cursor + next_cursor) / 2),
-            effort=effort if cursor >= known_since else None,
-        ))
+        steps.append(
+            SimulationStep(
+                hours=(next_cursor - cursor) / 3600.0,
+                context=context_at((cursor + next_cursor) / 2),
+                effort=effort if cursor >= known_since else None,
+            )
+        )
         cursor = next_cursor
     return tuple(steps)
-
-
-class PetTimeline(Protocol):
-    """Public aggregate operation for legacy module-level compatibility."""
-
-    def advance(
-        self,
-        now: float,
-        *,
-        auto_routine: bool = False,
-        allow_bedtime: bool | None = None,
-        allow_nap: bool = False,
-        interrupt_nap: bool = False,
-        effort: float | None = None,
-    ) -> None: ...
-
-
-class RoutineActor(Protocol):
-    def update_daily_routine(
-        self,
-        context: TimeContext,
-        *,
-        allow_bedtime: bool = True,
-        allow_nap: bool = False,
-        interrupt_nap: bool = False,
-        effort: float | None = None,
-    ) -> None: ...
-
-
-def apply_daily_routine(
-    record: RoutineActor,
-    context: TimeContext,
-    *,
-    allow_bedtime: bool = True,
-    allow_nap: bool = False,
-    interrupt_nap: bool = False,
-    effort: float | None = None,
-) -> None:
-    """Legacy adapter to the aggregate's explicit calendar operation."""
-    record.update_daily_routine(
-        context, allow_bedtime=allow_bedtime,
-        allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
-    )
-
-
-def advance_pet_time(
-    record: PetTimeline,
-    now: float,
-    *,
-    auto_routine: bool = False,
-    allow_bedtime: bool | None = None,
-    allow_nap: bool = False,
-    interrupt_nap: bool = False,
-    effort: float | None = None,
-) -> None:
-    """Legacy adapter; the aggregate now executes its own planned steps."""
-    record.advance(
-        now, auto_routine=auto_routine, allow_bedtime=allow_bedtime,
-        allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
-    )

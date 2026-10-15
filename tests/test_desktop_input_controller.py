@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tkinter as tk
 import unittest
+from unittest.mock import patch
 
 from aiko_pet.desktop.input import DesktopInput, DesktopInputActions
 
@@ -52,6 +53,14 @@ class DesktopInputTests(unittest.TestCase):
             ), self.mouse,
         )
         self.addCleanup(self.root.destroy)
+
+    def test_pointer_sampling_uses_desktop_input_boundary(self) -> None:
+        with (
+            patch.object(self.root, "winfo_pointerx", return_value=321),
+            patch.object(self.root, "winfo_pointery", return_value=654),
+            patch.object(self.root, "winfo_screenwidth", return_value=1920),
+        ):
+            self.assertEqual(self.input.pointer_sample(), (321, 654, 1920))
 
     def test_initial_bindings_preserve_sprite_events(self) -> None:
         self.input.initialize()

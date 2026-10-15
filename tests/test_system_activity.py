@@ -4,18 +4,18 @@ import random
 import threading
 import time
 import unittest
-from unittest.mock import patch
 from types import SimpleNamespace
+from unittest.mock import patch
 
 from aiko_pet.infrastructure.hardware import os_sensors as activity
-from aiko_pet.personality.workload_events import WorkloadEventDetector
-from aiko_pet.personality.catalog import DialogueBook
 from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
-from aiko_pet.telemetry import ComputerSnapshot, workload_intensity
-from aiko_pet.infrastructure.hardware.sampler import HardwareSampler
-from aiko_pet.infrastructure.hardware.os_sensors import load_percent
 from aiko_pet.infrastructure.hardware.nvidia import parse_nvidia_reading
-from aiko_pet.infrastructure.hardware.metrics import percent_label, workload_description
+from aiko_pet.infrastructure.hardware.os_sensors import load_percent
+from aiko_pet.infrastructure.hardware.sampler import HardwareSampler
+from aiko_pet.pet.mind.catalog import DialogueBook
+from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
+from aiko_pet.telemetry import ComputerSnapshot, workload_intensity
+from aiko_pet.ui.view_models.text_de import describe_workload, format_percent
 
 
 def reading(**kwargs):
@@ -35,8 +35,8 @@ class HardwareTests(unittest.TestCase):
         self.assertEqual(parse_nvidia_reading("16, 100, 400\n91, 70, 100"), (91, 70.0))
         self.assertEqual(parse_nvidia_reading("N/A, Not Supported, 0"), (None, None))
         self.assertEqual(parse_nvidia_reading(""), (None, None))
-        self.assertEqual(percent_label(None), "–")
-        self.assertEqual(percent_label(99.8), "100 %")
+        self.assertEqual(format_percent(None), "–")
+        self.assertEqual(format_percent(99.8), "100 %")
 
     def test_hardware_sampler_has_no_mandatory_gpu_dependency(self):
         # Developer OS may lack NVIDIA tools: no crash and no fake GPU value.
@@ -71,14 +71,19 @@ class HardwareTests(unittest.TestCase):
 
         with (
             patch.object(activity.sys, "platform", "win32"),
-            patch.object(activity.ctypes, "windll",
-                         SimpleNamespace(kernel32=FakeKernel()), create=True),
+            patch.object(
+                activity.ctypes,
+                "windll",
+                SimpleNamespace(kernel32=FakeKernel()),
+                create=True,
+            ),
         ):
             self.assertEqual(activity.cpu_windows_times(), (100, 500))
             self.assertEqual(activity.memory_windows_percent(), 75.0)
             self.assertEqual(activity.uptime_hours(), 50.0)
-            self.assertEqual(FakeKernel.GetTickCount64.restype,
-                             activity.ctypes.c_uint64)
+            self.assertEqual(
+                FakeKernel.GetTickCount64.restype, activity.ctypes.c_uint64
+            )
 
     def test_monitor_disable_clears_snapshot_and_prevents_sampling(self):
         class StubSampler:
@@ -155,9 +160,9 @@ class VoiceTests(unittest.TestCase):
         assert less_pressure is not None
         self.assertGreater(memory_pressure, less_pressure)
         for snap in (high_gpu, idle_but_occupied):
-            self.assertNotIn("GPU", workload_description(snap))
-            self.assertNotIn("RAM", workload_description(snap))
-            self.assertNotIn("CPU", workload_description(snap))
+            self.assertNotIn("GPU", describe_workload(snap))
+            self.assertNotIn("RAM", describe_workload(snap))
+            self.assertNotIn("CPU", describe_workload(snap))
 
     def test_classification_is_shared_effort_not_technical_category(self):
         cases = [
@@ -171,59 +176,132 @@ class VoiceTests(unittest.TestCase):
         ]
         for values, expected in cases:
             with self.subTest(values=values):
-                self.assertEqual(WorkloadEventDetector.classify(reading(**values)), expected)
+                self.assertEqual(
+                    WorkloadEventDetector.classify(reading(**values)), expected
+                )
 
     def test_brief_gpu_spike_must_not_claim_exhaustion(self):
-        voice = WorkloadEventDetector()
-        self.assertIsNone(voice.observe_change(reading(cpu=8, gpu=10), 1000))
-        self.assertEqual(voice.observe_change(
-            ComputerSnapshot(cpu=12, gpu=96, measured_at=1006), 1006,
-        ), "computer_effort_rising")
-        event = voice.observe_change(
-            ComputerSnapshot(cpu=10, gpu=12, measured_at=1012), 1012,
+        workload_events = WorkloadEventDetector()
+        self.assertIsNone(workload_events.observe_change(reading(cpu=8, gpu=10), 1000))
+        self.assertEqual(
+            workload_events.observe_change(
+                ComputerSnapshot(cpu=12, gpu=96, measured_at=1006),
+                1006,
+            ),
+            "computer_effort_rising",
         )
-        self.assertNotIn(event, (
-            "computer_effort_recovered_peak", "computer_effort_recovered",
-        ))
+        event = workload_events.observe_change(
+            ComputerSnapshot(cpu=10, gpu=12, measured_at=1012),
+            1012,
+        )
+        self.assertNotIn(
+            event,
+            (
+                "computer_effort_recovered_peak",
+                "computer_effort_recovered",
+            ),
+        )
 
     def test_sustained_heavy_gpu_load_has_distinct_after_work_reaction(self):
-        voice = WorkloadEventDetector()
-        self.assertIsNone(voice.observe_change(reading(cpu=7, gpu=5, ram=42), 1000))
-        self.assertEqual(voice.observe_change(ComputerSnapshot(
-            cpu=9, gpu=95, ram=42, measured_at=1006,
-        ), 1006), "computer_effort_rising")
+        workload_events = WorkloadEventDetector()
+        self.assertIsNone(
+            workload_events.observe_change(reading(cpu=7, gpu=5, ram=42), 1000)
+        )
+        self.assertEqual(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=9,
+                    gpu=95,
+                    ram=42,
+                    measured_at=1006,
+                ),
+                1006,
+            ),
+            "computer_effort_rising",
+        )
         for stamp in (1012, 1018):
-            self.assertIsNone(voice.observe_change(ComputerSnapshot(
-                cpu=9, gpu=96, ram=42, measured_at=stamp,
-            ), stamp))
-        self.assertEqual(voice.observe_change(ComputerSnapshot(
-            cpu=9, gpu=97, ram=42, measured_at=1024,
-        ), 1024), "computer_effort_peak")
-        self.assertEqual(voice.observe_change(ComputerSnapshot(
-            cpu=9, gpu=8, ram=43, measured_at=1030,
-        ), 1030), "computer_effort_recovered_peak")
-        self.assertIsNone(voice.observe_change(ComputerSnapshot(
-            cpu=9, gpu=8, ram=43, measured_at=1030,
-        ), 1031))
-        self.assertIsNone(voice.observe_change(ComputerSnapshot(
-            cpu=8, gpu=8, ram=43, measured_at=1036,
-        ), 1036))
+            self.assertIsNone(
+                workload_events.observe_change(
+                    ComputerSnapshot(
+                        cpu=9,
+                        gpu=96,
+                        ram=42,
+                        measured_at=stamp,
+                    ),
+                    stamp,
+                )
+            )
+        self.assertEqual(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=9,
+                    gpu=97,
+                    ram=42,
+                    measured_at=1024,
+                ),
+                1024,
+            ),
+            "computer_effort_peak",
+        )
+        self.assertEqual(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=9,
+                    gpu=8,
+                    ram=43,
+                    measured_at=1030,
+                ),
+                1030,
+            ),
+            "computer_effort_recovered_peak",
+        )
+        self.assertIsNone(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=9,
+                    gpu=8,
+                    ram=43,
+                    measured_at=1030,
+                ),
+                1031,
+            )
+        )
+        self.assertIsNone(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=8,
+                    gpu=8,
+                    ram=43,
+                    measured_at=1036,
+                ),
+                1036,
+            )
+        )
 
     def test_gradual_rampdown_still_remembers_recent_heavy_phase(self):
-        voice = WorkloadEventDetector()
-        voice.observe_change(reading(cpu=5, gpu=5), 1000)
-        voice.observe_change(ComputerSnapshot(cpu=80, measured_at=1006), 1006)
-        voice.observe_change(ComputerSnapshot(cpu=85, measured_at=1024), 1024)
-        voice.observe_change(ComputerSnapshot(cpu=52, measured_at=1030), 1030)
-        self.assertEqual(voice.observe_change(ComputerSnapshot(
-            cpu=8, measured_at=1036,
-        ), 1036), "computer_effort_recovered")
+        workload_events = WorkloadEventDetector()
+        workload_events.observe_change(reading(cpu=5, gpu=5), 1000)
+        workload_events.observe_change(ComputerSnapshot(cpu=80, measured_at=1006), 1006)
+        workload_events.observe_change(ComputerSnapshot(cpu=85, measured_at=1024), 1024)
+        workload_events.observe_change(ComputerSnapshot(cpu=52, measured_at=1030), 1030)
+        self.assertEqual(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=8,
+                    measured_at=1036,
+                ),
+                1036,
+            ),
+            "computer_effort_recovered",
+        )
 
     def test_initial_high_workload_is_not_ignored(self):
-        voice = WorkloadEventDetector()
+        workload_events = WorkloadEventDetector()
         snap = ComputerSnapshot(cpu=16, gpu=97, ram=52, measured_at=1000)
-        self.assertEqual(voice.observe_change(snap, 1000), "computer_effort_rising")
-        self.assertIsNone(voice.observe_change(snap, 1001))
+        self.assertEqual(
+            workload_events.observe_change(snap, 1000), "computer_effort_rising"
+        )
+        self.assertIsNone(workload_events.observe_change(snap, 1001))
 
     def test_rising_from_cpu_gpu_or_ram_uses_same_voice(self):
         for values in (
@@ -233,60 +311,114 @@ class VoiceTests(unittest.TestCase):
         ):
             before, after = values
             with self.subTest(after=after):
-                voice = WorkloadEventDetector()
-                voice.observe_change(ComputerSnapshot(**before, measured_at=1000), 1000)
-                self.assertEqual(voice.observe_change(
-                    ComputerSnapshot(**after, measured_at=1006), 1006),
-                    "computer_effort_rising")
+                workload_events = WorkloadEventDetector()
+                workload_events.observe_change(
+                    ComputerSnapshot(**before, measured_at=1000), 1000
+                )
+                self.assertEqual(
+                    workload_events.observe_change(
+                        ComputerSnapshot(**after, measured_at=1006), 1006
+                    ),
+                    "computer_effort_rising",
+                )
 
     def test_stale_duplicate_or_unknown_samples_are_ignored(self):
-        voice = WorkloadEventDetector()
-        self.assertIsNone(voice.observe_change(ComputerSnapshot(), 1100))
-        self.assertIsNone(voice.observe_change(ComputerSnapshot(
-            cpu=95, measured_at=1000,
-        ), 1100))
-        self.assertIsNone(voice.observe_change(ComputerSnapshot(
-            cpu=10, measured_at=1100,
-        ), 1100))
-        self.assertIsNone(voice.observe_change(ComputerSnapshot(
-            cpu=10, measured_at=1100,
-        ), 1101))
-        self.assertIsNone(voice.observe_change(ComputerSnapshot(
-            cpu=10, measured_at=1106,
-        ), 1106))
-        voice.reset_samples()
-        self.assertEqual(voice.observe_change(ComputerSnapshot(
-            cpu=95, measured_at=1120,
-        ), 1120), "computer_effort_rising")
+        workload_events = WorkloadEventDetector()
+        self.assertIsNone(workload_events.observe_change(ComputerSnapshot(), 1100))
+        self.assertIsNone(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=95,
+                    measured_at=1000,
+                ),
+                1100,
+            )
+        )
+        self.assertIsNone(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=10,
+                    measured_at=1100,
+                ),
+                1100,
+            )
+        )
+        self.assertIsNone(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=10,
+                    measured_at=1100,
+                ),
+                1101,
+            )
+        )
+        self.assertIsNone(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=10,
+                    measured_at=1106,
+                ),
+                1106,
+            )
+        )
+        workload_events.reset_samples()
+        self.assertEqual(
+            workload_events.observe_change(
+                ComputerSnapshot(
+                    cpu=95,
+                    measured_at=1120,
+                ),
+                1120,
+            ),
+            "computer_effort_rising",
+        )
 
     def test_spontaneous_voice_is_bounded_and_stale_cannot_speak(self):
-        voice = WorkloadEventDetector(rng=random.Random(1))
-        self.assertIsNone(voice.maybe_event(ComputerSnapshot(cpu=95), 1000))
-        self.assertIsNone(voice.maybe_event(reading(cpu=95), 1100))
-        self.assertEqual(voice.maybe_event(reading(cpu=95), 1000),
-                         "computer_effort_steady")
-        self.assertIsNone(voice.maybe_event(reading(cpu=95), 1200))
+        workload_events = WorkloadEventDetector(rng=random.Random(1))
+        self.assertIsNone(workload_events.maybe_event(ComputerSnapshot(cpu=95), 1000))
+        self.assertIsNone(workload_events.maybe_event(reading(cpu=95), 1100))
+        self.assertEqual(
+            workload_events.maybe_event(reading(cpu=95), 1000), "computer_effort_steady"
+        )
+        self.assertIsNone(workload_events.maybe_event(reading(cpu=95), 1200))
 
     def test_every_computer_line_is_characterful_and_never_names_sensors(self):
         from collections import Counter
+
         book = DialogueBook.from_file()
         counts = Counter(line.event for line in book.lines)
         events = (
-            "computer_effort_rising", "computer_effort_heavy",
-            "computer_effort_peak", "computer_effort_easing",
-            "computer_effort_recovered", "computer_effort_recovered_peak",
-            "computer_effort_steady", "computer_effort_rest", "computer_uptime",
+            "computer_effort_rising",
+            "computer_effort_heavy",
+            "computer_effort_peak",
+            "computer_effort_easing",
+            "computer_effort_recovered",
+            "computer_effort_recovered_peak",
+            "computer_effort_steady",
+            "computer_effort_rest",
+            "computer_uptime",
         )
         for event in events:
             with self.subTest(event=event):
                 self.assertGreaterEqual(counts[event], 5)
-        forbidden = ("cpu", "gpu", "ram", "grafikkarte", "prozessor", "vram",
-                     "auslastung", "rechenzyklen", "kern", "speicher")
+        forbidden = (
+            "cpu",
+            "gpu",
+            "ram",
+            "grafikkarte",
+            "prozessor",
+            "vram",
+            "auslastung",
+            "rechenzyklen",
+            "kern",
+            "speicher",
+        )
         for line in book.lines:
             if not line.event.startswith("computer_"):
                 continue
-            self.assertFalse(any(word in line.text.lower() for word in forbidden),
-                             line.text)
+            self.assertFalse(
+                any(word in line.text.lower() for word in forbidden), line.text
+            )
 
 
 if __name__ == "__main__":

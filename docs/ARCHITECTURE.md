@@ -1,4 +1,4 @@
-# Architecture — current `main`
+# Architecture — canonical pet and desktop UI packages
 
 Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tkinter and prepared PNG artwork. The program requires no remote services or inference model at runtime. This document describes the **current code structure**, not the original v0.7–v0.13 implementation history.
 
@@ -9,32 +9,32 @@ The key design principle: **one owner per mutable state or external side effect*
 ```mermaid
 flowchart TB
     Shell["gui.py — DesktopPet (composition root)"]
-    App["application/ — care, attention, activity, read models"]
-    Domain["pet/ — PetState and pure policy transitions"]
-    Mind["personality/ — AikoMind, catalog, adaptive memory"]
-    Presentation["presentation/ — localized views and visual policies"]
-    Widgets["ui/ — Tkinter character and windows"]
-    Desktop["desktop/ — timers, input, native Windows adapters"]
-    Infra["infrastructure/ — hardware and JSON storage"]
-    Telemetry["telemetry.py — immutable measurement values"]
-    Ports["application/ports.py — data/reading interfaces"]
+    App["application/ — care, attention, activity and commands"]
+    Pet["pet/ — PetState, PetMind, animation and movement policies"]
+    View["ui/view_models/ — immutable UI projections"]
+    Sprite["ui/pet_view/ — sprite, overlays and reaction playback"]
+    Windows["ui/windows/ and ui/common/ — controls and reusable Tk helpers"]
+    Desktop["desktop/ — timer, pointer/input and native Windows adapters"]
+    Infra["infrastructure/ — hardware, item/animation loaders and JSON save"]
+    Ports["application/ports.py and telemetry.py — read contracts"]
 
     Shell --> App
-    Shell --> Presentation
-    Shell --> Widgets
+    Shell --> Pet
+    Shell --> Sprite
+    Shell --> Windows
     Shell --> Desktop
     Shell --> Infra
-    App --> Domain
-    App --> Mind
+    App --> Pet
     App --> Ports
-    Ports --> Telemetry
-    Infra --> Telemetry
-    Presentation --> App
-    Presentation --> Domain
-    Presentation --> Mind
-    Widgets --> Presentation
-    Desktop --> Widgets
-    Infra -. "structurally satisfies reader ports" .-> Ports
+    View --> App
+    View --> Pet
+    Sprite --> Pet
+    Windows --> View
+    Windows --> Pet
+    Desktop --> Sprite
+    Desktop --> Windows
+    Infra --> Pet
+    Infra -. "satisfies reader contracts" .-> Ports
 ```
 
 The solid arrows highlight major code dependencies; the dotted provider-to-port
@@ -48,53 +48,145 @@ all runtime coupling between composed services.
 
 **`pet/state.py — PetState`** is the only mutable, persisted pet aggregate. Its public `interact(action, now=...)` and `advance(now, ...)` operations commit care and elapsed-time state changes. Pure policy modules in `pet/` calculate immutable decisions:
 
+`interact()` returns a language-neutral `CareResult` from `pet/care_result.py`.
+The one care decision owns acceptance, consumption, the chosen food and meal
+credit. Application outcomes expose that same result; they never recalculate
+satiety or energy thresholds. `application/active_time.py` owns the immutable
+`SessionInputs` record used by ticks, care and completed games. Its
+`advance_session_time()` function consumes the shared clock interval exactly
+once and forwards the same schedule, workload and nutrition context. The mind
+captures pre-care tone and conversation context before mutation, then
+interprets the committed effect.
+German fallback wording is selected only by `ui/view_models/care_text.py`.
+
 - `care_actions.py`: `CareTransition` for care actions and their rewards.
 - `need_decay.py`: `NeedLevels` for time and measured effort.
 - `friendship.py`: relationship gains, cooldowns and daily limits.
 - `lifecycle.py` and `routine.py`: bounded catch-up, sleep and daily schedule.
 
-**`personality/mind.py — AikoMind`** selects reactions and maintains short-term conversational context. It does not display windows or speak through an audio device. `WorkloadEventDetector` in `personality/workload_events.py` converts observed load changes into event keys; The historical `ComputerVoice` alias has been removed. Authored dialogue is stored in `aiko_pet/data/dialogues.de.json`.
+Food and localized UI content now have distinct, validated JSON owners:
+`data/balance.json` holds the initial values and named gameplay parameters;
+`data/food_catalog.json` holds nutrition/menu records;
+`data/texts.de.json` holds care, mood, emotion, workload, status and
+game-message copy; `data/routine.de.json` holds day schedules;
+`data/dialogues.de.json` holds authored situational lines.
+`assets/items/items.json` holds only item paths, dimensions, pivots and
+weapon labels, not duplicate food names or menu icon conventions.
+`desktop/animation_assembly.py` loads one immutable `ItemCatalog` and
+shares it with the hand overlay and food picker via typed UI values. Python
+food/status catalog models validate resource data; they do not define a
+second, independently editable list of food profiles or emotions.
+`pet/catalog_validation.py` rejects malformed JSON, duplicate keys and
+non-finite numbers. Typed catalogues reject missing/unknown fields, invalid
+references, text placeholders and inconsistent balance ranges before use.
+See [resource ownership and local saves](DATA_AND_SAVES.md).
 
-**`personality/adaptive.py`** learns coarse local daily patterns from observations. Unknown hardware readings do not become fabricated activity. No application names, process titles or content are collected for this version.
+**`pet/mind/mind.py — PetMind`** selects reactions and maintains short-term conversational context. It does not own Tk windows or play sounds. `WorkloadEventDetector` in `pet/mind/workload_events.py` converts observed load changes into event keys. Authored Aiko dialogue remains in `aiko_pet/data/dialogues.de.json`; it is not regenerated by this refactor.
 
-Some original domain convenience methods still return German text, such as `PetState.mood_hint()` and `TimeContext.greeting()`. They are retained for compatibility; **production status/hover copy** is formatted in `presentation/text_de.py`.
+**`pet/mind/adaptive.py`** learns coarse local daily patterns from observations. Unknown hardware readings do not become fabricated activity. No application names, process titles or content are collected for this version.
+
+`PetState.mood_hint()` now returns a typed `MoodHint` key from
+`pet/status_hints.py`. The exact same pure policy works on the immutable
+`PetReadSnapshot`; only `ui/view_models/text_de.py` selects German mood
+wording. `PetState.due_meal()` returns a due meal ID, and the UI decides
+whether to display a meal name or "Snack". Historical localized helpers
+`TimeContext.label`, `TimeContext.schedule_line` and
+`TimeContext.greeting()` have been removed; localized weekday/status display
+belongs to `ui/view_models/text_de.py`.
 
 ## Application layer
 
 - `CareController.execute()` advances pet time, coordinates the character's care event, applies the command and returns a presentation-independent `CareOutcome`.
+- `ContactCoordinator` coordinates intentional cursor entry, user clicks and startup greetings through UI effect ports. `PetMind` still chooses all authored dialogue.
 - `ApplicationRouter` accepts owner-thread care commands and validated, bounded incoming notifications. An external HTTP or IPC server is **not implemented**.
 - `ActivityCoordinator` consumes hardware samples and coordinates adaptive observations and elapsed-time pet state.
 - `AttentionCoordinator` controls spontaneous lines, non-interrupting notifications and idle gestures.
-- `PetSessionRestorer` restores saved data through a narrow reader port without offline catch-up; the new running session receives a fresh time anchor.
+- `PetSessionRestorer` restores saved data through a narrow reader port, then simulates bounded closed time with unknown workload and optional routine self-care before anchoring the live clock.
 - `PetReadSnapshot` is an immutable, language-neutral copy for presentation and potential future read-only adapters.
 - `application/ports.py` describes capabilities such as `ComputerReadings`, not concrete OS drivers.
+- `application/assembly.py` builds the single care/game/activity/cursor
+  use-case graph using existing state, mind and active-session clock. The
+  assembly imports no desktop, Tk, or infrastructure implementations.
 
 The application never imports Tkinter or native system monitor implementations.
 
-## Presentation and Tk widgets
+## Pet animation, UI views and Tk widgets
 
-`presentation/read_models.py` owns `DesktopPresentation`, converting pet read snapshots, typed settings and telemetry into immutable German `HoverSnapshot`, `StatusSnapshot` and `SettingsSnapshot` objects. `presentation/projections.py` formats display values; `presentation/text_de.py` owns German UI wording.
+Pet-owned pure behaviour lives in `pet/animation/` and `pet/movement/`:
+`gaze.py` computes sixteen directional sectors, `ambient.py` schedules
+subtle idle motion, `animation.py` owns frame-selection and timing policies,
+`timing.py` validates already-decoded animation profiles, and the
+`RandomWalkPlanner` selects departures separately from the `WalkController`'s
+movement execution. `pet/mind/cursor_attention.py` retains only short-lived
+pointer-attention timestamps, not operating-system access.
 
-Concrete widgets belong under `ui/`:
+`ui/pet_view/` owns the concrete renderer and overlays:
 
-- `AnimatedPet` draws Aiko and delegates animation-frame, gaze and walking calculations to pure presentation policies. Its cancellable `FrameClock` gives all eight frames of **each clip** identical holds while allowing distinct activity-appropriate clip tempos, separately from the 140 ms application tick. An independent `AmbientDirector` schedules occasional complete idle blinks, resting gaps and pointer-free glances without adding new animation loops. Its slow micro-motion phase drives a cached `RestPoseRenderer` for neutral and selected directional poses: the head/shoulder pixels shift by at most one source pixel with a gradual shoulder taper, while feet remain at fixed coordinates. This uses Tk PhotoImage composition without Pillow at runtime or extra authored sprites. Late callbacks retain every authored frame instead of skipping ahead, extending one-shot deadlines as needed. Nominal 33 ms movement callbacks consume elapsed walking frame progress: each walking cycle still covers 68 pixels per scale unit, including under delayed callbacks. Fractional motion is retained; only actual bounds end a blocked walk. Full 60–180 second pauses start after completed walks or blocking activities. One-shot care actions return to idle; sleep plays the breathing loop. Sixteen static gaze poses are selected by cursor sector and are exempt from the frame-clock rate.
-- `HoverUi` owns one pinnable toolbar, one persistent `SettingsWindow` and the minigame window, independently from the animated character. It distinguishes active control use from idle window visibility.
-- `SpeechPresenter` manages the existing speech/emote overlay.
-- `ActionToolbar` owns one care/status widget with six bars, care buttons and expandable `ToolbarDetails`; the separate status window is removed. `HoverUi` alone owns the visibility pin. `AikoSkin` and `WindowDrag` are composed by the toolbar, settings and minigame rather than duplicated. See [the UI window contract](UI_WINDOW_CONTRACT.md).
+- `AnimatedPet` owns Tk frame playback, sprite caches, overlays and
+  per-frame animation callbacks. Its `render()` applies a typed
+  `RenderDecision`; it no longer chooses behavioural priority, reads
+  hardware, owns gaze history or constructs a walking controller.
+- `DesktopAnimationRuntime` (`desktop/animation_runtime.py`) composes pure
+  pet animation policies, attention timing and already observed host facts.
+  Its single `AmbientDirector` is passed into `AnimatedPet` for head sway
+  and complete blink-frame playback without duplicating ambient state.
+- `DesktopVisualObservation` (`desktop/visual_observation.py`) owns
+  16-direction gaze hysteresis and reads cached workload only when needed.
+- `WalkDriver` (`desktop/walk_runtime.py`) translates host placement and
+  the current attention/work situation into steps from the single pet-owned
+  `WalkController`. Tk frame callbacks still advance movement smoothly.
+- `CharacterSpriteCache` handles runtime sprite frames, including lazy 2x
+  variants. `RestPoseRenderer` handles pose-relative head motion, and
+  `FoodOverlay` renders the selected hand item without affecting nutrition.
+- `SpeechPresenter` and `ReactionPlayer` display timed text and emote cues.
+  The pure need-based idle emote choice lives under `pet/animation/`.
+- `ActionPlayback` owns the current visual action state and deadline, not the
+  desktop shell. `CarePresenter` renders accepted care outcomes, including
+  held items, reactions and status refreshes. `AttentionPresenter` translates
+  approved spontaneous speech, idle gestures and notifications into visuals.
 
-`presentation/reaction_playback.py` performs the timed emote → text → optional follow-up sequence with cancellation.
+`ActionPlayback.clip_id` identifies the running animation clip; it is distinct
+from the pet aggregate and its needs. `CarePresenter` uses the result's action
+and consumed item directly instead of accepting a second copy of that action.
+
+`ui/windows/` owns `HoverUi`, the pinnable `ActionToolbar`, `FoodMenu`,
+`SettingsWindow`, and the rock-paper-scissors window. Controls are
+independently movable where applicable. `ui/common/` owns reusable skin and
+window-dragging helpers; `ui/view_models/` owns `DesktopPresentation`,
+immutable status/hover/settings contracts, projections and localized UI copy.
+
+No user-facing window owns PetState transitions. Actions are sent to the
+application boundary through named callbacks. The pet sprite and the utility
+windows are distinct UI owners even though both use Tkinter.
+
+`presentation/`, `personality/` and the former root-level `ui/*.py` widget
+forwarders have been **removed**. Runtime and tests import directly from the
+owning `pet/`, `ui/`, or `infrastructure/` module. See the
+[UI window contract](UI_WINDOW_CONTRACT.md).
 
 ## Desktop runtime and operating-system adapters
 
-`gui.DesktopPet` is the composition root. It constructs the single graph of application, UI, desktop services and providers, wires callbacks and starts `DesktopLifecycle`.
+`gui.DesktopPet` is the composition root. It wires typed callbacks and starts
+`DesktopLifecycle` without owning a duplicate application or animation state.
+`desktop/animation_assembly.py` constructs the interdependent WalkDriver,
+visual observer, animation runtime and sprite as one bounded assembly.
+`desktop/session_runtime.py` coordinates lifecycle advancement, window
+refresh and the advance-before-persist sequence through narrow effect ports.
 
 - `DesktopRuntime` takes explicit `DesktopTickPorts` and owns the ordered 140 ms update cycle and timer IDs.
+- `DesktopAnimationRuntime` chooses sprite intent without importing Tk.
+  `WalkDriver` executes bounded host displacement, while
+  `DesktopVisualObservation` resolves cursor and measured workload inputs.
 - `DesktopPreferences` coordinates the consequences of option changes without a second settings model.
-- `DesktopInput` owns Tk bindings, global click checks and cancellable delayed focus callbacks.
+- `application/settings.py` defines `PetSettings` as the single settings
+  aggregate, composing `PetBehaviorSettings` and `DesktopDisplaySettings`.
+  The historical flat properties and version-one JSON keys are preserved; no
+  preference value is duplicated between the two child objects.
+- `DesktopInput` owns Tk bindings, global click checks, pointer-coordinate sampling and cancellable delayed focus callbacks.
 - `DesktopLifecycle` controls startup/shutdown ordering.
 - `desktop/taskbar.py` and `window_stack.py` own Windows-specific taskbar discovery and z-order operations; `desktop/geometry.py` contains pure taskbar value calculations.
 
-`infrastructure/character_assets.py` reads the prepared character catalog into immutable `presentation/character.py` contracts before Tk widgets are constructed. Full-width frames and visible ground anchors preserve the wider sleeping pose. `tools/prepare_character_assets.py` retains the selected rebuild inputs and produces binary-alpha runtime PNGs. Runtime metadata retains historical source durations while each regular clip uses one constant frame hold, independently configurable in `assets/animation_timing.json` and validated when loaded. Walking remains at 160 ms per frame (1.28 seconds per cycle); the idle blink is event-like with a 3–8-second rest interval and a one-source-pixel pose-relative head sway. Attack is cataloged but has no trigger. See [asset licensing](../ASSETS.md).
+`infrastructure/character_assets.py` reads the prepared character catalog into immutable `pet/animation/character.py` contracts before Tk widgets are constructed. `infrastructure/animation_timing.py` owns JSON decoding while pure validation is in `pet/animation/timing.py`. Full-width frames and visible ground anchors preserve the wider sleeping pose. `tools/prepare_character_assets.py` retains the selected rebuild inputs and produces binary-alpha runtime PNGs. Runtime metadata retains historical source durations while each regular clip uses one constant frame hold, independently configurable in `assets/animation_timing.json` and validated when loaded. Walking currently uses 190 ms per frame (1.52 seconds per cycle); the idle blink is event-like with a 3–8-second rest interval and a one-source-pixel pose-relative head sway. Attack is cataloged but has no trigger. See [asset licensing](../ASSETS.md).
 
 Hardware implementation details live in `infrastructure/hardware/`. `telemetry.ComputerSnapshot` is immutable and shared by the provider and application layers. The sampler uses local OS APIs and optional bounded NVIDIA tooling.
 
@@ -102,17 +194,43 @@ Hardware implementation details live in `infrastructure/hardware/`. `telemetry.C
 
 `infrastructure/persistence.py — StateStore` is the only implementation of the version-one atomic local JSON repository. The default Windows file is `%LOCALAPPDATA%\AikoDesktopPet\state.json`. The sole optional environment override, `AIKO_SAVE_PATH`, selects another **file path**. No `.env` is required.
 
+`infrastructure/pet_codec.py` owns pet/nutrition JSON translation: field names,
+legacy defaults, malformed-value handling and four-decimal save rounding.
+`PetState` and `FoodState` contain gameplay values and transitions, with no
+`from_dict`/`to_dict` methods. Existing saves retain their version-one shape.
+
 - Storage decodes/writes data but does not simulate elapsed pet time.
-  - The application restores saved values without offline catch-up. A shared
+  - The application simulates bounded closed time after decoding. A shared
     `ActiveSessionClock` consumes each interval once across ticks, care, settings
     and saving. Windows uses unbiased interrupt time; Linux uses CLOCK_MONOTONIC.
-    Standby and closed sessions do not consume needs or restore energy.
+    Live standby is excluded. On reopening, closed wall time is reconstructed up to the configured limit, including routine sleep and offline-only meals.
 - Tests use temporary save files, never the user's production save.
 - No cloud, login, browser integration, microphone listener or network service is started.
 
 See [privacy and installation](../README.md#privacy-and-local-data) and [integration design](INTEGRATION_ARCHITECTURE.md) for future, explicitly unimplemented extension points.
 
 ## Import migration
+
+The care/storage follow-up also changes these Python call contracts:
+
+| Previous call | Current owner/contract |
+| --- | --- |
+| `PetState.interact()` returning German text | Returns `pet.care_result.CareResult`; UI uses `format_care_response` |
+| `PetState.from_dict` / `to_dict` | `infrastructure.pet_codec.decode_pet_state` / `encode_pet_state` |
+| `FoodState.from_dict` / `to_dict` | `infrastructure.pet_codec.decode_food_state` / `encode_food_state` |
+| `CareRuntime`, router `runtime=` | `SessionInputs`, router `inputs=` |
+| `application.controller.CareInputs`, `ActivityCoordinator.care_inputs()` | `application.active_time.SessionInputs`, `ActivityCoordinator.session_inputs()` |
+| `StateStore.load()` / `load_memory()` | One `load_session()` snapshot: `.state`, `.settings`, `.adaptive_memory` |
+| `asset_paths.ASSETS`, `EMOTE_ASSETS`, `SCI_FI_UI` | `SPRITE_FRAME_DIR`, `EMOTE_IMAGE_DIR`, `KENNEY_UI_DIR` |
+| `pet.value_rules.bounded` | `pet.value_rules.clamp_need_value` |
+| `ActionPlayback.state`, animation port `action_state` | `clip_id`, `action_clip_id` |
+| `PetMind.computer_event()` / `spontaneous_event()` | `select_computer_reaction()` / `select_spontaneous_reaction()`; both return a selected reaction |
+| `ActivityCoordinator.interrupt_nap()` | `should_interrupt_nap()`; a condition query without mutation |
+| `pet.mind.mind.AikoMind` | `pet.mind.PetMind` |
+
+The desktop entrypoints and on-disk save format remain compatible. Repository
+callers use these canonical owners directly; no reverse domain-to-storage import
+or compatibility registry is needed.
 
 The 2026-10-13 repository usage review found no runtime consumers of the 25
 flat-module forwarding files or the five old application view modules.
@@ -133,24 +251,24 @@ Python code imports the removed paths; such callers need the mappings below.
 | `domain` | `pet.state.PetState`; care/friendship/time constants and functions in their respective `pet` policy modules |
 | `care_actions`, `friendship`, `need_decay`, `routine`, `value_rules` | Modules of the same name under `pet` |
 | `pet_lifecycle` | `pet.lifecycle` |
-| `adaptive`, `adaptive_models`, `adaptive_policy`, `work_episode`, `reaction_sequence` | Modules of the same name under `personality` |
-| `dialogue` | `personality.mind.AikoMind` and `personality.catalog` types |
-| `dialogue_catalog`, `dialogue_events` | `personality.catalog`, `personality.click_policy` |
-| `computer_voice`; `ComputerVoice` alias | `personality.workload_events.WorkloadEventDetector` |
-| `animation`, `gaze`, `movement`, `reaction_playback` | Modules of the same name under `presentation` |
+| `adaptive`, `adaptive_models`, `adaptive_policy`, `work_episode`, `reaction_sequence` | Modules of the same name under `pet.mind` |
+| `dialogue` | `pet.mind.mind.PetMind` and `pet.mind.catalog` types |
+| `dialogue_catalog`, `dialogue_events` | `pet.mind.catalog`, `pet.mind.click_policy` |
+| `computer_voice`; `ComputerVoice` alias | `pet.mind.workload_events.WorkloadEventDetector` |
+| `animation`, `gaze`, `movement`, `reaction_playback` | `pet.animation`, `pet.movement`, `ui.pet_view.reaction_player` |
 | `desktop_input` | `desktop.global_input` |
 | `taskbar` | `desktop.taskbar` and `desktop.geometry.TaskbarTrack` |
 | `window_stack` | `desktop.window_stack` |
 | `storage` | `infrastructure.persistence.StateStore`; settings in `application.settings` |
 | `system_activity` | Providers in `infrastructure.hardware`; shared snapshots/effort in `telemetry` |
-| `application.view_models` | `presentation.contracts` |
-| `application.hover_projection`, `status_projection`, `settings_projection` | `presentation.projections` |
-| `application.read_models`; `presentation.legacy.DesktopViewSource` | `presentation.read_models.DesktopPresentation` |
+| `application.view_models` | `ui.view_models.contracts` |
+| `application.hover_projection`, `status_projection`, `settings_projection` | `ui.view_models.projections` |
+| `application.read_models`; `presentation.legacy.DesktopViewSource` | `ui.view_models.read_models.DesktopPresentation` |
 | `desktop.compatibility.DesktopCompatibility` | Owning `DesktopPet` components; no replacement facade |
 
 Hover/status projectors accept `application.read_snapshot.snapshot_pet(state)`
 instead of a mutable `PetState`. The status projector accepts the selected
-emotion string rather than an `AikoMind` and timestamp. `DesktopPresentation`
+emotion string rather than a `PetMind` object and timestamp. `DesktopPresentation`
 provides desktop views without exposing the old public component handles.
 
 Legacy desktop accesses such as `pet.toolbar`, `pet._bubble`, `pet.say()` and
@@ -160,10 +278,65 @@ are implementation components, not a new public integration API. Future
 external adapters should use the typed application boundary.
 
 Unused widget, asset and policy re-exports from `gui.py` have also been
-removed; import them from `ui`, `asset_paths`, `presentation` or `desktop`.
+removed; import them from their canonical `pet`, `ui`, `infrastructure`,
+`asset_paths` or `desktop` modules.
 The application uses `workload_events`, not the old `computer_voice` attribute.
 Existing domain convenience methods and version-one data decoding remain
 outside this module-import cleanup.
+
+The `tests/test_canonical_import_paths.py` audit forbids references to
+removed `personality/`, `presentation/` and root-level UI module paths in
+production code, tools and tests. `tests/test_canonical_owner_identity.py`
+checks implementation ownership without reviving obsolete compatibility tests.
+`tests/test_dependency_graph.py` centrally checks layer boundaries and cycles,
+including absolute, relative and from-package submodule imports. Former
+duplicate layer/identity checks have been folded into these shared audits;
+functional GUI, asset and domain tests remain in their owning suites.
+Adaptive models/policies, telemetry, geometry and UI snapshots are imported
+directly from their defining modules instead of historical re-exports.
+There are no surviving import-forwarding packages for these historical paths.
+The redundant module-level mutating adapters `apply_care_action`,
+`apply_need_decay`, `award_friendship_for_care`, `advance_pet_time` and
+`apply_daily_routine` have been retired. `PetState` alone applies their
+associated pure transition decisions. Legacy-only migration tests were
+updated to exercise immutable policies and the actual aggregate owner.
+
+
+## Rhythm and dialogue
+
+`pet/mind/adaptive.py` and its pure policies combine needs, local time,
+new hardware observations and user-idle evidence into measured work/rest
+behavior. Missing sensors stay unknown; uptime never acts as an exhaustion
+multiplier. Learned summaries use a local weekday/hour profile, not process
+names, typed text or browser content. Observation and learning can be disabled
+independently, and learned rhythm can be cleared without resetting pet progress.
+Live progression uses active-session time; reopening additionally simulates bounded closed wall time. See [data and saves](DATA_AND_SAVES.md).
+
+`pet/mind/catalog.py` validates and selects authored German lines from
+`data/dialogues.de.json`. `infrastructure/character_mind.py` supplies Aiko's
+catalog at composition time. Event, mood and context filters, weighted choice
+and cooldowns belong to the mind policies; the UI only presents their decisions.
+Keep her voice short, observant, reserved and quietly sarcastic; avoid constant
+speech or invented knowledge about the user's work. No runtime LLM is involved.
+The UI reaction player sequences emotes, text and optional follow-ups in one
+speech surface and cancels superseded cues. Need tuning belongs to the current
+[food](FOOD_SYSTEM.md) and [fun/mood](FUN_MOOD_SYSTEM.md) guides.
+
+## Refactor branch status (October 15, 2026)
+
+This structure is being validated on the draft `refactor/pet-domain-ui-boundaries`
+branch; the document becomes the maintained architecture after merge. The
+migration does **not** implement World, new emotion values, object detection,
+awareness, cursor fear, autonomous objects or drag-and-drop. Existing behavior,
+assets and save-format invariants remain the acceptance criteria.
+All historical `presentation/`, `personality/` and root-level UI import
+forwarders have been removed. R2 now separates desktop animation intent,
+host observations and concrete Tk frame playback. R5 delegates application
+and animation construction to bounded assemblies, and session lifecycle,
+refresh and save sequencing to `DesktopSessionRuntime`. R6 has consolidated
+typed mood hints, due-meal selection, localized weekday text, legacy mutator
+APIs and import-only tests. No final interactive Windows sign-off has been
+recorded for the latest commit; automated checks are commit-specific.
 
 ## Testing and contribution
 
@@ -171,9 +344,14 @@ GitHub Actions checks:
 
 - Full Python 3.11 and 3.13 unit/Tk suites under Linux/Xvfb.
 - Windows-hosted headless checks for native boundary logic.
-- Ruff, PEP 8 line lengths, strict Mypy and Pyright.
+- Ruff E/F/I/N/W checks across code, tests and tools: PEP 8 whitespace,
+  88-character lines, import order and identifier naming; strict Mypy and Pyright.
 - Domain invariants, immutable read data, import boundaries without legacy exceptions, and absence of module import cycles.
 
 Native Windows layering, transparent-window and taskbar behavior must also be tested interactively for relevant changes. The October 2026 OOP refactor passed its full automated checks and received maintainer-reported Windows acceptance before [PR #2](https://github.com/Lexoniarus/aiko-desktop-pet/pull/2) merged.
 
-For local commands, source changes and review expectations see [CONTRIBUTING.md](../CONTRIBUTING.md). Detailed refactor decisions are archived in [REFACTOR_ARCHITECTURE.md](REFACTOR_ARCHITECTURE.md) and the [dated architecture audit](ARCHITECTURE_AUDIT_20261013.md).
+For local commands, source changes and review expectations see
+[CONTRIBUTING.md](../CONTRIBUTING.md). [CHANGELOG](../CHANGELOG.md) summarizes
+historical milestones with fixed Git references. The current branch's
+[refactor ledger](PET_ARCHITECTURE_REFACTOR.md) and
+[Windows acceptance checklist](PET_REFACTOR_WINDOWS_SMOKE.md) remain active.

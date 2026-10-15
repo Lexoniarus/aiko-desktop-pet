@@ -7,15 +7,15 @@ import unittest
 from typing import cast
 from unittest.mock import MagicMock
 
-from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
 from aiko_pet.application.router import ApplicationRouter
 from aiko_pet.desktop.input import DesktopInput
 from aiko_pet.desktop.lifecycle import DesktopLifecycle
 from aiko_pet.desktop.runtime import DesktopRuntime
-from aiko_pet.presentation.reaction_playback import ReactionPlayer
-from aiko_pet.ui.hover_ui import HoverUi
-from aiko_pet.ui.speech_presenter import SpeechPresenter
 from aiko_pet.desktop.window_stack import WindowStack
+from aiko_pet.infrastructure.hardware.monitor import ActivityMonitor
+from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from aiko_pet.ui.pet_view.speech_presenter import SpeechPresenter
+from aiko_pet.ui.windows.hover_ui import HoverUi
 
 
 class DesktopLifecycleTests(unittest.TestCase):

@@ -4,22 +4,23 @@ from __future__ import annotations
 
 import random
 import unittest
-from aiko_pet.application.active_time import ActiveSessionClock
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-from aiko_pet.personality.adaptive import AdaptiveRoutine
+from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.commands import CareCommand, NotificationCommand
-from aiko_pet.application.controller import CareController, CareRuntime
+from aiko_pet.application.controller import CareController
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.application.inbox import NotificationInbox
 from aiko_pet.application.router import ApplicationRouter
-from aiko_pet.personality.mind import AikoMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
 
 
-def runtime(*, wall_time: float | None = None) -> CareRuntime:
-    return CareRuntime(
+def runtime(*, wall_time: float | None = None) -> SessionInputs:
+    return SessionInputs(
         wall_time=(
             wall_time if wall_time is not None
             else datetime(2026, 10, 13, 16).timestamp()
@@ -43,7 +44,7 @@ def notification(identifier: str = "test-1") -> IncomingNotification:
 class ApplicationCoreTests(unittest.TestCase):
     def setUp(self) -> None:
         self.state = PetState()
-        self.mind = AikoMind(rng=random.Random(8))
+        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(8))
         self.adaptive = AdaptiveRoutine()
         self.router = ApplicationRouter(
             CareController(self.state, self.mind, self.adaptive,
@@ -52,13 +53,13 @@ class ApplicationCoreTests(unittest.TestCase):
         )
 
     def test_care_uses_pre_action_tone_and_preserves_state_schema(self) -> None:
-        initial_keys = set(self.state.to_dict())
+        initial_keys = set(encode_pet_state(self.state))
         self.state.affection = 10.0
         self.state.updated_at = runtime().wall_time
-        result = self.router.dispatch(CareCommand("pet"), runtime=runtime())
+        result = self.router.dispatch(CareCommand("pet"), inputs=runtime())
         self.assertEqual(self.state.affection, 35.0)
         self.assertEqual(result.context.day_key, "2026-10-13")
-        self.assertEqual(set(self.state.to_dict()), initial_keys)
+        self.assertEqual(set(encode_pet_state(self.state)), initial_keys)
         self.assertEqual(self.adaptive.memory.last_contact_wall,
                          runtime().wall_time)
         self.assertIsNotNone(result.reaction)
@@ -66,7 +67,7 @@ class ApplicationCoreTests(unittest.TestCase):
     def test_care_matches_prior_pet_dialogue_order(self) -> None:
         rt = runtime()
         state = PetState(social=10.0, updated_at=rt.wall_time)
-        mind = AikoMind(rng=random.Random(12))
+        mind = make_aiko_mind(started_at=0.0, rng=random.Random(12))
         controller = CareController(state, mind, AdaptiveRoutine(),
                                     clock=ActiveSessionClock(lambda: 0.0))
         outcome = controller.execute(CareCommand("talk"), rt)
@@ -76,22 +77,22 @@ class ApplicationCoreTests(unittest.TestCase):
         self.assertEqual(mind._last_care_at, rt.monotonic_time)
 
     def test_invalid_commands_never_mutate_aiko(self) -> None:
-        before = self.state.to_dict()
+        before = encode_pet_state(self.state)
         with self.assertRaises(ValueError):
             CareCommand("unknown")  # type: ignore[arg-type]
         # Missing runtime is a static signature error, rather than an
         # operation supported by the typed command API.
-        self.assertEqual(self.state.to_dict(), before)
+        self.assertEqual(encode_pet_state(self.state), before)
 
     def test_worker_thread_cannot_modify_pet_state(self) -> None:
-        before = self.state.to_dict()
+        before = encode_pet_state(self.state)
         with ThreadPoolExecutor(max_workers=1) as pool:
             attempt = pool.submit(
-                self.router.dispatch, CareCommand("pet"), runtime=runtime(),
+                self.router.dispatch, CareCommand("pet"), inputs=runtime(),
             )
             with self.assertRaises(RuntimeError):
                 attempt.result()
-        self.assertEqual(self.state.to_dict(), before)
+        self.assertEqual(encode_pet_state(self.state), before)
 
     def test_notification_can_be_enqueued_from_another_thread(self) -> None:
         with ThreadPoolExecutor(max_workers=1) as pool:

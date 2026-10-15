@@ -6,10 +6,10 @@ import unittest
 from collections.abc import Callable
 
 from aiko_pet.games.rock_paper_scissors import Move, Outcome, Round, Score
-from aiko_pet.presentation.rock_paper_scissors_sequence import (
+from aiko_pet.ui.windows.rock_paper_scissors_sequence import (
     RockPaperScissorsSequence,
 )
-from aiko_pet.presentation.rock_paper_scissors_text_de import outcome_line
+from aiko_pet.ui.windows.rock_paper_scissors_text_de import outcome_line
 
 
 class FakeClock:

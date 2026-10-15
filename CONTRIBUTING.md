@@ -13,6 +13,8 @@ The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11. Run
 1. Branch from current `main` using `feature/…`, `fix/…`, `docs/…` or `chore/…`.
 2. Make focused changes with readable, descriptive English identifiers and commit messages. Prefer real object responsibilities over arbitrary line-count splits.
 3. Add or update tests when behavior, persistence, UI timing or public imports change.
+   Name test modules, classes and cases by their feature or behavior, rather than
+   the release that introduced them. Keep necessary legacy-format context in fixtures.
 4. Run the complete test suite (GUI tests need a display):
 
    ```bash
@@ -21,18 +23,22 @@ The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11. Run
 
    Under Linux with Xvfb: `xvfb-run -a python -m unittest discover -s tests -q`.
 
-5. If the tools are installed, run:
+5. Run the pinned quality checks used by CI:
 
    ```bash
-   python -m ruff check aiko_pet tests main.py
-   python -m ruff check --select E501 aiko_pet main.py tools
+   python -m ruff check aiko_pet tests main.py tools
    python -m mypy --strict --no-incremental aiko_pet main.py tools
    python -m pyright --project pyrightconfig.json
    ```
 
 6. Open a pull request to `main`. Describe changed behavior, tests and any Windows-specific manual checks. Do not merge with failing CI.
 
-CI pins Ruff and Mypy and verifies source and tests with Pyright. Consult [the workflow](.github/workflows/tests.yml) for its exact versions and additional quality gates.
+CI enforces PEP 8 whitespace, blank lines and 88-character lines, unused imports,
+import ordering and Python identifier conventions across application code,
+tests and tools. Ruff preview rules are enabled with its pinned version; only
+the exact foreign Win32 function names listed in `pyproject.toml` are exempt
+from lowercase function naming. Consult [the workflow](.github/workflows/tests.yml)
+for tool versions and additional quality gates.
 
 ## Design constraints
 

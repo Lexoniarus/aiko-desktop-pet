@@ -42,6 +42,14 @@ class DesktopInput:
         self._focus_timers: set[str] = set()
         self._stopped = False
 
+    def pointer_sample(self) -> tuple[int, int, int]:
+        """Read global pointer coordinates and primary screen width."""
+        return (
+            self.root.winfo_pointerx(),
+            self.root.winfo_pointery(),
+            self.root.winfo_screenwidth(),
+        )
+
     def initialize(self) -> None:
         """Baseline global button state before installing interactive handlers."""
         self.mouse.clicked()

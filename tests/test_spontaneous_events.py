@@ -7,11 +7,11 @@ import unittest
 from datetime import datetime
 from unittest.mock import patch
 
-from aiko_pet.personality.adaptive_models import Behaviour
-from aiko_pet.personality.adaptive_policy import ActivityMode
-from aiko_pet.personality.mind import AikoMind
-from aiko_pet.pet.state import PetState
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.mind.adaptive_models import Behaviour
+from aiko_pet.pet.mind.adaptive_policy import ActivityMode
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 
 
 def context(hour: int = 15):
@@ -31,12 +31,12 @@ def scenario(*, mode: ActivityMode = "working", duration: float = 300):
 
 class SpontaneousEventsTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.mind = AikoMind(rng=random.Random(12))
+        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(12))
 
     def test_sleep_never_chooses_an_event(self) -> None:
-        with patch.object(self.mind, "say_event") as speak:
+        with patch.object(self.mind, "select_reaction") as speak:
             self.assertIsNone(
-                self.mind.spontaneous_event(
+                self.mind.select_spontaneous_reaction(
                     PetState(sleeping=True), context(), 1000,
                 ),
             )

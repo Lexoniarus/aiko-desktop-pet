@@ -16,8 +16,8 @@ The single source of truth is `aiko_pet/assets/animation_timing.json` (version 3
 - The derived `waving-greeting` action reuses the exact same eight PNGs and
   pose durations, revisiting poses `3,4,5` for two hand waves.
 - The long action is reserved for explicit greetings (including the game's
-  welcome) and eventual farewells; casual dialogue and RPS draw reactions keep
-  the short `waving`. App shutdown currently has no farewell animation hook.
+  welcome) and the settings window's **Beenden** farewell; casual dialogue and
+  RPS draw reactions keep the short `waving`. Technical shutdown remains immediate.
 - Longer last-pose holds in `waiting` and `review` provide quiet intervals
   between gestures. These are repeating ambient behaviors, not frame interpolation.
 

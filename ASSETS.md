@@ -15,7 +15,8 @@ under [assets/aiko-anime-8-frames/](assets/aiko-anime-8-frames/IMPORT_README.md)
 Only the 134 original files needed to rebuild the selected character export
 are tracked, byte-for-byte: catalogs, manifests, pose images and attack hand
 layers. The other 813 archive members, including references, generation
-attempts, prompts and QA material, remain local and are ignored by Git.
+attempts, prompts and QA material, are archived locally outside the repository.
+Ignore rules also exclude them if the complete bundle is extracted here again.
 According to the project creator, the artwork was generated with ChatGPT image
 generation in an agent workflow.
 
@@ -25,8 +26,7 @@ in `aiko_pet/assets/frames/`, with timing/anchor metadata in
 `aiko_pet/assets/animations.json` and hand foreground layers in
 `aiko_pet/assets/hand-foreground/`. Attack assets remain reserved for future use; there is no attack trigger
 or bundled magic graphic. One prepared sword is reserved as an asset for
-future attack gameplay. The historical five 64px food PNGs remain under
-`aiko_pet/assets/food/`. The new food-and-drink item catalog includes
+future attack gameplay. The food-and-drink item catalog includes
 **ten foods and one Energy Drink**: native transparent 1×/2× overlays and
 64px picker icons under `aiko_pet/assets/items/`. Full-resolution source
 artwork remains outside the repository. See
@@ -123,9 +123,9 @@ The user-supplied `Kenney Mini.ttf` is **not distributed** with the project. Aik
 
 ## 5. Screenshots and previews
 
-The active `vorschau/` directory now contains **only captures of the current
-Aiko Anime/Tk UI and minigame**, plus a GIF preview of all 112 current runtime
-sprite poses. Real UI screenshots and reaction GIFs are captured on Linux/Xvfb
+The active `vorschau/` directory contains **six README media files**: two real
+UI stills and four GIFs covering reactions, ambient behavior, the minigame and
+all 112 runtime sprite poses. Real UI screenshots and reaction GIFs were captured on Linux/Xvfb
 from the running application by
 [`tools/capture_current_gallery.py`](tools/capture_current_gallery.py) and
 [`tools/capture_rock_paper_scissors_media.py`](tools/capture_rock_paper_scissors_media.py).
@@ -141,8 +141,8 @@ checked-in frame timings and is identified separately from live UI footage.
 The older v0.7–v0.13 screenshots, previous 73-frame animation GIF, and original
 maintainer-provided Windows image remain accessible in Git history, including
 [`main` at f41e8aa](https://github.com/Lexoniarus/aiko-desktop-pet/tree/f41e8aab58e6a93bd2675d0fd1f1adc3bed9b345/vorschau).
-The third-party Kenney design sample is preserved separately under
-[`docs/references/`](docs/references/Kenney_SciFi_Sample_Referenz.png).
+Unused Kenney bitmaps, the third-party design sample and historical food
+exports are archived locally outside the repository. They are not runtime inputs.
 The new captures retain the original sprite and UI asset licenses.
 See the [current media gallery](docs/MEDIA_GALLERY.md).
 

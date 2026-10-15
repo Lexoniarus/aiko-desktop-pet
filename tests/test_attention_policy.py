@@ -4,20 +4,20 @@ from __future__ import annotations
 
 import random
 import unittest
-from aiko_pet.application.active_time import ActiveSessionClock
 from unittest.mock import patch
 
-from aiko_pet.personality.adaptive import AdaptiveRoutine
+from aiko_pet.application.active_time import ActiveSessionClock
 from aiko_pet.application.attention import AttentionCoordinator
 from aiko_pet.application.commands import NotificationCommand
 from aiko_pet.application.controller import CareController
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.application.router import ApplicationRouter
-from aiko_pet.personality.mind import AikoMind
-from aiko_pet.personality.workload_events import WorkloadEventDetector
-from aiko_pet.pet.state import PetState
-from aiko_pet.pet.routine import context_at
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
+from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 
 
@@ -30,14 +30,14 @@ class AttentionPolicyTests(unittest.TestCase):
     def setUp(self) -> None:
         self.state = PetState()
         self.settings = PetSettings()
-        self.mind = AikoMind(rng=random.Random(7))
-        self.voice = WorkloadEventDetector(rng=random.Random(8))
+        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(7))
+        self.workload_events = WorkloadEventDetector(rng=random.Random(8))
         self.router = ApplicationRouter(
             CareController(self.state, self.mind, AdaptiveRoutine(),
                            clock=ActiveSessionClock(lambda: 0.0)),
         )
         self.attention = AttentionCoordinator(
-            self.state, self.settings, self.mind, self.voice,
+            self.state, self.settings, self.mind, self.workload_events,
             StaticReadings(), self.router, started_at=100.0,
         )
 
@@ -54,8 +54,8 @@ class AttentionPolicyTests(unittest.TestCase):
         self.attention.next_comment = 199.0
         self.attention.last_spoken = -1000.0
         with (
-            patch.object(self.voice, "maybe_event", return_value=None),
-            patch.object(self.mind, "spontaneous_event", return_value=None),
+            patch.object(self.workload_events, "maybe_event", return_value=None),
+            patch.object(self.mind, "select_spontaneous_reaction", return_value=None),
         ):
             result = self.attention.spontaneous(
                 200.0, context_at(1_781_000_000), toolbar_visible=False,
@@ -69,12 +69,12 @@ class AttentionPolicyTests(unittest.TestCase):
     def test_idles_never_interrupt_sleep_or_toolbar(self) -> None:
         self.attention.next_idle_emote = 0
         self.state.sleeping = True
-        self.assertIsNone(self.attention.idle_animation(
+        self.assertIsNone(self.attention.select_idle_animation(
             200, action_until=0, walking=False, toolbar_visible=False,
         ))
         self.state.sleeping = False
         self.attention.next_idle_emote = 0
-        self.assertIsNone(self.attention.idle_animation(
+        self.assertIsNone(self.attention.select_idle_animation(
             201, action_until=0, walking=False, toolbar_visible=True,
         ))
         self.attention.next_idle_emote = 0
@@ -82,7 +82,7 @@ class AttentionPolicyTests(unittest.TestCase):
             "aiko_pet.application.attention.random.choice",
             return_value="review",
         ):
-            self.assertEqual(self.attention.idle_animation(
+            self.assertEqual(self.attention.select_idle_animation(
                 202, action_until=0, walking=False, toolbar_visible=False,
             ), "review")
 
@@ -93,14 +93,14 @@ class AttentionPolicyTests(unittest.TestCase):
             patch("aiko_pet.application.attention.random.random", return_value=0.01),
             patch("aiko_pet.application.attention.random.uniform", return_value=300.0),
         ):
-            self.assertEqual(self.attention.cursor_moved(
+            self.assertEqual(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ), "cursor_far")
             self.assertEqual(self.attention.next_cursor_line, 1300.0)
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 100.0, 1000, 1299.0, toolbar_visible=False,
             ))
-            self.assertEqual(self.attention.cursor_moved(
+            self.assertEqual(self.attention.select_cursor_comment_event(
                 100.0, 1000, 1300.0, toolbar_visible=False,
             ), "cursor_follow")
 
@@ -108,25 +108,25 @@ class AttentionPolicyTests(unittest.TestCase):
         self.attention.next_cursor_line = 0.0
         self.attention.last_spoken = 900.0
         with patch("aiko_pet.application.attention.random.random") as chance:
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ))
             self.attention.last_spoken = -1000.0
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=True,
             ))
             self.settings.follow_cursor = False
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ))
             self.settings.follow_cursor = True
             self.settings.spontaneous_talk = False
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ))
             self.settings.spontaneous_talk = True
             self.state.sleeping = True
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ))
             chance.assert_not_called()
@@ -137,12 +137,12 @@ class AttentionPolicyTests(unittest.TestCase):
         with patch(
             "aiko_pet.application.attention.random.random", return_value=0.01,
         ) as chance:
-            self.assertFalse(self.attention.walk_finished(1000.0))
+            self.assertFalse(self.attention.should_comment_after_walk(1000.0))
             chance.assert_not_called()
             self.attention.last_spoken = 869.0
-            self.assertTrue(self.attention.walk_finished(1000.0))
+            self.assertTrue(self.attention.should_comment_after_walk(1000.0))
             self.settings.spontaneous_talk = False
-            self.assertFalse(self.attention.walk_finished(1000.0))
+            self.assertFalse(self.attention.should_comment_after_walk(1000.0))
 
     def test_notification_remains_queued_during_visible_dialogue(self) -> None:
         notice = IncomingNotification(

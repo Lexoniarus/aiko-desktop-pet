@@ -2,8 +2,8 @@
 
 import unittest
 
-from aiko_pet.presentation.contracts import HoverAnchor
-from aiko_pet.ui.hover_geometry import HoverGeometry, Rect
+from aiko_pet.ui.view_models.contracts import HoverAnchor
+from aiko_pet.ui.windows.hover_geometry import HoverGeometry, Rect
 
 
 class HoverGeometryTests(unittest.TestCase):

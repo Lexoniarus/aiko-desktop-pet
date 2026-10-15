@@ -17,15 +17,18 @@ class CharacterCatalogTests(unittest.TestCase):
         catalog = load_character_catalog()
         self.assertEqual(len(catalog.clips), 14)
         self.assertEqual(
-            len({frame.file for clip in catalog.clips.values()
-                 for frame in clip.frames}), 112,
+            len({
+                frame.file for clip in catalog.clips.values() for frame in clip.frames
+            }),
+            112,
         )
         self.assertNotIn("running", catalog.clips)
         self.assertEqual(catalog.clips["idle"].timings, (160,) * 8)
         self.assertAlmostEqual(catalog.clips["eat"].duration_seconds, 3.59)
         self.assertAlmostEqual(catalog.clips["waving"].duration_seconds, 1.135)
         self.assertAlmostEqual(
-            catalog.clips["waving-greeting"].duration_seconds, 1.895,
+            catalog.clips["waving-greeting"].duration_seconds,
+            1.895,
         )
         self.assertIs(
             catalog.clips["waving"].frames,
@@ -36,10 +39,12 @@ class CharacterCatalogTests(unittest.TestCase):
         self.assertEqual(catalog.clips["eat"].frames[3].events, ("bite",))
         self.assertEqual(len(catalog.clips["look"].frames), 16)
         self.assertEqual(
-            catalog.clips["attack"].frames[3].events, ("attack_release",),
+            catalog.clips["attack"].frames[3].events,
+            ("attack_release",),
         )
         self.assertEqual(
-            catalog.clips["attack"].timings, (215,) * 8,
+            catalog.clips["attack"].timings,
+            (215,) * 8,
         )
         self.assertGreater(
             catalog.clips["waiting"].duration_seconds,
@@ -70,17 +75,17 @@ class CharacterCatalogTests(unittest.TestCase):
                     durations[name],
                 )
                 sequence = policy["frame_sequences"].get(
-                    name, list(range(8)),
+                    name,
+                    list(range(8)),
                 )
                 self.assertEqual(clip["sequence"], sequence)
                 self.assertEqual(
                     clip["playback_total_ms"],
                     sum(durations[name][index] for index in sequence),
                 )
-                self.assertTrue(all(
-                    type(frame["source_duration_ms"]) is int
-                    for frame in frames
-                ))
+                self.assertTrue(
+                    all(type(frame["source_duration_ms"]) is int for frame in frames)
+                )
                 self.assertEqual(
                     [frame["file"].rsplit("/", 1)[1] for frame in frames],
                     [f"{i:02d}.png" for i in range(8)],
@@ -112,7 +117,8 @@ class CharacterCatalogTests(unittest.TestCase):
             self.assertEqual(greeting.timings[8], 115)
             self.assertEqual(greeting.timings[1], 205)
             self.assertAlmostEqual(
-                catalog.clips["running-left"].duration_seconds, 1.52,
+                catalog.clips["running-left"].duration_seconds,
+                1.52,
             )
 
     def test_timing_policy_rejects_invalid_hold_values(self) -> None:
@@ -146,9 +152,11 @@ class CharacterCatalogTests(unittest.TestCase):
 
     def test_replay_order_rejects_invalid_poses_and_missing_assets(self) -> None:
         data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))
-        for invalid in ([], list(range(7)), [0] * 8,
-                        [0, 1, 2, 3, 4, 5, 6, 8]):
-            with self.subTest(sequence=invalid), tempfile.TemporaryDirectory() as folder:
+        for invalid in ([], list(range(7)), [0] * 8, [0, 1, 2, 3, 4, 5, 6, 8]):
+            with (
+                self.subTest(sequence=invalid),
+                tempfile.TemporaryDirectory() as folder,
+            ):
                 root = Path(folder)
                 self._write_catalog(root, data)
                 path = root / "animation_timing.json"
@@ -178,7 +186,8 @@ class CharacterCatalogTests(unittest.TestCase):
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.touch()
         (root / "animations.json").write_text(
-            json.dumps(data), encoding="utf-8",
+            json.dumps(data),
+            encoding="utf-8",
         )
         (root / "animation_timing.json").write_bytes(
             (ASSET_ROOT / "animation_timing.json").read_bytes(),
@@ -186,8 +195,14 @@ class CharacterCatalogTests(unittest.TestCase):
 
     def test_corrupt_metadata_and_escaping_paths_are_rejected(self) -> None:
         for broken in (
-            "duration", "mismatch", "count", "path", "loop",
-            "return_to", "gaze", "sequence",
+            "duration",
+            "mismatch",
+            "count",
+            "path",
+            "loop",
+            "return_to",
+            "gaze",
+            "sequence",
         ):
             with self.subTest(broken=broken), tempfile.TemporaryDirectory() as folder:
                 data = json.loads((ASSET_ROOT / "animations.json").read_text("utf-8"))

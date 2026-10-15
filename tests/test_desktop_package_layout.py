@@ -6,7 +6,6 @@ import ast
 import unittest
 from pathlib import Path
 
-
 from aiko_pet.desktop import (
     geometry,
 )
@@ -37,22 +36,32 @@ class NativeDesktopLayoutTests(unittest.TestCase):
             for name in imports
         ))
 
-
-    def test_presentation_motion_imports_only_pure_geometry(self) -> None:
-        for name in ("animation.py", "gaze.py", "movement.py"):
-            tree = ast.parse(
-                (ROOT / "presentation" / name).read_text("utf-8"),
-            )
-            imports = [
-                node.module or ""
-                for node in ast.walk(tree)
-                if isinstance(node, ast.ImportFrom)
-            ]
-            self.assertFalse(any(
-                "window_stack" in module or "global_input" in module
-                or module == "taskbar"
-                for module in imports
-            ))
+    def test_pet_animation_and_motion_have_no_native_imports(self) -> None:
+        for relative in (
+            "pet/animation/animation.py",
+            "pet/animation/gaze.py",
+            "pet/movement/controller.py",
+            "pet/movement/random_walk.py",
+            "pet/movement/contracts.py",
+        ):
+            with self.subTest(path=relative):
+                tree = ast.parse((ROOT / relative).read_text("utf-8"))
+                imports = [
+                    node.module or ""
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.ImportFrom)
+                ] + [
+                    alias.name
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.Import)
+                    for alias in node.names
+                ]
+                self.assertFalse(any(
+                    "window_stack" in module or "global_input" in module
+                    or "taskbar" in module or "desktop" in module
+                    or module.startswith(("tkinter", "ctypes", "win32"))
+                    for module in imports
+                ))
 
 
 if __name__ == "__main__":

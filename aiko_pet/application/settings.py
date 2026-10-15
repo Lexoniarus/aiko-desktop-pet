@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Literal
 
-
 SettingKey = Literal[
     "always_on_top", "auto_walk", "auto_routine", "follow_cursor",
     "spontaneous_talk", "observe_computer", "learn_rhythm",
@@ -13,19 +12,166 @@ SettingKey = Literal[
 
 
 @dataclass
-class PetSettings:
-    x: int | None = None
-    y: int | None = None
-    scale: int = 1
-    always_on_top: bool = True
+class PetBehaviorSettings:
+    """Pet-specific behaviour options, independent of desktop geometry."""
+
     auto_walk: bool = True
     auto_routine: bool = True
     follow_cursor: bool = True
     spontaneous_talk: bool = True
     observe_computer: bool = True
     learn_rhythm: bool = True
+
+
+@dataclass
+class DesktopDisplaySettings:
+    """Window geometry, layering and toolbar placement preferences."""
+
+    x: int | None = None
+    y: int | None = None
+    scale: int = 1
+    always_on_top: bool = True
     toolbar_x: int | None = None
     toolbar_y: int | None = None
+
+
+@dataclass(init=False)
+class PetSettings:
+    """Own one mutable settings aggregate with two non-overlapping subobjects.
+
+    Flat constructor properties and version-one JSON keys remain compatible.
+    A setting is stored only on its owning subobject, never duplicated here.
+    """
+
+    behavior: PetBehaviorSettings
+    desktop: DesktopDisplaySettings
+
+    def __init__(
+        self, x: int | None = None,
+        y: int | None = None,
+        scale: int = 1,
+        always_on_top: bool = True,
+        auto_walk: bool = True,
+        auto_routine: bool = True,
+        follow_cursor: bool = True,
+        spontaneous_talk: bool = True,
+        observe_computer: bool = True,
+        learn_rhythm: bool = True,
+        toolbar_x: int | None = None,
+        toolbar_y: int | None = None,
+    ) -> None:
+        self.desktop = DesktopDisplaySettings(
+            x=x,
+            y=y,
+            scale=scale,
+            always_on_top=always_on_top,
+            toolbar_x=toolbar_x,
+            toolbar_y=toolbar_y,
+        )
+        self.behavior = PetBehaviorSettings(
+            auto_walk=auto_walk,
+            auto_routine=auto_routine,
+            follow_cursor=follow_cursor,
+            spontaneous_talk=spontaneous_talk,
+            observe_computer=observe_computer,
+            learn_rhythm=learn_rhythm,
+        )
+
+    @property
+    def x(self) -> int | None:
+        return self.desktop.x
+
+    @x.setter
+    def x(self, value: int | None) -> None:
+        self.desktop.x = value
+
+    @property
+    def y(self) -> int | None:
+        return self.desktop.y
+
+    @y.setter
+    def y(self, value: int | None) -> None:
+        self.desktop.y = value
+
+    @property
+    def scale(self) -> int:
+        return self.desktop.scale
+
+    @scale.setter
+    def scale(self, value: int) -> None:
+        self.desktop.scale = value
+
+    @property
+    def always_on_top(self) -> bool:
+        return self.desktop.always_on_top
+
+    @always_on_top.setter
+    def always_on_top(self, value: bool) -> None:
+        self.desktop.always_on_top = value
+
+    @property
+    def auto_walk(self) -> bool:
+        return self.behavior.auto_walk
+
+    @auto_walk.setter
+    def auto_walk(self, value: bool) -> None:
+        self.behavior.auto_walk = value
+
+    @property
+    def auto_routine(self) -> bool:
+        return self.behavior.auto_routine
+
+    @auto_routine.setter
+    def auto_routine(self, value: bool) -> None:
+        self.behavior.auto_routine = value
+
+    @property
+    def follow_cursor(self) -> bool:
+        return self.behavior.follow_cursor
+
+    @follow_cursor.setter
+    def follow_cursor(self, value: bool) -> None:
+        self.behavior.follow_cursor = value
+
+    @property
+    def spontaneous_talk(self) -> bool:
+        return self.behavior.spontaneous_talk
+
+    @spontaneous_talk.setter
+    def spontaneous_talk(self, value: bool) -> None:
+        self.behavior.spontaneous_talk = value
+
+    @property
+    def observe_computer(self) -> bool:
+        return self.behavior.observe_computer
+
+    @observe_computer.setter
+    def observe_computer(self, value: bool) -> None:
+        self.behavior.observe_computer = value
+
+    @property
+    def learn_rhythm(self) -> bool:
+        return self.behavior.learn_rhythm
+
+    @learn_rhythm.setter
+    def learn_rhythm(self, value: bool) -> None:
+        self.behavior.learn_rhythm = value
+
+    @property
+    def toolbar_x(self) -> int | None:
+        return self.desktop.toolbar_x
+
+    @toolbar_x.setter
+    def toolbar_x(self, value: int | None) -> None:
+        self.desktop.toolbar_x = value
+
+    @property
+    def toolbar_y(self) -> int | None:
+        return self.desktop.toolbar_y
+
+    @toolbar_y.setter
+    def toolbar_y(self, value: int | None) -> None:
+        self.desktop.toolbar_y = value
 
     @classmethod
     def from_dict(cls, payload: Any) -> PetSettings:
@@ -67,4 +213,3 @@ class PetSettings:
             "toolbar_x": self.toolbar_x,
             "toolbar_y": self.toolbar_y,
         }
-

@@ -57,9 +57,15 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         for forbidden in ("count_label", "remark_label", "reveal_label"):
             self.assertFalse(hasattr(game, forbidden))
         self.assertEqual(set(game.buttons), set(Move))
-        self.assertEqual(set(game.score_labels), {
-            "games", "wins", "losses", "draws",
-        })
+        self.assertEqual(
+            set(game.score_labels),
+            {
+                "games",
+                "wins",
+                "losses",
+                "draws",
+            },
+        )
         for count in game.score_labels.values():
             self.assertEqual(count.cget("text"), "0")
         self.assertEqual(
@@ -80,7 +86,8 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         assert game is not None
         self.assertTrue(self.pet._animated._game_mode)
         self.assertEqual(
-            self.pet._animated.frame_clock.active_key, ("waving-greeting", None),
+            self.pet._animated.frame_clock.active_key,
+            ("waving-greeting", None),
         )
         game._sequence._game._random_index = lambda _size: 2
         game.choose(Move.ROCK)
@@ -114,9 +121,12 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertEqual(game.score_labels["wins"].cget("text"), "1")
         self.assertEqual(game.score_labels["losses"].cget("text"), "0")
         self.assertEqual(game.score_labels["draws"].cget("text"), "0")
-        self.assertEqual(set(self.pet._speech.game_hand_images), {
-            Move.SCISSORS,
-        })
+        self.assertEqual(
+            set(self.pet._speech.game_hand_images),
+            {
+                Move.SCISSORS,
+            },
+        )
         # Aiko's speech frame shows her own hand, not the player's image.
         self.assertNotEqual(
             self.pet._speech.game_hand_images[Move.SCISSORS],
@@ -125,7 +135,8 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertIsNone(bubble_text(self.pet))
         game._sequence.advance()
         self.assertEqual(
-            self.pet._animated.frame_clock.active_key, ("failed", None),
+            self.pet._animated.frame_clock.active_key,
+            ("failed", None),
         )
         game._sequence.advance()
         remark = bubble_text(self.pet)
@@ -151,7 +162,8 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
             str(game.hand_images[Move.ROCK]),
         )
         self.assertEqual(
-            game.player_result_label.cget("text"), "Letzte Hand: Stein",
+            game.player_result_label.cget("text"),
+            "Letzte Hand: Stein",
         )
         self.assertEqual(game.score_labels["games"].cget("text"), "1")
         for _ in range(4):
@@ -165,6 +177,9 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.pet._hover.open_game()
         game = self.pet._hover.game_window
         assert game is not None
+        # Windows delivers native visibility/layout events after idle work.
+        # Measure realized pixels, not the pre-map 1x1 child placeholders.
+        game.window.wait_visibility()
         game.window.update_idletasks()
         dimensions = (game.window.winfo_width(), game.window.winfo_height())
         slot = (game.player_hand.winfo_width(), game.player_hand.winfo_height())
@@ -200,15 +215,26 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.pet._hover.open_game()
         visual = self.pet._animated
         self.assertTrue(self.pet.settings.follow_cursor)
-        self.assertIsNone(visual.gaze_direction((99999, 99999)))
-        self.assertIsNone(visual.maybe_walk(time.monotonic(), 0.5))
-        visual.render(time.monotonic() + 5, 0.14, (99999, 99999))
+        self.assertIsNone(
+            self.pet._visual.gaze_direction((99999, 99999), game_mode=visual.game_mode)
+        )
+        self.assertIsNone(
+            self.pet._walk.step(
+                time.monotonic(),
+                0.5,
+                game_mode=visual.game_mode,
+                attention_active=False,
+            )
+        )
+        visual.render(time.monotonic() + 5, (99999, 99999))
         current = visual.frame_clock.active_key
         assert current is not None
         self.assertIn(current[0], ("waving-greeting", "waiting"))
         self.pet._hover.close_game()
         self.assertFalse(visual._game_mode)
-        self.assertIsNotNone(visual.gaze_direction((99999, 99999)))
+        self.assertIsNotNone(
+            self.pet._visual.gaze_direction((99999, 99999), game_mode=visual.game_mode)
+        )
 
     def test_close_cancels_outstanding_bubble_and_session(self) -> None:
         self.pet._hover.open_game()

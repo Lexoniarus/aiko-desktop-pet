@@ -8,13 +8,14 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from aiko_pet.personality.adaptive_models import SLOTS, AdaptiveMemory, Observation
-from aiko_pet.personality.adaptive import AdaptiveRoutine
-from aiko_pet.personality.mind import AikoMind
-from aiko_pet.pet.state import PetState
-from aiko_pet.pet.routine import context_at
-from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.desktop.global_input import idle_seconds_windows
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.adaptive_models import SLOTS, AdaptiveMemory, Observation
+from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 
 
 def local_stamp(day, hour, minute=0):
@@ -277,22 +278,24 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         self.assertEqual(loaded.strain, 0)
         self.assertEqual(loaded.settled_work, 0)
 
-    def test_roundtrip_profile_and_old_v08_save_unchanged(self):
+    def test_roundtrip_preserves_profile_and_legacy_save_values(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "state.json"
             store = StateStore(path)
             old = {"version": 1, "pet": {"mood": 47, "updated_at": 123},
                    "settings": {"x": 55, "scale": 2}}
             path.write_text(json.dumps(old), encoding="utf-8")
-            pet, config = store.load(now=123)
-            memory = store.load_memory()
+            session_data = store.load_session(now=123)
+            pet, config = session_data.state, session_data.settings
+            memory = session_data.adaptive_memory
             self.assertEqual(pet.mood, 47)
             self.assertTrue(config.learn_rhythm)
             memory.hour_seconds[34] = 245.5
             memory.strain = 19
             store.save(pet, config, adaptive=memory)
-            pet2, config2 = store.load(now=123)
-            memory2 = store.load_memory()
+            session_data = store.load_session(now=123)
+            pet2, config2 = session_data.state, session_data.settings
+            memory2 = session_data.adaptive_memory
             self.assertEqual(pet2.mood, 47)
             self.assertEqual(config2.x, 55)
             self.assertEqual(memory2.hour_seconds[34], 245.5)
@@ -304,13 +307,13 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         state = PetState(sleeping=True, sleep_origin="nap",
                          nap_until=1_800_000_000,
                          auto_nap_day="2026-10-12", updated_at=42)
-        restored = PetState.from_dict(state.to_dict(), now=42)
+        restored = decode_pet_state(encode_pet_state(state), now=42)
         self.assertEqual(restored.sleep_origin, "nap")
         self.assertEqual(restored.auto_nap_day, "2026-10-12")
         self.assertEqual(restored.nap_until, 1_800_000_000)
 
     def test_work_pressure_affects_emotion_only_in_context(self):
-        mind = AikoMind()
+        mind = make_aiko_mind(started_at=0.0)
         base = PetState(mood=55, energy=45)
         start = local_stamp("2026-10-12", 13)
         self.assertEqual(mind.emotion(base, 123), "calm")

@@ -3,7 +3,6 @@
   "foods": [
     {
       "id": "onigiri",
-      "label": "Onigiri",
       "variants": {
         "1": {
           "path": "food/1x/onigiri.png",
@@ -24,7 +23,6 @@
     },
     {
       "id": "taiyaki",
-      "label": "Taiyaki",
       "variants": {
         "1": {
           "path": "food/1x/taiyaki.png",
@@ -45,7 +43,6 @@
     },
     {
       "id": "apple",
-      "label": "Apfel",
       "variants": {
         "1": {
           "path": "food/1x/apple.png",
@@ -66,7 +63,6 @@
     },
     {
       "id": "dango",
-      "label": "Dango",
       "variants": {
         "1": {
           "path": "food/1x/dango.png",
@@ -87,7 +83,6 @@
     },
     {
       "id": "sandwich",
-      "label": "Sandwich",
       "variants": {
         "1": {
           "path": "food/1x/sandwich.png",
@@ -108,8 +103,6 @@
     },
     {
       "id": "energy_drink",
-      "label": "Energy Drink",
-      "care_action": "energy_drink",
       "variants": {
         "1": {
           "path": "food/1x/energy_drink.png",
@@ -130,7 +123,6 @@
     },
     {
       "id": "donut",
-      "label": "Donut",
       "variants": {
         "1": {
           "path": "food/1x/donut.png",
@@ -151,7 +143,6 @@
     },
     {
       "id": "cookie",
-      "label": "Cookie",
       "variants": {
         "1": {
           "path": "food/1x/cookie.png",
@@ -172,7 +163,6 @@
     },
     {
       "id": "melonpan",
-      "label": "Melonpan",
       "variants": {
         "1": {
           "path": "food/1x/melonpan.png",
@@ -193,7 +183,6 @@
     },
     {
       "id": "cupcake",
-      "label": "Cupcake",
       "variants": {
         "1": {
           "path": "food/1x/cupcake.png",
@@ -214,7 +203,6 @@
     },
     {
       "id": "dorayaki",
-      "label": "Dorayaki",
       "variants": {
         "1": {
           "path": "food/1x/dorayaki.png",

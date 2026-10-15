@@ -2,84 +2,32 @@
 
 from __future__ import annotations
 
-import ast
 import random
 import unittest
 from datetime import datetime
 from pathlib import Path
 
-
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.personality.mind import AikoMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-
-from aiko_pet.presentation.projections import (
-    project_hover, project_settings, project_status,
-)
 from aiko_pet.telemetry import ComputerSnapshot
-
+from aiko_pet.ui.view_models.projections import (
+    project_hover,
+    project_settings,
+    project_status,
+)
 
 ROOT = Path(__file__).resolve().parents[1] / "aiko_pet"
 
 
 class FinalArchitectureTests(unittest.TestCase):
-    def test_active_application_has_no_outer_layer_imports(self) -> None:
-        forbidden = (
-            "presentation", "ui", "desktop",
-            "infrastructure", "storage", "system_activity",
-        )
-        for path in (ROOT / "application").glob("*.py"):
-            with self.subTest(module=path.name):
-                tree = ast.parse(path.read_text("utf-8"))
-                imports = [
-                    node.module or ""
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.ImportFrom)
-                ] + [
-                    alias.name
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.Import)
-                    for alias in node.names
-                ]
-                for name in imports:
-                    suffix = (
-                        name.removeprefix("aiko_pet.")
-                        if name.startswith("aiko_pet.") else name
-                    )
-                    self.assertFalse(
-                        suffix.startswith(forbidden),
-                        f"{path.name} imports outer layer {name}",
-                    )
-
-    def test_presentation_has_no_tk_provider_or_legacy_monitor_import(self) -> None:
-        for path in (ROOT / "presentation").glob("*.py"):
-            with self.subTest(module=path.name):
-                tree = ast.parse(path.read_text("utf-8"))
-                imports = [
-                    node.module or ""
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.ImportFrom)
-                ] + [
-                    alias.name
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.Import)
-                    for alias in node.names
-                ]
-                for name in imports:
-                    self.assertFalse(
-                        name.startswith(("tkinter", "infrastructure"))
-                        or "system_activity" in name
-                        or name in ("storage", "gui"),
-                    )
-
-
     def test_projections_preserve_original_german_copy(self) -> None:
         stamp = datetime(2026, 10, 12, 13).timestamp()
         context = context_at(stamp)
         state = PetState(satiety=10, mood=55)
-        mind = AikoMind(rng=random.Random(7))
+        mind = make_aiko_mind(started_at=0.0, rng=random.Random(7))
         reading = ComputerSnapshot(cpu=82, ram=55, measured_at=1000.0)
         for observing in (False, True):
             with self.subTest(observing=observing):

@@ -5,7 +5,9 @@ from __future__ import annotations
 import unittest
 
 from aiko_pet.games.rock_paper_scissors import (
-    Move, Outcome, RockPaperScissors,
+    Move,
+    Outcome,
+    RockPaperScissors,
 )
 
 

@@ -6,7 +6,7 @@ import tkinter as tk
 import unittest
 
 from aiko_pet.infrastructure.character_assets import load_character_catalog
-from aiko_pet.ui.character_sprite_cache import CharacterSpriteCache
+from aiko_pet.ui.pet_view.character_sprite_cache import CharacterSpriteCache
 
 
 class SpriteCacheTests(unittest.TestCase):

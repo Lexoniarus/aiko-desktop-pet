@@ -8,10 +8,8 @@ are independent of Tkinter and can be unit-tested without a display.
 from __future__ import annotations
 
 import sys
-from .geometry import (
-    FOOT_BASELINE as FOOT_BASELINE,
-    TaskbarTrack as TaskbarTrack,
-)
+
+from .geometry import TaskbarTrack
 
 # Windows shell discovery constants; geometry lives in desktop.geometry.
 FALLBACK_TASKBAR_HEIGHT = 48

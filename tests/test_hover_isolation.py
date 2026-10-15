@@ -6,12 +6,13 @@ import tkinter as tk
 import unittest
 
 from aiko_pet.application.read_snapshot import snapshot_pet
-from aiko_pet.presentation.projections import project_hover
-from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
-from aiko_pet.ui.action_toolbar import ActionToolbar
-from aiko_pet.ui.hover_contracts import HoverActions, HoverAnchor
+from aiko_pet.ui.view_models.contracts import HoverAnchor
+from aiko_pet.ui.view_models.projections import project_hover
+from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from aiko_pet.ui.windows.hover_contracts import HoverActions
 
 
 class IndependentHoverTests(unittest.TestCase):

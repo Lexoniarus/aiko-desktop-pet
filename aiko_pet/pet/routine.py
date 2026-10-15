@@ -6,42 +6,21 @@ structured habits: Aiko does not leave the desktop or have obligations.
 
 from __future__ import annotations
 
+from collections.abc import Collection
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 
-WEEKDAYS = (
-    "Montag", "Dienstag", "Mittwoch", "Donnerstag",
-    "Freitag", "Samstag", "Sonntag",
-)
+from .content import GERMAN_TEXT
+from .routine_catalog import ROUTINE_CATALOG
 
-# (start minute since midnight, period, label, optional meal)
-WEEKDAY_SLOTS = (
-    (0, "night", "Nachtruhe", None),
-    (7 * 60 + 30, "breakfast", "Frühstückszeit", "breakfast"),
-    (9 * 60, "quiet", "Ruhiger Vormittag", None),
-    (12 * 60 + 30, "lunch", "Mittagszeit", "lunch"),
-    (14 * 60, "free", "Eigene Zeit", None),
-    (18 * 60 + 30, "dinner", "Abendessen", "dinner"),
-    (20 * 60, "evening", "Gemütlicher Abend", None),
-    (23 * 60 + 30, "night", "Nachtruhe", None),
-)
-WEEKEND_SLOTS = (
-    (0, "night", "Nachtruhe", None),
-    (9 * 60, "breakfast", "Langsamer Morgen", "breakfast"),
-    (11 * 60 + 30, "free", "Eigene Zeit", None),
-    (13 * 60 + 30, "lunch", "Mittagszeit", "lunch"),
-    (15 * 60, "free", "Eigene Zeit", None),
-    (19 * 60 + 30, "dinner", "Abendessen", "dinner"),
-    (21 * 60, "evening", "Ruhiger Abend", None),
-)
-SUNDAY_SLOTS = WEEKEND_SLOTS + (
-    (23 * 60 + 30, "night", "Nachtruhe", None),
-)
+# Slot times and Aiko's German activity labels are packaged data.
+WEEKDAY_SLOTS = ROUTINE_CATALOG.weekdays
+WEEKEND_SLOTS = ROUTINE_CATALOG.saturday
+SUNDAY_SLOTS = ROUTINE_CATALOG.sunday
 
 MEAL_NAMES = {
-    "breakfast": "Frühstück",
-    "lunch": "Mittagessen",
-    "dinner": "Abendessen",
+    period: GERMAN_TEXT.format(f"meal.{period}")
+    for period in ("breakfast", "lunch", "dinner")
 }
 
 
@@ -84,32 +63,16 @@ class TimeContext:
             day -= timedelta(days=1)
         return day.isoformat()
 
-    @property
-    def label(self) -> str:
-        return (
-            f"{WEEKDAYS[self.local.weekday()]} · "
-            f"{self.local:%H:%M} · {self.activity}"
-        )
 
-    @property
-    def schedule_line(self) -> str:
-        return f"Danach: {self.next_activity} um {self.next_time}"
-
-    def greeting(self) -> str:
-        """Safe fallback when the dialogue catalogue cannot be loaded."""
-        if self.night:
-            return "...Du bist noch wach?"
-        if self.period == "breakfast":
-            return "Morgen. ...Schon wieder so viel Licht."
-        if self.period == "lunch":
-            return "Mittag. Essen klingt vernünftig."
-        if self.period == "dinner":
-            return "Ich könnte etwas essen."
-        if self.period == "evening":
-            return "Abends wird's hier angenehmer."
-        if self.weekend:
-            return "Heute lassen wir uns Zeit."
-        return "...Da bist du ja."
+def due_meal(
+    context: TimeContext, *, meals_date: str, meals_today: Collection[str],
+) -> str | None:
+    """Identify a current meal not yet recorded in this day's pet history."""
+    if context.meal is not None and (
+        context.day_key != meals_date or context.meal not in meals_today
+    ):
+        return context.meal
+    return None
 
 
 def context_at(timestamp: float) -> TimeContext:

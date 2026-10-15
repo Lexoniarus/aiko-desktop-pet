@@ -27,15 +27,18 @@ migration is needed.
 
 | Component | Responsibility |
 | --- | --- |
-| `ui/hover_ui.py` | One owner of the toolbar pin, automatic visibility, settings/game instances and live interaction detection |
-| `ui/action_toolbar.py` | One cohesive toolbar view and pin-button rendering, including expandable local details |
-| `ui/toolbar_details.py` | Detached status display inside the toolbar; no duplicate care actions |
-| `ui/settings_window.py` | Window geometry and controls, reading snapshots and invoking callbacks |
-| `ui/skin.py` | Shared colors, Kenney image ownership, font selection, common control factories |
-| `ui/window_drag.py` | Reusable title-only drag behavior and screen bounds without pet state |
+| `ui/windows/hover_ui.py` | One owner of the toolbar pin, automatic visibility, settings/game instances and live interaction detection |
+| `ui/windows/action_toolbar.py` | One cohesive toolbar view and pin-button rendering, including expandable local details |
+| `ui/windows/toolbar_details.py` | Detached status display inside the toolbar; no duplicate care actions |
+| `ui/windows/settings_window.py` | Window geometry and controls, reading snapshots and invoking callbacks |
+| `ui/common/skin.py` | Shared colors, Kenney image ownership, font selection, common control factories |
+| `ui/common/window_drag.py` | Reusable title-only drag behavior and screen bounds without pet state |
 | `desktop/preferences.py` | Effects of preference actions; no new settings owner |
-| `presentation/read_models.py` | Detached snapshots for hover, settings and status details |
+| `ui/view_models/read_models.py` | Detached snapshots for hover, settings and status details |
 | `desktop/lifecycle.py` | Ordered cleanup of the existing window owners |
+| `application/contact.py` | Preserve intentional hover and click priority without owning widgets |
+| `ui/pet_view/care_presenter.py` | Present care results without owning nutrition or friendship |
+| `ui/pet_view/attention_presenter.py` | Render approved spontaneous speech and notification cues |
 
 No new general event bus, global window manager, inference backend or
 additional domain aggregate is introduced.

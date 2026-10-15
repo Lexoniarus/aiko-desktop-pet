@@ -8,11 +8,12 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.personality.adaptive import AdaptiveRoutine
-from aiko_pet.desktop.persistence import DesktopPersistence
-from aiko_pet.pet.state import PetState
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.desktop.persistence import DesktopPersistence
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.state import PetState
 
 
 class DesktopPersistenceTests(unittest.TestCase):
@@ -36,7 +37,7 @@ class DesktopPersistenceTests(unittest.TestCase):
         self.assertIsNone(self.persistence.save())
         saved = json.loads(self.store.path.read_text(encoding="utf-8"))
         self.assertEqual(saved["version"], 1)
-        self.assertEqual(saved["pet"], self.state.to_dict())
+        self.assertEqual(saved["pet"], encode_pet_state(self.state))
         self.assertEqual(saved["settings"], self.settings.to_dict())
 
     def test_save_does_not_advance_domain_state(self) -> None:

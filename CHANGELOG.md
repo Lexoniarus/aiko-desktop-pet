@@ -1,3 +1,103 @@
+## Unreleased — Refactor consolidation
+
+- Enforce PEP 8 whitespace/blank lines, 88-character lines, import ordering
+  and identifier naming across code, tests and tools with pinned Ruff rules.
+  Keep exact Win32 API name exceptions; remove obsolete partial lint steps.
+- Name selected mind reactions, nap permission queries, workload detectors
+  and their regression suites consistently; retire the unused `AikoMind` alias.
+- Compare Windows setup/launcher paths by filesystem identity so 8.3 aliases
+  and expanded paths both pass, retaining strict shortcut argument quoting.
+- Name current regression suites, classes and cases by their tested feature
+  instead of historical release tags; preserve all existing test bodies.
+- Validate dialogue weights as integers from 1 to 10, independently of
+  normalized mood/activity weights. Retain all shipped balancing values.
+- Use `application.active_time.SessionInputs` and one interval-consumption
+  function for live ticks, care and completed games. Cancelled games still
+  leave elapsed time for the next tick; offline restoration remains separate.
+- Retire unused asset aliases, the `bounded` alias and partial save-loading
+  wrappers. Import models, geometry and view contracts from their owners.
+  Load state, settings and adaptive memory together through `load_session()`.
+- Consolidate duplicate layer and ownership tests, covering relative imports
+  and package-submodule imports without removing functional regression cases.
+
+## Unreleased — JSON resources, closed time and Windows regression
+
+- Move remaining UI/farewell copy and named balancing parameters into validated
+  JSON resources, retaining current values and Python parameter interfaces.
+  Use the canonical food display name in the recent-food status line.
+- Reject duplicate JSON keys, non-finite numbers, unknown/missing fields,
+  misspelled events, invalid text placeholders and inconsistent balance ranges.
+- Restore bounded closed-time progression on startup (eight hours by default).
+  With automatic routine enabled, simulate sleep and due main meals only for
+  that absence; do not invent observed work, human care or friendship rewards.
+- Preserve the version-one save format. Back up unreadable/future saves before
+  replacement; document location, atomic writes, autosave and time semantics.
+- Synchronize the RPS geometry regression with native Tk visibility events;
+  retain every pixel-size and image-bounds assertion on Windows and Linux.
+
+## Unreleased — Care and persistence responsibility follow-up
+
+- Return one immutable `CareResult` from pet care. Dialogue and consumption
+  visuals use its effect instead of separately testing acceptance thresholds.
+- Capture pre-care tone/context and format unchanged German fallback text in
+  the UI. Preserve care values, friendship, meals and conversation ordering.
+- Move pet/nutrition save decoding and encoding to infrastructure while keeping
+  the version-one JSON keys, defaults, bounds and rounding unchanged.
+- Name care input data `SessionInputs` and animation identity `clip_id`; update
+  repository callers and document the Python contract migration.
+
+## Unreleased — Repository cleanup
+
+- Archive historical food exports, unused Kenney bitmaps/design references and
+  superseded design/test reports outside the repository, with SHA-256 records.
+- Keep six README media files; remove redundant detail stills and the automatic
+  screenshot commit workflow. Manual capture tools produce only retained media.
+- Remove the unused application-only Pyright configuration; retain the complete
+  application/tools/tests configuration and all active architecture checks.
+- Consolidate history here and current rhythm/dialogue guidance in the
+  architecture guide. Preserve current refactor acceptance and specialist docs.
+
+## Unreleased — Windows source setup
+
+- Add `requirements.txt` documenting the standard-library-only runtime.
+- Add a double-click Windows setup that detects Python/Tkinter, installs
+  the official Python runtime including Tcl/Tk directly when missing or incomplete
+  (without requiring WinGet), verifies its SHA-256, prepares an isolated `.venv`, checks
+  imports and character PNG loading, and creates per-user start shortcuts.
+- Prefer the setup environment in normal and diagnostic launchers; document
+  setup options, troubleshooting and removal without changing saved progress.
+- Test an actual Tk window before accepting a runtime. Automatically back up
+  broken local environments and rebuild them; reject Windows older than 10.
+
+## Unreleased — Remove duplicate German copy and food-asset metadata
+
+- Move emotion labels into the existing versioned German text JSON. Hover
+  and status now share the same sleep and observation-disabled labels.
+- Keep food titles and ordered nutrition records only in the food JSON;
+  remove repeated food titles from the PNG manifest.
+- The food picker uses the exact validated icon paths from the shared
+  `ItemCatalog`, not a second hardcoded path convention.
+- Keep all visible German text, hand sprites, care amounts, and save keys
+  unchanged, with expanded regression tests.
+
+## Unreleased — Pet domain/UI architecture consolidation (draft PR #9)
+
+- Canonical `pet/mind/`, `pet/animation/`, `pet/movement/`,
+  `ui/pet_view/`, `ui/windows/`, `ui/common/` and
+  `ui/view_models/` ownership; historical import-forwarding modules removed.
+- Headless pet animation priorities and desktop-only gaze, movement and
+  animation decisions feed the Tk sprite through typed ports. All original
+  image clips, 16 gaze directions, timings and interaction precedence stay.
+- Bounded application and animation assemblies reduce the desktop
+  composition constructor; session lifecycle, UI refresh and save ordering
+  have an independent `DesktopSessionRuntime`.
+- Removed unused module-level care, need-decay, friendship and routine
+  mutation adapters, with regression tests on pure transitions and
+  `PetState` state changes instead.
+- Typed mood-hint keys, due-meal IDs and UI-owned German status/weekday
+  formatting replace duplicated and obsolete localized domain helpers.
+- Final interactive Windows revalidation remains required before PR #9 merge.
+
 ## Unreleased — Food, digestion and observed workload
 
 - Five selectable foods (Onigiri, Sandwich, Taiyaki, Apple, Dango) with
@@ -14,7 +114,8 @@
 
 Aiko Desktop Pet is maintained as a source repository. The dates below describe
 verified GitHub milestones, **not** packaged Windows releases. There is currently
-no separate downloadable installer or published GitHub Release.
+no separate downloadable executable installer or published GitHub Release;
+the source includes a Windows setup script.
 
 ## Unreleased — Pinnable toolbar and persistent settings
 
@@ -119,9 +220,16 @@ The historical **v0.13** project included a Kenney sci-fi hover interface,
 15 pixel emotes, 73 Aiko character animation frames, six displayed gauges
 (five care needs plus friendship) and sequenced German character reactions.
 
-For earlier v0.2–v0.13 design changes, see
-[the historical feature timeline](docs/HISTORY_0_2_TO_0_13.md). The numeric
+Earlier milestones introduced desktop placement and gaze (v0.2–v0.8),
+adaptive local rhythm learning (v0.9), context-sensitive reactions (v0.10),
+care/friendship (v0.11) and differentiated affection (v0.12). The numeric
 feature baseline is not a GitHub Release tag or a claim of an installer build.
+Detailed historical records are available at the fixed
+[pre-cleanup documentation snapshot](https://github.com/Lexoniarus/aiko-desktop-pet/tree/502c95d88062481d457b4901d1cc797bff8756e2/docs),
+including the [original feature timeline](https://github.com/Lexoniarus/aiko-desktop-pet/blob/502c95d88062481d457b4901d1cc797bff8756e2/docs/HISTORY_0_2_TO_0_13.md)
+and [completed OOP refactor record](https://github.com/Lexoniarus/aiko-desktop-pet/blob/502c95d88062481d457b4901d1cc797bff8756e2/docs/REFACTOR_ARCHITECTURE.md).
+Historical test totals and balancing figures describe their own revisions,
+not the current implementation or latest CI status.
 
 ## Compatibility approach
 

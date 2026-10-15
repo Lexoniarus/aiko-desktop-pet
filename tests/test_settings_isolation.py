@@ -6,8 +6,9 @@ import tkinter as tk
 import unittest
 from dataclasses import replace
 
-from aiko_pet.ui.settings_contracts import SettingsActions, SettingsSnapshot
-from aiko_pet.ui.settings_window import SettingsWindow
+from aiko_pet.ui.view_models.contracts import SettingsSnapshot
+from aiko_pet.ui.windows.settings_contracts import SettingsActions
+from aiko_pet.ui.windows.settings_window import SettingsWindow
 
 
 class StandaloneSettingsTests(unittest.TestCase):

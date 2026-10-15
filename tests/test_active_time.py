@@ -10,15 +10,17 @@ from types import SimpleNamespace
 from typing import Any
 from unittest.mock import MagicMock, patch
 
-from aiko_pet.application.active_time import ActiveSessionClock
+from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.activity import ActivityCallbacks, ActivityCoordinator
 from aiko_pet.application.commands import CareCommand
-from aiko_pet.application.controller import CareController, CareRuntime
+from aiko_pet.application.controller import CareController
+from aiko_pet.application.game_experience import GameExperienceCoordinator
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.active_time import active_uptime_seconds
-from aiko_pet.personality.adaptive import AdaptiveRoutine
-from aiko_pet.personality.mind import AikoMind
-from aiko_pet.personality.workload_events import WorkloadEventDetector
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.fun import GameExperience
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 
@@ -65,11 +67,11 @@ class ActiveTimeTests(unittest.TestCase):
             self.assertEqual(active_uptime_seconds(), 12.)
             reader.assert_called_once_with(1)
 
-    def test_tick_care_and_save_share_one_interval_even_after_wall_jump(self) -> None:
+    def test_tick_care_game_and_save_share_one_interval_after_wall_jump(self) -> None:
         uptime = [0.]
         clock = ActiveSessionClock(lambda: uptime[0])
-        state = PetState(satiety=100, updated_at=NOW)
-        mind, adaptive = AikoMind(), AdaptiveRoutine()
+        state = PetState(satiety=100, energy=100, updated_at=NOW)
+        mind, adaptive = make_aiko_mind(started_at=0.0), AdaptiveRoutine()
         activity = ActivityCoordinator(
             state, PetSettings(auto_routine=False), mind, adaptive,
             WorkloadEventDetector(), Monitor(),
@@ -77,11 +79,17 @@ class ActiveTimeTests(unittest.TestCase):
                               lambda: 0, lambda: 0), clock=clock,
         )
         care = CareController(state, mind, adaptive, clock=clock)
+        games = GameExperienceCoordinator(state, mind, adaptive, clock=clock)
         uptime[0] = 3600
         activity.advance_state(NOW + 3600)
-        care.execute(CareCommand('talk'), CareRuntime(
+        inputs = SessionInputs(
             NOW + 3600, 3600, False, None, False, False, None,
-        ))
+        )
+        self.assertAlmostEqual(state.energy, 94)
+        care.execute(CareCommand('talk'), inputs)
+        self.assertAlmostEqual(state.energy, 93)
+        games.complete(GameExperience("rock_paper_scissors", 1), inputs)
+        self.assertAlmostEqual(state.energy, 92.5)
         activity.advance_state(NOW + 3600)  # Save at the same instant.
         self.assertAlmostEqual(state.satiety, 92)
         activity.advance_state(NOW + 86400)  # Suspend/clock jump: uptime unchanged.
@@ -89,6 +97,23 @@ class ActiveTimeTests(unittest.TestCase):
         uptime[0] += 60
         activity.advance_state(NOW + 86460)
         self.assertAlmostEqual(state.satiety, 91.8667, places=3)
+
+    def test_cancelled_game_leaves_elapsed_time_for_the_next_tick(self) -> None:
+        uptime = [0.]
+        clock = ActiveSessionClock(lambda: uptime[0])
+        state = PetState(satiety=100, updated_at=NOW)
+        games = GameExperienceCoordinator(
+            state, make_aiko_mind(started_at=0.), AdaptiveRoutine(), clock=clock,
+        )
+        uptime[0] = 3600
+        result = games.complete(
+            GameExperience("rock_paper_scissors", 0),
+            SessionInputs(NOW + 3600, 3600, False, None, False, False, None),
+        )
+        self.assertEqual(result.fun_gained, 0)
+        self.assertEqual(result.fun_after, state.fun)
+        self.assertEqual(state.satiety, 100)
+        self.assertEqual(clock.consume(), 3600)
 
 
 class HourlyCareTests(unittest.TestCase):

@@ -14,7 +14,7 @@ Tkinter toolbar/buttons -> CareCommand ---------------->|ApplicationRouter|
                                       +------------------------+----------------+
                                       |                                         |
                                 CareController                         NotificationInbox
-                           PetState / AikoMind                     bounded, data-only FIFO
+                           PetState / PetMind                     bounded, data-only FIFO
                                       |                                         |
                                   CareOutcome                             UI thread polls
                                       |                                         |
@@ -84,7 +84,7 @@ contract, but must preserve the non-interrupting default and bounded queue.
 The live desktop constructs an immutable, language-neutral
 `PetReadSnapshot` in `application/read_snapshot.py`. This is distinct from
 the existing German `HoverSnapshot` and `StatusSnapshot`, now owned by
-`presentation/contracts.py` and composed by `DesktopPresentation`.
+`ui/view_models/contracts.py` and composed by `DesktopPresentation`.
 A future external adapter should expose only an authorized subset of the
 semantic snapshot rather than returning German desktop strings, local
 window geometry or unapproved computer-activity details.
@@ -103,7 +103,7 @@ objects directly. Snapshot reads must cross the owner-thread boundary or use
 an immutable, thread-safe cache. Do not expose application names, window
 titles or unapproved personal activity details.
 
-## Pending architecture cleanup
+## Current architecture boundaries
 
 - Desktop scheduling, state serialization and ordered shutdown now have
   dedicated services under `desktop/`. The runtime consumes named
@@ -114,7 +114,7 @@ titles or unapproved personal activity details.
 - `ActivityCoordinator` owns pet time progression during desktop ticks and
   before persistence; `DesktopPersistence` writes the supplied state without
   advancing the pet or choosing sleep policy.
-- `PetSessionRestorer` restores existing saves without offline catch-up
+- `PetSessionRestorer` decodes existing saves and applies bounded closed-time progression
   using the `SavedPetReader` port. `PetSettings` is owned by the application
   settings module, and `StateStore` only decodes/encodes JSON data. Neither
   application component imports the storage implementation.
@@ -131,10 +131,10 @@ titles or unapproved personal activity details.
 
 Adaptive observations, conversation decisions, workload event detection
 and work-session context now have explicit canonical modules in
-`aiko_pet/personality/`. The detector's descriptive English name is
+`aiko_pet/pet/mind/`. The detector's descriptive English name is
 `WorkloadEventDetector`; the old `ComputerVoice` alias has been removed.
 Presentation-owned cue scheduling lives in
-`presentation/reaction_playback.py`. Neither the API contract nor any
+`ui/pet_view/reaction_player.py`. Neither the API contract nor any
 German authored responses have changed.
 
 ## Platform and visual-policy ownership
@@ -142,15 +142,17 @@ German authored responses have changed.
 Windows taskbar discovery, native window ordering and read-only global
 input sampling now live in `desktop/` and are no longer primary imports
 from the root package. Sprite frame timing, gaze and horizontal motion
-planning are pure code in `presentation/`, consuming only immutable or
-explicitly typed desktop geometry. No hooks, key inspection, browser
+planning are pure code in `pet/animation/` and `pet/movement/`, consuming
+platform-neutral movement bounds. No hooks, key inspection, browser
 integration or network access were added.
 
 ## Persistence infrastructure contract
 
 `infrastructure/persistence.py` owns the only state JSON repository.
+Its `pet_codec.py` adapter translates pet and nutrition records without putting
+JSON decoding or formatting on the domain aggregates.
 Application session restoration
-consumes its typed load port without offline catch-up. Active-session time
+consumes its typed load port and then simulates bounded closed time. Active-session time
 progression stays outside the repository. Old save path precedence and version-one schema are
 preserved, including relative environment-variable overrides.
 
@@ -174,8 +176,11 @@ No migrations or extra runtime libraries are necessary.
   commands, future integration events, an owner-thread command router, and a
   bounded, thread-safe notification inbox.
 - `DesktopPet.interact()` now submits `CareCommand` and receives a
-  `CareOutcome`. The controller owns domain/dialogue sequencing; the GUI
-  still presents text, refreshes widgets and saves locally.
+  `CareOutcome` carrying the committed `CareResult`. `SessionInputs` supplies
+  trusted clock/observation values via the router's `inputs=` argument.
+  The controller owns domain/dialogue sequencing; the care presenter alone
+  formats German fallback text, refreshes widgets and selects item visuals.
+  The GUI saves locally after presentation.
 - External notification data uses `IncomingNotification.from_payload(...,
   authenticated_source=...)`. The adapter is responsible for authenticating
   and authorizing the source (not provided in this change).

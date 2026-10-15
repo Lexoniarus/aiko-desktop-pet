@@ -1,8 +1,23 @@
 [tool.ruff]
 target-version = "py311"
 line-length = 88
+preview = true
 
 [tool.ruff.lint]
-# Establish a stable baseline first. Remaining stylistic rules are adopted
-# in focused follow-up refactors instead of reformatting all legacy modules.
-select = ["E4", "E7", "E9", "F"]
+# Preview enables Ruff 0.13.2's whitespace and blank-line rules as well.
+# Apply the same PEP 8, import-order and naming checks to code and tests.
+select = ["E", "F", "I", "N", "W"]
+
+[tool.ruff.lint.pep8-naming]
+# Exact foreign function names used by the Win32 protocol and its test doubles.
+extend-ignore-names = [
+    "GetAncestor",
+    "GetWindow",
+    "GetWindowRect",
+    "GetWindowLongW",
+    "IsWindowVisible",
+    "IsIconic",
+    "SetWindowPos",
+    "GetSystemTimes",
+    "GlobalMemoryStatusEx",
+]

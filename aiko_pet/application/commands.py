@@ -3,17 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, TypeAlias, cast
+from typing import TypeAlias, cast
 
+from ..pet.care_result import CARE_ACTIONS, CareAction
 from ..pet.food import FOOD_CATALOG, FoodId
 from .events import IncomingNotification
-
-CareAction: TypeAlias = Literal[
-    "feed", "play", "pet", "talk", "energy_drink", "sleep",
-]
-CARE_ACTIONS: frozenset[str] = frozenset(
-    ("feed", "play", "pet", "talk", "energy_drink", "sleep")
-)
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,7 +33,6 @@ class CareCommand:
         if action not in CARE_ACTIONS:
             raise ValueError(f"Unsupported care action: {action}")
         return cls(cast(CareAction, action), food_id=food_id)
-
 
 
 @dataclass(frozen=True, slots=True)

@@ -1,0 +1,5 @@
+# Runtime: Python 3.11+ with working Tkinter/Tcl/Tk; not provided by Windows.
+# Aiko currently uses only the Python standard library: no pip packages needed.
+# Run Aiko_installieren.bat to check the runtime and download/install it if missing.
+# Tkinter is a Python installer component, not a package installable through pip.
+# Pillow and CI quality tools are development-only, not runtime dependencies.

@@ -9,17 +9,24 @@ from __future__ import annotations
 import math
 from typing import Callable
 
+from ..pet.content import GERMAN_TEXT
+
 
 class FarewellSequence:
     """Run one goodbye wave and bubble, then request the normal shutdown."""
 
-    TEXT = "Ah, okay. Tschüss, mach's gut!"
+    TEXT = GERMAN_TEXT.format("farewell.text")
 
     def __init__(
-        self, *, schedule: Callable[[int, Callable[[], None]], str],
-        cancel: Callable[[str], None], prepare: Callable[[], None],
-        animate: Callable[[], None], say: Callable[[str, int], None],
-        finish: Callable[[], None], seconds: float,
+        self,
+        *,
+        schedule: Callable[[int, Callable[[], None]], str],
+        cancel: Callable[[str], None],
+        prepare: Callable[[], None],
+        animate: Callable[[], None],
+        say: Callable[[str, int], None],
+        finish: Callable[[], None],
+        seconds: float,
     ) -> None:
         if not math.isfinite(seconds) or seconds <= 0:
             raise ValueError("Farewell clip must have a positive duration")
@@ -53,7 +60,8 @@ class FarewellSequence:
             # Teardown removes the bubble; never let its own timer hide it first.
             self._say(self.TEXT, self.duration_ms + 500)
             self._pending_timer = self._schedule(
-                self.duration_ms, self._complete,
+                self.duration_ms,
+                self._complete,
             )
         except Exception:
             # Quitting must remain possible even if displaying goodbye fails.

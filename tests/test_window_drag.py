@@ -5,7 +5,7 @@ from __future__ import annotations
 import tkinter as tk
 import unittest
 
-from aiko_pet.ui.window_drag import WindowDrag, bounded_position
+from aiko_pet.ui.common.window_drag import WindowDrag, bounded_position
 
 
 class WindowPositionTests(unittest.TestCase):

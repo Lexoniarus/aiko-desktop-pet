@@ -5,12 +5,19 @@ from __future__ import annotations
 import unittest
 from datetime import datetime
 
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.fun import (
-    FUN_BALANCE, GAME_FUN_PROFILES, GameExperience, advance_fun,
-    calculate_game_session_fun, completed_unit_reward_fraction,
+    FUN_BALANCE,
+    GAME_FUN_PROFILES,
+    GameExperience,
+    advance_fun,
+    calculate_game_session_fun,
+    completed_unit_reward_fraction,
 )
 from aiko_pet.pet.mood import (
-    MoodFactors, advance_mood, calculate_mood_target,
+    MoodFactors,
+    advance_mood,
+    calculate_mood_target,
 )
 from aiko_pet.pet.state import PetState
 
@@ -35,14 +42,14 @@ class FunMoodTests(unittest.TestCase):
 
     def test_an_unplayed_window_has_no_effect(self) -> None:
         pet = PetState(fun=27, updated_at=timestamp())
-        before = pet.to_dict()
+        before = encode_pet_state(pet)
         self.assertEqual(
             pet.record_game_experience(
                 GameExperience("rock_paper_scissors", 0), now=timestamp(),
             ),
             0.0,
         )
-        self.assertEqual(pet.to_dict(), before)
+        self.assertEqual(encode_pet_state(pet), before)
 
     def test_aiko_wins_a_little_more_but_losses_are_still_fun(self) -> None:
         won = calculate_game_session_fun(
@@ -128,15 +135,15 @@ class FunMoodTests(unittest.TestCase):
         )
 
     def test_old_saves_keep_mood_and_default_fun_safely(self) -> None:
-        old = PetState.from_dict({"mood": 34}, now=timestamp())
+        old = decode_pet_state({"mood": 34}, now=timestamp())
         self.assertEqual(old.fun, 75)
         self.assertEqual(old.mood, 34)
-        corrupt = PetState.from_dict({"fun": float("nan")}, now=timestamp())
+        corrupt = decode_pet_state({"fun": float("nan")}, now=timestamp())
         self.assertEqual(corrupt.fun, 75)
-        restored = PetState.from_dict(old.to_dict(), now=timestamp())
+        restored = decode_pet_state(encode_pet_state(old), now=timestamp())
         self.assertEqual(restored.fun, old.fun)
         self.assertEqual(restored.mood, old.mood)
-        self.assertNotIn("game_score", restored.to_dict())
+        self.assertNotIn("game_score", encode_pet_state(restored))
 
 
 if __name__ == "__main__":

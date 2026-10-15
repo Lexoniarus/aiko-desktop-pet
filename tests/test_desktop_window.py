@@ -6,7 +6,7 @@ import tkinter as tk
 import unittest
 
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.ui.desktop_window import DesktopWindow
+from aiko_pet.ui.pet_view.desktop_window import DesktopWindow
 
 
 class DesktopWindowTests(unittest.TestCase):

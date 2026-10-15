@@ -11,36 +11,21 @@ from __future__ import annotations
 import json
 import tempfile
 import time
-import tkinter as tk
 from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from tools.media_crop import CapturedFrame, capture_screen, save_sequence
-
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.personality.catalog import Reaction
+from aiko_pet.pet.mind.catalog import Reaction
+from tools.media_crop import CapturedFrame, capture_screen, save_sequence
 
 ROOT = Path(__file__).resolve().parents[1]
 PREVIEWS = ROOT / "vorschau"
 # Capture the complete Xvfb screen and derive a safe crop from mapped Tk
 # window geometry; fixed rectangles used to clip the left side of the toolbar.
-STILLS = (
-    "Aiko_Current_Hover.png",
-    "Aiko_Current_Hover_Moved.png",
-    "Aiko_Current_Dialog.png",
-    "Aiko_Current_Reaction_Emote_Start.png",
-    "Aiko_Current_Reaction_First_Line.png",
-    "Aiko_Current_Reaction_Followup.png",
-    "Aiko_Current_Reaction_Emote_End.png",
-    "Aiko_Current_Status.png",
-    "Aiko_Current_Settings.png",
-    "Aiko_Current_Care_Pet.png",
-    "Aiko_Current_Care_Feed.png",
-    "Aiko_Current_Care_Sleep.png",
-)
+STILLS = ("Aiko_Current_Hover.png",)
 REACTION_GIF = "Aiko_Current_Reaction_Sequence.gif"
 ANIMATION_GIF = "Aiko_Current_Animations.gif"
 AMBIENT_GIF = "Aiko_Current_Ambient_Blink_And_Glance.gif"
@@ -66,6 +51,7 @@ def live_capture(pet: DesktopPet, name: str) -> CapturedFrame:
     )
     return frame
 
+
 def advance_reaction(pet: DesktopPet, index: int) -> None:
     """Advance the actual reaction player to a specific visible cue for media."""
     player = pet._reaction_player
@@ -85,8 +71,8 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     # This is a temporary media-only state. Clear previous scripted care
     # deadlines so they cannot mask the passive idle director.
     pet.state.sleeping = False
-    pet._action_until = 0.0
-    pet._action_state = "idle"
+    pet._action_playback.until = 0.0
+    pet._action_playback.clip_id = "idle"
     pet._reaction_player.cancel()
     pet._speech.hide()
     # Stop the normal tick: scripted capture timestamps must not be
@@ -102,7 +88,7 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     ambient = pet._animated._ambient
     ambient.next_blink_at = now + 200
     ambient.next_glance_at = now + 200
-    pet._animated.render(now, 0, (0, 0))
+    pet._animated.render(now, (0, 0))
 
     frames: list[CapturedFrame] = []
     durations: list[int] = []
@@ -115,10 +101,10 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     # Capture the calmer one-pixel sway through the real Tk widget;
     # the feet and the selected gaze sprite remain anchored.
     for phase in range(8):
-        pet._animated.render(now + phase * .42 + .01, 0, (0, 0))
+        pet._animated.render(now + phase * .42 + .01, (0, 0))
         add_frame(420)
     ambient.next_blink_at = time.monotonic() - 1
-    pet._animated.render(time.monotonic(), 0, (0, 0))
+    pet._animated.render(time.monotonic(), (0, 0))
     if not ambient.blinking:
         raise RuntimeError("The real idle blink did not start")
     clip = pet._animated.assets.clips["idle"]
@@ -134,12 +120,12 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     # Resume slow motion after all eight blink frames, not during them.
     rest_at = ambient._motion_started_at
     for phase in range(8):
-        pet._animated.render(rest_at + phase * .42 + .01, 0, (0, 0))
+        pet._animated.render(rest_at + phase * .42 + .01, (0, 0))
         add_frame(420)
 
     ambient.next_glance_at = time.monotonic() - 1
     ambient.next_blink_at = time.monotonic() + 200
-    pet._animated.render(time.monotonic(), 0, (0, 0))
+    pet._animated.render(time.monotonic(), (0, 0))
     if pet._animated.frame_clock.active_key is None:
         raise RuntimeError("Missing autonomous look")
     if pet._animated.frame_clock.active_key[0] != "look":
@@ -147,7 +133,7 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     # Hold the same lateral look sprite while its head subtly rocks.
     look_at = time.monotonic()
     for phase in range(3):
-        pet._animated.render(look_at + phase * .42, 0, (0, 0))
+        pet._animated.render(look_at + phase * .42, (0, 0))
         add_frame(420)
         key = pet._animated.frame_clock.active_key
         if key is None or key[0] != "look":
@@ -155,7 +141,7 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     ambient.suspend(time.monotonic())
     back_at = time.monotonic()
     for phase in range(8):
-        pet._animated.render(back_at + phase * .42 + .01, 0, (0, 0))
+        pet._animated.render(back_at + phase * .42 + .01, (0, 0))
         add_frame(420)
     save_sequence(frames, durations, PREVIEWS / AMBIENT_GIF)
     print(
@@ -164,7 +150,7 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
 
 
 def capture_ui() -> None:
-    """Capture each current care, window and multi-stage reaction surface."""
+    """Capture the README overview, reaction GIF and ambient GIF only."""
     with tempfile.TemporaryDirectory(prefix="aiko-current-gallery-") as folder:
         pet = DesktopPet(
             store=StateStore(Path(folder) / "media-preview-state.json"),
@@ -194,27 +180,6 @@ def capture_ui() -> None:
             )
             live_capture(pet, "Aiko_Current_Hover.png")
 
-            # Use the panel's own dragging handlers; no fake panel rendering.
-            drag_start = tk.Event()
-            drag_start.x_root = bar.window.winfo_rootx() + 24
-            drag_start.y_root = bar.window.winfo_rooty() + 12
-            bar._drag.start(drag_start)
-            drag_end = tk.Event()
-            drag_end.x_root = drag_start.x_root - 140
-            drag_end.y_root = drag_start.y_root - 40
-            bar._drag.move(drag_end)
-            bar._drag.finish(drag_end)
-            live_capture(pet, "Aiko_Current_Hover_Moved.png")
-            bar.reset_position()
-
-            bar.hide()
-            pet._speech.show_text(
-                "Meine Sprechblase bleibt direkt bei mir, nicht beim Menü.",
-                20000,
-            )
-            live_capture(pet, "Aiko_Current_Dialog.png")
-            hover.show_toolbar()
-
             # The real ReactionPlayer drives the same speech/emote widgets as
             # production. Only its scheduled cue progression is controlled.
             reaction = Reaction(
@@ -225,52 +190,18 @@ def capture_ui() -> None:
                 800, "question", "heart",
             )
             pet._react(reaction, 2500)
-            reaction_frames = [
-                live_capture(pet, "Aiko_Current_Reaction_Emote_Start.png"),
-            ]
-            advance_reaction(pet, 1)
-            reaction_frames.append(live_capture(
-                pet, "Aiko_Current_Reaction_First_Line.png",
-            ))
-            advance_reaction(pet, 2)
-            reaction_frames.append(live_capture(
-                pet, "Aiko_Current_Reaction_Followup.png",
-            ))
-            advance_reaction(pet, 3)
-            reaction_frames.append(live_capture(
-                pet, "Aiko_Current_Reaction_Emote_End.png",
-            ))
+            reaction_frames: list[CapturedFrame] = []
+            for index in range(4):
+                if index:
+                    advance_reaction(pet, index)
+                settle(pet)
+                reaction_frames.append(capture_screen(pet.root))
             pet._reaction_player.cancel()
             save_sequence(
                 reaction_frames, [800, 2400, 2250, 1150],
                 PREVIEWS / REACTION_GIF,
             )
             print(f"Captured four real reaction cues: {REACTION_GIF}")
-
-            pet._speech.hide()
-            hover.show_toolbar()
-            hover.open_status()
-            if bar.details is None:
-                raise RuntimeError("The inline status details are missing")
-            bar.toggle_details()
-            live_capture(pet, "Aiko_Current_Status.png")
-            bar.toggle_details()
-
-            hover.show_toolbar()
-            bar.settings_button.invoke()
-            if hover.settings_window is None:
-                raise RuntimeError("The settings view did not open")
-            live_capture(pet, "Aiko_Current_Settings.png")
-            hover.settings_window.close()
-
-            hover.show_toolbar()
-            pet.interact("pet")
-            pet._speech.show_emote("heart", 9000)
-            live_capture(pet, "Aiko_Current_Care_Pet.png")
-            pet.interact("feed")
-            live_capture(pet, "Aiko_Current_Care_Feed.png")
-            pet.interact("sleep")
-            live_capture(pet, "Aiko_Current_Care_Sleep.png")
 
             capture_ambient_behavior(pet)
             expected = {name for name in STILLS}

@@ -10,16 +10,17 @@ import time
 from dataclasses import dataclass
 from typing import Callable
 
-from ..personality.adaptive import AdaptiveRoutine
 from ..application.activity import ActivityCoordinator
 from ..application.attention import AttentionCoordinator
 from ..application.settings import PetSettings, SettingKey
-from ..pet.state import PetState
+from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.routine import TimeContext, context_at
-from ..ui.animated_pet import AnimatedPet
-from ..ui.desktop_window import DesktopWindow
-from ..ui.hover_ui import HoverUi
-from ..ui.speech_presenter import SpeechPresenter
+from ..ui.pet_view.animated_pet import AnimatedPet
+from ..ui.pet_view.desktop_window import DesktopWindow
+from ..ui.pet_view.speech_presenter import SpeechPresenter
+from ..ui.windows.hover_ui import HoverUi
+from .visual_observation import DesktopVisualObservation
+from .walk_runtime import WalkDriver
 from .window_stack import WindowStack
 
 
@@ -36,18 +37,20 @@ class DesktopPreferences:
     """Own the effects of desktop settings, scale and toolbar placement."""
 
     def __init__(
-        self, *, settings: PetSettings, state: PetState,
+        self, *, settings: PetSettings,
         adaptive: AdaptiveRoutine, activity: ActivityCoordinator,
         attention: AttentionCoordinator, animated: AnimatedPet,
+        walk: WalkDriver, visual: DesktopVisualObservation,
         window: DesktopWindow, hover: HoverUi, speech: SpeechPresenter,
         overlay_stack: WindowStack, ports: DesktopPreferencePorts,
     ) -> None:
         self._settings = settings
-        self._state = state
         self._adaptive = adaptive
         self._activity = activity
         self._attention = attention
         self._animated = animated
+        self._walk = walk
+        self._visual = visual
         self._window = window
         self._hover = hover
         self._speech = speech
@@ -80,7 +83,7 @@ class DesktopPreferences:
         self._ports.save()
 
     def set_auto_walk(self, value: bool) -> None:
-        self._animated.set_auto_walk(value, time.monotonic())
+        self._walk.set_auto_walk(value, time.monotonic())
         self._ports.save()
 
     def set_auto_routine(self, enabled: bool) -> None:
@@ -93,7 +96,8 @@ class DesktopPreferences:
         self._ports.save()
 
     def set_follow_cursor(self, enabled: bool) -> None:
-        self._animated.set_follow_cursor(enabled)
+        self._settings.follow_cursor = bool(enabled)
+        self._visual.reset()
         self._ports.save()
 
     def set_spontaneous_talk(self, enabled: bool) -> None:
@@ -120,7 +124,7 @@ class DesktopPreferences:
         self._settings.scale = 2 if self._settings.scale == 1 else 1
         self._window.resize()
         self._animated.reload_sprites()
-        self._animated.gaze_sector = None
+        self._visual.reset()
         # Force a Tk geometry update even for an unchanged x/y position.
         self._window.placed = False
         self._ports.place_x(center - self._window.width / 2)
@@ -141,7 +145,7 @@ class DesktopPreferences:
         self._ports.place_x(
             (track.left + track.right - self._window.width) / 2,
         )
-        self._animated.movement.interrupt()
+        self._walk.movement.interrupt()
         self._ports.save()
 
     def record_toolbar_position(

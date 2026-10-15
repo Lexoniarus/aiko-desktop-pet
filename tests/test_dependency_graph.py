@@ -18,22 +18,12 @@ def module_name(path: Path) -> str:
     return ".".join(parts)
 
 
-def internal_dependencies(
-    path: Path, known_modules: frozenset[str],
-) -> set[str]:
-    """Resolve static absolute/relative imports without importing the app."""
-    current = module_name(path)
-    package = (
-        current if path.stem == "__init__"
-        else current.rsplit(".", 1)[0]
-    )
-    tree = ast.parse(path.read_text("utf-8"), filename=str(path))
-    dependencies: set[str] = set()
+def import_targets(tree: ast.AST, package: str) -> set[str]:
+    """Resolve every import form, including from-package submodule imports."""
+    targets: set[str] = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
-            for alias in node.names:
-                if alias.name in known_modules:
-                    dependencies.add(alias.name)
+            targets.update(alias.name for alias in node.names)
         if not isinstance(node, ast.ImportFrom):
             continue
         if node.level:
@@ -49,18 +39,76 @@ def internal_dependencies(
             )
         else:
             target = node.module or ""
-        if target in known_modules:
-            dependencies.add(target)
-        # "from package import submodule" is another module dependency.
-        for alias in node.names:
-            submodule = f"{target}.{alias.name}"
-            if submodule in known_modules:
-                dependencies.add(submodule)
+        targets.add(target)
+        targets.update(f"{target}.{alias.name}" for alias in node.names)
+    return targets
+
+
+def internal_dependencies(
+    path: Path, known_modules: frozenset[str],
+) -> set[str]:
+    """Resolve static imports without importing the app."""
+    current = module_name(path)
+    package = (
+        current if path.stem == "__init__"
+        else current.rsplit(".", 1)[0]
+    )
+    tree = ast.parse(path.read_text("utf-8"), filename=str(path))
+    dependencies = import_targets(tree, package) & known_modules
     dependencies.discard(current)
     return dependencies
 
 
 class PackageDependencyTests(unittest.TestCase):
+    def test_boundary_resolver_covers_nested_and_relative_imports(self) -> None:
+        for statement in (
+            "import aiko_pet.ui as view",
+            "from aiko_pet import ui",
+            "from ..ui import windows",
+            "if True:\n    from .. import ui",
+        ):
+            with self.subTest(statement=statement):
+                targets = import_targets(
+                    ast.parse(statement), "aiko_pet.application",
+                )
+                self.assertIn("aiko_pet.ui", targets)
+
+    def test_layers_only_import_allowed_dependencies(self) -> None:
+        outer = tuple(f"aiko_pet.{name}" for name in (
+            "ui", "presentation", "desktop", "infrastructure", "storage",
+            "system_activity", "gui", "personality", "adaptive", "dialogue",
+            "adaptive_models",
+        ))
+        rules = {
+            "application": (*outer, "tkinter"),
+            "pet": (*outer, "aiko_pet.application", "tkinter", "ctypes",
+                    "subprocess"),
+            "ui/view_models": (
+                "tkinter", "ctypes", "aiko_pet.infrastructure",
+                "aiko_pet.desktop", "aiko_pet.storage",
+                "aiko_pet.system_activity", "aiko_pet.gui",
+            ),
+        }
+        for layer, forbidden in rules.items():
+            for path in (SOURCES / layer).rglob("*.py"):
+                with self.subTest(module=str(path.relative_to(SOURCES))):
+                    current = module_name(path)
+                    package = (current if path.stem == "__init__"
+                               else current.rsplit(".", 1)[0])
+                    tree = ast.parse(path.read_text("utf-8"))
+                    for target in import_targets(tree, package):
+                        self.assertFalse(any(
+                            target == name or target.startswith(name + ".")
+                            for name in forbidden
+                        ), f"{current} imports forbidden {target}")
+                    if path.parent == SOURCES / "pet":
+                        for node in ast.walk(tree):
+                            if isinstance(node, ast.ImportFrom):
+                                self.assertLessEqual(
+                                    node.level, 1,
+                                    f"{path.name} must stay in the pet context",
+                                )
+
     def test_all_package_modules_import_without_starting_the_desktop(self) -> None:
         for path in SOURCES.rglob("*.py"):
             with self.subTest(module=module_name(path)):
@@ -94,48 +142,6 @@ class PackageDependencyTests(unittest.TestCase):
 
         for name in sorted(names):
             visit(name)
-
-    def test_application_imports_never_depend_on_outer_layers(
-        self,
-    ) -> None:
-        for path in (SOURCES / "application").glob("*.py"):
-            with self.subTest(module=path.name):
-                tree = ast.parse(path.read_text("utf-8"))
-                for node in ast.walk(tree):
-                    if isinstance(node, ast.ImportFrom):
-                        name = node.module or ""
-                        self.assertFalse(name.startswith((
-                            "ui", "presentation", "desktop",
-                            "infrastructure", "system_activity",
-                        )))
-                    if isinstance(node, ast.Import):
-                        for alias in node.names:
-                            self.assertFalse(alias.name.startswith((
-                                "aiko_pet.ui", "aiko_pet.presentation",
-                                "aiko_pet.desktop", "aiko_pet.infrastructure",
-                            )))
-
-    def test_canonical_pet_and_personality_do_not_import_outer_layers(
-        self,
-    ) -> None:
-        for folder in ("pet", "personality"):
-            for path in (SOURCES / folder).glob("*.py"):
-                with self.subTest(path=str(path.relative_to(SOURCES))):
-                    tree = ast.parse(path.read_text("utf-8"))
-                    for node in ast.walk(tree):
-                        if isinstance(node, ast.ImportFrom):
-                            name = node.module or ""
-                            self.assertFalse(name.startswith((
-                                "ui", "presentation", "desktop",
-                                "application", "infrastructure",
-                            )))
-                        elif isinstance(node, ast.Import):
-                            for alias in node.names:
-                                self.assertFalse(alias.name.startswith((
-                                    "aiko_pet.ui", "aiko_pet.presentation",
-                                    "aiko_pet.desktop", "aiko_pet.application",
-                                    "aiko_pet.infrastructure",
-                                )))
 
 
 if __name__ == "__main__":

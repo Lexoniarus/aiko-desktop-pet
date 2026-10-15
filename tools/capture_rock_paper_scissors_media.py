@@ -12,12 +12,10 @@ import tempfile
 import time
 from pathlib import Path
 
-from tools.media_crop import CapturedFrame, capture_screen, save_sequence
-
 from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
-
+from tools.media_crop import CapturedFrame, capture_screen, save_sequence
 
 MEDIA_DIR = Path(__file__).resolve().parents[1] / "vorschau"
 
@@ -34,9 +32,10 @@ def capture(pet: DesktopPet) -> CapturedFrame:
     present(pet)
     return capture_screen(pet.root)
 
+
 def assert_hand_fits(game: object) -> None:
     """Fail a capture if an actual hand is cropped or the slot changes size."""
-    from aiko_pet.ui.rock_paper_scissors_window import RockPaperScissorsWindow
+    from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
 
     if not isinstance(game, RockPaperScissorsWindow):
         raise RuntimeError("Expected a Rock–Paper–Scissors window")
@@ -105,7 +104,6 @@ def record_media() -> None:
                 game.window.winfo_width(), game.window.winfo_height(),
             )
             opening = capture(pet)
-            opening.save_png(MEDIA_DIR / "Aiko_RPS_Start.png")
             frames.append(opening)
             durations.append(1500)
 
@@ -154,7 +152,6 @@ def record_media() -> None:
             ) != expected_window:
                 raise RuntimeError("Minigame window shrank after second round")
             scoreboard = capture(pet)
-            scoreboard.save_png(MEDIA_DIR / "Aiko_RPS_Punktestand.png")
             frames.append(scoreboard)
             durations.append(1700)
 

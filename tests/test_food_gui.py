@@ -12,7 +12,7 @@ from unittest.mock import patch
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
-from aiko_pet.presentation.food_models import food_choices
+from aiko_pet.ui.view_models.food_models import food_choices
 
 
 class FoodGuiTests(unittest.TestCase):
@@ -66,7 +66,7 @@ class FoodGuiTests(unittest.TestCase):
         self.assertIsNone(self.pet._hover.food_menu)
 
     def test_png_assets_are_64_pixels_and_have_alpha(self) -> None:
-        choices = food_choices()
+        choices = food_choices(self.pet._item_catalog)
         self.assertEqual(len(choices), 11)
         for choice in choices:
             with self.subTest(food=choice.id):
@@ -130,7 +130,7 @@ class FoodGuiTests(unittest.TestCase):
             self.pet.settings.scale = scale
             self.pet._window.resize()
             self.pet._animated.reload_sprites()
-            for choice in food_choices():
+            for choice in food_choices(self.pet._item_catalog):
                 with self.subTest(scale=scale, food=choice.id):
                     self.pet._animated.set_food_overlay(choice.id)
                     self.pet._animated.begin_action("eat", time.monotonic())

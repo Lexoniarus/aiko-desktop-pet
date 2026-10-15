@@ -3,12 +3,18 @@
 import unittest
 from datetime import datetime
 
-from aiko_pet.pet.state import PetState
+from aiko_pet.infrastructure.pet_codec import decode_pet_state
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
+from aiko_pet.ui.view_models.text_de import format_day_label
 
 
 def local_time(day, hour, minute=0):
-    return datetime.fromisoformat(f"{day}T{hour:02d}:{minute:02d}:00").astimezone().timestamp()
+    return (
+        datetime.fromisoformat(f"{day}T{hour:02d}:{minute:02d}:00")
+        .astimezone()
+        .timestamp()
+    )
 
 
 class DailyRoutineTests(unittest.TestCase):
@@ -17,12 +23,14 @@ class DailyRoutineTests(unittest.TestCase):
         morning = context_at(local_time("2026-10-12", 10))
         self.assertEqual(morning.period, "quiet")
         self.assertFalse(morning.weekend)
-        self.assertIn("Ruhiger Vormittag", morning.label)
-        self.assertNotIn("Academy", morning.label)
+        self.assertIn("Ruhiger Vormittag", format_day_label(morning))
+        self.assertNotIn("Academy", format_day_label(morning))
         self.assertEqual(context_at(local_time("2026-10-12", 13)).meal, "lunch")
         self.assertEqual(context_at(local_time("2026-10-12", 19)).meal, "dinner")
         self.assertTrue(context_at(local_time("2026-10-12", 23, 45)).night)
-        self.assertIn("Dienstag", context_at(local_time("2026-10-13", 10)).label)
+        self.assertIn(
+            "Dienstag", format_day_label(context_at(local_time("2026-10-13", 10)))
+        )
 
     def test_saturday_has_later_meals_and_more_freetime(self):
         self.assertTrue(context_at(local_time("2026-10-17", 8, 30)).night)
@@ -78,15 +86,18 @@ class DailyRoutineTests(unittest.TestCase):
         morning = local_time("2026-10-17", 9, 20)
         state = PetState(updated_at=morning)
         context = context_at(morning)
-        self.assertEqual(state.feed_label(context), "Frühstück")
+        self.assertEqual(state.due_meal(context), "breakfast")
         response = state.interact("feed", now=morning)
-        self.assertIn("frühstück", response)
-        self.assertEqual(state.feed_label(context), "Snack")
+        self.assertEqual(response.meal_id, "breakfast")
+        self.assertIsNone(state.due_meal(context))
         self.assertEqual(state.meals_today, ["breakfast"])
         state.interact("feed", now=morning)
         self.assertEqual(state.meals_today, ["breakfast"])
         state.advance(local_time("2026-10-18", 9, 20), auto_routine=True)
-        self.assertEqual(state.feed_label(context_at(local_time("2026-10-18", 9, 20))), "Frühstück")
+        self.assertEqual(
+            state.due_meal(context_at(local_time("2026-10-18", 9, 20))),
+            "breakfast",
+        )
         self.assertEqual(state.meals_today, [])
 
     def test_weekend_keeps_hourly_care_rhythm(self):
@@ -105,7 +116,10 @@ class DailyRoutineTests(unittest.TestCase):
         self.assertEqual(state.energy, 75 - 6 / 3)
 
     def test_legacy_sleep_is_treated_as_manual(self):
-        state = PetState.from_dict({"sleeping": True, "updated_at": local_time("2026-10-12", 9)})
+        state = decode_pet_state({
+            "sleeping": True,
+            "updated_at": local_time("2026-10-12", 9),
+        })
         self.assertEqual(state.sleep_origin, "manual")
         state.advance(local_time("2026-10-12", 10), auto_routine=True)
         self.assertTrue(state.sleeping)

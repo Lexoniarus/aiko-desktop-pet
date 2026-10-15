@@ -1,17 +1,18 @@
 """Restore a desktop pet session without coupling application code to disk I/O.
 
-The repository only decodes saved values. This service preserves those values
-and resets the timestamp; closed sessions do not consume or recover needs.
+The repository only decodes saved values. This service advances closed time
+with unknown activity and optional routine self-care before anchoring a session.
 """
 
 from __future__ import annotations
 
+import math
 import time
 from dataclasses import dataclass
 from typing import Callable, Protocol
 
-from ..personality.adaptive import AdaptiveRoutine
-from ..personality.adaptive_models import AdaptiveMemory
+from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind.adaptive_models import AdaptiveMemory
 from ..pet.state import PetState
 from .settings import PetSettings
 
@@ -42,10 +43,12 @@ class RestoredPetSession:
 
 
 class PetSessionRestorer:
-    """Restore values and anchor a fresh session without offline catch-up."""
+    """Restore version-one data and simulate bounded, unobserved closed time."""
 
     def __init__(
-        self, reader: SavedPetReader, *,
+        self,
+        reader: SavedPetReader,
+        *,
         wall_time: Callable[[], float] = time.time,
     ) -> None:
         self._reader = reader
@@ -54,7 +57,14 @@ class PetSessionRestorer:
     def restore(self) -> RestoredPetSession:
         now = self._wall_time()
         loaded = self._reader.load_session(now=now)
-        # A closed application has no observed session time to consume.
+        elapsed = now - loaded.state.updated_at
+        if loaded.restored_from_save and math.isfinite(elapsed) and elapsed > 0:
+            loaded.state.advance(
+                now,
+                auto_routine=loaded.settings.auto_routine,
+                elapsed_seconds=elapsed,
+                self_care=True,
+            )
         loaded.state.updated_at = now
         return RestoredPetSession(
             state=loaded.state,

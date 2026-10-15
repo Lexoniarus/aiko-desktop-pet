@@ -3,17 +3,17 @@
 from __future__ import annotations
 
 import unittest
-from typing import cast
 from datetime import datetime
+from typing import cast
 
-from aiko_pet.personality.adaptive_models import Behaviour
-from aiko_pet.personality.click_policy import (
+from aiko_pet.pet.mind.adaptive_models import Behaviour
+from aiko_pet.pet.mind.click_policy import (
     ClickButton,
     ClickDecision,
     choose_click_reaction,
 )
-from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 
 
 def decision(

@@ -2,17 +2,17 @@
 
 import tempfile
 import time
-from datetime import datetime
+import tkinter as tk
 import unittest
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock, patch
-import tkinter as tk
 
 from aiko_pet.gui import DesktopPet
-from aiko_pet.ui.action_toolbar import ActionToolbar
-from aiko_pet.ui.settings_window import SettingsWindow
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.routine import context_at
+from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from aiko_pet.ui.windows.settings_window import SettingsWindow
 
 
 class TaskbarPetGuiTests(unittest.TestCase):
@@ -36,6 +36,14 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.settings.auto_routine = False
         self.app.state.sleeping = False
 
+    def _step_walk(self, now: float, elapsed: float) -> str | None:
+        return self.app._walk.step(
+            now,
+            elapsed,
+            game_mode=self.app._animated.game_mode,
+            attention_active=now < self.app.mind.cursor_attention.attention_until,
+        )
+
     @property
     def toolbar(self) -> ActionToolbar:
         """Require the toolbar created by the test's hover interaction."""
@@ -55,23 +63,43 @@ class TaskbarPetGuiTests(unittest.TestCase):
         assert bubble is not None
         return bubble
 
+    def test_mind_owns_live_cursor_attention(self):
+        self.assertIs(
+            self.app._cursor_observation.attention,
+            self.app.mind.cursor_attention,
+        )
+
+    def test_animation_assembly_has_single_state_owners(self):
+        self.assertIs(self.app._animation.ambient, self.app._animated._ambient)
+        self.assertIs(self.app._animation._walk, self.app._walk)
+        self.assertIs(self.app._animation._visual, self.app._visual)
+
+    def test_attention_presentation_has_one_owning_component(self):
+        self.assertIs(
+            self.app._attention_runtime.attention,
+            self.app._attention,
+        )
+
     def test_hover_toolbar_contains_every_care_action(self):
         self.app._on_enter()
         self.assertIsNotNone(self.app._hover.toolbar)
         bar = self.toolbar
         self.assertTrue(bar.visible)
         self.assertEqual(
-            set(bar.buttons), {"feed", "play", "pet", "sleep", "talk"},
+            set(bar.buttons),
+            {"feed", "play", "pet", "sleep", "talk"},
         )
         action_row = bar.buttons["feed"].master
         labels = [
-            child.cget("text") for child in action_row.winfo_children()
+            child.cget("text")
+            for child in action_row.winfo_children()
             if "text" in child.keys()
         ]
         self.assertIn("Reden", labels)
         extra_row = bar.buttons["sleep"].master
         extra_labels = [
-            child.cget("text") for child in extra_row.winfo_children()
+            child.cget("text")
+            for child in extra_row.winfo_children()
             if "text" in child.keys()
         ]
         self.assertIn("Offen halten", extra_labels)
@@ -90,8 +118,10 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app._on_enter()
         bar = self.toolbar
         self.assertFalse(hasattr(self.app._hover, "status_panel"))
-        self.assertEqual(set(bar.needs), {"satiety", "mood", "energy",
-                                           "social", "affection", "friendship"})
+        self.assertEqual(
+            set(bar.needs),
+            {"satiety", "mood", "energy", "social", "affection", "friendship"},
+        )
         for key, _title, _color in bar.NEEDS:
             canvas, rect, label = bar.needs[key]
             self.assertIn("%", label.cget("text"))
@@ -104,21 +134,30 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertIn("36%", bar.needs["satiety"][2].cget("text"))
         self.assertIn("95%", bar.needs["energy"][2].cget("text"))
         self.app.root.update()
-        self.assertEqual(bar.needs["mood"][0].coords(
-            bar.needs["mood"][1])[2], round(max(
-                bar.needs["mood"][0].winfo_width(),
-                bar.needs["mood"][0].winfo_reqwidth(),
-            ) * .22))
+        self.assertEqual(
+            bar.needs["mood"][0].coords(bar.needs["mood"][1])[2],
+            round(
+                max(
+                    bar.needs["mood"][0].winfo_width(),
+                    bar.needs["mood"][0].winfo_reqwidth(),
+                )
+                * 0.22
+            ),
+        )
 
     def test_busy_computer_makes_aiko_concentrate_instead_of_walking(self):
         from aiko_pet.telemetry import ComputerSnapshot
+
         self.app.center()
         original_x = self.app.settings.x
-        self.app._animated.movement.remaining_distance = 300
-        with patch.object(self.app.activity_monitor, "latest", return_value=
-                          ComputerSnapshot(cpu=94, ram=67)):
-            self.assertIsNone(self.app._animated.maybe_walk(time.monotonic(), .2))
-            self.assertEqual(self.app._animated.movement.remaining_distance, 0)
+        self.app._walk.movement.remaining_distance = 300
+        with patch.object(
+            self.app.activity_monitor,
+            "latest",
+            return_value=ComputerSnapshot(cpu=94, ram=67),
+        ):
+            self.assertIsNone(self._step_walk(time.monotonic(), 0.2))
+            self.assertEqual(self.app._walk.movement.remaining_distance, 0)
             self.assertEqual(original_x, self.app.settings.x)
         self.assertFalse(self.app.state.sleeping)
 
@@ -174,7 +213,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.state.mood = 25
         self.toolbar.refresh()
         bar, rect, _text = self.toolbar.needs["mood"]
-        self.assertEqual(bar.coords(rect)[2], round(bar.winfo_width() * .25))
+        self.assertEqual(bar.coords(rect)[2], round(bar.winfo_width() * 0.25))
 
     def test_side_by_side_bridge_keeps_hover_active(self):
         self.app._on_enter()
@@ -216,7 +255,8 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.root.update_idletasks()
         self.assertAlmostEqual(
             bubble.winfo_rootx() + bubble.winfo_width() / 2,
-            self.app.settings.x + self.app._window.width / 2, delta=3,
+            self.app.settings.x + self.app._window.width / 2,
+            delta=3,
         )
 
     def test_drag_toolbar_save_reopen_and_reset_to_aiko(self):
@@ -244,9 +284,11 @@ class TaskbarPetGuiTests(unittest.TestCase):
         bar.show()
         self.app.root.update_idletasks()
         self.assertEqual(
-            (bar.window.winfo_rootx(), bar.window.winfo_rooty()), position,
+            (bar.window.winfo_rootx(), bar.window.winfo_rooty()),
+            position,
         )
-        _saved, settings = self.app.store.load(now=time.time())
+        session_data = self.app.store.load_session(now=time.time())
+        _saved, settings = session_data.state, session_data.settings
         self.assertEqual((settings.toolbar_x, settings.toolbar_y), position)
         self.app.reset_toolbar_position()
         self.app.root.update()
@@ -274,6 +316,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
 
     def test_computer_load_can_trigger_first_person_speech(self):
         from aiko_pet.telemetry import ComputerSnapshot
+
         self.app._on_enter()
         self.assertIn("CPU", self.toolbar.hardware.cget("text"))
         self.assertIn("GPU", self.toolbar.hardware.cget("text"))
@@ -284,22 +327,30 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.toolbar.hide()
         self.app.settings.spontaneous_talk = True
         self.app._speech.hide()
-        self.app._action_until = 0
+        self.app._action_playback.until = 0
         with (
-            patch.object(self.app.activity_monitor, "latest", return_value=
-                         ComputerSnapshot(cpu=92, gpu=15, ram=55,
-                                          measured_at=now)),
-            patch.object(self.app.workload_events, "maybe_event",
-                         return_value="computer_effort_steady"),
+            patch.object(
+                self.app.activity_monitor,
+                "latest",
+                return_value=ComputerSnapshot(cpu=92, gpu=15, ram=55, measured_at=now),
+            ),
+            patch.object(
+                self.app.workload_events,
+                "maybe_event",
+                return_value="computer_effort_steady",
+            ),
         ):
             self.app._tick()
             # Work observations can start a review gesture. Speech waits for it.
-            self.app._action_until = 0
+            self.app._action_playback.until = 0
             self.app._maybe_speak_spontaneously(now + 2)
-        self.assertTrue(self.app.mind.book.recent[-1].startswith("computer_effort_steady-"))
+        self.assertTrue(
+            self.app.mind.book.recent[-1].startswith("computer_effort_steady-")
+        )
 
     def test_load_change_updates_visible_voice_and_reaction_with_hover_open(self):
         from aiko_pet.telemetry import ComputerSnapshot
+
         self.app._on_enter()
         self.app._attention.last_spoken = -1000
         base = time.monotonic()
@@ -317,19 +368,24 @@ class TaskbarPetGuiTests(unittest.TestCase):
             self.app._activity.react_to_computer(base + 10, self.app.context)
         self.assertTrue(self.toolbar.visible)
         self.assertIsNone(self.app._activity.pending_computer_line)
-        self.assertTrue(self.app.mind.book.recent[-1].startswith("computer_effort_rising-"))
+        self.assertTrue(
+            self.app.mind.book.recent[-1].startswith("computer_effort_rising-")
+        )
         self.assertIsNotNone(self.app._speech.bubble)
 
     def test_character_cannot_be_dragged_and_is_always_grounded(self):
         self.assertFalse(self.app.canvas.bind("<B1-Motion>"))
         self.assertEqual(
-            self.app.settings.y, self.app._window.track.sprite_y(self.app.settings.scale),
+            self.app.settings.y,
+            self.app._window.track.sprite_y(self.app.settings.scale),
         )
         y = self.app.settings.y
         self.app._place_x(-400)
         self.assertEqual(self.app.settings.x, self.app._window.track.left)
         self.app._place_x(99999)
-        self.assertEqual(self.app.settings.x, self.app._window.track.right - self.app._window.width)
+        self.assertEqual(
+            self.app.settings.x, self.app._window.track.right - self.app._window.width
+        )
         self.assertEqual(self.app.settings.y, y)
 
     def test_walk_is_horizontal_and_stops_on_hover(self):
@@ -337,16 +393,16 @@ class TaskbarPetGuiTests(unittest.TestCase):
         original_y = self.app.settings.y
         original_x = self.app.settings.x
         assert original_x is not None
-        self.app._animated.maybe_walk(time.monotonic(), 0)
-        self.app._animated.movement.remaining_distance = 140
-        state = self.app._animated.maybe_walk(time.monotonic(), .15)
+        self._step_walk(time.monotonic(), 0)
+        self.app._walk.movement.remaining_distance = 140
+        state = self._step_walk(time.monotonic(), 0.15)
         self.assertEqual(state, "running-right")
         assert self.app.settings.x is not None
         self.assertGreater(self.app.settings.x, original_x)
         self.assertEqual(self.app.settings.y, original_y)
         self.app._on_enter()
-        self.assertIsNone(self.app._animated.maybe_walk(time.monotonic(), .15))
-        self.assertEqual(self.app._animated.movement.remaining_distance, 0)
+        self.assertIsNone(self._step_walk(time.monotonic(), 0.15))
+        self.assertEqual(self.app._walk.movement.remaining_distance, 0)
 
     def test_toolbar_auto_hides_only_when_pointer_has_left(self):
         self.app._on_enter()
@@ -360,13 +416,14 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertFalse(self.toolbar.visible)
 
     def test_far_away_desktop_cursor_still_gets_a_gaze_frame(self):
-        self.assertEqual(self.app._animated.gaze_direction((99999, -99999)), 2)
-        self.assertIn(self.app._animated.gaze_direction((-99999, -99999)), (14, 15))
+        self.assertEqual(self.app._visual.gaze_direction((99999, -99999)), 2)
+        self.assertIn(self.app._visual.gaze_direction((-99999, -99999)), (14, 15))
         self.app.set_follow_cursor(False)
-        self.assertIsNone(self.app._animated.gaze_direction((99999, -99999)))
+        self.assertIsNone(self.app._visual.gaze_direction((99999, -99999)))
 
     def test_hover_bar_has_clock_and_meal_aware_button(self):
         from datetime import datetime
+
         from aiko_pet.pet.routine import context_at
 
         morning = datetime(2026, 10, 12, 8, 20).astimezone().timestamp()
@@ -405,14 +462,22 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app._on_click_left()
         self.assertIsNotNone(self.app._speech.bubble)
         self.assertEqual(
-            next(line.event for line in self.app.mind.book.lines
-                 if line.id == self.app.mind.book.recent[-1]), "click_left",
+            next(
+                line.event
+                for line in self.app.mind.book.lines
+                if line.id == self.app.mind.book.recent[-1]
+            ),
+            "click_left",
         )
         self.app._on_click_right()
         self.assertIsNotNone(self.app._speech.bubble)
         self.assertEqual(
-            next(line.event for line in self.app.mind.book.lines
-                 if line.id == self.app.mind.book.recent[-1]), "click_right",
+            next(
+                line.event
+                for line in self.app.mind.book.lines
+                if line.id == self.app.mind.book.recent[-1]
+            ),
+            "click_right",
         )
         self.assertTrue(self.toolbar.visible)
 
@@ -430,10 +495,11 @@ class TaskbarPetGuiTests(unittest.TestCase):
 
     def test_chatter_switch_suppresses_autonomous_lines(self):
         from unittest.mock import patch
+
         self.app.set_spontaneous_talk(False)
         now = time.monotonic()
         self.app._attention.next_comment = now - 1
-        with patch.object(self.app.mind, "spontaneous_event") as spoken:
+        with patch.object(self.app.mind, "select_spontaneous_reaction") as spoken:
             self.app._tick()
             spoken.assert_not_called()
         self.app.set_spontaneous_talk(True)
@@ -441,7 +507,11 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app._attention.last_spoken = -1000
         with (
             patch.object(self.app.workload_events, "maybe_event", return_value=None),
-            patch.object(self.app.mind, "spontaneous_event", wraps=self.app.mind.spontaneous_event) as spoken,
+            patch.object(
+                self.app.mind,
+                "select_spontaneous_reaction",
+                wraps=self.app.mind.select_spontaneous_reaction,
+            ) as spoken,
         ):
             self.app._tick()
             spoken.assert_called_once()
@@ -449,7 +519,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
 
     def test_disabling_autonomous_speech_also_suppresses_startup_greeting(self):
         self.app.set_spontaneous_talk(False)
-        with patch.object(self.app.mind, "say_event") as spoken:
+        with patch.object(self.app.mind, "select_reaction") as spoken:
             self.app._greet_on_start()
             spoken.assert_not_called()
 
@@ -470,7 +540,6 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertEqual(self.app.settings.scale, 1)
         self.assertEqual(self.app.settings.y, self.app._window.track.sprite_y(1))
 
-
     def test_restack_groups_sprite_toolbar_and_bubble_without_focusing(self):
         self.app._overlay_stack._backend = spy = Mock()
         spy.raise_without_focus.return_value = True
@@ -481,8 +550,12 @@ class TaskbarPetGuiTests(unittest.TestCase):
             self.app._speech.move()
             self.assertEqual(spy.raise_without_focus.call_count, 5)
             # Toolbar show: sprite + toolbar. Bubble show: all three.
-            recent = [call.args[0] for call in spy.raise_without_focus.call_args_list[-3:]]
-            self.assertEqual(recent, [self.app.root, self.toolbar.window, self.app._speech.bubble])
+            recent = [
+                call.args[0] for call in spy.raise_without_focus.call_args_list[-3:]
+            ]
+            self.assertEqual(
+                recent, [self.app.root, self.toolbar.window, self.app._speech.bubble]
+            )
             focus.assert_not_called()
 
     def test_restack_after_foreign_window_occludes_sprite(self):
@@ -507,12 +580,12 @@ class TaskbarPetGuiTests(unittest.TestCase):
         spy.raise_without_focus.return_value = True
         self.app._on_enter()
         self.toolbar.settings_button.invoke()
-        self.assertIs(spy.raise_without_focus.call_args.args[0],
-                      self.settings_window.window)
+        self.assertIs(
+            spy.raise_without_focus.call_args.args[0], self.settings_window.window
+        )
         self.settings_window.close()
         self.app._hover.open_status()
-        self.assertIs(spy.raise_without_focus.call_args.args[0],
-                      self.toolbar.window)
+        self.assertIs(spy.raise_without_focus.call_args.args[0], self.toolbar.window)
 
     def test_no_restack_while_windows_are_in_healthy_order(self):
         self.app._overlay_stack._backend = spy = Mock()
@@ -534,6 +607,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app._tick()
         spy.raise_without_focus.assert_not_called()
         spy.is_covered.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

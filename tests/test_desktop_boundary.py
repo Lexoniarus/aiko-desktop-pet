@@ -4,8 +4,6 @@ import unittest
 from pathlib import Path
 
 
-
-
 class DesktopBoundaryTests(unittest.TestCase):
     def test_desktop_shell_uses_owners_not_legacy_reads(self) -> None:
         source = (

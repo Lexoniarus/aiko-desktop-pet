@@ -7,7 +7,9 @@ from collections.abc import Callable
 from dataclasses import replace
 
 from aiko_pet.desktop.runtime import (
-    DesktopRuntime, DesktopTickPorts, TICK_MILLISECONDS,
+    TICK_MILLISECONDS,
+    DesktopRuntime,
+    DesktopTickPorts,
 )
 
 
