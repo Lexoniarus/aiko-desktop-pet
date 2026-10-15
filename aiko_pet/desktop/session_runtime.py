@@ -62,7 +62,7 @@ class DesktopSessionRuntime:
         if self._persistence.due(now):
             self._ports.save()
 
-    def save(self) -> OSError | None:
+    def advance_and_save(self) -> OSError | None:
         """Advance measured state exactly once before the persistence write."""
         self._activity.advance_state(time.time())
         return self._persistence.save()

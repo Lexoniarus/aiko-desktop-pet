@@ -389,7 +389,7 @@ class UiDependencyRules(unittest.TestCase):
         self.assertNotIn("def _refresh_overlays_and_autosave(", shell)
         self.assertIn("def advance_lifecycle(", owner)
         self.assertIn("def refresh(", owner)
-        self.assertIn("def save(", owner)
+        self.assertIn("def advance_and_save(", owner)
 
     def test_application_assembly_is_independent_of_desktop(self) -> None:
         gui = (ROOT / "gui.py").read_text("utf-8")

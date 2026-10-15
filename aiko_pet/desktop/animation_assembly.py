@@ -85,7 +85,7 @@ def assemble_animation(
             ),
             walk_active=animation.walk_active,
             interrupt_walk=animation.interrupt_walk,
-            choose_animation=animation.choose,
+            choose_animation=animation.select_animation,
             reset_gaze=visual.reset,
             extend_action=ports.extend_action,
         ),

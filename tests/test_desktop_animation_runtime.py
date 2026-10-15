@@ -48,7 +48,7 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self, *, now: float = 100.0, game_mode: bool = False,
         active_action: str | None = None,
     ) -> RenderDecision:
-        return self.runtime.choose(
+        return self.runtime.select_animation(
             now, (100, 0), now - 1, game_mode, active_action,
         )
 

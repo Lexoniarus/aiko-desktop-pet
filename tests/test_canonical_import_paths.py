@@ -68,6 +68,21 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+    def test_decision_owners_have_precise_method_names(self) -> None:
+        from aiko_pet.application.attention import AttentionCoordinator
+        from aiko_pet.desktop.animation_runtime import DesktopAnimationRuntime
+        from aiko_pet.desktop.session_runtime import DesktopSessionRuntime
+
+        for owner, obsolete in (
+            (AttentionCoordinator, "cursor_moved"),
+            (AttentionCoordinator, "walk_finished"),
+            (AttentionCoordinator, "idle_animation"),
+            (DesktopAnimationRuntime, "choose"),
+            (DesktopSessionRuntime, "save"),
+        ):
+            with self.subTest(owner=owner.__name__, method=obsolete):
+                self.assertFalse(hasattr(owner, obsolete))
+
     def test_lifecycle_has_no_module_level_state_mutation_forwarders(
         self,
     ) -> None:

@@ -85,5 +85,5 @@ class DesktopSessionRuntimeTests(unittest.TestCase):
             "aiko_pet.desktop.session_runtime.time.time",
             return_value=1_781_000_000.0,
         ):
-            self.assertIsNone(self.runtime.save())
+            self.assertIsNone(self.runtime.advance_and_save())
         self.assertEqual(steps, ["advance", "store"])

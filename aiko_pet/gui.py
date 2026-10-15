@@ -232,7 +232,7 @@ class DesktopPet:
                 open_sprite_hover=self._on_enter,
                 record_contact=self._record_hover_contact,
                 save_position=self._save_hover_position,
-                set_option=self._set_popup_option,
+                set_option=self._apply_setting,
                 toggle_scale=self.toggle_scale,
                 forget_rhythm=self.forget_rhythm,
                 reset_toolbar=self.reset_toolbar_position,
@@ -454,7 +454,7 @@ class DesktopPet:
         )
 
     def _set_popup_option(self, name: SettingKey, value: bool) -> None:
-        """Preserve the public desktop callback while routing to its owner."""
+        """Apply a setting through the desktop preference owner."""
         self._preferences.set_option(name, value)
 
     def _start_action(
@@ -541,7 +541,7 @@ class DesktopPet:
 
     def _save(self) -> None:
         """Advance application state before writing it; report I/O failures."""
-        failure = self._session_runtime.save()
+        failure = self._session_runtime.advance_and_save()
         if failure is not None:
             messagebox.showwarning(
                 "Aiko", f"Spielstand konnte nicht gespeichert werden:\n{failure}",

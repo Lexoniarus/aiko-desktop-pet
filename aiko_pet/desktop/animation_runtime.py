@@ -71,7 +71,7 @@ class DesktopAnimationRuntime:
     def interrupt_walk(self) -> None:
         self._walk.movement.interrupt()
 
-    def choose(
+    def select_animation(
         self, now: float, pointer: tuple[int, int],
         last_pointer_move: float, game_mode: bool,
         active_action: str | None,
