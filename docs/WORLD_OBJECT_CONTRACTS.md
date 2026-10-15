@@ -3,7 +3,8 @@
 Status: initial implementation through Stage 8; first practical test found
 behavior gaps. The investigation/feedback revision below is agreed behavior,
 implemented with practical follow-ups and verified with 855 tests at `ea4361f`;
-native practical retest remains open.
+the user reports the revised basic flow looks correct. Extended native checks
+and longer-term behavior remain open.
 Recorded: 15 October 2026.
 Baseline: `1753266db0dafc94024913cb281b80e7abe289a0` (merged PR #9).
 

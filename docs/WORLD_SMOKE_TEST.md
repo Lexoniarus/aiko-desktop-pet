@@ -2,7 +2,9 @@
 
 The first practical test found missing investigation/feedback, truncated drink
 playback and Magenta item fringes. Corrections are implemented on
-`feature/world-foundation`; native acceptance of this revised build is pending.
+`feature/world-foundation`. On 15 October 2026 the user reported that the revised
+basic flow at `ea4361f` now looks correct; longer-term behavior remains to be
+observed. Unreported boundary/restart cases below remain open.
 [Draft PR #10](https://github.com/Lexoniarus/aiko-desktop-pet/pull/10) remains
 unmerged. See [delivery/evidence](WORLD_OBJECT_IMPLEMENTATION_PLAN.md) and
 [behavior contracts](WORLD_OBJECT_CONTRACTS.md).
@@ -144,5 +146,6 @@ and actual timers also check food consumption followed promptly by drink
 investigation/defer at energy 66, preserved recognition and released gaze.
 Component tests
 separately exercise delayed/stale/duplicate completions and transaction recovery.
-These checks do not replace native visual/input acceptance. Keep the checklist
-open until the revised practical test is recorded; do not merge before then.
+These checks do not replace native visual/input acceptance. The user's positive
+retest covers the observed basic sequence; keep unreported checklist cases open.
+The PR remains draft and unmerged for review; no merge was requested.

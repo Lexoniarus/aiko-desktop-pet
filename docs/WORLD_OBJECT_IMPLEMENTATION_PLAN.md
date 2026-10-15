@@ -4,7 +4,8 @@ Status: first implementation passed automated regression through `bac23e0`
 (828 tests), but the first user test found incomplete visible behavior.
 The correction steps and practical follow-ups C7/C8 are implemented; regression
 at `ea4361f` passed 855 tests in 183.9 s on Windows/Python 3.11.
-Native acceptance of the revised build remains open.
+The user reports the revised basic flow looks correct at `ea4361f`.
+Extended native checks and longer-term behavior remain to be observed.
 Recorded: 15 October 2026.
 Baseline: `main` at `1753266db0dafc94024913cb281b80e7abe289a0` (merged PR #9).
 
@@ -35,7 +36,8 @@ CI run `38770173465` passed all three jobs at `416607c` (Linux Python
 3.11/3.13 and Windows). Latest source gate: 855 tests at `ea4361f`; current-head
 CI results are linked in [the test handoff](WORLD_SMOKE_TEST.md#automated-evidence).
 Ruff 0.13.2, strict Mypy 1.18.2 (167 source files) and Pyright 1.1.414 pass.
-Native appearance and interaction still need the revised practical retest.
+The subsequent practical retest received positive user feedback; this confirms
+the observed basic flow, not every boundary/restart case in the checklist.
 
 Second practical feedback: Onigiri reached consumption; a nearby Energy Drink
 was investigated and deferred at energy 66, but only after a long delay. The
@@ -60,6 +62,14 @@ memory, releases gaze, and becomes a consumption goal when wanted again.
 Regression tests reproduce all 56 pickup/put-down mask-order failures at 1x/2x
 and the stale gaze target, then verify correct ordering, cursor gaze, preserved
 recognition and later need-driven return.
+
+Latest practical result (15 October 2026, source `ea4361f`): the user reports
+that the revised flow now appears correct and that further issues may emerge
+over time. Earlier observations confirmed food consumption and drink
+investigation/defer at energy 65–66; the final response follows the hand-layer
+and gaze corrections. Treat the observed basic sequence as accepted. Keep
+unreported checklist items and longer-term behavior open. No merge was requested;
+the PR remains draft for review.
 
 Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
 the original consumption-only intention and immediate pickup-to-consumption
