@@ -4,40 +4,35 @@ This is the current, editable food design. It supersedes historical v0.11/v0.12
 feeding constants. The goal is three normal meals and optional snacks over a
 16-hour active day, with no mandatory meal alarm and no offline hunger penalty.
 
-## Change values in Python
+## One source per responsibility
 
-The *single* food policy is `aiko_pet/pet/food.py`:
+The nutrition rules and food *definitions* are deliberately separate:
 
-- `FOOD_BALANCE.awake_hunger_points_per_hour = 8.0`: waking baseline, even
-  if no user input or hardware load is currently observed
-- `FOOD_BALANCE.sleeping_hunger_points_per_hour = 1.4`: night baseline
-- `FOOD_BALANCE.maximum_hardware_hunger_bonus = 0.20`: CPU/GPU/RAM work
-- `FOOD_BALANCE.maximum_user_input_hunger_bonus = 0.18`: actual user input
-- `FOOD_BALANCE.maximum_combined_activity_bonus = 0.35`: combined cap
-- `awake_hours_before_hunger_accelerates = 3.0`: hungry again without food
-- `maximum_long_fast_hunger_bonus = 0.25`: cap on prolonged hunger
-- `maximum_digest_hunger_reduction = 0.55`: fullest digestion protection
-- `maximum_digest_reserve_minutes = 175`: limit repeated eating
-- `consecutive_repeats_before_dislike = 2`: third identical food in a row
+- **Gameplay policy:** `aiko_pet/pet/food.py` owns `FOOD_BALANCE` and the
+  pure hunger/digestion calculations. Its named policy parameters control
+  waking/sleeping hunger, activity modifiers, digestion decay, long fasting,
+  and the repeat-food penalty. These algorithmic rules remain Python code.
+- **Food content:** `aiko_pet/data/food_catalog.json` is the authoritative
+  record of the ten food IDs, localized display names, meal/snack category,
+  instant satiety, digestion reserve, mood bonuses and menu order (including
+  the Energy Drink). `pet/food_catalog.py` validates that data into immutable
+  `FoodProfile` values consumed by `pet/food.py`.
+- **Sprites/icons:** `aiko_pet/assets/items/items.json` owns the icon paths,
+  native 1×/2× PNGs and their grip pivots. It does **not** store duplicate
+  food display names. `infrastructure/item_assets.py` validates asset IDs
+  against the nutrition menu and derives food names from the canonical
+  nutrition records (the drink's name comes from `data/texts.de.json`).
+  Weapon-specific labels remain in this asset manifest.
+- **UI menu:** `ui/view_models/food_models.py` builds immutable `FoodChoice`
+  values from the validated nutrition and item catalogs. It never fabricates
+  icon paths. The desktop assembly loads a single `ItemCatalog` and shares
+  it between the picker and the sprite hand overlay.
 
-All quantities use hours, minutes, fractions or points, not opaque magic
-integers. The named functions `hunger_activity_multiplier`,
-`hunger_after_long_food_break`, `digestion_hunger_multiplier`,
-`eat_food`, `is_repeated_food` and `advance_food` are individually
-testable. The food definition table `FOOD_CATALOG` is adjacent:
-
-| Food | Category | Instant satiety | Digestion reserve | Mood on first serving |
-| --- | --- | ---: | ---: | ---: |
-| Onigiri | Meal | +30 | 105 min | +4 |
-| Sandwich | Meal | +38 | 145 min | +5 |
-| Taiyaki | Snack | +20 | 55 min | +4 |
-| Apple | Snack | +14 | 38 min | +3 |
-| Dango | Snack | +10 | 20 min | +2 |
-| Donut | Snack | +18 | 42 min | +4 |
-| Cookie | Snack | +12 | 30 min | +3 |
-| Melonpan | Snack | +29 | 85 min | +4 |
-| Cupcake | Snack | +17 | 46 min | +4 |
-| Dorayaki | Snack | +21 | 60 min | +4 |
+To alter the nutrition numbers or menu order, edit
+`aiko_pet/data/food_catalog.json` rather than a second Python table. The
+JSON files are packaged content; no cloud service or SQLite is required for
+the current runtime. A later repository backend can keep the same typed
+catalogue contracts.
 
 Reserve is consumed faster under combined activity and its defensive hunger
 effect progressively fades. Snacks do not reset
@@ -48,7 +43,7 @@ nutritional value or damage friendship. Aiko's scripted German
 
 Meals are *suggestions*, not a requirement at fixed wall-clock times. A
 proper meal in an existing breakfast/lunch/dinner time slot still marks that
-slot as eaten. The direct legacy `interact("feed")` chooses Onigiri by
+slot as eaten. The canonical `PetState.interact("feed")` chooses Onigiri by
 default; the current desktop toolbar displays eleven food-and-drink choices.
 
 ## Hardware workload versus user input
@@ -90,8 +85,8 @@ in two rows (up to six columns each). The menu icons are native transparent
 64 × 64 images in `aiko_pet/assets/items/icons/64/`. There are independent
 prepared **1× and native 2× PNGs** under
 `aiko_pet/assets/items/food/{1x,2x}/`, built from the high-resolution
-masters *outside the repository*. Runtime `ui/food_overlay.py` uses the
-single `items/items.json` manifest's scale-specific pivots to attach the
+masters *outside the repository*. Runtime `ui/pet_view/food_overlay.py` uses the
+shared `items/items.json` manifest's scale-specific pivots to attach the
 chosen sprite to all eight source-frame `food_anchor` positions. It never
 zooms tiny food images to make 2× objects, and it doesn't re-load them when
 Aiko's character size changes.

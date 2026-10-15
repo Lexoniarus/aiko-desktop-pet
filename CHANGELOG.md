@@ -1,3 +1,14 @@
+## Unreleased — Remove duplicate German copy and food-asset metadata
+
+- Move emotion labels into the existing versioned German text JSON. Hover
+  and status now share the same sleep and observation-disabled labels.
+- Keep food titles and ordered nutrition records only in the food JSON;
+  remove repeated food titles from the PNG manifest.
+- The food picker uses the exact validated icon paths from the shared
+  `ItemCatalog`, not a second hardcoded path convention.
+- Keep all visible German text, hand sprites, care amounts, and save keys
+  unchanged, with expanded regression tests.
+
 ## Unreleased — Pet domain/UI architecture consolidation (draft PR #9)
 
 - Canonical `pet/mind/`, `pet/animation/`, `pet/movement/`,
