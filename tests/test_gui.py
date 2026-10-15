@@ -471,7 +471,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
 
     def test_disabling_autonomous_speech_also_suppresses_startup_greeting(self):
         self.app.set_spontaneous_talk(False)
-        with patch.object(self.app.mind, "say_event") as spoken:
+        with patch.object(self.app.mind, "select_reaction") as spoken:
             self.app._greet_on_start()
             spoken.assert_not_called()
 
