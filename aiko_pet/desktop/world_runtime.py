@@ -35,6 +35,7 @@ from ..world.contracts import (
     ObjectFootprint,
     ObjectState,
     WorldPosition,
+    WorldSnapshot,
     WorldSurface,
 )
 from ..world.state import WorldState
@@ -54,6 +55,7 @@ class DesktopWorldRuntime:
         game_open: Callable[[], bool], controls_active: Callable[[], bool],
         show_care: Callable[[CareOutcome], None], feedback: Callable[[str], None],
         save: Callable[[], None],
+        restored_world: WorldSnapshot | None = None,
     ) -> None:
         self.root, self.state, self.settings = root, state, settings
         self._track, self._walk, self._visual = track, walk, visual
@@ -64,6 +66,9 @@ class DesktopWorldRuntime:
         self.world = WorldState(self._surface(), build_consumable_definitions(
             DEFAULT_CATALOG, items,
         ))
+        if restored_world is not None:
+            self.world.restore_snapshot(restored_world)
+            self.world.change_surface(self._surface())
         self.awareness = ObjectAwareness()
         self._consumption = ObjectConsumption(state, mind, adaptive, clock=clock)
         self.view = WorldView(root, items)

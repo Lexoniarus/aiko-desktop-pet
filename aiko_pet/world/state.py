@@ -71,6 +71,7 @@ class WorldState:
         return WorldSnapshot(
             self._surface, self._revision, tuple(self._definitions.values()),
             tuple(self._objects.values()),
+            self._next_id,
         )
 
     def get(self, instance_id: str) -> WorldObjectSnapshot:
@@ -98,7 +99,7 @@ class WorldState:
         self._surface = snapshot.surface
         self._objects = objects
         self._revision = snapshot.revision
-        self._next_id = max(self._next_id, 1 + max(
+        self._next_id = max(self._next_id, snapshot.next_instance_id, 1 + max(
             (int(key.removeprefix("object_")) for key in objects), default=0,
         ))
 

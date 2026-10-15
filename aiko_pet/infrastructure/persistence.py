@@ -13,9 +13,14 @@ from typing import Any
 
 from ..application import settings as app_settings
 from ..application.session import LoadedPetData
+from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.mind.adaptive_models import AdaptiveMemory
 from ..pet.state import PetState
+from ..world.contracts import WorldSnapshot
+from .item_assets import load_item_catalog
 from .pet_codec import decode_pet_state, encode_pet_state
+from .world_catalog import build_consumable_definitions
+from .world_codec import decode_world, encode_world
 
 SCHEMA_VERSION = 1
 
@@ -37,6 +42,7 @@ def default_save_path() -> Path:
 class StateStore:
     def __init__(self, path: Path | None = None) -> None:
         self.path = path or default_save_path()
+        self._invalid_world = False
 
     def _read_payload(self) -> dict[str, Any] | None:
         """Return only supported versioned JSON, without advancing the pet."""
@@ -63,15 +69,27 @@ class StateStore:
                 adaptive_memory=AdaptiveMemory(),
                 restored_from_save=False,
             )
+        saved_world: WorldSnapshot | None = None
+        if "world" in payload:
+            try:
+                saved_world = decode_world(
+                    payload["world"], build_consumable_definitions(
+                        DEFAULT_CATALOG, load_item_catalog(),
+                    ),
+                )
+            except (ValueError, TypeError, OverflowError):
+                self._invalid_world = True
         return LoadedPetData(
             state=decode_pet_state(payload.get("pet"), now=current),
             settings=app_settings.PetSettings.from_dict(payload.get("settings")),
             adaptive_memory=AdaptiveMemory.from_dict(payload.get("adaptive")),
             restored_from_save=True,
+            world=saved_world,
         )
 
     def save(self, pet: PetState, settings: app_settings.PetSettings,
-             *, adaptive: AdaptiveMemory | None = None) -> None:
+             *, adaptive: AdaptiveMemory | None = None,
+             world: WorldSnapshot | None = None, world_recovery_x: float = 0) -> None:
         """Don't leave a half-written save on power loss or interruption."""
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._preserve_unreadable_save()
@@ -82,6 +100,8 @@ class StateStore:
         }
         if adaptive is not None:
             payload["adaptive"] = adaptive.to_dict()
+        if world is not None:
+            payload["world"] = encode_world(world, recovery_x=world_recovery_x)
         temporary: str | None = None
         try:
             with tempfile.NamedTemporaryFile(
@@ -114,6 +134,7 @@ class StateStore:
             isinstance(payload, dict)
             and type(payload.get("version")) is int
             and payload["version"] == SCHEMA_VERSION
+            and not self._invalid_world
         ):
             return
         backup = self.path.with_name(
@@ -125,3 +146,4 @@ class StateStore:
             file.write(contents)
             file.flush()
             os.fsync(file.fileno())
+        self._invalid_world = False

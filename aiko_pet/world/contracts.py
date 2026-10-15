@@ -116,3 +116,4 @@ class WorldSnapshot:
     revision: int
     definitions: tuple[ObjectDefinition, ...]
     objects: tuple[WorldObjectSnapshot, ...]
+    next_instance_id: int = 1

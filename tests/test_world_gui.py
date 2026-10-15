@@ -89,3 +89,17 @@ class WorldGuiTests(unittest.TestCase):
             assert token is not None
             world.release()
             self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
+
+    def test_restart_restores_portion_on_ground_without_consuming_it(self):
+        app = self.app
+        item = app._world.world.place_resting("apple", app._world._body_x(),
+                                             ObjectFootprint(8, 8))
+        store = app.store
+        app.quit()
+        restored = DesktopPet(store=store)
+        self.addCleanup(restored.quit)
+        snapshot = restored._world.world.snapshot()
+        self.assertEqual(len(snapshot.objects), 1)
+        self.assertEqual(snapshot.objects[0].instance_id, item.instance_id)
+        self.assertEqual(snapshot.objects[0].state, ObjectState.RESTING)
+        self.assertAlmostEqual(restored.state.satiety, 50, places=1)

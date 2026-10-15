@@ -406,7 +406,9 @@ class DesktopPet:
             show_care=self._present_world_care,
             feedback=lambda text: self._speech.show_text(text, 2450),
             save=self._save,
+            restored_world=session.world,
         )
+        self._persistence.attach_world(self._world.world.snapshot, self._world._body_x)
         self._lifecycle.start()
 
     def _present_world_care(self, outcome: CareOutcome) -> None:

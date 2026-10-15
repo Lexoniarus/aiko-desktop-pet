@@ -14,6 +14,7 @@ from typing import Callable, Protocol
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.adaptive_models import AdaptiveMemory
 from ..pet.state import PetState
+from ..world.contracts import WorldSnapshot
 from .settings import PetSettings
 
 
@@ -25,6 +26,7 @@ class LoadedPetData:
     settings: PetSettings
     adaptive_memory: AdaptiveMemory
     restored_from_save: bool
+    world: WorldSnapshot | None = None
 
 
 class SavedPetReader(Protocol):
@@ -40,6 +42,7 @@ class RestoredPetSession:
     state: PetState
     settings: PetSettings
     adaptive: AdaptiveRoutine
+    world: WorldSnapshot | None = None
 
 
 class PetSessionRestorer:
@@ -70,4 +73,5 @@ class PetSessionRestorer:
             state=loaded.state,
             settings=loaded.settings,
             adaptive=AdaptiveRoutine(loaded.adaptive_memory),
+            world=loaded.world,
         )
