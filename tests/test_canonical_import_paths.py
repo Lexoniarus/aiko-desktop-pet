@@ -68,6 +68,12 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+    def test_pet_mind_never_performs_implicit_file_loading(self) -> None:
+        source = (ROOT / "pet/mind/mind.py").read_text("utf-8")
+        self.assertNotIn("DialogueBook.from_file(", source)
+        self.assertNotIn("CATALOGUE as CATALOGUE", source)
+        self.assertIn("self.book = book", source)
+
     def test_decision_owners_have_precise_method_names(self) -> None:
         from aiko_pet.application.attention import AttentionCoordinator
         from aiko_pet.desktop.animation_runtime import DesktopAnimationRuntime

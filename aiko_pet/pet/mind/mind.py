@@ -1,4 +1,4 @@
-"""Situational dialogue decisions for Aiko's offline desktop personality.
+"""Situational dialogue decisions for a locally authored desktop pet.
 
 The authored dialogue catalogue and its validation live in pet.mind.catalog.
 """
@@ -9,33 +9,20 @@ import random
 from collections import deque
 
 from .adaptive import Behaviour
-from .catalog import (
-    ANIMATIONS as ANIMATIONS,
-    CATALOGUE as CATALOGUE,
-    DialogueBook as DialogueBook,
-    EMOTIONS as EMOTIONS,
-    EMOTION_LABELS as EMOTION_LABELS,
-    Line as Line,
-    PERIODS as PERIODS,
-    Reaction as Reaction,
-)
-from .click_policy import (
-    ClickButton as ClickButton,
-    choose_click_reaction as choose_click_reaction,
-)
+from .catalog import DialogueBook, Reaction
+from .click_policy import ClickButton, choose_click_reaction
 from ..food import DEFAULT_FOOD_ID, FoodId, is_repeated_food
-from ..state import PetState as PetState
-from ..routine import TimeContext as TimeContext
-from .work_episode import WorkEpisodeMemory as WorkEpisodeMemory
+from ..state import PetState
+from ..routine import TimeContext
+from .work_episode import WorkEpisodeMemory
 from .cursor_attention import CursorAttention
 
 
 class PetMind:
     """Situational reactions with a short, decaying social memory.
 
-    Aiko is the personification of this computer, not a technical narrator.
-    Load is *her* effort; the same click can mean something different after
-    work, in a quiet evening, or during an interrupted calculation.
+    A character catalogue supplies the authored reactions. Their context
+    depends on observed work, need levels and the pet's recent interactions.
     """
 
     RETURN_AFTER_SECONDS = 25 * 60
@@ -43,11 +30,11 @@ class PetMind:
     MAX_CLICKS_IN_BURST = 20
 
     def __init__(
-        self, book: DialogueBook | None = None, *,
+        self, book: DialogueBook, *,
         rng: random.Random | None = None, started_at: float = 0.0,
     ) -> None:
         self.rng = rng or random.Random()
-        self.book = book or DialogueBook.from_file(rng=self.rng)
+        self.book = book
         self.clicks: deque[float] = deque(maxlen=self.MAX_CLICKS_IN_BURST)
         self.irritated_until = -1.0
         self.warm_until = -1.0

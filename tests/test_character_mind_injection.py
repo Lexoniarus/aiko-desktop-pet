@@ -17,6 +17,15 @@ class CharacterMindInjectionTests(unittest.TestCase):
         self.assertGreater(len(mind.book.lines), 0)
         self.assertEqual(mind.last_contact, 20.0)
 
+    def test_pet_mind_requires_a_dialogue_book_parameter(self) -> None:
+        import inspect
+
+        constructor = inspect.signature(PetMind)
+        self.assertIs(
+            constructor.parameters["book"].default,
+            inspect.Parameter.empty,
+        )
+
     def test_pet_mind_accepts_non_aiko_dialogue_book(self) -> None:
         line = Line(
             id="custom", event="greeting", text="Hallo aus einem anderen Pet",
