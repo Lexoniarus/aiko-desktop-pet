@@ -107,7 +107,8 @@ class TaskbarPetGuiTests(unittest.TestCase):
         menu = self.app._hover.food_menu
         assert menu is not None
         menu.buttons["onigiri"].invoke()
-        self.assertGreater(self.app.state.satiety, 75)
+        self.assertEqual(self.app.state.satiety, 75)
+        self.assertTrue(self.app._world.carrying)
         bar.buttons["sleep"].invoke()
         self.assertTrue(self.app.state.sleeping)
         self.assertEqual(bar.buttons["sleep"].cget("text"), "Wecken")
