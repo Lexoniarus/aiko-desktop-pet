@@ -1,7 +1,6 @@
 """Pure daily-routine and bounded-time planning for the pet aggregate.
 
 Policies calculate transitions and time steps; PetState owns every mutation.
-Old module-level functions remain callable as public PetState method adapters.
 """
 
 from __future__ import annotations
@@ -145,61 +144,3 @@ def plan_pet_time(
     return tuple(steps)
 
 
-class PetTimeline(Protocol):
-    """Public aggregate operation for legacy module-level compatibility."""
-
-    def advance(
-        self,
-        now: float,
-        *,
-        auto_routine: bool = False,
-        allow_bedtime: bool | None = None,
-        allow_nap: bool = False,
-        interrupt_nap: bool = False,
-        effort: float | None = None,
-    ) -> None: ...
-
-
-class RoutineActor(Protocol):
-    def update_daily_routine(
-        self,
-        context: TimeContext,
-        *,
-        allow_bedtime: bool = True,
-        allow_nap: bool = False,
-        interrupt_nap: bool = False,
-        effort: float | None = None,
-    ) -> None: ...
-
-
-def apply_daily_routine(
-    record: RoutineActor,
-    context: TimeContext,
-    *,
-    allow_bedtime: bool = True,
-    allow_nap: bool = False,
-    interrupt_nap: bool = False,
-    effort: float | None = None,
-) -> None:
-    """Legacy adapter to the aggregate's explicit calendar operation."""
-    record.update_daily_routine(
-        context, allow_bedtime=allow_bedtime,
-        allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
-    )
-
-
-def advance_pet_time(
-    record: PetTimeline,
-    now: float,
-    *,
-    auto_routine: bool = False,
-    allow_bedtime: bool | None = None,
-    allow_nap: bool = False,
-    interrupt_nap: bool = False,
-    effort: float | None = None,
-) -> None:
-    """Legacy adapter; the aggregate now executes its own planned steps."""
-    record.advance(
-        now, auto_routine=auto_routine, allow_bedtime=allow_bedtime,
-        allow_nap=allow_nap, interrupt_nap=interrupt_nap, effort=effort,
-    )

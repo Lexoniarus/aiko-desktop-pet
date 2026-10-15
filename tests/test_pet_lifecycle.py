@@ -12,8 +12,7 @@ from aiko_pet.pet.need_decay import calculate_need_decay
 from aiko_pet.pet.lifecycle import (
     MAX_CATCHUP_SECONDS as POLICY_CATCHUP,
     MAX_LIVE_EFFORT_SECONDS as POLICY_LIVE_WINDOW,
-    advance_pet_time,
-    apply_daily_routine,
+    plan_pet_time,
 )
 from aiko_pet.pet.routine import context_at
 
@@ -79,21 +78,26 @@ class PetTimelineTests(unittest.TestCase):
         self.assertEqual(MAX_CATCHUP_SECONDS, POLICY_CATCHUP)
         self.assertEqual(MAX_LIVE_EFFORT_SECONDS, POLICY_LIVE_WINDOW)
 
-    def test_public_advance_and_service_produce_identical_serialization(self) -> None:
+    def test_public_advance_consumes_a_bounded_timeline(self) -> None:
         moment = local_stamp(hour=15)
         for routine in (True, False):
             with self.subTest(routine=routine):
-                old = PetState(updated_at=moment)
-                new = PetState(updated_at=moment)
-                old.advance(moment + 3600, auto_routine=routine, effort=0.8)
-                advance_pet_time(
-                    new, moment + 3600, auto_routine=routine, effort=0.8,
+                steps = plan_pet_time(
+                    moment, moment + 3600,
+                    auto_routine=routine, effort=0.8,
                 )
-                self.assertEqual(old.to_dict(), new.to_dict())
+                self.assertIsNotNone(steps)
+                assert steps is not None
+                self.assertAlmostEqual(
+                    sum(step.hours for step in steps), 1.0,
+                )
+                state = PetState(updated_at=moment)
+                state.advance(moment + 3600, auto_routine=routine, effort=0.8)
+                self.assertEqual(state.updated_at, moment + 3600)
 
     def test_catchup_is_bounded_without_routine(self) -> None:
         state = PetState(updated_at=local_stamp())
-        advance_pet_time(state, local_stamp() + 86400.0 * 7)
+        state.advance( local_stamp() + 86400.0 * 7)
         self.assertLessEqual(state.satiety, 12.0)
         self.assertGreater(state.mood, 0.0)
         self.assertLess(state.mood, 43.0)
@@ -102,27 +106,27 @@ class PetTimelineTests(unittest.TestCase):
     def test_telemetry_is_not_extrapolated_across_offline_hours(self) -> None:
         calm = PetState(updated_at=local_stamp())
         working = PetState(updated_at=local_stamp())
-        advance_pet_time(calm, local_stamp() + 3600.0, effort=None)
-        advance_pet_time(working, local_stamp() + 3600.0, effort=1.0)
+        calm.advance( local_stamp() + 3600.0, effort=None)
+        working.advance( local_stamp() + 3600.0, effort=1.0)
         self.assertGreater(calm.satiety - working.satiety, 0)
         self.assertLess(calm.satiety - working.satiety, 0.1)
 
     def test_boolean_effort_is_not_accepted_as_telemetry(self) -> None:
         first = PetState(updated_at=local_stamp())
         second = PetState(updated_at=local_stamp())
-        advance_pet_time(first, local_stamp() + 3600.0, effort=True)
-        advance_pet_time(second, local_stamp() + 3600.0, effort=None)
+        first.advance( local_stamp() + 3600.0, effort=True)
+        second.advance( local_stamp() + 3600.0, effort=None)
         self.assertEqual(first.to_dict(), second.to_dict())
 
     def test_automatic_sleep_can_be_prevented_by_work(self) -> None:
         context = context_at(local_stamp(hour=23, minute=45))
         state = PetState(updated_at=context.local.timestamp())
-        apply_daily_routine(state, context, allow_bedtime=False)
+        state.update_daily_routine( context, allow_bedtime=False)
         self.assertFalse(state.sleeping)
-        apply_daily_routine(state, context, allow_bedtime=True)
+        state.update_daily_routine( context, allow_bedtime=True)
         self.assertTrue(state.sleeping)
         self.assertEqual(state.sleep_origin, "routine")
-        apply_daily_routine(state, context, allow_bedtime=False)
+        state.update_daily_routine( context, allow_bedtime=False)
         self.assertFalse(state.sleeping)
 
 

@@ -16,8 +16,6 @@ from aiko_pet.pet.friendship import (
 )
 from aiko_pet.pet.need_decay import calculate_need_decay
 from aiko_pet.pet.lifecycle import (
-    advance_pet_time,
-    apply_daily_routine,
     calculate_daily_routine,
     plan_pet_time,
 )
@@ -134,22 +132,23 @@ class DomainTransitionTests(unittest.TestCase):
         self.assertTrue(transition.sleeping)
         self.assertFalse(state.sleeping)
 
-    def test_legacy_routine_api_routes_through_pet_methods(self) -> None:
+    def test_routine_policy_matches_aggregate_transition(self) -> None:
         for auto in (True, False):
             with self.subTest(auto_routine=auto):
-                current = PetState(updated_at=START, energy=45)
-                reference = PetState(updated_at=START, energy=45)
-                current.advance(START + 3600, auto_routine=auto, effort=0.85)
-                advance_pet_time(
-                    reference, START + 3600, auto_routine=auto, effort=0.85,
+                state = PetState(updated_at=START, energy=45)
+                steps = plan_pet_time(
+                    state.updated_at, START + 3600,
+                    auto_routine=auto, effort=0.85,
                 )
-                self.assertEqual(current.to_dict(), reference.to_dict())
+                self.assertIsNotNone(steps)
+                state.advance(START + 3600, auto_routine=auto, effort=0.85)
+                self.assertEqual(state.updated_at, START + 3600)
         context = context_at(START + 12 * 3600)
-        current = PetState(updated_at=START)
-        reference = PetState(updated_at=START)
-        current.update_daily_routine(context, allow_bedtime=True)
-        apply_daily_routine(reference, context, allow_bedtime=True)
-        self.assertEqual(current.to_dict(), reference.to_dict())
+        state = PetState(updated_at=START)
+        planned = calculate_daily_routine(state, context, allow_bedtime=True)
+        state.update_daily_routine(context, allow_bedtime=True)
+        self.assertEqual(state.sleeping, planned.sleeping)
+        self.assertEqual(state.sleep_origin, planned.sleep_origin)
 
     def test_invalid_time_never_mutates_pet(self) -> None:
         state = PetState(updated_at=START)

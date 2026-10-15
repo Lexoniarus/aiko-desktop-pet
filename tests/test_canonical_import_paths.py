@@ -68,6 +68,18 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+    def test_lifecycle_has_no_module_level_state_mutation_forwarders(
+        self,
+    ) -> None:
+        from aiko_pet.pet import lifecycle
+
+        for old in (
+            "advance_pet_time", "apply_daily_routine", "PetTimeline",
+            "RoutineActor",
+        ):
+            with self.subTest(member=old):
+                self.assertFalse(hasattr(lifecycle, old))
+
     def test_friendship_reward_has_no_mutation_adapter(self) -> None:
         from aiko_pet.pet import friendship
 
