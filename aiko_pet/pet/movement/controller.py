@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from ..balance import BALANCE
 from .contracts import WalkConditions, WalkStep
 from .random_walk import RandomWalkPlanner
 
@@ -16,6 +17,15 @@ class WalkController:
         self._requested = 0.0
         self._blocked = False
         self._quiet = False
+        self.goal_x: float | None = None
+
+    def set_goal(self, x: float | None) -> None:
+        if x == self.goal_x:
+            return
+        self.goal_x = x
+        self.remaining_distance = 0
+        self._residual = 0
+        self._blocked = False
 
     @property
     def next_walk_at(self) -> float:
@@ -40,7 +50,8 @@ class WalkController:
         self._quiet = conditions.quiet_period
         if (
             conditions.attention_active and self.remaining_distance == 0
-            and conditions.auto_walk and not conditions.sleeping
+            and (conditions.auto_walk or self.goal_x is not None)
+            and not conditions.sleeping
             and not conditions.toolbar_visible
             and not (conditions.observing_computer and conditions.computer_busy)
         ):
@@ -48,7 +59,7 @@ class WalkController:
             return None
         if (
             (conditions.observing_computer and conditions.computer_busy)
-            or not conditions.auto_walk
+            or (not conditions.auto_walk and self.goal_x is None)
             or conditions.sleeping
             or conditions.attention_active
             or conditions.toolbar_visible
@@ -58,9 +69,20 @@ class WalkController:
         if self._blocked:
             self._blocked = False
             self.pause(now)
-            return None
+            if self.goal_x is None:
+                return None
 
-        if self.remaining_distance == 0 and now >= self.next_walk_at:
+        if self.goal_x is not None:
+            if conditions.energy < BALANCE.number("walk", "minimum_energy"):
+                self.interrupt()
+                return None
+            self.remaining_distance = self.goal_x - conditions.x
+            if abs(self.remaining_distance) < 1:
+                self.remaining_distance = 0
+                return None
+
+        if (self.goal_x is None and self.remaining_distance == 0
+                and now >= self.next_walk_at):
             departure = self.random_walk.plan_departure(conditions)
             if departure is not None:
                 self.remaining_distance = departure
