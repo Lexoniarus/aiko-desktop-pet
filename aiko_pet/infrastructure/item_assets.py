@@ -6,7 +6,7 @@ import json
 import struct
 from pathlib import Path
 from types import MappingProxyType
-from typing import Any, Literal, Mapping, cast
+from typing import Any, Mapping
 
 from ..asset_paths import ASSET_ROOT
 from ..pet.animation.item_assets import HandItem, ItemCatalog, ItemSprite
@@ -46,6 +46,8 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
             raise ValueError("Invalid item id")
         if key in items:
             raise ValueError("Duplicate item id")
+        if "care_action" in entry:
+            raise ValueError("Visual assets cannot decide pet care actions")
         if food:
             if "label" in entry:
                 raise ValueError("Food labels belong to the nutrition catalogue")
@@ -80,14 +82,8 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
             ):
                 raise ValueError(f"Invalid grip point for {key} at {scale}x")
             sprites[scale] = ItemSprite(path, (float(pivot[0]), float(pivot[1])))
-        action = entry.get("care_action", "feed" if food else None)
-        if food and action not in ("feed", "energy_drink"):
-            raise ValueError(f"Unsupported food care action for {key}")
-        if not food and action is not None:
-            raise ValueError("Weapon items cannot declare a food care action")
         items[key] = HandItem(
             key, label, icon, MappingProxyType(sprites),
-            cast(Literal["feed", "energy_drink"] | None, action),
         )
     return MappingProxyType(items)
 

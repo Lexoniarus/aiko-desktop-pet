@@ -34,12 +34,6 @@ class PreparedFoodCatalogTests(unittest.TestCase):
             self.assertEqual(item.label, expected_name)
         self.assertEqual(set(FOOD_CATALOG), set(items.foods) - {"energy_drink"})
         self.assertEqual(tuple(items.weapons), ("sword",))
-        for key, item in items.foods.items():
-            self.assertEqual(
-                item.care_action,
-                "energy_drink" if key == "energy_drink" else "feed",
-            )
-
     def test_asset_manifest_does_not_duplicate_food_titles(self) -> None:
         path = (
             Path(__file__).resolve().parents[1] / "aiko_pet" / "assets"
@@ -48,6 +42,11 @@ class PreparedFoodCatalogTests(unittest.TestCase):
         data = json.loads(path.read_text(encoding="utf-8"))
         self.assertTrue(all("label" not in row for row in data["foods"]))
         self.assertTrue(all("label" in row for row in data["weapons"]))
+        self.assertTrue(all(
+            "care_action" not in row
+            for row in (*data["foods"], *data["weapons"])
+        ))
+        self.assertFalse(hasattr(load_item_catalog().foods["onigiri"], "care_action"))
 
     def test_prepared_pngs_and_grips(self) -> None:
         items = load_item_catalog()

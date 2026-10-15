@@ -103,7 +103,6 @@
     },
     {
       "id": "energy_drink",
-      "care_action": "energy_drink",
       "variants": {
         "1": {
           "path": "food/1x/energy_drink.png",

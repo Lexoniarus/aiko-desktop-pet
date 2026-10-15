@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, Mapping
+from typing import Mapping
 
 
 @dataclass(frozen=True, slots=True)
@@ -23,7 +23,6 @@ class HandItem:
     label: str
     icon: Path | None
     sprites: Mapping[int, ItemSprite]
-    care_action: Literal["feed", "energy_drink"] | None = None
 
 
 @dataclass(frozen=True, slots=True)
