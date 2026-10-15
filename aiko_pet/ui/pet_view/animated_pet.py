@@ -13,10 +13,10 @@ from dataclasses import dataclass
 from typing import Callable, Protocol
 from collections.abc import Sequence
 
-from ...pet.animation.animation import FrameClock, PassiveObservation
+from ...pet.animation.animation import FrameClock
 from ...pet.animation.ambient import AmbientDirector
 from ...pet.animation.character import CharacterCatalog, FRAME_WIDTH
-from ...pet.animation.priority import choose_animation_priority
+from ...pet.animation.priority import RenderDecision
 from ...pet.mind.cursor_attention import CursorAttentionSnapshot
 from .food_overlay import FoodOverlay
 from .character_sprite_cache import CharacterSpriteCache
@@ -54,13 +54,6 @@ class CharacterSettings(Protocol):
     @y.setter
     def y(self, value: int | None) -> None: ...
 
-    @property
-    def observe_computer(self) -> bool: ...
-
-    @observe_computer.setter
-    def observe_computer(self, value: bool) -> None: ...
-
-
 @dataclass(frozen=True, slots=True)
 class AnimatedPorts:
     """Effects outside the sprite's own drawing and movement state."""
@@ -68,12 +61,10 @@ class AnimatedPorts:
     walk_step: Callable[[float, float], str | None]
     walk_active: Callable[[], bool]
     interrupt_walk: Callable[[], None]
-    observe_passive: Callable[
-        [float, tuple[int, int], float, bool], PassiveObservation
+    choose_animation: Callable[
+        [float, tuple[int, int], float, bool, str | None], RenderDecision
     ]
     reset_gaze: Callable[[], None]
-    action_until: Callable[[], float]
-    action_state: Callable[[], str]
     extend_action: Callable[[float], None]
 
 
@@ -84,6 +75,7 @@ class AnimatedPet:
         self, root: tk.Tk, canvas: tk.Canvas,
         state: CareVisuals, settings: CharacterSettings,
         ports: AnimatedPorts, *, assets: CharacterCatalog,
+        ambient: AmbientDirector,
     ) -> None:
         self.root = root
         self.canvas = canvas
@@ -98,7 +90,7 @@ class AnimatedPet:
         self._last_motion_at = time.monotonic()
         self._walk_progress = 0.0
         self.frame_clock = FrameClock(started_at=time.monotonic())
-        self._ambient = AmbientDirector(started_at=time.monotonic())
+        self._ambient = ambient
         self._game_mode = False
         self._cursor_snapshot = CursorAttentionSnapshot(-100.0, -100.0)
         self._last_render_pointer: tuple[int, int] = (0, 0)
@@ -264,47 +256,12 @@ class AnimatedPet:
         self._last_render_pointer = pointer
         if attention is not None:
             self._cursor_snapshot = attention
-        priority = choose_animation_priority(
-            game_mode=self._game_mode,
-            sleeping=self.state.sleeping,
-            active_action=self._active_action,
-            action_loops=(
-                self.assets.clips[self._active_action].loop
-                if self._active_action is not None else False
-            ),
-            timed_action_active=now < self.ports.action_until(),
+        decision = self.ports.choose_animation(
+            now, pointer, self._cursor_snapshot.last_pointer_move,
+            self._game_mode, self._active_action,
         )
-        if priority.mode != "passive":
-            self._ambient.suspend(now)
-            if priority.clear_action:
-                self._active_action = None
-            if priority.interrupt_walk:
-                self.ports.interrupt_walk()
-            selected = (
-                self.ports.action_state()
-                if priority.mode == "timed"
-                else priority.animation
-            )
-            if selected is None:
-                raise AssertionError("An active animation needs a clip")
-            self.show_frame(selected, now)
-            return
-        else:
+        if decision.clear_action:
             self._active_action = None
-            moving = self.ports.walk_step(now, 0)
-            if moving is not None:
-                self._ambient.suspend(now)
-                self.show_frame(moving, now)
-                return
-            observation = self.ports.observe_passive(
-                now, pointer, self._cursor_snapshot.last_pointer_move,
-                self._game_mode,
-            )
-            choice = self._ambient.select_passive_animation(
-                now, gaze_direction=observation.gaze_direction,
-                observing_computer=self.settings.observe_computer,
-                computer_busy=observation.computer_busy,
-                energy=self.state.energy, mood=self.state.mood,
-                satiety=self.state.satiety,
-            )
-            self.show_frame(choice.animation, now, fixed=choice.fixed_frame)
+        self.show_frame(
+            decision.sprite.animation, now, fixed=decision.sprite.fixed_frame,
+        )

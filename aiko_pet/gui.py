@@ -26,6 +26,7 @@ from .application.cursor_observation import CursorObservation
 from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
 from .desktop.walk_runtime import WalkDriver, WalkDriverPorts
 from .desktop.visual_observation import DesktopVisualObservation
+from .desktop.animation_runtime import DesktopAnimationRuntime, AnimationRuntimePorts
 from .application.active_time import ActiveSessionClock
 from .pet.food import FoodId
 from .infrastructure.active_time import active_uptime_seconds
@@ -172,26 +173,30 @@ class DesktopPet:
             settings=self.settings, monitor=self.activity_monitor,
             eyes=self._window.gaze_origin,
         )
+        self._animation = DesktopAnimationRuntime(
+            state=self.state, settings=self.settings,
+            assets=self._character_assets, walk=self._walk,
+            visual=self._visual,
+            ports=AnimationRuntimePorts(
+                action_until=lambda: self._action_playback.until,
+                action_state=lambda: self._action_playback.state,
+                attention_until=lambda: self.mind.cursor_attention.attention_until,
+            ),
+        )
         self._animated = AnimatedPet(
             self.root, self.canvas, self.state, self.settings,
             AnimatedPorts(
-                walk_step=lambda now, elapsed: self._walk.step(
+                walk_step=lambda now, elapsed: self._animation.advance_walk(
                     now, elapsed, game_mode=self._animated.game_mode,
-                    attention_active=(
-                        now < self.mind.cursor_attention.attention_until
-                    ),
                 ),
-                walk_active=lambda: (
-                    self._walk.movement.remaining_distance != 0
-                ),
-                interrupt_walk=self._walk.movement.interrupt,
-                observe_passive=self._visual.observe,
+                walk_active=self._animation.walk_active,
+                interrupt_walk=self._animation.interrupt_walk,
+                choose_animation=self._animation.choose,
                 reset_gaze=self._visual.reset,
-                action_until=lambda: self._action_playback.until,
-                action_state=lambda: self._action_playback.state,
                 extend_action=self._action_playback.extend,
             ),
             assets=self._character_assets,
+            ambient=self._animation.ambient,
         )
         self._closed = False
         self._attention = AttentionCoordinator(

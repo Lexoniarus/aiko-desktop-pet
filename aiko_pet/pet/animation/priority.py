@@ -5,7 +5,17 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
+from .animation import SpriteSelection
+
 AnimationMode = Literal["game", "sleep", "action", "timed", "passive"]
+
+
+@dataclass(frozen=True, slots=True)
+class RenderDecision:
+    """Chosen sprite and whether the prior one-shot playback has ended."""
+
+    sprite: SpriteSelection
+    clear_action: bool = False
 
 
 @dataclass(frozen=True, slots=True)

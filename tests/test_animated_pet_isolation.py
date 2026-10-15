@@ -16,6 +16,7 @@ from aiko_pet.desktop.geometry import TaskbarTrack
 from aiko_pet.pet.movement import WalkController
 from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
 from aiko_pet.desktop.visual_observation import DesktopVisualObservation
+from aiko_pet.desktop.animation_runtime import DesktopAnimationRuntime, AnimationRuntimePorts
 from aiko_pet.pet.animation.character import FRAME_WIDTH
 from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
@@ -62,20 +63,27 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                 self.root.winfo_y() + 82 * self.settings.scale,
             ),
         )
+        self.animation = DesktopAnimationRuntime(
+            state=self.state, settings=self.settings,
+            assets=assets, walk=self.walk, visual=self.visual,
+            ports=AnimationRuntimePorts(
+                action_until=lambda: 0.0,
+                action_state=lambda: "idle",
+                attention_until=lambda: self.anim._cursor_snapshot.attention_until,
+            ),
+        )
         self.anim = AnimatedPet(
             self.root, self.canvas,
             self.state, self.settings,
             AnimatedPorts(
                 walk_step=self._step_walk,
-                walk_active=lambda: self.walk.movement.remaining_distance != 0,
-                interrupt_walk=self.walk.movement.interrupt,
-                observe_passive=self.visual.observe,
+                walk_active=self.animation.walk_active,
+                interrupt_walk=self.animation.interrupt_walk,
+                choose_animation=self.animation.choose,
                 reset_gaze=self.visual.reset,
-                action_until=lambda: 0.0,
-                action_state=lambda: "idle",
                 extend_action=self.action_deadlines.append,
             ),
-            assets=assets,
+            assets=assets, ambient=self.animation.ambient,
         )
         self.addCleanup(self.root.destroy)
         self.addCleanup(self.anim.stop)
