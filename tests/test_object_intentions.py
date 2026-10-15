@@ -7,7 +7,7 @@ from aiko_pet.pet.mind.object_intentions import ObjectIntentions
 from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.state import PetState
 
-APPLE = ObjectObservation("one", "apple", "food", 100, 0, True, 0)
+APPLE = ObjectObservation("one", "apple", "food", 100, 0, True, 0, examined=True)
 
 
 class ObjectIntentionTests(unittest.TestCase):
@@ -30,8 +30,25 @@ class ObjectIntentionTests(unittest.TestCase):
         self.assertIsNone(planner.choose((drink,), pet, x=0, now=20))
         self.assertIsNotNone(planner.choose((drink,), pet, x=0, now=32))
 
-    def test_unknown_or_carried_objects_do_not_become_food_goals(self):
+    def test_unknown_ground_objects_are_investigated_but_carried_ones_not_pursued(self):
         planner = ObjectIntentions()
         pet = PetState(satiety=10)
-        for item in (replace(APPLE, identity=None), replace(APPLE, resting=False)):
-            self.assertIsNone(planner.choose((item,), pet, x=0, now=2, changed=True))
+        unknown = replace(APPLE, identity=None, kind=None, examined=False)
+        goal = planner.choose((unknown,), pet, x=0, now=2, changed=True)
+        assert goal is not None
+        self.assertEqual(goal.purpose, "investigate")
+        self.assertIsNone(planner.choose((replace(unknown, resting=False),), pet,
+                                         x=0, now=3, changed=True))
+
+    def test_satiated_food_is_investigated_once_then_reconsidered_when_hungry(self):
+        planner = ObjectIntentions()
+        pet = PetState(satiety=76)
+        goal = planner.choose((replace(APPLE, examined=False),), pet, x=0, now=0)
+        assert goal is not None
+        self.assertEqual(goal.purpose, "investigate")
+        planner.cancel(1)
+        self.assertIsNone(planner.choose((APPLE,), pet, x=0, now=20))
+        pet.satiety = 69
+        goal = planner.choose((APPLE,), pet, x=0, now=21)
+        assert goal is not None
+        self.assertEqual(goal.purpose, "consume")

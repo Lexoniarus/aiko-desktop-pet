@@ -3,21 +3,24 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Literal
 
 from ..balance import BALANCE
 from ..food import is_repeated_food
 from ..state import PetState
+from .object_decisions import decide_object_use
 from .object_perception import ConsumableKind, ObjectObservation
 
 
 @dataclass(frozen=True, slots=True)
 class ObjectGoal:
     token: str
-    identity: str
-    kind: ConsumableKind
+    identity: str | None
+    kind: ConsumableKind | None
     x: float
     height: float
     observed_at: float
+    purpose: Literal["investigate", "consume"] = "consume"
 
 
 class ObjectIntentions:
@@ -53,24 +56,27 @@ class ObjectIntentions:
         self._next_check = now + BALANCE.number("object_behavior", "reevaluate_seconds")
         options: list[tuple[tuple[float, bool, float, str], ObjectGoal]] = []
         for item in known:
-            if item.identity is None or item.kind is None or not item.resting:
+            if not item.resting:
+                continue
+            wanted = decide_object_use(item, state).consume
+            if item.examined and not wanted:
                 continue
             threshold = BALANCE.number(
                 "object_behavior",
                 "seek_food_satiety" if item.kind == "food" else "seek_drink_energy",
             )
             level = state.satiety if item.kind == "food" else state.energy
-            if level > threshold or now < self._retry.get(item.token, 0):
+            if now < self._retry.get(item.token, 0):
                 continue
             goal = ObjectGoal(item.token, item.identity, item.kind,
-                              item.x, item.height, item.observed_at)
+                              item.x, item.height, item.observed_at,
+                              "consume" if item.examined else "investigate")
             if self.goal is not None and item.token == self.goal.token:
                 self.goal = goal
                 return goal
-            repetitive = item.kind == "food" and is_repeated_food(
-                state.food, item.identity,
-            )
-            rank = (-(threshold - level) / threshold, repetitive,
+            repetitive = (item.identity is not None and item.kind == "food"
+                          and is_repeated_food(state.food, item.identity))
+            rank = (-(threshold - level) / threshold if wanted else 0, repetitive,
                     abs(item.x - x), item.token)
             options.append((rank, goal))
         self.goal = min(options, key=lambda option: option[0])[1] if options else None

@@ -23,7 +23,10 @@ Correction progress: C1 reproduced both reported control-flow gaps in real Tk
 timer tests (`tests/test_world_runtime_flow.py`): Onigiri at 76% is recognized
 but has no investigation goal, and a canvas Enter event truncates a committed
 drink. These characterization expectations will become regression assertions
-as C2–C4 change the behavior. C2–C6 are not implemented yet.
+as C2–C4 change the behavior. C1: `f902d20`, full suite 830 tests passed.
+C2 adds separate investigate/consume purposes, pure origin-aware use decisions,
+and subjective examined knowledge. Its 20 focused object tests and all static
+checks passed; execution/presentation wiring follows in C3/C4.
 
 Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
 the original consumption-only intention and immediate pickup-to-consumption

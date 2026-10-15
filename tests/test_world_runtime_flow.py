@@ -57,14 +57,16 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.app.root.mainloop()
         return trace
 
-    def test_baseline_full_food_is_recognized_but_never_investigated(self):
+    def test_satiated_food_forms_an_investigation_goal_before_execution_wiring(self):
         world = self.app._world
         item = world.world.place_resting("onigiri", world._body_x() + 75,
                                          ObjectFootprint(16, 16))
         trace = self.run_for(1.1)
         known = world.awareness.memory.snapshot()
         self.assertEqual(known[0].identity, "onigiri", trace)
-        self.assertIsNone(world.awareness.intentions.goal, trace)
+        goal = world.awareness.intentions.goal
+        assert goal is not None
+        self.assertEqual(goal.purpose, "investigate", trace)
         self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
         self.assertTrue(all(row[1] == "idle" for row in trace), trace)
 
