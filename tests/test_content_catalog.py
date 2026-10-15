@@ -27,6 +27,34 @@ class TextCatalogTests(unittest.TestCase):
             "Schon wieder Apfel? ...Na gut.",
         )
 
+    def test_game_reactions_are_backed_by_german_json(self) -> None:
+        from aiko_pet.ui.windows.rock_paper_scissors_text_de import (
+            countdown_line, welcome_line,
+        )
+
+        messages = GERMAN_TEXT.messages
+        for category in ("welcome", "win", "loss", "draw"):
+            with self.subTest(category=category):
+                self.assertEqual(
+                    {f"rps.{category}.{i}" for i in range(3)},
+                    {
+                        key for key in messages
+                        if key.startswith(f"rps.{category}.")
+                    },
+                )
+        for number in (1, 2, 3):
+            self.assertEqual(
+                countdown_line(number),
+                messages[f"rps.countdown.{number}"],
+            )
+        for games in range(7):
+            self.assertEqual(
+                welcome_line(games),
+                messages[f"rps.welcome.{games % 3}"],
+            )
+        with self.assertRaises(KeyError):
+            countdown_line(4)
+
     def test_all_mood_hint_keys_have_a_german_translation(self) -> None:
         self.assertEqual(
             {f"mood.{hint.value}" for hint in MoodHint},
