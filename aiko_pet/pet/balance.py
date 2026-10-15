@@ -59,6 +59,16 @@ def parse_balance(raw: Any) -> BalanceCatalog:
                 raise ValueError(f"balance.{section}: {key} exceeds {upper}")
         sections[section] = MappingProxyType(values)
     catalog = BalanceCatalog(MappingProxyType(sections))
+    objects = sections["object_behavior"]
+    if (
+        objects["recognize_widths"] > objects["notice_widths"]
+        or objects["reach_widths"] >= objects["recognize_widths"]
+        or objects["notice_seconds"] > objects["recognize_seconds"]
+        or objects["seek_food_satiety"] > 100
+        or objects["seek_drink_energy"] > 100
+        or any(value <= 0 for value in objects.values())
+    ):
+        raise ValueError("Invalid object perception/interest balance")
     for section, low, high in (
         ("walk", "pause_min_seconds", "pause_max_seconds"),
         ("walk", "quiet_pause_min_seconds", "pause_max_seconds"),

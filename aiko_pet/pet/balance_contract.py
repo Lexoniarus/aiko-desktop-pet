@@ -3,6 +3,21 @@
 from __future__ import annotations
 
 BALANCE_FIELDS: dict[str, dict[str, str]] = {
+    "object_behavior": {
+        "notice_widths": "number",
+        "recognize_widths": "number",
+        "notice_seconds": "number",
+        "recognize_seconds": "number",
+        "memory_seconds": "number",
+        "reevaluate_seconds": "number",
+        "seek_food_satiety": "number",
+        "seek_drink_energy": "number",
+        "search_seconds": "number",
+        "retry_seconds": "number",
+        "consumed_pause_seconds": "number",
+        "reach_widths": "number",
+        "fall_gravity": "number",
+    },
     "food": {
         "too_full_to_eat_threshold": "number",
         "maximum_recent_foods": "integer",
