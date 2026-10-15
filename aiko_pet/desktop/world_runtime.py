@@ -74,6 +74,7 @@ class DesktopWorldRuntime:
         self.view = WorldView(root, items)
         self._refresh_footprints()
         self.carry_id: str | None = None
+        self._capture_owned = False
         self._inside = True
         self._contact: tuple[float, float] | None = None
         self._closed = False
@@ -289,7 +290,24 @@ class DesktopWorldRuntime:
         position, self._inside = self._pointer_pose(item_id, footprint)
         item = self.world.create_held(item_id, position, footprint)
         self.carry_id = item.instance_id
+        try:
+            self.root.grab_set()
+            self.root.focus_set()
+            self._capture_owned = True
+        except tk.TclError:
+            self.cancel_carry()
+            return
         self._sync_view()
+
+    def _release_capture(self) -> None:
+        if self._capture_owned:
+            self._capture_owned = False
+            if self._owns_capture():
+                self.root.grab_release()
+
+    def _owns_capture(self) -> bool:
+        current = self.root.tk.call("grab", "current", str(self.root))
+        return str(current) == str(self.root)
 
     def _pointer_pose(
         self, item_id: str, footprint: ObjectFootprint,
@@ -322,6 +340,7 @@ class DesktopWorldRuntime:
             return
         self._move_carry()
         token, self.carry_id = self.carry_id, None
+        self._release_capture()
         item = self.world.get(token)
         if not self._inside:
             self.world.remove(token, expected_revision=item.revision)
@@ -333,6 +352,7 @@ class DesktopWorldRuntime:
         self._save()
 
     def cancel_carry(self) -> None:
+        self._release_capture()
         if self.carry_id is not None:
             item = self.world.get(self.carry_id)
             self.world.remove(item.instance_id, expected_revision=item.revision)
@@ -369,6 +389,8 @@ class DesktopWorldRuntime:
         self.world.advance_falls(elapsed, gravity=BALANCE.number(
             "object_behavior", "fall_gravity",
         ))
+        if self.carrying and self._capture_owned and not self._owns_capture():
+            self.cancel_carry()
         self._move_carry()
         buttons = mouse_buttons_down_windows()
         if self.carrying and buttons is not None and not buttons[0]:
@@ -388,6 +410,7 @@ class DesktopWorldRuntime:
 
     def close(self) -> None:
         self._closed = True
+        self._release_capture()
         for timer in (self._timer, self._event_timer):
             if timer is not None:
                 self.root.after_cancel(timer)

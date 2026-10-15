@@ -109,6 +109,18 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(snapshot.objects[0].state, ObjectState.RESTING)
         self.assertAlmostEqual(restored.state.satiety, 50, places=1)
 
+    def test_lost_input_capture_cancels_without_falling_or_consuming(self):
+        world = self.app._world
+        world.begin_carry("apple")
+        token = world.carry_id
+        assert token is not None
+        self.assertEqual(self.app.root.grab_current(), self.app.root)
+        self.app.root.grab_release()
+        world._frame()
+        self.assertIsNone(world.carry_id)
+        self.assertEqual(world.world.get(token).state, ObjectState.REMOVED)
+        self.assertIsNone(self.app.state.food.last_food_id)
+
     def test_actual_driver_reaches_food_with_random_walk_disabled(self):
         world = self.app._world
         start = self.app.settings.x or 0
