@@ -71,6 +71,17 @@ and gaze corrections. Treat the observed basic sequence as accepted. Keep
 unreported checklist items and longer-term behavior open. No merge was requested;
 the PR remains draft for review.
 
+Cross-platform test follow-up: CI run `38771566826` passed Windows but failed
+both Linux jobs only in the new preparation comparison (855 discovered tests,
+7 platform skips). The check incorrectly required identical PNG compression
+bytes across platforms. It now compares decoded RGBA pixels/dimensions and
+authoring metadata, validates generated and shipped hashes against their own
+files, and still requires byte-identical repeated output from the same encoder.
+This changes test portability only; interaction behavior and approved artwork
+remain unchanged. Final CI evidence is available in the PR checks.
+The portability follow-up passed 855 tests locally in 183.2 s, with Ruff,
+strict Mypy and Pyright green; the Linux matrix verifies the cross-platform case.
+
 Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
 the original consumption-only intention and immediate pickup-to-consumption
 assumptions below. Existing implementation/CI evidence remains historical

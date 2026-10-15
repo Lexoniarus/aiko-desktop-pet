@@ -132,9 +132,13 @@ Windows/Python 3.11, 15 October 2026:
   passed all three jobs (Linux Python 3.11/3.13 and Windows).
 - C8 `ea4361f`: 855 tests passed in 183.9 s with the same pinned static gates.
   Eating-grip coverage and pickup/hold/put-down top-layer assertions pass at both
-  scales; complete asset preparation matches shipped outputs and is repeatable.
+  scales; complete asset preparation preserves decoded pixels/metadata, validates
+  per-build file hashes and is repeatable with the same encoder. A follow-up
+  corrects the cross-platform test's original assumption of identical PNG bytes.
   Deferred drink memory survives gaze release; cursor following and later
   need-driven return are verified.
+- The test portability follow-up also passed 855 tests on Windows in 183.2 s
+  plus the pinned static checks; the Linux matrix covers the different encoder.
 - Current CI results are linked in the implementation ledger and
   [PR checks](https://github.com/Lexoniarus/aiko-desktop-pet/pull/10/checks)
   run Linux/Xvfb Python 3.11/3.13 and Windows, including real Tk flow tests.

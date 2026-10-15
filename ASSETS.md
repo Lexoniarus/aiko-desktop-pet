@@ -76,6 +76,10 @@ Consumables remain above the character in eating, pickup, holding and put-down.
 The latest practical feedback explicitly removes additional hand-mask occlusion
 from this renderer. Approved hand masks remain preserved in the imported and
 prepared asset catalogs. Native visual acceptance of the revision is pending.
+The preparation check compares decoded RGBA pixels, dimensions and authoring
+metadata across platforms: PNG compression can produce different file bytes.
+Each build's provenance hashes must match its actual files; repeated preparation
+with the same encoder must still be byte-identical.
 
 All thirteen normal clips retain exactly **eight source PNGs** each. The
 runtime can assign different hold times to each pose and replay selected

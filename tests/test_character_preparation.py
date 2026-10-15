@@ -1,5 +1,6 @@
 """Rebuilding the approved source preserves calibrated runtime metadata."""
 
+import hashlib
 import json
 import tempfile
 import unittest
@@ -20,6 +21,7 @@ class CharacterPreparationTests(unittest.TestCase):
         from tools.prepare_character_assets import SOURCE, prepare
 
         source_files = {path: path.read_bytes() for path in SOURCE.rglob("*.json")}
+        assert Image is not None
         with tempfile.TemporaryDirectory() as folder:
             destination = Path(folder)
             copy2(ASSET_ROOT / "animation_timing.json", destination)
@@ -27,8 +29,30 @@ class CharacterPreparationTests(unittest.TestCase):
             first = {path.relative_to(destination): path.read_bytes()
                      for path in destination.rglob("*") if path.is_file()}
             for relative, content in first.items():
-                self.assertEqual(content, (ASSET_ROOT / relative).read_bytes(),
-                                 relative)
+                shipped = ASSET_ROOT / relative
+                if relative.suffix == ".png":
+                    with Image.open(destination / relative) as generated:
+                        with Image.open(shipped) as approved:
+                            self.assertEqual(generated.size, approved.size, relative)
+                            self.assertEqual(generated.convert("RGBA").tobytes(),
+                                             approved.convert("RGBA").tobytes(),
+                                             relative)
+                elif relative == Path("provenance.json"):
+                    generated_manifest = json.loads(content)
+                    shipped_manifest = json.loads(shipped.read_bytes())
+                    generated_hashes = generated_manifest.pop("runtime_sha256")
+                    shipped_hashes = shipped_manifest.pop("runtime_sha256")
+                    self.assertEqual(generated_manifest, shipped_manifest)
+                    self.assertEqual(generated_hashes.keys(), shipped_hashes.keys())
+                    for root, hashes in ((destination, generated_hashes),
+                                         (ASSET_ROOT, shipped_hashes)):
+                        for file, digest in hashes.items():
+                            self.assertEqual(
+                                hashlib.sha256((root / file).read_bytes()).hexdigest(),
+                                digest, file,
+                            )
+                else:
+                    self.assertEqual(content, shipped.read_bytes(), relative)
             prepare(destination=destination)
             second = {path.relative_to(destination): path.read_bytes()
                       for path in destination.rglob("*") if path.is_file()}
