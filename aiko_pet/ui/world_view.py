@@ -34,6 +34,7 @@ class WorldView:
     def sync(
         self, snapshot: WorldSnapshot, *, left: float, ground_y: float,
         scale: int, topmost: bool,
+        carried_cursor: tuple[int, int] | None = None,
     ) -> None:
         definitions = {item.definition_id: item for item in snapshot.definitions}
         visible: set[str] = set()
@@ -61,11 +62,17 @@ class WorldView:
             window.wm_attributes("-topmost", topmost)
             x = round(left + item.position.x - image.width() / 2)
             y = round(ground_y - item.position.height - image.height())
+            if item.state == ObjectState.USER_HELD and carried_cursor is not None:
+                grip = self.items.foods[asset_id].sprites[scale].pivot
+                x = round(carried_cursor[0] - grip[0])
+                y = round(carried_cursor[1] - grip[1])
             window.geometry(f"{image.width()}x{image.height()}{x:+d}{y:+d}")
-            window.deiconify()
-            if entry is None or item.state == ObjectState.USER_HELD:
+            if entry is None:
                 window.update_idletasks()
                 make_object_window_passive(window)
+            window.deiconify()
+            if item.state == ObjectState.USER_HELD:
+                make_object_window_passive(window, x=x, y=y)
         for token in tuple(self._windows):
             if token not in visible:
                 self._windows.pop(token)[0].destroy()

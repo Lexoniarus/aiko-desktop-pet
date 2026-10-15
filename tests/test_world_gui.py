@@ -103,3 +103,20 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(snapshot.objects[0].instance_id, item.instance_id)
         self.assertEqual(snapshot.objects[0].state, ObjectState.RESTING)
         self.assertAlmostEqual(restored.state.satiety, 50, places=1)
+
+    def test_actual_driver_reaches_food_with_random_walk_disabled(self):
+        world = self.app._world
+        start = self.app.settings.x or 0
+        world.world.place_resting("apple", world._body_x() + 80,
+                                   ObjectFootprint(8, 8))
+        self.recognize()
+        for index in range(4):
+            self.app._walk.step(time.monotonic() + index, 1,
+                                game_mode=False, attention_active=False)
+            world.now += 1
+            world.update(time.monotonic())
+            if world.interaction.active:
+                break
+        self.assertGreater(self.app.settings.x or 0, start)
+        self.assertFalse(self.app.settings.auto_walk)
+        self.assertEqual(world.interaction.phase, "pick_up")

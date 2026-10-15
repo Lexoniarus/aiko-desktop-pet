@@ -168,5 +168,6 @@ class WalkDriver:
             >= track.right - FRAME_WIDTH * self.settings.scale
         )
         if self.movement.record_displacement(delta, now=now, blocked=blocked):
-            self.ports.walk_finished(now)
+            if self.movement.goal_x is None:
+                self.ports.walk_finished(now)
         return step.animation

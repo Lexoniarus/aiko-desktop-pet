@@ -253,6 +253,27 @@ class WorldState:
                 )
                 self._revision += 1
 
+    def change_footprint(
+        self, instance_id: str, footprint: ObjectFootprint, *, expected_revision: int,
+    ) -> None:
+        item = self._expect(
+            instance_id, expected_revision, ObjectState.USER_HELD,
+            ObjectState.FALLING, ObjectState.RESTING, ObjectState.PET_HELD,
+        )
+        if footprint.left + footprint.right > self._surface.width:
+            raise WorldOperationError(WorldFailure.OUT_OF_BOUNDS)
+        if item.footprint == footprint:
+            return
+        position = item.position
+        if position is not None:
+            position = WorldPosition(max(footprint.left, min(
+                position.x, self._surface.width - footprint.right,
+            )), position.height)
+        self._objects[instance_id] = replace(
+            item, footprint=footprint, position=position, revision=item.revision + 1,
+        )
+        self._revision += 1
+
     def remove(
         self, instance_id: str, *, expected_revision: int,
     ) -> WorldObjectSnapshot:

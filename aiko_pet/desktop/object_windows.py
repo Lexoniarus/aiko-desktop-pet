@@ -7,7 +7,9 @@ from ctypes import wintypes
 from .window_stack import Window, WindowsWindowOps
 
 
-def make_object_window_passive(window: Window) -> None:
+def make_object_window_passive(
+    window: Window, *, x: int | None = None, y: int | None = None,
+) -> None:
     if sys.platform != "win32":
         return
     ops = WindowsWindowOps()
@@ -18,4 +20,7 @@ def make_object_window_passive(window: Window) -> None:
     setter.restype = wintypes.LONG
     style = ops.user32.GetWindowLongW(hwnd, -20)
     setter(hwnd, -20, style | 0x08000000 | 0x00000020)
+    if x is not None and y is not None:
+        ops.user32.SetWindowPos(hwnd, 0, x, y, 0, 0,
+                               0x0001 | 0x0004 | 0x0010 | 0x0200)
     ops.raise_without_focus(window)

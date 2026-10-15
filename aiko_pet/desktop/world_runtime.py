@@ -72,10 +72,12 @@ class DesktopWorldRuntime:
         self.awareness = ObjectAwareness()
         self._consumption = ObjectConsumption(state, mind, adaptive, clock=clock)
         self.view = WorldView(root, items)
+        self._refresh_footprints()
         self.carry_id: str | None = None
         self._inside = True
         self._contact: tuple[float, float] | None = None
         self._closed = False
+        self._last_scale = settings.scale
         self._last_active = active_uptime_seconds()
         self._last_real = time.monotonic()
         self.now = 0.0
@@ -154,6 +156,7 @@ class DesktopWorldRuntime:
         self._walk.movement.set_goal(None)
         self._visual.object_target = None
         self._contact = None
+        self._save()
 
     def _ground_x(self, token: str) -> float:
         item = self.world.get(token)
@@ -325,11 +328,15 @@ class DesktopWorldRuntime:
             item = self.world.get(self.carry_id)
             self.world.remove(item.instance_id, expected_revision=item.revision)
             self.carry_id = None
+            self._save()
 
     def _sync_view(self) -> None:
         self.view.sync(self.world.snapshot(), left=self._track().left,
                        ground_y=self._track().ground_y, scale=self.settings.scale,
-                       topmost=self.settings.always_on_top)
+                       topmost=self.settings.always_on_top,
+                       carried_cursor=(self.root.winfo_pointerx(),
+                                       self.root.winfo_pointery()) if self.carrying
+                       else None)
         state, _fixed = self._animated.frame_clock.active_key or ("idle", None)
         clip = self._animated.assets.clips[state]
         index = clip.sprite_index(self._animated.frame_clock.frame_index)
@@ -347,6 +354,9 @@ class DesktopWorldRuntime:
         self._last_active, self._last_real = active, real
         self.now += elapsed
         self.world.change_surface(self._surface())
+        if self._last_scale != self.settings.scale:
+            self._refresh_footprints()
+            self._last_scale = self.settings.scale
         self.world.advance_falls(elapsed, gravity=BALANCE.number(
             "object_behavior", "fall_gravity",
         ))
@@ -356,6 +366,16 @@ class DesktopWorldRuntime:
             self.release()
         self._sync_view()
         self._timer = self.root.after(33, self._frame)
+
+    def _refresh_footprints(self) -> None:
+        for item in self.world.snapshot().objects:
+            if item.state in (ObjectState.CONSUMED, ObjectState.REMOVED):
+                continue
+            image = self.view.image(item.definition_id, self.settings.scale)
+            self.world.change_footprint(
+                item.instance_id, ObjectFootprint(image.width() / 2, image.width() / 2),
+                expected_revision=item.revision,
+            )
 
     def close(self) -> None:
         self._closed = True
