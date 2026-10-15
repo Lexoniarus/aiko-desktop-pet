@@ -1,6 +1,8 @@
 # World object contracts and behavior rules
 
-Status: implemented through Stage 8; native practical acceptance pending.
+Status: initial implementation through Stage 8; first practical test found
+behavior gaps. The investigation/feedback revision below is agreed behavior,
+with implementation still pending.
 Recorded: 15 October 2026.
 Baseline: `1753266db0dafc94024913cb281b80e7abe289a0` (merged PR #9).
 
@@ -10,6 +12,24 @@ accepted first feature. The [current architecture](ARCHITECTURE.md) maps these
 semantic contracts to their implemented owners and Python APIs.
 
 ## Confirmed product decisions
+
+### Practical-test clarification — 15 October 2026
+
+Investigation is a distinct intention independent of current hunger/energy.
+New noticed reachable ground objects lead through visible orientation,
+approach, pickup, held examination/identification and a consumption decision.
+No immediate desire to consume means animated put-down with a later-use bubble,
+not permanent gaze-only behavior. Relevant phases require readable authored
+bubbles. Record examined/deferred knowledge to avoid repeated inspection loops.
+
+These rules supersede the original requirement for recognized, wanted food as
+the only approach goal, and pickup completion must no longer automatically
+consume before inspection/decision. Physical World custody states, canonical
+consumption effects and the release-to-accept requirement stay in force.
+See the [architecture-aligned correction plan](WORLD_OBJECT_IMPLEMENTATION_PLAN.md#practical-test-correction-plan)
+for state ownership, handover entry, completion/interrupt rules and small steps.
+The later sections retain the initial implementation contract as baseline where
+it is not superseded by this clarification.
 
 ### Implementation update — 15 October 2026
 

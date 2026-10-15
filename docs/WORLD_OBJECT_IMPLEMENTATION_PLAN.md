@@ -1,7 +1,9 @@
 # World objects, perception and autonomous interaction — implementation plan
 
-Status: Stages 1–8 implemented; final automated regression passed through
-`bac23e0` (828 tests). Native practical acceptance remains open.
+Status: first implementation passed automated regression through `bac23e0`
+(828 tests), but the first user test found incomplete visible behavior.
+Practical acceptance has not passed. The correction plan below is documentation
+only; the corrections are not implemented yet.
 Recorded: 15 October 2026.
 Baseline: `main` at `1753266db0dafc94024913cb281b80e7abe289a0` (merged PR #9).
 
@@ -14,6 +16,136 @@ Native acceptance is separate from automated implementation checks. Keep the
 [current architecture](ARCHITECTURE.md) as the reference for the existing code.
 The [refactor ledger](PET_ARCHITECTURE_REFACTOR.md) describes the preceding work;
 its exclusions do not prohibit the explicitly planned feature here.
+
+## Practical test correction plan
+
+Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
+the original consumption-only intention and immediate pickup-to-consumption
+assumptions below. Existing implementation/CI evidence remains historical
+evidence for that baseline, not acceptance of the revised behavior.
+
+### Confirmed observations and desired behavior
+
+The user reported an Energy Drink being accepted without a readable decision
+or sustained consumption, resting objects receiving gaze but no visible
+investigation/identification/decision, and a purple item fringe. Ground objects
+included Onigiri at roughly 76% satiety and Energy Drink around 60% energy.
+
+Investigation is independent of appetite. A new noticed reachable ground object
+can motivate approach and inspection even when Aiko does not currently want to
+consume it. She announces the steps in readable bubbles, picks up the object,
+examines/identifies it, decides, then consumes or puts it down and says she will
+keep it for later. Known deferred objects must not trigger endless reinspection.
+
+Confirmed code gaps: `ObjectIntentions` currently requires recognized identity
+and a need threshold before selecting any goal; `InteractionPhase` currently
+contains only `idle`, `pick_up`, `put_down`, `eat`. Perception transitions have
+no object-specific dialogue events. `SpeechPresenter.show_text()` replaces the
+current bubble, so consecutive uncoordinated calls are insufficient.
+
+The authored eating clip lasts 3.59 s. Cursor entry currently calls the object
+interruption path even immediately after handover; this is a plausible abort
+path to reproduce, not yet proof of the user's exact event sequence. Existing
+GUI tests manually advance frames and bypass some real input/attention gates.
+The new regression must exercise the full scheduler and competing callbacks.
+
+Item PNGs contain partial alpha; World windows use Magenta color-key
+transparency. Prepared character frames already use binary alpha. Establish
+reproducible Windows-compatible item display copies and native visual evidence.
+
+### Preserve separate state owners
+
+| State plane | Existing owner | Planned extension |
+| --- | --- | --- |
+| Physical portion/custody | `world/contracts.py`, `world/state.py` | Keep `USER_HELD`, `FALLING`, `RESTING`, `PET_HELD`, `CONSUMED`, `REMOVED`; inspecting/deciding are not World states |
+| Subjective knowledge and review history | `pet/mind/object_perception.py`, `object_memory.py` | Keep observed/learned identity separate from whether an object was examined and deferred; update only from observations and Aiko's confirmed own actions |
+| Purpose and decision | `pet/mind/object_intentions.py`, pet care policies | Distinguish investigate from consume; represent defer with a reason; need thresholds gate consumption desire, not curiosity |
+| Execution progress | `application/object_interaction.py` | Explicit phase transitions, prerequisites, completion receipts and cancellation per interaction |
+| Wording and visible playback | `PetMind`, dialogue catalog, `ReactionPlayer`, `SpeechPresenter`, `AnimatedPet` | Mind selects authored reactions; presentation reports completed/cancelled cues and animation actions without deciding custody or nutrition |
+| Host/time/placement | existing desktop tick, `WalkDriver`, `DesktopWorldRuntime` | Feed facts and execute confirmed actions; no second cognition timer, position owner or widget-based decision engine |
+
+Do not turn emotion into a second action state machine. Aiko can remain calm
+while inspecting; emotion influences wording. Use narrow typed ports and event
+values between existing owners, not a new generic event bus.
+
+### Required execution sequence
+
+Phase names below are proposed application contracts, not implemented APIs.
+Knowledge and physical custody remain separate throughout.
+
+| Phase | Completion condition and visible behavior | Physical state |
+| --- | --- | --- |
+| Notice/orient | A real notice event; question/announcement cue gets readable time | `RESTING` |
+| Approach | Investigate intention accepted; existing driver confirms actual arrival; announce approach | `RESTING` |
+| Pick up | Fresh existence/custody/reach/activity check; source frame 4 acquires, pose 8 finishes pickup | `RESTING` → `PET_HELD` |
+| Inspect | Hold the existing safe pose, examine for a configured interval, confirm identity from permitted evidence and acknowledge it | `PET_HELD` |
+| Decide | Pure pet policy returns consume or defer with reason; decision bubble completes before advancing | `PET_HELD` |
+| Consume | Revalidate current acceptance; one application transaction applies effects at visible consumption start; play the complete existing eating/drinking presentation | `PET_HELD` → `CONSUMED` |
+| Put down | Reverse playback, detach at source 4→3; finish the animation and the truthful later-use comment | `PET_HELD` → `RESTING` |
+| Complete/defer | Remember the confirmed outcome; release the foreground interaction | Terminal or resting |
+
+Already recognized objects must not be presented as mysteriously unknown again.
+First investigation still permits handling/examination before the consumption
+decision. A deferred known object can later become a consumption target when
+the relevant need crosses its threshold, without repeating the discovery story.
+
+Handover is a distinct entry into this sequence: notice, identify and visibly
+signal willingness while the user holds; accept only on release if willing,
+recognized and available. Then confirm handover, hold/inspect as needed and
+consume visibly. It skips ground approach/pickup, not readable decisions and
+consumption. Unaccepted release still falls; no unconditional acceptance merely
+for investigation is introduced for user-held offers.
+
+### Phase, feedback and interruption contracts
+
+- Every meaningful phase emits one identified semantic event. Mind/catalog
+  supplies German wording; the application does not embed phrases in widgets.
+- Reuse the existing single bubble/emote channel. Add completion/cancellation
+  acknowledgement to existing reaction playback through narrow ports. Correlate
+  it with interaction, phase and cue/action IDs. A stale callback cannot advance
+  a later phase, duplicate an effect or strand the interaction.
+- Require the phase's animation completion and readable cue lifetime where both
+  belong to the phase. Cues may accompany movement; no rapid replacement of an
+  unread decision. Reuse current text timing (normally 1.8–3.5 s). Proposed
+  inspection minimum: 1 s, validated in balance data; existing consumption stays
+  3.59 s initially. These timing values are tuning proposals pending the next test.
+- Required object feedback is part of the action, independent of optional
+  spontaneous speech. Ambient chatter/notifications cannot overwrite it. Explicit
+  user actions retain priority through the existing interruption path.
+- Passive cursor re-entry, including entry caused by handover/window removal,
+  must not abort the consumption it just initiated. Explicit care/game/sleep
+  requests remain distinguishable from hover and can interrupt deliberately.
+- Before grasp: cancel safely without effects. After grasp/before consumption:
+  reach safe hold, put down, then execute the queued user request. After the
+  consumption commit: no recreation, refund or duplicate effect.
+- Evaluate investigation pickup by reach/custody/availability, not appetite.
+  Keep the canonical nutrition/capacity decision at consumption. Recheck after
+  delays; a changed condition can lead to put-down with appropriate wording.
+- Record examined/deferred knowledge per instance and relevant need band. A
+  continuously visible deferred item does not cause repeated pickup. Reconsider
+  for meaningful subjective changes or need-threshold crossing, not every float
+  change/tick. Unknown moves still do not refresh location or identity.
+- Keep current joint-save recovery: unconsumed held items recover grounded;
+  active phase/cursor capture and dialogue are not resumed after restart. No
+  World consumption while closed and no human-care reward for investigation or
+  autonomous use.
+
+### Small implementation commits and acceptance gates
+
+| Step | Scope | Required evidence before moving on |
+| --- | --- | --- |
+| C1 | Reproduce full-runtime drink/hover and approach failures; specify typed phase/decision/feedback contracts | Trace actual tick, input, active action, goal, custody and cue lifecycle in isolated tests; distinguish reproduced faults from hypotheses; pin acceptance scenarios |
+| C2 | Mind investigation purpose and examined/deferred knowledge | Onigiri at 76% can be investigated and deferred; unknown noticed objects can attract approach; known deferred objects stay stable; later hunger/energy activates consumption; hidden truth does not leak |
+| C3 | Application phase transitions and safe held inspection | Full pickup → hold/inspect → decide → consume/put-down sequence; frame-4/4→3 custody once; no nutrition during investigation; duplicate/stale/cancelled completions and interruptions recover safely |
+| C4 | Authored object reactions and phase-aware presentation arbitration | Required notice/approach/recognition/decision/outcome bubbles are readable and ordered through existing mind/UI owners; hover does not truncate the 3.59 s clip; explicit actions and cue cancellation cannot deadlock or repeat effects |
+| C5 | Shared reproducible item transparency preparation for cursor, World and hand | Preserve approved originals; use Windows-compatible display alpha consistently at native 1x/2x, retain pivots/size and icons; verify hashes/determinism plus native fringe/layering appearance |
+| C6 | Full scheduler regressions, updated test launcher/checklist and practical retest | Real Tk event loop without manually bypassing movement/control gates; food 76%, drink around 60%, hungry/full, offer/refusal, deliberate interruption, repeated ticks, 1x/2x and restart; static checks and complete CI |
+
+Further green splits are allowed, especially between coordinator contracts and
+UI wiring. Tests verify the public sequence while each layer stays independently
+testable. Automatic tests alone do not establish native visual acceptance.
+The draft PR stays unmerged until the revised practical test passes. This
+revision records planned corrections only; runtime behavior remains unchanged.
 
 ## First complete user scenario
 
