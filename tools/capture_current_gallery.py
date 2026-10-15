@@ -85,8 +85,8 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     # This is a temporary media-only state. Clear previous scripted care
     # deadlines so they cannot mask the passive idle director.
     pet.state.sleeping = False
-    pet._action_until = 0.0
-    pet._action_state = "idle"
+    pet._action_playback.until = 0.0
+    pet._action_playback.state = "idle"
     pet._reaction_player.cancel()
     pet._speech.hide()
     # Stop the normal tick: scripted capture timestamps must not be
