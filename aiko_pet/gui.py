@@ -303,6 +303,7 @@ class DesktopPet:
                     self._animated.movement.remaining_distance != 0
                 ),
                 action_until=lambda: self._action_until,
+                refresh_toolbar=self._refresh_care_toolbar,
             ),
         )
         self._care_view = CarePresenter(CareViewPorts(
@@ -560,14 +561,7 @@ class DesktopPet:
             now, wall_time, self.context,
         )
         self.context = progress.context
-        if progress.period_changed:
-            if self._hover.toolbar is not None:
-                self._hover.toolbar.refresh()
-            if self.settings.spontaneous_talk and progress.sleep_changed:
-                event = "sleep" if self.state.sleeping else "wake"
-                self._react(self.mind.say_event(
-                    event, self.state, self.context, now,
-                ))
+        self._attention_runtime.handle_time_progress(progress, now)
 
     def _maybe_show_idle_emote(self, now: float) -> None:
         self._attention_runtime.maybe_show_idle_emote(now)

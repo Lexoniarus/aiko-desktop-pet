@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ..application.attention import AttentionCoordinator
+from ..application.activity import TimeProgress
 from ..pet.animation.idle_emote import choose_idle_emote
 from ..pet.routine import TimeContext
 from ..ui.pet_view.attention_presenter import AttentionPresenter
@@ -27,6 +28,7 @@ class AttentionRuntimePorts:
     reaction_pending: Callable[[], bool]
     walking: Callable[[], bool]
     action_until: Callable[[], float]
+    refresh_toolbar: Callable[[], None]
 
 
 class DesktopAttentionRuntime:
@@ -39,6 +41,19 @@ class DesktopAttentionRuntime:
         self.attention = attention
         self._presenter = presenter
         self._ports = ports
+
+    def handle_time_progress(self, progress: TimeProgress, now: float) -> None:
+        """Present period transitions, leaving domain dialogue to attention."""
+        if not progress.period_changed:
+            return
+        self._ports.refresh_toolbar()
+        if not progress.sleep_changed:
+            return
+        reaction = self.attention.select_sleep_transition_reaction(
+            now, progress.context,
+        )
+        if reaction is not None:
+            self._presenter.show_reaction(reaction, 2600)
 
     def cursor_moved(
         self, distance: float, screen_width: int, now: float,

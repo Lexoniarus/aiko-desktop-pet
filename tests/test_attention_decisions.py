@@ -49,6 +49,37 @@ class AttentionDecisionTests(unittest.TestCase):
         self.assertIsNone(actual)
         say.assert_not_called()
 
+    def test_sleep_transition_uses_current_state_and_dialogue(self) -> None:
+        reaction = Mock()
+        with patch.object(self.mind, "say_event", return_value=reaction) as say:
+            self.state.sleeping = True
+            self.assertIs(
+                self.attention.select_sleep_transition_reaction(
+                    100.0, self.context,
+                ),
+                reaction,
+            )
+            say.assert_called_once_with(
+                "sleep", self.state, self.context, 100.0,
+            )
+
+        self.state.sleeping = False
+        with patch.object(self.mind, "say_event", return_value=reaction) as say:
+            self.attention.select_sleep_transition_reaction(101.0, self.context)
+            say.assert_called_once_with(
+                "wake", self.state, self.context, 101.0,
+            )
+
+    def test_disabled_spontaneous_talk_suppresses_sleep_transition(self) -> None:
+        self.attention.settings.spontaneous_talk = False
+        with patch.object(self.mind, "say_event") as say:
+            self.assertIsNone(
+                self.attention.select_sleep_transition_reaction(
+                    100.0, self.context,
+                ),
+            )
+            say.assert_not_called()
+
     def test_walk_pause_reaction_keeps_existing_gate(self) -> None:
         reaction = Mock()
         with (

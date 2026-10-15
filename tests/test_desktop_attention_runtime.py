@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import Mock
 
 from aiko_pet.application.attention import AttentionCoordinator, SpontaneousChoice
+from aiko_pet.application.activity import TimeProgress
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.desktop.attention_runtime import (
     AttentionRuntimePorts, DesktopAttentionRuntime,
@@ -19,6 +20,7 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         self.attention.state = PetState()
         self.presenter = Mock(spec=AttentionPresenter)
         self.context = context_at(1_781_000_000.0)
+        self.toolbar_refresh = Mock()
         self.runtime = DesktopAttentionRuntime(
             self.attention, self.presenter,
             AttentionRuntimePorts(
@@ -30,8 +32,39 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
                 reaction_pending=lambda: False,
                 walking=lambda: False,
                 action_until=lambda: 0.0,
+                refresh_toolbar=self.toolbar_refresh,
             ),
         )
+
+    def test_period_transition_refreshes_and_presents_sleep_dialogue(self) -> None:
+        reaction = Mock()
+        self.attention.select_sleep_transition_reaction.return_value = reaction
+        self.runtime.handle_time_progress(
+            TimeProgress(self.context, period_changed=True, sleep_changed=True),
+            123.0,
+        )
+        self.toolbar_refresh.assert_called_once_with()
+        self.attention.select_sleep_transition_reaction.assert_called_once_with(
+            123.0, self.context,
+        )
+        self.presenter.show_reaction.assert_called_once_with(reaction, 2600)
+
+    def test_no_period_transition_does_not_touch_presentation(self) -> None:
+        self.runtime.handle_time_progress(
+            TimeProgress(self.context, period_changed=False, sleep_changed=True),
+            123.0,
+        )
+        self.toolbar_refresh.assert_not_called()
+        self.attention.select_sleep_transition_reaction.assert_not_called()
+        self.presenter.show_reaction.assert_not_called()
+
+    def test_period_change_without_sleep_refreshes_only_toolbar(self) -> None:
+        self.runtime.handle_time_progress(
+            TimeProgress(self.context, period_changed=True, sleep_changed=False),
+            123.0,
+        )
+        self.toolbar_refresh.assert_called_once_with()
+        self.attention.select_sleep_transition_reaction.assert_not_called()
 
     def test_cursor_comment_is_selected_before_rendering(self) -> None:
         reaction = Mock()

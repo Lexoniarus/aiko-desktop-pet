@@ -113,6 +113,15 @@ class AttentionCoordinator:
             return None
         return self.mind.say_event("walk_pause", self.state, context, now)
 
+    def select_sleep_transition_reaction(
+        self, now: float, context: TimeContext,
+    ) -> Reaction | None:
+        """Select an authored sleep/wake line after a real period transition."""
+        if not self.settings.spontaneous_talk:
+            return None
+        event = "sleep" if self.state.sleeping else "wake"
+        return self.mind.say_event(event, self.state, context, now)
+
     def idle_animation(
         self, now: float, *, action_until: float,
         walking: bool, toolbar_visible: bool,
