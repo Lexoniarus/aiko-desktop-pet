@@ -1,0 +1,61 @@
+"""Joined pet/World effects survive duplicates and recover partial failures."""
+
+import unittest
+from copy import deepcopy
+from unittest.mock import patch
+
+from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
+from aiko_pet.application.object_consumption import ObjectConsumption
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.consumption import ConsumptionOrigin
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.state import PetState
+from aiko_pet.world.contracts import (
+    ObjectDefinition,
+    ObjectFootprint,
+    ObjectInteraction,
+    WorldSurface,
+)
+from aiko_pet.world.state import WorldState
+
+
+class ObjectConsumptionTests(unittest.TestCase):
+    def setUp(self):
+        self.world = WorldState(WorldSurface(800, 600), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        item = self.world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        self.item = self.world.collect_resting(item.instance_id, expected_revision=0)
+        self.pet = PetState(satiety=50)
+        self.use_case = ObjectConsumption(
+            self.pet, make_aiko_mind(started_at=0), AdaptiveRoutine(),
+            clock=ActiveSessionClock(lambda: 0),
+        )
+        self.inputs = SessionInputs(1_800_000_000, 1, False, None, False, False, None)
+
+    def consume(self):
+        return self.use_case.complete(self.world, "one", self.item.instance_id,
+                                      ConsumptionOrigin.AUTONOMOUS, self.inputs)
+
+    def test_identical_replay_returns_receipt_without_another_effect(self):
+        first = self.consume()
+        pet, world = deepcopy(self.pet), self.world.snapshot()
+        self.assertTrue(first.accepted)
+        self.assertEqual(self.consume(), first)
+        self.assertEqual(self.pet, pet)
+        self.assertEqual(self.world.snapshot(), world)
+
+    def test_failure_after_world_mutation_restores_both_owners(self):
+        before = self.world.snapshot()
+        original = self.world.consume
+
+        def broken(*args, **kwargs):
+            original(*args, **kwargs)
+            raise RuntimeError("injected partial failure")
+
+        with patch.object(self.world, "consume", side_effect=broken):
+            with self.assertRaises(RuntimeError):
+                self.consume()
+        self.assertEqual(self.world.snapshot(), before)
+        self.assertEqual(self.pet.satiety, 50)
+        self.assertTrue(self.consume().accepted)

@@ -79,6 +79,28 @@ class WorldState:
         except KeyError:
             raise WorldOperationError(WorldFailure.UNKNOWN_INSTANCE) from None
 
+    def restore_snapshot(self, snapshot: WorldSnapshot) -> None:
+        """Owner-controlled recovery from a validated session/checkpoint."""
+        self._require_owner()
+        if tuple(self._definitions.values()) != snapshot.definitions:
+            raise ValueError("World recovery requires the same definitions")
+        objects: dict[str, WorldObjectSnapshot] = {}
+        for item in snapshot.objects:
+            if (item.instance_id in objects
+                    or item.definition_id not in self._definitions):
+                raise ValueError("Invalid restored instance identity")
+            if item.position is not None and not snapshot.surface.contains(
+                item.position, item.footprint,
+            ):
+                raise ValueError("Invalid restored position")
+            objects[item.instance_id] = item
+        self._surface = snapshot.surface
+        self._objects = objects
+        self._revision = snapshot.revision
+        self._next_id = max(self._next_id, 1 + max(
+            (int(key.removeprefix("object_")) for key in objects), default=0,
+        ))
+
     def create_held(
         self, definition_id: str, position: WorldPosition,
         footprint: ObjectFootprint,
