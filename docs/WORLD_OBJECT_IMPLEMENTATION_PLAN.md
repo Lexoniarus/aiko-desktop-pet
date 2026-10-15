@@ -28,12 +28,22 @@ its exclusions do not prohibit the explicitly planned feature here.
 | C4 — readable reactions, staged handover and hover protection | `ea688b9`, `7d9eb40`, `1c0e95c` | 845 tests; actual timer flows; existing exact-care assertion uses controlled active time |
 | C5 — shared Windows-compatible item copies | `bf2f562` | 848 tests; 22 deterministic binary-alpha copies, original hashes/RGB/geometry preserved |
 | C6 — full regression and practical handoff | `9dec641` | 850 full-suite tests passed; three actual timer tests passed in 50.3 s: ordered readable bubbles, deferred reuse after hunger, full drink through Enter, interrupted inspection and restart; curious 76/60 profile added |
+| C7 — investigate another item after consumption | This follow-up | Reproduced global-pause failure, then 851 full-suite tests passed on Windows/Python 3.11 in 178.0 s; sequential food consumption → drink investigation/defer at energy 66 completes before the old pause expires; static checks pass |
 
 CI run `38767715644` passed all three jobs at `bf2f562` (Linux Python
 3.11/3.13 and Windows). Final C6 source gate: 850 tests at `9dec641`; current-head
 CI results are linked in [the test handoff](WORLD_SMOKE_TEST.md#automated-evidence).
 Ruff 0.13.2, strict Mypy 1.18.2 (167 source files) and Pyright 1.1.414 pass.
 Native appearance and interaction still need the revised practical retest.
+
+Second practical feedback: Onigiri reached consumption; a nearby Energy Drink
+was investigated and deferred at energy 66, but only after a long delay. The
+global 30-second consumption pause also blocked independent curiosity. Limit
+that pause to renewed supply seeking of examined portions. A sequential real
+timer regression now requires the drink's full investigation and put-down after
+food consumption, before the old pause expires. Energy 66 still correctly
+declines autonomous drink consumption (threshold 60). Eating grip placement
+remains under visual correction; native acceptance stays open.
 
 Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
 the original consumption-only intention and immediate pickup-to-consumption
@@ -177,7 +187,9 @@ Start parameters: seek food at satiety <=70, drink at energy <=60; notice within
 3 character widths after 0.2 s, recognize within 1.5 widths after 0.6 s. Memory
 expires after 600 active seconds. Reevaluate at most once per second plus
 meaningful changes; search a remembered position for 2 s, retry after 10 s,
-and pause 30 s after consumption. Stable eligible targets are retained.
+and pause renewed supply seeking of examined portions for 30 s after consumption.
+First investigation of a different portion bypasses this pause. Stable eligible
+targets are retained.
 
 The first practical handoff includes all eight stages and restart support, a
 temporary-save launcher with hungry/full scenarios, full regression and a draft

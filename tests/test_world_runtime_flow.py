@@ -121,6 +121,27 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.assertNotIn("object_notice", [event for _, event, _ in self.feedback])
         self.assertGreater(self.app.state.satiety, 98)
         self.assertEqual(self.app.state.friendship, 15)
+        self.app.state.energy = 66
+        drink = world.world.place_resting("energy_drink", world._body_x() + 30,
+                                          ObjectFootprint(12, 12))
+        self.feedback.clear()
+        trace = self.run_until(lambda: any(
+            cue[1] == "object_notice" for cue in self.feedback
+        ), 8)
+        self.assertIn("object_notice", [cue[1] for cue in self.feedback], trace)
+        started = self.feedback[0][0]
+        trace += self.run_until(lambda: (
+            (known := world.awareness.memory.get(drink.instance_id)) is not None
+            and known.examined and world.world.get(drink.instance_id).state
+            == ObjectState.RESTING and not world.interaction.active
+        ), 25)
+        self.assertFalse(world.interaction.active, trace)
+        self.assertLess(world.now - started, 25)
+        self.assertEqual(world.world.get(drink.instance_id).state, ObjectState.RESTING)
+        events = [cue[1] for cue in self.feedback]
+        self.assertEqual(events[events.index("object_notice"):], expected)
+        self.assertTrue(any("Energy" in text for _, _, text in self.bubbles))
+        self.assertLess(self.app.state.energy, 67)
 
     def test_sleep_during_held_inspection_puts_down_and_restart_keeps_portion(self):
         world = self.app._world

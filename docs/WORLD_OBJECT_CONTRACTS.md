@@ -329,7 +329,9 @@ Native Windows interaction acceptance is tracked separately in
   plus relevant changes. Retain eligible goals; tie-break by need urgency,
   food repetition, path length and stable instance token.
 - Search at last-known position for 2 s, then forget that presence and retry
-  after 10 s. Interruption also waits 10 s; consumption waits 30 s.
+  after 10 s. Interruption also waits 10 s; renewed supply seeking of examined
+  portions waits 30 s after consumption. This pause does not block the first
+  investigation of a different, unexamined portion.
 - Handover: horizontal distance ≤0.3 body widths, height 0.05–0.9 widths;
   recognition observed within 0.5 s, no conflicting action, canonical capacity.
   Ground reach is 0.25 widths, with actual arrival checked within 2 desktop units.

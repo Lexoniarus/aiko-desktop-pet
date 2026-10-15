@@ -49,14 +49,16 @@ class ObjectIntentions:
         if state.sleeping or blocked:
             self.cancel(now)
             return None
-        if now < self._pause_until:
-            return None
         if not changed and now < self._next_check:
             return self.goal
         self._next_check = now + BALANCE.number("object_behavior", "reevaluate_seconds")
         options: list[tuple[tuple[float, bool, float, str], ObjectGoal]] = []
         for item in known:
             if not item.resting:
+                continue
+            # Rest after consumption limits renewed supply seeking. Curiosity
+            # about a different, unexamined portion remains an independent goal.
+            if item.examined and now < self._pause_until:
                 continue
             wanted = decide_object_use(item, state).consume
             if item.examined and not wanted:

@@ -3,6 +3,9 @@
 - Add need-independent investigation and subjective examined memory. Aiko
   approaches, picks up, examines and decides; unwanted items are put down for
   later without repeated investigation, and hunger can activate known items.
+- Keep the post-consumption supply-seeking pause from delaying the first
+  investigation of another ground item; a drink at energy 66 is examined and
+  put down for later without waiting 30 seconds.
 - Coordinate readable notice, approach, recognition, decision and outcome
   bubbles through existing Mind/dialogue/reaction owners and identified receipts.
 - Stage accepted handover through safe holding/inspection before use; preserve

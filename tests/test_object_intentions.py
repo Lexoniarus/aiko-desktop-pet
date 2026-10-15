@@ -40,6 +40,18 @@ class ObjectIntentionTests(unittest.TestCase):
         self.assertIsNone(planner.choose((replace(unknown, resting=False),), pet,
                                          x=0, now=3, changed=True))
 
+    def test_consumption_pause_does_not_delay_another_objects_first_investigation(self):
+        planner = ObjectIntentions()
+        pet = PetState(satiety=50, energy=66)
+        planner.choose((APPLE,), pet, x=0, now=0)
+        planner.cancel(1, consumed=True)
+        drink = replace(APPLE, token="drink", identity="energy_drink", kind="drink",
+                        examined=False, x=150)
+        goal = planner.choose((APPLE, drink), pet, x=0, now=2)
+        assert goal is not None
+        self.assertEqual(goal.token, "drink")
+        self.assertEqual(goal.purpose, "investigate")
+
     def test_satiated_food_is_investigated_once_then_reconsidered_when_hungry(self):
         planner = ObjectIntentions()
         pet = PetState(satiety=76)

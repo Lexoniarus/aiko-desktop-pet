@@ -61,7 +61,12 @@ and sprite scale. Repeat visual/input checks at 1× and 2×.
   without repeating the surprise/discovery story.
 - [ ] In fresh `curious`, drop Energy Drink: energy around 60 motivates use after
   investigation. Energy rises by up to ten; satiety and digestion do not gain food
-  effects. After consumption there is the existing 30-second autonomous pause.
+  effects. Renewed supply seeking of examined items pauses for 30 seconds after
+  consumption; a different unexamined ground item can still be investigated.
+- [ ] Leave Onigiri and Energy Drink together, with hunger and energy around
+  66. After finishing the Onigiri, Aiko investigates the drink without the
+  former 30-second wait. At energy above 60 she puts it down for later; first
+  investigation is independent of the consumption threshold.
 - [ ] In `full`, offered food is visibly refused and falls. Ground food is still
   investigated and put down for later. Existing capacity limits remain food ≥96
   and drink at 100; even a small natural energy deficit permits a human drink
