@@ -1,0 +1,77 @@
+"""Stable need-driven goals selected from subjective knowledge only."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from ..balance import BALANCE
+from ..food import is_repeated_food
+from ..state import PetState
+from .object_perception import ConsumableKind, ObjectObservation
+
+
+@dataclass(frozen=True, slots=True)
+class ObjectGoal:
+    token: str
+    identity: str
+    kind: ConsumableKind
+    x: float
+    height: float
+    observed_at: float
+
+
+class ObjectIntentions:
+    def __init__(self) -> None:
+        self.goal: ObjectGoal | None = None
+        self._next_check = 0.0
+        self._retry: dict[str, float] = {}
+        self._pause_until = 0.0
+
+    def cancel(self, now: float, *, consumed: bool = False) -> None:
+        if self.goal is not None:
+            self._retry[self.goal.token] = now + BALANCE.number(
+                "object_behavior", "retry_seconds",
+            )
+        self.goal = None
+        self._next_check = 0
+        if consumed:
+            self._pause_until = now + BALANCE.number(
+                "object_behavior", "consumed_pause_seconds",
+            )
+
+    def choose(
+        self, known: tuple[ObjectObservation, ...], state: PetState, *,
+        x: float, now: float, blocked: bool = False, changed: bool = False,
+    ) -> ObjectGoal | None:
+        if state.sleeping or blocked:
+            self.cancel(now)
+            return None
+        if now < self._pause_until:
+            return None
+        if not changed and now < self._next_check:
+            return self.goal
+        self._next_check = now + BALANCE.number("object_behavior", "reevaluate_seconds")
+        options: list[tuple[tuple[float, bool, float, str], ObjectGoal]] = []
+        for item in known:
+            if item.identity is None or item.kind is None or not item.resting:
+                continue
+            threshold = BALANCE.number(
+                "object_behavior",
+                "seek_food_satiety" if item.kind == "food" else "seek_drink_energy",
+            )
+            level = state.satiety if item.kind == "food" else state.energy
+            if level > threshold or now < self._retry.get(item.token, 0):
+                continue
+            goal = ObjectGoal(item.token, item.identity, item.kind,
+                              item.x, item.height, item.observed_at)
+            if self.goal is not None and item.token == self.goal.token:
+                self.goal = goal
+                return goal
+            repetitive = item.kind == "food" and is_repeated_food(
+                state.food, item.identity,
+            )
+            rank = (-(threshold - level) / threshold, repetitive,
+                    abs(item.x - x), item.token)
+            options.append((rank, goal))
+        self.goal = min(options, key=lambda option: option[0])[1] if options else None
+        return self.goal
