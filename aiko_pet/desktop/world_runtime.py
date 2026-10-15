@@ -205,8 +205,9 @@ class DesktopWorldRuntime:
                     and known is not None and self.interaction.examined):
                 self.awareness.memory.update((ObjectObservation(
                     token, known.identity, known.kind, item.position.x,
-                    item.position.height, True, self.now, examined=True,
+                    item.position.height, True, self.now,
                 ),), now=self.now)
+                self.awareness.memory.mark_examined(token)
         self.awareness.intentions.cancel(self.now, consumed=consumed)
         self._walk.movement.set_goal(None)
         self._visual.object_target = None

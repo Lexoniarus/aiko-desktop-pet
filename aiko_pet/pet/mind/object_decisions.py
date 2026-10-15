@@ -9,7 +9,7 @@ from ..balance import BALANCE
 from ..consumption import ConsumptionOrigin
 from ..food import FOOD_BALANCE
 from ..state import PetState
-from .object_perception import ObjectObservation
+from .object_knowledge import ObjectKnowledge
 
 
 @dataclass(frozen=True, slots=True)
@@ -19,7 +19,7 @@ class ObjectUseDecision:
 
 
 def decide_object_use(
-    known: ObjectObservation | None, state: PetState,
+    known: ObjectKnowledge | None, state: PetState,
     origin: ConsumptionOrigin = ConsumptionOrigin.AUTONOMOUS,
 ) -> ObjectUseDecision:
     if known is None or known.identity is None or known.kind is None:

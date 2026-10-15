@@ -1,5 +1,10 @@
 ## Unreleased — World practical-test corrections
 
+- Separate learned object knowledge from current sensory observations. Preserve
+  known identity and completed inspection across observed relocation; expire
+  only unidentified sightings after ten active minutes. Add typed portable
+  memory values and distinguish deliberate reserve placement from interruption.
+
 - Let Aiko approach and grasp ground portions at both screen edges at 1x/2x.
   A shared geometry rule requires actual arrival at the closest legal standing
   pose for the bounded edge grip. Acquire/snap at pickup frame 4; defer by

@@ -32,7 +32,6 @@ class ObjectObservation:
     height: float
     resting: bool
     observed_at: float
-    examined: bool = False
 
 
 @dataclass

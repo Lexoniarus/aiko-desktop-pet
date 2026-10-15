@@ -9,7 +9,8 @@ from ..balance import BALANCE
 from ..food import is_repeated_food
 from ..state import PetState
 from .object_decisions import decide_object_use
-from .object_perception import ConsumableKind, ObjectObservation
+from .object_knowledge import ObjectKnowledge
+from .object_perception import ConsumableKind
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,7 +44,7 @@ class ObjectIntentions:
             )
 
     def choose(
-        self, known: tuple[ObjectObservation, ...], state: PetState, *,
+        self, known: tuple[ObjectKnowledge, ...], state: PetState, *,
         x: float, now: float, blocked: bool = False, changed: bool = False,
     ) -> ObjectGoal | None:
         if state.sleeping or blocked:

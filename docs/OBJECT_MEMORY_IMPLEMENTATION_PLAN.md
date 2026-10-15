@@ -56,12 +56,19 @@ Keep the existing draft PR unmerged until practical acceptance.
 
 | Step | Reviewable result | Commit / verification |
 | --- | --- | --- |
-| P0 | Record this accepted plan and architecture link | This document's initial commit; baseline checks |
-| P1 | Separate typed knowledge and snapshot values; retention, relocation and own-action facts | Pending |
+| P0 | Record this accepted plan and architecture link | `0ab36e0`; 9 documentation checks and pinned static gates; baseline 867 tests passed on Python 3.14 |
+| P1 | Separate typed knowledge and snapshot values; retention, relocation and own-action facts | This step's commit; verification below |
 | P2 | Coherent consumption and confirmed placement across owners | Pending |
 | P3 | Versioned codec, joint save/restore and compatibility without fabricated sensing | Pending |
 | P4 | Preserve retrieval purpose, skip redundant inspection, contextual JSON dialogue | Pending |
 | P5 | Restart regression, isolated practical starter and acceptance checklist | Pending |
+
+P1 separates `ObjectKnowledge` from observations and introduces portable snapshot
+values with relative active ages. Recognition survives absence and observed
+relocation; conflicting recognition invalidates inspection/disposition. Unknown
+sightings alone expire. Own-action records distinguish deferral and interruption.
+Targeted object tests and all pinned static checks passed (168 source files).
+Full Windows/Python 3.11 suite: 871 tests passed in 200.8 s.
 
 ## Acceptance evidence
 

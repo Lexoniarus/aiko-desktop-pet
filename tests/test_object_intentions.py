@@ -4,10 +4,10 @@ import unittest
 from dataclasses import replace
 
 from aiko_pet.pet.mind.object_intentions import ObjectIntentions
-from aiko_pet.pet.mind.object_perception import ObjectObservation
+from aiko_pet.pet.mind.object_knowledge import ObjectKnowledge
 from aiko_pet.pet.state import PetState
 
-APPLE = ObjectObservation("one", "apple", "food", 100, 0, True, 0, examined=True)
+APPLE = ObjectKnowledge("one", "apple", "food", 100, 0, True, 0, examined=True)
 
 
 class ObjectIntentionTests(unittest.TestCase):
