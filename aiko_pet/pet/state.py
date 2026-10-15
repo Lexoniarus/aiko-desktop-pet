@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
+from copy import deepcopy
+from dataclasses import dataclass, field, fields, replace
 
 from .balance import BALANCE
 from .care_actions import (
+    CareTransition,
     plan_care_action,
     resolve_care_time,
 )
 from .care_result import CareResult
+from .consumption import ConsumptionOrigin
 from .food import (
     FOOD_CATALOG,
     FoodActivity,
@@ -279,6 +282,35 @@ class PetState:
             now=stamp,
             food_id=food_id,
         )
+        return self._apply_care_transition(transition, stamp)
+
+    def consume_item(
+        self, item_id: str, origin: ConsumptionOrigin, *, now: float,
+    ) -> CareResult | None:
+        """Use canonical nutrition; autonomous intake is not human attention."""
+        if self.sleeping:
+            return None
+        action = "energy_drink" if item_id == "energy_drink" else "feed"
+        transition = plan_care_action(
+            self, action, now=now,
+            food_id=None if action == "energy_drink" else item_id,
+        )
+        if origin == ConsumptionOrigin.AUTONOMOUS:
+            transition = replace(
+                transition, reward_action=None,
+                needs=replace(transition.needs, social=self.social),
+            )
+        return self._apply_care_transition(transition, now)
+
+    def restore_values(self, snapshot: PetState) -> None:
+        """Owner-controlled commit/recovery without replacing aggregate identity."""
+        for item in fields(self):
+            setattr(self, item.name, deepcopy(getattr(snapshot, item.name)))
+
+    def _apply_care_transition(
+        self, transition: CareTransition, stamp: float,
+    ) -> CareResult:
+        action = transition.result.action
         if not transition.changed:
             return transition.result
         self._set_needs(transition.needs)
