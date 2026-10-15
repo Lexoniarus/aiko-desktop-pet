@@ -34,7 +34,7 @@ class SpontaneousEventsTests(unittest.TestCase):
         self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(12))
 
     def test_sleep_never_chooses_an_event(self) -> None:
-        with patch.object(self.mind, "say_event") as speak:
+        with patch.object(self.mind, "select_reaction") as speak:
             self.assertIsNone(
                 self.mind.spontaneous_event(
                     PetState(sleeping=True), context(), 1000,

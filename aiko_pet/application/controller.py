@@ -81,7 +81,7 @@ class CareController:
         )
         if event not in ("play_tired", "energy_drink_full"):
             self._mind.after_care(command.action, runtime.monotonic_time)
-        reaction = self._mind.say_event(
+        reaction = self._mind.select_reaction(
             event, self._state, context, runtime.monotonic_time,
             tone=previous_emotion,
         )

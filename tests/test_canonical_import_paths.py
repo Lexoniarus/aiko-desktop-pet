@@ -68,6 +68,12 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+    def test_pet_mind_selector_name_does_not_imply_speech_output(self) -> None:
+        from aiko_pet.pet.mind import PetMind
+
+        self.assertTrue(hasattr(PetMind, "select_reaction"))
+        self.assertFalse(hasattr(PetMind, "say_event"))
+
     def test_pet_mind_never_performs_implicit_file_loading(self) -> None:
         source = (ROOT / "pet/mind/mind.py").read_text("utf-8")
         self.assertNotIn("DialogueBook.from_file(", source)

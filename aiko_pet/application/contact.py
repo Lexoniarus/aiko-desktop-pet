@@ -91,7 +91,7 @@ class ContactCoordinator:
         if not self._ports.should_greet(now):
             return
         self._ports.react(
-            self._mind.say_event(
+            self._mind.select_reaction(
                 "greeting", self._state, self._ports.context(), now,
             ), 3300,
         )

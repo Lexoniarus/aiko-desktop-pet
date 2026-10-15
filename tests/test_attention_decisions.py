@@ -25,7 +25,7 @@ class AttentionDecisionTests(unittest.TestCase):
         with (
             patch.object(self.attention, "select_cursor_comment_event",
                          return_value="cursor_follow") as detect,
-            patch.object(self.mind, "say_event", return_value=reaction) as say,
+            patch.object(self.mind, "select_reaction", return_value=reaction) as say,
         ):
             actual = self.attention.cursor_reaction(
                 200.0, 1920, 100.0, self.context, toolbar_visible=False,
@@ -41,7 +41,7 @@ class AttentionDecisionTests(unittest.TestCase):
     def test_suppression_does_not_invoke_dialogue_book(self) -> None:
         with (
             patch.object(self.attention, "select_cursor_comment_event", return_value=None),
-            patch.object(self.mind, "say_event") as say,
+            patch.object(self.mind, "select_reaction") as say,
         ):
             actual = self.attention.cursor_reaction(
                 200.0, 1920, 100.0, self.context, toolbar_visible=True,
@@ -51,7 +51,7 @@ class AttentionDecisionTests(unittest.TestCase):
 
     def test_sleep_transition_uses_current_state_and_dialogue(self) -> None:
         reaction = Mock()
-        with patch.object(self.mind, "say_event", return_value=reaction) as say:
+        with patch.object(self.mind, "select_reaction", return_value=reaction) as say:
             self.state.sleeping = True
             self.assertIs(
                 self.attention.select_sleep_transition_reaction(
@@ -64,7 +64,7 @@ class AttentionDecisionTests(unittest.TestCase):
             )
 
         self.state.sleeping = False
-        with patch.object(self.mind, "say_event", return_value=reaction) as say:
+        with patch.object(self.mind, "select_reaction", return_value=reaction) as say:
             self.attention.select_sleep_transition_reaction(101.0, self.context)
             say.assert_called_once_with(
                 "wake", self.state, self.context, 101.0,
@@ -72,7 +72,7 @@ class AttentionDecisionTests(unittest.TestCase):
 
     def test_disabled_spontaneous_talk_suppresses_sleep_transition(self) -> None:
         self.attention.settings.spontaneous_talk = False
-        with patch.object(self.mind, "say_event") as say:
+        with patch.object(self.mind, "select_reaction") as say:
             self.assertIsNone(
                 self.attention.select_sleep_transition_reaction(
                     100.0, self.context,
@@ -84,7 +84,7 @@ class AttentionDecisionTests(unittest.TestCase):
         reaction = Mock()
         with (
             patch.object(self.attention, "should_comment_after_walk", return_value=True),
-            patch.object(self.mind, "say_event", return_value=reaction) as say,
+            patch.object(self.mind, "select_reaction", return_value=reaction) as say,
         ):
             actual = self.attention.walk_reaction(100.0, self.context)
         self.assertIs(actual, reaction)

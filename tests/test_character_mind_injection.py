@@ -36,7 +36,7 @@ class CharacterMindInjectionTests(unittest.TestCase):
         book = DialogueBook((line,), rng=rng)
         mind = PetMind(book=book, rng=rng)
         self.assertIs(mind.book, book)
-        selected = mind.say_event(
+        selected = mind.select_reaction(
             "greeting", PetState(), context_at(1_781_000_000.0), 100.0,
         )
         assert selected is not None

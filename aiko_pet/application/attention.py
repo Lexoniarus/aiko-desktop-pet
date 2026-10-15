@@ -103,7 +103,7 @@ class AttentionCoordinator:
         )
         if event is None:
             return None
-        return self.mind.say_event(event, self.state, context, now)
+        return self.mind.select_reaction(event, self.state, context, now)
 
     def walk_reaction(
         self, now: float, context: TimeContext,
@@ -111,7 +111,7 @@ class AttentionCoordinator:
         """Convert completed walks into an already selected dialogue event."""
         if not self.should_comment_after_walk(now):
             return None
-        return self.mind.say_event("walk_pause", self.state, context, now)
+        return self.mind.select_reaction("walk_pause", self.state, context, now)
 
     def select_sleep_transition_reaction(
         self, now: float, context: TimeContext,
@@ -120,7 +120,7 @@ class AttentionCoordinator:
         if not self.settings.spontaneous_talk:
             return None
         event = "sleep" if self.state.sleeping else "wake"
-        return self.mind.say_event(event, self.state, context, now)
+        return self.mind.select_reaction(event, self.state, context, now)
 
     def select_idle_animation(
         self, now: float, *, action_until: float,
@@ -157,7 +157,7 @@ class AttentionCoordinator:
             request is not None and now >= self.next_care_request
             and not self.mind.recently_cared_for(now)
         ):
-            reaction = self.mind.say_event(request, self.state, context, now)
+            reaction = self.mind.select_reaction(request, self.state, context, now)
             if reaction is not None:
                 self.next_care_request = now + 30 * 60
                 return SpontaneousChoice(True, reaction)

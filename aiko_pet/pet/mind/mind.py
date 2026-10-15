@@ -88,15 +88,11 @@ class PetMind:
             return "playful"
         return "calm"
 
-    def say_event(
+    def select_reaction(
         self, event: str, state: PetState, context: TimeContext, now: float,
         *, tone: str | None = None,
     ) -> Reaction | None:
-        """Select a dialogue reaction; speech rendering belongs to the UI.
-
-        The historical name is retained for public callers. This method
-        neither speaks audio nor opens a text bubble.
-        """
+        """Select authored dialogue; speech playback is owned by the UI."""
         return self.book.choose(event, tone or self.emotion(state, now), context, now)
 
     def click(
@@ -112,7 +108,7 @@ class PetMind:
         self.clicks.append(now)
         count = len(self.clicks)
         if state.sleeping:
-            return self.say_event("sleep_click", state, context, now)
+            return self.select_reaction("sleep_click", state, context, now)
 
         self.work.note_click(self.situation)
         decision = choose_click_reaction(
@@ -131,7 +127,7 @@ class PetMind:
             return None
         if decision.irritates:
             self.irritated_until = max(self.irritated_until, now + 13.0)
-        return self.say_event(decision.event, state, context, now)
+        return self.select_reaction(decision.event, state, context, now)
 
     def care_event(
         self, action: str, state: PetState, context: TimeContext, now: float,
@@ -195,7 +191,7 @@ class PetMind:
         event = self.work.interpret_event(event, self.situation, now)
         if event == "computer_uptime":
             event = "computer_uptime_grounded"
-        return self.say_event(event, state, context, now)
+        return self.select_reaction(event, state, context, now)
 
     def return_to_pet(
         self, state: PetState, context: TimeContext, now: float,
@@ -210,7 +206,7 @@ class PetMind:
             event = "return_after_work"
         else:
             event = "return_close" if state.friendship >= 72 else "return"
-        return self.say_event(event, state, context, now)
+        return self.select_reaction(event, state, context, now)
 
     def _choose_idle_topic(self, state: PetState, context: TimeContext) -> str:
         """Select a grounded idle topic using the existing weighted rotation."""
@@ -280,7 +276,7 @@ class PetMind:
         if state.sleeping:
             return None
         event = self._select_spontaneous_event(state, context, now)
-        return self.say_event(event, state, context, now)
+        return self.select_reaction(event, state, context, now)
 
 
 # Compatible constructor/class identity for existing Aiko integrations.
