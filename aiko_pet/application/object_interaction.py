@@ -7,6 +7,7 @@ from collections.abc import Callable
 from ..pet.animation.character import PlaybackEvent
 from ..pet.consumption import ConsumptionOrigin
 from ..pet.mind.object_decisions import ObjectUseDecision
+from ..pet.mind.object_events import ObjectEvent
 from ..pet.mind.object_intentions import ObjectGoal
 from ..world.contracts import ObjectState
 from ..world.state import WorldOperationError, WorldState
@@ -14,7 +15,6 @@ from .object_feedback import (
     FeedbackKey,
     FeedbackReceipt,
     InteractionPhase,
-    ObjectEvent,
     ObjectFeedback,
 )
 

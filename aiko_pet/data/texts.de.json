@@ -151,6 +151,7 @@
     "rps.player_hand": "Du: {hand}",
     "ui.save_failed": "Spielstand konnte nicht gespeichert werden:\n{failure}",
     "ui.window_title": "Aiko Desktop Pet",
-    "world.outside": "Außerhalb meines Bereichs kann ich das nicht ablegen."
+    "world.outside": "Außerhalb meines Bereichs kann ich das nicht ablegen.",
+    "world.unknown_item": "etwas"
   }
 }

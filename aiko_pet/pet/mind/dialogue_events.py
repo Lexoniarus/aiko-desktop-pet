@@ -1,5 +1,9 @@
 """Supported semantic dialogue events emitted by the pet policies."""
 
+from typing import get_args
+
+from .object_events import ObjectEvent
+
 DIALOGUE_EVENTS = frozenset(
     {
         "affection_low",
@@ -93,4 +97,4 @@ DIALOGUE_EVENTS = frozenset(
         "work_long_thought",
         "work_unexpected",
     }
-)
+) | frozenset(get_args(ObjectEvent))

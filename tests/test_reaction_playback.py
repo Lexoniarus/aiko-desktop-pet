@@ -32,6 +32,35 @@ class FakeScheduler:
 
 
 class ReactionPlayerTests(unittest.TestCase):
+    def test_required_feedback_waits_for_text_and_completes_exactly_once(self):
+        done = []
+        self.player.play(
+            Reaction("id", "Ich schaue es mir an.", "idle", "object_inspect"),
+            2300, animate=False, on_complete=done.append,
+        )
+        self.assertEqual(done, [])
+        token = self.active_token()
+        delay, stale = self.scheduler.callbacks[token]
+        self.assertGreaterEqual(delay, 1800)
+        self.scheduler.fire(token)
+        stale()
+        self.player.cancel()
+        self.assertEqual(done, [True])
+
+    def test_cancelled_feedback_cannot_clear_a_new_reactions_timer(self):
+        done = []
+        self.player.play(Reaction("old", "Alt.", "idle", "object_inspect"),
+                         on_complete=done.append)
+        stale = self.scheduler.callbacks[self.active_token()][1]
+        self.player.play(Reaction("new", "Neu.", "idle", "object_recognized"),
+                         on_complete=done.append)
+        current = self.active_token()
+        stale()
+        self.assertEqual(self.active_token(), current)
+        self.assertEqual(done, [False])
+        self.scheduler.fire(current)
+        self.assertEqual(done, [False, True])
+
     def setUp(self) -> None:
         self.scheduler = FakeScheduler()
         self.rendered: list[tuple[str, str, int]] = []

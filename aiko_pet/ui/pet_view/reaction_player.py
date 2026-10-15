@@ -42,6 +42,7 @@ class ReactionPlayer:
         self._generation = 0
         self._cues: tuple[Cue, ...] = ()
         self._pending_timer: str | None = None
+        self._completion: Callable[[bool], None] | None = None
 
     @property
     def generation(self) -> int:
@@ -62,6 +63,9 @@ class ReactionPlayer:
             self._pending_timer = None
         self._generation += 1
         self._cues = ()
+        completion, self._completion = self._completion, None
+        if completion is not None:
+            completion(False)
 
     def play(
         self,
@@ -69,16 +73,19 @@ class ReactionPlayer:
         duration_ms: int = 2600,
         *,
         animate: bool = True,
+        on_complete: Callable[[bool], None] | None = None,
     ) -> None:
         """Start a fresh reaction while preserving original event ordering."""
         if reaction is None:
             return
         self.cancel()
+        self._completion = on_complete
         generation = self._generation
         if animate and reaction.animation != "idle":
             self._start_action(reaction.animation, min(2.0, duration_ms / 1600))
         self._mark_spoken()
-        if reaction.emote_before is not None or reaction.emote_after is not None:
+        if (reaction.emote_before is not None or reaction.emote_after is not None
+                or on_complete is not None):
             self._cues = compose_cues(
                 reaction.text,
                 before=reaction.emote_before,
@@ -102,9 +109,9 @@ class ReactionPlayer:
 
     def _advance(self, generation: int, index: int) -> None:
         """Render precisely one cue, never emote and text simultaneously."""
-        self._pending_timer = None
         if self._is_closed() or generation != self._generation:
             return
+        self._pending_timer = None
         if index >= len(self._cues):
             self._cues = ()
             return
@@ -126,13 +133,16 @@ class ReactionPlayer:
             )
 
     def _complete(self, generation: int) -> None:
-        self._pending_timer = None
         if generation == self._generation:
+            self._pending_timer = None
             self._cues = ()
+            completion, self._completion = self._completion, None
+            if completion is not None:
+                completion(True)
 
     def _show_followup(self, generation: int, text: str) -> None:
-        self._pending_timer = None
         if self._is_closed() or generation != self._generation:
             return
+        self._pending_timer = None
         self._display_text(text, 2600)
         self._mark_spoken()

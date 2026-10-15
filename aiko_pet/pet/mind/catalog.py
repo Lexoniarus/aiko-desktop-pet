@@ -11,6 +11,7 @@ import random
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
+from string import Formatter
 from typing import Any
 
 from ..balance import BALANCE
@@ -136,6 +137,11 @@ class Line:
             not isinstance(followup, str) or not 1 <= len(followup) <= 125
         ):
             raise ValueError("Invalid follow-up text")
+        if raw["event"].startswith("object_"):
+            for phrase in (raw["text"], followup):
+                for _, field, spec, conversion in Formatter().parse(phrase or ""):
+                    if field is not None and (field != "item" or spec or conversion):
+                        raise ValueError("Invalid object dialogue placeholder")
         if type(delay) is not int or not 600 <= delay <= 2600:
             raise ValueError("Invalid follow-up timing")
         before = raw.get("emote_before")

@@ -5464,6 +5464,172 @@
       "cooldown_seconds": 130,
       "emote_before": "question",
       "emote_after": "faceSad"
+    },
+    {
+      "id": "object-notice-01",
+      "event": "object_notice",
+      "text": "Hm? Da liegt etwas.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "emote_before": "question"
+    },
+    {
+      "id": "object-return-01",
+      "event": "object_return",
+      "text": "Da liegt noch etwas für mich. Das hole ich mir.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-approach-01",
+      "event": "object_approach",
+      "text": "Ich schaue mir das mal genauer an.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-pick-up-01",
+      "event": "object_pick_up",
+      "text": "Ich nehme das kurz hoch.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-inspect-01",
+      "event": "object_inspect",
+      "text": "Einen Moment, ich schaue es mir an.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-recognized-01",
+      "event": "object_recognized",
+      "text": "Das ist {item}!",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-unknown-01",
+      "event": "object_unknown",
+      "text": "Hm. Das kann ich gerade nicht zuordnen.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-want-01",
+      "event": "object_want",
+      "text": "Das kann ich gerade gut gebrauchen.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-later-01",
+      "event": "object_later",
+      "text": "Jetzt brauche ich das noch nicht.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-consuming-01",
+      "event": "object_consuming",
+      "text": "Jetzt gönne ich mir das.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-put-down-01",
+      "event": "object_put_down",
+      "text": "Das lege ich mir für später hin.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-finished-01",
+      "event": "object_finished",
+      "text": "Das hat gutgetan.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-handover-01",
+      "event": "object_handover",
+      "text": "Danke. Ich schaue es mir kurz an.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-offer-01",
+      "event": "object_offer",
+      "text": "Ja, das hätte ich gerne. Gibst du es mir?",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-refuse-01",
+      "event": "object_refuse",
+      "text": "Gerade brauche ich das nicht. Vielleicht später.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
     }
   ]
 }
