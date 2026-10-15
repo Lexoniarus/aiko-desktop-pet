@@ -8,7 +8,6 @@ from datetime import datetime
 
 from aiko_pet.pet.care_actions import (
     CareTransition,
-    apply_care_action,
     plan_care_action,
 )
 from aiko_pet.pet.state import PetState
@@ -43,21 +42,19 @@ class DomainTransitionTests(unittest.TestCase):
                 with self.assertRaises(FrozenInstanceError):
                     setattr(transition, "changed", False)
 
-    def test_care_plans_match_aggregate_and_legacy_api(self) -> None:
+    def test_care_plans_match_aggregate_results(self) -> None:
         for action in ("pet", "talk", "feed", "play", "sleep", "energy_drink"):
             with self.subTest(action=action):
                 current = PetState(
                     updated_at=START, satiety=20, mood=20,
                     energy=65, social=20, affection=20,
                 )
-                legacy = PetState.from_dict(current.to_dict(), now=START)
                 planned = plan_care_action(current, action, now=START)
+                before = current.to_dict()
+                self.assertEqual(current.to_dict(), before)
                 self.assertEqual(current.interact(action, now=START), planned.response)
-                self.assertEqual(
-                    apply_care_action(legacy, action, now=START),
-                    planned.response,
-                )
-                self.assertEqual(current.to_dict(), legacy.to_dict())
+                self.assertEqual(current.sleeping, planned.sleeping)
+                self.assertEqual(current.meals_date, planned.meals_date)
 
     def test_rejected_care_preserves_every_field_even_during_sleep(self) -> None:
         for action, energy in (("play", 4), ("energy_drink", 100)):

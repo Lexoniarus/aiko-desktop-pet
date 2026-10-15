@@ -68,6 +68,12 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+    def test_care_mutation_has_no_module_level_legacy_adapter(self) -> None:
+        from aiko_pet.pet import care_actions
+
+        self.assertFalse(hasattr(care_actions, "apply_care_action"))
+        self.assertFalse(hasattr(care_actions, "CareState"))
+
     def test_time_context_has_no_legacy_localized_display_methods(self) -> None:
         from aiko_pet.pet.routine import TimeContext
 

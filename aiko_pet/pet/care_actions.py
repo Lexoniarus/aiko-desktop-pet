@@ -1,8 +1,7 @@
 """Pure care-action decisions for the PetState aggregate.
 
-Care outcomes include unchanged German fallback text, while only the pet
-applies need, sleep, meal and friendship mutations. Existing callers of
-apply_care_action are forwarded to the aggregate's public interact method.
+Care outcomes include unchanged German fallback text; only PetState applies
+the planned need, sleep, meal and friendship mutations.
 """
 
 from __future__ import annotations
@@ -35,15 +34,6 @@ class CareValues(Protocol):
     meals_date: str
     meals_today: list[str]
     food: FoodState
-
-
-class CareState(CareValues, Protocol):
-    """Legacy public action capability exposed by the pet aggregate."""
-
-    def interact(
-        self, action: str, *, now: float | None = None,
-        food_id: FoodId | None = None,
-    ) -> str: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -200,14 +190,6 @@ def plan_care_action(
         ),
         response=response,
     )
-
-def apply_care_action(
-    state: CareState, action: str, *, now: float | None = None,
-    food_id: FoodId | None = None,
-) -> str:
-    """Compatibility adapter for the aggregate's public care operation."""
-    return state.interact(action, now=now, food_id=food_id)
-
 
 def resolve_care_time(now: float | None) -> float:
     """Resolve the clock once per interaction for deterministic transitions."""

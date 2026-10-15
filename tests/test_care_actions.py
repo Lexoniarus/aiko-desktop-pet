@@ -5,7 +5,7 @@ from __future__ import annotations
 import unittest
 from datetime import datetime
 
-from aiko_pet.pet.care_actions import apply_care_action
+from aiko_pet.pet.care_actions import plan_care_action
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
 
@@ -15,17 +15,17 @@ def stamp(hour: int = 16) -> float:
 
 
 class CareActionRulesTests(unittest.TestCase):
-    def test_pet_state_method_matches_extracted_service(self) -> None:
+    def test_pet_state_method_follows_pure_care_plan(self) -> None:
         moment = stamp()
         for action in ("talk", "feed", "play", "pet", "energy_drink", "sleep"):
             with self.subTest(action=action):
-                method_state = PetState(updated_at=moment)
-                service_state = PetState(updated_at=moment)
+                state = PetState(updated_at=moment)
+                before = state.to_dict()
+                plan = plan_care_action(state, action, now=moment)
+                self.assertEqual(state.to_dict(), before)
                 self.assertEqual(
-                    method_state.interact(action, now=moment),
-                    apply_care_action(service_state, action, now=moment),
+                    state.interact(action, now=moment), plan.response,
                 )
-                self.assertEqual(method_state.to_dict(), service_state.to_dict())
 
     def test_each_care_action_retains_its_specific_effect(self) -> None:
         moment = stamp()
@@ -37,14 +37,14 @@ class CareActionRulesTests(unittest.TestCase):
         for action, (attribute, value, reply) in expected.items():
             with self.subTest(action=action):
                 state = PetState(updated_at=moment)
-                text = apply_care_action(state, action, now=moment)
+                text = state.interact(action, now=moment)
                 self.assertEqual(getattr(state, attribute), value)
                 self.assertIn(reply, text)
         state = PetState(updated_at=moment)
-        apply_care_action(state, "feed", now=moment)
+        state.interact("feed", now=moment)
         self.assertEqual(state.satiety, 100.0)
         before = state.to_dict()
-        self.assertIn("Spiel", apply_care_action(state, "play", now=moment))
+        self.assertIn("Spiel", state.interact("play", now=moment))
         self.assertEqual(state.to_dict(), before)
 
     def test_meal_credit_is_awarded_only_once_per_window(self) -> None:
@@ -52,25 +52,25 @@ class CareActionRulesTests(unittest.TestCase):
         ctx = context_at(meal_time)
         self.assertIsNotNone(ctx.meal)
         state = PetState(updated_at=meal_time)
-        first = apply_care_action(state, "feed", now=meal_time)
+        first = state.interact("feed", now=meal_time)
         self.assertIn("Danke", first)
         self.assertEqual(state.meals_today, [ctx.meal])
-        second = apply_care_action(state, "feed", now=meal_time + 1)
+        second = state.interact("feed", now=meal_time + 1)
         self.assertIn("satt", second)
         self.assertEqual(state.meals_today, [ctx.meal])
 
     def test_rejected_actions_leave_sleep_and_relationship_untouched(self) -> None:
         state = PetState(energy=4, sleeping=True, sleep_origin="manual")
         before = state.to_dict()
-        self.assertIn("müde", apply_care_action(state, "play", now=stamp()))
+        self.assertIn("müde", state.interact("play", now=stamp()))
         self.assertEqual(before, state.to_dict())
         with self.assertRaises(ValueError):
-            apply_care_action(state, "unknown", now=stamp())
+            state.interact("unknown", now=stamp())
         self.assertEqual(before, state.to_dict())
 
     def test_full_drink_does_not_wake_aiko(self) -> None:
         state = PetState(energy=100, sleeping=True, sleep_origin="manual")
-        self.assertIn("voll", apply_care_action(state, "energy_drink", now=stamp()))
+        self.assertIn("voll", state.interact("energy_drink", now=stamp()))
         self.assertTrue(state.sleeping)
         self.assertEqual(state.energy, 100)
 
@@ -79,18 +79,18 @@ class CareActionRulesTests(unittest.TestCase):
         context = context_at(night_time)
         self.assertTrue(context.night)
         state = PetState(updated_at=night_time)
-        self.assertIn("Zzz", apply_care_action(state, "sleep", now=night_time))
+        self.assertIn("Zzz", state.interact("sleep", now=night_time))
         self.assertTrue(state.sleeping)
         self.assertEqual(state.sleep_origin, "manual")
-        apply_care_action(state, "talk", now=night_time + 1)
+        state.interact("talk", now=night_time + 1)
         self.assertFalse(state.sleeping)
         self.assertEqual(state.auto_sleep_night, context.night_key)
 
     def test_drinks_and_sleep_never_credit_friendship(self) -> None:
         state = PetState(updated_at=stamp())
         before = state.friendship
-        apply_care_action(state, "energy_drink", now=stamp())
-        apply_care_action(state, "sleep", now=stamp() + 1)
+        state.interact("energy_drink", now=stamp())
+        state.interact("sleep", now=stamp() + 1)
         self.assertEqual(state.friendship, before)
 
 
