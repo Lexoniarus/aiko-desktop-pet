@@ -105,6 +105,7 @@ class WorldObjectSnapshot:
     state: ObjectState
     position: WorldPosition | None
     footprint: ObjectFootprint
+    fall_speed: float = 0.0
 
 
 @dataclass(frozen=True, slots=True)

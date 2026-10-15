@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import replace
 from enum import StrEnum
 from threading import get_ident
@@ -228,6 +229,29 @@ class WorldState:
         for item, position in replacements:
             self._commit(item, item.state, position)
 
+    def advance_falls(self, elapsed: float, *, gravity: float) -> None:
+        """Analytic fall progression; no frame-count dependency or bouncing."""
+        self._require_owner()
+        if (not math.isfinite(elapsed) or elapsed < 0
+                or not math.isfinite(gravity) or gravity <= 0):
+            raise ValueError("Invalid fall time/gravity")
+        if elapsed == 0:
+            return
+        for item in tuple(self._objects.values()):
+            if item.state != ObjectState.FALLING or item.position is None:
+                continue
+            height = item.position.height - item.fall_speed * elapsed
+            height -= gravity * elapsed * elapsed / 2
+            if height <= 0:
+                self.land(item.instance_id, expected_revision=item.revision)
+            else:
+                self._objects[item.instance_id] = replace(
+                    item, revision=item.revision + 1,
+                    position=WorldPosition(item.position.x, height),
+                    fall_speed=item.fall_speed + gravity * elapsed,
+                )
+                self._revision += 1
+
     def remove(
         self, instance_id: str, *, expected_revision: int,
     ) -> WorldObjectSnapshot:
@@ -264,7 +288,9 @@ class WorldState:
         if item.state == state and item.position == position:
             return item
         updated = replace(item, revision=item.revision + 1, state=state,
-                          position=position)
+                          position=position,
+                          fall_speed=item.fall_speed if state == ObjectState.FALLING
+                          else 0.0)
         self._objects[item.instance_id] = updated
         self._revision += 1
         return updated
