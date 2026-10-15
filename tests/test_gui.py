@@ -67,6 +67,11 @@ class TaskbarPetGuiTests(unittest.TestCase):
             self.app.mind.cursor_attention,
         )
 
+    def test_animation_assembly_has_single_state_owners(self):
+        self.assertIs(self.app._animation.ambient, self.app._animated._ambient)
+        self.assertIs(self.app._animation._walk, self.app._walk)
+        self.assertIs(self.app._animation._visual, self.app._visual)
+
     def test_attention_presentation_has_one_owning_component(self):
         self.assertIs(
             self.app._attention_runtime.attention, self.app._attention,

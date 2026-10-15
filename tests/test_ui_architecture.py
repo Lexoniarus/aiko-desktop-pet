@@ -382,6 +382,17 @@ class UiDependencyRules(unittest.TestCase):
                 ):
                     self.assertNotIn(original, source)
 
+    def test_animation_assembly_does_not_live_in_composition_root(self) -> None:
+        gui = (ROOT / "gui.py").read_text("utf-8")
+        assembly = (ROOT / "desktop/animation_assembly.py").read_text("utf-8")
+        self.assertIn("assemble_animation(", gui)
+        self.assertNotIn("WalkDriver(", gui)
+        self.assertNotIn("DesktopAnimationRuntime(", gui)
+        self.assertNotIn("AnimatedPet(", gui)
+        for owner in ("WalkDriver(", "DesktopVisualObservation(",
+                      "DesktopAnimationRuntime(", "AnimatedPet("):
+            self.assertIn(owner, assembly)
+
     def test_native_desktop_adapters_are_not_owned_by_sprite_code(self) -> None:
         sprite = (ROOT / "ui/pet_view/animated_pet.py").read_text("utf-8")
         desktop_window = (ROOT / "ui/pet_view/desktop_window.py").read_text("utf-8")
