@@ -7,7 +7,7 @@ import time
 from typing import Protocol
 
 from .sampler import HardwareSampler
-from .metrics import ComputerSnapshot
+from ...telemetry import ComputerSnapshot
 
 
 class Sampler(Protocol):

@@ -15,7 +15,7 @@ from aiko_pet.telemetry import ComputerSnapshot, workload_intensity
 from aiko_pet.infrastructure.hardware.sampler import HardwareSampler
 from aiko_pet.infrastructure.hardware.os_sensors import load_percent
 from aiko_pet.infrastructure.hardware.nvidia import parse_nvidia_reading
-from aiko_pet.infrastructure.hardware.metrics import percent_label, workload_description
+from aiko_pet.ui.view_models.text_de import format_percent, describe_workload
 
 
 def reading(**kwargs):
@@ -35,8 +35,8 @@ class HardwareTests(unittest.TestCase):
         self.assertEqual(parse_nvidia_reading("16, 100, 400\n91, 70, 100"), (91, 70.0))
         self.assertEqual(parse_nvidia_reading("N/A, Not Supported, 0"), (None, None))
         self.assertEqual(parse_nvidia_reading(""), (None, None))
-        self.assertEqual(percent_label(None), "–")
-        self.assertEqual(percent_label(99.8), "100 %")
+        self.assertEqual(format_percent(None), "–")
+        self.assertEqual(format_percent(99.8), "100 %")
 
     def test_hardware_sampler_has_no_mandatory_gpu_dependency(self):
         # Developer OS may lack NVIDIA tools: no crash and no fake GPU value.
@@ -155,9 +155,9 @@ class VoiceTests(unittest.TestCase):
         assert less_pressure is not None
         self.assertGreater(memory_pressure, less_pressure)
         for snap in (high_gpu, idle_but_occupied):
-            self.assertNotIn("GPU", workload_description(snap))
-            self.assertNotIn("RAM", workload_description(snap))
-            self.assertNotIn("CPU", workload_description(snap))
+            self.assertNotIn("GPU", describe_workload(snap))
+            self.assertNotIn("RAM", describe_workload(snap))
+            self.assertNotIn("CPU", describe_workload(snap))
 
     def test_classification_is_shared_effort_not_technical_category(self):
         cases = [

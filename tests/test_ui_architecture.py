@@ -147,7 +147,6 @@ class UiDependencyRules(unittest.TestCase):
 
     def test_sensor_modules_are_not_tk_or_browser_adapters(self) -> None:
         providers = (
-            "infrastructure/hardware/metrics.py",
             "infrastructure/hardware/os_sensors.py",
             "infrastructure/hardware/nvidia.py",
             "infrastructure/hardware/sampler.py",

@@ -7,7 +7,7 @@ import sys
 import time
 from collections import deque
 
-from .metrics import ComputerSnapshot
+from ...telemetry import ComputerSnapshot
 from .os_sensors import (
     cpu_linux_times, cpu_windows_times, load_percent,
     memory_linux_percent, memory_windows_percent, uptime_hours,

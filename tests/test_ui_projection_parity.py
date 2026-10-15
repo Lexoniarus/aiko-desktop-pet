@@ -14,7 +14,6 @@ from aiko_pet.application.settings import PetSettings
 from aiko_pet.pet.mind.mind import PetMind
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import MoodHint
-from aiko_pet.infrastructure.hardware.metrics import ComputerSnapshot as SensorData
 from aiko_pet.ui.view_models.contracts import (
     HoverAnchor,
 )
@@ -25,8 +24,7 @@ from aiko_pet.ui.view_models.text_de import (
     format_mood_hint, format_percent, format_schedule_line, mood_hint_text,
 )
 from aiko_pet.pet.routine import MEAL_NAMES, context_at
-from aiko_pet.infrastructure.hardware.metrics import workload_description, percent_label
-from aiko_pet.telemetry import ComputerSnapshot, workload_intensity
+from aiko_pet.telemetry import ComputerSnapshot
 
 
 def at(hour: int, *, day: int = 12) -> float:
@@ -113,21 +111,26 @@ class UiProjectionParityTests(unittest.TestCase):
             "Aiko schläft gerade ... gute Nacht.",
         )
 
-    def test_workload_copy_matches_existing_optional_readings(self) -> None:
-        for reading in (
-            ComputerSnapshot(),
-            ComputerSnapshot(cpu=15, measured_at=10),
-            ComputerSnapshot(cpu=45, measured_at=10),
-            ComputerSnapshot(cpu=75, measured_at=10),
-            ComputerSnapshot(cpu=95, gpu=90, measured_at=10),
-        ):
+    def test_workload_and_percent_copy_matches_original_thresholds(self) -> None:
+        cases = (
+            (ComputerSnapshot(), "Ich orientiere mich noch ..."),
+            (ComputerSnapshot(cpu=15, measured_at=10),
+             "Ich habe gerade etwas Ruhe."),
+            (ComputerSnapshot(cpu=45, measured_at=10), "Ich bin beschäftigt."),
+            (ComputerSnapshot(cpu=75, measured_at=10),
+             "Ich habe ordentlich zu tun."),
+            (ComputerSnapshot(cpu=95, gpu=90, measured_at=10),
+             "Ich bin gerade voll konzentriert."),
+        )
+        for reading, expected in cases:
             with self.subTest(cpu=reading.cpu):
-                self.assertEqual(describe_workload(reading),
-                                 workload_description(reading))
-                self.assertEqual(workload_intensity(reading),
-                                 workload_intensity(SensorData(**vars(reading))))
-        for number in (None, 0, 50.4, 99.8, 150):
-            self.assertEqual(format_percent(number), percent_label(number))
+                self.assertEqual(describe_workload(reading), expected)
+        for value, expected in (
+            (None, "–"), (0, "0 %"), (50.4, "50 %"),
+            (99.8, "100 %"), (150, "100 %"),
+        ):
+            with self.subTest(percent=value):
+                self.assertEqual(format_percent(value), expected)
 
     def test_hover_and_status_keep_needs_and_observation_preferences(self) -> None:
         mind = PetMind(rng=random.Random(9))
