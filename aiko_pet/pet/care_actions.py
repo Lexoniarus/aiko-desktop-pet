@@ -17,7 +17,7 @@ from .friendship import CARE_PRIMARY_NEED
 from .need_decay import NeedLevels
 from .routine import MEAL_NAMES, context_at
 from .value_rules import clamp_need_value
-from ..content import GERMAN_TEXT
+from .content import GERMAN_TEXT
 
 
 class CareValues(Protocol):

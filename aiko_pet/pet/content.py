@@ -38,7 +38,10 @@ def parse_text_catalog(raw: Any) -> TextCatalog:
     for key, message in texts.items():
         if (
             not isinstance(key, str) or not key
-            or any(not part.isidentifier() for part in key.split("."))
+            or any(
+                not (part.isidentifier() or part.isdecimal())
+                for part in key.split(".")
+            )
             or not isinstance(message, str) or not message
         ):
             raise ValueError("Invalid text key or content")
@@ -59,7 +62,7 @@ def parse_text_catalog(raw: Any) -> TextCatalog:
 
 
 def load_packaged_text_catalog(
-    path: Path = Path(__file__).resolve().parent / "data" / "texts.de.json",
+    path: Path = Path(__file__).resolve().parents[1] / "data" / "texts.de.json",
 ) -> TextCatalog:
     """Read local data once; never invoke network services or an AI model."""
     return parse_text_catalog(json.loads(path.read_text(encoding="utf-8")))

@@ -6,7 +6,7 @@ import json
 import unittest
 from pathlib import Path
 
-from aiko_pet.content import (
+from aiko_pet.pet.content import (
     GERMAN_TEXT, load_packaged_text_catalog, parse_text_catalog,
 )
 from aiko_pet.pet.status_hints import MoodHint

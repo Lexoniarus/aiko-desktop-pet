@@ -7,7 +7,7 @@ sentences. Status wording is owned by this view-model module.
 from __future__ import annotations
 
 from ...application.read_snapshot import PetReadSnapshot
-from ...content import GERMAN_TEXT
+from ...pet.content import GERMAN_TEXT
 from ...pet.routine import MEAL_NAMES, TimeContext, due_meal
 from ...pet.status_hints import MoodHint, choose_mood_hint
 from ...telemetry import ComputerSnapshot, workload_intensity

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Literal, TypeAlias
 
 from ...asset_paths import ASSET_ROOT
-from ...content import GERMAN_TEXT
+from ...pet.content import GERMAN_TEXT
 from ...pet.food import FOOD_CATALOG, FOOD_MENU_ORDER, FoodId
 
 FoodChoiceId: TypeAlias = FoodId | Literal["energy_drink"]
