@@ -1,6 +1,7 @@
 # Persistent object knowledge and remembered supply retrieval
 
 Accepted: 16 October 2026. Baseline: `257a176` on `feature/world-foundation`.
+Status: P0–P5 implemented and locally verified; native practical acceptance pending.
 See the [current architecture](ARCHITECTURE.md),
 [World contracts](WORLD_OBJECT_CONTRACTS.md) and
 [existing delivery ledger](WORLD_OBJECT_IMPLEMENTATION_PLAN.md).
@@ -61,7 +62,7 @@ Keep the existing draft PR unmerged until practical acceptance.
 | P2 | Coherent consumption and confirmed placement across owners | `cac4d24`; verification below |
 | P3 | Versioned codec, joint save/restore and compatibility without fabricated sensing | `586c93b`; verification below |
 | P4 | Preserve retrieval purpose, skip redundant inspection, contextual JSON dialogue | `6b615f3`; verification below |
-| P5 | Restart regression, isolated practical starter and acceptance checklist | This step's commit; verification below |
+| P5 | Restart regression, isolated practical starter and acceptance checklist | `b2168c5`; verification below |
 
 P1 separates `ObjectKnowledge` from observations and introduces portable snapshot
 values with relative active ages. Recognition survives absence and observed
@@ -148,7 +149,9 @@ strict Mypy 1.18.2 (169 source files) and Pyright 1.1.414 passed. No background
 Tk image-finalizer errors occurred after explicit image-owner shutdown. Existing
 Tk theme-change diagnostics from probe teardown remain nonfatal.
 P4 CI [38821588559](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38821588559)
-passed all three jobs. Current-head CI and commit references follow at handoff.
+passed all three jobs. The implementation ends at `b2168c5`; current-head matrix
+results are available in [PR checks](https://github.com/Lexoniarus/aiko-desktop-pet/pull/10/checks).
+The PR stays draft and unmerged until the user's visual/input acceptance.
 
 - New, recognized-but-unexamined and examined portions follow distinct routes.
 - Known unwanted supply survives restart and lets normal interactions continue;
