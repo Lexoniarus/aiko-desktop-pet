@@ -5,14 +5,14 @@ from unittest.mock import Mock, patch
 
 from aiko_pet.application.attention import AttentionCoordinator
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.pet.mind import PetMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
 
 
 class AttentionDecisionTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.mind = PetMind()
+        self.mind = make_aiko_mind(started_at=0.0)
         self.state = PetState()
         self.context = context_at(1_781_000_000.0)
         self.attention = AttentionCoordinator(

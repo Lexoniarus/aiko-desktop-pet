@@ -14,7 +14,7 @@ from aiko_pet.application.controller import CareController, CareRuntime
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.application.inbox import NotificationInbox
 from aiko_pet.application.router import ApplicationRouter
-from aiko_pet.pet.mind.mind import PetMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.state import PetState
 
 
@@ -43,7 +43,7 @@ def notification(identifier: str = "test-1") -> IncomingNotification:
 class ApplicationCoreTests(unittest.TestCase):
     def setUp(self) -> None:
         self.state = PetState()
-        self.mind = PetMind(rng=random.Random(8))
+        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(8))
         self.adaptive = AdaptiveRoutine()
         self.router = ApplicationRouter(
             CareController(self.state, self.mind, self.adaptive,
@@ -66,7 +66,7 @@ class ApplicationCoreTests(unittest.TestCase):
     def test_care_matches_prior_pet_dialogue_order(self) -> None:
         rt = runtime()
         state = PetState(social=10.0, updated_at=rt.wall_time)
-        mind = PetMind(rng=random.Random(12))
+        mind = make_aiko_mind(started_at=0.0, rng=random.Random(12))
         controller = CareController(state, mind, AdaptiveRoutine(),
                                     clock=ActiveSessionClock(lambda: 0.0))
         outcome = controller.execute(CareCommand("talk"), rt)

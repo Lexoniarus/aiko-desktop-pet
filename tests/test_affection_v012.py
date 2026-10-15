@@ -9,7 +9,7 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-from aiko_pet.pet.mind.mind import PetMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.catalog import DialogueBook, EMOTION_LABELS, Reaction
 from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
 from aiko_pet.pet.fun import GameExperience
@@ -232,7 +232,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
 
 class AffectionDialogueTests(unittest.TestCase):
     def setUp(self):
-        self.mind = PetMind(rng=random.Random(12))
+        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(12))
         self.context = context_at(stamp())
 
     def test_low_affection_is_not_social_loneliness(self):
@@ -258,7 +258,7 @@ class AffectionDialogueTests(unittest.TestCase):
             require_reaction(self.mind.click("left", state, self.context, 50)).event,
             "click_at_ease",
         )
-        reserved = PetMind(rng=random.Random(12))
+        reserved = make_aiko_mind(started_at=0.0, rng=random.Random(12))
         state.affection = 50
         self.assertEqual(
             require_reaction(reserved.click("left", state, self.context, 50)).event,

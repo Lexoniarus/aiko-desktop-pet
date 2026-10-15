@@ -8,7 +8,7 @@ from aiko_pet.application.active_time import ActiveSessionClock
 from aiko_pet.application.activity import ActivityCallbacks
 from aiko_pet.application.assembly import assemble_application
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.pet.mind import PetMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
@@ -26,7 +26,7 @@ class ApplicationAssemblyTests(unittest.TestCase):
     def test_components_reuse_existing_mutable_owners(self) -> None:
         state = PetState()
         settings = PetSettings()
-        mind = PetMind()
+        mind = make_aiko_mind(started_at=0.0)
         adaptive = AdaptiveRoutine()
         services = assemble_application(
             state=state, settings=settings, mind=mind,

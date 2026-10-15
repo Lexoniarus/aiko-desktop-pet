@@ -13,7 +13,7 @@ from aiko_pet.application.commands import NotificationCommand
 from aiko_pet.application.controller import CareController
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.application.router import ApplicationRouter
-from aiko_pet.pet.mind.mind import PetMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
@@ -30,7 +30,7 @@ class AttentionPolicyTests(unittest.TestCase):
     def setUp(self) -> None:
         self.state = PetState()
         self.settings = PetSettings()
-        self.mind = PetMind(rng=random.Random(7))
+        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(7))
         self.voice = WorkloadEventDetector(rng=random.Random(8))
         self.router = ApplicationRouter(
             CareController(self.state, self.mind, AdaptiveRoutine(),
