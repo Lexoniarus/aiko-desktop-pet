@@ -99,9 +99,9 @@ class DesktopPet:
                     now, self.context,
                 ),
                 observe_pointer=lambda now: self._pointer_runtime.observe(now),
-                render_character=lambda now, elapsed, pointer: (
+                render_character=lambda now, _elapsed, pointer: (
                     self._animated.render(
-                        now, elapsed, pointer,
+                        now, pointer,
                         attention=self.mind.cursor_attention.snapshot(),
                     )
                 ),

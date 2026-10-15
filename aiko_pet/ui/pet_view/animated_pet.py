@@ -236,9 +236,7 @@ class AnimatedPet:
             self._last_motion_at = now
             moving = self.ports.walk_step(now, elapsed)
             if moving is None or not self.ports.walk_active():
-                self.render(
-                    now, 0, self._last_render_pointer,
-                )
+                self.render(now, self._last_render_pointer)
                 return
             state = moving
         self.show_frame(state, now, fixed=fixed)
@@ -252,7 +250,7 @@ class AnimatedPet:
             self._frame_timer = None
 
     def render(
-        self, now: float, elapsed: float, pointer: tuple[int, int],
+        self, now: float, pointer: tuple[int, int],
         *, attention: CursorAttentionSnapshot | None = None,
     ) -> None:
         """Render an immutable cursor snapshot without mutating PetMind."""

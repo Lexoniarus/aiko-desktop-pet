@@ -157,7 +157,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
     def test_sleep_plays_the_full_width_breathing_clip(self) -> None:
         self.state.sleeping = True
         now = time.monotonic()
-        self.anim.render(now, 0, (0, 0))
+        self.anim.render(now, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("sleep", None))
         first_hold = self.anim.assets.clips["sleep"].timings[0] / 1000
         self.anim.show_frame("sleep", now + first_hold + .01)
@@ -184,7 +184,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.settings.follow_cursor = False
         self.walk.movement.remaining_distance = 100
         now = time.monotonic()
-        self.anim.render(now, .14, (0, 0))
+        self.anim.render(now, (0, 0))
         self.assertEqual(self.settings.x, 100)
         self.root.after(105, self.root.quit)
         self.root.mainloop()
@@ -237,10 +237,10 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertIsNone(self._gaze_direction((99999, -99999)))
         self.assertIsNone(self._step_walk(time.monotonic(), 0.3))
         self.assertIsNone(self.visual.sector)
-        self.anim.render(time.monotonic(), .14, (99999, -99999))
+        self.anim.render(time.monotonic(), (99999, -99999))
         self.assertEqual(self.anim.frame_clock.active_key, ("waiting", None))
         self.anim.begin_action("jumping", time.monotonic())
-        self.anim.render(time.monotonic(), .14, (99999, -99999))
+        self.anim.render(time.monotonic(), (99999, -99999))
         self.assertEqual(self.anim.frame_clock.active_key, ("jumping", None))
         self.anim.set_game_mode(False)
         self.assertNotEqual(self.anim.frame_clock.active_key, ("jumping", None))
@@ -253,7 +253,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         now = time.monotonic()
         self.anim._ambient.next_blink_at = now - 1
         self.anim._ambient.next_glance_at = now + 200
-        self.anim.render(now, 0, (0, 0))
+        self.anim.render(now, (0, 0))
         self.assertTrue(self.anim._ambient.blinking)
         self.assertEqual(self.anim.frame_clock.active_key, ("idle", None))
         observed = [self.anim.frame_clock.frame_index]
@@ -267,7 +267,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertFalse(self.anim._ambient.blinking)
         self.assertEqual(self.anim.frame_clock.active_key, ("idle", 0))
         self.assertIsNone(self.anim._frame_timer)
-        self.anim.render(now + 2.0, 0, (0, 0))
+        self.anim.render(now + 2.0, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("idle", 0))
 
     def test_aiko_looks_around_even_when_the_pointer_stays_still(self) -> None:
@@ -276,25 +276,25 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         now = time.monotonic()
         self.anim._ambient.next_blink_at = now + 200
         self.anim._ambient.next_glance_at = now - 1
-        self.anim.render(now, 0, (0, 0))
+        self.anim.render(now, (0, 0))
         active = self.anim.frame_clock.active_key
         assert active is not None
         self.assertEqual(active[0], "look")
         self.assertIn(active[1], (2, 3, 4, 12, 13, 14))
         self.assertIsNone(self.anim._frame_timer)
-        self.anim.render(self.anim._ambient._glance_until + .1, 0, (0, 0))
+        self.anim.render(self.anim._ambient._glance_until + .1, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("idle", 0))
 
     def test_spontaneous_glance_never_overrides_sleep_or_game(self) -> None:
         now = time.monotonic()
         self.anim.set_game_mode(True)
         self.anim._ambient.next_glance_at = now - 1
-        self.anim.render(now, 0, (0, 0))
+        self.anim.render(now, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("waiting", None))
         self.anim.set_game_mode(False)
         self.state.sleeping = True
         self.anim._ambient.next_glance_at = now - 1
-        self.anim.render(now + 1, 0, (0, 0))
+        self.anim.render(now + 1, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("sleep", None))
 
     def test_idle_rest_moves_head_without_moving_sprite_anchor(self) -> None:
@@ -305,11 +305,11 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim._ambient.suspend(now)
         self.anim._ambient.next_blink_at = now + 200
         self.anim._ambient.next_glance_at = now + 200
-        self.anim.render(now, 0, (0, 0))
+        self.anim.render(now, (0, 0))
         image_item = self.anim.image_item
         initial = self.canvas.itemcget(image_item, "image")
         canvas_coords = self.canvas.coords(image_item)
-        self.anim.render(now + .85, 0, (0, 0))
+        self.anim.render(now + .85, (0, 0))
         changed = self.canvas.itemcget(image_item, "image")
         self.assertNotEqual(initial, changed)
         self.assertEqual(self.canvas.coords(image_item), canvas_coords)
@@ -323,13 +323,13 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim._ambient.suspend(now)
         pointer = (99999, 20)
         self.anim.render(
-            now, 0, pointer, attention=CursorAttentionSnapshot(now, -100.0),
+            now, pointer, attention=CursorAttentionSnapshot(now, -100.0),
         )
         old_key = self.anim.frame_clock.active_key
         assert old_key is not None
         self.assertEqual(old_key[0], "look")
         original = self.canvas.itemcget(self.anim.image_item, "image")
-        self.anim.render(now + .85, 0, pointer)
+        self.anim.render(now + .85, pointer)
         self.assertEqual(self.anim.frame_clock.active_key, old_key)
         self.assertNotEqual(
             self.canvas.itemcget(self.anim.image_item, "image"), original,
@@ -342,7 +342,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim._ambient.suspend(now)
         self.anim._ambient.next_blink_at = now + 100
         self.anim._ambient.next_glance_at = now + 100
-        self.anim.render(now + .85, 0, (0, 0))
+        self.anim.render(now + .85, (0, 0))
         self.assertTrue(self.anim._rest_renderer._variants)
         self.settings.scale = 2
         self.anim.reload_sprites()

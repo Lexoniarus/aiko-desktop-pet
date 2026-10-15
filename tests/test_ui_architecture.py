@@ -289,6 +289,11 @@ class UiDependencyRules(unittest.TestCase):
             with self.subTest(method=legacy):
                 self.assertNotIn(legacy, source)
 
+    def test_sprite_render_has_no_unused_delta_argument(self) -> None:
+        source = (ROOT / "ui/pet_view/animated_pet.py").read_text("utf-8")
+        self.assertIn("self, now: float, pointer: tuple[int, int]", source)
+        self.assertNotIn("self, now: float, elapsed: float, pointer:", source)
+
     def test_action_state_is_owned_only_by_action_playback(self) -> None:
         source = (ROOT / "gui.py").read_text("utf-8")
         self.assertNotIn("def _action_state(", source)

@@ -86,7 +86,7 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.pet._start_action("eat", 0, started_at=now)
         original_deadline = self.pet._action_playback.until
         late = now + 3
-        self.pet._animated.render(late, .14, (0, 0))
+        self.pet._animated.render(late, (0, 0))
         self.assertEqual(self.pet._animated.frame_clock.active_key, ("eat", None))
         self.assertEqual(self.pet._animated.frame_clock.frame_index, 1)
         self.assertGreater(self.pet._action_playback.until, original_deadline)

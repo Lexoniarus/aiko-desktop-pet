@@ -102,7 +102,7 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     ambient = pet._animated._ambient
     ambient.next_blink_at = now + 200
     ambient.next_glance_at = now + 200
-    pet._animated.render(now, 0, (0, 0))
+    pet._animated.render(now, (0, 0))
 
     frames: list[CapturedFrame] = []
     durations: list[int] = []
@@ -115,10 +115,10 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     # Capture the calmer one-pixel sway through the real Tk widget;
     # the feet and the selected gaze sprite remain anchored.
     for phase in range(8):
-        pet._animated.render(now + phase * .42 + .01, 0, (0, 0))
+        pet._animated.render(now + phase * .42 + .01, (0, 0))
         add_frame(420)
     ambient.next_blink_at = time.monotonic() - 1
-    pet._animated.render(time.monotonic(), 0, (0, 0))
+    pet._animated.render(time.monotonic(), (0, 0))
     if not ambient.blinking:
         raise RuntimeError("The real idle blink did not start")
     clip = pet._animated.assets.clips["idle"]
@@ -134,12 +134,12 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     # Resume slow motion after all eight blink frames, not during them.
     rest_at = ambient._motion_started_at
     for phase in range(8):
-        pet._animated.render(rest_at + phase * .42 + .01, 0, (0, 0))
+        pet._animated.render(rest_at + phase * .42 + .01, (0, 0))
         add_frame(420)
 
     ambient.next_glance_at = time.monotonic() - 1
     ambient.next_blink_at = time.monotonic() + 200
-    pet._animated.render(time.monotonic(), 0, (0, 0))
+    pet._animated.render(time.monotonic(), (0, 0))
     if pet._animated.frame_clock.active_key is None:
         raise RuntimeError("Missing autonomous look")
     if pet._animated.frame_clock.active_key[0] != "look":
@@ -147,7 +147,7 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     # Hold the same lateral look sprite while its head subtly rocks.
     look_at = time.monotonic()
     for phase in range(3):
-        pet._animated.render(look_at + phase * .42, 0, (0, 0))
+        pet._animated.render(look_at + phase * .42, (0, 0))
         add_frame(420)
         key = pet._animated.frame_clock.active_key
         if key is None or key[0] != "look":
@@ -155,7 +155,7 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     ambient.suspend(time.monotonic())
     back_at = time.monotonic()
     for phase in range(8):
-        pet._animated.render(back_at + phase * .42 + .01, 0, (0, 0))
+        pet._animated.render(back_at + phase * .42 + .01, (0, 0))
         add_frame(420)
     save_sequence(frames, durations, PREVIEWS / AMBIENT_GIF)
     print(

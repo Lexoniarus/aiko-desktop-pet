@@ -205,7 +205,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
             time.monotonic(), 0.5,
             game_mode=visual.game_mode, attention_active=False,
         ))
-        visual.render(time.monotonic() + 5, 0.14, (99999, 99999))
+        visual.render(time.monotonic() + 5, (99999, 99999))
         current = visual.frame_clock.active_key
         assert current is not None
         self.assertIn(current[0], ("waving-greeting", "waiting"))
