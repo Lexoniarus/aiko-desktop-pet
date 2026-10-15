@@ -10,12 +10,12 @@ from datetime import datetime
 from pathlib import Path
 
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
-from aiko_pet.pet.mind.catalog import DialogueBook, EMOTION_LABELS, Reaction
+from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
 from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
 from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import MoodHint
-from aiko_pet.ui.view_models.text_de import mood_hint_text
+from aiko_pet.ui.view_models.text_de import mood_hint_text, format_emotion_label
 from aiko_pet.pet.routine import context_at
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.persistence import StateStore
@@ -238,7 +238,10 @@ class AffectionDialogueTests(unittest.TestCase):
     def test_low_affection_is_not_social_loneliness(self):
         state = PetState(social=70, affection=12)
         self.assertEqual(self.mind.emotion(state, 50), "seeking_affection")
-        self.assertEqual(EMOTION_LABELS["seeking_affection"], "Wünscht Zuwendung")
+        self.assertEqual(
+            format_emotion_label("seeking_affection"),
+            "Stimmung: Wünscht Zuwendung",
+        )
         self.assertEqual(require_reaction(self.mind.click("left", state, self.context, 50)).event,
                          "click_affection_low")
         self.assertEqual(self.mind.care_event("pet", state, self.context, 55)[0],
