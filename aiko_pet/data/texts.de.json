@@ -67,6 +67,20 @@
     "rps.draw.2": "Unentschieden! Wir sollten's noch einmal versuchen.",
     "rps.countdown.1": "Eins!",
     "rps.countdown.2": "Zwei!",
-    "rps.countdown.3": "Drei!"
+    "rps.countdown.3": "Drei!",
+    "emotion.asleep": "Schläfrig",
+    "emotion.irritated": "Gereizt",
+    "emotion.tired": "Müde",
+    "emotion.hungry": "Hungrig",
+    "emotion.withdrawn": "Nachdenklich",
+    "emotion.warm": "Zugewandt",
+    "emotion.playful": "Verspielt",
+    "emotion.calm": "Gelassen",
+    "emotion.lonely": "Vermisst Gesellschaft",
+    "emotion.seeking_affection": "Wünscht Zuwendung",
+    "ui.emotion_label": "Stimmung: {emotion}",
+    "ui.sleep_wake": "Wecken",
+    "ui.sleep_start": "Schlafen",
+    "ui.observation_disabled": "Rechnerbeobachtung deaktiviert"
   }
 }

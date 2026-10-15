@@ -31,20 +31,6 @@ PERIODS = frozenset({
     "night", "breakfast", "quiet", "lunch", "free", "dinner", "evening",
 })
 
-EMOTION_LABELS = {
-    "asleep": "Schläfrig",
-    "irritated": "Gereizt",
-    "tired": "Müde",
-    "hungry": "Hungrig",
-    "withdrawn": "Nachdenklich",
-    "warm": "Zugewandt",
-    "playful": "Verspielt",
-    "calm": "Gelassen",
-    "lonely": "Vermisst Gesellschaft",
-    "seeking_affection": "Wünscht Zuwendung",
-}
-
-
 @dataclass(frozen=True)
 class Line:
     id: str

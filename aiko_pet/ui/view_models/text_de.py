@@ -31,6 +31,23 @@ def format_schedule_line(context: TimeContext) -> str:
     )
 
 
+def format_emotion_label(emotion: str) -> str:
+    """Render the current semantic PetMind emotion without domain UI copy."""
+    return GERMAN_TEXT.format(
+        "ui.emotion_label", emotion=GERMAN_TEXT.format(f"emotion.{emotion}"),
+    )
+
+
+def format_sleep_label(sleeping: bool) -> str:
+    """Share the sleep button label across hover and status projections."""
+    return GERMAN_TEXT.format("ui.sleep_wake" if sleeping else "ui.sleep_start")
+
+
+def observation_disabled_text() -> str:
+    """Share one localized observation-off label between both views."""
+    return GERMAN_TEXT.format("ui.observation_disabled")
+
+
 def format_feed_label(pet: PetReadSnapshot, context: TimeContext) -> str:
     """Translate the canonical due-meal decision to the existing UI label."""
     meal = due_meal(

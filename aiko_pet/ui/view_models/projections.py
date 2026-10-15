@@ -5,13 +5,13 @@ from __future__ import annotations
 from ...pet.mind.adaptive_models import Behaviour
 from ...application.read_snapshot import PetReadSnapshot
 from ...application.settings import PetSettings
-from ...pet.mind.catalog import EMOTION_LABELS
 from ...pet.routine import TimeContext
 from ...telemetry import ComputerSnapshot
 from .contracts import HoverSnapshot, SettingsSnapshot, StatusSnapshot
 from .text_de import (
     describe_workload, format_day_label, format_feed_label,
     format_mood_hint, format_percent, format_schedule_line,
+    format_emotion_label, format_sleep_label, observation_disabled_text,
 )
 
 
@@ -31,11 +31,11 @@ def project_hover(
         )
         workload = describe_workload(computer)
     else:
-        hardware = "Rechnerbeobachtung deaktiviert"
+        hardware = observation_disabled_text()
         workload = ""
     return HoverSnapshot(
         header=f"{format_day_label(context)}   ↔ Ziehen",
-        sleep_label="Wecken" if pet.sleeping else "Schlafen",
+        sleep_label=format_sleep_label(pet.sleeping),
         feed_label=format_feed_label(pet, context),
         needs=pet.needs,
         friendship_level=pet.friendship_level,
@@ -66,7 +66,7 @@ def project_status(
             f"RAM {format_percent(computer.ram)}"
         )
     else:
-        hardware = "Rechnerbeobachtung deaktiviert"
+        hardware = observation_disabled_text()
     if observe_computer and situation is not None:
         descriptions = {
             "working": "Konzentriert bei der Arbeit",
@@ -90,8 +90,8 @@ def project_status(
         today=format_day_label(context),
         next_event=format_schedule_line(context),
         hint=format_mood_hint(pet, context),
-        emotion=f"Stimmung: {EMOTION_LABELS[emotion]}",
-        sleep_label="Wecken" if pet.sleeping else "Schlafen",
+        emotion=format_emotion_label(emotion),
+        sleep_label=format_sleep_label(pet.sleeping),
         hardware_line=hardware,
         activity_line=activity,
         needs=pet.needs,

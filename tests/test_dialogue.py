@@ -13,7 +13,6 @@ from aiko_pet.pet.mind.catalog import (
     ANIMATIONS,
     CATALOGUE,
     DialogueBook,
-    EMOTION_LABELS,
     Line,
     Reaction,
 )
@@ -132,7 +131,6 @@ class EmotionTests(unittest.TestCase):
         self.assertEqual(self.mind.emotion(PetState(mood=12), 101), 'withdrawn')
         self.assertEqual(self.mind.emotion(PetState(mood=97), 101), 'playful')
         self.assertEqual(self.mind.emotion(self.state, 101), 'calm')
-        self.assertTrue(all(EMOTION_LABELS.values()))
 
     def test_rising_click_pressure_changes_reaction(self):
         events = [require_reaction(self.mind.click('left', self.state, self.context, t)).event for t in (11, 12, 13, 14)]

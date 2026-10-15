@@ -10,6 +10,10 @@ from aiko_pet.pet.content import (
     GERMAN_TEXT, load_packaged_text_catalog, parse_text_catalog,
 )
 from aiko_pet.pet.status_hints import MoodHint
+from aiko_pet.pet.mind.catalog import EMOTIONS
+from aiko_pet.ui.view_models.text_de import (
+    format_emotion_label, format_sleep_label, observation_disabled_text,
+)
 
 
 class TextCatalogTests(unittest.TestCase):
@@ -25,6 +29,34 @@ class TextCatalogTests(unittest.TestCase):
         self.assertEqual(
             GERMAN_TEXT.format("care.feed_repeat", food="Apfel"),
             "Schon wieder Apfel? ...Na gut.",
+        )
+
+    def test_emotion_and_duplicate_status_copy_have_one_json_owner(self) -> None:
+        expected_labels = {
+            "asleep": "Schläfrig",
+            "irritated": "Gereizt",
+            "tired": "Müde",
+            "hungry": "Hungrig",
+            "withdrawn": "Nachdenklich",
+            "warm": "Zugewandt",
+            "playful": "Verspielt",
+            "calm": "Gelassen",
+            "lonely": "Vermisst Gesellschaft",
+            "seeking_affection": "Wünscht Zuwendung",
+        }
+        self.assertEqual(
+            {key for key in GERMAN_TEXT.messages if key.startswith("emotion.")},
+            {f"emotion.{emotion}" for emotion in EMOTIONS},
+        )
+        for emotion, expected in expected_labels.items():
+            with self.subTest(emotion=emotion):
+                self.assertEqual(
+                    format_emotion_label(emotion), f"Stimmung: {expected}",
+                )
+        self.assertEqual(format_sleep_label(True), "Wecken")
+        self.assertEqual(format_sleep_label(False), "Schlafen")
+        self.assertEqual(
+            observation_disabled_text(), "Rechnerbeobachtung deaktiviert",
         )
 
     def test_game_reactions_are_backed_by_german_json(self) -> None:
