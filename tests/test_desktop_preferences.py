@@ -57,7 +57,6 @@ class DesktopPreferenceTests(unittest.TestCase):
 
         self.prefs = DesktopPreferences(
             settings=self.settings,
-            state=self.state,
             adaptive=self.adaptive,
             activity=cast(ActivityCoordinator, self.activity),
             attention=cast(AttentionCoordinator, self.attention),

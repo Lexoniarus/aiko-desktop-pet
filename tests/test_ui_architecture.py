@@ -290,6 +290,14 @@ class UiDependencyRules(unittest.TestCase):
             with self.subTest(method=legacy):
                 self.assertNotIn(legacy, source)
 
+    def test_action_state_is_owned_only_by_action_playback(self) -> None:
+        source = (ROOT / "gui.py").read_text("utf-8")
+        self.assertNotIn("def _action_state(", source)
+        self.assertNotIn("def _action_until(", source)
+        self.assertNotIn("def _cancel_visual_action(", source)
+        self.assertNotIn("def _extend_action(", source)
+        self.assertIn("self._action_playback.until", source)
+
     def test_dead_desktop_shell_input_forwarders_are_removed(self) -> None:
         syntax = ast.parse((ROOT / "gui.py").read_text("utf-8"))
         shell = next(

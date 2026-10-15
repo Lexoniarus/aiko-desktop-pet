@@ -14,7 +14,6 @@ from ..pet.mind.adaptive import AdaptiveRoutine
 from ..application.activity import ActivityCoordinator
 from ..application.attention import AttentionCoordinator
 from ..application.settings import PetSettings, SettingKey
-from ..pet.state import PetState
 from ..pet.routine import TimeContext, context_at
 from ..ui.pet_view.animated_pet import AnimatedPet
 from ..ui.pet_view.desktop_window import DesktopWindow
@@ -38,7 +37,7 @@ class DesktopPreferences:
     """Own the effects of desktop settings, scale and toolbar placement."""
 
     def __init__(
-        self, *, settings: PetSettings, state: PetState,
+        self, *, settings: PetSettings,
         adaptive: AdaptiveRoutine, activity: ActivityCoordinator,
         attention: AttentionCoordinator, animated: AnimatedPet,
         walk: WalkDriver, visual: DesktopVisualObservation,
@@ -46,7 +45,6 @@ class DesktopPreferences:
         overlay_stack: WindowStack, ports: DesktopPreferencePorts,
     ) -> None:
         self._settings = settings
-        self._state = state
         self._adaptive = adaptive
         self._activity = activity
         self._attention = attention

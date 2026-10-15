@@ -146,7 +146,7 @@ class DesktopPet:
                     "review", 1.4, started_at=now,
                 ),
                 react=self._react,
-                action_until=lambda: self._action_until,
+                action_until=lambda: self._action_playback.until,
                 last_spoken=lambda: self._attention.last_spoken,
                 read_pointer=lambda: (
                     self.root.winfo_pointerx(), self.root.winfo_pointery(),
@@ -187,9 +187,9 @@ class DesktopPet:
                 interrupt_walk=self._walk.movement.interrupt,
                 observe_passive=self._visual.observe,
                 reset_gaze=self._visual.reset,
-                action_until=lambda: self._action_until,
-                action_state=lambda: self._action_state,
-                extend_action=self._extend_action,
+                action_until=lambda: self._action_playback.until,
+                action_state=lambda: self._action_playback.state,
+                extend_action=self._action_playback.extend,
             ),
             assets=self._character_assets,
         )
@@ -328,13 +328,13 @@ class DesktopPet:
                 walking=lambda: (
                     self._walk.movement.remaining_distance != 0
                 ),
-                action_until=lambda: self._action_until,
+                action_until=lambda: self._action_playback.until,
                 refresh_toolbar=self._refresh_care_toolbar,
             ),
         )
         self._care_view = CarePresenter(CareViewPorts(
             set_item=lambda item: self._animated.set_food_overlay(item),
-            cancel_action=self._cancel_visual_action,
+            cancel_action=self._action_playback.cancel_at,
             start_action=lambda animation, duration: self._start_action(
                 animation, duration,
             ),
@@ -356,7 +356,6 @@ class DesktopPet:
         )
         self._preferences = DesktopPreferences(
             settings=self.settings,
-            state=self.state,
             adaptive=self.adaptive,
             activity=self._activity,
             attention=self._attention,
@@ -466,23 +465,6 @@ class DesktopPet:
         """Preserve the public desktop callback while routing to its owner."""
         self._preferences.set_option(name, value)
 
-    @property
-    def _action_state(self) -> str:
-        """Compatibility access to pet-view action playback state."""
-        return self._action_playback.state
-
-    @_action_state.setter
-    def _action_state(self, state: str) -> None:
-        self._action_playback.state = state
-
-    @property
-    def _action_until(self) -> float:
-        return self._action_playback.until
-
-    @_action_until.setter
-    def _action_until(self, deadline: float) -> None:
-        self._action_playback.until = deadline
-
     def _start_action(
         self, state: str, duration: float, *, started_at: float | None = None,
     ) -> None:
@@ -490,16 +472,10 @@ class DesktopPet:
             state, duration, started_at=started_at,
         )
 
-    def _cancel_visual_action(self, now: float) -> None:
-        self._action_playback.cancel_at(now)
-
     def _refresh_care_toolbar(self) -> None:
         toolbar = self._hover.toolbar
         if toolbar is not None:
             toolbar.refresh()
-
-    def _extend_action(self, deadline: float) -> None:
-        self._action_playback.extend(deadline)
 
     def interact(
         self, action: str, *, food_id: FoodId | None = None,

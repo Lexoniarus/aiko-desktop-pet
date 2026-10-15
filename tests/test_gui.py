@@ -301,7 +301,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.toolbar.hide()
         self.app.settings.spontaneous_talk = True
         self.app._speech.hide()
-        self.app._action_until = 0
+        self.app._action_playback.until = 0
         with (
             patch.object(self.app.activity_monitor, "latest", return_value=
                          ComputerSnapshot(cpu=92, gpu=15, ram=55,
@@ -311,7 +311,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         ):
             self.app._tick()
             # Work observations can start a review gesture. Speech waits for it.
-            self.app._action_until = 0
+            self.app._action_playback.until = 0
             self.app._maybe_speak_spontaneously(now + 2)
         self.assertTrue(self.app.mind.book.recent[-1].startswith("computer_effort_steady-"))
 
