@@ -4,6 +4,9 @@ Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tki
 
 The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Imports point directly to the packages that own each responsibility.
 
+The accepted [persistent object knowledge plan](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md)
+extends subjective memory and remembered supply retrieval in small delivery steps.
+
 ## Dependency overview
 
 ```mermaid
