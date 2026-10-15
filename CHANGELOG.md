@@ -7,6 +7,9 @@
 - Commit consumed portions, needs and subjective memory together; roll back all
   three owners on failure. Record inspection and own placement at confirmed
   events, rather than waiting until the last bubble has completed.
+- Persist subjective object knowledge alongside Pet/World in the existing atomic
+  version-one save. Restore learned facts and active ages without offline sensing,
+  current visibility or automatic reconciliation to hidden World changes.
 
 - Let Aiko approach and grasp ground portions at both screen edges at 1x/2x.
   A shared geometry rule requires actual arrival at the closest legal standing

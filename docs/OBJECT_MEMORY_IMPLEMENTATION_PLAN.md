@@ -58,8 +58,8 @@ Keep the existing draft PR unmerged until practical acceptance.
 | --- | --- | --- |
 | P0 | Record this accepted plan and architecture link | `0ab36e0`; 9 documentation checks and pinned static gates; baseline 867 tests passed on Python 3.14 |
 | P1 | Separate typed knowledge and snapshot values; retention, relocation and own-action facts | `1fcf742`; verification below |
-| P2 | Coherent consumption and confirmed placement across owners | This step's commit; verification below |
-| P3 | Versioned codec, joint save/restore and compatibility without fabricated sensing | Pending |
+| P2 | Coherent consumption and confirmed placement across owners | `cac4d24`; verification below |
+| P3 | Versioned codec, joint save/restore and compatibility without fabricated sensing | This step's commit; verification below |
 | P4 | Preserve retrieval purpose, skip redundant inspection, contextual JSON dialogue | Pending |
 | P5 | Restart regression, isolated practical starter and acceptance checklist | Pending |
 
@@ -79,6 +79,21 @@ Full Windows/Python 3.11 suite: 875 tests passed in 203.7 s; pinned Ruff,
 strict Mypy (168 source files) and Pyright passed. P1 CI run
 [38819187841](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38819187841)
 passed all three Linux/Windows jobs.
+
+P3 adds strict `object_memory` version-one encoding in the same atomic save and
+passes typed snapshots through session restoration and the desktop writer.
+Relative active ages are reanchored; observations and sensory dwell start empty.
+Current gaze/offer checks use actual observations, not the freshness of restored
+knowledge. Legacy saves grant no knowledge; invalid/missing World drops paired
+memory, invalid memory keeps valid Pet/World and requires an original backup.
+Hidden movement/removal is not reconciled during load. Missing instance IDs can
+be approached/searched without crashing. Codec, atomic-write interruption,
+consumption-commit and held-recovery tests passed with all pinned static gates.
+The desktop writer captures a single typed `WorldSessionSnapshot`; the composition
+root remains within its existing architecture gate. Full Windows/Python 3.11
+suite: 890 tests passed in 198.8 s; strict Mypy covers 169 source files. P2 CI
+[38819674430](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38819674430)
+passed all three jobs.
 
 ## Acceptance evidence
 

@@ -3,17 +3,23 @@
 from __future__ import annotations
 
 from ..pet.mind.object_intentions import ObjectGoal, ObjectIntentions
+from ..pet.mind.object_knowledge import ObjectMemorySnapshot
 from ..pet.mind.object_memory import ObjectMemory
-from ..pet.mind.object_perception import ObjectCandidate, ObjectPerception
+from ..pet.mind.object_perception import (
+    ObjectCandidate,
+    ObjectObservation,
+    ObjectPerception,
+)
 from ..pet.state import PetState
 from ..world.contracts import ObjectInteraction, ObjectState, WorldSnapshot
 
 
 class ObjectAwareness:
-    def __init__(self) -> None:
+    def __init__(self, saved: ObjectMemorySnapshot | None = None) -> None:
         self.perception = ObjectPerception()
-        self.memory = ObjectMemory()
+        self.memory = ObjectMemory(saved)
         self.intentions = ObjectIntentions()
+        self.observations: tuple[ObjectObservation, ...] = ()
         self._world_revision = -1
 
     def update(
@@ -40,10 +46,13 @@ class ObjectAwareness:
             tuple(candidates), now=now, x=x, height=height,
             width=width, attentive=attentive,
         )
-        previous = {(item.token, item.identity, item.x, item.height, item.resting)
+        self.observations = observations
+        previous = {(item.token, item.identity, item.x, item.height, item.resting,
+                     item.examined, item.disposition)
                     for item in self.memory.snapshot()}
         self.memory.update(observations, now=now)
-        current = {(item.token, item.identity, item.x, item.height, item.resting)
+        current = {(item.token, item.identity, item.x, item.height, item.resting,
+                    item.examined, item.disposition)
                    for item in self.memory.snapshot()}
         changed = previous != current or self._world_revision != world.revision
         self._world_revision = world.revision

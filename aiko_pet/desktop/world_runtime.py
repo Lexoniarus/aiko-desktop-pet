@@ -16,6 +16,7 @@ from ..application.object_awareness import ObjectAwareness
 from ..application.object_consumption import ObjectConsumption
 from ..application.object_feedback import FeedbackKey, FeedbackReceipt, ObjectFeedback
 from ..application.object_interaction import ObjectInteractionCoordinator
+from ..application.session import WorldSessionSnapshot
 from ..application.settings import PetSettings
 from ..infrastructure.active_time import active_uptime_seconds
 from ..infrastructure.world_catalog import build_consumable_definitions
@@ -29,6 +30,7 @@ from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.object_decisions import ObjectUseDecision, decide_object_use
+from ..pet.mind.object_knowledge import ObjectMemorySnapshot
 from ..pet.routine import context_at
 from ..pet.state import PetState
 from ..ui.pet_view.action_playback import ActionPlayback
@@ -41,7 +43,7 @@ from ..world.contracts import (
     WorldSnapshot,
     WorldSurface,
 )
-from ..world.state import WorldState
+from ..world.state import WorldOperationError, WorldState
 from .geometry import GroundApproach, TaskbarTrack
 from .global_input import mouse_buttons_down_windows
 from .visual_observation import DesktopVisualObservation
@@ -61,6 +63,7 @@ class DesktopWorldRuntime:
         ], cancel_feedback: Callable[[], None], feedback: Callable[[str], None],
         save: Callable[[], None],
         restored_world: WorldSnapshot | None = None,
+        restored_memory: ObjectMemorySnapshot | None = None,
     ) -> None:
         self.root, self.state, self.settings = root, state, settings
         self._track, self._walk, self._visual = track, walk, visual
@@ -81,7 +84,9 @@ class DesktopWorldRuntime:
         if restored_world is not None:
             self.world.restore_snapshot(restored_world)
             self.world.change_surface(self._surface())
-        self.awareness = ObjectAwareness()
+        self.awareness = ObjectAwareness(
+            restored_memory if restored_world is not None else None,
+        )
         self._consumption = ObjectConsumption(
             state, mind, adaptive, clock=clock, memory=self.awareness.memory,
         )
@@ -120,6 +125,13 @@ class DesktopWorldRuntime:
     @property
     def carrying(self) -> bool:
         return self.carry_id is not None
+
+    def memory_snapshot(self) -> ObjectMemorySnapshot:
+        return self.awareness.memory.export(now=self.now)
+
+    def save_snapshot(self) -> WorldSessionSnapshot:
+        return WorldSessionSnapshot(self.world.snapshot(), self.memory_snapshot(),
+                                     self._body_x())
 
     def _surface(self) -> WorldSurface:
         track = self._track()
@@ -215,7 +227,10 @@ class DesktopWorldRuntime:
     def _eligible(self, token: str) -> bool:
         if self.state.sleeping or self._game_open():
             return False
-        item = self.world.get(token)
+        try:
+            item = self.world.get(token)
+        except WorldOperationError:
+            return False
         known = self.awareness.memory.get(token)
         if known is None or item.position is None:
             return False
@@ -229,6 +244,7 @@ class DesktopWorldRuntime:
                 ).consume
                 and time.monotonic() >= self._playback.until
                 and self.now - known.observed_at < 0.5
+                and any(seen.token == token for seen in self.awareness.observations)
                 and distance <= self.width * 0.3
                 and self.width * 0.05 <= item.position.height <= self.width * 0.9
             )
@@ -281,8 +297,9 @@ class DesktopWorldRuntime:
             blocked=blocked,
             held_pose=(self._body_x(), self.width * .4),
         )
+        observed = {item.token for item in self.awareness.observations}
         visible = [item for item in self.awareness.memory.snapshot()
-                   if not item.examined and self.now - item.observed_at < 0.5]
+                   if not item.examined and item.token in observed]
         gaze = goal or (min(visible, key=lambda item: abs(item.x - self._body_x()))
                         if visible else None)
         self._visual.object_target = (

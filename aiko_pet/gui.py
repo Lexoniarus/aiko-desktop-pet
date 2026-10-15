@@ -412,8 +412,9 @@ class DesktopPet:
             feedback=lambda text: self._speech.show_text(text, 2450),
             save=self._save,
             restored_world=session.world,
+            restored_memory=session.object_memory,
         )
-        self._persistence.attach_world(self._world.world.snapshot, self._world._body_x)
+        self._persistence.attach_world(self._world.save_snapshot)
         self._lifecycle.start()
 
     def _object_feedback_active(self) -> bool:

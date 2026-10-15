@@ -13,9 +13,19 @@ from typing import Callable, Protocol
 
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.adaptive_models import AdaptiveMemory
+from ..pet.mind.object_knowledge import ObjectMemorySnapshot
 from ..pet.state import PetState
 from ..world.contracts import WorldSnapshot
 from .settings import PetSettings
+
+
+@dataclass(frozen=True, slots=True)
+class WorldSessionSnapshot:
+    """Capture the paired physical/cognitive owners on the application thread."""
+
+    world: WorldSnapshot
+    object_memory: ObjectMemorySnapshot
+    recovery_x: float
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,6 +37,7 @@ class LoadedPetData:
     adaptive_memory: AdaptiveMemory
     restored_from_save: bool
     world: WorldSnapshot | None = None
+    object_memory: ObjectMemorySnapshot | None = None
 
 
 class SavedPetReader(Protocol):
@@ -43,6 +54,7 @@ class RestoredPetSession:
     settings: PetSettings
     adaptive: AdaptiveRoutine
     world: WorldSnapshot | None = None
+    object_memory: ObjectMemorySnapshot | None = None
 
 
 class PetSessionRestorer:
@@ -74,4 +86,5 @@ class PetSessionRestorer:
             settings=loaded.settings,
             adaptive=AdaptiveRoutine(loaded.adaptive_memory),
             world=loaded.world,
+            object_memory=loaded.object_memory,
         )

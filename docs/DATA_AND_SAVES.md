@@ -77,6 +77,7 @@ The existing top-level sections are unchanged:
 | `settings` | Window positions, size and behaviour/observation preferences |
 | `adaptive` | Aggregated learned weekday/hour patterns and bounded rhythm state; optional in older saves |
 | `world` | Optional separately versioned World snapshot (`version: 1`), surface, active portions, revisions and next instance ID |
+| `object_memory` | Optional separately versioned subjective knowledge (`version: 1`), learned identity, last known pose, relative active age, inspection and own-placement disposition |
 
 `pet.updated_at` is a Unix wall-clock timestamp in seconds. Need values are
 saved to four decimal places. Older version-one saves missing newer optional
@@ -137,8 +138,33 @@ backup before replacement while valid pet progress is retained.
 Only nonterminal portions are saved. Cursor-held, falling and unconsumed pet-held
 portions normalize to valid resting ground positions; pet-held recovery uses
 Aiko's position. IDs and the next-ID counter prevent accidental identity reuse.
-Consumed/removed instances, live capture, animations, pending user actions,
-interaction receipts and subjective memory are not resumed. No World consumption
+Consumed/removed instances, live capture, animations, pending user actions and
+interaction receipts are not resumed. No World consumption
 is simulated while closed. A completed meal and removal of its portion share
 the same durable snapshot, so restart cannot replay the meal from that snapshot.
 See [isolated restart testing](WORLD_SMOKE_TEST.md).
+
+## Subjective object knowledge
+
+`ObjectMemory` owns learned facts separately from current perception and World
+truth. Recognized identities and inspection experience survive restart until
+consumption or confirmed local absence. Only unidentified sightings expire after
+600 active seconds. Saved ages are relative active durations: closed time does
+not age memories, accumulate sensory evidence or produce observations.
+
+The optional `object_memory` section is captured with Pet/World and written by
+the same atomic replacement. Consumption removes its remembered target before
+that save, even while the visible eat clip is still playing. Confirmed own
+placement is recorded at detach; interrupted placement is distinct from keeping
+a supply for later. Held/falling recovery never invents observed ground positions.
+
+Restore does not look up a remembered identity or location in current objects.
+Unseen relocation/removal can therefore leave outdated knowledge until fresh
+observation or attentive local search. Actual observations and sensory progress
+start empty; restored knowledge alone cannot claim current visibility.
+
+Older saves without memory start with empty knowledge. A malformed or unsupported
+memory section requires an original backup before replacement, retaining valid
+Pet/World sections. Without a valid paired World, old instance-bound knowledge
+is discarded rather than attaching to reused IDs in a fresh World.
+See the [accepted delivery plan](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md).

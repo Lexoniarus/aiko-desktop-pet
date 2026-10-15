@@ -124,8 +124,10 @@ path, rather than creating another profile:
   falling or pet-held portions recover grounded, without resuming input/actions.
 - [ ] Consumed portions do not return and effects do not repeat. Saving still
   writes Pet and World together atomically with outer schema version 1.
-- [ ] Memory/inspection history starts fresh after reopening, as before. Restored
-  objects can be investigated again. No World item is eaten while the app is closed.
+- [ ] Learned identity, inspection and confirmed own placement survive reopening.
+  Known unwanted portions release gaze and do not trigger another investigation.
+  Old saves without the optional memory section start without that knowledge;
+  unidentified sightings stay unidentified. No World item is eaten while closed.
 
 ## Automated evidence
 

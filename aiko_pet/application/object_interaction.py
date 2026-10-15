@@ -167,8 +167,9 @@ class ObjectInteractionCoordinator:
             self._cancel_feedback()
             return
         if self.instance_id is not None:
-            item = self.world.get(self.instance_id)
-            if item.state == ObjectState.PET_HELD:
+            item = next((item for item in self.world.snapshot().objects
+                         if item.instance_id == self.instance_id), None)
+            if item is not None and item.state == ObjectState.PET_HELD:
                 self._queued = action
                 self._cue_done = True
                 self._cancel_feedback()
@@ -330,5 +331,8 @@ class ObjectInteractionCoordinator:
         self._set_phase("idle")
         self._select_item(None)
         if token is not None:
-            consumed = consumed or self.world.get(token).state == ObjectState.CONSUMED
+            consumed = consumed or any(
+                item.instance_id == token and item.state == ObjectState.CONSUMED
+                for item in self.world.snapshot().objects
+            )
             self._completed(token, consumed)
