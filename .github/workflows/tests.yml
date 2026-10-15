@@ -58,6 +58,11 @@ jobs:
         shell: pwsh
         run: |
           $patterns = @(
+            "test_world*.py",
+            "test_object*.py",
+            "test_pickup*.py",
+            "test_goal_walk.py",
+            "test_consumption_origin.py",
             "test_windows_setup.py",
             "test_taskbar.py",
             "test_character_assets.py",
