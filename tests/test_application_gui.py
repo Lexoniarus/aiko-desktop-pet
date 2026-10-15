@@ -54,8 +54,9 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
     def test_care_passes_through_application_controller(self) -> None:
         self.pet.state.affection = 10
         with patch.object(
-            self.pet.application, "dispatch",
-            wraps=self.pet.application.dispatch,
+            self.pet.application._care._clock, "consume", return_value=0.0,
+        ), patch.object(
+            self.pet.application, "dispatch", wraps=self.pet.application.dispatch,
         ) as dispatch:
             self.pet.interact("pet")
         self.assertAlmostEqual(self.pet.state.affection, 35, places=3)
