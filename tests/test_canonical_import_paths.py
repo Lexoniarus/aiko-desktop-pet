@@ -68,6 +68,13 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+    def test_time_context_has_no_legacy_localized_display_methods(self) -> None:
+        from aiko_pet.pet.routine import TimeContext
+
+        for obsolete in ("label", "schedule_line", "greeting"):
+            with self.subTest(member=obsolete):
+                self.assertFalse(hasattr(TimeContext, obsolete))
+
     def test_pet_state_has_no_legacy_mutation_reexports(self) -> None:
         module = __import__("aiko_pet.pet.state", fromlist=["PetState"])
         for obsolete in (

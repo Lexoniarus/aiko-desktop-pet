@@ -5,6 +5,7 @@ from datetime import datetime
 
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
+from aiko_pet.ui.view_models.text_de import format_day_label
 
 
 def local_time(day, hour, minute=0):
@@ -17,12 +18,12 @@ class DailyRoutineTests(unittest.TestCase):
         morning = context_at(local_time("2026-10-12", 10))
         self.assertEqual(morning.period, "quiet")
         self.assertFalse(morning.weekend)
-        self.assertIn("Ruhiger Vormittag", morning.label)
-        self.assertNotIn("Academy", morning.label)
+        self.assertIn("Ruhiger Vormittag", format_day_label(morning))
+        self.assertNotIn("Academy", format_day_label(morning))
         self.assertEqual(context_at(local_time("2026-10-12", 13)).meal, "lunch")
         self.assertEqual(context_at(local_time("2026-10-12", 19)).meal, "dinner")
         self.assertTrue(context_at(local_time("2026-10-12", 23, 45)).night)
-        self.assertIn("Dienstag", context_at(local_time("2026-10-13", 10)).label)
+        self.assertIn("Dienstag", format_day_label(context_at(local_time("2026-10-13", 10))))
 
     def test_saturday_has_later_meals_and_more_freetime(self):
         self.assertTrue(context_at(local_time("2026-10-17", 8, 30)).night)

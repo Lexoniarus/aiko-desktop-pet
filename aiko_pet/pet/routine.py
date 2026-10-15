@@ -10,11 +10,6 @@ from collections.abc import Collection
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 
-WEEKDAYS = (
-    "Montag", "Dienstag", "Mittwoch", "Donnerstag",
-    "Freitag", "Samstag", "Sonntag",
-)
-
 # (start minute since midnight, period, label, optional meal)
 WEEKDAY_SLOTS = (
     (0, "night", "Nachtruhe", None),
@@ -84,33 +79,6 @@ class TimeContext:
         if self.night and self.local.hour < 12:
             day -= timedelta(days=1)
         return day.isoformat()
-
-    @property
-    def label(self) -> str:
-        return (
-            f"{WEEKDAYS[self.local.weekday()]} · "
-            f"{self.local:%H:%M} · {self.activity}"
-        )
-
-    @property
-    def schedule_line(self) -> str:
-        return f"Danach: {self.next_activity} um {self.next_time}"
-
-    def greeting(self) -> str:
-        """Safe fallback when the dialogue catalogue cannot be loaded."""
-        if self.night:
-            return "...Du bist noch wach?"
-        if self.period == "breakfast":
-            return "Morgen. ...Schon wieder so viel Licht."
-        if self.period == "lunch":
-            return "Mittag. Essen klingt vernünftig."
-        if self.period == "dinner":
-            return "Ich könnte etwas essen."
-        if self.period == "evening":
-            return "Abends wird's hier angenehmer."
-        if self.weekend:
-            return "Heute lassen wir uns Zeit."
-        return "...Da bist du ja."
 
 
 def due_meal(

@@ -69,8 +69,17 @@ class UiProjectionParityTests(unittest.TestCase):
         )
         for stamp in (at(2), at(8), at(13), at(18), at(23), at(10, day=18)):
             context = context_at(stamp)
-            self.assertEqual(format_day_label(context), context.label)
-            self.assertEqual(format_schedule_line(context), context.schedule_line)
+            self.assertEqual(
+                format_day_label(context),
+                (
+                    f"{('Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag')[context.local.weekday()]}"
+                    f" · {context.local:%H:%M} · {context.activity}"
+                ),
+            )
+            self.assertEqual(
+                format_schedule_line(context),
+                f"Danach: {context.next_activity} um {context.next_time}",
+            )
             for state in states:
                 with self.subTest(stamp=stamp, needs=state.satiety):
                     snapshot = snapshot_pet(state)
