@@ -176,7 +176,9 @@ def plan_care_action(
     if intake.repetitive:
         response = GERMAN_TEXT.format("care.feed_repeat", food=profile.display_name)
     elif first_meal and context.meal is not None:
-        response = GERMAN_TEXT.format("care.feed_meal", meal=MEAL_NAMES[context.meal].lower())
+        response = GERMAN_TEXT.format(
+            "care.feed_meal", meal=MEAL_NAMES[context.meal].lower(),
+        )
     else:
         response = GERMAN_TEXT.format("care.feed_snack", food=profile.display_name)
     return replace(
