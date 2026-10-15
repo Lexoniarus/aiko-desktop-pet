@@ -1,7 +1,7 @@
 """Authored German dialogue catalogue, strict schema and weighted rotation.
 
 This module owns the available lines; it does not decide when Aiko should
-speak. AikoMind in mind.py owns situational behavior and conversation.
+speak. PetMind in mind.py owns situational behavior and conversation.
 """
 
 from __future__ import annotations

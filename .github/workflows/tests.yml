@@ -33,7 +33,7 @@ jobs:
             aiko_pet/pet/routine.py \
             tests/test_friendship_policy.py tests/test_care_actions.py \
             tests/test_pet_lifecycle.py tests/test_domain_transitions.py \
-            tests/test_presentation_boundary.py tests/test_pet_package_layout.py \
+            tests/test_ui_projection_parity.py tests/test_pet_package_layout.py \
             tests/test_persistence_package.py aiko_pet/infrastructure/persistence.py
       - name: Enforce PEP 8 line lengths in adaptive and dialogue modules
         run: |
@@ -54,7 +54,7 @@ jobs:
             aiko_pet/desktop/window_stack.py \
             tests/test_adaptive_policy.py tests/test_dialogue_events.py \
             tests/test_spontaneous_events.py \
-            tests/test_personality_package.py tests/test_computer_voice_modules.py \
+            tests/test_pet_mind_catalogue.py tests/test_computer_voice_modules.py \
             tests/test_desktop_package_layout.py \
             tests/test_desktop_runtime.py tests/test_desktop_preferences.py \
             tests/test_desktop_focus_timers.py \
@@ -119,7 +119,7 @@ jobs:
             "test_pet_lifecycle.py",
             "test_domain_transitions.py",
             "test_pet_package_layout.py",
-            "test_personality_package.py",
+            "test_pet_mind_catalogue.py",
             "test_desktop_package_layout.py",
             "test_persistence_package.py",
             "test_final_architecture_audit.py",
@@ -129,7 +129,7 @@ jobs:
             "test_application_core.py",
             "test_adaptive_models.py",
             "test_ui_architecture.py",
-            "test_presentation_boundary.py",
+            "test_ui_projection_parity.py",
             "test_desktop_runtime.py",
             "test_desktop_preferences.py",
             "test_desktop_focus_timers.py",

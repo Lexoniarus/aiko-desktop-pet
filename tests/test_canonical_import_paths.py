@@ -68,6 +68,13 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+    def test_migration_only_test_filenames_were_retired(self) -> None:
+        for old_name in (
+            "test_personality_package.py",
+            "test_presentation_boundary.py",
+        ):
+            self.assertFalse((ROOT.parent / "tests" / old_name).exists())
+
     def test_old_packages_and_ui_alias_modules_were_removed(self) -> None:
         for name in LEGACY_PACKAGES:
             self.assertFalse((ROOT / name).exists())

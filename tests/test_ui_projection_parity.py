@@ -1,4 +1,4 @@
-"""Parity and ownership tests for semantic application snapshots and UI copy."""
+"""Parity and ownership tests for semantic snapshots and German UI copy."""
 
 from __future__ import annotations
 
@@ -41,7 +41,7 @@ class StaticMonitor:
         return self.reading
 
 
-class PresentationBoundaryTests(unittest.TestCase):
+class UiProjectionParityTests(unittest.TestCase):
     def test_snapshot_copies_mutable_pet_values(self) -> None:
         state = PetState(satiety=19, affection=28, meals_today=["breakfast"])
         snapshot = snapshot_pet(state)
@@ -102,7 +102,7 @@ class PresentationBoundaryTests(unittest.TestCase):
             "Aiko schläft gerade ... gute Nacht.",
         )
 
-    def test_workload_copy_matches_legacy_for_optional_readings(self) -> None:
+    def test_workload_copy_matches_existing_optional_readings(self) -> None:
         for reading in (
             ComputerSnapshot(),
             ComputerSnapshot(cpu=15, measured_at=10),
