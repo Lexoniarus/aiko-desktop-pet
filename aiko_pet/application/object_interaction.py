@@ -37,6 +37,7 @@ class ObjectInteractionCoordinator:
         self._interaction_id = ""
         self._queued: Callable[[], None] | None = None
         self._seen: set[PlaybackEvent] = set()
+        self._effects: set[tuple[int, str]] = set()
 
     @property
     def active(self) -> bool:
@@ -48,6 +49,7 @@ class ObjectInteractionCoordinator:
         self._sequence += 1
         self._interaction_id = f"interaction_{self._sequence}"
         self._seen.clear()
+        self._effects.clear()
 
     def begin_pickup(self, instance_id: str) -> bool:
         if self.active or not self._eligible(instance_id):
@@ -70,11 +72,14 @@ class ObjectInteractionCoordinator:
 
     def interrupt(self, action: Callable[[], None]) -> None:
         """Only unconsumed acquired items need animated recovery."""
+        if self.phase == "put_down":
+            self._queued = action
+            return
         if self.instance_id is not None:
             item = self.world.get(self.instance_id)
             if item.state == ObjectState.PET_HELD:
                 self._queued = action
-                if self.phase != "put_down" and self.phase != "pick_up":
+                if self.phase != "pick_up":
                     self._put_down()
                 return
         if self.active:
@@ -89,7 +94,10 @@ class ObjectInteractionCoordinator:
         self._seen.add(event)
         instance_id = self.instance_id
         assert instance_id is not None
-        if self.phase == "pick_up" and "attach_object" in event.events:
+        attach = event.action_id, "attach_object"
+        detach = event.action_id, "detach_object"
+        if (self.phase == "pick_up" and "attach_object" in event.events
+                and attach not in self._effects):
             if not self._eligible(instance_id):
                 self._finish(False)
                 self._stop()
@@ -102,11 +110,14 @@ class ObjectInteractionCoordinator:
                 self._stop()
                 return
             self._select_item(item.definition_id)
-        if self.phase == "put_down" and "detach_object" in event.events:
+            self._effects.add(attach)
+        if (self.phase == "put_down" and "detach_object" in event.events
+                and detach not in self._effects):
             item = self.world.get(instance_id)
             self.world.put_down(instance_id, self._ground_x(instance_id),
                                 expected_revision=item.revision)
             self._select_item(None)
+            self._effects.add(detach)
         if not event.finished:
             return
         if self.phase == "pick_up":

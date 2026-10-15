@@ -65,3 +65,20 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual(self.world.get(self.item.instance_id).state,
                          ObjectState.RESTING)
         self.assertEqual(self.consumed, [])
+
+    def test_repeated_effect_in_different_envelope_cannot_grasp_or_release_twice(self):
+        self.coordinator.begin_pickup(self.item.instance_id)
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 4, ("attach_object",)))
+        self.assertEqual(self.coordinator.phase, "pick_up")
+        self.coordinator.interrupt(lambda: self.actions.append("sleep"))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 2, ("detach_object",)))
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 1, ("detach_object",)))
+        self.coordinator.interrupt(lambda: self.actions.append("game"))
+        self.assertEqual(self.coordinator.phase, "put_down")
+        self.assertNotIn("game", self.actions)
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 0, finished=True))
+        self.assertEqual(self.actions[-1], "game")
+        self.assertNotIn("sleep", self.actions)
+        self.assertEqual(self.consumed, [])
