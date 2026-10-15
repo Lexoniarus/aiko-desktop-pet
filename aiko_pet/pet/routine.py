@@ -6,6 +6,7 @@ structured habits: Aiko does not leave the desktop or have obligations.
 
 from __future__ import annotations
 
+from collections.abc import Collection
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 
@@ -110,6 +111,17 @@ class TimeContext:
         if self.weekend:
             return "Heute lassen wir uns Zeit."
         return "...Da bist du ja."
+
+
+def due_meal(
+    context: TimeContext, *, meals_date: str, meals_today: Collection[str],
+) -> str | None:
+    """Identify a current meal not yet recorded in this day's pet history."""
+    if context.meal is not None and (
+        context.day_key != meals_date or context.meal not in meals_today
+    ):
+        return context.meal
+    return None
 
 
 def context_at(timestamp: float) -> TimeContext:

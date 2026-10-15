@@ -78,15 +78,18 @@ class DailyRoutineTests(unittest.TestCase):
         morning = local_time("2026-10-17", 9, 20)
         state = PetState(updated_at=morning)
         context = context_at(morning)
-        self.assertEqual(state.feed_label(context), "Frühstück")
+        self.assertEqual(state.due_meal(context), "breakfast")
         response = state.interact("feed", now=morning)
         self.assertIn("frühstück", response)
-        self.assertEqual(state.feed_label(context), "Snack")
+        self.assertIsNone(state.due_meal(context))
         self.assertEqual(state.meals_today, ["breakfast"])
         state.interact("feed", now=morning)
         self.assertEqual(state.meals_today, ["breakfast"])
         state.advance(local_time("2026-10-18", 9, 20), auto_routine=True)
-        self.assertEqual(state.feed_label(context_at(local_time("2026-10-18", 9, 20))), "Frühstück")
+        self.assertEqual(
+            state.due_meal(context_at(local_time("2026-10-18", 9, 20))),
+            "breakfast",
+        )
         self.assertEqual(state.meals_today, [])
 
     def test_weekend_keeps_hourly_care_rhythm(self):

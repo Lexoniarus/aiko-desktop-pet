@@ -7,7 +7,7 @@ sentences. Status wording is owned by this view-model module.
 from __future__ import annotations
 
 from ...application.read_snapshot import PetReadSnapshot
-from ...pet.routine import MEAL_NAMES, WEEKDAYS, TimeContext
+from ...pet.routine import MEAL_NAMES, WEEKDAYS, TimeContext, due_meal
 from ...pet.status_hints import MoodHint, choose_mood_hint
 from ...telemetry import ComputerSnapshot, workload_intensity
 
@@ -24,12 +24,11 @@ def format_schedule_line(context: TimeContext) -> str:
 
 
 def format_feed_label(pet: PetReadSnapshot, context: TimeContext) -> str:
-    if context.meal and (
-        context.day_key != pet.meals_date
-        or context.meal not in pet.meals_today
-    ):
-        return MEAL_NAMES[context.meal]
-    return "Snack"
+    """Translate the canonical due-meal decision to the existing UI label."""
+    meal = due_meal(
+        context, meals_date=pet.meals_date, meals_today=pet.meals_today,
+    )
+    return MEAL_NAMES[meal] if meal is not None else "Snack"
 
 
 _MOOD_HINT_TEXT = {

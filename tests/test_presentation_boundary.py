@@ -24,7 +24,7 @@ from aiko_pet.ui.view_models.text_de import (
     describe_workload, format_day_label, format_feed_label,
     format_mood_hint, format_percent, format_schedule_line, mood_hint_text,
 )
-from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.routine import MEAL_NAMES, context_at
 from aiko_pet.infrastructure.hardware.metrics import workload_description, percent_label
 from aiko_pet.telemetry import ComputerSnapshot, workload_intensity
 
@@ -74,9 +74,10 @@ class PresentationBoundaryTests(unittest.TestCase):
             for state in states:
                 with self.subTest(stamp=stamp, needs=state.satiety):
                     snapshot = snapshot_pet(state)
+                    meal = state.due_meal(context)
+                    expected_label = MEAL_NAMES[meal] if meal is not None else "Snack"
                     self.assertEqual(
-                        format_feed_label(snapshot, context),
-                        state.feed_label(context),
+                        format_feed_label(snapshot, context), expected_label,
                     )
                     self.assertEqual(
                         format_mood_hint(snapshot, context),

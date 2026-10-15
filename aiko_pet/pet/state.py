@@ -39,7 +39,7 @@ from .lifecycle import (
     calculate_daily_routine,
     plan_pet_time,
 )
-from .routine import MEAL_NAMES, TimeContext, context_at
+from .routine import MEAL_NAMES, TimeContext, context_at, due_meal
 from .status_hints import MoodHint, choose_mood_hint
 from .value_rules import bounded as bounded, clamp_saved_time as clamp_saved_time
 
@@ -350,12 +350,11 @@ class PetState:
             )
         return transition.response
 
-    def feed_label(self, context: TimeContext) -> str:
-        if context.meal and (
-            context.day_key != self.meals_date or context.meal not in self.meals_today
-        ):
-            return MEAL_NAMES[context.meal]
-        return "Snack"
+    def due_meal(self, context: TimeContext) -> str | None:
+        """Return the due meal ID, or None when only snacks remain."""
+        return due_meal(
+            context, meals_date=self.meals_date, meals_today=self.meals_today,
+        )
 
     def mood_hint(self, context: TimeContext | None = None) -> MoodHint:
         """Return the semantic status hint, not a language-specific sentence."""
