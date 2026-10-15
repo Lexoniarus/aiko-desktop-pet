@@ -170,9 +170,41 @@ class WorldState:
         """World-only consumption record; no nutrition, care or UI side effects."""
         item = self._expect(instance_id, expected_revision, ObjectState.PET_HELD)
         definition = self._definitions[item.definition_id]
-        if ObjectInteraction.EAT not in definition.interactions:
+        if not definition.interactions.intersection((
+            ObjectInteraction.EAT, ObjectInteraction.DRINK,
+        )):
             raise WorldOperationError(WorldFailure.NOT_EDIBLE)
         return self._commit(item, ObjectState.CONSUMED, None)
+
+    def put_down(
+        self, instance_id: str, x: float, *, expected_revision: int,
+    ) -> WorldObjectSnapshot:
+        """Return an acquired item at the confirmed reverse-animation event."""
+        item = self._expect(instance_id, expected_revision, ObjectState.PET_HELD)
+        position = WorldPosition(x, 0)
+        self._validate_position(position, item.footprint)
+        return self._commit(item, ObjectState.RESTING, position)
+
+    def change_surface(self, surface: WorldSurface) -> None:
+        """Reproject active anchors atomically; reject shapes that cannot fit."""
+        self._require_owner()
+        if surface == self._surface:
+            return
+        replacements: list[tuple[WorldObjectSnapshot, WorldPosition]] = []
+        for item in self._objects.values():
+            if item.footprint.left + item.footprint.right > surface.width:
+                if item.position is not None:
+                    raise WorldOperationError(WorldFailure.OUT_OF_BOUNDS)
+            if item.position is not None:
+                replacements.append((item, WorldPosition(
+                    max(item.footprint.left, min(
+                        item.position.x, surface.width - item.footprint.right,
+                    )), min(item.position.height, surface.height),
+                )))
+        self._surface = surface
+        self._revision += 1
+        for item, position in replacements:
+            self._commit(item, item.state, position)
 
     def remove(
         self, instance_id: str, *, expected_revision: int,

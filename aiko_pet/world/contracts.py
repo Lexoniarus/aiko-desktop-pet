@@ -58,6 +58,7 @@ class WorldSurface:
 
 class ObjectInteraction(StrEnum):
     EAT = "eat"
+    DRINK = "drink"
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,6 +82,8 @@ class ObjectDefinition:
             raise ValueError("Interactions must be immutable typed capabilities")
         if (ObjectInteraction.EAT in self.interactions) != (self.food_id is not None):
             raise ValueError("An edible definition must reference a food ID")
+        if ObjectInteraction.DRINK in self.interactions and self.food_id is not None:
+            raise ValueError("A drink must not pretend to be a food")
 
 
 class ObjectState(StrEnum):
