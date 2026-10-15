@@ -28,6 +28,8 @@ class ObjectMemory:
                     previous.examined and observation.x == previous.x
                     and observation.height == previous.height
                     and observation.resting == previous.resting
+                    and (observation.identity is None
+                         or observation.identity == previous.identity)
                 )))
             if previous is not None and observation.identity is None:
                 observation = replace(observation, identity=previous.identity,

@@ -19,17 +19,21 @@ class ObjectAwareness:
     def update(
         self, world: WorldSnapshot, state: PetState, *, now: float,
         x: float, height: float, width: float, attentive: bool, blocked: bool,
+        held_pose: tuple[float, float] | None = None,
     ) -> ObjectGoal | None:
         definitions = {item.definition_id: item for item in world.definitions}
         candidates: list[ObjectCandidate] = []
         for item in world.objects:
-            if item.position is None:
+            pose = ((item.position.x, item.position.height)
+                    if item.position is not None else
+                    held_pose if item.state == ObjectState.PET_HELD else None)
+            if pose is None:
                 continue
             definition = definitions[item.definition_id]
             candidates.append(ObjectCandidate(
                 item.instance_id, definition.food_id or definition.definition_id,
                 "drink" if ObjectInteraction.DRINK in definition.interactions
-                else "food", item.position.x, item.position.height,
+                else "food", *pose,
                 item.state == ObjectState.RESTING,
             ))
         observations = self.perception.observe(

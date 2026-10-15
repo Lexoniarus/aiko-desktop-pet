@@ -50,7 +50,8 @@ class ObjectConsumption:
         if item.state != ObjectState.PET_HELD:
             return ConsumptionOutcome(False)
         context = context_at(inputs.wall_time)
-        before = self._mind.observe_care(self._state, context, inputs.monotonic_time)
+        before = self._mind.observe_care(self._state, context, inputs.monotonic_time) \
+            if origin == ConsumptionOrigin.HANDOVER else None
         checkpoint = deepcopy(self._state)
         prepared = deepcopy(self._state)
         definition = next(definition for definition in world.snapshot().definitions
@@ -73,6 +74,7 @@ class ObjectConsumption:
         if len(self._receipts) > 4096:
             self._receipts.popitem(last=False)
         if origin == ConsumptionOrigin.HANDOVER:
+            assert before is not None
             self._adaptive.note_interaction(inputs.wall_time)
             self._mind.after_care(result.action, inputs.monotonic_time)
             reaction = self._mind.select_reaction(

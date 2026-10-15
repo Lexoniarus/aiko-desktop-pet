@@ -29,6 +29,7 @@ class AttentionRuntimePorts:
     walking: Callable[[], bool]
     action_until: Callable[[], float]
     refresh_toolbar: Callable[[], None]
+    foreground_active: Callable[[], bool] = lambda: False
 
 
 class DesktopAttentionRuntime:
@@ -58,6 +59,8 @@ class DesktopAttentionRuntime:
     def cursor_moved(
         self, distance: float, screen_width: int, now: float,
     ) -> None:
+        if self._ports.foreground_active():
+            return
         reaction = self.attention.cursor_reaction(
             distance, screen_width, now, self._ports.context(),
             toolbar_visible=self._ports.toolbar_active(),
@@ -83,7 +86,7 @@ class DesktopAttentionRuntime:
 
     def maybe_show_idle_emote(self, now: float) -> None:
         ports = self._ports
-        if ports.game_open():
+        if ports.game_open() or ports.foreground_active():
             return
         animation = self.attention.select_idle_animation(
             now, action_until=ports.action_until(),
@@ -95,7 +98,7 @@ class DesktopAttentionRuntime:
 
     def maybe_speak_spontaneously(self, now: float) -> None:
         ports = self._ports
-        if ports.game_open():
+        if ports.game_open() or ports.foreground_active():
             return
         choice = self.attention.spontaneous(
             now, ports.context(),
@@ -109,7 +112,7 @@ class DesktopAttentionRuntime:
 
     def present_notification(self, now: float) -> None:
         ports = self._ports
-        if ports.game_open():
+        if ports.game_open() or ports.foreground_active():
             return
         note = self.attention.next_notification(
             now,

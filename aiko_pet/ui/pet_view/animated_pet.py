@@ -163,6 +163,13 @@ class AnimatedPet:
         self.ports.interrupt_walk()
         self.show_frame("sleep" if self.state.sleeping else "idle", now)
 
+    def hold_last_pose(self, state: str, now: float) -> None:
+        """Present an explicit held pose without replaying a ground pickup."""
+        self.frame_clock.frame_index = len(self.assets.clips[state].timings) - 1
+        self.frame_clock.frame_started_at = now
+        self.frame_clock.finished = True
+        self.show_frame(state, now)
+
     def show_frame(
         self, state: str, now: float, *, fixed: int | None = None,
     ) -> None:

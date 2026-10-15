@@ -14,7 +14,7 @@ from ..application.active_time import ActiveSessionClock, SessionInputs
 from ..application.controller import CareOutcome
 from ..application.object_awareness import ObjectAwareness
 from ..application.object_consumption import ObjectConsumption
-from ..application.object_feedback import FeedbackReceipt, ObjectFeedback
+from ..application.object_feedback import FeedbackKey, FeedbackReceipt, ObjectFeedback
 from ..application.object_interaction import ObjectInteractionCoordinator
 from ..application.settings import PetSettings
 from ..infrastructure.active_time import active_uptime_seconds
@@ -24,11 +24,13 @@ from ..pet.animation.item_assets import ItemCatalog
 from ..pet.balance import BALANCE
 from ..pet.consumption import ConsumptionOrigin
 from ..pet.content import GERMAN_TEXT
-from ..pet.food import FOOD_BALANCE
 from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind.catalog import Reaction
 from ..pet.mind.object_decisions import ObjectUseDecision, decide_object_use
+from ..pet.mind.object_perception import ObjectObservation
+from ..pet.routine import context_at
 from ..pet.state import PetState
 from ..ui.pet_view.action_playback import ActionPlayback
 from ..ui.pet_view.animated_pet import AnimatedPet
@@ -55,7 +57,9 @@ class DesktopWorldRuntime:
         walk: WalkDriver, visual: DesktopVisualObservation, animated: AnimatedPet,
         playback: ActionPlayback, inputs: Callable[[float, float], SessionInputs],
         game_open: Callable[[], bool], controls_active: Callable[[], bool],
-        show_care: Callable[[CareOutcome], None], feedback: Callable[[str], None],
+        present_feedback: Callable[
+            [ObjectFeedback, Reaction, Callable[[FeedbackReceipt], None]], None
+        ], cancel_feedback: Callable[[], None], feedback: Callable[[str], None],
         save: Callable[[], None],
         restored_world: WorldSnapshot | None = None,
     ) -> None:
@@ -64,7 +68,15 @@ class DesktopWorldRuntime:
         self._animated, self._playback = animated, playback
         self._inputs, self._game_open = inputs, game_open
         self._controls_active = controls_active
-        self._show_care, self._feedback, self._save = show_care, feedback, save
+        self._present_feedback, self._feedback = present_feedback, feedback
+        self._save, self._mind = save, mind
+        self._care: CareOutcome | None = None
+        self._offer_feedback: tuple[str, bool] | None = None
+        self._offer_serial = 0
+        self._offer_revision = 0
+        self._offer_key: FeedbackKey | None = None
+        self._offer_ready = False
+        self._cancel_feedback = cancel_feedback
         self.world = WorldState(self._surface(), build_consumable_definitions(
             DEFAULT_CATALOG, items,
         ))
@@ -95,8 +107,10 @@ class DesktopWorldRuntime:
             eligible=self._eligible, ground_x=self._ground_x,
             completed=self._completed,
             identify=self._identify, decide=self._decide,
-            feedback=self._ack_feedback, cancel_feedback=lambda: None,
-            now=lambda: self.now, inspection_seconds=0,
+            feedback=self._phase_feedback, cancel_feedback=cancel_feedback,
+            now=lambda: self.now, inspection_seconds=BALANCE.number(
+                "object_behavior", "inspection_seconds",
+            ),
         )
         animated.on_playback = self._queue_event
         root.bind_all("<Escape>", lambda _event: self.cancel_carry(), add="+")
@@ -119,7 +133,9 @@ class DesktopWorldRuntime:
         return FRAME_WIDTH * self.settings.scale
 
     def _play(self, clip: str) -> int:
-        self._playback.start(clip, 0)
+        self._playback.start("pick_up" if clip == "hold_item" else clip, 0)
+        if clip == "hold_item":
+            self._animated.hold_last_pose("pick_up", time.monotonic())
         return self._animated.action_id
 
     def _identify(self, token: str) -> str | None:
@@ -127,11 +143,24 @@ class DesktopWorldRuntime:
         return known.identity if known is not None else None
 
     def _decide(self, token: str, origin: ConsumptionOrigin) -> ObjectUseDecision:
+        self.awareness.memory.mark_examined(token)
         return decide_object_use(self.awareness.memory.get(token), self.state, origin)
 
-    def _ack_feedback(self, cue: ObjectFeedback) -> None:
-        # Headless phase wiring; C4 supplies the existing reaction presenter.
-        self.interaction.receive_feedback(FeedbackReceipt(cue.key, True))
+    def _phase_feedback(self, cue: ObjectFeedback) -> None:
+        reaction = self._care.reaction if (
+            cue.event == "object_finished" and self._care is not None
+        ) else None
+        if reaction is None:
+            reaction = self._mind.select_reaction(
+                cue.event, self.state, context_at(time.time()), time.monotonic(),
+            )
+        if reaction is None:
+            raise ValueError(f"Missing required object reaction: {cue.event}")
+        self._present_feedback(cue, reaction, self._receive_feedback)
+
+    def _receive_feedback(self, receipt: FeedbackReceipt) -> None:
+        if not self._closed:
+            self.interaction.receive_feedback(receipt)
 
     def _stop(self) -> None:
         self._playback.cancel_at(time.monotonic())
@@ -155,8 +184,8 @@ class DesktopWorldRuntime:
         )
         if outcome.accepted:
             self._save()
-            if origin == ConsumptionOrigin.HANDOVER and outcome.care is not None:
-                self._show_care(outcome.care)
+            if origin == ConsumptionOrigin.HANDOVER:
+                self._care = outcome.care
         return outcome.accepted
 
     def _select_item(self, item_id: str | None) -> None:
@@ -170,10 +199,20 @@ class DesktopWorldRuntime:
     def _completed(self, token: str, consumed: bool) -> None:
         if consumed:
             self.awareness.memory.forget(token)
+        else:
+            item = self.world.get(token)
+            known = self.awareness.memory.get(token)
+            if (item.state == ObjectState.RESTING and item.position is not None
+                    and known is not None and self.interaction.examined):
+                self.awareness.memory.update((ObjectObservation(
+                    token, known.identity, known.kind, item.position.x,
+                    item.position.height, True, self.now, examined=True,
+                ),), now=self.now)
         self.awareness.intentions.cancel(self.now, consumed=consumed)
         self._walk.movement.set_goal(None)
         self._visual.object_target = None
         self._contact = None
+        self._care = None
         self._save()
 
     def _ground_x(self, token: str) -> float:
@@ -186,18 +225,17 @@ class DesktopWorldRuntime:
         if self.state.sleeping or self._game_open():
             return False
         item = self.world.get(token)
-        known = next((known for known in self.awareness.memory.snapshot()
-                      if known.token == token and known.identity is not None), None)
+        known = self.awareness.memory.get(token)
         if known is None or item.position is None:
-            return False
-        drink = item.definition_id == "energy_drink"
-        if (self.state.energy >= 100 if drink else
-                self.state.satiety >= FOOD_BALANCE.too_full_to_eat_threshold):
             return False
         distance = abs(item.position.x - self._body_x())
         if item.state == ObjectState.USER_HELD:
             return (
                 not self.interaction.active
+                and self._offer_ready
+                and decide_object_use(
+                    known, self.state, ConsumptionOrigin.HANDOVER,
+                ).consume
                 and time.monotonic() >= self._playback.until
                 and self.now - known.observed_at < 0.5
                 and distance <= self.width * 0.3
@@ -205,11 +243,7 @@ class DesktopWorldRuntime:
             )
         if self._controls_active():
             return False
-        threshold = BALANCE.number(
-            "object_behavior", "seek_drink_energy" if drink else "seek_food_satiety",
-        )
-        level = self.state.energy if drink else self.state.satiety
-        return (item.state == ObjectState.RESTING and level <= threshold
+        return (item.state == ObjectState.RESTING
                 and distance <= self.width * BALANCE.number(
                     "object_behavior", "reach_widths",
                 ))
@@ -230,7 +264,9 @@ class DesktopWorldRuntime:
     def update(self, _now: float) -> None:
         if self._closed:
             return
-        blocked = (self.interaction.active or self.carrying or self._game_open()
+        self.interaction.update()
+        blocked = ((self.interaction.active and not self.interaction.approaching)
+                   or self.carrying or self._game_open()
                    or self._controls_active() or self.state.sleeping
                    or time.monotonic() < self._playback.until)
         snapshot = self.world.snapshot()
@@ -245,6 +281,7 @@ class DesktopWorldRuntime:
             width=self.width,
             attentive=not self.state.sleeping and not self._game_open(),
             blocked=blocked,
+            held_pose=(self._body_x(), self.width * .4),
         )
         visible = [item for item in self.awareness.memory.snapshot()
                    if self.now - item.observed_at < 0.5]
@@ -254,9 +291,17 @@ class DesktopWorldRuntime:
             (self._track().left + gaze.x, self._track().ground_y - gaze.height)
             if gaze is not None else None
         )
+        self._observe_offer()
         if blocked or goal is None:
             self._walk.movement.set_goal(None)
             self._search_at = None
+            if self.interaction.approaching:
+                self.interaction.interrupt(lambda: None)
+            return
+        if not self.interaction.active:
+            self.interaction.begin_goal(goal)
+        if self.interaction.phase == "notice":
+            self._walk.movement.set_goal(None)
             return
         track = self._track()
         target = max(track.left, min(track.left + goal.x - self.width / 2,
@@ -271,7 +316,7 @@ class DesktopWorldRuntime:
         if self._eligible(goal.token):
             self._walk.movement.set_goal(None)
             self._capture_contact(goal.token)
-            self.interaction.begin_pickup(goal.token)
+            self.interaction.arrive()
             self._search_at = None
         else:
             self._search_at = self.now if self._search_at is None else self._search_at
@@ -281,6 +326,7 @@ class DesktopWorldRuntime:
                 self.awareness.memory.forget(goal.token)
                 self.awareness.intentions.cancel(self.now)
                 self._walk.movement.set_goal(None)
+                self.interaction.interrupt(lambda: None)
 
     def interrupt(self, action: Callable[[], None]) -> None:
         self.awareness.intentions.cancel(self.now)
@@ -301,6 +347,9 @@ class DesktopWorldRuntime:
 
     def _begin_carry_now(self, item_id: str) -> None:
         self.cancel_carry()
+        self._offer_feedback = None
+        self._offer_ready = False
+        self._offer_serial += 1
         image = self.view.image(item_id, self.settings.scale)
         footprint = ObjectFootprint(image.width() / 2, image.width() / 2)
         position, self._inside = self._pointer_pose(item_id, footprint)
@@ -314,6 +363,38 @@ class DesktopWorldRuntime:
             self.cancel_carry()
             return
         self._sync_view()
+
+    def _observe_offer(self) -> None:
+        token = self.carry_id
+        known = self.awareness.memory.get(token) if token is not None else None
+        if token is None or known is None or known.identity is None:
+            return
+        wanted = (decide_object_use(
+            known, self.state, ConsumptionOrigin.HANDOVER,
+        ).consume and not self._game_open() and not self.interaction.active
+            and time.monotonic() >= self._playback.until)
+        if self._offer_feedback == (token, wanted):
+            return
+        self._offer_feedback = token, wanted
+        self._offer_ready = False
+        self._offer_revision += 1
+        key = FeedbackKey(f"offer_{self._offer_serial}", self._offer_revision)
+        self._offer_key = key
+        cue = ObjectFeedback(key, "object_offer" if wanted else "object_refuse",
+                             token, known.identity)
+        reaction = self._mind.select_reaction(
+            cue.event, self.state, context_at(time.time()), time.monotonic(),
+        )
+        if reaction is None:
+            raise ValueError("Missing required offer reaction")
+
+        def completed(receipt: FeedbackReceipt) -> None:
+            if (not self._closed and receipt.key == self._offer_key
+                    and self.carry_id == token
+                    and self._offer_feedback == (token, wanted)):
+                self._offer_ready = receipt.completed and wanted
+
+        self._present_feedback(cue, reaction, completed)
 
     def _release_capture(self) -> None:
         if self._capture_owned:
@@ -373,6 +454,8 @@ class DesktopWorldRuntime:
             item = self.world.get(self.carry_id)
             self.world.remove(item.instance_id, expected_revision=item.revision)
             self.carry_id = None
+            self._offer_ready = False
+            self._cancel_feedback()
             self._save()
 
     def _sync_view(self) -> None:
@@ -426,6 +509,7 @@ class DesktopWorldRuntime:
 
     def close(self) -> None:
         self._closed = True
+        self._cancel_feedback()
         self._release_capture()
         for timer in (self._timer, self._event_timer):
             if timer is not None:

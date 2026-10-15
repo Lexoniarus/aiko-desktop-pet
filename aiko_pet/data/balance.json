@@ -342,6 +342,7 @@
     "retry_seconds": 10.0,
     "consumed_pause_seconds": 30.0,
     "reach_widths": 0.25,
-    "fall_gravity": 900.0
+    "fall_gravity": 900.0,
+    "inspection_seconds": 1.0
   }
 }

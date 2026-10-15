@@ -32,6 +32,13 @@ identified feedback receipts, held inspection/defer and safe cancellation;
 23 focused object tests and six existing Tk World tests passed. The desktop
 temporarily acknowledges feedback immediately with zero inspection dwell;
 C4 replaces this bridge with readable reaction playback and active-time dwell.
+C3: `ae12dd6`, full suite 837 passed. C4 reaction infrastructure is in
+`ea688b9`; full runtime wiring now uses authored object events, readable receipt
+completion, one-second held inspection, release readiness and hover protection.
+Two real-timer flow tests passed in 29.9 s: Onigiri at 76% was investigated,
+put down and remembered without a repeat; the drink retained its complete
+consumption clip through an Enter event. Static checks and seven component Tk
+tests passed. C5 transparency and C6 final test handoff remain open.
 
 Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
 the original consumption-only intention and immediate pickup-to-consumption

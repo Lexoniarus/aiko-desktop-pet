@@ -7,12 +7,39 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState
 
 
 class WorldGuiTests(unittest.TestCase):
+    def test_stale_offer_readiness_cannot_authorize_a_later_offer_state(self):
+        world = self.app._world
+        callbacks = []
+        world._present_feedback = lambda cue, _reaction, done: callbacks.append(
+            (cue, done),
+        )
+        with patch.object(self.app.root, "winfo_pointerx", return_value=(
+            (self.app.settings.x or 0) + 96
+        )), patch.object(self.app.root, "winfo_pointery",
+                         return_value=world._track().ground_y - 80):
+            self.app.state.energy = 40
+            world.begin_carry("energy_drink")
+            for stamp in (0, .3, .7):
+                world.now = stamp
+                world.update(time.monotonic())
+            old, stale = callbacks[-1]
+            self.app.state.energy = 100
+            world.update(time.monotonic())
+            self.app.state.energy = 40
+            world.update(time.monotonic())
+            current, done = callbacks[-1]
+            stale(FeedbackReceipt(old.key, True))
+            self.assertFalse(world._offer_ready)
+            done(FeedbackReceipt(current.key, True))
+            self.assertTrue(world._offer_ready)
+
     def setUp(self):
         try:
             root = tk.Tk()
@@ -40,11 +67,31 @@ class WorldGuiTests(unittest.TestCase):
         for now in (0, .3, .7):
             self.app._world.now = now
             self.app._world.update(time.monotonic())
+        self.complete_feedback()
+        self.complete_feedback()
+
+    def complete_feedback(self):
+        # Component assertions skip cue dwell; runtime-flow tests use real timers.
+        player = self.app._reaction_player
+        if player.pending_timer is not None:
+            self.app.root.after_cancel(player.pending_timer)
+            player._complete(player.generation)
+        self.app._world.update(time.monotonic())
+
+    def finish_inspection(self):
+        self.app._world.now += 1.1
+        for _ in range(4):
+            if self.app._world.interaction.phase not in (
+                "inspect", "recognize", "decide",
+            ):
+                break
+            self.complete_feedback()
 
     def finish_pickup(self):
         self.finish_clip("pick_up")
 
     def finish_clip(self, name):
+        self.complete_feedback()
         animated = self.app._animated
         clip = animated.assets.clips[name]
         for _ in range(32):
@@ -55,7 +102,7 @@ class WorldGuiTests(unittest.TestCase):
             animated.show_frame(name, stamp + .001)
             self.app.root.update_idletasks()
 
-    def test_ground_pickup_commits_nutrition_only_after_the_pickup_finishes(self):
+    def test_ground_pickup_commits_nutrition_only_after_inspection_and_decision(self):
         world = self.app._world
         item = world.world.place_resting(
             "apple", world._body_x(), ObjectFootprint(8, 8),
@@ -64,6 +111,9 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(world.interaction.phase, "pick_up")
         self.assertEqual(self.app.state.satiety, 50)
         self.finish_pickup()
+        self.assertEqual(self.app.state.satiety, 50)
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.PET_HELD)
+        self.finish_inspection()
         self.assertEqual(world.world.get(item.instance_id).state, ObjectState.CONSUMED)
         self.assertGreater(self.app.state.satiety, 60)
         self.assertEqual(self.app.state.friendship, 15)
@@ -81,6 +131,8 @@ class WorldGuiTests(unittest.TestCase):
             token = world.carry_id
             assert token is not None
             world.release()
+            self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
+            self.finish_inspection()
             self.assertEqual(world.world.get(token).state, ObjectState.CONSUMED)
             self.assertGreater(app.state.energy, 49)
             app._action_playback.cancel_at(time.monotonic())
@@ -132,7 +184,7 @@ class WorldGuiTests(unittest.TestCase):
                                 game_mode=False, attention_active=False)
             world.now += 1
             world.update(time.monotonic())
-            if world.interaction.active:
+            if world.interaction.phase == "pick_up":
                 break
         self.assertGreater(self.app.settings.x or 0, start)
         self.assertFalse(self.app.settings.auto_walk)

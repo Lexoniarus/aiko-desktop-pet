@@ -8,12 +8,30 @@ from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectFootprint,
     ObjectInteraction,
+    WorldPosition,
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    def test_hand_inspection_uses_available_observation_instead_of_hidden_truth(self):
+        world = WorldState(WorldSurface(800, 600), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        item = world.create_held("apple", WorldPosition(100, 100),
+                                 ObjectFootprint(8, 8))
+        world.accept_handover_on_release(item.instance_id, expected_revision=0)
+        awareness = ObjectAwareness()
+        state = PetState(satiety=50)
+        awareness.update(world.snapshot(), state, now=0, x=0, height=0, width=192,
+                         attentive=True, blocked=True)
+        self.assertEqual(awareness.memory.snapshot(), ())
+        for now in (1, 1.3, 1.7):
+            awareness.update(world.snapshot(), state, now=now, x=0, height=0,
+                             width=192, attentive=True, blocked=True, held_pose=(0, 70))
+        self.assertEqual(awareness.memory.snapshot()[0].identity, "apple")
+
     def test_hidden_relocation_does_not_update_subjective_goal(self):
         world = WorldState(WorldSurface(2000, 600), (ObjectDefinition(
             "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),

@@ -51,6 +51,7 @@ class ObjectInteractionCoordinator:
         self._cue_done = self._animation_done = self._arrived = False
         self._inspect_at = 0.0
         self._decision = ObjectUseDecision(False, "unrecognized")
+        self.examined = False
 
     @property
     def active(self) -> bool:
@@ -72,6 +73,7 @@ class ObjectInteractionCoordinator:
         self._seen.clear()
         self._effects.clear()
         self._identity = None
+        self.examined = False
         self._arrived = False
 
     def _set_phase(self, phase: InteractionPhase) -> None:
@@ -129,6 +131,7 @@ class ObjectInteractionCoordinator:
         self._start(instance_id, ConsumptionOrigin.HANDOVER)
         self._identity = self._identify(instance_id)
         self._select_item(item.definition_id)
+        self._action_id = self._play("hold_item")
         self._inspect("object_handover")
         self.update()
         return True
@@ -220,6 +223,7 @@ class ObjectInteractionCoordinator:
             elif (self.phase == "inspect" and self._cue_done
                   and self._now() - self._inspect_at >= self._inspection_seconds):
                 self._identity = self._identify(token)
+                self.examined = True
                 self._set_phase("recognize")
                 self._announce(
                     "object_recognized" if self._identity else "object_unknown",
@@ -228,7 +232,9 @@ class ObjectInteractionCoordinator:
                 self._decision = self._decide(token, self._origin)
                 self._set_phase("decide")
                 self._announce(
-                    "object_want" if self._decision.consume else "object_later",
+                    "object_want" if self._decision.consume else
+                    "object_unknown" if self._decision.reason == "unrecognized"
+                    else "object_later",
                 )
             elif self.phase == "decide" and self._cue_done:
                 if self._decision.consume:

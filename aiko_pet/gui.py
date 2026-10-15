@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import time
 import tkinter as tk
-from dataclasses import replace
 from tkinter import font as tkfont
 from tkinter import messagebox
 
@@ -18,7 +17,6 @@ from .application.assembly import assemble_application
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.contact import ContactCoordinator, ContactPorts
-from .application.controller import CareOutcome
 from .application.game_experience import experience_from_rock_paper_scissors
 from .application.session import PetSessionRestorer
 from .application.settings import SettingKey
@@ -53,9 +51,9 @@ from .ui.pet_view.action_playback import ActionPlayback
 from .ui.pet_view.attention_presenter import AttentionPresenter, AttentionViewPorts
 from .ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 from .ui.pet_view.desktop_window import MAGENTA, DesktopWindow
+from .ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
 from .ui.pet_view.reaction_player import ReactionPlayer
 from .ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
-from .ui.view_models.care_text import format_care_response
 from .ui.view_models.food_models import food_choices
 from .ui.view_models.read_models import DesktopPresentation
 from .ui.windows.game_speech import GameSpeech
@@ -322,6 +320,7 @@ class DesktopPet:
                 ),
                 action_until=lambda: self._action_playback.until,
                 refresh_toolbar=self._refresh_care_toolbar,
+                foreground_active=self._object_feedback_active,
             ),
         )
         self._care_view = CarePresenter(CareViewPorts(
@@ -406,7 +405,10 @@ class DesktopPet:
             playback=self._action_playback, inputs=self._activity.session_inputs,
             game_open=lambda: self._hover.game_open,
             controls_active=lambda: self._hover.interaction_active,
-            show_care=self._present_world_care,
+            present_feedback=ObjectFeedbackPresenter(
+                self._reaction_player, self._item_catalog,
+            ).show,
+            cancel_feedback=self._reaction_player.cancel,
             feedback=lambda text: self._speech.show_text(text, 2450),
             save=self._save,
             restored_world=session.world,
@@ -414,11 +416,10 @@ class DesktopPet:
         self._persistence.attach_world(self._world.world.snapshot, self._world._body_x)
         self._lifecycle.start()
 
-    def _present_world_care(self, outcome: CareOutcome) -> None:
-        if outcome.reaction is not None:
-            self._react(replace(outcome.reaction, animation="idle"), 2900)
-        else:
-            self._speech.show_text(format_care_response(outcome.result), 2450)
+    def _object_feedback_active(self) -> bool:
+        return hasattr(self, "_world") and (
+            self._world.interaction.active or self._world.carrying
+        )
 
     def _set_game_mode(self, enabled: bool) -> None:
         self._animated.set_game_mode(enabled)
@@ -464,6 +465,10 @@ class DesktopPet:
         self._preferences.record_toolbar_position(x, y)
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
+        if self._world.interaction.active and not self._world.interaction.approaching:
+            self._hover.note_sprite_hover(time.monotonic())
+            self._hover.show_toolbar()
+            return
         if not self._world.carrying:
             self._world.interrupt(self._contact.enter)
 
@@ -486,7 +491,7 @@ class DesktopPet:
 
     def _react(self, reaction: Reaction | None, duration_ms: int = 2600) -> None:
         """Delegate the timeline; the GUI only renders visual effects."""
-        if self._hover.game_open:
+        if self._hover.game_open or self._object_feedback_active():
             return
         self._reaction_player.play(
             reaction, duration_ms, animate=not self.state.sleeping,
@@ -499,6 +504,8 @@ class DesktopPet:
     def _start_action(
         self, state: str, duration: float, *, started_at: float | None = None,
     ) -> None:
+        if self._object_feedback_active():
+            return
         self._action_playback.start(
             state, duration, started_at=started_at,
         )
@@ -512,6 +519,8 @@ class DesktopPet:
         self, action: str, *, food_id: FoodId | None = None,
     ) -> None:
         """Run a care command through the shared application boundary."""
+        if self._world.carrying:
+            self._world.cancel_carry()
         if (self._world.interaction.active
                 or self._world.awareness.intentions.goal is not None):
             self._world.interrupt(lambda: self.interact(action, food_id=food_id))
