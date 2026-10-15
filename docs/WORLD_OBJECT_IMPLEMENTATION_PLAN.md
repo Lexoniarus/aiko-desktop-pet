@@ -19,6 +19,12 @@ its exclusions do not prohibit the explicitly planned feature here.
 
 ## Practical test correction plan
 
+Correction progress: C1 reproduced both reported control-flow gaps in real Tk
+timer tests (`tests/test_world_runtime_flow.py`): Onigiri at 76% is recognized
+but has no investigation goal, and a canvas Enter event truncates a committed
+drink. These characterization expectations will become regression assertions
+as C2–C4 change the behavior. C2–C6 are not implemented yet.
+
 Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
 the original consumption-only intention and immediate pickup-to-consumption
 assumptions below. Existing implementation/CI evidence remains historical
