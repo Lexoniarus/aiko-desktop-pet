@@ -73,6 +73,106 @@ class WorldGuiTests(unittest.TestCase):
         self.complete_feedback()
         self.complete_feedback()
 
+    def restart(self):
+        store = self.app.store
+        self.app.quit()
+        self.app = DesktopPet(store=store)
+        self.addCleanup(self.app.quit)
+        self.app._runtime.stop()
+        world = self.app._world
+        assert world._timer is not None
+        self.app.root.after_cancel(world._timer)
+        world._timer = None
+        world._controls_active = lambda: False
+        self.app._action_playback.cancel_at(time.monotonic())
+
+    def test_deferred_drink_survives_cold_restore_at_both_edges_and_scales(self):
+        for scale, side in ((1, "left"), (1, "right"), (2, "left"), (2, "right")):
+            with self.subTest(scale=scale, side=side):
+                # Exercise the original inquiry and confirmed put-down first.
+                self._edge_drink_round_trip(scale, side)
+                old_world = self.app._world
+                token = old_world.awareness.memory.snapshot()[0].token
+                self.restart()
+                world = self.app._world
+                known = world.awareness.memory.get(token)
+                assert known is not None
+                self.assertEqual((known.identity, known.examined, known.disposition),
+                                 ("energy_drink", True, "deferred"))
+                self.assertEqual(world.awareness.observations, ())
+                world.update(time.monotonic())
+                self.assertFalse(world.interaction.active)
+                self.assertIsNone(world._visual.object_target)
+                self.assertFalse(self.app.settings.auto_walk)
+                cues = []
+                present = world._present_feedback
+
+                def capture(cue, reaction, done):
+                    cues.append(cue)
+                    present(cue, reaction, done)
+
+                world._present_feedback = capture
+                self.app.state.energy = 55
+                world.now += 1.1
+                world.update(time.monotonic())
+                self.assertEqual(cues[0].event, "object_recall_saved_drink")
+                self.complete_feedback()
+                self.assertEqual(world.interaction.phase, "pick_up")
+                self.finish_pickup()
+                self.assertEqual(world.interaction.phase, "eat")
+                self.assertGreater(self.app.state.energy, 64)
+                saved = self.app.store.load_session()
+                assert saved.world is not None
+                assert saved.object_memory is not None
+                self.assertEqual(saved.world.objects, ())
+                self.assertEqual(saved.object_memory.entries, ())
+                self.finish_clip("eat")
+                self.complete_feedback()
+                self.assertFalse(world.interaction.active)
+                self.assertEqual([cue.event for cue in cues], [
+                    "object_recall_saved_drink", "object_consuming_drink",
+                    "object_finished_drink",
+                ])
+                self.assertEqual(self.app.state.friendship, 15)
+                self.restart()
+                self.assertEqual(self.app._world.awareness.memory.snapshot(), ())
+                self.assertEqual(self.app._world.world.snapshot().objects, ())
+
+    def test_absent_remembered_instance_requires_attentive_local_search(self):
+        world = self.app._world
+        self.app.state.energy = 65
+        item = world.world.place_resting("energy_drink", world._body_x(),
+                                         ObjectFootprint(12, 12))
+        self.recognize()
+        self.finish_pickup()
+        self.finish_inspection()
+        self.finish_clip("put_down")
+        # Hide the actual removal from perception, then persist both owners.
+        current = world.world.get(item.instance_id)
+        world.world.remove(current.instance_id, expected_revision=current.revision)
+        self.app._save()
+        self.restart()
+        world = self.app._world
+        self.assertIsNotNone(world.awareness.memory.get(item.instance_id))
+        self.app.state.energy = 55
+        world.update(time.monotonic())
+        self.complete_feedback()
+        self.assertEqual(world.interaction.phase, "approach")
+        self.assertIsNotNone(world.awareness.memory.get(item.instance_id))
+        world.now += 1
+        world.update(time.monotonic())
+        self.assertIsNotNone(world.awareness.memory.get(item.instance_id))
+        world.now += 1.1
+        world.update(time.monotonic())
+        self.assertEqual(world.interaction.phase, "missing")
+        self.assertIsNone(world.awareness.memory.get(item.instance_id))
+        self.complete_feedback()
+        world.now += 20
+        world.update(time.monotonic())
+        self.assertFalse(world.interaction.active)
+        self.assertIsNone(world.awareness.intentions.goal)
+        self.assertIsNone(world._visual.object_target)
+
     def complete_feedback(self):
         # Component assertions skip cue dwell; runtime-flow tests use real timers.
         player = self.app._reaction_player

@@ -92,6 +92,7 @@ class AnimatedPet:
         self._emitted: set[tuple[int, str, int, bool]] = set()
         self._active_action: str | None = None
         self._stopped = False
+        self._closed = False
         self._last_motion_at = time.monotonic()
         self._walk_progress = 0.0
         self.frame_clock = FrameClock(started_at=time.monotonic())
@@ -274,6 +275,18 @@ class AnimatedPet:
         if self._frame_timer is not None:
             self.root.after_cancel(self._frame_timer)
             self._frame_timer = None
+
+    def close(self) -> None:
+        """Release Tk images before destruction, never from later worker GC."""
+        if self._closed:
+            return
+        self._closed = True
+        self.stop()
+        self.on_playback = lambda _event: None
+        self.food_overlay.close()
+        self._rest_renderer.clear()
+        self.sprites.clear()
+        self._sprite_cache.close()
 
     def render(
         self, now: float, pointer: tuple[int, int],

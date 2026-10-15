@@ -131,6 +131,20 @@ class ObjectMemoryPersistenceTests(unittest.TestCase):
                             object_memory=self.memory.export(now=1005))
         self.assertFalse(self.store.path.exists())
 
+    def test_reset_world_counter_cannot_rebind_prior_cognitive_instance_ids(self):
+        self.save()
+        raw = json.loads(self.store.path.read_text("utf-8"))
+        raw["world"]["objects"] = []
+        raw["world"]["next_instance_id"] = 1
+        self.store.path.write_text(json.dumps(raw), encoding="utf-8")
+        loaded = self.store.load_session()
+        self.assertIsNotNone(loaded.world)
+        self.assertEqual(loaded.state.satiety, 80)
+        self.assertIsNone(loaded.object_memory)
+        self.store.save(loaded.state, loaded.settings, world=loaded.world)
+        backups = tuple(self.store.path.parent.glob("*.aiko-save-backup"))
+        self.assertEqual(len(backups), 1)
+
     def test_interrupted_write_preserves_all_previous_sections(self):
         self.save()
         original = self.store.path.read_bytes()

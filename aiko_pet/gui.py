@@ -388,7 +388,7 @@ class DesktopPet:
             speech=self._speech,
             place_initially=self._place_initially,
             save=self._save,
-            stop_animation=self._animated.stop,
+            stop_animation=self._animated.close,
         )
         self._farewell = FarewellSequence(
             schedule=self.root.after, cancel=self.root.after_cancel,

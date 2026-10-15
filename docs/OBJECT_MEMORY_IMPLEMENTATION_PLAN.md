@@ -60,8 +60,8 @@ Keep the existing draft PR unmerged until practical acceptance.
 | P1 | Separate typed knowledge and snapshot values; retention, relocation and own-action facts | `1fcf742`; verification below |
 | P2 | Coherent consumption and confirmed placement across owners | `cac4d24`; verification below |
 | P3 | Versioned codec, joint save/restore and compatibility without fabricated sensing | `586c93b`; verification below |
-| P4 | Preserve retrieval purpose, skip redundant inspection, contextual JSON dialogue | This step's commit; verification below |
-| P5 | Restart regression, isolated practical starter and acceptance checklist | Pending |
+| P4 | Preserve retrieval purpose, skip redundant inspection, contextual JSON dialogue | `6b615f3`; verification below |
+| P5 | Restart regression, isolated practical starter and acceptance checklist | This step's commit; verification below |
 
 P1 separates `ObjectKnowledge` from observations and introduces portable snapshot
 values with relative active ages. Recognition survives absence and observed
@@ -115,6 +115,40 @@ the production notification gate. P3 CI
 passed all three jobs.
 
 ## Acceptance evidence
+
+P5 adds real desktop cold-restore cases at both edges and scales: actual inquiry
+and placement, restart while unwanted, later energy-driven direct use, save during
+consumption and another restart without ghost portions/knowledge. A missing saved
+instance survives load until bounded local search confirms absence. A real-timer
+food restore test checks readable recall and the entire consumption clip without
+inspection. The isolated starter adds explicit `--needs` override for repeatable
+later hunger while retaining the same World/memory; normal save paths stay blocked.
+Repeated cold starts exposed character/item image caches left alive after quit,
+allowing later worker-thread garbage collection to call Tk. The gate was stopped
+to correct this lifetime gap: the existing lifecycle now closes the sprite owner,
+which releases original/zoomed/warped images and the food overlay before destroying
+Tk. A weak-reference regression proves immediate owner release with the app
+still referenced, without forcing GC. World image cleanup retains its own owner.
+The paired allocation counter also rejects old memories after a World reset,
+backing them up without discarding valid Pet/World values. This checks technical
+ID allocation only, never live object membership, identity or hidden positions.
+The intermediate post-shutdown-fix full gate passed 906 tests in 210.8 s. Targeted
+desktop component tests passed all 16 cases, including the four cold edge/scale
+cases; the new real-timer food restore case passed in 12.4 s. The final gate also
+includes the additional World-reset allocation-counter regression.
+
+Separate-process launcher checks used one temporary save: a full restart retained
+known deferred Onigiri, a later `--needs hungry` restart consumed it once with the
+canonical food effect and unchanged friendship, and another default-launcher
+Python 3.14 restart kept both portion and cognitive target absent. Python 3.11
+handled the initial/known/hungry processes. No personal save was read or written.
+These automated checks do not substitute for the user's visual/input acceptance.
+Final Windows/Python 3.11 gate: 907 tests passed in 210.6 s; Ruff 0.13.2,
+strict Mypy 1.18.2 (169 source files) and Pyright 1.1.414 passed. No background
+Tk image-finalizer errors occurred after explicit image-owner shutdown. Existing
+Tk theme-change diagnostics from probe teardown remain nonfatal.
+P4 CI [38821588559](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38821588559)
+passed all three jobs. Current-head CI and commit references follow at handoff.
 
 - New, recognized-but-unexamined and examined portions follow distinct routes.
 - Known unwanted supply survives restart and lets normal interactions continue;

@@ -141,6 +141,10 @@ pointer-attention timestamps, not operating-system access.
 - `CharacterSpriteCache` handles runtime sprite frames, including lazy 2x
   variants. `RestPoseRenderer` handles pose-relative head motion, and
   `FoodOverlay` renders the selected hand item without affecting nutrition.
+
+At shutdown, the lifecycle closes `AnimatedPet` before destroying Tk. The sprite
+owner releases original/zoomed/rest-pose images and its food overlay on Tk's
+thread; delayed background garbage collection does not own those image effects.
 - `SpeechPresenter` and `ReactionPlayer` display timed text and emote cues.
   The pure need-based idle emote choice lives under `pet/animation/`.
 - `ActionPlayback` owns the current visual action state and deadline, not the

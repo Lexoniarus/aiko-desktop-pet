@@ -14,6 +14,12 @@
   consumption, skipping redundant inquiry. Keep first investigation and handover
   separate, distinguish confirmed deferral in dialogue, and announce local absence
   once after bounded search rather than repeatedly pursuing a missing portion.
+- Cover cold restoration at both edges/scales and full timed remembered-food
+  consumption. The isolated test starter accepts `--needs hungry` on its existing
+  temporary save to exercise later need without losing World or memory.
+- Release character, zoomed/rest-pose and held-item image caches on the Tk thread
+  before shutdown, preventing repeated restart tests from leaving image cleanup
+  to later background garbage collection.
 
 - Let Aiko approach and grasp ground portions at both screen edges at 1x/2x.
   A shared geometry rule requires actual arrival at the closest legal standing

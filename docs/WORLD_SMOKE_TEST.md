@@ -35,6 +35,45 @@ random walks, automatic routine, hardware observation, rhythm learning and
 spontaneous speech. Required object bubbles remain enabled. Normal need decay
 continues; no World consumption happens while closed.
 
+## Persistent memory and shortened retrieval — 16 October 2026
+
+Start a fresh `--scenario full` session and keep the printed temporary save path.
+Drop Onigiri and Energy Drink, one at a time. Let Aiko investigate and put both
+down. Quit normally, then reopen that exact save without overrides. She should
+retain their identity/inspection, release object gaze and continue normal
+interaction without lifting them again just because of the restart.
+
+To test later hunger immediately, quit and reopen the same isolated save with:
+
+```powershell
+.\Aiko_World_Test.bat --save-path "C:\exact\printed\temp-folder\state.json" --needs hungry
+```
+
+`--needs` explicitly sets only satiety/energy to the selected test profile
+(`hungry`: 55/55, `curious`: 76/60, `full`: 100/100) and reanchors its pet time.
+World, learned knowledge, food history and friendship remain intact. Omit the
+option for ordinary restart; `--scenario` alone never reseeds an existing path.
+The normal save path remains rejected, including with this override.
+
+- [ ] Aiko names her current need and recalls the known supply. “Aufgehoben”
+  belongs only to a confirmed deliberate reserve, not an interrupted action.
+- [ ] Known inspected stock uses approach, pickup, full consumption and outcome.
+  No repeated inspect/recognize/desire bubbles. Grasp alone changes no needs.
+- [ ] First discovery and cursor handover still use their separate full routes.
+- [ ] An unwanted known supply lets her follow the cursor normally, including
+  after restart and at both sides/scales. A later need activates retrieval.
+- [ ] Close during pickup/holding, after put-down or during consumption, then
+  reopen the same path. Unconsumed items recover grounded; inspection knowledge
+  remains, recovery invents no observed pose, and consumed items/effects do not
+  return. Running actions are not resumed.
+- [ ] A remembered missing portion gets a bounded local search and one missing
+  bubble; it does not keep Aiko looking at or revisiting an absent target.
+
+The existing 30-second pause after consumption still limits renewed seeking of
+another already inspected supply. Allow that pause when testing both together;
+first investigation of a different unknown item remains independent of it.
+Approach pacing/possible repeated loops remains a separate observation.
+
 ## What the complete sequence should show
 
 Use one object at a time initially. Bubbles normally remain readable for
@@ -138,6 +177,21 @@ path, rather than creating another profile:
   locally for at most two seconds, then dismissed with one bubble.
 
 ## Automated evidence
+
+16 October persistent-memory follow-up: 907 tests passed on Windows/Python 3.11
+in 210.6 s, with pinned Ruff, strict Mypy (169 source files) and Pyright green.
+Cold restoration covers both edges at 1x/2x, unwanted supplies releasing gaze,
+later need-driven direct consumption, saved absence/local search and consumption
+snapshots without ghost targets. The new actual-timer food restore test passed
+in 12.4 s and preserves the complete eat clip. A weak-reference test verifies
+immediate Tk image-owner shutdown without relying on later garbage collection.
+
+Separate Python processes also exercised one temporary save: known deferred
+Onigiri survived a full restart, `--needs hungry` consumed it once, and another
+default-launcher Python 3.14 restart retained no portion/target or repeated care
+effect. The typed memory codec, active ages, reset IDs, old saves, backups and
+interrupted atomic writes have headless regression coverage. These are automated
+checks; native visual/input acceptance for this follow-up remains pending.
 
 Windows/Python 3.11, 15 October 2026:
 

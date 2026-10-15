@@ -14,6 +14,8 @@ Stage 1 contracts were specified on 15 October 2026 in
 the user's release-to-accept, goal-movement and care-attribution decisions.
 
 This document records the accepted feature, delivery commits and verification.
+The 16 October follow-up for durable subjective knowledge and direct retrieval of
+known supplies has its own [implementation ledger](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md).
 Native acceptance is separate from automated implementation checks. Keep the
 [current architecture](ARCHITECTURE.md) as the reference for the existing code.
 The [refactor ledger](PET_ARCHITECTURE_REFACTOR.md) describes the preceding work;

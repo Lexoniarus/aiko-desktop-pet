@@ -89,11 +89,15 @@ class StateStore:
                 self._invalid_memory = True
             else:
                 try:
-                    saved_memory = decode_object_memory(payload["object_memory"], {
+                    memory = decode_object_memory(payload["object_memory"], {
                         item.food_id or item.definition_id:
                         "drink" if ObjectInteraction.DRINK in item.interactions
                         else "food" for item in saved_world.definitions
                     })
+                    if any(int(item.token.removeprefix("object_"))
+                           >= saved_world.next_instance_id for item in memory.entries):
+                        raise ValueError("Unallocated remembered World ID")
+                    saved_memory = memory
                 except (ValueError, TypeError, OverflowError):
                     self._invalid_memory = True
         return LoadedPetData(

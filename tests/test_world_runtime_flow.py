@@ -10,6 +10,7 @@ from unittest.mock import patch
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState
 
@@ -57,6 +58,65 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                 return str(widget.cget("text"))
             pending.extend(widget.winfo_children())
         return ""
+
+    def test_restored_food_uses_readable_recall_and_full_eat_without_reinspection(self):
+        world = self.app._world
+        self.app.state.satiety = 76
+        self.app.state.energy = 66
+        item = world.world.place_resting("onigiri", world._body_x() + 20,
+                                         ObjectFootprint(16, 16))
+        world.awareness.memory.update((ObjectObservation(
+            item.instance_id, "onigiri", "food", world._body_x() + 20,
+            0, True, world.now,
+        ),), now=world.now)
+        world.awareness.memory.mark_examined(item.instance_id)
+        world.awareness.memory.note_placement(item.instance_id, x=world._body_x() + 20,
+                                              height=0, now=world.now, deferred=True)
+        store = self.app.store
+        self.app.quit()
+        self.app = DesktopPet(store=store)
+        self.addCleanup(self.app.quit)
+        greeting = self.app._runtime.scheduled_greeting
+        if greeting is not None:
+            self.app.root.after_cancel(greeting)
+            self.app._runtime.scheduled_greeting = None
+        for method in ("winfo_pointerx", "winfo_pointery"):
+            self.enterContext(patch.object(self.app.root, method, return_value=0))
+        world = self.app._world
+        self.assertEqual(world.awareness.observations, ())
+        self.feedback.clear()
+        self.bubbles.clear()
+        present = world._present_feedback
+
+        def observe_feedback(cue, reaction, done):
+            self.feedback.append((world.now, cue.event, reaction.text))
+            present(cue, reaction, done)
+
+        world._present_feedback = observe_feedback
+        idle = self.run_for(1.3)
+        self.assertTrue(all(row[1] == "idle" for row in idle), idle)
+        self.assertIsNone(world._visual.object_target)
+        self.app.state.satiety = 55
+        trace = self.run_until(lambda: world.interaction.phase == "finish", 18)
+        self.assertEqual(world.interaction.phase, "finish", trace)
+        phases = {row[1] for row in trace}
+        self.assertTrue({"notice", "approach", "pick_up", "eat", "finish"}
+                        .issubset(phases), trace)
+        self.assertTrue(phases.isdisjoint({"inspect", "recognize", "decide"}), trace)
+        eating = next(row[0] for row in trace if row[1] == "eat")
+        finished = next(row[0] for row in trace if row[1] == "finish")
+        self.assertGreaterEqual(finished - eating, 3.4, trace)
+        self.assertEqual([cue[1] for cue in self.feedback], [
+            "object_recall_saved_food", "object_consuming_food", "object_finished_food",
+        ])
+        self.assertTrue(any("Hunger" in text and "Onigiri" in text
+                            for _, _, text in self.bubbles))
+        loaded = store.load_session()
+        assert loaded.world is not None
+        assert loaded.object_memory is not None
+        self.assertEqual(loaded.world.objects, ())
+        self.assertEqual(loaded.object_memory.entries, ())
+        self.assertEqual(self.app.state.friendship, 15)
 
     def run_for(self, seconds):
         return self.run_until(lambda: False, seconds)
