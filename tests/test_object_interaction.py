@@ -82,3 +82,12 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual(self.actions[-1], "game")
         self.assertNotIn("sleep", self.actions)
         self.assertEqual(self.consumed, [])
+
+    def test_interrupting_committed_eating_preserves_consumed_completion(self):
+        self.coordinator.begin_pickup(self.item.instance_id)
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        self.coordinator.interrupt(lambda: self.actions.append("talk"))
+        self.assertEqual(self.done, [(self.item.instance_id, True)])
+        self.assertEqual(self.actions[-1], "talk")
+        self.assertEqual(len(self.consumed), 1)

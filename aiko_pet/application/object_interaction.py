@@ -48,6 +48,7 @@ class ObjectInteractionCoordinator:
         self._origin = origin
         self._sequence += 1
         self._interaction_id = f"interaction_{self._sequence}"
+        self._queued = None
         self._seen.clear()
         self._effects.clear()
 
@@ -158,4 +159,6 @@ class ObjectInteractionCoordinator:
         self.instance_id = None
         self._select_item(None)
         if instance_id is not None:
+            consumed = (consumed
+                        or self.world.get(instance_id).state == ObjectState.CONSUMED)
             self._completed(instance_id, consumed)
