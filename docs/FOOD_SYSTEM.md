@@ -51,10 +51,14 @@ and does not call direct feeding. It displays eleven food-and-drink choices.
 
 Press and hold a choice to carry one portion. Offer it near Aiko long enough
 to be recognized, then release in her handover area, or release above the taskbar
-to let it fall. Hungry Aiko seeks recognized resting food at satiety ≤70;
-drink seeking instead starts at energy ≤60. Random walking can stay disabled.
+to let it fall. Aiko investigates new noticed resting objects independently of
+appetite. After held inspection she decides whether to use or put down for later.
+Autonomous food use starts at satiety ≤70, drink use at energy ≤60; known deferred
+items can become goals at later need without repeated discovery. Required phase
+bubbles are independent of spontaneous talk. Random walking can stay disabled.
 Ground pickup grants custody at source frame 4, nutrition only at subsequent
-consumption. Interruptions after grasp animate put-down before the user action.
+consumption after investigation and readable decision. Interruptions after
+grasp animate put-down before the user action; passive hover does not cut use short.
 Human handover retains existing care rewards; autonomous ground consumption
 does not grant human social/adaptive/friendship credit. See
 [World contracts](WORLD_OBJECT_CONTRACTS.md) and [practical test](WORLD_SMOKE_TEST.md).

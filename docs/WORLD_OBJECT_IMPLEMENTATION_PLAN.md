@@ -2,8 +2,9 @@
 
 Status: first implementation passed automated regression through `bac23e0`
 (828 tests), but the first user test found incomplete visible behavior.
-Practical acceptance has not passed. The correction plan below is documentation
-only; the corrections are not implemented yet.
+The six correction steps are implemented; final C6 regression at `9dec641`
+passed 850 tests in 157.4 s on Windows/Python 3.11.
+Native acceptance of the revised build remains open.
 Recorded: 15 October 2026.
 Baseline: `main` at `1753266db0dafc94024913cb281b80e7abe289a0` (merged PR #9).
 
@@ -19,31 +20,20 @@ its exclusions do not prohibit the explicitly planned feature here.
 
 ## Practical test correction plan
 
-Correction progress: C1 reproduced both reported control-flow gaps in real Tk
-timer tests (`tests/test_world_runtime_flow.py`): Onigiri at 76% is recognized
-but has no investigation goal, and a canvas Enter event truncates a committed
-drink. These characterization expectations will become regression assertions
-as C2–C4 change the behavior. C1: `f902d20`, full suite 830 tests passed.
-C2 adds separate investigate/consume purposes, pure origin-aware use decisions,
-and subjective examined knowledge. Its 20 focused object tests and all static
-checks passed; execution/presentation wiring follows in C3/C4.
-C2: `5730516`, full suite 834 passed. C3 adds explicit execution phases,
-identified feedback receipts, held inspection/defer and safe cancellation;
-23 focused object tests and six existing Tk World tests passed. The desktop
-temporarily acknowledges feedback immediately with zero inspection dwell;
-C4 replaces this bridge with readable reaction playback and active-time dwell.
-C3: `ae12dd6`, full suite 837 passed. C4 reaction infrastructure is in
-`ea688b9`; full runtime wiring now uses authored object events, readable receipt
-completion, one-second held inspection, release readiness and hover protection.
-Two real-timer flow tests passed in 29.9 s: Onigiri at 76% was investigated,
-put down and remembered without a repeat; the drink retained its complete
-consumption clip through an Enter event. Static checks and seven component Tk
-tests passed. C5 transparency and C6 final test handoff remain open.
-C4: `1c0e95c`, full suite 845 passed (137.0 s); reaction infrastructure
-`ea688b9`, deterministic existing care test `7d9eb40`. C5 prepares 22 binary-alpha
-display copies with original RGB/size/pivots preserved and source/output hashes.
-Catalog, preparation reproducibility, and existing food rendering checks passed;
-native appearance still needs the practical retest.
+| Correction | Commit | Passed evidence |
+| --- | --- | --- |
+| C1 — reproduce full runtime faults | `f902d20` | 830 tests; missing investigation and Enter-truncated drink reproduced |
+| C2 — curiosity, use decisions, examined knowledge | `5730516` | 834 tests |
+| C3 — explicit phases and identified receipts | `ae12dd6` | 837 tests, including safe cancelled/stale completion handling |
+| C4 — readable reactions, staged handover and hover protection | `ea688b9`, `7d9eb40`, `1c0e95c` | 845 tests; actual timer flows; existing exact-care assertion uses controlled active time |
+| C5 — shared Windows-compatible item copies | `bf2f562` | 848 tests; 22 deterministic binary-alpha copies, original hashes/RGB/geometry preserved |
+| C6 — full regression and practical handoff | `9dec641` | 850 full-suite tests passed; three actual timer tests passed in 50.3 s: ordered readable bubbles, deferred reuse after hunger, full drink through Enter, interrupted inspection and restart; curious 76/60 profile added |
+
+CI run `38767715644` passed all three jobs at `bf2f562` (Linux Python
+3.11/3.13 and Windows). Final C6 source gate: 850 tests at `9dec641`; current-head
+CI results are linked in [the test handoff](WORLD_SMOKE_TEST.md#automated-evidence).
+Ruff 0.13.2, strict Mypy 1.18.2 (167 source files) and Pyright 1.1.414 pass.
+Native appearance and interaction still need the revised practical retest.
 
 Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
 the original consumption-only intention and immediate pickup-to-consumption
@@ -63,17 +53,17 @@ consume it. She announces the steps in readable bubbles, picks up the object,
 examines/identifies it, decides, then consumes or puts it down and says she will
 keep it for later. Known deferred objects must not trigger endless reinspection.
 
-Confirmed code gaps: `ObjectIntentions` currently requires recognized identity
-and a need threshold before selecting any goal; `InteractionPhase` currently
+Confirmed baseline gaps: `ObjectIntentions` required recognized identity
+and a need threshold before selecting any goal; `InteractionPhase` originally
 contains only `idle`, `pick_up`, `put_down`, `eat`. Perception transitions have
 no object-specific dialogue events. `SpeechPresenter.show_text()` replaces the
 current bubble, so consecutive uncoordinated calls are insufficient.
 
-The authored eating clip lasts 3.59 s. Cursor entry currently calls the object
-interruption path even immediately after handover; this is a plausible abort
-path to reproduce, not yet proof of the user's exact event sequence. Existing
-GUI tests manually advance frames and bypass some real input/attention gates.
-The new regression must exercise the full scheduler and competing callbacks.
+The authored eating clip lasts 3.59 s. Baseline cursor entry called the object
+interruption path immediately after handover; C1 reproduced that abort. Current
+runtime regressions verify full playback through Enter. Component tests still
+advance individual frames, while runtime-flow tests exercise real timers and
+desktop gates without bypassing the movement/attention executor.
 
 Item PNGs contain partial alpha; World windows use Magenta color-key
 transparency. Prepared character frames already use binary alpha. Establish
@@ -96,7 +86,7 @@ values between existing owners, not a new generic event bus.
 
 ### Required execution sequence
 
-Phase names below are proposed application contracts, not implemented APIs.
+The phases below are implemented application contracts.
 Knowledge and physical custody remain separate throughout.
 
 | Phase | Completion condition and visible behavior | Physical state |
@@ -134,7 +124,7 @@ for investigation is introduced for user-held offers.
   belong to the phase. Cues may accompany movement; no rapid replacement of an
   unread decision. Reuse current text timing (normally 1.8–3.5 s). Proposed
   inspection minimum: 1 s, validated in balance data; existing consumption stays
-  3.59 s initially. These timing values are tuning proposals pending the next test.
+  3.59 s initially. These initial values remain subject to practical tuning.
 - Required object feedback is part of the action, independent of optional
   spontaneous speech. Ambient chatter/notifications cannot overwrite it. Explicit
   user actions retain priority through the existing interruption path.
@@ -171,7 +161,7 @@ Further green splits are allowed, especially between coordinator contracts and
 UI wiring. Tests verify the public sequence while each layer stays independently
 testable. Automatic tests alone do not establish native visual acceptance.
 The draft PR stays unmerged until the revised practical test passes. This
-revision records planned corrections only; runtime behavior remains unchanged.
+revision is implemented; native practical acceptance remains the merge gate.
 
 ## First complete user scenario
 

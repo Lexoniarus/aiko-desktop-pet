@@ -2,7 +2,7 @@
 
 Status: initial implementation through Stage 8; first practical test found
 behavior gaps. The investigation/feedback revision below is agreed behavior,
-with implementation still pending.
+implemented and verified with 850 tests; native practical retest remains open.
 Recorded: 15 October 2026.
 Baseline: `1753266db0dafc94024913cb281b80e7abe289a0` (merged PR #9).
 
@@ -26,6 +26,12 @@ These rules supersede the original requirement for recognized, wanted food as
 the only approach goal, and pickup completion must no longer automatically
 consume before inspection/decision. Physical World custody states, canonical
 consumption effects and the release-to-accept requirement stay in force.
+Required phase feedback uses identified completion/cancellation receipts and
+readable lifetimes through the existing reaction player. Ground inspection
+holds for at least one active second. A willing recognized offer may be released
+without waiting for preview speech to disappear; accepted custody then enters
+held inspection, identification and a readable decision before visible use.
+Passive hover cannot truncate that use; explicit user actions still arbitrate.
 See the [architecture-aligned correction plan](WORLD_OBJECT_IMPLEMENTATION_PLAN.md#practical-test-correction-plan)
 for state ownership, handover entry, completion/interrupt rules and small steps.
 The later sections retain the initial implementation contract as baseline where

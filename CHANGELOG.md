@@ -1,3 +1,18 @@
+## Unreleased — World practical-test corrections
+
+- Add need-independent investigation and subjective examined memory. Aiko
+  approaches, picks up, examines and decides; unwanted items are put down for
+  later without repeated investigation, and hunger can activate known items.
+- Coordinate readable notice, approach, recognition, decision and outcome
+  bubbles through existing Mind/dialogue/reaction owners and identified receipts.
+- Stage accepted handover through safe holding/inspection before use; preserve
+  the full consumption clip through passive cursor entry. Explicit actions still
+  put down unconsumed items first, and automatic use records no human contact.
+- Derive 22 reproducible binary-alpha display copies for cursor, ground and hand,
+  preserving original item RGB/geometry and preventing Magenta alpha blending.
+- Add real-timer flow/restart regressions and a `curious` isolated profile at
+  satiety 76/energy 60. Native practical retest and merge remain pending.
+
 ## Unreleased — World interaction test build
 
 - Replace direct feeding UI with one cursor-carried food/drink portion per

@@ -359,9 +359,18 @@ set the user-attention flag that would block walking toward the goal.
 and deliberate goals; `auto_walk` gates only random departures. `WalkDriver`
 still reports actual clamped desktop displacement, with no second pet position.
 
-`application/object_interaction.py` owns pickup, consumption and interrupted
-put-down. Identified animation events acquire at source frame 4, complete pickup
-at pose 8 and release during reverse frame 4→3. The animator changes no needs.
+`application/object_interaction.py` owns explicit notice, approach, pickup,
+held inspection, recognition, decision, consumption and put-down phases. The
+mind distinguishes investigate from consume, so a new noticed item can prompt
+investigation without current appetite. Subjective examined knowledge prevents
+repeated handling; later needs can activate known deferred portions.
+Identified animation events acquire at source frame 4, finish pickup at pose 8
+and release during reverse frame 4→3. The animator changes no needs.
+`application/object_feedback.py` correlates phase cues and completion receipts.
+Mind/catalogue supplies authored reactions; `ObjectFeedbackPresenter` formats
+known names and uses `ReactionPlayer`'s completion/cancellation acknowledgements.
+Transitions wait for readable cues and required animation/dwell. Ordinary hover
+does not abort consumption, and ambient feedback cannot replace action speech.
 `application/object_consumption.py` prepares canonical food/drink effects with
 explicit handover/autonomous origin, commits World and PetState on the owner
 thread with recovery, and deduplicates completed requests. World `consume()`
@@ -371,8 +380,14 @@ consumption, while canonical nutrition, repetition and food mood effects remain.
 `desktop/world_runtime.py` wires host coordinates, cursor gestures, awareness,
 interaction and presentation. `ui/world_view.py` renders snapshots in small
 passive native windows; `FoodOverlay` layers the held item and authored hands.
-Chooser press creates one portion; release offers or falls. Escape/capture loss
+Chooser press creates one portion; recognized willingness is signaled while
+held, then release offers or falls. Accepted handover holds the last pickup pose
+and enters inspection/decision before the existing complete consumption clip.
+Escape/capture loss
 cancels. Existing native toolbar/game rules remain in their owners.
+All three item presentations use manifest-referenced binary-alpha display copies
+prepared reproducibly from unchanged native 1x/2x originals for Windows color-key
+transparency; no runtime Pillow or replacement artwork is introduced.
 
 `infrastructure/world_codec.py` adds an optional separately versioned World
 section inside outer save v1. Pet, World, settings and adaptive data use one
