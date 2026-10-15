@@ -167,9 +167,9 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertLess(self.settings.x, 108)
         self.assertEqual(self.anim.frame_clock.active_key, ("running-right", None))
 
-    def test_visual_settings_are_owned_by_animated_character(self) -> None:
+    def test_movement_and_visual_settings_have_distinct_owners(self) -> None:
         self.walk.movement.remaining_distance = 30
-        self.anim.set_auto_walk(False, now=500)
+        self.walk.set_auto_walk(False, now=500)
         self.assertFalse(self.settings.auto_walk)
         self.assertEqual(self.walk.movement.remaining_distance, 0)
         self.assertGreater(self.walk.movement.next_walk_at, 500)

@@ -201,7 +201,10 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         visual = self.pet._animated
         self.assertTrue(self.pet.settings.follow_cursor)
         self.assertIsNone(visual.gaze_direction((99999, 99999)))
-        self.assertIsNone(visual.maybe_walk(time.monotonic(), 0.5))
+        self.assertIsNone(self.pet._walk.step(
+            time.monotonic(), 0.5,
+            game_mode=visual.game_mode, attention_active=False,
+        ))
         visual.render(time.monotonic() + 5, 0.14, (99999, 99999))
         current = visual.frame_clock.active_key
         assert current is not None
