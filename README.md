@@ -1,7 +1,8 @@
-> **Food update:** Aiko has ten selectable foods and an energy drink, an active-session
-> hunger/digestion model, a food-in-hand animation and independently observed
-> hardware/input activity factors. The editable balance table lives in
-> [`data/balance.json`](aiko_pet/data/balance.json); see [Food system](docs/FOOD_SYSTEM.md).
+> **World feature test:** Hold a food/drink choice to carry one portion, then
+> offer it on release or drop it onto the taskbar ground. Aiko can notice,
+> approach, pick up and consume wanted objects. Try the isolated
+> [test starter](Aiko_World_Test.bat) and [practical checklist](docs/WORLD_SMOKE_TEST.md).
+> Native practical acceptance is still pending on the feature branch.
 
 # Aiko Desktop Pet
 
@@ -46,7 +47,7 @@ Kenney emotes**. A separate [idle behavior preview](vorschau/Aiko_Current_Ambien
 shows occasional complete blinks, **subtle pose-relative head motion between
 blinks**, and autonomous gaze without mouse movement. The feet stay anchored,
 including when Aiko looks to either side. The sprite-only [animation catalog](vorschau/Aiko_Current_Animations.gif)
-includes all 112 runtime poses.
+shows the original 112 poses; the new pickup adds eight poses to the runtime.
 
 [Browse the six retained screenshots and GIFs →](docs/MEDIA_GALLERY.md)
 
@@ -62,7 +63,7 @@ preview gallery.
 - **Learns a gentle rhythm.** Locally aggregated activity evidence helps her adapt to regular working and resting periods.
 - **Stays out of the way.** One draggable sci-fi care toolbar with an optional visibility pin, inline status details, persistent settings and a separate speech bubble. See the [window contract](docs/UI_WINDOW_CONTRACT.md).
 
-This source builds on the **v0.13 feature baseline and modular OOP refactor**, with a new 112-pose Aiko Anime character set, per-frame timing, and dedicated eating, petting and sleeping animations. Attack artwork is stored for later use. A Windows setup script is included in the source; there is currently no separate packaged executable installer or published GitHub Release.
+This source builds on the **v0.13 feature baseline and modular OOP refactor**, with a 120-pose Aiko Anime character set, per-frame timing, pickup/put-down, eating, petting and sleeping animations. Attack artwork is stored for later use. A Windows setup script is included in the source; there is currently no separate packaged executable installer or published GitHub Release.
 
 ## Getting started
 
@@ -98,8 +99,8 @@ Her workload observations are drawn from local CPU/GPU utilization, memory press
 
 Needs progress during the running session. Reopening also reconstructs closed
 time, up to eight hours by default. With automatic routine enabled, Aiko sleeps
-and eats due main meals during this reconstruction; live meals remain your care
-actions. Live PC suspend is excluded from the running-session clock.
+and eats due main meals during this reconstruction. Live supply uses offered
+or autonomously collected World portions. Live PC suspend is excluded from the running-session clock.
 [Save format, backups, time rules and editable JSON data →](docs/DATA_AND_SAVES.md)
 The real clock still determines meals and daily routine. Friendship remains a
 separate, slowly earned bond with the existing daily limits.
@@ -113,6 +114,7 @@ The source is organized by responsibility rather than by window or feature versi
 | Package | Owns |
 | --- | --- |
 | `aiko_pet/pet/` | The PetState aggregate, care rules, needs, friendship and daily routine |
+| `aiko_pet/world/` | Concrete portions, custody, geometry and time-based falling |
 | `aiko_pet/pet/mind/` | Dialogue selection, personality, adaptive habits and workload events |
 | `aiko_pet/application/` | Typed use cases, attention/activity coordination and read contracts |
 | `aiko_pet/ui/view_models/` | German display text and immutable UI projections |

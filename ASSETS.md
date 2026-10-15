@@ -29,7 +29,7 @@ Ignore rules also exclude them if the complete bundle is extracted here again.
 According to the project creator, the artwork was generated with ChatGPT image
 generation in an agent workflow.
 
-The current desktop export has **112 character poses**: twelve eight-frame
+The current desktop export has **120 character poses**: thirteen eight-frame
 clips and sixteen cursor-gaze poses. Prepared full-width 192 × 208 copies live
 in `aiko_pet/assets/frames/`, with timing/anchor metadata in
 `aiko_pet/assets/animations.json` and hand foreground layers in
@@ -54,10 +54,10 @@ each included original file's path, byte size and SHA-256. The runtime provenanc
 manifest records prepared-file hashes, full image dimensions and the existing
 128-threshold binary-alpha policy used for Windows color-key transparency.
 Original imported artwork is not cropped or overwritten. Preparation uses
-`python tools/prepare_character_assets.py`; Pillow is required only for that
+`python -m tools.prepare_character_assets`; Pillow is required only for that
 build step, not for running the desktop app.
 
-All twelve normal clips retain exactly **eight source PNGs** each. The
+All thirteen normal clips retain exactly **eight source PNGs** each. The
 runtime can assign different hold times to each pose and replay selected
 source poses without creating duplicate PNGs. Ordinary waving uses eight
 steps; the separate greeting/farewell replay uses fourteen steps for two

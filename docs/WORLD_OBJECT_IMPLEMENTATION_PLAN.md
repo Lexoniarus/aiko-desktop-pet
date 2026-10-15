@@ -1,6 +1,7 @@
 # World objects, perception and autonomous interaction — implementation plan
 
-Status: Stage 1 specified; Stage 2 headless foundation implemented locally.
+Status: Stages 1–8 implemented; final automated regression passed through
+`bac23e0` (828 tests). Native practical acceptance remains open.
 Recorded: 15 October 2026.
 Baseline: `main` at `1753266db0dafc94024913cb281b80e7abe289a0` (merged PR #9).
 
@@ -8,8 +9,8 @@ Stage 1 contracts were specified on 15 October 2026 in
 [World object contracts and behavior rules](WORLD_OBJECT_CONTRACTS.md), including
 the user's release-to-accept, goal-movement and care-attribution decisions.
 
-This document is the working checklist for the next feature. It describes
-planned behavior and ownership, not existing runtime capabilities. Keep the
+This document records the accepted feature, delivery commits and verification.
+Native acceptance is separate from automated implementation checks. Keep the
 [current architecture](ARCHITECTURE.md) as the reference for the existing code.
 The [refactor ledger](PET_ARCHITECTURE_REFACTOR.md) describes the preceding work;
 its exclusions do not prohibit the explicitly planned feature here.
@@ -65,8 +66,8 @@ Delivery sequence (each item is a tested commit; further splits are allowed):
    again, takes it and eats it using the existing nutrition rules.
 
 The taskbar is the first horizontal walking surface. The desktop above it is
-available for carrying and falling objects. Existing direct feeding remains
-available; picking up a food choice must not silently execute direct feeding.
+available for carrying and falling objects. Cursor pickup/release replaces
+the old direct-feeding UI for all foods and the energy drink.
 
 ## Scope and limits
 
@@ -178,21 +179,53 @@ do not encode all these concerns in one large state machine.
 
 ## Staged implementation checklist
 
-Stage 1 is a completed documentation/contract stage. Stage 2 is implemented and
-verified locally, without desktop integration. Stages 3–8 remain pending.
-Record implementation commit/PR and verification evidence when each stage's
-acceptance conditions have actually passed; local results are not a CI claim.
+All eight implementation stages are complete. Native Windows input, layering,
+taskbar edges and 1x/2x grip alignment await the first practical acceptance.
+Use the [isolated test checklist](WORLD_SMOKE_TEST.md); the real save stays untouched.
+The [draft PR](https://github.com/Lexoniarus/aiko-desktop-pet/pull/10) remains
+unmerged. Local results below are not a remote CI claim.
 
 | Stage | Deliverable | Status | Commit/PR and evidence |
 | --- | --- | --- | --- |
 | 1 | Contracts and behavior decisions | Specified (documentation only) | [Stage 1 contracts](WORLD_OBJECT_CONTRACTS.md), user decisions and scenario review, 15 October 2026; no runtime checks claimed |
-| 2 | Minimal in-memory World | Implemented; local checks passed | `feature/world-foundation`, uncommitted; Stage 2 evidence below, 15 October 2026 |
-| 3 | Perception and object memory | Pending | — |
-| 4 | Interest and stable intentions | Pending | — |
-| 5 | Gaze, goal movement and runtime integration | Pending | — |
-| 6 | Acquisition and autonomous consumption | Pending | — |
-| 7 | Cursor pickup, offering and falling | Pending | — |
-| 8 | Persistence and complete regression | Pending | — |
+| 2 | Minimal in-memory World | Implemented | `069923c`, `c08be50`; World state/catalog/extension tests |
+| 3 | Perception and object memory | Implemented | `56617ad`, `a69e772`; perception/memory/awareness tests |
+| 4 | Interest and stable intentions | Implemented | `34b9b74`; intention/cooldown/tie tests |
+| 5 | Gaze, goal movement and runtime integration | Implemented; native acceptance open | `4b61579`, `5807c6c`, `293e56e`; goal walking and real Tk arrival tests |
+| 6 | Acquisition and autonomous consumption | Implemented | `7047799`, `7f7ad39`, `50ad3b2`, `1b9dfc8`; playback, origin, transaction and interruption tests |
+| 7 | Cursor pickup, offering and falling | Implemented; native acceptance open | `975bcb8`, `2b6b7e0`, `5d25d04`, `f4f18fd`; World GUI/falling/input tests |
+| 8 | Persistence and complete regression | Implemented; practical acceptance open | `220043b`, `d4f356d`, `1b0e767`, `9581d61`; persistence, isolated launcher and real Tk put-down-before-sleep tests |
+
+### Delivery commit ledger
+
+Each requested step has a green implementation boundary; corrective splits
+preserve the same branch and keep prior work intact.
+
+| Step | Commit(s) |
+| --- | --- |
+| 1 — preserve foundation | `069923c` |
+| 2 — accepted plan/contracts | `697322c` |
+| 3 — drinks, put-down, surface | `c08be50` |
+| 4 — perception | `56617ad` |
+| 5 — subjective memory | `a69e772` |
+| 6 — stable intentions | `34b9b74` |
+| 7 — shared movement | `4b61579` |
+| 8 — awareness/gaze phase | `5807c6c` |
+| 9 — approved source import/provenance | `7047799`, `f4ed371` |
+| 10 — identified pickup/reverse playback | `7f7ad39` |
+| 11 — consumption origin | `50ad3b2` |
+| 12 — interaction coordination | `1b9dfc8`, `26cc71c`, `852fb8b`, `bac23e0` |
+| 13 — World and hand rendering | `975bcb8` |
+| 14 — cursor/falls/input/arrival | `2b6b7e0`, `5d25d04`, `9e60fd3`, `293e56e`, `f4f18fd` |
+| 15 — joint persistence/recovery | `220043b` |
+| 16 — regression and test handoff | `d4f356d`, `1b0e767`, `9581d61`, final documentation |
+
+Final local full suite through `bac23e0`: 828 tests passed in 108.0 s on Windows,
+Python 3.11. Ruff 0.13.2, strict Mypy 1.18.2 (161 source files) and Pyright
+1.1.414 passed. Capture-loss follow-up: six real Tk World tests passed. Asset
+preparation reproduces 120 poses, with original runtime PNGs unchanged.
+Final regression, CI and isolated start/restart evidence is recorded in
+[the test handoff](WORLD_SMOKE_TEST.md).
 
 ### Stage 1 — Contracts and behavior decisions
 
@@ -248,40 +281,40 @@ Local evidence, Windows/Python 3.11, 15 October 2026:
 
 ### Stage 3 — Perception and object memory
 
-- [ ] Add perception contracts/policies and one subjective object memory owner
+- [x] Add perception contracts/policies and one subjective object memory owner
       under `pet/mind/`, coordinated through application read ports.
-- [ ] Implement noticed, recognized and remembered information using distance,
+- [x] Implement noticed, recognized and remembered information using distance,
       attention, motion and observation duration.
-- [ ] Store last-known position/time without leaking unseen World changes.
-- [ ] Extend validated balance data with explicit perception/memory parameters.
-- [ ] Cover loss of sight, observed absence and equivalent update cadences.
+- [x] Store last-known position/time without leaking unseen World changes.
+- [x] Extend validated balance data with explicit perception/memory parameters.
+- [x] Cover loss of sight, observed absence and equivalent update cadences.
 
 Acceptance: an unseen move leaves remembered position unchanged. The same
 observation history produces consistent results at different update rates.
 
 ### Stage 4 — Interest and stable intentions
 
-- [ ] Evaluate known objects from needs and current activity using canonical
+- [x] Evaluate known objects from needs and current activity using canonical
       food information.
-- [ ] Support looking, approaching, deferring and abandoning a goal initially.
-- [ ] Retain targets with explicit switching thresholds and deterministic ties.
-- [ ] Reevaluate on meaningful events/intervals and apply retry cooldowns.
-- [ ] Exercise decisions without any movement or rendering dependency.
+- [x] Support looking, approaching, deferring and abandoning a goal initially.
+- [x] Retain targets with explicit switching thresholds and deterministic ties.
+- [x] Reevaluate on meaningful events/intervals and apply retry cooldowns.
+- [x] Exercise decisions without any movement or rendering dependency.
 
 Acceptance: a satiated Aiko can leave an Onigiri alone and later select the same
 one when hungry. Competing portions do not produce rapid target switching.
 
 ### Stage 5 — Gaze, goal movement and runtime integration
 
-- [ ] Implement the confirmed random-versus-goal `auto_walk` semantics and
+- [x] Implement the confirmed random-versus-goal `auto_walk` semantics and
       Stage 1 arbitration rules in movement integration.
-- [ ] Extend the existing movement path for goals; share actual displacement
+- [x] Extend the existing movement path for goals; share actual displacement
       feedback with random walking and preserve one position writer.
-- [ ] Resolve a reachable interaction position beside each target.
-- [ ] Add object gaze using the existing sixteen directions and explicit
+- [x] Resolve a reachable interaction position beside each target.
+- [x] Add object gaze using the existing sixteen directions and explicit
       cursor/object attention selection.
-- [ ] Wire one named behavior coordination phase into the existing desktop tick.
-- [ ] Handle invalidation, bounds and interruption without conflicting timers.
+- [x] Wire one named behavior coordination phase into the existing desktop tick.
+- [x] Handle invalidation, bounds and interruption without conflicting timers.
 
 Acceptance: Aiko smoothly reaches a scripted visible object without waiting for
 a random departure. Sleep, contact, games, removed targets and unreachable goals
@@ -289,12 +322,12 @@ produce the specified result. Perform a native Windows movement/gaze check.
 
 ### Stage 6 — Acquisition and autonomous consumption
 
-- [ ] Add an application use case for a specific World instance and typed results.
-- [ ] Recheck custody, availability, reach and food acceptance at execution time.
-- [ ] Reuse pet nutrition policies, with `PetState` committing pet changes.
-- [ ] Coordinate acquisition/consumption with World and preserve action origin.
-- [ ] Begin existing eating/held-item presentation from the confirmed result.
-- [ ] Test refusal, interruption, failed/repeated requests and exactly-once effects.
+- [x] Add an application use case for a specific World instance and typed results.
+- [x] Recheck custody, availability, reach and food acceptance at execution time.
+- [x] Reuse pet nutrition policies, with `PetState` committing pet changes.
+- [x] Coordinate acquisition/consumption with World and preserve action origin.
+- [x] Begin existing eating/held-item presentation from the confirmed result.
+- [x] Test refusal, interruption, failed/repeated requests and exactly-once effects.
 
 Acceptance: autonomous eating changes the correct portion and pet once, with no
 fabricated human-care reward. Refusal changes neither nutrition nor custody.
@@ -302,14 +335,14 @@ Keep the offline meal mechanism separate.
 
 ### Stage 7 — Cursor pickup, offering and falling
 
-- [ ] Implement release-to-accept and fall-on-refusal; finalize short-click/hold
+- [x] Implement release-to-accept and fall-on-refusal; finalize short-click/hold
       discrimination and input cancellation details.
-- [ ] Adapt food-choice press/hold/release input into World operations.
-- [ ] Render the user-held instance at the cursor; end user custody on handover.
-- [ ] Add elapsed-time-based fall progression and one ground-contact transition.
-- [ ] Present resting/falling instances through World read projections.
-- [ ] Feed carried and falling observations into the same perception pipeline.
-- [ ] Define cancellation, capture loss, shutdown and out-of-area release behavior.
+- [x] Adapt food-choice press/hold/release input into World operations.
+- [x] Render the user-held instance at the cursor; end user custody on handover.
+- [x] Add elapsed-time-based fall progression and one ground-contact transition.
+- [x] Present resting/falling instances through World read projections.
+- [x] Feed carried and falling observations into the same perception pipeline.
+- [x] Define cancellation, capture loss, shutdown and out-of-area release behavior.
 
 Acceptance: the full Onigiri scenario works visibly, including successful
 handover, refusal, falling, ignoring and later autonomous eating. A gesture
@@ -318,33 +351,34 @@ input, layering and scale changes with an isolated save.
 
 ### Stage 8 — Persistence and complete regression
 
-- [ ] Design the save-format extension/migration before changing serialization.
-- [ ] Preserve existing saves, `AIKO_SAVE_PATH` and safe backup/write behavior.
-- [ ] Save related durable pet/World state in one consistent session snapshot.
-- [ ] Define recovery for carried, falling and pet-held instances; do not restore
+- [x] Design the save-format extension/migration before changing serialization.
+- [x] Preserve existing saves, `AIKO_SAVE_PATH` and safe backup/write behavior.
+- [x] Save related durable pet/World state in one consistent session snapshot.
+- [x] Define recovery for carried, falling and pet-held instances; do not restore
       stale cursor capture, active timers or an in-progress interaction verbatim.
-- [ ] Start perception and decision-making afresh after restoration; do not
+- [x] Start perception and decision-making afresh after restoration; do not
       replay consumption or consume World food offline.
-- [ ] Complete automated checks and native Windows end-to-end acceptance.
-- [ ] Update current architecture, user guidance and change history to describe
+- [x] Complete automated checks.
+- [ ] Complete native Windows end-to-end acceptance using the isolated launcher.
+- [x] Update current architecture, user guidance and change history to describe
       only the behavior actually shipped.
 
 Acceptance: reopening produces no extra portions or nutrition effects. Test old,
 new, malformed and interrupted-save cases, plus scales, displays/taskbar setup,
 games, sleep, direct care and existing animations.
 
-## Decisions to resolve during the relevant stage
+## Resolved implementation decisions
 
 | Decision | Resolve by | Current boundary |
 | --- | --- | --- |
-| Hunger threshold and reevaluation/cooldown values | Stage 4 | Separate desire to seek food from capacity to accept it; no numeric values agreed yet |
+| Hunger threshold and reevaluation/cooldown values | Stage 4, implemented | Food ≤70, drink energy ≤60; reevaluate 1 s, search 2 s, retry 10 s, post-consumption 30 s; validated balance data |
 | Movement setting semantics | Settled in Stage 1; implement in Stage 5 | `auto_walk` gates random walks; wanted perceived/remembered food goals can move independently under other activity gates |
 | Action interruption/priority details | Specified in Stage 1; verify in Stage 5 | Follow the Stage 1 arbitration table; preserve existing render priorities |
-| Offer gesture and refusal outcome | Settled in Stage 1; implement in Stage 7 | Release in handover area after notice/recognition and willingness; otherwise food falls. Short-click/hold and cancellation details remain open |
+| Offer gesture and refusal outcome | Stage 7, implemented | Press starts one portion; release after recognition/willingness offers it, otherwise it falls. Escape/capture loss cancels |
 | Human-handover reward policy | Settled in Stage 1; implement in Stage 6 | Accepted direct handover uses canonical feed care/friendship rules; autonomous collection does not |
-| Ground/display mapping and out-of-area drops | Coordinates specified in Stage 1; remaining input policy in Stage 7 | First surface follows the current primary taskbar track; sprite scale does not multiply object positions. Unsupported releases require an explicit policy |
-| Recognition and memory tuning | Stages 3 and 4 | No omniscient identity/position updates; begin with simple time-based rules |
-| Durable object recovery and schema migration | Stage 8 | Existing saves remain readable; no offline World consumption |
+| Ground/display mapping and out-of-area drops | Stage 7, implemented | Primary taskbar surface; scale does not multiply positions. Unsupported release removes the cursor portion with brief feedback |
+| Recognition and memory tuning | Stages 3 and 4, implemented | Notice 3 widths/0.2 s, recognize 1.5 widths/0.6 s, memory 600 active s; no unseen truth updates |
+| Durable object recovery and schema migration | Stage 8, implemented | Optional World v1 inside outer v1; nonterminal objects recover grounded; no offline World consumption |
 
 ## Verification and delivery discipline
 

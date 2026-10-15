@@ -76,6 +76,7 @@ The existing top-level sections are unchanged:
 | `pet` | Needs, friendship/reward limits, meal-day markers, sleep state, fun, food/digestion state and `updated_at` |
 | `settings` | Window positions, size and behaviour/observation preferences |
 | `adaptive` | Aggregated learned weekday/hour patterns and bounded rhythm state; optional in older saves |
+| `world` | Optional separately versioned World snapshot (`version: 1`), surface, active portions, revisions and next instance ID |
 
 `pet.updated_at` is a Unix wall-clock timestamp in seconds. Need values are
 saved to four decimal places. Older version-one saves missing newer optional
@@ -120,7 +121,24 @@ ticks, care and completed games use the same `advance_session_time()` function.
 Closed-time wall-clock reconstruction cannot distinguish shutdown, suspend
 or a forward clock correction, so all are subject to the same bounded rule.
 
-Self-served meals are **only** enabled for closed-time reconstruction. During
-the live application, the existing care actions and friendly requests remain
-in effect. Turning off automatic routine disables automatic offline sleep
-transitions and meals, while ordinary need progression still occurs.
+Scheduled self-served meals are enabled only for closed-time reconstruction.
+Live autonomous consumption instead requires an observed/remembered World
+portion and the normal interaction sequence. Turning off automatic routine
+disables automatic offline sleep/meals; live object behavior remains available.
+
+## Joint World recovery
+
+Pet and World are written together through the existing flush/fsync/atomic
+replacement path. Old version-one saves without `world` load an empty World.
+The optional World section is validated independently: unknown definitions,
+duplicate IDs, invalid geometry/revisions or unsupported versions require a
+backup before replacement while valid pet progress is retained.
+
+Only nonterminal portions are saved. Cursor-held, falling and unconsumed pet-held
+portions normalize to valid resting ground positions; pet-held recovery uses
+Aiko's position. IDs and the next-ID counter prevent accidental identity reuse.
+Consumed/removed instances, live capture, animations, pending user actions,
+interaction receipts and subjective memory are not resumed. No World consumption
+is simulated while closed. A completed meal and removal of its portion share
+the same durable snapshot, so restart cannot replay the meal from that snapshot.
+See [isolated restart testing](WORLD_SMOKE_TEST.md).

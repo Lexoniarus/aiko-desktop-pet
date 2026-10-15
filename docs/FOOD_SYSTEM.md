@@ -46,7 +46,18 @@ nutritional value or damage friendship. Aiko's scripted German
 Meals are *suggestions*, not a requirement at fixed wall-clock times. A
 proper meal in an existing breakfast/lunch/dinner time slot still marks that
 slot as eaten. The canonical `PetState.interact("feed")` chooses Onigiri by
-default; the current desktop toolbar displays eleven food-and-drink choices.
+default as a domain convenience; the desktop chooser creates World portions
+and does not call direct feeding. It displays eleven food-and-drink choices.
+
+Press and hold a choice to carry one portion. Offer it near Aiko long enough
+to be recognized, then release in her handover area, or release above the taskbar
+to let it fall. Hungry Aiko seeks recognized resting food at satiety ≤70;
+drink seeking instead starts at energy ≤60. Random walking can stay disabled.
+Ground pickup grants custody at source frame 4, nutrition only at subsequent
+consumption. Interruptions after grasp animate put-down before the user action.
+Human handover retains existing care rewards; autonomous ground consumption
+does not grant human social/adaptive/friendship credit. See
+[World contracts](WORLD_OBJECT_CONTRACTS.md) and [practical test](WORLD_SMOKE_TEST.md).
 
 ## Hardware workload versus user input
 
@@ -93,8 +104,8 @@ chosen sprite to all eight source-frame `food_anchor` positions. It never
 zooms tiny food images to make 2× objects, and it doesn't re-load them when
 Aiko's character size changes.
 
-The Energy Drink is a *drink choice, not a nutrition entry*: selecting it
-invokes the existing `energy_drink` care action, restoring up to ten energy
+The Energy Drink is a *drink choice, not a nutrition entry*: consuming its World
+instance reuses the existing `energy_drink` care rules, restoring up to ten energy
 points without adding satiety, digest reserve or fun. The old standalone
 toolbar button is removed. A full-energy refusal does not play the consumption
 animation. Its future mood-side-effect has deliberately **not yet been

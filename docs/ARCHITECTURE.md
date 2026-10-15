@@ -338,25 +338,53 @@ typed mood hints, due-meal selection, localized weekday text, legacy mutator
 APIs and import-only tests. No final interactive Windows sign-off has been
 recorded for the latest commit; automated checks are commit-specific.
 
-## World foundation and planned object interaction
+## World, subjective knowledge and object interaction
 
 `world/contracts.py` defines immutable object definitions, logical surface and
 position values, footprints and objective snapshots. `world/state.py` owns one
-in-memory World with stable per-session instance IDs, revisions and explicit
+in-memory World with stable instance IDs, revisions and explicit
 custody/lifecycle operations. It imports neither pet rules nor desktop/UI code.
 `infrastructure/world_catalog.py` builds definitions by referencing the existing
 food and item-asset IDs; it does not copy nutrition, labels or sprite data.
 
-This foundation is headless and not wired into `DesktopPet`. Scripted callers
-can place/move portions, release them, record ground contact and apply authorized
-handover, collection, removal and World-only consumption. `consume()` does not
-feed the pet. Perception, application-level eating, timed falling, mouse input
-and saving are later implementation stages.
+`pet/mind/object_perception.py`, `object_memory.py` and `object_intentions.py`
+separate timed recognition, last-observed knowledge and stable need-based goals.
+`application/object_awareness.py` is the objective-to-subjective boundary.
+Unseen moves do not update memory. The existing tick observes objects after
+need progression and before presentation. Faster physics/render callbacks do
+not run a second mind loop. Object gaze reuses sixteen directions and does not
+set the user-attention flag that would block walking toward the goal.
+
+`pet/movement/controller.py` shares the existing walking executor between random
+and deliberate goals; `auto_walk` gates only random departures. `WalkDriver`
+still reports actual clamped desktop displacement, with no second pet position.
+
+`application/object_interaction.py` owns pickup, consumption and interrupted
+put-down. Identified animation events acquire at source frame 4, complete pickup
+at pose 8 and release during reverse frame 4→3. The animator changes no needs.
+`application/object_consumption.py` prepares canonical food/drink effects with
+explicit handover/autonomous origin, commits World and PetState on the owner
+thread with recovery, and deduplicates completed requests. World `consume()`
+alone still cannot feed Aiko. Human-only care rewards are excluded for ground
+consumption, while canonical nutrition, repetition and food mood effects remain.
+
+`desktop/world_runtime.py` wires host coordinates, cursor gestures, awareness,
+interaction and presentation. `ui/world_view.py` renders snapshots in small
+passive native windows; `FoodOverlay` layers the held item and authored hands.
+Chooser press creates one portion; release offers or falls. Escape/capture loss
+cancels. Existing native toolbar/game rules remain in their owners.
+
+`infrastructure/world_codec.py` adds an optional separately versioned World
+section inside outer save v1. Pet, World, settings and adaptive data use one
+atomic StateStore write. Old saves start with empty World; transient nonconsumed
+items recover on valid ground positions, without restoring actions or knowledge.
+World objects are never consumed during existing pet-only closed-time catch-up.
 
 The [World and autonomous object implementation plan](WORLD_OBJECT_IMPLEMENTATION_PLAN.md)
 defines the agreed feature, its state owners, staged checklists and acceptance
-criteria. Its [Stage 1 contracts](WORLD_OBJECT_CONTRACTS.md) distinguish the
-implemented World foundation from planned visible and autonomous behavior.
+criteria. Its [behavior contracts](WORLD_OBJECT_CONTRACTS.md) define the current
+rules; [the isolated practical checklist](WORLD_SMOKE_TEST.md) tracks native
+acceptance separately from automated checks.
 
 ## Testing and contribution
 

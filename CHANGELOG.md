@@ -1,3 +1,19 @@
+## Unreleased — World interaction test build
+
+- Replace direct feeding UI with one cursor-carried food/drink portion per
+  gesture, recognized release-to-accept, fall-on-refusal and taskbar ground items.
+- Add timed perception, subjective object memory, stable hunger/energy goals
+  and goal walking independent of random-walk settings through one executor.
+- Import the approved eight-pose pickup and hand layers reproducibly. Acquire
+  at source frame 4, consume after completion, and animate reverse put-down
+  before an interrupting user action. Deduplicate identified playback events.
+- Reuse canonical food/drink effects with explicit human/autonomous origin;
+  ground consumption grants no human social/adaptive/friendship rewards.
+- Save Pet and optional versioned World together atomically; load older saves
+  and recover transient portions grounded without replaying consumption.
+- Add isolated hungry/full test profiles, real Tk integration regressions and
+  a restart checklist. Native practical acceptance and merge remain pending.
+
 ## Unreleased — Refactor consolidation
 
 - Add a headless in-memory World foundation with immutable snapshots, logical

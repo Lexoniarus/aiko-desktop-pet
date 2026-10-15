@@ -1,21 +1,20 @@
-# World object contracts and behavior rules — Stage 1
+# World object contracts and behavior rules
 
-Status: Stage 1 specified; headless Stage 2 foundation implemented separately.
+Status: implemented through Stage 8; native practical acceptance pending.
 Recorded: 15 October 2026.
 Baseline: `1753266db0dafc94024913cb281b80e7abe289a0` (merged PR #9).
 
 This is the detailed contract for Stage 1 of the
 [implementation plan](WORLD_OBJECT_IMPLEMENTATION_PLAN.md). It describes the
-planned first feature. The [current architecture](ARCHITECTURE.md) remains the
-reference for existing behavior. Names below describe semantic contracts, not
-newly implemented classes or fixed Python signatures.
+accepted first feature. The [current architecture](ARCHITECTURE.md) maps these
+semantic contracts to their implemented owners and Python APIs.
 
 ## Confirmed product decisions
 
 ### Implementation update — 15 October 2026
 
 The accepted end-to-end implementation plan supersedes the earlier narrow
-first-version restrictions below where they conflict:
+first-version restrictions. The rules below incorporate those decisions:
 
 - Cursor pickup/release replaces direct feeding, including the energy drink.
 - Food seeking starts at satiety 70; drink seeking starts at energy 60.
@@ -88,7 +87,8 @@ requests run on the application owner thread.
   User-held food can be examined, but is acquired only through release/handover.
 - Explicit removal changes availability without granting Aiko knowledge of an
   unseen removal. Terminal identity/receipt records prevent duplicate effects;
-  their retention and persistence are finalized in Stages 6 and 8.
+  durable saves omit terminal instances while preserving the next instance ID.
+  In-session consumption receipts retain the latest 4096 completed requests.
 - Taking an already resting object back onto the cursor is not required by this
   first scenario. A later gesture must use the same custody authority if added.
 
@@ -125,9 +125,10 @@ add cross-monitor paths or alternate walking surfaces.
   resting items through the World owner and cancel invalid prepared operations.
   Update Aiko's subjective position knowledge only through new observations.
 
-Unsupported-display release, input capture loss and shutdown recovery are
-resolved before Stage 7 input and Stage 8 persistence. No implementation may
-silently teleport a portion between monitors to make a target reachable.
+Unsupported-display release removes the cursor portion with brief feedback.
+Escape or loss of the gesture's Tk input capture removes it without consumption.
+Shutdown saves nonterminal items for ground recovery; it does not resume input.
+No portion is silently transferred between monitors to make a target reachable.
 
 ## Perception, recognition, interest and intention
 
@@ -139,7 +140,7 @@ silently teleport a portion between monitors to make a target reachable.
 | Want | Recognized edible food, appetite/interest criteria and canonical food acceptance allow it | An interested candidate; no custody or nutrition change |
 | Select | Wanted resting food or its remembered location, reachable known position, no blocking activity and cooldown satisfied | A stable approach/search intention |
 | Acquire | Fresh final check of identity, custody, distance, activity and acceptance succeeds | Coordinated custody transfer; no independent care effect |
-| Consume | Acquisition and prepared pet nutrition transition can commit together | Instance and pet effect complete exactly once |
+| Consume | Pet-held portion and prepared pet transition can commit together after pickup completion or accepted handover | Instance and pet effect complete exactly once |
 
 The application perception bridge may inspect objective definition data to
 resolve authored recognition; there is no image-recognition service. Only the
@@ -154,8 +155,8 @@ Stage 3 rules instead of depending on update count.
 
 An asleep Aiko does not acquire new observations or wake just because food
 exists. During games or care, available attention may be reduced; new locomotion
-and food acquisition remain blocked. Body orientation/attention contributes to
-perception without depending on the renderer's current look-frame ID.
+and food acquisition remain blocked. Available attention contributes without
+depending on the renderer's look-frame ID; there is no facing-angle filter.
 
 The first sensor uses known object-display availability and geometric/attention
 rules. It does not inspect foreign window content or add native occlusion
@@ -190,16 +191,16 @@ portion autonomously.
 
 | Origin | Food effects | Human-care effects |
 | --- | --- | --- |
-| Existing direct feed | Existing unchanged behavior | Existing unchanged behavior |
 | Successful release into Aiko's hand | Existing satiety, digestion, repetition, food mood and meal rules | Existing feed social/adaptive/dialogue and friendship rules, including their limits; once at successful consumption |
 | Autonomous ground collection | Same canonical satiety, digestion, repetition, food mood and meal rules | No feed social gain, human-contact/adaptive interaction credit or friendship reward |
 | Failed offer, refusal or mere placement | None | None |
 
 Food-related mood effects and meal credit remain nutritional effects; they do
 not disappear just because consumption was autonomous. Spontaneous commentary
-can acknowledge autonomous eating without recording human contact. No energy
-drink behavior is inferred from hunger; its separate rules need explicit scope
-before it becomes a World consumable.
+can acknowledge autonomous eating without recording human contact. Energy Drink
+is a distinct drink interaction, sought at energy ≤60 and accepted under the
+existing energy-drink rules. It restores up to ten energy without nutrition.
+The old direct-feeding UI is removed; canonical care policies remain reusable.
 
 ## Arbitration and interruptions
 
@@ -209,9 +210,9 @@ game, sleep or existing one-shot playback in this feature.
 
 | Situation/event | Before eating commit | After eating commit |
 | --- | --- | --- |
-| Explicit talk, petting or direct feeding | Stop object movement and cancel its execution; process user action, then reevaluate later | Nutrition remains committed; present user action according to existing playback rules |
-| User starts a game | Cancel object execution; no acquisition while game is open | No rollback; game playback follows existing rules |
-| Sleep begins | Cancel object execution; no seeking or handover while asleep | No rollback; sleep playback follows existing rules |
+| Explicit talk, petting or a new carried choice | Cancel approach; if already acquired, finish safe hold and animate put-down before action | Nutrition remains committed; present user action according to existing playback rules |
+| User starts a game | Cancel approach or put down acquired item before opening game | No rollback; game playback follows existing rules |
+| Sleep requested | Cancel approach or put down acquired item before sleeping; automatic routine waits during object execution | No rollback; sleep playback follows existing rules |
 | Existing care/one-shot animation or explicit active controls | Defer new object execution; do not reset the active action | Existing playback/arbitration governs display |
 | Intentional pet hover/contact | Stop an autonomous approach; resume only after fresh arbitration and cooldown | No rollback; preserve the confirmed eating result |
 | User-held item enters offer area | Treat as offer context; allow recognition, with no transfer before release | The completed instance cannot become user-held again |
@@ -228,7 +229,9 @@ a generic attention-blocking flag for Aiko looking at her own target would stop
 her approach. The offering context must likewise avoid accidental ordinary pet
 clicks and duplicate greeting/care actions.
 
-Interruption normally cancels execution while retaining subjective knowledge.
+Interruption cancels approach while retaining subjective knowledge. After grasp,
+pickup reaches source pose 8, then reverse playback detaches at 4→3; the latest
+queued user action runs after put-down. No nutrition is granted for grasp.
 After the blocker clears, reevaluate rather than resuming stale callbacks.
 Ground food remains where it was. A user-held release that cannot be accepted
 falls; it is not reserved while Aiko finishes another activity.
@@ -244,7 +247,7 @@ falls; it is not reserved while Aiko finishes another activity.
 4. Prepare the complete nutrition/care transition and World transition without
    mutation. Resolve all fallible lookup/validation work before commit. For a
    failed handover, prepare only the normal release-to-falling transition.
-5. Commit acquisition/consumption and the pet transition in one non-reentrant
+5. Commit consumption of the pet-held item and the pet transition in one non-reentrant
    owner-thread operation. Publish the receipt only after both owners agree.
    No timer, UI callback, await, file write or externally supplied function runs
    between the related commits.
@@ -287,34 +290,41 @@ using a joint durable pet/World snapshot, not assumed from an in-memory receipt.
 | Fail before commit or inject partial commit failure | No half-applied food effect; owner-controlled recovery for the latter |
 | Change sprite scale | Objects retain logical positions; reach/anchors update |
 
-These are specifications, not tests already run. Stages 2–8 supply automated
-and native Windows evidence for their corresponding scenarios.
+Automated evidence and commit references are in the implementation ledger.
+Native Windows interaction acceptance is tracked separately in
+[the practical checklist](WORLD_SMOKE_TEST.md).
 
-## Remaining implementation-stage decisions
+## Resolved implementation parameters
 
-- Stage 3: exact notice/recognition ranges, attention rules, dwell durations,
-  evidence decay and memory freshness. Define validated body-relative units.
-- Stage 4: exact appetite thresholds, interest differences, switch hysteresis,
-  bounded search duration and cooldowns. Capacity to eat is not desire to seek.
-- Stage 5: exact stable handover/foot anchors and approach tolerances from
-  character geometry; preserve the movement semantics confirmed above.
-- Stage 6: concrete prepared-transition/receipt contracts and retention bounds,
-  with the failure behavior above and an interruptible pickup/put-down phase;
-  no user reward policy remains open.
-- Stage 7: short-click versus hold discrimination, visual offer/refusal feedback,
-  release outside the active surface and capture-loss/Escape behavior. The
-  confirmed release-to-accept gesture itself is settled.
-- Stage 8: save format/migration and recovery of carried/falling/transient items;
-  retain existing save compatibility and no offline World consumption.
+- Notice: 3 body widths, 0.2 s; recognize: 1.5 widths, 0.6 s of attention.
+  Losing visibility clears current evidence, while learned memory persists.
+- Memory expires after 600 active seconds; no offline knowledge refresh.
+- Seek food at satiety ≤70, drink at energy ≤60. Check at most once per second
+  plus relevant changes. Retain eligible goals; tie-break by need urgency,
+  food repetition, path length and stable instance token.
+- Search at last-known position for 2 s, then forget that presence and retry
+  after 10 s. Interruption also waits 10 s; consumption waits 30 s.
+- Handover: horizontal distance ≤0.3 body widths, height 0.05–0.9 widths;
+  recognition observed within 0.5 s, no conflicting action, canonical capacity.
+  Ground reach is 0.25 widths, with actual arrival checked within 2 desktop units.
+- Press starts one portion immediately; even a quick release only offers/drops.
+  A local Tk grab spans the gesture, Escape cancels, lost capture cancels, and
+  release outside supported primary-surface bounds removes with feedback.
+- Fall acceleration is 900 desktop units/s², integrated analytically without
+  bouncing. Presentation runs at about 33 ms; cognition stays in the existing tick.
+- Save schema stays outer v1, with optional `world.version=1`. Ground recovery
+  normalizes falling/user-held/pet-held objects, keeps IDs and the next ID,
+  drops terminal objects and never restores actions, capture or memory.
 
-No code, new balance values, executable tests or persistence changes are part
-of Stage 1. Its completion records these contracts, the confirmed product
-decisions, scenario review and the remaining stage-specific tuning.
+Perception/interest/fall parameters are validated in `data/balance.json`.
+Grip/pointer and native appearance still need the practical calibration review.
 
 ## Stage 2 implementation boundary
 
-The following headless APIs now implement World ownership; no DesktopPet,
-perception, UI, nutrition or save integration is installed by Stage 2.
+Historical foundation boundary (`069923c`): these headless APIs established World
+ownership before desktop integration. Later stages added `advance_falls`,
+`put_down`, `change_surface`, `change_footprint`, snapshot recovery and drink
+definitions. World-only operations still never mutate pet needs.
 
 | Owner/API | Implemented behavior |
 | --- | --- |
@@ -343,5 +353,5 @@ integration. No external clock, filesystem, taskbar or image reader is used by
 the World core.
 
 Application-level validation, release-on-refusal, joined pet/World commits,
-recovery and idempotent interaction receipts remain Stage 6 responsibilities.
+recovery and idempotent receipts are implemented by the application coordinator.
 Callers must not mistake the World-only `consume` operation for that use case.
