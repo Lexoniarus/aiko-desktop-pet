@@ -53,7 +53,10 @@ class ObjectConsumption:
         before = self._mind.observe_care(self._state, context, inputs.monotonic_time)
         checkpoint = deepcopy(self._state)
         prepared = deepcopy(self._state)
-        result = prepared.consume_item(item.definition_id, origin, now=inputs.wall_time)
+        definition = next(definition for definition in world.snapshot().definitions
+                          if definition.definition_id == item.definition_id)
+        consumable_id = definition.food_id or "energy_drink"
+        result = prepared.consume_item(consumable_id, origin, now=inputs.wall_time)
         if result is None or result.consumed_item_id is None:
             return ConsumptionOutcome(False)
         world_checkpoint = world.snapshot()

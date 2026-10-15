@@ -27,7 +27,7 @@ class ObjectAwareness:
                 continue
             definition = definitions[item.definition_id]
             candidates.append(ObjectCandidate(
-                item.instance_id, definition.definition_id,
+                item.instance_id, definition.food_id or definition.definition_id,
                 "drink" if ObjectInteraction.DRINK in definition.interactions
                 else "food", item.position.x, item.position.height,
                 item.state == ObjectState.RESTING,

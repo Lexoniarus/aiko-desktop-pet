@@ -213,7 +213,7 @@ def capture_ui() -> None:
 
 
 def capture_current_sprite_animations() -> None:
-    """Preview all 112 bundled runtime poses with real manifest durations."""
+    """Preview all 120 bundled runtime poses with real manifest durations."""
     manifest = json.loads(
         (ASSET_ROOT / "animations.json").read_text(encoding="utf-8"),
     )
@@ -234,8 +234,8 @@ def capture_current_sprite_animations() -> None:
             )
             frames.append(preview.convert("RGB"))
             durations.append(max(80, int(item["duration_ms"])))
-    if len(frames) != 112:
-        raise RuntimeError("Current Aiko asset catalog is not 112 poses")
+    if len(frames) != 120:
+        raise RuntimeError("Current Aiko asset catalog is not 120 poses")
     frames[0].save(
         PREVIEWS / ANIMATION_GIF,
         save_all=True, append_images=frames[1:],
