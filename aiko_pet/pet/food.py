@@ -1,23 +1,23 @@
 """Food-only hunger, digestion and meal variety rules.
 
-All balance knobs are in FOOD_BALANCE and FOOD_CATALOG below. These rules
-know nothing about Tk, Windows input readers, dialogue or the other needs.
+Balance rules stay in Python; packaged nutrition profiles and menu order live
+in a validated JSON catalogue. No Tk, desktop or dialogue is imported.
 """
 
 from __future__ import annotations
 
 import math
 from dataclasses import dataclass, replace
-from typing import Any, Literal
+from typing import Any
+
+from .food_catalog import (
+    DEFAULT_CATALOG,
+    FoodCategory as FoodCategory,
+    FoodId as FoodId,
+    FoodProfile as FoodProfile,
+)
 
 from .value_rules import clamp_need_value
-
-FoodId = Literal[
-    "onigiri", "sandwich", "taiyaki", "apple", "dango",
-    "donut", "cookie", "melonpan", "cupcake", "dorayaki",
-]
-FoodCategory = Literal["meal", "snack"]
-
 
 @dataclass(frozen=True, slots=True)
 class FoodBalance:
@@ -46,32 +46,9 @@ class FoodBalance:
 FOOD_BALANCE = FoodBalance()
 
 
-@dataclass(frozen=True, slots=True)
-class FoodProfile:
-    """One editable nutrition profile, independent of visual sprites."""
-
-    id: FoodId
-    display_name: str
-    category: FoodCategory
-    instant_satiety_points: float
-    digest_reserve_minutes: float
-    normal_mood_bonus: float
-
-
-FOOD_CATALOG: dict[FoodId, FoodProfile] = {
-    "onigiri": FoodProfile("onigiri", "Onigiri", "meal", 30.0, 105.0, 4.0),
-    "sandwich": FoodProfile("sandwich", "Sandwich", "meal", 38.0, 145.0, 5.0),
-    "taiyaki": FoodProfile("taiyaki", "Taiyaki", "snack", 20.0, 55.0, 4.0),
-    "apple": FoodProfile("apple", "Apfel", "snack", 14.0, 38.0, 3.0),
-    "dango": FoodProfile("dango", "Dango", "snack", 10.0, 20.0, 2.0),
-    "donut": FoodProfile("donut", "Donut", "snack", 18.0, 42.0, 4.0),
-    "cookie": FoodProfile("cookie", "Cookie", "snack", 12.0, 30.0, 3.0),
-    "melonpan": FoodProfile("melonpan", "Melonpan", "snack", 29.0, 85.0, 4.0),
-    "cupcake": FoodProfile("cupcake", "Cupcake", "snack", 17.0, 46.0, 4.0),
-    "dorayaki": FoodProfile("dorayaki", "Dorayaki", "snack", 21.0, 60.0, 4.0),
-}
-DEFAULT_FOOD_ID: FoodId = "onigiri"
-
+FOOD_CATALOG = DEFAULT_CATALOG.foods
+DEFAULT_FOOD_ID: FoodId = DEFAULT_CATALOG.default_food_id
+FOOD_MENU_ORDER = DEFAULT_CATALOG.menu_order
 
 def _bounded_number(raw: Any, default: float, maximum: float) -> float:
     if type(raw) not in (int, float):

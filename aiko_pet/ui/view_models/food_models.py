@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Literal, TypeAlias
 
 from ...asset_paths import ASSET_ROOT
-from ...pet.food import FOOD_CATALOG, FoodId
+from ...pet.food import FOOD_CATALOG, FOOD_MENU_ORDER, FoodId
 
 FoodChoiceId: TypeAlias = FoodId | Literal["energy_drink"]
 
@@ -24,10 +24,7 @@ class FoodChoice:
 
 def food_choices() -> tuple[FoodChoice, ...]:
     """Display the single nutrition catalog alongside the separate drink."""
-    order: tuple[FoodChoiceId, ...] = (
-        "onigiri", "sandwich", "taiyaki", "apple", "dango",
-        "energy_drink", "donut", "cookie", "melonpan", "cupcake", "dorayaki",
-    )
+    order = FOOD_MENU_ORDER
     images = ASSET_ROOT / "items" / "icons" / "64"
     choices: list[FoodChoice] = []
     for item_id in order:
