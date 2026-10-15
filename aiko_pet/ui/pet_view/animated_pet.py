@@ -19,6 +19,7 @@ from ...pet.animation.animation import (
 from ...pet.animation.ambient import AmbientDirector
 from ...pet.animation.character import CharacterCatalog, FRAME_WIDTH
 from ...pet.animation.gaze import gaze_sector
+from ...pet.animation.priority import choose_animation_priority
 from ...pet.mind.cursor_attention import CursorAttentionSnapshot
 from ...pet.movement import WalkController
 from .walk_driver import (
@@ -337,31 +338,31 @@ class AnimatedPet:
         self._last_render_pointer = pointer
         if attention is not None:
             self._cursor_snapshot = attention
-        if self._game_mode:
+        priority = choose_animation_priority(
+            game_mode=self._game_mode,
+            sleeping=self.state.sleeping,
+            active_action=self._active_action,
+            action_loops=(
+                self.assets.clips[self._active_action].loop
+                if self._active_action is not None else False
+            ),
+            timed_action_active=now < self.ports.action_until(),
+        )
+        if priority.mode != "passive":
             self._ambient.suspend(now)
-            if (
-                self._active_action is not None
-                and not self.assets.clips[self._active_action].loop
-            ):
-                self.show_frame(self._active_action, now)
-            else:
+            if priority.clear_action:
                 self._active_action = None
-                self.show_frame("waiting", now)
+            if priority.interrupt_walk:
+                self.movement.interrupt()
+            selected = (
+                self.ports.action_state()
+                if priority.mode == "timed"
+                else priority.animation
+            )
+            if selected is None:
+                raise AssertionError("An active animation needs a clip")
+            self.show_frame(selected, now)
             return
-        if self.state.sleeping:
-            self._ambient.suspend(now)
-            self.movement.interrupt()
-            self._active_action = None
-            self.show_frame("sleep", now)
-        elif (
-            self._active_action is not None
-            and not self.assets.clips[self._active_action].loop
-        ):
-            self._ambient.suspend(now)
-            self.show_frame(self._active_action, now)
-        elif now < self.ports.action_until():
-            self._ambient.suspend(now)
-            self.show_frame(self.ports.action_state(), now)
         else:
             self._active_action = None
             moving = self.maybe_walk(now, 0)
