@@ -1,4 +1,4 @@
-"""Animated Aiko sprite: walking, direction, sprite assets and frame display.
+"""Animated Aiko sprite: frame playback, gaze, sprites and item overlays.
 
 This object owns the character visuals. It never imports DesktopPet, hover
 widgets, notification adapters or network services. All host effects use ports.
@@ -19,19 +19,10 @@ from ...pet.animation.character import CharacterCatalog, FRAME_WIDTH
 from ...pet.animation.gaze import gaze_sector
 from ...pet.animation.priority import choose_animation_priority
 from ...pet.mind.cursor_attention import CursorAttentionSnapshot
-from ...pet.movement import WalkController
-from .walk_driver import (
-    ActivityReadings as ActivityReadings,
-    BusyReading as BusyReading,
-    FocusReadings as FocusReadings,
-    FocusState as FocusState,
-    WalkDriver,
-    WalkDriverPorts,
-)
 from .food_overlay import FoodOverlay
 from .character_sprite_cache import CharacterSpriteCache
 from .rest_pose_renderer import RestPoseRenderer
-from ...desktop.geometry import TaskbarTrack, FOOT_BASELINE
+from ...desktop.geometry import FOOT_BASELINE
 
 
 class CareVisuals(Protocol):
@@ -41,6 +32,14 @@ class CareVisuals(Protocol):
     mood: float
     satiety: float
     sleeping: bool
+
+
+class BusyReading(Protocol):
+    def is_busy(self) -> bool: ...
+
+
+class BusyMonitor(Protocol):
+    def latest(self) -> BusyReading: ...
 
 
 class CharacterSettings(Protocol):
@@ -87,12 +86,11 @@ class CharacterSettings(Protocol):
 class AnimatedPorts:
     """Effects outside the sprite's own drawing and movement state."""
 
-    track: Callable[[], TaskbarTrack]
-    toolbar_visible: Callable[[], bool]
-    place_x: Callable[[float], None]
+    walk_step: Callable[[float, float], str | None]
+    walk_active: Callable[[], bool]
+    interrupt_walk: Callable[[], None]
     action_until: Callable[[], float]
     action_state: Callable[[], str]
-    walk_finished: Callable[[float], None]
     extend_action: Callable[[float], None]
 
 
@@ -102,14 +100,13 @@ class AnimatedPet:
     def __init__(
         self, root: tk.Tk, canvas: tk.Canvas,
         state: CareVisuals, settings: CharacterSettings,
-        adaptive: FocusReadings, monitor: ActivityReadings,
-        ports: AnimatedPorts, *, assets: CharacterCatalog,
+        monitor: BusyMonitor, ports: AnimatedPorts, *,
+        assets: CharacterCatalog,
     ) -> None:
         self.root = root
         self.canvas = canvas
         self.state = state
         self.settings = settings
-        self.adaptive = adaptive
         self.monitor = monitor
         self.ports = ports
         self.assets = assets
@@ -121,16 +118,6 @@ class AnimatedPet:
         self._walk_progress = 0.0
         self.frame_clock = FrameClock(started_at=time.monotonic())
         self._ambient = AmbientDirector(started_at=time.monotonic())
-        self._walk_driver = WalkDriver(
-            state=state, settings=settings, adaptive=adaptive, monitor=monitor,
-            walk_cycle_seconds=assets.clips["running-left"].duration_seconds,
-            ports=WalkDriverPorts(
-                track=ports.track,
-                toolbar_visible=ports.toolbar_visible,
-                place_x=ports.place_x,
-                walk_finished=ports.walk_finished,
-            ),
-        )
         self.gaze_sector: int | None = None
         self._game_mode = False
         self._cursor_snapshot = CursorAttentionSnapshot(-100.0, -100.0)
@@ -160,19 +147,6 @@ class AnimatedPet:
             (self.settings.y or 0) + 82 * scale,
         )
 
-    @property
-    def movement(self) -> WalkController:
-        """Compatibility access to the driver-owned walking controller."""
-        return self._walk_driver.movement
-
-    @movement.setter
-    def movement(self, value: WalkController) -> None:
-        self._walk_driver.movement = value
-
-    def set_auto_walk(self, enabled: bool, now: float) -> None:
-        """Delegate walking preferences to their movement owner."""
-        self._walk_driver.set_auto_walk(enabled, now)
-
     def set_follow_cursor(self, enabled: bool) -> None:
         self.settings.follow_cursor = bool(enabled)
         self.gaze_sector = None
@@ -181,7 +155,7 @@ class AnimatedPet:
         """Pause gaze/walking and hold a forward-facing game pose."""
         self._game_mode = bool(enabled)
         self.gaze_sector = None
-        self.movement.interrupt()
+        self.ports.interrupt_walk()
         self.cancel_action(time.monotonic())
 
     def reload_sprites(self) -> None:
@@ -201,7 +175,7 @@ class AnimatedPet:
         self._ambient.suspend(now)
         self.frame_clock.reset()
         self._active_action = state
-        self.movement.interrupt()
+        self.ports.interrupt_walk()
         self.show_frame(state, now)
 
     def cancel_action(self, now: float) -> None:
@@ -209,7 +183,7 @@ class AnimatedPet:
         self._ambient.suspend(now)
         self.frame_clock.reset()
         self._active_action = None
-        self.movement.interrupt()
+        self.ports.interrupt_walk()
         self.show_frame("sleep" if self.state.sleeping else "idle", now)
 
     def show_frame(
@@ -289,8 +263,8 @@ class AnimatedPet:
             elapsed = max(0.0, progress - self._walk_progress)
             self._walk_progress = progress
             self._last_motion_at = now
-            moving = self.maybe_walk(now, elapsed)
-            if moving is None or self.movement.remaining_distance == 0:
+            moving = self.ports.walk_step(now, elapsed)
+            if moving is None or not self.ports.walk_active():
                 self.render(
                     now, 0, self._last_render_pointer,
                 )
@@ -321,13 +295,6 @@ class AnimatedPet:
         )
         return self.gaze_sector
 
-    def maybe_walk(self, now: float, dt: float) -> str | None:
-        """Maintain the original sprite API while delegating desktop motion."""
-        return self._walk_driver.step(
-            now, dt, game_mode=self._game_mode,
-            attention_active=now < self._cursor_snapshot.attention_until,
-        )
-
     def render(
         self, now: float, elapsed: float, pointer: tuple[int, int],
         *, attention: CursorAttentionSnapshot | None = None,
@@ -351,7 +318,7 @@ class AnimatedPet:
             if priority.clear_action:
                 self._active_action = None
             if priority.interrupt_walk:
-                self.movement.interrupt()
+                self.ports.interrupt_walk()
             selected = (
                 self.ports.action_state()
                 if priority.mode == "timed"
@@ -363,7 +330,7 @@ class AnimatedPet:
             return
         else:
             self._active_action = None
-            moving = self.maybe_walk(now, 0)
+            moving = self.ports.walk_step(now, 0)
             if moving is not None:
                 self._ambient.suspend(now)
                 self.show_frame(moving, now)

@@ -14,6 +14,7 @@ from aiko_pet.application.settings import PetSettings
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.desktop.geometry import TaskbarTrack
 from aiko_pet.pet.movement import WalkController
+from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
 from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 
@@ -40,26 +41,42 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.state = PetState()
         self.settings = PetSettings(x=100, y=500)
         self.action_deadlines: list[float] = []
-        self.anim = AnimatedPet(
-            self.root, self.canvas,
-            self.state, self.settings,
-            AdaptiveRoutine(), IdleMonitor(),
-            AnimatedPorts(
+        assets = load_character_catalog()
+        self.walk = WalkDriver(
+            state=self.state, settings=self.settings,
+            adaptive=AdaptiveRoutine(), monitor=IdleMonitor(),
+            walk_cycle_seconds=assets.clips["running-left"].duration_seconds,
+            ports=WalkDriverPorts(
                 track=lambda: TaskbarTrack(0, 800, 800),
                 toolbar_visible=lambda: False,
                 place_x=self._place_x,
+                walk_finished=lambda _now: None,
+            ),
+        )
+        self.anim = AnimatedPet(
+            self.root, self.canvas,
+            self.state, self.settings, IdleMonitor(),
+            AnimatedPorts(
+                walk_step=self._step_walk,
+                walk_active=lambda: self.walk.movement.remaining_distance != 0,
+                interrupt_walk=self.walk.movement.interrupt,
                 action_until=lambda: 0.0,
                 action_state=lambda: "idle",
-                walk_finished=lambda _now: None,
                 extend_action=self.action_deadlines.append,
             ),
-            assets=load_character_catalog(),
+            assets=assets,
         )
         self.addCleanup(self.root.destroy)
         self.addCleanup(self.anim.stop)
 
     def _place_x(self, value: float) -> None:
         self.settings.x = round(value)
+
+    def _step_walk(self, now: float, elapsed: float) -> str | None:
+        return self.walk.step(
+            now, elapsed, game_mode=self.anim.game_mode,
+            attention_active=now < self.anim._cursor_snapshot.attention_until,
+        )
 
     def test_sprites_and_gaze_do_not_require_hover_ui(self) -> None:
         self.assertFalse(hasattr(self.anim, "pet"))
@@ -69,14 +86,14 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertIsNone(self.anim.gaze_direction((10000, 0)))
 
     def test_movement_uses_injected_geometry_boundary(self) -> None:
-        self.anim.movement.remaining_distance = 12
+        self.walk.movement.remaining_distance = 12
         stride_seconds = self.anim.assets.clips["running-right"].duration_seconds
         travel_seconds = 12 * stride_seconds / 68 + .03
-        result = self.anim.maybe_walk(time.monotonic() + 1000, travel_seconds)
+        result = self._step_walk(time.monotonic() + 1000, travel_seconds)
         self.assertEqual(result, "running-right")
         assert self.settings.x is not None
         self.assertGreater(self.settings.x, 100)
-        self.assertEqual(self.anim.movement.remaining_distance, 0)
+        self.assertEqual(self.walk.movement.remaining_distance, 0)
 
     def test_renderer_does_not_own_cursor_observation(self) -> None:
         self.assertFalse(hasattr(self.anim, "observe_pointer"))
@@ -139,7 +156,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
 
     def test_walking_moves_between_desktop_ticks(self) -> None:
         self.settings.follow_cursor = False
-        self.anim.movement.remaining_distance = 100
+        self.walk.movement.remaining_distance = 100
         now = time.monotonic()
         self.anim.render(now, .14, (0, 0))
         self.assertEqual(self.settings.x, 100)
@@ -151,11 +168,11 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertEqual(self.anim.frame_clock.active_key, ("running-right", None))
 
     def test_visual_settings_are_owned_by_animated_character(self) -> None:
-        self.anim.movement.remaining_distance = 30
+        self.walk.movement.remaining_distance = 30
         self.anim.set_auto_walk(False, now=500)
         self.assertFalse(self.settings.auto_walk)
-        self.assertEqual(self.anim.movement.remaining_distance, 0)
-        self.assertGreater(self.anim.movement.next_walk_at, 500)
+        self.assertEqual(self.walk.movement.remaining_distance, 0)
+        self.assertGreater(self.walk.movement.next_walk_at, 500)
         self.anim.gaze_sector = 3
         self.anim.set_follow_cursor(False)
         self.assertFalse(self.settings.follow_cursor)
@@ -170,8 +187,8 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                     start_x = self.settings.x
                     self.anim.reload_sprites()
                     now = time.monotonic()
-                    self.anim.movement = WalkController(next_walk_at=now + 100)
-                    self.anim.movement.remaining_distance = 1000 * direction
+                    self.walk.movement = WalkController(next_walk_at=now + 100)
+                    self.walk.movement.remaining_distance = 1000 * direction
                     self.anim.frame_clock.reset()
                     self.anim.show_frame(name, now)
                     frames = [0]
@@ -191,7 +208,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
     def test_game_mode_freezes_cursor_gaze_and_uses_existing_pose(self) -> None:
         self.anim.set_game_mode(True)
         self.assertIsNone(self.anim.gaze_direction((99999, -99999)))
-        self.assertIsNone(self.anim.maybe_walk(time.monotonic(), 0.3))
+        self.assertIsNone(self._step_walk(time.monotonic(), 0.3))
         self.assertIsNone(self.anim.gaze_sector)
         self.anim.render(time.monotonic(), .14, (99999, -99999))
         self.assertEqual(self.anim.frame_clock.active_key, ("waiting", None))

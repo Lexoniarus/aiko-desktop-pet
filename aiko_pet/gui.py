@@ -24,6 +24,7 @@ from .application.controller import CareController
 from .application.contact import ContactCoordinator, ContactPorts
 from .application.cursor_observation import CursorObservation
 from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
+from .desktop.walk_runtime import WalkDriver, WalkDriverPorts
 from .application.active_time import ActiveSessionClock
 from .pet.food import FoodId
 from .infrastructure.active_time import active_uptime_seconds
@@ -153,16 +154,35 @@ class DesktopPet:
             ),
             clock=active_clock,
         )
-        self._animated = AnimatedPet(
-            self.root, self.canvas, self.state, self.settings,
-            self.adaptive, self.activity_monitor,
-            AnimatedPorts(
+        self._walk = WalkDriver(
+            state=self.state, settings=self.settings,
+            adaptive=self.adaptive, monitor=self.activity_monitor,
+            walk_cycle_seconds=(
+                self._character_assets.clips["running-left"].duration_seconds
+            ),
+            ports=WalkDriverPorts(
                 track=lambda: self._window.track,
                 toolbar_visible=lambda: self._hover.interaction_active,
                 place_x=self._place_x,
+                walk_finished=self._on_walk_finished,
+            ),
+        )
+        self._animated = AnimatedPet(
+            self.root, self.canvas, self.state, self.settings,
+            self.activity_monitor,
+            AnimatedPorts(
+                walk_step=lambda now, elapsed: self._walk.step(
+                    now, elapsed, game_mode=self._animated.game_mode,
+                    attention_active=(
+                        now < self.mind.cursor_attention.attention_until
+                    ),
+                ),
+                walk_active=lambda: (
+                    self._walk.movement.remaining_distance != 0
+                ),
+                interrupt_walk=self._walk.movement.interrupt,
                 action_until=lambda: self._action_until,
                 action_state=lambda: self._action_state,
-                walk_finished=self._on_walk_finished,
                 extend_action=self._extend_action,
             ),
             assets=self._character_assets,
@@ -254,7 +274,7 @@ class DesktopPet:
                     self._hover.toolbar is None or not self._hover.toolbar.visible
                 ),
                 mark_hover=self._hover.note_sprite_hover,
-                interrupt_walk=lambda: self._animated.movement.interrupt(),
+                interrupt_walk=self._walk.movement.interrupt,
                 show_toolbar=lambda: self._hover.show_toolbar(),
                 game_open=lambda: self._hover.game_open,
                 cancel_followup=lambda: self._cancel_followup(),
@@ -300,7 +320,7 @@ class DesktopPet:
                     self._reaction_player.pending_timer is not None
                 ),
                 walking=lambda: (
-                    self._animated.movement.remaining_distance != 0
+                    self._walk.movement.remaining_distance != 0
                 ),
                 action_until=lambda: self._action_until,
                 refresh_toolbar=self._refresh_care_toolbar,
@@ -334,7 +354,7 @@ class DesktopPet:
             adaptive=self.adaptive,
             activity=self._activity,
             attention=self._attention,
-            animated=self._animated,
+            animated=self._animated, walk=self._walk,
             window=self._window,
             hover=self._hover,
             speech=self._speech,

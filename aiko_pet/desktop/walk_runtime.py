@@ -11,9 +11,9 @@ import time
 from dataclasses import dataclass
 from typing import Callable, Protocol
 
-from ...pet.animation.character import FRAME_WIDTH
-from ...pet.movement import WalkConditions, WalkController
-from ...pet.movement.contracts import HorizontalTrack
+from ..pet.animation.character import FRAME_WIDTH
+from ..pet.movement import WalkConditions, WalkController
+from ..pet.movement.contracts import HorizontalTrack
 
 
 class BusyReading(Protocol):

@@ -21,6 +21,7 @@ from aiko_pet.ui.pet_view.desktop_window import DesktopWindow
 from aiko_pet.ui.windows.hover_ui import HoverUi
 from aiko_pet.ui.pet_view.speech_presenter import SpeechPresenter
 from aiko_pet.desktop.window_stack import WindowStack
+from aiko_pet.desktop.walk_runtime import WalkDriver
 
 
 class DesktopPreferenceTests(unittest.TestCase):
@@ -33,8 +34,9 @@ class DesktopPreferenceTests(unittest.TestCase):
         self.activity = MagicMock(spec=ActivityCoordinator)
         self.attention = MagicMock(spec=AttentionCoordinator)
         self.animated = MagicMock(spec=AnimatedPet)
-        self.animated.movement = MagicMock()
-        self.animated.movement.remaining_distance = 140
+        self.walk = MagicMock(spec=WalkDriver)
+        self.walk.movement = MagicMock()
+        self.walk.movement.remaining_distance = 140
         self.window = MagicMock(spec=DesktopWindow)
         self.window.width = 128
         self.window.track = SimpleNamespace(left=100, right=1000)
@@ -58,6 +60,7 @@ class DesktopPreferenceTests(unittest.TestCase):
             activity=cast(ActivityCoordinator, self.activity),
             attention=cast(AttentionCoordinator, self.attention),
             animated=cast(AnimatedPet, self.animated),
+            walk=cast(WalkDriver, self.walk),
             window=cast(DesktopWindow, self.window),
             hover=cast(HoverUi, self.hover),
             speech=cast(SpeechPresenter, self.speech),
@@ -111,7 +114,7 @@ class DesktopPreferenceTests(unittest.TestCase):
         self.prefs.set_option("spontaneous_talk", False)
         self.prefs.set_option("observe_computer", False)
         self.prefs.set_option("learn_rhythm", False)
-        self.animated.set_auto_walk.assert_called_once()
+        self.walk.set_auto_walk.assert_called_once()
         self.animated.set_follow_cursor.assert_called_once_with(False)
         self.attention.set_spontaneous_talk.assert_called_once()
         self.activity.set_observation_enabled.assert_called_once_with(False)
@@ -142,7 +145,7 @@ class DesktopPreferenceTests(unittest.TestCase):
     def test_center_stops_walking_without_touching_hover(self) -> None:
         self.prefs.center()
         self.assertEqual(self.positions, [486.0])
-        self.animated.movement.interrupt.assert_called_once_with()
+        self.walk.movement.interrupt.assert_called_once_with()
         self.assertEqual(self.saves, 1)
 
 

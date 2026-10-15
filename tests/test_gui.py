@@ -36,6 +36,12 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.settings.auto_routine = False
         self.app.state.sleeping = False
 
+    def _step_walk(self, now: float, elapsed: float) -> str | None:
+        return self.app._walk.step(
+            now, elapsed, game_mode=self.app._animated.game_mode,
+            attention_active=now < self.app.mind.cursor_attention.attention_until,
+        )
+
     @property
     def toolbar(self) -> ActionToolbar:
         """Require the toolbar created by the test's hover interaction."""
@@ -125,11 +131,11 @@ class TaskbarPetGuiTests(unittest.TestCase):
         from aiko_pet.telemetry import ComputerSnapshot
         self.app.center()
         original_x = self.app.settings.x
-        self.app._animated.movement.remaining_distance = 300
+        self.app._walk.movement.remaining_distance = 300
         with patch.object(self.app.activity_monitor, "latest", return_value=
                           ComputerSnapshot(cpu=94, ram=67)):
-            self.assertIsNone(self.app._animated.maybe_walk(time.monotonic(), .2))
-            self.assertEqual(self.app._animated.movement.remaining_distance, 0)
+            self.assertIsNone(self._step_walk(time.monotonic(), .2))
+            self.assertEqual(self.app._walk.movement.remaining_distance, 0)
             self.assertEqual(original_x, self.app.settings.x)
         self.assertFalse(self.app.state.sleeping)
 
@@ -348,16 +354,16 @@ class TaskbarPetGuiTests(unittest.TestCase):
         original_y = self.app.settings.y
         original_x = self.app.settings.x
         assert original_x is not None
-        self.app._animated.maybe_walk(time.monotonic(), 0)
-        self.app._animated.movement.remaining_distance = 140
-        state = self.app._animated.maybe_walk(time.monotonic(), .15)
+        self._step_walk(time.monotonic(), 0)
+        self.app._walk.movement.remaining_distance = 140
+        state = self._step_walk(time.monotonic(), .15)
         self.assertEqual(state, "running-right")
         assert self.app.settings.x is not None
         self.assertGreater(self.app.settings.x, original_x)
         self.assertEqual(self.app.settings.y, original_y)
         self.app._on_enter()
-        self.assertIsNone(self.app._animated.maybe_walk(time.monotonic(), .15))
-        self.assertEqual(self.app._animated.movement.remaining_distance, 0)
+        self.assertIsNone(self._step_walk(time.monotonic(), .15))
+        self.assertEqual(self.app._walk.movement.remaining_distance, 0)
 
     def test_toolbar_auto_hides_only_when_pointer_has_left(self):
         self.app._on_enter()

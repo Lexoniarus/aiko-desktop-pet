@@ -4,7 +4,7 @@ import unittest
 from dataclasses import dataclass
 
 from aiko_pet.desktop.geometry import TaskbarTrack
-from aiko_pet.ui.pet_view.walk_driver import WalkDriver, WalkDriverPorts
+from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
 
 
 @dataclass

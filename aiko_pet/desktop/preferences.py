@@ -21,6 +21,7 @@ from ..ui.pet_view.desktop_window import DesktopWindow
 from ..ui.windows.hover_ui import HoverUi
 from ..ui.pet_view.speech_presenter import SpeechPresenter
 from .window_stack import WindowStack
+from .walk_runtime import WalkDriver
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,7 +40,8 @@ class DesktopPreferences:
         self, *, settings: PetSettings, state: PetState,
         adaptive: AdaptiveRoutine, activity: ActivityCoordinator,
         attention: AttentionCoordinator, animated: AnimatedPet,
-        window: DesktopWindow, hover: HoverUi, speech: SpeechPresenter,
+        walk: WalkDriver, window: DesktopWindow,
+        hover: HoverUi, speech: SpeechPresenter,
         overlay_stack: WindowStack, ports: DesktopPreferencePorts,
     ) -> None:
         self._settings = settings
@@ -48,6 +50,7 @@ class DesktopPreferences:
         self._activity = activity
         self._attention = attention
         self._animated = animated
+        self._walk = walk
         self._window = window
         self._hover = hover
         self._speech = speech
@@ -80,7 +83,7 @@ class DesktopPreferences:
         self._ports.save()
 
     def set_auto_walk(self, value: bool) -> None:
-        self._animated.set_auto_walk(value, time.monotonic())
+        self._walk.set_auto_walk(value, time.monotonic())
         self._ports.save()
 
     def set_auto_routine(self, enabled: bool) -> None:
@@ -141,7 +144,7 @@ class DesktopPreferences:
         self._ports.place_x(
             (track.left + track.right - self._window.width) / 2,
         )
-        self._animated.movement.interrupt()
+        self._walk.movement.interrupt()
         self._ports.save()
 
     def record_toolbar_position(
