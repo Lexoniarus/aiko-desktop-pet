@@ -9,6 +9,14 @@ from tools.world_smoke import prepare_session
 
 
 class WorldSmokeTests(unittest.TestCase):
+    def test_curious_profile_reproduces_the_reported_need_levels(self):
+        with tempfile.TemporaryDirectory() as folder:
+            store = prepare_session(Path(folder) / "state.json", scenario="curious")
+            session = store.load_session()
+            self.assertEqual(session.state.satiety, 76)
+            self.assertEqual(session.state.energy, 60)
+            self.assertFalse(session.settings.spontaneous_talk)
+
     def test_hungry_and_full_profiles_have_different_needs_without_random_walk(self):
         with tempfile.TemporaryDirectory() as folder:
             for scenario, level in (("hungry", 55), ("full", 100)):

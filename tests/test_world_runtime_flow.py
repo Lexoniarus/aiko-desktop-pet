@@ -36,6 +36,27 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             self.app._runtime.scheduled_greeting = None
         for method in ("winfo_pointerx", "winfo_pointery"):
             self.enterContext(patch.object(self.app.root, method, return_value=0))
+        self.feedback = []
+        self.bubbles = []
+        present = self.app._world._present_feedback
+
+        def observe_feedback(cue, reaction, done):
+            self.feedback.append((self.app._world.now, cue.event, reaction.text))
+            present(cue, reaction, done)
+
+        self.app._world._present_feedback = observe_feedback
+
+    def bubble_text(self):
+        bubble = self.app._speech.bubble
+        if bubble is None:
+            return ""
+        pending = list(bubble.winfo_children())
+        while pending:
+            widget = pending.pop()
+            if isinstance(widget, tk.Label) and widget.cget("text"):
+                return str(widget.cget("text"))
+            pending.extend(widget.winfo_children())
+        return ""
 
     def run_for(self, seconds):
         return self.run_until(lambda: False, seconds)
@@ -52,6 +73,9 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                    self.app.settings.x, goal.purpose if goal else None)
             if not trace or row[1:] != trace[-1][1:]:
                 trace.append(row)
+            text = self.bubble_text()
+            if text and (not self.bubbles or self.bubbles[-1][2] != text):
+                self.bubbles.append((world.now, world.interaction.phase, text))
             if predicate() or time.monotonic() >= until:
                 self.app.root.quit()
             else:
@@ -77,8 +101,46 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         known = world.awareness.memory.get(item.instance_id)
         assert known is not None
         self.assertTrue(known.examined)
+        expected = ["object_notice", "object_approach", "object_pick_up",
+                    "object_inspect", "object_recognized", "object_later",
+                    "object_put_down"]
+        self.assertEqual([event for _, event, _ in self.feedback], expected)
+        for before, after in zip(self.feedback, self.feedback[1:]):
+            self.assertGreater(after[0] - before[0], 1.6)
+        self.assertTrue(any("Onigiri" in text for _, _, text in self.bubbles))
+        self.assertTrue(any("später" in text for _, _, text in self.bubbles))
         trace = self.run_for(1.3)
         self.assertTrue(all(row[1] == "idle" for row in trace), trace)
+        self.app.state.satiety = 69
+        self.feedback.clear()
+        trace = self.run_until(lambda: world.world.get(item.instance_id).state
+                               == ObjectState.CONSUMED, 22)
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.CONSUMED,
+                         trace)
+        self.assertEqual(self.feedback[0][1], "object_return")
+        self.assertNotIn("object_notice", [event for _, event, _ in self.feedback])
+        self.assertGreater(self.app.state.satiety, 98)
+        self.assertEqual(self.app.state.friendship, 15)
+
+    def test_sleep_during_held_inspection_puts_down_and_restart_keeps_portion(self):
+        world = self.app._world
+        item = world.world.place_resting("onigiri", world._body_x(),
+                                         ObjectFootprint(16, 16))
+        trace = self.run_until(lambda: world.interaction.phase == "inspect", 15)
+        self.assertEqual(world.interaction.phase, "inspect", trace)
+        self.app.interact("sleep")
+        self.assertFalse(self.app.state.sleeping)
+        trace = self.run_until(lambda: self.app.state.sleeping, 4)
+        self.assertTrue(self.app.state.sleeping, trace)
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
+        self.assertIsNone(self.app.state.food.last_food_id)
+        store = self.app.store
+        self.app.quit()
+        restored = DesktopPet(store=store)
+        self.addCleanup(restored.quit)
+        saved = restored._world.world.get(item.instance_id)
+        self.assertEqual(saved.state, ObjectState.RESTING)
+        self.assertIsNone(restored.state.food.last_food_id)
 
     def test_handover_is_staged_and_cursor_entry_preserves_full_drink_animation(self):
         world = self.app._world

@@ -74,7 +74,6 @@ class DesktopWorldRuntime:
         self._offer_feedback: tuple[str, bool] | None = None
         self._offer_serial = 0
         self._offer_revision = 0
-        self._offer_key: FeedbackKey | None = None
         self._offer_ready = False
         self._cancel_feedback = cancel_feedback
         self.world = WorldState(self._surface(), build_consumable_definitions(
@@ -376,10 +375,9 @@ class DesktopWorldRuntime:
         if self._offer_feedback == (token, wanted):
             return
         self._offer_feedback = token, wanted
-        self._offer_ready = False
+        self._offer_ready = wanted
         self._offer_revision += 1
         key = FeedbackKey(f"offer_{self._offer_serial}", self._offer_revision)
-        self._offer_key = key
         cue = ObjectFeedback(key, "object_offer" if wanted else "object_refuse",
                              token, known.identity)
         reaction = self._mind.select_reaction(
@@ -388,13 +386,9 @@ class DesktopWorldRuntime:
         if reaction is None:
             raise ValueError("Missing required offer reaction")
 
-        def completed(receipt: FeedbackReceipt) -> None:
-            if (not self._closed and receipt.key == self._offer_key
-                    and self.carry_id == token
-                    and self._offer_feedback == (token, wanted)):
-                self._offer_ready = receipt.completed and wanted
-
-        self._present_feedback(cue, reaction, completed)
+        # A user release may deliberately interrupt preview speech. Willingness
+        # is already decided; playback completion never grants custody/readiness.
+        self._present_feedback(cue, reaction, lambda _receipt: None)
 
     def _release_capture(self) -> None:
         if self._capture_owned:

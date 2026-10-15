@@ -11,6 +11,8 @@ from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore, default_save_path
 from aiko_pet.pet.state import PetState
 
+SCENARIOS = {"hungry": (55, 55), "curious": (76, 60), "full": (100, 100)}
+
 
 def prepare_session(path: Path, *, scenario: str) -> StateStore:
     """Explicit restart paths reuse existing data instead of silently resetting."""
@@ -18,9 +20,9 @@ def prepare_session(path: Path, *, scenario: str) -> StateStore:
         raise ValueError("The smoke test must not use the normal save path")
     store = StateStore(path)
     if not path.exists():
-        level = 55 if scenario == "hungry" else 100
+        satiety, energy = SCENARIOS[scenario]
         store.save(
-            PetState(satiety=level, energy=level),
+            PetState(satiety=satiety, energy=energy),
             PetSettings(auto_walk=False, auto_routine=False, observe_computer=False,
                         learn_rhythm=False, spontaneous_talk=False),
         )
@@ -29,7 +31,7 @@ def prepare_session(path: Path, *, scenario: str) -> StateStore:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--scenario", choices=("hungry", "full"), default="hungry")
+    parser.add_argument("--scenario", choices=tuple(SCENARIOS), default="hungry")
     parser.add_argument("--save-path", type=Path)
     parser.add_argument("--auto-close-ms", type=int, default=0, help=argparse.SUPPRESS)
     args = parser.parse_args()

@@ -32,11 +32,13 @@ class WorldGuiTests(unittest.TestCase):
             old, stale = callbacks[-1]
             self.app.state.energy = 100
             world.update(time.monotonic())
+            stale(FeedbackReceipt(old.key, True))
+            self.assertFalse(world._offer_ready)
             self.app.state.energy = 40
             world.update(time.monotonic())
             current, done = callbacks[-1]
-            stale(FeedbackReceipt(old.key, True))
-            self.assertFalse(world._offer_ready)
+            stale(FeedbackReceipt(old.key, False))
+            self.assertTrue(world._offer_ready)
             done(FeedbackReceipt(current.key, True))
             self.assertTrue(world._offer_ready)
 
