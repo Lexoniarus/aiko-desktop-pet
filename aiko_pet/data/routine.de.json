@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "weekdays": [
+    {
+      "minute": 0,
+      "period": "night",
+      "label": "Nachtruhe",
+      "meal": null
+    },
+    {
+      "minute": 450,
+      "period": "breakfast",
+      "label": "Frühstückszeit",
+      "meal": "breakfast"
+    },
+    {
+      "minute": 540,
+      "period": "quiet",
+      "label": "Ruhiger Vormittag",
+      "meal": null
+    },
+    {
+      "minute": 750,
+      "period": "lunch",
+      "label": "Mittagszeit",
+      "meal": "lunch"
+    },
+    {
+      "minute": 840,
+      "period": "free",
+      "label": "Eigene Zeit",
+      "meal": null
+    },
+    {
+      "minute": 1110,
+      "period": "dinner",
+      "label": "Abendessen",
+      "meal": "dinner"
+    },
+    {
+      "minute": 1200,
+      "period": "evening",
+      "label": "Gemütlicher Abend",
+      "meal": null
+    },
+    {
+      "minute": 1410,
+      "period": "night",
+      "label": "Nachtruhe",
+      "meal": null
+    }
+  ],
+  "saturday": [
+    {
+      "minute": 0,
+      "period": "night",
+      "label": "Nachtruhe",
+      "meal": null
+    },
+    {
+      "minute": 540,
+      "period": "breakfast",
+      "label": "Langsamer Morgen",
+      "meal": "breakfast"
+    },
+    {
+      "minute": 690,
+      "period": "free",
+      "label": "Eigene Zeit",
+      "meal": null
+    },
+    {
+      "minute": 810,
+      "period": "lunch",
+      "label": "Mittagszeit",
+      "meal": "lunch"
+    },
+    {
+      "minute": 900,
+      "period": "free",
+      "label": "Eigene Zeit",
+      "meal": null
+    },
+    {
+      "minute": 1170,
+      "period": "dinner",
+      "label": "Abendessen",
+      "meal": "dinner"
+    },
+    {
+      "minute": 1260,
+      "period": "evening",
+      "label": "Ruhiger Abend",
+      "meal": null
+    }
+  ],
+  "sunday": [
+    {
+      "minute": 0,
+      "period": "night",
+      "label": "Nachtruhe",
+      "meal": null
+    },
+    {
+      "minute": 540,
+      "period": "breakfast",
+      "label": "Langsamer Morgen",
+      "meal": "breakfast"
+    },
+    {
+      "minute": 690,
+      "period": "free",
+      "label": "Eigene Zeit",
+      "meal": null
+    },
+    {
+      "minute": 810,
+      "period": "lunch",
+      "label": "Mittagszeit",
+      "meal": "lunch"
+    },
+    {
+      "minute": 900,
+      "period": "free",
+      "label": "Eigene Zeit",
+      "meal": null
+    },
+    {
+      "minute": 1170,
+      "period": "dinner",
+      "label": "Abendessen",
+      "meal": "dinner"
+    },
+    {
+      "minute": 1260,
+      "period": "evening",
+      "label": "Ruhiger Abend",
+      "meal": null
+    },
+    {
+      "minute": 1410,
+      "period": "night",
+      "label": "Nachtruhe",
+      "meal": null
+    }
+  ]
+}
