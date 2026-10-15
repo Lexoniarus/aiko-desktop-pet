@@ -1,5 +1,9 @@
 ## Unreleased — Refactor consolidation
 
+- Add a headless in-memory World foundation with immutable snapshots, logical
+  geometry, distinct portion IDs, revision-checked custody/lifecycle operations
+  and canonical food/asset references. No desktop, perception, UI, nutrition or
+  save integration is enabled by this foundation.
 - Enforce PEP 8 whitespace/blank lines, 88-character lines, import ordering
   and identifier naming across code, tests and tools with pinned Ruff rules.
   Keep exact Win32 API name exceptions; remove obsolete partial lint steps.

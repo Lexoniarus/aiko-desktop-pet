@@ -81,8 +81,11 @@ class PackageDependencyTests(unittest.TestCase):
         ))
         rules = {
             "application": (*outer, "tkinter"),
-            "pet": (*outer, "aiko_pet.application", "tkinter", "ctypes",
-                    "subprocess"),
+            "pet": (*outer, "aiko_pet.application", "aiko_pet.world", "tkinter",
+                    "ctypes", "subprocess"),
+            "world": (*outer, "aiko_pet.application", "aiko_pet.pet",
+                      "aiko_pet.games", "aiko_pet.telemetry", "aiko_pet.config",
+                      "aiko_pet.asset_paths", "tkinter", "ctypes", "subprocess"),
             "ui/view_models": (
                 "tkinter", "ctypes", "aiko_pet.infrastructure",
                 "aiko_pet.desktop", "aiko_pet.storage",
