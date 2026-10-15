@@ -66,6 +66,17 @@ Original imported artwork is not cropped or overwritten. Preparation uses
 `python -m tools.prepare_character_assets`; Pillow is required only for that
 build step, not for running the desktop app.
 
+The prepared eating anchors move six source pixels downward relative to the
+imported overlay hints, allowing native-size Onigiri to overlap the fingers
+instead of ending above them. Preparation records this calibration in runtime
+provenance and reproduces it; source manifests, PNGs, timing and item pivots
+stay unchanged. See the [before/after grip composition](docs/media/world-eating-grip-comparison.png)
+(source sprites composited at 2x for diagnosis, not a desktop screenshot).
+Consumables remain above the character in eating, pickup, holding and put-down.
+The latest practical feedback explicitly removes additional hand-mask occlusion
+from this renderer. Approved hand masks remain preserved in the imported and
+prepared asset catalogs. Native visual acceptance of the revision is pending.
+
 All thirteen normal clips retain exactly **eight source PNGs** each. The
 runtime can assign different hold times to each pose and replay selected
 source poses without creating duplicate PNGs. Ordinary waving uses eight

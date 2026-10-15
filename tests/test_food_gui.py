@@ -10,6 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.asset_paths import ASSET_ROOT
+from aiko_pet.desktop.geometry import FOOT_BASELINE
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.view_models.food_models import food_choices
@@ -189,6 +190,46 @@ class FoodGuiTests(unittest.TestCase):
         self.assertGreater(len(set(positions)), 2)
         animated.show_frame("idle", time.monotonic(), fixed=0)
         self.assertEqual(self.pet.canvas.itemcget(overlay.item, "state"), "hidden")
+
+    def test_onigiri_overlaps_the_eating_grip_in_front_of_the_character(self) -> None:
+        animated = self.pet._animated
+        clip = animated.assets.clips["eat"]
+        overlay = animated.food_overlay
+        # Finger contact positions measured on the eight approved source poses.
+        hand_y = (153, 135, 129, 135, 135, 135, 153, 153)
+        overlay.select("onigiri")
+        for scale in (1, 2):
+            for index, frame in enumerate(clip.frames):
+                with self.subTest(scale=scale, frame=index):
+                    overlay.render(clip, frame, scale=scale)
+                    left, top = self.pet.canvas.coords(overlay.item)
+                    image = overlay._images[("onigiri", scale)]
+                    x = round((192 // 2 - clip.anchor[0] + 96) * scale - left)
+                    y = round((FOOT_BASELINE - clip.anchor[1] + hand_y[index])
+                              * scale - top)
+                    self.assertTrue(0 <= x < image.width())
+                    self.assertTrue(0 <= y < image.height())
+                    self.assertFalse(image.transparency_get(x, y))
+                    stack = self.pet.canvas.find_all()
+                    self.assertGreater(stack.index(overlay.item),
+                                       stack.index(animated.image_item))
+
+    def test_consumables_stay_above_hands_during_pickup_holding_and_putdown(self):
+        animated = self.pet._animated
+        overlay = animated.food_overlay
+        for food in ("onigiri", "energy_drink"):
+            overlay.select(food)
+            for scale in (1, 2):
+                for clip_name in ("pick_up", "put_down"):
+                    clip = animated.assets.clips[clip_name]
+                    for index, frame in enumerate(clip.frames):
+                        if frame.food_anchor is None:
+                            continue
+                        with self.subTest(food=food, scale=scale, clip=clip_name,
+                                          frame=index):
+                            overlay.render(clip, frame, scale=scale)
+                            self.assertEqual(self.pet.canvas.find_all()[-1],
+                                             overlay.item)
 
 
 if __name__ == "__main__":

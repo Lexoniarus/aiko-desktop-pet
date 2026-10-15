@@ -142,6 +142,11 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.assertEqual(events[events.index("object_notice"):], expected)
         self.assertTrue(any("Energy" in text for _, _, text in self.bubbles))
         self.assertLess(self.app.state.energy, 67)
+        self.assertIsNone(world._visual.object_target)
+        known = world.awareness.memory.get(drink.instance_id)
+        assert known is not None
+        self.assertEqual(known.identity, "energy_drink")
+        self.assertTrue(known.examined)
 
     def test_sleep_during_held_inspection_puts_down_and_restart_keeps_portion(self):
         world = self.app._world

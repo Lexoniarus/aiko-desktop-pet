@@ -30,8 +30,6 @@ class FoodOverlay:
         }
         self.current_food_id: str | None = None
         self.item = canvas.create_image(0, 0, anchor="nw", state="hidden")
-        self.foreground = canvas.create_image(0, 0, anchor="nw", state="hidden")
-        self._hands: dict[tuple[str, int], tk.PhotoImage] = {}
         self.contact_origin: tuple[float, float] | None = None
         self._contact_at = 0.0
         self.reload(scale)
@@ -51,7 +49,6 @@ class FoodOverlay:
         self._contact_at = time.monotonic()
         if food_id is None:
             self._canvas.itemconfigure(self.item, state="hidden")
-            self._canvas.itemconfigure(self.foreground, state="hidden")
 
     def render(
         self, clip: AnimationClip, frame: AnimationFrame, *,
@@ -61,7 +58,6 @@ class FoodOverlay:
         if (clip.name not in ("eat", "pick_up", "put_down")
                 or frame.food_anchor is None or item_id is None):
             self._canvas.itemconfigure(self.item, state="hidden")
-            self._canvas.itemconfigure(self.foreground, state="hidden")
             return
         sprite = self._foods[item_id].sprites[scale]
         image = self._images[(item_id, scale)]
@@ -75,23 +71,10 @@ class FoodOverlay:
             self.item, round(x - sprite.pivot[0]), round(y - sprite.pivot[1]),
         )
         self._canvas.itemconfigure(self.item, image=image, state="normal")
+        # Consumables stay in front of the character in every interaction pose.
+        # Imported hand masks remain source assets, not extra item occluders.
         self._canvas.tag_raise(self.item)
-        self._canvas.itemconfigure(self.foreground, state="hidden")
-        if frame.hand_foreground is not None:
-            key = str(frame.hand_foreground), scale
-            if key not in self._hands:
-                hand = tk.PhotoImage(master=self._canvas,
-                                     file=str(frame.hand_foreground))
-                self._hands[key] = hand if scale == 1 else hand.zoom(scale)
-            self._canvas.coords(self.foreground,
-                                (FRAME_WIDTH // 2 - clip.anchor[0]) * scale,
-                                (FOOT_BASELINE - clip.anchor[1]) * scale)
-            self._canvas.itemconfigure(self.foreground, image=self._hands[key],
-                                       state="normal")
-            self._canvas.tag_raise(self.foreground)
 
     def close(self) -> None:
         self._canvas.delete(self.item)
-        self._canvas.delete(self.foreground)
-        self._hands.clear()
         self._images.clear()

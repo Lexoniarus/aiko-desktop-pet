@@ -13,6 +13,12 @@
   put down unconsumed items first, and automatic use records no human contact.
 - Derive 22 reproducible binary-alpha display copies for cursor, ground and hand,
   preserving original item RGB/geometry and preventing Magenta alpha blending.
+- Calibrate eating anchors for native item sizes so Onigiri overlaps the fingers
+  in front of the character. Preserve source artwork, timing and pickup hand
+  layers; verify all eight poses at 1x/2x and reproducible preparation.
+- Stop drawing additional hand masks over consumables, including held inspection
+  and put-down. Deferred recognized portions release object gaze, preserving
+  memory and returning attention to normal cursor/ambient behavior until wanted.
 - Add real-timer flow/restart regressions and a `curious` isolated profile at
   satiety 76/energy 60. Native practical retest and merge remain pending.
 

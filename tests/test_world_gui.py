@@ -120,6 +120,36 @@ class WorldGuiTests(unittest.TestCase):
         self.assertGreater(self.app.state.satiety, 60)
         self.assertEqual(self.app.state.friendship, 15)
 
+    def test_deferred_known_drink_releases_gaze_and_returns_only_when_wanted(self):
+        world = self.app._world
+        self.app.state.energy = 65
+        item = world.world.place_resting("energy_drink", world._body_x(),
+                                         ObjectFootprint(12, 12))
+        self.recognize()
+        self.finish_pickup()
+        self.finish_inspection()
+        self.assertEqual(world.interaction.phase, "put_down")
+        self.finish_clip("put_down")
+        self.assertFalse(world.interaction.active)
+        world.now += 1
+        world.update(time.monotonic())
+        known = world.awareness.memory.get(item.instance_id)
+        assert known is not None
+        self.assertEqual(known.identity, "energy_drink")
+        self.assertTrue(known.examined)
+        self.assertIsNone(world.awareness.intentions.goal)
+        self.assertIsNone(world._visual.object_target)
+        eyes_x, eyes_y = self.app._window.gaze_origin()
+        self.assertEqual(world._visual.gaze_direction(
+            (round(eyes_x + 200), round(eyes_y)),
+        ), 4)
+        self.app.state.energy = 55
+        world.now += 11
+        world.update(time.monotonic())
+        goal = world.awareness.intentions.goal
+        assert goal is not None
+        self.assertEqual((goal.token, goal.purpose), (item.instance_id, "consume"))
+
     def test_recognized_release_hands_over_drink_and_full_release_falls(self):
         app, world = self.app, self.app._world
         app.state.energy = 40

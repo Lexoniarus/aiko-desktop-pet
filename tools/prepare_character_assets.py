@@ -16,6 +16,9 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets/aiko-anime-8-frames/aiko-anime-compact/animations-8"
 DESTINATION = ROOT / "aiko_pet/assets"
 ALPHA_THRESHOLD = [255 if alpha >= 128 else 0 for alpha in range(256)]
+# Imported eating anchors assumed a much smaller overlay. Native food portions
+# need six source pixels of finger overlap instead of floating above the hands.
+EATING_GRIP_Y_OFFSET = 6
 
 
 def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
@@ -69,6 +72,8 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
                 original.parent / frame["file"], relative,
             ))
             frame["file"] = relative.as_posix()
+            if state == "eat" and "food_anchor" in frame:
+                frame["food_anchor"][1] += EATING_GRIP_Y_OFFSET
             if "hand_foreground" in frame:
                 relative_hand = Path("hand-foreground") / state / f"{index:02d}.png"
                 copy_frame(original.parent / frame["hand_foreground"], relative_hand)
@@ -146,6 +151,7 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
         "frame_counts": counts, "size": [192, 208], "alpha_threshold": 128,
         "license": "../../assets/aiko-anime-8-frames/LICENSE.md",
         "preparation": "Full-width copies; binary alpha; visible ground anchors",
+        "overlay_calibration": {"eat_anchor_offset_px": [0, EATING_GRIP_Y_OFFSET]},
         "timing_profile": (
             "Per-pose holds and configurable replay sequences; "
             "ambient blink gaps are separate; 16 static gaze poses; "

@@ -283,7 +283,7 @@ class DesktopWorldRuntime:
             held_pose=(self._body_x(), self.width * .4),
         )
         visible = [item for item in self.awareness.memory.snapshot()
-                   if self.now - item.observed_at < 0.5]
+                   if not item.examined and self.now - item.observed_at < 0.5]
         gaze = goal or (min(visible, key=lambda item: abs(item.x - self._body_x()))
                         if visible else None)
         self._visual.object_target = (
