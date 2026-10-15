@@ -16,6 +16,7 @@ from collections.abc import Sequence
 from ...pet.animation.animation import FrameClock
 from ...pet.animation.ambient import AmbientDirector
 from ...pet.animation.character import CharacterCatalog, FRAME_WIDTH
+from ...pet.animation.item_assets import ItemCatalog
 from ...pet.animation.priority import RenderDecision
 from ...pet.mind.cursor_attention import CursorAttentionSnapshot
 from .food_overlay import FoodOverlay
@@ -75,7 +76,7 @@ class AnimatedPet:
         self, root: tk.Tk, canvas: tk.Canvas,
         state: CareVisuals, settings: CharacterSettings,
         ports: AnimatedPorts, *, assets: CharacterCatalog,
-        ambient: AmbientDirector,
+        items: ItemCatalog, ambient: AmbientDirector,
     ) -> None:
         self.root = root
         self.canvas = canvas
@@ -100,7 +101,9 @@ class AnimatedPet:
         self.image_item = self.canvas.create_image(
             0, 0, anchor="nw", image=self.sprites["idle"][0],
         )
-        self.food_overlay = FoodOverlay(root, canvas, scale=self.settings.scale)
+        self.food_overlay = FoodOverlay(
+            root, canvas, catalog=items, scale=self.settings.scale,
+        )
         self.show_frame("idle", time.monotonic())
 
     def load_sprites(self) -> dict[str, Sequence[tk.PhotoImage]]:

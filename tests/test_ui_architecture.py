@@ -404,6 +404,14 @@ class UiDependencyRules(unittest.TestCase):
         self.assertNotIn("from ..desktop.", assembly)
         self.assertNotIn("from ..ui.", assembly)
 
+    def test_food_overlay_only_receives_validated_catalog_data(self) -> None:
+        overlay = (ROOT / "ui/pet_view/food_overlay.py").read_text("utf-8")
+        assembly = (ROOT / "desktop/animation_assembly.py").read_text("utf-8")
+        self.assertNotIn("load_item_catalog(", overlay)
+        self.assertNotIn("infrastructure.item_assets", overlay)
+        self.assertIn("catalog: ItemCatalog", overlay)
+        self.assertIn("items=load_item_catalog()", assembly)
+
     def test_animation_assembly_does_not_live_in_composition_root(self) -> None:
         gui = (ROOT / "gui.py").read_text("utf-8")
         assembly = (ROOT / "desktop/animation_assembly.py").read_text("utf-8")

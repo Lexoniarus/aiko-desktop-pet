@@ -16,6 +16,7 @@ from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.movement.contracts import HorizontalTrack
 from ..pet.state import PetState
 from ..infrastructure.hardware.monitor import ActivityMonitor
+from ..infrastructure.item_assets import load_item_catalog
 from ..ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from .animation_runtime import AnimationRuntimePorts, DesktopAnimationRuntime
 from .visual_observation import DesktopVisualObservation
@@ -88,6 +89,7 @@ def assemble_animation(
             reset_gaze=visual.reset,
             extend_action=ports.extend_action,
         ),
-        assets=assets, ambient=animation.ambient,
+        assets=assets, items=load_item_catalog(),
+        ambient=animation.ambient,
     )
     return AnimationComponents(walk, visual, animation, sprite)

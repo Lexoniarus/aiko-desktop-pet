@@ -9,7 +9,7 @@ from __future__ import annotations
 import tkinter as tk
 
 from ...desktop.geometry import FOOT_BASELINE
-from ...infrastructure.item_assets import load_item_catalog
+from ...pet.animation.item_assets import ItemCatalog
 from ...pet.animation.character import AnimationClip, AnimationFrame, FRAME_WIDTH
 
 
@@ -17,10 +17,11 @@ class FoodOverlay:
     """One Tk canvas item and reusable native-size sprite images."""
 
     def __init__(
-        self, root: tk.Tk, canvas: tk.Canvas, *, scale: int,
+        self, root: tk.Tk, canvas: tk.Canvas, *,
+        catalog: ItemCatalog, scale: int,
     ) -> None:
         self._canvas = canvas
-        self._foods = load_item_catalog().foods
+        self._foods = catalog.foods
         self._images = {
             (name, size): tk.PhotoImage(master=root, file=str(sprite.path))
             for name, food in self._foods.items()

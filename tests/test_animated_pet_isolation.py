@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from aiko_pet.infrastructure.character_assets import load_character_catalog
+from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
 from aiko_pet.application.settings import PetSettings
@@ -83,7 +84,8 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                 reset_gaze=self.visual.reset,
                 extend_action=self.action_deadlines.append,
             ),
-            assets=assets, ambient=self.animation.ambient,
+            assets=assets, items=load_item_catalog(),
+            ambient=self.animation.ambient,
         )
         self.addCleanup(self.root.destroy)
         self.addCleanup(self.anim.stop)
