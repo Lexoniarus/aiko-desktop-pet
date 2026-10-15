@@ -11,13 +11,13 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ..application.settings import PetSettings
+from ..infrastructure.hardware.monitor import ActivityMonitor
+from ..infrastructure.item_assets import load_item_catalog
 from ..pet.animation.character import CharacterCatalog
 from ..pet.animation.item_assets import ItemCatalog
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.movement.contracts import HorizontalTrack
 from ..pet.state import PetState
-from ..infrastructure.hardware.monitor import ActivityMonitor
-from ..infrastructure.item_assets import load_item_catalog
 from ..ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from .animation_runtime import AnimationRuntimePorts, DesktopAnimationRuntime
 from .visual_observation import DesktopVisualObservation

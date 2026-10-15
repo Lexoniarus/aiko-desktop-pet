@@ -131,13 +131,14 @@ class WindowStackUnitTests(unittest.TestCase):
         self.assertFalse(self.stack.maintain())
         self.assertEqual(self.user32.calls, [])
 
-
     def test_maintenance_is_rate_limited(self):
         # A browser may insist on keeping its own topmost dialog in front;
         # never fight it on every 140 ms animation tick.
         from unittest.mock import patch
 
-        with patch("aiko_pet.desktop.window_stack.time.monotonic", side_effect=[12, 13, 17]):
+        with patch(
+            "aiko_pet.desktop.window_stack.time.monotonic", side_effect=[12, 13, 17]
+        ):
             self.assertTrue(self.stack.maintain())
             count = len(self.user32.calls)
             self.assertFalse(self.stack.maintain())

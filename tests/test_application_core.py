@@ -2,21 +2,20 @@
 
 from __future__ import annotations
 
-from aiko_pet.infrastructure.pet_codec import encode_pet_state
-
 import random
 import unittest
-from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.commands import CareCommand, NotificationCommand
 from aiko_pet.application.controller import CareController
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.application.inbox import NotificationInbox
 from aiko_pet.application.router import ApplicationRouter
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
 
 

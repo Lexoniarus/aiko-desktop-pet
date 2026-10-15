@@ -158,6 +158,7 @@ class CanonicalImportTests(unittest.TestCase):
         for name in LEGACY_UI_MODULES:
             self.assertFalse((ROOT / "ui" / f"{name}.py").exists())
 
+
 def imported_modules(source: Path) -> tuple[str, ...]:
     """Inspect both regular imports and from-imports without executing code."""
     syntax = ast.parse(source.read_text("utf-8"))

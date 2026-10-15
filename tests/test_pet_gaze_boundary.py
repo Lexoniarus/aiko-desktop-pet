@@ -13,4 +13,3 @@ class PetGazeBoundaryTests(unittest.TestCase):
         self.assertIsNone(gaze_sector(0, 0, 0, 0))
         self.assertEqual(gaze_sector(0, 0, 0, -100), 0)
         self.assertEqual(gaze_sector(0, 0, 100, 0), 4)
-

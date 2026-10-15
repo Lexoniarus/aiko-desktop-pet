@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import Callable
 
 
-
 @dataclass(frozen=True, slots=True)
 class HoverActions:
     """Only the capabilities a hover panel is allowed to call."""

@@ -1,17 +1,20 @@
 """Checks for weekday/weekend care timing without story-world obligations."""
 
-from aiko_pet.infrastructure.pet_codec import decode_pet_state
-
 import unittest
 from datetime import datetime
 
-from aiko_pet.pet.state import PetState
+from aiko_pet.infrastructure.pet_codec import decode_pet_state
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 from aiko_pet.ui.view_models.text_de import format_day_label
 
 
 def local_time(day, hour, minute=0):
-    return datetime.fromisoformat(f"{day}T{hour:02d}:{minute:02d}:00").astimezone().timestamp()
+    return (
+        datetime.fromisoformat(f"{day}T{hour:02d}:{minute:02d}:00")
+        .astimezone()
+        .timestamp()
+    )
 
 
 class DailyRoutineTests(unittest.TestCase):
@@ -25,7 +28,9 @@ class DailyRoutineTests(unittest.TestCase):
         self.assertEqual(context_at(local_time("2026-10-12", 13)).meal, "lunch")
         self.assertEqual(context_at(local_time("2026-10-12", 19)).meal, "dinner")
         self.assertTrue(context_at(local_time("2026-10-12", 23, 45)).night)
-        self.assertIn("Dienstag", format_day_label(context_at(local_time("2026-10-13", 10))))
+        self.assertIn(
+            "Dienstag", format_day_label(context_at(local_time("2026-10-13", 10)))
+        )
 
     def test_saturday_has_later_meals_and_more_freetime(self):
         self.assertTrue(context_at(local_time("2026-10-17", 8, 30)).night)
@@ -111,7 +116,10 @@ class DailyRoutineTests(unittest.TestCase):
         self.assertEqual(state.energy, 75 - 6 / 3)
 
     def test_legacy_sleep_is_treated_as_manual(self):
-        state = decode_pet_state({"sleeping": True, "updated_at": local_time("2026-10-12", 9)})
+        state = decode_pet_state({
+            "sleeping": True,
+            "updated_at": local_time("2026-10-12", 9),
+        })
         self.assertEqual(state.sleep_origin, "manual")
         state.advance(local_time("2026-10-12", 10), auto_routine=True)
         self.assertTrue(state.sleeping)

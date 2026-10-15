@@ -2,23 +2,22 @@
 
 from __future__ import annotations
 
-from ...pet.content import GERMAN_TEXT
-
-from ...pet.mind.adaptive_models import Behaviour
 from ...application.read_snapshot import PetReadSnapshot
 from ...application.settings import PetSettings
+from ...pet.content import GERMAN_TEXT
+from ...pet.food import FOOD_CATALOG
+from ...pet.mind.adaptive_models import Behaviour
 from ...pet.routine import TimeContext
 from ...telemetry import ComputerSnapshot
-from ...pet.food import FOOD_CATALOG
 from .contracts import HoverSnapshot, SettingsSnapshot, StatusSnapshot
 from .text_de import (
     describe_workload,
     format_day_label,
+    format_emotion_label,
     format_feed_label,
     format_mood_hint,
     format_percent,
     format_schedule_line,
-    format_emotion_label,
     format_sleep_label,
     observation_disabled_text,
 )

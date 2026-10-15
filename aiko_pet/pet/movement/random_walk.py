@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 import random
 
+from ..balance import BALANCE
 from .contracts import WalkConditions
 
 

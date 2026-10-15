@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import Callable
 
 from ...pet.mind.catalog import Reaction
-
 from ...pet.mind.reaction_sequence import Cue, compose_cues
 
 TimerCallback = Callable[[], None]

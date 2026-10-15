@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import json
 import struct
-from pathlib import Path
 import unittest
+from pathlib import Path
 
 from aiko_pet.infrastructure.item_assets import load_item_catalog
-from aiko_pet.pet.food import FOOD_CATALOG, FOOD_MENU_ORDER
 from aiko_pet.pet.content import GERMAN_TEXT
+from aiko_pet.pet.food import FOOD_CATALOG, FOOD_MENU_ORDER
 from aiko_pet.ui.view_models.food_models import food_choices
 
 
@@ -34,6 +34,7 @@ class PreparedFoodCatalogTests(unittest.TestCase):
             self.assertEqual(item.label, expected_name)
         self.assertEqual(set(FOOD_CATALOG), set(items.foods) - {"energy_drink"})
         self.assertEqual(tuple(items.weapons), ("sword",))
+
     def test_asset_manifest_does_not_duplicate_food_titles(self) -> None:
         path = (
             Path(__file__).resolve().parents[1] / "aiko_pet" / "assets"

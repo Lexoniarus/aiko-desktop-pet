@@ -2,31 +2,34 @@
 
 from __future__ import annotations
 
-from aiko_pet.infrastructure.pet_codec import encode_pet_state
-
 import random
 import unittest
 from dataclasses import FrozenInstanceError
 from datetime import datetime
 
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
-
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.routine import MEAL_NAMES, context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import MoodHint
+from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.view_models.contracts import (
     HoverAnchor,
 )
 from aiko_pet.ui.view_models.projections import project_hover, project_status
 from aiko_pet.ui.view_models.read_models import DesktopPresentation
 from aiko_pet.ui.view_models.text_de import (
-    describe_workload, format_day_label, format_feed_label,
-    format_mood_hint, format_percent, format_schedule_line, mood_hint_text,
+    describe_workload,
+    format_day_label,
+    format_feed_label,
+    format_mood_hint,
+    format_percent,
+    format_schedule_line,
+    mood_hint_text,
 )
-from aiko_pet.pet.routine import MEAL_NAMES, context_at
-from aiko_pet.telemetry import ComputerSnapshot
 
 
 def at(hour: int, *, day: int = 12) -> float:

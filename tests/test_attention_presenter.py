@@ -4,7 +4,8 @@ import unittest
 from unittest.mock import Mock
 
 from aiko_pet.ui.pet_view.attention_presenter import (
-    AttentionPresenter, AttentionViewPorts,
+    AttentionPresenter,
+    AttentionViewPorts,
 )
 
 

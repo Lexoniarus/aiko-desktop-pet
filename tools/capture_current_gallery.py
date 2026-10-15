@@ -15,12 +15,11 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from tools.media_crop import CapturedFrame, capture_screen, save_sequence
-
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
+from tools.media_crop import CapturedFrame, capture_screen, save_sequence
 
 ROOT = Path(__file__).resolve().parents[1]
 PREVIEWS = ROOT / "vorschau"
@@ -51,6 +50,7 @@ def live_capture(pet: DesktopPet, name: str) -> CapturedFrame:
         f"{frame.cropped().height}, including all mapped windows"
     )
     return frame
+
 
 def advance_reaction(pet: DesktopPet, index: int) -> None:
     """Advance the actual reaction player to a specific visible cue for media."""

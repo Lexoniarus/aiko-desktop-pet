@@ -7,7 +7,6 @@ from pathlib import Path
 
 from aiko_pet.pet.mind import catalog
 
-
 ROOT = Path(__file__).resolve().parents[1] / "aiko_pet"
 
 

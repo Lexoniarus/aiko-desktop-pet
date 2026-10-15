@@ -7,7 +7,9 @@ from pathlib import Path
 from unittest.mock import Mock
 
 from aiko_pet.pet.animation.character import (
-    AnimationClip, AnimationFrame, CharacterCatalog,
+    AnimationClip,
+    AnimationFrame,
+    CharacterCatalog,
 )
 from aiko_pet.ui.pet_view.action_playback import ActionPlayback
 

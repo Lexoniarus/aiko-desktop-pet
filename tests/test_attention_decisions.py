@@ -6,8 +6,8 @@ from unittest.mock import Mock, patch
 from aiko_pet.application.attention import AttentionCoordinator
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
-from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 
 
 class AttentionDecisionTests(unittest.TestCase):

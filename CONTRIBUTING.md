@@ -23,18 +23,22 @@ The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11. Run
 
    Under Linux with Xvfb: `xvfb-run -a python -m unittest discover -s tests -q`.
 
-5. If the tools are installed, run:
+5. Run the pinned quality checks used by CI:
 
    ```bash
-   python -m ruff check aiko_pet tests main.py
-   python -m ruff check --select E501 aiko_pet main.py tools
+   python -m ruff check aiko_pet tests main.py tools
    python -m mypy --strict --no-incremental aiko_pet main.py tools
    python -m pyright --project pyrightconfig.json
    ```
 
 6. Open a pull request to `main`. Describe changed behavior, tests and any Windows-specific manual checks. Do not merge with failing CI.
 
-CI pins Ruff and Mypy and verifies source and tests with Pyright. Consult [the workflow](.github/workflows/tests.yml) for its exact versions and additional quality gates.
+CI enforces PEP 8 whitespace, blank lines and 88-character lines, unused imports,
+import ordering and Python identifier conventions across application code,
+tests and tools. Ruff preview rules are enabled with its pinned version; only
+the exact foreign Win32 function names listed in `pyproject.toml` are exempt
+from lowercase function naming. Consult [the workflow](.github/workflows/tests.yml)
+for tool versions and additional quality gates.
 
 ## Design constraints
 

@@ -6,19 +6,18 @@ speak. PetMind in mind.py owns situational behavior and conversation.
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 import math
 import random
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-from ..catalog_validation import load_json, object_fields
-from .dialogue_events import DIALOGUE_EVENTS
 
-from .reaction_sequence import EMOTES
+from ..balance import BALANCE
+from ..catalog_validation import load_json, object_fields
 from ..routine import TimeContext
+from .dialogue_events import DIALOGUE_EVENTS
+from .reaction_sequence import EMOTES
 
 CATALOGUE = Path(__file__).resolve().parents[2] / "data" / "dialogues.de.json"
 ANIMATIONS = frozenset(

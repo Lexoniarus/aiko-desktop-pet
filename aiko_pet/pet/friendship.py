@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from .balance import BALANCE
-
 import math
 from dataclasses import dataclass
 from typing import Protocol
 
+from .balance import BALANCE
 from .routine import context_at
 from .value_rules import clamp_need_value
 

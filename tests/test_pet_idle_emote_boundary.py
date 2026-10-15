@@ -7,7 +7,9 @@ from aiko_pet.pet.animation.idle_emote import choose_idle_emote
 
 class IdleEmoteBoundaryTests(unittest.TestCase):
     def test_emote_choice_has_one_pet_owner(self) -> None:
-        self.assertEqual(choose_idle_emote.__module__, "aiko_pet.pet.animation.idle_emote")
+        self.assertEqual(
+            choose_idle_emote.__module__, "aiko_pet.pet.animation.idle_emote"
+        )
 
     def test_need_priority(self) -> None:
         self.assertEqual(

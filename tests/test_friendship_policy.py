@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
-
 import unittest
 from datetime import datetime
 
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.value_rules import clamp_saved_time

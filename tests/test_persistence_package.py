@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from aiko_pet.infrastructure.pet_codec import encode_pet_state
-
 import json
 import os
 import tempfile
@@ -13,10 +11,11 @@ from unittest.mock import patch
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.persistence import (
-    StateStore, default_save_path,
+    StateStore,
+    default_save_path,
 )
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.state import PetState
-
 
 ROOT = Path(__file__).resolve().parents[1]
 

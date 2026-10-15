@@ -1,13 +1,12 @@
 import json
 import tempfile
 import unittest
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
-from aiko_pet.pet.state import PetState
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.persistence import StateStore
-
+from aiko_pet.pet.state import PetState
 
 # Early-epoch timestamps are not universally supported by Windows localtime.
 SAMPLE_TIMESTAMP = datetime(2026, 10, 12, 12).astimezone().timestamp()
@@ -27,8 +26,12 @@ class StateStoreTests(unittest.TestCase):
         self.assertEqual(settings.scale, 1)
 
     def test_save_and_load_roundtrip(self):
-        pet = PetState(satiety=88, mood=62, energy=44, sleeping=True, updated_at=SAMPLE_TIMESTAMP)
-        settings = PetSettings(x=155, y=190, scale=2, always_on_top=False, auto_walk=False)
+        pet = PetState(
+            satiety=88, mood=62, energy=44, sleeping=True, updated_at=SAMPLE_TIMESTAMP
+        )
+        settings = PetSettings(
+            x=155, y=190, scale=2, always_on_top=False, auto_walk=False
+        )
         self.store.save(pet, settings)
         session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
         loaded, other = session_data.state, session_data.settings
@@ -43,14 +46,19 @@ class StateStoreTests(unittest.TestCase):
 
         timestamp = datetime(2026, 10, 12, 12).astimezone().timestamp()
         self.store.path.parent.mkdir(parents=True, exist_ok=True)
-        self.store.path.write_text(json.dumps({
-            "version": 1,
-            "pet": {
-                "satiety": 42, "mood": 63, "energy": 88,
-                "sleeping": False, "updated_at": timestamp,
-            },
-            "settings": {"x": 400, "scale": 2, "auto_walk": False},
-        }))
+        self.store.path.write_text(
+            json.dumps({
+                "version": 1,
+                "pet": {
+                    "satiety": 42,
+                    "mood": 63,
+                    "energy": 88,
+                    "sleeping": False,
+                    "updated_at": timestamp,
+                },
+                "settings": {"x": 400, "scale": 2, "auto_walk": False},
+            })
+        )
         session_data = self.store.load_session(now=timestamp)
         pet, settings = session_data.state, session_data.settings
         self.assertEqual((pet.satiety, pet.mood, pet.energy), (42, 63, 88))
@@ -79,8 +87,11 @@ class StateStoreTests(unittest.TestCase):
 
     def test_malformed_settings_are_rejected(self):
         settings = PetSettings.from_dict({
-            "x": True, "y": 9999999, "scale": 55,
-            "always_on_top": False, "auto_walk": False,
+            "x": True,
+            "y": 9999999,
+            "scale": 55,
+            "always_on_top": False,
+            "auto_walk": False,
         })
         self.assertIsNone(settings.x)
         self.assertIsNone(settings.y)
@@ -91,8 +102,9 @@ class StateStoreTests(unittest.TestCase):
     def test_hardware_monitor_preference_is_optional_and_persisted(self):
         old = PetSettings.from_dict({"scale": 1})
         self.assertTrue(old.observe_computer)
-        self.store.save(PetState(updated_at=SAMPLE_TIMESTAMP),
-                        PetSettings(observe_computer=False))
+        self.store.save(
+            PetState(updated_at=SAMPLE_TIMESTAMP), PetSettings(observe_computer=False)
+        )
         session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
         _pet, settings = session_data.state, session_data.settings
         self.assertFalse(settings.observe_computer)

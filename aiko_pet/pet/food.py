@@ -10,14 +10,18 @@ import math
 from dataclasses import dataclass, replace
 
 from .balance import BALANCE
-
 from .food_catalog import (
     DEFAULT_CATALOG,
+)
+from .food_catalog import (
     FoodCategory as FoodCategory,
+)
+from .food_catalog import (
     FoodId as FoodId,
+)
+from .food_catalog import (
     FoodProfile as FoodProfile,
 )
-
 from .value_rules import bounded_number, clamp_need_value
 
 

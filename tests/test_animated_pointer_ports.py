@@ -3,9 +3,9 @@
 import unittest
 from unittest.mock import Mock
 
-from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
 from aiko_pet.pet.animation.animation import SpriteSelection
 from aiko_pet.pet.animation.priority import RenderDecision
+from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPorts
 
 

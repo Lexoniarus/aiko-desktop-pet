@@ -11,6 +11,7 @@ from pathlib import Path
 from string import Formatter
 from types import MappingProxyType
 from typing import Any, Mapping
+
 from .catalog_validation import load_json, object_fields
 from .text_contract import TEXT_FIELDS
 

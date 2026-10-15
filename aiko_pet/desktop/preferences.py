@@ -10,18 +10,18 @@ import time
 from dataclasses import dataclass
 from typing import Callable
 
-from ..pet.mind.adaptive import AdaptiveRoutine
 from ..application.activity import ActivityCoordinator
 from ..application.attention import AttentionCoordinator
 from ..application.settings import PetSettings, SettingKey
+from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.routine import TimeContext, context_at
 from ..ui.pet_view.animated_pet import AnimatedPet
 from ..ui.pet_view.desktop_window import DesktopWindow
-from ..ui.windows.hover_ui import HoverUi
 from ..ui.pet_view.speech_presenter import SpeechPresenter
-from .window_stack import WindowStack
-from .walk_runtime import WalkDriver
+from ..ui.windows.hover_ui import HoverUi
 from .visual_observation import DesktopVisualObservation
+from .walk_runtime import WalkDriver
+from .window_stack import WindowStack
 
 
 @dataclass(frozen=True, slots=True)

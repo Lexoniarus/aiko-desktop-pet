@@ -7,7 +7,6 @@ component tracks only verified work transitions, interruptions and recovery.
 from __future__ import annotations
 
 from ..balance import BALANCE
-
 from .adaptive_models import Behaviour
 
 

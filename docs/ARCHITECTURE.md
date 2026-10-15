@@ -224,6 +224,9 @@ The care/storage follow-up also changes these Python call contracts:
 | `asset_paths.ASSETS`, `EMOTE_ASSETS`, `SCI_FI_UI` | `SPRITE_FRAME_DIR`, `EMOTE_IMAGE_DIR`, `KENNEY_UI_DIR` |
 | `pet.value_rules.bounded` | `pet.value_rules.clamp_need_value` |
 | `ActionPlayback.state`, animation port `action_state` | `clip_id`, `action_clip_id` |
+| `PetMind.computer_event()` / `spontaneous_event()` | `select_computer_reaction()` / `select_spontaneous_reaction()`; both return a selected reaction |
+| `ActivityCoordinator.interrupt_nap()` | `should_interrupt_nap()`; a condition query without mutation |
+| `pet.mind.mind.AikoMind` | `pet.mind.PetMind` |
 
 The desktop entrypoints and on-disk save format remain compatible. Repository
 callers use these canonical owners directly; no reverse domain-to-storage import
@@ -341,7 +344,8 @@ GitHub Actions checks:
 
 - Full Python 3.11 and 3.13 unit/Tk suites under Linux/Xvfb.
 - Windows-hosted headless checks for native boundary logic.
-- Ruff, PEP 8 line lengths, strict Mypy and Pyright.
+- Ruff E/F/I/N/W checks across code, tests and tools: PEP 8 whitespace,
+  88-character lines, import order and identifier naming; strict Mypy and Pyright.
 - Domain invariants, immutable read data, import boundaries without legacy exceptions, and absence of module import cycles.
 
 Native Windows layering, transparent-window and taskbar behavior must also be tested interactively for relevant changes. The October 2026 OOP refactor passed its full automated checks and received maintainer-reported Windows acceptance before [PR #2](https://github.com/Lexoniarus/aiko-desktop-pet/pull/2) merged.

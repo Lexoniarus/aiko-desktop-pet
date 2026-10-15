@@ -7,9 +7,11 @@ import unittest
 from pathlib import Path
 from typing import cast
 
-from aiko_pet.pet.food import FOOD_CATALOG, FOOD_MENU_ORDER, DEFAULT_FOOD_ID
+from aiko_pet.pet.food import DEFAULT_FOOD_ID, FOOD_CATALOG, FOOD_MENU_ORDER
 from aiko_pet.pet.food_catalog import (
-    FoodProfile, parse_food_catalog, load_packaged_food_catalog,
+    FoodProfile,
+    load_packaged_food_catalog,
+    parse_food_catalog,
 )
 
 

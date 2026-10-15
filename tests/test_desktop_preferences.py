@@ -7,22 +7,23 @@ from types import SimpleNamespace
 from typing import cast
 from unittest.mock import MagicMock, patch
 
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.application.activity import ActivityCoordinator
 from aiko_pet.application.attention import AttentionCoordinator
 from aiko_pet.application.settings import PetSettings, SettingKey
 from aiko_pet.desktop.preferences import (
-    DesktopPreferencePorts, DesktopPreferences,
+    DesktopPreferencePorts,
+    DesktopPreferences,
 )
-from aiko_pet.pet.state import PetState
+from aiko_pet.desktop.visual_observation import DesktopVisualObservation
+from aiko_pet.desktop.walk_runtime import WalkDriver
+from aiko_pet.desktop.window_stack import WindowStack
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.routine import TimeContext
+from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet
 from aiko_pet.ui.pet_view.desktop_window import DesktopWindow
-from aiko_pet.ui.windows.hover_ui import HoverUi
 from aiko_pet.ui.pet_view.speech_presenter import SpeechPresenter
-from aiko_pet.desktop.window_stack import WindowStack
-from aiko_pet.desktop.walk_runtime import WalkDriver
-from aiko_pet.desktop.visual_observation import DesktopVisualObservation
+from aiko_pet.ui.windows.hover_ui import HoverUi
 
 
 class DesktopPreferenceTests(unittest.TestCase):

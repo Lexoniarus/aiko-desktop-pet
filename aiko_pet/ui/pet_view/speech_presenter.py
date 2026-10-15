@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from ...pet.content import GERMAN_TEXT
-
 import sys
 import tkinter as tk
 from dataclasses import dataclass
@@ -12,6 +10,7 @@ from typing import Callable
 
 from ...asset_paths import EMOTE_IMAGE_DIR, GAME_HANDS_DIR
 from ...games.rock_paper_scissors import Move
+from ...pet.content import GERMAN_TEXT
 from ...pet.mind.reaction_sequence import EMOTES
 
 

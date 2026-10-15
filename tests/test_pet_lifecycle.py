@@ -2,21 +2,25 @@
 
 from __future__ import annotations
 
-from aiko_pet.infrastructure.pet_codec import encode_pet_state
-
 import unittest
 from dataclasses import dataclass
 from datetime import datetime
 
-from aiko_pet.pet.lifecycle import MAX_CATCHUP_SECONDS, MAX_LIVE_EFFORT_SECONDS
-from aiko_pet.pet.state import PetState
-from aiko_pet.pet.need_decay import calculate_need_decay
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.lifecycle import (
-    MAX_CATCHUP_SECONDS as POLICY_CATCHUP,
-    MAX_LIVE_EFFORT_SECONDS as POLICY_LIVE_WINDOW,
+    MAX_CATCHUP_SECONDS,
+    MAX_LIVE_EFFORT_SECONDS,
     plan_pet_time,
 )
+from aiko_pet.pet.lifecycle import (
+    MAX_CATCHUP_SECONDS as POLICY_CATCHUP,
+)
+from aiko_pet.pet.lifecycle import (
+    MAX_LIVE_EFFORT_SECONDS as POLICY_LIVE_WINDOW,
+)
+from aiko_pet.pet.need_decay import calculate_need_decay
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 
 
 @dataclass
@@ -99,7 +103,7 @@ class PetTimelineTests(unittest.TestCase):
 
     def test_catchup_is_bounded_without_routine(self) -> None:
         state = PetState(updated_at=local_stamp())
-        state.advance( local_stamp() + 86400.0 * 7)
+        state.advance(local_stamp() + 86400.0 * 7)
         self.assertLessEqual(state.satiety, 12.0)
         self.assertGreater(state.mood, 0.0)
         self.assertLess(state.mood, 43.0)
@@ -108,27 +112,27 @@ class PetTimelineTests(unittest.TestCase):
     def test_telemetry_is_not_extrapolated_across_offline_hours(self) -> None:
         calm = PetState(updated_at=local_stamp())
         working = PetState(updated_at=local_stamp())
-        calm.advance( local_stamp() + 3600.0, effort=None)
-        working.advance( local_stamp() + 3600.0, effort=1.0)
+        calm.advance(local_stamp() + 3600.0, effort=None)
+        working.advance(local_stamp() + 3600.0, effort=1.0)
         self.assertGreater(calm.satiety - working.satiety, 0)
         self.assertLess(calm.satiety - working.satiety, 0.1)
 
     def test_boolean_effort_is_not_accepted_as_telemetry(self) -> None:
         first = PetState(updated_at=local_stamp())
         second = PetState(updated_at=local_stamp())
-        first.advance( local_stamp() + 3600.0, effort=True)
-        second.advance( local_stamp() + 3600.0, effort=None)
+        first.advance(local_stamp() + 3600.0, effort=True)
+        second.advance(local_stamp() + 3600.0, effort=None)
         self.assertEqual(encode_pet_state(first), encode_pet_state(second))
 
     def test_automatic_sleep_can_be_prevented_by_work(self) -> None:
         context = context_at(local_stamp(hour=23, minute=45))
         state = PetState(updated_at=context.local.timestamp())
-        state.update_daily_routine( context, allow_bedtime=False)
+        state.update_daily_routine(context, allow_bedtime=False)
         self.assertFalse(state.sleeping)
-        state.update_daily_routine( context, allow_bedtime=True)
+        state.update_daily_routine(context, allow_bedtime=True)
         self.assertTrue(state.sleeping)
         self.assertEqual(state.sleep_origin, "routine")
-        state.update_daily_routine( context, allow_bedtime=False)
+        state.update_daily_routine(context, allow_bedtime=False)
         self.assertFalse(state.sleeping)
 
 

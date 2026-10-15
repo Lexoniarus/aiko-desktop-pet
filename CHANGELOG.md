@@ -1,5 +1,10 @@
 ## Unreleased — Refactor consolidation
 
+- Enforce PEP 8 whitespace/blank lines, 88-character lines, import ordering
+  and identifier naming across code, tests and tools with pinned Ruff rules.
+  Keep exact Win32 API name exceptions; remove obsolete partial lint steps.
+- Name selected mind reactions, nap permission queries, workload detectors
+  and their regression suites consistently; retire the unused `AikoMind` alias.
 - Compare Windows setup/launcher paths by filesystem identity so 8.3 aliases
   and expanded paths both pass, retaining strict shortcut argument quoting.
 - Name current regression suites, classes and cases by their tested feature

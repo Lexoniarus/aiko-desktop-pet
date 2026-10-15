@@ -9,9 +9,9 @@ from typing import Any, Mapping
 
 from ..asset_paths import ASSET_ROOT
 from ..pet.animation.item_assets import HandItem, ItemCatalog, ItemSprite
-from ..pet.food_catalog import DEFAULT_CATALOG
-from ..pet.content import GERMAN_TEXT
 from ..pet.catalog_validation import load_json, object_fields
+from ..pet.content import GERMAN_TEXT
+from ..pet.food_catalog import DEFAULT_CATALOG
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 

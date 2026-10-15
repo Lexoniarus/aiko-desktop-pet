@@ -7,16 +7,16 @@ from types import MappingProxyType
 from typing import Any
 
 from ..asset_paths import ASSET_ROOT
-from ..pet.catalog_validation import load_json, object_fields
-from ..pet.animation.timing import VIRTUAL_CLIPS
-from .animation_timing import load_timing_policy
 from ..pet.animation.character import (
+    FRAME_HEIGHT,
+    FRAME_WIDTH,
     AnimationClip,
     AnimationFrame,
     CharacterCatalog,
-    FRAME_HEIGHT,
-    FRAME_WIDTH,
 )
+from ..pet.animation.timing import VIRTUAL_CLIPS
+from ..pet.catalog_validation import load_json, object_fields
+from .animation_timing import load_timing_policy
 
 
 def _file(root: Path, value: Any) -> Path:

@@ -6,8 +6,8 @@ with unknown activity and optional routine self-care before anchoring a session.
 
 from __future__ import annotations
 
-import time
 import math
+import time
 from dataclasses import dataclass
 from typing import Callable, Protocol
 

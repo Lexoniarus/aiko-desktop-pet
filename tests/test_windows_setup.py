@@ -27,8 +27,11 @@ class WindowsSetupTests(unittest.TestCase):
             self.folder / "tools/install_windows.ps1",
         )
         for filename in (
-            "requirements.txt", "Aiko_installieren.bat", "Aiko_Pet.pyw",
-            "Aiko_starten.bat", "Aiko_starten_debug.bat",
+            "requirements.txt",
+            "Aiko_installieren.bat",
+            "Aiko_Pet.pyw",
+            "Aiko_starten.bat",
+            "Aiko_starten_debug.bat",
         ):
             shutil.copy2(ROOT / filename, self.folder / filename)
         # Keep failure cases small; the successful setup needs the real package.
@@ -42,14 +45,23 @@ class WindowsSetupTests(unittest.TestCase):
         self.environment["PIP_CONFIG_FILE"] = os.devnull
 
     def run_setup(
-        self, python: str = sys.executable,
+        self,
+        python: str = sys.executable,
     ) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
             [
-                "powershell.exe", "-NoLogo", "-NoProfile", "-ExecutionPolicy",
-                "Bypass", "-File", str(self.folder / "tools/install_windows.ps1"),
-                "-PythonExecutable", python, "-NoPythonInstall",
-                "-ShortcutDirectory", str(self.folder / "shortcuts"),
+                "powershell.exe",
+                "-NoLogo",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(self.folder / "tools/install_windows.ps1"),
+                "-PythonExecutable",
+                python,
+                "-NoPythonInstall",
+                "-ShortcutDirectory",
+                str(self.folder / "shortcuts"),
             ],
             cwd=self.folder.parent,
             env=self.environment,
@@ -61,22 +73,28 @@ class WindowsSetupTests(unittest.TestCase):
 
     def test_install_repeat_and_both_launchers_use_isolated_runtime(self) -> None:
         shutil.copytree(
-            ROOT / "aiko_pet", self.folder / "aiko_pet", dirs_exist_ok=True,
+            ROOT / "aiko_pet",
+            self.folder / "aiko_pet",
+            dirs_exist_ok=True,
             ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
         )
         for _ in range(2):
             setup = self.run_setup()
             self.assertEqual(setup.returncode, 0, setup.stdout + setup.stderr)
             self.assertEqual(
-                self.save.read_text(encoding="utf-8"), '{"existing": "progress"}',
+                self.save.read_text(encoding="utf-8"),
+                '{"existing": "progress"}',
             )
         python = self.folder / ".venv/Scripts/python.exe"
         probe = subprocess.run(
-            [str(python), "-c", (
-                "import json,sys; "
-                "print(json.dumps([sys.prefix, sys.base_prefix]))"
-            )],
-            capture_output=True, text=True, check=True,
+            [
+                str(python),
+                "-c",
+                ("import json,sys; print(json.dumps([sys.prefix, sys.base_prefix]))"),
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
         )
         prefix, base = json.loads(probe.stdout)
         self.assertTrue(Path(prefix).samefile(self.folder / ".venv"))
@@ -84,18 +102,24 @@ class WindowsSetupTests(unittest.TestCase):
         shortcut = self.folder / "shortcuts/Aiko Desktop Pet.lnk"
         self.assertTrue(shortcut.is_file())
         shortcut_environment = dict(
-            self.environment, AIKO_TEST_SHORTCUT=str(shortcut),
+            self.environment,
+            AIKO_TEST_SHORTCUT=str(shortcut),
         )
         shortcut_info = subprocess.run(
             [
-                "powershell.exe", "-NoProfile", "-Command",
+                "powershell.exe",
+                "-NoProfile",
+                "-Command",
                 "$shell = New-Object -ComObject WScript.Shell; "
                 "$link = $shell.CreateShortcut($env:AIKO_TEST_SHORTCUT); "
                 "@{target=$link.TargetPath;arguments=$link.Arguments;"
                 "workingDirectory=$link.WorkingDirectory} | ConvertTo-Json",
             ],
-            env=shortcut_environment, capture_output=True,
-            text=True, check=True, timeout=15,
+            env=shortcut_environment,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=15,
         )
         link = json.loads(shortcut_info.stdout)
         # COM can expand 8.3 aliases in TEMP or the user directory. Compare
@@ -107,13 +131,18 @@ class WindowsSetupTests(unittest.TestCase):
         )
         self.assertTrue(Path(link["workingDirectory"]).samefile(self.folder))
         batch_setup = self.run_batch(
-            "Aiko_installieren.bat", "-NoPythonInstall", "-NoShortcuts",
+            "Aiko_installieren.bat",
+            "-NoPythonInstall",
+            "-NoShortcuts",
         )
         self.assertEqual(
-            batch_setup.returncode, 0, batch_setup.stdout + batch_setup.stderr,
+            batch_setup.returncode,
+            0,
+            batch_setup.stdout + batch_setup.stderr,
         )
         self.assertEqual(
-            self.save.read_text(encoding="utf-8"), '{"existing": "progress"}',
+            self.save.read_text(encoding="utf-8"),
+            '{"existing": "progress"}',
         )
 
         # Exercise the batch files without launching a pet or touching a save.
@@ -123,7 +152,8 @@ class WindowsSetupTests(unittest.TestCase):
             f"Path({str(marker)!r}).write_text(json.dumps(sys.executable))\n"
         )
         (self.folder / "aiko_pet/__main__.py").write_text(
-            entry + "raise SystemExit(7)\n", encoding="utf-8",
+            entry + "raise SystemExit(7)\n",
+            encoding="utf-8",
         )
         debug = self.run_batch("Aiko_starten_debug.bat")
         self.assertEqual(debug.returncode, 7, debug.stdout + debug.stderr)
@@ -137,16 +167,24 @@ class WindowsSetupTests(unittest.TestCase):
             time.sleep(0.05)
         self.assertTrue(marker.exists(), "Windowless launcher did not run")
         self.assertTrue(
-            Path(json.loads(marker.read_text())).samefile(python.with_name("pythonw.exe")),
+            Path(json.loads(marker.read_text())).samefile(
+                python.with_name("pythonw.exe")
+            ),
         )
 
     def run_batch(
-        self, filename: str, *arguments: str,
+        self,
+        filename: str,
+        *arguments: str,
     ) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
-            ["cmd.exe", "/d", "/c", filename, *arguments], cwd=self.folder,
-            env=self.environment, stdin=subprocess.DEVNULL,
-            capture_output=True, text=True, timeout=30,
+            ["cmd.exe", "/d", "/c", filename, *arguments],
+            cwd=self.folder,
+            env=self.environment,
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
 
     def test_invalid_explicit_python_fails_without_downloading(self) -> None:
@@ -157,7 +195,9 @@ class WindowsSetupTests(unittest.TestCase):
 
     def test_existing_broken_environment_is_preserved(self) -> None:
         shutil.copytree(
-            ROOT / "aiko_pet", self.folder / "aiko_pet", dirs_exist_ok=True,
+            ROOT / "aiko_pet",
+            self.folder / "aiko_pet",
+            dirs_exist_ok=True,
             ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
         )
         environment = self.folder / ".venv"
@@ -169,7 +209,8 @@ class WindowsSetupTests(unittest.TestCase):
         backups = list(self.folder.glob(".venv-backup-*"))
         self.assertEqual(len(backups), 1)
         self.assertEqual(
-            (backups[0] / "keep.txt").read_text(encoding="utf-8"), "preserve",
+            (backups[0] / "keep.txt").read_text(encoding="utf-8"),
+            "preserve",
         )
         self.assertTrue((environment / "Scripts/python.exe").is_file())
 
@@ -180,24 +221,37 @@ class WindowsSetupTests(unittest.TestCase):
         self.assertIn("gesamten Aiko-Quellordner", setup.stdout)
         self.assertFalse((self.folder / ".venv").exists())
 
-    def run_harness(self, source: str, *arguments: str) -> subprocess.CompletedProcess[str]:
+    def run_harness(
+        self, source: str, *arguments: str
+    ) -> subprocess.CompletedProcess[str]:
         harness = self.folder / "setup-test.ps1"
         harness.write_text(source, encoding="utf-8")
         return subprocess.run(
             [
-                "powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass",
-                "-File", str(harness), *arguments,
+                "powershell.exe",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(harness),
+                *arguments,
             ],
-            cwd=self.folder.parent, env=self.environment,
-            stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=90,
+            cwd=self.folder.parent,
+            env=self.environment,
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
+            timeout=90,
         )
 
     def test_runtime_download_install_repair_and_failure_paths(self) -> None:
         shutil.copytree(
-            ROOT / "aiko_pet", self.folder / "aiko_pet", dirs_exist_ok=True,
+            ROOT / "aiko_pet",
+            self.folder / "aiko_pet",
+            dirs_exist_ok=True,
             ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
         )
-        source = r'''param([string]$Python, [string]$Scenario)
+        source = r"""param([string]$Python, [string]$Scenario)
 $script:TestPythonExecutable = $Python
 . "$PSScriptRoot\tools\install_windows.ps1" -NoShortcuts
 $script:discoveryCount = 0
@@ -220,7 +274,10 @@ function Invoke-WebRequest {
     param($Uri, $OutFile, [switch]$UseBasicParsing, $TimeoutSec)
     $script:downloadFile = $OutFile
     if (-not $UseBasicParsing) { throw 'Missing PS 5.1 compatibility' }
-    if (-not ([Net.ServicePointManager]::SecurityProtocol -band [Net.SecurityProtocolType]::Tls12)) {
+    if (-not (
+        [Net.ServicePointManager]::SecurityProtocol -band
+        [Net.SecurityProtocolType]::Tls12
+    )) {
         throw 'TLS 1.2 not enabled'
     }
     $Uri | Set-Content "$PSScriptRoot\url.txt"
@@ -238,11 +295,15 @@ function Get-FileHash {
 }
 function Start-Process {
     param($FilePath, $ArgumentList, $WindowStyle, [switch]$Wait, [switch]$PassThru)
-    if ($FilePath -ne $script:downloadFile -or -not $Wait -or -not $PassThru -or $WindowStyle -ne 'Hidden') {
+    if (
+        $FilePath -ne $script:downloadFile -or -not $Wait -or
+        -not $PassThru -or $WindowStyle -ne 'Hidden'
+    ) {
         throw 'Unexpected process parameters'
     }
     $script:installCount++
-    ConvertTo-Json -InputObject @($ArgumentList) | Set-Content "$PSScriptRoot\install-$script:installCount.json"
+    ConvertTo-Json -InputObject @($ArgumentList) |
+        Set-Content "$PSScriptRoot\install-$script:installCount.json"
     $code = 0
     if ($Scenario -eq 'failed') { $code = 42 }
     if ($Scenario -eq 'reboot') { $code = 3010 }
@@ -259,11 +320,14 @@ try {
     if ([Net.ServicePointManager]::SecurityProtocol -ne $script:protocolBefore) {
         throw 'Network security protocol was not restored'
     }
-    if ($script:downloadFile -and (Test-Path -LiteralPath (Split-Path -Parent $script:downloadFile))) {
+    if (
+        $script:downloadFile -and
+        (Test-Path -LiteralPath (Split-Path -Parent $script:downloadFile))
+    ) {
         throw 'Temporary download was not removed'
     }
 }
-'''
+"""
         for scenario, error in (
             ("no-install", "Kein Python"),
             ("offline", "Netzwerk nicht erreichbar"),
@@ -284,20 +348,32 @@ try {
                     self.assertFalse((self.folder / ".venv").exists())
                 else:
                     self.assertEqual(
-                        result.returncode, 0, result.stdout + result.stderr,
+                        result.returncode,
+                        0,
+                        result.stdout + result.stderr,
                     )
                     shutil.rmtree(self.folder / ".venv")
                 installs = sorted(self.folder.glob("install-*.json"))
                 if scenario in ("no-install", "offline", "bad-hash"):
                     self.assertEqual(installs, [])
                 else:
-                    self.assertEqual(len(installs), 2 if scenario in (
-                        "repair", "unusable",
-                    ) else 1)
+                    self.assertEqual(
+                        len(installs),
+                        2
+                        if scenario
+                        in (
+                            "repair",
+                            "unusable",
+                        )
+                        else 1,
+                    )
                     arguments = json.loads(installs[0].read_text())
                     for flag in (
-                        "/quiet", "/norestart", "InstallAllUsers=0",
-                        "Include_tcltk=1", "Include_pip=1",
+                        "/quiet",
+                        "/norestart",
+                        "InstallAllUsers=0",
+                        "Include_tcltk=1",
+                        "Include_pip=1",
                     ):
                         self.assertIn(flag, arguments)
                     if len(installs) == 2:
@@ -315,29 +391,32 @@ try {
             "def Tk():\n    raise RuntimeError('broken Tcl/Tk')\n",
             encoding="utf-8",
         )
-        result = self.run_harness(r'''param([string]$Python)
+        result = self.run_harness(
+            r"""param([string]$Python)
 . "$PSScriptRoot\tools\install_windows.ps1"
 Set-Location -LiteralPath $PSScriptRoot
 $candidate = Get-CompatiblePython $Python
 if ($candidate) { throw 'Accepted broken Tcl/Tk' }
-''', sys.executable)
+""",
+            sys.executable,
+        )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_download_architectures_and_unsupported_windows(self) -> None:
-        result = self.run_harness(r'''
+        result = self.run_harness(r"""
 . "$PSScriptRoot\tools\install_windows.ps1"
 @('AMD64', 'x86', 'ARM64') | ForEach-Object { Get-PythonDownload $_ } | ConvertTo-Json
-''')
+""")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         downloads = json.loads(result.stdout)
         for item, suffix in zip(downloads, ("-amd64", "", "-arm64"), strict=True):
             self.assertTrue(item["Url"].endswith(f"3.13.16{suffix}.exe"))
             self.assertRegex(item["Sha256"], r"^[0-9a-f]{64}$")
-        result = self.run_harness(r'''
+        result = self.run_harness(r"""
 . "$PSScriptRoot\tools\install_windows.ps1" -NoShortcuts
 function Get-ItemProperty { return [pscustomobject]@{ CurrentBuildNumber = '7601' } }
 try { Invoke-AikoSetup; exit 0 } catch { Write-Host $_.Exception.Message; exit 1 }
-''')
+""")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Windows 10 oder neuer", result.stdout)
         self.assertFalse((self.folder / ".venv").exists())

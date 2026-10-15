@@ -10,10 +10,16 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from ...games.rock_paper_scissors import (
-    Move, Outcome, RockPaperScissors, Round, Score,
+    Move,
+    Outcome,
+    RockPaperScissors,
+    Round,
+    Score,
 )
 from .rock_paper_scissors_text_de import (
-    countdown_line, outcome_line, welcome_line,
+    countdown_line,
+    outcome_line,
+    welcome_line,
 )
 
 ScheduleTimer = Callable[[int, Callable[[], None]], str]

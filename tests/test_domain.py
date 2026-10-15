@@ -1,13 +1,12 @@
 
-from aiko_pet.ui.view_models.care_text import format_care_response
-
-from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 import unittest
 from datetime import datetime
 
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.lifecycle import MAX_CATCHUP_SECONDS
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.value_rules import clamp_need_value
+from aiko_pet.ui.view_models.care_text import format_care_response
 
 NOW = datetime(2026, 10, 13, 12).timestamp()
 

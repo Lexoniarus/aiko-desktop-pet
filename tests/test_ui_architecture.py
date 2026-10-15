@@ -23,14 +23,19 @@ class UiDependencyRules(unittest.TestCase):
     def test_gui_composition_root_stays_bounded(self) -> None:
         source = (ROOT / "gui.py").read_text("utf-8")
         self.assertLessEqual(
-            len(source.splitlines()), 625,
+            len(source.splitlines()),
+            625,
             "Move feature behavior to its owning object rather than gui.py",
         )
 
     def test_utility_windows_do_not_import_desktop_or_domain(self) -> None:
         forbidden = {
-            "gui", "domain", "adaptive", "storage",
-            "system_activity", "window_stack",
+            "gui",
+            "domain",
+            "adaptive",
+            "storage",
+            "system_activity",
+            "window_stack",
         }
         for relative in UTILITY_VIEWS:
             with self.subTest(module=relative):
@@ -43,17 +48,22 @@ class UiDependencyRules(unittest.TestCase):
                 for imported in imports:
                     self.assertNotIn(imported.rsplit(".", 1)[-1], forbidden)
                 names = {
-                    node.id for node in ast.walk(tree)
-                    if isinstance(node, ast.Name)
+                    node.id for node in ast.walk(tree) if isinstance(node, ast.Name)
                 }
                 self.assertNotIn("DesktopPet", names)
 
     def test_character_and_native_window_require_only_typed_ports(self) -> None:
         forbidden = {
-            "storage", "domain", "adaptive", "adaptive_models",
+            "storage",
+            "domain",
+            "adaptive",
+            "adaptive_models",
             "system_activity",
         }
-        for relative in ("ui/pet_view/animated_pet.py", "ui/pet_view/desktop_window.py"):
+        for relative in (
+            "ui/pet_view/animated_pet.py",
+            "ui/pet_view/desktop_window.py",
+        ):
             with self.subTest(module=relative):
                 tree = ast.parse((ROOT / relative).read_text("utf-8"))
                 direct = [
@@ -70,8 +80,11 @@ class UiDependencyRules(unittest.TestCase):
     def test_character_does_not_choose_commentary_events(self) -> None:
         source = (ROOT / "ui/pet_view/animated_pet.py").read_text("utf-8")
         for token in (
-            "cursor_far", "cursor_follow", "walk_pause",
-            "next_cursor_line", "random.random(",
+            "cursor_far",
+            "cursor_follow",
+            "walk_pause",
+            "next_cursor_line",
+            "random.random(",
         ):
             with self.subTest(token=token):
                 self.assertNotIn(token, source)
@@ -84,17 +97,20 @@ class UiDependencyRules(unittest.TestCase):
         for owner in ("infrastructure/persistence.py", "desktop/persistence.py"):
             with self.subTest(owner=owner):
                 tree = ast.parse((ROOT / owner).read_text("utf-8"))
-                self.assertFalse(any(
-                    isinstance(node, ast.Call)
-                    and isinstance(node.func, ast.Attribute)
-                    and node.func.attr == "advance"
-                    for node in ast.walk(tree)
-                ))
+                self.assertFalse(
+                    any(
+                        isinstance(node, ast.Call)
+                        and isinstance(node.func, ast.Attribute)
+                        and node.func.attr == "advance"
+                        for node in ast.walk(tree)
+                    )
+                )
 
     def test_desktop_runtime_services_do_not_import_domain(self) -> None:
         forbidden = {"gui", "domain", "adaptive", "storage", "dialogue"}
         for relative in (
-            "desktop/runtime.py", "desktop/maintenance.py",
+            "desktop/runtime.py",
+            "desktop/maintenance.py",
             "desktop/input.py",
         ):
             with self.subTest(module=relative):
@@ -117,26 +133,33 @@ class UiDependencyRules(unittest.TestCase):
             with self.subTest(provider=relative):
                 tree = ast.parse((ROOT / relative).read_text("utf-8"))
                 imports = [
-                    node.module or "" for node in ast.walk(tree)
+                    node.module or ""
+                    for node in ast.walk(tree)
                     if isinstance(node, ast.ImportFrom)
                 ] + [
-                    alias.name for node in ast.walk(tree)
+                    alias.name
+                    for node in ast.walk(tree)
                     if isinstance(node, ast.Import)
                     for alias in node.names
                 ]
                 self.assertFalse(
-                    any(name.startswith(("tkinter", "aiko_pet.ui"))
-                        for name in imports),
+                    any(
+                        name.startswith(("tkinter", "aiko_pet.ui")) for name in imports
+                    ),
                 )
-
 
     def test_domain_policies_never_call_pet_private_methods(self) -> None:
         forbidden = {
-            "_roll_meals", "_apply_clock", "_decay", "_credit_friendship",
+            "_roll_meals",
+            "_apply_clock",
+            "_decay",
+            "_credit_friendship",
         }
         for relative in (
-            "pet/care_actions.py", "pet/friendship.py",
-            "pet/need_decay.py", "pet/lifecycle.py",
+            "pet/care_actions.py",
+            "pet/friendship.py",
+            "pet/need_decay.py",
+            "pet/lifecycle.py",
         ):
             with self.subTest(policy=relative):
                 tree = ast.parse((ROOT / relative).read_text("utf-8"))
@@ -152,23 +175,27 @@ class UiDependencyRules(unittest.TestCase):
         source = (ROOT / "pet/state.py").read_text("utf-8")
         tree = ast.parse(source)
         state = next(
-            node for node in tree.body
+            node
+            for node in tree.body
             if isinstance(node, ast.ClassDef) and node.name == "PetState"
         )
         calls = {
             node.func.id
             for node in ast.walk(state)
-            if isinstance(node, ast.Call)
-            and isinstance(node.func, ast.Name)
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
         }
         forbidden = {
-            "apply_care_action", "apply_need_decay",
-            "award_friendship_for_care", "advance_pet_time",
+            "apply_care_action",
+            "apply_need_decay",
+            "award_friendship_for_care",
+            "advance_pet_time",
         }
         self.assertFalse(calls.intersection(forbidden))
         for policy in (
-            "plan_care_action", "calculate_need_decay",
-            "calculate_friendship_reward", "plan_pet_time",
+            "plan_care_action",
+            "calculate_need_decay",
+            "calculate_friendship_reward",
+            "plan_pet_time",
             "calculate_daily_routine",
         ):
             with self.subTest(policy=policy):
@@ -190,11 +217,13 @@ class UiDependencyRules(unittest.TestCase):
             with self.subTest(module=relative):
                 source = (ROOT / relative).read_text("utf-8")
                 for expression in (
-                    ".mood_hint(", ".feed_label(", ".schedule_line",
-                    ".label", ".greeting(",
+                    ".mood_hint(",
+                    ".feed_label(",
+                    ".schedule_line",
+                    ".label",
+                    ".greeting(",
                 ):
                     self.assertNotIn(expression, source)
-
 
     def test_runtime_consumes_named_ports_not_legacy_private_stages(self) -> None:
         source = (ROOT / "desktop/runtime.py").read_text("utf-8")
@@ -202,8 +231,10 @@ class UiDependencyRules(unittest.TestCase):
         self.assertIn("ports.advance_lifecycle(", source)
         self.assertIn("ports.render_character(", source)
         for legacy in (
-            "stages._advance_pet_lifecycle", "stages._refresh_hover",
-            "stages._render_current_sprite", "stages._closed",
+            "stages._advance_pet_lifecycle",
+            "stages._refresh_hover",
+            "stages._render_current_sprite",
+            "stages._closed",
         ):
             with self.subTest(method=legacy):
                 self.assertNotIn(legacy, source)
@@ -224,17 +255,22 @@ class UiDependencyRules(unittest.TestCase):
     def test_dead_desktop_shell_input_forwarders_are_removed(self) -> None:
         syntax = ast.parse((ROOT / "gui.py").read_text("utf-8"))
         shell = next(
-            node for node in syntax.body
+            node
+            for node in syntax.body
             if isinstance(node, ast.ClassDef) and node.name == "DesktopPet"
         )
         declared = {
-            node.name for node in shell.body
-            if isinstance(node, ast.FunctionDef)
+            node.name for node in shell.body if isinstance(node, ast.FunctionDef)
         }
         old = {
-            "_setup_events", "_react_to_click", "_on_tk_press",
-            "_on_focus_out", "_dismiss_after_focus_loss", "_show_menu",
-            "_poll_desktop_click", "_idle_emote",
+            "_setup_events",
+            "_react_to_click",
+            "_on_tk_press",
+            "_on_focus_out",
+            "_dismiss_after_focus_loss",
+            "_show_menu",
+            "_poll_desktop_click",
+            "_idle_emote",
         }
         self.assertFalse(declared.intersection(old))
 
@@ -255,11 +291,12 @@ class UiDependencyRules(unittest.TestCase):
             for node in ast.walk(tree)
             if isinstance(node, ast.ImportFrom)
         ]
-        self.assertFalse(any(
-            "storage" in name or "gui" in name
-            or "dialogue" in name
-            for name in imports
-        ))
+        self.assertFalse(
+            any(
+                "storage" in name or "gui" in name or "dialogue" in name
+                for name in imports
+            )
+        )
         self.assertNotIn("DesktopPet", source)
         self.assertIn("class DesktopPreferences:", source)
 
@@ -318,8 +355,12 @@ class UiDependencyRules(unittest.TestCase):
         self.assertNotIn("WalkDriver(", gui)
         self.assertNotIn("DesktopAnimationRuntime(", gui)
         self.assertNotIn("AnimatedPet(", gui)
-        for owner in ("WalkDriver(", "DesktopVisualObservation(",
-                      "DesktopAnimationRuntime(", "AnimatedPet("):
+        for owner in (
+            "WalkDriver(",
+            "DesktopVisualObservation(",
+            "DesktopAnimationRuntime(",
+            "AnimatedPet(",
+        ):
             self.assertIn(owner, assembly)
 
     def test_native_desktop_adapters_are_not_owned_by_sprite_code(self) -> None:

@@ -6,11 +6,11 @@ import tkinter as tk
 import unittest
 from pathlib import Path
 
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
-from aiko_pet.gui import DesktopPet
 from aiko_pet.asset_paths import EMOTE_IMAGE_DIR, KENNEY_UI_DIR
-from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue, compose_cues
+from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue, compose_cues
 
 
 class EmoteDomainTests(unittest.TestCase):
@@ -18,10 +18,10 @@ class EmoteDomainTests(unittest.TestCase):
         self.assertGreaterEqual(len(EMOTES), 12)
         for name in EMOTES:
             with self.subTest(name=name):
-                p = EMOTE_IMAGE_DIR / f'emote_{name}.png'
+                p = EMOTE_IMAGE_DIR / f"emote_{name}.png"
                 self.assertTrue(p.is_file())
                 self.assertGreater(p.stat().st_size, 80)
-                self.assertEqual(p.read_bytes()[:8], b'\x89PNG\r\n\x1a\n')
+                self.assertEqual(p.read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
 
     def test_curated_catalogue_emotes_have_valid_names_and_inherit(self):
         lines = DialogueBook.from_file().lines
@@ -35,31 +35,50 @@ class EmoteDomainTests(unittest.TestCase):
 
     def test_cues_are_ordered_without_overlap(self):
         cues = compose_cues(
-            '...Aha.', before='question',
-            followup='Das war peinlich.', after='heart',
+            "...Aha.",
+            before="question",
+            followup="Das war peinlich.",
+            after="heart",
         )
-        self.assertEqual([c.kind for c in cues], [
-            'emote', 'text', 'text', 'emote',
-        ])
-        self.assertEqual([c.content for c in cues], [
-            'question', '...Aha.', 'Das war peinlich.', 'heart',
-        ])
+        self.assertEqual(
+            [c.kind for c in cues],
+            [
+                "emote",
+                "text",
+                "text",
+                "emote",
+            ],
+        )
+        self.assertEqual(
+            [c.content for c in cues],
+            [
+                "question",
+                "...Aha.",
+                "Das war peinlich.",
+                "heart",
+            ],
+        )
         self.assertTrue(all(x.duration_ms > 0 for x in cues))
-        self.assertEqual([x.kind for x in compose_cues('Nur Text.')], ['text'])
+        self.assertEqual([x.kind for x in compose_cues("Nur Text.")], ["text"])
 
     def test_bad_emote_is_rejected_early(self):
-        self.assertRaises(ValueError, Cue, 'emote', 'unsupported', 700)
+        self.assertRaises(ValueError, Cue, "emote", "unsupported", 700)
         import json
-        raw = json.loads(CATALOGUE.read_text(encoding='utf-8'))['lines'][0]
-        raw['emote_before'] = 'does-not-exist'
+
+        raw = json.loads(CATALOGUE.read_text(encoding="utf-8"))["lines"][0]
+        raw["emote_before"] = "does-not-exist"
         self.assertRaises(ValueError, Line.parse, raw)
 
     def test_kenney_ui_pack_bitmaps_are_embedded(self):
-        for name in ('button_regular.png', 'button_wide.png',
-                     'button_small.png', 'toolbar_banner.png'):
+        for name in (
+            "button_regular.png",
+            "button_wide.png",
+            "button_small.png",
+            "toolbar_banner.png",
+        ):
             path = KENNEY_UI_DIR / name
             self.assertTrue(path.is_file())
-            self.assertEqual(path.read_bytes()[:8], b'\x89PNG\r\n\x1a\n')
+            self.assertEqual(path.read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
 
 
 class EmoteTkTests(unittest.TestCase):
@@ -68,13 +87,13 @@ class EmoteTkTests(unittest.TestCase):
         try:
             root = tk.Tk()
         except tk.TclError as err:
-            raise unittest.SkipTest('No screen for Tk tests') from err
+            raise unittest.SkipTest("No screen for Tk tests") from err
         root.destroy()
 
     def setUp(self):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(temp.name) / 'state.json'))
+        self.pet = DesktopPet(store=StateStore(Path(temp.name) / "state.json"))
         self.addCleanup(self.pet.quit)
         if self.pet._runtime.scheduled_greeting:
             self.pet.root.after_cancel(self.pet._runtime.scheduled_greeting)
@@ -86,29 +105,32 @@ class EmoteTkTests(unittest.TestCase):
         self.pet._runtime.scheduled_tick = None
 
     def progress(self, milliseconds: int) -> None:
-        time.sleep(milliseconds/1000)
+        time.sleep(milliseconds / 1000)
         self.pet.root.update()
 
     def is_emote(self) -> bool:
         if not self.pet._speech.bubble:
             return False
         first = self.pet._speech.bubble.winfo_children()[0]
-        return isinstance(first, tk.Label) and bool(first.cget('image'))
+        return isinstance(first, tk.Label) and bool(first.cget("image"))
 
     def bubble_text(self) -> str | None:
         if not self.pet._speech.bubble or self.is_emote():
             return None
-        return self.pet._speech.bubble.winfo_children()[0].winfo_children()[0].cget('text')
+        return (
+            self.pet._speech.bubble.winfo_children()[0].winfo_children()[0].cget("text")
+        )
 
     def test_three_beats_replace_each_other_and_never_overlap(self):
-        reaction = Reaction('test','...Oh.', 'idle', 'click_left',
-                            None, 1400, 'question', 'heart')
+        reaction = Reaction(
+            "test", "...Oh.", "idle", "click_left", None, 1400, "question", "heart"
+        )
         self.pet._react(reaction, 1700)
         self.assertTrue(self.is_emote())
         self.assertEqual(len(self.pet._overlay_windows()), 2)
         self.progress(750)
         self.assertFalse(self.is_emote())
-        self.assertEqual(self.bubble_text(), '...Oh.')
+        self.assertEqual(self.bubble_text(), "...Oh.")
         self.assertEqual(len(self.pet._overlay_windows()), 2)
         self.progress(1850)
         self.assertTrue(self.is_emote())
@@ -117,41 +139,64 @@ class EmoteTkTests(unittest.TestCase):
         self.assertIsNone(self.pet._speech.bubble)
 
     def test_multiple_speech_lines_and_visual_after(self):
-        reaction = Reaction('test','Oh.', 'waiting', 'click_left',
-                            '...Das hatte ich anders gemeint.',1400,
-                            'question','heart')
+        reaction = Reaction(
+            "test",
+            "Oh.",
+            "waiting",
+            "click_left",
+            "...Das hatte ich anders gemeint.",
+            1400,
+            "question",
+            "heart",
+        )
         self.pet._react(reaction, 1700)
         self.progress(750)
-        self.assertEqual(self.bubble_text(),'Oh.')
+        self.assertEqual(self.bubble_text(), "Oh.")
         self.progress(1850)
-        self.assertEqual(self.bubble_text(),'...Das hatte ich anders gemeint.')
+        self.assertEqual(self.bubble_text(), "...Das hatte ich anders gemeint.")
         self.progress(2350)
         self.assertTrue(self.is_emote())
 
     def test_new_click_preempts_entire_older_reaction(self):
-        reaction = Reaction('test','Nicht mehr.', 'waiting', 'click_left',
-                            'Alt und unerwünscht',1400,'question','heart')
+        reaction = Reaction(
+            "test",
+            "Nicht mehr.",
+            "waiting",
+            "click_left",
+            "Alt und unerwünscht",
+            1400,
+            "question",
+            "heart",
+        )
         self.pet._react(reaction, 1700)
         self.assertTrue(self.is_emote())
-        self.pet._react(Reaction('new','Jetzt hier.', 'idle', 'click_right'))
-        self.assertEqual(self.bubble_text(), 'Jetzt hier.')
+        self.pet._react(Reaction("new", "Jetzt hier.", "idle", "click_right"))
+        self.assertEqual(self.bubble_text(), "Jetzt hier.")
         self.progress(800)
-        self.assertEqual(self.bubble_text(), 'Jetzt hier.')
+        self.assertEqual(self.bubble_text(), "Jetzt hier.")
         self.assertIsNone(self.pet._reaction_player.pending_timer)
 
     def test_rapid_click_burst_does_not_stick_on_intro_emotes(self):
-        reaction = Reaction('rapid','Ich höre dich.', 'idle', 'rapid_click',
-                            None, 1400, 'anger', 'cloud')
+        reaction = Reaction(
+            "rapid",
+            "Ich höre dich.",
+            "idle",
+            "rapid_click",
+            None,
+            1400,
+            "anger",
+            "cloud",
+        )
         self.pet.mind.clicks.extend([1.0, 2.0, 3.0, 4.0])
         self.pet._contact.react_to_click(reaction)
-        self.assertEqual(self.bubble_text(), 'Ich höre dich.')
+        self.assertEqual(self.bubble_text(), "Ich höre dich.")
 
     def test_idle_emote_waits_until_dialogue_slot_is_free(self):
-        self.pet._react(Reaction('x','Ich rede.', 'idle','click_left'))
+        self.pet._react(Reaction("x", "Ich rede.", "idle", "click_left"))
         self.pet._attention_runtime.idle_emote()
-        self.assertEqual(self.bubble_text(), 'Ich rede.')
+        self.assertEqual(self.bubble_text(), "Ich rede.")
         self.pet._speech.hide()
-        self.pet.state.mood=3
+        self.pet.state.mood = 3
         self.pet._attention_runtime.idle_emote()
         self.assertTrue(self.is_emote())
 
@@ -160,20 +205,34 @@ class EmoteTkTests(unittest.TestCase):
         bar = self.pet._hover.toolbar
         assert bar is not None
         self.pet.root.update()
-        self.assertTrue(bar.today.cget('image'))
-        self.assertTrue(bar.buttons['feed'].cget('image'))
-        self.assertEqual(len(bar.needs),6)
-        self.assertTrue(all(name in bar.buttons for name in (
-            'feed','play','pet','talk','sleep',
-        )))
-        self.assertNotIn('energy_drink', bar.buttons)
+        self.assertTrue(bar.today.cget("image"))
+        self.assertTrue(bar.buttons["feed"].cget("image"))
+        self.assertEqual(len(bar.needs), 6)
+        self.assertTrue(
+            all(
+                name in bar.buttons
+                for name in (
+                    "feed",
+                    "play",
+                    "pet",
+                    "talk",
+                    "sleep",
+                )
+            )
+        )
+        self.assertNotIn("energy_drink", bar.buttons)
         for key in bar.needs:
             self.pet.state.__dict__[key] = 100
         bar.refresh()
         self.pet.root.update()
-        self.assertTrue(all(bar.needs[k][0].coords(bar.needs[k][1])[2]
-                            == bar.needs[k][0].winfo_width() for k in bar.needs))
+        self.assertTrue(
+            all(
+                bar.needs[k][0].coords(bar.needs[k][1])[2]
+                == bar.needs[k][0].winfo_width()
+                for k in bar.needs
+            )
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -7,7 +7,9 @@ import unittest
 from pathlib import Path
 
 from aiko_pet.pet.routine import (
-    WEEKDAY_SLOTS, WEEKEND_SLOTS, SUNDAY_SLOTS,
+    SUNDAY_SLOTS,
+    WEEKDAY_SLOTS,
+    WEEKEND_SLOTS,
 )
 from aiko_pet.pet.routine_catalog import parse_routine_catalog
 

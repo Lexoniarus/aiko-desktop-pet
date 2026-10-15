@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 FOOT_BASELINE = 194
 
+
 @dataclass(frozen=True)
 class TaskbarTrack:
     """Primary-monitor horizontal route; coordinates are screen pixels."""

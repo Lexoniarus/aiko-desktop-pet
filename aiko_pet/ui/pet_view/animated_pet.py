@@ -9,20 +9,20 @@ from __future__ import annotations
 import math
 import time
 import tkinter as tk
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Callable, Protocol
-from collections.abc import Sequence
 
-from ...pet.animation.animation import FrameClock
+from ...desktop.geometry import FOOT_BASELINE
 from ...pet.animation.ambient import AmbientDirector
-from ...pet.animation.character import CharacterCatalog, FRAME_WIDTH
+from ...pet.animation.animation import FrameClock
+from ...pet.animation.character import FRAME_WIDTH, CharacterCatalog
 from ...pet.animation.item_assets import ItemCatalog
 from ...pet.animation.priority import RenderDecision
 from ...pet.mind.cursor_attention import CursorAttentionSnapshot
-from .food_overlay import FoodOverlay
 from .character_sprite_cache import CharacterSpriteCache
+from .food_overlay import FoodOverlay
 from .rest_pose_renderer import RestPoseRenderer
-from ...desktop.geometry import FOOT_BASELINE
 
 
 class CareVisuals(Protocol):
@@ -54,6 +54,7 @@ class CharacterSettings(Protocol):
 
     @y.setter
     def y(self, value: int | None) -> None: ...
+
 
 @dataclass(frozen=True, slots=True)
 class AnimatedPorts:

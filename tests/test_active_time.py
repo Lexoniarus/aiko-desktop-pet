@@ -17,11 +17,11 @@ from aiko_pet.application.controller import CareController
 from aiko_pet.application.game_experience import GameExperienceCoordinator
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.active_time import active_uptime_seconds
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.fun import GameExperience
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.state import PetState
-from aiko_pet.pet.fun import GameExperience
 from aiko_pet.telemetry import ComputerSnapshot
 
 NOW = datetime(2026, 10, 13, 10).timestamp()

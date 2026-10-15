@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Collection
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
+
 from .content import GERMAN_TEXT
 from .routine_catalog import ROUTINE_CATALOG
 

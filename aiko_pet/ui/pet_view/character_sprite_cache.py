@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import overload
 
-from ...pet.animation.character import CharacterCatalog, FRAME_HEIGHT, FRAME_WIDTH
+from ...pet.animation.character import FRAME_HEIGHT, FRAME_WIDTH, CharacterCatalog
 
 
 class _ScaledFrames(Sequence[tk.PhotoImage]):

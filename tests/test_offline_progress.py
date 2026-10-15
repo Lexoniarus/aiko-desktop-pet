@@ -5,9 +5,9 @@ from __future__ import annotations
 import tempfile
 import unittest
 import uuid
-from unittest.mock import patch
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import patch
 
 from aiko_pet.application.active_time import ActiveSessionClock
 from aiko_pet.application.session import PetSessionRestorer

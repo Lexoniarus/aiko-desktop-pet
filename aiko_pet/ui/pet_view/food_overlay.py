@@ -9,8 +9,8 @@ from __future__ import annotations
 import tkinter as tk
 
 from ...desktop.geometry import FOOT_BASELINE
+from ...pet.animation.character import FRAME_WIDTH, AnimationClip, AnimationFrame
 from ...pet.animation.item_assets import ItemCatalog
-from ...pet.animation.character import AnimationClip, AnimationFrame, FRAME_WIDTH
 
 
 class FoodOverlay:

@@ -6,7 +6,6 @@ import ast
 import unittest
 from pathlib import Path
 
-
 from aiko_pet.desktop import (
     geometry,
 )
@@ -36,7 +35,6 @@ class NativeDesktopLayoutTests(unittest.TestCase):
             name.startswith(("tkinter", "ctypes", "subprocess", "win32"))
             for name in imports
         ))
-
 
     def test_pet_animation_and_motion_have_no_native_imports(self) -> None:
         for relative in (

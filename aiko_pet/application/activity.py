@@ -2,25 +2,24 @@
 
 from __future__ import annotations
 
-from ..pet.balance import BALANCE
-
 import time
 from dataclasses import dataclass
 from typing import Callable
 
+from ..pet.balance import BALANCE
+from ..pet.food import FoodActivity
+from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.adaptive_models import Observation
-from ..pet.mind import PetMind
-from ..pet.mind.workload_events import WorkloadEventDetector
 from ..pet.mind.catalog import Reaction
-from ..pet.food import FoodActivity
-from ..pet.state import PetState
-from .food_activity import FoodActivityHistory
+from ..pet.mind.workload_events import WorkloadEventDetector
 from ..pet.routine import TimeContext, context_at
-from .settings import PetSettings
+from ..pet.state import PetState
 from ..telemetry import workload_intensity
-from .ports import ComputerObservation
 from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
+from .food_activity import FoodActivityHistory
+from .ports import ComputerObservation
+from .settings import PetSettings
 
 
 @dataclass(frozen=True, slots=True)
@@ -52,7 +51,7 @@ class ActivityCoordinator:
         settings: PetSettings,
         mind: PetMind,
         adaptive: AdaptiveRoutine,
-        voice: WorkloadEventDetector,
+        workload_events: WorkloadEventDetector,
         monitor: ComputerObservation,
         callbacks: ActivityCallbacks,
         *,
@@ -62,7 +61,7 @@ class ActivityCoordinator:
         self.settings = settings
         self.mind = mind
         self.adaptive = adaptive
-        self.workload_events = voice
+        self.workload_events = workload_events
         self.monitor = monitor
         self.callbacks = callbacks
         self._clock = clock
@@ -82,7 +81,7 @@ class ActivityCoordinator:
         if not enabled:
             self.mind.set_situation(None)
 
-    def interrupt_nap(self) -> bool:
+    def should_interrupt_nap(self) -> bool:
         behaviour = self.adaptive.current
         return bool(
             self.settings.observe_computer
@@ -130,7 +129,7 @@ class ActivityCoordinator:
             auto_routine=self.settings.auto_routine,
             allow_bedtime=self.allow_bedtime(),
             allow_nap=self.allow_nap(),
-            interrupt_nap=self.interrupt_nap(),
+            interrupt_nap=self.should_interrupt_nap(),
             effort=self.live_effort(),
             food_activity=self.observed_food_activity(),
         )
@@ -190,7 +189,7 @@ class ActivityCoordinator:
             auto_routine=self.settings.auto_routine,
             allow_bedtime=self.allow_bedtime(),
             allow_nap=self.allow_nap(),
-            interrupt_nap=self.interrupt_nap(),
+            interrupt_nap=self.should_interrupt_nap(),
             effort=machine_load,
             food_activity=self.food_activity_history.current_food_activity(now),
         )
@@ -242,7 +241,7 @@ class ActivityCoordinator:
             and now - self.callbacks.last_spoken()
             >= BALANCE.integer("activity", "voice_quiet_seconds")
         ):
-            reaction = self.mind.computer_event(
+            reaction = self.mind.select_computer_reaction(
                 event,
                 self.state,
                 context,

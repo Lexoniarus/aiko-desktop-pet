@@ -6,11 +6,11 @@ thresholds live in adaptive_policy.py. Consumers import each owning module.
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 import math
 from datetime import datetime
 
+from ..balance import BALANCE
+from ..routine import TimeContext, context_at
 from .adaptive_models import (
     DAILY_DECAY,
     MAX_OBSERVATION_SECONDS,
@@ -24,7 +24,6 @@ from .adaptive_policy import (
     determine_activity_mode,
     determine_sleep_options,
 )
-from ..routine import TimeContext, context_at
 
 
 class AdaptiveRoutine:

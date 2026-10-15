@@ -2,20 +2,18 @@
 
 from __future__ import annotations
 
-from ...pet.content import GERMAN_TEXT
-
 import sys
 import tkinter as tk
 from functools import partial
 from typing import Callable
 
-from ..view_models.contracts import StatusSnapshot
-from .hover_contracts import HoverActions
-from ..view_models.contracts import HoverAnchor, HoverSnapshot
-from .hover_geometry import HoverGeometry, Rect
+from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
-from .toolbar_details import ToolbarDetails
 from ..common.window_drag import WindowDrag
+from ..view_models.contracts import HoverAnchor, HoverSnapshot, StatusSnapshot
+from .hover_contracts import HoverActions
+from .hover_geometry import HoverGeometry, Rect
+from .toolbar_details import ToolbarDetails
 
 
 class ActionToolbar:

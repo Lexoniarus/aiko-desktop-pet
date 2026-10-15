@@ -9,22 +9,22 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.balance import parse_balance
 from aiko_pet.pet.catalog_validation import load_json
 from aiko_pet.pet.content import parse_text_catalog
+from aiko_pet.pet.food import FoodState
 from aiko_pet.pet.food_catalog import parse_food_catalog
 from aiko_pet.pet.mind.catalog import DialogueBook, Line
+from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.routine_catalog import parse_routine_catalog
 from aiko_pet.pet.state import PetState
-from aiko_pet.pet.food import FoodState
-from aiko_pet.pet.routine import context_at
-from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.telemetry import ComputerSnapshot
-from aiko_pet.ui.view_models.projections import project_hover
 from aiko_pet.ui.view_models.food_models import food_choices
+from aiko_pet.ui.view_models.projections import project_hover
 
 DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
 

@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Literal, Mapping, TypeAlias, cast
+
 from .catalog_validation import load_json, object_fields
 
 FoodId: TypeAlias = str

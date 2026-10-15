@@ -6,12 +6,11 @@ contains no localized sentences, Tkinter or presentation dependencies.
 
 from __future__ import annotations
 
-from .balance import BALANCE
-
 from collections.abc import Sequence
 from enum import StrEnum
 from typing import Protocol
 
+from .balance import BALANCE
 from .routine import TimeContext
 
 

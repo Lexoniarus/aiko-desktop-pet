@@ -2,10 +2,11 @@
 
 import unittest
 
-from aiko_pet.pet.animation.animation import FrameClock, SpriteSelection
 from aiko_pet.pet.animation.ambient import AmbientDirector
+from aiko_pet.pet.animation.animation import FrameClock, SpriteSelection
 from aiko_pet.pet.animation.priority import (
-    AnimationPriority, choose_animation_priority,
+    AnimationPriority,
+    choose_animation_priority,
 )
 
 

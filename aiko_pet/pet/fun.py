@@ -11,7 +11,6 @@ import math
 from dataclasses import dataclass
 
 from .balance import BALANCE
-
 from .value_rules import clamp_need_value
 
 

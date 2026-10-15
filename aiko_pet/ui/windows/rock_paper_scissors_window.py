@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from ...pet.content import GERMAN_TEXT
-
 import sys
 import tkinter as tk
 from collections.abc import Callable
@@ -11,9 +9,10 @@ from functools import partial
 
 from ...asset_paths import GAME_HANDS_DIR
 from ...games.rock_paper_scissors import Move, Score
-from .rock_paper_scissors_sequence import RockPaperScissorsSequence
+from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
 from ..common.window_drag import WindowDrag
+from .rock_paper_scissors_sequence import RockPaperScissorsSequence
 
 _BG = "#D7DCE8"
 _TEXT = "#414B5F"

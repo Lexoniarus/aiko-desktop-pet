@@ -2,16 +2,15 @@
 
 from __future__ import annotations
 
-from ...pet.content import GERMAN_TEXT
-
 import sys
 import tkinter as tk
 from functools import partial
 from typing import Callable
 
-from ..view_models.food_models import FoodChoice, FoodChoiceId
+from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
 from ..common.window_drag import WindowDrag, bounded_position
+from ..view_models.food_models import FoodChoice, FoodChoiceId
 
 
 class FoodMenu:

@@ -4,14 +4,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..pet.mind.adaptive import AdaptiveRoutine
-from ..pet.mind import PetMind
-from ..pet.mind.catalog import Reaction
 from ..pet.care_result import CareEffect, CareResult
-from ..pet.state import PetState
+from ..pet.mind import PetMind
+from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind.catalog import Reaction
 from ..pet.routine import TimeContext, context_at
-from .commands import CareCommand
+from ..pet.state import PetState
 from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
+from .commands import CareCommand
 
 
 @dataclass(frozen=True, slots=True)

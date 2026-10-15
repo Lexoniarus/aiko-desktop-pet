@@ -12,12 +12,10 @@ import tempfile
 import time
 from pathlib import Path
 
-from tools.media_crop import CapturedFrame, capture_screen, save_sequence
-
 from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
-
+from tools.media_crop import CapturedFrame, capture_screen, save_sequence
 
 MEDIA_DIR = Path(__file__).resolve().parents[1] / "vorschau"
 
@@ -33,6 +31,7 @@ def capture(pet: DesktopPet) -> CapturedFrame:
     """Capture all visible Tk windows before applying per-view framing."""
     present(pet)
     return capture_screen(pet.root)
+
 
 def assert_hand_fits(game: object) -> None:
     """Fail a capture if an actual hand is cropped or the slot changes size."""

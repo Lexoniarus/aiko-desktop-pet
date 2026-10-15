@@ -6,14 +6,13 @@ values into movement conditions. It never selects a dialogue or Tk sprite.
 
 from __future__ import annotations
 
-from ..pet.balance import BALANCE
-
 import random
 import time
 from dataclasses import dataclass
 from typing import Callable, Protocol
 
 from ..pet.animation.character import FRAME_WIDTH
+from ..pet.balance import BALANCE
 from ..pet.movement import WalkConditions, WalkController
 from ..pet.movement.contracts import HorizontalTrack
 

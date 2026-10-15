@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 from dataclasses import dataclass
+
+from ..balance import BALANCE
 
 
 @dataclass(frozen=True, slots=True)

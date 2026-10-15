@@ -3,8 +3,8 @@
 import unittest
 from datetime import datetime
 
-from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory, Observation
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory, Observation
 from aiko_pet.pet.mind.adaptive_policy import (
     ActivityMode,
     SleepOptions,

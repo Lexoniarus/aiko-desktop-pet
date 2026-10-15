@@ -9,7 +9,6 @@ from __future__ import annotations
 import unittest
 from importlib import import_module
 
-
 OWNERS = {
     "aiko_pet.pet.mind.mind": ("PetMind",),
     "aiko_pet.pet.mind.catalog": ("DialogueBook",),

@@ -1,7 +1,8 @@
 """Windows button state is polled without global keyboard monitoring."""
 
 import unittest
-from aiko_pet.desktop.global_input import GlobalMouseClicks, VK_LBUTTON, VK_RBUTTON
+
+from aiko_pet.desktop.global_input import VK_LBUTTON, VK_RBUTTON, GlobalMouseClicks
 
 
 class GlobalClickTests(unittest.TestCase):

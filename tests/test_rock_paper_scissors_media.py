@@ -10,7 +10,6 @@ import struct
 import unittest
 from pathlib import Path
 
-
 MEDIA = Path(__file__).resolve().parents[1] / "vorschau"
 STILLS = (
     "Aiko_RPS_Aufgedeckt.png",

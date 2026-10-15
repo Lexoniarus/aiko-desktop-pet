@@ -2,20 +2,27 @@
 
 from __future__ import annotations
 
-from aiko_pet.ui.view_models.care_text import format_care_response
-
-from aiko_pet.infrastructure.pet_codec import (
-    decode_food_state, decode_pet_state, encode_pet_state,
-)
-
 import unittest
 from datetime import datetime
 
+from aiko_pet.infrastructure.pet_codec import (
+    decode_food_state,
+    decode_pet_state,
+    encode_pet_state,
+)
 from aiko_pet.pet.food import (
-    FOOD_BALANCE, FOOD_CATALOG, FoodActivity, FoodId, FoodState,
-    advance_food, eat_food, hunger_activity_multiplier, is_repeated_food,
+    FOOD_BALANCE,
+    FOOD_CATALOG,
+    FoodActivity,
+    FoodId,
+    FoodState,
+    advance_food,
+    eat_food,
+    hunger_activity_multiplier,
+    is_repeated_food,
 )
 from aiko_pet.pet.state import PetState
+from aiko_pet.ui.view_models.care_text import format_care_response
 
 
 def clock(hour: int = 8) -> float:
@@ -26,15 +33,23 @@ class FoodPolicyTests(unittest.TestCase):
     def test_all_ten_foods_have_distinct_immediate_and_delayed_effects(self) -> None:
         self.assertEqual(
             set(FOOD_CATALOG),
-            {"onigiri", "sandwich", "taiyaki", "apple", "dango",
-             "donut", "cookie", "melonpan", "cupcake", "dorayaki"},
+            {
+                "onigiri",
+                "sandwich",
+                "taiyaki",
+                "apple",
+                "dango",
+                "donut",
+                "cookie",
+                "melonpan",
+                "cupcake",
+                "dorayaki",
+            },
         )
         immediate = {
             profile.instant_satiety_points for profile in FOOD_CATALOG.values()
         }
-        reserves = {
-            profile.digest_reserve_minutes for profile in FOOD_CATALOG.values()
-        }
+        reserves = {profile.digest_reserve_minutes for profile in FOOD_CATALOG.values()}
         self.assertEqual(len(immediate), 10)
         self.assertEqual(len(reserves), 10)
         self.assertGreater(
@@ -55,7 +70,9 @@ class FoodPolicyTests(unittest.TestCase):
     def test_hunger_accelerates_when_no_food_is_eaten(self) -> None:
         normal = advance_food(FoodState(), 100, 2, sleeping=False)
         hungry = advance_food(
-            FoodState(awake_hours_since_last_food=6), 100, 2,
+            FoodState(awake_hours_since_last_food=6),
+            100,
+            2,
             sleeping=False,
         )
         self.assertLess(hungry.satiety, normal.satiety)
@@ -64,15 +81,24 @@ class FoodPolicyTests(unittest.TestCase):
     def test_both_real_activity_axes_increase_hunger_but_are_bounded(self) -> None:
         calm = advance_food(FoodState(), 100, 2, sleeping=False)
         cpu = advance_food(
-            FoodState(), 100, 2, sleeping=False,
+            FoodState(),
+            100,
+            2,
+            sleeping=False,
             activity=FoodActivity(hardware_load=1),
         )
         typing = advance_food(
-            FoodState(), 100, 2, sleeping=False,
+            FoodState(),
+            100,
+            2,
+            sleeping=False,
             activity=FoodActivity(user_input_activity=1),
         )
         both = advance_food(
-            FoodState(), 100, 2, sleeping=False,
+            FoodState(),
+            100,
+            2,
+            sleeping=False,
             activity=FoodActivity(1, 1),
         )
         self.assertLess(cpu.satiety, calm.satiety)
@@ -95,9 +121,12 @@ class FoodPolicyTests(unittest.TestCase):
         self.assertTrue(outcomes[2].repetitive)
         self.assertEqual(outcomes[0].satiety, outcomes[2].satiety)
         self.assertLess(outcomes[2].mood_change, outcomes[0].mood_change)
-        self.assertFalse(is_repeated_food(
-            food, "sandwich",
-        ))
+        self.assertFalse(
+            is_repeated_food(
+                food,
+                "sandwich",
+            )
+        )
 
     def test_snack_does_not_reset_hours_since_main_meal(self) -> None:
         old = FoodState(
@@ -112,7 +141,10 @@ class FoodPolicyTests(unittest.TestCase):
 
     def test_sleep_is_gentle_and_never_invents_user_activity(self) -> None:
         slept = advance_food(
-            FoodState(), 75, 8, sleeping=True,
+            FoodState(),
+            75,
+            8,
+            sleeping=True,
             activity=FoodActivity(1, 1),
         )
         self.assertAlmostEqual(slept.satiety, 75 - 8 * 1.4, places=3)
@@ -121,7 +153,9 @@ class FoodPolicyTests(unittest.TestCase):
     def test_rejected_overfeeding_leaves_entire_state_untouched(self) -> None:
         pet = PetState(satiety=99)
         before = encode_pet_state(pet)
-        reply = format_care_response(pet.interact("feed", now=clock(), food_id="sandwich"))
+        reply = format_care_response(
+            pet.interact("feed", now=clock(), food_id="sandwich")
+        )
         self.assertIn("satt", reply)
         self.assertEqual(encode_pet_state(pet), before)
 
@@ -168,13 +202,15 @@ class FoodPolicyTests(unittest.TestCase):
         pet = PetState(satiety=65, updated_at=day)
         lowest = 100.0
         consumed: dict[int, FoodId] = {
-            0: "onigiri", 3: "apple", 6: "sandwich",
-            9: "taiyaki", 12: "onigiri",
+            0: "onigiri",
+            3: "apple",
+            6: "sandwich",
+            9: "taiyaki",
+            12: "onigiri",
         }
         for hour in range(16):
             if hour in consumed:
-                pet.interact("feed", now=day + hour * 3600,
-                             food_id=consumed[hour])
+                pet.interact("feed", now=day + hour * 3600, food_id=consumed[hour])
             pet.advance(day + (hour + 1) * 3600, auto_routine=False)
             lowest = min(lowest, pet.satiety)
         self.assertGreaterEqual(lowest, 25)

@@ -8,19 +8,22 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ...application.settings import SettingKey
-from .action_toolbar import ActionToolbar
-from .game_speech import GameSpeech
 from ...games.rock_paper_scissors import Score
-from .food_menu import FoodMenu
-from ..view_models.food_models import FoodChoice, FoodChoiceId
-from .rock_paper_scissors_window import RockPaperScissorsWindow
-from .hover_contracts import HoverActions
-from ..view_models.contracts import HoverAnchor, HoverSnapshot
-from .settings_contracts import SettingsActions
-from ..view_models.contracts import SettingsSnapshot
-from .settings_window import SettingsWindow
-from ..view_models.contracts import StatusSnapshot
 from ..common.skin import AikoSkin
+from ..view_models.contracts import (
+    HoverAnchor,
+    HoverSnapshot,
+    SettingsSnapshot,
+    StatusSnapshot,
+)
+from ..view_models.food_models import FoodChoice, FoodChoiceId
+from .action_toolbar import ActionToolbar
+from .food_menu import FoodMenu
+from .game_speech import GameSpeech
+from .hover_contracts import HoverActions
+from .rock_paper_scissors_window import RockPaperScissorsWindow
+from .settings_contracts import SettingsActions
+from .settings_window import SettingsWindow
 
 
 @dataclass(frozen=True, slots=True)

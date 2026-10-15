@@ -2,16 +2,14 @@
 
 from __future__ import annotations
 
-from aiko_pet.ui.view_models.care_text import format_care_response
-
-from aiko_pet.infrastructure.pet_codec import encode_pet_state
-
 import unittest
 from datetime import datetime
 
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.care_actions import plan_care_action
-from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
+from aiko_pet.ui.view_models.care_text import format_care_response
 
 
 def stamp(hour: int = 16) -> float:

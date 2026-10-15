@@ -7,18 +7,17 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-
-from aiko_pet.ui.view_models.projections import (
-    project_hover, project_settings, project_status,
-)
 from aiko_pet.telemetry import ComputerSnapshot
-
+from aiko_pet.ui.view_models.projections import (
+    project_hover,
+    project_settings,
+    project_status,
+)
 
 ROOT = Path(__file__).resolve().parents[1] / "aiko_pet"
 

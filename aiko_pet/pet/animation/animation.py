@@ -5,10 +5,10 @@ This module does not depend on Tkinter or the desktop window manager.
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 import math
 from dataclasses import dataclass
+
+from ..balance import BALANCE
 
 FRAME_COUNTS: dict[str, int] = dict.fromkeys(
     (

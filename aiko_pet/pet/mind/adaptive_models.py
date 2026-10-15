@@ -6,12 +6,11 @@ No raw utilization samples, window titles or user activity logs.
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 import math
 from dataclasses import dataclass, field
 from typing import Any
 
+from ..balance import BALANCE
 from .adaptive_policy import ActivityMode
 
 SLOTS = 7 * 24

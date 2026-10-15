@@ -8,7 +8,8 @@ from unittest.mock import MagicMock
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.desktop.animation_runtime import (
-    AnimationRuntimePorts, DesktopAnimationRuntime,
+    AnimationRuntimePorts,
+    DesktopAnimationRuntime,
 )
 from aiko_pet.desktop.visual_observation import DesktopVisualObservation
 from aiko_pet.desktop.walk_runtime import WalkDriver

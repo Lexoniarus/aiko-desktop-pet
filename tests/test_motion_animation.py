@@ -4,13 +4,13 @@ import unittest
 from dataclasses import replace
 from unittest.mock import patch
 
+from aiko_pet.desktop.geometry import TaskbarTrack
 from aiko_pet.pet.animation.animation import (
     FrameClock,
     SpriteSelection,
     choose_passive_animation,
 )
 from aiko_pet.pet.movement import WalkConditions, WalkController
-from aiko_pet.desktop.geometry import TaskbarTrack
 
 
 class FrameClockTests(unittest.TestCase):

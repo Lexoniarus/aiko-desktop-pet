@@ -6,56 +6,56 @@ gaze sprites and exposes her care actions in a mouse-hover toolbar.
 
 from __future__ import annotations
 
-from .pet.content import GERMAN_TEXT
-
 import time
 import tkinter as tk
 from tkinter import font as tkfont
 from tkinter import messagebox
 
-from .application.session import PetSessionRestorer
-from .application.settings import SettingKey
-from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
-from .desktop.runtime import DesktopRuntime, DesktopTickPorts
-from .desktop.persistence import DesktopPersistence
-from .desktop.maintenance import DesktopMaintenance
-from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
+from .application.active_time import ActiveSessionClock
+from .application.activity import ActivityCallbacks
+from .application.assembly import assemble_application
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.contact import ContactCoordinator, ContactPorts
-from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
-from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation
-from .application.assembly import assemble_application
-from .application.activity import ActivityCallbacks
 from .application.game_experience import experience_from_rock_paper_scissors
-from .application.active_time import ActiveSessionClock
-from .pet.food import FoodId
-from .infrastructure.active_time import active_uptime_seconds
-from .ui.windows.hover_ui import HoverUi, HoverUiPorts
-from .ui.windows.game_speech import GameSpeech
-from .ui.view_models.read_models import DesktopPresentation
-from .ui.view_models.food_models import food_choices
+from .application.session import PetSessionRestorer
+from .application.settings import SettingKey
 from .config import load_env_file
+from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation
+from .desktop.attention_runtime import AttentionRuntimePorts, DesktopAttentionRuntime
+from .desktop.farewell import FarewellSequence
 from .desktop.global_input import (
-    idle_seconds_windows, mouse_buttons_down_windows,
+    idle_seconds_windows,
+    mouse_buttons_down_windows,
 )
 from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
-from .desktop.farewell import FarewellSequence
+from .desktop.maintenance import DesktopMaintenance
+from .desktop.persistence import DesktopPersistence
+from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
+from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
+from .desktop.runtime import DesktopRuntime, DesktopTickPorts
+from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
+from .desktop.window_stack import WindowStack
+from .infrastructure.active_time import active_uptime_seconds
+from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.character_mind import make_aiko_mind
+from .infrastructure.hardware.monitor import ActivityMonitor
+from .infrastructure.persistence import StateStore
+from .pet.content import GERMAN_TEXT
+from .pet.food import FoodId
 from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
-from .ui.pet_view.reaction_player import ReactionPlayer
-from .ui.pet_view.attention_presenter import AttentionPresenter, AttentionViewPorts
-from .desktop.attention_runtime import DesktopAttentionRuntime, AttentionRuntimePorts
-from .ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 from .ui.pet_view.action_playback import ActionPlayback
-from .infrastructure.character_assets import load_character_catalog
-from .infrastructure.persistence import StateStore
-from .infrastructure.hardware.monitor import ActivityMonitor
-from .ui.pet_view.desktop_window import DesktopWindow, MAGENTA
-from .desktop.window_stack import WindowStack
+from .ui.pet_view.attention_presenter import AttentionPresenter, AttentionViewPorts
+from .ui.pet_view.care_presenter import CarePresenter, CareViewPorts
+from .ui.pet_view.desktop_window import MAGENTA, DesktopWindow
+from .ui.pet_view.reaction_player import ReactionPlayer
 from .ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
+from .ui.view_models.food_models import food_choices
+from .ui.view_models.read_models import DesktopPresentation
+from .ui.windows.game_speech import GameSpeech
+from .ui.windows.hover_ui import HoverUi, HoverUiPorts
 
 
 class DesktopPet:

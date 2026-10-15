@@ -9,10 +9,10 @@ from __future__ import annotations
 import time
 from typing import Callable
 
-from ..pet.mind.adaptive import AdaptiveRoutine
-from ..pet.state import PetState
 from ..application.settings import PetSettings
 from ..infrastructure.persistence import StateStore
+from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.state import PetState
 
 AUTOSAVE_SECONDS = 55
 

@@ -9,8 +9,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
-from ..application.attention import AttentionCoordinator
 from ..application.activity import TimeProgress
+from ..application.attention import AttentionCoordinator
 from ..pet.animation.idle_emote import choose_idle_emote
 from ..pet.routine import TimeContext
 from ..ui.pet_view.attention_presenter import AttentionPresenter

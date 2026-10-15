@@ -6,15 +6,17 @@ import unittest
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.infrastructure.animation_timing import load_timing_policy
 from aiko_pet.pet.animation.timing import (
-    AnimationTimingPolicy,
     VIRTUAL_CLIPS,
+    AnimationTimingPolicy,
     parse_timing_policy,
 )
 
 
 class AnimationTimingBoundaryTests(unittest.TestCase):
     def test_timing_policy_is_owned_by_pet_domain(self) -> None:
-        self.assertEqual(AnimationTimingPolicy.__module__, "aiko_pet.pet.animation.timing")
+        self.assertEqual(
+            AnimationTimingPolicy.__module__, "aiko_pet.pet.animation.timing"
+        )
 
     def test_pure_validation_matches_both_loaders(self) -> None:
         raw = json.loads(

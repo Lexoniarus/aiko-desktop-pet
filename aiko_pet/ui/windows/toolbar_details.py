@@ -5,8 +5,8 @@ from __future__ import annotations
 import tkinter as tk
 from typing import Callable
 
-from ..view_models.contracts import StatusSnapshot
 from ..common.skin import AikoSkin
+from ..view_models.contracts import StatusSnapshot
 
 
 class ToolbarDetails:

@@ -6,10 +6,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, TypeAlias
 
-from ...pet.content import GERMAN_TEXT
-from ...pet.balance import BALANCE
-from ...pet.food import FOOD_CATALOG, FOOD_MENU_ORDER, FoodId
 from ...pet.animation.item_assets import ItemCatalog
+from ...pet.balance import BALANCE
+from ...pet.content import GERMAN_TEXT
+from ...pet.food import FOOD_CATALOG, FOOD_MENU_ORDER, FoodId
 
 FoodChoiceId: TypeAlias = FoodId | Literal["energy_drink"]
 

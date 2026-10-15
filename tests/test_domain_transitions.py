@@ -2,26 +2,25 @@
 
 from __future__ import annotations
 
-from aiko_pet.infrastructure.pet_codec import encode_pet_state
-
 import unittest
 from dataclasses import FrozenInstanceError
 from datetime import datetime
 
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.care_actions import (
     CareTransition,
     plan_care_action,
 )
-from aiko_pet.pet.state import PetState
 from aiko_pet.pet.friendship import (
     calculate_friendship_reward,
 )
-from aiko_pet.pet.need_decay import calculate_need_decay
 from aiko_pet.pet.lifecycle import (
     calculate_daily_routine,
     plan_pet_time,
 )
+from aiko_pet.pet.need_decay import calculate_need_decay
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 
 START = datetime(2026, 10, 12, 12).timestamp()
 

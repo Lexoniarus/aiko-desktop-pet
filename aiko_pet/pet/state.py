@@ -2,18 +2,15 @@
 
 from __future__ import annotations
 
-from .balance import BALANCE
-
 import time
 from dataclasses import dataclass, field
 
+from .balance import BALANCE
 from .care_actions import (
     plan_care_action,
     resolve_care_time,
 )
-from .friendship import (
-    calculate_friendship_reward,
-)
+from .care_result import CareResult
 from .food import (
     FOOD_CATALOG,
     FoodActivity,
@@ -22,19 +19,21 @@ from .food import (
     advance_food,
     eat_food,
 )
+from .friendship import (
+    calculate_friendship_reward,
+)
 from .fun import GameExperience, advance_fun, calculate_game_session_fun
+from .lifecycle import (
+    calculate_daily_routine,
+    plan_pet_time,
+)
 from .mood import MoodFactors, calculate_mood_target, reflect_care_in_mood
 from .need_decay import (
     NeedLevels,
     calculate_need_decay,
 )
-from .lifecycle import (
-    calculate_daily_routine,
-    plan_pet_time,
-)
 from .routine import TimeContext, context_at, due_meal
 from .status_hints import MoodHint, choose_mood_hint
-from .care_result import CareResult
 from .value_rules import clamp_need_value
 
 

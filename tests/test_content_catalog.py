@@ -7,12 +7,16 @@ import unittest
 from pathlib import Path
 
 from aiko_pet.pet.content import (
-    GERMAN_TEXT, load_packaged_text_catalog, parse_text_catalog,
+    GERMAN_TEXT,
+    load_packaged_text_catalog,
+    parse_text_catalog,
 )
-from aiko_pet.pet.status_hints import MoodHint
 from aiko_pet.pet.mind.catalog import EMOTIONS
+from aiko_pet.pet.status_hints import MoodHint
 from aiko_pet.ui.view_models.text_de import (
-    format_emotion_label, format_sleep_label, observation_disabled_text,
+    format_emotion_label,
+    format_sleep_label,
+    observation_disabled_text,
 )
 
 
@@ -61,7 +65,8 @@ class TextCatalogTests(unittest.TestCase):
 
     def test_game_reactions_are_backed_by_german_json(self) -> None:
         from aiko_pet.ui.windows.rock_paper_scissors_text_de import (
-            countdown_line, welcome_line,
+            countdown_line,
+            welcome_line,
         )
 
         messages = GERMAN_TEXT.messages

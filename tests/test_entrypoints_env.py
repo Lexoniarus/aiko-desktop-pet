@@ -23,10 +23,15 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
         from aiko_pet.gui import main
 
         order = []
-        with (patch("aiko_pet.gui.load_env_file", side_effect=lambda: order.append("env")),
-              patch("aiko_pet.gui.DesktopPet") as pet):
+        with (
+            patch(
+                "aiko_pet.gui.load_env_file", side_effect=lambda: order.append("env")
+            ),
+            patch("aiko_pet.gui.DesktopPet") as pet,
+        ):
             pet.side_effect = lambda: order.append("pet") or Mock(
-                run=lambda: order.append("run"))
+                run=lambda: order.append("run")
+            )
             main()
         self.assertEqual(order, ["env", "pet", "run"])
 
@@ -40,11 +45,14 @@ class LaunchAndEnvironmentTests(unittest.TestCase):
             env_file = Path(folder) / ".env"
             env_file.write_text(
                 "# comment\nAIKO_SAVE_PATH='some folder/state.json'\n"
-                "IRRELEVANT_TOKEN=should-not-load\n", encoding="utf-8")
+                "IRRELEVANT_TOKEN=should-not-load\n",
+                encoding="utf-8",
+            )
             with patch.dict(os.environ, {}, clear=True):
                 load_env_file(env_file)
-                self.assertEqual(os.environ.get("AIKO_SAVE_PATH"),
-                                 "some folder/state.json")
+                self.assertEqual(
+                    os.environ.get("AIKO_SAVE_PATH"), "some folder/state.json"
+                )
                 self.assertNotIn("IRRELEVANT_TOKEN", os.environ)
 
     def test_existing_environment_wins_over_dotenv(self) -> None:

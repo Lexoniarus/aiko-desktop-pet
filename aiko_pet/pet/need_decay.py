@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from .balance import BALANCE
-
 from dataclasses import dataclass
 from typing import Protocol
 
+from .balance import BALANCE
 from .food import FoodActivity, FoodProgress, FoodState, advance_food
 from .fun import advance_fun
 from .mood import MoodFactors, advance_mood, calculate_mood_target

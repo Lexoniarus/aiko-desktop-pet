@@ -6,22 +6,20 @@ to present the returned decisions; the inbox retains deferred notifications.
 
 from __future__ import annotations
 
-from ..pet.balance import BALANCE
-
 import random
 from dataclasses import dataclass
 
-
+from ..pet.balance import BALANCE
 from ..pet.mind import PetMind
-from ..pet.mind.workload_events import WorkloadEventDetector
 from ..pet.mind.catalog import Reaction
-from ..pet.state import PetState
+from ..pet.mind.workload_events import WorkloadEventDetector
 from ..pet.routine import TimeContext
-from .settings import PetSettings
-from .ports import ComputerReadings
-from .events import IncomingNotification
-from .router import ApplicationRouter
+from ..pet.state import PetState
 from .care_requests import choose_care_request
+from .events import IncomingNotification
+from .ports import ComputerReadings
+from .router import ApplicationRouter
+from .settings import PetSettings
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,7 +38,7 @@ class AttentionCoordinator:
         state: PetState,
         settings: PetSettings,
         mind: PetMind,
-        voice: WorkloadEventDetector,
+        workload_events: WorkloadEventDetector,
         monitor: ComputerReadings,
         router: ApplicationRouter,
         *,
@@ -49,7 +47,7 @@ class AttentionCoordinator:
         self.state = state
         self.settings = settings
         self.mind = mind
-        self.workload_events = voice
+        self.workload_events = workload_events
         self.monitor = monitor
         self.router = router
         self.last_spoken = -1000.0
@@ -230,9 +228,9 @@ class AttentionCoordinator:
         )
         event = self.workload_events.maybe_event(self.monitor.latest(), now)
         reaction = (
-            self.mind.computer_event(event, self.state, context, now)
+            self.mind.select_computer_reaction(event, self.state, context, now)
             if event is not None
-            else self.mind.spontaneous_event(self.state, context, now)
+            else self.mind.select_spontaneous_reaction(self.state, context, now)
         )
         return SpontaneousChoice(True, reaction)
 

@@ -2,10 +2,10 @@
 
 import tempfile
 import time
+import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-import tkinter as tk
 
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore

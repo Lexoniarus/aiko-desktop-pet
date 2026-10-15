@@ -6,14 +6,13 @@ without mutating the pet, click history or the desktop presentation.
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 from dataclasses import dataclass
 from typing import Literal
 
-from .adaptive_models import Behaviour
-from ..state import PetState
+from ..balance import BALANCE
 from ..routine import TimeContext
+from ..state import PetState
+from .adaptive_models import Behaviour
 
 ClickButton = Literal["left", "right"]
 ClickEvent = Literal[

@@ -13,8 +13,8 @@ from aiko_pet.pet.mind.catalog import (
     Line,
     Reaction,
 )
-from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.mind.work_episode import WorkEpisodeMemory
+from aiko_pet.pet.routine import context_at
 
 
 class DialogueModulesTests(unittest.TestCase):

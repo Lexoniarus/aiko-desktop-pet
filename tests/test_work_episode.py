@@ -13,8 +13,9 @@ def scene(
     confidence: bool = False, expectation: float | None = None,
 ) -> Behaviour:
     # The observed activity mode is a test fixture, never a made-up history.
-    from aiko_pet.pet.mind.adaptive_policy import ActivityMode
     from typing import cast
+
+    from aiko_pet.pet.mind.adaptive_policy import ActivityMode
 
     return Behaviour(
         mode=cast(ActivityMode, mode), strain=35.0, effort=0.8,

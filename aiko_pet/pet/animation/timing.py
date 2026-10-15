@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from ..catalog_validation import object_fields
-
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Mapping
 
+from ..catalog_validation import object_fields
 from .animation import FRAME_COUNTS
 
 REGULAR_CLIPS = frozenset(FRAME_COUNTS) - {"look"}

@@ -11,8 +11,8 @@ from aiko_pet.application.care_requests import choose_care_request
 from aiko_pet.application.controller import CareController
 from aiko_pet.application.router import ApplicationRouter
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState

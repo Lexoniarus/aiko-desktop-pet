@@ -6,11 +6,10 @@ sample hardware, render text, infer applications or send telemetry anywhere.
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 import random
 
 from ...telemetry import ComputerSnapshot, workload_intensity
+from ..balance import BALANCE
 
 
 class WorkloadEventDetector:

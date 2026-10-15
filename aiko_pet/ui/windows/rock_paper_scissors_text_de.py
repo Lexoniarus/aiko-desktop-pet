@@ -5,7 +5,6 @@ from __future__ import annotations
 from ...games.rock_paper_scissors import Outcome, Round
 from ...pet.content import GERMAN_TEXT
 
-
 _WELCOME = tuple(GERMAN_TEXT.format(f"rps.welcome.{i}") for i in range(3))
 _WIN = tuple(GERMAN_TEXT.format(f"rps.win.{i}") for i in range(3))
 _LOSS = tuple(GERMAN_TEXT.format(f"rps.loss.{i}") for i in range(3))

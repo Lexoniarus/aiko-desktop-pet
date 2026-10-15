@@ -8,6 +8,7 @@ are independent of Tkinter and can be unit-tested without a display.
 from __future__ import annotations
 
 import sys
+
 from .geometry import TaskbarTrack
 
 # Windows shell discovery constants; geometry lives in desktop.geometry.

@@ -5,7 +5,9 @@ from __future__ import annotations
 import unittest
 
 from aiko_pet.application.settings import (
-    DesktopDisplaySettings, PetBehaviorSettings, PetSettings,
+    DesktopDisplaySettings,
+    PetBehaviorSettings,
+    PetSettings,
 )
 
 

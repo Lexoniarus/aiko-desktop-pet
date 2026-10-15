@@ -5,12 +5,11 @@ Policies calculate transitions and time steps; PetState owns every mutation.
 
 from __future__ import annotations
 
-from .balance import BALANCE
-
 import math
 from dataclasses import dataclass
 from typing import Protocol
 
+from .balance import BALANCE
 from .routine import TimeContext, context_at
 
 MAX_CATCHUP_SECONDS = BALANCE.integer("simulation", "maximum_catchup_seconds")

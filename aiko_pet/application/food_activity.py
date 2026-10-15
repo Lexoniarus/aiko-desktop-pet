@@ -11,7 +11,6 @@ from collections import deque
 from dataclasses import dataclass
 
 from ..pet.balance import BALANCE
-
 from ..pet.food import FoodActivity
 
 

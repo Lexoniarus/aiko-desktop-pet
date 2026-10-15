@@ -7,7 +7,6 @@ import time
 from typing import Any
 
 from ..pet.balance import BALANCE
-from ..pet.state import PetState
 from ..pet.food import FOOD_BALANCE, FOOD_CATALOG, FoodState
 from ..pet.friendship import (
     CARE_FRIENDSHIP_GAIN,
@@ -16,7 +15,8 @@ from ..pet.friendship import (
     LEGACY_REWARD_ACTIONS,
 )
 from ..pet.routine import MEAL_NAMES
-from ..pet.value_rules import clamp_need_value, bounded_number, clamp_saved_time
+from ..pet.state import PetState
+from ..pet.value_rules import bounded_number, clamp_need_value, clamp_saved_time
 
 
 def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:

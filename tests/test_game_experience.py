@@ -2,21 +2,21 @@
 
 from __future__ import annotations
 
-from aiko_pet.infrastructure.pet_codec import encode_pet_state
-
 import unittest
 from datetime import datetime
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.controller import CareController
 from aiko_pet.application.game_experience import (
-    GameExperienceCoordinator, experience_from_rock_paper_scissors,
+    GameExperienceCoordinator,
+    experience_from_rock_paper_scissors,
 )
 from aiko_pet.application.router import ApplicationRouter
 from aiko_pet.games.rock_paper_scissors import Score
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.fun import GameExperience
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
 
 

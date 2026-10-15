@@ -6,10 +6,10 @@ No AI or sprite synthesis is used; all cue names refer to verified CC0 PNGs.
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 from dataclasses import dataclass
 from typing import Literal
+
+from ..balance import BALANCE
 
 CUE_KINDS = frozenset({"emote", "text"})
 EMOTES = frozenset(

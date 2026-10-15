@@ -9,10 +9,10 @@ from __future__ import annotations
 import sys
 import tkinter as tk
 from typing import Protocol
-from ...desktop.taskbar import locate_primary_taskbar
-from ...pet.content import GERMAN_TEXT
 
-from ...pet.animation.character import FRAME_WIDTH, FRAME_HEIGHT
+from ...desktop.taskbar import locate_primary_taskbar
+from ...pet.animation.character import FRAME_HEIGHT, FRAME_WIDTH
+from ...pet.content import GERMAN_TEXT
 
 MAGENTA = "#ff00ff"
 

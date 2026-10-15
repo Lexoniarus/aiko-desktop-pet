@@ -22,44 +22,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install Ruff quality tool
         run: python -m pip install ruff==0.13.2
-      - name: Run Ruff lint checks
-        run: python -m ruff check aiko_pet tests main.py
-      - name: Enforce PEP 8 line lengths in refactored domain
-        run: |
-          python -m ruff check --select E501 \
-            aiko_pet/pet/state.py aiko_pet/pet/friendship.py \
-            aiko_pet/pet/value_rules.py aiko_pet/pet/care_actions.py \
-            aiko_pet/pet/need_decay.py aiko_pet/pet/lifecycle.py \
-            aiko_pet/pet/routine.py \
-            tests/test_friendship_policy.py tests/test_care_actions.py \
-            tests/test_pet_lifecycle.py tests/test_domain_transitions.py \
-            tests/test_ui_projection_parity.py \
-            tests/test_persistence_package.py aiko_pet/infrastructure/persistence.py
-      - name: Enforce PEP 8 line lengths in adaptive and dialogue modules
-        run: |
-          python -m ruff check --select E501 \
-            aiko_pet/pet/mind/adaptive.py \
-            aiko_pet/pet/mind/adaptive_policy.py \
-            aiko_pet/pet/mind/adaptive_models.py \
-            aiko_pet/pet/mind/mind.py aiko_pet/pet/mind/catalog.py \
-            aiko_pet/pet/mind/click_policy.py \
-            aiko_pet/pet/mind/workload_events.py \
-            aiko_pet/pet/mind/work_episode.py \
-            aiko_pet/pet/mind/reaction_sequence.py \
-            aiko_pet/ui/pet_view/reaction_player.py \
-            aiko_pet/pet/animation/animation.py aiko_pet/pet/animation/gaze.py \
-            aiko_pet/pet/movement/controller.py \
-            aiko_pet/pet/movement/random_walk.py aiko_pet/desktop/geometry.py \
-            aiko_pet/desktop/taskbar.py aiko_pet/desktop/global_input.py \
-            aiko_pet/desktop/window_stack.py \
-            tests/test_adaptive_policy.py tests/test_dialogue_events.py \
-            tests/test_spontaneous_events.py \
-            tests/test_pet_mind_catalogue.py tests/test_computer_voice_modules.py \
-            tests/test_desktop_package_layout.py \
-            tests/test_desktop_runtime.py tests/test_desktop_preferences.py \
-            tests/test_desktop_focus_timers.py \
-            tests/test_final_architecture_audit.py tests/test_dependency_graph.py \
-            tests/test_public_repository.py
+      - name: Enforce PEP 8, imports and naming across code and tests
+        run: python -m ruff check aiko_pet tests main.py tools
       - name: Install static typing tool
         run: python -m pip install mypy==1.18.2
       - name: Type-check new headless core policies
@@ -67,8 +31,6 @@ jobs:
           python -m mypy --strict --follow-imports=silent \
             aiko_pet/pet/mind/adaptive_policy.py aiko_pet/pet/mind/click_policy.py \
             aiko_pet/pet/movement/controller.py aiko_pet/ui/pet_view/reaction_player.py
-      - name: Enforce PEP 8 line lengths across application and tools
-        run: python -m ruff check --select E501 aiko_pet main.py tools
       - name: Install whole-application typing dependencies
         run: python -m pip install mypy==1.18.2 pyright==1.1.414 Pillow==11.3.0
       - name: Enforce strict typing across the entire application
@@ -129,12 +91,13 @@ jobs:
             "test_final_architecture_audit.py",
             "test_dependency_graph.py",
             "test_public_repository.py",
-            "test_computer_voice_modules.py",
+            "test_workload_events.py",
             "test_application_core.py",
             "test_adaptive_models.py",
             "test_ui_architecture.py",
             "test_ui_projection_parity.py",
             "test_desktop_runtime.py",
+            "test_desktop_walk_runtime.py",
             "test_desktop_preferences.py",
             "test_desktop_focus_timers.py",
             "test_desktop_persistence.py",

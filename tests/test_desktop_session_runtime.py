@@ -3,15 +3,16 @@
 from __future__ import annotations
 
 import unittest
-from unittest.mock import MagicMock, patch
 from typing import cast
+from unittest.mock import MagicMock, patch
 
 from aiko_pet.application.activity import ActivityCoordinator, TimeProgress
 from aiko_pet.desktop.attention_runtime import DesktopAttentionRuntime
 from aiko_pet.desktop.maintenance import DesktopMaintenance
 from aiko_pet.desktop.persistence import DesktopPersistence
 from aiko_pet.desktop.session_runtime import (
-    DesktopSessionRuntime, SessionRuntimePorts,
+    DesktopSessionRuntime,
+    SessionRuntimePorts,
 )
 from aiko_pet.pet.routine import TimeContext, context_at
 

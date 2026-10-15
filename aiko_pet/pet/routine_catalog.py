@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, TypeAlias
+
 from .catalog_validation import load_json, object_fields
 
 DailySlot: TypeAlias = tuple[int, str, str, str | None]

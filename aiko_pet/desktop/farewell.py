@@ -6,10 +6,10 @@ simulation state, saved games or application shutdown implementation.
 
 from __future__ import annotations
 
-from ..pet.content import GERMAN_TEXT
-
 import math
 from typing import Callable
+
+from ..pet.content import GERMAN_TEXT
 
 
 class FarewellSequence:

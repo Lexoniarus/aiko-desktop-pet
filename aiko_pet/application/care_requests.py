@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from ..pet.balance import BALANCE
-
 from ..pet.state import PetState
 
 

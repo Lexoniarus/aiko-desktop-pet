@@ -2,10 +2,6 @@
 
 from __future__ import annotations
 
-from aiko_pet.pet.care_actions import plan_care_action
-
-from aiko_pet.infrastructure.pet_codec import decode_pet_state
-
 import json
 import random
 import tempfile
@@ -13,16 +9,18 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
+from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
-from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
+from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.infrastructure.pet_codec import decode_pet_state
+from aiko_pet.pet.care_actions import plan_care_action
 from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
 from aiko_pet.pet.fun import GameExperience
+from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
+from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import MoodHint
-from aiko_pet.ui.view_models.text_de import mood_hint_text, format_emotion_label
-from aiko_pet.pet.routine import context_at
-from aiko_pet.application.settings import PetSettings
-from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.ui.view_models.text_de import format_emotion_label, mood_hint_text
 
 
 def require_reaction(value: Reaction | None) -> Reaction:
@@ -46,12 +44,19 @@ class AffectionNeedTests(unittest.TestCase):
 
     def test_completed_play_is_fun_and_company_not_affection(self):
         state = PetState(
-            affection=17, mood=35, social=18, energy=50,
-            satiety=50, fun=25,
+            affection=17,
+            mood=35,
+            social=18,
+            energy=50,
+            satiety=50,
+            fun=25,
         )
         state.record_game_experience(
             GameExperience(
-                "rock_paper_scissors", 3, successful_units=2, setback_units=1,
+                "rock_paper_scissors",
+                3,
+                successful_units=2,
+                setback_units=1,
             ),
             now=stamp(),
         )
@@ -89,8 +94,13 @@ class AffectionNeedTests(unittest.TestCase):
 
     def test_affection_slowly_declines_during_sleep_without_affecting_trust(self):
         start = stamp()
-        state = PetState(updated_at=start, affection=30, friendship=63,
-                         sleeping=True, sleep_origin="manual")
+        state = PetState(
+            updated_at=start,
+            affection=30,
+            friendship=63,
+            sleeping=True,
+            sleep_origin="manual",
+        )
         state.advance(start + 2 * 3600, effort=1.0)
         self.assertAlmostEqual(state.affection, 29.5, places=2)
         self.assertEqual(state.friendship, 63)
@@ -119,8 +129,12 @@ class AffectionNeedTests(unittest.TestCase):
 
 class MeaningfulFriendshipTests(unittest.TestCase):
     def test_care_on_an_already_full_primary_need_does_not_farm_trust(self):
-        for action, value in (("feed", "satiety"), ("pet", "affection"),
-                              ("talk", "social"), ("play", "fun")):
+        for action, value in (
+            ("feed", "satiety"),
+            ("pet", "affection"),
+            ("talk", "social"),
+            ("play", "fun"),
+        ):
             with self.subTest(action=action):
                 state = PetState(energy=60)
                 setattr(state, value, 100)
@@ -170,10 +184,12 @@ class MeaningfulFriendshipTests(unittest.TestCase):
         start = stamp()
         state = PetState(affection=0, social=0, mood=0, satiety=0, energy=65)
         for i in range(20):
-            for action, attribute in (("feed", "satiety"),
-                                      ("pet", "affection"),
-                                      ("talk", "social"),
-                                      ("play", "fun")):
+            for action, attribute in (
+                ("feed", "satiety"),
+                ("pet", "affection"),
+                ("talk", "social"),
+                ("play", "fun"),
+            ):
                 setattr(state, attribute, 20)
                 state.energy = 65
                 state.interact(action, now=start + 16 * 60 * i)
@@ -186,22 +202,42 @@ class MeaningfulFriendshipTests(unittest.TestCase):
 
     def test_old_save_preserves_existing_relationship_and_needs(self):
         with tempfile.TemporaryDirectory() as tmp:
-            store = StateStore(Path(tmp)/"pet.json")
-            store.path.write_text(json.dumps({
-                "version": 1,
-                "pet": {"satiety": 30, "mood": 60, "energy": 40,
-                        "social": 24, "friendship": 54, "updated_at": stamp(),
-                        "care_last_rewards": {"pet": stamp()-300,
-                                              "sleep": stamp()-400}},
-                "settings": {"scale": 2, "toolbar_x": 120, "toolbar_y": 70},
-            }), encoding="utf8")
+            store = StateStore(Path(tmp) / "pet.json")
+            store.path.write_text(
+                json.dumps({
+                    "version": 1,
+                    "pet": {
+                        "satiety": 30,
+                        "mood": 60,
+                        "energy": 40,
+                        "social": 24,
+                        "friendship": 54,
+                        "updated_at": stamp(),
+                        "care_last_rewards": {
+                            "pet": stamp() - 300,
+                            "sleep": stamp() - 400,
+                        },
+                    },
+                    "settings": {"scale": 2, "toolbar_x": 120, "toolbar_y": 70},
+                }),
+                encoding="utf8",
+            )
             session_data = store.load_session(now=stamp())
             state, settings = session_data.state, session_data.settings
-            self.assertEqual((state.satiety, state.mood, state.energy,
-                              state.social, state.affection, state.friendship),
-                             (30, 60, 40, 24, 75, 54))
-            self.assertEqual((settings.scale, settings.toolbar_x,
-                              settings.toolbar_y), (2, 120, 70))
+            self.assertEqual(
+                (
+                    state.satiety,
+                    state.mood,
+                    state.energy,
+                    state.social,
+                    state.affection,
+                    state.friendship,
+                ),
+                (30, 60, 40, 24, 75, 54),
+            )
+            self.assertEqual(
+                (settings.scale, settings.toolbar_x, settings.toolbar_y), (2, 120, 70)
+            )
             self.assertIn("sleep", state.care_last_rewards)
             store.save(state, settings)
             session_data = store.load_session(now=stamp())
@@ -211,17 +247,16 @@ class MeaningfulFriendshipTests(unittest.TestCase):
 
     def test_new_relationship_metadata_survives_save(self):
         with tempfile.TemporaryDirectory() as tmp:
-            store = StateStore(Path(tmp)/"pet.json")
+            store = StateStore(Path(tmp) / "pet.json")
             state = PetState(updated_at=stamp(), affection=35)
             state.interact("pet", now=stamp())
             state.social = 35
-            state.interact("talk", now=stamp()+1)
+            state.interact("talk", now=stamp() + 1)
             store.save(state, PetSettings())
-            session_data = store.load_session(now=stamp()+1)
+            session_data = store.load_session(now=stamp() + 1)
             restored, _ = session_data.state, session_data.settings
             self.assertEqual(restored.care_types_today, ["pet", "talk"])
-            self.assertEqual(restored.care_last_rewards,
-                             state.care_last_rewards)
+            self.assertEqual(restored.care_last_rewards, state.care_last_rewards)
             self.assertEqual(restored.friendship, state.friendship)
             self.assertAlmostEqual(restored.affection, state.affection, places=2)
             raw = store.path.read_text(encoding="utf8")
@@ -231,7 +266,8 @@ class MeaningfulFriendshipTests(unittest.TestCase):
     def test_corrupt_daily_action_list_is_sanitized(self):
         state = decode_pet_state({
             "care_types_today": ["pet", "pet", "other", 10, "talk"],
-            "affection": 12, "friendship_gained_today": 999,
+            "affection": 12,
+            "friendship_gained_today": 999,
         })
         self.assertEqual(state.care_types_today, ["pet", "talk"])
         self.assertEqual(state.friendship_gained_today, FRIENDSHIP_DAILY_CAP)
@@ -249,28 +285,40 @@ class AffectionDialogueTests(unittest.TestCase):
             format_emotion_label("seeking_affection"),
             "Stimmung: Wünscht Zuwendung",
         )
-        self.assertEqual(require_reaction(self.mind.click("left", state, self.context, 50)).event,
-                         "click_affection_low")
-        self.assertEqual(self.mind.care_event(
-            plan_care_action(
-                state, "pet", now=self.context.local.timestamp(),
-            ).result,
-            self.mind.observe_care(state, self.context, 55),
-        ),
-                         "pet_needs_affection")
-        self.assertEqual(self.mind.care_event(
-            plan_care_action(
-                state, "talk", now=self.context.local.timestamp(),
-            ).result,
-            self.mind.observe_care(state, self.context, 55),
-        ),
-                         "talk")
+        self.assertEqual(
+            require_reaction(self.mind.click("left", state, self.context, 50)).event,
+            "click_affection_low",
+        )
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "pet",
+                    now=self.context.local.timestamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 55),
+            ),
+            "pet_needs_affection",
+        )
+        self.assertEqual(
+            self.mind.care_event(
+                plan_care_action(
+                    state,
+                    "talk",
+                    now=self.context.local.timestamp(),
+                ).result,
+                self.mind.observe_care(state, self.context, 55),
+            ),
+            "talk",
+        )
 
     def test_existing_social_shortage_still_has_own_priority(self):
         state = PetState(social=10, affection=10)
         self.assertEqual(self.mind.emotion(state, 50), "lonely")
-        self.assertEqual(require_reaction(self.mind.click("left", state, self.context, 50)).event,
-                         "click_lonely")
+        self.assertEqual(
+            require_reaction(self.mind.click("left", state, self.context, 50)).event,
+            "click_lonely",
+        )
 
     def test_feeling_cared_for_can_make_aiko_more_at_ease(self):
         state = PetState(affection=95, friendship=55, mood=73, social=78)
@@ -287,25 +335,51 @@ class AffectionDialogueTests(unittest.TestCase):
 
     def test_affection_spontaneous_hint_has_long_cooldown(self):
         state = PetState(affection=8)
-        self.assertEqual(require_reaction(self.mind.spontaneous_event(
-            state, self.context, 60)).event, "affection_low")
-        self.assertEqual(require_reaction(self.mind.spontaneous_event(
-            state, self.context, 61)).event, "idle")
-        self.assertEqual(require_reaction(self.mind.spontaneous_event(
-            state, self.context, 60 + 26 * 60)).event, "affection_low")
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 60)
+            ).event,
+            "affection_low",
+        )
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 61)
+            ).event,
+            "idle",
+        )
+        self.assertEqual(
+            require_reaction(
+                self.mind.select_spontaneous_reaction(state, self.context, 60 + 26 * 60)
+            ).event,
+            "affection_low",
+        )
 
     def test_dialogues_all_use_existing_sprites_and_grounded_topics(self):
-        lines = [line for line in DialogueBook.from_file().lines
-                 if line.id.startswith("v012-")]
+        lines = [
+            line
+            for line in DialogueBook.from_file().lines
+            if line.id.startswith("v012-")
+        ]
         self.assertGreaterEqual(len(lines), 12)
-        self.assertEqual({line.event for line in lines},
-                         {"affection_low", "click_affection_low",
-                          "pet_needs_affection", "click_at_ease"})
-        self.assertTrue(all(line.animation in {
-            "idle", "waiting", "review", "failed", "jumping", "waving"
-        } for line in lines))
-        self.assertTrue(all("CPU" not in line.text and "Academy" not in line.text
-                            for line in lines))
+        self.assertEqual(
+            {line.event for line in lines},
+            {
+                "affection_low",
+                "click_affection_low",
+                "pet_needs_affection",
+                "click_at_ease",
+            },
+        )
+        self.assertTrue(
+            all(
+                line.animation
+                in {"idle", "waiting", "review", "failed", "jumping", "waving"}
+                for line in lines
+            )
+        )
+        self.assertTrue(
+            all("CPU" not in line.text and "Academy" not in line.text for line in lines)
+        )
 
 
 if __name__ == "__main__":

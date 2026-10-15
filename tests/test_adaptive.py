@@ -1,7 +1,5 @@
 """Regression and long-running deterministic simulations of Aiko's rhythm."""
 
-from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
-
 import ctypes
 import json
 import tempfile
@@ -10,13 +8,14 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from aiko_pet.pet.mind.adaptive_models import SLOTS, AdaptiveMemory, Observation
-from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
-from aiko_pet.infrastructure.character_mind import make_aiko_mind
-from aiko_pet.pet.state import PetState
-from aiko_pet.pet.routine import context_at
-from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.desktop.global_input import idle_seconds_windows
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
+from aiko_pet.pet.mind.adaptive_models import SLOTS, AdaptiveMemory, Observation
+from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 
 
 def local_stamp(day, hour, minute=0):

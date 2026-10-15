@@ -5,20 +5,19 @@ The authored dialogue catalogue and its validation live in pet.mind.catalog.
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 import random
 from collections import deque
 from dataclasses import dataclass
 
+from ..balance import BALANCE
 from ..care_result import CareEffect, CareResult
+from ..routine import TimeContext
+from ..state import PetState
 from .adaptive_models import Behaviour
 from .catalog import DialogueBook, Reaction
 from .click_policy import ClickButton, choose_click_reaction
-from ..state import PetState
-from ..routine import TimeContext
-from .work_episode import WorkEpisodeMemory
 from .cursor_attention import CursorAttention
+from .work_episode import WorkEpisodeMemory
 
 
 @dataclass(frozen=True, slots=True)
@@ -253,7 +252,7 @@ class PetMind:
             "care_requests", "post_care_quiet_seconds"
         )
 
-    def computer_event(
+    def select_computer_reaction(
         self,
         event: str,
         state: PetState,
@@ -358,7 +357,7 @@ class PetMind:
             return "low_mood"
         return self._choose_idle_topic(state, context)
 
-    def spontaneous_event(
+    def select_spontaneous_reaction(
         self,
         state: PetState,
         context: TimeContext,
@@ -369,7 +368,3 @@ class PetMind:
             return None
         event = self._select_spontaneous_event(state, context, now)
         return self.select_reaction(event, state, context, now)
-
-
-# Compatible constructor/class identity for existing Aiko integrations.
-AikoMind = PetMind

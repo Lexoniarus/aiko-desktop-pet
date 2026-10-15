@@ -6,8 +6,8 @@ import threading
 import time
 from typing import Protocol
 
-from .sampler import HardwareSampler
 from ...telemetry import ComputerSnapshot
+from .sampler import HardwareSampler
 
 
 class Sampler(Protocol):

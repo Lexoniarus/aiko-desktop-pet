@@ -2,17 +2,22 @@
 
 from __future__ import annotations
 
-from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
-
 import unittest
 from datetime import datetime
 
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.fun import (
-    FUN_BALANCE, GAME_FUN_PROFILES, GameExperience, advance_fun,
-    calculate_game_session_fun, completed_unit_reward_fraction,
+    FUN_BALANCE,
+    GAME_FUN_PROFILES,
+    GameExperience,
+    advance_fun,
+    calculate_game_session_fun,
+    completed_unit_reward_fraction,
 )
 from aiko_pet.pet.mood import (
-    MoodFactors, advance_mood, calculate_mood_target,
+    MoodFactors,
+    advance_mood,
+    calculate_mood_target,
 )
 from aiko_pet.pet.state import PetState
 

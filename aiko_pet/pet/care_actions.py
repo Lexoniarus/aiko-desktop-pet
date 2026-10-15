@@ -6,12 +6,12 @@ need, sleep, meal and friendship mutations. Display text belongs to the UI.
 
 from __future__ import annotations
 
-from .balance import BALANCE
-
 import time
 from dataclasses import dataclass, replace
 from typing import Protocol, cast
 
+from .balance import BALANCE
+from .care_result import CARE_ACTIONS, CareAction, CareEffect, CareResult
 from .food import (
     DEFAULT_FOOD_ID,
     FOOD_CATALOG,
@@ -23,7 +23,6 @@ from .friendship import CARE_PRIMARY_NEED
 from .need_decay import NeedLevels
 from .routine import context_at
 from .value_rules import clamp_need_value
-from .care_result import CARE_ACTIONS, CareAction, CareEffect, CareResult
 
 
 class CareValues(Protocol):

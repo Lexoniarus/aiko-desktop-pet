@@ -103,7 +103,7 @@ objects directly. Snapshot reads must cross the owner-thread boundary or use
 an immutable, thread-safe cache. Do not expose application names, window
 titles or unapproved personal activity details.
 
-## Pending architecture cleanup
+## Current architecture boundaries
 
 - Desktop scheduling, state serialization and ordered shutdown now have
   dedicated services under `desktop/`. The runtime consumes named

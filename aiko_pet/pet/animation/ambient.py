@@ -7,11 +7,10 @@ directional sprites without hijacking mouse tracking or dialogue scheduling.
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 import random
 from collections.abc import Callable, Sequence
 
+from ..balance import BALANCE
 from .animation import SpriteSelection, choose_passive_animation
 
 _DIRECTIONS = (2, 3, 4, 12, 13, 14)

@@ -6,14 +6,12 @@ sentences. Status wording is owned by this view-model module.
 
 from __future__ import annotations
 
-from ...pet.balance import BALANCE
-
 from ...application.read_snapshot import PetReadSnapshot
+from ...pet.balance import BALANCE
 from ...pet.content import GERMAN_TEXT
 from ...pet.routine import MEAL_NAMES, TimeContext, due_meal
 from ...pet.status_hints import MoodHint, choose_mood_hint
 from ...telemetry import ComputerSnapshot, workload_intensity
-
 
 WEEKDAYS = tuple(GERMAN_TEXT.format(f"weekday.{i}") for i in range(7))
 

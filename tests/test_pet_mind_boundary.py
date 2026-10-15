@@ -4,8 +4,8 @@ import unittest
 from pathlib import Path
 
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
-from aiko_pet.pet.mind.cursor_attention import CursorAttention
 from aiko_pet.pet.mind.catalog import CATALOGUE
+from aiko_pet.pet.mind.cursor_attention import CursorAttention
 
 
 class PetMindBoundaryTests(unittest.TestCase):

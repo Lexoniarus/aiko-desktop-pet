@@ -9,9 +9,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..games.rock_paper_scissors import Score
-from ..pet.mind.adaptive import AdaptiveRoutine
-from ..pet.mind import PetMind
 from ..pet.fun import GameExperience
+from ..pet.mind import PetMind
+from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.state import PetState
 from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
 

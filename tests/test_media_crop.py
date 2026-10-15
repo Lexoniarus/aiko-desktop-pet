@@ -9,7 +9,9 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 from tools.media_crop import (
-    CapturedFrame, framed_bounds, save_sequence,
+    CapturedFrame,
+    framed_bounds,
+    save_sequence,
 )
 
 

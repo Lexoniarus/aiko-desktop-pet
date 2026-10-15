@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from ...pet.content import GERMAN_TEXT
-
 import sys
 import time
 import tkinter as tk
@@ -11,10 +9,11 @@ from functools import partial
 from typing import Callable
 
 from ...application.settings import SettingKey
-from .settings_contracts import SettingsActions
-from ..view_models.contracts import SettingsSnapshot
+from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
 from ..common.window_drag import WindowDrag, bounded_position
+from ..view_models.contracts import SettingsSnapshot
+from .settings_contracts import SettingsActions
 
 
 class SettingsWindow:

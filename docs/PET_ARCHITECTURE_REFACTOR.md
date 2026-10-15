@@ -95,6 +95,15 @@ pass; no functional GUI, asset, care or save regression cases were removed.
 `SessionInputs` and `advance_session_time()` now define one live-time contract;
 closed-time restoration and version-one save data retain their existing rules.
 
+The convention pass now enforces Ruff E/F/I/N/W across application code,
+tests, entrypoints and tools, including whitespace, blank lines and
+88-character lines. Exact foreign Win32 names remain explicit exceptions.
+Selected reactions and nap permission queries have precise method names;
+workload-event and desktop-walk regression suites use their current owners.
+All 767 tests and both type checkers pass. Normalized application ASTs,
+70 care/progression comparisons and the embedded PowerShell harness tokens
+confirm that this pass preserves logic and saved values.
+
 Review follow-up: care returns one language-neutral effect used by the mind,
 application and presenter. Pre-care tone/context is captured before mutation;
 acceptance and consumption are not guessed by consumers. Pet/nutrition save

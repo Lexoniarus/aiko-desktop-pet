@@ -6,12 +6,11 @@ uses only effect ports and never imports Tk widgets or speech presenters.
 
 from __future__ import annotations
 
-from ..pet.balance import BALANCE
-
 import time
 from dataclasses import dataclass, replace
 from typing import Callable
 
+from ..pet.balance import BALANCE
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction

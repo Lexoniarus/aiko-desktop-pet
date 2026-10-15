@@ -6,10 +6,10 @@ or persisted memory is accessed by these functions.
 
 from __future__ import annotations
 
-from ..balance import BALANCE
-
 from dataclasses import dataclass
 from typing import Literal
+
+from ..balance import BALANCE
 
 ActivityMode = Literal[
     "working",

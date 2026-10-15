@@ -3,14 +3,15 @@
 import unittest
 from unittest.mock import Mock
 
-from aiko_pet.application.attention import AttentionCoordinator, SpontaneousChoice
 from aiko_pet.application.activity import TimeProgress
+from aiko_pet.application.attention import AttentionCoordinator, SpontaneousChoice
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.desktop.attention_runtime import (
-    AttentionRuntimePorts, DesktopAttentionRuntime,
+    AttentionRuntimePorts,
+    DesktopAttentionRuntime,
 )
-from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.attention_presenter import AttentionPresenter
 
 
