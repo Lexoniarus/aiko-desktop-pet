@@ -1,16 +1,22 @@
-"""Foreground pickup/eat/put-down execution; presentation reports identified events."""
+"""Execute identified object phases; World, mind and presentation keep ownership."""
 
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Literal
 
 from ..pet.animation.character import PlaybackEvent
 from ..pet.consumption import ConsumptionOrigin
+from ..pet.mind.object_decisions import ObjectUseDecision
+from ..pet.mind.object_intentions import ObjectGoal
 from ..world.contracts import ObjectState
 from ..world.state import WorldOperationError, WorldState
-
-InteractionPhase = Literal["idle", "pick_up", "put_down", "eat"]
+from .object_feedback import (
+    FeedbackKey,
+    FeedbackReceipt,
+    InteractionPhase,
+    ObjectEvent,
+    ObjectFeedback,
+)
 
 
 class ObjectInteractionCoordinator:
@@ -20,45 +26,99 @@ class ObjectInteractionCoordinator:
         consume: Callable[[str, str, ConsumptionOrigin], bool],
         eligible: Callable[[str], bool], ground_x: Callable[[str], float],
         completed: Callable[[str, bool], None],
+        identify: Callable[[str], str | None],
+        decide: Callable[[str, ConsumptionOrigin], ObjectUseDecision],
+        feedback: Callable[[ObjectFeedback], None], cancel_feedback: Callable[[], None],
+        now: Callable[[], float], inspection_seconds: float,
     ) -> None:
         self.world = world
-        self._play = play
-        self._stop = stop
-        self._select_item = select_item
-        self._consume = consume
-        self._eligible = eligible
-        self._ground_x = ground_x
-        self._completed = completed
+        self._play, self._stop, self._select_item = play, stop, select_item
+        self._consume, self._eligible = consume, eligible
+        self._ground_x, self._completed = ground_x, completed
+        self._identify, self._decide = identify, decide
+        self._feedback, self._cancel_feedback = feedback, cancel_feedback
+        self._now, self._inspection_seconds = now, inspection_seconds
         self.phase: InteractionPhase = "idle"
         self.instance_id: str | None = None
         self._origin = ConsumptionOrigin.AUTONOMOUS
         self._action_id = -1
-        self._sequence = 0
+        self._sequence = self._phase_id = 0
         self._interaction_id = ""
+        self._identity: str | None = None
         self._queued: Callable[[], None] | None = None
         self._seen: set[PlaybackEvent] = set()
         self._effects: set[tuple[int, str]] = set()
+        self._cue_done = self._animation_done = self._arrived = False
+        self._inspect_at = 0.0
+        self._decision = ObjectUseDecision(False, "unrecognized")
 
     @property
     def active(self) -> bool:
         return self.phase != "idle"
 
-    def _start(self, instance_id: str, origin: ConsumptionOrigin) -> None:
-        self.instance_id = instance_id
-        self._origin = origin
+    @property
+    def approaching(self) -> bool:
+        return self.phase in ("notice", "approach")
+
+    @property
+    def feedback_key(self) -> FeedbackKey:
+        return FeedbackKey(self._interaction_id, self._phase_id)
+
+    def _start(self, token: str, origin: ConsumptionOrigin) -> None:
+        self.instance_id, self._origin = token, origin
         self._sequence += 1
         self._interaction_id = f"interaction_{self._sequence}"
         self._queued = None
         self._seen.clear()
         self._effects.clear()
+        self._identity = None
+        self._arrived = False
+
+    def _set_phase(self, phase: InteractionPhase) -> None:
+        self.phase = phase
+        self._phase_id += 1
+        self._cue_done = self._animation_done = False
+        # Invalidate the prior receipt before cancellation calls back.
+        self._cancel_feedback()
+
+    def _announce(self, event: ObjectEvent) -> None:
+        assert self.instance_id is not None
+        self._feedback(ObjectFeedback(self.feedback_key, event,
+                                      self.instance_id, self._identity))
+
+    def begin_goal(self, goal: ObjectGoal) -> bool:
+        if self.active:
+            return False
+        self._start(goal.token, ConsumptionOrigin.AUTONOMOUS)
+        self._identity = goal.identity
+        self._set_phase("notice")
+        self._announce(
+            "object_return" if goal.purpose == "consume" else "object_notice",
+        )
+        self.update()
+        return True
+
+    def arrive(self) -> None:
+        if self.phase == "approach":
+            self._arrived = True
+            self.update()
 
     def begin_pickup(self, instance_id: str) -> bool:
         if self.active or not self._eligible(instance_id):
             return False
         self._start(instance_id, ConsumptionOrigin.AUTONOMOUS)
-        self.phase = "pick_up"
-        self._action_id = self._play("pick_up")
+        self._pick_up()
         return True
+
+    def _pick_up(self) -> None:
+        assert self.instance_id is not None
+        if not self._eligible(self.instance_id):
+            self._finish(False)
+            self._stop()
+            return
+        self._set_phase("pick_up")
+        self._action_id = self._play("pick_up")
+        self._announce("object_pick_up")
 
     def offer_on_release(self, instance_id: str) -> bool:
         if self.active or not self._eligible(instance_id):
@@ -67,19 +127,36 @@ class ObjectInteractionCoordinator:
         self.world.accept_handover_on_release(instance_id,
                                               expected_revision=item.revision)
         self._start(instance_id, ConsumptionOrigin.HANDOVER)
+        self._identity = self._identify(instance_id)
         self._select_item(item.definition_id)
-        self._begin_eating()
+        self._inspect("object_handover")
+        self.update()
         return True
 
+    def _inspect(self, event: ObjectEvent = "object_inspect") -> None:
+        self._set_phase("inspect")
+        self._inspect_at = self._now()
+        self._announce(event)
+
+    def receive_feedback(self, receipt: FeedbackReceipt) -> None:
+        if not self.active or receipt.key != self.feedback_key or self._cue_done:
+            return
+        self._cue_done = True
+        if not receipt.completed and self.phase not in ("put_down", "finish"):
+            self.interrupt(lambda: None)
+
     def interrupt(self, action: Callable[[], None]) -> None:
-        """Only unconsumed acquired items need animated recovery."""
         if self.phase == "put_down":
             self._queued = action
+            self._cue_done = True
+            self._cancel_feedback()
             return
         if self.instance_id is not None:
             item = self.world.get(self.instance_id)
             if item.state == ObjectState.PET_HELD:
                 self._queued = action
+                self._cue_done = True
+                self._cancel_feedback()
                 if self.phase != "pick_up":
                     self._put_down()
                 return
@@ -93,19 +170,19 @@ class ObjectInteractionCoordinator:
                 or event.clip_id != self.phase or event in self._seen):
             return
         self._seen.add(event)
-        instance_id = self.instance_id
-        assert instance_id is not None
+        token = self.instance_id
+        assert token is not None
         attach = event.action_id, "attach_object"
         detach = event.action_id, "detach_object"
         if (self.phase == "pick_up" and "attach_object" in event.events
                 and attach not in self._effects):
-            if not self._eligible(instance_id):
+            if not self._eligible(token):
                 self._finish(False)
                 self._stop()
                 return
-            item = self.world.get(instance_id)
+            item = self.world.get(token)
             try:
-                self.world.collect_resting(instance_id, expected_revision=item.revision)
+                self.world.collect_resting(token, expected_revision=item.revision)
             except WorldOperationError:
                 self._finish(False)
                 self._stop()
@@ -114,31 +191,74 @@ class ObjectInteractionCoordinator:
             self._effects.add(attach)
         if (self.phase == "put_down" and "detach_object" in event.events
                 and detach not in self._effects):
-            item = self.world.get(instance_id)
-            self.world.put_down(instance_id, self._ground_x(instance_id),
+            item = self.world.get(token)
+            self.world.put_down(token, self._ground_x(token),
                                 expected_revision=item.revision)
             self._select_item(None)
             self._effects.add(detach)
-        if not event.finished:
-            return
-        if self.phase == "pick_up":
-            if self._queued is not None:
-                self._put_down()
-            else:
-                self._begin_eating()
-        elif self.phase == "put_down":
-            queued, self._queued = self._queued, None
-            self._finish(False)
-            self._stop()
-            if queued is not None:
-                queued()
-        elif self.phase == "eat":
-            self._finish(True)
-            self._stop()
+        if event.finished:
+            self._animation_done = True
+        self.update()
+
+    def update(self) -> None:
+        """Advance only confirmed prerequisites; injected active time owns dwell."""
+        for _ in range(12):
+            previous = self.phase
+            token = self.instance_id
+            if token is None:
+                return
+            if self.phase == "notice" and self._cue_done:
+                self._set_phase("approach")
+                self._announce("object_approach")
+            elif self.phase == "approach" and self._arrived and self._cue_done:
+                self._pick_up()
+            elif self.phase == "pick_up" and self._animation_done and self._cue_done:
+                if self._queued is not None:
+                    self._put_down()
+                else:
+                    self._inspect()
+            elif (self.phase == "inspect" and self._cue_done
+                  and self._now() - self._inspect_at >= self._inspection_seconds):
+                self._identity = self._identify(token)
+                self._set_phase("recognize")
+                self._announce(
+                    "object_recognized" if self._identity else "object_unknown",
+                )
+            elif self.phase == "recognize" and self._cue_done:
+                self._decision = self._decide(token, self._origin)
+                self._set_phase("decide")
+                self._announce(
+                    "object_want" if self._decision.consume else "object_later",
+                )
+            elif self.phase == "decide" and self._cue_done:
+                if self._decision.consume:
+                    self._begin_eating()
+                else:
+                    self._put_down()
+            elif (self.phase in ("eat", "put_down") and self._animation_done
+                  and self._cue_done):
+                if self.phase == "put_down":
+                    queued, self._queued = self._queued, None
+                    self._finish(False)
+                    self._stop()
+                    if queued is not None:
+                        queued()
+                else:
+                    self._set_phase("finish")
+                    self._announce("object_finished")
+            elif self.phase == "finish" and self._cue_done:
+                self._finish(True)
+                self._stop()
+            if self.phase == previous:
+                return
 
     def _put_down(self) -> None:
-        self.phase = "put_down"
+        self._set_phase("put_down")
         self._action_id = self._play("put_down")
+        if self._queued is None:
+            self._announce("object_put_down")
+        else:
+            self._cue_done = True
 
     def _begin_eating(self) -> None:
         assert self.instance_id is not None
@@ -147,18 +267,21 @@ class ObjectInteractionCoordinator:
             self._finish(False)
             self._stop()
             return
-        if not self._consume(self._interaction_id, self.instance_id, self._origin):
+        decision = self._decide(self.instance_id, self._origin)
+        if not decision.consume or not self._consume(
+            self._interaction_id, self.instance_id, self._origin,
+        ):
             self._put_down()
             return
-        self.phase = "eat"
+        self._set_phase("eat")
         self._action_id = self._play("eat")
+        self._announce("object_consuming")
 
     def _finish(self, consumed: bool) -> None:
-        instance_id = self.instance_id
-        self.phase = "idle"
+        token = self.instance_id
         self.instance_id = None
+        self._set_phase("idle")
         self._select_item(None)
-        if instance_id is not None:
-            consumed = (consumed
-                        or self.world.get(instance_id).state == ObjectState.CONSUMED)
-            self._completed(instance_id, consumed)
+        if token is not None:
+            consumed = consumed or self.world.get(token).state == ObjectState.CONSUMED
+            self._completed(token, consumed)

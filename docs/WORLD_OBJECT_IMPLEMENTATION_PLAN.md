@@ -27,6 +27,11 @@ as C2–C4 change the behavior. C1: `f902d20`, full suite 830 tests passed.
 C2 adds separate investigate/consume purposes, pure origin-aware use decisions,
 and subjective examined knowledge. Its 20 focused object tests and all static
 checks passed; execution/presentation wiring follows in C3/C4.
+C2: `5730516`, full suite 834 passed. C3 adds explicit execution phases,
+identified feedback receipts, held inspection/defer and safe cancellation;
+23 focused object tests and six existing Tk World tests passed. The desktop
+temporarily acknowledges feedback immediately with zero inspection dwell;
+C4 replaces this bridge with readable reaction playback and active-time dwell.
 
 Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
 the original consumption-only intention and immediate pickup-to-consumption

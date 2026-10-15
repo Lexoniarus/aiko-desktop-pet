@@ -2,8 +2,11 @@
 
 import unittest
 
+from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
 from aiko_pet.pet.animation.character import PlaybackEvent
+from aiko_pet.pet.mind.object_decisions import ObjectUseDecision
+from aiko_pet.pet.mind.object_intentions import ObjectGoal
 from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectFootprint,
@@ -23,6 +26,15 @@ class ObjectInteractionTests(unittest.TestCase):
         self.actions = []
         self.consumed = []
         self.done = []
+        self.cues = []
+        self.delay_feedback = False
+        self.stamp = 0
+        self.decision = ObjectUseDecision(True, "hungry")
+
+        def feedback(cue):
+            self.cues.append(cue)
+            if not self.delay_feedback:
+                self.coordinator.receive_feedback(FeedbackReceipt(cue.key, True))
 
         def play(clip):
             self.actions.append(clip)
@@ -38,6 +50,10 @@ class ObjectInteractionTests(unittest.TestCase):
             self.world, play=play, stop=lambda: None, select_item=lambda _item: None,
             consume=consume, eligible=lambda _item: True, ground_x=lambda _item: 100,
             completed=lambda item, consumed: self.done.append((item, consumed)),
+            identify=lambda _token: "apple",
+            decide=lambda _token, _origin: self.decision,
+            feedback=feedback, cancel_feedback=lambda: None, now=lambda: self.stamp,
+            inspection_seconds=0,
         )
 
     def test_acquisition_precedes_consumption_and_duplicates_are_ignored(self):
@@ -91,3 +107,64 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual(self.done, [(self.item.instance_id, True)])
         self.assertEqual(self.actions[-1], "talk")
         self.assertEqual(len(self.consumed), 1)
+
+    def acknowledge(self):
+        self.coordinator.receive_feedback(FeedbackReceipt(self.cues[-1].key, True))
+        self.coordinator.update()
+
+    def test_investigation_requires_actual_arrival_and_phase_receipts(self):
+        self.delay_feedback = True
+        goal = ObjectGoal(self.item.instance_id, None, None, 100, 0, 0, "investigate")
+        self.coordinator.begin_goal(goal)
+        notice = self.cues[-1]
+        self.coordinator.arrive()
+        self.assertEqual(self.coordinator.phase, "notice")
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "approach")
+        self.coordinator.arrive()
+        self.coordinator.receive_feedback(FeedbackReceipt(notice.key, True))
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.phase, "approach")
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "pick_up")
+
+    def test_inspection_and_defer_never_consume_and_wait_for_readable_decision(self):
+        self.delay_feedback = True
+        self.decision = ObjectUseDecision(False, "not_needed")
+        self.coordinator._inspection_seconds = 1
+        self.coordinator.begin_pickup(self.item.instance_id)
+        self.acknowledge()
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        self.assertEqual(self.coordinator.phase, "inspect")
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "inspect")
+        self.stamp = 1
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.phase, "recognize")
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "decide")
+        self.assertEqual(self.consumed, [])
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "put_down")
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 2, ("detach_object",)))
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 0, finished=True))
+        self.assertEqual(self.done, [])
+        self.acknowledge()
+        self.assertEqual(self.done, [(self.item.instance_id, False)])
+        self.assertEqual(self.consumed, [])
+
+    def test_cancelled_inspection_recovers_custody_and_ignores_stale_receipt(self):
+        self.delay_feedback = True
+        self.coordinator.begin_pickup(self.item.instance_id)
+        self.acknowledge()
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        cancelled = self.cues[-1].key
+        self.coordinator.receive_feedback(FeedbackReceipt(cancelled, False))
+        self.assertEqual(self.coordinator.phase, "put_down")
+        self.coordinator.receive_feedback(FeedbackReceipt(cancelled, True))
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 2, ("detach_object",)))
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 0, finished=True))
+        self.assertEqual(self.coordinator.phase, "idle")
+        self.assertEqual(self.consumed, [])

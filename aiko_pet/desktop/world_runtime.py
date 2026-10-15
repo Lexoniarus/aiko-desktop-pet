@@ -14,6 +14,7 @@ from ..application.active_time import ActiveSessionClock, SessionInputs
 from ..application.controller import CareOutcome
 from ..application.object_awareness import ObjectAwareness
 from ..application.object_consumption import ObjectConsumption
+from ..application.object_feedback import FeedbackReceipt, ObjectFeedback
 from ..application.object_interaction import ObjectInteractionCoordinator
 from ..application.settings import PetSettings
 from ..infrastructure.active_time import active_uptime_seconds
@@ -27,6 +28,7 @@ from ..pet.food import FOOD_BALANCE
 from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind.object_decisions import ObjectUseDecision, decide_object_use
 from ..pet.state import PetState
 from ..ui.pet_view.action_playback import ActionPlayback
 from ..ui.pet_view.animated_pet import AnimatedPet
@@ -92,6 +94,9 @@ class DesktopWorldRuntime:
             select_item=self._select_item, consume=self._consume,
             eligible=self._eligible, ground_x=self._ground_x,
             completed=self._completed,
+            identify=self._identify, decide=self._decide,
+            feedback=self._ack_feedback, cancel_feedback=lambda: None,
+            now=lambda: self.now, inspection_seconds=0,
         )
         animated.on_playback = self._queue_event
         root.bind_all("<Escape>", lambda _event: self.cancel_carry(), add="+")
@@ -116,6 +121,17 @@ class DesktopWorldRuntime:
     def _play(self, clip: str) -> int:
         self._playback.start(clip, 0)
         return self._animated.action_id
+
+    def _identify(self, token: str) -> str | None:
+        known = self.awareness.memory.get(token)
+        return known.identity if known is not None else None
+
+    def _decide(self, token: str, origin: ConsumptionOrigin) -> ObjectUseDecision:
+        return decide_object_use(self.awareness.memory.get(token), self.state, origin)
+
+    def _ack_feedback(self, cue: ObjectFeedback) -> None:
+        # Headless phase wiring; C4 supplies the existing reaction presenter.
+        self.interaction.receive_feedback(FeedbackReceipt(cue.key, True))
 
     def _stop(self) -> None:
         self._playback.cancel_at(time.monotonic())
