@@ -86,30 +86,3 @@ def calculate_need_decay(
     )
 
 
-def apply_need_decay(
-    record: NeedValues, hours: float,
-    context: TimeContext | None, effort: float | None = None,
-) -> None:
-    """Legacy mutable-record adapter; PetState applies calculations itself."""
-    food = getattr(record, "food", None)
-    food_progress = (
-        advance_food(
-            food, record.satiety, hours, sleeping=record.sleeping,
-            activity=FoodActivity(hardware_load=effort or 0.0),
-        )
-        if isinstance(food, FoodState) else None
-    )
-    next_values = calculate_need_decay(
-        record, hours, context, effort, food_progress=food_progress,
-    )
-    record.satiety = next_values.satiety
-    if food_progress is not None:
-        setattr(record, "food", food_progress.food)
-    record.mood = next_values.mood
-    record.energy = next_values.energy
-    record.social = next_values.social
-    record.affection = next_values.affection
-    if hasattr(record, "fun"):
-        setattr(record, "fun", advance_fun(
-            getattr(record, "fun"), hours, sleeping=record.sleeping,
-        ))

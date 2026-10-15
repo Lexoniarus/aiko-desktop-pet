@@ -8,7 +8,7 @@ from datetime import datetime
 
 from aiko_pet.pet.lifecycle import MAX_CATCHUP_SECONDS, MAX_LIVE_EFFORT_SECONDS
 from aiko_pet.pet.state import PetState
-from aiko_pet.pet.need_decay import apply_need_decay
+from aiko_pet.pet.need_decay import calculate_need_decay
 from aiko_pet.pet.lifecycle import (
     MAX_CATCHUP_SECONDS as POLICY_CATCHUP,
     MAX_LIVE_EFFORT_SECONDS as POLICY_LIVE_WINDOW,
@@ -35,30 +35,33 @@ def local_stamp(hour: int = 12, minute: int = 0) -> float:
 class NeedDecayTests(unittest.TestCase):
     def test_normal_waking_decay_does_not_require_pet_state(self) -> None:
         needs = Needs()
-        apply_need_decay(needs, 1, context=None)
-        self.assertAlmostEqual(needs.satiety, 67.0)
-        self.assertGreater(needs.mood, 69.0)
-        self.assertLess(needs.mood, 75.0)
-        self.assertAlmostEqual(needs.energy, 69.0)
-        self.assertEqual(needs.social, 67.0)
-        self.assertEqual(needs.affection, 69.0)
+        result = calculate_need_decay(needs, 1, context=None)
+        self.assertAlmostEqual(result.satiety, 67.0)
+        self.assertGreater(result.mood, 69.0)
+        self.assertLess(result.mood, 75.0)
+        self.assertAlmostEqual(result.energy, 69.0)
+        self.assertEqual(result.social, 67.0)
+        self.assertEqual(result.affection, 69.0)
+        self.assertEqual(needs.satiety, 75.0)
 
     def test_sleep_replenishes_energy_without_friendship_change(self) -> None:
         needs = Needs(sleeping=True, energy=40)
-        apply_need_decay(needs, 1, context=None, effort=1.0)
-        self.assertEqual(needs.energy, 62)
-        self.assertAlmostEqual(needs.satiety, 73.6)
-        self.assertEqual(needs.affection, 74.75)
+        result = calculate_need_decay(needs, 1, context=None, effort=1.0)
+        self.assertEqual(result.energy, 62)
+        self.assertAlmostEqual(result.satiety, 73.6)
+        self.assertEqual(result.affection, 74.75)
+        self.assertEqual(needs.energy, 40)
 
     def test_heavy_work_increases_waking_drain(self) -> None:
         relaxed = Needs()
         working = Needs()
-        apply_need_decay(relaxed, 1, context=None, effort=0)
-        apply_need_decay(working, 1, context=None, effort=1)
-        self.assertLess(working.satiety, relaxed.satiety)
-        self.assertLess(working.energy, relaxed.energy)
-        self.assertLess(working.mood, relaxed.mood)
-        self.assertEqual(working.affection, relaxed.affection)
+        relaxed_next = calculate_need_decay(relaxed, 1, context=None, effort=0)
+        working_next = calculate_need_decay(working, 1, context=None, effort=1)
+        self.assertLess(working_next.satiety, relaxed_next.satiety)
+        self.assertLess(working_next.energy, relaxed_next.energy)
+        self.assertLess(working_next.mood, relaxed_next.mood)
+        self.assertEqual(working_next.affection, relaxed_next.affection)
+        self.assertEqual(working.energy, relaxed.energy)
 
 
 class PetTimelineTests(unittest.TestCase):

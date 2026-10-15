@@ -68,6 +68,12 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+    def test_need_decay_only_publishes_pure_calculation(self) -> None:
+        from aiko_pet.pet import need_decay
+
+        self.assertFalse(hasattr(need_decay, "apply_need_decay"))
+        self.assertTrue(hasattr(need_decay, "calculate_need_decay"))
+
     def test_care_mutation_has_no_module_level_legacy_adapter(self) -> None:
         from aiko_pet.pet import care_actions
 

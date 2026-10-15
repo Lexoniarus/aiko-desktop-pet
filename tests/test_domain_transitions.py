@@ -15,7 +15,7 @@ from aiko_pet.pet.friendship import (
     award_friendship_for_care,
     calculate_friendship_reward,
 )
-from aiko_pet.pet.need_decay import apply_need_decay, calculate_need_decay
+from aiko_pet.pet.need_decay import calculate_need_decay
 from aiko_pet.pet.lifecycle import (
     advance_pet_time,
     apply_daily_routine,
@@ -92,10 +92,15 @@ class DomainTransitionTests(unittest.TestCase):
                         sleep_origin="manual" if sleeping else "",
                         updated_at=START,
                     )
-                    reference = PetState.from_dict(state.to_dict(), now=START)
-                    apply_need_decay(reference, 0.5, None, effort)
+                    before = state.to_dict()
+                    expected = calculate_need_decay(state, 0.5, None, effort)
+                    self.assertEqual(state.to_dict(), before)
                     state._decay(0.5, None, effort)
-                    self.assertEqual(state.to_dict(), reference.to_dict())
+                    for key in ("satiety", "mood", "energy", "social", "affection"):
+                        with self.subTest(need=key):
+                            self.assertAlmostEqual(
+                                getattr(state, key), getattr(expected, key),
+                            )
 
     def test_friendship_reward_adapters_preserve_daily_history(self) -> None:
         state = PetState(
