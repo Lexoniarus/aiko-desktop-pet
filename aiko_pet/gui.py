@@ -453,7 +453,7 @@ class DesktopPet:
             reaction, duration_ms, animate=not self.state.sleeping,
         )
 
-    def _set_popup_option(self, name: SettingKey, value: bool) -> None:
+    def _apply_setting(self, name: SettingKey, value: bool) -> None:
         """Apply a setting through the desktop preference owner."""
         self._preferences.set_option(name, value)
 
