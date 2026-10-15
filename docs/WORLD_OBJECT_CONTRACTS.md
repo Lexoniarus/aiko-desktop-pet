@@ -150,10 +150,20 @@ add cross-monitor paths or alternate walking surfaces.
   copying the character's dimensions into a second catalog.
 - A handover area is a stable body/hand-relative area, scaled with Aiko. It is
   independent of transparent window margins and does not oscillate per frame.
-- Ground collection requires a reachable standing position within interaction
-  distance. Choose the closest feasible approach side; at an edge, the other
-  side is allowed. If no position fits the actual track, the target is unreachable.
-- Reaching a clamped boundary is not arrival unless interaction distance is met.
+- Ground collection resolves the closest legal full-window standing position
+  on the active track. Ordinary reach remains one quarter of the current window
+  width. When an in-bounds ground item lies beyond that radius at either screen
+  edge, a bounded edge grip requires actual arrival within two desktop pixels
+  of the closest clamped standing position. An off-track item/pet or a track
+  narrower than the full character window cannot use this exception.
+- Planning and the frame-4 availability/reach recheck use the same geometry
+  rule. Edge acquisition snaps to the authored hand anchor at that event;
+  pre-grasp ground position and nutrition remain unchanged. Aiko's window stays
+  inside the active track throughout. The existing pickup/inspection/decision
+  phases and handover rules remain in their owners.
+- After refusal or pre-consumption interruption, reverse playback releases the
+  portion in front of Aiko's feet at source frame 4→3, clamped for its footprint.
+  Confirm the new location in subjective memory through her own completed action.
   Item footprints and allowed ground bounds are validated before resting.
 - Changed screen/track geometry is an explicit World update. Reproject/clamp
   resting items through the World owner and cancel invalid prepared operations.

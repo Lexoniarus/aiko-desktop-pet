@@ -85,6 +85,49 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.app.root.mainloop()
         return trace
 
+    def _edge_investigation(self, scale, side):
+        app, world = self.app, self.app._world
+        app.settings.scale = scale
+        app._window.resize()
+        app._animated.reload_sprites()
+        app.state.energy = 65
+        track = world._track()
+        boundary = track.left if side == "left" else track.right - world.width
+        app._place_x(boundary + (60 * scale if side == "left" else -60 * scale))
+        image = world.view.image("energy_drink", scale)
+        footprint = ObjectFootprint(image.width() / 2, image.width() / 2)
+        x = (footprint.left if side == "left" else
+             world.world.snapshot().surface.width - footprint.right)
+        item = world.world.place_resting("energy_drink", x, footprint)
+        trace = self.run_until(lambda: (
+            (known := world.awareness.memory.get(item.instance_id)) is not None
+            and known.examined and world.world.get(item.instance_id).state
+            == ObjectState.RESTING and not world.interaction.active
+        ), 30)
+        self.assertFalse(world.interaction.active, trace)
+        self.assertTrue({"approach", "pick_up", "inspect", "recognize", "decide",
+                         "put_down"}.issubset({row[1] for row in trace}), trace)
+        self.assertNotIn("eat", {row[1] for row in trace})
+        current_x = app.settings.x
+        assert current_x is not None
+        self.assertAlmostEqual(current_x, boundary, delta=2)
+        for row in trace:
+            self.assertGreaterEqual(row[4], track.left)
+            self.assertLessEqual(row[4] + world.width, track.right)
+        placed = world.world.get(item.instance_id)
+        assert placed.position is not None
+        self.assertEqual(placed.position.x, world._body_x())
+        self.assertNotEqual(placed.position.x, x)
+        self.assertIsNone(world._visual.object_target)
+        self.assertGreater(app.state.energy, 64)
+        self.assertLess(app.state.energy, 66)
+
+    def test_left_edge_investigation_at_scale_one_uses_actual_timers_and_motion(self):
+        self._edge_investigation(1, "left")
+
+    def test_right_edge_investigation_at_scale_two_uses_actual_timers_and_motion(self):
+        self._edge_investigation(2, "right")
+
     def test_satiated_food_is_investigated_put_down_and_not_repeated(self):
         world = self.app._world
         item = world.world.place_resting("onigiri", world._body_x() + 75,

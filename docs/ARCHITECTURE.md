@@ -383,6 +383,12 @@ passive native windows; `FoodOverlay` draws consumables above the character
 without additional hand masks. Calibrated eating anchors come from reproducible
 asset preparation. Examined deferred portions preserve memory but release
 incidental object gaze; only unexamined observations or active goals attract it.
+`TaskbarTrack.ground_approach()` resolves the closest full-window standing pose
+and whether a bounded edge grip is needed; `can_grasp_ground()` reuses that
+geometry for actual arrival/reach checks, including the pickup event recheck.
+The host skips ground-to-hand blending only for an edge grip, so acquisition
+snaps at frame 4. Put-down uses the current body/foot ground anchor and the
+existing World transition; confirmed own placement updates subjective memory.
 Chooser press creates one portion; recognized willingness is signaled while
 held, then release offers or falls. Accepted handover holds the last pickup pose
 and enters inspection/decision before the existing complete consumption clip.

@@ -62,6 +62,7 @@ jobs:
             "test_object*.py",
             "test_pickup*.py",
             "test_goal_walk.py",
+            "test_ground_approach.py",
             "test_consumption_origin.py",
             "test_food_gui.py",
             "test_item_display_assets.py",

@@ -9,6 +9,11 @@ observed. Unreported boundary/restart cases below remain open.
 unmerged. See [delivery/evidence](WORLD_OBJECT_IMPLEMENTATION_PLAN.md) and
 [behavior contracts](WORLD_OBJECT_CONTRACTS.md).
 
+On 16 October, the user confirmed successful edge pickup in the updated build.
+They also reported slow approach/possible repeated loops. Keep that observation
+open for separate behavior analysis; it is not claimed solved by the edge-grip
+correction. The complete left/right 1x/2x native checklist remains to be checked.
+
 ## Isolated launcher
 
 Close other Aiko instances. Double-click [Aiko_World_Test.bat](../Aiko_World_Test.bat)
@@ -83,6 +88,15 @@ and sprite scale. Repeat visual/input checks at 1× and 2×.
 - [ ] Check taskbar/screen edges, scale changes, item layering, focus,
   click-through and stacking. Existing toolbar pin, settings and game controls
   stay usable. Ambient speech/notifications do not overwrite object-phase bubbles.
+- [ ] Repeat at both extreme ground edges at 1x and 2x. First place Aiko within
+  about two character widths of the tested edge so the item is observable.
+  Aiko walks to the
+  closest permitted standing position, bends, and the portion snaps into her
+  hand at pickup frame 4. Her full window remains on-screen. In `full`, the
+  drink is examined and put down at her feet, visibly inward from its original
+  edge position; it remains recognized and releases gaze. In `hungry`, verify
+  the same pickup leads to normal consumption. Moving Aiko away before grasp
+  must prevent acquisition from the old standing position.
 - [ ] During Onigiri consumption, the portion overlaps the fingers in front of
   the character at both scales. Compare the [grip calibration](media/world-eating-grip-comparison.png)
   (source composition, not a native capture). Consumables stay in front of the
@@ -142,6 +156,14 @@ Windows/Python 3.11, 15 October 2026:
 - Current CI results are linked in the implementation ledger and
   [PR checks](https://github.com/Lexoniarus/aiko-desktop-pet/pull/10/checks)
   run Linux/Xvfb Python 3.11/3.13 and Windows, including real Tk flow tests.
+
+16 October edge-grip follow-up: 867 tests passed locally in 205.5 s, with the
+same static gates green. The four left/right 1x/2x component cases check actual
+driver arrival, frame-4 custody/snap, refusal and placement at the feet, remembered
+location and released gaze. Additional cases reject acquisition after Aiko moves
+away and verify wanted edge consumption without early nutrition. Pure geometry
+tests include an offset track, unchanged ordinary reach and unsupported poses.
+Five real-timer tests passed in 100.7 s, including left 1x/right 2x edge flows.
 
 `test_world_runtime_flow.py` runs actual timers and desktop gates: readable,
 ordered bubbles, Onigiri at 76%, deferred reuse after hunger, staged drink with

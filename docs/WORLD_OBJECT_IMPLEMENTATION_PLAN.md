@@ -21,6 +21,39 @@ its exclusions do not prohibit the explicitly planned feature here.
 
 ## Practical test correction plan
 
+### Screen-edge follow-up — 16 October 2026
+
+Baseline `0f729a8`: the target precheck cancelled approach when clamping the
+full character window left the object beyond quarter-width body reach. The
+same limitation affected frame-4 acquisition, leaving valid edge portions
+noticed but uncollected on either side, especially at scale 2.
+
+The accepted correction resolves the closest legal standing pose through
+`TaskbarTrack.ground_approach()` and reuses it in ground-grip eligibility.
+Only an in-bounds edge object outside ordinary reach permits the bounded grip,
+after actual arrival within two desktop pixels. Pickup frame 4 rechecks the
+current position and acquires/snaps at the authored hand anchor. Refusal uses
+the existing reverse put-down at Aiko's feet; own confirmed placement updates
+the remembered position. Cursor handover, need decisions and care origin keep
+their existing owners and behavior.
+
+Regression covers left/right at 1x/2x, frame-4 custody and snap placement,
+foot placement of the same instance, preserved examined memory, ordinary
+reach/out-of-track rejection, moving away before grasp, and wanted edge use
+without early nutrition. Five real-timer flow tests passed in 100.7 s, including
+left at 1x and right at 2x through the normal movement executor and feedback.
+Final local gate: 867 tests passed in 205.5 s on Windows/Python 3.11; Ruff
+0.13.2, strict Mypy 1.18.2 (167 source files) and Pyright 1.1.414 are green.
+The Windows CI job also includes the new pure ground-approach tests.
+
+Practical feedback during implementation: the user restarted and confirmed
+successful edge pickup, but observed slow approach and possible repeated
+loops. The cause of that behavior remains unverified and is explicitly left
+for a separate behavior discussion; this fix does not retune those policies.
+The remaining native edge/scale matrix stays in the practical checklist.
+
+### Earlier correction commits
+
 | Correction | Commit | Passed evidence |
 | --- | --- | --- |
 | C1 — reproduce full runtime faults | `f902d20` | 830 tests; missing investigation and Enter-truncated drink reproduced |

@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.application.object_feedback import FeedbackReceipt
+from aiko_pet.desktop.geometry import FOOT_BASELINE
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState
@@ -221,6 +222,128 @@ class WorldGuiTests(unittest.TestCase):
         self.assertGreater(self.app.settings.x or 0, start)
         self.assertFalse(self.app.settings.auto_walk)
         self.assertEqual(world.interaction.phase, "pick_up")
+
+    def _reach_edge_drink(self, scale, side):
+        app, world = self.app, self.app._world
+        app.settings.scale = scale
+        app._window.resize()
+        app._animated.reload_sprites()
+        app.state.energy = 65
+        track = world._track()
+        boundary = track.left if side == "left" else track.right - world.width
+        app._place_x(boundary + (120 * scale if side == "left" else -120 * scale))
+        image = world.view.image("energy_drink", scale)
+        footprint = ObjectFootprint(image.width() / 2, image.width() / 2)
+        x = (footprint.left if side == "left" else
+             world.world.snapshot().surface.width - footprint.right)
+        item = world.world.place_resting("energy_drink", x, footprint)
+        self.recognize()
+        self.assertEqual(world.interaction.phase, "approach")
+        self.assertEqual(app._walk.movement.goal_x, boundary)
+        self.assertFalse(world._eligible(item.instance_id))
+        for index in range(10):
+            app._walk.step(time.monotonic() + index, 1,
+                           game_mode=False, attention_active=False)
+            world.now += 1
+            world.update(time.monotonic())
+            current_x = app.settings.x
+            assert current_x is not None
+            self.assertGreaterEqual(current_x, track.left)
+            self.assertLessEqual(current_x + world.width, track.right)
+            if world.interaction.phase == "pick_up":
+                break
+        self.assertEqual(world.interaction.phase, "pick_up")
+        current_x = app.settings.x
+        assert current_x is not None
+        self.assertAlmostEqual(current_x, boundary, delta=2)
+        return item
+
+    def _edge_drink_round_trip(self, scale, side):
+        item = self._reach_edge_drink(scale, side)
+        world, animated = self.app._world, self.app._animated
+        clip = animated.assets.clips["pick_up"]
+        for index in range(1, 4):
+            stamp = animated.frame_clock.frame_started_at
+            animated.show_frame("pick_up",
+                                stamp + clip.timings[index - 1] / 1000 + .001)
+            self.app.root.update_idletasks()
+            expected = ObjectState.RESTING if index < 3 else ObjectState.PET_HELD
+            self.assertEqual(world.world.get(item.instance_id).state, expected)
+        world._sync_view()
+        overlay = animated.food_overlay
+        self.assertIsNone(overlay.contact_origin)
+        anchor = clip.frames[3].food_anchor
+        assert anchor is not None
+        pivot = world.view.items.foods["energy_drink"].sprites[scale].pivot
+        self.assertEqual(self.app.canvas.coords(overlay.item), [
+            round((96 - clip.anchor[0] + anchor[0]) * scale - pivot[0]),
+            round((FOOT_BASELINE - clip.anchor[1] + anchor[1]) * scale - pivot[1]),
+        ])
+        self.assertAlmostEqual(self.app.state.energy, 65, places=1)
+        self.finish_pickup()
+        self.finish_inspection()
+        self.assertEqual(world.interaction.phase, "put_down")
+        self.finish_clip("put_down")
+        self.assertFalse(world.interaction.active)
+        placed = world.world.get(item.instance_id)
+        self.assertEqual(placed.state, ObjectState.RESTING)
+        assert placed.position is not None and item.position is not None
+        self.assertEqual(placed.position.x, world._body_x())
+        self.assertNotEqual(placed.position.x, item.position.x)
+        self.assertEqual(placed.position.height, 0)
+        self.assertTrue(world.world.snapshot().surface.contains(
+            placed.position, placed.footprint,
+        ))
+        known = world.awareness.memory.get(item.instance_id)
+        assert known is not None
+        self.assertTrue(known.examined)
+        self.assertEqual(known.x, placed.position.x)
+        self.assertIsNone(world._visual.object_target)
+        self.assertAlmostEqual(self.app.state.energy, 65, places=1)
+
+    def test_left_edge_drink_at_scale_one_is_grasped_and_put_down_at_feet(self):
+        self._edge_drink_round_trip(1, "left")
+
+    def test_right_edge_drink_at_scale_one_is_grasped_and_put_down_at_feet(self):
+        self._edge_drink_round_trip(1, "right")
+
+    def test_left_edge_drink_at_scale_two_is_grasped_and_put_down_at_feet(self):
+        self._edge_drink_round_trip(2, "left")
+
+    def test_right_edge_drink_at_scale_two_is_grasped_and_put_down_at_feet(self):
+        self._edge_drink_round_trip(2, "right")
+
+    def test_edge_grip_rechecks_actual_standing_position_at_frame_four(self):
+        item = self._reach_edge_drink(1, "left")
+        animated, world = self.app._animated, self.app._world
+        clip = animated.assets.clips["pick_up"]
+        for index in (0, 1):
+            animated.show_frame("pick_up", animated.frame_clock.frame_started_at
+                                + clip.timings[index] / 1000 + .001)
+            self.app.root.update_idletasks()
+        self.app._place_x(world._track().left + 20)
+        animated.show_frame("pick_up", animated.frame_clock.frame_started_at
+                            + clip.timings[2] / 1000 + .001)
+        self.app.root.update_idletasks()
+        self.assertFalse(world.interaction.active)
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
+        self.assertIsNone(animated.food_overlay.current_food_id)
+        self.assertAlmostEqual(self.app.state.energy, 65, places=1)
+
+    def test_wanted_edge_drink_consumes_only_after_grasp_and_inspection(self):
+        item = self._reach_edge_drink(2, "right")
+        world = self.app._world
+        self.app.state.energy = 50
+        self.finish_pickup()
+        self.assertEqual(world.interaction.phase, "inspect")
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.PET_HELD)
+        self.assertEqual(self.app.state.energy, 50)
+        self.finish_inspection()
+        self.assertEqual(world.interaction.phase, "eat")
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.CONSUMED)
+        self.assertGreater(self.app.state.energy, 59)
+        self.assertLess(self.app.state.energy, 61)
+        self.assertEqual(self.app.state.friendship, 15)
 
     def test_sleep_request_after_grasp_puts_down_before_sleep_without_nutrition(self):
         world, animated = self.app._world, self.app._animated

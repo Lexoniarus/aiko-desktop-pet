@@ -43,7 +43,7 @@ from ..world.contracts import (
     WorldSurface,
 )
 from ..world.state import WorldState
-from .geometry import TaskbarTrack
+from .geometry import GroundApproach, TaskbarTrack
 from .global_input import mouse_buttons_down_windows
 from .visual_observation import DesktopVisualObservation
 from .walk_runtime import WalkDriver
@@ -220,6 +220,13 @@ class DesktopWorldRuntime:
         return max(item.footprint.left,
                    min(self._body_x(), surface.width - item.footprint.right))
 
+    def _ground_approach(self, x: float) -> GroundApproach | None:
+        track = self._track()
+        return track.ground_approach(
+            track.left + x, int(self.width),
+            self.width * BALANCE.number("object_behavior", "reach_widths"),
+        )
+
     def _eligible(self, token: str) -> bool:
         if self.state.sleeping or self._game_open():
             return False
@@ -242,15 +249,22 @@ class DesktopWorldRuntime:
             )
         if self._controls_active():
             return False
-        return (item.state == ObjectState.RESTING
-                and distance <= self.width * BALANCE.number(
-                    "object_behavior", "reach_widths",
-                ))
+        track = self._track()
+        return item.state == ObjectState.RESTING and track.can_grasp_ground(
+            track.left + item.position.x, self.settings.x or 0, int(self.width),
+            self.width * BALANCE.number("object_behavior", "reach_widths"),
+        )
 
     def _capture_contact(self, token: str) -> None:
         item = self.world.get(token)
         if item.position is None:
             return
+        if item.state == ObjectState.RESTING:
+            approach = self._ground_approach(item.position.x)
+            if approach is not None and approach.edge_grip:
+                # Frame 4 acquires directly at the authored hand anchor.
+                self._contact = None
+                return
         sprite = self.view.items.foods[item.definition_id].sprites[self.settings.scale]
         image = self.view.image(item.definition_id, self.settings.scale)
         self._contact = (
@@ -302,14 +316,14 @@ class DesktopWorldRuntime:
         if self.interaction.phase == "notice":
             self._walk.movement.set_goal(None)
             return
-        track = self._track()
-        target = max(track.left, min(track.left + goal.x - self.width / 2,
-                                     track.right - self.width))
-        if abs(target + self.width / 2 - track.left - goal.x) > self.width * 0.25:
+        approach = self._ground_approach(goal.x)
+        if approach is None:
             self.awareness.intentions.cancel(self.now)
+            self._walk.movement.set_goal(None)
+            self.interaction.interrupt(lambda: None)
             return
-        self._walk.movement.set_goal(target)
-        if abs((self.settings.x or 0) - target) > 2:
+        self._walk.movement.set_goal(approach.standing_x)
+        if not approach.arrived(self.settings.x or 0):
             self._search_at = None
             return
         if self._eligible(goal.token):

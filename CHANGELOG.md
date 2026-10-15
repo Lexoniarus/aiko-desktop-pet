@@ -1,5 +1,9 @@
 ## Unreleased — World practical-test corrections
 
+- Let Aiko approach and grasp ground portions at both screen edges at 1x/2x.
+  A shared geometry rule requires actual arrival at the closest legal standing
+  pose for the bounded edge grip. Acquire/snap at pickup frame 4; defer by
+  putting the same portion down at her feet and remember the new position.
 - Add need-independent investigation and subjective examined memory. Aiko
   approaches, picks up, examines and decides; unwanted items are put down for
   later without repeated investigation, and hunger can activate known items.
