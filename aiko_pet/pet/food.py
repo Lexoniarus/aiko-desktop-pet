@@ -115,7 +115,7 @@ class FoodState:
             awake_hours_since_main_meal=_bounded_number(
                 raw.get("awake_hours_since_main_meal"), 0.0, 1000.0,
             ),
-            recent_food_ids=recent,  # type: ignore[arg-type]
+            recent_food_ids=recent,
         )
 
 

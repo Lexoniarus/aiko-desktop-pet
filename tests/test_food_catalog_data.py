@@ -5,9 +5,12 @@ from __future__ import annotations
 import json
 import unittest
 from pathlib import Path
+from typing import cast
 
 from aiko_pet.pet.food import FOOD_CATALOG, FOOD_MENU_ORDER, DEFAULT_FOOD_ID
-from aiko_pet.pet.food_catalog import parse_food_catalog, load_packaged_food_catalog
+from aiko_pet.pet.food_catalog import (
+    FoodProfile, parse_food_catalog, load_packaged_food_catalog,
+)
 
 
 class FoodCatalogDataTests(unittest.TestCase):
@@ -22,7 +25,9 @@ class FoodCatalogDataTests(unittest.TestCase):
         self.assertEqual(loaded.menu_order, FOOD_MENU_ORDER)
         self.assertEqual(load_packaged_food_catalog(), loaded)
         with self.assertRaises(TypeError):
-            loaded.foods["new"] = next(iter(loaded.foods.values()))
+            cast(dict[str, FoodProfile], loaded.foods)["new"] = (
+                next(iter(loaded.foods.values()))
+            )
 
     def test_bad_values_and_duplicate_ids_are_rejected(self) -> None:
         good = {

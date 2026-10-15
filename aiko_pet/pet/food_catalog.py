@@ -65,16 +65,18 @@ def parse_food_catalog(data: Any) -> FoodCatalog:
             or category not in ("meal", "snack") or key in profiles
         ):
             raise ValueError("Invalid or duplicate food ID, title or category")
-        values = tuple(row.get(field) for field in fields)
-        if any(
-            type(value) not in (int, float)
-            or not math.isfinite(value) or not 0 <= value <= maximum
-            for value, maximum in zip(values, (100, 175, 20))
-        ):
-            raise ValueError(f"Invalid nutrition parameters for {key}")
+        values: list[float] = []
+        for field, maximum in zip(fields, (100, 175, 20)):
+            raw = row.get(field)
+            if not isinstance(raw, (int, float)) or isinstance(raw, bool):
+                raise ValueError(f"Invalid nutrition parameter {field} for {key}")
+            value = float(raw)
+            if not math.isfinite(value) or not 0 <= value <= maximum:
+                raise ValueError(f"Invalid nutrition parameter {field} for {key}")
+            values.append(value)
         profiles[key] = FoodProfile(
             key, title, cast(FoodCategory, category),
-            float(values[0]), float(values[1]), float(values[2]),
+            values[0], values[1], values[2],
         )
     default = data.get("default_food_id")
     if not isinstance(default, str) or default not in profiles:
