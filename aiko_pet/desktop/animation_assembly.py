@@ -12,6 +12,7 @@ from typing import Callable
 
 from ..application.settings import PetSettings
 from ..pet.animation.character import CharacterCatalog
+from ..pet.animation.item_assets import ItemCatalog
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.movement.contracts import HorizontalTrack
 from ..pet.state import PetState
@@ -47,6 +48,7 @@ class AnimationComponents:
     visual: DesktopVisualObservation
     animation: DesktopAnimationRuntime
     sprite: AnimatedPet
+    items: ItemCatalog
 
 
 def assemble_animation(
@@ -77,6 +79,7 @@ def assemble_animation(
             attention_until=ports.attention_until,
         ),
     )
+    items = load_item_catalog()
     sprite = AnimatedPet(
         root, canvas, state, settings,
         AnimatedPorts(
@@ -89,7 +92,7 @@ def assemble_animation(
             reset_gaze=visual.reset,
             extend_action=ports.extend_action,
         ),
-        assets=assets, items=load_item_catalog(),
+        assets=assets, items=items,
         ambient=animation.ambient,
     )
-    return AnimationComponents(walk, visual, animation, sprite)
+    return AnimationComponents(walk, visual, animation, sprite, items)

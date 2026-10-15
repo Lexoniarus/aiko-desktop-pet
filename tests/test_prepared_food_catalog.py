@@ -2,22 +2,36 @@
 
 from __future__ import annotations
 
+import json
 import struct
+from pathlib import Path
 import unittest
 
 from aiko_pet.infrastructure.item_assets import load_item_catalog
-from aiko_pet.pet.food import FOOD_CATALOG
+from aiko_pet.pet.food import FOOD_CATALOG, FOOD_MENU_ORDER
+from aiko_pet.pet.content import GERMAN_TEXT
 from aiko_pet.ui.view_models.food_models import food_choices
 
 
 class PreparedFoodCatalogTests(unittest.TestCase):
     def test_all_foods_have_one_nutrition_entry_and_one_visual(self) -> None:
         items = load_item_catalog()
-        choices = food_choices()
+        choices = food_choices(items)
         ids = tuple(choice.id for choice in choices)
         self.assertEqual(len(ids), 11)
         self.assertEqual(len(set(ids)), 11)
+        self.assertEqual(ids, FOOD_MENU_ORDER)
         self.assertEqual(set(ids), set(items.foods))
+        choice_by_id = {choice.id: choice for choice in choices}
+        for item_id, item in items.foods.items():
+            self.assertEqual(choice_by_id[item_id].image_path, item.icon)
+            self.assertEqual(choice_by_id[item_id].name, item.label)
+            expected_name = (
+                GERMAN_TEXT.format("ui.energy_drink_name")
+                if item_id == "energy_drink"
+                else FOOD_CATALOG[item_id].display_name
+            )
+            self.assertEqual(item.label, expected_name)
         self.assertEqual(set(FOOD_CATALOG), set(items.foods) - {"energy_drink"})
         self.assertEqual(tuple(items.weapons), ("sword",))
         for key, item in items.foods.items():
@@ -25,6 +39,15 @@ class PreparedFoodCatalogTests(unittest.TestCase):
                 item.care_action,
                 "energy_drink" if key == "energy_drink" else "feed",
             )
+
+    def test_asset_manifest_does_not_duplicate_food_titles(self) -> None:
+        path = (
+            Path(__file__).resolve().parents[1] / "aiko_pet" / "assets"
+            / "items" / "items.json"
+        )
+        data = json.loads(path.read_text(encoding="utf-8"))
+        self.assertTrue(all("label" not in row for row in data["foods"]))
+        self.assertTrue(all("label" in row for row in data["weapons"]))
 
     def test_prepared_pngs_and_grips(self) -> None:
         items = load_item_catalog()

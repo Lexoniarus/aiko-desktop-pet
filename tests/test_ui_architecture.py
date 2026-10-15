@@ -416,6 +416,16 @@ class UiDependencyRules(unittest.TestCase):
         self.assertIn("catalog: ItemCatalog", overlay)
         self.assertIn("items=load_item_catalog()", assembly)
 
+    def test_food_icon_paths_have_one_asset_manifest_owner(self) -> None:
+        view = (ROOT / "ui/view_models/food_models.py").read_text("utf-8")
+        hover = (ROOT / "ui/windows/hover_ui.py").read_text("utf-8")
+        assembly = (ROOT / "desktop/animation_assembly.py").read_text("utf-8")
+        self.assertNotIn("ASSET_ROOT", view)
+        self.assertNotIn("load_item_catalog(", view)
+        self.assertNotIn("load_item_catalog(", hover)
+        self.assertIn("load_item_catalog(", assembly)
+        self.assertIn("item.icon", view)
+
     def test_animation_assembly_does_not_live_in_composition_root(self) -> None:
         gui = (ROOT / "gui.py").read_text("utf-8")
         assembly = (ROOT / "desktop/animation_assembly.py").read_text("utf-8")

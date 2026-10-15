@@ -32,6 +32,7 @@ from .infrastructure.active_time import active_uptime_seconds
 from .ui.windows.hover_ui import HoverUi, HoverUiPorts
 from .ui.windows.game_speech import GameSpeech
 from .ui.view_models.read_models import DesktopPresentation
+from .ui.view_models.food_models import food_choices
 from .config import load_env_file
 from .desktop.global_input import (
     idle_seconds_windows, mouse_buttons_down_windows,
@@ -170,6 +171,8 @@ class DesktopPet:
         self._visual = visuals.visual
         self._animation = visuals.animation
         self._animated = visuals.sprite
+        self._item_catalog = visuals.items
+        self._food_choices = food_choices(visuals.items)
         self._closed = False
         self._attention = AttentionCoordinator(
             self.state, self.settings, self.mind, self.workload_events,
@@ -221,6 +224,7 @@ class DesktopPet:
                 settings_snapshot=self._views.settings_view,
                 anchor=self._views.anchor,
                 care=self.interact,
+                food_choices=self._food_choices,
                 feed=lambda selected: self.interact(
                     "energy_drink" if selected == "energy_drink" else "feed",
                     food_id=None if selected == "energy_drink" else selected,

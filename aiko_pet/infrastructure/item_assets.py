@@ -10,6 +10,8 @@ from typing import Any, Literal, Mapping, cast
 
 from ..asset_paths import ASSET_ROOT
 from ..pet.animation.item_assets import HandItem, ItemCatalog, ItemSprite
+from ..pet.food_catalog import DEFAULT_CATALOG
+from ..pet.content import GERMAN_TEXT
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
@@ -39,11 +41,25 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
     for entry in records:
         if not isinstance(entry, dict):
             raise ValueError("Malformed item entry")
-        key, label = entry.get("id"), entry.get("label")
+        key = entry.get("id")
         if not isinstance(key, str) or not key or not key.isidentifier():
             raise ValueError("Invalid item id")
-        if key in items or not isinstance(label, str) or not label.strip():
-            raise ValueError("Duplicate item id or missing label")
+        if key in items:
+            raise ValueError("Duplicate item id")
+        if food:
+            if "label" in entry:
+                raise ValueError("Food labels belong to the nutrition catalogue")
+            if key == "energy_drink":
+                label = GERMAN_TEXT.format("ui.energy_drink_name")
+            else:
+                profile = DEFAULT_CATALOG.foods.get(key)
+                if profile is None:
+                    raise ValueError(f"Food asset has no nutrition entry: {key}")
+                label = profile.display_name
+        else:
+            label = entry.get("label")
+            if not isinstance(label, str) or not label.strip():
+                raise ValueError("Weapon asset needs a label")
         icon = _png(root, entry.get("icon"))[0] if food else None
         variants = entry.get("variants")
         if not isinstance(variants, dict) or set(variants) != {"1", "2"}:
@@ -82,6 +98,8 @@ def load_item_catalog(root: Path = ASSET_ROOT / "items") -> ItemCatalog:
         raise ValueError("Unsupported item catalog version")
     foods = _items(root, data.get("foods"), food=True)
     weapons = _items(root, data.get("weapons"), food=False)
+    if set(foods) != set(DEFAULT_CATALOG.menu_order):
+        raise ValueError("Food assets and nutrition menu must have the same IDs")
     if set(foods).intersection(weapons):
         raise ValueError("Item IDs must be unique across categories")
     return ItemCatalog(foods, weapons)
