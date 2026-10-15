@@ -1,0 +1,8 @@
+Built-in ImageGen; identity-preserve.
+Canonical Aiko anime chibi, compact white bob with cyan underlayer, cyan-blue eyes with yellow lower highlights, peach skin, white/navy sailor uniform with red scarf, white socks and navy sneakers. Transparent background, no objects, no text, no scene. Fixed front camera and planted feet. Both hands perform the entire action symmetrically.
+Eight poses: neutral upright; begin bending knees and reach both hands down; deeper squat reaching toward floor; deepest squat with open hands flanking invisible object between shoes; same squat with both hands cupped to grasp; rise halfway holding with both hands; nearly upright carrying at waist; fully upright carrying at waist.
+Forward playback picks up, reverse playback sets down. Attach and release overlay at grasp frame. Preserve native high-resolution renders and supply registered runtime derivatives separately.
+
+Final selected order: 01 approved standing base;02 begin two-hand reach;03 deep open-hand reach;04 low two-hand grasp;05 initial hand lift while crouched;06 rise;07 almost upright;08 upright holding. The grasp event occurs at04, not05. Small cleanup of erroneous rear sleeve protrusions on05 preserves its real two front arms.
+
+V2 head/gaze edit (Built-in ImageGen): preserve each existing frame below the neck, including exact hands and body pose. Pitch entire head downward, show more crown, tuck chin, foreshorten face, lowered upper eyelids and downward irises; never eye contact with viewer. Frame01 floor20deg;02 reach30deg;03 floor45deg;04 grasp45deg;05 initial lift40deg;06 rise30deg;07 carry25deg;08 carry25deg. Eyes retain cyan-blue and yellow lower reflections. Actual transparency, no added object.

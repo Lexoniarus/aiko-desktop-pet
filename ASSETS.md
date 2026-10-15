@@ -8,6 +8,15 @@ Unless a file identifies a different license, the project's own source code is d
 
 ## 2. Aiko character artwork — distinct old and new terms
 
+### Pickup and put-down source supplement
+
+The approved `Aiko_Pick_Up_und_Hinlegen.zip` supplies eight 192x208 poses,
+eight hand foregrounds and authoring metadata under `assets/aiko-pick-up/`.
+`IMPORT_MANIFEST.json` records the archive and selected-file hashes. Only the
+runtime source material is imported; large intermediate exports remain outside
+the repository. These character derivatives follow the existing restricted
+Aiko artwork terms, not the source-code MIT license.
+
 ### Current Aiko Anime assets — restricted reuse
 
 The runtime source export from `Aiko_Anime_8_Frames_Komplett.zip` is imported

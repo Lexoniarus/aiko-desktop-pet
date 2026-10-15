@@ -1,0 +1,134 @@
+{
+  "checks": [
+    {
+      "folder": "Originalaufloesung",
+      "frames": 8,
+      "all_unique": true,
+      "transparent_rgba": true,
+      "sizes": [
+        [
+          1205,
+          1306
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ]
+      ]
+    },
+    {
+      "folder": "Registriert_Hochaufloesend",
+      "frames": 8,
+      "all_unique": true,
+      "transparent_rgba": true,
+      "sizes": [
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ],
+        [
+          1024,
+          1536
+        ]
+      ]
+    },
+    {
+      "folder": "Laufzeit_192x208",
+      "frames": 8,
+      "all_unique": true,
+      "transparent_rgba": true,
+      "sizes": [
+        [
+          192,
+          208
+        ],
+        [
+          192,
+          208
+        ],
+        [
+          192,
+          208
+        ],
+        [
+          192,
+          208
+        ],
+        [
+          192,
+          208
+        ],
+        [
+          192,
+          208
+        ],
+        [
+          192,
+          208
+        ],
+        [
+          192,
+          208
+        ]
+      ]
+    }
+  ],
+  "source_pixels_preserved": true,
+  "native_upscaling": false,
+  "both_hands_visual_review": "Open reach, low grasp, lift, rise and hold retained",
+  "gaze_revision": "Downward head pitch and eye tracking toward contact / cupped hands; native and runtime review",
+  "limitations": [
+    "Small per-pose illustration differences remain from generative rendering.",
+    "Object-specific overlay tuning and in-app playback have not been tested."
+  ],
+  "attach_source_frame": 4,
+  "reverse_release_source_frame": 4
+}
