@@ -40,7 +40,10 @@ class AttentionDecisionTests(unittest.TestCase):
 
     def test_suppression_does_not_invoke_dialogue_book(self) -> None:
         with (
-            patch.object(self.attention, "select_cursor_comment_event", return_value=None),
+            patch.object(
+                self.attention, "select_cursor_comment_event",
+                return_value=None,
+            ),
             patch.object(self.mind, "select_reaction") as say,
         ):
             actual = self.attention.cursor_reaction(
@@ -83,7 +86,10 @@ class AttentionDecisionTests(unittest.TestCase):
     def test_walk_pause_reaction_keeps_existing_gate(self) -> None:
         reaction = Mock()
         with (
-            patch.object(self.attention, "should_comment_after_walk", return_value=True),
+            patch.object(
+                self.attention, "should_comment_after_walk",
+                return_value=True,
+            ),
             patch.object(self.mind, "select_reaction", return_value=reaction) as say,
         ):
             actual = self.attention.walk_reaction(100.0, self.context)
