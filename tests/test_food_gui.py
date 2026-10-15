@@ -140,6 +140,12 @@ class FoodGuiTests(unittest.TestCase):
                         "normal",
                     )
                     expected = overlay._images[(choice.id, scale)]
+                    sprite = self.pet._item_catalog.foods[choice.id].sprites[scale]
+                    self.assertEqual(expected.cget("file"), str(sprite.render_path))
+                    self.assertEqual(
+                        self.pet._world.view.image(choice.id, scale).cget("file"),
+                        str(sprite.render_path),
+                    )
                     actual = self.pet.canvas.itemcget(overlay.item, "image")
                     self.assertEqual(actual, str(expected))
                     self.pet._animated.show_frame(

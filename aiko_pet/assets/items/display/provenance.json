@@ -1,0 +1,316 @@
+{
+  "version": 1,
+  "alpha_threshold": 128,
+  "preparation": "Binary alpha for Windows color-key display; RGB unchanged",
+  "license": "../LICENSE.md",
+  "files": [
+    {
+      "source": "food/1x/onigiri.png",
+      "display": "display/1x/onigiri.png",
+      "source_sha256": "60056a58402ec46ced4618957eedf73651ebc79a9c476a56087da7159ab12b1e",
+      "display_sha256": "79612fa9dde445b97ff5e72e9f9eaba07871fb24264b383e37738d40889b6421",
+      "size": [
+        31,
+        28
+      ],
+      "pivot": [
+        15.5,
+        25
+      ]
+    },
+    {
+      "source": "food/2x/onigiri.png",
+      "display": "display/2x/onigiri.png",
+      "source_sha256": "7b818ccf95b0cc55e37aff968876f6dc49377ae06cc46b6a31cd7b6f978932ab",
+      "display_sha256": "aec4783698889e4be35f58819275b89849c4e7fd736d0cc3b3b549938304485f",
+      "size": [
+        62,
+        56
+      ],
+      "pivot": [
+        31,
+        50
+      ]
+    },
+    {
+      "source": "food/1x/taiyaki.png",
+      "display": "display/1x/taiyaki.png",
+      "source_sha256": "95eb7fdf0970907382bd8406888a8f3c8b2a90e7c8347aa4ea0fa9467d691bcd",
+      "display_sha256": "967a377f27bda34e1f2dc941006ae1da1fbcca44617e0ccb6321542707f776bc",
+      "size": [
+        39,
+        27
+      ],
+      "pivot": [
+        19.5,
+        24
+      ]
+    },
+    {
+      "source": "food/2x/taiyaki.png",
+      "display": "display/2x/taiyaki.png",
+      "source_sha256": "40b831d19dcc7e178b46aa5d63935878ffca6115693f6eb0751b3bb641090788",
+      "display_sha256": "1fb8a41444e9b63069d78e7a3b212eb93c9bd2d13bdceacfaac80c555b8497bc",
+      "size": [
+        78,
+        54
+      ],
+      "pivot": [
+        39,
+        48
+      ]
+    },
+    {
+      "source": "food/1x/apple.png",
+      "display": "display/1x/apple.png",
+      "source_sha256": "c080827d59239cd7ca2884210813b4b7f5fa60492db0c35ed53fd7a34ca2fe23",
+      "display_sha256": "155fb9cb2ac7ac8b9cb4ecc10487ed36c2ba5f3ada98fe618d227b66c84708f1",
+      "size": [
+        27,
+        29
+      ],
+      "pivot": [
+        13.5,
+        26
+      ]
+    },
+    {
+      "source": "food/2x/apple.png",
+      "display": "display/2x/apple.png",
+      "source_sha256": "b021a277af70e2c7f008680976799418a2217e54e69179b88e2e4393d0ddc46e",
+      "display_sha256": "4ad41ff098935541dce9233f5b3cda10750fade3ef4a51d6ca0c9433368cac36",
+      "size": [
+        55,
+        59
+      ],
+      "pivot": [
+        27.5,
+        53
+      ]
+    },
+    {
+      "source": "food/1x/dango.png",
+      "display": "display/1x/dango.png",
+      "source_sha256": "8d10a16b2786232273ab50a55706ee9ff38d6d3a5afb7edbad019b0ac0ec2d0b",
+      "display_sha256": "5349771b3bb5d703cc949a3dfb7a9ac88c9a0279c897116b8df0cfd90eb04394",
+      "size": [
+        24,
+        31
+      ],
+      "pivot": [
+        12,
+        28
+      ]
+    },
+    {
+      "source": "food/2x/dango.png",
+      "display": "display/2x/dango.png",
+      "source_sha256": "a0d2d87b27a5e946f358fef8737a7b97982646c6bdce9b472bdcb2d35d12ed2e",
+      "display_sha256": "e938f7e52b3a7426dc29645e7276ff971bba917d1f1f60cbee6f11aae5e46737",
+      "size": [
+        49,
+        63
+      ],
+      "pivot": [
+        24.5,
+        57
+      ]
+    },
+    {
+      "source": "food/1x/sandwich.png",
+      "display": "display/1x/sandwich.png",
+      "source_sha256": "1530b77f20424ca090a4b674309f9f15b9a425a188617f199ffc773079235ad7",
+      "display_sha256": "b6ecd60716971e1c35e331d1acbb53b119ebb956024d8a024ce70bd9d65326f9",
+      "size": [
+        32,
+        28
+      ],
+      "pivot": [
+        16,
+        25
+      ]
+    },
+    {
+      "source": "food/2x/sandwich.png",
+      "display": "display/2x/sandwich.png",
+      "source_sha256": "c337a699157c573c7ef81284132d3878e9cfc668c34d96c2f9c7058209752e02",
+      "display_sha256": "37344da6386b04d34c8cf713fa1516bef4224603a6bc2997c4004bc13769695d",
+      "size": [
+        64,
+        55
+      ],
+      "pivot": [
+        32,
+        49
+      ]
+    },
+    {
+      "source": "food/1x/energy_drink.png",
+      "display": "display/1x/energy_drink.png",
+      "source_sha256": "f41ed2c96d161932389604e5740eefe1f1a623724f2c4db8fcd8958e2f1db688",
+      "display_sha256": "5249b6435fae750c350a8298e9a040b8cd415c07b87d1cf5b59328ee000550c3",
+      "size": [
+        20,
+        44
+      ],
+      "pivot": [
+        10,
+        35
+      ]
+    },
+    {
+      "source": "food/2x/energy_drink.png",
+      "display": "display/2x/energy_drink.png",
+      "source_sha256": "20aab046ae60e56890653e525f5484f47111e93b062384de265c192ad904e2d7",
+      "display_sha256": "ce7a3095ff2513c4eb44419bd5eb273701ba03f8525b8319a77631c9b34cf4b2",
+      "size": [
+        40,
+        88
+      ],
+      "pivot": [
+        20,
+        70
+      ]
+    },
+    {
+      "source": "food/1x/donut.png",
+      "display": "display/1x/donut.png",
+      "source_sha256": "d84e1817d04fca62f4f5adabdeb0457bc5bfe324e2f7dfab13ec3d52e8100ad4",
+      "display_sha256": "706dd2fc058ad2033618616a8c20f4695bc107f77c1e8dd554856177072003dc",
+      "size": [
+        37,
+        33
+      ],
+      "pivot": [
+        18.5,
+        30
+      ]
+    },
+    {
+      "source": "food/2x/donut.png",
+      "display": "display/2x/donut.png",
+      "source_sha256": "b5540ac0dbcaca81d48243aebbfe96e0bdd5ed1617db2e470a1398d42e035a28",
+      "display_sha256": "a238426af50968d9a3c6e5607c44353719c73a786f0dce4ab092ca76a856624e",
+      "size": [
+        74,
+        66
+      ],
+      "pivot": [
+        37,
+        60
+      ]
+    },
+    {
+      "source": "food/1x/cookie.png",
+      "display": "display/1x/cookie.png",
+      "source_sha256": "da84dfc27a04ebd44bdec761726de60a5d17527b91accddc6c765d2f22a98f62",
+      "display_sha256": "af99647a52e8f5b4e9059947983b44fc27e91850446046697f53bacb9a3a3594",
+      "size": [
+        33,
+        33
+      ],
+      "pivot": [
+        16.5,
+        30
+      ]
+    },
+    {
+      "source": "food/2x/cookie.png",
+      "display": "display/2x/cookie.png",
+      "source_sha256": "878cc80ee77fd6c5ce65729295044c508b4698fd48485b0aacc240b4c6b365cc",
+      "display_sha256": "f1ac462f332ceb4c7a8264df27e03a660d67b4b026e169a3f3489a1dabaa7331",
+      "size": [
+        66,
+        66
+      ],
+      "pivot": [
+        33,
+        60
+      ]
+    },
+    {
+      "source": "food/1x/melonpan.png",
+      "display": "display/1x/melonpan.png",
+      "source_sha256": "625f93a3969277a7948dd6a4a2c2612fb7af8805aff14fc863bacfc7d597f979",
+      "display_sha256": "1fb4d3950fb7848e80fc95e1b57ee41cc6ad42a989369b596904919387e0469e",
+      "size": [
+        37,
+        32
+      ],
+      "pivot": [
+        18.5,
+        29
+      ]
+    },
+    {
+      "source": "food/2x/melonpan.png",
+      "display": "display/2x/melonpan.png",
+      "source_sha256": "c1de31f6aa6eac9df8999117d62f5cc9f6193e4e5cf47ccb4f95497de416025d",
+      "display_sha256": "25b455022e06c681993cb5f986afbe11c6987ac9a1ebcf64b53e41cbbb182ad0",
+      "size": [
+        74,
+        64
+      ],
+      "pivot": [
+        37,
+        58
+      ]
+    },
+    {
+      "source": "food/1x/cupcake.png",
+      "display": "display/1x/cupcake.png",
+      "source_sha256": "18500b12bd6bd50909ddc5dd8ac9e9aad51ebb6c2dae40ca05b48f47d4c062fa",
+      "display_sha256": "3e9c5f03dac8be864ff35c2c7b819cec55861119a1d05fb28dd382afe67ed050",
+      "size": [
+        29,
+        38
+      ],
+      "pivot": [
+        14.5,
+        35
+      ]
+    },
+    {
+      "source": "food/2x/cupcake.png",
+      "display": "display/2x/cupcake.png",
+      "source_sha256": "b91ecdd534d69cdf92730911125c902d794cede598d5e129379556b3cb9920d4",
+      "display_sha256": "5b1bbee2a11c22cf84758b6456cf6bd8bb26683c80a2867b329eb7f595e8c0c2",
+      "size": [
+        58,
+        76
+      ],
+      "pivot": [
+        29,
+        70
+      ]
+    },
+    {
+      "source": "food/1x/dorayaki.png",
+      "display": "display/1x/dorayaki.png",
+      "source_sha256": "001a985d8a5b141375cb844fec0b9fc52ae11b9c0600efe0584f80a1bdf7997a",
+      "display_sha256": "4bc69aabf9d0f79263467ac76527c0f261334a8814c6bf07967fa1b95c8622b5",
+      "size": [
+        37,
+        31
+      ],
+      "pivot": [
+        18.5,
+        28
+      ]
+    },
+    {
+      "source": "food/2x/dorayaki.png",
+      "display": "display/2x/dorayaki.png",
+      "source_sha256": "ab021a450908d404be815c653685a01a22eb20ad9491979a188973c5eb636437",
+      "display_sha256": "0f83ce75cb305db73b8e0066057bdb98d19a7b92a62a01738542753931525992",
+      "size": [
+        74,
+        62
+      ],
+      "pivot": [
+        37,
+        56
+      ]
+    }
+  ]
+}

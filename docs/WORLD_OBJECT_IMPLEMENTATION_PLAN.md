@@ -39,6 +39,11 @@ Two real-timer flow tests passed in 29.9 s: Onigiri at 76% was investigated,
 put down and remembered without a repeat; the drink retained its complete
 consumption clip through an Enter event. Static checks and seven component Tk
 tests passed. C5 transparency and C6 final test handoff remain open.
+C4: `1c0e95c`, full suite 845 passed (137.0 s); reaction infrastructure
+`ea688b9`, deterministic existing care test `7d9eb40`. C5 prepares 22 binary-alpha
+display copies with original RGB/size/pivots preserved and source/output hashes.
+Catalog, preparation reproducibility, and existing food rendering checks passed;
+native appearance still needs the practical retest.
 
 Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
 the original consumption-only intention and immediate pickup-to-consumption

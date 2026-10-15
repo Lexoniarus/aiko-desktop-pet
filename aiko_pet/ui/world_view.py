@@ -27,7 +27,7 @@ class WorldView:
         if key not in self._images:
             self._images[key] = tk.PhotoImage(
                 master=self.root,
-                file=str(self.items.foods[asset_id].sprites[scale].path),
+                file=str(self.items.foods[asset_id].sprites[scale].render_path),
             )
         return self._images[key]
 

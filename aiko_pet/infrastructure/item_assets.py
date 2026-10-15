@@ -77,8 +77,14 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
             spec = variants[str(scale)]
             if not isinstance(spec, dict):
                 raise ValueError("Malformed item variant")
-            object_fields(spec, ("path", "pivot"), context=f"item {key} {scale}x")
+            object_fields(spec, ("path", "pivot"), optional=("display_path",),
+                          context=f"item {key} {scale}x")
             path, (width, height) = _png(root, spec.get("path"))
+            display_path = None
+            if "display_path" in spec:
+                display_path, display_size = _png(root, spec["display_path"])
+                if display_size != (width, height):
+                    raise ValueError("An item display copy must preserve dimensions")
             pivot: Any = spec.get("pivot")
             if (
                 not isinstance(pivot, list)
@@ -88,7 +94,8 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
                 or not 0 <= pivot[1] <= height
             ):
                 raise ValueError(f"Invalid grip point for {key} at {scale}x")
-            sprites[scale] = ItemSprite(path, (float(pivot[0]), float(pivot[1])))
+            sprites[scale] = ItemSprite(path, (float(pivot[0]), float(pivot[1])),
+                                        display_path)
         items[key] = HandItem(
             key,
             label,

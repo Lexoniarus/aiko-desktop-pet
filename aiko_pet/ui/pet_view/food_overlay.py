@@ -24,7 +24,7 @@ class FoodOverlay:
         self._canvas = canvas
         self._foods = catalog.foods
         self._images = {
-            (name, size): tk.PhotoImage(master=root, file=str(sprite.path))
+            (name, size): tk.PhotoImage(master=root, file=str(sprite.render_path))
             for name, food in self._foods.items()
             for size, sprite in food.sprites.items()
         }

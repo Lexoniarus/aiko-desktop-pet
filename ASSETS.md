@@ -19,6 +19,15 @@ Aiko artwork terms, not the source-code MIT license.
 
 ### Current Aiko Anime assets — restricted reuse
 
+Food/drink display copies under `aiko_pet/assets/items/display/` use the same
+128-threshold binary alpha as character frames, preventing partial-alpha blends
+with the Windows Magenta color key. Run
+`python -m tools.prepare_item_display_assets` with Pillow to reproduce all 22
+native 1x/2x copies. Original item PNGs, RGB colors, dimensions, pivots and picker
+icons remain unchanged. `display/provenance.json` records input/output hashes;
+the existing restricted item terms cover these technical display derivatives.
+Cursor, ground and hand renderers share these manifest-referenced copies.
+
 The runtime source export from `Aiko_Anime_8_Frames_Komplett.zip` is imported
 under [assets/aiko-anime-8-frames/](assets/aiko-anime-8-frames/IMPORT_README.md).
 Only the 134 original files needed to rebuild the selected character export
