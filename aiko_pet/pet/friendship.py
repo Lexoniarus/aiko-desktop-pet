@@ -1,4 +1,4 @@
-"""Pure friendship reward policy with an adapter for the legacy record API."""
+"""Pure friendship reward policy; PetState owns all reward mutations."""
 
 from __future__ import annotations
 
@@ -96,18 +96,3 @@ def calculate_friendship_reward(
     )
 
 
-def award_friendship_for_care(
-    record: FriendshipRecord,
-    action: str,
-    stamp: float,
-    need_before: float,
-) -> None:
-    """Legacy mutable-record adapter; PetState owns applying its own changes."""
-    change = calculate_friendship_reward(record, action, stamp, need_before)
-    if change is None:
-        return
-    record.friendship = change.friendship
-    record.friendship_day = change.day
-    record.friendship_gained_today = change.gained_today
-    record.care_types_today = list(change.care_types)
-    record.care_last_rewards = dict(change.last_rewards)

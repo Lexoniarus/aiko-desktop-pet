@@ -68,6 +68,12 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+    def test_friendship_reward_has_no_mutation_adapter(self) -> None:
+        from aiko_pet.pet import friendship
+
+        self.assertFalse(hasattr(friendship, "award_friendship_for_care"))
+        self.assertTrue(hasattr(friendship, "calculate_friendship_reward"))
+
     def test_need_decay_only_publishes_pure_calculation(self) -> None:
         from aiko_pet.pet import need_decay
 

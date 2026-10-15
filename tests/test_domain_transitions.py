@@ -12,7 +12,6 @@ from aiko_pet.pet.care_actions import (
 )
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.friendship import (
-    award_friendship_for_care,
     calculate_friendship_reward,
 )
 from aiko_pet.pet.need_decay import calculate_need_decay
@@ -102,20 +101,23 @@ class DomainTransitionTests(unittest.TestCase):
                                 getattr(state, key), getattr(expected, key),
                             )
 
-    def test_friendship_reward_adapters_preserve_daily_history(self) -> None:
+    def test_friendship_transition_matches_aggregate_history(self) -> None:
         state = PetState(
             friendship=20, affection=30, updated_at=START,
         )
-        reference = PetState.from_dict(state.to_dict(), now=START)
         original = state.to_dict()
         decision = calculate_friendship_reward(state, "pet", START, 30)
         self.assertIsNotNone(decision)
+        assert decision is not None
         self.assertEqual(state.to_dict(), original)
         state._credit_friendship("pet", START, 30)
-        award_friendship_for_care(reference, "pet", START, 30)
-        self.assertEqual(state.to_dict(), reference.to_dict())
+        self.assertEqual(state.friendship, decision.friendship)
+        self.assertEqual(state.friendship_day, decision.day)
+        self.assertEqual(state.friendship_gained_today, decision.gained_today)
+        self.assertEqual(tuple(state.care_types_today), decision.care_types)
+        unchanged = state.to_dict()
         state._credit_friendship("pet", START + 10, 0)
-        self.assertEqual(state.friendship, reference.friendship)
+        self.assertEqual(state.to_dict(), unchanged)
 
     def test_timeline_plan_never_modifies_state(self) -> None:
         state = PetState(updated_at=START, energy=20)
