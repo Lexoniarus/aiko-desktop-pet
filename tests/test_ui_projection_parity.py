@@ -69,12 +69,14 @@ class UiProjectionParityTests(unittest.TestCase):
         )
         for stamp in (at(2), at(8), at(13), at(18), at(23), at(10, day=18)):
             context = context_at(stamp)
+            weekdays = (
+                "Montag", "Dienstag", "Mittwoch", "Donnerstag",
+                "Freitag", "Samstag", "Sonntag",
+            )
             self.assertEqual(
                 format_day_label(context),
-                (
-                    f"{('Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag')[context.local.weekday()]}"
-                    f" · {context.local:%H:%M} · {context.activity}"
-                ),
+                f"{weekdays[context.local.weekday()]} · "
+                f"{context.local:%H:%M} · {context.activity}",
             )
             self.assertEqual(
                 format_schedule_line(context),
