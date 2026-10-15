@@ -13,6 +13,7 @@ from aiko_pet.application.settings import PetSettings
 
 from aiko_pet.pet.mind.mind import PetMind
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.status_hints import MoodHint
 from aiko_pet.infrastructure.hardware.metrics import ComputerSnapshot as SensorData
 from aiko_pet.ui.view_models.contracts import (
     HoverAnchor,
@@ -21,7 +22,7 @@ from aiko_pet.ui.view_models.projections import project_hover, project_status
 from aiko_pet.ui.view_models.read_models import DesktopPresentation
 from aiko_pet.ui.view_models.text_de import (
     describe_workload, format_day_label, format_feed_label,
-    format_mood_hint, format_percent, format_schedule_line,
+    format_mood_hint, format_percent, format_schedule_line, mood_hint_text,
 )
 from aiko_pet.pet.routine import context_at
 from aiko_pet.infrastructure.hardware.metrics import workload_description, percent_label
@@ -54,7 +55,7 @@ class PresentationBoundaryTests(unittest.TestCase):
         with self.assertRaises(FrozenInstanceError):
             setattr(snapshot, "sleeping", True)
 
-    def test_de_labels_match_existing_domain_compatibility_methods(self) -> None:
+    def test_de_labels_match_semantic_pet_hints(self) -> None:
         states = (
             PetState(),
             PetState(sleeping=True),
@@ -79,10 +80,26 @@ class PresentationBoundaryTests(unittest.TestCase):
                     )
                     self.assertEqual(
                         format_mood_hint(snapshot, context),
-                        state.mood_hint(context),
+                        mood_hint_text(state.mood_hint(context), context),
                     )
-                    self.assertEqual(format_mood_hint(snapshot),
-                                     state.mood_hint())
+                    self.assertEqual(
+                        format_mood_hint(snapshot),
+                        mood_hint_text(state.mood_hint()),
+                    )
+
+    def test_pet_hint_is_typed_and_wording_is_selected_by_ui(self) -> None:
+        state = PetState(satiety=10, energy=10)
+        self.assertIs(state.mood_hint(), MoodHint.HUNGRY)
+        self.assertEqual(
+            mood_hint_text(state.mood_hint()),
+            "Ein kleiner Snack wäre schön ...",
+        )
+        state.sleeping = True
+        self.assertIs(state.mood_hint(context_at(at(2))), MoodHint.SLEEP_NIGHT)
+        self.assertEqual(
+            mood_hint_text(state.mood_hint(context_at(at(2)))),
+            "Aiko schläft gerade ... gute Nacht.",
+        )
 
     def test_workload_copy_matches_legacy_for_optional_readings(self) -> None:
         for reading in (

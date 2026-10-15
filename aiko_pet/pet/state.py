@@ -40,6 +40,7 @@ from .lifecycle import (
     plan_pet_time,
 )
 from .routine import MEAL_NAMES, TimeContext, context_at
+from .status_hints import MoodHint, choose_mood_hint
 from .value_rules import bounded as bounded, clamp_saved_time as clamp_saved_time
 
 
@@ -356,34 +357,6 @@ class PetState:
             return MEAL_NAMES[context.meal]
         return "Snack"
 
-    def mood_hint(self, context: TimeContext | None = None) -> str:
-        if self.sleeping:
-            return (
-                "Aiko schläft gerade ... gute Nacht."
-                if context and context.night
-                else "Aiko ruht sich aus."
-            )
-        if self.satiety < 20:
-            return "Ein kleiner Snack wäre schön ..."
-        if self.energy < 20:
-            return "Ich könnte etwas Schlaf gebrauchen."
-        if self.social < 20:
-            return "...Etwas Gesellschaft wäre gerade schön."
-        if self.affection < 20:
-            return "...Eine kleine Geste wäre gerade schön."
-        if self.fun < 20:
-            return "Mir ist irgendwie langweilig ..."
-        if context is not None:
-            if context.meal and context.meal not in self.meals_today:
-                return f"Es wäre Zeit für {MEAL_NAMES[context.meal].lower()}."
-            if context.weekend:
-                return "Heute geht alles etwas langsamer. Gut so."
-            if context.night:
-                return "Es ist schon spät ..."
-            if context.period == "evening":
-                return "Endlich ein gemütlicher Abend."
-        if min(
-            self.satiety, self.mood, self.energy, self.social, self.affection,
-        ) > 85:
-            return "Heute ist ein guter Tag."
-        return "... Ich bin gern hier."
+    def mood_hint(self, context: TimeContext | None = None) -> MoodHint:
+        """Return the semantic status hint, not a language-specific sentence."""
+        return choose_mood_hint(self, context)
