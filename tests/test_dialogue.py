@@ -8,7 +8,7 @@ from datetime import datetime
 from tempfile import TemporaryDirectory
 from pathlib import Path
 
-from aiko_pet.pet.mind.mind import PetMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.catalog import (
     ANIMATIONS,
     CATALOGUE,
@@ -119,7 +119,7 @@ class VoiceCatalogueTests(unittest.TestCase):
 
 class EmotionTests(unittest.TestCase):
     def setUp(self):
-        self.mind = PetMind(rng=random.Random(8), started_at=10.0)
+        self.mind = make_aiko_mind(started_at=10.0, rng=random.Random(8))
         self.state = PetState()
         self.context = ctx()
 

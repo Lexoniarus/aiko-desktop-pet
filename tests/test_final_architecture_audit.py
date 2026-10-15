@@ -11,7 +11,7 @@ from pathlib import Path
 
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.pet.mind import PetMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 
@@ -79,7 +79,7 @@ class FinalArchitectureTests(unittest.TestCase):
         stamp = datetime(2026, 10, 12, 13).timestamp()
         context = context_at(stamp)
         state = PetState(satiety=10, mood=55)
-        mind = PetMind(rng=random.Random(7))
+        mind = make_aiko_mind(started_at=0.0, rng=random.Random(7))
         reading = ComputerSnapshot(cpu=82, ram=55, measured_at=1000.0)
         for observing in (False, True):
             with self.subTest(observing=observing):

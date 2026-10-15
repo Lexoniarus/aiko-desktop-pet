@@ -11,7 +11,7 @@ from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
 
-from aiko_pet.pet.mind.mind import PetMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import MoodHint
 from aiko_pet.ui.view_models.contracts import (
@@ -133,7 +133,7 @@ class UiProjectionParityTests(unittest.TestCase):
                 self.assertEqual(format_percent(value), expected)
 
     def test_hover_and_status_keep_needs_and_observation_preferences(self) -> None:
-        mind = PetMind(rng=random.Random(9))
+        mind = make_aiko_mind(started_at=0.0, rng=random.Random(9))
         states = (
             PetState(),
             PetState(sleeping=True),
@@ -187,7 +187,7 @@ class UiProjectionParityTests(unittest.TestCase):
             x=150, y=430, scale=2, toolbar_x=25, toolbar_y=35,
             observe_computer=True,
         )
-        mind = PetMind(rng=random.Random(10))
+        mind = make_aiko_mind(started_at=0.0, rng=random.Random(10))
         readings = StaticMonitor(
             ComputerSnapshot(cpu=83, measured_at=100),
         )

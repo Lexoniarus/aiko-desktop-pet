@@ -9,7 +9,7 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-from aiko_pet.pet.mind.mind import PetMind
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
 from aiko_pet.pet.lifecycle import MAX_LIVE_EFFORT_SECONDS
 from aiko_pet.pet.state import PetState
@@ -223,7 +223,7 @@ class TelemetryEffortTests(unittest.TestCase):
 
 class SocialDialogueTests(unittest.TestCase):
     def setUp(self):
-        self.mind = PetMind(rng=random.Random(57))
+        self.mind = make_aiko_mind(started_at=0.0, rng=random.Random(57))
         self.context = context_at(timestamp())
 
     def test_social_deficit_is_distinct_emotion_and_dialogue(self):
