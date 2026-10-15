@@ -68,6 +68,15 @@ class CanonicalImportTests(unittest.TestCase):
                         f"{path.relative_to(ROOT)} imports {name}",
                     )
 
+    def test_pet_state_has_no_legacy_mutation_reexports(self) -> None:
+        module = __import__("aiko_pet.pet.state", fromlist=["PetState"])
+        for obsolete in (
+            "apply_care_action", "award_friendship_for_care",
+            "apply_need_decay", "advance_pet_time", "apply_daily_routine",
+        ):
+            with self.subTest(export=obsolete):
+                self.assertFalse(hasattr(module, obsolete))
+
     def test_migration_only_test_filenames_were_retired(self) -> None:
         for old_name in (
             "test_personality_package.py",

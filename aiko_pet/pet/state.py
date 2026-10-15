@@ -8,7 +8,6 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .care_actions import (
-    apply_care_action as apply_care_action,
     plan_care_action,
     resolve_care_time,
 )
@@ -21,21 +20,18 @@ from .friendship import (
     FRIENDSHIP_VARIETY_BONUS as FRIENDSHIP_VARIETY_BONUS,
     LEGACY_REWARD_ACTIONS as LEGACY_REWARD_ACTIONS,
     calculate_friendship_reward,
-    award_friendship_for_care as award_friendship_for_care,
 )
 from .food import FoodActivity, FoodId, FoodState, advance_food
 from .fun import GameExperience, advance_fun, calculate_game_session_fun
 from .mood import MoodFactors, calculate_mood_target, reflect_care_in_mood
 from .need_decay import (
-    NeedLevels, apply_need_decay as apply_need_decay,
+    NeedLevels,
     calculate_need_decay,
 )
 from .lifecycle import (
     MAX_CATCHUP_SECONDS as MAX_CATCHUP_SECONDS,
     MAX_LIVE_EFFORT_SECONDS as MAX_LIVE_EFFORT_SECONDS,
     SIMULATION_STEP_SECONDS as SIMULATION_STEP_SECONDS,
-    advance_pet_time as advance_pet_time,
-    apply_daily_routine as apply_daily_routine,
     calculate_daily_routine,
     plan_pet_time,
 )
