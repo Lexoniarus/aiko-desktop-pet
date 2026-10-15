@@ -2,7 +2,8 @@
 
 Status: initial implementation through Stage 8; first practical test found
 behavior gaps. The investigation/feedback revision below is agreed behavior,
-implemented and verified with 850 tests; native practical retest remains open.
+implemented with practical follow-ups and verified with 855 tests at `ea4361f`;
+native practical retest remains open.
 Recorded: 15 October 2026.
 Baseline: `1753266db0dafc94024913cb281b80e7abe289a0` (merged PR #9).
 
@@ -21,6 +22,12 @@ approach, pickup, held examination/identification and a consumption decision.
 No immediate desire to consume means animated put-down with a later-use bubble,
 not permanent gaze-only behavior. Relevant phases require readable authored
 bubbles. Record examined/deferred knowledge to avoid repeated inspection loops.
+
+Latest practical clarification: after put-down, an examined deferred portion
+keeps its known identity/location but releases object gaze to normal cursor and
+ambient behavior. It becomes a goal again when wanted. Consumables render in
+front of the character without additional hand-mask layers during pickup,
+holding, consumption and put-down; imported hand assets remain preserved.
 
 These rules supersede the original requirement for recognized, wanted food as
 the only approach goal, and pickup completion must no longer automatically

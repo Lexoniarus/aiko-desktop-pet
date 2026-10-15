@@ -78,9 +78,19 @@ and sprite scale. Repeat visual/input checks at 1× and 2×.
 - [ ] Escape/input-capture loss cancels a carry without consumption or a duplicate.
   Release outside the supported primary-monitor surface discards it with brief
   feedback. Sleeping/busy Aiko does not silently queue an accepted offer.
-- [ ] Check taskbar/screen edges, scale changes, hand foregrounds, focus,
+- [ ] Check taskbar/screen edges, scale changes, item layering, focus,
   click-through and stacking. Existing toolbar pin, settings and game controls
   stay usable. Ambient speech/notifications do not overwrite object-phase bubbles.
+- [ ] During Onigiri consumption, the portion overlaps the fingers in front of
+  the character at both scales. Compare the [grip calibration](media/world-eating-grip-comparison.png)
+  (source composition, not a native capture). Consumables stay in front of the
+  character during pickup, holding and put-down too; no extra hand mask is drawn
+  over them. The eating calibration changes neither item pivots nor ground/cursor
+  placement.
+- [ ] After inspecting and deferring the drink at energy 65–66, Aiko releases
+  object gaze and resumes normal cursor/ambient interaction. The recognized
+  portion stays remembered at its observed location and is not picked up again
+  until wanted (autonomous energy threshold 60, normal retry rules still apply).
 
 Start a fresh profile when comparing need-specific outcomes; a previous meal or
 drink changes desire. Missing desire must still permit first investigation.
@@ -114,6 +124,15 @@ Windows/Python 3.11, 15 October 2026:
 - C6 `9dec641`: 850 tests passed in 157.4 s. Ruff 0.13.2, strict Mypy 1.18.2
   (167 source files) and Pyright 1.1.414 passed. The curious launcher and reopening
   its same temporary save both exited cleanly with `--auto-close-ms 1000`.
+- C7 `416607c`: 851 tests passed in 178.0 s; a different first investigation
+  bypasses the supply-seeking pause. CI run
+  [38770173465](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38770173465)
+  passed all three jobs (Linux Python 3.11/3.13 and Windows).
+- C8 `ea4361f`: 855 tests passed in 183.9 s with the same pinned static gates.
+  Eating-grip coverage and pickup/hold/put-down top-layer assertions pass at both
+  scales; complete asset preparation matches shipped outputs and is repeatable.
+  Deferred drink memory survives gaze release; cursor following and later
+  need-driven return are verified.
 - Current CI results are linked in the implementation ledger and
   [PR checks](https://github.com/Lexoniarus/aiko-desktop-pet/pull/10/checks)
   run Linux/Xvfb Python 3.11/3.13 and Windows, including real Tk flow tests.
@@ -121,6 +140,9 @@ Windows/Python 3.11, 15 October 2026:
 `test_world_runtime_flow.py` runs actual timers and desktop gates: readable,
 ordered bubbles, Onigiri at 76%, deferred reuse after hunger, staged drink with
 full playback through Enter, interrupted inspection and restart. Component tests
+and actual timers also check food consumption followed promptly by drink
+investigation/defer at energy 66, preserved recognition and released gaze.
+Component tests
 separately exercise delayed/stale/duplicate completions and transaction recovery.
 These checks do not replace native visual/input acceptance. Keep the checklist
 open until the revised practical test is recorded; do not merge before then.

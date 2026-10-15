@@ -2,8 +2,8 @@
 
 Status: first implementation passed automated regression through `bac23e0`
 (828 tests), but the first user test found incomplete visible behavior.
-The six correction steps are implemented; final C6 regression at `9dec641`
-passed 850 tests in 157.4 s on Windows/Python 3.11.
+The correction steps and practical follow-ups C7/C8 are implemented; regression
+at `ea4361f` passed 855 tests in 183.9 s on Windows/Python 3.11.
 Native acceptance of the revised build remains open.
 Recorded: 15 October 2026.
 Baseline: `main` at `1753266db0dafc94024913cb281b80e7abe289a0` (merged PR #9).
@@ -28,10 +28,11 @@ its exclusions do not prohibit the explicitly planned feature here.
 | C4 — readable reactions, staged handover and hover protection | `ea688b9`, `7d9eb40`, `1c0e95c` | 845 tests; actual timer flows; existing exact-care assertion uses controlled active time |
 | C5 — shared Windows-compatible item copies | `bf2f562` | 848 tests; 22 deterministic binary-alpha copies, original hashes/RGB/geometry preserved |
 | C6 — full regression and practical handoff | `9dec641` | 850 full-suite tests passed; three actual timer tests passed in 50.3 s: ordered readable bubbles, deferred reuse after hunger, full drink through Enter, interrupted inspection and restart; curious 76/60 profile added |
-| C7 — investigate another item after consumption | This follow-up | Reproduced global-pause failure, then 851 full-suite tests passed on Windows/Python 3.11 in 178.0 s; sequential food consumption → drink investigation/defer at energy 66 completes before the old pause expires; static checks pass |
+| C7 — investigate another item after consumption | `416607c` | Reproduced global-pause failure, then 851 full-suite tests passed on Windows/Python 3.11 in 178.0 s; sequential food consumption → drink investigation/defer at energy 66 completes before the old pause expires; static checks pass |
+| C8 — consumable grip/layers and deferred-object attention | `ea4361f` | 855 full-suite tests passed in 183.9 s; 16 eating-grip and 56 pickup/put-down render assertions at 1x/2x; reproducible preparation; deferred drink releases gaze, preserves recognition and becomes wanted later; static checks pass |
 
-CI run `38767715644` passed all three jobs at `bf2f562` (Linux Python
-3.11/3.13 and Windows). Final C6 source gate: 850 tests at `9dec641`; current-head
+CI run `38770173465` passed all three jobs at `416607c` (Linux Python
+3.11/3.13 and Windows). Latest source gate: 855 tests at `ea4361f`; current-head
 CI results are linked in [the test handoff](WORLD_SMOKE_TEST.md#automated-evidence).
 Ruff 0.13.2, strict Mypy 1.18.2 (167 source files) and Pyright 1.1.414 pass.
 Native appearance and interaction still need the revised practical retest.
@@ -42,8 +43,23 @@ global 30-second consumption pause also blocked independent curiosity. Limit
 that pause to renewed supply seeking of examined portions. A sequential real
 timer regression now requires the drink's full investigation and put-down after
 food consumption, before the old pause expires. Energy 66 still correctly
-declines autonomous drink consumption (threshold 60). Eating grip placement
-remains under visual correction; native acceptance stays open.
+declines autonomous drink consumption (threshold 60). Eating grip placement is
+calibrated six source pixels downward during preparation; Onigiri now overlaps
+the finger contacts in all eight poses at 1x/2x. The previous anchors failed all
+16 Tk render assertions. Source PNGs/timings/pivots remain unchanged and the
+complete preparation round-trip matches shipped outputs. See the
+[before/after diagnostic composition](media/world-eating-grip-comparison.png);
+native acceptance stays open.
+
+Further practical feedback confirmed drink investigation/defer at energy 65,
+but exposed hand-mask occlusion while holding/putting down and gaze remaining
+bound to the deferred drink. Remove additional hand layers from consumable
+presentation (preserving the assets). Restrict incidental object gaze to
+unexamined observations or a current goal. A known deferred drink keeps its
+memory, releases gaze, and becomes a consumption goal when wanted again.
+Regression tests reproduce all 56 pickup/put-down mask-order failures at 1x/2x
+and the stale gaze target, then verify correct ordering, cursor gaze, preserved
+recognition and later need-driven return.
 
 Recorded: 15 October 2026, runtime baseline `a6b1747`. This section supersedes
 the original consumption-only intention and immediate pickup-to-consumption

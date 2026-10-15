@@ -379,7 +379,10 @@ consumption, while canonical nutrition, repetition and food mood effects remain.
 
 `desktop/world_runtime.py` wires host coordinates, cursor gestures, awareness,
 interaction and presentation. `ui/world_view.py` renders snapshots in small
-passive native windows; `FoodOverlay` layers the held item and authored hands.
+passive native windows; `FoodOverlay` draws consumables above the character
+without additional hand masks. Calibrated eating anchors come from reproducible
+asset preparation. Examined deferred portions preserve memory but release
+incidental object gaze; only unexamined observations or active goals attract it.
 Chooser press creates one portion; recognized willingness is signaled while
 held, then release offers or falls. Accepted handover holds the last pickup pose
 and enters inspection/decision before the existing complete consumption clip.
