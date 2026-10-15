@@ -10,7 +10,7 @@ from aiko_pet.pet.animation.priority import (
 
 
 class PetAnimationPolicyBoundaryTests(unittest.TestCase):
-    def test_previous_imports_are_same_objects(self) -> None:
+    def test_animation_policies_keep_their_pet_domain_owner(self) -> None:
         self.assertEqual(FrameClock.__module__, "aiko_pet.pet.animation.animation")
         self.assertEqual(SpriteSelection.__module__, "aiko_pet.pet.animation.animation")
         self.assertEqual(AmbientDirector.__module__, "aiko_pet.pet.animation.ambient")
