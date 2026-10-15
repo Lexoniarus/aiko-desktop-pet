@@ -17,6 +17,7 @@ from .friendship import CARE_PRIMARY_NEED
 from .need_decay import NeedLevels
 from .routine import MEAL_NAMES, context_at
 from .value_rules import clamp_need_value
+from ..content import GERMAN_TEXT
 
 
 class CareValues(Protocol):
@@ -90,7 +91,8 @@ def plan_care_action(
         return replace(
             unchanged, changed=True,
             response=(
-                "Zzz ... gute Nacht." if sleeping else "Oh ... schon Morgen?"
+                GERMAN_TEXT.format("care.sleep_start") if sleeping
+                else GERMAN_TEXT.format("care.sleep_wake")
             ),
             sleeping=sleeping,
             sleep_origin="manual" if sleeping else "",
@@ -99,13 +101,13 @@ def plan_care_action(
     if action == "play":
         # A bare legacy care action cannot reward a game that was not played.
         message = (
-            "Ich bin gerade zu müde zum Spielen." if state.energy < 8
-            else "Wähle ein Spiel aus, dann spielen wir!"
+            GERMAN_TEXT.format("care.play_tired") if state.energy < 8
+            else GERMAN_TEXT.format("care.play_choose")
         )
         return replace(unchanged, response=message)
     if action == "energy_drink" and state.energy >= 100:
         return replace(
-            unchanged, response="Ich bin schon voll. Mehr passt gerade nicht rein.",
+            unchanged, response=GERMAN_TEXT.format("care.energy_full"),
         )
     sleeping = False
     sleep_origin = state.sleep_origin
@@ -125,7 +127,7 @@ def plan_care_action(
             needs=replace(
                 unchanged.needs, energy=clamp_need_value(state.energy + 10.0),
             ),
-            response="...Oh. Das hat geholfen.",
+            response=GERMAN_TEXT.format("care.energy_success"),
         )
     need_before = float(getattr(state, CARE_PRIMARY_NEED[action]))
     result = replace(
@@ -142,7 +144,7 @@ def plan_care_action(
                 social=clamp_need_value(state.social + 26),
                 energy=clamp_need_value(state.energy - 1),
             ),
-            response="...Du möchtest reden? Ich höre zu.",
+            response=GERMAN_TEXT.format("care.talk"),
         )
     if action == "pet":
         return replace(
@@ -152,13 +154,13 @@ def plan_care_action(
                 affection=clamp_need_value(state.affection + 25),
                 social=clamp_need_value(state.social + 2),
             ),
-            response="... Das ist angenehm.",
+            response=GERMAN_TEXT.format("care.pet"),
         )
     selected_food = food_id if food_id is not None else DEFAULT_FOOD_ID
     profile = FOOD_CATALOG[selected_food]
     intake = eat_food(state.food, state.satiety, selected_food)
     if not intake.accepted:
-        return replace(unchanged, response="Ich bin schon satt. ...Wirklich.")
+        return replace(unchanged, response=GERMAN_TEXT.format("care.feed_satisfied"))
     context = context_at(now)
     meals_date = state.meals_date
     meals = list(state.meals_today)
@@ -172,11 +174,11 @@ def plan_care_action(
     if first_meal and context.meal is not None:
         meals.append(context.meal)
     if intake.repetitive:
-        response = f"Schon wieder {profile.display_name}? ...Na gut."
+        response = GERMAN_TEXT.format("care.feed_repeat", food=profile.display_name)
     elif first_meal and context.meal is not None:
-        response = f"Danke für das {MEAL_NAMES[context.meal].lower()}!"
+        response = GERMAN_TEXT.format("care.feed_meal", meal=MEAL_NAMES[context.meal].lower())
     else:
-        response = f"Mhm ... {profile.display_name}! Danke."
+        response = GERMAN_TEXT.format("care.feed_snack", food=profile.display_name)
     return replace(
         result,
         meals_date=meals_date,

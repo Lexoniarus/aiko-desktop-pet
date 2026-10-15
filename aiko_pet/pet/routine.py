@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Collection
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
+from ..content import GERMAN_TEXT
 
 # (start minute since midnight, period, label, optional meal)
 WEEKDAY_SLOTS = (
@@ -35,9 +36,8 @@ SUNDAY_SLOTS = WEEKEND_SLOTS + (
 )
 
 MEAL_NAMES = {
-    "breakfast": "Frühstück",
-    "lunch": "Mittagessen",
-    "dinner": "Abendessen",
+    period: GERMAN_TEXT.format(f"meal.{period}")
+    for period in ("breakfast", "lunch", "dinner")
 }
 
 

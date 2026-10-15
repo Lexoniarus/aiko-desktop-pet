@@ -7,26 +7,28 @@ sentences. Status wording is owned by this view-model module.
 from __future__ import annotations
 
 from ...application.read_snapshot import PetReadSnapshot
+from ...content import GERMAN_TEXT
 from ...pet.routine import MEAL_NAMES, TimeContext, due_meal
 from ...pet.status_hints import MoodHint, choose_mood_hint
 from ...telemetry import ComputerSnapshot, workload_intensity
 
 
-WEEKDAYS = (
-    "Montag", "Dienstag", "Mittwoch", "Donnerstag",
-    "Freitag", "Samstag", "Sonntag",
-)
+WEEKDAYS = tuple(GERMAN_TEXT.format(f"weekday.{i}") for i in range(7))
 
 
 def format_day_label(context: TimeContext) -> str:
-    return (
-        f"{WEEKDAYS[context.local.weekday()]} · "
-        f"{context.local:%H:%M} · {context.activity}"
+    return GERMAN_TEXT.format(
+        "ui.day_label",
+        weekday=WEEKDAYS[context.local.weekday()],
+        time=f"{context.local:%H:%M}", activity=context.activity,
     )
 
 
 def format_schedule_line(context: TimeContext) -> str:
-    return f"Danach: {context.next_activity} um {context.next_time}"
+    return GERMAN_TEXT.format(
+        "ui.schedule_next", activity=context.next_activity,
+        time=context.next_time,
+    )
 
 
 def format_feed_label(pet: PetReadSnapshot, context: TimeContext) -> str:
@@ -34,32 +36,18 @@ def format_feed_label(pet: PetReadSnapshot, context: TimeContext) -> str:
     meal = due_meal(
         context, meals_date=pet.meals_date, meals_today=pet.meals_today,
     )
-    return MEAL_NAMES[meal] if meal is not None else "Snack"
-
-
-_MOOD_HINT_TEXT = {
-    MoodHint.SLEEP_NIGHT: "Aiko schläft gerade ... gute Nacht.",
-    MoodHint.SLEEP_REST: "Aiko ruht sich aus.",
-    MoodHint.HUNGRY: "Ein kleiner Snack wäre schön ...",
-    MoodHint.TIRED: "Ich könnte etwas Schlaf gebrauchen.",
-    MoodHint.LONELY: "...Etwas Gesellschaft wäre gerade schön.",
-    MoodHint.NEEDS_AFFECTION: "...Eine kleine Geste wäre gerade schön.",
-    MoodHint.BORED: "Mir ist irgendwie langweilig ...",
-    MoodHint.WEEKEND: "Heute geht alles etwas langsamer. Gut so.",
-    MoodHint.LATE_NIGHT: "Es ist schon spät ...",
-    MoodHint.EVENING: "Endlich ein gemütlicher Abend.",
-    MoodHint.GOOD_DAY: "Heute ist ein guter Tag.",
-    MoodHint.CONTENT: "... Ich bin gern hier.",
-}
+    return MEAL_NAMES[meal] if meal is not None else GERMAN_TEXT.format("ui.snack")
 
 
 def mood_hint_text(hint: MoodHint, context: TimeContext | None = None) -> str:
-    """Translate an already selected semantic hint without choosing one."""
+    """Render a semantic status hint using validated German JSON copy."""
     if hint is MoodHint.MEAL_TIME:
         if context is None or context.meal is None:
             raise ValueError("Meal-time text needs a meal context")
-        return f"Es wäre Zeit für {MEAL_NAMES[context.meal].lower()}."
-    return _MOOD_HINT_TEXT[hint]
+        return GERMAN_TEXT.format(
+            "mood.meal_time", meal=MEAL_NAMES[context.meal].lower(),
+        )
+    return GERMAN_TEXT.format(f"mood.{hint.value}")
 
 
 def format_mood_hint(
@@ -70,18 +58,23 @@ def format_mood_hint(
 
 
 def format_percent(number: float | None) -> str:
-    return "–" if number is None else f"{max(0, min(100, round(number)))} %"
+    return (
+        GERMAN_TEXT.format("ui.percent_missing") if number is None
+        else GERMAN_TEXT.format(
+            "ui.percent", percent=str(max(0, min(100, round(number)))),
+        )
+    )
 
 
 def describe_workload(snapshot: ComputerSnapshot) -> str:
     """Aiko describes observed effort, not fabricated applications."""
     effort = workload_intensity(snapshot)
     if snapshot.measured_at <= 0 or effort is None:
-        return "Ich orientiere mich noch ..."
+        return GERMAN_TEXT.format("workload.unobserved")
     if effort >= 0.9:
-        return "Ich bin gerade voll konzentriert."
+        return GERMAN_TEXT.format("workload.high")
     if effort >= 0.7:
-        return "Ich habe ordentlich zu tun."
+        return GERMAN_TEXT.format("workload.medium")
     if effort >= 0.36:
-        return "Ich bin beschäftigt."
-    return "Ich habe gerade etwas Ruhe."
+        return GERMAN_TEXT.format("workload.busy")
+    return GERMAN_TEXT.format("workload.calm")
