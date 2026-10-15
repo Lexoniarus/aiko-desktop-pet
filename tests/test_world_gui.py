@@ -42,12 +42,17 @@ class WorldGuiTests(unittest.TestCase):
             self.app._world.update(time.monotonic())
 
     def finish_pickup(self):
+        self.finish_clip("pick_up")
+
+    def finish_clip(self, name):
         animated = self.app._animated
-        clip = animated.assets.clips["pick_up"]
-        stamp = animated.frame_clock.frame_started_at
-        for duration in clip.timings:
-            stamp += duration / 1000 + .001
-            animated.show_frame("pick_up", stamp)
+        clip = animated.assets.clips[name]
+        for _ in range(32):
+            if self.app._world.interaction.phase != name:
+                break
+            index = animated.frame_clock.frame_index
+            stamp = animated.frame_clock.frame_started_at + clip.timings[index] / 1000
+            animated.show_frame(name, stamp + .001)
             self.app.root.update_idletasks()
 
     def test_ground_pickup_commits_nutrition_only_after_the_pickup_finishes(self):
@@ -120,3 +125,25 @@ class WorldGuiTests(unittest.TestCase):
         self.assertGreater(self.app.settings.x or 0, start)
         self.assertFalse(self.app.settings.auto_walk)
         self.assertEqual(world.interaction.phase, "pick_up")
+
+    def test_sleep_request_after_grasp_puts_down_before_sleep_without_nutrition(self):
+        world, animated = self.app._world, self.app._animated
+        item = world.world.place_resting(
+            "apple", world._body_x(), ObjectFootprint(8, 8),
+        )
+        self.recognize()
+        for _ in range(3):
+            index = animated.frame_clock.frame_index
+            stamp = animated.frame_clock.frame_started_at
+            stamp += animated.assets.clips["pick_up"].timings[index] / 1000 + .001
+            animated.show_frame("pick_up", stamp)
+            self.app.root.update_idletasks()
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.PET_HELD)
+        self.app.interact("sleep")
+        self.assertFalse(self.app.state.sleeping)
+        self.finish_clip("pick_up")
+        self.assertEqual(world.interaction.phase, "put_down")
+        self.finish_clip("put_down")
+        self.assertTrue(self.app.state.sleeping)
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
+        self.assertIsNone(self.app.state.food.last_food_id)
