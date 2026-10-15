@@ -382,6 +382,16 @@ class UiDependencyRules(unittest.TestCase):
                 ):
                     self.assertNotIn(original, source)
 
+    def test_session_lifecycle_and_refresh_have_one_runtime_owner(self) -> None:
+        shell = (ROOT / "gui.py").read_text("utf-8")
+        owner = (ROOT / "desktop/session_runtime.py").read_text("utf-8")
+        self.assertIn("DesktopSessionRuntime(", shell)
+        self.assertNotIn("def _advance_pet_lifecycle(", shell)
+        self.assertNotIn("def _refresh_overlays_and_autosave(", shell)
+        self.assertIn("def advance_lifecycle(", owner)
+        self.assertIn("def refresh(", owner)
+        self.assertIn("def save(", owner)
+
     def test_application_assembly_is_independent_of_desktop(self) -> None:
         gui = (ROOT / "gui.py").read_text("utf-8")
         assembly = (ROOT / "application/assembly.py").read_text("utf-8")

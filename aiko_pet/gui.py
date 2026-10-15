@@ -17,6 +17,7 @@ from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
 from .desktop.persistence import DesktopPersistence
 from .desktop.maintenance import DesktopMaintenance
+from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.contact import ContactCoordinator, ContactPorts
@@ -88,7 +89,9 @@ class DesktopPet:
                 is_closed=lambda: self._closed,
                 request_tick=self._tick,
                 greet=self._greet_on_start,
-                advance_lifecycle=self._advance_pet_lifecycle,
+                advance_lifecycle=lambda now, wall: (
+                    self._session_runtime.advance_lifecycle(now, wall)
+                ),
                 refresh_taskbar=lambda now: self._maintenance.refresh_track(now),
                 poll_desktop_clicks=lambda: self._input.poll_global_click(),
                 refresh_hover=lambda now: self._hover.refresh_hover(now),
@@ -105,7 +108,9 @@ class DesktopPet:
                 show_idle_emote=self._maybe_show_idle_emote,
                 speak_spontaneously=self._maybe_speak_spontaneously,
                 present_notification=self._present_pending_notification,
-                refresh_overlays_and_save=self._refresh_overlays_and_autosave,
+                refresh_overlays_and_save=lambda now: (
+                    self._session_runtime.refresh(now)
+                ),
             ),
             schedule=self.root.after,
             cancel=self.root.after_cancel,
@@ -326,6 +331,21 @@ class DesktopPet:
                 on_motion=self._on_cursor_moved,
             ),
         )
+        self._session_runtime = DesktopSessionRuntime(
+            activity=self._activity, attention=self._attention_runtime,
+            maintenance=self._maintenance, persistence=self._persistence,
+            ports=SessionRuntimePorts(
+                context=lambda: self.context,
+                set_context=self._set_context,
+                toolbar_visible=lambda: (
+                    self._hover.toolbar is not None and self._hover.toolbar.visible
+                ),
+                refresh_toolbar=self._refresh_care_toolbar,
+                refresh_status=self._hover.refresh_status,
+                refresh_settings=self._hover.refresh_settings,
+                save=self._save,
+            ),
+        )
         self._preferences = DesktopPreferences(
             settings=self.settings,
             adaptive=self.adaptive,
@@ -506,13 +526,6 @@ class DesktopPet:
     def _on_walk_finished(self, now: float) -> None:
         self._attention_runtime.walk_finished(now)
 
-    def _advance_pet_lifecycle(self, now: float, wall_time: float) -> None:
-        progress = self._activity.advance_lifecycle(
-            now, wall_time, self.context,
-        )
-        self.context = progress.context
-        self._attention_runtime.handle_time_progress(progress, now)
-
     def _maybe_show_idle_emote(self, now: float) -> None:
         self._attention_runtime.maybe_show_idle_emote(now)
 
@@ -522,24 +535,13 @@ class DesktopPet:
     def _present_pending_notification(self, now: float) -> None:
         self._attention_runtime.present_notification(now)
 
-    def _refresh_overlays_and_autosave(self, now: float) -> None:
-        """Refresh visible panels, window layering and periodic persistence."""
-        if self._hover.toolbar is not None and self._hover.toolbar.visible:
-            self._hover.toolbar.refresh()
-        self._hover.refresh_status()
-        self._hover.refresh_settings()
-        self._maintenance.refresh_stack(now)
-        if self._persistence.due(now):
-            self._save()
-
     def _tick(self) -> None:
         """Run the desktop scheduler, which owns update phase ordering."""
         self._runtime.tick()
 
     def _save(self) -> None:
         """Advance application state before writing it; report I/O failures."""
-        self._activity.advance_state(time.time())
-        failure = self._persistence.save()
+        failure = self._session_runtime.save()
         if failure is not None:
             messagebox.showwarning(
                 "Aiko", f"Spielstand konnte nicht gespeichert werden:\n{failure}",
