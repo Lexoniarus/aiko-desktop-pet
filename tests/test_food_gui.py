@@ -33,7 +33,7 @@ class FoodGuiTests(unittest.TestCase):
         self.pet.state.sleeping = False
         self.pet._on_enter()
 
-    def test_selecting_from_eleven_foods_feeds_the_matching_item(self) -> None:
+    def test_selecting_from_eleven_foods_carries_without_feeding(self) -> None:
         bar = self.pet._hover.toolbar
         assert bar is not None
         bar.buttons["feed"].invoke()
@@ -50,9 +50,12 @@ class FoodGuiTests(unittest.TestCase):
         self.assertEqual(self.pet.state.satiety, 75)
         menu.buttons["apple"].invoke()
         self.assertIsNone(self.pet._hover.food_menu)
-        self.assertEqual(self.pet.state.food.last_food_id, "apple")
-        self.assertEqual(self.pet._animated.food_overlay.current_food_id, "apple")
-        self.assertAlmostEqual(self.pet.state.satiety, 89, places=2)
+        token = self.pet._world.carry_id
+        assert token is not None
+        self.assertEqual(self.pet._world.world.get(token).definition_id, "apple")
+        self.assertIsNone(self.pet.state.food.last_food_id)
+        self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
+        self.assertAlmostEqual(self.pet.state.satiety, 75, places=2)
 
     def test_same_menu_instance_is_focused_instead_of_duplicated(
         self,
@@ -81,7 +84,7 @@ class FoodGuiTests(unittest.TestCase):
                 self.assertEqual((image.width(), image.height()), (64, 64))
                 self.assertTrue(image.transparency_get(0, 0))
 
-    def test_energy_drink_uses_energy_care_and_held_can_not_food(self) -> None:
+    def test_energy_drink_selection_carries_without_awarding_energy(self) -> None:
         bar = self.pet._hover.toolbar
         assert bar is not None
         self.pet.state.energy = 40
@@ -94,19 +97,17 @@ class FoodGuiTests(unittest.TestCase):
         self.assertEqual(menu.buttons["energy_drink"].cget("text"), "Energy Drink")
         menu.buttons["energy_drink"].invoke()
         self.assertIsNone(self.pet._hover.food_menu)
-        self.assertGreater(self.pet.state.energy, 40)
+        self.assertEqual(self.pet.state.energy, 40)
         self.assertLess(self.pet.state.satiety, 40)
         self.assertEqual(
             self.pet.state.food.recent_food_ids, old_food_history,
         )
         self.assertEqual(self.pet.state.food.remaining_digest_minutes, 0)
         self.assertAlmostEqual(self.pet.state.fun, old_fun, places=1)
-        self.assertEqual(
-            self.pet._animated.food_overlay.current_food_id, "energy_drink",
-        )
-        self.assertEqual(
-            self.pet._animated.frame_clock.active_key, ("eat", None),
-        )
+        token = self.pet._world.carry_id
+        assert token is not None
+        self.assertEqual(self.pet._world.world.get(token).definition_id, "energy_drink")
+        self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
 
     def test_full_energy_rejects_drink_without_eating_animation(self) -> None:
         self.pet.state.energy = 100

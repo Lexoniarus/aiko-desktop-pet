@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
+    "world.outside": frozenset(),
     "care.sleep_start": frozenset([]),
     "care.sleep_wake": frozenset([]),
     "care.play_tired": frozenset([]),

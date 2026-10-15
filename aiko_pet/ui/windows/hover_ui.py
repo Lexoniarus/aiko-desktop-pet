@@ -51,6 +51,7 @@ class HoverUiPorts:
     food_choices: tuple[FoodChoice, ...]
     feed: Callable[[FoodChoiceId], None] | None = None
     game_completed: Callable[[Score], object] | None = None
+    defer_game: Callable[[Callable[[], None]], None] | None = None
 
 
 class HoverUi:
@@ -165,6 +166,12 @@ class HoverUi:
                 button.configure(state="normal" if enabled else "disabled")
 
     def open_game(self) -> None:
+        if self._ports.defer_game is not None:
+            self._ports.defer_game(self._open_game_now)
+        else:
+            self._open_game_now()
+
+    def _open_game_now(self) -> None:
         if self.game_window is not None:
             self.game_window.focus()
             self._ports.restore_stack()

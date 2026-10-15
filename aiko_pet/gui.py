@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import time
 import tkinter as tk
+from dataclasses import replace
 from tkinter import font as tkfont
 from tkinter import messagebox
 
@@ -17,6 +18,7 @@ from .application.assembly import assemble_application
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.contact import ContactCoordinator, ContactPorts
+from .application.controller import CareOutcome
 from .application.game_experience import experience_from_rock_paper_scissors
 from .application.session import PetSessionRestorer
 from .application.settings import SettingKey
@@ -37,6 +39,7 @@ from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
 from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
 from .desktop.window_stack import WindowStack
+from .desktop.world_runtime import DesktopWorldRuntime
 from .infrastructure.active_time import active_uptime_seconds
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.character_mind import make_aiko_mind
@@ -52,6 +55,7 @@ from .ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 from .ui.pet_view.desktop_window import MAGENTA, DesktopWindow
 from .ui.pet_view.reaction_player import ReactionPlayer
 from .ui.pet_view.speech_presenter import SpeechAnchor, SpeechPresenter
+from .ui.view_models.care_text import format_care_response
 from .ui.view_models.food_models import food_choices
 from .ui.view_models.read_models import DesktopPresentation
 from .ui.windows.game_speech import GameSpeech
@@ -114,6 +118,7 @@ class DesktopPet:
                 refresh_overlays_and_save=lambda now: (
                     self._session_runtime.refresh(now)
                 ),
+                observe_objects=lambda now: self._world.update(now),
             ),
             schedule=self.root.after,
             cancel=self.root.after_cancel,
@@ -146,6 +151,9 @@ class DesktopPet:
                     self.root.winfo_pointerx(), self.root.winfo_pointery(),
                 ),
                 read_mouse_buttons=mouse_buttons_down_windows,
+                defer_routine=lambda: (
+                    hasattr(self, "_world") and self._world.interaction.active
+                ),
             ),
         )
         self._cursor_observation = services.cursor_observation
@@ -227,10 +235,8 @@ class DesktopPet:
                 anchor=self._views.anchor,
                 care=self.interact,
                 food_choices=self._food_choices,
-                feed=lambda selected: self.interact(
-                    "energy_drink" if selected == "energy_drink" else "feed",
-                    food_id=None if selected == "energy_drink" else selected,
-                ),
+                feed=lambda selected: self._world.begin_carry(selected),
+                defer_game=lambda action: self._world.interrupt(action),
                 game_completed=lambda score: self.application.complete_game(
                     experience_from_rock_paper_scissors(score),
                     inputs=self._activity.session_inputs(time.time(), time.monotonic()),
@@ -389,7 +395,25 @@ class DesktopPet:
             say=self._speech.show_text, finish=self.quit,
             seconds=self._character_assets.clips["waving-greeting"].duration_seconds,
         )
+        self._world = DesktopWorldRuntime(
+            root=self.root, state=self.state, settings=self.settings,
+            mind=self.mind, adaptive=self.adaptive, items=self._item_catalog,
+            clock=active_clock, track=lambda: self._window.track,
+            walk=self._walk, visual=self._visual, animated=self._animated,
+            playback=self._action_playback, inputs=self._activity.session_inputs,
+            game_open=lambda: self._hover.game_open,
+            controls_active=lambda: self._hover.interaction_active,
+            show_care=self._present_world_care,
+            feedback=lambda text: self._speech.show_text(text, 2450),
+            save=self._save,
+        )
         self._lifecycle.start()
+
+    def _present_world_care(self, outcome: CareOutcome) -> None:
+        if outcome.reaction is not None:
+            self._react(replace(outcome.reaction, animation="idle"), 2900)
+        else:
+            self._speech.show_text(format_care_response(outcome.result), 2450)
 
     def _set_game_mode(self, enabled: bool) -> None:
         self._animated.set_game_mode(enabled)
@@ -401,6 +425,8 @@ class DesktopPet:
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
         windows: list[tk.Tk | tk.Toplevel] = [self.root]
+        if hasattr(self, "_world"):
+            windows.extend(self._world.view.windows)
         if self._hover.toolbar is not None and self._hover.toolbar.visible:
             windows.append(self._hover.toolbar.window)
         if self._hover.game_window is not None:
@@ -433,13 +459,15 @@ class DesktopPet:
         self._preferences.record_toolbar_position(x, y)
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
-        self._contact.enter()
+        if not self._world.carrying:
+            self._world.interrupt(self._contact.enter)
 
     def _on_click_left(self, _event: tk.Event | None = None) -> None:
-        self._contact.click("left")
+        if not self._world.carrying:
+            self._world.interrupt(lambda: self._contact.click("left"))
 
     def _on_click_right(self, _event: tk.Event | None = None) -> None:
-        self._contact.click("right")
+        self._world.interrupt(lambda: self._contact.click("right"))
 
     def _greet_on_start(self) -> None:
         self._contact.greet()
@@ -479,6 +507,9 @@ class DesktopPet:
         self, action: str, *, food_id: FoodId | None = None,
     ) -> None:
         """Run a care command through the shared application boundary."""
+        if self._world.interaction.active:
+            self._world.interrupt(lambda: self.interact(action, food_id=food_id))
+            return
         stamp = time.time()
         now = time.monotonic()
         result = self.application.dispatch(
@@ -561,6 +592,7 @@ class DesktopPet:
             return
         self._closed = True
         self._farewell.cancel()
+        self._world.close()
         self._lifecycle.stop()
 
     def run(self) -> None:
