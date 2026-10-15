@@ -160,8 +160,10 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                                == ObjectState.CONSUMED, 22)
         self.assertEqual(world.world.get(item.instance_id).state, ObjectState.CONSUMED,
                          trace)
-        self.assertEqual(self.feedback[0][1], "object_return")
+        self.assertEqual(self.feedback[0][1], "object_recall_saved_food")
         self.assertNotIn("object_notice", [event for _, event, _ in self.feedback])
+        self.assertNotIn("object_inspect", [event for _, event, _ in self.feedback])
+        self.assertNotIn("object_recognized", [event for _, event, _ in self.feedback])
         self.assertGreater(self.app.state.satiety, 98)
         self.assertEqual(self.app.state.friendship, 15)
         self.app.state.energy = 66

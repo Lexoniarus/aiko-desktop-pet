@@ -15,6 +15,22 @@ semantic contracts to their implemented owners and Python APIs.
 
 ## Confirmed product decisions
 
+### Remembered supplies — 16 October 2026
+
+Recognized knowledge, successful inspection and confirmed own deferral survive
+restart until consumption or confirmed local absence. Fleeting unidentified
+sightings alone expire after ten active minutes. World truth, current perception
+and learned knowledge remain separate; a saved location is not current sight.
+
+A wanted, previously inspected supply follows need-based recall, approach,
+pickup and full consumption, then outcome. It skips repeated examination,
+recognition and desire bubbles. Recognized-but-unexamined objects retain the
+first investigation; cursor handover retains its own entry. Changed needs or
+contradictory evidence still revalidate before use. This supersedes mandatory
+reinspection for that known-ground route only. The
+[persistent knowledge plan](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md) records owners,
+atomic save/recovery rules and delivery evidence.
+
 ### Practical-test clarification — 15 October 2026
 
 Investigation is a distinct intention independent of current hunger/energy.
@@ -342,7 +358,9 @@ Native Windows interaction acceptance is tracked separately in
 
 - Notice: 3 body widths, 0.2 s; recognize: 1.5 widths, 0.6 s of attention.
   Losing visibility clears current evidence, while learned memory persists.
-- Memory expires after 600 active seconds; no offline knowledge refresh.
+- Only unidentified sightings expire after 600 active seconds. Recognized identity
+  and completed inspection persist until consumption or confirmed local absence;
+  no offline aging or knowledge refresh. Own confirmed deferral is a separate fact.
 - Seek food at satiety ≤70, drink at energy ≤60. Check at most once per second
   plus relevant changes. Retain eligible goals; tie-break by need urgency,
   food repetition, path length and stable instance token.
@@ -360,7 +378,9 @@ Native Windows interaction acceptance is tracked separately in
   bouncing. Presentation runs at about 33 ms; cognition stays in the existing tick.
 - Save schema stays outer v1, with optional `world.version=1`. Ground recovery
   normalizes falling/user-held/pet-held objects, keeps IDs and the next ID,
-  drops terminal objects and never restores actions, capture or memory.
+  drops terminal objects and never restores actions or capture. A separately
+  versioned optional `object_memory` section preserves learned facts and relative
+  active ages in the same atomic file; current observations/evidence start empty.
 
 Perception/interest/fall parameters are validated in `data/balance.json`.
 Grip/pointer and native appearance still need the practical calibration review.

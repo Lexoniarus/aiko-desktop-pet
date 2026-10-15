@@ -29,6 +29,13 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.addCleanup(folder.cleanup)
         self.pet = DesktopPet(store=StateStore(Path(folder.name) / "state.json"))
         self.addCleanup(self.pet.quit)
+        # These command tests own pointer input; a real cursor over the sprite
+        # legitimately opens controls and defers notifications on a live desktop.
+        for method in ("winfo_pointerx", "winfo_pointery"):
+            self.enterContext(patch.object(self.pet.root, method, return_value=0))
+        self.enterContext(patch.object(self.pet.root, "winfo_containing",
+                                       return_value=None))
+        self.pet._hover.close_toolbar()
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False
         self.pet.state.sleeping = False
@@ -138,6 +145,19 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.pet.state.sleeping = False
         self.pet._attention.last_spoken = time.monotonic() - 10
         self.pet._tick()
+        self.assertEqual(self._bubble_text(), "Kalender: Termin gleich.")
+
+    def test_hovered_controls_defer_notification_until_pointer_leaves(self) -> None:
+        self.pet.application.dispatch(NotificationCommand(self._notice("hover")))
+        with patch.object(self.pet.root, "winfo_containing",
+                          return_value=self.pet.canvas):
+            self.pet._tick()
+            self.assertTrue(self.pet._hover.interaction_active)
+            self.assertIsNone(self._bubble_text())
+        self.pet._hover.last_hover = time.monotonic() - 10
+        self.pet._attention.last_spoken = time.monotonic() - 10
+        self.pet._tick()
+        self.assertFalse(self.pet._hover.interaction_active)
         self.assertEqual(self._bubble_text(), "Kalender: Termin gleich.")
 
 

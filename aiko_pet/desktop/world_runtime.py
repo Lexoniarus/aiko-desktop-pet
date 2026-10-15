@@ -155,7 +155,8 @@ class DesktopWorldRuntime:
 
     def _phase_feedback(self, cue: ObjectFeedback) -> None:
         reaction = self._care.reaction if (
-            cue.event == "object_finished" and self._care is not None
+            cue.event in ("object_finished_food", "object_finished_drink")
+            and self._care is not None
         ) else None
         if reaction is None:
             reaction = self._mind.select_reaction(
@@ -338,10 +339,10 @@ class DesktopWorldRuntime:
             if self.now - self._search_at >= BALANCE.number(
                 "object_behavior", "search_seconds",
             ):
-                self.awareness.memory.forget(goal.token)
                 self.awareness.intentions.cancel(self.now)
                 self._walk.movement.set_goal(None)
-                self.interaction.interrupt(lambda: None)
+                self._visual.object_target = None
+                self.interaction.missing()
 
     def interrupt(self, action: Callable[[], None]) -> None:
         self.awareness.intentions.cancel(self.now)

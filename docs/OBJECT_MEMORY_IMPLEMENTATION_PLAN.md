@@ -59,8 +59,8 @@ Keep the existing draft PR unmerged until practical acceptance.
 | P0 | Record this accepted plan and architecture link | `0ab36e0`; 9 documentation checks and pinned static gates; baseline 867 tests passed on Python 3.14 |
 | P1 | Separate typed knowledge and snapshot values; retention, relocation and own-action facts | `1fcf742`; verification below |
 | P2 | Coherent consumption and confirmed placement across owners | `cac4d24`; verification below |
-| P3 | Versioned codec, joint save/restore and compatibility without fabricated sensing | This step's commit; verification below |
-| P4 | Preserve retrieval purpose, skip redundant inspection, contextual JSON dialogue | Pending |
+| P3 | Versioned codec, joint save/restore and compatibility without fabricated sensing | `586c93b`; verification below |
+| P4 | Preserve retrieval purpose, skip redundant inspection, contextual JSON dialogue | This step's commit; verification below |
 | P5 | Restart regression, isolated practical starter and acceptance checklist | Pending |
 
 P1 separates `ObjectKnowledge` from observations and introduces portable snapshot
@@ -93,6 +93,25 @@ The desktop writer captures a single typed `WorldSessionSnapshot`; the compositi
 root remains within its existing architecture gate. Full Windows/Python 3.11
 suite: 890 tests passed in 198.8 s; strict Mypy covers 169 source files. P2 CI
 [38819674430](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38819674430)
+passed all three jobs.
+
+P4 final Windows/Python 3.11 gate: 900 tests passed in 194.1 s; pinned Ruff,
+strict Mypy (169 source files) and Pyright passed.
+
+P4 preserves the consume purpose only for the same currently known, successfully
+inspected instance. Its visible route uses three meaningful bubbles: need-based
+recall, food/drink consumption and outcome. Confirmed deferral has distinct recall
+copy; first inspection and handover keep their own routes. Pickup must finish
+before consumption, whose clip must finish before the outcome. Changed needs
+produce a readable refusal and put-down; conflicting evidence restores inquiry.
+Attentive unsuccessful local search produces one missing reaction, without
+confusing cancellation/busy state with observed absence. All copy stays in JSON.
+The full gate exposed host-pointer-dependent notification fixtures (isolated
+rerun passed). A controlled cursor-over-sprite reproduction deferred the note
+with active hover controls and no object activity/memory. The fixtures now own
+their pointer input and explicitly test hover deferral and release, preserving
+the production notification gate. P3 CI
+[38820660257](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38820660257)
 passed all three jobs.
 
 ## Acceptance evidence

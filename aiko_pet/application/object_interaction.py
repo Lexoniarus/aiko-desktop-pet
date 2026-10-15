@@ -10,6 +10,7 @@ from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_events import ObjectEvent
 from ..pet.mind.object_intentions import ObjectGoal
 from ..pet.mind.object_memory import ObjectMemory
+from ..pet.mind.object_perception import ConsumableKind
 from ..world.contracts import ObjectState
 from ..world.state import WorldOperationError, WorldState
 from .object_feedback import (
@@ -53,6 +54,8 @@ class ObjectInteractionCoordinator:
         self._inspect_at = 0.0
         self._decision = ObjectUseDecision(False, "unrecognized")
         self.examined = False
+        self._retrieving = False
+        self._kind: ConsumableKind | None = None
 
     @property
     def active(self) -> bool:
@@ -77,6 +80,8 @@ class ObjectInteractionCoordinator:
         self.examined = False
         self._arrived = False
         self._decision = ObjectUseDecision(False, "unrecognized")
+        self._retrieving = False
+        self._kind = None
 
     def _set_phase(self, phase: InteractionPhase) -> None:
         self.phase = phase
@@ -95,12 +100,37 @@ class ObjectInteractionCoordinator:
             return False
         self._start(goal.token, ConsumptionOrigin.AUTONOMOUS)
         self._identity = goal.identity
-        self._set_phase("notice")
-        self._announce(
-            "object_return" if goal.purpose == "consume" else "object_notice",
+        known = self._memory.get(goal.token)
+        self._kind = known.kind if known is not None else None
+        self._retrieving = (
+            goal.purpose == "consume" and self._known_supply()
         )
+        self._set_phase("notice")
+        if self._retrieving:
+            saved = known is not None and known.disposition == "deferred"
+            self._announce(
+                ("object_recall_saved_drink" if saved else "object_recall_drink")
+                if self._kind == "drink" else
+                ("object_recall_saved_food" if saved else "object_recall_food"),
+            )
+        else:
+            self._announce("object_notice")
         self.update()
         return True
+
+    def _known_supply(self) -> bool:
+        known = self._memory.get(self.instance_id) if self.instance_id else None
+        return (known is not None and known.recognized and known.examined
+                and known.identity == self._identity and known.kind == self._kind)
+
+    def missing(self) -> None:
+        """Only the caller's completed attentive local search may establish absence."""
+        if self.phase != "approach" or self.instance_id is None:
+            return
+        self._memory.forget(self.instance_id)
+        self._set_phase("missing")
+        self._announce("object_missing")
+        self.update()
 
     def arrive(self) -> None:
         if self.phase == "approach":
@@ -122,7 +152,10 @@ class ObjectInteractionCoordinator:
             return
         self._set_phase("pick_up")
         self._action_id = self._play("pick_up")
-        self._announce("object_pick_up")
+        if self._retrieving:
+            self._cue_done = True
+        else:
+            self._announce("object_pick_up")
 
     def offer_on_release(self, instance_id: str) -> bool:
         if self.active or not self._eligible(instance_id):
@@ -142,6 +175,7 @@ class ObjectInteractionCoordinator:
         self._start(instance_id, ConsumptionOrigin.HANDOVER)
         known = self._memory.get(instance_id)
         self._identity = known.identity if known is not None else None
+        self._kind = known.kind if known is not None else None
         self._select_item(item.definition_id)
         self._action_id = self._play("hold_item")
         self._inspect("object_handover")
@@ -251,18 +285,26 @@ class ObjectInteractionCoordinator:
                 return
             if self.phase == "notice" and self._cue_done:
                 self._set_phase("approach")
-                self._announce("object_approach")
+                if self._retrieving:
+                    self._cue_done = True
+                else:
+                    self._announce("object_approach")
             elif self.phase == "approach" and self._arrived and self._cue_done:
                 self._pick_up()
             elif self.phase == "pick_up" and self._animation_done and self._cue_done:
                 if self._queued is not None:
                     self._put_down()
+                elif self._retrieving and self._known_supply():
+                    self.examined = True
+                    self._begin_eating()
                 else:
+                    self._retrieving = False
                     self._inspect()
             elif (self.phase == "inspect" and self._cue_done
                   and self._now() - self._inspect_at >= self._inspection_seconds):
                 known = self._memory.get(token)
                 self._identity = known.identity if known is not None else None
+                self._kind = known.kind if known is not None else None
                 self._memory.mark_examined(token)
                 self.examined = known is not None and known.recognized
                 self._set_phase("recognize")
@@ -292,9 +334,15 @@ class ObjectInteractionCoordinator:
                         queued()
                 else:
                     self._set_phase("finish")
-                    self._announce("object_finished")
+                    self._announce(
+                        "object_finished_drink" if self._kind == "drink"
+                        else "object_finished_food",
+                    )
             elif self.phase == "finish" and self._cue_done:
                 self._finish(True)
+                self._stop()
+            elif self.phase == "missing" and self._cue_done:
+                self._finish(False)
                 self._stop()
             if self.phase == previous:
                 return
@@ -316,14 +364,20 @@ class ObjectInteractionCoordinator:
             return
         decision = self._decide(self.instance_id, self._origin)
         self._decision = decision
-        if not decision.consume or not self._consume(
+        if not decision.consume:
+            self._set_phase("decide")
+            self._announce("object_unknown" if decision.reason == "unrecognized"
+                           else "object_later")
+            return
+        if not self._consume(
             self._interaction_id, self.instance_id, self._origin,
         ):
             self._put_down()
             return
         self._set_phase("eat")
         self._action_id = self._play("eat")
-        self._announce("object_consuming")
+        self._announce("object_consuming_drink" if self._kind == "drink"
+                       else "object_consuming_food")
 
     def _finish(self, consumed: bool) -> None:
         token = self.instance_id

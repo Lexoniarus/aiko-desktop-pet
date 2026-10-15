@@ -5630,6 +5630,105 @@
       "animation": "idle",
       "weight": 1,
       "cooldown_seconds": 0
+    },
+    {
+      "id": "object-recall-food-01",
+      "event": "object_recall_food",
+      "text": "Ich bekomme Hunger. Ich habe ja noch {item}.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-recall-drink-01",
+      "event": "object_recall_drink",
+      "text": "Meine Energie wird knapp. Ich habe ja noch {item}.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-recall-saved-food-01",
+      "event": "object_recall_saved_food",
+      "text": "Ich bekomme Hunger. Zum Glück habe ich mir noch {item} aufgehoben.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-recall-saved-drink-01",
+      "event": "object_recall_saved_drink",
+      "text": "Meine Energie wird knapp. Zum Glück habe ich mir noch {item} aufgehoben.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-consuming-food-01",
+      "event": "object_consuming_food",
+      "text": "Jetzt esse ich {item}. Das kommt gerade richtig.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-consuming-drink-01",
+      "event": "object_consuming_drink",
+      "text": "Jetzt trinke ich {item}. Ein bisschen neue Energie.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-finished-food-01",
+      "event": "object_finished_food",
+      "text": "Das war jetzt genau richtig.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-finished-drink-01",
+      "event": "object_finished_drink",
+      "text": "Das gibt mir wieder etwas Schwung.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
+    },
+    {
+      "id": "object-missing-01",
+      "event": "object_missing",
+      "text": "Hier finde ich gerade nichts mehr. Ich schaue später wieder.",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0
     }
   ]
 }

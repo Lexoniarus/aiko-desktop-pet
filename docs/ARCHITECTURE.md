@@ -350,8 +350,11 @@ custody/lifecycle operations. It imports neither pet rules nor desktop/UI code.
 `infrastructure/world_catalog.py` builds definitions by referencing the existing
 food and item-asset IDs; it does not copy nutrition, labels or sprite data.
 
-`pet/mind/object_perception.py`, `object_memory.py` and `object_intentions.py`
-separate timed recognition, last-observed knowledge and stable need-based goals.
+`pet/mind/object_perception.py`, `object_knowledge.py`, `object_memory.py` and
+`object_intentions.py` separate timed recognition, learned facts and stable
+need-based goals. Knowledge distinguishes identity, successful inspection and
+confirmed own deferral; observed relocation preserves learning. Recognized facts
+persist until consumption or confirmed absence; only unknown sightings expire.
 `application/object_awareness.py` is the objective-to-subjective boundary.
 Unseen moves do not update memory. The existing tick observes objects after
 need progression and before presentation. Faster physics/render callbacks do
@@ -367,6 +370,10 @@ held inspection, recognition, decision, consumption and put-down phases. The
 mind distinguishes investigate from consume, so a new noticed item can prompt
 investigation without current appetite. Subjective examined knowledge prevents
 repeated handling; later needs can activate known deferred portions.
+The coordinator preserves that consume purpose: known inspected stock uses recall,
+pickup and full consumption without repeating inspection/recognition/desire cues.
+Changed needs safely lead to refusal/put-down; conflicting evidence restores
+inquiry. Confirmed local absence has its own identified missing feedback.
 Identified animation events acquire at source frame 4, finish pickup at pose 8
 and release during reverse frame 4→3. The animator changes no needs.
 `application/object_feedback.py` correlates phase cues and completion receipts.
@@ -375,8 +382,8 @@ known names and uses `ReactionPlayer`'s completion/cancellation acknowledgements
 Transitions wait for readable cues and required animation/dwell. Ordinary hover
 does not abort consumption, and ambient feedback cannot replace action speech.
 `application/object_consumption.py` prepares canonical food/drink effects with
-explicit handover/autonomous origin, commits World and PetState on the owner
-thread with recovery, and deduplicates completed requests. World `consume()`
+explicit handover/autonomous origin, commits World, PetState and ObjectMemory on
+the owner thread with recovery, and deduplicates completed requests. World `consume()`
 alone still cannot feed Aiko. Human-only care rewards are excluded for ground
 consumption, while canonical nutrition, repetition and food mood effects remain.
 
@@ -403,8 +410,12 @@ transparency; no runtime Pillow or replacement artwork is introduced.
 
 `infrastructure/world_codec.py` adds an optional separately versioned World
 section inside outer save v1. Pet, World, settings and adaptive data use one
-atomic StateStore write. Old saves start with empty World; transient nonconsumed
-items recover on valid ground positions, without restoring actions or knowledge.
+atomic StateStore write. `object_memory_codec.py` adds optional version-one
+subjective facts and relative active ages. `WorldSessionSnapshot` captures World
+and memory together for that write. Old saves without memory grant no knowledge;
+transient nonconsumed items recover on valid ground positions without restoring
+actions or fabricating observations of recovery positions. Learned facts remain
+separate from current observations/evidence, which start empty on restore.
 World objects are never consumed during existing pet-only closed-time catch-up.
 
 The [World and autonomous object implementation plan](WORLD_OBJECT_IMPLEMENTATION_PLAN.md)

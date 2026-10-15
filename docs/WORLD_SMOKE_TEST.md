@@ -66,6 +66,9 @@ and sprite scale. Repeat visual/input checks at 1× and 2×.
   decision and complete consumption. No human-care/friendship reward is granted
   for autonomous use. A known deferred portion can become wanted at later hunger
   without repeating the surprise/discovery story.
+  Already inspected stock uses recall, pickup and consumption, followed by the
+  outcome; it must not repeat inspect/recognize/desire bubbles. First-time
+  investigation and accepted cursor handover retain their full separate routes.
 - [ ] In fresh `curious`, drop Energy Drink: energy around 60 motivates use after
   investigation. Energy rises by up to ten; satiety and digestion do not gain food
   effects. Renewed supply seeking of examined items pauses for 30 seconds after
@@ -128,6 +131,11 @@ path, rather than creating another profile:
   Known unwanted portions release gaze and do not trigger another investigation.
   Old saves without the optional memory section start without that knowledge;
   unidentified sightings stay unidentified. No World item is eaten while closed.
+- [ ] A later need produces a truthful hunger/energy recall naming the known
+  supply, then approach, pickup and the complete consumption clip. There is no
+  repeated examination or "Das ist ..." recognition. If needs change before use,
+  Aiko declines visibly and puts it down. A remembered missing target is searched
+  locally for at most two seconds, then dismissed with one bubble.
 
 ## Automated evidence
 

@@ -10,6 +10,10 @@
 - Persist subjective object knowledge alongside Pet/World in the existing atomic
   version-one save. Restore learned facts and active ages without offline sensing,
   current visibility or automatic reconciliation to hidden World changes.
+- Retrieve known, inspected supplies with hunger/energy recall and full
+  consumption, skipping redundant inquiry. Keep first investigation and handover
+  separate, distinguish confirmed deferral in dialogue, and announce local absence
+  once after bounded search rather than repeatedly pursuing a missing portion.
 
 - Let Aiko approach and grasp ground portions at both screen edges at 1x/2x.
   A shared geometry rule requires actual arrival at the closest legal standing
