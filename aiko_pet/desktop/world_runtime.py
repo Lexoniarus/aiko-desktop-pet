@@ -77,6 +77,7 @@ class DesktopWorldRuntime:
         self._inside = True
         self._contact: tuple[float, float] | None = None
         self._closed = False
+        self.user_action_pending = False
         self._last_scale = settings.scale
         self._last_active = active_uptime_seconds()
         self._last_real = time.monotonic()
@@ -268,7 +269,15 @@ class DesktopWorldRuntime:
         self.awareness.intentions.cancel(self.now)
         self._walk.movement.set_goal(None)
         self._visual.object_target = None
-        self.interaction.interrupt(action)
+        self.user_action_pending = True
+
+        def perform() -> None:
+            try:
+                action()
+            finally:
+                self.user_action_pending = False
+
+        self.interaction.interrupt(perform)
 
     def begin_carry(self, item_id: str) -> None:
         self.interrupt(lambda: self._begin_carry_now(item_id))

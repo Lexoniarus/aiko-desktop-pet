@@ -152,7 +152,10 @@ class DesktopPet:
                 ),
                 read_mouse_buttons=mouse_buttons_down_windows,
                 defer_routine=lambda: (
-                    hasattr(self, "_world") and self._world.interaction.active
+                    hasattr(self, "_world") and (
+                        self._world.interaction.active
+                        or self._world.user_action_pending
+                    )
                 ),
             ),
         )
@@ -509,7 +512,8 @@ class DesktopPet:
         self, action: str, *, food_id: FoodId | None = None,
     ) -> None:
         """Run a care command through the shared application boundary."""
-        if self._world.interaction.active:
+        if (self._world.interaction.active
+                or self._world.awareness.intentions.goal is not None):
             self._world.interrupt(lambda: self.interact(action, food_id=food_id))
             return
         stamp = time.time()
