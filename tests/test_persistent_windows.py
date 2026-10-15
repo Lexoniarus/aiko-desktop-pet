@@ -196,7 +196,7 @@ class PersistentWindowTests(unittest.TestCase):
     def test_notification_is_delivered_with_idle_pinned_windows(self) -> None:
         self.pet._hover.open_status()
         self.settings()
-        self.pet._action_until = 0
+        self.pet._action_playback.until = 0
         self.pet._attention.last_spoken = -1000
         self.pet.application.dispatch(NotificationCommand(IncomingNotification(
             event_id="persistent-windows", source="test.browser",
