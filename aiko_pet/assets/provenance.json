@@ -1,5 +1,10 @@
 {
   "source_asset": "Aiko_Anime_8_Frames_Komplett.zip / animations-8",
+  "supplement": {
+    "source_asset": "Aiko_Pick_Up_und_Hinlegen.zip",
+    "import_manifest": "../../assets/aiko-pick-up/IMPORT_MANIFEST.json",
+    "archive_sha256": "da581da6b4fd8f37c87be2d44244d146b6c7faa8b754f0f8a2d9cb5e81c19914"
+  },
   "source_catalog_sha256": "cf5f81b3b2de20beb20dcc51a0e6547a8913d3e18eda3aa1bbdd11b7db1c929f",
   "frame_counts": {
     "idle": 8,

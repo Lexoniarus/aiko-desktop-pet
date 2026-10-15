@@ -133,6 +133,13 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
     runtime = {"version": 1, "frame_size": [192, 208], "animations": animations}
     provenance = {
         "source_asset": "Aiko_Anime_8_Frames_Komplett.zip / animations-8",
+        "supplement": {
+            "source_asset": "Aiko_Pick_Up_und_Hinlegen.zip",
+            "import_manifest": "../../assets/aiko-pick-up/IMPORT_MANIFEST.json",
+            "archive_sha256": json.loads(
+                (supplement / "IMPORT_MANIFEST.json").read_text("utf-8"),
+            )["archive_sha256"],
+        },
         "source_catalog_sha256": hashlib.sha256(
             (source / "catalog.json").read_bytes(),
         ).hexdigest(),

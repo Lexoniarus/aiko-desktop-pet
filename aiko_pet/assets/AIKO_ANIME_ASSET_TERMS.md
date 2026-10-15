@@ -5,7 +5,8 @@ Copyright notice: Alex, 2026, to the extent that Alex holds the relevant rights.
 ## Scope
 
 These terms cover the new Aiko artwork and associated asset data imported from
-`Aiko_Anime_8_Frames_Komplett.zip`: sprites, source images, reference artwork,
+`Aiko_Anime_8_Frames_Komplett.zip` and the approved
+`Aiko_Pick_Up_und_Hinlegen.zip` supplement: sprites, source images, reference artwork,
 spritesheets, previews, videos, animation manifests and related asset material.
 They also cover the prepared runtime copies under `aiko_pet/assets/frames/`,
 the associated runtime animation data and hand foreground layers.
