@@ -382,6 +382,18 @@ class UiDependencyRules(unittest.TestCase):
                 ):
                     self.assertNotIn(original, source)
 
+    def test_application_assembly_is_independent_of_desktop(self) -> None:
+        gui = (ROOT / "gui.py").read_text("utf-8")
+        assembly = (ROOT / "application/assembly.py").read_text("utf-8")
+        self.assertIn("assemble_application(", gui)
+        self.assertNotIn("CareController(", gui)
+        self.assertNotIn("GameExperienceCoordinator(", gui)
+        self.assertNotIn("ActivityCoordinator(", gui)
+        self.assertIn("CareController(", assembly)
+        self.assertIn("GameExperienceCoordinator(", assembly)
+        self.assertNotIn("from ..desktop.", assembly)
+        self.assertNotIn("from ..ui.", assembly)
+
     def test_animation_assembly_does_not_live_in_composition_root(self) -> None:
         gui = (ROOT / "gui.py").read_text("utf-8")
         assembly = (ROOT / "desktop/animation_assembly.py").read_text("utf-8")

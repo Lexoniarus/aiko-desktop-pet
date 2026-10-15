@@ -13,27 +13,23 @@ from tkinter import messagebox
 
 from .application.session import PetSessionRestorer
 from .application.settings import SettingKey
-from .application.activity import ActivityCallbacks, ActivityCoordinator
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
 from .desktop.persistence import DesktopPersistence
 from .desktop.maintenance import DesktopMaintenance
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
-from .application.controller import CareController
 from .application.contact import ContactCoordinator, ContactPorts
-from .application.cursor_observation import CursorObservation
 from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
 from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation
+from .application.assembly import assemble_application
+from .application.activity import ActivityCallbacks
+from .application.game_experience import experience_from_rock_paper_scissors
 from .application.active_time import ActiveSessionClock
 from .pet.food import FoodId
 from .infrastructure.active_time import active_uptime_seconds
 from .ui.windows.hover_ui import HoverUi, HoverUiPorts
 from .ui.windows.game_speech import GameSpeech
-from .application.game_experience import (
-    GameExperienceCoordinator, experience_from_rock_paper_scissors,
-)
-from .application.router import ApplicationRouter
 from .ui.view_models.read_models import DesktopPresentation
 from .config import load_env_file
 from .desktop.global_input import (
@@ -43,7 +39,6 @@ from .desktop.input import DesktopInput, DesktopInputActions
 from .desktop.lifecycle import DesktopLifecycle
 from .desktop.farewell import FarewellSequence
 from .infrastructure.character_mind import make_aiko_mind
-from .pet.mind.workload_events import WorkloadEventDetector
 from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
 from .ui.pet_view.reaction_player import ReactionPlayer
@@ -124,22 +119,15 @@ class DesktopPet:
             self.store, self.state, self.settings, self.adaptive,
         )
         self.mind = make_aiko_mind(started_at=self._persistence.last_saved)
-        self._cursor_observation = CursorObservation(self.mind.cursor_attention)
         active_clock = ActiveSessionClock(active_uptime_seconds)
-        self.application = ApplicationRouter(
-            CareController(self.state, self.mind, self.adaptive, clock=active_clock),
-            game_experience=GameExperienceCoordinator(
-                self.state, self.mind, self.adaptive, clock=active_clock,
-            ),
-        )
-        self.workload_events = WorkloadEventDetector()
         self.activity_monitor = activity_monitor or ActivityMonitor()
         self.activity_monitor.set_enabled(self.settings.observe_computer)
-        self._activity = ActivityCoordinator(
-            self.state, self.settings, self.mind, self.adaptive,
-            self.workload_events, self.activity_monitor,
-            ActivityCallbacks(
-                read_idle_seconds=lambda: idle_seconds_windows(),
+        services = assemble_application(
+            state=self.state, settings=self.settings, mind=self.mind,
+            adaptive=self.adaptive, monitor=self.activity_monitor,
+            clock=active_clock,
+            callbacks=ActivityCallbacks(
+                read_idle_seconds=idle_seconds_windows,
                 start_review=lambda now: self._start_action(
                     "review", 1.4, started_at=now,
                 ),
@@ -151,8 +139,11 @@ class DesktopPet:
                 ),
                 read_mouse_buttons=mouse_buttons_down_windows,
             ),
-            clock=active_clock,
         )
+        self._cursor_observation = services.cursor_observation
+        self.application = services.router
+        self.workload_events = services.workload_events
+        self._activity = services.activity
         visuals = assemble_animation(
             root=self.root, canvas=self.canvas,
             state=self.state, settings=self.settings, adaptive=self.adaptive,
