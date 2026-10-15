@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv-backup-*/
 venv/
 env/
 .tox/
@@ -40,6 +41,7 @@ desktop.ini
 # Includes the example save directory from .env.example.
 local-data/
 state.json
+*.aiko-save-backup
 *.sqlite
 *.sqlite3
 *.db

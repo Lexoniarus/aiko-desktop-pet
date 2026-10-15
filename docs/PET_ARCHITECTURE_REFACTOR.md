@@ -4,7 +4,7 @@ Baseline: `main` at `c5d48d1043b1bbe696b6e5d984f2be79ff9348a7` (including PR #8 
 
 ## Purpose
 
-Prepare a readable, character-independent architecture **without adding** cursor fear, dragging, object recognition, World, new emotions, or autonomous item consumption in this refactor.
+Prepare a readable, character-independent architecture **without adding** cursor fear, dragging, object recognition, World, new emotions, or live autonomous item consumption in this refactor.
 
 Canonical ownership:
 - `pet/`: PetState, its rules, and pure pet behaviour (mind, gaze, motion and animation policies).
@@ -17,6 +17,12 @@ Canonical ownership:
 `World` is deliberately not created until its runtime/ownership contract is specified.
 
 ## Safety constraints
+
+October 15 follow-up: the maintainer explicitly requested bounded closed-time
+progression and scheduled self-care meals **only during that reconstruction**.
+This supersedes the earlier no-offline-progression constraint. Save schema,
+live care effects, friendship rewards, assets and frame timing remain unchanged.
+See [data and saves](DATA_AND_SAVES.md) for resource ownership and time rules.
 
 1. No changes to save-file shape, imported PNGs, authored dialogue, food/item selection, game rewards or animation frames.
 2. Retain 16-direction gaze, frame timing, walking pace, taskbar clamping, hover bridging, pinning, click reactions and non-modal settings.
@@ -74,6 +80,28 @@ This is a work plan, not an implementation claim. Mark each step complete only a
   after final green CI and the current-commit Windows smoke record.
 
 ## Original R1–R6 acceptance ledger
+
+Local follow-up verification (October 15, uncommitted working tree): 767 tests
+pass on Windows/Python 3.11, including native RPS geometry, invalid resource
+contracts, offline routine/self-care and save-backup cases. Ruff 0.13.2,
+Mypy 1.18.2 and Pyright 1.1.414 pass. Seventy pre/post care and need-progression
+cases retain identical results. This does not replace final SHA-specific CI or
+the maintainer's interactive Windows acceptance.
+
+The final consolidation reduces the previous 779-test suite to 767 tests by
+folding repeated architecture/identity checks into central audits and adding
+regressions for dialogue weights and shared live-time consumption. All 767
+pass; no functional GUI, asset, care or save regression cases were removed.
+`SessionInputs` and `advance_session_time()` now define one live-time contract;
+closed-time restoration and version-one save data retain their existing rules.
+
+Review follow-up: care returns one language-neutral effect used by the mind,
+application and presenter. Pre-care tone/context is captured before mutation;
+acceptance and consumption are not guessed by consumers. Pet/nutrition save
+translation lives in infrastructure, preserving the version-one payload.
+`SessionInputs` and `clip_id` replace ambiguous runtime/state names. See the
+[Python call migration](ARCHITECTURE.md#import-migration); latest-commit
+Windows acceptance remains required.
 
 | Phase | Implementation | Verification |
 | --- | --- | --- |

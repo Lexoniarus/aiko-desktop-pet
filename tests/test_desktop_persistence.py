@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+
 import json
 import tempfile
 import unittest
@@ -36,7 +38,7 @@ class DesktopPersistenceTests(unittest.TestCase):
         self.assertIsNone(self.persistence.save())
         saved = json.loads(self.store.path.read_text(encoding="utf-8"))
         self.assertEqual(saved["version"], 1)
-        self.assertEqual(saved["pet"], self.state.to_dict())
+        self.assertEqual(saved["pet"], encode_pet_state(self.state))
         self.assertEqual(saved["settings"], self.settings.to_dict())
 
     def test_save_does_not_advance_domain_state(self) -> None:

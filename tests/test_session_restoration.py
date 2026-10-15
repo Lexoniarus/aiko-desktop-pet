@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+
 import json
 import tempfile
 import unittest
@@ -52,24 +54,23 @@ class SessionRestorationTests(unittest.TestCase):
                 self.assertEqual(state.updated_at, NOW)
                 self.assertEqual(state.meals_date, "")
 
-    def test_store_load_is_data_only_even_after_long_inactivity(self) -> None:
+    def test_session_snapshot_is_data_only_even_after_long_inactivity(self) -> None:
         saved = PetState(satiety=60, energy=35, updated_at=NOW - 3600)
         settings = PetSettings(auto_routine=False)
         self.store.save(saved, settings)
         with patch.object(PetState, "advance", autospec=True) as advance:
-            decoded, restored_settings = self.store.load(now=NOW)
+            session_data = self.store.load_session(now=NOW)
+            decoded, restored_settings = session_data.state, session_data.settings
         advance.assert_not_called()
-        self.assertEqual(decoded.to_dict(), saved.to_dict())
+        self.assertEqual(encode_pet_state(decoded), encode_pet_state(saved))
         self.assertEqual(restored_settings.to_dict(), settings.to_dict())
-        self.assertTrue(self.store.load_session(now=NOW).restored_from_save)
+        self.assertTrue(session_data.restored_from_save)
 
-    def test_existing_save_freezes_closed_time_and_resets_anchor(self) -> None:
+    def test_existing_save_advances_closed_time_and_resets_anchor(self) -> None:
         saved = PetState(satiety=75, updated_at=NOW - 3600)
         self.store.save(saved, PetSettings(auto_routine=False))
-        with patch.object(PetState, "advance", autospec=True) as advance:
-            state, settings, _memory = self.restore()
-        advance.assert_not_called()
-        self.assertEqual(state.satiety, 75)
+        state, _settings, _memory = self.restore()
+        self.assertAlmostEqual(state.satiety, 67)
         self.assertEqual(state.updated_at, NOW)
 
     def test_saved_elapsed_time_and_adaptive_memory_are_preserved(self) -> None:
@@ -86,21 +87,19 @@ class SessionRestorationTests(unittest.TestCase):
         ) as reader:
             actual, restored_settings, adaptive_memory = self.restore()
         reader.assert_called_once()
-        expected = PetState.from_dict(saved.to_dict(), now=NOW)
-        expected.updated_at = NOW
-        self.assertEqual(actual.to_dict(), expected.to_dict())
+        expected = decode_pet_state(encode_pet_state(saved), now=NOW)
+        expected.advance(NOW, elapsed_seconds=3600)
+        self.assertEqual(encode_pet_state(actual), encode_pet_state(expected))
         self.assertEqual(restored_settings.to_dict(), settings.to_dict())
         self.assertEqual(adaptive_memory.hour_seconds[42], 32.5)
-        self.assertEqual(self.store.load(now=NOW)[0].updated_at, NOW - 3600)
+        self.assertEqual(self.store.load_session(now=NOW).state.updated_at, NOW - 3600)
 
-    def test_saved_auto_routine_setting_does_not_create_offline_recovery(self) -> None:
+    def test_daytime_offline_progress_has_no_unearned_energy_recovery(self) -> None:
         saved = PetState(energy=30, updated_at=NOW - 1800)
         settings = PetSettings(auto_routine=True)
         self.store.save(saved, settings)
-        with patch.object(PetState, "advance", autospec=True) as advance:
-            state, restored_settings, _memory = self.restore()
-        advance.assert_not_called()
-        self.assertEqual(state.energy, 30)
+        state, restored_settings, _memory = self.restore()
+        self.assertAlmostEqual(state.energy, 27)
         self.assertTrue(restored_settings.auto_routine)
 
     def test_old_version_one_save_without_adaptive_data_still_loads(self) -> None:

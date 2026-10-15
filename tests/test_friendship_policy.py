@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+
 import unittest
 from datetime import datetime
 
@@ -61,9 +63,9 @@ class FriendshipPolicyTests(unittest.TestCase):
     def test_pet_state_serialized_relationship_is_unchanged(self) -> None:
         state = PetState(updated_at=stamp())
         state.interact("pet", now=stamp())
-        serialized = state.to_dict()
-        restored = PetState.from_dict(serialized, now=stamp())
-        self.assertEqual(serialized, restored.to_dict())
+        serialized = encode_pet_state(state)
+        restored = decode_pet_state(serialized, now=stamp())
+        self.assertEqual(serialized, encode_pet_state(restored))
         self.assertEqual(clamp_saved_time(None), 0.0)
 
 

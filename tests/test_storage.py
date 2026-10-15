@@ -20,7 +20,8 @@ class StateStoreTests(unittest.TestCase):
         self.store = StateStore(Path(self.folder.name) / "nested" / "state.json")
 
     def test_no_save_starts_fresh(self):
-        pet, settings = self.store.load(now=123)
+        session_data = self.store.load_session(now=123)
+        pet, settings = session_data.state, session_data.settings
         self.assertEqual(pet.updated_at, 123)
         self.assertEqual(pet.satiety, 75)
         self.assertEqual(settings.scale, 1)
@@ -29,7 +30,8 @@ class StateStoreTests(unittest.TestCase):
         pet = PetState(satiety=88, mood=62, energy=44, sleeping=True, updated_at=SAMPLE_TIMESTAMP)
         settings = PetSettings(x=155, y=190, scale=2, always_on_top=False, auto_walk=False)
         self.store.save(pet, settings)
-        loaded, other = self.store.load(now=SAMPLE_TIMESTAMP)
+        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
+        loaded, other = session_data.state, session_data.settings
         self.assertEqual(loaded.satiety, 88)
         self.assertTrue(loaded.sleeping)
         self.assertEqual(other, settings)
@@ -49,7 +51,8 @@ class StateStoreTests(unittest.TestCase):
             },
             "settings": {"x": 400, "scale": 2, "auto_walk": False},
         }))
-        pet, settings = self.store.load(now=timestamp)
+        session_data = self.store.load_session(now=timestamp)
+        pet, settings = session_data.state, session_data.settings
         self.assertEqual((pet.satiety, pet.mood, pet.energy), (42, 63, 88))
         self.assertEqual(settings.x, 400)
         self.assertEqual(settings.scale, 2)
@@ -62,14 +65,16 @@ class StateStoreTests(unittest.TestCase):
     def test_corrupted_json_is_ignored(self):
         self.store.path.parent.mkdir(parents=True)
         self.store.path.write_text("{not-json")
-        pet, settings = self.store.load(now=SAMPLE_TIMESTAMP)
+        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
+        pet, settings = session_data.state, session_data.settings
         self.assertEqual(pet.satiety, 75)
         self.assertIsNone(settings.x)
 
     def test_future_version_uses_defaults(self):
         self.store.path.parent.mkdir(parents=True)
         self.store.path.write_text('{"version": 999, "pet": {"mood":0}}')
-        pet, _settings = self.store.load(now=SAMPLE_TIMESTAMP)
+        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
+        pet, _settings = session_data.state, session_data.settings
         self.assertEqual(pet.mood, 75)
 
     def test_malformed_settings_are_rejected(self):
@@ -88,7 +93,8 @@ class StateStoreTests(unittest.TestCase):
         self.assertTrue(old.observe_computer)
         self.store.save(PetState(updated_at=SAMPLE_TIMESTAMP),
                         PetSettings(observe_computer=False))
-        _pet, settings = self.store.load(now=SAMPLE_TIMESTAMP)
+        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
+        _pet, settings = session_data.state, session_data.settings
         self.assertFalse(settings.observe_computer)
         saved = json.loads(self.store.path.read_text(encoding="utf-8"))
         self.assertFalse(saved["settings"]["observe_computer"])
@@ -100,7 +106,8 @@ class StateStoreTests(unittest.TestCase):
         self.assertIsNone(PetSettings.from_dict({"scale": 1}).toolbar_x)
         settings = PetSettings(toolbar_x=77, toolbar_y=130)
         self.store.save(PetState(updated_at=SAMPLE_TIMESTAMP), settings)
-        _, loaded = self.store.load(now=SAMPLE_TIMESTAMP)
+        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
+        _, loaded = session_data.state, session_data.settings
         self.assertEqual((loaded.toolbar_x, loaded.toolbar_y), (77, 130))
         invalid = PetSettings.from_dict({"toolbar_x": True, "toolbar_y": 70000})
         self.assertIsNone(invalid.toolbar_x)
@@ -109,7 +116,8 @@ class StateStoreTests(unittest.TestCase):
     def test_chatter_preference_persists_in_the_v03_save_schema(self):
         pet = PetState(updated_at=SAMPLE_TIMESTAMP)
         self.store.save(pet, PetSettings(spontaneous_talk=False))
-        _pet, settings = self.store.load(now=SAMPLE_TIMESTAMP)
+        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
+        _pet, settings = session_data.state, session_data.settings
         self.assertFalse(settings.spontaneous_talk)
 
 

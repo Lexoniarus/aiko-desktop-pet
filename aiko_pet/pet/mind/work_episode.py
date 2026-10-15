@@ -6,7 +6,9 @@ component tracks only verified work transitions, interruptions and recovery.
 
 from __future__ import annotations
 
-from .adaptive_models import Behaviour as Behaviour
+from ..balance import BALANCE
+
+from .adaptive_models import Behaviour
 
 
 class WorkEpisodeMemory:
@@ -34,7 +36,9 @@ class WorkEpisodeMemory:
         elif previous is not None and previous.focused and not current.focused:
             self.last_work_duration = previous.prolonged_work_seconds
             if now is not None:
-                self.recovery_until = now + 110.0
+                self.recovery_until = now + BALANCE.number(
+                    "work_episode", "recovery_seconds"
+                )
                 self.last_work_finished_at = now
                 self.postwork_thought_spoken = False
         elif previous is not None and not previous.focused and current.focused:
@@ -52,26 +56,44 @@ class WorkEpisodeMemory:
         return now < self.recovery_until
 
     def interpret_event(
-        self, event: str, situation: Behaviour | None, now: float,
+        self,
+        event: str,
+        situation: Behaviour | None,
+        now: float,
     ) -> str:
         """Map measured work events to the established dialogue event keys."""
-        if event in (
-            "computer_effort_rising", "computer_effort_heavy",
-            "computer_effort_peak",
-        ) and situation is not None:
+        if (
+            event
+            in (
+                "computer_effort_rising",
+                "computer_effort_heavy",
+                "computer_effort_peak",
+            )
+            and situation is not None
+        ):
             if (
                 situation.expectation_confident
                 and situation.expected_effort is not None
-                and situation.expected_effort < 0.3
-                and (situation.effort or 0.0) >= 0.5
+                and situation.expected_effort
+                < BALANCE.number("work_episode", "unexpected_work_expected_effort")
+                and (situation.effort or 0.0)
+                >= BALANCE.number("work_episode", "unexpected_work_measured_effort")
             ):
                 event = "work_unexpected"
         if event.startswith("computer_effort_recovered"):
-            if self.interruptions >= 2 and self.last_work_duration >= 18:
+            if self.interruptions >= BALANCE.integer(
+                "work_episode", "interruption_count"
+            ) and self.last_work_duration >= BALANCE.integer(
+                "work_episode", "minimum_interrupted_work_seconds"
+            ):
                 event = "work_finished_interrupted"
-            elif self.last_work_duration >= 20 * 60:
+            elif self.last_work_duration >= BALANCE.integer(
+                "work_episode", "prolonged_work_seconds"
+            ):
                 event = "work_finished_long"
-            self.recovery_until = now + 110.0
+            self.recovery_until = now + BALANCE.number(
+                "work_episode", "recovery_seconds"
+            )
             self.last_recovery_comment = now
             self.last_work_finished_at = now
             self.postwork_thought_spoken = False
@@ -81,9 +103,12 @@ class WorkEpisodeMemory:
     def take_postwork_thought(self, now: float) -> bool:
         """Permit one reflection soon after genuinely prolonged work."""
         if (
-            self.last_work_duration < 20 * 60
+            self.last_work_duration
+            < BALANCE.integer("work_episode", "prolonged_work_seconds")
             or self.postwork_thought_spoken
-            or not 60 <= now - self.last_work_finished_at <= 480
+            or not BALANCE.integer("work_episode", "minimum_followup_seconds")
+            <= now - self.last_work_finished_at
+            <= BALANCE.integer("work_episode", "maximum_followup_seconds")
         ):
             return False
         self.postwork_thought_spoken = True

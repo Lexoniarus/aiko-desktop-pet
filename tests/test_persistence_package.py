@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+
 import json
 import os
 import tempfile
@@ -40,10 +42,11 @@ class PersistencePackageTests(unittest.TestCase):
             store.save(state, settings)
             saved = json.loads(store.path.read_text(encoding="utf-8"))
             self.assertEqual(saved["version"], 1)
-            self.assertEqual(saved["pet"], state.to_dict())
+            self.assertEqual(saved["pet"], encode_pet_state(state))
             self.assertEqual(saved["settings"], settings.to_dict())
-            loaded, other = store.load(now=1_780_000_000)
-            self.assertEqual(loaded.to_dict(), state.to_dict())
+            session_data = store.load_session(now=1_780_000_000)
+            loaded, other = session_data.state, session_data.settings
+            self.assertEqual(encode_pet_state(loaded), encode_pet_state(state))
             self.assertEqual(other, settings)
 
 

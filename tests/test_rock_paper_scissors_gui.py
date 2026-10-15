@@ -165,6 +165,9 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.pet._hover.open_game()
         game = self.pet._hover.game_window
         assert game is not None
+        # Windows delivers native visibility/layout events after idle work.
+        # Measure realized pixels, not the pre-map 1x1 child placeholders.
+        game.window.wait_visibility()
         game.window.update_idletasks()
         dimensions = (game.window.winfo_width(), game.window.winfo_height())
         slot = (game.player_hand.winfo_width(), game.player_hand.winfo_height())

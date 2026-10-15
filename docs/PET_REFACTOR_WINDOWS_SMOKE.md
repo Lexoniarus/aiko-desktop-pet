@@ -61,6 +61,11 @@ events, taskbar positioning or visual sprite alignment.
 - [ ] **Saving/restarting:** Close normally, restart using the same temporary
   save, and confirm settings, position, mood/friendship and care values.
   The save must retain `version: 1` and the same flat `settings` keys.
+- [ ] **Closed-time reconstruction:** With a temporary save, close Aiko and
+  reopen after a known interval. Needs advance up to the configured catch-up
+  limit; the next live tick does not consume that interval again. With automatic
+  routine enabled, offline sleep and due main meals apply without friendship
+  rewards. Live meals still require the existing care actions.
 
 ## Targeted regression check for the later R2/R5 cleanup
 

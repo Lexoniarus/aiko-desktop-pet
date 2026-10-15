@@ -36,7 +36,7 @@ class AnimationRuntimePorts:
     """Current action and pet attention; no concrete UI references."""
 
     action_until: Callable[[], float]
-    action_state: Callable[[], str]
+    action_clip_id: Callable[[], str]
     attention_until: Callable[[], float]
 
 
@@ -92,7 +92,7 @@ class DesktopAnimationRuntime:
             if priority.interrupt_walk:
                 self.interrupt_walk()
             selected = (
-                self._ports.action_state()
+                self._ports.action_clip_id()
                 if priority.mode == "timed" else priority.animation
             )
             if selected is None:

@@ -10,10 +10,9 @@ import sys
 import tkinter as tk
 from typing import Protocol
 from ...desktop.taskbar import locate_primary_taskbar
+from ...pet.content import GERMAN_TEXT
 
-from ...pet.animation.character import (
-    FRAME_WIDTH as FRAME_WIDTH, FRAME_HEIGHT as FRAME_HEIGHT,
-)
+from ...pet.animation.character import FRAME_WIDTH, FRAME_HEIGHT
 
 MAGENTA = "#ff00ff"
 
@@ -53,7 +52,7 @@ class DesktopWindow:
         self.settings = settings
         self.root = tk.Tk()
         self.root.withdraw()
-        self.root.title("Aiko Desktop Pet")
+        self.root.title(GERMAN_TEXT.format("ui.window_title"))
         self.root.overrideredirect(True)
         self.background = (
             MAGENTA if sys.platform == "win32" else "#202733"

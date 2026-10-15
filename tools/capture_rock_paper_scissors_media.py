@@ -105,7 +105,6 @@ def record_media() -> None:
                 game.window.winfo_width(), game.window.winfo_height(),
             )
             opening = capture(pet)
-            opening.save_png(MEDIA_DIR / "Aiko_RPS_Start.png")
             frames.append(opening)
             durations.append(1500)
 
@@ -154,7 +153,6 @@ def record_media() -> None:
             ) != expected_window:
                 raise RuntimeError("Minigame window shrank after second round")
             scoreboard = capture(pet)
-            scoreboard.save_png(MEDIA_DIR / "Aiko_RPS_Punktestand.png")
             frames.append(scoreboard)
             durations.append(1700)
 

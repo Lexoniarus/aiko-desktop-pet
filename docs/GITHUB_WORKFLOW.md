@@ -41,13 +41,13 @@ Do not modify the user's existing save as part of a test or cleanup. Tests shoul
 
 ## Contracts
 
-- Canonical code is organized under `pet/`, `personality/`, `application/`, `presentation/`, `ui/`, `desktop/` and `infrastructure/`.
-- Preserve the documented public compatibility import paths while clients still depend on them.
+- Canonical code is organized under `pet/`, `application/`, `ui/`, `desktop/`, `infrastructure/` and `games/`; mind policies live in `pet/mind/`.
+- Use canonical imports and the documented import migration; retired compatibility modules must not be recreated.
 - Application code must not manipulate Tk widgets or depend on concrete hardware providers.
 - Hardware sampling and domain mutations have separate owners. Domain state changes must be testable without opening a desktop window.
 - Keep authored German runtime/dialogue copy in German; technical docs, code identifiers and development messages are in English.
 
 See [current architecture](ARCHITECTURE.md),
-[historical refactor audit](ARCHITECTURE_AUDIT_20261013.md),
+[project milestones](../CHANGELOG.md),
 [asset licensing](../ASSETS.md), [security policy](../SECURITY.md),
 and [test status](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml).

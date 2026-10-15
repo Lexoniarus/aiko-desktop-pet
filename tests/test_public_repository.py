@@ -10,13 +10,13 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-LOCAL_MARKDOWN = (
-    "README.md", "CONTRIBUTING.md", "CHANGELOG.md", "SECURITY.md",
-    "ASSETS.md", "docs/ARCHITECTURE.md", "docs/MEDIA_GALLERY.md",
-    "assets/aiko-anime-8-frames/IMPORT_README.md",
-    "assets/aiko-anime-8-frames/LICENSE.md",
-    "docs/GITHUB_WORKFLOW.md", "docs/REFACTOR_ACCEPTANCE.md",
-)
+LOCAL_MARKDOWN = tuple(sorted({
+    *ROOT.glob("*.md"),
+    *(ROOT / "docs").rglob("*.md"),
+    *(ROOT / "LICENSES").rglob("*.md"),
+    *(ROOT / "assets").rglob("*.md"),
+    *(ROOT / "aiko_pet/assets").rglob("*.md"),
+}))
 LOCAL_LINK = re.compile(r"\]\(([^)]+)\)")
 
 
@@ -38,8 +38,8 @@ def local_links(source: Path) -> set[Path]:
 
 class PublicRepositoryTests(unittest.TestCase):
     def test_public_docs_have_no_broken_local_links(self) -> None:
-        for relative in LOCAL_MARKDOWN:
-            document = ROOT / relative
+        for document in LOCAL_MARKDOWN:
+            relative = document.relative_to(ROOT)
             with self.subTest(document=relative):
                 self.assertTrue(document.is_file())
                 for path in sorted(local_links(document)):
@@ -95,9 +95,6 @@ class PublicRepositoryTests(unittest.TestCase):
                     asset.name.startswith(("Aiko_Current_", "Aiko_RPS_")),
                     f"An outdated UI or sprite preview is still active: {asset}",
                 )
-        self.assertTrue(
-            (ROOT / "docs/references/Kenney_SciFi_Sample_Referenz.png").is_file(),
-        )
 
     def test_provenance_matches_actual_sprite_frames(self) -> None:
         manifest = json.loads(
@@ -195,19 +192,6 @@ class PublicRepositoryTests(unittest.TestCase):
         ):
             source = (ROOT / workflow).read_text(encoding="utf-8")
             self.assertIn("pyright==1.1.414", source)
-
-    def test_refactor_reports_are_marked_historical(self) -> None:
-        for relative in (
-            "docs/REFACTOR_ARCHITECTURE.md",
-            "docs/ARCHITECTURE_AUDIT_20261013.md",
-            "docs/REFACTOR_ACCEPTANCE.md",
-        ):
-            with self.subTest(path=relative):
-                preface = (ROOT / relative).read_text(
-                    encoding="utf-8",
-                )[:550].lower()
-                self.assertIn("historical", preface)
-                self.assertIn("architecture.md", preface)
 
 
 if __name__ == "__main__":

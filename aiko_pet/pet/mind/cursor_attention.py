@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..balance import BALANCE
+
 from dataclasses import dataclass
 
 
@@ -37,7 +39,11 @@ class CursorAttention:
         )
 
     def observe(
-        self, pointer: tuple[int, int], now: float, *, game_mode: bool = False,
+        self,
+        pointer: tuple[int, int],
+        now: float,
+        *,
+        game_mode: bool = False,
     ) -> bool:
         """Observe pointer motion; keep game-mode readings as baselines."""
         previous = self.previous_pointer
@@ -45,7 +51,11 @@ class CursorAttention:
         if game_mode or previous is None or pointer == previous:
             return False
         self.last_pointer_move = now
-        if now - self.last_attention >= 6.0:
+        if now - self.last_attention >= BALANCE.number(
+            "cursor", "attention_interval_seconds"
+        ):
             self.last_attention = now
-            self.attention_until = now + 1.0
+            self.attention_until = now + BALANCE.number(
+                "cursor", "attention_hold_seconds"
+            )
         return True

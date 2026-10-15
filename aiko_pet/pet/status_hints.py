@@ -6,6 +6,8 @@ contains no localized sentences, Tkinter or presentation dependencies.
 
 from __future__ import annotations
 
+from .balance import BALANCE
+
 from collections.abc import Sequence
 from enum import StrEnum
 from typing import Protocol
@@ -60,23 +62,25 @@ class MoodHintState(Protocol):
 
 
 def choose_mood_hint(
-    pet: MoodHintState, context: TimeContext | None = None,
+    pet: MoodHintState,
+    context: TimeContext | None = None,
 ) -> MoodHint:
     """Choose one semantic hint, preserving existing need/time precedence."""
     if pet.sleeping:
         return (
             MoodHint.SLEEP_NIGHT
-            if context is not None and context.night else MoodHint.SLEEP_REST
+            if context is not None and context.night
+            else MoodHint.SLEEP_REST
         )
-    if pet.satiety < 20:
+    if pet.satiety < BALANCE.integer("status", "low_need"):
         return MoodHint.HUNGRY
-    if pet.energy < 20:
+    if pet.energy < BALANCE.integer("status", "low_need"):
         return MoodHint.TIRED
-    if pet.social < 20:
+    if pet.social < BALANCE.integer("status", "low_need"):
         return MoodHint.LONELY
-    if pet.affection < 20:
+    if pet.affection < BALANCE.integer("status", "low_need"):
         return MoodHint.NEEDS_AFFECTION
-    if pet.fun < 20:
+    if pet.fun < BALANCE.integer("status", "low_need"):
         return MoodHint.BORED
     if context is not None:
         if context.meal and context.meal not in pet.meals_today:
@@ -88,7 +92,11 @@ def choose_mood_hint(
         if context.period == "evening":
             return MoodHint.EVENING
     if min(
-        pet.satiety, pet.mood, pet.energy, pet.social, pet.affection,
-    ) > 85:
+        pet.satiety,
+        pet.mood,
+        pet.energy,
+        pet.social,
+        pet.affection,
+    ) > BALANCE.integer("status", "happy_average"):
         return MoodHint.GOOD_DAY
     return MoodHint.CONTENT

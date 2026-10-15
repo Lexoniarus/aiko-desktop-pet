@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from aiko_pet.ui.view_models.care_text import format_care_response
+
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+
 import unittest
 from datetime import datetime
 
@@ -20,11 +24,11 @@ class CareActionRulesTests(unittest.TestCase):
         for action in ("talk", "feed", "play", "pet", "energy_drink", "sleep"):
             with self.subTest(action=action):
                 state = PetState(updated_at=moment)
-                before = state.to_dict()
+                before = encode_pet_state(state)
                 plan = plan_care_action(state, action, now=moment)
-                self.assertEqual(state.to_dict(), before)
+                self.assertEqual(encode_pet_state(state), before)
                 self.assertEqual(
-                    state.interact(action, now=moment), plan.response,
+                    state.interact(action, now=moment), plan.result,
                 )
 
     def test_each_care_action_retains_its_specific_effect(self) -> None:
@@ -37,40 +41,41 @@ class CareActionRulesTests(unittest.TestCase):
         for action, (attribute, value, reply) in expected.items():
             with self.subTest(action=action):
                 state = PetState(updated_at=moment)
-                text = state.interact(action, now=moment)
+                text = format_care_response(state.interact(action, now=moment))
                 self.assertEqual(getattr(state, attribute), value)
                 self.assertIn(reply, text)
         state = PetState(updated_at=moment)
         state.interact("feed", now=moment)
         self.assertEqual(state.satiety, 100.0)
-        before = state.to_dict()
-        self.assertIn("Spiel", state.interact("play", now=moment))
-        self.assertEqual(state.to_dict(), before)
+        before = encode_pet_state(state)
+        self.assertIn("Spiel", format_care_response(state.interact("play", now=moment)))
+        self.assertEqual(encode_pet_state(state), before)
 
     def test_meal_credit_is_awarded_only_once_per_window(self) -> None:
         meal_time = stamp(hour=13)
         ctx = context_at(meal_time)
         self.assertIsNotNone(ctx.meal)
         state = PetState(updated_at=meal_time)
-        first = state.interact("feed", now=meal_time)
+        first = format_care_response(state.interact("feed", now=meal_time))
         self.assertIn("Danke", first)
         self.assertEqual(state.meals_today, [ctx.meal])
-        second = state.interact("feed", now=meal_time + 1)
+        second = format_care_response(state.interact("feed", now=meal_time + 1))
         self.assertIn("satt", second)
         self.assertEqual(state.meals_today, [ctx.meal])
 
     def test_rejected_actions_leave_sleep_and_relationship_untouched(self) -> None:
         state = PetState(energy=4, sleeping=True, sleep_origin="manual")
-        before = state.to_dict()
-        self.assertIn("müde", state.interact("play", now=stamp()))
-        self.assertEqual(before, state.to_dict())
+        before = encode_pet_state(state)
+        self.assertIn("müde", format_care_response(state.interact("play", now=stamp())))
+        self.assertEqual(before, encode_pet_state(state))
         with self.assertRaises(ValueError):
             state.interact("unknown", now=stamp())
-        self.assertEqual(before, state.to_dict())
+        self.assertEqual(before, encode_pet_state(state))
 
     def test_full_drink_does_not_wake_aiko(self) -> None:
         state = PetState(energy=100, sleeping=True, sleep_origin="manual")
-        self.assertIn("voll", state.interact("energy_drink", now=stamp()))
+        result = state.interact("energy_drink", now=stamp())
+        self.assertIn("voll", format_care_response(result))
         self.assertTrue(state.sleeping)
         self.assertEqual(state.energy, 100)
 
@@ -79,7 +84,8 @@ class CareActionRulesTests(unittest.TestCase):
         context = context_at(night_time)
         self.assertTrue(context.night)
         state = PetState(updated_at=night_time)
-        self.assertIn("Zzz", state.interact("sleep", now=night_time))
+        result = state.interact("sleep", now=night_time)
+        self.assertIn("Zzz", format_care_response(result))
         self.assertTrue(state.sleeping)
         self.assertEqual(state.sleep_origin, "manual")
         state.interact("talk", now=night_time + 1)

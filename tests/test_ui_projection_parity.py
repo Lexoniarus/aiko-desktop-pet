@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+
 import random
 import unittest
 from dataclasses import FrozenInstanceError
@@ -149,7 +151,7 @@ class UiProjectionParityTests(unittest.TestCase):
                 for reading in readings:
                     for enabled in (True, False):
                         with self.subTest(stamp=stamp, enabled=enabled):
-                            before = state.to_dict()
+                            before = encode_pet_state(state)
                             copy = snapshot_pet(state)
                             hover = project_hover(
                                 copy, context, reading,
@@ -179,7 +181,7 @@ class UiProjectionParityTests(unittest.TestCase):
                                     hover.hardware_line,
                                     "Rechnerbeobachtung deaktiviert",
                                 )
-                            self.assertEqual(state.to_dict(), before)
+                            self.assertEqual(encode_pet_state(state), before)
 
     def test_desktop_adapter_owns_only_read_projections_and_geometry(self) -> None:
         state = PetState(energy=39)

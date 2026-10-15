@@ -29,7 +29,7 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.visual = MagicMock(spec=DesktopVisualObservation)
         self.visual.observe.return_value = PassiveObservation(None, False)
         self.action_until = 0.0
-        self.action_state = "review"
+        self.action_clip_id = "review"
         self.runtime = DesktopAnimationRuntime(
             state=self.state, settings=self.settings,
             assets=load_character_catalog(),
@@ -37,7 +37,7 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
             visual=cast(DesktopVisualObservation, self.visual),
             ports=AnimationRuntimePorts(
                 action_until=lambda: self.action_until,
-                action_state=lambda: self.action_state,
+                action_clip_id=lambda: self.action_clip_id,
                 attention_until=lambda: -100.0,
             ),
         )

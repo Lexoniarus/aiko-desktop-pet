@@ -7,6 +7,8 @@ directional sprites without hijacking mouse tracking or dialogue scheduling.
 
 from __future__ import annotations
 
+from ..balance import BALANCE
+
 import random
 from collections.abc import Callable, Sequence
 
@@ -16,15 +18,20 @@ _DIRECTIONS = (2, 3, 4, 12, 13, 14)
 # Repeating positions make the one-pixel sway gentler and less busy.
 # Eight phases still form a 3.36-second cycle at 420 ms per phase.
 _SWAY_OFFSETS = (0, 0, 1, 1, 0, 0, -1, -1)
-_SWAY_STEP_SECONDS = 0.42
-_BLINK_GAP_SECONDS = (3.0, 8.0)
+_SWAY_STEP_SECONDS = BALANCE.number("ambient", "sway_step_seconds")
+_BLINK_GAP_SECONDS = (
+    BALANCE.number("ambient", "blink_gap_minimum_seconds"),
+    BALANCE.number("ambient", "blink_gap_maximum_seconds"),
+)
 
 
 class AmbientDirector:
     """Pure policy for blink gaps, quiet poses and occasional self-glances."""
 
     def __init__(
-        self, started_at: float, *,
+        self,
+        started_at: float,
+        *,
         between: Callable[[float, float], float] = random.uniform,
         direction: Callable[[Sequence[int]], int] = random.choice,
     ) -> None:
@@ -35,7 +42,10 @@ class AmbientDirector:
         self._glance_frame: int | None = None
         self._glance_until = started_at
         self.next_blink_at = started_at + self._between(*_BLINK_GAP_SECONDS)
-        self.next_glance_at = started_at + self._between(22.0, 46.0)
+        self.next_glance_at = started_at + self._between(
+            BALANCE.number("ambient", "glance_gap_minimum_seconds"),
+            BALANCE.number("ambient", "glance_gap_maximum_seconds"),
+        )
 
     @property
     def blinking(self) -> bool:
@@ -49,7 +59,10 @@ class AmbientDirector:
         self._glance_frame = None
         self._glance_until = now
         self.next_blink_at = now + self._between(*_BLINK_GAP_SECONDS)
-        self.next_glance_at = now + self._between(22.0, 46.0)
+        self.next_glance_at = now + self._between(
+            BALANCE.number("ambient", "glance_gap_minimum_seconds"),
+            BALANCE.number("ambient", "glance_gap_maximum_seconds"),
+        )
 
     def motion_offset(self, now: float) -> int:
         """Head sway relative to the selected pose, not the whole character."""
@@ -66,14 +79,20 @@ class AmbientDirector:
             if now < self._glance_until:
                 return SpriteSelection("look", fixed_frame=self._glance_frame)
             self._glance_frame = None
-            self.next_glance_at = now + self._between(22.0, 46.0)
+            self.next_glance_at = now + self._between(
+                BALANCE.number("ambient", "glance_gap_minimum_seconds"),
+                BALANCE.number("ambient", "glance_gap_maximum_seconds"),
+            )
 
         if now >= self.next_glance_at:
             index = self._direction(_DIRECTIONS)
             if index not in _DIRECTIONS:
                 raise ValueError("Invalid autonomous glance direction")
             self._glance_frame = index
-            self._glance_until = now + self._between(1.1, 2.2)
+            self._glance_until = now + self._between(
+                BALANCE.number("ambient", "glance_hold_minimum_seconds"),
+                BALANCE.number("ambient", "glance_hold_maximum_seconds"),
+            )
             return SpriteSelection("look", fixed_frame=index)
 
         if now >= self.next_blink_at:
@@ -82,21 +101,30 @@ class AmbientDirector:
         return SpriteSelection("idle", fixed_frame=0)
 
     def select_passive_animation(
-        self, now: float, *, gaze_direction: int | None,
-        observing_computer: bool, computer_busy: bool,
-        energy: float, mood: float, satiety: float,
+        self,
+        now: float,
+        *,
+        gaze_direction: int | None,
+        observing_computer: bool,
+        computer_busy: bool,
+        energy: float,
+        mood: float,
+        satiety: float,
     ) -> SpriteSelection:
         """Choose the passive pose and preserve ambient timing on gaze."""
         choice = choose_passive_animation(
             gaze_direction=gaze_direction,
             observing_computer=observing_computer,
             computer_busy=computer_busy,
-            energy=energy, mood=mood, satiety=satiety,
+            energy=energy,
+            mood=mood,
+            satiety=satiety,
         )
         if choice.animation == "idle" and choice.fixed_frame is None:
             return self.choose(now)
         self.suspend(
-            now, keep_pose_motion=(
+            now,
+            keep_pose_motion=(
                 choice.animation == "look" and choice.fixed_frame is not None
             ),
         )

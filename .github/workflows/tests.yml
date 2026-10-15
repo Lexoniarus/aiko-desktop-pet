@@ -33,7 +33,7 @@ jobs:
             aiko_pet/pet/routine.py \
             tests/test_friendship_policy.py tests/test_care_actions.py \
             tests/test_pet_lifecycle.py tests/test_domain_transitions.py \
-            tests/test_ui_projection_parity.py tests/test_pet_package_layout.py \
+            tests/test_ui_projection_parity.py \
             tests/test_persistence_package.py aiko_pet/infrastructure/persistence.py
       - name: Enforce PEP 8 line lengths in adaptive and dialogue modules
         run: |
@@ -83,7 +83,7 @@ jobs:
         run: xvfb-run -a python -m unittest discover -s tests -q
 
   windows-smoke:
-    name: Windows headless boundaries
+    name: Windows setup and desktop boundaries
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -92,14 +92,16 @@ jobs:
           python-version: '3.11'
       - name: Import all desktop components on Windows
         run: python -c "import aiko_pet.gui, aiko_pet.desktop.global_input, aiko_pet.desktop.window_stack, aiko_pet.desktop.taskbar"
-      - name: Check Windows desktop boundaries without opening GUI windows
+      - name: Check Windows setup and desktop boundaries
         shell: pwsh
         run: |
           $patterns = @(
+            "test_windows_setup.py",
             "test_taskbar.py",
             "test_character_assets.py",
             "test_active_time.py",
             "test_care_requests.py",
+            "test_care_results.py",
             "test_assets.py",
             "test_window_stack.py",
             "test_desktop_input.py",
@@ -108,6 +110,9 @@ jobs:
             "test_entrypoints_env.py",
             "test_storage.py",
             "test_session_restoration.py",
+            "test_offline_progress.py",
+            "test_resource_validation.py",
+            "test_rock_paper_scissors_gui.py",
             "test_settings_model.py",
             "test_motion_animation.py",
             "test_reaction_playback.py",
@@ -118,7 +123,6 @@ jobs:
             "test_care_actions.py",
             "test_pet_lifecycle.py",
             "test_domain_transitions.py",
-            "test_pet_package_layout.py",
             "test_pet_mind_catalogue.py",
             "test_desktop_package_layout.py",
             "test_persistence_package.py",

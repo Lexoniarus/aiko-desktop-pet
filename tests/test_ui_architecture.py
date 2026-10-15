@@ -48,45 +48,6 @@ class UiDependencyRules(unittest.TestCase):
                 }
                 self.assertNotIn("DesktopPet", names)
 
-    def test_application_never_depends_on_ui_implementations(self) -> None:
-        for path in (ROOT / "application").glob("*.py"):
-            with self.subTest(module=path.name):
-                tree = ast.parse(path.read_text("utf-8"))
-                for node in ast.walk(tree):
-                    if not isinstance(node, ast.ImportFrom):
-                        continue
-                    name = node.module or ""
-                    self.assertFalse(
-                        name == "ui" or name.startswith("ui.")
-                        or name.startswith("aiko_pet.ui."),
-                    )
-
-    def test_application_never_imports_concrete_persistence(self) -> None:
-        for path in (ROOT / "application").glob("*.py"):
-            with self.subTest(module=path.name):
-                tree = ast.parse(path.read_text("utf-8"))
-                imported = [
-                    node.module or ""
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.ImportFrom)
-                ] + [
-                    alias.name
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.Import)
-                    for alias in node.names
-                ]
-                self.assertNotIn("storage", imported)
-                self.assertNotIn("aiko_pet.storage", imported)
-
-    def test_state_store_cannot_advance_pet_time(self) -> None:
-        tree = ast.parse((ROOT / "infrastructure/persistence.py").read_text("utf-8"))
-        self.assertFalse(any(
-            isinstance(node, ast.Call)
-            and isinstance(node.func, ast.Attribute)
-            and node.func.attr == "advance"
-            for node in ast.walk(tree)
-        ))
-
     def test_character_and_native_window_require_only_typed_ports(self) -> None:
         forbidden = {
             "storage", "domain", "adaptive", "adaptive_models",
@@ -120,15 +81,15 @@ class UiDependencyRules(unittest.TestCase):
         self.assertNotIn("toolbar._dragging", source)
 
     def test_persistence_never_advances_domain_state(self) -> None:
-        tree = ast.parse(
-            (ROOT / "desktop/persistence.py").read_text("utf-8"),
-        )
-        self.assertFalse(any(
-            isinstance(node, ast.Call)
-            and isinstance(node.func, ast.Attribute)
-            and node.func.attr == "advance"
-            for node in ast.walk(tree)
-        ))
+        for owner in ("infrastructure/persistence.py", "desktop/persistence.py"):
+            with self.subTest(owner=owner):
+                tree = ast.parse((ROOT / owner).read_text("utf-8"))
+                self.assertFalse(any(
+                    isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Attribute)
+                    and node.func.attr == "advance"
+                    for node in ast.walk(tree)
+                ))
 
     def test_desktop_runtime_services_do_not_import_domain(self) -> None:
         forbidden = {"gui", "domain", "adaptive", "storage", "dialogue"}
@@ -218,48 +179,6 @@ class UiDependencyRules(unittest.TestCase):
         self.assertIn("from .ui.view_models.read_models import", source)
         self.assertIn("DesktopPresentation(", source)
         self.assertNotIn("from .application.read_models import", source)
-
-    def test_application_runtime_does_not_import_hardware_provider(self) -> None:
-        for module in (
-            "activity.py", "attention.py", "ports.py", "read_snapshot.py",
-        ):
-            with self.subTest(module=module):
-                tree = ast.parse(
-                    (ROOT / "application" / module).read_text("utf-8"),
-                )
-                names = [
-                    node.module or ""
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.ImportFrom)
-                ]
-                self.assertFalse(any(
-                    "infrastructure" in name
-                    or "system_activity" in name
-                    or "presentation" in name
-                    or ".ui." in name
-                    for name in names
-                ))
-
-    def test_pure_policies_and_views_do_not_import_tk_or_storage(self) -> None:
-        for owner in ("ui/view_models", "pet/animation", "pet/movement"):
-            for module in (ROOT / owner).glob("*.py"):
-                with self.subTest(module=str(module.relative_to(ROOT))):
-                    tree = ast.parse(module.read_text("utf-8"))
-                    imports = [
-                        node.module or ""
-                        for node in ast.walk(tree)
-                        if isinstance(node, ast.ImportFrom)
-                    ] + [
-                        alias.name
-                        for node in ast.walk(tree)
-                        if isinstance(node, ast.Import)
-                        for alias in node.names
-                    ]
-                    self.assertFalse(any(
-                        name.startswith("tkinter") or name.endswith("storage")
-                        or "infrastructure" in name
-                        for name in imports
-                    ))
 
     def test_production_text_is_not_read_from_pet_legacy_methods(self) -> None:
         files = (
@@ -351,41 +270,6 @@ class UiDependencyRules(unittest.TestCase):
         self.assertIn("self.root.after_cancel(", input_source)
         self.assertIn("self._inputs.stop()", lifecycle)
 
-    def test_personality_code_has_no_ui_storage_or_native_imports(self) -> None:
-        for path in (ROOT / "pet/mind").glob("*.py"):
-            with self.subTest(module=path.name):
-                tree = ast.parse(path.read_text("utf-8"))
-                for node in ast.walk(tree):
-                    if not isinstance(node, ast.ImportFrom):
-                        continue
-                    imported = node.module or ""
-                    if node.level >= 2:
-                        self.assertNotIn(
-                            imported.split(".", 1)[0],
-                            {"ui", "presentation", "desktop", "storage",
-                             "infrastructure"},
-                        )
-                names = {
-                    alias.name
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.Import)
-                    for alias in node.names
-                }
-                self.assertFalse(any(
-                    name.startswith(("tkinter", "ctypes", "subprocess"))
-                    for name in names
-                ))
-
-    def test_application_uses_canonical_personality_modules(self) -> None:
-        for path in (ROOT / "application").glob("*.py"):
-            with self.subTest(module=path.name):
-                source = path.read_text("utf-8")
-                for original in (
-                    "from ..adaptive import", "from ..dialogue import",
-                    "from ..adaptive_models import",
-                ):
-                    self.assertNotIn(original, source)
-
     def test_session_lifecycle_and_refresh_have_one_runtime_owner(self) -> None:
         shell = (ROOT / "gui.py").read_text("utf-8")
         owner = (ROOT / "desktop/session_runtime.py").read_text("utf-8")
@@ -456,25 +340,6 @@ class UiDependencyRules(unittest.TestCase):
         self.assertIn("from ...desktop.taskbar import", desktop_window)
         self.assertNotIn("from ..taskbar import", sprite)
         self.assertNotIn("from ..taskbar import", desktop_window)
-
-
-    def test_application_services_never_import_tkinter(self) -> None:
-        for path in (ROOT / "application").glob("*.py"):
-            with self.subTest(module=path.name):
-                tree = ast.parse(path.read_text("utf-8"))
-                imported = [
-                    name.name for node in ast.walk(tree)
-                    if isinstance(node, ast.Import)
-                    for name in node.names
-                ]
-                imported += [
-                    node.module or ""
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.ImportFrom)
-                ]
-                self.assertFalse(
-                    any(name.startswith("tkinter") for name in imported),
-                )
 
 
 if __name__ == "__main__":

@@ -114,7 +114,7 @@ titles or unapproved personal activity details.
 - `ActivityCoordinator` owns pet time progression during desktop ticks and
   before persistence; `DesktopPersistence` writes the supplied state without
   advancing the pet or choosing sleep policy.
-- `PetSessionRestorer` restores existing saves without offline catch-up
+- `PetSessionRestorer` decodes existing saves and applies bounded closed-time progression
   using the `SavedPetReader` port. `PetSettings` is owned by the application
   settings module, and `StateStore` only decodes/encodes JSON data. Neither
   application component imports the storage implementation.
@@ -149,8 +149,10 @@ integration or network access were added.
 ## Persistence infrastructure contract
 
 `infrastructure/persistence.py` owns the only state JSON repository.
+Its `pet_codec.py` adapter translates pet and nutrition records without putting
+JSON decoding or formatting on the domain aggregates.
 Application session restoration
-consumes its typed load port without offline catch-up. Active-session time
+consumes its typed load port and then simulates bounded closed time. Active-session time
 progression stays outside the repository. Old save path precedence and version-one schema are
 preserved, including relative environment-variable overrides.
 
@@ -174,8 +176,11 @@ No migrations or extra runtime libraries are necessary.
   commands, future integration events, an owner-thread command router, and a
   bounded, thread-safe notification inbox.
 - `DesktopPet.interact()` now submits `CareCommand` and receives a
-  `CareOutcome`. The controller owns domain/dialogue sequencing; the GUI
-  still presents text, refreshes widgets and saves locally.
+  `CareOutcome` carrying the committed `CareResult`. `SessionInputs` supplies
+  trusted clock/observation values via the router's `inputs=` argument.
+  The controller owns domain/dialogue sequencing; the care presenter alone
+  formats German fallback text, refreshes widgets and selects item visuals.
+  The GUI saves locally after presentation.
 - External notification data uses `IncomingNotification.from_payload(...,
   authenticated_source=...)`. The adapter is responsible for authenticating
   and authorizing the source (not provided in this change).

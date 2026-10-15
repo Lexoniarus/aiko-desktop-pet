@@ -11,7 +11,8 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.pet.routine import context_at
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
-from aiko_pet.ui.windows.hover_contracts import HoverActions, HoverAnchor
+from aiko_pet.ui.windows.hover_contracts import HoverActions
+from aiko_pet.ui.view_models.contracts import HoverAnchor
 
 
 class IndependentHoverTests(unittest.TestCase):

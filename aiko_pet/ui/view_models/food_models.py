@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Literal, TypeAlias
 
 from ...pet.content import GERMAN_TEXT
+from ...pet.balance import BALANCE
 from ...pet.food import FOOD_CATALOG, FOOD_MENU_ORDER, FoodId
 from ...pet.animation.item_assets import ItemCatalog
 
@@ -34,27 +35,36 @@ def food_choices(items: ItemCatalog) -> tuple[FoodChoice, ...]:
             raise ValueError(f"Food {item_id} has no menu icon")
         icon = item.icon
         if item_id == "energy_drink":
-            choices.append(FoodChoice(
-                id=item_id, name=item.label,
-                category_label=GERMAN_TEXT.format("ui.energy_drink_category"),
-                satiety_points=0.0,
-                image_path=icon,
-                benefit_label=GERMAN_TEXT.format("ui.energy_drink_benefit"),
-            ))
+            choices.append(
+                FoodChoice(
+                    id=item_id,
+                    name=item.label,
+                    category_label=GERMAN_TEXT.format("ui.energy_drink_category"),
+                    satiety_points=0.0,
+                    image_path=icon,
+                    benefit_label=GERMAN_TEXT.format(
+                        "ui.energy_drink_benefit",
+                        points=f"{BALANCE.number('care', 'energy_drink_gain'):.0f}",
+                    ),
+                )
+            )
             continue
         profile = FOOD_CATALOG[item_id]
-        choices.append(FoodChoice(
-            id=item_id, name=item.label,
-            category_label=(
-                GERMAN_TEXT.format("ui.food_category_meal")
-                if profile.category == "meal"
-                else GERMAN_TEXT.format("ui.food_category_snack")
-            ),
-            satiety_points=profile.instant_satiety_points,
-            image_path=icon,
-            benefit_label=GERMAN_TEXT.format(
-                "ui.food_benefit",
-                points=f"{profile.instant_satiety_points:.0f}",
-            ),
-        ))
+        choices.append(
+            FoodChoice(
+                id=item_id,
+                name=item.label,
+                category_label=(
+                    GERMAN_TEXT.format("ui.food_category_meal")
+                    if profile.category == "meal"
+                    else GERMAN_TEXT.format("ui.food_category_snack")
+                ),
+                satiety_points=profile.instant_satiety_points,
+                image_path=icon,
+                benefit_label=GERMAN_TEXT.format(
+                    "ui.food_benefit",
+                    points=f"{profile.instant_satiety_points:.0f}",
+                ),
+            )
+        )
     return tuple(choices)

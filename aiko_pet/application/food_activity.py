@@ -10,6 +10,8 @@ import math
 from collections import deque
 from dataclasses import dataclass
 
+from ..pet.balance import BALANCE
+
 from ..pet.food import FoodActivity
 
 
@@ -17,15 +19,27 @@ from ..pet.food import FoodActivity
 class FoodActivityBalance:
     """Adjust these observation knobs without touching the hunger rules."""
 
-    short_window_minutes: float = 15.0
-    long_window_minutes: float = 60.0
-    short_window_weight: float = 0.7
-    max_sample_gap_seconds: float = 2.0
-    last_input_is_recent_seconds: float = 1.25
-    meaningful_mouse_move_pixels: float = 5.0
-    inferred_keyboard_or_wheel_activity: float = 0.75
-    bucket_seconds: int = 15
-    recalculate_summary_after_seconds: float = 4.0
+    short_window_minutes: float = BALANCE.number(
+        "food_activity", "short_window_minutes"
+    )
+    long_window_minutes: float = BALANCE.number("food_activity", "long_window_minutes")
+    short_window_weight: float = BALANCE.number("food_activity", "short_window_weight")
+    max_sample_gap_seconds: float = BALANCE.number(
+        "food_activity", "max_sample_gap_seconds"
+    )
+    last_input_is_recent_seconds: float = BALANCE.number(
+        "food_activity", "last_input_is_recent_seconds"
+    )
+    meaningful_mouse_move_pixels: float = BALANCE.number(
+        "food_activity", "meaningful_mouse_move_pixels"
+    )
+    inferred_keyboard_or_wheel_activity: float = BALANCE.number(
+        "food_activity", "inferred_keyboard_or_wheel_activity"
+    )
+    bucket_seconds: int = BALANCE.integer("food_activity", "bucket_seconds")
+    recalculate_summary_after_seconds: float = BALANCE.number(
+        "food_activity", "recalculate_summary_after_seconds"
+    )
 
 
 ACTIVITY_BALANCE = FoodActivityBalance()
@@ -53,7 +67,10 @@ class FoodActivityHistory:
         self._last_summary_at = float("-inf")
 
     def observe(
-        self, *, now: float, pointer: tuple[int, int] | None,
+        self,
+        *,
+        now: float,
+        pointer: tuple[int, int] | None,
         input_idle_seconds: float | None,
         mouse_buttons_down: tuple[bool, bool] | None,
         measured_hardware_load: float | None,
@@ -63,26 +80,20 @@ class FoodActivityHistory:
         self._previous_sample_at = now
         if not math.isfinite(now):
             return
-        delta = (
-            0.0 if previous_time is None else now - previous_time
-        )
+        delta = 0.0 if previous_time is None else now - previous_time
         meaningful_motion = False
         if pointer is not None and self._previous_pointer is not None:
             dx = abs(pointer[0] - self._previous_pointer[0])
             dy = abs(pointer[1] - self._previous_pointer[1])
-            meaningful_motion = (
-                dx + dy >= ACTIVITY_BALANCE.meaningful_mouse_move_pixels
-            )
+            meaningful_motion = dx + dy >= ACTIVITY_BALANCE.meaningful_mouse_move_pixels
         self._previous_pointer = pointer
         clicked = False
-        if (
-            mouse_buttons_down is not None
-            and self._previous_buttons is not None
-        ):
+        if mouse_buttons_down is not None and self._previous_buttons is not None:
             clicked = any(
                 down and not previous
                 for down, previous in zip(
-                    mouse_buttons_down, self._previous_buttons,
+                    mouse_buttons_down,
+                    self._previous_buttons,
                 )
             )
         self._previous_buttons = mouse_buttons_down
@@ -92,13 +103,17 @@ class FoodActivityHistory:
         recent_input = (
             input_idle_seconds is not None
             and math.isfinite(input_idle_seconds)
-            and 0.0 <= input_idle_seconds
-                <= ACTIVITY_BALANCE.last_input_is_recent_seconds
+            and 0.0
+            <= input_idle_seconds
+            <= ACTIVITY_BALANCE.last_input_is_recent_seconds
         )
         input_strength = (
-            1.0 if meaningful_motion or clicked else (
+            1.0
+            if meaningful_motion or clicked
+            else (
                 ACTIVITY_BALANCE.inferred_keyboard_or_wheel_activity
-                if recent_input else 0.0
+                if recent_input
+                else 0.0
             )
         )
         hardware = (

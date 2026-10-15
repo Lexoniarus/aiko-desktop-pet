@@ -7,12 +7,12 @@ schema without embedding nutrition entries in Python source.
 
 from __future__ import annotations
 
-import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Literal, Mapping, TypeAlias, cast
+from .catalog_validation import load_json, object_fields
 
 FoodId: TypeAlias = str
 FoodCategory = Literal["meal", "snack"]
@@ -41,6 +41,9 @@ class FoodCatalog:
 
 def parse_food_catalog(data: Any) -> FoodCatalog:
     """Reject malformed, inconsistent and nonfinite packaged food records."""
+    object_fields(
+        data, ("version", "foods", "default_food_id", "menu_order"), context="foods"
+    )
     if not isinstance(data, dict) or type(data.get("version")) is not int:
         raise ValueError("Food catalogue must have an integer version")
     if data["version"] != 1:
@@ -50,19 +53,28 @@ def parse_food_catalog(data: Any) -> FoodCatalog:
         raise ValueError("Food catalogue must have food records")
     profiles: dict[FoodId, FoodProfile] = {}
     fields = (
-        "instant_satiety_points", "digest_reserve_minutes",
+        "instant_satiety_points",
+        "digest_reserve_minutes",
         "normal_mood_bonus",
     )
     for row in rows:
         if not isinstance(row, dict):
             raise ValueError("Invalid food record")
+        object_fields(
+            row,
+            ("id", "display_name", "category", *fields),
+            context="food",
+        )
         key = row.get("id")
         title = row.get("display_name")
         category = row.get("category")
         if (
-            not isinstance(key, str) or not key.isidentifier()
-            or not isinstance(title, str) or not title.strip()
-            or category not in ("meal", "snack") or key in profiles
+            not isinstance(key, str)
+            or not key.isidentifier()
+            or not isinstance(title, str)
+            or not title.strip()
+            or category not in ("meal", "snack")
+            or key in profiles
         ):
             raise ValueError("Invalid or duplicate food ID, title or category")
         values: list[float] = []
@@ -75,8 +87,12 @@ def parse_food_catalog(data: Any) -> FoodCatalog:
                 raise ValueError(f"Invalid nutrition parameter {field} for {key}")
             values.append(value)
         profiles[key] = FoodProfile(
-            key, title, cast(FoodCategory, category),
-            values[0], values[1], values[2],
+            key,
+            title,
+            cast(FoodCategory, category),
+            values[0],
+            values[1],
+            values[2],
         )
     default = data.get("default_food_id")
     if not isinstance(default, str) or default not in profiles:
@@ -96,7 +112,7 @@ def load_packaged_food_catalog(
     path: Path = Path(__file__).resolve().parents[1] / "data" / "food_catalog.json",
 ) -> FoodCatalog:
     """Read validated read-only default resources once for the local pet."""
-    return parse_food_catalog(json.loads(path.read_text(encoding="utf-8")))
+    return parse_food_catalog(load_json(path))
 
 
 DEFAULT_CATALOG = load_packaged_food_catalog()

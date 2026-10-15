@@ -1,23 +1,29 @@
 """Pure care-action decisions for the PetState aggregate.
 
-Care outcomes include unchanged German fallback text; only PetState applies
-the planned need, sleep, meal and friendship mutations.
+Care outcomes describe semantic effects; only PetState applies the planned
+need, sleep, meal and friendship mutations. Display text belongs to the UI.
 """
 
 from __future__ import annotations
 
+from .balance import BALANCE
+
 import time
 from dataclasses import dataclass, replace
-from typing import Protocol
+from typing import Protocol, cast
 
 from .food import (
-    DEFAULT_FOOD_ID, FOOD_CATALOG, FoodId, FoodState, eat_food,
+    DEFAULT_FOOD_ID,
+    FOOD_CATALOG,
+    FoodId,
+    FoodState,
+    eat_food,
 )
 from .friendship import CARE_PRIMARY_NEED
 from .need_decay import NeedLevels
-from .routine import MEAL_NAMES, context_at
+from .routine import context_at
 from .value_rules import clamp_need_value
-from .content import GERMAN_TEXT
+from .care_result import CARE_ACTIONS, CareAction, CareEffect, CareResult
 
 
 class CareValues(Protocol):
@@ -41,7 +47,7 @@ class CareValues(Protocol):
 class CareTransition:
     """A validated full snapshot of one care action's intended changes."""
 
-    response: str
+    result: CareResult
     changed: bool
     needs: NeedLevels
     sleeping: bool
@@ -57,22 +63,26 @@ class CareTransition:
 
 
 def plan_care_action(
-    state: CareValues, action: str, *, now: float,
+    state: CareValues,
+    action: str,
+    *,
+    now: float,
     food_id: FoodId | None = None,
 ) -> CareTransition:
-    """Decide old care values, rejection and dialogue without any writes."""
-    if action not in {
-        "sleep", "feed", "play", "pet", "talk", "energy_drink",
-    }:
+    """Decide care effects and rejection once, without writes or display text."""
+    if action not in CARE_ACTIONS:
         raise ValueError(f"Unknown action: {action}")
     if food_id is not None and (action != "feed" or food_id not in FOOD_CATALOG):
         raise ValueError("Food selection only accepts known feed items")
     unchanged = CareTransition(
-        response="",
+        result=CareResult(cast(CareAction, action), CareEffect.PLAY_REQUESTED),
         changed=False,
         needs=NeedLevels(
-            state.satiety, state.mood, state.energy,
-            state.social, state.affection,
+            state.satiety,
+            state.mood,
+            state.energy,
+            state.social,
+            state.affection,
         ),
         sleeping=state.sleeping,
         sleep_origin=state.sleep_origin,
@@ -89,10 +99,11 @@ def plan_care_action(
             if context.night:
                 night_key = context.night_key
         return replace(
-            unchanged, changed=True,
-            response=(
-                GERMAN_TEXT.format("care.sleep_start") if sleeping
-                else GERMAN_TEXT.format("care.sleep_wake")
+            unchanged,
+            changed=True,
+            result=CareResult(
+                "sleep",
+                CareEffect.SLEEP_STARTED if sleeping else CareEffect.SLEEP_ENDED,
             ),
             sleeping=sleeping,
             sleep_origin="manual" if sleeping else "",
@@ -100,14 +111,16 @@ def plan_care_action(
         )
     if action == "play":
         # A bare legacy care action cannot reward a game that was not played.
-        message = (
-            GERMAN_TEXT.format("care.play_tired") if state.energy < 8
-            else GERMAN_TEXT.format("care.play_choose")
+        effect = (
+            CareEffect.PLAY_TIRED
+            if state.energy < BALANCE.integer("care", "play_minimum_energy")
+            else CareEffect.PLAY_REQUESTED
         )
-        return replace(unchanged, response=message)
+        return replace(unchanged, result=CareResult("play", effect))
     if action == "energy_drink" and state.energy >= 100:
         return replace(
-            unchanged, response=GERMAN_TEXT.format("care.energy_full"),
+            unchanged,
+            result=CareResult("energy_drink", CareEffect.DRINK_SATISFIED),
         )
     sleeping = False
     sleep_origin = state.sleep_origin
@@ -121,46 +134,67 @@ def plan_care_action(
             night_key = context.night_key
     if action == "energy_drink":
         return replace(
-            unchanged, changed=True,
-            sleeping=sleeping, sleep_origin=sleep_origin,
-            nap_until=nap_until, auto_sleep_night=night_key,
+            unchanged,
+            changed=True,
+            sleeping=sleeping,
+            sleep_origin=sleep_origin,
+            nap_until=nap_until,
+            auto_sleep_night=night_key,
             needs=replace(
-                unchanged.needs, energy=clamp_need_value(state.energy + 10.0),
+                unchanged.needs,
+                energy=clamp_need_value(
+                    state.energy + BALANCE.number("care", "energy_drink_gain")
+                ),
             ),
-            response=GERMAN_TEXT.format("care.energy_success"),
+            result=CareResult("energy_drink", CareEffect.DRINK_CONSUMED),
         )
     need_before = float(getattr(state, CARE_PRIMARY_NEED[action]))
     result = replace(
-        unchanged, changed=True,
-        sleeping=sleeping, sleep_origin=sleep_origin,
-        nap_until=nap_until, auto_sleep_night=night_key,
-        reward_action=action, need_before=need_before,
+        unchanged,
+        changed=True,
+        sleeping=sleeping,
+        sleep_origin=sleep_origin,
+        nap_until=nap_until,
+        auto_sleep_night=night_key,
+        reward_action=action,
+        need_before=need_before,
     )
     if action == "talk":
         return replace(
             result,
             needs=replace(
                 result.needs,
-                social=clamp_need_value(state.social + 26),
-                energy=clamp_need_value(state.energy - 1),
+                social=clamp_need_value(
+                    state.social + BALANCE.integer("care", "talk_social_gain")
+                ),
+                energy=clamp_need_value(
+                    state.energy - BALANCE.integer("care", "talk_energy_cost")
+                ),
             ),
-            response=GERMAN_TEXT.format("care.talk"),
+            result=CareResult("talk", CareEffect.CONVERSATION),
         )
     if action == "pet":
         return replace(
             result,
             needs=replace(
                 result.needs,
-                affection=clamp_need_value(state.affection + 25),
-                social=clamp_need_value(state.social + 2),
+                affection=clamp_need_value(
+                    state.affection + BALANCE.integer("care", "pet_affection_gain")
+                ),
+                social=clamp_need_value(
+                    state.social + BALANCE.integer("care", "pet_social_gain")
+                ),
             ),
-            response=GERMAN_TEXT.format("care.pet"),
+            result=CareResult("pet", CareEffect.AFFECTION),
         )
     selected_food = food_id if food_id is not None else DEFAULT_FOOD_ID
     profile = FOOD_CATALOG[selected_food]
     intake = eat_food(state.food, state.satiety, selected_food)
     if not intake.accepted:
-        return replace(unchanged, response=GERMAN_TEXT.format("care.feed_satisfied"))
+        return replace(
+            unchanged,
+            result=CareResult("feed", CareEffect.FOOD_SATISFIED),
+        )
     context = context_at(now)
     meals_date = state.meals_date
     meals = list(state.meals_today)
@@ -169,18 +203,17 @@ def plan_care_action(
         meals = []
     first_meal = (
         profile.category == "meal"
-        and context.meal is not None and context.meal not in meals
+        and context.meal is not None
+        and context.meal not in meals
     )
     if first_meal and context.meal is not None:
         meals.append(context.meal)
     if intake.repetitive:
-        response = GERMAN_TEXT.format("care.feed_repeat", food=profile.display_name)
+        effect = CareEffect.FOOD_REPEAT
     elif first_meal and context.meal is not None:
-        response = GERMAN_TEXT.format(
-            "care.feed_meal", meal=MEAL_NAMES[context.meal].lower(),
-        )
+        effect = CareEffect.FOOD_MEAL
     else:
-        response = GERMAN_TEXT.format("care.feed_snack", food=profile.display_name)
+        effect = CareEffect.FOOD_SNACK
     return replace(
         result,
         meals_date=meals_date,
@@ -190,10 +223,13 @@ def plan_care_action(
         needs=replace(
             result.needs,
             satiety=intake.satiety,
-            social=clamp_need_value(state.social + 1),
+            social=clamp_need_value(
+                state.social + BALANCE.integer("care", "feed_social_gain")
+            ),
         ),
-        response=response,
+        result=CareResult("feed", effect, selected_food, context.meal),
     )
+
 
 def resolve_care_time(now: float | None) -> float:
     """Resolve the clock once per interaction for deterministic transitions."""

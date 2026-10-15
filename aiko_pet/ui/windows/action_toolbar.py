@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+from ...pet.content import GERMAN_TEXT
+
 import sys
 import tkinter as tk
 from functools import partial
 from typing import Callable
 
 from ..view_models.contracts import StatusSnapshot
-from .hover_contracts import HoverActions, HoverAnchor, HoverSnapshot
+from .hover_contracts import HoverActions
+from ..view_models.contracts import HoverAnchor, HoverSnapshot
 from .hover_geometry import HoverGeometry, Rect
 from ..common.skin import AikoSkin
 from .toolbar_details import ToolbarDetails
@@ -19,19 +22,24 @@ class ActionToolbar:
     """Render care, pin state and optional details; HoverUi owns visibility."""
 
     NEEDS = (
-        ("satiety", "Sättigung", "#f5bd7a"),
-        ("mood", "Laune", "#95ddc1"),
-        ("energy", "Energie", "#98c9f5"),
-        ("social", "Sozial", "#dda9ef"),
-        ("affection", "Zuwendung", "#f0a5be"),
-        ("friendship", "Freundschaft", "#ffb9c2"),
+        ("satiety", GERMAN_TEXT.format("need.satiety"), "#f5bd7a"),
+        ("mood", GERMAN_TEXT.format("need.mood"), "#95ddc1"),
+        ("energy", GERMAN_TEXT.format("need.energy"), "#98c9f5"),
+        ("social", GERMAN_TEXT.format("need.social"), "#dda9ef"),
+        ("affection", GERMAN_TEXT.format("need.affection"), "#f0a5be"),
+        ("friendship", GERMAN_TEXT.format("need.friendship"), "#ffb9c2"),
     )
     BAR_WIDTH = 92
 
     def __init__(
-        self, root: tk.Tk, *, snapshot: Callable[[], HoverSnapshot],
-        anchor: Callable[[], HoverAnchor], actions: HoverActions,
-        always_on_top: bool, skin: AikoSkin | None = None,
+        self,
+        root: tk.Tk,
+        *,
+        snapshot: Callable[[], HoverSnapshot],
+        anchor: Callable[[], HoverAnchor],
+        actions: HoverActions,
+        always_on_top: bool,
+        skin: AikoSkin | None = None,
         status_snapshot: Callable[[], StatusSnapshot] | None = None,
     ) -> None:
         self.root = root
@@ -53,7 +61,9 @@ class ActionToolbar:
         self.today = self.skin.header(outer, "")
         self.today.pack(fill="x")
         self._drag = WindowDrag(
-            self.window, self.today, moved=actions.move_speech,
+            self.window,
+            self.today,
+            moved=actions.move_speech,
             dropped=self._drag_dropped,
         )
         needs_frame = tk.Frame(outer, bg=self.skin.background)
@@ -65,13 +75,22 @@ class ActionToolbar:
             cell = tk.Frame(needs_frame, bg=self.skin.background)
             cell.grid(row=i // 3, column=i % 3, sticky="ew", padx=3, pady=2)
             label = tk.Label(
-                cell, text="", font=(self.font_family, 9), width=20,
-                fg=self.skin.text, bg=self.skin.background, anchor="w",
+                cell,
+                text="",
+                font=(self.font_family, 9),
+                width=20,
+                fg=self.skin.text,
+                bg=self.skin.background,
+                anchor="w",
             )
             label.pack(anchor="w")
             bar = tk.Canvas(
-                cell, width=self.BAR_WIDTH, height=10, bd=0,
-                highlightthickness=0, bg="#969FB2",
+                cell,
+                width=self.BAR_WIDTH,
+                height=10,
+                bd=0,
+                highlightthickness=0,
+                bg="#969FB2",
             )
             rect = bar.create_rectangle(0, 0, 1, 10, outline="", fill=color)
             bar.pack(fill="x", pady=(3, 3))
@@ -85,35 +104,54 @@ class ActionToolbar:
         extra_row.pack(fill="x")
         self.buttons: dict[str, tk.Button] = {}
         for action, title, parent in (
-            ("feed", "Snack", actions_row),
-            ("play", "Spielen", actions_row),
-            ("pet", "Streicheln", actions_row),
-            ("talk", "Reden", actions_row),
-            ("sleep", "Schlafen", extra_row),
+            ("feed", GERMAN_TEXT.format("ui.snack"), actions_row),
+            ("play", GERMAN_TEXT.format("ui.play"), actions_row),
+            ("pet", GERMAN_TEXT.format("ui.pet"), actions_row),
+            ("talk", GERMAN_TEXT.format("ui.talk"), actions_row),
+            ("sleep", GERMAN_TEXT.format("ui.sleep_start"), extra_row),
         ):
             self.buttons[action] = self._button(
-                parent, title, partial(actions.interact, action),
+                parent,
+                title,
+                partial(actions.interact, action),
             )
         self.pin_button = self._button(
-            extra_row, "Offen halten", actions.toggle_pin,
+            extra_row,
+            GERMAN_TEXT.format("ui.pin_keep"),
+            actions.toggle_pin,
         )
         self.settings_button = self._button(extra_row, "⋯", self._open_settings)
         self.hardware = tk.Label(
-            outer, text="", font=(self.font_family, 8),
-            fg=self.skin.muted, bg=self.skin.background,
-            anchor="w", padx=10, pady=3,
+            outer,
+            text="",
+            font=(self.font_family, 8),
+            fg=self.skin.muted,
+            bg=self.skin.background,
+            anchor="w",
+            padx=10,
+            pady=3,
         )
         self.hardware.pack(fill="x")
         self.food_info = tk.Label(
-            outer, text="", font=(self.font_family, 8),
-            fg=self.skin.muted, bg=self.skin.background,
-            anchor="w", padx=10, pady=2,
+            outer,
+            text="",
+            font=(self.font_family, 8),
+            fg=self.skin.muted,
+            bg=self.skin.background,
+            anchor="w",
+            padx=10,
+            pady=2,
         )
         self.food_info.pack(fill="x")
         self.workload = tk.Label(
-            outer, text="", font=(self.font_family, 8),
-            fg=self.skin.text, bg=self.skin.background,
-            anchor="w", padx=10, pady=3,
+            outer,
+            text="",
+            font=(self.font_family, 8),
+            fg=self.skin.text,
+            bg=self.skin.background,
+            anchor="w",
+            padx=10,
+            pady=3,
         )
         self.workload.pack(fill="x")
         self.details: ToolbarDetails | None = None
@@ -121,7 +159,10 @@ class ActionToolbar:
         self._details_open = False
         if status_snapshot is not None:
             self.details_button = self.skin.button(
-                outer, "Details anzeigen", self.toggle_details, size="wide",
+                outer,
+                GERMAN_TEXT.format("ui.details_show"),
+                self.toggle_details,
+                size="wide",
             )
             self.details_button.pack(anchor="w", padx=9, pady=(0, 4))
             self.details = ToolbarDetails(outer, self.skin, status_snapshot)
@@ -135,7 +176,9 @@ class ActionToolbar:
     def set_pinned(self, enabled: bool) -> None:
         """Display the controller's state without keeping a second pin flag."""
         self.pin_button.configure(
-            text="Pin lösen" if enabled else "Offen halten",
+            text=GERMAN_TEXT.format("ui.pin_release")
+            if enabled
+            else GERMAN_TEXT.format("ui.pin_keep"),
             fg=self.skin.accent if enabled else self.skin.text,
         )
 
@@ -149,7 +192,9 @@ class ActionToolbar:
         else:
             self.details.frame.pack_forget()
         self.details_button.configure(
-            text="Details verbergen" if self._details_open else "Details anzeigen",
+            text=GERMAN_TEXT.format("ui.details_hide")
+            if self._details_open
+            else GERMAN_TEXT.format("ui.details_show"),
         )
         if self.visible:
             self.place()
@@ -159,7 +204,10 @@ class ActionToolbar:
             self.details.refresh()
 
     def _button(
-        self, parent: tk.Widget, text: str, command: Callable[[], None],
+        self,
+        parent: tk.Widget,
+        text: str,
+        command: Callable[[], None],
     ) -> tk.Button:
         size = "small" if text == "⋯" else "wide" if len(text) > 13 else "regular"
         button = self.skin.button(parent, text, command, size=size)
@@ -202,9 +250,16 @@ class ActionToolbar:
         for key, title, _color in self.NEEDS:
             amount = max(0, min(100, view.need_value(key)))
             _bar, _rect, label = self.needs[key]
-            text = f"{title}  {amount:.0f}%"
+            text = GERMAN_TEXT.format(
+                "ui.need_value",
+                title=title,
+                percent=f"{amount:.0f}",
+            )
             if key == "friendship":
-                text += f" · Lv {view.friendship_level}"
+                text += GERMAN_TEXT.format(
+                    "ui.friendship_level_suffix",
+                    level=str(view.friendship_level),
+                )
             if label.cget("text") != text:
                 label.configure(text=text)
             self._resize_need(key)
@@ -216,22 +271,29 @@ class ActionToolbar:
         if not self.visible:
             return False
         x, y = self.window.winfo_rootx(), self.window.winfo_rooty()
-        return (x <= px < x + self.window.winfo_width()
-                and y <= py < y + self.window.winfo_height())
+        return (
+            x <= px < x + self.window.winfo_width()
+            and y <= py < y + self.window.winfo_height()
+        )
 
     def contains_bridge(self, px: int, py: int) -> bool:
         if not self.visible:
             return False
         anchor = self._anchor()
         return HoverGeometry.bridge(
-            px, py,
+            px,
+            py,
             Rect(
-                self.window.winfo_rootx(), self.window.winfo_rooty(),
-                self.window.winfo_width(), self.window.winfo_height(),
+                self.window.winfo_rootx(),
+                self.window.winfo_rooty(),
+                self.window.winfo_width(),
+                self.window.winfo_height(),
             ),
             Rect(
-                self.root.winfo_rootx(), self.root.winfo_rooty(),
-                anchor.width, anchor.height,
+                self.root.winfo_rootx(),
+                self.root.winfo_rooty(),
+                anchor.width,
+                anchor.height,
             ),
             pinned=anchor.pinned_x is not None,
         )
@@ -243,8 +305,11 @@ class ActionToolbar:
         width = self.window.winfo_reqwidth()
         height = self.window.winfo_reqheight()
         x, y = HoverGeometry.placement(
-            self._anchor(), width, height,
-            self.root.winfo_screenwidth(), self.root.winfo_screenheight(),
+            self._anchor(),
+            width,
+            height,
+            self.root.winfo_screenwidth(),
+            self.root.winfo_screenheight(),
         )
         placement = x, y, width, height
         if placement != self._last_placement:
@@ -253,7 +318,10 @@ class ActionToolbar:
 
     def _drag_dropped(self, x: int, y: int) -> None:
         self._last_placement = (
-            x, y, self.window.winfo_width(), self.window.winfo_height(),
+            x,
+            y,
+            self.window.winfo_width(),
+            self.window.winfo_height(),
         )
         self._actions.save_position(x, y)
 

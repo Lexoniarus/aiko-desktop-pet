@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+from ..pet.balance import BALANCE
+
 import time
 from dataclasses import dataclass
 from typing import Callable
 
-from ..pet.mind.adaptive import AdaptiveRoutine, Observation
+from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind.adaptive_models import Observation
 from ..pet.mind import PetMind
 from ..pet.mind.workload_events import WorkloadEventDetector
 from ..pet.mind.catalog import Reaction
@@ -17,8 +20,7 @@ from ..pet.routine import TimeContext, context_at
 from .settings import PetSettings
 from ..telemetry import workload_intensity
 from .ports import ComputerObservation
-from .active_time import ActiveSessionClock
-from .controller import CareRuntime
+from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,11 +47,16 @@ class ActivityCoordinator:
     """Own coarse sampling, sleep permissions and deferred work dialogue."""
 
     def __init__(
-        self, state: PetState, settings: PetSettings,
-        mind: PetMind, adaptive: AdaptiveRoutine,
-        voice: WorkloadEventDetector, monitor: ComputerObservation,
+        self,
+        state: PetState,
+        settings: PetSettings,
+        mind: PetMind,
+        adaptive: AdaptiveRoutine,
+        voice: WorkloadEventDetector,
+        monitor: ComputerObservation,
         callbacks: ActivityCallbacks,
-        *, clock: ActiveSessionClock,
+        *,
+        clock: ActiveSessionClock,
     ) -> None:
         self.state = state
         self.settings = settings
@@ -78,14 +85,16 @@ class ActivityCoordinator:
     def interrupt_nap(self) -> bool:
         behaviour = self.adaptive.current
         return bool(
-            self.settings.observe_computer and behaviour is not None
+            self.settings.observe_computer
+            and behaviour is not None
             and behaviour.should_wake
         )
 
     def allow_nap(self) -> bool:
         behaviour = self.adaptive.current
         return bool(
-            self.settings.observe_computer and behaviour is not None
+            self.settings.observe_computer
+            and behaviour is not None
             and behaviour.can_nap
         )
 
@@ -101,16 +110,23 @@ class ActivityCoordinator:
             return None
         reading = self.monitor.latest()
         age = time.monotonic() - reading.measured_at
-        if not 0 <= age <= 18:
+        if (
+            not 0
+            <= age
+            <= BALANCE.integer("activity", "live_effort_maximum_age_seconds")
+        ):
             return None
         return workload_intensity(reading)
 
-    def care_runtime(
-        self, wall_time: float, monotonic_time: float,
-    ) -> CareRuntime:
+    def session_inputs(
+        self,
+        wall_time: float,
+        monotonic_time: float,
+    ) -> SessionInputs:
         """Gather trusted activity context for care and completed games."""
-        return CareRuntime(
-            wall_time=wall_time, monotonic_time=monotonic_time,
+        return SessionInputs(
+            wall_time=wall_time,
+            monotonic_time=monotonic_time,
             auto_routine=self.settings.auto_routine,
             allow_bedtime=self.allow_bedtime(),
             allow_nap=self.allow_nap(),
@@ -125,7 +141,9 @@ class ActivityCoordinator:
         sample = self.monitor.latest()
         if sample.measured_at <= self.last_adaptive_sample:
             return
-        if sample.measured_at <= 0 or now - sample.measured_at > 25:
+        if sample.measured_at <= 0 or now - sample.measured_at > BALANCE.integer(
+            "activity", "adaptive_sample_maximum_age_seconds"
+        ):
             return
         self.last_adaptive_sample = sample.measured_at
         behaviour = self.adaptive.observe(
@@ -135,7 +153,9 @@ class ActivityCoordinator:
                 idle_seconds=self.callbacks.read_idle_seconds(),
                 uptime_hours=sample.uptime_hours,
             ),
-            now, energy=self.state.energy, sleeping=self.state.sleeping,
+            now,
+            energy=self.state.energy,
+            sleeping=self.state.sleeping,
             manual_sleep=self.state.sleep_origin == "manual",
             learn=self.settings.learn_rhythm,
         )
@@ -153,27 +173,34 @@ class ActivityCoordinator:
             now=now,
             pointer=(
                 self.callbacks.read_pointer()
-                if self.callbacks.read_pointer is not None else None
+                if self.callbacks.read_pointer is not None
+                else None
             ),
             input_idle_seconds=self.callbacks.read_idle_seconds(),
             mouse_buttons_down=(
                 self.callbacks.read_mouse_buttons()
-                if self.callbacks.read_mouse_buttons is not None else None
+                if self.callbacks.read_mouse_buttons is not None
+                else None
             ),
             measured_hardware_load=machine_load,
         )
-        self.state.advance(
-            wall_time, auto_routine=self.settings.auto_routine,
+        inputs = SessionInputs(
+            wall_time=wall_time,
+            monotonic_time=now,
+            auto_routine=self.settings.auto_routine,
             allow_bedtime=self.allow_bedtime(),
             allow_nap=self.allow_nap(),
             interrupt_nap=self.interrupt_nap(),
             effort=machine_load,
-            elapsed_seconds=self._clock.consume(),
             food_activity=self.food_activity_history.current_food_activity(now),
         )
+        advance_session_time(self.state, self._clock, inputs)
 
     def advance_lifecycle(
-        self, now: float, wall_time: float, previous: TimeContext,
+        self,
+        now: float,
+        wall_time: float,
+        previous: TimeContext,
     ) -> TimeProgress:
         """Apply observed activity before time, preserving sleep transitions."""
         was_sleeping = self.state.sleeping
@@ -183,9 +210,7 @@ class ActivityCoordinator:
         context = context_at(wall_time)
         return TimeProgress(
             context=context,
-            period_changed=(
-                (context.day_key, context.period) != previous_period
-            ),
+            period_changed=((context.day_key, context.period) != previous_period),
             sleep_changed=self.state.sleeping != was_sleeping,
         )
 
@@ -198,10 +223,7 @@ class ActivityCoordinator:
         if sample.measured_at > self.last_hardware_sample:
             self.last_hardware_sample = sample.measured_at
             event = self.workload_events.observe_change(sample, now)
-            if (
-                event and self.settings.spontaneous_talk
-                and not self.state.sleeping
-            ):
+            if event and self.settings.spontaneous_talk and not self.state.sleeping:
                 self.pending_computer_line = (event, now)
                 if now >= self.callbacks.action_until():
                     self.callbacks.start_review(now)
@@ -209,19 +231,26 @@ class ActivityCoordinator:
             return
         event, observed_at = self.pending_computer_line
         if (
-            now - observed_at > 25
+            now - observed_at
+            > BALANCE.integer("activity", "pending_voice_maximum_age_seconds")
             or not self.settings.spontaneous_talk
             or self.state.sleeping
         ):
             self.pending_computer_line = None
         elif (
             now >= self.callbacks.action_until()
-            and now - self.callbacks.last_spoken() >= 7
+            and now - self.callbacks.last_spoken()
+            >= BALANCE.integer("activity", "voice_quiet_seconds")
         ):
             reaction = self.mind.computer_event(
-                event, self.state, context, now,
+                event,
+                self.state,
+                context,
+                now,
             )
             self.pending_computer_line = None
             if reaction is not None:
-                self.callbacks.react(reaction, 3400)
+                self.callbacks.react(
+                    reaction, BALANCE.integer("activity", "voice_duration_ms")
+                )
                 self.workload_events.last_voice_at = now

@@ -2,6 +2,12 @@
 
 from __future__ import annotations
 
+from aiko_pet.ui.view_models.care_text import format_care_response
+
+from aiko_pet.infrastructure.pet_codec import (
+    decode_food_state, decode_pet_state, encode_pet_state,
+)
+
 import unittest
 from datetime import datetime
 
@@ -114,15 +120,15 @@ class FoodPolicyTests(unittest.TestCase):
 
     def test_rejected_overfeeding_leaves_entire_state_untouched(self) -> None:
         pet = PetState(satiety=99)
-        before = pet.to_dict()
-        reply = pet.interact("feed", now=clock(), food_id="sandwich")
+        before = encode_pet_state(pet)
+        reply = format_care_response(pet.interact("feed", now=clock(), food_id="sandwich"))
         self.assertIn("satt", reply)
-        self.assertEqual(pet.to_dict(), before)
+        self.assertEqual(encode_pet_state(pet), before)
 
     def test_corrupt_food_save_is_bounded_and_old_save_is_supported(self) -> None:
-        old = PetState.from_dict({"satiety": 41}, now=clock())
+        old = decode_pet_state({"satiety": 41}, now=clock())
         self.assertEqual(old.food, FoodState())
-        broken = FoodState.from_dict({
+        broken = decode_food_state({
             "remaining_digest_minutes": 1000000,
             "awake_hours_since_last_food": float("nan"),
             "awake_hours_since_main_meal": -20,
@@ -139,8 +145,8 @@ class FoodPolicyTests(unittest.TestCase):
     def test_food_state_roundtrips_without_offline_digesting(self) -> None:
         pet = PetState(satiety=12, updated_at=clock())
         pet.interact("feed", now=clock(), food_id="sandwich")
-        encoded = pet.to_dict()
-        reopened = PetState.from_dict(encoded, now=clock() + 72 * 3600)
+        encoded = encode_pet_state(pet)
+        reopened = decode_pet_state(encoded, now=clock() + 72 * 3600)
         self.assertEqual(reopened.satiety, pet.satiety)
         self.assertEqual(reopened.food, pet.food)
         self.assertNotIn("user_input_activity", encoded)
@@ -152,10 +158,10 @@ class FoodPolicyTests(unittest.TestCase):
         pet.interact("feed", now=clock())
         self.assertEqual(pet.satiety, 50)
         self.assertEqual(pet.food.last_food_id, "onigiri")
-        before = pet.to_dict()
+        before = encode_pet_state(pet)
         with self.assertRaises(ValueError):
             pet.interact("talk", now=clock(), food_id="apple")
-        self.assertEqual(pet.to_dict(), before)
+        self.assertEqual(encode_pet_state(pet), before)
 
     def test_three_main_meals_and_two_snacks_cover_a_normal_day(self) -> None:
         day = clock()

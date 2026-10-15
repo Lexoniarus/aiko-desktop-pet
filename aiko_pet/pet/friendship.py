@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from .balance import BALANCE
+
 import math
 from dataclasses import dataclass
 from typing import Protocol
@@ -9,18 +11,21 @@ from typing import Protocol
 from .routine import context_at
 from .value_rules import clamp_need_value
 
-FRIENDSHIP_REWARD_INTERVAL = 12 * 60
-FRIENDSHIP_DAILY_CAP = 5.0
+FRIENDSHIP_REWARD_INTERVAL = BALANCE.integer("friendship", "reward_interval_seconds")
+FRIENDSHIP_DAILY_CAP = BALANCE.number("friendship", "daily_cap")
 # Only care addressing a genuine need can slowly build the relationship.
 CARE_FRIENDSHIP_GAIN = {
-    "feed": 0.9, "play": 1.0, "pet": 1.0, "talk": 1.0,
+    action: BALANCE.number("friendship", f"{action}_gain")
+    for action in ("feed", "play", "pet", "talk")
 }
 CARE_PRIMARY_NEED = {
-    "feed": "satiety", "play": "fun",
-    "pet": "affection", "talk": "social",
+    "feed": "satiety",
+    "play": "fun",
+    "pet": "affection",
+    "talk": "social",
 }
-FRIENDSHIP_NEED_THRESHOLD = 80.0
-FRIENDSHIP_VARIETY_BONUS = 0.35
+FRIENDSHIP_NEED_THRESHOLD = BALANCE.number("friendship", "need_threshold")
+FRIENDSHIP_VARIETY_BONUS = BALANCE.number("friendship", "variety_bonus")
 # Keep legacy history during migration, but these no longer earn friendship.
 LEGACY_REWARD_ACTIONS = ("energy_drink", "sleep")
 
@@ -53,10 +58,7 @@ def calculate_friendship_reward(
     need_before: float,
 ) -> FriendshipTransition | None:
     """Decide new relationship values without mutating a record."""
-    if (
-        action not in CARE_FRIENDSHIP_GAIN
-        or not math.isfinite(stamp) or stamp <= 0
-    ):
+    if action not in CARE_FRIENDSHIP_GAIN or not math.isfinite(stamp) or stamp <= 0:
         return None
     context = context_at(stamp)
     day = record.friendship_day
@@ -73,12 +75,10 @@ def calculate_friendship_reward(
         if last is None or stamp - last >= FRIENDSHIP_REWARD_INTERVAL:
             remaining = max(0.0, FRIENDSHIP_DAILY_CAP - gained)
             first_time = action not in types
-            variety = (
-                FRIENDSHIP_VARIETY_BONUS
-                if first_time and types else 0.0
-            )
+            variety = FRIENDSHIP_VARIETY_BONUS if first_time and types else 0.0
             gain = min(
-                remaining, CARE_FRIENDSHIP_GAIN[action] + variety,
+                remaining,
+                CARE_FRIENDSHIP_GAIN[action] + variety,
                 100.0 - friendship,
             )
             if gain > 0:
@@ -94,5 +94,3 @@ def calculate_friendship_reward(
         care_types=tuple(types),
         last_rewards=tuple(rewards.items()),
     )
-
-

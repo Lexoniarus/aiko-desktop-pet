@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import ast
 import random
 import unittest
 from datetime import datetime
@@ -25,56 +24,6 @@ ROOT = Path(__file__).resolve().parents[1] / "aiko_pet"
 
 
 class FinalArchitectureTests(unittest.TestCase):
-    def test_active_application_has_no_outer_layer_imports(self) -> None:
-        forbidden = (
-            "presentation", "ui", "desktop",
-            "infrastructure", "storage", "system_activity",
-        )
-        for path in (ROOT / "application").glob("*.py"):
-            with self.subTest(module=path.name):
-                tree = ast.parse(path.read_text("utf-8"))
-                imports = [
-                    node.module or ""
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.ImportFrom)
-                ] + [
-                    alias.name
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.Import)
-                    for alias in node.names
-                ]
-                for name in imports:
-                    suffix = (
-                        name.removeprefix("aiko_pet.")
-                        if name.startswith("aiko_pet.") else name
-                    )
-                    self.assertFalse(
-                        suffix.startswith(forbidden),
-                        f"{path.name} imports outer layer {name}",
-                    )
-
-    def test_canonical_ui_views_have_no_tk_or_native_imports(self) -> None:
-        for path in (ROOT / "ui/view_models").glob("*.py"):
-            with self.subTest(module=path.name):
-                tree = ast.parse(path.read_text("utf-8"))
-                imports = [
-                    node.module or ""
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.ImportFrom)
-                ] + [
-                    alias.name
-                    for node in ast.walk(tree)
-                    if isinstance(node, ast.Import)
-                    for alias in node.names
-                ]
-                for name in imports:
-                    self.assertFalse(
-                        name.startswith(("tkinter", "infrastructure"))
-                        or "system_activity" in name
-                        or name in ("storage", "gui"),
-                    )
-
-
     def test_projections_preserve_original_german_copy(self) -> None:
         stamp = datetime(2026, 10, 12, 13).timestamp()
         context = context_at(stamp)

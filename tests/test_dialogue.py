@@ -17,6 +17,7 @@ from aiko_pet.pet.mind.catalog import (
     Reaction,
 )
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.care_actions import plan_care_action
 from aiko_pet.pet.routine import context_at
 
 
@@ -156,27 +157,67 @@ class EmotionTests(unittest.TestCase):
         self.assertTrue(self.state.sleeping)
 
     def test_pre_action_tone_preserved_and_warmth_temporary(self):
-        self.assertEqual(self.mind.care_event('pet', self.state, self.context, 10), ('pet', 'calm'))
+        self.assertEqual((self.mind.care_event(
+            plan_care_action(
+                self.state, 'pet', now=self.context.local.timestamp(),
+            ).result,
+            self.mind.observe_care(self.state, self.context, 10),
+        ), self.mind.emotion(self.state, 10)), ('pet', 'calm'))
         self.mind.after_care('pet', 10)
         self.assertEqual(self.mind.emotion(self.state, 11), 'warm')
         self.assertEqual(self.mind.emotion(self.state, 81), 'calm')
 
     def test_feeding_uses_meal_snack_full(self):
         breakfast = ctx(hour=8)
-        self.assertEqual(self.mind.care_event('feed', self.state, breakfast, 20)[0], 'feed_meal')
+        self.assertEqual(self.mind.care_event(
+            plan_care_action(
+                self.state, 'feed', now=breakfast.local.timestamp(),
+            ).result,
+            self.mind.observe_care(self.state, breakfast, 20),
+        ), 'feed_meal')
         self.state.meals_date = breakfast.day_key
         self.state.meals_today = ['breakfast']
-        self.assertEqual(self.mind.care_event('feed', self.state, breakfast, 21)[0], 'feed_snack')
+        self.assertEqual(self.mind.care_event(
+            plan_care_action(
+                self.state, 'feed', now=breakfast.local.timestamp(),
+            ).result,
+            self.mind.observe_care(self.state, breakfast, 21),
+        ), 'feed_snack')
         self.state.satiety = 99
-        self.assertEqual(self.mind.care_event('feed', self.state, breakfast, 22)[0], 'feed_full')
+        self.assertEqual(self.mind.care_event(
+            plan_care_action(
+                self.state, 'feed', now=breakfast.local.timestamp(),
+            ).result,
+            self.mind.observe_care(self.state, breakfast, 22),
+        ), 'feed_full')
 
     def test_playing_and_sleeping_emit_appropriate_events(self):
-        self.assertEqual(self.mind.care_event('play', self.state, self.context, 20)[0], 'play')
+        self.assertEqual(self.mind.care_event(
+            plan_care_action(
+                self.state, 'play', now=self.context.local.timestamp(),
+            ).result,
+            self.mind.observe_care(self.state, self.context, 20),
+        ), 'play')
         self.state.energy = 6
-        self.assertEqual(self.mind.care_event('play', self.state, self.context, 22)[0], 'play_tired')
-        self.assertEqual(self.mind.care_event('sleep', self.state, self.context, 23)[0], 'sleep')
+        self.assertEqual(self.mind.care_event(
+            plan_care_action(
+                self.state, 'play', now=self.context.local.timestamp(),
+            ).result,
+            self.mind.observe_care(self.state, self.context, 22),
+        ), 'play_tired')
+        self.assertEqual(self.mind.care_event(
+            plan_care_action(
+                self.state, 'sleep', now=self.context.local.timestamp(),
+            ).result,
+            self.mind.observe_care(self.state, self.context, 23),
+        ), 'sleep')
         self.state.sleeping = True
-        self.assertEqual(self.mind.care_event('sleep', self.state, self.context, 24)[0], 'wake')
+        self.assertEqual(self.mind.care_event(
+            plan_care_action(
+                self.state, 'sleep', now=self.context.local.timestamp(),
+            ).result,
+            self.mind.observe_care(self.state, self.context, 24),
+        ), 'wake')
 
     def test_return_triggers_only_after_absence(self):
         self.assertIsNone(self.mind.return_to_pet(self.state, self.context, 100))

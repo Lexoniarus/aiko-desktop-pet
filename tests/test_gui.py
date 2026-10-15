@@ -268,7 +268,8 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertEqual(
             (bar.window.winfo_rootx(), bar.window.winfo_rooty()), position,
         )
-        _saved, settings = self.app.store.load(now=time.time())
+        session_data = self.app.store.load_session(now=time.time())
+        _saved, settings = session_data.state, session_data.settings
         self.assertEqual((settings.toolbar_x, settings.toolbar_y), position)
         self.app.reset_toolbar_position()
         self.app.root.update()

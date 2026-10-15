@@ -5,13 +5,28 @@ This module does not depend on Tkinter or the desktop window manager.
 
 from __future__ import annotations
 
+from ..balance import BALANCE
+
 import math
 from dataclasses import dataclass
 
-FRAME_COUNTS: dict[str, int] = dict.fromkeys((
-    "idle", "running-right", "running-left", "waving", "jumping", "failed",
-    "waiting", "review", "sleep", "petting", "eat", "attack",
-), 8)
+FRAME_COUNTS: dict[str, int] = dict.fromkeys(
+    (
+        "idle",
+        "running-right",
+        "running-left",
+        "waving",
+        "jumping",
+        "failed",
+        "waiting",
+        "review",
+        "sleep",
+        "petting",
+        "eat",
+        "attack",
+    ),
+    8,
+)
 FRAME_COUNTS["look"] = 16
 
 
@@ -45,9 +60,13 @@ def choose_passive_animation(
         return SpriteSelection("look", fixed_frame=gaze_direction)
     if observing_computer and computer_busy:
         return SpriteSelection("review")
-    if energy < 10 or mood < 10:
+    if energy < BALANCE.integer(
+        "animation_needs", "critical_energy"
+    ) or mood < BALANCE.integer("animation_needs", "critical_mood"):
         return SpriteSelection("failed")
-    if satiety < 20 or energy < 24:
+    if satiety < BALANCE.integer(
+        "animation_needs", "low_satiety"
+    ) or energy < BALANCE.integer("animation_needs", "low_energy"):
         return SpriteSelection("waiting")
     return SpriteSelection("idle")
 
@@ -77,8 +96,13 @@ class FrameClock:
         return (self._completed_ms + min(elapsed, timings[self.frame_index])) / 1000
 
     def next_index(
-        self, animation: str, now: float, timings: tuple[int, ...], *,
-        fixed: int | None = None, loop: bool = True,
+        self,
+        animation: str,
+        now: float,
+        timings: tuple[int, ...],
+        *,
+        fixed: int | None = None,
+        loop: bool = True,
     ) -> int:
         if not timings or any(duration <= 0 for duration in timings):
             raise ValueError("An animation needs positive frame durations")
@@ -114,7 +138,5 @@ class FrameClock:
             return self.frame_index
         remaining = timings[self.frame_index] - elapsed
         self.next_delay_ms = max(1, math.ceil(remaining - 1e-6))
-        self.end_time = now + (
-            remaining + sum(timings[self.frame_index + 1:])
-        ) / 1000
+        self.end_time = now + (remaining + sum(timings[self.frame_index + 1 :])) / 1000
         return self.frame_index

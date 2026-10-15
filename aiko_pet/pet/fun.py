@@ -1,6 +1,6 @@
 """Game-independent enjoyment rules; no Tk, game engine or mood imports.
 
-Tune the active-day need and each game's completed-unit rewards below.
+Tune the active-day need and each game's completed-unit rewards in balance.json.
 Three to four short play sessions with two to three rounds each should
 roughly balance a normal sixteen-hour awake day. No window-time rewards.
 """
@@ -10,6 +10,8 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+from .balance import BALANCE
+
 from .value_rules import clamp_need_value
 
 
@@ -17,15 +19,31 @@ from .value_rules import clamp_need_value
 class FunBalance:
     """Editable global enjoyment policy, using hours and need points."""
 
-    awake_fun_loss_points_per_hour: float = 2.6
-    sleeping_fun_loss_points_per_hour: float = 0.0
-    full_reward_units_per_session: int = 3
-    middle_reward_units_per_session: int = 6
-    middle_unit_reward_fraction: float = 0.60
-    late_unit_reward_fraction: float = 0.25
-    maximum_fun_gain_per_session: float = 20.0
-    high_fun_threshold: float = 85.0
-    reward_fraction_at_full_fun: float = 0.75
+    awake_fun_loss_points_per_hour: float = BALANCE.number(
+        "fun", "awake_fun_loss_points_per_hour"
+    )
+    sleeping_fun_loss_points_per_hour: float = BALANCE.number(
+        "fun", "sleeping_fun_loss_points_per_hour"
+    )
+    full_reward_units_per_session: int = BALANCE.integer(
+        "fun", "full_reward_units_per_session"
+    )
+    middle_reward_units_per_session: int = BALANCE.integer(
+        "fun", "middle_reward_units_per_session"
+    )
+    middle_unit_reward_fraction: float = BALANCE.number(
+        "fun", "middle_unit_reward_fraction"
+    )
+    late_unit_reward_fraction: float = BALANCE.number(
+        "fun", "late_unit_reward_fraction"
+    )
+    maximum_fun_gain_per_session: float = BALANCE.number(
+        "fun", "maximum_fun_gain_per_session"
+    )
+    high_fun_threshold: float = BALANCE.number("fun", "high_fun_threshold")
+    reward_fraction_at_full_fun: float = BALANCE.number(
+        "fun", "reward_fraction_at_full_fun"
+    )
 
 
 FUN_BALANCE = FunBalance()
@@ -45,12 +63,24 @@ class GameFunProfile:
 
 GAME_FUN_PROFILES: dict[str, GameFunProfile] = {
     "rock_paper_scissors": GameFunProfile(
-        base_fun_per_completed_unit=5.4,
-        successful_unit_bonus=0.6,
-        neutral_unit_bonus=0.25,
-        setback_unit_bonus=0.0,
-        energy_cost_per_completed_unit=0.5,
-        social_gain_per_completed_unit=0.6,
+        base_fun_per_completed_unit=BALANCE.number(
+            "game_rock_paper_scissors", "base_fun_per_completed_unit"
+        ),
+        successful_unit_bonus=BALANCE.number(
+            "game_rock_paper_scissors", "successful_unit_bonus"
+        ),
+        neutral_unit_bonus=BALANCE.number(
+            "game_rock_paper_scissors", "neutral_unit_bonus"
+        ),
+        setback_unit_bonus=BALANCE.number(
+            "game_rock_paper_scissors", "setback_unit_bonus"
+        ),
+        energy_cost_per_completed_unit=BALANCE.number(
+            "game_rock_paper_scissors", "energy_cost_per_completed_unit"
+        ),
+        social_gain_per_completed_unit=BALANCE.number(
+            "game_rock_paper_scissors", "social_gain_per_completed_unit"
+        ),
     ),
 }
 
@@ -71,8 +101,10 @@ class GameExperience:
 
     def __post_init__(self) -> None:
         counts = (
-            self.completed_units, self.successful_units,
-            self.neutral_units, self.setback_units,
+            self.completed_units,
+            self.successful_units,
+            self.neutral_units,
+            self.setback_units,
         )
         if not self.game_id or any(
             type(number) is not int or number < 0 for number in counts
@@ -96,7 +128,8 @@ def advance_fun(current_fun: float, hours: float, *, sleeping: bool) -> float:
     if not math.isfinite(hours) or hours <= 0:
         return clamp_need_value(current_fun)
     rate = (
-        FUN_BALANCE.sleeping_fun_loss_points_per_hour if sleeping
+        FUN_BALANCE.sleeping_fun_loss_points_per_hour
+        if sleeping
         else FUN_BALANCE.awake_fun_loss_points_per_hour
     )
     return clamp_need_value(current_fun - hours * rate)
@@ -109,12 +142,14 @@ def completed_unit_reward_fraction(completed_units: int) -> float:
     balance = FUN_BALANCE
     full = min(completed_units, balance.full_reward_units_per_session)
     middle = max(
-        0, min(completed_units, balance.middle_reward_units_per_session)
-        - balance.full_reward_units_per_session
+        0,
+        min(completed_units, balance.middle_reward_units_per_session)
+        - balance.full_reward_units_per_session,
     )
     late = max(0, completed_units - balance.middle_reward_units_per_session)
     weighted_units = (
-        full + middle * balance.middle_unit_reward_fraction
+        full
+        + middle * balance.middle_unit_reward_fraction
         + late * balance.late_unit_reward_fraction
     )
     return weighted_units / completed_units
@@ -130,7 +165,8 @@ def satisfaction_reward_fraction(current_fun: float) -> float:
 
 
 def calculate_game_session_fun(
-    experience: GameExperience, current_fun: float,
+    experience: GameExperience,
+    current_fun: float,
 ) -> FunReward:
     """Award actual completed play, never an open window or pending round."""
     if experience.completed_units == 0:

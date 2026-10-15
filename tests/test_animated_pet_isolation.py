@@ -69,7 +69,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
             assets=assets, walk=self.walk, visual=self.visual,
             ports=AnimationRuntimePorts(
                 action_until=lambda: 0.0,
-                action_state=lambda: "idle",
+                action_clip_id=lambda: "idle",
                 attention_until=lambda: self.anim._cursor_snapshot.attention_until,
             ),
         )

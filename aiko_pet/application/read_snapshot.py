@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..pet.balance import BALANCE
+
 from dataclasses import dataclass
 
 from ..pet.state import PetState
@@ -23,7 +25,7 @@ class PetReadSnapshot:
     meals_today: tuple[str, ...]
     last_food_id: str | None = None
     food_digest_minutes: float = 0.0
-    fun: float = 75.0
+    fun: float = BALANCE.number("initial", "fun")
 
     @property
     def needs(self) -> tuple[tuple[str, float], ...]:

@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+from ...pet.content import GERMAN_TEXT
+
 import sys
 import tkinter as tk
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-from ...asset_paths import EMOTE_ASSETS, GAME_HANDS_DIR
+from ...asset_paths import EMOTE_IMAGE_DIR, GAME_HANDS_DIR
 from ...games.rock_paper_scissors import Move
 from ...pet.mind.reaction_sequence import EMOTES
 
@@ -38,7 +40,7 @@ class SpeechPresenter:
         always_on_top: Callable[[], bool],
         restore_stack: Callable[[], object],
         transparent_color: str = "#ff00ff",
-        emote_assets: Path = EMOTE_ASSETS,
+        emote_assets: Path = EMOTE_IMAGE_DIR,
     ) -> None:
         self._root = root
         self._anchor = anchor
@@ -56,9 +58,7 @@ class SpeechPresenter:
         window = tk.Toplevel(self._root)
         window.withdraw()
         window.overrideredirect(True)
-        transparent = (
-            self._transparent_color if sys.platform == "win32" else "#202733"
-        )
+        transparent = self._transparent_color if sys.platform == "win32" else "#202733"
         window.configure(bg=transparent)
         window.wm_attributes("-topmost", self._always_on_top())
         if sys.platform == "win32":
@@ -113,12 +113,13 @@ class SpeechPresenter:
                 raise FileNotFoundError(f"Missing emote: {path}")
             original = tk.PhotoImage(file=str(path))
             self.emote_images[emote] = original.zoom(3)
-        transparent = (
-            self._transparent_color if sys.platform == "win32" else "#202733"
-        )
+        transparent = self._transparent_color if sys.platform == "win32" else "#202733"
         tk.Label(
-            bubble, image=self.emote_images[emote],
-            bg=transparent, borderwidth=0, highlightthickness=0,
+            bubble,
+            image=self.emote_images[emote],
+            bg=transparent,
+            borderwidth=0,
+            highlightthickness=0,
         ).pack()
         self._present(bubble, duration_ms)
 
@@ -129,26 +130,43 @@ class SpeechPresenter:
         frame = tk.Frame(bubble, bg="#53687e", bd=0)
         frame.pack()
         tk.Label(
-            frame, text=phrase, font=(self._font_name, 9), wraplength=235,
-            bg="#f0f6fa", fg="#243247", justify="center",
-            padx=12, pady=8,
+            frame,
+            text=phrase,
+            font=(self._font_name, 9),
+            wraplength=235,
+            bg="#f0f6fa",
+            fg="#243247",
+            justify="center",
+            padx=12,
+            pady=8,
         ).pack(padx=1, pady=1)
-        transparent = (
-            self._transparent_color if sys.platform == "win32" else "#202733"
-        )
+        transparent = self._transparent_color if sys.platform == "win32" else "#202733"
         tail = tk.Canvas(
-            bubble, width=20, height=11, bg=transparent,
-            highlightthickness=0, borderwidth=0,
+            bubble,
+            width=20,
+            height=11,
+            bg=transparent,
+            highlightthickness=0,
+            borderwidth=0,
         )
         tail.pack()
         tail.create_polygon(
-            2, 0, 18, 0, 10, 10, fill="#f0f6fa",
-            outline="#53687e", width=1,
+            2,
+            0,
+            18,
+            0,
+            10,
+            10,
+            fill="#f0f6fa",
+            outline="#53687e",
+            width=1,
         )
         self._present(bubble, duration_ms)
 
     def show_game_hand(
-        self, aiko: Move, duration_ms: int = 2300,
+        self,
+        aiko: Move,
+        duration_ms: int = 2300,
     ) -> None:
         """Show only Aiko's own hand in the existing character bubble."""
         if not isinstance(aiko, Move):
@@ -163,31 +181,52 @@ class SpeechPresenter:
         frame.pack()
         panel = tk.Frame(frame, bg="#f0f6fa")
         panel.pack(padx=1, pady=1)
-        names = {Move.ROCK: "Stein", Move.PAPER: "Papier",
-                 Move.SCISSORS: "Schere"}
+        names = {
+            Move.ROCK: GERMAN_TEXT.format("rps.move.rock"),
+            Move.PAPER: GERMAN_TEXT.format("rps.move.paper"),
+            Move.SCISSORS: GERMAN_TEXT.format("rps.move.scissors"),
+        }
         tk.Label(
-            panel, text="Ich nehme ...", bg="#f0f6fa", fg="#243247",
+            panel,
+            text=GERMAN_TEXT.format("rps.choose_own_hand"),
+            bg="#f0f6fa",
+            fg="#243247",
             font=(self._font_name, 9, "bold"),
         ).pack(padx=12, pady=(8, 1))
         tk.Label(
-            panel, image=self.game_hand_images[aiko], bg="#f0f6fa",
-            bd=0, highlightthickness=0,
+            panel,
+            image=self.game_hand_images[aiko],
+            bg="#f0f6fa",
+            bd=0,
+            highlightthickness=0,
         ).pack(padx=8)
         tk.Label(
-            panel, text=names[aiko], bg="#f0f6fa", fg="#243247",
+            panel,
+            text=names[aiko],
+            bg="#f0f6fa",
+            fg="#243247",
             font=(self._font_name, 9),
         ).pack(padx=12, pady=(1, 8))
-        transparent = (
-            self._transparent_color if sys.platform == "win32" else "#202733"
-        )
+        transparent = self._transparent_color if sys.platform == "win32" else "#202733"
         tail = tk.Canvas(
-            bubble, width=20, height=11, bg=transparent,
-            highlightthickness=0, borderwidth=0,
+            bubble,
+            width=20,
+            height=11,
+            bg=transparent,
+            highlightthickness=0,
+            borderwidth=0,
         )
         tail.pack()
         tail.create_polygon(
-            2, 0, 18, 0, 10, 10, fill="#f0f6fa",
-            outline="#53687e", width=1,
+            2,
+            0,
+            18,
+            0,
+            10,
+            10,
+            fill="#f0f6fa",
+            outline="#53687e",
+            width=1,
         )
         self._present(bubble, duration_ms)
 

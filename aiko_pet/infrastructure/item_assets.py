@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import struct
 from pathlib import Path
 from types import MappingProxyType
@@ -12,6 +11,7 @@ from ..asset_paths import ASSET_ROOT
 from ..pet.animation.item_assets import HandItem, ItemCatalog, ItemSprite
 from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.content import GERMAN_TEXT
+from ..pet.catalog_validation import load_json, object_fields
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
@@ -63,6 +63,11 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
             if not isinstance(raw_label, str) or not raw_label.strip():
                 raise ValueError("Weapon asset needs a label")
             label = raw_label
+        object_fields(
+            entry,
+            ("id", "variants", "icon") if food else ("id", "variants", "label"),
+            context=f"item {key}",
+        )
         icon = _png(root, entry.get("icon"))[0] if food else None
         variants = entry.get("variants")
         if not isinstance(variants, dict) or set(variants) != {"1", "2"}:
@@ -72,10 +77,12 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
             spec = variants[str(scale)]
             if not isinstance(spec, dict):
                 raise ValueError("Malformed item variant")
+            object_fields(spec, ("path", "pivot"), context=f"item {key} {scale}x")
             path, (width, height) = _png(root, spec.get("path"))
             pivot: Any = spec.get("pivot")
             if (
-                not isinstance(pivot, list) or len(pivot) != 2
+                not isinstance(pivot, list)
+                or len(pivot) != 2
                 or any(type(v) not in (int, float) for v in pivot)
                 or not 0 <= pivot[0] <= width
                 or not 0 <= pivot[1] <= height
@@ -83,15 +90,20 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
                 raise ValueError(f"Invalid grip point for {key} at {scale}x")
             sprites[scale] = ItemSprite(path, (float(pivot[0]), float(pivot[1])))
         items[key] = HandItem(
-            key, label, icon, MappingProxyType(sprites),
+            key,
+            label,
+            icon,
+            MappingProxyType(sprites),
         )
     return MappingProxyType(items)
 
 
 def load_item_catalog(root: Path = ASSET_ROOT / "items") -> ItemCatalog:
     """Read the prebuilt sprites without Pillow or a runtime network request."""
-    data = json.loads((root / "items.json").read_text(encoding="utf-8"))
-    if not isinstance(data, dict) or data.get("version") != 1:
+    data = object_fields(
+        load_json(root / "items.json"), ("version", "foods", "weapons"), context="items"
+    )
+    if type(data["version"]) is not int or data.get("version") != 1:
         raise ValueError("Unsupported item catalog version")
     foods = _items(root, data.get("foods"), food=True)
     weapons = _items(root, data.get("weapons"), food=False)

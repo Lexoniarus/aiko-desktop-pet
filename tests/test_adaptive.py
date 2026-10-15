@@ -1,5 +1,7 @@
 """Regression and long-running deterministic simulations of Aiko's rhythm."""
 
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+
 import ctypes
 import json
 import tempfile
@@ -284,15 +286,17 @@ class AdaptiveBehaviourTests(unittest.TestCase):
             old = {"version": 1, "pet": {"mood": 47, "updated_at": 123},
                    "settings": {"x": 55, "scale": 2}}
             path.write_text(json.dumps(old), encoding="utf-8")
-            pet, config = store.load(now=123)
-            memory = store.load_memory()
+            session_data = store.load_session(now=123)
+            pet, config = session_data.state, session_data.settings
+            memory = session_data.adaptive_memory
             self.assertEqual(pet.mood, 47)
             self.assertTrue(config.learn_rhythm)
             memory.hour_seconds[34] = 245.5
             memory.strain = 19
             store.save(pet, config, adaptive=memory)
-            pet2, config2 = store.load(now=123)
-            memory2 = store.load_memory()
+            session_data = store.load_session(now=123)
+            pet2, config2 = session_data.state, session_data.settings
+            memory2 = session_data.adaptive_memory
             self.assertEqual(pet2.mood, 47)
             self.assertEqual(config2.x, 55)
             self.assertEqual(memory2.hour_seconds[34], 245.5)
@@ -304,7 +308,7 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         state = PetState(sleeping=True, sleep_origin="nap",
                          nap_until=1_800_000_000,
                          auto_nap_day="2026-10-12", updated_at=42)
-        restored = PetState.from_dict(state.to_dict(), now=42)
+        restored = decode_pet_state(encode_pet_state(state), now=42)
         self.assertEqual(restored.sleep_origin, "nap")
         self.assertEqual(restored.auto_nap_day, "2026-10-12")
         self.assertEqual(restored.nap_until, 1_800_000_000)

@@ -5,9 +5,10 @@ from `Aiko_Anime_8_Frames_Komplett.zip` are tracked, byte-for-byte, with their
 archive paths preserved. These are 120 pose/hand-layer PNGs, twelve animation
 manifests, the animation catalog and the gaze-direction manifest.
 
-The other **813 archive members** remain local and are ignored by Git:
+The other **813 archive members** are archived locally outside the repository:
 references, generation attempts, prompts, QA, preview animations, contact
 sheets and original preparation scripts. The ZIP is not duplicated in Git.
+Ignore rules exclude this material if the full archive is extracted here again.
 No imported scripts are executed.
 
 The desktop export is

@@ -4,7 +4,11 @@ Fun and mood now have **different responsibilities**. The target experience
 is to play **three or four times per active day, with two or three completed
 rounds per session**. These are optional, not fixed appointments.
 
-## Editable Python settings
+## Editable JSON settings
+
+Tune the `fun`, `mood` and `game_rock_paper_scissors` sections of
+`aiko_pet/data/balance.json`. The existing `FUN_BALANCE` and `MOOD_BALANCE`
+parameter objects read their defaults from this validated resource.
 
 The fun-need policy is in `aiko_pet/pet/fun.py`. Its `FUN_BALANCE` contains
 a 2.6-point-per-awake-hour fun decline (41.6 points over 16 waking hours),
@@ -59,7 +63,7 @@ minigame must be completed.
 
 Old saves without `fun` load at 75. Previously saved mood values
 are preserved initially and gradually follow the new formula.
-No closed-app or Windows-suspend time is retroactively simulated.
+On reopening, bounded closed time now advances needs and mood. Routine sleep and self-served main meals apply only during this reconstruction when automatic routine is enabled. Windows suspend remains excluded from the running-session clock. See [data and saves](DATA_AND_SAVES.md).
 
 ## Verification
 

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..catalog_validation import object_fields
+
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Mapping
@@ -10,9 +12,11 @@ from .animation import FRAME_COUNTS
 
 REGULAR_CLIPS = frozenset(FRAME_COUNTS) - {"look"}
 # Playback-only actions reuse their source clip's PNGs and pose durations.
-VIRTUAL_CLIPS: Mapping[str, str] = MappingProxyType({
-    "waving-greeting": "waving",
-})
+VIRTUAL_CLIPS: Mapping[str, str] = MappingProxyType(
+    {
+        "waving-greeting": "waving",
+    }
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -36,13 +40,27 @@ class AnimationTimingPolicy:
 
 
 def parse_timing_policy(data: object) -> AnimationTimingPolicy:
+    object_fields(
+        data,
+        (
+            "version",
+            "regular_frames",
+            "gaze_directions",
+            "frame_duration_ms",
+            "frame_sequences",
+        ),
+        context="animation timing",
+    )
     """Validate decoded timing data without filesystem or UI dependencies."""
     if not isinstance(data, dict):
         raise ValueError("Invalid animation timing policy")
     holds = data.get("frame_duration_ms")
     custom = data.get("frame_sequences")
     if (
-        data.get("version") != 3
+        type(data.get("version")) is not int
+        or data.get("version") != 3
+        or type(data.get("regular_frames")) is not int
+        or type(data.get("gaze_directions")) is not int
         or data.get("regular_frames") != 8
         or data.get("gaze_directions") != 16
         or not isinstance(holds, dict)
@@ -61,8 +79,7 @@ def parse_timing_policy(data: object) -> AnimationTimingPolicy:
             if (
                 not isinstance(values, list)
                 or len(values) != 8
-                or any(type(ms) is not int or not 40 <= ms <= 5000
-                       for ms in values)
+                or any(type(ms) is not int or not 40 <= ms <= 5000 for ms in values)
             ):
                 raise ValueError(f"Invalid frame durations: {state}")
             frames[state] = tuple(values)
@@ -70,8 +87,9 @@ def parse_timing_policy(data: object) -> AnimationTimingPolicy:
         if (
             not isinstance(raw_order, list)
             or not 8 <= len(raw_order) <= 32
-            or any(type(index) is not int or index not in expected
-                   for index in raw_order)
+            or any(
+                type(index) is not int or index not in expected for index in raw_order
+            )
             or set(raw_order) != expected
             or raw_order[0] != 0
             or raw_order[-1] != 7
@@ -79,7 +97,8 @@ def parse_timing_policy(data: object) -> AnimationTimingPolicy:
             raise ValueError(f"Invalid playback sequence: {state}")
         sequences[state] = tuple(raw_order)
     return AnimationTimingPolicy(
-        regular_frames=8, gaze_directions=16,
+        regular_frames=8,
+        gaze_directions=16,
         frame_ms=MappingProxyType(frames),
         sequences=MappingProxyType(sequences),
     )

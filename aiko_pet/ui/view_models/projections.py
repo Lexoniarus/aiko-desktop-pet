@@ -2,16 +2,25 @@
 
 from __future__ import annotations
 
+from ...pet.content import GERMAN_TEXT
+
 from ...pet.mind.adaptive_models import Behaviour
 from ...application.read_snapshot import PetReadSnapshot
 from ...application.settings import PetSettings
 from ...pet.routine import TimeContext
 from ...telemetry import ComputerSnapshot
+from ...pet.food import FOOD_CATALOG
 from .contracts import HoverSnapshot, SettingsSnapshot, StatusSnapshot
 from .text_de import (
-    describe_workload, format_day_label, format_feed_label,
-    format_mood_hint, format_percent, format_schedule_line,
-    format_emotion_label, format_sleep_label, observation_disabled_text,
+    describe_workload,
+    format_day_label,
+    format_feed_label,
+    format_mood_hint,
+    format_percent,
+    format_schedule_line,
+    format_emotion_label,
+    format_sleep_label,
+    observation_disabled_text,
 )
 
 
@@ -24,17 +33,21 @@ def project_hover(
 ) -> HoverSnapshot:
     """Render the hover text without reading or mutating a pet aggregate."""
     if observe_computer:
-        hardware = (
-            f"MEIN RECHNER   CPU {format_percent(computer.cpu)}"
-            f"   ·   GPU {format_percent(computer.gpu)}"
-            f"   ·   RAM {format_percent(computer.ram)}"
+        hardware = GERMAN_TEXT.format(
+            "ui.hover_hardware",
+            cpu=format_percent(computer.cpu),
+            gpu=format_percent(computer.gpu),
+            ram=format_percent(computer.ram),
         )
         workload = describe_workload(computer)
     else:
         hardware = observation_disabled_text()
         workload = ""
     return HoverSnapshot(
-        header=f"{format_day_label(context)}   ↔ Ziehen",
+        header=GERMAN_TEXT.format(
+            "ui.hover_header",
+            day_label=format_day_label(context),
+        ),
         sleep_label=format_sleep_label(pet.sleeping),
         feed_label=format_feed_label(pet, context),
         needs=pet.needs,
@@ -42,9 +55,13 @@ def project_hover(
         hardware_line=hardware,
         workload_line=workload,
         food_line=(
-            f"Zuletzt: {pet.last_food_id.capitalize()}"
-            f" · Sättigungspuffer: {pet.food_digest_minutes:.0f} Min."
-            if pet.last_food_id is not None else ""
+            GERMAN_TEXT.format(
+                "ui.last_food",
+                food=FOOD_CATALOG[pet.last_food_id].display_name,
+                minutes=f"{pet.food_digest_minutes:.0f}",
+            )
+            if pet.last_food_id is not None
+            else ""
         ),
     )
 
@@ -60,32 +77,39 @@ def project_status(
 ) -> StatusSnapshot:
     """Format the current status for German desktop views only."""
     if observe_computer:
-        hardware = (
-            f"CPU {format_percent(computer.cpu)}  ·  "
-            f"GPU {format_percent(computer.gpu)}  ·  "
-            f"RAM {format_percent(computer.ram)}"
+        hardware = GERMAN_TEXT.format(
+            "ui.status_hardware",
+            cpu=format_percent(computer.cpu),
+            gpu=format_percent(computer.gpu),
+            ram=format_percent(computer.ram),
         )
     else:
         hardware = observation_disabled_text()
     if observe_computer and situation is not None:
         descriptions = {
-            "working": "Konzentriert bei der Arbeit",
-            "recovering": "Nach der Arbeit zur Ruhe kommen",
-            "resting": "Eine ruhige Pause genießen",
-            "present": "Wach und aufmerksam",
-            "wandering": "Zeit für mich",
+            "working": GERMAN_TEXT.format("activity.working"),
+            "recovering": GERMAN_TEXT.format("activity.recovering"),
+            "resting": GERMAN_TEXT.format("activity.resting"),
+            "present": GERMAN_TEXT.format("activity.present"),
+            "wandering": GERMAN_TEXT.format("activity.wandering"),
         }
-        summary = descriptions.get(situation.mode, "Ich bin hier")
+        summary = descriptions.get(
+            situation.mode, GERMAN_TEXT.format("activity.unknown")
+        )
         if situation.expectation_confident:
-            summary += " · eingespielter Tagesrhythmus"
-        activity = (
-            f"Mein Rhythmus: {summary} · "
-            f"Beanspruchung {situation.strain:.0f}/100"
+            summary += GERMAN_TEXT.format("activity.familiar_suffix")
+        activity = GERMAN_TEXT.format(
+            "activity.summary",
+            summary=summary,
+            strain=f"{situation.strain:.0f}",
         )
         if situation.uptime_hours is not None:
-            activity += f" · Rechnerlaufzeit {situation.uptime_hours:.1f} h"
+            activity += GERMAN_TEXT.format(
+                "activity.uptime_suffix",
+                hours=f"{situation.uptime_hours:.1f}",
+            )
     else:
-        activity = "Mein Rhythmus: lernt noch" if observe_computer else ""
+        activity = GERMAN_TEXT.format("activity.learning") if observe_computer else ""
     return StatusSnapshot(
         today=format_day_label(context),
         next_event=format_schedule_line(context),
@@ -96,7 +120,7 @@ def project_status(
         activity_line=activity,
         needs=pet.needs,
         friendship_level=pet.friendship_level,
-        fun_line=f"Spaß: {pet.fun:.0f} %",
+        fun_line=GERMAN_TEXT.format("ui.fun", percent=f"{pet.fun:.0f}"),
     )
 
 

@@ -35,7 +35,7 @@ class AnimationAssemblyPorts:
     gaze_origin: Callable[[], tuple[float, float]]
     game_mode: Callable[[], bool]
     action_until: Callable[[], float]
-    action_state: Callable[[], str]
+    action_clip_id: Callable[[], str]
     attention_until: Callable[[], float]
     extend_action: Callable[[float], None]
 
@@ -75,7 +75,7 @@ def assemble_animation(
         state=state, settings=settings, assets=assets, walk=walk, visual=visual,
         ports=AnimationRuntimePorts(
             action_until=ports.action_until,
-            action_state=ports.action_state,
+            action_clip_id=ports.action_clip_id,
             attention_until=ports.attention_until,
         ),
     )

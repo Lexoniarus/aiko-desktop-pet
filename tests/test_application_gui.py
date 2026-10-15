@@ -65,10 +65,10 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
 
     def test_care_uses_new_one_shot_clips_and_sleep_cancels_them(self) -> None:
         self.pet.interact("feed")
-        self.assertEqual(self.pet._action_playback.state, "eat")
+        self.assertEqual(self.pet._action_playback.clip_id, "eat")
         self.assertEqual(self.pet._animated.frame_clock.active_key, ("eat", None))
         self.pet.interact("pet")
-        self.assertEqual(self.pet._action_playback.state, "petting")
+        self.assertEqual(self.pet._action_playback.clip_id, "petting")
         self.assertEqual(self.pet._animated.frame_clock.active_key,
                          ("petting", None))
         self.pet.interact("sleep")
@@ -79,7 +79,7 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.assertFalse(self.pet.state.sleeping)
         self.assertNotEqual(self.pet._animated.frame_clock.active_key,
                             ("petting", None))
-        self.assertNotEqual(self.pet._action_playback.state, "attack")
+        self.assertNotEqual(self.pet._action_playback.clip_id, "attack")
 
     def test_late_care_frames_extend_the_host_action_deadline(self) -> None:
         now = time.monotonic()

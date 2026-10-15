@@ -6,11 +6,17 @@ or persisted memory is accessed by these functions.
 
 from __future__ import annotations
 
+from ..balance import BALANCE
+
 from dataclasses import dataclass
 from typing import Literal
 
 ActivityMode = Literal[
-    "working", "recovering", "resting", "present", "wandering",
+    "working",
+    "recovering",
+    "resting",
+    "present",
+    "wandering",
 ]
 
 
@@ -35,16 +41,18 @@ def determine_activity_mode(
 ) -> ActivityMode:
     """Classify only observed effort and bounded recent activity."""
     working = effort is not None and (
-        effort >= 0.75 or settled_work >= 0.59
+        effort >= BALANCE.number("adaptive_sleep", "working_effort_threshold")
+        or settled_work >= BALANCE.number("adaptive_sleep", "working_settled_threshold")
     )
     if working:
         return "working"
-    if (
-        last_session_seconds >= 120
-        and 0 <= wall_time - last_work_wall <= 180
+    if last_session_seconds >= BALANCE.integer(
+        "adaptive_sleep", "recovery_minimum_session_seconds"
+    ) and 0 <= wall_time - last_work_wall <= BALANCE.integer(
+        "adaptive_sleep", "recovery_recent_work_seconds"
     ):
         return "recovering"
-    if rest_seconds >= 300:
+    if rest_seconds >= BALANCE.integer("adaptive_sleep", "resting_after_seconds"):
         return "resting"
     if present is True:
         return "present"
@@ -68,28 +76,48 @@ def determine_sleep_options(
     working = mode == "working"
     quiet_enough = (
         not working
-        and (effort is None or effort < 0.38)
-        and (idle_seconds is None or idle_seconds >= 180)
+        and (
+            effort is None
+            or effort < BALANCE.number("adaptive_sleep", "quiet_maximum_effort")
+        )
+        and (
+            idle_seconds is None
+            or idle_seconds
+            >= BALANCE.integer("adaptive_sleep", "quiet_minimum_idle_seconds")
+        )
     )
     can_sleep = (
-        (night and not working and (quiet_enough or energy <= 17))
-        or (energy <= 23 and rest_seconds >= 1800)
+        night
+        and not working
+        and (
+            quiet_enough
+            or energy <= BALANCE.integer("adaptive_sleep", "night_forced_sleep_energy")
+        )
+    ) or (
+        energy <= BALANCE.integer("adaptive_sleep", "rest_sleep_energy")
+        and rest_seconds
+        >= BALANCE.integer("adaptive_sleep", "rest_sleep_after_seconds")
     )
     should_wake = (
-        not manual_sleep and sleeping
-        and (working or (not night and present is True))
+        not manual_sleep and sleeping and (working or (not night and present is True))
     )
     can_nap = (
-        not night and present is False and not working
-        and rest_seconds >= 900
+        not night
+        and present is False
+        and not working
+        and rest_seconds >= BALANCE.integer("adaptive_sleep", "nap_after_rest_seconds")
         and (
-            energy <= 18
+            energy <= BALANCE.integer("adaptive_sleep", "nap_low_energy")
             or (
-                energy <= 35 and expected_effort is not None
-                and expected_effort < 0.32
+                energy <= BALANCE.integer("adaptive_sleep", "nap_expected_quiet_energy")
+                and expected_effort is not None
+                and expected_effort
+                < BALANCE.number("adaptive_sleep", "nap_expected_effort")
             )
         )
     )
     return SleepOptions(
-        can_sleep=can_sleep, should_wake=should_wake, can_nap=can_nap,
+        can_sleep=can_sleep,
+        should_wake=should_wake,
+        can_nap=can_nap,
     )

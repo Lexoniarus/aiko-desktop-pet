@@ -2,7 +2,7 @@
 
 This is the current, editable food design. It supersedes historical v0.11/v0.12
 feeding constants. The goal is three normal meals and optional snacks over a
-16-hour active day, with no mandatory meal alarm and no offline hunger penalty.
+16-hour active day, with no mandatory meal alarm. Reopening now reconstructs bounded closed time with optional scheduled self-care; see [data and saves](DATA_AND_SAVES.md).
 
 ## One source per responsibility
 
@@ -12,6 +12,8 @@ The nutrition rules and food *definitions* are deliberately separate:
   pure hunger/digestion calculations. Its named policy parameters control
   waking/sleeping hunger, activity modifiers, digestion decay, long fasting,
   and the repeat-food penalty. These algorithmic rules remain Python code.
+  Parameter values come from `aiko_pet/data/balance.json`; the dataclass no
+  longer owns an independent set of editable numeric defaults.
 - **Food content:** `aiko_pet/data/food_catalog.json` is the authoritative
   record of the ten food IDs, localized display names, meal/snack category,
   instant satiety, digestion reserve, mood bonuses and menu order (including
@@ -98,15 +100,11 @@ toolbar button is removed. A full-energy refusal does not play the consumption
 animation. Its future mood-side-effect has deliberately **not yet been
 balanced or enabled**; Fun/Mood  rules remain unchanged.
 
-The existing five food images in `aiko_pet/assets/food/` remain available as
-legacy prepared references, but are not used by the current selector.
-
 The original full-resolution artwork stays outside GitHub. Offline
 preparation produces the two runtime scales and picker icons; item pivots
-live in the checked-in JSON manifest. The original
-`tools/prepare_food_assets.py` continues to cover the five historical
-64px images; it is not the generator for the new native 1×/2× collection.
-Pillow is never needed at runtime.
+live in the checked-in JSON manifest. Historical standalone 64px food images
+and their old exporter are archived outside the repository; only the current
+item catalog is shipped. Pillow is never needed at runtime.
 
 ## Quality and further balancing
 

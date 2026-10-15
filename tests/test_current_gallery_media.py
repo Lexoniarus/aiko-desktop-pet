@@ -8,12 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PREVIEW = ROOT / "vorschau"
-STILLS = (
-    "Hover", "Hover_Moved", "Dialog",
-    "Reaction_Emote_Start", "Reaction_First_Line",
-    "Reaction_Followup", "Reaction_Emote_End",
-    "Status", "Settings", "Care_Pet", "Care_Feed", "Care_Sleep",
-)
+STILLS = ("Hover",)
 ANIMATIONS = {
     "Aiko_Current_Reaction_Sequence.gif",
     "Aiko_Current_Animations.gif",
@@ -32,7 +27,6 @@ class CurrentGalleryTests(unittest.TestCase):
                 width, height = struct.unpack(">II", sample[16:24])
                 # No fixed desktop rectangle; every mapped Tk window is
                 # fully framed with 24px breathing room, without resampling.
-                # The merged settings view can reach 1090px in previews.
                 self.assertGreaterEqual(width, 250)
                 self.assertLessEqual(width, 1150)
                 self.assertGreaterEqual(height, 290)
@@ -60,12 +54,16 @@ class CurrentGalleryTests(unittest.TestCase):
                 )
                 self.assertGreaterEqual(frames, minimum)
 
-    def test_all_new_stills_are_distinct(self) -> None:
-        payloads = [
-            (PREVIEW / f"Aiko_Current_{name}.png").read_bytes()
-            for name in STILLS
-        ]
-        self.assertEqual(len(payloads), len(set(payloads)))
+    def test_public_gallery_contains_exactly_the_six_readme_media(self) -> None:
+        expected = ANIMATIONS | {
+            "Aiko_Current_Hover.png", "Aiko_RPS_Aufgedeckt.png",
+            "Aiko_RPS_Spielablauf.gif",
+        }
+        actual = {path.name for path in PREVIEW.iterdir() if path.is_file()}
+        self.assertEqual(actual, expected)
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        for filename in expected:
+            self.assertIn(f"vorschau/{filename}", readme)
 
 
 if __name__ == "__main__":

@@ -6,12 +6,12 @@ sample hardware, render text, infer applications or send telemetry anywhere.
 
 from __future__ import annotations
 
+from ..balance import BALANCE
+
 import random
 
-from ...telemetry import (
-    ComputerSnapshot as ComputerSnapshot,
-    workload_intensity as workload_intensity,
-)
+from ...telemetry import ComputerSnapshot, workload_intensity
+
 
 class WorkloadEventDetector:
     """Translate measured effort into Aiko's *subjective* working rhythm.
@@ -20,9 +20,11 @@ class WorkloadEventDetector:
     imagined task. A proper 'that was hard' response requires sustained load.
     """
 
-    MIN_SECONDS_BETWEEN = 370.0
-    MIN_CHANGE_SECONDS = 18.0
-    STRESS_SECONDS = 18.0
+    MIN_SECONDS_BETWEEN = BALANCE.number(
+        "workload_dialogue", "minimum_voice_interval_seconds"
+    )
+    MIN_CHANGE_SECONDS = BALANCE.number("workload_dialogue", "minimum_change_seconds")
+    STRESS_SECONDS = BALANCE.number("workload_dialogue", "stress_seconds")
 
     def __init__(self, *, rng: random.Random | None = None) -> None:
         self.rng = rng or random.Random()
@@ -43,7 +45,9 @@ class WorkloadEventDetector:
 
     def observe_change(self, snapshot: ComputerSnapshot, now: float) -> str | None:
         """Emit meaningful transitions only once per fresh hardware reading."""
-        if snapshot.measured_at <= 0 or now - snapshot.measured_at > 25:
+        if snapshot.measured_at <= 0 or now - snapshot.measured_at > BALANCE.integer(
+            "workload_dialogue", "change_sample_maximum_age_seconds"
+        ):
             return None
         previous = self._last_sample
         if previous is not None and snapshot.measured_at <= previous.measured_at:
@@ -58,7 +62,7 @@ class WorkloadEventDetector:
             return None
         before = workload_intensity(previous) if previous is not None else None
         event: str | None = None
-        if current >= 0.70:
+        if current >= BALANCE.number("workload_dialogue", "high_effort"):
             self._last_high_at = now
             if self._stressed_since is None:
                 self._stressed_since = now
@@ -68,31 +72,58 @@ class WorkloadEventDetector:
             duration = now - self._stressed_since
             if duration >= self.STRESS_SECONDS and not self._milestone_spoken:
                 self._milestone_spoken = True
-                event = ("computer_effort_peak" if self._peak_effort >= 0.90
-                         else "computer_effort_heavy")
+                event = (
+                    "computer_effort_peak"
+                    if self._peak_effort
+                    >= BALANCE.number("workload_dialogue", "peak_effort")
+                    else "computer_effort_heavy"
+                )
         elif self._stressed_since is not None:
             duration = now - self._stressed_since
             was_recent = (
                 self._last_high_at is not None
-                and now - self._last_high_at <= 90
+                and now - self._last_high_at
+                <= BALANCE.integer("workload_dialogue", "recent_high_seconds")
             )
-            if current < 0.42 and duration >= self.STRESS_SECONDS and was_recent:
-                event = ("computer_effort_recovered_peak"
-                         if self._peak_effort >= 0.90
-                         else "computer_effort_recovered")
-            elif current < 0.42 and duration >= 7:
+            if (
+                current < BALANCE.number("workload_dialogue", "recovered_effort")
+                and duration >= self.STRESS_SECONDS
+                and was_recent
+            ):
+                event = (
+                    "computer_effort_recovered_peak"
+                    if self._peak_effort
+                    >= BALANCE.number("workload_dialogue", "peak_effort")
+                    else "computer_effort_recovered"
+                )
+            elif current < BALANCE.number(
+                "workload_dialogue", "recovered_effort"
+            ) and duration >= BALANCE.integer(
+                "workload_dialogue", "minimum_short_work_seconds"
+            ):
                 event = "computer_effort_easing"
-            if current < 0.42 or not was_recent:
+            if (
+                current < BALANCE.number("workload_dialogue", "recovered_effort")
+                or not was_recent
+            ):
                 self._stressed_since = None
                 self._peak_effort = 0.0
                 self._milestone_spoken = False
                 self._last_high_at = None
         if event is None and before is not None:
-            if current - before >= 0.23 and current >= 0.32:
+            if current - before >= BALANCE.number(
+                "workload_dialogue", "rise_delta"
+            ) and current >= BALANCE.number("workload_dialogue", "rise_minimum_effort"):
                 event = "computer_effort_rising"
-            elif before - current >= 0.27 and current < 0.55:
+            elif before - current >= BALANCE.number(
+                "workload_dialogue", "fall_delta"
+            ) and current < BALANCE.number("workload_dialogue", "fall_maximum_effort"):
                 event = "computer_effort_easing"
-        elif event is None and before is None and current >= 0.70:
+        elif (
+            event is None
+            and before is None
+            and current >= BALANCE.number("workload_dialogue", "high_effort")
+        ):
             event = "computer_effort_rising"
         if event is None:
             return None
@@ -111,11 +142,15 @@ class WorkloadEventDetector:
         effort = workload_intensity(snapshot)
         if effort is None:
             return None
-        if effort >= 0.70:
+        if effort >= BALANCE.number("workload_dialogue", "high_effort"):
             return "computer_effort_steady"
-        if effort <= 0.20:
+        if effort <= BALANCE.number("workload_dialogue", "rest_effort"):
             return "computer_effort_rest"
-        if snapshot.uptime_hours is not None and snapshot.uptime_hours >= 8:
+        if (
+            snapshot.uptime_hours is not None
+            and snapshot.uptime_hours
+            >= BALANCE.integer("workload_dialogue", "long_uptime_hours")
+        ):
             return "computer_uptime"
         return None
 
@@ -123,15 +158,25 @@ class WorkloadEventDetector:
         since_last = now - max(self.last_voice_at, self.last_change_at)
         if since_last < self.MIN_SECONDS_BETWEEN:
             return None
-        if snapshot.measured_at <= 0 or now - snapshot.measured_at > 65:
+        if snapshot.measured_at <= 0 or now - snapshot.measured_at > BALANCE.integer(
+            "workload_dialogue", "voice_sample_maximum_age_seconds"
+        ):
             return None
         event = self.classify(snapshot)
         if event is None:
             return None
-        if event == "computer_effort_rest" and (snapshot.uptime_hours or 0) >= 8:
-            if self.rng.random() < 0.18:
+        if event == "computer_effort_rest" and (
+            snapshot.uptime_hours or 0
+        ) >= BALANCE.integer("workload_dialogue", "long_uptime_hours"):
+            if self.rng.random() < BALANCE.number(
+                "workload_dialogue", "long_uptime_comment_probability"
+            ):
                 event = "computer_uptime"
-        if self.rng.random() >= (0.56 if event == "computer_effort_steady" else 0.25):
+        if self.rng.random() >= (
+            BALANCE.number("workload_dialogue", "steady_silence_probability")
+            if event == "computer_effort_steady"
+            else BALANCE.number("workload_dialogue", "other_silence_probability")
+        ):
             return None
         self.last_voice_at = now
         return event

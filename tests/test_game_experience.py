@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+
 import unittest
 from datetime import datetime
 
-from aiko_pet.application.active_time import ActiveSessionClock
-from aiko_pet.application.controller import CareController, CareRuntime
+from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
+from aiko_pet.application.controller import CareController
 from aiko_pet.application.game_experience import (
     GameExperienceCoordinator, experience_from_rock_paper_scissors,
 )
@@ -36,7 +38,7 @@ class GameExperienceTests(unittest.TestCase):
                 self.state, self.mind, self.adaptive, clock=clock,
             ),
         )
-        self.runtime = CareRuntime(
+        self.runtime = SessionInputs(
             wall_time=timestamp(), monotonic_time=100.0,
             auto_routine=False, allow_bedtime=None, allow_nap=False,
             interrupt_nap=False, effort=None,
@@ -54,26 +56,26 @@ class GameExperienceTests(unittest.TestCase):
     def test_completed_game_updates_fun_only_once(self) -> None:
         score = Score(wins=1, losses=2, draws=1)
         outcome = self.router.complete_game(
-            experience_from_rock_paper_scissors(score), runtime=self.runtime,
+            experience_from_rock_paper_scissors(score), inputs=self.runtime,
         )
         self.assertGreater(outcome.fun_gained, 0)
         self.assertEqual(self.state.fun, outcome.fun_after)
         self.assertGreater(self.state.social, 75)
         self.assertLess(self.state.energy, 75)
         self.assertGreater(self.state.friendship, 15)
-        saved = self.state.to_dict()
+        saved = encode_pet_state(self.state)
         self.assertNotIn("score", saved)
         self.assertNotIn("completed_units", saved)
         self.assertNotIn("game_id", saved)
 
     def test_empty_game_cannot_farm_fun_or_friendship(self) -> None:
-        original = self.state.to_dict()
+        original = encode_pet_state(self.state)
         result = self.router.complete_game(
             experience_from_rock_paper_scissors(Score()),
-            runtime=self.runtime,
+            inputs=self.runtime,
         )
         self.assertEqual(result.fun_gained, 0)
-        self.assertEqual(self.state.to_dict(), original)
+        self.assertEqual(encode_pet_state(self.state), original)
 
     def test_future_game_needs_only_a_profile_not_new_calculator(self) -> None:
         # There is intentionally no RPS dependency in the general fun domain.
@@ -85,7 +87,7 @@ class GameExperienceTests(unittest.TestCase):
         try:
             outcome = self.router.complete_game(
                 GameExperience("test_quiz", 3, successful_units=2),
-                runtime=self.runtime,
+                inputs=self.runtime,
             )
             self.assertGreater(outcome.fun_gained, 0)
         finally:

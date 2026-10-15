@@ -15,23 +15,13 @@ LEGACY_UI_MODULES = frozenset({
     "rest_pose_renderer", "rock_paper_scissors_window",
     "settings_contracts", "settings_window", "skin",
     "speech_presenter", "toolbar_details", "window_drag",
+    "status_panel", "status_contracts", "settings_popup",
 })
 
 
 def active_sources() -> tuple[Path, ...]:
-    """Exclude compatibility modules, never the new canonical implementation."""
-    paths = []
-    for path in ROOT.rglob("*.py"):
-        relative = path.relative_to(ROOT)
-        if relative.parts[0] in LEGACY_PACKAGES:
-            continue
-        if (
-            len(relative.parts) == 2 and relative.parts[0] == "ui"
-            and relative.stem in LEGACY_UI_MODULES
-        ):
-            continue
-        paths.append(path)
-    return tuple(sorted(paths))
+    """Audit the entire current source tree, without legacy exclusions."""
+    return tuple(sorted(ROOT.rglob("*.py")))
 
 
 def legacy_target(name: str) -> bool:

@@ -3,17 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, TypeAlias, cast
+from typing import TypeAlias, cast
 
 from ..pet.food import FOOD_CATALOG, FoodId
 from .events import IncomingNotification
-
-CareAction: TypeAlias = Literal[
-    "feed", "play", "pet", "talk", "energy_drink", "sleep",
-]
-CARE_ACTIONS: frozenset[str] = frozenset(
-    ("feed", "play", "pet", "talk", "energy_drink", "sleep")
-)
+from ..pet.care_result import CARE_ACTIONS, CareAction
 
 
 @dataclass(frozen=True, slots=True)

@@ -2,6 +2,12 @@
 
 from __future__ import annotations
 
+from aiko_pet.pet.care_actions import plan_care_action
+
+from aiko_pet.ui.view_models.care_text import format_care_response
+
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+
 import json
 import random
 import tempfile
@@ -32,14 +38,14 @@ class NeedsAndBondTests(unittest.TestCase):
     def test_migration_from_old_save_keeps_existing_values(self):
         old = {"satiety": 28, "mood": 34, "energy": 41,
                "updated_at": timestamp(), "sleeping": False}
-        state = PetState.from_dict(old, now=timestamp())
+        state = decode_pet_state(old, now=timestamp())
         self.assertEqual((state.satiety, state.mood, state.energy), (28, 34, 41))
         self.assertEqual(state.social, 75)
         self.assertEqual(state.friendship, 15)
         self.assertEqual(state.friendship_level, 2)
 
     def test_corrupt_new_values_and_reward_history_are_bounded(self):
-        state = PetState.from_dict({
+        state = decode_pet_state({
             "social": -20, "friendship": "nan", "updated_at": timestamp(),
             "care_last_rewards": {"feed": 9999999999,
                                   "pet": "malformed", "sleep": timestamp(),
@@ -65,9 +71,9 @@ class NeedsAndBondTests(unittest.TestCase):
         state.interact("pet", now=timestamp() + 1)
         self.assertEqual(state.social, 11)
         self.assertEqual(state.affection, 100)
-        before = state.to_dict()
+        before = encode_pet_state(state)
         state.interact("play", now=timestamp() + 2)
-        self.assertEqual(state.to_dict(), before)
+        self.assertEqual(encode_pet_state(state), before)
 
     def test_energy_drink_is_exactly_ten_points_and_can_be_stacked(self):
         state = PetState(energy=47, sleeping=True)
@@ -78,9 +84,9 @@ class NeedsAndBondTests(unittest.TestCase):
         self.assertFalse(state.sleeping)
         state.interact("energy_drink", now=start + 7)
         self.assertEqual(state.energy, 100)
-        before = state.to_dict()
-        self.assertIn("voll", state.interact("energy_drink", now=start + 8))
-        self.assertEqual(before, state.to_dict())
+        before = encode_pet_state(state)
+        self.assertIn("voll", format_care_response(state.interact("energy_drink", now=start + 8)))
+        self.assertEqual(before, encode_pet_state(state))
 
     def test_night_energy_drink_prevents_immediate_auto_sleep(self):
         stamp = timestamp(hour=23) + 45 * 60
@@ -151,7 +157,8 @@ class NeedsAndBondTests(unittest.TestCase):
             state = PetState(updated_at=start, social=14, friendship=63)
             state.interact("talk", now=start)
             store.save(state, PetSettings())
-            loaded, _ = store.load(now=start)
+            session_data = store.load_session(now=start)
+            loaded, _ = session_data.state, session_data.settings
             self.assertEqual(loaded.social, 40)
             self.assertAlmostEqual(loaded.friendship, state.friendship)
             self.assertEqual(loaded.care_last_rewards, state.care_last_rewards)
@@ -197,7 +204,7 @@ class TelemetryEffortTests(unittest.TestCase):
         state_b = PetState(updated_at=start)
         state_a.advance(start + 50, effort=float('nan'))
         state_b.advance(start + 50, effort=None)
-        self.assertEqual(state_a.to_dict(), state_b.to_dict())
+        self.assertEqual(encode_pet_state(state_a), encode_pet_state(state_b))
 
     def test_workload_during_sleep_does_not_drain_energy(self):
         start = timestamp()
@@ -238,24 +245,44 @@ class SocialDialogueTests(unittest.TestCase):
         self.assertEqual(require_reaction(self.mind.click(
             "left", state, self.context, 60)).event, "click_lonely")
         self.assertEqual(self.mind.care_event(
-            "talk", state, self.context, 62)[0], "talk_lonely")
+            plan_care_action(
+                state, "talk", now=self.context.local.timestamp(),
+            ).result,
+            self.mind.observe_care(state, self.context, 62),
+        ), "talk_lonely")
 
     def test_new_friendship_dialogues_are_conditioned(self):
         state = PetState(friendship=88, social=78, mood=74)
         self.assertEqual(require_reaction(self.mind.click(
             "left", state, self.context, 40)).event, "click_close")
         self.assertEqual(self.mind.care_event(
-            "pet", state, self.context, 100)[0], "pet_close")
+            plan_care_action(
+                state, "pet", now=self.context.local.timestamp(),
+            ).result,
+            self.mind.observe_care(state, self.context, 100),
+        ), "pet_close")
         self.assertEqual(self.mind.care_event(
-            "talk", state, self.context, 100)[0], "talk_close")
+            plan_care_action(
+                state, "talk", now=self.context.local.timestamp(),
+            ).result,
+            self.mind.observe_care(state, self.context, 100),
+        ), "talk_close")
 
     def test_energy_drink_has_grounded_line_even_when_full(self):
         state = PetState(energy=100)
         self.assertEqual(self.mind.care_event(
-            "energy_drink", state, self.context, 90)[0], "energy_drink_full")
+            plan_care_action(
+                state, "energy_drink", now=self.context.local.timestamp(),
+            ).result,
+            self.mind.observe_care(state, self.context, 90),
+        ), "energy_drink_full")
         state.energy = 70
         self.assertEqual(self.mind.care_event(
-            "energy_drink", state, self.context, 91)[0], "energy_drink")
+            plan_care_action(
+                state, "energy_drink", now=self.context.local.timestamp(),
+            ).result,
+            self.mind.observe_care(state, self.context, 91),
+        ), "energy_drink")
 
     def test_new_dialogues_reference_only_existing_sprites(self):
         book = DialogueBook.from_file()

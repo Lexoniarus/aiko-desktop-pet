@@ -6,6 +6,8 @@ values into movement conditions. It never selects a dialogue or Tk sprite.
 
 from __future__ import annotations
 
+from ..pet.balance import BALANCE
+
 import random
 import time
 from dataclasses import dataclass
@@ -84,9 +86,14 @@ class WalkDriver:
     """Own movement execution, with no widget or window lifecycle methods."""
 
     def __init__(
-        self, *, state: WalkNeeds, settings: WalkSettings,
-        adaptive: FocusReadings, monitor: ActivityReadings,
-        ports: WalkDriverPorts, walk_cycle_seconds: float,
+        self,
+        *,
+        state: WalkNeeds,
+        settings: WalkSettings,
+        adaptive: FocusReadings,
+        monitor: ActivityReadings,
+        ports: WalkDriverPorts,
+        walk_cycle_seconds: float,
     ) -> None:
         self.state = state
         self.settings = settings
@@ -95,7 +102,11 @@ class WalkDriver:
         self.ports = ports
         self.walk_cycle_seconds = walk_cycle_seconds
         self.movement = WalkController(
-            next_walk_at=time.monotonic() + random.uniform(60.0, 180.0),
+            next_walk_at=time.monotonic()
+            + random.uniform(
+                BALANCE.number("walk", "pause_min_seconds"),
+                BALANCE.number("walk", "pause_max_seconds"),
+            ),
         )
 
     def set_auto_walk(self, enabled: bool, now: float) -> None:
@@ -104,36 +115,46 @@ class WalkDriver:
         self.movement.pause(now)
 
     def step(
-        self, now: float, elapsed: float, *,
-        game_mode: bool, attention_active: bool,
+        self,
+        now: float,
+        elapsed: float,
+        *,
+        game_mode: bool,
+        attention_active: bool,
     ) -> str | None:
         """Plan motion and apply only actual bounded desktop displacement."""
         if game_mode:
             return None
         observed = self.adaptive.current
         busy = (
-            observed.focused if observed is not None
+            observed.focused
+            if observed is not None
             else self.monitor.latest().is_busy()
         )
-        step = self.movement.plan_step(WalkConditions(
-            now=now,
-            elapsed_seconds=elapsed,
-            speed_pixels_per_second=(
-                68 * self.settings.scale / self.walk_cycle_seconds
-            ),
-            stride_pixels=68 * self.settings.scale,
-            x=self.settings.x or 0,
-            track=self.ports.track(),
-            sprite_width=FRAME_WIDTH * self.settings.scale,
-            energy=self.state.energy,
-            auto_walk=self.settings.auto_walk,
-            sleeping=self.state.sleeping,
-            attention_active=attention_active,
-            toolbar_visible=self.ports.toolbar_visible(),
-            observing_computer=self.settings.observe_computer,
-            computer_busy=busy,
-            quiet_period=bool(observed is not None and observed.quiet),
-        ))
+        step = self.movement.plan_step(
+            WalkConditions(
+                now=now,
+                elapsed_seconds=elapsed,
+                speed_pixels_per_second=(
+                    BALANCE.integer("walk", "stride_pixels_at_scale_one")
+                    * self.settings.scale
+                    / self.walk_cycle_seconds
+                ),
+                stride_pixels=BALANCE.integer("walk", "stride_pixels_at_scale_one")
+                * self.settings.scale,
+                x=self.settings.x or 0,
+                track=self.ports.track(),
+                sprite_width=FRAME_WIDTH * self.settings.scale,
+                energy=self.state.energy,
+                auto_walk=self.settings.auto_walk,
+                sleeping=self.state.sleeping,
+                attention_active=attention_active,
+                toolbar_visible=self.ports.toolbar_visible(),
+                observing_computer=self.settings.observe_computer,
+                computer_busy=busy,
+                quiet_period=bool(observed is not None and observed.quiet),
+            )
+        )
         if step is None:
             return None
         if step.pixels == 0:
@@ -142,10 +163,10 @@ class WalkDriver:
         self.ports.place_x(old_x + step.pixels)
         delta = (self.settings.x or 0) - old_x
         track = self.ports.track()
-        blocked = (
-            (step.pixels < 0 and (self.settings.x or 0) <= track.left)
-            or (step.pixels > 0 and (self.settings.x or 0)
-                >= track.right - FRAME_WIDTH * self.settings.scale)
+        blocked = (step.pixels < 0 and (self.settings.x or 0) <= track.left) or (
+            step.pixels > 0
+            and (self.settings.x or 0)
+            >= track.right - FRAME_WIDTH * self.settings.scale
         )
         if self.movement.record_displacement(delta, now=now, blocked=blocked):
             self.ports.walk_finished(now)

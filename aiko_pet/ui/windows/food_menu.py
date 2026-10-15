@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ...pet.content import GERMAN_TEXT
+
 import sys
 import tkinter as tk
 from functools import partial
@@ -16,7 +18,11 @@ class FoodMenu:
     """Read-only choices and a typed callback into the care application."""
 
     def __init__(
-        self, root: tk.Tk, x: int, y: int, *,
+        self,
+        root: tk.Tk,
+        x: int,
+        y: int,
+        *,
         choices: tuple[FoodChoice, ...],
         selected: Callable[[FoodChoiceId], None],
         closed: Callable[[], None],
@@ -37,7 +43,7 @@ class FoodMenu:
         self.window.bind("<Escape>", lambda _event: self.close())
         outer = skin.frame(self.window)
         outer.pack(fill="both", expand=True, padx=3, pady=3)
-        header = skin.header(outer, "ESSEN & GETRÄNKE")
+        header = skin.header(outer, GERMAN_TEXT.format("food.header"))
         header.pack(fill="x")
         self._drag = WindowDrag(self.window, header)
         body = tk.Frame(outer, bg=skin.background)
@@ -50,40 +56,63 @@ class FoodMenu:
         for index, choice in enumerate(choices):
             item = tk.Frame(body, bg=skin.panel, padx=4, pady=5)
             item.grid(
-                row=index // self.columns, column=index % self.columns,
-                padx=3, pady=3, sticky="nsew",
+                row=index // self.columns,
+                column=index % self.columns,
+                padx=3,
+                pady=3,
+                sticky="nsew",
             )
             image = (
                 tk.PhotoImage(master=root, file=str(choice.image_path))
-                if choice.image_path.is_file() else None
+                if choice.image_path.is_file()
+                else None
             )
             if image is not None:
                 self.images[choice.id] = image
             button = tk.Button(
-                item, text=choice.name,
+                item,
+                text=choice.name,
                 image=image if image is not None else "",
-                compound="top", command=partial(self.choose, choice.id),
-                font=(skin.font, 9), fg=skin.text,
-                bg=skin.panel, activebackground=skin.background,
+                compound="top",
+                command=partial(self.choose, choice.id),
+                font=(skin.font, 9),
+                fg=skin.text,
+                bg=skin.panel,
+                activebackground=skin.background,
                 activeforeground=skin.accent,
-                bd=0, cursor="hand2", padx=5, pady=4,
+                bd=0,
+                cursor="hand2",
+                padx=5,
+                pady=4,
             )
             button.pack(fill="x")
             self.buttons[choice.id] = button
             tk.Label(
                 item,
-                text=f"{choice.benefit_label} · {choice.category_label}",
-                bg=skin.panel, fg=skin.muted, wraplength=105,
+                text=GERMAN_TEXT.format(
+                    "food.choice_details",
+                    benefit=choice.benefit_label,
+                    category=choice.category_label,
+                ),
+                bg=skin.panel,
+                fg=skin.muted,
+                wraplength=105,
                 font=(skin.font, 8),
             ).pack(pady=(1, 4))
-        skin.button(outer, "Schließen", self.close).pack(
-            anchor="e", padx=12, pady=(0, 8),
+        skin.button(outer, GERMAN_TEXT.format("ui.close"), self.close).pack(
+            anchor="e",
+            padx=12,
+            pady=(0, 8),
         )
         self.window.update_idletasks()
         width, height = self.window.winfo_reqwidth(), self.window.winfo_reqheight()
         tx, ty = bounded_position(
-            x, y, width, height,
-            root.winfo_screenwidth(), root.winfo_screenheight(),
+            x,
+            y,
+            width,
+            height,
+            root.winfo_screenwidth(),
+            root.winfo_screenheight(),
         )
         self.window.geometry(f"+{tx}+{ty}")
         self.window.deiconify()

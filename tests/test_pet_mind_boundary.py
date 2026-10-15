@@ -3,17 +3,12 @@
 import unittest
 from pathlib import Path
 
-from aiko_pet.pet.mind import PetMind
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.cursor_attention import CursorAttention
-from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook
+from aiko_pet.pet.mind.catalog import CATALOGUE
 
 
 class PetMindBoundaryTests(unittest.TestCase):
-    def test_mind_and_catalogue_have_exact_canonical_owners(self) -> None:
-        self.assertEqual(PetMind.__module__, "aiko_pet.pet.mind.mind")
-        self.assertEqual(DialogueBook.__module__, "aiko_pet.pet.mind.catalog")
-
     def test_mind_owns_distinct_session_cursor_attention(self) -> None:
         first = make_aiko_mind(started_at=0.0)
         second = make_aiko_mind(started_at=0.0)

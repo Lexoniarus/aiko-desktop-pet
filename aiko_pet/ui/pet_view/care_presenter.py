@@ -11,6 +11,7 @@ from typing import Callable
 
 from ...application.controller import CareOutcome
 from ...pet.mind.catalog import Reaction
+from ..view_models.care_text import format_care_response
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,10 +35,11 @@ class CarePresenter:
         self._ports = ports
 
     def present(
-        self, action: str, outcome: CareOutcome, *,
+        self, outcome: CareOutcome, *,
         now: float, sleeping: bool,
     ) -> None:
         ports = self._ports
+        action = outcome.result.action
         if outcome.consumed_item_id is not None:
             ports.set_item(outcome.consumed_item_id)
         if action == "sleep":
@@ -57,7 +59,7 @@ class CarePresenter:
                 ports.start_action(visual, 0.0)
         if reaction is None:
             ports.cancel_followup()
-            ports.show_text(outcome.fallback_text, 2450)
+            ports.show_text(format_care_response(outcome.result), 2450)
         else:
             ports.react(reaction, 2900)
         ports.refresh_toolbar()

@@ -32,7 +32,7 @@ class ActionPlaybackTests(unittest.TestCase):
 
     def test_non_loop_action_uses_authored_clip_duration(self) -> None:
         self.actions.start("eat", 0.0, started_at=100.0)
-        self.assertEqual(self.actions.state, "eat")
+        self.assertEqual(self.actions.clip_id, "eat")
         self.assertEqual(self.actions.until, 102.5)
         self.begin.assert_called_once_with("eat", 100.0)
 
@@ -48,7 +48,7 @@ class ActionPlaybackTests(unittest.TestCase):
         self.actions.cancel_at(101.0)
         self.assertEqual(self.actions.until, 101.0)
         self.cancel.assert_called_once_with(101.0)
-        self.assertEqual(self.actions.state, "eat")
+        self.assertEqual(self.actions.clip_id, "eat")
 
 
 if __name__ == "__main__":

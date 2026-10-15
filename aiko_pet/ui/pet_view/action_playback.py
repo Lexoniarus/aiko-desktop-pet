@@ -23,19 +23,19 @@ class ActionPlayback:
         self._assets = assets
         self._begin = begin
         self._cancel = cancel
-        self.state = "idle"
+        self.clip_id = "idle"
         self.until = 0.0
 
     def start(
-        self, state: str, duration: float, *, started_at: float | None = None,
+        self, clip_id: str, duration: float, *, started_at: float | None = None,
     ) -> None:
         now = time.monotonic() if started_at is None else started_at
-        clip = self._assets.clips[state]
+        clip = self._assets.clips[clip_id]
         if not clip.loop:
             duration = clip.duration_seconds
-        self.state = state
+        self.clip_id = clip_id
         self.until = now + duration
-        self._begin(state, now)
+        self._begin(clip_id, now)
 
     def cancel_at(self, now: float) -> None:
         self.until = now

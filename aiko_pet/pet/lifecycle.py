@@ -5,16 +5,18 @@ Policies calculate transitions and time steps; PetState owns every mutation.
 
 from __future__ import annotations
 
+from .balance import BALANCE
+
 import math
 from dataclasses import dataclass
 from typing import Protocol
 
 from .routine import TimeContext, context_at
 
-MAX_CATCHUP_SECONDS = 8 * 60 * 60
-SIMULATION_STEP_SECONDS = 300
+MAX_CATCHUP_SECONDS = BALANCE.integer("simulation", "maximum_catchup_seconds")
+SIMULATION_STEP_SECONDS = BALANCE.integer("simulation", "step_seconds")
 # Live telemetry is never projected across a restart/suspend or offline gap.
-MAX_LIVE_EFFORT_SECONDS = 30.0
+MAX_LIVE_EFFORT_SECONDS = BALANCE.number("simulation", "maximum_live_effort_seconds")
 
 
 class RoutineValues(Protocol):
@@ -83,12 +85,11 @@ def calculate_daily_routine(
         sleeping = False
         origin = ""
     elif (
-        not context.night and allow_nap and not sleeping
-        and nap_day != context.day_key
+        not context.night and allow_nap and not sleeping and nap_day != context.day_key
     ):
         sleeping = True
         origin = "nap"
-        nap_until = stamp + 45 * 60
+        nap_until = stamp + BALANCE.integer("simulation", "nap_seconds")
         nap_day = context.day_key
     return RoutineTransition(
         sleeping=sleeping,
@@ -116,9 +117,7 @@ def plan_pet_time(
     elapsed = max(0.0, min(MAX_CATCHUP_SECONDS, duration))
     if type(effort) not in (int, float):
         effort = None
-    elif effort is not None and (
-        not math.isfinite(effort) or not 0.0 <= effort <= 1.0
-    ):
+    elif effort is not None and (not math.isfinite(effort) or not 0.0 <= effort <= 1.0):
         effort = None
     known_since = now - min(elapsed, MAX_LIVE_EFFORT_SECONDS)
     if not auto_routine:
@@ -135,12 +134,12 @@ def plan_pet_time(
         next_cursor = min(now, cursor + SIMULATION_STEP_SECONDS)
         if effort is not None and cursor < known_since < next_cursor:
             next_cursor = known_since
-        steps.append(SimulationStep(
-            hours=(next_cursor - cursor) / 3600.0,
-            context=context_at((cursor + next_cursor) / 2),
-            effort=effort if cursor >= known_since else None,
-        ))
+        steps.append(
+            SimulationStep(
+                hours=(next_cursor - cursor) / 3600.0,
+                context=context_at((cursor + next_cursor) / 2),
+                effort=effort if cursor >= known_since else None,
+            )
+        )
         cursor = next_cursor
     return tuple(steps)
-
-

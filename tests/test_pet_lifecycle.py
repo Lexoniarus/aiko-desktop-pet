@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from aiko_pet.infrastructure.pet_codec import encode_pet_state
+
 import unittest
 from dataclasses import dataclass
 from datetime import datetime
@@ -72,7 +74,7 @@ class PetTimelineTests(unittest.TestCase):
             "meals_today", "sleep_origin", "auto_sleep_night", "nap_until",
             "auto_nap_day", "food", "fun",
         }
-        self.assertEqual(set(PetState().to_dict()), expected)
+        self.assertEqual(set(encode_pet_state(PetState())), expected)
 
     def test_legacy_constants_are_preserved(self) -> None:
         self.assertEqual(MAX_CATCHUP_SECONDS, POLICY_CATCHUP)
@@ -116,7 +118,7 @@ class PetTimelineTests(unittest.TestCase):
         second = PetState(updated_at=local_stamp())
         first.advance( local_stamp() + 3600.0, effort=True)
         second.advance( local_stamp() + 3600.0, effort=None)
-        self.assertEqual(first.to_dict(), second.to_dict())
+        self.assertEqual(encode_pet_state(first), encode_pet_state(second))
 
     def test_automatic_sleep_can_be_prevented_by_work(self) -> None:
         context = context_at(local_stamp(hour=23, minute=45))

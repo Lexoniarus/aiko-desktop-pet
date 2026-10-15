@@ -6,6 +6,8 @@ from unittest.mock import Mock
 
 from aiko_pet.application.controller import CareOutcome
 from aiko_pet.pet.mind.catalog import Reaction
+from aiko_pet.pet.care_result import CareAction, CareEffect, CareResult
+from aiko_pet.ui.view_models.care_text import format_care_response
 from aiko_pet.pet.routine import context_at
 from aiko_pet.ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 
@@ -33,34 +35,39 @@ class CarePresenterTests(unittest.TestCase):
         self.context = context_at(datetime(2026, 10, 12, 13).timestamp())
 
     def outcome(
-        self, *, reaction: Reaction | None = None,
+        self, *, action: CareAction = "feed", reaction: Reaction | None = None,
         item: str | None = None,
     ) -> CareOutcome:
-        return CareOutcome(
-            fallback_text="Okay", reaction=reaction, context=self.context,
-            consumed_item_id=item,
-        )
+        effect = CareEffect.FOOD_SNACK if item else CareEffect.FOOD_SATISFIED
+        if action == "energy_drink":
+            effect = CareEffect.DRINK_CONSUMED
+        elif action == "sleep":
+            effect = CareEffect.SLEEP_STARTED
+        food_id = item if action == "feed" else None
+        return CareOutcome(CareResult(action, effect, food_id), reaction, self.context)
 
     def test_food_overlay_only_appears_after_consumption(self) -> None:
         self.presenter.present(
-            "feed", self.outcome(item="dango"), now=100.0, sleeping=False,
+            self.outcome(item="dango"), now=100.0, sleeping=False,
         )
         self.set_item.assert_called_once_with("dango")
         self.start_action.assert_called_once_with("eat", 0.0)
-        self.show_text.assert_called_once_with("Okay", 2450)
+        self.show_text.assert_called_once_with(
+            format_care_response(self.outcome(item="dango").result), 2450,
+        )
         self.refresh_status.assert_called_once()
         self.refresh_toolbar.assert_called_once()
 
     def test_rejected_food_does_not_animate_or_set_item(self) -> None:
         self.presenter.present(
-            "feed", self.outcome(), now=100.0, sleeping=False,
+            self.outcome(), now=100.0, sleeping=False,
         )
         self.set_item.assert_not_called()
         self.start_action.assert_not_called()
 
     def test_sleep_cancels_current_animation_without_starting_another(self) -> None:
         self.presenter.present(
-            "sleep", self.outcome(), now=100.0, sleeping=True,
+            self.outcome(action="sleep"), now=100.0, sleeping=True,
         )
         self.cancel_action.assert_called_once_with(100.0)
         self.start_action.assert_not_called()
@@ -72,7 +79,9 @@ class CarePresenterTests(unittest.TestCase):
             line_id="test-care", event="feed", text="Hallo", animation="idle",
         )
         self.presenter.present(
-            "energy_drink", self.outcome(reaction=reaction, item="energy_drink"),
+            self.outcome(
+                action="energy_drink", reaction=reaction, item="energy_drink",
+            ),
             now=100.0, sleeping=False,
         )
         displayed, duration = self.react.call_args.args

@@ -6,15 +6,19 @@ No raw utilization samples, window titles or user activity logs.
 
 from __future__ import annotations
 
+from ..balance import BALANCE
+
 import math
 from dataclasses import dataclass, field
 from typing import Any
 
-from .adaptive_policy import ActivityMode as ActivityMode
+from .adaptive_policy import ActivityMode
 
 SLOTS = 7 * 24
-MAX_OBSERVATION_SECONDS = 30.0
-DAILY_DECAY = 0.965  # Long-term half-life ~19 days; no one-off takeover.
+MAX_OBSERVATION_SECONDS = BALANCE.number("adaptive_learning", "maximum_sample_seconds")
+DAILY_DECAY = BALANCE.number(
+    "adaptive_learning", "daily_profile_decay"
+)  # Long-term half-life ~19 days; no one-off takeover.
 
 
 def clamp(value: Any, default: float = 0.0, high: float = 100.0) -> float:
@@ -83,8 +87,7 @@ class AdaptiveMemory:
             present_seconds=_hours(payload.get("present_seconds")),
             observed_days=_hours(payload.get("observed_days")),
             last_slot_key=(
-                last_slot if isinstance(last_slot, str) and len(last_slot) <= 20
-                else ""
+                last_slot if isinstance(last_slot, str) and len(last_slot) <= 20 else ""
             ),
             profile_day=day if isinstance(day, str) and len(day) == 10 else "",
             strain=clamp(payload.get("strain")),
@@ -92,11 +95,13 @@ class AdaptiveMemory:
             session_seconds=clamp(payload.get("session_seconds"), high=172_800.0),
             rest_seconds=clamp(payload.get("rest_seconds"), high=172_800.0),
             last_session_seconds=clamp(
-                payload.get("last_session_seconds"), high=172_800.0,
+                payload.get("last_session_seconds"),
+                high=172_800.0,
             ),
             last_work_wall=clamp(payload.get("last_work_wall"), high=4_000_000_000.0),
             last_contact_wall=clamp(
-                payload.get("last_contact_wall"), high=4_000_000_000.0,
+                payload.get("last_contact_wall"),
+                high=4_000_000_000.0,
             ),
             last_seen_wall=clamp(payload.get("last_seen_wall"), high=4_000_000_000.0),
         )
@@ -144,5 +149,3 @@ class Behaviour:
     @property
     def quiet(self) -> bool:
         return self.mode in ("resting", "recovering")
-
-

@@ -1,9 +1,13 @@
+
+from aiko_pet.ui.view_models.care_text import format_care_response
+
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 import unittest
 from datetime import datetime
 
 from aiko_pet.pet.lifecycle import MAX_CATCHUP_SECONDS
 from aiko_pet.pet.state import PetState
-from aiko_pet.pet.value_rules import bounded
+from aiko_pet.pet.value_rules import clamp_need_value
 
 NOW = datetime(2026, 10, 13, 12).timestamp()
 
@@ -43,15 +47,15 @@ class PetStateTests(unittest.TestCase):
 
     def test_play_requires_an_actual_completed_game(self):
         state = PetState(satiety=99, mood=99, energy=10)
-        before = state.to_dict()
-        self.assertIn("Spiel", state.interact("play"))
-        self.assertEqual(state.to_dict(), before)
-        self.assertIn("angenehm", state.interact("pet"))
+        before = encode_pet_state(state)
+        self.assertIn("Spiel", format_care_response(state.interact("play")))
+        self.assertEqual(encode_pet_state(state), before)
+        self.assertIn("angenehm", format_care_response(state.interact("pet")))
         self.assertEqual(state.affection, 100)
 
     def test_play_when_exhausted_does_not_apply_cost(self):
         state = PetState(mood=20, energy=7)
-        self.assertIn("müde", state.interact("play"))
+        self.assertIn("müde", format_care_response(state.interact("play")))
         self.assertEqual((state.mood, state.energy), (20, 7))
 
     def test_sleep_toggle_and_feeding_wakes(self):
@@ -63,14 +67,14 @@ class PetStateTests(unittest.TestCase):
         self.assertEqual(state.satiety, 100)
 
     def test_malformed_save_is_safely_normalized(self):
-        state = PetState.from_dict({
+        state = decode_pet_state({
             "satiety": "NaN", "mood": -5, "energy": float("inf"),
             "sleeping": "yes", "updated_at": "oops",
         }, now=300)
         self.assertEqual((state.satiety, state.mood, state.energy), (75, 0, 75))
         self.assertFalse(state.sleeping)
         self.assertEqual(state.updated_at, 300)
-        self.assertEqual(bounded(None), 75)
+        self.assertEqual(clamp_need_value(None), 75)
 
     def test_unknown_action_rejected(self):
         with self.assertRaises(ValueError):

@@ -8,7 +8,7 @@ from pathlib import Path
 
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
 from aiko_pet.gui import DesktopPet
-from aiko_pet.asset_paths import EMOTE_ASSETS, SCI_FI_UI
+from aiko_pet.asset_paths import EMOTE_IMAGE_DIR, KENNEY_UI_DIR
 from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue, compose_cues
 from aiko_pet.infrastructure.persistence import StateStore
 
@@ -18,7 +18,7 @@ class EmoteDomainTests(unittest.TestCase):
         self.assertGreaterEqual(len(EMOTES), 12)
         for name in EMOTES:
             with self.subTest(name=name):
-                p = EMOTE_ASSETS / f'emote_{name}.png'
+                p = EMOTE_IMAGE_DIR / f'emote_{name}.png'
                 self.assertTrue(p.is_file())
                 self.assertGreater(p.stat().st_size, 80)
                 self.assertEqual(p.read_bytes()[:8], b'\x89PNG\r\n\x1a\n')
@@ -57,7 +57,7 @@ class EmoteDomainTests(unittest.TestCase):
     def test_kenney_ui_pack_bitmaps_are_embedded(self):
         for name in ('button_regular.png', 'button_wide.png',
                      'button_small.png', 'toolbar_banner.png'):
-            path = SCI_FI_UI / name
+            path = KENNEY_UI_DIR / name
             self.assertTrue(path.is_file())
             self.assertEqual(path.read_bytes()[:8], b'\x89PNG\r\n\x1a\n')
 

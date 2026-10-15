@@ -6,6 +6,8 @@ uses only effect ports and never imports Tk widgets or speech presenters.
 
 from __future__ import annotations
 
+from ..pet.balance import BALANCE
+
 import time
 from dataclasses import dataclass, replace
 from typing import Callable
@@ -38,8 +40,12 @@ class ContactCoordinator:
     """Keep direct user contact higher priority than autonomous pet actions."""
 
     def __init__(
-        self, *, state: PetState, mind: PetMind,
-        adaptive: AdaptiveRoutine, ports: ContactPorts,
+        self,
+        *,
+        state: PetState,
+        mind: PetMind,
+        adaptive: AdaptiveRoutine,
+        ports: ContactPorts,
     ) -> None:
         self._state = state
         self._mind = mind
@@ -54,14 +60,17 @@ class ContactCoordinator:
         now = time.monotonic()
         reaction = (
             self._mind.return_to_pet(
-                self._state, self._ports.context(), now,
+                self._state,
+                self._ports.context(),
+                now,
             )
-            if self._ports.toolbar_hidden() else None
+            if self._ports.toolbar_hidden()
+            else None
         )
         self._ports.mark_hover(now)
         self._ports.interrupt_walk()
         self._ports.show_toolbar()
-        self._ports.react(reaction, 2800)
+        self._ports.react(reaction, BALANCE.integer("dialogue", "contact_reaction_ms"))
 
     def click(self, button: ClickButton) -> None:
         """Deliver an intentional click only after initiating hover."""
@@ -71,9 +80,14 @@ class ContactCoordinator:
         # PetMind validates the available button types itself.
         if button not in ("left", "right"):
             raise ValueError("Unknown click button")
-        self.react_to_click(self._mind.click(
-            button, self._state, self._ports.context(), now,
-        ))
+        self.react_to_click(
+            self._mind.click(
+                button,
+                self._state,
+                self._ports.context(),
+                now,
+            )
+        )
 
     def react_to_click(self, reaction: Reaction | None) -> None:
         if self._ports.game_open():
@@ -82,9 +96,13 @@ class ContactCoordinator:
             self._ports.cancel_followup()
             self._ports.hide_speech()
             return
-        if len(self._mind.clicks) >= 3 and reaction.emote_before is not None:
+        if (
+            len(self._mind.clicks)
+            >= BALANCE.integer("dialogue", "hide_click_emote_from_count")
+            and reaction.emote_before is not None
+        ):
             reaction = replace(reaction, emote_before=None)
-        self._ports.react(reaction, 2800)
+        self._ports.react(reaction, BALANCE.integer("dialogue", "contact_reaction_ms"))
 
     def greet(self) -> None:
         now = time.monotonic()
@@ -92,6 +110,10 @@ class ContactCoordinator:
             return
         self._ports.react(
             self._mind.select_reaction(
-                "greeting", self._state, self._ports.context(), now,
-            ), 3300,
+                "greeting",
+                self._state,
+                self._ports.context(),
+                now,
+            ),
+            BALANCE.integer("dialogue", "greeting_reaction_ms"),
         )

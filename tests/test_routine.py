@@ -1,5 +1,7 @@
 """Checks for weekday/weekend care timing without story-world obligations."""
 
+from aiko_pet.infrastructure.pet_codec import decode_pet_state
+
 import unittest
 from datetime import datetime
 
@@ -81,7 +83,7 @@ class DailyRoutineTests(unittest.TestCase):
         context = context_at(morning)
         self.assertEqual(state.due_meal(context), "breakfast")
         response = state.interact("feed", now=morning)
-        self.assertIn("frühstück", response)
+        self.assertEqual(response.meal_id, "breakfast")
         self.assertIsNone(state.due_meal(context))
         self.assertEqual(state.meals_today, ["breakfast"])
         state.interact("feed", now=morning)
@@ -109,7 +111,7 @@ class DailyRoutineTests(unittest.TestCase):
         self.assertEqual(state.energy, 75 - 6 / 3)
 
     def test_legacy_sleep_is_treated_as_manual(self):
-        state = PetState.from_dict({"sleeping": True, "updated_at": local_time("2026-10-12", 9)})
+        state = decode_pet_state({"sleeping": True, "updated_at": local_time("2026-10-12", 9)})
         self.assertEqual(state.sleep_origin, "manual")
         state.advance(local_time("2026-10-12", 10), auto_routine=True)
         self.assertTrue(state.sleeping)

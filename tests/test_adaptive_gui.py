@@ -59,10 +59,11 @@ class AdaptiveGuiTests(unittest.TestCase):
         self.app.settings.learn_rhythm = True
         self.app.adaptive.memory.hour_seconds[9] = 40
         self.app.set_learn_rhythm(False)
-        self.assertEqual(self.store.load_memory().hour_seconds[9], 40)
-        self.assertFalse(self.store.load()[1].learn_rhythm)
+        restored = self.store.load_session()
+        self.assertEqual(restored.adaptive_memory.hour_seconds[9], 40)
+        self.assertFalse(restored.settings.learn_rhythm)
         self.app.forget_rhythm()
-        self.assertEqual(sum(self.store.load_memory().hour_seconds), 0)
+        self.assertEqual(sum(self.store.load_session().adaptive_memory.hour_seconds), 0)
 
     def test_settings_window_exposes_learning_and_reset_controls(self):
         self.app._on_enter()
@@ -92,9 +93,9 @@ class AdaptiveGuiTests(unittest.TestCase):
         original = self.app.settings.x, self.app.settings.y
         self.app.adaptive.memory.strain = 43
         self.app._save()
-        restored = self.store.load_memory()
-        self.assertEqual(restored.strain, 43)
-        self.assertEqual((self.store.load()[1].x, self.store.load()[1].y), original)
+        restored = self.store.load_session()
+        self.assertEqual(restored.adaptive_memory.strain, 43)
+        self.assertEqual((restored.settings.x, restored.settings.y), original)
 
 
 if __name__ == "__main__":

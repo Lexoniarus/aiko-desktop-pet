@@ -6,15 +6,31 @@ No AI or sprite synthesis is used; all cue names refer to verified CC0 PNGs.
 
 from __future__ import annotations
 
+from ..balance import BALANCE
+
 from dataclasses import dataclass
 from typing import Literal
 
 CUE_KINDS = frozenset({"emote", "text"})
-EMOTES = frozenset({
-    "alert", "anger", "cloud", "drops", "exclamation", "faceHappy",
-    "faceSad", "heart", "idea", "laugh", "music", "question", "sleeps",
-    "star", "swirl",
-})
+EMOTES = frozenset(
+    {
+        "alert",
+        "anger",
+        "cloud",
+        "drops",
+        "exclamation",
+        "faceHappy",
+        "faceSad",
+        "heart",
+        "idea",
+        "laugh",
+        "music",
+        "question",
+        "sleeps",
+        "star",
+        "swirl",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -40,7 +56,7 @@ def compose_cues(
     before: str | None = None,
     followup: str | None = None,
     after: str | None = None,
-    minimum_text_ms: int = 1800,
+    minimum_text_ms: int = BALANCE.integer("dialogue", "minimum_text_ms"),
 ) -> tuple[Cue, ...]:
     """Produce one coherent sequence, never overlapping emote and text.
 
@@ -51,12 +67,21 @@ def compose_cues(
         raise ValueError("Reaction must include speech")
     cues: list[Cue] = []
     if before is not None:
-        cues.append(Cue("emote", before, 700))
+        cues.append(
+            Cue("emote", before, BALANCE.integer("dialogue", "before_emote_ms"))
+        )
     for phrase in (text, followup):
         if phrase:
             # Readability scales with length, but one line doesn't stall forever.
-            reading_ms = min(3500, max(minimum_text_ms, len(phrase) * 58))
+            reading_ms = min(
+                BALANCE.integer("dialogue", "maximum_text_ms"),
+                max(
+                    minimum_text_ms,
+                    len(phrase)
+                    * BALANCE.integer("dialogue", "reading_ms_per_character"),
+                ),
+            )
             cues.append(Cue("text", phrase, reading_ms))
     if after is not None:
-        cues.append(Cue("emote", after, 900))
+        cues.append(Cue("emote", after, BALANCE.integer("dialogue", "after_emote_ms")))
     return tuple(cues)

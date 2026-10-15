@@ -6,6 +6,8 @@ gaze sprites and exposes her care actions in a mouse-hover toolbar.
 
 from __future__ import annotations
 
+from .pet.content import GERMAN_TEXT
+
 import time
 import tkinter as tk
 from tkinter import font as tkfont
@@ -162,7 +164,7 @@ class DesktopPet:
                 gaze_origin=self._window.gaze_origin,
                 game_mode=lambda: self._animated.game_mode,
                 action_until=lambda: self._action_playback.until,
-                action_state=lambda: self._action_playback.state,
+                action_clip_id=lambda: self._action_playback.clip_id,
                 attention_until=lambda: self.mind.cursor_attention.attention_until,
                 extend_action=self._action_playback.extend,
             ),
@@ -231,7 +233,7 @@ class DesktopPet:
                 ),
                 game_completed=lambda score: self.application.complete_game(
                     experience_from_rock_paper_scissors(score),
-                    runtime=self._activity.care_runtime(time.time(), time.monotonic()),
+                    inputs=self._activity.session_inputs(time.time(), time.monotonic()),
                 ),
                 open_sprite_hover=self._on_enter,
                 record_contact=self._record_hover_contact,
@@ -481,11 +483,11 @@ class DesktopPet:
         now = time.monotonic()
         result = self.application.dispatch(
             CareCommand.from_action(action, food_id=food_id),
-            runtime=self._activity.care_runtime(stamp, now),
+            inputs=self._activity.session_inputs(stamp, now),
         )
         self.context = result.context
         self._care_view.present(
-            action, result, now=now, sleeping=self.state.sleeping,
+            result, now=now, sleeping=self.state.sleeping,
         )
         self._save()
 
@@ -548,7 +550,9 @@ class DesktopPet:
         failure = self._session_runtime.advance_and_save()
         if failure is not None:
             messagebox.showwarning(
-                "Aiko", f"Spielstand konnte nicht gespeichert werden:\n{failure}",
+                GERMAN_TEXT.format("ui.application_name"), GERMAN_TEXT.format(
+                    "ui.save_failed", failure=str(failure),
+                ),
             )
 
     def quit(self) -> None:
