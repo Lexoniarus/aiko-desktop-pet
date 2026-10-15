@@ -143,16 +143,16 @@ class EmoteTkTests(unittest.TestCase):
         reaction = Reaction('rapid','Ich höre dich.', 'idle', 'rapid_click',
                             None, 1400, 'anger', 'cloud')
         self.pet.mind.clicks.extend([1.0, 2.0, 3.0, 4.0])
-        self.pet._react_to_click(reaction)
+        self.pet._contact.react_to_click(reaction)
         self.assertEqual(self.bubble_text(), 'Ich höre dich.')
 
     def test_idle_emote_waits_until_dialogue_slot_is_free(self):
         self.pet._react(Reaction('x','Ich rede.', 'idle','click_left'))
-        self.pet._idle_emote()
+        self.pet._attention_runtime.idle_emote()
         self.assertEqual(self.bubble_text(), 'Ich rede.')
         self.pet._speech.hide()
         self.pet.state.mood=3
-        self.pet._idle_emote()
+        self.pet._attention_runtime.idle_emote()
         self.assertTrue(self.is_emote())
 
     def test_hud_uses_kenney_assets_and_keeps_six_values(self):
