@@ -57,9 +57,10 @@ def _items(root: Path, records: object, *, food: bool) -> Mapping[str, HandItem]
                     raise ValueError(f"Food asset has no nutrition entry: {key}")
                 label = profile.display_name
         else:
-            label = entry.get("label")
-            if not isinstance(label, str) or not label.strip():
+            raw_label = entry.get("label")
+            if not isinstance(raw_label, str) or not raw_label.strip():
                 raise ValueError("Weapon asset needs a label")
+            label = raw_label
         icon = _png(root, entry.get("icon"))[0] if food else None
         variants = entry.get("variants")
         if not isinstance(variants, dict) or set(variants) != {"1", "2"}:

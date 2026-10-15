@@ -414,7 +414,8 @@ class UiDependencyRules(unittest.TestCase):
         self.assertNotIn("load_item_catalog(", overlay)
         self.assertNotIn("infrastructure.item_assets", overlay)
         self.assertIn("catalog: ItemCatalog", overlay)
-        self.assertIn("items=load_item_catalog()", assembly)
+        self.assertIn("items = load_item_catalog()", assembly)
+        self.assertIn("assets=assets, items=items", assembly)
 
     def test_food_icon_paths_have_one_asset_manifest_owner(self) -> None:
         view = (ROOT / "ui/view_models/food_models.py").read_text("utf-8")
