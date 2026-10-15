@@ -32,6 +32,11 @@ limits remain unchanged: food refuses at satiety ≥96; drink refuses at energy
 100. Even a small energy deficit after time passes permits an offered drink.
 Autonomous drink seeking still requires energy ≤60.
 
+Start a fresh hungry profile for each autonomous food/drink scenario. A prior
+handover may already raise the relevant need above the seeking threshold; the
+30-second pause expiring alone does not make Aiko hungry again. Reuse the same
+save path specifically for the restart checks.
+
 ## Practical checklist
 
 Record Windows version, primary-monitor/taskbar arrangement, display scaling,
@@ -44,7 +49,7 @@ sprite scale and tested commit. Repeat the relevant checks at 1× and 2×.
   area while she is awake/free: it is consumed once with normal human care.
 - [ ] Start another portion and release away from her above the taskbar. It
   falls without bouncing, rests at ground height and remains visible.
-- [ ] In the hungry profile, drop within roughly 1–1.5 character widths. Move
+- [ ] In a fresh hungry profile, drop within roughly 1–1.5 character widths. Move
   the pointer away from Aiko and controls. She recognizes it, approaches despite
   random walking being off, picks it up and eats. Wait through the 30-second
   consumption pause before expecting another autonomous meal.
@@ -99,6 +104,11 @@ Windows, Python 3.11, 15 October 2026:
 - PR evidence: [checks for PR #10](https://github.com/Lexoniarus/aiko-desktop-pet/pull/10/checks)
   run Linux/Xvfb Python 3.11/3.13 and Windows, including the new World tests.
   Check the tested head before relying on a result; local green is separate.
+- [CI run 38759905855](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38759905855)
+  passed all three jobs at `ffbffc2`: Linux 3.11 and 3.13 each discovered 828
+  tests and finished `OK` (seven platform-specific skips); Windows boundary
+  checks, including the new World suites, passed. Subsequent documentation-only
+  updates do not change the tested runtime; current-head CI is linked above.
 
 Real Tk integration tests cover actual goal-driver arrival, release handover,
 refusal, nutrition timing, animated put-down before sleep, lost capture and

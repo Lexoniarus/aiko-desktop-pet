@@ -224,6 +224,7 @@ Final local full suite through `bac23e0`: 828 tests passed in 108.0 s on Windows
 Python 3.11. Ruff 0.13.2, strict Mypy 1.18.2 (161 source files) and Pyright
 1.1.414 passed. Capture-loss follow-up: six real Tk World tests passed. Asset
 preparation reproduces 120 poses, with original runtime PNGs unchanged.
+CI run `38759905855` passed Python 3.11/3.13 and Windows at `ffbffc2`.
 Final regression, CI and isolated start/restart evidence is recorded in
 [the test handoff](WORLD_SMOKE_TEST.md).
 
