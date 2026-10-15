@@ -390,9 +390,6 @@ class DesktopPet:
             windows.append(self._hover.settings_window.window)
         return windows
 
-    def _setup_events(self) -> None:
-        self._input.initialize()
-
     def _place_initially(self) -> None:
         self._place_x(self._window.initial_x())
 
@@ -431,9 +428,6 @@ class DesktopPet:
         """Cancel an older reaction, including every pending follow-up."""
         self._reaction_player.cancel()
 
-    def _react_to_click(self, reaction: Reaction | None) -> None:
-        self._contact.react_to_click(reaction)
-
     def _react(self, reaction: Reaction | None, duration_ms: int = 2600) -> None:
         """Delegate the timeline; the GUI only renders visual effects."""
         if self._hover.game_open:
@@ -442,24 +436,9 @@ class DesktopPet:
             reaction, duration_ms, animate=not self.state.sleeping,
         )
 
-    def _on_tk_press(self, event: tk.Event) -> None:
-        self._input.on_tk_press(event)
-
-    def _on_focus_out(self, event: tk.Event) -> None:
-        self._input.on_focus_out(event)
-
-    def _dismiss_after_focus_loss(self) -> None:
-        self._input.dismiss_after_focus_loss()
-
-    def _show_menu(self, event: tk.Event) -> None:
-        self._input.on_menu(event)
-
     def _set_popup_option(self, name: SettingKey, value: bool) -> None:
         """Preserve the public desktop callback while routing to its owner."""
         self._preferences.set_option(name, value)
-
-    def _poll_desktop_click(self) -> None:
-        self._input.poll_global_click()
 
     @property
     def _action_state(self) -> str:
@@ -544,9 +523,6 @@ class DesktopPet:
 
     def center(self) -> None:
         self._preferences.center()
-
-    def _idle_emote(self) -> None:
-        self._attention_runtime.idle_emote()
 
     def _on_cursor_moved(
         self, distance: float, screen_width: int, now: float,

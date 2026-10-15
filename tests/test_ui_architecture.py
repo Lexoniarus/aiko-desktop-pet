@@ -290,6 +290,23 @@ class UiDependencyRules(unittest.TestCase):
             with self.subTest(method=legacy):
                 self.assertNotIn(legacy, source)
 
+    def test_dead_desktop_shell_input_forwarders_are_removed(self) -> None:
+        syntax = ast.parse((ROOT / "gui.py").read_text("utf-8"))
+        shell = next(
+            node for node in syntax.body
+            if isinstance(node, ast.ClassDef) and node.name == "DesktopPet"
+        )
+        declared = {
+            node.name for node in shell.body
+            if isinstance(node, ast.FunctionDef)
+        }
+        old = {
+            "_setup_events", "_react_to_click", "_on_tk_press",
+            "_on_focus_out", "_dismiss_after_focus_loss", "_show_menu",
+            "_poll_desktop_click", "_idle_emote",
+        }
+        self.assertFalse(declared.intersection(old))
+
     def test_desktop_gui_wires_runtime_without_self_as_stage_object(self) -> None:
         source = (ROOT / "gui.py").read_text("utf-8")
         self.assertIn("DesktopTickPorts(", source)
