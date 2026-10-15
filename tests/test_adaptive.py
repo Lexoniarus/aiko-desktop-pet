@@ -279,7 +279,7 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         self.assertEqual(loaded.strain, 0)
         self.assertEqual(loaded.settled_work, 0)
 
-    def test_roundtrip_profile_and_old_v08_save_unchanged(self):
+    def test_roundtrip_preserves_profile_and_legacy_save_values(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "state.json"
             store = StateStore(path)

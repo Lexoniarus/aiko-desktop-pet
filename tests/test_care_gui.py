@@ -1,4 +1,4 @@
-"""GUI wiring for five stats, drink and relationship actions."""
+"""GUI integration of needs, care actions and relationship status."""
 
 import tempfile
 import time
@@ -13,7 +13,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.telemetry import ComputerSnapshot
 
 
-class CareGuiV11Tests(unittest.TestCase):
+class CareGuiTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         try:
@@ -38,7 +38,7 @@ class CareGuiV11Tests(unittest.TestCase):
         assert bar is not None
         return bar
 
-    def test_hover_has_five_needs_and_five_100_percent_bars(self):
+    def test_hover_shows_all_six_full_bars(self):
         self.assertEqual(set(self.toolbar.needs), {
             "satiety", "mood", "energy", "social", "affection", "friendship",
         })

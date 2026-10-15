@@ -79,8 +79,8 @@ class WindowsSetupTests(unittest.TestCase):
             capture_output=True, text=True, check=True,
         )
         prefix, base = json.loads(probe.stdout)
-        self.assertEqual(Path(prefix), self.folder / ".venv")
-        self.assertNotEqual(prefix, base)
+        self.assertTrue(Path(prefix).samefile(self.folder / ".venv"))
+        self.assertFalse(Path(prefix).samefile(base))
         shortcut = self.folder / "shortcuts/Aiko Desktop Pet.lnk"
         self.assertTrue(shortcut.is_file())
         shortcut_environment = dict(
@@ -98,9 +98,14 @@ class WindowsSetupTests(unittest.TestCase):
             text=True, check=True, timeout=15,
         )
         link = json.loads(shortcut_info.stdout)
-        self.assertEqual(Path(link["target"]), python.with_name("pythonw.exe"))
-        self.assertEqual(link["arguments"], f'"{self.folder / "Aiko_Pet.pyw"}"')
-        self.assertEqual(Path(link["workingDirectory"]), self.folder)
+        # COM can expand 8.3 aliases in TEMP or the user directory. Compare
+        # filesystem identity while still requiring exactly one quoted script.
+        self.assertTrue(Path(link["target"]).samefile(python.with_name("pythonw.exe")))
+        self.assertRegex(link["arguments"], r'\A"[^"]+"\Z')
+        self.assertTrue(
+            Path(link["arguments"][1:-1]).samefile(self.folder / "Aiko_Pet.pyw"),
+        )
+        self.assertTrue(Path(link["workingDirectory"]).samefile(self.folder))
         batch_setup = self.run_batch(
             "Aiko_installieren.bat", "-NoPythonInstall", "-NoShortcuts",
         )
@@ -122,7 +127,7 @@ class WindowsSetupTests(unittest.TestCase):
         )
         debug = self.run_batch("Aiko_starten_debug.bat")
         self.assertEqual(debug.returncode, 7, debug.stdout + debug.stderr)
-        self.assertEqual(Path(json.loads(marker.read_text())), python)
+        self.assertTrue(Path(json.loads(marker.read_text())).samefile(python))
         marker.unlink()
         (self.folder / "Aiko_Pet.pyw").write_text(entry, encoding="utf-8")
         normal = self.run_batch("Aiko_starten.bat")
@@ -131,8 +136,8 @@ class WindowsSetupTests(unittest.TestCase):
         while not marker.exists() and time.monotonic() < deadline:
             time.sleep(0.05)
         self.assertTrue(marker.exists(), "Windowless launcher did not run")
-        self.assertEqual(
-            Path(json.loads(marker.read_text())), python.with_name("pythonw.exe"),
+        self.assertTrue(
+            Path(json.loads(marker.read_text())).samefile(python.with_name("pythonw.exe")),
         )
 
     def run_batch(

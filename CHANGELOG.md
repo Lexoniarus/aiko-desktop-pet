@@ -1,5 +1,9 @@
 ## Unreleased — Refactor consolidation
 
+- Compare Windows setup/launcher paths by filesystem identity so 8.3 aliases
+  and expanded paths both pass, retaining strict shortcut argument quoting.
+- Name current regression suites, classes and cases by their tested feature
+  instead of historical release tags; preserve all existing test bodies.
 - Validate dialogue weights as integers from 1 to 10, independently of
   normalized mood/activity weights. Retain all shipped balancing values.
 - Use `application.active_time.SessionInputs` and one interval-consumption

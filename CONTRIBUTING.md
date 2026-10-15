@@ -13,6 +13,8 @@ The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11. Run
 1. Branch from current `main` using `feature/…`, `fix/…`, `docs/…` or `chore/…`.
 2. Make focused changes with readable, descriptive English identifiers and commit messages. Prefer real object responsibilities over arbitrary line-count splits.
 3. Add or update tests when behavior, persistence, UI timing or public imports change.
+   Name test modules, classes and cases by their feature or behavior, rather than
+   the release that introduced them. Keep necessary legacy-format context in fixtures.
 4. Run the complete test suite (GUI tests need a display):
 
    ```bash

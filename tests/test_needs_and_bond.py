@@ -1,4 +1,4 @@
-"""Safety and behavior of v0.11's needs, bonds and monitored effort."""
+"""Needs, relationship rewards and observed workload regressions."""
 
 from __future__ import annotations
 

@@ -38,7 +38,7 @@ class StateStoreTests(unittest.TestCase):
         self.assertEqual(json.loads(self.store.path.read_text())["version"], 1)
         self.assertEqual(list(self.store.path.parent.glob("*.tmp")), [])
 
-    def test_existing_v02_save_is_migrated_without_losing_needs(self):
+    def test_legacy_save_defaults_preserve_existing_needs(self):
         from datetime import datetime
 
         timestamp = datetime(2026, 10, 12, 12).astimezone().timestamp()
@@ -113,7 +113,7 @@ class StateStoreTests(unittest.TestCase):
         self.assertIsNone(invalid.toolbar_x)
         self.assertIsNone(invalid.toolbar_y)
 
-    def test_chatter_preference_persists_in_the_v03_save_schema(self):
+    def test_chatter_preference_survives_save_roundtrip(self):
         pet = PetState(updated_at=SAMPLE_TIMESTAMP)
         self.store.save(pet, PetSettings(spontaneous_talk=False))
         session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)

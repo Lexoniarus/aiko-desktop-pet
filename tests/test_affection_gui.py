@@ -1,4 +1,4 @@
-"""GUI integration of the sixth value without touching v0.8 window stacking."""
+"""GUI integration of affection, care controls and persistent windows."""
 
 import tempfile
 import tkinter as tk
