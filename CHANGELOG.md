@@ -1,3 +1,21 @@
+## Unreleased — Pet domain/UI architecture consolidation (draft PR #9)
+
+- Canonical `pet/mind/`, `pet/animation/`, `pet/movement/`,
+  `ui/pet_view/`, `ui/windows/`, `ui/common/` and
+  `ui/view_models/` ownership; historical import-forwarding modules removed.
+- Headless pet animation priorities and desktop-only gaze, movement and
+  animation decisions feed the Tk sprite through typed ports. All original
+  image clips, 16 gaze directions, timings and interaction precedence stay.
+- Bounded application and animation assemblies reduce the desktop
+  composition constructor; session lifecycle, UI refresh and save ordering
+  have an independent `DesktopSessionRuntime`.
+- Removed unused module-level care, need-decay, friendship and routine
+  mutation adapters, with regression tests on pure transitions and
+  `PetState` state changes instead.
+- Typed mood-hint keys, due-meal IDs and UI-owned German status/weekday
+  formatting replace duplicated and obsolete localized domain helpers.
+- Final interactive Windows revalidation remains required before PR #9 merge.
+
 ## Unreleased — Food, digestion and observed workload
 
 - Five selectable foods (Onigiri, Sandwich, Taiyaki, Apple, Dango) with

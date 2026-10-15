@@ -61,8 +61,10 @@ all runtime coupling between composed services.
 `pet/status_hints.py`. The exact same pure policy works on the immutable
 `PetReadSnapshot`; only `ui/view_models/text_de.py` selects German mood
 wording. `PetState.due_meal()` returns a due meal ID, and the UI decides
-whether to display a meal name or "Snack". Historical time-context text helpers
-such as `TimeContext.greeting()` remain pending separate compatibility review.
+whether to display a meal name or "Snack". Historical localized helpers
+`TimeContext.label`, `TimeContext.schedule_line` and
+`TimeContext.greeting()` have been removed; localized weekday/status display
+belongs to `ui/view_models/text_de.py`.
 
 ## Application layer
 
@@ -74,6 +76,9 @@ such as `TimeContext.greeting()` remain pending separate compatibility review.
 - `PetSessionRestorer` restores saved data through a narrow reader port without offline catch-up; the new running session receives a fresh time anchor.
 - `PetReadSnapshot` is an immutable, language-neutral copy for presentation and potential future read-only adapters.
 - `application/ports.py` describes capabilities such as `ComputerReadings`, not concrete OS drivers.
+- `application/assembly.py` builds the single care/game/activity/cursor
+  use-case graph using existing state, mind and active-session clock. The
+  assembly imports no desktop, Tk, or infrastructure implementations.
 
 The application never imports Tkinter or native system monitor implementations.
 
@@ -129,7 +134,12 @@ owning `pet/`, `ui/`, or `infrastructure/` module. See the
 
 ## Desktop runtime and operating-system adapters
 
-`gui.DesktopPet` is the composition root. It constructs the single graph of application, UI, desktop services and providers, wires callbacks and starts `DesktopLifecycle`.
+`gui.DesktopPet` is the composition root. It wires typed callbacks and starts
+`DesktopLifecycle` without owning a duplicate application or animation state.
+`desktop/animation_assembly.py` constructs the interdependent WalkDriver,
+visual observer, animation runtime and sprite as one bounded assembly.
+`desktop/session_runtime.py` coordinates lifecycle advancement, window
+refresh and the advance-before-persist sequence through narrow effect ports.
 
 - `DesktopRuntime` takes explicit `DesktopTickPorts` and owns the ordered 140 ms update cycle and timer IDs.
 - `DesktopAnimationRuntime` chooses sprite intent without importing Tk.
@@ -221,6 +231,11 @@ removed `personality/`, `presentation/` and root-level UI module paths in
 production code, tools and tests. `tests/test_canonical_owner_identity.py`
 checks implementation ownership without reviving obsolete compatibility tests.
 There are no surviving import-forwarding packages for these historical paths.
+The redundant module-level mutating adapters `apply_care_action`,
+`apply_need_decay`, `award_friendship_for_care`, `advance_pet_time` and
+`apply_daily_routine` have been retired. `PetState` alone applies their
+associated pure transition decisions. Legacy-only migration tests were
+updated to exercise immutable policies and the actual aggregate owner.
 
 
 ## Refactor branch status (October 15, 2026)
@@ -229,13 +244,15 @@ This structure is being validated on the draft `refactor/pet-domain-ui-boundarie
 branch; the document becomes the maintained architecture after merge. The
 migration does **not** implement World, new emotion values, object detection,
 awareness, cursor fear, autonomous objects or drag-and-drop. Existing behavior,
-assets and save-format invariants remain the acceptance criteria. All historical `presentation/`, `personality/` and root-level UI import
-forwarders are removed. R2 animation ownership now separates desktop
-observation/decision, pet policies and concrete Tk frame playback. R5 has
-removed duplicate action-state accessors and unused preference dependencies;
-composition wiring remains under review. R6 has consolidated typed mood hints,
-due-meal selection and single-assertion ownership tests. Relevant changes still require CI and
-final-commit Windows verification before merge.
+assets and save-format invariants remain the acceptance criteria.
+All historical `presentation/`, `personality/` and root-level UI import
+forwarders have been removed. R2 now separates desktop animation intent,
+host observations and concrete Tk frame playback. R5 delegates application
+and animation construction to bounded assemblies, and session lifecycle,
+refresh and save sequencing to `DesktopSessionRuntime`. R6 has consolidated
+typed mood hints, due-meal selection, localized weekday text, legacy mutator
+APIs and import-only tests. No final interactive Windows sign-off has been
+recorded for the latest commit; automated checks are commit-specific.
 
 ## Testing and contribution
 

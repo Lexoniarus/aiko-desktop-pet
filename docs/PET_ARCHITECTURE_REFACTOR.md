@@ -37,43 +37,41 @@ Canonical ownership:
 This is a work plan, not an implementation claim. Mark each step complete only after passing relevant automated checks.
 
 
-## Progress on the refactor branch (15 October 2026)
+## Completion review — 15 October 2026
 
-- **R1 canonical owners:** `pet/mind/` owns `PetMind`, dialogue and adaptive
-  policy; Aiko's authored catalogue is injected by the character factory.
-- **R2 implementation separated:** `pet/animation/` owns pure timing,
-  gaze, priority and ambient policies. `DesktopAnimationRuntime` chooses
-  complete sprite intent and supplies an immutable `RenderDecision`;
-  `DesktopVisualObservation` owns gaze history and workload observation.
-  `AnimatedPet.render()` now applies the selected frame, retains only Tk
-  frame playback and uses injected walking/frame callbacks. A single shared
-  `AmbientDirector` avoids duplicate animation state. Automated checks and
-  targeted Windows revalidation are the remaining R2 acceptance gates.
-- **R3 done:** `pet/movement/` plans bounded movement;
-  `desktop/walk_runtime.py` owns the host `WalkDriver` and placement
-  connection independently of the Tk sprite.
-- **R4 done:** `ui/pet_view/`, `ui/windows/`, `ui/common/` and
-  `ui/view_models/` are the sole implementation owners.
-- **R5 in progress:** movement, cursor, care and spontaneous event handling
-  are delegated from the shell. Sleep/wake dialogue is selected by
-  `AttentionCoordinator` and presented by `DesktopAttentionRuntime`.
-  `gui.py` now reads `ActionPlayback` state and deadlines directly rather
-  than mirroring them in shell properties; `DesktopPreferences` no longer
-  requires an unused `PetState`. Constructor wiring and remaining private
-  adapters still need the final ownership review.
-- **R6 in progress:** the former `personality/`, `presentation/` and
-  root-level UI forwarding modules are **gone**; canonical-import checks
-  enforce their absence. `PetState.mood_hint()` now returns typed status keys,
-  and `PetState.due_meal()` returns meal IDs. German status copy is owned by
-  `ui/view_models/text_de.py`. Fourteen import-identity-only test files were
-  consolidated into one stronger canonical-owner matrix. Remaining historical
-  APIs and documentation must be audited before marking R6 complete.
-- **Windows acceptance:** on 15 October the maintainer reported the prior
-  branch's Windows behavior functional. Exact machine/DPI/tested SHA were not
-  recorded, and subsequent cleanup commits need a targeted recheck.
-- **CI:** Ruff, strict Mypy, Pyright, Python 3.11/3.13 and Windows-headless
-  tests are required for each candidate commit. Historical success is not
-  acceptance of newer commits; PR #9 stays a draft until final sign-off.
+- **R1 implemented:** `pet/mind/` owns `PetMind`, dialogues and adaptive
+  policy; the Aiko catalogue is provided at the character composition boundary.
+- **R2 implemented in code:** pure `pet/animation/` timing, gaze, idle and
+  priority rules feed `DesktopAnimationRuntime`. Desktop visual observation
+  and host movement have distinct runtime owners; `AnimatedPet.render()`
+  applies a typed `RenderDecision` and keeps only Tk frame/timer concerns.
+  One `AmbientDirector` is shared by the runtime and sprite playback.
+  Native Windows visual/timing confirmation is still required for the final SHA.
+- **R3 implemented:** `pet/movement/` owns movement policies;
+  `desktop/walk_runtime.py` owns host displacement through `WalkDriver`.
+- **R4 implemented:** `ui/pet_view/`, `ui/windows/`, `ui/common/`,
+  `ui/view_models/` are the only current UI implementation owners.
+- **R5 implemented in code:** `application/assembly.py` builds application
+  use-case services, `desktop/animation_assembly.py` wires visual/motion
+  components, and `DesktopSessionRuntime` owns lifecycle, overlays and
+  advance-before-save ordering. `gui.py` holds composition and thin desktop
+  callback adapters rather than business rules or mirrored action state.
+- **R6 implemented in code:** removed historical `personality/`,
+  `presentation/` and direct UI forwarding paths. Canonical imports and
+  implementation ownership are checked by architecture tests. `PetState`
+  owns all care, need-decay, friendship and routine mutations; the old
+  policy-level mutation adapters have been retired. Localized
+  `TimeContext` display helpers were removed in favor of
+  `ui/view_models/text_de.py`; mood hints and meals use typed semantic
+  decisions. Historical identity-only tests were consolidated and the
+  remaining behavior tests now call canonical owners.
+- **Verification:** the last reported Windows interactive acceptance covered
+  an earlier refactor version. The exact tested SHA and DPI/display details
+  were not recorded. Later R2/R5/R6 commits require a targeted Windows check.
+  Full Ruff, strict Mypy, Pyright, Python 3.11/3.13, Linux/Xvfb Tk, and
+  Windows-headless CI must be green for the final SHA.
+- **Merge:** PR #9 stays in draft until the user explicitly approves merging
+  after final green CI and the current-commit Windows smoke record.
 
 ## Original R1–R6 acceptance ledger
 
