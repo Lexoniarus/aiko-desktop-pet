@@ -31,7 +31,9 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
     hashes: dict[str, str] = {}
     expected: set[Path] = set()
 
-    def copy_frame(original: Path, relative: Path) -> int:
+    def copy_frame(
+        original: Path, relative: Path, *, allow_empty: bool = False,
+    ) -> int:
         path = destination / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         with Image.open(original) as raw:
@@ -40,12 +42,12 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
             raise ValueError(f"Unexpected source dimensions: {original}")
         image.putalpha(image.getchannel("A").point(ALPHA_THRESHOLD))
         bounds = image.getbbox()
-        if bounds is None:
+        if bounds is None and not allow_empty:
             raise ValueError(f"Empty character image: {original}")
         image.save(path, optimize=True)
         hashes[relative.as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
         expected.add(path.resolve())
-        return int(bounds[3])
+        return int(bounds[3]) if bounds is not None else 0
 
     for item in catalog["animations"]:
         # The desktop uses directional walking; the generic clip has no caller.
@@ -79,6 +81,30 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
         )
         animations.append(entry)
         counts[state] = len(entry["frames"])
+    supplement = ROOT / "assets/aiko-pick-up"
+    pickup = json.loads((supplement / "animation.json").read_text("utf-8"))
+    pickup_frames: list[dict[str, Any]] = []
+    for index, frame in enumerate(pickup["frames"]):
+        relative = Path("frames/pick_up") / f"{index:02d}.png"
+        copy_frame(supplement / frame["file"], relative)
+        hand = Path("hand-foreground/pick_up") / f"{index:02d}.png"
+        copy_frame(supplement / frame["hand_foreground"], hand, allow_empty=True)
+        prepared: dict[str, Any] = {
+            "file": relative.as_posix(), "duration_ms": frame["duration_ms"],
+            "source_duration_ms": frame["duration_ms"],
+            "events": frame["events"], "hand_foreground": hand.as_posix(),
+        }
+        if frame["grasp_anchor_px"] is not None:
+            prepared["food_anchor"] = frame["grasp_anchor_px"]
+        pickup_frames.append(prepared)
+    animations.append({
+        "state": "pick_up", "loop": False, "anchor": pickup["feet_anchor"],
+        "frames": pickup_frames, "hold_last": True, "return_to": "idle",
+        "sequence": list(range(8)), "playback_total_ms": sum(
+            frame["duration_ms"] for frame in pickup_frames
+        ),
+    })
+    counts["pick_up"] = 8
     directions = json.loads(
         (source / "look-directions/directions.json").read_text(encoding="utf-8"),
     )

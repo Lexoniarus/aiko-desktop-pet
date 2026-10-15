@@ -94,7 +94,7 @@ class CurrentClipPacingTests(unittest.TestCase):
         )
 
         catalog = load_character_catalog()
-        self.assertEqual(len(catalog.clips), 14)
+        self.assertEqual(len(catalog.clips), 16)
         for name, clip in catalog.clips.items():
             if name == "look":
                 self.assertEqual(len(clip.frames), 16)

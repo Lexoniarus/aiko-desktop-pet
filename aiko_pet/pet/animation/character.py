@@ -16,6 +16,7 @@ class AnimationFrame:
     duration_ms: int
     events: tuple[str, ...] = ()
     food_anchor: tuple[int, int] | None = None
+    hand_foreground: Path | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,6 +27,7 @@ class AnimationClip:
     anchor: tuple[int, int]
     return_to: str = "idle"
     playback_order: tuple[int, ...] = ()
+    hold_last: bool = False
 
     @property
     def timings(self) -> tuple[int, ...]:
@@ -49,3 +51,14 @@ class AnimationClip:
 @dataclass(frozen=True, slots=True)
 class CharacterCatalog:
     clips: Mapping[str, AnimationClip]
+
+
+@dataclass(frozen=True, slots=True)
+class PlaybackEvent:
+    """Identified source-pose event; consumed by application coordination."""
+
+    action_id: int
+    clip_id: str
+    source_index: int
+    events: tuple[str, ...] = ()
+    finished: bool = False
