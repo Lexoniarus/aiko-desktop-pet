@@ -66,7 +66,7 @@ class AttentionCoordinator:
             and now - self.last_spoken >= 15
         )
 
-    def cursor_moved(
+    def select_cursor_comment_event(
         self, distance: float, screen_width: int, now: float, *,
         toolbar_visible: bool,
     ) -> str | None:
@@ -85,7 +85,7 @@ class AttentionCoordinator:
         self.next_cursor_line = now + random.uniform(280.0, 590.0)
         return "cursor_far" if distance > screen_width * 0.6 else "cursor_follow"
 
-    def walk_finished(self, now: float) -> bool:
+    def should_comment_after_walk(self, now: float) -> bool:
         """Allow the character to comment occasionally after a completed walk."""
         return bool(
             self.settings.spontaneous_talk
@@ -98,7 +98,7 @@ class AttentionCoordinator:
         context: TimeContext, *, toolbar_visible: bool,
     ) -> Reaction | None:
         """Interpret existing cursor event keys before entering the UI."""
-        event = self.cursor_moved(
+        event = self.select_cursor_comment_event(
             distance, screen_width, now, toolbar_visible=toolbar_visible,
         )
         if event is None:
@@ -109,7 +109,7 @@ class AttentionCoordinator:
         self, now: float, context: TimeContext,
     ) -> Reaction | None:
         """Convert completed walks into an already selected dialogue event."""
-        if not self.walk_finished(now):
+        if not self.should_comment_after_walk(now):
             return None
         return self.mind.say_event("walk_pause", self.state, context, now)
 
@@ -122,7 +122,7 @@ class AttentionCoordinator:
         event = "sleep" if self.state.sleeping else "wake"
         return self.mind.say_event(event, self.state, context, now)
 
-    def idle_animation(
+    def select_idle_animation(
         self, now: float, *, action_until: float,
         walking: bool, toolbar_visible: bool,
     ) -> str | None:

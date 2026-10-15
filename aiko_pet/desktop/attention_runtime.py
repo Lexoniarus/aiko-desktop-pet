@@ -85,7 +85,7 @@ class DesktopAttentionRuntime:
         ports = self._ports
         if ports.game_open():
             return
-        animation = self.attention.idle_animation(
+        animation = self.attention.select_idle_animation(
             now, action_until=ports.action_until(),
             walking=ports.walking(), toolbar_visible=ports.toolbar_active(),
         )

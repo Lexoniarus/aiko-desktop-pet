@@ -69,12 +69,12 @@ class AttentionPolicyTests(unittest.TestCase):
     def test_idles_never_interrupt_sleep_or_toolbar(self) -> None:
         self.attention.next_idle_emote = 0
         self.state.sleeping = True
-        self.assertIsNone(self.attention.idle_animation(
+        self.assertIsNone(self.attention.select_idle_animation(
             200, action_until=0, walking=False, toolbar_visible=False,
         ))
         self.state.sleeping = False
         self.attention.next_idle_emote = 0
-        self.assertIsNone(self.attention.idle_animation(
+        self.assertIsNone(self.attention.select_idle_animation(
             201, action_until=0, walking=False, toolbar_visible=True,
         ))
         self.attention.next_idle_emote = 0
@@ -82,7 +82,7 @@ class AttentionPolicyTests(unittest.TestCase):
             "aiko_pet.application.attention.random.choice",
             return_value="review",
         ):
-            self.assertEqual(self.attention.idle_animation(
+            self.assertEqual(self.attention.select_idle_animation(
                 202, action_until=0, walking=False, toolbar_visible=False,
             ), "review")
 
@@ -93,14 +93,14 @@ class AttentionPolicyTests(unittest.TestCase):
             patch("aiko_pet.application.attention.random.random", return_value=0.01),
             patch("aiko_pet.application.attention.random.uniform", return_value=300.0),
         ):
-            self.assertEqual(self.attention.cursor_moved(
+            self.assertEqual(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ), "cursor_far")
             self.assertEqual(self.attention.next_cursor_line, 1300.0)
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 100.0, 1000, 1299.0, toolbar_visible=False,
             ))
-            self.assertEqual(self.attention.cursor_moved(
+            self.assertEqual(self.attention.select_cursor_comment_event(
                 100.0, 1000, 1300.0, toolbar_visible=False,
             ), "cursor_follow")
 
@@ -108,25 +108,25 @@ class AttentionPolicyTests(unittest.TestCase):
         self.attention.next_cursor_line = 0.0
         self.attention.last_spoken = 900.0
         with patch("aiko_pet.application.attention.random.random") as chance:
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ))
             self.attention.last_spoken = -1000.0
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=True,
             ))
             self.settings.follow_cursor = False
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ))
             self.settings.follow_cursor = True
             self.settings.spontaneous_talk = False
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ))
             self.settings.spontaneous_talk = True
             self.state.sleeping = True
-            self.assertIsNone(self.attention.cursor_moved(
+            self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ))
             chance.assert_not_called()
@@ -137,12 +137,12 @@ class AttentionPolicyTests(unittest.TestCase):
         with patch(
             "aiko_pet.application.attention.random.random", return_value=0.01,
         ) as chance:
-            self.assertFalse(self.attention.walk_finished(1000.0))
+            self.assertFalse(self.attention.should_comment_after_walk(1000.0))
             chance.assert_not_called()
             self.attention.last_spoken = 869.0
-            self.assertTrue(self.attention.walk_finished(1000.0))
+            self.assertTrue(self.attention.should_comment_after_walk(1000.0))
             self.settings.spontaneous_talk = False
-            self.assertFalse(self.attention.walk_finished(1000.0))
+            self.assertFalse(self.attention.should_comment_after_walk(1000.0))
 
     def test_notification_remains_queued_during_visible_dialogue(self) -> None:
         notice = IncomingNotification(
