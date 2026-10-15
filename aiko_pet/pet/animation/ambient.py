@@ -10,7 +10,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable, Sequence
 
-from .animation import SpriteSelection
+from .animation import SpriteSelection, choose_passive_animation
 
 _DIRECTIONS = (2, 3, 4, 12, 13, 14)
 # Repeating positions make the one-pixel sway gentler and less busy.
@@ -80,6 +80,27 @@ class AmbientDirector:
             self._blink_active = True
             return SpriteSelection("idle")
         return SpriteSelection("idle", fixed_frame=0)
+
+    def select_passive_animation(
+        self, now: float, *, gaze_direction: int | None,
+        observing_computer: bool, computer_busy: bool,
+        energy: float, mood: float, satiety: float,
+    ) -> SpriteSelection:
+        """Choose the passive pose and preserve ambient timing on gaze."""
+        choice = choose_passive_animation(
+            gaze_direction=gaze_direction,
+            observing_computer=observing_computer,
+            computer_busy=computer_busy,
+            energy=energy, mood=mood, satiety=satiety,
+        )
+        if choice.animation == "idle" and choice.fixed_frame is None:
+            return self.choose(now)
+        self.suspend(
+            now, keep_pose_motion=(
+                choice.animation == "look" and choice.fixed_frame is not None
+            ),
+        )
+        return choice
 
     def finish_blink(self, now: float) -> None:
         """A full eight-frame blink ended; do not immediately repeat it."""

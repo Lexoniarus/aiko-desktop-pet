@@ -13,9 +13,7 @@ from dataclasses import dataclass
 from typing import Callable, Protocol
 from collections.abc import Sequence
 
-from ...pet.animation.animation import (
-    FrameClock, choose_passive_animation,
-)
+from ...pet.animation.animation import FrameClock
 from ...pet.animation.ambient import AmbientDirector
 from ...pet.animation.character import CharacterCatalog, FRAME_WIDTH
 from ...pet.animation.gaze import gaze_sector
@@ -381,23 +379,11 @@ class AnimatedPet:
                 if look is None and self.settings.observe_computer
                 else False
             )
-            choice = choose_passive_animation(
-                gaze_direction=look,
+            choice = self._ambient.select_passive_animation(
+                now, gaze_direction=look,
                 observing_computer=self.settings.observe_computer,
                 computer_busy=computer_busy,
-                energy=self.state.energy,
-                mood=self.state.mood,
+                energy=self.state.energy, mood=self.state.mood,
                 satiety=self.state.satiety,
             )
-            if choice.animation == "idle" and choice.fixed_frame is None:
-                choice = self._ambient.choose(now)
-            else:
-                self._ambient.suspend(
-                    now, keep_pose_motion=(
-                        choice.animation == "look"
-                        and choice.fixed_frame is not None
-                    ),
-                )
-            self.show_frame(
-                choice.animation, now, fixed=choice.fixed_frame,
-            )
+            self.show_frame(choice.animation, now, fixed=choice.fixed_frame)

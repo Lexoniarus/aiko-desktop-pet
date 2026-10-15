@@ -83,6 +83,32 @@ class AmbientDirectorTests(unittest.TestCase):
         self.policy.finish_blink(105.2)
         self.assertEqual(self.policy.motion_offset(105.2), 0)
 
+    def test_external_gaze_keeps_sway_without_starting_ambient_blink(self) -> None:
+        selected = self.policy.select_passive_animation(
+            101.0, gaze_direction=3, observing_computer=True,
+            computer_busy=True, energy=0, mood=0, satiety=0,
+        )
+        self.assertEqual(selected, SpriteSelection("look", fixed_frame=3))
+        self.assertEqual(self.policy.motion_offset(101.0), 1)
+        self.assertFalse(self.policy.blinking)
+
+    def test_busy_computer_overrides_idle_but_resets_ambient_motion(self) -> None:
+        selected = self.policy.select_passive_animation(
+            101.0, gaze_direction=None, observing_computer=True,
+            computer_busy=True, energy=80, mood=80, satiety=80,
+        )
+        self.assertEqual(selected, SpriteSelection("review"))
+        self.assertEqual(self.policy.motion_offset(101.0), 0)
+        self.assertFalse(self.policy.blinking)
+
+    def test_passive_idle_uses_original_blink_schedule(self) -> None:
+        selected = self.policy.select_passive_animation(
+            103.0, gaze_direction=None, observing_computer=False,
+            computer_busy=False, energy=80, mood=80, satiety=80,
+        )
+        self.assertEqual(selected, SpriteSelection("idle"))
+        self.assertTrue(self.policy.blinking)
+
     def test_invalid_autonomous_direction_is_rejected(self) -> None:
         bad = AmbientDirector(
             0.0, between=lambda low, _high: low,
