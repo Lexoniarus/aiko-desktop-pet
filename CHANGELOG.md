@@ -4,6 +4,9 @@
   known identity and completed inspection across observed relocation; expire
   only unidentified sightings after ten active minutes. Add typed portable
   memory values and distinguish deliberate reserve placement from interruption.
+- Commit consumed portions, needs and subjective memory together; roll back all
+  three owners on failure. Record inspection and own placement at confirmed
+  events, rather than waiting until the last bubble has completed.
 
 - Let Aiko approach and grasp ground portions at both screen edges at 1x/2x.
   A shared geometry rule requires actual arrival at the closest legal standing

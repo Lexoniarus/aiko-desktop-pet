@@ -1,12 +1,15 @@
 """Grasp is distinct from nutrition; interruption safely reverses ownership."""
 
 import unittest
+from unittest.mock import patch
 
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
 from aiko_pet.pet.animation.character import PlaybackEvent
 from aiko_pet.pet.mind.object_decisions import ObjectUseDecision
 from aiko_pet.pet.mind.object_intentions import ObjectGoal
+from aiko_pet.pet.mind.object_memory import ObjectMemory
+from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectFootprint,
@@ -44,13 +47,18 @@ class ObjectInteractionTests(unittest.TestCase):
             self.consumed.append((key, item_id, origin))
             item = self.world.get(item_id)
             self.world.consume(item_id, expected_revision=item.revision)
+            self.memory.forget(item_id)
             return True
 
+        self.memory = ObjectMemory()
+        self.memory.update((ObjectObservation(
+            self.item.instance_id, "apple", "food", 100, 0, True, 0,
+        ),), now=0)
         self.coordinator = ObjectInteractionCoordinator(
             self.world, play=play, stop=lambda: None, select_item=lambda _item: None,
             consume=consume, eligible=lambda _item: True, ground_x=lambda _item: 100,
             completed=lambda item, consumed: self.done.append((item, consumed)),
-            identify=lambda _token: "apple",
+            memory=self.memory,
             decide=lambda _token, _origin: self.decision,
             feedback=feedback, cancel_feedback=lambda: None, now=lambda: self.stamp,
             inspection_seconds=0,
@@ -68,6 +76,68 @@ class ObjectInteractionTests(unittest.TestCase):
         self.coordinator.receive(done)
         self.coordinator.receive(done)
         self.assertEqual(len(self.consumed), 1)
+
+    def test_confirmed_detach_records_own_placement_before_clip_finishes(self):
+        self.delay_feedback = True
+        self.decision = ObjectUseDecision(False, "not_needed")
+        self.coordinator.begin_pickup(self.item.instance_id)
+        self.acknowledge()
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.assertFalse(self.memory.snapshot()[0].resting)
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "recognize")
+        self.assertTrue(self.memory.snapshot()[0].examined)
+        self.acknowledge()
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "put_down")
+        self.assertIsNone(self.memory.snapshot()[0].disposition)
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 2, ("detach_object",)))
+        known = self.memory.snapshot()[0]
+        self.assertEqual((known.resting, known.disposition), (True, "deferred"))
+        self.assertEqual(self.coordinator.phase, "put_down")
+        self.assertEqual(self.done, [])
+
+    def test_failed_placement_rolls_back_and_same_event_can_retry(self):
+        self.coordinator.begin_pickup(self.item.instance_id)
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.coordinator.interrupt(lambda: None)
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        world, memory = self.world.snapshot(), self.memory.snapshot()
+        original = self.memory.note_placement
+
+        def broken(*args, **kwargs):
+            original(*args, **kwargs)
+            raise RuntimeError("injected placement failure")
+
+        event = PlaybackEvent(2, "put_down", 2, ("detach_object",))
+        with patch.object(self.memory, "note_placement", side_effect=broken):
+            with self.assertRaises(RuntimeError):
+                self.coordinator.receive(event)
+        self.assertEqual(self.world.snapshot(), world)
+        self.assertEqual(self.memory.snapshot(), memory)
+        self.coordinator.receive(event)
+        self.assertEqual(self.memory.snapshot()[0].disposition, "interrupted")
+        self.assertFalse(self.memory.snapshot()[0].examined)
+
+    def test_failed_grasp_rolls_back_world_and_memory_and_can_retry(self):
+        self.coordinator.begin_pickup(self.item.instance_id)
+        world, memory = self.world.snapshot(), self.memory.snapshot()
+        original = self.memory.note_acquired
+
+        def broken(*args, **kwargs):
+            original(*args, **kwargs)
+            raise RuntimeError("injected acquisition failure")
+
+        event = PlaybackEvent(1, "pick_up", 3, ("attach_object",))
+        with patch.object(self.memory, "note_acquired", side_effect=broken):
+            with self.assertRaises(RuntimeError):
+                self.coordinator.receive(event)
+        self.assertEqual(self.world.snapshot(), world)
+        self.assertEqual(self.memory.snapshot(), memory)
+        self.coordinator.receive(event)
+        self.assertEqual(self.world.get(self.item.instance_id).state,
+                         ObjectState.PET_HELD)
 
     def test_interruption_after_grasp_puts_down_before_user_action(self):
         self.coordinator.begin_pickup(self.item.instance_id)

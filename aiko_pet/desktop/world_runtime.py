@@ -29,7 +29,6 @@ from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.object_decisions import ObjectUseDecision, decide_object_use
-from ..pet.mind.object_perception import ObjectObservation
 from ..pet.routine import context_at
 from ..pet.state import PetState
 from ..ui.pet_view.action_playback import ActionPlayback
@@ -83,7 +82,9 @@ class DesktopWorldRuntime:
             self.world.restore_snapshot(restored_world)
             self.world.change_surface(self._surface())
         self.awareness = ObjectAwareness()
-        self._consumption = ObjectConsumption(state, mind, adaptive, clock=clock)
+        self._consumption = ObjectConsumption(
+            state, mind, adaptive, clock=clock, memory=self.awareness.memory,
+        )
         self.view = WorldView(root, items)
         self._refresh_footprints()
         self.carry_id: str | None = None
@@ -105,7 +106,7 @@ class DesktopWorldRuntime:
             select_item=self._select_item, consume=self._consume,
             eligible=self._eligible, ground_x=self._ground_x,
             completed=self._completed,
-            identify=self._identify, decide=self._decide,
+            memory=self.awareness.memory, decide=self._decide,
             feedback=self._phase_feedback, cancel_feedback=cancel_feedback,
             now=lambda: self.now, inspection_seconds=BALANCE.number(
                 "object_behavior", "inspection_seconds",
@@ -137,12 +138,7 @@ class DesktopWorldRuntime:
             self._animated.hold_last_pose("pick_up", time.monotonic())
         return self._animated.action_id
 
-    def _identify(self, token: str) -> str | None:
-        known = self.awareness.memory.get(token)
-        return known.identity if known is not None else None
-
     def _decide(self, token: str, origin: ConsumptionOrigin) -> ObjectUseDecision:
-        self.awareness.memory.mark_examined(token)
         return decide_object_use(self.awareness.memory.get(token), self.state, origin)
 
     def _phase_feedback(self, cue: ObjectFeedback) -> None:
@@ -196,18 +192,6 @@ class DesktopWorldRuntime:
         overlay.select(item_id)
 
     def _completed(self, token: str, consumed: bool) -> None:
-        if consumed:
-            self.awareness.memory.forget(token)
-        else:
-            item = self.world.get(token)
-            known = self.awareness.memory.get(token)
-            if (item.state == ObjectState.RESTING and item.position is not None
-                    and known is not None and self.interaction.examined):
-                self.awareness.memory.update((ObjectObservation(
-                    token, known.identity, known.kind, item.position.x,
-                    item.position.height, True, self.now,
-                ),), now=self.now)
-                self.awareness.memory.mark_examined(token)
         self.awareness.intentions.cancel(self.now, consumed=consumed)
         self._walk.movement.set_goal(None)
         self._visual.object_target = None

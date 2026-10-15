@@ -57,8 +57,8 @@ Keep the existing draft PR unmerged until practical acceptance.
 | Step | Reviewable result | Commit / verification |
 | --- | --- | --- |
 | P0 | Record this accepted plan and architecture link | `0ab36e0`; 9 documentation checks and pinned static gates; baseline 867 tests passed on Python 3.14 |
-| P1 | Separate typed knowledge and snapshot values; retention, relocation and own-action facts | This step's commit; verification below |
-| P2 | Coherent consumption and confirmed placement across owners | Pending |
+| P1 | Separate typed knowledge and snapshot values; retention, relocation and own-action facts | `1fcf742`; verification below |
+| P2 | Coherent consumption and confirmed placement across owners | This step's commit; verification below |
 | P3 | Versioned codec, joint save/restore and compatibility without fabricated sensing | Pending |
 | P4 | Preserve retrieval purpose, skip redundant inspection, contextual JSON dialogue | Pending |
 | P5 | Restart regression, isolated practical starter and acceptance checklist | Pending |
@@ -69,6 +69,16 @@ relocation; conflicting recognition invalidates inspection/disposition. Unknown
 sightings alone expire. Own-action records distinguish deferral and interruption.
 Targeted object tests and all pinned static checks passed (168 source files).
 Full Windows/Python 3.11 suite: 871 tests passed in 200.8 s.
+
+P2 includes memory in the consumption transaction and rolls back World, Pet and
+memory on injected failure. Acquisition and detach update own-action facts with
+World checkpoints; failed events can retry, duplicate events cannot repeat
+effects. Inspection is learned at its confirmed phase, deferral at detach,
+independently of bubble/clip completion. Completion no longer invents observations.
+Full Windows/Python 3.11 suite: 875 tests passed in 203.7 s; pinned Ruff,
+strict Mypy (168 source files) and Pyright passed. P1 CI run
+[38819187841](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38819187841)
+passed all three Linux/Windows jobs.
 
 ## Acceptance evidence
 

@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from ..pet.consumption import ConsumptionOrigin
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind.object_memory import ObjectMemory
 from ..pet.routine import context_at
 from ..pet.state import PetState
 from ..world.contracts import ObjectState
@@ -26,12 +27,13 @@ class ConsumptionOutcome:
 class ObjectConsumption:
     def __init__(
         self, state: PetState, mind: PetMind, adaptive: AdaptiveRoutine, *,
-        clock: ActiveSessionClock,
+        clock: ActiveSessionClock, memory: ObjectMemory,
     ) -> None:
         self._state = state
         self._mind = mind
         self._adaptive = adaptive
         self._clock = clock
+        self._memory = memory
         self._receipts: OrderedDict[
             str, tuple[str, ConsumptionOrigin, ConsumptionOutcome]
         ] = OrderedDict()
@@ -61,12 +63,15 @@ class ObjectConsumption:
         if result is None or result.consumed_item_id is None:
             return ConsumptionOutcome(False)
         world_checkpoint = world.snapshot()
+        memory_checkpoint = self._memory.snapshot()
         try:
             world.consume(instance_id, expected_revision=item.revision)
             self._state.restore_values(prepared)
+            self._memory.forget(instance_id)
         except Exception:
             world.restore_snapshot(world_checkpoint)
             self._state.restore_values(checkpoint)
+            self._memory.restore_snapshot(memory_checkpoint)
             raise
         care = CareOutcome(result, None, context)
         outcome = ConsumptionOutcome(True, care)

@@ -9,6 +9,7 @@ from ..pet.consumption import ConsumptionOrigin
 from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_events import ObjectEvent
 from ..pet.mind.object_intentions import ObjectGoal
+from ..pet.mind.object_memory import ObjectMemory
 from ..world.contracts import ObjectState
 from ..world.state import WorldOperationError, WorldState
 from .object_feedback import (
@@ -26,7 +27,7 @@ class ObjectInteractionCoordinator:
         consume: Callable[[str, str, ConsumptionOrigin], bool],
         eligible: Callable[[str], bool], ground_x: Callable[[str], float],
         completed: Callable[[str, bool], None],
-        identify: Callable[[str], str | None],
+        memory: ObjectMemory,
         decide: Callable[[str, ConsumptionOrigin], ObjectUseDecision],
         feedback: Callable[[ObjectFeedback], None], cancel_feedback: Callable[[], None],
         now: Callable[[], float], inspection_seconds: float,
@@ -35,7 +36,7 @@ class ObjectInteractionCoordinator:
         self._play, self._stop, self._select_item = play, stop, select_item
         self._consume, self._eligible = consume, eligible
         self._ground_x, self._completed = ground_x, completed
-        self._identify, self._decide = identify, decide
+        self._memory, self._decide = memory, decide
         self._feedback, self._cancel_feedback = feedback, cancel_feedback
         self._now, self._inspection_seconds = now, inspection_seconds
         self.phase: InteractionPhase = "idle"
@@ -75,6 +76,7 @@ class ObjectInteractionCoordinator:
         self._identity = None
         self.examined = False
         self._arrived = False
+        self._decision = ObjectUseDecision(False, "unrecognized")
 
     def _set_phase(self, phase: InteractionPhase) -> None:
         self.phase = phase
@@ -126,10 +128,20 @@ class ObjectInteractionCoordinator:
         if self.active or not self._eligible(instance_id):
             return False
         item = self.world.get(instance_id)
-        self.world.accept_handover_on_release(instance_id,
-                                              expected_revision=item.revision)
+        world_checkpoint, memory_checkpoint = (
+            self.world.snapshot(), self._memory.snapshot(),
+        )
+        try:
+            self.world.accept_handover_on_release(instance_id,
+                                                  expected_revision=item.revision)
+            self._memory.note_acquired(instance_id, now=self._now())
+        except Exception:
+            self.world.restore_snapshot(world_checkpoint)
+            self._memory.restore_snapshot(memory_checkpoint)
+            raise
         self._start(instance_id, ConsumptionOrigin.HANDOVER)
-        self._identity = self._identify(instance_id)
+        known = self._memory.get(instance_id)
+        self._identity = known.identity if known is not None else None
         self._select_item(item.definition_id)
         self._action_id = self._play("hold_item")
         self._inspect("object_handover")
@@ -184,21 +196,47 @@ class ObjectInteractionCoordinator:
                 self._stop()
                 return
             item = self.world.get(token)
+            world_checkpoint, memory_checkpoint = (
+                self.world.snapshot(), self._memory.snapshot(),
+            )
             try:
                 self.world.collect_resting(token, expected_revision=item.revision)
+                self._memory.note_acquired(token, now=self._now())
             except WorldOperationError:
+                self.world.restore_snapshot(world_checkpoint)
+                self._memory.restore_snapshot(memory_checkpoint)
                 self._finish(False)
                 self._stop()
                 return
+            except Exception:
+                self.world.restore_snapshot(world_checkpoint)
+                self._memory.restore_snapshot(memory_checkpoint)
+                self._seen.discard(event)
+                raise
             self._select_item(item.definition_id)
             self._effects.add(attach)
         if (self.phase == "put_down" and "detach_object" in event.events
                 and detach not in self._effects):
             item = self.world.get(token)
-            self.world.put_down(token, self._ground_x(token),
-                                expected_revision=item.revision)
-            self._select_item(None)
+            world_checkpoint, memory_checkpoint = (
+                self.world.snapshot(), self._memory.snapshot(),
+            )
+            try:
+                placed = self.world.put_down(token, self._ground_x(token),
+                                             expected_revision=item.revision)
+                assert placed.position is not None
+                self._memory.note_placement(
+                    token, x=placed.position.x, height=placed.position.height,
+                    now=self._now(), deferred=self._queued is None
+                    and self._decision.reason == "not_needed",
+                )
+            except Exception:
+                self.world.restore_snapshot(world_checkpoint)
+                self._memory.restore_snapshot(memory_checkpoint)
+                self._seen.discard(event)
+                raise
             self._effects.add(detach)
+            self._select_item(None)
         if event.finished:
             self._animation_done = True
         self.update()
@@ -222,8 +260,10 @@ class ObjectInteractionCoordinator:
                     self._inspect()
             elif (self.phase == "inspect" and self._cue_done
                   and self._now() - self._inspect_at >= self._inspection_seconds):
-                self._identity = self._identify(token)
-                self.examined = True
+                known = self._memory.get(token)
+                self._identity = known.identity if known is not None else None
+                self._memory.mark_examined(token)
+                self.examined = known is not None and known.recognized
                 self._set_phase("recognize")
                 self._announce(
                     "object_recognized" if self._identity else "object_unknown",
@@ -274,6 +314,7 @@ class ObjectInteractionCoordinator:
             self._stop()
             return
         decision = self._decide(self.instance_id, self._origin)
+        self._decision = decision
         if not decision.consume or not self._consume(
             self._interaction_id, self.instance_id, self._origin,
         ):

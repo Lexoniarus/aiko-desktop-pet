@@ -77,6 +77,12 @@ class ObjectMemory:
                 else "interrupted",
             )
 
+    def note_acquired(self, token: str, *, now: float) -> None:
+        known = self._known.get(token)
+        if known is not None:
+            self._known[token] = replace(known, resting=False, observed_at=now,
+                                         disposition=None)
+
     def forget(self, token: str) -> None:
         """Explicit observed absence or failed local interaction invalidates it."""
         self._known.pop(token, None)
