@@ -41,19 +41,26 @@ This is a work plan, not an implementation claim. Mark each step complete only a
 
 - **R1 canonical owners:** `pet/mind/` owns `PetMind`, dialogue and adaptive
   policy; Aiko's authored catalogue is injected by the character factory.
-- **R2 in progress:** `pet/animation/` owns pure sprite timing, gaze, ambient
-  policies and now foreground priority selection
-  (`pet/animation/priority.py`). `AnimatedPet` still coordinates some
-  runtime conditions and Tk frame playback; finish that boundary separately.
-- **R3 done:** `pet/movement/` plans and executes bounded movement;
-  `ui/pet_view/walk_driver.py` connects it to the host.
+- **R2 implementation separated:** `pet/animation/` owns pure timing,
+  gaze, priority and ambient policies. `DesktopAnimationRuntime` chooses
+  complete sprite intent and supplies an immutable `RenderDecision`;
+  `DesktopVisualObservation` owns gaze history and workload observation.
+  `AnimatedPet.render()` now applies the selected frame, retains only Tk
+  frame playback and uses injected walking/frame callbacks. A single shared
+  `AmbientDirector` avoids duplicate animation state. Automated checks and
+  targeted Windows revalidation are the remaining R2 acceptance gates.
+- **R3 done:** `pet/movement/` plans bounded movement;
+  `desktop/walk_runtime.py` owns the host `WalkDriver` and placement
+  connection independently of the Tk sprite.
 - **R4 done:** `ui/pet_view/`, `ui/windows/`, `ui/common/` and
   `ui/view_models/` are the sole implementation owners.
 - **R5 in progress:** movement, cursor, care and spontaneous event handling
-  are delegated from the shell. Sleep/wake dialogue is now decided by
+  are delegated from the shell. Sleep/wake dialogue is selected by
   `AttentionCoordinator` and presented by `DesktopAttentionRuntime`.
-  Composition-root constructor wiring and remaining private adapters need
-  a final responsibility/usage review.
+  `gui.py` now reads `ActionPlayback` state and deadlines directly rather
+  than mirroring them in shell properties; `DesktopPreferences` no longer
+  requires an unused `PetState`. Constructor wiring and remaining private
+  adapters still need the final ownership review.
 - **R6 in progress:** the former `personality/`, `presentation/` and
   root-level UI forwarding modules are **gone**; canonical-import checks
   enforce their absence. `PetState.mood_hint()` now returns typed status keys,

@@ -62,6 +62,27 @@ events, taskbar positioning or visual sprite alignment.
   save, and confirm settings, position, mood/friendship and care values.
   The save must retain `version: 1` and the same flat `settings` keys.
 
+## Targeted regression check for the later R2/R5 cleanup
+
+After the earlier positive Windows report, the moving and observation
+boundaries changed substantially. Before approving the **latest commit**,
+repeat at least these interactive checks, in addition to any impacted items
+above:
+
+- [ ] Smooth horizontal walking between 140 ms desktop ticks; pause at
+  taskbar limits, hover, sleep, game, disabled walking and busy workload
+- [ ] All sixteen gaze directions, stale-pointer reset and switching
+  between cursor gaze and computer-busy review pose
+- [ ] Full eight-frame idle blink and head sway; game waiting, care animations
+  and one-shot completion (including selected hand-held food assets)
+- [ ] Settings changes to follow-cursor, auto-walk and scale 1x/2x, with
+  independent settings window, toolbar, and non-activating window layering
+- [ ] No duplicate animations, unexpected monitor polls or callback errors
+  after switching between game, sleep, care and passive idle
+
+These steps should be recorded against the exact new SHA. Automated green
+CI alone is insufficient for interactive Win32 acceptance.
+
 ## Acceptance record
 
 Maintainer report, 15 October 2026: the refactor branch was tested

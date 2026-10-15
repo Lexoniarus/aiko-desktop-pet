@@ -89,10 +89,19 @@ pointer-attention timestamps, not operating-system access.
 
 `ui/pet_view/` owns the concrete renderer and overlays:
 
-- `AnimatedPet` draws the selected frame; it does not calculate random walk
-  departures or own cursor-attention history.
-- `WalkDriver` translates read-only conditions and host placement ports into
-  safe displacement through the one pet-owned `WalkController`.
+- `AnimatedPet` owns Tk frame playback, sprite caches, overlays and
+  per-frame animation callbacks. Its `render()` applies a typed
+  `RenderDecision`; it no longer chooses behavioural priority, reads
+  hardware, owns gaze history or constructs a walking controller.
+- `DesktopAnimationRuntime` (`desktop/animation_runtime.py`) composes pure
+  pet animation policies, attention timing and already observed host facts.
+  Its single `AmbientDirector` is passed into `AnimatedPet` for head sway
+  and complete blink-frame playback without duplicating ambient state.
+- `DesktopVisualObservation` (`desktop/visual_observation.py`) owns
+  16-direction gaze hysteresis and reads cached workload only when needed.
+- `WalkDriver` (`desktop/walk_runtime.py`) translates host placement and
+  the current attention/work situation into steps from the single pet-owned
+  `WalkController`. Tk frame callbacks still advance movement smoothly.
 - `CharacterSpriteCache` handles runtime sprite frames, including lazy 2x
   variants. `RestPoseRenderer` handles pose-relative head motion, and
   `FoodOverlay` renders the selected hand item without affecting nutrition.
@@ -123,6 +132,9 @@ owning `pet/`, `ui/`, or `infrastructure/` module. See the
 `gui.DesktopPet` is the composition root. It constructs the single graph of application, UI, desktop services and providers, wires callbacks and starts `DesktopLifecycle`.
 
 - `DesktopRuntime` takes explicit `DesktopTickPorts` and owns the ordered 140 ms update cycle and timer IDs.
+- `DesktopAnimationRuntime` chooses sprite intent without importing Tk.
+  `WalkDriver` executes bounded host displacement, while
+  `DesktopVisualObservation` resolves cursor and measured workload inputs.
 - `DesktopPreferences` coordinates the consequences of option changes without a second settings model.
 - `application/settings.py` defines `PetSettings` as the single settings
   aggregate, composing `PetBehaviorSettings` and `DesktopDisplaySettings`.
@@ -218,9 +230,11 @@ branch; the document becomes the maintained architecture after merge. The
 migration does **not** implement World, new emotion values, object detection,
 awareness, cursor fear, autonomous objects or drag-and-drop. Existing behavior,
 assets and save-format invariants remain the acceptance criteria. All historical `presentation/`, `personality/` and root-level UI import
-forwarders are removed. R2 animation-selection and R5 orchestration cleanup
-continues; R6 has consolidated typed mood hints, due-meal selection and
-single-assertion ownership tests. Relevant changes still require CI and
+forwarders are removed. R2 animation ownership now separates desktop
+observation/decision, pet policies and concrete Tk frame playback. R5 has
+removed duplicate action-state accessors and unused preference dependencies;
+composition wiring remains under review. R6 has consolidated typed mood hints,
+due-meal selection and single-assertion ownership tests. Relevant changes still require CI and
 final-commit Windows verification before merge.
 
 ## Testing and contribution
