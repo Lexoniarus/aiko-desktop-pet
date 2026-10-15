@@ -80,7 +80,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                 walk_step=self._step_walk,
                 walk_active=self.animation.walk_active,
                 interrupt_walk=self.animation.interrupt_walk,
-                choose_animation=self.animation.choose,
+                choose_animation=self.animation.select_animation,
                 reset_gaze=self.visual.reset,
                 extend_action=self.action_deadlines.append,
             ),
