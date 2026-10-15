@@ -18,8 +18,8 @@ class StaticComputer:
     def latest(self) -> ComputerSnapshot:
         return ComputerSnapshot()
 
-    def set_enabled(self, _enabled: bool) -> None:
-        pass
+    def set_enabled(self, enabled: bool) -> None:
+        del enabled
 
 
 class ApplicationAssemblyTests(unittest.TestCase):
