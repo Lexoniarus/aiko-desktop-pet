@@ -1,4 +1,4 @@
-"""Animated Aiko sprite: frame playback, gaze, sprites and item overlays.
+"""Animated Aiko sprite: frame playback, sprites and item overlays.
 
 This object owns the character visuals. It never imports DesktopPet, hover
 widgets, notification adapters or network services. All host effects use ports.
@@ -13,10 +13,9 @@ from dataclasses import dataclass
 from typing import Callable, Protocol
 from collections.abc import Sequence
 
-from ...pet.animation.animation import FrameClock
+from ...pet.animation.animation import FrameClock, PassiveObservation
 from ...pet.animation.ambient import AmbientDirector
 from ...pet.animation.character import CharacterCatalog, FRAME_WIDTH
-from ...pet.animation.gaze import gaze_sector
 from ...pet.animation.priority import choose_animation_priority
 from ...pet.mind.cursor_attention import CursorAttentionSnapshot
 from .food_overlay import FoodOverlay
@@ -32,14 +31,6 @@ class CareVisuals(Protocol):
     mood: float
     satiety: float
     sleeping: bool
-
-
-class BusyReading(Protocol):
-    def is_busy(self) -> bool: ...
-
-
-class BusyMonitor(Protocol):
-    def latest(self) -> BusyReading: ...
 
 
 class CharacterSettings(Protocol):
@@ -64,18 +55,6 @@ class CharacterSettings(Protocol):
     def y(self, value: int | None) -> None: ...
 
     @property
-    def follow_cursor(self) -> bool: ...
-
-    @follow_cursor.setter
-    def follow_cursor(self, value: bool) -> None: ...
-
-    @property
-    def auto_walk(self) -> bool: ...
-
-    @auto_walk.setter
-    def auto_walk(self, value: bool) -> None: ...
-
-    @property
     def observe_computer(self) -> bool: ...
 
     @observe_computer.setter
@@ -89,6 +68,10 @@ class AnimatedPorts:
     walk_step: Callable[[float, float], str | None]
     walk_active: Callable[[], bool]
     interrupt_walk: Callable[[], None]
+    observe_passive: Callable[
+        [float, tuple[int, int], float, bool], PassiveObservation
+    ]
+    reset_gaze: Callable[[], None]
     action_until: Callable[[], float]
     action_state: Callable[[], str]
     extend_action: Callable[[float], None]
@@ -100,14 +83,12 @@ class AnimatedPet:
     def __init__(
         self, root: tk.Tk, canvas: tk.Canvas,
         state: CareVisuals, settings: CharacterSettings,
-        monitor: BusyMonitor, ports: AnimatedPorts, *,
-        assets: CharacterCatalog,
+        ports: AnimatedPorts, *, assets: CharacterCatalog,
     ) -> None:
         self.root = root
         self.canvas = canvas
         self.state = state
         self.settings = settings
-        self.monitor = monitor
         self.ports = ports
         self.assets = assets
         self._frame_timer: str | None = None
@@ -118,7 +99,6 @@ class AnimatedPet:
         self._walk_progress = 0.0
         self.frame_clock = FrameClock(started_at=time.monotonic())
         self._ambient = AmbientDirector(started_at=time.monotonic())
-        self.gaze_sector: int | None = None
         self._game_mode = False
         self._cursor_snapshot = CursorAttentionSnapshot(-100.0, -100.0)
         self._last_render_pointer: tuple[int, int] = (0, 0)
@@ -147,14 +127,10 @@ class AnimatedPet:
             (self.settings.y or 0) + 82 * scale,
         )
 
-    def set_follow_cursor(self, enabled: bool) -> None:
-        self.settings.follow_cursor = bool(enabled)
-        self.gaze_sector = None
-
     def set_game_mode(self, enabled: bool) -> None:
         """Pause gaze/walking and hold a forward-facing game pose."""
         self._game_mode = bool(enabled)
-        self.gaze_sector = None
+        self.ports.reset_gaze()
         self.ports.interrupt_walk()
         self.cancel_action(time.monotonic())
 
@@ -280,21 +256,6 @@ class AnimatedPet:
             self.root.after_cancel(self._frame_timer)
             self._frame_timer = None
 
-    def gaze_direction(self, pointer: tuple[int, int]) -> int | None:
-        if self._game_mode:
-            self.gaze_sector = None
-            return None
-        if not self.settings.follow_cursor:
-            self.gaze_sector = None
-            return None
-        eyes_x = self.root.winfo_x() + (FRAME_WIDTH // 2) * self.settings.scale
-        eyes_y = self.root.winfo_y() + 82 * self.settings.scale
-        self.gaze_sector = gaze_sector(
-            eyes_x, eyes_y, *pointer,
-            scale=self.settings.scale, previous=self.gaze_sector,
-        )
-        return self.gaze_sector
-
     def render(
         self, now: float, elapsed: float, pointer: tuple[int, int],
         *, attention: CursorAttentionSnapshot | None = None,
@@ -335,21 +296,14 @@ class AnimatedPet:
                 self._ambient.suspend(now)
                 self.show_frame(moving, now)
                 return
-            if now - self._cursor_snapshot.last_pointer_move < 4.0:
-                look = self.gaze_direction(pointer)
-            else:
-                look = None
-                self.gaze_sector = None
-            # Cursor gaze takes precedence; avoid a needless monitor read.
-            computer_busy = (
-                self.monitor.latest().is_busy()
-                if look is None and self.settings.observe_computer
-                else False
+            observation = self.ports.observe_passive(
+                now, pointer, self._cursor_snapshot.last_pointer_move,
+                self._game_mode,
             )
             choice = self._ambient.select_passive_animation(
-                now, gaze_direction=look,
+                now, gaze_direction=observation.gaze_direction,
                 observing_computer=self.settings.observe_computer,
-                computer_busy=computer_busy,
+                computer_busy=observation.computer_busy,
                 energy=self.state.energy, mood=self.state.mood,
                 satiety=self.state.satiety,
             )

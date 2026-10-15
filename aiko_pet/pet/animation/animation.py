@@ -15,6 +15,14 @@ FRAME_COUNTS: dict[str, int] = dict.fromkeys((
 FRAME_COUNTS["look"] = 16
 
 
+@dataclass(frozen=True, slots=True)
+class PassiveObservation:
+    """Pointer gaze and workload facts already gathered by the host."""
+
+    gaze_direction: int | None
+    computer_busy: bool
+
+
 @dataclass(frozen=True)
 class SpriteSelection:
     """Animation name and optional fixed sprite index."""

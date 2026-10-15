@@ -383,6 +383,8 @@ class UiDependencyRules(unittest.TestCase):
         self.assertNotIn("WalkConditions(", sprite)
         self.assertNotIn("WalkDriver(", sprite)
         self.assertNotIn("from .walk_driver import", sprite)
+        self.assertNotIn("gaze_direction(", sprite)
+        self.assertNotIn("monitor.latest()", sprite)
         self.assertIn("from ...desktop.geometry import FOOT_BASELINE", sprite)
         self.assertIn("from ...desktop.taskbar import", desktop_window)
         self.assertNotIn("from ..taskbar import", sprite)

@@ -96,6 +96,14 @@ class DesktopWindow:
         self.placed = True
         return True
 
+    def gaze_origin(self) -> tuple[float, float]:
+        """Return the visible eye anchor from actual Tk window coordinates."""
+        scale = self.settings.scale
+        return (
+            self.root.winfo_x() + (FRAME_WIDTH // 2) * scale,
+            self.root.winfo_y() + 82 * scale,
+        )
+
     def set_topmost(self, enabled: bool) -> None:
         """Control the character window's stack without touching other views."""
         self.root.wm_attributes("-topmost", enabled)

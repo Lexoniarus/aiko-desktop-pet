@@ -377,10 +377,10 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertFalse(self.toolbar.visible)
 
     def test_far_away_desktop_cursor_still_gets_a_gaze_frame(self):
-        self.assertEqual(self.app._animated.gaze_direction((99999, -99999)), 2)
-        self.assertIn(self.app._animated.gaze_direction((-99999, -99999)), (14, 15))
+        self.assertEqual(self.app._visual.gaze_direction((99999, -99999)), 2)
+        self.assertIn(self.app._visual.gaze_direction((-99999, -99999)), (14, 15))
         self.app.set_follow_cursor(False)
-        self.assertIsNone(self.app._animated.gaze_direction((99999, -99999)))
+        self.assertIsNone(self.app._visual.gaze_direction((99999, -99999)))
 
     def test_hover_bar_has_clock_and_meal_aware_button(self):
         from datetime import datetime

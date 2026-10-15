@@ -15,6 +15,8 @@ from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.desktop.geometry import TaskbarTrack
 from aiko_pet.pet.movement import WalkController
 from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
+from aiko_pet.desktop.visual_observation import DesktopVisualObservation
+from aiko_pet.pet.animation.character import FRAME_WIDTH
 from aiko_pet.pet.mind.cursor_attention import CursorAttentionSnapshot
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 
@@ -53,13 +55,22 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
                 walk_finished=lambda _now: None,
             ),
         )
+        self.visual = DesktopVisualObservation(
+            settings=self.settings, monitor=IdleMonitor(),
+            eyes=lambda: (
+                self.root.winfo_x() + (FRAME_WIDTH // 2) * self.settings.scale,
+                self.root.winfo_y() + 82 * self.settings.scale,
+            ),
+        )
         self.anim = AnimatedPet(
             self.root, self.canvas,
-            self.state, self.settings, IdleMonitor(),
+            self.state, self.settings,
             AnimatedPorts(
                 walk_step=self._step_walk,
                 walk_active=lambda: self.walk.movement.remaining_distance != 0,
                 interrupt_walk=self.walk.movement.interrupt,
+                observe_passive=self.visual.observe,
+                reset_gaze=self.visual.reset,
                 action_until=lambda: 0.0,
                 action_state=lambda: "idle",
                 extend_action=self.action_deadlines.append,
@@ -72,6 +83,11 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
     def _place_x(self, value: float) -> None:
         self.settings.x = round(value)
 
+    def _gaze_direction(self, pointer: tuple[int, int]) -> int | None:
+        return self.visual.gaze_direction(
+            pointer, game_mode=self.anim.game_mode,
+        )
+
     def _step_walk(self, now: float, elapsed: float) -> str | None:
         return self.walk.step(
             now, elapsed, game_mode=self.anim.game_mode,
@@ -83,7 +99,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertEqual(self.anim.sprites["idle"][0].width(), 192)
         self.anim.show_frame("idle", time.monotonic(), fixed=0)
         self.settings.follow_cursor = False
-        self.assertIsNone(self.anim.gaze_direction((10000, 0)))
+        self.assertIsNone(self._gaze_direction((10000, 0)))
 
     def test_movement_uses_injected_geometry_boundary(self) -> None:
         self.walk.movement.remaining_distance = 12
@@ -173,10 +189,11 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertFalse(self.settings.auto_walk)
         self.assertEqual(self.walk.movement.remaining_distance, 0)
         self.assertGreater(self.walk.movement.next_walk_at, 500)
-        self.anim.gaze_sector = 3
-        self.anim.set_follow_cursor(False)
+        self.assertIsNotNone(self._gaze_direction((99999, 0)))
+        self.settings.follow_cursor = False
+        self.visual.reset()
         self.assertFalse(self.settings.follow_cursor)
-        self.assertIsNone(self.anim.gaze_sector)
+        self.assertIsNone(self.visual.sector)
 
     def test_late_frames_still_move_one_stride_per_cycle_at_both_sizes(self) -> None:
         for scale in (1, 2):
@@ -207,9 +224,9 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
 
     def test_game_mode_freezes_cursor_gaze_and_uses_existing_pose(self) -> None:
         self.anim.set_game_mode(True)
-        self.assertIsNone(self.anim.gaze_direction((99999, -99999)))
+        self.assertIsNone(self._gaze_direction((99999, -99999)))
         self.assertIsNone(self._step_walk(time.monotonic(), 0.3))
-        self.assertIsNone(self.anim.gaze_sector)
+        self.assertIsNone(self.visual.sector)
         self.anim.render(time.monotonic(), .14, (99999, -99999))
         self.assertEqual(self.anim.frame_clock.active_key, ("waiting", None))
         self.anim.begin_action("jumping", time.monotonic())
@@ -217,7 +234,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.assertEqual(self.anim.frame_clock.active_key, ("jumping", None))
         self.anim.set_game_mode(False)
         self.assertNotEqual(self.anim.frame_clock.active_key, ("jumping", None))
-        self.assertIsNotNone(self.anim.gaze_direction((99999, -99999)))
+        self.assertIsNotNone(self._gaze_direction((99999, -99999)))
 
     def test_idle_blinks_once_then_holds_a_neutral_pose(self) -> None:
         self.settings.auto_walk = False

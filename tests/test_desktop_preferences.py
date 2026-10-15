@@ -22,6 +22,7 @@ from aiko_pet.ui.windows.hover_ui import HoverUi
 from aiko_pet.ui.pet_view.speech_presenter import SpeechPresenter
 from aiko_pet.desktop.window_stack import WindowStack
 from aiko_pet.desktop.walk_runtime import WalkDriver
+from aiko_pet.desktop.visual_observation import DesktopVisualObservation
 
 
 class DesktopPreferenceTests(unittest.TestCase):
@@ -37,6 +38,7 @@ class DesktopPreferenceTests(unittest.TestCase):
         self.walk = MagicMock(spec=WalkDriver)
         self.walk.movement = MagicMock()
         self.walk.movement.remaining_distance = 140
+        self.visual = MagicMock(spec=DesktopVisualObservation)
         self.window = MagicMock(spec=DesktopWindow)
         self.window.width = 128
         self.window.track = SimpleNamespace(left=100, right=1000)
@@ -61,6 +63,7 @@ class DesktopPreferenceTests(unittest.TestCase):
             attention=cast(AttentionCoordinator, self.attention),
             animated=cast(AnimatedPet, self.animated),
             walk=cast(WalkDriver, self.walk),
+            visual=cast(DesktopVisualObservation, self.visual),
             window=cast(DesktopWindow, self.window),
             hover=cast(HoverUi, self.hover),
             speech=cast(SpeechPresenter, self.speech),
@@ -103,7 +106,7 @@ class DesktopPreferenceTests(unittest.TestCase):
         self.assertEqual(self.settings.scale, 2)
         self.window.resize.assert_called_once()
         self.animated.reload_sprites.assert_called_once()
-        self.assertIsNone(self.animated.gaze_sector)
+        self.visual.reset.assert_called_once_with()
         self.assertFalse(self.window.placed)
         self.assertEqual(self.positions, [420.0])
         self.assertEqual(self.saves, 1)
@@ -115,7 +118,8 @@ class DesktopPreferenceTests(unittest.TestCase):
         self.prefs.set_option("observe_computer", False)
         self.prefs.set_option("learn_rhythm", False)
         self.walk.set_auto_walk.assert_called_once()
-        self.animated.set_follow_cursor.assert_called_once_with(False)
+        self.visual.reset.assert_called_once_with()
+        self.assertFalse(self.settings.follow_cursor)
         self.attention.set_spontaneous_talk.assert_called_once()
         self.activity.set_observation_enabled.assert_called_once_with(False)
         self.assertFalse(self.settings.learn_rhythm)

@@ -22,6 +22,7 @@ from ..ui.windows.hover_ui import HoverUi
 from ..ui.pet_view.speech_presenter import SpeechPresenter
 from .window_stack import WindowStack
 from .walk_runtime import WalkDriver
+from .visual_observation import DesktopVisualObservation
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,8 +41,8 @@ class DesktopPreferences:
         self, *, settings: PetSettings, state: PetState,
         adaptive: AdaptiveRoutine, activity: ActivityCoordinator,
         attention: AttentionCoordinator, animated: AnimatedPet,
-        walk: WalkDriver, window: DesktopWindow,
-        hover: HoverUi, speech: SpeechPresenter,
+        walk: WalkDriver, visual: DesktopVisualObservation,
+        window: DesktopWindow, hover: HoverUi, speech: SpeechPresenter,
         overlay_stack: WindowStack, ports: DesktopPreferencePorts,
     ) -> None:
         self._settings = settings
@@ -51,6 +52,7 @@ class DesktopPreferences:
         self._attention = attention
         self._animated = animated
         self._walk = walk
+        self._visual = visual
         self._window = window
         self._hover = hover
         self._speech = speech
@@ -96,7 +98,8 @@ class DesktopPreferences:
         self._ports.save()
 
     def set_follow_cursor(self, enabled: bool) -> None:
-        self._animated.set_follow_cursor(enabled)
+        self._settings.follow_cursor = bool(enabled)
+        self._visual.reset()
         self._ports.save()
 
     def set_spontaneous_talk(self, enabled: bool) -> None:
@@ -123,7 +126,7 @@ class DesktopPreferences:
         self._settings.scale = 2 if self._settings.scale == 1 else 1
         self._window.resize()
         self._animated.reload_sprites()
-        self._animated.gaze_sector = None
+        self._visual.reset()
         # Force a Tk geometry update even for an unchanged x/y position.
         self._window.placed = False
         self._ports.place_x(center - self._window.width / 2)

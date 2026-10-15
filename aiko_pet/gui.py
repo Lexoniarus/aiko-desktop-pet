@@ -25,6 +25,7 @@ from .application.contact import ContactCoordinator, ContactPorts
 from .application.cursor_observation import CursorObservation
 from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
 from .desktop.walk_runtime import WalkDriver, WalkDriverPorts
+from .desktop.visual_observation import DesktopVisualObservation
 from .application.active_time import ActiveSessionClock
 from .pet.food import FoodId
 from .infrastructure.active_time import active_uptime_seconds
@@ -167,9 +168,12 @@ class DesktopPet:
                 walk_finished=self._on_walk_finished,
             ),
         )
+        self._visual = DesktopVisualObservation(
+            settings=self.settings, monitor=self.activity_monitor,
+            eyes=self._window.gaze_origin,
+        )
         self._animated = AnimatedPet(
             self.root, self.canvas, self.state, self.settings,
-            self.activity_monitor,
             AnimatedPorts(
                 walk_step=lambda now, elapsed: self._walk.step(
                     now, elapsed, game_mode=self._animated.game_mode,
@@ -181,6 +185,8 @@ class DesktopPet:
                     self._walk.movement.remaining_distance != 0
                 ),
                 interrupt_walk=self._walk.movement.interrupt,
+                observe_passive=self._visual.observe,
+                reset_gaze=self._visual.reset,
                 action_until=lambda: self._action_until,
                 action_state=lambda: self._action_state,
                 extend_action=self._extend_action,
@@ -355,7 +361,7 @@ class DesktopPet:
             activity=self._activity,
             attention=self._attention,
             animated=self._animated, walk=self._walk,
-            window=self._window,
+            visual=self._visual, window=self._window,
             hover=self._hover,
             speech=self._speech,
             overlay_stack=self._overlay_stack,

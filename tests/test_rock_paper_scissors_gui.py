@@ -200,7 +200,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.pet._hover.open_game()
         visual = self.pet._animated
         self.assertTrue(self.pet.settings.follow_cursor)
-        self.assertIsNone(visual.gaze_direction((99999, 99999)))
+        self.assertIsNone(self.pet._visual.gaze_direction((99999, 99999), game_mode=visual.game_mode))
         self.assertIsNone(self.pet._walk.step(
             time.monotonic(), 0.5,
             game_mode=visual.game_mode, attention_active=False,
@@ -211,7 +211,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertIn(current[0], ("waving-greeting", "waiting"))
         self.pet._hover.close_game()
         self.assertFalse(visual._game_mode)
-        self.assertIsNotNone(visual.gaze_direction((99999, 99999)))
+        self.assertIsNotNone(self.pet._visual.gaze_direction((99999, 99999), game_mode=visual.game_mode))
 
     def test_close_cancels_outstanding_bubble_and_session(self) -> None:
         self.pet._hover.open_game()
