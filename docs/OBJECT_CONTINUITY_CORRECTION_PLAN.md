@@ -65,3 +65,10 @@ real saves; use temporary test saves only.
   coordinator routing repeats identification; handover text mixes known and
   unknown cases. Current wishes are limited to resting portions.
 - Implementation and verification evidence will be recorded below.
+- Step 1: `42789e3` records this approved plan and its architecture link.
+- Step 2: ordinary observed pickup and held-item tracking survive without a
+  committed action; settlement releases the cursor lock. Capture establishes
+  current pointer pose before save/view/observation. Verified 10 awareness tests,
+  23 native World GUI tests (including 1x/2x focus resumption), Ruff, strict Mypy
+  (178 sources) and Pyright. Tk emits teardown ThemeChanged diagnostics in the
+  existing GUI fixture; all assertions pass.

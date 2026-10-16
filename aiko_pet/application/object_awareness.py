@@ -86,8 +86,6 @@ class ObjectAwareness:
         held_pose: tuple[float, float] | None = None,
         committed: str | None = None,
     ) -> ObjectGoal | None:
-        if committed is None:
-            self._tracker.stop_following()
         definitions = {item.definition_id: item for item in world.definitions}
         focused_instance = (self.instance_for_record(committed)
                             if committed is not None else None)
@@ -131,8 +129,7 @@ class ObjectAwareness:
                                item.height - focused_memory.height)
                 <= width * BALANCE.number("object_behavior", "memory_place_widths")
             )]
-        following = (self._tracker.following_instance
-                     if committed is not None else None)
+        following = self._tracker.following_instance
         visible = tuple(item for item in candidates if attentive and (
             item.token == following or math.hypot(item.x - x, item.height - height)
             <= width * BALANCE.number("object_behavior", "notice_widths")
@@ -171,7 +168,9 @@ class ObjectAwareness:
                 maximum_distance=width * BALANCE.number(
                     "object_behavior", "memory_place_widths",
                 ),
-                preserve_record=old is not None and old == committed,
+                preserve_record=old is not None and (
+                    old == committed or instance == following
+                ),
             )
             claimed.add(record)
             records[seen.token] = record
@@ -180,6 +179,13 @@ class ObjectAwareness:
                 if seen.resting:
                     held.pop(instance, None)
             observations.append(replace(seen, token=record))
+            if instance is not None:
+                item = next(item for item in world.objects
+                            if item.instance_id == instance)
+                if item.state == ObjectState.USER_HELD:
+                    self._tracker.follow_taken(instance)
+                elif item.state == ObjectState.RESTING and instance == following:
+                    self._tracker.stop_following()
         self._sighting_records, self._world_records = records, world_records
         self._owned_records = held
         self.observations = tuple(observations)

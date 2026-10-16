@@ -3,6 +3,7 @@
 import unittest
 
 from aiko_pet.application.object_awareness import ObjectAwareness
+from aiko_pet.infrastructure.world_motion import motion_parameters
 from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import (
@@ -16,6 +17,43 @@ from aiko_pet.world.state import WorldState
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    def test_ordinary_observed_take_and_placement_keep_the_same_record(self):
+        world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        item = world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        awareness = ObjectAwareness()
+        state = PetState(satiety=100)
+
+        def observe(stamp):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100, attentive=True, blocked=True)
+
+        for stamp in (0, .3, .7):
+            observe(stamp)
+        record = awareness.record_for_instance(item.instance_id)
+        assert record is not None
+        world.take_resting(item.instance_id, expected_revision=0)
+        self.assertTrue(awareness.follow_taken(item.instance_id, record))
+        held = world.get(item.instance_id)
+        world.move_held(item.instance_id, WorldPosition(1400, 700),
+                        expected_revision=held.revision)
+        observe(.9)
+        held = world.get(item.instance_id)
+        world.release(item.instance_id, expected_revision=held.revision)
+        observe(1.1)
+        world.advance_motion(20, motion_parameters())
+        observe(1.3)
+        known = awareness.known_instance(item.instance_id)
+        assert known is not None
+        self.assertEqual((known.token, known.identity, known.resting),
+                         (record, "apple", True))
+        self.assertIsNone(awareness.intentions.goal)
+        # Settling releases the special cursor track. A hidden later move is new.
+        awareness.update(world.snapshot(), state, now=1.5, x=100,
+                         height=0, width=100, attentive=False, blocked=True)
+        self.assertIsNone(awareness.instance_for_record(record))
+
     def test_recognition_cannot_merge_focus_with_an_unobserved_known_neighbour(self):
         world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
             "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),

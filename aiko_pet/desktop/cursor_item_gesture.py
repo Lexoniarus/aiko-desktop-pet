@@ -85,6 +85,7 @@ class CursorItemGesture:
         except tk.TclError:
             self.cancel()
             return
+        self._move_carry()
         self._ports.save()
         self._ports.sync_view()
 

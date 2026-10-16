@@ -467,9 +467,10 @@ class DesktopWorldRuntime:
             observed = any(item.token == record
                            for item in self.awareness.observations)
             if (self.cursor.begin_existing(token, revision) and observed
-                    and record is not None and self.interaction.target_taken(record)):
-                self.awareness.follow_taken(token, record)
-                self._walk.movement.set_goal(None)
+                    and record is not None):
+                if self.awareness.follow_taken(token, record):
+                    if self.interaction.target_taken(record):
+                        self._walk.movement.set_goal(None)
 
         self._request_gesture(acquire)
 

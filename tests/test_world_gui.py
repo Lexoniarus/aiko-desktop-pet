@@ -551,6 +551,9 @@ class WorldGuiTests(unittest.TestCase):
             patch.object(self.app.root, "winfo_pointery", return_value=200),
         ):
             world.begin_relocate(item.instance_id, returned.revision)
+            carried = world.world.get(item.instance_id)
+            self.assertNotEqual(carried.position, returned.position)
+            self.assertEqual(carried.state, ObjectState.USER_HELD)
             world.cursor.release()
         dropped = world.world.get(item.instance_id)
         self.assertEqual(dropped.state, ObjectState.FALLING)
