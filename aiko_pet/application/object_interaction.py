@@ -132,6 +132,10 @@ class ObjectInteractionCoordinator:
                 self._cue_done = True
         elif (state == ObjectState.RESTING and self._cue_done
               and self._auxiliary_key is None):
+            known = self._memory.get(self.memory_id) if self.memory_id else None
+            if known is not None:
+                self._identity, self._kind = known.identity, known.kind
+                self._retrieving = self._known_supply()
             self._set_phase("approach")
             self._announce("object_returned")
         elif (state == ObjectState.USER_HELD and self._cue_done

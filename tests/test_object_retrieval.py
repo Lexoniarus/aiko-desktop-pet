@@ -146,6 +146,29 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.assertEqual(self.coordinator.phase, "eat")
         self.assertEqual(self.consumed[0][2], ConsumptionOrigin.HANDOVER)
 
+    def test_cursor_assessment_shortens_resumed_investigation(self):
+        self.memory.restore_snapshot(tuple(replace(item, assessed=False)
+                                           for item in self.memory.snapshot()))
+        self.coordinator.begin_goal(ObjectGoal(
+            self.item.instance_id, "apple", "food", 100, 0, 0, "investigate",
+        ))
+        self.acknowledge()
+        self.acknowledge()
+        self.world.take_resting(self.item.instance_id, expected_revision=0)
+        self.coordinator.target_taken(self.item.instance_id)
+        self.memory.mark_assessed(self.item.instance_id)
+        self.acknowledge()
+        item = self.world.get(self.item.instance_id)
+        self.world.return_user_held(item.instance_id, 110,
+                                    expected_revision=item.revision)
+        self.coordinator.observe_target_state(ObjectState.RESTING)
+        self.acknowledge()
+        self.coordinator.arrive()
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        self.assertEqual(self.coordinator.phase, "eat")
+        self.assertNotIn("object_recognized", [cue.event for cue in self.cues])
+
     def test_actual_target_loss_releases_focus_to_bounded_subjective_search(self):
         self.begin_retrieval()
         self.world.take_resting(self.item.instance_id, expected_revision=0)
