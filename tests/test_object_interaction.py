@@ -90,6 +90,28 @@ class ObjectInteractionTests(unittest.TestCase):
         self.coordinator.receive(done)
         self.assertEqual(len(self.consumed), 1)
 
+    def test_auxiliary_feedback_waits_and_cannot_acknowledge_a_phase(self):
+        self.delay_feedback = True
+        self.coordinator.begin_goal(ObjectGoal(
+            self.item.instance_id, "apple", "food", 100, 0, 0, "investigate",
+        ))
+        phase_key = self.cues[-1].key
+        self.coordinator.request_feedback("object_approach")
+        self.coordinator.update()
+        self.assertEqual(len(self.cues), 1)
+        self.coordinator.receive_feedback(FeedbackReceipt(phase_key, True))
+        self.coordinator.update()
+        aside = self.cues[-1].key
+        self.assertNotEqual(aside, phase_key)
+        self.coordinator.receive_feedback(FeedbackReceipt(aside, False))
+        self.assertEqual(self.coordinator.phase, "notice")
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.phase, "approach")
+        self.coordinator.receive_feedback(FeedbackReceipt(aside, True))
+        self.coordinator.arrive()
+        self.assertEqual(self.coordinator.phase, "approach")
+        self.assertEqual(self.actions, [])
+
     def test_confirmed_detach_records_own_placement_before_clip_finishes(self):
         self.delay_feedback = True
         self.decision = ObjectUseDecision(False, "not_needed")

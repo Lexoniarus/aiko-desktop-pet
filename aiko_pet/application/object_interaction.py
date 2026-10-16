@@ -66,6 +66,9 @@ class ObjectInteractionCoordinator:
         self._decision = ObjectUseDecision(False, "unrecognized")
         self._retrieving = False
         self._kind: ConsumableKind | None = None
+        self._pending_feedback: ObjectEvent | None = None
+        self._auxiliary_key: FeedbackKey | None = None
+        self._auxiliary_serial = 0
 
     @property
     def active(self) -> bool:
@@ -113,6 +116,8 @@ class ObjectInteractionCoordinator:
         self.phase = phase
         self._phase_id += 1
         self._cue_done = self._animation_done = False
+        self._pending_feedback = None
+        self._auxiliary_key = None
         # Invalidate the prior receipt before cancellation calls back.
         self._cancel_feedback()
 
@@ -120,6 +125,11 @@ class ObjectInteractionCoordinator:
         assert self.memory_id is not None
         self._feedback(ObjectFeedback(self.feedback_key, event,
                                       self.memory_id, self._identity))
+
+    def request_feedback(self, event: ObjectEvent) -> None:
+        """Keep at most one aside; never replace an unfinished phase bubble."""
+        if self.focus_record is not None and self._auxiliary_key is None:
+            self._pending_feedback = event
 
     def begin_goal(self, goal: ObjectGoal) -> bool:
         if self.active:
@@ -223,6 +233,9 @@ class ObjectInteractionCoordinator:
         self._announce(event)
 
     def receive_feedback(self, receipt: FeedbackReceipt) -> None:
+        if self._auxiliary_key is not None and receipt.key == self._auxiliary_key:
+            self._auxiliary_key = None
+            return
         if not self.active or receipt.key != self.feedback_key or self._cue_done:
             return
         self._cue_done = True
@@ -303,6 +316,18 @@ class ObjectInteractionCoordinator:
 
     def update(self) -> None:
         """Advance only confirmed prerequisites; injected active time owns dwell."""
+        if self._auxiliary_key is not None:
+            return
+        if (self._pending_feedback is not None and self._cue_done
+                and self.memory_id is not None):
+            event, self._pending_feedback = self._pending_feedback, None
+            self._auxiliary_serial += 1
+            self._auxiliary_key = FeedbackKey(
+                self._interaction_id, self._phase_id, self._auxiliary_serial,
+            )
+            self._feedback(ObjectFeedback(self._auxiliary_key, event,
+                                          self.memory_id, self._identity))
+            return
         for _ in range(12):
             previous = self.phase
             token = self.memory_id

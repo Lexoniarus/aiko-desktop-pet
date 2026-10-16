@@ -15,6 +15,7 @@ InteractionPhase = Literal[
 class FeedbackKey:
     interaction_id: str
     phase_id: int
+    auxiliary_id: int = 0
 
 
 @dataclass(frozen=True, slots=True)
