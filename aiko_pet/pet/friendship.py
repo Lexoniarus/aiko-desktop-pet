@@ -1,4 +1,4 @@
-"""Pure friendship reward policy; PetState owns all reward mutations."""
+"""Pure friendship policies; PetState owns relationship mutations."""
 
 from __future__ import annotations
 

@@ -15,7 +15,40 @@ open for separate behavior analysis; it is not claimed solved by the edge-grip
 correction. The complete left/right 1x/2x native checklist remains to be checked.
 
 
-## Current combined retest — 16 October 2026
+## Committed attention and withholding retest — 16 October 2026
+
+Use the same isolated launcher below, initially with `--scenario hungry --stock
+two`. The [correction plan](OBJECT_FOCUS_CORRECTION_PLAN.md) records commits and
+automated evidence. These new visual/input checks still require practical acceptance.
+
+- [ ] At 1x and 2x, wait until Aiko starts investigating one portion. Drop another,
+  relocate another, move the mouse and hold a different offer near her. The first
+  episode continues; other objects are discovered only after it ends.
+- [ ] Click/hover during approach and inspection. She asks for a moment at sensible
+  intervals, keeps her target and continues walking despite cursor/toolbar presence.
+- [ ] Pick up exactly her target before grasp. She stops safely and protests;
+  follow it across the supported primary display. A second identical portion must
+  not replace her target. A failed press/capture causes no protest or social loss.
+- [ ] Drop it high/low, including outside reachable bounds. She watches its hops,
+  waits for rest, acknowledges return and continues the same investigation. A known
+  assessed portion goes to full consumption without another identification.
+- [ ] Briefly reposition once: no friendship loss. Hold for over 18 seconds, or
+  repeatedly take it back: spaced requests can turn irritated, with small bounded
+  friendship loss. Return provides no bonus. Accepted handover/ground collection
+  retain their different care origins.
+- [ ] Lose genuine visual contact: she cannot know its new place through the World
+  handle; existing short search applies. Explicit play/sleep still interrupts
+  safely. Restart the same isolated save: friendship/knowledge persist, waiting
+  and input capture do not resume.
+
+Automated handoff: 986 tests passed on Windows/Python 3.11 in 217.982 s; Ruff,
+strict Mypy (178 sources) and Pyright passed. Code CI
+[38968361032](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38968361032)
+passed Linux Python 3.11/3.13 and Windows. The isolated Python 3.14 launcher and
+same-save restart also exited normally. These results cover automation; the
+unchecked practical observations above remain for the user.
+
+## Earlier combined retest — 16 October 2026
 
 The [delivery plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md) records the implementation
 commits and checks. This combined behavior still needs the user's practical

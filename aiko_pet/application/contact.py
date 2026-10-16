@@ -38,7 +38,7 @@ class ContactPorts:
 
 
 class ContactCoordinator:
-    """Keep direct user contact higher priority than autonomous pet actions."""
+    """Coordinate contact after foreground ownership has granted it."""
 
     def __init__(
         self,

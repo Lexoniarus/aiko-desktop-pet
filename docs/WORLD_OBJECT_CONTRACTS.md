@@ -1,5 +1,33 @@
 # World object contracts and behavior rules
 
+## Current committed-attention correction — 16 October 2026
+
+The [focus correction plan](OBJECT_FOCUS_CORRECTION_PLAN.md) supersedes older
+ordinary-contact priority rules during an accepted object episode. The interaction
+owns one subjective focus until its outcome. Other drops, moves and offers do not
+enter perception/memory. Hover and ordinary clicks cannot interrupt; clicks ask
+for a short wait without care rewards. Explicit commands retain safe put-down.
+
+An observed successful take of the target pauses before frame-4 custody. Existing
+cursor geometry and sixteen-direction gaze follow that exact visible portion.
+`await_return` waits for the player; `await_settle` waits through fall/hops.
+Resume the same episode after resting, preserving knowledge/assessment and actual
+care origin. Unknown objects still need their original investigation. Visual loss
+discards continuity and activates existing bounded subjective search, without
+tracking through a hidden World ID or merging unobserved identical neighbours.
+
+Repeated requests are at least 10 active seconds apart. A first repositioning is
+free; frustration begins after 18 seconds held or the third observed take in one
+episode. Eligible loss requests are at least 30 seconds apart, 0.15 friendship
+points each and at most 0.6 requested per episode. Actual losses additionally have
+a 120-active-second session cooldown across episodes. Suppressed loss requests are
+not replayed later. Return stops escalation and adds no friendship reward;
+temporary irritation expires normally without clearing unrelated irritation.
+Validated JSON owns all these start values and authored dialogue. Persist actual
+friendship through the existing save; restart no running focus/waiting episode.
+
+## Earlier implementation record
+
 Status: initial implementation through Stage 8; first practical test found
 behavior gaps. The investigation/feedback revision below is agreed behavior,
 implemented with practical follow-ups and verified with 855 tests at `ea4361f`;

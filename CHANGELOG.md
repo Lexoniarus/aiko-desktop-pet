@@ -1,3 +1,15 @@
+## Unreleased — Committed object attention
+
+- Keep one investigation committed through ordinary hover, clicks and other item
+  gestures; exclude distractions before perception and memory updates.
+- Follow an observed target take through cursor motion and settling, then resume
+  the same interaction with acquired knowledge. Preserve actual handover origin,
+  safe explicit interruption and bounded search after genuine visual loss.
+- Add spaced return requests, temporary irritation and limited persisted
+  friendship loss for repeated/prolonged withholding, without return bonuses.
+- Preserve configured dialogue reading times and make timing fixtures portable;
+  extend targeted native 1x/2x and isolated restart coverage.
+
 ## Unreleased — Offers, placement and subjective search
 
 - Remember recognized cursor assessments and acknowledge accepted handovers

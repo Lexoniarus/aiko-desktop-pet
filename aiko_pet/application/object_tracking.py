@@ -20,6 +20,7 @@ class ObjectTracker:
     Call with only currently visible candidates. Mutual unique nearest matches
     preserve continuity; gaps, implausible jumps and ties start fresh sightings.
     Catalog IDs are carried to the recognizer but never used for association.
+    An observed cursor take may lock one visible track; loss discards the lock.
     """
 
     def __init__(self, *, maximum_gap: float) -> None:

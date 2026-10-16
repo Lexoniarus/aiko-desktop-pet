@@ -422,9 +422,19 @@ IDs. `object_stock.py` supplies one-to-one matching/count uncertainty; the memor
 owner retires explained checked places and keeps ambiguous consumption witnesses
 unavailable until evidence resolves them. No parallel inventory is maintained.
 
+The interaction's `focus_record` commits attention to one subject, filtering other
+changes before tracking/recognition/reconciliation. A successful observed take can
+lock the existing visible track to the cursor-rendered portion through hand
+motion and settling. Absence or a sensory gap discards that lock; a World handle
+cannot recover it. Recognition during focus cannot merge its record into an
+unobserved neighbouring portion. Non-focused discovery resumes after the episode.
+
 `pet/movement/controller.py` shares the existing walking executor between random
 and deliberate goals; `auto_walk` gates only random departures. `WalkDriver`
 still reports actual clamped desktop displacement, with no second pet position.
+Its read-only committed-goal port suppresses incidental cursor/toolbar blockers
+only for the active object episode. Sleep, energy and work blockers retain their
+existing rules; random walking retains ordinary hover/cursor behavior.
 
 `application/object_interaction.py` owns explicit notice, approach, pickup,
 held inspection, recognition, decision, consumption and put-down phases. The
@@ -437,13 +447,30 @@ Changed needs safely lead to refusal/put-down; conflicting evidence restores
 inquiry. Confirmed local absence starts bounded search with existing gaze/walk
 assets. A useful find can end search early; the coordinator owns the sole search
 budget and identified search/find/missing feedback.
+Observed player acquisition before the grasp commits enters `await_return`;
+visible falling/bouncing enters `await_settle`. Settling resumes the same
+interaction with acquired assessments, and actual visual loss enters existing
+bounded search. An accepted return into Aiko's hand retains the interaction but
+uses actual human-handover origin; ground retrieval stays autonomous.
 Identified animation events acquire at source frame 4, finish pickup at pose 8
 and release during reverse frame 4→3. The animator changes no needs.
 `application/object_feedback.py` correlates phase cues and completion receipts.
 Mind/catalogue supplies authored reactions; `ObjectFeedbackPresenter` formats
 known names and uses `ReactionPlayer`'s completion/cancellation acknowledgements.
-Transitions wait for readable cues and required animation/dwell. Ordinary hover
-does not abort consumption, and ambient feedback cannot replace action speech.
+Transitions wait for readable cues and required animation/dwell. Auxiliary cue
+IDs cannot acknowledge phases. One pending aside waits for the phase bubble,
+using the existing speech surface and timers. Ordinary clicks request a bounded
+wait acknowledgement, without normal click/care effects. Hover and other item
+gestures cannot cancel the episode; explicit care/game commands still interrupt
+safely. Ambient feedback cannot replace action speech.
+
+`pet/mind/object_withholding.py` calculates immutable active-time episode decisions.
+The interaction owns the episode and only evaluates currently observed user-held
+custody. `application/object_relationship.py` deduplicates social effects and owns
+the cross-episode loss cooldown. `PetMind` owns temporary irritation; `PetState`
+commits friendship changes through the pure friendship policy. Loss preserves
+care reward history/daily caps, is saved normally, and creates no return bonus.
+Episode/request/cursor state is session-local; no save-schema change is required.
 `application/object_custody.py` commits confirmed acquisition and placement in
 World and memory together, restoring both owners on failure. The interaction
 coordinator retains animation deduplication, cue receipts and phase ordering.

@@ -73,4 +73,56 @@ but no resumed waiting episode. Automated checks do not imply human acceptance.
 
 ## Delivery ledger
 
-Implementation commits and evidence are recorded here as delivery progresses.
+| Commit | Delivered behavior and targeted validation |
+| --- | --- |
+| `3ca01e4` | Accepted plan and architecture link; documentation only |
+| `4b42c60` | Inherited reading-time CI failure corrected: 29 reaction/emote/follow-up/farewell tests, Ruff/Mypy/Pyright; configured timing preserved |
+| `f025019` | Committed intentions across blockers: 7 intention and 11 interaction cases; changed native expectation checked separately; static checks |
+| `abc5248` | Separate identified auxiliary receipts: 12 interaction and 4 presentation cases; static checks |
+| `2968a35` | Selective perception/focus gaze: 30 awareness/tracking/native cases; static checks |
+| `fc5f791` | Hover/click/other-gesture protection and authored wait copy: 47 interaction/catalogue/native cases; static checks |
+| `daba031` | Observed successful target acquisition, stale grasp rejection: 49 focused cases; static checks |
+| `e08e1bf` | Visible cursor tracking, settle/resume, genuine loss/search and actual handover origin: 43 focused cases plus extra retrieval cases; static checks. 31 native/runtime/origin cases also passed in 106.1 s |
+| `f0d906c` | Pure withholding policy, validated JSON, authored copy and canonical state/mind mutations: 34 focused cases; static checks |
+| `971a2b3` | Identified social effects, cooldown, return cue and saved friendship: 34 focused cases including isolated restart; static checks |
+| `697eaed` | Shared movement still respects committed attention despite cursor/toolbar: 30 movement/native cases; static checks |
+| `290a552` | CI correction: reset the two-scale fixture inside smaller desktops between scenarios; targeted native case and Ruff |
+| `8480006` | Protect committed memory from unobserved-neighbour association: 28 awareness/memory/stock/tracking cases; static checks |
+| `137b446` | Preserve assessment learned during a held offer when resuming original investigation: 29 interaction/retrieval cases; static checks |
+| `4edbe49` | CI architecture correction: ordinary contact arbitration belongs to the desktop runtime; GUI stays within its existing composition-root guard. 40 architecture/input/interaction cases and static checks |
+
+Static checks use Ruff 0.13.2, strict Mypy 1.18.2 and Pyright 1.1.414.
+No complete local suite was run during these implementation steps. The final
+combined regression and final CI are recorded below after completion.
+
+CI monitoring found the inherited timing failure at `02ae098`, corrected in
+`4b42c60`. Subsequent runs through `daba031` passed all three jobs. The new
+two-scale fixture at `e08e1bf` exposed an out-of-bounds setup on smaller Linux and
+Windows desktops; it was isolated to that fixture and corrected in `290a552`.
+Older runs before that correction retain their historical failures.
+After the fixture correction, CI exposed the existing 640-line GUI guard
+(642 lines). `4edbe49` moves contact arbitration to the existing runtime owner;
+the guard is unchanged. Final validation uses that corrected owner boundary.
+
+## Final validation and handoff
+
+Code commit `4edbe49` passed all three GitHub jobs in
+[run 38968361032](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38968361032):
+Linux/Xvfb Python 3.11 and 3.13, plus Windows setup/desktop boundaries.
+
+The first final local regression ran 986 tests in 218.553 s and found only that
+already-corrected GUI guard. The corrected final tree passed **986 tests in
+217.982 s** on Windows/Python 3.11. Ruff 0.13.2, strict Mypy 1.18.2 (178 source
+files) and Pyright 1.1.414 pass. The handoff changes only documentation, owner
+docstrings and layout of the same authored JSON records; no gameplay changes
+follow this validation. The final documentation commit also receives PR CI.
+
+The existing isolated starter created two portions under Python 3.14, closed
+normally after 1.2 s, reopened the same temporary save and closed normally again.
+The real save and existing user process were not modified. Automated native
+component checks cover both scales, grab/cancel, gaze, hops, continuation,
+friendship persistence and safe explicit interruption; existing real-timer flows
+remain. No additional long timing test or duplicate edge matrix was added.
+
+The updated [practical checklist](WORLD_SMOKE_TEST.md) is ready. Visual/input
+acceptance by the user remains pending; draft PR #10 stays unmerged.
