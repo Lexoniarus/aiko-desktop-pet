@@ -115,7 +115,7 @@ class EmoteTkTests(unittest.TestCase):
         self.assertFalse(self.is_emote())
         self.assertEqual(self.bubble_text(), "...Oh.")
         self.assertEqual(len(self.pet._overlay_windows()), 2)
-        self.progress(1850)
+        self.progress(reaction.beats[1].duration_ms + 80)
         self.assertTrue(self.is_emote())
         self.assertEqual(len(self.pet._overlay_windows()), 2)
         self.progress(950)
@@ -136,9 +136,9 @@ class EmoteTkTests(unittest.TestCase):
         self.pet._react(reaction, 1700)
         self.progress(750)
         self.assertEqual(self.bubble_text(), "Oh.")
-        self.progress(1850)
+        self.progress(reaction.beats[1].duration_ms + 80)
         self.assertEqual(self.bubble_text(), "...Das hatte ich anders gemeint.")
-        self.progress(2350)
+        self.progress(reaction.beats[2].duration_ms + 80)
         self.assertTrue(self.is_emote())
 
     def test_new_click_preempts_entire_older_reaction(self):

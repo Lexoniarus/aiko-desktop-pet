@@ -42,8 +42,8 @@ class FollowupGuiTests(unittest.TestCase):
             self.app._speech.bubble.winfo_children()[0].winfo_children()[0].cget("text")
         )
 
-    def pass_delay(self):
-        time.sleep(1.86)
+    def pass_delay(self, seconds=None):
+        time.sleep(seconds or (Cue.text("Oh.").duration_ms / 1000 + 0.08))
         self.app.root.update()
 
     def test_short_correction_becomes_second_bubble(self):
@@ -83,7 +83,7 @@ class FollowupGuiTests(unittest.TestCase):
                 "click_right",
             )
         )
-        self.pass_delay()
+        self.pass_delay(1.86)
         self.assertEqual(self.text(), "Eine neue Antwort, die jetzt lesbar bleibt.")
 
     def test_deliberate_click_silence_cancels_pending_followup(self):

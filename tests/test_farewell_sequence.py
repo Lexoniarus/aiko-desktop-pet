@@ -6,6 +6,7 @@ import unittest
 from collections.abc import Callable
 
 from aiko_pet.desktop.farewell import FarewellSequence
+from aiko_pet.pet.mind.reaction_sequence import Cue
 
 
 class FarewellSequenceTests(unittest.TestCase):
@@ -41,13 +42,14 @@ class FarewellSequenceTests(unittest.TestCase):
         self.sequence.begin()
         self.sequence.begin()
         self.assertTrue(self.sequence.active)
-        self.assertEqual(self.delays, [2600])
+        duration = max(2600, Cue.text(FarewellSequence.TEXT).duration_ms)
+        self.assertEqual(self.delays, [duration])
         self.assertEqual(
             self.events,
             [
                 "prepare",
                 "waving-greeting",
-                "say:Bis später. War schön mit dir.:3100",
+                f"say:{FarewellSequence.TEXT}:{duration + 500}",
             ],
         )
         key = self.sequence.pending_timer

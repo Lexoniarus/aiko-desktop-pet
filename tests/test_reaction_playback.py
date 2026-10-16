@@ -112,11 +112,18 @@ class ReactionPlayerTests(unittest.TestCase):
         )
         self.player.play(reaction)
         self.assertEqual(self.actions, [("waiting", 1.625)])
-        self.assertEqual(self.rendered, [("text", "Oh.", 1800)])
+        self.assertEqual(
+            self.rendered, [("text", "Oh.", reaction.beats[0].duration_ms)],
+        )
         token = self.active_token()
-        self.assertEqual(self.scheduler.callbacks[token][0], 1800)
+        self.assertEqual(
+            self.scheduler.callbacks[token][0], reaction.beats[0].duration_ms,
+        )
         self.scheduler.fire(token)
-        self.assertEqual(self.rendered[-1], ("text", "Das war unerwartet.", 1800))
+        self.assertEqual(
+            self.rendered[-1],
+            ("text", "Das war unerwartet.", reaction.beats[1].duration_ms),
+        )
         self.assertIsNotNone(self.player.pending_timer)
         self.assertEqual(self.spoken_count, 2)
 
