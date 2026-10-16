@@ -11,6 +11,23 @@ APPLE = ObjectKnowledge("one", "apple", "food", 100, 0, True, 0, assessed=True)
 
 
 class ObjectIntentionTests(unittest.TestCase):
+    def test_commitment_survives_blocking_carry_and_more_attractive_find(self):
+        planner = ObjectIntentions()
+        pet = PetState(satiety=50)
+        planner.choose((APPLE,), pet, x=0, now=0)
+        other = replace(APPLE, token="other", x=1)
+        carried = replace(APPLE, resting=False, x=400)
+        goal = planner.choose(
+            (carried, other), pet, x=0, now=1, blocked=True, changed=True,
+            committed=APPLE.token, observed=frozenset((other.token,)),
+        )
+        assert goal is not None
+        self.assertEqual((goal.token, goal.x), (APPLE.token, 400))
+        planner.complete(APPLE.token, 2)
+        goal = planner.choose((other,), pet, x=0, now=2, changed=True)
+        assert goal is not None
+        self.assertEqual(goal.token, other.token)
+
     def test_available_finding_replaces_a_stale_goal_and_missing_places_stay_out(self):
         planner = ObjectIntentions()
         pet = PetState(satiety=50)

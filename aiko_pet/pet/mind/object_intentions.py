@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Literal
 
 from ..balance import BALANCE
@@ -55,7 +55,19 @@ class ObjectIntentions:
         self, known: tuple[ObjectKnowledge, ...], state: PetState, *,
         x: float, now: float, blocked: bool = False, changed: bool = False,
         observed: frozenset[str] = frozenset(),
+        committed: str | None = None,
     ) -> ObjectGoal | None:
+        if committed is not None and not state.sleeping:
+            if self.goal is None or self.goal.token != committed:
+                return None
+            subject = next((item for item in known if item.token == committed), None)
+            if subject is not None:
+                self.goal = replace(
+                    self.goal, identity=subject.identity, kind=subject.kind,
+                    x=subject.x, height=subject.height,
+                    observed_at=subject.observed_at,
+                )
+            return self.goal
         if state.sleeping or blocked:
             self.cancel(now)
             return None

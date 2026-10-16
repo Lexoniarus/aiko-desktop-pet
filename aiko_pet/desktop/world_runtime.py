@@ -305,6 +305,7 @@ class DesktopWorldRuntime:
             attentive=not self.state.sleeping and not self._game_open(),
             blocked=blocked,
             held_pose=(self._body_x(), self.width * .4),
+            committed=self.interaction.focus_record,
         )
         observed = {item.token for item in self.awareness.observations}
         visible = [item for item in self.awareness.memory.snapshot()
@@ -336,7 +337,8 @@ class DesktopWorldRuntime:
             return
         if blocked or goal is None:
             self._walk.movement.set_goal(None)
-            if self.interaction.approaching:
+            if (self.interaction.approaching
+                    and self.interaction.focus_record is None):
                 self.interaction.interrupt(lambda: None)
             return
         if (self.interaction.approaching

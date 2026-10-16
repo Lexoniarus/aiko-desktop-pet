@@ -72,6 +72,12 @@ class ObjectInteractionCoordinator:
         return self.phase != "idle"
 
     @property
+    def focus_record(self) -> str | None:
+        """One committed subject; actual loss releases attention to local search."""
+        return (self.memory_id if self.active
+                and self.phase not in ("search", "found", "missing") else None)
+
+    @property
     def approaching(self) -> bool:
         return self.phase in ("notice", "approach")
 

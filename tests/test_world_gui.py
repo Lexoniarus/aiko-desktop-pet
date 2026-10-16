@@ -144,7 +144,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(self.app._world.awareness.memory.snapshot(), ())
         self.assertEqual(self.app._world.world.snapshot().objects, ())
 
-    def test_observed_alternative_survives_completion_of_the_old_approach(self):
+    def test_observed_alternative_cannot_replace_committed_approach(self):
         world = self.app._world
         self.app._place_x(world._track().left)
         old = world.awareness.memory.observe_find(ObjectObservation(
@@ -165,10 +165,11 @@ class WorldGuiTests(unittest.TestCase):
         self.complete_feedback()
         world.now = 2.8
         world.update(time.monotonic())
-        self.assertEqual(world.interaction.memory_id, known.token)
+        self.assertEqual(world.interaction.memory_id, old)
         goal = world.awareness.intentions.goal
         assert goal is not None
-        self.assertEqual(goal.token, known.token)
+        self.assertEqual(goal.token, old)
+        self.assertNotEqual(known.token, old)
 
     def test_absent_remembered_instance_requires_attentive_local_search(self):
         world = self.app._world

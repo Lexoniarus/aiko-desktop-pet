@@ -78,6 +78,7 @@ class ObjectAwareness:
         self, world: WorldSnapshot, state: PetState, *, now: float,
         x: float, height: float, width: float, attentive: bool, blocked: bool,
         held_pose: tuple[float, float] | None = None,
+        committed: str | None = None,
     ) -> ObjectGoal | None:
         definitions = {item.definition_id: item for item in world.definitions}
         candidates: list[ObjectCandidate] = []
@@ -161,5 +162,6 @@ class ObjectAwareness:
         self._world_revision = world.revision
         return self.intentions.choose(self.memory.snapshot(), state, x=x,
                                       now=now, blocked=blocked, changed=changed,
+                                      committed=committed,
                                       observed=frozenset(item.token
                                                          for item in observations))
