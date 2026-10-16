@@ -10,6 +10,7 @@ import math
 from typing import Callable
 
 from ..pet.content import GERMAN_TEXT
+from ..pet.mind.reaction_sequence import Cue
 
 
 class FarewellSequence:
@@ -27,9 +28,11 @@ class FarewellSequence:
         say: Callable[[str, int], None],
         finish: Callable[[], None],
         seconds: float,
+        wording: Callable[[], str] | None = None,
     ) -> None:
         if not math.isfinite(seconds) or seconds <= 0:
             raise ValueError("Farewell clip must have a positive duration")
+        self._wording = wording or (lambda: self.TEXT)
         self._schedule = schedule
         self._cancel = cancel
         self._prepare = prepare
@@ -55,10 +58,12 @@ class FarewellSequence:
             return
         self._active = True
         try:
+            text = self._wording()
+            self.duration_ms = max(self.duration_ms, Cue.text(text).duration_ms)
             self._prepare()
             self._animate()
             # Teardown removes the bubble; never let its own timer hide it first.
-            self._say(self.TEXT, self.duration_ms + 500)
+            self._say(text, self.duration_ms + 500)
             self._pending_timer = self._schedule(
                 self.duration_ms,
                 self._complete,

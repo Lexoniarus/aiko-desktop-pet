@@ -1,87 +1,87 @@
-"""Sequential, mutually exclusive visual beats for Aiko's reactions.
-
-An emote is a moment in a reaction, never a second concurrent overlay.
-No AI or sprite synthesis is used; all cue names refer to verified CC0 PNGs.
-"""
+"""Validated, sequential text, emote and pause beats for authored reactions."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 from ..balance import BALANCE
+from ..catalog_validation import object_fields
 
-CUE_KINDS = frozenset({"emote", "text"})
-EMOTES = frozenset(
-    {
-        "alert",
-        "anger",
-        "cloud",
-        "drops",
-        "exclamation",
-        "faceHappy",
-        "faceSad",
-        "heart",
-        "idea",
-        "laugh",
-        "music",
-        "question",
-        "sleeps",
-        "star",
-        "swirl",
-    }
-)
+CUE_KINDS = frozenset({"emote", "text", "pause"})
+EMOTES = frozenset({
+    "alert",
+    "anger",
+    "cloud",
+    "drops",
+    "exclamation",
+    "faceHappy",
+    "faceSad",
+    "heart",
+    "idea",
+    "laugh",
+    "music",
+    "question",
+    "sleeps",
+    "star",
+    "swirl",
+})
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Cue:
-    """One screen occupant with a bounded lifetime."""
+    """One occupant of the speech surface, or a deliberate silent pause."""
 
-    kind: Literal["emote", "text"]
+    kind: Literal["emote", "text", "pause"]
     content: str
     duration_ms: int
 
     def __post_init__(self) -> None:
-        if self.kind not in CUE_KINDS or not self.content:
-            raise ValueError("Invalid cue")
+        if self.kind not in CUE_KINDS:
+            raise ValueError("Invalid cue kind")
+        if type(self.duration_ms) is not int or not 250 <= self.duration_ms <= 8000:
+            raise ValueError("Cue duration out of range")
+        if self.kind == "text" and not 1 <= len(self.content.strip()) <= 125:
+            raise ValueError("Invalid dialogue text")
         if self.kind == "emote" and self.content not in EMOTES:
             raise ValueError("Missing or unsupported emote")
-        if not 250 <= self.duration_ms <= 8000:
-            raise ValueError("Cue duration out of range")
+        if self.kind == "pause" and self.content:
+            raise ValueError("Pause cannot contain text")
 
-
-def compose_cues(
-    text: str,
-    *,
-    before: str | None = None,
-    followup: str | None = None,
-    after: str | None = None,
-    minimum_text_ms: int = BALANCE.integer("dialogue", "minimum_text_ms"),
-) -> tuple[Cue, ...]:
-    """Produce one coherent sequence, never overlapping emote and text.
-
-    The optional concluding emote comes after every text fragment. Durations
-    are deliberately modest: Aiko should not dominate the desktop.
-    """
-    if not text.strip():
-        raise ValueError("Reaction must include speech")
-    cues: list[Cue] = []
-    if before is not None:
-        cues.append(
-            Cue("emote", before, BALANCE.integer("dialogue", "before_emote_ms"))
-        )
-    for phrase in (text, followup):
-        if phrase:
-            # Readability scales with length, but one line doesn't stall forever.
-            reading_ms = min(
+    @classmethod
+    def text(cls, content: str) -> Cue:
+        return cls(
+            "text",
+            content,
+            min(
                 BALANCE.integer("dialogue", "maximum_text_ms"),
                 max(
-                    minimum_text_ms,
-                    len(phrase)
+                    BALANCE.integer("dialogue", "minimum_text_ms"),
+                    len(content)
                     * BALANCE.integer("dialogue", "reading_ms_per_character"),
                 ),
-            )
-            cues.append(Cue("text", phrase, reading_ms))
-    if after is not None:
-        cues.append(Cue("emote", after, BALANCE.integer("dialogue", "after_emote_ms")))
-    return tuple(cues)
+            ),
+        )
+
+    @classmethod
+    def parse(cls, raw: Any) -> Cue:
+        data = object_fields(
+            raw, ("kind",), optional=("content", "duration_ms"), context="dialogue beat"
+        )
+        kind = data["kind"]
+        content = data.get("content", "")
+        if not isinstance(content, str):
+            raise ValueError("Cue content must be text")
+        if kind == "text":
+            if "duration_ms" in data:
+                raise ValueError("Text duration is derived from its length")
+            return cls.text(content)
+        if kind not in ("emote", "pause"):
+            raise ValueError("Invalid cue kind")
+        duration = data.get(
+            "duration_ms",
+            BALANCE.integer("dialogue", "emote_ms" if kind == "emote" else "pause_ms"),
+        )
+        if type(duration) is not int:
+            raise ValueError("Invalid cue duration")
+        return cls(kind, content, duration)

@@ -12,213 +12,230 @@ from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
 from string import Formatter
-from typing import Any
+from typing import Any, Literal
 
 from ..balance import BALANCE
 from ..catalog_validation import load_json, object_fields
 from ..routine import TimeContext
+from .dialogue_context import DialogueContext, FriendshipStage
 from .dialogue_events import DIALOGUE_EVENTS
-from .reaction_sequence import EMOTES
+from .reaction_sequence import Cue
 
 CATALOGUE = Path(__file__).resolve().parents[2] / "data" / "dialogues.de.json"
-ANIMATIONS = frozenset(
-    {
-        "idle",
-        "waiting",
-        "review",
-        "failed",
-        "waving",
-        "waving-greeting",
-        "jumping",
-        "eat",
-        "petting",
-    }
-)
-EMOTIONS = frozenset(
-    {
-        "asleep",
-        "irritated",
-        "tired",
-        "hungry",
-        "withdrawn",
-        "warm",
-        "playful",
-        "calm",
-        "lonely",
-        "seeking_affection",
-    }
-)
-PERIODS = frozenset(
-    {
-        "night",
-        "breakfast",
-        "quiet",
-        "lunch",
-        "free",
-        "dinner",
-        "evening",
-    }
-)
+ANIMATIONS = frozenset({
+    "idle",
+    "waiting",
+    "review",
+    "failed",
+    "waving",
+    "waving-greeting",
+    "jumping",
+    "eat",
+    "petting",
+})
+EMOTIONS = frozenset({
+    "asleep",
+    "irritated",
+    "tired",
+    "hungry",
+    "withdrawn",
+    "warm",
+    "playful",
+    "calm",
+    "lonely",
+    "seeking_affection",
+})
+PERIODS = frozenset({
+    "night",
+    "breakfast",
+    "quiet",
+    "lunch",
+    "free",
+    "dinner",
+    "evening",
+})
 
 
 @dataclass(frozen=True)
 class Line:
     id: str
     event: str
-    text: str
+    beats: tuple[Cue, ...]
     animation: str
     moods: tuple[str, ...]
     periods: tuple[str, ...]
     weekdays: tuple[int, ...]
-    weight: int
-    cooldown_seconds: float
-    followup_text: str | None = None
-    followup_delay_ms: int = BALANCE.integer("dialogue", "default_followup_delay_ms")
-    emote_before: str | None = None
-    emote_after: str | None = None
+    weight: int = 1
+    cooldown_seconds: float = 120
+    stages: tuple[FriendshipStage, ...] = ()
+    needs: frozenset[str] = frozenset()
+    presentation: Literal["short", "story"] = "short"
+    requires_present: bool = False
+
+    @property
+    def text(self) -> str:
+        return next(beat.content for beat in self.beats if beat.kind == "text")
 
     @classmethod
     def parse(cls, raw: Any) -> Line:
-        if not isinstance(raw, dict):
-            raise ValueError("A dialogue line must be an object")
-        required = ("id", "event", "text", "animation", "moods", "periods", "weekdays")
-        object_fields(
+        data = object_fields(
             raw,
-            required,
+            ("id", "event", "beats", "animation", "moods", "periods", "weekdays"),
             optional=(
                 "weight",
                 "cooldown_seconds",
-                "followup_text",
-                "followup_delay_ms",
-                "emote_before",
-                "emote_after",
+                "stages",
+                "needs",
+                "presentation",
+                "requires_present",
             ),
             context="dialogue line",
         )
-        if any(key not in raw for key in required):
-            raise ValueError("Incomplete dialogue line")
-        for key in ("id", "event", "text", "animation"):
-            if not isinstance(raw[key], str) or not raw[key].strip():
+        for key in ("id", "event", "animation"):
+            if not isinstance(data[key], str) or not data[key].strip():
                 raise ValueError(f"Invalid dialogue {key}")
-        if not 1 <= len(raw["text"]) <= 125:
-            raise ValueError("Dialogue line is too long")
-        if raw["animation"] not in ANIMATIONS:
-            raise ValueError("No matching physical sprite animation")
-        if raw["event"] not in DIALOGUE_EVENTS:
-            raise ValueError(f"Unknown dialogue event: {raw['event']}")
-        for key in ("moods", "periods", "weekdays"):
-            if not isinstance(raw[key], list):
+        if data["event"] not in DIALOGUE_EVENTS or data["animation"] not in ANIMATIONS:
+            raise ValueError("Unknown dialogue event or animation")
+        for key, allowed in (
+            ("moods", EMOTIONS),
+            ("periods", PERIODS),
+            ("stages", frozenset(FriendshipStage)),
+            ("needs", EMOTIONS),
+        ):
+            values = data.get(key, [])
+            if not isinstance(values, list) or any(
+                not isinstance(value, str) or value not in allowed for value in values
+            ):
                 raise ValueError(f"Invalid dialogue {key}")
-        moods, periods, weekdays = raw["moods"], raw["periods"], raw["weekdays"]
-        if any(not isinstance(m, str) or m not in EMOTIONS for m in moods):
-            raise ValueError("Unknown emotion")
-        if any(not isinstance(p, str) or p not in PERIODS for p in periods):
-            raise ValueError("Unknown day period")
-        if any(type(day) is not int or not 0 <= day <= 6 for day in weekdays):
-            raise ValueError("Invalid weekday")
-        weight = raw.get("weight", BALANCE.integer("dialogue", "default_weight"))
-        cooldown = raw.get(
+        days = data["weekdays"]
+        if not isinstance(days, list) or any(
+            type(day) is not int or not 0 <= day <= 6 for day in days
+        ):
+            raise ValueError("Invalid weekdays")
+        raw_beats = data["beats"]
+        if not isinstance(raw_beats, list) or not 1 <= len(raw_beats) <= 16:
+            raise ValueError("Invalid dialogue beats")
+        beats = tuple(Cue.parse(beat) for beat in raw_beats)
+        texts = [beat.content for beat in beats if beat.kind == "text"]
+        presentation = data.get("presentation", "short")
+        if presentation not in ("short", "story"):
+            raise ValueError("Invalid presentation")
+        if not 1 <= len(texts) <= (5 if presentation == "story" else 2):
+            raise ValueError("Invalid number of speech bubbles")
+        for phrase in texts:
+            try:
+                fields = list(Formatter().parse(phrase))
+            except ValueError as error:
+                raise ValueError("Invalid dialogue template") from error
+            for _, field, spec, conversion in fields:
+                if field is not None and (
+                    not data["event"].startswith("object_")
+                    or field != "item"
+                    or spec
+                    or conversion
+                ):
+                    raise ValueError("Invalid dialogue placeholder")
+        weight = data.get("weight", BALANCE.integer("dialogue", "default_weight"))
+        cooldown = data.get(
             "cooldown_seconds", BALANCE.integer("dialogue", "default_cooldown_seconds")
         )
         if type(weight) is not int or not 1 <= weight <= 10:
-            raise ValueError("Invalid line weight")
+            raise ValueError("Invalid dialogue weight")
         if (
             type(cooldown) not in (int, float)
             or not math.isfinite(cooldown)
             or not 0 <= cooldown <= 86400
         ):
-            raise ValueError("Invalid cooldown")
-        followup = raw.get("followup_text")
-        delay = raw.get(
-            "followup_delay_ms",
-            BALANCE.integer("dialogue", "default_followup_delay_ms"),
-        )
-        if followup is not None and (
-            not isinstance(followup, str) or not 1 <= len(followup) <= 125
-        ):
-            raise ValueError("Invalid follow-up text")
-        if raw["event"].startswith("object_"):
-            for phrase in (raw["text"], followup):
-                for _, field, spec, conversion in Formatter().parse(phrase or ""):
-                    if field is not None and (field != "item" or spec or conversion):
-                        raise ValueError("Invalid object dialogue placeholder")
-        if type(delay) is not int or not 600 <= delay <= 2600:
-            raise ValueError("Invalid follow-up timing")
-        before = raw.get("emote_before")
-        after = raw.get("emote_after")
-        if any(
-            emote is not None and (not isinstance(emote, str) or emote not in EMOTES)
-            for emote in (before, after)
-        ):
-            raise ValueError("Unknown or unavailable emote")
+            raise ValueError("Invalid dialogue cooldown")
+        present = data.get("requires_present", False)
+        if type(present) is not bool:
+            raise ValueError("Invalid presence filter")
         return cls(
-            id=raw["id"],
-            event=raw["event"],
-            text=raw["text"],
-            animation=raw["animation"],
-            moods=tuple(moods),
-            periods=tuple(periods),
-            weekdays=tuple(weekdays),
-            weight=weight,
-            cooldown_seconds=float(cooldown),
-            followup_text=followup,
-            followup_delay_ms=delay,
-            emote_before=before,
-            emote_after=after,
+            data["id"],
+            data["event"],
+            beats,
+            data["animation"],
+            tuple(data["moods"]),
+            tuple(data["periods"]),
+            tuple(days),
+            weight,
+            float(cooldown),
+            tuple(FriendshipStage(s) for s in data.get("stages", [])),
+            frozenset(data.get("needs", [])),
+            presentation,
+            present,
         )
 
-    def matches(self, emotion: str, context: TimeContext) -> bool:
+    def matches(
+        self,
+        emotion: str,
+        context: TimeContext,
+        dialogue: DialogueContext | None = None,
+    ) -> bool:
         return (
             (not self.moods or emotion in self.moods)
             and (not self.periods or context.period in self.periods)
             and (not self.weekdays or context.local.weekday() in self.weekdays)
+            and (
+                not self.stages
+                or dialogue is not None
+                and dialogue.stage in self.stages
+            )
+            and (
+                not self.needs or dialogue is not None and self.needs <= dialogue.states
+            )
+            and (
+                not self.requires_present
+                or dialogue is not None
+                and dialogue.present is True
+            )
         )
 
+    def specificity(self) -> int:
+        return bool(self.moods) + bool(self.stages) + len(self.needs)
+
     def score(self, emotion: str, context: TimeContext) -> int:
-        """Relevant, specific entries win more often than generic fallbacks."""
         return self.weight * (
-            1
-            + 2 * bool(self.moods and emotion in self.moods)
-            + 2 * bool(self.periods and context.period in self.periods)
-            + 2 * bool(self.weekdays and context.local.weekday() in self.weekdays)
+            1 + 2 * bool(self.moods) + 2 * bool(self.periods) + 2 * bool(self.weekdays)
         )
 
 
 @dataclass(frozen=True)
 class Reaction:
-    """An actual available animation plus a short German speech bubble."""
+    """An already selected, immutable sequence; playback never reselects text."""
 
     line_id: str
-    text: str
+    beats: tuple[Cue, ...]
     animation: str
     event: str
-    followup_text: str | None = None
-    followup_delay_ms: int = BALANCE.integer("dialogue", "default_followup_delay_ms")
-    emote_before: str | None = None
-    emote_after: str | None = None
+    presentation: Literal["short", "story"] = "short"
+
+    @property
+    def text(self) -> str:
+        return next(beat.content for beat in self.beats if beat.kind == "text")
+
+    @classmethod
+    def spoken(cls, line_id: str, text: str, animation: str, event: str) -> Reaction:
+        return cls(line_id, (Cue.text(text),), animation, event)
 
 
 class DialogueBook:
-    """Filtered weighted rotation with no immediate repeats or rapid spam."""
+    """Context-filtered rotation; no fallback can cross a relationship boundary."""
 
     def __init__(self, lines: tuple[Line, ...], *, rng: random.Random | None = None):
-        if len({line.id for line in lines}) != len(lines):
-            raise ValueError("Duplicate dialogue IDs")
-        if not lines:
-            raise ValueError("Empty dialogue book")
+        if not lines or len({line.id for line in lines}) != len(lines):
+            raise ValueError("Empty dialogue book or duplicate dialogue IDs")
         self.lines = lines
         self.rng = rng or random.Random()
         self.last_used: dict[str, float] = {}
         self.recent: deque[str] = deque(
             maxlen=BALANCE.integer("dialogue", "recent_line_history")
         )
+        self._story_used: set[str] = set()
 
     @classmethod
     def from_file(
-        cls,
-        file: Path = CATALOGUE,
-        *,
-        rng: random.Random | None = None,
+        cls, file: Path = CATALOGUE, *, rng: random.Random | None = None
     ) -> DialogueBook:
         data = object_fields(
             load_json(file),
@@ -227,12 +244,12 @@ class DialogueBook:
         )
         if (
             type(data["catalogue_version"]) is not int
-            or data.get("catalogue_version") != 1
-            or data.get("language") != "de"
+            or data["catalogue_version"] != 2
+            or data["language"] != "de"
         ):
             raise ValueError("Unsupported dialogue catalogue version")
-        if not isinstance(data.get("lines"), list):
-            raise ValueError("Dialogue book has no lines")
+        if not isinstance(data["lines"], list):
+            raise ValueError("Missing dialogue lines")
         return cls(tuple(Line.parse(item) for item in data["lines"]), rng=rng)
 
     def choose(
@@ -241,41 +258,49 @@ class DialogueBook:
         emotion: str,
         context: TimeContext,
         now: float,
+        *,
+        dialogue: DialogueContext | None = None,
+        presentation: Literal["short", "story"] | None = None,
     ) -> Reaction | None:
         candidates = [
             line
             for line in self.lines
-            if line.event == event and line.matches(emotion, context)
+            if line.event == event
+            and line.matches(emotion, context, dialogue)
+            and (presentation is None or line.presentation == presentation)
         ]
         if not candidates:
             return None
+        specificity = max(line.specificity() for line in candidates)
+        candidates = [line for line in candidates if line.specificity() == specificity]
+        if candidates[0].presentation == "story":
+            unseen = [line for line in candidates if line.id not in self._story_used]
+            if not unseen:
+                self._story_used.difference_update(line.id for line in candidates)
+                unseen = candidates
+            candidates = unseen
         fresh = [
             line
             for line in candidates
             if line.id not in self.recent
-            and (
-                now - self.last_used.get(line.id, float("-inf"))
-                >= line.cooldown_seconds
-            )
+            and now - self.last_used.get(line.id, float("-inf"))
+            >= line.cooldown_seconds
         ]
         if not fresh:
             fresh = [line for line in candidates if line.id not in self.recent]
         if not fresh:
-            last_used_id = self.recent[-1] if self.recent else ""
-            fresh = [line for line in candidates if line.id != last_used_id]
+            fresh = [
+                line
+                for line in candidates
+                if not self.recent or line.id != self.recent[-1]
+            ]
         if not fresh:
             fresh = candidates
-        weights = [line.score(emotion, context) for line in fresh]
-        line = self.rng.choices(fresh, weights=weights, k=1)[0]
+        line = self.rng.choices(
+            fresh, weights=[x.score(emotion, context) for x in fresh], k=1
+        )[0]
         self.last_used[line.id] = now
         self.recent.append(line.id)
-        return Reaction(
-            line.id,
-            line.text,
-            line.animation,
-            event,
-            line.followup_text,
-            line.followup_delay_ms,
-            line.emote_before,
-            line.emote_after,
-        )
+        if line.presentation == "story":
+            self._story_used.add(line.id)
+        return Reaction(line.id, line.beats, line.animation, event, line.presentation)

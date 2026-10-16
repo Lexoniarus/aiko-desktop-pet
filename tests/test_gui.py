@@ -370,7 +370,12 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertTrue(self.toolbar.visible)
         self.assertIsNone(self.app._activity.pending_computer_line)
         self.assertTrue(
-            self.app.mind.book.recent[-1].startswith("computer_effort_rising-")
+            next(
+                line
+                for line in self.app.mind.book.lines
+                if line.id == self.app.mind.book.recent[-1]
+            ).event
+            == "computer_effort_rising"
         )
         self.assertIsNotNone(self.app._speech.bubble)
 

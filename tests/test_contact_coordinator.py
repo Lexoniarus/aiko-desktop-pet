@@ -10,6 +10,7 @@ from aiko_pet.application.contact import ContactCoordinator, ContactPorts
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.catalog import Reaction
+from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 
@@ -28,7 +29,9 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.greet_enabled = True
         self.context = context_at(datetime(2026, 10, 12, 13).timestamp())
         self.contact = ContactCoordinator(
-            state=self.state, mind=self.mind, adaptive=self.adaptive,
+            state=self.state,
+            mind=self.mind,
+            adaptive=self.adaptive,
             ports=ContactPorts(
                 context=lambda: self.context,
                 toolbar_hidden=lambda: True,
@@ -54,10 +57,7 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.assertEqual(self.reactions, [(None, 2800)])
 
     def test_click_preserves_mind_event_and_adaptive_contact(self) -> None:
-        reaction = Reaction(
-            line_id="test-click", event="click_left",
-            text="Hallo", animation="idle",
-        )
+        reaction = Reaction("test-click", (Cue.text("Hallo"),), "idle", "click_left")
         with (
             patch.object(self.mind, "return_to_pet", return_value=None),
             patch.object(self.mind, "click", return_value=reaction) as choose,
@@ -76,15 +76,20 @@ class ContactCoordinatorTests(unittest.TestCase):
     def test_three_clicks_suppress_duplicated_emote(self) -> None:
         self.mind.clicks.extend((1.0, 2.0, 3.0))
         reaction = Reaction(
-            line_id="test-click", event="click_left", text="Hallo",
-            animation="idle", emote_before="heart",
+            "test-click",
+            (
+                Cue("emote", "heart", 700),
+                Cue.text("Hallo"),
+            ),
+            "idle",
+            "click_left",
         )
         self.contact.react_to_click(reaction)
         chosen, duration = self.reactions[-1]
         assert chosen is not None
-        self.assertIsNone(chosen.emote_before)
+        self.assertEqual(chosen.beats[0].kind, "text")
         self.assertEqual(duration, 2800)
-        self.assertEqual(reaction.emote_before, "heart")
+        self.assertEqual(reaction.beats[0].content, "heart")
 
     def test_greeting_is_guarded_by_attention_policy(self) -> None:
         self.greet_enabled = False

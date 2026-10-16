@@ -138,6 +138,7 @@ class DesktopPet:
             adaptive=self.adaptive, monitor=self.activity_monitor,
             clock=active_clock,
             callbacks=ActivityCallbacks(
+                speech_busy=lambda: self._reaction_player.pending_timer is not None,
                 read_idle_seconds=idle_seconds_windows,
                 start_review=lambda now: self._start_action(
                     "review", 1.4, started_at=now,
@@ -202,6 +203,7 @@ class DesktopPet:
             transparent_color=MAGENTA,
         )
         self._reaction_player = ReactionPlayer(
+            hide_speech=self._speech.hide,
             schedule=self.root.after,
             cancel_timer=self.root.after_cancel,
             display_emote=self._speech.show_emote,
@@ -254,6 +256,8 @@ class DesktopPet:
                 move_speech=self._speech.move,
                 restore_stack=self._overlay_stack.restore,
                 always_on_top=lambda: self.settings.always_on_top,
+                game_dialogue=lambda event: self.mind.contact_text(
+                    event, self.state, self.context, time.monotonic()),
                 game_speech=GameSpeech(
                     self._reaction_player, self._speech,
                     self._mark_reaction_spoken,
@@ -277,6 +281,8 @@ class DesktopPet:
                 hide_speech=lambda: self._speech.hide(),
                 react=lambda reaction, duration: self._react(reaction, duration),
                 should_greet=lambda now: self._attention.should_greet(now),
+                story_active=lambda: self._reaction_player.story_active,
+                advance_story=self._reaction_player.advance_story,
             ),
         )
         self._input = DesktopInput(
@@ -391,6 +397,8 @@ class DesktopPet:
             stop_animation=self._animated.close,
         )
         self._farewell = FarewellSequence(
+            wording=lambda: self.mind.contact_text(
+                "farewell", self.state, self.context, time.monotonic()),
             schedule=self.root.after, cancel=self.root.after_cancel,
             prepare=self._lifecycle.prepare_farewell,
             animate=lambda: self._start_action("waving-greeting", 0),
@@ -404,7 +412,8 @@ class DesktopPet:
             walk=self._walk, visual=self._visual, animated=self._animated,
             playback=self._action_playback, inputs=self._activity.session_inputs,
             game_open=lambda: self._hover.game_open,
-            controls_active=lambda: self._hover.interaction_active,
+            controls_active=lambda: (self._hover.interaction_active
+                                     or self._reaction_player.story_active),
             present_feedback=ObjectFeedbackPresenter(
                 self._reaction_player, self._item_catalog,
             ).show,

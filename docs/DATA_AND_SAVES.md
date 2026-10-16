@@ -6,8 +6,8 @@
 | --- | --- |
 | `aiko_pet/data/balance.json` | Initial values, care effects, hunger/digestion, fun/mood, friendship, movement, attention and adaptive behaviour parameters |
 | `aiko_pet/data/food_catalog.json` | Food IDs, display names, nutrition, categories and menu order |
-| `aiko_pet/data/texts.de.json` | UI wording, status templates, care fallback text, game labels and farewell |
-| `aiko_pet/data/dialogues.de.json` | Authored character dialogue, semantic events, filters, weights and cooldowns |
+| `aiko_pet/data/texts.de.json` | UI wording, status templates, care fallback text, game labels and emergency farewell fallback |
+| `aiko_pet/data/dialogues.de.json` | Version-2 character sequences, relationship/state filters, stories and rotation |
 | `aiko_pet/data/routine.de.json` | Weekday/weekend schedules, activity labels and meal windows |
 | `aiko_pet/assets/animation_timing.json` | Frame holds and playback sequences |
 | `aiko_pet/assets/items/items.json` | Item images, icons and hand pivots |
@@ -44,6 +44,25 @@ corresponding typed consumer and its contract in `pet/balance_contract.py`,
 `pet/text_contract.py` or `pet/mind/dialogue_events.py`. Changing an existing
 value or sentence does not require another Python copy of that value.
 Run the resource validation and functional tests before sharing changed data.
+
+### Character copy
+
+Spoken character game reactions live in the dialogue catalogue; countdowns,
+player-facing labels, status displays and emergency care fallback wording stay
+in the text catalogue. Catalogue version 2 replaces the former first-text,
+follow-up and before/after-emote fields with one `beats` list. Each text beat
+has 1–125 characters and derived reading time; emote/pause beats may specify a
+bounded duration. Short reactions have at most two text beats, stories at most
+five. Named filters use supported `stages`, `moods`, simultaneous `needs`, day
+periods and weekdays; `requires_present` requires observed or direct contact.
+Item placeholders are allowed only on object events and only as `{item}`.
+Object formatting applies to every text beat, never to an emote or a pause.
+
+The editorial voice is quiet, dry, curious and sometimes cheeky. Clear wishes,
+charming competitiveness and sincere affection replace repeated denial of
+positive feelings. Relationship stages describe growing familiarity, not new
+care rules. Neither resource migration changes the version-one save schema;
+unfinished stories and rotation history remain session-local.
 
 ## Where progress is stored
 

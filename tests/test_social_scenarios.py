@@ -388,20 +388,20 @@ class CatalogueContractTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     Line.parse(data)
 
-    def test_all_followup_text_is_short_and_no_fiction_or_hardware(self):
-        lines = DialogueBook.from_file().lines
-        for line in lines:
-            if not line.followup_text:
-                continue
-            self.assertLessEqual(len(line.followup_text), 125)
-            for forbidden in ("Academy", "Kobe", "GPU", "CPU", "RAM"):
-                self.assertIsNone(
-                    re.search(
-                        r"\b" + re.escape(forbidden) + r"\b",
-                        line.followup_text,
-                        flags=re.IGNORECASE,
+    def test_all_sequence_text_is_short_and_no_fiction_or_hardware(self):
+        for line in DialogueBook.from_file().lines:
+            for beat in line.beats:
+                if beat.kind != "text":
+                    continue
+                self.assertLessEqual(len(beat.content), 125)
+                for forbidden in ("Academy", "Kobe", "GPU", "CPU", "RAM"):
+                    self.assertIsNone(
+                        re.search(
+                            r"\b" + re.escape(forbidden) + r"\b",
+                            beat.content,
+                            flags=re.IGNORECASE,
+                        )
                     )
-                )
 
     def test_all_new_events_have_actual_authored_lines(self):
         book = DialogueBook.from_file()

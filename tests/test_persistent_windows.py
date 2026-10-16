@@ -41,7 +41,8 @@ class PersistentWindowTests(unittest.TestCase):
     def outside(self) -> ExitStack:
         stack = ExitStack()
         for name, value in (
-            ("winfo_pointerx", -999), ("winfo_pointery", -999),
+            ("winfo_pointerx", -999),
+            ("winfo_pointery", -999),
             ("winfo_containing", None),
         ):
             stack.enter_context(patch.object(self.pet.root, name, return_value=value))
@@ -87,13 +88,14 @@ class PersistentWindowTests(unittest.TestCase):
             bubble = self.pet._speech.bubble
             assert bubble is not None
             labels = [
-                child for frame in bubble.winfo_children()
+                child
+                for frame in bubble.winfo_children()
                 for child in frame.winfo_children()
                 if isinstance(child, tk.Label)
             ]
-            self.assertTrue(any(
-                "Tschüss" in str(label.cget("text")) for label in labels
-            ))
+            self.assertTrue(
+                any("Bis später" in str(label.cget("text")) for label in labels)
+            )
             self.pet._farewell.begin()
             self.assertEqual(len(scheduled), 1)
             finish = scheduled[0][1]
@@ -143,8 +145,9 @@ class PersistentWindowTests(unittest.TestCase):
         self.pet._save_hover_position(25, 35)
         bar.pin_button.invoke()
         self.assertFalse(self.pet.settings.always_on_top)
-        self.assertEqual((self.pet.settings.toolbar_x, self.pet.settings.toolbar_y),
-                         (25, 35))
+        self.assertEqual(
+            (self.pet.settings.toolbar_x, self.pet.settings.toolbar_y), (25, 35)
+        )
         self.pet.reset_toolbar_position()
         self.assertTrue(self.pet._hover.keep_open)
         self.assertIsNone(self.pet.settings.toolbar_x)
@@ -175,8 +178,9 @@ class PersistentWindowTests(unittest.TestCase):
         window.scale_button.invoke()
         self.pet._hover.refresh_settings()
         self.pet.root.update_idletasks()
-        self.assertEqual((window.window.winfo_rootx(), window.window.winfo_rooty()),
-                         (80, 60))
+        self.assertEqual(
+            (window.window.winfo_rootx(), window.window.winfo_rooty()), (80, 60)
+        )
         window.close()
         replacement = self.settings()
         self.assertEqual(replacement.position, (80, 60))
@@ -198,10 +202,16 @@ class PersistentWindowTests(unittest.TestCase):
         self.settings()
         self.pet._action_playback.until = 0
         self.pet._attention.last_spoken = -1000
-        self.pet.application.dispatch(NotificationCommand(IncomingNotification(
-            event_id="persistent-windows", source="test.browser",
-            title="Kalender", message="Termin gleich.",
-        )))
+        self.pet.application.dispatch(
+            NotificationCommand(
+                IncomingNotification(
+                    event_id="persistent-windows",
+                    source="test.browser",
+                    title="Kalender",
+                    message="Termin gleich.",
+                )
+            )
+        )
         with self.outside(), patch.object(self.pet._speech, "show_text") as show:
             self.pet._present_pending_notification(time.monotonic())
         show.assert_called_once_with("Kalender: Termin gleich.", 3500)

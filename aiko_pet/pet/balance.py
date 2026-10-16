@@ -43,9 +43,10 @@ def parse_balance(raw: Any) -> BalanceCatalog:
                 or not 0 <= value <= 10_000_000
             ):
                 raise ValueError(f"Invalid balance.{section}.{key}")
-            normalized_weight = (
-                section == "mood" and key.endswith("_weight")
-            ) or (section, key) == ("food_activity", "short_window_weight")
+            normalized_weight = (section == "mood" and key.endswith("_weight")) or (
+                section,
+                key,
+            ) == ("food_activity", "short_window_weight")
             if ("fraction" in key or normalized_weight) and value > 1:
                 raise ValueError(f"balance.{section}.{key} must be within 0..1")
             if key.endswith(("_probability", "_effort", "_decay")) and value > 1:
@@ -101,14 +102,13 @@ def parse_balance(raw: Any) -> BalanceCatalog:
     if (
         not 1 <= dialogue["default_weight"] <= 10
         or dialogue["default_cooldown_seconds"] > 86400
-        or not 600 <= dialogue["default_followup_delay_ms"] <= 2600
         or dialogue["recent_line_history"] < 1
         or not 250 <= dialogue["minimum_text_ms"] <= dialogue["maximum_text_ms"] <= 8000
         or any(
             not 250 <= dialogue[key] <= 8000
             for key in (
-                "before_emote_ms",
-                "after_emote_ms",
+                "emote_ms",
+                "pause_ms",
                 "contact_reaction_ms",
                 "greeting_reaction_ms",
             )

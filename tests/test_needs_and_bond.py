@@ -277,14 +277,14 @@ class SocialDialogueTests(unittest.TestCase):
                 ).result,
                 self.mind.observe_care(state, self.context, 62),
             ),
-            "talk_lonely",
+            "talk",
         )
 
     def test_new_friendship_dialogues_are_conditioned(self):
         state = PetState(friendship=88, social=78, mood=74)
         self.assertEqual(
             require_reaction(self.mind.click("left", state, self.context, 40)).event,
-            "click_close",
+            "click_left",
         )
         self.assertEqual(
             self.mind.care_event(
@@ -295,7 +295,7 @@ class SocialDialogueTests(unittest.TestCase):
                 ).result,
                 self.mind.observe_care(state, self.context, 100),
             ),
-            "pet_close",
+            "pet",
         )
         self.assertEqual(
             self.mind.care_event(
@@ -306,7 +306,7 @@ class SocialDialogueTests(unittest.TestCase):
                 ).result,
                 self.mind.observe_care(state, self.context, 100),
             ),
-            "talk_close",
+            "talk",
         )
 
     def test_energy_drink_has_grounded_line_even_when_full(self):

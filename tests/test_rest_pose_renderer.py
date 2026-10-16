@@ -45,7 +45,8 @@ class RestPoseRendererTests(unittest.TestCase):
             with self.subTest(scale=scale):
                 original = tk.PhotoImage(
                     master=self.root,
-                    width=192 * scale, height=208 * scale,
+                    width=192 * scale,
+                    height=208 * scale,
                 )
                 original.put(
                     "#ff0000",
@@ -56,14 +57,22 @@ class RestPoseRendererTests(unittest.TestCase):
                     to=(85 * scale, 181 * scale, 106 * scale, 202 * scale),
                 )
                 moved = self.render.resolve(
-                    original, offset=-1, scale=scale,
+                    original,
+                    offset=-1,
+                    scale=scale,
                 )
-                self.assertTrue(moved.transparency_get(
-                    105 * scale, 75 * scale,
-                ))
-                self.assertFalse(moved.transparency_get(
-                    104 * scale, 75 * scale,
-                ))
+                self.assertTrue(
+                    moved.transparency_get(
+                        105 * scale,
+                        75 * scale,
+                    )
+                )
+                self.assertFalse(
+                    moved.transparency_get(
+                        104 * scale,
+                        75 * scale,
+                    )
+                )
                 self.assertEqual(
                     moved.get(91 * scale, 190 * scale),
                     original.get(91 * scale, 190 * scale),
@@ -75,7 +84,8 @@ class RestPoseRendererTests(unittest.TestCase):
         self.assertIs(self.render.resolve(original, offset=0, scale=1), original)
         variant = self.render.resolve(original, offset=1, scale=1)
         self.assertIs(
-            self.render.resolve(original, offset=1, scale=1), variant,
+            self.render.resolve(original, offset=1, scale=1),
+            variant,
         )
         self.assertEqual(original.get(85, 55), (255, 0, 0))
         self.render.clear()

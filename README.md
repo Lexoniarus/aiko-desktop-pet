@@ -58,7 +58,7 @@ preview gallery.
 
 - **Lives on your desktop.** Short, slower taskbar walks with 1–3 minute pauses, intermittent blinking, spontaneous glances, jumping, waving, resting and 16-direction cursor gaze.
 - **Needs a little care.** Feed, play Rock–Paper–Scissors, talk, pet, sleep/wake or offer an energy drink. Meals and snacks provide different satiety and digestion effects. Enjoyment, social needs and affection develop separately, with occasional friendly requests.
-- **Has her own voice.** Handwritten German reactions vary with mood, time, repeated clicks, interruptions and recent interactions. Emotes, text and optional follow-ups play in sequence.
+- **Has her own voice.** Handwritten German reactions vary with mood, time, repeated clicks, interruptions and recent interactions. Authored stories vary across four friendship stages and current needs. Talk plays several bubbles with emotes and pauses; left-click Aiko to advance a story.
 - **Notices actual workload.** Local CPU/GPU and memory observations inform her working/resting behavior, without inventing the application or task you are using. Missing sensors remain unknown.
 - **Learns a gentle rhythm.** Locally aggregated activity evidence helps her adapt to regular working and resting periods.
 - **Stays out of the way.** One draggable sci-fi care toolbar with an optional visibility pin, inline status details, persistent settings and a separate speech bubble. See the [window contract](docs/UI_WINDOW_CONTRACT.md).

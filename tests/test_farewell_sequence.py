@@ -26,7 +26,8 @@ class FarewellSequenceTests(unittest.TestCase):
             self.waiting.pop(token, None)
 
         self.sequence = FarewellSequence(
-            schedule=schedule, cancel=cancel,
+            schedule=schedule,
+            cancel=cancel,
             prepare=lambda: self.events.append("prepare"),
             animate=lambda: self.events.append("waving-greeting"),
             say=lambda line, duration: self.events.append(
@@ -41,10 +42,14 @@ class FarewellSequenceTests(unittest.TestCase):
         self.sequence.begin()
         self.assertTrue(self.sequence.active)
         self.assertEqual(self.delays, [2600])
-        self.assertEqual(self.events, [
-            "prepare", "waving-greeting",
-            "say:Ah, okay. Tschüss, mach's gut!:3100",
-        ])
+        self.assertEqual(
+            self.events,
+            [
+                "prepare",
+                "waving-greeting",
+                "say:Bis später. War schön mit dir.:3100",
+            ],
+        )
         key = self.sequence.pending_timer
         assert key is not None
         self.waiting.pop(key)()

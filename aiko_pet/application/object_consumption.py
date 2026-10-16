@@ -26,8 +26,13 @@ class ConsumptionOutcome:
 
 class ObjectConsumption:
     def __init__(
-        self, state: PetState, mind: PetMind, adaptive: AdaptiveRoutine, *,
-        clock: ActiveSessionClock, memory: ObjectMemory,
+        self,
+        state: PetState,
+        mind: PetMind,
+        adaptive: AdaptiveRoutine,
+        *,
+        clock: ActiveSessionClock,
+        memory: ObjectMemory,
     ) -> None:
         self._state = state
         self._mind = mind
@@ -39,8 +44,12 @@ class ObjectConsumption:
         ] = OrderedDict()
 
     def complete(
-        self, world: WorldState, interaction_id: str, instance_id: str,
-        origin: ConsumptionOrigin, inputs: SessionInputs,
+        self,
+        world: WorldState,
+        interaction_id: str,
+        instance_id: str,
+        origin: ConsumptionOrigin,
+        inputs: SessionInputs,
     ) -> ConsumptionOutcome:
         previous = self._receipts.get(interaction_id)
         if previous is not None:
@@ -52,12 +61,18 @@ class ObjectConsumption:
         if item.state != ObjectState.PET_HELD:
             return ConsumptionOutcome(False)
         context = context_at(inputs.wall_time)
-        before = self._mind.observe_care(self._state, context, inputs.monotonic_time) \
-            if origin == ConsumptionOrigin.HANDOVER else None
+        before = (
+            self._mind.observe_care(self._state, context, inputs.monotonic_time)
+            if origin == ConsumptionOrigin.HANDOVER
+            else None
+        )
         checkpoint = deepcopy(self._state)
         prepared = deepcopy(self._state)
-        definition = next(definition for definition in world.snapshot().definitions
-                          if definition.definition_id == item.definition_id)
+        definition = next(
+            definition
+            for definition in world.snapshot().definitions
+            if definition.definition_id == item.definition_id
+        )
         consumable_id = definition.food_id or "energy_drink"
         result = prepared.consume_item(consumable_id, origin, now=inputs.wall_time)
         if result is None or result.consumed_item_id is None:
@@ -83,8 +98,12 @@ class ObjectConsumption:
             self._adaptive.note_interaction(inputs.wall_time)
             self._mind.after_care(result.action, inputs.monotonic_time)
             reaction = self._mind.select_reaction(
-                self._mind.care_event(result, before), self._state, context,
-                inputs.monotonic_time, tone=before.tone,
+                self._mind.care_event(result, before),
+                self._state,
+                context,
+                inputs.monotonic_time,
+                tone=before.tone,
+                dialogue=before.dialogue,
             )
             outcome = ConsumptionOutcome(True, CareOutcome(result, reaction, context))
             self._receipts[interaction_id] = (instance_id, origin, outcome)

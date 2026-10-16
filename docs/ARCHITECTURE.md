@@ -323,10 +323,43 @@ Live progression uses active-session time; reopening additionally simulates boun
 `data/dialogues.de.json`. `infrastructure/character_mind.py` supplies Aiko's
 catalog at composition time. Event, mood and context filters, weighted choice
 and cooldowns belong to the mind policies; the UI only presents their decisions.
-Keep her voice short, observant, reserved and quietly sarcastic; avoid constant
-speech or invented knowledge about the user's work. No runtime LLM is involved.
-The UI reaction player sequences emotes, text and optional follow-ups in one
-speech surface and cancels superseded cues. Need tuning belongs to the current
+Aiko is reserved, observant, curious and quietly sarcastic. She can express
+warmth directly without retracting it. Friendship changes the familiarity of
+her wording; current needs, irritation and measured work still matter. Avoid
+invented knowledge about the user's applications, speech or work. No runtime
+LLM is involved.
+
+`DialogueContext` freezes the display-level relationship stage, primary mood,
+simultaneous need flags, time and observed situation. The four stages cover
+levels 1–2, 3–5, 6–8 and 9–10. Care captures the whole context before applying
+its effects, including before a friendship level boundary is crossed.
+Relationship filters never relax during rotation or fallback. Specific need
+and mood variants take priority over suitable general wording.
+
+Catalogue version 2 owns ordered text, emote and pause beats. `Reaction` carries
+that immutable sequence and a short/story presentation mode. The UI only plays
+it: one speech surface, length-based reading time (58 ms/character, 1.8–8 s),
+800 ms default emotes and 600 ms deliberate pauses. There are 48 authored talk
+stories, twelve per relationship stage, covering calm, playful, tired,
+withdrawn/irritated, hungry, lonely, affection-seeking and warm moments.
+Stories exhaust their matching rotation pool before repeating. Warm moments
+also admit suitable calm stories, keeping repeated contact varied after care.
+
+An intentional talk normally runs three to five text bubbles. Left-clicking
+Aiko during a story advances to the next text, skipping intermediate emotes
+and pauses. Clicking the last text ends it. These reading clicks do not enter
+the teasing counter or apply care rewards; normal clicks start a fresh burst.
+Other deliberate interactions can interrupt. Automatic speech, gaze remarks,
+idle effects and object-goal acquisition respect active playback, including
+blank pauses. Spontaneous stories require observed presence, a 20% draw among
+eligible quiet moments and at least ten minutes since the previous one.
+
+Playback completion and cancellation are reported once; stale timers cannot
+advance or complete a newer sequence. Object-phase feedback retains its
+receipt-driven interaction ownership. The RPS countdown/reveal timeline also
+retains its owner; greeting/outcome wording is selected through the same mind
+and relationship context, with outcome perspective explicitly mapped.
+Need tuning belongs to the current
 [food](FOOD_SYSTEM.md) and [fun/mood](FUN_MOOD_SYSTEM.md) guides.
 
 ## Refactor branch status (October 15, 2026)
