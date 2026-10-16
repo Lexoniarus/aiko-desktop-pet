@@ -184,6 +184,7 @@ class ResourceValidationTests(unittest.TestCase):
             ("object_behavior", "bounce_maximum_contacts", 33),
             ("object_behavior", "bounce_minimum_speed", 0),
             ("object_behavior", "presentation_seconds", 0),
+            ("object_behavior", "absence_seconds", .1),
             ("object_behavior", "presentation_jitter_widths", 0.4),
             ("object_behavior", "presentation_vertical_widths", 0),
             ("simulation", "maximum_catchup_seconds", 8 * 86400),

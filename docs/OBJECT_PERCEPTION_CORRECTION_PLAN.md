@@ -201,3 +201,10 @@ must include a fresh isolated profile plus a separate known-stock restart case.
   The restart regression also verifies later real identification reconciles the
   missing portion without double stock. Verified 38 targeted memory, stock,
   persistence and awareness tests; Ruff, strict Mypy and Pyright pass.
+- Stage 5 commit: `a72a6bf`.
+- Stage 6 policy: added pure local empty-place evidence with validated 0.5 active
+  second dwell. It excludes pending occupants, attention gaps, uncovered edges,
+  unrelated committed places and expected non-ground custody. Confirmation is
+  emitted once per continuous local observation and never persisted as a clock.
+  Verified 15 targeted absence/resource tests plus Ruff, strict Mypy and Pyright.
+  Runtime delivery follows in stage 7 with the receiving coordinator phase.

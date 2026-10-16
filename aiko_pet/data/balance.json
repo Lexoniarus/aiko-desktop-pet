@@ -335,6 +335,7 @@
   "object_behavior": {
     "notice_widths": 6.0,
     "notice_seconds": 0.2,
+    "absence_seconds": 0.5,
     "recognize_seconds": 0.6,
     "presentation_seconds": 1.0,
     "presentation_horizontal_widths": 0.4,

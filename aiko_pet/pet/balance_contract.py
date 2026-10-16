@@ -6,6 +6,7 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
     "object_behavior": {
         "notice_widths": "number",
         "notice_seconds": "number",
+        "absence_seconds": "number",
         "recognize_seconds": "number",
         "presentation_seconds": "number",
         "presentation_horizontal_widths": "number",
