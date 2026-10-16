@@ -31,7 +31,11 @@ from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
-from ..pet.mind.object_decisions import ObjectUseDecision, decide_object_use
+from ..pet.mind.object_decisions import (
+    ObjectUseContext,
+    ObjectUseDecision,
+    decide_object_use,
+)
 from ..pet.mind.object_intentions import ObjectGoal
 from ..pet.mind.object_knowledge import ObjectKnowledge, ObjectMemorySnapshot
 from ..pet.routine import context_at
@@ -163,8 +167,8 @@ class DesktopWorldRuntime:
             self._animated.hold_last_pose("pick_up", time.monotonic())
         return self._animated.action_id
 
-    def _decide(self, token: str, origin: ConsumptionOrigin) -> ObjectUseDecision:
-        return decide_object_use(self.awareness.memory.get(token), self.state, origin)
+    def _decide(self, token: str, context: ObjectUseContext) -> ObjectUseDecision:
+        return decide_object_use(self.awareness.memory.get(token), self.state, context)
 
     def _phase_feedback(self, cue: ObjectFeedback) -> None:
         reaction = self._care.reaction if (
@@ -263,7 +267,7 @@ class DesktopWorldRuntime:
                  and self.interaction.memory_id == known.token)
                 and self.cursor.offer_ready
                 and decide_object_use(
-                    known, self.state, ConsumptionOrigin.HANDOVER,
+                    known, self.state, ObjectUseContext.OFFER,
                 ).consume
                 and time.monotonic() >= self._playback.until
                 and self.now - known.observed_at < 0.5

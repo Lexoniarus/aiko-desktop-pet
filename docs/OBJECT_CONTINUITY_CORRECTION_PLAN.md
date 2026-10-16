@@ -72,3 +72,8 @@ real saves; use temporary test saves only.
   23 native World GUI tests (including 1x/2x focus resumption), Ruff, strict Mypy
   (178 sources) and Pyright. Tk emits teardown ThemeChanged diagnostics in the
   existing GUI fixture; all assertions pass.
+- Step 2 commit: `c21d2dd`.
+- Step 3a: use decisions now take an explicit supply/offer/continuing-wish
+  context, independently of the unchanged consumption care origin. Capacity and
+  sleeping checks remain mandatory. Verified 40 decision, coordinator, retrieval,
+  transaction and care-origin tests; Ruff, strict Mypy and Pyright pass.

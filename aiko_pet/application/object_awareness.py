@@ -6,8 +6,11 @@ import math
 from dataclasses import replace
 
 from ..pet.balance import BALANCE
-from ..pet.consumption import ConsumptionOrigin
-from ..pet.mind.object_decisions import ObjectUseDecision, decide_object_use
+from ..pet.mind.object_decisions import (
+    ObjectUseContext,
+    ObjectUseDecision,
+    decide_object_use,
+)
 from ..pet.mind.object_intentions import ObjectGoal, ObjectIntentions
 from ..pet.mind.object_knowledge import ObjectKnowledge, ObjectMemorySnapshot
 from ..pet.mind.object_memory import ObjectMemory
@@ -74,7 +77,7 @@ class ObjectAwareness:
             for seen in self.observations
         ):
             return None
-        decision = decide_object_use(known, state, ConsumptionOrigin.HANDOVER)
+        decision = decide_object_use(known, state, ObjectUseContext.OFFER)
         if decision.reason in ("unrecognized", "unavailable"):
             return None
         self.memory.mark_assessed(token)

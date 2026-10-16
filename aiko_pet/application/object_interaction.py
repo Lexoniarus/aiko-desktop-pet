@@ -7,7 +7,7 @@ from collections.abc import Callable
 from ..pet.animation.character import PlaybackEvent
 from ..pet.balance import BALANCE
 from ..pet.consumption import ConsumptionOrigin
-from ..pet.mind.object_decisions import ObjectUseDecision
+from ..pet.mind.object_decisions import ObjectUseContext, ObjectUseDecision
 from ..pet.mind.object_events import ObjectEvent
 from ..pet.mind.object_intentions import ObjectGoal
 from ..pet.mind.object_memory import ObjectMemory
@@ -37,7 +37,7 @@ class ObjectInteractionCoordinator:
         can_acquire: Callable[[str], bool], ground_x: Callable[[str], float],
         completed: Callable[[str, bool], None],
         memory: ObjectMemory,
-        decide: Callable[[str, ConsumptionOrigin], ObjectUseDecision],
+        decide: Callable[[str, ObjectUseContext], ObjectUseDecision],
         feedback: Callable[[ObjectFeedback], None], cancel_feedback: Callable[[], None],
         now: Callable[[], float], inspection_seconds: float, search_seconds: float,
         withholding: Callable[[str, float], None] = lambda _key, _loss: None,
@@ -60,6 +60,7 @@ class ObjectInteractionCoordinator:
         self.instance_id: str | None = None
         self.memory_id: str | None = None
         self._origin = ConsumptionOrigin.AUTONOMOUS
+        self._use_context = ObjectUseContext.SUPPLY
         self._action_id = -1
         self._sequence = self._phase_id = 0
         self._interaction_id = ""
@@ -166,6 +167,9 @@ class ObjectInteractionCoordinator:
 
     def _start(self, token: str, origin: ConsumptionOrigin) -> None:
         self.memory_id, self._origin = token, origin
+        self._use_context = (ObjectUseContext.OFFER
+                             if origin == ConsumptionOrigin.HANDOVER
+                             else ObjectUseContext.SUPPLY)
         self.instance_id = None
         self._sequence += 1
         self._interaction_id = f"interaction_{self._sequence}"
@@ -295,6 +299,7 @@ class ObjectInteractionCoordinator:
         )
         if returning:
             self._origin = ConsumptionOrigin.HANDOVER
+            self._use_context = ObjectUseContext.OFFER
         else:
             self._start(record, ConsumptionOrigin.HANDOVER)
         self.instance_id = instance_id
@@ -444,7 +449,7 @@ class ObjectInteractionCoordinator:
                     "object_recognized" if self._identity else "object_unknown",
                 )
             elif self.phase == "recognize" and self._cue_done:
-                self._decision = self._decide(token, self._origin)
+                self._decision = self._decide(token, self._use_context)
                 self._set_phase("decide")
                 self._announce(
                     "object_want" if self._decision.consume else
@@ -506,7 +511,7 @@ class ObjectInteractionCoordinator:
             self._finish(False)
             self._stop()
             return
-        decision = self._decide(self.memory_id, self._origin)
+        decision = self._decide(self.memory_id, self._use_context)
         self._decision = decision
         if not decision.consume:
             self._set_phase("decide")
