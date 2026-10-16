@@ -492,8 +492,8 @@ S identifiers remain stable so contracts and physics references do not move.
 | S2 | Unify assessment in memory, intentions and gaze; record recognized cursor assessment through a domain/application operation | Known refusal does not trigger repeated inquiry/gaze; temporary unavailability is separate | `0eeab14`; 66 object + 13 World GUI tests, Ruff/Mypy/Pyright green |
 | S3 | Add readable handover shortcut using the existing consumption and interruption machinery | No repeated inspect/recognize/decide; no instant use, stale-receipt progression or extra care origin | `1ddc11c`; 10 retrieval + 13 component + 1 real-time handover test; Ruff/Mypy/Pyright green |
 | S4 | Introduce and test subjective record values and ephemeral perceptual bindings before switching durable runtime callers | Changing only technical IDs cannot change recognition; unseen relocation is not followed movement | `7bfd7c7`; spatial tracker prepared, 3 targeted tests and Ruff/Mypy/Pyright green; runtime switches in S6 |
-| S5 | Add and test stock/place reconciliation for the memory owner, ready for the v2 integration | Repeated sightings, one/two/many identical portions, ambiguous matching and order symmetry | This revision; pure matching/count uncertainty prepared, 4 stock + 4 codec tests and Ruff/Mypy/Pyright green; production integration S6 |
-| S6 | Add memory v2 reader/writer and v1 conversion, then switch runtime callers and paired snapshots coherently | Learned facts/absence survive restart; no live bindings or invented identity; malformed references backed up | Planned |
+| S5 | Add and test stock/place reconciliation for the memory owner, ready for the v2 integration | Repeated sightings, one/two/many identical portions, ambiguous matching and order symmetry | `69e3da9`; 4 stock + 4 codec tests and Ruff/Mypy/Pyright green; production integration S6 |
+| S6 | Add memory v2 reader/writer and v1 conversion, then switch runtime callers and paired snapshots coherently | Learned facts/absence survive restart; no live bindings or invented identity; malformed references backed up | S6a in this revision: v2 storage/legacy conversion and memory operations, 78 targeted tests plus static gates green; runtime switch pending |
 | S7 | Add visible bounded search, useful-alternative selection and German feedback | Found-before-missing and missing-before-found stop appropriately; no repeated resolved-place loops; cancel proves no absence | Planned |
 | S8 | Introduce shared placement bounds and synchronized scale/surface/snapshot handling | Fast geometry matrix, 1x/2x, both sides, footprint and invalid narrow surface | Planned |
 | S9 | Deliver the selected own-physics policy through S9a-S9d below | Low/high falls, variable hops, time partition equivalence, finite termination, reachable rest, non-collectibility and restart | Planned |
@@ -511,6 +511,13 @@ do not add a permanent old/new dual-memory mode. Temporary scaffolding must not
 present technical identity as cognitive evidence in a supposedly complete step.
 S2/S3's assessment tests must still pass after the switch. S8/S9 precede S12,
 so removing the fallback cannot leave a production placement path broken.
+
+S6a introduces the validated v2 codec, allocation provenance, subjective-ID
+allocation and memory operations before activating tracked production sightings.
+S6b switches the application bindings, custody/consumption references and desktop
+callers together. S6c verifies native restoration and the new observation routes.
+These are small independently checked commits within S6, not a permanent dual
+runtime. The v1 reader remains only at the persistence boundary.
 
 S9 is split into these small commits. S9a/S9b prepare calculations before the
 full new lifecycle is enabled; do not ship bouncing with incompatible recovery

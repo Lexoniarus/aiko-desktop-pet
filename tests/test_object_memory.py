@@ -8,6 +8,41 @@ from aiko_pet.pet.mind.object_perception import ObjectObservation
 
 
 class ObjectMemoryTests(unittest.TestCase):
+    def test_found_before_or_after_missing_resolves_one_old_place(self):
+        for missing_first in (True, False):
+            with self.subTest(missing_first=missing_first):
+                memory = ObjectMemory()
+                seen = ObjectObservation("sighting_1", "apple", "food", 100, 0,
+                                         True, 0)
+                old = memory.observe_find(seen, now=0, record=None,
+                                          claimed=frozenset(), maximum_distance=10)
+                memory.mark_assessed(old)
+                if missing_first:
+                    memory.mark_missing(old)
+                new = memory.observe_find(
+                    replace(seen, token="sighting_2", x=500, observed_at=1),
+                    now=1, record=None, claimed=frozenset(), maximum_distance=10,
+                )
+                if not missing_first:
+                    memory.mark_missing(old)
+                self.assertIsNone(memory.get(old))
+                found = memory.get(new)
+                assert found is not None
+                self.assertFalse(found.assessed)
+                self.assertEqual(found.possible_sources, ())
+                self.assertEqual(len(memory.snapshot()), 1)
+
+    def test_subjective_ids_do_not_recycle_after_consumption_and_restart(self):
+        memory = ObjectMemory()
+        seen = ObjectObservation("sighting_1", "apple", "food", 100, 0, True, 0)
+        old = memory.observe_find(seen, now=0, record=None,
+                                  claimed=frozenset(), maximum_distance=10)
+        memory.record_consumption(old)
+        restored = ObjectMemory(memory.export(now=1))
+        new = restored.observe_find(seen, now=1, record=None,
+                                    claimed=frozenset(), maximum_distance=10)
+        self.assertNotEqual(new, old)
+
     def test_observed_relocation_preserves_identity_and_completed_inspection(self):
         memory = ObjectMemory()
         seen = ObjectObservation("one", "apple", "food", 100, 0, True, 1)

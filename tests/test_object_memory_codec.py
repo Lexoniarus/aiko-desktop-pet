@@ -37,19 +37,46 @@ class ObjectMemoryCodecTests(unittest.TestCase):
 
     def test_unknown_sighting_stays_unknown_and_unexamined(self):
         raw = deepcopy(self.raw)
-        raw["entries"][0].update(identity=None, kind=None, examined=False,
+        raw["entries"][0].update(identity=None, kind=None, assessed=False,
                                   disposition=None)
         known = ObjectMemory(decode_object_memory(raw, IDENTITIES)).snapshot()[0]
         self.assertIsNone(known.identity)
         self.assertFalse(known.assessed)
+
+    def test_v1_conversion_keeps_history_without_a_live_binding(self):
+        raw = deepcopy(self.raw)
+        raw["version"] = 1
+        del raw["next_record_id"], raw["world_next_id"]
+        row = raw["entries"][0]
+        row["examined"] = row.pop("assessed")
+        del row["place_status"], row["possible_sources"]
+        restored = decode_object_memory(raw, IDENTITIES, allocated_until=10)
+        self.assertEqual(restored, self.saved)
+        with self.assertRaises(ValueError):
+            decode_object_memory(raw, IDENTITIES, allocated_until=1)
+
+    def test_associations_reject_missing_self_and_cyclic_references(self):
+        for sources in (["missing"], ["object_9"], ["object_10", "object_10"]):
+            with self.subTest(sources=sources):
+                raw = deepcopy(self.raw)
+                raw["entries"][0]["possible_sources"] = sources
+                with self.assertRaises(ValueError):
+                    decode_object_memory(raw, IDENTITIES)
+        raw = deepcopy(self.raw)
+        other = deepcopy(raw["entries"][0])
+        other.update(token="object_10", possible_sources=["object_9"])
+        raw["entries"][0]["possible_sources"] = ["object_10"]
+        raw["entries"].append(other)
+        with self.assertRaises(ValueError):
+            decode_object_memory(raw, IDENTITIES)
 
     def test_invalid_flags_ids_numbers_and_experiences_are_rejected(self):
         cases = (
             ("token", "object_0"), ("token", []), ("identity", "unknown_food"),
             ("kind", "food"), ("kind", []), ("x", -1), ("height", math.nan),
             ("age_seconds", math.inf), ("age_seconds", True), ("resting", 1),
-            ("examined", 0), ("disposition", []), ("disposition", "stored"),
-            ("examined", False),
+            ("assessed", 0), ("disposition", []), ("disposition", "stored"),
+            ("assessed", False),
         )
         for field, value in cases:
             with self.subTest(field=field, value=value):

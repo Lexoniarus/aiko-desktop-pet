@@ -93,10 +93,7 @@ class StateStore:
                         item.food_id or item.definition_id:
                         "drink" if ObjectInteraction.DRINK in item.interactions
                         else "food" for item in saved_world.definitions
-                    })
-                    if any(int(item.token.removeprefix("object_"))
-                           >= saved_world.next_instance_id for item in memory.entries):
-                        raise ValueError("Unallocated remembered World ID")
+                    }, allocated_until=saved_world.next_instance_id)
                     saved_memory = memory
                 except (ValueError, TypeError, OverflowError):
                     self._invalid_memory = True
@@ -128,7 +125,10 @@ class StateStore:
         if world is not None:
             payload["world"] = encode_world(world, recovery_x=world_recovery_x)
         if object_memory is not None:
-            payload["object_memory"] = encode_object_memory(object_memory)
+            assert world is not None
+            payload["object_memory"] = encode_object_memory(
+                object_memory, world_next_id=world.next_instance_id,
+            )
         temporary: str | None = None
         try:
             with tempfile.NamedTemporaryFile(

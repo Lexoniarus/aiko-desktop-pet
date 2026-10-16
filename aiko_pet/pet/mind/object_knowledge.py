@@ -48,3 +48,4 @@ class SavedObjectKnowledge:
 @dataclass(frozen=True, slots=True)
 class ObjectMemorySnapshot:
     entries: tuple[SavedObjectKnowledge, ...] = ()
+    next_record_id: int = 1

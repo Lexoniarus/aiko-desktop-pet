@@ -51,7 +51,7 @@ class ObjectMemoryPersistenceTests(unittest.TestCase):
     def test_joint_save_restores_facts_without_aging_during_closed_time(self):
         self.save()
         raw = json.loads(self.store.path.read_text("utf-8"))
-        self.assertEqual((raw["version"], raw["object_memory"]["version"]), (1, 1))
+        self.assertEqual((raw["version"], raw["object_memory"]["version"]), (1, 2))
         self.assertNotIn("observed_at", raw["object_memory"]["entries"][0])
         restored = PetSessionRestorer(
             self.store, wall_time=lambda: self.state.updated_at + 3600,

@@ -11,6 +11,7 @@ from .object_knowledge import (
     SavedObjectKnowledge,
 )
 from .object_perception import ObjectObservation
+from .object_stock import match_find
 
 
 class ObjectMemory:
@@ -18,10 +19,12 @@ class ObjectMemory:
         self, saved: ObjectMemorySnapshot | None = None, *, now: float = 0,
     ) -> None:
         self._known: dict[str, ObjectKnowledge] = {}
+        self._next_id = saved.next_record_id if saved is not None else 1
         if saved is not None:
             self.restore_snapshot(tuple(ObjectKnowledge(
                 item.token, item.identity, item.kind, item.x, item.height,
                 item.resting, now - item.age_seconds, item.assessed, item.disposition,
+                item.place_status, item.possible_sources,
             ) for item in saved.entries))
 
     @staticmethod
@@ -55,7 +58,38 @@ class ObjectMemory:
                 observation.observed_at,
                 previous.assessed if compatible and previous is not None else False,
                 previous.disposition if compatible and previous is not None else None,
+                "remembered",
+                (previous.possible_sources
+                 if compatible and previous is not None else ()),
             )
+
+    def observe_find(
+        self, seen: ObjectObservation, *, now: float, record: str | None,
+        claimed: frozenset[str], maximum_distance: float,
+    ) -> str:
+        """Associate a live sighting from perceived evidence, not its World ID."""
+        previous = self.get(record) if record is not None else None
+        match = None
+        if previous is None or not previous.recognized and seen.identity is not None:
+            match = match_find(
+                tuple(item for item in self.snapshot() if item.token != record),
+                seen, claimed=claimed, maximum_distance=maximum_distance,
+            )
+            if match.record is not None:
+                if previous is not None:
+                    self.forget(previous.token)
+                record = match.record
+            elif previous is None:
+                record = f"memory_{self._next_id}"
+                self._next_id += 1
+        assert record is not None
+        self.update((replace(seen, token=record),), now=now)
+        if match is not None and match.record is None:
+            self._known[record] = replace(
+                self._known[record], possible_sources=match.possible_sources,
+            )
+        self._reconcile_sources()
+        return record
 
     def get(self, token: str) -> ObjectKnowledge | None:
         return self._known.get(token)
@@ -86,6 +120,33 @@ class ObjectMemory:
     def forget(self, token: str) -> None:
         """Explicit observed absence or failed local interaction invalidates it."""
         self._known.pop(token, None)
+        for key, item in tuple(self._known.items()):
+            if token in item.possible_sources:
+                self._known[key] = replace(
+                    item, possible_sources=tuple(source for source
+                                                  in item.possible_sources
+                                                  if source != token),
+                )
+
+    def mark_missing(self, token: str) -> None:
+        known = self.get(token)
+        if known is None:
+            return
+        self._known[token] = replace(known, place_status="missing")
+        self._reconcile_sources()
+
+    def _reconcile_sources(self) -> None:
+        for item in tuple(self._known.values()):
+            if len(item.possible_sources) == 1:
+                source = self.get(item.possible_sources[0])
+                if source is not None and source.place_status == "missing":
+                    self.forget(source.token)
+
+    def record_consumption(self, token: str) -> None:
+        known = self.get(token)
+        if known is not None and len(known.possible_sources) == 1:
+            self.forget(known.possible_sources[0])
+        self.forget(token)
 
     def snapshot(self) -> tuple[ObjectKnowledge, ...]:
         return tuple(self._known.values())
@@ -93,9 +154,15 @@ class ObjectMemory:
     def restore_snapshot(self, known: tuple[ObjectKnowledge, ...]) -> None:
         """Restore the owner's immutable checkpoint, without consulting World."""
         self._known = {item.token: item for item in known}
+        self._next_id = max(self._next_id, 1 + max((
+            int(item.token.removeprefix("memory_")) for item in known
+            if item.token.startswith("memory_")
+        ), default=0))
 
     def export(self, *, now: float) -> ObjectMemorySnapshot:
         return ObjectMemorySnapshot(tuple(SavedObjectKnowledge(
             item.token, item.identity, item.kind, item.x, item.height, item.resting,
             max(0, now - item.observed_at), item.assessed, item.disposition,
-        ) for item in self._known.values() if self._retained(item, now)))
+            item.place_status, item.possible_sources,
+        ) for item in self._known.values() if self._retained(item, now)),
+                                    self._next_id)
