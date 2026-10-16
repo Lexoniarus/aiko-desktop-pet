@@ -202,6 +202,7 @@ class WorldGuiTests(unittest.TestCase):
                 self.app._window.resize()
                 self.app._animated.reload_sprites()
                 world._sync_geometry()
+                self.app._place_x(world._track().left + 40)
                 self.app.state.satiety = 50
                 item = world.world.place_resting(
                     "apple", world._body_x() + 70 * scale, ObjectFootprint(8, 8),
