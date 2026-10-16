@@ -32,11 +32,19 @@ class ObjectIntentions:
         self._pause_until = 0.0
 
     def cancel(self, now: float, *, consumed: bool = False) -> None:
-        if self.goal is not None:
-            self._retry[self.goal.token] = now + BALANCE.number(
+        self.complete(self.goal.token if self.goal is not None else None,
+                      now, consumed=consumed)
+
+    def complete(
+        self, token: str | None, now: float, *, consumed: bool = False,
+    ) -> None:
+        """Finish the named attempt without cancelling a newer selected goal."""
+        if token is not None:
+            self._retry[token] = now + BALANCE.number(
                 "object_behavior", "retry_seconds",
             )
-        self.goal = None
+        if self.goal is not None and self.goal.token == token:
+            self.goal = None
         self._next_check = 0
         if consumed:
             self._pause_until = now + BALANCE.number(

@@ -215,8 +215,8 @@ class DesktopWorldRuntime:
             overlay.contact_origin = None
         overlay.select(item_id)
 
-    def _completed(self, _token: str, consumed: bool) -> None:
-        self.awareness.intentions.cancel(self.now, consumed=consumed)
+    def _completed(self, token: str, consumed: bool) -> None:
+        self.awareness.intentions.complete(token, self.now, consumed=consumed)
         self._walk.movement.set_goal(None)
         self._visual.object_target = None
         self._contact = None

@@ -501,7 +501,7 @@ S identifiers remain stable so contracts and physics references do not move.
 | S11 | Add selective Windows resting-object input and connect the gesture | Visible-pixel targeting, no focus/contact regression, normal release/capture behavior | `ce936b9`: resting-only pixel input and nonactivating native projection; 1 native Windows hit-test (1x/2x) + 17 GUI tests and Ruff/Mypy/Pyright green. |
 | S12 | Connect every production placement route and remove the special edge grip | Normal arrival/grasp still checked at frame 4; own put-down and gesture return remain reachable | `d328e2a`: edge exception removed, ordinary frame-4 reach/contact blending retained; delayed gesture release guard and start save points. 30 ground/World tests + 18 GUI tests, Ruff/Mypy/Pyright green. Native restart matrix reduced to one representative; both sides/scales remain in pure geometry and native input tests. |
 | S13 | Finish residual cleanup after the behavior-specific replacements already delivered in their owning stages | No orphan fixtures/helpers or redundant flow combinations; unique grasp/clip/interruption and save coverage retained | S13a `ce36420`: retain ambiguous consumed-find evidence and reconcile fully explained checked groups; 85 object tests including wire restart and two-place cases, Windows/Linux-targeted typing and Ruff green. S13b `90a6d66`: unused test return removed, stale fall/assessment names corrected, search uses the latest remembered place and found feedback identifies the new record. 20 focused tests plus the preceding 18 GUI checks and Ruff/Mypy/Pyright green. No obsolete edge/fall-only/test-only pickup symbols remain in source/tests/tools. |
-| S14 | Update architecture, contracts, save docs, changelog and isolated smoke scenarios | Documentation matches delivered APIs and actual verification; practical checklist below | This revision: current architecture/contracts/save docs/changelog, one/two-portion starter and updated practical checklist; 6 starter tests, static gates and actual isolated fresh/restart launch passed. |
+| S14 | Update architecture, contracts, save docs, changelog and isolated smoke scenarios | Documentation matches delivered APIs and actual verification; practical checklist below | `96b49ff`: current architecture/contracts/save docs/changelog, one/two-portion starter and updated practical checklist; 6 starter tests, static gates and actual isolated fresh/restart launch passed. |
 | S15 | Run final regression and hand over a fully pushed practical-test build | Full gates/CI, real Windows evidence and explicit test readiness; PR remains unmerged | Planned |
 
 S4/S5 prepare the typed model and policies without exposing a half-converted
@@ -757,8 +757,10 @@ Final contract corrections before S15: `3ec6f4c` controls elapsed time in two
 chooser-effect tests now that gesture start saves through the shared active-time
 owner (11 targeted checks pass). `17cf4ac` makes live reach changes settle
 continuously, while recovery normalizes directly (16 focused World/geometry and
-18 GUI checks pass). The following World validation commit prepares all motion
+18 GUI checks pass). `3913a57` prepares all motion
 updates before committing and shares reachable-footprint rejection (32 focused
 World checks and static gates pass). These preserve the existing save boundary.
 The actual starter ran fresh with two Onigiri and reopened the same isolated
 save with `--needs hungry`; it exited cleanly without touching the normal save.
+
+S15 review: the first full local run at 96b49ff passed 964 tests in 190.495 seconds and all three CI jobs passed (run 38890635389). A further targeted regression reproduced an approach handoff cancelling the newly selected alternative: completion now names its own memory record rather than cancelling whichever goal is current. The same review makes the primary monitor right edge exclusive for cursor release. 37 focused GUI/intention/retrieval tests and Ruff, strict Mypy, Windows/Linux Pyright pass; final full rerun follows these corrections.

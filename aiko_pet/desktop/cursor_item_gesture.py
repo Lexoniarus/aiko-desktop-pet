@@ -130,7 +130,7 @@ class CursorItemGesture:
              + image.width() / 2 - sprite.pivot[0])
         height: float = track.ground_y - self.root.winfo_pointery() - image.height()
         height += sprite.pivot[1]
-        inside = (track.left <= self.root.winfo_pointerx() <= track.right
+        inside = (track.left <= self.root.winfo_pointerx() < track.right
                   and 0 <= self.root.winfo_pointery() < self.root.winfo_screenheight())
         return WorldPosition(
             max(footprint.left, min(x, surface.width - footprint.right)),

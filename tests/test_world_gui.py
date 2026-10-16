@@ -12,6 +12,7 @@ from aiko_pet.desktop.geometry import FOOT_BASELINE
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
+from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
 
 
@@ -142,6 +143,31 @@ class WorldGuiTests(unittest.TestCase):
         self.restart()
         self.assertEqual(self.app._world.awareness.memory.snapshot(), ())
         self.assertEqual(self.app._world.world.snapshot().objects, ())
+
+    def test_observed_alternative_survives_completion_of_the_old_approach(self):
+        world = self.app._world
+        old = world.awareness.memory.observe_find(ObjectObservation(
+            "old_sighting", "apple", "food", world._body_x() + 300, 0, True, 0,
+        ), now=0, record=None, claimed=frozenset(), maximum_distance=10)
+        world.awareness.memory.mark_assessed(old)
+        world.update(time.monotonic())
+        self.complete_feedback()
+        self.assertEqual(world.interaction.memory_id, old)
+        item = world.world.place_resting("apple", world._body_x() + 70,
+                                         ObjectFootprint(8, 8))
+        for stamp in (1, 1.3, 1.7):
+            world.now = stamp
+            world.update(time.monotonic())
+        known = world.awareness.known_instance(item.instance_id)
+        assert known is not None
+        self.complete_feedback()
+        self.complete_feedback()
+        world.now = 2.8
+        world.update(time.monotonic())
+        self.assertEqual(world.interaction.memory_id, known.token)
+        goal = world.awareness.intentions.goal
+        assert goal is not None
+        self.assertEqual(goal.token, known.token)
 
     def test_absent_remembered_instance_requires_attentive_local_search(self):
         world = self.app._world
@@ -464,6 +490,27 @@ class WorldGuiTests(unittest.TestCase):
             pending[0]()
         self.assertFalse(world.cursor.carrying)
         self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
+
+    def test_primary_monitor_exclusive_right_edge_returns_only_existing_portions(self):
+        world = self.app._world
+        for existing in (False, True):
+            with (
+                self.subTest(existing=existing),
+                patch.object(self.app.root, "winfo_pointerx",
+                             return_value=world._track().right),
+                patch.object(self.app.root, "winfo_pointery", return_value=200),
+            ):
+                if existing:
+                    item = world.world.place_resting("apple", world._body_x(),
+                                                     ObjectFootprint(8, 8))
+                    world.begin_relocate(item.instance_id, item.revision)
+                else:
+                    world.begin_carry("apple")
+                token = world.cursor.instance_id
+                assert token is not None
+                world.cursor.release()
+                expected = ObjectState.RESTING if existing else ObjectState.REMOVED
+                self.assertEqual(world.world.get(token).state, expected)
 
     def test_actual_driver_reaches_food_with_random_walk_disabled(self):
         world = self.app._world
