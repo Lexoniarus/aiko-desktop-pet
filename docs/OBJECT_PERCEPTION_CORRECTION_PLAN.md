@@ -1,6 +1,6 @@
 # Object perception: noticing, identifying and assessing
 
-Status: implementation authorized; delivery evidence is recorded below.
+Status: implemented and automatically verified; practical acceptance remains open.
 Recorded: 17 October 2026.
 Code baseline: `86c3bce` on `feature/world-foundation`.
 
@@ -147,9 +147,9 @@ running application. Split a stage further only at a usable green boundary.
 | 7. Integrate priority and dialogue | Feed confirmed absence into the coordinator before new discovery/offer decisions. Reuse bounded search, identified feedback and JSON dialogue; distinguish first loss from failed search. | One correctly worded loss reaction; early search for a missing target; no repeated loss, duplicate search budgets or disruption by unrelated changes during committed focus. |
 | 8. Combined verification and practical handoff | Consolidate affected expectations and extend focused regression cases. Run final full verification and prepare an isolated practical checklist. | Food/drink; unknown/known; ordinary/withheld offers; deliberate presentation; take/drop/hops; real visual loss; 1x/2x; stale receipts; restart and existing care/animation rules. |
 
-Proposed calibration starting points, not measured final values: increase notice
-range from three to six character widths and use about one active second for
-deliberate presentation. Calibrate face bounds and allowed jitter separately at
+Configured starting points, still subject to practical calibration: notice range
+is six character widths and deliberate presentation requires one active second.
+Calibrate face bounds and allowed jitter separately at
 both scales; do not enlarge walking/grasp/handover reach as a side effect.
 Retain the existing hand-inspection timing unless practical evidence requires a
 separate agreed adjustment. No new values belong in ad hoc UI conditions.
@@ -219,3 +219,19 @@ must include a fresh isolated profile plus a separate known-stock restart case.
   after a tracking gap without acquiring any identity. Verified 167 targeted
   object-policy, native Tk and resource tests; Ruff, strict Mypy and Pyright pass.
   CI for `f2ce9f5` and `a72a6bf` passed on Python 3.11/3.13 and Windows.
+- Stage 7 commit: `53434a5`; CI
+  [38978799149](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38978799149)
+  passed Linux Python 3.11/3.13 and Windows. All preceding delivery CI runs passed.
+- Stage 8: full local Windows/Python 3.11 suite passed **1,020 tests in 224.194 s**,
+  including retained actual-timer flows and native 1x/2x, custody, interruption,
+  memory and restart coverage. Ruff 0.13.2, strict Mypy 1.18.2 (179 source files)
+  and Pyright 1.1.414 pass. Older Tk teardown fixtures still emit ThemeChanged
+  diagnostics; the suite exits successfully with no failed tests.
+- The real Python 3.14 isolated launcher and same-save restart both exited
+  normally, using a fresh `aiko-perception-smoke-*` temporary directory with two
+  unknown portions. The normal user save was neither opened nor changed.
+- Updated architecture, current contracts, changelog and the dedicated
+  [three-level practical checklist](WORLD_SMOKE_TEST.md#three-level-perception-retest--17-october-2026).
+  Existing long timing coverage was retained; no duplicate native timing matrix,
+  new dependency, knowledge enum or save version was introduced. PR #10 remains
+  a draft and unmerged. Human visual/input acceptance and calibration remain open.

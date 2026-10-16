@@ -1,5 +1,34 @@
 # World object contracts and behavior rules
 
+## Current three-level perception correction — 17 October 2026
+
+The implemented [perception plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md) supersedes
+earlier proximity-identification and arrival-only absence assumptions below.
+**Bemerken** means knowing presence/place; **Identifizieren** means knowing the
+type; **Beurteilen** means a current use decision. These are distinct from custody
+and historical assessment. An unknown portion can be an investigation target
+without being a desired consumable.
+
+Unknown floor/falling/bouncing items never identify from proximity. First
+identification requires Aiko's actual post-pickup hand inspection, or continuously
+holding the displayed item before her face for one active second. Brief passes,
+far-away carrying and unrelated items during committed focus do not qualify.
+Small jitter is allowed. A new gesture needs presentation even for known items;
+learned identity is retained independently. Completed presentation survives the
+observed move from face to hand for release. Release, capacity and handover
+geometry still decide acquisition; presentation itself consumes nothing.
+
+Currently covered remembered places require 0.5 active seconds of local empty
+evidence, with no pending occupant or attention gap. Unknown noticed items can
+also be missed, using unnamed wording. Known types alone permit named wording.
+Observed taking, own custody and consumption resolve before absence checking.
+Confirmed absence precedes new discoveries/offers; unrelated places wait while
+another investigation owns attention. One early `notice_absence` reaction is
+separate from failed-search feedback. Only current targets/needed stock search,
+using the existing two-second budget. A newly occupied confirmed missing place
+does not transfer old identity to an unknown portion. No save-format change;
+presentation, local evidence and pending reactions do not survive restart.
+
 ## Current observed-continuity correction — 16 October 2026
 
 The [continuity correction plan](OBJECT_CONTINUITY_CORRECTION_PLAN.md) separates
@@ -289,28 +318,27 @@ Escape or loss of the gesture's Tk input capture removes it without consumption.
 Shutdown saves nonterminal items for ground recovery; it does not resume input.
 No portion is silently transferred between monitors to make a target reachable.
 
-## Perception, recognition, interest and intention
+## Perception, identification, assessment and intention
 
 | Step | Preconditions | Result |
 | --- | --- | --- |
 | Notice | Observable candidate inside notice range, sufficient attention and elapsed observation time | A located appearance/motion is known; food identity need not be known |
-| Recognize | Candidate can be examined inside recognition range for the required observed duration | Canonical food identity becomes available to memory and interest |
+| Identify | Actual safe own-hand inspection or completed deliberate face presentation | Canonical consumable identity/kind become available; ground proximity never qualifies |
 | Remember | Information was actually acquired | Last-known location and observation age remain available after loss of sight |
-| Want | Recognized edible food, appetite/interest criteria and canonical food acceptance allow it | An interested candidate; no custody or nutrition change |
-| Select | Wanted resting food or its remembered location, reachable known position, no blocking activity and cooldown satisfied | A stable approach/search intention |
-| Acquire | Fresh final check of identity, custody, distance, activity and acceptance succeeds | Coordinated custody transfer; no independent care effect |
+| Assess | Identified portion, current appetite/energy/activity/capacity criteria; deliberate presentation for a player offer | Current willingness/refusal; no custody or nutrition change |
+| Select | Unexamined reachable appearance or wanted known supply, eligible attention and cooldown | A stable investigation or consumption intention |
+| Acquire | Final custody/reach/activity check; identified presented willingness additionally required for handover | Coordinated custody transfer; ground pickup can precede identification; no care effect |
 | Consume | Pet-held portion and prepared pet transition can commit together after pickup completion or accepted handover | Instance and pet effect complete exactly once |
 
 The application perception bridge may inspect objective definition data to
 resolve authored recognition; there is no image-recognition service. Only the
 perception result crosses into memory, interest and goal selection.
 
-Notice range is at least recognition range; collection reach is narrower than
-the general perception area. Exact distances and durations are validated balance
-parameters in Stage 3. Observation duration advances only while the corresponding
-conditions hold. Losing sight stops new evidence; knowledge ages rather than
-being refreshed from the World. Recognition evidence can decay under explicit
-Stage 3 rules instead of depending on update count.
+Notice range, face presentation and handover/reach are separate validated balance
+parameters. Observation duration advances only while the corresponding conditions
+hold. Losing sight stops new evidence; memory is not refreshed from hidden World
+state. Incomplete presentations reset on leaving the area, excess movement or
+attention loss, independently of learned identity.
 
 An asleep Aiko does not acquire new observations or wake just because food
 exists. During games or care, available attention may be reduced; new locomotion
@@ -455,20 +483,27 @@ Native Windows interaction acceptance is tracked separately in
 
 ## Resolved implementation parameters
 
-- Notice: 3 body widths, 0.2 s; recognize: 1.5 widths, 0.6 s of attention.
-  Losing visibility clears current evidence, while learned memory persists.
+- Notice: 6 body widths, 0.2 s. Identify during actual hand inspection after
+  0.6 s of attention; the complete inspection retains its one-second minimum.
+  Player presentation: one continuous active second, displayed center within
+  0.4 horizontal/0.3 vertical widths of the eyes, at most 0.12 widths of jitter
+  from its stationary anchor. Losing continuity clears presentation evidence.
+- Empty-place observation: 0.5 s of continuous local attention and full covered
+  place area, no pending occupant. An early loss message precedes new goals.
 - Only unidentified sightings expire after 600 active seconds. Recognized identity
-  and completed inspection persist until consumption or confirmed local absence;
+  and completed inspection persist until consumption; confirmed local absence
+  marks the remembered place missing while retaining its learned type;
   no offline aging or knowledge refresh. Own confirmed deferral is a separate fact.
 - Seek food at satiety ≤70, drink at energy ≤60. Check at most once per second
   plus relevant changes. Retain eligible goals; tie-break by need urgency,
   food repetition, path length and stable instance token.
-- Search at last-known position for 2 s, then forget that presence and retry
+- Search at last-known position for 2 s, retaining checked missing-place status;
+  retry eligible interrupted/unresolved attempts
   after 10 s. Interruption also waits 10 s; renewed supply seeking of examined
   portions waits 30 s after consumption. This pause does not block the first
   investigation of a different, unexamined portion.
 - Handover: horizontal distance ≤0.3 body widths, height 0.05–0.9 widths;
-  recognition observed within 0.5 s, no conflicting action, canonical capacity.
+  presented identified portion observed within 0.5 s, no conflict, canonical capacity.
   Ground reach is 0.25 widths, with actual arrival checked within 2 desktop units.
 - Press starts one portion immediately; even a quick release only offers/drops.
   A local Tk grab spans the gesture, Escape cancels, lost capture cancels, and

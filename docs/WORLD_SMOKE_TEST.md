@@ -14,6 +14,71 @@ They also reported slow approach/possible repeated loops. Keep that observation
 open for separate behavior analysis; it is not claimed solved by the edge-grip
 correction. The complete left/right 1x/2x native checklist remains to be checked.
 
+## Three-level perception retest — 17 October 2026
+
+The [perception correction plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md) supersedes
+earlier "hold near Aiko" expectations below: **deliberately hold the displayed
+item before her face for one active second**. Mere presence, identity and current
+willingness are separate facts. These checks still need practical acceptance.
+
+Start a **fresh isolated save** with the existing launcher; old saves cannot tell
+whether previously learned identity came from the old premature ground sensing.
+Do not reset the normal save. Run the main checks at both 1x and 2x:
+
+```powershell
+.\Aiko_World_Test.bat --scenario curious
+```
+
+- [ ] Drop a fresh unknown food/drink several character widths away. Aiko notices
+  an item and investigates it without naming its type on the ground or in flight.
+  Only after pickup reaches the safe holding pose does she inspect, identify and
+  assess it. Food at 76 satiety/drink at 60 energy may be deferred under ordinary
+  supply rules. A hungry profile must instead show complete consumption.
+- [ ] Hold a fresh portion far away, pass briefly before her face, then make
+  several brief passes. No identification/offer decision from these passes.
+  Hold steadily before her face for about one second, allowing small jitter:
+  she can identify and state current willingness. Keep holding: no consumption.
+  Test both a wanted portion and `--scenario full` refusal.
+- [ ] Move a completed presentation down into her hand and release: accept only
+  if still wanted, followed by full slow consumption. A dropped known offer is
+  followed through fall/hops and collected without another first identification;
+  autonomous consumption grants no human care reward.
+- [ ] Pick up a known lying portion while she is free and watching, then carry it
+  far away. Identity remains known, but a **new gesture** needs its own face
+  presentation before another offer decision. Ordinary holding causes no theft
+  protest, irritation or friendship loss.
+- [ ] Take the exact unknown target during her approach. She requests its return
+  without naming it. Present it before her face for a second: identification,
+  then an explicit wanted/refused decision. Refusal ends return demands and
+  withholding effects; agreement permits release or continued observed placement.
+- [ ] Let her learn and defer a portion, then open a game so attention is occupied.
+  Move that portion elsewhere while she is distracted. Close the game with its
+  former place visible. After a short local look she notices the empty place
+  before new ordinary discoveries/offers. Needed stock can trigger a short search;
+  an unwanted reserve gets one loss comment without compulsory search. Repeating
+  ticks must not repeat the loss message. Unknown previously noticed portions use
+  "etwas", never an unlearned name.
+- [ ] Repeat while she watched the actual take/placement, or while she owns the
+  portion. No unexplained ground-loss message. Other drops/moves remain ignored
+  during a committed investigation; verify ordinary clicks still ask for a moment.
+- [ ] Reopen the exact printed temporary save. Learned identity/assessment remain;
+  current presentation, visibility, gesture and action do not resume. An unknown
+  new portion found at a previously confirmed empty place needs real identification.
+  Check known-stock retrieval with `--needs hungry` as documented below.
+
+Parameters live in the existing validated balance JSON: noticing 6 widths/0.2 s,
+face hold 1 s, local empty-place evidence 0.5 s. Handover, walking and pickup reach
+are unchanged. Automated checks do not establish visual calibration or user acceptance.
+
+Automated handoff: 1,020 tests passed in 224.194 s on Windows/Python 3.11;
+Ruff, strict Mypy (179 source files) and Pyright passed. Code commit `53434a5`
+passed [CI 38978799149](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38978799149)
+on Linux Python 3.11/3.13 and Windows. The actual Python 3.14 isolated launcher
+with two unknown portions and its same-save restart also exited normally.
+Earlier Tk teardown fixtures still print ThemeChanged diagnostics in the full
+suite, without failed tests. These results do not replace the unchecked visual
+and input observations above. Commit evidence is in the perception plan.
+
 
 ## Observed continuity and known-item retest — 16 October 2026
 

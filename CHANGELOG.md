@@ -1,3 +1,16 @@
+## Unreleased — Notice, identification and assessment
+
+- Separate noticed presence, learned type and current willingness. Unknown floor
+  and moving items identify only during Aiko's actual post-pickup inspection.
+- Require a deliberate one-second face presentation for cursor offers, including
+  known items. Retain acquired identity and completed presentation through observed
+  movement into the handover area; preserve actual release and care-origin rules.
+- Notice covered empty remembered places before new discoveries/offers, with
+  local dwell and pending-occupant protection. Use separate early-loss feedback
+  and one bounded search only for current targets or needed reserves.
+- Prevent unknown finds at confirmed missing places from inheriting old identity;
+  preserve subjective stock reconciliation, observed continuity and save formats.
+
 ## Unreleased — Observed item continuity
 
 - Preserve learned identity across ordinary observed floor/cursor/placement

@@ -4,10 +4,10 @@ Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tki
 
 The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Imports point directly to the packages that own each responsibility.
 
-The agreed [perception correction plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md)
-defines noticing, identifying and assessing, deliberate cursor presentation and
-early absence detection. It is planned work; the current implementation described
-here has not yet adopted these stricter perception rules.
+The implemented [perception correction plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md)
+separates noticing, identifying and assessing, deliberate cursor presentation and
+early local absence detection. Its delivery ledger and practical checklist
+distinguish automated verification from user acceptance.
 
 The [observed item continuity correction](OBJECT_CONTINUITY_CORRECTION_PLAN.md)
 separates observation, learned identity and current desire across cursor custody.
@@ -414,11 +414,16 @@ custody/lifecycle operations. It imports neither pet rules nor desktop/UI code.
 food and item-asset IDs; it does not copy nutrition, labels or sprite data.
 
 `pet/mind/object_perception.py`, `object_knowledge.py`, `object_memory.py` and
-`object_intentions.py` separate timed recognition, learned facts and stable
+`object_intentions.py` separate timed identification, learned facts and stable
 need-based goals. Knowledge distinguishes identity, assessment and
 confirmed own deferral; observed relocation preserves learning. Recognized facts
 persist across restart; checked absence marks a place missing rather than erasing
 all its learned history. Only unknown sightings expire.
+An unknown ground or moving portion can be noticed but cannot be identified.
+First identification requires explicit actual hand-inspection context after
+safe pickup, or a continuous player presentation before the face. `recognized`
+means identified; the independent historical `assessed` fact is not a lasting wish.
+Presentation clocks/evidence are transient sensory state, never saved knowledge.
 `application/object_awareness.py` is the objective-to-subjective boundary.
 Unseen moves do not update memory. The existing tick observes objects after
 need progression and before presentation. Faster physics/render callbacks do
@@ -438,8 +443,13 @@ cannot recover it. Recognition during focus cannot merge its record into an
 unobserved neighbouring portion. Non-focused discovery resumes after the episode.
 Ordinary observed pickup also retains this track without an action focus, and a
 newly noticed cursor portion can be tracked while its identity is learned. Rest
-releases the cursor lock. Current visibility and learned identity jointly permit
-offer assessment; fresh recognition is required only for unknown identities.
+releases the cursor lock. Current visibility, learned identity and completed
+presentation jointly permit offer assessment. A new gesture requires presentation
+even for known items; it never requires repeating learned identification.
+`CursorItemGesture.presentation()` derives the displayed item's center, including
+its sprite pivot, from the existing eye reference. The pure perception policy
+validates face bounds, holding time and jitter in character-relative units.
+Completed presentation survives an observed face-to-handover move in that gesture.
 The sole `ObjectIntentions.goal` can hold a session-local wish while the player
 holds a portion. `ObjectUseContext` separates seeking, offered use and continued
 wishes from actual care origin. An observed drop preserves the wish but starts
@@ -463,6 +473,17 @@ Changed needs safely lead to refusal/put-down; conflicting evidence restores
 inquiry. Confirmed local absence starts bounded search with existing gaze/walk
 assets. A useful find can end search early; the coordinator owns the sole search
 budget and identified search/find/missing feedback.
+`object_absence.py` owns local negative sensory evidence: covered remembered
+places, continuous attention/dwell and raw occupants, including unnoticed ones.
+The awareness bridge resolves current custody first, then marks confirmed empty
+places missing and retains unacknowledged sensory facts until the coordinator can
+handle them. It defers new goals/offers while checking local absence.
+`notice_absence` announces `object_place_missing` before ordinary new discovery.
+Only a wanted reserve or an active unknown investigation continues into bounded
+search; an unwanted reserve needs no search. Later `object_missing` is the failed
+search outcome. Unrelated places wait during committed focus; losing a cursor
+track alone does not mark a ground place missing. A new unknown find at an already
+confirmed missing place cannot inherit the old identity from location alone.
 Known but unassessed acquisitions decide without repeating identification;
 unknown or conflicting evidence retains inspection. Known handover uses authored
 acceptance, while expressed-wish collection has its own cue. Shared offer copy
@@ -472,7 +493,9 @@ visible falling/bouncing enters `await_settle`. Settling resumes the same
 interaction with acquired assessments, and actual visual loss enters existing
 bounded search. An accepted return into Aiko's hand retains the interaction but
 uses actual human-handover origin; ground retrieval stays autonomous.
-An observed held target can be recognized and reappraised during that wait.
+An observed held target can be identified and reappraised during that wait,
+after deliberate face presentation. Own-hand inspection similarly waits for
+confirmed identification before announcing its result.
 `recognize_offer` and `decide_offer` retain player custody and identified reading
 receipts; they are distinct from pet-held inspection/use. Agreement resumes the
 waiting/settling path, while refusal completes the episode without acquisition
@@ -529,8 +552,9 @@ snapshots; `WorldState.advance_motion()` alone commits it. Parameters come from
 validated balance JSON through `infrastructure/world_motion.py`. Geometry is
 synchronized before frames, gestures and save snapshots; scaling does not reset
 velocity or multiply World coordinates. Only final settlement grants rest.
-Chooser press creates one portion; recognized willingness is signaled while
-held, then release offers or falls. Accepted handover holds the last pickup pose
+Chooser press creates one portion; willingness is signaled after deliberate
+presentation while held, then release offers or falls. Accepted handover holds
+the last pickup pose
 and acknowledges a known assessed offer before full consumption. Unknown ground
 finds retain inspection/decision. Resting-item press acquires the same portion
 through the same gesture. Escape/capture loss or off-monitor release removes new
