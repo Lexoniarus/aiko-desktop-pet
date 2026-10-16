@@ -13,4 +13,5 @@ ObjectEvent = Literal[
     "object_finished_food", "object_finished_drink", "object_missing",
     "object_search", "object_found",
     "object_busy",
+    "object_taken",
 ]

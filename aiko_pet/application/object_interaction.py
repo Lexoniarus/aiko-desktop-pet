@@ -87,6 +87,27 @@ class ObjectInteractionCoordinator:
         return self.phase in ("notice", "approach")
 
     @property
+    def waiting_for_target(self) -> bool:
+        return self.phase in ("await_return", "await_settle")
+
+    def target_taken(self, record: str) -> bool:
+        """Pause only an observed successful take before Aiko owns the item."""
+        if self.focus_record != record or self.phase not in (
+            "notice", "approach", "pick_up", "await_settle",
+        ):
+            return False
+        if (self.instance_id is not None
+                and self.world.get(self.instance_id).state == ObjectState.PET_HELD):
+            return False
+        self.instance_id = None
+        self._action_id = -1
+        self._arrived = False
+        self._set_phase("await_return")
+        self._stop()
+        self._announce("object_taken")
+        return True
+
+    @property
     def searching(self) -> bool:
         return self.phase == "search"
 

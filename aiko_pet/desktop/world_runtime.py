@@ -439,7 +439,12 @@ class DesktopWorldRuntime:
             return
 
         def acquire() -> None:
-            self.cursor.begin_existing(token, revision)
+            record = self.awareness.record_for_instance(token)
+            observed = any(item.token == record
+                           for item in self.awareness.observations)
+            if (self.cursor.begin_existing(token, revision) and observed
+                    and record is not None and self.interaction.target_taken(record)):
+                self._walk.movement.set_goal(None)
 
         self._request_gesture(acquire)
 

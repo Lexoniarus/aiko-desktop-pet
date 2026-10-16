@@ -23298,6 +23298,9 @@
     },
     {"id": "object-busy-1", "event": "object_busy", "moods": [], "periods": [], "weekdays": [], "animation": "idle", "cooldown_seconds": 0, "beats": [{"kind": "text", "content": "Warte einen kleinen Moment, ich will mir das da anschauen."}]},
     {"id": "object-busy-2", "event": "object_busy", "moods": [], "periods": [], "weekdays": [], "animation": "idle", "cooldown_seconds": 0, "beats": [{"kind": "text", "content": "Gleich. Ich bin gerade mit diesem Gegenstand beschäftigt."}]},
-    {"id": "object-busy-3", "event": "object_busy", "moods": [], "periods": [], "weekdays": [], "animation": "idle", "cooldown_seconds": 0, "beats": [{"kind": "text", "content": "Einen Augenblick bitte. Das hier möchte ich erst zu Ende anschauen."}]}
+    {"id": "object-busy-3", "event": "object_busy", "moods": [], "periods": [], "weekdays": [], "animation": "idle", "cooldown_seconds": 0, "beats": [{"kind": "text", "content": "Einen Augenblick bitte. Das hier möchte ich erst zu Ende anschauen."}]},
+    {"id": "object-taken-1", "event": "object_taken", "moods": [], "periods": [], "weekdays": [], "animation": "idle", "cooldown_seconds": 0, "beats": [{"kind": "emote", "content": "question"}, {"kind": "text", "content": "Huch, das wollte ich mir gerade anschauen! Gibst du es mir wieder?"}]},
+    {"id": "object-taken-2", "event": "object_taken", "moods": [], "periods": [], "weekdays": [], "animation": "idle", "cooldown_seconds": 0, "beats": [{"kind": "emote", "content": "question"}, {"kind": "text", "content": "Hey, ich war gerade auf dem Weg dorthin. Darf ich das noch anschauen?"}]},
+    {"id": "object-taken-3", "event": "object_taken", "moods": [], "periods": [], "weekdays": [], "animation": "idle", "cooldown_seconds": 0, "beats": [{"kind": "emote", "content": "question"}, {"kind": "text", "content": "Moment, genau das wollte ich mir ansehen. Legst du es bitte wieder hin?"}]}
   ]
 }

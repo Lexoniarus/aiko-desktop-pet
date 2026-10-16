@@ -112,6 +112,26 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual(self.coordinator.phase, "approach")
         self.assertEqual(self.actions, [])
 
+    def test_observed_take_invalidates_queued_grasp_without_losing_episode(self):
+        self.start_investigation()
+        key = self.coordinator.feedback_key.interaction_id
+        taken = self.world.take_resting(self.item.instance_id, expected_revision=0)
+        self.assertTrue(self.coordinator.target_taken(self.item.instance_id))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.assertEqual(self.world.get(taken.instance_id).state, ObjectState.USER_HELD)
+        self.assertEqual(self.coordinator.phase, "await_return")
+        self.assertEqual(self.coordinator.feedback_key.interaction_id, key)
+        self.assertEqual(self.done, [])
+        self.assertEqual(self.consumed, [])
+
+    def test_take_notification_does_not_interrupt_pet_held_custody(self):
+        self.start_investigation()
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        phase = self.coordinator.phase
+        self.assertFalse(self.coordinator.target_taken(self.item.instance_id))
+        self.assertEqual(self.coordinator.phase, phase)
+
     def test_confirmed_detach_records_own_placement_before_clip_finishes(self):
         self.delay_feedback = True
         self.decision = ObjectUseDecision(False, "not_needed")
