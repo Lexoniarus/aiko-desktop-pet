@@ -14,6 +14,7 @@ from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.commands import CareCommand
 from aiko_pet.application.controller import CareController
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.balance import parse_balance
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line
 from aiko_pet.pet.mind.dialogue_context import DialogueContext, FriendshipStage
@@ -164,18 +165,26 @@ class DialogueContextTests(unittest.TestCase):
     def test_spontaneous_story_throttle_and_sleep(self) -> None:
         state = PetState(friendship=90, mood=65, social=80, affection=80)
         context = self.mind.dialogue_context(state, self.time, 10, present=True)
+        raw = json.loads((CATALOGUE.parent / "balance.json").read_text("utf-8"))
+        raw["dialogue"]["spontaneous_story_quiet_seconds"] = 60
+        raw["dialogue"]["spontaneous_story_probability"] = 0.05
         with (
+            patch("aiko_pet.pet.mind.mind.BALANCE", parse_balance(raw)),
             patch.object(self.mind, "dialogue_context", return_value=context),
             patch.object(self.mind, "_select_spontaneous_event", return_value="idle"),
-            patch.object(self.mind.rng, "random", return_value=0.19),
+            patch.object(self.mind.rng, "random", return_value=0.049),
         ):
             first = self.mind.select_spontaneous_reaction(state, self.time, 10)
-            second = self.mind.select_spontaneous_reaction(state, self.time, 609)
-            third = self.mind.select_spontaneous_reaction(state, self.time, 610)
+            second = self.mind.select_spontaneous_reaction(state, self.time, 69)
+            third = self.mind.select_spontaneous_reaction(state, self.time, 70)
             assert first and second and third
             self.assertEqual(first.presentation, "story")
             self.assertEqual(second.presentation, "short")
             self.assertEqual(third.presentation, "story")
+            with patch.object(self.mind.rng, "random", return_value=0.05):
+                chosen = self.mind.select_spontaneous_reaction(state, self.time, 130)
+                assert chosen is not None
+                self.assertEqual(chosen.presentation, "short")
         with patch.object(self.mind.rng, "random", return_value=0.2):
             self.mind._last_spontaneous_story = -1000
             chosen = self.mind.select_spontaneous_reaction(state, self.time, 1000)

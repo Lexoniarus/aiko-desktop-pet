@@ -419,8 +419,12 @@ class PetMind:
             event in ("idle", "low_mood", "tired", "social_low", "affection_low")
             and not snapshot.working
             and snapshot.present is True
-            and now - self._last_spontaneous_story >= 600
-            and self.rng.random() < 0.2
+            and now - self._last_spontaneous_story >= BALANCE.integer(
+                "dialogue", "spontaneous_story_quiet_seconds",
+            )
+            and self.rng.random() < BALANCE.number(
+                "dialogue", "spontaneous_story_probability",
+            )
         ):
             story = self.book.choose(
                 "talk",

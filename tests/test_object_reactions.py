@@ -2,15 +2,43 @@
 
 import unittest
 from typing import get_args
+from unittest.mock import patch
 
+from aiko_pet.application.object_feedback import FeedbackKey, ObjectFeedback
 from aiko_pet.infrastructure.item_assets import load_item_catalog
-from aiko_pet.pet.mind.catalog import DialogueBook, Line, Reaction
+from aiko_pet.pet.balance import parse_balance
+from aiko_pet.pet.catalog_validation import load_json
+from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.object_events import ObjectEvent
 from aiko_pet.pet.mind.reaction_sequence import Cue
+from aiko_pet.ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
+from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
 from aiko_pet.ui.view_models.object_reactions import format_object_reaction
 
 
 class ObjectReactionTests(unittest.TestCase):
+    def test_object_playback_respects_configured_reading_time_after_formatting(self):
+        raw = load_json(CATALOGUE.parent / "balance.json")
+        raw["dialogue"]["minimum_text_ms"] = 3000
+        delays = []
+        player = ReactionPlayer(
+            schedule=lambda delay, _callback: delays.append(delay) or "timer",
+            cancel_timer=lambda _token: None,
+            display_emote=lambda _text, _ms: None,
+            display_text=lambda _text, _ms: None,
+            start_action=lambda _clip, _duration: None,
+            mark_spoken=lambda: None, is_closed=lambda: False,
+        )
+        presenter = ObjectFeedbackPresenter(player, load_item_catalog())
+        with patch("aiko_pet.pet.mind.reaction_sequence.BALANCE", parse_balance(raw)):
+            presenter.show(
+                ObjectFeedback(FeedbackKey("test", 1), "object_recognized",
+                               "object_1", "onigiri"),
+                Reaction.spoken("id", "Das ist {item}.", "idle", "object_recognized"),
+                lambda _receipt: None,
+            )
+        self.assertEqual(delays, [3000])
+
     def test_every_phase_event_has_unconditional_authored_copy(self):
         book = DialogueBook.from_file()
         for event in get_args(ObjectEvent):
@@ -39,12 +67,12 @@ class ObjectReactionTests(unittest.TestCase):
 
     def test_object_templates_reject_attribute_access_and_format_expressions(self):
         for text in ("{item.secret}", "{other}", "{item!r}", "{item:100}"):
-            with self.assertRaises(ValueError):
+            with self.assertRaisesRegex(ValueError, "placeholder"):
                 Line.parse(
                     dict(
                         id="one",
                         event="object_recognized",
-                        text=text,
+                        beats=[dict(kind="text", content=text)],
                         animation="idle",
                         moods=[],
                         periods=[],

@@ -319,7 +319,9 @@
     "greeting_reaction_ms": 3300,
     "hide_click_emote_from_count": 3,
     "emote_ms": 800,
-    "pause_ms": 600
+    "pause_ms": 600,
+    "spontaneous_story_quiet_seconds": 600,
+    "spontaneous_story_probability": 0.2
   },
   "object_behavior": {
     "notice_widths": 3.0,

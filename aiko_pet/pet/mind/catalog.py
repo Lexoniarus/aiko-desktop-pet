@@ -65,8 +65,8 @@ class Line:
     moods: tuple[str, ...]
     periods: tuple[str, ...]
     weekdays: tuple[int, ...]
-    weight: int = 1
-    cooldown_seconds: float = 120
+    weight: int = BALANCE.integer("dialogue", "default_weight")
+    cooldown_seconds: float = BALANCE.integer("dialogue", "default_cooldown_seconds")
     stages: tuple[FriendshipStage, ...] = ()
     needs: frozenset[str] = frozenset()
     presentation: Literal["short", "story"] = "short"
