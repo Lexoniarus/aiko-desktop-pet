@@ -170,7 +170,7 @@ class WorldState:
     def land(
         self, instance_id: str, *, expected_revision: int,
     ) -> WorldObjectSnapshot:
-        """Record scripted ground contact, preserving the horizontal anchor."""
+        """Record scripted final contact on reachable ground."""
         item = self._expect(instance_id, expected_revision, ObjectState.FALLING,
                             ObjectState.BOUNCING)
         if item.position is None:

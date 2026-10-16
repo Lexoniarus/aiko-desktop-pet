@@ -562,7 +562,6 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(known.x, placed.position.x)
         self.assertIsNone(world._visual.object_target)
         self.assertAlmostEqual(self.app.state.energy, 65, places=1)
-        return item
 
     def test_ground_pickup_rechecks_actual_reach_at_frame_four(self):
         item = self._reach_placed_drink(1, "left")

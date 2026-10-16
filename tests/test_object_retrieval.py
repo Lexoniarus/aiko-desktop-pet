@@ -219,9 +219,13 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.acknowledge()
         # A valid paired save may omit a terminal instance while memory is stale.
         self.world.restore_snapshot(replace(self.world.snapshot(), objects=()))
+        self.memory.update((ObjectObservation(
+            self.item.instance_id, "apple", "food", 120, 0, True, 1,
+        ),), now=1)
         self.coordinator.start_search()
         self.coordinator.start_search()
         self.assertEqual(self.coordinator.phase, "search")
+        self.assertEqual(self.coordinator.search_x, 120)
         self.assertEqual(self.memory.snapshot()[0].place_status, "missing")
         self.acknowledge()
         self.stamp = 2.1
@@ -248,6 +252,7 @@ class ObjectRetrievalTests(unittest.TestCase):
             found.instance_id, "apple", "food", 200, 0, 1, "investigate",
         ))
         self.assertEqual(self.coordinator.phase, "found")
+        self.assertEqual(self.cues[-1].record_id, found.instance_id)
         self.coordinator.receive_feedback(FeedbackReceipt(old, True))
         self.assertEqual(self.coordinator.phase, "found")
         self.acknowledge()

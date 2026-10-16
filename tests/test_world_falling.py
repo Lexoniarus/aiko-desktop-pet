@@ -20,7 +20,7 @@ class WorldFallingTests(unittest.TestCase):
         world.release(item.instance_id, expected_revision=0)
         return world, item.instance_id
 
-    def test_equivalent_elapsed_time_and_one_ground_contact(self):
+    def test_equivalent_elapsed_time_and_idempotent_settlement(self):
         first, token = self.make()
         second, other = self.make()
         first.advance_motion(0.5, motion_parameters())

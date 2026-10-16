@@ -35,7 +35,7 @@ class ObjectMemoryCodecTests(unittest.TestCase):
         self.assertEqual((known.x, known.observed_at, known.disposition),
                          (650, -998, "deferred"))
 
-    def test_unknown_sighting_stays_unknown_and_unexamined(self):
+    def test_unknown_sighting_stays_unknown_and_unassessed(self):
         raw = deepcopy(self.raw)
         raw["entries"][0].update(identity=None, kind=None, assessed=False,
                                   disposition=None)

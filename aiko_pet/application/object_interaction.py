@@ -148,6 +148,9 @@ class ObjectInteractionCoordinator:
         """The caller has attentively arrived at an empty remembered place."""
         if self.phase != "approach" or self.memory_id is None:
             return
+        known = self._memory.get(self.memory_id)
+        if known is not None:
+            self.search_x = known.x
         self._memory.mark_missing(self.memory_id)
         self._search_started = self._now()
         self._set_phase("search")
@@ -161,7 +164,8 @@ class ObjectInteractionCoordinator:
         self._next_goal = goal
         self._identity = goal.identity
         self._set_phase("found")
-        self._announce("object_found")
+        self._feedback(ObjectFeedback(self.feedback_key, "object_found",
+                                      goal.token, goal.identity))
         self.update()
 
     def arrive(self) -> None:
