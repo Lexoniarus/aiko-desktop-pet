@@ -6,10 +6,10 @@ import unittest
 from collections.abc import Callable
 
 from aiko_pet.games.rock_paper_scissors import Move, Outcome, Round, Score
+from aiko_pet.ui.windows.rock_paper_scissors_dialogue import GameDialogue, outcome_event
 from aiko_pet.ui.windows.rock_paper_scissors_sequence import (
     RockPaperScissorsSequence,
 )
-from aiko_pet.ui.windows.rock_paper_scissors_text_de import outcome_line
 
 
 class FakeClock:
@@ -155,7 +155,10 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
 
     def test_outcome_dialogue_varies_without_narrating_player_score(self) -> None:
         result = Round(Move.ROCK, Move.SCISSORS, Outcome.WIN)
-        remarks = [outcome_line(result, number) for number in (1, 2, 3)]
+        dialogue, other = GameDialogue(), GameDialogue()
+        remarks = [dialogue.choose(outcome_event(result)) for _ in range(3)]
+        self.assertEqual(len(dialogue._book.recent), 3)
+        self.assertEqual(tuple(other._book.recent), ())
         self.assertEqual(len(set(remarks)), 3)
         self.assertTrue(all("Stein" not in remark for remark in remarks))
 

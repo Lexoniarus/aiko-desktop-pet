@@ -10,30 +10,24 @@ from ...pet.mind.catalog import DialogueBook
 from ...pet.mind.dialogue_context import DialogueContext, FriendshipStage
 from ...pet.routine import context_at
 
-_BOOK = DialogueBook.from_file()
 
+class GameDialogue:
+    """Own standalone game rotation; desktop games inject their session mind."""
 
-def game_line(event: str, dialogue: DialogueContext | None = None) -> str:
-    snapshot = dialogue or DialogueContext(
-        FriendshipStage.ACQUAINTANCE,
-        "calm",
-        context_at(time.time()),
-    )
-    reaction = _BOOK.choose(
-        event,
-        snapshot.mood,
-        snapshot.time,
-        time.monotonic(),
-        dialogue=snapshot,
-        presentation="short",
-    )
-    if reaction is None:
-        raise ValueError(f"Missing game dialogue: {event}")
-    return reaction.text
+    def __init__(self) -> None:
+        self._book = DialogueBook.from_file()
 
-
-def welcome_line(rounds: int = 0) -> str:
-    return game_line("game_greeting")
+    def choose(self, event: str, dialogue: DialogueContext | None = None) -> str:
+        snapshot = dialogue or DialogueContext(
+            FriendshipStage.ACQUAINTANCE, "calm", context_at(time.time()),
+        )
+        reaction = self._book.choose(
+            event, snapshot.mood, snapshot.time, time.monotonic(),
+            dialogue=snapshot, presentation="short",
+        )
+        if reaction is None:
+            raise ValueError(f"Missing game dialogue: {event}")
+        return reaction.text
 
 
 def countdown_line(number: int) -> str:
@@ -48,7 +42,3 @@ def outcome_event(result: Round) -> str:
         Outcome.LOSS: "game_aiko_win",
         Outcome.DRAW: "game_draw",
     }[result.outcome]
-
-
-def outcome_line(result: Round, games: int = 1) -> str:
-    return game_line(outcome_event(result))

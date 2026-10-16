@@ -65,9 +65,9 @@ class TextCatalogTests(unittest.TestCase):
         )
 
     def test_game_reactions_are_backed_by_german_json(self) -> None:
-        from aiko_pet.ui.windows.rock_paper_scissors_text_de import (
+        from aiko_pet.ui.windows.rock_paper_scissors_dialogue import (
+            GameDialogue,
             countdown_line,
-            welcome_line,
         )
 
         messages = GERMAN_TEXT.messages
@@ -81,8 +81,9 @@ class TextCatalogTests(unittest.TestCase):
                 countdown_line(number), messages[f"rps.countdown.{number}"]
             )
         greetings = {line.text for line in book.lines if line.event == "game_greeting"}
+        dialogue = GameDialogue()
         for _ in range(7):
-            self.assertIn(welcome_line(), greetings)
+            self.assertIn(dialogue.choose("game_greeting"), greetings)
         with self.assertRaises(KeyError):
             countdown_line(4)
 
