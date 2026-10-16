@@ -194,7 +194,7 @@ class Line:
     def specificity(self) -> int:
         return bool(self.moods) + bool(self.stages) + len(self.needs)
 
-    def score(self, emotion: str, context: TimeContext) -> int:
+    def selection_weight(self) -> int:
         return self.weight * (
             1 + 2 * bool(self.moods) + 2 * bool(self.periods) + 2 * bool(self.weekdays)
         )
@@ -297,7 +297,7 @@ class DialogueBook:
         if not fresh:
             fresh = candidates
         line = self.rng.choices(
-            fresh, weights=[x.score(emotion, context) for x in fresh], k=1
+            fresh, weights=[x.selection_weight() for x in fresh], k=1
         )[0]
         self.last_used[line.id] = now
         self.recent.append(line.id)

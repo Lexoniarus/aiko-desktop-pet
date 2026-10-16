@@ -53,7 +53,6 @@ class ObjectInteractionCoordinator:
         self._cue_done = self._animation_done = self._arrived = False
         self._inspect_at = 0.0
         self._decision = ObjectUseDecision(False, "unrecognized")
-        self.examined = False
         self._retrieving = False
         self._kind: ConsumableKind | None = None
 
@@ -77,7 +76,6 @@ class ObjectInteractionCoordinator:
         self._seen.clear()
         self._effects.clear()
         self._identity = None
-        self.examined = False
         self._arrived = False
         self._decision = ObjectUseDecision(False, "unrecognized")
         self._retrieving = False
@@ -136,13 +134,6 @@ class ObjectInteractionCoordinator:
         if self.phase == "approach":
             self._arrived = True
             self.update()
-
-    def begin_pickup(self, instance_id: str) -> bool:
-        if self.active or not self._eligible(instance_id):
-            return False
-        self._start(instance_id, ConsumptionOrigin.AUTONOMOUS)
-        self._pick_up()
-        return True
 
     def _pick_up(self) -> None:
         assert self.instance_id is not None
@@ -295,7 +286,6 @@ class ObjectInteractionCoordinator:
                 if self._queued is not None:
                     self._put_down()
                 elif self._retrieving and self._known_supply():
-                    self.examined = True
                     self._begin_eating()
                 else:
                     self._retrieving = False
@@ -306,7 +296,6 @@ class ObjectInteractionCoordinator:
                 self._identity = known.identity if known is not None else None
                 self._kind = known.kind if known is not None else None
                 self._memory.mark_examined(token)
-                self.examined = known is not None and known.recognized
                 self._set_phase("recognize")
                 self._announce(
                     "object_recognized" if self._identity else "object_unknown",

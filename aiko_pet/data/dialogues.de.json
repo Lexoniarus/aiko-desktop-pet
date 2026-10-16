@@ -8895,23 +8895,6 @@
       "presentation": "short"
     },
     {
-      "id": "object-return-01",
-      "event": "object_return",
-      "moods": [],
-      "periods": [],
-      "weekdays": [],
-      "animation": "idle",
-      "weight": 1,
-      "cooldown_seconds": 0,
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Da liegt noch etwas für mich. Das hole ich mir."
-        }
-      ],
-      "presentation": "short"
-    },
-    {
       "id": "object-approach-01",
       "event": "object_approach",
       "moods": [],
@@ -9031,23 +9014,6 @@
       "presentation": "short"
     },
     {
-      "id": "object-consuming-01",
-      "event": "object_consuming",
-      "moods": [],
-      "periods": [],
-      "weekdays": [],
-      "animation": "idle",
-      "weight": 1,
-      "cooldown_seconds": 0,
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Jetzt gönne ich mir das."
-        }
-      ],
-      "presentation": "short"
-    },
-    {
       "id": "object-put-down-01",
       "event": "object_put_down",
       "moods": [],
@@ -9060,23 +9026,6 @@
         {
           "kind": "text",
           "content": "Das lege ich mir für später hin."
-        }
-      ],
-      "presentation": "short"
-    },
-    {
-      "id": "object-finished-01",
-      "event": "object_finished",
-      "moods": [],
-      "periods": [],
-      "weekdays": [],
-      "animation": "idle",
-      "weight": 1,
-      "cooldown_seconds": 0,
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Das hat gutgetan."
         }
       ],
       "presentation": "short"
@@ -9320,44 +9269,6 @@
         {
           "kind": "text",
           "content": "Hm. Das sieht interessant aus."
-        }
-      ]
-    },
-    {
-      "id": "voice-object_return-0003",
-      "event": "object_return",
-      "animation": "idle",
-      "moods": [],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [],
-      "needs": [],
-      "presentation": "short",
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Das liegt noch da. Ich gehe mal hin."
-        }
-      ]
-    },
-    {
-      "id": "voice-object_return-0004",
-      "event": "object_return",
-      "animation": "idle",
-      "moods": [],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [],
-      "needs": [],
-      "presentation": "short",
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Da wollte ich noch einmal nachsehen."
         }
       ]
     },
@@ -9628,44 +9539,6 @@
       ]
     },
     {
-      "id": "voice-object_consuming-0019",
-      "event": "object_consuming",
-      "animation": "idle",
-      "moods": [],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [],
-      "needs": [],
-      "presentation": "short",
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Dafür nehme ich mir jetzt einen Moment."
-        }
-      ]
-    },
-    {
-      "id": "voice-object_consuming-0020",
-      "event": "object_consuming",
-      "animation": "idle",
-      "moods": [],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [],
-      "needs": [],
-      "presentation": "short",
-      "beats": [
-        {
-          "kind": "text",
-          "content": "So. Das kommt mir gelegen."
-        }
-      ]
-    },
-    {
       "id": "voice-object_put_down-0021",
       "event": "object_put_down",
       "animation": "idle",
@@ -9700,44 +9573,6 @@
         {
           "kind": "text",
           "content": "Das bekommt einen Platz für später."
-        }
-      ]
-    },
-    {
-      "id": "voice-object_finished-0023",
-      "event": "object_finished",
-      "animation": "idle",
-      "moods": [],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [],
-      "needs": [],
-      "presentation": "short",
-      "beats": [
-        {
-          "kind": "text",
-          "content": "Ja. Genau das habe ich gebraucht."
-        }
-      ]
-    },
-    {
-      "id": "voice-object_finished-0024",
-      "event": "object_finished",
-      "animation": "idle",
-      "moods": [],
-      "periods": [],
-      "weekdays": [],
-      "weight": 1,
-      "cooldown_seconds": 120,
-      "stages": [],
-      "needs": [],
-      "presentation": "short",
-      "beats": [
-        {
-          "kind": "text",
-          "content": "So ist es besser."
         }
       ]
     },

@@ -64,8 +64,18 @@ class ObjectInteractionTests(unittest.TestCase):
             inspection_seconds=0,
         )
 
+    def start_investigation(self):
+        # Acknowledge only approach cues; retain each case's pickup cue timing.
+        delayed = self.delay_feedback
+        self.delay_feedback = False
+        self.coordinator.begin_goal(ObjectGoal(
+            self.item.instance_id, "apple", "food", 100, 0, 0, "investigate",
+        ))
+        self.delay_feedback = delayed
+        self.coordinator.arrive()
+
     def test_acquisition_precedes_consumption_and_duplicates_are_ignored(self):
-        self.coordinator.begin_pickup(self.item.instance_id)
+        self.start_investigation()
         grasp = PlaybackEvent(1, "pick_up", 3, ("attach_object",))
         self.coordinator.receive(grasp)
         self.coordinator.receive(grasp)
@@ -80,7 +90,7 @@ class ObjectInteractionTests(unittest.TestCase):
     def test_confirmed_detach_records_own_placement_before_clip_finishes(self):
         self.delay_feedback = True
         self.decision = ObjectUseDecision(False, "not_needed")
-        self.coordinator.begin_pickup(self.item.instance_id)
+        self.start_investigation()
         self.acknowledge()
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
         self.assertFalse(self.memory.snapshot()[0].resting)
@@ -99,7 +109,7 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual(self.done, [])
 
     def test_failed_placement_rolls_back_and_same_event_can_retry(self):
-        self.coordinator.begin_pickup(self.item.instance_id)
+        self.start_investigation()
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
         self.coordinator.interrupt(lambda: None)
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
@@ -121,7 +131,7 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertFalse(self.memory.snapshot()[0].examined)
 
     def test_failed_grasp_rolls_back_world_and_memory_and_can_retry(self):
-        self.coordinator.begin_pickup(self.item.instance_id)
+        self.start_investigation()
         world, memory = self.world.snapshot(), self.memory.snapshot()
         original = self.memory.note_acquired
 
@@ -140,7 +150,7 @@ class ObjectInteractionTests(unittest.TestCase):
                          ObjectState.PET_HELD)
 
     def test_interruption_after_grasp_puts_down_before_user_action(self):
-        self.coordinator.begin_pickup(self.item.instance_id)
+        self.start_investigation()
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
         self.coordinator.interrupt(lambda: self.actions.append("game"))
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
@@ -153,7 +163,7 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual(self.consumed, [])
 
     def test_repeated_effect_in_different_envelope_cannot_grasp_or_release_twice(self):
-        self.coordinator.begin_pickup(self.item.instance_id)
+        self.start_investigation()
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 4, ("attach_object",)))
         self.assertEqual(self.coordinator.phase, "pick_up")
@@ -170,7 +180,7 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual(self.consumed, [])
 
     def test_interrupting_committed_eating_preserves_consumed_completion(self):
-        self.coordinator.begin_pickup(self.item.instance_id)
+        self.start_investigation()
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
         self.coordinator.interrupt(lambda: self.actions.append("talk"))
@@ -202,7 +212,7 @@ class ObjectInteractionTests(unittest.TestCase):
         self.delay_feedback = True
         self.decision = ObjectUseDecision(False, "not_needed")
         self.coordinator._inspection_seconds = 1
-        self.coordinator.begin_pickup(self.item.instance_id)
+        self.start_investigation()
         self.acknowledge()
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
@@ -226,7 +236,7 @@ class ObjectInteractionTests(unittest.TestCase):
 
     def test_cancelled_inspection_recovers_custody_and_ignores_stale_receipt(self):
         self.delay_feedback = True
-        self.coordinator.begin_pickup(self.item.instance_id)
+        self.start_investigation()
         self.acknowledge()
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))

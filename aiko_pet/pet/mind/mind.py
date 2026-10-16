@@ -141,7 +141,6 @@ class PetMind:
             context,
             frozenset(needs),
             working=bool(situation and situation.focused),
-            recovering=self.work.recovering(now),
             present=present
             if present is not None
             else (situation.present if situation else None),

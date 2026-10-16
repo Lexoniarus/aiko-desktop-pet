@@ -34,7 +34,6 @@ class DialogueContext:
     time: TimeContext
     needs: frozenset[str] = frozenset()
     working: bool = False
-    recovering: bool = False
     present: bool | None = None
 
     @property
