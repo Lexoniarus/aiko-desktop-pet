@@ -20,6 +20,7 @@ from ..application.session import WorldSessionSnapshot
 from ..application.settings import PetSettings
 from ..infrastructure.active_time import active_uptime_seconds
 from ..infrastructure.world_catalog import build_consumable_definitions
+from ..infrastructure.world_motion import motion_parameters
 from ..pet.animation.character import FRAME_WIDTH, PlaybackEvent
 from ..pet.animation.item_assets import ItemCatalog
 from ..pet.balance import BALANCE
@@ -73,6 +74,7 @@ class DesktopWorldRuntime:
         self._save, self._mind = save, mind
         self._care: CareOutcome | None = None
         self._cancel_feedback = cancel_feedback
+        self._motion_parameters = motion_parameters()
         self.world = WorldState(self._surface(), build_consumable_definitions(
             DEFAULT_CATALOG, items,
         ))
@@ -443,9 +445,7 @@ class DesktopWorldRuntime:
         self._last_active, self._last_real = active, real
         self.now += elapsed
         self._sync_geometry()
-        self.world.advance_falls(elapsed, gravity=BALANCE.number(
-            "object_behavior", "fall_gravity",
-        ))
+        self.world.advance_motion(elapsed, self._motion_parameters)
         self.cursor.update()
         self._sync_view()
         self._timer = self.root.after(33, self._frame)

@@ -387,6 +387,7 @@ class WorldGuiTests(unittest.TestCase):
         app.settings.scale = scale
         app._window.resize()
         app._animated.reload_sprites()
+        world._sync_geometry()
         app.state.energy = 65
         track = world._track()
         boundary = track.left if side == "left" else track.right - world.width
@@ -430,10 +431,13 @@ class WorldGuiTests(unittest.TestCase):
             self.assertEqual(world.world.get(item.instance_id).state, expected)
         world._sync_view()
         overlay = animated.food_overlay
-        self.assertIsNone(overlay.contact_origin)
+        self.assertIsNotNone(overlay.contact_origin)
         anchor = clip.frames[3].food_anchor
         assert anchor is not None
         pivot = world.view.items.foods["energy_drink"].sprites[scale].pivot
+        with patch("aiko_pet.ui.pet_view.food_overlay.time.monotonic",
+                   return_value=overlay._contact_at + .14):
+            world._sync_view()
         self.assertEqual(self.app.canvas.coords(overlay.item), [
             round((96 - clip.anchor[0] + anchor[0]) * scale - pivot[0]),
             round((FOOT_BASELINE - clip.anchor[1] + anchor[1]) * scale - pivot[1]),
@@ -468,7 +472,7 @@ class WorldGuiTests(unittest.TestCase):
             animated.show_frame("pick_up", animated.frame_clock.frame_started_at
                                 + clip.timings[index] / 1000 + .001)
             self.app.root.update_idletasks()
-        self.app._place_x(world._track().left + 20)
+        self.app._place_x(world._track().left + world.width)
         animated.show_frame("pick_up", animated.frame_clock.frame_started_at
                             + clip.timings[2] / 1000 + .001)
         self.app.root.update_idletasks()

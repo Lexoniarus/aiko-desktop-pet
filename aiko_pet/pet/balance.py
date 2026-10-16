@@ -67,6 +67,9 @@ def parse_balance(raw: Any) -> BalanceCatalog:
         or objects["notice_seconds"] > objects["recognize_seconds"]
         or objects["seek_food_satiety"] > 100
         or objects["seek_drink_energy"] > 100
+        or objects["bounce_restitution_fraction"] >= 1
+        or objects["bounce_horizontal_damping_fraction"] >= 1
+        or objects["bounce_maximum_contacts"] > 32
         or any(value <= 0 for value in objects.values())
     ):
         raise ValueError("Invalid object perception/interest balance")

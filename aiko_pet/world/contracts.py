@@ -6,6 +6,8 @@ import math
 from dataclasses import dataclass
 from enum import StrEnum
 
+from .motion import ItemMotion
+
 
 def _finite_nonnegative(value: float, name: str) -> None:
     if isinstance(value, bool) or not math.isfinite(value) or value < 0:
@@ -105,6 +107,7 @@ class ObjectDefinition:
 class ObjectState(StrEnum):
     USER_HELD = "user_held"
     FALLING = "falling"
+    BOUNCING = "bouncing"
     RESTING = "resting"
     PET_HELD = "pet_held"
     CONSUMED = "consumed"
@@ -121,7 +124,7 @@ class WorldObjectSnapshot:
     state: ObjectState
     position: WorldPosition | None
     footprint: ObjectFootprint
-    fall_speed: float = 0.0
+    motion: ItemMotion | None = None
 
 
 @dataclass(frozen=True, slots=True)

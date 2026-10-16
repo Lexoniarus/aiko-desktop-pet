@@ -18,6 +18,7 @@ from .contracts import (
     WorldSnapshot,
     WorldSurface,
 )
+from .motion import ItemMotion, MotionParameters, advance_motion
 
 
 class WorldFailure(StrEnum):
@@ -91,6 +92,9 @@ class WorldState:
             if (item.instance_id in objects
                     or item.definition_id not in self._definitions):
                 raise ValueError("Invalid restored instance identity")
+            if ((item.state in (ObjectState.FALLING, ObjectState.BOUNCING))
+                    != (item.motion is not None)):
+                raise ValueError("Restored motion must match object state")
             if item.position is not None and not snapshot.surface.contains(
                 item.position, item.footprint,
             ):
@@ -126,6 +130,8 @@ class WorldState:
         if definition_id not in self._definitions:
             raise WorldOperationError(WorldFailure.UNKNOWN_DEFINITION)
         self._validate_position(position, footprint)
+        if state == ObjectState.RESTING:
+            position = WorldPosition(self._surface.ground_x(position.x, footprint), 0)
         if state == ObjectState.USER_HELD:
             self._require_free(ObjectState.USER_HELD, WorldFailure.CURSOR_OCCUPIED)
         instance_id = f"object_{self._next_id}"
@@ -151,12 +157,13 @@ class WorldState:
         item = self._expect(instance_id, expected_revision, ObjectState.RESTING)
         position = WorldPosition(x, 0)
         self._validate_position(position, item.footprint)
+        position = WorldPosition(self._surface.ground_x(x, item.footprint), 0)
         return self._commit(item, item.state, position)
 
     def release(
         self, instance_id: str, *, expected_revision: int,
     ) -> WorldObjectSnapshot:
-        """Unaccepted release starts falling; physics is a later stage."""
+        """Unaccepted release starts one continuous motion lifecycle."""
         item = self._expect(instance_id, expected_revision, ObjectState.USER_HELD)
         return self._commit(item, ObjectState.FALLING, item.position)
 
@@ -164,10 +171,12 @@ class WorldState:
         self, instance_id: str, *, expected_revision: int,
     ) -> WorldObjectSnapshot:
         """Record scripted ground contact, preserving the horizontal anchor."""
-        item = self._expect(instance_id, expected_revision, ObjectState.FALLING)
+        item = self._expect(instance_id, expected_revision, ObjectState.FALLING,
+                            ObjectState.BOUNCING)
         if item.position is None:
             raise AssertionError("Falling objects require a position")
-        position = WorldPosition(item.position.x, 0)
+        position = WorldPosition(self._surface.ground_x(
+            item.position.x, item.footprint), 0)
         self._validate_position(position, item.footprint)
         return self._commit(item, ObjectState.RESTING, position)
 
@@ -207,6 +216,7 @@ class WorldState:
         item = self._expect(instance_id, expected_revision, ObjectState.PET_HELD)
         position = WorldPosition(x, 0)
         self._validate_position(position, item.footprint)
+        position = WorldPosition(self._surface.ground_x(x, item.footprint), 0)
         return self._commit(item, ObjectState.RESTING, position)
 
     def change_surface(self, surface: WorldSurface) -> None:
@@ -220,45 +230,46 @@ class WorldState:
                 if item.position is not None:
                     raise WorldOperationError(WorldFailure.OUT_OF_BOUNDS)
             if item.position is not None:
-                replacements.append((item, WorldPosition(
-                    max(item.footprint.left, min(
+                x = max(item.footprint.left, min(
                         item.position.x, surface.width - item.footprint.right,
-                    )), min(item.position.height, surface.height),
+                    ))
+                if item.state == ObjectState.RESTING:
+                    x = surface.ground_x(x, item.footprint)
+                replacements.append((item, WorldPosition(
+                    x, min(item.position.height, surface.height),
                 )))
         self._surface = surface
         self._revision += 1
         for item, position in replacements:
             self._commit(item, item.state, position)
 
-    def advance_falls(self, elapsed: float, *, gravity: float) -> None:
-        """Analytic fall progression; no frame-count dependency or bouncing."""
+    def advance_motion(self, elapsed: float, parameters: MotionParameters) -> None:
+        """Advance all flying/bouncing portions; only final contact grants rest."""
         self._require_owner()
-        if (not math.isfinite(elapsed) or elapsed < 0
-                or not math.isfinite(gravity) or gravity <= 0):
-            raise ValueError("Invalid fall time/gravity")
+        if not math.isfinite(elapsed) or elapsed < 0:
+            raise ValueError("Invalid motion time")
         if elapsed == 0:
             return
         for item in tuple(self._objects.values()):
-            if item.state != ObjectState.FALLING or item.position is None:
+            if (item.state not in (ObjectState.FALLING, ObjectState.BOUNCING)
+                    or item.position is None or item.motion is None):
                 continue
-            height = item.position.height - item.fall_speed * elapsed
-            height -= gravity * elapsed * elapsed / 2
-            if height <= 0:
-                self.land(item.instance_id, expected_revision=item.revision)
-            else:
-                self._objects[item.instance_id] = replace(
-                    item, revision=item.revision + 1,
-                    position=WorldPosition(item.position.x, height),
-                    fall_speed=item.fall_speed + gravity * elapsed,
-                )
-                self._revision += 1
+            result = advance_motion(
+                item.position.x, item.position.height, item.motion, elapsed,
+                self._surface.ground_interval(item.footprint), parameters,
+            )
+            state = (ObjectState.RESTING if result.motion is None else
+                     ObjectState.BOUNCING if result.contacted else item.state)
+            self._commit(item, state, WorldPosition(result.x, result.height),
+                         motion=result.motion)
 
     def change_footprint(
         self, instance_id: str, footprint: ObjectFootprint, *, expected_revision: int,
     ) -> None:
         item = self._expect(
             instance_id, expected_revision, ObjectState.USER_HELD,
-            ObjectState.FALLING, ObjectState.RESTING, ObjectState.PET_HELD,
+            ObjectState.FALLING, ObjectState.BOUNCING, ObjectState.RESTING,
+            ObjectState.PET_HELD,
         )
         if footprint.left + footprint.right > self._surface.width:
             raise WorldOperationError(WorldFailure.OUT_OF_BOUNDS)
@@ -269,6 +280,10 @@ class WorldState:
             position = WorldPosition(max(footprint.left, min(
                 position.x, self._surface.width - footprint.right,
             )), position.height)
+            if item.state == ObjectState.RESTING:
+                position = WorldPosition(
+                    self._surface.ground_x(position.x, footprint), 0,
+                )
         self._objects[instance_id] = replace(
             item, footprint=footprint, position=position, revision=item.revision + 1,
         )
@@ -279,7 +294,7 @@ class WorldState:
     ) -> WorldObjectSnapshot:
         item = self._expect(
             instance_id, expected_revision, ObjectState.USER_HELD,
-            ObjectState.FALLING, ObjectState.RESTING,
+            ObjectState.FALLING, ObjectState.BOUNCING, ObjectState.RESTING,
         )
         return self._commit(item, ObjectState.REMOVED, None)
 
@@ -306,13 +321,15 @@ class WorldState:
     def _commit(
         self, item: WorldObjectSnapshot, state: ObjectState,
         position: WorldPosition | None,
+        *, motion: ItemMotion | None = None,
     ) -> WorldObjectSnapshot:
-        if item.state == state and item.position == position:
+        moving = state in (ObjectState.FALLING, ObjectState.BOUNCING)
+        motion = (motion or item.motion or ItemMotion()) if moving else None
+        if item.state == state and item.position == position and item.motion == motion:
             return item
         updated = replace(item, revision=item.revision + 1, state=state,
                           position=position,
-                          fall_speed=item.fall_speed if state == ObjectState.FALLING
-                          else 0.0)
+                          motion=motion)
         self._objects[item.instance_id] = updated
         self._revision += 1
         return updated

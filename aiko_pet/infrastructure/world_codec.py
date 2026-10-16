@@ -24,8 +24,7 @@ def encode_world(snapshot: WorldSnapshot, *, recovery_x: float) -> dict[str, Any
         if item.state in (ObjectState.CONSUMED, ObjectState.REMOVED):
             continue
         x = item.position.x if item.position is not None else recovery_x
-        x = max(item.footprint.left,
-                min(x, snapshot.surface.width - item.footprint.right))
+        x = snapshot.surface.ground_x(x, item.footprint)
         records.append({
             "id": item.instance_id, "definition_id": item.definition_id,
             "revision": item.revision + int(item.state != ObjectState.RESTING),
