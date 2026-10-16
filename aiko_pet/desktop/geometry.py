@@ -7,6 +7,17 @@ from dataclasses import dataclass
 FOOT_BASELINE = 194
 
 
+def item_face_offset(
+    pointer: tuple[float, float], *, pivot: tuple[int, int],
+    size: tuple[int, int], eyes: tuple[float, float], width: float,
+) -> tuple[float, float]:
+    """Displayed item center relative to the existing eyes, in sprite widths."""
+    if width <= 0:
+        raise ValueError("Sprite width must be positive")
+    return ((pointer[0] - pivot[0] + size[0] / 2 - eyes[0]) / width,
+            (pointer[1] - pivot[1] + size[1] / 2 - eyes[1]) / width)
+
+
 @dataclass(frozen=True)
 class GroundApproach:
     """A bounded full-window standing position for ordinary ground reach."""

@@ -177,3 +177,10 @@ must include a fresh isolated profile plus a separate known-stock restart case.
   documents were uncommitted. Implementation was subsequently authorized.
 - Each following entry records the actual checks and commit evidence. Earlier
   delivery evidence remains in the continuity plan; PR #10 remains unmerged.
+- Stage 1 commit: `f035b1d`.
+- Stage 2: wider noticing and validated presentation timing/face bounds/jitter
+  are in the existing JSON catalogue. Displayed item-center geometry reuses the
+  eye reference and normalizes scale/pivots without changing grasp or walking
+  reach. Verified 31 targeted geometry, configuration, perception, awareness and
+  reach tests; Ruff, strict Mypy and Pyright pass. Presentation enforcement follows
+  with the producer/consumer update in stages 3-4.

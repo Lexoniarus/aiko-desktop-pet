@@ -73,6 +73,11 @@ def parse_balance(raw: Any) -> BalanceCatalog:
         objects["recognize_widths"] > objects["notice_widths"]
         or objects["reach_widths"] >= objects["recognize_widths"]
         or objects["notice_seconds"] > objects["recognize_seconds"]
+        or objects["notice_seconds"] > objects["presentation_seconds"]
+        or objects["presentation_jitter_widths"] >= min(
+            objects["presentation_horizontal_widths"],
+            objects["presentation_vertical_widths"],
+        )
         or objects["seek_food_satiety"] > 100
         or objects["seek_drink_energy"] > 100
         or objects["bounce_restitution_fraction"] >= 1

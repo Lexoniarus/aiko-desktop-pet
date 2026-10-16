@@ -333,10 +333,14 @@
     "spontaneous_story_probability": 0.2
   },
   "object_behavior": {
-    "notice_widths": 3.0,
+    "notice_widths": 6.0,
     "recognize_widths": 1.5,
     "notice_seconds": 0.2,
     "recognize_seconds": 0.6,
+    "presentation_seconds": 1.0,
+    "presentation_horizontal_widths": 0.4,
+    "presentation_vertical_widths": 0.3,
+    "presentation_jitter_widths": 0.12,
     "memory_seconds": 600.0,
     "reevaluate_seconds": 1.0,
     "seek_food_satiety": 70.0,
