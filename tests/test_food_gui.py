@@ -96,7 +96,11 @@ class FoodGuiTests(unittest.TestCase):
         menu = self.pet._hover.food_menu
         assert menu is not None
         self.assertEqual(menu.buttons["energy_drink"].cget("text"), "Energy Drink")
-        menu.buttons["energy_drink"].invoke()
+        # Gesture start now saves through the active-time owner. Isolate the
+        # selection effect from real elapsed need decay in this boundary test.
+        with patch("aiko_pet.application.active_time.ActiveSessionClock.consume",
+                   return_value=0):
+            menu.buttons["energy_drink"].invoke()
         self.assertIsNone(self.pet._hover.food_menu)
         self.assertEqual(self.pet.state.energy, 40)
         self.assertLess(self.pet.state.satiety, 40)

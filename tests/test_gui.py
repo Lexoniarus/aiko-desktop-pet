@@ -106,7 +106,9 @@ class TaskbarPetGuiTests(unittest.TestCase):
         bar.buttons["feed"].invoke()
         menu = self.app._hover.food_menu
         assert menu is not None
-        menu.buttons["onigiri"].invoke()
+        with patch("aiko_pet.application.active_time.ActiveSessionClock.consume",
+                   return_value=0):
+            menu.buttons["onigiri"].invoke()
         self.assertEqual(self.app.state.satiety, 75)
         self.assertTrue(self.app._world.cursor.carrying)
         bar.buttons["sleep"].invoke()
