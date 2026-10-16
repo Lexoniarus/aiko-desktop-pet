@@ -17,9 +17,10 @@ from aiko_pet.world.contracts import (
 from aiko_pet.world.state import WorldState
 
 
-@unittest.skipUnless(sys.platform == "win32", "Windows layered-window hit testing")
 class ObjectWindowTests(unittest.TestCase):
     def test_visible_pixels_accept_input_without_activating_and_motion_is_passive(self):
+        if sys.platform != "win32":
+            self.skipTest("Windows layered-window hit testing")
         root = tk.Tk()
         self.addCleanup(root.destroy)
         root.geometry("240x220+100+100")

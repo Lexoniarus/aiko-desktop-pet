@@ -747,3 +747,5 @@ CI correction after S7: the short-dialogue catalogue requires at least three var
 Native input uses the existing color-keyed layered windows: [Microsoft documents pixel hit testing and the WS_EX_TRANSPARENT bypass](https://learn.microsoft.com/en-us/windows/win32/winmsg/window-features#layered-windows). Resting windows remove only that bypass; moving/carried windows keep it, and NOACTIVATE remains set. No global hook, native subclass or second hit-mask store is required.
 
 CI harness correction: S10 Windows setup hit the same intermittent 90-second subprocess deadline as S6a. Seven local setup tests pass in 29.241 seconds. Shared PowerShell harness now allows 180 seconds and reports captured output on timeout, without retrying setup or changing production installation behavior. Ruff and Pyright pass.
+
+CI portability correction: native item-window test now guards WinDLL inside the test, so Linux type analysis sees the platform boundary. Native Windows hit testing and Linux-targeted Pyright both pass.
