@@ -12,7 +12,7 @@ from aiko_pet.desktop.geometry import FOOT_BASELINE
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
-from aiko_pet.world.contracts import ObjectFootprint, ObjectState
+from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
 
 
 class WorldGuiTests(unittest.TestCase):
@@ -352,6 +352,29 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(snapshot.objects[0].instance_id, item.instance_id)
         self.assertEqual(snapshot.objects[0].state, ObjectState.RESTING)
         self.assertAlmostEqual(restored.state.satiety, 50, places=1)
+
+    def test_immediate_scale_save_updates_geometry_without_resetting_motion(self):
+        world = self.app._world
+        image = world.view.image("apple", 1)
+        item = world.world.create_held("apple", WorldPosition(30, 300),
+                                       ObjectFootprint(image.width() / 2,
+                                                       image.width() / 2))
+        world.world.release(item.instance_id, expected_revision=item.revision)
+        world.world.advance_motion(.2, world._motion_parameters)
+        before = world.world.get(item.instance_id).motion
+        self.app.settings.scale = 2
+        checkpoint = world.save_snapshot()
+        changed = world.world.get(item.instance_id)
+        self.assertEqual(changed.motion, before)
+        self.assertEqual(changed.footprint.left,
+                         world.view.image("apple", 2).width() / 2)
+        self.assertEqual(checkpoint.world.surface, world._surface())
+        world.world.advance_motion(20, world._motion_parameters)
+        settled = world.world.get(item.instance_id)
+        assert settled.position is not None
+        self.assertEqual(settled.position.x, checkpoint.world.surface.ground_x(
+            settled.position.x, settled.footprint,
+        ))
 
     def test_lost_input_capture_cancels_without_falling_or_consuming(self):
         world = self.app._world

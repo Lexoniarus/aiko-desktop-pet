@@ -35,6 +35,19 @@ class FlightTests(unittest.TestCase):
 class ReboundTests(unittest.TestCase):
     parameters = MotionParameters(900, .42, .65, .35, 25, 100, 12, 8)
 
+    def test_shrunken_ceiling_dissipates_upward_energy_without_frame_dependence(self):
+        whole = advance_motion(400, 90, ItemMotion(vy=300), .3,
+                               (96, 704), self.parameters, ceiling=100)
+        split = advance_motion(400, 90, ItemMotion(vy=300), .1,
+                               (96, 704), self.parameters, ceiling=100)
+        assert split.motion is not None
+        split = advance_motion(split.x, split.height, split.motion, .2,
+                               (96, 704), self.parameters, ceiling=100)
+        self.assertAlmostEqual(whole.height, split.height)
+        assert whole.motion is not None and split.motion is not None
+        self.assertAlmostEqual(whole.motion.vy, split.motion.vy)
+        self.assertLessEqual(whole.height, 100)
+
     def test_both_edges_heights_and_partitioned_time_end_safely(self):
         for x in (8, 400, 792):
             for height in (0, 1, 600):

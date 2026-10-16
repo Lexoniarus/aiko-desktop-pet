@@ -257,6 +257,7 @@ class WorldState:
             result = advance_motion(
                 item.position.x, item.position.height, item.motion, elapsed,
                 self._surface.ground_interval(item.footprint), parameters,
+                ceiling=self._surface.height,
             )
             state = (ObjectState.RESTING if result.motion is None else
                      ObjectState.BOUNCING if result.contacted else item.state)

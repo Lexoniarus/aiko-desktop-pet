@@ -58,7 +58,8 @@ def _horizontal(x: float, velocity: float, elapsed: float,
 
 
 def advance_motion(x: float, height: float, motion: ItemMotion, elapsed: float,
-                   bounds: tuple[float, float], parameters: MotionParameters
+                   bounds: tuple[float, float], parameters: MotionParameters,
+                   *, ceiling: float = math.inf,
                    ) -> MotionStep:
     """Consume elapsed time at exact contacts, then finish a short ground slide.
 
@@ -68,7 +69,8 @@ def advance_motion(x: float, height: float, motion: ItemMotion, elapsed: float,
     """
     left, right = bounds
     if (not all(math.isfinite(v) for v in (x, height, elapsed, left, right))
-            or x < 0 or height < 0 or elapsed < 0 or left < 0 or right < left):
+            or x < 0 or height < 0 or elapsed < 0 or left < 0 or right < left
+            or math.isnan(ceiling) or ceiling <= 0 or height > ceiling):
         raise ValueError("Invalid motion geometry/time")
     remaining, contacted = elapsed, False
     current = motion
@@ -83,11 +85,20 @@ def advance_motion(x: float, height: float, motion: ItemMotion, elapsed: float,
             current = replace(current, age=current.age + remaining)
             return MotionStep(x, 0, current, contacted)
         contact = contact_time(height, current.vy, parameters.gravity)
-        step = min(remaining, contact)
+        roof = math.inf
+        headroom = ceiling - height
+        if current.vy > 0 and current.vy**2 > 2 * parameters.gravity * headroom:
+            root = math.sqrt(current.vy**2 - 2 * parameters.gravity * headroom)
+            roof = 2 * headroom / (current.vy + root)
+        step = min(remaining, contact, roof)
         x = _horizontal(x, current.vx, step, left, right)
         height, vy = flight(height, current.vy, step, parameters.gravity)
         current = replace(current, vy=vy, age=current.age + step)
         remaining = max(0.0, remaining - step)
+        if step == roof:
+            height = ceiling
+            current = replace(current, vy=0)
+            continue
         if step < contact:
             break
         contacted = True

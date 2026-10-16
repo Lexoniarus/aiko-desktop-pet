@@ -179,6 +179,10 @@ class ResourceValidationTests(unittest.TestCase):
             ("adaptive_learning", "effort_smoothing_seconds", 0),
             ("attention", "cursor_comment_probability", 2),
             ("simulation", "step_seconds", 1000),
+            ("object_behavior", "bounce_restitution_fraction", 1),
+            ("object_behavior", "bounce_horizontal_damping_fraction", 1),
+            ("object_behavior", "bounce_maximum_contacts", 33),
+            ("object_behavior", "bounce_minimum_speed", 0),
             ("simulation", "maximum_catchup_seconds", 8 * 86400),
         ):
             raw = copy.deepcopy(original)
