@@ -10,10 +10,11 @@ from ..application.object_feedback import FeedbackKey, ObjectFeedback
 from ..application.settings import PetSettings
 from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_knowledge import ObjectKnowledge
+from ..pet.mind.object_perception import ItemPresentation
 from ..ui.world_view import WorldView
 from ..world.contracts import ObjectFootprint, WorldPosition
 from ..world.state import WorldOperationError, WorldState
-from .geometry import TaskbarTrack
+from .geometry import TaskbarTrack, item_face_offset
 from .global_input import mouse_buttons_down_windows
 
 
@@ -51,6 +52,22 @@ class CursorItemGesture:
     @property
     def carrying(self) -> bool:
         return self.instance_id is not None
+
+    def presentation(
+        self, eyes: tuple[float, float], width: float,
+    ) -> tuple[str, ItemPresentation] | None:
+        if self.instance_id is None or not self.inside:
+            return None
+        item = self.world.get(self.instance_id)
+        image = self.view.image(item.definition_id, self.settings.scale)
+        sprite = self.view.items.foods[item.definition_id].sprites[self.settings.scale]
+        offset = item_face_offset(
+            (self.root.winfo_pointerx(), self.root.winfo_pointery()),
+            pivot=sprite.pivot, size=(image.width(), image.height()),
+            eyes=eyes, width=width,
+        )
+        return (self.instance_id,
+                ItemPresentation(f"cursor_{self._offer_serial}", *offset))
 
     def begin(self, item_id: str) -> None:
         self.cancel()

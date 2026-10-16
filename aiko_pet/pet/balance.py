@@ -70,8 +70,7 @@ def parse_balance(raw: Any) -> BalanceCatalog:
         raise ValueError("Invalid object withholding balance")
     objects = sections["object_behavior"]
     if (
-        objects["recognize_widths"] > objects["notice_widths"]
-        or objects["reach_widths"] >= objects["recognize_widths"]
+        objects["reach_widths"] >= objects["notice_widths"]
         or objects["notice_seconds"] > objects["recognize_seconds"]
         or objects["notice_seconds"] > objects["presentation_seconds"]
         or objects["presentation_jitter_widths"] >= min(

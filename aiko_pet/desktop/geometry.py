@@ -8,7 +8,7 @@ FOOT_BASELINE = 194
 
 
 def item_face_offset(
-    pointer: tuple[float, float], *, pivot: tuple[int, int],
+    pointer: tuple[float, float], *, pivot: tuple[float, float],
     size: tuple[int, int], eyes: tuple[float, float], width: float,
 ) -> tuple[float, float]:
     """Displayed item center relative to the existing eyes, in sprite widths."""

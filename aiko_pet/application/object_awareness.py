@@ -11,6 +11,7 @@ from ..pet.mind.object_intentions import ObjectGoal, ObjectIntentions
 from ..pet.mind.object_knowledge import ObjectKnowledge, ObjectMemorySnapshot
 from ..pet.mind.object_memory import ObjectMemory
 from ..pet.mind.object_perception import (
+    ItemPresentation,
     ObjectCandidate,
     ObjectObservation,
     ObjectPerception,
@@ -68,7 +69,7 @@ class ObjectAwareness:
         """Use learned identity only with current subjective visibility."""
         known = self.memory.get(token)
         if known is None or not known.recognized or not any(
-            seen.token == token for seen in self.observations
+            seen.token == token and seen.presented for seen in self.observations
         ):
             return None
         decision = self.intentions.assess_offer(known, state)
@@ -82,6 +83,8 @@ class ObjectAwareness:
         x: float, height: float, width: float, attentive: bool, blocked: bool,
         held_pose: tuple[float, float] | None = None,
         committed: str | None = None,
+        presentation: tuple[str, ItemPresentation] | None = None,
+        inspecting: str | None = None,
     ) -> ObjectGoal | None:
         definitions = {item.definition_id: item for item in world.definitions}
         focused_instance = (self.instance_for_record(committed)
@@ -115,6 +118,11 @@ class ObjectAwareness:
                 "drink" if ObjectInteraction.DRINK in definition.interactions
                 else "food", *pose,
                 item.state == ObjectState.RESTING,
+                inspecting=record is not None and record == inspecting
+                and item.state == ObjectState.PET_HELD,
+                presentation=presentation[1] if presentation is not None
+                and presentation[0] == item.instance_id
+                and item.state == ObjectState.USER_HELD else None,
             ))
         if committed is not None:
             # Filter before tracking, recognition and stock reconciliation.

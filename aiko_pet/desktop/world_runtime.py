@@ -329,6 +329,10 @@ class DesktopWorldRuntime:
             blocked=blocked,
             held_pose=(self._body_x(), self.width * .4),
             committed=self.interaction.focus_record,
+            inspecting=self.interaction.inspection_record,
+            presentation=self.cursor.presentation(
+                self._animated.cursor_eye_position, self.width,
+            ),
         )
         observed = {item.token for item in self.awareness.observations}
         visible = [item for item in self.awareness.memory.snapshot()

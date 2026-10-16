@@ -1,11 +1,12 @@
 """Real World snapshots do not bypass recognition or remembered positions."""
 
 import unittest
+from dataclasses import replace
 
 from aiko_pet.application.object_awareness import ObjectAwareness
 from aiko_pet.infrastructure.world_motion import motion_parameters
 from aiko_pet.pet.mind.object_decisions import ObjectUseContext
-from aiko_pet.pet.mind.object_perception import ObjectObservation
+from aiko_pet.pet.mind.object_perception import ItemPresentation, ObjectObservation
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import (
     ObjectDefinition,
@@ -18,6 +19,12 @@ from aiko_pet.world.state import WorldState
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    @staticmethod
+    def identify_observed(awareness, *, now):
+        """Seed completed earlier identification for continuity-only fixtures."""
+        awareness.memory.update(tuple(replace(seen, identity="apple", kind="food")
+                                      for seen in awareness.observations), now=now)
+
     def test_unknown_offer_can_become_known_and_wanted_during_holding(self):
         world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
             "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
@@ -27,12 +34,15 @@ class ObjectAwarenessTests(unittest.TestCase):
         state = PetState(satiety=76)
         for stamp in (0, .3):
             awareness.update(world.snapshot(), state, now=stamp, x=100,
-                             height=0, width=100, attentive=True, blocked=True)
+                             height=0, width=100, attentive=True, blocked=True,
+                             presentation=(item.instance_id,
+                                           ItemPresentation("one", 0, 0)))
         record = awareness.record_for_instance(item.instance_id)
         assert record is not None
         self.assertIsNone(awareness.assess_offer(record, state))
-        awareness.update(world.snapshot(), state, now=.7, x=100,
-                         height=0, width=100, attentive=True, blocked=True)
+        awareness.update(world.snapshot(), state, now=1.1, x=100,
+                         height=0, width=100, attentive=True, blocked=True,
+                         presentation=(item.instance_id, ItemPresentation("one", 0, 0)))
         decision = awareness.assess_offer(record, state)
         assert decision is not None
         self.assertTrue(decision.consume)
@@ -43,15 +53,16 @@ class ObjectAwarenessTests(unittest.TestCase):
         # Moving far away removes fresh recognition, not learned identity.
         world.move_held(item.instance_id, WorldPosition(1400, 700),
                         expected_revision=item.revision)
-        awareness.update(world.snapshot(), state, now=.9, x=100,
-                         height=0, width=100, attentive=True, blocked=True)
-        self.assertIsNone(awareness.observations[0].identity)
+        awareness.update(world.snapshot(), state, now=1.3, x=100,
+                         height=0, width=100, attentive=True, blocked=True,
+                         presentation=(item.instance_id, ItemPresentation("one", 5, 5)))
+        self.assertTrue(awareness.observations[0].presented)
         decision = awareness.assess_offer(record, state)
         assert decision is not None
         self.assertTrue(decision.consume)
         self.assertEqual(len(awareness.memory.snapshot()), 1)
         # Actual loss of attention removes execution evidence and held desire.
-        awareness.update(world.snapshot(), state, now=1, x=100,
+        awareness.update(world.snapshot(), state, now=1.5, x=100,
                          height=0, width=100, attentive=False, blocked=True)
         self.assertIsNone(awareness.assess_offer(record, state))
         self.assertIsNone(awareness.intentions.goal)
@@ -70,6 +81,7 @@ class ObjectAwarenessTests(unittest.TestCase):
 
         for stamp in (0, .3, .7):
             observe(stamp)
+        self.identify_observed(awareness, now=.7)
         record = awareness.record_for_instance(item.instance_id)
         assert record is not None
         world.take_resting(item.instance_id, expected_revision=0)
@@ -104,6 +116,7 @@ class ObjectAwarenessTests(unittest.TestCase):
             awareness.update(world.snapshot(), state, now=stamp, x=100,
                              height=0, width=100, attentive=True, blocked=True)
         neighbour, = awareness.memory.snapshot()
+        self.identify_observed(awareness, now=.7)
         target = world.place_resting("apple", 110, ObjectFootprint(8, 8))
         for stamp in (.8, 1.1):
             awareness.update(world.snapshot(), state, now=stamp, x=100,
@@ -111,9 +124,14 @@ class ObjectAwarenessTests(unittest.TestCase):
         record = awareness.record_for_instance(target.instance_id)
         assert record is not None
         self.assertNotEqual(record, neighbour.token)
-        awareness.update(world.snapshot(), state, now=1.5, x=100,
-                         height=0, width=100, attentive=True, blocked=True,
-                         committed=record)
+        world.take_resting(target.instance_id, expected_revision=0)
+        self.assertTrue(awareness.follow_taken(target.instance_id, record))
+        for stamp in (1.2, 1.6, 2, 2.3):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100, attentive=True, blocked=True,
+                             committed=record, presentation=(
+                                 target.instance_id, ItemPresentation("target", 0, 0),
+                             ))
         self.assertEqual(awareness.record_for_instance(target.instance_id), record)
         self.assertIsNotNone(awareness.memory.get(neighbour.token))
         known = awareness.memory.get(record)
@@ -132,6 +150,7 @@ class ObjectAwarenessTests(unittest.TestCase):
                              height=0, width=100, attentive=True, blocked=True)
         record = awareness.record_for_instance(item.instance_id)
         assert record is not None
+        self.identify_observed(awareness, now=.7)
         awareness.memory.mark_assessed(record)
         world.take_resting(item.instance_id, expected_revision=0)
         self.assertTrue(awareness.follow_taken(item.instance_id, record))
@@ -189,6 +208,7 @@ class ObjectAwarenessTests(unittest.TestCase):
                 for stamp in (0, .3, .7):
                     awareness.update(world.snapshot(), state, now=stamp, x=100,
                                      height=0, width=100, attentive=True, blocked=True)
+                self.identify_observed(awareness, now=.7)
                 old, = awareness.memory.snapshot()
                 awareness.memory.mark_assessed(old.token)
                 world.move_resting(item.instance_id, 700, expected_revision=0)
@@ -203,6 +223,15 @@ class ObjectAwarenessTests(unittest.TestCase):
                 assert found is not None
                 self.assertNotEqual(found.token, old.token)
                 self.assertFalse(found.assessed)
+                # Identification happens only after the newly found portion is
+                # actually collected and inspected, not from its ground position.
+                world.collect_resting(item.instance_id, expected_revision=1)
+                for stamp in (2.8, 3.1, 3.5):
+                    awareness.update(world.snapshot(), state, now=stamp, x=700,
+                                     height=0, width=100, attentive=True, blocked=True,
+                                     held_pose=(700, 40), inspecting=found.token)
+                found = awareness.known_instance(item.instance_id)
+                assert found is not None
                 if not missing_first:
                     self.assertEqual(found.possible_sources, (old.token,))
                     awareness.memory.mark_missing(old.token)
@@ -212,7 +241,9 @@ class ObjectAwarenessTests(unittest.TestCase):
 
     def test_offer_assessment_requires_current_recognition_and_attention(self):
         awareness = ObjectAwareness()
-        seen = ObjectObservation("one", "apple", "food", 100, 70, False, 1)
+        seen = ObjectObservation(
+            "one", "apple", "food", 100, 70, False, 1, presented=True,
+        )
         awareness.memory.update((seen,), now=1)
         state = PetState(satiety=50)
         self.assertIsNone(awareness.assess_offer("one", state))
@@ -229,7 +260,9 @@ class ObjectAwarenessTests(unittest.TestCase):
 
     def test_refused_offer_remains_assessed_after_observed_placement(self):
         awareness = ObjectAwareness()
-        seen = ObjectObservation("one", "energy_drink", "drink", 100, 70, False, 1)
+        seen = ObjectObservation(
+            "one", "energy_drink", "drink", 100, 70, False, 1, presented=True,
+        )
         awareness.memory.update((seen,), now=1)
         awareness.observations = (seen,)
         state = PetState(energy=100)
@@ -288,9 +321,10 @@ class ObjectAwarenessTests(unittest.TestCase):
         awareness.update(world.snapshot(), state, now=0, x=0, height=0, width=192,
                          attentive=True, blocked=True)
         self.assertEqual(awareness.memory.snapshot(), ())
-        for now in (1, 1.3, 1.7):
+        for now in (1, 1.3, 1.7, 2, 2.4):
             awareness.update(world.snapshot(), state, now=now, x=0, height=0,
-                             width=192, attentive=True, blocked=True, held_pose=(0, 70))
+                             width=192, attentive=True, blocked=True, held_pose=(0, 70),
+                             inspecting=awareness.record_for_instance(item.instance_id))
         self.assertEqual(awareness.memory.snapshot()[0].identity, "apple")
 
     def test_hidden_relocation_does_not_update_subjective_goal(self):

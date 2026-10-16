@@ -97,6 +97,11 @@ class ObjectInteractionCoordinator:
         return self.phase in ("notice", "approach")
 
     @property
+    def inspection_record(self) -> str | None:
+        """First identification is eligible only during actual hand inspection."""
+        return self.memory_id if self.phase == "inspect" else None
+
+    @property
     def waiting_for_target(self) -> bool:
         return self.phase in (
             "await_return", "await_settle", "recognize_offer", "decide_offer",
@@ -483,6 +488,8 @@ class ObjectInteractionCoordinator:
             elif (self.phase == "inspect" and self._cue_done
                   and self._now() - self._inspect_at >= self._inspection_seconds):
                 known = self._memory.get(token)
+                if known is None or not known.recognized:
+                    return
                 self._identity = known.identity if known is not None else None
                 self._kind = known.kind if known is not None else None
                 self._set_phase("recognize")

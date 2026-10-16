@@ -359,11 +359,16 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.stamp = 2
         self.acknowledge()
         self.acknowledge()
-        self.assertEqual(self.cues[-1].event, "object_unknown")
-        self.acknowledge()
-        self.assertEqual(self.coordinator.phase, "put_down")
+        self.assertEqual(self.cues[-1].event, "object_inspect")
+        self.assertEqual(self.coordinator.phase, "inspect")
         self.assertEqual(self.consumed, [])
         self.assertFalse(self.memory.snapshot()[0].assessed)
+        self.memory.update((ObjectObservation(
+            self.item.instance_id, "apple", "food", 100, 70, False, 2,
+        ),), now=2)
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.phase, "recognize")
+        self.assertEqual(self.cues[-1].event, "object_recognized")
 
     def test_interrupted_retrieval_preserves_learning_but_not_deliberate_deferral(self):
         self.begin_retrieval()

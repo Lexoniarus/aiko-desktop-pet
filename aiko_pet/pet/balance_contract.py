@@ -5,7 +5,6 @@ from __future__ import annotations
 BALANCE_FIELDS: dict[str, dict[str, str]] = {
     "object_behavior": {
         "notice_widths": "number",
-        "recognize_widths": "number",
         "notice_seconds": "number",
         "recognize_seconds": "number",
         "presentation_seconds": "number",

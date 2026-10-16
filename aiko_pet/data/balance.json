@@ -334,7 +334,6 @@
   },
   "object_behavior": {
     "notice_widths": 6.0,
-    "recognize_widths": 1.5,
     "notice_seconds": 0.2,
     "recognize_seconds": 0.6,
     "presentation_seconds": 1.0,

@@ -184,3 +184,13 @@ must include a fresh isolated profile plus a separate known-stock restart case.
   reach. Verified 31 targeted geometry, configuration, perception, awareness and
   reach tests; Ruff, strict Mypy and Pyright pass. Presentation enforcement follows
   with the producer/consumer update in stages 3-4.
+- Stage 2 commit: `4939108`; both preceding GitHub CI runs are green.
+- Stages 3-4: perception receives explicit hand-inspection or cursor-presentation
+  context. Resting and moving unknown items stay unclassified. New offers,
+  including known portions, require a continuous face presentation; completed
+  evidence survives the observed move to the handover zone. Inspection waits for
+  actual learned identity before announcing its result. Removed the obsolete
+  proximity-identification radius. Updated known-history fixtures rather than
+  retaining false ground-identification expectations. Verified 92 targeted
+  perception, awareness, retrieval, coordinator, native Tk, geometry and resource
+  tests; Ruff, strict Mypy and Pyright pass. No full local suite run yet.

@@ -4,6 +4,7 @@ import tempfile
 import time
 import tkinter as tk
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
@@ -62,8 +63,9 @@ class WorldGuiTests(unittest.TestCase):
                     world.begin_relocate(item.instance_id, item.revision)
                     app.state.energy = energy
                     self.assertEqual(world.interaction.phase, "await_return")
-                    world.now = start + .95
-                    world.update(time.monotonic())
+                    for offset in (.3, .6, .9, 1.2, 1.4):
+                        world.now = start + offset
+                        world.update(time.monotonic())
                     self.complete_feedback()
                     self.assertEqual(world.interaction.phase, "recognize_offer")
                     self.assertEqual(cues[-1].event, "object_recognized")
@@ -108,7 +110,7 @@ class WorldGuiTests(unittest.TestCase):
                          return_value=world._track().ground_y - 80),
         ):
             world.begin_carry("cookie")
-            self.recognize()
+            self.observe_and_acknowledge()
             token = world.cursor.instance_id
             assert token is not None
             known = world.awareness.known_instance(token)
@@ -132,7 +134,8 @@ class WorldGuiTests(unittest.TestCase):
         item = world.world.place_resting("cookie", world._body_x(),
                                          ObjectFootprint(8, 8))
         world._controls_active = lambda: True
-        self.recognize()
+        self.observe_and_acknowledge()
+        self.seed_previous_identification(item.instance_id, "cookie", "food")
         known = world.awareness.known_instance(item.instance_id)
         assert known is not None
         self.assertFalse(known.assessed)
@@ -171,7 +174,8 @@ class WorldGuiTests(unittest.TestCase):
         item = world.world.place_resting("cookie", world._body_x(),
                                          ObjectFootprint(8, 8))
         world._controls_active = lambda: True
-        self.recognize()
+        self.observe_and_acknowledge()
+        self.seed_previous_identification(item.instance_id, "cookie", "food")
         known = world.awareness.known_instance(item.instance_id)
         assert known is not None
         self.assertEqual(known.identity, "cookie")
@@ -191,7 +195,7 @@ class WorldGuiTests(unittest.TestCase):
             self.assertEqual((current.token, current.identity),
                              (known.token, "cookie"))
             self.assertIsNone(world.awareness.observations[0].identity)
-            self.assertTrue(world.cursor.offer_ready)
+            self.assertFalse(world.cursor.offer_ready)
             self.assertFalse(world.interaction.active)
             self.assertIsNone(app.state.food.last_food_id)
             world.cursor.cancel()
@@ -228,7 +232,7 @@ class WorldGuiTests(unittest.TestCase):
                     world.begin_carry(item_id)
                     token = world.cursor.instance_id
                     assert token is not None
-                    self.recognize()
+                    self.observe_and_acknowledge()
                     record = world.awareness.record_for_instance(token)
                     self.assertTrue(world.cursor.offer_ready)
                     self.assertFalse(world.interaction.active)
@@ -289,7 +293,7 @@ class WorldGuiTests(unittest.TestCase):
                          return_value=world._track().ground_y - 80):
             self.app.state.energy = 40
             world.begin_carry("energy_drink")
-            for stamp in (0, .3, .7):
+            for stamp in (0, .3, .7, 1.1):
                 world.now = stamp
                 world.update(time.monotonic())
             old, stale = callbacks[-1]
@@ -329,9 +333,9 @@ class WorldGuiTests(unittest.TestCase):
         self.app._action_playback.cancel_at(time.monotonic())
         world._controls_active = lambda: False
 
-    def recognize(self):
+    def observe_and_acknowledge(self):
         start = self.app._world.now
-        for offset in (0, .3, .7):
+        for offset in (0, .3, .7, 1.1):
             self.app._world.now = start + offset
             self.app._world.update(time.monotonic())
         self.complete_feedback()
@@ -434,7 +438,7 @@ class WorldGuiTests(unittest.TestCase):
         world = self.app._world
         world.world.place_resting("apple", world._body_x() + 70,
                                   ObjectFootprint(8, 8))
-        self.recognize()
+        self.observe_and_acknowledge()
         record = world.interaction.memory_id
         phase = world.interaction.phase
         friendship = self.app.state.friendship
@@ -468,7 +472,7 @@ class WorldGuiTests(unittest.TestCase):
                 item = world.world.place_resting(
                     "apple", world._body_x() + 70 * scale, ObjectFootprint(8, 8),
                 )
-                self.recognize()
+                self.observe_and_acknowledge()
                 record = world.interaction.memory_id
                 episode = world.interaction.feedback_key.interaction_id
                 assert record is not None
@@ -492,10 +496,10 @@ class WorldGuiTests(unittest.TestCase):
                     world._track().ground_y - held.position.height,
                 ))
                 self.complete_feedback()
-                self.assertEqual(world.interaction.phase, "recognize_offer")
-                self.complete_feedback()
-                self.assertEqual(world.interaction.phase, "decide_offer")
-                self.complete_feedback()
+                self.assertEqual(world.interaction.phase, "await_return")
+                known = world.awareness.memory.get(record)
+                assert known is not None
+                self.assertIsNone(known.identity)
                 with (
                     patch.object(self.app.root, "winfo_pointerx",
                                  return_value=int(world._body_x()) + 120 * scale),
@@ -531,7 +535,7 @@ class WorldGuiTests(unittest.TestCase):
         world = self.app._world
         item = world.world.place_resting("apple", world._body_x() + 70,
                                          ObjectFootprint(8, 8))
-        self.recognize()
+        self.observe_and_acknowledge()
         world.begin_relocate(item.instance_id, item.revision)
         self.complete_feedback()
         initial = self.app.state.friendship
@@ -559,7 +563,7 @@ class WorldGuiTests(unittest.TestCase):
         self.app.state.energy = 65
         item = world.world.place_resting("energy_drink", world._body_x(),
                                          ObjectFootprint(12, 12))
-        self.recognize()
+        self.observe_and_acknowledge()
         self.finish_pickup()
         self.finish_inspection()
         self.finish_clip("put_down")
@@ -607,13 +611,24 @@ class WorldGuiTests(unittest.TestCase):
         self.app._world.update(time.monotonic())
 
     def finish_inspection(self):
-        self.app._world.now += 1.1
+        # Sample continuous hand inspection, rather than skipping sensory ticks.
+        for _ in range(4):
+            self.app._world.now += .3
+            self.app._world.update(time.monotonic())
         for _ in range(4):
             if self.app._world.interaction.phase not in (
                 "inspect", "recognize", "decide",
             ):
                 break
             self.complete_feedback()
+
+    def seed_previous_identification(self, instance, identity, kind):
+        """Known-history fixture; first identification has its own coverage."""
+        awareness = self.app._world.awareness
+        record = awareness.record_for_instance(instance)
+        seen = next(seen for seen in awareness.observations if seen.token == record)
+        awareness.memory.update((replace(seen, identity=identity, kind=kind),),
+                                now=self.app._world.now)
 
     def finish_pickup(self):
         self.finish_clip("pick_up")
@@ -635,7 +650,7 @@ class WorldGuiTests(unittest.TestCase):
         item = world.world.place_resting(
             "apple", world._body_x(), ObjectFootprint(8, 8),
         )
-        self.recognize()
+        self.observe_and_acknowledge()
         self.assertEqual(world.interaction.phase, "pick_up")
         self.assertEqual(self.app.state.satiety, 50)
         self.finish_pickup()
@@ -651,7 +666,7 @@ class WorldGuiTests(unittest.TestCase):
         self.app.state.energy = 65
         world.world.place_resting("energy_drink", world._body_x(),
                                   ObjectFootprint(12, 12))
-        self.recognize()
+        self.observe_and_acknowledge()
         self.finish_pickup()
         self.finish_inspection()
         self.assertEqual(world.interaction.phase, "put_down")
@@ -679,7 +694,7 @@ class WorldGuiTests(unittest.TestCase):
         world = self.app._world
         food = world.world.place_resting("onigiri", world._body_x(),
                                          ObjectFootprint(16, 16))
-        self.recognize()
+        self.observe_and_acknowledge()
         self.finish_pickup()
         self.finish_inspection()
         self.assertEqual(world.world.get(food.instance_id).state, ObjectState.CONSUMED)
@@ -698,7 +713,7 @@ class WorldGuiTests(unittest.TestCase):
         world._present_feedback = capture
         drink = world.world.place_resting("energy_drink", world._body_x(),
                                           ObjectFootprint(12, 12))
-        self.recognize()
+        self.observe_and_acknowledge()
         self.assertEqual(world.interaction.phase, "pick_up")
         self.assertLess(world.now - consumed_at, BALANCE.number(
             "object_behavior", "consumed_pause_seconds",
@@ -728,7 +743,7 @@ class WorldGuiTests(unittest.TestCase):
             app.root, "winfo_pointery", return_value=y,
         ):
             world.begin_carry("energy_drink")
-            self.recognize()
+            self.observe_and_acknowledge()
             token = world.cursor.instance_id
             assert token is not None
             world.cursor.release()
@@ -905,7 +920,7 @@ class WorldGuiTests(unittest.TestCase):
         start = self.app.settings.x or 0
         world.world.place_resting("apple", world._body_x() + 80,
                                    ObjectFootprint(8, 8))
-        self.recognize()
+        self.observe_and_acknowledge()
         for index in range(4):
             self.app._walk.step(time.monotonic() + index, 1,
                                 game_mode=False, attention_active=False)
@@ -932,7 +947,7 @@ class WorldGuiTests(unittest.TestCase):
         x = (footprint.left if side == "left" else
              world.world.snapshot().surface.width - footprint.right)
         item = world.world.place_resting("energy_drink", x, footprint)
-        self.recognize()
+        self.observe_and_acknowledge()
         self.assertEqual(world.interaction.phase, "approach")
         self.assertEqual(app._walk.movement.goal_x, boundary)
         self.assertFalse(world._can_acquire(item.instance_id))
@@ -1035,7 +1050,7 @@ class WorldGuiTests(unittest.TestCase):
         item = world.world.place_resting(
             "apple", world._body_x(), ObjectFootprint(8, 8),
         )
-        self.recognize()
+        self.observe_and_acknowledge()
         for _ in range(3):
             index = animated.frame_clock.frame_index
             stamp = animated.frame_clock.frame_started_at
