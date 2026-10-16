@@ -745,3 +745,5 @@ the authorized order; merge still requires practical acceptance.
 CI correction after S7: the short-dialogue catalogue requires at least three variants per event in every relationship stage. Added the missing search/find variants; 10 dialogue-context and 11 retrieval tests plus Ruff pass. Retain this catalogue gate for future event additions.
 
 Native input uses the existing color-keyed layered windows: [Microsoft documents pixel hit testing and the WS_EX_TRANSPARENT bypass](https://learn.microsoft.com/en-us/windows/win32/winmsg/window-features#layered-windows). Resting windows remove only that bypass; moving/carried windows keep it, and NOACTIVATE remains set. No global hook, native subclass or second hit-mask store is required.
+
+CI harness correction: S10 Windows setup hit the same intermittent 90-second subprocess deadline as S6a. Seven local setup tests pass in 29.241 seconds. Shared PowerShell harness now allows 180 seconds and reports captured output on timeout, without retrying setup or changing production installation behavior. Ruff and Pyright pass.
