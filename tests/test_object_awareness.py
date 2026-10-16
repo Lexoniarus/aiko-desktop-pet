@@ -16,6 +16,33 @@ from aiko_pet.world.state import WorldState
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    def test_recognition_cannot_merge_focus_with_an_unobserved_known_neighbour(self):
+        world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        awareness = ObjectAwareness()
+        state = PetState(satiety=50)
+        for stamp in (0, .3, .7):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100, attentive=True, blocked=True)
+        neighbour, = awareness.memory.snapshot()
+        target = world.place_resting("apple", 110, ObjectFootprint(8, 8))
+        for stamp in (.8, 1.1):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100, attentive=True, blocked=True)
+        record = awareness.record_for_instance(target.instance_id)
+        assert record is not None
+        self.assertNotEqual(record, neighbour.token)
+        awareness.update(world.snapshot(), state, now=1.5, x=100,
+                         height=0, width=100, attentive=True, blocked=True,
+                         committed=record)
+        self.assertEqual(awareness.record_for_instance(target.instance_id), record)
+        self.assertIsNotNone(awareness.memory.get(neighbour.token))
+        known = awareness.memory.get(record)
+        assert known is not None
+        self.assertEqual(known.identity, "apple")
+
     def test_following_a_visible_take_preserves_knowledge_outside_notice_radius(self):
         world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
             "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),

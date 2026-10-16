@@ -171,6 +171,7 @@ class ObjectAwareness:
                 maximum_distance=width * BALANCE.number(
                     "object_behavior", "memory_place_widths",
                 ),
+                preserve_record=old is not None and old == committed,
             )
             claimed.add(record)
             records[seen.token] = record

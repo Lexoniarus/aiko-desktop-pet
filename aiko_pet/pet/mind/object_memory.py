@@ -11,7 +11,7 @@ from .object_knowledge import (
     SavedObjectKnowledge,
 )
 from .object_perception import ObjectObservation
-from .object_stock import match_find, resolved_places
+from .object_stock import FindMatch, match_find, resolved_places
 
 
 class ObjectMemory:
@@ -66,6 +66,7 @@ class ObjectMemory:
     def observe_find(
         self, seen: ObjectObservation, *, now: float, record: str | None,
         claimed: frozenset[str], maximum_distance: float,
+        preserve_record: bool = False,
     ) -> str:
         """Associate a live sighting from perceived evidence, not its World ID."""
         previous = self.get(record) if record is not None else None
@@ -75,6 +76,10 @@ class ObjectMemory:
                 tuple(item for item in self.snapshot() if item.token != record),
                 seen, claimed=claimed, maximum_distance=maximum_distance,
             )
+            if preserve_record and previous is not None and match.record is not None:
+                # Focus hides neighbouring evidence. A possible reunion cannot
+                # replace the continuously watched subject with another record.
+                match = FindMatch(None, (match.record,))
             if match.record is not None:
                 if previous is not None:
                     self.forget(previous.token)
