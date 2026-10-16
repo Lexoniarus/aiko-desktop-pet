@@ -405,6 +405,18 @@ class DesktopWorldRuntime:
         self._sync_geometry()
         self.interrupt(lambda: self.cursor.begin(item_id))
 
+    def begin_relocate(self, token: str, revision: int) -> None:
+        self._sync_geometry()
+        item = self.world.get(token)
+        if (self.cursor.carrying or item.state != ObjectState.RESTING
+                or item.revision != revision):
+            return
+
+        def acquire() -> None:
+            self.cursor.begin_existing(token, revision)
+
+        self.interrupt(acquire)
+
     def _assess_offer(self, token: str) -> ObjectUseDecision | None:
         if (self._game_open() or self.interaction.active
                 or time.monotonic() < self._playback.until):

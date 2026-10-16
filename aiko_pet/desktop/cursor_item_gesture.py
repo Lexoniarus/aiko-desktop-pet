@@ -12,7 +12,7 @@ from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..ui.world_view import WorldView
 from ..world.contracts import ObjectFootprint, WorldPosition
-from ..world.state import WorldState
+from ..world.state import WorldOperationError, WorldState
 from .geometry import TaskbarTrack
 from .global_input import mouse_buttons_down_windows
 
@@ -44,6 +44,7 @@ class CursorItemGesture:
         self._capture_owned = False
         self._offer_feedback: tuple[str, bool] | None = None
         self._offer_serial = self._offer_revision = 0
+        self._return_x: float | None = None
         root.bind_all("<Escape>", lambda _event: self.cancel(), add="+")
         root.bind_all("<ButtonRelease-1>", lambda _event: self.release(), add="+")
 
@@ -53,14 +54,30 @@ class CursorItemGesture:
 
     def begin(self, item_id: str) -> None:
         self.cancel()
-        self._offer_feedback = None
-        self.offer_ready = False
-        self._offer_serial += 1
+        self._return_x = None
         image = self.view.image(item_id, self.settings.scale)
         footprint = ObjectFootprint(image.width() / 2, image.width() / 2)
         position, self.inside = self._pointer_pose(item_id, footprint)
         item = self.world.create_held(item_id, position, footprint)
-        self.instance_id = item.instance_id
+        self._start(item.instance_id)
+
+    def begin_existing(self, token: str, expected_revision: int) -> bool:
+        if self.carrying:
+            return False
+        try:
+            item = self.world.take_resting(token, expected_revision=expected_revision)
+        except WorldOperationError:
+            return False
+        assert item.position is not None
+        self._return_x = item.position.x
+        self._start(token)
+        return self.carrying
+
+    def _start(self, token: str) -> None:
+        self._offer_feedback = None
+        self.offer_ready = False
+        self._offer_serial += 1
+        self.instance_id = token
         try:
             self.root.grab_set()
             self.root.focus_set()
@@ -112,8 +129,8 @@ class CursorItemGesture:
              + image.width() / 2 - sprite.pivot[0])
         height: float = track.ground_y - self.root.winfo_pointery() - image.height()
         height += sprite.pivot[1]
-        inside = (footprint.left <= x <= surface.width - footprint.right
-                  and 0 <= height <= surface.height)
+        inside = (track.left <= self.root.winfo_pointerx() <= track.right
+                  and 0 <= self.root.winfo_pointery() < self.root.winfo_screenheight())
         return WorldPosition(
             max(footprint.left, min(x, surface.width - footprint.right)),
             max(0, min(height, surface.height)),
@@ -135,20 +152,30 @@ class CursorItemGesture:
         self._release_capture()
         item = self.world.get(token)
         if not self.inside:
-            self.world.remove(token, expected_revision=item.revision)
+            self._discard_or_return(token, item.revision)
             self._ports.outside()
         else:
             self._ports.capture_contact(token)
             if not self._ports.handover(token):
                 self.world.release(token, expected_revision=item.revision)
+        self._return_x = None
+        self.offer_ready = False
         self._ports.save()
+
+    def _discard_or_return(self, token: str, revision: int) -> None:
+        if self._return_x is None:
+            self.world.remove(token, expected_revision=revision)
+        else:
+            self.world.return_user_held(token, self._return_x,
+                                        expected_revision=revision)
 
     def cancel(self) -> None:
         self._release_capture()
         if self.instance_id is not None:
             item = self.world.get(self.instance_id)
-            self.world.remove(item.instance_id, expected_revision=item.revision)
+            self._discard_or_return(item.instance_id, item.revision)
             self.instance_id = None
+            self._return_x = None
             self.offer_ready = False
             self._ports.cancel_feedback()
             self._ports.save()

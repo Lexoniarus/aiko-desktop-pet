@@ -388,6 +388,43 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(world.world.get(token).state, ObjectState.REMOVED)
         self.assertIsNone(self.app.state.food.last_food_id)
 
+    def test_existing_portion_cancel_and_drop_share_capture_without_recreation(self):
+        world = self.app._world
+        item = world.world.place_resting("apple", world._body_x(),
+                                         ObjectFootprint(8, 8))
+        world.begin_relocate(item.instance_id, item.revision)
+        self.assertEqual(world.cursor.instance_id, item.instance_id)
+        self.app.root.grab_release()
+        world.cursor.update()
+        returned = world.world.get(item.instance_id)
+        self.assertEqual(returned.state, ObjectState.RESTING)
+        self.assertEqual(returned.position, item.position)
+        with (
+            patch.object(self.app.root, "winfo_pointerx", return_value=20),
+            patch.object(self.app.root, "winfo_pointery", return_value=200),
+        ):
+            world.begin_relocate(item.instance_id, returned.revision)
+            world.cursor.release()
+        dropped = world.world.get(item.instance_id)
+        self.assertEqual(dropped.state, ObjectState.FALLING)
+        self.assertEqual(len(world.world.snapshot().objects), 1)
+        world.begin_relocate(item.instance_id, dropped.revision)
+        self.assertFalse(world.cursor.carrying)
+        world.world.advance_motion(20, world._motion_parameters)
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
+        self.assertIsNone(self.app.state.food.last_food_id)
+
+    def test_existing_portion_capture_failure_returns_it_instead_of_deleting_it(self):
+        world = self.app._world
+        item = world.world.place_resting("apple", world._body_x(),
+                                         ObjectFootprint(8, 8))
+        with patch.object(self.app.root, "grab_set", side_effect=tk.TclError):
+            world.begin_relocate(item.instance_id, item.revision)
+        self.assertFalse(world.cursor.carrying)
+        returned = world.world.get(item.instance_id)
+        self.assertEqual(returned.state, ObjectState.RESTING)
+        self.assertEqual(returned.position, item.position)
+
     def test_actual_driver_reaches_food_with_random_walk_disabled(self):
         world = self.app._world
         start = self.app.settings.x or 0

@@ -193,6 +193,22 @@ class WorldState:
         item = self._expect(instance_id, expected_revision, ObjectState.RESTING)
         return self._acquire(item)
 
+    def take_resting(
+        self, instance_id: str, *, expected_revision: int,
+    ) -> WorldObjectSnapshot:
+        """Acquire the same settled portion for a new player gesture."""
+        item = self._expect(instance_id, expected_revision, ObjectState.RESTING)
+        self._require_free(ObjectState.USER_HELD, WorldFailure.CURSOR_OCCUPIED)
+        return self._commit(item, ObjectState.USER_HELD, item.position)
+
+    def return_user_held(
+        self, instance_id: str, x: float, *, expected_revision: int,
+    ) -> WorldObjectSnapshot:
+        """Cancel relocation to its safe starting place, without cognition effects."""
+        item = self._expect(instance_id, expected_revision, ObjectState.USER_HELD)
+        position = WorldPosition(self._surface.ground_x(x, item.footprint), 0)
+        return self._commit(item, ObjectState.RESTING, position)
+
     def _acquire(self, item: WorldObjectSnapshot) -> WorldObjectSnapshot:
         self._require_free(ObjectState.PET_HELD, WorldFailure.PET_OCCUPIED)
         return self._commit(item, ObjectState.PET_HELD, None)

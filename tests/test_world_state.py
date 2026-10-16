@@ -182,6 +182,18 @@ class WorldStateTests(unittest.TestCase):
                                     expected_revision=item.revision)
         ))
 
+    def test_player_relocation_preserves_portion_and_revalidates_custody(self):
+        item = self.place()
+        held = self.world.take_resting(item.instance_id, expected_revision=0)
+        self.assertEqual(held.state, ObjectState.USER_HELD)
+        self.assert_rejected(WorldFailure.STALE_REVISION, lambda: (
+            self.world.collect_resting(item.instance_id, expected_revision=0)
+        ))
+        restored = self.world.return_user_held(item.instance_id, 200,
+                                              expected_revision=held.revision)
+        self.assertEqual(restored.state, ObjectState.RESTING)
+        self.assertEqual(len(self.world.snapshot().objects), 1)
+
     def test_terminal_instances_cannot_be_reused_and_ids_do_not_recycle(self) -> None:
         for initial in (ObjectState.USER_HELD, ObjectState.FALLING,
                         ObjectState.RESTING):
