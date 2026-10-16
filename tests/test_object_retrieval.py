@@ -7,7 +7,7 @@ from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
 from aiko_pet.pet.animation.character import PlaybackEvent
 from aiko_pet.pet.consumption import ConsumptionOrigin
-from aiko_pet.pet.mind.object_decisions import decide_object_use
+from aiko_pet.pet.mind.object_decisions import ObjectUseContext, decide_object_use
 from aiko_pet.pet.mind.object_intentions import ObjectGoal, ObjectIntentions
 from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.mind.object_perception import ObjectObservation
@@ -24,6 +24,115 @@ from aiko_pet.world.state import WorldState
 
 
 class ObjectRetrievalTests(unittest.TestCase):
+    def take_unknown_drink(self):
+        self.item = self.world.place_resting("energy_drink", 100, ObjectFootprint(8, 8))
+        self.memory.restore_snapshot(())
+        self.memory.update((ObjectObservation(
+            self.item.instance_id, None, None, 100, 0, True, 0,
+        ),), now=0)
+        self.coordinator.begin_goal(ObjectGoal(
+            self.item.instance_id, None, None, 100, 0, 0, "investigate",
+        ))
+        self.acknowledge()
+        self.world.take_resting(self.item.instance_id, expected_revision=0)
+        self.coordinator.target_taken(self.item.instance_id)
+        self.memory.update((ObjectObservation(
+            self.item.instance_id, "energy_drink", "drink", 100, 80, False, 1,
+        ),), now=1)
+        self.memory.mark_assessed(self.item.instance_id)
+        self.acknowledge()
+
+    def test_taken_unknown_offer_is_identified_then_wanted_before_handover(self):
+        self.take_unknown_drink()
+        decision = decide_object_use(self.memory.get(self.item.instance_id),
+                                     self.pet, ObjectUseContext.OFFER)
+        self.coordinator.observe_held_offer(self.item.instance_id, decision)
+        recognition = self.cues[-1]
+        self.assertEqual(recognition.event, "object_recognized")
+        self.assertEqual(recognition.identity, "energy_drink")
+        self.assertEqual(self.coordinator.phase, "recognize_offer")
+        self.assertEqual(self.consumed, [])
+        self.acknowledge()
+        self.assertEqual(self.cues[-1].event, "object_offer")
+        self.assertEqual(self.coordinator.phase, "decide_offer")
+        self.acknowledge()
+        self.coordinator.receive_feedback(FeedbackReceipt(recognition.key, True))
+        self.assertEqual(self.coordinator.phase, "await_return")
+        self.assertTrue(self.coordinator.offer_on_release(self.item.instance_id))
+        self.assertEqual(self.consumed, [])
+        self.acknowledge()
+        self.assertEqual(self.consumed[0][2], ConsumptionOrigin.HANDOVER)
+
+    def test_taken_offer_refusal_ends_return_requests_without_collecting(self):
+        self.take_unknown_drink()
+        self.pet.energy = 100
+        decision = decide_object_use(self.memory.get(self.item.instance_id),
+                                     self.pet, ObjectUseContext.OFFER)
+        self.coordinator.observe_held_offer(self.item.instance_id, decision)
+        self.acknowledge()
+        self.assertEqual(self.cues[-1].event, "object_refuse")
+        self.acknowledge()
+        self.stamp = 100
+        self.coordinator.observe_target_state(ObjectState.USER_HELD)
+        self.coordinator.update()
+        self.assertFalse(self.coordinator.active)
+        self.assertEqual(self.done, [(self.item.instance_id, False)])
+        self.assertEqual(self.consumed, [])
+        self.assertEqual(self.world.get(self.item.instance_id).state,
+                         ObjectState.USER_HELD)
+        self.assertEqual(self.cues[-1].event, "object_refuse")
+
+    def test_need_changes_during_recognition_and_decision_keep_current_feedback(self):
+        self.take_unknown_drink()
+        known = self.memory.get(self.item.instance_id)
+        self.coordinator.observe_held_offer(
+            self.item.instance_id, decide_object_use(known, self.pet,
+                                                     ObjectUseContext.OFFER),
+        )
+        self.pet.energy = 100
+        self.coordinator.observe_held_offer(
+            self.item.instance_id, decide_object_use(known, self.pet,
+                                                     ObjectUseContext.OFFER),
+        )
+        self.acknowledge()
+        self.assertEqual(self.cues[-1].event, "object_refuse")
+        refused = self.cues[-1].key
+        self.pet.energy = 65
+        self.coordinator.observe_held_offer(
+            self.item.instance_id, decide_object_use(known, self.pet,
+                                                     ObjectUseContext.OFFER),
+        )
+        self.acknowledge()
+        self.assertEqual(self.cues[-1].event, "object_offer")
+        self.coordinator.receive_feedback(FeedbackReceipt(refused, True))
+        self.assertEqual(self.coordinator.phase, "decide_offer")
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "await_return")
+        self.assertEqual(self.consumed, [])
+
+    def test_drop_during_offer_recognition_keeps_reading_then_resumes_pickup(self):
+        self.take_unknown_drink()
+        self.coordinator.observe_held_offer(
+            self.item.instance_id,
+            decide_object_use(self.memory.get(self.item.instance_id), self.pet,
+                              ObjectUseContext.OFFER),
+        )
+        held = self.world.get(self.item.instance_id)
+        self.world.return_user_held(held.instance_id, 110,
+                                    expected_revision=held.revision)
+        self.coordinator.observe_target_state(ObjectState.RESTING)
+        self.assertEqual(self.coordinator.phase, "recognize_offer")
+        self.acknowledge()
+        self.acknowledge()
+        self.coordinator.observe_target_state(ObjectState.RESTING)
+        self.acknowledge()
+        self.coordinator.arrive()
+        self.grasp()
+        self.finish_pickup()
+        self.assertEqual(self.coordinator.phase, "eat")
+        self.assertEqual(self.consumed[0][2], ConsumptionOrigin.AUTONOMOUS)
+        self.assertNotIn("object_inspect", [cue.event for cue in self.cues])
+
     def setUp(self):
         self.world = WorldState(WorldSurface(800, 600), (
             ObjectDefinition("apple", "apple", "apple",
@@ -118,6 +227,13 @@ class ObjectRetrievalTests(unittest.TestCase):
         episode = self.coordinator.feedback_key.interaction_id
         self.world.take_resting(self.item.instance_id, expected_revision=0)
         self.assertTrue(self.coordinator.target_taken(self.item.instance_id))
+        self.acknowledge()
+        self.coordinator.observe_held_offer(
+            self.item.instance_id,
+            decide_object_use(self.memory.get(self.item.instance_id), self.pet,
+                              ObjectUseContext.OFFER),
+        )
+        self.assertEqual(self.coordinator.phase, "decide_offer")
         self.acknowledge()
         item = self.world.get(self.item.instance_id)
         self.world.return_user_held(item.instance_id, 110,

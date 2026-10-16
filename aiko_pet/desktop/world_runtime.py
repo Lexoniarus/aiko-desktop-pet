@@ -496,8 +496,11 @@ class DesktopWorldRuntime:
         if (self._game_open() or self.interaction.active and not returning
                 or time.monotonic() < self._playback.until):
             return None
-        return (self.awareness.assess_offer(record, self.state)
-                if record is not None else None)
+        decision = (self.awareness.assess_offer(record, self.state)
+                    if record is not None else None)
+        if returning and record is not None and decision is not None:
+            self.interaction.observe_held_offer(record, decision)
+        return decision
 
     def _present_offer(self, cue: ObjectFeedback) -> None:
         if self.interaction.active:

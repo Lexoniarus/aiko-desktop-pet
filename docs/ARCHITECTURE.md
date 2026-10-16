@@ -467,6 +467,11 @@ visible falling/bouncing enters `await_settle`. Settling resumes the same
 interaction with acquired assessments, and actual visual loss enters existing
 bounded search. An accepted return into Aiko's hand retains the interaction but
 uses actual human-handover origin; ground retrieval stays autonomous.
+An observed held target can be recognized and reappraised during that wait.
+`recognize_offer` and `decide_offer` retain player custody and identified reading
+receipts; they are distinct from pet-held inspection/use. Agreement resumes the
+waiting/settling path, while refusal completes the episode without acquisition
+or further withholding escalation. Current assessments can update pending cues.
 Identified animation events acquire at source frame 4, finish pickup at pose 8
 and release during reverse frame 4→3. The animator changes no needs.
 `application/object_feedback.py` correlates phase cues and completion receipts.

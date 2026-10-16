@@ -35,6 +35,11 @@ Use the isolated launcher below, at both 1x and 2x. The
   drinking. No text claims she must find out what the accepted item is.
 - [ ] Take her already committed target: the existing protest/return rules still
   apply. Drop a different identical portion: it must not replace that subject.
+- [ ] Take an unknown Energy Drink during approach, then hold it near her. After
+  the return request she names the recognized drink and states whether she wants
+  it. Agreement allows actual handover or known ground retrieval; refusal ends
+  return requests and further withholding penalties while retaining knowledge.
+  Change her need during a cue and release during recognition to check ordering.
 - [ ] Close while holding a recognized desired portion, reopen the same temporary
   save, and check knowledge survives but cursor/wish/interaction do not resume.
   A previously known but unassessed portion needs a decision, not identification.

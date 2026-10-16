@@ -17,6 +17,88 @@ from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
 
 
 class WorldGuiTests(unittest.TestCase):
+    def test_taken_unknown_drink_is_recognized_then_accepted_or_refused_at_cursor(self):
+        app, world = self.app, self.app._world
+        cues = []
+        present = world._present_feedback
+
+        def capture(cue, reaction, done):
+            cues.append(cue)
+            present(cue, reaction, done)
+
+        world._present_feedback = capture
+        for scale, energy in ((1, 65), (2, 100)):
+            with self.subTest(scale=scale, energy=energy):
+                cues.clear()
+                app.settings.scale = scale
+                app._window.resize()
+                app._animated.reload_sprites()
+                world._sync_geometry()
+                app._place_x(world._track().left + 40)
+                app.state.energy = energy
+                start = world.now
+                item = world.world.place_resting(
+                    "energy_drink", world._body_x() + 200 * scale,
+                    ObjectFootprint(8, 8),
+                )
+                for offset in (0, .3):
+                    world.now = start + offset
+                    world.update(time.monotonic())
+                self.complete_feedback()
+                self.assertEqual(world.interaction.phase, "approach")
+                record = world.interaction.memory_id
+                episode = world.interaction.feedback_key.interaction_id
+                known = world.awareness.known_instance(item.instance_id)
+                assert known is not None
+                self.assertIsNone(known.identity)
+                with (
+                    patch.object(app.root, "winfo_pointerx",
+                                 return_value=(int(world._body_x())
+                                               + world._track().left)),
+                    patch.object(app.root, "winfo_pointery", return_value=(
+                        world._track().ground_y - 80 * scale
+                    )),
+                ):
+                    world.begin_relocate(item.instance_id, item.revision)
+                    app.state.energy = energy
+                    self.assertEqual(world.interaction.phase, "await_return")
+                    world.now = start + .95
+                    world.update(time.monotonic())
+                    self.complete_feedback()
+                    self.assertEqual(world.interaction.phase, "recognize_offer")
+                    self.assertEqual(cues[-1].event, "object_recognized")
+                    self.assertEqual(cues[-1].identity, "energy_drink")
+                    self.assertEqual(world.interaction.memory_id, record)
+                    self.assertEqual(world.interaction.feedback_key.interaction_id,
+                                     episode)
+                    self.assertEqual(world.world.get(item.instance_id).state,
+                                     ObjectState.USER_HELD)
+                    self.complete_feedback()
+                    self.assertEqual(world.interaction.phase, "decide_offer")
+                    expected = "object_offer" if energy < 100 else "object_refuse"
+                    self.assertEqual(cues[-1].event, expected)
+                    self.complete_feedback()
+                    if energy < 100:
+                        self.assertEqual(world.interaction.phase, "await_return")
+                        world.cursor.release()
+                        self.assertEqual(world.interaction.phase, "handover")
+                        self.complete_feedback()
+                        self.finish_clip("eat")
+                        self.complete_feedback()
+                    else:
+                        self.assertFalse(world.interaction.active)
+                        friendship = app.state.friendship
+                        for _ in range(100):
+                            app.state.energy = 100
+                            world.now += .25
+                            world.update(time.monotonic())
+                            self.complete_feedback()
+                        self.assertEqual(app.state.friendship, friendship)
+                        self.assertNotIn("object_request_return",
+                                         [cue.event for cue in cues])
+                        self.assertNotIn("object_withheld", [cue.event for cue in cues])
+                        world.cursor.cancel()
+
     def test_restart_during_a_held_wish_restores_facts_without_live_cursor_state(self):
         app, world = self.app, self.app._world
         with (
@@ -409,6 +491,10 @@ class WorldGuiTests(unittest.TestCase):
                     world._track().left + held.position.x,
                     world._track().ground_y - held.position.height,
                 ))
+                self.complete_feedback()
+                self.assertEqual(world.interaction.phase, "recognize_offer")
+                self.complete_feedback()
+                self.assertEqual(world.interaction.phase, "decide_offer")
                 self.complete_feedback()
                 with (
                     patch.object(self.app.root, "winfo_pointerx",

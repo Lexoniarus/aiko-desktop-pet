@@ -17,6 +17,13 @@ Release in the handover area remains required for human care. Later ground
 collection always has autonomous origin. Knowledge and assessment persist using
 the existing save format; live tracking, current wishes and actions do not.
 
+Taking a committed investigation target does not imply a desire to consume it.
+If the player then presents that exact portion, Aiko can recognize it while held
+and must express a fresh use decision. Agreement permits actual handover or known
+ground retrieval; refusal ends return requests and further withholding effects
+from that episode. Knowledge persists. Player-held recognition/decision cues do
+not themselves acquire, consume or put down a portion.
+
 ## Current committed-attention correction — 16 October 2026
 
 The [focus correction plan](OBJECT_FOCUS_CORRECTION_PLAN.md) supersedes older

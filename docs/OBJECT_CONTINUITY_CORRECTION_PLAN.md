@@ -136,3 +136,42 @@ real saves; use temporary test saves only.
   Delivery is ready for manual acceptance; no visual acceptance is claimed.
   Draft PR #10 remains unmerged. The final delivery commit contains these
   restart checks and evidence; its CI is checked after push.
+
+## Practical follow-up: recognizing the withheld target — 17 October 2026
+
+The user found a missing path in the live test: Aiko had committed to investigating
+an unknown portion, the player took it and then held it near her. Awareness could
+learn and assess it, but the ordinary offer presenter discarded feedback while
+the coordinator was active. The old waiting path continued demanding return,
+including after a refusal, rather than expressing the new knowledge/decision.
+
+The correction belongs to the existing interaction coordinator:
+
+- Feed the current assessment of the exact observed held target into that owner.
+  Preserve readable prior cues; announce first recognition in `recognize_offer`
+  followed by current willingness in `decide_offer`. Known targets skip the
+  recognition cue. These phases describe player-held custody, not pet-held use.
+- A desired portion returns to the existing waiting/settling path and can be
+  handed over on release or collected after observed ground contact. Neither
+  recognition nor desire consumes it. Existing consumption origin/animation rules
+  remain mandatory; known return skips another identification.
+- A refused portion ends the investigation after its refusal cue, preserving
+  learned identity/assessment and the player's actual custody. No more return
+  requests or withholding losses follow from that finished episode.
+- Reassess if need changes during either cue. Changed decisions get a new
+  identified cue; stale receipts cannot complete it. Falling/placement cannot
+  replace an unfinished recognition/decision cue. Explicit commands still cancel
+  safely, and actual visual loss retains bounded subjective search.
+- Reuse existing authored JSON recognition/offer/refusal copy, feedback receipts,
+  and current memory/World saves. No extra speech player or save schema is added.
+
+Verification: 20 retrieval/coordinator-path tests, 14 interaction tests and 28
+native GUI cases passed. The new native case reproduces the user's exact unknown
+Energy Drink take/presentation sequence, including agreement at 65 energy (1x),
+refusal at 100 energy (2x), and no further withholding losses after refusal.
+Headless cases cover readable recognition/decision, known-target shortcuts,
+need changes during both cues, stale receipts and placement during recognition.
+The final Windows/Python 3.11 suite passed **1002 tests in 221.743 s**; Ruff,
+strict Mypy (178 sources) and Pyright passed. No real save or asset was modified.
+This follow-up is delivered as one bounded correction commit; its CI matrix is
+checked after push. Practical acceptance remains open; PR #10 remains unmerged.

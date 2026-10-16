@@ -8,6 +8,9 @@
   restart cases. Keep unknown-item inspection and full consumption playback.
 - Distinguish ordinary holding from withholding a committed target, and align
   known acceptance, offer and collection dialogue with the actual knowledge.
+- Recognize and reappraise a withheld investigation target while presented at
+  the cursor. Express current agreement/refusal; refusal ends return demands
+  without acquiring the portion or continuing withholding penalties.
 
 ## Unreleased — Committed object attention
 

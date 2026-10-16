@@ -71,6 +71,7 @@ class ObjectInteractionCoordinator:
         self._cue_done = self._animation_done = self._arrived = False
         self._inspect_at = 0.0
         self._decision = ObjectUseDecision(False, "unrecognized")
+        self._offer_decision: ObjectUseDecision | None = None
         self._retrieving = False
         self._kind: ConsumableKind | None = None
         self._pending_feedback: ObjectEvent | None = None
@@ -97,12 +98,25 @@ class ObjectInteractionCoordinator:
 
     @property
     def waiting_for_target(self) -> bool:
-        return self.phase in ("await_return", "await_settle")
+        return self.phase in (
+            "await_return", "await_settle", "recognize_offer", "decide_offer",
+        )
+
+    def observe_held_offer(self, record: str, decision: ObjectUseDecision) -> None:
+        """Reappraise the observed target without borrowing pet-held phases."""
+        known = self._memory.get(record)
+        if (not self.waiting_for_target or record != self.memory_id
+                or known is None or not known.recognized
+                or decision.reason in ("unrecognized", "unavailable")):
+            return
+        self._offer_decision = decision
+        self.update()
 
     def target_taken(self, record: str) -> bool:
         """Pause only an observed successful take before Aiko owns the item."""
         if self.focus_record != record or self.phase not in (
             "notice", "approach", "pick_up", "await_settle", "await_return",
+            "recognize_offer", "decide_offer",
         ):
             return False
         if (self.instance_id is not None
@@ -112,6 +126,8 @@ class ObjectInteractionCoordinator:
         self._action_id = -1
         self._arrived = False
         self._withholding = self._withholding.taken(self._now())
+        self._decision = ObjectUseDecision(False, "unrecognized")
+        self._offer_decision = None
         self._set_phase("await_return")
         self._stop()
         self._announce("object_taken")
@@ -123,6 +139,9 @@ class ObjectInteractionCoordinator:
             return
         if state != ObjectState.USER_HELD:
             self._withholding = self._withholding.returned()
+        if self.phase in ("recognize_offer", "decide_offer"):
+            # Motion cannot replace an unfinished recognition/decision cue.
+            return
         if state is None:
             self._set_phase("approach")
             self._cue_done = True
@@ -179,6 +198,7 @@ class ObjectInteractionCoordinator:
         self._identity = None
         self._arrived = False
         self._decision = ObjectUseDecision(False, "unrecognized")
+        self._offer_decision = None
         self._retrieving = False
         self._kind = None
         self._next_goal = None
@@ -471,6 +491,39 @@ class ObjectInteractionCoordinator:
                 )
             elif self.phase == "recognize" and self._cue_done:
                 self._consider_use()
+            elif (self.phase in ("await_return", "await_settle") and self._cue_done
+                  and self._offer_decision is not None):
+                known = self._memory.get(token)
+                if known is not None and known.recognized and (
+                    not self._known_identity() or self._decision != self._offer_decision
+                ):
+                    recognized = self._known_identity()
+                    self._identity, self._kind = known.identity, known.kind
+                    self._decision = self._offer_decision
+                    self._set_phase("decide_offer" if recognized else "recognize_offer")
+                    self._announce(
+                        ("object_offer" if self._decision.consume else "object_refuse")
+                        if recognized else "object_recognized",
+                    )
+            elif self.phase == "recognize_offer" and self._cue_done:
+                if self._offer_decision is not None:
+                    self._decision = self._offer_decision
+                self._set_phase("decide_offer")
+                self._announce("object_offer" if self._decision.consume
+                               else "object_refuse")
+            elif self.phase == "decide_offer" and self._cue_done:
+                if (self._offer_decision is not None
+                        and self._offer_decision != self._decision):
+                    self._decision = self._offer_decision
+                    self._set_phase("decide_offer")
+                    self._announce("object_offer" if self._decision.consume
+                                   else "object_refuse")
+                elif self._decision.consume:
+                    self._set_phase("await_return")
+                    self._cue_done = True
+                else:
+                    self._finish(False)
+                    self._stop()
             elif self.phase == "handover" and self._cue_done:
                 self._begin_eating()
             elif self.phase == "decide" and self._cue_done:
@@ -550,6 +603,7 @@ class ObjectInteractionCoordinator:
         self.instance_id = None
         self.memory_id = None
         self._withholding = WithholdingEpisode()
+        self._offer_decision = None
         self._set_phase("idle")
         self._select_item(None)
         if record is not None:
