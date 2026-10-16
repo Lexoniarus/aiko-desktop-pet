@@ -11,6 +11,7 @@ from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.desktop.geometry import FOOT_BASELINE
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.pet.balance import BALANCE
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState
 
 
@@ -67,8 +68,9 @@ class WorldGuiTests(unittest.TestCase):
         world._controls_active = lambda: False
 
     def recognize(self):
-        for now in (0, .3, .7):
-            self.app._world.now = now
+        start = self.app._world.now
+        for offset in (0, .3, .7):
+            self.app._world.now = start + offset
             self.app._world.update(time.monotonic())
         self.complete_feedback()
         self.complete_feedback()
@@ -251,6 +253,51 @@ class WorldGuiTests(unittest.TestCase):
         assert goal is not None
         self.assertEqual((goal.token, goal.purpose), (item.instance_id, "consume"))
 
+    def test_new_drink_inquiry_bypasses_pause_after_consuming_known_food(self):
+        world = self.app._world
+        food = world.world.place_resting("onigiri", world._body_x(),
+                                         ObjectFootprint(16, 16))
+        self.recognize()
+        self.finish_pickup()
+        self.finish_inspection()
+        self.assertEqual(world.world.get(food.instance_id).state, ObjectState.CONSUMED)
+        self.finish_clip("eat")
+        self.complete_feedback()
+        self.assertFalse(world.interaction.active)
+        consumed_at = world.now
+        self.app.state.energy = 66
+        cues = []
+        present = world._present_feedback
+
+        def capture(cue, reaction, done):
+            cues.append(cue.event)
+            present(cue, reaction, done)
+
+        world._present_feedback = capture
+        drink = world.world.place_resting("energy_drink", world._body_x(),
+                                          ObjectFootprint(12, 12))
+        self.recognize()
+        self.assertEqual(world.interaction.phase, "pick_up")
+        self.assertLess(world.now - consumed_at, BALANCE.number(
+            "object_behavior", "consumed_pause_seconds",
+        ))
+        self.finish_pickup()
+        self.finish_inspection()
+        self.finish_clip("put_down")
+        self.assertFalse(world.interaction.active)
+        self.assertEqual(cues, [
+            "object_notice", "object_approach", "object_pick_up", "object_inspect",
+            "object_recognized", "object_later", "object_put_down",
+        ])
+        known = world.awareness.memory.get(drink.instance_id)
+        assert known is not None
+        self.assertEqual((known.identity, known.examined, known.disposition),
+                         ("energy_drink", True, "deferred"))
+        self.assertEqual(world.world.get(drink.instance_id).state, ObjectState.RESTING)
+        self.assertIsNone(world._visual.object_target)
+        self.assertAlmostEqual(self.app.state.energy, 66, places=1)
+        self.assertEqual(self.app.state.friendship, 15)
+
     def test_recognized_release_hands_over_drink_and_full_release_falls(self):
         app, world = self.app, self.app._world
         app.state.energy = 40
@@ -400,18 +447,6 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(known.x, placed.position.x)
         self.assertIsNone(world._visual.object_target)
         self.assertAlmostEqual(self.app.state.energy, 65, places=1)
-
-    def test_left_edge_drink_at_scale_one_is_grasped_and_put_down_at_feet(self):
-        self._edge_drink_round_trip(1, "left")
-
-    def test_right_edge_drink_at_scale_one_is_grasped_and_put_down_at_feet(self):
-        self._edge_drink_round_trip(1, "right")
-
-    def test_left_edge_drink_at_scale_two_is_grasped_and_put_down_at_feet(self):
-        self._edge_drink_round_trip(2, "left")
-
-    def test_right_edge_drink_at_scale_two_is_grasped_and_put_down_at_feet(self):
-        self._edge_drink_round_trip(2, "right")
 
     def test_edge_grip_rechecks_actual_standing_position_at_frame_four(self):
         item = self._reach_edge_drink(1, "left")

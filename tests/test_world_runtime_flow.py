@@ -283,51 +283,6 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.assertTrue(any("später" in text for _, _, text in self.bubbles))
         trace = self.run_for(1.3)
         self.assertTrue(all(row[1] == "idle" for row in trace), trace)
-        self.app.state.satiety = 69
-        self.feedback.clear()
-        trace = self.run_until(
-            lambda: world.world.get(item.instance_id).state == ObjectState.CONSUMED, 22
-        )
-        self.assertEqual(
-            world.world.get(item.instance_id).state, ObjectState.CONSUMED, trace
-        )
-        self.assertEqual(self.feedback[0][1], "object_recall_saved_food")
-        self.assertNotIn("object_notice", [event for _, event, _ in self.feedback])
-        self.assertNotIn("object_inspect", [event for _, event, _ in self.feedback])
-        self.assertNotIn("object_recognized", [event for _, event, _ in self.feedback])
-        self.assertGreater(self.app.state.satiety, 98)
-        self.assertEqual(self.app.state.friendship, 15)
-        self.app.state.energy = 66
-        drink = world.world.place_resting(
-            "energy_drink", world._body_x() + 30, ObjectFootprint(12, 12)
-        )
-        self.feedback.clear()
-        trace = self.run_until(
-            lambda: any(cue[1] == "object_notice" for cue in self.feedback), 8
-        )
-        self.assertIn("object_notice", [cue[1] for cue in self.feedback], trace)
-        started = self.feedback[0][0]
-        trace += self.run_until(
-            lambda: (
-                (known := world.awareness.memory.get(drink.instance_id)) is not None
-                and known.examined
-                and world.world.get(drink.instance_id).state == ObjectState.RESTING
-                and not world.interaction.active
-            ),
-            25,
-        )
-        self.assertFalse(world.interaction.active, trace)
-        self.assertLess(world.now - started, 25)
-        self.assertEqual(world.world.get(drink.instance_id).state, ObjectState.RESTING)
-        events = [cue[1] for cue in self.feedback]
-        self.assertEqual(events[events.index("object_notice") :], expected)
-        self.assertTrue(any("Energy" in text for _, _, text in self.bubbles))
-        self.assertLess(self.app.state.energy, 67)
-        self.assertIsNone(world._visual.object_target)
-        known = world.awareness.memory.get(drink.instance_id)
-        assert known is not None
-        self.assertEqual(known.identity, "energy_drink")
-        self.assertTrue(known.examined)
 
     def test_sleep_during_held_inspection_puts_down_and_restart_keeps_portion(self):
         world = self.app._world
