@@ -1,5 +1,12 @@
 # Observed item continuity and knowledge-aware interaction
 
+The next agreed, **not yet implemented** correction is the
+[noticing, identification and assessment plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md).
+It records deliberate cursor presentation, first identification in Aiko's hand,
+early perceived absence and the implementation stages. Its stricter perception
+rules supersede earlier proximity-only identification assumptions below; this
+document retains the evidence of the already delivered continuity work.
+
 Approved follow-up to the completed object focus correction. Preserve care,
 animation, subjective search and save compatibility. No merge is authorized.
 
