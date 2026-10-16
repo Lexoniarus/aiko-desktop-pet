@@ -72,7 +72,7 @@ class ObjectInteractionTests(unittest.TestCase):
         delayed = self.delay_feedback
         self.delay_feedback = False
         self.coordinator.begin_goal(ObjectGoal(
-            self.item.instance_id, "apple", "food", 100, 0, 0, "investigate",
+            self.item.instance_id, None, None, 100, 0, 0, "investigate",
         ))
         self.delay_feedback = delayed
         self.coordinator.arrive()
@@ -142,8 +142,9 @@ class ObjectInteractionTests(unittest.TestCase):
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
         self.acknowledge()
         self.assertEqual(self.coordinator.phase, "recognize")
-        self.assertTrue(self.memory.snapshot()[0].assessed)
+        self.assertFalse(self.memory.snapshot()[0].assessed)
         self.acknowledge()
+        self.assertTrue(self.memory.snapshot()[0].assessed)
         self.acknowledge()
         self.assertEqual(self.coordinator.phase, "put_down")
         self.assertIsNone(self.memory.snapshot()[0].disposition)
@@ -198,7 +199,7 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertFalse(self.coordinator.active)
         self.assertTrue(self.coordinator.offer_on_release(held.instance_id))
         self.assertEqual(self.world.get(held.instance_id).state, ObjectState.PET_HELD)
-        self.assertEqual(self.coordinator.phase, "inspect")
+        self.assertEqual(self.coordinator.phase, "handover")
         self.assertEqual(self.cues[-1].event, "object_handover")
 
     def test_failed_grasp_rolls_back_world_and_memory_and_can_retry(self):

@@ -241,8 +241,24 @@ class ObjectInteractionCoordinator:
 
     def _known_supply(self) -> bool:
         known = self._memory.get(self.memory_id) if self.memory_id else None
-        return (known is not None and known.recognized and known.assessed
+        return known is not None and known.assessed and self._known_identity()
+
+    def _known_identity(self) -> bool:
+        known = self._memory.get(self.memory_id) if self.memory_id else None
+        return (known is not None and known.recognized
                 and known.identity == self._identity and known.kind == self._kind)
+
+    def _consider_use(self) -> None:
+        assert self.memory_id is not None
+        self._decision = self._decide(self.memory_id, self._use_context)
+        if self._decision.reason not in ("unrecognized", "unavailable"):
+            self._memory.mark_assessed(self.memory_id)
+        self._set_phase("decide")
+        self._announce(
+            "object_want" if self._decision.consume else
+            "object_unknown" if self._decision.reason == "unrecognized"
+            else "object_later",
+        )
 
     def start_search(self) -> None:
         """The caller has attentively arrived at an empty remembered place."""
@@ -309,7 +325,7 @@ class ObjectInteractionCoordinator:
         self._kind = known.kind if known is not None else None
         self._select_item(item.definition_id)
         self._action_id = self._play("hold_item")
-        if self._known_supply():
+        if self._known_identity():
             self._set_phase("handover")
             self._announce("object_handover")
         else:
@@ -436,6 +452,8 @@ class ObjectInteractionCoordinator:
                     self._put_down()
                 elif self._retrieving and self._known_supply():
                     self._begin_eating()
+                elif self._known_identity():
+                    self._consider_use()
                 else:
                     self._retrieving = False
                     self._inspect()
@@ -444,19 +462,12 @@ class ObjectInteractionCoordinator:
                 known = self._memory.get(token)
                 self._identity = known.identity if known is not None else None
                 self._kind = known.kind if known is not None else None
-                self._memory.mark_assessed(token)
                 self._set_phase("recognize")
                 self._announce(
                     "object_recognized" if self._identity else "object_unknown",
                 )
             elif self.phase == "recognize" and self._cue_done:
-                self._decision = self._decide(token, self._use_context)
-                self._set_phase("decide")
-                self._announce(
-                    "object_want" if self._decision.consume else
-                    "object_unknown" if self._decision.reason == "unrecognized"
-                    else "object_later",
-                )
+                self._consider_use()
             elif self.phase == "handover" and self._cue_done:
                 self._begin_eating()
             elif self.phase == "decide" and self._cue_done:
@@ -519,6 +530,7 @@ class ObjectInteractionCoordinator:
             self._announce("object_unknown" if decision.reason == "unrecognized"
                            else "object_later")
             return
+        self._memory.mark_assessed(self.memory_id)
         if not self._consume(
             self._interaction_id, self.instance_id, self.memory_id, self._origin,
         ):

@@ -192,7 +192,7 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.coordinator.begin_goal(goal)
         self.assertEqual(self.cues[-1].event, "object_recall_saved_drink")
 
-    def test_recognized_but_unexamined_item_cannot_take_shortcut_from_forged_goal(self):
+    def test_known_but_unassessed_item_decides_without_identifying_again(self):
         self.memory.restore_snapshot(tuple(replace(item, assessed=False,
                                                    disposition=None)
                                            for item in self.memory.snapshot()))
@@ -205,9 +205,13 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.acknowledge()
         self.grasp()
         self.finish_pickup()
-        self.assertEqual(self.coordinator.phase, "inspect")
-        self.assertEqual(self.cues[-1].event, "object_inspect")
+        self.assertEqual(self.coordinator.phase, "decide")
+        self.assertEqual(self.cues[-1].event, "object_want")
+        self.assertTrue(self.memory.snapshot()[0].assessed)
+        self.assertNotIn("object_recognized", [cue.event for cue in self.cues])
         self.assertEqual(self.consumed, [])
+        self.acknowledge()
+        self.assertEqual(len(self.consumed), 1)
 
     def test_changed_needs_after_grasp_lead_to_readable_decline_and_put_down(self):
         self.begin_retrieval()
@@ -221,6 +225,29 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.coordinator.receive(PlaybackEvent(2, "put_down", 2, ("detach_object",)))
         self.assertEqual(self.memory.snapshot()[0].disposition, "deferred")
         self.assertEqual(self.consumed, [])
+
+    def test_unknown_identity_cannot_be_supplied_by_a_forged_consumption_goal(self):
+        self.memory.restore_snapshot(tuple(replace(
+            item, identity=None, kind=None, assessed=False,
+        ) for item in self.memory.snapshot()))
+        self.coordinator.begin_goal(ObjectGoal(
+            self.item.instance_id, "apple", "food", 100, 0, 0, "consume",
+        ))
+        self.acknowledge()
+        self.acknowledge()
+        self.coordinator.arrive()
+        self.acknowledge()
+        self.grasp()
+        self.finish_pickup()
+        self.assertEqual(self.coordinator.phase, "inspect")
+        self.stamp = 2
+        self.acknowledge()
+        self.acknowledge()
+        self.assertEqual(self.cues[-1].event, "object_unknown")
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "put_down")
+        self.assertEqual(self.consumed, [])
+        self.assertFalse(self.memory.snapshot()[0].assessed)
 
     def test_interrupted_retrieval_preserves_learning_but_not_deliberate_deferral(self):
         self.begin_retrieval()

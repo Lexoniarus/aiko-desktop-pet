@@ -85,3 +85,11 @@ real saves; use temporary test saves only.
   while capacity/activity are rechecked. Passive wishes wait for ground contact
   before an interaction begins. Verified 11 awareness, 8 intention, 4 perception,
   4 tracker and 23 native GUI cases; Ruff, strict Mypy and Pyright pass.
+- Step 3b commit: `24175b0`.
+- Step 4: known identity and completed use assessment now route independently.
+  Known/unassessed acquisition waits for a readable decision without repeating
+  identification; unknown/conflicting evidence still requires inspection. Only
+  actual valid assessments are recorded. Known handover retains its acceptance
+  phase and full consume clip. Verified 14 coordinator, 16 retrieval and 23 native
+  GUI tests, including forged-goal protection, stale receipts, reverse placement
+  and transaction retry; Ruff, strict Mypy and Pyright pass.
