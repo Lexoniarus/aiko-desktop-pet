@@ -16,6 +16,34 @@ from aiko_pet.world.state import WorldState
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    def test_commitment_filters_other_drops_and_relocations_before_memory(self):
+        world = WorldState(WorldSurface(1600, 600), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        target = world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        other = world.place_resting("apple", 200, ObjectFootprint(8, 8))
+        awareness = ObjectAwareness()
+        state = PetState(satiety=50)
+        for stamp in (0, .3, .7):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100, attentive=True, blocked=True)
+        focus = awareness.record_for_instance(target.instance_id)
+        old = awareness.known_instance(other.instance_id)
+        assert focus is not None and old is not None
+        world.move_resting(other.instance_id, 250, expected_revision=0)
+        dropped = world.place_resting("apple", 150, ObjectFootprint(8, 8))
+        for stamp in (1, 1.3, 1.7):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100, attentive=True, blocked=True,
+                             committed=focus)
+        self.assertEqual(awareness.memory.get(old.token), old)
+        self.assertIsNone(awareness.known_instance(dropped.instance_id))
+        self.assertEqual({item.token for item in awareness.observations}, {focus})
+        for stamp in (2, 2.3, 2.7):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100, attentive=True, blocked=True)
+        self.assertIsNotNone(awareness.known_instance(dropped.instance_id))
+
     def test_unseen_relocation_is_a_new_find_and_both_discovery_orders_reconcile(self):
         for missing_first in (False, True):
             with self.subTest(missing_first=missing_first):

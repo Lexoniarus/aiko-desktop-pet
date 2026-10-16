@@ -31,7 +31,8 @@ from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.object_decisions import ObjectUseDecision, decide_object_use
-from ..pet.mind.object_knowledge import ObjectMemorySnapshot
+from ..pet.mind.object_intentions import ObjectGoal
+from ..pet.mind.object_knowledge import ObjectKnowledge, ObjectMemorySnapshot
 from ..pet.routine import context_at
 from ..pet.state import PetState
 from ..ui.pet_view.action_playback import ActionPlayback
@@ -310,8 +311,14 @@ class DesktopWorldRuntime:
         observed = {item.token for item in self.awareness.observations}
         visible = [item for item in self.awareness.memory.snapshot()
                    if not item.assessed and item.token in observed]
-        gaze = goal or (min(visible, key=lambda item: abs(item.x - self._body_x()))
-                        if visible else None)
+        focus = self.interaction.focus_record
+        gaze: ObjectKnowledge | ObjectGoal | None = (
+            self.awareness.memory.get(focus) if focus is not None else None
+        )
+        gaze = gaze or goal or (
+            min(visible, key=lambda item: abs(item.x - self._body_x()))
+            if visible else None
+        )
         self._visual.object_target = (
             (self._track().left + gaze.x, self._track().ground_y - gaze.height)
             if gaze is not None else None

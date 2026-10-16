@@ -159,8 +159,7 @@ class WorldGuiTests(unittest.TestCase):
         for stamp in (1, 1.3, 1.7):
             world.now = stamp
             world.update(time.monotonic())
-        known = world.awareness.known_instance(item.instance_id)
-        assert known is not None
+        self.assertIsNone(world.awareness.known_instance(item.instance_id))
         self.complete_feedback()
         self.complete_feedback()
         world.now = 2.8
@@ -169,7 +168,6 @@ class WorldGuiTests(unittest.TestCase):
         goal = world.awareness.intentions.goal
         assert goal is not None
         self.assertEqual(goal.token, old)
-        self.assertNotEqual(known.token, old)
 
     def test_absent_remembered_instance_requires_attentive_local_search(self):
         world = self.app._world

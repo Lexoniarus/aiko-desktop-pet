@@ -81,6 +81,9 @@ class ObjectAwareness:
         committed: str | None = None,
     ) -> ObjectGoal | None:
         definitions = {item.definition_id: item for item in world.definitions}
+        focused_instance = (self.instance_for_record(committed)
+                            if committed is not None else None)
+        focused_memory = self.memory.get(committed) if committed is not None else None
         candidates: list[ObjectCandidate] = []
         own_actions: dict[str, str] = {}
         held: dict[str, str] = {}
@@ -110,6 +113,16 @@ class ObjectAwareness:
                 else "food", *pose,
                 item.state == ObjectState.RESTING,
             ))
+        if committed is not None:
+            # Filter before tracking, recognition and stock reconciliation.
+            candidates = [item for item in candidates if (
+                item.token == focused_instance
+                or own_actions.get(item.token) == committed
+                or focused_instance is None and focused_memory is not None
+                and math.hypot(item.x - focused_memory.x,
+                               item.height - focused_memory.height)
+                <= width * BALANCE.number("object_behavior", "memory_place_widths")
+            )]
         visible = tuple(item for item in candidates if attentive and math.hypot(
             item.x - x, item.height - height,
         ) <= width * BALANCE.number("object_behavior", "notice_widths"))
