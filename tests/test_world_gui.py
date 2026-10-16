@@ -186,6 +186,13 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(world.interaction.phase, phase)
         self.assertEqual(self.app.state.friendship, friendship)
         self.assertEqual(list(self.app.mind.clicks), [])
+        self.complete_feedback()
+        self.complete_feedback()
+        world.update(time.monotonic())
+        before = self.app.settings.x or 0
+        self.app.mind.cursor_attention.attention_until = time.monotonic() + 100
+        self.app._animation.advance_walk(time.monotonic(), .2, game_mode=False)
+        self.assertNotEqual(self.app.settings.x, before)
 
     def test_taken_target_is_followed_through_hops_and_resumes_at_both_scales(self):
         world = self.app._world

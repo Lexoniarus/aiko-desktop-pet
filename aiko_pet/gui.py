@@ -177,6 +177,10 @@ class DesktopPet:
                 action_clip_id=lambda: self._action_playback.clip_id,
                 attention_until=lambda: self.mind.cursor_attention.attention_until,
                 extend_action=self._action_playback.extend,
+                object_focus=lambda: (
+                    hasattr(self, "_world")
+                    and self._world.interaction.focus_record is not None
+                ),
             ),
         )
         self._walk = visuals.walk
