@@ -113,6 +113,47 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.assertEqual(self.done, [(self.item.instance_id, True)])
         self.assertEqual(self.memory.snapshot(), ())
 
+    def test_returned_known_target_resumes_same_retrieval_without_identification(self):
+        self.begin_retrieval()
+        episode = self.coordinator.feedback_key.interaction_id
+        self.world.take_resting(self.item.instance_id, expected_revision=0)
+        self.assertTrue(self.coordinator.target_taken(self.item.instance_id))
+        self.acknowledge()
+        item = self.world.get(self.item.instance_id)
+        self.world.return_user_held(item.instance_id, 110,
+                                    expected_revision=item.revision)
+        self.coordinator.observe_target_state(ObjectState.RESTING)
+        self.coordinator.arrive()
+        self.coordinator.receive(PlaybackEvent(2, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(2, "pick_up", 7, finished=True))
+        self.assertEqual(self.coordinator.phase, "eat")
+        self.assertEqual(self.coordinator.feedback_key.interaction_id, episode)
+        self.assertNotIn("object_recognized", [cue.event for cue in self.cues])
+        self.assertEqual(len(self.consumed), 1)
+        self.assertEqual(self.consumed[0][2], ConsumptionOrigin.AUTONOMOUS)
+
+    def test_returned_target_handover_retains_episode_and_actual_human_origin(self):
+        self.begin_retrieval()
+        episode = self.coordinator.feedback_key.interaction_id
+        self.world.take_resting(self.item.instance_id, expected_revision=0)
+        self.coordinator.target_taken(self.item.instance_id)
+        self.assertTrue(self.coordinator.offer_on_release(self.item.instance_id))
+        self.assertEqual(self.coordinator.phase, "handover")
+        self.assertEqual(self.coordinator.feedback_key.interaction_id, episode)
+        self.assertEqual(self.consumed, [])
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "eat")
+        self.assertEqual(self.consumed[0][2], ConsumptionOrigin.HANDOVER)
+
+    def test_actual_target_loss_releases_focus_to_bounded_subjective_search(self):
+        self.begin_retrieval()
+        self.world.take_resting(self.item.instance_id, expected_revision=0)
+        self.coordinator.target_taken(self.item.instance_id)
+        self.coordinator.observe_target_state(None)
+        self.assertEqual(self.coordinator.phase, "search")
+        self.assertIsNone(self.coordinator.focus_record)
+        self.assertEqual(self.memory.snapshot()[0].place_status, "missing")
+
     def test_drink_recall_matches_energy_and_only_claims_confirmed_deferral(self):
         self.memory.update((replace(self.seen, identity="energy_drink", kind="drink"),),
                            now=0)

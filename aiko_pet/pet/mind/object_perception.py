@@ -56,6 +56,7 @@ class ObjectPerception:
     def observe(
         self, candidates: tuple[ObjectCandidate, ...], *, now: float,
         x: float, height: float, width: float, attentive: bool,
+        following: str | None = None,
     ) -> tuple[ObjectObservation, ...]:
         if not math.isfinite(now) or width <= 0 or not math.isfinite(width):
             raise ValueError("Perception requires finite time and positive width")
@@ -69,7 +70,8 @@ class ObjectPerception:
         observations: list[ObjectObservation] = []
         for item in candidates if attentive else ():
             distance = math.hypot(item.x - x, item.height - height) / width
-            if distance > BALANCE.number("object_behavior", "notice_widths"):
+            if (item.token != following
+                    and distance > BALANCE.number("object_behavior", "notice_widths")):
                 continue
             old = self._evidence.get(item.token)
             current = old or _Evidence()

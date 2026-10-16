@@ -8,6 +8,19 @@ from aiko_pet.pet.mind.object_perception import ObjectCandidate
 
 
 class ObjectTrackingTests(unittest.TestCase):
+    def test_observed_take_follows_visible_motion_but_never_bridges_loss(self):
+        tracker = ObjectTracker(maximum_gap=1)
+        item = ObjectCandidate("world_a", "apple", "food", 100, 0, True)
+        first = tracker.update((item,), now=0, maximum_distance=50)[0]
+        self.assertTrue(tracker.follow_taken(item.token))
+        moving = replace(item, x=900, height=500, resting=False)
+        held = tracker.update((moving,), now=.2, maximum_distance=50)[0]
+        self.assertEqual(held.token, first.token)
+        tracker.update((), now=.3, maximum_distance=50)
+        self.assertIsNone(tracker.following_instance)
+        seen = tracker.update((moving,), now=.4, maximum_distance=50)[0]
+        self.assertNotEqual(seen.token, first.token)
+
     def test_continuity_uses_space_even_when_the_technical_handle_changes(self):
         tracker = ObjectTracker(maximum_gap=1)
         item = ObjectCandidate("world_a", "apple", "food", 100, 0, True)

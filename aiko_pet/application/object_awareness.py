@@ -59,6 +59,12 @@ class ObjectAwareness:
         record = self.record_for_instance(instance)
         return self.memory.get(record) if record is not None else None
 
+    def follow_taken(self, instance: str, record: str) -> bool:
+        """Only an actual observed acquisition can extend visual continuity."""
+        return (self.record_for_instance(instance) == record
+                and any(seen.token == record for seen in self.observations)
+                and self._tracker.follow_taken(instance))
+
     def assess_offer(self, token: str, state: PetState) -> ObjectUseDecision | None:
         """Assess only a currently recognized offer, never hidden World truth."""
         known = self.memory.get(token)
@@ -80,6 +86,8 @@ class ObjectAwareness:
         held_pose: tuple[float, float] | None = None,
         committed: str | None = None,
     ) -> ObjectGoal | None:
+        if committed is None:
+            self._tracker.stop_following()
         definitions = {item.definition_id: item for item in world.definitions}
         focused_instance = (self.instance_for_record(committed)
                             if committed is not None else None)
@@ -123,9 +131,12 @@ class ObjectAwareness:
                                item.height - focused_memory.height)
                 <= width * BALANCE.number("object_behavior", "memory_place_widths")
             )]
-        visible = tuple(item for item in candidates if attentive and math.hypot(
-            item.x - x, item.height - height,
-        ) <= width * BALANCE.number("object_behavior", "notice_widths"))
+        following = (self._tracker.following_instance
+                     if committed is not None else None)
+        visible = tuple(item for item in candidates if attentive and (
+            item.token == following or math.hypot(item.x - x, item.height - height)
+            <= width * BALANCE.number("object_behavior", "notice_widths")
+        ))
         tracked = self._tracker.update(
             visible, now=now, maximum_distance=width * BALANCE.number(
                 "object_behavior", "tracking_jump_widths",
@@ -134,6 +145,9 @@ class ObjectAwareness:
         sensed = self.perception.observe(
             tracked, now=now, x=x, height=height,
             width=width, attentive=attentive,
+            following=next((item.token for item in tracked
+                            if self._tracker.resolve(item.token)
+                            == self._tracker.following_instance), None),
         )
         noticed = {seen.token for seen in sensed}
         self._unnoticed = tuple(item for item in tracked if item.token not in noticed)

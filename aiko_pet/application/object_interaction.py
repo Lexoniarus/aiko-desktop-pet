@@ -107,6 +107,23 @@ class ObjectInteractionCoordinator:
         self._announce("object_taken")
         return True
 
+    def observe_target_state(self, state: ObjectState | None) -> None:
+        """Use current sensory custody only; loss resumes bounded local search."""
+        if not self.waiting_for_target:
+            return
+        if state is None:
+            self._set_phase("approach")
+            self._cue_done = True
+            self.start_search()
+        elif state in (ObjectState.FALLING, ObjectState.BOUNCING):
+            if self.phase != "await_settle":
+                self._set_phase("await_settle")
+                self._cue_done = True
+        elif (state == ObjectState.RESTING and self._cue_done
+              and self._auxiliary_key is None):
+            self._set_phase("approach")
+            self._cue_done = True
+
     @property
     def searching(self) -> bool:
         return self.phase == "search"
@@ -239,14 +256,19 @@ class ObjectInteractionCoordinator:
 
     def offer_on_release(self, instance_id: str) -> bool:
         record = self._record_for_instance(instance_id)
-        if record is None or self.active or not self._can_acquire(instance_id):
+        returning = self.waiting_for_target and record == self.memory_id
+        if (record is None or self.active and not returning
+                or not self._can_acquire(instance_id)):
             return False
         item = self.world.get(instance_id)
         self._custody.accept_handover_on_release(
             instance_id, memory_id=record, expected_revision=item.revision,
             now=self._now(),
         )
-        self._start(record, ConsumptionOrigin.HANDOVER)
+        if returning:
+            self._origin = ConsumptionOrigin.HANDOVER
+        else:
+            self._start(record, ConsumptionOrigin.HANDOVER)
         self.instance_id = instance_id
         known = self._memory.get(record)
         self._identity = known.identity if known is not None else None

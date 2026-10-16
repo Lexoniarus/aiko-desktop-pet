@@ -16,6 +16,35 @@ from aiko_pet.world.state import WorldState
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    def test_following_a_visible_take_preserves_knowledge_outside_notice_radius(self):
+        world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        item = world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        awareness = ObjectAwareness()
+        state = PetState(satiety=50)
+        for stamp in (0, .3, .7):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100, attentive=True, blocked=True)
+        record = awareness.record_for_instance(item.instance_id)
+        assert record is not None
+        awareness.memory.mark_assessed(record)
+        world.take_resting(item.instance_id, expected_revision=0)
+        self.assertTrue(awareness.follow_taken(item.instance_id, record))
+        held = world.get(item.instance_id)
+        world.move_held(item.instance_id, WorldPosition(1400, 700),
+                        expected_revision=held.revision)
+        awareness.update(world.snapshot(), state, now=.9, x=100, height=0,
+                         width=100, attentive=True, blocked=True, committed=record)
+        known = awareness.known_instance(item.instance_id)
+        assert known is not None
+        self.assertEqual((known.token, known.identity, known.x),
+                         (record, "apple", 1400))
+        self.assertTrue(known.assessed)
+        awareness.update(world.snapshot(), state, now=1, x=100, height=0,
+                         width=100, attentive=False, blocked=True, committed=record)
+        self.assertIsNone(awareness.instance_for_record(record))
+
     def test_commitment_filters_other_drops_and_relocations_before_memory(self):
         world = WorldState(WorldSurface(1600, 600), (ObjectDefinition(
             "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),

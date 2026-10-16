@@ -187,6 +187,72 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(self.app.state.friendship, friendship)
         self.assertEqual(list(self.app.mind.clicks), [])
 
+    def test_taken_target_is_followed_through_hops_and_resumes_at_both_scales(self):
+        world = self.app._world
+        for scale in (1, 2):
+            with self.subTest(scale=scale):
+                self.app.settings.scale = scale
+                self.app._window.resize()
+                self.app._animated.reload_sprites()
+                world._sync_geometry()
+                self.app.state.satiety = 50
+                item = world.world.place_resting(
+                    "apple", world._body_x() + 70 * scale, ObjectFootprint(8, 8),
+                )
+                self.recognize()
+                record = world.interaction.memory_id
+                episode = world.interaction.feedback_key.interaction_id
+                assert record is not None
+                world.begin_relocate(item.instance_id, item.revision)
+                self.assertEqual(world.interaction.phase, "await_return")
+                with (
+                    patch.object(self.app.root, "winfo_pointerx",
+                                 return_value=world._track().right - 40),
+                    patch.object(self.app.root, "winfo_pointery", return_value=100),
+                ):
+                    world.cursor._move_carry()
+                world.now += .15
+                world.update(time.monotonic())
+                self.assertEqual(world.interaction.phase, "await_return")
+                self.assertEqual(world.awareness.record_for_instance(item.instance_id),
+                                 record)
+                held = world.world.get(item.instance_id)
+                assert held.position is not None
+                self.assertEqual(world._visual.object_target, (
+                    world._track().left + held.position.x,
+                    world._track().ground_y - held.position.height,
+                ))
+                self.complete_feedback()
+                with (
+                    patch.object(self.app.root, "winfo_pointerx",
+                                 return_value=int(world._body_x()) + 120 * scale),
+                    patch.object(self.app.root, "winfo_pointery",
+                                 return_value=world._track().ground_y - 200 * scale),
+                ):
+                    world.cursor.release()
+                world.now += .15
+                world.update(time.monotonic())
+                self.assertEqual(world.interaction.phase, "await_settle")
+                world.world.advance_motion(20, world._motion_parameters)
+                world.now += .15
+                world.update(time.monotonic())
+                self.assertEqual(world.interaction.phase, "approach")
+                self.assertEqual(world.interaction.feedback_key.interaction_id, episode)
+                for index in range(10):
+                    self.app._walk.step(time.monotonic() + index, 1,
+                                        game_mode=False, attention_active=False)
+                    world.now += .15
+                    world.update(time.monotonic())
+                    if world.interaction.phase == "pick_up":
+                        break
+                self.assertEqual(world.interaction.phase, "pick_up")
+                self.finish_pickup()
+                self.finish_inspection()
+                self.finish_clip("eat")
+                self.complete_feedback()
+                self.assertEqual(world.world.get(item.instance_id).state,
+                                 ObjectState.CONSUMED)
+
     def test_absent_remembered_instance_requires_attentive_local_search(self):
         world = self.app._world
         self.app.state.energy = 65

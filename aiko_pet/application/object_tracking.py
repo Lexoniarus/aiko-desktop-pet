@@ -29,6 +29,20 @@ class ObjectTracker:
         self._tracks: dict[str, _Track] = {}
         self._bindings: dict[str, str] = {}
         self._serial = 0
+        self._following: str | None = None
+
+    @property
+    def following_instance(self) -> str | None:
+        return self._bindings.get(self._following) if self._following else None
+
+    def follow_taken(self, instance: str) -> bool:
+        """Lock a currently seen take; never recover an absent track by ID."""
+        self._following = next((key for key, value in self._bindings.items()
+                                if value == instance), None)
+        return self._following is not None
+
+    def stop_following(self) -> None:
+        self._following = None
 
     def resolve(self, sighting: str) -> str | None:
         return self._bindings.get(sighting)
@@ -44,6 +58,8 @@ class ObjectTracker:
             token: track for token, track in self._tracks.items()
             if 0 <= now - track.observed_at <= self._maximum_gap + 1e-9
         }
+        following = self._following if self._following in previous else None
+        followed_instance = self.following_instance if following is not None else None
         distances = {
             (index, token): math.hypot(
                 item.x - track.candidate.x, item.height - track.candidate.height,
@@ -62,8 +78,11 @@ class ObjectTracker:
         tracks: dict[str, _Track] = {}
         bindings: dict[str, str] = {}
         for index, item in enumerate(candidates):
-            token = nearest.get(index)
-            if token is not None:
+            token = (following if item.token == followed_instance
+                     else nearest.get(index))
+            if token == following and item.token != followed_instance:
+                token = None
+            if token is not None and token != following:
                 competitors = sorted((distance, number) for (number, old), distance
                                      in distances.items() if old == token)
                 if (competitors[0][1] != index or len(competitors) > 1
@@ -77,4 +96,5 @@ class ObjectTracker:
             bindings[token] = item.token
             result.append(tracked)
         self._tracks, self._bindings = tracks, bindings
+        self._following = following if following in tracks else None
         return tuple(result)

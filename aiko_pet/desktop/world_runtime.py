@@ -250,7 +250,8 @@ class DesktopWorldRuntime:
         distance = abs(item.position.x - self._body_x())
         if item.state == ObjectState.USER_HELD:
             return (
-                not self.interaction.active
+                (not self.interaction.active or self.interaction.waiting_for_target
+                 and self.interaction.memory_id == known.token)
                 and self.cursor.offer_ready
                 and decide_object_use(
                     known, self.state, ConsumptionOrigin.HANDOVER,
@@ -327,6 +328,15 @@ class DesktopWorldRuntime:
             if gaze is not None else None
         )
         self.cursor.observe_offer()
+        if self.interaction.waiting_for_target:
+            record = self.interaction.memory_id
+            instance = (self.awareness.instance_for_record(record)
+                        if record is not None else None)
+            self.interaction.observe_target_state(
+                self.world.get(instance).state if instance is not None else None,
+            )
+            self._walk.movement.set_goal(None)
+            return
         if self.interaction.searching:
             known = self.awareness.memory.get(goal.token) if goal is not None else None
             if (goal is not None and goal.token != self.interaction.memory_id
@@ -444,19 +454,24 @@ class DesktopWorldRuntime:
                            for item in self.awareness.observations)
             if (self.cursor.begin_existing(token, revision) and observed
                     and record is not None and self.interaction.target_taken(record)):
+                self.awareness.follow_taken(token, record)
                 self._walk.movement.set_goal(None)
 
         self._request_gesture(acquire)
 
     def _assess_offer(self, token: str) -> ObjectUseDecision | None:
-        if (self._game_open() or self.interaction.active
+        record = self.awareness.record_for_instance(token)
+        returning = (self.interaction.waiting_for_target
+                     and record == self.interaction.memory_id)
+        if (self._game_open() or self.interaction.active and not returning
                 or time.monotonic() < self._playback.until):
             return None
-        record = self.awareness.record_for_instance(token)
         return (self.awareness.assess_offer(record, self.state)
                 if record is not None else None)
 
     def _present_offer(self, cue: ObjectFeedback) -> None:
+        if self.interaction.active:
+            return
         reaction = self._mind.select_reaction(
             cue.event, self.state, context_at(time.time()), time.monotonic(),
         )
