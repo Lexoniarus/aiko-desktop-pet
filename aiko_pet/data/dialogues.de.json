@@ -23225,6 +23225,46 @@
       ]
     },
     {
+      "id": "object-search-nearby",
+      "event": "object_search",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [{"kind": "text", "content": "Wo ist {item} hin? Vielleicht liegt es noch hier in der Nähe."}]
+    },
+    {
+      "id": "object-search-place",
+      "event": "object_search",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [{"kind": "text", "content": "An dieser Stelle finde ich {item} gerade nicht. Ich sehe mich kurz um."}]
+    },
+    {
+      "id": "object-found-nearby",
+      "event": "object_found",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [{"kind": "text", "content": "Hier sehe ich {item}. Damit komme ich erst mal weiter."}]
+    },
+    {
+      "id": "object-found-alternative",
+      "event": "object_found",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [{"kind": "text", "content": "Da liegt {item}! Ich kümmere mich erst mal darum."}]
+    },
+    {
       "id": "object-search-local",
       "event": "object_search",
       "moods": [],

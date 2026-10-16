@@ -741,3 +741,5 @@ restart cases and report what was observed rather than only automated results.
 Delivery remains incomplete until automated checks, Windows interaction evidence
 and the user's practical review have been recorded. Implementation proceeds in
 the authorized order; merge still requires practical acceptance.
+
+CI correction after S7: the short-dialogue catalogue requires at least three variants per event in every relationship stage. Added the missing search/find variants; 10 dialogue-context and 11 retrieval tests plus Ruff pass. Retain this catalogue gate for future event additions.
