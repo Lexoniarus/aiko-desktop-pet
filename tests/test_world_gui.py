@@ -425,6 +425,31 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(returned.state, ObjectState.RESTING)
         self.assertEqual(returned.position, item.position)
 
+    def test_resting_item_press_uses_visible_pixels_and_cannot_award_pet_care(self):
+        world = self.app._world
+        item = world.world.place_resting("apple", world._body_x(),
+                                         ObjectFootprint(8, 8))
+        world._sync_view()
+        self.app.root.update()
+        entry = world.view._windows[item.instance_id]
+        image = world.view.image("apple", 1)
+        clear = next((x, y) for y in range(image.height())
+                     for x in range(image.width()) if image.transparency_get(x, y)
+                     or image.get(x, y) == (255, 0, 255))
+        opaque = next((x, y) for y in range(image.height())
+                      for x in range(image.width())
+                      if not image.transparency_get(x, y)
+                      and image.get(x, y) != (255, 0, 255))
+        care = self.app.state.friendship
+        entry.label.event_generate("<ButtonPress-1>", x=clear[0], y=clear[1])
+        self.assertFalse(world.cursor.carrying)
+        entry.label.event_generate("<ButtonPress-1>", x=opaque[0], y=opaque[1])
+        self.assertEqual(world.cursor.instance_id, item.instance_id)
+        world._sync_view()
+        self.assertFalse(entry.interactive)
+        world.cursor.cancel()
+        self.assertEqual(self.app.state.friendship, care)
+
     def test_actual_driver_reaches_food_with_random_walk_disabled(self):
         world = self.app._world
         start = self.app.settings.x or 0

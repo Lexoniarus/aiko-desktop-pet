@@ -87,7 +87,7 @@ class DesktopWorldRuntime:
         self._consumption = ObjectConsumption(
             state, mind, adaptive, clock=clock, memory=self.awareness.memory,
         )
-        self.view = WorldView(root, items)
+        self.view = WorldView(root, items, pickup=self.begin_relocate)
         self._refresh_footprints()
         self._contact: tuple[float, float] | None = None
         self._closed = False
