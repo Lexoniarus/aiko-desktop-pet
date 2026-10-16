@@ -3,9 +3,14 @@
 import unittest
 from dataclasses import replace
 
+from aiko_pet.infrastructure.object_memory_codec import (
+    decode_object_memory,
+    encode_object_memory,
+)
 from aiko_pet.pet.mind.object_knowledge import ObjectKnowledge
+from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.mind.object_perception import ObjectObservation
-from aiko_pet.pet.mind.object_stock import match_find, summarize_stock
+from aiko_pet.pet.mind.object_stock import match_find, resolved_places, summarize_stock
 
 APPLE = ObjectKnowledge("memory_1", "apple", "food", 100, 0, True, 0, True)
 
@@ -52,3 +57,40 @@ class ObjectStockTests(unittest.TestCase):
         distinct = summarize_stock((APPLE, replace(found, possible_sources=())))
         self.assertEqual((distinct.available_minimum, distinct.available_maximum),
                          (2, 2))
+
+    def test_two_finds_can_explain_two_checked_places_without_identity_claims(self):
+        first = replace(APPLE, place_status="missing")
+        second = replace(first, token="memory_2", x=200)
+        found = replace(APPLE, token="memory_3", x=500,
+                        possible_sources=(first.token, second.token))
+        another = replace(found, token="memory_4", x=600)
+        self.assertEqual(resolved_places((first, second, found)), frozenset())
+        self.assertEqual(resolved_places((first, second, found, another)),
+                         frozenset((first.token, second.token)))
+
+    def test_consumed_ambiguous_find_keeps_one_witness_until_evidence_resolves_it(self):
+        memory = ObjectMemory()
+
+        def observe(x, claimed=frozenset()):
+            return memory.observe_find(ObjectObservation(
+                "sighting", "apple", "food", x, 0, True, 0,
+            ), now=0, record=None, claimed=claimed, maximum_distance=10)
+
+        first = observe(100)
+        second = observe(200, frozenset((first,)))
+        found = observe(500)
+        memory.record_consumption(found)
+        memory.mark_missing(first)
+        memory.mark_missing(second)
+        summary = summarize_stock(memory.snapshot())
+        self.assertEqual((summary.missing_minimum, summary.missing_maximum), (1, 2))
+        saved = encode_object_memory(memory.export(now=1))
+        restored = ObjectMemory(decode_object_memory(saved, {"apple": "food"}))
+        self.assertEqual(summarize_stock(restored.snapshot()), summary)
+        # Seeing the first original portion excludes it from the consumed find.
+        restored.observe_find(ObjectObservation(
+            "new_handle", "apple", "food", 100, 0, True, 2,
+        ), now=2, record=None, claimed=frozenset(), maximum_distance=10)
+        remaining, = restored.snapshot()
+        self.assertEqual(remaining.token, first)
+        self.assertEqual(remaining.place_status, "remembered")

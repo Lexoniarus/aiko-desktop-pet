@@ -11,7 +11,7 @@ from .object_knowledge import (
     SavedObjectKnowledge,
 )
 from .object_perception import ObjectObservation
-from .object_stock import match_find
+from .object_stock import match_find, resolved_places
 
 
 class ObjectMemory:
@@ -88,6 +88,12 @@ class ObjectMemory:
             self._known[record] = replace(
                 self._known[record], possible_sources=match.possible_sources,
             )
+        visible = claimed | {record}
+        for key, item in tuple(self._known.items()):
+            if item.token in visible or item.place_status == "superseded":
+                self._known[key] = replace(item, possible_sources=tuple(
+                    source for source in item.possible_sources if source not in visible
+                ))
         self._reconcile_sources()
         return record
 
@@ -136,16 +142,23 @@ class ObjectMemory:
         self._reconcile_sources()
 
     def _reconcile_sources(self) -> None:
+        for token in resolved_places(self.snapshot()):
+            self.forget(token)
         for item in tuple(self._known.values()):
-            if len(item.possible_sources) == 1:
-                source = self.get(item.possible_sources[0])
-                if source is not None and source.place_status == "missing":
-                    self.forget(source.token)
+            if item.place_status == "superseded" and not item.possible_sources:
+                self.forget(item.token)
 
     def record_consumption(self, token: str) -> None:
         known = self.get(token)
         if known is not None and len(known.possible_sources) == 1:
             self.forget(known.possible_sources[0])
+        elif known is not None and known.possible_sources:
+            # Keep one consumed-find witness while its former place is ambiguous.
+            # It cannot become stock or a reunion candidate again.
+            self._known[token] = replace(known, resting=False, disposition=None,
+                                          place_status="superseded")
+            self._reconcile_sources()
+            return
         self.forget(token)
 
     def snapshot(self) -> tuple[ObjectKnowledge, ...]:

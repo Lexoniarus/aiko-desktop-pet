@@ -6,6 +6,8 @@ from typing import Literal
 from .object_perception import ConsumableKind
 
 ObjectDisposition = Literal["deferred", "interrupted"]
+# Superseded records are consumed-find witnesses with unresolved associations;
+# they are never available stock or visual reunion candidates.
 PlaceStatus = Literal["remembered", "missing", "superseded"]
 
 
