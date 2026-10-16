@@ -17,6 +17,73 @@ from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
 
 
 class WorldGuiTests(unittest.TestCase):
+    def test_restart_during_a_held_wish_restores_facts_without_live_cursor_state(self):
+        app, world = self.app, self.app._world
+        with (
+            patch.object(app.root, "winfo_pointerx",
+                         return_value=int(world._body_x()) + world._track().left),
+            patch.object(app.root, "winfo_pointery",
+                         return_value=world._track().ground_y - 80),
+        ):
+            world.begin_carry("cookie")
+            self.recognize()
+            token = world.cursor.instance_id
+            assert token is not None
+            known = world.awareness.known_instance(token)
+            assert known is not None
+            self.assertIsNotNone(world.awareness.intentions.goal)
+            self.restart()
+        world = self.app._world
+        restored = world.awareness.memory.get(known.token)
+        assert restored is not None
+        self.assertEqual((restored.identity, restored.assessed), ("cookie", True))
+        self.assertEqual(world.awareness.observations, ())
+        self.assertIsNone(world.awareness.intentions.goal)
+        self.assertIsNone(world.awareness.instance_for_record(known.token))
+        self.assertFalse(world.cursor.carrying)
+        self.assertFalse(world.interaction.active)
+        self.assertEqual(world.world.get(token).state, ObjectState.RESTING)
+        self.assertIsNone(self.app.state.food.last_food_id)
+
+    def test_restart_keeps_known_unassessed_cookie_without_identifying_again(self):
+        world = self.app._world
+        item = world.world.place_resting("cookie", world._body_x(),
+                                         ObjectFootprint(8, 8))
+        world._controls_active = lambda: True
+        self.recognize()
+        known = world.awareness.known_instance(item.instance_id)
+        assert known is not None
+        self.assertFalse(known.assessed)
+        self.restart()
+        world = self.app._world
+        restored = world.awareness.memory.get(known.token)
+        assert restored is not None
+        self.assertEqual((restored.identity, restored.assessed), ("cookie", False))
+        self.assertEqual(world.awareness.observations, ())
+        self.assertIsNone(world.awareness.intentions.goal)
+        cues = []
+        present = world._present_feedback
+
+        def capture(cue, reaction, done):
+            cues.append(cue.event)
+            present(cue, reaction, done)
+
+        world._present_feedback = capture
+        world.update(time.monotonic())
+        self.complete_feedback()
+        world.now += .3
+        self.complete_feedback()
+        self.assertEqual(world.interaction.phase, "pick_up")
+        self.finish_pickup()
+        self.assertEqual(world.interaction.phase, "decide")
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.PET_HELD)
+        self.complete_feedback()
+        self.assertEqual(world.interaction.phase, "eat")
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.CONSUMED)
+        self.assertFalse(set(cues) & {
+            "object_notice", "object_inspect", "object_recognized",
+        })
+
     def test_known_floor_pickup_stays_known_far_from_aiko_without_a_theft_episode(self):
         app, world = self.app, self.app._world
         item = world.world.place_resting("cookie", world._body_x(),
@@ -159,6 +226,7 @@ class WorldGuiTests(unittest.TestCase):
     def setUp(self):
         try:
             root = tk.Tk()
+            root.update_idletasks()
             root.destroy()
         except tk.TclError as error:
             self.skipTest(str(error))

@@ -15,6 +15,42 @@ open for separate behavior analysis; it is not claimed solved by the edge-grip
 correction. The complete left/right 1x/2x native checklist remains to be checked.
 
 
+## Observed continuity and known-item retest — 16 October 2026
+
+Use the isolated launcher below, at both 1x and 2x. The
+[continuity plan](OBJECT_CONTINUITY_CORRECTION_PLAN.md) records automated evidence.
+
+- [ ] Pick up a known cookie while Aiko is free and watching. Move it far across
+  the supported display. She retains its identity; ordinary holding causes no
+  return protest, irritation or friendship loss.
+- [ ] Hold a fresh unknown food/drink near Aiko. Recognition still takes time;
+  once recognized, the offer/refusal names it. Move it away and back while she
+  watches: no repeated identification. Change need during holding: she can begin
+  wanting it without treating the previous holding time as theft.
+- [ ] Release a desired portion high above the floor. She follows fall/hops,
+  waits for ground contact and collects the same known portion without another
+  identification. Test food around 76 satiety and drink around 65 energy after
+  an expressed offer wish. Ground collection provides no human care reward.
+- [ ] Release into her hand instead: known acceptance, then full slow eating or
+  drinking. No text claims she must find out what the accepted item is.
+- [ ] Take her already committed target: the existing protest/return rules still
+  apply. Drop a different identical portion: it must not replace that subject.
+- [ ] Close while holding a recognized desired portion, reopen the same temporary
+  save, and check knowledge survives but cursor/wish/interaction do not resume.
+  A previously known but unassessed portion needs a decision, not identification.
+- [ ] Break actual visual contact while moving a portion: hidden motion cannot
+  update its remembered location. Existing bounded subjective search still applies.
+
+Practical acceptance of these changes remains open; automation is not visual
+acceptance. Earlier results below describe their respective earlier builds.
+
+Automated handoff (17 October): 997 tests passed in 220.374 s on Windows/Python
+3.11; Ruff, strict Mypy (178 sources) and Pyright passed. Code-fix CI
+[38973573575](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38973573575)
+passed Linux Python 3.11/3.13 and Windows. The native module includes 27 cases;
+the actual Python 3.14 isolated launcher and same-save restart also exited
+normally. The complete commit ledger is in the continuity plan.
+
 ## Committed attention and withholding retest — 16 October 2026
 
 Use the same isolated launcher below, initially with `--scenario hungry --stock

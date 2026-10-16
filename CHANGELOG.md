@@ -1,3 +1,14 @@
+## Unreleased — Observed item continuity
+
+- Preserve learned identity across ordinary observed floor/cursor/placement
+  movement, independently of an existing investigation or current desire.
+- Let recognition and desire develop during holding; retain the expressed wish
+  after observed placement, with capacity checks and actual care origin.
+- Skip repeated identification for known items, including known but unassessed
+  restart cases. Keep unknown-item inspection and full consumption playback.
+- Distinguish ordinary holding from withholding a committed target, and align
+  known acceptance, offer and collection dialogue with the actual knowledge.
+
 ## Unreleased — Committed object attention
 
 - Keep one investigation committed through ordinary hover, clicks and other item

@@ -431,6 +431,14 @@ lock the existing visible track to the cursor-rendered portion through hand
 motion and settling. Absence or a sensory gap discards that lock; a World handle
 cannot recover it. Recognition during focus cannot merge its record into an
 unobserved neighbouring portion. Non-focused discovery resumes after the episode.
+Ordinary observed pickup also retains this track without an action focus, and a
+newly noticed cursor portion can be tracked while its identity is learned. Rest
+releases the cursor lock. Current visibility and learned identity jointly permit
+offer assessment; fresh recognition is required only for unknown identities.
+The sole `ObjectIntentions.goal` can hold a session-local wish while the player
+holds a portion. `ObjectUseContext` separates seeking, offered use and continued
+wishes from actual care origin. An observed drop preserves the wish but starts
+no acquisition until ground contact; it is not a withholding episode.
 
 `pet/movement/controller.py` shares the existing walking executor between random
 and deliberate goals; `auto_walk` gates only random departures. `WalkDriver`
@@ -450,6 +458,10 @@ Changed needs safely lead to refusal/put-down; conflicting evidence restores
 inquiry. Confirmed local absence starts bounded search with existing gaze/walk
 assets. A useful find can end search early; the coordinator owns the sole search
 budget and identified search/find/missing feedback.
+Known but unassessed acquisitions decide without repeating identification;
+unknown or conflicting evidence retains inspection. Known handover uses authored
+acceptance, while expressed-wish collection has its own cue. Shared offer copy
+names the item and does not claim a food need when offering a drink.
 Observed player acquisition before the grasp commits enters `await_return`;
 visible falling/bouncing enters `await_settle`. Settling resumes the same
 interaction with acquired assessments, and actual visual loss enters existing

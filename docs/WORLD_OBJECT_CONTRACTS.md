@@ -1,5 +1,22 @@
 # World object contracts and behavior rules
 
+## Current observed-continuity correction — 16 October 2026
+
+The [continuity correction plan](OBJECT_CONTINUITY_CORRECTION_PLAN.md) separates
+observed motion, learned identity and current desire. Aiko may recognize and
+want a portion during holding. An observed pickup and continuously followed
+placement preserve its subjective record, with or without a prior intention.
+Known identity does not require another recognition dwell; unknown identity does.
+Known but unassessed portions require a use decision, not another identification.
+
+A wish expressed while the player already holds a portion is ordinary interest,
+not withholding. Only taking an existing committed target invokes the rules
+below. A continuing wish survives observed placement independently of normal
+seeking thresholds; current capacity/activity must still permit consumption.
+Release in the handover area remains required for human care. Later ground
+collection always has autonomous origin. Knowledge and assessment persist using
+the existing save format; live tracking, current wishes and actions do not.
+
 ## Current committed-attention correction — 16 October 2026
 
 The [focus correction plan](OBJECT_FOCUS_CORRECTION_PLAN.md) supersedes older

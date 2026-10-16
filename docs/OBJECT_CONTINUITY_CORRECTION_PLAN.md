@@ -118,3 +118,21 @@ real saves; use temporary test saves only.
   completion lifecycle invalidates them, preserving committed decline/put-down.
   The preliminary complete suite passed 996 tests in 219.775 s. The final fix is
   covered by a focused intention test; full verification follows after this fix.
+- Review fix: `233c698`; 9 intention and 16 retrieval tests plus Ruff, strict
+  Mypy and Pyright passed before push. Its CI matrix passed:
+  [38973573575](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38973573575).
+- Step 7, final verification (17 October 2026): **997 tests passed in 220.374 s**
+  on Windows/Python 3.11, including retained real-time consumption and all native
+  1x/2x flows. Ruff 0.13.2, strict Mypy 1.18.2 (178 sources) and Pyright 1.1.414
+  passed. The native module now has 27 cases, including cold known/unassessed
+  cookie recovery and quitting during a newly learned held wish. Its Tk probe
+  flushes idle setup before destruction; other existing suite fixtures still
+  emit ThemeChanged teardown diagnostics without failures.
+- The actual Python 3.14 isolated launcher passed fresh `curious --stock two`
+  startup/shutdown and same-save restart, both with 1200-ms auto-close, under
+  `%TEMP%/aiko-continuity-smoke-326f71f4cd9146ae8511e74084903e84/state.json`.
+  No real save was used. Save formats and normalization rules are unchanged.
+- Architecture, contracts, changelog and the practical checklist are updated.
+  Delivery is ready for manual acceptance; no visual acceptance is claimed.
+  Draft PR #10 remains unmerged. The final delivery commit contains these
+  restart checks and evidence; its CI is checked after push.
