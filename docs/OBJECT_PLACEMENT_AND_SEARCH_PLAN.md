@@ -486,8 +486,8 @@ S identifiers remain stable so contracts and physics references do not move.
 
 | Step | Result and principal owners | Required evidence | Status / commit |
 | --- | --- | --- | --- |
-| S0 | Record this complete plan, current-code findings and links | Documentation consistency, valid local links, no code edits | This documentation commit; implementation authorized |
-| T0 | Inventory existing behavior coverage and consolidate only tests already redundant on the current baseline | Coverage-to-contract map, unchanged production behavior, retained unique timing/custody cases, complete green gates | Planned; first implementation step |
+| S0 | Record this complete plan, current-code findings and links | Documentation consistency, valid local links, no code edits | `092906b`; local links and diff checks passed |
+| T0 | Inventory existing behavior coverage and consolidate only tests already redundant on the current baseline | Coverage-to-contract map, unchanged production behavior, retained unique timing/custody cases, targeted gates | This revision; inventory below, 11 targeted tests passed |
 | S1 | Fix typed contracts for assessment, subjective records/tracks, matching, search outcomes, execution bindings and v2 conversion | Scenario table for continuous/unseen moves, multiple identical portions, both discovery orders and restart | Planned |
 | S2 | Unify assessment in memory, intentions and gaze; record recognized cursor assessment through a domain/application operation | Known refusal does not trigger repeated inquiry/gaze; temporary unavailability is separate | Planned |
 | S3 | Add readable handover shortcut using the existing consumption and interruption machinery | No repeated inspect/recognize/decide; no instant use, stale-receipt progression or extra care origin | Planned |
@@ -527,6 +527,27 @@ S9c includes baseline parameter validation and synchronized geometry safety;
 S9d deepens their tests and visual calibration rather than postponing correctness.
 
 ## Test cleanup first, with remaining removal owned by each stage
+
+### T0 inventory at `092906b`
+
+| Coverage owner | Distinct contract retained | Later replacement |
+| --- | --- | --- |
+| `test_ground_approach.py` | Fast left/right/scale reach and rejected-position matrix | S8/S12 replace the exception, retain normal reach |
+| `test_world_gui.py` | Controlled-time component wiring, actual grasp event, overlay and cold save/restore | Update each altered route at its implementation stage |
+| `test_world_runtime_flow.py` | Real timers, readable bubbles and complete native clip ordering | Keep a small set of real-time integration flows |
+| `test_object_memory.py` | Known/unknown retention, compatible versus contradictory observation and own placement | S2/S4-S6 evolve the facts and continuity rules |
+| `test_object_awareness.py` | World-to-subjective boundary, hidden move and restored evidence | S4-S6 keep boundary assertions with new bindings |
+| `test_object_retrieval.py` | Pure coordinator receipts, known route, changed needs and interruption | S3/S7 replace specific old handover/search expectations |
+| `test_object_interaction.py` / `test_object_consumption.py` | Exactly-once events and joint rollback; consume and custody differ | Preserve while updating memory references |
+| Memory codec/persistence tests | Schema validation versus actual atomic disk recovery | S6 adds v1 conversion and v2 relation validation |
+| World state/extensions/falling/persistence tests | Custody, geometry, elapsed physics and durable normalization | S8/S9/S10 evolve their own contracts |
+
+No further whole test or expensive matrix is demonstrably redundant after the
+earlier cleanup. In particular, cold restore versus real timers, compatible
+known-identity retention versus an unidentified observation, and current edge
+grasp versus ordinary reach are distinct. T0 removes no coverage artificially.
+Targeted baseline checks: seven object-memory tests and four ground-approach
+tests passed. The user-requested full local suite is reserved for the end.
 
 T0 reviews the actual current tests and the prior
 [cleanup evidence](WORLD_DIALOGUE_CLEANUP_REVIEW.md). That earlier cleanup already
