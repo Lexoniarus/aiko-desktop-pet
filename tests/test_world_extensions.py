@@ -4,6 +4,7 @@ import unittest
 
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.infrastructure.world_catalog import build_consumable_definitions
+from aiko_pet.infrastructure.world_motion import motion_parameters
 from aiko_pet.pet.food_catalog import DEFAULT_CATALOG
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldSurface
 from aiko_pet.world.state import WorldOperationError, WorldState
@@ -46,3 +47,21 @@ class WorldExtensionTests(unittest.TestCase):
         with self.assertRaises(WorldOperationError):
             self.world.change_surface(WorldSurface(100, 500))
         self.assertEqual(self.world.snapshot(), before)
+
+    def test_live_reach_change_settles_continuously_but_recovery_normalizes(self):
+        item = self.world.place_resting("onigiri", 30, ObjectFootprint(8, 8))
+        checkpoint = self.world.snapshot()
+        self.world.change_surface(WorldSurface(800, 600, 96))
+        moving = self.world.get(item.instance_id)
+        self.assertEqual(moving.state, ObjectState.BOUNCING)
+        self.assertEqual(moving.position, item.position)
+        self.world.advance_motion(.1, motion_parameters())
+        position = self.world.get(item.instance_id).position
+        assert position is not None
+        self.assertTrue(30 < position.x < 96)
+        self.world.restore_snapshot(checkpoint)
+        self.world.change_surface(WorldSurface(800, 600, 96), recovering=True)
+        restored = self.world.get(item.instance_id)
+        self.assertEqual(restored.state, ObjectState.RESTING)
+        assert restored.position is not None
+        self.assertEqual(restored.position.x, 96)

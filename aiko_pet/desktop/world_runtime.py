@@ -81,7 +81,7 @@ class DesktopWorldRuntime:
         ))
         if restored_world is not None:
             self.world.restore_snapshot(restored_world)
-            self.world.change_surface(self._surface())
+            self.world.change_surface(self._surface(), recovering=True)
         self.awareness = ObjectAwareness(
             restored_memory if restored_world is not None else None,
         )

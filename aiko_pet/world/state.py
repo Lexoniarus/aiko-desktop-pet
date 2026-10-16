@@ -235,12 +235,15 @@ class WorldState:
         position = WorldPosition(self._surface.ground_x(x, item.footprint), 0)
         return self._commit(item, ObjectState.RESTING, position)
 
-    def change_surface(self, surface: WorldSurface) -> None:
+    def change_surface(
+        self, surface: WorldSurface, *, recovering: bool = False,
+    ) -> None:
         """Reproject active anchors atomically; reject shapes that cannot fit."""
         self._require_owner()
         if surface == self._surface:
             return
-        replacements: list[tuple[WorldObjectSnapshot, WorldPosition]] = []
+        replacements: list[tuple[WorldObjectSnapshot, WorldPosition,
+                                 ObjectState, ItemMotion | None]] = []
         for item in self._objects.values():
             if item.footprint.left + item.footprint.right > surface.width:
                 if item.position is not None:
@@ -249,15 +252,20 @@ class WorldState:
                 x = max(item.footprint.left, min(
                         item.position.x, surface.width - item.footprint.right,
                     ))
+                state, motion = item.state, item.motion
                 if item.state == ObjectState.RESTING:
-                    x = surface.ground_x(x, item.footprint)
+                    ground_x = surface.ground_x(x, item.footprint)
+                    if recovering:
+                        x = ground_x
+                    elif x != ground_x:
+                        state, motion = ObjectState.BOUNCING, ItemMotion(settling=True)
                 replacements.append((item, WorldPosition(
                     x, min(item.position.height, surface.height),
-                )))
+                ), state, motion))
         self._surface = surface
         self._revision += 1
-        for item, position in replacements:
-            self._commit(item, item.state, position)
+        for item, position, state, motion in replacements:
+            self._commit(item, state, position, motion=motion)
 
     def advance_motion(self, elapsed: float, parameters: MotionParameters) -> None:
         """Advance all flying/bouncing portions; only final contact grants rest."""
@@ -293,16 +301,18 @@ class WorldState:
         if item.footprint == footprint:
             return
         position = item.position
+        state, motion = item.state, item.motion
         if position is not None:
             position = WorldPosition(max(footprint.left, min(
                 position.x, self._surface.width - footprint.right,
             )), position.height)
             if item.state == ObjectState.RESTING:
-                position = WorldPosition(
-                    self._surface.ground_x(position.x, footprint), 0,
-                )
+                ground_x = self._surface.ground_x(position.x, footprint)
+                if ground_x != position.x:
+                    state, motion = ObjectState.BOUNCING, ItemMotion(settling=True)
         self._objects[instance_id] = replace(
-            item, footprint=footprint, position=position, revision=item.revision + 1,
+            item, footprint=footprint, position=position, state=state, motion=motion,
+            revision=item.revision + 1,
         )
         self._revision += 1
 
