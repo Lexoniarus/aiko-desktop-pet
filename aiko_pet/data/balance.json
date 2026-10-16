@@ -100,7 +100,7 @@
     "talk_gain": 1.0
   },
   "walk": {
-    "pause_min_seconds": 60,
+    "pause_min_seconds": 20,
     "quiet_pause_min_seconds": 120,
     "pause_max_seconds": 180,
     "minimum_energy": 20,
@@ -312,7 +312,7 @@
     "default_weight": 1,
     "default_cooldown_seconds": 120,
     "recent_line_history": 6,
-    "minimum_text_ms": 1800,
+    "minimum_text_ms": 2800,
     "maximum_text_ms": 8000,
     "reading_ms_per_character": 58,
     "contact_reaction_ms": 2800,
