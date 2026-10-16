@@ -227,7 +227,9 @@ class ObjectInteractionCoordinator:
             goal.purpose == "consume" and self._known_supply()
         )
         self._set_phase("notice")
-        if self._retrieving:
+        if self._retrieving and goal.use_context == ObjectUseContext.CONTINUING_WISH:
+            self._announce("object_collect_wanted")
+        elif self._retrieving:
             saved = known is not None and known.disposition == "deferred"
             self._announce(
                 ("object_recall_saved_drink" if saved else "object_recall_drink")
@@ -235,7 +237,8 @@ class ObjectInteractionCoordinator:
                 ("object_recall_saved_food" if saved else "object_recall_food"),
             )
         else:
-            self._announce("object_notice")
+            self._announce("object_consider_known" if self._known_identity()
+                           else "object_notice")
         self.update()
         return True
 
@@ -329,7 +332,7 @@ class ObjectInteractionCoordinator:
             self._set_phase("handover")
             self._announce("object_handover")
         else:
-            self._inspect("object_handover")
+            self._inspect()
         self.update()
         return True
 

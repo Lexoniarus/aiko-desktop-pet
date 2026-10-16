@@ -198,7 +198,7 @@ class ObjectRetrievalTests(unittest.TestCase):
                                            for item in self.memory.snapshot()))
         self.coordinator.begin_goal(ObjectGoal(self.item.instance_id, "apple", "food",
                                                100, 0, 0, "consume"))
-        self.assertEqual(self.cues[-1].event, "object_notice")
+        self.assertEqual(self.cues[-1].event, "object_consider_known")
         self.acknowledge()
         self.coordinator.arrive()
         self.acknowledge()

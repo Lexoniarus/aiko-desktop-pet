@@ -17,6 +17,14 @@ from aiko_pet.ui.view_models.object_reactions import format_object_reaction
 
 
 class ObjectReactionTests(unittest.TestCase):
+    def test_offer_and_known_acceptance_copy_name_the_learned_item(self):
+        book = DialogueBook.from_file()
+        for line in book.lines:
+            if line.event in ("object_offer", "object_refuse", "object_handover"):
+                text = " ".join(beat.content or "" for beat in line.beats
+                                if beat.kind == "text")
+                self.assertIn("{item}", text, line.id)
+
     def test_object_playback_respects_configured_reading_time_after_formatting(self):
         raw = load_json(CATALOGUE.parent / "balance.json")
         raw["dialogue"]["minimum_text_ms"] = 3000

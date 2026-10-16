@@ -105,6 +105,7 @@ class WorldGuiTests(unittest.TestCase):
                     world.now += .1
                     world.update(time.monotonic())
                     self.assertEqual(world.awareness.record_for_instance(token), record)
+                    self.assertEqual(cues[-1], "object_collect_wanted")
                     self.complete_feedback()
                     self.assertEqual(world.interaction.phase, "pick_up")
                     self.assertEqual(app.state.friendship, friendship)

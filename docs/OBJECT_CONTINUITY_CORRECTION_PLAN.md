@@ -101,3 +101,12 @@ real saves; use temporary test saves only.
   Offered wishes above normal seeking thresholds still consume after observed
   placement, with autonomous care attribution. Verified 25 native GUI tests,
   Ruff, strict Mypy and Pyright. Existing true-withholding regressions stay green.
+- Step 5 commit: `6811f5a`.
+- Step 6: existing JSON offer/refusal/acceptance variants now name the learned
+  item. Known acceptance no longer announces identification; shared drink offers
+  no longer claim hunger. New semantic cues distinguish a known item awaiting
+  assessment and collection of an already expressed wish from a true return or
+  a fresh unknown find. Existing relationship variants and one feedback player
+  remain intact. Verified 5 object reaction, 10 dialogue context, 1 catalogue,
+  16 retrieval, 14 coordinator and 25 native GUI tests; Ruff, strict Mypy and
+  Pyright pass.
