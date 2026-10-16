@@ -487,8 +487,8 @@ S identifiers remain stable so contracts and physics references do not move.
 | Step | Result and principal owners | Required evidence | Status / commit |
 | --- | --- | --- | --- |
 | S0 | Record this complete plan, current-code findings and links | Documentation consistency, valid local links, no code edits | `092906b`; local links and diff checks passed |
-| T0 | Inventory existing behavior coverage and consolidate only tests already redundant on the current baseline | Coverage-to-contract map, unchanged production behavior, retained unique timing/custody cases, targeted gates | This revision; inventory below, 11 targeted tests passed |
-| S1 | Fix typed contracts for assessment, subjective records/tracks, matching, search outcomes, execution bindings and v2 conversion | Scenario table for continuous/unseen moves, multiple identical portions, both discovery orders and restart | Planned |
+| T0 | Inventory existing behavior coverage and consolidate only tests already redundant on the current baseline | Coverage-to-contract map, unchanged production behavior, retained unique timing/custody cases, targeted gates | `874db92`; inventory below, 11 targeted tests passed |
+| S1 | Fix typed contracts for assessment, subjective records/tracks, matching, search outcomes, execution bindings and v2 conversion | Scenario table for continuous/unseen moves, multiple identical portions, both discovery orders and restart | This revision; executable changes start at S2 |
 | S2 | Unify assessment in memory, intentions and gaze; record recognized cursor assessment through a domain/application operation | Known refusal does not trigger repeated inquiry/gaze; temporary unavailability is separate | Planned |
 | S3 | Add readable handover shortcut using the existing consumption and interruption machinery | No repeated inspect/recognize/decide; no instant use, stale-receipt progression or extra care origin | Planned |
 | S4 | Introduce and test subjective record values and ephemeral perceptual bindings before switching durable runtime callers | Changing only technical IDs cannot change recognition; unseen relocation is not followed movement | Planned |
@@ -527,6 +527,52 @@ S9c includes baseline parameter validation and synchronized geometry safety;
 S9d deepens their tests and visual calibration rather than postponing correctness.
 
 ## Test cleanup first, with remaining removal owned by each stage
+
+### S1 implementation contracts
+
+- Rename the internal experience fact to `assessed`; keep the v1 stored
+  `examined` spelling only in the codec until the v2 switch. The assessment
+  operation requires recognized knowledge. A transient acceptance block is
+  availability, not an assessment rejection. Acknowledgement receipts order
+  visible phases; they do not grant custody or permanent willingness.
+- A subjective record has its own ID, recognized catalog identity/kind,
+  last observed pose/active age, resting evidence, assessment, own disposition,
+  checked-absence status and possible source-record links. Association links
+  are one-to-one explanations, not extra counted portions. No independent
+  writable count is added. Current observations/execution bindings are ephemeral.
+- Perceptual continuity matches successive spatial observations within explicit
+  distance/time limits, not stable World IDs. Current World handles remain only
+  at the application boundary. A disconnected recognized find can join one
+  uniquely compatible remembered place, or remain a new finding with possible
+  links; ambiguity never transfers private own-deferral experience.
+- Search retains a subjective record/place even when no live World handle is
+  available. Acquisition needs a currently observed binding, actual arrival,
+  eligible resting state and revision revalidation at frame 4. The coordinator
+  owns the search budget; its movement requests use the existing walk driver.
+- Checked absence marks the old place unavailable. An already usable finding
+  wins over a stale-place search. New findings during search end that attempt;
+  found-before-missing and missing-before-found converge on the same available
+  stock. Repeated empty-place checks do not replenish search budgets.
+- Memory v2 stores subjective records and relative active ages; v1 conversion
+  preserves learned history without treating legacy tokens as recognition.
+  Validate missing association references, self-links and invalid cardinality;
+  preserve replacement-World provenance separately from visual identity.
+- Motion uses immutable signed velocity, target x, cumulative active elapsed,
+  contact count and flight/ground-completion mode. Parameters are immutable
+  injected values from Balance. Contact math consumes residual elapsed time;
+  only final completion produces collectible resting state. Snapshot rollback
+  is exact; durable recovery stores valid ground, without observing that recovery.
+
+| Scenario | Required subjective/action result |
+| --- | --- |
+| Watched offered portion is dropped and moved continuously | Keep assessment, follow observed place, use short known route when needed |
+| The same World ID reappears after an unseen distant move | Treat as a disconnected find; ID alone grants no reunion |
+| A different World ID occupies the same observed trajectory | Technical renaming alone does not change cognitive evidence |
+| Two identical portions are visible | Two distinct sightings; one new find cannot explain two missing portions |
+| Old place is checked empty, then a compatible find appears | Resolve/suppress the old search once a usable find satisfies the need |
+| A compatible find is known before the need arises | Prefer available supply without an inventory-balancing detour |
+| A held/falling portion is restored on restart | Valid physical recovery; no live binding or fabricated location knowledge |
+| User interrupts or needs change before a search finishes | Stop safely; no absence inferred solely from cancellation |
 
 ### T0 inventory at `092906b`
 
