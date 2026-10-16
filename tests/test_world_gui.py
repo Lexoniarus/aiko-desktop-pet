@@ -146,6 +146,7 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_observed_alternative_survives_completion_of_the_old_approach(self):
         world = self.app._world
+        self.app._place_x(world._track().left)
         old = world.awareness.memory.observe_find(ObjectObservation(
             "old_sighting", "apple", "food", world._body_x() + 300, 0, True, 0,
         ), now=0, record=None, claimed=frozenset(), maximum_distance=10)
