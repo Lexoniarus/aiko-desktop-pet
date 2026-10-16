@@ -89,6 +89,15 @@
     "pet_social_gain": 2,
     "feed_social_gain": 1
   },
+  "object_withholding": {
+    "request_interval_seconds": 10.0,
+    "grace_seconds": 18.0,
+    "repeated_takes": 3,
+    "loss_interval_seconds": 30.0,
+    "friendship_loss": 0.15,
+    "maximum_episode_loss": 0.6,
+    "friendship_cooldown_seconds": 120.0
+  },
   "friendship": {
     "reward_interval_seconds": 720,
     "daily_cap": 5.0,

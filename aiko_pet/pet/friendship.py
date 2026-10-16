@@ -93,3 +93,10 @@ def calculate_friendship_reward(
         care_types=tuple(types),
         last_rewards=tuple(rewards.items()),
     )
+
+
+def friendship_after_withholding(friendship: float, loss: float) -> float:
+    """Loss never reopens the daily care allowance or rewrites reward history."""
+    if not math.isfinite(loss) or loss < 0:
+        raise ValueError("Friendship loss must be finite and nonnegative")
+    return clamp_need_value(friendship - loss)

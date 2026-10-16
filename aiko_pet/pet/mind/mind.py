@@ -65,6 +65,12 @@ class PetMind:
         self._last_affection_comment = float("-inf")
         self._last_spontaneous_story = float("-inf")
 
+    def note_object_withholding(self, now: float) -> None:
+        """Express temporary frustration using the existing emotion owner."""
+        self.irritated_until = max(
+            self.irritated_until, now + BALANCE.number("mind", "irritation_seconds"),
+        )
+
     def set_situation(
         self,
         situation: Behaviour | None,

@@ -24,6 +24,7 @@ from .food import (
 )
 from .friendship import (
     calculate_friendship_reward,
+    friendship_after_withholding,
 )
 from .fun import GameExperience, advance_fun, calculate_game_session_fun
 from .lifecycle import (
@@ -245,6 +246,12 @@ class PetState:
             if self_care:
                 self._provide_own_meal(context_at(now))
         self.updated_at = now
+
+    def apply_object_withholding(self, loss: float) -> float:
+        """Commit a bounded application decision without manufacturing care."""
+        previous = self.friendship
+        self.friendship = friendship_after_withholding(previous, loss)
+        return previous - self.friendship
 
     def _credit_friendship(
         self,

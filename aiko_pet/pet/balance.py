@@ -60,6 +60,14 @@ def parse_balance(raw: Any) -> BalanceCatalog:
                 raise ValueError(f"balance.{section}: {key} exceeds {upper}")
         sections[section] = MappingProxyType(values)
     catalog = BalanceCatalog(MappingProxyType(sections))
+    withholding = sections["object_withholding"]
+    if (any(value <= 0 for value in withholding.values())
+            or withholding["friendship_loss"] > withholding["maximum_episode_loss"]
+            or withholding["maximum_episode_loss"] > 100
+            or withholding["request_interval_seconds"] > withholding["grace_seconds"]
+            or withholding["request_interval_seconds"]
+            > withholding["loss_interval_seconds"]):
+        raise ValueError("Invalid object withholding balance")
     objects = sections["object_behavior"]
     if (
         objects["recognize_widths"] > objects["notice_widths"]

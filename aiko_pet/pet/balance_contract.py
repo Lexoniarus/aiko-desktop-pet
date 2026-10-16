@@ -31,6 +31,15 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "search_stride_widths": "number",
         "contact_feedback_seconds": "number",
     },
+    "object_withholding": {
+        "request_interval_seconds": "number",
+        "grace_seconds": "number",
+        "repeated_takes": "integer",
+        "loss_interval_seconds": "number",
+        "friendship_loss": "number",
+        "maximum_episode_loss": "number",
+        "friendship_cooldown_seconds": "number",
+    },
     "food": {
         "too_full_to_eat_threshold": "number",
         "maximum_recent_foods": "integer",

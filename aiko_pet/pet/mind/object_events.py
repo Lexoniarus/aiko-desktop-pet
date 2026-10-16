@@ -14,4 +14,5 @@ ObjectEvent = Literal[
     "object_search", "object_found",
     "object_busy",
     "object_taken",
+    "object_request_return", "object_withheld", "object_returned",
 ]
