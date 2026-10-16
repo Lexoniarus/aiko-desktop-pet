@@ -47,7 +47,7 @@ class ObjectRetrievalTests(unittest.TestCase):
             self.actions.append(clip)
             return len(self.actions)
 
-        def consume(key, token, origin):
+        def consume(key, token, memory_id, origin):
             self.consumed.append((key, token, origin))
             item = self.world.get(token)
             self.world.consume(token, expected_revision=item.revision)
@@ -60,6 +60,8 @@ class ObjectRetrievalTests(unittest.TestCase):
             ground_x=lambda _token: 110,
             completed=lambda token, used: self.done.append((token, used)),
             memory=self.memory,
+            resolve_instance=lambda token: token,
+            record_for_instance=lambda token: token,
             decide=lambda token, origin: decide_object_use(
                 self.memory.get(token), self.pet, origin,
             ), feedback=self.cues.append, cancel_feedback=lambda: None,

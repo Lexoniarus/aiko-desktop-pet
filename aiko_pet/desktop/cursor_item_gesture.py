@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from ..application.object_feedback import FeedbackKey, ObjectFeedback
 from ..application.settings import PetSettings
 from ..pet.mind.object_decisions import ObjectUseDecision
-from ..pet.mind.object_memory import ObjectMemory
+from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..ui.world_view import WorldView
 from ..world.contracts import ObjectFootprint, WorldPosition
 from ..world.state import WorldState
@@ -22,6 +22,7 @@ class CursorItemPorts:
     capture_contact: Callable[[str], None]
     handover: Callable[[str], bool]
     assess_offer: Callable[[str], ObjectUseDecision | None]
+    known_instance: Callable[[str], ObjectKnowledge | None]
     present_offer: Callable[[ObjectFeedback], None]
     cancel_feedback: Callable[[], None]
     save: Callable[[], None]
@@ -33,10 +34,10 @@ class CursorItemGesture:
     def __init__(
         self, *, root: tk.Tk, world: WorldState, view: WorldView,
         settings: PetSettings, track: Callable[[], TaskbarTrack],
-        memory: ObjectMemory, ports: CursorItemPorts,
+        ports: CursorItemPorts,
     ) -> None:
         self.root, self.world, self.view, self.settings = root, world, view, settings
-        self._track, self._memory, self._ports = track, memory, ports
+        self._track, self._ports = track, ports
         self.instance_id: str | None = None
         self.inside = True
         self.offer_ready = False
@@ -71,7 +72,7 @@ class CursorItemGesture:
 
     def observe_offer(self) -> None:
         token = self.instance_id
-        known = self._memory.get(token) if token is not None else None
+        known = self._ports.known_instance(token) if token is not None else None
         if token is None or known is None or known.identity is None:
             self.offer_ready = False
             return
@@ -80,13 +81,13 @@ class CursorItemGesture:
         if decision is None:
             return
         wanted = decision.consume
-        if self._offer_feedback == (token, wanted):
+        if self._offer_feedback == (known.token, wanted):
             return
-        self._offer_feedback = token, wanted
+        self._offer_feedback = known.token, wanted
         self._offer_revision += 1
         key = FeedbackKey(f"offer_{self._offer_serial}", self._offer_revision)
         cue = ObjectFeedback(key, "object_offer" if wanted else "object_refuse",
-                             token, known.identity)
+                             known.token, known.identity)
         # Preview completion never grants custody or willingness.
         self._ports.present_offer(cue)
 

@@ -101,6 +101,8 @@ class DesktopWorldRuntime:
         self.interaction = ObjectInteractionCoordinator(
             self.world, play=self._play, stop=self._stop,
             select_item=self._select_item, consume=self._consume,
+            resolve_instance=self.awareness.instance_for_record,
+            record_for_instance=self.awareness.record_for_instance,
             can_acquire=self._can_acquire, ground_x=self._ground_x,
             completed=self._completed,
             memory=self.awareness.memory, decide=self._decide,
@@ -112,11 +114,12 @@ class DesktopWorldRuntime:
         animated.on_playback = self._queue_event
         self.cursor = CursorItemGesture(
             root=root, world=self.world, view=self.view, settings=settings,
-            track=track, memory=self.awareness.memory,
+            track=track,
             ports=CursorItemPorts(
                 capture_contact=self._capture_contact,
                 handover=self.interaction.offer_on_release,
                 assess_offer=self._assess_offer, present_offer=self._present_offer,
+                known_instance=self.awareness.known_instance,
                 cancel_feedback=cancel_feedback, save=save, sync_view=self._sync_view,
                 outside=lambda: feedback(GERMAN_TEXT.format("world.outside")),
             ),
@@ -182,10 +185,13 @@ class DesktopWorldRuntime:
         while self._events and not self._closed:
             self.interaction.receive(self._events.popleft())
 
-    def _consume(self, key: str, token: str, origin: ConsumptionOrigin) -> bool:
+    def _consume(
+        self, key: str, token: str, memory_id: str, origin: ConsumptionOrigin,
+    ) -> bool:
         outcome = self._consumption.commit(
             self.world, key, token, origin,
             self._inputs(time.time(), time.monotonic()),
+            memory_id=memory_id,
         )
         if outcome.accepted:
             self._save()
@@ -229,7 +235,7 @@ class DesktopWorldRuntime:
             item = self.world.get(token)
         except WorldOperationError:
             return False
-        known = self.awareness.memory.get(token)
+        known = self.awareness.known_instance(token)
         if known is None or item.position is None:
             return False
         distance = abs(item.position.x - self._body_x())
@@ -242,7 +248,8 @@ class DesktopWorldRuntime:
                 ).consume
                 and time.monotonic() >= self._playback.until
                 and self.now - known.observed_at < 0.5
-                and any(seen.token == token for seen in self.awareness.observations)
+                and any(seen.token == known.token
+                        for seen in self.awareness.observations)
                 and distance <= self.width * 0.3
                 and self.width * 0.05 <= item.position.height <= self.width * 0.9
             )
@@ -312,6 +319,9 @@ class DesktopWorldRuntime:
             if self.interaction.approaching:
                 self.interaction.interrupt(lambda: None)
             return
+        if (self.interaction.approaching
+                and self.interaction.memory_id != goal.token):
+            self.interaction.interrupt(lambda: None)
         if not self.interaction.active:
             self.interaction.begin_goal(goal)
         if self.interaction.phase == "notice":
@@ -327,9 +337,10 @@ class DesktopWorldRuntime:
         if not approach.arrived(self.settings.x or 0):
             self._search_at = None
             return
-        if self._can_acquire(goal.token):
+        instance = self.awareness.instance_for_record(goal.token)
+        if instance is not None and self._can_acquire(instance):
             self._walk.movement.set_goal(None)
-            self._capture_contact(goal.token)
+            self._capture_contact(instance)
             self.interaction.arrive()
             self._search_at = None
         else:
@@ -363,7 +374,9 @@ class DesktopWorldRuntime:
         if (self._game_open() or self.interaction.active
                 or time.monotonic() < self._playback.until):
             return None
-        return self.awareness.assess_offer(token, self.state)
+        record = self.awareness.record_for_instance(token)
+        return (self.awareness.assess_offer(record, self.state)
+                if record is not None else None)
 
     def _present_offer(self, cue: ObjectFeedback) -> None:
         reaction = self._mind.select_reaction(

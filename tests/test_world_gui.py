@@ -119,6 +119,10 @@ class WorldGuiTests(unittest.TestCase):
                 world.update(time.monotonic())
                 self.assertEqual(cues[0].event, "object_recall_saved_drink")
                 self.complete_feedback()
+                self.assertEqual(world.interaction.phase, "approach")
+                # Restored history authorizes approach, not invisible acquisition.
+                world.now += .3
+                world.update(time.monotonic())
                 self.assertEqual(world.interaction.phase, "pick_up")
                 self.finish_pickup()
                 self.assertEqual(world.interaction.phase, "eat")
@@ -149,25 +153,26 @@ class WorldGuiTests(unittest.TestCase):
         self.finish_pickup()
         self.finish_inspection()
         self.finish_clip("put_down")
+        record = world.awareness.memory.snapshot()[0].token
         # Hide the actual removal from perception, then persist both owners.
         current = world.world.get(item.instance_id)
         world.world.remove(current.instance_id, expected_revision=current.revision)
         self.app._save()
         self.restart()
         world = self.app._world
-        self.assertIsNotNone(world.awareness.memory.get(item.instance_id))
+        self.assertIsNotNone(world.awareness.memory.get(record))
         self.app.state.energy = 55
         world.update(time.monotonic())
         self.complete_feedback()
         self.assertEqual(world.interaction.phase, "approach")
-        self.assertIsNotNone(world.awareness.memory.get(item.instance_id))
+        self.assertIsNotNone(world.awareness.memory.get(record))
         world.now += 1
         world.update(time.monotonic())
-        self.assertIsNotNone(world.awareness.memory.get(item.instance_id))
+        self.assertIsNotNone(world.awareness.memory.get(record))
         world.now += 1.1
         world.update(time.monotonic())
         self.assertEqual(world.interaction.phase, "missing")
-        self.assertIsNone(world.awareness.memory.get(item.instance_id))
+        self.assertIsNone(world.awareness.memory.get(record))
         self.complete_feedback()
         world.now += 20
         world.update(time.monotonic())
@@ -226,8 +231,8 @@ class WorldGuiTests(unittest.TestCase):
     def test_deferred_known_drink_releases_gaze_and_returns_only_when_wanted(self):
         world = self.app._world
         self.app.state.energy = 65
-        item = world.world.place_resting("energy_drink", world._body_x(),
-                                         ObjectFootprint(12, 12))
+        world.world.place_resting("energy_drink", world._body_x(),
+                                  ObjectFootprint(12, 12))
         self.recognize()
         self.finish_pickup()
         self.finish_inspection()
@@ -236,8 +241,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertFalse(world.interaction.active)
         world.now += 1
         world.update(time.monotonic())
-        known = world.awareness.memory.get(item.instance_id)
-        assert known is not None
+        known, = world.awareness.memory.snapshot()
         self.assertEqual(known.identity, "energy_drink")
         self.assertTrue(known.assessed)
         self.assertIsNone(world.awareness.intentions.goal)
@@ -251,7 +255,7 @@ class WorldGuiTests(unittest.TestCase):
         world.update(time.monotonic())
         goal = world.awareness.intentions.goal
         assert goal is not None
-        self.assertEqual((goal.token, goal.purpose), (item.instance_id, "consume"))
+        self.assertEqual((goal.token, goal.purpose), (known.token, "consume"))
 
     def test_new_drink_inquiry_bypasses_pause_after_consuming_known_food(self):
         world = self.app._world
@@ -289,8 +293,7 @@ class WorldGuiTests(unittest.TestCase):
             "object_notice", "object_approach", "object_pick_up", "object_inspect",
             "object_recognized", "object_later", "object_put_down",
         ])
-        known = world.awareness.memory.get(drink.instance_id)
-        assert known is not None
+        known, = world.awareness.memory.snapshot()
         self.assertEqual((known.identity, known.assessed, known.disposition),
                          ("energy_drink", True, "deferred"))
         self.assertEqual(world.world.get(drink.instance_id).state, ObjectState.RESTING)
@@ -442,12 +445,12 @@ class WorldGuiTests(unittest.TestCase):
         self.assertTrue(world.world.snapshot().surface.contains(
             placed.position, placed.footprint,
         ))
-        known = world.awareness.memory.get(item.instance_id)
-        assert known is not None
+        known, = world.awareness.memory.snapshot()
         self.assertTrue(known.assessed)
         self.assertEqual(known.x, placed.position.x)
         self.assertIsNone(world._visual.object_target)
         self.assertAlmostEqual(self.app.state.energy, 65, places=1)
+        return item
 
     def test_edge_grip_rechecks_actual_standing_position_at_frame_four(self):
         item = self._reach_edge_drink(1, "left")

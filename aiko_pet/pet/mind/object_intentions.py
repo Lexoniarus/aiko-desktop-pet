@@ -46,6 +46,7 @@ class ObjectIntentions:
     def choose(
         self, known: tuple[ObjectKnowledge, ...], state: PetState, *,
         x: float, now: float, blocked: bool = False, changed: bool = False,
+        observed: frozenset[str] = frozenset(),
     ) -> ObjectGoal | None:
         if state.sleeping or blocked:
             self.cancel(now)
@@ -53,9 +54,12 @@ class ObjectIntentions:
         if not changed and now < self._next_check:
             return self.goal
         self._next_check = now + BALANCE.number("object_behavior", "reevaluate_seconds")
-        options: list[tuple[tuple[float, bool, float, str], ObjectGoal]] = []
+        available = {item.token for item in known if item.token in observed
+                     and item.resting and item.place_status == "remembered"
+                     and decide_object_use(item, state).consume}
+        options: list[tuple[tuple[bool, float, bool, float, str], ObjectGoal]] = []
         for item in known:
-            if not item.resting:
+            if not item.resting or item.place_status != "remembered":
                 continue
             # Rest after consumption limits renewed supply seeking. Curiosity
             # about a different, unexamined portion remains an independent goal.
@@ -74,12 +78,14 @@ class ObjectIntentions:
             goal = ObjectGoal(item.token, item.identity, item.kind,
                               item.x, item.height, item.observed_at,
                               "consume" if item.assessed else "investigate")
-            if self.goal is not None and item.token == self.goal.token:
+            if (self.goal is not None and item.token == self.goal.token
+                    and (not available or item.token in available)):
                 self.goal = goal
                 return goal
             repetitive = (item.identity is not None and item.kind == "food"
                           and is_repeated_food(state.food, item.identity))
-            rank = (-(threshold - level) / threshold if wanted else 0, repetitive,
+            rank = (item.token not in available,
+                    -(threshold - level) / threshold if wanted else 0, repetitive,
                     abs(item.x - x), item.token)
             options.append((rank, goal))
         self.goal = min(options, key=lambda option: option[0])[1] if options else None

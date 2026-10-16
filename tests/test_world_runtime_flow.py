@@ -196,7 +196,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         item = world.world.place_resting("energy_drink", x, footprint)
         trace = self.run_until(
             lambda: (
-                (known := world.awareness.memory.get(item.instance_id)) is not None
+                (known := world.awareness.known_instance(item.instance_id)) is not None
                 and known.assessed
                 and world.world.get(item.instance_id).state == ObjectState.RESTING
                 and not world.interaction.active
@@ -264,7 +264,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.assertNotIn("eat", phases, trace)
         self.assertFalse(world.interaction.active, trace)
         self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
-        known = world.awareness.memory.get(item.instance_id)
+        known = world.awareness.known_instance(item.instance_id)
         assert known is not None
         self.assertTrue(known.assessed)
         expected = [

@@ -197,6 +197,7 @@ class ObjectMemoryPersistenceTests(unittest.TestCase):
         outcome = use_case.commit(
             self.world, "test", self.item.instance_id, ConsumptionOrigin.AUTONOMOUS,
             SessionInputs(self.state.updated_at, 1, False, None, False, False, None),
+            memory_id=self.item.instance_id,
         )
         self.assertTrue(outcome.accepted)
         # Saving precedes the remaining visible clip and final bubble.

@@ -40,7 +40,7 @@ class ObjectConsumption:
         self._clock = clock
         self._memory = memory
         self._receipts: OrderedDict[
-            str, tuple[str, ConsumptionOrigin, ConsumptionOutcome]
+            str, tuple[str, str, ConsumptionOrigin, ConsumptionOutcome]
         ] = OrderedDict()
 
     def commit(
@@ -49,14 +49,14 @@ class ObjectConsumption:
         interaction_id: str,
         instance_id: str,
         origin: ConsumptionOrigin,
-        inputs: SessionInputs,
+        inputs: SessionInputs, *, memory_id: str,
     ) -> ConsumptionOutcome:
         """Commit effects once at consumption start, before visual playback ends."""
         previous = self._receipts.get(interaction_id)
         if previous is not None:
-            if previous[:2] != (instance_id, origin):
+            if previous[:3] != (instance_id, memory_id, origin):
                 raise ValueError("Conflicting consumption interaction")
-            return previous[2]
+            return previous[3]
         advance_session_time(self._state, self._clock, inputs)
         item = world.get(instance_id)
         if item.state != ObjectState.PET_HELD:
@@ -83,7 +83,7 @@ class ObjectConsumption:
         try:
             world.consume(instance_id, expected_revision=item.revision)
             self._state.restore_values(prepared)
-            self._memory.forget(instance_id)
+            self._memory.record_consumption(memory_id)
         except Exception:
             world.restore_snapshot(world_checkpoint)
             self._state.restore_values(checkpoint)
@@ -91,7 +91,7 @@ class ObjectConsumption:
             raise
         care = CareOutcome(result, None, context)
         outcome = ConsumptionOutcome(True, care)
-        self._receipts[interaction_id] = (instance_id, origin, outcome)
+        self._receipts[interaction_id] = (instance_id, memory_id, origin, outcome)
         if len(self._receipts) > 4096:
             self._receipts.popitem(last=False)
         if origin == ConsumptionOrigin.HANDOVER:
@@ -107,5 +107,5 @@ class ObjectConsumption:
                 dialogue=before.dialogue,
             )
             outcome = ConsumptionOutcome(True, CareOutcome(result, reaction, context))
-            self._receipts[interaction_id] = (instance_id, origin, outcome)
+            self._receipts[interaction_id] = (instance_id, memory_id, origin, outcome)
         return outcome

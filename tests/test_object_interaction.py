@@ -44,7 +44,7 @@ class ObjectInteractionTests(unittest.TestCase):
             self.actions.append(clip)
             return len(self.actions)
 
-        def consume(key, item_id, origin):
+        def consume(key, item_id, memory_id, origin):
             self.consumed.append((key, item_id, origin))
             item = self.world.get(item_id)
             self.world.consume(item_id, expected_revision=item.revision)
@@ -60,6 +60,8 @@ class ObjectInteractionTests(unittest.TestCase):
             consume=consume, can_acquire=lambda _item: True, ground_x=lambda _item: 100,
             completed=lambda item, consumed: self.done.append((item, consumed)),
             memory=self.memory,
+            resolve_instance=lambda token: token,
+            record_for_instance=lambda token: token,
             decide=lambda _token, _origin: self.decision,
             feedback=feedback, cancel_feedback=lambda: None, now=lambda: self.stamp,
             inspection_seconds=0,

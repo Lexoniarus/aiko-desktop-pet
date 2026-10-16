@@ -42,7 +42,7 @@ class ObjectTracker:
             raise ValueError("Invalid tracking time/distance")
         previous = {
             token: track for token, track in self._tracks.items()
-            if 0 <= now - track.observed_at <= self._maximum_gap
+            if 0 <= now - track.observed_at <= self._maximum_gap + 1e-9
         }
         distances = {
             (index, token): math.hypot(

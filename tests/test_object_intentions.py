@@ -11,6 +11,19 @@ APPLE = ObjectKnowledge("one", "apple", "food", 100, 0, True, 0, assessed=True)
 
 
 class ObjectIntentionTests(unittest.TestCase):
+    def test_available_finding_replaces_a_stale_goal_and_missing_places_stay_out(self):
+        planner = ObjectIntentions()
+        pet = PetState(satiety=50)
+        planner.choose((APPLE,), pet, x=0, now=0)
+        found = replace(APPLE, token="new", x=300, assessed=False)
+        goal = planner.choose((APPLE, found), pet, x=0, now=1,
+                               observed=frozenset((found.token,)), changed=True)
+        assert goal is not None
+        self.assertEqual((goal.token, goal.purpose), ("new", "investigate"))
+        self.assertIsNone(planner.choose(
+            (replace(APPLE, place_status="missing"),), pet, x=0, now=2, changed=True,
+        ))
+
     def test_hunger_reconsiders_known_food_and_retains_it_over_nearer_food(self):
         planner = ObjectIntentions()
         pet = PetState(satiety=90)

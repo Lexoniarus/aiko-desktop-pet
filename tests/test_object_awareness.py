@@ -16,6 +16,39 @@ from aiko_pet.world.state import WorldState
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    def test_unseen_relocation_is_a_new_find_and_both_discovery_orders_reconcile(self):
+        for missing_first in (False, True):
+            with self.subTest(missing_first=missing_first):
+                world = WorldState(WorldSurface(2000, 600), (ObjectDefinition(
+                    "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+                ),))
+                item = world.place_resting("apple", 100, ObjectFootprint(8, 8))
+                awareness = ObjectAwareness()
+                state = PetState(satiety=100)
+                for stamp in (0, .3, .7):
+                    awareness.update(world.snapshot(), state, now=stamp, x=100,
+                                     height=0, width=100, attentive=True, blocked=True)
+                old, = awareness.memory.snapshot()
+                awareness.memory.mark_assessed(old.token)
+                world.move_resting(item.instance_id, 700, expected_revision=0)
+                awareness.update(world.snapshot(), state, now=1, x=100, height=0,
+                                 width=100, attentive=False, blocked=True)
+                if missing_first:
+                    awareness.memory.mark_missing(old.token)
+                for stamp in (2, 2.3, 2.7):
+                    awareness.update(world.snapshot(), state, now=stamp, x=700,
+                                     height=0, width=100, attentive=True, blocked=True)
+                found = awareness.known_instance(item.instance_id)
+                assert found is not None
+                self.assertNotEqual(found.token, old.token)
+                self.assertFalse(found.assessed)
+                if not missing_first:
+                    self.assertEqual(found.possible_sources, (old.token,))
+                    awareness.memory.mark_missing(old.token)
+                self.assertEqual(len(awareness.memory.snapshot()), 1)
+                self.assertEqual(awareness.instance_for_record(found.token),
+                                 item.instance_id)
+
     def test_offer_assessment_requires_current_recognition_and_attention(self):
         awareness = ObjectAwareness()
         seen = ObjectObservation("one", "apple", "food", 100, 70, False, 1)

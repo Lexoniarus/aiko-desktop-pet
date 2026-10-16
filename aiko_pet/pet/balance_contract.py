@@ -18,6 +18,9 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "reach_widths": "number",
         "fall_gravity": "number",
         "inspection_seconds": "number",
+        "tracking_gap_seconds": "number",
+        "tracking_jump_widths": "number",
+        "memory_place_widths": "number",
     },
     "food": {
         "too_full_to_eat_threshold": "number",

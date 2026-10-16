@@ -24,29 +24,30 @@ class ObjectCustody:
             raise
 
     def accept_handover_on_release(
-        self, token: str, *, expected_revision: int, now: float,
+        self, token: str, *, memory_id: str, expected_revision: int, now: float,
     ) -> None:
         with self._change():
             self._world.accept_handover_on_release(
                 token, expected_revision=expected_revision,
             )
-            self._memory.note_acquired(token, now=now)
+            self._memory.note_acquired(memory_id, now=now)
 
     def collect_resting(
-        self, token: str, *, expected_revision: int, now: float,
+        self, token: str, *, memory_id: str, expected_revision: int, now: float,
     ) -> None:
         with self._change():
             self._world.collect_resting(token, expected_revision=expected_revision)
-            self._memory.note_acquired(token, now=now)
+            self._memory.note_acquired(memory_id, now=now)
 
     def put_down(
-        self, token: str, x: float, *, expected_revision: int, now: float,
+        self, token: str, x: float, *, memory_id: str,
+        expected_revision: int, now: float,
         deferred: bool,
     ) -> None:
         with self._change():
             placed = self._world.put_down(token, x, expected_revision=expected_revision)
             assert placed.position is not None
             self._memory.note_placement(
-                token, x=placed.position.x, height=placed.position.height,
+                memory_id, x=placed.position.x, height=placed.position.height,
                 now=now, deferred=deferred,
             )

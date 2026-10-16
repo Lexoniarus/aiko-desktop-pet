@@ -26,7 +26,9 @@ class ObjectInteractionCoordinator:
     def __init__(
         self, world: WorldState, *, play: Callable[[str], int],
         stop: Callable[[], None], select_item: Callable[[str | None], None],
-        consume: Callable[[str, str, ConsumptionOrigin], bool],
+        consume: Callable[[str, str, str, ConsumptionOrigin], bool],
+        resolve_instance: Callable[[str], str | None],
+        record_for_instance: Callable[[str], str | None],
         can_acquire: Callable[[str], bool], ground_x: Callable[[str], float],
         completed: Callable[[str, bool], None],
         memory: ObjectMemory,
@@ -38,12 +40,15 @@ class ObjectInteractionCoordinator:
         self._custody = ObjectCustody(world, memory)
         self._play, self._stop, self._select_item = play, stop, select_item
         self._consume, self._can_acquire = consume, can_acquire
+        self._resolve_instance = resolve_instance
+        self._record_for_instance = record_for_instance
         self._ground_x, self._completed = ground_x, completed
         self._memory, self._decide = memory, decide
         self._feedback, self._cancel_feedback = feedback, cancel_feedback
         self._now, self._inspection_seconds = now, inspection_seconds
         self.phase: InteractionPhase = "idle"
         self.instance_id: str | None = None
+        self.memory_id: str | None = None
         self._origin = ConsumptionOrigin.AUTONOMOUS
         self._action_id = -1
         self._sequence = self._phase_id = 0
@@ -71,7 +76,8 @@ class ObjectInteractionCoordinator:
         return FeedbackKey(self._interaction_id, self._phase_id)
 
     def _start(self, token: str, origin: ConsumptionOrigin) -> None:
-        self.instance_id, self._origin = token, origin
+        self.memory_id, self._origin = token, origin
+        self.instance_id = None
         self._sequence += 1
         self._interaction_id = f"interaction_{self._sequence}"
         self._queued = None
@@ -91,9 +97,9 @@ class ObjectInteractionCoordinator:
         self._cancel_feedback()
 
     def _announce(self, event: ObjectEvent) -> None:
-        assert self.instance_id is not None
+        assert self.memory_id is not None
         self._feedback(ObjectFeedback(self.feedback_key, event,
-                                      self.instance_id, self._identity))
+                                      self.memory_id, self._identity))
 
     def begin_goal(self, goal: ObjectGoal) -> bool:
         if self.active:
@@ -119,15 +125,15 @@ class ObjectInteractionCoordinator:
         return True
 
     def _known_supply(self) -> bool:
-        known = self._memory.get(self.instance_id) if self.instance_id else None
+        known = self._memory.get(self.memory_id) if self.memory_id else None
         return (known is not None and known.recognized and known.assessed
                 and known.identity == self._identity and known.kind == self._kind)
 
     def missing(self) -> None:
         """Only the caller's completed attentive local search may establish absence."""
-        if self.phase != "approach" or self.instance_id is None:
+        if self.phase != "approach" or self.memory_id is None:
             return
-        self._memory.forget(self.instance_id)
+        self._memory.forget(self.memory_id)
         self._set_phase("missing")
         self._announce("object_missing")
         self.update()
@@ -138,8 +144,9 @@ class ObjectInteractionCoordinator:
             self.update()
 
     def _pick_up(self) -> None:
-        assert self.instance_id is not None
-        if not self._can_acquire(self.instance_id):
+        assert self.memory_id is not None
+        self.instance_id = self._resolve_instance(self.memory_id)
+        if self.instance_id is None or not self._can_acquire(self.instance_id):
             self._finish(False)
             self._stop()
             return
@@ -151,14 +158,17 @@ class ObjectInteractionCoordinator:
             self._announce("object_pick_up")
 
     def offer_on_release(self, instance_id: str) -> bool:
-        if self.active or not self._can_acquire(instance_id):
+        record = self._record_for_instance(instance_id)
+        if record is None or self.active or not self._can_acquire(instance_id):
             return False
         item = self.world.get(instance_id)
         self._custody.accept_handover_on_release(
-            instance_id, expected_revision=item.revision, now=self._now(),
+            instance_id, memory_id=record, expected_revision=item.revision,
+            now=self._now(),
         )
-        self._start(instance_id, ConsumptionOrigin.HANDOVER)
-        known = self._memory.get(instance_id)
+        self._start(record, ConsumptionOrigin.HANDOVER)
+        self.instance_id = instance_id
+        known = self._memory.get(record)
         self._identity = known.identity if known is not None else None
         self._kind = known.kind if known is not None else None
         self._select_item(item.definition_id)
@@ -211,18 +221,21 @@ class ObjectInteractionCoordinator:
         self._seen.add(event)
         token = self.instance_id
         assert token is not None
+        assert self.memory_id is not None
         attach = event.action_id, "attach_object"
         detach = event.action_id, "detach_object"
         if (self.phase == "pick_up" and "attach_object" in event.events
                 and attach not in self._effects):
-            if not self._can_acquire(token):
+            if (self._resolve_instance(self.memory_id) != token
+                    or not self._can_acquire(token)):
                 self._finish(False)
                 self._stop()
                 return
             item = self.world.get(token)
             try:
                 self._custody.collect_resting(
-                    token, expected_revision=item.revision, now=self._now(),
+                    token, memory_id=self.memory_id,
+                    expected_revision=item.revision, now=self._now(),
                 )
             except WorldOperationError:
                 self._finish(False)
@@ -238,7 +251,8 @@ class ObjectInteractionCoordinator:
             item = self.world.get(token)
             try:
                 self._custody.put_down(
-                    token, self._ground_x(token), expected_revision=item.revision,
+                    token, self._ground_x(token), memory_id=self.memory_id,
+                    expected_revision=item.revision,
                     now=self._now(), deferred=self._queued is None
                     and self._decision.reason == "not_needed",
                 )
@@ -255,7 +269,7 @@ class ObjectInteractionCoordinator:
         """Advance only confirmed prerequisites; injected active time owns dwell."""
         for _ in range(12):
             previous = self.phase
-            token = self.instance_id
+            token = self.memory_id
             if token is None:
                 return
             if self.phase == "notice" and self._cue_done:
@@ -332,12 +346,13 @@ class ObjectInteractionCoordinator:
 
     def _begin_eating(self) -> None:
         assert self.instance_id is not None
+        assert self.memory_id is not None
         item = self.world.get(self.instance_id)
         if item.state != ObjectState.PET_HELD:
             self._finish(False)
             self._stop()
             return
-        decision = self._decide(self.instance_id, self._origin)
+        decision = self._decide(self.memory_id, self._origin)
         self._decision = decision
         if not decision.consume:
             self._set_phase("decide")
@@ -345,7 +360,7 @@ class ObjectInteractionCoordinator:
                            else "object_later")
             return
         if not self._consume(
-            self._interaction_id, self.instance_id, self._origin,
+            self._interaction_id, self.instance_id, self.memory_id, self._origin,
         ):
             self._put_down()
             return
@@ -356,12 +371,14 @@ class ObjectInteractionCoordinator:
 
     def _finish(self, consumed: bool) -> None:
         token = self.instance_id
+        record = self.memory_id
         self.instance_id = None
+        self.memory_id = None
         self._set_phase("idle")
         self._select_item(None)
-        if token is not None:
+        if record is not None:
             consumed = consumed or any(
                 item.instance_id == token and item.state == ObjectState.CONSUMED
                 for item in self.world.snapshot().objects
             )
-            self._completed(token, consumed)
+            self._completed(record, consumed)

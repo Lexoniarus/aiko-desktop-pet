@@ -21,7 +21,7 @@ class FeedbackKey:
 class ObjectFeedback:
     key: FeedbackKey
     event: ObjectEvent
-    instance_id: str
+    record_id: str
     identity: str | None
 
 
