@@ -12,6 +12,21 @@ APPLE = ObjectKnowledge("one", "apple", "food", 100, 0, True, 0, assessed=True)
 
 
 class ObjectIntentionTests(unittest.TestCase):
+    def test_offer_refusal_does_not_orphan_a_committed_returning_target(self):
+        planner = ObjectIntentions()
+        pet = PetState(satiety=76)
+        held = replace(APPLE, resting=False)
+        planner.assess_offer(held, pet)
+        pet.satiety = 100
+        self.assertFalse(planner.assess_offer(held, pet).consume)
+        goal = planner.choose((held,), pet, x=0, now=1, blocked=True,
+                              committed=held.token)
+        assert goal is not None
+        self.assertEqual(goal.token, held.token)
+        # The committed coordinator can finish its decline/put-down; ordinary
+        # uncommitted wishes are still invalidated by the next choice.
+        self.assertIsNone(planner.choose((held,), pet, x=0, now=2, blocked=True))
+
     def test_offer_wish_survives_observed_drop_but_rechecks_capacity_and_identity(self):
         planner = ObjectIntentions()
         pet = PetState(satiety=76)

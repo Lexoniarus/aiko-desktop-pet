@@ -110,3 +110,11 @@ real saves; use temporary test saves only.
   remain intact. Verified 5 object reaction, 10 dialogue context, 1 catalogue,
   16 retrieval, 14 coordinator and 25 native GUI tests; Ruff, strict Mypy and
   Pyright pass.
+- Step 6 commit: `662d811`; its complete three-job CI matrix passed, as did all
+  preceding delivery commits.
+- Final review found and reproduced one extra boundary: refusing a held offer
+  after a need changes could clear the sole goal of an already committed return
+  episode. Offer assessment now only proposes wishes; the existing choice and
+  completion lifecycle invalidates them, preserving committed decline/put-down.
+  The preliminary complete suite passed 996 tests in 219.775 s. The final fix is
+  covered by a focused intention test; full verification follows after this fix.

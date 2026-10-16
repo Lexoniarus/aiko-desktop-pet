@@ -42,9 +42,6 @@ class ObjectIntentions:
                 known.token, known.identity, known.kind, known.x, known.height,
                 known.observed_at, "consume", ObjectUseContext.CONTINUING_WISH,
             )
-        elif (self.goal is not None and self.goal.token == known.token
-              and self.goal.use_context == ObjectUseContext.CONTINUING_WISH):
-            self.goal = None
         return decision
 
     def cancel(self, now: float, *, consumed: bool = False) -> None:
