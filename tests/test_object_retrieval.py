@@ -123,6 +123,7 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.world.return_user_held(item.instance_id, 110,
                                     expected_revision=item.revision)
         self.coordinator.observe_target_state(ObjectState.RESTING)
+        self.acknowledge()
         self.coordinator.arrive()
         self.coordinator.receive(PlaybackEvent(2, "pick_up", 3, ("attach_object",)))
         self.coordinator.receive(PlaybackEvent(2, "pick_up", 7, finished=True))

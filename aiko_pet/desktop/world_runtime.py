@@ -16,6 +16,7 @@ from ..application.object_awareness import ObjectAwareness
 from ..application.object_consumption import ObjectConsumption
 from ..application.object_feedback import FeedbackReceipt, ObjectFeedback
 from ..application.object_interaction import ObjectInteractionCoordinator
+from ..application.object_relationship import ObjectRelationship
 from ..application.session import WorldSessionSnapshot
 from ..application.settings import PetSettings
 from ..infrastructure.active_time import active_uptime_seconds
@@ -89,6 +90,7 @@ class DesktopWorldRuntime:
         self._consumption = ObjectConsumption(
             state, mind, adaptive, clock=clock, memory=self.awareness.memory,
         )
+        self._relationship = ObjectRelationship(state, mind)
         self.view = WorldView(root, items, pickup=self.begin_relocate)
         self._refresh_footprints()
         self._contact: tuple[float, float] | None = None
@@ -114,6 +116,7 @@ class DesktopWorldRuntime:
                 "object_behavior", "inspection_seconds",
             ),
             search_seconds=BALANCE.number("object_behavior", "search_seconds"),
+            withholding=self._withheld,
         )
         animated.on_playback = self._queue_event
         self.cursor = CursorItemGesture(
@@ -208,6 +211,12 @@ class DesktopWorldRuntime:
             if origin == ConsumptionOrigin.HANDOVER:
                 self._care = outcome.care
         return outcome.accepted
+
+    def _withheld(self, key: str, loss: float) -> None:
+        if self._relationship.withheld(
+            key, loss, active_time=self.now, monotonic_time=time.monotonic(),
+        ) > 0:
+            self._save()
 
     def _select_item(self, item_id: str | None) -> None:
         overlay = self._animated.food_overlay

@@ -2,6 +2,7 @@
 
 import unittest
 
+from aiko_pet.application.object_relationship import ObjectRelationship
 from aiko_pet.pet.balance import BALANCE, parse_balance
 from aiko_pet.pet.catalog_validation import load_json
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook
@@ -14,6 +15,26 @@ from aiko_pet.pet.state import PetState
 
 
 class ObjectWithholdingTests(unittest.TestCase):
+    def test_application_receipts_and_cross_episode_cooldown_limit_actual_loss(self):
+        state = PetState(friendship=15)
+        mind = PetMind(DialogueBook.from_file())
+        relationship = ObjectRelationship(state, mind)
+        self.assertAlmostEqual(relationship.withheld(
+            "episode_a/1", .15, active_time=20, monotonic_time=1000,
+        ), .15)
+        until = mind.irritated_until
+        self.assertEqual(relationship.withheld(
+            "episode_a/1", .15, active_time=200, monotonic_time=2000,
+        ), 0)
+        self.assertEqual(mind.irritated_until, until)
+        self.assertEqual(relationship.withheld(
+            "episode_b/1", .15, active_time=30, monotonic_time=1010,
+        ), 0)
+        self.assertAlmostEqual(relationship.withheld(
+            "episode_c/1", .15, active_time=140, monotonic_time=1120,
+        ), .15)
+        self.assertAlmostEqual(state.friendship, 14.7)
+
     def test_grace_requests_escalation_and_return_do_not_replay_delayed_ticks(self):
         episode = WithholdingEpisode().taken(0)
         self.assertIsNone(choose_withholding_response(episode, 9))

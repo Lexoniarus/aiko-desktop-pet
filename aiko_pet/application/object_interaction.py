@@ -12,6 +12,10 @@ from ..pet.mind.object_events import ObjectEvent
 from ..pet.mind.object_intentions import ObjectGoal
 from ..pet.mind.object_memory import ObjectMemory
 from ..pet.mind.object_perception import ConsumableKind
+from ..pet.mind.object_withholding import (
+    WithholdingEpisode,
+    choose_withholding_response,
+)
 from ..world.contracts import ObjectState
 from ..world.state import WorldOperationError, WorldState
 from .object_custody import ObjectCustody
@@ -36,6 +40,7 @@ class ObjectInteractionCoordinator:
         decide: Callable[[str, ConsumptionOrigin], ObjectUseDecision],
         feedback: Callable[[ObjectFeedback], None], cancel_feedback: Callable[[], None],
         now: Callable[[], float], inspection_seconds: float, search_seconds: float,
+        withholding: Callable[[str, float], None] = lambda _key, _loss: None,
     ) -> None:
         self.world = world
         self._custody = ObjectCustody(world, memory)
@@ -71,6 +76,9 @@ class ObjectInteractionCoordinator:
         self._auxiliary_key: FeedbackKey | None = None
         self._auxiliary_serial = 0
         self._next_contact_feedback = 0.0
+        self._withholding = WithholdingEpisode()
+        self._withholding_serial = 0
+        self._on_withholding = withholding
 
     @property
     def active(self) -> bool:
@@ -93,7 +101,7 @@ class ObjectInteractionCoordinator:
     def target_taken(self, record: str) -> bool:
         """Pause only an observed successful take before Aiko owns the item."""
         if self.focus_record != record or self.phase not in (
-            "notice", "approach", "pick_up", "await_settle",
+            "notice", "approach", "pick_up", "await_settle", "await_return",
         ):
             return False
         if (self.instance_id is not None
@@ -102,6 +110,7 @@ class ObjectInteractionCoordinator:
         self.instance_id = None
         self._action_id = -1
         self._arrived = False
+        self._withholding = self._withholding.taken(self._now())
         self._set_phase("await_return")
         self._stop()
         self._announce("object_taken")
@@ -111,6 +120,8 @@ class ObjectInteractionCoordinator:
         """Use current sensory custody only; loss resumes bounded local search."""
         if not self.waiting_for_target:
             return
+        if state != ObjectState.USER_HELD:
+            self._withholding = self._withholding.returned()
         if state is None:
             self._set_phase("approach")
             self._cue_done = True
@@ -122,7 +133,19 @@ class ObjectInteractionCoordinator:
         elif (state == ObjectState.RESTING and self._cue_done
               and self._auxiliary_key is None):
             self._set_phase("approach")
-            self._cue_done = True
+            self._announce("object_returned")
+        elif (state == ObjectState.USER_HELD and self._cue_done
+              and self._auxiliary_key is None):
+            response = choose_withholding_response(self._withholding, self._now())
+            if response is not None:
+                self._withholding = response.episode
+                self.request_feedback(response.event)
+                if response.irritated:
+                    self._withholding_serial += 1
+                    self._on_withholding(
+                        f"{self._interaction_id}/withholding_{self._withholding_serial}",
+                        response.friendship_loss,
+                    )
 
     @property
     def searching(self) -> bool:
@@ -151,6 +174,7 @@ class ObjectInteractionCoordinator:
         self._retrieving = False
         self._kind = None
         self._next_goal = None
+        self._withholding = WithholdingEpisode()
 
     def _set_phase(self, phase: InteractionPhase) -> None:
         self.phase = phase
@@ -500,6 +524,7 @@ class ObjectInteractionCoordinator:
         record = self.memory_id
         self.instance_id = None
         self.memory_id = None
+        self._withholding = WithholdingEpisode()
         self._set_phase("idle")
         self._select_item(None)
         if record is not None:

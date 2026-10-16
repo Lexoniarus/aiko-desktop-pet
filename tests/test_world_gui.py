@@ -238,6 +238,7 @@ class WorldGuiTests(unittest.TestCase):
                 world.update(time.monotonic())
                 self.assertEqual(world.interaction.phase, "approach")
                 self.assertEqual(world.interaction.feedback_key.interaction_id, episode)
+                self.complete_feedback()
                 for index in range(10):
                     self.app._walk.step(time.monotonic() + index, 1,
                                         game_mode=False, attention_active=False)
@@ -252,6 +253,33 @@ class WorldGuiTests(unittest.TestCase):
                 self.complete_feedback()
                 self.assertEqual(world.world.get(item.instance_id).state,
                                  ObjectState.CONSUMED)
+
+    def test_visible_withholding_changes_friendship_once_and_survives_restart(self):
+        world = self.app._world
+        item = world.world.place_resting("apple", world._body_x() + 70,
+                                         ObjectFootprint(8, 8))
+        self.recognize()
+        world.begin_relocate(item.instance_id, item.revision)
+        self.complete_feedback()
+        initial = self.app.state.friendship
+        self.assertEqual(initial, 15)
+        for _ in range(44):
+            world.now += .5
+            world.update(time.monotonic())
+            self.complete_feedback()
+        self.assertAlmostEqual(self.app.state.friendship, initial - .15)
+        self.assertEqual(self.app.mind.emotion(self.app.state, time.monotonic()),
+                         "irritated")
+        self.assertEqual(world.interaction.phase, "await_return")
+        stored = self.app.store.load_session().state
+        self.assertAlmostEqual(stored.friendship, initial - .15)
+        world.cursor.cancel()
+        self.complete_feedback()
+        self.complete_feedback()
+        self.assertAlmostEqual(self.app.state.friendship, initial - .15)
+        self.restart()
+        self.assertFalse(self.app._world.interaction.active)
+        self.assertAlmostEqual(self.app.state.friendship, initial - .15)
 
     def test_absent_remembered_instance_requires_attentive_local_search(self):
         world = self.app._world
