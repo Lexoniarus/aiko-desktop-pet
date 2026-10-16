@@ -35,6 +35,11 @@ class TaskbarTrack:
         """Place the sprite's feet at the taskbar, not its transparent margin."""
         return max(0, self.ground_y - FOOT_BASELINE * scale)
 
+    def ground_inset(self, sprite_width: int, reach: float) -> float:
+        """Reachable anchor margin in World coordinates, independent of origin."""
+        return min((self.right - self.left) / 2,
+                   max(0, sprite_width / 2 - reach))
+
     def ground_approach(
         self, object_x: float, sprite_width: int, reach: float,
     ) -> GroundApproach | None:

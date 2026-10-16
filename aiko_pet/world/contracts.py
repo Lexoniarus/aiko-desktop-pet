@@ -42,12 +42,28 @@ class WorldSurface:
 
     width: float
     height: float
+    ground_inset: float = 0.0
 
     def __post_init__(self) -> None:
         _finite_nonnegative(self.width, "surface width")
         _finite_nonnegative(self.height, "surface height")
         if self.width == 0 or self.height == 0:
             raise ValueError("Surface dimensions must be positive")
+        _finite_nonnegative(self.ground_inset, "ground inset")
+        if self.ground_inset > self.width / 2:
+            raise ValueError("Reachable ground must not be empty")
+
+    def ground_interval(self, footprint: ObjectFootprint) -> tuple[float, float]:
+        """Reachable support anchors, intersected with the item's full extent."""
+        left = max(self.ground_inset, footprint.left)
+        right = min(self.width - self.ground_inset, self.width - footprint.right)
+        if left > right:
+            raise ValueError("Object does not fit reachable ground")
+        return left, right
+
+    def ground_x(self, x: float, footprint: ObjectFootprint) -> float:
+        left, right = self.ground_interval(footprint)
+        return max(left, min(x, right))
 
     def contains(self, position: WorldPosition, footprint: ObjectFootprint) -> bool:
         return (

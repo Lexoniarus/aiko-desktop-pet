@@ -130,12 +130,17 @@ class DesktopWorldRuntime:
         return self.awareness.memory.export(now=self.now)
 
     def save_snapshot(self) -> WorldSessionSnapshot:
+        self._sync_geometry()
         return WorldSessionSnapshot(self.world.snapshot(), self.memory_snapshot(),
                                      self._body_x())
 
     def _surface(self) -> WorldSurface:
         track = self._track()
-        return WorldSurface(max(1, track.right - track.left), max(1, track.ground_y))
+        return WorldSurface(
+            max(1, track.right - track.left), max(1, track.ground_y),
+            track.ground_inset(int(self.width), self.width * BALANCE.number(
+                "object_behavior", "reach_widths")),
+        )
 
     def _body_x(self) -> float:
         return (self.settings.x or 0) - self._track().left + self.width / 2
@@ -395,6 +400,7 @@ class DesktopWorldRuntime:
         self.interaction.interrupt(perform)
 
     def begin_carry(self, item_id: str) -> None:
+        self._sync_geometry()
         self.interrupt(lambda: self.cursor.begin(item_id))
 
     def _assess_offer(self, token: str) -> ObjectUseDecision | None:
@@ -436,16 +442,19 @@ class DesktopWorldRuntime:
                    else min(0.5, max(0, real - self._last_real)))
         self._last_active, self._last_real = active, real
         self.now += elapsed
-        self.world.change_surface(self._surface())
-        if self._last_scale != self.settings.scale:
-            self._refresh_footprints()
-            self._last_scale = self.settings.scale
+        self._sync_geometry()
         self.world.advance_falls(elapsed, gravity=BALANCE.number(
             "object_behavior", "fall_gravity",
         ))
         self.cursor.update()
         self._sync_view()
         self._timer = self.root.after(33, self._frame)
+
+    def _sync_geometry(self) -> None:
+        self.world.change_surface(self._surface())
+        if self._last_scale != self.settings.scale:
+            self._refresh_footprints()
+            self._last_scale = self.settings.scale
 
     def _refresh_footprints(self) -> None:
         for item in self.world.snapshot().objects:
