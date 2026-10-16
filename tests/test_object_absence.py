@@ -21,10 +21,10 @@ class ObjectAbsenceTests(unittest.TestCase):
 
     def test_unknown_presence_can_be_confirmed_missing_once(self):
         self.assertEqual(self.sample(0, attentive=True), ())
-        self.assertFalse(self.sensor.checked_empty(100, width=100))
+        self.assertTrue(self.sensor.checking)
         self.assertEqual(self.sample(.3, attentive=True), ())
         self.assertEqual(self.sample(.5, attentive=True), (PLACE.token,))
-        self.assertTrue(self.sensor.checked_empty(100, width=100))
+        self.assertFalse(self.sensor.checking)
         self.assertEqual(self.sample(.7, attentive=True), ())
 
     def test_pending_occupants_reset_local_evidence(self):
@@ -58,7 +58,7 @@ class ObjectAbsenceTests(unittest.TestCase):
     def test_empty_place_evidence_is_not_borrowed_from_neighbour_or_old_location(self):
         self.sample(0, attentive=True)
         self.sample(.5, attentive=True)
-        self.assertFalse(self.sensor.checked_empty(200, width=100))
+        self.assertFalse(self.sensor.checking)
         moved = replace(PLACE, x=150)
         self.assertEqual(self.sample(.6, known=(moved,), attentive=True), ())
-        self.assertFalse(self.sensor.checked_empty(150, width=100))
+        self.assertTrue(self.sensor.checking)

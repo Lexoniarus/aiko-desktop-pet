@@ -24,7 +24,14 @@ def match_find(
                   and item.place_status != "superseded"
                   and item.recognized and (seen.identity is None or (
                       item.identity == seen.identity and item.kind == seen.kind))]
-    local = [item for item in compatible if item.resting == seen.resting
+    # A still occupied, unchecked unknown place can resume curiosity without
+    # acquiring any identity. It must not deadlock a focused investigation
+    # after a sensory gap, nor borrow the identity of a known missing portion.
+    unknown_places = [item for item in records if item.token not in claimed
+                      and item.place_status == "remembered" and not item.recognized
+                      and seen.identity is None]
+    local = [item for item in (*compatible, *unknown_places)
+             if item.resting == seen.resting
              and (seen.identity is not None or item.place_status != "missing")
              and math.hypot(item.x - seen.x, item.height - seen.height)
              <= maximum_distance]

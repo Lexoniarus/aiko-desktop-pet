@@ -91,11 +91,6 @@ class ObjectPerception:
     def __init__(self) -> None:
         self._previous: float | None = None
         self._evidence: dict[str, _Evidence] = {}
-        self._attention_started: float | None = None
-
-    def attentive_seconds(self, now: float) -> float:
-        return (max(0.0, now - self._attention_started)
-                if self._attention_started is not None else 0.0)
 
     def observe(
         self, candidates: tuple[ObjectCandidate, ...], *, now: float,
@@ -106,10 +101,6 @@ class ObjectPerception:
             raise ValueError("Perception requires finite time and positive width")
         elapsed = 0.0 if self._previous is None else max(0.0, now - self._previous)
         self._previous = now
-        if not attentive:
-            self._attention_started = None
-        elif self._attention_started is None:
-            self._attention_started = now
         evidence: dict[str, _Evidence] = {}
         observations: list[ObjectObservation] = []
         for item in candidates if attentive else ():

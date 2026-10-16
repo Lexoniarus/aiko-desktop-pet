@@ -10,6 +10,7 @@ from ..pet.consumption import ConsumptionOrigin
 from ..pet.mind.object_decisions import ObjectUseContext, ObjectUseDecision
 from ..pet.mind.object_events import ObjectEvent
 from ..pet.mind.object_intentions import ObjectGoal
+from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..pet.mind.object_memory import ObjectMemory
 from ..pet.mind.object_perception import ConsumableKind
 from ..pet.mind.object_withholding import (
@@ -54,6 +55,7 @@ class ObjectInteractionCoordinator:
         self._now, self._inspection_seconds = now, inspection_seconds
         self._search_seconds = search_seconds
         self._search_started = 0.0
+        self._search_after_absence = False
         self.search_x = 0.0
         self._next_goal: ObjectGoal | None = None
         self.phase: InteractionPhase = "idle"
@@ -150,7 +152,7 @@ class ObjectInteractionCoordinator:
         if state is None:
             self._set_phase("approach")
             self._cue_done = True
-            self.start_search()
+            self.start_search(confirmed_empty=False)
         elif state in (ObjectState.FALLING, ObjectState.BOUNCING):
             if self.phase != "await_settle":
                 self._set_phase("await_settle")
@@ -207,6 +209,7 @@ class ObjectInteractionCoordinator:
         self._retrieving = False
         self._kind = None
         self._next_goal = None
+        self._search_after_absence = False
         self._withholding = WithholdingEpisode()
 
     def _set_phase(self, phase: InteractionPhase) -> None:
@@ -288,14 +291,32 @@ class ObjectInteractionCoordinator:
             else "object_later",
         )
 
-    def start_search(self) -> None:
+    def notice_absence(self, known: ObjectKnowledge) -> bool:
+        """Give a checked empty place priority, using the existing action owner."""
+        if self.active and (not self.approaching or self.memory_id != known.token):
+            return False
+        investigating = self.active and not known.recognized
+        if not self.active:
+            self._start(known.token, ConsumptionOrigin.AUTONOMOUS)
+        self._identity, self._kind = known.identity, known.kind
+        self.search_x = known.x
+        self._search_after_absence = investigating or self._decide(
+            known.token, self._use_context,
+        ).consume
+        self._set_phase("notice_absence")
+        self._stop()
+        self._announce("object_place_missing")
+        return True
+
+    def start_search(self, *, confirmed_empty: bool = True) -> None:
         """The caller has attentively arrived at an empty remembered place."""
-        if self.phase != "approach" or self.memory_id is None:
+        if self.phase not in ("approach", "notice_absence") or self.memory_id is None:
             return
         known = self._memory.get(self.memory_id)
         if known is not None:
             self.search_x = known.x
-        self._memory.mark_missing(self.memory_id)
+        if confirmed_empty:
+            self._memory.mark_missing(self.memory_id)
         self._search_started = self._now()
         self._set_phase("search")
         self._stop()
@@ -473,6 +494,12 @@ class ObjectInteractionCoordinator:
                     self._cue_done = True
                 else:
                     self._announce("object_approach")
+            elif self.phase == "notice_absence" and self._cue_done:
+                if self._search_after_absence:
+                    self.start_search()
+                else:
+                    self._finish(False)
+                    self._stop()
             elif self.phase == "approach" and self._arrived and self._cue_done:
                 self._pick_up()
             elif self.phase == "pick_up" and self._animation_done and self._cue_done:

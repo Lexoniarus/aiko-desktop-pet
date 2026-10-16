@@ -17,6 +17,19 @@ from aiko_pet.ui.view_models.object_reactions import format_object_reaction
 
 
 class ObjectReactionTests(unittest.TestCase):
+    def test_early_loss_names_only_learned_identity(self):
+        book = DialogueBook.from_file()
+        items = load_item_catalog()
+        lines = [line for line in book.lines if line.event == "object_place_missing"]
+        self.assertGreaterEqual(len(lines), 3)
+        for line in lines:
+            reaction = Reaction(line.id, line.beats, line.animation, line.event)
+            unknown = format_object_reaction(reaction, None, items).text
+            known = format_object_reaction(reaction, "energy_drink", items).text
+            self.assertIn("etwas", unknown)
+            self.assertNotIn("Energy", unknown)
+            self.assertIn("Energy", known)
+
     def test_offer_and_known_acceptance_copy_name_the_learned_item(self):
         book = DialogueBook.from_file()
         for line in book.lines:

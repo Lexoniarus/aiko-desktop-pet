@@ -412,6 +412,10 @@ class WorldGuiTests(unittest.TestCase):
     def test_observed_alternative_cannot_replace_committed_approach(self):
         world = self.app._world
         self.app._place_x(world._track().left)
+        # The current target really exists. An empty remembered place now has
+        # separate early-loss coverage rather than masquerading as an approach.
+        world.world.place_resting("apple", world._body_x() + 300,
+                                  ObjectFootprint(8, 8))
         old = world.awareness.memory.observe_find(ObjectObservation(
             "old_sighting", "apple", "food", world._body_x() + 300, 0, True, 0,
         ), now=0, record=None, claimed=frozenset(), maximum_distance=10)
@@ -578,11 +582,13 @@ class WorldGuiTests(unittest.TestCase):
         self.app.state.energy = 55
         world.update(time.monotonic())
         self.complete_feedback()
-        self.assertEqual(world.interaction.phase, "approach")
+        self.assertEqual(world.interaction.phase, "idle")
         self.assertIsNotNone(world.awareness.memory.get(record))
         world.now += 1
         world.update(time.monotonic())
         self.assertIsNotNone(world.awareness.memory.get(record))
+        self.assertEqual(world.interaction.phase, "notice_absence")
+        self.complete_feedback()
         self.assertEqual(world.interaction.phase, "search")
         self.complete_feedback()
         world.now += 1.1
@@ -601,6 +607,64 @@ class WorldGuiTests(unittest.TestCase):
         self.assertFalse(world.interaction.active)
         self.assertIsNone(world.awareness.intentions.goal)
         self.assertIsNone(world._visual.object_target)
+
+    def test_unknown_absence_precedes_new_discovery_without_forced_search(self):
+        world = self.app._world
+        world.awareness.memory.update((ObjectObservation(
+            "earlier", None, None, world._body_x() - 80, 0, True, 0,
+        ),), now=0)
+        world.world.place_resting("cookie", world._body_x() + 80,
+                                  ObjectFootprint(8, 8))
+        cues = []
+        present = world._present_feedback
+
+        def capture(cue, reaction, done):
+            cues.append(cue)
+            present(cue, reaction, done)
+
+        world._present_feedback = capture
+        for now in (0, .3):
+            world.now = now
+            world.update(time.monotonic())
+            self.assertFalse(world.interaction.active)
+        world.now = .5
+        world.update(time.monotonic())
+        self.assertEqual(world.interaction.phase, "notice_absence")
+        self.assertEqual(cues[0].event, "object_place_missing")
+        self.assertIsNone(cues[0].identity)
+        self.complete_feedback()
+        self.assertEqual(cues[1].event, "object_notice")
+        self.assertNotIn("object_search", [cue.event for cue in cues])
+        for _ in range(5):
+            world.now += .25
+            world.update(time.monotonic())
+        self.assertEqual([cue.event for cue in cues].count("object_place_missing"), 1)
+
+    def test_missing_unwanted_reserve_is_named_once_without_search(self):
+        world = self.app._world
+        self.app.state.energy = 100
+        world.awareness.memory.update((ObjectObservation(
+            "reserve", "energy_drink", "drink", world._body_x(), 0, True, 0,
+        ),), now=0)
+        world.awareness.memory.mark_assessed("reserve")
+        cues = []
+        present = world._present_feedback
+
+        def capture(cue, reaction, done):
+            cues.append(cue)
+            present(cue, reaction, done)
+
+        world._present_feedback = capture
+        for now in (0, .3, .5):
+            world.now = now
+            world.update(time.monotonic())
+        self.assertEqual(cues[0].identity, "energy_drink")
+        self.complete_feedback()
+        self.assertFalse(world.interaction.active)
+        for _ in range(6):
+            world.now += 1
+            world.update(time.monotonic())
+        self.assertEqual([cue.event for cue in cues], ["object_place_missing"])
 
     def complete_feedback(self):
         # Component assertions skip cue dwell; runtime-flow tests use real timers.

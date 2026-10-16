@@ -24,6 +24,33 @@ from aiko_pet.world.state import WorldState
 
 
 class ObjectRetrievalTests(unittest.TestCase):
+    def test_early_absence_waits_for_receipt_then_uses_one_search_budget(self):
+        goal = ObjectIntentions().choose(self.memory.snapshot(), self.pet, x=0, now=0)
+        assert goal is not None
+        self.coordinator.begin_goal(goal)
+        known = self.memory.get(self.item.instance_id)
+        assert known is not None
+        self.memory.mark_missing(known.token)
+        previous = self.cues[-1]
+        self.assertTrue(self.coordinator.notice_absence(known))
+        self.assertEqual(self.coordinator.phase, "notice_absence")
+        self.assertEqual(self.cues[-1].event, "object_place_missing")
+        self.assertFalse(self.coordinator.notice_absence(known))
+        self.coordinator.receive_feedback(FeedbackReceipt(previous.key, True))
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.phase, "notice_absence")
+        self.stamp = 3
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "search")
+        self.stamp = 4.9
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "search")
+        self.stamp = 5.1
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.phase, "missing")
+        self.acknowledge()
+        self.assertEqual(self.done, [(known.token, False)])
+
     def take_unknown_drink(self):
         self.item = self.world.place_resting("energy_drink", 100, ObjectFootprint(8, 8))
         self.memory.restore_snapshot(())
@@ -292,7 +319,8 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.coordinator.observe_target_state(None)
         self.assertEqual(self.coordinator.phase, "search")
         self.assertIsNone(self.coordinator.focus_record)
-        self.assertEqual(self.memory.snapshot()[0].place_status, "missing")
+        # Losing visual tracking is not a local observation of an empty place.
+        self.assertEqual(self.memory.snapshot()[0].place_status, "remembered")
 
     def test_drink_recall_matches_energy_and_only_claims_confirmed_deferral(self):
         self.memory.update((replace(self.seen, identity="energy_drink", kind="drink"),),

@@ -19,6 +19,66 @@ from aiko_pet.world.state import WorldState
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    def test_unknown_occupied_place_resumes_curiosity_after_a_tracking_gap(self):
+        world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        item = world.place_resting("apple", 200, ObjectFootprint(8, 8))
+        awareness = ObjectAwareness()
+        state = PetState(satiety=50)
+        for now in (0, .3):
+            awareness.update(world.snapshot(), state, now=now, x=100, height=0,
+                             width=100, attentive=True, blocked=False)
+        record = awareness.record_for_instance(item.instance_id)
+        for now in (2, 2.3):
+            awareness.update(world.snapshot(), state, now=now, x=100, height=0,
+                             width=100, attentive=True, blocked=False, committed=record)
+        self.assertEqual(awareness.record_for_instance(item.instance_id), record)
+        self.assertEqual(len(awareness.memory.snapshot()), 1)
+        self.assertIsNone(awareness.observations[0].identity)
+        self.assertEqual(awareness.absences, ())
+
+    def test_focused_empty_place_waits_for_unnoticed_occupant(self):
+        world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        item = world.place_resting("apple", 200, ObjectFootprint(8, 8))
+        awareness = ObjectAwareness()
+        state = PetState(satiety=50)
+        for now in (0, .3):
+            awareness.update(world.snapshot(), state, now=now, x=100, height=0,
+                             width=100, attentive=True, blocked=False)
+        record = awareness.record_for_instance(item.instance_id)
+        world.remove(item.instance_id, expected_revision=0)
+        world.place_resting("apple", 200, ObjectFootprint(8, 8))
+        for now in (.4, .7, 1):
+            awareness.update(world.snapshot(), state, now=now, x=100, height=0,
+                             width=100, attentive=True, blocked=False, committed=record)
+        self.assertEqual(awareness.absences, ())
+        self.assertFalse(awareness.checking_absence)
+        self.assertTrue(all(item.identity is None
+                            for item in awareness.memory.snapshot()))
+
+    def test_unrelated_places_wait_until_committed_attention_is_released(self):
+        world = WorldState(WorldSurface(1600, 900), ())
+        awareness = ObjectAwareness()
+        awareness.memory.update((ObjectObservation(
+            "old", None, None, 100, 0, True, 0,
+        ),), now=0)
+        for now in (0, .3, .6):
+            awareness.update(world.snapshot(), PetState(), now=now, x=100,
+                             height=0, width=100, attentive=True, blocked=False,
+                             committed="other")
+        self.assertEqual(awareness.absences, ())
+        for now in (.7, 1, 1.2):
+            awareness.update(world.snapshot(), PetState(), now=now, x=100,
+                             height=0, width=100, attentive=True, blocked=False)
+        self.assertEqual(awareness.absences[0].token, "old")
+        awareness.acknowledge_absence("old")
+        awareness.update(world.snapshot(), PetState(), now=1.5, x=100,
+                         height=0, width=100, attentive=True, blocked=False)
+        self.assertEqual(awareness.absences, ())
+
     @staticmethod
     def identify_observed(awareness, *, now):
         """Seed completed earlier identification for continuity-only fixtures."""
@@ -341,5 +401,11 @@ class ObjectAwarenessTests(unittest.TestCase):
         world.move_resting(item.instance_id, 1500, expected_revision=0)
         goal = awareness.update(world.snapshot(), state, now=2, x=0,
                                 height=0, width=192, attentive=True, blocked=False)
-        assert goal is not None
-        self.assertEqual(goal.x, 100)
+        self.assertIsNone(goal)
+        self.assertTrue(awareness.checking_absence)
+        self.assertEqual(awareness.memory.snapshot()[0].x, 100)
+        self.assertEqual(awareness.absences, ())
+        awareness.update(world.snapshot(), state, now=2.5, x=0, height=0,
+                         width=192, attentive=True, blocked=False)
+        self.assertEqual(awareness.absences[0].x, 100)
+        self.assertIsNone(awareness.absences[0].identity)

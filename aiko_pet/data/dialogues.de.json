@@ -3,6 +3,36 @@
   "language": "de",
   "lines": [
     {
+      "id": "object-place-missing-here",
+      "event": "object_place_missing",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [{"kind": "text", "content": "Hier lag doch {item}. Jetzt ist der Platz leer."}]
+    },
+    {
+      "id": "object-place-missing-noticed",
+      "event": "object_place_missing",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [{"kind": "text", "content": "Moment, an dieser Stelle war doch {item}."}]
+    },
+    {
+      "id": "object-place-missing-empty",
+      "event": "object_place_missing",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "cooldown_seconds": 0,
+      "beats": [{"kind": "text", "content": "Da lag vorhin {item}. Jetzt sehe ich es dort nicht mehr."}]
+    },
+    {
       "id": "greeting-01",
       "event": "greeting",
       "moods": [],

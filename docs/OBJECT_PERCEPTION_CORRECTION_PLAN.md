@@ -208,3 +208,14 @@ must include a fresh isolated profile plus a separate known-stock restart case.
   emitted once per continuous local observation and never persisted as a clock.
   Verified 15 targeted absence/resource tests plus Ruff, strict Mypy and Pyright.
   Runtime delivery follows in stage 7 with the receiving coordinator phase.
+- Stage 6 policy commit: `746ab52`.
+- Stage 7: runtime checks local empty-place evidence before dispatching new
+  discoveries/offers. `notice_absence` uses the existing identified feedback
+  player and acknowledges each confirmed fact once. An unwanted reserve ends
+  after its loss message; a wanted reserve or active unknown investigation uses
+  the existing single bounded search. Losing a cursor track alone no longer
+  marks a ground place missing. Removed the old global attention/arrival-based
+  emptiness shortcut. An unchecked occupied unknown place can resume curiosity
+  after a tracking gap without acquiring any identity. Verified 167 targeted
+  object-policy, native Tk and resource tests; Ruff, strict Mypy and Pyright pass.
+  CI for `f2ce9f5` and `a72a6bf` passed on Python 3.11/3.13 and Windows.

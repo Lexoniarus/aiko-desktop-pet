@@ -334,6 +334,20 @@ class DesktopWorldRuntime:
                 self._animated.cursor_eye_position, self.width,
             ),
         )
+        can_react = (not self.state.sleeping and not self._game_open()
+                     and not self._controls_active() and not self.user_action_pending
+                     and time.monotonic() >= self._playback.until)
+        for absent in self.awareness.absences if can_react else ():
+            if self.interaction.notice_absence(absent):
+                self.awareness.acknowledge_absence(absent.token)
+                self._walk.movement.set_goal(None)
+                self.cursor.offer_ready = False
+                self._visual.object_target = (
+                    self._track().left + absent.x,
+                    self._track().ground_y - absent.height,
+                )
+                self._save()
+                return
         observed = {item.token for item in self.awareness.observations}
         visible = [item for item in self.awareness.memory.snapshot()
                    if not item.assessed and item.token in observed]
@@ -349,7 +363,10 @@ class DesktopWorldRuntime:
             (self._track().left + gaze.x, self._track().ground_y - gaze.height)
             if gaze is not None else None
         )
-        self.cursor.observe_offer()
+        if self.awareness.checking_absence or self.awareness.absences:
+            self.cursor.offer_ready = False
+        else:
+            self.cursor.observe_offer()
         if self.interaction.waiting_for_target:
             record = self.interaction.memory_id
             instance = (self.awareness.instance_for_record(record)
@@ -377,7 +394,7 @@ class DesktopWorldRuntime:
         if self.interaction.phase == "found":
             self._walk.movement.set_goal(None)
             return
-        if blocked or goal is None:
+        if blocked or goal is None or self.awareness.checking_absence:
             self._walk.movement.set_goal(None)
             if (self.interaction.approaching
                     and self.interaction.focus_record is None):
@@ -411,11 +428,6 @@ class DesktopWorldRuntime:
             self._walk.movement.set_goal(None)
             self._capture_contact(instance)
             self.interaction.arrive()
-        else:
-            # A pending sensory notice is not evidence of an empty location.
-            if not self.awareness.checked_empty(goal.x, width=self.width, now=self.now):
-                return
-            self.interaction.start_search()
 
     def _show_search(self) -> None:
         track = self._track()

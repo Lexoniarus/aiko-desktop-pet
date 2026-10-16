@@ -25,10 +25,9 @@ class ObjectAbsencePerception:
     def __init__(self) -> None:
         self._places: dict[str, _EmptyPlace] = {}
 
-    def checked_empty(self, x: float, *, width: float) -> bool:
-        reach = width * BALANCE.number("object_behavior", "memory_place_widths")
-        return any(place.confirmed and abs(place.x - x) <= reach
-                   for place in self._places.values())
+    @property
+    def checking(self) -> bool:
+        return any(not place.confirmed for place in self._places.values())
 
     def observe(
         self, known: tuple[ObjectKnowledge, ...],

@@ -6,6 +6,7 @@ import math
 from dataclasses import replace
 
 from ..pet.balance import BALANCE
+from ..pet.mind.object_absence import ObjectAbsencePerception
 from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_intentions import ObjectGoal, ObjectIntentions
 from ..pet.mind.object_knowledge import ObjectKnowledge, ObjectMemorySnapshot
@@ -24,6 +25,8 @@ from .object_tracking import ObjectTracker
 class ObjectAwareness:
     def __init__(self, saved: ObjectMemorySnapshot | None = None) -> None:
         self.perception = ObjectPerception()
+        self._absence = ObjectAbsencePerception()
+        self._absences: dict[str, ObjectKnowledge] = {}
         self.memory = ObjectMemory(saved)
         self.intentions = ObjectIntentions()
         self.observations: tuple[ObjectObservation, ...] = ()
@@ -34,19 +37,18 @@ class ObjectAwareness:
         self._sighting_records: dict[str, str] = {}
         self._world_records: dict[str, str] = {}
         self._owned_records: dict[str, str] = {}
-        self._unnoticed: tuple[ObjectCandidate, ...] = ()
 
-    def checked_empty(self, x: float, *, width: float, now: float) -> bool:
-        """Do not turn pending local sensory evidence into confirmed absence."""
-        if self.perception.attentive_seconds(now) < BALANCE.number(
-            "object_behavior", "notice_seconds",
-        ):
-            return False
-        reach = width * BALANCE.number("object_behavior", "memory_place_widths")
-        return not any(abs(item.x - x) <= reach for item in self.observations
-                       if item.resting) and not any(
-                           abs(item.x - x) <= reach for item in self._unnoticed
-                       )
+    @property
+    def absences(self) -> tuple[ObjectKnowledge, ...]:
+        """Confirmed sensory facts waiting for the application to acknowledge."""
+        return tuple(self._absences.values())
+
+    @property
+    def checking_absence(self) -> bool:
+        return self._absence.checking
+
+    def acknowledge_absence(self, record: str) -> None:
+        self._absences.pop(record, None)
 
     def record_for_instance(self, instance: str) -> str | None:
         return self._world_records.get(instance)
@@ -124,6 +126,10 @@ class ObjectAwareness:
                 and presentation[0] == item.instance_id
                 and item.state == ObjectState.USER_HELD else None,
             ))
+        # Occupancy can disprove emptiness without noticing an unrelated subject.
+        occupants = tuple(item for item in candidates if attentive and math.hypot(
+            item.x - x, item.height - height,
+        ) <= width * BALANCE.number("object_behavior", "notice_widths"))
         if committed is not None:
             # Filter before tracking, recognition and stock reconciliation.
             candidates = [item for item in candidates if (
@@ -151,8 +157,6 @@ class ObjectAwareness:
                             if self._tracker.resolve(item.token)
                             == self._tracker.following_instance), None),
         )
-        noticed = {seen.token for seen in sensed}
-        self._unnoticed = tuple(item for item in tracked if item.token not in noticed)
         previous = {(item.token, item.identity, item.x, item.height, item.resting,
                      item.assessed, item.disposition, item.place_status)
                     for item in self.memory.snapshot()}
@@ -194,13 +198,26 @@ class ObjectAwareness:
         self._sighting_records, self._world_records = records, world_records
         self._owned_records = held
         self.observations = tuple(observations)
+        for record in self._absence.observe(
+            self.memory.snapshot(), occupants, now=now, x=x, height=height,
+            width=width, attentive=attentive, ground_bounds=(0, world.surface.width),
+            focused=committed,
+        ):
+            known = self.memory.get(record)
+            self.memory.mark_missing(record)
+            if known is not None:
+                self._absences[record] = known
+        self._absences = {key: item for key, item in self._absences.items()
+                          if (entry := self.memory.get(key)) is not None
+                          and entry.place_status == "missing"}
         current = {(item.token, item.identity, item.x, item.height, item.resting,
                     item.assessed, item.disposition, item.place_status)
                    for item in self.memory.snapshot()}
         changed = previous != current or self._world_revision != world.revision
         self._world_revision = world.revision
         return self.intentions.choose(self.memory.snapshot(), state, x=x,
-                                      now=now, blocked=blocked, changed=changed,
+                                      now=now, blocked=blocked or self.checking_absence
+                                      or bool(self.absences), changed=changed,
                                       committed=committed,
                                       observed=frozenset(item.token
                                                          for item in observations))
