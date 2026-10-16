@@ -7,6 +7,15 @@ The key design principle: **one owner per mutable state or external side effect*
 The accepted [persistent object knowledge plan](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md)
 extends subjective memory and remembered supply retrieval in small delivery steps.
 
+The agreed [offer, placement and search follow-up plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md)
+records future changes for assessed cursor offers, movable portions, reachable
+placement with impact-dependent damped hops, and subjective stock/search
+reconciliation. It is planning only; the implementation description below remains
+the current baseline.
+The follow-up explicitly selects a small owned analytic motion policy over
+Pymunk: pure World calculations, existing active-time scheduling and immutable
+checkpoints, with no additional runtime dependency.
+
 ## Dependency overview
 
 ```mermaid

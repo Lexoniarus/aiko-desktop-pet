@@ -15,6 +15,32 @@ semantic contracts to their implemented owners and Python APIs.
 
 ## Confirmed product decisions
 
+### Planned offers, placement and search follow-up — 16 October 2026
+
+The complete [follow-up plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md) records the
+agreed next behavior and small delivery steps. It covers assessed cursor offers,
+moving resting portions, impact-dependent damped settling hops, subjective
+identity and quantity, and visible bounded search. Technical World IDs must not prove that
+an unobserved new find is the old portion. Found-before-missing and
+missing-before-found must both avoid repeated searches and double-counting.
+
+The latest hop clarification replaces the fixed three-hop proposal: fall height
+and impact speed determine rebound height, travel and the number of damped hops.
+Motion must terminate on reachable ground, including low-energy outside drops;
+there is no mandatory hop count. See the follow-up plan for bounded inward
+settling, safe trajectories and the corresponding verification cases.
+
+The selected implementation approach is a small own-physics policy, not Pymunk.
+The follow-up plan records pure analytic motion, signed immutable state,
+state-dependent cleanup, exact runtime rollback versus durable ground recovery,
+and substeps S9a-S9d. These remain future changes; current fall behavior below
+is not described as already supporting rebounds.
+
+This follow-up is not implemented yet. Once delivered, its assessment/handover,
+subjective reidentification, reachable placement and search rules supersede the
+older inspected-only, World-token memory, bounded-edge-grip and missing-object
+rules below. Existing sections remain the implementation baseline and history.
+
 ### Remembered supplies — 16 October 2026
 
 Recognized knowledge, successful inspection and confirmed own deferral survive
