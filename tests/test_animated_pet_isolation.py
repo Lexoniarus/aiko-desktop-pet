@@ -100,7 +100,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
             ambient=self.animation.ambient,
         )
         self.addCleanup(self.root.destroy)
-        self.addCleanup(self.anim.stop)
+        self.addCleanup(self.anim.close)
 
     def _place_x(self, value: float) -> None:
         self.settings.x = round(value)

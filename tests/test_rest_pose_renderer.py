@@ -22,6 +22,7 @@ class RestPoseRendererTests(unittest.TestCase):
         self.root.withdraw()
         self.render = RestPoseRenderer(self.root)
         self.addCleanup(self.root.destroy)
+        self.addCleanup(self.render.clear)
 
     def test_head_sways_but_leg_pixels_remain_stationary(self) -> None:
         original = tk.PhotoImage(master=self.root, width=192, height=208)
