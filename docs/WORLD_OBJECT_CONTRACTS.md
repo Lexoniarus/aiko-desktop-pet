@@ -15,10 +15,10 @@ semantic contracts to their implemented owners and Python APIs.
 
 ## Confirmed product decisions
 
-### Planned offers, placement and search follow-up — 16 October 2026
+### Current offers, placement and search contracts — 16 October 2026
 
 The complete [follow-up plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md) records the
-agreed next behavior and small delivery steps. It covers assessed cursor offers,
+agreed behavior, delivery commits and verification. It covers assessed cursor offers,
 moving resting portions, impact-dependent damped settling hops, subjective
 identity and quantity, and visible bounded search. Technical World IDs must not prove that
 an unobserved new find is the old portion. Found-before-missing and
@@ -33,13 +33,34 @@ settling, safe trajectories and the corresponding verification cases.
 The selected implementation approach is a small own-physics policy, not Pymunk.
 The follow-up plan records pure analytic motion, signed immutable state,
 state-dependent cleanup, exact runtime rollback versus durable ground recovery,
-and substeps S9a-S9d. These remain future changes; current fall behavior below
-is not described as already supporting rebounds.
+and substeps S9a-S9d. These are implemented on the feature branch; practical
+acceptance of the combined changes remains pending.
 
-This follow-up is not implemented yet. Once delivered, its assessment/handover,
-subjective reidentification, reachable placement and search rules supersede the
+Its assessment/handover, subjective reidentification, reachable placement and
+search rules supersede the
 older inspected-only, World-token memory, bounded-edge-grip and missing-object
-rules below. Existing sections remain the implementation baseline and history.
+rules below. Older dated sections remain historical where superseded.
+
+- Assessment belongs to subjective memory and can happen during a recognized
+  cursor offer. Release-time willingness is rechecked; a readable handover cue
+  precedes full consumption without repeated inspection.
+- Current geometric tracks map to execution handles only at the application
+  boundary. Disconnected finds use type/place hypotheses and one-to-one stock
+  associations, not technical identity. Checked missing places and unresolved
+  consumed-find witnesses persist in memory v2; v1 history still loads.
+- Search has one active-time budget, visible gaze/short ordinary walking and
+  identified feedback. Currently useful stock can replace a stale-place search.
+- Resting portions can become user-held without changing ID. Cancellation or
+  off-monitor release returns existing portions to valid source ground; new
+  chooser portions are removed. Moving portions cannot be collected.
+- Free motion is falling, optionally bouncing, then resting. Impact energy
+  drives damped hops with a finite tail and continuous inward completion.
+  Shared bounds apply to scripted placement, put-down, cancellation, geometry
+  updates, settlement and durable recovery. The special edge grip is removed.
+- Runtime checkpoints preserve signed velocities and progress. Durable World
+  v1 stores valid ground targets; actions, capture and motion are not resumed.
+- Food/drink thresholds, care origin, frame-4 acquisition, reverse detach and
+  complete consumption playback remain unchanged.
 
 ### Remembered supplies — 16 October 2026
 

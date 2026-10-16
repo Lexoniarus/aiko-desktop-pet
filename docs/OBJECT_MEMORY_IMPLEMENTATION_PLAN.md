@@ -7,10 +7,12 @@ See the [current architecture](ARCHITECTURE.md),
 [existing delivery ledger](WORLD_OBJECT_IMPLEMENTATION_PLAN.md).
 
 The later [offer, placement and search plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md)
-is the agreed, not-yet-implemented follow-up. It separates technical World IDs
+records the implemented follow-up and pending combined practical acceptance.
+It separates technical World IDs
 from subjective reidentification, reconciles quantities and remembered places,
 and adds visible bounded search. The delivery evidence below describes the
-earlier instance-keyed memory implementation, not those future capabilities.
+earlier instance-keyed memory implementation; the later plan records the current
+subjective-record model and memory v2 conversion.
 
 ## Contract and ownership
 

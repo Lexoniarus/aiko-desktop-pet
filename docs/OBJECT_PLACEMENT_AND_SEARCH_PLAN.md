@@ -2,7 +2,7 @@
 
 Agreed product behavior: 16 October 2026.
 Code baseline: `e7ebe7e` on `feature/world-foundation`.
-Status: implementation authorized; S0 records the agreed plan, T0 is next.
+Status: implementation and S14 test handoff delivered; S15 final integration checks are in progress. Combined practical acceptance remains pending.
 Rechecked against the same code baseline after the user's own-physics decision.
 
 This is the complete follow-up plan for recognized cursor offers, moving resting
@@ -12,8 +12,8 @@ the [current architecture](ARCHITECTURE.md),
 [World contracts](WORLD_OBJECT_CONTRACTS.md),
 [persistent memory delivery](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md) and
 [World/dialogue cleanup review](WORLD_DIALOGUE_CLEANUP_REVIEW.md).
-Current implementation reports remain historical evidence. Statements below
-describe the agreed target behavior, not features already delivered.
+Earlier implementation reports remain historical evidence. The delivery table
+records the commits implementing the agreed behavior below.
 
 ## Scope and preserved behavior
 
@@ -500,8 +500,8 @@ S identifiers remain stable so contracts and physics references do not move.
 | S10 | Add existing-portion user acquisition and source-aware cancellation to the shared gesture | Same ID, exclusive custody, stale revision, failed/lost capture and delayed/released input | `44ac20e`: one gesture owner, explicit same-instance acquisition and source-aware cancel/off-monitor return; 19 World state + 16 GUI tests and Ruff/Mypy/Pyright green. |
 | S11 | Add selective Windows resting-object input and connect the gesture | Visible-pixel targeting, no focus/contact regression, normal release/capture behavior | `ce936b9`: resting-only pixel input and nonactivating native projection; 1 native Windows hit-test (1x/2x) + 17 GUI tests and Ruff/Mypy/Pyright green. |
 | S12 | Connect every production placement route and remove the special edge grip | Normal arrival/grasp still checked at frame 4; own put-down and gesture return remain reachable | `d328e2a`: edge exception removed, ordinary frame-4 reach/contact blending retained; delayed gesture release guard and start save points. 30 ground/World tests + 18 GUI tests, Ruff/Mypy/Pyright green. Native restart matrix reduced to one representative; both sides/scales remain in pure geometry and native input tests. |
-| S13 | Finish residual cleanup after the behavior-specific replacements already delivered in their owning stages | No orphan fixtures/helpers or redundant flow combinations; unique grasp/clip/interruption and save coverage retained | S13a `ce36420`: retain ambiguous consumed-find evidence and reconcile fully explained checked groups; 85 object tests including wire restart and two-place cases, Windows/Linux-targeted typing and Ruff green. S13b this revision: unused test return removed, stale fall/assessment names corrected, search uses the latest remembered place and found feedback identifies the new record. 20 focused tests plus the preceding 18 GUI checks and Ruff/Mypy/Pyright green. No obsolete edge/fall-only/test-only pickup symbols remain in source/tests/tools. |
-| S14 | Update architecture, contracts, save docs, changelog and isolated smoke scenarios | Documentation matches delivered APIs and actual verification; practical checklist below | Planned |
+| S13 | Finish residual cleanup after the behavior-specific replacements already delivered in their owning stages | No orphan fixtures/helpers or redundant flow combinations; unique grasp/clip/interruption and save coverage retained | S13a `ce36420`: retain ambiguous consumed-find evidence and reconcile fully explained checked groups; 85 object tests including wire restart and two-place cases, Windows/Linux-targeted typing and Ruff green. S13b `90a6d66`: unused test return removed, stale fall/assessment names corrected, search uses the latest remembered place and found feedback identifies the new record. 20 focused tests plus the preceding 18 GUI checks and Ruff/Mypy/Pyright green. No obsolete edge/fall-only/test-only pickup symbols remain in source/tests/tools. |
+| S14 | Update architecture, contracts, save docs, changelog and isolated smoke scenarios | Documentation matches delivered APIs and actual verification; practical checklist below | This revision: current architecture/contracts/save docs/changelog, one/two-portion starter and updated practical checklist; 6 starter tests, static gates and actual isolated fresh/restart launch passed. |
 | S15 | Run final regression and hand over a fully pushed practical-test build | Full gates/CI, real Windows evidence and explicit test readiness; PR remains unmerged | Planned |
 
 S4/S5 prepare the typed model and policies without exposing a half-converted
@@ -564,8 +564,9 @@ S9d deepens their tests and visual calibration rather than postponing correctnes
   preserves learned history without treating legacy tokens as recognition.
   Validate missing association references, self-links and invalid cardinality;
   preserve replacement-World provenance separately from visual identity.
-- Motion uses immutable signed velocity, target x, cumulative active elapsed,
-  contact count and flight/ground-completion mode. Parameters are immutable
+- Motion uses immutable signed velocity, cumulative active elapsed,
+  contact count and flight/ground-completion mode. The safe target is derived
+  from current bounds rather than stored twice. Parameters are immutable
   injected values from Balance. Contact math consumes residual elapsed time;
   only final completion produces collectible resting state. Snapshot rollback
   is exact; durable recovery stores valid ground, without observing that recovery.
@@ -751,3 +752,13 @@ CI harness correction: S10 Windows setup hit the same intermittent 90-second sub
 CI portability correction: native item-window test now guards WinDLL inside the test, so Linux type analysis sees the platform boundary. Native Windows hit testing and Linux-targeted Pyright both pass.
 
 S13 reconciliation review: a consumed ambiguous finding is a superseded, unavailable witness while possible sources remain. It cannot be visually reunited or pursued. Distinct simultaneous sightings remove impossible links; checked groups retire only with enough one-to-one findings. Wire v2 already represents these values; no format or nutrition change. This closes the multi-portion consumption case instead of deleting unresolved evidence.
+
+Final contract corrections before S15: `3ec6f4c` controls elapsed time in two
+chooser-effect tests now that gesture start saves through the shared active-time
+owner (11 targeted checks pass). `17cf4ac` makes live reach changes settle
+continuously, while recovery normalizes directly (16 focused World/geometry and
+18 GUI checks pass). The following World validation commit prepares all motion
+updates before committing and shares reachable-footprint rejection (32 focused
+World checks and static gates pass). These preserve the existing save boundary.
+The actual starter ran fresh with two Onigiri and reopened the same isolated
+save with `--needs hungry`; it exited cleanly without touching the normal save.

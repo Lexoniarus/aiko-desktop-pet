@@ -8,10 +8,10 @@ The accepted [persistent object knowledge plan](OBJECT_MEMORY_IMPLEMENTATION_PLA
 extends subjective memory and remembered supply retrieval in small delivery steps.
 
 The agreed [offer, placement and search follow-up plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md)
-records future changes for assessed cursor offers, movable portions, reachable
+records delivery of assessed cursor offers, movable portions, reachable
 placement with impact-dependent damped hops, and subjective stock/search
-reconciliation. It is planning only; the implementation description below remains
-the current baseline.
+reconciliation. The implementation below describes these owners; the plan records
+commit evidence and the remaining practical acceptance.
 The follow-up explicitly selects a small owned analytic motion policy over
 Pymunk: pure World calculations, existing active-time scheduling and immutable
 checkpoints, with no additional runtime dependency.
@@ -404,14 +404,20 @@ food and item-asset IDs; it does not copy nutrition, labels or sprite data.
 
 `pet/mind/object_perception.py`, `object_knowledge.py`, `object_memory.py` and
 `object_intentions.py` separate timed recognition, learned facts and stable
-need-based goals. Knowledge distinguishes identity, successful inspection and
+need-based goals. Knowledge distinguishes identity, assessment and
 confirmed own deferral; observed relocation preserves learning. Recognized facts
-persist until consumption or confirmed absence; only unknown sightings expire.
+persist across restart; checked absence marks a place missing rather than erasing
+all its learned history. Only unknown sightings expire.
 `application/object_awareness.py` is the objective-to-subjective boundary.
 Unseen moves do not update memory. The existing tick observes objects after
 need progression and before presentation. Faster physics/render callbacks do
 not run a second mind loop. Object gaze reuses sixteen directions and does not
 set the user-attention flag that would block walking toward the goal.
+`application/object_tracking.py` associates only current spatial sightings and
+maps them to execution handles. Subjective memory IDs are independent of World
+IDs. `object_stock.py` supplies one-to-one matching/count uncertainty; the memory
+owner retires explained checked places and keeps ambiguous consumption witnesses
+unavailable until evidence resolves them. No parallel inventory is maintained.
 
 `pet/movement/controller.py` shares the existing walking executor between random
 and deliberate goals; `auto_walk` gates only random departures. `WalkDriver`
@@ -420,12 +426,14 @@ still reports actual clamped desktop displacement, with no second pet position.
 `application/object_interaction.py` owns explicit notice, approach, pickup,
 held inspection, recognition, decision, consumption and put-down phases. The
 mind distinguishes investigate from consume, so a new noticed item can prompt
-investigation without current appetite. Subjective examined knowledge prevents
+investigation without current appetite. Subjective assessed knowledge prevents
 repeated handling; later needs can activate known deferred portions.
-The coordinator preserves that consume purpose: known inspected stock uses recall,
+The coordinator preserves that consume purpose: known assessed stock uses recall,
 pickup and full consumption without repeating inspection/recognition/desire cues.
 Changed needs safely lead to refusal/put-down; conflicting evidence restores
-inquiry. Confirmed local absence has its own identified missing feedback.
+inquiry. Confirmed local absence starts bounded search with existing gaze/walk
+assets. A useful find can end search early; the coordinator owns the sole search
+budget and identified search/find/missing feedback.
 Identified animation events acquire at source frame 4, finish pickup at pose 8
 and release during reverse frame 4→3. The animator changes no needs.
 `application/object_feedback.py` correlates phase cues and completion receipts.
@@ -449,29 +457,41 @@ instance handle, native capture, pointer geometry, offer-preview IDs and release
 or cancellation. Named ports keep appetite/feedback and custody decisions with
 the existing application owners. There are no shadow cursor fields or retired
 forwarding properties in the runtime. `ui/world_view.py` renders snapshots in small
-passive native windows; `FoodOverlay` draws consumables above the character
+native windows; resting items accept visible-pixel presses, while moving/carried
+items remain click-through and all item windows remain nonactivating.
+`FoodOverlay` draws consumables above the character
 without additional hand masks. Calibrated eating anchors come from reproducible
-asset preparation. Examined deferred portions preserve memory but release
-incidental object gaze; only unexamined observations or active goals attract it.
-`TaskbarTrack.ground_approach()` resolves the closest full-window standing pose
-and whether a bounded edge grip is needed; `can_grasp_ground()` reuses that
-geometry for actual arrival/reach checks, including the pickup event recheck.
-The host skips ground-to-hand blending only for an edge grip, so acquisition
-snaps at frame 4. Put-down uses the current body/foot ground anchor and the
-existing World transition; confirmed own placement updates subjective memory.
+asset preparation. Assessed deferred portions preserve memory but release
+incidental object gaze; only unassessed observations or active goals attract it.
+`TaskbarTrack` derives a reachable ground inset from ordinary standing bounds
+and reach. `WorldSurface.ground_interval()` intersects it with each footprint;
+every placement/recovery route uses this rule. There is no special edge grip.
+`ground_approach()` and `can_grasp_ground()` retain actual arrival/reach checks,
+including frame-4 revalidation and ordinary ground-to-hand blending.
+`world/motion.py` calculates analytic flights, exact contacts, damped rebounds
+and continuous low-energy inward completion. Immutable motion belongs to World
+snapshots; `WorldState.advance_motion()` alone commits it. Parameters come from
+validated balance JSON through `infrastructure/world_motion.py`. Geometry is
+synchronized before frames, gestures and save snapshots; scaling does not reset
+velocity or multiply World coordinates. Only final settlement grants rest.
 Chooser press creates one portion; recognized willingness is signaled while
 held, then release offers or falls. Accepted handover holds the last pickup pose
-and enters inspection/decision before the existing complete consumption clip.
-Escape/capture loss
-cancels. Existing native toolbar/game rules remain in their owners.
+and acknowledges a known assessed offer before full consumption. Unknown ground
+finds retain inspection/decision. Resting-item press acquires the same portion
+through the same gesture. Escape/capture loss or off-monitor release removes new
+chooser portions and returns existing portions to their safe source place.
+Delayed gesture requests recheck the button after animated interruption.
+Existing native toolbar/game rules remain in their owners.
 All three item presentations use manifest-referenced binary-alpha display copies
 prepared reproducibly from unchanged native 1x/2x originals for Windows color-key
 transparency; no runtime Pillow or replacement artwork is introduced.
 
 `infrastructure/world_codec.py` adds an optional separately versioned World
 section inside outer save v1. Pet, World, settings and adaptive data use one
-atomic StateStore write. `object_memory_codec.py` adds optional version-one
-subjective facts and relative active ages. `WorldSessionSnapshot` captures World
+atomic StateStore write. `object_memory_codec.py` writes optional version-two
+subjective records, assessment, place status/associations and relative active
+ages; its version-one reader converts legacy history without live bindings.
+`WorldSessionSnapshot` captures World
 and memory together for that write. Old saves without memory grant no knowledge;
 transient nonconsumed items recover on valid ground positions without restoring
 actions or fabricating observations of recovery positions. Learned facts remain

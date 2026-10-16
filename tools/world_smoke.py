@@ -11,8 +11,22 @@ from aiko_pet.application.settings import PetSettings
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore, default_save_path
 from aiko_pet.pet.state import PetState
+from aiko_pet.world.contracts import ObjectFootprint
+from aiko_pet.world.state import WorldState
 
 SCENARIOS = {"hungry": (55, 55), "curious": (76, 60), "full": (100, 100)}
+
+
+def seed_stock(world: WorldState, *, x: float, footprint: ObjectFootprint,
+               count: int) -> None:
+    """Fresh isolated arrangements use actual runtime geometry, no fake memory."""
+    if world.snapshot().objects or count not in (1, 2):
+        raise ValueError("Stock arrangements require an empty test World and 1-2 items")
+    surface = world.snapshot().surface
+    spacing = 3 * (footprint.left + footprint.right)
+    for index in range(count):
+        world.place_resting("onigiri", surface.ground_x(x + index * spacing, footprint),
+                            footprint)
 
 
 def prepare_session(
@@ -45,11 +59,17 @@ def main() -> None:
     parser.add_argument("--needs", choices=tuple(SCENARIOS), help=(
         "Set only hunger/energy in this isolated test save; keep World and memory"
     ))
+    parser.add_argument("--stock", choices=("one", "two"), help=(
+        "Place one or two unknown Onigiri near Aiko in a fresh isolated save only"
+    ))
     parser.add_argument("--auto-close-ms", type=int, default=0, help=argparse.SUPPRESS)
     args = parser.parse_args()
     path = args.save_path or (
         Path(tempfile.mkdtemp(prefix="aiko-world-smoke-")) / "state.json"
     )
+    if args.stock is not None and path.exists():
+        parser.error("--stock requires a fresh test save; "
+                     "existing stock is not reseeded")
     print(f"Isolated World test save: {path}", flush=True)
     print(f'Restart: python -m tools.world_smoke --save-path "{path}"', flush=True)
     if args.needs is not None:
@@ -57,6 +77,13 @@ def main() -> None:
     app = DesktopPet(store=prepare_session(
         path, scenario=args.scenario, needs=args.needs,
     ))
+    if args.stock is not None:
+        runtime = app._world
+        image = runtime.view.image("onigiri", app.settings.scale)
+        seed_stock(runtime.world, x=runtime._body_x(),
+                   footprint=ObjectFootprint(image.width() / 2, image.width() / 2),
+                   count=1 if args.stock == "one" else 2)
+        app._save()
     if args.auto_close_ms > 0:
         app.root.after(args.auto_close_ms, app.quit)
     app.run()

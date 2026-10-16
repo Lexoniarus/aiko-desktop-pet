@@ -1,3 +1,18 @@
+## Unreleased — Offers, placement and subjective search
+
+- Remember recognized cursor assessments and acknowledge accepted handovers
+  without repeating inspection, preserving complete consumption and care origin.
+- Separate subjective records from technical World identities, reconcile stock
+  ambiguity and persist memory v2 with v1 conversion. Search checked empty places
+  visibly and briefly; useful finds can end the old search.
+- Let players relocate the same resting portion through visible-pixel input.
+  Cancel existing portions back to their source; keep moving items click-through.
+- Replace the edge-grip exception with shared reachable placement and analytic,
+  impact-dependent damped rebounds. Preserve motion across scale changes and
+  normalize interrupted motion to valid ground on restart, without new dependencies.
+- Consolidate redundant native edge matrices, retain grasp/timing/recovery
+  evidence and extend the isolated starter with one/two-portion arrangements.
+
 ## Unreleased — Dialogue and ownership review
 
 - Preserve the completed dialogue-v2 catalogue, relationship/compound-need

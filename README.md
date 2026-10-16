@@ -1,6 +1,7 @@
 > **World feature test:** Hold a food/drink choice to carry one portion, then
 > offer it on release or drop it onto the taskbar ground. Aiko can notice,
-> approach, pick up and consume wanted objects. Try the isolated
+> approach, pick up and consume wanted objects. Resting portions can be moved;
+> drops settle with damped hops inside normal reach. Try the isolated
 > [test starter](Aiko_World_Test.bat) and [practical checklist](docs/WORLD_SMOKE_TEST.md).
 > Native practical acceptance is still pending on the feature branch.
 
@@ -114,7 +115,7 @@ The source is organized by responsibility rather than by window or feature versi
 | Package | Owns |
 | --- | --- |
 | `aiko_pet/pet/` | The PetState aggregate, care rules, needs, friendship and daily routine |
-| `aiko_pet/world/` | Concrete portions, custody, geometry and time-based falling |
+| `aiko_pet/world/` | Concrete portions, custody, reachable geometry and analytic drop/rebound motion |
 | `aiko_pet/pet/mind/` | Dialogue selection, personality, adaptive habits and workload events |
 | `aiko_pet/application/` | Typed use cases, attention/activity coordination and read contracts |
 | `aiko_pet/ui/view_models/` | German display text and immutable UI projections |

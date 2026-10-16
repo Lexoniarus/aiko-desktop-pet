@@ -12,10 +12,25 @@ from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.world.contracts import ObjectFootprint, WorldSurface
 from aiko_pet.world.state import WorldState
-from tools.world_smoke import prepare_session
+from tools.world_smoke import prepare_session, seed_stock
 
 
 class WorldSmokeTests(unittest.TestCase):
+    def test_stock_arrangement_keeps_real_portions_distinct_and_never_reseeds(self):
+        world = WorldState(WorldSurface(800, 600, 48), build_consumable_definitions(
+            DEFAULT_CATALOG, load_item_catalog(),
+        ))
+        seed_stock(world, x=400, footprint=ObjectFootprint(16, 16), count=2)
+        first, second = world.snapshot().objects
+        self.assertNotEqual(first.instance_id, second.instance_id)
+        self.assertNotEqual(first.position, second.position)
+        self.assertEqual((first.definition_id, second.definition_id),
+                         ("onigiri", "onigiri"))
+        before = world.snapshot()
+        with self.assertRaises(ValueError):
+            seed_stock(world, x=400, footprint=ObjectFootprint(16, 16), count=1)
+        self.assertEqual(world.snapshot(), before)
+
     def test_curious_profile_reproduces_the_reported_need_levels(self):
         with tempfile.TemporaryDirectory() as folder:
             store = prepare_session(Path(folder) / "state.json", scenario="curious")

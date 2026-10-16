@@ -1,4 +1,4 @@
-# World investigation and consumption — practical retest
+# World offers, placement and search — practical retest
 
 The first practical test found missing investigation/feedback, truncated drink
 playback and Magenta item fringes. Corrections are implemented on
@@ -13,6 +13,50 @@ On 16 October, the user confirmed successful edge pickup in the updated build.
 They also reported slow approach/possible repeated loops. Keep that observation
 open for separate behavior analysis; it is not claimed solved by the edge-grip
 correction. The complete left/right 1x/2x native checklist remains to be checked.
+
+
+## Current combined retest — 16 October 2026
+
+The [delivery plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md) records the implementation
+commits and checks. This combined behavior still needs the user's practical
+acceptance; earlier successful retests below describe their earlier builds.
+
+Use `--stock one` or `--stock two` on a **fresh** test profile for one or two
+unknown Onigiri near Aiko, for example:
+
+```powershell
+.\Aiko_World_Test.bat --scenario full --stock two
+```
+
+The existing save is never reseeded; omit `--stock` when reopening its printed
+path. Arrangement uses actual sprite footprints and reachable bounds, and seeds
+no knowledge. Keep the same isolated save to test memory across restart.
+
+- [ ] Hold an offer until Aiko identifies and accepts/refuses it. A watched
+  placement preserves assessment when spatial tracking remains continuous.
+  Later known retrieval must not repeat inspection. An accepted handover has a
+  readable acknowledgement and complete consumption, with human care origin.
+- [ ] Drag a resting portion by a visible pixel. Release elsewhere or offer it.
+  The same portion moves; there is no duplicate. Escape/capture loss/off-monitor
+  release returns an existing portion, while a new chooser portion is discarded.
+- [ ] Move it while Aiko can watch, then while she cannot. Disconnected finds do
+  not inherit hidden identity or special own-deferral experience. Two identical
+  portions remain distinct; one find cannot explain two missing portions.
+- [ ] Trigger a need after moving known stock out of sight. At the empty old
+  place, check left/right gaze and short ordinary walking, bounded search and a
+  single outcome. Reveal useful stock during search; repeat with find-before-need.
+  Neither order should produce repeated empty-place searches.
+- [ ] Drop low and high at both edges and both scales. Height controls rebound
+  strength and the number of hops; low-energy outside releases may finish with
+  a short inward ground slide. Every portion finally rests within normal reach.
+  Aiko cannot collect it during a hop. There is no special edge snap/grip.
+- [ ] Change scale during motion and immediately quit. Reopen the same save:
+  surviving portions recover on valid ground, knowledge remains subjective and
+  no action/capture/search resumes. Recheck ordinary controls and mouse following.
+
+The fast geometric matrix and native Windows visible/transparent-pixel test cover
+both scales; retained real-timer flows cover readable consumption and interruption.
+Automated checks do not substitute for this visual acceptance.
 
 ## Isolated launcher
 
@@ -59,7 +103,7 @@ The normal save path remains rejected, including with this override.
   belongs only to a confirmed deliberate reserve, not an interrupted action.
 - [ ] Known inspected stock uses approach, pickup, full consumption and outcome.
   No repeated inspect/recognize/desire bubbles. Grasp alone changes no needs.
-- [ ] First discovery and cursor handover still use their separate full routes.
+- [ ] First discovery retains investigation; assessed cursor handover uses its own readable acknowledgement and full consumption.
 - [ ] An unwanted known supply lets her follow the cursor normally, including
   after restart and at both sides/scales. A later need activates retrieval.
 - [ ] Close during pickup/holding, after put-down or during consumption, then
@@ -90,12 +134,12 @@ and sprite scale. Repeat visual/input checks at 1× and 2×.
 - [ ] Hold near Aiko until recognition and a willingness/refusal bubble. Release
   in the handover area to offer; holding alone transfers nothing. You may release
   once willingness is signaled, without waiting for preview speech to disappear.
-- [ ] Accepted handover visibly holds the item, examines/identifies it and
-  announces use before consumption. Nutrition/energy changes once at the visible
+- [ ] Accepted assessed handover visibly holds and acknowledges the item, then
+  announces use before complete consumption without repeated identification. Nutrition/energy changes once at the visible
   consumption start. Moving the pointer over Aiko after release must not cut
   the consumption clip short. Human handover retains normal care effects.
-- [ ] Release elsewhere above the taskbar: the portion falls without bouncing
-  and remains resting. Move away from Aiko/active controls to allow approach;
+- [ ] Release elsewhere above the taskbar: the portion falls, rebounds according to impact energy
+  and settles on reachable ground. Move away from Aiko/active controls to allow approach;
   keeping random walks off must not prevent object-directed walking.
 - [ ] In `curious`, drop Onigiri within roughly 1–2 character widths. Aiko notices
   it, comments, approaches, picks up, holds/examines, identifies it and decides
@@ -107,7 +151,7 @@ and sprite scale. Repeat visual/input checks at 1× and 2×.
   without repeating the surprise/discovery story.
   Already inspected stock uses recall, pickup and consumption, followed by the
   outcome; it must not repeat inspect/recognize/desire bubbles. First-time
-  investigation and accepted cursor handover retain their full separate routes.
+  investigation and assessed cursor handover retain their separate entries.
 - [ ] In fresh `curious`, drop Energy Drink: energy around 60 motivates use after
   investigation. Energy rises by up to ten; satiety and digestion do not gain food
   effects. Renewed supply seeking of examined items pauses for 30 seconds after
@@ -125,20 +169,16 @@ and sprite scale. Repeat visual/input checks at 1× and 2×.
   reaches the safe held pose, then puts down. No meal effect occurs from grasp
   or interruption. A deliberate action after consumption cannot recreate food.
 - [ ] Escape/input-capture loss cancels a carry without consumption or a duplicate.
-  Release outside the supported primary-monitor surface discards it with brief
-  feedback. Sleeping/busy Aiko does not silently queue an accepted offer.
+  Release outside the supported primary monitor discards a new portion or returns
+  an existing portion to safe source ground, with brief feedback. Sleeping/busy Aiko does not silently queue an accepted offer.
 - [ ] Check taskbar/screen edges, scale changes, item layering, focus,
   click-through and stacking. Existing toolbar pin, settings and game controls
   stay usable. Ambient speech/notifications do not overwrite object-phase bubbles.
-- [ ] Repeat at both extreme ground edges at 1x and 2x. First place Aiko within
-  about two character widths of the tested edge so the item is observable.
-  Aiko walks to the
-  closest permitted standing position, bends, and the portion snaps into her
-  hand at pickup frame 4. Her full window remains on-screen. In `full`, the
-  drink is examined and put down at her feet, visibly inward from its original
-  edge position; it remains recognized and releases gaze. In `hungry`, verify
-  the same pickup leads to normal consumption. Moving Aiko away before grasp
-  must prevent acquisition from the old standing position.
+- [ ] Repeat drops at both extreme ground edges at 1x and 2x, with Aiko near
+  enough to observe them. The damped drop finishes inward on reachable ground.
+  Aiko uses normal approach and frame-4 grasp; no extra edge reach is granted.
+  If unwanted, she puts it at her feet and releases gaze. Moving her out of
+  ordinary reach before grasp must prevent acquisition.
 - [ ] During Onigiri consumption, the portion overlaps the fingers in front of
   the character at both scales. Compare the [grip calibration](media/world-eating-grip-comparison.png)
   (source composition, not a native capture). Consumables stay in front of the
@@ -163,7 +203,7 @@ path, rather than creating another profile:
 ```
 
 - [ ] Ground portions retain identity and valid position. Unconsumed cursor-held,
-  falling or pet-held portions recover grounded, without resuming input/actions.
+  falling/bouncing or pet-held portions recover grounded, without resuming input/actions.
 - [ ] Consumed portions do not return and effects do not repeat. Saving still
   writes Pet and World together atomically with outer schema version 1.
 - [ ] Learned identity, inspection and confirmed own placement survive reopening.
@@ -176,7 +216,9 @@ path, rather than creating another profile:
   Aiko declines visibly and puts it down. A remembered missing target is searched
   locally for at most two seconds, then dismissed with one bubble.
 
-## Automated evidence
+## Historical automated evidence
+
+Current verification is recorded in the [delivery ledger](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md#small-delivery-steps). Older counts below are historical.
 
 16 October persistent-memory follow-up: 907 tests passed on Windows/Python 3.11
 in 210.6 s, with pinned Ruff, strict Mypy (169 source files) and Pyright green.
