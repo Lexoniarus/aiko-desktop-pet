@@ -475,7 +475,7 @@ class DesktopPet:
         self._preferences.record_toolbar_position(x, y)
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
-        if self._world.interaction.active and not self._world.interaction.approaching:
+        if self._world.interaction.active:
             self._hover.note_sprite_hover(time.monotonic())
             self._hover.show_toolbar()
             return
@@ -483,10 +483,14 @@ class DesktopPet:
             self._world.interrupt(self._contact.enter)
 
     def _on_click_left(self, _event: tk.Event | None = None) -> None:
+        if self._world.interaction.acknowledge_contact():
+            return
         if not self._world.cursor.carrying:
             self._world.interrupt(lambda: self._contact.click("left"))
 
     def _on_click_right(self, _event: tk.Event | None = None) -> None:
+        if self._world.interaction.acknowledge_contact():
+            return
         self._world.interrupt(lambda: self._contact.click("right"))
 
     def _greet_on_start(self) -> None:

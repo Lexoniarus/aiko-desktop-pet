@@ -169,6 +169,24 @@ class WorldGuiTests(unittest.TestCase):
         assert goal is not None
         self.assertEqual(goal.token, old)
 
+    def test_hover_clicks_and_other_cancelled_gesture_keep_the_episode(self):
+        world = self.app._world
+        world.world.place_resting("apple", world._body_x() + 70,
+                                  ObjectFootprint(8, 8))
+        self.recognize()
+        record = world.interaction.memory_id
+        phase = world.interaction.phase
+        friendship = self.app.state.friendship
+        self.app._on_enter()
+        self.app._on_click_left()
+        self.app._on_click_right()
+        world.begin_carry("energy_drink")
+        world.cursor.cancel()
+        self.assertEqual(world.interaction.memory_id, record)
+        self.assertEqual(world.interaction.phase, phase)
+        self.assertEqual(self.app.state.friendship, friendship)
+        self.assertEqual(list(self.app.mind.clicks), [])
+
     def test_absent_remembered_instance_requires_attentive_local_search(self):
         world = self.app._world
         self.app.state.energy = 65

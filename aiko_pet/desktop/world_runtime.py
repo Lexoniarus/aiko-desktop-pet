@@ -124,7 +124,8 @@ class DesktopWorldRuntime:
                 handover=self.interaction.offer_on_release,
                 assess_offer=self._assess_offer, present_offer=self._present_offer,
                 known_instance=self.awareness.known_instance,
-                cancel_feedback=cancel_feedback, save=save, sync_view=self._sync_view,
+                cancel_feedback=self._cancel_offer, save=save,
+                sync_view=self._sync_view,
                 outside=lambda: feedback(GERMAN_TEXT.format("world.outside")),
             ),
         )
@@ -261,7 +262,7 @@ class DesktopWorldRuntime:
                 and distance <= self.width * 0.3
                 and self.width * 0.05 <= item.position.height <= self.width * 0.9
             )
-        if self._controls_active():
+        if self._controls_active() and self.interaction.focus_record is None:
             return False
         track = self._track()
         return item.state == ObjectState.RESTING and track.can_grasp_ground(
@@ -289,8 +290,10 @@ class DesktopWorldRuntime:
         blocked = ((self.interaction.active and not self.interaction.approaching
                     and not self.interaction.searching
                     and self.interaction.phase != "found")
-                   or self.cursor.carrying or self._game_open()
-                   or self._controls_active() or self.state.sleeping
+                   or (self.cursor.carrying and self.interaction.focus_record is None)
+                   or self._game_open()
+                   or (self._controls_active()
+                       and self.interaction.focus_record is None) or self.state.sleeping
                    or time.monotonic() < self._playback.until)
         snapshot = self.world.snapshot()
         if self.cursor.carrying and not self.cursor.inside:
@@ -409,6 +412,9 @@ class DesktopWorldRuntime:
         self._request_gesture(lambda: self.cursor.begin(item_id))
 
     def _request_gesture(self, action: Callable[[], None]) -> None:
+        if self.interaction.focus_record is not None:
+            action()
+            return
         dispatching = True
 
         def start() -> None:
@@ -420,6 +426,10 @@ class DesktopWorldRuntime:
 
         self.interrupt(start)
         dispatching = False
+
+    def _cancel_offer(self) -> None:
+        if not self.interaction.active:
+            self._cancel_feedback()
 
     def begin_relocate(self, token: str, revision: int) -> None:
         self._sync_geometry()

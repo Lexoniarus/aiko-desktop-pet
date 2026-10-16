@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from ..pet.animation.character import PlaybackEvent
+from ..pet.balance import BALANCE
 from ..pet.consumption import ConsumptionOrigin
 from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_events import ObjectEvent
@@ -69,6 +70,7 @@ class ObjectInteractionCoordinator:
         self._pending_feedback: ObjectEvent | None = None
         self._auxiliary_key: FeedbackKey | None = None
         self._auxiliary_serial = 0
+        self._next_contact_feedback = 0.0
 
     @property
     def active(self) -> bool:
@@ -130,6 +132,17 @@ class ObjectInteractionCoordinator:
         """Keep at most one aside; never replace an unfinished phase bubble."""
         if self.focus_record is not None and self._auxiliary_key is None:
             self._pending_feedback = event
+
+    def acknowledge_contact(self) -> bool:
+        """Ordinary contact defers to a committed episode, without care effects."""
+        if self.focus_record is None:
+            return False
+        if self._now() >= self._next_contact_feedback:
+            self._next_contact_feedback = self._now() + BALANCE.number(
+                "object_behavior", "contact_feedback_seconds",
+            )
+            self.request_feedback("object_busy")
+        return True
 
     def begin_goal(self, goal: ObjectGoal) -> bool:
         if self.active:

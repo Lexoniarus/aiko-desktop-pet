@@ -23295,6 +23295,9 @@
           "content": "Ah, da ist {item}. Vielleicht wurde mein Vorrat umgestellt."
         }
       ]
-    }
+    },
+    {"id": "object-busy-1", "event": "object_busy", "moods": [], "periods": [], "weekdays": [], "animation": "idle", "cooldown_seconds": 0, "beats": [{"kind": "text", "content": "Warte einen kleinen Moment, ich will mir das da anschauen."}]},
+    {"id": "object-busy-2", "event": "object_busy", "moods": [], "periods": [], "weekdays": [], "animation": "idle", "cooldown_seconds": 0, "beats": [{"kind": "text", "content": "Gleich. Ich bin gerade mit diesem Gegenstand beschäftigt."}]},
+    {"id": "object-busy-3", "event": "object_busy", "moods": [], "periods": [], "weekdays": [], "animation": "idle", "cooldown_seconds": 0, "beats": [{"kind": "text", "content": "Einen Augenblick bitte. Das hier möchte ich erst zu Ende anschauen."}]}
   ]
 }

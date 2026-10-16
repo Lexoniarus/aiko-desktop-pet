@@ -344,6 +344,7 @@
     "bounce_settling_speed": 100.0,
     "bounce_maximum_contacts": 12,
     "bounce_maximum_seconds": 8.0,
+    "contact_feedback_seconds": 8.0,
     "inspection_seconds": 1.0,
     "tracking_gap_seconds": 1.0,
     "tracking_jump_widths": 1.0,
