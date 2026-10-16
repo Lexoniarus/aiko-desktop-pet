@@ -194,3 +194,10 @@ must include a fresh isolated profile plus a separate known-stock restart case.
   retaining false ground-identification expectations. Verified 92 targeted
   perception, awareness, retrieval, coordinator, native Tk, geometry and resource
   tests; Ruff, strict Mypy and Pyright pass. No full local suite run yet.
+- Stages 3-4 commit: `f2ce9f5`.
+- Stage 5: a newly noticed, unclassified portion at a confirmed missing place
+  cannot inherit the missing portion's identity. Learned stock recovery at an
+  unchecked remembered place and explicit observed continuity remain supported.
+  The restart regression also verifies later real identification reconciles the
+  missing portion without double stock. Verified 38 targeted memory, stock,
+  persistence and awareness tests; Ruff, strict Mypy and Pyright pass.

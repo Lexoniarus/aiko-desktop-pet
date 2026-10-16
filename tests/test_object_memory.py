@@ -8,6 +8,34 @@ from aiko_pet.pet.mind.object_perception import ObjectObservation
 
 
 class ObjectMemoryTests(unittest.TestCase):
+    def test_unknown_find_at_confirmed_empty_place_does_not_inherit_identity(self):
+        memory = ObjectMemory()
+        memory.update((ObjectObservation(
+            "old", "cookie", "food", 100, 0, True, 0,
+        ),), now=0)
+        memory.mark_assessed("old")
+        memory.mark_missing("old")
+        # A restart preserves facts, not live sighting continuity.
+        memory = ObjectMemory(memory.export(now=1))
+        record = memory.observe_find(ObjectObservation(
+            "new_sighting", None, None, 100, 0, True, 2,
+        ), now=2, record=None, claimed=frozenset(), maximum_distance=10)
+        self.assertNotEqual(record, "old")
+        found = memory.get(record)
+        assert found is not None
+        self.assertIsNone(found.identity)
+        self.assertIsNone(found.kind)
+        self.assertFalse(found.assessed)
+        old = memory.get("old")
+        assert old is not None
+        self.assertEqual((old.identity, old.place_status), ("cookie", "missing"))
+        memory.observe_find(ObjectObservation(
+            "new_sighting", "cookie", "food", 100, 70, False, 3,
+        ), now=3, record=record, claimed=frozenset(), maximum_distance=10,
+                            preserve_record=True)
+        self.assertIsNone(memory.get("old"))
+        self.assertEqual(len(memory.snapshot()), 1)
+
     def test_found_before_or_after_missing_resolves_one_old_place(self):
         for missing_first in (True, False):
             with self.subTest(missing_first=missing_first):

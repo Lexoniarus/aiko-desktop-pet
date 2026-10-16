@@ -25,6 +25,7 @@ def match_find(
                   and item.recognized and (seen.identity is None or (
                       item.identity == seen.identity and item.kind == seen.kind))]
     local = [item for item in compatible if item.resting == seen.resting
+             and (seen.identity is not None or item.place_status != "missing")
              and math.hypot(item.x - seen.x, item.height - seen.height)
              <= maximum_distance]
     if len(local) == 1:
