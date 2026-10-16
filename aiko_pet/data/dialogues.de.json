@@ -23223,6 +23223,38 @@
           "content": "Bis später. Ich freue mich auf dich."
         }
       ]
+    },
+    {
+      "id": "object-search-local",
+      "event": "object_search",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hier war doch noch {item}. Ich schaue mich kurz um."
+        }
+      ]
+    },
+    {
+      "id": "object-found-supply",
+      "event": "object_found",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah, da ist {item}. Vielleicht wurde mein Vorrat umgestellt."
+        }
+      ]
     }
   ]
 }

@@ -65,7 +65,7 @@ class ObjectRetrievalTests(unittest.TestCase):
             decide=lambda token, origin: decide_object_use(
                 self.memory.get(token), self.pet, origin,
             ), feedback=self.cues.append, cancel_feedback=lambda: None,
-            now=lambda: self.stamp, inspection_seconds=1,
+            now=lambda: self.stamp, inspection_seconds=1, search_seconds=2,
         )
 
     def acknowledge(self):
@@ -212,21 +212,48 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.coordinator.receive_feedback(FeedbackReceipt(key, True))
         self.assertEqual(self.consumed, [])
 
-    def test_confirmed_absence_announces_once_and_clears_only_the_missing_memory(self):
+    def test_confirmed_absence_searches_once_and_marks_only_the_checked_place(self):
         self.coordinator.begin_goal(ObjectGoal(
             self.item.instance_id, "apple", "food", 100, 0, 0, "consume",
         ))
         self.acknowledge()
         # A valid paired save may omit a terminal instance while memory is stale.
         self.world.restore_snapshot(replace(self.world.snapshot(), objects=()))
-        self.coordinator.missing()
-        self.coordinator.missing()
+        self.coordinator.start_search()
+        self.coordinator.start_search()
+        self.assertEqual(self.coordinator.phase, "search")
+        self.assertEqual(self.memory.snapshot()[0].place_status, "missing")
+        self.acknowledge()
+        self.stamp = 2.1
+        self.coordinator.update()
         self.assertEqual(self.coordinator.phase, "missing")
         self.assertEqual([cue.event for cue in self.cues].count("object_missing"), 1)
-        self.assertEqual(self.memory.snapshot(), ())
+        self.assertEqual(self.memory.snapshot()[0].place_status, "missing")
         self.acknowledge()
         self.assertEqual(self.done, [(self.item.instance_id, False)])
         self.assertEqual(self.consumed, [])
+
+    def test_found_supply_ends_search_and_stale_search_receipt_cannot_restart_it(self):
+        self.coordinator.begin_goal(ObjectGoal(
+            self.item.instance_id, "apple", "food", 100, 0, 0, "consume",
+        ))
+        self.acknowledge()
+        self.coordinator.start_search()
+        old = self.coordinator.feedback_key
+        found = self.world.place_resting("apple", 200, ObjectFootprint(8, 8))
+        self.memory.update((ObjectObservation(
+            found.instance_id, "apple", "food", 200, 0, True, 1,
+        ),), now=1)
+        self.coordinator.found(ObjectGoal(
+            found.instance_id, "apple", "food", 200, 0, 1, "investigate",
+        ))
+        self.assertEqual(self.coordinator.phase, "found")
+        self.coordinator.receive_feedback(FeedbackReceipt(old, True))
+        self.assertEqual(self.coordinator.phase, "found")
+        self.acknowledge()
+        self.assertEqual(self.coordinator.memory_id, found.instance_id)
+        self.assertEqual(self.coordinator.phase, "notice")
+        self.assertEqual(self.done, [])
 
     def test_cancelling_approach_does_not_claim_absence_or_erase_known_stock(self):
         self.coordinator.begin_goal(ObjectGoal(

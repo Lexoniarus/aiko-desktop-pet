@@ -94,7 +94,6 @@ class DesktopWorldRuntime:
         self._last_active = active_uptime_seconds()
         self._last_real = time.monotonic()
         self.now = 0.0
-        self._search_at: float | None = None
         self._timer: str | None = None
         self._event_timer: str | None = None
         self._events: deque[PlaybackEvent] = deque(maxlen=128)
@@ -110,6 +109,7 @@ class DesktopWorldRuntime:
             now=lambda: self.now, inspection_seconds=BALANCE.number(
                 "object_behavior", "inspection_seconds",
             ),
+            search_seconds=BALANCE.number("object_behavior", "search_seconds"),
         )
         animated.on_playback = self._queue_event
         self.cursor = CursorItemGesture(
@@ -284,7 +284,9 @@ class DesktopWorldRuntime:
         if self._closed:
             return
         self.interaction.update()
-        blocked = ((self.interaction.active and not self.interaction.approaching)
+        blocked = ((self.interaction.active and not self.interaction.approaching
+                    and not self.interaction.searching
+                    and self.interaction.phase != "found")
                    or self.cursor.carrying or self._game_open()
                    or self._controls_active() or self.state.sleeping
                    or time.monotonic() < self._playback.until)
@@ -313,9 +315,26 @@ class DesktopWorldRuntime:
             if gaze is not None else None
         )
         self.cursor.observe_offer()
+        if self.interaction.searching:
+            known = self.awareness.memory.get(goal.token) if goal is not None else None
+            if (goal is not None and goal.token != self.interaction.memory_id
+                    and decide_object_use(known, self.state).consume):
+                self.interaction.found(goal)
+            elif blocked:
+                self.interaction.interrupt(lambda: None)
+            else:
+                remembered = self.awareness.memory.get(self.interaction.memory_id or "")
+                if (remembered is not None and remembered.recognized
+                        and not decide_object_use(remembered, self.state).consume):
+                    self.interaction.interrupt(lambda: None)
+                    return
+                self._show_search()
+                return
+        if self.interaction.phase == "found":
+            self._walk.movement.set_goal(None)
+            return
         if blocked or goal is None:
             self._walk.movement.set_goal(None)
-            self._search_at = None
             if self.interaction.approaching:
                 self.interaction.interrupt(lambda: None)
             return
@@ -335,23 +354,31 @@ class DesktopWorldRuntime:
             return
         self._walk.movement.set_goal(approach.standing_x)
         if not approach.arrived(self.settings.x or 0):
-            self._search_at = None
             return
         instance = self.awareness.instance_for_record(goal.token)
         if instance is not None and self._can_acquire(instance):
             self._walk.movement.set_goal(None)
             self._capture_contact(instance)
             self.interaction.arrive()
-            self._search_at = None
         else:
-            self._search_at = self.now if self._search_at is None else self._search_at
-            if self.now - self._search_at >= BALANCE.number(
-                "object_behavior", "search_seconds",
-            ):
-                self.awareness.intentions.cancel(self.now)
-                self._walk.movement.set_goal(None)
-                self._visual.object_target = None
-                self.interaction.missing()
+            # A pending sensory notice is not evidence of an empty location.
+            if not self.awareness.checked_empty(goal.x, width=self.width, now=self.now):
+                return
+            self.interaction.start_search()
+
+    def _show_search(self) -> None:
+        track = self._track()
+        progress = self.interaction.search_progress
+        direction = -1 if progress < .33 else 1 if progress < .66 else 0
+        base = track.clamp_x(track.left + self.interaction.search_x - self.width / 2,
+                             int(self.width))
+        stride = self.width * BALANCE.number("object_behavior", "search_stride_widths")
+        self._walk.movement.set_goal(track.clamp_x(base + direction * stride,
+                                                   int(self.width)))
+        self._visual.object_target = (
+            base + self.width / 2 + (direction or 1) * self.width,
+            track.ground_y - self.width * .15,
+        )
 
     def interrupt(self, action: Callable[[], None]) -> None:
         self.awareness.intentions.cancel(self.now)

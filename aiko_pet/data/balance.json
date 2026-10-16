@@ -340,6 +340,7 @@
     "inspection_seconds": 1.0,
     "tracking_gap_seconds": 1.0,
     "tracking_jump_widths": 1.0,
-    "memory_place_widths": 0.25
+    "memory_place_widths": 0.25,
+    "search_stride_widths": 0.15
   }
 }

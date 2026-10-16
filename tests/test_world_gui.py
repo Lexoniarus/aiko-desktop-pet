@@ -169,10 +169,18 @@ class WorldGuiTests(unittest.TestCase):
         world.now += 1
         world.update(time.monotonic())
         self.assertIsNotNone(world.awareness.memory.get(record))
+        self.assertEqual(world.interaction.phase, "search")
+        self.complete_feedback()
         world.now += 1.1
         world.update(time.monotonic())
+        self.assertEqual(world.interaction.phase, "search")
+        self.assertIsNotNone(world._visual.object_target)
+        world.now += 1
+        world.update(time.monotonic())
         self.assertEqual(world.interaction.phase, "missing")
-        self.assertIsNone(world.awareness.memory.get(record))
+        missing = world.awareness.memory.get(record)
+        assert missing is not None
+        self.assertEqual(missing.place_status, "missing")
         self.complete_feedback()
         world.now += 20
         world.update(time.monotonic())

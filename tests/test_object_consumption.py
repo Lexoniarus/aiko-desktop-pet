@@ -59,6 +59,16 @@ class ObjectConsumptionTests(unittest.TestCase):
         self.assertTrue(self.consume().accepted)
         self.assertEqual(self.mind.last_contact, before)
 
+    def test_place_hypothesis_cannot_consume_a_different_catalog_item(self):
+        self.memory.update((ObjectObservation(
+            self.item.instance_id, "onigiri", "food", 100, 0, False, 1,
+        ),), now=1)
+        world, memory = self.world.snapshot(), self.memory.snapshot()
+        self.assertFalse(self.consume().accepted)
+        self.assertEqual(self.world.snapshot(), world)
+        self.assertEqual(self.memory.snapshot(), memory)
+        self.assertEqual(self.pet.satiety, 50)
+
     def test_failure_after_memory_mutation_restores_all_three_owners(self):
         world, memory = self.world.snapshot(), self.memory.snapshot()
         original = self.memory.forget

@@ -7,7 +7,7 @@ from ..pet.mind.object_events import ObjectEvent
 
 InteractionPhase = Literal[
     "idle", "notice", "approach", "pick_up", "inspect", "recognize", "decide",
-    "handover", "eat", "put_down", "finish", "missing",
+    "handover", "search", "found", "eat", "put_down", "finish", "missing",
 ]
 
 

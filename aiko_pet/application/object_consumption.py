@@ -75,6 +75,9 @@ class ObjectConsumption:
             if definition.definition_id == item.definition_id
         )
         consumable_id = definition.food_id or "energy_drink"
+        known = self._memory.get(memory_id)
+        if known is None or known.identity != consumable_id:
+            return ConsumptionOutcome(False)
         result = prepared.consume_item(consumable_id, origin, now=inputs.wall_time)
         if result is None or result.consumed_item_id is None:
             return ConsumptionOutcome(False)

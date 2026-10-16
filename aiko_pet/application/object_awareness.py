@@ -34,6 +34,19 @@ class ObjectAwareness:
         self._sighting_records: dict[str, str] = {}
         self._world_records: dict[str, str] = {}
         self._owned_records: dict[str, str] = {}
+        self._unnoticed: tuple[ObjectCandidate, ...] = ()
+
+    def checked_empty(self, x: float, *, width: float, now: float) -> bool:
+        """Do not turn pending local sensory evidence into confirmed absence."""
+        if self.perception.attentive_seconds(now) < BALANCE.number(
+            "object_behavior", "notice_seconds",
+        ):
+            return False
+        reach = width * BALANCE.number("object_behavior", "memory_place_widths")
+        return not any(abs(item.x - x) <= reach for item in self.observations
+                       if item.resting) and not any(
+                           abs(item.x - x) <= reach for item in self._unnoticed
+                       )
 
     def record_for_instance(self, instance: str) -> str | None:
         return self._world_records.get(instance)
@@ -108,6 +121,8 @@ class ObjectAwareness:
             tracked, now=now, x=x, height=height,
             width=width, attentive=attentive,
         )
+        noticed = {seen.token for seen in sensed}
+        self._unnoticed = tuple(item for item in tracked if item.token not in noticed)
         previous = {(item.token, item.identity, item.x, item.height, item.resting,
                      item.assessed, item.disposition, item.place_status)
                     for item in self.memory.snapshot()}

@@ -34,7 +34,7 @@ class ObjectInteractionCoordinator:
         memory: ObjectMemory,
         decide: Callable[[str, ConsumptionOrigin], ObjectUseDecision],
         feedback: Callable[[ObjectFeedback], None], cancel_feedback: Callable[[], None],
-        now: Callable[[], float], inspection_seconds: float,
+        now: Callable[[], float], inspection_seconds: float, search_seconds: float,
     ) -> None:
         self.world = world
         self._custody = ObjectCustody(world, memory)
@@ -46,6 +46,10 @@ class ObjectInteractionCoordinator:
         self._memory, self._decide = memory, decide
         self._feedback, self._cancel_feedback = feedback, cancel_feedback
         self._now, self._inspection_seconds = now, inspection_seconds
+        self._search_seconds = search_seconds
+        self._search_started = 0.0
+        self.search_x = 0.0
+        self._next_goal: ObjectGoal | None = None
         self.phase: InteractionPhase = "idle"
         self.instance_id: str | None = None
         self.memory_id: str | None = None
@@ -72,6 +76,15 @@ class ObjectInteractionCoordinator:
         return self.phase in ("notice", "approach")
 
     @property
+    def searching(self) -> bool:
+        return self.phase == "search"
+
+    @property
+    def search_progress(self) -> float:
+        return min(1.0, max(0.0, (self._now() - self._search_started)
+                            / self._search_seconds))
+
+    @property
     def feedback_key(self) -> FeedbackKey:
         return FeedbackKey(self._interaction_id, self._phase_id)
 
@@ -88,6 +101,7 @@ class ObjectInteractionCoordinator:
         self._decision = ObjectUseDecision(False, "unrecognized")
         self._retrieving = False
         self._kind = None
+        self._next_goal = None
 
     def _set_phase(self, phase: InteractionPhase) -> None:
         self.phase = phase
@@ -105,6 +119,7 @@ class ObjectInteractionCoordinator:
         if self.active:
             return False
         self._start(goal.token, ConsumptionOrigin.AUTONOMOUS)
+        self.search_x = goal.x
         self._identity = goal.identity
         known = self._memory.get(goal.token)
         self._kind = known.kind if known is not None else None
@@ -129,13 +144,24 @@ class ObjectInteractionCoordinator:
         return (known is not None and known.recognized and known.assessed
                 and known.identity == self._identity and known.kind == self._kind)
 
-    def missing(self) -> None:
-        """Only the caller's completed attentive local search may establish absence."""
+    def start_search(self) -> None:
+        """The caller has attentively arrived at an empty remembered place."""
         if self.phase != "approach" or self.memory_id is None:
             return
-        self._memory.forget(self.memory_id)
-        self._set_phase("missing")
-        self._announce("object_missing")
+        self._memory.mark_missing(self.memory_id)
+        self._search_started = self._now()
+        self._set_phase("search")
+        self._stop()
+        self._announce("object_search")
+        self.update()
+
+    def found(self, goal: ObjectGoal) -> None:
+        if not self.searching:
+            return
+        self._next_goal = goal
+        self._identity = goal.identity
+        self._set_phase("found")
+        self._announce("object_found")
         self.update()
 
     def arrive(self) -> None:
@@ -333,6 +359,15 @@ class ObjectInteractionCoordinator:
             elif self.phase == "missing" and self._cue_done:
                 self._finish(False)
                 self._stop()
+            elif (self.phase == "search" and self.search_progress >= 1
+                  and self._cue_done):
+                self._set_phase("missing")
+                self._announce("object_missing")
+            elif self.phase == "found" and self._cue_done:
+                goal = self._next_goal
+                self._set_phase("idle")
+                if goal is not None:
+                    self.begin_goal(goal)
             if self.phase == previous:
                 return
 

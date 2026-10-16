@@ -64,7 +64,7 @@ class ObjectInteractionTests(unittest.TestCase):
             record_for_instance=lambda token: token,
             decide=lambda _token, _origin: self.decision,
             feedback=feedback, cancel_feedback=lambda: None, now=lambda: self.stamp,
-            inspection_seconds=0,
+            inspection_seconds=0, search_seconds=2,
         )
 
     def start_investigation(self):
