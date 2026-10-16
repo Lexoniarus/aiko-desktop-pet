@@ -487,15 +487,11 @@ class DesktopPet:
             self._world.interrupt(self._contact.enter)
 
     def _on_click_left(self, _event: tk.Event | None = None) -> None:
-        if self._world.interaction.acknowledge_contact():
-            return
         if not self._world.cursor.carrying:
-            self._world.interrupt(lambda: self._contact.click("left"))
+            self._world.request_contact(lambda: self._contact.click("left"))
 
     def _on_click_right(self, _event: tk.Event | None = None) -> None:
-        if self._world.interaction.acknowledge_contact():
-            return
-        self._world.interrupt(lambda: self._contact.click("right"))
+        self._world.request_contact(lambda: self._contact.click("right"))
 
     def _greet_on_start(self) -> None:
         self._contact.greet()

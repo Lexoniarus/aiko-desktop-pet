@@ -412,6 +412,11 @@ class DesktopWorldRuntime:
             track.ground_y - self.width * .15,
         )
 
+    def request_contact(self, action: Callable[[], None]) -> None:
+        """Ordinary input respects commitment; explicit commands use interrupt."""
+        if not self.interaction.acknowledge_contact():
+            self.interrupt(action)
+
     def interrupt(self, action: Callable[[], None]) -> None:
         self.awareness.intentions.cancel(self.now)
         self._walk.movement.set_goal(None)
