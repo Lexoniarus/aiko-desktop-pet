@@ -35,14 +35,14 @@ class WorldGuiTests(unittest.TestCase):
             self.app.state.energy = 100
             world.update(time.monotonic())
             stale(FeedbackReceipt(old.key, True))
-            self.assertFalse(world._offer_ready)
+            self.assertFalse(world.cursor.offer_ready)
             self.app.state.energy = 40
             world.update(time.monotonic())
             current, done = callbacks[-1]
             stale(FeedbackReceipt(old.key, False))
-            self.assertTrue(world._offer_ready)
+            self.assertTrue(world.cursor.offer_ready)
             done(FeedbackReceipt(current.key, True))
-            self.assertTrue(world._offer_ready)
+            self.assertTrue(world.cursor.offer_ready)
 
     def setUp(self):
         try:
@@ -308,9 +308,9 @@ class WorldGuiTests(unittest.TestCase):
         ):
             world.begin_carry("energy_drink")
             self.recognize()
-            token = world.carry_id
+            token = world.cursor.instance_id
             assert token is not None
-            world.release()
+            world.cursor.release()
             self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
             self.finish_inspection()
             self.assertEqual(world.world.get(token).state, ObjectState.CONSUMED)
@@ -322,9 +322,9 @@ class WorldGuiTests(unittest.TestCase):
             for now in (1, 1.3, 1.7):
                 world.now = now
                 world.update(time.monotonic())
-            token = world.carry_id
+            token = world.cursor.instance_id
             assert token is not None
-            world.release()
+            world.cursor.release()
             self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
 
     def test_restart_restores_portion_on_ground_without_consuming_it(self):
@@ -344,12 +344,12 @@ class WorldGuiTests(unittest.TestCase):
     def test_lost_input_capture_cancels_without_falling_or_consuming(self):
         world = self.app._world
         world.begin_carry("apple")
-        token = world.carry_id
+        token = world.cursor.instance_id
         assert token is not None
         self.assertEqual(self.app.root.grab_current(), self.app.root)
         self.app.root.grab_release()
         world._frame()
-        self.assertIsNone(world.carry_id)
+        self.assertIsNone(world.cursor.instance_id)
         self.assertEqual(world.world.get(token).state, ObjectState.REMOVED)
         self.assertIsNone(self.app.state.food.last_food_id)
 
@@ -387,7 +387,7 @@ class WorldGuiTests(unittest.TestCase):
         self.recognize()
         self.assertEqual(world.interaction.phase, "approach")
         self.assertEqual(app._walk.movement.goal_x, boundary)
-        self.assertFalse(world._eligible(item.instance_id))
+        self.assertFalse(world._can_acquire(item.instance_id))
         for index in range(10):
             app._walk.step(time.monotonic() + index, 1,
                            game_mode=False, attention_active=False)

@@ -323,17 +323,17 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         )
         self.enterContext(
             patch(
-                "aiko_pet.desktop.world_runtime.mouse_buttons_down_windows",
+                "aiko_pet.desktop.cursor_item_gesture.mouse_buttons_down_windows",
                 return_value=(True, False),
             )
         )
         world.begin_carry("energy_drink")
-        token = world.carry_id
+        token = world.cursor.instance_id
         assert token is not None
-        self.run_until(lambda: world._offer_ready, 6)
-        self.assertTrue(world._offer_ready)
+        self.run_until(lambda: world.cursor.offer_ready, 6)
+        self.assertTrue(world.cursor.offer_ready)
         self.assertLess(self.app.state.energy, 61)
-        world.release()
+        world.cursor.release()
         self.assertEqual(world.interaction.phase, "inspect")
         self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
         self.assertLess(self.app.state.energy, 61)

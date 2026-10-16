@@ -27,7 +27,7 @@ class ObjectInteractionCoordinator:
         self, world: WorldState, *, play: Callable[[str], int],
         stop: Callable[[], None], select_item: Callable[[str | None], None],
         consume: Callable[[str, str, ConsumptionOrigin], bool],
-        eligible: Callable[[str], bool], ground_x: Callable[[str], float],
+        can_acquire: Callable[[str], bool], ground_x: Callable[[str], float],
         completed: Callable[[str, bool], None],
         memory: ObjectMemory,
         decide: Callable[[str, ConsumptionOrigin], ObjectUseDecision],
@@ -37,7 +37,7 @@ class ObjectInteractionCoordinator:
         self.world = world
         self._custody = ObjectCustody(world, memory)
         self._play, self._stop, self._select_item = play, stop, select_item
-        self._consume, self._eligible = consume, eligible
+        self._consume, self._can_acquire = consume, can_acquire
         self._ground_x, self._completed = ground_x, completed
         self._memory, self._decide = memory, decide
         self._feedback, self._cancel_feedback = feedback, cancel_feedback
@@ -139,7 +139,7 @@ class ObjectInteractionCoordinator:
 
     def _pick_up(self) -> None:
         assert self.instance_id is not None
-        if not self._eligible(self.instance_id):
+        if not self._can_acquire(self.instance_id):
             self._finish(False)
             self._stop()
             return
@@ -151,7 +151,7 @@ class ObjectInteractionCoordinator:
             self._announce("object_pick_up")
 
     def offer_on_release(self, instance_id: str) -> bool:
-        if self.active or not self._eligible(instance_id):
+        if self.active or not self._can_acquire(instance_id):
             return False
         item = self.world.get(instance_id)
         self._custody.accept_handover_on_release(
@@ -211,7 +211,7 @@ class ObjectInteractionCoordinator:
         detach = event.action_id, "detach_object"
         if (self.phase == "pick_up" and "attach_object" in event.events
                 and attach not in self._effects):
-            if not self._eligible(token):
+            if not self._can_acquire(token):
                 self._finish(False)
                 self._stop()
                 return

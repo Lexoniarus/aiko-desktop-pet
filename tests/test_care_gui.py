@@ -62,7 +62,7 @@ class CareGuiTests(unittest.TestCase):
         assert menu is not None
         menu.buttons["energy_drink"].invoke()
         self.assertAlmostEqual(self.app.state.energy, 11, places=2)
-        self.assertTrue(self.app._world.carrying)
+        self.assertTrue(self.app._world.cursor.carrying)
         self.assertNotIn("energy_drink", self.toolbar.buttons)
         self.assertFalse(self.app._hover.keep_open)
         self.toolbar.refresh()

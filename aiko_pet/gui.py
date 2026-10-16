@@ -428,7 +428,7 @@ class DesktopPet:
 
     def _object_feedback_active(self) -> bool:
         return hasattr(self, "_world") and (
-            self._world.interaction.active or self._world.carrying
+            self._world.interaction.active or self._world.cursor.carrying
         )
 
     def _set_game_mode(self, enabled: bool) -> None:
@@ -479,11 +479,11 @@ class DesktopPet:
             self._hover.note_sprite_hover(time.monotonic())
             self._hover.show_toolbar()
             return
-        if not self._world.carrying:
+        if not self._world.cursor.carrying:
             self._world.interrupt(self._contact.enter)
 
     def _on_click_left(self, _event: tk.Event | None = None) -> None:
-        if not self._world.carrying:
+        if not self._world.cursor.carrying:
             self._world.interrupt(lambda: self._contact.click("left"))
 
     def _on_click_right(self, _event: tk.Event | None = None) -> None:
@@ -529,8 +529,8 @@ class DesktopPet:
         self, action: str, *, food_id: FoodId | None = None,
     ) -> None:
         """Run a care command through the shared application boundary."""
-        if self._world.carrying:
-            self._world.cancel_carry()
+        if self._world.cursor.carrying:
+            self._world.cursor.cancel()
         if (self._world.interaction.active
                 or self._world.awareness.intentions.goal is not None):
             self._world.interrupt(lambda: self.interact(action, food_id=food_id))

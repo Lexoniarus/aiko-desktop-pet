@@ -1,3 +1,17 @@
+## Unreleased — Dialogue and ownership review
+
+- Preserve the completed dialogue-v2 catalogue, relationship/compound-need
+  selection, authored stories and cancellable beat playback on the World branch.
+- Keep story pacing in validated JSON and remove obsolete object event families,
+  unused coordinator state and the test-only pickup entry point.
+- Give confirmed World/memory custody changes one application service and cursor
+  input its own desktop owner; name consumption commits separately from playback.
+- Scope standalone game dialogue history per game while embedded games retain
+  Aiko's session mind. Use responsibility-named modules without old forwarders.
+- Close isolated Tk image owners before destroying fixtures, correct the v2
+  placeholder regression and consolidate duplicate/long native World cases.
+  Preserve the edge/scale, restart, interruption and readable animation checks.
+
 ## Unreleased — World practical-test corrections
 
 - Separate learned object knowledge from current sensory observations. Preserve

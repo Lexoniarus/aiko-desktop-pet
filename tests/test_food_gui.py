@@ -51,7 +51,7 @@ class FoodGuiTests(unittest.TestCase):
         self.assertEqual(self.pet.state.satiety, 75)
         menu.buttons["apple"].invoke()
         self.assertIsNone(self.pet._hover.food_menu)
-        token = self.pet._world.carry_id
+        token = self.pet._world.cursor.instance_id
         assert token is not None
         self.assertEqual(self.pet._world.world.get(token).definition_id, "apple")
         self.assertIsNone(self.pet.state.food.last_food_id)
@@ -105,7 +105,7 @@ class FoodGuiTests(unittest.TestCase):
         )
         self.assertEqual(self.pet.state.food.remaining_digest_minutes, 0)
         self.assertAlmostEqual(self.pet.state.fun, old_fun, places=1)
-        token = self.pet._world.carry_id
+        token = self.pet._world.cursor.instance_id
         assert token is not None
         self.assertEqual(self.pet._world.world.get(token).definition_id, "energy_drink")
         self.assertIsNone(self.pet._animated.food_overlay.current_food_id)

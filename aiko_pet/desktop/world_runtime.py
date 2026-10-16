@@ -14,7 +14,7 @@ from ..application.active_time import ActiveSessionClock, SessionInputs
 from ..application.controller import CareOutcome
 from ..application.object_awareness import ObjectAwareness
 from ..application.object_consumption import ObjectConsumption
-from ..application.object_feedback import FeedbackKey, FeedbackReceipt, ObjectFeedback
+from ..application.object_feedback import FeedbackReceipt, ObjectFeedback
 from ..application.object_interaction import ObjectInteractionCoordinator
 from ..application.session import WorldSessionSnapshot
 from ..application.settings import PetSettings
@@ -39,13 +39,12 @@ from ..ui.world_view import WorldView
 from ..world.contracts import (
     ObjectFootprint,
     ObjectState,
-    WorldPosition,
     WorldSnapshot,
     WorldSurface,
 )
 from ..world.state import WorldOperationError, WorldState
+from .cursor_item_gesture import CursorItemGesture, CursorItemPorts
 from .geometry import GroundApproach, TaskbarTrack
-from .global_input import mouse_buttons_down_windows
 from .visual_observation import DesktopVisualObservation
 from .walk_runtime import WalkDriver
 
@@ -70,13 +69,9 @@ class DesktopWorldRuntime:
         self._animated, self._playback = animated, playback
         self._inputs, self._game_open = inputs, game_open
         self._controls_active = controls_active
-        self._present_feedback, self._feedback = present_feedback, feedback
+        self._present_feedback = present_feedback
         self._save, self._mind = save, mind
         self._care: CareOutcome | None = None
-        self._offer_feedback: tuple[str, bool] | None = None
-        self._offer_serial = 0
-        self._offer_revision = 0
-        self._offer_ready = False
         self._cancel_feedback = cancel_feedback
         self.world = WorldState(self._surface(), build_consumable_definitions(
             DEFAULT_CATALOG, items,
@@ -92,9 +87,6 @@ class DesktopWorldRuntime:
         )
         self.view = WorldView(root, items)
         self._refresh_footprints()
-        self.carry_id: str | None = None
-        self._capture_owned = False
-        self._inside = True
         self._contact: tuple[float, float] | None = None
         self._closed = False
         self.user_action_pending = False
@@ -109,7 +101,7 @@ class DesktopWorldRuntime:
         self.interaction = ObjectInteractionCoordinator(
             self.world, play=self._play, stop=self._stop,
             select_item=self._select_item, consume=self._consume,
-            eligible=self._eligible, ground_x=self._ground_x,
+            can_acquire=self._can_acquire, ground_x=self._ground_x,
             completed=self._completed,
             memory=self.awareness.memory, decide=self._decide,
             feedback=self._phase_feedback, cancel_feedback=cancel_feedback,
@@ -118,13 +110,18 @@ class DesktopWorldRuntime:
             ),
         )
         animated.on_playback = self._queue_event
-        root.bind_all("<Escape>", lambda _event: self.cancel_carry(), add="+")
-        root.bind_all("<ButtonRelease-1>", lambda _event: self.release(), add="+")
+        self.cursor = CursorItemGesture(
+            root=root, world=self.world, view=self.view, settings=settings,
+            track=track, memory=self.awareness.memory,
+            ports=CursorItemPorts(
+                capture_contact=self._capture_contact,
+                handover=self.interaction.offer_on_release,
+                offer_wanted=self._offer_wanted, present_offer=self._present_offer,
+                cancel_feedback=cancel_feedback, save=save, sync_view=self._sync_view,
+                outside=lambda: feedback(GERMAN_TEXT.format("world.outside")),
+            ),
+        )
         self._timer = root.after(33, self._frame)
-
-    @property
-    def carrying(self) -> bool:
-        return self.carry_id is not None
 
     def memory_snapshot(self) -> ObjectMemorySnapshot:
         return self.awareness.memory.export(now=self.now)
@@ -204,7 +201,7 @@ class DesktopWorldRuntime:
             overlay.contact_origin = None
         overlay.select(item_id)
 
-    def _completed(self, token: str, consumed: bool) -> None:
+    def _completed(self, _token: str, consumed: bool) -> None:
         self.awareness.intentions.cancel(self.now, consumed=consumed)
         self._walk.movement.set_goal(None)
         self._visual.object_target = None
@@ -225,7 +222,7 @@ class DesktopWorldRuntime:
             self.width * BALANCE.number("object_behavior", "reach_widths"),
         )
 
-    def _eligible(self, token: str) -> bool:
+    def _can_acquire(self, token: str) -> bool:
         if self.state.sleeping or self._game_open():
             return False
         try:
@@ -239,7 +236,7 @@ class DesktopWorldRuntime:
         if item.state == ObjectState.USER_HELD:
             return (
                 not self.interaction.active
-                and self._offer_ready
+                and self.cursor.offer_ready
                 and decide_object_use(
                     known, self.state, ConsumptionOrigin.HANDOVER,
                 ).consume
@@ -281,15 +278,16 @@ class DesktopWorldRuntime:
             return
         self.interaction.update()
         blocked = ((self.interaction.active and not self.interaction.approaching)
-                   or self.carrying or self._game_open()
+                   or self.cursor.carrying or self._game_open()
                    or self._controls_active() or self.state.sleeping
                    or time.monotonic() < self._playback.until)
         snapshot = self.world.snapshot()
-        if self.carrying and not self._inside:
+        if self.cursor.carrying and not self.cursor.inside:
             from dataclasses import replace
 
             snapshot = replace(snapshot, objects=tuple(
-                item for item in snapshot.objects if item.instance_id != self.carry_id
+                item for item in snapshot.objects
+                if item.instance_id != self.cursor.instance_id
             ))
         goal = self.awareness.update(
             snapshot, self.state, now=self.now, x=self._body_x(), height=0,
@@ -307,7 +305,7 @@ class DesktopWorldRuntime:
             (self._track().left + gaze.x, self._track().ground_y - gaze.height)
             if gaze is not None else None
         )
-        self._observe_offer()
+        self.cursor.observe_offer()
         if blocked or goal is None:
             self._walk.movement.set_goal(None)
             self._search_at = None
@@ -329,7 +327,7 @@ class DesktopWorldRuntime:
         if not approach.arrived(self.settings.x or 0):
             self._search_at = None
             return
-        if self._eligible(goal.token):
+        if self._can_acquire(goal.token):
             self._walk.movement.set_goal(None)
             self._capture_contact(goal.token)
             self.interaction.arrive()
@@ -359,123 +357,29 @@ class DesktopWorldRuntime:
         self.interaction.interrupt(perform)
 
     def begin_carry(self, item_id: str) -> None:
-        self.interrupt(lambda: self._begin_carry_now(item_id))
+        self.interrupt(lambda: self.cursor.begin(item_id))
 
-    def _begin_carry_now(self, item_id: str) -> None:
-        self.cancel_carry()
-        self._offer_feedback = None
-        self._offer_ready = False
-        self._offer_serial += 1
-        image = self.view.image(item_id, self.settings.scale)
-        footprint = ObjectFootprint(image.width() / 2, image.width() / 2)
-        position, self._inside = self._pointer_pose(item_id, footprint)
-        item = self.world.create_held(item_id, position, footprint)
-        self.carry_id = item.instance_id
-        try:
-            self.root.grab_set()
-            self.root.focus_set()
-            self._capture_owned = True
-        except tk.TclError:
-            self.cancel_carry()
-            return
-        self._sync_view()
-
-    def _observe_offer(self) -> None:
-        token = self.carry_id
-        known = self.awareness.memory.get(token) if token is not None else None
-        if token is None or known is None or known.identity is None:
-            return
-        wanted = (decide_object_use(
-            known, self.state, ConsumptionOrigin.HANDOVER,
+    def _offer_wanted(self, token: str) -> bool:
+        return (decide_object_use(
+            self.awareness.memory.get(token), self.state, ConsumptionOrigin.HANDOVER,
         ).consume and not self._game_open() and not self.interaction.active
             and time.monotonic() >= self._playback.until)
-        if self._offer_feedback == (token, wanted):
-            return
-        self._offer_feedback = token, wanted
-        self._offer_ready = wanted
-        self._offer_revision += 1
-        key = FeedbackKey(f"offer_{self._offer_serial}", self._offer_revision)
-        cue = ObjectFeedback(key, "object_offer" if wanted else "object_refuse",
-                             token, known.identity)
+
+    def _present_offer(self, cue: ObjectFeedback) -> None:
         reaction = self._mind.select_reaction(
             cue.event, self.state, context_at(time.time()), time.monotonic(),
         )
         if reaction is None:
             raise ValueError("Missing required offer reaction")
-
-        # A user release may deliberately interrupt preview speech. Willingness
-        # is already decided; playback completion never grants custody/readiness.
         self._present_feedback(cue, reaction, lambda _receipt: None)
-
-    def _release_capture(self) -> None:
-        if self._capture_owned:
-            self._capture_owned = False
-            if self._owns_capture():
-                self.root.grab_release()
-
-    def _owns_capture(self) -> bool:
-        current = self.root.tk.call("grab", "current", str(self.root))
-        return str(current) == str(self.root)
-
-    def _pointer_pose(
-        self, item_id: str, footprint: ObjectFootprint,
-    ) -> tuple[WorldPosition, bool]:
-        image = self.view.image(item_id, self.settings.scale)
-        sprite = self.view.items.foods[item_id].sprites[self.settings.scale]
-        track = self._track()
-        surface = self.world.snapshot().surface
-        x = (self.root.winfo_pointerx() - track.left
-             + image.width() / 2 - sprite.pivot[0])
-        height: float = track.ground_y - self.root.winfo_pointery() - image.height()
-        height += sprite.pivot[1]
-        inside = (footprint.left <= x <= surface.width - footprint.right
-                  and 0 <= height <= surface.height)
-        return WorldPosition(
-            max(footprint.left, min(x, surface.width - footprint.right)),
-            max(0, min(height, surface.height)),
-        ), inside
-
-    def _move_carry(self) -> None:
-        if self.carry_id is None:
-            return
-        item = self.world.get(self.carry_id)
-        position, self._inside = self._pointer_pose(item.definition_id, item.footprint)
-        self.world.move_held(item.instance_id, position,
-                             expected_revision=item.revision)
-
-    def release(self) -> None:
-        if self.carry_id is None:
-            return
-        self._move_carry()
-        token, self.carry_id = self.carry_id, None
-        self._release_capture()
-        item = self.world.get(token)
-        if not self._inside:
-            self.world.remove(token, expected_revision=item.revision)
-            self._feedback(GERMAN_TEXT.format("world.outside"))
-        else:
-            self._capture_contact(token)
-            if not self.interaction.offer_on_release(token):
-                self.world.release(token, expected_revision=item.revision)
-        self._save()
-
-    def cancel_carry(self) -> None:
-        self._release_capture()
-        if self.carry_id is not None:
-            item = self.world.get(self.carry_id)
-            self.world.remove(item.instance_id, expected_revision=item.revision)
-            self.carry_id = None
-            self._offer_ready = False
-            self._cancel_feedback()
-            self._save()
 
     def _sync_view(self) -> None:
         self.view.sync(self.world.snapshot(), left=self._track().left,
                        ground_y=self._track().ground_y, scale=self.settings.scale,
                        topmost=self.settings.always_on_top,
                        carried_cursor=(self.root.winfo_pointerx(),
-                                       self.root.winfo_pointery()) if self.carrying
-                       else None)
+                                       self.root.winfo_pointery())
+                       if self.cursor.carrying else None)
         state, _fixed = self._animated.frame_clock.active_key or ("idle", None)
         clip = self._animated.assets.clips[state]
         index = clip.sprite_index(self._animated.frame_clock.frame_index)
@@ -499,12 +403,7 @@ class DesktopWorldRuntime:
         self.world.advance_falls(elapsed, gravity=BALANCE.number(
             "object_behavior", "fall_gravity",
         ))
-        if self.carrying and self._capture_owned and not self._owns_capture():
-            self.cancel_carry()
-        self._move_carry()
-        buttons = mouse_buttons_down_windows()
-        if self.carrying and buttons is not None and not buttons[0]:
-            self.release()
+        self.cursor.update()
         self._sync_view()
         self._timer = self.root.after(33, self._frame)
 
@@ -521,7 +420,7 @@ class DesktopWorldRuntime:
     def close(self) -> None:
         self._closed = True
         self._cancel_feedback()
-        self._release_capture()
+        self.cursor.close()
         for timer in (self._timer, self._event_timer):
             if timer is not None:
                 self.root.after_cancel(timer)

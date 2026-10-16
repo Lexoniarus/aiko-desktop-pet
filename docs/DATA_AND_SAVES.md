@@ -57,6 +57,11 @@ five. Named filters use supported `stages`, `moods`, simultaneous `needs`, day
 periods and weekdays; `requires_present` requires observed or direct contact.
 Item placeholders are allowed only on object events and only as `{item}`.
 Object formatting applies to every text beat, never to an emote or a pause.
+The resulting text determines its reading time through the dialogue balance
+values. Spontaneous story frequency and quiet time use
+`spontaneous_story_probability` and `spontaneous_story_quiet_seconds` in that
+same section. Mutable selection history belongs to the session mind, or to
+one standalone game instance; neither is a second source of authored copy.
 
 The editorial voice is quiet, dry, curious and sometimes cheeky. Clear wishes,
 charming competitiveness and sincere affection replace repeated denial of

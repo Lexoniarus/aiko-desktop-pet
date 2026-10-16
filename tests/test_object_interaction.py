@@ -57,7 +57,7 @@ class ObjectInteractionTests(unittest.TestCase):
         ),), now=0)
         self.coordinator = ObjectInteractionCoordinator(
             self.world, play=play, stop=lambda: None, select_item=lambda _item: None,
-            consume=consume, eligible=lambda _item: True, ground_x=lambda _item: 100,
+            consume=consume, can_acquire=lambda _item: True, ground_x=lambda _item: 100,
             completed=lambda item, consumed: self.done.append((item, consumed)),
             memory=self.memory,
             decide=lambda _token, _origin: self.decision,

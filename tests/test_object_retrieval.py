@@ -56,7 +56,8 @@ class ObjectRetrievalTests(unittest.TestCase):
 
         self.coordinator = ObjectInteractionCoordinator(
             self.world, play=play, stop=lambda: None, select_item=lambda _item: None,
-            consume=consume, eligible=lambda _token: True, ground_x=lambda _token: 110,
+            consume=consume, can_acquire=lambda _token: True,
+            ground_x=lambda _token: 110,
             completed=lambda token, used: self.done.append((token, used)),
             memory=self.memory,
             decide=lambda token, origin: decide_object_use(

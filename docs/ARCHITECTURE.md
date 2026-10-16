@@ -352,22 +352,28 @@ the teasing counter or apply care rewards; normal clicks start a fresh burst.
 Other deliberate interactions can interrupt. Automatic speech, gaze remarks,
 idle effects and object-goal acquisition respect active playback, including
 blank pauses. Spontaneous stories require observed presence, a 20% draw among
-eligible quiet moments and at least ten minutes since the previous one.
+eligible quiet moments and at least ten minutes since the previous one. Those
+values come from `dialogue.spontaneous_story_probability` and
+`dialogue.spontaneous_story_quiet_seconds` in the validated balance catalogue.
 
 Playback completion and cancellation are reported once; stale timers cannot
 advance or complete a newer sequence. Object-phase feedback retains its
 receipt-driven interaction ownership. The RPS countdown/reveal timeline also
 retains its owner; greeting/outcome wording is selected through the same mind
-and relationship context, with outcome perspective explicitly mapped.
+and relationship context, with outcome perspective explicitly mapped. Standalone
+games use an instance-owned `GameDialogue` from
+`ui/windows/rock_paper_scissors_dialogue.py`; no mutable game catalogue is created
+at import time. Embedded games keep the existing session mind and its history.
 Need tuning belongs to the current
 [food](FOOD_SYSTEM.md) and [fun/mood](FUN_MOOD_SYSTEM.md) guides.
 
-## Refactor branch status (October 15, 2026)
+## Historical architecture refactor (October 15, 2026)
 
-This structure is being validated on the draft `refactor/pet-domain-ui-boundaries`
-branch; the document becomes the maintained architecture after merge. The
-migration does **not** implement World, new emotion values, object detection,
-awareness, cursor fear, autonomous objects or drag-and-drop. Existing behavior,
+The earlier `refactor/pet-domain-ui-boundaries` delivery established these
+boundaries. Its scope excluded World, new emotion values, object detection,
+awareness, cursor fear, autonomous objects and drag-and-drop. Current World
+and dialogue ownership is described in the maintained sections around this
+historical delivery record. Existing behavior,
 assets and save-format invariants remain the acceptance criteria.
 All historical `presentation/`, `personality/` and root-level UI import
 forwarders have been removed. R2 now separates desktop animation intent,
@@ -375,8 +381,8 @@ host observations and concrete Tk frame playback. R5 delegates application
 and animation construction to bounded assemblies, and session lifecycle,
 refresh and save sequencing to `DesktopSessionRuntime`. R6 has consolidated
 typed mood hints, due-meal selection, localized weekday text, legacy mutator
-APIs and import-only tests. No final interactive Windows sign-off has been
-recorded for the latest commit; automated checks are commit-specific.
+APIs and import-only tests. Native acceptance belongs to each later feature
+delivery and its smoke-test evidence; automated checks remain commit-specific.
 
 ## World, subjective knowledge and object interaction
 
@@ -418,14 +424,22 @@ Mind/catalogue supplies authored reactions; `ObjectFeedbackPresenter` formats
 known names and uses `ReactionPlayer`'s completion/cancellation acknowledgements.
 Transitions wait for readable cues and required animation/dwell. Ordinary hover
 does not abort consumption, and ambient feedback cannot replace action speech.
-`application/object_consumption.py` prepares canonical food/drink effects with
-explicit handover/autonomous origin, commits World, PetState and ObjectMemory on
-the owner thread with recovery, and deduplicates completed requests. World `consume()`
+`application/object_custody.py` commits confirmed acquisition and placement in
+World and memory together, restoring both owners on failure. The interaction
+coordinator retains animation deduplication, cue receipts and phase ordering.
+`application/object_consumption.py` uses `ObjectConsumption.commit()` to apply
+canonical food/drink effects at consumption start with explicit handover/autonomous
+origin. It commits World, PetState and ObjectMemory together on the owner thread
+with recovery and deduplicates completed requests. World `consume()`
 alone still cannot feed Aiko. Human-only care rewards are excluded for ground
 consumption, while canonical nutrition, repetition and food mood effects remain.
 
-`desktop/world_runtime.py` wires host coordinates, cursor gestures, awareness,
-interaction and presentation. `ui/world_view.py` renders snapshots in small
+`desktop/world_runtime.py` connects host geometry, awareness, interaction and
+presentation. `desktop/cursor_item_gesture.py` owns one input gesture: cursor
+instance handle, native capture, pointer geometry, offer-preview IDs and release
+or cancellation. Named ports keep appetite/feedback and custody decisions with
+the existing application owners. There are no shadow cursor fields or retired
+forwarding properties in the runtime. `ui/world_view.py` renders snapshots in small
 passive native windows; `FoodOverlay` draws consumables above the character
 without additional hand masks. Calibrated eating anchors come from reproducible
 asset preparation. Examined deferred portions preserve memory but release
@@ -478,3 +492,6 @@ For local commands, source changes and review expectations see
 historical milestones with fixed Git references. The current branch's
 [refactor ledger](PET_ARCHITECTURE_REFACTOR.md) and
 [Windows acceptance checklist](PET_REFACTOR_WINDOWS_SMOKE.md) remain active.
+
+The [World/dialogue cleanup review](WORLD_DIALOGUE_CLEANUP_REVIEW.md) records
+current responsibilities, removed duplication and commit-specific verification.
