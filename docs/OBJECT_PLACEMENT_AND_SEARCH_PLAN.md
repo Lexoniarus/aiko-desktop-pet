@@ -2,7 +2,7 @@
 
 Agreed product behavior: 16 October 2026.
 Code baseline: `e7ebe7e` on `feature/world-foundation`.
-Status: implementation and S14 test handoff delivered; S15 final integration checks are in progress. Combined practical acceptance remains pending.
+Status: T0 and S1-S15 automated delivery complete. Combined practical acceptance remains pending; the draft PR stays unmerged.
 Rechecked against the same code baseline after the user's own-physics decision.
 
 This is the complete follow-up plan for recognized cursor offers, moving resting
@@ -502,7 +502,7 @@ S identifiers remain stable so contracts and physics references do not move.
 | S12 | Connect every production placement route and remove the special edge grip | Normal arrival/grasp still checked at frame 4; own put-down and gesture return remain reachable | `d328e2a`: edge exception removed, ordinary frame-4 reach/contact blending retained; delayed gesture release guard and start save points. 30 ground/World tests + 18 GUI tests, Ruff/Mypy/Pyright green. Native restart matrix reduced to one representative; both sides/scales remain in pure geometry and native input tests. |
 | S13 | Finish residual cleanup after the behavior-specific replacements already delivered in their owning stages | No orphan fixtures/helpers or redundant flow combinations; unique grasp/clip/interruption and save coverage retained | S13a `ce36420`: retain ambiguous consumed-find evidence and reconcile fully explained checked groups; 85 object tests including wire restart and two-place cases, Windows/Linux-targeted typing and Ruff green. S13b `90a6d66`: unused test return removed, stale fall/assessment names corrected, search uses the latest remembered place and found feedback identifies the new record. 20 focused tests plus the preceding 18 GUI checks and Ruff/Mypy/Pyright green. No obsolete edge/fall-only/test-only pickup symbols remain in source/tests/tools. |
 | S14 | Update architecture, contracts, save docs, changelog and isolated smoke scenarios | Documentation matches delivered APIs and actual verification; practical checklist below | `96b49ff`: current architecture/contracts/save docs/changelog, one/two-portion starter and updated practical checklist; 6 starter tests, static gates and actual isolated fresh/restart launch passed. |
-| S15 | Run final regression and hand over a fully pushed practical-test build | Full gates/CI, real Windows evidence and explicit test readiness; PR remains unmerged | Planned |
+| S15 | Run final regression and hand over a fully pushed practical-test build | Full gates/CI, real Windows evidence and explicit test readiness; PR remains unmerged | Complete automated handoff: 966 local tests, all static gates and Linux 3.11/3.13 + Windows CI green at `e78c707` (run 38891597930). Actual isolated fresh/restart and native 1x/2x input checks passed; combined user acceptance pending. |
 
 S4/S5 prepare the typed model and policies without exposing a half-converted
 durable runtime. S6 switches production consumers only when conversion, writing
@@ -764,3 +764,38 @@ The actual starter ran fresh with two Onigiri and reopened the same isolated
 save with `--needs hungry`; it exited cleanly without touching the normal save.
 
 S15 review: the first full local run at 96b49ff passed 964 tests in 190.495 seconds and all three CI jobs passed (run 38890635389). A further targeted regression reproduced an approach handoff cancelling the newly selected alternative: completion now names its own memory record rather than cancelling whichever goal is current. The same review makes the primary monitor right edge exclusive for cursor release. 37 focused GUI/intention/retrieval tests and Ruff, strict Mypy, Windows/Linux Pyright pass; final full rerun follows these corrections.
+
+## Final automated handoff — 16 October 2026
+
+- Final production correction: `c7bf92b`; only its smaller-desktop regression
+  fixture is adjusted in `e78c707`. The final complete local suite passed
+  **966 tests in 189.963 seconds**. The adjusted fixture also passed targeted
+  local verification; final CI verifies that exact fixture on all three jobs.
+- Ruff 0.13.2 passes across source/tests/tools. Strict Mypy 1.18.2 passes across
+  176 application/tool source files. Pyright 1.1.414 passes with both Windows
+  and Linux platform analysis. `git diff --check` and relative documentation
+  file links pass.
+- [Final implementation CI](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38891597930)
+  at `e78c707`: Linux Python 3.11, Linux Python 3.13 and Windows desktop/setup
+  boundaries all pass. Earlier red runs were corrected in separate commits;
+  their specific causes and focused checks are recorded above.
+- Native automated Windows evidence includes visible versus transparent pixel
+  hit testing at both scales without activation, capture/cancellation, actual
+  arrival and frame-4 reach revalidation, full timed consumption, interruption
+  and paired recovery. The starter also launched with two portions and reopened
+  the same isolated save. These are not a claim of new user visual acceptance.
+- During development only targeted local tests ran. The complete local suite
+  first ran at S15 (964 green); the newly reproduced target-handoff defect then
+  justified the final 966-test rerun. No additional production changes follow it.
+- Existing normal saves were not opened or changed. Runtime dependencies remain
+  Python/Tk. Everything is pushed on `feature/world-foundation`; no merge was
+  performed. PR #10 remains draft. Use the
+  [combined practical checklist](WORLD_SMOKE_TEST.md#current-combined-retest--16-october-2026)
+  and the existing isolated starter for the user's acceptance.
+
+Useful fresh start: `Aiko_World_Test.bat --scenario full --stock two`.
+The console prints the temporary save and its restart command. Omit `--stock`
+when reopening it; `--needs hungry` changes test needs while preserving stock and
+subjective history. Unknown portions and disconnected findings still require
+investigation; assessed continuously observed offers and known supplies use the
+shortened route. Successful human release alone selects human care origin.

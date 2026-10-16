@@ -216,6 +216,19 @@ path, rather than creating another profile:
   Aiko declines visibly and puts it down. A remembered missing target is searched
   locally for at most two seconds, then dismissed with one bubble.
 
+## Current automated evidence
+
+Final local regression: 966 tests passed in 189.963 seconds; Ruff 0.13.2,
+strict Mypy 1.18.2 (176 source files) and Pyright 1.1.414 for Windows/Linux pass.
+[Implementation CI at e78c707](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38891597930)
+passes Linux Python 3.11/3.13 and Windows. The final test-only change positions
+its goal-handoff fixture on the smaller CI desktop; production matches c7bf92b.
+Native input checks include visible/transparent pixels at 1x/2x without focus
+activation, plus the retained actual-timer consumption/interruption flows.
+The enhanced starter launched a fresh two-portion save and reopened that same
+isolated file successfully. Combined user visual acceptance remains pending.
+See the [full delivery evidence](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md#final-automated-handoff--16-october-2026).
+
 ## Historical automated evidence
 
 Current verification is recorded in the [delivery ledger](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md#small-delivery-steps). Older counts below are historical.
