@@ -6,11 +6,7 @@ import math
 from dataclasses import replace
 
 from ..pet.balance import BALANCE
-from ..pet.mind.object_decisions import (
-    ObjectUseContext,
-    ObjectUseDecision,
-    decide_object_use,
-)
+from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_intentions import ObjectGoal, ObjectIntentions
 from ..pet.mind.object_knowledge import ObjectKnowledge, ObjectMemorySnapshot
 from ..pet.mind.object_memory import ObjectMemory
@@ -69,15 +65,13 @@ class ObjectAwareness:
                 and self._tracker.follow_taken(instance))
 
     def assess_offer(self, token: str, state: PetState) -> ObjectUseDecision | None:
-        """Assess only a currently recognized offer, never hidden World truth."""
+        """Use learned identity only with current subjective visibility."""
         known = self.memory.get(token)
-        if known is None or not any(
-            seen.token == token and seen.identity == known.identity
-            and seen.kind == known.kind and seen.identity is not None
-            for seen in self.observations
+        if known is None or not known.recognized or not any(
+            seen.token == token for seen in self.observations
         ):
             return None
-        decision = decide_object_use(known, state, ObjectUseContext.OFFER)
+        decision = self.intentions.assess_offer(known, state)
         if decision.reason in ("unrecognized", "unavailable"):
             return None
         self.memory.mark_assessed(token)

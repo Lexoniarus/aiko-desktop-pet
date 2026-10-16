@@ -3,6 +3,7 @@
 import unittest
 from dataclasses import replace
 
+from aiko_pet.pet.mind.object_decisions import ObjectUseContext
 from aiko_pet.pet.mind.object_intentions import ObjectIntentions
 from aiko_pet.pet.mind.object_knowledge import ObjectKnowledge
 from aiko_pet.pet.state import PetState
@@ -11,6 +12,28 @@ APPLE = ObjectKnowledge("one", "apple", "food", 100, 0, True, 0, assessed=True)
 
 
 class ObjectIntentionTests(unittest.TestCase):
+    def test_offer_wish_survives_observed_drop_but_rechecks_capacity_and_identity(self):
+        planner = ObjectIntentions()
+        pet = PetState(satiety=76)
+        held = replace(APPLE, resting=False)
+        self.assertTrue(planner.assess_offer(held, pet).consume)
+        other = replace(APPLE, token="other")
+        goal = planner.choose((held, other), pet, x=0, now=1, blocked=True,
+                              observed=frozenset((held.token,)))
+        assert goal is not None
+        self.assertEqual(goal.token, held.token)
+        goal = planner.choose((APPLE, other), pet, x=0, now=2, changed=True,
+                              observed=frozenset((APPLE.token,)))
+        assert goal is not None
+        self.assertEqual(goal.use_context, ObjectUseContext.CONTINUING_WISH)
+        self.assertEqual(goal.purpose, "consume")
+        pet.satiety = 100
+        self.assertIsNone(planner.choose((APPLE,), pet, x=0, now=3, changed=True))
+        pet.satiety = 76
+        planner.assess_offer(held, pet)
+        self.assertIsNone(planner.choose((replace(APPLE, identity=None),), pet,
+                                         x=0, now=4, blocked=True, changed=True))
+
     def test_commitment_survives_blocking_carry_and_more_attractive_find(self):
         planner = ObjectIntentions()
         pet = PetState(satiety=50)

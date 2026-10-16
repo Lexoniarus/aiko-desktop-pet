@@ -168,6 +168,11 @@ class DesktopWorldRuntime:
         return self._animated.action_id
 
     def _decide(self, token: str, context: ObjectUseContext) -> ObjectUseDecision:
+        goal = self.awareness.intentions.goal
+        if goal is not None and goal.token == token and (
+            goal.use_context == ObjectUseContext.CONTINUING_WISH
+        ):
+            context = goal.use_context
         return decide_object_use(self.awareness.memory.get(token), self.state, context)
 
     def _phase_feedback(self, cue: ObjectFeedback) -> None:
@@ -373,6 +378,12 @@ class DesktopWorldRuntime:
             if (self.interaction.approaching
                     and self.interaction.focus_record is None):
                 self.interaction.interrupt(lambda: None)
+            return
+        known = self.awareness.memory.get(goal.token)
+        if not self.interaction.active and known is not None and not known.resting:
+            # A passive held wish is not an interrupted acquisition. Wait for
+            # observed ground contact before committing to a new approach.
+            self._walk.movement.set_goal(None)
             return
         if (self.interaction.approaching
                 and self.interaction.memory_id != goal.token):

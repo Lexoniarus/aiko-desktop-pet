@@ -77,3 +77,11 @@ real saves; use temporary test saves only.
   context, independently of the unchanged consumption care origin. Capacity and
   sleeping checks remain mandatory. Verified 40 decision, coordinator, retrieval,
   transaction and care-origin tests; Ruff, strict Mypy and Pyright pass.
+- Step 3a commit: `f706441`.
+- Step 3b: currently observed knowledge can authorize an offer assessment even
+  when its new sensory sample has no identity. Unknown held portions still
+  require the existing recognition dwell/range. The existing intention owner
+  selects a session-only wish; observed holding, falling and placement retain it
+  while capacity/activity are rechecked. Passive wishes wait for ground contact
+  before an interaction begins. Verified 11 awareness, 8 intention, 4 perception,
+  4 tracker and 23 native GUI cases; Ruff, strict Mypy and Pyright pass.

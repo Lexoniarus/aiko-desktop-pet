@@ -218,6 +218,7 @@ class ObjectInteractionCoordinator:
         if self.active:
             return False
         self._start(goal.token, ConsumptionOrigin.AUTONOMOUS)
+        self._use_context = goal.use_context
         self.search_x = goal.x
         self._identity = goal.identity
         known = self._memory.get(goal.token)

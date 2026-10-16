@@ -8,7 +8,7 @@ from typing import Literal
 from ..balance import BALANCE
 from ..food import is_repeated_food
 from ..state import PetState
-from .object_decisions import decide_object_use
+from .object_decisions import ObjectUseContext, ObjectUseDecision, decide_object_use
 from .object_knowledge import ObjectKnowledge
 from .object_perception import ConsumableKind
 
@@ -22,6 +22,7 @@ class ObjectGoal:
     height: float
     observed_at: float
     purpose: Literal["investigate", "consume"] = "consume"
+    use_context: ObjectUseContext = ObjectUseContext.SUPPLY
 
 
 class ObjectIntentions:
@@ -30,6 +31,21 @@ class ObjectIntentions:
         self._next_check = 0.0
         self._retry: dict[str, float] = {}
         self._pause_until = 0.0
+
+    def assess_offer(
+        self, known: ObjectKnowledge, state: PetState,
+    ) -> ObjectUseDecision:
+        """A visible offer can create a wish without starting a theft episode."""
+        decision = decide_object_use(known, state, ObjectUseContext.OFFER)
+        if decision.consume:
+            self.goal = ObjectGoal(
+                known.token, known.identity, known.kind, known.x, known.height,
+                known.observed_at, "consume", ObjectUseContext.CONTINUING_WISH,
+            )
+        elif (self.goal is not None and self.goal.token == known.token
+              and self.goal.use_context == ObjectUseContext.CONTINUING_WISH):
+            self.goal = None
+        return decision
 
     def cancel(self, now: float, *, consumed: bool = False) -> None:
         self.complete(self.goal.token if self.goal is not None else None,
@@ -68,6 +84,21 @@ class ObjectIntentions:
                     observed_at=subject.observed_at,
                 )
             return self.goal
+        if self.goal is not None and not state.sleeping:
+            subject = next((item for item in known
+                            if item.token == self.goal.token), None)
+            if (self.goal.use_context == ObjectUseContext.CONTINUING_WISH
+                    and subject is not None and subject.place_status == "remembered"
+                    and (subject.resting or subject.token in observed)
+                    and subject.identity == self.goal.identity
+                    and subject.kind == self.goal.kind
+                    and decide_object_use(subject, state,
+                                          self.goal.use_context).consume):
+                self.goal = replace(
+                    self.goal, x=subject.x, height=subject.height,
+                    observed_at=subject.observed_at,
+                )
+                return self.goal
         if state.sleeping or blocked:
             self.cancel(now)
             return None

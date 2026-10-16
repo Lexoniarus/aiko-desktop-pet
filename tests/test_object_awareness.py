@@ -4,6 +4,7 @@ import unittest
 
 from aiko_pet.application.object_awareness import ObjectAwareness
 from aiko_pet.infrastructure.world_motion import motion_parameters
+from aiko_pet.pet.mind.object_decisions import ObjectUseContext
 from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import (
@@ -17,6 +18,44 @@ from aiko_pet.world.state import WorldState
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    def test_unknown_offer_can_become_known_and_wanted_during_holding(self):
+        world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        item = world.create_held("apple", WorldPosition(100, 80), ObjectFootprint(8, 8))
+        awareness = ObjectAwareness()
+        state = PetState(satiety=76)
+        for stamp in (0, .3):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100, attentive=True, blocked=True)
+        record = awareness.record_for_instance(item.instance_id)
+        assert record is not None
+        self.assertIsNone(awareness.assess_offer(record, state))
+        awareness.update(world.snapshot(), state, now=.7, x=100,
+                         height=0, width=100, attentive=True, blocked=True)
+        decision = awareness.assess_offer(record, state)
+        assert decision is not None
+        self.assertTrue(decision.consume)
+        goal = awareness.intentions.goal
+        assert goal is not None
+        self.assertEqual((goal.token, goal.use_context),
+                         (record, ObjectUseContext.CONTINUING_WISH))
+        # Moving far away removes fresh recognition, not learned identity.
+        world.move_held(item.instance_id, WorldPosition(1400, 700),
+                        expected_revision=item.revision)
+        awareness.update(world.snapshot(), state, now=.9, x=100,
+                         height=0, width=100, attentive=True, blocked=True)
+        self.assertIsNone(awareness.observations[0].identity)
+        decision = awareness.assess_offer(record, state)
+        assert decision is not None
+        self.assertTrue(decision.consume)
+        self.assertEqual(len(awareness.memory.snapshot()), 1)
+        # Actual loss of attention removes execution evidence and held desire.
+        awareness.update(world.snapshot(), state, now=1, x=100,
+                         height=0, width=100, attentive=False, blocked=True)
+        self.assertIsNone(awareness.assess_offer(record, state))
+        self.assertIsNone(awareness.intentions.goal)
+
     def test_ordinary_observed_take_and_placement_keep_the_same_record(self):
         world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
             "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
