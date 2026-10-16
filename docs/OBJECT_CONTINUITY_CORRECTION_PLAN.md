@@ -93,3 +93,11 @@ real saves; use temporary test saves only.
   phase and full consume clip. Verified 14 coordinator, 16 retrieval and 23 native
   GUI tests, including forged-goal protection, stale receipts, reverse placement
   and transaction retry; Ruff, strict Mypy and Pyright pass.
+- Step 4 commit: `5cd3123`.
+- Step 5: added native boundary coverage for an ordinary known floor pickup
+  moved far away and for newly learned held wishes: food/drink, 1x/2x, release
+  into Aiko's hand versus observed falling/ground collection. Twenty-five active
+  seconds of ordinary holding cause no withholding phase or friendship loss.
+  Offered wishes above normal seeking thresholds still consume after observed
+  placement, with autonomous care attribution. Verified 25 native GUI tests,
+  Ruff, strict Mypy and Pyright. Existing true-withholding regressions stay green.

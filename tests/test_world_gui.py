@@ -17,6 +17,116 @@ from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
 
 
 class WorldGuiTests(unittest.TestCase):
+    def test_known_floor_pickup_stays_known_far_from_aiko_without_a_theft_episode(self):
+        app, world = self.app, self.app._world
+        item = world.world.place_resting("cookie", world._body_x(),
+                                         ObjectFootprint(8, 8))
+        world._controls_active = lambda: True
+        self.recognize()
+        known = world.awareness.known_instance(item.instance_id)
+        assert known is not None
+        self.assertEqual(known.identity, "cookie")
+        self.assertFalse(known.assessed)
+        self.assertFalse(world.interaction.active)
+        world._controls_active = lambda: False
+        with (
+            patch.object(app.root, "winfo_pointerx",
+                         return_value=world._track().right - 40),
+            patch.object(app.root, "winfo_pointery", return_value=100),
+        ):
+            world.begin_relocate(item.instance_id, item.revision)
+            world.now += .2
+            world.update(time.monotonic())
+            current = world.awareness.known_instance(item.instance_id)
+            assert current is not None
+            self.assertEqual((current.token, current.identity),
+                             (known.token, "cookie"))
+            self.assertIsNone(world.awareness.observations[0].identity)
+            self.assertTrue(world.cursor.offer_ready)
+            self.assertFalse(world.interaction.active)
+            self.assertIsNone(app.state.food.last_food_id)
+            world.cursor.cancel()
+
+    def test_ordinary_held_wishes_keep_identity_and_actual_origin_at_both_scales(self):
+        app, world = self.app, self.app._world
+        cues = []
+        present = world._present_feedback
+
+        def capture(cue, reaction, done):
+            cues.append(cue.event)
+            present(cue, reaction, done)
+
+        world._present_feedback = capture
+        for scale, item_id, handover in (
+            (1, "apple", False), (2, "energy_drink", False),
+            (1, "energy_drink", True), (2, "apple", True),
+        ):
+            with self.subTest(scale=scale, item=item_id, handover=handover):
+                cues.clear()
+                app.settings.scale = scale
+                app._window.resize()
+                app._animated.reload_sprites()
+                world._sync_geometry()
+                app._place_x(world._track().left + 40)
+                app.state.satiety, app.state.energy = 76, 65
+                friendship = app.state.friendship
+                x = world._track().left + int(world._body_x())
+                with (
+                    patch.object(app.root, "winfo_pointerx", return_value=x),
+                    patch.object(app.root, "winfo_pointery",
+                                 return_value=world._track().ground_y - 80 * scale),
+                ):
+                    world.begin_carry(item_id)
+                    token = world.cursor.instance_id
+                    assert token is not None
+                    self.recognize()
+                    record = world.awareness.record_for_instance(token)
+                    self.assertTrue(world.cursor.offer_ready)
+                    self.assertFalse(world.interaction.active)
+                    # A wish developed during holding must never count as theft.
+                    for _ in range(100):
+                        world.now += .25
+                        world.update(time.monotonic())
+                    self.assertEqual(app.state.friendship, friendship)
+                    self.assertFalse(world.interaction.active)
+                    if handover:
+                        world.cursor.release()
+                    else:
+                        with patch.object(app.root, "winfo_pointery", return_value=(
+                            world._track().ground_y - 300 * scale
+                        )):
+                            world.cursor.release()
+                if not handover:
+                    world.now += .1
+                    world.update(time.monotonic())
+                    self.assertFalse(world.interaction.active)
+                    self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
+                    world.world.advance_motion(20, world._motion_parameters)
+                    world.now += .1
+                    world.update(time.monotonic())
+                    self.assertEqual(world.awareness.record_for_instance(token), record)
+                    self.complete_feedback()
+                    self.assertEqual(world.interaction.phase, "pick_up")
+                    self.assertEqual(app.state.friendship, friendship)
+                    self.finish_pickup()
+                else:
+                    self.assertEqual(world.interaction.phase, "handover")
+                    self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
+                    self.complete_feedback()
+                self.assertEqual(world.interaction.phase, "eat")
+                self.assertEqual(world.world.get(token).state, ObjectState.CONSUMED)
+                self.assertEqual(world.interaction.memory_id, record)
+                self.assertEqual(world._care is not None, handover)
+                if not handover:
+                    self.assertEqual(app.state.friendship, friendship)
+                self.assertFalse(set(cues) & {
+                    "object_taken", "object_request_return", "object_withheld",
+                    "object_returned", "object_inspect", "object_recognized",
+                })
+                self.finish_clip("eat")
+                self.complete_feedback()
+                self.assertFalse(world.interaction.active)
+
     def test_stale_offer_readiness_cannot_authorize_a_later_offer_state(self):
         world = self.app._world
         callbacks = []
