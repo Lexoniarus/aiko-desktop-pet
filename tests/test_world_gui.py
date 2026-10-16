@@ -312,7 +312,8 @@ class WorldGuiTests(unittest.TestCase):
             assert token is not None
             world.cursor.release()
             self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
-            self.finish_inspection()
+            self.assertEqual(world.interaction.phase, "handover")
+            self.complete_feedback()
             self.assertEqual(world.world.get(token).state, ObjectState.CONSUMED)
             self.assertGreater(app.state.energy, 49)
             app._action_playback.cancel_at(time.monotonic())

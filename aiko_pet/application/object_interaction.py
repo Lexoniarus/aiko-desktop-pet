@@ -163,7 +163,11 @@ class ObjectInteractionCoordinator:
         self._kind = known.kind if known is not None else None
         self._select_item(item.definition_id)
         self._action_id = self._play("hold_item")
-        self._inspect("object_handover")
+        if self._known_supply():
+            self._set_phase("handover")
+            self._announce("object_handover")
+        else:
+            self._inspect("object_handover")
         self.update()
         return True
 
@@ -288,6 +292,8 @@ class ObjectInteractionCoordinator:
                     "object_unknown" if self._decision.reason == "unrecognized"
                     else "object_later",
                 )
+            elif self.phase == "handover" and self._cue_done:
+                self._begin_eating()
             elif self.phase == "decide" and self._cue_done:
                 if self._decision.consume:
                     self._begin_eating()

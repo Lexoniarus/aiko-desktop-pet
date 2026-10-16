@@ -177,7 +177,7 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.assertEqual(self.coordinator.phase, "inspect")
         self.assertEqual(self.consumed, [])
 
-    def test_handover_keeps_its_own_entry_even_for_a_known_inspected_instance(self):
+    def test_assessed_handover_waits_for_acknowledgement_without_reinspection(self):
         item = self.world.create_held("energy_drink", WorldPosition(100, 80),
                                       ObjectFootprint(8, 8))
         self.memory.update((ObjectObservation(
@@ -185,9 +185,29 @@ class ObjectRetrievalTests(unittest.TestCase):
         ),), now=0)
         self.memory.mark_assessed(item.instance_id)
         self.assertTrue(self.coordinator.offer_on_release(item.instance_id))
-        self.assertEqual(self.coordinator.phase, "inspect")
+        self.assertEqual(self.coordinator.phase, "handover")
         self.assertEqual(self.cues[-1].event, "object_handover")
         self.assertEqual(self.world.get(item.instance_id).state, ObjectState.PET_HELD)
+        self.assertEqual(self.consumed, [])
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "eat")
+        self.assertEqual(self.consumed[0][2], ConsumptionOrigin.HANDOVER)
+        self.assertEqual([cue.event for cue in self.cues], [
+            "object_handover", "object_consuming_drink",
+        ])
+
+    def test_cancelled_assessed_handover_puts_down_and_ignores_old_receipt(self):
+        item = self.world.create_held("apple", WorldPosition(100, 80),
+                                      ObjectFootprint(8, 8))
+        self.memory.update((ObjectObservation(
+            item.instance_id, "apple", "food", 100, 80, False, 0,
+        ),), now=0)
+        self.memory.mark_assessed(item.instance_id)
+        self.coordinator.offer_on_release(item.instance_id)
+        key = self.coordinator.feedback_key
+        self.coordinator.receive_feedback(FeedbackReceipt(key, False))
+        self.assertEqual(self.coordinator.phase, "put_down")
+        self.coordinator.receive_feedback(FeedbackReceipt(key, True))
         self.assertEqual(self.consumed, [])
 
     def test_confirmed_absence_announces_once_and_clears_only_the_missing_memory(self):

@@ -334,7 +334,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.assertTrue(world.cursor.offer_ready)
         self.assertLess(self.app.state.energy, 61)
         world.cursor.release()
-        self.assertEqual(world.interaction.phase, "inspect")
+        self.assertEqual(world.interaction.phase, "handover")
         self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
         self.assertLess(self.app.state.energy, 61)
         trace = self.run_until(lambda: world.interaction.phase == "eat", 12)
