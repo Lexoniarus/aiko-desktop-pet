@@ -4,6 +4,9 @@ Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tki
 
 The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Imports point directly to the packages that own each responsibility.
 
+The [observed item continuity correction](OBJECT_CONTINUITY_CORRECTION_PLAN.md)
+separates observation, learned identity and current desire across cursor custody.
+
 The [object focus correction plan](OBJECT_FOCUS_CORRECTION_PLAN.md) records
 committed investigation, observed withholding, resumption and friendship rules.
 
