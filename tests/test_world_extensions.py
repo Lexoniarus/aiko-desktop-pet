@@ -65,3 +65,10 @@ class WorldExtensionTests(unittest.TestCase):
         self.assertEqual(restored.state, ObjectState.RESTING)
         assert restored.position is not None
         self.assertEqual(restored.position.x, 96)
+
+    def test_rejected_reach_geometry_preserves_every_object(self):
+        self.world.place_resting("onigiri", 650, ObjectFootprint(600, 0))
+        before = self.world.snapshot()
+        with self.assertRaises(WorldOperationError):
+            self.world.change_surface(WorldSurface(800, 600, 300))
+        self.assertEqual(self.world.snapshot(), before)

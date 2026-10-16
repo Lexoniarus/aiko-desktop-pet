@@ -245,9 +245,8 @@ class WorldState:
         replacements: list[tuple[WorldObjectSnapshot, WorldPosition,
                                  ObjectState, ItemMotion | None]] = []
         for item in self._objects.values():
-            if item.footprint.left + item.footprint.right > surface.width:
-                if item.position is not None:
-                    raise WorldOperationError(WorldFailure.OUT_OF_BOUNDS)
+            if item.state not in (ObjectState.CONSUMED, ObjectState.REMOVED):
+                self._validate_footprint(surface, item.footprint)
             if item.position is not None:
                 x = max(item.footprint.left, min(
                         item.position.x, surface.width - item.footprint.right,
@@ -274,6 +273,8 @@ class WorldState:
             raise ValueError("Invalid motion time")
         if elapsed == 0:
             return
+        updates: list[tuple[WorldObjectSnapshot, ObjectState,
+                            WorldPosition, ItemMotion | None]] = []
         for item in tuple(self._objects.values()):
             if (item.state not in (ObjectState.FALLING, ObjectState.BOUNCING)
                     or item.position is None or item.motion is None):
@@ -285,8 +286,10 @@ class WorldState:
             )
             state = (ObjectState.RESTING if result.motion is None else
                      ObjectState.BOUNCING if result.contacted else item.state)
-            self._commit(item, state, WorldPosition(result.x, result.height),
-                         motion=result.motion)
+            updates.append((item, state, WorldPosition(result.x, result.height),
+                            result.motion))
+        for item, state, position, motion in updates:
+            self._commit(item, state, position, motion=motion)
 
     def change_footprint(
         self, instance_id: str, footprint: ObjectFootprint, *, expected_revision: int,
@@ -296,8 +299,7 @@ class WorldState:
             ObjectState.FALLING, ObjectState.BOUNCING, ObjectState.RESTING,
             ObjectState.PET_HELD,
         )
-        if footprint.left + footprint.right > self._surface.width:
-            raise WorldOperationError(WorldFailure.OUT_OF_BOUNDS)
+        self._validate_footprint(self._surface, footprint)
         if item.footprint == footprint:
             return
         position = item.position
@@ -344,6 +346,14 @@ class WorldState:
     ) -> None:
         if not self._surface.contains(position, footprint):
             raise WorldOperationError(WorldFailure.OUT_OF_BOUNDS)
+        self._validate_footprint(self._surface, footprint)
+
+    @staticmethod
+    def _validate_footprint(surface: WorldSurface, footprint: ObjectFootprint) -> None:
+        try:
+            surface.ground_interval(footprint)
+        except ValueError:
+            raise WorldOperationError(WorldFailure.OUT_OF_BOUNDS) from None
 
     def _commit(
         self, item: WorldObjectSnapshot, state: ObjectState,
