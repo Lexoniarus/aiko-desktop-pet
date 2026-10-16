@@ -20,7 +20,7 @@ class ObjectMemoryCodecTests(unittest.TestCase):
         memory.update((ObjectObservation(
             "object_9", "energy_drink", "drink", 700, 0, True, 9000,
         ),), now=9000)
-        memory.mark_examined("object_9")
+        memory.mark_assessed("object_9")
         memory.note_placement("object_9", x=650, height=0, now=9001, deferred=True)
         self.saved = memory.export(now=9999)
         self.raw = encode_object_memory(self.saved)
@@ -41,7 +41,7 @@ class ObjectMemoryCodecTests(unittest.TestCase):
                                   disposition=None)
         known = ObjectMemory(decode_object_memory(raw, IDENTITIES)).snapshot()[0]
         self.assertIsNone(known.identity)
-        self.assertFalse(known.examined)
+        self.assertFalse(known.assessed)
 
     def test_invalid_flags_ids_numbers_and_experiences_are_rejected(self):
         cases = (

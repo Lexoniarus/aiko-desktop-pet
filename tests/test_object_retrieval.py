@@ -36,7 +36,7 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.seen = ObjectObservation(self.item.instance_id, "apple", "food",
                                       100, 0, True, 0)
         self.memory.update((self.seen,), now=0)
-        self.memory.mark_examined(self.item.instance_id)
+        self.memory.mark_assessed(self.item.instance_id)
         self.memory.note_placement(self.item.instance_id, x=100, height=0,
                                    now=0, deferred=True)
         self.pet = PetState(satiety=50, energy=40)
@@ -114,7 +114,7 @@ class ObjectRetrievalTests(unittest.TestCase):
     def test_drink_recall_matches_energy_and_only_claims_confirmed_deferral(self):
         self.memory.update((replace(self.seen, identity="energy_drink", kind="drink"),),
                            now=0)
-        self.memory.mark_examined(self.item.instance_id)
+        self.memory.mark_assessed(self.item.instance_id)
         goal = ObjectIntentions().choose(self.memory.snapshot(), self.pet, x=0, now=0)
         assert goal is not None
         self.coordinator.begin_goal(goal)
@@ -126,7 +126,7 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.assertEqual(self.cues[-1].event, "object_recall_saved_drink")
 
     def test_recognized_but_unexamined_item_cannot_take_shortcut_from_forged_goal(self):
-        self.memory.restore_snapshot(tuple(replace(item, examined=False,
+        self.memory.restore_snapshot(tuple(replace(item, assessed=False,
                                                    disposition=None)
                                            for item in self.memory.snapshot()))
         self.coordinator.begin_goal(ObjectGoal(self.item.instance_id, "apple", "food",
@@ -164,7 +164,7 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.coordinator.receive(PlaybackEvent(2, "put_down", 2, ("detach_object",)))
         self.coordinator.receive(PlaybackEvent(2, "put_down", 0, finished=True))
         self.assertEqual(self.actions[-1], "game")
-        self.assertTrue(self.memory.snapshot()[0].examined)
+        self.assertTrue(self.memory.snapshot()[0].assessed)
         self.assertEqual(self.memory.snapshot()[0].disposition, "interrupted")
         self.assertEqual(self.consumed, [])
 
@@ -183,7 +183,7 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.memory.update((ObjectObservation(
             item.instance_id, "energy_drink", "drink", 100, 80, False, 0,
         ),), now=0)
-        self.memory.mark_examined(item.instance_id)
+        self.memory.mark_assessed(item.instance_id)
         self.assertTrue(self.coordinator.offer_on_release(item.instance_id))
         self.assertEqual(self.coordinator.phase, "inspect")
         self.assertEqual(self.cues[-1].event, "object_handover")

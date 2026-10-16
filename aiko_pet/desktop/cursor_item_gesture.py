@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from ..application.object_feedback import FeedbackKey, ObjectFeedback
 from ..application.settings import PetSettings
+from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_memory import ObjectMemory
 from ..ui.world_view import WorldView
 from ..world.contracts import ObjectFootprint, WorldPosition
@@ -20,7 +21,7 @@ from .global_input import mouse_buttons_down_windows
 class CursorItemPorts:
     capture_contact: Callable[[str], None]
     handover: Callable[[str], bool]
-    offer_wanted: Callable[[str], bool]
+    assess_offer: Callable[[str], ObjectUseDecision | None]
     present_offer: Callable[[ObjectFeedback], None]
     cancel_feedback: Callable[[], None]
     save: Callable[[], None]
@@ -72,12 +73,16 @@ class CursorItemGesture:
         token = self.instance_id
         known = self._memory.get(token) if token is not None else None
         if token is None or known is None or known.identity is None:
+            self.offer_ready = False
             return
-        wanted = self._ports.offer_wanted(token)
+        decision = self._ports.assess_offer(token)
+        self.offer_ready = decision is not None and decision.consume
+        if decision is None:
+            return
+        wanted = decision.consume
         if self._offer_feedback == (token, wanted):
             return
         self._offer_feedback = token, wanted
-        self.offer_ready = wanted
         self._offer_revision += 1
         key = FeedbackKey(f"offer_{self._offer_serial}", self._offer_revision)
         cue = ObjectFeedback(key, "object_offer" if wanted else "object_refuse",

@@ -13,7 +13,12 @@ from ..pet.mind.object_perception import ConsumableKind
 
 
 def encode_object_memory(snapshot: ObjectMemorySnapshot) -> dict[str, Any]:
-    return {"version": 1, "entries": [asdict(item) for item in snapshot.entries]}
+    entries = []
+    for item in snapshot.entries:
+        row = asdict(item)
+        row["examined"] = row.pop("assessed")
+        entries.append(row)
+    return {"version": 1, "entries": entries}
 
 
 def _number(raw: Any) -> float:

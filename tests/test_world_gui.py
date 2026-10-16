@@ -99,7 +99,7 @@ class WorldGuiTests(unittest.TestCase):
                 world = self.app._world
                 known = world.awareness.memory.get(token)
                 assert known is not None
-                self.assertEqual((known.identity, known.examined, known.disposition),
+                self.assertEqual((known.identity, known.assessed, known.disposition),
                                  ("energy_drink", True, "deferred"))
                 self.assertEqual(world.awareness.observations, ())
                 world.update(time.monotonic())
@@ -239,7 +239,7 @@ class WorldGuiTests(unittest.TestCase):
         known = world.awareness.memory.get(item.instance_id)
         assert known is not None
         self.assertEqual(known.identity, "energy_drink")
-        self.assertTrue(known.examined)
+        self.assertTrue(known.assessed)
         self.assertIsNone(world.awareness.intentions.goal)
         self.assertIsNone(world._visual.object_target)
         eyes_x, eyes_y = self.app._window.gaze_origin()
@@ -291,7 +291,7 @@ class WorldGuiTests(unittest.TestCase):
         ])
         known = world.awareness.memory.get(drink.instance_id)
         assert known is not None
-        self.assertEqual((known.identity, known.examined, known.disposition),
+        self.assertEqual((known.identity, known.assessed, known.disposition),
                          ("energy_drink", True, "deferred"))
         self.assertEqual(world.world.get(drink.instance_id).state, ObjectState.RESTING)
         self.assertIsNone(world._visual.object_target)
@@ -443,7 +443,7 @@ class WorldGuiTests(unittest.TestCase):
         ))
         known = world.awareness.memory.get(item.instance_id)
         assert known is not None
-        self.assertTrue(known.examined)
+        self.assertTrue(known.assessed)
         self.assertEqual(known.x, placed.position.x)
         self.assertIsNone(world._visual.object_target)
         self.assertAlmostEqual(self.app.state.energy, 65, places=1)

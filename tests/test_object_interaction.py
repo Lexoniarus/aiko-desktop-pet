@@ -98,7 +98,7 @@ class ObjectInteractionTests(unittest.TestCase):
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
         self.acknowledge()
         self.assertEqual(self.coordinator.phase, "recognize")
-        self.assertTrue(self.memory.snapshot()[0].examined)
+        self.assertTrue(self.memory.snapshot()[0].assessed)
         self.acknowledge()
         self.acknowledge()
         self.assertEqual(self.coordinator.phase, "put_down")
@@ -129,7 +129,7 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual(self.memory.snapshot(), memory)
         self.coordinator.receive(event)
         self.assertEqual(self.memory.snapshot()[0].disposition, "interrupted")
-        self.assertFalse(self.memory.snapshot()[0].examined)
+        self.assertFalse(self.memory.snapshot()[0].assessed)
 
     def test_failed_handover_restores_both_owners_before_retry(self):
         held = self.world.create_held("apple", WorldPosition(100, 50),

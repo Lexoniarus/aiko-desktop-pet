@@ -116,7 +116,7 @@ class DesktopWorldRuntime:
             ports=CursorItemPorts(
                 capture_contact=self._capture_contact,
                 handover=self.interaction.offer_on_release,
-                offer_wanted=self._offer_wanted, present_offer=self._present_offer,
+                assess_offer=self._assess_offer, present_offer=self._present_offer,
                 cancel_feedback=cancel_feedback, save=save, sync_view=self._sync_view,
                 outside=lambda: feedback(GERMAN_TEXT.format("world.outside")),
             ),
@@ -298,7 +298,7 @@ class DesktopWorldRuntime:
         )
         observed = {item.token for item in self.awareness.observations}
         visible = [item for item in self.awareness.memory.snapshot()
-                   if not item.examined and item.token in observed]
+                   if not item.assessed and item.token in observed]
         gaze = goal or (min(visible, key=lambda item: abs(item.x - self._body_x()))
                         if visible else None)
         self._visual.object_target = (
@@ -359,11 +359,11 @@ class DesktopWorldRuntime:
     def begin_carry(self, item_id: str) -> None:
         self.interrupt(lambda: self.cursor.begin(item_id))
 
-    def _offer_wanted(self, token: str) -> bool:
-        return (decide_object_use(
-            self.awareness.memory.get(token), self.state, ConsumptionOrigin.HANDOVER,
-        ).consume and not self._game_open() and not self.interaction.active
-            and time.monotonic() >= self._playback.until)
+    def _assess_offer(self, token: str) -> ObjectUseDecision | None:
+        if (self._game_open() or self.interaction.active
+                or time.monotonic() < self._playback.until):
+            return None
+        return self.awareness.assess_offer(token, self.state)
 
     def _present_offer(self, cue: ObjectFeedback) -> None:
         reaction = self._mind.select_reaction(

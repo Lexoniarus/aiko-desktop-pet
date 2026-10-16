@@ -17,7 +17,7 @@ class ObjectKnowledge:
     height: float
     resting: bool
     observed_at: float
-    examined: bool = False
+    assessed: bool = False
     disposition: ObjectDisposition | None = None
 
     @property
@@ -36,7 +36,7 @@ class SavedObjectKnowledge:
     height: float
     resting: bool
     age_seconds: float
-    examined: bool
+    assessed: bool
     disposition: ObjectDisposition | None
 
 

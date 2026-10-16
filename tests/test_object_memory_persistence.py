@@ -38,7 +38,7 @@ class ObjectMemoryPersistenceTests(unittest.TestCase):
         self.memory.update((ObjectObservation(
             self.item.instance_id, "apple", "food", 100, 0, True, 1000,
         ),), now=1000)
-        self.memory.mark_examined(self.item.instance_id)
+        self.memory.mark_assessed(self.item.instance_id)
         self.memory.note_placement(self.item.instance_id, x=100, height=0,
                                    now=1000, deferred=True)
         self.state = PetState(satiety=80, updated_at=1_800_000_000)
@@ -59,7 +59,7 @@ class ObjectMemoryPersistenceTests(unittest.TestCase):
         self.assertEqual(restored.object_memory, self.memory.export(now=1005))
         self.assertLess(restored.state.satiety, self.state.satiety)
         known = ObjectMemory(restored.object_memory).snapshot()[0]
-        self.assertEqual((known.observed_at, known.examined, known.disposition),
+        self.assertEqual((known.observed_at, known.assessed, known.disposition),
                          (-5, True, "deferred"))
 
     def test_hidden_move_or_removal_is_not_reconciled_from_saved_world(self):
@@ -172,7 +172,7 @@ class ObjectMemoryPersistenceTests(unittest.TestCase):
         known = ObjectMemory(loaded.object_memory).snapshot()[0]
         self.assertEqual(known.x, 100)
         self.assertFalse(known.resting)
-        self.assertTrue(known.examined)
+        self.assertTrue(known.assessed)
         self.assertIsNone(known.disposition)
 
     def test_desktop_writer_captures_world_and_cognition_in_one_save(self):

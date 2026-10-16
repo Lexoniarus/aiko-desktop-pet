@@ -120,7 +120,7 @@ class ObjectInteractionCoordinator:
 
     def _known_supply(self) -> bool:
         known = self._memory.get(self.instance_id) if self.instance_id else None
-        return (known is not None and known.recognized and known.examined
+        return (known is not None and known.recognized and known.assessed
                 and known.identity == self._identity and known.kind == self._kind)
 
     def missing(self) -> None:
@@ -275,7 +275,7 @@ class ObjectInteractionCoordinator:
                 known = self._memory.get(token)
                 self._identity = known.identity if known is not None else None
                 self._kind = known.kind if known is not None else None
-                self._memory.mark_examined(token)
+                self._memory.mark_assessed(token)
                 self._set_phase("recognize")
                 self._announce(
                     "object_recognized" if self._identity else "object_unknown",

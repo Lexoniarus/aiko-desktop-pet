@@ -21,7 +21,7 @@ class ObjectMemory:
         if saved is not None:
             self.restore_snapshot(tuple(ObjectKnowledge(
                 item.token, item.identity, item.kind, item.x, item.height,
-                item.resting, now - item.age_seconds, item.examined, item.disposition,
+                item.resting, now - item.age_seconds, item.assessed, item.disposition,
             ) for item in saved.entries))
 
     @staticmethod
@@ -53,17 +53,17 @@ class ObjectMemory:
                 and previous is not None else observation.kind,
                 observation.x, observation.height, observation.resting,
                 observation.observed_at,
-                previous.examined if compatible and previous is not None else False,
+                previous.assessed if compatible and previous is not None else False,
                 previous.disposition if compatible and previous is not None else None,
             )
 
     def get(self, token: str) -> ObjectKnowledge | None:
         return self._known.get(token)
 
-    def mark_examined(self, token: str) -> None:
+    def mark_assessed(self, token: str) -> None:
         known = self._known.get(token)
         if known is not None and known.recognized:
-            self._known[token] = replace(known, examined=True)
+            self._known[token] = replace(known, assessed=True)
 
     def note_placement(
         self, token: str, *, x: float, height: float, now: float, deferred: bool,
@@ -73,7 +73,7 @@ class ObjectMemory:
         if known is not None:
             self._known[token] = replace(
                 known, x=x, height=height, resting=True, observed_at=now,
-                disposition="deferred" if deferred and known.examined
+                disposition="deferred" if deferred and known.assessed
                 else "interrupted",
             )
 
@@ -97,5 +97,5 @@ class ObjectMemory:
     def export(self, *, now: float) -> ObjectMemorySnapshot:
         return ObjectMemorySnapshot(tuple(SavedObjectKnowledge(
             item.token, item.identity, item.kind, item.x, item.height, item.resting,
-            max(0, now - item.observed_at), item.examined, item.disposition,
+            max(0, now - item.observed_at), item.assessed, item.disposition,
         ) for item in self._known.values() if self._retained(item, now)))

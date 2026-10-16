@@ -12,13 +12,13 @@ class ObjectMemoryTests(unittest.TestCase):
         memory = ObjectMemory()
         seen = ObjectObservation("one", "apple", "food", 100, 0, True, 1)
         memory.update((seen,), now=1)
-        memory.mark_examined("one")
+        memory.mark_assessed("one")
         memory.update((replace(seen, observed_at=2),), now=2)
-        self.assertTrue(memory.snapshot()[0].examined)
+        self.assertTrue(memory.snapshot()[0].assessed)
         memory.update((), now=3)
-        self.assertTrue(memory.snapshot()[0].examined)
+        self.assertTrue(memory.snapshot()[0].assessed)
         memory.update((replace(seen, x=200, observed_at=4),), now=4)
-        self.assertTrue(memory.snapshot()[0].examined)
+        self.assertTrue(memory.snapshot()[0].assessed)
         self.assertEqual(memory.snapshot()[0].x, 200)
 
     def test_known_identity_survives_ten_minutes_without_revealing_hidden_changes(self):
@@ -47,8 +47,8 @@ class ObjectMemoryTests(unittest.TestCase):
     def test_only_unidentified_sightings_expire_after_600_active_seconds(self):
         memory = ObjectMemory()
         memory.update((ObjectObservation("one", None, None, 100, 0, True, 1),), now=1)
-        memory.mark_examined("one")
-        self.assertFalse(memory.snapshot()[0].examined)
+        memory.mark_assessed("one")
+        self.assertFalse(memory.snapshot()[0].assessed)
         memory.update((), now=601)
         self.assertEqual(len(memory.snapshot()), 1)
         memory.update((), now=601.1)
@@ -58,12 +58,12 @@ class ObjectMemoryTests(unittest.TestCase):
         memory = ObjectMemory()
         seen = ObjectObservation("one", "apple", "food", 100, 0, True, 1)
         memory.update((seen,), now=1)
-        memory.mark_examined("one")
+        memory.mark_assessed("one")
         memory.note_placement("one", x=200, height=0, now=2, deferred=True)
         memory.update((replace(seen, identity="onigiri", observed_at=3),), now=3)
         known = memory.snapshot()[0]
         self.assertEqual(known.identity, "onigiri")
-        self.assertFalse(known.examined)
+        self.assertFalse(known.assessed)
         self.assertIsNone(known.disposition)
 
     def test_portable_snapshot_reanchors_age_without_manufacturing_offline_time(self):
@@ -83,13 +83,13 @@ class ObjectMemoryTests(unittest.TestCase):
         memory = ObjectMemory()
         memory.update((ObjectObservation("one", "apple", "food", 100, 0, False, 1),),
                       now=1)
-        memory.mark_examined("one")
+        memory.mark_assessed("one")
         memory.note_placement("one", x=200, height=0, now=2, deferred=True)
         known = memory.snapshot()[0]
         self.assertEqual((known.x, known.resting, known.disposition),
                          (200, True, "deferred"))
         restored = ObjectMemory(memory.export(now=10000))
-        self.assertTrue(restored.snapshot()[0].examined)
+        self.assertTrue(restored.snapshot()[0].assessed)
         self.assertEqual(restored.snapshot()[0].disposition, "deferred")
         memory.note_placement("one", x=300, height=0, now=3, deferred=False)
         self.assertEqual(memory.snapshot()[0].disposition, "interrupted")

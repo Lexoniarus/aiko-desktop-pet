@@ -58,7 +58,7 @@ class WorldSmokeTests(unittest.TestCase):
             memory.update((ObjectObservation(
                 item.instance_id, "energy_drink", "drink", 100, 0, True, 0,
             ),), now=0)
-            memory.mark_examined(item.instance_id)
+            memory.mark_assessed(item.instance_id)
             memory.note_placement(item.instance_id, x=100, height=0,
                                    now=0, deferred=True)
             store.save(loaded.state, loaded.settings, world=world.snapshot(),

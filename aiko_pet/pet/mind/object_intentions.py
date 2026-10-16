@@ -59,10 +59,10 @@ class ObjectIntentions:
                 continue
             # Rest after consumption limits renewed supply seeking. Curiosity
             # about a different, unexamined portion remains an independent goal.
-            if item.examined and now < self._pause_until:
+            if item.assessed and now < self._pause_until:
                 continue
             wanted = decide_object_use(item, state).consume
-            if item.examined and not wanted:
+            if item.assessed and not wanted:
                 continue
             threshold = BALANCE.number(
                 "object_behavior",
@@ -73,7 +73,7 @@ class ObjectIntentions:
                 continue
             goal = ObjectGoal(item.token, item.identity, item.kind,
                               item.x, item.height, item.observed_at,
-                              "consume" if item.examined else "investigate")
+                              "consume" if item.assessed else "investigate")
             if self.goal is not None and item.token == self.goal.token:
                 self.goal = goal
                 return goal

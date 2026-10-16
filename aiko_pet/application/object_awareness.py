@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..pet.consumption import ConsumptionOrigin
+from ..pet.mind.object_decisions import ObjectUseDecision, decide_object_use
 from ..pet.mind.object_intentions import ObjectGoal, ObjectIntentions
 from ..pet.mind.object_knowledge import ObjectMemorySnapshot
 from ..pet.mind.object_memory import ObjectMemory
@@ -21,6 +23,21 @@ class ObjectAwareness:
         self.intentions = ObjectIntentions()
         self.observations: tuple[ObjectObservation, ...] = ()
         self._world_revision = -1
+
+    def assess_offer(self, token: str, state: PetState) -> ObjectUseDecision | None:
+        """Assess only a currently recognized offer, never hidden World truth."""
+        known = self.memory.get(token)
+        if known is None or not any(
+            seen.token == token and seen.identity == known.identity
+            and seen.kind == known.kind and seen.identity is not None
+            for seen in self.observations
+        ):
+            return None
+        decision = decide_object_use(known, state, ConsumptionOrigin.HANDOVER)
+        if decision.reason in ("unrecognized", "unavailable"):
+            return None
+        self.memory.mark_assessed(token)
+        return decision
 
     def update(
         self, world: WorldSnapshot, state: PetState, *, now: float,
@@ -48,11 +65,11 @@ class ObjectAwareness:
         )
         self.observations = observations
         previous = {(item.token, item.identity, item.x, item.height, item.resting,
-                     item.examined, item.disposition)
+                     item.assessed, item.disposition)
                     for item in self.memory.snapshot()}
         self.memory.update(observations, now=now)
         current = {(item.token, item.identity, item.x, item.height, item.resting,
-                    item.examined, item.disposition)
+                    item.assessed, item.disposition)
                    for item in self.memory.snapshot()}
         changed = previous != current or self._world_revision != world.revision
         self._world_revision = world.revision

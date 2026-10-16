@@ -86,7 +86,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             ),
             now=world.now,
         )
-        world.awareness.memory.mark_examined(item.instance_id)
+        world.awareness.memory.mark_assessed(item.instance_id)
         world.awareness.memory.note_placement(
             item.instance_id,
             x=world._body_x() + 20,
@@ -197,7 +197,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         trace = self.run_until(
             lambda: (
                 (known := world.awareness.memory.get(item.instance_id)) is not None
-                and known.examined
+                and known.assessed
                 and world.world.get(item.instance_id).state == ObjectState.RESTING
                 and not world.interaction.active
             ),
@@ -243,7 +243,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         )
         trace = self.run_until(
             lambda: (
-                any(known.examined for known in world.awareness.memory.snapshot())
+                any(known.assessed for known in world.awareness.memory.snapshot())
                 and not world.interaction.active
             ),
             30,
@@ -266,7 +266,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
         known = world.awareness.memory.get(item.instance_id)
         assert known is not None
-        self.assertTrue(known.examined)
+        self.assertTrue(known.assessed)
         expected = [
             "object_notice",
             "object_approach",
