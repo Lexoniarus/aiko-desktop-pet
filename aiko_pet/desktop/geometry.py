@@ -9,10 +9,9 @@ FOOT_BASELINE = 194
 
 @dataclass(frozen=True)
 class GroundApproach:
-    """A bounded standing position and its required kind of ground grip."""
+    """A bounded full-window standing position for ordinary ground reach."""
 
     standing_x: int
-    edge_grip: bool
 
     def arrived(self, x: float) -> bool:
         return abs(x - self.standing_x) <= 2
@@ -49,17 +48,14 @@ class TaskbarTrack:
             return None
         standing_x = self.clamp_x(object_x - sprite_width / 2, sprite_width)
         residual = abs(object_x - (standing_x + sprite_width / 2))
-        edge = standing_x in (self.left, self.right - sprite_width)
-        return GroundApproach(standing_x, edge_grip=edge and residual > reach)
+        return GroundApproach(standing_x) if residual <= reach else None
 
     def can_grasp_ground(
         self, object_x: float, pet_x: float, sprite_width: int, reach: float,
     ) -> bool:
-        """Allow ordinary reach, or a bounded edge grip after actual arrival."""
+        """Require a reachable anchor, ordinary distance and an on-track pet."""
         approach = self.ground_approach(object_x, sprite_width, reach)
         if (approach is None
                 or not self.left <= pet_x <= self.right - sprite_width):
             return False
-        if approach.edge_grip:
-            return approach.arrived(pet_x)
         return abs(object_x - (pet_x + sprite_width / 2)) <= reach

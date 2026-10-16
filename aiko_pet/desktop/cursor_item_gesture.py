@@ -85,6 +85,7 @@ class CursorItemGesture:
         except tk.TclError:
             self.cancel()
             return
+        self._ports.save()
         self._ports.sync_view()
 
     def observe_offer(self) -> None:

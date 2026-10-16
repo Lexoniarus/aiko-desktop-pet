@@ -88,61 +88,60 @@ class WorldGuiTests(unittest.TestCase):
         world._controls_active = lambda: False
         self.app._action_playback.cancel_at(time.monotonic())
 
-    def test_deferred_drink_survives_cold_restore_at_both_edges_and_scales(self):
-        for scale, side in ((1, "left"), (1, "right"), (2, "left"), (2, "right")):
-            with self.subTest(scale=scale, side=side):
-                # Exercise the original inquiry and confirmed put-down first.
-                self._edge_drink_round_trip(scale, side)
-                old_world = self.app._world
-                token = old_world.awareness.memory.snapshot()[0].token
-                self.restart()
-                world = self.app._world
-                known = world.awareness.memory.get(token)
-                assert known is not None
-                self.assertEqual((known.identity, known.assessed, known.disposition),
-                                 ("energy_drink", True, "deferred"))
-                self.assertEqual(world.awareness.observations, ())
-                world.update(time.monotonic())
-                self.assertFalse(world.interaction.active)
-                self.assertIsNone(world._visual.object_target)
-                self.assertFalse(self.app.settings.auto_walk)
-                cues = []
-                present = world._present_feedback
+    def test_deferred_drink_survives_cold_restore_and_known_retrieval(self):
+        scale, side = 2, "left"
+        # Exercise the original inquiry and confirmed put-down first.
+        self._placed_drink_round_trip(scale, side)
+        old_world = self.app._world
+        token = old_world.awareness.memory.snapshot()[0].token
+        self.restart()
+        world = self.app._world
+        known = world.awareness.memory.get(token)
+        assert known is not None
+        self.assertEqual((known.identity, known.assessed, known.disposition),
+                         ("energy_drink", True, "deferred"))
+        self.assertEqual(world.awareness.observations, ())
+        world.update(time.monotonic())
+        self.assertFalse(world.interaction.active)
+        self.assertIsNone(world._visual.object_target)
+        self.assertFalse(self.app.settings.auto_walk)
+        cues = []
+        present = world._present_feedback
 
-                def capture(cue, reaction, done):
-                    cues.append(cue)
-                    present(cue, reaction, done)
+        def capture(cue, reaction, done):
+            cues.append(cue)
+            present(cue, reaction, done)
 
-                world._present_feedback = capture
-                self.app.state.energy = 55
-                world.now += 1.1
-                world.update(time.monotonic())
-                self.assertEqual(cues[0].event, "object_recall_saved_drink")
-                self.complete_feedback()
-                self.assertEqual(world.interaction.phase, "approach")
-                # Restored history authorizes approach, not invisible acquisition.
-                world.now += .3
-                world.update(time.monotonic())
-                self.assertEqual(world.interaction.phase, "pick_up")
-                self.finish_pickup()
-                self.assertEqual(world.interaction.phase, "eat")
-                self.assertGreater(self.app.state.energy, 64)
-                saved = self.app.store.load_session()
-                assert saved.world is not None
-                assert saved.object_memory is not None
-                self.assertEqual(saved.world.objects, ())
-                self.assertEqual(saved.object_memory.entries, ())
-                self.finish_clip("eat")
-                self.complete_feedback()
-                self.assertFalse(world.interaction.active)
-                self.assertEqual([cue.event for cue in cues], [
-                    "object_recall_saved_drink", "object_consuming_drink",
-                    "object_finished_drink",
-                ])
-                self.assertEqual(self.app.state.friendship, 15)
-                self.restart()
-                self.assertEqual(self.app._world.awareness.memory.snapshot(), ())
-                self.assertEqual(self.app._world.world.snapshot().objects, ())
+        world._present_feedback = capture
+        self.app.state.energy = 55
+        world.now += 1.1
+        world.update(time.monotonic())
+        self.assertEqual(cues[0].event, "object_recall_saved_drink")
+        self.complete_feedback()
+        self.assertEqual(world.interaction.phase, "approach")
+        # Restored history authorizes approach, not invisible acquisition.
+        world.now += .3
+        world.update(time.monotonic())
+        self.assertEqual(world.interaction.phase, "pick_up")
+        self.finish_pickup()
+        self.assertEqual(world.interaction.phase, "eat")
+        self.assertGreater(self.app.state.energy, 64)
+        saved = self.app.store.load_session()
+        assert saved.world is not None
+        assert saved.object_memory is not None
+        self.assertEqual(saved.world.objects, ())
+        self.assertEqual(saved.object_memory.entries, ())
+        self.finish_clip("eat")
+        self.complete_feedback()
+        self.assertFalse(world.interaction.active)
+        self.assertEqual([cue.event for cue in cues], [
+            "object_recall_saved_drink", "object_consuming_drink",
+            "object_finished_drink",
+        ])
+        self.assertEqual(self.app.state.friendship, 15)
+        self.restart()
+        self.assertEqual(self.app._world.awareness.memory.snapshot(), ())
+        self.assertEqual(self.app._world.world.snapshot().objects, ())
 
     def test_absent_remembered_instance_requires_attentive_local_search(self):
         world = self.app._world
@@ -329,8 +328,10 @@ class WorldGuiTests(unittest.TestCase):
             self.assertGreater(app.state.energy, 49)
             app._action_playback.cancel_at(time.monotonic())
             world.interrupt(lambda: None)
-            app.state.energy = 100
             world.begin_carry("energy_drink")
+            # Starting a gesture saves through the shared active-time owner.
+            # Establish the exact capacity boundary after that time advance.
+            app.state.energy = 100
             for now in (1, 1.3, 1.7):
                 world.now = now
                 world.update(time.monotonic())
@@ -450,6 +451,20 @@ class WorldGuiTests(unittest.TestCase):
         world.cursor.cancel()
         self.assertEqual(self.app.state.friendship, care)
 
+    def test_released_button_cannot_start_a_gesture_after_queued_putdown(self):
+        world = self.app._world
+        item = world.world.place_resting("apple", world._body_x(),
+                                         ObjectFootprint(8, 8))
+        pending = []
+        with patch.object(world.interaction, "interrupt", side_effect=pending.append):
+            world.begin_relocate(item.instance_id, item.revision)
+        self.assertFalse(world.cursor.carrying)
+        with patch("aiko_pet.desktop.world_runtime.mouse_buttons_down_windows",
+                   return_value=(False, False)):
+            pending[0]()
+        self.assertFalse(world.cursor.carrying)
+        self.assertEqual(world.world.get(item.instance_id).state, ObjectState.RESTING)
+
     def test_actual_driver_reaches_food_with_random_walk_disabled(self):
         world = self.app._world
         start = self.app.settings.x or 0
@@ -467,7 +482,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertFalse(self.app.settings.auto_walk)
         self.assertEqual(world.interaction.phase, "pick_up")
 
-    def _reach_edge_drink(self, scale, side):
+    def _reach_placed_drink(self, scale, side):
         app, world = self.app, self.app._world
         app.settings.scale = scale
         app._window.resize()
@@ -503,8 +518,8 @@ class WorldGuiTests(unittest.TestCase):
         self.assertAlmostEqual(current_x, boundary, delta=2)
         return item
 
-    def _edge_drink_round_trip(self, scale, side):
-        item = self._reach_edge_drink(scale, side)
+    def _placed_drink_round_trip(self, scale, side):
+        item = self._reach_placed_drink(scale, side)
         world, animated = self.app._world, self.app._animated
         clip = animated.assets.clips["pick_up"]
         for index in range(1, 4):
@@ -549,8 +564,8 @@ class WorldGuiTests(unittest.TestCase):
         self.assertAlmostEqual(self.app.state.energy, 65, places=1)
         return item
 
-    def test_edge_grip_rechecks_actual_standing_position_at_frame_four(self):
-        item = self._reach_edge_drink(1, "left")
+    def test_ground_pickup_rechecks_actual_reach_at_frame_four(self):
+        item = self._reach_placed_drink(1, "left")
         animated, world = self.app._animated, self.app._world
         clip = animated.assets.clips["pick_up"]
         for index in (0, 1):
@@ -566,8 +581,8 @@ class WorldGuiTests(unittest.TestCase):
         self.assertIsNone(animated.food_overlay.current_food_id)
         self.assertAlmostEqual(self.app.state.energy, 65, places=1)
 
-    def test_wanted_edge_drink_consumes_only_after_grasp_and_inspection(self):
-        item = self._reach_edge_drink(2, "right")
+    def test_wanted_placed_drink_consumes_only_after_grasp_and_inspection(self):
+        item = self._reach_placed_drink(2, "right")
         world = self.app._world
         self.app.state.energy = 50
         self.finish_pickup()

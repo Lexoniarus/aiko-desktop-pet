@@ -64,6 +64,7 @@ class WorldSurface:
         return left, right
 
     def ground_x(self, x: float, footprint: ObjectFootprint) -> float:
+        _finite_nonnegative(x, "ground anchor")
         left, right = self.ground_interval(footprint)
         return max(left, min(x, right))
 

@@ -46,6 +46,7 @@ from ..world.contracts import (
 from ..world.state import WorldOperationError, WorldState
 from .cursor_item_gesture import CursorItemGesture, CursorItemPorts
 from .geometry import GroundApproach, TaskbarTrack
+from .global_input import mouse_buttons_down_windows
 from .visual_observation import DesktopVisualObservation
 from .walk_runtime import WalkDriver
 
@@ -225,8 +226,7 @@ class DesktopWorldRuntime:
     def _ground_x(self, token: str) -> float:
         item = self.world.get(token)
         surface = self.world.snapshot().surface
-        return max(item.footprint.left,
-                   min(self._body_x(), surface.width - item.footprint.right))
+        return surface.ground_x(self._body_x(), item.footprint)
 
     def _ground_approach(self, x: float) -> GroundApproach | None:
         track = self._track()
@@ -272,12 +272,6 @@ class DesktopWorldRuntime:
         item = self.world.get(token)
         if item.position is None:
             return
-        if item.state == ObjectState.RESTING:
-            approach = self._ground_approach(item.position.x)
-            if approach is not None and approach.edge_grip:
-                # Frame 4 acquires directly at the authored hand anchor.
-                self._contact = None
-                return
         sprite = self.view.items.foods[item.definition_id].sprites[self.settings.scale]
         image = self.view.image(item.definition_id, self.settings.scale)
         self._contact = (
@@ -403,7 +397,20 @@ class DesktopWorldRuntime:
 
     def begin_carry(self, item_id: str) -> None:
         self._sync_geometry()
-        self.interrupt(lambda: self.cursor.begin(item_id))
+        self._request_gesture(lambda: self.cursor.begin(item_id))
+
+    def _request_gesture(self, action: Callable[[], None]) -> None:
+        dispatching = True
+
+        def start() -> None:
+            # A queued put-down can outlive the physical press which requested it.
+            buttons = mouse_buttons_down_windows()
+            if not dispatching and buttons is not None and not buttons[0]:
+                return
+            action()
+
+        self.interrupt(start)
+        dispatching = False
 
     def begin_relocate(self, token: str, revision: int) -> None:
         self._sync_geometry()
@@ -415,7 +422,7 @@ class DesktopWorldRuntime:
         def acquire() -> None:
             self.cursor.begin_existing(token, revision)
 
-        self.interrupt(acquire)
+        self._request_gesture(acquire)
 
     def _assess_offer(self, token: str) -> ObjectUseDecision | None:
         if (self._game_open() or self.interaction.active
