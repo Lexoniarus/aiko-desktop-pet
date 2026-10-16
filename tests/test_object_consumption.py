@@ -41,7 +41,7 @@ class ObjectConsumptionTests(unittest.TestCase):
         self.inputs = SessionInputs(1_800_000_000, 1, False, None, False, False, None)
 
     def consume(self):
-        return self.use_case.complete(self.world, "one", self.item.instance_id,
+        return self.use_case.commit(self.world, "one", self.item.instance_id,
                                       ConsumptionOrigin.AUTONOMOUS, self.inputs)
 
     def test_identical_replay_returns_receipt_without_another_effect(self):

@@ -194,7 +194,7 @@ class ObjectMemoryPersistenceTests(unittest.TestCase):
             self.state, make_aiko_mind(started_at=0), AdaptiveRoutine(),
             clock=ActiveSessionClock(lambda: 0), memory=self.memory,
         )
-        outcome = use_case.complete(
+        outcome = use_case.commit(
             self.world, "test", self.item.instance_id, ConsumptionOrigin.AUTONOMOUS,
             SessionInputs(self.state.updated_at, 1, False, None, False, False, None),
         )

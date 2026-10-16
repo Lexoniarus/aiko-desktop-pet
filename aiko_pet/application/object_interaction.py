@@ -13,6 +13,7 @@ from ..pet.mind.object_memory import ObjectMemory
 from ..pet.mind.object_perception import ConsumableKind
 from ..world.contracts import ObjectState
 from ..world.state import WorldOperationError, WorldState
+from .object_custody import ObjectCustody
 from .object_feedback import (
     FeedbackKey,
     FeedbackReceipt,
@@ -34,6 +35,7 @@ class ObjectInteractionCoordinator:
         now: Callable[[], float], inspection_seconds: float,
     ) -> None:
         self.world = world
+        self._custody = ObjectCustody(world, memory)
         self._play, self._stop, self._select_item = play, stop, select_item
         self._consume, self._eligible = consume, eligible
         self._ground_x, self._completed = ground_x, completed
@@ -152,17 +154,9 @@ class ObjectInteractionCoordinator:
         if self.active or not self._eligible(instance_id):
             return False
         item = self.world.get(instance_id)
-        world_checkpoint, memory_checkpoint = (
-            self.world.snapshot(), self._memory.snapshot(),
+        self._custody.accept_handover_on_release(
+            instance_id, expected_revision=item.revision, now=self._now(),
         )
-        try:
-            self.world.accept_handover_on_release(instance_id,
-                                                  expected_revision=item.revision)
-            self._memory.note_acquired(instance_id, now=self._now())
-        except Exception:
-            self.world.restore_snapshot(world_checkpoint)
-            self._memory.restore_snapshot(memory_checkpoint)
-            raise
         self._start(instance_id, ConsumptionOrigin.HANDOVER)
         known = self._memory.get(instance_id)
         self._identity = known.identity if known is not None else None
@@ -222,21 +216,15 @@ class ObjectInteractionCoordinator:
                 self._stop()
                 return
             item = self.world.get(token)
-            world_checkpoint, memory_checkpoint = (
-                self.world.snapshot(), self._memory.snapshot(),
-            )
             try:
-                self.world.collect_resting(token, expected_revision=item.revision)
-                self._memory.note_acquired(token, now=self._now())
+                self._custody.collect_resting(
+                    token, expected_revision=item.revision, now=self._now(),
+                )
             except WorldOperationError:
-                self.world.restore_snapshot(world_checkpoint)
-                self._memory.restore_snapshot(memory_checkpoint)
                 self._finish(False)
                 self._stop()
                 return
             except Exception:
-                self.world.restore_snapshot(world_checkpoint)
-                self._memory.restore_snapshot(memory_checkpoint)
                 self._seen.discard(event)
                 raise
             self._select_item(item.definition_id)
@@ -244,21 +232,13 @@ class ObjectInteractionCoordinator:
         if (self.phase == "put_down" and "detach_object" in event.events
                 and detach not in self._effects):
             item = self.world.get(token)
-            world_checkpoint, memory_checkpoint = (
-                self.world.snapshot(), self._memory.snapshot(),
-            )
             try:
-                placed = self.world.put_down(token, self._ground_x(token),
-                                             expected_revision=item.revision)
-                assert placed.position is not None
-                self._memory.note_placement(
-                    token, x=placed.position.x, height=placed.position.height,
+                self._custody.put_down(
+                    token, self._ground_x(token), expected_revision=item.revision,
                     now=self._now(), deferred=self._queued is None
                     and self._decision.reason == "not_needed",
                 )
             except Exception:
-                self.world.restore_snapshot(world_checkpoint)
-                self._memory.restore_snapshot(memory_checkpoint)
                 self._seen.discard(event)
                 raise
             self._effects.add(detach)

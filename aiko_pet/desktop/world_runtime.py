@@ -186,7 +186,7 @@ class DesktopWorldRuntime:
             self.interaction.receive(self._events.popleft())
 
     def _consume(self, key: str, token: str, origin: ConsumptionOrigin) -> bool:
-        outcome = self._consumption.complete(
+        outcome = self._consumption.commit(
             self.world, key, token, origin,
             self._inputs(time.time(), time.monotonic()),
         )

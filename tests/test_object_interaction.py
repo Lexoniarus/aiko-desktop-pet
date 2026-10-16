@@ -15,6 +15,7 @@ from aiko_pet.world.contracts import (
     ObjectFootprint,
     ObjectInteraction,
     ObjectState,
+    WorldPosition,
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
@@ -129,6 +130,32 @@ class ObjectInteractionTests(unittest.TestCase):
         self.coordinator.receive(event)
         self.assertEqual(self.memory.snapshot()[0].disposition, "interrupted")
         self.assertFalse(self.memory.snapshot()[0].examined)
+
+    def test_failed_handover_restores_both_owners_before_retry(self):
+        held = self.world.create_held("apple", WorldPosition(100, 50),
+                                      ObjectFootprint(8, 8))
+        self.memory.update((ObjectObservation(
+            held.instance_id, "apple", "food", 100, 50, False, 0,
+        ),), now=0)
+        self.stamp = 1
+        self.delay_feedback = True
+        before_world, before_memory = self.world.snapshot(), self.memory.snapshot()
+        original = self.memory.note_acquired
+
+        def broken(*args, **kwargs):
+            original(*args, **kwargs)
+            raise RuntimeError("injected handover failure")
+
+        with patch.object(self.memory, "note_acquired", side_effect=broken):
+            with self.assertRaises(RuntimeError):
+                self.coordinator.offer_on_release(held.instance_id)
+        self.assertEqual(self.world.snapshot(), before_world)
+        self.assertEqual(self.memory.snapshot(), before_memory)
+        self.assertFalse(self.coordinator.active)
+        self.assertTrue(self.coordinator.offer_on_release(held.instance_id))
+        self.assertEqual(self.world.get(held.instance_id).state, ObjectState.PET_HELD)
+        self.assertEqual(self.coordinator.phase, "inspect")
+        self.assertEqual(self.cues[-1].event, "object_handover")
 
     def test_failed_grasp_rolls_back_world_and_memory_and_can_retry(self):
         self.start_investigation()

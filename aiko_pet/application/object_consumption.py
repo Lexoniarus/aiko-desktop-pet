@@ -43,7 +43,7 @@ class ObjectConsumption:
             str, tuple[str, ConsumptionOrigin, ConsumptionOutcome]
         ] = OrderedDict()
 
-    def complete(
+    def commit(
         self,
         world: WorldState,
         interaction_id: str,
@@ -51,6 +51,7 @@ class ObjectConsumption:
         origin: ConsumptionOrigin,
         inputs: SessionInputs,
     ) -> ConsumptionOutcome:
+        """Commit effects once at consumption start, before visual playback ends."""
         previous = self._receipts.get(interaction_id)
         if previous is not None:
             if previous[:2] != (instance_id, origin):
