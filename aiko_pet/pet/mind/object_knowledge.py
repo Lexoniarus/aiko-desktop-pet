@@ -6,6 +6,7 @@ from typing import Literal
 from .object_perception import ConsumableKind
 
 ObjectDisposition = Literal["deferred", "interrupted"]
+PlaceStatus = Literal["remembered", "missing", "superseded"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -19,6 +20,8 @@ class ObjectKnowledge:
     observed_at: float
     assessed: bool = False
     disposition: ObjectDisposition | None = None
+    place_status: PlaceStatus = "remembered"
+    possible_sources: tuple[str, ...] = ()
 
     @property
     def recognized(self) -> bool:
@@ -38,6 +41,8 @@ class SavedObjectKnowledge:
     age_seconds: float
     assessed: bool
     disposition: ObjectDisposition | None
+    place_status: PlaceStatus = "remembered"
+    possible_sources: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

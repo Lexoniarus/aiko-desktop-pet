@@ -17,6 +17,8 @@ def encode_object_memory(snapshot: ObjectMemorySnapshot) -> dict[str, Any]:
     for item in snapshot.entries:
         row = asdict(item)
         row["examined"] = row.pop("assessed")
+        row.pop("place_status")
+        row.pop("possible_sources")
         entries.append(row)
     return {"version": 1, "entries": entries}
 
