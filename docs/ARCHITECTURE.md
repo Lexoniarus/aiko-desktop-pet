@@ -4,6 +4,10 @@ Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tki
 
 The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Imports point directly to the packages that own each responsibility.
 
+The accepted [OOP refactoring plan](OOP_REFACTOR_PLAN.md) records the staged
+work on interaction state, application-owned object behavior and PetState write
+boundaries. Its delivery ledger distinguishes verified stages from future design.
+
 The implemented [perception correction plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md)
 separates noticing, identifying and assessing, deliberate cursor presentation and
 early local absence detection. Its delivery ledger and practical checklist
@@ -467,6 +471,20 @@ held inspection, recognition, decision, consumption and put-down phases. The
 mind distinguishes investigate from consume, so a new noticed item can prompt
 investigation without current appetite. Subjective assessed knowledge prevents
 repeated handling; later needs can activate known deferred portions.
+
+`application/object_interaction_state.py` holds the coordinator's private
+`InteractionEpisode`: subject/custody references, care origin/use context,
+learned identity, queued interruption, withholding and effect history. Takes and
+observed returns retain the episode; a fresh attempt creates a new record, and
+completion releases it before cancelling feedback. Record/instance identifiers
+remain readable properties. Typed phase variants now own arrival, playback,
+inspection/search time, use decisions and cue/aside prerequisites. Waiting and
+offer phases share their current appraisal while each transition gets fresh
+feedback; a new approach requires fresh arrival. The coordinator owns phase
+transitions and session counters/contact cooldown. Its read-only phase name and
+search diagnostics keep their existing contracts; see the verified stages in
+the [OOP refactoring plan](OOP_REFACTOR_PLAN.md).
+
 The coordinator preserves that consume purpose: known assessed stock uses recall,
 pickup and full consumption without repeating inspection/recognition/desire cues.
 Changed needs safely lead to refusal/put-down; conflicting evidence restores
@@ -529,8 +547,26 @@ with recovery and deduplicates completed requests. World `consume()`
 alone still cannot feed Aiko. Human-only care rewards are excluded for ground
 consumption, while canonical nutrition, repetition and food mood effects remain.
 
-`desktop/world_runtime.py` connects host geometry, awareness, interaction and
-presentation. `desktop/cursor_item_gesture.py` owns one input gesture: cursor
+`application/object_behavior.py` coordinates object attention, checked-absence
+priority, search continuation/replacement, waiting for return and approach
+start/change using the existing state, awareness, interaction and World owners.
+It owns behavioral eligibility, continuing-wish decisions and returning-offer
+appraisal. Immutable host facts enter the application; relative gaze and bounded
+`Hold`, `Approach` or `SearchMotion` instructions leave it. Normal completion
+ports retain cancellation effects; `SearchStopped` adds no subsequent native
+action. Attention is applied before cursor offer observation, then motion is
+decided against the resulting episode. Suitable search replacements precede
+general blocking, unknown curiosity does not invent appetite, synchronous found
+feedback keeps the same update handoff and return waiting holds for its original
+tick. It stores no duplicate wish, memory, episode or clock. See stage 5 of the
+[OOP refactoring plan](OOP_REFACTOR_PLAN.md).
+
+`desktop/world_runtime.py` composes the owners, samples host/sensory facts and
+translates application instructions into native movement/gaze. It retains actual
+arrival, taskbar reach, scale bounds and source-frame reach revalidation; contact
+capture precedes arrival acknowledgement. It contains no phase-name behavior
+branching. The mind tick and separate motion/render timer remain unchanged.
+`desktop/cursor_item_gesture.py` owns one input gesture: cursor
 instance handle, native capture, pointer geometry, offer-preview IDs and release
 or cancellation. Named ports keep appetite/feedback and custody decisions with
 the existing application owners. There are no shadow cursor fields or retired

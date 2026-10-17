@@ -13,6 +13,13 @@ from collections.abc import Callable
 from ..application.active_time import ActiveSessionClock, SessionInputs
 from ..application.controller import CareOutcome
 from ..application.object_awareness import ObjectAwareness
+from ..application.object_behavior import (
+    BehaviorFacts,
+    Hold,
+    ObjectBehaviorCoordinator,
+    SearchMotion,
+    SearchStopped,
+)
 from ..application.object_consumption import ObjectConsumption
 from ..application.object_feedback import FeedbackReceipt, ObjectFeedback
 from ..application.object_interaction import ObjectInteractionCoordinator
@@ -34,10 +41,8 @@ from ..pet.mind.catalog import Reaction
 from ..pet.mind.object_decisions import (
     ObjectUseContext,
     ObjectUseDecision,
-    decide_object_use,
 )
-from ..pet.mind.object_intentions import ObjectGoal
-from ..pet.mind.object_knowledge import ObjectKnowledge, ObjectMemorySnapshot
+from ..pet.mind.object_knowledge import ObjectMemorySnapshot
 from ..pet.routine import context_at
 from ..pet.state import PetState
 from ..ui.pet_view.action_playback import ActionPlayback
@@ -122,6 +127,9 @@ class DesktopWorldRuntime:
             search_seconds=BALANCE.number("object_behavior", "search_seconds"),
             withholding=self._withheld,
         )
+        self._behavior = ObjectBehaviorCoordinator(
+            state, self.awareness, self.interaction, self.world,
+        )
         animated.on_playback = self._queue_event
         self.cursor = CursorItemGesture(
             root=root, world=self.world, view=self.view, settings=settings,
@@ -168,12 +176,15 @@ class DesktopWorldRuntime:
         return self._animated.action_id
 
     def _decide(self, token: str, context: ObjectUseContext) -> ObjectUseDecision:
-        goal = self.awareness.intentions.goal
-        if goal is not None and goal.token == token and (
-            goal.use_context == ObjectUseContext.CONTINUING_WISH
-        ):
-            context = goal.use_context
-        return decide_object_use(self.awareness.memory.get(token), self.state, context)
+        return self._behavior.decide(token, context)
+
+    def _behavior_facts(self) -> BehaviorFacts:
+        return BehaviorFacts(
+            game_open=self._game_open(), controls_active=self._controls_active(),
+            carrying=self.cursor.carrying,
+            playback_busy=time.monotonic() < self._playback.until,
+            user_action_pending=self.user_action_pending,
+        )
 
     def _phase_feedback(self, cue: ObjectFeedback) -> None:
         reaction = self._care.reaction if (
@@ -256,37 +267,28 @@ class DesktopWorldRuntime:
         )
 
     def _can_acquire(self, token: str) -> bool:
-        if self.state.sleeping or self._game_open():
-            return False
         try:
             item = self.world.get(token)
         except WorldOperationError:
             return False
-        known = self.awareness.known_instance(token)
-        if known is None or item.position is None:
+        if item.position is None:
             return False
         distance = abs(item.position.x - self._body_x())
         if item.state == ObjectState.USER_HELD:
-            return (
-                (not self.interaction.active or self.interaction.waiting_for_target
-                 and self.interaction.memory_id == known.token)
-                and self.cursor.offer_ready
-                and decide_object_use(
-                    known, self.state, ObjectUseContext.OFFER,
-                ).consume
-                and time.monotonic() >= self._playback.until
-                and self.now - known.observed_at < 0.5
-                and any(seen.token == known.token
-                        for seen in self.awareness.observations)
-                and distance <= self.width * 0.3
-                and self.width * 0.05 <= item.position.height <= self.width * 0.9
+            reachable = (
+                distance <= self.width * .3
+                and self.width * .05 <= item.position.height <= self.width * .9
             )
-        if self._controls_active() and self.interaction.focus_record is None:
-            return False
-        track = self._track()
-        return item.state == ObjectState.RESTING and track.can_grasp_ground(
-            track.left + item.position.x, self.settings.x or 0, int(self.width),
-            self.width * BALANCE.number("object_behavior", "reach_widths"),
+        else:
+            track = self._track()
+            reachable = track.can_grasp_ground(
+                track.left + item.position.x, self.settings.x or 0, int(self.width),
+                self.width * BALANCE.number("object_behavior", "reach_widths"),
+            )
+        return self._behavior.can_acquire(
+            token, object_state=item.state, reachable=reachable,
+            offer_ready=self.cursor.offer_ready, now=self.now,
+            facts=self._behavior_facts(),
         )
 
     def _capture_contact(self, token: str) -> None:
@@ -306,14 +308,6 @@ class DesktopWorldRuntime:
         if self._closed:
             return
         self.interaction.update()
-        blocked = ((self.interaction.active and not self.interaction.approaching
-                    and not self.interaction.searching
-                    and self.interaction.phase != "found")
-                   or (self.cursor.carrying and self.interaction.focus_record is None)
-                   or self._game_open()
-                   or (self._controls_active()
-                       and self.interaction.focus_record is None) or self.state.sleeping
-                   or time.monotonic() < self._playback.until)
         snapshot = self.world.snapshot()
         if self.cursor.carrying and not self.cursor.inside:
             from dataclasses import replace
@@ -322,103 +316,42 @@ class DesktopWorldRuntime:
                 item for item in snapshot.objects
                 if item.instance_id != self.cursor.instance_id
             ))
-        goal = self.awareness.update(
-            snapshot, self.state, now=self.now, x=self._body_x(), height=0,
-            width=self.width,
-            attentive=not self.state.sleeping and not self._game_open(),
-            blocked=blocked,
-            held_pose=(self._body_x(), self.width * .4),
-            committed=self.interaction.focus_record,
-            inspecting=self.interaction.inspection_record,
+        observation = self._behavior.observe(
+            snapshot, now=self.now, x=self._body_x(), width=self.width,
+            facts=self._behavior_facts(),
             presentation=self.cursor.presentation(
                 self._animated.cursor_eye_position, self.width,
             ),
         )
-        can_react = (not self.state.sleeping and not self._game_open()
-                     and not self._controls_active() and not self.user_action_pending
-                     and time.monotonic() >= self._playback.until)
-        for absent in self.awareness.absences if can_react else ():
-            if self.interaction.notice_absence(absent):
-                self.awareness.acknowledge_absence(absent.token)
-                self._walk.movement.set_goal(None)
-                self.cursor.offer_ready = False
-                self._visual.object_target = (
-                    self._track().left + absent.x,
-                    self._track().ground_y - absent.height,
-                )
-                self._save()
-                return
-        observed = {item.token for item in self.awareness.observations}
-        visible = [item for item in self.awareness.memory.snapshot()
-                   if not item.assessed and item.token in observed]
-        focus = self.interaction.focus_record
-        gaze: ObjectKnowledge | ObjectGoal | None = (
-            self.awareness.memory.get(focus) if focus is not None else None
-        )
-        gaze = gaze or goal or (
-            min(visible, key=lambda item: abs(item.x - self._body_x()))
-            if visible else None
-        )
+        gaze = observation.gaze
+        if observation.absence_noticed:
+            self._walk.movement.set_goal(None)
+            self.cursor.offer_ready = False
         self._visual.object_target = (
             (self._track().left + gaze.x, self._track().ground_y - gaze.height)
             if gaze is not None else None
         )
-        if self.awareness.checking_absence or self.awareness.absences:
-            self.cursor.offer_ready = False
-        else:
+        if observation.absence_noticed:
+            self._save()
+            return
+        if observation.observe_offer:
             self.cursor.observe_offer()
-        if self.interaction.waiting_for_target:
-            record = self.interaction.memory_id
-            instance = (self.awareness.instance_for_record(record)
-                        if record is not None else None)
-            self.interaction.observe_target_state(
-                self.world.get(instance).state if instance is not None else None,
-            )
+        else:
+            self.cursor.offer_ready = False
+        motion = self._behavior.advance(observation.goal, blocked=observation.blocked)
+        if isinstance(motion, SearchMotion):
+            self._show_search(motion)
+            return
+        if isinstance(motion, SearchStopped):
+            return
+        if isinstance(motion, Hold):
             self._walk.movement.set_goal(None)
             return
-        if self.interaction.searching:
-            known = self.awareness.memory.get(goal.token) if goal is not None else None
-            if (goal is not None and goal.token != self.interaction.memory_id
-                    and decide_object_use(known, self.state).consume):
-                self.interaction.found(goal)
-            elif blocked:
-                self.interaction.interrupt(lambda: None)
-            else:
-                remembered = self.awareness.memory.get(self.interaction.memory_id or "")
-                if (remembered is not None and remembered.recognized
-                        and not decide_object_use(remembered, self.state).consume):
-                    self.interaction.interrupt(lambda: None)
-                    return
-                self._show_search()
-                return
-        if self.interaction.phase == "found":
-            self._walk.movement.set_goal(None)
-            return
-        if blocked or goal is None or self.awareness.checking_absence:
-            self._walk.movement.set_goal(None)
-            if (self.interaction.approaching
-                    and self.interaction.focus_record is None):
-                self.interaction.interrupt(lambda: None)
-            return
-        known = self.awareness.memory.get(goal.token)
-        if not self.interaction.active and known is not None and not known.resting:
-            # A passive held wish is not an interrupted acquisition. Wait for
-            # observed ground contact before committing to a new approach.
-            self._walk.movement.set_goal(None)
-            return
-        if (self.interaction.approaching
-                and self.interaction.memory_id != goal.token):
-            self.interaction.interrupt(lambda: None)
-        if not self.interaction.active:
-            self.interaction.begin_goal(goal)
-        if self.interaction.phase == "notice":
-            self._walk.movement.set_goal(None)
-            return
+        goal = motion.target
         approach = self._ground_approach(goal.x)
         if approach is None:
-            self.awareness.intentions.cancel(self.now)
             self._walk.movement.set_goal(None)
-            self.interaction.interrupt(lambda: None)
+            self._behavior.unreachable(now=self.now)
             return
         self._walk.movement.set_goal(approach.standing_x)
         if not approach.arrived(self.settings.x or 0):
@@ -429,11 +362,11 @@ class DesktopWorldRuntime:
             self._capture_contact(instance)
             self.interaction.arrive()
 
-    def _show_search(self) -> None:
+    def _show_search(self, search: SearchMotion) -> None:
         track = self._track()
-        progress = self.interaction.search_progress
+        progress = search.progress
         direction = -1 if progress < .33 else 1 if progress < .66 else 0
-        base = track.clamp_x(track.left + self.interaction.search_x - self.width / 2,
+        base = track.clamp_x(track.left + search.center - self.width / 2,
                              int(self.width))
         stride = self.width * BALANCE.number("object_behavior", "search_stride_widths")
         self._walk.movement.set_goal(track.clamp_x(base + direction * stride,
@@ -506,17 +439,7 @@ class DesktopWorldRuntime:
         self._request_gesture(acquire)
 
     def _assess_offer(self, token: str) -> ObjectUseDecision | None:
-        record = self.awareness.record_for_instance(token)
-        returning = (self.interaction.waiting_for_target
-                     and record == self.interaction.memory_id)
-        if (self._game_open() or self.interaction.active and not returning
-                or time.monotonic() < self._playback.until):
-            return None
-        decision = (self.awareness.assess_offer(record, self.state)
-                    if record is not None else None)
-        if returning and record is not None and decision is not None:
-            self.interaction.observe_held_offer(record, decision)
-        return decision
+        return self._behavior.assess_offer(token, facts=self._behavior_facts())
 
     def _present_offer(self, cue: ObjectFeedback) -> None:
         if self.interaction.active:

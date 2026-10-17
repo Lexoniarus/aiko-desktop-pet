@@ -6,6 +6,7 @@ from unittest.mock import patch
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
 from aiko_pet.pet.animation.character import PlaybackEvent
+from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.mind.object_decisions import ObjectUseDecision
 from aiko_pet.pet.mind.object_intentions import ObjectGoal
 from aiko_pet.pet.mind.object_memory import ObjectMemory
@@ -32,6 +33,8 @@ class ObjectInteractionTests(unittest.TestCase):
         self.done = []
         self.cues = []
         self.delay_feedback = False
+        self.cancel_reports_previous = False
+        self.cancelled_feedback = []
         self.stamp = 0
         self.decision = ObjectUseDecision(True, "hungry")
 
@@ -43,6 +46,12 @@ class ObjectInteractionTests(unittest.TestCase):
         def play(clip):
             self.actions.append(clip)
             return len(self.actions)
+
+        def cancel_feedback():
+            if self.cancel_reports_previous and self.cues:
+                receipt = FeedbackReceipt(self.cues[-1].key, False)
+                self.cancelled_feedback.append(receipt)
+                self.coordinator.receive_feedback(receipt)
 
         def consume(key, item_id, memory_id, origin):
             self.consumed.append((key, item_id, origin))
@@ -63,7 +72,7 @@ class ObjectInteractionTests(unittest.TestCase):
             resolve_instance=lambda token: token,
             record_for_instance=lambda token: token,
             decide=lambda _token, _origin: self.decision,
-            feedback=feedback, cancel_feedback=lambda: None, now=lambda: self.stamp,
+            feedback=feedback, cancel_feedback=cancel_feedback, now=lambda: self.stamp,
             inspection_seconds=0, search_seconds=2,
         )
 
@@ -89,6 +98,92 @@ class ObjectInteractionTests(unittest.TestCase):
         self.coordinator.receive(done)
         self.coordinator.receive(done)
         self.assertEqual(len(self.consumed), 1)
+
+    def test_phase_change_invalidates_receipt_before_synchronous_cancellation(self):
+        self.delay_feedback = True
+        self.coordinator.begin_goal(ObjectGoal(
+            self.item.instance_id, None, None, 100, 0, 0, "investigate",
+        ))
+        notice = self.cues[-1]
+        self.cancel_reports_previous = True
+        self.acknowledge()
+        self.assertEqual(self.cancelled_feedback, [FeedbackReceipt(notice.key, False)])
+        self.assertEqual(self.coordinator.phase, "approach")
+        self.assertNotEqual(self.coordinator.feedback_key, notice.key)
+        self.assertEqual(self.coordinator.focus_record, self.item.instance_id)
+        self.assertEqual(self.done, [])
+        self.coordinator.arrive()
+        self.assertEqual(self.actions, [])
+        self.acknowledge()
+        self.assertEqual(self.actions, ["pick_up"])
+        self.assertEqual(self.coordinator.phase, "pick_up")
+
+    def test_new_episode_ignores_old_receipts_and_playback_for_the_same_item(self):
+        self.delay_feedback = True
+        self.start_investigation()
+        old = self.coordinator.feedback_key
+        self.coordinator.interrupt(lambda: None)
+        self.start_investigation()
+        current = self.coordinator.feedback_key
+        self.assertNotEqual(current.interaction_id, old.interaction_id)
+        world, memory = self.world.snapshot(), self.memory.snapshot()
+        for completed in (False, True):
+            self.coordinator.receive_feedback(FeedbackReceipt(old, completed))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        self.assertEqual(self.coordinator.feedback_key, current)
+        self.assertEqual(self.coordinator.phase, "pick_up")
+        self.assertEqual(self.world.snapshot(), world)
+        self.assertEqual(self.memory.snapshot(), memory)
+        self.assertEqual(self.consumed, [])
+        self.coordinator.receive(PlaybackEvent(2, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(2, "pick_up", 7, finished=True))
+        self.assertEqual(self.coordinator.phase, "pick_up")
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "inspect")
+        self.assertEqual(self.world.get(self.item.instance_id).state,
+                         ObjectState.PET_HELD)
+
+    def test_old_auxiliary_receipt_cannot_release_a_new_episode_phase(self):
+        self.delay_feedback = True
+        goal = ObjectGoal(self.item.instance_id, None, None, 100, 0, 0, "investigate")
+        self.coordinator.begin_goal(goal)
+        self.coordinator.receive_feedback(FeedbackReceipt(self.cues[-1].key, True))
+        self.coordinator.request_feedback("object_busy")
+        self.coordinator.update()
+        aside = self.cues[-1]
+        self.assertNotEqual(aside.key.auxiliary_id, 0)
+        self.coordinator.interrupt(lambda: None)
+        self.coordinator.begin_goal(goal)
+        current = self.coordinator.feedback_key
+        for completed in (False, True):
+            self.coordinator.receive_feedback(FeedbackReceipt(aside.key, completed))
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.phase, "notice")
+        self.assertEqual(self.coordinator.feedback_key, current)
+        self.assertEqual(self.cues[-1].event, "object_notice")
+        self.assertEqual(self.actions, [])
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "approach")
+
+    def test_contact_cooldown_survives_an_episode_restart(self):
+        goal = ObjectGoal(self.item.instance_id, None, None, 100, 0, 0, "investigate")
+        self.coordinator.begin_goal(goal)
+        first = self.coordinator.feedback_key.interaction_id
+        self.assertTrue(self.coordinator.acknowledge_contact())
+        self.coordinator.update()
+        self.assertEqual(self.cues[-1].event, "object_busy")
+        self.coordinator.interrupt(lambda: None)
+        self.coordinator.begin_goal(goal)
+        self.assertNotEqual(self.coordinator.feedback_key.interaction_id, first)
+        self.assertTrue(self.coordinator.acknowledge_contact())
+        self.coordinator.update()
+        self.assertEqual([cue.event for cue in self.cues].count("object_busy"), 1)
+        self.stamp = BALANCE.number("object_behavior", "contact_feedback_seconds")
+        self.assertTrue(self.coordinator.acknowledge_contact())
+        self.coordinator.update()
+        self.assertEqual([cue.event for cue in self.cues].count("object_busy"), 2)
+        self.assertEqual(self.actions, [])
 
     def test_auxiliary_feedback_waits_and_cannot_acknowledge_a_phase(self):
         self.delay_feedback = True
@@ -131,6 +226,45 @@ class ObjectInteractionTests(unittest.TestCase):
         phase = self.coordinator.phase
         self.assertFalse(self.coordinator.target_taken(self.item.instance_id))
         self.assertEqual(self.coordinator.phase, phase)
+
+    def test_observed_return_requires_a_fresh_arrival_after_an_earlier_approach(self):
+        self.start_investigation()
+        episode = self.coordinator.feedback_key.interaction_id
+        taken = self.world.take_resting(self.item.instance_id, expected_revision=0)
+        self.assertTrue(self.coordinator.target_taken(self.item.instance_id))
+        self.world.return_user_held(taken.instance_id, 110,
+                                    expected_revision=taken.revision)
+        self.coordinator.observe_target_state(ObjectState.RESTING)
+        self.coordinator.update()
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        self.assertEqual(self.coordinator.phase, "approach")
+        self.assertEqual(self.coordinator.feedback_key.interaction_id, episode)
+        self.assertEqual(self.actions, ["pick_up"])
+        self.assertEqual(self.world.get(self.item.instance_id).state,
+                         ObjectState.RESTING)
+        self.coordinator.arrive()
+        self.assertEqual(self.coordinator.phase, "pick_up")
+        self.assertEqual(self.actions, ["pick_up", "pick_up"])
+        self.assertEqual(self.consumed, [])
+
+    def test_pickup_cue_cannot_replace_clip_completion_or_next_phase_feedback(self):
+        self.delay_feedback = True
+        self.start_investigation()
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "pick_up")
+        self.assertEqual(self.consumed, [])
+        finished = PlaybackEvent(1, "pick_up", 7, finished=True)
+        self.coordinator.receive(finished)
+        self.assertEqual(self.coordinator.phase, "inspect")
+        current = self.coordinator.feedback_key
+        self.coordinator.receive(finished)
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.phase, "inspect")
+        self.assertEqual(self.coordinator.feedback_key, current)
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "recognize")
+        self.assertEqual(self.consumed, [])
 
     def test_confirmed_detach_records_own_placement_before_clip_finishes(self):
         self.delay_feedback = True
@@ -259,6 +393,28 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual(self.done, [(self.item.instance_id, True)])
         self.assertEqual(self.actions[-1], "talk")
         self.assertEqual(len(self.consumed), 1)
+
+    def test_cancelled_finish_feedback_keeps_consumption_and_completes_once(self):
+        self.start_investigation()
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        self.assertEqual(self.coordinator.phase, "eat")
+        self.delay_feedback = True
+        finished = PlaybackEvent(2, "eat", 7, finished=True)
+        self.coordinator.receive(finished)
+        self.assertEqual(self.coordinator.phase, "finish")
+        key = self.coordinator.feedback_key
+        self.coordinator.receive_feedback(FeedbackReceipt(key, False))
+        self.coordinator.update()
+        self.coordinator.receive_feedback(FeedbackReceipt(key, True))
+        self.coordinator.receive(finished)
+        self.coordinator.update()
+        self.assertFalse(self.coordinator.active)
+        self.assertEqual(self.done, [(self.item.instance_id, True)])
+        self.assertEqual(len(self.consumed), 1)
+        self.assertEqual(self.world.get(self.item.instance_id).state,
+                         ObjectState.CONSUMED)
+        self.assertEqual(self.actions, ["pick_up", "eat"])
 
     def acknowledge(self):
         self.coordinator.receive_feedback(FeedbackReceipt(self.cues[-1].key, True))

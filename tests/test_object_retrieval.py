@@ -453,6 +453,39 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.coordinator.receive_feedback(FeedbackReceipt(key, True))
         self.assertEqual(self.consumed, [])
 
+    def test_retrieval_after_interrupted_handover_has_fresh_origin_and_action(self):
+        item = self.world.create_held("apple", WorldPosition(100, 80),
+                                      ObjectFootprint(8, 8))
+        self.memory.update((ObjectObservation(
+            item.instance_id, "apple", "food", 100, 80, False, 0,
+        ),), now=0)
+        self.memory.mark_assessed(item.instance_id)
+        self.assertTrue(self.coordinator.offer_on_release(item.instance_id))
+        first = self.coordinator.feedback_key.interaction_id
+        resumed = []
+        self.coordinator.interrupt(lambda: resumed.append("game"))
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 2, ("detach_object",)))
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 0, finished=True))
+        self.assertEqual(resumed, ["game"])
+        self.assertFalse(self.coordinator.active)
+        self.assertIsNone(self.coordinator.memory_id)
+        self.assertIsNone(self.coordinator.instance_id)
+        self.assertEqual(self.coordinator.feedback_key.interaction_id, first)
+        self.assertTrue(self.coordinator.begin_goal(ObjectGoal(
+            item.instance_id, "apple", "food", 110, 0, 0,
+        )))
+        self.assertNotEqual(self.coordinator.feedback_key.interaction_id, first)
+        self.acknowledge()
+        self.coordinator.arrive()
+        self.coordinator.receive(PlaybackEvent(3, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(3, "pick_up", 7, finished=True))
+        self.assertEqual(self.coordinator.phase, "eat")
+        self.assertEqual(self.consumed, [
+            (self.coordinator.feedback_key.interaction_id,
+             item.instance_id, ConsumptionOrigin.AUTONOMOUS),
+        ])
+        self.assertEqual(resumed, ["game"])
+
     def test_confirmed_absence_searches_once_and_marks_only_the_checked_place(self):
         self.coordinator.begin_goal(ObjectGoal(
             self.item.instance_id, "apple", "food", 100, 0, 0, "consume",
@@ -500,6 +533,57 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.assertEqual(self.coordinator.memory_id, found.instance_id)
         self.assertEqual(self.coordinator.phase, "notice")
         self.assertEqual(self.done, [])
+
+    def test_new_search_episode_gets_its_own_dwell_and_feedback(self):
+        goal = ObjectGoal(self.item.instance_id, "apple", "food", 100, 0, 0)
+        self.coordinator.begin_goal(goal)
+        self.acknowledge()
+        self.coordinator.start_search()
+        old = self.coordinator.feedback_key
+        self.acknowledge()
+        self.stamp = 1.9
+        self.assertAlmostEqual(self.coordinator.search_progress, .95)
+        self.coordinator.interrupt(lambda: None)
+        self.coordinator.begin_goal(goal)
+        self.acknowledge()
+        self.coordinator.start_search()
+        self.assertNotEqual(self.coordinator.feedback_key.interaction_id,
+                            old.interaction_id)
+        self.assertEqual(self.coordinator.search_progress, 0)
+        self.stamp = 4
+        self.coordinator.receive_feedback(FeedbackReceipt(old, True))
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.phase, "search")
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "missing")
+        self.acknowledge()
+        self.assertEqual(self.done, [(self.item.instance_id, False)] * 2)
+        self.assertEqual(self.consumed, [])
+
+    def test_search_reads_keep_their_last_facts_until_a_fresh_search_begins(self):
+        self.stamp = 10
+        self.coordinator.begin_goal(ObjectGoal(
+            self.item.instance_id, "apple", "food", 100, 0, 0,
+        ))
+        self.acknowledge()
+        self.coordinator.start_search()
+        self.stamp = 11
+        self.coordinator.interrupt(lambda: None)
+        self.assertFalse(self.coordinator.active)
+        self.assertEqual(self.coordinator.search_x, 100)
+        self.assertEqual(self.coordinator.search_progress, .5)
+        found = self.world.place_resting("apple", 240, ObjectFootprint(8, 8))
+        self.memory.update((ObjectObservation(
+            found.instance_id, "apple", "food", 240, 0, True, 11,
+        ),), now=11)
+        self.coordinator.begin_goal(ObjectGoal(
+            found.instance_id, "apple", "food", 240, 0, 11,
+        ))
+        self.assertEqual(self.coordinator.search_x, 240)
+        self.assertEqual(self.coordinator.search_progress, .5)
+        self.acknowledge()
+        self.coordinator.start_search()
+        self.assertEqual(self.coordinator.search_progress, 0)
 
     def test_cancelling_approach_does_not_claim_absence_or_erase_known_stock(self):
         self.coordinator.begin_goal(ObjectGoal(
