@@ -10,6 +10,10 @@ perception contracts below without discarding observed continuity, subjective
 search, care origin, safe interruption or persistent knowledge. It supersedes
 earlier assumptions that attentive proximity alone permits identification.
 Current implementation ownership is described in [ARCHITECTURE.md](ARCHITECTURE.md).
+The later [World OOP follow-up](OOP_WORLD_FOLLOWUP_PLAN.md) and
+[current World contracts](WORLD_OBJECT_CONTRACTS.md) supersede compulsory
+face presentation before *all* handovers and the original need-gated search
+after confirmed loss. The earlier test ledger remains historical evidence.
 
 ## Three distinct knowledge levels
 

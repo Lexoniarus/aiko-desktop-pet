@@ -13,7 +13,10 @@ the [current architecture](ARCHITECTURE.md),
 [persistent memory delivery](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md) and
 [World/dialogue cleanup review](WORLD_DIALOGUE_CLEANUP_REVIEW.md).
 Earlier implementation reports remain historical evidence. The delivery table
-records the commits implementing the agreed behavior below.
+records the commits implementing the originally agreed behavior below.
+The later [World OOP follow-up](OOP_WORLD_FOLLOWUP_PLAN.md) and
+[current World contracts](WORLD_OBJECT_CONTRACTS.md) supersede older search
+priority and unidentified-cursor-handover restrictions.
 
 ## Scope and preserved behavior
 

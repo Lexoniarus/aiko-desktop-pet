@@ -10,7 +10,11 @@ This is the accepted implementation plan following the OOP review. It extends
 the current [architecture](ARCHITECTURE.md) and preserves the behavior contracts
 in [World object contracts](WORLD_OBJECT_CONTRACTS.md) and the implemented
 [perception correction](OBJECT_PERCEPTION_CORRECTION_PLAN.md).
-The delivery ledger distinguishes implemented work from remaining design targets.
+The delivery ledger records those original stages as historical delivery
+evidence. The later [World OOP follow-up](OOP_WORLD_FOLLOWUP_PLAN.md) supersedes
+the earlier appetite-based search cancellation, search-stop result and
+conditional missing-place search. Its newer World behavior contracts govern
+current runtime decisions.
 
 ## Scope and invariants
 

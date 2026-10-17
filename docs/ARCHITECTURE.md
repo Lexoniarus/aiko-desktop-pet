@@ -4,9 +4,10 @@ Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tki
 
 The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Imports point directly to the packages that own each responsibility.
 
-The accepted [OOP refactoring plan](OOP_REFACTOR_PLAN.md) records the staged
-work on interaction state, application-owned object behavior and PetState write
-boundaries. Its delivery ledger distinguishes verified stages from future design.
+The accepted [OOP refactoring plan](OOP_REFACTOR_PLAN.md) records stages 1–7 of
+interaction state, behavior ownership and PetState encapsulation. The later
+[focused World OOP cleanup](OOP_WORLD_FOLLOWUP_PLAN.md) supersedes its historical
+search-appetite rules and documents the smaller post-refactor ownership fixes.
 
 The implemented [perception correction plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md)
 separates noticing, identifying and assessing, deliberate cursor presentation and
@@ -503,6 +504,10 @@ the [OOP refactoring plan](OOP_REFACTOR_PLAN.md).
 
 The coordinator preserves that consume purpose: known assessed stock uses recall,
 pickup and full consumption without repeating inspection/recognition/desire cues.
+The pure postpickup type-consistency guard in `object_awareness.py` can request
+actual hand inspection when a local type hypothesis contradicts the acquired
+portion. It never writes World definition identity to subjective memory; the
+interaction coordinator receives only the guard's boolean result.
 Changed needs safely lead to refusal/put-down; conflicting evidence restores
 inquiry. Confirmed local absence starts bounded search with existing gaze/walk
 assets. A useful find can end search early; the coordinator owns the sole search
@@ -513,9 +518,8 @@ The awareness bridge resolves current custody first, then marks confirmed empty
 places missing and retains unacknowledged sensory facts until the coordinator can
 handle them. It defers new goals/offers while checking local absence.
 `notice_absence` announces `object_place_missing` before ordinary new discovery.
-Only a wanted reserve or an active unknown investigation continues into bounded
-search; an unwanted reserve needs no search. Later `object_missing` is the failed
-search outcome. Unrelated places wait during committed focus; losing a cursor
+Every confirmed missing remembered place starts one bounded search regardless
+of current appetite. Later `object_missing` is the failed search outcome. Unrelated places wait during committed focus; losing a cursor
 track alone does not mark a ground place missing. A new unknown find at an already
 confirmed missing place cannot inherit the old identity from location alone.
 Known but unassessed acquisitions decide without repeating identification;
@@ -558,10 +562,11 @@ World and memory together, restoring both owners on failure. The interaction
 coordinator retains animation deduplication, cue receipts and phase ordering.
 `application/object_consumption.py` uses `ObjectConsumption.commit()` to apply
 canonical food/drink effects at consumption start with explicit handover/autonomous
-origin. It prepares the canonical pet effect through PetState-owned immutable
-checkpoints, then commits World, PetState and ObjectMemory together on the owner
-thread, restoring the same pet object on failure and deduplicating completed
-requests. World `consume()`
+origin. It captures pre-care Mind context without modifying social contact,
+then prepares the canonical pet effect through PetState-owned immutable checkpoints.
+It commits World, PetState and ObjectMemory together on the owner thread,
+restoring the same pet object on failure and recording human contact only
+after a successful commit. Completed requests remain deduplicated. World `consume()`
 alone still cannot feed Aiko. Human-only care rewards are excluded for ground
 consumption, while canonical nutrition, repetition and food mood effects remain.
 
@@ -571,8 +576,7 @@ start/change using the existing state, awareness, interaction and World owners.
 It owns behavioral eligibility, continuing-wish decisions and returning-offer
 appraisal. Immutable host facts enter the application; relative gaze and bounded
 `Hold`, `Approach` or `SearchMotion` instructions leave it. Normal completion
-ports retain cancellation effects; `SearchStopped` adds no subsequent native
-action. Attention is applied before cursor offer observation, then motion is
+ports retain cancellation effects without an obsolete search-stop result. Attention is applied before cursor offer observation, then motion is
 decided against the resulting episode. Suitable search replacements precede
 general blocking, unknown curiosity does not invent appetite, synchronous found
 feedback keeps the same update handoff and return waiting holds for its original
@@ -584,6 +588,8 @@ translates application instructions into native movement/gaze. It retains actual
 arrival, taskbar reach, scale bounds and source-frame reach revalidation; contact
 capture precedes arrival acknowledgement. It contains no phase-name behavior
 branching. The mind tick and separate motion/render timer remain unchanged.
+The typed `desktop/world_access.py` binds to this one World runtime after
+composition, replacing implicit `hasattr` guards without duplicating state.
 `desktop/cursor_item_gesture.py` owns one input gesture: cursor
 instance handle, native capture, pointer geometry, offer-preview IDs and release
 or cancellation. Named ports keep appetite/feedback and custody decisions with
@@ -606,10 +612,11 @@ snapshots; `WorldState.advance_motion()` alone commits it. Parameters come from
 validated balance JSON through `infrastructure/world_motion.py`. Geometry is
 synchronized before frames, gestures and save snapshots; scaling does not reset
 velocity or multiply World coordinates. Only final settlement grants rest.
-Chooser press creates one portion; willingness is signaled after deliberate
-presentation while held, then release offers or falls. Accepted handover holds
-the last pickup pose
-and acknowledges a known assessed offer before full consumption. Unknown ground
+Chooser press creates one portion. Deliberate face presentation may identify
+and assess it before handover; a current refusal prevents accepted transfer.
+Alternatively, Aiko may accept a still-unknown portion on release in the
+valid handover area and actually identify it in her hands before deciding.
+A known approved handover takes the shorter confirmation route. Unknown ground
 finds retain inspection/decision. Resting-item press acquires the same portion
 through the same gesture. Escape/capture loss or off-monitor release removes new
 chooser portions and returns existing portions to their safe source place.

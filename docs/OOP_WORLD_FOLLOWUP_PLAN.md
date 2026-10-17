@@ -2,7 +2,8 @@
 
 Recorded: 17 October 2026.
 Baseline: `d12c5a1e5eb9` on `feature/world-foundation`.
-Status: implementation in progress; manual native World acceptance open.
+Status: stages P0–P6 automatically verified; final P7 documentation CI pending.
+Manual native World acceptance remains open.
 PR #10 stays **draft and unmerged**. Main must remain untouched.
 
 This follows the reviewed OOP stages 1–7 in [OOP_REFACTOR_PLAN.md](OOP_REFACTOR_PLAN.md)
@@ -65,3 +66,38 @@ must be explicitly documented instead of silently reinterpreted.
   action/gesture that was not persisted.
 - Native visual/interaction acceptance by the user remains an independent
   gate after the final automated green CI.
+
+## Delivery evidence and current ownership outcome
+
+Each entry is a separate, narrow commit on `feature/world-foundation`, with a
+complete, pinned GitHub Actions run before the next code stage.
+
+| Stage | Commit | Evidence |
+|---|---|---|
+| P0 | `4ae29a3` | [CI 39069711093](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39069711093) green |
+| P1 | `d0e1215`, test correction `8206220` | [CI 39069880728](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39069880728) green |
+| P2 | `2619465` | [CI 39070216022](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39070216022) green |
+| P3 | `dd121f2` | [CI 39070524884](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39070524884) green |
+| P4 | `e539908` | [CI 39070938577](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39070938577) green |
+| P5a | `792ebb7` | [CI 39071246899](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39071246899) green |
+| P5b | `34c3110` | [CI 39071647505](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39071647505) green |
+| P6 | `0564f8b` | [CI 39071951843](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39071951843) green |
+| P7 | Final documentation and ledger cleanup | Final source-equivalent CI after documentation commit |
+
+P1 preserves the existing canonical direct-care path: only the World handover
+consumption path now uses side-effect-free pre-care capture. Mind still owns
+its social-contact record and the application records accepted contact once.
+P2 removes the competing no-binding search trigger rather than inventing a
+second negative-evidence policy. P3 adds a pure, non-identifying guard at the
+application awareness boundary, injected into the existing interaction owner.
+P4 removes obsolete search and offer diagnostics. P5 splits existing methods
+without moving the phase state or candidate memory elsewhere. P6 late-binds
+callbacks to the same DesktopWorldRuntime object rather than copying its state.
+
+No real save, image/animation asset, balance value, authored dialogue or schema
+was altered. The original OOP stages and dated documents remain historical;
+the latest [architecture](ARCHITECTURE.md) and
+[World behavior contract](WORLD_OBJECT_CONTRACTS.md) define current execution.
+A manual Windows visual/input acceptance at 1x and 2x is still required before
+PR #10 can be taken out of Draft; neither automated Tk nor Linux Xvfb tests
+substitute for the user's live interaction check.

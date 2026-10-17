@@ -1,3 +1,22 @@
+## Unreleased — Focused World OOP ownership cleanup
+
+- Record independently reviewable small commits in
+  [docs/OOP_WORLD_FOLLOWUP_PLAN.md](docs/OOP_WORLD_FOLLOWUP_PLAN.md).
+- Separate pure pre-care Mind context from actual recorded human contact;
+  rejected or rolled-back World handovers cannot claim social interaction.
+- Make the timed absence perception the sole source of missing-place evidence.
+  Native arrival/reach failures no longer invent an alternate search trigger.
+- Move postpickup type-consistency guarding behind the application perception
+  boundary; subjective identification still requires valid hand evidence.
+- Remove obsolete search results, conditional absence branches and unused
+  cursor preview diagnostics.
+- Extract cohesive pickup, offer and completion handlers, as well as World
+  sensing-candidate preparation, without changing the sole state owners.
+- Bind early desktop callbacks to the existing World runtime through a typed
+  late-bound read port; no second World state or independent timer.
+- Preserve existing save formats, balance, dialogue and assets. Draft PR #10
+  stays unmerged; native visual acceptance is still required.
+
 ## Unreleased — World pickup, missing-place search and reunion correction
 
 - Separate handover acceptance from prior type identification and consumption:
@@ -10,7 +29,8 @@
   observation order, without copying type/assessment to ambiguous or conflicting
   portions. Recheck actual hand-held type before skipping known-stock inspection.
 - Prevent premature search while normal notice or native final reach is still
-  pending; recover from truly unavailable approach targets instead of looping.
+  pending; failed arrival waits for confirmed local absence instead of
+  inventing an independent search entry.
 - Add domain, ownership and native/Tk regression tests. Manual native World
   acceptance and merging draft PR #10 remain open.
 
