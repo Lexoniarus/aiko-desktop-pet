@@ -69,6 +69,40 @@ class ObjectConsumptionTests(unittest.TestCase):
         self.assertEqual(self.memory.snapshot(), memory)
         self.assertEqual(self.pet.satiety, 50)
 
+    def test_rejected_handover_does_not_record_contact_in_mind(self):
+        self.memory.update((ObjectObservation(
+            self.item.instance_id, "cookie", "food", 100, 0, False, 1,
+        ),), now=1)
+        before = self.mind.last_contact
+        outcome = self.use_case.commit(
+            self.world, "rejected", self.item.instance_id,
+            ConsumptionOrigin.HANDOVER, self.inputs,
+            memory_id=self.item.instance_id,
+        )
+        self.assertFalse(outcome.accepted)
+        self.assertEqual(self.mind.last_contact, before)
+        self.assertIsNone(self.mind._last_care_action)
+
+    def test_accepted_handover_updates_contact_once_after_commit(self):
+        before = self.mind.last_contact
+        outcome = self.use_case.commit(
+            self.world, "handed", self.item.instance_id,
+            ConsumptionOrigin.HANDOVER, self.inputs,
+            memory_id=self.item.instance_id,
+        )
+        self.assertTrue(outcome.accepted)
+        self.assertNotEqual(self.mind.last_contact, before)
+        self.assertEqual(self.mind.last_contact, self.inputs.monotonic_time)
+        replay = self.use_case.commit(
+            self.world, "handed", self.item.instance_id,
+            ConsumptionOrigin.HANDOVER,
+            SessionInputs(self.inputs.wall_time + 10, 11, False, None,
+                          False, False, None),
+            memory_id=self.item.instance_id,
+        )
+        self.assertEqual(replay, outcome)
+        self.assertEqual(self.mind.last_contact, self.inputs.monotonic_time)
+
     def test_failure_after_memory_mutation_restores_all_three_owners(self):
         world, memory = self.world.snapshot(), self.memory.snapshot()
         original = self.memory.forget
@@ -92,6 +126,7 @@ class ObjectConsumptionTests(unittest.TestCase):
         before = self.pet.capture_checkpoint()
         world_before = self.world.snapshot()
         memory_before = self.memory.snapshot()
+        contact_before = self.mind.last_contact
         forget = self.memory.forget
 
         def fail_after_forget(token):
@@ -109,6 +144,7 @@ class ObjectConsumptionTests(unittest.TestCase):
         self.assertEqual(self.pet.capture_checkpoint(), before)
         self.assertEqual(self.world.snapshot(), world_before)
         self.assertEqual(self.memory.snapshot(), memory_before)
+        self.assertEqual(self.mind.last_contact, contact_before)
         self.assertTrue(self.use_case.commit(
             self.world, "handover", self.item.instance_id,
             ConsumptionOrigin.HANDOVER, self.inputs,

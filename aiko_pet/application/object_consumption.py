@@ -62,7 +62,7 @@ class ObjectConsumption:
             return ConsumptionOutcome(False)
         context = context_at(inputs.wall_time)
         before = (
-            self._mind.observe_care(self._state, context, inputs.monotonic_time)
+            self._mind.preview_care(self._state, context, inputs.monotonic_time)
             if origin == ConsumptionOrigin.HANDOVER
             else None
         )
@@ -99,6 +99,7 @@ class ObjectConsumption:
             self._receipts.popitem(last=False)
         if origin == ConsumptionOrigin.HANDOVER:
             assert before is not None
+            self._mind.record_care_contact(inputs.monotonic_time)
             self._adaptive.note_interaction(inputs.wall_time)
             self._mind.after_care(prepared.result.action, inputs.monotonic_time)
             reaction = self._mind.select_reaction(

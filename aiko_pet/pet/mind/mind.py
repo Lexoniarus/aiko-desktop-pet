@@ -245,8 +245,18 @@ class PetMind:
         context: TimeContext,
         now: float,
     ) -> CareReactionContext:
-        """Capture pre-care tone and conversation facts before state changes."""
-        self.last_contact = now
+        """Record an actual care contact and capture its preceding context."""
+        before = self.preview_care(state, context, now)
+        self.record_care_contact(now)
+        return before
+
+    def preview_care(
+        self,
+        state: PetState,
+        context: TimeContext,
+        now: float,
+    ) -> CareReactionContext:
+        """Read pre-care facts without claiming an uncommitted interaction."""
         return CareReactionContext(
             tone=self.emotion(state, now),
             affection=state.affection,
@@ -259,6 +269,10 @@ class PetMind:
                 )
             ),
         )
+
+    def record_care_contact(self, now: float) -> None:
+        """Only call after a concrete human care action has been accepted."""
+        self.last_contact = now
 
     def care_event(self, result: CareResult, before: CareReactionContext) -> str:
         """Interpret the one committed effect without deciding acceptance again."""
