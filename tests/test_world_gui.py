@@ -799,7 +799,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertAlmostEqual(self.app.state.energy, 66, places=1)
         self.assertEqual(self.app.state.friendship, 15)
 
-    def test_recognized_release_hands_over_drink_and_full_release_falls(self):
+    def test_recognized_drink_handover_then_unknown_full_drink_is_examined(self):
         app, world = self.app, self.app._world
         set_test_pet_values(app.state, energy=40)
         x = (app.settings.x or 0) + 96
@@ -828,8 +828,17 @@ class WorldGuiTests(unittest.TestCase):
                 world.update(time.monotonic())
             token = world.cursor.instance_id
             assert token is not None
+            known = world.awareness.known_instance(token)
+            assert known is not None
+            self.assertIsNone(known.identity)
             world.cursor.release()
-            self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
+            self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
+            self.assertEqual(world.interaction.phase, "inspect")
+            self.finish_inspection()
+            self.assertEqual(world.interaction.phase, "put_down")
+            self.finish_clip("put_down")
+            self.assertAlmostEqual(app.state.energy, 100)
+            self.assertIsNone(app.state.food.last_food_id)
 
     def test_unseen_cookie_replacement_does_not_get_consumed_as_known_apple(self):
         world = self.app._world
@@ -920,8 +929,11 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_missing_approach_target_gets_absence_first_and_then_searches(self):
         world = self.app._world
+        origin = world._body_x()
+        surface = world.world.snapshot().surface
+        target = origin + 250 if origin + 250 <= surface.width - 8 else origin - 250
         item = world.world.place_resting(
-            "apple", world._body_x() + 250, ObjectFootprint(8, 8),
+            "apple", target, ObjectFootprint(8, 8),
         )
         cues = []
         presenter = world._present_feedback
