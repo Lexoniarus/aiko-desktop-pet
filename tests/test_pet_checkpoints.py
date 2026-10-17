@@ -9,6 +9,7 @@ from dataclasses import FrozenInstanceError, fields
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.consumption import ConsumptionOrigin
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.state_values import PetValues
 
 STAMP = 1_800_000_000.0
 
@@ -26,7 +27,7 @@ class PetCheckpointTests(unittest.TestCase):
         checkpoint = pet.capture_checkpoint()
         self.assertEqual(
             {field.name for field in fields(checkpoint)},
-            {field.name for field in fields(PetState)},
+            {field.name for field in fields(PetValues)},
         )
         self.assertEqual(checkpoint.meals_today, ("breakfast",))
         self.assertEqual(checkpoint.care_types_today, ("pet",))
@@ -55,10 +56,10 @@ class PetCheckpointTests(unittest.TestCase):
         checkpoint = pet.capture_checkpoint()
         expected = deepcopy(pet)
         pet_id = id(pet)
+        pet = pet.with_test_values(satiety=99)
         pet.meals_today.append("dinner")
         pet.care_types_today.clear()
         pet.care_last_rewards.clear()
-        pet.satiety = 99
         pet.restore_checkpoint(checkpoint)
         self.assertEqual(id(pet), pet_id)
         self.assertEqual(pet, expected)
