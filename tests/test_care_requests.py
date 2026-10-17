@@ -44,7 +44,7 @@ class CareRequestTests(unittest.TestCase):
         self.assertIsNone(choose_care_request(self.state))
         set_test_pet_values(self.state, satiety=70)
         self.assertEqual(choose_care_request(self.state), 'care_request_feed')
-        set_test_pet_values(self.state, social=self.state.fun = 60, affection=self.state.fun = 60)
+        set_test_pet_values(self.state, social=60, affection=60, fun=60)
         self.assertEqual(choose_care_request(self.state), 'care_request_talk')
         set_test_pet_values(self.state, social=100)
         self.assertEqual(choose_care_request(self.state), 'care_request_pet')
