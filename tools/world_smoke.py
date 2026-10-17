@@ -13,6 +13,7 @@ from aiko_pet.infrastructure.persistence import StateStore, default_save_path
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint
 from aiko_pet.world.state import WorldState
+from tools.pet_test_support import set_test_pet_values
 
 SCENARIOS = {"hungry": (55, 55), "curious": (76, 60), "full": (100, 100)}
 
@@ -45,7 +46,9 @@ def prepare_session(
         )
     if needs is not None:
         loaded = store.load_session()
-        loaded.state.set_test_needs(*SCENARIOS[needs], now=time.time())
+        satiety, energy = SCENARIOS[needs]
+        set_test_pet_values(loaded.state, satiety=satiety, energy=energy,
+                            updated_at=time.time())
         store.save(loaded.state, loaded.settings, adaptive=loaded.adaptive_memory,
                    world=loaded.world, object_memory=loaded.object_memory)
     return store
