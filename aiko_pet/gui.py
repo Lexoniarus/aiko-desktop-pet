@@ -37,6 +37,7 @@ from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
 from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
 from .desktop.window_stack import WindowStack
+from .desktop.world_access import WorldRuntimeAccess
 from .desktop.world_runtime import DesktopWorldRuntime
 from .infrastructure.active_time import active_uptime_seconds
 from .infrastructure.character_assets import load_character_catalog
@@ -84,6 +85,7 @@ class DesktopPet:
         self.root = self._window.root
         self.canvas = self._window.canvas
         self.background = self._window.background
+        self._world_access = WorldRuntimeAccess()
         self._speech_font = (
             "Kenney Mini"
             if "Kenney Mini" in set(tkfont.families(root=self.root))
@@ -150,12 +152,7 @@ class DesktopPet:
                     self.root.winfo_pointerx(), self.root.winfo_pointery(),
                 ),
                 read_mouse_buttons=mouse_buttons_down_windows,
-                defer_routine=lambda: (
-                    hasattr(self, "_world") and (
-                        self._world.interaction.active
-                        or self._world.user_action_pending
-                    )
-                ),
+                defer_routine=self._world_access.defer_routine,
             ),
         )
         self._cursor_observation = services.cursor_observation
@@ -177,10 +174,7 @@ class DesktopPet:
                 action_clip_id=lambda: self._action_playback.clip_id,
                 attention_until=lambda: self.mind.cursor_attention.attention_until,
                 extend_action=self._action_playback.extend,
-                object_focus=lambda: (
-                    hasattr(self, "_world")
-                    and self._world.interaction.focus_record is not None
-                ),
+                object_focus=self._world_access.focused,
             ),
         )
         self._walk = visuals.walk
@@ -427,6 +421,7 @@ class DesktopPet:
             restored_world=session.world,
             restored_memory=session.object_memory,
         )
+        self._world_access.bind(self._world)
         self._persistence.attach_world(self._world.save_snapshot)
         self._lifecycle.start()
 
