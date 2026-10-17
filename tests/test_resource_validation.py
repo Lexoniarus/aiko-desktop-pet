@@ -54,6 +54,7 @@ class ResourceValidationTests(unittest.TestCase):
             ("mood", "fun_weight"),
             ("mood", "social_weight"),
             ("food_activity", "short_window_weight"),
+            ("dialogue", "spontaneous_story_probability"),
         ):
             with self.subTest(section=section, key=key):
                 raw = copy.deepcopy(original)
@@ -178,6 +179,14 @@ class ResourceValidationTests(unittest.TestCase):
             ("adaptive_learning", "effort_smoothing_seconds", 0),
             ("attention", "cursor_comment_probability", 2),
             ("simulation", "step_seconds", 1000),
+            ("object_behavior", "bounce_restitution_fraction", 1),
+            ("object_behavior", "bounce_horizontal_damping_fraction", 1),
+            ("object_behavior", "bounce_maximum_contacts", 33),
+            ("object_behavior", "bounce_minimum_speed", 0),
+            ("object_behavior", "presentation_seconds", 0),
+            ("object_behavior", "absence_seconds", .1),
+            ("object_behavior", "presentation_jitter_widths", 0.4),
+            ("object_behavior", "presentation_vertical_widths", 0),
             ("simulation", "maximum_catchup_seconds", 8 * 86400),
         ):
             raw = copy.deepcopy(original)

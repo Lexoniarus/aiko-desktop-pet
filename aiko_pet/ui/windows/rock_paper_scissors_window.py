@@ -41,6 +41,7 @@ class RockPaperScissorsWindow:
         animate: Callable[[str], None],
         always_on_top: bool,
         skin: AikoSkin | None = None,
+        dialogue: Callable[[str], str] | None = None,
     ) -> None:
         self._on_closed = on_closed
         self._closed = False
@@ -155,14 +156,12 @@ class RockPaperScissorsWindow:
         score = tk.Frame(outer, bg=_BG)
         score.pack(fill="x", padx=12, pady=(0, 8))
         self.score_labels: dict[str, tk.Label] = {}
-        for column, (key, title) in enumerate(
-            (
-                ("games", GERMAN_TEXT.format("rps.score.games")),
-                ("wins", GERMAN_TEXT.format("rps.score.wins")),
-                ("losses", GERMAN_TEXT.format("rps.score.losses")),
-                ("draws", GERMAN_TEXT.format("rps.score.draws")),
-            )
-        ):
+        for column, (key, title) in enumerate((
+            ("games", GERMAN_TEXT.format("rps.score.games")),
+            ("wins", GERMAN_TEXT.format("rps.score.wins")),
+            ("losses", GERMAN_TEXT.format("rps.score.losses")),
+            ("draws", GERMAN_TEXT.format("rps.score.draws")),
+        )):
             cell = tk.Frame(score, bg=_PANEL, bd=0)
             cell.grid(row=0, column=column, padx=2, sticky="nsew")
             score.grid_columnconfigure(column, weight=1)
@@ -188,6 +187,7 @@ class RockPaperScissorsWindow:
         )
         self.close_button.pack(anchor="e", padx=13, pady=(0, 9))
         self._sequence = RockPaperScissorsSequence(
+            dialogue=dialogue,
             schedule=self.window.after,
             cancel=self.window.after_cancel,
             say=speak,

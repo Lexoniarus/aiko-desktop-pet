@@ -24,6 +24,7 @@ from aiko_pet.pet.movement import WalkController
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
+from tools.pet_test_support import set_test_pet_values
 
 
 class IdleMonitor:
@@ -100,7 +101,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
             ambient=self.animation.ambient,
         )
         self.addCleanup(self.root.destroy)
-        self.addCleanup(self.anim.stop)
+        self.addCleanup(self.anim.close)
 
     def _place_x(self, value: float) -> None:
         self.settings.x = round(value)
@@ -171,7 +172,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         )
 
     def test_sleep_plays_the_full_width_breathing_clip(self) -> None:
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         now = time.monotonic()
         self.anim.render(now, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("sleep", None))
@@ -315,7 +316,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.render(now, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("waiting", None))
         self.anim.set_game_mode(False)
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         self.anim._ambient.next_glance_at = now - 1
         self.anim.render(now + 1, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("sleep", None))

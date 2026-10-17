@@ -17,6 +17,7 @@ from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 def runtime(*, wall_time: float | None = None) -> SessionInputs:
@@ -54,8 +55,8 @@ class ApplicationCoreTests(unittest.TestCase):
 
     def test_care_uses_pre_action_tone_and_preserves_state_schema(self) -> None:
         initial_keys = set(encode_pet_state(self.state))
-        self.state.affection = 10.0
-        self.state.updated_at = runtime().wall_time
+        set_test_pet_values(self.state, affection=10.0)
+        set_test_pet_values(self.state, updated_at=runtime().wall_time)
         result = self.router.dispatch(CareCommand("pet"), inputs=runtime())
         self.assertEqual(self.state.affection, 35.0)
         self.assertEqual(result.context.day_key, "2026-10-13")

@@ -35,8 +35,12 @@ class CareController:
     """Coordinate existing pet and conversation rules without UI side effects."""
 
     def __init__(
-        self, state: PetState, mind: PetMind, adaptive: AdaptiveRoutine,
-        *, clock: ActiveSessionClock,
+        self,
+        state: PetState,
+        mind: PetMind,
+        adaptive: AdaptiveRoutine,
+        *,
+        clock: ActiveSessionClock,
     ) -> None:
         self._state = state
         self._mind = mind
@@ -49,17 +53,27 @@ class CareController:
         self._adaptive.note_interaction(inputs.wall_time)
         context = context_at(inputs.wall_time)
         before = self._mind.observe_care(
-            self._state, context, inputs.monotonic_time,
+            self._state,
+            context,
+            inputs.monotonic_time,
         )
         result = self._state.interact(
-            command.action, now=inputs.wall_time, food_id=command.food_id,
+            command.action,
+            now=inputs.wall_time,
+            food_id=command.food_id,
         )
         event = self._mind.care_event(result, before)
         if result.effect not in (
-            CareEffect.PLAY_TIRED, CareEffect.DRINK_SATISFIED,
+            CareEffect.PLAY_TIRED,
+            CareEffect.DRINK_SATISFIED,
         ):
             self._mind.after_care(command.action, inputs.monotonic_time)
         reaction = self._mind.select_reaction(
-            event, self._state, context, inputs.monotonic_time, tone=before.tone,
+            event,
+            self._state,
+            context,
+            inputs.monotonic_time,
+            tone=before.tone,
+            dialogue=before.dialogue,
         )
         return CareOutcome(result, reaction, context)

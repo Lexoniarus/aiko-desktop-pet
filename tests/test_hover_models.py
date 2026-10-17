@@ -7,6 +7,7 @@ from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.view_models.projections import project_hover
+from tools.pet_test_support import set_test_pet_values
 
 
 class HoverModelTests(unittest.TestCase):
@@ -16,7 +17,7 @@ class HoverModelTests(unittest.TestCase):
             snapshot_pet(state), context_at(1_781_000_000),
             ComputerSnapshot(cpu=80), observe_computer=True,
         )
-        state.affection = 95
+        set_test_pet_values(state, affection=95)
         self.assertEqual(model.need_value("affection"), 40)
         self.assertIn("CPU 80 %", model.hardware_line)
         with self.assertRaises(KeyError):

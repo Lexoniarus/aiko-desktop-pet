@@ -38,6 +38,7 @@ class AnimationAssemblyPorts:
     action_clip_id: Callable[[], str]
     attention_until: Callable[[], float]
     extend_action: Callable[[float], None]
+    object_focus: Callable[[], bool] = lambda: False
 
 
 @dataclass(frozen=True, slots=True)
@@ -66,6 +67,7 @@ def assemble_animation(
             toolbar_visible=ports.toolbar_visible,
             place_x=ports.place_x,
             walk_finished=ports.walk_finished,
+            committed_goal=ports.object_focus,
         ),
     )
     visual = DesktopVisualObservation(

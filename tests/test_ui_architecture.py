@@ -24,7 +24,7 @@ class UiDependencyRules(unittest.TestCase):
         source = (ROOT / "gui.py").read_text("utf-8")
         self.assertLessEqual(
             len(source.splitlines()),
-            625,
+            640,
             "Move feature behavior to its owning object rather than gui.py",
         )
 

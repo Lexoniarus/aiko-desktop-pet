@@ -43,6 +43,7 @@ class DesktopVisualObservation:
         self._monitor = monitor
         self._eyes = eyes
         self._sector: int | None = None
+        self.object_target: tuple[float, float] | None = None
 
     @property
     def sector(self) -> int | None:
@@ -56,12 +57,15 @@ class DesktopVisualObservation:
         self, pointer: tuple[int, int], *, game_mode: bool = False,
     ) -> int | None:
         """Resolve cursor gaze without entering Tk or reading the monitor."""
-        if game_mode or not self._settings.follow_cursor:
+        if game_mode or (
+            not self._settings.follow_cursor and self.object_target is None
+        ):
             self.reset()
             return None
         eyes_x, eyes_y = self._eyes()
+        target = self.object_target or pointer
         self._sector = gaze_sector(
-            eyes_x, eyes_y, *pointer,
+            eyes_x, eyes_y, *target,
             scale=self._settings.scale, previous=self._sector,
         )
         return self._sector
@@ -71,7 +75,7 @@ class DesktopVisualObservation:
         last_pointer_move: float, game_mode: bool,
     ) -> PassiveObservation:
         """Return passive inputs; preserve gaze precedence over hardware."""
-        if now - last_pointer_move < 4.0:
+        if self.object_target is not None or now - last_pointer_move < 4.0:
             direction = self.gaze_direction(pointer, game_mode=game_mode)
         else:
             self.reset()

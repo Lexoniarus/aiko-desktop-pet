@@ -24,8 +24,8 @@ class AssetContractTests(unittest.TestCase):
                 w, h = struct.unpack(">II", data[16:24])
                 self.assertEqual((w, h), (FRAME_WIDTH, FRAME_HEIGHT))
                 found.append(file)
-        self.assertEqual(len(found), 112)
-        self.assertEqual(len(list((root / "frames").rglob("*.png"))), 112)
+        self.assertEqual(len(found), 120)
+        self.assertEqual(len(list((root / "frames").rglob("*.png"))), 120)
 
 
 if __name__ == "__main__":

@@ -6,8 +6,8 @@
 | --- | --- |
 | `aiko_pet/data/balance.json` | Initial values, care effects, hunger/digestion, fun/mood, friendship, movement, attention and adaptive behaviour parameters |
 | `aiko_pet/data/food_catalog.json` | Food IDs, display names, nutrition, categories and menu order |
-| `aiko_pet/data/texts.de.json` | UI wording, status templates, care fallback text, game labels and farewell |
-| `aiko_pet/data/dialogues.de.json` | Authored character dialogue, semantic events, filters, weights and cooldowns |
+| `aiko_pet/data/texts.de.json` | UI wording, status templates, care fallback text, game labels and emergency farewell fallback |
+| `aiko_pet/data/dialogues.de.json` | Version-2 character sequences, relationship/state filters, stories and rotation |
 | `aiko_pet/data/routine.de.json` | Weekday/weekend schedules, activity labels and meal windows |
 | `aiko_pet/assets/animation_timing.json` | Frame holds and playback sequences |
 | `aiko_pet/assets/items/items.json` | Item images, icons and hand pivots |
@@ -45,6 +45,30 @@ corresponding typed consumer and its contract in `pet/balance_contract.py`,
 value or sentence does not require another Python copy of that value.
 Run the resource validation and functional tests before sharing changed data.
 
+### Character copy
+
+Spoken character game reactions live in the dialogue catalogue; countdowns,
+player-facing labels, status displays and emergency care fallback wording stay
+in the text catalogue. Catalogue version 2 replaces the former first-text,
+follow-up and before/after-emote fields with one `beats` list. Each text beat
+has 1–125 characters and derived reading time; emote/pause beats may specify a
+bounded duration. Short reactions have at most two text beats, stories at most
+five. Named filters use supported `stages`, `moods`, simultaneous `needs`, day
+periods and weekdays; `requires_present` requires observed or direct contact.
+Item placeholders are allowed only on object events and only as `{item}`.
+Object formatting applies to every text beat, never to an emote or a pause.
+The resulting text determines its reading time through the dialogue balance
+values. Spontaneous story frequency and quiet time use
+`spontaneous_story_probability` and `spontaneous_story_quiet_seconds` in that
+same section. Mutable selection history belongs to the session mind, or to
+one standalone game instance; neither is a second source of authored copy.
+
+The editorial voice is quiet, dry, curious and sometimes cheeky. Clear wishes,
+charming competitiveness and sincere affection replace repeated denial of
+positive feelings. Relationship stages describe growing familiarity, not new
+care rules. Neither resource migration changes the version-one save schema;
+unfinished stories and rotation history remain session-local.
+
 ## Where progress is stored
 
 On Windows, paste this into Explorer's address bar:
@@ -76,6 +100,8 @@ The existing top-level sections are unchanged:
 | `pet` | Needs, friendship/reward limits, meal-day markers, sleep state, fun, food/digestion state and `updated_at` |
 | `settings` | Window positions, size and behaviour/observation preferences |
 | `adaptive` | Aggregated learned weekday/hour patterns and bounded rhythm state; optional in older saves |
+| `world` | Optional separately versioned World snapshot (`version: 1`), surface, active portions, revisions and next instance ID |
+| `object_memory` | Optional subjective records (`version: 2`, v1 readable): learned type/assessment, relative active age, place status, possible source links, allocation provenance and own-placement disposition |
 
 `pet.updated_at` is a Unix wall-clock timestamp in seconds. Need values are
 saved to four decimal places. Older version-one saves missing newer optional
@@ -120,7 +146,57 @@ ticks, care and completed games use the same `advance_session_time()` function.
 Closed-time wall-clock reconstruction cannot distinguish shutdown, suspend
 or a forward clock correction, so all are subject to the same bounded rule.
 
-Self-served meals are **only** enabled for closed-time reconstruction. During
-the live application, the existing care actions and friendly requests remain
-in effect. Turning off automatic routine disables automatic offline sleep
-transitions and meals, while ordinary need progression still occurs.
+Scheduled self-served meals are enabled only for closed-time reconstruction.
+Live autonomous consumption instead requires an observed/remembered World
+portion and the normal interaction sequence. Turning off automatic routine
+disables automatic offline sleep/meals; live object behavior remains available.
+
+## Joint World recovery
+
+Pet and World are written together through the existing flush/fsync/atomic
+replacement path. Old version-one saves without `world` load an empty World.
+The optional World section is validated independently: unknown definitions,
+duplicate IDs, invalid geometry/revisions or unsupported versions require a
+backup before replacement while valid pet progress is retained.
+
+Only nonterminal portions are saved. Cursor-held, falling, bouncing and unconsumed pet-held
+portions normalize to reachable resting ground positions; pet-held recovery uses
+Aiko's position. IDs and the next-ID counter prevent accidental identity reuse.
+Consumed/removed instances, live capture, animations, pending user actions and
+interaction receipts are not resumed. No World consumption
+is simulated while closed. A completed meal and removal of its portion share
+the same durable snapshot, so restart cannot replay the meal from that snapshot.
+See [isolated restart testing](WORLD_SMOKE_TEST.md).
+
+## Subjective object knowledge
+
+`ObjectMemory` owns learned facts separately from current perception and World
+truth. Recognized identities and assessment survive restart. Confirmed local
+absence marks an unavailable remembered place; associations can resolve presumed
+relocation without proving hidden identity. Only unidentified sightings expire after
+600 active seconds. Saved ages are relative active durations: closed time does
+not age memories, accumulate sensory evidence or produce observations.
+
+The optional `object_memory` section is captured with Pet/World and written by
+the same atomic replacement. Consumption resolves its remembered target before
+that save; an ambiguous consumed-find witness remains unavailable until further
+evidence resolves its possible former places. It cannot be reused as supply.
+Confirmed own
+placement is recorded at detach; interrupted placement is distinct from keeping
+a supply for later. Held/falling recovery never invents observed ground positions.
+
+Restore does not look up a remembered identity or location in current objects.
+Unseen relocation/removal can therefore leave outdated knowledge until fresh
+observation or attentive local search. Actual observations and sensory progress
+start empty; restored knowledge alone cannot claim current visibility.
+
+Older saves without memory start with empty knowledge. A malformed or unsupported
+memory section requires an original backup before replacement, retaining valid
+Pet/World sections. Without a valid paired World, old instance-bound knowledge
+is discarded rather than attaching to reused IDs in a fresh World.
+Version-one records convert to subjective history; their old object labels are
+never recognition evidence. Current bindings, observations and search budgets
+are not serialized. Runtime checkpoints retain exact motion, while durable
+World v1 writes only valid ground targets. Geometry is synchronized before saves,
+including an immediate scale toggle. See the
+[current delivery plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md).

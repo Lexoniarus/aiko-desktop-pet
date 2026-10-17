@@ -51,13 +51,18 @@ class HoverUiPorts:
     food_choices: tuple[FoodChoice, ...]
     feed: Callable[[FoodChoiceId], None] | None = None
     game_completed: Callable[[Score], object] | None = None
+    defer_game: Callable[[Callable[[], None]], None] | None = None
+    game_dialogue: Callable[[str], str] | None = None
 
 
 class HoverUi:
     """One visibility owner; an open utility window is not a modal menu."""
 
     def __init__(
-        self, root: tk.Tk, canvas: tk.Canvas, ports: HoverUiPorts,
+        self,
+        root: tk.Tk,
+        canvas: tk.Canvas,
+        ports: HoverUiPorts,
     ) -> None:
         self.root = root
         self.canvas = canvas
@@ -84,7 +89,8 @@ class HoverUi:
     def settings_engaged(self) -> bool:
         window = self.settings_window
         return window is not None and window.interacting(
-            self.root.winfo_pointerx(), self.root.winfo_pointery(),
+            self.root.winfo_pointerx(),
+            self.root.winfo_pointery(),
             time.monotonic(),
         )
 
@@ -92,15 +98,22 @@ class HoverUi:
     def interaction_active(self) -> bool:
         """Mapped/pinned windows alone must not suppress autonomous behavior."""
         toolbar = self.toolbar
-        using_toolbar = toolbar is not None and toolbar.visible and (
-            toolbar.dragging or not self._keep_open
-            or self.pointer_inside(
-                self.root.winfo_pointerx(), self.root.winfo_pointery(),
+        using_toolbar = (
+            toolbar is not None
+            and toolbar.visible
+            and (
+                toolbar.dragging
+                or not self._keep_open
+                or self.pointer_inside(
+                    self.root.winfo_pointerx(),
+                    self.root.winfo_pointery(),
+                )
             )
         )
         menu = self.food_menu
         using_food = menu is not None and menu.contains_pointer(
-            self.root.winfo_pointerx(), self.root.winfo_pointery(),
+            self.root.winfo_pointerx(),
+            self.root.winfo_pointery(),
         )
         return bool(using_toolbar or using_food or self.settings_engaged)
 
@@ -130,12 +143,18 @@ class HoverUi:
         x = toolbar.window.winfo_rootx() if toolbar is not None else 200
         y = (
             toolbar.window.winfo_rooty() + toolbar.window.winfo_height()
-            if toolbar is not None else 200
+            if toolbar is not None
+            else 200
         )
         self.food_menu = FoodMenu(
-            self.root, x, y, choices=self._ports.food_choices,
-            selected=self._food_selected, closed=self._food_menu_closed,
-            always_on_top=self._ports.always_on_top(), skin=self._skin,
+            self.root,
+            x,
+            y,
+            choices=self._ports.food_choices,
+            selected=self._food_selected,
+            closed=self._food_menu_closed,
+            always_on_top=self._ports.always_on_top(),
+            skin=self._skin,
         )
         self._ports.restore_stack()
 
@@ -165,6 +184,12 @@ class HoverUi:
                 button.configure(state="normal" if enabled else "disabled")
 
     def open_game(self) -> None:
+        if self._ports.defer_game is not None:
+            self._ports.defer_game(self._open_game_now)
+        else:
+            self._open_game_now()
+
+    def _open_game_now(self) -> None:
         if self.game_window is not None:
             self.game_window.focus()
             self._ports.restore_stack()
@@ -173,7 +198,9 @@ class HoverUi:
         self._ports.game_speech.start()
         try:
             self.game_window = RockPaperScissorsWindow(
-                self.root, on_closed=self._game_closed,
+                self.root,
+                on_closed=self._game_closed,
+                dialogue=self._ports.game_dialogue,
                 speak=self._ports.game_speech.say,
                 emote=self._ports.game_speech.emote,
                 hand=self._ports.game_speech.hand,
@@ -195,17 +222,20 @@ class HoverUi:
     def show_toolbar(self) -> None:
         if self.toolbar is None:
             self.toolbar = ActionToolbar(
-                self.root, snapshot=self._ports.hover_snapshot,
+                self.root,
+                snapshot=self._ports.hover_snapshot,
                 status_snapshot=self._ports.status_snapshot,
                 anchor=self._ports.anchor,
                 actions=HoverActions(
-                    interact=self._interact, toggle_pin=self.toggle_pin,
+                    interact=self._interact,
+                    toggle_pin=self.toggle_pin,
                     open_settings=self.open_settings,
                     save_position=self._ports.save_position,
                     move_speech=self._ports.move_speech,
                     restore_stack=self._ports.restore_stack,
                 ),
-                always_on_top=self._ports.always_on_top(), skin=self._skin,
+                always_on_top=self._ports.always_on_top(),
+                skin=self._skin,
             )
         self.toolbar.set_pinned(self._keep_open)
         self.toolbar.show()
@@ -240,17 +270,22 @@ class HoverUi:
             self._ports.restore_stack()
             return
         self.settings_window = SettingsWindow(
-            self.root, x, y, snapshot=self._ports.settings_snapshot,
+            self.root,
+            x,
+            y,
+            snapshot=self._ports.settings_snapshot,
             actions=SettingsActions(
                 toggle_scale=self._ports.toggle_scale,
                 set_option=self._ports.set_option,
                 forget_rhythm=self._ports.forget_rhythm,
                 reset_toolbar=self._ports.reset_toolbar,
-                center=self._ports.center, quit=self._ports.quit,
+                center=self._ports.center,
+                quit=self._ports.quit,
                 closed=self._settings_closed,
             ),
             always_on_top=self._ports.always_on_top(),
-            skin=self._skin, position=self._settings_position,
+            skin=self._skin,
+            position=self._settings_position,
         )
         self.settings_window.focus()
         self._ports.restore_stack()
@@ -261,7 +296,9 @@ class HoverUi:
 
     def set_topmost(self, enabled: bool) -> None:
         for window in (
-            self.toolbar, self.settings_window, self.game_window,
+            self.toolbar,
+            self.settings_window,
+            self.game_window,
             self.food_menu,
         ):
             if window is not None:
@@ -313,9 +350,12 @@ class HoverUi:
             ):
                 self._ports.open_sprite_hover()
             self._ports.record_contact(now)
-        elif toolbar is not None and toolbar.visible and (
-            now - self.last_hover >= (
-                2.0 if self._ports.anchor().pinned_x is not None else 0.9
+        elif (
+            toolbar is not None
+            and toolbar.visible
+            and (
+                now - self.last_hover
+                >= (2.0 if self._ports.anchor().pinned_x is not None else 0.9)
             )
         ):
             self._auto_hide_toolbar()

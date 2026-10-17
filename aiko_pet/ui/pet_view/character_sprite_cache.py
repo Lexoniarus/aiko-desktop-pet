@@ -90,3 +90,11 @@ class CharacterSpriteCache:
                 for name, frames in self._originals.items()
             }
         return self._views[scale]
+
+    def close(self) -> None:
+        """Release every scale view while Tk's owner thread is still alive."""
+        for view in self._views.values():
+            view.clear()
+        self._views.clear()
+        self._shared_zoomed.clear()
+        self._originals.clear()

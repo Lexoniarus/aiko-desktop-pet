@@ -1,5 +1,201 @@
+## Unreleased — Focused World OOP ownership cleanup
+
+- Record independently reviewable small commits in
+  [docs/OOP_WORLD_FOLLOWUP_PLAN.md](docs/OOP_WORLD_FOLLOWUP_PLAN.md).
+- Separate pure pre-care Mind context from actual recorded human contact;
+  rejected or rolled-back World handovers cannot claim social interaction.
+- Make the timed absence perception the sole source of missing-place evidence.
+  Native arrival/reach failures no longer invent an alternate search trigger.
+- Move postpickup type-consistency guarding behind the application perception
+  boundary; subjective identification still requires valid hand evidence.
+- Remove obsolete search results, conditional absence branches and unused
+  cursor preview diagnostics.
+- Extract cohesive pickup, offer and completion handlers, as well as World
+  sensing-candidate preparation, without changing the sole state owners.
+- Bind early desktop callbacks to the existing World runtime through a typed
+  late-bound read port; no second World state or independent timer.
+- Preserve existing save formats, balance, dialogue and assets. Draft PR #10
+  stays unmerged; native visual acceptance is still required.
+
+## Unreleased — World pickup, missing-place search and reunion correction
+
+- Separate handover acceptance from prior type identification and consumption:
+  accept a currently eligible unidentified cursor item on valid release, then
+  inspect in Aiko's hands. Keep preidentified explicit refusals effective.
+- Give confirmed absent remembered places priority over discovering unknown
+  portions, then initiate one bounded search independent of current appetite.
+  Use exactly the ordinary item-noticing range for absent-place detection.
+- Reconcile unique missing same-type finds as remembered supplies in either
+  observation order, without copying type/assessment to ambiguous or conflicting
+  portions. Recheck actual hand-held type before skipping known-stock inspection.
+- Prevent premature search while normal notice or native final reach is still
+  pending; failed arrival waits for confirmed local absence instead of
+  inventing an independent search entry.
+- Add domain, ownership and native/Tk regression tests. Manual native World
+  acceptance and merging draft PR #10 remain open.
+
+## Unreleased — PetState encapsulation
+
+- Complete OOP stage 7: keep one frozen PetValues inside the mutable pet
+  aggregate, expose scalars as read-only properties and detach collection reads.
+- Preserve named construction, save v1, deepcopy, equality and canonical
+  nutrition/friendship transitions without adding public setters or new gameplay.
+- Migrate GUI/walk/animation read protocols, isolated smoke setup, media
+  captures and tests to existing domain commands/checkpoints. Add regression
+  coverage for rejected outside writes and isolated history copies.
+- Complete Linux 3.11/3.13 and Windows CI; manual practical World acceptance
+  and merging PR #10 remain separate and open.
+
+## Unreleased — Read-only pet policies and checkpoints
+
+- Convert need, care, routine and friendship policy inputs to read-only
+  properties and Sequence/Mapping histories without changing game decisions.
+- Introduce complete immutable PetValues checkpoints, prepare consumption in the
+  pet domain and restore the same live pet identity across joint World/memory
+  rollback; retain the existing compatibility method until stage 7.
+- Give session restoration an explicit time-anchor operation and test unchanged
+  care origins, independent histories, save values and rejected preparations.
+  Stage 7 and manual native World acceptance remain open.
+
+## Unreleased — Notice, identification and assessment
+
+- Separate noticed presence, learned type and current willingness. Unknown floor
+  and moving items identify only during Aiko's actual post-pickup inspection.
+- Require a deliberate one-second face presentation for cursor offers, including
+  known items. Retain acquired identity and completed presentation through observed
+  movement into the handover area; preserve actual release and care-origin rules.
+- Notice covered empty remembered places before new discoveries/offers, with
+  local dwell and pending-occupant protection. Use separate early-loss feedback
+  and one bounded search only for current targets or needed reserves.
+- Prevent unknown finds at confirmed missing places from inheriting old identity;
+  preserve subjective stock reconciliation, observed continuity and save formats.
+
+## Unreleased — Observed item continuity
+
+- Preserve learned identity across ordinary observed floor/cursor/placement
+  movement, independently of an existing investigation or current desire.
+- Let recognition and desire develop during holding; retain the expressed wish
+  after observed placement, with capacity checks and actual care origin.
+- Skip repeated identification for known items, including known but unassessed
+  restart cases. Keep unknown-item inspection and full consumption playback.
+- Distinguish ordinary holding from withholding a committed target, and align
+  known acceptance, offer and collection dialogue with the actual knowledge.
+- Recognize and reappraise a withheld investigation target while presented at
+  the cursor. Express current agreement/refusal; refusal ends return demands
+  without acquiring the portion or continuing withholding penalties.
+
+## Unreleased — Committed object attention
+
+- Keep one investigation committed through ordinary hover, clicks and other item
+  gestures; exclude distractions before perception and memory updates.
+- Follow an observed target take through cursor motion and settling, then resume
+  the same interaction with acquired knowledge. Preserve actual handover origin,
+  safe explicit interruption and bounded search after genuine visual loss.
+- Add spaced return requests, temporary irritation and limited persisted
+  friendship loss for repeated/prolonged withholding, without return bonuses.
+- Preserve configured dialogue reading times and make timing fixtures portable;
+  extend targeted native 1x/2x and isolated restart coverage.
+
+## Unreleased — Offers, placement and subjective search
+
+- Remember recognized cursor assessments and acknowledge accepted handovers
+  without repeating inspection, preserving complete consumption and care origin.
+- Separate subjective records from technical World identities, reconcile stock
+  ambiguity and persist memory v2 with v1 conversion. Search checked empty places
+  visibly and briefly; useful finds can end the old search.
+- Let players relocate the same resting portion through visible-pixel input.
+  Cancel existing portions back to their source; keep moving items click-through.
+- Replace the edge-grip exception with shared reachable placement and analytic,
+  impact-dependent damped rebounds. Preserve motion across scale changes and
+  normalize interrupted motion to valid ground on restart, without new dependencies.
+- Consolidate redundant native edge matrices, retain grasp/timing/recovery
+  evidence and extend the isolated starter with one/two-portion arrangements.
+
+## Unreleased — Dialogue and ownership review
+
+- Preserve the completed dialogue-v2 catalogue, relationship/compound-need
+  selection, authored stories and cancellable beat playback on the World branch.
+- Keep story pacing in validated JSON and remove obsolete object event families,
+  unused coordinator state and the test-only pickup entry point.
+- Give confirmed World/memory custody changes one application service and cursor
+  input its own desktop owner; name consumption commits separately from playback.
+- Scope standalone game dialogue history per game while embedded games retain
+  Aiko's session mind. Use responsibility-named modules without old forwarders.
+- Close isolated Tk image owners before destroying fixtures, correct the v2
+  placeholder regression and consolidate duplicate/long native World cases.
+  Preserve the edge/scale, restart, interruption and readable animation checks.
+
+## Unreleased — World practical-test corrections
+
+- Separate learned object knowledge from current sensory observations. Preserve
+  known identity and completed inspection across observed relocation; expire
+  only unidentified sightings after ten active minutes. Add typed portable
+  memory values and distinguish deliberate reserve placement from interruption.
+- Commit consumed portions, needs and subjective memory together; roll back all
+  three owners on failure. Record inspection and own placement at confirmed
+  events, rather than waiting until the last bubble has completed.
+- Persist subjective object knowledge alongside Pet/World in the existing atomic
+  version-one save. Restore learned facts and active ages without offline sensing,
+  current visibility or automatic reconciliation to hidden World changes.
+- Retrieve known, inspected supplies with hunger/energy recall and full
+  consumption, skipping redundant inquiry. Keep first investigation and handover
+  separate, distinguish confirmed deferral in dialogue, and announce local absence
+  once after bounded search rather than repeatedly pursuing a missing portion.
+- Cover cold restoration at both edges/scales and full timed remembered-food
+  consumption. The isolated test starter accepts `--needs hungry` on its existing
+  temporary save to exercise later need without losing World or memory.
+- Release character, zoomed/rest-pose and held-item image caches on the Tk thread
+  before shutdown, preventing repeated restart tests from leaving image cleanup
+  to later background garbage collection.
+
+- Let Aiko approach and grasp ground portions at both screen edges at 1x/2x.
+  A shared geometry rule requires actual arrival at the closest legal standing
+  pose for the bounded edge grip. Acquire/snap at pickup frame 4; defer by
+  putting the same portion down at her feet and remember the new position.
+- Add need-independent investigation and subjective examined memory. Aiko
+  approaches, picks up, examines and decides; unwanted items are put down for
+  later without repeated investigation, and hunger can activate known items.
+- Keep the post-consumption supply-seeking pause from delaying the first
+  investigation of another ground item; a drink at energy 66 is examined and
+  put down for later without waiting 30 seconds.
+- Coordinate readable notice, approach, recognition, decision and outcome
+  bubbles through existing Mind/dialogue/reaction owners and identified receipts.
+- Stage accepted handover through safe holding/inspection before use; preserve
+  the full consumption clip through passive cursor entry. Explicit actions still
+  put down unconsumed items first, and automatic use records no human contact.
+- Derive 22 reproducible binary-alpha display copies for cursor, ground and hand,
+  preserving original item RGB/geometry and preventing Magenta alpha blending.
+- Calibrate eating anchors for native item sizes so Onigiri overlaps the fingers
+  in front of the character. Preserve source artwork, timing and pickup hand
+  layers; verify all eight poses at 1x/2x and reproducible preparation.
+- Stop drawing additional hand masks over consumables, including held inspection
+  and put-down. Deferred recognized portions release object gaze, preserving
+  memory and returning attention to normal cursor/ambient behavior until wanted.
+- Add real-timer flow/restart regressions and a `curious` isolated profile at
+  satiety 76/energy 60. Native practical retest and merge remain pending.
+
+## Unreleased — World interaction test build
+
+- Replace direct feeding UI with one cursor-carried food/drink portion per
+  gesture, recognized release-to-accept, fall-on-refusal and taskbar ground items.
+- Add timed perception, subjective object memory, stable hunger/energy goals
+  and goal walking independent of random-walk settings through one executor.
+- Import the approved eight-pose pickup and hand layers reproducibly. Acquire
+  at source frame 4, consume after completion, and animate reverse put-down
+  before an interrupting user action. Deduplicate identified playback events.
+- Reuse canonical food/drink effects with explicit human/autonomous origin;
+  ground consumption grants no human social/adaptive/friendship rewards.
+- Save Pet and optional versioned World together atomically; load older saves
+  and recover transient portions grounded without replaying consumption.
+- Add isolated hungry/full test profiles, real Tk integration regressions and
+  a restart checklist. Native practical acceptance and merge remain pending.
+
 ## Unreleased — Refactor consolidation
 
+- Add a headless in-memory World foundation with immutable snapshots, logical
+  geometry, distinct portion IDs, revision-checked custody/lifecycle operations
+  and canonical food/asset references. No desktop, perception, UI, nutrition or
+  save integration is enabled by this foundation.
 - Enforce PEP 8 whitespace/blank lines, 88-character lines, import ordering
   and identifier naming across code, tests and tools with pinned Ruff rules.
   Keep exact Win32 API name exceptions; remove obsolete partial lint steps.

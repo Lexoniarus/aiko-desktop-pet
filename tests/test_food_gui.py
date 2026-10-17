@@ -10,9 +10,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.asset_paths import ASSET_ROOT
+from aiko_pet.desktop.geometry import FOOT_BASELINE
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.view_models.food_models import food_choices
+from tools.pet_test_support import set_test_pet_values
 
 
 class FoodGuiTests(unittest.TestCase):
@@ -30,10 +32,10 @@ class FoodGuiTests(unittest.TestCase):
         self.pet = DesktopPet(store=StateStore(Path(temp.name) / "pet.json"))
         self.addCleanup(self.pet.quit)
         self.pet.settings.auto_routine = False
-        self.pet.state.sleeping = False
+        set_test_pet_values(self.pet.state, sleeping=False)
         self.pet._on_enter()
 
-    def test_selecting_from_eleven_foods_feeds_the_matching_item(self) -> None:
+    def test_selecting_from_eleven_foods_carries_without_feeding(self) -> None:
         bar = self.pet._hover.toolbar
         assert bar is not None
         bar.buttons["feed"].invoke()
@@ -50,9 +52,12 @@ class FoodGuiTests(unittest.TestCase):
         self.assertEqual(self.pet.state.satiety, 75)
         menu.buttons["apple"].invoke()
         self.assertIsNone(self.pet._hover.food_menu)
-        self.assertEqual(self.pet.state.food.last_food_id, "apple")
-        self.assertEqual(self.pet._animated.food_overlay.current_food_id, "apple")
-        self.assertAlmostEqual(self.pet.state.satiety, 89, places=2)
+        token = self.pet._world.cursor.instance_id
+        assert token is not None
+        self.assertEqual(self.pet._world.world.get(token).definition_id, "apple")
+        self.assertIsNone(self.pet.state.food.last_food_id)
+        self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
+        self.assertAlmostEqual(self.pet.state.satiety, 75, places=2)
 
     def test_same_menu_instance_is_focused_instead_of_duplicated(
         self,
@@ -81,36 +86,38 @@ class FoodGuiTests(unittest.TestCase):
                 self.assertEqual((image.width(), image.height()), (64, 64))
                 self.assertTrue(image.transparency_get(0, 0))
 
-    def test_energy_drink_uses_energy_care_and_held_can_not_food(self) -> None:
+    def test_energy_drink_selection_carries_without_awarding_energy(self) -> None:
         bar = self.pet._hover.toolbar
         assert bar is not None
-        self.pet.state.energy = 40
-        self.pet.state.satiety = 30
+        set_test_pet_values(self.pet.state, energy=40)
+        set_test_pet_values(self.pet.state, satiety=30)
         old_fun = self.pet.state.fun
         old_food_history = self.pet.state.food.recent_food_ids
         bar.buttons["feed"].invoke()
         menu = self.pet._hover.food_menu
         assert menu is not None
         self.assertEqual(menu.buttons["energy_drink"].cget("text"), "Energy Drink")
-        menu.buttons["energy_drink"].invoke()
+        # Gesture start now saves through the active-time owner. Isolate the
+        # selection effect from real elapsed need decay in this boundary test.
+        with patch("aiko_pet.application.active_time.ActiveSessionClock.consume",
+                   return_value=0):
+            menu.buttons["energy_drink"].invoke()
         self.assertIsNone(self.pet._hover.food_menu)
-        self.assertGreater(self.pet.state.energy, 40)
+        self.assertEqual(self.pet.state.energy, 40)
         self.assertLess(self.pet.state.satiety, 40)
         self.assertEqual(
             self.pet.state.food.recent_food_ids, old_food_history,
         )
         self.assertEqual(self.pet.state.food.remaining_digest_minutes, 0)
         self.assertAlmostEqual(self.pet.state.fun, old_fun, places=1)
-        self.assertEqual(
-            self.pet._animated.food_overlay.current_food_id, "energy_drink",
-        )
-        self.assertEqual(
-            self.pet._animated.frame_clock.active_key, ("eat", None),
-        )
+        token = self.pet._world.cursor.instance_id
+        assert token is not None
+        self.assertEqual(self.pet._world.world.get(token).definition_id, "energy_drink")
+        self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
 
     def test_full_energy_rejects_drink_without_eating_animation(self) -> None:
-        self.pet.state.energy = 100
-        self.pet.state.satiety = 45
+        set_test_pet_values(self.pet.state, energy=100)
+        set_test_pet_values(self.pet.state, satiety=45)
         self.pet._hover.open_food_menu()
         menu = self.pet._hover.food_menu
         assert menu is not None
@@ -139,6 +146,12 @@ class FoodGuiTests(unittest.TestCase):
                         "normal",
                     )
                     expected = overlay._images[(choice.id, scale)]
+                    sprite = self.pet._item_catalog.foods[choice.id].sprites[scale]
+                    self.assertEqual(expected.cget("file"), str(sprite.render_path))
+                    self.assertEqual(
+                        self.pet._world.view.image(choice.id, scale).cget("file"),
+                        str(sprite.render_path),
+                    )
                     actual = self.pet.canvas.itemcget(overlay.item, "image")
                     self.assertEqual(actual, str(expected))
                     self.pet._animated.show_frame(
@@ -182,6 +195,46 @@ class FoodGuiTests(unittest.TestCase):
         self.assertGreater(len(set(positions)), 2)
         animated.show_frame("idle", time.monotonic(), fixed=0)
         self.assertEqual(self.pet.canvas.itemcget(overlay.item, "state"), "hidden")
+
+    def test_onigiri_overlaps_the_eating_grip_in_front_of_the_character(self) -> None:
+        animated = self.pet._animated
+        clip = animated.assets.clips["eat"]
+        overlay = animated.food_overlay
+        # Finger contact positions measured on the eight approved source poses.
+        hand_y = (153, 135, 129, 135, 135, 135, 153, 153)
+        overlay.select("onigiri")
+        for scale in (1, 2):
+            for index, frame in enumerate(clip.frames):
+                with self.subTest(scale=scale, frame=index):
+                    overlay.render(clip, frame, scale=scale)
+                    left, top = self.pet.canvas.coords(overlay.item)
+                    image = overlay._images[("onigiri", scale)]
+                    x = round((192 // 2 - clip.anchor[0] + 96) * scale - left)
+                    y = round((FOOT_BASELINE - clip.anchor[1] + hand_y[index])
+                              * scale - top)
+                    self.assertTrue(0 <= x < image.width())
+                    self.assertTrue(0 <= y < image.height())
+                    self.assertFalse(image.transparency_get(x, y))
+                    stack = self.pet.canvas.find_all()
+                    self.assertGreater(stack.index(overlay.item),
+                                       stack.index(animated.image_item))
+
+    def test_consumables_stay_above_hands_during_pickup_holding_and_putdown(self):
+        animated = self.pet._animated
+        overlay = animated.food_overlay
+        for food in ("onigiri", "energy_drink"):
+            overlay.select(food)
+            for scale in (1, 2):
+                for clip_name in ("pick_up", "put_down"):
+                    clip = animated.assets.clips[clip_name]
+                    for index, frame in enumerate(clip.frames):
+                        if frame.food_anchor is None:
+                            continue
+                        with self.subTest(food=food, scale=scale, clip=clip_name,
+                                          frame=index):
+                            overlay.render(clip, frame, scale=scale)
+                            self.assertEqual(self.pet.canvas.find_all()[-1],
+                                             overlay.item)
 
 
 if __name__ == "__main__":

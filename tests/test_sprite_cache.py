@@ -23,6 +23,7 @@ class SpriteCacheTests(unittest.TestCase):
         self.root.withdraw()
         self.addCleanup(self.root.destroy)
         self.cache = CharacterSpriteCache(self.root, load_character_catalog())
+        self.addCleanup(self.cache.close)
 
     def test_only_requested_frames_are_zoomed_and_reused(self) -> None:
         sprites_1x = self.cache.for_scale(1)

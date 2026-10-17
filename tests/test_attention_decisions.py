@@ -8,6 +8,7 @@ from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class AttentionDecisionTests(unittest.TestCase):
@@ -55,7 +56,7 @@ class AttentionDecisionTests(unittest.TestCase):
     def test_sleep_transition_uses_current_state_and_dialogue(self) -> None:
         reaction = Mock()
         with patch.object(self.mind, "select_reaction", return_value=reaction) as say:
-            self.state.sleeping = True
+            set_test_pet_values(self.state, sleeping=True)
             self.assertIs(
                 self.attention.select_sleep_transition_reaction(
                     100.0, self.context,
@@ -66,7 +67,7 @@ class AttentionDecisionTests(unittest.TestCase):
                 "sleep", self.state, self.context, 100.0,
             )
 
-        self.state.sleeping = False
+        set_test_pet_values(self.state, sleeping=False)
         with patch.object(self.mind, "select_reaction", return_value=reaction) as say:
             self.attention.select_sleep_transition_reaction(101.0, self.context)
             say.assert_called_once_with(

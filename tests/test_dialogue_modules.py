@@ -13,6 +13,7 @@ from aiko_pet.pet.mind.catalog import (
     Line,
     Reaction,
 )
+from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.mind.work_episode import WorkEpisodeMemory
 from aiko_pet.pet.routine import context_at
 
@@ -31,9 +32,15 @@ class DialogueModulesTests(unittest.TestCase):
 
     def test_selected_reaction_remains_same_public_type(self) -> None:
         line = Line(
-            id="smoke", event="greeting", text="Hallo!",
-            animation="idle", moods=(), periods=(), weekdays=(),
-            weight=1, cooldown_seconds=0.0,
+            id="smoke",
+            event="greeting",
+            animation="idle",
+            moods=(),
+            periods=(),
+            weekdays=(),
+            weight=1,
+            cooldown_seconds=0.0,
+            beats=(Cue.text("Hallo!"),),
         )
         book = DialogueBook((line,), rng=random.Random(8))
         context = context_at(1760281200)

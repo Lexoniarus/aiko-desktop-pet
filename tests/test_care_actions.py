@@ -26,14 +26,15 @@ class CareActionRulesTests(unittest.TestCase):
                 plan = plan_care_action(state, action, now=moment)
                 self.assertEqual(encode_pet_state(state), before)
                 self.assertEqual(
-                    state.interact(action, now=moment), plan.result,
+                    state.interact(action, now=moment),
+                    plan.result,
                 )
 
     def test_each_care_action_retains_its_specific_effect(self) -> None:
         moment = stamp()
         expected = {
-            "talk": ("social", 100.0, "Du möchtest reden"),
-            "pet": ("affection", 100.0, "angenehm"),
+            "talk": ("social", 100.0, "vorbeischaust"),
+            "pet": ("affection", 100.0, "tut gut"),
             "energy_drink": ("energy", 85.0, "geholfen"),
         }
         for action, (attribute, value, reply) in expected.items():
@@ -83,7 +84,7 @@ class CareActionRulesTests(unittest.TestCase):
         self.assertTrue(context.night)
         state = PetState(updated_at=night_time)
         result = state.interact("sleep", now=night_time)
-        self.assertIn("Zzz", format_care_response(result))
+        self.assertIn("Gute Nacht", format_care_response(result))
         self.assertTrue(state.sleeping)
         self.assertEqual(state.sleep_origin, "manual")
         state.interact("talk", now=night_time + 1)

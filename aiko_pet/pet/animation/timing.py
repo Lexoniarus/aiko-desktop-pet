@@ -14,6 +14,7 @@ REGULAR_CLIPS = frozenset(FRAME_COUNTS) - {"look"}
 VIRTUAL_CLIPS: Mapping[str, str] = MappingProxyType(
     {
         "waving-greeting": "waving",
+        "put_down": "pick_up",
     }
 )
 
@@ -90,8 +91,8 @@ def parse_timing_policy(data: object) -> AnimationTimingPolicy:
                 type(index) is not int or index not in expected for index in raw_order
             )
             or set(raw_order) != expected
-            or raw_order[0] != 0
-            or raw_order[-1] != 7
+            or (state != "put_down" and (raw_order[0] != 0 or raw_order[-1] != 7))
+            or (state == "put_down" and raw_order != list(reversed(range(8))))
         ):
             raise ValueError(f"Invalid playback sequence: {state}")
         sequences[state] = tuple(raw_order)

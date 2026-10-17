@@ -1,5 +1,10 @@
 {
   "source_asset": "Aiko_Anime_8_Frames_Komplett.zip / animations-8",
+  "supplement": {
+    "source_asset": "Aiko_Pick_Up_und_Hinlegen.zip",
+    "import_manifest": "../../assets/aiko-pick-up/IMPORT_MANIFEST.json",
+    "archive_sha256": "da581da6b4fd8f37c87be2d44244d146b6c7faa8b754f0f8a2d9cb5e81c19914"
+  },
   "source_catalog_sha256": "cf5f81b3b2de20beb20dcc51a0e6547a8913d3e18eda3aa1bbdd11b7db1c929f",
   "frame_counts": {
     "idle": 8,
@@ -14,6 +19,7 @@
     "petting": 8,
     "eat": 8,
     "attack": 8,
+    "pick_up": 8,
     "look": 16
   },
   "size": [
@@ -23,6 +29,12 @@
   "alpha_threshold": 128,
   "license": "../../assets/aiko-anime-8-frames/LICENSE.md",
   "preparation": "Full-width copies; binary alpha; visible ground anchors",
+  "overlay_calibration": {
+    "eat_anchor_offset_px": [
+      0,
+      6
+    ]
+  },
   "timing_profile": "Per-pose holds and configurable replay sequences; ambient blink gaps are separate; 16 static gaze poses; original times retained; source PNGs unchanged",
   "runtime_sha256": {
     "frames/idle/00.png": "8526c24231ac2fa2c878908f8317e058829e45081f7935dba8b7c8ad03a14bd5",
@@ -129,6 +141,22 @@
     "hand-foreground/attack/06.png": "bba114da147d160cd12d8736b77eb90027573e8ca2e3c48b1b6ed8da70f07b3a",
     "frames/attack/07.png": "b059cc0cff6d3a5b87b8fd0dd93d86f0e3ef22ada6c5a07a2b4c57f456ed39d0",
     "hand-foreground/attack/07.png": "aa7d9331a8125f505b096bbdb0fe59346f6145cd4f7081cfa07891650b259d85",
+    "frames/pick_up/00.png": "8be49f273c7c5713f653979aa703c5909fc30a20d4a51d6f8b299056dd99d4b7",
+    "hand-foreground/pick_up/00.png": "dcd4a9b87d7d1abf78e42e2e8fb37d8a5e48c6d4afe9fa8b563696f4ac687778",
+    "frames/pick_up/01.png": "664acc0925f8949cfe817359d6251a1cd7c6bb457bfae2c390b1feec8d991c16",
+    "hand-foreground/pick_up/01.png": "9edbdaf9d0745afa882ef657aa6e1a171aa94efcf0d039f00f8ac5fdb0cefbd5",
+    "frames/pick_up/02.png": "8b9720a844efe1f79a706458a2c760bf1a21469f3e158a1cda9fba3ecd9bfacb",
+    "hand-foreground/pick_up/02.png": "63371b6ad976b6864b7493b1131a4cdc14a3e5d75ac0411d2ed038b793ce18ce",
+    "frames/pick_up/03.png": "a5f6d11d673af44e98032a87b5868567ce4dedb09cb65cfc38c826d39832968b",
+    "hand-foreground/pick_up/03.png": "911ea13078e75808a0910c120deac537822a4b18c668d6866dda971e727788dc",
+    "frames/pick_up/04.png": "c3bbe2bd3890e4f71d049dc7dcd2c883e5449d28e4606d8f7a86dc0942bfcce0",
+    "hand-foreground/pick_up/04.png": "34793ad8ddaaeabde7a492c9ef6f1e95fb668dc9fef31a014c0dc1d58e3bb884",
+    "frames/pick_up/05.png": "3eaa67cf850200cb9dafca25bbdfd1e44efe73aee2b0ec3424ccdebd558e94da",
+    "hand-foreground/pick_up/05.png": "98b03196a00e34ee4810a201f574a153d4e2d2dd373ccf34e822f15596fbd2d1",
+    "frames/pick_up/06.png": "ad25b41e06372a3fd26ce37d7795dad1f8273625e0c01eddadaa22e007fc58c1",
+    "hand-foreground/pick_up/06.png": "a9370795590ea3587bb0e0a8c724c8e68c2d849b178e21aac1f4a955e95ff2a8",
+    "frames/pick_up/07.png": "44b009699ce5089d1560b1d8ee4d4fa05f8ed24f6ff0aeca7bc65df1d2ffe692",
+    "hand-foreground/pick_up/07.png": "898322df0ec25b6f725b73971ee867631b9b58fe075c24f3f6d3f564cde1c29b",
     "frames/look/00.png": "a73d1484e112dcd9aef4ef77c1d883bc8cbc1db4efaa46f43ce8c095c64c0be5",
     "frames/look/01.png": "b69f41bbc95a6da82771364d3dd24021b46ca8c240fd56b7d734e5d8eb176e5c",
     "frames/look/02.png": "efaca2159dda720be121e9aadfbcbac4b805d2d7d865cb4b6d3becb788c2e28a",

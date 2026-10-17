@@ -28,9 +28,7 @@ ClickEvent = Literal[
     "click_lonely",
     "click_affection_low",
     "click_night",
-    "click_close",
     "click_at_ease",
-    "click_reserved",
     "click_left",
     "click_right",
     "click_notice_playful",
@@ -107,20 +105,10 @@ def choose_click_reaction(
             event = "click_affection_low"
         elif context.night and not cheerful:
             event = "click_night"
-        elif (
-            state.friendship >= BALANCE.integer("click", "close_friendship")
-            and state.mood >= BALANCE.integer("click", "close_mood")
-            and state.affection >= BALANCE.integer("click", "close_affection")
-        ):
-            event = "click_close"
-        elif (
-            state.affection >= BALANCE.integer("click", "at_ease_affection")
-            and state.friendship >= BALANCE.integer("click", "at_ease_friendship")
-            and state.mood >= BALANCE.integer("click", "close_mood")
-        ):
+        elif state.affection >= BALANCE.integer(
+            "click", "at_ease_affection"
+        ) and state.mood >= BALANCE.integer("click", "close_mood"):
             event = "click_at_ease"
-        elif state.friendship < BALANCE.integer("click", "reserved_friendship"):
-            event = "click_reserved"
         else:
             event = "click_left" if button == "left" else "click_right"
     elif click_count == BALANCE.integer("click", "notice_click_count"):

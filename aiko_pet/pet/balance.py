@@ -43,9 +43,10 @@ def parse_balance(raw: Any) -> BalanceCatalog:
                 or not 0 <= value <= 10_000_000
             ):
                 raise ValueError(f"Invalid balance.{section}.{key}")
-            normalized_weight = (
-                section == "mood" and key.endswith("_weight")
-            ) or (section, key) == ("food_activity", "short_window_weight")
+            normalized_weight = (section == "mood" and key.endswith("_weight")) or (
+                section,
+                key,
+            ) == ("food_activity", "short_window_weight")
             if ("fraction" in key or normalized_weight) and value > 1:
                 raise ValueError(f"balance.{section}.{key} must be within 0..1")
             if key.endswith(("_probability", "_effort", "_decay")) and value > 1:
@@ -59,6 +60,32 @@ def parse_balance(raw: Any) -> BalanceCatalog:
                 raise ValueError(f"balance.{section}: {key} exceeds {upper}")
         sections[section] = MappingProxyType(values)
     catalog = BalanceCatalog(MappingProxyType(sections))
+    withholding = sections["object_withholding"]
+    if (any(value <= 0 for value in withholding.values())
+            or withholding["friendship_loss"] > withholding["maximum_episode_loss"]
+            or withholding["maximum_episode_loss"] > 100
+            or withholding["request_interval_seconds"] > withholding["grace_seconds"]
+            or withholding["request_interval_seconds"]
+            > withholding["loss_interval_seconds"]):
+        raise ValueError("Invalid object withholding balance")
+    objects = sections["object_behavior"]
+    if (
+        objects["reach_widths"] >= objects["notice_widths"]
+        or objects["notice_seconds"] > objects["recognize_seconds"]
+        or objects["notice_seconds"] > objects["absence_seconds"]
+        or objects["notice_seconds"] > objects["presentation_seconds"]
+        or objects["presentation_jitter_widths"] >= min(
+            objects["presentation_horizontal_widths"],
+            objects["presentation_vertical_widths"],
+        )
+        or objects["seek_food_satiety"] > 100
+        or objects["seek_drink_energy"] > 100
+        or objects["bounce_restitution_fraction"] >= 1
+        or objects["bounce_horizontal_damping_fraction"] >= 1
+        or objects["bounce_maximum_contacts"] > 32
+        or any(value <= 0 for value in objects.values())
+    ):
+        raise ValueError("Invalid object perception/interest balance")
     for section, low, high in (
         ("walk", "pause_min_seconds", "pause_max_seconds"),
         ("walk", "quiet_pause_min_seconds", "pause_max_seconds"),
@@ -91,14 +118,13 @@ def parse_balance(raw: Any) -> BalanceCatalog:
     if (
         not 1 <= dialogue["default_weight"] <= 10
         or dialogue["default_cooldown_seconds"] > 86400
-        or not 600 <= dialogue["default_followup_delay_ms"] <= 2600
         or dialogue["recent_line_history"] < 1
         or not 250 <= dialogue["minimum_text_ms"] <= dialogue["maximum_text_ms"] <= 8000
         or any(
             not 250 <= dialogue[key] <= 8000
             for key in (
-                "before_emote_ms",
-                "after_emote_ms",
+                "emote_ms",
+                "pause_ms",
                 "contact_reaction_ms",
                 "greeting_reaction_ms",
             )

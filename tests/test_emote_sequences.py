@@ -10,7 +10,8 @@ from aiko_pet.asset_paths import EMOTE_IMAGE_DIR, KENNEY_UI_DIR
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
-from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue, compose_cues
+from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue
+from tools.pet_test_support import set_test_pet_values
 
 
 class EmoteDomainTests(unittest.TestCase):
@@ -25,41 +26,17 @@ class EmoteDomainTests(unittest.TestCase):
 
     def test_curated_catalogue_emotes_have_valid_names_and_inherit(self):
         lines = DialogueBook.from_file().lines
-        with_intro = [x for x in lines if x.emote_before]
-        self.assertGreater(len(with_intro), 150)
-        self.assertTrue(all(x.emote_before in EMOTES for x in with_intro))
-        self.assertTrue(all(x.emote_after in EMOTES for x in lines if x.emote_after))
-        match = next(x for x in lines if x.emote_before and x.emote_after)
-        self.assertIn(match.emote_before, EMOTES)
-        self.assertIsNotNone(match.event)
+        emotes = [b.content for line in lines for b in line.beats if b.kind == "emote"]
+        self.assertGreater(len(emotes), 150)
+        self.assertTrue(all(name in EMOTES for name in emotes))
 
-    def test_cues_are_ordered_without_overlap(self):
-        cues = compose_cues(
-            "...Aha.",
-            before="question",
-            followup="Das war peinlich.",
-            after="heart",
-        )
+    def test_authored_beats_have_readable_text_and_deliberate_pauses(self):
+        text = Cue.parse({"kind": "text", "content": "A" * 125})
+        self.assertEqual(text.duration_ms, 7250)
+        self.assertEqual(Cue.parse({"kind": "pause"}).duration_ms, 600)
         self.assertEqual(
-            [c.kind for c in cues],
-            [
-                "emote",
-                "text",
-                "text",
-                "emote",
-            ],
+            Cue.parse({"kind": "emote", "content": "heart"}).duration_ms, 800
         )
-        self.assertEqual(
-            [c.content for c in cues],
-            [
-                "question",
-                "...Aha.",
-                "Das war peinlich.",
-                "heart",
-            ],
-        )
-        self.assertTrue(all(x.duration_ms > 0 for x in cues))
-        self.assertEqual([x.kind for x in compose_cues("Nur Text.")], ["text"])
 
     def test_bad_emote_is_rejected_early(self):
         self.assertRaises(ValueError, Cue, "emote", "unsupported", 700)
@@ -99,7 +76,7 @@ class EmoteTkTests(unittest.TestCase):
             self.pet.root.after_cancel(self.pet._runtime.scheduled_greeting)
             self.pet._runtime.scheduled_greeting = None
         self.pet.settings.auto_routine = False
-        self.pet.state.sleeping = False
+        set_test_pet_values(self.pet.state, sleeping=False)
         if self.pet._runtime.scheduled_tick is not None:
             self.pet.root.after_cancel(self.pet._runtime.scheduled_tick)
         self.pet._runtime.scheduled_tick = None
@@ -123,7 +100,14 @@ class EmoteTkTests(unittest.TestCase):
 
     def test_three_beats_replace_each_other_and_never_overlap(self):
         reaction = Reaction(
-            "test", "...Oh.", "idle", "click_left", None, 1400, "question", "heart"
+            "test",
+            (
+                Cue("emote", "question", 700),
+                Cue.text("...Oh."),
+                Cue("emote", "heart", 900),
+            ),
+            "idle",
+            "click_left",
         )
         self.pet._react(reaction, 1700)
         self.assertTrue(self.is_emote())
@@ -132,7 +116,7 @@ class EmoteTkTests(unittest.TestCase):
         self.assertFalse(self.is_emote())
         self.assertEqual(self.bubble_text(), "...Oh.")
         self.assertEqual(len(self.pet._overlay_windows()), 2)
-        self.progress(1850)
+        self.progress(reaction.beats[1].duration_ms + 80)
         self.assertTrue(self.is_emote())
         self.assertEqual(len(self.pet._overlay_windows()), 2)
         self.progress(950)
@@ -141,62 +125,66 @@ class EmoteTkTests(unittest.TestCase):
     def test_multiple_speech_lines_and_visual_after(self):
         reaction = Reaction(
             "test",
-            "Oh.",
+            (
+                Cue("emote", "question", 700),
+                Cue.text("Oh."),
+                Cue.text("...Das hatte ich anders gemeint."),
+                Cue("emote", "heart", 900),
+            ),
             "waiting",
             "click_left",
-            "...Das hatte ich anders gemeint.",
-            1400,
-            "question",
-            "heart",
         )
         self.pet._react(reaction, 1700)
         self.progress(750)
         self.assertEqual(self.bubble_text(), "Oh.")
-        self.progress(1850)
+        self.progress(reaction.beats[1].duration_ms + 80)
         self.assertEqual(self.bubble_text(), "...Das hatte ich anders gemeint.")
-        self.progress(2350)
+        self.progress(reaction.beats[2].duration_ms + 80)
         self.assertTrue(self.is_emote())
 
     def test_new_click_preempts_entire_older_reaction(self):
         reaction = Reaction(
             "test",
-            "Nicht mehr.",
+            (
+                Cue("emote", "question", 700),
+                Cue.text("Nicht mehr."),
+                Cue.text("Alt und unerwünscht"),
+                Cue("emote", "heart", 900),
+            ),
             "waiting",
             "click_left",
-            "Alt und unerwünscht",
-            1400,
-            "question",
-            "heart",
         )
         self.pet._react(reaction, 1700)
         self.assertTrue(self.is_emote())
-        self.pet._react(Reaction("new", "Jetzt hier.", "idle", "click_right"))
+        self.pet._react(
+            Reaction("new", (Cue.text("Jetzt hier."),), "idle", "click_right")
+        )
         self.assertEqual(self.bubble_text(), "Jetzt hier.")
         self.progress(800)
         self.assertEqual(self.bubble_text(), "Jetzt hier.")
-        self.assertIsNone(self.pet._reaction_player.pending_timer)
+        self.assertIsNotNone(self.pet._reaction_player.pending_timer)
 
     def test_rapid_click_burst_does_not_stick_on_intro_emotes(self):
         reaction = Reaction(
             "rapid",
-            "Ich höre dich.",
+            (
+                Cue("emote", "anger", 700),
+                Cue.text("Ich höre dich."),
+                Cue("emote", "cloud", 900),
+            ),
             "idle",
             "rapid_click",
-            None,
-            1400,
-            "anger",
-            "cloud",
         )
         self.pet.mind.clicks.extend([1.0, 2.0, 3.0, 4.0])
         self.pet._contact.react_to_click(reaction)
         self.assertEqual(self.bubble_text(), "Ich höre dich.")
 
     def test_idle_emote_waits_until_dialogue_slot_is_free(self):
-        self.pet._react(Reaction("x", "Ich rede.", "idle", "click_left"))
+        self.pet._react(Reaction("x", (Cue.text("Ich rede."),), "idle", "click_left"))
         self.pet._attention_runtime.idle_emote()
         self.assertEqual(self.bubble_text(), "Ich rede.")
-        self.pet._speech.hide()
-        self.pet.state.mood = 3
+        self.pet._reaction_player.cancel()
+        set_test_pet_values(self.pet.state, mood=3)
         self.pet._attention_runtime.idle_emote()
         self.assertTrue(self.is_emote())
 
@@ -222,7 +210,7 @@ class EmoteTkTests(unittest.TestCase):
         )
         self.assertNotIn("energy_drink", bar.buttons)
         for key in bar.needs:
-            self.pet.state.__dict__[key] = 100
+            set_test_pet_values(self.pet.state, **{key: 100})
         bar.refresh()
         self.pet.root.update()
         self.assertTrue(

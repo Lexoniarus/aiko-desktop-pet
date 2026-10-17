@@ -30,6 +30,7 @@ from aiko_pet.ui.view_models.text_de import (
     format_schedule_line,
     mood_hint_text,
 )
+from tools.pet_test_support import set_test_pet_values
 
 
 def at(hour: int, *, day: int = 12) -> float:
@@ -48,9 +49,9 @@ class UiProjectionParityTests(unittest.TestCase):
     def test_snapshot_copies_mutable_pet_values(self) -> None:
         state = PetState(satiety=19, affection=28, meals_today=["breakfast"])
         snapshot = snapshot_pet(state)
-        state.satiety = 95
-        state.affection = 100
-        state.meals_today.append("lunch")
+        set_test_pet_values(state, satiety=95)
+        set_test_pet_values(state, affection=100)
+        set_test_pet_values(state, meals_today=[*state.meals_today, "lunch"])
         self.assertEqual(snapshot.satiety, 19)
         self.assertEqual(snapshot.affection, 28)
         self.assertEqual(snapshot.meals_today, ("breakfast",))
@@ -109,7 +110,7 @@ class UiProjectionParityTests(unittest.TestCase):
             mood_hint_text(state.mood_hint()),
             "Ein kleiner Snack wäre schön ...",
         )
-        state.sleeping = True
+        set_test_pet_values(state, sleeping=True)
         self.assertIs(state.mood_hint(context_at(at(2))), MoodHint.SLEEP_NIGHT)
         self.assertEqual(
             mood_hint_text(state.mood_hint(context_at(at(2)))),
@@ -207,7 +208,7 @@ class UiProjectionParityTests(unittest.TestCase):
             150, 430, 256, 416, 25, 35,
         ))
         self.assertEqual(source.settings_view().value("auto_walk"), True)
-        state.energy = 70
+        set_test_pet_values(state, energy=70)
         self.assertEqual(original.need_value("energy"), 39)
         self.assertEqual(source.hover().need_value("energy"), 70)
         self.assertEqual(source.status().need_value("energy"), 70)

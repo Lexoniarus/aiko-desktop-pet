@@ -16,10 +16,11 @@ from ...games.rock_paper_scissors import (
     Round,
     Score,
 )
-from .rock_paper_scissors_text_de import (
+from ...pet.mind.reaction_sequence import Cue
+from .rock_paper_scissors_dialogue import (
+    GameDialogue,
     countdown_line,
-    outcome_line,
-    welcome_line,
+    outcome_event,
 )
 
 ScheduleTimer = Callable[[int, Callable[[], None]], str]
@@ -48,12 +49,19 @@ class RockPaperScissorsSequence:
     REACTION_MS = 2800
 
     def __init__(
-        self, *, schedule: ScheduleTimer, cancel: CancelTimer,
-        say: DisplayText, show_emote: DisplayEmote,
+        self,
+        *,
+        schedule: ScheduleTimer,
+        cancel: CancelTimer,
+        say: DisplayText,
+        show_emote: DisplayEmote,
         show_aiko_hand: DisplayAikoHand,
         reveal_player: RevealPlayer,
-        animate: PlayAnimation, set_busy: SetBusy,
+        animate: PlayAnimation,
+        set_busy: SetBusy,
+        dialogue: Callable[[str], str] | None = None,
     ) -> None:
+        self._dialogue = dialogue if dialogue is not None else GameDialogue().choose
         self._schedule = schedule
         self._cancel = cancel
         self._say = say
@@ -83,7 +91,8 @@ class RockPaperScissorsSequence:
     def greet(self) -> None:
         if not self._closed:
             self._animate("waving-greeting")
-            self._say(welcome_line(self.score.games), 4300)
+            phrase = self._dialogue("game_greeting")
+            self._say(phrase, Cue.text(phrase).duration_ms)
 
     def choose(self, move: Move) -> None:
         if self._closed or self.busy:
@@ -131,10 +140,8 @@ class RockPaperScissorsSequence:
             self._emit_emote(emote, self.REACTION_EMOTE_MS)
         elif self._phase == 6 and self._result is not None:
             self._phase = 7
-            self._emit_text(
-                outcome_line(self._result, self.score.games),
-                self.REACTION_MS,
-            )
+            phrase = self._dialogue(outcome_event(self._result))
+            self._emit_text(phrase, Cue.text(phrase).duration_ms)
         elif self._phase == 7:
             self._phase = 0
             self._result = None

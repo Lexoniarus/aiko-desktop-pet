@@ -19,6 +19,7 @@ from aiko_pet.pet.mind.catalog import (
 )
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 def require_reaction(value: Reaction | None) -> Reaction:
@@ -182,7 +183,7 @@ class EmotionTests(unittest.TestCase):
         self.assertNotEqual(left.text, right.text)
 
     def test_sleep_click_does_not_wake(self):
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         reaction = self.mind.click("left", self.state, self.context, 20)
         assert reaction is not None
         self.assertEqual(reaction.event, "sleep_click")
@@ -220,8 +221,8 @@ class EmotionTests(unittest.TestCase):
             ),
             "feed_meal",
         )
-        self.state.meals_date = breakfast.day_key
-        self.state.meals_today = ["breakfast"]
+        set_test_pet_values(self.state, meals_date=breakfast.day_key)
+        set_test_pet_values(self.state, meals_today=["breakfast"])
         self.assertEqual(
             self.mind.care_event(
                 plan_care_action(
@@ -233,7 +234,7 @@ class EmotionTests(unittest.TestCase):
             ),
             "feed_snack",
         )
-        self.state.satiety = 99
+        set_test_pet_values(self.state, satiety=99)
         self.assertEqual(
             self.mind.care_event(
                 plan_care_action(
@@ -258,7 +259,7 @@ class EmotionTests(unittest.TestCase):
             ),
             "play",
         )
-        self.state.energy = 6
+        set_test_pet_values(self.state, energy=6)
         self.assertEqual(
             self.mind.care_event(
                 plan_care_action(
@@ -281,7 +282,7 @@ class EmotionTests(unittest.TestCase):
             ),
             "sleep",
         )
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         self.assertEqual(
             self.mind.care_event(
                 plan_care_action(
@@ -302,17 +303,17 @@ class EmotionTests(unittest.TestCase):
         self.assertIsNone(
             self.mind.return_to_pet(self.state, self.context, 100 + 27 * 60)
         )
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         self.assertIsNone(
             self.mind.return_to_pet(self.state, self.context, 100 + 55 * 60)
         )
 
     def test_spontaneous_comment_is_suppressed_during_sleep(self):
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         self.assertIsNone(
             self.mind.select_spontaneous_reaction(self.state, self.context, 30)
         )
-        self.state.sleeping = False
+        set_test_pet_values(self.state, sleeping=False)
         self.assertIsNotNone(
             self.mind.select_spontaneous_reaction(self.state, self.context, 31)
         )

@@ -141,7 +141,16 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         game._sequence.advance()
         remark = bubble_text(self.pet)
         assert remark is not None
-        self.assertIn("Punkt", remark)
+        from aiko_pet.pet.mind.catalog import DialogueBook
+
+        self.assertIn(
+            remark,
+            {
+                line.text
+                for line in DialogueBook.from_file().lines
+                if line.event == "game_player_win"
+            },
+        )
         self.assertNotIn("Unser Stand", remark)
         game._sequence.advance()
         self.assertEqual(game.buttons[Move.ROCK].cget("state"), "normal")

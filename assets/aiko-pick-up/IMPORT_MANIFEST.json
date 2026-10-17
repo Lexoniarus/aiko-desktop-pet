@@ -1,0 +1,111 @@
+{
+  "source_asset": "Aiko_Pick_Up_und_Hinlegen.zip",
+  "archive_sha256": "da581da6b4fd8f37c87be2d44244d146b6c7faa8b754f0f8a2d9cb5e81c19914",
+  "files": [
+    {
+      "path": "README.txt",
+      "bytes": 1839,
+      "sha256": "ec9aa7f5c2b6993d366df3d5ccb5dff8c4de875e6625cb7352d4885434b13601"
+    },
+    {
+      "path": "prompt.txt",
+      "bytes": 1717,
+      "sha256": "c5e034165a401052daeac82fc8fb546191e804f0bb271bc91e7d41056ab06e00"
+    },
+    {
+      "path": "animation.json",
+      "bytes": 3790,
+      "sha256": "96a5f95108edea51f1c355099f5e0d5bbf17367ecc45be08cae6dcee80ad071f"
+    },
+    {
+      "path": "registration.json",
+      "bytes": 2740,
+      "sha256": "c291abe4a2e8fb63ffb3cab2be1004303ccf288f39e52dd9a0b9efe040d8f459"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 2228,
+      "sha256": "a23e0b8a45a874b727816cf4e07a9d6cb068377a6f51ebf35c9f8adf2a9592e5"
+    },
+    {
+      "path": "Laufzeit_192x208/01.png",
+      "bytes": 28127,
+      "sha256": "3e6f9bd92fc0773f83a5f622f71bd9b8c0a7625ca3641064e87c5f7c453d1888"
+    },
+    {
+      "path": "Laufzeit_192x208/02.png",
+      "bytes": 26772,
+      "sha256": "87845bef5fa5722616e05a1bb5027c4180d78b0974b790963bf05f699480b772"
+    },
+    {
+      "path": "Laufzeit_192x208/03.png",
+      "bytes": 27084,
+      "sha256": "f8777799dce73ab14a348217b91e6cf9d07f417228403b29f628ff33b1a607fa"
+    },
+    {
+      "path": "Laufzeit_192x208/04.png",
+      "bytes": 26988,
+      "sha256": "20913f3d64ea49904aeb1d7ba376c583c3c36e4cadd69efaed7c55daf3d4ef3d"
+    },
+    {
+      "path": "Laufzeit_192x208/05.png",
+      "bytes": 25519,
+      "sha256": "772cc0aeaaa25c418307505f1dfbec2c8e1a91a89941dac991f44897c624e5e4"
+    },
+    {
+      "path": "Laufzeit_192x208/06.png",
+      "bytes": 24347,
+      "sha256": "d5cbb2104c03e8958b34265fd71c42c07f049f411ebf55de7d3b66a0d6e0ee0b"
+    },
+    {
+      "path": "Laufzeit_192x208/07.png",
+      "bytes": 25319,
+      "sha256": "235b8e4463889f6fe2bd3c7dafdcdda55f9f073ab72e3395151f8ed4fb3f7e67"
+    },
+    {
+      "path": "Laufzeit_192x208/08.png",
+      "bytes": 26205,
+      "sha256": "a282d72c2c51cc7bd4cc6a3c409498abf7d99e7c0daf5cf609d03865d251809f"
+    },
+    {
+      "path": "Hand_Vordergrund/01.png",
+      "bytes": 25442,
+      "sha256": "8930148272878fa54b569e8e825fb0c225a89bb91719552f8941fea76aa6535b"
+    },
+    {
+      "path": "Hand_Vordergrund/02.png",
+      "bytes": 24091,
+      "sha256": "4cc72f910a937c0508357a9a318e394693538a5ec7cafbb2af75ec3bb7d973e2"
+    },
+    {
+      "path": "Hand_Vordergrund/03.png",
+      "bytes": 24815,
+      "sha256": "3c9be85228d3ed5d3beb02634eefea847e198ae11eaac09d4fa12d01f67148ef"
+    },
+    {
+      "path": "Hand_Vordergrund/04.png",
+      "bytes": 24516,
+      "sha256": "7d000ce1f912c7292865be90c71c199d06575001d7af9a63999d4dcb705c11b8"
+    },
+    {
+      "path": "Hand_Vordergrund/05.png",
+      "bytes": 22985,
+      "sha256": "7257af99720e56d6e7a9d6309af243ffc0db0d8fe3d3d323c794cd471b9f0124"
+    },
+    {
+      "path": "Hand_Vordergrund/06.png",
+      "bytes": 21872,
+      "sha256": "0075134ef9ad6a8a9e4296cf0218f6cbe477e71a5c1178ced9574bfff5e4dbfa"
+    },
+    {
+      "path": "Hand_Vordergrund/07.png",
+      "bytes": 22899,
+      "sha256": "e8e85623003ed515a760e364d19fe557d1058e583caae58c2b7c26533f7af952"
+    },
+    {
+      "path": "Hand_Vordergrund/08.png",
+      "bytes": 23727,
+      "sha256": "352b4d7bc1941a0d241991f0dba0abafe9884893b0e03a8a8092740cf77713d5"
+    }
+  ]
+}

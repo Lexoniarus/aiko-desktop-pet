@@ -16,6 +16,9 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets/aiko-anime-8-frames/aiko-anime-compact/animations-8"
 DESTINATION = ROOT / "aiko_pet/assets"
 ALPHA_THRESHOLD = [255 if alpha >= 128 else 0 for alpha in range(256)]
+# Imported eating anchors assumed a much smaller overlay. Native food portions
+# need six source pixels of finger overlap instead of floating above the hands.
+EATING_GRIP_Y_OFFSET = 6
 
 
 def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
@@ -31,7 +34,9 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
     hashes: dict[str, str] = {}
     expected: set[Path] = set()
 
-    def copy_frame(original: Path, relative: Path) -> int:
+    def copy_frame(
+        original: Path, relative: Path, *, allow_empty: bool = False,
+    ) -> int:
         path = destination / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         with Image.open(original) as raw:
@@ -40,12 +45,12 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
             raise ValueError(f"Unexpected source dimensions: {original}")
         image.putalpha(image.getchannel("A").point(ALPHA_THRESHOLD))
         bounds = image.getbbox()
-        if bounds is None:
+        if bounds is None and not allow_empty:
             raise ValueError(f"Empty character image: {original}")
         image.save(path, optimize=True)
         hashes[relative.as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
         expected.add(path.resolve())
-        return int(bounds[3])
+        return int(bounds[3]) if bounds is not None else 0
 
     for item in catalog["animations"]:
         # The desktop uses directional walking; the generic clip has no caller.
@@ -67,6 +72,8 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
                 original.parent / frame["file"], relative,
             ))
             frame["file"] = relative.as_posix()
+            if state == "eat" and "food_anchor" in frame:
+                frame["food_anchor"][1] += EATING_GRIP_Y_OFFSET
             if "hand_foreground" in frame:
                 relative_hand = Path("hand-foreground") / state / f"{index:02d}.png"
                 copy_frame(original.parent / frame["hand_foreground"], relative_hand)
@@ -79,6 +86,30 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
         )
         animations.append(entry)
         counts[state] = len(entry["frames"])
+    supplement = ROOT / "assets/aiko-pick-up"
+    pickup = json.loads((supplement / "animation.json").read_text("utf-8"))
+    pickup_frames: list[dict[str, Any]] = []
+    for index, frame in enumerate(pickup["frames"]):
+        relative = Path("frames/pick_up") / f"{index:02d}.png"
+        copy_frame(supplement / frame["file"], relative)
+        hand = Path("hand-foreground/pick_up") / f"{index:02d}.png"
+        copy_frame(supplement / frame["hand_foreground"], hand, allow_empty=True)
+        prepared: dict[str, Any] = {
+            "file": relative.as_posix(), "duration_ms": frame["duration_ms"],
+            "source_duration_ms": frame["duration_ms"],
+            "events": frame["events"], "hand_foreground": hand.as_posix(),
+        }
+        if frame["grasp_anchor_px"] is not None:
+            prepared["food_anchor"] = frame["grasp_anchor_px"]
+        pickup_frames.append(prepared)
+    animations.append({
+        "state": "pick_up", "loop": False, "anchor": pickup["feet_anchor"],
+        "frames": pickup_frames, "hold_last": True, "return_to": "idle",
+        "sequence": list(range(8)), "playback_total_ms": sum(
+            frame["duration_ms"] for frame in pickup_frames
+        ),
+    })
+    counts["pick_up"] = 8
     directions = json.loads(
         (source / "look-directions/directions.json").read_text(encoding="utf-8"),
     )
@@ -107,12 +138,20 @@ def prepare(source: Path = SOURCE, destination: Path = DESTINATION) -> None:
     runtime = {"version": 1, "frame_size": [192, 208], "animations": animations}
     provenance = {
         "source_asset": "Aiko_Anime_8_Frames_Komplett.zip / animations-8",
+        "supplement": {
+            "source_asset": "Aiko_Pick_Up_und_Hinlegen.zip",
+            "import_manifest": "../../assets/aiko-pick-up/IMPORT_MANIFEST.json",
+            "archive_sha256": json.loads(
+                (supplement / "IMPORT_MANIFEST.json").read_text("utf-8"),
+            )["archive_sha256"],
+        },
         "source_catalog_sha256": hashlib.sha256(
             (source / "catalog.json").read_bytes(),
         ).hexdigest(),
         "frame_counts": counts, "size": [192, 208], "alpha_threshold": 128,
         "license": "../../assets/aiko-anime-8-frames/LICENSE.md",
         "preparation": "Full-width copies; binary alpha; visible ground anchors",
+        "overlay_calibration": {"eat_anchor_offset_px": [0, EATING_GRIP_Y_OFFSET]},
         "timing_profile": (
             "Per-pose holds and configurable replay sequences; "
             "ambient blink gaps are separate; 16 static gaze poses; "

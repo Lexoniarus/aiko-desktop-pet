@@ -4,6 +4,34 @@ Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tki
 
 The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Imports point directly to the packages that own each responsibility.
 
+The accepted [OOP refactoring plan](OOP_REFACTOR_PLAN.md) records stages 1–7 of
+interaction state, behavior ownership and PetState encapsulation. The later
+[focused World OOP cleanup](OOP_WORLD_FOLLOWUP_PLAN.md) supersedes its historical
+search-appetite rules and documents the smaller post-refactor ownership fixes.
+
+The implemented [perception correction plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md)
+separates noticing, identifying and assessing, deliberate cursor presentation and
+early local absence detection. Its delivery ledger and practical checklist
+distinguish automated verification from user acceptance.
+
+The [observed item continuity correction](OBJECT_CONTINUITY_CORRECTION_PLAN.md)
+separates observation, learned identity and current desire across cursor custody.
+
+The [object focus correction plan](OBJECT_FOCUS_CORRECTION_PLAN.md) records
+committed investigation, observed withholding, resumption and friendship rules.
+
+The accepted [persistent object knowledge plan](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md)
+extends subjective memory and remembered supply retrieval in small delivery steps.
+
+The agreed [offer, placement and search follow-up plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md)
+records delivery of assessed cursor offers, movable portions, reachable
+placement with impact-dependent damped hops, and subjective stock/search
+reconciliation. The implementation below describes these owners; the plan records
+commit evidence and the remaining practical acceptance.
+The follow-up explicitly selects a small owned analytic motion policy over
+Pymunk: pure World calculations, existing active-time scheduling and immutable
+checkpoints, with no additional runtime dependency.
+
 ## Dependency overview
 
 ```mermaid
@@ -47,6 +75,22 @@ all runtime coupling between composed services.
 ## State and business rules
 
 **`pet/state.py — PetState`** is the only mutable, persisted pet aggregate. Its public `interact(action, now=...)` and `advance(now, ...)` operations commit care and elapsed-time state changes. Pure policy modules in `pet/` calculate immutable decisions:
+
+Stages 6-7 complete PetState encapsulation. NeedValues, CareValues,
+RoutineValues and FriendshipRecord expose read-only properties and
+Sequence/Mapping policy inputs. PetState retains one frozen
+`pet/state_values.py::PetValues` value, replacing it only within owned
+transitions; the existing named constructor, equality and deepcopy contracts
+remain usable. Public scalars are read-only properties, and public
+meal/reward histories are detached list/dict copies, never writable handles
+into the aggregate. The complete PetValues checkpoint is distinct from the
+smaller application-facing PetReadSnapshot. PetState owns
+`capture_checkpoint()`, `prepare_item_consumption()`,
+`restore_checkpoint()` and `anchor_live_session()`; recovery preserves
+the same live aggregate identity. Legacy `restore_values()` remains as a
+compatibility wrapper around explicit checkpoints, not a public field setter.
+Only test-only smoke/scenario helpers manipulate prepared checkpoints for
+isolated test data. Native GUI visual/input acceptance remains pending.
 
 `interact()` returns a language-neutral `CareResult` from `pet/care_result.py`.
 The one care decision owns acceptance, consumption, the chosen food and meal
@@ -138,6 +182,10 @@ pointer-attention timestamps, not operating-system access.
 - `CharacterSpriteCache` handles runtime sprite frames, including lazy 2x
   variants. `RestPoseRenderer` handles pose-relative head motion, and
   `FoodOverlay` renders the selected hand item without affecting nutrition.
+
+At shutdown, the lifecycle closes `AnimatedPet` before destroying Tk. The sprite
+owner releases original/zoomed/rest-pose images and its food overlay on Tk's
+thread; delayed background garbage collection does not own those image effects.
 - `SpeechPresenter` and `ReactionPlayer` display timed text and emote cues.
   The pure need-based idle emote choice lives under `pet/animation/`.
 - `ActionPlayback` owns the current visual action state and deadline, not the
@@ -316,18 +364,57 @@ Live progression uses active-session time; reopening additionally simulates boun
 `data/dialogues.de.json`. `infrastructure/character_mind.py` supplies Aiko's
 catalog at composition time. Event, mood and context filters, weighted choice
 and cooldowns belong to the mind policies; the UI only presents their decisions.
-Keep her voice short, observant, reserved and quietly sarcastic; avoid constant
-speech or invented knowledge about the user's work. No runtime LLM is involved.
-The UI reaction player sequences emotes, text and optional follow-ups in one
-speech surface and cancels superseded cues. Need tuning belongs to the current
+Aiko is reserved, observant, curious and quietly sarcastic. She can express
+warmth directly without retracting it. Friendship changes the familiarity of
+her wording; current needs, irritation and measured work still matter. Avoid
+invented knowledge about the user's applications, speech or work. No runtime
+LLM is involved.
+
+`DialogueContext` freezes the display-level relationship stage, primary mood,
+simultaneous need flags, time and observed situation. The four stages cover
+levels 1–2, 3–5, 6–8 and 9–10. Care captures the whole context before applying
+its effects, including before a friendship level boundary is crossed.
+Relationship filters never relax during rotation or fallback. Specific need
+and mood variants take priority over suitable general wording.
+
+Catalogue version 2 owns ordered text, emote and pause beats. `Reaction` carries
+that immutable sequence and a short/story presentation mode. The UI only plays
+it: one speech surface, length-based reading time (58 ms/character, 1.8–8 s),
+800 ms default emotes and 600 ms deliberate pauses. There are 48 authored talk
+stories, twelve per relationship stage, covering calm, playful, tired,
+withdrawn/irritated, hungry, lonely, affection-seeking and warm moments.
+Stories exhaust their matching rotation pool before repeating. Warm moments
+also admit suitable calm stories, keeping repeated contact varied after care.
+
+An intentional talk normally runs three to five text bubbles. Left-clicking
+Aiko during a story advances to the next text, skipping intermediate emotes
+and pauses. Clicking the last text ends it. These reading clicks do not enter
+the teasing counter or apply care rewards; normal clicks start a fresh burst.
+Other deliberate interactions can interrupt. Automatic speech, gaze remarks,
+idle effects and object-goal acquisition respect active playback, including
+blank pauses. Spontaneous stories require observed presence, a 20% draw among
+eligible quiet moments and at least ten minutes since the previous one. Those
+values come from `dialogue.spontaneous_story_probability` and
+`dialogue.spontaneous_story_quiet_seconds` in the validated balance catalogue.
+
+Playback completion and cancellation are reported once; stale timers cannot
+advance or complete a newer sequence. Object-phase feedback retains its
+receipt-driven interaction ownership. The RPS countdown/reveal timeline also
+retains its owner; greeting/outcome wording is selected through the same mind
+and relationship context, with outcome perspective explicitly mapped. Standalone
+games use an instance-owned `GameDialogue` from
+`ui/windows/rock_paper_scissors_dialogue.py`; no mutable game catalogue is created
+at import time. Embedded games keep the existing session mind and its history.
+Need tuning belongs to the current
 [food](FOOD_SYSTEM.md) and [fun/mood](FUN_MOOD_SYSTEM.md) guides.
 
-## Refactor branch status (October 15, 2026)
+## Historical architecture refactor (October 15, 2026)
 
-This structure is being validated on the draft `refactor/pet-domain-ui-boundaries`
-branch; the document becomes the maintained architecture after merge. The
-migration does **not** implement World, new emotion values, object detection,
-awareness, cursor fear, autonomous objects or drag-and-drop. Existing behavior,
+The earlier `refactor/pet-domain-ui-boundaries` delivery established these
+boundaries. Its scope excluded World, new emotion values, object detection,
+awareness, cursor fear, autonomous objects and drag-and-drop. Current World
+and dialogue ownership is described in the maintained sections around this
+historical delivery record. Existing behavior,
 assets and save-format invariants remain the acceptance criteria.
 All historical `presentation/`, `personality/` and root-level UI import
 forwarders have been removed. R2 now separates desktop animation intent,
@@ -335,8 +422,227 @@ host observations and concrete Tk frame playback. R5 delegates application
 and animation construction to bounded assemblies, and session lifecycle,
 refresh and save sequencing to `DesktopSessionRuntime`. R6 has consolidated
 typed mood hints, due-meal selection, localized weekday text, legacy mutator
-APIs and import-only tests. No final interactive Windows sign-off has been
-recorded for the latest commit; automated checks are commit-specific.
+APIs and import-only tests. Native acceptance belongs to each later feature
+delivery and its smoke-test evidence; automated checks remain commit-specific.
+
+## World, subjective knowledge and object interaction
+
+`world/contracts.py` defines immutable object definitions, logical surface and
+position values, footprints and objective snapshots. `world/state.py` owns one
+in-memory World with stable instance IDs, revisions and explicit
+custody/lifecycle operations. It imports neither pet rules nor desktop/UI code.
+`infrastructure/world_catalog.py` builds definitions by referencing the existing
+food and item-asset IDs; it does not copy nutrition, labels or sprite data.
+
+`pet/mind/object_perception.py`, `object_knowledge.py`, `object_memory.py` and
+`object_intentions.py` separate timed identification, learned facts and stable
+need-based goals. Knowledge distinguishes identity, assessment and
+confirmed own deferral; observed relocation preserves learning. Recognized facts
+persist across restart; checked absence marks a place missing rather than erasing
+all its learned history. Only unknown sightings expire.
+An unknown ground or moving portion can be noticed but cannot be identified.
+First identification requires explicit actual hand-inspection context after
+safe pickup, or a continuous player presentation before the face. `recognized`
+means identified; the independent historical `assessed` fact is not a lasting wish.
+Presentation clocks/evidence are transient sensory state, never saved knowledge.
+`application/object_awareness.py` is the objective-to-subjective boundary.
+Unseen moves do not update memory. The existing tick observes objects after
+need progression and before presentation. Faster physics/render callbacks do
+not run a second mind loop. Object gaze reuses sixteen directions and does not
+set the user-attention flag that would block walking toward the goal.
+`application/object_tracking.py` associates only current spatial sightings and
+maps them to execution handles. Subjective memory IDs are independent of World
+IDs. `object_stock.py` supplies one-to-one matching/count uncertainty; the memory
+owner retires explained checked places and keeps ambiguous consumption witnesses
+unavailable until evidence resolves them. No parallel inventory is maintained.
+
+The interaction's `focus_record` commits attention to one subject, filtering other
+changes before tracking/recognition/reconciliation. A successful observed take can
+lock the existing visible track to the cursor-rendered portion through hand
+motion and settling. Absence or a sensory gap discards that lock; a World handle
+cannot recover it. Recognition during focus cannot merge its record into an
+unobserved neighbouring portion. Non-focused discovery resumes after the episode.
+Ordinary observed pickup also retains this track without an action focus, and a
+newly noticed cursor portion can be tracked while its identity is learned. Rest
+releases the cursor lock. Current visibility, learned identity and completed
+presentation jointly permit offer assessment. A new gesture requires presentation
+even for known items; it never requires repeating learned identification.
+`CursorItemGesture.presentation()` derives the displayed item's center, including
+its sprite pivot, from the existing eye reference. The pure perception policy
+validates face bounds, holding time and jitter in character-relative units.
+Completed presentation survives an observed face-to-handover move in that gesture.
+The sole `ObjectIntentions.goal` can hold a session-local wish while the player
+holds a portion. `ObjectUseContext` separates seeking, offered use and continued
+wishes from actual care origin. An observed drop preserves the wish but starts
+no acquisition until ground contact; it is not a withholding episode.
+
+`pet/movement/controller.py` shares the existing walking executor between random
+and deliberate goals; `auto_walk` gates only random departures. `WalkDriver`
+still reports actual clamped desktop displacement, with no second pet position.
+Its read-only committed-goal port suppresses incidental cursor/toolbar blockers
+only for the active object episode. Sleep, energy and work blockers retain their
+existing rules; random walking retains ordinary hover/cursor behavior.
+
+`application/object_interaction.py` owns explicit notice, approach, pickup,
+held inspection, recognition, decision, consumption and put-down phases. The
+mind distinguishes investigate from consume, so a new noticed item can prompt
+investigation without current appetite. Subjective assessed knowledge prevents
+repeated handling; later needs can activate known deferred portions.
+
+`application/object_interaction_state.py` holds the coordinator's private
+`InteractionEpisode`: subject/custody references, care origin/use context,
+learned identity, queued interruption, withholding and effect history. Takes and
+observed returns retain the episode; a fresh attempt creates a new record, and
+completion releases it before cancelling feedback. Record/instance identifiers
+remain readable properties. Typed phase variants now own arrival, playback,
+inspection/search time, use decisions and cue/aside prerequisites. Waiting and
+offer phases share their current appraisal while each transition gets fresh
+feedback; a new approach requires fresh arrival. The coordinator owns phase
+transitions and session counters/contact cooldown. Its read-only phase name and
+search diagnostics keep their existing contracts; see the verified stages in
+the [OOP refactoring plan](OOP_REFACTOR_PLAN.md).
+
+The coordinator preserves that consume purpose: known assessed stock uses recall,
+pickup and full consumption without repeating inspection/recognition/desire cues.
+The pure postpickup type-consistency guard in `object_awareness.py` can request
+actual hand inspection when a local type hypothesis contradicts the acquired
+portion. It never writes World definition identity to subjective memory; the
+interaction coordinator receives only the guard's boolean result.
+Changed needs safely lead to refusal/put-down; conflicting evidence restores
+inquiry. Confirmed local absence starts bounded search with existing gaze/walk
+assets. A useful find can end search early; the coordinator owns the sole search
+budget and identified search/find/missing feedback.
+`object_absence.py` owns local negative sensory evidence: covered remembered
+places, continuous attention/dwell and raw occupants, including unnoticed ones.
+The awareness bridge resolves current custody first, then marks confirmed empty
+places missing and retains unacknowledged sensory facts until the coordinator can
+handle them. It defers new goals/offers while checking local absence.
+`notice_absence` announces `object_place_missing` before ordinary new discovery.
+Every confirmed missing remembered place starts one bounded search regardless
+of current appetite. Later `object_missing` is the failed search outcome. Unrelated places wait during committed focus; losing a cursor
+track alone does not mark a ground place missing. A new unknown find at an already
+confirmed missing place cannot inherit the old identity from location alone.
+Known but unassessed acquisitions decide without repeating identification;
+unknown or conflicting evidence retains inspection. Known handover uses authored
+acceptance, while expressed-wish collection has its own cue. Shared offer copy
+names the item and does not claim a food need when offering a drink.
+Observed player acquisition before the grasp commits enters `await_return`;
+visible falling/bouncing enters `await_settle`. Settling resumes the same
+interaction with acquired assessments, and actual visual loss enters existing
+bounded search. An accepted return into Aiko's hand retains the interaction but
+uses actual human-handover origin; ground retrieval stays autonomous.
+An observed held target can be identified and reappraised during that wait,
+after deliberate face presentation. Own-hand inspection similarly waits for
+confirmed identification before announcing its result.
+`recognize_offer` and `decide_offer` retain player custody and identified reading
+receipts; they are distinct from pet-held inspection/use. Agreement resumes the
+waiting/settling path, while refusal completes the episode without acquisition
+or further withholding escalation. Current assessments can update pending cues.
+Identified animation events acquire at source frame 4, finish pickup at pose 8
+and release during reverse frame 4→3. The animator changes no needs.
+`application/object_feedback.py` correlates phase cues and completion receipts.
+Mind/catalogue supplies authored reactions; `ObjectFeedbackPresenter` formats
+known names and uses `ReactionPlayer`'s completion/cancellation acknowledgements.
+Transitions wait for readable cues and required animation/dwell. Auxiliary cue
+IDs cannot acknowledge phases. One pending aside waits for the phase bubble,
+using the existing speech surface and timers. Ordinary clicks request a bounded
+wait acknowledgement, without normal click/care effects. Hover and other item
+gestures cannot cancel the episode; explicit care/game commands still interrupt
+safely. Ambient feedback cannot replace action speech.
+
+`pet/mind/object_withholding.py` calculates immutable active-time episode decisions.
+The interaction owns the episode and only evaluates currently observed user-held
+custody. `application/object_relationship.py` deduplicates social effects and owns
+the cross-episode loss cooldown. `PetMind` owns temporary irritation; `PetState`
+commits friendship changes through the pure friendship policy. Loss preserves
+care reward history/daily caps, is saved normally, and creates no return bonus.
+Episode/request/cursor state is session-local; no save-schema change is required.
+`application/object_custody.py` commits confirmed acquisition and placement in
+World and memory together, restoring both owners on failure. The interaction
+coordinator retains animation deduplication, cue receipts and phase ordering.
+`application/object_consumption.py` uses `ObjectConsumption.commit()` to apply
+canonical food/drink effects at consumption start with explicit handover/autonomous
+origin. It captures pre-care Mind context without modifying social contact,
+then prepares the canonical pet effect through PetState-owned immutable checkpoints.
+It commits World, PetState and ObjectMemory together on the owner thread,
+restoring the same pet object on failure and recording human contact only
+after a successful commit. Completed requests remain deduplicated. World `consume()`
+alone still cannot feed Aiko. Human-only care rewards are excluded for ground
+consumption, while canonical nutrition, repetition and food mood effects remain.
+
+`application/object_behavior.py` coordinates object attention, checked-absence
+priority, search continuation/replacement, waiting for return and approach
+start/change using the existing state, awareness, interaction and World owners.
+It owns behavioral eligibility, continuing-wish decisions and returning-offer
+appraisal. Immutable host facts enter the application; relative gaze and bounded
+`Hold`, `Approach` or `SearchMotion` instructions leave it. Normal completion
+ports retain cancellation effects without an obsolete search-stop result. Attention is applied before cursor offer observation, then motion is
+decided against the resulting episode. Suitable search replacements precede
+general blocking, unknown curiosity does not invent appetite, synchronous found
+feedback keeps the same update handoff and return waiting holds for its original
+tick. It stores no duplicate wish, memory, episode or clock. See stage 5 of the
+[OOP refactoring plan](OOP_REFACTOR_PLAN.md).
+
+`desktop/world_runtime.py` composes the owners, samples host/sensory facts and
+translates application instructions into native movement/gaze. It retains actual
+arrival, taskbar reach, scale bounds and source-frame reach revalidation; contact
+capture precedes arrival acknowledgement. It contains no phase-name behavior
+branching. The mind tick and separate motion/render timer remain unchanged.
+The typed `desktop/world_access.py` binds to this one World runtime after
+composition, replacing implicit `hasattr` guards without duplicating state.
+`desktop/cursor_item_gesture.py` owns one input gesture: cursor
+instance handle, native capture, pointer geometry, offer-preview IDs and release
+or cancellation. Named ports keep appetite/feedback and custody decisions with
+the existing application owners. There are no shadow cursor fields or retired
+forwarding properties in the runtime. `ui/world_view.py` renders snapshots in small
+native windows; resting items accept visible-pixel presses, while moving/carried
+items remain click-through and all item windows remain nonactivating.
+`FoodOverlay` draws consumables above the character
+without additional hand masks. Calibrated eating anchors come from reproducible
+asset preparation. Assessed deferred portions preserve memory but release
+incidental object gaze; only unassessed observations or active goals attract it.
+`TaskbarTrack` derives a reachable ground inset from ordinary standing bounds
+and reach. `WorldSurface.ground_interval()` intersects it with each footprint;
+every placement/recovery route uses this rule. There is no special edge grip.
+`ground_approach()` and `can_grasp_ground()` retain actual arrival/reach checks,
+including frame-4 revalidation and ordinary ground-to-hand blending.
+`world/motion.py` calculates analytic flights, exact contacts, damped rebounds
+and continuous low-energy inward completion. Immutable motion belongs to World
+snapshots; `WorldState.advance_motion()` alone commits it. Parameters come from
+validated balance JSON through `infrastructure/world_motion.py`. Geometry is
+synchronized before frames, gestures and save snapshots; scaling does not reset
+velocity or multiply World coordinates. Only final settlement grants rest.
+Chooser press creates one portion. Deliberate face presentation may identify
+and assess it before handover; a current refusal prevents accepted transfer.
+Alternatively, Aiko may accept a still-unknown portion on release in the
+valid handover area and actually identify it in her hands before deciding.
+A known approved handover takes the shorter confirmation route. Unknown ground
+finds retain inspection/decision. Resting-item press acquires the same portion
+through the same gesture. Escape/capture loss or off-monitor release removes new
+chooser portions and returns existing portions to their safe source place.
+Delayed gesture requests recheck the button after animated interruption.
+Existing native toolbar/game rules remain in their owners.
+All three item presentations use manifest-referenced binary-alpha display copies
+prepared reproducibly from unchanged native 1x/2x originals for Windows color-key
+transparency; no runtime Pillow or replacement artwork is introduced.
+
+`infrastructure/world_codec.py` adds an optional separately versioned World
+section inside outer save v1. Pet, World, settings and adaptive data use one
+atomic StateStore write. `object_memory_codec.py` writes optional version-two
+subjective records, assessment, place status/associations and relative active
+ages; its version-one reader converts legacy history without live bindings.
+`WorldSessionSnapshot` captures World
+and memory together for that write. Old saves without memory grant no knowledge;
+transient nonconsumed items recover on valid ground positions without restoring
+actions or fabricating observations of recovery positions. Learned facts remain
+separate from current observations/evidence, which start empty on restore.
+World objects are never consumed during existing pet-only closed-time catch-up.
+
+The [World and autonomous object implementation plan](WORLD_OBJECT_IMPLEMENTATION_PLAN.md)
+defines the agreed feature, its state owners, staged checklists and acceptance
+criteria. Its [behavior contracts](WORLD_OBJECT_CONTRACTS.md) define the current
+rules; [the isolated practical checklist](WORLD_SMOKE_TEST.md) tracks native
+acceptance separately from automated checks.
 
 ## Testing and contribution
 
@@ -355,3 +661,6 @@ For local commands, source changes and review expectations see
 historical milestones with fixed Git references. The current branch's
 [refactor ledger](PET_ARCHITECTURE_REFACTOR.md) and
 [Windows acceptance checklist](PET_REFACTOR_WINDOWS_SMOKE.md) remain active.
+
+The [World/dialogue cleanup review](WORLD_DIALOGUE_CLEANUP_REVIEW.md) records
+current responsibilities, removed duplication and commit-specific verification.

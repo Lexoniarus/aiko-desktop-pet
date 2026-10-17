@@ -33,10 +33,12 @@ class ContactPorts:
     hide_speech: Callable[[], None]
     react: Callable[[Reaction | None, int], None]
     should_greet: Callable[[float], bool]
+    story_active: Callable[[], bool] = lambda: False
+    advance_story: Callable[[], bool] = lambda: False
 
 
 class ContactCoordinator:
-    """Keep direct user contact higher priority than autonomous pet actions."""
+    """Coordinate contact after foreground ownership has granted it."""
 
     def __init__(
         self,
@@ -63,16 +65,25 @@ class ContactCoordinator:
                 self._ports.context(),
                 now,
             )
-            if self._ports.toolbar_hidden()
+            if self._ports.toolbar_hidden() and not self._ports.story_active()
             else None
         )
         self._ports.mark_hover(now)
         self._ports.interrupt_walk()
         self._ports.show_toolbar()
-        self._ports.react(reaction, BALANCE.integer("dialogue", "contact_reaction_ms"))
+        if not self._ports.story_active():
+            self._ports.react(
+                reaction, BALANCE.integer("dialogue", "contact_reaction_ms")
+            )
 
     def click(self, button: ClickButton) -> None:
         """Deliver an intentional click only after initiating hover."""
+        if button not in ("left", "right"):
+            raise ValueError("Unknown click button")
+        if button == "left" and self._ports.advance_story():
+            self._mind.clicks.clear()
+            self._mind.last_contact = time.monotonic()
+            return
         self.enter()
         now = time.monotonic()
         self._adaptive.note_interaction(time.time())
@@ -98,9 +109,9 @@ class ContactCoordinator:
         if (
             len(self._mind.clicks)
             >= BALANCE.integer("dialogue", "hide_click_emote_from_count")
-            and reaction.emote_before is not None
+            and reaction.beats[0].kind == "emote"
         ):
-            reaction = replace(reaction, emote_before=None)
+            reaction = replace(reaction, beats=reaction.beats[1:])
         self._ports.react(reaction, BALANCE.integer("dialogue", "contact_reaction_ms"))
 
     def greet(self) -> None:

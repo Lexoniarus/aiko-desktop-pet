@@ -20,10 +20,17 @@ from .walk_runtime import WalkDriver
 
 
 class AnimationNeeds(Protocol):
-    sleeping: bool
-    energy: float
-    mood: float
-    satiety: float
+    @property
+    def sleeping(self) -> bool: ...
+
+    @property
+    def energy(self) -> float: ...
+
+    @property
+    def mood(self) -> float: ...
+
+    @property
+    def satiety(self) -> float: ...
 
 
 class AnimationSettings(Protocol):

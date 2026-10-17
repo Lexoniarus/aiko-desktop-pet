@@ -6,6 +6,7 @@ import unittest
 from collections.abc import Callable
 
 from aiko_pet.desktop.farewell import FarewellSequence
+from aiko_pet.pet.mind.reaction_sequence import Cue
 
 
 class FarewellSequenceTests(unittest.TestCase):
@@ -26,7 +27,8 @@ class FarewellSequenceTests(unittest.TestCase):
             self.waiting.pop(token, None)
 
         self.sequence = FarewellSequence(
-            schedule=schedule, cancel=cancel,
+            schedule=schedule,
+            cancel=cancel,
             prepare=lambda: self.events.append("prepare"),
             animate=lambda: self.events.append("waving-greeting"),
             say=lambda line, duration: self.events.append(
@@ -40,11 +42,16 @@ class FarewellSequenceTests(unittest.TestCase):
         self.sequence.begin()
         self.sequence.begin()
         self.assertTrue(self.sequence.active)
-        self.assertEqual(self.delays, [2600])
-        self.assertEqual(self.events, [
-            "prepare", "waving-greeting",
-            "say:Ah, okay. Tschüss, mach's gut!:3100",
-        ])
+        duration = max(2600, Cue.text(FarewellSequence.TEXT).duration_ms)
+        self.assertEqual(self.delays, [duration])
+        self.assertEqual(
+            self.events,
+            [
+                "prepare",
+                "waving-greeting",
+                f"say:{FarewellSequence.TEXT}:{duration + 500}",
+            ],
+        )
         key = self.sequence.pending_timer
         assert key is not None
         self.waiting.pop(key)()
