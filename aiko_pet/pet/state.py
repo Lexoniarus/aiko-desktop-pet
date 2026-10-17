@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field, replace
+from copy import deepcopy
+from dataclasses import replace
+from typing import Any
 
 from .balance import BALANCE
 from .care_actions import (
@@ -41,36 +43,149 @@ from .status_hints import MoodHint, choose_mood_hint
 from .value_rules import clamp_need_value
 
 
-@dataclass
 class PetState:
-    satiety: float = BALANCE.number("initial", "satiety")
-    mood: float = BALANCE.number("initial", "mood")
-    energy: float = BALANCE.number("initial", "energy")
-    social: float = BALANCE.number(
-        "initial", "social"
-    )  # Conversation and shared activity.
-    affection: float = BALANCE.number(
-        "initial", "affection"
-    )  # Gentle attention and feeling cared for.
-    friendship: float = BALANCE.number(
-        "initial", "friendship"
-    )  # Slow, durable bond; never an immediate need.
-    friendship_day: str = ""
-    friendship_gained_today: float = 0.0
-    care_types_today: list[str] = field(default_factory=list)
-    care_last_rewards: dict[str, float] = field(default_factory=dict)
-    sleeping: bool = False
-    updated_at: float = field(default_factory=time.time)
-    meals_date: str = ""
-    meals_today: list[str] = field(default_factory=list)
-    sleep_origin: str = ""  # "routine" or "manual", manual sleep isn't auto-cancelled
-    auto_sleep_night: str = ""  # prevents repeated bedtime after manual waking
-    nap_until: float = 0.0
-    auto_nap_day: str = ""
-    food: FoodState = field(default_factory=FoodState)
-    fun: float = BALANCE.number(
-        "initial", "fun"
-    )  # Entertainment need; mood is its consequence.
+    """Sole mutable aggregate, owning one immutable PetValues record."""
+
+    __slots__ = ("_values",)
+
+    def __init__(
+        self,
+        satiety: float = BALANCE.number("initial", "satiety"),
+        mood: float = BALANCE.number("initial", "mood"),
+        energy: float = BALANCE.number("initial", "energy"),
+        social: float = BALANCE.number("initial", "social"),
+        affection: float = BALANCE.number("initial", "affection"),
+        friendship: float = BALANCE.number("initial", "friendship"),
+        friendship_day: str = "",
+        friendship_gained_today: float = 0.0,
+        care_types_today: list[str] | None = None,
+        care_last_rewards: dict[str, float] | None = None,
+        sleeping: bool = False,
+        updated_at: float | None = None,
+        meals_date: str = "",
+        meals_today: list[str] | None = None,
+        sleep_origin: str = "",
+        auto_sleep_night: str = "",
+        nap_until: float = 0.0,
+        auto_nap_day: str = "",
+        food: FoodState | None = None,
+        fun: float = BALANCE.number("initial", "fun"),
+    ) -> None:
+        self._values = PetValues(
+            satiety=satiety, mood=mood, energy=energy, social=social,
+            affection=affection, friendship=friendship,
+            friendship_day=friendship_day,
+            friendship_gained_today=friendship_gained_today,
+            care_types_today=tuple(care_types_today or ()),
+            care_last_rewards=tuple((care_last_rewards or {}).items()),
+            sleeping=sleeping,
+            updated_at=time.time() if updated_at is None else updated_at,
+            meals_date=meals_date, meals_today=tuple(meals_today or ()),
+            sleep_origin=sleep_origin, auto_sleep_night=auto_sleep_night,
+            nap_until=nap_until, auto_nap_day=auto_nap_day,
+            food=FoodState() if food is None else food, fun=fun,
+        )
+
+    def __repr__(self) -> str:
+        return f"PetState({self._values!r})"
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, PetState):
+            return NotImplemented
+        return self._values == other._values
+
+    def __deepcopy__(self, memo: dict[int, object]) -> PetState:
+        copied = PetState()
+        copied.restore_checkpoint(deepcopy(self._values, memo))
+        memo[id(self)] = copied
+        return copied
+
+    def _change(self, **values: Any) -> None:
+        """One aggregate-owned replacement, never a public field setter."""
+        self._values = replace(self._values, **values)
+
+    @property
+    def care_types_today(self) -> list[str]:
+        """Compatibility read: a detached list cannot mutate the aggregate."""
+        return list(self._values.care_types_today)
+
+    @property
+    def care_last_rewards(self) -> dict[str, float]:
+        """Compatibility read: return a detached mapping."""
+        return dict(self._values.care_last_rewards)
+
+    @property
+    def meals_today(self) -> list[str]:
+        """Compatibility read: a detached list cannot mutate the aggregate."""
+        return list(self._values.meals_today)
+
+    @property
+    def satiety(self) -> float:
+        return self._values.satiety
+
+    @property
+    def mood(self) -> float:
+        return self._values.mood
+
+    @property
+    def energy(self) -> float:
+        return self._values.energy
+
+    @property
+    def social(self) -> float:
+        return self._values.social
+
+    @property
+    def affection(self) -> float:
+        return self._values.affection
+
+    @property
+    def friendship(self) -> float:
+        return self._values.friendship
+
+    @property
+    def friendship_day(self) -> str:
+        return self._values.friendship_day
+
+    @property
+    def friendship_gained_today(self) -> float:
+        return self._values.friendship_gained_today
+
+    @property
+    def sleeping(self) -> bool:
+        return self._values.sleeping
+
+    @property
+    def updated_at(self) -> float:
+        return self._values.updated_at
+
+    @property
+    def meals_date(self) -> str:
+        return self._values.meals_date
+
+    @property
+    def sleep_origin(self) -> str:
+        return self._values.sleep_origin
+
+    @property
+    def auto_sleep_night(self) -> str:
+        return self._values.auto_sleep_night
+
+    @property
+    def nap_until(self) -> float:
+        return self._values.nap_until
+
+    @property
+    def auto_nap_day(self) -> str:
+        return self._values.auto_nap_day
+
+    @property
+    def food(self) -> FoodState:
+        return self._values.food
+
+    @property
+    def fun(self) -> float:
+        return self._values.fun
 
     @property
     def friendship_level(self) -> int:
@@ -79,16 +194,14 @@ class PetState:
 
     def _roll_meals(self, context: TimeContext) -> None:
         if self.meals_date != context.day_key:
-            self.meals_date = context.day_key
-            self.meals_today = []
+            self._change(meals_date=context.day_key, meals_today=())
 
     def _set_needs(self, values: NeedLevels) -> None:
         """Commit validated need values together inside the pet aggregate."""
-        self.satiety = values.satiety
-        self.mood = values.mood
-        self.energy = values.energy
-        self.social = values.social
-        self.affection = values.affection
+        self._change(
+            satiety=values.satiety, mood=values.mood, energy=values.energy,
+            social=values.social, affection=values.affection,
+        )
 
     def update_daily_routine(
         self,
@@ -109,11 +222,12 @@ class PetState:
             interrupt_nap=interrupt_nap,
             effort=effort,
         )
-        self.sleeping = transition.sleeping
-        self.sleep_origin = transition.sleep_origin
-        self.nap_until = transition.nap_until
-        self.auto_sleep_night = transition.auto_sleep_night
-        self.auto_nap_day = transition.auto_nap_day
+        self._change(
+            sleeping=transition.sleeping, sleep_origin=transition.sleep_origin,
+            nap_until=transition.nap_until,
+            auto_sleep_night=transition.auto_sleep_night,
+            auto_nap_day=transition.auto_nap_day,
+        )
 
     def _decay(
         self,
@@ -143,8 +257,10 @@ class PetState:
                 food_progress=food_progress,
             )
         )
-        self.food = food_progress.food
-        self.fun = advance_fun(self.fun, hours, sleeping=self.sleeping)
+        self._change(
+            food=food_progress.food,
+            fun=advance_fun(self.fun, hours, sleeping=self.sleeping),
+        )
 
     def _mood_target(self) -> float:
         """Read current needs; mood itself never feeds any of them back."""
@@ -176,9 +292,10 @@ class PetState:
         )
         intake = eat_food(self.food, self.satiety, food_id)
         if intake.accepted:
-            self.satiety = intake.satiety
-            self.food = intake.food
-            self.meals_today.append(meal)
+            self._change(
+                satiety=intake.satiety, food=intake.food,
+                meals_today=(*self._values.meals_today, meal),
+            )
 
     def record_game_experience(
         self,
@@ -191,11 +308,13 @@ class PetState:
         if experience.completed_units == 0:
             return 0.0
         before = self.fun
-        self.fun = clamp_need_value(self.fun + reward.fun_points, 0.0)
-        self.energy = clamp_need_value(self.energy - reward.energy_cost, 0.0)
-        self.social = clamp_need_value(self.social + reward.social_gain, 0.0)
+        self._change(
+            fun=clamp_need_value(self.fun + reward.fun_points, 0.0),
+            energy=clamp_need_value(self.energy - reward.energy_cost, 0.0),
+            social=clamp_need_value(self.social + reward.social_gain, 0.0),
+        )
         self._credit_friendship("play", now, before)
-        self.mood = reflect_care_in_mood(self.mood, self._mood_target())
+        self._change(mood=reflect_care_in_mood(self.mood, self._mood_target()))
         return self.fun - before
 
     def advance(
@@ -245,12 +364,12 @@ class PetState:
             )
             if self_care:
                 self._provide_own_meal(context_at(now))
-        self.updated_at = now
+        self._change(updated_at=now)
 
     def apply_object_withholding(self, loss: float) -> float:
         """Commit a bounded application decision without manufacturing care."""
         previous = self.friendship
-        self.friendship = friendship_after_withholding(previous, loss)
+        self._change(friendship=friendship_after_withholding(previous, loss))
         return previous - self.friendship
 
     def _credit_friendship(
@@ -268,11 +387,12 @@ class PetState:
         )
         if transition is None:
             return
-        self.friendship = transition.friendship
-        self.friendship_day = transition.day
-        self.friendship_gained_today = transition.gained_today
-        self.care_types_today = list(transition.care_types)
-        self.care_last_rewards = dict(transition.last_rewards)
+        self._change(
+            friendship=transition.friendship, friendship_day=transition.day,
+            friendship_gained_today=transition.gained_today,
+            care_types_today=transition.care_types,
+            care_last_rewards=transition.last_rewards,
+        )
 
     def interact(
         self,
@@ -310,59 +430,18 @@ class PetState:
         return self._apply_care_transition(transition, now)
 
     def capture_checkpoint(self) -> PetValues:
-        """Capture every live field with immutable, independent histories."""
-        return PetValues(
-            satiety=self.satiety,
-            mood=self.mood,
-            energy=self.energy,
-            social=self.social,
-            affection=self.affection,
-            friendship=self.friendship,
-            friendship_day=self.friendship_day,
-            friendship_gained_today=self.friendship_gained_today,
-            care_types_today=tuple(self.care_types_today),
-            care_last_rewards=tuple(self.care_last_rewards.items()),
-            sleeping=self.sleeping,
-            updated_at=self.updated_at,
-            meals_date=self.meals_date,
-            meals_today=tuple(self.meals_today),
-            sleep_origin=self.sleep_origin,
-            auto_sleep_night=self.auto_sleep_night,
-            nap_until=self.nap_until,
-            auto_nap_day=self.auto_nap_day,
-            food=self.food,
-            fun=self.fun,
-        )
+        """The already immutable complete value is a safe independent capture."""
+        return self._values
 
     def restore_checkpoint(self, checkpoint: PetValues) -> None:
         """Restore owned values without replacing this live PetState identity."""
-        self.satiety = checkpoint.satiety
-        self.mood = checkpoint.mood
-        self.energy = checkpoint.energy
-        self.social = checkpoint.social
-        self.affection = checkpoint.affection
-        self.friendship = checkpoint.friendship
-        self.friendship_day = checkpoint.friendship_day
-        self.friendship_gained_today = checkpoint.friendship_gained_today
-        self.care_types_today = list(checkpoint.care_types_today)
-        self.care_last_rewards = dict(checkpoint.care_last_rewards)
-        self.sleeping = checkpoint.sleeping
-        self.updated_at = checkpoint.updated_at
-        self.meals_date = checkpoint.meals_date
-        self.meals_today = list(checkpoint.meals_today)
-        self.sleep_origin = checkpoint.sleep_origin
-        self.auto_sleep_night = checkpoint.auto_sleep_night
-        self.nap_until = checkpoint.nap_until
-        self.auto_nap_day = checkpoint.auto_nap_day
-        self.food = checkpoint.food
-        self.fun = checkpoint.fun
+        self._values = checkpoint
 
     def prepare_item_consumption(
         self, item_id: str, origin: ConsumptionOrigin, *, now: float,
     ) -> PreparedItemConsumption | None:
         """Plan a complete consumption transition without mutating this pet."""
-        working = PetState(updated_at=self.updated_at)
-        working.restore_checkpoint(self.capture_checkpoint())
+        working = deepcopy(self)
         result = working.consume_item(item_id, origin, now=now)
         if result is None or result.consumed_item_id is None:
             return None
@@ -374,7 +453,7 @@ class PetState:
 
     def anchor_live_session(self, now: float) -> None:
         """Set the live wall-time anchor after bounded closed-time progression."""
-        self.updated_at = now
+        self._change(updated_at=now)
 
     def _apply_care_transition(
         self, transition: CareTransition, stamp: float,
@@ -383,18 +462,21 @@ class PetState:
         if not transition.changed:
             return transition.result
         self._set_needs(transition.needs)
-        self.sleeping = transition.sleeping
-        self.sleep_origin = transition.sleep_origin
-        self.nap_until = transition.nap_until
-        self.auto_sleep_night = transition.auto_sleep_night
+        self._change(
+            sleeping=transition.sleeping, sleep_origin=transition.sleep_origin,
+            nap_until=transition.nap_until,
+            auto_sleep_night=transition.auto_sleep_night,
+        )
         if transition.food is not None:
-            self.food = transition.food
+            self._change(food=transition.food)
         if (
             self.meals_date != transition.meals_date
             or tuple(self.meals_today) != transition.meals_today
         ):
-            self.meals_date = transition.meals_date
-            self.meals_today = list(transition.meals_today)
+            self._change(
+                meals_date=transition.meals_date,
+                meals_today=transition.meals_today,
+            )
         if transition.reward_action is not None:
             self._credit_friendship(
                 transition.reward_action,
@@ -402,11 +484,10 @@ class PetState:
                 transition.need_before,
             )
         if action in ("feed", "pet", "talk", "energy_drink"):
-            self.mood = reflect_care_in_mood(
-                self.mood,
-                self._mood_target(),
+            self._change(mood=reflect_care_in_mood(
+                self.mood, self._mood_target(),
                 experience_points=transition.mood_experience,
-            )
+            ))
         return transition.result
 
     def due_meal(self, context: TimeContext) -> str | None:
