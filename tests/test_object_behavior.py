@@ -308,24 +308,33 @@ class ObjectBehaviorTests(unittest.TestCase):
         assert latest is not None
         self.assertIsNone(latest.identity)
 
-    def test_reached_unbound_target_uses_one_search_without_inventing_absence(self):
+    def test_unbound_recall_waits_for_confirmed_absence_before_search(self):
         goal = ObjectGoal("stock", "apple", "food", 100, 0, 0)
         self.assertIsInstance(self.behavior.advance(goal, blocked=False), Hold)
         self.acknowledge()
         self.assertEqual(self.interaction.phase, "approach")
-        self.behavior.arrival_unavailable(goal, width=100)
-        self.assertEqual(self.interaction.phase, "search")
-        self.assertEqual(self.cues[-1].event, "object_search")
+        for stamp in (0, .3):
+            self.now = stamp
+            observation = self.observe()
+            self.assertFalse(observation.absence_noticed)
+            self.assertTrue(self.awareness.checking_absence)
+            self.assertEqual(self.interaction.phase, "approach")
+            self.assertNotIn("object_search", [cue.event for cue in self.cues])
+        self.now = .6
+        noticed = self.observe()
+        self.assertTrue(noticed.absence_noticed)
+        self.assertEqual(self.interaction.phase, "notice_absence")
+        self.assertEqual(self.cues[-1].event, "object_place_missing")
         known = self.awareness.memory.get("stock")
         assert known is not None
-        self.assertEqual(known.place_status, "remembered")
-        count = len(self.cues)
-        self.behavior.arrival_unavailable(goal, width=100)
-        self.assertEqual(len(self.cues), count)
+        self.assertEqual(known.place_status, "missing")
         self.acknowledge()
-        self.now = 2.1
-        self.interaction.update()
-        self.assertEqual(self.interaction.phase, "missing")
+        self.assertEqual(self.interaction.phase, "search")
+        self.assertEqual(self.cues[-1].event, "object_search")
+        self.now = 1
+        self.assertIsInstance(
+            self.behavior.advance_search(None, blocked=False), SearchMotion,
+        )
         self.assertEqual([cue.event for cue in self.cues].count("object_search"), 1)
 
     def test_inactive_wish_cancels_abandoned_approach_but_not_absence_check(self):

@@ -171,21 +171,6 @@ class ObjectBehaviorCoordinator:
             return Hold()
         return Approach(goal)
 
-    def arrival_unavailable(self, goal: ObjectGoal, *, width: float) -> None:
-        """A reached remembered place has no currently collectable binding.
-
-        Physical reach failure is not proof of missing stock. Continue through
-        the existing bounded search without claiming an observed empty place.
-        """
-        if (self._interaction.phase == "approach"
-                and self._interaction.memory_id == goal.token
-                and not self._awareness.checking_absence
-                and not self._awareness.absences
-                and not self._awareness.local_notice_pending(
-                    x=goal.x, height=goal.height, width=width,
-                )):
-            self._interaction.start_search(confirmed_empty=False)
-
     def unreachable(self, *, now: float) -> None:
         """The native adapter could not find a reachable standing position."""
         self._awareness.intentions.cancel(now)

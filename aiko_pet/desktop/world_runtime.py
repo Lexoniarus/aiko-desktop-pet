@@ -367,10 +367,10 @@ class DesktopWorldRuntime:
             # arrival tolerance; retain the exact standing goal for reach.
             return
         else:
-            # No observed/eligible item at the remembered landing position.
-            # Do not retry forever or infer a hidden World move.
+            # A failed local reach is not evidence that the place is empty.
+            # Stop the approach and let the normal timed absence perception
+            # establish the loss before announcing or beginning a search.
             self._walk.movement.set_goal(None)
-            self._behavior.arrival_unavailable(goal, width=self.width)
 
     def _show_search(self, search: SearchMotion) -> None:
         track = self._track()
