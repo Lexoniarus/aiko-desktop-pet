@@ -1,3 +1,19 @@
+## Unreleased — World pickup, missing-place search and reunion correction
+
+- Separate handover acceptance from prior type identification and consumption:
+  accept a currently eligible unidentified cursor item on valid release, then
+  inspect in Aiko's hands. Keep preidentified explicit refusals effective.
+- Give confirmed absent remembered places priority over discovering unknown
+  portions, then initiate one bounded search independent of current appetite.
+  Use exactly the ordinary item-noticing range for absent-place detection.
+- Reconcile unique missing same-type finds as remembered supplies in either
+  observation order, without copying type/assessment to ambiguous or conflicting
+  portions. Recheck actual hand-held type before skipping known-stock inspection.
+- Prevent premature search while normal notice or native final reach is still
+  pending; recover from truly unavailable approach targets instead of looping.
+- Add domain, ownership and native/Tk regression tests. Manual native World
+  acceptance and merging draft PR #10 remain open.
+
 ## Unreleased — PetState encapsulation
 
 - Complete OOP stage 7: keep one frozen PetValues inside the mutable pet

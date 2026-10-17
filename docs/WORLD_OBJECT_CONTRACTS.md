@@ -1,5 +1,41 @@
 # World object contracts and behavior rules
 
+## World pickup, loss and search priority correction — 17 October 2026
+
+This later decision supersedes earlier gates that required a recognized and
+wanted food type for **all** user-to-pet transfers. A user-held portion may be
+accepted on real release inside the handover area while still unidentified.
+Aiko then performs the existing own-hand inspection, assessment, and either
+consumption or safe put-down. A consciously presented, identified and refused
+offer is not accepted. Real custody/reach/activity and care-origin rules remain.
+
+The same validated **notice_widths** range applies to noticed new objects and
+remembered places whose occupants have disappeared. Absent-place confirmation
+still requires uninterrupted attentive local evidence and the configured dwell,
+not a hidden World lookup. A confirmed absence takes first priority and starts
+one bounded active search **even if Aiko is not currently hungry or thirsty**.
+New unknown objects are considered after missing-place feedback has started
+that search. A possible newly discovered portion can become the search find;
+unknown types must still be established by permitted face presentation or
+actual hand inspection, never the hidden World definition alone.
+
+When a newly identified finding matches a *uniquely* confirmed missing type,
+its learned experience is reconciled as the remembered supply, not double
+counted as another portion. A find-before-loss and loss-before-find yield the
+same one-to-one result. Multiple indistinguishable missing alternatives remain
+uncertain rather than being merged arbitrarily. If a different type is
+identified, no old missing type is overwritten by the new find. A new portion
+of the expected same type at its remembered location may satisfy the old
+supply expectation without technical-instance tracking.
+
+Approach, arrival, inspection, identified feedback and search each keep their
+existing owners. Empty remembered targets enter the normal local absence
+check and search; legitimate new sightings awaiting the notice dwell and a
+walking pose still within native reach tolerance must not trigger premature
+search. A search has one budget; repeated absence announcements, remote
+object pickup and phantom repeated approaches are forbidden. Native practical
+acceptance remains separate from automated checks.
+
 ## Current three-level perception correction — 17 October 2026
 
 The implemented [perception plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md) supersedes

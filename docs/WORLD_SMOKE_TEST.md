@@ -14,6 +14,44 @@ They also reported slow approach/possible repeated loops. Keep that observation
 open for separate behavior analysis; it is not claimed solved by the edge-grip
 correction. The complete left/right 1x/2x native checklist remains to be checked.
 
+## Combined multi-object regression — 17 October 2026
+
+This checklist follows the later pickup/search priority decision. Start with a
+fresh isolated save. Repeat with multiple apples, cookies and drinks at 1x/2x;
+the user's normal save is not part of this experiment.
+
+- [ ] Offer a completely unidentified item directly in Aiko's hand area and
+  release it without the one-second face presentation. After normal noticing,
+  she accepts it, identifies it only while inspecting it in her hands, decides,
+  and either consumes it or animates the put-down. No pre-identification is
+  required to hold it. Deliberately identified and refused offers still fall.
+- [ ] Have Aiko learn an apple at place X, then remove it while she is distracted
+  and leave X empty. When X enters the very same noticing range used for new
+  objects, local empty evidence triggers one missing reaction and one bounded
+  search. This happens even when satiety is full; the search does not loop.
+- [ ] Put an unrelated unknown portion nearby during that absence detection.
+  The disappearance must be announced and search started before investigating
+  the new object. If the discovered type is the uniquely missing apple, recover
+  the old knowledge without double-counting; if it is a cookie, no apple
+  knowledge may be transferred to the cookie.
+- [ ] Repeat the apple reunion with the new type identification *before* and
+  *after* the local absence confirmation. Both event orders must reconcile one
+  remembered portion. If two indistinguishable missing apples compete, do not
+  pretend certainty about which one returned.
+- [ ] Replace a known apple at X with a different apple or a cookie while
+  distracted. A compatible apple at X is acceptable known local supply. A
+  conflicting cookie must be actually examined in hand before its type is
+  used; it must never be eaten under stale apple identity.
+- [ ] Observe a pickup and relocation through cursor movement, release and
+  landing; retain continuous tracked knowledge. Repeat out of sight: Aiko
+  knows only the old place until genuine new evidence. Verify the focused
+  approach, missing-place feedback, active search and normal idle recovery,
+  including both display edges and repeated moves.
+
+The historical checklists below document earlier rules. Their descriptions
+of compulsory face-presentation before all acceptance and optional search for
+unwanted missing reserves are superseded by this section.
+
 ## Three-level perception retest — 17 October 2026
 
 The [perception correction plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md) supersedes
@@ -54,8 +92,8 @@ Do not reset the normal save. Run the main checks at both 1x and 2x:
 - [ ] Let her learn and defer a portion, then open a game so attention is occupied.
   Move that portion elsewhere while she is distracted. Close the game with its
   former place visible. After a short local look she notices the empty place
-  before new ordinary discoveries/offers. Needed stock can trigger a short search;
-  an unwanted reserve gets one loss comment without compulsory search. Repeating
+  before new ordinary discoveries/offers. Every confirmed missing place gets a short bounded search, including
+  an unwanted known reserve. Repeating
   ticks must not repeat the loss message. Unknown previously noticed portions use
   "etwas", never an unlearned name.
 - [ ] Repeat while she watched the actual take/placement, or while she owns the
