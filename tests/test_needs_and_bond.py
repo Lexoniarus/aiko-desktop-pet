@@ -137,7 +137,7 @@ class NeedsAndBondTests(unittest.TestCase):
             state.interact("pet", now=start + i + 1)
         self.assertAlmostEqual(state.friendship, first)
         # Only another genuine need for care may earn trust after cooldown.
-        state.affection = 55
+        state = state.with_test_values(affection=55)
         state.interact("pet", now=start + 13 * 60)
         self.assertGreater(state.friendship, first)
 
@@ -146,11 +146,11 @@ class NeedsAndBondTests(unittest.TestCase):
         start = timestamp()
         for k in range(30):
             for action in ("feed", "pet", "talk", "play", "energy_drink"):
-                state.energy = 65
+                state = state.with_test_values(energy=65)
                 state.interact(action, now=start + 900 * k)
         self.assertLessEqual(state.friendship, 31 + 7.000001)
         previous = state.friendship
-        state.social = 30
+        state = state.with_test_values(social=30)
         state.interact("talk", now=start + 24 * 3600 + 1)
         self.assertGreater(state.friendship, previous)
 
@@ -322,7 +322,7 @@ class SocialDialogueTests(unittest.TestCase):
             ),
             "energy_drink_full",
         )
-        state.energy = 70
+        state = state.with_test_values(energy=70)
         self.assertEqual(
             self.mind.care_event(
                 plan_care_action(
