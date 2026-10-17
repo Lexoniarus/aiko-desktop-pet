@@ -495,7 +495,8 @@ above select Python 3.11 and Mypy's Python 3.11 target explicitly.
 - The second OOP concern is implemented and automatically verified through
   stages 4-5; practical native acceptance remains a separate outstanding gate.
 - Existing stage 1-4 work is preserved. No commit, push or merge was made during
-  stage 5. Stages 6-7 remain planned and have not been started.
+  stage 5. At that handoff, stages 6-7 had not yet started; stage 6 is
+  documented below.
 
 ### Stage 6
 
