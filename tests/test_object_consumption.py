@@ -81,7 +81,7 @@ class ObjectConsumptionTests(unittest.TestCase):
         )
         self.assertFalse(outcome.accepted)
         self.assertEqual(self.mind.last_contact, before)
-        self.assertIsNone(self.mind._last_care_action)
+        self.assertEqual(self.mind._last_care_action, "")
 
     def test_accepted_handover_updates_contact_once_after_commit(self):
         before = self.mind.last_contact
