@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections import OrderedDict
-from copy import deepcopy
 from dataclasses import dataclass
 
 from ..pet.consumption import ConsumptionOrigin
@@ -67,8 +66,7 @@ class ObjectConsumption:
             if origin == ConsumptionOrigin.HANDOVER
             else None
         )
-        checkpoint = deepcopy(self._state)
-        prepared = deepcopy(self._state)
+        checkpoint = self._state.capture_checkpoint()
         definition = next(
             definition
             for definition in world.snapshot().definitions
@@ -78,21 +76,23 @@ class ObjectConsumption:
         known = self._memory.get(memory_id)
         if known is None or known.identity != consumable_id:
             return ConsumptionOutcome(False)
-        result = prepared.consume_item(consumable_id, origin, now=inputs.wall_time)
-        if result is None or result.consumed_item_id is None:
+        prepared = self._state.prepare_item_consumption(
+            consumable_id, origin, now=inputs.wall_time,
+        )
+        if prepared is None:
             return ConsumptionOutcome(False)
         world_checkpoint = world.snapshot()
         memory_checkpoint = self._memory.snapshot()
         try:
             world.consume(instance_id, expected_revision=item.revision)
-            self._state.restore_values(prepared)
+            self._state.restore_checkpoint(prepared.checkpoint)
             self._memory.record_consumption(memory_id)
         except Exception:
             world.restore_snapshot(world_checkpoint)
-            self._state.restore_values(checkpoint)
+            self._state.restore_checkpoint(checkpoint)
             self._memory.restore_snapshot(memory_checkpoint)
             raise
-        care = CareOutcome(result, None, context)
+        care = CareOutcome(prepared.result, None, context)
         outcome = ConsumptionOutcome(True, care)
         self._receipts[interaction_id] = (instance_id, memory_id, origin, outcome)
         if len(self._receipts) > 4096:
@@ -100,9 +100,9 @@ class ObjectConsumption:
         if origin == ConsumptionOrigin.HANDOVER:
             assert before is not None
             self._adaptive.note_interaction(inputs.wall_time)
-            self._mind.after_care(result.action, inputs.monotonic_time)
+            self._mind.after_care(prepared.result.action, inputs.monotonic_time)
             reaction = self._mind.select_reaction(
-                self._mind.care_event(result, before),
+                self._mind.care_event(prepared.result, before),
                 self._state,
                 context,
                 inputs.monotonic_time,

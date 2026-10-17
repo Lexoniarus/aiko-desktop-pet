@@ -86,6 +86,35 @@ class ObjectConsumptionTests(unittest.TestCase):
         self.assertTrue(self.consume().accepted)
         self.assertEqual(self.memory.snapshot(), ())
 
+    def test_failed_handover_recovers_all_pet_values_and_identity(self):
+        original_pet = self.pet
+        before = self.pet.capture_checkpoint()
+        world_before = self.world.snapshot()
+        memory_before = self.memory.snapshot()
+        forget = self.memory.forget
+
+        def fail_after_forget(token):
+            forget(token)
+            raise RuntimeError("injected history rollback")
+
+        with patch.object(self.memory, "forget", side_effect=fail_after_forget):
+            with self.assertRaises(RuntimeError):
+                self.use_case.commit(
+                    self.world, "handover", self.item.instance_id,
+                    ConsumptionOrigin.HANDOVER, self.inputs,
+                    memory_id=self.item.instance_id,
+                )
+        self.assertIs(self.pet, original_pet)
+        self.assertEqual(self.pet.capture_checkpoint(), before)
+        self.assertEqual(self.world.snapshot(), world_before)
+        self.assertEqual(self.memory.snapshot(), memory_before)
+        self.assertTrue(self.use_case.commit(
+            self.world, "handover", self.item.instance_id,
+            ConsumptionOrigin.HANDOVER, self.inputs,
+            memory_id=self.item.instance_id,
+        ).accepted)
+        self.assertGreater(self.pet.friendship, before.friendship)
+
     def test_failure_after_world_mutation_restores_both_owners(self):
         before = self.world.snapshot()
         original = self.world.consume

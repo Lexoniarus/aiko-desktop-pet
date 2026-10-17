@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import time
-from copy import deepcopy
-from dataclasses import dataclass, field, fields, replace
+from dataclasses import dataclass, field, replace
 
 from .balance import BALANCE
 from .care_actions import (
@@ -37,6 +36,7 @@ from .need_decay import (
     calculate_need_decay,
 )
 from .routine import TimeContext, context_at, due_meal
+from .state_values import PetValues, PreparedItemConsumption
 from .status_hints import MoodHint, choose_mood_hint
 from .value_rules import clamp_need_value
 
@@ -309,10 +309,72 @@ class PetState:
             )
         return self._apply_care_transition(transition, now)
 
+    def capture_checkpoint(self) -> PetValues:
+        """Capture every live field with immutable, independent histories."""
+        return PetValues(
+            satiety=self.satiety,
+            mood=self.mood,
+            energy=self.energy,
+            social=self.social,
+            affection=self.affection,
+            friendship=self.friendship,
+            friendship_day=self.friendship_day,
+            friendship_gained_today=self.friendship_gained_today,
+            care_types_today=tuple(self.care_types_today),
+            care_last_rewards=tuple(self.care_last_rewards.items()),
+            sleeping=self.sleeping,
+            updated_at=self.updated_at,
+            meals_date=self.meals_date,
+            meals_today=tuple(self.meals_today),
+            sleep_origin=self.sleep_origin,
+            auto_sleep_night=self.auto_sleep_night,
+            nap_until=self.nap_until,
+            auto_nap_day=self.auto_nap_day,
+            food=self.food,
+            fun=self.fun,
+        )
+
+    def restore_checkpoint(self, checkpoint: PetValues) -> None:
+        """Restore owned values without replacing this live PetState identity."""
+        self.satiety = checkpoint.satiety
+        self.mood = checkpoint.mood
+        self.energy = checkpoint.energy
+        self.social = checkpoint.social
+        self.affection = checkpoint.affection
+        self.friendship = checkpoint.friendship
+        self.friendship_day = checkpoint.friendship_day
+        self.friendship_gained_today = checkpoint.friendship_gained_today
+        self.care_types_today = list(checkpoint.care_types_today)
+        self.care_last_rewards = dict(checkpoint.care_last_rewards)
+        self.sleeping = checkpoint.sleeping
+        self.updated_at = checkpoint.updated_at
+        self.meals_date = checkpoint.meals_date
+        self.meals_today = list(checkpoint.meals_today)
+        self.sleep_origin = checkpoint.sleep_origin
+        self.auto_sleep_night = checkpoint.auto_sleep_night
+        self.nap_until = checkpoint.nap_until
+        self.auto_nap_day = checkpoint.auto_nap_day
+        self.food = checkpoint.food
+        self.fun = checkpoint.fun
+
+    def prepare_item_consumption(
+        self, item_id: str, origin: ConsumptionOrigin, *, now: float,
+    ) -> PreparedItemConsumption | None:
+        """Plan a complete consumption transition without mutating this pet."""
+        working = PetState(updated_at=self.updated_at)
+        working.restore_checkpoint(self.capture_checkpoint())
+        result = working.consume_item(item_id, origin, now=now)
+        if result is None or result.consumed_item_id is None:
+            return None
+        return PreparedItemConsumption(working.capture_checkpoint(), result)
+
     def restore_values(self, snapshot: PetState) -> None:
-        """Owner-controlled commit/recovery without replacing aggregate identity."""
-        for item in fields(self):
-            setattr(self, item.name, deepcopy(getattr(snapshot, item.name)))
+        """Compatibility for existing callers until the stage-seven migration."""
+        self.restore_checkpoint(snapshot.capture_checkpoint())
+
+    def anchor_live_session(self, now: float) -> None:
+        """Set the live wall-time anchor after bounded closed-time progression."""
+        self.updated_at = now
 
     def _apply_care_transition(
         self, transition: CareTransition, stamp: float,

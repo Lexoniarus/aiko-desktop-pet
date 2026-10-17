@@ -14,14 +14,25 @@ from .value_rules import clamp_need_value
 
 
 class NeedValues(Protocol):
-    """Required current values, readable without a concrete PetState."""
+    """Read-only need values; policies cannot write back to the pet."""
 
-    sleeping: bool
-    satiety: float
-    mood: float
-    energy: float
-    social: float
-    affection: float
+    @property
+    def sleeping(self) -> bool: ...
+
+    @property
+    def satiety(self) -> float: ...
+
+    @property
+    def mood(self) -> float: ...
+
+    @property
+    def energy(self) -> float: ...
+
+    @property
+    def social(self) -> float: ...
+
+    @property
+    def affection(self) -> float: ...
 
 
 @dataclass(frozen=True, slots=True)

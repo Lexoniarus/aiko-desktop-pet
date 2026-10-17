@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -30,13 +31,22 @@ LEGACY_REWARD_ACTIONS = ("energy_drink", "sleep")
 
 
 class FriendshipRecord(Protocol):
-    """Readable relationship fields needed to evaluate a care reward."""
+    """Read-only relationship values and history views."""
 
-    friendship: float
-    friendship_day: str
-    friendship_gained_today: float
-    care_types_today: list[str]
-    care_last_rewards: dict[str, float]
+    @property
+    def friendship(self) -> float: ...
+
+    @property
+    def friendship_day(self) -> str: ...
+
+    @property
+    def friendship_gained_today(self) -> float: ...
+
+    @property
+    def care_types_today(self) -> Sequence[str]: ...
+
+    @property
+    def care_last_rewards(self) -> Mapping[str, float]: ...
 
 
 @dataclass(frozen=True, slots=True)

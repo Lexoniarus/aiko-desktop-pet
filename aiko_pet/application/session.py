@@ -80,7 +80,7 @@ class PetSessionRestorer:
                 elapsed_seconds=elapsed,
                 self_care=True,
             )
-        loaded.state.updated_at = now
+        loaded.state.anchor_live_session(now)
         return RestoredPetSession(
             state=loaded.state,
             settings=loaded.settings,
