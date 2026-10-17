@@ -30,6 +30,7 @@ class ObjectAwareness:
         self.memory = ObjectMemory(saved)
         self.intentions = ObjectIntentions()
         self.observations: tuple[ObjectObservation, ...] = ()
+        self._local_candidates: tuple[ObjectCandidate, ...] = ()
         self._world_revision = -1
         self._tracker = ObjectTracker(maximum_gap=BALANCE.number(
             "object_behavior", "tracking_gap_seconds",
@@ -46,6 +47,19 @@ class ObjectAwareness:
     @property
     def checking_absence(self) -> bool:
         return self._absence.checking
+
+    def local_notice_pending(self, *, x: float, height: float, width: float) -> bool:
+        """A nearby visible shape is awaiting its normal notice interval.
+
+        Neither physical instance IDs nor catalog types become memory facts.
+        Waiting prevents premature failed-grasp search during initial sensing.
+        """
+        reach = width * BALANCE.number("object_behavior", "memory_place_widths")
+        present = any(math.hypot(item.x - x, item.height - height) <= reach
+                      for item in self._local_candidates)
+        noticed = any(math.hypot(item.x - x, item.height - height) <= reach
+                      for item in self.observations)
+        return present and not noticed
 
     def acknowledge_absence(self, record: str) -> None:
         self._absences.pop(record, None)
@@ -130,6 +144,7 @@ class ObjectAwareness:
         occupants = tuple(item for item in candidates if attentive and math.hypot(
             item.x - x, item.height - height,
         ) <= width * BALANCE.number("object_behavior", "notice_widths"))
+        self._local_candidates = occupants
         if committed is not None:
             # Filter before tracking, recognition and stock reconciliation.
             candidates = [item for item in candidates if (

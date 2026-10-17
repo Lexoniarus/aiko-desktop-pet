@@ -290,13 +290,14 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.awareness.memory.restore_snapshot((
             replace(known, identity=None, kind=None, assessed=False),
         ))
-        allowed = lambda **options: self.behavior.can_acquire(
-            item.instance_id, object_state=ObjectState.USER_HELD,
-            reachable=options.get("reachable", True),
-            offer_ready=False, offer_assessed=False,
-            now=options.get("now", self.now),
-            facts=options.get("facts", BehaviorFacts()),
-        )
+        def allowed(**options):
+            return self.behavior.can_acquire(
+                item.instance_id, object_state=ObjectState.USER_HELD,
+                reachable=options.get("reachable", True),
+                offer_ready=False, offer_assessed=False,
+                now=options.get("now", self.now),
+                facts=options.get("facts", BehaviorFacts()),
+            )
         self.assertTrue(allowed())
         self.assertFalse(allowed(reachable=False))
         self.assertFalse(allowed(now=self.now + .6))
@@ -311,14 +312,14 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertIsInstance(self.behavior.advance(goal, blocked=False), Hold)
         self.acknowledge()
         self.assertEqual(self.interaction.phase, "approach")
-        self.behavior.arrival_unavailable(goal)
+        self.behavior.arrival_unavailable(goal, width=100)
         self.assertEqual(self.interaction.phase, "search")
         self.assertEqual(self.cues[-1].event, "object_search")
         known = self.awareness.memory.get("stock")
         assert known is not None
         self.assertEqual(known.place_status, "remembered")
         count = len(self.cues)
-        self.behavior.arrival_unavailable(goal)
+        self.behavior.arrival_unavailable(goal, width=100)
         self.assertEqual(len(self.cues), count)
         self.acknowledge()
         self.now = 2.1

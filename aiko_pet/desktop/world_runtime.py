@@ -362,11 +362,16 @@ class DesktopWorldRuntime:
             self._walk.movement.set_goal(None)
             self._capture_contact(instance)
             self.interaction.arrive()
+        elif (instance is not None
+              and self.world.get(instance).state == ObjectState.RESTING):
+            # Native motion may still be settling inside the two-pixel
+            # arrival tolerance; retain the exact standing goal for reach.
+            return
         else:
             # No observed/eligible item at the remembered landing position.
-            # Do not retry this approach forever or infer a hidden World move.
+            # Do not retry forever or infer a hidden World move.
             self._walk.movement.set_goal(None)
-            self._behavior.arrival_unavailable(goal)
+            self._behavior.arrival_unavailable(goal, width=self.width)
 
     def _show_search(self, search: SearchMotion) -> None:
         track = self._track()
