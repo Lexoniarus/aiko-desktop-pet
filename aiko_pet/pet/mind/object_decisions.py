@@ -27,7 +27,8 @@ class ObjectUseDecision:
 
 
 def decide_object_use(
-    known: ObjectKnowledge | None, state: PetState,
+    known: ObjectKnowledge | None,
+    state: PetState,
     context: ObjectUseContext = ObjectUseContext.SUPPLY,
 ) -> ObjectUseDecision:
     if known is None or known.identity is None or known.kind is None:
@@ -37,11 +38,17 @@ def decide_object_use(
     drink = known.kind == "drink"
     level = state.energy if drink else state.satiety
     capacity = 100 if drink else FOOD_BALANCE.too_full_to_eat_threshold
-    threshold = capacity if context != ObjectUseContext.SUPPLY else BALANCE.number(
-        "object_behavior", "seek_drink_energy" if drink else "seek_food_satiety",
+    threshold = (
+        capacity
+        if context != ObjectUseContext.SUPPLY
+        else BALANCE.number(
+            "object_behavior",
+            "seek_drink_energy" if drink else "seek_food_satiety",
+        )
     )
     wanted = level < capacity and (
         context != ObjectUseContext.SUPPLY or level <= threshold
     )
-    return ObjectUseDecision(wanted, ("low_energy" if drink else "hungry")
-                             if wanted else "not_needed")
+    return ObjectUseDecision(
+        wanted, ("low_energy" if drink else "hungry") if wanted else "not_needed"
+    )

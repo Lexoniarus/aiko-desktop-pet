@@ -10,7 +10,12 @@
       "periods": [],
       "weekdays": [],
       "cooldown_seconds": 0,
-      "beats": [{"kind": "text", "content": "Hier lag doch {item}. Jetzt ist der Platz leer."}]
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hier lag doch ein {item}. Jetzt ist es weg."
+        }
+      ]
     },
     {
       "id": "object-place-missing-noticed",
@@ -20,7 +25,12 @@
       "periods": [],
       "weekdays": [],
       "cooldown_seconds": 0,
-      "beats": [{"kind": "text", "content": "Moment, an dieser Stelle war doch {item}."}]
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Moment, an dieser Stelle war doch ein {item}."
+        }
+      ]
     },
     {
       "id": "object-place-missing-empty",
@@ -30,7 +40,12 @@
       "periods": [],
       "weekdays": [],
       "cooldown_seconds": 0,
-      "beats": [{"kind": "text", "content": "Da lag vorhin {item}. Jetzt sehe ich es dort nicht mehr."}]
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da lag vorhin ein {item}. Jetzt sehe ich es verschwunden."
+        }
+      ]
     },
     {
       "id": "greeting-01",
@@ -69,7 +84,7 @@
         },
         {
           "kind": "text",
-          "content": "Oh. Ein Neustart."
+          "content": "Oh. Da sind wir ja wieder."
         },
         {
           "kind": "text",
@@ -82,9 +97,7 @@
       "id": "greeting-05",
       "event": "greeting",
       "moods": [],
-      "periods": [
-        "breakfast"
-      ],
+      "periods": ["breakfast"],
       "weekdays": [],
       "animation": "waiting",
       "weight": 2,
@@ -96,7 +109,7 @@
         },
         {
           "kind": "text",
-          "content": "...Ich bin wach. Fast."
+          "content": "...Ich bin wach. Du auch?"
         }
       ],
       "presentation": "short"
@@ -105,9 +118,7 @@
       "id": "greeting-06",
       "event": "greeting",
       "moods": [],
-      "periods": [
-        "lunch"
-      ],
+      "periods": ["lunch"],
       "weekdays": [],
       "animation": "idle",
       "weight": 2,
@@ -119,7 +130,7 @@
         },
         {
           "kind": "text",
-          "content": "Mittag schon. Die Zeit ist seltsam schnell."
+          "content": "Mittag schon. Na dann mal Mahlzeit!"
         }
       ],
       "presentation": "short"
@@ -128,9 +139,7 @@
       "id": "greeting-07",
       "event": "greeting",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
       "animation": "idle",
       "weight": 2,
@@ -142,7 +151,7 @@
         },
         {
           "kind": "text",
-          "content": "Abends sind selbst meine Gedanken etwas leiser."
+          "content": "Abends bedeutet Freizeit, oder?"
         }
       ],
       "presentation": "short"
@@ -151,9 +160,7 @@
       "id": "greeting-08",
       "event": "greeting",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "animation": "waiting",
       "weight": 2,
@@ -165,7 +172,7 @@
         },
         {
           "kind": "text",
-          "content": "Du bist noch auf? ...Ich urteile nicht."
+          "content": "Du bist noch auf? Alles klar, auf zur Nachtschicht."
         }
       ],
       "presentation": "short"
@@ -207,11 +214,11 @@
         },
         {
           "kind": "text",
-          "content": "Du hast mich erwischt."
+          "content": "kann  ich dir helfen?"
         },
         {
           "kind": "text",
-          "content": "Ich habe nichts angestellt."
+          "content": "Ich hab eh grad Zeit."
         }
       ],
       "presentation": "short"
@@ -232,7 +239,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hab dich längst gesehen."
+          "content": "Ja? ...Ich hab dich schon bemerkt."
         }
       ],
       "presentation": "short"
@@ -240,10 +247,7 @@
     {
       "id": "click_left-08",
       "event": "click_left",
-      "moods": [
-        "playful",
-        "warm"
-      ],
+      "moods": ["playful", "warm"],
       "periods": [],
       "weekdays": [],
       "animation": "waving",
@@ -256,7 +260,7 @@
         },
         {
           "kind": "text",
-          "content": "Du bist heute gesprächig. Für uns beide."
+          "content": "Du bist heute sehr... Klickfreudig, oder?"
         }
       ],
       "presentation": "short"
@@ -264,10 +268,7 @@
     {
       "id": "click_left-09",
       "event": "click_left",
-      "moods": [
-        "playful",
-        "warm"
-      ],
+      "moods": ["playful", "warm"],
       "periods": [],
       "weekdays": [],
       "animation": "waving",
@@ -280,7 +281,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hatte gerade erst meine Ruhe gefunden."
+          "content": "Ich hatte gerade erst etwas Ruhe gefunden."
         }
       ],
       "presentation": "short"
@@ -288,10 +289,7 @@
     {
       "id": "click_left-10",
       "event": "click_left",
-      "moods": [
-        "playful",
-        "warm"
-      ],
+      "moods": ["playful", "warm"],
       "periods": [],
       "weekdays": [],
       "animation": "waving",
@@ -312,10 +310,7 @@
     {
       "id": "click_left-11",
       "event": "click_left",
-      "moods": [
-        "tired",
-        "withdrawn"
-      ],
+      "moods": ["tired", "withdrawn"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -336,10 +331,7 @@
     {
       "id": "click_left-12",
       "event": "click_left",
-      "moods": [
-        "tired",
-        "withdrawn"
-      ],
+      "moods": ["tired", "withdrawn"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -352,7 +344,7 @@
         },
         {
           "kind": "text",
-          "content": "Einen Moment. Ich war gerade bei einem Gedanken."
+          "content": "Einen Moment. Ich bin gerade woanders mit meinen Gedanken."
         }
       ],
       "presentation": "short"
@@ -360,9 +352,7 @@
     {
       "id": "click_left-13",
       "event": "click_left",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "animation": "review",
@@ -375,7 +365,7 @@
         },
         {
           "kind": "text",
-          "content": "Falls es wichtig ist, sag es. Falls nicht ... auch gut."
+          "content": "Falls es wichtig war, sag es. Falls nicht ... auch gut."
         }
       ],
       "presentation": "short"
@@ -383,9 +373,7 @@
     {
       "id": "click_left-14",
       "event": "click_left",
-      "moods": [
-        "irritated"
-      ],
+      "moods": ["irritated"],
       "periods": [],
       "weekdays": [],
       "animation": "review",
@@ -398,7 +386,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich war eigentlich gerade ganz zufrieden mit der Stille."
+          "content": "Ich war eigentlich gerade ganz zufrieden."
         }
       ],
       "presentation": "short"
@@ -473,10 +461,7 @@
     {
       "id": "click_right-06",
       "event": "click_right",
-      "moods": [
-        "playful",
-        "warm"
-      ],
+      "moods": ["playful", "warm"],
       "periods": [],
       "weekdays": [],
       "animation": "waving",
@@ -531,7 +516,7 @@
         },
         {
           "kind": "text",
-          "content": "...Du machst das mit Absicht."
+          "content": "...Du machst das mit Absicht, nicht wahr?"
         }
       ],
       "presentation": "short"
@@ -539,9 +524,7 @@
     {
       "id": "sleep_click-01",
       "event": "sleep_click",
-      "moods": [
-        "asleep"
-      ],
+      "moods": ["asleep"],
       "periods": [],
       "weekdays": [],
       "animation": "idle",
@@ -562,9 +545,7 @@
     {
       "id": "sleep_click-02",
       "event": "sleep_click",
-      "moods": [
-        "asleep"
-      ],
+      "moods": ["asleep"],
       "periods": [],
       "weekdays": [],
       "animation": "idle",
@@ -585,9 +566,7 @@
     {
       "id": "sleep_click-03",
       "event": "sleep_click",
-      "moods": [
-        "asleep"
-      ],
+      "moods": ["asleep"],
       "periods": [],
       "weekdays": [],
       "animation": "idle",
@@ -608,9 +587,7 @@
     {
       "id": "sleep_click-04",
       "event": "sleep_click",
-      "moods": [
-        "asleep"
-      ],
+      "moods": ["asleep"],
       "periods": [],
       "weekdays": [],
       "animation": "idle",
@@ -644,7 +621,7 @@
         },
         {
           "kind": "text",
-          "content": "Ja. Das mag ich."
+          "content": "Ja. Das mag ich. Aber Vorsicht. Ich bin empfindlich."
         }
       ],
       "presentation": "short"
@@ -711,10 +688,7 @@
     {
       "id": "pet-09",
       "event": "pet",
-      "moods": [
-        "warm",
-        "playful"
-      ],
+      "moods": ["warm", "playful"],
       "periods": [],
       "weekdays": [],
       "animation": "waving",
@@ -739,10 +713,7 @@
     {
       "id": "pet-10",
       "event": "pet",
-      "moods": [
-        "irritated",
-        "withdrawn"
-      ],
+      "moods": ["irritated", "withdrawn"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -855,10 +826,7 @@
     {
       "id": "feed_meal-06",
       "event": "feed_meal",
-      "moods": [
-        "warm",
-        "playful"
-      ],
+      "moods": ["warm", "playful"],
       "periods": [],
       "weekdays": [],
       "animation": "idle",
@@ -883,9 +851,7 @@
     {
       "id": "feed_meal-07",
       "event": "feed_meal",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -1064,10 +1030,7 @@
     {
       "id": "feed_snack-07",
       "event": "feed_snack",
-      "moods": [
-        "playful",
-        "warm"
-      ],
+      "moods": ["playful", "warm"],
       "periods": [],
       "weekdays": [],
       "animation": "idle",
@@ -1230,9 +1193,7 @@
     {
       "id": "play_tired-01",
       "event": "play_tired",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -1253,9 +1214,7 @@
     {
       "id": "play_tired-02",
       "event": "play_tired",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -1276,9 +1235,7 @@
     {
       "id": "play_tired-03",
       "event": "play_tired",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -1299,9 +1256,7 @@
     {
       "id": "play_tired-04",
       "event": "play_tired",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -1356,7 +1311,7 @@
         },
         {
           "kind": "text",
-          "content": "...Mach das Licht gedanklich aus, ja?"
+          "content": "...Mach das Licht bitte aus, ja?"
         }
       ],
       "presentation": "short"
@@ -1490,10 +1445,7 @@
     {
       "id": "wake-06",
       "event": "wake",
-      "moods": [
-        "warm",
-        "playful"
-      ],
+      "moods": ["warm", "playful"],
       "periods": [],
       "weekdays": [],
       "animation": "waving",
@@ -2070,9 +2022,7 @@
     {
       "id": "hungry-01",
       "event": "hungry",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -2093,9 +2043,7 @@
     {
       "id": "hungry-02",
       "event": "hungry",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -2116,9 +2064,7 @@
     {
       "id": "hungry-03",
       "event": "hungry",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -2139,9 +2085,7 @@
     {
       "id": "hungry-04",
       "event": "hungry",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -2162,9 +2106,7 @@
     {
       "id": "hungry-05",
       "event": "hungry",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -2185,9 +2127,7 @@
     {
       "id": "tired-01",
       "event": "tired",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -2208,9 +2148,7 @@
     {
       "id": "tired-02",
       "event": "tired",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -2231,9 +2169,7 @@
     {
       "id": "tired-03",
       "event": "tired",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -2254,9 +2190,7 @@
     {
       "id": "tired-04",
       "event": "tired",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -2277,9 +2211,7 @@
     {
       "id": "tired-05",
       "event": "tired",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -2300,10 +2232,7 @@
     {
       "id": "low_mood-01",
       "event": "low_mood",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "animation": "idle",
@@ -2324,10 +2253,7 @@
     {
       "id": "low_mood-02",
       "event": "low_mood",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "animation": "idle",
@@ -2348,10 +2274,7 @@
     {
       "id": "low_mood-03",
       "event": "low_mood",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "animation": "idle",
@@ -2372,10 +2295,7 @@
     {
       "id": "low_mood-04",
       "event": "low_mood",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "animation": "idle",
@@ -2397,10 +2317,7 @@
       "id": "morning-02",
       "event": "morning",
       "moods": [],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
       "animation": "waiting",
       "weight": 2,
@@ -2417,10 +2334,7 @@
       "id": "morning-03",
       "event": "morning",
       "moods": [],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
       "animation": "waiting",
       "weight": 2,
@@ -2441,10 +2355,7 @@
       "id": "morning-04",
       "event": "morning",
       "moods": [],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
       "animation": "waiting",
       "weight": 2,
@@ -2461,9 +2372,7 @@
       "id": "midday-01",
       "event": "midday",
       "moods": [],
-      "periods": [
-        "lunch"
-      ],
+      "periods": ["lunch"],
       "weekdays": [],
       "animation": "review",
       "weight": 2,
@@ -2480,9 +2389,7 @@
       "id": "midday-02",
       "event": "midday",
       "moods": [],
-      "periods": [
-        "lunch"
-      ],
+      "periods": ["lunch"],
       "weekdays": [],
       "animation": "review",
       "weight": 2,
@@ -2499,9 +2406,7 @@
       "id": "midday-03",
       "event": "midday",
       "moods": [],
-      "periods": [
-        "lunch"
-      ],
+      "periods": ["lunch"],
       "weekdays": [],
       "animation": "review",
       "weight": 2,
@@ -2518,9 +2423,7 @@
       "id": "evening-01",
       "event": "evening",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
       "animation": "idle",
       "weight": 2,
@@ -2537,9 +2440,7 @@
       "id": "evening-02",
       "event": "evening",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
       "animation": "idle",
       "weight": 2,
@@ -2556,9 +2457,7 @@
       "id": "evening-03",
       "event": "evening",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
       "animation": "idle",
       "weight": 2,
@@ -2579,9 +2478,7 @@
       "id": "night-01",
       "event": "night",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "animation": "waiting",
       "weight": 2,
@@ -2598,9 +2495,7 @@
       "id": "night-02",
       "event": "night",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "animation": "waiting",
       "weight": 2,
@@ -2617,9 +2512,7 @@
       "id": "night-03",
       "event": "night",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "animation": "waiting",
       "weight": 2,
@@ -2636,9 +2529,7 @@
       "id": "night-04",
       "event": "night",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "animation": "waiting",
       "weight": 2,
@@ -2656,10 +2547,7 @@
       "event": "weekend",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        5,
-        6
-      ],
+      "weekdays": [5, 6],
       "animation": "idle",
       "weight": 2,
       "cooldown_seconds": 420,
@@ -2676,10 +2564,7 @@
       "event": "weekend",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        5,
-        6
-      ],
+      "weekdays": [5, 6],
       "animation": "idle",
       "weight": 2,
       "cooldown_seconds": 420,
@@ -2696,10 +2581,7 @@
       "event": "weekend",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        5,
-        6
-      ],
+      "weekdays": [5, 6],
       "animation": "idle",
       "weight": 2,
       "cooldown_seconds": 420,
@@ -2716,9 +2598,7 @@
       "event": "monday",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        0
-      ],
+      "weekdays": [0],
       "animation": "review",
       "weight": 2,
       "cooldown_seconds": 600,
@@ -2735,9 +2615,7 @@
       "event": "monday",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        0
-      ],
+      "weekdays": [0],
       "animation": "review",
       "weight": 2,
       "cooldown_seconds": 600,
@@ -2754,9 +2632,7 @@
       "event": "friday",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        4
-      ],
+      "weekdays": [4],
       "animation": "idle",
       "weight": 2,
       "cooldown_seconds": 600,
@@ -2773,9 +2649,7 @@
       "event": "friday",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        4
-      ],
+      "weekdays": [4],
       "animation": "idle",
       "weight": 2,
       "cooldown_seconds": 600,
@@ -5601,9 +5475,7 @@
       "event": "work_late",
       "animation": "review",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 260,
@@ -5628,9 +5500,7 @@
       "event": "work_late",
       "animation": "waiting",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 260,
@@ -5655,9 +5525,7 @@
       "event": "work_late",
       "animation": "review",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 260,
@@ -5682,9 +5550,7 @@
       "event": "work_late",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 260,
@@ -6705,9 +6571,7 @@
       "event": "evening",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 110,
@@ -6724,9 +6588,7 @@
       "event": "evening",
       "animation": "waiting",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 110,
@@ -6747,9 +6609,7 @@
       "event": "night",
       "animation": "waiting",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 110,
@@ -6770,9 +6630,7 @@
       "event": "night",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 110,
@@ -6794,9 +6652,7 @@
       "animation": "waiting",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        0
-      ],
+      "weekdays": [0],
       "weight": 3,
       "cooldown_seconds": 110,
       "beats": [
@@ -6817,9 +6673,7 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        4
-      ],
+      "weekdays": [4],
       "weight": 3,
       "cooldown_seconds": 110,
       "beats": [
@@ -7251,9 +7105,7 @@
       "event": "click_night",
       "animation": "waiting",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 105,
@@ -7274,9 +7126,7 @@
       "event": "click_night",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 105,
@@ -7297,9 +7147,7 @@
       "event": "click_night",
       "animation": "review",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
       "weight": 3,
       "cooldown_seconds": 105,
@@ -7385,9 +7233,7 @@
     {
       "id": "v011-talk_lonely-01",
       "event": "talk",
-      "moods": [
-        "lonely"
-      ],
+      "moods": ["lonely"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -7412,9 +7258,7 @@
     {
       "id": "v011-talk_lonely-02",
       "event": "talk",
-      "moods": [
-        "lonely"
-      ],
+      "moods": ["lonely"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -7439,9 +7283,7 @@
     {
       "id": "v011-talk_lonely-03",
       "event": "talk",
-      "moods": [
-        "lonely"
-      ],
+      "moods": ["lonely"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -7466,9 +7308,7 @@
     {
       "id": "v011-talk_lonely-04",
       "event": "talk",
-      "moods": [
-        "lonely"
-      ],
+      "moods": ["lonely"],
       "periods": [],
       "weekdays": [],
       "animation": "waiting",
@@ -7569,10 +7409,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-energy_drink-01",
@@ -7799,9 +7636,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "acquaintance"
-      ]
+      "stages": ["acquaintance"]
     },
     {
       "id": "v011-click_reserved-02",
@@ -7819,9 +7654,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "acquaintance"
-      ]
+      "stages": ["acquaintance"]
     },
     {
       "id": "v011-click_reserved-03",
@@ -7839,9 +7672,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "acquaintance"
-      ]
+      "stages": ["acquaintance"]
     },
     {
       "id": "v011-click_close-01",
@@ -7867,10 +7698,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-click_close-02",
@@ -7896,10 +7724,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-click_close-03",
@@ -7925,10 +7750,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-click_close-04",
@@ -7954,10 +7776,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-social_low-01",
@@ -8042,10 +7861,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-close_thought-03",
@@ -8067,10 +7883,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-close_thought-04",
@@ -8092,10 +7905,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-return_close-01",
@@ -8121,10 +7931,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-return_close-02",
@@ -8150,10 +7957,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-return_close-03",
@@ -8171,10 +7975,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-pet_close-01",
@@ -8200,10 +8001,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-pet_close-02",
@@ -8229,10 +8027,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-pet_close-03",
@@ -8258,10 +8053,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-play_close-01",
@@ -8287,10 +8079,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-play_close-02",
@@ -8316,10 +8105,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v011-play_close-03",
@@ -8345,10 +8131,7 @@
         }
       ],
       "presentation": "short",
-      "stages": [
-        "friend",
-        "close"
-      ]
+      "stages": ["friend", "close"]
     },
     {
       "id": "v012-affection_low-01",
@@ -10166,9 +9949,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10187,9 +9968,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10208,9 +9987,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10229,9 +10006,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10250,9 +10025,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10271,9 +10044,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10292,9 +10063,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10313,9 +10082,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10334,9 +10101,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10355,9 +10120,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10376,9 +10139,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10397,9 +10158,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10418,9 +10177,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10439,9 +10196,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10460,9 +10215,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10481,9 +10234,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10502,9 +10253,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10523,9 +10272,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10544,9 +10291,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10565,9 +10310,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10586,9 +10329,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10607,9 +10348,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10628,9 +10367,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10649,9 +10386,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10670,9 +10405,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10691,9 +10424,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10712,9 +10443,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10733,9 +10462,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10754,9 +10481,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10775,9 +10500,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10796,9 +10519,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10817,9 +10538,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10838,9 +10557,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10859,9 +10576,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10880,9 +10595,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10901,9 +10614,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10922,9 +10633,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10943,9 +10652,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10964,9 +10671,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -10985,9 +10690,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11006,9 +10709,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11027,9 +10728,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11048,9 +10747,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11069,9 +10766,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11090,9 +10785,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11111,9 +10804,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11132,9 +10823,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11153,9 +10842,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11174,9 +10861,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11195,9 +10880,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11216,9 +10899,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11237,9 +10918,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11258,9 +10937,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11279,9 +10956,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11300,9 +10975,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11321,9 +10994,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11342,9 +11013,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11363,9 +11032,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11384,9 +11051,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11405,9 +11070,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11426,9 +11089,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11447,9 +11108,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11468,9 +11127,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11489,9 +11146,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11510,9 +11165,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11531,9 +11184,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11552,9 +11203,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11573,9 +11222,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11594,9 +11241,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11615,9 +11260,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11636,9 +11279,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11657,9 +11298,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11678,9 +11317,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11699,9 +11336,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11720,9 +11355,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11741,9 +11374,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11762,9 +11393,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11783,9 +11412,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11804,9 +11431,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11825,9 +11450,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11846,9 +11469,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11867,9 +11488,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11888,9 +11507,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11909,9 +11526,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11930,9 +11545,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11951,9 +11564,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11972,9 +11583,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -11993,9 +11602,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12014,9 +11621,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12035,9 +11640,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12056,9 +11659,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12077,9 +11678,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12098,9 +11697,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12119,9 +11716,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12140,9 +11735,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12161,9 +11754,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12182,9 +11773,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12203,9 +11792,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12224,9 +11811,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12245,9 +11830,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12266,9 +11849,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12287,9 +11868,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12308,9 +11887,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12329,9 +11906,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12350,9 +11925,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12371,9 +11944,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12392,9 +11963,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12413,9 +11982,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12434,9 +12001,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12455,9 +12020,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12476,9 +12039,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12497,9 +12058,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12518,9 +12077,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12539,9 +12096,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12560,9 +12115,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12581,9 +12134,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12602,9 +12153,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12623,9 +12172,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12644,9 +12191,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12665,9 +12210,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12686,9 +12229,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12707,9 +12248,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12728,9 +12267,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12749,9 +12286,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12770,9 +12305,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12791,9 +12324,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12812,9 +12343,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12833,9 +12362,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12854,9 +12381,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12875,9 +12400,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12896,9 +12419,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12917,9 +12438,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12938,9 +12457,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12959,9 +12476,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -12980,9 +12495,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13001,9 +12514,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13022,9 +12533,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13043,9 +12552,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13064,9 +12571,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13085,9 +12590,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13106,9 +12609,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13127,9 +12628,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13148,9 +12647,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13169,9 +12666,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13190,9 +12685,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13211,9 +12704,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13232,9 +12723,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13253,9 +12742,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13274,9 +12761,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13295,9 +12780,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13316,9 +12799,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13337,9 +12818,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13358,9 +12837,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13379,9 +12856,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13400,9 +12875,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13421,9 +12894,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13442,9 +12913,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13463,9 +12932,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13484,9 +12951,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13505,9 +12970,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13526,9 +12989,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13547,9 +13008,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13568,9 +13027,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13589,9 +13046,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13610,9 +13065,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13631,9 +13084,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13652,9 +13103,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13673,9 +13122,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13694,9 +13141,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13715,9 +13160,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13736,9 +13179,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13757,9 +13198,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13778,9 +13217,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13799,9 +13236,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13820,9 +13255,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13841,9 +13274,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13862,9 +13293,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13883,9 +13312,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13904,9 +13331,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13925,9 +13350,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13946,9 +13369,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13967,9 +13388,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -13988,9 +13407,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -14009,9 +13426,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -14030,9 +13445,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -14051,9 +13464,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -14072,9 +13483,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -14093,9 +13502,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -14114,9 +13521,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -14135,9 +13540,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -14156,9 +13559,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -14177,9 +13578,7 @@
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "presentation": "short",
       "beats": [
@@ -14193,17 +13592,12 @@
       "id": "story-acquaintance-calm-01",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "calm",
-        "warm"
-      ],
+      "moods": ["calm", "warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14240,17 +13634,12 @@
       "id": "story-acquaintance-calm-02",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "calm",
-        "warm"
-      ],
+      "moods": ["calm", "warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14287,16 +13676,12 @@
       "id": "story-acquaintance-playful-03",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "playful"
-      ],
+      "moods": ["playful"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14333,16 +13718,12 @@
       "id": "story-acquaintance-playful-04",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "playful"
-      ],
+      "moods": ["playful"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14379,16 +13760,12 @@
       "id": "story-acquaintance-tired-05",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14425,16 +13802,12 @@
       "id": "story-acquaintance-tired-06",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14471,17 +13844,12 @@
       "id": "story-acquaintance-withdrawn-07",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14518,17 +13886,12 @@
       "id": "story-acquaintance-withdrawn-08",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14565,16 +13928,12 @@
       "id": "story-acquaintance-hungry-09",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14611,16 +13970,12 @@
       "id": "story-acquaintance-lonely-10",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "lonely"
-      ],
+      "moods": ["lonely"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14657,16 +14012,12 @@
       "id": "story-acquaintance-seeking_affection-11",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "seeking_affection"
-      ],
+      "moods": ["seeking_affection"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14703,16 +14054,12 @@
       "id": "story-acquaintance-warm-12",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "warm"
-      ],
+      "moods": ["warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14749,17 +14096,12 @@
       "id": "story-familiar-calm-01",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "calm",
-        "warm"
-      ],
+      "moods": ["calm", "warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14796,17 +14138,12 @@
       "id": "story-familiar-calm-02",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "calm",
-        "warm"
-      ],
+      "moods": ["calm", "warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14843,16 +14180,12 @@
       "id": "story-familiar-playful-03",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "playful"
-      ],
+      "moods": ["playful"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14889,16 +14222,12 @@
       "id": "story-familiar-playful-04",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "playful"
-      ],
+      "moods": ["playful"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14935,16 +14264,12 @@
       "id": "story-familiar-tired-05",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -14981,16 +14306,12 @@
       "id": "story-familiar-tired-06",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15027,17 +14348,12 @@
       "id": "story-familiar-withdrawn-07",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15074,17 +14390,12 @@
       "id": "story-familiar-withdrawn-08",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15121,16 +14432,12 @@
       "id": "story-familiar-hungry-09",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15167,16 +14474,12 @@
       "id": "story-familiar-lonely-10",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "lonely"
-      ],
+      "moods": ["lonely"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15213,16 +14516,12 @@
       "id": "story-familiar-seeking_affection-11",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "seeking_affection"
-      ],
+      "moods": ["seeking_affection"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15259,16 +14558,12 @@
       "id": "story-familiar-warm-12",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "warm"
-      ],
+      "moods": ["warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15305,17 +14600,12 @@
       "id": "story-friend-calm-01",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "calm",
-        "warm"
-      ],
+      "moods": ["calm", "warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15352,17 +14642,12 @@
       "id": "story-friend-calm-02",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "calm",
-        "warm"
-      ],
+      "moods": ["calm", "warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15399,16 +14684,12 @@
       "id": "story-friend-playful-03",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "playful"
-      ],
+      "moods": ["playful"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15445,16 +14726,12 @@
       "id": "story-friend-playful-04",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "playful"
-      ],
+      "moods": ["playful"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15491,16 +14768,12 @@
       "id": "story-friend-tired-05",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15537,16 +14810,12 @@
       "id": "story-friend-tired-06",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15583,17 +14852,12 @@
       "id": "story-friend-withdrawn-07",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15630,17 +14894,12 @@
       "id": "story-friend-withdrawn-08",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15677,16 +14936,12 @@
       "id": "story-friend-hungry-09",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15723,16 +14978,12 @@
       "id": "story-friend-lonely-10",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "lonely"
-      ],
+      "moods": ["lonely"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15769,16 +15020,12 @@
       "id": "story-friend-seeking_affection-11",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "seeking_affection"
-      ],
+      "moods": ["seeking_affection"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15815,16 +15062,12 @@
       "id": "story-friend-warm-12",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "warm"
-      ],
+      "moods": ["warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15861,17 +15104,12 @@
       "id": "story-close-calm-01",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "calm",
-        "warm"
-      ],
+      "moods": ["calm", "warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15908,17 +15146,12 @@
       "id": "story-close-calm-02",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "calm",
-        "warm"
-      ],
+      "moods": ["calm", "warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -15955,16 +15188,12 @@
       "id": "story-close-playful-03",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "playful"
-      ],
+      "moods": ["playful"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -16001,16 +15230,12 @@
       "id": "story-close-playful-04",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "playful"
-      ],
+      "moods": ["playful"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -16047,16 +15272,12 @@
       "id": "story-close-tired-05",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -16093,16 +15314,12 @@
       "id": "story-close-tired-06",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -16139,17 +15356,12 @@
       "id": "story-close-withdrawn-07",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -16190,17 +15402,12 @@
       "id": "story-close-withdrawn-08",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -16241,16 +15448,12 @@
       "id": "story-close-hungry-09",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -16287,16 +15490,12 @@
       "id": "story-close-lonely-10",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "lonely"
-      ],
+      "moods": ["lonely"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -16337,16 +15536,12 @@
       "id": "story-close-seeking_affection-11",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "seeking_affection"
-      ],
+      "moods": ["seeking_affection"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -16387,16 +15582,12 @@
       "id": "story-close-warm-12",
       "event": "talk",
       "animation": "idle",
-      "moods": [
-        "warm"
-      ],
+      "moods": ["warm"],
       "periods": [],
       "weekdays": [],
       "weight": 1,
       "cooldown_seconds": 120,
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "story",
       "requires_present": true,
       "beats": [
@@ -16440,9 +15631,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16461,9 +15650,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16482,9 +15669,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16503,9 +15688,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16524,9 +15707,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16545,9 +15726,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16566,9 +15745,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16587,9 +15764,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16608,9 +15783,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16629,9 +15802,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16650,9 +15821,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16671,9 +15840,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16692,9 +15859,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16713,9 +15878,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16734,9 +15897,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16755,9 +15916,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16776,9 +15935,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16797,9 +15954,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16818,9 +15973,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16839,9 +15992,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16860,9 +16011,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16881,9 +16030,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16902,9 +16049,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16923,9 +16068,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16944,9 +16087,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16965,9 +16106,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -16986,9 +16125,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17007,9 +16144,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17028,9 +16163,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17049,9 +16182,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17070,9 +16201,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17091,9 +16220,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17112,9 +16239,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17133,9 +16258,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17154,9 +16277,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17175,9 +16296,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17196,9 +16315,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17217,9 +16334,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17238,9 +16353,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17259,9 +16372,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17280,9 +16391,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17301,9 +16410,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17322,9 +16429,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17343,9 +16448,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17364,9 +16467,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17385,9 +16486,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17406,9 +16505,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17427,9 +16524,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17448,9 +16543,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17469,9 +16562,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17490,9 +16581,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17511,9 +16600,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17532,9 +16619,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17553,9 +16638,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17574,9 +16657,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17595,9 +16676,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17616,9 +16695,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17637,9 +16714,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17658,9 +16733,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17679,9 +16752,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17700,9 +16771,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17721,9 +16790,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17742,9 +16809,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17763,9 +16828,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17784,9 +16847,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17805,9 +16866,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17826,9 +16885,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17847,9 +16904,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17868,9 +16923,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17889,9 +16942,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17910,9 +16961,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17931,9 +16980,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17952,9 +16999,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17973,9 +17018,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -17994,9 +17037,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18015,9 +17056,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18036,9 +17075,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18057,9 +17094,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18078,9 +17113,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18099,9 +17132,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18120,9 +17151,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18141,9 +17170,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18162,9 +17189,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18183,9 +17208,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18204,9 +17227,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18225,9 +17246,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18246,9 +17265,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18267,9 +17284,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18288,9 +17303,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18309,9 +17322,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18330,9 +17341,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18351,9 +17360,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18372,9 +17379,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18393,9 +17398,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18414,9 +17417,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18435,9 +17436,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18456,9 +17455,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18477,9 +17474,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18498,9 +17493,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18519,9 +17512,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18540,9 +17531,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18561,9 +17550,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18582,9 +17569,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18603,9 +17588,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18624,9 +17607,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18645,9 +17626,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18666,9 +17645,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18687,9 +17664,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18708,14 +17683,8 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
-      "needs": [
-        "hungry",
-        "tired"
-      ],
+      "stages": ["acquaintance", "familiar"],
+      "needs": ["hungry", "tired"],
       "weight": 1,
       "cooldown_seconds": 120,
       "presentation": "short",
@@ -18733,14 +17702,8 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
-      "needs": [
-        "hungry",
-        "tired"
-      ],
+      "stages": ["acquaintance", "familiar"],
+      "needs": ["hungry", "tired"],
       "weight": 1,
       "cooldown_seconds": 120,
       "presentation": "short",
@@ -18758,14 +17721,8 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
-      "needs": [
-        "hungry",
-        "tired"
-      ],
+      "stages": ["acquaintance", "familiar"],
+      "needs": ["hungry", "tired"],
       "weight": 1,
       "cooldown_seconds": 120,
       "presentation": "short",
@@ -18780,15 +17737,10 @@
       "id": "expanded-pet-0112",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18804,15 +17756,10 @@
       "id": "expanded-pet-0113",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18828,15 +17775,10 @@
       "id": "expanded-pet-0114",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18852,15 +17794,10 @@
       "id": "expanded-pet-0115",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "irritated"
-      ],
+      "moods": ["irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18876,15 +17813,10 @@
       "id": "expanded-pet-0116",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "irritated"
-      ],
+      "moods": ["irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18900,15 +17832,10 @@
       "id": "expanded-pet-0117",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "irritated"
-      ],
+      "moods": ["irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18924,15 +17851,10 @@
       "id": "expanded-greeting-0118",
       "event": "greeting",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18948,15 +17870,10 @@
       "id": "expanded-greeting-0119",
       "event": "greeting",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18972,15 +17889,10 @@
       "id": "expanded-greeting-0120",
       "event": "greeting",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -18996,16 +17908,10 @@
       "id": "expanded-return-0121",
       "event": "return",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19021,16 +17927,10 @@
       "id": "expanded-return-0122",
       "event": "return",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19046,16 +17946,10 @@
       "id": "expanded-return-0123",
       "event": "return",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19071,15 +17965,10 @@
       "id": "expanded-play-0124",
       "event": "play",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19095,15 +17984,10 @@
       "id": "expanded-play-0125",
       "event": "play",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19119,15 +18003,10 @@
       "id": "expanded-play-0126",
       "event": "play",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19143,15 +18022,10 @@
       "id": "expanded-game_player_win-0127",
       "event": "game_player_win",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19167,15 +18041,10 @@
       "id": "expanded-game_player_win-0128",
       "event": "game_player_win",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19191,15 +18060,10 @@
       "id": "expanded-game_player_win-0129",
       "event": "game_player_win",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19215,15 +18079,10 @@
       "id": "expanded-object_offer-0130",
       "event": "object_offer",
       "animation": "idle",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19239,15 +18098,10 @@
       "id": "expanded-object_offer-0131",
       "event": "object_offer",
       "animation": "idle",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19263,15 +18117,10 @@
       "id": "expanded-object_offer-0132",
       "event": "object_offer",
       "animation": "idle",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19290,14 +18139,8 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
-      "needs": [
-        "hungry",
-        "tired"
-      ],
+      "stages": ["friend", "close"],
+      "needs": ["hungry", "tired"],
       "weight": 1,
       "cooldown_seconds": 120,
       "presentation": "short",
@@ -19315,14 +18158,8 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
-      "needs": [
-        "hungry",
-        "tired"
-      ],
+      "stages": ["friend", "close"],
+      "needs": ["hungry", "tired"],
       "weight": 1,
       "cooldown_seconds": 120,
       "presentation": "short",
@@ -19340,14 +18177,8 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
-      "needs": [
-        "hungry",
-        "tired"
-      ],
+      "stages": ["friend", "close"],
+      "needs": ["hungry", "tired"],
       "weight": 1,
       "cooldown_seconds": 120,
       "presentation": "short",
@@ -19362,15 +18193,10 @@
       "id": "expanded-pet-0136",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19386,15 +18212,10 @@
       "id": "expanded-pet-0137",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19410,15 +18231,10 @@
       "id": "expanded-pet-0138",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19434,15 +18250,10 @@
       "id": "expanded-pet-0139",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "irritated"
-      ],
+      "moods": ["irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19458,15 +18269,10 @@
       "id": "expanded-pet-0140",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "irritated"
-      ],
+      "moods": ["irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19482,15 +18288,10 @@
       "id": "expanded-pet-0141",
       "event": "pet",
       "animation": "idle",
-      "moods": [
-        "irritated"
-      ],
+      "moods": ["irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19506,15 +18307,10 @@
       "id": "expanded-greeting-0142",
       "event": "greeting",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19530,15 +18326,10 @@
       "id": "expanded-greeting-0143",
       "event": "greeting",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19554,15 +18345,10 @@
       "id": "expanded-greeting-0144",
       "event": "greeting",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19578,16 +18364,10 @@
       "id": "expanded-return-0145",
       "event": "return",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19603,16 +18383,10 @@
       "id": "expanded-return-0146",
       "event": "return",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19628,16 +18402,10 @@
       "id": "expanded-return-0147",
       "event": "return",
       "animation": "idle",
-      "moods": [
-        "withdrawn",
-        "irritated"
-      ],
+      "moods": ["withdrawn", "irritated"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19653,15 +18421,10 @@
       "id": "expanded-play-0148",
       "event": "play",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19677,15 +18440,10 @@
       "id": "expanded-play-0149",
       "event": "play",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19701,15 +18459,10 @@
       "id": "expanded-play-0150",
       "event": "play",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19725,15 +18478,10 @@
       "id": "expanded-game_player_win-0151",
       "event": "game_player_win",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19749,15 +18497,10 @@
       "id": "expanded-game_player_win-0152",
       "event": "game_player_win",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19773,15 +18516,10 @@
       "id": "expanded-game_player_win-0153",
       "event": "game_player_win",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
+      "moods": ["tired"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19797,15 +18535,10 @@
       "id": "expanded-object_offer-0154",
       "event": "object_offer",
       "animation": "idle",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19821,15 +18554,10 @@
       "id": "expanded-object_offer-0155",
       "event": "object_offer",
       "animation": "idle",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19845,15 +18573,10 @@
       "id": "expanded-object_offer-0156",
       "event": "object_offer",
       "animation": "idle",
-      "moods": [
-        "hungry"
-      ],
+      "moods": ["hungry"],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19872,10 +18595,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19894,10 +18614,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19916,10 +18633,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19938,10 +18652,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19960,10 +18671,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -19982,10 +18690,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20004,10 +18709,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20026,10 +18728,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20048,10 +18747,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20070,10 +18766,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20093,10 +18786,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20115,10 +18805,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20137,10 +18824,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20159,10 +18843,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20181,10 +18862,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20203,10 +18881,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20225,10 +18900,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20247,10 +18919,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20269,10 +18938,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20291,10 +18957,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20313,10 +18976,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20335,10 +18995,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20358,10 +19015,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20380,10 +19034,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20402,10 +19053,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20424,10 +19072,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20446,10 +19091,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20468,10 +19110,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20491,10 +19130,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20514,10 +19150,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20537,10 +19170,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20559,10 +19189,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20581,10 +19208,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20603,10 +19227,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20626,10 +19247,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20648,10 +19266,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "needs": [],
       "weight": 1,
       "cooldown_seconds": 120,
@@ -20670,9 +19285,7 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        1
-      ],
+      "weekdays": [1],
       "stages": [],
       "needs": [],
       "weight": 1,
@@ -20691,9 +19304,7 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        2
-      ],
+      "weekdays": [2],
       "stages": [],
       "needs": [],
       "weight": 1,
@@ -20712,9 +19323,7 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        3
-      ],
+      "weekdays": [3],
       "stages": [],
       "needs": [],
       "weight": 1,
@@ -20733,9 +19342,7 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        4
-      ],
+      "weekdays": [4],
       "stages": [],
       "needs": [],
       "weight": 1,
@@ -20754,9 +19361,7 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        0
-      ],
+      "weekdays": [0],
       "stages": [],
       "needs": [],
       "weight": 1,
@@ -20891,10 +19496,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "needs": [
-        "hungry",
-        "tired"
-      ],
+      "needs": ["hungry", "tired"],
       "presentation": "short",
       "beats": [
         {
@@ -20910,10 +19512,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "needs": [
-        "hungry",
-        "tired"
-      ],
+      "needs": ["hungry", "tired"],
       "presentation": "short",
       "beats": [
         {
@@ -20929,10 +19528,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "needs": [
-        "hungry",
-        "tired"
-      ],
+      "needs": ["hungry", "tired"],
       "presentation": "short",
       "beats": [
         {
@@ -20948,10 +19544,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -20967,10 +19560,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -20986,10 +19576,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -21005,9 +19592,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21023,9 +19608,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21041,9 +19624,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21059,9 +19640,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21077,9 +19656,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21095,9 +19672,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21113,9 +19688,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21131,9 +19704,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21149,9 +19720,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21167,9 +19736,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21185,9 +19752,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21203,9 +19768,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21221,9 +19784,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21239,9 +19800,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21257,9 +19816,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21275,9 +19832,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21293,9 +19848,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21311,9 +19864,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21329,9 +19880,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21347,9 +19896,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21365,9 +19912,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21383,9 +19928,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21401,9 +19944,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21419,9 +19960,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21437,9 +19976,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21455,9 +19992,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21473,9 +20008,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21491,9 +20024,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21509,9 +20040,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21527,9 +20056,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21545,9 +20072,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21563,9 +20088,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21581,9 +20104,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21599,9 +20120,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21617,9 +20136,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21635,9 +20152,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21653,9 +20168,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21671,9 +20184,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21689,9 +20200,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -21707,9 +20216,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21725,9 +20232,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21743,9 +20248,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21761,9 +20264,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21779,9 +20280,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21797,9 +20296,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -21815,9 +20312,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21833,9 +20328,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21851,9 +20344,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -21867,15 +20358,9 @@
       "event": "morning",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21889,15 +20374,9 @@
       "event": "morning",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21911,15 +20390,9 @@
       "event": "morning",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -21933,15 +20406,9 @@
       "event": "morning",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -21955,15 +20422,9 @@
       "event": "morning",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -21977,15 +20438,9 @@
       "event": "morning",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -21999,14 +20454,9 @@
       "event": "midday",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "lunch"
-      ],
+      "periods": ["lunch"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22020,14 +20470,9 @@
       "event": "midday",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "lunch"
-      ],
+      "periods": ["lunch"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22041,14 +20486,9 @@
       "event": "midday",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "lunch"
-      ],
+      "periods": ["lunch"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22062,14 +20502,9 @@
       "event": "midday",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "lunch"
-      ],
+      "periods": ["lunch"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22083,14 +20518,9 @@
       "event": "midday",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "lunch"
-      ],
+      "periods": ["lunch"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22104,14 +20534,9 @@
       "event": "midday",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "lunch"
-      ],
+      "periods": ["lunch"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22125,14 +20550,9 @@
       "event": "evening",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22146,14 +20566,9 @@
       "event": "evening",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22167,14 +20582,9 @@
       "event": "evening",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22188,14 +20598,9 @@
       "event": "evening",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22209,14 +20614,9 @@
       "event": "evening",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22230,14 +20630,9 @@
       "event": "evening",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "evening"
-      ],
+      "periods": ["evening"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22251,14 +20646,9 @@
       "event": "night",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22272,14 +20662,9 @@
       "event": "night",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22293,14 +20678,9 @@
       "event": "night",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22314,14 +20694,9 @@
       "event": "night",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22335,14 +20710,9 @@
       "event": "night",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22356,14 +20726,9 @@
       "event": "night",
       "animation": "idle",
       "moods": [],
-      "periods": [
-        "night"
-      ],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22378,13 +20743,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        0
-      ],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "weekdays": [0],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22399,13 +20759,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        0
-      ],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "weekdays": [0],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22420,13 +20775,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        0
-      ],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "weekdays": [0],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22441,13 +20791,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        0
-      ],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "weekdays": [0],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22462,13 +20807,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        0
-      ],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "weekdays": [0],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22483,13 +20823,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        0
-      ],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "weekdays": [0],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22504,13 +20839,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        4
-      ],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "weekdays": [4],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22525,13 +20855,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        4
-      ],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "weekdays": [4],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22546,13 +20871,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        4
-      ],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "weekdays": [4],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22567,13 +20887,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        4
-      ],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "weekdays": [4],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22588,13 +20903,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        4
-      ],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "weekdays": [4],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22609,13 +20919,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        4
-      ],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "weekdays": [4],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22630,14 +20935,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        5,
-        6
-      ],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "weekdays": [5, 6],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22652,14 +20951,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        5,
-        6
-      ],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "weekdays": [5, 6],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22674,14 +20967,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        5,
-        6
-      ],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "weekdays": [5, 6],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22696,14 +20983,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        5,
-        6
-      ],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "weekdays": [5, 6],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22718,14 +20999,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        5,
-        6
-      ],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "weekdays": [5, 6],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22740,14 +21015,8 @@
       "animation": "idle",
       "moods": [],
       "periods": [],
-      "weekdays": [
-        5,
-        6
-      ],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "weekdays": [5, 6],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22760,18 +21029,10 @@
       "id": "situation-morning-079",
       "event": "morning",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "moods": ["tired"],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22784,18 +21045,10 @@
       "id": "situation-morning-080",
       "event": "morning",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "moods": ["tired"],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22808,18 +21061,10 @@
       "id": "situation-morning-081",
       "event": "morning",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "moods": ["tired"],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22832,18 +21077,10 @@
       "id": "situation-morning-082",
       "event": "morning",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "moods": ["tired"],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22856,18 +21093,10 @@
       "id": "situation-morning-083",
       "event": "morning",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "moods": ["tired"],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22880,18 +21109,10 @@
       "id": "situation-morning-084",
       "event": "morning",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "breakfast",
-        "quiet"
-      ],
+      "moods": ["tired"],
+      "periods": ["breakfast", "quiet"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22904,17 +21125,10 @@
       "id": "situation-night-085",
       "event": "night",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "night"
-      ],
+      "moods": ["tired"],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22927,17 +21141,10 @@
       "id": "situation-night-086",
       "event": "night",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "night"
-      ],
+      "moods": ["tired"],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22950,17 +21157,10 @@
       "id": "situation-night-087",
       "event": "night",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "night"
-      ],
+      "moods": ["tired"],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "acquaintance",
-        "familiar"
-      ],
+      "stages": ["acquaintance", "familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -22973,17 +21173,10 @@
       "id": "situation-night-088",
       "event": "night",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "night"
-      ],
+      "moods": ["tired"],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -22996,17 +21189,10 @@
       "id": "situation-night-089",
       "event": "night",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "night"
-      ],
+      "moods": ["tired"],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -23019,17 +21205,10 @@
       "id": "situation-night-090",
       "event": "night",
       "animation": "idle",
-      "moods": [
-        "tired"
-      ],
-      "periods": [
-        "night"
-      ],
+      "moods": ["tired"],
+      "periods": ["night"],
       "weekdays": [],
-      "stages": [
-        "friend",
-        "close"
-      ],
+      "stages": ["friend", "close"],
       "presentation": "short",
       "beats": [
         {
@@ -23045,9 +21224,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -23063,9 +21240,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -23081,9 +21256,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "acquaintance"
-      ],
+      "stages": ["acquaintance"],
       "presentation": "short",
       "beats": [
         {
@@ -23099,9 +21272,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -23117,9 +21288,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -23135,9 +21304,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "familiar"
-      ],
+      "stages": ["familiar"],
       "presentation": "short",
       "beats": [
         {
@@ -23153,9 +21320,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -23171,9 +21336,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -23189,9 +21352,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "friend"
-      ],
+      "stages": ["friend"],
       "presentation": "short",
       "beats": [
         {
@@ -23207,9 +21368,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -23225,9 +21384,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -23243,9 +21400,7 @@
       "moods": [],
       "periods": [],
       "weekdays": [],
-      "stages": [
-        "close"
-      ],
+      "stages": ["close"],
       "presentation": "short",
       "beats": [
         {
@@ -23262,7 +21417,12 @@
       "periods": [],
       "weekdays": [],
       "cooldown_seconds": 0,
-      "beats": [{"kind": "text", "content": "Wo ist {item} hin? Vielleicht liegt es noch hier in der Nähe."}]
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wo ist {item} hin? Vielleicht liegt es noch hier in der Nähe."
+        }
+      ]
     },
     {
       "id": "object-search-place",
@@ -23272,7 +21432,12 @@
       "periods": [],
       "weekdays": [],
       "cooldown_seconds": 0,
-      "beats": [{"kind": "text", "content": "An dieser Stelle finde ich {item} gerade nicht. Ich sehe mich kurz um."}]
+      "beats": [
+        {
+          "kind": "text",
+          "content": "An dieser Stelle finde ich {item} gerade nicht. Ich sehe mich kurz um."
+        }
+      ]
     },
     {
       "id": "object-found-nearby",
@@ -23282,7 +21447,12 @@
       "periods": [],
       "weekdays": [],
       "cooldown_seconds": 0,
-      "beats": [{"kind": "text", "content": "Hier sehe ich {item}. Damit komme ich erst mal weiter."}]
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Hier sehe ich {item}. Damit komme ich erst mal weiter."
+        }
+      ]
     },
     {
       "id": "object-found-alternative",
@@ -23292,7 +21462,12 @@
       "periods": [],
       "weekdays": [],
       "cooldown_seconds": 0,
-      "beats": [{"kind": "text", "content": "Da liegt {item}! Ich kümmere mich erst mal darum."}]
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da liegt {item}! Ich kümmere mich erst mal darum."
+        }
+      ]
     },
     {
       "id": "object-search-local",
