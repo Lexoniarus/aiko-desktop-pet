@@ -90,8 +90,27 @@ class ObjectMemory:
         assert record is not None
         self.update((replace(seen, token=record),), now=now)
         if match is not None and match.record is None:
+            sources = match.possible_sources
+            # A newly examined portion matching exactly one already confirmed
+            # missing known type is the supported reunion, not new stock.
+            # Never borrow experience for an unidentified find or ambiguous
+            # competing old portions.
+            eligible = tuple(
+                item for token in sources
+                if (item := self.get(token)) is not None
+                and item.place_status == "missing"
+                and item.identity == seen.identity and item.kind == seen.kind
+            )
+            reunion = eligible[0] if (
+                seen.identity is not None and len(sources) == 1
+                and len(eligible) == 1
+            ) else None
+            current = self._known[record]
             self._known[record] = replace(
-                self._known[record], possible_sources=match.possible_sources,
+                current, possible_sources=sources,
+                assessed=reunion.assessed if reunion is not None else current.assessed,
+                disposition=(reunion.disposition if reunion is not None
+                             else current.disposition),
             )
         visible = claimed | {record}
         for key, item in tuple(self._known.items()):

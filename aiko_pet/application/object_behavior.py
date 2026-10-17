@@ -232,7 +232,11 @@ class ObjectBehaviorCoordinator:
                 # An unidentified portion may enter Aiko's hands for her
                 # first examination; a previously identified one still
                 # requires its actual positive current offer assessment.
-                and (not known.recognized or offer_ready)
+                and (not known.recognized or (
+                    offer_ready and decide_object_use(
+                        known, self._state, ObjectUseContext.OFFER,
+                    ).consume
+                ))
                 and not facts.playback_busy and now - known.observed_at < .5
                 and any(seen.token == known.token
                         for seen in self._awareness.observations)

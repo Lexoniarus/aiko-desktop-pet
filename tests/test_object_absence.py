@@ -55,6 +55,26 @@ class ObjectAbsenceTests(unittest.TestCase):
                     self.assertEqual(self.sample(now, known=(item,),
                                                  attentive=True), ())
 
+    def test_missing_place_has_the_same_notice_distance_as_a_new_item(self):
+        # Notice and loss both use exactly notice_widths, with no extra
+        # memory-place radius removed from the detection distance.
+        boundary = replace(PLACE, x=700)
+        self.assertEqual(self.sample(0, known=(boundary,), attentive=True), ())
+        self.assertEqual(self.sample(.5, known=(boundary,), attentive=True),
+                         (boundary.token,))
+        self.sensor = ObjectAbsencePerception()
+        outside = replace(PLACE, x=701)
+        for stamp in (0, .5, 1):
+            self.assertEqual(self.sample(stamp, known=(outside,),
+                                         attentive=True), ())
+        self.assertFalse(self.sensor.checking)
+
+    def test_visible_ground_edge_is_not_excluded_from_missing_perception(self):
+        at_edge = replace(PLACE, x=0)
+        self.assertEqual(self.sample(0, known=(at_edge,), attentive=True), ())
+        self.assertEqual(self.sample(.5, known=(at_edge,), attentive=True),
+                         (at_edge.token,))
+
     def test_empty_place_evidence_is_not_borrowed_from_neighbour_or_old_location(self):
         self.sample(0, attentive=True)
         self.sample(.5, attentive=True)

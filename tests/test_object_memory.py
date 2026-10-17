@@ -129,6 +129,49 @@ class ObjectMemoryTests(unittest.TestCase):
         self.assertFalse(known.assessed)
         self.assertIsNone(known.disposition)
 
+    def test_matching_newly_identified_find_recovers_unique_missing_history(self):
+        memory = ObjectMemory()
+        old = ObjectObservation("old_apple", "apple", "food", 100, 0, True, 0)
+        memory.update((old,), now=0)
+        memory.mark_assessed(old.token)
+        memory.note_placement(old.token, x=100, height=0, now=0, deferred=True)
+        memory.mark_missing(old.token)
+        memory.update((ObjectObservation(
+            "new_find", None, None, 700, 0, True, 2,
+        ),), now=2)
+        matched = memory.observe_find(ObjectObservation(
+            "new_find", "apple", "food", 700, 80, False, 3,
+        ), now=3, record="new_find", claimed=frozenset(),
+            maximum_distance=10, preserve_record=True)
+        self.assertEqual(matched, "new_find")
+        self.assertIsNone(memory.get(old.token))
+        found = memory.get(matched)
+        assert found is not None
+        self.assertEqual(found.identity, "apple")
+        self.assertTrue(found.assessed)
+        self.assertEqual(found.disposition, "deferred")
+        self.assertEqual(found.possible_sources, ())
+
+    def test_different_identified_find_never_replaces_missing_apple(self):
+        memory = ObjectMemory()
+        memory.update((ObjectObservation(
+            "old", "apple", "food", 100, 0, True, 0,
+        ),), now=0)
+        memory.mark_assessed("old")
+        memory.mark_missing("old")
+        memory.update((ObjectObservation(
+            "new", None, None, 700, 0, True, 2,
+        ),), now=2)
+        memory.observe_find(ObjectObservation(
+            "new", "cookie", "food", 700, 80, False, 3,
+        ), now=3, record="new", claimed=frozenset(),
+            maximum_distance=10, preserve_record=True)
+        old = memory.get("old")
+        new = memory.get("new")
+        assert old is not None and new is not None
+        self.assertEqual((old.identity, old.place_status), ("apple", "missing"))
+        self.assertEqual((new.identity, new.assessed), ("cookie", False))
+
     def test_portable_snapshot_reanchors_age_without_manufacturing_offline_time(self):
         memory = ObjectMemory()
         memory.update((ObjectObservation("one", None, None, 100, 0, True, 5000),),
