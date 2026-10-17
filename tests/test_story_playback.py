@@ -109,7 +109,7 @@ class StoryPlaybackTests(unittest.TestCase):
 
     def test_reading_contact_does_not_credit_care_or_escalate_clicks(self) -> None:
         state = PetState()
-        before = vars(state).copy()
+        before = state.capture_checkpoint()
         mind = make_aiko_mind(started_at=0)
         adaptive = AdaptiveRoutine()
         contact = ContactCoordinator(
@@ -145,5 +145,5 @@ class StoryPlaybackTests(unittest.TestCase):
         click.assert_not_called()
         note.assert_not_called()
         self.assertEqual(list(mind.clicks), [])
-        self.assertEqual(vars(state), before)
+        self.assertEqual(state.capture_checkpoint(), before)
         self.assertGreater(mind.last_contact, 0)

@@ -41,7 +41,7 @@ class AffectionGuiTests(unittest.TestCase):
         self.assertEqual(len(toolbar.NEEDS), 6)
         self.assertEqual(len(toolbar.needs), 6)
         for key in toolbar.needs:
-            setattr(self.app.state, key, 100)
+            set_test_pet_values(self.app.state, **{key: 100})
         toolbar.refresh()
         self.app.root.update()
         toolbar.refresh()

@@ -12,6 +12,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue
 from tools.pet_test_support import set_test_pet_values
+from tools.pet_test_support import set_test_pet_values
 
 
 class EmoteDomainTests(unittest.TestCase):
@@ -210,7 +211,7 @@ class EmoteTkTests(unittest.TestCase):
         )
         self.assertNotIn("energy_drink", bar.buttons)
         for key in bar.needs:
-            self.pet.state.__dict__[key] = 100
+            set_test_pet_values(self.pet.state, **{key: 100})
         bar.refresh()
         self.pet.root.update()
         self.assertTrue(

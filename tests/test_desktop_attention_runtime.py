@@ -13,6 +13,7 @@ from aiko_pet.desktop.attention_runtime import (
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.attention_presenter import AttentionPresenter
+from tools.pet_test_support import set_test_pet_values
 
 
 class DesktopAttentionRuntimeTests(unittest.TestCase):
@@ -94,7 +95,7 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         self.attention.mark_spoken.assert_called_once_with(100.0)
 
     def test_idle_emote_comes_from_pet_needs(self) -> None:
-        self.attention.state.energy = 0
+        set_test_pet_values(self.attention.state, energy=0)
         self.runtime.idle_emote()
         self.presenter.show_idle_emote.assert_called_once_with("sleeps")
 

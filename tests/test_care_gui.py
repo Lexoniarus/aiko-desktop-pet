@@ -44,7 +44,7 @@ class CareGuiTests(unittest.TestCase):
             "satiety", "mood", "energy", "social", "affection", "friendship",
         })
         for key in self.toolbar.needs:
-            setattr(self.app.state, key, 100)
+            set_test_pet_values(self.app.state, **{key: 100})
         self.toolbar.refresh()
         self.app.root.update()
         for key, (canvas, rect, label) in self.toolbar.needs.items():

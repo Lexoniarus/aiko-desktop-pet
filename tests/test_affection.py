@@ -138,7 +138,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
         ):
             with self.subTest(action=action):
                 state = PetState(energy=60)
-                setattr(state, value, 100)
+                set_test_pet_values(state, **{value: 100})
                 state.interact(action, now=stamp())
                 self.assertEqual(state.friendship, 15)
 
@@ -191,7 +191,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
                 ("talk", "social"),
                 ("play", "fun"),
             ):
-                setattr(state, attribute, 20)
+                set_test_pet_values(state, **{attribute: 20})
                 set_test_pet_values(state, energy=65)
                 state.interact(action, now=start + 16 * 60 * i)
         self.assertLessEqual(state.friendship, 15 + FRIENDSHIP_DAILY_CAP + 1e-6)

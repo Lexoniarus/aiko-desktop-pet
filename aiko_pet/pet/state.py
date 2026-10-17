@@ -46,7 +46,7 @@ from .value_rules import clamp_need_value
 class PetState:
     """Sole mutable aggregate, owning one immutable PetValues record."""
 
-    __slots__ = ("_values",)
+    __slots__ = ("_values", "__dict__")
 
     def __init__(
         self,
