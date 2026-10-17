@@ -105,18 +105,14 @@ class ObjectAwareness:
         self.memory.mark_assessed(token)
         return decision
 
-    def update(
-        self, world: WorldSnapshot, state: PetState, *, now: float,
-        x: float, height: float, width: float, attentive: bool, blocked: bool,
-        held_pose: tuple[float, float] | None = None,
-        committed: str | None = None,
-        presentation: tuple[str, ItemPresentation] | None = None,
-        inspecting: str | None = None,
-    ) -> ObjectGoal | None:
+    def _collect_candidates(
+        self, world: WorldSnapshot, *,
+        held_pose: tuple[float, float] | None,
+        presentation: tuple[str, ItemPresentation] | None,
+        inspecting: str | None,
+    ) -> tuple[list[ObjectCandidate], dict[str, str], dict[str, str]]:
+        """Prepare objective sensing inputs without changing subjective memory."""
         definitions = {item.definition_id: item for item in world.definitions}
-        focused_instance = (self.instance_for_record(committed)
-                            if committed is not None else None)
-        focused_memory = self.memory.get(committed) if committed is not None else None
         candidates: list[ObjectCandidate] = []
         own_actions: dict[str, str] = {}
         held: dict[str, str] = {}
@@ -151,6 +147,23 @@ class ObjectAwareness:
                 and presentation[0] == item.instance_id
                 and item.state == ObjectState.USER_HELD else None,
             ))
+        return candidates, own_actions, held
+
+    def update(
+        self, world: WorldSnapshot, state: PetState, *, now: float,
+        x: float, height: float, width: float, attentive: bool, blocked: bool,
+        held_pose: tuple[float, float] | None = None,
+        committed: str | None = None,
+        presentation: tuple[str, ItemPresentation] | None = None,
+        inspecting: str | None = None,
+    ) -> ObjectGoal | None:
+        focused_instance = (self.instance_for_record(committed)
+                            if committed is not None else None)
+        focused_memory = self.memory.get(committed) if committed is not None else None
+        candidates, own_actions, held = self._collect_candidates(
+            world, held_pose=held_pose, presentation=presentation,
+            inspecting=inspecting,
+        )
         # Occupancy can disprove emptiness without noticing an unrelated subject.
         occupants = tuple(item for item in candidates if attentive and math.hypot(
             item.x - x, item.height - height,
