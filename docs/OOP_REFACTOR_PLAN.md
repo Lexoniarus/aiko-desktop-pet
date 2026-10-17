@@ -2,8 +2,8 @@
 
 Recorded: 17 October 2026.
 Baseline: `46ef08f` on `feature/world-foundation`.
-Status: stages 1-6 automatically verified;
-stage 7 is planned. Practical native acceptance remains open.
+Status: stages 1-7 automatically verified.
+Practical native acceptance remains open.
 No merge is authorized.
 
 This is the accepted implementation plan following the OOP review. It extends
@@ -321,7 +321,7 @@ These are behavioral guards for the state extraction, not tests of future types.
 | 4 | Move search continuation, cancellation and replacement to application. | Pure application tests cover appetite changes, blocking, alternate supply and stale search receipts; desktop executes results. | Verified |
 | 5 | Move remaining behavior coordination and connect desktop. | Absence priority, approach, waiting and gaze preserved; native reach and actual arrival retained; no desktop phase-based behavior policy. | Automatically verified; practical native acceptance open |
 | 6 | Prepare read-only pet protocols and explicit checkpoints. | Current policies accept read-only contracts; consumption preparation/recovery preserves values and live identity. | Automatically verified; practical native acceptance open |
-| 7 | Encapsulate PetState; migrate callers and architecture documentation. | External field/collection writes cannot change state; save compatibility and all transitions retain parity. | Planned |
+| 7 | Encapsulate PetState; migrate callers and architecture documentation. | External field/collection writes cannot change state; save compatibility and all transitions retain parity. | Automatically verified; practical native acceptance open |
 
 Run the affected suites after every stage and record actual results below.
 Stages 2-3, 4-5 and 6-7 each complete one of the three reviewed concerns.
@@ -535,3 +535,41 @@ above select Python 3.11 and Mypy's Python 3.11 target explicitly.
   The existing practical World checklist remains open, and draft PR #10 stays
   unmerged. Stage 7 (encapsulate live PetState and migrate external writers)
   has not been started.
+
+### Stage 7
+
+- Replaced the writable public PetState dataclass with a stable mutable
+  aggregate that owns one frozen PetValues record. Every named constructor
+  argument from the v1 codec and prior tests remains supported, with
+  independent immutable histories. Live identity and value equality persist.
+- Public scalar properties are read-only. Public meal, reward and care-history
+  reads return detached lists/dictionaries; modifying them cannot change the
+  aggregate. The internal `_change` operation commits a replacement PetValues
+  only from owner-controlled care, routine, time, game, withholding, checkpoint
+  and session-anchoring paths. There are no new public field setters.
+- Existing canonical nutrition and friendship transitions, exact-time updates,
+  explicit checkpoint preparation/restoration, persistent v1 fields and rollback
+  origins remain unchanged. A compatible `__deepcopy__` reconstructs an
+  independent owner, and the aggregate retains an instance dictionary solely
+  for existing method-spy/mock compatibility; it does not expose mutable values.
+- Read-only desktop animation, walk and sprite protocols now accept the
+  protected PetState. Isolated World smoke overrides and regression fixture
+  mutations use the test-only `tools/pet_test_support.py` checkpoint adapter,
+  preserving the identity required by desktop services. Developer media
+  captures use the real sleep command rather than direct field assignment.
+- Replaced dynamic test assignments, `vars()` comparisons and direct history
+  writes; added an explicit regression proving public assignments fail and
+  modifications of detached collection reads leave the live checkpoint intact.
+  The prior stage-six checkpoint/consumption tests and v1 persistence parity
+  still run in the full suite.
+- Code revision `a2bf97b` passed
+  [CI 39045634303](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39045634303):
+  Linux Python 3.11 **1,060 tests**, Linux Python 3.13 **1,060 tests**,
+  and the Windows setup/native-boundary matrix. Ruff 0.13.2, strict
+  Mypy 1.18.2, and Pyright 1.1.414 all passed. The test fixture
+  migrations exposed expected early red CI runs; their failures were fixed
+  before the final green revision. No separate local full Windows suite was run.
+- No gameplay, balancing, assets, JSON catalogue, persistence schema or
+  application event/timer contract was changed. This finishes the structural
+  stages 6-7 of the PetState write-boundary concern. Native manual visual/input
+  acceptance remains a separate requirement; PR #10 stays draft and unmerged.

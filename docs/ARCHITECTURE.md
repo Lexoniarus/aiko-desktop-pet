@@ -75,16 +75,21 @@ all runtime coupling between composed services.
 
 **`pet/state.py — PetState`** is the only mutable, persisted pet aggregate. Its public `interact(action, now=...)` and `advance(now, ...)` operations commit care and elapsed-time state changes. Pure policy modules in `pet/` calculate immutable decisions:
 
-Stage 6 gives NeedValues, CareValues, RoutineValues and FriendshipRecord
-read-only properties, with Sequence/Mapping history inputs. The frozen
-`pet/state_values.py::PetValues` is a complete checkpoint with immutable
-meal/reward histories and FoodState; it is distinct from the smaller
-application-facing PetReadSnapshot. PetState owns `capture_checkpoint()`,
-`prepare_item_consumption()`, `restore_checkpoint()` and
-`anchor_live_session()`. Restoration retains the live aggregate identity
-and recreates independent mutable collections. The old `restore_values()`
-delegates to checkpoints for compatibility; external field-writer migration
-belongs to stage 7 and has not happened.
+Stages 6-7 complete PetState encapsulation. NeedValues, CareValues,
+RoutineValues and FriendshipRecord expose read-only properties and
+Sequence/Mapping policy inputs. PetState retains one frozen
+`pet/state_values.py::PetValues` value, replacing it only within owned
+transitions; the existing named constructor, equality and deepcopy contracts
+remain usable. Public scalars are read-only properties, and public
+meal/reward histories are detached list/dict copies, never writable handles
+into the aggregate. The complete PetValues checkpoint is distinct from the
+smaller application-facing PetReadSnapshot. PetState owns
+`capture_checkpoint()`, `prepare_item_consumption()`,
+`restore_checkpoint()` and `anchor_live_session()`; recovery preserves
+the same live aggregate identity. Legacy `restore_values()` remains as a
+compatibility wrapper around explicit checkpoints, not a public field setter.
+Only test-only smoke/scenario helpers manipulate prepared checkpoints for
+isolated test data. Native GUI visual/input acceptance remains pending.
 
 `interact()` returns a language-neutral `CareResult` from `pet/care_result.py`.
 The one care decision owns acceptance, consumption, the chosen food and meal

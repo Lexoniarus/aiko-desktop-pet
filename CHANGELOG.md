@@ -1,3 +1,15 @@
+## Unreleased — PetState encapsulation
+
+- Complete OOP stage 7: keep one frozen PetValues inside the mutable pet
+  aggregate, expose scalars as read-only properties and detach collection reads.
+- Preserve named construction, save v1, deepcopy, equality and canonical
+  nutrition/friendship transitions without adding public setters or new gameplay.
+- Migrate GUI/walk/animation read protocols, isolated smoke setup, media
+  captures and tests to existing domain commands/checkpoints. Add regression
+  coverage for rejected outside writes and isolated history copies.
+- Complete Linux 3.11/3.13 and Windows CI; manual practical World acceptance
+  and merging PR #10 remain separate and open.
+
 ## Unreleased — Read-only pet policies and checkpoints
 
 - Convert need, care, routine and friendship policy inputs to read-only
