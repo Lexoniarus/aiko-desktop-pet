@@ -834,6 +834,9 @@ class WorldGuiTests(unittest.TestCase):
             world.cursor.release()
             self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
             self.assertEqual(world.interaction.phase, "inspect")
+            # Session save/advance can tick the need fractionally below 100.
+            # The full-capacity refusal must be evaluated at the hand decision.
+            set_test_pet_values(app.state, energy=100)
             self.finish_inspection()
             self.assertEqual(world.interaction.phase, "put_down")
             self.finish_clip("put_down")
