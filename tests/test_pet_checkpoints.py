@@ -44,6 +44,30 @@ class PetCheckpointTests(unittest.TestCase):
         self.assertEqual(checkpoint.care_types_today, ("pet",))
         self.assertEqual(checkpoint.care_last_rewards, (("pet", 123.0),))
 
+    def test_external_writes_and_history_mutation_cannot_change_live_pet(
+        self,
+    ) -> None:
+        pet = PetState(
+            satiety=45, friendship=30, meals_today=["breakfast"],
+            care_types_today=["feed"], care_last_rewards={"feed": 12.0},
+        )
+        snapshot = pet.capture_checkpoint()
+        for name, value in (
+            ("satiety", 99), ("friendship", 0), ("sleeping", True),
+            ("meals_today", []), ("care_last_rewards", {}),
+        ):
+            with self.subTest(name=name):
+                with self.assertRaises(AttributeError):
+                    setattr(pet, name, value)
+        meals = pet.meals_today
+        types = pet.care_types_today
+        rewards = pet.care_last_rewards
+        meals.append("dinner")
+        types.clear()
+        rewards["feed"] = 99.0
+        self.assertEqual(pet.capture_checkpoint(), snapshot)
+        self.assertEqual(pet.meals_today, ["breakfast"])
+
     def test_restore_keeps_identity_and_independent_histories(self) -> None:
         pet = PetState(
             satiety=42,
