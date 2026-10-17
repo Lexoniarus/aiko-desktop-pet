@@ -109,6 +109,8 @@ class ObjectConsumption:
                 tone=before.tone,
                 dialogue=before.dialogue,
             )
-            outcome = ConsumptionOutcome(True, CareOutcome(prepared.result, reaction, context))
+            outcome = ConsumptionOutcome(
+                True, CareOutcome(prepared.result, reaction, context),
+            )
             self._receipts[interaction_id] = (instance_id, memory_id, origin, outcome)
         return outcome
