@@ -24,8 +24,10 @@ class ConsumptionOriginTests(unittest.TestCase):
         pet = PetState(energy=50)
         pet.consume_item("energy_drink", ConsumptionOrigin.AUTONOMOUS, now=0)
         self.assertEqual(pet.energy, 60)
-        pet.sleeping = True
-        self.assertIsNone(pet.consume_item("apple", ConsumptionOrigin.HANDOVER, now=0))
+        sleeping = PetState(energy=pet.energy, sleeping=True)
+        self.assertIsNone(
+            sleeping.consume_item("apple", ConsumptionOrigin.HANDOVER, now=0)
+        )
 
     def test_recovery_preserves_identity_and_owned_collections(self):
         pet = PetState(satiety=50)
