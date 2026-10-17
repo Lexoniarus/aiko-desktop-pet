@@ -14,7 +14,7 @@ from ..pet.mind.object_intentions import ObjectGoal
 from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..pet.mind.object_memory import ObjectMemory
 from ..pet.mind.object_withholding import choose_withholding_response
-from ..world.contracts import ObjectState
+from ..world.contracts import ObjectInteraction, ObjectState
 from ..world.state import WorldOperationError, WorldState
 from .object_custody import ObjectCustody
 from .object_feedback import (
@@ -353,6 +353,23 @@ class ObjectInteractionCoordinator:
             self._phase.arrived = True
             self.update()
 
+    def _hand_item_conflicts(self) -> bool:
+        """A known local reunion may be a different food: inspect after grasp."""
+        if self.instance_id is None or self.memory_id is None:
+            return False
+        item = self.world.get(self.instance_id)
+        known = self._memory.get(self.memory_id)
+        if item.state != ObjectState.PET_HELD or known is None or not known.recognized:
+            return False
+        definition = next(
+            entry for entry in self.world.snapshot().definitions
+            if entry.definition_id == item.definition_id
+        )
+        actual_id = definition.food_id or definition.definition_id
+        actual_kind = ("drink" if ObjectInteraction.DRINK in definition.interactions
+                       else "food")
+        return known.identity != actual_id or known.kind != actual_kind
+
     def _pick_up(self) -> None:
         assert self.memory_id is not None
         self._episode.instance_id = self._resolve_instance(self.memory_id)
@@ -538,6 +555,11 @@ class ObjectInteractionCoordinator:
                   and state.playback.finished and cue_done):
                 if episode.queued is not None:
                     self._put_down()
+                elif self._hand_item_conflicts():
+                    # Ground position is only a remembered type hypothesis.
+                    # The acquired portion must now get a real hand inspection.
+                    episode.retrieving = False
+                    self._inspect()
                 elif episode.retrieving and self._known_supply():
                     self._begin_eating()
                 elif self._known_identity():

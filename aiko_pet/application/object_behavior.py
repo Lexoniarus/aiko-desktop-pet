@@ -151,7 +151,12 @@ class ObjectBehaviorCoordinator:
         if interaction.phase == "found":
             return Hold()
         if blocked or goal is None or self._awareness.checking_absence:
-            if interaction.approaching and interaction.focus_record is None:
+            # An active focused approach always has a focus_record. Only end
+            # it if the selected wish is truly gone, not while checking an
+            # empty remembered place or waiting for its absence reaction.
+            if (goal is None and interaction.approaching
+                    and not self._awareness.checking_absence
+                    and not self._awareness.absences):
                 interaction.interrupt(lambda: None)
             return Hold()
         known = self._awareness.memory.get(goal.token)
@@ -165,6 +170,18 @@ class ObjectBehaviorCoordinator:
         if interaction.phase == "notice":
             return Hold()
         return Approach(goal)
+
+    def arrival_unavailable(self, goal: ObjectGoal) -> None:
+        """A reached remembered place has no currently collectable binding.
+
+        Physical reach failure is not proof of missing stock. Continue through
+        the existing bounded search without claiming an observed empty place.
+        """
+        if (self._interaction.phase == "approach"
+                and self._interaction.memory_id == goal.token
+                and not self._awareness.checking_absence
+                and not self._awareness.absences):
+            self._interaction.start_search(confirmed_empty=False)
 
     def unreachable(self, *, now: float) -> None:
         """The native adapter could not find a reachable standing position."""
@@ -197,7 +214,8 @@ class ObjectBehaviorCoordinator:
 
     def can_acquire(
         self, instance: str, *, object_state: ObjectState, reachable: bool,
-        offer_ready: bool, now: float, facts: BehaviorFacts,
+        offer_ready: bool, offer_assessed: bool, now: float,
+        facts: BehaviorFacts,
     ) -> bool:
         """Combine current sensory/episode eligibility with native reach evidence."""
         if self._state.sleeping or facts.game_open:
@@ -209,10 +227,10 @@ class ObjectBehaviorCoordinator:
             return (
                 (not self._interaction.active or self._interaction.waiting_for_target
                  and self._interaction.memory_id == known.token)
-                and offer_ready
-                and decide_object_use(
-                    known, self._state, ObjectUseContext.OFFER,
-                ).consume
+                # The player can hand an unpresented portion over for
+                # identification in Aiko's hands. A completed explicit refusal
+                # still wins; an accepted preview takes the shorter path.
+                and (not offer_assessed or offer_ready)
                 and not facts.playback_busy and now - known.observed_at < .5
                 and any(seen.token == known.token
                         for seen in self._awareness.observations)

@@ -287,7 +287,8 @@ class DesktopWorldRuntime:
             )
         return self._behavior.can_acquire(
             token, object_state=item.state, reachable=reachable,
-            offer_ready=self.cursor.offer_ready, now=self.now,
+            offer_ready=self.cursor.offer_ready,
+            offer_assessed=self.cursor.offer_assessed, now=self.now,
             facts=self._behavior_facts(),
         )
 
@@ -361,6 +362,11 @@ class DesktopWorldRuntime:
             self._walk.movement.set_goal(None)
             self._capture_contact(instance)
             self.interaction.arrive()
+        else:
+            # No observed/eligible item at the remembered landing position.
+            # Do not retry this approach forever or infer a hidden World move.
+            self._walk.movement.set_goal(None)
+            self._behavior.arrival_unavailable(goal)
 
     def _show_search(self, search: SearchMotion) -> None:
         track = self._track()
