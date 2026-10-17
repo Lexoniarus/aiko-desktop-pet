@@ -310,15 +310,13 @@ class ObjectInteractionCoordinator:
         """Give a checked empty place priority, using the existing action owner."""
         if self.active and (not self.approaching or self.memory_id != known.token):
             return False
-        investigating = self.active and not known.recognized
         if not self.active:
             self._start(known.token, ConsumptionOrigin.AUTONOMOUS)
         self._episode.identity, self._episode.kind = known.identity, known.kind
         self._search_readout = replace(self._search_readout, x=known.x)
-        search_after = investigating or self._decide(
-            known.token, self._episode.use_context,
-        ).consume
-        self._set_phase(AbsencePhase(search_after))
+        # Confirmed absence comes before other discoveries even if Aiko
+        # does not currently need to consume that remembered item.
+        self._set_phase(AbsencePhase(True))
         self._stop()
         self._announce("object_place_missing")
         return True

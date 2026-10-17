@@ -267,11 +267,6 @@ class ObjectBehaviorCoordinator:
         elif blocked:
             interaction.interrupt(lambda: None)
         else:
-            remembered = self._awareness.memory.get(interaction.memory_id or "")
-            if (remembered is not None and remembered.recognized
-                    and not decide_object_use(remembered, self._state).consume):
-                interaction.interrupt(lambda: None)
-                return SearchStopped()
             progress = interaction.search_progress
             return SearchMotion(interaction.search_x, progress)
         # Found feedback may complete synchronously. Continue the same desktop

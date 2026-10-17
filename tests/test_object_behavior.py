@@ -11,7 +11,6 @@ from aiko_pet.application.object_behavior import (
     Hold,
     ObjectBehaviorCoordinator,
     SearchMotion,
-    SearchStopped,
 )
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
@@ -374,18 +373,19 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertTrue(self.interaction.searching)
         self.assertEqual(self.completed, [])
 
-    def test_changed_need_stops_once_and_preserves_learned_missing_stock(self):
+    def test_satisfied_need_does_not_abort_an_ongoing_missing_item_search(self):
         self.start_search()
         set_test_pet_values(self.state, satiety=100)
         self.assertIsInstance(self.behavior.advance_search(None, blocked=False),
-                              SearchStopped)
-        self.assertFalse(self.interaction.active)
-        self.assertEqual(self.completed, [("stock", False)])
+                              SearchMotion)
+        self.assertTrue(self.interaction.active)
+        self.assertEqual(self.completed, [])
         known = self.awareness.memory.get("stock")
         assert known is not None
         self.assertEqual((known.identity, known.place_status), ("apple", "missing"))
-        self.assertIsNone(self.behavior.advance_search(None, blocked=False))
-        self.assertEqual(self.completed, [("stock", False)])
+        self.now = 2.1
+        self.interaction.update()
+        self.assertEqual(self.interaction.phase, "missing")
         self.assertEqual(self.actions, [])
 
     def test_blocking_cancels_then_leaves_the_desktop_update_to_continue(self):

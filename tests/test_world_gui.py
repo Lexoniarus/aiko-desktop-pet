@@ -641,7 +641,7 @@ class WorldGuiTests(unittest.TestCase):
             world.update(time.monotonic())
         self.assertEqual([cue.event for cue in cues].count("object_place_missing"), 1)
 
-    def test_missing_unwanted_reserve_is_named_once_without_search(self):
+    def test_missing_unwanted_reserve_starts_one_bounded_search(self):
         world = self.app._world
         set_test_pet_values(self.app.state, energy=100)
         world.awareness.memory.update((ObjectObservation(
@@ -661,11 +661,19 @@ class WorldGuiTests(unittest.TestCase):
             world.update(time.monotonic())
         self.assertEqual(cues[0].identity, "energy_drink")
         self.complete_feedback()
+        self.assertEqual(world.interaction.phase, "search")
+        self.assertEqual(cues[1].event, "object_search")
+        self.complete_feedback()
+        world.now += 2.1
+        world.update(time.monotonic())
+        self.assertEqual(world.interaction.phase, "missing")
+        self.complete_feedback()
         self.assertFalse(world.interaction.active)
         for _ in range(6):
             world.now += 1
             world.update(time.monotonic())
-        self.assertEqual([cue.event for cue in cues], ["object_place_missing"])
+        self.assertEqual([cue.event for cue in cues].count("object_place_missing"), 1)
+        self.assertEqual([cue.event for cue in cues].count("object_search"), 1)
 
     def complete_feedback(self):
         # Component assertions skip cue dwell; runtime-flow tests use real timers.
