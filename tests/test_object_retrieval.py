@@ -167,6 +167,8 @@ class ObjectRetrievalTests(unittest.TestCase):
                              frozenset((ObjectInteraction.EAT,))),
             ObjectDefinition("energy_drink", "energy_drink", None,
                              frozenset((ObjectInteraction.DRINK,))),
+            ObjectDefinition("cookie", "cookie", "cookie",
+                             frozenset((ObjectInteraction.EAT,))),
         ))
         self.item = self.world.place_resting("apple", 100, ObjectFootprint(8, 8))
         self.memory = ObjectMemory()
@@ -224,6 +226,53 @@ class ObjectRetrievalTests(unittest.TestCase):
 
     def finish_pickup(self):
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+
+    def _replace_recalled_portion(self, food_id: str) -> str:
+        """A different portion can occupy the same remembered local place."""
+        former = self.world.get(self.item.instance_id)
+        self.world.remove(former.instance_id, expected_revision=former.revision)
+        replacement = self.world.place_resting(
+            food_id, 100, ObjectFootprint(8, 8),
+        )
+        # The subjective record is still the old place; runtime perception
+        # resolves the new concrete portion only at the time of collection.
+        self.coordinator._resolve_instance = lambda _record: replacement.instance_id
+        return replacement.instance_id
+
+    def test_recalled_apple_replaced_by_another_apple_is_valid_stock(self):
+        self.begin_retrieval()
+        new_id = self._replace_recalled_portion("apple")
+        self.grasp()
+        self.finish_pickup()
+        self.assertEqual(self.coordinator.phase, "eat")
+        self.assertEqual(self.world.get(new_id).state, ObjectState.CONSUMED)
+        self.assertNotIn("object_inspect", [cue.event for cue in self.cues])
+
+    def test_recalled_apple_replaced_by_cookie_requires_hand_inspection(self):
+        self.begin_retrieval()
+        new_id = self._replace_recalled_portion("cookie")
+        self.grasp()
+        self.finish_pickup()
+        self.assertEqual(self.world.get(new_id).state, ObjectState.PET_HELD)
+        self.assertEqual(self.coordinator.phase, "inspect")
+        self.assertEqual(self.cues[-1].event, "object_inspect")
+        self.assertIsNone(self.cues[-1].identity)
+        self.assertEqual(self.consumed, [])
+        # Identification is an actual later hand observation, not knowledge
+        # borrowed from the position or the hidden replacement definition.
+        self.memory.update((ObjectObservation(
+            self.item.instance_id, "cookie", "food", 100, 80, False, 1,
+        ),), now=1)
+        self.stamp = 1.2
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "recognize")
+        self.assertEqual(self.cues[-1].identity, "cookie")
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "decide")
+        self.assertEqual(self.consumed, [])
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "eat")
+        self.assertEqual(self.world.get(new_id).state, ObjectState.CONSUMED)
 
     def test_remembered_food_skips_inquiry_but_waits_for_full_consumption_clip(self):
         self.begin_retrieval()

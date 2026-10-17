@@ -831,6 +831,80 @@ class WorldGuiTests(unittest.TestCase):
             world.cursor.release()
             self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
 
+    def test_unpresented_unknown_item_is_accepted_and_identified_in_hands(self):
+        world = self.app._world
+        pointer_x = (self.app.settings.x or 0) + 96
+        pointer_y = world._track().ground_y - 80
+        with (
+            patch.object(self.app.root, "winfo_pointerx", return_value=pointer_x),
+            patch.object(self.app.root, "winfo_pointery", return_value=pointer_y),
+        ):
+            world.begin_carry("cookie")
+            token = world.cursor.instance_id
+            assert token is not None
+            for now in (0, .3):
+                world.now = now
+                world.update(time.monotonic())
+            known = world.awareness.known_instance(token)
+            assert known is not None
+            self.assertIsNone(known.identity)
+            self.assertFalse(world.cursor.offer_ready)
+            self.assertFalse(world.cursor.offer_assessed)
+            world.cursor.release()
+        self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
+        self.assertEqual(world.interaction.phase, "inspect")
+        self.assertAlmostEqual(self.app.state.satiety, 50, delta=1)
+        self.finish_inspection()
+        self.assertEqual(world.world.get(token).state, ObjectState.CONSUMED)
+        self.assertEqual(self.app.state.food.last_food_id, "cookie")
+
+    def test_refused_identified_offer_still_falls_instead_of_entering_hands(self):
+        world = self.app._world
+        set_test_pet_values(self.app.state, satiety=100)
+        pointer_x = (self.app.settings.x or 0) + 96
+        pointer_y = world._track().ground_y - 80
+        with (
+            patch.object(self.app.root, "winfo_pointerx", return_value=pointer_x),
+            patch.object(self.app.root, "winfo_pointery", return_value=pointer_y),
+        ):
+            world.begin_carry("cookie")
+            token = world.cursor.instance_id
+            assert token is not None
+            for now in (0, .3, .7, 1.1):
+                world.now = now
+                world.update(time.monotonic())
+            self.assertTrue(world.cursor.offer_assessed)
+            self.assertFalse(world.cursor.offer_ready)
+            world.cursor.release()
+        self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
+        self.assertFalse(world.interaction.active)
+        self.assertIsNone(self.app.state.food.last_food_id)
+
+    def test_reached_target_without_available_binding_enters_bounded_search(self):
+        world = self.app._world
+        item = world.world.place_resting(
+            "apple", world._body_x(), ObjectFootprint(8, 8),
+        )
+        cues = []
+        presenter = world._present_feedback
+
+        def capture(cue, reaction, done):
+            cues.append(cue.event)
+            presenter(cue, reaction, done)
+
+        world._present_feedback = capture
+        with patch.object(world, "_can_acquire", return_value=False):
+            self.observe_and_acknowledge()
+            self.assertEqual(world.interaction.phase, "search")
+            self.assertEqual(cues.count("object_search"), 1)
+            self.assertEqual(world.world.get(item.instance_id).state,
+                             ObjectState.RESTING)
+            for _ in range(3):
+                world.now += .1
+                world.update(time.monotonic())
+            self.assertEqual(cues.count("object_search"), 1)
+            self.assertEqual(world.interaction.search_x, item.position.x)
+
     def test_restart_restores_portion_on_ground_without_consuming_it(self):
         app = self.app
         item = app._world.world.place_resting("apple", app._world._body_x(),

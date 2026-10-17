@@ -258,10 +258,12 @@ class ObjectBehaviorTests(unittest.TestCase):
     def test_native_reach_alone_cannot_authorize_an_unseen_or_stale_offer(self):
         item, goal = self.observed_stock()
 
-        def allowed(*, reachable=True, ready=True, now=.3, facts=BehaviorFacts()):
+        def allowed(*, reachable=True, ready=True, assessed=True,
+                    now=.3, facts=BehaviorFacts()):
             return self.behavior.can_acquire(
                 item.instance_id, object_state=ObjectState.USER_HELD,
-                reachable=reachable, offer_ready=ready, now=now, facts=facts,
+                reachable=reachable, offer_ready=ready, offer_assessed=assessed,
+                now=now, facts=facts,
             )
 
         self.assertTrue(allowed())
@@ -280,6 +282,57 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(
             goal.token, self.awareness.record_for_instance(item.instance_id),
         )
+
+    def test_unpresented_unknown_cursor_portion_can_be_received_for_inspection(self):
+        item, goal = self.observed_stock()
+        known = self.awareness.memory.get(goal.token)
+        assert known is not None
+        self.awareness.memory.restore_snapshot((
+            replace(known, identity=None, kind=None, assessed=False),
+        ))
+        allowed = lambda **options: self.behavior.can_acquire(
+            item.instance_id, object_state=ObjectState.USER_HELD,
+            reachable=options.get("reachable", True),
+            offer_ready=False, offer_assessed=False,
+            now=options.get("now", self.now),
+            facts=options.get("facts", BehaviorFacts()),
+        )
+        self.assertTrue(allowed())
+        self.assertFalse(allowed(reachable=False))
+        self.assertFalse(allowed(now=self.now + .6))
+        self.assertFalse(allowed(facts=BehaviorFacts(game_open=True)))
+        self.assertFalse(allowed(facts=BehaviorFacts(playback_busy=True)))
+        self.awareness.observations = ()
+        self.assertFalse(allowed())
+        self.assertEqual(self.awareness.memory.get(goal.token).identity, None)
+
+    def test_reached_unbound_target_uses_one_search_without_inventing_absence(self):
+        goal = ObjectGoal("stock", "apple", "food", 100, 0, 0)
+        self.assertIsInstance(self.behavior.advance(goal, blocked=False), Hold)
+        self.acknowledge()
+        self.assertEqual(self.interaction.phase, "approach")
+        self.behavior.arrival_unavailable(goal)
+        self.assertEqual(self.interaction.phase, "search")
+        self.assertEqual(self.cues[-1].event, "object_search")
+        known = self.awareness.memory.get("stock")
+        assert known is not None
+        self.assertEqual(known.place_status, "remembered")
+        count = len(self.cues)
+        self.behavior.arrival_unavailable(goal)
+        self.assertEqual(len(self.cues), count)
+        self.acknowledge()
+        self.now = 2.1
+        self.interaction.update()
+        self.assertEqual(self.interaction.phase, "missing")
+        self.assertEqual([cue.event for cue in self.cues].count("object_search"), 1)
+
+    def test_inactive_wish_cancels_abandoned_approach_but_not_absence_check(self):
+        goal = ObjectGoal("stock", "apple", "food", 100, 0, 0)
+        self.behavior.advance(goal, blocked=False)
+        self.acknowledge()
+        self.assertIsInstance(self.behavior.advance(None, blocked=False), Hold)
+        self.assertFalse(self.interaction.active)
+        self.assertEqual(self.completed, [("stock", False)])
 
     def test_continuing_wish_uses_offer_threshold_and_cannot_leak_to_other_record(self):
         set_test_pet_values(self.state, satiety=80)
