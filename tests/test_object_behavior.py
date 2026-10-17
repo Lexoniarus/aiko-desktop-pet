@@ -383,6 +383,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         known = self.awareness.memory.get("stock")
         assert known is not None
         self.assertEqual((known.identity, known.place_status), ("apple", "missing"))
+        self.acknowledge()
         self.now = 2.1
         self.interaction.update()
         self.assertEqual(self.interaction.phase, "missing")
