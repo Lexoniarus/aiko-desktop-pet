@@ -451,6 +451,32 @@ class PetState:
         """Compatibility for existing callers until the stage-seven migration."""
         self.restore_checkpoint(snapshot.capture_checkpoint())
 
+    def set_test_needs(
+        self, satiety: float, energy: float, *, now: float,
+    ) -> None:
+        """Explicit, isolated smoke-profile override, never a generic setter."""
+        self._change(satiety=satiety, energy=energy, updated_at=now)
+
+    def with_test_values(
+        self, *, affection: float | None = None,
+        energy: float | None = None, social: float | None = None,
+        satiety: float | None = None,
+    ) -> PetState:
+        """Construct an independent scenario without exposing any write handle."""
+        checkpoint = self.capture_checkpoint()
+        updates: dict[str, float] = {}
+        if affection is not None:
+            updates["affection"] = affection
+        if energy is not None:
+            updates["energy"] = energy
+        if social is not None:
+            updates["social"] = social
+        if satiety is not None:
+            updates["satiety"] = satiety
+        created = PetState()
+        created.restore_checkpoint(replace(checkpoint, **updates))
+        return created
+
     def anchor_live_session(self, now: float) -> None:
         """Set the live wall-time anchor after bounded closed-time progression."""
         self._change(updated_at=now)
