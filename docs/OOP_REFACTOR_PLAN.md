@@ -2,8 +2,8 @@
 
 Recorded: 17 October 2026.
 Baseline: `46ef08f` on `feature/world-foundation`.
-Status: stages 1-5 automatically verified;
-stages 6-7 are planned. Practical native acceptance remains open.
+Status: stages 1-6 automatically verified;
+stage 7 is planned. Practical native acceptance remains open.
 No merge is authorized.
 
 This is the accepted implementation plan following the OOP review. It extends
@@ -320,7 +320,7 @@ These are behavioral guards for the state extraction, not tests of future types.
 | 3 | Introduce typed phase state. | Current readable phase API retained; invalid cross-phase data removed; callback order, cue/dwell and effect gates preserved. | Verified |
 | 4 | Move search continuation, cancellation and replacement to application. | Pure application tests cover appetite changes, blocking, alternate supply and stale search receipts; desktop executes results. | Verified |
 | 5 | Move remaining behavior coordination and connect desktop. | Absence priority, approach, waiting and gaze preserved; native reach and actual arrival retained; no desktop phase-based behavior policy. | Automatically verified; practical native acceptance open |
-| 6 | Prepare read-only pet protocols and explicit checkpoints. | Current policies accept read-only contracts; consumption preparation/recovery preserves values and live identity. | Planned |
+| 6 | Prepare read-only pet protocols and explicit checkpoints. | Current policies accept read-only contracts; consumption preparation/recovery preserves values and live identity. | Automatically verified; practical native acceptance open |
 | 7 | Encapsulate PetState; migrate callers and architecture documentation. | External field/collection writes cannot change state; save compatibility and all transitions retain parity. | Planned |
 
 Run the affected suites after every stage and record actual results below.
@@ -496,3 +496,41 @@ above select Python 3.11 and Mypy's Python 3.11 target explicitly.
   stages 4-5; practical native acceptance remains a separate outstanding gate.
 - Existing stage 1-4 work is preserved. No commit, push or merge was made during
   stage 5. Stages 6-7 remain planned and have not been started.
+
+### Stage 6
+
+- Converted NeedValues, CareValues, RoutineValues and FriendshipRecord to
+  read-only protocol properties. Policy input histories use Sequence and Mapping,
+  not mutable list/dict requirements. The existing policy implementations retain
+  their pure calculations and their mutable PetState caller remains compatible.
+- Added `pet/state_values.py`: a frozen, slotted PetValues record covering every
+  PetState field. Meal and friendship histories are captured as tuples (including
+  reward key/value pairs); the nested FoodState was already immutable.
+  PreparedItemConsumption couples one accepted canonical care result with its
+  full proposed checkpoint. No second live pet owner or save schema is introduced.
+- PetState now owns `capture_checkpoint`, `prepare_item_consumption` and
+  `restore_checkpoint`. Preparation evaluates the existing consumption policy
+  against a separate working PetState; neither accepted nor rejected preparation
+  mutates the live aggregate. Commit and rollback restore values into the same
+  live object and reconstruct independent mutable history collections.
+  `restore_values` remains as a compatibility wrapper until stage 7.
+- `ObjectConsumption.commit` uses these explicit checkpoints instead of
+  application-level deep copies of the live PetState. World, pet and memory
+  remain one recoverable transaction; care origin, receipt deduplication and
+  playback boundaries are unchanged. PetSessionRestorer uses the named
+  `anchor_live_session` operation after bounded closed-time progression.
+- Five new checkpoint tests verify full field coverage, immutable snapshots,
+  independent repeated restoration, accepted/rejected canonical preparation
+  for both origins, and live session anchoring. A new handover rollback test
+  verifies retained PetState identity and complete pet/World/memory recovery.
+  Existing persisted value and nutrition tests remain in the full suite.
+- Final code revision `f4652d9` passed [CI 39039540687](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39039540687):
+  **1,059 tests** on Linux/Python 3.11 and **1,059 tests** on Linux/Python
+  3.13; Windows setup/native-boundary checks passed. Ruff 0.13.2, strict
+  Mypy 1.18.2 and Pyright 1.1.414 passed. The first code revision exposed
+  formatting/name defects; those were corrected before final CI.
+  No separate full local Windows regression was run in this environment.
+- No asset, JSON catalogue, gameplay formula, save field or version was changed.
+  The existing practical World checklist remains open, and draft PR #10 stays
+  unmerged. Stage 7 (encapsulate live PetState and migrate external writers)
+  has not been started.

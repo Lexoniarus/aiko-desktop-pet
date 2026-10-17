@@ -75,6 +75,17 @@ all runtime coupling between composed services.
 
 **`pet/state.py — PetState`** is the only mutable, persisted pet aggregate. Its public `interact(action, now=...)` and `advance(now, ...)` operations commit care and elapsed-time state changes. Pure policy modules in `pet/` calculate immutable decisions:
 
+Stage 6 gives NeedValues, CareValues, RoutineValues and FriendshipRecord
+read-only properties, with Sequence/Mapping history inputs. The frozen
+`pet/state_values.py::PetValues` is a complete checkpoint with immutable
+meal/reward histories and FoodState; it is distinct from the smaller
+application-facing PetReadSnapshot. PetState owns `capture_checkpoint()`,
+`prepare_item_consumption()`, `restore_checkpoint()` and
+`anchor_live_session()`. Restoration retains the live aggregate identity
+and recreates independent mutable collections. The old `restore_values()`
+delegates to checkpoints for compatibility; external field-writer migration
+belongs to stage 7 and has not happened.
+
 `interact()` returns a language-neutral `CareResult` from `pet/care_result.py`.
 The one care decision owns acceptance, consumption, the chosen food and meal
 credit. Application outcomes expose that same result; they never recalculate
@@ -542,8 +553,10 @@ World and memory together, restoring both owners on failure. The interaction
 coordinator retains animation deduplication, cue receipts and phase ordering.
 `application/object_consumption.py` uses `ObjectConsumption.commit()` to apply
 canonical food/drink effects at consumption start with explicit handover/autonomous
-origin. It commits World, PetState and ObjectMemory together on the owner thread
-with recovery and deduplicates completed requests. World `consume()`
+origin. It prepares the canonical pet effect through PetState-owned immutable
+checkpoints, then commits World, PetState and ObjectMemory together on the owner
+thread, restoring the same pet object on failure and deduplicating completed
+requests. World `consume()`
 alone still cannot feed Aiko. Human-only care rewards are excluded for ground
 consumption, while canonical nutrition, repetition and food mood effects remain.
 

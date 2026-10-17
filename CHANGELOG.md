@@ -1,3 +1,14 @@
+## Unreleased — Read-only pet policies and checkpoints
+
+- Convert need, care, routine and friendship policy inputs to read-only
+  properties and Sequence/Mapping histories without changing game decisions.
+- Introduce complete immutable PetValues checkpoints, prepare consumption in the
+  pet domain and restore the same live pet identity across joint World/memory
+  rollback; retain the existing compatibility method until stage 7.
+- Give session restoration an explicit time-anchor operation and test unchanged
+  care origins, independent histories, save values and rejected preparations.
+  Stage 7 and manual native World acceptance remain open.
+
 ## Unreleased — Notice, identification and assessment
 
 - Separate noticed presence, learned type and current willingness. Unknown floor
