@@ -831,6 +831,44 @@ class WorldGuiTests(unittest.TestCase):
             world.cursor.release()
             self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
 
+    def test_unseen_cookie_replacement_does_not_get_consumed_as_known_apple(self):
+        world = self.app._world
+        world._controls_active = lambda: True
+        first = world.world.place_resting(
+            "apple", world._body_x(), ObjectFootprint(8, 8),
+        )
+        for now in (0, .3):
+            world.now = now
+            world.update(time.monotonic())
+        self.seed_previous_identification(first.instance_id, "apple", "food")
+        record = world.awareness.record_for_instance(first.instance_id)
+        assert record is not None
+        world.awareness.memory.mark_assessed(record)
+        world.world.remove(first.instance_id, expected_revision=first.revision)
+        replacement = world.world.place_resting(
+            "cookie", world._body_x(), ObjectFootprint(8, 8),
+        )
+        world.now = .4
+        world.update(time.monotonic())
+        recalled = world.awareness.known_instance(replacement.instance_id)
+        assert recalled is not None
+        self.assertEqual(recalled.identity, "apple")
+        self.assertEqual(recalled.token, record)
+        world._controls_active = lambda: False
+        world.now = .7
+        world.update(time.monotonic())
+        self.complete_feedback()
+        self.assertEqual(world.interaction.phase, "pick_up")
+        self.finish_pickup()
+        self.assertEqual(world.interaction.phase, "inspect")
+        self.assertEqual(world.world.get(replacement.instance_id).state,
+                         ObjectState.PET_HELD)
+        self.assertIsNone(self.app.state.food.last_food_id)
+        self.finish_inspection()
+        self.assertEqual(world.world.get(replacement.instance_id).state,
+                         ObjectState.CONSUMED)
+        self.assertEqual(self.app.state.food.last_food_id, "cookie")
+
     def test_unpresented_unknown_item_is_accepted_and_identified_in_hands(self):
         world = self.app._world
         pointer_x = (self.app.settings.x or 0) + 96
@@ -903,6 +941,7 @@ class WorldGuiTests(unittest.TestCase):
                 world.now += .1
                 world.update(time.monotonic())
             self.assertEqual(cues.count("object_search"), 1)
+            assert item.position is not None
             self.assertEqual(world.interaction.search_x, item.position.x)
 
     def test_restart_restores_portion_on_ground_without_consuming_it(self):

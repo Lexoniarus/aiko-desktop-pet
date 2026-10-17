@@ -556,9 +556,10 @@ class ObjectInteractionCoordinator:
                 if episode.queued is not None:
                     self._put_down()
                 elif self._hand_item_conflicts():
-                    # Ground position is only a remembered type hypothesis.
-                    # The acquired portion must now get a real hand inspection.
+                    # A local position match was not an identification of this
+                    # physical portion. Inspect in hand before naming its type.
                     episode.retrieving = False
+                    episode.identity, episode.kind = None, None
                     self._inspect()
                 elif episode.retrieving and self._known_supply():
                     self._begin_eating()
