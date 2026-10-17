@@ -494,6 +494,83 @@ class ObjectInteractionCoordinator:
             state.playback.finished = True
         self.update()
 
+    def _complete_pickup(self, episode: InteractionEpisode, record: str) -> None:
+        """Choose the next hand phase after confirmed pickup playback."""
+        if episode.queued is not None:
+            self._put_down()
+        elif (episode.instance_id is not None
+              and self._hand_type_conflicts(record, episode.instance_id)):
+            # A local type hypothesis cannot skip safety-critical inspection.
+            episode.retrieving = False
+            episode.identity, episode.kind = None, None
+            self._inspect()
+        elif episode.retrieving and self._known_supply():
+            self._begin_eating()
+        elif self._known_identity():
+            self._consider_use()
+        else:
+            episode.retrieving = False
+            self._inspect()
+
+    def _advance_waiting(self, state: WaitingPhase, record: str) -> None:
+        """Reappraise a held offer using the same episode and feedback ordering."""
+        appraisal = state.appraisal
+        if state.name in ("await_return", "await_settle"):
+            if appraisal.latest is None:
+                return
+            known = self._memory.get(record)
+            if (known is None or not known.recognized
+                    or (self._known_identity()
+                        and appraisal.decision == appraisal.latest)):
+                return
+            already_known = self._known_identity()
+            self._episode.identity, self._episode.kind = known.identity, known.kind
+            appraisal.decision = appraisal.latest
+            self._set_phase(WaitingPhase(
+                "decide_offer" if already_known else "recognize_offer", appraisal,
+            ))
+            self._announce(
+                ("object_offer" if appraisal.decision.consume
+                 else "object_refuse") if already_known else "object_recognized",
+            )
+        elif state.name == "recognize_offer":
+            if appraisal.latest is not None:
+                appraisal.decision = appraisal.latest
+            self._set_phase(WaitingPhase("decide_offer", appraisal))
+            self._announce("object_offer" if appraisal.decision.consume
+                           else "object_refuse")
+        elif state.name == "decide_offer":
+            if (appraisal.latest is not None
+                    and appraisal.latest != appraisal.decision):
+                appraisal.decision = appraisal.latest
+                self._set_phase(WaitingPhase("decide_offer", appraisal))
+                self._announce("object_offer" if appraisal.decision.consume
+                               else "object_refuse")
+            elif appraisal.decision.consume:
+                waiting = WaitingPhase("await_return", appraisal)
+                self._set_phase(waiting)
+                waiting.feedback.completed = True
+            else:
+                self._finish(False)
+                self._stop()
+
+    def _complete_use_animation(
+        self, state: AnimationPhase | PutDownPhase, episode: InteractionEpisode,
+    ) -> None:
+        """Finish eating or safe put-down separately from phase dispatch."""
+        if isinstance(state, PutDownPhase):
+            queued, episode.queued = episode.queued, None
+            self._finish(False)
+            self._stop()
+            if queued is not None:
+                queued()
+        else:
+            self._set_phase(CuePhase("finish"))
+            self._announce(
+                "object_finished_drink" if episode.kind == "drink"
+                else "object_finished_food",
+            )
+
     def update(self) -> None:
         """Advance only confirmed prerequisites; injected active time owns dwell."""
         if isinstance(self._phase, IdlePhase):
@@ -532,22 +609,7 @@ class ObjectInteractionCoordinator:
                 self._pick_up()
             elif (isinstance(state, AnimationPhase) and state.name == "pick_up"
                   and state.playback.finished and cue_done):
-                if episode.queued is not None:
-                    self._put_down()
-                elif (episode.instance_id is not None
-                      and self._hand_type_conflicts(token, episode.instance_id)):
-                    # A local position match was not an identification of this
-                    # physical portion. Inspect in hand before naming its type.
-                    episode.retrieving = False
-                    episode.identity, episode.kind = None, None
-                    self._inspect()
-                elif episode.retrieving and self._known_supply():
-                    self._begin_eating()
-                elif self._known_identity():
-                    self._consider_use()
-                else:
-                    episode.retrieving = False
-                    self._inspect()
+                self._complete_pickup(episode, token)
             elif (isinstance(state, InspectionPhase) and cue_done
                   and self._now() - state.started_at >= self._inspection_seconds):
                 known = self._memory.get(token)
@@ -561,49 +623,8 @@ class ObjectInteractionCoordinator:
             elif (isinstance(state, CuePhase) and state.name == "recognize"
                   and cue_done):
                 self._consider_use()
-            elif (isinstance(state, WaitingPhase)
-                  and state.name in ("await_return", "await_settle") and cue_done
-                  and state.appraisal.latest is not None):
-                known = self._memory.get(token)
-                appraisal = state.appraisal
-                if known is not None and known.recognized and (
-                    not self._known_identity() or appraisal.decision != appraisal.latest
-                ):
-                    recognized = self._known_identity()
-                    episode.identity, episode.kind = known.identity, known.kind
-                    assert appraisal.latest is not None
-                    appraisal.decision = appraisal.latest
-                    self._set_phase(WaitingPhase(
-                        "decide_offer" if recognized else "recognize_offer", appraisal,
-                    ))
-                    self._announce(
-                        ("object_offer" if appraisal.decision.consume
-                         else "object_refuse") if recognized else "object_recognized",
-                    )
-            elif (isinstance(state, WaitingPhase) and state.name == "recognize_offer"
-                  and cue_done):
-                appraisal = state.appraisal
-                if appraisal.latest is not None:
-                    appraisal.decision = appraisal.latest
-                self._set_phase(WaitingPhase("decide_offer", appraisal))
-                self._announce("object_offer" if appraisal.decision.consume
-                               else "object_refuse")
-            elif (isinstance(state, WaitingPhase) and state.name == "decide_offer"
-                  and cue_done):
-                appraisal = state.appraisal
-                if (appraisal.latest is not None
-                        and appraisal.latest != appraisal.decision):
-                    appraisal.decision = appraisal.latest
-                    self._set_phase(WaitingPhase("decide_offer", appraisal))
-                    self._announce("object_offer" if appraisal.decision.consume
-                                   else "object_refuse")
-                elif appraisal.decision.consume:
-                    waiting = WaitingPhase("await_return", appraisal)
-                    self._set_phase(waiting)
-                    waiting.feedback.completed = True
-                else:
-                    self._finish(False)
-                    self._stop()
+            elif isinstance(state, WaitingPhase) and cue_done:
+                self._advance_waiting(state, token)
             elif isinstance(state, CuePhase) and state.name == "handover" and cue_done:
                 self._begin_eating()
             elif isinstance(state, DecisionPhase) and cue_done:
@@ -616,18 +637,7 @@ class ObjectInteractionCoordinator:
             elif (isinstance(state, (AnimationPhase, PutDownPhase))
                   and state.name in ("eat", "put_down")
                   and state.playback.finished and cue_done):
-                if isinstance(state, PutDownPhase):
-                    queued, episode.queued = episode.queued, None
-                    self._finish(False)
-                    self._stop()
-                    if queued is not None:
-                        queued()
-                else:
-                    self._set_phase(CuePhase("finish"))
-                    self._announce(
-                        "object_finished_drink" if episode.kind == "drink"
-                        else "object_finished_food",
-                    )
+                self._complete_use_animation(state, episode)
             elif isinstance(state, CuePhase) and state.name == "finish" and cue_done:
                 self._finish(True)
                 self._stop()
