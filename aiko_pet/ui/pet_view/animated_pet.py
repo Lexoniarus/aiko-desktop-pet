@@ -28,10 +28,17 @@ from .rest_pose_renderer import RestPoseRenderer
 class CareVisuals(Protocol):
     """A read-only view of needs used by sprite presentation."""
 
-    energy: float
-    mood: float
-    satiety: float
-    sleeping: bool
+    @property
+    def energy(self) -> float: ...
+
+    @property
+    def mood(self) -> float: ...
+
+    @property
+    def satiety(self) -> float: ...
+
+    @property
+    def sleeping(self) -> bool: ...
 
 
 class CharacterSettings(Protocol):

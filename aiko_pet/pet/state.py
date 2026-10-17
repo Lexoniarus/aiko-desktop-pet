@@ -464,17 +464,14 @@ class PetState:
     ) -> PetState:
         """Construct an independent scenario without exposing any write handle."""
         checkpoint = self.capture_checkpoint()
-        updates: dict[str, float] = {}
-        if affection is not None:
-            updates["affection"] = affection
-        if energy is not None:
-            updates["energy"] = energy
-        if social is not None:
-            updates["social"] = social
-        if satiety is not None:
-            updates["satiety"] = satiety
         created = PetState()
-        created.restore_checkpoint(replace(checkpoint, **updates))
+        created.restore_checkpoint(replace(
+            checkpoint,
+            affection=checkpoint.affection if affection is None else affection,
+            energy=checkpoint.energy if energy is None else energy,
+            social=checkpoint.social if social is None else social,
+            satiety=checkpoint.satiety if satiety is None else satiety,
+        ))
         return created
 
     def anchor_live_session(self, now: float) -> None:

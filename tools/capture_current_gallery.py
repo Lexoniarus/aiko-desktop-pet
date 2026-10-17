@@ -71,7 +71,8 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     """
     # This is a temporary media-only state. Clear previous scripted care
     # deadlines so they cannot mask the passive idle director.
-    pet.state.sleeping = False
+    if pet.state.sleeping:
+        pet.state.interact("sleep")
     pet._action_playback.until = 0.0
     pet._action_playback.clip_id = "idle"
     pet._reaction_player.cancel()
@@ -159,7 +160,8 @@ def capture_ui() -> None:
             pet.settings.auto_walk = False
             pet.settings.auto_routine = False
             pet.settings.observe_computer = False
-            pet.state.sleeping = False
+            if pet.state.sleeping:
+                pet.state.interact("sleep")
             if pet._runtime.scheduled_greeting is not None:
                 pet.root.after_cancel(pet._runtime.scheduled_greeting)
                 pet._runtime.scheduled_greeting = None

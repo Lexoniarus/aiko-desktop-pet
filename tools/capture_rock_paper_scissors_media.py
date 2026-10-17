@@ -67,7 +67,8 @@ def record_media() -> None:
         try:
             pet.settings.spontaneous_talk = False
             pet.settings.auto_routine = False
-            pet.state.sleeping = False
+            if pet.state.sleeping:
+                pet.state.interact("sleep")
             if pet._runtime.scheduled_greeting is not None:
                 pet.root.after_cancel(pet._runtime.scheduled_greeting)
                 pet._runtime.scheduled_greeting = None

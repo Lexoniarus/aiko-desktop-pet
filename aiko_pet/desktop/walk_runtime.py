@@ -67,8 +67,11 @@ class WalkSettings(Protocol):
 
 
 class WalkNeeds(Protocol):
-    energy: float
-    sleeping: bool
+    @property
+    def energy(self) -> float: ...
+
+    @property
+    def sleeping(self) -> bool: ...
 
 
 @dataclass(frozen=True, slots=True)
