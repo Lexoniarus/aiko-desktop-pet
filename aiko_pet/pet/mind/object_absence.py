@@ -46,9 +46,8 @@ class ObjectAbsencePerception:
         for item in known if attentive else ():
             if (not item.resting or item.place_status != "remembered"
                     or focused is not None and item.token != focused
-                    or not ground_bounds[0] <= item.x - reach
-                    or not item.x + reach <= ground_bounds[1]
-                    or math.hypot(item.x - x, item.height - height) + reach > radius
+                    or not ground_bounds[0] <= item.x <= ground_bounds[1]
+                    or math.hypot(item.x - x, item.height - height) > radius
                     or any(math.hypot(candidate.x - item.x,
                                       candidate.height - item.height) <= reach
                            for candidate in occupants)):

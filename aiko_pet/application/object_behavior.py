@@ -217,8 +217,7 @@ class ObjectBehaviorCoordinator:
 
     def can_acquire(
         self, instance: str, *, object_state: ObjectState, reachable: bool,
-        offer_ready: bool, offer_assessed: bool, now: float,
-        facts: BehaviorFacts,
+        offer_ready: bool, now: float, facts: BehaviorFacts,
     ) -> bool:
         """Combine current sensory/episode eligibility with native reach evidence."""
         if self._state.sleeping or facts.game_open:
@@ -230,10 +229,10 @@ class ObjectBehaviorCoordinator:
             return (
                 (not self._interaction.active or self._interaction.waiting_for_target
                  and self._interaction.memory_id == known.token)
-                # The player can hand an unpresented portion over for
-                # identification in Aiko's hands. A completed explicit refusal
-                # still wins; an accepted preview takes the shorter path.
-                and (not offer_assessed or offer_ready)
+                # An unidentified portion may enter Aiko's hands for her
+                # first examination; a previously identified one still
+                # requires its actual positive current offer assessment.
+                and (not known.recognized or offer_ready)
                 and not facts.playback_busy and now - known.observed_at < .5
                 and any(seen.token == known.token
                         for seen in self._awareness.observations)
@@ -257,7 +256,9 @@ class ObjectBehaviorCoordinator:
             return None
         known = self._awareness.memory.get(goal.token) if goal is not None else None
         if (goal is not None and goal.token != interaction.memory_id
-                and decide_object_use(known, self._state).consume):
+                and known is not None
+                and (goal.purpose == "investigate"
+                     or decide_object_use(known, self._state).consume)):
             interaction.found(goal)
         elif blocked:
             interaction.interrupt(lambda: None)

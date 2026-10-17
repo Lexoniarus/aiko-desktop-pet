@@ -258,11 +258,11 @@ class ObjectBehaviorTests(unittest.TestCase):
     def test_native_reach_alone_cannot_authorize_an_unseen_or_stale_offer(self):
         item, goal = self.observed_stock()
 
-        def allowed(*, reachable=True, ready=True, assessed=True,
+        def allowed(*, reachable=True, ready=True,
                     now=.3, facts=BehaviorFacts()):
             return self.behavior.can_acquire(
                 item.instance_id, object_state=ObjectState.USER_HELD,
-                reachable=reachable, offer_ready=ready, offer_assessed=assessed,
+                reachable=reachable, offer_ready=ready,
                 now=now, facts=facts,
             )
 
@@ -290,12 +290,12 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.awareness.memory.restore_snapshot((
             replace(known, identity=None, kind=None, assessed=False),
         ))
+
         def allowed(**options):
             return self.behavior.can_acquire(
                 item.instance_id, object_state=ObjectState.USER_HELD,
                 reachable=options.get("reachable", True),
-                offer_ready=False, offer_assessed=False,
-                now=options.get("now", self.now),
+                offer_ready=False, now=options.get("now", self.now),
                 facts=options.get("facts", BehaviorFacts()),
             )
         self.assertTrue(allowed())

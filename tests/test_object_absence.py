@@ -46,7 +46,7 @@ class ObjectAbsenceTests(unittest.TestCase):
                 self.assertEqual(self.sample(now + .5, attentive=True), (PLACE.token,))
 
     def test_hidden_boundary_missing_and_own_custody_places_supply_no_loss(self):
-        for item in (replace(PLACE, x=1400), replace(PLACE, x=0),
+        for item in (replace(PLACE, x=1400), replace(PLACE, x=1501),
                      replace(PLACE, resting=False),
                      replace(PLACE, place_status="missing")):
             with self.subTest(item=item):

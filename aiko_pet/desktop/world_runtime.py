@@ -287,8 +287,7 @@ class DesktopWorldRuntime:
             )
         return self._behavior.can_acquire(
             token, object_state=item.state, reachable=reachable,
-            offer_ready=self.cursor.offer_ready,
-            offer_assessed=self.cursor.offer_assessed, now=self.now,
+            offer_ready=self.cursor.offer_ready, now=self.now,
             facts=self._behavior_facts(),
         )
 
