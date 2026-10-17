@@ -45,8 +45,7 @@ def prepare_session(
         )
     if needs is not None:
         loaded = store.load_session()
-        loaded.state.satiety, loaded.state.energy = SCENARIOS[needs]
-        loaded.state.updated_at = time.time()
+        loaded.state.set_test_needs(*SCENARIOS[needs], now=time.time())
         store.save(loaded.state, loaded.settings, adaptive=loaded.adaptive_memory,
                    world=loaded.world, object_memory=loaded.object_memory)
     return store
