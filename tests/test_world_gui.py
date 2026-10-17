@@ -609,7 +609,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertIsNone(world.awareness.intentions.goal)
         self.assertIsNone(world._visual.object_target)
 
-    def test_unknown_absence_precedes_new_discovery_without_forced_search(self):
+    def test_unknown_absence_starts_search_before_new_discovery(self):
         world = self.app._world
         world.awareness.memory.update((ObjectObservation(
             "earlier", None, None, world._body_x() - 80, 0, True, 0,
@@ -634,12 +634,13 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(cues[0].event, "object_place_missing")
         self.assertIsNone(cues[0].identity)
         self.complete_feedback()
-        self.assertEqual(cues[1].event, "object_notice")
-        self.assertNotIn("object_search", [cue.event for cue in cues])
+        self.assertEqual(cues[1].event, "object_search")
+        self.assertNotIn("object_notice", [cue.event for cue in cues[:2]])
         for _ in range(5):
             world.now += .25
             world.update(time.monotonic())
         self.assertEqual([cue.event for cue in cues].count("object_place_missing"), 1)
+        self.assertEqual([cue.event for cue in cues].count("object_search"), 1)
 
     def test_missing_unwanted_reserve_starts_one_bounded_search(self):
         world = self.app._world
