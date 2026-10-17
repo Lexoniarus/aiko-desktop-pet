@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Behavior coordination uses real application owners without a desktop or Tk."""
 
 import unittest
@@ -162,7 +163,7 @@ class ObjectBehaviorTests(unittest.TestCase):
             carrying=True, controls_active=True,
         )).blocked)
         self.assertTrue(self.observe(facts=BehaviorFacts(game_open=True)).blocked)
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         self.assertTrue(self.observe().blocked)
 
     def test_blocked_nearest_unassessed_observation_keeps_gaze_without_episode(self):
@@ -269,9 +270,9 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertFalse(allowed(now=.8))
         self.assertFalse(allowed(facts=BehaviorFacts(playback_busy=True)))
         self.assertFalse(allowed(facts=BehaviorFacts(game_open=True)))
-        self.state.satiety = 100
+        set_test_pet_values(self.state, satiety=100)
         self.assertFalse(allowed())
-        self.state.satiety = 50
+        set_test_pet_values(self.state, satiety=50)
         self.awareness.observations = ()
         self.assertFalse(allowed())
         self.assertEqual(self.actions, [])
@@ -281,7 +282,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         )
 
     def test_continuing_wish_uses_offer_threshold_and_cannot_leak_to_other_record(self):
-        self.state.satiety = 80
+        set_test_pet_values(self.state, satiety=80)
         goal = self.awareness.intentions.assess_offer(
             self.awareness.memory.snapshot()[0], self.state,
         )
@@ -310,7 +311,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.actions, [])
 
     def test_unknown_stock_is_not_cancelled_by_satisfied_needs(self):
-        self.state.satiety = 100
+        set_test_pet_values(self.state, satiety=100)
         self.start_search(identified=False)
         self.assertIsInstance(self.behavior.advance_search(None, blocked=False),
                               SearchMotion)
@@ -319,7 +320,7 @@ class ObjectBehaviorTests(unittest.TestCase):
 
     def test_changed_need_stops_once_and_preserves_learned_missing_stock(self):
         self.start_search()
-        self.state.satiety = 100
+        set_test_pet_values(self.state, satiety=100)
         self.assertIsInstance(self.behavior.advance_search(None, blocked=False),
                               SearchStopped)
         self.assertFalse(self.interaction.active)

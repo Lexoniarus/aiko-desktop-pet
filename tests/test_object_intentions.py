@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Needs create stable goals; small changes and absent truth cannot hijack them."""
 
 import unittest
@@ -17,7 +18,7 @@ class ObjectIntentionTests(unittest.TestCase):
         pet = PetState(satiety=76)
         held = replace(APPLE, resting=False)
         planner.assess_offer(held, pet)
-        pet.satiety = 100
+        set_test_pet_values(pet, satiety=100)
         self.assertFalse(planner.assess_offer(held, pet).consume)
         goal = planner.choose((held,), pet, x=0, now=1, blocked=True,
                               committed=held.token)
@@ -42,9 +43,9 @@ class ObjectIntentionTests(unittest.TestCase):
         assert goal is not None
         self.assertEqual(goal.use_context, ObjectUseContext.CONTINUING_WISH)
         self.assertEqual(goal.purpose, "consume")
-        pet.satiety = 100
+        set_test_pet_values(pet, satiety=100)
         self.assertIsNone(planner.choose((APPLE,), pet, x=0, now=3, changed=True))
-        pet.satiety = 76
+        set_test_pet_values(pet, satiety=76)
         planner.assess_offer(held, pet)
         self.assertIsNone(planner.choose((replace(APPLE, identity=None),), pet,
                                          x=0, now=4, blocked=True, changed=True))
@@ -83,7 +84,7 @@ class ObjectIntentionTests(unittest.TestCase):
         planner = ObjectIntentions()
         pet = PetState(satiety=90)
         self.assertIsNone(planner.choose((APPLE,), pet, x=0, now=0))
-        pet.satiety = 55
+        set_test_pet_values(pet, satiety=55)
         goal = planner.choose((APPLE,), pet, x=0, now=2)
         assert goal is not None
         nearer = replace(APPLE, token="two", x=10)
@@ -128,7 +129,7 @@ class ObjectIntentionTests(unittest.TestCase):
         self.assertEqual(goal.purpose, "investigate")
         planner.cancel(1)
         self.assertIsNone(planner.choose((APPLE,), pet, x=0, now=20))
-        pet.satiety = 69
+        set_test_pet_values(pet, satiety=69)
         goal = planner.choose((APPLE,), pet, x=0, now=21)
         assert goal is not None
         self.assertEqual(goal.purpose, "consume")

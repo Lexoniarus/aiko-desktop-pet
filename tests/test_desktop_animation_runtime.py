@@ -1,6 +1,7 @@
 """Desktop animation intent is selected without constructing Tk sprites."""
 
 from __future__ import annotations
+from tools.pet_test_support import set_test_pet_values
 
 import unittest
 from typing import cast
@@ -54,7 +55,7 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         )
 
     def test_game_one_shot_preempts_sleep_and_hardware(self) -> None:
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         self.assertEqual(
             self.choose(game_mode=True, active_action="jumping"),
             RenderDecision(SpriteSelection("jumping")),
@@ -63,7 +64,7 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.visual.observe.assert_not_called()
 
     def test_sleep_interrupts_motion_and_clears_active_action(self) -> None:
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         self.assertEqual(
             self.choose(active_action="eat"),
             RenderDecision(SpriteSelection("sleep"), clear_action=True),

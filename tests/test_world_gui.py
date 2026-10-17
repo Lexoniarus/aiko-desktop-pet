@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Real Tk application joins food perception, movement and pickup effects."""
 
 import tempfile
@@ -36,7 +37,7 @@ class WorldGuiTests(unittest.TestCase):
                 app._animated.reload_sprites()
                 world._sync_geometry()
                 app._place_x(world._track().left + 40)
-                app.state.energy = energy
+                set_test_pet_values(app.state, energy=energy)
                 start = world.now
                 item = world.world.place_resting(
                     "energy_drink", world._body_x() + 200 * scale,
@@ -61,7 +62,7 @@ class WorldGuiTests(unittest.TestCase):
                     )),
                 ):
                     world.begin_relocate(item.instance_id, item.revision)
-                    app.state.energy = energy
+                    set_test_pet_values(app.state, energy=energy)
                     self.assertEqual(world.interaction.phase, "await_return")
                     for offset in (.3, .6, .9, 1.2, 1.4):
                         world.now = start + offset
@@ -91,7 +92,7 @@ class WorldGuiTests(unittest.TestCase):
                         self.assertFalse(world.interaction.active)
                         friendship = app.state.friendship
                         for _ in range(100):
-                            app.state.energy = 100
+                            set_test_pet_values(app.state, energy=100)
                             world.now += .25
                             world.update(time.monotonic())
                             self.complete_feedback()
@@ -221,7 +222,7 @@ class WorldGuiTests(unittest.TestCase):
                 app._animated.reload_sprites()
                 world._sync_geometry()
                 app._place_x(world._track().left + 40)
-                app.state.satiety, app.state.energy = 76, 65
+                set_test_pet_values(app.state, satiety=76, energy=65)
                 friendship = app.state.friendship
                 x = world._track().left + int(world._body_x())
                 with (
@@ -291,17 +292,17 @@ class WorldGuiTests(unittest.TestCase):
             (self.app.settings.x or 0) + 96
         )), patch.object(self.app.root, "winfo_pointery",
                          return_value=world._track().ground_y - 80):
-            self.app.state.energy = 40
+            set_test_pet_values(self.app.state, energy=40)
             world.begin_carry("energy_drink")
             for stamp in (0, .3, .7, 1.1):
                 world.now = stamp
                 world.update(time.monotonic())
             old, stale = callbacks[-1]
-            self.app.state.energy = 100
+            set_test_pet_values(self.app.state, energy=100)
             world.update(time.monotonic())
             stale(FeedbackReceipt(old.key, True))
             self.assertFalse(world.cursor.offer_ready)
-            self.app.state.energy = 40
+            set_test_pet_values(self.app.state, energy=40)
             world.update(time.monotonic())
             current, done = callbacks[-1]
             stale(FeedbackReceipt(old.key, False))
@@ -328,8 +329,8 @@ class WorldGuiTests(unittest.TestCase):
         self.app.settings.auto_routine = False
         self.app.settings.observe_computer = False
         self.app.settings.auto_walk = False
-        self.app.state.sleeping = False
-        self.app.state.satiety = 50
+        set_test_pet_values(self.app.state, sleeping=False)
+        set_test_pet_values(self.app.state, satiety=50)
         self.app._action_playback.cancel_at(time.monotonic())
         world._controls_active = lambda: False
 
@@ -379,7 +380,7 @@ class WorldGuiTests(unittest.TestCase):
             present(cue, reaction, done)
 
         world._present_feedback = capture
-        self.app.state.energy = 55
+        set_test_pet_values(self.app.state, energy=55)
         world.now += 1.1
         world.update(time.monotonic())
         self.assertEqual(cues[0].event, "object_recall_saved_drink")
@@ -472,7 +473,7 @@ class WorldGuiTests(unittest.TestCase):
                 self.app._animated.reload_sprites()
                 world._sync_geometry()
                 self.app._place_x(world._track().left + 40)
-                self.app.state.satiety = 50
+                set_test_pet_values(self.app.state, satiety=50)
                 item = world.world.place_resting(
                     "apple", world._body_x() + 70 * scale, ObjectFootprint(8, 8),
                 )
@@ -564,7 +565,7 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_absent_remembered_instance_requires_attentive_local_search(self):
         world = self.app._world
-        self.app.state.energy = 65
+        set_test_pet_values(self.app.state, energy=65)
         item = world.world.place_resting("energy_drink", world._body_x(),
                                          ObjectFootprint(12, 12))
         self.observe_and_acknowledge()
@@ -579,7 +580,7 @@ class WorldGuiTests(unittest.TestCase):
         self.restart()
         world = self.app._world
         self.assertIsNotNone(world.awareness.memory.get(record))
-        self.app.state.energy = 55
+        set_test_pet_values(self.app.state, energy=55)
         world.update(time.monotonic())
         self.complete_feedback()
         self.assertEqual(world.interaction.phase, "idle")
@@ -642,7 +643,7 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_missing_unwanted_reserve_is_named_once_without_search(self):
         world = self.app._world
-        self.app.state.energy = 100
+        set_test_pet_values(self.app.state, energy=100)
         world.awareness.memory.update((ObjectObservation(
             "reserve", "energy_drink", "drink", world._body_x(), 0, True, 0,
         ),), now=0)
@@ -727,7 +728,7 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_deferred_known_drink_releases_gaze_and_returns_only_when_wanted(self):
         world = self.app._world
-        self.app.state.energy = 65
+        set_test_pet_values(self.app.state, energy=65)
         world.world.place_resting("energy_drink", world._body_x(),
                                   ObjectFootprint(12, 12))
         self.observe_and_acknowledge()
@@ -747,7 +748,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(world._visual.gaze_direction(
             (round(eyes_x + 200), round(eyes_y)),
         ), 4)
-        self.app.state.energy = 55
+        set_test_pet_values(self.app.state, energy=55)
         world.now += 11
         world.update(time.monotonic())
         goal = world.awareness.intentions.goal
@@ -766,7 +767,7 @@ class WorldGuiTests(unittest.TestCase):
         self.complete_feedback()
         self.assertFalse(world.interaction.active)
         consumed_at = world.now
-        self.app.state.energy = 66
+        set_test_pet_values(self.app.state, energy=66)
         cues = []
         present = world._present_feedback
 
@@ -800,7 +801,7 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_recognized_release_hands_over_drink_and_full_release_falls(self):
         app, world = self.app, self.app._world
-        app.state.energy = 40
+        set_test_pet_values(app.state, energy=40)
         x = (app.settings.x or 0) + 96
         y = world._track().ground_y - 80
         with patch.object(app.root, "winfo_pointerx", return_value=x), patch.object(
@@ -821,7 +822,7 @@ class WorldGuiTests(unittest.TestCase):
             world.begin_carry("energy_drink")
             # Starting a gesture saves through the shared active-time owner.
             # Establish the exact capacity boundary after that time advance.
-            app.state.energy = 100
+            set_test_pet_values(app.state, energy=100)
             for now in (1, 1.3, 1.7):
                 world.now = now
                 world.update(time.monotonic())
@@ -1002,7 +1003,7 @@ class WorldGuiTests(unittest.TestCase):
         app._window.resize()
         app._animated.reload_sprites()
         world._sync_geometry()
-        app.state.energy = 65
+        set_test_pet_values(app.state, energy=65)
         track = world._track()
         boundary = track.left if side == "left" else track.right - world.width
         app._place_x(boundary + (120 * scale if side == "left" else -120 * scale))
@@ -1097,7 +1098,7 @@ class WorldGuiTests(unittest.TestCase):
     def test_wanted_placed_drink_consumes_only_after_grasp_and_inspection(self):
         item = self._reach_placed_drink(2, "right")
         world = self.app._world
-        self.app.state.energy = 50
+        set_test_pet_values(self.app.state, energy=50)
         self.finish_pickup()
         self.assertEqual(world.interaction.phase, "inspect")
         self.assertEqual(world.world.get(item.instance_id).state, ObjectState.PET_HELD)

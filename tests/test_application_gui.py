@@ -1,6 +1,7 @@
 """Tk-boundary tests for care command dispatch and queued notifications."""
 
 from __future__ import annotations
+from tools.pet_test_support import set_test_pet_values
 
 import tempfile
 import time
@@ -38,7 +39,7 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.pet._hover.close_toolbar()
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False
-        self.pet.state.sleeping = False
+        set_test_pet_values(self.pet.state, sleeping=False)
         if self.pet._runtime.scheduled_greeting is not None:
             self.pet.root.after_cancel(self.pet._runtime.scheduled_greeting)
             self.pet._runtime.scheduled_greeting = None
@@ -59,7 +60,7 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         return str(children[0].cget("text"))
 
     def test_care_passes_through_application_controller(self) -> None:
-        self.pet.state.affection = 10
+        set_test_pet_values(self.pet.state, affection=10)
         with patch.object(
             self.pet.application._care._clock, "consume", return_value=0.0,
         ), patch.object(
@@ -139,10 +140,10 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.pet.application.dispatch(
             NotificationCommand(self._notice("browser-2")),
         )
-        self.pet.state.sleeping = True
+        set_test_pet_values(self.pet.state, sleeping=True)
         self.pet._tick()
         self.assertIsNone(self._bubble_text())
-        self.pet.state.sleeping = False
+        set_test_pet_values(self.pet.state, sleeping=False)
         self.pet._attention.last_spoken = time.monotonic() - 10
         self.pet._tick()
         self.assertEqual(self._bubble_text(), "Kalender: Termin gleich.")

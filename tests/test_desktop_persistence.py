@@ -1,6 +1,7 @@
 """Headless persistence tests for unchanged state format and autosave timing."""
 
 from __future__ import annotations
+from tools.pet_test_support import set_test_pet_values
 
 import json
 import tempfile
@@ -41,7 +42,7 @@ class DesktopPersistenceTests(unittest.TestCase):
         self.assertEqual(saved["settings"], self.settings.to_dict())
 
     def test_save_does_not_advance_domain_state(self) -> None:
-        self.state.updated_at = self.stamp - 3600
+        set_test_pet_values(self.state, updated_at=self.stamp - 3600)
         with patch.object(self.state, "advance") as progression:
             self.assertIsNone(self.persistence.save())
         progression.assert_not_called()

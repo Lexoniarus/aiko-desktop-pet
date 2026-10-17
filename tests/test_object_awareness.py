@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Real World snapshots do not bypass recognition or remembered positions."""
 
 import unittest
@@ -309,10 +310,10 @@ class ObjectAwarenessTests(unittest.TestCase):
         self.assertIsNone(awareness.assess_offer("one", state))
         self.assertFalse(awareness.memory.snapshot()[0].assessed)
         awareness.observations = (seen,)
-        state.sleeping = True
+        set_test_pet_values(state, sleeping=True)
         self.assertIsNone(awareness.assess_offer("one", state))
         self.assertFalse(awareness.memory.snapshot()[0].assessed)
-        state.sleeping = False
+        set_test_pet_values(state, sleeping=False)
         decision = awareness.assess_offer("one", state)
         assert decision is not None
         self.assertTrue(decision.consume)
@@ -335,7 +336,7 @@ class ObjectAwarenessTests(unittest.TestCase):
         self.assertIsNone(awareness.intentions.choose(
             awareness.memory.snapshot(), state, x=0, now=2,
         ))
-        state.energy = 50
+        set_test_pet_values(state, energy=50)
         goal = awareness.intentions.choose(
             awareness.memory.snapshot(), state, x=0, now=3,
         )

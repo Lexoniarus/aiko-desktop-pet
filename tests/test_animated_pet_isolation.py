@@ -1,6 +1,7 @@
 """Animated character tests that do not instantiate DesktopPet or HoverUi."""
 
 from __future__ import annotations
+from tools.pet_test_support import set_test_pet_values
 
 import time
 import tkinter as tk
@@ -171,7 +172,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         )
 
     def test_sleep_plays_the_full_width_breathing_clip(self) -> None:
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         now = time.monotonic()
         self.anim.render(now, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("sleep", None))
@@ -315,7 +316,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.render(now, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("waiting", None))
         self.anim.set_game_mode(False)
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         self.anim._ambient.next_glance_at = now - 1
         self.anim.render(now + 1, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("sleep", None))

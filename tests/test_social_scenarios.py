@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Deterministic, multi-event behaviour scenarios for Aiko v0.10.
 
 Do not assert one specific randomly selected quote. Assert that her *reason* to
@@ -95,8 +96,8 @@ class ClickStoryTests(unittest.TestCase):
         self.assertEqual(self.mind.emotion(self.state, 50), "calm")
 
     def test_good_mood_turns_provocation_into_playful_teasing(self):
-        self.state.mood = 94
-        self.state.energy = 90
+        set_test_pet_values(self.state, mood=94)
+        set_test_pet_values(self.state, energy=90)
         events = [
             require_reaction(self.mind.click("left", self.state, self.context, 50 + i))
             for i in range(8)
@@ -117,7 +118,7 @@ class ClickStoryTests(unittest.TestCase):
         self.assertEqual(self.mind.emotion(self.state, 58), "playful")
 
     def test_low_energy_and_recent_care_change_early_clicks(self):
-        self.state.energy = 19
+        set_test_pet_values(self.state, energy=19)
         self.assertEqual(
             require_reaction(
                 self.mind.click("left", self.state, self.context, 20)
@@ -140,7 +141,7 @@ class ClickStoryTests(unittest.TestCase):
         )
 
     def test_withdrawn_aiko_stops_earlier_without_forced_jokes(self):
-        self.state.mood = 12
+        set_test_pet_values(self.state, mood=12)
         events = [
             self.mind.click("left", self.state, self.context, 100 + i) for i in range(9)
         ]
@@ -173,7 +174,7 @@ class ClickStoryTests(unittest.TestCase):
         )
 
     def test_sleep_does_not_wake_and_is_not_click_spam(self):
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         for i in range(12):
             r = self.mind.click("left", self.state, self.context, 30 + i)
             assert r is not None

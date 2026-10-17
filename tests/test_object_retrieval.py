@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Known stock bypasses repeated inquiry while custody/use gates remain intact."""
 
 import unittest
@@ -92,7 +93,7 @@ class ObjectRetrievalTests(unittest.TestCase):
 
     def test_taken_offer_refusal_ends_return_requests_without_collecting(self):
         self.take_unknown_drink()
-        self.pet.energy = 100
+        set_test_pet_values(self.pet, energy=100)
         decision = decide_object_use(self.memory.get(self.item.instance_id),
                                      self.pet, ObjectUseContext.OFFER)
         self.coordinator.observe_held_offer(self.item.instance_id, decision)
@@ -116,7 +117,7 @@ class ObjectRetrievalTests(unittest.TestCase):
             self.item.instance_id, decide_object_use(known, self.pet,
                                                      ObjectUseContext.OFFER),
         )
-        self.pet.energy = 100
+        set_test_pet_values(self.pet, energy=100)
         self.coordinator.observe_held_offer(
             self.item.instance_id, decide_object_use(known, self.pet,
                                                      ObjectUseContext.OFFER),
@@ -124,7 +125,7 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.acknowledge()
         self.assertEqual(self.cues[-1].event, "object_refuse")
         refused = self.cues[-1].key
-        self.pet.energy = 65
+        set_test_pet_values(self.pet, energy=65)
         self.coordinator.observe_held_offer(
             self.item.instance_id, decide_object_use(known, self.pet,
                                                      ObjectUseContext.OFFER),
@@ -360,7 +361,7 @@ class ObjectRetrievalTests(unittest.TestCase):
     def test_changed_needs_after_grasp_lead_to_readable_decline_and_put_down(self):
         self.begin_retrieval()
         self.grasp()
-        self.pet.satiety = 100
+        set_test_pet_values(self.pet, satiety=100)
         self.finish_pickup()
         self.assertEqual(self.coordinator.phase, "decide")
         self.assertEqual(self.cues[-1].event, "object_later")

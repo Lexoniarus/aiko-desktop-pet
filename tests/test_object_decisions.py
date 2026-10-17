@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Curiosity is independent from canonical capacity and need-based use."""
 
 import unittest
@@ -17,7 +18,7 @@ class ObjectDecisionTests(unittest.TestCase):
             known, state, ObjectUseContext.CONTINUING_WISH,
         ).consume)
         for sleeping, energy in ((True, 65), (False, 100)):
-            state.sleeping, state.energy = sleeping, energy
+            set_test_pet_values(state, sleeping=sleeping, energy=energy)
             self.assertFalse(decide_object_use(
                 known, state, ObjectUseContext.CONTINUING_WISH,
             ).consume)
@@ -29,7 +30,7 @@ class ObjectDecisionTests(unittest.TestCase):
         self.assertTrue(decide_object_use(
             known, state, ObjectUseContext.OFFER,
         ).consume)
-        state.satiety = 96
+        set_test_pet_values(state, satiety=96)
         self.assertFalse(decide_object_use(
             known, state, ObjectUseContext.OFFER,
         ).consume)
@@ -38,7 +39,7 @@ class ObjectDecisionTests(unittest.TestCase):
         known = ObjectKnowledge("one", "energy_drink", "drink", 0, 0, True, 0)
         state = PetState(energy=60)
         self.assertTrue(decide_object_use(known, state).consume)
-        state.energy = 60.1
+        set_test_pet_values(state, energy=60.1)
         self.assertFalse(decide_object_use(known, state).consume)
         self.assertFalse(decide_object_use(
             replace(known, identity=None), state,

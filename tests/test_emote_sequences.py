@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Kenney-style coherent emote -> text -> emote reactions."""
 
 import tempfile
@@ -75,7 +76,7 @@ class EmoteTkTests(unittest.TestCase):
             self.pet.root.after_cancel(self.pet._runtime.scheduled_greeting)
             self.pet._runtime.scheduled_greeting = None
         self.pet.settings.auto_routine = False
-        self.pet.state.sleeping = False
+        set_test_pet_values(self.pet.state, sleeping=False)
         if self.pet._runtime.scheduled_tick is not None:
             self.pet.root.after_cancel(self.pet._runtime.scheduled_tick)
         self.pet._runtime.scheduled_tick = None
@@ -183,7 +184,7 @@ class EmoteTkTests(unittest.TestCase):
         self.pet._attention_runtime.idle_emote()
         self.assertEqual(self.bubble_text(), "Ich rede.")
         self.pet._reaction_player.cancel()
-        self.pet.state.mood = 3
+        set_test_pet_values(self.pet.state, mood=3)
         self.pet._attention_runtime.idle_emote()
         self.assertTrue(self.is_emote())
 

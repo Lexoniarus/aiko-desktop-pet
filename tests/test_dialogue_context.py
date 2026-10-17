@@ -1,6 +1,7 @@
 """Relationship, compound need, authored coverage and story rotation contracts."""
 
 from __future__ import annotations
+from tools.pet_test_support import set_test_pet_values
 
 import json
 import random
@@ -190,7 +191,7 @@ class DialogueContextTests(unittest.TestCase):
             chosen = self.mind.select_spontaneous_reaction(state, self.time, 1000)
             assert chosen is not None
             self.assertEqual(chosen.presentation, "short")
-        state.sleeping = True
+        set_test_pet_values(state, sleeping=True)
         self.assertIsNone(self.mind.select_spontaneous_reaction(state, self.time, 2000))
 
     def test_short_catalogue_coverage_in_every_relationship(self) -> None:

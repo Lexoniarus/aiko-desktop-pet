@@ -1,6 +1,7 @@
 """Session consumption, suspend-safe platform readers and hourly care rhythm."""
 
 from __future__ import annotations
+from tools.pet_test_support import set_test_pet_values
 
 import ctypes
 import math
@@ -150,7 +151,7 @@ class HourlyCareTests(unittest.TestCase):
 
     def test_sleep_retains_gentle_recovery_and_unknown_load_has_no_bonus(self) -> None:
         state = self.full_state()
-        state.sleeping, state.energy = True, 40
+        set_test_pet_values(state, sleeping=True, energy=40)
         state.advance(NOW + 3600, elapsed_seconds=3600, effort=1.)
         self.assertAlmostEqual(state.energy, 62)
         self.assertAlmostEqual(state.satiety, 98.6)

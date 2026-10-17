@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """GUI integration of affection, care controls and persistent windows."""
 
 import tempfile
@@ -25,7 +26,7 @@ class AffectionGuiTests(unittest.TestCase):
         self.app = DesktopPet(store=StateStore(Path(self.tempdir.name) / "pet.json"))
         self.addCleanup(self.app.quit)
         self.app.settings.auto_routine = False
-        self.app.state.sleeping = False
+        set_test_pet_values(self.app.state, sleeping=False)
         self.app._on_enter()
         self.app.root.update_idletasks()
 
@@ -51,10 +52,10 @@ class AffectionGuiTests(unittest.TestCase):
         self.assertIn("Lv 10", toolbar.needs["friendship"][2].cget("text"))
 
     def test_pet_button_refills_affection_without_refilling_energy(self):
-        self.app.state.affection = 10
-        self.app.state.social = 15
-        self.app.state.energy = 44
-        self.app.state.mood = 20
+        set_test_pet_values(self.app.state, affection=10)
+        set_test_pet_values(self.app.state, social=15)
+        set_test_pet_values(self.app.state, energy=44)
+        set_test_pet_values(self.app.state, mood=20)
         self.toolbar.buttons["pet"].invoke()
         self.assertAlmostEqual(self.app.state.affection, 35, places=2)
         self.assertAlmostEqual(self.app.state.energy, 44, places=2)
@@ -69,8 +70,8 @@ class AffectionGuiTests(unittest.TestCase):
         self.assertIs(self.toolbar, before)
         self.assertTrue(self.app._hover.keep_open)
         self.assertEqual(len(self.toolbar.needs), 6)
-        self.app.state.affection = 46
-        self.app.state.friendship = 93
+        set_test_pet_values(self.app.state, affection=46)
+        set_test_pet_values(self.app.state, friendship=93)
         self.toolbar.refresh()
         self.assertIn("46%", self.toolbar.needs["affection"][2].cget("text"))
         self.assertIn("Lv 10", self.toolbar.needs["friendship"][2].cget("text"))

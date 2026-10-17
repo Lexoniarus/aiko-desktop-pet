@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Characterize object behavior through real Tk timers and desktop gates."""
 
 import tempfile
@@ -67,8 +68,8 @@ class WorldRuntimeFlowTests(unittest.TestCase):
 
     def test_restored_food_uses_readable_recall_and_full_eat_without_reinspection(self):
         world = self.app._world
-        self.app.state.satiety = 76
-        self.app.state.energy = 66
+        set_test_pet_values(self.app.state, satiety=76)
+        set_test_pet_values(self.app.state, energy=66)
         item = world.world.place_resting(
             "onigiri", world._body_x() + 20, ObjectFootprint(16, 16)
         )
@@ -118,7 +119,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         idle = self.run_for(1.3)
         self.assertTrue(all(row[1] == "idle" for row in idle), idle)
         self.assertIsNone(world._visual.object_target)
-        self.app.state.satiety = 55
+        set_test_pet_values(self.app.state, satiety=55)
         trace = self.run_until(lambda: world.interaction.phase == "finish", 18)
         self.assertEqual(world.interaction.phase, "finish", trace)
         phases = {row[1] for row in trace}
@@ -182,7 +183,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         app.settings.scale = scale
         app._window.resize()
         app._animated.reload_sprites()
-        app.state.energy = 65
+        set_test_pet_values(app.state, energy=65)
         track = world._track()
         boundary = track.left if side == "left" else track.right - world.width
         app._place_x(boundary + (60 * scale if side == "left" else -60 * scale))

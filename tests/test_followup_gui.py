@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Real-Tk tests for readable sequential speech and deliberate interruption."""
 
 import tempfile
@@ -33,7 +34,7 @@ class FollowupGuiTests(unittest.TestCase):
             self.app.root.after_cancel(self.app._runtime.scheduled_greeting)
             self.app._runtime.scheduled_greeting = None
         self.app.settings.auto_routine = False
-        self.app.state.sleeping = False
+        set_test_pet_values(self.app.state, sleeping=False)
 
     def text(self):
         if self.app._speech.bubble is None:

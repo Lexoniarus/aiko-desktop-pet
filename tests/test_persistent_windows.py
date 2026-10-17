@@ -1,6 +1,7 @@
 """Desktop regressions for one pinnable toolbar and persistent settings."""
 
 from __future__ import annotations
+from tools.pet_test_support import set_test_pet_values
 
 import tempfile
 import time
@@ -35,7 +36,7 @@ class PersistentWindowTests(unittest.TestCase):
         self.pet._runtime.stop()
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False
-        self.pet.state.sleeping = False
+        set_test_pet_values(self.pet.state, sleeping=False)
         self.pet.root.update_idletasks()
 
     def outside(self) -> ExitStack:

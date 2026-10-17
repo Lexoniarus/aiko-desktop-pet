@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """GUI integration of needs, care actions and relationship status."""
 
 import tempfile
@@ -28,7 +29,7 @@ class CareGuiTests(unittest.TestCase):
         self.app = DesktopPet(store=StateStore(Path(self.folder.name) / "save.json"))
         self.addCleanup(self.app.quit)
         self.app.settings.auto_routine = False
-        self.app.state.sleeping = False
+        set_test_pet_values(self.app.state, sleeping=False)
         self.app._on_enter()
         self.app.root.update_idletasks()
 
@@ -53,8 +54,8 @@ class CareGuiTests(unittest.TestCase):
 
     def test_social_and_energy_actions_work_without_pinning(self):
         self.assertFalse(self.app._hover.keep_open)
-        self.app.state.social = 9
-        self.app.state.energy = 12
+        set_test_pet_values(self.app.state, social=9)
+        set_test_pet_values(self.app.state, energy=12)
         self.toolbar.buttons["talk"].invoke()
         self.assertAlmostEqual(self.app.state.social, 35, places=2)
         self.toolbar.buttons["feed"].invoke()
@@ -74,7 +75,7 @@ class CareGuiTests(unittest.TestCase):
         self.assertEqual(set(self.toolbar.needs), {
             "satiety", "mood", "energy", "social", "affection", "friendship",
         })
-        self.app.state.friendship = 85
+        set_test_pet_values(self.app.state, friendship=85)
         self.toolbar.refresh()
         self.assertIn("Lv 9", self.toolbar.needs["friendship"][2].cget("text"))
 

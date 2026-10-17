@@ -1,6 +1,7 @@
 """Real Tk selection and frame-anchored food PNG overlays."""
 
 from __future__ import annotations
+from tools.pet_test_support import set_test_pet_values
 
 import tempfile
 import time
@@ -31,7 +32,7 @@ class FoodGuiTests(unittest.TestCase):
         self.pet = DesktopPet(store=StateStore(Path(temp.name) / "pet.json"))
         self.addCleanup(self.pet.quit)
         self.pet.settings.auto_routine = False
-        self.pet.state.sleeping = False
+        set_test_pet_values(self.pet.state, sleeping=False)
         self.pet._on_enter()
 
     def test_selecting_from_eleven_foods_carries_without_feeding(self) -> None:
@@ -88,8 +89,8 @@ class FoodGuiTests(unittest.TestCase):
     def test_energy_drink_selection_carries_without_awarding_energy(self) -> None:
         bar = self.pet._hover.toolbar
         assert bar is not None
-        self.pet.state.energy = 40
-        self.pet.state.satiety = 30
+        set_test_pet_values(self.pet.state, energy=40)
+        set_test_pet_values(self.pet.state, satiety=30)
         old_fun = self.pet.state.fun
         old_food_history = self.pet.state.food.recent_food_ids
         bar.buttons["feed"].invoke()
@@ -115,8 +116,8 @@ class FoodGuiTests(unittest.TestCase):
         self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
 
     def test_full_energy_rejects_drink_without_eating_animation(self) -> None:
-        self.pet.state.energy = 100
-        self.pet.state.satiety = 45
+        set_test_pet_values(self.pet.state, energy=100)
+        set_test_pet_values(self.pet.state, satiety=45)
         self.pet._hover.open_food_menu()
         menu = self.pet._hover.food_menu
         assert menu is not None

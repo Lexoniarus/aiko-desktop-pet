@@ -1,3 +1,4 @@
+from tools.pet_test_support import set_test_pet_values
 """Functional GUI smoke tests (automatically skipped without a display)."""
 
 import tempfile
@@ -34,7 +35,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         # GUI tests must not depend on whether the test runner's local time
         # happens to be Aiko's bedtime.
         self.app.settings.auto_routine = False
-        self.app.state.sleeping = False
+        set_test_pet_values(self.app.state, sleeping=False)
 
     def _step_walk(self, now: float, elapsed: float) -> str | None:
         return self.app._walk.step(
@@ -129,9 +130,9 @@ class TaskbarPetGuiTests(unittest.TestCase):
             canvas, rect, label = bar.needs[key]
             self.assertIn("%", label.cget("text"))
             self.assertGreater(canvas.coords(rect)[2], 0)
-        self.app.state.mood = 22
-        self.app.state.satiety = 36
-        self.app.state.energy = 95
+        set_test_pet_values(self.app.state, mood=22)
+        set_test_pet_values(self.app.state, satiety=36)
+        set_test_pet_values(self.app.state, energy=95)
         bar.refresh()
         self.assertIn("22%", bar.needs["mood"][2].cget("text"))
         self.assertIn("36%", bar.needs["satiety"][2].cget("text"))
@@ -200,12 +201,12 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertTrue(self.toolbar.visible)
 
     def test_all_100_percent_need_bars_fill_real_display_width(self):
-        self.app.state.satiety = 100
-        self.app.state.mood = 100
-        self.app.state.energy = 100
-        self.app.state.social = 100
-        self.app.state.affection = 100
-        self.app.state.friendship = 100
+        set_test_pet_values(self.app.state, satiety=100)
+        set_test_pet_values(self.app.state, mood=100)
+        set_test_pet_values(self.app.state, energy=100)
+        set_test_pet_values(self.app.state, social=100)
+        set_test_pet_values(self.app.state, affection=100)
+        set_test_pet_values(self.app.state, friendship=100)
         self.app._on_enter()
         self.app.root.update()
         self.toolbar.refresh()
@@ -213,7 +214,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
             bar, rect, text = self.toolbar.needs[key]
             self.assertEqual(bar.coords(rect)[2], bar.winfo_width(), key)
             self.assertIn("100%", text.cget("text"))
-        self.app.state.mood = 25
+        set_test_pet_values(self.app.state, mood=25)
         self.toolbar.refresh()
         bar, rect, _text = self.toolbar.needs["mood"]
         self.assertEqual(bar.coords(rect)[2], round(bar.winfo_width() * 0.25))
@@ -436,7 +437,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
 
         morning = datetime(2026, 10, 12, 8, 20).astimezone().timestamp()
         self.app.context = context_at(morning)
-        self.app.state.meals_date = ""
+        set_test_pet_values(self.app.state, meals_date="")
         self.app._on_enter()
         self.assertIn("Montag", self.toolbar.today.cget("text"))
         self.assertEqual(self.toolbar.buttons["feed"].cget("text"), "Frühstück")
@@ -534,7 +535,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
     def test_status_details_show_emotion_in_toolbar(self):
         self.app._hover.open_status()
         self.toolbar.toggle_details()
-        self.app.state.energy = 8
+        set_test_pet_values(self.app.state, energy=8)
         self.toolbar.refresh()
         assert self.toolbar.details is not None
         self.assertIn("Müde", self.toolbar.details.text("emotion"))
