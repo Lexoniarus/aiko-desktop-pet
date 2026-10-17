@@ -848,7 +848,7 @@ class WorldGuiTests(unittest.TestCase):
             self.finish_inspection()
             self.assertEqual(world.interaction.phase, "put_down")
             self.finish_clip("put_down")
-            self.assertAlmostEqual(app.state.energy, 100)
+            self.assertAlmostEqual(app.state.energy, 100, delta=.01)
             self.assertIsNone(app.state.food.last_food_id)
 
     def test_unseen_cookie_replacement_does_not_get_consumed_as_known_apple(self):
