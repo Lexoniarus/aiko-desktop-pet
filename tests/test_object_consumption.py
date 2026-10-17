@@ -87,6 +87,7 @@ class ObjectConsumptionTests(unittest.TestCase):
         self.assertEqual(self.memory.snapshot(), ())
 
     def test_failed_handover_recovers_all_pet_values_and_identity(self):
+        self.pet.advance(self.inputs.wall_time, elapsed_seconds=0)
         original_pet = self.pet
         before = self.pet.capture_checkpoint()
         world_before = self.world.snapshot()

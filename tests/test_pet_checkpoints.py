@@ -32,9 +32,9 @@ class PetCheckpointTests(unittest.TestCase):
         self.assertEqual(checkpoint.care_types_today, ("pet",))
         self.assertEqual(checkpoint.care_last_rewards, (("pet", 123.0),))
         with self.assertRaises(FrozenInstanceError):
-            checkpoint.friendship = 99
+            setattr(checkpoint, "friendship", 99)
         with self.assertRaises(AttributeError):
-            checkpoint.meals_today.append("lunch")
+            getattr(checkpoint.meals_today, "append")("lunch")
 
         pet.meals_today.append("lunch")
         pet.care_types_today.append("talk")
@@ -43,7 +43,7 @@ class PetCheckpointTests(unittest.TestCase):
         self.assertEqual(checkpoint.care_types_today, ("pet",))
         self.assertEqual(checkpoint.care_last_rewards, (("pet", 123.0),))
 
-    def test_repeated_restore_keeps_pet_identity_and_independent_histories(self) -> None:
+    def test_restore_keeps_identity_and_independent_histories(self) -> None:
         pet = PetState(
             satiety=42,
             friendship_day="2026-10-12",
