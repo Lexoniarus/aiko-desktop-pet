@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Needs create stable goals; small changes and absent truth cannot hijack them."""
 
 import unittest
@@ -8,6 +7,7 @@ from aiko_pet.pet.mind.object_decisions import ObjectUseContext
 from aiko_pet.pet.mind.object_intentions import ObjectIntentions
 from aiko_pet.pet.mind.object_knowledge import ObjectKnowledge
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 APPLE = ObjectKnowledge("one", "apple", "food", 100, 0, True, 0, assessed=True)
 

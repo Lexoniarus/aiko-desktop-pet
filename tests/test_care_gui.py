@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """GUI integration of needs, care actions and relationship status."""
 
 import tempfile
@@ -12,6 +11,7 @@ from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from tools.pet_test_support import set_test_pet_values
 
 
 class CareGuiTests(unittest.TestCase):

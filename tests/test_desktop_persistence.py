@@ -1,7 +1,6 @@
 """Headless persistence tests for unchanged state format and autosave timing."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import json
 import tempfile
@@ -15,6 +14,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class DesktopPersistenceTests(unittest.TestCase):

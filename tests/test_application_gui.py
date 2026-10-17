@@ -1,7 +1,6 @@
 """Tk-boundary tests for care command dispatch and queued notifications."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import tempfile
 import time
@@ -14,6 +13,7 @@ from aiko_pet.application.commands import CareCommand, NotificationCommand
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
+from tools.pet_test_support import set_test_pet_values
 
 
 class ApplicationGuiBoundaryTests(unittest.TestCase):

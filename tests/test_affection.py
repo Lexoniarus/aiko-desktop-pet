@@ -1,7 +1,6 @@
 """Distinct affection need, meaningful trust rewards and backwards-compatible saves."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import json
 import random
@@ -22,6 +21,7 @@ from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import MoodHint
 from aiko_pet.ui.view_models.text_de import format_emotion_label, mood_hint_text
+from tools.pet_test_support import set_test_pet_values
 
 
 def require_reaction(value: Reaction | None) -> Reaction:

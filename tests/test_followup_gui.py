@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Real-Tk tests for readable sequential speech and deliberate interruption."""
 
 import tempfile
@@ -12,6 +11,7 @@ from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
+from tools.pet_test_support import set_test_pet_values
 
 
 class FollowupGuiTests(unittest.TestCase):

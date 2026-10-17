@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """GUI integration of affection, care controls and persistent windows."""
 
 import tempfile
@@ -9,6 +8,7 @@ from pathlib import Path
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from tools.pet_test_support import set_test_pet_values
 
 
 class AffectionGuiTests(unittest.TestCase):

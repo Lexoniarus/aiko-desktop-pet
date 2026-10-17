@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Behavior coordination uses real application owners without a desktop or Tk."""
 
 import unittest
@@ -28,6 +27,7 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
+from tools.pet_test_support import set_test_pet_values
 
 
 class ObjectBehaviorTests(unittest.TestCase):

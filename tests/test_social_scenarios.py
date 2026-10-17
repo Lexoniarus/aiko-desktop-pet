@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Deterministic, multi-event behaviour scenarios for Aiko v0.10.
 
 Do not assert one specific randomly selected quote. Assert that her *reason* to
@@ -18,6 +17,7 @@ from aiko_pet.pet.mind.adaptive_policy import ActivityMode
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 def require_reaction(value: Reaction | None) -> Reaction:

@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Curiosity is independent from canonical capacity and need-based use."""
 
 import unittest
@@ -7,6 +6,7 @@ from dataclasses import replace
 from aiko_pet.pet.mind.object_decisions import ObjectUseContext, decide_object_use
 from aiko_pet.pet.mind.object_knowledge import ObjectKnowledge
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class ObjectDecisionTests(unittest.TestCase):

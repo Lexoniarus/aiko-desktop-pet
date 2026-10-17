@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """No-network dialogue/voice regression tests for Aiko's desktop version."""
 
 import json
@@ -20,6 +19,7 @@ from aiko_pet.pet.mind.catalog import (
 )
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 def require_reaction(value: Reaction | None) -> Reaction:

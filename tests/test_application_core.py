@@ -1,7 +1,6 @@
 """Headless application boundary and future integration contract tests."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import random
 import unittest
@@ -18,6 +17,7 @@ from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 def runtime(*, wall_time: float | None = None) -> SessionInputs:

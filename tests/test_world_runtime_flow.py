@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Characterize object behavior through real Tk timers and desktop gates."""
 
 import tempfile
@@ -14,6 +13,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState
+from tools.pet_test_support import set_test_pet_values
 
 
 class WorldRuntimeFlowTests(unittest.TestCase):

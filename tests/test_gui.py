@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Functional GUI smoke tests (automatically skipped without a display)."""
 
 import tempfile
@@ -14,6 +13,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.routine import context_at
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.settings_window import SettingsWindow
+from tools.pet_test_support import set_test_pet_values
 
 
 class TaskbarPetGuiTests(unittest.TestCase):

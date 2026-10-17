@@ -1,7 +1,6 @@
 """Parity and ownership tests for semantic snapshots and German UI copy."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import random
 import unittest
@@ -31,6 +30,7 @@ from aiko_pet.ui.view_models.text_de import (
     format_schedule_line,
     mood_hint_text,
 )
+from tools.pet_test_support import set_test_pet_values
 
 
 def at(hour: int, *, day: int = 12) -> float:
@@ -51,7 +51,7 @@ class UiProjectionParityTests(unittest.TestCase):
         snapshot = snapshot_pet(state)
         set_test_pet_values(state, satiety=95)
         set_test_pet_values(state, affection=100)
-        state.meals_today.append("lunch")
+        set_test_pet_values(state, meals_today=[*state.meals_today, "lunch"])
         self.assertEqual(snapshot.satiety, 19)
         self.assertEqual(snapshot.affection, 28)
         self.assertEqual(snapshot.meals_today, ("breakfast",))

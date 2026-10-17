@@ -1,7 +1,6 @@
 """Session consumption, suspend-safe platform readers and hourly care rhythm."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import ctypes
 import math
@@ -24,6 +23,7 @@ from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
+from tools.pet_test_support import set_test_pet_values
 
 NOW = datetime(2026, 10, 13, 10).timestamp()
 

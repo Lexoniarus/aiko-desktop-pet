@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """The application resolves attention dialogue before presentation."""
 
 import unittest
@@ -9,6 +8,7 @@ from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class AttentionDecisionTests(unittest.TestCase):

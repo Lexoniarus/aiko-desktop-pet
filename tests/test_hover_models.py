@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Independent hover model contracts (no desktop/Tk dependencies)."""
 
 import unittest
@@ -8,6 +7,7 @@ from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.view_models.projections import project_hover
+from tools.pet_test_support import set_test_pet_values
 
 
 class HoverModelTests(unittest.TestCase):

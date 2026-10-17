@@ -1,7 +1,6 @@
 """Animated character tests that do not instantiate DesktopPet or HoverUi."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import time
 import tkinter as tk
@@ -25,6 +24,7 @@ from aiko_pet.pet.movement import WalkController
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
+from tools.pet_test_support import set_test_pet_values
 
 
 class IdleMonitor:

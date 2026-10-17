@@ -1,7 +1,6 @@
 """Relationship, compound need, authored coverage and story rotation contracts."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import json
 import random
@@ -21,6 +20,7 @@ from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line
 from aiko_pet.pet.mind.dialogue_context import DialogueContext, FriendshipStage
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class DialogueContextTests(unittest.TestCase):

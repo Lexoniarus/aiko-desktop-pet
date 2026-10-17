@@ -1,7 +1,6 @@
 """Desktop regressions for one pinnable toolbar and persistent settings."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import tempfile
 import time
@@ -17,6 +16,7 @@ from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.settings_window import SettingsWindow
+from tools.pet_test_support import set_test_pet_values
 
 
 class PersistentWindowTests(unittest.TestCase):

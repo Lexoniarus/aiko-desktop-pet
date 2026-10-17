@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Real World snapshots do not bypass recognition or remembered positions."""
 
 import unittest
@@ -17,6 +16,7 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
+from tools.pet_test_support import set_test_pet_values
 
 
 class ObjectAwarenessTests(unittest.TestCase):

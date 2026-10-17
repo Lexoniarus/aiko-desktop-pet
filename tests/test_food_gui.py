@@ -1,7 +1,6 @@
 """Real Tk selection and frame-anchored food PNG overlays."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import tempfile
 import time
@@ -15,6 +14,7 @@ from aiko_pet.desktop.geometry import FOOT_BASELINE
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.view_models.food_models import food_choices
+from tools.pet_test_support import set_test_pet_values
 
 
 class FoodGuiTests(unittest.TestCase):

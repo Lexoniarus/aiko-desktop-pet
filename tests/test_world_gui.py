@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Real Tk application joins food perception, movement and pickup effects."""
 
 import tempfile
@@ -16,6 +15,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
+from tools.pet_test_support import set_test_pet_values
 
 
 class WorldGuiTests(unittest.TestCase):

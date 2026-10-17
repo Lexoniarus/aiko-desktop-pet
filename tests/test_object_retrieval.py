@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Known stock bypasses repeated inquiry while custody/use gates remain intact."""
 
 import unittest
@@ -22,6 +21,7 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
+from tools.pet_test_support import set_test_pet_values
 
 
 class ObjectRetrievalTests(unittest.TestCase):

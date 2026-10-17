@@ -1,4 +1,3 @@
-from tools.pet_test_support import set_test_pet_values
 """Kenney-style coherent emote -> text -> emote reactions."""
 
 import tempfile
@@ -12,6 +11,7 @@ from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue
+from tools.pet_test_support import set_test_pet_values
 
 
 class EmoteDomainTests(unittest.TestCase):

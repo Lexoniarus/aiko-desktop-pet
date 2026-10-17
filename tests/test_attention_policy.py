@@ -1,7 +1,6 @@
 """Attention policy is usable without a desktop display or API listener."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import random
 import unittest
@@ -20,6 +19,7 @@ from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
+from tools.pet_test_support import set_test_pet_values
 
 
 class StaticReadings:

@@ -1,7 +1,6 @@
 """The hover view operates without DesktopPet or direct game references."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import tkinter as tk
 import unittest
@@ -14,6 +13,7 @@ from aiko_pet.ui.view_models.contracts import HoverAnchor
 from aiko_pet.ui.view_models.projections import project_hover
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.hover_contracts import HoverActions
+from tools.pet_test_support import set_test_pet_values
 
 
 class IndependentHoverTests(unittest.TestCase):

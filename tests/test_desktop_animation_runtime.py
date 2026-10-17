@@ -1,7 +1,6 @@
 """Desktop animation intent is selected without constructing Tk sprites."""
 
 from __future__ import annotations
-from tools.pet_test_support import set_test_pet_values
 
 import unittest
 from typing import cast
@@ -18,6 +17,7 @@ from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.pet.animation.animation import PassiveObservation, SpriteSelection
 from aiko_pet.pet.animation.priority import RenderDecision
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class DesktopAnimationRuntimeTests(unittest.TestCase):
