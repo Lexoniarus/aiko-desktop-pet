@@ -318,7 +318,7 @@ class ObjectInteractionCoordinator:
         self._search_readout = replace(self._search_readout, x=known.x)
         # Confirmed absence comes before other discoveries even if Aiko
         # does not currently need to consume that remembered item.
-        self._set_phase(AbsencePhase(True))
+        self._set_phase(AbsencePhase())
         self._stop()
         self._announce("object_place_missing")
         return True
@@ -527,11 +527,7 @@ class ObjectInteractionCoordinator:
                 else:
                     self._announce("object_approach")
             elif isinstance(state, AbsencePhase) and cue_done:
-                if state.search_after:
-                    self.start_search()
-                else:
-                    self._finish(False)
-                    self._stop()
+                self.start_search()
             elif isinstance(state, ApproachPhase) and state.arrived and cue_done:
                 self._pick_up()
             elif (isinstance(state, AnimationPhase) and state.name == "pick_up"

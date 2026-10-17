@@ -106,11 +106,6 @@ class CursorItemGesture:
         self._ports.save()
         self._ports.sync_view()
 
-    @property
-    def offer_assessed(self) -> bool:
-        """A completed preview decision for this specific cursor gesture."""
-        return self._offer_feedback is not None
-
     def observe_offer(self) -> None:
         token = self.instance_id
         known = self._ports.known_instance(token) if token is not None else None

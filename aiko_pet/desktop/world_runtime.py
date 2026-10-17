@@ -21,7 +21,6 @@ from ..application.object_behavior import (
     Hold,
     ObjectBehaviorCoordinator,
     SearchMotion,
-    SearchStopped,
 )
 from ..application.object_consumption import ObjectConsumption
 from ..application.object_feedback import FeedbackReceipt, ObjectFeedback
@@ -350,8 +349,6 @@ class DesktopWorldRuntime:
         motion = self._behavior.advance(observation.goal, blocked=observation.blocked)
         if isinstance(motion, SearchMotion):
             self._show_search(motion)
-            return
-        if isinstance(motion, SearchStopped):
             return
         if isinstance(motion, Hold):
             self._walk.movement.set_goal(None)

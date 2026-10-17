@@ -129,7 +129,6 @@ class WaitingPhase:
 @dataclass(slots=True)
 class AbsencePhase:
     name: ClassVar[Literal["notice_absence"]] = "notice_absence"
-    search_after: bool
     feedback: PhaseFeedback = field(default_factory=PhaseFeedback)
 
 

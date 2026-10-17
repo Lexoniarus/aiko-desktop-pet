@@ -27,11 +27,6 @@ class SearchMotion:
 
 
 @dataclass(frozen=True, slots=True)
-class SearchStopped:
-    """The episode completed; end this update without another desktop action."""
-
-
-@dataclass(frozen=True, slots=True)
 class BehaviorFacts:
     """Host facts sampled on the owner thread, without native object references."""
 
@@ -133,7 +128,7 @@ class ObjectBehaviorCoordinator:
 
     def advance(
         self, goal: ObjectGoal | None, *, blocked: bool,
-    ) -> Hold | Approach | SearchMotion | SearchStopped:
+    ) -> Hold | Approach | SearchMotion:
         """Continue after native offer observation, preserving same-tick effects."""
         interaction = self._interaction
         if interaction.waiting_for_target:
@@ -233,7 +228,7 @@ class ObjectBehaviorCoordinator:
 
     def advance_search(
         self, goal: ObjectGoal | None, *, blocked: bool,
-    ) -> SearchMotion | SearchStopped | None:
+    ) -> SearchMotion | None:
         """Return a search instruction, or let the remaining update continue.
 
         A suitable replacement precedes general blocking, as in the existing

@@ -908,7 +908,6 @@ class WorldGuiTests(unittest.TestCase):
             assert known is not None
             self.assertIsNone(known.identity)
             self.assertFalse(world.cursor.offer_ready)
-            self.assertFalse(world.cursor.offer_assessed)
             world.cursor.release()
         self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)
         self.assertEqual(world.interaction.phase, "inspect")
@@ -932,7 +931,9 @@ class WorldGuiTests(unittest.TestCase):
             for now in (0, .3, .7, 1.1):
                 world.now = now
                 world.update(time.monotonic())
-            self.assertTrue(world.cursor.offer_assessed)
+            known = world.awareness.known_instance(token)
+            assert known is not None
+            self.assertTrue(known.assessed)
             self.assertFalse(world.cursor.offer_ready)
             world.cursor.release()
         self.assertEqual(world.world.get(token).state, ObjectState.FALLING)
