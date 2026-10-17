@@ -56,7 +56,7 @@ class PetCheckpointTests(unittest.TestCase):
         checkpoint = pet.capture_checkpoint()
         expected = deepcopy(pet)
         pet_id = id(pet)
-        pet = pet.with_test_values(satiety=99)
+        pet.advance(STAMP + 3600, elapsed_seconds=3600)
         pet.meals_today.append("dinner")
         pet.care_types_today.clear()
         pet.care_last_rewards.clear()
