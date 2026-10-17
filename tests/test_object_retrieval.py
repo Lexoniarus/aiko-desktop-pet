@@ -3,6 +3,7 @@
 import unittest
 from dataclasses import replace
 
+from aiko_pet.application.object_awareness import held_type_conflicts_with_memory
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
 from aiko_pet.pet.animation.character import PlaybackEvent
@@ -197,6 +198,11 @@ class ObjectRetrievalTests(unittest.TestCase):
             self.world, play=play, stop=lambda: None, select_item=lambda _item: None,
             consume=consume, can_acquire=lambda _token: True,
             ground_x=lambda _token: 110,
+            hand_type_conflicts=lambda record, instance: (
+                held_type_conflicts_with_memory(
+                    self.memory.get(record), instance, self.world.snapshot(),
+                )
+            ),
             completed=lambda token, used: self.done.append((token, used)),
             memory=self.memory,
             resolve_instance=lambda token: token,

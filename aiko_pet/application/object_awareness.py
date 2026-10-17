@@ -22,6 +22,31 @@ from ..world.contracts import ObjectInteraction, ObjectState, WorldSnapshot
 from .object_tracking import ObjectTracker
 
 
+def held_type_conflicts_with_memory(
+    known: ObjectKnowledge | None, instance: str, world: WorldSnapshot,
+) -> bool:
+    """Require hand identification when physical type contradicts old knowledge.
+
+    Only the application boundary compares objective and subjective values;
+    the result is a safety guard, never an identification event or new type
+    written into Aiko's memory.
+    """
+    if known is None or not known.recognized:
+        return False
+    item = next((entry for entry in world.objects
+                 if entry.instance_id == instance), None)
+    if item is None or item.state != ObjectState.PET_HELD:
+        return True
+    definition = next((entry for entry in world.definitions
+                       if entry.definition_id == item.definition_id), None)
+    if definition is None:
+        return True
+    real_kind = ("drink" if ObjectInteraction.DRINK in definition.interactions
+                 else "food")
+    return (known.identity != (definition.food_id or definition.definition_id)
+            or known.kind != real_kind)
+
+
 class ObjectAwareness:
     def __init__(self, saved: ObjectMemorySnapshot | None = None) -> None:
         self.perception = ObjectPerception()

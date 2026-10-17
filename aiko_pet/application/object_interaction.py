@@ -14,7 +14,7 @@ from ..pet.mind.object_intentions import ObjectGoal
 from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..pet.mind.object_memory import ObjectMemory
 from ..pet.mind.object_withholding import choose_withholding_response
-from ..world.contracts import ObjectInteraction, ObjectState
+from ..world.contracts import ObjectState
 from ..world.state import WorldOperationError, WorldState
 from .object_custody import ObjectCustody
 from .object_feedback import (
@@ -50,6 +50,7 @@ class ObjectInteractionCoordinator:
         resolve_instance: Callable[[str], str | None],
         record_for_instance: Callable[[str], str | None],
         can_acquire: Callable[[str], bool], ground_x: Callable[[str], float],
+        hand_type_conflicts: Callable[[str, str], bool],
         completed: Callable[[str, bool], None],
         memory: ObjectMemory,
         decide: Callable[[str, ObjectUseContext], ObjectUseDecision],
@@ -61,6 +62,7 @@ class ObjectInteractionCoordinator:
         self._custody = ObjectCustody(world, memory)
         self._play, self._stop, self._select_item = play, stop, select_item
         self._consume, self._can_acquire = consume, can_acquire
+        self._hand_type_conflicts = hand_type_conflicts
         self._resolve_instance = resolve_instance
         self._record_for_instance = record_for_instance
         self._ground_x, self._completed = ground_x, completed
@@ -351,23 +353,6 @@ class ObjectInteractionCoordinator:
             self._phase.arrived = True
             self.update()
 
-    def _hand_item_conflicts(self) -> bool:
-        """A known local reunion may be a different food: inspect after grasp."""
-        if self.instance_id is None or self.memory_id is None:
-            return False
-        item = self.world.get(self.instance_id)
-        known = self._memory.get(self.memory_id)
-        if item.state != ObjectState.PET_HELD or known is None or not known.recognized:
-            return False
-        definition = next(
-            entry for entry in self.world.snapshot().definitions
-            if entry.definition_id == item.definition_id
-        )
-        actual_id = definition.food_id or definition.definition_id
-        actual_kind = ("drink" if ObjectInteraction.DRINK in definition.interactions
-                       else "food")
-        return known.identity != actual_id or known.kind != actual_kind
-
     def _pick_up(self) -> None:
         assert self.memory_id is not None
         self._episode.instance_id = self._resolve_instance(self.memory_id)
@@ -553,7 +538,8 @@ class ObjectInteractionCoordinator:
                   and state.playback.finished and cue_done):
                 if episode.queued is not None:
                     self._put_down()
-                elif self._hand_item_conflicts():
+                elif (episode.instance_id is not None
+                      and self._hand_type_conflicts(token, episode.instance_id)):
                     # A local position match was not an identification of this
                     # physical portion. Inspect in hand before naming its type.
                     episode.retrieving = False

@@ -3,7 +3,10 @@
 import unittest
 from dataclasses import replace
 
-from aiko_pet.application.object_awareness import ObjectAwareness
+from aiko_pet.application.object_awareness import (
+    ObjectAwareness,
+    held_type_conflicts_with_memory,
+)
 from aiko_pet.application.object_behavior import (
     Approach,
     BehaviorFacts,
@@ -63,6 +66,12 @@ class ObjectBehaviorTests(unittest.TestCase):
             resolve_instance=self.awareness.instance_for_record,
             record_for_instance=self.awareness.record_for_instance,
             can_acquire=lambda _token: False, ground_x=lambda _token: 100,
+            hand_type_conflicts=lambda record, instance: (
+                held_type_conflicts_with_memory(
+                    self.awareness.memory.get(record), instance,
+                    self.world.snapshot(),
+                )
+            ),
             completed=completed, memory=self.awareness.memory,
             decide=lambda token, context: self.behavior.decide(token, context),
             feedback=feedback, cancel_feedback=lambda: None, now=lambda: self.now,

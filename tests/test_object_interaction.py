@@ -3,6 +3,7 @@
 import unittest
 from unittest.mock import patch
 
+from aiko_pet.application.object_awareness import held_type_conflicts_with_memory
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
 from aiko_pet.pet.animation.character import PlaybackEvent
@@ -67,6 +68,11 @@ class ObjectInteractionTests(unittest.TestCase):
         self.coordinator = ObjectInteractionCoordinator(
             self.world, play=play, stop=lambda: None, select_item=lambda _item: None,
             consume=consume, can_acquire=lambda _item: True, ground_x=lambda _item: 100,
+            hand_type_conflicts=lambda record, instance: (
+                held_type_conflicts_with_memory(
+                    self.memory.get(record), instance, self.world.snapshot(),
+                )
+            ),
             completed=lambda item, consumed: self.done.append((item, consumed)),
             memory=self.memory,
             resolve_instance=lambda token: token,

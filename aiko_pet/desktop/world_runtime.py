@@ -12,7 +12,10 @@ from collections.abc import Callable
 
 from ..application.active_time import ActiveSessionClock, SessionInputs
 from ..application.controller import CareOutcome
-from ..application.object_awareness import ObjectAwareness
+from ..application.object_awareness import (
+    ObjectAwareness,
+    held_type_conflicts_with_memory,
+)
 from ..application.object_behavior import (
     BehaviorFacts,
     Hold,
@@ -118,6 +121,12 @@ class DesktopWorldRuntime:
             resolve_instance=self.awareness.instance_for_record,
             record_for_instance=self.awareness.record_for_instance,
             can_acquire=self._can_acquire, ground_x=self._ground_x,
+            hand_type_conflicts=lambda record, instance: (
+                held_type_conflicts_with_memory(
+                    self.awareness.memory.get(record), instance,
+                    self.world.snapshot(),
+                )
+            ),
             completed=self._completed,
             memory=self.awareness.memory, decide=self._decide,
             feedback=self._phase_feedback, cancel_feedback=cancel_feedback,

@@ -3,9 +3,13 @@
 import unittest
 from dataclasses import replace
 
-from aiko_pet.application.object_awareness import ObjectAwareness
+from aiko_pet.application.object_awareness import (
+    ObjectAwareness,
+    held_type_conflicts_with_memory,
+)
 from aiko_pet.infrastructure.world_motion import motion_parameters
 from aiko_pet.pet.mind.object_decisions import ObjectUseContext
+from aiko_pet.pet.mind.object_knowledge import ObjectKnowledge
 from aiko_pet.pet.mind.object_perception import ItemPresentation, ObjectObservation
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import (
@@ -20,6 +24,35 @@ from tools.pet_test_support import set_test_pet_values
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    def test_held_guard_checks_actual_type_without_identifying_from_world(self):
+        world = WorldState(WorldSurface(1600, 900), (
+            ObjectDefinition("apple", "apple", "apple",
+                             frozenset((ObjectInteraction.EAT,))),
+            ObjectDefinition("cookie", "cookie", "cookie",
+                             frozenset((ObjectInteraction.EAT,))),
+        ))
+        apple = world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        known = ObjectKnowledge("memory_1", "apple", "food", 100, 0,
+                                False, 1, assessed=True)
+        self.assertTrue(held_type_conflicts_with_memory(
+            known, apple.instance_id, world.snapshot(),
+        ))
+        taken = world.collect_resting(apple.instance_id, expected_revision=0)
+        self.assertFalse(held_type_conflicts_with_memory(
+            known, taken.instance_id, world.snapshot(),
+        ))
+        world.consume(taken.instance_id, expected_revision=taken.revision)
+        cookie = world.place_resting("cookie", 100, ObjectFootprint(8, 8))
+        cookie = world.collect_resting(cookie.instance_id, expected_revision=0)
+        self.assertTrue(held_type_conflicts_with_memory(
+            known, cookie.instance_id, world.snapshot(),
+        ))
+        unknown = replace(known, identity=None, kind=None, assessed=False)
+        self.assertFalse(held_type_conflicts_with_memory(
+            unknown, cookie.instance_id, world.snapshot(),
+        ))
+        self.assertEqual((known.identity, known.assessed), ("apple", True))
+
     def test_unknown_occupied_place_resumes_curiosity_after_a_tracking_gap(self):
         world = WorldState(WorldSurface(1600, 900), (ObjectDefinition(
             "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
