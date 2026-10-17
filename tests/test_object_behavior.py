@@ -305,7 +305,9 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertFalse(allowed(facts=BehaviorFacts(playback_busy=True)))
         self.awareness.observations = ()
         self.assertFalse(allowed())
-        self.assertEqual(self.awareness.memory.get(goal.token).identity, None)
+        latest = self.awareness.memory.get(goal.token)
+        assert latest is not None
+        self.assertIsNone(latest.identity)
 
     def test_reached_unbound_target_uses_one_search_without_inventing_absence(self):
         goal = ObjectGoal("stock", "apple", "food", 100, 0, 0)
@@ -426,6 +428,36 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertIsInstance(self.behavior.advance_search(goal, blocked=False),
                               SearchMotion)
         self.assertEqual(self.interaction.feedback_key, key)
+
+    def test_missing_stock_takes_priority_over_unknown_found_during_search(self):
+        other = self.world.place_resting("apple", 180, ObjectFootprint(8, 8))
+        self.observe()
+        self.now = .3
+        first = self.observe()
+        self.assertFalse(first.absence_noticed)
+        self.assertFalse(self.interaction.active)
+        self.now = .5
+        missing = self.observe()
+        self.assertTrue(missing.absence_noticed)
+        self.assertEqual(self.cues[-1].event, "object_place_missing")
+        self.acknowledge()
+        self.assertEqual(self.interaction.phase, "search")
+        self.now = .8
+        observation = self.observe()
+        assert observation.goal is not None
+        self.assertNotEqual(observation.goal.token, "stock")
+        self.assertEqual(observation.goal.purpose, "investigate")
+        self.assertIsNone(self.behavior.advance_search(
+            observation.goal, blocked=observation.blocked,
+        ))
+        self.assertEqual(self.interaction.phase, "found")
+        self.assertEqual(self.cues[-1].event, "object_found")
+        self.assertIsNotNone(self.awareness.record_for_instance(other.instance_id))
+        self.assertLess(
+            self.cues.index(next(cue for cue in self.cues
+                                 if cue.event == "object_place_missing")),
+            len(self.cues) - 1,
+        )
 
     def test_goal_identity_cannot_replace_missing_or_unidentified_memory(self):
         self.start_search()

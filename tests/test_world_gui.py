@@ -918,10 +918,10 @@ class WorldGuiTests(unittest.TestCase):
         self.assertFalse(world.interaction.active)
         self.assertIsNone(self.app.state.food.last_food_id)
 
-    def test_reached_target_without_available_binding_enters_bounded_search(self):
+    def test_missing_approach_target_gets_absence_first_and_then_searches(self):
         world = self.app._world
         item = world.world.place_resting(
-            "apple", world._body_x(), ObjectFootprint(8, 8),
+            "apple", world._body_x() + 250, ObjectFootprint(8, 8),
         )
         cues = []
         presenter = world._present_feedback
@@ -931,18 +931,24 @@ class WorldGuiTests(unittest.TestCase):
             presenter(cue, reaction, done)
 
         world._present_feedback = capture
-        with patch.object(world, "_can_acquire", return_value=False):
-            self.observe_and_acknowledge()
-            self.assertEqual(world.interaction.phase, "search")
-            self.assertEqual(cues.count("object_search"), 1)
-            self.assertEqual(world.world.get(item.instance_id).state,
-                             ObjectState.RESTING)
-            for _ in range(3):
-                world.now += .1
-                world.update(time.monotonic())
-            self.assertEqual(cues.count("object_search"), 1)
-            assert item.position is not None
-            self.assertEqual(world.interaction.search_x, item.position.x)
+        self.observe_and_acknowledge()
+        self.assertEqual(world.interaction.phase, "approach")
+        current = world.world.get(item.instance_id)
+        world.world.remove(item.instance_id, expected_revision=current.revision)
+        for _ in range(3):
+            world.now += .3
+            world.update(time.monotonic())
+        self.assertEqual(world.interaction.phase, "notice_absence")
+        self.assertEqual(cues[-1], "object_place_missing")
+        self.assertNotIn("object_search", cues)
+        self.complete_feedback()
+        self.assertEqual(world.interaction.phase, "search")
+        self.assertEqual(cues[-1], "object_search")
+        count = cues.count("object_search")
+        for _ in range(3):
+            world.now += .2
+            world.update(time.monotonic())
+        self.assertEqual(cues.count("object_search"), count)
 
     def test_restart_restores_portion_on_ground_without_consuming_it(self):
         app = self.app
