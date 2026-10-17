@@ -261,7 +261,7 @@ class ObjectBehaviorCoordinator:
         known = self._awareness.memory.get(goal.token) if goal is not None else None
         if (goal is not None and goal.token != interaction.memory_id
                 and known is not None
-                and (goal.purpose == "investigate"
+                and (goal.purpose == "investigate" and not known.recognized
                      or decide_object_use(known, self._state).consume)):
             interaction.found(goal)
         elif blocked:

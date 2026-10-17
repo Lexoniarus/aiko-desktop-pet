@@ -272,13 +272,13 @@ class ObjectAwarenessTests(unittest.TestCase):
                 self.identify_observed(awareness, now=.7)
                 old, = awareness.memory.snapshot()
                 awareness.memory.mark_assessed(old.token)
-                world.move_resting(item.instance_id, 700, expected_revision=0)
+                world.move_resting(item.instance_id, 800, expected_revision=0)
                 awareness.update(world.snapshot(), state, now=1, x=100, height=0,
                                  width=100, attentive=False, blocked=True)
                 if missing_first:
                     awareness.memory.mark_missing(old.token)
                 for stamp in (2, 2.3, 2.7):
-                    awareness.update(world.snapshot(), state, now=stamp, x=700,
+                    awareness.update(world.snapshot(), state, now=stamp, x=800,
                                      height=0, width=100, attentive=True, blocked=True)
                 found = awareness.known_instance(item.instance_id)
                 assert found is not None
@@ -288,9 +288,9 @@ class ObjectAwarenessTests(unittest.TestCase):
                 # actually collected and inspected, not from its ground position.
                 world.collect_resting(item.instance_id, expected_revision=1)
                 for stamp in (2.8, 3.1, 3.5):
-                    awareness.update(world.snapshot(), state, now=stamp, x=700,
+                    awareness.update(world.snapshot(), state, now=stamp, x=800,
                                      height=0, width=100, attentive=True, blocked=True,
-                                     held_pose=(700, 40), inspecting=found.token)
+                                     held_pose=(800, 40), inspecting=found.token)
                 found = awareness.known_instance(item.instance_id)
                 assert found is not None
                 if not missing_first:

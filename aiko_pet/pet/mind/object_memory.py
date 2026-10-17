@@ -166,6 +166,21 @@ class ObjectMemory:
         self._reconcile_sources()
 
     def _reconcile_sources(self) -> None:
+        # A unique same-type find may precede the confirmation that its old
+        # location is missing, or follow it. Both orders preserve the
+        # already learned assessment without manufacturing another portion.
+        for item in tuple(self._known.values()):
+            if (item.place_status != "remembered" or not item.recognized
+                    or len(item.possible_sources) != 1):
+                continue
+            source = self.get(item.possible_sources[0])
+            if (source is not None and source.place_status == "missing"
+                    and source.identity == item.identity
+                    and source.kind == item.kind):
+                self._known[item.token] = replace(
+                    item, assessed=item.assessed or source.assessed,
+                    disposition=item.disposition or source.disposition,
+                )
         for token in resolved_places(self.snapshot()):
             self.forget(token)
         for item in tuple(self._known.values()):

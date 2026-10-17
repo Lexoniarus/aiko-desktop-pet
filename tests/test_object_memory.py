@@ -56,7 +56,7 @@ class ObjectMemoryTests(unittest.TestCase):
                 self.assertIsNone(memory.get(old))
                 found = memory.get(new)
                 assert found is not None
-                self.assertFalse(found.assessed)
+                self.assertTrue(found.assessed)
                 self.assertEqual(found.possible_sources, ())
                 self.assertEqual(len(memory.snapshot()), 1)
 

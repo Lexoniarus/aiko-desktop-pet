@@ -240,8 +240,12 @@ class ObjectRetrievalTests(unittest.TestCase):
         return replacement.instance_id
 
     def test_recalled_apple_replaced_by_another_apple_is_valid_stock(self):
-        self.begin_retrieval()
+        self.coordinator.begin_goal(ObjectGoal(
+            self.item.instance_id, "apple", "food", 100, 0, 0, "consume",
+        ))
+        self.acknowledge()
         new_id = self._replace_recalled_portion("apple")
+        self.coordinator.arrive()
         self.grasp()
         self.finish_pickup()
         self.assertEqual(self.coordinator.phase, "eat")
@@ -249,8 +253,12 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.assertNotIn("object_inspect", [cue.event for cue in self.cues])
 
     def test_recalled_apple_replaced_by_cookie_requires_hand_inspection(self):
-        self.begin_retrieval()
+        self.coordinator.begin_goal(ObjectGoal(
+            self.item.instance_id, "apple", "food", 100, 0, 0, "consume",
+        ))
+        self.acknowledge()
         new_id = self._replace_recalled_portion("cookie")
+        self.coordinator.arrive()
         self.grasp()
         self.finish_pickup()
         self.assertEqual(self.world.get(new_id).state, ObjectState.PET_HELD)
