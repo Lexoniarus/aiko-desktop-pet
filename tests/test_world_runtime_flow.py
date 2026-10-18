@@ -46,6 +46,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             self.enterContext(patch.object(self.app.root, method, return_value=0))
         self.feedback = []
         self.bubbles = []
+        self.orientation_sides = []
         present = self.app._world._present_feedback
 
         def observe_feedback(cue, reaction, done):
@@ -138,6 +139,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.run_until(lambda: bool(self.feedback), 35)
         self.assertTrue(self.feedback)
         self.assertEqual(self.feedback[0][1], "object_place_missing")
+        self.assertEqual(self.orientation_sides, [-1, 1])
         missing = world.awareness.memory.get(record)
         assert missing is not None
         self.assertEqual(missing.place_status, "missing")
@@ -224,6 +226,10 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         def sample():
             world, animated = self.app._world, self.app._animated
             goal = world.awareness.intentions.goal
+            side = world.orientation_side()
+            if side is not None and world._attention().mode == "survey":
+                if not self.orientation_sides or self.orientation_sides[-1] != side:
+                    self.orientation_sides.append(side)
             row = (
                 world.now,
                 world.interaction.phase,

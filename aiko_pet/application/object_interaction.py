@@ -330,6 +330,12 @@ class ObjectInteractionCoordinator:
         episode.retrieving = (
             goal.purpose == "consume" and self._known_supply()
         )
+        if self._search is not None and not self._known_identity():
+            # This approach examines a recovery candidate within the same task.
+            self._set_phase(ApproachPhase())
+            self._announce("object_approach")
+            self.update()
+            return True
         self._set_phase(CuePhase("notice"))
         if episode.retrieving and goal.use_context == ObjectUseContext.CONTINUING_WISH:
             self._announce("object_collect_wanted")

@@ -26,8 +26,10 @@ class WorldGuiTests(unittest.TestCase):
         set_test_pet_values(app.state, satiety=100, energy=100)
         runtime._controls_active = lambda: True
         self.look_at(runtime._body_x() + 3 * runtime.width)
-        portions = [runtime.world.place_resting(kind, runtime._body_x() + offset,
-                                                ObjectFootprint(8, 8))
+        area = runtime.world.snapshot().surface.width
+        portions = [runtime.world.place_resting(
+                        kind, area - 16 if kind == "onigiri"
+                        else runtime._body_x() + offset, ObjectFootprint(8, 8))
                     for kind, offset in (("dango", runtime.width),
                                          ("dango", 1.1 * runtime.width),
                                          ("energy_drink", 1.4 * runtime.width),
@@ -35,11 +37,21 @@ class WorldGuiTests(unittest.TestCase):
         self.observe_and_acknowledge()
         for item in portions:
             kind = "drink" if item.definition_id == "energy_drink" else "food"
-            self.seed_previous_identification(
-                item.instance_id, item.definition_id, kind,
-            )
-            record = runtime.awareness.record_for_instance(item.instance_id)
-            assert record is not None
+            observed = runtime.awareness.record_for_instance(item.instance_id)
+            if item.definition_id == "onigiri" and observed is None:
+                # Historical identified stock may lie beyond today's local
+                # notice field. First hand/face acquisition is covered elsewhere.
+                record = runtime.awareness.memory.observe_find(ObjectObservation(
+                    "earlier_far_place", item.definition_id, kind,
+                    area - 16, 0, True, runtime.now,
+                ), now=runtime.now, record=None, claimed=frozenset(),
+                    maximum_distance=0, instance_id=item.instance_id)
+            else:
+                self.seed_previous_identification(
+                    item.instance_id, item.definition_id, kind,
+                )
+                record = runtime.awareness.record_for_instance(item.instance_id)
+                assert record is not None
             runtime.awareness.memory.mark_assessed(record)
         self.restart()
         app = self.app
@@ -94,6 +106,11 @@ class WorldGuiTests(unittest.TestCase):
                 assert lost is not None
                 self.assertEqual(lost.place_status, "missing")
                 self.assertNotIn("object_notice", events)
+                learned = [runtime.awareness.memory.get(item.token)
+                           for item in remembered.values()]
+                self.assertTrue(all(item is not None for item in learned))
+                self.assertEqual({item.place_status for item in learned
+                                  if item is not None}, {"missing"})
             known = runtime.awareness.memory.get(cue.record_id)
             if cue.event == "object_place_missing" and known is not None:
                 missing.append((known.instance_id, cue.identity))
@@ -118,8 +135,8 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(runtime.interaction.phase, "pick_up")
         self.finish_pickup()
         self.assertEqual(runtime.interaction.phase, "inspect")
-        # Complete the committed action. No synthetic post-action look is added:
-        # the remembered places remain within the actual nearby field.
+        # Complete the committed action, then let the live orientation inspect
+        # old places on both sides. At 1x the far place is outside local notice.
         self.assertEqual(runtime.awareness.absences, ())
         self.finish_inspection()
         self.finish_clip("put_down")
@@ -154,7 +171,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(events.count("object_search"), 1)
         self.assertEqual(events.count("object_missing"), int(scale == 2))
         self.assertNotIn("object_want", events)
-        self.assertGreater(events.index("object_notice"), events.index("object_search"))
+        self.assertNotIn("object_notice", events)
         self.assertFalse(runtime.interaction.search_active)
         self.assertTrue(all(runtime.world.get(item).state == ObjectState.RESTING
                             for item in expected))

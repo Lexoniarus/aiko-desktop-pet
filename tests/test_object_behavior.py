@@ -392,7 +392,10 @@ class ObjectBehaviorTests(unittest.TestCase):
         assert record is not None
         self.assertEqual(self.awareness.instance_for_record(record),
                          candidate.instance_id)
-        self.assertEqual(self.interaction.phase, "notice")
+        self.assertEqual(self.interaction.phase, "approach")
+        self.assertTrue(self.interaction.search_active)
+        self.assertEqual(self.cues[-1].event, "object_approach")
+        self.assertNotIn("object_notice", [cue.event for cue in self.cues])
 
     def test_close_unknown_pair_releases_orphan_and_selects_observed_portion(self):
         self.awareness.memory.restore_snapshot(())
@@ -810,7 +813,10 @@ class ObjectBehaviorTests(unittest.TestCase):
         assert investigation is not None
         self.assertNotEqual(investigation.token, "stock")
         self.assertEqual(investigation.purpose, "investigate")
-        self.assertEqual(self.interaction.phase, "notice")
+        self.assertEqual(self.interaction.phase, "approach")
+        self.assertTrue(self.interaction.search_active)
+        self.assertEqual(self.cues[-1].event, "object_approach")
+        self.assertNotIn("object_notice", [cue.event for cue in self.cues])
         self.assertNotIn("object_found", [cue.event for cue in self.cues])
         self.assertIsNotNone(self.awareness.record_for_instance(other.instance_id))
         self.assertEqual(self.interaction.memory_id, investigation.token)
