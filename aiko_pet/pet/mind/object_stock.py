@@ -18,12 +18,15 @@ class FindMatch:
 def match_find(
     records: tuple[ObjectKnowledge, ...], seen: ObjectObservation, *,
     claimed: frozenset[str], maximum_distance: float,
+    instance_id: str | None = None,
 ) -> FindMatch:
     """Only perceived type/place support a reunion, never an instance handle."""
     compatible = [item for item in records if item.token not in claimed
                   and item.place_status != "superseded"
                   and item.recognized and (seen.identity is None or (
-                      item.identity == seen.identity and item.kind == seen.kind))]
+                      item.identity == seen.identity and item.kind == seen.kind))
+                  and (instance_id is None or item.instance_id is None
+                       or item.instance_id == instance_id)]
     # A still occupied, unchecked unknown place can resume curiosity without
     # acquiring any identity. It must not deadlock a focused investigation
     # after a sensory gap, nor borrow the identity of a known missing portion.

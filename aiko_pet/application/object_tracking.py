@@ -20,6 +20,8 @@ class ObjectTracker:
     Call with only currently visible candidates. Mutual unique nearest matches
     preserve continuity; gaps, implausible jumps and ties start fresh sightings.
     Catalog IDs are carried to the recognizer but never used for association.
+    Acquired references at exactly remembered places may resolve known ties;
+    their caller qualification never supplies first identification or dwell.
     An observed cursor take may lock one visible track; loss discards the lock.
     """
 
@@ -51,6 +53,7 @@ class ObjectTracker:
     def update(
         self, candidates: tuple[ObjectCandidate, ...], *,
         now: float, maximum_distance: float,
+        learned: frozenset[str] = frozenset(),
     ) -> tuple[ObjectCandidate, ...]:
         if (not math.isfinite(now) or not math.isfinite(maximum_distance)
                 or maximum_distance <= 0):
@@ -61,12 +64,20 @@ class ObjectTracker:
         }
         following = self._following if self._following in previous else None
         followed_instance = self.following_instance if following is not None else None
+        # The caller may qualify previously identified portions at their exact
+        # remembered places. Their acquired references can resolve spatial ties,
+        # but cannot bridge a sensory gap or identify an unknown candidate.
+        anchors = {instance: token for token, instance in self._bindings.items()
+                   if token in previous and instance in learned}
+        protected = {token: instance for instance, token in anchors.items()}
         distances = {
             (index, token): math.hypot(
                 item.x - track.candidate.x, item.height - track.candidate.height,
             )
             for index, item in enumerate(candidates)
             for token, track in previous.items()
+            if (item.token not in anchors or anchors[item.token] == token)
+            and (token not in protected or protected[token] == item.token)
         }
         nearest: dict[int, str] = {}
         for index in range(len(candidates)):
@@ -80,10 +91,13 @@ class ObjectTracker:
         bindings: dict[str, str] = {}
         for index, item in enumerate(candidates):
             token = (following if item.token == followed_instance
-                     else nearest.get(index))
+                     else anchors.get(item.token, nearest.get(index)))
             if token == following and item.token != followed_instance:
                 token = None
-            if token is not None and token != following:
+            if token in protected and protected[token] != item.token:
+                token = None
+            if (token is not None and token != following
+                    and item.token not in anchors):
                 competitors = sorted((distance, number) for (number, old), distance
                                      in distances.items() if old == token)
                 if (competitors[0][1] != index or len(competitors) > 1

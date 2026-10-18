@@ -24,10 +24,16 @@ class ObjectKnowledge:
     disposition: ObjectDisposition | None = None
     place_status: PlaceStatus = "remembered"
     possible_sources: tuple[str, ...] = ()
+    # Acquired only through hand/face identification, never from a remembered place.
+    instance_id: str | None = None
 
     @property
     def recognized(self) -> bool:
         return self.identity is not None and self.kind is not None
+
+    def at_place(self, *, x: float, height: float, resting: bool) -> bool:
+        """Compare an observed place exactly; proximity is not object identity."""
+        return (self.x, self.height, self.resting) == (x, height, resting)
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,6 +51,7 @@ class SavedObjectKnowledge:
     disposition: ObjectDisposition | None
     place_status: PlaceStatus = "remembered"
     possible_sources: tuple[str, ...] = ()
+    instance_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

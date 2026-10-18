@@ -24,7 +24,7 @@ class ObjectMemory:
             self.restore_snapshot(tuple(ObjectKnowledge(
                 item.token, item.identity, item.kind, item.x, item.height,
                 item.resting, now - item.age_seconds, item.assessed, item.disposition,
-                item.place_status, item.possible_sources,
+                item.place_status, item.possible_sources, item.instance_id,
             ) for item in saved.entries))
 
     @staticmethod
@@ -61,20 +61,44 @@ class ObjectMemory:
                 "remembered",
                 (previous.possible_sources
                  if compatible and previous is not None else ()),
+                previous.instance_id if compatible and previous is not None else None,
             )
 
     def observe_find(
         self, seen: ObjectObservation, *, now: float, record: str | None,
         claimed: frozenset[str], maximum_distance: float,
         preserve_record: bool = False,
+        instance_id: str | None = None,
     ) -> str:
-        """Associate a live sighting from perceived evidence, not its World ID."""
+        """Recall learned portions at their place; identify new ones by hand/face."""
+        learned = self.learned_instance(instance_id) if instance_id else None
+        reunion = None
+        supported = learned is not None and (
+            seen.identity is not None or learned.at_place(
+                x=seen.x, height=seen.height, resting=seen.resting,
+            )
+        )
+        if supported and learned is not None:
+            if (preserve_record and record is not None and record != learned.token
+                    and self.get(record) is not None):
+                reunion = learned
+            else:
+                record = learned.token
+        elif (learned is not None and record == learned.token
+              and learned.resting and seen.resting):
+            record = None
         previous = self.get(record) if record is not None else None
+        if (previous is not None and previous.instance_id is not None
+                and instance_id is not None and previous.instance_id != instance_id):
+            record, previous = None, None
         match = None
-        if previous is None or not previous.recognized and seen.identity is not None:
+        if reunion is None and (
+            previous is None or not previous.recognized and seen.identity is not None
+        ):
             match = match_find(
                 tuple(item for item in self.snapshot() if item.token != record),
                 seen, claimed=claimed, maximum_distance=maximum_distance,
+                instance_id=instance_id,
             )
             if preserve_record and previous is not None and match.record is not None:
                 # Focus hides neighbouring evidence. A possible reunion cannot
@@ -89,6 +113,19 @@ class ObjectMemory:
                 self._next_id += 1
         assert record is not None
         self.update((replace(seen, token=record),), now=now)
+        if seen.identity is not None and instance_id is not None:
+            self._known[record] = replace(self._known[record], instance_id=instance_id)
+        if reunion is not None:
+            current = self._known[record]
+            if current.identity is None or (
+                current.identity, current.kind
+            ) == (reunion.identity, reunion.kind):
+                self._known[record] = replace(
+                    current, identity=reunion.identity, kind=reunion.kind,
+                    assessed=reunion.assessed, disposition=reunion.disposition,
+                    instance_id=reunion.instance_id,
+                )
+            self.forget(reunion.token)
         if match is not None and match.record is None:
             sources = match.possible_sources
             # A newly examined portion matching exactly one already confirmed
@@ -101,15 +138,15 @@ class ObjectMemory:
                 and item.place_status == "missing"
                 and item.identity == seen.identity and item.kind == seen.kind
             )
-            reunion = eligible[0] if (
+            source = eligible[0] if (
                 seen.identity is not None and len(sources) == 1
                 and len(eligible) == 1
             ) else None
             current = self._known[record]
             self._known[record] = replace(
                 current, possible_sources=sources,
-                assessed=reunion.assessed if reunion is not None else current.assessed,
-                disposition=(reunion.disposition if reunion is not None
+                assessed=source.assessed if source is not None else current.assessed,
+                disposition=(source.disposition if source is not None
                              else current.disposition),
             )
         visible = claimed | {record}
@@ -123,6 +160,31 @@ class ObjectMemory:
 
     def get(self, token: str) -> ObjectKnowledge | None:
         return self._known.get(token)
+
+    def learned_instance(self, instance: str) -> ObjectKnowledge | None:
+        """Read durable learning; this alone proves neither visibility nor reunion."""
+        return next((item for item in self._known.values()
+                     if item.instance_id == instance and item.recognized
+                     and item.place_status != "superseded"), None)
+
+    def retire_ambiguous_sightings(
+        self, observations: tuple[ObjectObservation, ...], *, maximum_distance: float,
+        new_records: frozenset[str],
+    ) -> None:
+        """Drop unbound unknown places superseded by completed local sightings.
+
+        Forgetting a fleeting appearance claims neither identification nor an
+        empty place. Learned records and currently observed subjects survive.
+        """
+        import math
+
+        observed = {seen.token for seen in observations}
+        for item in self.snapshot():
+            if (not item.recognized and item.resting and item.token not in observed
+                    and any(seen.token in new_records and seen.resting and math.hypot(
+                        seen.x - item.x, seen.height - item.height,
+                    ) <= maximum_distance for seen in observations)):
+                self.forget(item.token)
 
     def mark_assessed(self, token: str) -> None:
         known = self._known.get(token)
@@ -215,6 +277,6 @@ class ObjectMemory:
         return ObjectMemorySnapshot(tuple(SavedObjectKnowledge(
             item.token, item.identity, item.kind, item.x, item.height, item.resting,
             max(0, now - item.observed_at), item.assessed, item.disposition,
-            item.place_status, item.possible_sources,
+            item.place_status, item.possible_sources, item.instance_id,
         ) for item in self._known.values() if self._retained(item, now)),
                                     self._next_id)

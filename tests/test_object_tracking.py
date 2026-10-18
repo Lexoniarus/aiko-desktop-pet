@@ -8,6 +8,30 @@ from aiko_pet.pet.mind.object_perception import ObjectCandidate
 
 
 class ObjectTrackingTests(unittest.TestCase):
+    def test_acquired_place_references_resolve_ties_without_bridging_gaps(self):
+        tracker = ObjectTracker(maximum_gap=1)
+        one = ObjectCandidate("a", "apple", "food", 100, 0, True)
+        two = replace(one, token="b")
+        learned = frozenset(("a", "b"))
+        first = tracker.update((one, two), now=0, maximum_distance=50,
+                                learned=learned)
+        second = tracker.update((two, one), now=.3, maximum_distance=50,
+                                 learned=learned)
+        self.assertEqual([item.token for item in second],
+                         [first[1].token, first[0].token])
+        # The known anchor stays reserved; other sightings keep separate tracks.
+        # Memory separately rejects identity transfer to a different portion.
+        third = tracker.update((one, replace(two, token="unknown")), now=.6,
+                                maximum_distance=50, learned=frozenset(("a",)))
+        self.assertEqual(third[0].token, first[0].token)
+        self.assertNotEqual(third[1].token, third[0].token)
+        tracker.update((), now=.7, maximum_distance=50, learned=learned)
+        restored = tracker.update((one, two), now=.9, maximum_distance=50,
+                                   learned=learned)
+        self.assertTrue({item.token for item in restored}.isdisjoint(
+            {item.token for item in first},
+        ))
+
     def test_observed_take_follows_visible_motion_but_never_bridges_loss(self):
         tracker = ObjectTracker(maximum_gap=1)
         item = ObjectCandidate("world_a", "apple", "food", 100, 0, True)

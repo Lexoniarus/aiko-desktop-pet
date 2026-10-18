@@ -48,12 +48,49 @@ class ObjectMemoryCodecTests(unittest.TestCase):
         raw["version"] = 1
         del raw["next_record_id"], raw["world_next_id"]
         row = raw["entries"][0]
+        del row["instance_id"]
         row["examined"] = row.pop("assessed")
         del row["place_status"], row["possible_sources"]
         restored = decode_object_memory(raw, IDENTITIES, allocated_until=10)
         self.assertEqual(restored, self.saved)
         with self.assertRaises(ValueError):
             decode_object_memory(raw, IDENTITIES, allocated_until=1)
+
+    def test_v2_conversion_preserves_history_without_inventing_reference(self):
+        raw = deepcopy(self.raw)
+        raw["version"] = 2
+        for row in raw["entries"]:
+            del row["instance_id"]
+        self.assertEqual(decode_object_memory(raw, IDENTITIES), self.saved)
+
+    def test_learned_reference_round_trip_and_allocation_validation(self):
+        raw = deepcopy(self.raw)
+        raw["world_next_id"] = 10
+        raw["entries"][0]["instance_id"] = "object_9"
+        saved = decode_object_memory(raw, IDENTITIES, allocated_until=10)
+        self.assertEqual(saved.entries[0].instance_id, "object_9")
+        self.assertEqual(decode_object_memory(
+            encode_object_memory(saved, world_next_id=10), IDENTITIES,
+        ), saved)
+        for instance in ("object_0", "object_10", "memory_9", [], True):
+            with self.subTest(instance=instance):
+                invalid = deepcopy(raw)
+                invalid["entries"][0]["instance_id"] = instance
+                with self.assertRaises(ValueError):
+                    decode_object_memory(invalid, IDENTITIES)
+        other = deepcopy(raw["entries"][0])
+        other["token"] = "object_8"
+        raw["entries"].append(other)
+        with self.assertRaises(ValueError):
+            decode_object_memory(raw, IDENTITIES)
+
+    def test_unknown_sighting_cannot_store_a_learned_reference(self):
+        raw = deepcopy(self.raw)
+        raw["world_next_id"] = 10
+        raw["entries"][0].update(identity=None, kind=None, assessed=False,
+                                  disposition=None, instance_id="object_9")
+        with self.assertRaises(ValueError):
+            decode_object_memory(raw, IDENTITIES)
 
     def test_associations_reject_missing_self_and_cyclic_references(self):
         for sources in (["missing"], ["object_9"], ["object_10", "object_10"]):

@@ -24,7 +24,7 @@ def encode_object_memory(
         row = asdict(item)
         row["possible_sources"] = list(item.possible_sources)
         entries.append(row)
-    return {"version": 2, "entries": entries,
+    return {"version": 3, "entries": entries,
             "next_record_id": snapshot.next_record_id,
             "world_next_id": world_next_id}
 
@@ -45,18 +45,19 @@ def decode_object_memory(
     raw: Any, identities: dict[str, ConsumableKind], *,
     allocated_until: int | None = None,
 ) -> ObjectMemorySnapshot:
-    """Read v1 history or v2 records without joining them to current objects."""
+    """Read history and acquired references without observing current World state."""
     if not isinstance(raw, dict) or type(raw.get("version")) is not int:
         raise ValueError("Invalid object memory version")
     version = raw["version"]
-    if version not in (1, 2):
+    if version not in (1, 2, 3):
         raise ValueError("Unsupported object memory version")
     fields = ("version", "entries") + (
-        ("next_record_id", "world_next_id") if version == 2 else ()
+        ("next_record_id", "world_next_id") if version >= 2 else ()
     )
     data = object_fields(raw, fields, context="saved object memory")
-    next_id = _counter(data["next_record_id"]) if version == 2 else 1
-    if version == 2:
+    next_id = _counter(data["next_record_id"]) if version >= 2 else 1
+    watermark = 1
+    if version >= 2:
         watermark = _counter(data["world_next_id"])
         if allocated_until is not None and watermark > allocated_until:
             raise ValueError("Memory belongs to an older World allocation")
@@ -64,16 +65,17 @@ def decode_object_memory(
         raise ValueError("Object memory entries must be a list")
     entries: list[SavedObjectKnowledge] = []
     tokens: set[str] = set()
+    instances: set[str] = set()
     for entry in data["entries"]:
         names = ("token", "identity", "kind", "x", "height", "resting",
                  "age_seconds", "disposition") + (
-            ("assessed", "place_status", "possible_sources") if version == 2
+            ("assessed", "place_status", "possible_sources") if version >= 2
             else ("examined",)
-        )
+        ) + (("instance_id",) if version == 3 else ())
         row = object_fields(entry, names, context="remembered object")
         token, identity, kind = row["token"], row["identity"], row["kind"]
         if (not isinstance(token, str) or not re.fullmatch(
-            r"(?:object|memory)_[1-9][0-9]*" if version == 2
+            r"(?:object|memory)_[1-9][0-9]*" if version >= 2
             else r"object_[1-9][0-9]*", token,
         ) or token in tokens):
             raise ValueError("Invalid subjective record ID")
@@ -89,7 +91,15 @@ def decode_object_memory(
         elif (not isinstance(identity, str) or identity not in identities
               or kind != identities[identity]):
             raise ValueError("Invalid remembered catalog identity")
-        assessed = row["assessed" if version == 2 else "examined"]
+        instance = row["instance_id"] if version == 3 else None
+        if instance is not None:
+            if (not isinstance(instance, str)
+                    or not re.fullmatch(r"object_[1-9][0-9]*", instance)
+                    or identity is None or instance in instances
+                    or int(instance.removeprefix("object_")) >= watermark):
+                raise ValueError("Invalid or duplicate learned physical reference")
+            instances.add(instance)
+        assessed = row["assessed" if version >= 2 else "examined"]
         if type(row["resting"]) is not bool or type(assessed) is not bool:
             raise ValueError("Remembered flags require booleans")
         disposition = row["disposition"]
@@ -98,8 +108,8 @@ def decode_object_memory(
         if (assessed and identity is None
                 or disposition == "deferred" and not assessed):
             raise ValueError("Remembered experience requires learned identity")
-        status = row["place_status"] if version == 2 else "remembered"
-        sources = row["possible_sources"] if version == 2 else []
+        status = row["place_status"] if version >= 2 else "remembered"
+        sources = row["possible_sources"] if version >= 2 else []
         if status not in ("remembered", "missing", "superseded"):
             raise ValueError("Invalid remembered place status")
         if (not isinstance(sources, list)
@@ -109,7 +119,7 @@ def decode_object_memory(
         entries.append(SavedObjectKnowledge(
             token, identity, kind, _number(row["x"]), _number(row["height"]),
             row["resting"], _number(row["age_seconds"]), assessed, disposition,
-            cast(PlaceStatus, status), tuple(sources),
+            cast(PlaceStatus, status), tuple(sources), instance,
         ))
         tokens.add(token)
     by_token = {item.token: item for item in entries}
