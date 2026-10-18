@@ -103,3 +103,16 @@ architecture checks, and six native close-portion restart, observed relocation
 and actual conversation/missing-bubble timer cases. Both display scales are
 covered. Ruff, strict Mypy (187 sources), and Pyright pass. The complete regression
 and final documentation checks follow before this stage is marked complete.
+
+### Final fixture refinement
+
+The interruption regression now derives the host `carrying` fact from its actual
+USER_HELD custody snapshot. The first version left that host fact at its default,
+although tracking already made the same update bound. This corrects the fixture's
+production context without changing application code or expected behavior. The
+first validation caught a trailing-comma syntax error in this test refinement;
+the initial success note was premature. The corrected exported snapshot passes
+213 tests in 0.922 seconds, all three static gates, and the same 257 trace events.
+Only these corrected results finalize the unpublished fixture commits. The
+complete suite then runs on this final test/source combination; the earlier
+in-flight full run is not substituted for validation of the edited fixture.
