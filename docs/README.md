@@ -60,6 +60,22 @@ application contracts and explicitly unimplemented external transports.
 [Minigame candidates](MINIGAME_CANDIDATES.md) are exploratory research, not an
 approved roadmap or a dependency list for the running application.
 
+## Preserved product concepts
+
+The following owner-supplied concepts were recorded on 2026-10-19. They preserve
+future product direction, with explicit comparisons against main after PR #10.
+They describe proposed extensions rather than currently implemented behavior;
+recording them does not select the next feature or approve a delivery schedule.
+
+| Concept | Scope |
+| --- | --- |
+| [Social and entertainment](SOCIAL_ENTERTAINMENT_CONCEPT.md) | German jokes/facts, content APIs, local EN-to-DE translation, cache, initiative/settings and shared quiz preparation |
+| [Adaptive cursor perception and interaction](ADAPTIVE_CURSOR_CONCEPT.md) | State-sensitive startle/trust, flight, curious approach/touch and reliable direct interaction through existing owners |
+
+The social concept connects the [minigame catalogue](MINIGAME_CANDIDATES.md)
+to the proposed content/translation pipeline. Cursor behavior shares attention
+and presentation owners but does not depend on online sources or translation.
+
 ## Keeping documentation current
 
 Maintain behavior in the World contract, ownership in the architecture guide and

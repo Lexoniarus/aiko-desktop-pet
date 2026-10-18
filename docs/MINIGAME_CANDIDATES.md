@@ -14,6 +14,13 @@ It is a record of possibilities, **not a verified compatibility matrix or
 procurement decision**. External API conditions, licenses, game coverage, and
 platform compatibility must be checked again before any adoption.
 
+The separately preserved [social and entertainment concept](SOCIAL_ENTERTAINMENT_CONCEPT.md)
+records the broader API-content, jokes, local English-to-German translation and
+cache design that can also serve quizzes. Its German-only/free social-content
+constraints and original effort estimates are not captured by this catalogue's
+general game preferences. The [adaptive cursor concept](ADAPTIVE_CURSOR_CONCEPT.md)
+is a related interaction proposal with no dependency on that content pipeline.
+
 ## Existing baseline (not a decision about future games)
 
 **Rock–Paper–Scissors** is already part of `main`. Its rules are local, and its
@@ -133,6 +140,12 @@ Chess was explicitly excluded from the earlier shortlist; it is **not** a
 candidate proposed by this document.
 
 ### Quiz and content-driven game variations
+
+For the shared provider/translation design and the original 4/5 estimate for
+riddles/Open Trivia DB (assuming an installed translator), see the
+[social concept](SOCIAL_ENTERTAINMENT_CONCEPT.md#content-sources-and-original-relative-effort).
+That estimate does not assign an effort rating to every metadata-based quiz
+theme below or select one for implementation.
 
 One reusable four-choice quiz mechanic could potentially support multiple
 themes. Data APIs generally provide *content*, not complete, validated German

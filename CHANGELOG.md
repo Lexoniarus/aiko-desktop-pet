@@ -32,6 +32,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Tests and documentation
 
+- Preserve the owner-supplied social/entertainment and adaptive cursor concepts,
+  including content APIs, local translation and contextual mouse interaction.
+  Link them from the documentation index and minigame catalogue, and distinguish
+  older assumptions from the current main implementation. No runtime behavior,
+  dependencies, settings or save formats change.
 - Replace redundant long UI replays with focused native boundaries and headless
   feedback integration. Standalone rendering fixtures retain anchors, layering,
   scaling and image checks without constructing a full game instance.
