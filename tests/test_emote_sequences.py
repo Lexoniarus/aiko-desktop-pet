@@ -142,7 +142,7 @@ class EmoteTkTests(unittest.TestCase):
         self.progress(reaction.beats[2].duration_ms + 80)
         self.assertTrue(self.is_emote())
 
-    def test_new_click_preempts_entire_older_reaction(self):
+    def test_new_reaction_replaces_entire_older_sequence(self):
         reaction = Reaction(
             "test",
             (

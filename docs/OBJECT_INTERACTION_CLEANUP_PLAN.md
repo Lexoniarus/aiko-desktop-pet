@@ -1,7 +1,7 @@
 # Interaction ownership review cleanup
 
 Recorded: 18 October 2026. Baseline: `063837a`, `feature/world-foundation`.
-Status: stages 1-3 complete; stage 4 pending. All work stays local; no push or merge authorized.
+Status: four implementations complete; final whole-suite validation pending. All work stays local; no push or merge authorized.
 
 Follow [architecture](ARCHITECTURE.md), [contribution rules](../CONTRIBUTING.md)
 and the completed [interaction availability plan](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).
@@ -45,7 +45,7 @@ isolated saves; they do not claim an exploratory human playtest.
 | 1 | Complete | 85 object interaction/behavior/withholding/reaction tests pass in 0.129 seconds on the staged export; targeted Ruff passes. |
 | 2 | Complete | 32 native game/care/persistent-window/hover/search tests pass in 32.651 seconds on the staged export; targeted Ruff passes. |
 | 3 | Complete | 33 contact/story/care/click-policy/follow-up tests pass in 22.288 seconds on the staged export; targeted Ruff passes. |
-| 4 | Pending | |
+| 4 | Implemented; final verification pending | 28 emote/reaction/story playback tests pass in 15.192 seconds. Whole-tree Ruff, strict Mypy (187 sources), Pyright and documentation checks pass on the staged export. |
 
 ### Stage 1 evidence
 
@@ -78,3 +78,14 @@ ContactCoordinator validation still runs before story advancement or any contact
 effects; the domain validates its own input as before. Sleeping/game/playback
 guards, World admission, dialogue selection and relationship effects are unchanged.
 Existing boundary and native tests verify behavior without a new mirrored test.
+
+### Stage 4 evidence
+
+Only the name changed to test_new_reaction_replaces_entire_older_sequence. The
+actual emote/text assertions, timer checks and explicit replacement behavior are
+unchanged. Actual direct-click continuity is still covered by its separate native
+follow-up and search tests. The old name has no script/documentation consumers.
+
+The complete four-stage source/test export passes Ruff 0.13.2, strict Mypy 1.18.2
+(187 source files), Pyright 1.1.414 and 274 local documentation file targets plus
+15 anchors in 37 root/docs Markdown files. The final full-suite run is pending.
