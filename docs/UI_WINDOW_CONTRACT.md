@@ -2,7 +2,8 @@
 
 ## Window behavior
 
-Aiko exposes one `ActionToolbar` with six care indicators, care buttons,
+Aiko exposes one `ActionToolbar` with a wide overall mood bar above six individual
+indicators (satiety, fun, energy, social, affection, friendship), care buttons,
 local computer status, and expandable `ToolbarDetails`. There is no second
 status/actions window. The F2 status action reveals and pins the existing
 toolbar. Clicking `Offen halten` keeps it visible when the pointer leaves or
@@ -45,6 +46,17 @@ additional domain aggregate is introduced.
 
 ## Presence versus interaction
 
+Expanded details show a detached `ObjectStatusSnapshot`: **Auf dem Desktop**
+counts resting World portions; **Bekannt** counts identified memory portions,
+excluding superseded history; **Zugeordnet** counts those remembered at a place
+or in custody without open association ambiguity; **Vermisst** counts identified
+memories with confirmed missing-place status. Same-type portions count separately.
+The application projection reads World and memory snapshots; rendering these
+numbers never identifies a sighting, checks a hidden place or changes memory.
+An unseen relocation therefore changes objective location before subjective
+assignment, exactly as it does without the diagnostics. These totals are current
+owner-thread reads, including while the toolbar is pinned and details are open.
+
 A pinned toolbar standing idle on screen, or an open settings window without
 pointer/keyboard interaction, must not permanently suppress spontaneous
 dialogue, emotes or noninterrupting notifications. The host supplies actual
@@ -69,7 +81,7 @@ are covered by [the World practical checklist](WORLD_SMOKE_TEST.md).
 ## Tests and Windows acceptance
 
 Unit tests cover shared drag geometry, window isolation, idempotent cleanup,
-option callbacks, six progress bars, pin and timeout behavior, focus/reopen
+option callbacks, seven progress bars, pin and timeout behavior, focus/reopen
 semantics, notification delivery and preservation of saved toolbar location.
 CI must pass the Linux/Xvfb Tk suite, Windows headless checks, Ruff, strict
 Mypy and Pyright. Real Windows smoke testing is still required for DPI,

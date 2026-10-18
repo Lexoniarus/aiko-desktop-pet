@@ -69,7 +69,7 @@ The remaining native edge/scale matrix stays in the practical checklist.
 
 CI run `38770173465` passed all three jobs at `416607c` (Linux Python
 3.11/3.13 and Windows). Latest source gate: 855 tests at `ea4361f`; current-head
-CI results are linked in [the test handoff](WORLD_SMOKE_TEST.md#automated-evidence).
+CI results are linked in [the test handoff](WORLD_SMOKE_TEST.md#historical-automated-evidence).
 Ruff 0.13.2, strict Mypy 1.18.2 (167 source files) and Pyright 1.1.414 pass.
 The subsequent practical retest received positive user feedback; this confirms
 the observed basic flow, not every boundary/restart case in the checklist.

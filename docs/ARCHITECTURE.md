@@ -9,6 +9,10 @@ interaction state, behavior ownership and PetState encapsulation. The later
 [focused World OOP cleanup](OOP_WORLD_FOLLOWUP_PLAN.md) supersedes its historical
 search-appetite rules and documents the smaller post-refactor ownership fixes.
 
+The [investigation and taskbar search plan](OBJECT_SEARCH_LIFECYCLE_PLAN.md)
+records the newer accepted target lifecycle and complete taskbar search. Its
+delivery ledger distinguishes those changes from the historical local search.
+
 The implemented [perception correction plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md)
 separates noticing, identifying and assessing, deliberate cursor presentation and
 early local absence detection. Its delivery ledger and practical checklist
@@ -31,6 +35,15 @@ commit evidence and the remaining practical acceptance.
 The follow-up explicitly selects a small owned analytic motion policy over
 Pymunk: pure World calculations, existing active-time scheduling and immutable
 checkpoints, with no additional runtime dependency.
+
+The current [attention and perception plan](ATTENTION_PERCEPTION_SIMPLIFICATION_PLAN.md)
+connects gaze and sensory evidence, and gives fresh visible-place checks priority
+before free curiosity or appetite. Earlier plans remain delivery history.
+
+The [orientation and observed continuity follow-up](OBJECT_ORIENTATION_AND_CONTINUITY_PLAN.md)
+preserves separate learned identity, appraisal, wish, tracking, and search state.
+Its pure orientation progress and explicit learned-place coverage are available;
+live left/right orientation is not wired until its integration stage.
 
 ## Dependency overview
 
@@ -446,6 +459,26 @@ safe pickup, or a continuous player presentation before the face. `recognized`
 means identified; the independent historical `assessed` fact is not a lasting wish.
 Presentation clocks/evidence are transient sensory state, never saved knowledge.
 `application/object_awareness.py` is the objective-to-subjective boundary.
+`choose_object_attention` in the existing application coordinator derives one
+immutable `ObjectAttention` from action phase, actual movement, cursor attention,
+current subject and ongoing activity read from existing playback/speech owners.
+Item commitment takes precedence over walking; the other activity owners retain
+attention through animation and full speech completion, without another timer.
+`DesktopVisualObservation` supplies eye coordinates and
+body width, projects that decision into the gaze atlas, and the World adapter
+translates the same value into World coordinates before sensing. Normal visibility
+is the one-body-width near field plus the forward half-plane up to six body widths.
+Every committed item phase excludes ambient evidence, including approach. Its
+ground-place window checks only the selected execution subject, not neighbours.
+Other active interactions and sleep/game states also exclude ambient evidence;
+own held/placed custody stays continuous. A lost execution association releases
+the action without inventing learned absence. See the
+[shared focus plan](SHARED_INTERACTION_FOCUS_PLAN.md).
+Positive candidates and empty remembered places use this same visibility rule;
+`ObjectPerception` only accumulates notice, inspection and presentation dwell for
+qualified inputs. A cursor take also requires the current attention, sampled before
+resetting the old gaze. A witnessed cursor lock can follow that one portion beyond
+the ambient range; attention loss ends the lock without erasing learned knowledge.
 Unseen moves do not update memory. The existing tick observes objects after
 need progression and before presentation. Faster physics/render callbacks do
 not run a second mind loop. Object gaze reuses sixteen directions and does not
@@ -456,13 +489,33 @@ IDs. `object_stock.py` supplies one-to-one matching/count uncertainty; the memor
 owner retires explained checked places and keeps ambiguous consumption witnesses
 unavailable until evidence resolves them. No parallel inventory is maintained.
 
-The interaction's `focus_record` commits attention to one subject, filtering other
-changes before tracking/recognition/reconciliation. A successful observed take can
-lock the existing visible track to the cursor-rendered portion through hand
-motion and settling. Absence or a sensory gap discards that lock; a World handle
-cannot recover it. Recognition during focus cannot merge its record into an
-unobserved neighbouring portion. Non-focused discovery resumes after the episode.
-Ordinary observed pickup also retains this track without an action focus, and a
+For an actually identified portion, `ObjectMemory` additionally owns an acquired
+physical reference (`instance_id`) alongside identity and the last observed
+place. Only completed hand/face identification acquires this reference; unknown
+ground sightings never borrow a learned type by proximity. The awareness bridge
+passes references only after normal attention/range/notice gates. At the exact
+remembered place, learned identity/assessment can then restore the same record
+after restart or a focused tracking gap, even for close same-type portions.
+An unseen relocation requires a new permitted identification; it cannot silently
+refresh the remembered place. Observed custody/motion retain their existing
+continuity. A verified reunion preserves the current episode record while the
+memory owner reconciles earlier learning. This supersedes position-only reunion
+as proof of a known portion; unknown tracking remains geometric. Acquired
+references at exactly remembered places may anchor known tracks through a
+geometric tie, so coincident known portions can complete normal notice dwell.
+Actual sensory gaps still reset tracks, and unknown ties gain no identity.
+
+The interaction's `focus_record` commits the current action to one subject while
+local tracking, recognition and absence sensing continue for other portions.
+A successful observed take can lock the existing visible track to the
+cursor-rendered portion through hand motion and settling. Absence or a sensory
+gap discards that lock; a World handle cannot recover it. Recognition during
+focus cannot merge its record into an
+unobserved neighbouring portion. Other goals wait for the committed action or
+the shared search task to release them.
+Ordinary observed pickup also retains this track without an action focus. Its
+witnessed take immediately records non-resting custody in ObjectMemory, so a
+complete take/drop between perception ticks does not become a phantom loss. A
 newly noticed cursor portion can be tracked while its identity is learned. Rest
 releases the cursor lock. Current visibility, learned identity and completed
 presentation jointly permit offer assessment. A new gesture requires presentation
@@ -495,32 +548,73 @@ learned identity, queued interruption, withholding and effect history. Takes and
 observed returns retain the episode; a fresh attempt creates a new record, and
 completion releases it before cancelling feedback. Record/instance identifiers
 remain readable properties. Typed phase variants now own arrival, playback,
-inspection/search time, use decisions and cue/aside prerequisites. Waiting and
+inspection time, use decisions and cue/aside prerequisites. Waiting and
 offer phases share their current appraisal while each transition gets fresh
 feedback; a new approach requires fresh arrival. The coordinator owns phase
-transitions and session counters/contact cooldown. Its read-only phase name and
-search diagnostics keep their existing contracts; see the verified stages in
-the [OOP refactoring plan](OOP_REFACTOR_PLAN.md).
+transitions and session counters/contact cooldown. The same coordinator owns one
+session-local SearchTask, which encapsulates missing subjects, route coverage and
+unreachable candidates. Its `add`, `resolve`, `exclude_candidate` and `destination`
+operations preserve the task's invariants; callers receive immutable subjects
+and read-only progress/completion queries rather than mutable task collections.
+The task has no World reads, UI callbacks or movement execution. It survives
+candidate action episodes and gathers further confirmed losses. SearchPhase is
+only the current patrol action; generic CuePhase carries absence and reunion
+speech. `search_progress` describes endpoint coverage, including during inspection,
+and is zero outside a task. See
+the [current attention plan](ATTENTION_PERCEPTION_SIMPLIFICATION_PLAN.md).
 
 The coordinator preserves that consume purpose: known assessed stock uses recall,
 pickup and full consumption without repeating inspection/recognition/desire cues.
 The pure postpickup type-consistency guard in `object_awareness.py` can request
 actual hand inspection when a local type hypothesis contradicts the acquired
-portion. It never writes World definition identity to subjective memory; the
+portion. Supported saved knowledge can contradict the paired World definition:
+the memory codec validates history without rewriting it from objective truth.
+The guard therefore remains a required boundary, backed by a restored-conflict
+test. It never writes World definition identity to subjective memory; the
 interaction coordinator receives only the guard's boolean result.
 Changed needs safely lead to refusal/put-down; conflicting evidence restores
-inquiry. Confirmed local absence starts bounded search with existing gaze/walk
-assets. A useful find can end search early; the coordinator owns the sole search
-budget and identified search/find/missing feedback.
+inquiry. Identified loss starts a complete taskbar search with existing gaze/walk
+assets. SearchTask owns route advancement; the coordinator owns task lifetime,
+phase transitions and search/find/missing feedback. Desktop adapters still
+execute movement and report actual position.
+Unknown reachable resting candidates use ordinary pickup/inspection/put-down
+before resuming this route. Hand/face verification, or permitted exact-place
+recall, updates memory; verified remembered findings resolve their own missing
+subjects even if response was delayed by another action. A different learned
+portion of the same type cannot substitute a bound subject. Captured subjects
+survive old-record reconciliation. The coordinator's `found(record)` patrol
+entry reads canonical memory; hand inspection and face presentation share
+`_announce_identification`. All use `_reunite` for one task resolution and result
+cue, without creating an ObjectGoal just to announce a finding. Completing a
+readable recognition cue separately invokes `_complete_recognition`, which
+rechecks current facts and previously confirmed losses whose reaction was deferred
+until that cue. This is not ambient perception during hand inspection.
+A nonmatching find is safely placed, or released from the episode with player custody intact,
+before the task continues; ordinary use retains its decision/consumption path.
 `object_absence.py` owns local negative sensory evidence: covered remembered
 places, continuous attention/dwell and raw occupants, including unnoticed ones.
 The awareness bridge resolves current custody first, then marks confirmed empty
 places missing and retains unacknowledged sensory facts until the coordinator can
-handle them. It defers new goals/offers while checking local absence.
+handle them. Identified different occupants do not hide an absent portion.
+Unknown/pending occupancy postpones only that place; other empty places and a
+required investigation remain possible. Free walking and search patrol observe
+their forward field; item commitment and other interactions exclude unrelated
+sightings, empty-place evidence and transport, including during focused approach.
+After focus release, visible-place evidence starts fresh. While it is pending,
+the existing look stays fixed and free goals/offers wait, including a continuing
+consumption wish. All confirmed visible losses join the same task before a new
+free investigation; unseen places wait until actually covered. During search,
+`advance_search` selects investigations and free appetite does not steer the look.
 `notice_absence` announces `object_place_missing` before ordinary new discovery.
-Every confirmed missing remembered place starts one bounded search regardless
-of current appetite. Later `object_missing` is the failed search outcome. Unrelated places wait during committed focus; losing a cursor
-track alone does not mark a ground place missing. A new unknown find at an already
+An unknown confirmed loss is acknowledged and forgotten without patrol. An
+identified loss starts a complete route regardless of appetite, from the nearer
+reachable end to the opposite end. Actual position observations advance coverage;
+elapsed time does not. Only an exhausted route, no pending local evidence and no
+eligible unexamined candidates allow `object_missing`. More losses join the same
+task; resolving one does not restart the pass for the others. Cursor gestures and
+soft motion blocking retain the task; explicit interruption cancels safely.
+Losing a spatial association alone does not mark a ground place missing or start
+a patrol. A new unknown find at an already
 confirmed missing place cannot inherit the old identity from location alone.
 Known but unassessed acquisitions decide without repeating identification;
 unknown or conflicting evidence retains inspection. Known handover uses authored
@@ -528,8 +622,9 @@ acceptance, while expressed-wish collection has its own cue. Shared offer copy
 names the item and does not claim a food need when offering a drink.
 Observed player acquisition before the grasp commits enters `await_return`;
 visible falling/bouncing enters `await_settle`. Settling resumes the same
-interaction with acquired assessments, and actual visual loss enters existing
-bounded search. An accepted return into Aiko's hand retains the interaction but
+interaction with acquired assessments. Actual visual loss retires an unknown
+target or searches for a learned one. An accepted return into Aiko's hand retains
+the interaction but
 uses actual human-handover origin; ground retrieval stays autonomous.
 An observed held target can be identified and reappraised during that wait,
 after deliberate face presentation. Own-hand inspection similarly waits for
@@ -571,17 +666,20 @@ alone still cannot feed Aiko. Human-only care rewards are excluded for ground
 consumption, while canonical nutrition, repetition and food mood effects remain.
 
 `application/object_behavior.py` coordinates object attention, checked-absence
-priority, search continuation/replacement, waiting for return and approach
+priority, shared missing-subject search, waiting for return and approach
 start/change using the existing state, awareness, interaction and World owners.
 It owns behavioral eligibility, continuing-wish decisions and returning-offer
 appraisal. Immutable host facts enter the application; relative gaze and bounded
 `Hold`, `Approach` or `SearchMotion` instructions leave it. Normal completion
 ports retain cancellation effects without an obsolete search-stop result. Attention is applied before cursor offer observation, then motion is
-decided against the resulting episode. Suitable search replacements precede
-general blocking, unknown curiosity does not invent appetite, synchronous found
-feedback keeps the same update handoff and return waiting holds for its original
-tick. It stores no duplicate wish, memory, episode or clock. See stage 5 of the
-[OOP refactoring plan](OOP_REFACTOR_PLAN.md).
+decided against the resulting episode. Completed local target evidence separates
+an ambiguous association from pending notice or an empty place; unknown actions
+cannot retain orphaned memories. Search candidates use ordinary investigation;
+unrelated consumption waits. Soft motion blocking pauses the task; explicit
+interruption ends it safely. Matching reunion waits through its receipt before
+ordinary approach, while return waiting holds for its original tick. It stores no
+duplicate wish, memory, episode or clock. See the
+[current simplification plan](OBJECT_SEARCH_SIMPLIFICATION_PLAN.md).
 
 `desktop/world_runtime.py` composes the owners, samples host/sensory facts and
 translates application instructions into native movement/gaze. It retains actual
@@ -628,9 +726,11 @@ transparency; no runtime Pillow or replacement artwork is introduced.
 
 `infrastructure/world_codec.py` adds an optional separately versioned World
 section inside outer save v1. Pet, World, settings and adaptive data use one
-atomic StateStore write. `object_memory_codec.py` writes optional version-two
-subjective records, assessment, place status/associations and relative active
-ages; its version-one reader converts legacy history without live bindings.
+atomic StateStore write. `object_memory_codec.py` writes optional version-three
+subjective records, acquired physical references, assessment, place status/
+associations and relative active ages. It validates reference uniqueness and
+allocation provenance. Its v1/v2 readers retain legacy history without inventing
+acquired references or live bindings.
 `WorldSessionSnapshot` captures World
 and memory together for that write. Old saves without memory grant no knowledge;
 transient nonconsumed items recover on valid ground positions without restoring

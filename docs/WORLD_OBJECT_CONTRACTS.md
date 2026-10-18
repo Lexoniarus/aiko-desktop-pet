@@ -1,5 +1,122 @@
 # World object contracts and behavior rules
 
+## Shared attention and visible-place checks — 18 October 2026
+
+The [shared interaction focus plan](SHARED_INTERACTION_FOCUS_PLAN.md)
+is the current focus contract. It corrects the focused-walking exception in the
+[earlier attention plan](ATTENTION_PERCEPTION_SIMPLIFICATION_PLAN.md).
+Earlier dated corrections below retain their valid
+custody, learned-identity, presentation and persistence rules; their conflicting
+visibility assumptions are historical.
+
+- One attention decision controls gaze, positive sightings, empty remembered
+  places and whether a cursor take was witnessed. Its origin is the actual eyes.
+  The near field is one body width; beyond that, the forward half-plane extends
+  to the existing six-body-width notice range. Without direction only the near
+  field is covered. Unseen places are never globally checked.
+- Free walking and search patrol observe that field in their travel direction.
+  A committed item interaction observes only its own subject, from approach
+  through complete feedback and safe use/put-down. Nearby neighbours supply no
+  discoveries, losses or witnessed transport during that interaction. Petting,
+  conversation and other ongoing actions also exclude ambient observations until
+  animation and the complete speech/bubble sequence finish. Sleep and active
+  games supply no object observations. An idle pinned toolbar is not an action.
+  A witnessed cursor track of the current subject
+  may follow its own portion beyond ambient range; it opens no remote environment.
+- After the complete committed action, including eating or safe put-down and
+  feedback, visible known places require fresh local evidence. The look stays
+  stable during that check. Confirmed losses precede new free goals, offers and
+  continuing appetite wishes. All losses confirmed in this pass enter one task.
+- Unknown occupancy postpones only its own place decision. It must not prevent
+  other losses or investigation of that occupant. Already confirmed pending facts
+  remain valid across hand focus; receiving them later does not invent perception
+  during inspection. No additional scan state, motion owner or timer is required.
+
+## Shared search and investigation — 18 October 2026
+
+The [shared-search delivery ledger](OBJECT_SEARCH_SIMPLIFICATION_PLAN.md) records
+the task rules below. The attention contract above replaces its earlier assumption
+of unrestricted local sensing during every committed action.
+First identification still requires actual hand inspection or deliberate face
+presentation. Exact-place recall, witnessed transport and memory v3 remain valid.
+
+- One task gathers confirmed missing learned portions within actual perception.
+  Further confirmed losses join the same pass. There is no omniscient screen scan.
+- Every accepted missing portion receives its own named, readable loss bubble,
+  including further losses during patrol. These cues use separate receipts and
+  do not replace an unfinished action bubble. Patrol waits for them without
+  resetting route coverage or repeating the shared search introduction. A portion
+  already reunited before its deferred cue is shown is not reported missing later.
+- Unknown resting candidates are investigated during that pass using the normal
+  approach, grasp, inspection and safe put-down actions. Route coverage survives
+  them. An unreachable or vanished candidate releases its action, not the task.
+- Verified hand/face knowledge resolves its matching missing portion. A different
+  learned portion of the same type cannot replace it. One result cue identifies
+  and acknowledges a hand-held reunion; it implies no desire to consume.
+- Face presentation also works during patrol or after the player takes a search
+  candidate during approach. It needs no forced pickup or consumption. A known
+  legitimate find may be acknowledged without being reachable for acquisition.
+- Local sensing follows current attention: forward visibility during free walking
+  and patrol, own-subject visibility throughout item focus, fresh ambient evidence
+  after complete action release.
+  A positively identified different portion cannot hide loss. Mere association
+  ambiguity ends an invalid approach without inventing absence.
+- Only actual endpoint coverage plus settled local evidence and no eligible
+  unexamined candidates permit failed completion. Resolving all missing portions
+  ends the task early; resolving one preserves the others and their route.
+- Cursor gestures and temporary motion blocking retain search. Explicit commands
+  cancel through the existing safe-custody interruption path. Learned memory
+  persists; search tasks, route progress and presentation evidence do not resume
+  after restart. The normal save and its schema are unchanged.
+
+The sections below retain the custody, identity and persistence contracts;
+earlier search variants are recorded in their historical delivery plans.
+
+## Witnessed transport — 18 October 2026
+
+A currently observed successful cursor take immediately changes the memory's
+custody evidence to non-resting, through the existing memory owner. This does
+not wait for an intermediate held-frame sample. If take, move and release
+occur between ticks, the surviving observed-transport track still carries the
+same record through settling to the new place. The exact-place rule below
+governs **unobserved** relocation; it cannot undo a witnessed acquisition.
+Unknown portions remain unknown throughout this transport. Attention loss and
+actual loss of tracking still remove current execution evidence.
+
+Stages 7–8 in the [earlier delivery ledger](OBJECT_SEARCH_LIFECYCLE_PLAN.md)
+record the observed-transport and physical-subject corrections that preceded
+the shared search task.
+
+## Learned portion and remembered place — 18 October 2026
+
+This correction supersedes the earlier technical-reference restrictions and
+memory-v2 statements below. First identification still has exactly two paths:
+actual own-hand inspection and deliberate face presentation. Knowing a catalog
+type does not identify a new portion of that type.
+
+After identification, ObjectMemory retains the acquired physical reference with
+its learned identity, assessment and last observed place. After normal attentive
+notice dwell within the ordinary notice range, that same portion at its **exactly
+remembered place** can be recognized without another inspection, including after
+restart and with nearby/overlapping portions of the same or different types.
+A different portion at that place remains unknown. An unobserved relocation
+does not reveal the new location or identity: the new find requires hand/face
+identification again. Existing observed cursor motion, custody and placement can
+preserve continuity; position alone can never supply learned identity.
+
+The memory owner reconciles a verified learned portion while keeping its active
+episode record stable. The awareness bridge supplies only currently noticed
+references; neither decoding World JSON nor a private reference lookup counts as
+an observation or confirms absence. The existing tracker remains spatial for
+unidentified portions; focus changes cannot erase acquired knowledge.
+
+Memory v3 stores and validates the learned reference, paired with World allocation
+provenance. V1/v2 history loads without inventing associations. Legacy portions
+may need one permitted identification to acquire their missing reference.
+Ambiguous old history is retained rather than guessed away. Pet save v1 and the
+World format are unchanged. See stages 4–6 of the
+[delivery plan](OBJECT_SEARCH_LIFECYCLE_PLAN.md) for regression evidence.
+
 ## World pickup, loss and search priority correction — 17 October 2026
 
 This later decision supersedes earlier gates that required a recognized and
@@ -9,31 +126,23 @@ Aiko then performs the existing own-hand inspection, assessment, and either
 consumption or safe put-down. A consciously presented, identified and refused
 offer is not accepted. Real custody/reach/activity and care-origin rules remain.
 
-The same validated **notice_widths** range applies to noticed new objects and
-remembered places whose occupants have disappeared. Absent-place confirmation
-still requires uninterrupted attentive local evidence and the configured dwell,
-not a hidden World lookup. A confirmed absence takes first priority and starts
-one bounded active search **even if Aiko is not currently hungry or thirsty**.
-New unknown objects are considered after missing-place feedback has started
-that search. A possible newly discovered portion can become the search find;
-unknown types must still be established by permitted face presentation or
-actual hand inspection, never the hidden World definition alone.
+The shared search contract above governs priority, candidate handling and route
+completion independently of hunger/thirst. Absence uses the same notice range
+as positive sensing and requires actual local evidence, never hidden World truth.
 
-When a newly identified finding matches a *uniquely* confirmed missing type,
+For legacy memories without acquired physical references, when a newly
+identified finding matches a *uniquely* confirmed missing type,
 its learned experience is reconciled as the remembered supply, not double
 counted as another portion. A find-before-loss and loss-before-find yield the
 same one-to-one result. Multiple indistinguishable missing alternatives remain
 uncertain rather than being merged arbitrarily. If a different type is
 identified, no old missing type is overwritten by the new find. A new portion
-of the expected same type at its remembered location may satisfy the old
-supply expectation without technical-instance tracking.
+of the expected same type may satisfy that legacy supply expectation only after
+permitted identification and unique matching, without technical-instance tracking.
+Occupation of the remembered location alone never identifies the new portion.
 
-Approach, arrival, inspection, identified feedback and search each keep their
-existing owners. Empty remembered targets enter the normal local absence
-check and search; legitimate new sightings awaiting the notice dwell and a
-walking pose still within native reach tolerance must not trigger premature
-search. A search has one budget; repeated absence announcements, remote
-object pickup and phantom repeated approaches are forbidden. Native practical
+Legitimate new sightings awaiting notice dwell and a walking pose still within
+native reach tolerance must not trigger premature absence. Native practical
 acceptance remains separate from automated checks.
 
 ## Current three-level perception correction — 17 October 2026
@@ -48,7 +157,7 @@ without being a desired consumable.
 Unknown floor/falling/bouncing items never identify from proximity. First
 identification requires Aiko's actual post-pickup hand inspection, or continuously
 holding the displayed item before her face for one active second. Brief passes,
-far-away carrying and unrelated items during committed focus do not qualify.
+and far-away carrying do not qualify.
 Small jitter is allowed. A new gesture needs presentation even for known items;
 learned identity is retained independently. Completed presentation survives the
 observed move from face to hand for release. Release, capacity and handover
@@ -58,11 +167,9 @@ Currently covered remembered places require 0.5 active seconds of local empty
 evidence, with no pending occupant or attention gap. Unknown noticed items can
 also be missed, using unnamed wording. Known types alone permit named wording.
 Observed taking, own custody and consumption resolve before absence checking.
-Confirmed absence precedes new discoveries/offers; unrelated places wait while
-another investigation owns attention. One early `notice_absence` reaction is
-separate from failed-search feedback. Only current targets/needed stock search,
-using the existing two-second budget. A newly occupied confirmed missing place
-does not transfer old identity to an unknown portion. No save-format change;
+One early `notice_absence` reaction is separate from failed-search feedback.
+A newly occupied confirmed missing place does not transfer old identity to an
+unknown portion. The shared task above defines search lifetime. No save-format change;
 presentation, local evidence and pending reactions do not survive restart.
 
 ## Current observed-continuity correction — 16 October 2026
@@ -89,7 +196,7 @@ ground retrieval; refusal ends return requests and further withholding effects
 from that episode. Knowledge persists. Player-held recognition/decision cues do
 not themselves acquire, consume or put down a portion.
 
-## Current committed-attention correction — 16 October 2026
+## Historical committed-attention baseline — 16 October 2026
 
 The [focus correction plan](OBJECT_FOCUS_CORRECTION_PLAN.md) supersedes older
 ordinary-contact priority rules during an accepted object episode. The interaction

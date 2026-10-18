@@ -55,9 +55,11 @@ animation and on direct shutdown. It cannot credit a session twice.
 
 ## Presentation and compatibility
 
-The existing six main bars stay in place. The expandable toolbar
-details now display **Spaß** separately; the Laune bar represents
-the whole. Requests to play use *fun*, not mood. The legacy direct
+The toolbar displays **Laune** as the wide overall bar above six individual
+indicators. **Spaß** has its own bar between satiety and energy; the second row
+contains social, affection and friendship. Fun is no longer repeated as a
+percentage line in the expandable details. Requests to play use *fun*, not mood.
+The legacy direct
 `interact("play")` is deliberately non-rewarding, since a real
 minigame must be completed.
 

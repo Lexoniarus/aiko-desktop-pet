@@ -793,7 +793,7 @@ S15 review: the first full local run at 96b49ff passed 964 tests in 190.495 seco
 - Existing normal saves were not opened or changed. Runtime dependencies remain
   Python/Tk. Everything is pushed on `feature/world-foundation`; no merge was
   performed. PR #10 remains draft. Use the
-  [combined practical checklist](WORLD_SMOKE_TEST.md#current-combined-retest--16-october-2026)
+  [combined practical checklist](WORLD_SMOKE_TEST.md#earlier-combined-retest--16-october-2026)
   and the existing isolated starter for the user's acceptance.
 
 Useful fresh start: `Aiko_World_Test.bat --scenario full --stock two`.

@@ -1,5 +1,60 @@
 # World offers, placement and search — practical retest
 
+## Shared search acceptance — 18 October 2026
+
+Use an isolated save at 1x and 2x. The
+[current focus plan](SHARED_INTERACTION_FOCUS_PLAN.md) defines the
+visibility conditions below. Older independent per-object patrols and general
+ambient sensing during committed approach or other interactions are superseded.
+Controlled native tests pass; the following human visual/input checks remain open.
+
+- [ ] In free idle, move the cursor so Aiko looks to either side. Nearby items
+  may be noticed; farther items require the actual forward field. An unknown
+  sighting must not identify without hand inspection or deliberate face hold.
+- [ ] Learn two nearby same-type portions and a drink; restart the same isolated
+  save. Unchanged places are recognized without repeated pickup/identification.
+- [ ] Learn four portions, including two nearby of the same type. As soon as Aiko
+  walks toward a new item, move all four through real cursor gestures; repeat
+  during hand inspection. Include positions before and behind her, near and far.
+  No unrelated loss/new-item/observed-transport claim may occur during item focus.
+  The diagnostics must retain the previous subjective places/assignments. After the
+  full action, look toward the old places: only currently visible places supply
+  fresh evidence. Put a new item on the other side; its earlier notice must not
+  turn the look away before the place check completes. She announces confirmed
+  loss, searches once, takes and identifies unknown finds, puts them down, and
+  retains the same task for the other losses, even when hungry or thirsty.
+  An unrelated known portion is never substituted.
+- [ ] Repeat unseen relocation and a new drop during petting, conversation and a
+  game. Ambient discoveries, loss claims and transport updates must wait until
+  the complete action, including all dialogue bubbles, ends. Then visible old
+  places get fresh evidence; confirmed loss precedes ordinary new investigation.
+  A shorter animation ending must not truncate the conversation's focus.
+  Closing the game must also release its playback deadline and restore free
+  perception; an invisible leftover animation must not keep attention locked.
+- [ ] Every confirmed missing portion gets its own named, readable bubble,
+  including another loss discovered during patrol. No bubble overwrites the
+  preceding one; the same search continues without restarting its route.
+  The user has confirmed eating plus three unseen relocations and successful
+  reunion of all three; this per-portion feedback correction still needs a retest.
+- [ ] Present a missing portion steadily at her actual eyes during search and
+  also after taking its approach target. She acknowledges the reunion without
+  forced pickup or a desire/consumption bubble. Other losses retain priority.
+- [ ] Leave a genuinely new portion among the finds and remove another entirely.
+  Investigating the new portion does not erase the remaining loss. Only after
+  the full pass and candidate checks does failed search finish without a loop.
+- [ ] Leave an unknown occupant on one remembered place. That place stays
+  uncertain; another visibly empty remembered place must still trigger search,
+  and examining the occupant must remain possible. A vanished unknown target
+  is forgotten without a patrol.
+- [ ] Repeat take/move/drop while Aiko is actually looking at and following the
+  cursor: no phantom loss or reidentification. Repeat during another hand focus:
+  the old learned place remains remembered until a later valid empty-place look.
+  Check readable notice, approach, pickup, result and put-down wording; neither
+  repeated identification nor invented player actions should be spoken.
+
+The remaining sections preserve historical evidence and checklists; current
+behavior is defined by the linked plan and World contracts.
+
 The first practical test found missing investigation/feedback, truncated drink
 playback and Magenta item fringes. Corrections are implemented on
 `feature/world-foundation`. On 15 October 2026 the user reported that the revised
@@ -39,8 +94,9 @@ the user's normal save is not part of this experiment.
   remembered portion. If two indistinguishable missing apples compete, do not
   pretend certainty about which one returned.
 - [ ] Replace a known apple at X with a different apple or a cookie while
-  distracted. A compatible apple at X is acceptable known local supply. A
-  conflicting cookie must be actually examined in hand before its type is
+  distracted. A different portion at X is unknown, including another apple;
+  only the exact unchanged learned portion can be recalled there. A replacement
+  must be examined in hand or deliberately presented before its type is
   used; it must never be eaten under stale apple identity.
 - [ ] Observe a pickup and relocation through cursor movement, release and
   landing; retain continuous tracked knowledge. Repeat out of sight: Aiko
