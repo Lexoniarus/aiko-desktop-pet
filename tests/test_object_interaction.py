@@ -198,27 +198,42 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual([cue.event for cue in self.cues].count("object_busy"), 2)
         self.assertEqual(self.actions, [])
 
-    def test_auxiliary_feedback_waits_and_cannot_acknowledge_a_phase(self):
+    def test_return_request_receipt_cannot_acknowledge_returned_item_phase(self):
         self.delay_feedback = True
-        self.coordinator.begin_goal(ObjectGoal(
-            self.item.instance_id, "apple", "food", 100, 0, 0, "investigate",
-        ))
-        phase_key = self.cues[-1].key
-        self.coordinator.request_feedback("object_approach")
+        self.start_investigation()
+        taken = self.world.take_resting(self.item.instance_id, expected_revision=0)
+        self.assertTrue(self.coordinator.target_taken(self.item.instance_id))
+        taken_cue = self.cues[-1]
+        self.assertEqual(taken_cue.event, "object_taken")
+        self.acknowledge()
+        self.stamp = BALANCE.number("object_withholding", "request_interval_seconds")
+        self.coordinator.observe_target_state(ObjectState.USER_HELD)
         self.coordinator.update()
-        self.assertEqual(len(self.cues), 1)
-        self.coordinator.receive_feedback(FeedbackReceipt(phase_key, True))
+        request = self.cues[-1]
+        self.assertEqual(request.event, "object_request_return")
+        self.assertNotEqual(request.key, taken_cue.key)
+        self.assertFalse(self.coordinator.contact_feedback_active)
+        self.world.return_user_held(taken.instance_id, 100,
+                                    expected_revision=taken.revision)
+        self.coordinator.observe_target_state(ObjectState.RESTING)
         self.coordinator.update()
-        aside = self.cues[-1].key
-        self.assertNotEqual(aside, phase_key)
-        self.coordinator.receive_feedback(FeedbackReceipt(aside, False))
-        self.assertEqual(self.coordinator.phase, "notice")
-        self.coordinator.update()
-        self.assertEqual(self.coordinator.phase, "approach")
-        self.coordinator.receive_feedback(FeedbackReceipt(aside, True))
+        self.assertEqual(self.coordinator.phase, "await_return")
+        self.assertEqual(self.actions, ["pick_up"])
+        self.coordinator.receive_feedback(FeedbackReceipt(request.key, True))
+        self.assertEqual(self.coordinator.phase, "await_return")
+        self.coordinator.observe_target_state(ObjectState.RESTING)
+        self.assertEqual(self.cues[-1].event, "object_returned")
+        returned_key = self.cues[-1].key
+        for completed in (False, True):
+            self.coordinator.receive_feedback(FeedbackReceipt(request.key, completed))
         self.coordinator.arrive()
         self.assertEqual(self.coordinator.phase, "approach")
-        self.assertEqual(self.actions, [])
+        self.assertEqual(self.coordinator.feedback_key, returned_key)
+        self.assertEqual(self.actions, ["pick_up"])
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "pick_up")
+        self.assertEqual(self.actions, ["pick_up", "pick_up"])
+        self.assertEqual(self.consumed, [])
 
     def test_observed_take_invalidates_queued_grasp_without_losing_episode(self):
         self.start_investigation()

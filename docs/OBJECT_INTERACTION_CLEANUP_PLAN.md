@@ -1,7 +1,7 @@
 # Interaction ownership review cleanup
 
 Recorded: 18 October 2026. Baseline: `063837a`, `feature/world-foundation`.
-Status: planned. All work stays local; no push or merge authorized.
+Status: stage 1 complete; stages 2-4 pending. All work stays local; no push or merge authorized.
 
 Follow [architecture](ARCHITECTURE.md), [contribution rules](../CONTRIBUTING.md)
 and the completed [interaction availability plan](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).
@@ -42,7 +42,18 @@ isolated saves; they do not claim an exploratory human playtest.
 | Stage | Status | Evidence |
 | --- | --- | --- |
 | Plan | Complete | Clean baseline and reviewed owners/callers confirmed. |
-| 1 | Pending | |
+| 1 | Complete | 85 object interaction/behavior/withholding/reaction tests pass in 0.129 seconds on the staged export; targeted Ruff passes. |
 | 2 | Pending | |
 | 3 | Pending | |
 | 4 | Pending | |
+
+### Stage 1 evidence
+
+The replacement test performs a real World take before pickup attachment,
+acknowledges the taken cue and advances the injected active-time clock to the
+configured return-request interval. The coordinator produces object_request_return
+from observed user-held custody. Cancelling the relocation physically returns
+the portion to its original place; the required aside still blocks the returned
+phase until its own receipt arrives. Both stale success and cancellation receipts
+then fail to release the fresh object_returned phase. Actual arrival alone cannot
+replace that phase's readable receipt. No production code changed.
