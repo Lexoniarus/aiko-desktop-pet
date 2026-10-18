@@ -1,7 +1,7 @@
 # Object orientation and observed continuity plan
 
-Recorded: 18 October 2026. Status: **Stage 1 complete at policy/sensor level;
-observed transport fixes and live orientation integration are pending**.
+Recorded: 18 October 2026. Status: **Stages 1 and 2 complete;
+live orientation and search-priority integration are pending**.
 Baseline: `feature/world-foundation`, HEAD `fb4f357`, including the existing local changes.
 
 This plan follows the [architecture](ARCHITECTURE.md),
@@ -326,7 +326,7 @@ references, and `git diff --check` are validated as part of delivery.
 | --- | --- | --- |
 | P0 planning revision | Recorded with Stage 1 delivery | English state/ownership/reachability audit and staged-tree commit discipline. |
 | 1 coverage and orientation value | Complete at policy/sensor level | `f1fc8a6`, `dbb8b80`, `3f422f9`; live behavior wiring remains Stage 3. |
-| 2 witnessed acquisition and own feedback | Not started | No implementation commit. |
+| 2 witnessed acquisition and own feedback | Complete | `a148296` acquisition and `62c161a` live feedback scope; verification below. |
 | 3 orientation and search integration | Not started | No implementation commit. |
 | 4 proven cleanup | Not started | No implementation commit. |
 | 5 final regression and native acceptance | Not started | No implementation commit. |
@@ -378,3 +378,17 @@ references, and `git diff --check` are validated as part of delivery.
 - Prerequisite `152a7c5`: separately commit the previously approved grounded
   German item dialogue. Only authored strings changed; 59 focused catalogue,
   dialogue, resource, and object-reaction tests pass against the staged tree.
+- Stage 2a `a148296`: a successful acquisition at the exact learned place can
+  establish notice and tracking between sensor ticks. The event does not grant
+  identification, borrow a neighbour, or override a foreign focus. Current desire
+  is tested independently. The staged tree passes 209 object tests, seven native
+  take/return/face/capture scenarios, Ruff, strict Mypy, and Pyright.
+- Stage 2b `62c161a`: the existing ReactionPlayer owns the live feedback subject, clearing
+  it on cancellation/completion before callbacks. Matching item feedback preserves
+  the already observed transport; unrelated activity remains unavailable. The
+  existing native relocation helper now covers loss of old sensor bindings,
+  a longer real gesture, its own refusal cue, and incremental physical settling
+  at 1x/2x. A real ground press precedes the move to the face; the test does not
+  simulate taking an out-of-view floor item while the pointer is already at the
+  face. The staged tree passes 256 focused object/presentation/architecture tests,
+  five native transport/Care scenarios, and all three static gates.
