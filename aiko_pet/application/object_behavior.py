@@ -427,8 +427,7 @@ class ObjectBehaviorCoordinator:
             return Hold()
         center = (interaction.search_destination(position)
                   if position is not None else None)
-        if not self._awareness.checking_absence:
-            interaction.complete_search()
+        interaction.complete_search()
         if not interaction.searching:
             return Hold()
         if center is None:
