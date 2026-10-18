@@ -44,8 +44,9 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 - Record 1,146 passing native Windows/Python 3.11.9 tests at `5f1bdea`, with Ruff,
   strict Mypy and Pyright passing. The final scoped review at `65175f2` reran 126
   targeted tests. These local results do not predeclare new-commit CI success.
-- Record maintainer-reported desktop acceptance on 2026-10-18. Keep PR #10 draft
-  and unmerged; publishing the branch does not authorize a merge.
+- Record maintainer-reported desktop acceptance and explicit authorization on
+  2026-10-18 to merge PR #10 after final review and green current-head CI, then
+  verify the resulting `main` workflow.
 - Consolidate maintained World rules and smoke guidance; archive completed plans,
   superseded checklists and the prior patchwork changelog as explicitly historical
   [delivery records](docs/history/README.md).

@@ -45,9 +45,10 @@ and test-cleanup plans.
   [Tests workflow](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml)
   runs Linux Python 3.11/3.13 and Windows jobs. Prior run links and local test
   results are not a green status for a different SHA.
-- [PR #10](https://github.com/Lexoniarus/aiko-desktop-pet/pull/10) stays draft and
-  unmerged until an explicit merge instruction. Desktop acceptance and push
-  authorization do not themselves authorize merging.
+- The maintainer authorized merging
+  [PR #10](https://github.com/Lexoniarus/aiko-desktop-pet/pull/10) on 2026-10-18,
+  subject to final review and green checks for its current head. Verify the
+  resulting `main` push workflow separately after merging.
 
 Detailed commit-specific evidence is in the
 [completed test ownership record](history/TEST_OWNERSHIP_FOLLOWUP_PLAN.md).
