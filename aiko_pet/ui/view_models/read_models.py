@@ -9,6 +9,7 @@ from __future__ import annotations
 import time
 from typing import Callable
 
+from ...application.object_status import ObjectStatusSnapshot
 from ...application.ports import ComputerReadings
 from ...application.read_snapshot import snapshot_pet
 from ...application.settings import PetSettings
@@ -34,6 +35,7 @@ class DesktopPresentation:
         adaptive: AdaptiveRoutine, monitor: ComputerReadings,
         *, context: Callable[[], TimeContext],
         sprite_size: Callable[[], tuple[int, int]],
+        object_status: Callable[[], ObjectStatusSnapshot] = ObjectStatusSnapshot,
     ) -> None:
         self._state = state
         self._settings = settings
@@ -42,6 +44,7 @@ class DesktopPresentation:
         self._monitor = monitor
         self._context = context
         self._sprite_size = sprite_size
+        self._object_status = object_status
 
     def hover(self) -> HoverSnapshot:
         return project_hover(
@@ -61,6 +64,7 @@ class DesktopPresentation:
             self._mind.emotion(self._state, now),
             self._adaptive.current, computer,
             observe_computer=self._settings.observe_computer,
+            objects=self._object_status(),
         )
 
     def settings_view(self) -> SettingsSnapshot:

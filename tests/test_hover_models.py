@@ -30,7 +30,7 @@ class HoverModelTests(unittest.TestCase):
         )
         self.assertEqual(model.hardware_line, "Rechnerbeobachtung deaktiviert")
         self.assertEqual(model.workload_line, "")
-        self.assertEqual(len(model.needs), 6)
+        self.assertEqual(len(model.needs), 7)
 
 
 if __name__ == "__main__":

@@ -124,7 +124,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertFalse(hasattr(self.app._hover, "status_panel"))
         self.assertEqual(
             set(bar.needs),
-            {"satiety", "mood", "energy", "social", "affection", "friendship"},
+            {"satiety", "fun", "mood", "energy", "social", "affection", "friendship"},
         )
         for key, _title, _color in bar.NEEDS:
             canvas, rect, label = bar.needs[key]
@@ -201,6 +201,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertTrue(self.toolbar.visible)
 
     def test_all_100_percent_need_bars_fill_real_display_width(self):
+        set_test_pet_values(self.app.state, fun=100)
         set_test_pet_values(self.app.state, satiety=100)
         set_test_pet_values(self.app.state, mood=100)
         set_test_pet_values(self.app.state, energy=100)

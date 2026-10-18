@@ -7,6 +7,7 @@ import unittest
 from dataclasses import FrozenInstanceError
 from datetime import datetime
 
+from aiko_pet.application.object_status import ObjectStatusSnapshot
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
@@ -46,6 +47,18 @@ class StaticMonitor:
 
 
 class UiProjectionParityTests(unittest.TestCase):
+    def test_status_formats_object_counts_and_keeps_fun_as_a_need(self) -> None:
+        state = PetState()
+        set_test_pet_values(state, fun=42)
+        view = project_status(
+            snapshot_pet(state), context_at(at(8)), "calm", None, ComputerSnapshot(),
+            observe_computer=False,
+            objects=ObjectStatusSnapshot(desktop=5, known=4, assigned=2, missing=2),
+        )
+        self.assertEqual(view.need_value("fun"), 42)
+        self.assertEqual(view.objects_line,
+                         "Auf dem Desktop: 5 · Bekannt: 4\nZugeordnet: 2 · Vermisst: 2")
+
     def test_snapshot_copies_mutable_pet_values(self) -> None:
         state = PetState(satiety=19, affection=28, meals_today=["breakfast"])
         snapshot = snapshot_pet(state)

@@ -188,14 +188,14 @@ class EmoteTkTests(unittest.TestCase):
         self.pet._attention_runtime.idle_emote()
         self.assertTrue(self.is_emote())
 
-    def test_hud_uses_kenney_assets_and_keeps_six_values(self):
+    def test_hud_uses_kenney_assets_and_keeps_seven_values(self):
         self.pet._on_enter()
         bar = self.pet._hover.toolbar
         assert bar is not None
         self.pet.root.update()
         self.assertTrue(bar.today.cget("image"))
         self.assertTrue(bar.buttons["feed"].cget("image"))
-        self.assertEqual(len(bar.needs), 6)
+        self.assertEqual(len(bar.needs), 7)
         self.assertTrue(
             all(
                 name in bar.buttons

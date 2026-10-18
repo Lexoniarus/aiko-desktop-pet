@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from ...application.object_status import ObjectStatusSnapshot
 from ...application.read_snapshot import PetReadSnapshot
 from ...application.settings import PetSettings
 from ...pet.content import GERMAN_TEXT
@@ -73,6 +74,7 @@ def project_status(
     computer: ComputerSnapshot,
     *,
     observe_computer: bool,
+    objects: ObjectStatusSnapshot = ObjectStatusSnapshot(),
 ) -> StatusSnapshot:
     """Format the current status for German desktop views only."""
     if observe_computer:
@@ -119,7 +121,10 @@ def project_status(
         activity_line=activity,
         needs=pet.needs,
         friendship_level=pet.friendship_level,
-        fun_line=GERMAN_TEXT.format("ui.fun", percent=f"{pet.fun:.0f}"),
+        objects_line=GERMAN_TEXT.format(
+            "ui.object_status", desktop=str(objects.desktop), known=str(objects.known),
+            assigned=str(objects.assigned), missing=str(objects.missing),
+        ),
     )
 
 

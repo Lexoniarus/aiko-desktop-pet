@@ -36,19 +36,31 @@ class AffectionGuiTests(unittest.TestCase):
         assert bar is not None
         return bar
 
-    def test_six_hud_bars_stay_in_two_rows_and_fill_at_100_percent(self):
+    def test_mood_above_six_need_bars_and_fill_at_100_percent(self):
         toolbar = self.toolbar
-        self.assertEqual(len(toolbar.NEEDS), 6)
-        self.assertEqual(len(toolbar.needs), 6)
+        self.assertEqual(len(toolbar.NEEDS), 7)
+        self.assertEqual(len(toolbar.needs), 7)
+        mood = toolbar.needs["mood"][0]
+        assert isinstance(mood.master, tk.Frame)
+        self.assertEqual(int(mood.master.grid_info()["columnspan"]), 3)
+        for key in ("satiety", "fun", "energy", "social", "affection", "friendship"):
+            bar = toolbar.needs[key][0]
+            assert isinstance(bar.master, tk.Frame)
+            self.assertGreater(int(bar.master.grid_info()["row"]), 0)
+        fun_cell = toolbar.needs["fun"][0].master
+        assert isinstance(fun_cell, tk.Frame)
+        self.assertEqual(int(fun_cell.grid_info()["column"]), 1)
         for key in toolbar.needs:
             set_test_pet_values(self.app.state, **{key: 100})
         toolbar.refresh()
         self.app.root.update()
         toolbar.refresh()
+        self.assertGreater(mood.winfo_width(), toolbar.needs["fun"][0].winfo_width())
         for key, (bar, rect, label) in toolbar.needs.items():
             self.assertEqual(bar.coords(rect)[2], bar.winfo_width(), key)
             self.assertIn("100%", label.cget("text"))
         self.assertIn("Zuwendung", toolbar.needs["affection"][2].cget("text"))
+        self.assertIn("Spaß", toolbar.needs["fun"][2].cget("text"))
         self.assertIn("Lv 10", toolbar.needs["friendship"][2].cget("text"))
 
     def test_pet_button_refills_affection_without_refilling_energy(self):
@@ -69,7 +81,7 @@ class AffectionGuiTests(unittest.TestCase):
         self.app._hover.open_status()
         self.assertIs(self.toolbar, before)
         self.assertTrue(self.app._hover.keep_open)
-        self.assertEqual(len(self.toolbar.needs), 6)
+        self.assertEqual(len(self.toolbar.needs), 7)
         set_test_pet_values(self.app.state, affection=46)
         set_test_pet_values(self.app.state, friendship=93)
         self.toolbar.refresh()

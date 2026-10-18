@@ -226,6 +226,7 @@ class DesktopPet:
             self.activity_monitor,
             context=lambda: self.context,
             sprite_size=lambda: (self._window.width, self._window.height),
+            object_status=self._world_access.object_status,
         )
         self._hover = HoverUi(
             self.root, self.canvas,

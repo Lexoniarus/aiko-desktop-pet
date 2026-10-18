@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from ..application.object_status import ObjectStatusSnapshot
+
 if TYPE_CHECKING:
     from .world_runtime import DesktopWorldRuntime
 
@@ -29,3 +31,8 @@ class WorldRuntimeAccess:
         runtime = self._runtime
         return (runtime is not None
                 and runtime.interaction.focus_record is not None)
+
+    def object_status(self) -> ObjectStatusSnapshot:
+        """Expose detached diagnostics through the existing late-binding port."""
+        return (self._runtime.object_status() if self._runtime is not None
+                else ObjectStatusSnapshot())

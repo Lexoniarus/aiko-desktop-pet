@@ -26,6 +26,7 @@ from ..application.object_consumption import ObjectConsumption
 from ..application.object_feedback import FeedbackReceipt, ObjectFeedback
 from ..application.object_interaction import ObjectInteractionCoordinator
 from ..application.object_relationship import ObjectRelationship
+from ..application.object_status import ObjectStatusSnapshot, snapshot_object_status
 from ..application.session import WorldSessionSnapshot
 from ..application.settings import PetSettings
 from ..infrastructure.active_time import active_uptime_seconds
@@ -65,6 +66,11 @@ from .walk_runtime import WalkDriver
 
 
 class DesktopWorldRuntime:
+    def object_status(self) -> ObjectStatusSnapshot:
+        return snapshot_object_status(
+            self.world.snapshot(), self.awareness.memory.snapshot(),
+        )
+
     def __init__(
         self, *, root: tk.Tk, state: PetState, settings: PetSettings,
         mind: PetMind, adaptive: AdaptiveRoutine, items: ItemCatalog,

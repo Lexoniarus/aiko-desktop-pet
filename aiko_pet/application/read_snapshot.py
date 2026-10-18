@@ -31,6 +31,7 @@ class PetReadSnapshot:
         return (
             ("satiety", self.satiety),
             ("mood", self.mood),
+            ("fun", self.fun),
             ("energy", self.energy),
             ("social", self.social),
             ("affection", self.affection),

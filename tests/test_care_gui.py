@@ -39,9 +39,9 @@ class CareGuiTests(unittest.TestCase):
         assert bar is not None
         return bar
 
-    def test_hover_shows_all_six_full_bars(self):
+    def test_hover_shows_all_seven_full_bars(self):
         self.assertEqual(set(self.toolbar.needs), {
-            "satiety", "mood", "energy", "social", "affection", "friendship",
+            "satiety", "fun", "mood", "energy", "social", "affection", "friendship",
         })
         for key in self.toolbar.needs:
             set_test_pet_values(self.app.state, **{key: 100})
@@ -73,7 +73,7 @@ class CareGuiTests(unittest.TestCase):
         self.app._hover.open_status()
         self.assertTrue(self.app._hover.keep_open)
         self.assertEqual(set(self.toolbar.needs), {
-            "satiety", "mood", "energy", "social", "affection", "friendship",
+            "satiety", "fun", "mood", "energy", "social", "affection", "friendship",
         })
         set_test_pet_values(self.app.state, friendship=85)
         self.toolbar.refresh()
