@@ -180,7 +180,7 @@ class HoverUi:
             self.refresh_status()
 
     def open_game(self) -> None:
-        if not self._ports.can_interact("play"):
+        if self.game_open or not self._ports.can_interact("play"):
             return
         if self._ports.defer_game is not None:
             self._ports.defer_game(self._open_game_now)
@@ -188,10 +188,6 @@ class HoverUi:
             self._open_game_now()
 
     def _open_game_now(self) -> None:
-        if self.game_window is not None:
-            self.game_window.focus()
-            self._ports.restore_stack()
-            return
         self.close_food_menu()
         self._ports.game_speech.start()
         try:

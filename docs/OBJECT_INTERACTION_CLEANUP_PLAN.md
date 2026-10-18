@@ -1,7 +1,7 @@
 # Interaction ownership review cleanup
 
 Recorded: 18 October 2026. Baseline: `063837a`, `feature/world-foundation`.
-Status: stage 1 complete; stages 2-4 pending. All work stays local; no push or merge authorized.
+Status: stages 1-2 complete; stages 3-4 pending. All work stays local; no push or merge authorized.
 
 Follow [architecture](ARCHITECTURE.md), [contribution rules](../CONTRIBUTING.md)
 and the completed [interaction availability plan](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).
@@ -43,7 +43,7 @@ isolated saves; they do not claim an exploratory human playtest.
 | --- | --- | --- |
 | Plan | Complete | Clean baseline and reviewed owners/callers confirmed. |
 | 1 | Complete | 85 object interaction/behavior/withholding/reaction tests pass in 0.129 seconds on the staged export; targeted Ruff passes. |
-| 2 | Pending | |
+| 2 | Complete | 32 native game/care/persistent-window/hover/search tests pass in 32.651 seconds on the staged export; targeted Ruff passes. |
 | 3 | Pending | |
 | 4 | Pending | |
 
@@ -57,3 +57,16 @@ the portion to its original place; the required aside still blocks the returned
 phase until its own receipt arrives. Both stale success and cancellation receipts
 then fail to release the fresh object_returned phase. Actual arrival alone cannot
 replace that phase's readable receipt. No production code changed.
+
+### Stage 2 evidence
+
+Code, tests, tools and documentation contain no other callers of the private
+_open_game_now callback. The production deferral is World.interrupt after public
+admission; repeat play is already disabled. open_game now checks its existing
+game_open property at entry, preserving the UI-owned singleton invariant without
+another state field. The private existing-window focus branch is removed.
+
+The existing native game-window test now explicitly verifies disabled play,
+repeat button invocation and direct public invocation, no extra window
+construction or game focus call, and the same live window. Other game creation,
+closing/reopening, care availability and real-timer object regressions remain.
