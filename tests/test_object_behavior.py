@@ -975,9 +975,13 @@ class ObjectBehaviorTests(unittest.TestCase):
                         target=((known.x - 400) / 100, (known.height - 60) / 100)
                         if known is not None else None,
                     ), origin=(400, 60), width=100)
+                    snapshot = self.world.snapshot()
                     observation = self.behavior.observe(
-                        self.world.snapshot(), now=now, x=400, width=100,
-                        presentation=None, facts=BehaviorFacts(), attention=attention,
+                        snapshot, now=now, x=400, width=100, presentation=None,
+                        facts=BehaviorFacts(carrying=any(
+                            item.state == ObjectState.USER_HELD
+                            for item in snapshot.objects
+                        )), attention=attention,
                     )
                     return observation, attention
 
