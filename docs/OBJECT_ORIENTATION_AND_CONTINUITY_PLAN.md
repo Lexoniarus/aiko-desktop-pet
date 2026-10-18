@@ -327,7 +327,7 @@ references, and `git diff --check` are validated as part of delivery.
 | P0 planning revision | Recorded with Stage 1 delivery | English state/ownership/reachability audit and staged-tree commit discipline. |
 | 1 coverage and orientation value | Complete at policy/sensor level | `f1fc8a6`, `dbb8b80`, `3f422f9`; live behavior wiring remains Stage 3. |
 | 2 witnessed acquisition and own feedback | Complete | `a148296` acquisition and `62c161a` live feedback scope; verification below. |
-| 3 orientation and search integration | 3a complete; 3b next | `90a754a` live integration verified; candidate feedback and expanded native coverage remain. |
+| 3 orientation and search integration | Complete | `90a754a` and `37c4365`; both-side loss collection, current-wish pause, and search-related candidate feedback verified. |
 | 4 proven cleanup | Not started | No implementation commit. |
 | 5 final regression and native acceptance | Not started | No implementation commit. |
 
@@ -406,3 +406,15 @@ references, and `git diff --check` are validated as part of delivery.
   (174.482-second combined run; its sole read-port fixture typo was corrected and
   the 256-test selection rerun successfully). Ruff, strict Mypy (187 sources), and
   Pyright pass on the corrected staged snapshot. No merge or user-save change.
+
+- Stage 3b: an unknown recovery candidate now begins the existing approach phase
+  and cue inside its enclosing SearchTask. It does not announce ordinary novelty;
+  candidate inspection, readable identification/reunion, rejection, and route
+  resumption retain their existing owners. The restart scenario now checks old
+  places on both sides, with the far 1x place beyond local discovery range, and
+  requires every old portion to be missing before the first loss bubble. At 2x,
+  historical setup reuses an already noticed record rather than inventing a second
+  record for the same portion. Actual conversation timers prove left/right looks
+  before loss, and actual multi-bubble timers preserve each named receipt.
+  The staged tree passes 214 object tests plus six native restart/face/timer cases
+  in 37.237 seconds, and all three static gates. No merge.
