@@ -42,7 +42,7 @@ still need focused integration coverage.
 | Stage | Change | Protection retained | Status |
 | --- | --- | --- | --- |
 | 1 | Move six asset/overlay tests from FoodGuiTests to standalone Tk/AnimatedPet fixtures. | All icon alpha, authored anchors, stacking, scale and timer assertions; four real menu/carry tests stay in FoodGuiTests. Canonical display assets retain their asset tests and direct view-cache coverage. | Complete |
-| 2 | Shorten the conversation focus integration scenario using a short test-only reaction with actual Tk timers. | Real care dispatch, silent cue focus, unobserved relocation and missing-first orientation; authored story/sequence semantics retain scheduler tests. | Pending |
+| 2 | Shorten the conversation focus integration scenario using a short test-only reaction with actual Tk timers. | Real care dispatch, silent cue focus, unobserved relocation and missing-first orientation; authored story/sequence semantics retain scheduler tests. | Complete |
 | 3 | Replace two complete edge investigation timer replays with one real-motion right-edge scale-two pickup smoke. | Both-scale/edge geometry matrix, full ordinary native investigation, reach recheck at attachment and frame/release tests remain. | Pending |
 | 4 | Replace duplicated long multi-loss bubble replays with deterministic presenter/player/coordinator coverage and fast physical search integration. | All named missing bubbles and matching receipts before candidate investigation; same-type replacement, multi-relocation, native hover and busy-reply cases remain covered. | Pending |
 
@@ -76,3 +76,17 @@ saves, cyclic collection after each test.
 
 Related history: [scoped interaction cleanup](OBJECT_INTERACTION_CLEANUP_PLAN.md)
 and [interaction availability](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).
+
+### Stage 2 completed
+
+The conversation integration test now supplies a short test-only pause/text/pause
+reaction through the real care command. Actual Tk callbacks finish it; no manual
+completion or mocked focus predicate is used. Its silent opening verifies focus
+without a visible bubble. Relocation remains unobserved, memory stays unchanged,
+and both orientation sides precede the first missing-place event. Long authored
+story pacing remains in the deterministic story/player tests.
+
+Validation: native conversation test plus object attention, story playback and
+reaction playback: 25 tests in 2.729 seconds, no skips. The previous sampled
+conversation test alone took 18.514 seconds. Ruff passes. Existing Tk teardown
+ThemeChanged stderr appeared without test failure.

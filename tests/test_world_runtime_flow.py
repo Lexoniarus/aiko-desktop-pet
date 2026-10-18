@@ -10,7 +10,9 @@ from unittest.mock import patch
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.object_perception import ObjectObservation
+from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState
 from tools.pet_test_support import set_test_pet_values
@@ -290,7 +292,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             and missing.place_status == "missing" for record in records
         ))
 
-    def test_conversation_holds_environment_until_actual_sequence_completion(self):
+    def test_conversation_focus_ends_only_after_native_sequence_completion(self):
         world = self.app._world
         x = world._body_x() + .2 * world.width
         item = world.world.place_resting("cookie", x, ObjectFootprint(8, 8))
@@ -302,7 +304,14 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         )
         world.awareness.memory.mark_assessed(record)
         original = world.awareness.memory.get(record)
-        self.app.interact("talk")
+        # Keep the real care/focus/player wiring, without replaying a long
+        # catalogue story whose pacing is covered by scheduler tests.
+        reaction = Reaction(
+            "focus-wiring", (Cue("pause", "", 250), Cue("text", "Moment.", 250),
+                             Cue("pause", "", 250)), "idle", "talk",
+        )
+        with patch.object(self.app.mind, "select_reaction", return_value=reaction):
+            self.app.interact("talk")
         self.assertEqual(world._attention().mode, "unavailable")
         with (
             patch.object(self.app.root, "winfo_pointerx", return_value=int(
@@ -316,12 +325,14 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             world.cursor.release()
         world.world.place_resting("onigiri", world._body_x() - .7 * world.width,
                                    ObjectFootprint(8, 8))
-        self.run_for(1)
+        self.run_for(.08)
+        self.assertIsNone(self.app._speech.bubble)
+        self.assertEqual(world._attention().mode, "unavailable")
         self.assertIsNotNone(self.app._reaction_player.pending_timer)
         self.assertEqual(world.awareness.memory.get(record), original)
         self.assertEqual(len(world.awareness.memory.snapshot()), 1)
         self.assertEqual(self.feedback, [])
-        self.run_until(lambda: bool(self.feedback), 35)
+        self.run_until(lambda: bool(self.feedback), 5)
         self.assertTrue(self.feedback)
         self.assertEqual(self.feedback[0][1], "object_place_missing")
         self.assertEqual(self.orientation_sides, [-1, 1])
