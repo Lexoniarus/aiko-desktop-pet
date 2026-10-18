@@ -131,3 +131,9 @@ a separate exploratory user playtest is not claimed.
 Local commits: plan `af35de4`; hover `4de11cb`; action buttons `1996e25`;
 busy replies `b936f69`; contact ownership and corrected UI scenarios `99dc5c1`.
 No push or merge performed.
+
+## Subsequent ownership review
+
+The [interaction cleanup plan](OBJECT_INTERACTION_CLEANUP_PLAN.md) records four
+small review follow-ups. The completed implementation and validation above
+remain the baseline; the follow-up preserves their behavioral contracts.
