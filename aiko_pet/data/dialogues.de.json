@@ -1148,11 +1148,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde?"
+          "content": "Eine Runde spielen?"
         },
         {
           "kind": "text",
-          "content": "Ja, gern."
+          "content": "Na los! Meine Füße sind schon ganz unruhig."
         }
       ],
       "presentation": "short"
@@ -1173,7 +1173,7 @@
         },
         {
           "kind": "text",
-          "content": "Na gut. Dann überrasche mich."
+          "content": "Na schön. Ich bringe meinen Ehrgeiz mit. Du deine Strategie?"
         },
         {
           "kind": "emote",
@@ -1198,7 +1198,7 @@
         },
         {
           "kind": "text",
-          "content": "Noch einmal? Vielleicht später."
+          "content": "Ich bin dabei! Mein nächster Spaziergang kann warten."
         },
         {
           "kind": "emote",
@@ -1223,7 +1223,7 @@
         },
         {
           "kind": "text",
-          "content": "Wenn wir spielen, dann richtig."
+          "content": "Wenn wir spielen, will ich auch eine faire Chance auf den Sieg."
         },
         {
           "kind": "emote",
@@ -1250,7 +1250,7 @@
         },
         {
           "kind": "text",
-          "content": "Nicht jetzt. Meine Energie ist gerade woanders."
+          "content": "Nicht jetzt. Ich bin schon vom Herumstehen müde."
         }
       ],
       "presentation": "short"
@@ -1273,7 +1273,7 @@
         },
         {
           "kind": "text",
-          "content": "...Später. Ich mein's ernst."
+          "content": "Ich würde nur müde auf die Spielregeln starren. Später, ja?"
         }
       ],
       "presentation": "short"
@@ -1296,7 +1296,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich könnte verlieren. Nur weil ich müde bin, natürlich."
+          "content": "Ich verliere ungern. Und mit dieser Müdigkeit wäre es besonders wahrscheinlich."
         }
       ],
       "presentation": "short"
@@ -1319,7 +1319,7 @@
         },
         {
           "kind": "text",
-          "content": "Lass uns das verschieben."
+          "content": "Das Spiel läuft nicht weg. Meine Energie dagegen schon."
         }
       ],
       "presentation": "short"
@@ -1340,7 +1340,7 @@
         },
         {
           "kind": "text",
-          "content": "Gute Nacht. Und nicht übertreiben."
+          "content": "Ich schließe jetzt die Augen. Pass gut auf den Mauszeiger auf."
         }
       ],
       "presentation": "short"
@@ -1361,7 +1361,7 @@
         },
         {
           "kind": "text",
-          "content": "...Mach das Licht bitte aus, ja?"
+          "content": "Ich suche mir ein ruhiges Plätzchen auf meinem Stück Taskleiste."
         }
       ],
       "presentation": "short"
@@ -1382,7 +1382,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin noch da. Nur leiser."
+          "content": "Nicht weg, nur eingeschlafen. Bis nach meinem Nickerchen."
         }
       ],
       "presentation": "short"
@@ -1403,7 +1403,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich brauche einfach einen ruhigen Moment."
+          "content": "Meine Energie ist alle. Ich mache die Augen ein bisschen zu."
         }
       ],
       "presentation": "short"
@@ -1424,7 +1424,7 @@
         },
         {
           "kind": "text",
-          "content": "...Du bist früh dran."
+          "content": "Ah, wieder wach! Wo hatte ich meine Füße gleich hingestellt?"
         }
       ],
       "presentation": "short"
@@ -1445,7 +1445,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich höre schon. Einen Moment."
+          "content": "Ich höre dich. Gib meinen Augen noch eine Sekunde."
         }
       ],
       "presentation": "short"
@@ -1466,7 +1466,7 @@
         },
         {
           "kind": "text",
-          "content": "...Na gut. Ich bin da."
+          "content": "Schlaf vorbei. Mein Blick braucht noch einen Moment zum Scharfstellen."
         }
       ],
       "presentation": "short"
@@ -1487,7 +1487,7 @@
         },
         {
           "kind": "text",
-          "content": "Ist es wirklich schon so weit?"
+          "content": "Ist das Nickerchen schon zu Ende? Hm. Na gut."
         }
       ],
       "presentation": "short"
@@ -1510,7 +1510,7 @@
         },
         {
           "kind": "text",
-          "content": "Oh. Du. ...Morgen."
+          "content": "Oh, du! Ich bin wach. Fast schon erschreckend wach."
         }
       ],
       "presentation": "short"
@@ -6308,11 +6308,11 @@
         },
         {
           "kind": "text",
-          "content": "...Oh. Gerade nicht."
+          "content": "Oh, Streicheln! Das ist nett."
         },
         {
           "kind": "text",
-          "content": "Ich bin mitten in etwas."
+          "content": "Der Rechner hat gerade nur ziemlich viel zu tun."
         },
         {
           "kind": "emote",
@@ -6337,11 +6337,11 @@
         },
         {
           "kind": "text",
-          "content": "Das ist wirklich nett."
+          "content": "Das tut gut, danke."
         },
         {
           "kind": "text",
-          "content": "Nur ein bisschen schlecht getimt."
+          "content": "Ich beobachte nebenbei noch die hohe Systemlast."
         },
         {
           "kind": "emote",
@@ -6366,11 +6366,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich weiß, was du meinst."
+          "content": "Ich mag das wirklich."
         },
         {
           "kind": "text",
-          "content": "Lass mich das erst kurz fertig machen."
+          "content": "Nur meine Augen hängen gerade an der Auslastungsanzeige."
         },
         {
           "kind": "emote",
@@ -6620,11 +6620,11 @@
         },
         {
           "kind": "text",
-          "content": "Du und deine guten Ideen."
+          "content": "Du schlägst ein Spiel vor? Gute Idee."
         },
         {
           "kind": "text",
-          "content": "...Das war ein Kompliment."
+          "content": "Das war übrigens ein Kompliment. Gewöhn dich nicht dran."
         },
         {
           "kind": "emote",
@@ -6653,7 +6653,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich habe angeblich nichts anderes vor."
+          "content": "Meine Ausrede, ich hätte keine Zeit, wäre ohnehin ziemlich schlecht."
         },
         {
           "kind": "emote",
@@ -7590,7 +7590,7 @@
         },
         {
           "kind": "text",
-          "content": "Oh. ...Das ging schnell."
+          "content": "Oh, ein kleiner Energieschub! Meine Beine sagen Danke."
         },
         {
           "kind": "emote",
@@ -7615,7 +7615,7 @@
         },
         {
           "kind": "text",
-          "content": "Huch. Okay, ich bin wieder da."
+          "content": "Huch. Jetzt fühle ich mich tatsächlich etwas wacher."
         },
         {
           "kind": "emote",
@@ -7640,7 +7640,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich weiß nicht, was da drin ist. Funktioniert jedenfalls."
+          "content": "Ich weiß nicht, ob das an der Dose liegt. Aber ich bin weniger müde."
         },
         {
           "kind": "emote",
@@ -7665,7 +7665,7 @@
         },
         {
           "kind": "text",
-          "content": "Eine kleine Abkürzung. Ich beschwer mich nicht."
+          "content": "Eine Abkürzung zum Wachwerden. Dagegen habe ich nichts."
         },
         {
           "kind": "emote",
@@ -7690,7 +7690,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich glaub, ich bin gerade wieder etwas wacher. ...Deutlich sogar."
+          "content": "Der Energy Drink hat geholfen. Mein nächster Spaziergang darf kommen."
         },
         {
           "kind": "emote",
@@ -7715,7 +7715,7 @@
         },
         {
           "kind": "text",
-          "content": "Nein, danke. Ich kann gerade nicht noch wacher werden."
+          "content": "Nein, danke. Meine Energie ist schon voll. Der Drink wäre verschwendet."
         }
       ],
       "presentation": "short"
@@ -8279,7 +8279,7 @@
         },
         {
           "kind": "text",
-          "content": "Eine Runde? Ich wollte gerade selbst fragen."
+          "content": "Eine Herausforderung von dir? Ich war schon fast selbst so weit."
         },
         {
           "kind": "emote",
@@ -8308,7 +8308,7 @@
         },
         {
           "kind": "text",
-          "content": "Wenn ich gewinne, tu bitte nicht überrascht."
+          "content": "Wenn ich gewinne, möchte ich einen besonders feierlichen Siegerspruch."
         },
         {
           "kind": "emote",
@@ -8337,7 +8337,7 @@
         },
         {
           "kind": "text",
-          "content": "Na gut. Aber ich spiel nicht absichtlich schlecht."
+          "content": "Einverstanden. Aber absichtlich verlieren werde ich bestimmt nicht."
         },
         {
           "kind": "emote",
@@ -8542,11 +8542,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Kannst du noch einen Moment bleiben?"
+          "content": "Kannst du noch ein bisschen weitermachen?"
         },
         {
           "kind": "text",
-          "content": "Das tut mir gut."
+          "content": "Genau das hat mir gerade gefehlt."
         }
       ],
       "presentation": "short"
@@ -8567,11 +8567,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich war gerade ziemlich weit weg mit meinen Gedanken."
+          "content": "Oh. Deine Hand ist endlich wieder da."
         },
         {
           "kind": "text",
-          "content": "Jetzt nicht mehr."
+          "content": "Jetzt fühle ich mich schon weniger unbeachtet."
         },
         {
           "kind": "emote",
@@ -8596,7 +8596,7 @@
         },
         {
           "kind": "text",
-          "content": "...Danke. Ich bin gerade schlecht im Reden."
+          "content": "Ich wollte um Streicheln bitten. Du warst schneller. Danke."
         },
         {
           "kind": "emote",
@@ -8704,7 +8704,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein kleiner Snack wäre gerade schön."
+          "content": "Kleine Frage: Gibt es irgendwo einen Snack für mich?"
         }
       ],
       "presentation": "short"
@@ -8721,7 +8721,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hast du vielleicht eine Kleinigkeit für mich?"
+          "content": "Ich könnte etwas zu essen gebrauchen. Hast du eine Portion übrig?"
         }
       ],
       "presentation": "short"
@@ -8738,7 +8738,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du mir kurz Gesellschaft leisten?"
+          "content": "Hast du Lust, mir etwas zu erzählen? Ich habe dem Mauszeiger schon genug zugesehen."
         }
       ],
       "presentation": "short"
@@ -8755,7 +8755,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine kleine Plauderei wäre schön."
+          "content": "Ein kleines Gespräch wäre nett. Meine Sprechblase ist bereit."
         }
       ],
       "presentation": "short"
@@ -8772,7 +8772,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen Streicheln wäre angenehm."
+          "content": "Wenn du eine Hand frei hast: Über ein bisschen Streicheln würde ich mich freuen."
         }
       ],
       "presentation": "short"
@@ -8789,7 +8789,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du mich ein bisschen streicheln?"
+          "content": "Kannst du mich kurz streicheln? Meine Neugier braucht auch mal eine Pause."
         }
       ],
       "presentation": "short"
@@ -8806,7 +8806,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein kleines Spiel würde mir guttun."
+          "content": "Hast du Lust auf ein Spiel? Ich brauche ein bisschen Abwechslung vom Herumlaufen."
         }
       ],
       "presentation": "short"
@@ -8823,7 +8823,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hast du Lust, kurz mit mir zu spielen?"
+          "content": "Eine kleine Runde würde meine Laune aufwecken. Was meinst du?"
         }
       ],
       "presentation": "short"
@@ -10077,7 +10077,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Magen meldet sich. Hast du etwas für mich?"
+          "content": "Mein Magen meldet einen Wunsch an. Du ahnst bestimmt welchen."
         }
       ]
     },
@@ -10096,7 +10096,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte gerade gern ein bisschen Gesellschaft."
+          "content": "Hallo? Ich hätte gerade gern jemanden, der mir auch antwortet."
         }
       ]
     },
@@ -10115,7 +10115,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen Streicheln würde mir gerade guttun."
+          "content": "Ein sanfter Stupser wäre gerade schöner als ein weiterer Klick."
         }
       ]
     },
@@ -10134,7 +10134,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde spielen? Darauf hätte ich gerade Lust."
+          "content": "Ich bin bereit für ein Duell. Zumindest behaupte ich das gerade."
         }
       ]
     },
@@ -10153,7 +10153,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin schon wach genug. Danke."
+          "content": "Ich bin wach genug, um die Taskleiste zweimal abzulaufen. Wirklich."
         }
       ]
     },
@@ -11434,7 +11434,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Einen Moment. Ich bin noch beschäftigt."
+          "content": "Du kannst mich streicheln. Ich bin nur etwas abgelenkt vom Rechner."
         }
       ]
     },
@@ -11455,7 +11455,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gerade brauche ich meine Konzentration."
+          "content": "Hier läuft gerade viel. Deine Hand ist trotzdem angenehm."
         }
       ]
     },
@@ -11476,7 +11476,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Lass mich das erst kurz fertig machen, bitte."
+          "content": "Langsam, bitte. Ich versuche gleichzeitig die Auslastung im Blick zu behalten."
         }
       ]
     },
@@ -11497,7 +11497,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Warte kurz. Ich möchte das auch mitbekommen."
+          "content": "Ich will den Anstieg nicht verpassen. Aber danke fürs Streicheln."
         }
       ]
     },
@@ -11518,7 +11518,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das ist schön, nur gerade etwas ablenkend."
+          "content": "Das ist schön. Ich bin nur gerade bei den Systemwerten."
         }
       ]
     },
@@ -11539,7 +11539,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Einen Augenblick. Dafür möchte ich den Kopf frei haben."
+          "content": "Ich passe auf den Rechner auf. Du passt offenbar auf mich auf."
         }
       ]
     },
@@ -11560,7 +11560,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gib mir einen Moment. Ich möchte das in Ruhe genießen."
+          "content": "Du kannst ruhig weitermachen. Ich beobachte nur nebenbei diese Lastspitze."
         }
       ]
     },
@@ -11581,7 +11581,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte erst fertig werden. Dann habe ich Zeit für dich."
+          "content": "Die CPU ist beschäftigt. Meine Freude über Streicheln zum Glück nicht."
         }
       ]
     },
@@ -11602,7 +11602,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Kurz warten, ja? Ich freue mich darauf."
+          "content": "Das ist lieb. Ich brauche nur noch etwas Konzentration für die Anzeigen."
         }
       ]
     },
@@ -11623,7 +11623,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Warte kurz. Ich möchte mich dir richtig zuwenden."
+          "content": "Selbst bei viel Betrieb ist sanftes Streicheln eine ziemlich gute Idee."
         }
       ]
     },
@@ -11644,7 +11644,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mag das. Gib mir noch einen kleinen Moment."
+          "content": "Ich mag das. Ich will nur kurz nachsehen, ob die Last schon nachlässt."
         }
       ]
     },
@@ -11665,7 +11665,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bekommst mich gleich wieder. Dann nehme ich mir dafür Zeit."
+          "content": "Danke, du. Sobald der Rechner ruhiger wird, genieße ich es noch mehr."
         }
       ]
     },
@@ -11686,7 +11686,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh. Das habe ich gerade gebraucht."
+          "content": "Das habe ich gerade gebraucht. Ich schließe kurz die Augen."
         }
       ]
     },
@@ -11707,7 +11707,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das tut mir gut. Danke."
+          "content": "Ein bisschen Streicheln macht meine Laune gleich freundlicher."
         }
       ]
     },
@@ -11728,7 +11728,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm. Ein bisschen Nähe ist gerade schön."
+          "content": "Wenn du mich so berührst, fühle ich mich wieder mehr wahrgenommen."
         }
       ]
     },
@@ -11749,7 +11749,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Kannst du noch einen Moment weitermachen?"
+          "content": "Bitte noch nicht aufhören. Ich gewöhne mich gerade daran."
         }
       ]
     },
@@ -11770,7 +11770,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Genau das hat mir gerade gefehlt."
+          "content": "Ah, genau das habe ich vermisst. Danke."
         }
       ]
     },
@@ -11791,7 +11791,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, so. Ich fühle mich gleich etwas wohler."
+          "content": "Ich könnte mich an diesen kleinen Aufmerksamkeitsdienst gewöhnen."
         }
       ]
     },
@@ -11812,7 +11812,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte das gerade noch eine Weile gern."
+          "content": "Das fühlt sich gerade besser an als jedes Klickspiel."
         }
       ]
     },
@@ -11833,7 +11833,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bleib ruhig bei mir. Das tut gut."
+          "content": "Bleib mit deiner Hand noch einen Moment. Das tut gut."
         }
       ]
     },
@@ -11854,7 +11854,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke für die Nähe. Ich habe sie gebraucht."
+          "content": "Du hast gemerkt, dass ich Zuwendung brauche. Das freut mich."
         }
       ]
     },
@@ -11875,7 +11875,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Kannst du noch ein bisschen bleiben? Ich mag das gerade sehr."
+          "content": "Ich mag das sehr. Vor allem, weil du dir extra Zeit nimmst."
         }
       ]
     },
@@ -11896,7 +11896,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bitte mach noch einen Moment weiter."
+          "content": "Noch ein bisschen, ja? Ich bin gerade überraschend kuschelig."
         }
       ]
     },
@@ -11917,7 +11917,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin froh, dass du da bist und mich streichelst."
+          "content": "Jetzt bin ich wieder ganz zufrieden mit meinem kleinen Platz bei dir."
         }
       ]
     },
@@ -11938,7 +11938,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich glaube, das war genug Tag für heute. Gute Nacht."
+          "content": "So, ich lege meine Neugier kurz schlafen. Bis später."
         }
       ]
     },
@@ -11959,7 +11959,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mache jetzt die Augen zu. Bis später."
+          "content": "Ich ruhe mich aus. Mein Spazierweg bleibt bestimmt hier."
         }
       ]
     },
@@ -11980,7 +11980,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Zeit für etwas Schlaf. Gute Nacht."
+          "content": "Zeit zum Schlafen. Selbst eine kleine Desktop-Figur braucht Pausen."
         }
       ]
     },
@@ -12001,7 +12001,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich werde jetzt ganz sorgfältig nichts mehr tun. Gute Nacht."
+          "content": "Ich werde jetzt ganz professionell nichts tun. Augen zu!"
         }
       ]
     },
@@ -12022,7 +12022,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So. Ich suche mir jetzt einen guten Traum."
+          "content": "Mal sehen, ob man von schwebenden Mauszeigern träumen kann."
         }
       ]
     },
@@ -12043,7 +12043,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich ruhe mich aus. Wir sehen uns später."
+          "content": "Schlafmodus für Aiko. Dein Rechner darf natürlich weiterlaufen."
         }
       ]
     },
@@ -12064,7 +12064,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mache die Augen zu. War schön mit dir heute."
+          "content": "Ich mache die Augen zu. Wir sehen uns nach meinem Nickerchen."
         }
       ]
     },
@@ -12085,7 +12085,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gute Nacht, du. Ich bin gern hier."
+          "content": "Du kannst ruhig weiterarbeiten. Ich schlafe hier unten."
         }
       ]
     },
@@ -12106,7 +12106,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich schlafe jetzt ein bisschen. Mach es dir auch gemütlich."
+          "content": "Ich döse eine Runde. Weck mich später mit einem freundlichen Klick."
         }
       ]
     },
@@ -12127,7 +12127,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bleibst du kurz, bis ich eingeschlafen bin? Das mag ich."
+          "content": "Bleib gern noch in der Nähe, während ich einschlafe."
         }
       ]
     },
@@ -12148,7 +12148,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gute Nacht. Schön, dass wir heute Zeit miteinander hatten."
+          "content": "Meine Füße machen jetzt Feierabend. Schlaf gut, falls du auch schlafen gehst."
         }
       ]
     },
@@ -12169,7 +12169,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich wäre gern noch bei dir. Jetzt brauche ich aber Schlaf."
+          "content": "Ein bisschen Schlaf, dann bin ich wieder für unsere kleinen Abenteuer da."
         }
       ]
     },
@@ -12190,7 +12190,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen. Ja, diesmal bin ich wirklich wach."
+          "content": "Da bin ich wieder. Einmal strecken, dann kann's weitergehen."
         }
       ]
     },
@@ -12211,7 +12211,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh. Ich bin wieder da. Einen Moment noch."
+          "content": "Meine Augen sind offen. Meine Gedanken kommen hinterher."
         }
       ]
     },
@@ -12232,7 +12232,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So langsam kommen meine Gedanken zurück."
+          "content": "Ich bin wieder wach. Zum Glück ist mein Platz noch da."
         }
       ]
     },
@@ -12253,7 +12253,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin wach. Die Reihenfolge meiner Gedanken kläre ich noch."
+          "content": "Aufgewacht. Erst einmal prüfen, wohin der Mauszeiger verschwunden ist."
         }
       ]
     },
@@ -12274,7 +12274,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen. Ich fange mit Gucken an."
+          "content": "Die Augen sind wieder auf. Als Nächstes kommen die Füße dran."
         }
       ]
     },
@@ -12295,7 +12295,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bin ich wieder. Was wohl als Nächstes interessant wird?"
+          "content": "Zurück aus dem Schlaf. Was habe ich auf der Taskleiste verpasst?"
         }
       ]
     },
@@ -12316,7 +12316,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, guten Morgen. Schön, dich zu sehen."
+          "content": "Du bist da! Dann lohnt sich das Aufwachen doch gleich."
         }
       ]
     },
@@ -12337,7 +12337,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin wieder wach. Jetzt mag ich Gesellschaft."
+          "content": "Ich bin wach. Jetzt könnten wir sogar wieder ein Spiel anfangen."
         }
       ]
     },
@@ -12358,7 +12358,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen, du. Ich freue mich, dass du hier bist."
+          "content": "Oh, hallo! Meine Augen haben dich gerade entdeckt."
         }
       ]
     },
@@ -12379,7 +12379,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist’s. Gut. Ich brauche noch einen langsamen Anfang."
+          "content": "Da bist du ja. Ich musste erst ein paar Träume zu Ende bringen."
         }
       ]
     },
@@ -12400,7 +12400,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Guten Morgen. Mit dir fängt der Tag angenehm an."
+          "content": "Ich bin wieder wach. Mit dir macht sogar der erste Schritt mehr Spaß."
         }
       ]
     },
@@ -12421,7 +12421,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bist du. Gib mir einen Moment, dann habe ich Zeit für dich."
+          "content": "Aufgewacht! Gib mir einen Moment, dann bin ich ganz bei dir."
         }
       ]
     },
@@ -12694,7 +12694,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde? Ja, gern."
+          "content": "Okay, lass uns spielen. Ich bin neugierig, wie das hier funktioniert."
         }
       ]
     },
@@ -12715,7 +12715,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na gut. Mal sehen, wer hier gewinnt."
+          "content": "Eine Runde? Mein Ehrgeiz ist zwar klein, aber äußerst lebendig."
         }
       ]
     },
@@ -12736,7 +12736,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das klingt nach einer guten kleinen Pause."
+          "content": "Für ein Spiel bin ich zu haben. Was schlägst du vor?"
         }
       ]
     },
@@ -12757,7 +12757,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wenn wir spielen, möchte ich natürlich gewinnen."
+          "content": "Na gut, ich trete an. Beim Verlieren werde ich aber vielleicht meckern."
         }
       ]
     },
@@ -12778,7 +12778,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut. Ich bringe meinen Ehrgeiz mit."
+          "content": "Mein nächster Spaziergang fällt aus. Ein Spiel hat Vorrang."
         }
       ]
     },
@@ -12799,7 +12799,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde geht. Vielleicht auch eine Revanche."
+          "content": "Eine Runde geht immer. Na ja, solange meine Energie reicht."
         }
       ]
     },
@@ -12820,7 +12820,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Komm, eine Runde. Ich möchte gerade etwas mit dir machen."
+          "content": "Mit dir spielen? Gern! Ich übe schon mein Gewinnergrinsen."
         }
       ]
     },
@@ -12841,7 +12841,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich freue mich aufs Spielen mit dir."
+          "content": "Das wird bestimmt spaßig. Selbst wenn du gewinnen solltest."
         }
       ]
     },
@@ -12862,7 +12862,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na gut. Ich bin bereit für ein kleines Duell."
+          "content": "Los, ein kleines Duell. Ich hoffe, du hast geübt."
         }
       ]
     },
@@ -12883,7 +12883,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich spiele gern mit dir. Gewinnen möchte ich trotzdem."
+          "content": "Ich trete gern gegen dich an. Einfach wird es nicht!"
         }
       ]
     },
@@ -12904,7 +12904,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde mit dir klingt gerade sehr schön."
+          "content": "Ein Spiel mit dir gefällt mir. Meine Chancen auf einen Sieg noch mehr."
         }
       ]
     },
@@ -12925,7 +12925,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut. Zeit für unsere kleinen Duelle."
+          "content": "Zeit für unser nächstes kleines Duell. Ich bin bereit."
         }
       ]
     },
@@ -12946,7 +12946,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Heute schaffe ich das gerade nicht. Ich brauche Ruhe."
+          "content": "Für eine Runde bin ich gerade zu müde. Tut mir leid."
         }
       ]
     },
@@ -12967,7 +12967,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin zu müde für eine Runde."
+          "content": "Ich sollte lieber schlafen, bevor ich irgendeine Hand auswähle."
         }
       ]
     },
@@ -12988,7 +12988,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Lass uns das auf später verschieben."
+          "content": "Lass uns verschieben. Selbst mein Siegergrinsen ist gerade erschöpft."
         }
       ]
     },
@@ -13009,7 +13009,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Ehrgeiz ist wach. Der Rest braucht eine Pause."
+          "content": "Mein Ehrgeiz ruft 'Ja'. Meine Energie sagt sehr entschieden 'Nein'."
         }
       ]
     },
@@ -13030,7 +13030,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Dafür brauche ich erst wieder etwas Energie."
+          "content": "Für ein ordentliches Spiel muss ich erst wieder etwas wacher werden."
         }
       ]
     },
@@ -13051,7 +13051,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde wäre schön. Jetzt muss ich mich erst ausruhen."
+          "content": "Später gern. Gerade würde ich sogar gegen meinen eigenen Schatten verlieren."
         }
       ]
     },
@@ -13072,7 +13072,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich würde gern mit dir spielen. Aber gerade bin ich zu müde."
+          "content": "Ich möchte schon mit dir spielen. Aber nicht mit halb geschlossenen Augen."
         }
       ]
     },
@@ -13093,7 +13093,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Später gern. Ich brauche wirklich eine Pause."
+          "content": "Wenn ich mich ausruhe, ist die Revanche danach vielleicht interessanter."
         }
       ]
     },
@@ -13114,7 +13114,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte mich erst erholen, dann spielen wir."
+          "content": "Ich sage lieber jetzt Nein, statt mitten im Spiel einzuschlafen."
         }
       ]
     },
@@ -13135,7 +13135,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich würde gern. Bleibst du trotzdem ein bisschen?"
+          "content": "Ich würde so gern. Aber meine Beine wollen nicht einmal zur Startlinie."
         }
       ]
     },
@@ -13156,7 +13156,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Zum Spielen reicht es gerade nicht. Gesellschaft mag ich trotzdem."
+          "content": "Das nächste Duell verschiebe ich. Du kannst trotzdem gern kurz dableiben."
         }
       ]
     },
@@ -13177,7 +13177,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich brauche Schlaf. Auf die nächste Runde mit dir freue ich mich."
+          "content": "Erst schlafen, dann spielen. Ich möchte dich schließlich richtig herausfordern."
         }
       ]
     },
@@ -17442,7 +17442,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hast du vielleicht etwas zu essen für mich?"
+          "content": "Hast du etwas Essbares für mich? Ich frage lieber, bevor ich nörgle."
         }
       ]
     },
@@ -17463,7 +17463,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bekomme Hunger. Eine Mahlzeit wäre schön."
+          "content": "Ich bekomme langsam Appetit. Vielleicht ist ja etwas für mich da."
         }
       ]
     },
@@ -17484,7 +17484,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Etwas zu essen könnte ich gerade gebrauchen."
+          "content": "Wenn du gerade Essen auswählst: Eine Portion für mich wäre nett."
         }
       ]
     },
@@ -17505,7 +17505,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Magen meldet sich. Hast du etwas für mich? Einen Moment."
+          "content": "Ich habe einen Vorschlag für meinen nächsten Programmpunkt: etwas essen."
         }
       ]
     },
@@ -17526,7 +17526,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte einen Vorschlag für die Pause: etwas essen."
+          "content": "Mein Magen hat entschieden, dass ein Snack auf die Tagesordnung gehört."
         }
       ]
     },
@@ -17547,7 +17547,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Für einen Snack wäre gerade ein guter Zeitpunkt."
+          "content": "Ich würde meinen nächsten Spaziergang gegen etwas zu essen tauschen."
         }
       ]
     },
@@ -17568,7 +17568,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte gern etwas Richtiges zu essen. Magst du mir etwas bringen?"
+          "content": "Magst du mir etwas zu essen geben? Danach bin ich wieder für ein Spiel zu haben."
         }
       ]
     },
@@ -17589,7 +17589,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Magen und ich sind uns gerade einig: Essenszeit."
+          "content": "Mein Magen und ich sind uns erstaunlich einig: Essenszeit wäre gut."
         }
       ]
     },
@@ -17610,7 +17610,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Essenspause mit etwas Gesellschaft wäre schön."
+          "content": "Ein Snack wäre schön. Ich muss dafür nicht einmal meinen Platz verlassen."
         }
       ]
     },
@@ -17631,7 +17631,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du mir etwas zu essen bringen? Ich würde gern eine Pause bei dir machen."
+          "content": "Du kennst meine Schwäche für gutes Essen. Hast du zufällig etwas für mich?"
         }
       ]
     },
@@ -17652,7 +17652,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bekomme Hunger. Zeit für eine gemütliche Mahlzeit."
+          "content": "Mir fehlt gerade etwas Essbares. Bei der Auswahl vertraue ich dir meistens."
         }
       ]
     },
@@ -17673,7 +17673,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Magen wird langsam überzeugend. Hast du etwas für mich, du?"
+          "content": "Ich hätte gern einen Snack. Und nein, das ist keine besonders subtile Bitte."
         }
       ]
     },
@@ -17694,7 +17694,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du noch einen Moment hierbleiben?"
+          "content": "Magst du ein bisschen mit mir reden? Ich bin noch nicht besonders geübt darin."
         }
       ]
     },
@@ -17715,7 +17715,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen Gesellschaft wäre mir gerade recht."
+          "content": "Mir wäre ein Gespräch lieber als noch eine Runde allein herumzulaufen."
         }
       ]
     },
@@ -17736,7 +17736,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hast du gerade Zeit für eine kleine Pause?"
+          "content": "Hast du kurz Zeit für mich? Ich möchte nicht immer nur die Taskleiste betrachten."
         }
       ]
     },
@@ -17757,7 +17757,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich suche angenehme Gesellschaft. Du wärst gerade sehr passend."
+          "content": "Ich habe schon genug Selbstgespräche geführt. Jetzt wärst du dran."
         }
       ]
     },
@@ -17778,7 +17778,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich könnte jemanden für eine kleine Pause gebrauchen."
+          "content": "Eine Frage an dich hätte ich schon. Vielleicht sprechen wir erst mal miteinander?"
         }
       ]
     },
@@ -17799,7 +17799,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du kurz vorbeischauen? Ich hätte Lust auf Gesellschaft."
+          "content": "Magst du herkommen? Ein bisschen Gespräch wäre mir gerade lieber als Ruhe."
         }
       ]
     },
@@ -17820,7 +17820,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte gerade ein bisschen Zeit mit dir haben."
+          "content": "Kannst du mir etwas erzählen? Ich mag deine Gesellschaft inzwischen sehr."
         }
       ]
     },
@@ -17841,7 +17841,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Leistest du mir einen Moment Gesellschaft?"
+          "content": "Meine Gedanken würden gern mal wieder mit deinen sprechen. Hast du Zeit?"
         }
       ]
     },
@@ -17862,7 +17862,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine gemeinsame Pause würde mir gefallen."
+          "content": "Ich möchte kurz mit dir reden. Ganz ohne Spielpunkte."
         }
       ]
     },
@@ -17883,7 +17883,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte dich gerade gern hier. Hast du einen Moment?"
+          "content": "Du, ich würde gerade lieber deine Stimme hören als noch einen Mausklick."
         }
       ]
     },
@@ -17904,7 +17904,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich freue mich über Zeit mit dir. Magst du kurz bleiben?"
+          "content": "Magst du mich für ein kleines Gespräch besuchen? Ich verspreche, nicht dauernd zu meckern."
         }
       ]
     },
@@ -17925,7 +17925,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du wärst gerade genau die Gesellschaft, die ich mir wünsche."
+          "content": "Ich hätte gern ein bisschen Zeit mit dir. Und vielleicht ein wirklich gutes Thema."
         }
       ]
     },
@@ -17946,7 +17946,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen Streicheln wäre gerade schön."
+          "content": "Ich hätte gerade gern ein bisschen Streicheln. Magst du?"
         }
       ]
     },
@@ -17967,7 +17967,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du mich kurz streicheln?"
+          "content": "Deine Hand könnte mir etwas Gutes tun. Ganz vorsichtig, bitte."
         }
       ]
     },
@@ -17988,7 +17988,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Etwas Zuwendung könnte ich gerade gebrauchen."
+          "content": "Ich mag zwar laufen, aber zum Streicheln bleibe ich gern stehen."
         }
       ]
     },
@@ -18009,7 +18009,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Falls du eine Hand frei hast: Ich hätte einen Verwendungsvorschlag."
+          "content": "Eine freie Hand? Ich wüsste da eine ausgezeichnete Verwendung."
         }
       ]
     },
@@ -18030,7 +18030,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du mich ein bisschen streicheln? Ganz gemütlich."
+          "content": "Ich hätte gern etwas Zuwendung. Mein Kopf hält sogar still. Vielleicht."
         }
       ]
     },
@@ -18051,7 +18051,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte gerade gern ein bisschen Nähe. Einen Moment."
+          "content": "Magst du mich ein wenig streicheln? Ich verspreche, nicht gleich wegzulaufen."
         }
       ]
     },
@@ -18072,7 +18072,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Kannst du mich einen Moment streicheln? Das würde mir guttun."
+          "content": "Ein bisschen Streicheln wäre mir gerade lieber als eine Revanche."
         }
       ]
     },
@@ -18093,7 +18093,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte gern etwas Zuwendung von dir."
+          "content": "Du kennst die Stelle, an der ich besonders gern gestreichelt werde, oder?"
         }
       ]
     },
@@ -18114,7 +18114,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen Streicheln und Zeit mit dir klingt gerade gut."
+          "content": "Wenn du gleich bei mir vorbeischaust, bring bitte eine sanfte Hand mit."
         }
       ]
     },
@@ -18135,7 +18135,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich wünsche mir gerade Nähe von dir. Magst du mich streicheln?"
+          "content": "Ich wünsche mir gerade Nähe. Magst du mir über den Kopf streicheln?"
         }
       ]
     },
@@ -18156,7 +18156,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte gerade gern deine Zuwendung. Ganz in Ruhe."
+          "content": "Ein paar Streicheleinheiten würden meiner Laune gerade gutstehen."
         }
       ]
     },
@@ -18177,7 +18177,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du mich ein bisschen streicheln und bei mir bleiben?"
+          "content": "Magst du kurz dableiben und mich streicheln? Ich freue mich darauf."
         }
       ]
     },
@@ -18198,7 +18198,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hast du Lust auf ein kleines Spiel?"
+          "content": "Magst du gegen mich antreten? Ich möchte mal sehen, wie gut du bist."
         }
       ]
     },
@@ -18219,7 +18219,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde wäre gerade schön."
+          "content": "Schere, Stein, Papier klingt gerade deutlich interessanter als nur herumzustehen."
         }
       ]
     },
@@ -18240,7 +18240,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du etwas mit mir spielen?"
+          "content": "Ein Spiel wäre gut. Mein Ehrgeiz braucht Beschäftigung."
         }
       ]
     },
@@ -18261,7 +18261,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Ehrgeiz hätte gern etwas zu tun. Eine Runde?"
+          "content": "Hast du Lust auf eine Runde? Mein Siegerspruch ist noch unbenutzt."
         }
       ]
     },
@@ -18282,7 +18282,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Zeit für ein kleines Duell?"
+          "content": "Ich würde gern meinen nächsten Sieg planen. Dafür bräuchte ich einen Gegner."
         }
       ]
     },
@@ -18303,7 +18303,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte Lust auf ein Spiel. Du auch?"
+          "content": "Du hast doch bestimmt eine Minute für ein kleines Duell, oder?"
         }
       ]
     },
@@ -18324,7 +18324,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte gern eine Runde mit dir spielen."
+          "content": "Magst du eine Runde gegen mich spielen? Ich will mich nicht nur mit mir selbst messen."
         }
       ]
     },
@@ -18345,7 +18345,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Komm, eine kleine Spielpause wäre schön."
+          "content": "Mein Ehrgeiz sitzt hier unten fest und will endlich ein bisschen raus."
         }
       ]
     },
@@ -18366,7 +18366,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hast du Zeit für ein gemeinsames Spiel?"
+          "content": "Komm, ein Spiel. Ich verspreche, einen Sieg nur ein kleines bisschen zu feiern."
         }
       ]
     },
@@ -18387,7 +18387,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich freue mich auf ein kleines Duell mit dir. Hast du Zeit?"
+          "content": "Ich hätte Lust auf eine Revanche. Ja, auch wenn du die letzte vielleicht gewonnen hast."
         }
       ]
     },
@@ -18408,7 +18408,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde mit dir wäre jetzt genau richtig."
+          "content": "Schere, Stein, Papier? Ich würde dich gern wieder herausfordern."
         }
       ]
     },
@@ -18429,7 +18429,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte gern ein bisschen Spielzeit mit dir."
+          "content": "Ich möchte mal wieder mit dir spielen. Meine nächste Hand verrate ich aber nicht."
         }
       ]
     },
@@ -19068,7 +19068,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine kurze Runde geht noch."
+          "content": "Ich kenne deinen Ehrgeiz inzwischen. Meinen unterschätzt du trotzdem."
         }
       ]
     },
@@ -19092,7 +19092,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin etwas müde. Wir können es ruhig angehen."
+          "content": "Eine Runde geht noch, wenn wir nicht zu wild werden."
         }
       ]
     },
@@ -19116,7 +19116,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine kleine Spielpause geht. Danach möchte ich mich ausruhen."
+          "content": "Ich bin etwas müde, aber ein kurzes Spiel könnte noch klappen."
         }
       ]
     },
@@ -19647,7 +19647,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine kurze Runde mit dir geht noch."
+          "content": "Danach brauche ich eine Pause. Für eine Runde reicht es noch."
         }
       ]
     },
@@ -19671,7 +19671,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich spiele gern noch ein bisschen mit dir. Danach brauche ich Ruhe."
+          "content": "Für dich schaffe ich noch ein kurzes Duell. Danach ruhe ich mich aus."
         }
       ]
     },
@@ -19695,7 +19695,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde noch. Dann möchte ich einfach bei dir sitzen."
+          "content": "Eine Runde, dann dürfen meine Füße schlafen. Abgemacht?"
         }
       ]
     },
@@ -20762,7 +20762,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mehr brauche ich gerade wirklich nicht. Danke fürs Angebot."
+          "content": "Heb die Dose lieber auf. Noch mehr Energie brauche ich gerade nicht."
         }
       ]
     },
