@@ -21,7 +21,7 @@ passed 143 targeted tests and instrumented the two misleading test fixtures.
 
 | Stage | Evidence and change | Required protection | Status |
 | --- | --- | --- | --- |
-| 1 | `FoodGuiTests.test_full_energy_rejects_drink_without_eating_animation` only selects a menu item. The observed result is USER_HELD cursor custody, idle interaction and energy 100. Merge its full-energy case into the existing drink-selection test and remove the obsolete refusal claim. | Selection at energy 40 and 100 starts cursor custody without consumption, nutrition, friendship or an eating animation. Actual hand/face refusal remains in the existing World GUI tests. | Pending |
+| 1 | `FoodGuiTests.test_full_energy_rejects_drink_without_eating_animation` only selects a menu item. The observed result is USER_HELD cursor custody, idle interaction and energy 100. Merge its full-energy case into the existing drink-selection test and remove the obsolete refusal claim. | Selection at energy 40 and 100 starts cursor custody without consumption, nutrition, friendship or an eating animation. Actual hand/face refusal remains in the existing World GUI tests. | Complete |
 | 2 | `ObjectInteractionTests.test_take_notification_does_not_interrupt_pet_held_custody` finishes pickup and reaches eat; target_taken returns at its phase guard without reading custody. Stop at the actual attachment event while still in pick_up. | A late take notification cannot steal a PET_HELD item or change its committed episode. Actual World pickup and frame-bound reach checks remain unchanged. | Pending |
 | 3 | The named-loss feedback test composes Coordinator, Presenter, ReactionPlayer and catalogue but reuses a grasp fixture and rewrites private callback fields. Move it into a dedicated headless integration module with its own minimal fixture and constructor-injected ports. | All named missing bubbles, readable delays, distinct completion receipts, stale callback protection and search readiness remain asserted. Keep separate behavior/orientation and native timer/input tests. | Pending |
 
@@ -55,4 +55,19 @@ their current owners and rules.
 
 ## Execution record
 
-Plan recorded before implementation. All three stages are pending.
+### Stage 1 completed
+
+Removed the obsolete full-energy refusal test. The existing energy-drink menu
+case now covers energy 40 and 100 in subtests, cancelling the first cursor
+gesture through its public owner before the second selection. Both cases assert
+USER_HELD custody, idle interaction, no eating animation/hand overlay and
+unchanged energy, satiety, digestion, food history, fun and friendship. Only
+elapsed-time accounting is isolated to avoid ordinary need decay in a selection
+boundary test. No presentation, handover or refusal is claimed at this stage.
+
+Validation: `tests.test_food_gui`, `tests.test_object_decisions`,
+`WorldGuiTests.test_taken_unknown_drink_is_recognized_then_accepted_or_refused_at_cursor`
+and `WorldGuiTests.test_recognized_drink_handover_then_unknown_full_drink_is_examined`:
+8 tests in 2.850 seconds, no skips; Ruff passes. Actual cursor and hand refusal
+remain covered by their existing physical interaction fixtures. No runtime change.
+

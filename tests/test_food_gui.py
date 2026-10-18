@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.world.contracts import ObjectState
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -69,47 +70,41 @@ class FoodGuiTests(unittest.TestCase):
     def test_energy_drink_selection_carries_without_awarding_energy(self) -> None:
         bar = self.pet._hover.toolbar
         assert bar is not None
-        set_test_pet_values(self.pet.state, energy=40)
-        set_test_pet_values(self.pet.state, satiety=30)
-        old_fun = self.pet.state.fun
-        old_food_history = self.pet.state.food.recent_food_ids
-        bar.buttons["feed"].invoke()
-        menu = self.pet._hover.food_menu
-        assert menu is not None
-        self.assertEqual(menu.buttons["energy_drink"].cget("text"), "Energy Drink")
-        # Gesture start now saves through the active-time owner. Isolate the
-        # selection effect from real elapsed need decay in this boundary test.
+        # Menu selection starts a gesture at either capacity. Refusal requires
+        # later hand/face evidence and is covered by World interaction tests.
         with patch("aiko_pet.application.active_time.ActiveSessionClock.consume",
                    return_value=0):
-            menu.buttons["energy_drink"].invoke()
-        self.assertIsNone(self.pet._hover.food_menu)
-        self.assertEqual(self.pet.state.energy, 40)
-        self.assertLess(self.pet.state.satiety, 40)
-        self.assertEqual(
-            self.pet.state.food.recent_food_ids, old_food_history,
-        )
-        self.assertEqual(self.pet.state.food.remaining_digest_minutes, 0)
-        self.assertAlmostEqual(self.pet.state.fun, old_fun, places=1)
-        token = self.pet._world.cursor.instance_id
-        assert token is not None
-        self.assertEqual(self.pet._world.world.get(token).definition_id, "energy_drink")
-        self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
-
-    def test_full_energy_rejects_drink_without_eating_animation(self) -> None:
-        set_test_pet_values(self.pet.state, energy=100)
-        set_test_pet_values(self.pet.state, satiety=45)
-        self.pet._hover.open_food_menu()
-        menu = self.pet._hover.food_menu
-        assert menu is not None
-        with patch.object(
-            self.pet.application._care._clock, "consume",
-            return_value=0.0,
-        ):
-            menu.buttons["energy_drink"].invoke()
-        self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
-        self.assertNotEqual(
-            self.pet._animated.frame_clock.active_key, ("eat", None),
-        )
+            for energy in (40, 100):
+                with self.subTest(energy=energy):
+                    set_test_pet_values(self.pet.state, energy=energy, satiety=30)
+                    old_fun = self.pet.state.fun
+                    old_friendship = self.pet.state.friendship
+                    old_food_history = self.pet.state.food.recent_food_ids
+                    self.assertFalse(self.pet._world.cursor.carrying)
+                    bar.buttons["feed"].invoke()
+                    menu = self.pet._hover.food_menu
+                    assert menu is not None
+                    self.assertEqual(menu.buttons["energy_drink"].cget("text"),
+                                     "Energy Drink")
+                    menu.buttons["energy_drink"].invoke()
+                    self.assertIsNone(self.pet._hover.food_menu)
+                    token = self.pet._world.cursor.instance_id
+                    assert token is not None
+                    item = self.pet._world.world.get(token)
+                    self.assertEqual(item.definition_id, "energy_drink")
+                    self.assertEqual(item.state, ObjectState.USER_HELD)
+                    self.assertEqual(self.pet._world.interaction.phase, "idle")
+                    self.assertEqual(self.pet.state.energy, energy)
+                    self.assertEqual(self.pet.state.satiety, 30)
+                    self.assertEqual(self.pet.state.food.recent_food_ids,
+                                     old_food_history)
+                    self.assertEqual(self.pet.state.food.remaining_digest_minutes, 0)
+                    self.assertEqual(self.pet.state.fun, old_fun)
+                    self.assertEqual(self.pet.state.friendship, old_friendship)
+                    self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
+                    self.assertNotEqual(self.pet._animated.frame_clock.active_key,
+                                        ("eat", None))
+                    self.pet._world.cursor.cancel()
 
 
 if __name__ == "__main__":
