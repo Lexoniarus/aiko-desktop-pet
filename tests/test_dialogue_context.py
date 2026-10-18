@@ -98,14 +98,15 @@ class DialogueContextTests(unittest.TestCase):
                 line = next(x for x in book.lines if x.id == chosen.line_id)
                 self.assertIn(stage, line.stages)
 
-    def test_48_stories_have_the_agreed_state_distribution(self) -> None:
+    def test_48_stories_have_single_emotion_and_desktop_stage_distribution(self) -> None:
         stories = [x for x in self.mind.book.lines if x.presentation == "story"]
         self.assertEqual(len(stories), 48)
         expected = Counter(
             calm=2,
             playful=2,
             tired=2,
-            withdrawn=2,
+            withdrawn=1,
+            irritated=1,
             hungry=1,
             lonely=1,
             seeking_affection=1,
@@ -115,6 +116,7 @@ class DialogueContextTests(unittest.TestCase):
             selected = [x for x in stories if x.stages == (stage,)]
             self.assertEqual(Counter(x.moods[0] for x in selected), expected)
             for line in selected:
+                self.assertEqual(len(line.moods), 1)
                 self.assertTrue(3 <= sum(b.kind == "text" for b in line.beats) <= 5)
                 self.assertTrue(any(b.kind == "emote" for b in line.beats))
 
@@ -139,29 +141,40 @@ class DialogueContextTests(unittest.TestCase):
         self.assertEqual(set(ids), pool)
         self.assertEqual(len(ids), len(set(ids)))
 
-    def test_warmth_after_care_keeps_a_varied_story_pool(self) -> None:
+    def test_warm_stories_do_not_borrow_calm_dialogue(self) -> None:
         for stage in FriendshipStage:
-            snapshot = DialogueContext(stage, "warm", self.time, present=True)
+            warm = DialogueContext(stage, "warm", self.time, present=True)
+            calm = DialogueContext(stage, "calm", self.time, present=True)
             pool = [
                 line
                 for line in self.mind.book.lines
                 if line.presentation == "story"
-                and line.matches("warm", self.time, snapshot)
+                and line.matches("warm", self.time, warm)
             ]
-            self.assertEqual(len(pool), 3)
-            selected = set()
-            for i in range(3):
-                chosen = self.mind.book.choose(
-                    "talk",
-                    "warm",
-                    self.time,
-                    i,
-                    dialogue=snapshot,
-                    presentation="story",
-                )
-                assert chosen is not None
-                selected.add(chosen.line_id)
-            self.assertEqual(len(selected), 3)
+            self.assertEqual(len(pool), 1)
+            self.assertEqual(pool[0].moods, ("warm",))
+            self.assertFalse(pool[0].matches("calm", self.time, calm))
+            chosen = self.mind.book.choose(
+                "talk", "warm", self.time, 1,
+                dialogue=warm, presentation="story",
+            )
+            assert chosen is not None
+            self.assertEqual(chosen.line_id, pool[0].id)
+
+    def test_single_primary_emotion_per_authored_variant(self) -> None:
+        self.assertTrue(
+            all(len(line.moods) <= 1 for line in self.mind.book.lines)
+        )
+        for stage in FriendshipStage:
+            for emotion in ("withdrawn", "irritated"):
+                snapshot = DialogueContext(stage, emotion, self.time, present=True)
+                pool = [
+                    line for line in self.mind.book.lines
+                    if line.event == "talk"
+                    and line.presentation == "story"
+                    and line.matches(emotion, self.time, snapshot)
+                ]
+                self.assertEqual(len(pool), 1, (stage, emotion))
 
     def test_spontaneous_story_throttle_and_sleep(self) -> None:
         state = PetState(friendship=90, mood=65, social=80, affection=80)
