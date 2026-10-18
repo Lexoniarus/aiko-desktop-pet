@@ -9,6 +9,15 @@ from ..pet.mind.object_attention import KnownPlaceCoverage, LookSide, ObjectAtte
 from ..pet.mind.object_knowledge import ObjectKnowledge
 
 
+def has_learned_places(
+    known: tuple[ObjectKnowledge, ...], ground_bounds: tuple[float, float],
+) -> bool:
+    return any(item.recognized and item.resting
+               and item.place_status == "remembered"
+               and ground_bounds[0] <= item.x <= ground_bounds[1]
+               for item in known)
+
+
 @dataclass(frozen=True, slots=True)
 class OrientationProgress:
     """One transient value; the behavior coordinator owns its replacement."""
@@ -36,10 +45,8 @@ class OrientationProgress:
             raise ValueError("Orientation durations must be positive")
         if self.complete:
             return self
-        if not any(item.recognized and item.resting
-                   and item.place_status == "remembered"
-                   and ground_bounds[0] <= item.x <= ground_bounds[1]
-                   for item in known):
+        if (self.side == -1 and self.since is None
+                and not has_learned_places(known, ground_bounds)):
             return OrientationProgress(side=None)
         if attention.mode in ("object", "unavailable"):
             return OrientationProgress()

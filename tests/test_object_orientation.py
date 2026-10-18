@@ -70,3 +70,11 @@ class ObjectOrientationTests(unittest.TestCase):
                 progress = self.advance(OrientationProgress(), 0, known=(known,))
                 self.assertFalse(progress.complete)
                 self.assertEqual(progress.side, -1)
+
+    def test_last_left_loss_does_not_skip_the_remaining_right_look(self):
+        progress = self.advance(OrientationProgress(), 0)
+        progress = self.advance(progress, .5, known=())
+        self.assertEqual(progress.side, 1)
+        progress = self.advance(progress, .6, RIGHT, known=())
+        self.assertFalse(progress.complete)
+        self.assertTrue(self.advance(progress, 1.1, RIGHT, known=()).complete)

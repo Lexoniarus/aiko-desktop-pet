@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..pet.balance import BALANCE
-from ..pet.mind.object_attention import ObjectAttention
+from ..pet.mind.object_attention import LookSide, ObjectAttention
 from ..pet.mind.object_decisions import (
     ObjectUseContext,
     ObjectUseDecision,
@@ -20,6 +20,7 @@ from .object_awareness import ObjectAwareness
 from .object_feedback import InteractionPhase
 from .object_interaction import ObjectInteractionCoordinator
 from .object_interaction_state import SearchPosition
+from .object_orientation import OrientationProgress, has_learned_places
 
 
 def choose_object_attention(
@@ -27,6 +28,7 @@ def choose_object_attention(
     walking: float, following_cursor: bool = False,
     activity_active: bool = False,
     tracking_feedback: bool = False,
+    orientation_side: LookSide | None = None,
     cursor: tuple[float, float] | None, target: tuple[float, float] | None,
 ) -> ObjectAttention:
     """Derive attention from the existing action and movement owners only."""
@@ -46,6 +48,8 @@ def choose_object_attention(
         return ObjectAttention("object", target, focused_place=target is not None)
     if activity_active and not (following_cursor and tracking_feedback):
         return ObjectAttention("unavailable", None)
+    if orientation_side is not None:
+        return ObjectAttention("survey", (orientation_side, 0))
     if following_cursor and cursor is not None:
         subject = target or cursor
         return ObjectAttention("object", subject, focused_place=True)
@@ -122,6 +126,24 @@ class ObjectBehaviorCoordinator:
         self._awareness = awareness
         self._interaction = interaction
         self._world = world
+        self._orientation = OrientationProgress(side=None)
+
+    def request_orientation(self) -> None:
+        self._orientation = OrientationProgress(
+            side=-1 if has_learned_places(
+                self._awareness.memory.snapshot(),
+                (0, self._world.snapshot().surface.width),
+            ) else None,
+        )
+
+    @property
+    def orientation_side(self) -> LookSide | None:
+        followed = self._awareness.following_record
+        known = self._awareness.memory.get(followed) if followed is not None else None
+        if known is not None and known.recognized:
+            return None
+        progress = self._orientation
+        return progress.side
 
     def observe(
         self, snapshot: WorldSnapshot, *, now: float, x: float, width: float,
@@ -129,6 +151,22 @@ class ObjectBehaviorCoordinator:
         attention: ObjectAttention,
     ) -> BehaviorObservation:
         interaction, awareness = self._interaction, self._awareness
+        memory_before = awareness.memory.snapshot()
+        goal_before = awareness.intentions.goal
+        checking_before = awareness.checking_absence
+        absences_before = {item.token for item in awareness.absences}
+        followed = awareness.following_record
+        followed_known = (awareness.memory.get(followed)
+                          if followed is not None else None)
+        transport = followed_known is not None and followed_known.recognized
+        bound = (interaction.active and not interaction.searching
+                 or attention.mode == "unavailable" or transport)
+        if bound:
+            self.request_orientation()
+        pending = not self._orientation.complete
+        coverage = (self._orientation.coverage
+                    if pending and not bound and self.orientation_side is not None
+                    else None)
         focus = interaction.focus_record
         if focus is None and attention.mode == "object":
             focus = awareness.following_record
@@ -146,8 +184,37 @@ class ObjectBehaviorCoordinator:
             attention=attention,
             blocked=blocked or interaction.search_active, held_pose=(x, width * .4),
             committed=focus,
-            inspecting=interaction.inspection_record, presentation=presentation,
+            inspecting=interaction.inspection_record,
+            presentation=presentation if not pending or interaction.focus_record
+            is not None or transport else None,
+            known_coverage=coverage, defer_selection=pending,
         )
+        if pending and not bound:
+            self._orientation = self._orientation.advance(
+                now=now, attention=attention, known=memory_before,
+                ground_bounds=(0, snapshot.surface.width),
+                duration=BALANCE.number("object_behavior", "absence_seconds"),
+                maximum_gap=BALANCE.number("object_behavior", "tracking_gap_seconds"),
+            )
+            if self._orientation.complete:
+                goal = awareness.choose_goal(
+                    self._state, x=x, now=now,
+                    blocked=blocked or interaction.search_active, committed=focus,
+                )
+        elif not bound and self._orientation.complete and has_learned_places(
+            memory_before, (0, snapshot.surface.width),
+        ) and (not checking_before and awareness.checking_absence
+               or {item.token for item in awareness.absences} - absences_before
+               or not interaction.active and goal is not None
+               and (goal_before is None or goal_before.token != goal.token)):
+            self.request_orientation()
+        if not self._orientation.complete and interaction.focus_record is None:
+            direction = self.orientation_side
+            orientation_gaze = (GazeTarget(attention.origin[0] + direction * width,
+                               attention.origin[1]) if direction is not None else
+                    GazeTarget(followed_known.x, followed_known.height)
+                    if followed_known is not None else None)
+            return BehaviorObservation(None, True, orientation_gaze, False, transport)
         if interaction.searching:
             # SearchTask chooses investigations; free appetite cannot steer its look.
             goal = None
@@ -184,9 +251,9 @@ class ObjectBehaviorCoordinator:
                      and attention.mode != "unavailable"
                      and not facts.controls_active and not facts.user_action_pending
                      and not facts.playback_busy)
-        pending = sorted(awareness.absences, key=lambda item: not item.recognized)
+        losses = sorted(awareness.absences, key=lambda item: not item.recognized)
         absence_gaze = None
-        for absent in pending if can_react else ():
+        for absent in losses if can_react else ():
             previous = interaction.phase
             if interaction.notice_absence(absent):
                 awareness.acknowledge_absence(absent.token)
@@ -300,6 +367,10 @@ class ObjectBehaviorCoordinator:
             return False
         known = self._awareness.known_instance(instance)
         if known is None:
+            return False
+        if (not self._orientation.complete and not self._interaction.active
+                and not (known.recognized
+                         and self._awareness.following_record == known.token)):
             return False
         if object_state == ObjectState.USER_HELD:
             return (

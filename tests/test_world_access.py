@@ -16,15 +16,20 @@ class WorldRuntimeAccessTests(unittest.TestCase):
         self.assertEqual(access.phase(), "idle")
         self.assertFalse(access.following_cursor())
         self.assertIsNone(access.following_record())
+        self.assertIsNone(access.orientation_side())
         episode = SimpleNamespace(
             active=False, focus_record=None, searching=False, phase="idle",
         )
         awareness = SimpleNamespace(following_cursor=False, following_record=None)
+        side = [-1]
         stub = cast(DesktopWorldRuntime, SimpleNamespace(
             interaction=episode, user_action_pending=False,
-            awareness=awareness,
+            awareness=awareness, orientation_side=lambda: side[0],
         ))
         access.bind(stub)
+        self.assertEqual(access.orientation_side(), -1)
+        side[0] = 1
+        self.assertEqual(access.orientation_side(), 1)
         self.assertFalse(access.focused())
         self.assertFalse(access.defer_routine())
         awareness.following_cursor = True

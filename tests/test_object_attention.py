@@ -104,3 +104,17 @@ class ObjectAttentionTests(unittest.TestCase):
         ):
             with self.subTest(attention=attention, offset=offset):
                 self.assertEqual(attention.sees_environment(*offset), visible)
+
+    def test_orientation_precedes_free_targets_but_not_committed_action(self):
+        cases: tuple[tuple[InteractionPhase, bool, ObjectAttention], ...] = (
+            ("idle", False, ObjectAttention("survey", (-1, 0))),
+            ("search", False, ObjectAttention("survey", (-1, 0))),
+            ("approach", False, ObjectAttention("object", (3, 0), focused_place=True)),
+            ("idle", True, ObjectAttention("unavailable", None)),
+        )
+        for phase, active, expected in cases:
+            self.assertEqual(choose_object_attention(
+                phase, sleeping=False, game_open=False, walking=10,
+                cursor=(2, 1), target=(3, 0), orientation_side=-1,
+                activity_active=active,
+            ), expected)

@@ -15,7 +15,7 @@ from ..application.object_feedback import InteractionPhase
 from ..pet.animation.animation import PassiveObservation
 from ..pet.animation.character import FRAME_WIDTH
 from ..pet.animation.gaze import gaze_sector
-from ..pet.mind.object_attention import ObjectAttention
+from ..pet.mind.object_attention import LookSide, ObjectAttention
 
 
 class VisualSettings(Protocol):
@@ -47,6 +47,7 @@ class VisualAttentionPorts:
     following_subject: Callable[[], str | None] = lambda: None
     feedback_subject: Callable[[], str | None] = lambda: None
     activity_active: Callable[[], bool] = lambda: False
+    orientation_side: Callable[[], LookSide | None] = lambda: None
 
 
 class DesktopVisualObservation:
@@ -67,6 +68,10 @@ class DesktopVisualObservation:
     @property
     def sector(self) -> int | None:
         return self._sector
+
+    @property
+    def orienting(self) -> bool:
+        return self._attention.orientation_side() is not None
 
     def reset(self) -> None:
         """Clear gaze hysteresis on game, scale or cursor-setting changes."""
@@ -99,6 +104,7 @@ class DesktopVisualObservation:
             tracking_feedback=(following is not None
                                and following == self._attention.feedback_subject()),
             activity_active=self._attention.activity_active(),
+            orientation_side=self._attention.orientation_side(),
             cursor=relative(pointer)
             if self._settings.follow_cursor
             and (pointer_recent or following is not None) else None,

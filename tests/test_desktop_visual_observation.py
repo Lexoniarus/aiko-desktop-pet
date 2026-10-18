@@ -11,6 +11,7 @@ from aiko_pet.desktop.visual_observation import (
     VisualAttentionPorts,
 )
 from aiko_pet.pet.animation.animation import PassiveObservation
+from aiko_pet.pet.mind.object_attention import LookSide
 
 
 class Reading:
@@ -148,3 +149,17 @@ class DesktopVisualObservationTests(unittest.TestCase):
         followed = None
         self.assertEqual(observer.attention((300, 200), pointer_recent=True).mode,
                          "unavailable")
+
+    def test_orientation_read_port_controls_actual_gaze_before_sensor_sampling(self):
+        side: LookSide = -1
+        observer = DesktopVisualObservation(
+            settings=self.settings, monitor=self.monitor, eyes=lambda: (100, 200),
+            attention=VisualAttentionPorts(orientation_side=lambda: side),
+        )
+        observer.object_target = (1000, 200)
+        self.assertTrue(observer.orienting)
+        self.assertEqual(observer.attention((100, 0), pointer_recent=True).direction,
+                         (-1, 0))
+        self.assertEqual(observer.gaze_direction((100, 0)), 12)
+        side = 1
+        self.assertEqual(observer.gaze_direction((100, 0)), 4)

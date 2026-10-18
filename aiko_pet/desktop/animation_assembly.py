@@ -17,6 +17,7 @@ from ..infrastructure.item_assets import load_item_catalog
 from ..pet.animation.character import CharacterCatalog
 from ..pet.animation.item_assets import ItemCatalog
 from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind.object_attention import LookSide
 from ..pet.movement.contracts import HorizontalTrack
 from ..pet.state import PetState
 from ..ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
@@ -44,6 +45,7 @@ class AnimationAssemblyPorts:
     following_subject: Callable[[], str | None] = lambda: None
     feedback_subject: Callable[[], str | None] = lambda: None
     activity_active: Callable[[], bool] = lambda: False
+    orientation_side: Callable[[], LookSide | None] = lambda: None
 
 
 @dataclass(frozen=True, slots=True)
@@ -83,6 +85,7 @@ def assemble_animation(
             following_subject=ports.following_subject,
             feedback_subject=ports.feedback_subject,
             activity_active=ports.activity_active,
+            orientation_side=ports.orientation_side,
         ),
     )
     animation = DesktopAnimationRuntime(

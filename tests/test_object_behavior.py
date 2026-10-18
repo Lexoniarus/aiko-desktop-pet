@@ -14,6 +14,7 @@ from aiko_pet.application.object_behavior import (
     Hold,
     ObjectBehaviorCoordinator,
     SearchMotion,
+    choose_object_attention,
 )
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
@@ -31,7 +32,7 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
-from tools.pet_test_support import object_test_attention, set_test_pet_values
+from tools.pet_test_support import set_test_pet_values
 
 
 class ObjectBehaviorTests(unittest.TestCase):
@@ -58,6 +59,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         observation = self.observe(x=750)
         self.behavior.advance(observation.goal, blocked=observation.blocked,
                               search_position=SearchPosition(50, 750, 750))
+        self.finish_orientation(x=750)
         self.assertEqual(self.awareness.absences, ())
         self.assertEqual(self.interaction.phase, "search")
         self.interaction.update()
@@ -85,6 +87,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.observe()
         self.now = .6
         self.observe()
+        self.finish_orientation()
         self.assertEqual(self.awareness.absences, ())
         self.assertFalse(self.interaction.notice_absence(replace(
             subject, token="reconciled_record", instance_id="portion_1",
@@ -287,13 +290,24 @@ class ObjectBehaviorTests(unittest.TestCase):
             width=width,
             presentation=None,
             facts=facts,
-            attention=object_test_attention(
-                x,
-                width=width,
-                attentive=not self.state.sleeping and not facts.game_open,
-                direction=(-1 if x > 100 else 1, 0),
-            ),
+            attention=replace(choose_object_attention(
+                self.interaction.phase, sleeping=self.state.sleeping,
+                game_open=facts.game_open, walking=0,
+                orientation_side=self.behavior.orientation_side,
+                cursor=(-1 if x > 100 else 1, 0),
+                target=((known.x - x) / width, (known.height - 60) / width)
+                if (record := self.interaction.focus_record) is not None
+                and (known := self.awareness.memory.get(record)) is not None else None,
+            ), origin=(x, 60), width=width),
         )
+
+    def finish_orientation(self, *, facts=BehaviorFacts(), x=100, width=100):
+        for _ in range(20):
+            self.now += .2
+            observation = self.observe(facts=facts, x=x, width=width)
+            if self.behavior.orientation_side is None:
+                return observation
+        self.fail("Deliberate orientation did not complete")
 
     def observed_stock(self):
         self.awareness.memory.restore_snapshot(())
@@ -322,16 +336,8 @@ class ObjectBehaviorTests(unittest.TestCase):
             )
             self.assertIsNone(observation.goal)
         # Model the native adapter using the returned look on the next tick.
-        self.assertEqual(observation.gaze, GazeTarget(200, 60))
-        gaze = observation.gaze
-        assert gaze is not None
-        attention = replace(attention, direction=((gaze.x - 100) / 100,
-                                                 (gaze.height - 60) / 100))
-        self.now = .6
-        observation = self.behavior.observe(
-            self.world.snapshot(), now=self.now, x=100, width=100,
-            presentation=None, facts=BehaviorFacts(), attention=attention,
-        )
+        self.assertEqual(observation.gaze, GazeTarget(0, 60))
+        observation = self.finish_orientation()
         self.assertTrue(observation.absence_noticed)
         self.assertEqual(self.interaction.phase, "notice_absence")
         self.assertNotIn("object_notice", [cue.event for cue in self.cues])
@@ -353,7 +359,7 @@ class ObjectBehaviorTests(unittest.TestCase):
             ), Hold())
             self.assertFalse(self.interaction.active)
         self.now = .6
-        self.assertTrue(self.observe().absence_noticed)
+        self.assertTrue(self.finish_orientation().absence_noticed)
         self.assertEqual(self.interaction.memory_id, "stock")
         self.acknowledge()
         self.assertTrue(self.interaction.search_active)
@@ -370,6 +376,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         for stamp in (0, .3, .6):
             self.now = stamp
             observation = self.observe()
+        observation = self.finish_orientation()
         self.assertTrue(observation.absence_noticed)
         self.assertEqual(self.interaction.memory_id, "other")
         unresolved = self.awareness.memory.get("stock")
@@ -434,7 +441,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.world.place_resting("apple", 180, ObjectFootprint(8, 8))
         self.observe()
         self.now = .5
-        waiting = self.observe(facts=BehaviorFacts(user_action_pending=True))
+        waiting = self.finish_orientation(facts=BehaviorFacts(user_action_pending=True))
         self.assertFalse(waiting.absence_noticed)
         self.assertFalse(waiting.observe_offer)
         self.assertEqual([item.token for item in self.awareness.absences], ["stock"])
@@ -450,7 +457,7 @@ class ObjectBehaviorTests(unittest.TestCase):
     def test_busy_episode_keeps_unaccepted_absence_pending(self):
         self.observe()
         self.now = .5
-        self.observe(facts=BehaviorFacts(user_action_pending=True))
+        self.finish_orientation(facts=BehaviorFacts(user_action_pending=True))
         self.awareness.memory.update((ObjectObservation(
             "alternative", "apple", "food", 700, 0, True, self.now,
         ),), now=self.now)
@@ -638,19 +645,17 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertIsNone(latest.identity)
 
     def test_unbound_recall_waits_for_confirmed_absence_before_search(self):
-        goal = ObjectGoal("stock", "apple", "food", 100, 0, 0)
-        self.assertIsInstance(self.behavior.advance(goal, blocked=False), Hold)
-        self.acknowledge()
-        self.assertEqual(self.interaction.phase, "approach")
+        self.behavior.request_orientation()
         for stamp in (0, .3):
             self.now = stamp
             observation = self.observe()
             self.assertFalse(observation.absence_noticed)
-            self.assertTrue(self.awareness.checking_absence)
-            self.assertEqual(self.interaction.phase, "approach")
+            self.assertEqual(self.behavior.advance(
+                observation.goal, blocked=observation.blocked,
+            ), Hold())
+            self.assertEqual(self.interaction.phase, "idle")
             self.assertNotIn("object_search", [cue.event for cue in self.cues])
-        self.now = .6
-        noticed = self.observe()
+        noticed = self.finish_orientation()
         self.assertTrue(noticed.absence_noticed)
         self.assertEqual(self.interaction.phase, "notice_absence")
         self.assertEqual(self.cues[-1].event, "object_place_missing")
@@ -729,6 +734,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.observe()
         self.now = .6
         self.observe()
+        self.finish_orientation()
         self.assertEqual(self.interaction.memory_id, "known")
         self.acknowledge()
         self.assertTrue(self.interaction.searching)
@@ -787,14 +793,14 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertFalse(first.absence_noticed)
         self.assertFalse(self.interaction.active)
         self.now = .5
-        missing = self.observe()
+        missing = self.finish_orientation()
         self.assertTrue(missing.absence_noticed)
         self.assertEqual(self.cues[-1].event, "object_place_missing")
         self.acknowledge()
         self.assertEqual(self.interaction.phase, "search")
         self.acknowledge()
         self.interaction.search_destination(SearchPosition(50, 750, 50))
-        self.now = .8
+        self.now += .3
         observation = self.observe()
         self.assertIsNone(observation.goal)  # Search owns the next investigation.
         self.assertIsInstance(self.behavior.advance_search(
@@ -869,3 +875,74 @@ class ObjectBehaviorTests(unittest.TestCase):
                 self.assertFalse(self.interaction.found(token))
                 self.assertEqual(self.interaction.memory_id, "stock")
                 self.assertEqual(self.cues[-1].event, "object_search")
+
+    def test_both_distant_losses_are_collected_before_any_notice_or_new_action(self):
+        self.awareness.memory.restore_snapshot(())
+        records = []
+        for x in (50, 750):
+            item = self.world.place_resting("apple", x, ObjectFootprint(8, 8))
+            record = self.awareness.memory.observe_find(ObjectObservation(
+                "learned", "apple", "food", x, 0, True, 0, True,
+            ), now=0, record=None, claimed=frozenset(), maximum_distance=0,
+                instance_id=item.instance_id)
+            records.append(record)
+            self.world.move_resting(item.instance_id, x + 60 if x < 400 else x - 60,
+                                    expected_revision=item.revision)
+        known = self.awareness.memory.get(records[0])
+        assert known is not None
+        self.awareness.intentions.assess_offer(known, self.state)
+        wish = self.awareness.intentions.goal
+        assert wish is not None
+        self.behavior.request_orientation()
+        sides = []
+        observation = None
+        for _ in range(20):
+            sides.append(self.behavior.orientation_side)
+            observation = self.observe(x=400, width=30)
+            if observation.absence_noticed:
+                break
+            self.assertEqual(self.behavior.advance(
+                observation.goal, blocked=observation.blocked,
+            ), Hold())
+            self.assertEqual(self.awareness.intentions.goal, wish)
+            self.assertFalse(self.interaction.active)
+            self.now += .2
+        self.assertIn(-1, sides)
+        self.assertIn(1, sides)
+        assert observation is not None
+        self.assertTrue(observation.absence_noticed)
+        self.assertEqual({item.token for item in self.awareness.memory.snapshot()
+                          if item.place_status == "missing"}, set(records))
+        self.assertEqual(len(self.awareness.memory.snapshot()), 2)
+        self.assertEqual([cue.event for cue in self.cues], ["object_place_missing"])
+        self.acknowledge()
+        self.acknowledge()
+        self.assertEqual([cue.record_id for cue in self.cues
+                          if cue.event == "object_place_missing"], records)
+        self.assertTrue(self.interaction.search_active)
+
+    def test_orientation_pauses_a_valid_wish_and_resumes_it_after_both_looks(self):
+        item, goal = self.observed_stock()
+        self.awareness.memory.mark_assessed(goal.token)
+        known = self.awareness.memory.get(goal.token)
+        assert known is not None
+        self.awareness.intentions.assess_offer(known, self.state)
+        wish = self.awareness.intentions.goal
+        assert wish is not None
+        self.behavior.request_orientation()
+        observation = None
+        for _ in range(20):
+            observation = self.observe()
+            if self.behavior.orientation_side is None:
+                break
+            self.assertIsNone(observation.goal)
+            self.assertEqual(self.awareness.intentions.goal, wish)
+            self.assertFalse(self.interaction.active)
+            self.now += .2
+        assert observation is not None and observation.goal is not None
+        self.assertEqual(observation.goal.token, wish.token)
+        self.behavior.advance(observation.goal, blocked=observation.blocked)
+        self.assertEqual(self.interaction.memory_id, wish.token)
+        self.assertEqual(self.awareness.instance_for_record(wish.token),
+                         item.instance_id)
+        self.assertEqual(self.cues[-1].event, "object_collect_wanted")

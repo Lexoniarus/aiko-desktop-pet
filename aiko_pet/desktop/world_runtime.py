@@ -43,7 +43,7 @@ from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
-from ..pet.mind.object_attention import ObjectAttention
+from ..pet.mind.object_attention import LookSide, ObjectAttention
 from ..pet.mind.object_decisions import (
     ObjectUseContext,
     ObjectUseDecision,
@@ -146,6 +146,7 @@ class DesktopWorldRuntime:
         self._behavior = ObjectBehaviorCoordinator(
             state, self.awareness, self.interaction, self.world,
         )
+        self._behavior.request_orientation()
         animated.on_playback = self._queue_event
         self.cursor = CursorItemGesture(
             root=root, world=self.world, view=self.view, settings=settings,
@@ -158,6 +159,7 @@ class DesktopWorldRuntime:
                 cancel_feedback=self._cancel_offer, save=save,
                 sync_view=self._sync_view,
                 outside=lambda: feedback(GERMAN_TEXT.format("world.outside")),
+                finished=self._behavior.request_orientation,
             ),
         )
         self._timer = root.after(33, self._frame)
@@ -264,6 +266,7 @@ class DesktopWorldRuntime:
 
     def _completed(self, token: str, consumed: bool) -> None:
         self.awareness.intentions.complete(token, self.now, consumed=consumed)
+        self._behavior.request_orientation()
         self._walk.movement.set_goal(None)
         self._visual.object_target = None
         self._contact = None
@@ -331,6 +334,9 @@ class DesktopWorldRuntime:
         track = self._track()
         return replace(attention, origin=(attention.origin[0] - track.left,
                                          attention.origin[1] + track.ground_y))
+
+    def orientation_side(self) -> LookSide | None:
+        return self._behavior.orientation_side
 
     def update(self, _now: float) -> None:
         if self._closed:
@@ -436,7 +442,12 @@ class DesktopWorldRuntime:
 
     def begin_carry(self, item_id: str) -> None:
         self._sync_geometry()
-        self._request_gesture(lambda: self.cursor.begin(item_id))
+
+        def begin() -> None:
+            self._behavior.request_orientation()
+            self.cursor.begin(item_id)
+
+        self._request_gesture(begin)
 
     def _request_gesture(self, action: Callable[[], None]) -> None:
         if self.interaction.active:
@@ -475,6 +486,7 @@ class DesktopWorldRuntime:
                     attention=attention,
                     committed=self.interaction.focus_record,
                 )
+                self._behavior.request_orientation()
                 if record is not None and self.interaction.target_taken(record):
                     self._walk.movement.set_goal(None)
 

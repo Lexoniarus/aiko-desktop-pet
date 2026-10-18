@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from ..application.object_feedback import InteractionPhase
 from ..application.object_status import ObjectStatusSnapshot
+from ..pet.mind.object_attention import LookSide
 
 if TYPE_CHECKING:
     from .world_runtime import DesktopWorldRuntime
@@ -37,6 +38,9 @@ class WorldRuntimeAccess:
     def phase(self) -> InteractionPhase:
         """Read the live episode; before World assembly there is no action."""
         return self._runtime.interaction.phase if self._runtime is not None else "idle"
+
+    def orientation_side(self) -> LookSide | None:
+        return self._runtime.orientation_side() if self._runtime is not None else None
 
     def following_cursor(self) -> bool:
         """Read the existing visual lock, without retaining another cursor state."""

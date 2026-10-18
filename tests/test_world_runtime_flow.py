@@ -184,7 +184,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             present(cue, reaction, done)
 
         world._present_feedback = observe_feedback
-        idle = self.run_for(1.3)
+        idle = self.run_until(lambda: world.orientation_side() is None, 3)
         self.assertTrue(all(row[1] == "idle" for row in idle), idle)
         self.assertIsNone(world._visual.object_target)
         set_test_pet_values(self.app.state, satiety=55)
@@ -269,6 +269,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                 and known.assessed
                 and world.world.get(item.instance_id).state == ObjectState.RESTING
                 and not world.interaction.active
+                and world.orientation_side() is None
             ),
             30,
         )

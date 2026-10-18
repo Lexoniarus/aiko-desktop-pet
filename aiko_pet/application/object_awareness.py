@@ -261,6 +261,7 @@ class ObjectAwareness:
         presentation: tuple[str, ItemPresentation] | None = None,
         inspecting: str | None = None,
         known_coverage: KnownPlaceCoverage | None = None,
+        defer_selection: bool = False,
     ) -> ObjectGoal | None:
         candidates, own_actions, held = self._collect_candidates(
             world, held_pose=held_pose, presentation=presentation,
@@ -384,6 +385,15 @@ class ObjectAwareness:
                    for item in self.memory.snapshot()}
         changed = previous != current or self._world_revision != world.revision
         self._world_revision = world.revision
+        if defer_selection and committed is None:
+            return None
+        return self.choose_goal(state, x=x, now=now, blocked=blocked, changed=changed,
+                                committed=committed)
+
+    def choose_goal(
+        self, state: PetState, *, x: float, now: float, blocked: bool,
+        changed: bool = True, committed: str | None = None,
+    ) -> ObjectGoal | None:
         if committed is None and (self.checking_absence or self.absences):
             # Finish the current visible place evidence before any free wish,
             # including a continuing offer wish. Keep the wish owner intact.
@@ -393,4 +403,4 @@ class ObjectAwareness:
                                       or bool(self.absences), changed=changed,
                                       committed=committed,
                                       observed=frozenset(item.token
-                                                         for item in observations))
+                                                         for item in self.observations))

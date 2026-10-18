@@ -30,6 +30,7 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.walk.step.return_value = None
         self.visual = MagicMock(spec=DesktopVisualObservation)
         self.visual.observe.return_value = PassiveObservation(None, False)
+        self.visual.orienting = False
         self.action_until = 0.0
         self.action_clip_id = "review"
         self.runtime = DesktopAnimationRuntime(
@@ -103,4 +104,11 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
         self.runtime.advance_walk(100.0, 0.1, game_mode=False)
         self.walk.step.assert_called_once_with(
             100.0, 0.1, game_mode=False, attention_active=False,
+        )
+
+    def test_deliberate_orientation_holds_walking_without_a_new_deadline(self):
+        self.visual.orienting = True
+        self.runtime.advance_walk(100, .1, game_mode=False)
+        self.walk.step.assert_called_once_with(
+            100, .1, game_mode=False, attention_active=True,
         )

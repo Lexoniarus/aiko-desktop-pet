@@ -29,6 +29,7 @@ class CursorItemPorts:
     save: Callable[[], None]
     sync_view: Callable[[], None]
     outside: Callable[[], None]
+    finished: Callable[[], None] = lambda: None
 
 
 class CursorItemGesture:
@@ -180,6 +181,7 @@ class CursorItemGesture:
                 self.world.release(token, expected_revision=item.revision)
         self._return_x = None
         self.offer_ready = False
+        self._ports.finished()
         self._ports.save()
 
     def _discard_or_return(self, token: str, revision: int) -> None:
@@ -198,6 +200,7 @@ class CursorItemGesture:
             self._return_x = None
             self.offer_ready = False
             self._ports.cancel_feedback()
+            self._ports.finished()
             self._ports.save()
 
     def update(self) -> None:

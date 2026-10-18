@@ -224,6 +224,7 @@ class WorldGuiTests(unittest.TestCase):
         for _ in range(3):
             runtime.now += .3
             runtime.update(time.monotonic())
+        self.finish_orientation()
         self.assertTrue(events)
         self.assertEqual(events[0], "object_place_missing")
         self.assertNotIn("object_notice", events)
@@ -254,6 +255,7 @@ class WorldGuiTests(unittest.TestCase):
         for _ in range(4):
             runtime.now += .3
             runtime.update(time.monotonic())
+        self.finish_orientation()
         self.assertEqual(runtime.interaction.phase, "notice_absence")
         self.complete_feedback()
         self.assertEqual(runtime.interaction.phase, "search")
@@ -708,6 +710,7 @@ class WorldGuiTests(unittest.TestCase):
 
         world._present_feedback = capture
         world.update(time.monotonic())
+        self.finish_orientation()
         self.complete_feedback()
         world.now += .3
         self.complete_feedback()
@@ -912,11 +915,29 @@ class WorldGuiTests(unittest.TestCase):
         cursor.observe((-1, -1), time.monotonic())
         cursor.observe(pointer, time.monotonic())
 
+    def finish_orientation(self):
+        """Drive the public gaze/sensor sequence; leave cue receipts untouched."""
+        world = self.app._world
+        for _ in range(20):
+            world.now += .2
+            world.update(time.monotonic())
+            if world.orientation_side() is None:
+                return
+        self.fail("Remembered-place orientation did not finish")
+
     def observe_and_acknowledge(self):
         start = self.app._world.now
-        for offset in (0, .3, .7, 1.1):
+        # Include both .5-second learned-place looks before ordinary dispatch.
+        for offset in (0, .3, .6, .9, 1.2, 1.5, 1.8):
             self.app._world.now = start + offset
             self.app._world.update(time.monotonic())
+        self.finish_orientation()
+        if self.app._world.cursor.carrying:
+            # A free unknown offer begins its one-second presentation only
+            # after learned-place orientation has released attention.
+            for _ in range(4):
+                self.app._world.now += .3
+                self.app._world.update(time.monotonic())
         self.complete_feedback()
         self.complete_feedback()
 
@@ -949,6 +970,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(world.awareness.observations, ())
         world.update(time.monotonic())
         self.assertFalse(world.interaction.active)
+        self.finish_orientation()
         self.assertIsNone(world._visual.object_target)
         self.assertFalse(self.app.settings.auto_walk)
         cues = []
@@ -962,12 +984,11 @@ class WorldGuiTests(unittest.TestCase):
         set_test_pet_values(self.app.state, energy=55)
         world.now += 1.1
         world.update(time.monotonic())
+        self.finish_orientation()
         self.assertEqual(cues[0].event, "object_recall_saved_drink")
         self.complete_feedback()
-        self.assertEqual(world.interaction.phase, "approach")
-        # Restored history authorizes approach, not invisible acquisition.
-        world.now += .3
-        world.update(time.monotonic())
+        # Orientation has supplied fresh exact-place evidence; the actual
+        # reachable portion may now be grasped without another identification.
         self.assertEqual(world.interaction.phase, "pick_up")
         self.finish_pickup()
         self.assertEqual(world.interaction.phase, "eat")
@@ -1002,6 +1023,7 @@ class WorldGuiTests(unittest.TestCase):
             instance_id=target.instance_id)
         world.awareness.memory.mark_assessed(old)
         world.update(time.monotonic())
+        self.finish_orientation()
         self.complete_feedback()
         self.assertEqual(world.interaction.memory_id, old)
         item = world.world.place_resting("apple", world._body_x() + 70,
@@ -1148,7 +1170,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertFalse(self.app._world.interaction.active)
         self.assertAlmostEqual(self.app.state.friendship, initial - .15)
 
-    def test_absent_remembered_instance_requires_attentive_local_search(self):
+    def test_absent_remembered_instance_requires_deliberate_place_check(self):
         world = self.app._world
         set_test_pet_values(self.app.state, energy=65)
         item = world.world.place_resting("energy_drink", world._body_x(),
@@ -1173,6 +1195,7 @@ class WorldGuiTests(unittest.TestCase):
         world.now += 1
         world.update(time.monotonic())
         self.assertIsNotNone(world.awareness.memory.get(record))
+        self.finish_orientation()
         self.assertEqual(world.interaction.phase, "notice_absence")
         self.complete_feedback()
         self.assertEqual(world.interaction.phase, "search")
@@ -1247,6 +1270,7 @@ class WorldGuiTests(unittest.TestCase):
         for now in (0, .3, .5):
             world.now = now
             world.update(time.monotonic())
+        self.finish_orientation()
         self.assertEqual(cues[0].identity, "energy_drink")
         self.complete_feedback()
         self.assertEqual(world.interaction.phase, "search")
@@ -1351,6 +1375,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertFalse(world.interaction.active)
         world.now += 1
         world.update(time.monotonic())
+        self.finish_orientation()
         known, = world.awareness.memory.snapshot()
         self.assertEqual(known.identity, "energy_drink")
         self.assertTrue(known.assessed)
@@ -1484,6 +1509,7 @@ class WorldGuiTests(unittest.TestCase):
         world._controls_active = lambda: False
         world.now = .7
         world.update(time.monotonic())
+        self.finish_orientation()
         self.complete_feedback()
         self.complete_feedback()
         self.assertEqual(world.interaction.phase, "pick_up")
