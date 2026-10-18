@@ -1,7 +1,7 @@
 # Interaction ownership review cleanup
 
 Recorded: 18 October 2026. Baseline: `063837a`, `feature/world-foundation`.
-Status: stages 1-2 complete; stages 3-4 pending. All work stays local; no push or merge authorized.
+Status: stages 1-3 complete; stage 4 pending. All work stays local; no push or merge authorized.
 
 Follow [architecture](ARCHITECTURE.md), [contribution rules](../CONTRIBUTING.md)
 and the completed [interaction availability plan](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).
@@ -44,7 +44,7 @@ isolated saves; they do not claim an exploratory human playtest.
 | Plan | Complete | Clean baseline and reviewed owners/callers confirmed. |
 | 1 | Complete | 85 object interaction/behavior/withholding/reaction tests pass in 0.129 seconds on the staged export; targeted Ruff passes. |
 | 2 | Complete | 32 native game/care/persistent-window/hover/search tests pass in 32.651 seconds on the staged export; targeted Ruff passes. |
-| 3 | Pending | |
+| 3 | Complete | 33 contact/story/care/click-policy/follow-up tests pass in 22.288 seconds on the staged export; targeted Ruff passes. |
 | 4 | Pending | |
 
 ### Stage 1 evidence
@@ -70,3 +70,11 @@ The existing native game-window test now explicitly verifies disabled play,
 repeat button invocation and direct public invocation, no extra window
 construction or game focus call, and the same live window. Other game creation,
 closing/reopening, care availability and real-timer object regressions remain.
+
+### Stage 3 evidence
+
+Only the repeated validation and its redundant comment were removed. The initial
+ContactCoordinator validation still runs before story advancement or any contact
+effects; the domain validates its own input as before. Sleeping/game/playback
+guards, World admission, dialogue selection and relationship effects are unchanged.
+Existing boundary and native tests verify behavior without a new mirrored test.

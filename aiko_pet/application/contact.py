@@ -104,9 +104,6 @@ class ContactCoordinator:
         self.enter()
         now = time.monotonic()
         self._adaptive.note_interaction(time.time())
-        # PetMind validates the available button types itself.
-        if button not in ("left", "right"):
-            raise ValueError("Unknown click button")
         self.react_to_click(
             self._mind.click(
                 button,
