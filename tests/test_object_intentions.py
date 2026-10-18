@@ -13,6 +13,13 @@ APPLE = ObjectKnowledge("one", "apple", "food", 100, 0, True, 0, assessed=True)
 
 
 class ObjectIntentionTests(unittest.TestCase):
+    def test_forgotten_subject_cannot_retain_a_committed_goal(self):
+        planner = ObjectIntentions()
+        self.assertIsNotNone(planner.choose((APPLE,), PetState(satiety=50), x=0, now=0))
+        self.assertIsNone(planner.choose((), PetState(satiety=50), x=0, now=701,
+                                         committed=APPLE.token))
+        self.assertIsNone(planner.goal)
+
     def test_offer_refusal_does_not_orphan_a_committed_returning_target(self):
         planner = ObjectIntentions()
         pet = PetState(satiety=76)
@@ -103,7 +110,9 @@ class ObjectIntentionTests(unittest.TestCase):
         planner = ObjectIntentions()
         pet = PetState(satiety=10)
         unknown = replace(APPLE, identity=None, kind=None, assessed=False)
-        goal = planner.choose((unknown,), pet, x=0, now=2, changed=True)
+        self.assertIsNone(planner.choose((unknown,), pet, x=0, now=1, changed=True))
+        goal = planner.choose((unknown,), pet, x=0, now=2, changed=True,
+                              observed=frozenset((unknown.token,)))
         assert goal is not None
         self.assertEqual(goal.purpose, "investigate")
         self.assertIsNone(planner.choose((replace(unknown, resting=False),), pet,

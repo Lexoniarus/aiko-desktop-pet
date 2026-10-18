@@ -48,6 +48,10 @@ class ObjectIntentions:
         self.complete(self.goal.token if self.goal is not None else None,
                       now, consumed=consumed)
 
+    def adopt(self, goal: ObjectGoal) -> None:
+        """Accept a chosen investigation through this same wish owner."""
+        self.goal = goal
+
     def complete(
         self, token: str | None, now: float, *, consumed: bool = False,
     ) -> None:
@@ -74,12 +78,14 @@ class ObjectIntentions:
             if self.goal is None or self.goal.token != committed:
                 return None
             subject = next((item for item in known if item.token == committed), None)
-            if subject is not None:
-                self.goal = replace(
-                    self.goal, identity=subject.identity, kind=subject.kind,
-                    x=subject.x, height=subject.height,
-                    observed_at=subject.observed_at,
-                )
+            if subject is None:
+                self.complete(committed, now)
+                return None
+            self.goal = replace(
+                self.goal, identity=subject.identity, kind=subject.kind,
+                x=subject.x, height=subject.height,
+                observed_at=subject.observed_at,
+            )
             return self.goal
         if self.goal is not None and not state.sleeping:
             subject = next((item for item in known
@@ -108,6 +114,9 @@ class ObjectIntentions:
         options: list[tuple[tuple[bool, float, bool, float, str], ObjectGoal]] = []
         for item in known:
             if not item.resting or item.place_status != "remembered":
+                continue
+            if not item.recognized and item.token not in observed:
+                # Fleeting unknown places are not executable recall targets.
                 continue
             # Rest after consumption limits renewed supply seeking. Curiosity
             # about a different, unexamined portion remains an independent goal.
