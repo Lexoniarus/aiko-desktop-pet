@@ -4,6 +4,12 @@ Recorded: 18 October 2026. Status: **Stages 1-5 implemented and automatically
 verified. Human practical acceptance remains open. No merge authorized.**
 Baseline: `feature/world-foundation`, HEAD `fb4f357`, including the existing local changes.
 
+Subsequent practical feedback: the user reports that the core behavior matches
+expectations, with occasional pre-approach pauses. The
+[ownership cleanup](OBJECT_BEHAVIOR_CLEANUP_PLAN.md) preserves that behavior and
+its timing. The original delivery evidence and remaining boundary checklist below
+are retained; this feedback does not claim every checklist case was tested.
+
 This plan follows the [architecture](ARCHITECTURE.md),
 [contribution rules](../CONTRIBUTING.md), and
 [development workflow](GITHUB_WORKFLOW.md). Technical documentation, identifiers,

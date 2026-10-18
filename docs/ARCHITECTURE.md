@@ -58,6 +58,12 @@ The existing tracker admits a qualified actual take at its exact learned place,
 including between sensor ticks, without granting a new identity or appetite.
 No extra saved state, scan timer, movement writer, or mutable GUI focus is added.
 
+The [object behavior ownership cleanup](OBJECT_BEHAVIOR_CLEANUP_PLAN.md) retains
+this flow. Activity interruption belongs to the behavior coordinator; progress
+only advances admitted free looks. Observation delegates target-loss checks,
+accepted-loss feedback and gaze selection to named private methods, preserving
+the evidence/receipt order and existing notice timing.
+
 ## Dependency overview
 
 ```mermaid

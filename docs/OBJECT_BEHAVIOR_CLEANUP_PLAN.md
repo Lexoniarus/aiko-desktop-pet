@@ -1,7 +1,7 @@
 # Object behavior ownership cleanup
 
 Recorded: 18 October 2026. Baseline: `feature/world-foundation`, `c7958fa`.
-Status: Stages 1-2 complete; Stage 3 pending. No merge authorized.
+Status: all three stages implemented; final full regression pending. No merge authorized.
 
 ## Purpose and protected behavior
 
@@ -57,7 +57,7 @@ new private method names would merely mirror the refactoring and are not needed.
 | Planning | Recorded | Baseline inspected; worktree clean. Three review findings scoped above. |
 | 1 | Complete | `ea93518`; 213 object and four native focus/transport tests pass, plus all static gates. |
 | 2 | Complete | `8c3e225`; 213 object tests and all static gates pass. |
-| 3 | Pending | Behavior-preserving extraction and final validation. |
+| 3 | Targeted checks complete | `b2a51c0`; 250 targeted tests, 257 identical trace events and all static gates pass. Full regression pending. |
 
 All implementation and verification results will be recorded here after each stage.
 
@@ -84,3 +84,22 @@ or added for the dead condition. The exported staged tree passes 213 object test
 in 0.950 seconds, including endpoint evidence, later losses, candidate resumption,
 wanted/unwanted recovery and actual arrival at both route ends. Ruff, strict Mypy
 (187 sources), and Pyright pass.
+
+### Stage 3 evidence
+
+`observe` now has 84 lines instead of 136. Named private steps handle approach
+association loss, accepted loss feedback and gaze selection; a shared read-only
+query obtains the followed knowledge. The same coordinator owns orientation and
+samples pre-observation evidence. Early exits, receipt handoff, search priority,
+current wish and synchronous offer ordering remain unchanged. No state, mode,
+timer, saved field, tuning parameter or dialogue line was added or changed.
+
+A temporary external probe records 257 application-boundary events across the
+213 object tests. Before/after extraction, return values, phases, focus/record,
+search lifetime/progress, current wish, memory, observations and pending losses
+are identical. The probe is not added as a repository test or runner. The exported
+staged tree passes 250 targeted tests in 39.102 seconds: 213 object tests, 31
+architecture checks, and six native close-portion restart, observed relocation
+and actual conversation/missing-bubble timer cases. Both display scales are
+covered. Ruff, strict Mypy (187 sources), and Pyright pass. The complete regression
+and final documentation checks follow before this stage is marked complete.
