@@ -7,8 +7,10 @@ from aiko_pet.application.object_awareness import (
     ObjectAwareness,
     held_type_conflicts_with_memory,
 )
+from aiko_pet.application.object_behavior import choose_object_attention
+from aiko_pet.application.object_feedback import InteractionPhase
 from aiko_pet.infrastructure.world_motion import motion_parameters
-from aiko_pet.pet.mind.object_attention import ObjectAttention
+from aiko_pet.pet.mind.object_attention import KnownPlaceCoverage, ObjectAttention
 from aiko_pet.pet.mind.object_decisions import ObjectUseContext
 from aiko_pet.pet.mind.object_knowledge import ObjectKnowledge
 from aiko_pet.pet.mind.object_perception import ItemPresentation, ObjectObservation
@@ -25,6 +27,13 @@ from tools.pet_test_support import object_test_attention, set_test_pet_values
 
 
 class ObjectAwarenessTests(unittest.TestCase):
+    @staticmethod
+    def focused_attention(x, target, phase: InteractionPhase = "approach"):
+        return replace(choose_object_attention(
+            phase, sleeping=False, game_open=False, walking=0, cursor=None,
+            target=((target[0] - x) / 100, target[1] / 100),
+        ), origin=(x, 0), width=100)
+
     def test_ground_focus_excludes_neighbours_and_their_cursor_take(self):
         world = WorldState(WorldSurface(800, 600), (ObjectDefinition(
             "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
@@ -93,15 +102,18 @@ class ObjectAwarenessTests(unittest.TestCase):
         # Looking away supplies neither new sightings nor empty-place evidence.
         left = object_test_attention(100, width=100, height=100, direction=(-1, 0))
         for now in (1.3, 1.6):
-            observe(now, left, held_pose=(100, 40))
+            observe(now, left, held_pose=(100, 40),
+                    known_coverage=KnownPlaceCoverage(-1))
             self.assertEqual(awareness.absences, ())
             self.assertEqual({seen.token for seen in awareness.observations}, {record})
         # Returning to the scene starts fresh notice and absence dwell.
-        observe(1.7, right, held_pose=(100, 40))
+        observe(1.7, right, held_pose=(100, 40),
+                known_coverage=KnownPlaceCoverage(1))
         self.assertEqual(awareness.absences, ())
         self.assertEqual(len(awareness.observations), 1)
         for now in (2, 2.3):
-            observe(now, right, held_pose=(100, 40))
+            observe(now, right, held_pose=(100, 40),
+                    known_coverage=KnownPlaceCoverage(1))
         self.assertEqual({item.token for item in awareness.absences}, records)
         self.assertTrue(all(not seen.identity for seen in awareness.observations
                             if seen.token != record))
@@ -211,11 +223,13 @@ class ObjectAwarenessTests(unittest.TestCase):
                 state = PetState(satiety=100)
                 for step in range(40):
                     focus = records[step % 2] if step % 4 else None
+                    selected = (awareness.memory.get(focus)
+                                if focus is not None else None)
+                    attention = (self.focused_attention(600, (selected.x, 0))
+                                 if selected is not None else object_test_attention(
+                                     600, width=100, direction=(-1, 0)))
                     awareness.update(world.snapshot(), state, now=step * .3,
-                                     x=600, height=0, width=100,
-                                     attention=object_test_attention(
-                                         600, width=100, direction=(-1, 0),
-                                     ),
+                                     x=600, height=0, width=100, attention=attention,
                                      blocked=True, committed=focus)
                 for now in (12, 12.3, 12.6):
                     awareness.update(world.snapshot(), state, now=now, x=600,
@@ -281,10 +295,10 @@ class ObjectAwarenessTests(unittest.TestCase):
         for now in (2.7, 3, 3.4):
             awareness.update(world.snapshot(), PetState(), now=now, x=800, height=0,
                              width=100,
-                             attention=object_test_attention(
-                                 800, width=100,
-                             ), blocked=True,
-                             held_pose=(800, 40), committed=unknown.token,
+                             attention=self.focused_attention(
+                                 800, (800, 40), "inspect",
+                             ),
+                             blocked=True, held_pose=(800, 40), committed=unknown.token,
                              inspecting=unknown.token)
         known = awareness.known_instance(item.instance_id)
         assert known is not None
@@ -363,9 +377,8 @@ class ObjectAwarenessTests(unittest.TestCase):
         for now in (2, 2.3):
             awareness.update(world.snapshot(), state, now=now, x=100, height=0,
                              width=100,
-                             attention=object_test_attention(
-                                 100, width=100,
-                             ), blocked=False, committed=record)
+                             attention=object_test_attention(100, width=100),
+                             blocked=False)
         self.assertEqual(awareness.record_for_instance(item.instance_id), record)
         self.assertEqual(len(awareness.memory.snapshot()), 1)
         self.assertIsNone(awareness.observations[0].identity)
@@ -390,9 +403,8 @@ class ObjectAwarenessTests(unittest.TestCase):
         for now in (.4, .7, 1):
             awareness.update(world.snapshot(), state, now=now, x=100, height=0,
                              width=100,
-                             attention=object_test_attention(
-                                 100, width=100,
-                             ), blocked=False, committed=record)
+                             attention=self.focused_attention(100, (200, 0)),
+                             blocked=False, committed=record)
         self.assertEqual(awareness.absences, ())
         self.assertFalse(awareness.checking_absence)
         self.assertTrue(all(item.identity is None
@@ -538,10 +550,8 @@ class ObjectAwarenessTests(unittest.TestCase):
         for stamp in (1.2, 1.6, 2, 2.3):
             awareness.update(world.snapshot(), state, now=stamp, x=100,
                              height=0, width=100,
-                             attention=object_test_attention(
-                                 100, width=100,
-                             ), blocked=True,
-                             committed=record, presentation=(
+                             attention=self.focused_attention(100, (100, 0)),
+                             blocked=True, committed=record, presentation=(
                                  target.instance_id, ItemPresentation("target", 0, 0),
                              ))
         self.assertEqual(awareness.record_for_instance(target.instance_id), record)
@@ -577,9 +587,8 @@ class ObjectAwarenessTests(unittest.TestCase):
                         expected_revision=held.revision)
         awareness.update(world.snapshot(), state, now=.9, x=100, height=0,
                          width=100,
-                         attention=object_test_attention(
-                             100, width=100, mode="cursor",
-                         ), blocked=True, committed=record)
+                         attention=self.focused_attention(100, (1400, 700)),
+                         blocked=True, committed=record)
         known = awareness.known_instance(item.instance_id)
         assert known is not None
         self.assertEqual((known.token, known.identity, known.x),
@@ -623,60 +632,61 @@ class ObjectAwarenessTests(unittest.TestCase):
         self.assertIn(focus, {item.token for item in awareness.observations})
         self.assertIsNotNone(awareness.known_instance(dropped.instance_id))
 
-    def test_unseen_relocation_is_a_new_find_and_both_discovery_orders_reconcile(self):
-        for missing_first in (False, True):
-            with self.subTest(missing_first=missing_first):
-                world = WorldState(WorldSurface(2000, 600), (ObjectDefinition(
-                    "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
-                ),))
-                item = world.place_resting("apple", 100, ObjectFootprint(8, 8))
-                awareness = ObjectAwareness()
-                state = PetState(satiety=100)
-                for stamp in (0, .3, .7):
-                    awareness.update(world.snapshot(), state, now=stamp, x=100,
-                                     height=0, width=100,
-                                     attention=object_test_attention(
-                                         100, width=100,
-                                     ), blocked=True)
-                self.identify_observed(awareness, now=.7)
-                old, = awareness.memory.snapshot()
-                awareness.memory.mark_assessed(old.token)
-                world.move_resting(item.instance_id, 800, expected_revision=0)
-                awareness.update(world.snapshot(), state, now=1, x=100, height=0,
-                                 width=100,
-                                 attention=object_test_attention(
-                                     100, width=100, attentive=False,
-                                 ), blocked=True)
-                if missing_first:
-                    awareness.memory.mark_missing(old.token)
-                for stamp in (2, 2.3, 2.7):
-                    awareness.update(world.snapshot(), state, now=stamp, x=800,
-                                     height=0, width=100,
-                                     attention=object_test_attention(
-                                         800, width=100,
-                                     ), blocked=True)
-                found = awareness.known_instance(item.instance_id)
-                assert found is not None
-                self.assertNotEqual(found.token, old.token)
-                self.assertFalse(found.assessed)
-                # Identification happens only after the newly found portion is
-                # actually collected and inspected, not from its ground position.
-                world.collect_resting(item.instance_id, expected_revision=1)
-                for stamp in (2.8, 3.1, 3.5):
-                    awareness.update(world.snapshot(), state, now=stamp, x=800,
-                                     height=0, width=100,
-                                     attention=object_test_attention(
-                                         800, width=100,
-                                     ), blocked=True,
-                                     held_pose=(800, 40), inspecting=found.token)
-                found = awareness.known_instance(item.instance_id)
-                assert found is not None
-                if not missing_first:
-                    self.assertEqual(found.possible_sources, (old.token,))
-                    awareness.memory.mark_missing(old.token)
-                self.assertEqual(len(awareness.memory.snapshot()), 1)
-                self.assertEqual(awareness.instance_for_record(found.token),
-                                 item.instance_id)
+    def test_unseen_relocation_is_missing_before_new_hand_identification(self):
+        world = WorldState(WorldSurface(2000, 600), (ObjectDefinition(
+            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
+        ),))
+        item = world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        awareness = ObjectAwareness()
+        state = PetState(satiety=100)
+        for stamp in (0, .3, .7):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100,
+                             attention=object_test_attention(
+                                 100, width=100,
+                             ), blocked=True)
+        self.identify_observed(awareness, now=.7)
+        old, = awareness.memory.snapshot()
+        awareness.memory.mark_assessed(old.token)
+        world.move_resting(item.instance_id, 800, expected_revision=0)
+        awareness.update(world.snapshot(), state, now=1, x=100, height=0,
+                         width=100,
+                         attention=object_test_attention(
+                             100, width=100, attentive=False,
+                         ), blocked=True)
+        for stamp in (1.1, 1.4, 1.7):
+            awareness.update(world.snapshot(), state, now=stamp, x=100,
+                             height=0, width=100,
+                             attention=object_test_attention(100, width=100),
+                             known_coverage=KnownPlaceCoverage(1), blocked=True)
+        self.assertEqual([known.token for known in awareness.absences], [old.token])
+        awareness.acknowledge_absence(old.token)
+        for stamp in (2, 2.3, 2.7):
+            awareness.update(world.snapshot(), state, now=stamp, x=800,
+                             height=0, width=100,
+                             attention=object_test_attention(
+                                 800, width=100,
+                             ), blocked=True)
+        found = awareness.known_instance(item.instance_id)
+        assert found is not None
+        self.assertNotEqual(found.token, old.token)
+        self.assertFalse(found.assessed)
+        # Identification happens only after the newly found portion is
+        # actually collected and inspected, not from its ground position.
+        world.collect_resting(item.instance_id, expected_revision=1)
+        for stamp in (2.8, 3.1, 3.5):
+            awareness.update(world.snapshot(), state, now=stamp, x=800,
+                             height=0, width=100,
+                             attention=self.focused_attention(
+                                 800, (800, 40), "inspect",
+                             ),
+                             blocked=True, held_pose=(800, 40),
+                             committed=found.token, inspecting=found.token)
+        found = awareness.known_instance(item.instance_id)
+        assert found is not None
+        self.assertEqual(len(awareness.memory.snapshot()), 1)
+        self.assertEqual(awareness.instance_for_record(found.token),
+                         item.instance_id)
 
     def test_offer_assessment_requires_current_recognition_and_attention(self):
         awareness = ObjectAwareness()

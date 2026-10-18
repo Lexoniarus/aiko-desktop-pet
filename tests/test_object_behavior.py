@@ -40,14 +40,18 @@ class ObjectBehaviorTests(unittest.TestCase):
         subject = self.awareness.memory.get("stock")
         assert subject is not None
         self.awareness.memory.restore_snapshot((replace(subject, instance_id="old"),))
+        edge = self.world.place_resting("apple", 740, ObjectFootprint(8, 8))
+        edge_record = self.awareness.memory.observe_find(ObjectObservation(
+            "edge", "apple", "food", 740, 0, True, 0,
+        ), now=0, record="edge", claimed=frozenset(), maximum_distance=0,
+            instance_id=edge.instance_id)
         self.start_search()
         self.acknowledge()
-        self.awareness.memory.update((ObjectObservation(
-            "edge", "apple", "food", 740, 0, True, 0,
-        ),), now=0)
         self.observe(x=50)
         self.behavior.advance_search(blocked=False,
                                      position=SearchPosition(50, 750, 50))
+        # This learned place becomes empty only after the pass has begun.
+        self.world.move_resting(edge.instance_id, 400, expected_revision=0)
         self.now = .3
         observation = self.observe(x=750)
         motion = self.behavior.advance(observation.goal, blocked=observation.blocked,
@@ -64,7 +68,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.interaction.phase, "search")
         self.interaction.update()
         self.assertEqual((self.cues[-1].event, self.cues[-1].record_id),
-                         ("object_place_missing", "edge"))
+                         ("object_place_missing", edge_record))
         self.acknowledge()
         self.behavior.advance_search(blocked=False,
                                      position=SearchPosition(50, 750, 750))
@@ -530,17 +534,6 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.actions, [])
         self.assertEqual(self.world.snapshot().objects, ())
         self.assertEqual(self.interaction.phase, "approach")
-
-    def test_changed_approach_finishes_old_episode_before_new_notice(self):
-        old = ObjectGoal("stock", "apple", "food", 100, 0, 0)
-        self.behavior.advance(old, blocked=False)
-        self.acknowledge()
-        new = self.alternative()
-        self.assertIsInstance(self.behavior.advance(new, blocked=False), Hold)
-        self.assertEqual(self.completed, [("stock", False)])
-        self.assertEqual(self.interaction.memory_id, new.token)
-        self.assertEqual(self.interaction.phase, "notice")
-        self.assertEqual(self.actions, [])
 
     def test_synchronous_reunion_finishes_without_forcing_another_pickup(self):
         self.start_search()

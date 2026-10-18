@@ -318,8 +318,6 @@ class ObjectBehaviorCoordinator:
         if not interaction.active and known is not None and not known.resting:
             # A passive held wish waits for observed ground contact.
             return Hold()
-        if interaction.approaching and interaction.memory_id != goal.token:
-            interaction.interrupt(lambda: None)
         if not interaction.active:
             interaction.begin_goal(goal)
         if interaction.phase == "notice":
