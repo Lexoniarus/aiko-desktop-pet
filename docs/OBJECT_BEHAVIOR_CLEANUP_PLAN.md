@@ -1,7 +1,7 @@
 # Object behavior ownership cleanup
 
 Recorded: 18 October 2026. Baseline: `feature/world-foundation`, `c7958fa`.
-Status: Stage 1 complete; Stages 2-3 pending. No merge authorized.
+Status: Stages 1-2 complete; Stage 3 pending. No merge authorized.
 
 ## Purpose and protected behavior
 
@@ -56,7 +56,7 @@ new private method names would merely mirror the refactoring and are not needed.
 | --- | --- | --- |
 | Planning | Recorded | Baseline inspected; worktree clean. Three review findings scoped above. |
 | 1 | Complete | `ea93518`; 213 object and four native focus/transport tests pass, plus all static gates. |
-| 2 | Pending | Retain all reachable search contracts. |
+| 2 | Complete | `8c3e225`; 213 object tests and all static gates pass. |
 | 3 | Pending | Behavior-preserving extraction and final validation. |
 
 All implementation and verification results will be recorded here after each stage.
@@ -73,3 +73,14 @@ actual lifecycle owner. Progress retains gaze/gap/dwell handling and validation.
 The exported staged tree passes 217 tests in 4.250 seconds, including native
 petting/conversation exclusion and witnessed relocation at 1x/2x. Ruff, strict
 Mypy (187 sources), and Pyright pass. No dialogue, duration, or save changes.
+
+### Stage 2 evidence
+
+Only the later dominated `checking_absence` condition was removed. The early
+absence/notice return remains. `search_destination` mutates only the existing
+route and invokes no Awareness-changing callback; `complete_search` retains its
+own readiness/actual-route-completion guards. No reachable search test is removed
+or added for the dead condition. The exported staged tree passes 213 object tests
+in 0.950 seconds, including endpoint evidence, later losses, candidate resumption,
+wanted/unwanted recovery and actual arrival at both route ends. Ruff, strict Mypy
+(187 sources), and Pyright pass.
