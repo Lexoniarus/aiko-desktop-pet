@@ -11,6 +11,7 @@ from ..pet.consumption import ConsumptionOrigin
 from ..pet.mind.object_decisions import ObjectUseContext, ObjectUseDecision
 from ..pet.mind.object_events import ObjectEvent
 from ..pet.mind.object_intentions import ObjectGoal
+from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..pet.mind.object_perception import ConsumableKind
 from ..pet.mind.object_withholding import WithholdingEpisode
 from .object_feedback import FeedbackKey
@@ -62,6 +63,110 @@ class OfferAppraisal:
         default_factory=lambda: ObjectUseDecision(False, "unrecognized"),
     )
     latest: ObjectUseDecision | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class SearchPosition:
+    """Reachable body-center bounds and actual current World-relative center."""
+
+    left: float
+    right: float
+    x: float
+
+
+@dataclass(frozen=True, slots=True)
+class SearchRoute:
+    """One physical pass; only observed arrival advances its two legs."""
+
+    first: float
+    second: float
+    leg: int = 0
+
+    @classmethod
+    def begin(cls, position: SearchPosition) -> SearchRoute:
+        if abs(position.x - position.left) <= abs(position.right - position.x):
+            return cls(position.left, position.right)
+        return cls(position.right, position.left)
+
+    @property
+    def target(self) -> float:
+        return self.first if self.leg == 0 else self.second
+
+    def observe(self, x: float) -> SearchRoute:
+        # Native adapter reports the actual center; requested goals do not count.
+        if self.leg < 2 and abs(x - self.target) <= 2:
+            from dataclasses import replace
+
+            return replace(self, leg=self.leg + 1)
+        return self
+
+
+class SearchTask:
+    """One pass and its missing portions, retained across candidate actions."""
+
+    __slots__ = ("_missing", "_route", "_unreachable")
+
+    def __init__(self, subject: ObjectKnowledge) -> None:
+        self._missing: dict[str, ObjectKnowledge] = {}
+        self._route: SearchRoute | None = None
+        self._unreachable: set[str] = set()
+        self.add(subject)
+
+    @property
+    def next_subject(self) -> ObjectKnowledge | None:
+        return next(iter(self._missing.values()), None)
+
+    @property
+    def progress(self) -> float:
+        return self._route.leg / 2 if self._route is not None else 0.0
+
+    @property
+    def route_complete(self) -> bool:
+        return self._route is not None and self._route.leg == 2
+
+    def can_investigate(self, token: str) -> bool:
+        return token not in self._unreachable
+
+    def exclude_candidate(self, token: str) -> None:
+        self._unreachable.add(token)
+
+    def destination(self, position: SearchPosition) -> float:
+        """Advance only from actual arrival; changed bounds start fresh coverage."""
+        route = self._route or SearchRoute.begin(position)
+        if {route.first, route.second} != {position.left, position.right}:
+            route = SearchRoute.begin(position)
+        self._route = route.observe(position.x)
+        return self._route.target
+
+    def add(self, known: ObjectKnowledge) -> bool:
+        if known.token in self._missing or (
+            known.instance_id is not None and any(
+                item.instance_id == known.instance_id for item in self._missing.values()
+            )
+        ):
+            return False
+        self._missing[known.token] = known
+        return True
+
+    def resolve(self, known: ObjectKnowledge) -> ObjectKnowledge | None:
+        """Remove one verified subject without changing the pass or other losses."""
+        token = self._match(known)
+        return self._missing.pop(token) if token is not None else None
+
+    def _match(self, known: ObjectKnowledge) -> str | None:
+        if not known.recognized:
+            return None
+        legacy = []
+        for token, subject in self._missing.items():
+            if (known.identity, known.kind) != (subject.identity, subject.kind):
+                continue
+            if subject.instance_id is not None:
+                if known.instance_id == subject.instance_id:
+                    return token
+            else:
+                legacy.append(token)
+        # One newly identified portion cannot resolve several ambiguous old ones.
+        return legacy[0] if len(legacy) == 1 else None
 
 
 @dataclass(frozen=True, slots=True)
