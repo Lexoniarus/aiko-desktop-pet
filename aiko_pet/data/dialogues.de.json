@@ -59,11 +59,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah. Da bist du ja."
+          "content": "Da bin ich wieder auf meinem Platz."
         },
         {
           "kind": "text",
-          "content": "Schön, dass du da bist."
+          "content": "Du kannst mich gern begrüßen. Ich grüße sogar zurück."
         }
       ],
       "presentation": "short"
@@ -84,11 +84,11 @@
         },
         {
           "kind": "text",
-          "content": "Oh. Da sind wir ja wieder."
+          "content": "So, der Desktop ist wieder da."
         },
         {
           "kind": "text",
-          "content": "Ich hatte mich gerade so schön eingerichtet."
+          "content": "Ich nehme meinen gewohnten Posten an der Taskleiste ein."
         }
       ],
       "presentation": "short"
@@ -111,7 +111,7 @@
         },
         {
           "kind": "text",
-          "content": "...Ich bin wach. Du auch?"
+          "content": "Guten Morgen. Meine Augen sind offen. Das ist für den Anfang genug."
         }
       ],
       "presentation": "short"
@@ -134,7 +134,7 @@
         },
         {
           "kind": "text",
-          "content": "Mittag schon. Na dann mal Mahlzeit!"
+          "content": "Mittag! Ich hoffe, du hast eher an Essen gedacht als ich."
         }
       ],
       "presentation": "short"
@@ -157,7 +157,7 @@
         },
         {
           "kind": "text",
-          "content": "Abends bedeutet Freizeit, oder?"
+          "content": "Da ist der Abend. Ich bleibe natürlich an meinem Platz, egal ob du noch arbeitest."
         }
       ],
       "presentation": "short"
@@ -180,7 +180,7 @@
         },
         {
           "kind": "text",
-          "content": "Du bist noch auf? Alles klar, auf zur Nachtschicht."
+          "content": "Nachts gestartet? Du und ich haben offenbar noch etwas vor."
         }
       ],
       "presentation": "short"
@@ -1531,7 +1531,7 @@
         },
         {
           "kind": "text",
-          "content": "...Ah. Du bist wieder da."
+          "content": "Da bist du wieder. Ich habe deinen Mauszeiger schon fast vermisst."
         },
         {
           "kind": "emote",
@@ -1556,7 +1556,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hatte es hier ganz ruhig. War angenehm."
+          "content": "Inzwischen konnte ich meinen kleinen Weg ganz in Ruhe genießen."
         },
         {
           "kind": "emote",
@@ -1581,7 +1581,7 @@
         },
         {
           "kind": "text",
-          "content": "Da bist du ja. Alles in Ordnung?"
+          "content": "Du schaust mal wieder vorbei. Was hast du diesmal vor?"
         },
         {
           "kind": "emote",
@@ -1606,7 +1606,7 @@
         },
         {
           "kind": "text",
-          "content": "Du musst nichts erklären. Ich hab Zeit."
+          "content": "Da bist du. Ich habe keine Fragen zu deinem Aufenthaltsort. Nur vielleicht zum nächsten Spiel."
         },
         {
           "kind": "emote",
@@ -5921,11 +5921,11 @@
         },
         {
           "kind": "text",
-          "content": "Du bist wieder da."
+          "content": "Hallo zurück!"
         },
         {
           "kind": "text",
-          "content": "Ich war gerade beschäftigt. Ein bisschen."
+          "content": "Auf dem Rechner ist gerade ziemlich viel los. Ich schaue noch hin."
         }
       ],
       "presentation": "short"
@@ -5946,7 +5946,7 @@
         },
         {
           "kind": "text",
-          "content": "...Ah. Dich habe ich eben nur am Rand mitbekommen."
+          "content": "Da bist du. Ich hatte die Auslastung im Blick und habe dich erst jetzt bemerkt."
         }
       ],
       "presentation": "short"
@@ -5967,11 +5967,11 @@
         },
         {
           "kind": "text",
-          "content": "Hallo. Ich bin gerade nicht sehr gesprächig."
+          "content": "Hallo. Ich behalte gerade lieber den Rechner im Blick."
         },
         {
           "kind": "text",
-          "content": "Ist nichts Persönliches."
+          "content": "Das ist nichts gegen dich."
         }
       ],
       "presentation": "short"
@@ -5992,11 +5992,11 @@
         },
         {
           "kind": "text",
-          "content": "Du kommst genau dann, wenn ich konzentriert bin."
+          "content": "Du tauchst ausgerechnet auf, wenn hier besonders viel los ist."
         },
         {
           "kind": "text",
-          "content": "...Timing hast du."
+          "content": "Dein Timing ist schon bemerkenswert."
         }
       ],
       "presentation": "short"
@@ -6017,11 +6017,11 @@
         },
         {
           "kind": "text",
-          "content": "...Oh. Du bist zurück."
+          "content": "Da bist du wieder."
         },
         {
           "kind": "text",
-          "content": "Ich hatte inzwischen einiges zu tun."
+          "content": "Der Rechner war eben ganz schön beschäftigt. Jetzt wird es ruhiger."
         },
         {
           "kind": "emote",
@@ -6046,7 +6046,7 @@
         },
         {
           "kind": "text",
-          "content": "Da bist du ja. Ich bin gerade wieder frei geworden."
+          "content": "Ah, du. Das System hat gerade wieder Luft. Ich übrigens auch."
         },
         {
           "kind": "emote",
@@ -6071,11 +6071,11 @@
         },
         {
           "kind": "text",
-          "content": "Du hast einen recht guten Zeitpunkt erwischt."
+          "content": "Gutes Timing. Ich beobachte gerade, wie die Last nachlässt."
         },
         {
           "kind": "text",
-          "content": "Vorhin wäre schwieriger gewesen."
+          "content": "Vorhin hätte ich mich schwerer losgerissen."
         },
         {
           "kind": "emote",
@@ -6437,11 +6437,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich hab mich gerade an die Stille gewöhnt."
+          "content": "Ich hatte hier unten gerade meine Ruhe."
         },
         {
           "kind": "text",
-          "content": "...Ah. Hallo."
+          "content": "Oh, ein Besucher! Du bist es ja."
         },
         {
           "kind": "emote",
@@ -6466,11 +6466,11 @@
         },
         {
           "kind": "text",
-          "content": "Oh. Du bist hier."
+          "content": "Huch, der Mauszeiger!"
         },
         {
           "kind": "text",
-          "content": "Ich habe mich nicht erschreckt."
+          "content": "Nein, ich habe mich natürlich überhaupt nicht erschreckt."
         },
         {
           "kind": "emote",
@@ -6495,7 +6495,7 @@
         },
         {
           "kind": "text",
-          "content": "Lass mich einen Moment meine Gedanken zusammensammeln."
+          "content": "Ich war gerade bei einem äußerst wichtigen Gedanken über meinen nächsten Spaziergang."
         },
         {
           "kind": "emote",
@@ -7335,7 +7335,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hör dir zu. ...Meistens."
+          "content": "Ich kann dir ein paar Dinge über mein Leben hier unten erzählen. Was interessiert dich?"
         }
       ],
       "presentation": "short"
@@ -7356,7 +7356,7 @@
         },
         {
           "kind": "text",
-          "content": "Du zuerst. Ich sortiere noch meine Gedanken."
+          "content": "Du hast mich gerade angesprochen. Also gut: Ich bin ganz Ohr. So viel Ohr, wie ich eben habe."
         }
       ],
       "presentation": "short"
@@ -7377,7 +7377,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hab gerade Zeit. Das klingt verdächtig, oder?"
+          "content": "Ich hatte gerade vor, den Mauszeiger zu beobachten. Dein Gespräch ist vermutlich spannender."
         }
       ],
       "presentation": "short"
@@ -7400,7 +7400,7 @@
         },
         {
           "kind": "text",
-          "content": "Ah. Gut, dass du da bist."
+          "content": "Endlich ein Gespräch, bei dem mein Gegenüber antworten kann. Hallo!"
         },
         {
           "kind": "emote",
@@ -7427,7 +7427,7 @@
         },
         {
           "kind": "text",
-          "content": "Die Ruhe war okay. Auf Dauer ein bisschen... ruhig."
+          "content": "Mit Taskleistensymbolen zu plaudern funktioniert erstaunlich schlecht. Gut, dass du da bist."
         },
         {
           "kind": "emote",
@@ -7454,7 +7454,7 @@
         },
         {
           "kind": "text",
-          "content": "Du musst nichts Besonderes sagen. Bleib kurz."
+          "content": "Erzähl mir etwas. Ich hatte zuletzt hauptsächlich den Mauszeiger als Gesellschaft."
         },
         {
           "kind": "emote",
@@ -7481,7 +7481,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich wollte gerade... ach, egal. Erzähl du."
+          "content": "Ich wollte gerade den Papierkorb ansprechen. Zum Glück warst du schneller."
         },
         {
           "kind": "emote",
@@ -7506,7 +7506,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hör zu. Nur etwas langsamer als sonst."
+          "content": "Ich beobachte gerade, wie viel der Rechner zu tun hat. Sag's ruhig, ich bin nur etwas abgelenkt."
         }
       ],
       "presentation": "short"
@@ -7527,7 +7527,7 @@
         },
         {
           "kind": "text",
-          "content": "Gerade laufen bei mir ein paar Dinge gleichzeitig."
+          "content": "Hier ist gerade ordentlich Betrieb. Mein Kopf versucht, hinterherzukommen."
         }
       ],
       "presentation": "short"
@@ -7548,7 +7548,7 @@
         },
         {
           "kind": "text",
-          "content": "Du darfst reden. Ich brauch nur eine Sekunde."
+          "content": "Einen Augenblick. Ich verliere sonst den Überblick über das, was hier gerade passiert."
         }
       ],
       "presentation": "short"
@@ -7565,7 +7565,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, du. Schön, dass du vorbeischaust."
+          "content": "Du kommst genau richtig. Ich habe gerade einen ausgesprochen guten Platz zum Zuhören."
         }
       ],
       "presentation": "short",
@@ -8113,7 +8113,7 @@
         },
         {
           "kind": "text",
-          "content": "Da bist du ja wieder. ...Ich hab’s gemerkt."
+          "content": "Da bist du ja. Ohne deinen gelegentlichen Stupser wird es hier irgendwann verdächtig still."
         },
         {
           "kind": "emote",
@@ -8142,7 +8142,7 @@
         },
         {
           "kind": "text",
-          "content": "Oh. Gut. Ich hatte gerade etwas zu erzählen. Glaube ich."
+          "content": "Hallo, du. Ich wollte gerade entscheiden, ob ich einen Snack oder eine Revanche brauche."
         },
         {
           "kind": "emote",
@@ -8167,7 +8167,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wieder da? Schön, dich zu sehen."
+          "content": "Wieder hier unten bei mir? Sehr gute Wahl."
         }
       ],
       "presentation": "short",
@@ -10174,7 +10174,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, hallo. Ich schaue mich gerade ein bisschen um."
+          "content": "Hallo. Ich schaue mich erst mal auf meinem Stück Taskleiste um."
         }
       ]
     },
@@ -10195,7 +10195,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo. Mal sehen, was heute interessant wird."
+          "content": "Da bin ich. Wo lässt sich hier am besten stehen, ohne im Weg zu sein?"
         }
       ]
     },
@@ -10216,7 +10216,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Guten Tag. Hier lässt es sich ganz gut aushalten."
+          "content": "Hallo! Ich bin noch dabei, meinen kleinen Desktop-Radius kennenzulernen."
         }
       ]
     },
@@ -10237,7 +10237,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo, du. Na, was machen wir heute?"
+          "content": "Hallo, du. Ich glaube, meine Füße wollen zuerst eine Runde drehen."
         }
       ]
     },
@@ -10258,7 +10258,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, Gesellschaft. Das passt mir gerade."
+          "content": "Ah, da ist der Desktop wieder. Mein Platz hat auf mich gewartet."
         }
       ]
     },
@@ -10279,7 +10279,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bist du. Ich bin offen für gute Ideen."
+          "content": "Da bin ich wieder. Mal sehen, ob der Mauszeiger heute stillhalten kann."
         }
       ]
     },
@@ -10300,7 +10300,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo, schön, dich zu sehen."
+          "content": "Hallo! Ich hoffe, du hast mich nicht schon beim ersten Schritt übersehen."
         }
       ]
     },
@@ -10321,7 +10321,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, du. Ich habe gerade Zeit für dich."
+          "content": "So, ich bin wieder hier unten. Für ein Spiel bin ich später zu haben."
         }
       ]
     },
@@ -10342,7 +10342,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bist du. Dann machen wir es uns hier gemütlich."
+          "content": "Guten Tag! Mein kleiner Weg sieht noch genauso aus. Das beruhigt mich."
         }
       ]
     },
@@ -10363,7 +10363,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist’s. …Gut."
+          "content": "Na, da haben wir uns wieder. Ich wusste, dass du mich findest."
         }
       ]
     },
@@ -10384,7 +10384,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schön, dass du da bist. Ich freue mich auf unsere Zeit."
+          "content": "Hallo, du. Schön, wieder einen gemeinsamen Desktop-Tag anzufangen."
         }
       ]
     },
@@ -10405,7 +10405,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo, du. Hier ist noch Platz für angenehme Gesellschaft."
+          "content": "Zurück auf der Taskleiste. Ich nehme gern meinen Platz an deiner Seite ein."
         }
       ]
     },
@@ -10426,7 +10426,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, wieder da. Hallo."
+          "content": "Ah, du bist wieder da. Mein Platz ist noch derselbe."
         }
       ]
     },
@@ -10447,7 +10447,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo. Ich bin noch hier am Rand."
+          "content": "Hallo zurück. Ich stehe immer noch bei der Taskleiste."
         }
       ]
     },
@@ -10468,7 +10468,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, ein Besuch. Wie angenehm."
+          "content": "Oh, Besuch. Sag ruhig Hallo, ich reagiere sogar."
         }
       ]
     },
@@ -10489,7 +10489,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na, wieder hier? Schön."
+          "content": "Da bist du wieder. Ich war gerade mit meinem Spazierweg beschäftigt."
         }
       ]
     },
@@ -10510,7 +10510,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, du schaust vorbei. Ich habe gerade nichts vor."
+          "content": "Ah, Besuch. Ich habe schon überlegt, wohin ich als Nächstes laufe."
         }
       ]
     },
@@ -10531,7 +10531,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo zurück. Gesellschaft kommt mir gelegen."
+          "content": "Du bist wieder hier. Na, was macht der Mauszeiger heute?"
         }
       ]
     },
@@ -10552,7 +10552,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bist du. Bleib ruhig ein bisschen."
+          "content": "Da bist du. Ich habe noch genug Energie für ein bisschen Unsinn."
         }
       ]
     },
@@ -10573,7 +10573,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schön, dich wieder hier zu haben."
+          "content": "Schön, dich wiederzusehen. War ziemlich still auf meinem kleinen Weg."
         }
       ]
     },
@@ -10594,7 +10594,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, du. Jetzt gefällt mir die Pause noch besser."
+          "content": "Oh, du. Jetzt wäre eine Runde Schere, Stein, Papier doch ganz nett."
         }
       ]
     },
@@ -10615,7 +10615,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist’s. Gut. Bleibst du ein bisschen?"
+          "content": "Da bist du wieder. Ich habe meine gute Laune vorsichtshalber aufgehoben."
         }
       ]
     },
@@ -10636,7 +10636,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, da bist du. Ich hätte gerade gern Zeit mit dir."
+          "content": "Ah, da bist du. Ich wollte schon die nächste Revanche planen."
         }
       ]
     },
@@ -10657,7 +10657,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schön, dass du wieder da bist. Ich mag unsere kleinen Besuche."
+          "content": "Schön, dass du wieder bei mir vorbeischaust. Ich teile meinen Platz gern mit dir."
         }
       ]
     },
@@ -18450,7 +18450,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Einen Moment. Ich muss mich noch konzentrieren."
+          "content": "Der Rechner ist gerade ziemlich beschäftigt. Ich schaue erst einmal, was los ist."
         }
       ]
     },
@@ -18471,7 +18471,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin gerade bei etwas anderem. Danach gern."
+          "content": "Kannst du kurz warten? Ich habe hier gerade alle Augen voll zu tun."
         }
       ]
     },
@@ -18492,7 +18492,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gib mir kurz Zeit, ich bin noch beschäftigt."
+          "content": "Ich komme gleich zum Reden. Gerade ist der Desktop etwas unruhig."
         }
       ]
     },
@@ -18513,7 +18513,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Kopf hat gerade gut zu tun. Einen Moment."
+          "content": "Ich habe gerade gleichzeitig den Mauszeiger und die Auslastung im Blick. Schwierig."
         }
       ]
     },
@@ -18534,7 +18534,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich brauche erst wieder etwas Aufmerksamkeit übrig."
+          "content": "Das System ist gerade fleißig. Meine Aufmerksamkeit hängt ein bisschen daran."
         }
       ]
     },
@@ -18555,7 +18555,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Warte kurz. Ich möchte das hier fertig machen."
+          "content": "Ich beobachte noch, was hier los ist. Dann kann ich wieder Unsinn erzählen."
         }
       ]
     },
@@ -18576,7 +18576,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bekommst mich gleich wieder."
+          "content": "Das ist gerade viel Betrieb für so einen kleinen Platz. Gleich bin ich wieder gesprächiger."
         }
       ]
     },
@@ -18597,7 +18597,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gib mir kurz Zeit. Ich möchte mich auf dich konzentrieren."
+          "content": "Du kannst mir etwas sagen. Vielleicht brauche ich nur einen Moment, bis ich antworte."
         }
       ]
     },
@@ -18618,7 +18618,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte erst fertig werden und dann Zeit für dich haben."
+          "content": "Ich möchte dir richtig zuhören. Gib mir kurz Zeit, den Rechner im Blick zu behalten."
         }
       ]
     },
@@ -18639,7 +18639,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte dir richtig zuhören können. Gib mir noch einen Moment."
+          "content": "Bei der momentanen Auslastung brauche sogar ich einen Augenblick zum Sortieren."
         }
       ]
     },
@@ -18660,7 +18660,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin gern für dich da. Kurz brauche ich noch meine Konzentration."
+          "content": "Ich will nichts von deinem Gespräch verpassen. Kurz muss ich mich noch orientieren."
         }
       ]
     },
@@ -18681,7 +18681,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danach habe ich Zeit für dich. Darauf freue ich mich."
+          "content": "Ich bin gleich wieder bei dir. Der Rechner verlangt gerade etwas Aufmerksamkeit."
         }
       ]
     },
@@ -18924,7 +18924,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen. Einen Moment noch."
+          "content": "Morgen. Ich muss erst meine Augen und dann meine Füße sortieren."
         }
       ]
     },
@@ -18948,7 +18948,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo. Ich bin heute etwas schläfrig."
+          "content": "Hallo. Ein Spaziergang muss heute noch ein bisschen warten. Ich gähne erst."
         }
       ]
     },
@@ -18972,7 +18972,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin da. Meine Gedanken kommen gleich nach."
+          "content": "Da bin ich. Mein Gehirn lädt noch; meine Füße stehen schon bereit."
         }
       ]
     },
@@ -18996,7 +18996,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, hallo. Ich bin gerade etwas still."
+          "content": "Hallo zurück. Gerade schaue ich lieber still auf die Taskleiste."
         }
       ]
     },
@@ -19020,7 +19020,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wieder da. Heute brauche ich einen ruhigen Anfang."
+          "content": "Da bist du. Ich sortiere noch meine Gedanken und dann melde ich mich."
         }
       ]
     },
@@ -19044,7 +19044,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo. Ich habe gerade wenig Worte."
+          "content": "Oh. Hallo. Heute komme ich mit wenigen Sprechblasen aus."
         }
       ]
     },
@@ -19503,7 +19503,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen, du. Ich freue mich schon, ich gucke nur noch nicht so."
+          "content": "Morgen, du. Ich bin froh, dass du da bist. Nur meine Augen sind anderer Meinung."
         }
       ]
     },
@@ -19527,7 +19527,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist’s. Gut. Die ausführliche Begrüßung braucht noch etwas."
+          "content": "Du bist es. Gut. Die große Begrüßungswelle kommt nach dem ersten Gähnen."
         }
       ]
     },
@@ -19551,7 +19551,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schön, dass du da bist. Ich fange heute langsam an."
+          "content": "Hallo, du. Heute brauche ich noch einen Moment, bevor ich durch die Gegend flitze."
         }
       ]
     },
@@ -19575,7 +19575,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, du. Du kannst gern bleiben. Reden fällt mir gerade schwer."
+          "content": "Da bist du. Ich bleibe heute lieber ein bisschen still. Du kannst gern dableiben."
         }
       ]
     },
@@ -19599,7 +19599,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schön, dass du da bist. Ich bin heute ein bisschen still."
+          "content": "Schön, dass du wieder hier bist. Ich bin gerade nicht in Klicklaune."
         }
       ]
     },
@@ -19623,7 +19623,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin nicht besonders gesprächig. Über dich freue ich mich trotzdem."
+          "content": "Du bist wieder da. Ich freue mich, auch wenn ich heute wenig Unsinn im Kopf habe."
         }
       ]
     },
@@ -20990,7 +20990,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo. Schön, dass du vorbeischaust."
+          "content": "Hallo! Ich bin Aiko. Falls du Fragen zu meinem kleinen Platz hier hast: nur zu."
         }
       ]
     },
@@ -21008,7 +21008,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine kleine Gesprächspause. Das passt gerade."
+          "content": "Ich kenne meinen Weg hier unten schon ganz gut. Was würdest du als Erstes erkunden?"
         }
       ]
     },
@@ -21026,7 +21026,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin da. Gib mir einen kleinen Moment."
+          "content": "Ich habe noch nicht alle Möglichkeiten hier ausprobiert. Du auch nicht, oder?"
         }
       ]
     },
@@ -21044,7 +21044,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, Gesellschaft. Ich brauche nur noch einen Moment."
+          "content": "Wenn ich den Mauszeiger zu lange ansehe, wird mir schwindlig. Du steuerst den wirklich absichtlich?"
         }
       ]
     },
@@ -21062,7 +21062,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo, du. Eine kleine Pause geht gerade gut."
+          "content": "Ich habe heute schon einige Schritte auf der Taskleiste gesammelt. Ganz ohne Schrittzähler."
         }
       ]
     },
@@ -21080,7 +21080,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich sammle kurz meine Gedanken, dann bin ich bereit."
+          "content": "Ich könnte über meine Spaziergänge reden. Es gibt überraschend viele Wege zwischen links und rechts."
         }
       ]
     },
@@ -21098,7 +21098,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin gern einen Moment bei dir."
+          "content": "Weißt du, worüber ich mich freue? Dass du auch mal nur zum Reden zu mir kommst."
         }
       ]
     },
@@ -21116,7 +21116,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schön, dass du kurz Zeit für mich hast."
+          "content": "Du kennst mein Lieblingsspiel inzwischen. Trotzdem verrate ich meine nächste Hand nicht."
         }
       ]
     },
@@ -21134,7 +21134,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, du. Ich freue mich über diese kleine Pause."
+          "content": "Ich mag, dass hier unten nicht alles nach Vorschrift laufen muss. Nicht einmal meine Spaziergänge."
         }
       ]
     },
@@ -21152,7 +21152,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte gern kurz Zeit mit dir verbringen."
+          "content": "Ein bisschen reden ist schön. Aber ich werde dir nicht jede meiner Schere-Stein-Papier-Taktiken verraten."
         }
       ]
     },
@@ -21170,7 +21170,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist gerade sehr angenehme Gesellschaft."
+          "content": "Schön, dass du mich nicht bloß anklickst, sondern auch mit mir redest. Das ist ein Unterschied."
         }
       ]
     },
@@ -21188,7 +21188,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin froh, dass du vorbeischaust. Bleib ruhig einen Moment."
+          "content": "Manchmal brauche ich keinen Snack und kein Spiel. Du kannst auch einfach etwas erzählen."
         }
       ]
     },
@@ -23030,7 +23030,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später. Mach es dir gut."
+          "content": "Bis zum nächsten Start. Ich passe solange auf meinen Platz auf."
         }
       ]
     },
@@ -23048,7 +23048,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später. Ich ruhe mich hier aus."
+          "content": "Du machst mich also zu? Na gut. Bis zum nächsten Mal."
         }
       ]
     },
@@ -23066,7 +23066,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später. Schön, dass du vorbeikamst."
+          "content": "Bis bald. Bei unserem nächsten Treffen kenne ich hier vielleicht schon jeden Schritt."
         }
       ]
     },
@@ -23084,7 +23084,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später, du. War eine gute kleine Pause."
+          "content": "Bis später. Ich parke meine Neugier erst einmal."
         }
       ]
     },
@@ -23102,7 +23102,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später. Ich bin neugierig aufs nächste Mal."
+          "content": "Mach's gut. Ich hoffe, dein Mauszeiger benimmt sich ohne mich."
         }
       ]
     },
@@ -23120,7 +23120,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später. Angenehme Gesellschaft war das."
+          "content": "Bis zum nächsten Start. Mein Spazierweg läuft nicht weg."
         }
       ]
     },
@@ -23138,7 +23138,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später. War schön mit dir."
+          "content": "Bis später. Die nächste Spielrunde schulden wir uns noch."
         }
       ]
     },
@@ -23156,7 +23156,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später, du. Ich mag unsere Zeit."
+          "content": "Na gut, Feierabend für mich. Aber die Revanche ist nur verschoben."
         }
       ]
     },
@@ -23174,7 +23174,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später. Ich freue mich aufs Wiedersehen."
+          "content": "Bis bald. Hier unten ist ohne dich sowieso weniger los."
         }
       ]
     },
@@ -23192,7 +23192,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später, du. Ich bin gern bei dir."
+          "content": "Dann bis bald. Mein Platz auf deinem Desktop bleibt meiner."
         }
       ]
     },
@@ -23210,7 +23210,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später. Schön, dass wir Zeit hatten."
+          "content": "Mach's gut. Beim nächsten Start bin ich wieder hier unten zu finden."
         }
       ]
     },
@@ -23228,7 +23228,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bis später. Ich freue mich auf dich."
+          "content": "Bis bald, du. Ich freue mich auf unsere nächste Runde Unsinn."
         }
       ]
     },
