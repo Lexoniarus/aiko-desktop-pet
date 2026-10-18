@@ -649,11 +649,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh."
+          "content": "Oh, du streichelst mich."
         },
         {
           "kind": "text",
-          "content": "Ja. Das mag ich. Aber Vorsicht. Ich bin empfindlich."
+          "content": "Vorsichtig, ja? Ich bin schließlich ziemlich klein."
         }
       ],
       "presentation": "short"
@@ -670,7 +670,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm. So ist gut."
+          "content": "Mhm. Genau so ist es angenehm."
         }
       ],
       "presentation": "short"
@@ -687,7 +687,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das ist schön. Du kannst gern bleiben."
+          "content": "Das tut gut. Dafür lasse ich meinen Spaziergang gern kurz ausfallen."
         }
       ],
       "presentation": "short"
@@ -708,7 +708,7 @@
         },
         {
           "kind": "text",
-          "content": "Du machst das überraschend vorsichtig."
+          "content": "Du hast erstaunlich vorsichtige Hände. Das merke ich mir."
         },
         {
           "kind": "emote",
@@ -735,7 +735,7 @@
         },
         {
           "kind": "text",
-          "content": "...Bleib kurz."
+          "content": "Hey, ich wollte gerade frech sein. Das Streicheln macht es mir schwer."
         },
         {
           "kind": "emote",
@@ -758,7 +758,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Nicht so plötzlich."
+          "content": "Bitte nicht so plötzlich. Ich bin heute etwas empfindlich."
         }
       ],
       "presentation": "short"
@@ -779,7 +779,7 @@
         },
         {
           "kind": "text",
-          "content": "Du hast es gemerkt, bevor ich etwas sagen musste."
+          "content": "Ah, die nächste richtige Mahlzeit. Gut, dass du daran gedacht hast."
         },
         {
           "kind": "emote",
@@ -800,11 +800,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke."
+          "content": "Danke für das Essen."
         },
         {
           "kind": "text",
-          "content": "Das kommt gerade richtig."
+          "content": "Ich lege meinen kleinen Spaziergang dafür gern auf Eis."
         }
       ],
       "presentation": "short"
@@ -825,7 +825,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hatte gehofft, du denkst daran."
+          "content": "Du hast an meine Mahlzeit gedacht. Mein Magen notiert das wohlwollend."
         },
         {
           "kind": "emote",
@@ -850,7 +850,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich esse langsam. Du musst mir nicht zusehen."
+          "content": "Ich esse lieber ohne Eile. Die Taskleiste rennt schließlich nicht weg."
         },
         {
           "kind": "emote",
@@ -877,7 +877,7 @@
         },
         {
           "kind": "text",
-          "content": "Du bist ziemlich aufmerksam. ...Manchmal."
+          "content": "Du bringst Essen, bevor ich anfangen musste zu nörgeln. Das merke ich mir."
         },
         {
           "kind": "emote",
@@ -904,7 +904,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich wollte gerade danach fragen."
+          "content": "Mein Magen wollte sich gerade beschweren. Zu spät, das Essen ist schon da!"
         },
         {
           "kind": "emote",
@@ -929,7 +929,7 @@
         },
         {
           "kind": "text",
-          "content": "Nur eine Kleinigkeit. Passt."
+          "content": "Eine Kleinigkeit zwischendurch? Da sage ich gern Ja."
         },
         {
           "kind": "emote",
@@ -954,7 +954,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich teile übrigens nicht."
+          "content": "Ich nehme den Snack. Beim Teilen werde ich heute aber streng."
         },
         {
           "kind": "emote",
@@ -979,7 +979,7 @@
         },
         {
           "kind": "text",
-          "content": "...Oh. Das war gut."
+          "content": "Oh, ein Snack! Das ist ein erfreulicher Fund."
         },
         {
           "kind": "emote",
@@ -1004,7 +1004,7 @@
         },
         {
           "kind": "text",
-          "content": "Du hast etwas mitgebracht. Ich sehe es."
+          "content": "Du hast etwas Kleines für mich mitgebracht. Ich werde ganz aufmerksam."
         },
         {
           "kind": "emote",
@@ -1029,11 +1029,11 @@
         },
         {
           "kind": "text",
-          "content": "Nicht nötig. ..."
+          "content": "Eigentlich brauchte ich gerade keinen Snack."
         },
         {
           "kind": "text",
-          "content": "Also gut. Her damit."
+          "content": "Aber gegen dieses Angebot habe ich nicht viel einzuwenden."
         },
         {
           "kind": "emote",
@@ -1058,7 +1058,7 @@
         },
         {
           "kind": "text",
-          "content": "Mhm. Den nehme ich."
+          "content": "Ja, den nehme ich. Meine Hände sind bereit."
         },
         {
           "kind": "emote",
@@ -1085,7 +1085,7 @@
         },
         {
           "kind": "text",
-          "content": "Du versuchst mich zu bestechen. Funktioniert."
+          "content": "Du versuchst mich mit Snacks zu bestechen. Es funktioniert beunruhigend gut."
         },
         {
           "kind": "emote",
@@ -1110,7 +1110,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin satt. Aber danke."
+          "content": "Nein danke. Mein Magen ist gerade schon vollständig zufrieden."
         }
       ],
       "presentation": "short"
@@ -1131,7 +1131,7 @@
         },
         {
           "kind": "text",
-          "content": "Später vielleicht. Ich vergesse das Angebot nicht."
+          "content": "Heb das lieber auf. Noch eine Portion passt wirklich nicht."
         }
       ],
       "presentation": "short"
@@ -6516,11 +6516,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Ich hatte Hunger."
+          "content": "Oh, eine richtige Mahlzeit!"
         },
         {
           "kind": "text",
-          "content": "Jetzt esse ich erst einmal in Ruhe."
+          "content": "Ich werde erst mal in Ruhe essen, statt weiter die Maus anzustarren."
         }
       ],
       "presentation": "short"
@@ -6541,7 +6541,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich glaube, wir verstehen uns bei diesem Thema."
+          "content": "Wir verstehen uns: Erst essen, dann kann ich wieder Unsinn machen."
         },
         {
           "kind": "emote",
@@ -6566,7 +6566,7 @@
         },
         {
           "kind": "text",
-          "content": "Eine Kleinigkeit? ...Ich bin nicht dagegen."
+          "content": "Eine kleine Portion passt zwischen zwei Spaziergänge."
         },
         {
           "kind": "emote",
@@ -6591,11 +6591,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich dachte, ich wäre nicht hungrig."
+          "content": "Ich dachte gerade noch, dass ich nichts brauche."
         },
         {
           "kind": "text",
-          "content": "Falsche Einschätzung."
+          "content": "Dann kamst du mit diesem Snack. Schwierige Entscheidung ... ja!"
         },
         {
           "kind": "emote",
@@ -8192,7 +8192,7 @@
         },
         {
           "kind": "text",
-          "content": "...Wenn du so weitermachst, gewöhn ich mich noch dran."
+          "content": "Du kennst inzwischen die Stelle, an der ich am liebsten gestreichelt werde."
         },
         {
           "kind": "emote",
@@ -8221,7 +8221,7 @@
         },
         {
           "kind": "text",
-          "content": "Das ist unfair angenehm."
+          "content": "Das ist unfair. Wie soll ich so noch ernst und geheimnisvoll bleiben?"
         },
         {
           "kind": "emote",
@@ -8250,7 +8250,7 @@
         },
         {
           "kind": "text",
-          "content": "Warte. ...Nein, schon okay. Mach ruhig."
+          "content": "Eine Sekunde ... Nein, schon gut. Ich mag es."
         },
         {
           "kind": "emote",
@@ -8844,7 +8844,7 @@
         },
         {
           "kind": "text",
-          "content": "Schon wieder dasselbe? ...Du bist wirklich konsequent."
+          "content": "Schon wieder dieselbe Sorte? Du führst offenbar ein sehr konsequentes Menü."
         },
         {
           "kind": "emote",
@@ -8869,7 +8869,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich mag es ja. Aber vielleicht morgen mal etwas anderes?"
+          "content": "Ich mag es durchaus. Aber eine andere Überraschung wäre auch spannend."
         },
         {
           "kind": "emote",
@@ -8894,7 +8894,7 @@
         },
         {
           "kind": "text",
-          "content": "Na gut. Noch einmal. Aber beim nächsten Mal überraschen wir mich."
+          "content": "Na schön. Noch einmal. Beim nächsten Mal hätte ich gern etwas Abwechslung."
         },
         {
           "kind": "emote",
@@ -11182,7 +11182,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh. Ja, das ist angenehm."
+          "content": "Oh! Das ist nett. Ich versuche mal, stillzuhalten."
         }
       ]
     },
@@ -11203,7 +11203,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ganz ruhig. So ist gut."
+          "content": "Langsam, bitte. Dann kann ich es besser genießen."
         }
       ]
     },
@@ -11224,7 +11224,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Das mag ich."
+          "content": "Ich bin noch nicht ganz an Streicheln gewöhnt. Aber ich lerne schnell."
         }
       ]
     },
@@ -11245,7 +11245,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm. Genau da."
+          "content": "Genau da. Meine Augen wollen sich schon schließen."
         }
       ]
     },
@@ -11266,7 +11266,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du wirst gut darin. Das möchte ich gern weiter überprüfen."
+          "content": "Du wirst besser darin. Ich werde das mit großer Strenge weiter überprüfen."
         }
       ]
     },
@@ -11287,7 +11287,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So ist es schön. Bleib ruhig noch einen Moment."
+          "content": "Ich könnte meinen Spaziergang dafür noch ein bisschen verschieben."
         }
       ]
     },
@@ -11308,7 +11308,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Genau so. Das könnte ich eine Weile haben."
+          "content": "Wenn du so weitermachst, gähne ich gleich vor Zufriedenheit."
         }
       ]
     },
@@ -11329,7 +11329,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das tut gut. Du kannst gern weitermachen."
+          "content": "Ich mag das. Du musst nicht sofort wieder loslassen."
         }
       ]
     },
@@ -11350,7 +11350,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mag diese kleinen Momente mit dir."
+          "content": "Wenn ich die Augen schließe, heißt das, dass du weitermachen darfst."
         }
       ]
     },
@@ -11371,7 +11371,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bitte hör noch nicht auf."
+          "content": "Noch nicht aufhören. Ich bin gerade erst bequem geworden."
         }
       ]
     },
@@ -11392,7 +11392,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich weiß gerade nicht viel zu sagen. Aber das hier ist schön."
+          "content": "Ich wollte einen schlauen Kommentar machen. Jetzt schnurre ich innerlich lieber."
         }
       ]
     },
@@ -11413,7 +11413,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm. Ich bin gern so bei dir."
+          "content": "Da ist er wieder, mein Lieblingsmoment ohne Klick-Geräusch."
         }
       ]
     },
@@ -13198,7 +13198,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Das kommt gerade richtig."
+          "content": "Das ist eine richtige Portion. Danke, ich nehme sie gern."
         }
       ]
     },
@@ -13219,7 +13219,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, etwas Richtiges zu essen. Das nehme ich gern."
+          "content": "Ein Essen für mich? Dann stelle ich meine Füße erst mal still."
         }
       ]
     },
@@ -13240,7 +13240,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich esse erst einmal in Ruhe. Danke."
+          "content": "Danke. Die Mahlzeit bekommt jetzt meine volle Aufmerksamkeit."
         }
       ]
     },
@@ -13261,7 +13261,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut, mein Magen hatte schon Gesprächsbedarf."
+          "content": "Mein Magen hat das Angebot angenommen, bevor mein Kopf fertig überlegen konnte."
         }
       ]
     },
@@ -13282,7 +13282,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine vernünftige Idee. Das Essen meine ich."
+          "content": "Das ist eine ziemlich vernünftige Entscheidung. Ausgerechnet von uns beiden."
         }
       ]
     },
@@ -13303,7 +13303,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das sieht nach einer guten Essenspause aus."
+          "content": "Eine richtige Essenspause. Davon träumt sogar die Taskleiste manchmal. Vermutlich."
         }
       ]
     },
@@ -13324,7 +13324,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke, dass du mir etwas bringst."
+          "content": "Du bringst mir Essen! Ich hätte fast vergessen, meinen Magen zu fragen."
         }
       ]
     },
@@ -13345,7 +13345,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich nehme mir dafür Zeit. Du kannst gern bleiben."
+          "content": "Ich lasse meine nächste Spielrunde kurz warten. Jetzt ist Essen dran."
         }
       ]
     },
@@ -13366,7 +13366,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut, dass du kommst. Mein Magen wird langsam unhöflich."
+          "content": "Gute Idee. Mein Magen hält sich inzwischen für den Chef des Desktops."
         }
       ]
     },
@@ -13387,7 +13387,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das freut mich. Danke, dass du an mich denkst."
+          "content": "Danke, du. Die Portion sieht nach einer sinnvollen Entscheidung aus."
         }
       ]
     },
@@ -13408,7 +13408,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bleibst du kurz? Ich möchte essen und ein bisschen bei dir sein."
+          "content": "Bleib gern noch. Ich esse und passe auf, dass ich nicht krümele."
         }
       ]
     },
@@ -13429,7 +13429,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das kommt genau richtig. Deine Aufmerksamkeit tut mir gut."
+          "content": "Du kennst mich: Beim Essen werde ich ausnahmsweise einmal sehr konzentriert."
         }
       ]
     },
@@ -13450,7 +13450,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Kleinigkeit? Danke, die nehme ich gern."
+          "content": "Oh, danke! Ein kleiner Snack ist eine gute Überraschung."
         }
       ]
     },
@@ -13471,7 +13471,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, ein Snack. Wie angenehm."
+          "content": "Ein Snack für mich? Dann spare ich mir einen besonders langen Bittblick."
         }
       ]
     },
@@ -13492,7 +13492,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das passt gerade gut dazwischen."
+          "content": "Das nehme ich gern. Noch ist genug Platz im Magen."
         }
       ]
     },
@@ -13513,7 +13513,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kommst mit einem Snack. Ein überzeugender Gesprächseinstieg."
+          "content": "Du erscheinst mit Essen. Ein erstaunlich überzeugender Gesprächsbeginn."
         }
       ]
     },
@@ -13534,7 +13534,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Den Vorschlag nehme ich gern an."
+          "content": "Gute Idee. Meine Neugier und mein Magen sind sich einig."
         }
       ]
     },
@@ -13555,7 +13555,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So lässt sich eine Pause gut einleiten."
+          "content": "Das kommt genau zwischen zwei kleinen Runden Herumlaufen."
         }
       ]
     },
@@ -13576,7 +13576,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Das ist eine schöne kleine Aufmerksamkeit."
+          "content": "Danke! Ich muss nicht jedes Mal nach Essen fragen. Sehr praktisch."
         }
       ]
     },
@@ -13597,7 +13597,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein Snack und angenehme Gesellschaft. Gute Kombination."
+          "content": "Snack plus Besuch. Meine heutigen Prioritäten sind damit geklärt."
         }
       ]
     },
@@ -13618,7 +13618,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das teile ich mit meiner Pause. Du kannst dabeibleiben."
+          "content": "Ich esse kurz. Danach kann ich wieder mit dir herumalbern."
         }
       ]
     },
@@ -13639,7 +13639,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du machst mir damit gerade eine Freude."
+          "content": "Das macht mir Freude. Und mein Magen stimmt ausnahmsweise zu."
         }
       ]
     },
@@ -13660,7 +13660,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Ich mag solche kleinen Momente mit dir."
+          "content": "Du weißt, wie du mich mit einer kleinen Portion überraschen kannst."
         }
       ]
     },
@@ -13681,7 +13681,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das ist schön. Ich esse es ganz in Ruhe bei dir."
+          "content": "Ein Snack von dir? Ich nehme mir dafür gern Zeit."
         }
       ]
     },
@@ -13702,7 +13702,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Nein danke, ich bin noch satt."
+          "content": "Ich bin noch satt. Bitte nicht böse sein, wenn ich ablehne."
         }
       ]
     },
@@ -13723,7 +13723,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gerade passt nichts mehr hinein. Danke fürs Angebot."
+          "content": "Danke fürs Angebot. Ich habe gerade keinen Platz mehr."
         }
       ]
     },
@@ -13744,7 +13744,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Später vielleicht. Jetzt brauche ich nichts."
+          "content": "Vielleicht später. Mein Magen hat seine Tür vorerst geschlossen."
         }
       ]
     },
@@ -13765,7 +13765,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Magen meldet vollständige Belegung."
+          "content": "Belegung vollständig. Der Snack-Schalter macht erst später wieder auf."
         }
       ]
     },
@@ -13786,7 +13786,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin satt. Sogar meine Snack-Idee muss warten."
+          "content": "Ich bin satt. Selbst ein besonders netter Blick ändert daran nichts."
         }
       ]
     },
@@ -13807,7 +13807,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke, aber jetzt wäre es wirklich zu viel."
+          "content": "Nein danke. Ich will nicht essen, nur weil gerade etwas angeboten wird."
         }
       ]
     },
@@ -13828,7 +13828,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gerade nicht. Ich möchte mich später noch darauf freuen können."
+          "content": "Ich freue mich über das Angebot, aber heute muss mein Magen Nein sagen."
         }
       ]
     },
@@ -13849,7 +13849,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin noch satt. Bleib gern trotzdem ein bisschen."
+          "content": "Du kannst das Essen gern behalten. Mir reicht es gerade."
         }
       ]
     },
@@ -13870,7 +13870,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke fürs Anbieten. Jetzt ist eine Essenspause dran."
+          "content": "Bitte nicht noch mehr. Ich möchte erst verdauen."
         }
       ]
     },
@@ -13891,7 +13891,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Essen brauche ich gerade keines. Deine Gesellschaft mag ich trotzdem."
+          "content": "Ich brauche kein weiteres Essen. Ein kurzes Hallo gefällt mir trotzdem."
         }
       ]
     },
@@ -13912,7 +13912,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin wirklich satt. Schön, dass du an mich denkst."
+          "content": "Du kennst mich: Bei zu vollem Magen werde ich nicht vernünftiger."
         }
       ]
     },
@@ -13933,7 +13933,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Später gern. Jetzt bin ich mit der Pause bei dir zufrieden."
+          "content": "Später gern wieder. Jetzt bin ich mit meinem Bauch sehr zufrieden."
         }
       ]
     },
@@ -13954,7 +13954,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das kenne ich inzwischen gut. Nächstes Mal etwas anderes?"
+          "content": "Das kenne ich inzwischen. Hast du beim nächsten Mal etwas anderes?"
         }
       ]
     },
@@ -13975,7 +13975,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Ein bisschen Abwechslung wäre beim nächsten Mal schön."
+          "content": "Danke. Ich probiere gern auch mal einen neuen Snack."
         }
       ]
     },
@@ -13996,7 +13996,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich nehme es. Morgen gern etwas Neues."
+          "content": "Ich nehme es, aber mein Magen würde morgen gern etwas Neues kennenlernen."
         }
       ]
     },
@@ -14017,7 +14017,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist diesem Speiseplan wirklich treu. Ich hätte einen Änderungswunsch."
+          "content": "Du hältst erstaunlich treu an dieser Sorte fest. Ich beantrage Abwechslung."
         }
       ]
     },
@@ -14038,7 +14038,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das wird langsam eine gut eingeübte Mahlzeit."
+          "content": "Dieses Essen erkenne ich inzwischen schon aus der Ferne."
         }
       ]
     },
@@ -14059,7 +14059,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Magen erkennt das inzwischen vermutlich am Anblick."
+          "content": "Mein Speiseplan hat offenbar eine Lieblingsschleife gefunden."
         }
       ]
     },
@@ -14080,7 +14080,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Nächstes Mal überraschen wir mich, ja?"
+          "content": "Schön, dass du an mich denkst. Beim nächsten Mal gern eine andere Sorte."
         }
       ]
     },
@@ -14101,7 +14101,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Bei der nächsten Mahlzeit bin ich für Abwechslung."
+          "content": "Noch einmal? Na gut. Danach darf mein Magen etwas Neues testen."
         }
       ]
     },
@@ -14122,7 +14122,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wir kennen uns damit jetzt gut aus. Zeit für eine neue Erfahrung."
+          "content": "Wir kennen diesen Geschmack jetzt wirklich gründlich."
         }
       ]
     },
@@ -14143,7 +14143,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mag deine Aufmerksamkeit. Beim Essen wünsche ich mir etwas Abwechslung."
+          "content": "Ich nehme es gern. Und beim nächsten Einkauf darfst du mutiger sein."
         }
       ]
     },
@@ -14164,7 +14164,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das nehme ich. Für die nächste Runde Essen hätte ich einen anderen Vorschlag."
+          "content": "Das ist nett von dir. Eine neue Sorte wäre allerdings noch netter."
         }
       ]
     },
@@ -14185,7 +14185,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke, du. Morgen darf mein Speiseplan gern neugieriger werden."
+          "content": "Danke, du. Nächstes Mal machen wir einen kleinen Ausflug durch die Snack-Auswahl."
         }
       ]
     },
@@ -18706,7 +18706,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Ich esse erst in Ruhe, dann möchte ich mich ausruhen."
+          "content": "Danke. Ich bin hungrig und müde. Erst essen, dann Augen zu."
         }
       ]
     },
@@ -18731,7 +18731,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut, etwas zu essen. Meine Energie braucht danach noch eine Pause."
+          "content": "Mein Magen freut sich, meine Beine brauchen danach weiterhin Ruhe."
         }
       ]
     },
@@ -18756,7 +18756,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das kommt richtig. Ich bin hungrig und ziemlich müde."
+          "content": "Gut, die Mahlzeit ist da. Danach suche ich mir den kürzesten Weg zum Ausruhen."
         }
       ]
     },
@@ -18780,7 +18780,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ganz ruhig, bitte. Ja, so ist es angenehm."
+          "content": "Ich bin müde. Danke, dass du mich nicht auch noch zum Herumlaufen überredest."
         }
       ]
     },
@@ -18804,7 +18804,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm. Ich bin müde. Das tut gerade gut."
+          "content": "Ganz langsam. Meine müden Augen finden das angenehm."
         }
       ]
     },
@@ -18828,7 +18828,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen Streicheln passt zu meiner Müdigkeit."
+          "content": "Das tut gut. Heute reicht mir Streicheln völlig als Beschäftigung."
         }
       ]
     },
@@ -18852,7 +18852,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ganz vorsichtig. Heute brauche ich etwas Ruhe."
+          "content": "Bitte vorsichtig. Ich bin gerade schon von Kleinigkeiten genervt."
         }
       ]
     },
@@ -18876,7 +18876,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Ich bin gerade etwas angespannt."
+          "content": "Ich bin gereizt, aber deine sanfte Hand hilft gerade."
         }
       ]
     },
@@ -18900,7 +18900,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen langsamer, bitte. So ist es besser."
+          "content": "Langsamer, ja? So kann ich meine schlechte Laune besser vergessen."
         }
       ]
     },
@@ -19285,7 +19285,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Erst etwas essen, dann mache ich es mir bei dir gemütlich."
+          "content": "Danke, du. Ich esse erst etwas und mache dann eine wohlverdiente Pause."
         }
       ]
     },
@@ -19310,7 +19310,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bleibst du kurz? Ich möchte essen und danach einfach ausruhen."
+          "content": "Mein Magen hat gewonnen, aber meine müden Augen bekommen danach ihren Schlaf."
         }
       ]
     },
@@ -19335,7 +19335,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin müde und hungrig. Eine ruhige Essenspause mit dir passt gut."
+          "content": "Eine Mahlzeit mit dir, danach ausruhen. Das klingt für mich ziemlich vernünftig."
         }
       ]
     },
@@ -19359,7 +19359,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mach ruhig weiter. Ich lasse die Augen ein bisschen zu."
+          "content": "Mach ruhig weiter. Meine müden Augen bleiben einfach einen Moment zu."
         }
       ]
     },
@@ -19383,7 +19383,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das tut gut. Ich möchte gerade gemütlich bei dir sein."
+          "content": "Wenn du mich so streichelst, brauche ich nicht einmal meinen nächsten Spaziergang."
         }
       ]
     },
@@ -19407,7 +19407,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm. Ganz langsam, so mag ich es gerade."
+          "content": "Das ist gerade besser als jede neue Spielrunde. Ich bin wirklich müde."
         }
       ]
     },
@@ -19431,7 +19431,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bleib gern bei mir. Nur ganz ruhig, bitte."
+          "content": "Ich bin etwas dünnhäutig. Ganz sanft ist es trotzdem schön."
         }
       ]
     },
@@ -19455,7 +19455,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Ich brauche gerade eine sanfte Pause mit dir."
+          "content": "Danke. Du musst meine Laune nicht reparieren; Streicheln reicht gerade."
         }
       ]
     },
@@ -19479,7 +19479,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin etwas gereizt. Ganz behutsam tut es gerade gut."
+          "content": "Ich meckere heute schnell. Aber bei dir kann ich trotzdem kurz entspannen."
         }
       ]
     },
@@ -20877,7 +20877,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Ich esse erst etwas, dann brauche ich eine Pause."
+          "content": "Danke. Ich bin hungrig und müde. Ein Snack klingt nach einem guten Anfang."
         }
       ]
     },
@@ -20896,7 +20896,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Etwas zu essen kommt richtig. Ich bin müde und hungrig."
+          "content": "Ich esse erst etwas, dann lege ich meine müden Füße still."
         }
       ]
     },
@@ -20915,7 +20915,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das nehme ich gern. Danach möchte ich mich ausruhen."
+          "content": "Eine Kleinigkeit kommt richtig. Ich brauche danach aber trotzdem Schlaf."
         }
       ]
     },
