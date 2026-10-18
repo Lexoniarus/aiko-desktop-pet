@@ -98,6 +98,15 @@ class StoryGuiTests(unittest.TestCase):
         self.pet.interact("pet")
         self.assertFalse(self.pet._reaction_player.story_active)
         self.pet._hover.open_game()
+        self.assertFalse(self.pet._hover.game_open)
+        # The next UI action starts after care playback and speech complete.
+        deadline = time.monotonic() + 6
+        while (not self.pet._contact.can_interact("play")
+               and time.monotonic() < deadline):
+            self.pet.root.update()
+            time.sleep(.02)
+        self.assertTrue(self.pet._contact.can_interact("play"))
+        self.pet._hover.open_game()
         chosen = next(
             line
             for line in self.pet.mind.book.lines

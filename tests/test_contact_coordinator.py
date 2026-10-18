@@ -27,6 +27,7 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.hide = Mock()
         self.reactions: list[tuple[Reaction | None, int]] = []
         self.greet_enabled = True
+        self.foreground = self.playback = False
         self.context = context_at(datetime(2026, 10, 12, 13).timestamp())
         self.contact = ContactCoordinator(
             state=self.state,
@@ -45,6 +46,8 @@ class ContactCoordinatorTests(unittest.TestCase):
                     (reaction, duration),
                 ),
                 should_greet=lambda _now: self.greet_enabled,
+                foreground_active=lambda: self.foreground,
+                playback_active=lambda: self.playback,
             ),
         )
 
@@ -55,6 +58,23 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.interrupt.assert_called_once()
         self.show.assert_called_once()
         self.assertEqual(self.reactions, [(None, 2800)])
+
+    def test_busy_hover_only_opens_ui_and_busy_playback_ignores_clicks(self) -> None:
+        for owner in ("foreground", "playback"):
+            with self.subTest(owner=owner):
+                self.foreground = owner == "foreground"
+                self.playback = owner == "playback"
+                self.assertFalse(self.contact.can_interact("pet"))
+                self.contact.enter()
+                self.interrupt.assert_not_called()
+                self.assertEqual(self.reactions, [])
+                self.assertEqual(list(self.mind.clicks), [])
+        self.assertEqual(self.show.call_count, 2)
+        self.contact.click("right")
+        self.assertEqual(list(self.mind.clicks), [])
+        self.assertEqual(self.reactions, [])
+        self.foreground = self.playback = False
+        self.assertTrue(self.contact.can_interact("pet"))
 
     def test_click_preserves_mind_event_and_adaptive_contact(self) -> None:
         reaction = Reaction("test-click", (Cue.text("Hallo"),), "idle", "click_left")

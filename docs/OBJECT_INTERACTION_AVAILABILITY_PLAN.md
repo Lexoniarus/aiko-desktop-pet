@@ -50,14 +50,14 @@ saves and main-thread collection. Do not access or modify the normal save.
 Existing active object episodes now retain admission during UI hover, including
 search and loss feedback. Idle UI blocking and unrelated game/playback/custody
 rules remain. The revised coordinator regression fails on the baseline and passes
-with the correction. A real-timer native regression holds an unmoving pointer
-over the sprite with cursor-follow disabled: the toolbar opens, a visible unknown
+with the correction. A real-timer native regression injects stationary pointer readings
+over real sprite geometry with cursor-follow disabled: the toolbar opens, a visible unknown
 candidate is approached, and movement continues without extra contact feedback,
 care effects or a lost search subject. No new saved or mutable activity state.
 
 ### Stage 2 evidence
 
-A read-only GUI admission query derives permission from existing World, game,
+A read-only contact admission query derives permission from existing World, game,
 sleep and playback owners. Toolbar states and UI callbacks share that query,
 including food selections from an already open menu. The existing toolbar tick
 refreshes permission; pin/settings/details remain usable. Waking remains an
@@ -89,3 +89,25 @@ unfinished hover/care/click speech, or expect a click to cancel that speech. The
 fixtures/expectations must follow the agreed foreground rule before final signoff;
 retain the lower-level explicit replacement/cancellation contracts. Pure window
 component fixtures should open HoverUi directly instead of starting a pet response.
+
+### Final validation follow-up
+
+The full architecture guard also caught admission behavior growing the GUI
+composition root. The read-only permission and ordinary contact guards now live in
+the existing ContactCoordinator, with typed current-owner callbacks; World routes object-busy clicks before ordinary contact. No new coordinator, busy
+state or relaxed architecture limit was needed. Passive hover remains separate
+from action admission. The unused GUI contact-recording forwarder was replaced
+with direct late binding to its owner.
+
+Window component fixtures open HoverUi without starting hover dialogue. Actual
+sequential click/care/game tests finish the preceding response before the next
+UI action; the pending-food case ends cursor custody before sleep. The old
+click-cancels-ongoing-speech assertion now verifies continuation instead.
+Low-level explicit command replacement and stale timer/receipt tests remain.
+The first full run completed 1,148 tests in 338.431 seconds with nine failures:
+eight incompatible UI scenarios/expectations and the unchanged GUI size guard.
+All were addressed above. On the reviewed exported snapshot, 103 targeted native
+UI, contact and architecture tests pass in 70.580 seconds, including both native
+search regressions. Ruff, strict Mypy (187 sources), Pyright, 270 documentation
+file targets and 15 anchors pass. A separate 93-test headless owner/architecture
+check also passes. The complete final rerun is pending.

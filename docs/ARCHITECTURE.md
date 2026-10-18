@@ -671,9 +671,10 @@ busy reply. The attention adapter reads this exception from the same live phase
 feedback, rather than treating that optional reply as a new foreground activity.
 
 Passive hover opens accessory UI without pausing a committed object episode or
-producing an extra pet reaction. One read-only GUI permission derived from the
-current World, game, sleep and playback owners controls both care button states
-and their UI callbacks, including stale food menus. Pin/settings/details remain
+producing an extra pet reaction. ContactCoordinator derives one read-only user
+action permission from the current World, game, sleep and playback owners. That
+permission controls care button states and their UI callbacks, including stale
+food menus. Pin/settings/details remain
 independent. Explicit lower-level care/game commands retain safe interruption;
 UI actions cannot start a competing activity. See the
 [hover and action availability plan](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).

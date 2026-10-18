@@ -43,7 +43,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.pet.settings.spontaneous_talk = False
 
     def test_game_window_has_player_hand_and_transient_score(self) -> None:
-        self.pet._on_enter()
+        self.pet._hover.show_toolbar()
         toolbar = self.pet._hover.toolbar
         assert toolbar is not None
         previous_mood = self.pet.state.mood

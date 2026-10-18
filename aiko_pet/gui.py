@@ -244,7 +244,7 @@ class DesktopPet:
                 settings_snapshot=self._views.settings_view,
                 anchor=self._views.anchor,
                 care=self.interact,
-                can_interact=self._can_interact,
+                can_interact=lambda action: self._contact.can_interact(action),
                 food_choices=self._food_choices,
                 feed=lambda selected: self._world.begin_carry(selected),
                 defer_game=lambda action: self._world.interrupt(action),
@@ -253,7 +253,7 @@ class DesktopPet:
                     inputs=self._activity.session_inputs(time.time(), time.monotonic()),
                 ),
                 open_sprite_hover=self._on_enter,
-                record_contact=self._record_hover_contact,
+                record_contact=lambda now: self._contact.record_contact(now),
                 save_position=self._save_hover_position,
                 set_option=self._apply_setting,
                 toggle_scale=self.toggle_scale,
@@ -282,7 +282,8 @@ class DesktopPet:
                     self._hover.toolbar is None or not self._hover.toolbar.visible
                 ),
                 mark_hover=self._hover.note_sprite_hover,
-                interrupt_walk=self._walk.movement.interrupt,
+                interrupt_walk=lambda: self._world.interrupt(
+                    self._walk.movement.interrupt),
                 show_toolbar=lambda: self._hover.show_toolbar(),
                 game_open=lambda: self._hover.game_open,
                 cancel_followup=lambda: self._cancel_followup(),
@@ -291,6 +292,11 @@ class DesktopPet:
                 should_greet=lambda now: self._attention.should_greet(now),
                 story_active=lambda: self._reaction_player.story_active,
                 advance_story=self._reaction_player.advance_story,
+                foreground_active=lambda: (self._object_feedback_active()
+                    or self._world_access.defer_routine()),
+                playback_active=lambda: (time.monotonic() < self._action_playback.until
+                    or self._reaction_player.pending_timer is not None
+                    or self._speech.bubble is not None),
             ),
         )
         self._input = DesktopInput(
@@ -438,24 +444,10 @@ class DesktopPet:
             self._world.interaction.active or self._world.cursor.carrying
         )
 
-    def _can_interact(self, action: str) -> bool:
-        """Admit user actions from existing owners, independent of UI hover."""
-        if (self._object_feedback_active() or self._world_access.defer_routine()
-                or self._hover.game_open):
-            return False
-        if self.state.sleeping:
-            return action == "sleep"  # Waking ends the current lifecycle action.
-        return not (time.monotonic() < self._action_playback.until
-                    or self._reaction_player.pending_timer is not None
-                    or self._speech.bubble is not None)
-
     def _set_game_mode(self, enabled: bool) -> None:
         self._action_playback.cancel_at(time.monotonic())
         self._animated.set_game_mode(enabled)
         self.mind.cursor_attention.reset()
-
-    def _record_hover_contact(self, now: float) -> None:
-        self._contact.record_contact(now)
 
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
@@ -494,23 +486,13 @@ class DesktopPet:
         self._preferences.record_toolbar_position(x, y)
 
     def _on_enter(self, _event: tk.Event | None = None) -> None:
-        if not self._can_interact("pet"):
-            self._hover.note_sprite_hover(time.monotonic())
-            self._hover.show_toolbar()
-            return
-        if not self._world.cursor.carrying:
-            self._world.interrupt(self._contact.enter)
+        self._contact.enter()
 
     def _on_click_left(self, _event: tk.Event | None = None) -> None:
-        if (not self._world.interaction.active and not self._can_interact("pet")
-                and not self._reaction_player.story_active):
-            return
         if not self._world.cursor.carrying:
             self._world.request_contact(lambda: self._contact.click("left"))
 
     def _on_click_right(self, _event: tk.Event | None = None) -> None:
-        if not self._world.interaction.active and not self._can_interact("pet"):
-            return
         self._world.request_contact(lambda: self._contact.click("right"))
 
     def _greet_on_start(self) -> None:

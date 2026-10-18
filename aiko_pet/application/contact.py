@@ -35,6 +35,8 @@ class ContactPorts:
     should_greet: Callable[[float], bool]
     story_active: Callable[[], bool] = lambda: False
     advance_story: Callable[[], bool] = lambda: False
+    foreground_active: Callable[[], bool] = lambda: False
+    playback_active: Callable[[], bool] = lambda: False
 
 
 class ContactCoordinator:
@@ -53,12 +55,24 @@ class ContactCoordinator:
         self._adaptive = adaptive
         self._ports = ports
 
+    def can_interact(self, action: str) -> bool:
+        """Derive user-action permission from current owners, never UI hover."""
+        if self._ports.foreground_active() or self._ports.game_open():
+            return False
+        if self._state.sleeping:
+            return action == "sleep"  # Waking ends the current lifecycle action.
+        return not self._ports.playback_active()
+
     def record_contact(self, now: float) -> None:
         self._mind.last_contact = now
 
     def enter(self) -> None:
         """Preserve toolbar and walk-interruption order on pointer entry."""
         now = time.monotonic()
+        if not self.can_interact("pet"):
+            self._ports.mark_hover(now)
+            self._ports.show_toolbar()
+            return
         reaction = (
             self._mind.return_to_pet(
                 self._state,
@@ -83,6 +97,9 @@ class ContactCoordinator:
         if button == "left" and self._ports.advance_story():
             self._mind.clicks.clear()
             self._mind.last_contact = time.monotonic()
+            return
+        if (self._state.sleeping or self._ports.game_open()
+                or self._ports.playback_active()):
             return
         self.enter()
         now = time.monotonic()

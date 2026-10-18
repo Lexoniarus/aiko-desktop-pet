@@ -27,7 +27,7 @@ class AffectionGuiTests(unittest.TestCase):
         self.addCleanup(self.app.quit)
         self.app.settings.auto_routine = False
         set_test_pet_values(self.app.state, sleeping=False)
-        self.app._on_enter()
+        self.app._hover.show_toolbar()
         self.app.root.update_idletasks()
 
     @property

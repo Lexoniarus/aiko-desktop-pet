@@ -82,7 +82,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         )
 
     def test_hover_toolbar_contains_every_care_action(self):
-        self.app._on_enter()
+        self.app._hover.show_toolbar()
         self.assertIsNotNone(self.app._hover.toolbar)
         bar = self.toolbar
         self.assertTrue(bar.visible)
@@ -112,6 +112,10 @@ class TaskbarPetGuiTests(unittest.TestCase):
             menu.buttons["onigiri"].invoke()
         self.assertEqual(self.app.state.satiety, 75)
         self.assertTrue(self.app._world.cursor.carrying)
+        bar.refresh()
+        self.assertEqual(bar.buttons["sleep"].cget("state"), "disabled")
+        self.app._world.cursor.cancel()
+        bar.refresh()
         bar.buttons["sleep"].invoke()
         self.assertTrue(self.app.state.sleeping)
         self.assertEqual(bar.buttons["sleep"].cget("text"), "Wecken")
@@ -463,6 +467,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertEqual(self.app.root.winfo_y(), self.app.settings.y)
 
     def test_left_and_right_click_open_voice_reactions(self):
+        self.app._runtime.stop()
         # Dialogue expectations are daytime-specific, never test local time.
         self.app.context = context_at(
             datetime(2026, 10, 12, 15, 0).timestamp(),
@@ -479,6 +484,11 @@ class TaskbarPetGuiTests(unittest.TestCase):
             ),
             "click_left",
         )
+        deadline = time.monotonic() + 6
+        while not self.app._contact.can_interact("pet") and time.monotonic() < deadline:
+            self.app.root.update()
+            time.sleep(.02)
+        self.assertTrue(self.app._contact.can_interact("pet"))
         self.app._on_click_right()
         self.assertIsNotNone(self.app._speech.bubble)
         self.assertEqual(

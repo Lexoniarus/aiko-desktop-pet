@@ -87,24 +87,25 @@ class FollowupGuiTests(unittest.TestCase):
         self.pass_delay(1.86)
         self.assertEqual(self.text(), "Eine neue Antwort, die jetzt lesbar bleibt.")
 
-    def test_deliberate_click_silence_cancels_pending_followup(self):
+    def test_direct_click_keeps_foreground_followup_running(self):
         self.app._react(
             Reaction(
                 "test",
                 (
                     Cue.text("Noch da"),
-                    Cue.text("Das darf nicht kommen"),
+                    Cue.text("Die laufende Antwort geht weiter."),
                 ),
                 "idle",
                 "click_left",
             )
         )
-        with patch.object(self.app.mind, "click", return_value=None):
+        with patch.object(self.app.mind, "click", return_value=None) as click:
             self.app._on_click_left()
-        self.assertIsNone(self.app._speech.bubble)
+        click.assert_not_called()
+        self.assertEqual(self.text(), "Noch da")
         self.pass_delay()
-        self.assertIsNone(self.app._speech.bubble)
-        self.assertIsNone(self.app._reaction_player.pending_timer)
+        self.assertEqual(self.text(), "Die laufende Antwort geht weiter.")
+        self.assertIsNotNone(self.app._reaction_player.pending_timer)
 
     def test_existing_window_stack_and_hover_are_preserved(self):
         self.app._on_enter()

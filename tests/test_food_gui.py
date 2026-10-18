@@ -33,7 +33,7 @@ class FoodGuiTests(unittest.TestCase):
         self.addCleanup(self.pet.quit)
         self.pet.settings.auto_routine = False
         set_test_pet_values(self.pet.state, sleeping=False)
-        self.pet._on_enter()
+        self.pet._hover.show_toolbar()
 
     def test_selecting_from_eleven_foods_carries_without_feeding(self) -> None:
         bar = self.pet._hover.toolbar
