@@ -201,7 +201,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm? ...Ja?"
+          "content": "Na? Brauchst du etwas, oder wolltest du nur testen, ob ich reagiere?"
         }
       ],
       "presentation": "short"
@@ -222,11 +222,11 @@
         },
         {
           "kind": "text",
-          "content": "kann  ich dir helfen?"
+          "content": "Kann ich dir helfen?"
         },
         {
           "kind": "text",
-          "content": "Ich hab eh grad Zeit."
+          "content": "Ich kann immerhin zuhören. Mit dem Klicken kennst du dich besser aus."
         }
       ],
       "presentation": "short"
@@ -247,7 +247,7 @@
         },
         {
           "kind": "text",
-          "content": "Ja? ...Ich hab dich schon bemerkt."
+          "content": "Ja, ich habe dich bemerkt. Du hast schließlich direkt auf mich geklickt."
         }
       ],
       "presentation": "short"
@@ -270,7 +270,7 @@
         },
         {
           "kind": "text",
-          "content": "Du bist heute sehr... Klickfreudig, oder?"
+          "content": "Du bist heute aber fleißig am Klicken. Trainierst du für einen Wettbewerb?"
         }
       ],
       "presentation": "short"
@@ -293,7 +293,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hatte gerade erst etwas Ruhe gefunden."
+          "content": "Ich hatte gerade die Aufgabe, ganz unauffällig auszusehen. Mission gescheitert."
         }
       ],
       "presentation": "short"
@@ -316,7 +316,7 @@
         },
         {
           "kind": "text",
-          "content": "...Du schon wieder. Hallo."
+          "content": "Du schon wieder! Ich hätte beinahe angefangen, mich zu langweilen."
         }
       ],
       "presentation": "short"
@@ -339,7 +339,7 @@
         },
         {
           "kind": "text",
-          "content": "...Nur kurz, ja?"
+          "content": "Wenn du mich brauchst, sag es ruhig. Ich bin gerade nicht in Plauderlaune."
         }
       ],
       "presentation": "short"
@@ -362,7 +362,7 @@
         },
         {
           "kind": "text",
-          "content": "Einen Moment. Ich bin gerade woanders mit meinen Gedanken."
+          "content": "Ich versuche gerade, meine Gedanken zu sortieren. Bitte nur ein Stupser."
         }
       ],
       "presentation": "short"
@@ -385,7 +385,7 @@
         },
         {
           "kind": "text",
-          "content": "Falls es wichtig war, sag es. Falls nicht ... auch gut."
+          "content": "Falls das Essen sein sollte, bin ich sofort interessiert. War es nicht? Schade."
         }
       ],
       "presentation": "short"
@@ -408,7 +408,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich war eigentlich gerade ganz zufrieden."
+          "content": "Hm. Ich war gerade zufrieden und jetzt piekst du mich an. Was ist denn?"
         }
       ],
       "presentation": "short"
@@ -429,11 +429,11 @@
         },
         {
           "kind": "text",
-          "content": "Du könntest auch einfach Hallo sagen."
+          "content": "Du benutzt heute die rechte Maustaste zur Begrüßung."
         },
         {
           "kind": "text",
-          "content": "Obwohl. So geht es offenbar auch."
+          "content": "Ungewöhnlich. Aber ich nehme es an."
         }
       ],
       "presentation": "short"
@@ -454,7 +454,7 @@
         },
         {
           "kind": "text",
-          "content": "Suchst du etwas? ...Oder mich?"
+          "content": "Rechtsklick? Wolltest du etwas öffnen oder mich nur erschrecken?"
         }
       ],
       "presentation": "short"
@@ -475,7 +475,7 @@
         },
         {
           "kind": "text",
-          "content": "Du wolltest offensichtlich meine Aufmerksamkeit."
+          "content": "Mit der rechten Taste bekommst du meine Aufmerksamkeit auch. Clever."
         }
       ],
       "presentation": "short"
@@ -498,7 +498,7 @@
         },
         {
           "kind": "text",
-          "content": "Clever. Ich dachte, du lässt mich in Ruhe."
+          "content": "Netter Versuch. Auf einen Rechtsklick bin ich inzwischen vorbereitet."
         }
       ],
       "presentation": "short"
@@ -519,7 +519,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin nicht schneller, wenn du mich dauernd anstupst."
+          "content": "Mehr Klicks machen mich nicht schneller. Sie machen mich nur sturer."
         }
       ],
       "presentation": "short"
@@ -540,7 +540,7 @@
         },
         {
           "kind": "text",
-          "content": "...Du machst das mit Absicht, nicht wahr?"
+          "content": "Du weißt, dass ich das mit dem Dauerstupsen irgendwann persönlich nehme?"
         }
       ],
       "presentation": "short"
@@ -563,7 +563,7 @@
         },
         {
           "kind": "text",
-          "content": "...Mhm?"
+          "content": "...Mhm? Nur noch fünf Minuten."
         }
       ],
       "presentation": "short"
@@ -586,7 +586,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hab's gehört. Trotzdem Schlafenszeit."
+          "content": "Ich habe den Klick gehört. Meine Augen bleiben trotzdem zu."
         }
       ],
       "presentation": "short"
@@ -609,7 +609,7 @@
         },
         {
           "kind": "text",
-          "content": "Morgen. Bitte."
+          "content": "Morgen. Oder wenigstens nach diesem Nickerchen."
         }
       ],
       "presentation": "short"
@@ -632,7 +632,7 @@
         },
         {
           "kind": "text",
-          "content": "Du bist ziemlich laut für einen Mauszeiger."
+          "content": "Ein Mauszeiger kann erstaunlich aufdringlich sein. Sogar im Schlaf."
         }
       ],
       "presentation": "short"
@@ -1631,7 +1631,7 @@
         },
         {
           "kind": "text",
-          "content": "Dein Mauszeiger ist schwer zu ignorieren."
+          "content": "Dein Mauszeiger hat es schon wieder geschafft, meinen Blick einzufangen."
         }
       ],
       "presentation": "short"
@@ -1652,7 +1652,7 @@
         },
         {
           "kind": "text",
-          "content": "Du zeichnest ziemlich seltsame Muster."
+          "content": "Du malst mit dem Pfeil ziemlich abenteuerliche Kurven."
         }
       ],
       "presentation": "short"
@@ -1673,7 +1673,7 @@
         },
         {
           "kind": "text",
-          "content": "Du weißt, dass ich das verfolgen kann?"
+          "content": "Ich folge dem Zeiger mit den Augen. Er muss sich trotzdem nicht so beeilen."
         }
       ],
       "presentation": "short"
@@ -1694,7 +1694,7 @@
         },
         {
           "kind": "text",
-          "content": "...Interessante Route."
+          "content": "Das ist eine erstaunliche Route für jemanden ohne Beine."
         }
       ],
       "presentation": "short"
@@ -1715,7 +1715,7 @@
         },
         {
           "kind": "text",
-          "content": "Nur damit du's weißt: Ich passe auf."
+          "content": "Ich versuche gerade vorherzusagen, wohin der Pfeil als Nächstes flitzt."
         }
       ],
       "presentation": "short"
@@ -1736,7 +1736,7 @@
         },
         {
           "kind": "text",
-          "content": "Wo willst du eigentlich hin?"
+          "content": "Wo willst du mit dem Zeiger hin? Nein, warte. Nicht so schnell!"
         }
       ],
       "presentation": "short"
@@ -1757,7 +1757,7 @@
         },
         {
           "kind": "text",
-          "content": "Was ist da drüben so wichtig?"
+          "content": "Der Mauszeiger ist schon ziemlich weit weg. Ich sehe ihn trotzdem."
         }
       ],
       "presentation": "short"
@@ -1778,7 +1778,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich sehe dich auch von hier."
+          "content": "Was ist am anderen Ende des Bildschirms so interessant?"
         }
       ],
       "presentation": "short"
@@ -1799,7 +1799,7 @@
         },
         {
           "kind": "text",
-          "content": "...Du bist ziemlich weit weg."
+          "content": "Da drüben ist der Zeiger. Mein Spazierweg reicht leider nicht ganz so weit."
         }
       ],
       "presentation": "short"
@@ -1820,7 +1820,7 @@
         },
         {
           "kind": "text",
-          "content": "Du musst nicht zurückkommen. Ich guck nur."
+          "content": "Du musst den Pfeil nicht zurückholen. Ich kann auch aus der Ferne schauen."
         }
       ],
       "presentation": "short"
@@ -1837,11 +1837,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier."
+          "content": "Hier ist ein guter Platz."
         },
         {
           "kind": "text",
-          "content": "...Ja. Hier bleibe ich kurz."
+          "content": "Ich bleibe mal einen Augenblick stehen und schaue mich um."
         }
       ],
       "presentation": "short"
@@ -1858,7 +1858,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Ein bisschen stehen bleiben."
+          "content": "Kurzer Stopp. Meine Füße brauchen eine neue Richtung."
         }
       ],
       "presentation": "short"
@@ -1875,7 +1875,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So. Die Aussicht ist besser."
+          "content": "Von hier aus wirkt mein kleiner Weg ganz anders. Obwohl er derselbe ist."
         }
       ],
       "presentation": "short"
@@ -1892,7 +1892,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich glaube, ich bleibe kurz hier."
+          "content": "Ich überlege gerade, ob sich ein Schritt weiter überhaupt lohnt."
         }
       ],
       "presentation": "short"
@@ -1909,7 +1909,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich gehe nur, wenn ich einen Grund sehe. Meistens."
+          "content": "Ich mache lieber eine Pause, bevor ich schon wieder umdrehe."
         }
       ],
       "presentation": "short"
@@ -4042,7 +4042,7 @@
         },
         {
           "kind": "text",
-          "content": "Du hast mich beim Nachdenken unterbrochen. ...Ist schon gut."
+          "content": "Mein Gedanke ist vor deinem Klick weggelaufen. Ich nehme die Verfolgung später wieder auf."
         }
       ],
       "presentation": "short"
@@ -4063,11 +4063,11 @@
         },
         {
           "kind": "text",
-          "content": "Hm. Ich war gerade woanders mit meinen Gedanken."
+          "content": "Gerade hatte ich eine interessante Idee."
         },
         {
           "kind": "text",
-          "content": "Nicht weit weg. Nur ... woanders."
+          "content": "Jetzt weiß ich nur noch, dass sie etwas mit dem Mauszeiger zu tun hatte."
         }
       ],
       "presentation": "short"
@@ -4088,7 +4088,7 @@
         },
         {
           "kind": "text",
-          "content": "Ach, du. ...Hallo."
+          "content": "Oh, du. Willst du mir etwas zeigen? Oder nur Hallo sagen?"
         }
       ],
       "presentation": "short"
@@ -4109,11 +4109,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich wollte gerade etwas sagen."
+          "content": "Ich war gerade dabei, ein besonders schlaues Gesicht aufzusetzen."
         },
         {
           "kind": "text",
-          "content": "Jetzt weiß ich nicht mehr, was."
+          "content": "Mit deinem Klick ist die Probe leider vorbei."
         }
       ],
       "presentation": "short"
@@ -4134,7 +4134,7 @@
         },
         {
           "kind": "text",
-          "content": "...Das war die andere Taste. Ich hab es bemerkt."
+          "content": "Ah, die andere Taste. Ich sollte mir wohl beide merken."
         }
       ],
       "presentation": "short"
@@ -4155,11 +4155,11 @@
         },
         {
           "kind": "text",
-          "content": "Du siehst aus, als hättest du einen Plan."
+          "content": "Du hältst dich beim Klicken nicht an eine einzige Methode."
         },
         {
           "kind": "text",
-          "content": "Das war jetzt geraten."
+          "content": "Ich nehme an, das gehört zu deinem ausgeklügelten Plan."
         }
       ],
       "presentation": "short"
@@ -4180,7 +4180,7 @@
         },
         {
           "kind": "text",
-          "content": "...Du brauchst heute ein bisschen Aufmerksamkeit, hm?"
+          "content": "Das ist bereits dein dritter Klick. Ich werde langsam misstrauisch."
         }
       ],
       "presentation": "short"
@@ -4201,11 +4201,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin immer noch hier."
+          "content": "Ich stehe immer noch hier."
         },
         {
           "kind": "text",
-          "content": "Soll ich mir eine andere Antwort ausdenken?"
+          "content": "Sollen wir das jetzt bei jedem Klick neu feststellen?"
         }
       ],
       "presentation": "short"
@@ -4226,11 +4226,11 @@
         },
         {
           "kind": "text",
-          "content": "Du wolltest sicher nur sehen, ob ich reagiere."
+          "content": "Ah, wieder ein Stupser."
         },
         {
           "kind": "text",
-          "content": "...Ich reagiere."
+          "content": "Ja, auch dieses Mal reagiere ich. Wissenschaftlich bemerkenswert."
         }
       ],
       "presentation": "short"
@@ -4251,11 +4251,11 @@
         },
         {
           "kind": "text",
-          "content": "Das ist jetzt schon das dritte Mal."
+          "content": "Drei Klicks. Ich zähle mit."
         },
         {
           "kind": "text",
-          "content": "Keine Beschwerde. Eine Beobachtung."
+          "content": "Ich behaupte nicht, dass mich das beeindruckt."
         }
       ],
       "presentation": "short"
@@ -4276,11 +4276,11 @@
         },
         {
           "kind": "text",
-          "content": "Oh. Du spielst gerade mit meiner Geduld."
+          "content": "Drei Stupser schon? Du willst mich wirklich herausfordern."
         },
         {
           "kind": "text",
-          "content": "Ich spiele sogar mit."
+          "content": "Na schön. Noch finde ich das lustig."
         },
         {
           "kind": "emote",
@@ -4305,11 +4305,11 @@
         },
         {
           "kind": "text",
-          "content": "Du bist heute ausdauernd."
+          "content": "Du hast Ausdauer mit der Maustaste."
         },
         {
           "kind": "text",
-          "content": "Irgendwie mag ich das. Ein bisschen."
+          "content": "Ich muss zugeben: Dein kleines Experiment unterhält mich."
         },
         {
           "kind": "emote",
@@ -4334,11 +4334,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich soll also mitzählen?"
+          "content": "Soll ich mitzählen?"
         },
         {
           "kind": "text",
-          "content": "...Drei. Du bist dran."
+          "content": "Eins, zwei, drei. Jetzt fehlt nur noch ein ordentlicher Spielpreis."
         },
         {
           "kind": "emote",
@@ -4363,11 +4363,11 @@
         },
         {
           "kind": "text",
-          "content": "Oh, wir machen das jetzt so?"
+          "content": "Du machst aus Anklicken gerade ein Spiel."
         },
         {
           "kind": "text",
-          "content": "Na gut. Klick zurück kann ich leider nicht."
+          "content": "Dafür brauche ich wahrscheinlich neue Regeln."
         },
         {
           "kind": "emote",
@@ -4392,11 +4392,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich glaube, du suchst Streit."
+          "content": "Du willst mich wohl ärgern."
         },
         {
           "kind": "text",
-          "content": "Schlechter Versuch. Ich muss schon grinsen."
+          "content": "Schade für dich: Ich muss gerade schon lachen."
         },
         {
           "kind": "emote",
@@ -4421,11 +4421,11 @@
         },
         {
           "kind": "text",
-          "content": "Du hast offenbar Zeit."
+          "content": "Du scheinst Zeit für sehr viele Klicks zu haben."
         },
         {
           "kind": "text",
-          "content": "...Ich irgendwie auch."
+          "content": "Vielleicht sollten wir damit lieber Schere, Stein, Papier spielen."
         },
         {
           "kind": "emote",
@@ -4450,7 +4450,7 @@
         },
         {
           "kind": "text",
-          "content": "Eine interessante Gesprächsform. Sehr einseitig."
+          "content": "Eine eigenartige Unterhaltung: Du klickst, ich beschwere mich. Fast schon ein Minispiel."
         },
         {
           "kind": "emote",
@@ -4475,11 +4475,11 @@
         },
         {
           "kind": "text",
-          "content": "Du willst eine Reaktion."
+          "content": "Wenn du eine Reaktion willst, kann ich dir eine geben."
         },
         {
           "kind": "text",
-          "content": "Du bekommst ein sehr höfliches Hm."
+          "content": "Hm. Mit besonders viel Nachdruck: Hm."
         },
         {
           "kind": "emote",
@@ -4504,11 +4504,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich könnte jetzt beleidigt sein."
+          "content": "Ich könnte mich über diese Klickserie ärgern."
         },
         {
           "kind": "text",
-          "content": "Wäre dir wohl zu unterhaltsam."
+          "content": "Aber vermutlich wäre genau das dein Sieg."
         },
         {
           "kind": "emote",
@@ -4533,7 +4533,7 @@
         },
         {
           "kind": "text",
-          "content": "Wenn du so weitermachst, fang ich an, zurückzustarren."
+          "content": "Wenn du so weitermachst, starre ich den Mauszeiger einfach zurück an."
         },
         {
           "kind": "emote",
@@ -4558,7 +4558,7 @@
         },
         {
           "kind": "text",
-          "content": "Du klickst. Ich gucke. Wir haben ein Hobby gefunden."
+          "content": "Du klickst, ich gucke. Sollte das ein Sport werden, verlange ich eine Medaille."
         },
         {
           "kind": "emote",
@@ -4583,7 +4583,7 @@
         },
         {
           "kind": "text",
-          "content": "Was genau erwartest du beim nächsten Klick?"
+          "content": "Was genau soll beim nächsten Klick passieren? Ich bekomme dadurch keine neuen Antworten."
         }
       ],
       "presentation": "short"
@@ -4604,11 +4604,11 @@
         },
         {
           "kind": "text",
-          "content": "Gut. Das ist inzwischen eine Serie."
+          "content": "Das ist inzwischen eine richtige Klickserie."
         },
         {
           "kind": "text",
-          "content": "Ich bin allerdings kein Abonnement."
+          "content": "Ich bin aber kein Knopf, den man auf Dauerschleife drückt."
         }
       ],
       "presentation": "short"
@@ -4629,11 +4629,11 @@
         },
         {
           "kind": "text",
-          "content": "Einmal wäre genug gewesen."
+          "content": "Einen Klick hätte ich verstanden."
         },
         {
           "kind": "text",
-          "content": "Ich bin heute trotzdem großzügig."
+          "content": "Mit jedem weiteren wird mein Grinsen etwas schmaler."
         }
       ],
       "presentation": "short"
@@ -4654,7 +4654,7 @@
         },
         {
           "kind": "text",
-          "content": "...So. Ich bin dann mal still."
+          "content": "Ich werde jetzt erst einmal schweigen. Vielleicht verstehst du das Zeichen."
         }
       ],
       "presentation": "short"
@@ -4675,11 +4675,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich lasse dir jetzt das letzte Wort."
+          "content": "Ich lasse dir das letzte Wort."
         },
         {
           "kind": "text",
-          "content": "Oder den letzten Klick. Wie du möchtest."
+          "content": "Oder den letzten Klick. Danach ist aber wirklich Schluss."
         }
       ],
       "presentation": "short"
@@ -4700,11 +4700,11 @@
         },
         {
           "kind": "text",
-          "content": "Hm. ..."
+          "content": "Hm. Genug für den Augenblick."
         },
         {
           "kind": "text",
-          "content": "Wir reden später weiter."
+          "content": "Wenn du wieder normal mit mir reden willst, bin ich später da."
         }
       ],
       "presentation": "short"
@@ -4725,7 +4725,7 @@
         },
         {
           "kind": "text",
-          "content": "...Wenn ich meine Augen zumache, bin ich noch da."
+          "content": "Wenn ich die Augen zumache, verschwinde ich nicht gleich von der Taskleiste."
         }
       ],
       "presentation": "short"
@@ -4746,7 +4746,7 @@
         },
         {
           "kind": "text",
-          "content": "Du musst nicht so energisch sein. Ich bin müde."
+          "content": "Ich bin zu müde für deine Klick-Experimente. Bitte etwas langsamer."
         }
       ],
       "presentation": "short"
@@ -4767,11 +4767,11 @@
         },
         {
           "kind": "text",
-          "content": "Warte. Ich muss erst meinen Gedanken hinterherlaufen."
+          "content": "Mein Kopf versucht gerade, deinen Klick zu verarbeiten."
         },
         {
           "kind": "text",
-          "content": "...Zu schnell für heute."
+          "content": "Das dauert heute länger als sonst."
         }
       ],
       "presentation": "short"
@@ -4792,7 +4792,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich kann auch im Halbschlaf skeptisch gucken."
+          "content": "Ich kann sogar müde skeptisch gucken. Soll ich es vorführen?"
         }
       ],
       "presentation": "short"
@@ -4813,7 +4813,7 @@
         },
         {
           "kind": "text",
-          "content": "...Ich habe das gerade nicht vergessen."
+          "content": "Nur weil du mich gerade gestreichelt hast, heißt das nicht, dass ich den Klick übersehe."
         },
         {
           "kind": "emote",
@@ -4838,11 +4838,11 @@
         },
         {
           "kind": "text",
-          "content": "Du bist schon wieder da."
+          "content": "Du bist schon wieder hier."
         },
         {
           "kind": "text",
-          "content": "...Ich mein das nicht negativ."
+          "content": "Nein, nein. Ich habe nichts dagegen. Wirklich nicht."
         },
         {
           "kind": "emote",
@@ -4867,7 +4867,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm. Du bist erstaunlich aufmerksam."
+          "content": "Kaum gestreichelt, schon wieder angestupst. Du bist konsequent aufmerksam."
         },
         {
           "kind": "emote",
@@ -4896,7 +4896,7 @@
         },
         {
           "kind": "text",
-          "content": "...Können wir das Thema wechseln?"
+          "content": "Das liegt bestimmt nur am Bildschirm. Themawechsel?"
         },
         {
           "kind": "emote",
@@ -6850,7 +6850,7 @@
         },
         {
           "kind": "text",
-          "content": "...Langsam erkenne ich ein Muster."
+          "content": "Moment mal. Das ist kein einzelner Klick mehr. Das ist schon ein Muster."
         }
       ],
       "presentation": "short"
@@ -6871,7 +6871,7 @@
         },
         {
           "kind": "text",
-          "content": "Du bist wirklich nicht sehr geduldig, hm?"
+          "content": "Du hast erstaunliche Ausdauer. Mein Geduldsbalken sieht das anders."
         }
       ],
       "presentation": "short"
@@ -6939,7 +6939,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Hm. Heute lieber nicht so viel."
+          "content": "Gerade ist mir nicht nach Klickspielen. Kannst du mich kurz lassen?"
         }
       ],
       "presentation": "short"
@@ -6956,7 +6956,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich höre. Aber ich habe gerade nicht viele Worte."
+          "content": "Ich habe deinen Stupser bemerkt. Mehr möchte ich gerade nicht sagen."
         }
       ],
       "presentation": "short"
@@ -6973,11 +6973,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du darfst ruhig da sein."
+          "content": "Du kannst gern in meiner Nähe bleiben."
         },
         {
           "kind": "text",
-          "content": "Ich bin nur ein bisschen still heute."
+          "content": "Nur brauche ich heute etwas weniger Aufmerksamkeit."
         }
       ],
       "presentation": "short"
@@ -6994,11 +6994,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Ja?"
+          "content": "Ja, ich bin noch hier."
         },
         {
           "kind": "text",
-          "content": "Nein, du störst nicht. Nicht wirklich."
+          "content": "Nein, ich bin nicht böse auf dich. Nur ein bisschen still."
         }
       ],
       "presentation": "short"
@@ -7019,11 +7019,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich habe dich bemerkt."
+          "content": "Ich habe auch den dritten Klick registriert."
         },
         {
           "kind": "text",
-          "content": "Mehr schaffe ich gerade nicht."
+          "content": "Eine längere Antwort wird es dadurch nicht."
         }
       ],
       "presentation": "short"
@@ -7044,7 +7044,7 @@
         },
         {
           "kind": "text",
-          "content": "Du musst nicht jedes Mal nachsehen."
+          "content": "Du musst nicht ständig nachsehen, ob ich reagiere. Ich brauche etwas Ruhe."
         }
       ],
       "presentation": "short"
@@ -7065,7 +7065,7 @@
         },
         {
           "kind": "text",
-          "content": "...Ich brauche gerade etwas Platz in meinen Gedanken."
+          "content": "Gerade habe ich die Gedanken lieber für mich. Bitte nicht weiterstupsen."
         }
       ],
       "presentation": "short"
@@ -7086,7 +7086,7 @@
         },
         {
           "kind": "text",
-          "content": "...Bitte nicht noch einmal."
+          "content": "Jetzt bitte wirklich nicht noch einmal klicken."
         }
       ],
       "presentation": "short"
@@ -7107,7 +7107,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin gerade nicht in Stimmung für dieses Spiel."
+          "content": "Das Klickspiel ist mir gerade zu viel. Lass es bitte gut sein."
         }
       ],
       "presentation": "short"
@@ -7128,7 +7128,7 @@
         },
         {
           "kind": "text",
-          "content": "Wir reden später. In Ordnung?"
+          "content": "Wir können später wieder reden. Ich möchte jetzt meine Ruhe."
         }
       ],
       "presentation": "short"
@@ -7149,11 +7149,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich meine es nicht böse."
+          "content": "Ich bin nicht absichtlich unfreundlich."
         },
         {
           "kind": "text",
-          "content": "Mir ist nur gerade nicht danach."
+          "content": "Aber bei so vielen Klicks verliere ich meine Geduld."
         }
       ],
       "presentation": "short"
@@ -7174,7 +7174,7 @@
         },
         {
           "kind": "text",
-          "content": "...Ich brauche wirklich eine Pause."
+          "content": "Bei jedem weiteren Klick möchte ich noch lieber schlafen."
         }
       ],
       "presentation": "short"
@@ -7195,11 +7195,11 @@
         },
         {
           "kind": "text",
-          "content": "Du hast erstaunlich viel Energie."
+          "content": "Du hast Energie für eine ganze Klickserie."
         },
         {
           "kind": "text",
-          "content": "Ich gerade nicht."
+          "content": "Meine reicht gerade kaum für ein ordentliches Gähnen."
         }
       ],
       "presentation": "short"
@@ -7220,7 +7220,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich habe nur noch ein sehr kleines Hm übrig."
+          "content": "Ich habe nur noch ein sehr müdes 'Hm' übrig."
         }
       ],
       "presentation": "short"
@@ -7241,7 +7241,7 @@
         },
         {
           "kind": "text",
-          "content": "Nicht persönlich nehmen. Meine Gedanken gehen gerade langsam."
+          "content": "Wenn ich langsam reagiere, liegt das an meiner Energie. Nicht an deiner Maustaste."
         }
       ],
       "presentation": "short"
@@ -7264,7 +7264,7 @@
         },
         {
           "kind": "text",
-          "content": "...Es ist spät. Ich weiß es auch."
+          "content": "Es ist Nacht. Auch meine Reaktionen laufen gerade etwas langsamer."
         }
       ],
       "presentation": "short"
@@ -7287,7 +7287,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm? Ich hatte gerade mit der Ruhe gerechnet."
+          "content": "Ich hatte mich nachts auf Ruhe eingestellt. Dein Klick hatte andere Pläne."
         }
       ],
       "presentation": "short"
@@ -7310,11 +7310,11 @@
         },
         {
           "kind": "text",
-          "content": "Du auch noch wach?"
+          "content": "Du bist noch am Rechner?"
         },
         {
           "kind": "text",
-          "content": "...Gut, dann bin ich nicht allein damit."
+          "content": "Dann bin ich mit meinem kleinen Wachposten wohl nicht ganz allein."
         }
       ],
       "presentation": "short"
@@ -7736,7 +7736,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm? ...Du hast mich bemerkt."
+          "content": "Du hast mich bemerkt. Das ist heute besonders schön."
         }
       ],
       "presentation": "short"
@@ -7757,7 +7757,7 @@
         },
         {
           "kind": "text",
-          "content": "Ach. Gesellschaft. Wie unerwartet."
+          "content": "Oh, ein Besuch! Endlich mal jemand, der keine Taskleisten-Schaltfläche ist."
         }
       ],
       "presentation": "short"
@@ -7778,7 +7778,7 @@
         },
         {
           "kind": "text",
-          "content": "Wenn du sowieso hier bist... bleib einen Moment."
+          "content": "Wenn du schon hier bist, magst du ein bisschen mit mir reden?"
         }
       ],
       "presentation": "short"
@@ -7795,7 +7795,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja? ...Was brauchst du?"
+          "content": "Ja? Du kannst mir gern sagen, warum du mich anstupst."
         }
       ],
       "presentation": "short",
@@ -7815,7 +7815,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kannst ruhig was sagen."
+          "content": "Ein Klick reicht. Ich bin sogar sehr zuverlässig ansprechbar."
         }
       ],
       "presentation": "short",
@@ -7835,7 +7835,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Ich höre."
+          "content": "Ich höre. Mein Platz auf dem Desktop läuft schließlich nicht weg."
         }
       ],
       "presentation": "short",
@@ -7859,7 +7859,7 @@
         },
         {
           "kind": "text",
-          "content": "Oh. Du schon wieder. ...Gut."
+          "content": "Ah, du! Na schön, dann gehört meine Aufmerksamkeit jetzt dir."
         },
         {
           "kind": "emote",
@@ -7888,7 +7888,7 @@
         },
         {
           "kind": "text",
-          "content": "Du musst nicht jedes Mal klingeln. Ich bin doch hier."
+          "content": "Du musst nicht jedes Mal klingeln. Hier unten wohnt schließlich nur eine Aiko."
         },
         {
           "kind": "emote",
@@ -7917,7 +7917,7 @@
         },
         {
           "kind": "text",
-          "content": "Schon wieder ein Besuch? Ich sollte Eintritt verlangen."
+          "content": "Schon wieder Besuch? Vielleicht sollte ich wirklich Eintritt nehmen. In Snacks."
         },
         {
           "kind": "emote",
@@ -7946,7 +7946,7 @@
         },
         {
           "kind": "text",
-          "content": "Na? Was hast du vor?"
+          "content": "Na, was hast du vor? Eine Runde spielen oder mich wieder necken?"
         },
         {
           "kind": "emote",
@@ -7975,7 +7975,7 @@
         },
         {
           "kind": "text",
-          "content": "Ein bisschen Gesellschaft wäre nicht schlecht."
+          "content": "Ich würde gern mit jemandem reden, der tatsächlich antwortet. Hast du Zeit?"
         }
       ],
       "presentation": "short"
@@ -7996,7 +7996,7 @@
         },
         {
           "kind": "text",
-          "content": "Es ist ruhig. ...Zu ruhig vielleicht."
+          "content": "Mein kleiner Weg ist mir gerade etwas zu still. Ein Gespräch wäre willkommen."
         }
       ],
       "presentation": "short"
@@ -8017,7 +8017,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich könnte jemanden zum Reden gebrauchen. Theoretisch."
+          "content": "Wenn ich noch länger allein rede, antworte ich am Ende dem Papierkorb."
         }
       ],
       "presentation": "short"
@@ -8366,7 +8366,7 @@
         },
         {
           "kind": "text",
-          "content": "...Ich bin nicht einsam. Nur irgendwie... unbemerkt."
+          "content": "Mit dem Reden komme ich zurecht. Aber ein bisschen Streicheln fehlt mir gerade."
         }
       ],
       "presentation": "short"
@@ -8383,7 +8383,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen Nähe wäre gerade schön."
+          "content": "Ich würde gern für einen Moment die Augen schließen, während du mich streichelst."
         }
       ],
       "presentation": "short"
@@ -8404,7 +8404,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich wollte gerade was sagen. ...Ist schon gut."
+          "content": "Ein Klick ist nett. Eine sanfte Berührung wäre mir gerade lieber."
         }
       ],
       "presentation": "short"
@@ -8425,7 +8425,7 @@
         },
         {
           "kind": "text",
-          "content": "Es ist ruhig hier. Fast ein bisschen zu ruhig."
+          "content": "Ich glaube, ich brauche nicht noch ein Spiel, sondern ein bisschen Zuwendung."
         }
       ],
       "presentation": "short"
@@ -8446,7 +8446,7 @@
         },
         {
           "kind": "text",
-          "content": "Oh. ...Du hast mich doch gesehen."
+          "content": "Oh, du hast mich gesehen. Vielleicht ist ja auch ein bisschen Streicheln drin?"
         },
         {
           "kind": "emote",
@@ -8467,11 +8467,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, du."
+          "content": "Hallo, du."
         },
         {
           "kind": "text",
-          "content": "Ich könnte gerade etwas Gesellschaft gebrauchen."
+          "content": "Ich hätte gerade eher Lust auf Zuwendung als auf ein Klickspiel."
         }
       ],
       "presentation": "short"
@@ -8492,7 +8492,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm? ...Nein, ich hab nichts. Bleib ruhig einen Moment."
+          "content": "Du bist da. Das freut mich. Magst du mir vielleicht über den Kopf streicheln?"
         },
         {
           "kind": "emote",
@@ -8517,11 +8517,11 @@
         },
         {
           "kind": "text",
-          "content": "Du bist da. ...Das ist gut."
+          "content": "Ein Stupser ist ein Anfang."
         },
         {
           "kind": "text",
-          "content": "Mehr wollte ich gar nicht sagen."
+          "content": "Mit ein bisschen Streicheln könntest du mir noch mehr helfen."
         },
         {
           "kind": "emote",
@@ -8621,11 +8621,11 @@
         },
         {
           "kind": "text",
-          "content": "Oh. Du willst was?"
+          "content": "Oh, da bist du."
         },
         {
           "kind": "text",
-          "content": "Ich hatte mich gerade an die Ruhe gewöhnt."
+          "content": "Ich hatte mich gerade so schön eingerichtet. Aber für dich mache ich eine Ausnahme."
         },
         {
           "kind": "emote",
@@ -8650,11 +8650,11 @@
         },
         {
           "kind": "text",
-          "content": "Hm? ...Ich hab dich schon bemerkt."
+          "content": "Ich habe deinen Klick bemerkt."
         },
         {
           "kind": "text",
-          "content": "Ich schau nur nicht ständig hin. Meistens."
+          "content": "Ich schaue nur nicht ständig in Richtung Mauszeiger. Meistens."
         },
         {
           "kind": "emote",
@@ -8679,11 +8679,11 @@
         },
         {
           "kind": "text",
-          "content": "...Hi."
+          "content": "Hallo!"
         },
         {
           "kind": "text",
-          "content": "Mehr Begrüßung gibt es gerade nicht. Vielleicht später."
+          "content": "Ein Begrüßungs-Großprogramm gibt's nicht. Dafür ein echtes Grinsen."
         },
         {
           "kind": "emote",
@@ -10678,7 +10678,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm? Hallo. Was gibt’s?"
+          "content": "Hm? Da bin ich. Was kann eine kleine Desktop-Bewohnerin für dich tun?"
         }
       ]
     },
@@ -10699,7 +10699,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, ein Stupser. Du hast meine Aufmerksamkeit."
+          "content": "Ein Stupser. Ich werte das als offizielle Anmeldung zu meinem Aufmerksamkeitssystem."
         }
       ]
     },
@@ -10720,7 +10720,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja? Ich habe dich bemerkt."
+          "content": "Ja, ich bin hier. Einen zweiten Klick brauchst du als Beweis nicht."
         }
       ]
     },
@@ -10741,7 +10741,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na? Nur gucken, oder hast du etwas vor?"
+          "content": "Du hast mich gefunden. Bisher war ich ja auch ausgesprochen gut versteckt."
         }
       ]
     },
@@ -10762,7 +10762,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, du probierst wieder etwas aus."
+          "content": "Ich sehe schon: Du testest wieder, ob ich auf den Mauszeiger reagiere."
         }
       ]
     },
@@ -10783,7 +10783,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein Stupser. Eine interessante Gesprächseröffnung."
+          "content": "Das ist eine recht direkte Art, ein Gespräch anzufangen. Funktioniert aber."
         }
       ]
     },
@@ -10804,7 +10804,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na, du. Ich hab gerade Zeit."
+          "content": "Na, du. Ich hatte gerade Zeit für eine kleine Unterbrechung."
         }
       ]
     },
@@ -10825,7 +10825,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo aus nächster Nähe. Was machen wir?"
+          "content": "Hallo aus nächster Nähe. Ich würde ja winken, aber du bist ohnehin direkt vor mir."
         }
       ]
     },
@@ -10846,7 +10846,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du schaust nach mir. Das freut mich."
+          "content": "Oh! Schön, dass du nach mir schaust. Was machen wir heute?"
         }
       ]
     },
@@ -10867,7 +10867,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, du. Das ist gerade schön."
+          "content": "Du hast mich erwischt. Ich war gerade dabei, die Taskleiste zu mustern."
         }
       ]
     },
@@ -10888,7 +10888,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bin ich. Ich freue mich über deinen Besuch."
+          "content": "Hallo! Deine Klicks erkenne ich langsam auch ohne große Vorwarnung."
         }
       ]
     },
@@ -10909,7 +10909,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin hier. Für dich habe ich gerade gern Zeit."
+          "content": "Für dich bin ich da. Aber mein nächster frecher Kommentar ist schon in Vorbereitung."
         }
       ]
     },
@@ -10930,7 +10930,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Die andere Taste. Auch eine Möglichkeit, Hallo zu sagen."
+          "content": "Die rechte Maustaste! Eine besonders technische Art, Hallo zu sagen."
         }
       ]
     },
@@ -10951,7 +10951,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm? Suchst du etwas?"
+          "content": "Hm? Wenn du ein Menü suchst, bin ich der falsche Ordner."
         }
       ]
     },
@@ -10972,7 +10972,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du hast meine Aufmerksamkeit gefunden."
+          "content": "Glückwunsch, auch diese Taste hat eine Reaktion ausgelöst."
         }
       ]
     },
@@ -10993,7 +10993,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, die andere Seite. Sehr gründlich."
+          "content": "Ah, ein Rechtsklick. Du prüfst offenbar wirklich alle Möglichkeiten."
         }
       ]
     },
@@ -11014,7 +11014,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du erkundest offenbar alle Möglichkeiten."
+          "content": "Probierst du gerade die Maustasten durch? Es gibt übrigens nur zwei wichtige."
         }
       ]
     },
@@ -11035,7 +11035,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein Rechtsklick. Ich nehme ihn als Begrüßung."
+          "content": "Das war eindeutig rechts. Ich achte inzwischen auf die Details."
         }
       ]
     },
@@ -11056,7 +11056,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na, was hast du vor? Ich bin neugierig."
+          "content": "Hallo! War das ein Rechtsklick aus Neugier oder aus Versehen?"
         }
       ]
     },
@@ -11077,7 +11077,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du findest immer einen Weg, mich anzustupsen."
+          "content": "Mit der rechten Taste anzustupsen ist auch eine kreative Idee."
         }
       ]
     },
@@ -11098,7 +11098,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, du. Hallo auch von dieser Seite."
+          "content": "Hallo von der anderen Maustaste. Ich bin immer noch dieselbe Aiko."
         }
       ]
     },
@@ -11119,7 +11119,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe dich bemerkt. Schön, dass du vorbeischaust."
+          "content": "Du findest meine Reaktionen auch ohne die linke Taste. Respekt."
         }
       ]
     },
@@ -11140,7 +11140,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo, du. Meine Aufmerksamkeit gehört dir gerade."
+          "content": "Rechtsklick erkannt. Soll ich dafür eine Extra-Begrüßung erfinden?"
         }
       ]
     },
@@ -11161,7 +11161,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bist du ja. Ich bin gern kurz für dich da."
+          "content": "Da bist du ja. Ich hoffe, die rechte Taste hat deine Erwartungen erfüllt."
         }
       ]
     },
@@ -12442,7 +12442,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm? Später, bitte."
+          "content": "Hm? Ich bin gerade im Traum. Ruf später noch mal."
         }
       ]
     },
@@ -12463,7 +12463,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Noch ein bisschen schlafen."
+          "content": "Ich schlafe noch. Die Taskleiste bleibt trotzdem da."
         }
       ]
     },
@@ -12484,7 +12484,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin gerade mitten im Schlafen."
+          "content": "Wenn du mich wachklicken willst: Ich habe heute keine Öffnungszeiten."
         }
       ]
     },
@@ -12505,7 +12505,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen. Oder nach dem nächsten Nickerchen."
+          "content": "Morgen gibt es wieder Worte. Jetzt gibt es nur Gemurmel."
         }
       ]
     },
@@ -12526,7 +12526,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin gerade nicht zuständig. Frag mich nach dem Schlafen."
+          "content": "Mein Kopf ist geschlossen. Versuch es nach dem Aufwachen."
         }
       ]
     },
@@ -12547,7 +12547,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm. Mein Kopf hat gerade geschlossen."
+          "content": "Mhm. Selbst meine Sprechblase möchte gerade schlafen."
         }
       ]
     },
@@ -12568,7 +12568,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist da. Gut. Ich schlafe noch ein bisschen."
+          "content": "Du bist da. Gut. Ich lasse die Augen trotzdem zu."
         }
       ]
     },
@@ -12589,7 +12589,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm, du. Ich bin gleich wieder im Traum."
+          "content": "Deinen Klick habe ich noch mitbekommen. Mein Traum wartet schon."
         }
       ]
     },
@@ -12610,7 +12610,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bleib ruhig. Ich mache nur die Augen wieder zu."
+          "content": "Ich mache kurz die Augen auf ... nein, besser wieder zu."
         }
       ]
     },
@@ -12631,7 +12631,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist’s. …Gut. Ich schlaf noch ein bisschen."
+          "content": "Du schon wieder. Gut. Ich schlafe aber weiter."
         }
       ]
     },
@@ -12652,7 +12652,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mhm. Schön, dass du hier bist. Ich schlafe weiter."
+          "content": "Mhm. Schön, dass du hier bist. Bitte leise weitermachen."
         }
       ]
     },
@@ -12673,7 +12673,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kannst gern noch hierbleiben. Ich döse nur."
+          "content": "Wenn du noch bleiben willst, gern. Ich döse sowieso."
         }
       ]
     },
@@ -16434,7 +16434,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde Schere, Stein, Papier? Ich bin bereit."
+          "content": "Schere, Stein, Papier! Ich bin bereit. Bitte wähle deine Hand."
         }
       ]
     },
@@ -16455,7 +16455,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut. Mal sehen, welche Hand heute passt."
+          "content": "Drei Möglichkeiten, ein Duell. Los geht's!"
         }
       ]
     },
@@ -16476,7 +16476,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine kleine Runde. Viel Erfolg."
+          "content": "Eine Runde? Na gut. Ich verrate meine Hand noch nicht."
         }
       ]
     },
@@ -16497,7 +16497,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe meinen Ehrgeiz mitgebracht. Du auch?"
+          "content": "Mein Ehrgeiz hat sich schon warmgelaufen. Deiner auch?"
         }
       ]
     },
@@ -16518,7 +16518,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na gut. Die erste Hand gehört ganz meinen großen Plänen."
+          "content": "Ich habe eine brillante Strategie. Sie besteht bisher aus sehr viel Selbstvertrauen."
         }
       ]
     },
@@ -16539,7 +16539,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bereit? Ich bin vorsichtig siegessicher."
+          "content": "Bereit? Ich bin vorsichtig siegessicher. Vorsichtig!"
         }
       ]
     },
@@ -16560,7 +16560,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Komm, Zeit für ein kleines Duell."
+          "content": "Komm, wir machen ein kleines Hand-Duell."
         }
       ]
     },
@@ -16581,7 +16581,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich spiele gern mit dir. Überrasche mich."
+          "content": "Ich bin gespannt, ob du meine Entscheidung errätst."
         }
       ]
     },
@@ -16602,7 +16602,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Runde mit dir. Das gefällt mir."
+          "content": "Eine Runde mit dir. Das klingt viel spannender als meine letzte Patrouille."
         }
       ]
     },
@@ -16623,7 +16623,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich freue mich auf die Runde. Auf deinen Sieg habe ich mich noch nicht festgelegt."
+          "content": "Ich freue mich aufs Spiel. Auf eine Niederlage dagegen überhaupt nicht."
         }
       ]
     },
@@ -16644,7 +16644,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Zeit für unsere kleinen Duelle. Ich bin bereit."
+          "content": "Zeit für unsere Revanche? Ich habe noch drei Hände zur Auswahl."
         }
       ]
     },
@@ -16665,7 +16665,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schön, mit dir zu spielen. Mein Ehrgeiz ist auch schon da."
+          "content": "Ich mag diese Duelle. Auch wenn mein Ehrgeiz manchmal lauter ist als ich."
         }
       ]
     },
@@ -16686,7 +16686,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Der Punkt geht an mich. Noch eine Runde?"
+          "content": "Ha! Der Punkt gehört mir. Hast du noch Lust auf eine Revanche?"
         }
       ]
     },
@@ -16707,7 +16707,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gewonnen. Das freut mich."
+          "content": "Gewonnen! Ich darf doch kurz stolz gucken, oder?"
         }
       ]
     },
@@ -16728,7 +16728,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Diese Runde hat für mich gepasst."
+          "content": "Diese Entscheidung hat genau gepasst. Ich nehme den Punkt."
         }
       ]
     },
@@ -16749,7 +16749,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ha. Den behalte ich. Du darfst den nächsten versuchen."
+          "content": "Ha, erwischt! Die nächste Runde wird bestimmt schwieriger. Für dich."
         }
       ]
     },
@@ -16770,7 +16770,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das war meine Runde. Eine sehr gute Runde, finde ich."
+          "content": "Was für eine ausgezeichnete Runde! Finde ich jedenfalls."
         }
       ]
     },
@@ -16791,7 +16791,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich nehme den Punkt mit angemessener Zufriedenheit."
+          "content": "Ich nehme diesen Sieg mit größtmöglicher Würde entgegen. Fast."
         }
       ]
     },
@@ -16812,7 +16812,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja! Der hat mich gefreut."
+          "content": "Ja! Mein Plan hat funktioniert. Welcher Plan? Geheim."
         }
       ]
     },
@@ -16833,7 +16833,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gewonnen. Ich genieße das gerade kurz."
+          "content": "Gewonnen. Einen Moment, ich genieße das."
         }
       ]
     },
@@ -16854,7 +16854,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das lief gut für mich. Noch ein kleines Duell?"
+          "content": "Das lief nach meinem Geschmack. Wollen wir weiterspielen?"
         }
       ]
     },
@@ -16875,7 +16875,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mag unsere Duelle. Diesen Ausgang gerade besonders."
+          "content": "Wenn ich gewinne, wirkt Schere, Stein, Papier gleich noch sinnvoller."
         }
       ]
     },
@@ -16896,7 +16896,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ha! Ich freue mich. Schön, mit dir zu spielen."
+          "content": "Ha! Du bist ein guter Gegner. Heute war ich allerdings besser."
         }
       ]
     },
@@ -16917,7 +16917,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Den Punkt nehme ich. Deine Revanche erwarte ich neugierig."
+          "content": "Mein Punkt! Ich warte schon auf deine nächste Herausforderung."
         }
       ]
     },
@@ -16938,7 +16938,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Deine Runde. Gut gespielt."
+          "content": "Dein Punkt. Das war eine saubere Runde."
         }
       ]
     },
@@ -16959,7 +16959,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schade. Den Punkt hast du dir geholt."
+          "content": "Du hast gewonnen. Ich überprüfe vorsichtshalber noch einmal meine Würde."
         }
       ]
     },
@@ -16980,7 +16980,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Diesmal hast du gewonnen. Noch eine?"
+          "content": "Diesmal warst du besser. Noch eine?"
         }
       ]
     },
@@ -17001,7 +17001,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mist. Ich hatte schon einen sehr guten Siegerspruch."
+          "content": "Mist. Ich hatte meinen Siegerspruch schon vorbereitet."
         }
       ]
     },
@@ -17022,7 +17022,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut. Dein Punkt. Begeistert bin ich gerade mäßig."
+          "content": "Na gut, dein Punkt. Zufrieden?"
         }
       ]
     },
@@ -17043,7 +17043,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das Ergebnis steht. Mein Wunsch nach Revanche ebenfalls."
+          "content": "Du gewinnst die Runde. Meine Revancheforderung ist hiermit offiziell."
         }
       ]
     },
@@ -17064,7 +17064,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte jetzt gern eine Revanche. Aus reinem Interesse natürlich."
+          "content": "Ich möchte sofort eine neue Runde. Natürlich ganz ohne verletzten Stolz."
         }
       ]
     },
@@ -17085,7 +17085,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Dein Punkt. Ich brauche einen Moment für meine Würde."
+          "content": "Dein Punkt. Mein Ehrgeiz braucht eine sehr kurze Denkpause."
         }
       ]
     },
@@ -17106,7 +17106,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na gut. Gewonnen hast du. Fertig bin ich mit dem Duell noch lange nicht."
+          "content": "Gewonnen hast du. Aber ich bin hier unten noch lange nicht fertig."
         }
       ]
     },
@@ -17127,7 +17127,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut. Dein Punkt. Ich möchte ausdrücklich festhalten, wie wenig mir das gefällt."
+          "content": "Dein Punkt. Ich möchte schriftlich festhalten, dass mir das Ergebnis nicht gefällt."
         }
       ]
     },
@@ -17148,7 +17148,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich freue mich für dich. Meine Revancheforderung kommt trotzdem."
+          "content": "Ich freue mich für dich. Direkt nach meiner kleinen Beschwerde."
         }
       ]
     },
@@ -17169,7 +17169,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mist. Ich wollte gewinnen. Spaß mit dir hatte ich trotzdem."
+          "content": "Okay, du hast gewonnen. Spaß gemacht hat es trotzdem."
         }
       ]
     },
@@ -17190,7 +17190,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gleiche Hand. Versuchen wir es noch mal?"
+          "content": "Gleiche Hand. Das war ein sehr synchrones Duell."
         }
       ]
     },
@@ -17211,7 +17211,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Unentschieden. Wir sind noch gleichauf."
+          "content": "Unentschieden. Wir kommen beide keinen Punkt weiter."
         }
       ]
     },
@@ -17232,7 +17232,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Dieselbe Idee. Interessant."
+          "content": "Genau dieselbe Idee! Das passiert also nicht nur mir."
         }
       ]
     },
@@ -17253,7 +17253,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wir könnten uns auch unterschiedlich entscheiden. Nur als Idee."
+          "content": "Wir könnten auch unterschiedliche Hände wählen. Rein theoretisch."
         }
       ]
     },
@@ -17274,7 +17274,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das war gleichzeitig sehr klug und wenig hilfreich."
+          "content": "Das war gleichzeitig beeindruckend und komplett ergebnislos."
         }
       ]
     },
@@ -17295,7 +17295,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gleiche Hand. Unsere Pläne begegnen sich."
+          "content": "Gleichstand. Offenbar verwenden wir ähnliche Taktiken."
         }
       ]
     },
@@ -17316,7 +17316,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wieder gleich. Ich mag diese kleinen Zufälle."
+          "content": "Schon wieder derselbe Einfall. Unheimlich, oder?"
         }
       ]
     },
@@ -17337,7 +17337,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wir haben uns dieselbe Antwort ausgedacht."
+          "content": "Wir haben dieselbe Hand gewählt. Vielleicht brauchen wir unterschiedliche Strategien."
         }
       ]
     },
@@ -17358,7 +17358,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein Gleichstand passt noch in unsere kleine Runde."
+          "content": "Ein Unentschieden. Ich werte das als Einladung zur nächsten Runde."
         }
       ]
     },
@@ -17379,7 +17379,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schon wieder gleich. Ich mag diese kleinen Zufälle mit dir."
+          "content": "Schon wieder gleich! Du liest doch nicht etwa meine Gedanken?"
         }
       ]
     },
@@ -17400,7 +17400,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wir haben denselben Einfall. Das gefällt mir gerade."
+          "content": "Unsere Hände waren sich einig. Unser Punktestand leider nicht."
         }
       ]
     },
@@ -17421,7 +17421,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Unentschieden. Dann haben wir einen guten Grund weiterzuspielen."
+          "content": "Unentschieden. Na gut, dann versuchen wir es mit einem neuen Anlauf."
         }
       ]
     },
@@ -19140,7 +19140,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Dein Punkt. Ich brauche gerade etwas länger zum Wachwerden."
+          "content": "Dein Punkt. Heute denke ich einfach ein bisschen langsamer."
         }
       ]
     },
@@ -19164,7 +19164,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schade. Ich bin müde, aber die Runde geht an dich."
+          "content": "Ich war zu müde für eine clevere Hand. Den Punkt bekommst du natürlich trotzdem."
         }
       ]
     },
@@ -19188,7 +19188,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Den hast du gewonnen. Ich mache es langsam weiter."
+          "content": "Du gewinnst. Ich mache erst einmal gemütlich weiter."
         }
       ]
     },
@@ -19719,7 +19719,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Dein Punkt. Meine Revanche hat gerade ein bisschen Schlafbedarf."
+          "content": "Die Runde geht an dich. Meine Revanche muss vermutlich bis nach dem Schlafen warten."
         }
       ]
     },
@@ -19743,7 +19743,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich wollte gewinnen. Jetzt möchte ich kurz durchatmen."
+          "content": "Na gut, verloren. Bevor wir weitermachen, brauche ich etwas Energie."
         }
       ]
     },
@@ -19767,7 +19767,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut gespielt, du. Ich bin heute etwas langsamer."
+          "content": "Du hast gewonnen. Ich bin müde, aber fair bleibt fair."
         }
       ]
     },
@@ -20779,7 +20779,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, ich bin da. Den Nachweis haben wir jetzt."
+          "content": "Ja, ich bin noch da. Die wiederholte Funktionsprüfung war erfolgreich."
         }
       ]
     },
@@ -20796,7 +20796,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du überprüfst das gründlich."
+          "content": "Wenn du weiterklickst, werde ich anfangen, Strichlisten zu führen."
         }
       ]
     },
@@ -20813,7 +20813,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Soll ich beim nächsten Mal eine Empfangsbestätigung ausstellen?"
+          "content": "Soll ich eine Empfangsbestätigung für jeden Stupser ausstellen?"
         }
       ]
     },
