@@ -7,7 +7,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from ..balance import BALANCE
-from .object_attention import ObjectAttention
+from .object_attention import KnownPlaceCoverage, ObjectAttention
 from .object_knowledge import ObjectKnowledge
 from .object_perception import ObjectCandidate
 
@@ -37,6 +37,7 @@ class ObjectAbsencePerception:
         *, now: float, attention: ObjectAttention,
         ground_bounds: tuple[float, float],
         identified: Mapping[str, ObjectKnowledge] | None = None,
+        known_coverage: KnownPlaceCoverage | None = None,
     ) -> tuple[str, ...]:
         width = attention.width
         if not math.isfinite(now) or not math.isfinite(width) or width <= 0:
@@ -47,9 +48,13 @@ class ObjectAbsencePerception:
         places: dict[str, _EmptyPlace] = {}
         confirmed = []
         for item in known:
+            visible = (known_coverage.contains(
+                item.x, attention=attention, ground_bounds=ground_bounds,
+            ) if known_coverage is not None and item.recognized
+                else attention.sees(item.x, item.height))
             if (not item.resting or item.place_status != "remembered"
                     or not ground_bounds[0] <= item.x <= ground_bounds[1]
-                    or not attention.sees(item.x, item.height)
+                    or not visible
                     or any(math.hypot(candidate.x - item.x,
                                       candidate.height - item.height) <= reach
                            and self._could_be(item, candidate, identified)

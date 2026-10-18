@@ -8,7 +8,7 @@ from typing import Literal
 
 from ..pet.balance import BALANCE
 from ..pet.mind.object_absence import ObjectAbsencePerception
-from ..pet.mind.object_attention import ObjectAttention
+from ..pet.mind.object_attention import KnownPlaceCoverage, ObjectAttention
 from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_intentions import ObjectGoal, ObjectIntentions
 from ..pet.mind.object_knowledge import ObjectKnowledge, ObjectMemorySnapshot
@@ -214,19 +214,37 @@ class ObjectAwareness:
         committed: str | None = None,
         presentation: tuple[str, ItemPresentation] | None = None,
         inspecting: str | None = None,
+        known_coverage: KnownPlaceCoverage | None = None,
     ) -> ObjectGoal | None:
         candidates, own_actions, held = self._collect_candidates(
             world, held_pose=held_pose, presentation=presentation,
             inspecting=inspecting,
         )
-        # The same scope admits positive and negative environmental evidence.
+        checked = tuple(item for item in self.memory.snapshot()
+                        if known_coverage is not None and item.recognized
+                        and item.resting and item.place_status == "remembered"
+                        and known_coverage.contains(
+                            item.x, attention=attention,
+                            ground_bounds=(0, world.surface.width),
+                        ))
+        place_radius = width * BALANCE.number("object_behavior", "memory_place_widths")
+        recalled = frozenset(item.token for item in candidates
+                             if (known := self.memory.learned_instance(item.token))
+                             is not None and known in checked and known.at_place(
+                                 x=item.x, height=item.height, resting=item.resting,
+                             ))
+        # Distant occupancy is evidence about a checked learned place only.
         occupants = tuple(item for item in candidates
-                          if attention.sees(item.x, item.height))
+                          if attention.sees(item.x, item.height) or any(
+                              math.hypot(item.x - place.x, item.height - place.height)
+                              <= place_radius for place in checked
+                          ))
         following = self._tracker.following_instance
         following_subject = (following is not None and committed is not None
                              and self._world_records.get(following) == committed)
         visible = tuple(item for item in candidates if (
             attention.sees(item.x, item.height)
+            or item.token in recalled
             or attention.mode != "unavailable" and item.token in own_actions
             and (not item.resting or own_actions[item.token] == committed)
             or item.token == following and (attention.mode == "cursor"
@@ -303,6 +321,7 @@ class ObjectAwareness:
         for record in self._absence.observe(
             places, occupants, now=now, attention=attention,
             ground_bounds=(0, world.surface.width),
+            known_coverage=known_coverage,
             identified={instance: known for instance, record in world_records.items()
                         if (known := self.memory.get(record)) is not None
                         and known.recognized},

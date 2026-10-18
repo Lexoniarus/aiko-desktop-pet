@@ -70,9 +70,8 @@ class ObjectAbsenceTests(unittest.TestCase):
                     self.assertEqual(self.sample(now, known=(item,),
                                                  attentive=True), ())
 
-    def test_missing_place_has_the_same_notice_distance_as_a_new_item(self):
-        # Notice and loss both use exactly notice_widths, with no extra
-        # memory-place radius removed from the detection distance.
+    def test_unidentified_place_stays_within_local_notice_range(self):
+        # An unidentified sighting has no learned place for distant orientation.
         boundary = replace(PLACE, x=700)
         self.assertEqual(self.sample(0, known=(boundary,), attentive=True), ())
         self.assertEqual(self.sample(.5, known=(boundary,), attentive=True),
