@@ -12,6 +12,7 @@ from ..pet.mind.object_decisions import (
     decide_object_use,
 )
 from ..pet.mind.object_intentions import ObjectGoal
+from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..pet.mind.object_perception import ItemPresentation
 from ..pet.state import PetState
 from ..world.contracts import ObjectState, WorldSnapshot
@@ -134,14 +135,16 @@ class ObjectBehaviorCoordinator:
             ) else None,
         )
 
+    def _followed_knowledge(self) -> ObjectKnowledge | None:
+        record = self._awareness.following_record
+        return self._awareness.memory.get(record) if record is not None else None
+
     @property
     def orientation_side(self) -> LookSide | None:
-        followed = self._awareness.following_record
-        known = self._awareness.memory.get(followed) if followed is not None else None
+        known = self._followed_knowledge()
         if known is not None and known.recognized:
             return None
-        progress = self._orientation
-        return progress.side
+        return self._orientation.side
 
     def observe(
         self, snapshot: WorldSnapshot, *, now: float, x: float, width: float,
@@ -153,9 +156,7 @@ class ObjectBehaviorCoordinator:
         goal_before = awareness.intentions.goal
         checking_before = awareness.checking_absence
         absences_before = {item.token for item in awareness.absences}
-        followed = awareness.following_record
-        followed_known = (awareness.memory.get(followed)
-                          if followed is not None else None)
+        followed_known = self._followed_knowledge()
         transport = followed_known is not None and followed_known.recognized
         bound = (interaction.active and not interaction.searching
                  or attention.mode == "unavailable" or transport)
@@ -216,6 +217,26 @@ class ObjectBehaviorCoordinator:
         if interaction.searching:
             # SearchTask chooses investigations; free appetite cannot steer its look.
             goal = None
+        goal = self._check_approach_goal(
+            goal, attention=attention, now=now, width=width,
+        )
+        absence_gaze = self._notice_absences(facts, attention=attention)
+        if absence_gaze is not None:
+            return BehaviorObservation(goal, blocked, absence_gaze, True, False)
+        gaze_target = self._observation_gaze(
+            goal, focus=focus, attention=attention, x=x,
+        )
+        return BehaviorObservation(
+            goal, blocked, gaze_target,
+            False, not (awareness.checking_absence or awareness.absences),
+        )
+
+    def _check_approach_goal(
+        self, goal: ObjectGoal | None, *, attention: ObjectAttention,
+        now: float, width: float,
+    ) -> ObjectGoal | None:
+        """Release a lost target without inventing absence or switching subjects."""
+        interaction, awareness = self._interaction, self._awareness
         record = interaction.memory_id
         if interaction.approaching and record is not None:
             evidence = awareness.target_evidence(
@@ -245,6 +266,13 @@ class ObjectBehaviorCoordinator:
                 # Association loss alone establishes no missing learned portion.
                 self.unreachable(now=now)
                 goal = None
+        return goal
+
+    def _notice_absences(
+        self, facts: BehaviorFacts, *, attention: ObjectAttention,
+    ) -> GazeTarget | None:
+        """Acknowledge only losses accepted by the existing feedback owner."""
+        interaction, awareness = self._interaction, self._awareness
         can_react = (not self._state.sleeping and not facts.game_open
                      and attention.mode != "unavailable"
                      and not facts.controls_active and not facts.user_action_pending
@@ -257,8 +285,14 @@ class ObjectBehaviorCoordinator:
                 awareness.acknowledge_absence(absent.token)
                 if previous != interaction.phase:
                     absence_gaze = GazeTarget(absent.x, absent.height)
-        if absence_gaze is not None:
-            return BehaviorObservation(goal, blocked, absence_gaze, True, False)
+        return absence_gaze
+
+    def _observation_gaze(
+        self, goal: ObjectGoal | None, *, focus: str | None,
+        attention: ObjectAttention, x: float,
+    ) -> GazeTarget | None:
+        """Choose the subject or retain the current unfinished sensory look."""
+        awareness = self._awareness
         observed = {item.token for item in awareness.observations}
         visible = [item for item in awareness.memory.snapshot()
                    if not item.assessed and item.token in observed]
@@ -275,10 +309,7 @@ class ObjectBehaviorCoordinator:
                 attention.origin[0] + attention.direction[0] * attention.width,
                 attention.origin[1] + attention.direction[1] * attention.width,
             ) if attention.direction is not None else None
-        return BehaviorObservation(
-            goal, blocked, gaze_target,
-            False, not (awareness.checking_absence or awareness.absences),
-        )
+        return gaze_target
 
     def advance(
         self, goal: ObjectGoal | None, *, blocked: bool,
