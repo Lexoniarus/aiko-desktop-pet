@@ -1,7 +1,8 @@
 # Object behavior ownership cleanup
 
 Recorded: 18 October 2026. Baseline: `feature/world-foundation`, `c7958fa`.
-Status: all three stages implemented and fully verified. No merge authorized.
+Status: all three stages and the replacement-rule follow-up implemented and fully
+verified. No merge authorized.
 
 ## Purpose and protected behavior
 
@@ -153,8 +154,8 @@ relocation and the same learned portion at its exact place remain recognized.
 3. Run the full suite, static and documentation gates; record results below.
    Use isolated saves, keep small local commits, and do not push or merge.
 
-Status: policy, component and native timer corrections verified; final full
-verification pending. Policy/component commit: `118c5ca`.
+Status: complete and fully verified. Policy/component commit: `118c5ca`;
+native timer regression: `8e3022b`.
 
 The corrected absence, distant-coverage and coordinator regressions first fail
 on the unchanged policy (four cases, five failing assertions/subtests). The policy
@@ -179,3 +180,12 @@ its actual presentation receipt before approach, pickup or hand inspection.
 The replacement remains unidentified on entry to inspection, and all three old
 records remain missing. No synthetic receipt or private phase setter bypasses
 the readable sequence. All three pinned static gates pass on this test snapshot.
+
+The final exported snapshot passes all 1,145 tests in 315.736 seconds, with zero
+failures, errors or skips. All 353 tracked Python files match the final local
+source/test tree. Ruff 0.13.2, strict Mypy 1.18.2 (187 sources), and Pyright 1.1.414
+pass on that snapshot. Documentation validation checks 267 local targets and 15
+heading anchors across 35 root/docs Markdown files; UTF-8 decoding and Git
+whitespace checks pass. The original normal save is untouched. No new state,
+save field or timing parameter was introduced. Changes remain in small local
+commits; nothing was pushed or merged.
