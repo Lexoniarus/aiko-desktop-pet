@@ -88,7 +88,7 @@ normalized.
 
 ### Stage 3 completed
 
-Moved the named-loss test to `tests/test_object_feedback_flow.py`, in its own
+Moved the named-loss test to the [feedback integration](../tests/test_object_feedback_flow.py), in its own
 ObjectFeedbackFlowTests fixture. It constructs only the real empty World,
 ObjectMemory, scheduler, Presenter, ReactionPlayer and Coordinator required for
 this collaboration. Constructor ports wire feedback and cancellation from the
@@ -106,4 +106,38 @@ selection and ordinary discovery, without a CI workflow change.
 Validation: new integration, coordinator, behavior, object reactions and reaction
 playback: 81 tests in 0.384 seconds, no skips. Ruff passes on both affected
 modules; Pyright 1.1.414 reports zero errors/warnings. All three stages are
-complete. Full final verification follows.
+complete. Final verification is recorded below.
+
+### Static gates
+
+The committed source/test export at `5f1bdea` passes Ruff 0.13.2, strict Mypy
+1.18.2 (188 source files), and Pyright 1.1.414 (zero errors/warnings). Initial
+local documentation validation passes 281 file targets and 15 heading anchors
+in 39 root/docs Markdown files. Changed files pass UTF-8/no-BOM and Git whitespace
+checks. Complete native suite results for that same immutable export follow below.
+
+## Completion
+
+All three findings are resolved in tests and documentation. The Git-index export
+at `5f1bdea` passes **1,146 tests in 258.742 seconds**, with no failures, errors or
+skips, using Python 3.11.9, Pillow 11.3.0 and native Windows Tk. Discovery uses the
+same sequential unittest harness as the preceding baseline: automatic cyclic
+collection disabled, with explicit collection after each test to avoid deferred
+Tk cleanup across interpreters. Existing ThemeChanged teardown diagnostics do
+not fail the suite.
+
+The count falls by one because the obsolete refusal test was merged into the
+drink-selection case; both energy values remain covered. The feedback test moved
+without duplicating it. Its 17 assertion calls remain, with physical-effect ports
+now failing immediately instead of relying on an unrelated consumption fixture.
+The corrected custody test additionally proved sensitive to removal of its
+specific guard in an isolated in-memory mutation check.
+
+Final Ruff, strict Mypy and Pyright checks pass as recorded above. Documentation
+links, UTF-8/no-BOM and Git whitespace are checked again for the final
+documentation-only update. Production modules, assets and the normal save are
+unchanged. The user's passed desktop acceptance remains valid for the unchanged
+runtime; no further manual acceptance is requested by this test-only cleanup.
+
+Local commits: plan `e364e17`; menu boundary `392c5e1`; custody guard `f0ecebd`;
+feedback integration `5f1bdea`. No push or merge performed.

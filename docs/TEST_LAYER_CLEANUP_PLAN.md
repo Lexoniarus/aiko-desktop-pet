@@ -199,3 +199,7 @@ changed areas; no production module or normal save changed.
 Local commits: plan `8a43de5`; rendering `c918fd9`; conversation `b8922a3`;
 edge pickup `989c12b`; loss feedback `fe002e1`; typed geometry assertion `fb83f44`.
 No push or merge performed.
+
+The subsequent [test ownership follow-up](TEST_OWNERSHIP_FOLLOWUP_PLAN.md)
+addresses the three remaining review findings and records the user's passed
+desktop acceptance. The results above remain the historical cleanup baseline.
