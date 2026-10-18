@@ -32,6 +32,9 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Tests and documentation
 
+- Record the unapproved friendship balance proposal, including personal-care
+  gains, progressive real-time absence losses, negative interaction values,
+  level/progression examples and open decisions. Runtime balance is unchanged.
 - Add a complete bubble-dialogue review workbook with ordered sequences,
   event/context conditions, an unreviewed status per sequence and empty text
   proposal fields. Include fixed speech fallbacks and the RPS countdown without

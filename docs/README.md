@@ -76,6 +76,13 @@ The social concept connects the [minigame catalogue](MINIGAME_CANDIDATES.md)
 to the proposed content/translation pipeline. Cursor behavior shares attention
 and presentation owners but does not depend on online sources or translation.
 
+## Balance proposals
+
+The [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) preserves the
+candidate care gains, real-time absence losses and negative-interaction values
+discussed on 2026-10-19. It is unapproved tuning, with explicit examples and open
+questions; the values have not been applied to the running application.
+
 ## Dialogue editorial review
 
 The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) inventories every

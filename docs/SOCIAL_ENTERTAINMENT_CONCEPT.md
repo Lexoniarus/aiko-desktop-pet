@@ -22,6 +22,10 @@ The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) records complete
 existing sequences and their conditions for individual editorial review before
 any wording changes. Its review status and proposals do not change runtime copy.
 
+The later [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) records
+candidate relationship gains/losses and real-time absence consequences. It is
+separate from this preserved content-provider concept and is not implemented.
+
 ## Product direction
 
 Aiko should offer small, varied moments of entertainment on her own initiative,
