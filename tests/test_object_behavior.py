@@ -945,3 +945,76 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.awareness.instance_for_record(wish.token),
                          item.instance_id)
         self.assertEqual(self.cues[-1].event, "object_collect_wanted")
+
+    def test_interrupted_right_look_requires_fresh_both_sides_after_release(self):
+        for transport in (False, True):
+            with self.subTest(transport=transport):
+                self.setUp()
+                self.awareness.memory.restore_snapshot(())
+                set_test_pet_values(self.state, satiety=100)
+                portions = [self.world.place_resting("apple", x, ObjectFootprint(8, 8))
+                            for x in (200, 600)]
+                for item in portions:
+                    assert item.position is not None
+                    record = self.awareness.memory.observe_find(ObjectObservation(
+                        "earlier", "apple", "food", item.position.x, 0, True, 0, True,
+                    ), now=0, record=None, claimed=frozenset(), maximum_distance=0,
+                        instance_id=item.instance_id)
+                    self.awareness.memory.mark_assessed(record)
+
+                def sample(now, *, activity=False):
+                    self.now = now
+                    following = self.awareness.following_record
+                    known = (self.awareness.memory.get(following)
+                             if following is not None else None)
+                    attention = replace(choose_object_attention(
+                        "idle", sleeping=False, game_open=False, walking=0,
+                        following_cursor=following is not None,
+                        orientation_side=self.behavior.orientation_side,
+                        activity_active=activity, cursor=(2, 0),
+                        target=((known.x - 400) / 100, (known.height - 60) / 100)
+                        if known is not None else None,
+                    ), origin=(400, 60), width=100)
+                    observation = self.behavior.observe(
+                        self.world.snapshot(), now=now, x=400, width=100,
+                        presentation=None, facts=BehaviorFacts(), attention=attention,
+                    )
+                    return observation, attention
+
+                self.behavior.request_orientation()
+                sample(0)
+                sample(.5)
+                self.assertEqual(self.behavior.orientation_side, 1)
+                _, right = sample(.6)
+                held = None
+                if transport:
+                    held = self.world.take_resting(portions[1].instance_id,
+                                                   expected_revision=0)
+                    self.assertIsNotNone(self.awareness.witness_take(
+                        held.instance_id, position=(600, 0), now=.9, attention=right,
+                    ))
+                observation, attention = sample(.9, activity=not transport)
+                self.assertEqual(attention.mode,
+                                 "object" if transport else "unavailable")
+                self.assertTrue(observation.blocked)
+                self.assertEqual(self.awareness.absences, ())
+                if held is not None:
+                    self.world.return_user_held(held.instance_id, 600,
+                                                expected_revision=held.revision)
+                sample(1)
+                sample(1.1)
+                self.assertEqual(self.behavior.orientation_side, -1)
+                sample(1.4)
+                self.assertEqual(self.behavior.orientation_side, -1)
+                sample(1.6)
+                self.assertEqual(self.behavior.orientation_side, 1)
+                sample(1.7)
+                sample(2)
+                self.assertEqual(self.behavior.orientation_side, 1)
+                sample(2.2)
+                self.assertIsNone(self.behavior.orientation_side)
+                self.assertEqual(self.cues, [])
+                self.assertEqual(self.awareness.absences, ())
+                self.assertEqual(len(self.awareness.memory.snapshot()), 2)
+                self.assertTrue(all(known.recognized
+                                    for known in self.awareness.memory.snapshot()))

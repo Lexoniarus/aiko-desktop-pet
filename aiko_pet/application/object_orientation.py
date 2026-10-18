@@ -39,6 +39,7 @@ class OrientationProgress:
         known: tuple[ObjectKnowledge, ...], ground_bounds: tuple[float, float],
         duration: float, maximum_gap: float,
     ) -> OrientationProgress:
+        """Advance admitted free looks; the coordinator owns activity resets."""
         if not all(math.isfinite(value) for value in (now, duration, maximum_gap)):
             raise ValueError("Orientation requires finite time and durations")
         if duration <= 0 or maximum_gap <= 0:
@@ -48,8 +49,6 @@ class OrientationProgress:
         if (self.side == -1 and self.since is None
                 and not has_learned_places(known, ground_bounds)):
             return OrientationProgress(side=None)
-        if attention.mode in ("object", "unavailable"):
-            return OrientationProgress()
         if attention.mode != "survey" or attention.direction != (self.side, 0):
             return replace(self, since=None, last=None)
         if (self.last is None or self.since is None

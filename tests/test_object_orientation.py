@@ -52,18 +52,6 @@ class ObjectOrientationTests(unittest.TestCase):
         self.assertEqual(delayed.since, 2)
         self.assertEqual(delayed.side, -1)
 
-    def test_bound_activity_resets_the_check_without_borrowing_its_elapsed_time(self):
-        progress = self.advance(OrientationProgress(), 0)
-        progress = self.advance(progress, .5)
-        for attention in (replace(LEFT, mode="object"),
-                          ObjectAttention("unavailable", None)):
-            with self.subTest(attention=attention):
-                reset = self.advance(progress, 1, attention)
-                self.assertEqual(reset, OrientationProgress())
-                reset = self.advance(reset, 2)
-                self.assertEqual(reset.side, -1)
-                self.assertEqual(reset.since, 2)
-
     def test_appraisal_does_not_decide_if_a_learned_place_needs_checking(self):
         for known in (KNOWN, replace(KNOWN, assessed=True, disposition="deferred")):
             with self.subTest(known=known):
