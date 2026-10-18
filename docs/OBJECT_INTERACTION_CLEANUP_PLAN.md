@@ -108,3 +108,7 @@ That audit remains open. It must distinguish invalid physical setup from valid
 accelerated animation/custody tests, identify the relevant test names and existing
 headless protection, and retain the necessary native input/timer boundaries.
 No additional test removal is authorized by this completion record.
+
+The subsequently authorized broader audit and implementation are tracked in the
+[broader test-layer cleanup plan](TEST_LAYER_CLEANUP_PLAN.md). The completion
+record above describes only the earlier four findings.

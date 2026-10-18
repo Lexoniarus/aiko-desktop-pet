@@ -44,7 +44,7 @@ still need focused integration coverage.
 | 1 | Move six asset/overlay tests from FoodGuiTests to standalone Tk/AnimatedPet fixtures. | All icon alpha, authored anchors, stacking, scale and timer assertions; four real menu/carry tests stay in FoodGuiTests. Canonical display assets retain their asset tests and direct view-cache coverage. | Complete |
 | 2 | Shorten the conversation focus integration scenario using a short test-only reaction with actual Tk timers. | Real care dispatch, silent cue focus, unobserved relocation and missing-first orientation; authored story/sequence semantics retain scheduler tests. | Complete |
 | 3 | Replace two complete edge investigation timer replays with one real-motion right-edge scale-two pickup smoke. | Both-scale/edge geometry matrix, full ordinary native investigation, reach recheck at attachment and frame/release tests remain. | Complete |
-| 4 | Replace duplicated long multi-loss bubble replays with deterministic presenter/player/coordinator coverage and fast physical search integration. | All named missing bubbles and matching receipts before candidate investigation; same-type replacement, multi-relocation, native hover and busy-reply cases remain covered. | Pending |
+| 4 | Replace duplicated long multi-loss bubble replays with deterministic presenter/player/coordinator coverage and fast physical search integration. | All named missing bubbles and matching receipts before candidate investigation; same-type replacement, multi-relocation, native hover and busy-reply cases remain covered. | Complete |
 
 Do not remove a test merely because it sets up state directly: owner-level
 fixtures may start with known memory or held custody. Remove or relocate a fixture
@@ -73,6 +73,8 @@ Validation: `tests.test_food_gui`, `tests.test_food_rendering` and
 `tests.test_item_display_assets`: 13 tests, 4.347 seconds, no skips. Ruff passes
 for both changed Python modules. Python 3.11.9/Pillow 11.3.0; native Tk, isolated
 saves, cyclic collection after each test.
+
+Ownership reference: [current architecture](ARCHITECTURE.md).
 
 Related history: [scoped interaction cleanup](OBJECT_INTERACTION_CLEANUP_PLAN.md)
 and [interaction availability](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).
@@ -110,3 +112,35 @@ satiated investigation and fast deferred-drink/restart retrieval: 2 tests in
 24.185 seconds. No skips; Ruff passes. The same-boundary left/right scale matrix
 remains in GroundApproachTests, alongside native left-scale-two round-trip and
 left-scale-one negative reach coverage.
+
+### Stage 4 completed
+
+Removed the two long native `each_missing_portion` and `same_type_replacement`
+replays after their replacement checks passed. A headless integration now uses
+real ObjectInteractionCoordinator, ObjectFeedbackPresenter, ReactionPlayer and
+unconditional authored catalogue lines. It checks Dango/Energy/Onigiri text,
+readable delays, distinct completion keys, blocked search readiness, stale
+receipts and stale callbacks. The existing fake scheduler moved unchanged into a
+shared test-support module; there is no new production abstraction or state.
+
+The fast physical multi-relocation/restart cases at both scales additionally
+check every completed loss receipt before search approach/pickup/inspection.
+They retain all learned-place checks, actual gestures, full search/reunion,
+distinct portions and an unrelated unknown candidate. Initial orientation must
+finish before the first search approach; subsequent movement can request a new
+orientation for after the committed action, so a pending side during pickup is
+not treated as a failed initial survey. Existing same-type replacement admission
+remains in ObjectBehaviorTests; native unknown-replacement inspection remains in
+WorldGuiTests. The two native hover/busy regressions are retained unchanged.
+
+Validation: object interaction, behavior, reaction formatting/playback,
+orientation awareness and all WorldGui tests: 133 tests in 32.718 seconds, no
+skips. Ruff passes on changed modules. Windows CI now explicitly selects the
+new renderer module, preserving the native coverage moved in Stage 1. The food
+system guide points to both menu and renderer coverage.
+
+Compared with the original 160 DesktopPet test methods, nine whole-application
+fixtures are removed (six moved renderer tests and three fewer runtime cases).
+The runtime suite goes from eleven methods to eight, retaining one complete
+ordinary investigation plus sleep/restart, handover, hover and busy boundaries.
+No production behavior changed. Complete final verification is pending.

@@ -3,33 +3,12 @@
 from __future__ import annotations
 
 import unittest
-from collections.abc import Callable
 
 from aiko_pet.pet.animation.idle_emote import choose_idle_emote
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
-
-
-class FakeScheduler:
-    def __init__(self) -> None:
-        self.callbacks: dict[str, tuple[int, Callable[[], None]]] = {}
-        self.cancelled: set[str] = set()
-        self.next_id = 0
-
-    def schedule(self, delay_ms: int, callback: Callable[[], None]) -> str:
-        self.next_id += 1
-        token = str(self.next_id)
-        self.callbacks[token] = (delay_ms, callback)
-        return token
-
-    def cancel(self, token: str) -> None:
-        self.cancelled.add(token)
-        self.callbacks.pop(token, None)
-
-    def fire(self, token: str) -> None:
-        _, callback = self.callbacks.pop(token)
-        callback()
+from tools.reaction_test_support import FakeScheduler
 
 
 class ReactionPlayerTests(unittest.TestCase):

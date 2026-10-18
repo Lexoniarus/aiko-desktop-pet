@@ -124,7 +124,9 @@ item catalog is shipped. Pillow is never needed at runtime.
 ## Quality and further balancing
 
 Use `tests/test_food.py`, `tests/test_food_activity.py`, the existing care
-and persistence tests, and `tests/test_food_gui.py`. Run the complete
+and persistence tests, `tests/test_food_gui.py` for menu/cursor wiring, and
+[standalone food rendering tests](../tests/test_food_rendering.py) for native
+assets, hand anchors, stacking and scale changes. Run the complete
 Ruff, Mypy, Pyright, Python 3.11/3.13 Tk/Xvfb and Windows-headless suites;
 native Windows visual verification is required for hand overlay placement.
 

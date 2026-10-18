@@ -101,10 +101,18 @@ class WorldGuiTests(unittest.TestCase):
             absent = runtime.world.get(expected.pop())
             runtime.world.remove(absent.instance_id, expected_revision=absent.revision)
         found, recognized, events, missing = [], [], [], []
+        completed_losses = set()
+        expected_losses = {known.token for known in remembered.values()}
         present = runtime._present_feedback
 
         def capture(cue, reaction, done):
             events.append(cue.event)
+            if (runtime.interaction.search_active and cue.event in
+                    ("object_approach", "object_pick_up", "object_inspect")):
+                self.assertEqual(completed_losses, expected_losses)
+                self.assertEqual(runtime.awareness.absences, ())
+                if cue.event == "object_approach" and events.count(cue.event) == 1:
+                    self.assertIsNone(runtime.orientation_side())
             if cue.event == "object_place_missing":
                 lost = runtime.awareness.memory.get(cue.record_id)
                 assert lost is not None
@@ -122,7 +130,13 @@ class WorldGuiTests(unittest.TestCase):
                 found.append(known.instance_id)
             if cue.event in ("object_recognized", "object_found") and known is not None:
                 recognized.append(known.instance_id)
-            present(cue, reaction, done)
+
+            def received(receipt):
+                if cue.event == "object_place_missing" and receipt.completed:
+                    completed_losses.add(cue.record_id)
+                done(receipt)
+
+            present(cue, reaction, received)
 
         runtime._present_feedback = capture
         for step in range(60):

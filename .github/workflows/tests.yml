@@ -65,6 +65,7 @@ jobs:
             "test_ground_approach.py",
             "test_consumption_origin.py",
             "test_food_gui.py",
+            "test_food_rendering.py",
             "test_item_display_assets.py",
             "test_windows_setup.py",
             "test_taskbar.py",
