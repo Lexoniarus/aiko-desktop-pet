@@ -143,7 +143,7 @@ Compared with the original 160 DesktopPet test methods, nine whole-application
 fixtures are removed (six moved renderer tests and three fewer runtime cases).
 The runtime suite goes from eleven methods to eight, retaining one complete
 ordinary investigation plus sleep/restart, handover, hover and busy boundaries.
-No production behavior changed. Complete final verification is pending.
+No production behavior changed. Complete final verification is recorded below.
 
 ### Final-gate correction
 
@@ -151,11 +151,51 @@ Pyright found that the new reach assertion passed a float-typed width to an
 integer sprite-width parameter. The test now uses `int(world.width)`, matching
 the production call. The focused native pickup passes again (1 test, 7.026
 seconds), and Pyright reports zero errors/warnings. The initial complete run was
-stopped before completion to avoid validating the superseded snapshot; a fresh
-committed export will receive the final full run.
+stopped before completion to avoid validating the superseded snapshot; the final
+full run uses a fresh committed export.
 
 A repository-wide acquisition/overlay search finds no remaining native
 DesktopPet test that forces `_can_acquire` or directly selects a hand overlay.
 Direct `collect_resting` fixtures remain in headless custody, awareness,
 consumption and persistence tests, where the owner transition or held-state
 invariant is the subject, rather than desktop reach. These are retained.
+
+### Static and documentation gates
+
+The corrected committed export at `fb83f44` passes Ruff 0.13.2, strict Mypy
+1.18.2 (188 source files), Pyright 1.1.414 (zero errors/warnings), and 279 local
+documentation targets plus 15 anchors in 38 root/docs Markdown files. Changed
+files pass UTF-8/no-BOM and Git whitespace checks. The earlier continuity plan's
+conversation test reference is updated to the current name; its historical
+validation results remain unchanged. Complete suite results follow below.
+
+## Completion
+
+All four stages are complete. The Git-index export at `fb83f44` passes **1,147
+tests in 254.301 seconds**, with no failures, errors or skips, using Python 3.11.9,
+Pillow 11.3.0 and native Windows Tk. This is 90.612 seconds (26.3%) shorter than
+the preceding 344.913-second full run. These are observed runs on this host,
+not a performance threshold. Test discovery used the same sequential unittest
+harness as the baseline, with automatic cyclic collection disabled and explicit
+collection after each test to avoid deferred Tk cleanup between interpreters.
+Existing ThemeChanged teardown diagnostics do not fail the suite.
+
+Targeted reproduction (with a graphical display and the same pinned Python):
+
+```powershell
+python -m unittest tests.test_food_gui tests.test_food_rendering tests.test_item_display_assets
+python -m unittest tests.test_object_attention tests.test_story_playback tests.test_reaction_playback
+python -m unittest tests.test_ground_approach tests.test_pickup_playback tests.test_world_gui
+python -m unittest tests.test_object_interaction tests.test_object_behavior tests.test_object_reactions tests.test_object_orientation_awareness
+python -m unittest discover -s tests -q
+```
+
+Ruff, strict Mypy, Pyright and documentation gates pass as recorded above; the
+final documentation-only update also passes local link, encoding and whitespace
+checks. The remaining native runtime tests preserve the necessary input/timer
+boundaries. Test support, tests, CI selection and documentation are the only
+changed areas; no production module or normal save changed.
+
+Local commits: plan `8a43de5`; rendering `c918fd9`; conversation `b8922a3`;
+edge pickup `989c12b`; loss feedback `fe002e1`; typed geometry assertion `fb83f44`.
+No push or merge performed.
