@@ -180,8 +180,9 @@ class DesktopPet:
                 orientation_side=self._world_access.orientation_side,
                 feedback_subject=lambda: self._reaction_player.subject,
                 activity_active=lambda: (time.monotonic() < self._action_playback.until
-                    or self._reaction_player.pending_timer is not None
-                    or self._speech.bubble is not None),
+                    or ((self._reaction_player.pending_timer is not None
+                         or self._speech.bubble is not None)
+                        and not self._world_access.contact_feedback_active())),
             ),
         )
         self._walk = visuals.walk

@@ -12,12 +12,14 @@ class WorldRuntimeAccessTests(unittest.TestCase):
     def test_unbound_reads_are_safe_and_bound_reads_follow_live_owner(self):
         access = WorldRuntimeAccess()
         self.assertFalse(access.focused())
+        self.assertFalse(access.contact_feedback_active())
         self.assertFalse(access.defer_routine())
         self.assertEqual(access.phase(), "idle")
         self.assertIsNone(access.following_record())
         self.assertIsNone(access.orientation_side())
         episode = SimpleNamespace(
             active=False, focus_record=None, searching=False, phase="idle",
+            contact_feedback_active=False,
         )
         awareness = SimpleNamespace(following_record=None)
         side = [-1]
@@ -42,6 +44,8 @@ class WorldRuntimeAccessTests(unittest.TestCase):
         self.assertTrue(access.focused())
         episode.searching = False
         self.assertFalse(access.focused())
+        episode.contact_feedback_active = True
+        self.assertTrue(access.contact_feedback_active())
         episode.active = True
         self.assertTrue(access.defer_routine())
         episode.active = False

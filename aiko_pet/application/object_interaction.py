@@ -186,7 +186,7 @@ class ObjectInteractionCoordinator:
                 self._set_phase(waiting)
                 waiting.feedback.completed = True
         elif (state == ObjectState.RESTING and phase.feedback.completed
-              and phase.feedback.auxiliary_key is None):
+              and not phase.feedback.blocking_aside):
             known = self._memory.get(self.memory_id) if self.memory_id else None
             if known is not None:
                 episode.identity, episode.kind = known.identity, known.kind
@@ -194,7 +194,7 @@ class ObjectInteractionCoordinator:
             self._set_phase(ApproachPhase())
             self._announce("object_returned")
         elif (state == ObjectState.USER_HELD and phase.feedback.completed
-              and phase.feedback.auxiliary_key is None):
+              and not phase.feedback.blocking_aside):
             response = choose_withholding_response(episode.withholding, self._now())
             if response is not None:
                 episode.withholding = response.episode
@@ -215,9 +215,14 @@ class ObjectInteractionCoordinator:
         return self._search is not None
 
     @property
+    def contact_feedback_active(self) -> bool:
+        """An optional click reply describes the action without owning it."""
+        return self.active and self._phase_feedback.contact_active
+
+    @property
     def search_ready(self) -> bool:
         return (self.searching and self._phase_feedback.completed
-                and self._phase_feedback.auxiliary_key is None
+                and not self._phase_feedback.blocking_aside
                 and not self._missing_feedback)
 
     def can_investigate(self, token: str) -> bool:
@@ -294,7 +299,7 @@ class ObjectInteractionCoordinator:
         """Keep at most one aside; never replace an unfinished phase bubble."""
         if self.active:
             feedback = self._phase_feedback
-            if feedback.auxiliary_key is None:
+            if feedback.aside is None:
                 feedback.pending = event
 
     def _announce_aside(
@@ -304,8 +309,9 @@ class ObjectInteractionCoordinator:
         key = FeedbackKey(
             self._episode.interaction_id, self._phase_id, self._auxiliary_serial,
         )
-        self._phase_feedback.auxiliary_key = key
-        self._feedback(ObjectFeedback(key, event, record, identity))
+        cue = ObjectFeedback(key, event, record, identity)
+        self._phase_feedback.aside = cue
+        self._feedback(cue)
 
     def acknowledge_contact(self) -> bool:
         """Ordinary contact defers to a committed episode, without care effects."""
@@ -315,7 +321,8 @@ class ObjectInteractionCoordinator:
             self._next_contact_feedback = self._now() + BALANCE.number(
                 "object_behavior", "contact_feedback_seconds",
             )
-            self.request_feedback("object_busy")
+            self.request_feedback("object_busy_search" if self.search_active
+                                  else "object_busy")
         return True
 
     def begin_goal(self, goal: ObjectGoal) -> bool:
@@ -527,9 +534,8 @@ class ObjectInteractionCoordinator:
         if isinstance(state, IdlePhase):
             return
         feedback = state.feedback
-        if (feedback.auxiliary_key is not None
-                and receipt.key == feedback.auxiliary_key):
-            feedback.auxiliary_key = None
+        if feedback.aside is not None and receipt.key == feedback.aside.key:
+            feedback.aside = None
             return
         if receipt.key != self.feedback_key or feedback.completed:
             return
@@ -695,7 +701,7 @@ class ObjectInteractionCoordinator:
         if isinstance(self._phase, IdlePhase):
             return
         feedback = self._phase.feedback
-        if feedback.auxiliary_key is not None:
+        if feedback.blocking_aside:
             return
         if (feedback.completed and self.phase in ("notice_absence", "search")
                 and self._missing_feedback):

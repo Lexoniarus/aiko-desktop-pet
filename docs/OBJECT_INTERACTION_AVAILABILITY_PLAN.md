@@ -1,7 +1,7 @@
 # Hover, action availability and contact feedback
 
 Recorded: 18 October 2026. Baseline: `1086385`, `feature/world-foundation`.
-Status: stages 1 and 2 complete; stage 3 pending. Keep all changes local; no push or merge authorized.
+Status: all three implementations complete; final validation in progress. Keep all changes local; no push or merge authorized.
 
 ## Required behavior and ownership
 
@@ -43,7 +43,7 @@ saves and main-thread collection. Do not access or modify the normal save.
 | Plan | Complete | Existing owners, UI callbacks and test gaps reviewed; worktree clean at baseline. |
 | 1 | Complete | 59 targeted tests pass in 10.088 seconds on the exported snapshot; Ruff, strict Mypy (187 sources) and Pyright pass. |
 | 2 | Complete | 79 targeted integration/UI/architecture tests pass in 57.890 seconds; all 6 care UI tests repeated on the final export after a typing-only correction. Ruff, strict Mypy (187 sources) and Pyright pass. |
-| 3 | Pending | |
+| 3 | Implemented; final validation pending | 98 focused coordinator/catalogue/receipt/UI tests pass in 22.926 seconds on Python 3.11.9, including two real-timer search tests. Ruff, strict Mypy (187 sources), Pyright and documentation links pass. |
 
 ### Stage 1 evidence
 
@@ -68,3 +68,24 @@ Native care tests now complete the previous response before starting another
 UI action. A focused regression verifies care/conversation ownership, passive
 hover, callback guards and recovery. The stationary-hover search regression also
 verifies disabled buttons and rejected callbacks during candidate approach.
+
+### Stage 3 evidence
+
+PhaseFeedback now retains the current auxiliary cue itself instead of a separate
+key without its meaning. Contact replies are derived as nonblocking from that
+cue; required loss/recognition/find cues retain their receipt gates. The native
+attention adapter reads the same distinction through WorldRuntimeAccess. No
+additional busy flag, timer or search state was added. Search clicks use three
+new authored `object_busy_search` replies on the existing speech surface.
+
+The coordinator regression verifies movement during contact feedback, unchanged
+subject/route, required loss priority and rejected stale contact receipts. Existing
+mandatory-aside, phase and cancellation tests remain. The real-timer test verifies
+both pet click routes, continuing patrol during the visible reply, disabled care
+buttons, no care effect, and candidate approach superseding optional speech.
+
+The first whole-suite run exposed older UI tests that start new actions during
+unfinished hover/care/click speech, or expect a click to cancel that speech. These
+fixtures/expectations must follow the agreed foreground rule before final signoff;
+retain the lower-level explicit replacement/cancellation contracts. Pure window
+component fixtures should open HoverUi directly instead of starting a pet response.

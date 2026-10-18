@@ -136,6 +136,54 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             "object_place_missing", "object_search", "object_approach",
         ])
 
+    def test_search_click_reply_keeps_native_patrol_and_hover_active(self):
+        record = self.begin_native_search()
+        app, world = self.app, self.app._world
+        app.root.update_idletasks()
+        friendship, social = app.state.friendship, app.state.social
+        for click in (app._on_click_left, app._on_click_right):
+            pointer = (app.root.winfo_rootx() + app.root.winfo_width() // 2,
+                       app.root.winfo_rooty() + app.root.winfo_height() // 2)
+            with (
+                patch.object(app.root, "winfo_pointerx", return_value=pointer[0]),
+                patch.object(app.root, "winfo_pointery", return_value=pointer[1]),
+            ):
+                click()
+                self.run_until(lambda: world.interaction.contact_feedback_active, 1)
+                self.assertTrue(world.interaction.contact_feedback_active)
+                self.assertEqual(self.feedback[-1][1], "object_busy_search")
+                self.assertTrue(self.bubble_text())
+                self.assertTrue(app._hover.interaction_active)
+                toolbar = app._hover.toolbar
+                assert toolbar is not None
+                self.assertTrue(all(button.cget("state") == "disabled"
+                                    for button in toolbar.buttons.values()))
+                before = app.settings.x
+                progress = world.interaction.search_progress
+                self.run_for(.35)
+                self.assertIsNotNone(app._speech.bubble)
+                self.assertNotEqual(app.settings.x, before)
+                self.assertTrue(world.interaction.search_ready)
+                self.assertEqual(world.interaction.search_progress, progress)
+                self.assertEqual(world.interaction.memory_id, record)
+                self.assertFalse(world.cursor.carrying)
+                self.assertEqual(app.state.friendship, friendship)
+                self.assertAlmostEqual(app.state.social, social, delta=.05)
+                self.assertEqual(list(app.mind.clicks), [])
+        direction = -1 if app._walk.movement.remaining_distance < 0 else 1
+        world.world.place_resting(
+            "onigiri", world._body_x() + direction * 1.5 * world.width,
+            ObjectFootprint(8, 8),
+        )
+        trace = self.run_until(lambda: world.interaction.phase == "approach", 3)
+        self.assertEqual(world.interaction.phase, "approach", trace)
+        self.assertTrue(world.interaction.search_active)
+        self.assertFalse(world.interaction.contact_feedback_active)
+        self.assertEqual([event for _, event, _ in self.feedback], [
+            "object_place_missing", "object_search", "object_busy_search",
+            "object_approach",
+        ])
+
     def test_each_missing_portion_gets_a_readable_named_bubble_before_patrol(self):
         world = self.app._world
         set_test_pet_values(self.app.state, satiety=100, energy=100)

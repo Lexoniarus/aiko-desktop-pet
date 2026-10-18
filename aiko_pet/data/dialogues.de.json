@@ -21839,6 +21839,51 @@
           "content": "Ja, {item} möchte ich noch. Ich hole es mir jetzt."
         }
       ]
+    },
+    {
+      "id": "contact-object_busy_search-1",
+      "event": "object_busy_search",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich suche gerade etwas. Gleich bin ich wieder bei dir."
+        }
+      ]
+    },
+    {
+      "id": "contact-object_busy_search-2",
+      "event": "object_busy_search",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Moment. Ich will erst finden, was hier fehlt."
+        }
+      ]
+    },
+    {
+      "id": "contact-object_busy_search-3",
+      "event": "object_busy_search",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "animation": "idle",
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin noch auf der Suche. Gib mir einen Augenblick."
+        }
+      ]
     }
   ]
 }

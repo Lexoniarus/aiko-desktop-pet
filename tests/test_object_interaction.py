@@ -159,6 +159,13 @@ class ObjectInteractionTests(unittest.TestCase):
         self.coordinator.update()
         aside = self.cues[-1]
         self.assertNotEqual(aside.key.auxiliary_id, 0)
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.phase, "approach")
+        self.assertFalse(self.coordinator.contact_feedback_active)
+        self.coordinator.receive_feedback(FeedbackReceipt(aside.key, True))
+        self.coordinator.arrive()
+        self.assertEqual(self.coordinator.phase, "approach")
+        self.assertEqual(self.actions, [])
         self.coordinator.interrupt(lambda: None)
         self.coordinator.begin_goal(goal)
         current = self.coordinator.feedback_key

@@ -663,9 +663,21 @@ known names and uses `ReactionPlayer`'s completion/cancellation acknowledgements
 Transitions wait for readable cues and required animation/dwell. Auxiliary cue
 IDs cannot acknowledge phases. One pending aside waits for the phase bubble,
 using the existing speech surface and timers. Ordinary clicks request a bounded
-wait acknowledgement, without normal click/care effects. Hover and other item
-gestures cannot cancel the episode; explicit care/game commands still interrupt
-safely. Ambient feedback cannot replace action speech.
+wait acknowledgement, without normal click/care effects. Contact asides describe
+the ongoing action and do not block movement or phase progression. A required
+loss/find/identification cue supersedes a contact aside and retains its reading
+receipt; stale aside receipts cannot release it. Search has its own contextual
+busy reply. The attention adapter reads this exception from the same live phase
+feedback, rather than treating that optional reply as a new foreground activity.
+
+Passive hover opens accessory UI without pausing a committed object episode or
+producing an extra pet reaction. One read-only GUI permission derived from the
+current World, game, sleep and playback owners controls both care button states
+and their UI callbacks, including stale food menus. Pin/settings/details remain
+independent. Explicit lower-level care/game commands retain safe interruption;
+UI actions cannot start a competing activity. See the
+[hover and action availability plan](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).
+Ambient feedback cannot replace action speech.
 
 `pet/mind/object_withholding.py` calculates immutable active-time episode decisions.
 The interaction owns the episode and only evaluates currently observed user-held

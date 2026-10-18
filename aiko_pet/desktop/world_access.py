@@ -35,6 +35,10 @@ class WorldRuntimeAccess:
                 and (runtime.interaction.focus_record is not None
                      or runtime.interaction.searching))
 
+    def contact_feedback_active(self) -> bool:
+        runtime = self._runtime
+        return runtime is not None and runtime.interaction.contact_feedback_active
+
     def phase(self) -> InteractionPhase:
         """Read the live episode; before World assembly there is no action."""
         return self._runtime.interaction.phase if self._runtime is not None else "idle"

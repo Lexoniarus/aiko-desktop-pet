@@ -788,6 +788,29 @@ class ObjectBehaviorTests(unittest.TestCase):
             blocked=observation.blocked, position=SearchPosition(50, 750, 100),
         ), SearchMotion)
         self.assertTrue(self.interaction.acknowledge_contact())
+        self.interaction.update()
+        contact = self.cues[-1]
+        self.assertEqual(contact.event, "object_busy_search")
+        self.assertTrue(self.interaction.contact_feedback_active)
+        self.assertIsInstance(self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 50),
+        ), SearchMotion)
+        self.assertEqual(self.interaction.search_progress, .5)
+        self.assertEqual(self.interaction.memory_id, "stock")
+        first = self.awareness.memory.get("stock")
+        assert first is not None
+        self.interaction.notice_absence(replace(first, token="another"))
+        self.interaction.update()
+        required = self.cues[-1]
+        self.assertEqual(required.event, "object_place_missing")
+        self.assertFalse(self.interaction.contact_feedback_active)
+        for completed in (False, True):
+            self.interaction.receive_feedback(FeedbackReceipt(contact.key, completed))
+            self.assertFalse(self.interaction.search_ready)
+        self.assertEqual(self.behavior.advance_search(blocked=False), Hold())
+        self.acknowledge()
+        self.assertTrue(self.interaction.search_ready)
+        self.assertEqual(self.interaction.search_progress, .5)
         self.assertIsInstance(self.behavior.advance_search(blocked=True), Hold)
         self.assertTrue(self.interaction.search_active)
         self.interaction.interrupt(lambda: None)

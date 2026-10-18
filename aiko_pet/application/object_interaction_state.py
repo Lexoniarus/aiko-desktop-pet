@@ -13,7 +13,7 @@ from ..pet.mind.object_events import ObjectEvent
 from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..pet.mind.object_perception import ConsumableKind
 from ..pet.mind.object_withholding import WithholdingEpisode
-from .object_feedback import FeedbackKey
+from .object_feedback import ObjectFeedback
 
 
 @dataclass(slots=True)
@@ -45,7 +45,16 @@ class PhaseFeedback:
 
     completed: bool = False
     pending: ObjectEvent | None = None
-    auxiliary_key: FeedbackKey | None = None
+    aside: ObjectFeedback | None = None
+
+    @property
+    def contact_active(self) -> bool:
+        return (self.aside is not None
+                and self.aside.event in ("object_busy", "object_busy_search"))
+
+    @property
+    def blocking_aside(self) -> bool:
+        return self.aside is not None and not self.contact_active
 
 
 @dataclass(slots=True)
