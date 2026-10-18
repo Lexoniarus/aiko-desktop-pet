@@ -13,7 +13,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier war doch {item}. Wo ist das hin?"
+          "content": "Moment, genau hier lag {item}. Ich habe doch eben noch hingesehen."
         }
       ]
     },
@@ -28,7 +28,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Moment. {item} ist nicht mehr hier."
+          "content": "Das ist merkwürdig. {item} ist von seinem Platz verschwunden."
         }
       ]
     },
@@ -43,7 +43,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} sehe ich hier gerade nicht mehr."
+          "content": "Hm. Kein {item} mehr an dieser Stelle. Habe ich etwas übersehen?"
         }
       ]
     },
@@ -8919,7 +8919,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm? Da liegt etwas."
+          "content": "Oh! Da ist etwas auf meinem Weg gelandet."
         }
       ],
       "presentation": "short"
@@ -8936,7 +8936,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na gut. Jetzt will ich’s wissen."
+          "content": "Na dann. Ein paar Schritte bis zu diesem Ding schaffe ich."
         }
       ],
       "presentation": "short"
@@ -8953,7 +8953,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So. Einmal hoch damit."
+          "content": "Erst mal vorsichtig aufheben. So."
         }
       ],
       "presentation": "short"
@@ -8970,7 +8970,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm. Was bist du denn?"
+          "content": "Einmal von dieser Seite anschauen ... und jetzt von der anderen."
         }
       ],
       "presentation": "short"
@@ -8987,7 +8987,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, {item}."
+          "content": "Ah, {item}! Jetzt erkenne ich es."
         }
       ],
       "presentation": "short"
@@ -9004,7 +9004,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm. Das kann ich gerade nicht zuordnen."
+          "content": "Das Ding ist mir noch nicht bekannt. Ich will lieber nichts erfinden."
         }
       ],
       "presentation": "short"
@@ -9021,7 +9021,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das kann ich gerade gut gebrauchen."
+          "content": "Ja, das kann ich gerade gebrauchen. Gute Entdeckung!"
         }
       ],
       "presentation": "short"
@@ -9038,7 +9038,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Jetzt brauche ich das noch nicht."
+          "content": "Das brauche ich gerade noch nicht. Ich lege es lieber für später ab."
         }
       ],
       "presentation": "short"
@@ -9055,7 +9055,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich setze das wieder ab."
+          "content": "Hier sollte es liegen bleiben können. Vorsichtig absetzen."
         }
       ],
       "presentation": "short"
@@ -9072,7 +9072,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke für {item}. Das nehme ich gern."
+          "content": "Für mich? {item}? Danke, ich nehme es vorsichtig."
         }
       ],
       "presentation": "short"
@@ -9089,7 +9089,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, {item} hätte ich gerne. Gibst du es mir?"
+          "content": "Du bietest mir {item} an? Ja, das würde ich gern nehmen."
         }
       ],
       "presentation": "short"
@@ -9106,7 +9106,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Gerade brauche ich das nicht. Vielleicht später."
+          "content": "{item}? Danke, aber ich habe gerade keinen Bedarf."
         }
       ],
       "presentation": "short"
@@ -9123,7 +9123,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Moment. Ich habe doch noch {item}."
+          "content": "Ach richtig, ich hatte doch {item} für später aufgehoben. Jetzt wäre später."
         }
       ],
       "presentation": "short"
@@ -9140,7 +9140,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Meine Energie wird knapp. Ich habe ja noch {item}."
+          "content": "Meine Energie sinkt. Gut, dass ich noch {item} hier habe."
         }
       ],
       "presentation": "short"
@@ -9157,7 +9157,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut, dass ich noch {item} aufgehoben habe."
+          "content": "{item} liegt noch auf meinem Weg. Heute zahlt sich Vorratshaltung aus."
         }
       ],
       "presentation": "short"
@@ -9174,7 +9174,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Meine Energie wird knapp. Zum Glück habe ich mir noch {item} aufgehoben."
+          "content": "Ich habe {item} aufgehoben. Jetzt wäre etwas neue Energie willkommen."
         }
       ],
       "presentation": "short"
@@ -9191,7 +9191,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut. Jetzt habe ich Zeit für {item}."
+          "content": "So, {item} ist jetzt dran. Ich esse lieber in Ruhe."
         }
       ],
       "presentation": "short"
@@ -9208,7 +9208,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen neue Energie. Das passt gerade."
+          "content": "Ein Schluck, bevor meine Energie noch weiter absackt."
         }
       ],
       "presentation": "short"
@@ -9225,7 +9225,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das war jetzt genau richtig."
+          "content": "Ah, das Essen hat meinem Magen gutgetan."
         }
       ],
       "presentation": "short"
@@ -9242,7 +9242,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das gibt mir wieder etwas Schwung."
+          "content": "Das Getränk ist leer. Meine Energie fühlt sich besser an."
         }
       ],
       "presentation": "short"
@@ -9259,7 +9259,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Einmal alles abgesucht. Noch keine Spur."
+          "content": "Ich habe meinen Weg abgesucht. Leider noch nichts gefunden."
         }
       ],
       "presentation": "short"
@@ -9279,7 +9279,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Was liegt denn da?"
+          "content": "Was liegt denn da unten? Das muss ich mir ansehen."
         }
       ]
     },
@@ -9298,7 +9298,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm. Das sieht interessant aus."
+          "content": "Hm, ein Gegenstand auf der Taskleiste. Interessant!"
         }
       ]
     },
@@ -9317,7 +9317,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich geh mal rüber."
+          "content": "Ich komme mal näher. Von hier aus erkenne ich es noch nicht richtig."
         }
       ]
     },
@@ -9336,7 +9336,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das lasse ich mir nicht entgehen."
+          "content": "Weg da, Neugier. Nein, warte. Bleib lieber. Ich gehe hin."
         }
       ]
     },
@@ -9355,7 +9355,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Dich schnapp ich mir kurz."
+          "content": "Komm mal her. Ich möchte sehen, was du bist."
         }
       ]
     },
@@ -9374,7 +9374,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Komm mal her, du."
+          "content": "Mit beiden Händen geht das sicherer. Hab dich!"
         }
       ]
     },
@@ -9393,7 +9393,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Moment … gleich hab ich’s."
+          "content": "Hm. Ich prüfe lieber erst, was ich da gerade aufgehoben habe."
         }
       ]
     },
@@ -9412,7 +9412,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Einen Moment noch."
+          "content": "Das ist interessant. Ich brauche noch einen Blick, bevor ich entscheide."
         }
       ]
     },
@@ -9431,7 +9431,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}. Na also."
+          "content": "Das kenne ich doch. {item}, richtig."
         }
       ]
     },
@@ -9450,7 +9450,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ach, {item}. Alles klar."
+          "content": "Na klar. Das ist {item}. Ich hätte gleich darauf kommen können."
         }
       ]
     },
@@ -9469,7 +9469,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bin ich mir noch nicht sicher."
+          "content": "Hm, dafür habe ich noch keinen passenden Namen gelernt."
         }
       ]
     },
@@ -9488,7 +9488,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm. Ich weiß noch nicht, was das ist."
+          "content": "Ich kann es ansehen und tragen. Aber erkennen? Noch nicht."
         }
       ]
     },
@@ -9507,7 +9507,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja. Das passt gerade gut."
+          "content": "Ich glaube, ich nehme das. Meine Bedürfnisse melden Zustimmung."
         }
       ]
     },
@@ -9526,7 +9526,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das nehme ich mir jetzt."
+          "content": "Das lasse ich mir jetzt nicht entgehen."
         }
       ]
     },
@@ -9545,7 +9545,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das hat noch ein bisschen Zeit."
+          "content": "Interessant, aber im Moment passt es nicht zu dem, was ich brauche."
         }
       ]
     },
@@ -9564,7 +9564,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hebe es erst einmal auf."
+          "content": "Ich werde es nicht sofort verbrauchen. Vielleicht später."
         }
       ]
     },
@@ -9583,7 +9583,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier lasse ich das erst mal."
+          "content": "Ich stelle es wieder auf meinem Weg ab."
         }
       ]
     },
@@ -9602,7 +9602,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das bleibt erst mal hier."
+          "content": "So, wieder auf dem Boden. Meine Hände sind frei."
         }
       ]
     },
@@ -9621,7 +9621,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. {item} passt gerade gut."
+          "content": "Oh, {item}! Das kann ich jetzt gut brauchen."
         }
       ]
     },
@@ -9640,7 +9640,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, danke. {item} kann ich gerade gebrauchen."
+          "content": "Du gibst mir {item}. Das war aufmerksam von dir."
         }
       ]
     },
@@ -9659,7 +9659,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} nehme ich gern. Magst du es mir geben?"
+          "content": "Oh, {item}. Gibst du es mir bitte rüber?"
         }
       ]
     },
@@ -9678,7 +9678,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, bitte. {item} passt gerade."
+          "content": "Das kommt mir gelegen. {item} hätte ich gern."
         }
       ]
     },
@@ -9697,7 +9697,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Gerade lieber nicht. Danke fürs Anbieten."
+          "content": "Ich sehe {item}. Heute sage ich dazu lieber Nein."
         }
       ]
     },
@@ -9716,7 +9716,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Nein danke. Im Moment brauche ich es nicht."
+          "content": "Das ist nett, aber {item} brauche ich im Moment nicht."
         }
       ]
     },
@@ -9735,7 +9735,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe Hunger. Da liegt noch {item}."
+          "content": "Mein Magen erinnert mich an {item}. Gute Idee, das nicht gleich zu essen."
         }
       ]
     },
@@ -9754,7 +9754,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Vorrat ist gerade eine gute Idee: {item}."
+          "content": "Da liegt noch {item}. Das könnte meinen Hunger jetzt lösen."
         }
       ]
     },
@@ -9773,7 +9773,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Etwas Energie wäre gut. Ich habe noch {item}."
+          "content": "Vielleicht wäre jetzt der richtige Moment für {item}."
         }
       ]
     },
@@ -9792,7 +9792,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich werde müde. Zeit, nach {item} zu sehen."
+          "content": "Ich habe doch {item} aufgehoben. Mein müder Kopf erinnert sich gerade daran."
         }
       ]
     },
@@ -9811,7 +9811,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Vorrat für später: {item}. Jetzt passt es."
+          "content": "Ich habe {item} für genau so einen hungrigen Moment aufgehoben."
         }
       ]
     },
@@ -9830,7 +9830,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, mein Vorrat: {item}. Gut, dass ich vorgesorgt habe."
+          "content": "Na bitte, {item} ist noch da. Mein Magen sagt Danke an mein früheres Ich."
         }
       ]
     },
@@ -9849,7 +9849,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut, dass ich noch {item} für später habe."
+          "content": "Sieh an: {item} steht noch bereit. Mein Plan von vorhin funktioniert."
         }
       ]
     },
@@ -9868,7 +9868,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Jetzt kommt mein aufgehobenes Getränk gerade richtig: {item}."
+          "content": "Mein Vorrat an {item} kommt mir gerade sehr gelegen."
         }
       ]
     },
@@ -9887,7 +9887,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich esse jetzt in Ruhe."
+          "content": "Jetzt wird gekaut statt kommentiert."
         }
       ]
     },
@@ -9906,7 +9906,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So. Zeit für ein bisschen Stärkung."
+          "content": "Das hat gerade Vorrang vor jedem Spaziergang: Essen."
         }
       ]
     },
@@ -9925,7 +9925,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das kann ich gerade gut gebrauchen. Ein Schluck zuerst."
+          "content": "Trinken geht auch ohne große Ansprache. Sehr praktisch."
         }
       ]
     },
@@ -9944,7 +9944,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich trinke erst einmal etwas."
+          "content": "Jetzt erst mal die Dose festhalten und einen Schluck nehmen."
         }
       ]
     },
@@ -9963,7 +9963,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das war eine gute Entscheidung."
+          "content": "Die Portion ist weg. Meine Hände sind wieder frei."
         }
       ]
     },
@@ -9982,7 +9982,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Jetzt fühlt sich mein Magen wieder wohler."
+          "content": "So. Wieder satt genug, um über andere Dinge nachzudenken."
         }
       ]
     },
@@ -10001,7 +10001,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah. Ich fühle mich wieder etwas wacher."
+          "content": "So, wieder etwas wacher. Das war gut getimt."
         }
       ]
     },
@@ -10020,7 +10020,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das hat mir gerade gefehlt."
+          "content": "Das war eine sinnvolle kleine Stärkung."
         }
       ]
     },
@@ -10039,7 +10039,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin einmal durch. Noch fehlt etwas."
+          "content": "Hier ist es nicht. Auch am anderen Ende habe ich nichts entdeckt."
         }
       ]
     },
@@ -10058,7 +10058,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Für jetzt habe ich überall nachgesehen. Noch fehlt etwas."
+          "content": "Die Suche war diesmal erfolglos. Ich behalte es im Kopf."
         }
       ]
     },
@@ -19212,7 +19212,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, bitte. {item} hätte ich gern."
+          "content": "Ja bitte. {item} wäre jetzt eine gute Idee."
         }
       ]
     },
@@ -19236,7 +19236,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} wäre gerade willkommen."
+          "content": "{item}? Hm, das passt. Ich nehme es gern."
         }
       ]
     },
@@ -19260,7 +19260,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gern. {item} passt mir gerade."
+          "content": "Bitte her damit. {item} könnte ich gebrauchen."
         }
       ]
     },
@@ -19791,7 +19791,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut, dass du {item} anbietest. Das hätte ich gern."
+          "content": "Du hast {item} im Angebot? Überzeugend."
         }
       ]
     },
@@ -19815,7 +19815,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, bitte. {item} nehme ich gern."
+          "content": "{item} klingt nach einer guten Idee. Ich bin dabei."
         }
       ]
     },
@@ -19839,7 +19839,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} hätte ich gern von dir."
+          "content": "Ja, bitte. Ich mache in meinen Händen Platz für {item}."
         }
       ]
     },
@@ -21206,7 +21206,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke fürs Geben. {item} nehme ich gern."
+          "content": "Ah, {item}. Danke! Ich muss mich noch ans Annehmen gewöhnen."
         }
       ]
     },
@@ -21224,7 +21224,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Für mich? Danke für {item}."
+          "content": "Das ist also für mich. {item} nehme ich gern."
         }
       ]
     },
@@ -21242,7 +21242,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. {item} passt mir gerade gut."
+          "content": "Danke, ich passe auf {item} auf."
         }
       ]
     },
@@ -21260,7 +21260,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gute Idee. {item} kann ich gerade gebrauchen."
+          "content": "Ein gutes Timing für {item}. Danke dir."
         }
       ]
     },
@@ -21278,7 +21278,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Mit {item} wird meine Pause gleich besser."
+          "content": "Du hast {item} dabei? Dann wird mein kleiner Vorrat interessanter."
         }
       ]
     },
@@ -21296,7 +21296,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} nehme ich gern von dir. Danke."
+          "content": "Ich nehme {item}. Aber ich halte es ordentlich fest."
         }
       ]
     },
@@ -21314,7 +21314,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke, du. {item} passt genau."
+          "content": "Du hast an {item} gedacht. Das gefällt mir."
         }
       ]
     },
@@ -21332,7 +21332,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bringst mir {item}. Das freut mich."
+          "content": "Oh, {item} passt genau zu dem, was ich gerade brauche."
         }
       ]
     },
@@ -21350,7 +21350,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. {item} wollte ich gerade haben."
+          "content": "Danke. Ich mache erst einmal Platz für {item}."
         }
       ]
     },
@@ -21368,7 +21368,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke, dass du an mich denkst. {item} nehme ich gern."
+          "content": "Das ist für mich? {item} nehme ich gern von dir."
         }
       ]
     },
@@ -21386,7 +21386,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich freue mich über {item}. Danke dir."
+          "content": "Du kennst mich: Bei {item} werde ich aufmerksam. Danke!"
         }
       ]
     },
@@ -21404,7 +21404,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}, für mich. Schön. Danke."
+          "content": "{item} in meine Hände, ein guter Plan. Danke dir."
         }
       ]
     },
@@ -21422,7 +21422,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} hätte ich gern. Magst du es mir geben?"
+          "content": "Für mich? Dann nehme ich {item} gern."
         }
       ]
     },
@@ -21440,7 +21440,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, bitte. {item} kann ich gerade gebrauchen."
+          "content": "Oh, {item}. Das würde ich gerne näher ansehen."
         }
       ]
     },
@@ -21458,7 +21458,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh, {item} nehme ich gern an."
+          "content": "Ja. {item} passt zu meinen Plänen."
         }
       ]
     },
@@ -21476,7 +21476,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Überzeugendes Angebot. {item} hätte ich gern."
+          "content": "Du weißt, wie man meine Neugier weckt: mit {item}."
         }
       ]
     },
@@ -21494,7 +21494,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, {item} passt zu meinen momentanen Plänen."
+          "content": "Na gut. {item} darf gern zu mir herüber."
         }
       ]
     },
@@ -21512,7 +21512,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} nehme ich. Eine interessante Aufmerksamkeit."
+          "content": "Das Angebot mit {item} nehme ich an. Gute Wahl!"
         }
       ]
     },
@@ -21530,7 +21530,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, gern. Danke, {item}s du es mir anbietest."
+          "content": "Ich hätte {item} gern. Gibst du es mir?"
         }
       ]
     },
@@ -21548,7 +21548,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} hätte ich jetzt gern von dir."
+          "content": "{item}? Da sage ich nicht Nein."
         }
       ]
     },
@@ -21566,7 +21566,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} nehme ich gern. Gute Idee, es mir anzubieten."
+          "content": "Ja, ich will {item} gern haben. Du darfst loslassen."
         }
       ]
     },
@@ -21584,7 +21584,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Gern. Deine Aufmerksamkeit freut mich."
+          "content": "Du kannst mir {item} geben. Ich passe darauf auf."
         }
       ]
     },
@@ -21602,7 +21602,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Ja, bitte. Darüber freue ich mich gerade."
+          "content": "Oh, {item} für mich? Ja, bitte!"
         }
       ]
     },
@@ -21620,7 +21620,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} hätte ich gern. Schön, {item}s du an mich denkst."
+          "content": "Bei {item} werde ich schwach. Reichst du es mir?"
         }
       ]
     },
@@ -21638,7 +21638,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Danke fürs Anbieten. Gerade brauche ich es nicht."
+          "content": "{item} lasse ich heute lieber liegen. Danke trotzdem."
         }
       ]
     },
@@ -21656,7 +21656,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Im Moment lieber nicht. Danke dir."
+          "content": "Nein danke. Für {item} ist gerade nicht der richtige Zeitpunkt."
         }
       ]
     },
@@ -21674,7 +21674,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Jetzt habe ich dafür keinen Bedarf. Später vielleicht."
+          "content": "Du kannst {item} erst mal behalten. Vielleicht später."
         }
       ]
     },
@@ -21692,7 +21692,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Ein gutes Angebot zu einem etwas unpassenden Zeitpunkt."
+          "content": "{item}? Im Augenblick passt das nicht in meine Pläne."
         }
       ]
     },
@@ -21710,7 +21710,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Danke. Mein Bedarf macht gerade Pause."
+          "content": "Über {item} denke ich später gern noch mal nach."
         }
       ]
     },
@@ -21728,7 +21728,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Gerade passt es mir weniger. Vielleicht später."
+          "content": "Ich glaube, {item} muss heute noch warten."
         }
       ]
     },
@@ -21746,7 +21746,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Danke, du. Gerade brauche ich es nicht."
+          "content": "Du meinst es gut, aber {item} brauche ich gerade wirklich nicht."
         }
       ]
     },
@@ -21764,7 +21764,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Für später wäre es schön. Jetzt möchte ich noch warten."
+          "content": "Danke, du. {item} ist im Moment nicht das Richtige für mich."
         }
       ]
     },
@@ -21782,7 +21782,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Das Angebot freut mich. Gerade passt es noch nicht."
+          "content": "Du darfst {item} gern erst einmal wieder ablegen."
         }
       ]
     },
@@ -21800,7 +21800,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Schön, dass du an mich denkst. Jetzt brauche ich es gerade nicht."
+          "content": "{item} merke ich mir für später. Jetzt noch nicht."
         }
       ]
     },
@@ -21818,7 +21818,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Gerade lieber nicht. Über deine Aufmerksamkeit freue ich mich trotzdem."
+          "content": "Auch bei dir sage ich manchmal Nein. {item} brauche ich gerade nicht."
         }
       ]
     },
@@ -21836,7 +21836,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}? Danke, du. Ich möchte im Moment noch ein bisschen warten."
+          "content": "{item}? Lieb von dir, aber ich möchte lieber warten."
         }
       ]
     },
@@ -23243,7 +23243,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wo ist {item} hin? Ich suche die ganze Taskleiste ab."
+          "content": "{item} ist nicht an seinem Platz. Ich schaue erst mal den Weg entlang."
         }
       ]
     },
@@ -23258,7 +23258,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier finde ich {item} gerade nicht. Ich laufe die Taskleiste ab."
+          "content": "Ich suche {item}. Vielleicht liegt es weiter drüben auf der Taskleiste."
         }
       ]
     },
@@ -23273,7 +23273,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, da ist {item} wieder."
+          "content": "Da ist {item}! Die Suche war doch nicht umsonst."
         }
       ]
     },
@@ -23288,7 +23288,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}. Wiedergefunden."
+          "content": "{item} wiedergefunden. Sehr gut."
         }
       ]
     },
@@ -23304,7 +23304,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier war doch noch {item}. Ich suche bis zum anderen Ende."
+          "content": "Hier war doch noch {item}. Ich gehe die mögliche Stelle noch einmal ab."
         }
       ]
     },
@@ -23320,7 +23320,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bist du ja, {item}."
+          "content": "Ah, {item}. Ich hatte dich schon abgeschrieben."
         }
       ]
     },
@@ -23335,7 +23335,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Warte einen kleinen Moment, ich will mir das da anschauen."
+          "content": "Nicht jetzt, ich möchte diesen Fund erst einmal untersuchen."
         }
       ]
     },
@@ -23350,7 +23350,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gleich. Ich bin gerade mit diesem Gegenstand beschäftigt."
+          "content": "Ich halte gerade etwas in den Händen. Gib mir noch einen Moment."
         }
       ]
     },
@@ -23365,7 +23365,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Einen Augenblick bitte. Das hier möchte ich erst zu Ende anschauen."
+          "content": "Ich bin mitten im Anschauen. Gleich habe ich wieder Aufmerksamkeit übrig."
         }
       ]
     },
@@ -23384,7 +23384,7 @@
         },
         {
           "kind": "text",
-          "content": "Huch, das wollte ich mir gerade anschauen! Gibst du es mir wieder?"
+          "content": "Hey! Das hatte ich gerade im Blick. Bekomme ich es wieder?"
         }
       ]
     },
@@ -23403,7 +23403,7 @@
         },
         {
           "kind": "text",
-          "content": "Hey, ich war gerade auf dem Weg dorthin. Darf ich das noch anschauen?"
+          "content": "Oh, weggenommen! Dabei war ich doch fast schon dort."
         }
       ]
     },
@@ -23422,7 +23422,7 @@
         },
         {
           "kind": "text",
-          "content": "Moment, genau das wollte ich mir ansehen. Legst du es bitte wieder hin?"
+          "content": "Moment! Ich wollte den Gegenstand gerade genauer ansehen."
         }
       ]
     },
@@ -23437,7 +23437,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Kannst du das bitte wieder hinlegen? Ich möchte es noch anschauen."
+          "content": "Legst du es bitte wieder hin? Ich war mit Anschauen noch nicht fertig."
         }
       ]
     },
@@ -23452,7 +23452,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich warte noch auf diesen Gegenstand. Gibst du ihn mir zurück?"
+          "content": "Ich hätte den Gegenstand gern zurück. Meine Neugier ist noch nicht satt."
         }
       ]
     },
@@ -23467,7 +23467,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Darf ich jetzt weitermachen? Das wollte ich mir gerade ansehen."
+          "content": "Darf ich erst meine Untersuchung beenden? Gib es mir bitte wieder."
         }
       ]
     },
@@ -23486,7 +23486,7 @@
         },
         {
           "kind": "text",
-          "content": "Jetzt ärgert mich das. Bitte gib mir den Gegenstand wieder."
+          "content": "Jetzt reicht's aber mit Wegnehmen. Ich möchte das Ding zurück."
         }
       ]
     },
@@ -23505,7 +23505,7 @@
         },
         {
           "kind": "text",
-          "content": "Du weißt doch, dass ich das anschauen will. Bitte leg es wieder hin."
+          "content": "Du weißt, dass ich das noch anschauen wollte. Bitte leg es wieder hin."
         }
       ]
     },
@@ -23524,7 +23524,7 @@
         },
         {
           "kind": "text",
-          "content": "Das ständige Wegnehmen finde ich nicht lustig. Ich möchte weitermachen."
+          "content": "Das ist inzwischen nicht mehr lustig. Ich will endlich weitermachen."
         }
       ]
     },
@@ -23539,7 +23539,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Danke. Dann mache ich hier weiter."
+          "content": "Ah, wieder da. Danke. Meine Hände wissen schon, was zu tun ist."
         }
       ]
     },
@@ -23554,7 +23554,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da ist es wieder. Jetzt kann ich weitermachen."
+          "content": "Gut, zurückgelegt. Dann kann ich den Gegenstand weiter untersuchen."
         }
       ]
     },
@@ -23569,7 +23569,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut, du hast es zurückgelegt. Ich mache weiter."
+          "content": "Na bitte! Jetzt ist mein Fund wieder an seinem Platz."
         }
       ]
     },
@@ -23584,7 +23584,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} kenne ich schon. Ich hole es mir kurz."
+          "content": "{item} kenne ich schon. Ich sehe mal nach, ob ich es jetzt brauche."
         }
       ]
     },
@@ -23599,7 +23599,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da liegt {item}. Ich schaue, ob ich es gerade brauche."
+          "content": "Da liegt {item}. Das könnte gleich interessant werden."
         }
       ]
     },
@@ -23614,7 +23614,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}. Ich nehme es kurz in die Hand und entscheide dann."
+          "content": "Oh, {item} wieder. Ich entscheide erst beim Näherkommen, ob ich es nehme."
         }
       ]
     },
@@ -23629,7 +23629,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item} wollte ich gerade haben. Ich hole es mir."
+          "content": "{item} wollte ich noch. Ich gehe gleich hin."
         }
       ]
     },
@@ -23644,7 +23644,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da liegt {item} jetzt. Das nehme ich mir."
+          "content": "Da liegt {item}. Gut, dann hole ich es mir jetzt."
         }
       ]
     },
@@ -23659,7 +23659,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja, {item} möchte ich noch. Ich hole es mir jetzt."
+          "content": "Ich habe mich entschieden: {item} soll nicht länger dort liegen."
         }
       ]
     },
@@ -23674,7 +23674,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich suche gerade etwas. Gleich bin ich wieder bei dir."
+          "content": "Ich bin noch auf der Suche. Für eine Begrüßung habe ich gleich wieder Zeit."
         }
       ]
     },
@@ -23689,7 +23689,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Moment. Ich will erst finden, was hier fehlt."
+          "content": "Eine Sekunde, bitte. Mir fehlt hier noch ein Gegenstand."
         }
       ]
     },
@@ -23704,7 +23704,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin noch auf der Suche. Gib mir einen Augenblick."
+          "content": "Ich prüfe erst meinen Weg. Dann kannst du mich wieder ausfragen."
         }
       ]
     }
