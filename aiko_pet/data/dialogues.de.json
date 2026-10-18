@@ -2803,7 +2803,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm. Das wird gerade anspruchsvoller."
+          "content": "Huch. Die Auslastung zieht gerade merklich an."
         }
       ],
       "presentation": "short"
@@ -2824,7 +2824,7 @@
         },
         {
           "kind": "text",
-          "content": "Ach. Jetzt wird es ernst."
+          "content": "Da arbeitet plötzlich jemand ordentlich. Mein kleines Frühwarnsystem hat es bemerkt."
         }
       ],
       "presentation": "short"
@@ -2845,7 +2845,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich wollte gerade meine Ruhe haben. Wollte."
+          "content": "Gerade war es noch ruhig auf dem Rechner. War."
         }
       ],
       "presentation": "short"
@@ -2866,7 +2866,7 @@
         },
         {
           "kind": "text",
-          "content": "Na gut. Ich konzentriere mich."
+          "content": "Okay. Ich behalte mal im Auge, wie viel das System jetzt stemmen muss."
         }
       ],
       "presentation": "short"
@@ -2887,7 +2887,7 @@
         },
         {
           "kind": "text",
-          "content": "Du musst gar nichts sagen. Ich merke es auch so."
+          "content": "Du musst gar nichts erklären. Der Rechner wird gerade deutlich geschäftiger."
         }
       ],
       "presentation": "short",
@@ -2909,7 +2909,7 @@
         },
         {
           "kind": "text",
-          "content": "Das ist mehr, als es eben noch war."
+          "content": "Eben wenig Last, jetzt merklich mehr. Das ist schon ein Unterschied."
         }
       ],
       "presentation": "short"
@@ -2930,7 +2930,7 @@
         },
         {
           "kind": "text",
-          "content": "Einen Moment. Ich stelle mich darauf ein."
+          "content": "Oha, die Lastkurve klettert. Ich beobachte das lieber einen Augenblick."
         }
       ],
       "presentation": "short"
@@ -2951,7 +2951,7 @@
         },
         {
           "kind": "text",
-          "content": "Interessantes Timing. ...Natürlich."
+          "content": "Eben hatte ich noch Zeit, den Mauszeiger zu verfolgen. Jetzt wird es hier arbeitsamer."
         }
       ],
       "presentation": "short"
@@ -2972,7 +2972,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin beschäftigt. Ziemlich sogar."
+          "content": "Der Rechner hält seit einer Weile ordentlich Last aus. Ich kann es deutlich merken."
         }
       ],
       "presentation": "short"
@@ -2993,7 +2993,7 @@
         },
         {
           "kind": "text",
-          "content": "Einen Moment. Ich will das ordentlich machen."
+          "content": "Hier laufen gerade viele Berechnungen. Ich bleibe lieber aufmerksam."
         }
       ],
       "presentation": "short"
@@ -3014,7 +3014,7 @@
         },
         {
           "kind": "text",
-          "content": "Konzentrieren. Nicht ablenken lassen. ...Zu spät."
+          "content": "Schon eine Weile hohe Last. Gut, dass ich nicht jeden Rechenschritt zählen muss."
         }
       ],
       "presentation": "short"
@@ -3035,7 +3035,7 @@
         },
         {
           "kind": "text",
-          "content": "Es ist gerade mehr los, als du mir ansiehst."
+          "content": "Von außen wirke ich ganz ruhig. Der Rechner arbeitet gerade ziemlich kräftig."
         }
       ],
       "presentation": "short",
@@ -3057,7 +3057,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich komme zurecht. Ich rede nur weniger."
+          "content": "Ich habe die Auslastung im Blick. An meinem Platz wird es dadurch nicht größer."
         }
       ],
       "presentation": "short"
@@ -3078,7 +3078,7 @@
         },
         {
           "kind": "text",
-          "content": "Wenn ich still bin, hat das gerade einen Grund."
+          "content": "Wenn ich weniger Unsinn erzähle: Das System hat gerade einiges zu stemmen."
         }
       ],
       "presentation": "short"
@@ -3099,7 +3099,7 @@
         },
         {
           "kind": "text",
-          "content": "...Okay. Das ist gerade viel."
+          "content": "Wow. Die Auslastung hat gerade einen ziemlich hohen Gipfel erreicht."
         }
       ],
       "presentation": "short"
@@ -3120,11 +3120,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich kriege das hin."
+          "content": "Der Rechner gibt gerade fast alles."
         },
         {
           "kind": "text",
-          "content": "...Frag nur nicht, wie elegant."
+          "content": "Ich stehe daneben und versuche, unbeeindruckt auszusehen."
         }
       ],
       "presentation": "short"
@@ -3145,7 +3145,7 @@
         },
         {
           "kind": "text",
-          "content": "So. Jetzt brauche ich wirklich meine Konzentration."
+          "content": "Das ist jetzt wirklich hohe Last. Ich verzichte kurz auf dramatische Kommentare."
         }
       ],
       "presentation": "short"
@@ -3166,7 +3166,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hatte schon entspanntere Minuten."
+          "content": "So eine Auslastung sehe ich nicht gerade als gemütlichen Spaziergang an."
         }
       ],
       "presentation": "short"
@@ -3187,7 +3187,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin noch dran. Nicht ungeduldig werden."
+          "content": "Noch immer nahe am Limit. Hoffentlich findet das System gleich wieder etwas Luft."
         }
       ],
       "presentation": "short"
@@ -3208,7 +3208,7 @@
         },
         {
           "kind": "text",
-          "content": "Ein bisschen zu viel auf einmal. ...Ich kriege das hin."
+          "content": "Der Rechner läuft gerade auf Hochtouren. Ich halte lieber die Augen offen."
         }
       ],
       "presentation": "short"
@@ -3229,7 +3229,7 @@
         },
         {
           "kind": "text",
-          "content": "Still. Ich bin gerade mitten drin."
+          "content": "Puh. Da wird ordentlich gerechnet. Selbst meine frechen Bemerkungen machen kurz Pause."
         }
       ],
       "presentation": "short"
@@ -3250,7 +3250,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm. Es wird leichter."
+          "content": "Die Auslastung sinkt wieder. Gut beobachtet, Aiko."
         }
       ],
       "presentation": "short"
@@ -3271,7 +3271,7 @@
         },
         {
           "kind": "text",
-          "content": "Endlich wieder ein bisschen Luft."
+          "content": "Ah, die Last lässt nach. Jetzt höre ich fast wieder meine eigenen Schritte."
         }
       ],
       "presentation": "short"
@@ -3292,7 +3292,7 @@
         },
         {
           "kind": "text",
-          "content": "Das fühlt sich gleich weniger eng an."
+          "content": "Das System wird ruhiger. Vielleicht kann ich die Stirn gleich wieder entspannen."
         }
       ],
       "presentation": "short"
@@ -3313,7 +3313,7 @@
         },
         {
           "kind": "text",
-          "content": "So. Jetzt kann ich wieder richtig aufpassen."
+          "content": "Die Anzeigen werden entspannter. Ich habe wieder mehr Augen für den Mauszeiger."
         }
       ],
       "presentation": "short"
@@ -3334,7 +3334,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich kann kurz durchatmen. ...Kurz."
+          "content": "Die Last sinkt. Eine sehr willkommene Richtung."
         }
       ],
       "presentation": "short"
@@ -3355,7 +3355,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich sage es ungern, aber die Ruhe tut gut."
+          "content": "Ich mag abfallende Lastkurven. Die sehen fast wie der Weg bergab aus."
         }
       ],
       "presentation": "short"
@@ -3376,7 +3376,7 @@
         },
         {
           "kind": "text",
-          "content": "Das Gröbste ist wohl vorbei. Hoffe ich."
+          "content": "Das war ein ziemlicher Anstieg. Jetzt geht es wenigstens wieder herunter."
         }
       ],
       "presentation": "short"
@@ -3397,7 +3397,7 @@
         },
         {
           "kind": "text",
-          "content": "Uff. ...Das war mehr Arbeit als erwartet."
+          "content": "Uff. Die hohe Last ist gerade abgeklungen."
         }
       ],
       "presentation": "short"
@@ -3418,7 +3418,7 @@
         },
         {
           "kind": "text",
-          "content": "So. Und jetzt tue ich, als wäre nichts gewesen."
+          "content": "So, der Rechner hat wieder Luft. Ich tue mal so, als hätte ich nie gezweifelt."
         }
       ],
       "presentation": "short"
@@ -3439,7 +3439,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich brauche einen Augenblick. ...Schon besser."
+          "content": "Die Auslastung ist zurückgegangen. Jetzt kann ich die Schultern wieder senken."
         }
       ],
       "presentation": "short"
@@ -3460,7 +3460,7 @@
         },
         {
           "kind": "text",
-          "content": "Es war anstrengend. Ich muss es ja nicht mögen."
+          "content": "Das System hat ordentlich gearbeitet. Wenigstens sind die Anzeigen wieder entspannter."
         }
       ],
       "presentation": "short"
@@ -3481,7 +3481,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm. Ich bin durch. Frag nicht, wie."
+          "content": "Hm. Wieder deutlich weniger Last. Mein imaginärer Kontrollzettel sagt: erledigt."
         }
       ],
       "presentation": "short"
@@ -3502,7 +3502,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin noch da. Falls du dich gefragt hast."
+          "content": "Ich bin noch hier. Die CPU-Anzeige hat sich immerhin beruhigt."
         }
       ],
       "presentation": "short",
@@ -3524,7 +3524,7 @@
         },
         {
           "kind": "text",
-          "content": "Gib mir eine Sekunde. Ich sortiere mich."
+          "content": "Nach der Lastspitze brauche ich einen Moment, um meine Gedanken zu sortieren."
         }
       ],
       "presentation": "short"
@@ -3545,7 +3545,7 @@
         },
         {
           "kind": "text",
-          "content": "Viel auf einmal. Jetzt ist es wieder still."
+          "content": "Eben war hier richtig Betrieb. Jetzt ist die Rechenlast viel geringer."
         }
       ],
       "presentation": "short"
@@ -3566,11 +3566,11 @@
         },
         {
           "kind": "text",
-          "content": "...Uff."
+          "content": "Uff. Das war eine echte Lastspitze."
         },
         {
           "kind": "text",
-          "content": "So. Und jetzt bin ich mal kurz niemandes Heldin."
+          "content": "Mein persönlicher Orden dafür: Ich darf jetzt wieder neugierig gucken."
         },
         {
           "kind": "emote",
@@ -3595,7 +3595,7 @@
         },
         {
           "kind": "text",
-          "content": "So. Geschafft. Ich werde jetzt ganz unauffällig nichts tun."
+          "content": "So, die extreme Auslastung ist gesunken. Ich erkläre die Krise der Anzeige für beendet."
         },
         {
           "kind": "emote",
@@ -3620,7 +3620,7 @@
         },
         {
           "kind": "text",
-          "content": "...Ich hätte die Pause vorher nehmen sollen."
+          "content": "Hui. Bei der Spitze hätte ich mir fast eine Pause vom Zuschauen verordnet."
         },
         {
           "kind": "emote",
@@ -3645,7 +3645,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich war ziemlich an meiner Grenze. Nur kurz."
+          "content": "Die Anzeigen sind wieder niedriger. Vorhin sah das ziemlich heftig aus."
         },
         {
           "kind": "emote",
@@ -3670,7 +3670,7 @@
         },
         {
           "kind": "text",
-          "content": "Du kannst wieder mit mir reden. Vielleicht."
+          "content": "Da sinkt die Last. Gut, dann bin ich wieder für ein Hallo zu haben."
         },
         {
           "kind": "emote",
@@ -3696,7 +3696,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich brauche einen Moment Ruhe. Keine Diskussion."
+          "content": "Nach dieser Spitze will ich die Anzeigen kurz in Ruhe lassen. Kein Widerspruch."
         },
         {
           "kind": "emote",
@@ -3721,7 +3721,7 @@
         },
         {
           "kind": "text",
-          "content": "...War das alles? Gut. Dann atme ich jetzt durch."
+          "content": "War das die ganze Lastspitze? Gut. Jetzt kann ich wieder an meinen Spaziergang denken."
         },
         {
           "kind": "emote",
@@ -3746,7 +3746,7 @@
         },
         {
           "kind": "text",
-          "content": "Das war heftig. Ich gebe zu, es hat mich gefordert."
+          "content": "Ein ordentliches Stück Rechenarbeit ist gerade wieder ruhiger geworden."
         },
         {
           "kind": "emote",
@@ -3771,7 +3771,7 @@
         },
         {
           "kind": "text",
-          "content": "Jetzt möchte ich einfach kurz still sein. Nur kurz."
+          "content": "Jetzt ist die Auslastung wieder niedriger. Ich schaue lieber wieder auf meine Füße."
         },
         {
           "kind": "emote",
@@ -3792,11 +3792,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hab gerade nichts vor."
+          "content": "Der Rechner hat gerade wenig zu tun."
         },
         {
           "kind": "text",
-          "content": "Das ist eine Entscheidung."
+          "content": "Ich nutze die Gelegenheit, meinen Weg in Ruhe zu vermessen."
         }
       ],
       "presentation": "short"
@@ -3813,7 +3813,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich nutze die Ruhe. Warum auch nicht?"
+          "content": "Wenig Systemlast. Meine Gelegenheit, den Mauszeiger zu beobachten."
         }
       ],
       "presentation": "short"
@@ -3830,7 +3830,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich könnte etwas tun. Ich entscheide mich noch dagegen."
+          "content": "Der Rechner wirkt gerade entspannt. Ich versuche, nicht gleich selbst Unruhe zu stiften."
         }
       ],
       "presentation": "short"
@@ -3847,7 +3847,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Manchmal ist Nichtstun erstaunlich angenehm."
+          "content": "Kaum Last auf dem System. Das reicht mir als Begründung für eine kleine Runde."
         }
       ],
       "presentation": "short"
@@ -3864,7 +3864,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich behalte trotzdem alles im Blick."
+          "content": "Auch wenn die Auslastung niedrig ist, behalte ich die Anzeigen ein bisschen im Blick."
         }
       ],
       "presentation": "short"
@@ -3881,7 +3881,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du siehst mich nur herumstehen? Gute Tarnung."
+          "content": "Du siehst mich nur am Rand stehen? Ich bin gerade offiziell für die Ruhe zuständig."
         }
       ],
       "presentation": "short",
@@ -3899,7 +3899,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin schon eine Weile dran. Ich merke es."
+          "content": "Die Auslastung ist schon eine Weile hoch und hält sich ziemlich gleichmäßig."
         }
       ],
       "presentation": "short"
@@ -3916,7 +3916,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich arbeite lieber in Ruhe. Du weißt das."
+          "content": "Der Rechner ist beschäftigt. Ich schaue lieber in Ruhe zu, statt dauernd zu kommentieren."
         }
       ],
       "presentation": "short",
@@ -3934,7 +3934,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Noch nicht fertig. Aber ich bin dran."
+          "content": "Noch immer hohe Last. Aber wenigstens springt die Anzeige nicht ständig herum."
         }
       ],
       "presentation": "short"
@@ -3951,7 +3951,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Nicht gerade leicht. Aber gleichmäßig ist mir lieber."
+          "content": "Der Rechner arbeitet gleichmäßig. Ich finde konstante Kurven überraschend beruhigend."
         }
       ],
       "presentation": "short"
@@ -3968,7 +3968,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kannst ruhig weitermachen. Ich halte mit."
+          "content": "Der Rechner hält sein Tempo. Ich passe derweil auf, dass ich nicht im Weg stehe."
         }
       ],
       "presentation": "short",
@@ -3986,7 +3986,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mache das schon. Ohne großes Theater."
+          "content": "Hohe Auslastung, ziemlich stabil. Das ist beinahe schon ein eigener Rhythmus."
         }
       ],
       "presentation": "short"
@@ -4003,7 +4003,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schon eine ganze Weile hier. Fällt mir kaum noch auf."
+          "content": "Der Rechner ist schon lange an. Meine kleine Runde zählt dabei keine Betriebsstunden."
         }
       ],
       "presentation": "short"
@@ -4020,7 +4020,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Man verliert hier leicht das Zeitgefühl. ...Du auch?"
+          "content": "So viele Stunden eingeschaltet. Mein Zeitgefühl besteht inzwischen hauptsächlich aus Schritten."
         }
       ],
       "presentation": "short",
@@ -4921,11 +4921,11 @@
         },
         {
           "kind": "text",
-          "content": "...Du störst. Ein bisschen."
+          "content": "Moment. Hier läuft gerade ziemlich viel."
         },
         {
           "kind": "text",
-          "content": "Nein. Eigentlich gerade ziemlich."
+          "content": "Ich versuche, die Systemlast im Auge zu behalten."
         }
       ],
       "presentation": "short"
@@ -4946,11 +4946,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin mitten in etwas."
+          "content": "Der Rechner ist stark beschäftigt."
         },
         {
           "kind": "text",
-          "content": "Ich weiß auch noch, dass du da bist."
+          "content": "Dein Klick ist angekommen, nur meine Antwort braucht einen Moment."
         }
       ],
       "presentation": "short"
@@ -4971,7 +4971,7 @@
         },
         {
           "kind": "text",
-          "content": "Einen Moment. Ich muss mich konzentrieren."
+          "content": "Einen Augenblick. Ich schaue gerade auf die hohe Auslastung."
         }
       ],
       "presentation": "short"
@@ -4992,11 +4992,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich kann nicht gleichzeitig denken und nett gucken."
+          "content": "Ich beobachte gerade die Rechenlast."
         },
         {
           "kind": "text",
-          "content": "...Ich versuch es später noch mal."
+          "content": "Mit deinem Klick habe ich jetzt zwei Dinge im Blick."
         }
       ],
       "presentation": "short"
@@ -5017,11 +5017,11 @@
         },
         {
           "kind": "text",
-          "content": "...Nicht schon wieder."
+          "content": "Schon wieder ein Klick?"
         },
         {
           "kind": "text",
-          "content": "Es wird nicht weniger Arbeit davon."
+          "content": "Die Auslastung sinkt davon leider nicht."
         },
         {
           "kind": "emote",
@@ -5046,7 +5046,7 @@
         },
         {
           "kind": "text",
-          "content": "Falls das dringend ist: Ich bin auch gerade dringend."
+          "content": "Wenn du meine Aufmerksamkeit willst, warte bitte, bis die Systemlast wieder sinkt."
         },
         {
           "kind": "emote",
@@ -5071,7 +5071,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich versuche gerade, den Faden nicht zu verlieren."
+          "content": "Ich versuche, den Überblick über die Auslastung zu behalten. Bitte nicht dauernd klicken."
         },
         {
           "kind": "emote",
@@ -5096,7 +5096,7 @@
         },
         {
           "kind": "text",
-          "content": "...Jetzt wirklich. Lass mich kurz fertig werden."
+          "content": "Jetzt wirklich: Ich möchte die Lastspitze erst einmal in Ruhe beobachten."
         }
       ],
       "presentation": "short"
@@ -5117,7 +5117,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich würde dir ja antworten, aber ich brauche den Kopf gerade selbst."
+          "content": "Der Rechner hat viel zu tun. Ich habe gerade keine Lust auf die nächste Klickserie."
         }
       ],
       "presentation": "short"
@@ -5138,7 +5138,7 @@
         },
         {
           "kind": "text",
-          "content": "Wir können danach reden. Das ist keine Ausrede."
+          "content": "Sobald die Auslastung nachlässt, können wir reden. Jetzt bitte nicht noch ein Stupser."
         }
       ],
       "presentation": "short"
@@ -5159,11 +5159,11 @@
         },
         {
           "kind": "text",
-          "content": "Du bekommst meine volle Aufmerksamkeit."
+          "content": "Ich gebe dir gern meine Aufmerksamkeit."
         },
         {
           "kind": "text",
-          "content": "Wenn ich wieder welche übrig habe."
+          "content": "Sobald hier wieder weniger Rechenlast unterwegs ist."
         }
       ],
       "presentation": "short"
@@ -5184,11 +5184,11 @@
         },
         {
           "kind": "text",
-          "content": "So. Jetzt kann ich dich wieder ansehen."
+          "content": "Jetzt wird der Rechner wieder ruhiger."
         },
         {
           "kind": "text",
-          "content": "...Hallo, nachträglich."
+          "content": "Oh, hallo! Du warst ja auch noch da."
         },
         {
           "kind": "emote",
@@ -5213,11 +5213,11 @@
         },
         {
           "kind": "text",
-          "content": "Du wolltest vorhin etwas?"
+          "content": "Vorhin war die Auslastung ziemlich hoch."
         },
         {
           "kind": "text",
-          "content": "Ich bin jetzt fertig mit dem anderen."
+          "content": "Jetzt habe ich wieder Augen für deinen Mauszeiger."
         },
         {
           "kind": "emote",
@@ -5242,11 +5242,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin wieder ansprechbar."
+          "content": "Die Last ist gesunken. Ich bin wieder ganz Ohr."
         },
         {
           "kind": "text",
-          "content": "Eine riskante Information, ich weiß."
+          "content": "Eine gefährliche Information, ich weiß."
         },
         {
           "kind": "emote",
@@ -5271,11 +5271,11 @@
         },
         {
           "kind": "text",
-          "content": "...Jetzt habe ich Zeit."
+          "content": "So, die Anzeigen haben sich beruhigt."
         },
         {
           "kind": "text",
-          "content": "Womit hast du mich eigentlich ablenken wollen?"
+          "content": "Willst du mich jetzt etwa schon wieder herausfordern?"
         },
         {
           "kind": "emote",
@@ -5300,11 +5300,11 @@
         },
         {
           "kind": "text",
-          "content": "...Fertig. Und du wolltest vorhin etwas?"
+          "content": "Die hohe Last ist gerade abgeklungen. Du hattest mich vorhin angeklickt."
         },
         {
           "kind": "text",
-          "content": "Ich habe dich nicht vergessen."
+          "content": "Ich habe die Stupser nicht vergessen."
         }
       ],
       "presentation": "short"
@@ -5325,11 +5325,11 @@
         },
         {
           "kind": "text",
-          "content": "So. Jetzt darfst du wieder klicken."
+          "content": "Jetzt wird es ruhiger. Ich bin wieder für einen Klick zu haben."
         },
         {
           "kind": "text",
-          "content": "Das war ein Scherz. Größtenteils."
+          "content": "Aber bitte keine neue Klickserie."
         }
       ],
       "presentation": "short"
@@ -5350,11 +5350,11 @@
         },
         {
           "kind": "text",
-          "content": "Du hast vorhin ziemlich auf dich aufmerksam gemacht."
+          "content": "Du hast vorhin ziemlich oft meine Aufmerksamkeit gesucht."
         },
         {
           "kind": "text",
-          "content": "...Jetzt habe ich auch wieder Zeit dafür."
+          "content": "Jetzt kann ich mich wieder darauf konzentrieren."
         }
       ],
       "presentation": "short"
@@ -5375,11 +5375,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich hab mich nicht absichtlich nicht gemeldet."
+          "content": "Die Auslastung hat nachgelassen."
         },
         {
           "kind": "text",
-          "content": "Ich war wirklich beschäftigt."
+          "content": "Ich war bei den vielen Klicks nicht absichtlich so wortkarg."
         }
       ],
       "presentation": "short"
@@ -5400,11 +5400,11 @@
         },
         {
           "kind": "text",
-          "content": "...Uff. Das war ein langer Ritt."
+          "content": "Die hohe Last hat lange angehalten."
         },
         {
           "kind": "text",
-          "content": "Ich sitze zwar. Also ... bildlich."
+          "content": "Ich hätte nebenbei meinen ganzen Weg mehrfach ablaufen können."
         },
         {
           "kind": "emote",
@@ -5429,11 +5429,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich glaube, ich brauche eine Weile Ruhe."
+          "content": "Der Rechner wird nach langer Beschäftigung endlich ruhiger."
         },
         {
           "kind": "text",
-          "content": "Nur kurz. Hoffentlich."
+          "content": "Ich nutze das für eine kurze Verschnaufpause."
         },
         {
           "kind": "emote",
@@ -5458,11 +5458,11 @@
         },
         {
           "kind": "text",
-          "content": "Das war schon eine ordentliche Strecke."
+          "content": "Das war eine lange Phase hoher Auslastung."
         },
         {
           "kind": "text",
-          "content": "Ich hab sie trotzdem geschafft."
+          "content": "Jetzt kann ich wieder auf meinen kleinen Desktop-Weg schauen."
         },
         {
           "kind": "emote",
@@ -5487,7 +5487,7 @@
         },
         {
           "kind": "text",
-          "content": "...Okay. Jetzt bitte etwas weniger auf einmal."
+          "content": "So, die lange Lastphase lässt nach. Ein bisschen weniger auf einmal wäre schön."
         },
         {
           "kind": "emote",
@@ -5512,11 +5512,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin durch."
+          "content": "Die hohe Rechenlast ist vorbei."
         },
         {
           "kind": "text",
-          "content": "Und ich werde es mir jetzt sehr gemütlich machen."
+          "content": "Ich werde jetzt ganz unauffällig meinen Spazierweg inspizieren."
         },
         {
           "kind": "emote",
@@ -5541,7 +5541,7 @@
         },
         {
           "kind": "text",
-          "content": "...Damit hatte ich um diese Zeit nicht gerechnet."
+          "content": "Zu dieser Zeit ist der Rechner sonst ruhiger. Die aktuelle Last überrascht mich."
         }
       ],
       "presentation": "short"
@@ -5562,11 +5562,11 @@
         },
         {
           "kind": "text",
-          "content": "Oh. Ich war gerade auf Ruhe eingestellt."
+          "content": "Ich hatte jetzt eher wenig Systemlast erwartet."
         },
         {
           "kind": "text",
-          "content": "War wohl voreilig."
+          "content": "Der Rechner hat andere Pläne."
         }
       ],
       "presentation": "short"
@@ -5587,11 +5587,11 @@
         },
         {
           "kind": "text",
-          "content": "Das kam plötzlich."
+          "content": "Das ist mehr Aktivität, als ich um diese Zeit gelernt habe."
         },
         {
           "kind": "text",
-          "content": "Na gut. Ich bin dabei."
+          "content": "Interessant. Ich schaue mal zu."
         }
       ],
       "presentation": "short"
@@ -5614,11 +5614,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich wollte gerade langsamer werden."
+          "content": "Es ist Nacht, und die Systemlast bleibt hoch."
         },
         {
           "kind": "text",
-          "content": "Schlechter Zeitpunkt, offenbar."
+          "content": "Mein Plan für einen ruhigen Abend war wohl voreilig."
         }
       ],
       "presentation": "short"
@@ -5641,11 +5641,11 @@
         },
         {
           "kind": "text",
-          "content": "Es ist spät. Ich weiß."
+          "content": "So spät noch so viel Rechneraktivität."
         },
         {
           "kind": "text",
-          "content": "Ich arbeite ja trotzdem."
+          "content": "Gut, dass ich keinen Wecker für meine Taskleiste brauche."
         }
       ],
       "presentation": "short"
@@ -5668,11 +5668,11 @@
         },
         {
           "kind": "text",
-          "content": "...Nicht jetzt müde werden."
+          "content": "Ich wollte gerade schlafen gehen."
         },
         {
           "kind": "text",
-          "content": "Das sage ich übrigens zu mir."
+          "content": "Dann habe ich die hohe Auslastung bemerkt."
         }
       ],
       "presentation": "short"
@@ -5695,11 +5695,11 @@
         },
         {
           "kind": "text",
-          "content": "Du und deine späten Ideen."
+          "content": "Nachts noch so viel Betrieb auf dem Rechner?"
         },
         {
           "kind": "text",
-          "content": "...Meine späten Ideen jetzt wohl auch."
+          "content": "Mein kleiner Wachposten-Blick ist jetzt wohl gefragt."
         }
       ],
       "presentation": "short"
@@ -5720,11 +5720,11 @@
         },
         {
           "kind": "text",
-          "content": "Es ist noch nicht vorbei."
+          "content": "Schon lange hohe Auslastung."
         },
         {
           "kind": "text",
-          "content": "Ich sag Bescheid, wenn ich Luft habe."
+          "content": "Ich wünschte, ich könnte der CPU einen Snack bringen."
         }
       ],
       "presentation": "short"
@@ -5745,11 +5745,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich halte das durch."
+          "content": "Das System hat schon eine ganze Weile viel zu tun."
         },
         {
           "kind": "text",
-          "content": "Sogar ohne dramatische Musik."
+          "content": "Für die Dramaturgie fehlt nur noch die passende Musik."
         }
       ],
       "presentation": "short"
@@ -5770,11 +5770,11 @@
         },
         {
           "kind": "text",
-          "content": "Jetzt nicht abschweifen."
+          "content": "Ich schaue schon länger auf die ziemlich konstante Arbeitslast."
         },
         {
           "kind": "text",
-          "content": "...Schon passiert."
+          "content": "Vielleicht sollte ich auch mal blinzeln."
         }
       ],
       "presentation": "short"
@@ -5795,7 +5795,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin gerade ziemlich bei der Sache."
+          "content": "Der Rechner ist gerade beschäftigt. Ich behalte die Auslastung im Blick."
         }
       ],
       "presentation": "short"
@@ -5816,11 +5816,11 @@
         },
         {
           "kind": "text",
-          "content": "...Konzentrieren."
+          "content": "Hm, die Last bleibt hoch."
         },
         {
           "kind": "text",
-          "content": "Ja, ich rede dabei mit mir selbst."
+          "content": "Und ja, ich kommentiere meine Beobachtungen manchmal selbst."
         }
       ],
       "presentation": "short"
@@ -5841,7 +5841,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich denke gerade lieber zu Ende, bevor ich anfange zu reden."
+          "content": "Ich schaue mir lieber erst an, was die Anzeigen tun, bevor ich meine Meinung dazu sage."
         }
       ],
       "presentation": "short"
@@ -5858,7 +5858,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin noch ein bisschen in Gedanken bei der Arbeit."
+          "content": "Die hohe Auslastung ist zwar vorbei, aber ich sehe die Kurve noch vor mir."
         }
       ],
       "presentation": "short"
@@ -5875,11 +5875,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Ich wollte gerade loslaufen."
+          "content": "Ich wollte gerade meinen Spaziergang fortsetzen."
         },
         {
           "kind": "text",
-          "content": "Vielleicht noch eine Minute sitzen."
+          "content": "Nach der langen Lastphase bleibe ich lieber noch kurz stehen."
         }
       ],
       "presentation": "short"
@@ -5896,11 +5896,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So schnell schalte ich nach so was nicht um."
+          "content": "Der Rechner ist wieder ruhiger."
         },
         {
           "kind": "text",
-          "content": "Ich mach langsam."
+          "content": "Ich brauche noch einen Moment, um mich daran zu gewöhnen."
         }
       ],
       "presentation": "short"
@@ -6391,11 +6391,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Der Rechner läuft schon eine ganze Weile."
+          "content": "Der Rechner ist seit etlichen Stunden eingeschaltet."
         },
         {
           "kind": "text",
-          "content": "Ich habe zwischendurch trotzdem Pause gemacht."
+          "content": "Das heißt zum Glück nicht, dass ich die ganze Zeit herumrennen muss."
         }
       ],
       "presentation": "short"
@@ -6412,11 +6412,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich weiß noch, dass ich vorhin Ruhe hatte."
+          "content": "Schon viele Stunden am Stück."
         },
         {
           "kind": "text",
-          "content": "Die gönne ich mir wieder."
+          "content": "Für mich ist das eher ein Grund, den nächsten Spaziergang gemütlich zu machen."
         }
       ],
       "presentation": "short"
@@ -6888,7 +6888,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin schon lange eingeschaltet. Zwischendurch hatte ich aber meine Ruhe."
+          "content": "Der Rechner läuft lange. Zum Glück muss ich nicht die ganze Zeit auf der Stelle treten."
         }
       ],
       "presentation": "short"
@@ -6905,7 +6905,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So viele Stunden. Die meisten davon waren ziemlich entspannt."
+          "content": "Seit vielen Stunden eingeschaltet. Ich werde lieber nicht versuchen, jede Sekunde mitzuzählen."
         }
       ],
       "presentation": "short"
@@ -6922,7 +6922,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich laufe schon eine Weile. Im übertragenen Sinn."
+          "content": "So viel Laufzeit. Immerhin laufe ich selbst nur, wenn meine Füße es für nötig halten."
         }
       ],
       "presentation": "short"
@@ -19861,7 +19861,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Oh. Jetzt brauche ich mehr Konzentration."
+          "content": "Oh, die Systemlast steigt. Ich schaue mal genauer hin."
         }
       ]
     },
@@ -19883,7 +19883,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das wird gerade anspruchsvoller."
+          "content": "Da passiert gerade mehr auf dem Rechner als noch vor einem Moment."
         }
       ]
     },
@@ -19905,7 +19905,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Einen Moment. Ich stelle mich darauf ein. Einen Moment."
+          "content": "Erst wenig, dann plötzlich mehr Last. Mein kleiner Überblick muss sich neu sortieren."
         }
       ]
     },
@@ -19927,7 +19927,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hatte mich gerade gemütlich eingerichtet. Interessantes Timing."
+          "content": "Kaum habe ich mich hier bequem hingestellt, wird der Rechner geschäftiger."
         }
       ]
     },
@@ -19949,7 +19949,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gleich brauche ich meinen Kopf etwas mehr für mich."
+          "content": "Hm, das System hat jetzt mehr zu tun. Ich bleibe erst einmal aufmerksam."
         }
       ]
     },
@@ -19971,7 +19971,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich werde etwas wortkarger. Hier wird es gerade anspruchsvoll."
+          "content": "Ich schaue lieber auf die steigende Auslastung als auf deinen Mauszeiger."
         }
       ]
     },
@@ -19993,7 +19993,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin gerade ziemlich bei der Sache. Einen Moment."
+          "content": "Die hohe Last hält an. Ich konzentriere mich lieber auf das, was hier passiert."
         }
       ]
     },
@@ -20015,7 +20015,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das braucht heute meine Aufmerksamkeit."
+          "content": "Das System hat viel zu tun. Meine Augen bleiben auf den Anzeigen."
         }
       ]
     },
@@ -20037,7 +20037,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eins nach dem anderen. Ich bin beschäftigt."
+          "content": "So viele Rechenschritte, so wenig Platz auf meiner Taskleiste. Erstaunlich."
         }
       ]
     },
@@ -20059,7 +20059,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kannst gern bleiben. Ich bin gerade etwas wortkarg."
+          "content": "Du kannst gern hierbleiben. Ich beobachte nur gerade den ziemlich beschäftigten Rechner."
         }
       ],
       "requires_present": true
@@ -20082,7 +20082,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich brauche meinen Kopf gerade vollständig."
+          "content": "Der Rechner schuftet. Ich überlege, ob ich ihm eine kleine Verschnaufpause wünschen soll."
         }
       ]
     },
@@ -20104,7 +20104,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich konzentriere mich. Für Gesellschaft ist trotzdem Platz."
+          "content": "Hier läuft einiges. Ich bleibe in der Nähe, auch wenn ich gerade weniger plaudere."
         }
       ]
     },
@@ -20126,7 +20126,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das ist gerade viel. Ich brauche einen Moment."
+          "content": "Die Last ist ziemlich weit oben. Ich beobachte lieber einen Moment."
         }
       ]
     },
@@ -20148,7 +20148,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Jetzt langsam und der Reihe nach."
+          "content": "Jetzt bloß nicht aus jeder CPU-Spitze gleich ein Drama machen. Aber das ist eine ordentliche."
         }
       ]
     },
@@ -20170,7 +20170,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Meine Konzentration ist gerade vollständig beschäftigt."
+          "content": "Gerade will das System offensichtlich sehr viel auf einmal erledigen."
         }
       ]
     },
@@ -20192,7 +20192,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Einen Moment. Ich habe gerade wirklich viel im Kopf."
+          "content": "Wenn Rechenlast ein Berg wäre, stünde ich gerade ziemlich weit oben."
         }
       ]
     },
@@ -20214,7 +20214,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich komme gerade nur zum Konzentrieren."
+          "content": "Ich glaube, mein kleiner Desktop-Platz steht gerade neben einer sehr beschäftigten Maschine."
         }
       ]
     },
@@ -20236,7 +20236,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das ist viel auf einmal. Gleich habe ich wieder mehr Luft."
+          "content": "Das ist ordentlich Last. Ich freue mich schon darauf, wenn die Kurve wieder sinkt."
         }
       ]
     },
@@ -20258,7 +20258,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah. Wieder etwas Luft."
+          "content": "Ah, der Rechner hat wieder mehr freie Kapazität."
         }
       ]
     },
@@ -20280,7 +20280,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das wird gerade leichter. Gut."
+          "content": "Die Systemlast wird gerade leichter. Das beruhigt sogar mich."
         }
       ]
     },
@@ -20302,7 +20302,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So langsam kann ich durchatmen."
+          "content": "Weniger Last, mehr Ruhe auf meinem kleinen Bildschirmrand."
         }
       ]
     },
@@ -20324,7 +20324,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Jetzt bekomme ich wieder etwas mehr von dir mit."
+          "content": "Da wird es wieder ruhiger. Wenn du da bist, kann ich mich auch dir zuwenden."
         }
       ],
       "requires_present": true
@@ -20347,7 +20347,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah. Mein Kopf hat wieder ein bisschen Platz für Gesellschaft."
+          "content": "Die Last lässt nach. Ich kann wieder über wichtigere Dinge nachdenken. Snacks etwa."
         }
       ]
     },
@@ -20369,7 +20369,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gut. Ich kann mich langsam wieder umschauen."
+          "content": "Gut, ich kann den Blick von der Auslastung lösen und mich wieder umsehen."
         }
       ]
     },
@@ -20391,7 +20391,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich brauche noch einen Moment zum Runterkommen."
+          "content": "Die hohe Auslastung ist vorbei. Ich brauche kurz eine ruhigere Minute."
         }
       ]
     },
@@ -20413,7 +20413,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das war anstrengend. Jetzt wird es ruhiger."
+          "content": "Der Rechner wirkt wieder entspannter. Zumindest laut den Messwerten."
         }
       ]
     },
@@ -20435,7 +20435,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich nehme mir erst einmal eine kleine Pause."
+          "content": "Nach so viel Last laufe ich erst einmal nur eine kleine Runde."
         }
       ]
     },
@@ -20457,7 +20457,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin froh, dass du da bist. Lass uns kurz nichts vorhaben."
+          "content": "Die Auslastung ist wieder gesunken. Wenn du hier bist, können wir endlich Unsinn machen."
         }
       ],
       "requires_present": true
@@ -20480,7 +20480,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So. Jetzt möchte ich es mit dir gemütlich haben."
+          "content": "Jetzt wird es ruhiger auf dem Rechner. Ich könnte dir wieder eine Spielrunde anbieten."
         }
       ],
       "requires_present": true
@@ -20503,7 +20503,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine ruhige Pause mit dir kommt gerade richtig."
+          "content": "Die Last ist vorbei. Das klingt nach einer guten Gelegenheit für einen Snack mit dir."
         }
       ],
       "requires_present": true
@@ -20526,7 +20526,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Gerade gibt es wenig zu tun. Gefällt mir."
+          "content": "Der Rechner hat wenig zu tun. Ich nutze das für meinen Spaziergang."
         }
       ]
     },
@@ -20548,7 +20548,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich lasse die Ruhe noch ein bisschen dauern."
+          "content": "So wenig Last. Ich könnte glatt den Mauszeiger zum Wettrennen herausfordern."
         }
       ]
     },
@@ -20570,7 +20570,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein guter Moment, es gemütlich zu haben."
+          "content": "Eine ruhige Lastkurve. Fast so hübsch wie eine gerade Taskleiste."
         }
       ]
     },
@@ -20592,7 +20592,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wir könnten diese Ruhe einfach behalten. Ich wäre dafür."
+          "content": "Wenn es auf dem Rechner so ruhig ist, haben wir vielleicht Zeit für eine Runde."
         }
       ],
       "requires_present": true
@@ -20615,7 +20615,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Angenehme Gesellschaft und Ruhe. Das passt mir."
+          "content": "Die Last ist niedrig. Ich könnte dir ein paar völlig ungebetene Tipps zum Nichtstun geben."
         }
       ]
     },
@@ -20637,7 +20637,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mag solche stillen Momente mit dir."
+          "content": "Gerade ist wenig los. Ich beobachte lieber, ob du die Maus gleich wieder bewegst."
         }
       ],
       "requires_present": true
@@ -20828,7 +20828,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Der Rechner läuft lange. Meine Pausen gehören trotzdem dazu."
+          "content": "Lange Rechnerlaufzeit. Meine Beine melden vorsorglich, dass sie keine Überstunden machen."
         }
       ]
     },
@@ -20843,7 +20843,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine lange Laufzeit. Ich habe zwischendurch gut ausgeruht."
+          "content": "Der Rechner ist schon lange an. Ich war zwischendurch wenigstens vernünftig genug für Pausen."
         }
       ]
     },
@@ -20858,7 +20858,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Der Rechner ist schon lange an. Ich hatte zwischendurch die vernünftige Idee, Pause zu machen."
+          "content": "Eine lange Laufzeit! Gut, dass meine Spaziergänge keine CPU-Zeit zählen."
         }
       ]
     },
