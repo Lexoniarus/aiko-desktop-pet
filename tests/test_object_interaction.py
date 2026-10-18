@@ -6,16 +6,12 @@ from unittest.mock import patch
 from aiko_pet.application.object_awareness import held_type_conflicts_with_memory
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
-from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.pet.animation.character import PlaybackEvent
 from aiko_pet.pet.balance import BALANCE
-from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
 from aiko_pet.pet.mind.object_decisions import ObjectUseDecision
 from aiko_pet.pet.mind.object_intentions import ObjectGoal
 from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.mind.object_perception import ObjectObservation
-from aiko_pet.ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
-from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
 from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectFootprint,
@@ -25,7 +21,6 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
-from tools.reaction_test_support import FakeScheduler
 
 
 class ObjectInteractionTests(unittest.TestCase):
@@ -96,82 +91,6 @@ class ObjectInteractionTests(unittest.TestCase):
         ))
         self.delay_feedback = delayed
         self.coordinator.arrive()
-
-    def test_named_losses_wait_for_presented_text_before_search_is_ready(self):
-        # Confirmed historical losses are application input here. Geometry and
-        # orientation admission remain in behavior and native World tests.
-        self.memory.restore_snapshot(())
-        scheduler = FakeScheduler()
-        visible, receipts, presented = [], [], []
-        player = ReactionPlayer(
-            schedule=scheduler.schedule, cancel_timer=scheduler.cancel,
-            display_text=lambda text, ms: visible.append((text, ms)),
-            display_emote=lambda _text, _ms: None,
-            start_action=lambda _clip, _duration: self.fail("feedback animated"),
-            mark_spoken=lambda: None, is_closed=lambda: False,
-        )
-        self.addCleanup(player.cancel)
-        presenter = ObjectFeedbackPresenter(player, load_item_catalog())
-        book = DialogueBook.from_file()
-
-        def received(receipt):
-            receipts.append(receipt)
-            self.coordinator.receive_feedback(receipt)
-
-        def present(cue):
-            presented.append(cue)
-            line = next(line for line in book.lines if line.event == cue.event
-                        and not line.moods and not line.periods and not line.weekdays)
-            presenter.show(cue, Reaction(line.id, line.beats, line.animation,
-                                         line.event), received)
-
-        self.coordinator._feedback = present
-        self.coordinator._cancel_feedback = player.cancel
-        records = []
-        for identity in ("dango", "energy_drink", "onigiri"):
-            self.memory.update((ObjectObservation(
-                identity, identity, "drink" if identity == "energy_drink" else "food",
-                100, 0, True, 0,
-            ),), now=0)
-            self.memory.mark_missing(identity)
-            known = self.memory.get(identity)
-            assert known is not None
-            records.append(known.token)
-            self.assertTrue(self.coordinator.notice_absence(known))
-
-        for index, expected in enumerate(("Dango", "Energy", "Onigiri", None)):
-            self.coordinator.update()
-            self.assertTrue(self.coordinator.search_active)
-            self.assertFalse(self.coordinator.search_ready)
-            self.assertEqual(len(presented), index + 1)
-            cue = presented[-1]
-            self.assertEqual(cue.event, "object_place_missing" if expected
-                             else "object_search")
-            if expected:
-                self.assertIn(expected, visible[-1][0])
-                self.assertEqual(cue.record_id, records[index])
-            token = player.pending_timer
-            assert token is not None
-            delay, stale = scheduler.callbacks[token]
-            self.assertGreaterEqual(delay, 1800)
-            self.assertEqual(delay, visible[-1][1])
-            # Ordinary updates cannot skip readable text; a previous completion
-            # cannot satisfy the newly presented required cue.
-            self.coordinator.update()
-            self.assertEqual(player.pending_timer, token)
-            if receipts:
-                self.coordinator.receive_feedback(receipts[-1])
-                self.assertFalse(self.coordinator.search_ready)
-            scheduler.fire(token)
-            self.coordinator.update()
-            current_timer = player.pending_timer
-            stale()
-            self.assertEqual(player.pending_timer, current_timer)
-            self.assertEqual(len(receipts), index + 1)
-        self.assertTrue(self.coordinator.search_ready)
-        self.assertEqual(len({cue.key for cue in presented}), 4)
-        self.assertTrue(all(receipt.completed for receipt in receipts))
-        self.assertEqual(self.consumed, [])
 
     def test_acquisition_precedes_consumption_and_duplicates_are_ignored(self):
         self.start_investigation()

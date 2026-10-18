@@ -23,7 +23,7 @@ passed 143 targeted tests and instrumented the two misleading test fixtures.
 | --- | --- | --- | --- |
 | 1 | `FoodGuiTests.test_full_energy_rejects_drink_without_eating_animation` only selects a menu item. The observed result is USER_HELD cursor custody, idle interaction and energy 100. Merge its full-energy case into the existing drink-selection test and remove the obsolete refusal claim. | Selection at energy 40 and 100 starts cursor custody without consumption, nutrition, friendship or an eating animation. Actual hand/face refusal remains in the existing World GUI tests. | Complete |
 | 2 | `ObjectInteractionTests.test_take_notification_does_not_interrupt_pet_held_custody` finishes pickup and reaches eat; target_taken returns at its phase guard without reading custody. Stop at the actual attachment event while still in pick_up. | A late take notification cannot steal a PET_HELD item or change its committed episode. Actual World pickup and frame-bound reach checks remain unchanged. | Complete |
-| 3 | The named-loss feedback test composes Coordinator, Presenter, ReactionPlayer and catalogue but reuses a grasp fixture and rewrites private callback fields. Move it into a dedicated headless integration module with its own minimal fixture and constructor-injected ports. | All named missing bubbles, readable delays, distinct completion receipts, stale callback protection and search readiness remain asserted. Keep separate behavior/orientation and native timer/input tests. | Pending |
+| 3 | The named-loss feedback test composes Coordinator, Presenter, ReactionPlayer and catalogue but reuses a grasp fixture and rewrites private callback fields. Move it into a dedicated headless integration module with its own minimal fixture and constructor-injected ports. | All named missing bubbles, readable delays, distinct completion receipts, stale callback protection and search readiness remain asserted. Keep separate behavior/orientation and native timer/input tests. | Complete |
 
 The headless integration must not construct DesktopPet or Tk widgets, prepare an
 unrelated apple pickup, mutate private callback fields, or import another test
@@ -85,3 +85,25 @@ process removed only the PET_HELD early return from an in-memory copy of
 The original method was restored; no production source was edited. This confirms
 that the test protects the intended custody guard. Plan EOF whitespace is also
 normalized.
+
+### Stage 3 completed
+
+Moved the named-loss test to `tests/test_object_feedback_flow.py`, in its own
+ObjectFeedbackFlowTests fixture. It constructs only the real empty World,
+ObjectMemory, scheduler, Presenter, ReactionPlayer and Coordinator required for
+this collaboration. Constructor ports wire feedback and cancellation from the
+start; the fixture no longer creates an unrelated apple or overwrites private
+callback fields. Physical-action ports fail immediately if called.
+
+The original named Dango/Energy/Onigiri text, reading delay, loss ordering,
+matching/distinct receipts, stale callback checks and blocked search readiness
+are retained. The old no-consumption assertion is strengthened by rejecting any
+consume call and checking that World remains empty. Coordinator unit tests no
+longer import the UI presenter/player, catalogue or item-asset loader for this
+integration. The new module matches the existing Windows `test_object*.py`
+selection and ordinary discovery, without a CI workflow change.
+
+Validation: new integration, coordinator, behavior, object reactions and reaction
+playback: 81 tests in 0.384 seconds, no skips. Ruff passes on both affected
+modules; Pyright 1.1.414 reports zero errors/warnings. All three stages are
+complete. Full final verification follows.
