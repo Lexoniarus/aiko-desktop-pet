@@ -18,6 +18,10 @@ Related references: [current architecture](ARCHITECTURE.md),
 [adaptive cursor concept](ADAPTIVE_CURSOR_CONCEPT.md) and
 [integration boundaries](INTEGRATION_ARCHITECTURE.md).
 
+The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) records complete
+existing sequences and their conditions for individual editorial review before
+any wording changes. Its review status and proposals do not change runtime copy.
+
 ## Product direction
 
 Aiko should offer small, varied moments of entertainment on her own initiative,

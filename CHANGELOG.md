@@ -32,6 +32,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Tests and documentation
 
+- Add a complete bubble-dialogue review workbook with ordered sequences,
+  event/context conditions, an unreviewed status per sequence and empty text
+  proposal fields. Include fixed speech fallbacks and the RPS countdown without
+  changing the runtime catalogues or selection/playback behavior.
 - Preserve the owner-supplied social/entertainment and adaptive cursor concepts,
   including content APIs, local translation and contextual mouse interaction.
   Link them from the documentation index and minigame catalogue, and distinguish

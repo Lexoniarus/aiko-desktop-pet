@@ -76,6 +76,15 @@ The social concept connects the [minigame catalogue](MINIGAME_CANDIDATES.md)
 to the proposed content/translation pipeline. Cursor behavior shares attention
 and presentation owners but does not depend on online sources or translation.
 
+## Dialogue editorial review
+
+The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) inventories every
+complete catalogue sequence and additional non-catalogue speech, with current
+event triggers, variant filters and ordered text/emote/pause beats. Each row
+has one review-status field and an initially empty whole-sequence proposal.
+It is an editorial snapshot for `feature/social-optimization`; the runtime
+catalogues remain the source of shipped wording. All entries start unreviewed.
+
 ## Keeping documentation current
 
 Maintain behavior in the World contract, ownership in the architecture guide and
