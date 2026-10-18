@@ -19,6 +19,7 @@ from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.view_models.care_text import format_care_response
+from tools.pet_test_support import set_test_pet_values
 
 
 def require_reaction(value: Reaction | None) -> Reaction:
@@ -137,7 +138,7 @@ class NeedsAndBondTests(unittest.TestCase):
             state.interact("pet", now=start + i + 1)
         self.assertAlmostEqual(state.friendship, first)
         # Only another genuine need for care may earn trust after cooldown.
-        state.affection = 55
+        set_test_pet_values(state, affection=55)
         state.interact("pet", now=start + 13 * 60)
         self.assertGreater(state.friendship, first)
 
@@ -146,11 +147,11 @@ class NeedsAndBondTests(unittest.TestCase):
         start = timestamp()
         for k in range(30):
             for action in ("feed", "pet", "talk", "play", "energy_drink"):
-                state.energy = 65
+                set_test_pet_values(state, energy=65)
                 state.interact(action, now=start + 900 * k)
         self.assertLessEqual(state.friendship, 31 + 7.000001)
         previous = state.friendship
-        state.social = 30
+        set_test_pet_values(state, social=30)
         state.interact("talk", now=start + 24 * 3600 + 1)
         self.assertGreater(state.friendship, previous)
 
@@ -277,14 +278,14 @@ class SocialDialogueTests(unittest.TestCase):
                 ).result,
                 self.mind.observe_care(state, self.context, 62),
             ),
-            "talk_lonely",
+            "talk",
         )
 
     def test_new_friendship_dialogues_are_conditioned(self):
         state = PetState(friendship=88, social=78, mood=74)
         self.assertEqual(
             require_reaction(self.mind.click("left", state, self.context, 40)).event,
-            "click_close",
+            "click_left",
         )
         self.assertEqual(
             self.mind.care_event(
@@ -295,7 +296,7 @@ class SocialDialogueTests(unittest.TestCase):
                 ).result,
                 self.mind.observe_care(state, self.context, 100),
             ),
-            "pet_close",
+            "pet",
         )
         self.assertEqual(
             self.mind.care_event(
@@ -306,7 +307,7 @@ class SocialDialogueTests(unittest.TestCase):
                 ).result,
                 self.mind.observe_care(state, self.context, 100),
             ),
-            "talk_close",
+            "talk",
         )
 
     def test_energy_drink_has_grounded_line_even_when_full(self):
@@ -322,7 +323,7 @@ class SocialDialogueTests(unittest.TestCase):
             ),
             "energy_drink_full",
         )
-        state.energy = 70
+        set_test_pet_values(state, energy=70)
         self.assertEqual(
             self.mind.care_event(
                 plan_care_action(

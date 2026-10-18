@@ -19,6 +19,7 @@ from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
+from aiko_pet.pet.mind.reaction_sequence import Cue
 from tools.media_crop import CapturedFrame, capture_screen, save_sequence
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,7 +71,8 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     """
     # This is a temporary media-only state. Clear previous scripted care
     # deadlines so they cannot mask the passive idle director.
-    pet.state.sleeping = False
+    if pet.state.sleeping:
+        pet.state.interact("sleep")
     pet._action_playback.until = 0.0
     pet._action_playback.clip_id = "idle"
     pet._reaction_player.cancel()
@@ -101,7 +103,7 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     # Capture the calmer one-pixel sway through the real Tk widget;
     # the feet and the selected gaze sprite remain anchored.
     for phase in range(8):
-        pet._animated.render(now + phase * .42 + .01, (0, 0))
+        pet._animated.render(now + phase * 0.42 + 0.01, (0, 0))
         add_frame(420)
     ambient.next_blink_at = time.monotonic() - 1
     pet._animated.render(time.monotonic(), (0, 0))
@@ -111,16 +113,16 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     add_frame(clip.timings[0])
     for _ in range(1, 8):
         at = pet._animated.frame_clock.frame_started_at
-        pet._animated.show_frame("idle", at + clip.timings[0] / 1000 + .002)
+        pet._animated.show_frame("idle", at + clip.timings[0] / 1000 + 0.002)
         add_frame(clip.timings[0])
     at = pet._animated.frame_clock.frame_started_at
-    pet._animated.show_frame("idle", at + clip.timings[-1] / 1000 + .002)
+    pet._animated.show_frame("idle", at + clip.timings[-1] / 1000 + 0.002)
     if ambient.blinking or pet._animated.frame_clock.active_key != ("idle", 0):
         raise RuntimeError("Idle blink did not return to the neutral pose")
     # Resume slow motion after all eight blink frames, not during them.
     rest_at = ambient._motion_started_at
     for phase in range(8):
-        pet._animated.render(rest_at + phase * .42 + .01, (0, 0))
+        pet._animated.render(rest_at + phase * 0.42 + 0.01, (0, 0))
         add_frame(420)
 
     ambient.next_glance_at = time.monotonic() - 1
@@ -133,7 +135,7 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     # Hold the same lateral look sprite while its head subtly rocks.
     look_at = time.monotonic()
     for phase in range(3):
-        pet._animated.render(look_at + phase * .42, (0, 0))
+        pet._animated.render(look_at + phase * 0.42, (0, 0))
         add_frame(420)
         key = pet._animated.frame_clock.active_key
         if key is None or key[0] != "look":
@@ -141,12 +143,10 @@ def capture_ambient_behavior(pet: DesktopPet) -> None:
     ambient.suspend(time.monotonic())
     back_at = time.monotonic()
     for phase in range(8):
-        pet._animated.render(back_at + phase * .42 + .01, (0, 0))
+        pet._animated.render(back_at + phase * 0.42 + 0.01, (0, 0))
         add_frame(420)
     save_sequence(frames, durations, PREVIEWS / AMBIENT_GIF)
-    print(
-        f"Captured {len(frames)} real ambient UI frames: {AMBIENT_GIF}"
-    )
+    print(f"Captured {len(frames)} real ambient UI frames: {AMBIENT_GIF}")
 
 
 def capture_ui() -> None:
@@ -160,7 +160,8 @@ def capture_ui() -> None:
             pet.settings.auto_walk = False
             pet.settings.auto_routine = False
             pet.settings.observe_computer = False
-            pet.state.sleeping = False
+            if pet.state.sleeping:
+                pet.state.interact("sleep")
             if pet._runtime.scheduled_greeting is not None:
                 pet.root.after_cancel(pet._runtime.scheduled_greeting)
                 pet._runtime.scheduled_greeting = None
@@ -184,10 +185,14 @@ def capture_ui() -> None:
             # production. Only its scheduled cue progression is controlled.
             reaction = Reaction(
                 "gallery-reaction",
-                "Hm? Hast du mich gerade gerufen?",
-                "waving", "click_left",
-                "Ach so! Ich bin ja schon da.",
-                800, "question", "heart",
+                (
+                    Cue("emote", "question", 800),
+                    Cue.text("Hm? Du schaust nach mir?"),
+                    Cue.text("Schön, dass du da bist."),
+                    Cue("emote", "heart", 800),
+                ),
+                "waving",
+                "click_left",
             )
             pet._react(reaction, 2500)
             reaction_frames: list[CapturedFrame] = []
@@ -198,7 +203,8 @@ def capture_ui() -> None:
                 reaction_frames.append(capture_screen(pet.root))
             pet._reaction_player.cancel()
             save_sequence(
-                reaction_frames, [800, 2400, 2250, 1150],
+                reaction_frames,
+                [800, 2400, 2250, 1150],
                 PREVIEWS / REACTION_GIF,
             )
             print(f"Captured four real reaction cues: {REACTION_GIF}")
@@ -213,7 +219,7 @@ def capture_ui() -> None:
 
 
 def capture_current_sprite_animations() -> None:
-    """Preview all 112 bundled runtime poses with real manifest durations."""
+    """Preview all 120 bundled runtime poses with real manifest durations."""
     manifest = json.loads(
         (ASSET_ROOT / "animations.json").read_text(encoding="utf-8"),
     )
@@ -230,16 +236,22 @@ def capture_current_sprite_animations() -> None:
             preview = Image.new("RGBA", (224, 246), "#202733")
             preview.alpha_composite(sprite, (16, 30))
             ImageDraw.Draw(preview).text(
-                (10, 8), state.replace("-", " "), fill="#b0e7fb",
+                (10, 8),
+                state.replace("-", " "),
+                fill="#b0e7fb",
             )
             frames.append(preview.convert("RGB"))
             durations.append(max(80, int(item["duration_ms"])))
-    if len(frames) != 112:
-        raise RuntimeError("Current Aiko asset catalog is not 112 poses")
+    if len(frames) != 120:
+        raise RuntimeError("Current Aiko asset catalog is not 120 poses")
     frames[0].save(
         PREVIEWS / ANIMATION_GIF,
-        save_all=True, append_images=frames[1:],
-        duration=durations, loop=0, disposal=2, optimize=True,
+        save_all=True,
+        append_images=frames[1:],
+        duration=durations,
+        loop=0,
+        disposal=2,
+        optimize=True,
     )
     print(f"Captured {len(frames)} current sprite frames: {ANIMATION_GIF}")
 

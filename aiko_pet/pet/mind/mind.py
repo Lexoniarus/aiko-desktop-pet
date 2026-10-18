@@ -8,6 +8,7 @@ from __future__ import annotations
 import random
 from collections import deque
 from dataclasses import dataclass
+from typing import Literal
 
 from ..balance import BALANCE
 from ..care_result import CareEffect, CareResult
@@ -17,6 +18,7 @@ from .adaptive_models import Behaviour
 from .catalog import DialogueBook, Reaction
 from .click_policy import ClickButton, choose_click_reaction
 from .cursor_attention import CursorAttention
+from .dialogue_context import DialogueContext, FriendshipStage
 from .work_episode import WorkEpisodeMemory
 
 
@@ -25,10 +27,9 @@ class CareReactionContext:
     """Conversation facts captured before the care aggregate changes."""
 
     tone: str
-    friendship: float
-    social: float
     affection: float
     meal_due: bool
+    dialogue: DialogueContext
 
 
 class PetMind:
@@ -62,6 +63,13 @@ class PetMind:
         self._last_care_at = -1.0
         self._last_social_comment = float("-inf")
         self._last_affection_comment = float("-inf")
+        self._last_spontaneous_story = float("-inf")
+
+    def note_object_withholding(self, now: float) -> None:
+        """Express temporary frustration using the existing emotion owner."""
+        self.irritated_until = max(
+            self.irritated_until, now + BALANCE.number("mind", "irritation_seconds"),
+        )
 
     def set_situation(
         self,
@@ -111,6 +119,39 @@ class PetMind:
             return "playful"
         return "calm"
 
+    def dialogue_context(
+        self,
+        state: PetState,
+        context: TimeContext,
+        now: float,
+        *,
+        present: bool | None = None,
+    ) -> DialogueContext:
+        needs = set()
+        for name, value, threshold in (
+            ("hungry", state.satiety, BALANCE.integer("mind", "hungry_satiety")),
+            ("tired", state.energy, BALANCE.integer("mind", "tired_energy")),
+            ("lonely", state.social, BALANCE.integer("mind", "care_lonely_social")),
+            (
+                "seeking_affection",
+                state.affection,
+                BALANCE.integer("mind", "care_low_affection"),
+            ),
+        ):
+            if value <= threshold:
+                needs.add(name)
+        situation = self.situation
+        return DialogueContext(
+            FriendshipStage.from_level(state.friendship_level),
+            self.emotion(state, now),
+            context,
+            frozenset(needs),
+            working=bool(situation and situation.focused),
+            present=present
+            if present is not None
+            else (situation.present if situation else None),
+        )
+
     def select_reaction(
         self,
         event: str,
@@ -119,9 +160,44 @@ class PetMind:
         now: float,
         *,
         tone: str | None = None,
+        dialogue: DialogueContext | None = None,
     ) -> Reaction | None:
-        """Select authored dialogue; speech playback is owned by the UI."""
-        return self.book.choose(event, tone or self.emotion(state, now), context, now)
+        """Choose against an immutable snapshot, including pre-care needs."""
+        snapshot = dialogue or self.dialogue_context(state, context, now)
+        mood = tone or snapshot.mood
+        presentation: Literal["short", "story"] = (
+            "story" if event == "talk" and mood != "asleep" else "short"
+        )
+        reaction = self.book.choose(
+            event,
+            mood,
+            snapshot.time,
+            now,
+            dialogue=snapshot,
+            presentation=presentation,
+        )
+        if reaction is None and presentation == "story":
+            reaction = self.book.choose(
+                event, mood, snapshot.time, now, dialogue=snapshot, presentation="short"
+            )
+        if reaction is not None and reaction.presentation == "story":
+            self.clicks.clear()
+        return reaction
+
+    def contact_text(
+        self, event: str, state: PetState, context: TimeContext, now: float
+    ) -> str:
+        """Choose short copy for deliberate game or farewell contact."""
+        reaction = self.select_reaction(
+            event,
+            state,
+            context,
+            now,
+            dialogue=self.dialogue_context(state, context, now, present=True),
+        )
+        if reaction is None:
+            raise ValueError(f"Missing contact dialogue: {event}")
+        return reaction.text
 
     def click(
         self,
@@ -169,13 +245,22 @@ class PetMind:
         context: TimeContext,
         now: float,
     ) -> CareReactionContext:
-        """Capture pre-care tone and conversation facts before state changes."""
-        self.last_contact = now
+        """Record an actual care contact and capture its preceding context."""
+        before = self.preview_care(state, context, now)
+        self.record_care_contact(now)
+        return before
+
+    def preview_care(
+        self,
+        state: PetState,
+        context: TimeContext,
+        now: float,
+    ) -> CareReactionContext:
+        """Read pre-care facts without claiming an uncommitted interaction."""
         return CareReactionContext(
             tone=self.emotion(state, now),
-            friendship=state.friendship,
-            social=state.social,
             affection=state.affection,
+            dialogue=self.dialogue_context(state, context, now, present=True),
             meal_due=bool(
                 context.meal
                 and (
@@ -184,6 +269,10 @@ class PetMind:
                 )
             ),
         )
+
+    def record_care_contact(self, now: float) -> None:
+        """Only call after a concrete human care action has been accepted."""
+        self.last_contact = now
 
     def care_event(self, result: CareResult, before: CareReactionContext) -> str:
         """Interpret the one committed effect without deciding acceptance again."""
@@ -198,21 +287,11 @@ class PetMind:
         if action == "play":
             if effect == CareEffect.PLAY_TIRED:
                 return "play_tired"
-            return (
-                "play_close"
-                if before.friendship >= BALANCE.integer("mind", "close_friendship")
-                else "play"
-            )
+            return "play"
         if action == "talk":
             if self.situation is not None and self.situation.focused:
                 return "talk_busy"
-            if before.social <= BALANCE.integer("mind", "care_lonely_social"):
-                return "talk_lonely"
-            return (
-                "talk_close"
-                if before.friendship >= BALANCE.integer("mind", "close_friendship")
-                else "talk"
-            )
+            return "talk"
         if action == "energy_drink":
             return (
                 "energy_drink_full"
@@ -226,11 +305,7 @@ class PetMind:
                 return "pet_during_work"
             if before.affection <= BALANCE.integer("mind", "care_low_affection"):
                 return "pet_needs_affection"
-            return (
-                "pet_close"
-                if before.friendship >= BALANCE.integer("mind", "close_friendship")
-                else "pet"
-            )
+            return "pet"
         raise ValueError(f"Unknown care event: {action}")
 
     def after_care(self, action: str, now: float) -> None:
@@ -280,20 +355,12 @@ class PetMind:
         elif self.work.recovering(now):
             event = "return_after_work"
         else:
-            event = (
-                "return_close"
-                if state.friendship >= BALANCE.integer("mind", "close_friendship")
-                else "return"
-            )
+            event = "return"
         return self.select_reaction(event, state, context, now)
 
     def _choose_idle_topic(self, state: PetState, context: TimeContext) -> str:
         """Select a grounded idle topic using the existing weighted rotation."""
         events = ["idle", "idle", "idle", "idle"]
-        if state.friendship >= BALANCE.integer(
-            "mind", "warm_friendship"
-        ) and state.mood >= BALANCE.integer("mind", "warm_mood"):
-            events.append("close_thought")
         if context.period in ("breakfast", "quiet"):
             events.append("morning")
         if context.period == "lunch":
@@ -367,4 +434,28 @@ class PetMind:
         if state.sleeping:
             return None
         event = self._select_spontaneous_event(state, context, now)
+        snapshot = self.dialogue_context(state, context, now)
+        if (
+            event in ("idle", "low_mood", "tired", "social_low", "affection_low")
+            and not snapshot.working
+            and snapshot.present is True
+            and now - self._last_spontaneous_story >= BALANCE.integer(
+                "dialogue", "spontaneous_story_quiet_seconds",
+            )
+            and self.rng.random() < BALANCE.number(
+                "dialogue", "spontaneous_story_probability",
+            )
+        ):
+            story = self.book.choose(
+                "talk",
+                snapshot.mood,
+                context,
+                now,
+                dialogue=snapshot,
+                presentation="story",
+            )
+            if story is not None:
+                self._last_spontaneous_story = now
+                self.clicks.clear()
+                return story
         return self.select_reaction(event, state, context, now)

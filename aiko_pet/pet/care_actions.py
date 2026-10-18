@@ -7,6 +7,7 @@ need, sleep, meal and friendship mutations. Display text belongs to the UI.
 from __future__ import annotations
 
 import time
+from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from typing import Protocol, cast
 
@@ -26,20 +27,43 @@ from .value_rules import clamp_need_value
 
 
 class CareValues(Protocol):
-    """Values required to decide a care action without mutating the owner."""
+    """Read-only care inputs; history is exposed as a sequence."""
 
-    sleeping: bool
-    sleep_origin: str
-    auto_sleep_night: str
-    nap_until: float
-    energy: float
-    satiety: float
-    mood: float
-    social: float
-    affection: float
-    meals_date: str
-    meals_today: list[str]
-    food: FoodState
+    @property
+    def sleeping(self) -> bool: ...
+
+    @property
+    def sleep_origin(self) -> str: ...
+
+    @property
+    def auto_sleep_night(self) -> str: ...
+
+    @property
+    def nap_until(self) -> float: ...
+
+    @property
+    def energy(self) -> float: ...
+
+    @property
+    def satiety(self) -> float: ...
+
+    @property
+    def mood(self) -> float: ...
+
+    @property
+    def social(self) -> float: ...
+
+    @property
+    def affection(self) -> float: ...
+
+    @property
+    def meals_date(self) -> str: ...
+
+    @property
+    def meals_today(self) -> Sequence[str]: ...
+
+    @property
+    def food(self) -> FoodState: ...
 
 
 @dataclass(frozen=True, slots=True)

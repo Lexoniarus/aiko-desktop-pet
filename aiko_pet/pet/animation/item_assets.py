@@ -13,6 +13,11 @@ class ItemSprite:
 
     path: Path
     pivot: tuple[float, float]
+    display_path: Path | None = None
+
+    @property
+    def render_path(self) -> Path:
+        return self.display_path or self.path
 
 
 @dataclass(frozen=True, slots=True)

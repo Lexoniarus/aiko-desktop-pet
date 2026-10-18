@@ -4,9 +4,14 @@ from __future__ import annotations
 
 import unittest
 
+from aiko_pet.application.object_feedback import InteractionPhase
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.desktop.visual_observation import DesktopVisualObservation
+from aiko_pet.desktop.visual_observation import (
+    DesktopVisualObservation,
+    VisualAttentionPorts,
+)
 from aiko_pet.pet.animation.animation import PassiveObservation
+from aiko_pet.pet.mind.object_attention import LookSide
 
 
 class Reading:
@@ -77,3 +82,84 @@ class DesktopVisualObservationTests(unittest.TestCase):
             PassiveObservation(None, False),
         )
         self.assertEqual(self.monitor.calls, 0)
+
+    def test_live_attention_uses_eye_geometry_and_existing_action_owners(self):
+        phase: InteractionPhase = "idle"
+        walking = 0.0
+        sleeping = False
+        observer = DesktopVisualObservation(
+            settings=self.settings, monitor=self.monitor,
+            eyes=lambda: (100, 200),
+            attention=VisualAttentionPorts(
+                phase=lambda: phase, walking=lambda: walking,
+                sleeping=lambda: sleeping,
+            ),
+        )
+        for scale in (1, 2):
+            self.settings.scale = scale
+            width = 192 * scale
+            pointer = (100 + 3 * width, 200 - width)
+            attention = observer.attention(pointer, pointer_recent=True)
+            self.assertEqual(attention.mode, "cursor")
+            self.assertEqual(attention.direction, (3, 1))
+            observer.object_target = (100 - 3 * width, 200)
+            self.settings.follow_cursor = False
+            self.assertEqual(observer.observe(1, pointer, 0, False).gaze_direction, 12)
+            walking = 10
+            self.assertEqual(observer.observe(1, pointer, 0, False).gaze_direction, 4)
+            phase = "inspect"
+            attention = observer.attention(pointer, pointer_recent=True)
+            self.assertEqual(attention.mode, "object")
+            self.assertFalse(attention.sees_environment(.1, 0))
+            sleeping = True
+            self.assertEqual(observer.observe(1, pointer, 0, False),
+                             PassiveObservation(None, False))
+            self.assertIsNone(observer.sector)
+            phase, walking, sleeping = "idle", 0, False
+            self.settings.follow_cursor = True
+            observer.object_target = None
+
+    def test_activity_port_holds_perception_across_cursor_and_movement(self):
+        active = True
+        observer = DesktopVisualObservation(
+            settings=self.settings, monitor=self.monitor, eyes=lambda: (100, 200),
+            attention=VisualAttentionPorts(activity_active=lambda: active,
+                                           walking=lambda: 10),
+        )
+        self.assertEqual(observer.attention((300, 200), pointer_recent=True).mode,
+                         "unavailable")
+        active = False
+        self.assertEqual(observer.attention((300, 200), pointer_recent=True).mode,
+                         "moving")
+
+    def test_only_feedback_for_the_live_tracked_subject_keeps_its_focus(self):
+        followed, feedback = "known", "known"
+        observer = DesktopVisualObservation(
+            settings=self.settings, monitor=self.monitor, eyes=lambda: (100, 200),
+            attention=VisualAttentionPorts(
+                following_subject=lambda: followed, feedback_subject=lambda: feedback,
+                activity_active=lambda: True,
+            ),
+        )
+        self.assertEqual(observer.attention((300, 200), pointer_recent=True).mode,
+                         "object")
+        feedback = "another"
+        self.assertEqual(observer.attention((300, 200), pointer_recent=True).mode,
+                         "unavailable")
+        followed = None
+        self.assertEqual(observer.attention((300, 200), pointer_recent=True).mode,
+                         "unavailable")
+
+    def test_orientation_read_port_controls_actual_gaze_before_sensor_sampling(self):
+        side: LookSide = -1
+        observer = DesktopVisualObservation(
+            settings=self.settings, monitor=self.monitor, eyes=lambda: (100, 200),
+            attention=VisualAttentionPorts(orientation_side=lambda: side),
+        )
+        observer.object_target = (1000, 200)
+        self.assertTrue(observer.orienting)
+        self.assertEqual(observer.attention((100, 0), pointer_recent=True).direction,
+                         (-1, 0))
+        self.assertEqual(observer.gaze_direction((100, 0)), 12)
+        side = 1
+        self.assertEqual(observer.gaze_direction((100, 0)), 4)

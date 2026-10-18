@@ -5,7 +5,7 @@ from __future__ import annotations
 import sys
 import tkinter as tk
 from functools import partial
-from typing import Callable
+from typing import Callable, Literal
 
 from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
@@ -20,8 +20,9 @@ class ActionToolbar:
     """Render care, pin state and optional details; HoverUi owns visibility."""
 
     NEEDS = (
-        ("satiety", GERMAN_TEXT.format("need.satiety"), "#f5bd7a"),
         ("mood", GERMAN_TEXT.format("need.mood"), "#95ddc1"),
+        ("satiety", GERMAN_TEXT.format("need.satiety"), "#f5bd7a"),
+        ("fun", GERMAN_TEXT.format("need.fun"), "#f2d67b"),
         ("energy", GERMAN_TEXT.format("need.energy"), "#98c9f5"),
         ("social", GERMAN_TEXT.format("need.social"), "#dda9ef"),
         ("affection", GERMAN_TEXT.format("need.affection"), "#f0a5be"),
@@ -71,11 +72,17 @@ class ActionToolbar:
             needs_frame.columnconfigure(column, weight=1, uniform="needs")
         for i, (key, _title, color) in enumerate(self.NEEDS):
             cell = tk.Frame(needs_frame, bg=self.skin.background)
-            cell.grid(row=i // 3, column=i % 3, sticky="ew", padx=3, pady=2)
+            if key == "mood":
+                cell.grid(row=0, column=0, columnspan=3, sticky="ew", padx=3,
+                          pady=(2, 7))
+            else:
+                cell.grid(row=(i - 1) // 3 + 1, column=(i - 1) % 3,
+                          sticky="ew", padx=3, pady=2)
             label = tk.Label(
                 cell,
                 text="",
-                font=(self.font_family, 9),
+                font=((self.font_family, 10, "bold") if key == "mood"
+                      else (self.font_family, 9)),
                 width=20,
                 fg=self.skin.text,
                 bg=self.skin.background,
@@ -85,7 +92,7 @@ class ActionToolbar:
             bar = tk.Canvas(
                 cell,
                 width=self.BAR_WIDTH,
-                height=10,
+                height=14 if key == "mood" else 10,
                 bd=0,
                 highlightthickness=0,
                 bg="#969FB2",
@@ -201,6 +208,15 @@ class ActionToolbar:
         if self._details_open and self.details is not None:
             self.details.refresh()
 
+    def refresh_actions(self) -> None:
+        """Project current permission; the controller rechecks on invocation."""
+        for action, button in self.buttons.items():
+            state: Literal["normal", "disabled"] = (
+                "normal" if self._actions.can_interact(action) else "disabled"
+            )
+            if button.cget("state") != state:
+                button.configure(state=state)
+
     def _button(
         self,
         parent: tk.Widget,
@@ -228,9 +244,11 @@ class ActionToolbar:
         if actual_width <= 1:
             actual_width = bar.winfo_reqwidth()
         amount = max(0.0, min(100.0, self._current.need_value(key)))
-        bar.coords(rect, 0, 0, round(actual_width * amount / 100), 10)
+        bar.coords(rect, 0, 0, round(actual_width * amount / 100),
+                   bar.winfo_reqheight())
 
     def refresh(self) -> None:
+        self.refresh_actions()
         view = self._snapshot()
         self._current = view
         changed = False

@@ -9,14 +9,16 @@
           "pivot": [
             15.5,
             25
-          ]
+          ],
+          "display_path": "display/1x/onigiri.png"
         },
         "2": {
           "path": "food/2x/onigiri.png",
           "pivot": [
             31,
             50
-          ]
+          ],
+          "display_path": "display/2x/onigiri.png"
         }
       },
       "icon": "icons/64/onigiri.png"
@@ -29,14 +31,16 @@
           "pivot": [
             19.5,
             24
-          ]
+          ],
+          "display_path": "display/1x/taiyaki.png"
         },
         "2": {
           "path": "food/2x/taiyaki.png",
           "pivot": [
             39,
             48
-          ]
+          ],
+          "display_path": "display/2x/taiyaki.png"
         }
       },
       "icon": "icons/64/taiyaki.png"
@@ -49,14 +53,16 @@
           "pivot": [
             13.5,
             26
-          ]
+          ],
+          "display_path": "display/1x/apple.png"
         },
         "2": {
           "path": "food/2x/apple.png",
           "pivot": [
             27.5,
             53
-          ]
+          ],
+          "display_path": "display/2x/apple.png"
         }
       },
       "icon": "icons/64/apple.png"
@@ -69,14 +75,16 @@
           "pivot": [
             12,
             28
-          ]
+          ],
+          "display_path": "display/1x/dango.png"
         },
         "2": {
           "path": "food/2x/dango.png",
           "pivot": [
             24.5,
             57
-          ]
+          ],
+          "display_path": "display/2x/dango.png"
         }
       },
       "icon": "icons/64/dango.png"
@@ -89,14 +97,16 @@
           "pivot": [
             16,
             25
-          ]
+          ],
+          "display_path": "display/1x/sandwich.png"
         },
         "2": {
           "path": "food/2x/sandwich.png",
           "pivot": [
             32,
             49
-          ]
+          ],
+          "display_path": "display/2x/sandwich.png"
         }
       },
       "icon": "icons/64/sandwich.png"
@@ -109,14 +119,16 @@
           "pivot": [
             10,
             35
-          ]
+          ],
+          "display_path": "display/1x/energy_drink.png"
         },
         "2": {
           "path": "food/2x/energy_drink.png",
           "pivot": [
             20,
             70
-          ]
+          ],
+          "display_path": "display/2x/energy_drink.png"
         }
       },
       "icon": "icons/64/energy_drink.png"
@@ -129,14 +141,16 @@
           "pivot": [
             18.5,
             30
-          ]
+          ],
+          "display_path": "display/1x/donut.png"
         },
         "2": {
           "path": "food/2x/donut.png",
           "pivot": [
             37,
             60
-          ]
+          ],
+          "display_path": "display/2x/donut.png"
         }
       },
       "icon": "icons/64/donut.png"
@@ -149,14 +163,16 @@
           "pivot": [
             16.5,
             30
-          ]
+          ],
+          "display_path": "display/1x/cookie.png"
         },
         "2": {
           "path": "food/2x/cookie.png",
           "pivot": [
             33,
             60
-          ]
+          ],
+          "display_path": "display/2x/cookie.png"
         }
       },
       "icon": "icons/64/cookie.png"
@@ -169,14 +185,16 @@
           "pivot": [
             18.5,
             29
-          ]
+          ],
+          "display_path": "display/1x/melonpan.png"
         },
         "2": {
           "path": "food/2x/melonpan.png",
           "pivot": [
             37,
             58
-          ]
+          ],
+          "display_path": "display/2x/melonpan.png"
         }
       },
       "icon": "icons/64/melonpan.png"
@@ -189,14 +207,16 @@
           "pivot": [
             14.5,
             35
-          ]
+          ],
+          "display_path": "display/1x/cupcake.png"
         },
         "2": {
           "path": "food/2x/cupcake.png",
           "pivot": [
             29,
             70
-          ]
+          ],
+          "display_path": "display/2x/cupcake.png"
         }
       },
       "icon": "icons/64/cupcake.png"
@@ -209,14 +229,16 @@
           "pivot": [
             18.5,
             28
-          ]
+          ],
+          "display_path": "display/1x/dorayaki.png"
         },
         "2": {
           "path": "food/2x/dorayaki.png",
           "pivot": [
             37,
             56
-          ]
+          ],
+          "display_path": "display/2x/dorayaki.png"
         }
       },
       "icon": "icons/64/dorayaki.png"

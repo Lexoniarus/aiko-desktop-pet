@@ -67,8 +67,11 @@ class WalkSettings(Protocol):
 
 
 class WalkNeeds(Protocol):
-    energy: float
-    sleeping: bool
+    @property
+    def energy(self) -> float: ...
+
+    @property
+    def sleeping(self) -> bool: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -79,6 +82,7 @@ class WalkDriverPorts:
     toolbar_visible: Callable[[], bool]
     place_x: Callable[[float], None]
     walk_finished: Callable[[float], None]
+    committed_goal: Callable[[], bool] = lambda: False
 
 
 class WalkDriver:
@@ -125,6 +129,7 @@ class WalkDriver:
         if game_mode:
             return None
         observed = self.adaptive.current
+        committed = self.movement.goal_x is not None and self.ports.committed_goal()
         busy = (
             observed.focused
             if observed is not None
@@ -147,8 +152,8 @@ class WalkDriver:
                 energy=self.state.energy,
                 auto_walk=self.settings.auto_walk,
                 sleeping=self.state.sleeping,
-                attention_active=attention_active,
-                toolbar_visible=self.ports.toolbar_visible(),
+                attention_active=attention_active and not committed,
+                toolbar_visible=self.ports.toolbar_visible() and not committed,
                 observing_computer=self.settings.observe_computer,
                 computer_busy=busy,
                 quiet_period=bool(observed is not None and observed.quiet),
@@ -168,5 +173,6 @@ class WalkDriver:
             >= track.right - FRAME_WIDTH * self.settings.scale
         )
         if self.movement.record_displacement(delta, now=now, blocked=blocked):
-            self.ports.walk_finished(now)
+            if self.movement.goal_x is None:
+                self.ports.walk_finished(now)
         return step.animation

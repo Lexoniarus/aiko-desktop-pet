@@ -24,6 +24,7 @@ class ToolbarDetailTests(unittest.TestCase):
             hardware_line="Rechnerbeobachtung deaktiviert",
             activity_line="Mein Rhythmus: ruhig", needs=(("energy", 55),),
             friendship_level=3,
+            objects_line="Auf dem Desktop: 5 · Bekannt: 5\nZugeordnet: 5 · Vermisst: 0",
         )
         self.parent = tk.Frame(self.root)
         self.parent.pack()
@@ -42,11 +43,15 @@ class ToolbarDetailTests(unittest.TestCase):
         self.assertEqual(self.details.text("hint"), "Gut")
         self.assertEqual(self.details.text("next_event"), "Pause")
         self.assertIn("Mein Rhythmus", self.details.text("activity_line"))
+        self.assertIn("Vermisst: 0", self.details.text("objects_line"))
+        self.assertNotIn("fun_line", self.details._labels)
 
     def test_details_refresh_from_detached_snapshot(self) -> None:
-        self.view = replace(self.view, emotion="Stimmung: Müde")
+        self.view = replace(self.view, emotion="Stimmung: Müde",
+                            objects_line="Auf dem Desktop: 4 · Vermisst: 1")
         self.details.refresh()
         self.assertEqual(self.details.text("emotion"), "Stimmung: Müde")
+        self.assertIn("Vermisst: 1", self.details.text("objects_line"))
         self.assertFalse(hasattr(self.details, "pet"))
 
 

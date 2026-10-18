@@ -33,10 +33,14 @@ class ContactPorts:
     hide_speech: Callable[[], None]
     react: Callable[[Reaction | None, int], None]
     should_greet: Callable[[float], bool]
+    story_active: Callable[[], bool] = lambda: False
+    advance_story: Callable[[], bool] = lambda: False
+    foreground_active: Callable[[], bool] = lambda: False
+    playback_active: Callable[[], bool] = lambda: False
 
 
 class ContactCoordinator:
-    """Keep direct user contact higher priority than autonomous pet actions."""
+    """Coordinate contact after foreground ownership has granted it."""
 
     def __init__(
         self,
@@ -51,34 +55,55 @@ class ContactCoordinator:
         self._adaptive = adaptive
         self._ports = ports
 
+    def can_interact(self, action: str) -> bool:
+        """Derive user-action permission from current owners, never UI hover."""
+        if self._ports.foreground_active() or self._ports.game_open():
+            return False
+        if self._state.sleeping:
+            return action == "sleep"  # Waking ends the current lifecycle action.
+        return not self._ports.playback_active()
+
     def record_contact(self, now: float) -> None:
         self._mind.last_contact = now
 
     def enter(self) -> None:
         """Preserve toolbar and walk-interruption order on pointer entry."""
         now = time.monotonic()
+        if not self.can_interact("pet"):
+            self._ports.mark_hover(now)
+            self._ports.show_toolbar()
+            return
         reaction = (
             self._mind.return_to_pet(
                 self._state,
                 self._ports.context(),
                 now,
             )
-            if self._ports.toolbar_hidden()
+            if self._ports.toolbar_hidden() and not self._ports.story_active()
             else None
         )
         self._ports.mark_hover(now)
         self._ports.interrupt_walk()
         self._ports.show_toolbar()
-        self._ports.react(reaction, BALANCE.integer("dialogue", "contact_reaction_ms"))
+        if not self._ports.story_active():
+            self._ports.react(
+                reaction, BALANCE.integer("dialogue", "contact_reaction_ms")
+            )
 
     def click(self, button: ClickButton) -> None:
         """Deliver an intentional click only after initiating hover."""
+        if button not in ("left", "right"):
+            raise ValueError("Unknown click button")
+        if button == "left" and self._ports.advance_story():
+            self._mind.clicks.clear()
+            self._mind.last_contact = time.monotonic()
+            return
+        if (self._state.sleeping or self._ports.game_open()
+                or self._ports.playback_active()):
+            return
         self.enter()
         now = time.monotonic()
         self._adaptive.note_interaction(time.time())
-        # PetMind validates the available button types itself.
-        if button not in ("left", "right"):
-            raise ValueError("Unknown click button")
         self.react_to_click(
             self._mind.click(
                 button,
@@ -98,9 +123,9 @@ class ContactCoordinator:
         if (
             len(self._mind.clicks)
             >= BALANCE.integer("dialogue", "hide_click_emote_from_count")
-            and reaction.emote_before is not None
+            and reaction.beats[0].kind == "emote"
         ):
-            reaction = replace(reaction, emote_before=None)
+            reaction = replace(reaction, beats=reaction.beats[1:])
         self._ports.react(reaction, BALANCE.integer("dialogue", "contact_reaction_ms"))
 
     def greet(self) -> None:

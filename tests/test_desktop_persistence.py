@@ -14,6 +14,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class DesktopPersistenceTests(unittest.TestCase):
@@ -41,7 +42,7 @@ class DesktopPersistenceTests(unittest.TestCase):
         self.assertEqual(saved["settings"], self.settings.to_dict())
 
     def test_save_does_not_advance_domain_state(self) -> None:
-        self.state.updated_at = self.stamp - 3600
+        set_test_pet_values(self.state, updated_at=self.stamp - 3600)
         with patch.object(self.state, "advance") as progression:
             self.assertIsNone(self.persistence.save())
         progression.assert_not_called()

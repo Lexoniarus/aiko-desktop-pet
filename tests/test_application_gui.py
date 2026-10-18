@@ -13,6 +13,7 @@ from aiko_pet.application.commands import CareCommand, NotificationCommand
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
+from tools.pet_test_support import set_test_pet_values
 
 
 class ApplicationGuiBoundaryTests(unittest.TestCase):
@@ -29,9 +30,16 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.addCleanup(folder.cleanup)
         self.pet = DesktopPet(store=StateStore(Path(folder.name) / "state.json"))
         self.addCleanup(self.pet.quit)
+        # These command tests own pointer input; a real cursor over the sprite
+        # legitimately opens controls and defers notifications on a live desktop.
+        for method in ("winfo_pointerx", "winfo_pointery"):
+            self.enterContext(patch.object(self.pet.root, method, return_value=0))
+        self.enterContext(patch.object(self.pet.root, "winfo_containing",
+                                       return_value=None))
+        self.pet._hover.close_toolbar()
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False
-        self.pet.state.sleeping = False
+        set_test_pet_values(self.pet.state, sleeping=False)
         if self.pet._runtime.scheduled_greeting is not None:
             self.pet.root.after_cancel(self.pet._runtime.scheduled_greeting)
             self.pet._runtime.scheduled_greeting = None
@@ -52,10 +60,11 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         return str(children[0].cget("text"))
 
     def test_care_passes_through_application_controller(self) -> None:
-        self.pet.state.affection = 10
+        set_test_pet_values(self.pet.state, affection=10)
         with patch.object(
-            self.pet.application, "dispatch",
-            wraps=self.pet.application.dispatch,
+            self.pet.application._care._clock, "consume", return_value=0.0,
+        ), patch.object(
+            self.pet.application, "dispatch", wraps=self.pet.application.dispatch,
         ) as dispatch:
             self.pet.interact("pet")
         self.assertAlmostEqual(self.pet.state.affection, 35, places=3)
@@ -131,12 +140,25 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.pet.application.dispatch(
             NotificationCommand(self._notice("browser-2")),
         )
-        self.pet.state.sleeping = True
+        set_test_pet_values(self.pet.state, sleeping=True)
         self.pet._tick()
         self.assertIsNone(self._bubble_text())
-        self.pet.state.sleeping = False
+        set_test_pet_values(self.pet.state, sleeping=False)
         self.pet._attention.last_spoken = time.monotonic() - 10
         self.pet._tick()
+        self.assertEqual(self._bubble_text(), "Kalender: Termin gleich.")
+
+    def test_hovered_controls_defer_notification_until_pointer_leaves(self) -> None:
+        self.pet.application.dispatch(NotificationCommand(self._notice("hover")))
+        with patch.object(self.pet.root, "winfo_containing",
+                          return_value=self.pet.canvas):
+            self.pet._tick()
+            self.assertTrue(self.pet._hover.interaction_active)
+            self.assertIsNone(self._bubble_text())
+        self.pet._hover.last_hover = time.monotonic() - 10
+        self.pet._attention.last_spoken = time.monotonic() - 10
+        self.pet._tick()
+        self.assertFalse(self.pet._hover.interaction_active)
         self.assertEqual(self._bubble_text(), "Kalender: Termin gleich.")
 
 

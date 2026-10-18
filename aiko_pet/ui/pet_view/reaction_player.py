@@ -1,15 +1,11 @@
-"""Tk-independent timing and cancellation for Aiko's visual reactions.
-
-The playback controller owns every reaction-generation guard and its scheduled
-follow-up. The GUI supplies the Tk scheduler and presentation callbacks.
-"""
+"""Cancellable, Tk-independent playback of immutable authored sequences."""
 
 from __future__ import annotations
 
 from typing import Callable
 
 from ...pet.mind.catalog import Reaction
-from ...pet.mind.reaction_sequence import Cue, compose_cues
+from ...pet.mind.reaction_sequence import Cue
 
 TimerCallback = Callable[[], None]
 ScheduleTimer = Callable[[int, TimerCallback], str]
@@ -19,8 +15,6 @@ StartAction = Callable[[str, float], None]
 
 
 class ReactionPlayer:
-    """Play non-overlapping reaction cues, cancelling stale queued callbacks."""
-
     def __init__(
         self,
         *,
@@ -31,6 +25,7 @@ class ReactionPlayer:
         start_action: StartAction,
         mark_spoken: TimerCallback,
         is_closed: Callable[[], bool],
+        hide_speech: TimerCallback = lambda: None,
     ) -> None:
         self._schedule = schedule
         self._cancel_timer = cancel_timer
@@ -39,9 +34,14 @@ class ReactionPlayer:
         self._start_action = start_action
         self._mark_spoken = mark_spoken
         self._is_closed = is_closed
+        self._hide_speech = hide_speech
         self._generation = 0
         self._cues: tuple[Cue, ...] = ()
         self._pending_timer: str | None = None
+        self._completion: Callable[[bool], None] | None = None
+        self._index = -1
+        self._story = False
+        self._subject: str | None = None
 
     @property
     def generation(self) -> int:
@@ -55,13 +55,31 @@ class ReactionPlayer:
     def pending_timer(self) -> str | None:
         return self._pending_timer
 
-    def cancel(self) -> None:
-        """Invalidate callbacks and remove an existing reaction timer."""
+    @property
+    def story_active(self) -> bool:
+        return self._story and bool(self._cues)
+
+    @property
+    def subject(self) -> str | None:
+        """The current sequence's subject, cleared with that same lifecycle."""
+        return self._subject
+
+    def _invalidate_timer(self) -> None:
         if self._pending_timer is not None:
             self._cancel_timer(self._pending_timer)
             self._pending_timer = None
         self._generation += 1
+
+    def cancel(self) -> None:
+        self._invalidate_timer()
         self._cues = ()
+        self._story = False
+        self._subject = None
+        self._index = -1
+        self._hide_speech()
+        completion, self._completion = self._completion, None
+        if completion is not None:
+            completion(False)
 
     def play(
         self,
@@ -69,70 +87,65 @@ class ReactionPlayer:
         duration_ms: int = 2600,
         *,
         animate: bool = True,
+        on_complete: Callable[[bool], None] | None = None,
+        subject: str | None = None,
     ) -> None:
-        """Start a fresh reaction while preserving original event ordering."""
         if reaction is None:
             return
         self.cancel()
-        generation = self._generation
+        self._completion = on_complete
+        self._subject = subject
         if animate and reaction.animation != "idle":
             self._start_action(reaction.animation, min(2.0, duration_ms / 1600))
-        self._mark_spoken()
-        if reaction.emote_before is not None or reaction.emote_after is not None:
-            self._cues = compose_cues(
-                reaction.text,
-                before=reaction.emote_before,
-                followup=reaction.followup_text,
-                after=reaction.emote_after,
-                minimum_text_ms=max(1700, duration_ms - 500),
-            )
-            self._advance(generation, 0)
-            return
-        # Ordinary speech retains its shorter, deliberately awkward follow-up.
-        self._display_text(
-            reaction.text,
-            max(duration_ms, reaction.followup_delay_ms + 200),
+        self._cues = reaction.beats
+        self._story = reaction.presentation == "story"
+        self._advance(self._generation, 0)
+
+    def advance_story(self) -> bool:
+        """Consume one reading click, invalidating even already-queued callbacks."""
+        if not self.story_active:
+            return False
+        self._invalidate_timer()
+        index = next(
+            (
+                i
+                for i in range(self._index + 1, len(self._cues))
+                if self._cues[i].kind == "text"
+            ),
+            len(self._cues),
         )
-        followup_text = reaction.followup_text
-        if followup_text:
-            self._pending_timer = self._schedule(
-                reaction.followup_delay_ms,
-                lambda: self._show_followup(generation, followup_text),
-            )
+        self._advance(self._generation, index)
+        return True
 
     def _advance(self, generation: int, index: int) -> None:
-        """Render precisely one cue, never emote and text simultaneously."""
-        self._pending_timer = None
         if self._is_closed() or generation != self._generation:
             return
+        self._pending_timer = None
         if index >= len(self._cues):
-            self._cues = ()
+            self._complete(generation)
             return
+        self._index = index
         cue = self._cues[index]
         if cue.kind == "emote":
             self._display_emote(cue.content, cue.duration_ms)
-        else:
+        elif cue.kind == "text":
             self._display_text(cue.content, cue.duration_ms)
-        self._mark_spoken()
-        if index + 1 < len(self._cues):
-            self._pending_timer = self._schedule(
-                cue.duration_ms,
-                lambda: self._advance(generation, index + 1),
-            )
         else:
-            self._pending_timer = self._schedule(
-                cue.duration_ms,
-                lambda: self._complete(generation),
-            )
+            self._hide_speech()
+        self._mark_spoken()
+        self._pending_timer = self._schedule(
+            cue.duration_ms,
+            lambda: self._advance(generation, index + 1),
+        )
 
     def _complete(self, generation: int) -> None:
-        self._pending_timer = None
-        if generation == self._generation:
-            self._cues = ()
-
-    def _show_followup(self, generation: int, text: str) -> None:
-        self._pending_timer = None
-        if self._is_closed() or generation != self._generation:
+        if generation != self._generation:
             return
-        self._display_text(text, 2600)
-        self._mark_spoken()
+        self._pending_timer = None
+        self._cues = ()
+        self._story = False
+        self._subject = None
+        self._hide_speech()
+        completion, self._completion = self._completion, None
+        if completion is not None:
+            completion(True)

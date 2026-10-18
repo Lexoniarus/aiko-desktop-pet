@@ -13,6 +13,7 @@ from aiko_pet.ui.view_models.contracts import HoverAnchor
 from aiko_pet.ui.view_models.projections import project_hover
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.hover_contracts import HoverActions
+from tools.pet_test_support import set_test_pet_values
 
 
 class IndependentHoverTests(unittest.TestCase):
@@ -63,7 +64,7 @@ class IndependentHoverTests(unittest.TestCase):
         self.assertEqual(self.events, ["pet", "talk", "settings", "pin"])
 
     def test_rendering_updates_from_snapshot_not_game_object(self) -> None:
-        self.state.energy = 14
+        set_test_pet_values(self.state, energy=14)
         self.panel.refresh()
         self.assertIn("14%", self.panel.needs["energy"][2].cget("text"))
         self.assertIn("CPU 42 %", self.panel.hardware.cget("text"))

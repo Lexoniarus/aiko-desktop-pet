@@ -8,6 +8,7 @@ from pathlib import Path
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from tools.pet_test_support import set_test_pet_values
 
 
 class AffectionGuiTests(unittest.TestCase):
@@ -25,8 +26,8 @@ class AffectionGuiTests(unittest.TestCase):
         self.app = DesktopPet(store=StateStore(Path(self.tempdir.name) / "pet.json"))
         self.addCleanup(self.app.quit)
         self.app.settings.auto_routine = False
-        self.app.state.sleeping = False
-        self.app._on_enter()
+        set_test_pet_values(self.app.state, sleeping=False)
+        self.app._hover.show_toolbar()
         self.app.root.update_idletasks()
 
     @property
@@ -35,26 +36,38 @@ class AffectionGuiTests(unittest.TestCase):
         assert bar is not None
         return bar
 
-    def test_six_hud_bars_stay_in_two_rows_and_fill_at_100_percent(self):
+    def test_mood_above_six_need_bars_and_fill_at_100_percent(self):
         toolbar = self.toolbar
-        self.assertEqual(len(toolbar.NEEDS), 6)
-        self.assertEqual(len(toolbar.needs), 6)
+        self.assertEqual(len(toolbar.NEEDS), 7)
+        self.assertEqual(len(toolbar.needs), 7)
+        mood = toolbar.needs["mood"][0]
+        assert isinstance(mood.master, tk.Frame)
+        self.assertEqual(int(mood.master.grid_info()["columnspan"]), 3)
+        for key in ("satiety", "fun", "energy", "social", "affection", "friendship"):
+            bar = toolbar.needs[key][0]
+            assert isinstance(bar.master, tk.Frame)
+            self.assertGreater(int(bar.master.grid_info()["row"]), 0)
+        fun_cell = toolbar.needs["fun"][0].master
+        assert isinstance(fun_cell, tk.Frame)
+        self.assertEqual(int(fun_cell.grid_info()["column"]), 1)
         for key in toolbar.needs:
-            setattr(self.app.state, key, 100)
+            set_test_pet_values(self.app.state, **{key: 100})
         toolbar.refresh()
         self.app.root.update()
         toolbar.refresh()
+        self.assertGreater(mood.winfo_width(), toolbar.needs["fun"][0].winfo_width())
         for key, (bar, rect, label) in toolbar.needs.items():
             self.assertEqual(bar.coords(rect)[2], bar.winfo_width(), key)
             self.assertIn("100%", label.cget("text"))
         self.assertIn("Zuwendung", toolbar.needs["affection"][2].cget("text"))
+        self.assertIn("Spaß", toolbar.needs["fun"][2].cget("text"))
         self.assertIn("Lv 10", toolbar.needs["friendship"][2].cget("text"))
 
     def test_pet_button_refills_affection_without_refilling_energy(self):
-        self.app.state.affection = 10
-        self.app.state.social = 15
-        self.app.state.energy = 44
-        self.app.state.mood = 20
+        set_test_pet_values(self.app.state, affection=10)
+        set_test_pet_values(self.app.state, social=15)
+        set_test_pet_values(self.app.state, energy=44)
+        set_test_pet_values(self.app.state, mood=20)
         self.toolbar.buttons["pet"].invoke()
         self.assertAlmostEqual(self.app.state.affection, 35, places=2)
         self.assertAlmostEqual(self.app.state.energy, 44, places=2)
@@ -68,9 +81,9 @@ class AffectionGuiTests(unittest.TestCase):
         self.app._hover.open_status()
         self.assertIs(self.toolbar, before)
         self.assertTrue(self.app._hover.keep_open)
-        self.assertEqual(len(self.toolbar.needs), 6)
-        self.app.state.affection = 46
-        self.app.state.friendship = 93
+        self.assertEqual(len(self.toolbar.needs), 7)
+        set_test_pet_values(self.app.state, affection=46)
+        set_test_pet_values(self.app.state, friendship=93)
         self.toolbar.refresh()
         self.assertIn("46%", self.toolbar.needs["affection"][2].cget("text"))
         self.assertIn("Lv 10", self.toolbar.needs["friendship"][2].cget("text"))

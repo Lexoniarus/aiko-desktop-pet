@@ -20,10 +20,17 @@ from .walk_runtime import WalkDriver
 
 
 class AnimationNeeds(Protocol):
-    sleeping: bool
-    energy: float
-    mood: float
-    satiety: float
+    @property
+    def sleeping(self) -> bool: ...
+
+    @property
+    def energy(self) -> float: ...
+
+    @property
+    def mood(self) -> float: ...
+
+    @property
+    def satiety(self) -> float: ...
 
 
 class AnimationSettings(Protocol):
@@ -62,7 +69,8 @@ class DesktopAnimationRuntime:
         """Advance host movement at the current Tk sprite frame cadence."""
         return self._walk.step(
             now, elapsed, game_mode=game_mode,
-            attention_active=now < self._ports.attention_until(),
+            attention_active=(now < self._ports.attention_until()
+                              or self._visual.orienting),
         )
 
     def walk_active(self) -> bool:

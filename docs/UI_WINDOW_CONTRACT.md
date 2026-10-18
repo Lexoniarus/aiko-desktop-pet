@@ -1,8 +1,9 @@
-# UI window contract — single care toolbar and persistent settings
+# UI window contract — care controls and passive World items
 
 ## Window behavior
 
-Aiko exposes one `ActionToolbar` with six care indicators, care buttons,
+Aiko exposes one `ActionToolbar` with a wide overall mood bar above six individual
+indicators (satiety, fun, energy, social, affection, friendship), care buttons,
 local computer status, and expandable `ToolbarDetails`. There is no second
 status/actions window. The F2 status action reveals and pins the existing
 toolbar. Clicking `Offen halten` keeps it visible when the pointer leaves or
@@ -45,6 +46,17 @@ additional domain aggregate is introduced.
 
 ## Presence versus interaction
 
+Expanded details show a detached `ObjectStatusSnapshot`: **Auf dem Desktop**
+counts resting World portions; **Bekannt** counts identified memory portions,
+excluding superseded history; **Zugeordnet** counts those remembered at a place
+or in custody without open association ambiguity; **Vermisst** counts identified
+memories with confirmed missing-place status. Same-type portions count separately.
+The application projection reads World and memory snapshots; rendering these
+numbers never identifies a sighting, checks a hidden place or changes memory.
+An unseen relocation therefore changes objective location before subjective
+assignment, exactly as it does without the diagnostics. These totals are current
+owner-thread reads, including while the toolbar is pinned and details are open.
+
 A pinned toolbar standing idle on screen, or an open settings window without
 pointer/keyboard interaction, must not permanently suppress spontaneous
 dialogue, emotes or noninterrupting notifications. The host supplies actual
@@ -52,15 +64,33 @@ UI engagement to the attention coordinator. Game activity maintains its
 existing independent suppression rules. Settings refresh never calls a
 preference setter or takes focus.
 
+## Passive World presentation
+
+World item windows are read-only projections owned by `ui/world_view.py`, with
+Windows no-activate/click-through styling in `desktop/object_windows.py`. They
+add no care toolbar, status panel or independent domain state. Item stacking
+follows the existing always-on-top preference; showing/moving items must not
+steal focus. Pet-held items and foreground hands render on the character canvas.
+
+The food picker starts one cursor portion on press. The application root owns
+a temporary local Tk input grab during that gesture and releases it on drop,
+handover, Escape, capture loss or shutdown. This deliberate gesture capture is
+separate from passive item windows. Native behavior, DPI and grip alignment
+are covered by [the World practical checklist](WORLD_SMOKE_TEST.md).
+
 ## Tests and Windows acceptance
 
 Unit tests cover shared drag geometry, window isolation, idempotent cleanup,
-option callbacks, six progress bars, pin and timeout behavior, focus/reopen
+option callbacks, seven progress bars, pin and timeout behavior, focus/reopen
 semantics, notification delivery and preservation of saved toolbar location.
 CI must pass the Linux/Xvfb Tk suite, Windows headless checks, Ruff, strict
-Mypy and Pyright. Real Windows smoke testing is still required for DPI,
+Mypy and Pyright. Maintainer-reported desktop acceptance is recorded as passed
+in the [current smoke guide](WORLD_SMOKE_TEST.md#acceptance-status). Repeat
+relevant native checks after changes affecting DPI,
 transparent windows, focus and z-order, multiple displays and taskbar behavior.
-No approved character images, dialogue or save data are modified.
+The World feature adds approved pickup resources and an optional save section;
+earlier window consolidation preserved the existing character and save values.
 
-Existing gallery screenshots of settings and status must be refreshed to show
-the new behavior; previously captured screenshots are historical until then.
+Gallery screenshots may show earlier settings/status layouts. Their historical
+illustration scope is stated in the [media gallery](MEDIA_GALLERY.md); the
+maintained behavior contract is this document.

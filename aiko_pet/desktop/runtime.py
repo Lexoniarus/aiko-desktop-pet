@@ -31,6 +31,7 @@ class DesktopTickPorts:
     speak_spontaneously: Callable[[float], None]
     present_notification: Callable[[float], None]
     refresh_overlays_and_save: Callable[[float], None]
+    observe_objects: Callable[[float], None] = lambda _now: None
 
 
 class DesktopRuntime:
@@ -86,6 +87,7 @@ class DesktopRuntime:
             ports.refresh_hover(now)
             ports.observe_computer(now)
             pointer = ports.observe_pointer(now)
+            ports.observe_objects(now)
             ports.render_character(now, elapsed, pointer)
             ports.show_idle_emote(now)
             ports.speak_spontaneously(now)

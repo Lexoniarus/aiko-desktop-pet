@@ -1,4 +1,4 @@
-"""Small real-Tk tests for intentionally awkward, two-part speech bubbles."""
+"""Real-Tk tests for readable sequential speech and deliberate interruption."""
 
 import tempfile
 import time
@@ -10,6 +10,8 @@ from unittest.mock import patch
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
+from aiko_pet.pet.mind.reaction_sequence import Cue
+from tools.pet_test_support import set_test_pet_values
 
 
 class FollowupGuiTests(unittest.TestCase):
@@ -32,7 +34,7 @@ class FollowupGuiTests(unittest.TestCase):
             self.app.root.after_cancel(self.app._runtime.scheduled_greeting)
             self.app._runtime.scheduled_greeting = None
         self.app.settings.auto_routine = False
-        self.app.state.sleeping = False
+        set_test_pet_values(self.app.state, sleeping=False)
 
     def text(self):
         if self.app._speech.bubble is None:
@@ -41,53 +43,82 @@ class FollowupGuiTests(unittest.TestCase):
             self.app._speech.bubble.winfo_children()[0].winfo_children()[0].cget("text")
         )
 
-    def pass_delay(self):
-        time.sleep(0.68)
+    def pass_delay(self, seconds=None):
+        time.sleep(seconds or (Cue.text("Oh.").duration_ms / 1000 + 0.08))
         self.app.root.update()
 
     def test_short_correction_becomes_second_bubble(self):
         self.app._react(
             Reaction(
-                "test", "Oh.", "waiting", "click_left", "...Das war unerwartet.", 600
+                "test",
+                (
+                    Cue.text("Oh."),
+                    Cue.text("...Das war unerwartet."),
+                ),
+                "waiting",
+                "click_left",
             )
         )
         self.assertEqual(self.text(), "Oh.")
         self.pass_delay()
         self.assertEqual(self.text(), "...Das war unerwartet.")
-        self.assertIsNone(self.app._reaction_player.pending_timer)
+        self.assertIsNotNone(self.app._reaction_player.pending_timer)
 
     def test_new_reaction_cancels_old_followup(self):
         self.app._react(
             Reaction(
                 "test",
-                "Erster Satz",
+                (
+                    Cue.text("Erster Satz"),
+                    Cue.text("Darf nicht mehr auftauchen"),
+                ),
                 "idle",
                 "click_left",
-                "Darf nicht mehr auftauchen",
-                600,
             )
         )
-        self.app._react(Reaction("other", "Neuer Satz", "idle", "click_right"))
-        self.pass_delay()
-        self.assertEqual(self.text(), "Neuer Satz")
-
-    def test_deliberate_click_silence_cancels_pending_followup(self):
         self.app._react(
             Reaction(
-                "test", "Noch da", "idle", "click_left", "Das darf nicht kommen", 600
+                "other",
+                (Cue.text("Eine neue Antwort, die jetzt lesbar bleibt."),),
+                "idle",
+                "click_right",
             )
         )
-        with patch.object(self.app.mind, "click", return_value=None):
+        self.pass_delay(1.86)
+        self.assertEqual(self.text(), "Eine neue Antwort, die jetzt lesbar bleibt.")
+
+    def test_direct_click_keeps_foreground_followup_running(self):
+        self.app._react(
+            Reaction(
+                "test",
+                (
+                    Cue.text("Noch da"),
+                    Cue.text("Die laufende Antwort geht weiter."),
+                ),
+                "idle",
+                "click_left",
+            )
+        )
+        with patch.object(self.app.mind, "click", return_value=None) as click:
             self.app._on_click_left()
-        self.assertIsNone(self.app._speech.bubble)
+        click.assert_not_called()
+        self.assertEqual(self.text(), "Noch da")
         self.pass_delay()
-        self.assertIsNone(self.app._speech.bubble)
-        self.assertIsNone(self.app._reaction_player.pending_timer)
+        self.assertEqual(self.text(), "Die laufende Antwort geht weiter.")
+        self.assertIsNotNone(self.app._reaction_player.pending_timer)
 
     def test_existing_window_stack_and_hover_are_preserved(self):
         self.app._on_enter()
         self.app._react(
-            Reaction("test", "Aiko", "waving", "click_left", "...Immer noch Aiko", 600)
+            Reaction(
+                "test",
+                (
+                    Cue.text("Aiko"),
+                    Cue.text("...Immer noch Aiko"),
+                ),
+                "waving",
+                "click_left",
+            )
         )
         self.app.root.update_idletasks()
         bar = self.app._hover.toolbar

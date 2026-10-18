@@ -6,10 +6,10 @@ import unittest
 from collections.abc import Callable
 
 from aiko_pet.games.rock_paper_scissors import Move, Outcome, Round, Score
+from aiko_pet.ui.windows.rock_paper_scissors_dialogue import GameDialogue, outcome_event
 from aiko_pet.ui.windows.rock_paper_scissors_sequence import (
     RockPaperScissorsSequence,
 )
-from aiko_pet.ui.windows.rock_paper_scissors_text_de import outcome_line
 
 
 class FakeClock:
@@ -74,25 +74,44 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         self.assertEqual(self.reveals, [])
         self.step()
         self.assertEqual(self.events[-1], ("aiko_hand", "scissors"))
-        self.assertEqual(self.reveals, [
-            (Move.ROCK, Score(wins=1)),
-        ])
+        self.assertEqual(
+            self.reveals,
+            [
+                (Move.ROCK, Score(wins=1)),
+            ],
+        )
         self.assertEqual(self.flow.score.games, 1)
         self.step()
         self.assertEqual(self.animations[-1], "failed")
         self.assertEqual(self.events[-1], ("emote", "drops"))
         self.step()
         self.assertEqual(self.events[-1][0], "text")
-        self.assertIn("Punkt", self.events[-1][1])
+        from aiko_pet.pet.mind.catalog import DialogueBook
+
+        allowed = {
+            line.text
+            for line in DialogueBook.from_file().lines
+            if line.event == "game_player_win"
+        }
+        self.assertIn(self.events[-1][1], allowed)
         # Aiko must never narrate the player hand or overall score.
         self.assertNotIn("Stein", self.events[-1][1])
         self.step()
         self.assertEqual(self.busy, [True, False])
         self.assertEqual(len(self.reveals), 1)
-        self.assertEqual([kind for kind, _ in self.events], [
-            "text", "text", "text", "text", "emote",
-            "aiko_hand", "emote", "text",
-        ])
+        self.assertEqual(
+            [kind for kind, _ in self.events],
+            [
+                "text",
+                "text",
+                "text",
+                "text",
+                "emote",
+                "aiko_hand",
+                "emote",
+                "text",
+            ],
+        )
 
     def test_all_outcomes_trigger_correct_emotes_and_animations(self) -> None:
         for aiko_index, animation, emote in (
@@ -136,7 +155,10 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
 
     def test_outcome_dialogue_varies_without_narrating_player_score(self) -> None:
         result = Round(Move.ROCK, Move.SCISSORS, Outcome.WIN)
-        remarks = [outcome_line(result, number) for number in (1, 2, 3)]
+        dialogue, other = GameDialogue(), GameDialogue()
+        remarks = [dialogue.choose(outcome_event(result)) for _ in range(3)]
+        self.assertEqual(len(dialogue._book.recent), 3)
+        self.assertEqual(tuple(other._book.recent), ())
         self.assertEqual(len(set(remarks)), 3)
         self.assertTrue(all("Stein" not in remark for remark in remarks))
 

@@ -8,7 +8,25 @@ Unless a file identifies a different license, the project's own source code is d
 
 ## 2. Aiko character artwork — distinct old and new terms
 
+### Pickup and put-down source supplement
+
+The approved `Aiko_Pick_Up_und_Hinlegen.zip` supplies eight 192x208 poses,
+eight hand foregrounds and authoring metadata under `assets/aiko-pick-up/`.
+`IMPORT_MANIFEST.json` records the archive and selected-file hashes. Only the
+runtime source material is imported; large intermediate exports remain outside
+the repository. These character derivatives follow the existing restricted
+Aiko artwork terms, not the source-code MIT license.
+
 ### Current Aiko Anime assets — restricted reuse
+
+Food/drink display copies under `aiko_pet/assets/items/display/` use the same
+128-threshold binary alpha as character frames, preventing partial-alpha blends
+with the Windows Magenta color key. Run
+`python -m tools.prepare_item_display_assets` with Pillow to reproduce all 22
+native 1x/2x copies. Original item PNGs, RGB colors, dimensions, pivots and picker
+icons remain unchanged. `display/provenance.json` records input/output hashes;
+the existing restricted item terms cover these technical display derivatives.
+Cursor, ground and hand renderers share these manifest-referenced copies.
 
 The runtime source export from `Aiko_Anime_8_Frames_Komplett.zip` is imported
 under [assets/aiko-anime-8-frames/](assets/aiko-anime-8-frames/IMPORT_README.md).
@@ -20,7 +38,7 @@ Ignore rules also exclude them if the complete bundle is extracted here again.
 According to the project creator, the artwork was generated with ChatGPT image
 generation in an agent workflow.
 
-The current desktop export has **112 character poses**: twelve eight-frame
+The current desktop export has **120 character poses**: thirteen eight-frame
 clips and sixteen cursor-gaze poses. Prepared full-width 192 × 208 copies live
 in `aiko_pet/assets/frames/`, with timing/anchor metadata in
 `aiko_pet/assets/animations.json` and hand foreground layers in
@@ -45,10 +63,25 @@ each included original file's path, byte size and SHA-256. The runtime provenanc
 manifest records prepared-file hashes, full image dimensions and the existing
 128-threshold binary-alpha policy used for Windows color-key transparency.
 Original imported artwork is not cropped or overwritten. Preparation uses
-`python tools/prepare_character_assets.py`; Pillow is required only for that
+`python -m tools.prepare_character_assets`; Pillow is required only for that
 build step, not for running the desktop app.
 
-All twelve normal clips retain exactly **eight source PNGs** each. The
+The prepared eating anchors move six source pixels downward relative to the
+imported overlay hints, allowing native-size Onigiri to overlap the fingers
+instead of ending above them. Preparation records this calibration in runtime
+provenance and reproduces it; source manifests, PNGs, timing and item pivots
+stay unchanged. See the [before/after grip composition](docs/media/world-eating-grip-comparison.png)
+(source sprites composited at 2x for diagnosis, not a desktop screenshot).
+Consumables remain above the character in eating, pickup, holding and put-down.
+The latest practical feedback explicitly removes additional hand-mask occlusion
+from this renderer. Approved hand masks remain preserved in the imported and
+prepared asset catalogs. Native visual acceptance of the revision is pending.
+The preparation check compares decoded RGBA pixels, dimensions and authoring
+metadata across platforms: PNG compression can produce different file bytes.
+Each build's provenance hashes must match its actual files; repeated preparation
+with the same encoder must still be byte-identical.
+
+All thirteen normal clips retain exactly **eight source PNGs** each. The
 runtime can assign different hold times to each pose and replay selected
 source poses without creating duplicate PNGs. Ordinary waving uses eight
 steps; the separate greeting/farewell replay uses fourteen steps for two

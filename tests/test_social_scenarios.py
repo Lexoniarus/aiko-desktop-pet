@@ -17,6 +17,7 @@ from aiko_pet.pet.mind.adaptive_policy import ActivityMode
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 def require_reaction(value: Reaction | None) -> Reaction:
@@ -95,8 +96,8 @@ class ClickStoryTests(unittest.TestCase):
         self.assertEqual(self.mind.emotion(self.state, 50), "calm")
 
     def test_good_mood_turns_provocation_into_playful_teasing(self):
-        self.state.mood = 94
-        self.state.energy = 90
+        set_test_pet_values(self.state, mood=94)
+        set_test_pet_values(self.state, energy=90)
         events = [
             require_reaction(self.mind.click("left", self.state, self.context, 50 + i))
             for i in range(8)
@@ -117,7 +118,7 @@ class ClickStoryTests(unittest.TestCase):
         self.assertEqual(self.mind.emotion(self.state, 58), "playful")
 
     def test_low_energy_and_recent_care_change_early_clicks(self):
-        self.state.energy = 19
+        set_test_pet_values(self.state, energy=19)
         self.assertEqual(
             require_reaction(
                 self.mind.click("left", self.state, self.context, 20)
@@ -140,7 +141,7 @@ class ClickStoryTests(unittest.TestCase):
         )
 
     def test_withdrawn_aiko_stops_earlier_without_forced_jokes(self):
-        self.state.mood = 12
+        set_test_pet_values(self.state, mood=12)
         events = [
             self.mind.click("left", self.state, self.context, 100 + i) for i in range(9)
         ]
@@ -173,7 +174,7 @@ class ClickStoryTests(unittest.TestCase):
         )
 
     def test_sleep_does_not_wake_and_is_not_click_spam(self):
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         for i in range(12):
             r = self.mind.click("left", self.state, self.context, 30 + i)
             assert r is not None
@@ -388,20 +389,20 @@ class CatalogueContractTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     Line.parse(data)
 
-    def test_all_followup_text_is_short_and_no_fiction_or_hardware(self):
-        lines = DialogueBook.from_file().lines
-        for line in lines:
-            if not line.followup_text:
-                continue
-            self.assertLessEqual(len(line.followup_text), 125)
-            for forbidden in ("Academy", "Kobe", "GPU", "CPU", "RAM"):
-                self.assertIsNone(
-                    re.search(
-                        r"\b" + re.escape(forbidden) + r"\b",
-                        line.followup_text,
-                        flags=re.IGNORECASE,
+    def test_all_sequence_text_is_short_and_no_fiction_or_hardware(self):
+        for line in DialogueBook.from_file().lines:
+            for beat in line.beats:
+                if beat.kind != "text":
+                    continue
+                self.assertLessEqual(len(beat.content), 125)
+                for forbidden in ("Academy", "Kobe", "GPU", "CPU", "RAM"):
+                    self.assertIsNone(
+                        re.search(
+                            r"\b" + re.escape(forbidden) + r"\b",
+                            beat.content,
+                            flags=re.IGNORECASE,
+                        )
                     )
-                )
 
     def test_all_new_events_have_actual_authored_lines(self):
         book = DialogueBook.from_file()

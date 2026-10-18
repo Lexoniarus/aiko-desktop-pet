@@ -1,0 +1,86 @@
+# World desktop acceptance and repeatable smoke checks
+
+## Acceptance status
+
+The maintainer reports that desktop acceptance for the current object-interaction
+flow is **passed**, recorded on 2026-10-18 before the documentation consolidation.
+The following test-only changes preserved that runtime. Local verification at
+`5f1bdea` passed 1,146 tests; the final review at `65175f2` reran 126 targeted tests
+and found no remaining findings in the three scoped cleanup items.
+
+This is reported practical acceptance, not a claim that every historical matrix
+cell has a separately recorded screenshot or exact-SHA sign-off. Earlier open
+checklists and test totals are [history](history/README.md), not outstanding work
+on the accepted flow. PR #10 remains draft and unmerged. CI for a new pushed
+commit must be checked separately; see the [documentation index](README.md).
+
+## Isolated launcher
+
+Close other Aiko instances when doing a practical smoke run. Use
+[Aiko_World_Test.bat](../Aiko_World_Test.bat), which selects a temporary test save:
+
+```powershell
+.\Aiko_World_Test.bat --scenario curious --stock two
+```
+
+A fresh run creates an `aiko-world-smoke-*` directory in system temp and prints its
+exact save path and restart command. Profiles are `hungry` (55/55 satiety/energy),
+`curious` (76/60) and `full` (100/100). `--stock one` or `--stock two` only seeds
+a fresh save; an existing save is not reseeded.
+
+To restart the same isolated session, use the printed path:
+
+```powershell
+.\Aiko_World_Test.bat --save-path "C:/exact/printed/temp-folder/state.json"
+```
+
+Add `--needs hungry` to change only the selected need values while retaining
+World, learned memory, history and friendship. Omit it for an ordinary restart.
+The normal save path, including an `AIKO_SAVE_PATH` override, is rejected. The
+launcher disables random walks, automatic routine, hardware observation, rhythm
+learning and spontaneous speech; required object bubbles and need decay remain.
+
+## Repeat checks after relevant future changes
+
+These are repeatable regression instructions, not an uncompleted acceptance plan.
+Use both 1x and 2x when changing geometry, scaling or native item rendering.
+The maintained [World rules](WORLD_OBJECT_CONTRACTS.md) define expected behavior.
+
+1. Drop an unknown portion. Aiko notices, approaches, picks up and inspects it
+   before identifying it. Depending on appetite she consumes it or safely puts it
+   down. Full energy does not prevent selecting a drink into cursor custody.
+2. Present an unknown portion deliberately before her face. Verify identification
+   and assessment, then actual release for handover. Passing through the face
+   region must not identify; a deliberate known refusal must remain effective.
+3. While Aiko is free and following the cursor, move a known portion continuously.
+   It retains its identity and observed place without repeated inspection or a
+   phantom missing-item bubble.
+4. While she approaches, eats, plays, is petted or is talking, relocate several
+   known portions. On attention release she checks learned places left and right,
+   announces every confirmed loss individually, then searches. An unknown
+   replacement at an old place must not hide the known loss.
+5. During that search, verify pickup/inspection of reachable unknown candidates,
+   a grounded found bubble for each matching portion and continued route progress
+   for the others. A genuinely new candidate must not steal search priority.
+6. Hover over Aiko during patrol and candidate inspection. The toolbar opens,
+   action buttons remain disabled and movement continues. A direct click may
+   produce a busy reply without cancelling the current action. Pin/details and
+   settings remain usable.
+7. Test both taskbar edges. An item must be reachable before attachment, and a
+   portion moved away before the attachment frame must stay out of her hand.
+   Falling/rebounding items are not collectible until settled.
+8. Restart with two nearby learned portions in the same temporary save. They
+   remain distinct and are not reidentified solely because of restart. Later
+   hunger recalls known assessed supply without repeating first identification.
+9. Check safe sleep/termination during held inspection, complete consumption
+   playback and exactly-once nutrition/removal after same-save restart. Original
+   user saves must remain untouched.
+
+## Automated protection
+
+Headless owner tests cover perception, memory, orientation, search, custody,
+receipts, consumption, migration and rollback. Separate native fixtures cover
+actual reach/attachment, input, hover, animation timers, handover and restart.
+Renderer tests use standalone Tk components rather than fictional World pickup.
+See [tests and current evidence](README.md#validation-and-acceptance) and
+[contribution commands](../CONTRIBUTING.md).

@@ -1,0 +1,123 @@
+{
+  "frames": [
+    {
+      "frame": 1,
+      "native_size": [
+        1205,
+        1306
+      ],
+      "registration_scale": 0.98,
+      "registration_origin": [
+        -106,
+        241
+      ],
+      "foot_alignment": "original approved action body baseline and shoe width",
+      "file": "Originalaufloesung/01.png"
+    },
+    {
+      "frame": 2,
+      "native_size": [
+        1024,
+        1536
+      ],
+      "registration_scale": 0.8391959798994975,
+      "registration_origin": [
+        64,
+        227
+      ],
+      "foot_alignment": "original approved action body baseline and shoe width",
+      "file": "Originalaufloesung/02.png"
+    },
+    {
+      "frame": 3,
+      "native_size": [
+        1024,
+        1536
+      ],
+      "registration_scale": 0.7577319587628866,
+      "registration_origin": [
+        113,
+        377
+      ],
+      "foot_alignment": "original approved action body baseline and shoe width",
+      "file": "Originalaufloesung/03.png"
+    },
+    {
+      "frame": 4,
+      "native_size": [
+        1024,
+        1536
+      ],
+      "registration_scale": 0.7615780445969125,
+      "registration_origin": [
+        111,
+        370
+      ],
+      "foot_alignment": "original approved action body baseline and shoe width",
+      "file": "Originalaufloesung/04.png"
+    },
+    {
+      "frame": 5,
+      "native_size": [
+        1024,
+        1536
+      ],
+      "registration_scale": 0.7551020408163265,
+      "registration_origin": [
+        99,
+        366
+      ],
+      "foot_alignment": "original approved action body baseline and shoe width",
+      "file": "Originalaufloesung/05.png"
+    },
+    {
+      "frame": 6,
+      "native_size": [
+        1024,
+        1536
+      ],
+      "registration_scale": 0.7730870712401056,
+      "registration_origin": [
+        90,
+        322
+      ],
+      "foot_alignment": "original approved action body baseline and shoe width",
+      "file": "Originalaufloesung/06.png"
+    },
+    {
+      "frame": 7,
+      "native_size": [
+        1024,
+        1536
+      ],
+      "registration_scale": 0.7888888888888889,
+      "registration_origin": [
+        88,
+        314
+      ],
+      "foot_alignment": "original approved action body baseline and shoe width",
+      "file": "Originalaufloesung/07.png"
+    },
+    {
+      "frame": 8,
+      "native_size": [
+        1024,
+        1536
+      ],
+      "registration_scale": 0.7938461538461539,
+      "registration_origin": [
+        95,
+        279
+      ],
+      "foot_alignment": "original approved action body baseline and shoe width",
+      "file": "Originalaufloesung/08.png"
+    }
+  ],
+  "game_scale": 0.13029315960912052,
+  "game_origin": [
+    29,
+    3
+  ],
+  "baseline_highres": 1480,
+  "baseline_runtime": 196
+}

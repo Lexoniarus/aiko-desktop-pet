@@ -17,6 +17,7 @@ from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
+from tools.pet_test_support import set_test_pet_values
 
 
 class Monitor:
@@ -41,19 +42,19 @@ class CareRequestTests(unittest.TestCase):
 
     def test_threshold_and_all_tie_breaks(self) -> None:
         self.assertIsNone(choose_care_request(self.state))
-        self.state.satiety = 70
+        set_test_pet_values(self.state, satiety=70)
         self.assertEqual(choose_care_request(self.state), 'care_request_feed')
-        self.state.social = self.state.affection = self.state.fun = 60
+        set_test_pet_values(self.state, social=60, affection=60, fun=60)
         self.assertEqual(choose_care_request(self.state), 'care_request_talk')
-        self.state.social = 100
+        set_test_pet_values(self.state, social=100)
         self.assertEqual(choose_care_request(self.state), 'care_request_pet')
-        self.state.affection = 100
+        set_test_pet_values(self.state, affection=100)
         self.assertEqual(choose_care_request(self.state), 'care_request_play')
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         self.assertIsNone(choose_care_request(self.state))
 
     def test_request_is_authored_and_throttled_for_thirty_minutes(self) -> None:
-        self.state.satiety = 70
+        set_test_pet_values(self.state, satiety=70)
         first = self.attention.spontaneous(1000, self.context, toolbar_visible=False)
         self.assertTrue(first.due)
         self.assertIsNotNone(first.reaction)
@@ -65,7 +66,7 @@ class CareRequestTests(unittest.TestCase):
         ).due)
 
     def test_accepted_care_has_three_minute_grace(self) -> None:
-        self.state.satiety = 60
+        set_test_pet_values(self.state, satiety=60)
         self.mind.after_care('pet', 1000)
         self.assertFalse(self.attention.spontaneous(
             1179, self.context, toolbar_visible=False,
@@ -75,7 +76,7 @@ class CareRequestTests(unittest.TestCase):
         ).due)
 
     def test_visible_ui_and_running_reactions_are_not_interrupted(self) -> None:
-        self.state.satiety = 60
+        set_test_pet_values(self.state, satiety=60)
         for flag in ('toolbar_visible', 'bubble_visible', 'popup_visible'):
             with self.subTest(flag=flag):
                 arguments = {flag: True}

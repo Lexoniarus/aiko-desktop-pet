@@ -1,0 +1,190 @@
+# Observed item continuity and knowledge-aware interaction
+
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
+The next agreed, **not yet implemented** correction is the
+[noticing, identification and assessment plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md).
+It records deliberate cursor presentation, first identification in Aiko's hand,
+early perceived absence and the implementation stages. Its stricter perception
+rules supersede earlier proximity-only identification assumptions below; this
+document retains the evidence of the already delivered continuity work.
+
+Approved follow-up to the completed object focus correction. Preserve care,
+animation, subjective search and save compatibility. No merge is authorized.
+
+## Contracts and ownership
+
+Observation, learned identity and current desire are independent. Aiko can learn
+an identity and develop a desire while the player holds a portion. An observed
+pickup and continuously followed placement preserve the same subjective record;
+two identical portions do not become one. Unobserved movement still uses bounded
+subjective search and matching, never objective instance IDs as proof of knowledge.
+
+World owns custody and motion. ObjectAwareness/ObjectTracker own sensory
+continuity, ObjectMemory owns learned facts and completed assessment, and
+ObjectIntentions owns the selected current wish. The interaction coordinator owns
+action phases. CursorItemGesture owns input capture and current pointer pose.
+Dialogue and tuning remain in the existing JSON catalogues.
+
+An ordinary held portion is not a stolen target. Only taking the subject of an
+already committed action invokes return requests, irritation and friendship
+consequences. A newly expressed desire must not retroactively become theft.
+Committed focus continues to exclude unrelated drops and offers.
+
+A known identity needs no repeated identification. Recognition does not imply a
+completed use assessment. Consumption always rechecks current capacity/activity.
+A desire expressed for an observed offer survives its observed placement; seeking
+thresholds and actual care origin are separate. Release in the handover area is
+still required for human handover. Ground collection remains autonomous.
+
+Known identity/assessment survive restart using existing memory serialization;
+live tracking and current wishes remain session-only. No new save version or
+parallel known-items store is needed.
+
+## Small delivery steps
+
+1. Record these contracts and the evidence ledger; update architectural links.
+2. Establish current cursor pose before observation and generalize observed pickup
+   tracking independently of committed focus. Failed capture must not create a
+   pickup observation. Test continuity and loss of sight separately.
+3. Keep existing recognition dwell/range for unknown held items; reuse known
+   identity under continuous observation. Assess and select held wishes through
+   the existing intentions owner. Separate use context from consumption origin.
+4. Route known, unassessed and unknown items through the appropriate coordinator
+   phases. Preserve unchecked-consumption protection and full consumption clips.
+5. Preserve wishes across observed placement without theft mechanics; keep actual
+   handover/ground origin and true target withholding rules. Test both paths.
+6. Align authored cues with first identification, desire, known acceptance and
+   actual return. Keep the existing identified feedback player and JSON variants.
+7. Verify paired save/restart, native 1x/2x cursor flows, targeted regressions,
+   complete suite and final CI. Update practical retest instructions and evidence.
+
+Split steps further when an independently green boundary is useful. Run targeted
+tests during development plus Ruff, strict Mypy and Pyright. Run the complete
+local suite only at the end. Push each green commit, monitor preceding CI runs,
+and stop implementation to repair a red run. Preserve unrelated local work and
+real saves; use temporary test saves only.
+
+## Evidence ledger
+
+- Baseline: `8e9374d`, clean checkout on `feature/world-foundation`.
+- Baseline diagnosis: ordinary pickup calls `follow_taken` only if
+  `target_taken` succeeds; awareness stops following without committed focus;
+  offer assessment requires a new recognized observation; known but unassessed
+  coordinator routing repeats identification; handover text mixes known and
+  unknown cases. Current wishes are limited to resting portions.
+- Implementation and verification evidence will be recorded below.
+- Step 1: `42789e3` records this approved plan and its architecture link.
+- Step 2: ordinary observed pickup and held-item tracking survive without a
+  committed action; settlement releases the cursor lock. Capture establishes
+  current pointer pose before save/view/observation. Verified 10 awareness tests,
+  23 native World GUI tests (including 1x/2x focus resumption), Ruff, strict Mypy
+  (178 sources) and Pyright. Tk emits teardown ThemeChanged diagnostics in the
+  existing GUI fixture; all assertions pass.
+- Step 2 commit: `c21d2dd`.
+- Step 3a: use decisions now take an explicit supply/offer/continuing-wish
+  context, independently of the unchanged consumption care origin. Capacity and
+  sleeping checks remain mandatory. Verified 40 decision, coordinator, retrieval,
+  transaction and care-origin tests; Ruff, strict Mypy and Pyright pass.
+- Step 3a commit: `f706441`.
+- Step 3b: currently observed knowledge can authorize an offer assessment even
+  when its new sensory sample has no identity. Unknown held portions still
+  require the existing recognition dwell/range. The existing intention owner
+  selects a session-only wish; observed holding, falling and placement retain it
+  while capacity/activity are rechecked. Passive wishes wait for ground contact
+  before an interaction begins. Verified 11 awareness, 8 intention, 4 perception,
+  4 tracker and 23 native GUI cases; Ruff, strict Mypy and Pyright pass.
+- Step 3b commit: `24175b0`.
+- Step 4: known identity and completed use assessment now route independently.
+  Known/unassessed acquisition waits for a readable decision without repeating
+  identification; unknown/conflicting evidence still requires inspection. Only
+  actual valid assessments are recorded. Known handover retains its acceptance
+  phase and full consume clip. Verified 14 coordinator, 16 retrieval and 23 native
+  GUI tests, including forged-goal protection, stale receipts, reverse placement
+  and transaction retry; Ruff, strict Mypy and Pyright pass.
+- Step 4 commit: `5cd3123`.
+- Step 5: added native boundary coverage for an ordinary known floor pickup
+  moved far away and for newly learned held wishes: food/drink, 1x/2x, release
+  into Aiko's hand versus observed falling/ground collection. Twenty-five active
+  seconds of ordinary holding cause no withholding phase or friendship loss.
+  Offered wishes above normal seeking thresholds still consume after observed
+  placement, with autonomous care attribution. Verified 25 native GUI tests,
+  Ruff, strict Mypy and Pyright. Existing true-withholding regressions stay green.
+- Step 5 commit: `6811f5a`.
+- Step 6: existing JSON offer/refusal/acceptance variants now name the learned
+  item. Known acceptance no longer announces identification; shared drink offers
+  no longer claim hunger. New semantic cues distinguish a known item awaiting
+  assessment and collection of an already expressed wish from a true return or
+  a fresh unknown find. Existing relationship variants and one feedback player
+  remain intact. Verified 5 object reaction, 10 dialogue context, 1 catalogue,
+  16 retrieval, 14 coordinator and 25 native GUI tests; Ruff, strict Mypy and
+  Pyright pass.
+- Step 6 commit: `662d811`; its complete three-job CI matrix passed, as did all
+  preceding delivery commits.
+- Final review found and reproduced one extra boundary: refusing a held offer
+  after a need changes could clear the sole goal of an already committed return
+  episode. Offer assessment now only proposes wishes; the existing choice and
+  completion lifecycle invalidates them, preserving committed decline/put-down.
+  The preliminary complete suite passed 996 tests in 219.775 s. The final fix is
+  covered by a focused intention test; full verification follows after this fix.
+- Review fix: `233c698`; 9 intention and 16 retrieval tests plus Ruff, strict
+  Mypy and Pyright passed before push. Its CI matrix passed:
+  [38973573575](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/38973573575).
+- Step 7, final verification (17 October 2026): **997 tests passed in 220.374 s**
+  on Windows/Python 3.11, including retained real-time consumption and all native
+  1x/2x flows. Ruff 0.13.2, strict Mypy 1.18.2 (178 sources) and Pyright 1.1.414
+  passed. The native module now has 27 cases, including cold known/unassessed
+  cookie recovery and quitting during a newly learned held wish. Its Tk probe
+  flushes idle setup before destruction; other existing suite fixtures still
+  emit ThemeChanged teardown diagnostics without failures.
+- The actual Python 3.14 isolated launcher passed fresh `curious --stock two`
+  startup/shutdown and same-save restart, both with 1200-ms auto-close, under
+  `%TEMP%/aiko-continuity-smoke-326f71f4cd9146ae8511e74084903e84/state.json`.
+  No real save was used. Save formats and normalization rules are unchanged.
+- Architecture, contracts, changelog and the practical checklist are updated.
+  Delivery is ready for manual acceptance; no visual acceptance is claimed.
+  Draft PR #10 remains unmerged. The final delivery commit contains these
+  restart checks and evidence; its CI is checked after push.
+
+## Practical follow-up: recognizing the withheld target — 17 October 2026
+
+The user found a missing path in the live test: Aiko had committed to investigating
+an unknown portion, the player took it and then held it near her. Awareness could
+learn and assess it, but the ordinary offer presenter discarded feedback while
+the coordinator was active. The old waiting path continued demanding return,
+including after a refusal, rather than expressing the new knowledge/decision.
+
+The correction belongs to the existing interaction coordinator:
+
+- Feed the current assessment of the exact observed held target into that owner.
+  Preserve readable prior cues; announce first recognition in `recognize_offer`
+  followed by current willingness in `decide_offer`. Known targets skip the
+  recognition cue. These phases describe player-held custody, not pet-held use.
+- A desired portion returns to the existing waiting/settling path and can be
+  handed over on release or collected after observed ground contact. Neither
+  recognition nor desire consumes it. Existing consumption origin/animation rules
+  remain mandatory; known return skips another identification.
+- A refused portion ends the investigation after its refusal cue, preserving
+  learned identity/assessment and the player's actual custody. No more return
+  requests or withholding losses follow from that finished episode.
+- Reassess if need changes during either cue. Changed decisions get a new
+  identified cue; stale receipts cannot complete it. Falling/placement cannot
+  replace an unfinished recognition/decision cue. Explicit commands still cancel
+  safely, and actual visual loss retains bounded subjective search.
+- Reuse existing authored JSON recognition/offer/refusal copy, feedback receipts,
+  and current memory/World saves. No extra speech player or save schema is added.
+
+Verification: 20 retrieval/coordinator-path tests, 14 interaction tests and 28
+native GUI cases passed. The new native case reproduces the user's exact unknown
+Energy Drink take/presentation sequence, including agreement at 65 energy (1x),
+refusal at 100 energy (2x), and no further withholding losses after refusal.
+Headless cases cover readable recognition/decision, known-target shortcuts,
+need changes during both cues, stale receipts and placement during recognition.
+The final Windows/Python 3.11 suite passed **1002 tests in 221.743 s**; Ruff,
+strict Mypy (178 sources) and Pyright passed. No real save or asset was modified.
+This follow-up is delivered as one bounded correction commit; its CI matrix is
+checked after push. Practical acceptance remains open; PR #10 remains unmerged.

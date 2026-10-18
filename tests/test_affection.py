@@ -21,6 +21,7 @@ from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import MoodHint
 from aiko_pet.ui.view_models.text_de import format_emotion_label, mood_hint_text
+from tools.pet_test_support import set_test_pet_values
 
 
 def require_reaction(value: Reaction | None) -> Reaction:
@@ -137,7 +138,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
         ):
             with self.subTest(action=action):
                 state = PetState(energy=60)
-                setattr(state, value, 100)
+                set_test_pet_values(state, **{value: 100})
                 state.interact(action, now=stamp())
                 self.assertEqual(state.friendship, 15)
 
@@ -151,7 +152,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
         # Even after the reward cooldown, full affection is not useful care.
         state.interact("pet", now=stamp() + 20 * 60)
         self.assertEqual(state.friendship, 16)
-        state.affection = 40
+        set_test_pet_values(state, affection=40)
         state.interact("pet", now=stamp() + 21 * 60)
         self.assertGreater(state.friendship, 16)
 
@@ -166,7 +167,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
             now=start,
         )
         for i in range(4):
-            repeated.affection = 20
+            set_test_pet_values(repeated, affection=20)
             repeated.interact("pet", now=start + i * 15 * 60)
         self.assertGreater(diverse.friendship, repeated.friendship)
         self.assertEqual(set(diverse.care_types_today), {"feed", "pet", "talk", "play"})
@@ -190,12 +191,12 @@ class MeaningfulFriendshipTests(unittest.TestCase):
                 ("talk", "social"),
                 ("play", "fun"),
             ):
-                setattr(state, attribute, 20)
-                state.energy = 65
+                set_test_pet_values(state, **{attribute: 20})
+                set_test_pet_values(state, energy=65)
                 state.interact(action, now=start + 16 * 60 * i)
         self.assertLessEqual(state.friendship, 15 + FRIENDSHIP_DAILY_CAP + 1e-6)
         previous = state.friendship
-        state.social = 20
+        set_test_pet_values(state, social=20)
         state.interact("talk", now=stamp("2026-10-13"))
         self.assertGreater(state.friendship, previous)
         self.assertEqual(state.care_types_today, ["talk"])
@@ -250,7 +251,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
             store = StateStore(Path(tmp) / "pet.json")
             state = PetState(updated_at=stamp(), affection=35)
             state.interact("pet", now=stamp())
-            state.social = 35
+            set_test_pet_values(state, social=35)
             state.interact("talk", now=stamp() + 1)
             store.save(state, PetSettings())
             session_data = store.load_session(now=stamp() + 1)
@@ -327,7 +328,7 @@ class AffectionDialogueTests(unittest.TestCase):
             "click_at_ease",
         )
         reserved = make_aiko_mind(started_at=0.0, rng=random.Random(12))
-        state.affection = 50
+        set_test_pet_values(state, affection=50)
         self.assertEqual(
             require_reaction(reserved.click("left", state, self.context, 50)).event,
             "click_left",

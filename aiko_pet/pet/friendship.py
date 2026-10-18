@@ -1,8 +1,9 @@
-"""Pure friendship reward policy; PetState owns all reward mutations."""
+"""Pure friendship policies; PetState owns relationship mutations."""
 
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -30,13 +31,22 @@ LEGACY_REWARD_ACTIONS = ("energy_drink", "sleep")
 
 
 class FriendshipRecord(Protocol):
-    """Readable relationship fields needed to evaluate a care reward."""
+    """Read-only relationship values and history views."""
 
-    friendship: float
-    friendship_day: str
-    friendship_gained_today: float
-    care_types_today: list[str]
-    care_last_rewards: dict[str, float]
+    @property
+    def friendship(self) -> float: ...
+
+    @property
+    def friendship_day(self) -> str: ...
+
+    @property
+    def friendship_gained_today(self) -> float: ...
+
+    @property
+    def care_types_today(self) -> Sequence[str]: ...
+
+    @property
+    def care_last_rewards(self) -> Mapping[str, float]: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -93,3 +103,10 @@ def calculate_friendship_reward(
         care_types=tuple(types),
         last_rewards=tuple(rewards.items()),
     )
+
+
+def friendship_after_withholding(friendship: float, loss: float) -> float:
+    """Loss never reopens the daily care allowance or rewrites reward history."""
+    if not math.isfinite(loss) or loss < 0:
+        raise ValueError("Friendship loss must be finite and nonnegative")
+    return clamp_need_value(friendship - loss)

@@ -15,12 +15,12 @@ from aiko_pet.infrastructure.character_assets import load_character_catalog
 class CharacterCatalogTests(unittest.TestCase):
     def test_eight_source_sprites_with_independent_playback(self) -> None:
         catalog = load_character_catalog()
-        self.assertEqual(len(catalog.clips), 14)
+        self.assertEqual(len(catalog.clips), 16)
         self.assertEqual(
             len({
                 frame.file for clip in catalog.clips.values() for frame in clip.frames
             }),
-            112,
+            120,
         )
         self.assertNotIn("running", catalog.clips)
         self.assertEqual(catalog.clips["idle"].timings, (160,) * 8)
@@ -60,7 +60,7 @@ class CharacterCatalogTests(unittest.TestCase):
         self.assertEqual(policy["version"], 3)
         self.assertEqual(durations["running-left"], [190] * 8)
         self.assertNotEqual(durations["sleep"], durations["waving"])
-        self.assertEqual(len(data["animations"]), 13)
+        self.assertEqual(len(data["animations"]), 14)
         for clip in data["animations"]:
             name = clip["state"]
             if name == "look":
@@ -185,6 +185,10 @@ class CharacterCatalogTests(unittest.TestCase):
                 if path.is_relative_to(root.resolve()):
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.touch()
+                if "hand_foreground" in frame:
+                    hand = root / frame["hand_foreground"]
+                    hand.parent.mkdir(parents=True, exist_ok=True)
+                    hand.touch()
         (root / "animations.json").write_text(
             json.dumps(data),
             encoding="utf-8",

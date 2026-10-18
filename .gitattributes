@@ -19,3 +19,4 @@
 
 # Preserve the imported runtime source export byte-for-byte, including text.
 assets/aiko-anime-8-frames/aiko-anime-compact/** -text -eol
+assets/aiko-pick-up/** -text -eol

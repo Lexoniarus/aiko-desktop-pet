@@ -3,7 +3,11 @@
 The public gallery contains exactly the six media files used by the README.
 The UI captures show the real Tk application under Linux/Xvfb; they are not
 native Windows screenshots or performance measurements. Additional detail
-stills have been removed. Native Windows acceptance remains separate.
+stills have been removed. The captures are historical illustrations and may
+predate the current mood-bar hierarchy and object-count details. Use the
+[UI contract](UI_WINDOW_CONTRACT.md) for the current layout and the
+[documentation index](README.md#validation-and-acceptance) for separately recorded
+desktop acceptance; image filenames do not establish an exact-commit sign-off.
 
 ## Desktop overview
 

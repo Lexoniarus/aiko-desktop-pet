@@ -19,11 +19,22 @@ MAX_LIVE_EFFORT_SECONDS = BALANCE.number("simulation", "maximum_live_effort_seco
 
 
 class RoutineValues(Protocol):
-    sleeping: bool
-    sleep_origin: str
-    nap_until: float
-    auto_sleep_night: str
-    auto_nap_day: str
+    """Read-only routine inputs for the pure transition policy."""
+
+    @property
+    def sleeping(self) -> bool: ...
+
+    @property
+    def sleep_origin(self) -> str: ...
+
+    @property
+    def nap_until(self) -> float: ...
+
+    @property
+    def auto_sleep_night(self) -> str: ...
+
+    @property
+    def auto_nap_day(self) -> str: ...
 
 
 @dataclass(frozen=True, slots=True)

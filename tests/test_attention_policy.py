@@ -19,6 +19,7 @@ from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
+from tools.pet_test_support import set_test_pet_values
 
 
 class StaticReadings:
@@ -68,11 +69,11 @@ class AttentionPolicyTests(unittest.TestCase):
 
     def test_idles_never_interrupt_sleep_or_toolbar(self) -> None:
         self.attention.next_idle_emote = 0
-        self.state.sleeping = True
+        set_test_pet_values(self.state, sleeping=True)
         self.assertIsNone(self.attention.select_idle_animation(
             200, action_until=0, walking=False, toolbar_visible=False,
         ))
-        self.state.sleeping = False
+        set_test_pet_values(self.state, sleeping=False)
         self.attention.next_idle_emote = 0
         self.assertIsNone(self.attention.select_idle_animation(
             201, action_until=0, walking=False, toolbar_visible=True,
@@ -125,7 +126,7 @@ class AttentionPolicyTests(unittest.TestCase):
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ))
             self.settings.spontaneous_talk = True
-            self.state.sleeping = True
+            set_test_pet_values(self.state, sleeping=True)
             self.assertIsNone(self.attention.select_cursor_comment_event(
                 800.0, 1000, 1000.0, toolbar_visible=False,
             ))

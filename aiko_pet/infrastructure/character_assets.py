@@ -75,6 +75,7 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
                 "release_frame",
                 "transition_included",
                 "weapon_embedded",
+                "hold_last",
             ),
             context="animation entry",
         )
@@ -143,6 +144,10 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
                     duration,
                     tuple(events),
                     food_anchor=food_anchor,
+                    hand_foreground=(
+                        _file(root, frame["hand_foreground"])
+                        if "hand_foreground" in frame else None
+                    ),
                 )
             )
         if name != "look":
@@ -176,6 +181,7 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
             (anchor[0], anchor[1]),
             return_to,
             playback_order,
+            bool(entry.get("hold_last", False)),
         )
     for variant, source_name in VIRTUAL_CLIPS.items():
         if variant in clips or source_name not in clips:
@@ -188,6 +194,7 @@ def load_character_catalog(root: Path = ASSET_ROOT) -> CharacterCatalog:
             source.anchor,
             source.return_to,
             policy.sequence_for(variant),
+            source.hold_last,
         )
     for required in ("idle", "sleep", "eat", "petting", "look"):
         if required not in clips:

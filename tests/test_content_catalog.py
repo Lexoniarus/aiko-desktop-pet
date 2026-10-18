@@ -23,8 +23,7 @@ from aiko_pet.ui.view_models.text_de import (
 class TextCatalogTests(unittest.TestCase):
     def test_packaged_copy_and_templates_are_read_only(self) -> None:
         path = (
-            Path(__file__).resolve().parents[1]
-            / "aiko_pet" / "data" / "texts.de.json"
+            Path(__file__).resolve().parents[1] / "aiko_pet" / "data" / "texts.de.json"
         )
         decoded = json.loads(path.read_text(encoding="utf-8"))
         loaded = parse_text_catalog(decoded)
@@ -55,40 +54,36 @@ class TextCatalogTests(unittest.TestCase):
         for emotion, expected in expected_labels.items():
             with self.subTest(emotion=emotion):
                 self.assertEqual(
-                    format_emotion_label(emotion), f"Stimmung: {expected}",
+                    format_emotion_label(emotion),
+                    f"Stimmung: {expected}",
                 )
         self.assertEqual(format_sleep_label(True), "Wecken")
         self.assertEqual(format_sleep_label(False), "Schlafen")
         self.assertEqual(
-            observation_disabled_text(), "Rechnerbeobachtung deaktiviert",
+            observation_disabled_text(),
+            "Rechnerbeobachtung deaktiviert",
         )
 
     def test_game_reactions_are_backed_by_german_json(self) -> None:
-        from aiko_pet.ui.windows.rock_paper_scissors_text_de import (
+        from aiko_pet.ui.windows.rock_paper_scissors_dialogue import (
+            GameDialogue,
             countdown_line,
-            welcome_line,
         )
 
         messages = GERMAN_TEXT.messages
-        for category in ("welcome", "win", "loss", "draw"):
-            with self.subTest(category=category):
-                self.assertEqual(
-                    {f"rps.{category}.{i}" for i in range(3)},
-                    {
-                        key for key in messages
-                        if key.startswith(f"rps.{category}.")
-                    },
-                )
+        from aiko_pet.pet.mind.catalog import DialogueBook
+
+        book = DialogueBook.from_file()
+        for event in ("game_greeting", "game_aiko_win", "game_player_win", "game_draw"):
+            self.assertGreaterEqual(sum(line.event == event for line in book.lines), 12)
         for number in (1, 2, 3):
             self.assertEqual(
-                countdown_line(number),
-                messages[f"rps.countdown.{number}"],
+                countdown_line(number), messages[f"rps.countdown.{number}"]
             )
-        for games in range(7):
-            self.assertEqual(
-                welcome_line(games),
-                messages[f"rps.welcome.{games % 3}"],
-            )
+        greetings = {line.text for line in book.lines if line.event == "game_greeting"}
+        dialogue = GameDialogue()
+        for _ in range(7):
+            self.assertIn(dialogue.choose("game_greeting"), greetings)
         with self.assertRaises(KeyError):
             countdown_line(4)
 
@@ -103,12 +98,9 @@ class TextCatalogTests(unittest.TestCase):
             {"version": 2, "locale": "de", "messages": {"care.x": "Hallo"}},
             {"version": 1, "locale": "en", "messages": {"care.x": "Hello"}},
             {"version": 1, "locale": "de", "messages": {}},
-            {"version": 1, "locale": "de",
-             "messages": {"care.x": "{food.__class__}"}},
-            {"version": 1, "locale": "de",
-             "messages": {"care.x": "{value:>5}"}},
-            {"version": 1, "locale": "de",
-             "messages": {"care.x": "{missing"}},
+            {"version": 1, "locale": "de", "messages": {"care.x": "{food.__class__}"}},
+            {"version": 1, "locale": "de", "messages": {"care.x": "{value:>5}"}},
+            {"version": 1, "locale": "de", "messages": {"care.x": "{missing"}},
         ):
             with self.subTest(raw=raw):
                 with self.assertRaises(ValueError):

@@ -1,4 +1,3 @@
-
 import unittest
 from datetime import datetime
 
@@ -49,7 +48,7 @@ class PetStateTests(unittest.TestCase):
         before = encode_pet_state(state)
         self.assertIn("Spiel", format_care_response(state.interact("play")))
         self.assertEqual(encode_pet_state(state), before)
-        self.assertIn("angenehm", format_care_response(state.interact("pet")))
+        self.assertIn("tut gut", format_care_response(state.interact("pet")))
         self.assertEqual(state.affection, 100)
 
     def test_play_when_exhausted_does_not_apply_cost(self):
@@ -66,10 +65,16 @@ class PetStateTests(unittest.TestCase):
         self.assertEqual(state.satiety, 100)
 
     def test_malformed_save_is_safely_normalized(self):
-        state = decode_pet_state({
-            "satiety": "NaN", "mood": -5, "energy": float("inf"),
-            "sleeping": "yes", "updated_at": "oops",
-        }, now=300)
+        state = decode_pet_state(
+            {
+                "satiety": "NaN",
+                "mood": -5,
+                "energy": float("inf"),
+                "sleeping": "yes",
+                "updated_at": "oops",
+            },
+            now=300,
+        )
         self.assertEqual((state.satiety, state.mood, state.energy), (75, 0, 75))
         self.assertFalse(state.sleeping)
         self.assertEqual(state.updated_at, 300)

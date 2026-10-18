@@ -85,6 +85,7 @@ class FoodMenu:
                 pady=4,
             )
             button.pack(fill="x")
+            button.bind("<ButtonPress-1>", partial(self._press, choice.id))
             self.buttons[choice.id] = button
             tk.Label(
                 item,
@@ -121,6 +122,11 @@ class FoodMenu:
             return
         self.close()
         self._selected(food_id)
+
+    def _press(self, food_id: FoodChoiceId, _event: tk.Event) -> str:
+        """Start one carried portion on press, suppressing release-click feed."""
+        self.choose(food_id)
+        return "break"
 
     def contains_pointer(self, x: int, y: int) -> bool:
         if self._closed:

@@ -10,17 +10,19 @@ import tkinter as tk
 from dataclasses import dataclass
 from typing import Callable
 
+from ..application.object_feedback import InteractionPhase
 from ..application.settings import PetSettings
 from ..infrastructure.hardware.monitor import ActivityMonitor
 from ..infrastructure.item_assets import load_item_catalog
 from ..pet.animation.character import CharacterCatalog
 from ..pet.animation.item_assets import ItemCatalog
 from ..pet.mind.adaptive import AdaptiveRoutine
+from ..pet.mind.object_attention import LookSide
 from ..pet.movement.contracts import HorizontalTrack
 from ..pet.state import PetState
 from ..ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from .animation_runtime import AnimationRuntimePorts, DesktopAnimationRuntime
-from .visual_observation import DesktopVisualObservation
+from .visual_observation import DesktopVisualObservation, VisualAttentionPorts
 from .walk_runtime import WalkDriver, WalkDriverPorts
 
 
@@ -38,6 +40,12 @@ class AnimationAssemblyPorts:
     action_clip_id: Callable[[], str]
     attention_until: Callable[[], float]
     extend_action: Callable[[float], None]
+    object_focus: Callable[[], bool] = lambda: False
+    object_phase: Callable[[], InteractionPhase] = lambda: "idle"
+    following_subject: Callable[[], str | None] = lambda: None
+    feedback_subject: Callable[[], str | None] = lambda: None
+    activity_active: Callable[[], bool] = lambda: False
+    orientation_side: Callable[[], LookSide | None] = lambda: None
 
 
 @dataclass(frozen=True, slots=True)
@@ -66,10 +74,19 @@ def assemble_animation(
             toolbar_visible=ports.toolbar_visible,
             place_x=ports.place_x,
             walk_finished=ports.walk_finished,
+            committed_goal=ports.object_focus,
         ),
     )
     visual = DesktopVisualObservation(
         settings=settings, monitor=monitor, eyes=ports.gaze_origin,
+        attention=VisualAttentionPorts(
+            phase=ports.object_phase, sleeping=lambda: state.sleeping,
+            walking=lambda: walk.movement.remaining_distance,
+            following_subject=ports.following_subject,
+            feedback_subject=ports.feedback_subject,
+            activity_active=ports.activity_active,
+            orientation_side=ports.orientation_side,
+        ),
     )
     animation = DesktopAnimationRuntime(
         state=state, settings=settings, assets=assets, walk=walk, visual=visual,

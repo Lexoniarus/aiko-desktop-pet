@@ -33,6 +33,8 @@ class ActivityCallbacks:
     last_spoken: Callable[[], float]
     read_pointer: Callable[[], tuple[int, int]] | None = None
     read_mouse_buttons: Callable[[], tuple[bool, bool] | None] | None = None
+    defer_routine: Callable[[], bool] = lambda: False
+    speech_busy: Callable[[], bool] = lambda: False
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,6 +92,8 @@ class ActivityCoordinator:
         )
 
     def allow_nap(self) -> bool:
+        if self.callbacks.defer_routine():
+            return False
         behaviour = self.adaptive.current
         return bool(
             self.settings.observe_computer
@@ -98,6 +102,8 @@ class ActivityCoordinator:
         )
 
     def allow_bedtime(self) -> bool | None:
+        if self.callbacks.defer_routine():
+            return False
         behaviour = self.adaptive.current
         if not self.settings.observe_computer or behaviour is None:
             return None
@@ -224,7 +230,10 @@ class ActivityCoordinator:
             event = self.workload_events.observe_change(sample, now)
             if event and self.settings.spontaneous_talk and not self.state.sleeping:
                 self.pending_computer_line = (event, now)
-                if now >= self.callbacks.action_until():
+                if (
+                    now >= self.callbacks.action_until()
+                    and not self.callbacks.speech_busy()
+                ):
                     self.callbacks.start_review(now)
         if self.pending_computer_line is None:
             return
@@ -238,6 +247,7 @@ class ActivityCoordinator:
             self.pending_computer_line = None
         elif (
             now >= self.callbacks.action_until()
+            and not self.callbacks.speech_busy()
             and now - self.callbacks.last_spoken()
             >= BALANCE.integer("activity", "voice_quiet_seconds")
         ):

@@ -16,7 +16,7 @@ from typing import Callable, Protocol
 from ...desktop.geometry import FOOT_BASELINE
 from ...pet.animation.ambient import AmbientDirector
 from ...pet.animation.animation import FrameClock
-from ...pet.animation.character import FRAME_WIDTH, CharacterCatalog
+from ...pet.animation.character import FRAME_WIDTH, CharacterCatalog, PlaybackEvent
 from ...pet.animation.item_assets import ItemCatalog
 from ...pet.animation.priority import RenderDecision
 from ...pet.mind.cursor_attention import CursorAttentionSnapshot
@@ -28,10 +28,17 @@ from .rest_pose_renderer import RestPoseRenderer
 class CareVisuals(Protocol):
     """A read-only view of needs used by sprite presentation."""
 
-    energy: float
-    mood: float
-    satiety: float
-    sleeping: bool
+    @property
+    def energy(self) -> float: ...
+
+    @property
+    def mood(self) -> float: ...
+
+    @property
+    def satiety(self) -> float: ...
+
+    @property
+    def sleeping(self) -> bool: ...
 
 
 class CharacterSettings(Protocol):
@@ -87,8 +94,12 @@ class AnimatedPet:
         self.assets = assets
         self._frame_timer: str | None = None
         self._frame_generation = 0
+        self.action_id = 0
+        self.on_playback: Callable[[PlaybackEvent], None] = lambda _event: None
+        self._emitted: set[tuple[int, str, int, bool]] = set()
         self._active_action: str | None = None
         self._stopped = False
+        self._closed = False
         self._last_motion_at = time.monotonic()
         self._walk_progress = 0.0
         self.frame_clock = FrameClock(started_at=time.monotonic())
@@ -128,7 +139,6 @@ class AnimatedPet:
         self._game_mode = bool(enabled)
         self.ports.reset_gaze()
         self.ports.interrupt_walk()
-        self.cancel_action(time.monotonic())
 
     def reload_sprites(self) -> None:
         """Replace scaled images while preserving the active playback clock."""
@@ -147,6 +157,8 @@ class AnimatedPet:
         self._ambient.suspend(now)
         self.frame_clock.reset()
         self._active_action = state
+        self.action_id += 1
+        self._emitted.clear()
         self.ports.interrupt_walk()
         self.show_frame(state, now)
 
@@ -157,6 +169,13 @@ class AnimatedPet:
         self._active_action = None
         self.ports.interrupt_walk()
         self.show_frame("sleep" if self.state.sleeping else "idle", now)
+
+    def hold_last_pose(self, state: str, now: float) -> None:
+        """Present an explicit held pose without replaying a ground pickup."""
+        self.frame_clock.frame_index = len(self.assets.clips[state].timings) - 1
+        self.frame_clock.frame_started_at = now
+        self.frame_clock.finished = True
+        self.show_frame(state, now)
 
     def show_frame(
         self, state: str, now: float, *, fixed: int | None = None,
@@ -190,6 +209,17 @@ class AnimatedPet:
             (FOOT_BASELINE - clip.anchor[1]) * self.settings.scale,
         )
         source_index = clip.sprite_index(index)
+        if self._active_action == state:
+            key = (self.action_id, state, index, self.frame_clock.finished)
+            if key not in self._emitted:
+                self._emitted.add(key)
+                events = clip.frames[source_index].events
+                if state == "put_down":
+                    events = ("detach_object",) if source_index == 2 else ()
+                self.on_playback(PlaybackEvent(
+                    self.action_id, state, source_index, events,
+                    self.frame_clock.finished,
+                ))
         image = self.sprites[state][source_index]
         if (state == "idle" and fixed == 0) or (
             state == "look" and fixed is not None
@@ -209,6 +239,8 @@ class AnimatedPet:
         generation = self._frame_generation
         delay = self.frame_clock.next_delay_ms
         if self.frame_clock.finished and self._active_action == state:
+            if clip.hold_last:
+                return
             self._active_action = None
             self.show_frame(clip.return_to, now)
         elif delay is not None:
@@ -249,6 +281,18 @@ class AnimatedPet:
         if self._frame_timer is not None:
             self.root.after_cancel(self._frame_timer)
             self._frame_timer = None
+
+    def close(self) -> None:
+        """Release Tk images before destruction, never from later worker GC."""
+        if self._closed:
+            return
+        self._closed = True
+        self.stop()
+        self.on_playback = lambda _event: None
+        self.food_overlay.close()
+        self._rest_renderer.clear()
+        self.sprites.clear()
+        self._sprite_cache.close()
 
     def render(
         self, now: float, pointer: tuple[int, int],

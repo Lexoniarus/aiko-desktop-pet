@@ -7,6 +7,7 @@ import time
 import tkinter as tk
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.gui import DesktopPet
@@ -42,7 +43,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.pet.settings.spontaneous_talk = False
 
     def test_game_window_has_player_hand_and_transient_score(self) -> None:
-        self.pet._on_enter()
+        self.pet._hover.show_toolbar()
         toolbar = self.pet._hover.toolbar
         assert toolbar is not None
         previous_mood = self.pet.state.mood
@@ -77,7 +78,15 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.pet._hover.dismiss_outside(-999, -999)
         self.assertIs(self.pet._hover.game_window, game)
         self.assertTrue(game.window.winfo_exists())
-        toolbar.buttons["play"].invoke()
+        self.assertEqual(toolbar.buttons["play"].cget("state"), "disabled")
+        with (
+            patch.object(game, "focus") as focus,
+            patch("aiko_pet.ui.windows.hover_ui.RockPaperScissorsWindow") as create,
+        ):
+            toolbar.buttons["play"].invoke()
+            self.pet._hover.open_game()
+        focus.assert_not_called()
+        create.assert_not_called()
         self.assertIs(self.pet._hover.game_window, game)
 
     def test_player_and_aiko_reveal_separately_and_update_ui(self) -> None:
@@ -141,7 +150,16 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         game._sequence.advance()
         remark = bubble_text(self.pet)
         assert remark is not None
-        self.assertIn("Punkt", remark)
+        from aiko_pet.pet.mind.catalog import DialogueBook
+
+        self.assertIn(
+            remark,
+            {
+                line.text
+                for line in DialogueBook.from_file().lines
+                if line.event == "game_player_win"
+            },
+        )
         self.assertNotIn("Unser Stand", remark)
         game._sequence.advance()
         self.assertEqual(game.buttons[Move.ROCK].cget("state"), "normal")
@@ -230,8 +248,13 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         current = visual.frame_clock.active_key
         assert current is not None
         self.assertIn(current[0], ("waving-greeting", "waiting"))
-        self.pet._hover.close_game()
+        with patch.object(
+            visual, "cancel_action", wraps=visual.cancel_action,
+        ) as cancel:
+            self.pet._hover.close_game()
+        cancel.assert_called_once()
         self.assertFalse(visual._game_mode)
+        self.assertLessEqual(self.pet._action_playback.until, time.monotonic())
         self.assertIsNotNone(
             self.pet._visual.gaze_direction((99999, 99999), game_mode=visual.game_mode)
         )

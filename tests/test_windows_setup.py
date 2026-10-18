@@ -48,28 +48,27 @@ class WindowsSetupTests(unittest.TestCase):
         self,
         python: str = sys.executable,
     ) -> subprocess.CompletedProcess[str]:
-        return subprocess.run(
-            [
-                "powershell.exe",
-                "-NoLogo",
-                "-NoProfile",
-                "-ExecutionPolicy",
-                "Bypass",
-                "-File",
-                str(self.folder / "tools/install_windows.ps1"),
-                "-PythonExecutable",
-                python,
-                "-NoPythonInstall",
-                "-ShortcutDirectory",
-                str(self.folder / "shortcuts"),
-            ],
-            cwd=self.folder.parent,
-            env=self.environment,
-            stdin=subprocess.DEVNULL,
-            capture_output=True,
-            text=True,
-            timeout=90,
-        )
+        return self.run_powershell([
+            "-File", str(self.folder / "tools/install_windows.ps1"),
+            "-PythonExecutable", python, "-NoPythonInstall",
+            "-ShortcutDirectory", str(self.folder / "shortcuts"),
+        ])
+
+    def run_powershell(self, arguments: list[str]) -> subprocess.CompletedProcess[str]:
+        # Hosted Windows runners occasionally need over 90 seconds for a cold
+        # PowerShell/venv startup. Preserve the bounded check and expose the last
+        # installer output if it really stalls; do not retry a failed installation.
+        try:
+            return subprocess.run(
+                ["powershell.exe", "-NoLogo", "-NoProfile", "-ExecutionPolicy",
+                 "Bypass", *arguments],
+                cwd=self.folder.parent, env=self.environment,
+                stdin=subprocess.DEVNULL, capture_output=True, text=True,
+                timeout=180,
+            )
+        except subprocess.TimeoutExpired as error:
+            self.fail(f"Setup exceeded 180 seconds. "
+                      f"stdout={error.stdout!r}; stderr={error.stderr!r}")
 
     def test_install_repeat_and_both_launchers_use_isolated_runtime(self) -> None:
         shutil.copytree(
@@ -226,23 +225,7 @@ class WindowsSetupTests(unittest.TestCase):
     ) -> subprocess.CompletedProcess[str]:
         harness = self.folder / "setup-test.ps1"
         harness.write_text(source, encoding="utf-8")
-        return subprocess.run(
-            [
-                "powershell.exe",
-                "-NoProfile",
-                "-ExecutionPolicy",
-                "Bypass",
-                "-File",
-                str(harness),
-                *arguments,
-            ],
-            cwd=self.folder.parent,
-            env=self.environment,
-            stdin=subprocess.DEVNULL,
-            capture_output=True,
-            text=True,
-            timeout=90,
-        )
+        return self.run_powershell(["-File", str(harness), *arguments])
 
     def test_runtime_download_install_repair_and_failure_paths(self) -> None:
         shutil.copytree(

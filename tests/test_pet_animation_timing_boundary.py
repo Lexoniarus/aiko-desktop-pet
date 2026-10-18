@@ -26,7 +26,9 @@ class AnimationTimingBoundaryTests(unittest.TestCase):
         canonical = load_timing_policy(ASSET_ROOT)
         self.assertEqual(canonical.frame_ms, expected.frame_ms)
         self.assertEqual(canonical.sequences, expected.sequences)
-        self.assertEqual(dict(VIRTUAL_CLIPS), {"waving-greeting": "waving"})
+        self.assertEqual(dict(VIRTUAL_CLIPS), {
+            "waving-greeting": "waving", "put_down": "pick_up",
+        })
 
     def test_rejects_invalid_profile_without_touching_files(self) -> None:
         with self.assertRaises(ValueError):

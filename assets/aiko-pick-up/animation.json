@@ -1,0 +1,185 @@
+{
+  "name": "pick-up-two-handed",
+  "frame_size": [
+    192,
+    208
+  ],
+  "feet_anchor": [
+    96,
+    196
+  ],
+  "loop": false,
+  "frames": [
+    {
+      "frame": 1,
+      "file": "Laufzeit_192x208/01.png",
+      "duration_ms": 180,
+      "grasp_anchor_px": null,
+      "registered_grasp_anchor_px": null,
+      "hand_foreground": "Hand_Vordergrund/01.png",
+      "events": []
+    },
+    {
+      "frame": 2,
+      "file": "Laufzeit_192x208/02.png",
+      "duration_ms": 120,
+      "grasp_anchor_px": [
+        96,
+        166
+      ],
+      "registered_grasp_anchor_px": [
+        514,
+        1251
+      ],
+      "hand_foreground": "Hand_Vordergrund/02.png",
+      "events": []
+    },
+    {
+      "frame": 3,
+      "file": "Laufzeit_192x208/03.png",
+      "duration_ms": 120,
+      "grasp_anchor_px": [
+        96,
+        186
+      ],
+      "registered_grasp_anchor_px": [
+        514,
+        1405
+      ],
+      "hand_foreground": "Hand_Vordergrund/03.png",
+      "events": []
+    },
+    {
+      "frame": 4,
+      "file": "Laufzeit_192x208/04.png",
+      "duration_ms": 130,
+      "grasp_anchor_px": [
+        96,
+        183
+      ],
+      "registered_grasp_anchor_px": [
+        514,
+        1382
+      ],
+      "hand_foreground": "Hand_Vordergrund/04.png",
+      "events": [
+        "attach_object"
+      ]
+    },
+    {
+      "frame": 5,
+      "file": "Laufzeit_192x208/05.png",
+      "duration_ms": 180,
+      "grasp_anchor_px": [
+        96,
+        173
+      ],
+      "registered_grasp_anchor_px": [
+        514,
+        1305
+      ],
+      "hand_foreground": "Hand_Vordergrund/05.png",
+      "events": []
+    },
+    {
+      "frame": 6,
+      "file": "Laufzeit_192x208/06.png",
+      "duration_ms": 140,
+      "grasp_anchor_px": [
+        96,
+        145
+      ],
+      "registered_grasp_anchor_px": [
+        514,
+        1090
+      ],
+      "hand_foreground": "Hand_Vordergrund/06.png",
+      "events": []
+    },
+    {
+      "frame": 7,
+      "file": "Laufzeit_192x208/07.png",
+      "duration_ms": 140,
+      "grasp_anchor_px": [
+        96,
+        148
+      ],
+      "registered_grasp_anchor_px": [
+        514,
+        1113
+      ],
+      "hand_foreground": "Hand_Vordergrund/07.png",
+      "events": []
+    },
+    {
+      "frame": 8,
+      "file": "Laufzeit_192x208/08.png",
+      "duration_ms": 400,
+      "grasp_anchor_px": [
+        96,
+        155
+      ],
+      "registered_grasp_anchor_px": [
+        514,
+        1167
+      ],
+      "hand_foreground": "Hand_Vordergrund/08.png",
+      "events": []
+    }
+  ],
+  "playback": {
+    "pick_up": {
+      "order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "attach_at": 4,
+      "hold_last": true
+    },
+    "put_down": {
+      "order": [
+        8,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1
+      ],
+      "detach_after_source_frame": 4,
+      "hold_last": true
+    }
+  },
+  "overlay": {
+    "object_embedded": false,
+    "handedness": "both",
+    "anchor": "grasp_anchor_px",
+    "item_pivot": "asset_specific_contact_point",
+    "draw_order": [
+      "character",
+      "object",
+      "hand_foreground"
+    ],
+    "calibration": "Anchors are a starting point for small items; tune each item pivot and scale. Interpolate world-to-hand position during contact to prevent snapping. Detach into world coordinates and stop following the hand."
+  },
+  "native_originals": "Originalaufloesung",
+  "registered_highres": "Registriert_Hochaufloesend",
+  "registered_frame_size": [
+    1024,
+    1536
+  ],
+  "runtime_integrated": false,
+  "revision": "head-and-gaze-v2",
+  "gaze": {
+    "target": "object contact area between both hands",
+    "camera_eye_contact": false,
+    "head_pitch": "downward, following reach and lift"
+  }
+}

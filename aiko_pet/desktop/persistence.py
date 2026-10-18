@@ -9,6 +9,7 @@ from __future__ import annotations
 import time
 from typing import Callable
 
+from ..application.session import WorldSessionSnapshot
 from ..application.settings import PetSettings
 from ..infrastructure.persistence import StateStore
 from ..pet.mind.adaptive import AdaptiveRoutine
@@ -32,6 +33,12 @@ class DesktopPersistence:
         self._adaptive = adaptive
         self._monotonic = monotonic
         self.last_saved = monotonic()
+        self._world: Callable[[], WorldSessionSnapshot] | None = None
+
+    def attach_world(
+        self, snapshot: Callable[[], WorldSessionSnapshot],
+    ) -> None:
+        self._world = snapshot
 
     def due(self, now: float) -> bool:
         return now - self.last_saved >= AUTOSAVE_SECONDS
@@ -40,9 +47,17 @@ class DesktopPersistence:
         """Write the current state and update timing even after I/O error."""
         failure: OSError | None = None
         try:
-            self._store.save(
-                self._state, self._settings, adaptive=self._adaptive.memory,
-            )
+            if self._world is None:
+                self._store.save(
+                    self._state, self._settings, adaptive=self._adaptive.memory,
+                )
+            else:
+                world = self._world()
+                self._store.save(
+                    self._state, self._settings, adaptive=self._adaptive.memory,
+                    world=world.world, world_recovery_x=world.recovery_x,
+                    object_memory=world.object_memory,
+                )
         except OSError as error:
             failure = error
         self.last_saved = self._monotonic()

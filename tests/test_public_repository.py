@@ -106,7 +106,7 @@ class PublicRepositoryTests(unittest.TestCase):
         for action, count in manifest["frame_counts"].items():
             with self.subTest(action=action):
                 self.assertEqual(len(tuple((frames / action).glob("*.png"))), count)
-        self.assertEqual(sum(manifest["frame_counts"].values()), 112)
+        self.assertEqual(sum(manifest["frame_counts"].values()), 120)
         self.assertEqual(
             len(tuple((ROOT / "aiko_pet/assets/emotes").glob("*.png"))), 15,
         )

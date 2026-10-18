@@ -68,7 +68,8 @@ artwork only if a pose transition is still visibly jumpy at good timing.
 
 The **Beenden** action in the persistent settings window starts a
 non-blocking farewell: Aiko uses the existing `waving-greeting` sequence,
-shows `Ah, okay. Tschüss, mach's gut!` in her ordinary speech bubble,
+selects authored `farewell` wording using the live relationship and needs
+(with the packaged text as an emergency fallback) in her ordinary speech bubble,
 and closes only after the animation and a brief readable hold. The
 `FarewellSequence` timer is owned separately from Tk windows; old reactions,
 background ticks and settings/toolbar input are stopped first. Direct

@@ -24,6 +24,7 @@ FRAME_COUNTS: dict[str, int] = dict.fromkeys(
         "petting",
         "eat",
         "attack",
+        "pick_up",
     ),
     8,
 )
