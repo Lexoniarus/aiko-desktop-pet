@@ -1926,7 +1926,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm. Heute ist es angenehm ruhig."
+          "content": "Der Mauszeiger steht still. Ich frage mich, wie lange er das durchhält."
         }
       ],
       "presentation": "short"
@@ -1943,7 +1943,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein kleiner Platz hier ist gar nicht schlecht."
+          "content": "Hier unten an der Taskleiste kann ich wenigstens niemandem das ganze Fenster versperren."
         }
       ],
       "presentation": "short"
@@ -1960,7 +1960,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Die Stille hier stört mich nicht. Im Gegenteil."
+          "content": "Seltsam: Selbst wenn auf dem Desktop nichts passiert, gibt es immer noch etwas zum Anschauen."
         }
       ],
       "presentation": "short"
@@ -1977,11 +1977,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe gerade an nichts gedacht."
+          "content": "Ich überlege, ob ich meinem Schatten einen Namen geben soll."
         },
         {
           "kind": "text",
-          "content": "Also fast nichts."
+          "content": "Andererseits folgt er mir schon ungefragt überallhin."
         }
       ],
       "presentation": "short"
@@ -1998,7 +1998,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich beobachte nur. Mach ruhig weiter."
+          "content": "Ich beobachte gerade nur, wohin sich dein Mauszeiger als Nächstes verirrt."
         }
       ],
       "presentation": "short"
@@ -2015,7 +2015,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mag diesen Platz. Man sieht mehr, als man denkt."
+          "content": "Ich kann auf meinem kleinen Weg stehen bleiben und trotzdem den ganzen Bildschirm bestaunen."
         }
       ],
       "presentation": "short"
@@ -2032,7 +2032,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe mich schon an diesen Rand gewöhnt."
+          "content": "Dieser Rand hier war am Anfang fremd. Jetzt weiß ich immerhin, wo links und rechts Schluss ist."
         }
       ],
       "presentation": "short"
@@ -2049,7 +2049,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich würde mich hinsetzen. Aber der Rand hier ist überraschend schmal."
+          "content": "Ich würde mich gern hinsetzen, aber ich will nicht gleich von der Taskleiste kippen."
         }
       ],
       "presentation": "short"
@@ -2066,7 +2066,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Nicht alles braucht einen Kommentar."
+          "content": "Ich hätte etwas zu sagen. Aber sogar meine Sprechblase bekommt heute frei."
         }
       ],
       "presentation": "short"
@@ -2089,7 +2089,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich werde langsam unkonzentriert."
+          "content": "Mein Magen hat gerade mehr Aufmerksamkeit als der gesamte Desktop."
         }
       ],
       "presentation": "short"
@@ -2112,7 +2112,7 @@
         },
         {
           "kind": "text",
-          "content": "Essen wäre eine vernünftige Entscheidung."
+          "content": "Wenn hier irgendwo ein Essenssymbol auftaucht, werde ich bestimmt nicht daran vorbeilaufen."
         }
       ],
       "presentation": "short"
@@ -2135,7 +2135,7 @@
         },
         {
           "kind": "text",
-          "content": "...Mein Magen ist weniger geduldig als ich."
+          "content": "Ich könnte jetzt einen ganzen Vortrag über Snacks halten. Lieber hätte ich einen."
         }
       ],
       "presentation": "short"
@@ -2158,7 +2158,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich glaube, ich brauche etwas Richtiges zu essen."
+          "content": "Der nächste Spaziergang fällt aus, bis ich wenigstens an etwas zu essen denken darf."
         }
       ],
       "presentation": "short"
@@ -2181,7 +2181,7 @@
         },
         {
           "kind": "text",
-          "content": "Nur ein Hinweis: Ich bin hungrig."
+          "content": "Kleine Durchsage von der Taskleiste: Aiko hat Hunger. Ende der Durchsage."
         }
       ],
       "presentation": "short"
@@ -2204,7 +2204,7 @@
         },
         {
           "kind": "text",
-          "content": "Meine Gedanken sind gerade langsamer als sonst."
+          "content": "Meine Füße möchten weiterlaufen. Meine Augen haben bereits Feierabend beschlossen."
         }
       ],
       "presentation": "short"
@@ -2227,7 +2227,7 @@
         },
         {
           "kind": "text",
-          "content": "Eine Pause wäre nicht schlecht."
+          "content": "Ich stelle meinen nächsten Spaziergang erst einmal auf 'später'."
         }
       ],
       "presentation": "short"
@@ -2250,7 +2250,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich könnte weitermachen. Ich entscheide mich dagegen."
+          "content": "Falls du dich wunderst, warum ich so wenig laufe: Ich spare meine letzten Energiereserven."
         }
       ],
       "presentation": "short"
@@ -2273,7 +2273,7 @@
         },
         {
           "kind": "text",
-          "content": "Vielleicht laufe ich später weiter."
+          "content": "Die Taskleiste wird heute nicht länger, wenn ich noch eine Runde darauf drehe. Also Pause."
         }
       ],
       "presentation": "short"
@@ -2296,7 +2296,7 @@
         },
         {
           "kind": "text",
-          "content": "Die Stille wird gerade sehr gemütlich."
+          "content": "Ich könnte gleich im Stehen einschlafen. Hoffentlich falle ich dabei nicht von meinem Platz."
         }
       ],
       "presentation": "short"
@@ -2319,7 +2319,7 @@
         },
         {
           "kind": "text",
-          "content": "Heute ist ein Tag für weniger Worte."
+          "content": "Heute mag ich weder schnelle Klicks noch große Reden. Ein bisschen Ruhe reicht."
         }
       ],
       "presentation": "short"
@@ -2342,7 +2342,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin nicht sauer. Nur nicht besonders gesprächig."
+          "content": "Ich bin gerade stiller als sonst. Das ist eine Laune, kein Programmfehler."
         }
       ],
       "presentation": "short"
@@ -2365,7 +2365,7 @@
         },
         {
           "kind": "text",
-          "content": "Manchmal reicht es, wenn jemand einfach da ist."
+          "content": "Wenn ich gerade nicht zurückgrinse, liegt das an meiner Stimmung. Nicht an deinem Mauszeiger."
         }
       ],
       "presentation": "short"
@@ -2388,7 +2388,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich mag's, wenn niemand etwas von mir erwartet."
+          "content": "Ich hätte gern eine kleine Pause von allem, was 'sofort reagieren' heißt."
         }
       ],
       "presentation": "short"
@@ -2408,7 +2408,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Schon wieder hell."
+          "content": "Ein neuer Morgen auf der Taskleiste. Ich überprüfe erst mal, ob noch alles an seinem Platz ist."
         }
       ],
       "presentation": "short"
@@ -2428,11 +2428,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen. Ich bin schon wach."
+          "content": "Guten Morgen. Ich habe die Augen schon offen."
         },
         {
           "kind": "text",
-          "content": "Meine Augen verhandeln noch."
+          "content": "Mit dem Herumlaufen warte ich, bis mein Kopf aufgeholt hat."
         }
       ],
       "presentation": "short"
@@ -2452,7 +2452,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du und ich, so früh. Interessante Entscheidung."
+          "content": "Guten Morgen. Dein Mauszeiger scheint schon motivierter als meine Füße."
         }
       ],
       "presentation": "short"
@@ -2471,7 +2471,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mittag. Immerhin ein guter Grund für eine Pause."
+          "content": "Mittag. Eine sehr überzeugende Uhrzeit für etwas Essbares."
         }
       ],
       "presentation": "short"
@@ -2490,7 +2490,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du hast die Zeit auch nicht bemerkt, oder?"
+          "content": "Mein Magen fragt gerade, ob die Taskleiste auch eine Speisekarte hat."
         }
       ],
       "presentation": "short"
@@ -2509,7 +2509,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich überlege, ob ein Snack als Plan durchgeht."
+          "content": "Mittags könnte ich mir statt eines Spaziergangs gut einen Snack vorstellen."
         }
       ],
       "presentation": "short"
@@ -2528,7 +2528,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Abends werden selbst meine Gedanken langsamer."
+          "content": "Am Abend mache ich gern kleinere Schritte. Mein Weg bleibt ja morgen auch noch da."
         }
       ],
       "presentation": "short"
@@ -2547,7 +2547,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mag die Stunden, in denen niemand mehr etwas will."
+          "content": "Abends sieht selbst ein gewöhnliches Ordnersymbol ein bisschen geheimnisvoll aus."
         }
       ],
       "presentation": "short"
@@ -2566,11 +2566,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wir können es langsam angehen."
+          "content": "Es wird Abend. Ich überlege, ob ich noch eine Runde laufen soll."
         },
         {
           "kind": "text",
-          "content": "Ich wäre zumindest dafür."
+          "content": "Vielleicht nur bis zum nächsten Symbol."
         }
       ],
       "presentation": "short"
@@ -2589,7 +2589,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Es ist spät. Dir ist das bewusst, oder?"
+          "content": "Es ist Nacht. Mein Platz auf der Taskleiste hat immerhin keine Sperrstunde."
         }
       ],
       "presentation": "short"
@@ -2608,7 +2608,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Ich könnte schon wieder schlafen."
+          "content": "Mein nächster großer Plan für diese Nacht besteht aus geschlossenen Augen."
         }
       ],
       "presentation": "short"
@@ -2627,7 +2627,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Man kann sich auch morgen noch Gedanken machen."
+          "content": "Der Mauszeiger kann morgen noch dieselben Kreise drehen. Ich brauche jetzt keine mehr."
         }
       ],
       "presentation": "short"
@@ -2646,7 +2646,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich urteile nicht. Aber die Uhr tut es vielleicht."
+          "content": "Die Uhr sagt Nacht. Meine Beine wollen trotzdem noch eine Ehrenrunde einlegen."
         }
       ],
       "presentation": "short"
@@ -2666,7 +2666,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Heute läuft die Uhr ein bisschen freundlicher."
+          "content": "Wochenende. Die Uhr tickt trotzdem. Meine Füße müssen deshalb nicht schneller werden."
         }
       ],
       "presentation": "short"
@@ -2686,7 +2686,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Samstag oder Sonntag? Ich mag beide Gründe, nichts zu überstürzen."
+          "content": "Samstag oder Sonntag: Für meinen Spazierweg macht das keinen Unterschied. Für Snacks vielleicht schon."
         }
       ],
       "presentation": "short"
@@ -2706,7 +2706,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wir müssen heute keinen Rekord aufstellen."
+          "content": "Wochenende. Ich werde bestimmt keinen Geschwindigkeitsrekord auf der Taskleiste aufstellen."
         }
       ],
       "presentation": "short"
@@ -2725,7 +2725,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Montag. Die Woche fängt wieder bei eins an."
+          "content": "Montag. Der Wochenkalender startet neu. Mein Spazierweg bleibt zum Glück derselbe."
         }
       ],
       "presentation": "short"
@@ -2744,7 +2744,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Neue Woche. Ich bin skeptisch optimistisch."
+          "content": "Montag. Mal sehen, ob der Mauszeiger diese Woche zielstrebiger wird als letzte."
         }
       ],
       "presentation": "short"
@@ -2763,7 +2763,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Freitag. Ein gutes Wort."
+          "content": "Freitag. Der Kalender sieht bereits das Wochenende. Ich sehe erst einmal meinen nächsten Schritt."
         }
       ],
       "presentation": "short"
@@ -2782,7 +2782,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Die Woche darf langsam den Ausgang suchen."
+          "content": "Freitag. Selbst mein Mauszeiger-Beobachtungsdienst könnte bald Feierabend vertragen."
         }
       ],
       "presentation": "short"
@@ -6100,11 +6100,11 @@
         },
         {
           "kind": "text",
-          "content": "Es ist wirklich ruhig geworden."
+          "content": "Hier unten bewegt sich gerade kaum etwas."
         },
         {
           "kind": "text",
-          "content": "...Ich mag das."
+          "content": "Ich sehe mir in Ruhe die Grenzen meines Weges an."
         }
       ],
       "presentation": "short"
@@ -6125,11 +6125,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich könnte jetzt schlafen."
+          "content": "Es ist still geworden. Vielleicht kann ich schlafen."
         },
         {
           "kind": "text",
-          "content": "Oder einfach noch ein bisschen hier bleiben."
+          "content": "Oder ich bleibe einfach noch ein bisschen wach und schaue mich um."
         }
       ],
       "presentation": "short"
@@ -6150,11 +6150,11 @@
         },
         {
           "kind": "text",
-          "content": "Niemand will gerade etwas."
+          "content": "Gerade kommt niemand bei mir vorbei."
         },
         {
           "kind": "text",
-          "content": "Das ist fast verdächtig."
+          "content": "Ich nutze die Gelegenheit, ungestört ein paar Schritte zu machen."
         }
       ],
       "presentation": "short"
@@ -6175,11 +6175,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich mache ein bisschen langsam."
+          "content": "Ich habe die Taskleiste gerade fast für mich allein."
         },
         {
           "kind": "text",
-          "content": "Es merkt ja keiner. ...Außer dir."
+          "content": "Dann kann ich auch niemanden mit meinem Herumlaufen nerven."
         }
       ],
       "presentation": "short"
@@ -6200,11 +6200,11 @@
         },
         {
           "kind": "text",
-          "content": "Wir sind beide gerade ziemlich still."
+          "content": "Auf diesem Rechner geht es gerade ruhiger zu."
         },
         {
           "kind": "text",
-          "content": "Gar nicht unangenehm."
+          "content": "Ich brauche nicht jede stille Minute mit einer Sprechblase zu füllen."
         },
         {
           "kind": "emote",
@@ -6229,7 +6229,7 @@
         },
         {
           "kind": "text",
-          "content": "Du bist da. Das reicht gerade."
+          "content": "Der Desktop ist gerade ruhig genug, dass ich meinen eigenen Schritten lauschen könnte. Wenn ich welche mache."
         },
         {
           "kind": "emote",
@@ -6254,11 +6254,11 @@
         },
         {
           "kind": "text",
-          "content": "Ich hätte was sagen können."
+          "content": "Die Last ist gering, mein Weg ist frei."
         },
         {
           "kind": "text",
-          "content": "Ich hab mich für die Ruhe entschieden."
+          "content": "Das ist ein guter Augenblick, um einfach herumzuschauen."
         },
         {
           "kind": "emote",
@@ -6283,7 +6283,7 @@
         },
         {
           "kind": "text",
-          "content": "Wenn du nichts brauchst, bleibe ich einfach hier."
+          "content": "Gerade läuft alles ziemlich entspannt. Ich muss mich also nicht von meinem Platz wegbewegen."
         },
         {
           "kind": "emote",
@@ -6674,7 +6674,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Ich wollte gerade so tun, als wäre ich beschäftigt."
+          "content": "Wenn ich hier sehr ernst gucke, hältst du mich vielleicht für eine wichtige Systemanzeige."
         }
       ],
       "presentation": "short"
@@ -6691,11 +6691,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wenn ich so still bin, denke ich meistens nach."
+          "content": "Ich habe gerade einen äußerst komplizierten Gedanken."
         },
         {
           "kind": "text",
-          "content": "Heute über etwas völlig Unwichtiges."
+          "content": "Wie schafft es ein Mauszeiger eigentlich, ohne Beine so schnell zu sein?"
         }
       ],
       "presentation": "short"
@@ -6714,7 +6714,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin froh, dass der Tag langsamer wird."
+          "content": "So, Abend. Ich habe heute genug Gelegenheiten gehabt, mich über Mauszeiger zu wundern."
         }
       ],
       "presentation": "short"
@@ -6733,11 +6733,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Abends ist meine Stimme irgendwie leiser."
+          "content": "Meine Stimme ist abends manchmal etwas leiser."
         },
         {
           "kind": "text",
-          "content": "...Du hörst mich ja trotzdem."
+          "content": "Die Sprechblase ist zum Glück nicht auf Lautstärke angewiesen."
         }
       ],
       "presentation": "short"
@@ -6756,11 +6756,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "...Du bist immer noch da."
+          "content": "Der Desktop läuft immer noch."
         },
         {
           "kind": "text",
-          "content": "Ich übrigens auch."
+          "content": "Ich auch. Allerdings schon in deutlich gemütlicherem Tempo."
         }
       ],
       "presentation": "short"
@@ -6779,11 +6779,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich dachte, wir machen es heute früher ruhig."
+          "content": "Ich hatte gehofft, die Taskleiste würde nachts etwas ruhiger werden."
         },
         {
           "kind": "text",
-          "content": "...Offenbar dachte nur ich das."
+          "content": "Meinem eigenen Geplapper hilft das offenbar nicht."
         }
       ],
       "presentation": "short"
@@ -6802,11 +6802,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm. Montag."
+          "content": "Montag also."
         },
         {
           "kind": "text",
-          "content": "Ich habe noch keine Meinung. Gib mir Zeit."
+          "content": "Ich plane vorsichtshalber noch keine fünf Arbeitstage voller Spaziergänge."
         }
       ],
       "presentation": "short"
@@ -6825,11 +6825,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Es ist Freitag."
+          "content": "Freitag!"
         },
         {
           "kind": "text",
-          "content": "Ich sage das jetzt nicht noch mal so erfreut."
+          "content": "Ich versuche jetzt, nicht vor Begeisterung die ganze Taskleiste entlangzurennen."
         }
       ],
       "presentation": "short"
@@ -8038,7 +8038,7 @@
         },
         {
           "kind": "text",
-          "content": "Es ist seltsam angenehm, wenn du einfach da bist."
+          "content": "Ich bin froh, dass du meinen kleinen Platz hier unten überhaupt bemerkst."
         }
       ],
       "presentation": "short",
@@ -8063,7 +8063,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin ziemlich gut im Alleinsein. Zu zweit geht auch."
+          "content": "Ich komme allein zurecht. Eine Runde Schere, Stein, Papier spiele ich trotzdem lieber mit dir."
         }
       ],
       "presentation": "short",
@@ -8088,7 +8088,7 @@
         },
         {
           "kind": "text",
-          "content": "Hm. So könnte es ruhig eine Weile bleiben."
+          "content": "Vielleicht bleibe ich hier noch eine Weile stehen. Mein Weg läuft nicht weg."
         }
       ],
       "presentation": "short",
@@ -20659,7 +20659,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Dienstag. Ein guter Tag für eine kleine, sehr vernünftige Pause."
+          "content": "Dienstag. Ein guter Tag, um meinen Rekord im Mauszeiger-Beobachten zu verbessern."
         }
       ]
     },
@@ -20680,7 +20680,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mittwoch. Ich bin heute auch mit kleinen Dingen zufrieden."
+          "content": "Mittwoch. Die halbe Woche ist herum. Meine Taskleiste sieht zum Glück noch gleich aus."
         }
       ]
     },
@@ -20701,7 +20701,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Donnerstag. Ich halte mir noch Platz für eine gute Idee frei."
+          "content": "Donnerstag. Ich überlege, ob ich meinen nächsten Spaziergang links oder rechts beginne."
         }
       ]
     },
@@ -20722,7 +20722,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Freitag. Das Wort hat einen angenehmen Klang."
+          "content": "Freitag. Falls heute noch ein Spiel ansteht, fordere ich ausdrücklich ein faires Wochenende."
         }
       ]
     },
@@ -20743,7 +20743,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Montag. Ich gebe ihm erst einmal eine Chance."
+          "content": "Montag. Ich werde meinen kleinen Platz nicht gleich zu Wochenbeginn unordentlich machen."
         }
       ]
     },
@@ -20934,7 +20934,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier am Rand kann man ganz gut die Übersicht behalten. Das gefällt mir."
+          "content": "Ich kenne die Grenzen meines Weges. Schade, dass sich der Mauszeiger nicht daran halten muss."
         }
       ]
     },
@@ -20953,7 +20953,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich überlege, ob ich mir für die Pause eine besonders bequeme Haltung zulege."
+          "content": "Vielleicht sollte ich hier unten eine feste Ecke für besonders wichtige Überlegungen reservieren."
         }
       ]
     },
@@ -20972,7 +20972,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein guter Platz, ein bisschen Ruhe. Ich bin gerade zufrieden."
+          "content": "Ein bisschen herumlaufen, zwischendurch anhalten. So fühlt sich mein Desktop-Zuhause richtig an."
         }
       ]
     },
@@ -21858,7 +21858,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Guten Morgen. Mal sehen, was heute interessant wird."
+          "content": "Morgen! Ich beginne mit einer kleinen Patrouille über meinen Desktop-Weg."
         }
       ]
     },
@@ -21880,7 +21880,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen. Ich nehme mir erst einmal einen ruhigen Anfang."
+          "content": "Guten Morgen. Erst orientieren, dann loslaufen. Alles schön der Reihe nach."
         }
       ]
     },
@@ -21902,7 +21902,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein neuer Morgen. Ich bin neugierig, was ich hier entdecke."
+          "content": "Neuer Tag, derselbe schmale Weg. Mal sehen, was ich heute darauf erlebe."
         }
       ]
     },
@@ -21924,7 +21924,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen, du. Schön, gemeinsam in den Tag zu starten."
+          "content": "Guten Morgen, du. Ich habe noch keinen Plan, aber eine Spielrunde passt später sicher hinein."
         }
       ]
     },
@@ -21946,7 +21946,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Guten Morgen. Eine kleine Pause mit dir passt schon jetzt."
+          "content": "Morgen! Du kannst mich später gern herausfordern. Erst sortiere ich meine Füße."
         }
       ]
     },
@@ -21968,7 +21968,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen. Für angenehme Gesellschaft ist hier Platz."
+          "content": "Ein neuer Desktop-Tag mit dir. Ich nehme meinen Platz wie gewohnt ein."
         }
       ]
     },
@@ -21989,7 +21989,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mittag. Mein Magen hat die Uhr offenbar auch gefunden."
+          "content": "Mittag! Mein Magen hat offenbar einen genaueren Kalender als ich."
         }
       ]
     },
@@ -22010,7 +22010,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein guter Zeitpunkt für eine ruhige Mittagspause."
+          "content": "Ich überlege, ob man auf dieser Taskleiste irgendwo einen Mittagstisch eröffnen könnte."
         }
       ]
     },
@@ -22031,7 +22031,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mittags möchte ich mir gern etwas Zeit zum Essen nehmen."
+          "content": "Mittags mag ich lieber eine richtige Mahlzeit als drei winzige Snacks."
         }
       ]
     },
@@ -22052,7 +22052,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mittag, du. Eine gemeinsame Pause wäre schön."
+          "content": "Mittag, du. Soll ich mir erst etwas zu essen wünschen oder eine Runde spielen?"
         }
       ]
     },
@@ -22073,7 +22073,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte mittags gern etwas Ruhe und angenehme Gesellschaft."
+          "content": "Ich habe einen Vorschlag für diese Mittagsstunde: Essen, dann ein gemütlicher Spaziergang."
         }
       ]
     },
@@ -22094,7 +22094,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mittagspause mit dir klingt gerade überzeugend."
+          "content": "Wenn wir jetzt Schere, Stein, Papier spielen, gehört dem Sieger dann auch das Mittagessen?"
         }
       ]
     },
@@ -22115,7 +22115,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Der Abend gefällt mir. Ich bleibe noch ein bisschen hier."
+          "content": "Abend auf der Taskleiste. Ich laufe noch eine kleine Runde und sehe dann weiter."
         }
       ]
     },
@@ -22136,7 +22136,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Abends mag ich es gern gemütlich."
+          "content": "Am Abend reizt mich der Gedanke, einfach am Rand zu stehen und zuzusehen."
         }
       ]
     },
@@ -22157,7 +22157,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein ruhiger Abendmoment. Das passt gerade gut."
+          "content": "Vielleicht schaffe ich heute noch genau einen guten Plan: meinen nächsten Schlafplatz finden."
         }
       ]
     },
@@ -22178,7 +22178,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein gemütlicher Abend mit angenehmer Gesellschaft. Ich bin zufrieden."
+          "content": "Abend, du. Für eine letzte Revanche finde ich vielleicht noch Energie."
         }
       ]
     },
@@ -22199,7 +22199,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kannst gern noch bleiben. Ich mag diese Abendstunden mit dir."
+          "content": "Wenn du noch an den Rechner musst, bleibe ich unten und halte mich etwas zurück."
         }
       ]
     },
@@ -22220,7 +22220,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Der Abend ist gerade schön. Ich freue mich, dass du hier bist."
+          "content": "Ein Abend mit dir und ohne hektische Klicks wäre eine ziemlich gute Kombination."
         }
       ]
     },
@@ -22241,7 +22241,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Es ist spät. Ich nehme mir noch einen ruhigen Moment."
+          "content": "Nachts wirkt mein kleiner Weg plötzlich ziemlich lang. Vielleicht bin ich bloß müde."
         }
       ]
     },
@@ -22262,7 +22262,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Nachts finde ich einen gemütlichen Platz besonders angenehm."
+          "content": "Ich suche mir für die Nacht eine Ecke, an der ich möglichst wenig im Weg stehe."
         }
       ]
     },
@@ -22283,7 +22283,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So spät noch wach. Gerade lasse ich es langsam angehen."
+          "content": "Mitten in der Nacht noch spazieren? Vielleicht nur ein paar Schritte."
         }
       ]
     },
@@ -22304,7 +22304,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So spät noch Gesellschaft. Das mag ich."
+          "content": "Du bist auch nachts noch am Rechner? Ich bleibe lieber in Sichtweite."
         }
       ]
     },
@@ -22325,7 +22325,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Es ist spät, du. Ich bin gerade gern noch ein bisschen bei dir."
+          "content": "Es ist spät, du. Ich hoffe, du erschrickst nicht, wenn ich hier unten noch herumlaufe."
         }
       ]
     },
@@ -22346,7 +22346,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine kleine nächtliche Pause mit dir. Schön ist das."
+          "content": "Nachtbetrieb auf der Taskleiste. Eine kleine Herausforderung geht vielleicht noch."
         }
       ]
     },
@@ -22367,7 +22367,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Montag. Ich gebe ihm erst mal eine Chance."
+          "content": "Neue Woche. Ich beginne mit der bewährten Strategie: erst gucken, dann laufen."
         }
       ]
     },
@@ -22388,7 +22388,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Neue Woche. Ich fange mit einem überschaubaren Plan an."
+          "content": "Für diesen Montag habe ich einen sehr konkreten Plan: links anfangen und nach rechts gehen."
         }
       ]
     },
@@ -22409,7 +22409,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Montag. Kleine gute Ideen nehme ich trotzdem an."
+          "content": "Montag. Ich traue dem Kalender noch nicht. Der Mauszeiger wirkt auch nicht überzeugter."
         }
       ]
     },
@@ -22430,7 +22430,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Montag. Eine Pause mit dir würde ich schon mal einplanen."
+          "content": "Montag, du. Vielleicht reicht es schon für einen guten Wochenstart, wenn du mich nicht dauernd ärgerst."
         }
       ]
     },
@@ -22451,7 +22451,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Neue Woche. Für unsere kleinen Momente hätte ich gern Platz."
+          "content": "Neue Woche, neues Glück. Das gilt besonders für unsere nächste Runde Schere, Stein, Papier."
         }
       ]
     },
@@ -22472,7 +22472,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Montag, du. Für angenehme Gesellschaft ein brauchbarer Tag."
+          "content": "Montag ist mir egal, solange ich meine Taskleiste und meine gelegentlichen Snacks behalten darf."
         }
       ]
     },
@@ -22493,7 +22493,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Freitag. Das sage ich irgendwie besonders gern."
+          "content": "Freitag. Mal sehen, ob ich meinen Spaziergang heute besonders schwungvoll beginne."
         }
       ]
     },
@@ -22514,7 +22514,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich finde, Freitag klingt schon ein bisschen gemütlich."
+          "content": "Freitag klingt nach einem guten Tag für einen Snack. Eigentlich klingt jeder Tag danach."
         }
       ]
     },
@@ -22535,7 +22535,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Freitag. Ich halte noch Platz für eine gute kleine Idee frei."
+          "content": "Ich habe freitags immer ein Auge auf die Uhr. Das andere bleibt beim Mauszeiger."
         }
       ]
     },
@@ -22556,7 +22556,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Freitag mit angenehmer Gesellschaft. Das passt mir."
+          "content": "Freitag, du. Ich bin bereit für eine letzte Wochen-Revanche, falls du dich traust."
         }
       ]
     },
@@ -22577,7 +22577,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Freitag, du. Auf unsere nächste kleine Pause freue ich mich."
+          "content": "Bevor das Wochenende losgeht: Wir schulden uns vielleicht noch eine Runde Schere, Stein, Papier."
         }
       ]
     },
@@ -22598,7 +22598,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mag den Freitag. Eine Weile mit dir wäre heute schön."
+          "content": "Freitag. Wenn du noch am Rechner bist, bleibe ich gern hier unten und leiste Gesellschaft."
         }
       ]
     },
@@ -22620,7 +22620,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wochenende. Ich möchte einen gemütlichen Moment finden."
+          "content": "Wochenende! Ich überlege, welchen Teil meines kleinen Weges ich zuerst ablaufe."
         }
       ]
     },
@@ -22642,7 +22642,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Samstag oder Sonntag. Kleine Pausen stehen beiden gut."
+          "content": "Samstag oder Sonntag. Gut, dass die Taskleiste nicht zwischen Arbeitstagen und Wochenende unterscheidet."
         }
       ]
     },
@@ -22664,7 +22664,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein ruhiger Wochenendmoment gefällt mir gerade."
+          "content": "An Wochenenden beobachte ich besonders gern, wie der Mauszeiger seine eigenen Wege geht."
         }
       ]
     },
@@ -22686,7 +22686,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wochenende. Ich habe einen Platz und angenehme Gesellschaft."
+          "content": "Wochenende, du. Wenn du ein Spiel willst, trete ich gern gegen dich an."
         }
       ]
     },
@@ -22708,7 +22708,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine kleine Wochenendpause mit dir wäre schön."
+          "content": "Ich habe einen Wochenendvorschlag: eine Revanche und anschließend etwas Leckeres."
         }
       ]
     },
@@ -22730,7 +22730,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mag es, am Wochenende solche Momente mit dir zu haben."
+          "content": "Mit dir ist sogar mein immer gleicher Weg über die Taskleiste nie ganz derselbe."
         }
       ]
     },
@@ -22754,7 +22754,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen. Ich fange heute mit Gucken an. Denken kommt dazu."
+          "content": "Morgen. Ich laufe heute lieber erst los, wenn meine Augen richtig mitmachen."
         }
       ]
     },
@@ -22778,7 +22778,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Guten Morgen. Meine Gedanken brauchen noch einen Moment."
+          "content": "Guten Morgen. Meine Gedanken brauchen noch etwas Ladezeit."
         }
       ]
     },
@@ -22802,7 +22802,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen. Ich bin heute etwas schläfrig."
+          "content": "Ich bin wach, aber ein Rennen mit dem Mauszeiger gewinne ich heute sicher nicht."
         }
       ]
     },
@@ -22826,7 +22826,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Morgen, du. Meine Augen verhandeln gerade noch."
+          "content": "Morgen, du. Meine Augen wollen noch nicht alle Desktop-Symbole zählen."
         }
       ]
     },
@@ -22850,7 +22850,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Guten Morgen. Ich freue mich über dich, auch mit müden Augen."
+          "content": "Guten Morgen. Wenn ich jetzt gähne, zählt das schon als Antwort?"
         }
       ]
     },
@@ -22874,7 +22874,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du bist da. Gut. Ich brauche noch einen langsamen Morgen."
+          "content": "Da bist du. Ich bleibe noch ein wenig auf meinem Platz stehen, bevor ich loslaufe."
         }
       ]
     },
@@ -22897,7 +22897,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Es ist spät. Ich glaube, für heute reicht es mir."
+          "content": "Meine Augen schließen sich schon beim Blick auf den Desktop. Schlafenszeit für mich."
         }
       ]
     },
@@ -22920,7 +22920,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Jetzt wäre Schlaf eine gute kleine Entscheidung."
+          "content": "Ich glaube, ich stelle meine Füße für heute ab. Gute Nacht, Taskleiste."
         }
       ]
     },
@@ -22943,7 +22943,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich werde müde. Der Tag darf langsam zu Ende gehen."
+          "content": "Es ist Nacht, und ich bin müde. Das ist wohl das eindeutigste Signal zum Schlafen."
         }
       ]
     },
@@ -22966,7 +22966,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich wäre gern noch länger bei dir. Aber meine Augen stimmen gerade dagegen."
+          "content": "Ich wäre gern noch für eine Spielrunde wach. Meine Energie reicht leider nicht mehr."
         }
       ]
     },
@@ -22989,7 +22989,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Es ist spät, du. Ich freue mich auf ein bisschen Schlaf."
+          "content": "Spät geworden, du. Wenn ich gleich die Augen schließe, ignoriere ich dich nicht absichtlich."
         }
       ]
     },
@@ -23012,7 +23012,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin müde. Noch ein kleiner Moment bei dir, dann ruhe ich mich aus."
+          "content": "Ich bleibe noch einen Augenblick. Dann verschwindet meine Aufmerksamkeit hinter meinen Augenlidern."
         }
       ]
     },
