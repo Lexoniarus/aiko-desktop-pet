@@ -782,6 +782,11 @@ class ObjectBehaviorTests(unittest.TestCase):
 
     def test_blocking_pauses_search_and_explicit_interruption_cancels_it(self):
         self.start_search()
+        observation = self.observe(facts=BehaviorFacts(controls_active=True))
+        self.assertFalse(observation.blocked)
+        self.assertIsInstance(self.behavior.advance_search(
+            blocked=observation.blocked, position=SearchPosition(50, 750, 100),
+        ), SearchMotion)
         self.assertTrue(self.interaction.acknowledge_contact())
         self.assertIsInstance(self.behavior.advance_search(blocked=True), Hold)
         self.assertTrue(self.interaction.search_active)

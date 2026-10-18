@@ -41,6 +41,16 @@ saves and main-thread collection. Do not access or modify the normal save.
 | Stage | Status | Evidence |
 | --- | --- | --- |
 | Plan | Complete | Existing owners, UI callbacks and test gaps reviewed; worktree clean at baseline. |
-| 1 | Pending | |
+| 1 | Complete | 59 targeted tests pass in 10.088 seconds on the exported snapshot; Ruff, strict Mypy (187 sources) and Pyright pass. |
 | 2 | Pending | |
 | 3 | Pending | |
+
+### Stage 1 evidence
+
+Existing active object episodes now retain admission during UI hover, including
+search and loss feedback. Idle UI blocking and unrelated game/playback/custody
+rules remain. The revised coordinator regression fails on the baseline and passes
+with the correction. A real-timer native regression holds an unmoving pointer
+over the sprite with cursor-follow disabled: the toolbar opens, a visible unknown
+candidate is approached, and movement continues without extra contact feedback,
+care effects or a lost search subject. No new saved or mutable activity state.

@@ -175,7 +175,7 @@ class ObjectBehaviorCoordinator:
              and not interaction.searching and interaction.phase != "found")
             or (facts.carrying and interaction.focus_record is None)
             or facts.game_open
-            or (facts.controls_active and interaction.focus_record is None)
+            or (facts.controls_active and not interaction.active)
             or self._state.sleeping or facts.playback_busy
         )
         goal = awareness.update(
@@ -275,7 +275,8 @@ class ObjectBehaviorCoordinator:
         interaction, awareness = self._interaction, self._awareness
         can_react = (not self._state.sleeping and not facts.game_open
                      and attention.mode != "unavailable"
-                     and not facts.controls_active and not facts.user_action_pending
+                     and (not facts.controls_active or interaction.active)
+                     and not facts.user_action_pending
                      and not facts.playback_busy)
         losses = sorted(awareness.absences, key=lambda item: not item.recognized)
         absence_gaze = None
@@ -416,7 +417,7 @@ class ObjectBehaviorCoordinator:
                         for seen in self._awareness.observations)
                 and reachable
             )
-        if facts.controls_active and self._interaction.focus_record is None:
+        if facts.controls_active and not self._interaction.active:
             return False
         return object_state == ObjectState.RESTING and reachable
 

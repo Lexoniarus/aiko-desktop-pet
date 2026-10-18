@@ -67,6 +67,65 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             pending.extend(widget.winfo_children())
         return ""
 
+    def begin_native_search(self):
+        app, world = self.app, self.app._world
+        app.settings.follow_cursor = False
+        set_test_pet_values(app.state, satiety=100, energy=100)
+        track = world._track()
+        app._place_x(track.left + (track.right - track.left - world.width) / 2)
+        x = world._body_x() + .3 * world.width
+        item = world.world.place_resting("cookie", x, ObjectFootprint(8, 8))
+        record = world.awareness.memory.observe_find(
+            ObjectObservation("earlier", "cookie", "food", x, 0, True, world.now),
+            now=world.now, record=None, claimed=frozenset(), maximum_distance=0,
+            instance_id=item.instance_id,
+        )
+        world.awareness.memory.mark_assessed(record)
+        world.world.remove(item.instance_id, expected_revision=item.revision)
+        world._behavior.request_orientation()
+        trace = self.run_until(lambda: world.interaction.search_ready, 12)
+        self.assertTrue(world.interaction.search_ready, trace)
+        self.run_for(.3)
+        return record
+
+    def test_stationary_hover_opens_ui_without_pausing_search_or_candidate(self):
+        record = self.begin_native_search()
+        app, world = self.app, self.app._world
+        app.root.update_idletasks()
+        pointer = (app.root.winfo_rootx() + app.root.winfo_width() // 2,
+                   app.root.winfo_rooty() + app.root.winfo_height() // 2)
+        self.assertTrue(app._hover.pointer_inside(*pointer))
+        direction = -1 if app._walk.movement.remaining_distance < 0 else 1
+        candidate = world.world.place_resting(
+            "onigiri", world._body_x() + direction * 1.5 * world.width,
+            ObjectFootprint(8, 8),
+        )
+        friendship = app.state.friendship
+        with (
+            patch.object(app.root, "winfo_pointerx", return_value=pointer[0]),
+            patch.object(app.root, "winfo_pointery", return_value=pointer[1]),
+        ):
+            trace = self.run_until(lambda: world.interaction.phase == "approach", 3)
+            self.assertEqual(world.interaction.phase, "approach", trace)
+            self.assertTrue(app._hover.interaction_active)
+            self.assertIsNotNone(app._hover.toolbar)
+            before = app.settings.x
+            self.run_for(.2)
+            self.assertNotEqual(app.settings.x, before)
+        focus = world.interaction.memory_id
+        assert focus is not None
+        self.assertEqual(world.awareness.instance_for_record(focus),
+                         candidate.instance_id)
+        self.assertTrue(world.interaction.search_active)
+        missing = world.awareness.memory.get(record)
+        assert missing is not None
+        self.assertEqual(missing.place_status, "missing")
+        self.assertEqual(app.state.friendship, friendship)
+        self.assertEqual(list(app.mind.clicks), [])
+        self.assertEqual([event for _, event, _ in self.feedback], [
+            "object_place_missing", "object_search", "object_approach",
+        ])
+
     def test_each_missing_portion_gets_a_readable_named_bubble_before_patrol(self):
         world = self.app._world
         set_test_pet_values(self.app.state, satiety=100, energy=100)
