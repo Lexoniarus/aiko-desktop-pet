@@ -310,14 +310,23 @@ class WorldGuiTests(unittest.TestCase):
         self.app._place_x(runtime._track().left + runtime.width)
         set_test_pet_values(app.state, satiety=100, energy=100)
         runtime._controls_active = lambda: True
-        item = runtime.world.place_resting("dango", runtime._body_x(),
-                                           ObjectFootprint(8, 8))
+        item = runtime.world.place_resting(
+            "dango", runtime._body_x() + 2 * runtime.width, ObjectFootprint(8, 8),
+        )
+        assert item.position is not None
+        self.look_at(item.position.x)
         self.observe_and_acknowledge()
         self.seed_previous_identification(item.instance_id, "dango", "food")
         record = runtime.awareness.record_for_instance(item.instance_id)
         assert record is not None
         runtime.awareness.memory.mark_assessed(record)
         runtime._controls_active = lambda: False
+        self.look_at(runtime._body_x() - runtime.width)
+        for _ in range(2):
+            runtime.now += .3
+            runtime.update(time.monotonic())
+        self.assertIsNone(runtime.awareness.record_for_instance(item.instance_id))
+        self.assertIsNotNone(runtime.awareness.memory.get(record))
         cues = []
         present = runtime._present_feedback
 

@@ -92,6 +92,13 @@ class ObjectPerception:
         self._previous: float | None = None
         self._evidence: dict[str, _Evidence] = {}
 
+    def notice_acquisition(self, token: str) -> None:
+        """A qualified observed take is notice evidence, never identification."""
+        evidence = self._evidence.setdefault(token, _Evidence())
+        evidence.notice = max(evidence.notice, BALANCE.number(
+            "object_behavior", "notice_seconds",
+        ))
+
     def observe(
         self, candidates: tuple[ObjectCandidate, ...], *, now: float,
     ) -> tuple[ObjectObservation, ...]:

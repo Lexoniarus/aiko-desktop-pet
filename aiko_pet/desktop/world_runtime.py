@@ -464,20 +464,19 @@ class DesktopWorldRuntime:
         if (self.cursor.carrying or item.state != ObjectState.RESTING
                 or item.revision != revision):
             return
+        assert item.position is not None
+        previous_position = (item.position.x, item.position.height)
         attention = self._attention()
 
         def acquire() -> None:
-            record = self.awareness.record_for_instance(token)
-            observed = any(item.token == record
-                           for item in self.awareness.observations)
-            if (self.cursor.begin_existing(token, revision) and observed
-                    and record is not None):
-                if self.awareness.follow_taken(
-                    token, record, now=self.now, attention=attention,
+            if self.cursor.begin_existing(token, revision):
+                record = self.awareness.witness_take(
+                    token, position=previous_position, now=self.now,
+                    attention=attention,
                     committed=self.interaction.focus_record,
-                ):
-                    if self.interaction.target_taken(record):
-                        self._walk.movement.set_goal(None)
+                )
+                if record is not None and self.interaction.target_taken(record):
+                    self._walk.movement.set_goal(None)
 
         self._request_gesture(acquire)
 

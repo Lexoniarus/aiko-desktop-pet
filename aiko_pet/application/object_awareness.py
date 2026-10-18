@@ -128,6 +128,47 @@ class ObjectAwareness:
         self.memory.note_acquired(record, now=now)
         return True
 
+    def witness_take(
+        self, instance: str, *, position: tuple[float, float], now: float,
+        attention: ObjectAttention, committed: str | None = None,
+    ) -> str | None:
+        """Use a successful observed take at a learned place between sensor ticks."""
+        record = self.record_for_instance(instance)
+        known = (self.memory.get(record) if record is not None
+                 else self.memory.learned_instance(instance))
+        if (known is None
+                or attention.mode == "object" and known.token != committed):
+            return None
+        continuing = self._tracker.following_instance == instance
+        if (not known.at_place(x=position[0], height=position[1], resting=True)
+                and not continuing):
+            return None
+        if not (attention.sees(*position) or continuing
+                and attention.mode in ("cursor", "object")):
+            return None
+        if record is not None and self.follow_taken(
+            instance, record, now=now, attention=attention, committed=committed,
+        ):
+            return record
+        if continuing:
+            self.memory.note_acquired(known.token, now=now)
+            return known.token
+        if not known.recognized or known.instance_id != instance:
+            return None
+        assert known.identity is not None and known.kind is not None
+        tracked = self._tracker.witness_take(ObjectCandidate(
+            instance, known.identity, known.kind, *position, False,
+        ), now=now)
+        self.perception.notice_acquisition(tracked.token)
+        self._sighting_records[tracked.token] = known.token
+        self._world_records[instance] = known.token
+        self.observations = tuple(item for item in self.observations
+                                  if item.token != known.token) + (ObjectObservation(
+            known.token, None, None, *position, False, now,
+        ),)
+        self.memory.note_acquired(known.token, now=now)
+        return known.token
+
     def assess_offer(self, token: str, state: PetState) -> ObjectUseDecision | None:
         """Use learned identity only with current subjective visibility."""
         known = self.memory.get(token)

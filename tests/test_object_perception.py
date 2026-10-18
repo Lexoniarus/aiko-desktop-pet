@@ -14,6 +14,13 @@ INSPECTED = replace(APPLE, resting=False, inspecting=True)
 
 
 class ObjectPerceptionTests(unittest.TestCase):
+    def test_acquisition_notice_does_not_grant_identification(self):
+        sensor = ObjectPerception()
+        sensor.notice_acquisition(APPLE.token)
+        seen, = sensor.observe((replace(APPLE, resting=False),), now=0)
+        self.assertIsNone(seen.identity)
+        self.assertIsNone(seen.kind)
+
     def sample(self, step: float):
         sensor = ObjectPerception()
         result = ()

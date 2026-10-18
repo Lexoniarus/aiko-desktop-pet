@@ -47,6 +47,21 @@ class ObjectTracker:
     def stop_following(self) -> None:
         self._following = None
 
+    def witness_take(
+        self, candidate: ObjectCandidate, *, now: float,
+    ) -> ObjectCandidate:
+        """Admit a qualified acquisition event, not recovery by an unseen handle."""
+        token = next((key for key, instance in self._bindings.items()
+                      if instance == candidate.token), None)
+        if token is None:
+            self._serial += 1
+            token = f"sighting_{self._serial}"
+        tracked = replace(candidate, token=token)
+        self._tracks[token] = _Track(tracked, now)
+        self._bindings[token] = candidate.token
+        self._following = token
+        return tracked
+
     def resolve(self, sighting: str) -> str | None:
         return self._bindings.get(sighting)
 
