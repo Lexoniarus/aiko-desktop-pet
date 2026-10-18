@@ -1,10 +1,11 @@
 # World object contracts and behavior rules
 
-## Shared attention and visible-place checks — 18 October 2026
+## Shared attention and deliberate learned-place orientation — 18 October 2026
 
-The [shared interaction focus plan](SHARED_INTERACTION_FOCUS_PLAN.md)
-is the current focus contract. It corrects the focused-walking exception in the
-[earlier attention plan](ATTENTION_PERCEPTION_SIMPLIFICATION_PLAN.md).
+The [orientation and observed continuity plan](OBJECT_ORIENTATION_AND_CONTINUITY_PLAN.md)
+is the current decision-order contract. It preserves exclusive activity focus from
+[the shared focus plan](SHARED_INTERACTION_FOCUS_PLAN.md) and supersedes its
+local-only post-action check. Earlier attention exceptions are historical.
 Earlier dated corrections below retain their valid
 custody, learned-identity, presentation and persistence rules; their conflicting
 visibility assumptions are historical.
@@ -13,7 +14,9 @@ visibility assumptions are historical.
   places and whether a cursor take was witnessed. Its origin is the actual eyes.
   The near field is one body width; beyond that, the forward half-plane extends
   to the existing six-body-width notice range. Without direction only the near
-  field is covered. Unseen places are never globally checked.
+  field is covered. This local scope governs new-item discovery. A deliberate
+  left/right look separately covers learned places across the taskbar; it admits
+  no remote unknown discovery or identity at an unobserved new location.
 - Free walking and search patrol observe that field in their travel direction.
   A committed item interaction observes only its own subject, from approach
   through complete feedback and safe use/put-down. Nearby neighbours supply no
@@ -24,13 +27,20 @@ visibility assumptions are historical.
   A witnessed cursor track of the current subject
   may follow its own portion beyond ambient range; it opens no remote environment.
 - After the complete committed action, including eating or safe put-down and
-  feedback, visible known places require fresh local evidence. The look stays
-  stable during that check. Confirmed losses precede new free goals, offers and
-  continuing appetite wishes. All losses confirmed in this pass enter one task.
+  feedback, the behavior coordinator requests one deliberate left/right check.
+  Start/restart, cursor-gesture completion, and a new ordinary goal also request
+  fresh coverage. Each side requires its own uninterrupted 0.5-second look; an
+  unrelated action resets progress. Empty eligible learned memory completes
+  immediately. All old places are checked before the first loss cue can seize
+  focus. A current wish is paused without being erased and cannot bypass this gate.
+- Confirmed losses precede new free goals, offers and continuing appetite wishes.
+  Every confirmed portion joins one task and receives its own readable bubble.
+  A genuinely later loss pauses that same patrol without restarting its route.
 - Unknown occupancy postpones only its own place decision. It must not prevent
   other losses or investigation of that occupant. Already confirmed pending facts
   remain valid across hand focus; receiving them later does not invent perception
-  during inspection. No additional scan state, motion owner or timer is required.
+  during inspection. One transient orientation value belongs to the behavior
+  coordinator; no additional persisted flag, motion owner or timer is introduced.
 
 ## Shared search and investigation — 18 October 2026
 
@@ -49,7 +59,10 @@ presentation. Exact-place recall, witnessed transport and memory v3 remain valid
   already reunited before its deferred cue is shown is not reported missing later.
 - Unknown resting candidates are investigated during that pass using the normal
   approach, grasp, inspection and safe put-down actions. Route coverage survives
-  them. An unreachable or vanished candidate releases its action, not the task.
+  them. Candidate entry uses the existing approach phase/cue, without ordinary
+  novelty feedback. An unreachable or vanished candidate releases its action,
+  not the task. `search_active` therefore remains true during hand inspection;
+  `searching` describes patrol only.
 - Verified hand/face knowledge resolves its matching missing portion. A different
   learned portion of the same type cannot replace it. One result cue identifies
   and acknowledges a hand-held reunion; it implies no desire to consume.
@@ -83,6 +96,14 @@ governs **unobserved** relocation; it cannot undo a witnessed acquisition.
 Unknown portions remain unknown throughout this transport. Attention loss and
 actual loss of tracking still remove current execution evidence.
 
+The take may be witnessed from acquired exact-place knowledge after old sensor
+bindings have expired. It is qualified by attention sampled at the old pose and
+committed only after successful physical acquisition. A failed take, an unobserved
+new position, or another action's subject cannot manufacture continuity. The
+existing ReactionPlayer exposes the live cue subject: a tracked portion's own
+feedback preserves its exclusive tracking, while unrelated speech/action does not.
+Cancellation and completion clear that subject before invoking callbacks.
+
 Stages 7–8 in the [earlier delivery ledger](OBJECT_SEARCH_LIFECYCLE_PLAN.md)
 record the observed-transport and physical-subject corrections that preceded
 the shared search task.
@@ -96,9 +117,9 @@ type does not identify a new portion of that type.
 
 After identification, ObjectMemory retains the acquired physical reference with
 its learned identity, assessment and last observed place. After normal attentive
-notice dwell within the ordinary notice range, that same portion at its **exactly
-remembered place** can be recognized without another inspection, including after
-restart and with nearby/overlapping portions of the same or different types.
+notice dwell within the ordinary notice range or qualified learned-place
+orientation, that same portion at its **exactly remembered place** can be recognized
+without another inspection, including after restart and with nearby/overlapping portions of the same or different types.
 A different portion at that place remains unknown. An unobserved relocation
 does not reveal the new location or identity: the new find requires hand/face
 identification again. Existing observed cursor motion, custody and placement can

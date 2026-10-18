@@ -3,7 +3,7 @@
 ## Shared search acceptance — 18 October 2026
 
 Use an isolated save at 1x and 2x. The
-[current focus plan](SHARED_INTERACTION_FOCUS_PLAN.md) defines the
+[orientation and continuity plan](OBJECT_ORIENTATION_AND_CONTINUITY_PLAN.md) defines the
 visibility conditions below. Older independent per-object patrols and general
 ambient sensing during committed approach or other interactions are superseded.
 Controlled native tests pass; the following human visual/input checks remain open.
@@ -18,16 +18,18 @@ Controlled native tests pass; the following human visual/input checks remain ope
   during hand inspection. Include positions before and behind her, near and far.
   No unrelated loss/new-item/observed-transport claim may occur during item focus.
   The diagnostics must retain the previous subjective places/assignments. After the
-  full action, look toward the old places: only currently visible places supply
-  fresh evidence. Put a new item on the other side; its earlier notice must not
-  turn the look away before the place check completes. She announces confirmed
-  loss, searches once, takes and identifies unknown finds, puts them down, and
-  retains the same task for the other losses, even when hungry or thirsty.
+  full action, Aiko automatically looks left and right to check learned places
+  across the entire taskbar. Do not steer those looks with the cursor. At 1x,
+  include a learned place beyond ordinary new-item range; at 2x, keep all items
+  within the actual display. Put a new item on the other side; it must not turn
+  her away before both looks finish. All confirmed losses enter the task before
+  the first named loss bubble. She announces each loss, searches once, takes and
+  identifies unknown finds, puts them down, and retains the same task for the other losses, even when hungry or thirsty.
   An unrelated known portion is never substituted.
 - [ ] Repeat unseen relocation and a new drop during petting, conversation and a
   game. Ambient discoveries, loss claims and transport updates must wait until
-  the complete action, including all dialogue bubbles, ends. Then visible old
-  places get fresh evidence; confirmed loss precedes ordinary new investigation.
+  the complete action, including all dialogue bubbles, ends. Both learned-place
+  looks then get fresh evidence; confirmed loss precedes ordinary investigation.
   A shorter animation ending must not truncate the conversation's focus.
   Closing the game must also release its playback deadline and restore free
   perception; an invisible leftover animation must not keep attention locked.
@@ -69,7 +71,10 @@ They also reported slow approach/possible repeated loops. Keep that observation
 open for separate behavior analysis; it is not claimed solved by the edge-grip
 correction. The complete left/right 1x/2x native checklist remains to be checked.
 
-## Combined multi-object regression — 17 October 2026
+## Historical combined multi-object regression — 17 October 2026
+
+Its local-only absence range and ordinary identify-before-loss permutations are
+superseded by the 18 October checklist above. They are not current acceptance steps.
 
 This checklist follows the later pickup/search priority decision. Start with a
 fresh isolated save. Repeat with multiple apples, cookies and drinks at 1x/2x;

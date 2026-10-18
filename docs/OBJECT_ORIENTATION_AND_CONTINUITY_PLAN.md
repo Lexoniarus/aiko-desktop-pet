@@ -1,7 +1,7 @@
 # Object orientation and observed continuity plan
 
-Recorded: 18 October 2026. Status: **Stages 1 and 2 complete;
-live orientation and search-priority integration are pending**.
+Recorded: 18 October 2026. Status: **Stages 1-5 implemented and automatically
+verified. Human practical acceptance remains open. No merge authorized.**
 Baseline: `feature/world-foundation`, HEAD `fb4f357`, including the existing local changes.
 
 This plan follows the [architecture](ARCHITECTURE.md),
@@ -15,7 +15,7 @@ looks left and right to check remembered places across the taskbar. Confirmed
 losses and the ongoing search take precedence over ordinary novelty. A witnessed
 relocation preserves learned identity whether or not Aiko currently wants the item.
 
-For the next implementation, this supersedes the local-only post-action checks
+This implementation supersedes the local-only post-action checks
 in the [shared focus plan](SHARED_INTERACTION_FOCUS_PLAN.md) and
 [earlier perception plan](ATTENTION_PERCEPTION_SIMPLIFICATION_PLAN.md).
 Their exclusive interaction focus remains required. Historical green results
@@ -111,9 +111,12 @@ Sleep, play, or an explicit new activity may interrupt orientation. Restart its
 fresh evidence after release. An item moved again after its side was checked
 needs later evidence; orientation is a visible sequence, not an atomic World poll.
 
-## Current code and OOP audit
+## Baseline code and OOP audit
 
-| Existing code | Verified current behavior or gap | Planned change and preserved boundary |
+This audit describes the starting snapshot at `fb4f357` plus the then-local work.
+The delivery ledger below records the implemented corrections and current status.
+
+| Baseline code | Verified baseline behavior or gap | Implementation target and preserved boundary |
 | --- | --- | --- |
 | [choose_object_attention](../aiko_pet/application/object_behavior.py) and [ObjectAttention](../aiko_pet/pet/mind/object_attention.py) | Object phases win over free movement, but release returns directly to free gaze. New sightings and empty known places share the same bounded spatial test. | Add explicit orientation precedence and separate learned-place coverage from local discovery. Keep sleeping/game and exclusive-item priorities. The identical `pick_up` dispatch branch can be removed without removing its phase. |
 | [ObjectBehaviorCoordinator.observe](../aiko_pet/application/object_behavior.py) | Repeated `checking_absence`/`absences` conditions delay goals. The first accepted loss immediately changes the interaction phase; no full left/right barrier exists. | Own one orientation progress value and one decision gate for dispatch. Keep sensory pending evidence separate from accepted facts and readable feedback. Do not implement the same gate in Intentions, UI, and SearchTask independently. |
@@ -146,10 +149,10 @@ They need focused regressions in their owning implementation commits.
 
 ### Orientation ownership
 
-Use one transient typed progress value owned by the existing behavior coordinator.
-A small proposed `application/object_orientation.py` may hold its data and pure
-transitions. Store the current side and required current coverage only; derive
-readiness instead of storing parallel active/pending/done flags. No new coordinator,
+The existing behavior coordinator owns one transient typed progress value.
+`application/object_orientation.py` holds its data and pure transitions. It stores
+only the current side and uninterrupted-dwell timestamps; coverage and readiness
+are derived, without parallel active/pending/done flags. No new coordinator,
 timer, movement writer, saved schema, or substitute Item/SearchTask state machine.
 
 The same sampled decision must control the visible gaze and evidence admission.
@@ -314,23 +317,20 @@ off-screen placements to make a small display fit a test assumption.
 - Local small commits and their focused checks are expected during implementation.
   Implementation has started with staged-tree verification; no merge is authorized.
 
-The fresh code audit covers the current dirty baseline, not just the committed
-HEAD. Previous baseline verification passed all 196 object tests. In this
-revision, two temporary instrumentation checks confirmed the invalid focus
-fixtures above; they changed no repository source or test files. A fresh focused
-run passed **143 tests** across object decisions, intentions, behavior, tracking,
-retrieval, memory, awareness, absence, and UI architecture. The full suite was not
-rerun for this documentation-only revision. Local references, named test/module
-references, and `git diff --check` are validated as part of delivery.
+The planning audit covered the initial dirty baseline, not just the then-committed
+HEAD. Its focused verification passed 143 tests; the full suite was deliberately
+not rerun for that planning-only revision. Temporary instrumentation confirmed the
+invalid focus contexts without changing repository source. The implementation
+ledger below records subsequent per-commit tests and final regression separately.
 
 | Stage | Status | Commit and verification |
 | --- | --- | --- |
 | P0 planning revision | Recorded with Stage 1 delivery | English state/ownership/reachability audit and staged-tree commit discipline. |
-| 1 coverage and orientation value | Complete at policy/sensor level | `f1fc8a6`, `dbb8b80`, `3f422f9`; live behavior wiring remains Stage 3. |
+| 1 coverage and orientation value | Complete at policy/sensor level | `f1fc8a6`, `dbb8b80`, `3f422f9`; live behavior wiring delivered in Stage 3. |
 | 2 witnessed acquisition and own feedback | Complete | `a148296` acquisition and `62c161a` live feedback scope; verification below. |
 | 3 orientation and search integration | Complete | `90a754a` and `37c4365`; both-side loss collection, current-wish pause, and search-related candidate feedback verified. |
 | 4 proven cleanup | Complete | `8fe556b` and `946d590`; repaired focus fixtures and removed audited duplicate/dead paths. |
-| 5 final regression and native acceptance | Not started | No implementation commit. |
+| 5 final regression and native acceptance | Complete (automated) | 1,143 tests pass; pinned static and documentation gates pass. Native restart/1x/2x/timer checks pass; human visual/input acceptance remains open. |
 
 ## Implementation ledger
 
@@ -440,3 +440,21 @@ references, and `git diff --check` are validated as part of delivery.
   models that owner cancellation before its mode change. The staged tree passes
   88 attention/access/animation/reaction/game/architecture checks in 13.098 seconds,
   Ruff, strict Mypy (187 sources), and Pyright. No merge.
+
+- Stage 5: the complete committed application/test snapshot passes **1,143 tests
+  in 299.856 seconds**, with no failures, errors, or skips, on Windows using the
+  pinned Python 3.11.9/Pillow 11.3.0 environment. This includes real Tk timer,
+  cursor, custody, restart, close-portion, same-type, and 1x/2x coverage. No source
+  correction was required by the final full run. Ruff 0.13.2, strict Mypy 1.18.2
+  (187 sources), and Pyright 1.1.414 pass on that same exported snapshot.
+  Architecture, current World contracts, the supersession note, and the practical
+  checklist now describe deliberate whole-taskbar learned-place checks separately
+  from local new-item discovery. Documentation verification passes 260 local file
+  targets and 15 heading anchors; UTF-8 decoding and diff whitespace checks pass.
+  Every implementation commit was checked through an exported index snapshot.
+  Commits remain local: no push, remote CI run, or merge was performed. The normal
+  user save was not readjusted; native tests use temporary saves. Human visual/input
+  acceptance is intentionally not claimed: restart Aiko and use the current
+  [practical checklist](WORLD_SMOKE_TEST.md) for the next feedback round.
+  Optional deletion of temporary verification exports was rejected by automatic
+  approval review as "blocked by policy"; those exports remain outside the repo.

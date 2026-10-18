@@ -1,8 +1,9 @@
 # Gemeinsamer Interaktionsfokus — 18. Oktober 2026
 
 **Planning follow-up:** The [object orientation and observed continuity
-plan](OBJECT_ORIENTATION_AND_CONTINUITY_PLAN.md) records the ongoing implementation.
-Its policy/sensor foundation is complete; live integration remains pending.
+plan](OBJECT_ORIENTATION_AND_CONTINUITY_PLAN.md) records the implemented follow-up
+and its verification ledger. Live left/right integration and audited cleanup are
+complete; the current ledger separates automated checks from human acceptance.
 It replaces local-only post-action checks with deliberate
 left/right checks of all learned places while preserving exclusive activity
 focus and independent knowledge, wish, tracking, and search states. The follow-up

@@ -42,8 +42,21 @@ before free curiosity or appetite. Earlier plans remain delivery history.
 
 The [orientation and observed continuity follow-up](OBJECT_ORIENTATION_AND_CONTINUITY_PLAN.md)
 preserves separate learned identity, appraisal, wish, tracking, and search state.
-Its pure orientation progress and explicit learned-place coverage are available;
-live left/right orientation is not wired until its integration stage.
+The behavior coordinator owns one transient immutable `OrientationProgress` value.
+After activity release, restart, or a new ordinary goal, its left/right gaze read
+reaches the visual policy before sensing. Learned-place coverage spans the taskbar;
+unknown discovery retains its ordinary local range. Pending orientation defers
+selection without cancelling the existing wish, and the existing walk driver holds
+movement. Confirmed losses accumulate before individual readable receipts start.
+
+An enclosing `SearchTask` survives candidate approach/inspection, pauses for later
+loss receipts, and retains route progress. Its unknown candidates use the existing
+approach cue rather than an ordinary new-object announcement. `ReactionPlayer`
+owns the live feedback subject and clears it before completion/cancellation
+callbacks; only feedback for an already tracked portion preserves that tracking.
+The existing tracker admits a qualified actual take at its exact learned place,
+including between sensor ticks, without granting a new identity or appetite.
+No extra saved state, scan timer, movement writer, or mutable GUI focus is added.
 
 ## Dependency overview
 
