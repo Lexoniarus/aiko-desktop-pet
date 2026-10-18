@@ -133,3 +133,24 @@ owner-level lifecycle regression; no other test was removed. Native checks use
 isolated temporary saves. The normal save was not touched. Automated verification
 does not replace the remaining human boundary checklist in the preceding plan.
 Changes remain in small local commits; nothing was pushed or merged.
+
+## Follow-up: unknown replacements must not conceal a learned loss
+
+Baseline: `d75651c`. The user rejects the earlier occupied-place exception:
+an unknown replacement at a learned place does not establish that the learned
+portion is still there. Check that learned portion's absence, announce it, and
+include it in the search before investigating the replacement. The replacement
+remains unidentified until actual hand/face evidence. A continuously observed
+relocation and the same learned portion at its exact place remain recognized.
+
+1. Correct the absence policy in its existing domain owner. Replace tests that
+   require unknown occupancy to conceal learned absence. Preserve coverage/dwell,
+   unobserved-location privacy, distinct physical portions, and unknown-place
+   presence evidence. Run the focused object suite and pinned static checks.
+2. Correct the native replacement regression and verify actual named missing
+   bubbles finish before candidate pickup, including the same-type replacement
+   and the restarted close-portion search. Update the current architecture rule.
+3. Run the full suite, static and documentation gates; record results below.
+   Use isolated saves, keep small local commits, and do not push or merge.
+
+Status: planned; implementation and verification pending.
