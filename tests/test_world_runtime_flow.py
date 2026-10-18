@@ -105,6 +105,74 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         for before, after in zip(self.feedback, self.feedback[1:]):
             self.assertGreater(after[0] - before[0], 1.6)
 
+    def test_same_type_replacement_waits_for_all_actual_missing_bubbles(self):
+        app, world = self.app, self.app._world
+        set_test_pet_values(app.state, satiety=100, energy=100)
+        track = world._track()
+        app._place_x(track.left + (track.right - track.left - world.width) / 2)
+        body = world._body_x()
+        records = set()
+        for identity, old, new in (("dango", .3, 2.5),
+                                   ("energy_drink", -.7, 3.3),
+                                   ("onigiri", .9, -2.5)):
+            x = body + old * world.width
+            item = world.world.place_resting(identity, x, ObjectFootprint(8, 8))
+            record = world.awareness.memory.observe_find(
+                ObjectObservation("earlier", identity,
+                                  "drink" if identity == "energy_drink" else "food",
+                                  x, 0, True, world.now),
+                now=world.now, record=None, claimed=frozenset(), maximum_distance=0,
+                instance_id=item.instance_id,
+            )
+            records.add(record)
+            world.awareness.memory.mark_assessed(record)
+            world.world.move_resting(item.instance_id, body + new * world.width,
+                                     expected_revision=item.revision)
+        replacement = world.world.place_resting(
+            "dango", body + .3 * world.width, ObjectFootprint(8, 8),
+        )
+        completed = set()
+        approaches = []
+        present = world._present_feedback
+
+        def observe_feedback(cue, reaction, done):
+            if cue.event in ("object_approach", "object_pick_up", "object_inspect"):
+                self.assertEqual(completed, records)
+                self.assertEqual(world.awareness.absences, ())
+            if cue.event == "object_approach":
+                self.assertIsNone(world.orientation_side())
+                self.assertFalse(world.awareness.checking_absence)
+                approaches.append(cue.record_id)
+
+            def received(receipt):
+                if cue.event == "object_place_missing" and receipt.completed:
+                    completed.add(cue.record_id)
+                done(receipt)
+
+            present(cue, reaction, received)
+
+        world._present_feedback = observe_feedback
+        world._behavior.request_orientation()
+        trace = self.run_until(lambda: world.interaction.phase == "inspect", 32)
+        self.assertEqual(world.interaction.phase, "inspect", trace)
+        self.assertEqual(world.interaction.instance_id, replacement.instance_id)
+        self.assertEqual(len(approaches), 1)
+        self.assertEqual(completed, records)
+        self.assertEqual([event for _, event, _ in self.feedback], [
+            "object_place_missing", "object_place_missing", "object_place_missing",
+            "object_search", "object_approach", "object_pick_up", "object_inspect",
+        ])
+        for name in ("Dango", "Energy", "Onigiri"):
+            self.assertTrue(any(name in text for _, _, text in self.bubbles),
+                            self.bubbles)
+        known = world.awareness.known_instance(replacement.instance_id)
+        assert known is not None
+        self.assertFalse(known.recognized)
+        self.assertTrue(all(
+            (missing := world.awareness.memory.get(record)) is not None
+            and missing.place_status == "missing" for record in records
+        ))
+
     def test_conversation_holds_environment_until_actual_sequence_completion(self):
         world = self.app._world
         x = world._body_x() + .2 * world.width

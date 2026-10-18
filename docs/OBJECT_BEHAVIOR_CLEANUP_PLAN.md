@@ -153,8 +153,8 @@ relocation and the same learned portion at its exact place remain recognized.
 3. Run the full suite, static and documentation gates; record results below.
    Use isolated saves, keep small local commits, and do not push or merge.
 
-Status: policy and component corrections verified; native timer regression and
-final full verification pending.
+Status: policy, component and native timer corrections verified; final full
+verification pending. Policy/component commit: `118c5ca`.
 
 The corrected absence, distant-coverage and coordinator regressions first fail
 on the unchanged policy (four cases, five failing assertions/subtests). The policy
@@ -171,3 +171,11 @@ the corrected native replacement and restarted close-portion search at 1x/2x.
 Ruff 0.13.2, strict Mypy 1.18.2 (187 sources), and Pyright 1.1.414 pass with Python
 3.11.9 and Pillow 11.3.0. The first type-check commands omitted Pillow; correcting
 the verification environment resolved those import errors without source edits.
+
+The added native timer regression passes in 20.552 seconds on the next exported
+snapshot. Three learned portions are moved away and a new same-type Dango is
+placed at the original Dango location. Every named missing bubble must complete
+its actual presentation receipt before approach, pickup or hand inspection.
+The replacement remains unidentified on entry to inspection, and all three old
+records remain missing. No synthetic receipt or private phase setter bypasses
+the readable sequence. All three pinned static gates pass on this test snapshot.
