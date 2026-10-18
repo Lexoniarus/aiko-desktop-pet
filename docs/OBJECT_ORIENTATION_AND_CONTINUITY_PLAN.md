@@ -327,7 +327,7 @@ references, and `git diff --check` are validated as part of delivery.
 | P0 planning revision | Recorded with Stage 1 delivery | English state/ownership/reachability audit and staged-tree commit discipline. |
 | 1 coverage and orientation value | Complete at policy/sensor level | `f1fc8a6`, `dbb8b80`, `3f422f9`; live behavior wiring remains Stage 3. |
 | 2 witnessed acquisition and own feedback | Complete | `a148296` acquisition and `62c161a` live feedback scope; verification below. |
-| 3 orientation and search integration | Not started | No implementation commit. |
+| 3 orientation and search integration | 3a complete; 3b next | `90a754a` live integration verified; candidate feedback and expanded native coverage remain. |
 | 4 proven cleanup | Not started | No implementation commit. |
 | 5 final regression and native acceptance | Not started | No implementation commit. |
 
@@ -392,3 +392,17 @@ references, and `git diff --check` are validated as part of delivery.
   simulate taking an out-of-view floor item while the pointer is already at the
   face. The staged tree passes 256 focused object/presentation/architecture tests,
   five native transport/Care scenarios, and all three static gates.
+
+- Stage 3a: live orientation now precedes free selection/identification after
+  restart, completed activities, and cursor gestures. The behavior coordinator
+  owns the sole transient progress value; visual ports expose its current side
+  before sensing, and the existing walk driver holds while looking. Empty learned
+  memory adds no presentation delay. Committed episodes and witnessed transport
+  retain their distinct attention; waiting preserves the canonical current wish.
+  Both sides finish even if the final left-side record becomes missing. Confirmed
+  losses accumulate before receipts begin. Existing component fixtures now drive
+  the public sequence, including a real restored-place check before acquisition.
+  The staged tree passes 256 focused tests and 65 native World/runtime/game tests
+  (174.482-second combined run; its sole read-port fixture typo was corrected and
+  the 256-test selection rerun successfully). Ruff, strict Mypy (187 sources), and
+  Pyright pass on the corrected staged snapshot. No merge or user-save change.
