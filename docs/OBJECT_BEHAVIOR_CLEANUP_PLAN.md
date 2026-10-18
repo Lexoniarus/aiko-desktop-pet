@@ -1,7 +1,7 @@
 # Object behavior ownership cleanup
 
 Recorded: 18 October 2026. Baseline: `feature/world-foundation`, `c7958fa`.
-Status: all three stages implemented; final full regression pending. No merge authorized.
+Status: all three stages implemented and fully verified. No merge authorized.
 
 ## Purpose and protected behavior
 
@@ -57,9 +57,9 @@ new private method names would merely mirror the refactoring and are not needed.
 | Planning | Recorded | Baseline inspected; worktree clean. Three review findings scoped above. |
 | 1 | Complete | `ea93518`; 213 object and four native focus/transport tests pass, plus all static gates. |
 | 2 | Complete | `8c3e225`; 213 object tests and all static gates pass. |
-| 3 | Targeted checks complete | `b2a51c0`; 250 targeted tests, 257 identical trace events and all static gates pass. Full regression pending. |
+| 3 | Complete | `b2a51c0`; 250 targeted tests, 257 identical trace events and all static gates pass. Final fixture correction: `01dc523`. Full regression: 1,143 tests pass in 295.539 seconds. |
 
-All implementation and verification results will be recorded here after each stage.
+Implementation and verification results for each stage are recorded below.
 
 ### Stage 1 evidence
 
@@ -101,8 +101,8 @@ are identical. The probe is not added as a repository test or runner. The export
 staged tree passes 250 targeted tests in 39.102 seconds: 213 object tests, 31
 architecture checks, and six native close-portion restart, observed relocation
 and actual conversation/missing-bubble timer cases. Both display scales are
-covered. Ruff, strict Mypy (187 sources), and Pyright pass. The complete regression
-and final documentation checks follow before this stage is marked complete.
+covered. Ruff, strict Mypy (187 sources), and Pyright pass. Final regression and
+documentation results are recorded below.
 
 ### Final fixture refinement
 
@@ -114,5 +114,22 @@ first validation caught a trailing-comma syntax error in this test refinement;
 the initial success note was premature. The corrected exported snapshot passes
 213 tests in 0.922 seconds, all three static gates, and the same 257 trace events.
 Only these corrected results finalize the unpublished fixture commits. The
-complete suite then runs on this final test/source combination; the earlier
-in-flight full run is not substituted for validation of the edited fixture.
+complete suite was then repeated on this final test/source combination; the
+earlier in-flight full run was not substituted for validation of the edited fixture.
+
+### Final verification and delivery
+
+The final exported snapshot passes all 1,143 tests in 295.539 seconds, with no
+failures, errors or skips. All 353 tracked Python files match the statically
+verified snapshot and the working tree after normalizing Windows line endings.
+Ruff 0.13.2, strict Mypy 1.18.2 (187 sources), and Pyright 1.1.414 pass on the final
+source/test combination. The final documentation check validates 266 local file
+targets and 15 heading anchors across 35 root/docs Markdown files; UTF-8 decoding
+and staged whitespace checks pass.
+
+The three cleanups retain the distinct states, statement order, existing timing
+and practically accepted behavior. One isolated reset test was replaced by an
+owner-level lifecycle regression; no other test was removed. Native checks use
+isolated temporary saves. The normal save was not touched. Automated verification
+does not replace the remaining human boundary checklist in the preceding plan.
+Changes remain in small local commits; nothing was pushed or merged.
