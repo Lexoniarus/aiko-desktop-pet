@@ -13,7 +13,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier lag doch ein {item}. Jetzt ist es weg."
+          "content": "Hier war doch {item}. Wo ist das hin?"
         }
       ]
     },
@@ -28,7 +28,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Moment, an dieser Stelle war doch ein {item}."
+          "content": "Moment. {item} ist nicht mehr hier."
         }
       ]
     },
@@ -43,7 +43,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da lag vorhin ein {item}. Jetzt sehe ich es verschwunden."
+          "content": "{item} sehe ich hier gerade nicht mehr."
         }
       ]
     },
@@ -8719,7 +8719,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das möchte ich mir genauer ansehen."
+          "content": "Na gut. Jetzt will ich’s wissen."
         }
       ],
       "presentation": "short"
@@ -8736,7 +8736,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Na, was haben wir denn hier?"
+          "content": "So. Einmal hoch damit."
         }
       ],
       "presentation": "short"
@@ -8753,7 +8753,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Moment. Ich will erst sehen, was das ist."
+          "content": "Hm. Was bist du denn?"
         }
       ],
       "presentation": "short"
@@ -8770,7 +8770,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, {item}. Jetzt erkenne ich es."
+          "content": "Ah, {item}."
         }
       ],
       "presentation": "short"
@@ -8838,7 +8838,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das lege ich mir für später hin."
+          "content": "Ich setze das wieder ab."
         }
       ],
       "presentation": "short"
@@ -9042,7 +9042,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier finde ich gerade nichts mehr. Ich schaue später wieder."
+          "content": "Einmal alles abgesucht. Noch keine Spur."
         }
       ],
       "presentation": "short"
@@ -9100,7 +9100,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mal sehen, was das ist."
+          "content": "Ich geh mal rüber."
         }
       ]
     },
@@ -9119,7 +9119,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Meine Neugier hat gerade einen Vorschlag gemacht."
+          "content": "Das lasse ich mir nicht entgehen."
         }
       ]
     },
@@ -9138,7 +9138,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich nehme es mal in die Hand."
+          "content": "Dich schnapp ich mir kurz."
         }
       ]
     },
@@ -9157,7 +9157,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "So lässt es sich besser ansehen."
+          "content": "Komm mal her, du."
         }
       ]
     },
@@ -9176,7 +9176,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Einen Augenblick. Ich bin neugierig."
+          "content": "Moment … gleich hab ich’s."
         }
       ]
     },
@@ -9195,7 +9195,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das möchte ich erst genauer betrachten."
+          "content": "Einen Moment noch."
         }
       ]
     },
@@ -9214,7 +9214,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "{item}. Jetzt weiß ich, was ich da habe."
+          "content": "{item}. Na also."
         }
       ]
     },
@@ -9233,7 +9233,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ach, {item}. Gut zu wissen."
+          "content": "Ach, {item}. Alles klar."
         }
       ]
     },
@@ -9366,7 +9366,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier bleibt es für später."
+          "content": "Hier lasse ich das erst mal."
         }
       ]
     },
@@ -9385,7 +9385,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das bekommt einen Platz für später."
+          "content": "Das bleibt erst mal hier."
         }
       ]
     },
@@ -9822,7 +9822,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hm. Hier ist es nicht mehr."
+          "content": "Ich bin einmal durch. Noch fehlt etwas."
         }
       ]
     },
@@ -9841,7 +9841,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mein Vorrat ist offenbar nicht mehr hier. Ich schaue später weiter."
+          "content": "Für jetzt habe ich überall nachgesehen. Noch fehlt etwas."
         }
       ]
     },
@@ -21420,7 +21420,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wo ist {item} hin? Vielleicht liegt es noch hier in der Nähe."
+          "content": "Wo ist {item} hin? Ich suche die ganze Taskleiste ab."
         }
       ]
     },
@@ -21435,7 +21435,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "An dieser Stelle finde ich {item} gerade nicht. Ich sehe mich kurz um."
+          "content": "Hier finde ich {item} gerade nicht. Ich laufe die Taskleiste ab."
         }
       ]
     },
@@ -21450,7 +21450,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier sehe ich {item}. Damit komme ich erst mal weiter."
+          "content": "Ah, da ist {item} wieder."
         }
       ]
     },
@@ -21465,7 +21465,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da liegt {item}! Ich kümmere mich erst mal darum."
+          "content": "{item}. Wiedergefunden."
         }
       ]
     },
@@ -21481,7 +21481,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hier war doch noch {item}. Ich schaue mich kurz um."
+          "content": "Hier war doch noch {item}. Ich suche bis zum anderen Ende."
         }
       ]
     },
@@ -21497,7 +21497,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ah, da ist {item}. Vielleicht wurde mein Vorrat umgestellt."
+          "content": "Da bist du ja, {item}."
         }
       ]
     },
