@@ -32,6 +32,17 @@ class CareGuiTests(unittest.TestCase):
         set_test_pet_values(self.app.state, sleeping=False)
         self.app._on_enter()
         self.app.root.update_idletasks()
+        # Start UI component checks after the initial hover response has ended.
+        self.finish_response()
+
+    def finish_response(self):
+        player = self.app._reaction_player
+        if player.pending_timer is not None:
+            self.app.root.after_cancel(player.pending_timer)
+            player._complete(player.generation)
+        self.app._action_playback.cancel_at(time.monotonic())
+        if self.app._hover.toolbar is not None:
+            self.app._hover.toolbar.refresh()
 
     @property
     def toolbar(self) -> ActionToolbar:
@@ -58,6 +69,8 @@ class CareGuiTests(unittest.TestCase):
         set_test_pet_values(self.app.state, energy=12)
         self.toolbar.buttons["talk"].invoke()
         self.assertAlmostEqual(self.app.state.social, 35, places=2)
+        self.assertEqual(self.toolbar.buttons["feed"].cget("state"), "disabled")
+        self.finish_response()
         self.toolbar.buttons["feed"].invoke()
         menu = self.app._hover.food_menu
         assert menu is not None
@@ -68,6 +81,32 @@ class CareGuiTests(unittest.TestCase):
         self.assertFalse(self.app._hover.keep_open)
         self.toolbar.refresh()
         self.assertIn("35%", self.toolbar.needs["social"][2].cget("text"))
+
+    def test_foreground_care_owns_buttons_and_passive_hover_until_completion(self):
+        for action in ("pet", "talk"):
+            with self.subTest(action=action):
+                self.app.interact(action)
+                self.toolbar.refresh()
+                generation = self.app._reaction_player.generation
+                social = self.app.state.social
+                self.assertTrue(all(button.cget("state") == "disabled"
+                                    for button in self.toolbar.buttons.values()))
+                self.toolbar.buttons["talk"].invoke()
+                self.app._hover._interact("talk")
+                self.app._hover._food_selected("energy_drink")
+                self.app._on_enter()
+                self.assertEqual(self.app._reaction_player.generation, generation)
+                self.assertEqual(self.app.state.social, social)
+                self.assertFalse(self.app._world.cursor.carrying)
+                self.assertEqual(self.toolbar.pin_button.cget("state"), "normal")
+                self.assertEqual(self.toolbar.settings_button.cget("state"), "normal")
+                self.finish_response()
+                self.assertTrue(all(button.cget("state") == "normal"
+                                    for button in self.toolbar.buttons.values()))
+        set_test_pet_values(self.app.state, sleeping=True)
+        self.toolbar.refresh()
+        self.assertEqual(self.toolbar.buttons["sleep"].cget("state"), "normal")
+        self.assertEqual(self.toolbar.buttons["play"].cget("state"), "disabled")
 
     def test_relationship_and_needs_in_pinned_toolbar(self):
         self.app._hover.open_status()

@@ -16,3 +16,4 @@ class HoverActions:
     save_position: Callable[[int | None, int | None], None]
     move_speech: Callable[[], None]
     restore_stack: Callable[[], bool]
+    can_interact: Callable[[str], bool] = lambda _action: True

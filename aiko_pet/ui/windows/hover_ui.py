@@ -53,6 +53,7 @@ class HoverUiPorts:
     game_completed: Callable[[Score], object] | None = None
     defer_game: Callable[[Callable[[], None]], None] | None = None
     game_dialogue: Callable[[str], str] | None = None
+    can_interact: Callable[[str], bool] = lambda _action: True
 
 
 class HoverUi:
@@ -118,6 +119,8 @@ class HoverUi:
         return bool(using_toolbar or using_food or self.settings_engaged)
 
     def _interact(self, action: str) -> None:
+        if not self._ports.can_interact(action):
+            return
         if action == "play":
             self.open_game()
         elif action == "feed" and self._ports.feed is not None:
@@ -129,12 +132,13 @@ class HoverUi:
         self.food_menu = None
 
     def _food_selected(self, food_id: FoodChoiceId) -> None:
-        if self._ports.feed is not None and not self.game_open:
+        if (self._ports.feed is not None and not self.game_open
+                and self._ports.can_interact("feed")):
             self._ports.feed(food_id)
 
     def open_food_menu(self) -> None:
         """Reuse one selection window; no domain mutations before choice."""
-        if self.game_open:
+        if self.game_open or not self._ports.can_interact("feed"):
             return
         if self.food_menu is not None:
             self.food_menu.focus()
@@ -171,19 +175,13 @@ class HoverUi:
             self.game_window = None
             self._ports.game_speech.stop()
             self.last_hover = time.monotonic()
-            self._set_care_buttons_enabled(True)
             if self.toolbar is not None:
                 self.toolbar.refresh()
             self.refresh_status()
 
-    def _set_care_buttons_enabled(self, enabled: bool) -> None:
-        if self.toolbar is None:
-            return
-        for name, button in self.toolbar.buttons.items():
-            if name != "play":
-                button.configure(state="normal" if enabled else "disabled")
-
     def open_game(self) -> None:
+        if not self._ports.can_interact("play"):
+            return
         if self._ports.defer_game is not None:
             self._ports.defer_game(self._open_game_now)
         else:
@@ -211,7 +209,8 @@ class HoverUi:
         except Exception:
             self._ports.game_speech.stop()
             raise
-        self._set_care_buttons_enabled(False)
+        if self.toolbar is not None:
+            self.toolbar.refresh_actions()
         self.game_window.greet()
         self._ports.restore_stack()
 
@@ -233,13 +232,14 @@ class HoverUi:
                     save_position=self._ports.save_position,
                     move_speech=self._ports.move_speech,
                     restore_stack=self._ports.restore_stack,
+                    can_interact=self._ports.can_interact,
                 ),
                 always_on_top=self._ports.always_on_top(),
                 skin=self._skin,
             )
         self.toolbar.set_pinned(self._keep_open)
         self.toolbar.show()
-        self._set_care_buttons_enabled(not self.game_open)
+        self.toolbar.refresh_actions()
 
     def note_sprite_hover(self, now: float) -> None:
         """Keep hover timing with the owner of toolbar visibility."""
@@ -338,6 +338,8 @@ class HoverUi:
 
     def refresh_hover(self, now: float) -> None:
         toolbar = self.toolbar
+        if toolbar is not None:
+            toolbar.refresh_actions()
         if toolbar is not None and toolbar.dragging:
             self.last_hover = now
             return

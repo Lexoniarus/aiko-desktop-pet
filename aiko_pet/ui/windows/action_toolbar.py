@@ -5,7 +5,7 @@ from __future__ import annotations
 import sys
 import tkinter as tk
 from functools import partial
-from typing import Callable
+from typing import Callable, Literal
 
 from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
@@ -208,6 +208,15 @@ class ActionToolbar:
         if self._details_open and self.details is not None:
             self.details.refresh()
 
+    def refresh_actions(self) -> None:
+        """Project current permission; the controller rechecks on invocation."""
+        for action, button in self.buttons.items():
+            state: Literal["normal", "disabled"] = (
+                "normal" if self._actions.can_interact(action) else "disabled"
+            )
+            if button.cget("state") != state:
+                button.configure(state=state)
+
     def _button(
         self,
         parent: tk.Widget,
@@ -239,6 +248,7 @@ class ActionToolbar:
                    bar.winfo_reqheight())
 
     def refresh(self) -> None:
+        self.refresh_actions()
         view = self._snapshot()
         self._current = view
         changed = False

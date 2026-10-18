@@ -109,6 +109,16 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             self.assertEqual(world.interaction.phase, "approach", trace)
             self.assertTrue(app._hover.interaction_active)
             self.assertIsNotNone(app._hover.toolbar)
+            toolbar = app._hover.toolbar
+            assert toolbar is not None
+            self.assertTrue(all(button.cget("state") == "disabled"
+                                for button in toolbar.buttons.values()))
+            social = app.state.social
+            toolbar.buttons["talk"].invoke()
+            app._hover._interact("talk")
+            app._hover._food_selected("energy_drink")
+            self.assertEqual(app.state.social, social)
+            self.assertFalse(world.cursor.carrying)
             before = app.settings.x
             self.run_for(.2)
             self.assertNotEqual(app.settings.x, before)

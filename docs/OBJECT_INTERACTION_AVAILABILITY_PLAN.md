@@ -1,7 +1,7 @@
 # Hover, action availability and contact feedback
 
 Recorded: 18 October 2026. Baseline: `1086385`, `feature/world-foundation`.
-Status: planned. Keep all changes local; no push or merge authorized.
+Status: stages 1 and 2 complete; stage 3 pending. Keep all changes local; no push or merge authorized.
 
 ## Required behavior and ownership
 
@@ -42,7 +42,7 @@ saves and main-thread collection. Do not access or modify the normal save.
 | --- | --- | --- |
 | Plan | Complete | Existing owners, UI callbacks and test gaps reviewed; worktree clean at baseline. |
 | 1 | Complete | 59 targeted tests pass in 10.088 seconds on the exported snapshot; Ruff, strict Mypy (187 sources) and Pyright pass. |
-| 2 | Pending | |
+| 2 | Complete | 79 targeted integration/UI/architecture tests pass in 57.890 seconds; all 6 care UI tests repeated on the final export after a typing-only correction. Ruff, strict Mypy (187 sources) and Pyright pass. |
 | 3 | Pending | |
 
 ### Stage 1 evidence
@@ -54,3 +54,17 @@ with the correction. A real-timer native regression holds an unmoving pointer
 over the sprite with cursor-follow disabled: the toolbar opens, a visible unknown
 candidate is approached, and movement continues without extra contact feedback,
 care effects or a lost search subject. No new saved or mutable activity state.
+
+### Stage 2 evidence
+
+A read-only GUI admission query derives permission from existing World, game,
+sleep and playback owners. Toolbar states and UI callbacks share that query,
+including food selections from an already open menu. The existing toolbar tick
+refreshes permission; pin/settings/details remain usable. Waking remains an
+explicit end of sleep. Lower-level explicit interruption retains its safe custody
+cleanup. No new mutable busy state was introduced.
+
+Native care tests now complete the previous response before starting another
+UI action. A focused regression verifies care/conversation ownership, passive
+hover, callback guards and recovery. The stationary-hover search regression also
+verifies disabled buttons and rejected callbacks during candidate approach.
