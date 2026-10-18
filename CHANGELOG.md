@@ -38,6 +38,9 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 - Merge the obsolete full-energy menu-refusal test into actual cursor-selection
   coverage, correct the pickup custody-guard fixture and inject feedback ports
   through a dedicated integration fixture.
+- Anchor four native scene fixtures at the available taskbar edge so 2x layouts
+  fit smaller CI desktops and unseen-relocation cases actually leave the old
+  place. Preserve all existing behavioral assertions and production geometry.
 - Record 1,146 passing native Windows/Python 3.11.9 tests at `5f1bdea`, with Ruff,
   strict Mypy and Pyright passing. The final scoped review at `65175f2` reran 126
   targeted tests. These local results do not predeclare new-commit CI success.

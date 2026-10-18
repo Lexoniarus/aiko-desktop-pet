@@ -36,6 +36,11 @@ and test-cleanup plans.
 - The final scoped OOP review at `65175f2` reran **126 targeted tests**. Menu
   selection, actual custody-guard reachability and the separate feedback
   integration were verified; no new scoped findings remained.
+- CI portability follow-up: all 48 WorldGui cases pass on both 1,024- and
+  1,280-pixel simulated taskbars with a neutral pointer inside the simulated
+  desktop (31.900 and 31.536 seconds). The eight affected cases also pass on
+  the normal wider desktop (6.183 seconds). Only four scene-helper starting
+  positions changed; test methods, assertions and production code are unchanged.
 - Remote CI must pass for the newly pushed commit. The
   [Tests workflow](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml)
   runs Linux Python 3.11/3.13 and Windows jobs. Prior run links and local test

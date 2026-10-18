@@ -22,7 +22,7 @@ class WorldGuiTests(unittest.TestCase):
     def _search_multiple_relocated_portions(self, scale):
         self._resize_for_search_test(scale)
         app, runtime = self.app, self.app._world
-        app._place_x(runtime._track().left + runtime.width)
+        app._place_x(runtime._track().left)
         set_test_pet_values(app.state, satiety=100, energy=100)
         runtime._controls_active = lambda: True
         self.look_at(runtime._body_x() + 3 * runtime.width)
@@ -153,8 +153,8 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(runtime.interaction.phase, "pick_up")
         self.finish_pickup()
         self.assertEqual(runtime.interaction.phase, "inspect")
-        # Complete the committed action, then let the live orientation inspect
-        # old places on both sides. At 1x the far place is outside local notice.
+        # Complete the action, then inspect old places on both sides. On wide
+        # tracks the far place also lies beyond ordinary local noticing.
         self.assertEqual(runtime.awareness.absences, ())
         self.finish_inspection()
         self.finish_clip("put_down")
@@ -273,6 +273,7 @@ class WorldGuiTests(unittest.TestCase):
     def _search_face_reunion(self, during_approach):
         self._resize_for_search_test(2)
         app, runtime = self.app, self.app._world
+        app._place_x(runtime._track().left)
         set_test_pet_values(app.state, satiety=100, energy=100)
         runtime._controls_active = lambda: True
         drink = runtime.world.place_resting("energy_drink", runtime._body_x(),
@@ -344,7 +345,7 @@ class WorldGuiTests(unittest.TestCase):
     def _fast_observed_cursor_relocation(self, scale):
         self._resize_for_search_test(scale)
         app, runtime = self.app, self.app._world
-        self.app._place_x(runtime._track().left + runtime.width)
+        app._place_x(runtime._track().left)
         set_test_pet_values(app.state, satiety=100, energy=100)
         runtime._controls_active = lambda: True
         item = runtime.world.place_resting(
@@ -565,7 +566,7 @@ class WorldGuiTests(unittest.TestCase):
         self._resize_for_search_test(scale)
         runtime = self.app._world
         track = runtime._track()
-        self.app._place_x(track.left + int(runtime.width))
+        self.app._place_x(track.left)
         base, width = runtime._body_x(), runtime.width
         portions = [runtime.world.place_resting(kind, base + offset * width,
                                                 ObjectFootprint(8, 8))
