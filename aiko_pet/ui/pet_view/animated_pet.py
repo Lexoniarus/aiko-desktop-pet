@@ -139,7 +139,6 @@ class AnimatedPet:
         self._game_mode = bool(enabled)
         self.ports.reset_gaze()
         self.ports.interrupt_walk()
-        self.cancel_action(time.monotonic())
 
     def reload_sprites(self) -> None:
         """Replace scaled images while preserving the active playback clock."""

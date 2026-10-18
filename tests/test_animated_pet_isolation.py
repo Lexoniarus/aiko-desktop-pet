@@ -266,6 +266,8 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.begin_action("jumping", time.monotonic())
         self.anim.render(time.monotonic(), (99999, -99999))
         self.assertEqual(self.anim.frame_clock.active_key, ("jumping", None))
+        # The shell's canonical playback cancellation precedes its mode change.
+        self.anim.cancel_action(time.monotonic())
         self.anim.set_game_mode(False)
         self.assertNotEqual(self.anim.frame_clock.active_key, ("jumping", None))
         self.assertIsNotNone(self._gaze_direction((99999, -99999)))

@@ -42,10 +42,6 @@ class WorldRuntimeAccess:
     def orientation_side(self) -> LookSide | None:
         return self._runtime.orientation_side() if self._runtime is not None else None
 
-    def following_cursor(self) -> bool:
-        """Read the existing visual lock, without retaining another cursor state."""
-        return self._runtime is not None and self._runtime.awareness.following_cursor
-
     def following_record(self) -> str | None:
         return (self._runtime.awareness.following_record
                 if self._runtime is not None else None)

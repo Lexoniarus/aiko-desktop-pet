@@ -36,6 +36,7 @@ class ObjectAttentionTests(unittest.TestCase):
             ("idle", None, ObjectAttention("survey", None)),
             ("idle", (2, 0), ObjectAttention("survey", (2, 0))),
             ("approach", (2, 0), ObjectAttention("object", (2, 0), focused_place=True)),
+            ("pick_up", (2, 0), ObjectAttention("object", (2, 0), focused_place=True)),
             ("await_settle", (2, 0),
              ObjectAttention("object", (2, 0), focused_place=True)),
         )

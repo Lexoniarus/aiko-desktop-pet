@@ -34,8 +34,6 @@ def choose_object_attention(
     """Derive attention from the existing action and movement owners only."""
     if sleeping or game_open:
         return ObjectAttention("unavailable", None)
-    if phase == "pick_up":
-        return ObjectAttention("object", target, focused_place=target is not None)
     if phase in (
         "inspect", "recognize", "decide", "handover", "eat",
         "put_down", "finish",

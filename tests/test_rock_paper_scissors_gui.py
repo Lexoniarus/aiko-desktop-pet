@@ -7,6 +7,7 @@ import time
 import tkinter as tk
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.gui import DesktopPet
@@ -239,7 +240,11 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         current = visual.frame_clock.active_key
         assert current is not None
         self.assertIn(current[0], ("waving-greeting", "waiting"))
-        self.pet._hover.close_game()
+        with patch.object(
+            visual, "cancel_action", wraps=visual.cancel_action,
+        ) as cancel:
+            self.pet._hover.close_game()
+        cancel.assert_called_once()
         self.assertFalse(visual._game_mode)
         self.assertLessEqual(self.pet._action_playback.until, time.monotonic())
         self.assertIsNotNone(
