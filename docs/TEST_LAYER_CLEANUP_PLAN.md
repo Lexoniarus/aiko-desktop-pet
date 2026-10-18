@@ -144,3 +144,18 @@ fixtures are removed (six moved renderer tests and three fewer runtime cases).
 The runtime suite goes from eleven methods to eight, retaining one complete
 ordinary investigation plus sleep/restart, handover, hover and busy boundaries.
 No production behavior changed. Complete final verification is pending.
+
+### Final-gate correction
+
+Pyright found that the new reach assertion passed a float-typed width to an
+integer sprite-width parameter. The test now uses `int(world.width)`, matching
+the production call. The focused native pickup passes again (1 test, 7.026
+seconds), and Pyright reports zero errors/warnings. The initial complete run was
+stopped before completion to avoid validating the superseded snapshot; a fresh
+committed export will receive the final full run.
+
+A repository-wide acquisition/overlay search finds no remaining native
+DesktopPet test that forces `_can_acquire` or directly selects a hand overlay.
+Direct `collect_resting` fixtures remain in headless custody, awareness,
+consumption and persistence tests, where the owner transition or held-state
+invariant is the subject, rather than desktop reach. These are retained.

@@ -373,7 +373,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         assert current_x is not None
         self.assertAlmostEqual(current_x, boundary, delta=2)
         self.assertTrue(track.can_grasp_ground(
-            object_x, current_x, world.width,
+            object_x, current_x, int(world.width),
             world.width * BALANCE.number("object_behavior", "reach_widths"),
         ))
         self.assertIn("approach", {row[1] for row in trace})
