@@ -9,6 +9,7 @@ import time
 import tkinter as tk
 from collections import deque
 from collections.abc import Callable
+from dataclasses import replace
 
 from ..application.active_time import ActiveSessionClock, SessionInputs
 from ..application.controller import CareOutcome
@@ -25,6 +26,7 @@ from ..application.object_behavior import (
 from ..application.object_consumption import ObjectConsumption
 from ..application.object_feedback import FeedbackReceipt, ObjectFeedback
 from ..application.object_interaction import ObjectInteractionCoordinator
+from ..application.object_interaction_state import SearchPosition
 from ..application.object_relationship import ObjectRelationship
 from ..application.object_status import ObjectStatusSnapshot, snapshot_object_status
 from ..application.session import WorldSessionSnapshot
@@ -41,6 +43,7 @@ from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
+from ..pet.mind.object_attention import ObjectAttention
 from ..pet.mind.object_decisions import (
     ObjectUseContext,
     ObjectUseDecision,
@@ -138,7 +141,6 @@ class DesktopWorldRuntime:
             now=lambda: self.now, inspection_seconds=BALANCE.number(
                 "object_behavior", "inspection_seconds",
             ),
-            search_seconds=BALANCE.number("object_behavior", "search_seconds"),
             withholding=self._withheld,
         )
         self._behavior = ObjectBehaviorCoordinator(
@@ -318,21 +320,31 @@ class DesktopWorldRuntime:
             + sprite.pivot[1] - (self.settings.y or 0),
         )
 
+    def _attention(self) -> ObjectAttention:
+        """Sample before perception; translate native eyes to World coordinates."""
+        pointer = self.root.winfo_pointerx(), self.root.winfo_pointery()
+        attention = self._visual.attention(
+            pointer, game_mode=self._game_open(),
+            pointer_recent=time.monotonic()
+            - self._mind.cursor_attention.last_pointer_move < 4.0,
+        )
+        track = self._track()
+        return replace(attention, origin=(attention.origin[0] - track.left,
+                                         attention.origin[1] + track.ground_y))
+
     def update(self, _now: float) -> None:
         if self._closed:
             return
         self.interaction.update()
         snapshot = self.world.snapshot()
         if self.cursor.carrying and not self.cursor.inside:
-            from dataclasses import replace
-
             snapshot = replace(snapshot, objects=tuple(
                 item for item in snapshot.objects
                 if item.instance_id != self.cursor.instance_id
             ))
         observation = self._behavior.observe(
             snapshot, now=self.now, x=self._body_x(), width=self.width,
-            facts=self._behavior_facts(),
+            facts=self._behavior_facts(), attention=self._attention(),
             presentation=self.cursor.presentation(
                 self._animated.cursor_eye_position, self.width,
             ),
@@ -352,7 +364,15 @@ class DesktopWorldRuntime:
             self.cursor.observe_offer()
         else:
             self.cursor.offer_ready = False
-        motion = self._behavior.advance(observation.goal, blocked=observation.blocked)
+        track = self._track()
+        motion = self._behavior.advance(
+            observation.goal, blocked=observation.blocked,
+            search_position=SearchPosition(
+                self.width / 2,
+                max(self.width / 2, track.right - track.left - self.width / 2),
+                self._body_x(),
+            ),
+        )
         if isinstance(motion, SearchMotion):
             self._show_search(motion)
             return
@@ -386,13 +406,10 @@ class DesktopWorldRuntime:
 
     def _show_search(self, search: SearchMotion) -> None:
         track = self._track()
-        progress = search.progress
-        direction = -1 if progress < .33 else 1 if progress < .66 else 0
+        direction = -1 if search.center < self._body_x() else 1
         base = track.clamp_x(track.left + search.center - self.width / 2,
                              int(self.width))
-        stride = self.width * BALANCE.number("object_behavior", "search_stride_widths")
-        self._walk.movement.set_goal(track.clamp_x(base + direction * stride,
-                                                   int(self.width)))
+        self._walk.movement.set_goal(base)
         self._visual.object_target = (
             base + self.width / 2 + (direction or 1) * self.width,
             track.ground_y - self.width * .15,
@@ -422,7 +439,7 @@ class DesktopWorldRuntime:
         self._request_gesture(lambda: self.cursor.begin(item_id))
 
     def _request_gesture(self, action: Callable[[], None]) -> None:
-        if self.interaction.focus_record is not None:
+        if self.interaction.active:
             action()
             return
         dispatching = True
@@ -447,6 +464,7 @@ class DesktopWorldRuntime:
         if (self.cursor.carrying or item.state != ObjectState.RESTING
                 or item.revision != revision):
             return
+        attention = self._attention()
 
         def acquire() -> None:
             record = self.awareness.record_for_instance(token)
@@ -454,7 +472,10 @@ class DesktopWorldRuntime:
                            for item in self.awareness.observations)
             if (self.cursor.begin_existing(token, revision) and observed
                     and record is not None):
-                if self.awareness.follow_taken(token, record):
+                if self.awareness.follow_taken(
+                    token, record, now=self.now, attention=attention,
+                    committed=self.interaction.focus_record,
+                ):
                     if self.interaction.target_taken(record):
                         self._walk.movement.set_goal(None)
 

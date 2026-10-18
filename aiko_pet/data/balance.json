@@ -345,7 +345,6 @@
     "reevaluate_seconds": 1.0,
     "seek_food_satiety": 70.0,
     "seek_drink_energy": 60.0,
-    "search_seconds": 2.0,
     "retry_seconds": 10.0,
     "consumed_pause_seconds": 30.0,
     "reach_widths": 0.25,
@@ -361,7 +360,6 @@
     "inspection_seconds": 1.0,
     "tracking_gap_seconds": 1.0,
     "tracking_jump_widths": 1.0,
-    "memory_place_widths": 0.25,
-    "search_stride_widths": 0.15
+    "memory_place_widths": 0.25
   }
 }

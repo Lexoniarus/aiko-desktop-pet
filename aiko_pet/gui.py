@@ -175,6 +175,11 @@ class DesktopPet:
                 attention_until=lambda: self.mind.cursor_attention.attention_until,
                 extend_action=self._action_playback.extend,
                 object_focus=self._world_access.focused,
+                object_phase=self._world_access.phase,
+                following_cursor=self._world_access.following_cursor,
+                activity_active=lambda: (time.monotonic() < self._action_playback.until
+                    or self._reaction_player.pending_timer is not None
+                    or self._speech.bubble is not None),
             ),
         )
         self._walk = visuals.walk
@@ -432,6 +437,7 @@ class DesktopPet:
         )
 
     def _set_game_mode(self, enabled: bool) -> None:
+        self._action_playback.cancel_at(time.monotonic())
         self._animated.set_game_mode(enabled)
         self.mind.cursor_attention.reset()
 

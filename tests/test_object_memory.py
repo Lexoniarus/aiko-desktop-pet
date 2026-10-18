@@ -8,6 +8,108 @@ from aiko_pet.pet.mind.object_perception import ObjectObservation
 
 
 class ObjectMemoryTests(unittest.TestCase):
+    def test_only_identified_observation_acquires_durable_physical_reference(self):
+        memory = ObjectMemory()
+        memory.update((ObjectObservation(
+            "old", "apple", "food", 100, 0, True, 0,
+        ),), now=0)
+        memory.mark_assessed("old")
+        for x in (100, 105):
+            record = memory.observe_find(ObjectObservation(
+                "sighting", None, None, x, 0, True, 1,
+            ), now=1, record=None, claimed=frozenset(), maximum_distance=25,
+                instance_id="object_7")
+            unknown = memory.get(record)
+            assert unknown is not None
+            self.assertIsNone(unknown.identity)
+            self.assertFalse(unknown.assessed)
+            self.assertIsNone(unknown.instance_id)
+            self.assertIsNone(memory.learned_instance("object_7"))
+            memory.forget(record)
+        record = memory.observe_find(ObjectObservation(
+            "sighting", "apple", "food", 500, 40, False, 2,
+        ), now=2, record=None, claimed=frozenset(), maximum_distance=25,
+            instance_id="object_7")
+        restored = ObjectMemory(memory.export(now=2))
+        learned = restored.learned_instance("object_7")
+        self.assertIsNotNone(learned)
+        assert learned is not None
+        self.assertEqual(learned.token, record)
+        found = restored.observe_find(ObjectObservation(
+            "new_sighting", None, None, 500, 40, False, 3,
+        ), now=3, record=None, claimed=frozenset(), maximum_distance=25,
+            instance_id="object_7")
+        self.assertEqual(found, record)
+        known = restored.get(found)
+        assert known is not None
+        self.assertEqual(known.identity, "apple")
+        self.assertEqual(known.x, 500)
+
+    def test_same_type_new_portion_cannot_borrow_learned_portion_experience(self):
+        memory = ObjectMemory()
+        seen = ObjectObservation("first", "apple", "food", 100, 0, True, 0)
+        first = memory.observe_find(seen, now=0, record=None,
+                                    claimed=frozenset(), maximum_distance=25,
+                                    instance_id="object_1")
+        memory.mark_assessed(first)
+        second = memory.observe_find(replace(seen, token="second"), now=1,
+                                     record=None, claimed=frozenset(),
+                                     maximum_distance=25, instance_id="object_2")
+        self.assertNotEqual(first, second)
+        other = memory.get(second)
+        assert other is not None
+        self.assertFalse(other.assessed)
+        self.assertEqual(other.possible_sources, ())
+        one, two = (memory.learned_instance(key)
+                    for key in ("object_1", "object_2"))
+        assert one is not None and two is not None
+        self.assertEqual((one.token, two.token), (first, second))
+
+    def test_moved_learned_portion_needs_identification_and_keeps_episode_record(self):
+        memory = ObjectMemory()
+        seen = ObjectObservation("first", "apple", "food", 100, 0, True, 0)
+        old = memory.observe_find(seen, now=0, record=None,
+                                  claimed=frozenset(), maximum_distance=25,
+                                  instance_id="object_1")
+        memory.mark_assessed(old)
+        memory = ObjectMemory(memory.export(now=1))
+        moved = memory.observe_find(replace(seen, identity=None, kind=None, x=100.001),
+                                    now=2, record=None, claimed=frozenset(),
+                                    maximum_distance=25, instance_id="object_1")
+        unknown = memory.get(moved)
+        assert unknown is not None
+        self.assertNotEqual(moved, old)
+        self.assertIsNone(unknown.identity)
+        found = memory.observe_find(replace(seen, x=100.001, height=40, resting=False),
+                                    now=3, record=moved, claimed=frozenset(),
+                                    maximum_distance=25, preserve_record=True,
+                                    instance_id="object_1")
+        self.assertEqual(found, moved)
+        self.assertIsNone(memory.get(old))
+        known = memory.get(found)
+        assert known is not None
+        self.assertTrue(known.assessed)
+        self.assertEqual(known.instance_id, "object_1")
+
+    def test_ambiguous_unknown_places_retire_without_erasing_learned_neighbour(self):
+        memory = ObjectMemory()
+        memory.update((
+            ObjectObservation("old_unknown", None, None, 100, 0, True, 0),
+            ObjectObservation("known", "apple", "food", 110, 0, True, 0),
+        ), now=0)
+        new = ObjectObservation("new", None, None, 105, 0, True, 1)
+        memory.update((new,), now=1)
+        memory.retire_ambiguous_sightings((new,), maximum_distance=25,
+                                         new_records=frozenset())
+        self.assertIsNotNone(memory.get("old_unknown"))
+        memory.retire_ambiguous_sightings((new,), maximum_distance=25,
+                                         new_records=frozenset(("new",)))
+        self.assertIsNone(memory.get("old_unknown"))
+        self.assertIsNotNone(memory.get("new"))
+        known = memory.get("known")
+        assert known is not None
+        self.assertEqual((known.identity, known.place_status), ("apple", "remembered"))
+
     def test_unknown_find_at_confirmed_empty_place_does_not_inherit_identity(self):
         memory = ObjectMemory()
         memory.update((ObjectObservation(

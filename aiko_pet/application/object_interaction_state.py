@@ -10,7 +10,6 @@ from ..pet.animation.character import PlaybackEvent
 from ..pet.consumption import ConsumptionOrigin
 from ..pet.mind.object_decisions import ObjectUseContext, ObjectUseDecision
 from ..pet.mind.object_events import ObjectEvent
-from ..pet.mind.object_intentions import ObjectGoal
 from ..pet.mind.object_knowledge import ObjectKnowledge
 from ..pet.mind.object_perception import ConsumableKind
 from ..pet.mind.object_withholding import WithholdingEpisode
@@ -169,14 +168,6 @@ class SearchTask:
         return legacy[0] if len(legacy) == 1 else None
 
 
-@dataclass(frozen=True, slots=True)
-class SearchReadout:
-    """Immutable search facts also retained for the existing diagnostic reads."""
-
-    x: float = 0.0
-    started_at: float = 0.0
-
-
 @dataclass(slots=True)
 class IdlePhase:
     name: ClassVar[Literal["idle"]] = "idle"
@@ -184,7 +175,10 @@ class IdlePhase:
 
 @dataclass(slots=True)
 class CuePhase:
-    name: Literal["notice", "recognize", "handover", "finish", "missing"]
+    name: Literal[
+        "notice", "recognize", "handover", "finish", "missing",
+        "notice_absence", "found",
+    ]
     feedback: PhaseFeedback = field(default_factory=PhaseFeedback)
 
 
@@ -232,27 +226,12 @@ class WaitingPhase:
 
 
 @dataclass(slots=True)
-class AbsencePhase:
-    name: ClassVar[Literal["notice_absence"]] = "notice_absence"
-    feedback: PhaseFeedback = field(default_factory=PhaseFeedback)
-
-
-@dataclass(slots=True)
 class SearchPhase:
     name: ClassVar[Literal["search"]] = "search"
-    readout: SearchReadout
-    feedback: PhaseFeedback = field(default_factory=PhaseFeedback)
-
-
-@dataclass(slots=True)
-class FoundPhase:
-    name: ClassVar[Literal["found"]] = "found"
-    goal: ObjectGoal
     feedback: PhaseFeedback = field(default_factory=PhaseFeedback)
 
 
 PhaseState: TypeAlias = (
     IdlePhase | CuePhase | ApproachPhase | AnimationPhase | PutDownPhase
-    | InspectionPhase | DecisionPhase | WaitingPhase | AbsencePhase
-    | SearchPhase | FoundPhase
+    | InspectionPhase | DecisionPhase | WaitingPhase | SearchPhase
 )

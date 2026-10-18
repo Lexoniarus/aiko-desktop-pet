@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections import deque
 from collections.abc import Callable
-from dataclasses import replace
 
 from ..pet.animation.character import PlaybackEvent
 from ..pet.balance import BALANCE
@@ -24,12 +24,10 @@ from .object_feedback import (
     ObjectFeedback,
 )
 from .object_interaction_state import (
-    AbsencePhase,
     AnimationPhase,
     ApproachPhase,
     CuePhase,
     DecisionPhase,
-    FoundPhase,
     IdlePhase,
     InspectionPhase,
     InteractionEpisode,
@@ -37,7 +35,8 @@ from .object_interaction_state import (
     PhaseState,
     PutDownPhase,
     SearchPhase,
-    SearchReadout,
+    SearchPosition,
+    SearchTask,
     WaitingPhase,
 )
 
@@ -55,7 +54,7 @@ class ObjectInteractionCoordinator:
         memory: ObjectMemory,
         decide: Callable[[str, ObjectUseContext], ObjectUseDecision],
         feedback: Callable[[ObjectFeedback], None], cancel_feedback: Callable[[], None],
-        now: Callable[[], float], inspection_seconds: float, search_seconds: float,
+        now: Callable[[], float], inspection_seconds: float,
         withholding: Callable[[str, float], None] = lambda _key, _loss: None,
     ) -> None:
         self.world = world
@@ -69,8 +68,8 @@ class ObjectInteractionCoordinator:
         self._memory, self._decide = memory, decide
         self._feedback, self._cancel_feedback = feedback, cancel_feedback
         self._now, self._inspection_seconds = now, inspection_seconds
-        self._search_seconds = search_seconds
-        self._search_readout = SearchReadout()
+        self._search: SearchTask | None = None
+        self._missing_feedback: deque[ObjectKnowledge] = deque()
         self._phase: PhaseState = IdlePhase()
         self._active_episode: InteractionEpisode | None = None
         self._sequence = self._phase_id = 0
@@ -105,10 +104,6 @@ class ObjectInteractionCoordinator:
         return self._phase.feedback
 
     @property
-    def search_x(self) -> float:
-        return self._search_readout.x
-
-    @property
     def active(self) -> bool:
         return self.phase != "idle"
 
@@ -141,6 +136,10 @@ class ObjectInteractionCoordinator:
                 or known is None or not known.recognized
                 or decision.reason in ("unrecognized", "unavailable")):
             return
+        if self._search is not None:
+            self._announce_identification(known)
+            self.update()
+            return
         state.appraisal.latest = decision
         self.update()
 
@@ -162,7 +161,7 @@ class ObjectInteractionCoordinator:
         return True
 
     def observe_target_state(self, state: ObjectState | None) -> None:
-        """Use current sensory custody only; loss resumes bounded local search."""
+        """Use sensory custody; loss retires unknowns or searches learned stock."""
         phase = self._phase
         if not isinstance(phase, WaitingPhase):
             return
@@ -173,10 +172,14 @@ class ObjectInteractionCoordinator:
             # Motion cannot replace an unfinished recognition/decision cue.
             return
         if state is None:
-            approach = ApproachPhase()
-            self._set_phase(approach)
-            approach.feedback.completed = True
-            self.start_search(confirmed_empty=False)
+            known = self._memory.get(episode.memory_id)
+            self._finish(False)
+            if known is not None:
+                if known.recognized:
+                    self._memory.mark_missing(known.token)
+                    self.notice_absence(known)
+                else:
+                    self._memory.forget(known.token)
         elif state in (ObjectState.FALLING, ObjectState.BOUNCING):
             if phase.name != "await_settle":
                 waiting = WaitingPhase("await_settle", phase.appraisal)
@@ -208,9 +211,57 @@ class ObjectInteractionCoordinator:
         return self.phase == "search"
 
     @property
+    def search_active(self) -> bool:
+        return self._search is not None
+
+    @property
+    def search_ready(self) -> bool:
+        return (self.searching and self._phase_feedback.completed
+                and self._phase_feedback.auxiliary_key is None
+                and not self._missing_feedback)
+
+    def can_investigate(self, token: str) -> bool:
+        return self._search is not None and self._search.can_investigate(token)
+
+    def abandon_candidate(self) -> None:
+        """An unreachable find ends this action, not the enclosing search."""
+        if self._search is not None and self.memory_id is not None:
+            self._search.exclude_candidate(self.memory_id)
+        self._finish(False)
+        self._stop()
+
+    @property
     def search_progress(self) -> float:
-        return min(1.0, max(0.0, (self._now() - self._search_readout.started_at)
-                            / self._search_seconds))
+        return self._search.progress if self._search is not None else 0.0
+
+    def search_destination(self, position: SearchPosition) -> float | None:
+        """Accept actual position as route evidence on the owner thread."""
+        task = self._search
+        if not self.searching or task is None:
+            return None
+        return task.destination(position)
+
+    def complete_search(self) -> None:
+        """The behavior owner has exhausted route, local evidence and finds."""
+        if (self._search is None or not self.search_ready
+                or not self._search.route_complete):
+            return
+        self._search = None
+        self._set_phase(CuePhase("missing"))
+        self._stop()
+        self._announce("object_missing")
+
+    def _resume_search(self) -> None:
+        task = self._search
+        subject = task.next_subject if task is not None else None
+        if subject is None:
+            self._search = None
+            self._missing_feedback.clear()
+            return
+        self._start(subject.token, ConsumptionOrigin.AUTONOMOUS)
+        self._episode.identity, self._episode.kind = subject.identity, subject.kind
+        self._set_phase(SearchPhase())
+        self._phase_feedback.completed = True
 
     @property
     def feedback_key(self) -> FeedbackKey:
@@ -241,14 +292,24 @@ class ObjectInteractionCoordinator:
 
     def request_feedback(self, event: ObjectEvent) -> None:
         """Keep at most one aside; never replace an unfinished phase bubble."""
-        if self.focus_record is not None:
+        if self.active:
             feedback = self._phase_feedback
             if feedback.auxiliary_key is None:
                 feedback.pending = event
 
+    def _announce_aside(
+        self, event: ObjectEvent, record: str, identity: str | None,
+    ) -> None:
+        self._auxiliary_serial += 1
+        key = FeedbackKey(
+            self._episode.interaction_id, self._phase_id, self._auxiliary_serial,
+        )
+        self._phase_feedback.auxiliary_key = key
+        self._feedback(ObjectFeedback(key, event, record, identity))
+
     def acknowledge_contact(self) -> bool:
         """Ordinary contact defers to a committed episode, without care effects."""
-        if self.focus_record is None:
+        if not self.active:
             return False
         if self._now() >= self._next_contact_feedback:
             self._next_contact_feedback = self._now() + BALANCE.number(
@@ -258,12 +319,11 @@ class ObjectInteractionCoordinator:
         return True
 
     def begin_goal(self, goal: ObjectGoal) -> bool:
-        if self.active:
+        if self.active and not self.searching:
             return False
         self._start(goal.token, ConsumptionOrigin.AUTONOMOUS)
         episode = self._episode
         episode.use_context = goal.use_context
-        self._search_readout = replace(self._search_readout, x=goal.x)
         episode.identity = goal.identity
         known = self._memory.get(goal.token)
         episode.kind = known.kind if known is not None else None
@@ -310,43 +370,95 @@ class ObjectInteractionCoordinator:
 
     def notice_absence(self, known: ObjectKnowledge) -> bool:
         """Give a checked empty place priority, using the existing action owner."""
+        if self._search is not None:
+            if not known.recognized:
+                self._memory.forget(known.token)
+                return True
+            if not self._search.add(known):
+                return False
+            self._missing_feedback.append(known)
+            return True
         if self.active and (not self.approaching or self.memory_id != known.token):
             return False
         if not self.active:
             self._start(known.token, ConsumptionOrigin.AUTONOMOUS)
         self._episode.identity, self._episode.kind = known.identity, known.kind
-        self._search_readout = replace(self._search_readout, x=known.x)
+        if known.recognized:
+            self._search = SearchTask(known)
         # Confirmed absence comes before other discoveries even if Aiko
         # does not currently need to consume that remembered item.
-        self._set_phase(AbsencePhase())
+        self._set_phase(CuePhase("notice_absence"))
         self._stop()
         self._announce("object_place_missing")
         return True
 
-    def start_search(self, *, confirmed_empty: bool = True) -> None:
-        """The caller has attentively arrived at an empty remembered place."""
-        if (not isinstance(self._phase, (ApproachPhase, AbsencePhase))
+    def start_search(self) -> None:
+        """Start one task for confirmed missing learned portions."""
+        if (self.phase not in ("approach", "notice_absence")
                 or self.memory_id is None):
             return
         known = self._memory.get(self.memory_id)
-        if known is not None:
-            self._search_readout = replace(self._search_readout, x=known.x)
-        if confirmed_empty:
-            self._memory.mark_missing(self.memory_id)
-        self._search_readout = SearchReadout(self.search_x, self._now())
-        self._set_phase(SearchPhase(self._search_readout))
+        if known is None or not known.recognized:
+            record = self.memory_id
+            self._memory.forget(record)
+            self._finish(False)
+            self._stop()
+            return
+        self._memory.mark_missing(self.memory_id)
+        if self._search is None:
+            self._search = SearchTask(known)
+        self._set_phase(SearchPhase())
         self._stop()
         self._announce("object_search")
         self.update()
 
-    def found(self, goal: ObjectGoal) -> None:
-        if not self.searching:
-            return
-        self._episode.identity = goal.identity
-        self._set_phase(FoundPhase(goal))
-        self._feedback(ObjectFeedback(self.feedback_key, "object_found",
-                                      goal.token, goal.identity))
+    def found(self, record: str) -> bool:
+        """Resolve a verified remembered finding without inventing an action goal."""
+        known = self._memory.get(record)
+        if known is None or not self._reunite(known):
+            return False
         self.update()
+        return True
+
+    def _reunite(self, known: ObjectKnowledge) -> bool:
+        """Resolve one learned portion and announce its result for every entry."""
+        subject = self._search.resolve(known) if self._search is not None else None
+        if subject is None:
+            return False
+        self._missing_feedback = deque(
+            item for item in self._missing_feedback if item.token != subject.token
+        )
+        if self.searching:
+            self._start(known.token, ConsumptionOrigin.AUTONOMOUS)
+        self._episode.identity, self._episode.kind = known.identity, known.kind
+        self._set_phase(CuePhase("found"))
+        self._announce("object_found")
+        return True
+
+    def _announce_identification(self, known: ObjectKnowledge) -> None:
+        """Choose the result cue once the hand/face evidence identifies a portion."""
+        if not self._reunite(known):
+            self._episode.identity, self._episode.kind = known.identity, known.kind
+            self._set_phase(CuePhase("recognize"))
+            self._announce("object_recognized")
+
+    def _complete_recognition(self, token: str) -> None:
+        """Recheck losses accepted while the recognition cue was being read."""
+        if self._search is None:
+            self._consider_use()
+            return
+        known = self._memory.get(token)
+        if known is not None and self._reunite(known):
+            return
+        decision = self._decide(token, ObjectUseContext.SUPPLY)
+        if decision.reason not in ("unrecognized", "unavailable"):
+            self._memory.mark_assessed(token)
+        if (self.instance_id is not None and self.world.get(
+            self.instance_id,
+        ).state == ObjectState.PET_HELD):
+            self._put_down(defer_if_uninterrupted=decision.reason == "not_needed")
+        else:
+            self._finish(False)
 
     def arrive(self) -> None:
         if isinstance(self._phase, ApproachPhase):
@@ -357,8 +469,7 @@ class ObjectInteractionCoordinator:
         assert self.memory_id is not None
         self._episode.instance_id = self._resolve_instance(self.memory_id)
         if self.instance_id is None or not self._can_acquire(self.instance_id):
-            self._finish(False)
-            self._stop()
+            self.abandon_candidate()
             return
         state = AnimationPhase("pick_up")
         self._set_phase(state)
@@ -421,6 +532,8 @@ class ObjectInteractionCoordinator:
             self.interrupt(lambda: None)
 
     def interrupt(self, action: Callable[[], None]) -> None:
+        self._search = None
+        self._missing_feedback.clear()
         if isinstance(self._phase, PutDownPhase):
             self._episode.queued = action
             self._phase.feedback.completed = True
@@ -578,15 +691,17 @@ class ObjectInteractionCoordinator:
         feedback = self._phase.feedback
         if feedback.auxiliary_key is not None:
             return
+        if (feedback.completed and self.phase in ("notice_absence", "search")
+                and self._missing_feedback):
+            missing = self._missing_feedback.popleft()
+            self._announce_aside(
+                "object_place_missing", missing.token, missing.identity,
+            )
+            return
         if (feedback.pending is not None and feedback.completed
                 and self.memory_id is not None):
             event, feedback.pending = feedback.pending, None
-            self._auxiliary_serial += 1
-            feedback.auxiliary_key = FeedbackKey(
-                self._episode.interaction_id, self._phase_id, self._auxiliary_serial,
-            )
-            self._feedback(ObjectFeedback(feedback.auxiliary_key, event,
-                                          self.memory_id, self._episode.identity))
+            self._announce_aside(event, self.memory_id, self._episode.identity)
             return
         for _ in range(12):
             state = self._phase
@@ -603,8 +718,14 @@ class ObjectInteractionCoordinator:
                     approach.feedback.completed = True
                 else:
                     self._announce("object_approach")
-            elif isinstance(state, AbsencePhase) and cue_done:
-                self.start_search()
+            elif (isinstance(state, CuePhase) and state.name == "notice_absence"
+                  and cue_done):
+                if episode.identity is None:
+                    self._memory.forget(token)
+                    self._finish(False)
+                    self._stop()
+                else:
+                    self.start_search()
             elif isinstance(state, ApproachPhase) and state.arrived and cue_done:
                 self._pick_up()
             elif (isinstance(state, AnimationPhase) and state.name == "pick_up"
@@ -615,14 +736,10 @@ class ObjectInteractionCoordinator:
                 known = self._memory.get(token)
                 if known is None or not known.recognized:
                     return
-                episode.identity, episode.kind = known.identity, known.kind
-                self._set_phase(CuePhase("recognize"))
-                self._announce(
-                    "object_recognized" if episode.identity else "object_unknown",
-                )
+                self._announce_identification(known)
             elif (isinstance(state, CuePhase) and state.name == "recognize"
                   and cue_done):
-                self._consider_use()
+                self._complete_recognition(token)
             elif isinstance(state, WaitingPhase) and cue_done:
                 self._advance_waiting(state, token)
             elif isinstance(state, CuePhase) and state.name == "handover" and cue_done:
@@ -644,13 +761,13 @@ class ObjectInteractionCoordinator:
             elif isinstance(state, CuePhase) and state.name == "missing" and cue_done:
                 self._finish(False)
                 self._stop()
-            elif (isinstance(state, SearchPhase) and cue_done
-                  and self._now() - state.readout.started_at >= self._search_seconds):
-                self._set_phase(CuePhase("missing"))
-                self._announce("object_missing")
-            elif isinstance(state, FoundPhase) and cue_done:
-                self._set_phase(IdlePhase())
-                self.begin_goal(state.goal)
+            elif isinstance(state, CuePhase) and state.name == "found" and cue_done:
+                if (self.instance_id is not None
+                        and self.world.get(self.instance_id).state
+                        == ObjectState.PET_HELD):
+                    self._put_down()
+                else:
+                    self._finish(False)
             if self.phase == previous:
                 return
 
@@ -702,3 +819,4 @@ class ObjectInteractionCoordinator:
                 for item in self.world.snapshot().objects
             )
             self._completed(record, consumed)
+        self._resume_search()

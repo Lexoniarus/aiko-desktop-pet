@@ -16,7 +16,6 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "reevaluate_seconds": "number",
         "seek_food_satiety": "number",
         "seek_drink_energy": "number",
-        "search_seconds": "number",
         "retry_seconds": "number",
         "consumed_pause_seconds": "number",
         "reach_widths": "number",
@@ -32,7 +31,6 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "tracking_gap_seconds": "number",
         "tracking_jump_widths": "number",
         "memory_place_widths": "number",
-        "search_stride_widths": "number",
         "contact_feedback_seconds": "number",
     },
     "object_withholding": {

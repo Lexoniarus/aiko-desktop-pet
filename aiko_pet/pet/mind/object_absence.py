@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 from ..balance import BALANCE
+from .object_attention import ObjectAttention
 from .object_knowledge import ObjectKnowledge
 from .object_perception import ObjectCandidate
 
@@ -32,24 +34,25 @@ class ObjectAbsencePerception:
     def observe(
         self, known: tuple[ObjectKnowledge, ...],
         occupants: tuple[ObjectCandidate, ...],
-        *, now: float, x: float, height: float, width: float, attentive: bool,
-        ground_bounds: tuple[float, float], focused: str | None = None,
+        *, now: float, attention: ObjectAttention,
+        ground_bounds: tuple[float, float],
+        identified: Mapping[str, ObjectKnowledge] | None = None,
     ) -> tuple[str, ...]:
+        width = attention.width
         if not math.isfinite(now) or not math.isfinite(width) or width <= 0:
             raise ValueError("Absence perception requires finite time and width")
         reach = width * BALANCE.number("object_behavior", "memory_place_widths")
-        radius = width * BALANCE.number("object_behavior", "notice_widths")
         gap = BALANCE.number("object_behavior", "tracking_gap_seconds")
         duration = BALANCE.number("object_behavior", "absence_seconds")
         places: dict[str, _EmptyPlace] = {}
         confirmed = []
-        for item in known if attentive else ():
+        for item in known:
             if (not item.resting or item.place_status != "remembered"
-                    or focused is not None and item.token != focused
                     or not ground_bounds[0] <= item.x <= ground_bounds[1]
-                    or math.hypot(item.x - x, item.height - height) > radius
+                    or not attention.sees(item.x, item.height)
                     or any(math.hypot(candidate.x - item.x,
                                       candidate.height - item.height) <= reach
+                           and self._could_be(item, candidate, identified)
                            for candidate in occupants)):
                 continue
             previous = self._places.get(item.token)
@@ -63,3 +66,18 @@ class ObjectAbsencePerception:
             places[item.token] = previous
         self._places = places
         return tuple(confirmed)
+
+    @staticmethod
+    def _could_be(
+        remembered: ObjectKnowledge, candidate: ObjectCandidate,
+        identified: Mapping[str, ObjectKnowledge] | None,
+    ) -> bool:
+        occupant = identified.get(candidate.token) if identified is not None else None
+        if occupant is None:
+            return True  # Pending/unknown occupancy first needs investigation.
+        return (occupant.token == remembered.token
+                or remembered.instance_id is not None
+                and occupant.instance_id == remembered.instance_id
+                or remembered.instance_id is None
+                and (remembered.identity, remembered.kind)
+                == (occupant.identity, occupant.kind))

@@ -17,6 +17,8 @@ from aiko_pet.application.object_behavior import (
 )
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
+from aiko_pet.application.object_interaction_state import SearchPosition
+from aiko_pet.pet.mind.object_attention import ObjectAttention
 from aiko_pet.pet.mind.object_decisions import ObjectUseContext
 from aiko_pet.pet.mind.object_intentions import ObjectGoal
 from aiko_pet.pet.mind.object_perception import ConsumableKind, ObjectObservation
@@ -29,10 +31,174 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
-from tools.pet_test_support import set_test_pet_values
+from tools.pet_test_support import object_test_attention, set_test_pet_values
 
 
 class ObjectBehaviorTests(unittest.TestCase):
+    def test_endpoint_waits_for_local_evidence_and_collects_another_loss(self):
+        subject = self.awareness.memory.get("stock")
+        assert subject is not None
+        self.awareness.memory.restore_snapshot((replace(subject, instance_id="old"),))
+        self.start_search()
+        self.acknowledge()
+        self.awareness.memory.update((ObjectObservation(
+            "edge", "apple", "food", 740, 0, True, 0,
+        ),), now=0)
+        self.observe(x=50)
+        self.behavior.advance_search(blocked=False,
+                                     position=SearchPosition(50, 750, 50))
+        self.now = .3
+        observation = self.observe(x=750)
+        motion = self.behavior.advance(observation.goal, blocked=observation.blocked,
+                                       search_position=SearchPosition(50, 750, 750))
+        self.assertIsInstance(motion, Hold)
+        self.assertTrue(self.awareness.checking_absence)
+        self.assertEqual(self.interaction.phase, "search")
+        self.now = .9
+        observation = self.observe(x=750)
+        self.behavior.advance(observation.goal, blocked=observation.blocked,
+                              search_position=SearchPosition(50, 750, 750))
+        self.assertEqual(self.awareness.absences, ())
+        self.assertEqual(self.interaction.phase, "search")
+        self.interaction.update()
+        self.assertEqual((self.cues[-1].event, self.cues[-1].record_id),
+                         ("object_place_missing", "edge"))
+        self.acknowledge()
+        self.behavior.advance_search(blocked=False,
+                                     position=SearchPosition(50, 750, 750))
+        self.assertEqual(self.interaction.phase, "missing")
+        self.assertEqual([cue.event for cue in self.cues].count("object_search"), 1)
+
+    def test_multiple_losses_share_one_pass_and_verified_finds_do_not_reset_it(self):
+        subject = self.awareness.memory.get("stock")
+        assert subject is not None
+        self.awareness.memory.restore_snapshot((
+            replace(subject, instance_id="portion_1"),
+        ))
+        self.awareness.memory.update((ObjectObservation(
+            "second", "apple", "food", 200, 0, True, 0,
+        ),), now=0)
+        self.awareness.memory.restore_snapshot(tuple(
+            replace(item, instance_id="portion_2") if item.token == "second" else item
+            for item in self.awareness.memory.snapshot()
+        ))
+        self.observe()
+        self.now = .6
+        self.observe()
+        self.assertEqual(self.awareness.absences, ())
+        self.assertFalse(self.interaction.notice_absence(replace(
+            subject, token="reconciled_record", instance_id="portion_1",
+        )))
+        self.acknowledge()
+        self.acknowledge()
+        self.acknowledge()
+        self.interaction.search_destination(SearchPosition(50, 750, 50))
+        goal = self.alternative(observed=True)
+        self.awareness.memory.restore_snapshot(tuple(
+            replace(item, instance_id="portion_1") if item.token == goal.token else item
+            for item in self.awareness.memory.snapshot()
+        ))
+        self.behavior.advance_search(blocked=False)
+        self.assertEqual(self.interaction.phase, "found")
+        self.acknowledge()
+        self.assertEqual(self.interaction.phase, "search")
+        self.assertEqual(self.interaction.memory_id, "second")
+        self.assertEqual(self.interaction.search_progress, .5)
+        self.assertEqual([cue.event for cue in self.cues].count("object_search"), 1)
+        self.interaction.interrupt(lambda: None)
+        self.assertFalse(self.interaction.search_active)
+        self.assertEqual(self.interaction.search_progress, 0)
+
+    def test_each_loss_waits_for_its_own_receipt_before_shared_search(self):
+        first = self.awareness.memory.get("stock")
+        assert first is not None
+        losses = (first, replace(first, token="drink", identity="energy_drink",
+                                 kind="drink"), replace(first, token="rice",
+                                                       identity="onigiri"))
+        for known in losses:
+            self.assertTrue(self.interaction.notice_absence(known))
+        self.assertEqual(len(self.cues), 1)
+        first_key = self.cues[-1].key
+        self.acknowledge()
+        second_key = self.cues[-1].key
+        self.assertNotEqual(first_key, second_key)
+        self.interaction.receive_feedback(FeedbackReceipt(first_key, True))
+        self.interaction.update()
+        self.assertEqual(len(self.cues), 2)
+        self.acknowledge()
+        self.assertFalse(self.interaction.search_ready)
+        self.acknowledge()
+        self.assertEqual(
+            [(cue.record_id, cue.identity) for cue in self.cues
+             if cue.event == "object_place_missing"],
+            [(known.token, known.identity) for known in losses],
+        )
+        self.assertEqual(self.cues[-1].event, "object_search")
+        self.acknowledge()
+        self.assertTrue(self.interaction.search_ready)
+
+    def test_new_loss_during_patrol_pauses_for_bubble_and_preserves_route(self):
+        self.start_search()
+        self.interaction.search_destination(SearchPosition(50, 750, 50))
+        self.assertEqual(self.interaction.search_progress, .5)
+        first = self.awareness.memory.get("stock")
+        assert first is not None
+        another = replace(first, token="another", identity="energy_drink",
+                          kind="drink")
+        self.assertTrue(self.interaction.notice_absence(another))
+        self.assertFalse(self.interaction.notice_absence(another))
+        self.assertFalse(self.interaction.search_ready)
+        self.assertEqual(self.behavior.advance_search(blocked=False), Hold())
+        self.interaction.update()
+        cue = self.cues[-1]
+        self.assertEqual((cue.event, cue.record_id, cue.identity),
+                         ("object_place_missing", "another", "energy_drink"))
+        self.assertFalse(self.interaction.search_ready)
+        self.acknowledge()
+        self.assertTrue(self.interaction.search_ready)
+        self.assertEqual(self.interaction.memory_id, "stock")
+        self.assertEqual(self.interaction.search_progress, .5)
+        self.assertEqual([cue.event for cue in self.cues].count("object_search"), 1)
+
+    def test_other_same_type_portion_cannot_end_physical_subject_search(self):
+        subject = self.awareness.memory.get("stock")
+        assert subject is not None
+        self.awareness.memory.restore_snapshot((replace(
+            subject, instance_id="object_1",
+        ),))
+        self.start_search()
+        other = self.alternative(observed=True)
+        self.awareness.memory.restore_snapshot(tuple(
+            replace(item, instance_id="object_2") if item.token == other.token else item
+            for item in self.awareness.memory.snapshot()
+        ))
+        self.assertIsInstance(self.behavior.advance(
+            other, blocked=False, search_position=SearchPosition(50, 750, 100),
+        ), SearchMotion)
+        self.assertEqual(self.interaction.memory_id, "stock")
+        self.assertNotIn("object_found", [cue.event for cue in self.cues])
+        # The fact entry uses the same physical-subject guard as patrol findings.
+        self.assertFalse(self.interaction.found(other.token))
+        self.assertEqual(self.interaction.phase, "search")
+
+    def test_verified_physical_reunion_survives_old_memory_record_reconciliation(self):
+        subject = self.awareness.memory.get("stock")
+        assert subject is not None
+        self.awareness.memory.restore_snapshot((replace(
+            subject, instance_id="object_1",
+        ),))
+        self.start_search()
+        goal = self.alternative(observed=True)
+        # Hand/face recognition has reconciled the old record into the active
+        # finding, which still refers to the actually searched physical portion.
+        self.awareness.memory.restore_snapshot(tuple(
+            replace(item, instance_id="object_1")
+            for item in self.awareness.memory.snapshot() if item.token == goal.token
+        ))
+        self.assertEqual(self.behavior.advance(goal, blocked=False), Hold())
+        self.assertEqual(self.interaction.phase, "found")
+        self.assertEqual(self.cues[-1].event, "object_found")
+
     def setUp(self):
         self.state = PetState(satiety=50, energy=100)
         self.world = WorldState(WorldSurface(800, 600), (ObjectDefinition(
@@ -75,7 +241,7 @@ class ObjectBehaviorTests(unittest.TestCase):
             completed=completed, memory=self.awareness.memory,
             decide=lambda token, context: self.behavior.decide(token, context),
             feedback=feedback, cancel_feedback=lambda: None, now=lambda: self.now,
-            inspection_seconds=1, search_seconds=2,
+            inspection_seconds=1,
         )
         self.behavior = ObjectBehaviorCoordinator(
             self.state, self.awareness, self.interaction, self.world,
@@ -99,19 +265,34 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.acknowledge()
         self.interaction.start_search()
         self.assertEqual(self.interaction.phase, "search")
+        self.acknowledge()
 
-    def alternative(self, *, kind: ConsumableKind = "food"):
+    def alternative(self, *, kind: ConsumableKind = "food", observed=False):
         identity = "apple" if kind == "food" else "energy_drink"
         self.awareness.memory.update((ObjectObservation(
             "alternative", identity, kind, 240, 0, True, 0,
         ),), now=0)
+        if observed:
+            self.awareness.observations = (ObjectObservation(
+                "alternative", identity, kind, 240, 0, True, self.now,
+            ),)
         return ObjectGoal("alternative", identity, kind, 240, 0, 0, "investigate")
 
     def observe(self, *, facts=BehaviorFacts(), x=100, width=100):
         self.interaction.update()
         return self.behavior.observe(
-            self.world.snapshot(), now=self.now, x=x, width=width,
-            presentation=None, facts=facts,
+            self.world.snapshot(),
+            now=self.now,
+            x=x,
+            width=width,
+            presentation=None,
+            facts=facts,
+            attention=object_test_attention(
+                x,
+                width=width,
+                attentive=not self.state.sleeping and not facts.game_open,
+                direction=(-1 if x > 100 else 1, 0),
+            ),
         )
 
     def observed_stock(self):
@@ -122,10 +303,132 @@ class ObjectBehaviorTests(unittest.TestCase):
         observation = self.observe()
         assert observation.goal is not None
         goal = observation.goal
-        self.awareness.memory.update((ObjectObservation(
+        self.awareness.memory.observe_find(ObjectObservation(
             goal.token, "apple", "food", 100, 0, True, self.now,
-        ),), now=self.now)
+        ), now=self.now, record=goal.token, claimed=frozenset(),
+            maximum_distance=25, instance_id=item.instance_id)
         return item, replace(goal, identity="apple", kind="food")
+
+    def test_fresh_place_check_keeps_its_look_before_turning_to_a_new_find(self):
+        subject = self.awareness.memory.get("stock")
+        assert subject is not None
+        self.awareness.memory.restore_snapshot((replace(subject, x=400),))
+        self.world.place_resting("apple", 40, ObjectFootprint(8, 8))
+        attention = ObjectAttention("survey", (1, 0), origin=(100, 60), width=100)
+        for stamp in (0, .3):
+            observation = self.behavior.observe(
+                self.world.snapshot(), now=stamp, x=100, width=100,
+                presentation=None, facts=BehaviorFacts(), attention=attention,
+            )
+            self.assertIsNone(observation.goal)
+        # Model the native adapter using the returned look on the next tick.
+        self.assertEqual(observation.gaze, GazeTarget(200, 60))
+        gaze = observation.gaze
+        assert gaze is not None
+        attention = replace(attention, direction=((gaze.x - 100) / 100,
+                                                 (gaze.height - 60) / 100))
+        self.now = .6
+        observation = self.behavior.observe(
+            self.world.snapshot(), now=self.now, x=100, width=100,
+            presentation=None, facts=BehaviorFacts(), attention=attention,
+        )
+        self.assertTrue(observation.absence_noticed)
+        self.assertEqual(self.interaction.phase, "notice_absence")
+        self.assertNotIn("object_notice", [cue.event for cue in self.cues])
+
+    def test_place_check_precedes_a_continuing_consumption_wish(self):
+        self.awareness.memory.update((ObjectObservation(
+            "wish", "apple", "food", 180, 0, True, 0, True,
+        ),), now=0)
+        wish = self.awareness.memory.get("wish")
+        assert wish is not None
+        self.awareness.intentions.assess_offer(wish, self.state)
+        self.world.place_resting("apple", 180, ObjectFootprint(8, 8))
+        for stamp in (0, .3):
+            self.now = stamp
+            observation = self.observe()
+            self.assertIsNone(observation.goal)
+            self.assertEqual(self.behavior.advance(
+                observation.goal, blocked=observation.blocked,
+            ), Hold())
+            self.assertFalse(self.interaction.active)
+        self.now = .6
+        self.assertTrue(self.observe().absence_noticed)
+        self.assertEqual(self.interaction.memory_id, "stock")
+        self.acknowledge()
+        self.assertTrue(self.interaction.search_active)
+        self.assertFalse(any(cue.record_id == "wish" for cue in self.cues))
+
+    def test_unclear_occupied_place_does_not_block_other_loss_or_investigation(self):
+        subject = self.awareness.memory.get("stock")
+        assert subject is not None
+        self.awareness.memory.restore_snapshot((
+            replace(subject, instance_id="original"),
+            replace(subject, token="other", x=300, instance_id="elsewhere"),
+        ))
+        candidate = self.world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        for stamp in (0, .3, .6):
+            self.now = stamp
+            observation = self.observe()
+        self.assertTrue(observation.absence_noticed)
+        self.assertEqual(self.interaction.memory_id, "other")
+        unresolved = self.awareness.memory.get("stock")
+        assert unresolved is not None
+        self.assertEqual(unresolved.place_status, "remembered")
+        self.acknowledge()
+        self.acknowledge()
+        self.assertTrue(self.interaction.search_active)
+        self.assertEqual(self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 100),
+        ), Hold())
+        record = self.interaction.memory_id
+        assert record is not None
+        self.assertEqual(self.awareness.instance_for_record(record),
+                         candidate.instance_id)
+        self.assertEqual(self.interaction.phase, "notice")
+
+    def test_close_unknown_pair_releases_orphan_and_selects_observed_portion(self):
+        self.awareness.memory.restore_snapshot(())
+        items = [self.world.place_resting("apple", x, ObjectFootprint(8, 8))
+                 for x in (100, 120)]
+        for stamp in (0, .3, .6):
+            self.now = stamp
+            observation = self.observe()
+            self.behavior.advance(observation.goal, blocked=observation.blocked)
+            if self.cues:
+                self.acknowledge()
+        old = self.interaction.memory_id
+        assert old is not None
+        for stamp in (2, 2.3, 2.6, 2.9, 3.2, 3.5):
+            self.now = stamp
+            observation = self.observe()
+            self.behavior.advance(observation.goal, blocked=observation.blocked)
+            if self.cues:
+                self.acknowledge()
+        self.assertIsNone(self.awareness.memory.get(old))
+        self.assertNotEqual(self.interaction.memory_id, old)
+        current = self.interaction.memory_id
+        assert current is not None
+        self.assertIn(self.awareness.instance_for_record(current),
+                      {item.instance_id for item in items})
+        self.assertNotIn("object_search", [cue.event for cue in self.cues])
+        self.assertTrue(all(not item.recognized
+                            for item in self.awareness.memory.snapshot()))
+
+    def test_pending_target_sighting_is_not_an_unresolved_completed_observation(self):
+        item, goal = self.observed_stock()
+        self.behavior.advance(goal, blocked=False)
+        self.acknowledge()
+        self.now = 2
+        observation = self.observe()
+        self.assertFalse(observation.absence_noticed)
+        self.assertEqual(self.interaction.memory_id, goal.token)
+        self.assertEqual(self.awareness.target_evidence(goal.token, radius=25),
+                         "unseen")
+        self.now = 2.3
+        self.observe()
+        self.assertEqual(self.awareness.instance_for_record(goal.token),
+                         item.instance_id)
 
     def test_absence_precedes_discovery_and_only_acknowledges_accepted_notice(self):
         self.world.place_resting("apple", 180, ObjectFootprint(8, 8))
@@ -162,6 +465,13 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.interaction.memory_id, "alternative")
 
     def test_host_blocking_respects_existing_commitment(self):
+        unavailable = self.behavior.observe(
+            self.world.snapshot(), now=self.now, x=100, width=100,
+            presentation=None, facts=BehaviorFacts(),
+            attention=ObjectAttention("unavailable", None, origin=(100, 60), width=100),
+        )
+        self.assertTrue(unavailable.blocked)
+        self.assertIsNone(unavailable.goal)
         for facts in (BehaviorFacts(carrying=True), BehaviorFacts(controls_active=True),
                       BehaviorFacts(game_open=True), BehaviorFacts(playback_busy=True)):
             with self.subTest(facts=facts):
@@ -174,16 +484,21 @@ class ObjectBehaviorTests(unittest.TestCase):
         set_test_pet_values(self.state, sleeping=True)
         self.assertTrue(self.observe().blocked)
 
-    def test_blocked_nearest_unassessed_observation_keeps_gaze_without_episode(self):
+    def test_blocked_observation_uses_only_current_attention_without_episode(self):
         self.awareness.memory.restore_snapshot(())
-        self.world.place_resting("apple", 180, ObjectFootprint(8, 8))
-        self.world.place_resting("apple", 130, ObjectFootprint(8, 8))
-        facts = BehaviorFacts(controls_active=True)
-        self.observe(facts=facts)
-        self.now = .3
-        observation = self.observe(facts=facts)
+        hidden = self.world.place_resting("apple", 10, ObjectFootprint(8, 8))
+        visible = self.world.place_resting("apple", 220, ObjectFootprint(8, 8))
+        attention = ObjectAttention("survey", (1, 0), origin=(100, 60), width=100)
+        for stamp in (0, .3):
+            observation = self.behavior.observe(
+                self.world.snapshot(), now=stamp, x=100, width=100,
+                presentation=None, facts=BehaviorFacts(controls_active=True),
+                attention=attention,
+            )
         self.assertIsNone(observation.goal)
-        self.assertEqual(observation.gaze, GazeTarget(130, 0))
+        self.assertEqual(observation.gaze, GazeTarget(220, 0))
+        self.assertIsNone(self.awareness.record_for_instance(hidden.instance_id))
+        self.assertIsNotNone(self.awareness.record_for_instance(visible.instance_id))
         self.assertIsInstance(self.behavior.advance(None, blocked=True), Hold)
         self.assertFalse(self.interaction.active)
 
@@ -217,12 +532,12 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.interaction.phase, "notice")
         self.assertEqual(self.actions, [])
 
-    def test_synchronous_replacement_can_approach_in_the_same_update(self):
+    def test_synchronous_reunion_finishes_without_forcing_another_pickup(self):
         self.start_search()
-        goal = self.alternative()
+        goal = self.alternative(observed=True)
         self.synchronous_feedback = True
-        self.assertEqual(self.behavior.advance(goal, blocked=False), Approach(goal))
-        self.assertEqual(self.interaction.phase, "approach")
+        self.assertEqual(self.behavior.advance(goal, blocked=False), Hold())
+        self.assertEqual(self.interaction.phase, "idle")
         self.assertEqual(self.actions, [])
 
     def test_return_waiting_holds_once_even_when_return_cue_is_synchronous(self):
@@ -243,13 +558,18 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.behavior.advance(goal, blocked=False), Approach(goal))
         self.assertEqual(self.actions, [])
 
-    def test_lost_return_binding_starts_search_but_holds_for_this_update(self):
+    def test_lost_return_binding_announces_loss_before_search(self):
         goal = ObjectGoal("stock", "apple", "food", 100, 0, 0)
         self.behavior.advance(goal, blocked=False)
         self.assertTrue(self.interaction.target_taken(goal.token))
         self.assertIsInstance(self.behavior.advance(goal, blocked=True), Hold)
+        self.assertEqual(self.interaction.phase, "notice_absence")
+        self.acknowledge()
         self.assertEqual(self.interaction.phase, "search")
-        self.assertIsInstance(self.behavior.advance(None, blocked=False), SearchMotion)
+        self.acknowledge()
+        self.assertIsInstance(self.behavior.advance(
+            None, blocked=False, search_position=SearchPosition(50, 750, 100),
+        ), SearchMotion)
 
     def test_unreachable_approach_cancels_shared_intention_without_acquiring(self):
         goal = self.awareness.intentions.choose(
@@ -340,9 +660,12 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.acknowledge()
         self.assertEqual(self.interaction.phase, "search")
         self.assertEqual(self.cues[-1].event, "object_search")
+        self.acknowledge()
         self.now = 1
         self.assertIsInstance(
-            self.behavior.advance_search(None, blocked=False), SearchMotion,
+            self.behavior.advance_search(
+                blocked=False, position=SearchPosition(50, 750, 100),
+            ), SearchMotion,
         )
         self.assertEqual([cue.event for cue in self.cues].count("object_search"), 1)
 
@@ -366,36 +689,56 @@ class ObjectBehaviorTests(unittest.TestCase):
             alternate.token, ObjectUseContext.SUPPLY,
         ).consume)
 
-    def test_non_search_phase_is_left_to_the_remaining_update(self):
-        goal = self.alternative()
-        self.assertIsNone(self.behavior.advance_search(goal, blocked=True))
-        self.assertFalse(self.interaction.active)
-        self.assertEqual(self.cues, [])
-        self.assertEqual(self.completed, [])
-
-    def test_wanted_stock_continues_with_relative_center_and_active_progress(self):
-        self.start_search()
-        self.now = 1
-        key = self.interaction.feedback_key
-        self.assertEqual(self.behavior.advance_search(None, blocked=False),
-                         SearchMotion(100, .5))
-        self.assertEqual(self.interaction.feedback_key, key)
-        self.assertEqual(self.completed, [])
-        self.assertEqual(self.actions, [])
-
-    def test_unknown_stock_is_not_cancelled_by_satisfied_needs(self):
+    def test_lost_unknown_target_is_retired_without_a_patrol(self):
         set_test_pet_values(self.state, satiety=100)
-        self.start_search(identified=False)
-        self.assertIsInstance(self.behavior.advance_search(None, blocked=False),
-                              SearchMotion)
+        self.awareness.memory.restore_snapshot(())
+        self.awareness.memory.update((ObjectObservation(
+            "stock", None, None, 100, 0, True, 0,
+        ),), now=0)
+        self.interaction.begin_goal(ObjectGoal(
+            "stock", None, None, 100, 0, 0, "investigate",
+        ))
+        self.acknowledge()
+        self.interaction.start_search()
+        self.assertFalse(self.interaction.active)
+        self.assertIsNone(self.awareness.memory.get("stock"))
+        self.assertNotIn("object_search", [cue.event for cue in self.cues])
+
+    def test_confirmed_unknown_absence_has_one_readable_notice_then_forgets(self):
+        self.awareness.memory.restore_snapshot(())
+        self.awareness.memory.update((ObjectObservation(
+            "unknown", None, None, 100, 0, True, 0,
+        ),), now=0)
+        self.observe()
+        self.now = .6
+        noticed = self.observe()
+        self.assertTrue(noticed.absence_noticed)
+        self.assertEqual(self.interaction.phase, "notice_absence")
+        self.assertIsNone(self.cues[-1].identity)
+        self.acknowledge()
+        self.assertIsNone(self.awareness.memory.get("unknown"))
+        self.assertFalse(self.interaction.active)
+        self.assertEqual([cue.event for cue in self.cues], ["object_place_missing"])
+
+    def test_identified_loss_precedes_pending_unknown_loss(self):
+        self.awareness.memory.restore_snapshot(())
+        self.awareness.memory.update((
+            ObjectObservation("unknown", None, None, 100, 0, True, 0),
+            ObjectObservation("known", "apple", "food", 150, 0, True, 0),
+        ), now=0)
+        self.observe()
+        self.now = .6
+        self.observe()
+        self.assertEqual(self.interaction.memory_id, "known")
+        self.acknowledge()
         self.assertTrue(self.interaction.searching)
-        self.assertEqual(self.completed, [])
 
     def test_satisfied_need_does_not_abort_an_ongoing_missing_item_search(self):
         self.start_search()
         set_test_pet_values(self.state, satiety=100)
-        self.assertIsInstance(self.behavior.advance_search(None, blocked=False),
-                              SearchMotion)
+        self.assertIsInstance(self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 100),
+        ), SearchMotion)
         self.assertTrue(self.interaction.active)
         self.assertEqual(self.completed, [])
         known = self.awareness.memory.get("stock")
@@ -404,51 +747,39 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.acknowledge()
         self.now = 2.1
         self.interaction.update()
+        self.assertEqual(self.interaction.phase, "search")
+        self.interaction.search_destination(SearchPosition(50, 750, 50))
+        self.interaction.search_destination(SearchPosition(50, 750, 750))
+        self.interaction.complete_search()
         self.assertEqual(self.interaction.phase, "missing")
         self.assertEqual(self.actions, [])
 
-    def test_blocking_cancels_then_leaves_the_desktop_update_to_continue(self):
+    def test_blocking_pauses_search_and_explicit_interruption_cancels_it(self):
         self.start_search()
-        self.assertIsNone(self.behavior.advance_search(None, blocked=True))
+        self.assertTrue(self.interaction.acknowledge_contact())
+        self.assertIsInstance(self.behavior.advance_search(blocked=True), Hold)
+        self.assertTrue(self.interaction.search_active)
+        self.interaction.interrupt(lambda: None)
         self.assertFalse(self.interaction.active)
         self.assertEqual(self.completed, [("stock", False)])
 
-    def test_replacement_precedes_blocking_and_waits_for_its_own_feedback(self):
+    def test_verified_reunion_waits_for_its_own_feedback(self):
         self.start_search()
         old = self.interaction.feedback_key
-        goal = self.alternative()
-        self.assertIsNone(self.behavior.advance_search(goal, blocked=True))
+        goal = self.alternative(observed=True)
+        self.assertIsInstance(self.behavior.advance_search(blocked=False), Hold)
         self.assertEqual(self.interaction.phase, "found")
         self.assertEqual(self.cues[-1].record_id, goal.token)
         self.interaction.receive_feedback(FeedbackReceipt(old, True))
         self.interaction.update()
         self.assertEqual(self.interaction.phase, "found")
         self.acknowledge()
-        self.assertEqual(self.interaction.memory_id, goal.token)
-        self.assertNotEqual(self.interaction.feedback_key.interaction_id,
-                            old.interaction_id)
-        self.assertEqual(self.completed, [])
+        self.assertFalse(self.interaction.active)
+        self.assertFalse(self.interaction.search_active)
+        self.assertEqual(self.completed, [(goal.token, False)])
         self.assertEqual(self.actions, [])
 
-    def test_synchronous_replacement_keeps_the_same_update_handoff(self):
-        self.start_search()
-        goal = self.alternative()
-        self.synchronous_feedback = True
-        self.assertIsNone(self.behavior.advance_search(goal, blocked=False))
-        self.assertEqual(self.interaction.phase, "approach")
-        self.assertEqual(self.interaction.memory_id, goal.token)
-        self.assertEqual(self.completed, [])
-        self.assertEqual(self.actions, [])
-
-    def test_same_target_is_not_a_replacement(self):
-        self.start_search()
-        key = self.interaction.feedback_key
-        goal = ObjectGoal("stock", "apple", "food", 100, 0, 0)
-        self.assertIsInstance(self.behavior.advance_search(goal, blocked=False),
-                              SearchMotion)
-        self.assertEqual(self.interaction.feedback_key, key)
-
-    def test_missing_stock_takes_priority_over_unknown_found_during_search(self):
+    def test_search_investigates_unknown_find_and_resumes_its_route(self):
         other = self.world.place_resting("apple", 180, ObjectFootprint(8, 8))
         self.observe()
         self.now = .3
@@ -461,41 +792,80 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.cues[-1].event, "object_place_missing")
         self.acknowledge()
         self.assertEqual(self.interaction.phase, "search")
+        self.acknowledge()
+        self.interaction.search_destination(SearchPosition(50, 750, 50))
         self.now = .8
         observation = self.observe()
-        assert observation.goal is not None
-        self.assertNotEqual(observation.goal.token, "stock")
-        self.assertEqual(observation.goal.purpose, "investigate")
-        self.assertIsNone(self.behavior.advance_search(
-            observation.goal, blocked=observation.blocked,
-        ))
-        self.assertEqual(self.interaction.phase, "found")
-        self.assertEqual(self.cues[-1].event, "object_found")
+        self.assertIsNone(observation.goal)  # Search owns the next investigation.
+        self.assertIsInstance(self.behavior.advance_search(
+            blocked=observation.blocked,
+        ), Hold)
+        investigation = self.awareness.intentions.goal
+        assert investigation is not None
+        self.assertNotEqual(investigation.token, "stock")
+        self.assertEqual(investigation.purpose, "investigate")
+        self.assertEqual(self.interaction.phase, "notice")
+        self.assertNotIn("object_found", [cue.event for cue in self.cues])
         self.assertIsNotNone(self.awareness.record_for_instance(other.instance_id))
-        self.assertLess(
-            self.cues.index(next(cue for cue in self.cues
-                                 if cue.event == "object_place_missing")),
-            len(self.cues) - 1,
-        )
+        self.assertEqual(self.interaction.memory_id, investigation.token)
+        self.assertEqual(self.interaction.search_progress, .5)
+        # Native reach failure retires this attempt while the same pass survives.
+        self.behavior.unreachable(now=self.now)
+        self.assertEqual(self.interaction.phase, "search")
+        self.assertEqual(self.interaction.memory_id, "stock")
+        self.assertEqual(self.interaction.search_progress, .5)
+        self.assertFalse(self.interaction.can_investigate(investigation.token))
 
-    def test_goal_identity_cannot_replace_missing_or_unidentified_memory(self):
+    def test_route_needs_actual_arrival_at_both_ends_before_failure(self):
+        self.start_search()
+        self.acknowledge()
+        for stamp in (1, 20, 200):
+            self.now = stamp
+            motion = self.behavior.advance_search(
+                blocked=False, position=SearchPosition(50, 750, 200),
+            )
+            self.assertEqual(motion, SearchMotion(50, 0))
+        self.assertEqual(self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 50),
+        ), SearchMotion(750, .5))
+        self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 749),
+        )
+        self.assertEqual(self.interaction.phase, "missing")
+        self.acknowledge()
+        self.assertFalse(self.interaction.active)
+
+    def test_right_start_and_changed_bounds_require_current_route_coverage(self):
+        self.start_search()
+        self.acknowledge()
+        self.assertEqual(self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 700),
+        ), SearchMotion(750, 0))
+        self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 750),
+        )
+        self.assertEqual(self.behavior.advance_search(
+            blocked=False, position=SearchPosition(100, 1400, 750),
+        ), SearchMotion(100, 0))
+
+    def test_matching_known_find_is_resolved_even_when_no_longer_needed(self):
+        self.start_search()
+        set_test_pet_values(self.state, satiety=100)
+        goal = self.alternative(observed=True)
+        self.awareness.memory.mark_assessed(goal.token)
+        self.behavior.advance_search(blocked=False)
+        self.assertEqual(self.interaction.phase, "found")
+        self.acknowledge()
+        self.assertFalse(self.interaction.active)
+        self.assertEqual(self.actions, [])
+
+    def test_missing_or_unidentified_record_cannot_resolve_search(self):
         self.start_search()
         self.awareness.memory.update((ObjectObservation(
             "unknown", None, None, 240, 0, True, 0,
         ),), now=0)
         for token in ("unknown", "no_record"):
             with self.subTest(token=token):
-                forged = ObjectGoal(token, "apple", "food", 240, 0, 0)
-                self.assertIsInstance(
-                    self.behavior.advance_search(forged, blocked=False), SearchMotion,
-                )
+                self.assertFalse(self.interaction.found(token))
                 self.assertEqual(self.interaction.memory_id, "stock")
                 self.assertEqual(self.cues[-1].event, "object_search")
-
-    def test_unwanted_alternative_does_not_replace_a_wanted_search(self):
-        self.start_search()
-        goal = self.alternative(kind="drink")
-        self.assertIsInstance(self.behavior.advance_search(goal, blocked=False),
-                              SearchMotion)
-        self.assertEqual(self.interaction.memory_id, "stock")
-        self.assertEqual(self.completed, [])

@@ -6,6 +6,7 @@ from dataclasses import replace
 from aiko_pet.pet.mind.object_absence import ObjectAbsencePerception
 from aiko_pet.pet.mind.object_knowledge import ObjectKnowledge
 from aiko_pet.pet.mind.object_perception import ObjectCandidate
+from tools.pet_test_support import object_test_attention
 
 PLACE = ObjectKnowledge("noticed", None, None, 100, 0, True, 0)
 OCCUPANT = ObjectCandidate("unnoticed", "cookie", "food", 100, 0, True)
@@ -16,8 +17,11 @@ class ObjectAbsenceTests(unittest.TestCase):
         self.sensor = ObjectAbsencePerception()
 
     def sample(self, now, occupants=(), known=(PLACE,), **kwargs):
-        return self.sensor.observe(known, occupants, now=now, x=100, height=0,
-                                   width=100, ground_bounds=(0, 1500), **kwargs)
+        attention = kwargs.pop("attention", object_test_attention(
+            100, width=100, attentive=kwargs.pop("attentive", True),
+        ))
+        return self.sensor.observe(known, occupants, now=now, attention=attention,
+                                   ground_bounds=(0, 1500), **kwargs)
 
     def test_unknown_presence_can_be_confirmed_missing_once(self):
         self.assertEqual(self.sample(0, attentive=True), ())
@@ -34,13 +38,24 @@ class ObjectAbsenceTests(unittest.TestCase):
         self.assertEqual(self.sample(.9, attentive=True), ())
         self.assertEqual(self.sample(1.1, attentive=True), (PLACE.token,))
 
-    def test_distraction_gap_or_changed_focus_cannot_accumulate_absence(self):
-        for interruption in ("attention", "gap", "focus"):
+    def test_identified_other_portion_cannot_hide_a_missing_neighbour(self):
+        missing = replace(PLACE, identity="apple", kind="food", instance_id="old")
+        other = replace(missing, token="other", x=110, instance_id="different")
+        occupant = replace(OCCUPANT, x=110)
+        self.sample(0, (occupant,), known=(missing,), attentive=True)
+        self.assertFalse(self.sensor.checking)
+        identified = {occupant.token: other}
+        self.sample(.6, (occupant,), known=(missing,), attentive=True,
+                    identified=identified)
+        self.assertEqual(self.sample(1.2, (occupant,), known=(missing,), attentive=True,
+                                     identified=identified), (missing.token,))
+
+    def test_distraction_or_time_gap_cannot_accumulate_absence(self):
+        for interruption in ("attention", "gap"):
             with self.subTest(interruption=interruption):
                 self.sensor = ObjectAbsencePerception()
                 self.sample(0, attentive=True)
-                self.sample(.4, attentive=interruption != "attention",
-                            focused="other" if interruption == "focus" else None)
+                self.sample(.4, attentive=interruption != "attention")
                 now = 5 if interruption == "gap" else .6
                 self.assertEqual(self.sample(now, attentive=True), ())
                 self.assertEqual(self.sample(now + .5, attentive=True), (PLACE.token,))

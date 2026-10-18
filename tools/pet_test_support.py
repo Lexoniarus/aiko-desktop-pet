@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import fields, replace
 from typing import Any
 
+from aiko_pet.pet.mind.object_attention import AttentionMode, ObjectAttention
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.state_values import PetValues
 
@@ -23,3 +24,12 @@ def set_test_pet_values(state: PetState, **changes: Any) -> None:
         rewards = changes["care_last_rewards"]
         changes["care_last_rewards"] = tuple(rewards.items())
     state.restore_checkpoint(replace(state.capture_checkpoint(), **changes))
+
+
+def object_test_attention(
+    x: float, *, width: float, height: float = 0, attentive: bool = True,
+    direction: tuple[float, float] = (1, 0), mode: AttentionMode = "survey",
+) -> ObjectAttention:
+    """An explicit right-facing sensor fixture; callers can select another look."""
+    return ObjectAttention(mode if attentive else "unavailable", direction,
+                           origin=(x, height), width=width)

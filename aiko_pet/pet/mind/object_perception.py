@@ -86,7 +86,7 @@ class _Evidence:
 
 
 class ObjectPerception:
-    """Accumulate only continuous, attentive observation in active seconds."""
+    """Accumulate dwell for visibility-qualified inputs, in active seconds."""
 
     def __init__(self) -> None:
         self._previous: float | None = None
@@ -94,20 +94,14 @@ class ObjectPerception:
 
     def observe(
         self, candidates: tuple[ObjectCandidate, ...], *, now: float,
-        x: float, height: float, width: float, attentive: bool,
-        following: str | None = None,
     ) -> tuple[ObjectObservation, ...]:
-        if not math.isfinite(now) or width <= 0 or not math.isfinite(width):
-            raise ValueError("Perception requires finite time and positive width")
+        if not math.isfinite(now):
+            raise ValueError("Perception requires finite time")
         elapsed = 0.0 if self._previous is None else max(0.0, now - self._previous)
         self._previous = now
         evidence: dict[str, _Evidence] = {}
         observations: list[ObjectObservation] = []
-        for item in candidates if attentive else ():
-            distance = math.hypot(item.x - x, item.height - height) / width
-            if (item.token != following
-                    and distance > BALANCE.number("object_behavior", "notice_widths")):
-                continue
+        for item in candidates:
             old = self._evidence.get(item.token)
             current = old or _Evidence()
             recognizable = item.inspecting

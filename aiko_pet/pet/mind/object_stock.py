@@ -23,8 +23,8 @@ def match_find(
     """Only perceived type/place support a reunion, never an instance handle."""
     compatible = [item for item in records if item.token not in claimed
                   and item.place_status != "superseded"
-                  and item.recognized and (seen.identity is None or (
-                      item.identity == seen.identity and item.kind == seen.kind))
+                  and item.recognized and seen.identity is not None
+                  and item.identity == seen.identity and item.kind == seen.kind
                   and (instance_id is None or item.instance_id is None
                        or item.instance_id == instance_id)]
     # A still occupied, unchecked unknown place can resume curiosity without
@@ -58,33 +58,6 @@ def _matching_size(edges: dict[str, tuple[str, ...]]) -> int:
         return False
 
     return sum(assign(token, set()) for token in edges)
-
-
-@dataclass(frozen=True, slots=True)
-class StockSummary:
-    available_minimum: int
-    available_maximum: int
-    missing_minimum: int
-    missing_maximum: int
-
-
-def summarize_stock(records: tuple[ObjectKnowledge, ...]) -> StockSummary:
-    """A possible reunion explains at most one other place/portion."""
-    available = {item.token: item for item in records
-                 if item.place_status == "remembered" and item.resting}
-    missing = {item.token for item in records if item.place_status == "missing"}
-    finds = {item.token: item for item in records if item.possible_sources
-             and (item.token in available or item.place_status == "superseded")}
-    active_links = {token: tuple(source for source in item.possible_sources
-                                 if source in available)
-                    for token, item in finds.items()}
-    missing_links = {token: tuple(source for source in item.possible_sources
-                                  if source in missing)
-                     for token, item in finds.items()}
-    return StockSummary(
-        len(available) - _matching_size(active_links), len(available),
-        len(missing) - _matching_size(missing_links), len(missing),
-    )
 
 
 def resolved_places(records: tuple[ObjectKnowledge, ...]) -> frozenset[str]:

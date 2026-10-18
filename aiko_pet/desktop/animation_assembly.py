@@ -10,6 +10,7 @@ import tkinter as tk
 from dataclasses import dataclass
 from typing import Callable
 
+from ..application.object_feedback import InteractionPhase
 from ..application.settings import PetSettings
 from ..infrastructure.hardware.monitor import ActivityMonitor
 from ..infrastructure.item_assets import load_item_catalog
@@ -20,7 +21,7 @@ from ..pet.movement.contracts import HorizontalTrack
 from ..pet.state import PetState
 from ..ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from .animation_runtime import AnimationRuntimePorts, DesktopAnimationRuntime
-from .visual_observation import DesktopVisualObservation
+from .visual_observation import DesktopVisualObservation, VisualAttentionPorts
 from .walk_runtime import WalkDriver, WalkDriverPorts
 
 
@@ -39,6 +40,9 @@ class AnimationAssemblyPorts:
     attention_until: Callable[[], float]
     extend_action: Callable[[float], None]
     object_focus: Callable[[], bool] = lambda: False
+    object_phase: Callable[[], InteractionPhase] = lambda: "idle"
+    following_cursor: Callable[[], bool] = lambda: False
+    activity_active: Callable[[], bool] = lambda: False
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,6 +76,12 @@ def assemble_animation(
     )
     visual = DesktopVisualObservation(
         settings=settings, monitor=monitor, eyes=ports.gaze_origin,
+        attention=VisualAttentionPorts(
+            phase=ports.object_phase, sleeping=lambda: state.sleeping,
+            walking=lambda: walk.movement.remaining_distance,
+            following_cursor=ports.following_cursor,
+            activity_active=ports.activity_active,
+        ),
     )
     animation = DesktopAnimationRuntime(
         state=state, settings=settings, assets=assets, walk=walk, visual=visual,

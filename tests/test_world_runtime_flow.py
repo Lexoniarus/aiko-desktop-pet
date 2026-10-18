@@ -66,6 +66,82 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             pending.extend(widget.winfo_children())
         return ""
 
+    def test_each_missing_portion_gets_a_readable_named_bubble_before_patrol(self):
+        world = self.app._world
+        set_test_pet_values(self.app.state, satiety=100, energy=100)
+        for offset, identity in ((.3, "dango"), (.5, "energy_drink"),
+                                 (.7, "onigiri")):
+            x = world._body_x() + offset * world.width
+            item = world.world.place_resting(identity, x, ObjectFootprint(8, 8))
+            world.awareness.memory.observe_find(
+                ObjectObservation(item.instance_id, identity,
+                                  "drink" if identity == "energy_drink" else "food",
+                                  x, 0, True, world.now),
+                now=world.now, record=None, claimed=frozenset(), maximum_distance=0,
+                instance_id=item.instance_id,
+            )
+            world.world.move_resting(item.instance_id,
+                                     world.world.snapshot().surface.width * .95,
+                                     expected_revision=item.revision)
+        track = world._track()
+        pointer = int(track.left + world._body_x() + world.width), track.ground_y
+        for method, value in zip(("winfo_pointerx", "winfo_pointery"), pointer):
+            self.enterContext(patch.object(self.app.root, method, return_value=value))
+        cursor = self.app.mind.cursor_attention
+        cursor.observe((-1, -1), time.monotonic())
+        cursor.observe(pointer, time.monotonic())
+        trace = self.run_until(lambda: world.interaction.search_ready, 25)
+        self.assertTrue(world.interaction.search_ready, trace)
+        missing = [(stamp, text) for stamp, event, text in self.feedback
+                   if event == "object_place_missing"]
+        self.assertEqual(len(missing), 3, self.feedback)
+        # The presenter formats the actual visible bubble from each cue identity.
+        visible = [text for _, _, text in self.bubbles]
+        for name in ("Dango", "Energy", "Onigiri"):
+            self.assertTrue(any(name in text for text in visible), visible)
+        events = [event for _, event, _ in self.feedback]
+        self.assertEqual(events, ["object_place_missing"] * 3 + ["object_search"])
+        for before, after in zip(self.feedback, self.feedback[1:]):
+            self.assertGreater(after[0] - before[0], 1.6)
+
+    def test_conversation_holds_environment_until_actual_sequence_completion(self):
+        world = self.app._world
+        x = world._body_x() + .2 * world.width
+        item = world.world.place_resting("cookie", x, ObjectFootprint(8, 8))
+        record = world.awareness.memory.observe_find(
+            ObjectObservation(item.instance_id, "cookie", "food", x, 0, True,
+                              world.now),
+            now=world.now, record=None, claimed=frozenset(), maximum_distance=0,
+            instance_id=item.instance_id,
+        )
+        world.awareness.memory.mark_assessed(record)
+        original = world.awareness.memory.get(record)
+        self.app.interact("talk")
+        self.assertEqual(world._attention().mode, "unavailable")
+        with (
+            patch.object(self.app.root, "winfo_pointerx", return_value=int(
+                world._track().left + world.world.snapshot().surface.width * .2,
+            )),
+            patch.object(self.app.root, "winfo_pointery",
+                         return_value=world._track().ground_y),
+        ):
+            world.begin_relocate(item.instance_id, item.revision)
+            self.assertFalse(world.awareness.following_cursor)
+            world.cursor.release()
+        world.world.place_resting("onigiri", world._body_x() - .7 * world.width,
+                                   ObjectFootprint(8, 8))
+        self.run_for(1)
+        self.assertIsNotNone(self.app._reaction_player.pending_timer)
+        self.assertEqual(world.awareness.memory.get(record), original)
+        self.assertEqual(len(world.awareness.memory.snapshot()), 1)
+        self.assertEqual(self.feedback, [])
+        self.run_until(lambda: bool(self.feedback), 35)
+        self.assertTrue(self.feedback)
+        self.assertEqual(self.feedback[0][1], "object_place_missing")
+        missing = world.awareness.memory.get(record)
+        assert missing is not None
+        self.assertEqual(missing.place_status, "missing")
+
     def test_restored_food_uses_readable_recall_and_full_eat_without_reinspection(self):
         world = self.app._world
         set_test_pet_values(self.app.state, satiety=76)
@@ -73,23 +149,15 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         item = world.world.place_resting(
             "onigiri", world._body_x() + 20, ObjectFootprint(16, 16)
         )
-        world.awareness.memory.update(
-            (
-                ObjectObservation(
-                    item.instance_id,
-                    "onigiri",
-                    "food",
-                    world._body_x() + 20,
-                    0,
-                    True,
-                    world.now,
-                ),
-            ),
-            now=world.now,
+        record = world.awareness.memory.observe_find(
+            ObjectObservation(item.instance_id, "onigiri", "food",
+                              world._body_x() + 20, 0, True, world.now),
+            now=world.now, record=None, claimed=frozenset(), maximum_distance=0,
+            instance_id=item.instance_id,
         )
-        world.awareness.memory.mark_assessed(item.instance_id)
+        world.awareness.memory.mark_assessed(record)
         world.awareness.memory.note_placement(
-            item.instance_id,
+            record,
             x=world._body_x() + 20,
             height=0,
             now=world.now,
@@ -281,7 +349,8 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         for before, after in zip(self.feedback, self.feedback[1:]):
             self.assertGreater(after[0] - before[0], 1.6)
         self.assertTrue(any("Onigiri" in text for _, _, text in self.bubbles))
-        self.assertTrue(any("später" in text for _, _, text in self.bubbles))
+        self.assertTrue(any(phase == "put_down" and text
+                            for _, phase, text in self.bubbles))
         trace = self.run_for(1.3)
         self.assertTrue(all(row[1] == "idle" for row in trace), trace)
 

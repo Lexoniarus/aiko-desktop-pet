@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ..pet.balance import BALANCE
+from ..pet.mind.object_attention import ObjectAttention
 from ..pet.mind.object_decisions import (
     ObjectUseContext,
     ObjectUseDecision,
@@ -15,12 +17,48 @@ from ..pet.state import PetState
 from ..world.contracts import ObjectState, WorldSnapshot
 from ..world.state import WorldState
 from .object_awareness import ObjectAwareness
+from .object_feedback import InteractionPhase
 from .object_interaction import ObjectInteractionCoordinator
+from .object_interaction_state import SearchPosition
+
+
+def choose_object_attention(
+    phase: InteractionPhase, *, sleeping: bool, game_open: bool,
+    walking: float, following_cursor: bool = False,
+    activity_active: bool = False,
+    cursor: tuple[float, float] | None, target: tuple[float, float] | None,
+) -> ObjectAttention:
+    """Derive attention from the existing action and movement owners only."""
+    if sleeping or game_open:
+        return ObjectAttention("unavailable", None)
+    if phase == "pick_up":
+        return ObjectAttention("object", target, focused_place=target is not None)
+    if phase in (
+        "inspect", "recognize", "decide", "handover", "eat",
+        "put_down", "finish",
+    ):
+        return ObjectAttention("object", target)
+    if phase in ("await_return", "await_settle", "recognize_offer", "decide_offer"):
+        subject = target or cursor
+        return ObjectAttention("object", subject, focused_place=subject is not None)
+    if phase not in ("idle", "search"):
+        return ObjectAttention("object", target, focused_place=target is not None)
+    if activity_active:
+        return ObjectAttention("unavailable", None)
+    if walking:
+        return ObjectAttention("moving", (1 if walking > 0 else -1, 0))
+    if following_cursor and cursor is not None:
+        return ObjectAttention("cursor", cursor)
+    if target is not None:
+        return ObjectAttention("survey", target)
+    if cursor is not None:
+        return ObjectAttention("cursor", cursor)
+    return ObjectAttention("survey", None)
 
 
 @dataclass(frozen=True, slots=True)
 class SearchMotion:
-    """Continue searching around this World-relative center and active progress."""
+    """Walk to a World-relative body-center waypoint with route coverage."""
 
     center: float
     progress: float
@@ -86,10 +124,12 @@ class ObjectBehaviorCoordinator:
     def observe(
         self, snapshot: WorldSnapshot, *, now: float, x: float, width: float,
         presentation: tuple[str, ItemPresentation] | None, facts: BehaviorFacts,
+        attention: ObjectAttention,
     ) -> BehaviorObservation:
         interaction, awareness = self._interaction, self._awareness
         blocked = (
-            (interaction.active and not interaction.approaching
+            attention.mode == "unavailable"
+            or (interaction.active and not interaction.approaching
              and not interaction.searching and interaction.phase != "found")
             or (facts.carrying and interaction.focus_record is None)
             or facts.game_open
@@ -98,20 +138,57 @@ class ObjectBehaviorCoordinator:
         )
         goal = awareness.update(
             snapshot, self._state, now=now, x=x, height=0, width=width,
-            attentive=not self._state.sleeping and not facts.game_open,
-            blocked=blocked, held_pose=(x, width * .4),
+            attention=attention,
+            blocked=blocked or interaction.search_active, held_pose=(x, width * .4),
             committed=interaction.focus_record,
             inspecting=interaction.inspection_record, presentation=presentation,
         )
+        if interaction.searching:
+            # SearchTask chooses investigations; free appetite cannot steer its look.
+            goal = None
+        record = interaction.memory_id
+        if interaction.approaching and record is not None:
+            evidence = awareness.target_evidence(
+                record, radius=width * BALANCE.number(
+                    "object_behavior", "memory_place_widths",
+                ),
+            )
+            known = awareness.memory.get(record)
+            if (evidence == "unseen" and attention.mode == "object"
+                    and known is not None and known.resting
+                    and attention.sees(known.x, known.height)
+                    and not awareness.checking_notice):
+                # End a lost target association without discovering its neighbour
+                # or claiming that a remembered learned place is already missing.
+                if not known.recognized:
+                    awareness.memory.forget(record)
+                self.unreachable(now=now)
+                goal = None
+            if evidence == "forgotten" or (
+                evidence == "unresolved" and known is not None and not known.recognized
+            ):
+                awareness.memory.forget(record)
+                self.unreachable(now=now)
+                goal = None
+            elif evidence == "unresolved" and interaction.phase == "approach":
+                # Release the action so the local unknown can be inspected.
+                # Association loss alone establishes no missing learned portion.
+                self.unreachable(now=now)
+                goal = None
         can_react = (not self._state.sleeping and not facts.game_open
+                     and attention.mode != "unavailable"
                      and not facts.controls_active and not facts.user_action_pending
                      and not facts.playback_busy)
-        for absent in awareness.absences if can_react else ():
+        pending = sorted(awareness.absences, key=lambda item: not item.recognized)
+        absence_gaze = None
+        for absent in pending if can_react else ():
+            previous = interaction.phase
             if interaction.notice_absence(absent):
                 awareness.acknowledge_absence(absent.token)
-                return BehaviorObservation(
-                    goal, blocked, GazeTarget(absent.x, absent.height), True, False,
-                )
+                if previous != interaction.phase:
+                    absence_gaze = GazeTarget(absent.x, absent.height)
+        if absence_gaze is not None:
+            return BehaviorObservation(goal, blocked, absence_gaze, True, False)
         observed = {item.token for item in awareness.observations}
         visible = [item for item in awareness.memory.snapshot()
                    if not item.assessed and item.token in observed]
@@ -120,14 +197,23 @@ class ObjectBehaviorCoordinator:
         target = gaze or goal or (
             min(visible, key=lambda item: abs(item.x - x)) if visible else None
         )
+        gaze_target = (GazeTarget(target.x, target.height)
+                       if target is not None else None)
+        if ((focus is None and (awareness.checking_absence or awareness.absences))
+                or gaze_target is None and awareness.checking_notice):
+            # Complete the current look before a new find can turn it away.
+            gaze_target = GazeTarget(
+                attention.origin[0] + attention.direction[0] * attention.width,
+                attention.origin[1] + attention.direction[1] * attention.width,
+            ) if attention.direction is not None else None
         return BehaviorObservation(
-            goal, blocked,
-            GazeTarget(target.x, target.height) if target is not None else None,
+            goal, blocked, gaze_target,
             False, not (awareness.checking_absence or awareness.absences),
         )
 
     def advance(
         self, goal: ObjectGoal | None, *, blocked: bool,
+        search_position: SearchPosition | None = None,
     ) -> Hold | Approach | SearchMotion:
         """Continue after native offer observation, preserving same-tick effects."""
         interaction = self._interaction
@@ -140,7 +226,7 @@ class ObjectBehaviorCoordinator:
             )
             # Even a synchronous return acknowledgement holds for this tick.
             return Hold()
-        search = self.advance_search(goal, blocked=blocked)
+        search = self.advance_search(blocked=blocked, position=search_position)
         if search is not None:
             return search
         if interaction.phase == "found":
@@ -155,6 +241,9 @@ class ObjectBehaviorCoordinator:
                 interaction.interrupt(lambda: None)
             return Hold()
         known = self._awareness.memory.get(goal.token)
+        if (known is not None and not known.recognized
+                and self._awareness.instance_for_record(goal.token) is None):
+            return Hold()
         if not interaction.active and known is not None and not known.resting:
             # A passive held wish waits for observed ground contact.
             return Hold()
@@ -169,7 +258,10 @@ class ObjectBehaviorCoordinator:
     def unreachable(self, *, now: float) -> None:
         """The native adapter could not find a reachable standing position."""
         self._awareness.intentions.cancel(now)
-        self._interaction.interrupt(lambda: None)
+        if self._interaction.search_active:
+            self._interaction.abandon_candidate()
+        else:
+            self._interaction.interrupt(lambda: None)
 
     def decide(self, token: str, context: ObjectUseContext) -> ObjectUseDecision:
         goal = self._awareness.intentions.goal
@@ -227,28 +319,47 @@ class ObjectBehaviorCoordinator:
         return object_state == ObjectState.RESTING and reachable
 
     def advance_search(
-        self, goal: ObjectGoal | None, *, blocked: bool,
-    ) -> SearchMotion | None:
-        """Return a search instruction, or let the remaining update continue.
-
-        A suitable replacement precedes general blocking, as in the existing
-        flow. Cancellation effects use the interaction's normal completion port;
-        no separate goal, memory, clock or presentation state is introduced.
-        """
+        self, *, blocked: bool,
+        position: SearchPosition | None = None,
+    ) -> SearchMotion | Hold | None:
+        """Keep the search subject until verified reunion or actual route end."""
         interaction = self._interaction
         if not interaction.searching:
             return None
-        known = self._awareness.memory.get(goal.token) if goal is not None else None
-        if (goal is not None and goal.token != interaction.memory_id
-                and known is not None
-                and (goal.purpose == "investigate" and not known.recognized
-                     or decide_object_use(known, self._state).consume)):
-            interaction.found(goal)
-        elif blocked:
-            interaction.interrupt(lambda: None)
-        else:
-            progress = interaction.search_progress
-            return SearchMotion(interaction.search_x, progress)
-        # Found feedback may complete synchronously. Continue the same desktop
-        # update so its existing found/approach/blocking gates see the new state.
-        return None
+        if not interaction.search_ready:
+            return Hold()
+        for known in self._awareness.memory.snapshot():
+            if (known.place_status == "remembered"
+                    and interaction.found(known.token)):
+                return Hold()
+        if blocked:
+            return Hold()
+        if self._awareness.checking_absence or self._awareness.checking_notice:
+            return Hold()
+        candidates = [item for item in self._awareness.memory.snapshot()
+                      if not item.recognized and item.resting
+                      and item.place_status == "remembered"
+                      and interaction.can_investigate(item.token)
+                      and any(seen.token == item.token
+                              for seen in self._awareness.observations)]
+        if candidates:
+            candidate = min(candidates, key=lambda item: (
+                abs(item.x - position.x) if position is not None else item.x,
+                item.token,
+            ))
+            investigation = ObjectGoal(
+                candidate.token, None, None, candidate.x, candidate.height,
+                candidate.observed_at, "investigate",
+            )
+            self._awareness.intentions.adopt(investigation)
+            interaction.begin_goal(investigation)
+            return Hold()
+        center = (interaction.search_destination(position)
+                  if position is not None else None)
+        if not self._awareness.checking_absence:
+            interaction.complete_search()
+        if not interaction.searching:
+            return Hold()
+        if center is None:
+            return Hold()
+        return SearchMotion(center, interaction.search_progress)

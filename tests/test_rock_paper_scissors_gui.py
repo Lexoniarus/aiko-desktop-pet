@@ -241,6 +241,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertIn(current[0], ("waving-greeting", "waiting"))
         self.pet._hover.close_game()
         self.assertFalse(visual._game_mode)
+        self.assertLessEqual(self.pet._action_playback.until, time.monotonic())
         self.assertIsNotNone(
             self.pet._visual.gaze_direction((99999, 99999), game_mode=visual.game_mode)
         )

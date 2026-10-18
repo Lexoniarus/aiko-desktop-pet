@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from ..application.object_feedback import InteractionPhase
 from ..application.object_status import ObjectStatusSnapshot
 
 if TYPE_CHECKING:
@@ -30,7 +31,16 @@ class WorldRuntimeAccess:
     def focused(self) -> bool:
         runtime = self._runtime
         return (runtime is not None
-                and runtime.interaction.focus_record is not None)
+                and (runtime.interaction.focus_record is not None
+                     or runtime.interaction.searching))
+
+    def phase(self) -> InteractionPhase:
+        """Read the live episode; before World assembly there is no action."""
+        return self._runtime.interaction.phase if self._runtime is not None else "idle"
+
+    def following_cursor(self) -> bool:
+        """Read the existing visual lock, without retaining another cursor state."""
+        return self._runtime is not None and self._runtime.awareness.following_cursor
 
     def object_status(self) -> ObjectStatusSnapshot:
         """Expose detached diagnostics through the existing late-binding port."""

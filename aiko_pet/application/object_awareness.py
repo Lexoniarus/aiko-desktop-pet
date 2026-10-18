@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import math
 from dataclasses import replace
+from typing import Literal
 
 from ..pet.balance import BALANCE
 from ..pet.mind.object_absence import ObjectAbsencePerception
+from ..pet.mind.object_attention import ObjectAttention
 from ..pet.mind.object_decisions import ObjectUseDecision
 from ..pet.mind.object_intentions import ObjectGoal, ObjectIntentions
 from ..pet.mind.object_knowledge import ObjectKnowledge, ObjectMemorySnapshot
@@ -20,6 +22,8 @@ from ..pet.mind.object_perception import (
 from ..pet.state import PetState
 from ..world.contracts import ObjectInteraction, ObjectState, WorldSnapshot
 from .object_tracking import ObjectTracker
+
+TargetEvidence = Literal["observed", "unresolved", "unseen", "forgotten"]
 
 
 def held_type_conflicts_with_memory(
@@ -55,6 +59,7 @@ class ObjectAwareness:
         self.memory = ObjectMemory(saved)
         self.intentions = ObjectIntentions()
         self.observations: tuple[ObjectObservation, ...] = ()
+        self.checking_notice = False
         self._world_revision = -1
         self._tracker = ObjectTracker(maximum_gap=BALANCE.number(
             "object_behavior", "tracking_gap_seconds",
@@ -86,11 +91,42 @@ class ObjectAwareness:
         record = self.record_for_instance(instance)
         return self.memory.get(record) if record is not None else None
 
-    def follow_taken(self, instance: str, record: str) -> bool:
+    def target_evidence(self, record: str, *, radius: float) -> TargetEvidence:
+        """Separate executable association from knowledge and local occupancy.
+
+        Pending candidates cannot establish loss or ambiguity. Only completed
+        subjective observations can show that this place now has other records.
+        """
+        known = self.memory.get(record)
+        if known is None:
+            return "forgotten"
+        if self.instance_for_record(record) is not None:
+            return "observed"
+        if any(math.hypot(seen.x - known.x, seen.height - known.height) <= radius
+               for seen in self.observations):
+            return "unresolved"
+        return "unseen"
+
+    @property
+    def following_cursor(self) -> bool:
+        return self._tracker.following_instance is not None
+
+    def follow_taken(
+        self, instance: str, record: str, *, now: float, attention: ObjectAttention,
+        committed: str | None = None,
+    ) -> bool:
         """Only an actual observed acquisition can extend visual continuity."""
-        return (self.record_for_instance(instance) == record
-                and any(seen.token == record for seen in self.observations)
-                and self._tracker.follow_taken(instance))
+        known = self.memory.get(record)
+        if (attention.mode == "object" and record != committed
+                or known is None or not attention.sees(known.x, known.height)
+                or self.record_for_instance(instance) != record
+                or not any(seen.token == record for seen in self.observations)
+                or not self._tracker.follow_taken(instance)):
+            return False
+        # The witnessed take is already custody evidence. Do not wait for a
+        # held-frame sample: a whole cursor gesture can occur between ticks.
+        self.memory.note_acquired(record, now=now)
+        return True
 
     def assess_offer(self, token: str, state: PetState) -> ObjectUseDecision | None:
         """Use learned identity only with current subjective visibility."""
@@ -149,52 +185,69 @@ class ObjectAwareness:
             ))
         return candidates, own_actions, held
 
+    def _focused_candidates(
+        self, candidates: tuple[ObjectCandidate, ...], *, committed: str | None,
+        own_actions: dict[str, str],
+    ) -> tuple[ObjectCandidate, ...]:
+        """A focused place is a target check, not permission to discover neighbours."""
+        subject = self.memory.get(committed) if committed is not None else None
+        result = []
+        for item in candidates:
+            if item.token in own_actions and not item.resting:
+                result.append(item)
+                continue
+            if subject is None:
+                continue
+            at_place = subject.at_place(x=item.x, height=item.height,
+                                        resting=item.resting)
+            bound = self._world_records.get(item.token) == committed
+            if (bound and (not subject.resting or not item.resting or at_place)
+                    or subject.instance_id == item.token and at_place):
+                result.append(item)
+        return tuple(result)
+
     def update(
         self, world: WorldSnapshot, state: PetState, *, now: float,
-        x: float, height: float, width: float, attentive: bool, blocked: bool,
+        x: float, height: float, width: float,
+        attention: ObjectAttention, blocked: bool,
         held_pose: tuple[float, float] | None = None,
         committed: str | None = None,
         presentation: tuple[str, ItemPresentation] | None = None,
         inspecting: str | None = None,
     ) -> ObjectGoal | None:
-        focused_instance = (self.instance_for_record(committed)
-                            if committed is not None else None)
-        focused_memory = self.memory.get(committed) if committed is not None else None
         candidates, own_actions, held = self._collect_candidates(
             world, held_pose=held_pose, presentation=presentation,
             inspecting=inspecting,
         )
-        # Occupancy can disprove emptiness without noticing an unrelated subject.
-        occupants = tuple(item for item in candidates if attentive and math.hypot(
-            item.x - x, item.height - height,
-        ) <= width * BALANCE.number("object_behavior", "notice_widths"))
-        if committed is not None:
-            # Filter before tracking, recognition and stock reconciliation.
-            candidates = [item for item in candidates if (
-                item.token == focused_instance
-                or own_actions.get(item.token) == committed
-                or focused_instance is None and focused_memory is not None
-                and math.hypot(item.x - focused_memory.x,
-                               item.height - focused_memory.height)
-                <= width * BALANCE.number("object_behavior", "memory_place_widths")
-            )]
+        # The same scope admits positive and negative environmental evidence.
+        occupants = tuple(item for item in candidates
+                          if attention.sees(item.x, item.height))
         following = self._tracker.following_instance
-        visible = tuple(item for item in candidates if attentive and (
-            item.token == following or math.hypot(item.x - x, item.height - height)
-            <= width * BALANCE.number("object_behavior", "notice_widths")
+        following_subject = (following is not None and committed is not None
+                             and self._world_records.get(following) == committed)
+        visible = tuple(item for item in candidates if (
+            attention.sees(item.x, item.height)
+            or attention.mode != "unavailable" and item.token in own_actions
+            and (not item.resting or own_actions[item.token] == committed)
+            or item.token == following and (attention.mode == "cursor"
+                                            or attention.mode == "object"
+                                            and following_subject)
         ))
+        if attention.mode == "object":
+            visible = self._focused_candidates(visible, committed=committed,
+                                                own_actions=own_actions)
         tracked = self._tracker.update(
             visible, now=now, maximum_distance=width * BALANCE.number(
                 "object_behavior", "tracking_jump_widths",
             ),
+            learned=frozenset(item.token for item in visible
+                              if (known := self.memory.learned_instance(item.token))
+                              is not None and known.at_place(
+                                  x=item.x, height=item.height, resting=item.resting,
+                              )),
         )
-        sensed = self.perception.observe(
-            tracked, now=now, x=x, height=height,
-            width=width, attentive=attentive,
-            following=next((item.token for item in tracked
-                            if self._tracker.resolve(item.token)
-                            == self._tracker.following_instance), None),
-        )
+        sensed = self.perception.observe(tracked, now=now)
+        self.checking_notice = len(sensed) < len(tracked)
         previous = {(item.token, item.identity, item.x, item.height, item.resting,
                      item.assessed, item.disposition, item.place_status)
                     for item in self.memory.snapshot()}
@@ -218,12 +271,13 @@ class ObjectAwareness:
                 preserve_record=old is not None and (
                     old == committed or instance == following
                 ),
+                instance_id=instance,
             )
             claimed.add(record)
             records[seen.token] = record
             if instance is not None:
                 world_records[instance] = record
-                if seen.resting:
+                if seen.resting and record != committed:
                     held.pop(instance, None)
             observations.append(replace(seen, token=record))
             if instance is not None:
@@ -236,10 +290,22 @@ class ObjectAwareness:
         self._sighting_records, self._world_records = records, world_records
         self._owned_records = held
         self.observations = tuple(observations)
+        previous_tokens = {entry[0] for entry in previous}
+        self.memory.retire_ambiguous_sightings(
+            self.observations, maximum_distance=width * BALANCE.number(
+                "object_behavior", "memory_place_widths",
+            ),
+            new_records=frozenset(seen.token for seen in self.observations
+                                  if seen.token not in previous_tokens),
+        )
+        places = tuple(item for item in self.memory.snapshot()
+                       if attention.mode != "object" or item.token == committed)
         for record in self._absence.observe(
-            self.memory.snapshot(), occupants, now=now, x=x, height=height,
-            width=width, attentive=attentive, ground_bounds=(0, world.surface.width),
-            focused=committed,
+            places, occupants, now=now, attention=attention,
+            ground_bounds=(0, world.surface.width),
+            identified={instance: known for instance, record in world_records.items()
+                        if (known := self.memory.get(record)) is not None
+                        and known.recognized},
         ):
             known = self.memory.get(record)
             self.memory.mark_missing(record)
@@ -253,6 +319,10 @@ class ObjectAwareness:
                    for item in self.memory.snapshot()}
         changed = previous != current or self._world_revision != world.revision
         self._world_revision = world.revision
+        if committed is None and (self.checking_absence or self.absences):
+            # Finish the current visible place evidence before any free wish,
+            # including a continuing offer wish. Keep the wish owner intact.
+            return None
         return self.intentions.choose(self.memory.snapshot(), state, x=x,
                                       now=now, blocked=blocked or self.checking_absence
                                       or bool(self.absences), changed=changed,

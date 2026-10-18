@@ -79,7 +79,7 @@ class ObjectInteractionTests(unittest.TestCase):
             record_for_instance=lambda token: token,
             decide=lambda _token, _origin: self.decision,
             feedback=feedback, cancel_feedback=cancel_feedback, now=lambda: self.stamp,
-            inspection_seconds=0, search_seconds=2,
+            inspection_seconds=0,
         )
 
     def start_investigation(self):
@@ -466,6 +466,48 @@ class ObjectInteractionTests(unittest.TestCase):
         self.assertEqual(self.done, [])
         self.acknowledge()
         self.assertEqual(self.done, [(self.item.instance_id, False)])
+        self.assertEqual(self.consumed, [])
+
+    def test_pending_preinspection_loss_waits_for_readable_recognition(self):
+        self.memory.update((ObjectObservation(
+            "missing", "energy_drink", "drink", 200, 0, True, 0,
+        ),), now=0)
+        missing = self.memory.get("missing")
+        learned = self.memory.get(self.item.instance_id)
+        assert missing is not None and learned is not None
+        # This immutable loss was confirmed at the old empty place, before the
+        # hand action, but reaction was deferred. No environment is seen in hand.
+        self.world.move_resting(self.item.instance_id, 300, expected_revision=0)
+        self.memory.mark_missing(learned.token)
+        self.delay_feedback = True
+        self.coordinator.notice_absence(missing)
+        self.acknowledge()
+        self.acknowledge()
+        self.start_investigation()
+        self.acknowledge()
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
+        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "recognize")
+        receipt = self.coordinator.feedback_key
+        self.assertTrue(self.coordinator.notice_absence(learned))
+        self.coordinator.update()
+        self.assertEqual(self.coordinator.feedback_key, receipt)
+        self.assertNotIn("object_found", [cue.event for cue in self.cues])
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "found")
+        self.assertEqual(self.cues[-1].record_id, self.item.instance_id)
+        self.assertEqual([cue.event for cue in self.cues].count("object_found"), 1)
+        self.assertEqual(self.consumed, [])
+        self.assertEqual(self.world.get(self.item.instance_id).state,
+                         ObjectState.PET_HELD)
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "put_down")
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 2, ("detach_object",)))
+        self.coordinator.receive(PlaybackEvent(2, "put_down", 0, finished=True))
+        self.acknowledge()
+        self.assertEqual(self.coordinator.phase, "search")
+        self.assertEqual(self.coordinator.memory_id, "missing")
         self.assertEqual(self.consumed, [])
 
     def test_cancelled_inspection_recovers_custody_and_ignores_stale_receipt(self):

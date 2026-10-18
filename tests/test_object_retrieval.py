@@ -6,6 +6,10 @@ from dataclasses import replace
 from aiko_pet.application.object_awareness import held_type_conflicts_with_memory
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
+from aiko_pet.infrastructure.object_memory_codec import (
+    decode_object_memory,
+    encode_object_memory,
+)
 from aiko_pet.pet.animation.character import PlaybackEvent
 from aiko_pet.pet.consumption import ConsumptionOrigin
 from aiko_pet.pet.mind.object_decisions import ObjectUseContext, decide_object_use
@@ -26,33 +30,6 @@ from tools.pet_test_support import set_test_pet_values
 
 
 class ObjectRetrievalTests(unittest.TestCase):
-    def test_early_absence_waits_for_receipt_then_uses_one_search_budget(self):
-        goal = ObjectIntentions().choose(self.memory.snapshot(), self.pet, x=0, now=0)
-        assert goal is not None
-        self.coordinator.begin_goal(goal)
-        known = self.memory.get(self.item.instance_id)
-        assert known is not None
-        self.memory.mark_missing(known.token)
-        previous = self.cues[-1]
-        self.assertTrue(self.coordinator.notice_absence(known))
-        self.assertEqual(self.coordinator.phase, "notice_absence")
-        self.assertEqual(self.cues[-1].event, "object_place_missing")
-        self.assertFalse(self.coordinator.notice_absence(known))
-        self.coordinator.receive_feedback(FeedbackReceipt(previous.key, True))
-        self.coordinator.update()
-        self.assertEqual(self.coordinator.phase, "notice_absence")
-        self.stamp = 3
-        self.acknowledge()
-        self.assertEqual(self.coordinator.phase, "search")
-        self.stamp = 4.9
-        self.acknowledge()
-        self.assertEqual(self.coordinator.phase, "search")
-        self.stamp = 5.1
-        self.coordinator.update()
-        self.assertEqual(self.coordinator.phase, "missing")
-        self.acknowledge()
-        self.assertEqual(self.done, [(known.token, False)])
-
     def take_unknown_drink(self):
         self.item = self.world.place_resting("energy_drink", 100, ObjectFootprint(8, 8))
         self.memory.restore_snapshot(())
@@ -168,8 +145,6 @@ class ObjectRetrievalTests(unittest.TestCase):
                              frozenset((ObjectInteraction.EAT,))),
             ObjectDefinition("energy_drink", "energy_drink", None,
                              frozenset((ObjectInteraction.DRINK,))),
-            ObjectDefinition("cookie", "cookie", "cookie",
-                             frozenset((ObjectInteraction.EAT,))),
         ))
         self.item = self.world.place_resting("apple", 100, ObjectFootprint(8, 8))
         self.memory = ObjectMemory()
@@ -210,7 +185,7 @@ class ObjectRetrievalTests(unittest.TestCase):
             decide=lambda token, origin: decide_object_use(
                 self.memory.get(token), self.pet, origin,
             ), feedback=self.cues.append, cancel_feedback=lambda: None,
-            now=lambda: self.stamp, inspection_seconds=1, search_seconds=2,
+            now=lambda: self.stamp, inspection_seconds=1,
         )
 
     def acknowledge(self):
@@ -232,61 +207,6 @@ class ObjectRetrievalTests(unittest.TestCase):
 
     def finish_pickup(self):
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
-
-    def _replace_recalled_portion(self, food_id: str) -> str:
-        """A different portion can occupy the same remembered local place."""
-        former = self.world.get(self.item.instance_id)
-        self.world.remove(former.instance_id, expected_revision=former.revision)
-        replacement = self.world.place_resting(
-            food_id, 100, ObjectFootprint(8, 8),
-        )
-        # The subjective record is still the old place; runtime perception
-        # resolves the new concrete portion only at the time of collection.
-        self.coordinator._resolve_instance = lambda _record: replacement.instance_id
-        return replacement.instance_id
-
-    def test_recalled_apple_replaced_by_another_apple_is_valid_stock(self):
-        self.coordinator.begin_goal(ObjectGoal(
-            self.item.instance_id, "apple", "food", 100, 0, 0, "consume",
-        ))
-        self.acknowledge()
-        new_id = self._replace_recalled_portion("apple")
-        self.coordinator.arrive()
-        self.grasp()
-        self.finish_pickup()
-        self.assertEqual(self.coordinator.phase, "eat")
-        self.assertEqual(self.world.get(new_id).state, ObjectState.CONSUMED)
-        self.assertNotIn("object_inspect", [cue.event for cue in self.cues])
-
-    def test_recalled_apple_replaced_by_cookie_requires_hand_inspection(self):
-        self.coordinator.begin_goal(ObjectGoal(
-            self.item.instance_id, "apple", "food", 100, 0, 0, "consume",
-        ))
-        self.acknowledge()
-        new_id = self._replace_recalled_portion("cookie")
-        self.coordinator.arrive()
-        self.grasp()
-        self.finish_pickup()
-        self.assertEqual(self.world.get(new_id).state, ObjectState.PET_HELD)
-        self.assertEqual(self.coordinator.phase, "inspect")
-        self.assertEqual(self.cues[-1].event, "object_inspect")
-        self.assertIsNone(self.cues[-1].identity)
-        self.assertEqual(self.consumed, [])
-        # Identification is an actual later hand observation, not knowledge
-        # borrowed from the position or the hidden replacement definition.
-        self.memory.update((ObjectObservation(
-            self.item.instance_id, "cookie", "food", 100, 80, False, 1,
-        ),), now=1)
-        self.stamp = 1.2
-        self.acknowledge()
-        self.assertEqual(self.coordinator.phase, "recognize")
-        self.assertEqual(self.cues[-1].identity, "cookie")
-        self.acknowledge()
-        self.assertEqual(self.coordinator.phase, "decide")
-        self.assertEqual(self.consumed, [])
-        self.acknowledge()
-        self.assertEqual(self.coordinator.phase, "eat")
-        self.assertEqual(self.world.get(new_id).state, ObjectState.CONSUMED)
 
     def test_remembered_food_skips_inquiry_but_waits_for_full_consumption_clip(self):
         self.begin_retrieval()
@@ -375,16 +295,6 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
         self.assertEqual(self.coordinator.phase, "eat")
         self.assertNotIn("object_recognized", [cue.event for cue in self.cues])
-
-    def test_actual_target_loss_releases_focus_to_bounded_subjective_search(self):
-        self.begin_retrieval()
-        self.world.take_resting(self.item.instance_id, expected_revision=0)
-        self.coordinator.target_taken(self.item.instance_id)
-        self.coordinator.observe_target_state(None)
-        self.assertEqual(self.coordinator.phase, "search")
-        self.assertIsNone(self.coordinator.focus_record)
-        # Losing visual tracking is not a local observation of an empty place.
-        self.assertEqual(self.memory.snapshot()[0].place_status, "remembered")
 
     def test_drink_recall_matches_energy_and_only_claims_confirmed_deferral(self):
         self.memory.update((replace(self.seen, identity="energy_drink", kind="drink"),),
@@ -475,11 +385,23 @@ class ObjectRetrievalTests(unittest.TestCase):
         self.assertEqual(self.memory.snapshot()[0].disposition, "interrupted")
         self.assertEqual(self.consumed, [])
 
-    def test_conflicting_observation_during_pickup_restores_full_inspection(self):
+    def test_restored_conflicting_knowledge_requires_hand_inspection(self):
+        # The supported codec validates learned identity and references, without
+        # replacing subjective history with the current World's definition.
+        saved = self.memory.export(now=0)
+        saved = replace(saved, entries=(replace(
+            saved.entries[0], identity="energy_drink", kind="drink",
+            instance_id=self.item.instance_id,
+        ),))
+        allocated = self.world.snapshot().next_instance_id
+        restored = decode_object_memory(
+            encode_object_memory(saved, world_next_id=allocated),
+            {"apple": "food", "energy_drink": "drink"},
+            allocated_until=allocated,
+        )
+        self.memory.restore_snapshot(ObjectMemory(restored).snapshot())
         self.begin_retrieval()
         self.grasp()
-        self.memory.update((replace(self.seen, identity="energy_drink", kind="drink",
-                                     resting=False),), now=0)
         self.finish_pickup()
         self.assertEqual(self.coordinator.phase, "inspect")
         self.assertEqual(self.consumed, [])
@@ -549,105 +471,6 @@ class ObjectRetrievalTests(unittest.TestCase):
              item.instance_id, ConsumptionOrigin.AUTONOMOUS),
         ])
         self.assertEqual(resumed, ["game"])
-
-    def test_confirmed_absence_searches_once_and_marks_only_the_checked_place(self):
-        self.coordinator.begin_goal(ObjectGoal(
-            self.item.instance_id, "apple", "food", 100, 0, 0, "consume",
-        ))
-        self.acknowledge()
-        # A valid paired save may omit a terminal instance while memory is stale.
-        self.world.restore_snapshot(replace(self.world.snapshot(), objects=()))
-        self.memory.update((ObjectObservation(
-            self.item.instance_id, "apple", "food", 120, 0, True, 1,
-        ),), now=1)
-        self.coordinator.start_search()
-        self.coordinator.start_search()
-        self.assertEqual(self.coordinator.phase, "search")
-        self.assertEqual(self.coordinator.search_x, 120)
-        self.assertEqual(self.memory.snapshot()[0].place_status, "missing")
-        self.acknowledge()
-        self.stamp = 2.1
-        self.coordinator.update()
-        self.assertEqual(self.coordinator.phase, "missing")
-        self.assertEqual([cue.event for cue in self.cues].count("object_missing"), 1)
-        self.assertEqual(self.memory.snapshot()[0].place_status, "missing")
-        self.acknowledge()
-        self.assertEqual(self.done, [(self.item.instance_id, False)])
-        self.assertEqual(self.consumed, [])
-
-    def test_found_supply_ends_search_and_stale_search_receipt_cannot_restart_it(self):
-        self.coordinator.begin_goal(ObjectGoal(
-            self.item.instance_id, "apple", "food", 100, 0, 0, "consume",
-        ))
-        self.acknowledge()
-        self.coordinator.start_search()
-        old = self.coordinator.feedback_key
-        found = self.world.place_resting("apple", 200, ObjectFootprint(8, 8))
-        self.memory.update((ObjectObservation(
-            found.instance_id, "apple", "food", 200, 0, True, 1,
-        ),), now=1)
-        self.coordinator.found(ObjectGoal(
-            found.instance_id, "apple", "food", 200, 0, 1, "investigate",
-        ))
-        self.assertEqual(self.coordinator.phase, "found")
-        self.assertEqual(self.cues[-1].record_id, found.instance_id)
-        self.coordinator.receive_feedback(FeedbackReceipt(old, True))
-        self.assertEqual(self.coordinator.phase, "found")
-        self.acknowledge()
-        self.assertEqual(self.coordinator.memory_id, found.instance_id)
-        self.assertEqual(self.coordinator.phase, "notice")
-        self.assertEqual(self.done, [])
-
-    def test_new_search_episode_gets_its_own_dwell_and_feedback(self):
-        goal = ObjectGoal(self.item.instance_id, "apple", "food", 100, 0, 0)
-        self.coordinator.begin_goal(goal)
-        self.acknowledge()
-        self.coordinator.start_search()
-        old = self.coordinator.feedback_key
-        self.acknowledge()
-        self.stamp = 1.9
-        self.assertAlmostEqual(self.coordinator.search_progress, .95)
-        self.coordinator.interrupt(lambda: None)
-        self.coordinator.begin_goal(goal)
-        self.acknowledge()
-        self.coordinator.start_search()
-        self.assertNotEqual(self.coordinator.feedback_key.interaction_id,
-                            old.interaction_id)
-        self.assertEqual(self.coordinator.search_progress, 0)
-        self.stamp = 4
-        self.coordinator.receive_feedback(FeedbackReceipt(old, True))
-        self.coordinator.update()
-        self.assertEqual(self.coordinator.phase, "search")
-        self.acknowledge()
-        self.assertEqual(self.coordinator.phase, "missing")
-        self.acknowledge()
-        self.assertEqual(self.done, [(self.item.instance_id, False)] * 2)
-        self.assertEqual(self.consumed, [])
-
-    def test_search_reads_keep_their_last_facts_until_a_fresh_search_begins(self):
-        self.stamp = 10
-        self.coordinator.begin_goal(ObjectGoal(
-            self.item.instance_id, "apple", "food", 100, 0, 0,
-        ))
-        self.acknowledge()
-        self.coordinator.start_search()
-        self.stamp = 11
-        self.coordinator.interrupt(lambda: None)
-        self.assertFalse(self.coordinator.active)
-        self.assertEqual(self.coordinator.search_x, 100)
-        self.assertEqual(self.coordinator.search_progress, .5)
-        found = self.world.place_resting("apple", 240, ObjectFootprint(8, 8))
-        self.memory.update((ObjectObservation(
-            found.instance_id, "apple", "food", 240, 0, True, 11,
-        ),), now=11)
-        self.coordinator.begin_goal(ObjectGoal(
-            found.instance_id, "apple", "food", 240, 0, 11,
-        ))
-        self.assertEqual(self.coordinator.search_x, 240)
-        self.assertEqual(self.coordinator.search_progress, .5)
-        self.acknowledge()
-        self.coordinator.start_search()
-        self.assertEqual(self.coordinator.search_progress, 0)
 
     def test_cancelling_approach_does_not_claim_absence_or_erase_known_stock(self):
         self.coordinator.begin_goal(ObjectGoal(
