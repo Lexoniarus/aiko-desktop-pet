@@ -84,10 +84,13 @@ Unit tests cover shared drag geometry, window isolation, idempotent cleanup,
 option callbacks, seven progress bars, pin and timeout behavior, focus/reopen
 semantics, notification delivery and preservation of saved toolbar location.
 CI must pass the Linux/Xvfb Tk suite, Windows headless checks, Ruff, strict
-Mypy and Pyright. Real Windows smoke testing is still required for DPI,
+Mypy and Pyright. Maintainer-reported desktop acceptance is recorded as passed
+in the [current smoke guide](WORLD_SMOKE_TEST.md#acceptance-status). Repeat
+relevant native checks after changes affecting DPI,
 transparent windows, focus and z-order, multiple displays and taskbar behavior.
 The World feature adds approved pickup resources and an optional save section;
 earlier window consolidation preserved the existing character and save values.
 
-Existing gallery screenshots of settings and status must be refreshed to show
-the new behavior; previously captured screenshots are historical until then.
+Gallery screenshots may show earlier settings/status layouts. Their historical
+illustration scope is stated in the [media gallery](MEDIA_GALLERY.md); the
+maintained behavior contract is this document.

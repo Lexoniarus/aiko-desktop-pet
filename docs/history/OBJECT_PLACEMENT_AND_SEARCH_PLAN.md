@@ -1,5 +1,11 @@
 # Recognized offers, movable supplies and visible object search
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Agreed product behavior: 16 October 2026.
 Code baseline: `e7ebe7e` on `feature/world-foundation`.
 Status: T0 and S1-S15 automated delivery complete. Combined practical acceptance remains pending; the draft PR stays unmerged.
@@ -8,7 +14,7 @@ Rechecked against the same code baseline after the user's own-physics decision.
 This is the complete follow-up plan for recognized cursor offers, moving resting
 portions, impact-dependent settling hops and subjective search/reconciliation.
 It follows
-the [current architecture](ARCHITECTURE.md),
+the [current architecture](../ARCHITECTURE.md),
 [World contracts](WORLD_OBJECT_CONTRACTS.md),
 [persistent memory delivery](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md) and
 [World/dialogue cleanup review](WORLD_DIALOGUE_CLEANUP_REVIEW.md).

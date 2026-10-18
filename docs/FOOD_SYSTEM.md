@@ -111,8 +111,9 @@ Aiko's character size changes.
 The Energy Drink is a *drink choice, not a nutrition entry*: consuming its World
 instance reuses the existing `energy_drink` care rules, restoring up to ten energy
 points without adding satiety, digest reserve or fun. The old standalone
-toolbar button is removed. A full-energy refusal does not play the consumption
-animation. Its future mood-side-effect has deliberately **not yet been
+toolbar button is removed. Menu selection at full energy still starts cursor
+carrying. Refusal is assessed later through valid hand/face evidence; a refused
+drink does not play the consumption animation. Its future mood-side-effect has deliberately **not yet been
 balanced or enabled**; Fun/Mood  rules remain unchanged.
 
 The original full-resolution artwork stays outside GitHub. Offline

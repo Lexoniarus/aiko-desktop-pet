@@ -1,5 +1,11 @@
 # Broader test-layer cleanup
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 ## Scope and evidence
 
 Preserve the working behavior while removing unnecessary whole-application
@@ -74,7 +80,7 @@ Validation: `tests.test_food_gui`, `tests.test_food_rendering` and
 for both changed Python modules. Python 3.11.9/Pillow 11.3.0; native Tk, isolated
 saves, cyclic collection after each test.
 
-Ownership reference: [current architecture](ARCHITECTURE.md).
+Ownership reference: [current architecture](../ARCHITECTURE.md).
 
 Related history: [scoped interaction cleanup](OBJECT_INTERACTION_CLEANUP_PLAN.md)
 and [interaction availability](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).

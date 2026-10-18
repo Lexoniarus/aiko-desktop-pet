@@ -1,5 +1,11 @@
 # Pet domain / UI boundary refactor
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Baseline: `main` at `c5d48d1043b1bbe696b6e5d984f2be79ff9348a7` (including PR #8 food and item overlays).
 
 ## Purpose
@@ -22,7 +28,7 @@ October 15 follow-up: the maintainer explicitly requested bounded closed-time
 progression and scheduled self-care meals **only during that reconstruction**.
 This supersedes the earlier no-offline-progression constraint. Save schema,
 live care effects, friendship rewards, assets and frame timing remain unchanged.
-See [data and saves](DATA_AND_SAVES.md) for resource ownership and time rules.
+See [data and saves](../DATA_AND_SAVES.md) for resource ownership and time rules.
 
 1. No changes to save-file shape, imported PNGs, authored dialogue, food/item selection, game rewards or animation frames.
 2. Retain 16-direction gaze, frame timing, walking pace, taskbar clamping, hover bridging, pinning, click reactions and non-modal settings.
@@ -109,7 +115,7 @@ application and presenter. Pre-care tone/context is captured before mutation;
 acceptance and consumption are not guessed by consumers. Pet/nutrition save
 translation lives in infrastructure, preserving the version-one payload.
 `SessionInputs` and `clip_id` replace ambiguous runtime/state names. See the
-[Python call migration](ARCHITECTURE.md#import-migration); latest-commit
+[Python call migration](../ARCHITECTURE.md#import-migration); latest-commit
 Windows acceptance remains required.
 
 | Phase | Implementation | Verification |

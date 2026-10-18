@@ -1,10 +1,16 @@
 # Test ownership follow-up
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 ## Scope and acceptance
 
 Address the three remaining findings from the review after the
 [broader test-layer cleanup](TEST_LAYER_CLEANUP_PLAN.md). Follow the
-[current architecture](ARCHITECTURE.md): test each owner's contracts directly and
+[current architecture](../ARCHITECTURE.md): test each owner's contracts directly and
 use integration fixtures for the collaboration between owners.
 
 The user reports that desktop acceptance is **passed** for the current working
@@ -88,7 +94,7 @@ normalized.
 
 ### Stage 3 completed
 
-Moved the named-loss test to the [feedback integration](../tests/test_object_feedback_flow.py), in its own
+Moved the named-loss test to the [feedback integration](../../tests/test_object_feedback_flow.py), in its own
 ObjectFeedbackFlowTests fixture. It constructs only the real empty World,
 ObjectMemory, scheduler, Presenter, ReactionPlayer and Coordinator required for
 this collaboration. Constructor ports wire feedback and cancellation from the

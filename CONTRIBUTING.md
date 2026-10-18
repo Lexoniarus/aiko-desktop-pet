@@ -40,6 +40,11 @@ the exact foreign Win32 function names listed in `pyproject.toml` are exempt
 from lowercase function naming. Consult [the workflow](.github/workflows/tests.yml)
 for tool versions and additional quality gates.
 
+For maintained guides, reported desktop acceptance and completed delivery history,
+start at the [documentation index](docs/README.md). Keep one current Unreleased
+changelog section and archive completed plans rather than extending the active
+documentation with superseded task checklists.
+
 ## Design constraints
 
 - **One mutable pet aggregate:** `pet/state.py`. Pure domain policies calculate transitions; `PetState` applies them.

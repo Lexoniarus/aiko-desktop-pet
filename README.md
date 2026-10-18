@@ -133,7 +133,8 @@ python -m unittest discover -s tests -q
 
 GUI tests require a display; on Linux use `xvfb-run -a python -m unittest discover -s tests -q`. [GitHub Actions](https://github.com/Lexoniarus/aiko-desktop-pet/actions/workflows/tests.yml) runs Python 3.11/3.13 under Linux/Xvfb, Windows headless regressions, Ruff, strict Mypy and Pyright. Real Windows window behavior was also checked by the project maintainer during the October 2026 refactor.
 
-See [Contributing](CONTRIBUTING.md), the [current change history](CHANGELOG.md),
+See the [documentation index](docs/README.md), [Contributing](CONTRIBUTING.md),
+the [current change history](CHANGELOG.md),
 [development workflow](docs/GITHUB_WORKFLOW.md), and the historical milestones
 in the change history.
 

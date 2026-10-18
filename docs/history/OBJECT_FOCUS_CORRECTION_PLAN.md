@@ -1,6 +1,12 @@
 # Committed object attention and withholding corrections
 
-Accepted 2026-10-16; baseline `02ae098`. See [architecture](ARCHITECTURE.md)
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
+Accepted 2026-10-16; baseline `02ae098`. See [architecture](../ARCHITECTURE.md)
 and the existing [placement/search plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md).
 
 ## Contract

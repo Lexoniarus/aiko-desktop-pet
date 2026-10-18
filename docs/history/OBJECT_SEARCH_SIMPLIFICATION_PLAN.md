@@ -1,5 +1,11 @@
 # Shared object search and investigation
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Recorded: 18 October 2026. Branch: `feature/world-foundation`.
 Status: stages 1–7 complete and automatically verified. Initial user smoke
 feedback is positive; full manual acceptance open.

@@ -1,5 +1,11 @@
 # Object perception: noticing, identifying and assessing
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Status: implemented and automatically verified; practical acceptance remains open.
 Recorded: 17 October 2026.
 Code baseline: `86c3bce` on `feature/world-foundation`.
@@ -9,7 +15,7 @@ This is the next delivery plan after the implemented
 perception contracts below without discarding observed continuity, subjective
 search, care origin, safe interruption or persistent knowledge. It supersedes
 earlier assumptions that attentive proximity alone permits identification.
-Current implementation ownership is described in [ARCHITECTURE.md](ARCHITECTURE.md).
+Current implementation ownership is described in [ARCHITECTURE.md](../ARCHITECTURE.md).
 The later [World OOP follow-up](OOP_WORLD_FOLLOWUP_PLAN.md) and
 [current World contracts](WORLD_OBJECT_CONTRACTS.md) supersede compulsory
 face presentation before *all* handovers and the original need-gated search

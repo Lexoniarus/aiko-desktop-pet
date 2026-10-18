@@ -1,5 +1,11 @@
 # OOP refactoring: interaction state, behavior ownership and pet encapsulation
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Recorded: 17 October 2026.
 Baseline: `46ef08f` on `feature/world-foundation`.
 Status: stages 1-7 automatically verified.
@@ -7,7 +13,7 @@ Practical native acceptance remains open.
 No merge is authorized.
 
 This is the accepted implementation plan following the OOP review. It extends
-the current [architecture](ARCHITECTURE.md) and preserves the behavior contracts
+the current [architecture](../ARCHITECTURE.md) and preserves the behavior contracts
 in [World object contracts](WORLD_OBJECT_CONTRACTS.md) and the implemented
 [perception correction](OBJECT_PERCEPTION_CORRECTION_PLAN.md).
 The delivery ledger records those original stages as historical delivery

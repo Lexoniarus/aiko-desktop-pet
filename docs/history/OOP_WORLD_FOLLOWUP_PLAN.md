@@ -1,5 +1,11 @@
 # Focused World OOP cleanup — delivery plan
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Recorded: 17 October 2026.
 Baseline: `d12c5a1e5eb9` on `feature/world-foundation`.
 Status: stages P0–P6 automatically verified; final P7 documentation CI pending.
@@ -96,7 +102,7 @@ callbacks to the same DesktopWorldRuntime object rather than copying its state.
 
 No real save, image/animation asset, balance value, authored dialogue or schema
 was altered. The original OOP stages and dated documents remain historical;
-the latest [architecture](ARCHITECTURE.md) and
+the latest [architecture](../ARCHITECTURE.md) and
 [World behavior contract](WORLD_OBJECT_CONTRACTS.md) define current execution.
 A manual Windows visual/input acceptance at 1x and 2x is still required before
 PR #10 can be taken out of Draft; neither automated Tk nor Linux Xvfb tests

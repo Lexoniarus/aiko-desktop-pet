@@ -1,5 +1,11 @@
 # Windows acceptance checklist — pet architecture refactor
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Scope: draft PR #9, `refactor/pet-domain-ui-boundaries`. Record a result
 against the **exact commit SHA** tested; a previous successful screenshot or
 an unrelated CI run is not acceptance for the new branch.

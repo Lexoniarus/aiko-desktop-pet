@@ -1,5 +1,11 @@
 # Object behavior ownership cleanup
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Recorded: 18 October 2026. Baseline: `feature/world-foundation`, `c7958fa`.
 Status: all three stages and the replacement-rule follow-up implemented and fully
 verified. No merge authorized.
@@ -19,8 +25,8 @@ physical custody/reach, exact-place recall, named loss receipts, same-type
 ambiguity, persistence compatibility, and exactly-once consumption. No changes to
 dialogue, durations, balance, saves, native input, or movement ownership.
 
-Follow [CONTRIBUTING](../CONTRIBUTING.md), the [architecture](ARCHITECTURE.md),
-and the [branch workflow](GITHUB_WORKFLOW.md). Keep English technical documents,
+Follow [CONTRIBUTING](../../CONTRIBUTING.md), the [architecture](../ARCHITECTURE.md),
+and the [branch workflow](../GITHUB_WORKFLOW.md). Keep English technical documents,
 identifiers and commits; authored German dialogue stays unchanged.
 
 ## Three implementation stages

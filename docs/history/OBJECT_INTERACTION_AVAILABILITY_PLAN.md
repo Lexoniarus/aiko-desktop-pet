@@ -1,5 +1,11 @@
 # Hover, action availability and contact feedback
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Recorded: 18 October 2026. Baseline: `1086385`, `feature/world-foundation`.
 Status: complete and locally verified. No push or merge performed.
 
@@ -21,7 +27,7 @@ existing owners. Derive availability from them; introduce no second busy flag,
 search lifecycle, persisted field or movement writer. Preserve attention during
 candidate inspection, learned-place orientation, every missing bubble before
 candidate investigation, the corrected replacement rule, and observed relocation.
-Follow [architecture](ARCHITECTURE.md) and [contribution rules](../CONTRIBUTING.md).
+Follow [architecture](../ARCHITECTURE.md) and [contribution rules](../../CONTRIBUTING.md).
 
 ## Delivery stages
 

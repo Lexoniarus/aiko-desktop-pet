@@ -1,8 +1,14 @@
 # Persistent object knowledge and remembered supply retrieval
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Accepted: 16 October 2026. Baseline: `257a176` on `feature/world-foundation`.
 Status: P0–P5 implemented and locally verified; native practical acceptance pending.
-See the [current architecture](ARCHITECTURE.md),
+See the [current architecture](../ARCHITECTURE.md),
 [World contracts](WORLD_OBJECT_CONTRACTS.md) and
 [existing delivery ledger](WORLD_OBJECT_IMPLEMENTATION_PLAN.md).
 

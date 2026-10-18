@@ -1,8 +1,14 @@
 # World and dialogue cleanup review
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Reviewed against the completed dialogue-v2 implementation on
 `feature/world-foundation`, including its previously uncommitted changes.
-See [architecture](ARCHITECTURE.md), [resource/save ownership](DATA_AND_SAVES.md)
+See [architecture](../ARCHITECTURE.md), [resource/save ownership](../DATA_AND_SAVES.md)
 and [practical World checks](WORLD_SMOKE_TEST.md).
 
 ## Responsibilities and data

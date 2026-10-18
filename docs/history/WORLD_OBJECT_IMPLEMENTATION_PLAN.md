@@ -1,5 +1,11 @@
 # World objects, perception and autonomous interaction — implementation plan
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Status: first implementation passed automated regression through `bac23e0`
 (828 tests), but the first user test found incomplete visible behavior.
 The correction steps and practical follow-ups C7/C8 are implemented; regression
@@ -17,7 +23,7 @@ This document records the accepted feature, delivery commits and verification.
 The 16 October follow-up for durable subjective knowledge and direct retrieval of
 known supplies has its own [implementation ledger](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md).
 Native acceptance is separate from automated implementation checks. Keep the
-[current architecture](ARCHITECTURE.md) as the reference for the existing code.
+[current architecture](../ARCHITECTURE.md) as the reference for the existing code.
 The [refactor ledger](PET_ARCHITECTURE_REFACTOR.md) describes the preceding work;
 its exclusions do not prohibit the explicitly planned feature here.
 
@@ -85,7 +91,7 @@ calibrated six source pixels downward during preparation; Onigiri now overlaps
 the finger contacts in all eight poses at 1x/2x. The previous anchors failed all
 16 Tk render assertions. Source PNGs/timings/pivots remain unchanged and the
 complete preparation round-trip matches shipped outputs. See the
-[before/after diagnostic composition](media/world-eating-grip-comparison.png);
+[before/after diagnostic composition](../media/world-eating-grip-comparison.png);
 native acceptance stays open.
 
 Further practical feedback confirmed drink investigation/defer at energy 65,
@@ -490,16 +496,16 @@ explicitly assigned to their implementation stages. No implementation is claimed
 Acceptance: identical portions remain independent. Invalid custody transitions
 are rejected and a consumed instance cannot be acquired again.
 
-Implementation: [World contracts](../aiko_pet/world/contracts.py),
-[World state owner](../aiko_pet/world/state.py) and
-[catalog adapter](../aiko_pet/infrastructure/world_catalog.py).
+Implementation: [World contracts](../../aiko_pet/world/contracts.py),
+[World state owner](../../aiko_pet/world/state.py) and
+[catalog adapter](../../aiko_pet/infrastructure/world_catalog.py).
 The [Stage 2 API boundary](WORLD_OBJECT_CONTRACTS.md#stage-2-implementation-boundary)
 separates recorded custody changes from future application-level eating.
 
 Local evidence, Windows/Python 3.11, 15 October 2026:
 
-- [21 focused World tests](../tests/test_world_state.py) and
-  [catalog tests](../tests/test_world_catalog.py) passed together. Coverage includes
+- [21 focused World tests](../../tests/test_world_state.py) and
+  [catalog tests](../../tests/test_world_catalog.py) passed together. Coverage includes
   independent portions, invalid transitions, single-carrier slots, stale
   revisions, bounds/footprints, immutable historical snapshots, thread ownership
   and canonical catalog identity.
@@ -616,12 +622,12 @@ games, sleep, direct care and existing animations.
 ## Verification and delivery discipline
 
 - Work from the checked current `main` on focused branches, following the
-  [repository workflow](GITHUB_WORKFLOW.md). Preserve unrelated local work.
+  [repository workflow](../GITHUB_WORKFLOW.md). Preserve unrelated local work.
 - Use small cohesive commits. Group stages into reviewable PRs according to the
   actual changes; the stage list does not mandate one PR per stage.
 - Add behavioral tests for the invariants and failures above. Simulated sources
   exercise the real World/decision contracts rather than a parallel fake model.
-- Run required checks from [Contributing](../CONTRIBUTING.md): Ruff, strict Mypy,
+- Run required checks from [Contributing](../../CONTRIBUTING.md): Ruff, strict Mypy,
   Pyright and the relevant/full unit and GUI suites. Preserve Python 3.11/3.13
   and Windows coverage.
 - Validate native mouse handling, movement, transparency/layering, taskbar

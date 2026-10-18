@@ -1,9 +1,15 @@
 # Interaction ownership review cleanup
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Recorded: 18 October 2026. Baseline: `063837a`, `feature/world-foundation`.
 Status: the four scoped cleanups are complete and locally verified. All work stays local; no push or merge authorized.
 
-Follow [architecture](ARCHITECTURE.md), [contribution rules](../CONTRIBUTING.md)
+Follow [architecture](../ARCHITECTURE.md), [contribution rules](../../CONTRIBUTING.md)
 and the completed [interaction availability plan](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).
 Keep historical validation results in that plan unchanged.
 

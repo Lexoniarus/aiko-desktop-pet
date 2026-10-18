@@ -4,65 +4,19 @@ Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tki
 
 The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Imports point directly to the packages that own each responsibility.
 
-The accepted [OOP refactoring plan](OOP_REFACTOR_PLAN.md) records stages 1–7 of
-interaction state, behavior ownership and PetState encapsulation. The later
-[focused World OOP cleanup](OOP_WORLD_FOLLOWUP_PLAN.md) supersedes its historical
-search-appetite rules and documents the smaller post-refactor ownership fixes.
+Current behavior is defined in the [World contract](WORLD_OBJECT_CONTRACTS.md).
+The [documentation index](README.md) separates maintained guides, validation and
+accepted desktop behavior from [completed delivery history](history/README.md).
+Historical plan rules and pending checklists are not an active roadmap.
 
-The [investigation and taskbar search plan](OBJECT_SEARCH_LIFECYCLE_PLAN.md)
-records the newer accepted target lifecycle and complete taskbar search. Its
-delivery ledger distinguishes those changes from the historical local search.
-
-The implemented [perception correction plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md)
-separates noticing, identifying and assessing, deliberate cursor presentation and
-early local absence detection. Its delivery ledger and practical checklist
-distinguish automated verification from user acceptance.
-
-The [observed item continuity correction](OBJECT_CONTINUITY_CORRECTION_PLAN.md)
-separates observation, learned identity and current desire across cursor custody.
-
-The [object focus correction plan](OBJECT_FOCUS_CORRECTION_PLAN.md) records
-committed investigation, observed withholding, resumption and friendship rules.
-
-The accepted [persistent object knowledge plan](OBJECT_MEMORY_IMPLEMENTATION_PLAN.md)
-extends subjective memory and remembered supply retrieval in small delivery steps.
-
-The agreed [offer, placement and search follow-up plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md)
-records delivery of assessed cursor offers, movable portions, reachable
-placement with impact-dependent damped hops, and subjective stock/search
-reconciliation. The implementation below describes these owners; the plan records
-commit evidence and the remaining practical acceptance.
-The follow-up explicitly selects a small owned analytic motion policy over
-Pymunk: pure World calculations, existing active-time scheduling and immutable
-checkpoints, with no additional runtime dependency.
-
-The current [attention and perception plan](ATTENTION_PERCEPTION_SIMPLIFICATION_PLAN.md)
-connects gaze and sensory evidence, and gives fresh visible-place checks priority
-before free curiosity or appetite. Earlier plans remain delivery history.
-
-The [orientation and observed continuity follow-up](OBJECT_ORIENTATION_AND_CONTINUITY_PLAN.md)
-preserves separate learned identity, appraisal, wish, tracking, and search state.
-The behavior coordinator owns one transient immutable `OrientationProgress` value.
-After activity release, restart, or a new ordinary goal, its left/right gaze read
-reaches the visual policy before sensing. Learned-place coverage spans the taskbar;
-unknown discovery retains its ordinary local range. Pending orientation defers
-selection without cancelling the existing wish, and the existing walk driver holds
-movement. Confirmed losses accumulate before individual readable receipts start.
-
-An enclosing `SearchTask` survives candidate approach/inspection, pauses for later
-loss receipts, and retains route progress. Its unknown candidates use the existing
-approach cue rather than an ordinary new-object announcement. `ReactionPlayer`
-owns the live feedback subject and clears it before completion/cancellation
-callbacks; only feedback for an already tracked portion preserves that tracking.
-The existing tracker admits a qualified actual take at its exact learned place,
-including between sensor ticks, without granting a new identity or appetite.
-No extra saved state, scan timer, movement writer, or mutable GUI focus is added.
-
-The [object behavior ownership cleanup](OBJECT_BEHAVIOR_CLEANUP_PLAN.md) retains
-this flow. Activity interruption belongs to the behavior coordinator; progress
-only advances admitted free looks. Observation delegates target-loss checks,
-accepted-loss feedback and gaze selection to named private methods, preserving
-the evidence/receipt order and existing notice timing.
+Object attention, learned identity, appraisal, current wish, tracking and search
+remain distinct. `ObjectBehaviorCoordinator` owns one immutable
+`OrientationProgress`: after focus releases, both learned-place looks complete
+before ordinary new goals. `SearchTask` owns recovery subjects and route progress
+across candidate action episodes; the current patrol phase is a separate fact.
+Required loss bubbles precede investigation. Observed transport preserves acquired
+knowledge without granting identity to unknown sightings. All movement executes
+through the existing WalkDriver and mutable pet aggregate.
 
 ## Dependency overview
 
@@ -122,7 +76,8 @@ smaller application-facing PetReadSnapshot. PetState owns
 the same live aggregate identity. Legacy `restore_values()` remains as a
 compatibility wrapper around explicit checkpoints, not a public field setter.
 Only test-only smoke/scenario helpers manipulate prepared checkpoints for
-isolated test data. Native GUI visual/input acceptance remains pending.
+isolated test data. Current maintainer-reported desktop acceptance is recorded
+in the [smoke guide](WORLD_SMOKE_TEST.md#acceptance-status).
 
 `interact()` returns a language-neutral `CareResult` from `pet/care_result.py`.
 The one care decision owns acceptance, consumption, the chosen food and meal
@@ -442,20 +397,10 @@ Need tuning belongs to the current
 
 ## Historical architecture refactor (October 15, 2026)
 
-The earlier `refactor/pet-domain-ui-boundaries` delivery established these
-boundaries. Its scope excluded World, new emotion values, object detection,
-awareness, cursor fear, autonomous objects and drag-and-drop. Current World
-and dialogue ownership is described in the maintained sections around this
-historical delivery record. Existing behavior,
-assets and save-format invariants remain the acceptance criteria.
-All historical `presentation/`, `personality/` and root-level UI import
-forwarders have been removed. R2 now separates desktop animation intent,
-host observations and concrete Tk frame playback. R5 delegates application
-and animation construction to bounded assemblies, and session lifecycle,
-refresh and save sequencing to `DesktopSessionRuntime`. R6 has consolidated
-typed mood hints, due-meal selection, localized weekday text, legacy mutator
-APIs and import-only tests. Native acceptance belongs to each later feature
-delivery and its smoke-test evidence; automated checks remain commit-specific.
+PR #9 established canonical package ownership and is merged. Its
+[delivery record](history/PET_ARCHITECTURE_REFACTOR.md) and
+[old Windows checklist](history/PET_REFACTOR_WINDOWS_SMOKE.md) are history;
+the maintained World sections below describe the current runtime.
 
 ## World, subjective knowledge and object interaction
 
@@ -492,8 +437,10 @@ ground-place window checks only the selected execution subject, not neighbours.
 Other active interactions and sleep/game states also exclude ambient evidence;
 own held/placed custody stays continuous. A lost execution association releases
 the action without inventing learned absence. See the
-[shared focus plan](SHARED_INTERACTION_FOCUS_PLAN.md).
-Positive candidates and empty remembered places use this same visibility rule;
+[attention contract](WORLD_OBJECT_CONTRACTS.md#attention-noticing-and-identification).
+Ordinary positive candidates use this local field. Deliberate left/right
+orientation additionally covers learned places across the taskbar without remote
+unknown discovery;
 `ObjectPerception` only accumulates notice, inspection and presentation dwell for
 qualified inputs. A cursor take also requires the current attention, sampled before
 resetting the old gaze. A witnessed cursor lock can follow that one portion beyond
@@ -524,8 +471,9 @@ references at exactly remembered places may anchor known tracks through a
 geometric tie, so coincident known portions can complete normal notice dwell.
 Actual sensory gaps still reset tracks, and unknown ties gain no identity.
 
-The interaction's `focus_record` commits the current action to one subject while
-local tracking, recognition and absence sensing continue for other portions.
+The interaction's `focus_record` commits the current action to one subject.
+Unrelated tracking, recognition and absence sensing are excluded during that
+commitment; a witnessed track of the selected subject may continue.
 A successful observed take can lock the existing visible track to the
 cursor-rendered portion through hand motion and settling. Absence or a sensory
 gap discards that lock; a World handle cannot recover it. Recognition during
@@ -580,7 +528,7 @@ candidate action episodes and gathers further confirmed losses. SearchPhase is
 only the current patrol action; generic CuePhase carries absence and reunion
 speech. `search_progress` describes endpoint coverage, including during inspection,
 and is zero outside a task. See
-the [current attention plan](ATTENTION_PERCEPTION_SIMPLIFICATION_PLAN.md).
+the [search contract](WORLD_OBJECT_CONTRACTS.md#one-search-task-explicit-action-phases).
 
 The coordinator preserves that consume purpose: known assessed stock uses recall,
 pickup and full consumption without repeating inspection/recognition/desire cues.
@@ -622,10 +570,11 @@ All confirmed losses receive their own completed bubble before the next search
 candidate is approached. Free walking and search patrol observe
 their forward field; item commitment and other interactions exclude unrelated
 sightings, empty-place evidence and transport, including during focused approach.
-After focus release, visible-place evidence starts fresh. While it is pending,
+After focus release, learned-place orientation and its sensory evidence start
+fresh. Its left/right coverage spans the taskbar. While it is pending,
 the existing look stays fixed and free goals/offers wait, including a continuing
-consumption wish. All confirmed visible losses join the same task before a new
-free investigation; unseen places wait until actually covered. During search,
+consumption wish. All confirmed learned losses join the same task before a new
+free investigation; evidence still requires the admitted look and continuous dwell. During search,
 `advance_search` selects investigations and free appetite does not steer the look.
 `notice_absence` announces `object_place_missing` before ordinary new discovery.
 An unknown confirmed loss is acknowledged and forgotten without patrol. An
@@ -677,7 +626,7 @@ permission controls care button states and their UI callbacks, including stale
 food menus. Pin/settings/details remain
 independent. Explicit lower-level care/game commands retain safe interruption;
 UI actions cannot start a competing activity. See the
-[hover and action availability plan](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).
+[hover and availability contract](WORLD_OBJECT_CONTRACTS.md#hover-controls-and-busy-replies).
 Ambient feedback cannot replace action speech.
 
 `pet/mind/object_withholding.py` calculates immutable active-time episode decisions.
@@ -714,7 +663,7 @@ unrelated consumption waits. Soft motion blocking pauses the task; explicit
 interruption ends it safely. Matching reunion waits through its receipt before
 ordinary approach, while return waiting holds for its original tick. It stores no
 duplicate wish, memory, episode or clock. See the
-[current simplification plan](OBJECT_SEARCH_SIMPLIFICATION_PLAN.md).
+[shared search contract](WORLD_OBJECT_CONTRACTS.md#one-search-task-explicit-action-phases).
 
 `desktop/world_runtime.py` composes the owners, samples host/sensory facts and
 translates application instructions into native movement/gaze. It retains actual
@@ -773,11 +722,10 @@ actions or fabricating observations of recovery positions. Learned facts remain
 separate from current observations/evidence, which start empty on restore.
 World objects are never consumed during existing pet-only closed-time catch-up.
 
-The [World and autonomous object implementation plan](WORLD_OBJECT_IMPLEMENTATION_PLAN.md)
-defines the agreed feature, its state owners, staged checklists and acceptance
-criteria. Its [behavior contracts](WORLD_OBJECT_CONTRACTS.md) define the current
-rules; [the isolated practical checklist](WORLD_SMOKE_TEST.md) tracks native
-acceptance separately from automated checks.
+The [maintained World contract](WORLD_OBJECT_CONTRACTS.md) defines behavior;
+the [isolated smoke guide](WORLD_SMOKE_TEST.md) records reported desktop
+acceptance and repeatable checks. Implementation iterations and superseded
+contracts are kept in [delivery history](history/README.md).
 
 ## Testing and contribution
 
@@ -792,10 +740,7 @@ GitHub Actions checks:
 Native Windows layering, transparent-window and taskbar behavior must also be tested interactively for relevant changes. The October 2026 OOP refactor passed its full automated checks and received maintainer-reported Windows acceptance before [PR #2](https://github.com/Lexoniarus/aiko-desktop-pet/pull/2) merged.
 
 For local commands, source changes and review expectations see
-[CONTRIBUTING.md](../CONTRIBUTING.md). [CHANGELOG](../CHANGELOG.md) summarizes
-historical milestones with fixed Git references. The current branch's
-[refactor ledger](PET_ARCHITECTURE_REFACTOR.md) and
-[Windows acceptance checklist](PET_REFACTOR_WINDOWS_SMOKE.md) remain active.
-
-The [World/dialogue cleanup review](WORLD_DIALOGUE_CLEANUP_REVIEW.md) records
-current responsibilities, removed duplication and commit-specific verification.
+[CONTRIBUTING.md](../CONTRIBUTING.md). The [documentation index](README.md)
+records current local evidence and acceptance; [CHANGELOG](../CHANGELOG.md)
+summarizes unreleased changes and verified milestones. Prior refactor plans and
+review ledgers are [historical records](history/README.md), not active blockers.

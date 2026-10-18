@@ -1,5 +1,11 @@
 # Observed item continuity and knowledge-aware interaction
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 The next agreed, **not yet implemented** correction is the
 [noticing, identification and assessment plan](OBJECT_PERCEPTION_CORRECTION_PLAN.md).
 It records deliberate cursor presentation, first identification in Aiko's hand,

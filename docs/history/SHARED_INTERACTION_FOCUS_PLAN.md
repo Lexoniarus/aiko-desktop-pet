@@ -1,5 +1,11 @@
 # Gemeinsamer Interaktionsfokus — 18. Oktober 2026
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 **Planning follow-up:** The [object orientation and observed continuity
 plan](OBJECT_ORIENTATION_AND_CONTINUITY_PLAN.md) records the implemented follow-up
 and its verification ledger. Live left/right integration and audited cleanup are

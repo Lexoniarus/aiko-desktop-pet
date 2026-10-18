@@ -171,9 +171,10 @@ See [isolated restart testing](WORLD_SMOKE_TEST.md).
 ## Subjective object knowledge
 
 `ObjectMemory` owns learned facts separately from current perception and World
-truth. Recognized identities and assessment survive restart. Confirmed local
-absence marks an unavailable remembered place; associations can resolve presumed
-relocation without proving hidden identity. Only unidentified sightings expire after
+truth. Recognized identities, acquired references and assessment survive restart.
+Confirmed learned-place absence marks unavailable remembered stock. Current
+identified portions reunite through acquired evidence; legacy associations remain
+supported without claiming hidden identity. Only unidentified sightings expire after
 600 active seconds. Saved ages are relative active durations: closed time does
 not age memories, accumulate sensory evidence or produce observations.
 
@@ -187,7 +188,7 @@ a supply for later. Held/falling recovery never invents observed ground position
 
 Restore does not look up a remembered identity or location in current objects.
 Unseen relocation/removal can therefore leave outdated knowledge until fresh
-observation or attentive local search. Actual observations and sensory progress
+observation or deliberate learned-place orientation and search. Actual observations and sensory progress
 start empty; restored knowledge alone cannot claim current visibility.
 
 Older saves without memory start with empty knowledge. A malformed or unsupported
@@ -199,4 +200,4 @@ never recognition evidence. Current bindings, observations and search budgets
 are not serialized. Runtime checkpoints retain exact motion, while durable
 World v1 writes only valid ground targets. Geometry is synchronized before saves,
 including an immediate scale toggle. See the
-[current delivery plan](OBJECT_PLACEMENT_AND_SEARCH_PLAN.md).
+[current custody and persistence contract](WORLD_OBJECT_CONTRACTS.md#custody-physics-consumption-and-persistence).

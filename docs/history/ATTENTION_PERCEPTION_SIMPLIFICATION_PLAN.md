@@ -1,5 +1,11 @@
 # Vereinfachung von Blickrichtung, Aufmerksamkeit und Wahrnehmung
 
+> **Historical record, archived 2026-10-18.** This delivery/review snapshot is
+> completed or superseded and is not an active plan. Its old pending checks,
+> future proposals and push/merge restrictions describe that revision only.
+> Use the [current documentation](../README.md) and
+> [current World rules](../WORLD_OBJECT_CONTRACTS.md) for maintained guidance.
+
 Die spätere [gemeinsame Fokusregel](SHARED_INTERACTION_FOCUS_PLAN.md) ersetzt
 die hier historisch dokumentierte Umgebungsfreigabe während fokussierten
 Hinlaufens und ergänzt Streicheln/Gespräch. Frühere Prüfergebnisse bleiben
@@ -34,12 +40,12 @@ Besitz-, Speicher- und gemeinsame Suchregeln bleiben erhalten.
 
 | Stelle | Aktuelles Verhalten | Geplante Korrektur |
 |---|---|---|
-| [VisualObservation](../aiko_pet/desktop/visual_observation.py) | Objektziel geht vor Cursorblick; Cursoraktivität und Einstellungen bestimmen den passiven Blick. | Bereits entschiedene Aufmerksamkeit darstellen; keine zweite fachliche Zielwahl. |
-| [Animationslaufzeit](../aiko_pet/desktop/animation_runtime.py) | Aktion und Laufen gehen vor passivem Blick. Der passive Blicksektor wird dabei teilweise gar nicht aktualisiert. | Tatsächliche Aktion und Bewegungsrichtung als Eingaben verwenden; keinen alten Sprite-Blicksektor als Wahrnehmungswahrheit lesen. |
-| [ObjectBehavior](../aiko_pet/application/object_behavior.py) | `attentive` hängt überwiegend an Wachzustand/Spiel; `blocked` steuert separat Aktionen und Reaktionen. | Beobachtungsumfang vor der Wahrnehmung aus dem aktuellen Ablauf bestimmen. |
-| [ObjectAwareness](../aiko_pet/application/object_awareness.py) | Umgebung wird hauptsächlich nach Entfernung gefiltert; `committed` erhält die Bindung des Zielobjekts, begrenzt aber das Umfeld nicht. | Nur zulässige Beobachtungen an Tracker, Erkennung und Platzprüfung weitergeben. |
-| [ObjectAbsencePerception](../aiko_pet/pet/mind/object_absence.py) | Eigene Entfernungs-/Aufmerksamkeitsprüfung mit Belegungs- und Zeitnachweisen. | Derselbe Sichtentscheid wie bei positiven Beobachtungen; leere Plätze bleiben eigenständige Belege. |
-| [WorldRuntime](../aiko_pet/desktop/world_runtime.py) | Wahrnehmung erzeugt ein Blickziel; Cursorereignisse können unabhängig davon Transportkontinuität melden. | Cursorereignis und Tick verwenden dieselbe Aufmerksamkeitsregel, bevor eine Beobachtung bestätigt wird. |
+| [VisualObservation](../../aiko_pet/desktop/visual_observation.py) | Objektziel geht vor Cursorblick; Cursoraktivität und Einstellungen bestimmen den passiven Blick. | Bereits entschiedene Aufmerksamkeit darstellen; keine zweite fachliche Zielwahl. |
+| [Animationslaufzeit](../../aiko_pet/desktop/animation_runtime.py) | Aktion und Laufen gehen vor passivem Blick. Der passive Blicksektor wird dabei teilweise gar nicht aktualisiert. | Tatsächliche Aktion und Bewegungsrichtung als Eingaben verwenden; keinen alten Sprite-Blicksektor als Wahrnehmungswahrheit lesen. |
+| [ObjectBehavior](../../aiko_pet/application/object_behavior.py) | `attentive` hängt überwiegend an Wachzustand/Spiel; `blocked` steuert separat Aktionen und Reaktionen. | Beobachtungsumfang vor der Wahrnehmung aus dem aktuellen Ablauf bestimmen. |
+| [ObjectAwareness](../../aiko_pet/application/object_awareness.py) | Umgebung wird hauptsächlich nach Entfernung gefiltert; `committed` erhält die Bindung des Zielobjekts, begrenzt aber das Umfeld nicht. | Nur zulässige Beobachtungen an Tracker, Erkennung und Platzprüfung weitergeben. |
+| [ObjectAbsencePerception](../../aiko_pet/pet/mind/object_absence.py) | Eigene Entfernungs-/Aufmerksamkeitsprüfung mit Belegungs- und Zeitnachweisen. | Derselbe Sichtentscheid wie bei positiven Beobachtungen; leere Plätze bleiben eigenständige Belege. |
+| [WorldRuntime](../../aiko_pet/desktop/world_runtime.py) | Wahrnehmung erzeugt ein Blickziel; Cursorereignisse können unabhängig davon Transportkontinuität melden. | Cursorereignis und Tick verwenden dieselbe Aufmerksamkeitsregel, bevor eine Beobachtung bestätigt wird. |
 
 ## Fachlicher Soll-Vertrag
 
@@ -717,7 +723,7 @@ Fallmatrix für dieselbe Blickpriorität angelegt. Außer R1–R3 entfällt kein
 
 ### Dokumentation und Umfang
 
-[Architektur](ARCHITECTURE.md), [Verhaltensvertrag](WORLD_OBJECT_CONTRACTS.md) und
+[Architektur](../ARCHITECTURE.md), [Verhaltensvertrag](WORLD_OBJECT_CONTRACTS.md) und
 [manuelle Prüfliste](WORLD_SMOKE_TEST.md) beschreiben jetzt die gemeinsame
 Aufmerksamkeitsableitung und Sichtgrenze, fehlende Umweltbelege während Handfokus,
 frische Platzprüfung mit stabilem Blick und Suchpriorität vor Neugier/Appetit.
@@ -960,7 +966,7 @@ Verluste getrennt. `application/object_status.py` liefert nur einen unveränderl
 Read-Snapshot aus den bestehenden Besitzern. Die Ansicht liefert keinerlei neue
 Erkenntnis an Aiko zurück. Historische `superseded`-Zeugen zählen nicht als Bestand;
 gleiche Typen zählen pro Portion. Die genaue Semantik und Darstellung stehen im
-[UI-Vertrag](UI_WINDOW_CONTRACT.md).
+[UI-Vertrag](../UI_WINDOW_CONTRACT.md).
 
 Laune steht als breiter Gesamtbalken über den sechs Einzelanzeigen. Spaß belegt
 den früheren Laune-Platz zwischen Sättigung und Energie, mit eigenem Balken;
