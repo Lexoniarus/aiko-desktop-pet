@@ -331,10 +331,21 @@ class ObjectInteractionTests(unittest.TestCase):
     def test_take_notification_does_not_interrupt_pet_held_custody(self):
         self.start_investigation()
         self.coordinator.receive(PlaybackEvent(1, "pick_up", 3, ("attach_object",)))
-        self.coordinator.receive(PlaybackEvent(1, "pick_up", 7, finished=True))
-        phase = self.coordinator.phase
+        # Attachment precedes clip completion: the phase still admits take
+        # notifications, so custody itself must reject this late notification.
+        self.assertEqual(self.coordinator.phase, "pick_up")
+        self.assertEqual(self.world.get(self.item.instance_id).state,
+                         ObjectState.PET_HELD)
+        episode = self.coordinator.feedback_key
+        world, memory = self.world.snapshot(), self.memory.snapshot()
         self.assertFalse(self.coordinator.target_taken(self.item.instance_id))
-        self.assertEqual(self.coordinator.phase, phase)
+        self.assertEqual(self.coordinator.phase, "pick_up")
+        self.assertEqual(self.coordinator.feedback_key, episode)
+        self.assertEqual(self.world.snapshot(), world)
+        self.assertEqual(self.memory.snapshot(), memory)
+        self.assertEqual(self.actions, ["pick_up"])
+        self.assertEqual(self.consumed, [])
+        self.assertEqual(self.done, [])
 
     def test_observed_return_requires_a_fresh_arrival_after_an_earlier_approach(self):
         self.start_investigation()

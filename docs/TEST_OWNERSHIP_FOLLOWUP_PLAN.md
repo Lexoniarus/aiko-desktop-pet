@@ -22,7 +22,7 @@ passed 143 targeted tests and instrumented the two misleading test fixtures.
 | Stage | Evidence and change | Required protection | Status |
 | --- | --- | --- | --- |
 | 1 | `FoodGuiTests.test_full_energy_rejects_drink_without_eating_animation` only selects a menu item. The observed result is USER_HELD cursor custody, idle interaction and energy 100. Merge its full-energy case into the existing drink-selection test and remove the obsolete refusal claim. | Selection at energy 40 and 100 starts cursor custody without consumption, nutrition, friendship or an eating animation. Actual hand/face refusal remains in the existing World GUI tests. | Complete |
-| 2 | `ObjectInteractionTests.test_take_notification_does_not_interrupt_pet_held_custody` finishes pickup and reaches eat; target_taken returns at its phase guard without reading custody. Stop at the actual attachment event while still in pick_up. | A late take notification cannot steal a PET_HELD item or change its committed episode. Actual World pickup and frame-bound reach checks remain unchanged. | Pending |
+| 2 | `ObjectInteractionTests.test_take_notification_does_not_interrupt_pet_held_custody` finishes pickup and reaches eat; target_taken returns at its phase guard without reading custody. Stop at the actual attachment event while still in pick_up. | A late take notification cannot steal a PET_HELD item or change its committed episode. Actual World pickup and frame-bound reach checks remain unchanged. | Complete |
 | 3 | The named-loss feedback test composes Coordinator, Presenter, ReactionPlayer and catalogue but reuses a grasp fixture and rewrites private callback fields. Move it into a dedicated headless integration module with its own minimal fixture and constructor-injected ports. | All named missing bubbles, readable delays, distinct completion receipts, stale callback protection and search readiness remain asserted. Keep separate behavior/orientation and native timer/input tests. | Pending |
 
 The headless integration must not construct DesktopPet or Tk widgets, prepare an
@@ -71,3 +71,17 @@ and `WorldGuiTests.test_recognized_drink_handover_then_unknown_full_drink_is_exa
 8 tests in 2.850 seconds, no skips; Ruff passes. Actual cursor and hand refusal
 remain covered by their existing physical interaction fixtures. No runtime change.
 
+### Stage 2 completed
+
+The custody test now stops after frame-three attachment, before clip completion.
+It explicitly asserts pick_up and PET_HELD, then rejects the late notification
+without changing phase, feedback key, World, memory, actions or completion.
+It no longer relies on the unrelated eat-phase admission guard.
+
+Validation: object interaction tests, pickup metadata and the native frame-four
+reach recheck: 25 tests in 0.774 seconds, no skips; Ruff passes. An isolated
+process removed only the PET_HELD early return from an in-memory copy of
+`target_taken`: the corrected test then failed as expected, with no test errors.
+The original method was restored; no production source was edited. This confirms
+that the test protects the intended custody guard. Plan EOF whitespace is also
+normalized.
