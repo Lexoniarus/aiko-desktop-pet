@@ -1,7 +1,7 @@
 # Object behavior ownership cleanup
 
 Recorded: 18 October 2026. Baseline: `feature/world-foundation`, `c7958fa`.
-Status: planning recorded; implementation authorized. No merge authorized.
+Status: Stage 1 complete; Stages 2-3 pending. No merge authorized.
 
 ## Purpose and protected behavior
 
@@ -55,8 +55,21 @@ new private method names would merely mirror the refactoring and are not needed.
 | Stage | Status | Commit and evidence |
 | --- | --- | --- |
 | Planning | Recorded | Baseline inspected; worktree clean. Three review findings scoped above. |
-| 1 | Pending | Coordinator-level interruption proof precedes reset removal. |
+| 1 | Complete | `ea93518`; 213 object and four native focus/transport tests pass, plus all static gates. |
 | 2 | Pending | Retain all reachable search contracts. |
 | 3 | Pending | Behavior-preserving extraction and final validation. |
 
 All implementation and verification results will be recorded here after each stage.
+
+### Stage 1 evidence
+
+The new coordinator regression passes on the unchanged baseline before reset
+removal. It interrupts a partly completed right look using foreign activity or a
+real successful take of learned stock, then returns actual cursor custody to the
+floor. Neither interrupted time nor the earlier left look can complete the new
+sequence. Identity persists; no false loss or feedback is emitted. This replaces
+`test_bound_activity_resets_the_check_without_borrowing_its_elapsed_time` at its
+actual lifecycle owner. Progress retains gaze/gap/dwell handling and validation.
+The exported staged tree passes 217 tests in 4.250 seconds, including native
+petting/conversation exclusion and witnessed relocation at 1x/2x. Ruff, strict
+Mypy (187 sources), and Pyright pass. No dialogue, duration, or save changes.
