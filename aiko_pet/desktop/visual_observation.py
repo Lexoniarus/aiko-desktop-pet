@@ -44,7 +44,8 @@ class VisualAttentionPorts:
     phase: Callable[[], InteractionPhase] = lambda: "idle"
     sleeping: Callable[[], bool] = lambda: False
     walking: Callable[[], float] = lambda: 0.0
-    following_cursor: Callable[[], bool] = lambda: False
+    following_subject: Callable[[], str | None] = lambda: None
+    feedback_subject: Callable[[], str | None] = lambda: None
     activity_active: Callable[[], bool] = lambda: False
 
 
@@ -86,6 +87,7 @@ class DesktopVisualObservation:
         """Normalize native geometry once; application policy selects attention."""
         eyes_x, eyes_y = self._eyes()
         width = FRAME_WIDTH * self._settings.scale
+        following = self._attention.following_subject()
 
         def relative(point: tuple[float, float]) -> tuple[float, float]:
             return ((point[0] - eyes_x) / width, (eyes_y - point[1]) / width)
@@ -93,11 +95,13 @@ class DesktopVisualObservation:
         attention = choose_object_attention(
             self._attention.phase(), sleeping=self._attention.sleeping(),
             game_open=game_mode, walking=self._attention.walking(),
-            following_cursor=self._attention.following_cursor(),
+            following_cursor=following is not None,
+            tracking_feedback=(following is not None
+                               and following == self._attention.feedback_subject()),
             activity_active=self._attention.activity_active(),
             cursor=relative(pointer)
             if self._settings.follow_cursor
-            and (pointer_recent or self._attention.following_cursor()) else None,
+            and (pointer_recent or following is not None) else None,
             target=relative(self.object_target) if self.object_target is not None
             else None,
         )

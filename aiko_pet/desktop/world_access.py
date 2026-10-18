@@ -42,6 +42,10 @@ class WorldRuntimeAccess:
         """Read the existing visual lock, without retaining another cursor state."""
         return self._runtime is not None and self._runtime.awareness.following_cursor
 
+    def following_record(self) -> str | None:
+        return (self._runtime.awareness.following_record
+                if self._runtime is not None else None)
+
     def object_status(self) -> ObjectStatusSnapshot:
         """Expose detached diagnostics through the existing late-binding port."""
         return (self._runtime.object_status() if self._runtime is not None

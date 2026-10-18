@@ -41,7 +41,8 @@ class AnimationAssemblyPorts:
     extend_action: Callable[[float], None]
     object_focus: Callable[[], bool] = lambda: False
     object_phase: Callable[[], InteractionPhase] = lambda: "idle"
-    following_cursor: Callable[[], bool] = lambda: False
+    following_subject: Callable[[], str | None] = lambda: None
+    feedback_subject: Callable[[], str | None] = lambda: None
     activity_active: Callable[[], bool] = lambda: False
 
 
@@ -79,7 +80,8 @@ def assemble_animation(
         attention=VisualAttentionPorts(
             phase=ports.object_phase, sleeping=lambda: state.sleeping,
             walking=lambda: walk.movement.remaining_distance,
-            following_cursor=ports.following_cursor,
+            following_subject=ports.following_subject,
+            feedback_subject=ports.feedback_subject,
             activity_active=ports.activity_active,
         ),
     )

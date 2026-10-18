@@ -368,6 +368,49 @@ class WorldGuiTests(unittest.TestCase):
                              (placed.position.x, placed.position.height))
         self.assertEqual(cues, [])
 
+        # A longer held gesture includes this known item's own refusal cue.
+        eyes_x, eyes_y = app._animated.cursor_eye_position
+        current = runtime.world.get(item.instance_id)
+        assert current.position is not None
+        pointer = [int(runtime._track().left + current.position.x),
+                   int(runtime._track().ground_y - current.position.height)]
+        with (
+            patch.object(app.root, "winfo_pointerx", side_effect=lambda: pointer[0]),
+            patch.object(app.root, "winfo_pointery", side_effect=lambda: pointer[1]),
+        ):
+            runtime.begin_relocate(item.instance_id, current.revision)
+            self.assertTrue(runtime.awareness.following_cursor)
+            pointer[:] = [int(eyes_x), int(eyes_y)]
+            for _ in range(10):
+                runtime.now += .2
+                runtime.cursor._move_carry()
+                runtime.update(time.monotonic())
+            self.assertEqual(cues, ["object_refuse"])
+            self.assertEqual(app._reaction_player.subject, record)
+            self.assertTrue(runtime.awareness.following_cursor)
+            self.assertEqual(runtime._attention().mode, "object")
+            pointer[:] = [int(runtime._track().left + runtime._body_x()
+                             + 2 * runtime.width),
+                          int(runtime._track().ground_y - runtime.width)]
+            runtime.cursor.release()
+            for _ in range(80):
+                runtime.world.advance_motion(.1, runtime._motion_parameters)
+                runtime.now += .1
+                runtime.update(time.monotonic())
+                if runtime.world.get(item.instance_id).state == ObjectState.RESTING:
+                    break
+            self.assertEqual(runtime.world.get(item.instance_id).state,
+                             ObjectState.RESTING)
+            self.complete_feedback()
+            for _ in range(3):
+                runtime.now += .2
+                runtime.update(time.monotonic())
+        known = runtime.awareness.memory.get(record)
+        assert known is not None
+        self.assertTrue(known.recognized and known.resting)
+        self.assertEqual(len(runtime.awareness.memory.snapshot()), 1)
+        self.assertEqual(cues, ["object_refuse"])
+
     def test_fast_observed_cursor_relocation_at_scale_one(self):
         self._fast_observed_cursor_relocation(1)
 

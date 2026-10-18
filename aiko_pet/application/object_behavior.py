@@ -26,6 +26,7 @@ def choose_object_attention(
     phase: InteractionPhase, *, sleeping: bool, game_open: bool,
     walking: float, following_cursor: bool = False,
     activity_active: bool = False,
+    tracking_feedback: bool = False,
     cursor: tuple[float, float] | None, target: tuple[float, float] | None,
 ) -> ObjectAttention:
     """Derive attention from the existing action and movement owners only."""
@@ -43,12 +44,13 @@ def choose_object_attention(
         return ObjectAttention("object", subject, focused_place=subject is not None)
     if phase not in ("idle", "search"):
         return ObjectAttention("object", target, focused_place=target is not None)
-    if activity_active:
+    if activity_active and not (following_cursor and tracking_feedback):
         return ObjectAttention("unavailable", None)
+    if following_cursor and cursor is not None:
+        subject = target or cursor
+        return ObjectAttention("object", subject, focused_place=True)
     if walking:
         return ObjectAttention("moving", (1 if walking > 0 else -1, 0))
-    if following_cursor and cursor is not None:
-        return ObjectAttention("cursor", cursor)
     if target is not None:
         return ObjectAttention("survey", target)
     if cursor is not None:
@@ -127,6 +129,9 @@ class ObjectBehaviorCoordinator:
         attention: ObjectAttention,
     ) -> BehaviorObservation:
         interaction, awareness = self._interaction, self._awareness
+        focus = interaction.focus_record
+        if focus is None and attention.mode == "object":
+            focus = awareness.following_record
         blocked = (
             attention.mode == "unavailable"
             or (interaction.active and not interaction.approaching
@@ -140,7 +145,7 @@ class ObjectBehaviorCoordinator:
             snapshot, self._state, now=now, x=x, height=0, width=width,
             attention=attention,
             blocked=blocked or interaction.search_active, held_pose=(x, width * .4),
-            committed=interaction.focus_record,
+            committed=focus,
             inspecting=interaction.inspection_record, presentation=presentation,
         )
         if interaction.searching:
@@ -192,7 +197,6 @@ class ObjectBehaviorCoordinator:
         observed = {item.token for item in awareness.observations}
         visible = [item for item in awareness.memory.snapshot()
                    if not item.assessed and item.token in observed]
-        focus = interaction.focus_record
         gaze = awareness.memory.get(focus) if focus is not None else None
         target = gaze or goal or (
             min(visible, key=lambda item: abs(item.x - x)) if visible else None

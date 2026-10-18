@@ -111,6 +111,11 @@ class ObjectAwareness:
     def following_cursor(self) -> bool:
         return self._tracker.following_instance is not None
 
+    @property
+    def following_record(self) -> str | None:
+        instance = self._tracker.following_instance
+        return self.record_for_instance(instance) if instance is not None else None
+
     def follow_taken(
         self, instance: str, record: str, *, now: float, attention: ObjectAttention,
         committed: str | None = None,

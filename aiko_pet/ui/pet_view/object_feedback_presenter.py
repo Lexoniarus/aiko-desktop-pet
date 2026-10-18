@@ -20,5 +20,6 @@ class ObjectFeedbackPresenter:
         self._player.play(
             format_object_reaction(reaction, cue.identity, self._items),
             animate=False,
+            subject=cue.record_id,
             on_complete=lambda success: completed(FeedbackReceipt(cue.key, success)),
         )

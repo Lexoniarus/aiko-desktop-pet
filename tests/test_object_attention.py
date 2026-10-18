@@ -54,18 +54,23 @@ class ObjectAttentionTests(unittest.TestCase):
             self.assertTrue(pickup.sees(100, 0))
             self.assertFalse(pickup.sees(100 + width, 0))
             self.assertFalse(hand.sees(100, 0))
-        cases: tuple[tuple[InteractionPhase, float, str], ...] = (
-            ("idle", 0, "cursor"), ("inspect", 0, "object"),
-            ("search", 10, "moving"),
-        )
-        for phase, walking, mode in cases:
-            attention = choose_object_attention(
-                phase, sleeping=False, game_open=False, walking=walking,
-                cursor=(3, 1), target=(-3, 0), following_cursor=True,
-            )
-            self.assertEqual(attention.mode, mode)
-            if mode == "cursor":
-                self.assertEqual(attention.direction, (3, 1))
+
+    def test_witnessed_transport_keeps_its_subject_only_during_own_feedback(self):
+        for phase in ("idle", "search"):
+            for feedback_matches in (False, True):
+                attention = choose_object_attention(
+                    phase, sleeping=False, game_open=False, walking=10,
+                    cursor=(3, 1), target=(-3, 0), following_cursor=True,
+                    activity_active=True, tracking_feedback=feedback_matches,
+                )
+                self.assertEqual(attention, ObjectAttention(
+                    "object", (-3, 0), focused_place=True,
+                ) if feedback_matches else ObjectAttention("unavailable", None))
+        self.assertEqual(choose_object_attention(
+            "idle", sleeping=False, game_open=False, walking=0,
+            cursor=(3, 1), target=None, following_cursor=False,
+            activity_active=True, tracking_feedback=True,
+        ), ObjectAttention("unavailable", None))
 
     def test_other_activity_blocks_free_perception_until_complete(self):
         for phase in ("idle", "search"):

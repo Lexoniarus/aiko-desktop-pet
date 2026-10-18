@@ -176,7 +176,8 @@ class DesktopPet:
                 extend_action=self._action_playback.extend,
                 object_focus=self._world_access.focused,
                 object_phase=self._world_access.phase,
-                following_cursor=self._world_access.following_cursor,
+                following_subject=self._world_access.following_record,
+                feedback_subject=lambda: self._reaction_player.subject,
                 activity_active=lambda: (time.monotonic() < self._action_playback.until
                     or self._reaction_player.pending_timer is not None
                     or self._speech.bubble is not None),
@@ -336,9 +337,7 @@ class DesktopPet:
         self._care_view = CarePresenter(CareViewPorts(
             set_item=lambda item: self._animated.set_food_overlay(item),
             cancel_action=self._action_playback.cancel_at,
-            start_action=lambda animation, duration: self._start_action(
-                animation, duration,
-            ),
+            start_action=self._start_action,
             cancel_followup=self._cancel_followup,
             react=lambda reaction, duration: self._react(reaction, duration),
             show_text=lambda text, duration: self._speech.show_text(

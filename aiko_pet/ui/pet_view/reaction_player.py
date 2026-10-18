@@ -41,6 +41,7 @@ class ReactionPlayer:
         self._completion: Callable[[bool], None] | None = None
         self._index = -1
         self._story = False
+        self._subject: str | None = None
 
     @property
     def generation(self) -> int:
@@ -58,6 +59,11 @@ class ReactionPlayer:
     def story_active(self) -> bool:
         return self._story and bool(self._cues)
 
+    @property
+    def subject(self) -> str | None:
+        """The current sequence's subject, cleared with that same lifecycle."""
+        return self._subject
+
     def _invalidate_timer(self) -> None:
         if self._pending_timer is not None:
             self._cancel_timer(self._pending_timer)
@@ -68,6 +74,7 @@ class ReactionPlayer:
         self._invalidate_timer()
         self._cues = ()
         self._story = False
+        self._subject = None
         self._index = -1
         self._hide_speech()
         completion, self._completion = self._completion, None
@@ -81,11 +88,13 @@ class ReactionPlayer:
         *,
         animate: bool = True,
         on_complete: Callable[[bool], None] | None = None,
+        subject: str | None = None,
     ) -> None:
         if reaction is None:
             return
         self.cancel()
         self._completion = on_complete
+        self._subject = subject
         if animate and reaction.animation != "idle":
             self._start_action(reaction.animation, min(2.0, duration_ms / 1600))
         self._cues = reaction.beats
@@ -135,6 +144,7 @@ class ReactionPlayer:
         self._pending_timer = None
         self._cues = ()
         self._story = False
+        self._subject = None
         self._hide_speech()
         completion, self._completion = self._completion, None
         if completion is not None:

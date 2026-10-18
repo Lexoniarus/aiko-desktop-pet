@@ -15,10 +15,11 @@ class WorldRuntimeAccessTests(unittest.TestCase):
         self.assertFalse(access.defer_routine())
         self.assertEqual(access.phase(), "idle")
         self.assertFalse(access.following_cursor())
+        self.assertIsNone(access.following_record())
         episode = SimpleNamespace(
             active=False, focus_record=None, searching=False, phase="idle",
         )
-        awareness = SimpleNamespace(following_cursor=False)
+        awareness = SimpleNamespace(following_cursor=False, following_record=None)
         stub = cast(DesktopWorldRuntime, SimpleNamespace(
             interaction=episode, user_action_pending=False,
             awareness=awareness,
@@ -27,7 +28,9 @@ class WorldRuntimeAccessTests(unittest.TestCase):
         self.assertFalse(access.focused())
         self.assertFalse(access.defer_routine())
         awareness.following_cursor = True
+        awareness.following_record = "memory_1"
         self.assertTrue(access.following_cursor())
+        self.assertEqual(access.following_record(), "memory_1")
         episode.focus_record = "memory_1"
         episode.phase = "inspect"
         self.assertEqual(access.phase(), "inspect")

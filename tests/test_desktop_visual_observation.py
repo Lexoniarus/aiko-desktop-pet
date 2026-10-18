@@ -130,3 +130,21 @@ class DesktopVisualObservationTests(unittest.TestCase):
         active = False
         self.assertEqual(observer.attention((300, 200), pointer_recent=True).mode,
                          "moving")
+
+    def test_only_feedback_for_the_live_tracked_subject_keeps_its_focus(self):
+        followed, feedback = "known", "known"
+        observer = DesktopVisualObservation(
+            settings=self.settings, monitor=self.monitor, eyes=lambda: (100, 200),
+            attention=VisualAttentionPorts(
+                following_subject=lambda: followed, feedback_subject=lambda: feedback,
+                activity_active=lambda: True,
+            ),
+        )
+        self.assertEqual(observer.attention((300, 200), pointer_recent=True).mode,
+                         "object")
+        feedback = "another"
+        self.assertEqual(observer.attention((300, 200), pointer_recent=True).mode,
+                         "unavailable")
+        followed = None
+        self.assertEqual(observer.attention((300, 200), pointer_recent=True).mode,
+                         "unavailable")
