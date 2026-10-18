@@ -41,7 +41,7 @@ still need focused integration coverage.
 
 | Stage | Change | Protection retained | Status |
 | --- | --- | --- | --- |
-| 1 | Move six asset/overlay tests from FoodGuiTests to standalone Tk/AnimatedPet fixtures. | All icon alpha, authored anchors, stacking, scale and timer assertions; four real menu/carry tests stay in FoodGuiTests. Canonical display assets retain their asset tests and direct view-cache coverage. | Pending |
+| 1 | Move six asset/overlay tests from FoodGuiTests to standalone Tk/AnimatedPet fixtures. | All icon alpha, authored anchors, stacking, scale and timer assertions; four real menu/carry tests stay in FoodGuiTests. Canonical display assets retain their asset tests and direct view-cache coverage. | Complete |
 | 2 | Shorten the conversation focus integration scenario using a short test-only reaction with actual Tk timers. | Real care dispatch, silent cue focus, unobserved relocation and missing-first orientation; authored story/sequence semantics retain scheduler tests. | Pending |
 | 3 | Replace two complete edge investigation timer replays with one real-motion right-edge scale-two pickup smoke. | Both-scale/edge geometry matrix, full ordinary native investigation, reach recheck at attachment and frame/release tests remain. | Pending |
 | 4 | Replace duplicated long multi-loss bubble replays with deterministic presenter/player/coordinator coverage and fast physical search integration. | All named missing bubbles and matching receipts before candidate investigation; same-type replacement, multi-relocation, native hover and busy-reply cases remain covered. | Pending |
@@ -60,7 +60,19 @@ full unittest discovery with Pillow, Ruff 0.13.2, strict Mypy 1.18.2, Pyright
 1.1.414, documentation links and Git whitespace. Compare duration on the same
 environment; timing is descriptive, not a flaky test threshold.
 
-Plan recorded before implementation. No tests or runtime code changed yet.
+### Stage 1 completed
+
+Six rendering tests now construct AnimatedPet and WorldView directly on a
+withdrawn Tk root. They no longer construct DesktopPet, a World scene, monitor,
+persistence or toolbar. All original assertions remain, including the shared
+WorldView display-image path. Selecting an overlay is now explicitly a renderer
+operation rather than an apparent application pickup. Four menu/cursor-custody
+tests retain DesktopPet. No production change.
+
+Validation: `tests.test_food_gui`, `tests.test_food_rendering` and
+`tests.test_item_display_assets`: 13 tests, 4.347 seconds, no skips. Ruff passes
+for both changed Python modules. Python 3.11.9/Pillow 11.3.0; native Tk, isolated
+saves, cyclic collection after each test.
 
 Related history: [scoped interaction cleanup](OBJECT_INTERACTION_CLEANUP_PLAN.md)
 and [interaction availability](OBJECT_INTERACTION_AVAILABILITY_PLAN.md).
