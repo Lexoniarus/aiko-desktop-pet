@@ -2328,7 +2328,7 @@
       "id": "low_mood-02",
       "event": "low_mood",
       "moods": [
-        "withdrawn"
+        "irritated"
       ],
       "periods": [],
       "weekdays": [],
@@ -2342,7 +2342,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin gerade stiller als sonst. Das ist eine Laune, kein Programmfehler."
+          "content": "Heute bin ich schneller gereizt als sonst. Bitte versuch nicht, meine Geduld zu testen."
         }
       ],
       "presentation": "short"
@@ -2374,7 +2374,7 @@
       "id": "low_mood-04",
       "event": "low_mood",
       "moods": [
-        "withdrawn"
+        "irritated"
       ],
       "periods": [],
       "weekdays": [],
@@ -2388,7 +2388,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hätte gern eine kleine Pause von allem, was 'sofort reagieren' heißt."
+          "content": "Ich habe gerade keine Lust auf weitere Stupser. Meine Geduld braucht ein bisschen Ruhe."
         }
       ],
       "presentation": "short"
@@ -19005,7 +19005,7 @@
       "event": "return",
       "animation": "idle",
       "moods": [
-        "withdrawn"
+        "irritated"
       ],
       "periods": [],
       "weekdays": [],
@@ -19020,7 +19020,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Da bist du. Ich sortiere noch meine Gedanken und dann melde ich mich."
+          "content": "Da bist du. Ich bin gerade etwas gereizt, also bitte nur langsam mit den Klicks."
         }
       ]
     },
@@ -19584,7 +19584,7 @@
       "event": "return",
       "animation": "idle",
       "moods": [
-        "withdrawn"
+        "irritated"
       ],
       "periods": [],
       "weekdays": [],
@@ -19599,7 +19599,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schön, dass du wieder hier bist. Ich bin gerade nicht in Klicklaune."
+          "content": "Du bist wieder hier. Schön. Ich habe heute nur eine ziemlich kurze Geduldsspanne."
         }
       ]
     },
