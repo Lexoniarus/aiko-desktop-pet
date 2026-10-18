@@ -1,7 +1,7 @@
 # Hover, action availability and contact feedback
 
 Recorded: 18 October 2026. Baseline: `1086385`, `feature/world-foundation`.
-Status: all three implementations complete; final validation in progress. Keep all changes local; no push or merge authorized.
+Status: complete and locally verified. No push or merge performed.
 
 ## Required behavior and ownership
 
@@ -43,7 +43,7 @@ saves and main-thread collection. Do not access or modify the normal save.
 | Plan | Complete | Existing owners, UI callbacks and test gaps reviewed; worktree clean at baseline. |
 | 1 | Complete | 59 targeted tests pass in 10.088 seconds on the exported snapshot; Ruff, strict Mypy (187 sources) and Pyright pass. |
 | 2 | Complete | 79 targeted integration/UI/architecture tests pass in 57.890 seconds; all 6 care UI tests repeated on the final export after a typing-only correction. Ruff, strict Mypy (187 sources) and Pyright pass. |
-| 3 | Implemented; final validation pending | 98 focused coordinator/catalogue/receipt/UI tests pass in 22.926 seconds on Python 3.11.9, including two real-timer search tests. Ruff, strict Mypy (187 sources), Pyright and documentation links pass. |
+| 3 | Complete | 98 initial focused tests pass in 22.926 seconds. After the contact-owner/fixture follow-up, 103 targeted tests pass in 70.580 seconds and all 1,149 tests pass in 346.515 seconds on Python 3.11.9. Ruff, strict Mypy (187 sources), Pyright and documentation links pass. |
 
 ### Stage 1 evidence
 
@@ -86,15 +86,16 @@ buttons, no care effect, and candidate approach superseding optional speech.
 
 The first whole-suite run exposed older UI tests that start new actions during
 unfinished hover/care/click speech, or expect a click to cancel that speech. These
-fixtures/expectations must follow the agreed foreground rule before final signoff;
-retain the lower-level explicit replacement/cancellation contracts. Pure window
-component fixtures should open HoverUi directly instead of starting a pet response.
+fixtures/expectations now follow the agreed foreground rule. Lower-level explicit
+replacement/cancellation contracts remain. Pure window component fixtures open
+HoverUi directly instead of starting a pet response.
 
 ### Final validation follow-up
 
 The full architecture guard also caught admission behavior growing the GUI
 composition root. The read-only permission and ordinary contact guards now live in
-the existing ContactCoordinator, with typed current-owner callbacks; World routes object-busy clicks before ordinary contact. No new coordinator, busy
+the existing ContactCoordinator, with typed current-owner callbacks; World routes
+object-busy clicks before ordinary contact. No new coordinator, busy
 state or relaxed architecture limit was needed. Passive hover remains separate
 from action admission. The unused GUI contact-recording forwarder was replaced
 with direct late binding to its owner.
@@ -110,4 +111,23 @@ All were addressed above. On the reviewed exported snapshot, 103 targeted native
 UI, contact and architecture tests pass in 70.580 seconds, including both native
 search regressions. Ruff, strict Mypy (187 sources), Pyright, 270 documentation
 file targets and 15 anchors pass. A separate 93-test headless owner/architecture
-check also passes. The complete final rerun is pending.
+check also passes.
+
+### Completion
+
+The final Git-index export at `99dc5c1` passes all **1,149 tests in 346.515
+seconds** with Python 3.11.9 and Pillow 11.3.0. Static checks pass on identical
+production/test sources: Ruff 0.13.2, strict Mypy 1.18.2 (187 source files) and
+Pyright 1.1.414. Final documentation links, UTF-8 text and Git whitespace checks
+also pass. Tk teardown can emit the existing ThemeChanged diagnostic; the
+complete result is OK with no failures, errors or skips.
+
+Native Windows/Tk tests use actual widgets and real timers, with controlled
+pointer readings and click-handler input on temporary saves. They cover UI
+opening, disabled controls/callback guards, continuing movement during busy
+speech, candidate/loss priority and safe receipts. No normal save was accessed;
+a separate exploratory user playtest is not claimed.
+
+Local commits: plan `af35de4`; hover `4de11cb`; action buttons `1996e25`;
+busy replies `b936f69`; contact ownership and corrected UI scenarios `99dc5c1`.
+No push or merge performed.
