@@ -347,13 +347,20 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertNotIn("object_notice", [cue.event for cue in self.cues])
 
     def test_place_check_precedes_a_continuing_consumption_wish(self):
-        self.awareness.memory.update((ObjectObservation(
+        stock = self.world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        self.awareness.memory.restore_snapshot(tuple(
+            replace(known, instance_id=stock.instance_id)
+            for known in self.awareness.memory.snapshot()
+        ))
+        self.world.remove(stock.instance_id, expected_revision=0)
+        item = self.world.place_resting("apple", 180, ObjectFootprint(8, 8))
+        record = self.awareness.memory.observe_find(ObjectObservation(
             "wish", "apple", "food", 180, 0, True, 0, True,
-        ),), now=0)
-        wish = self.awareness.memory.get("wish")
+        ), now=0, record=None, claimed=frozenset(), maximum_distance=0,
+            instance_id=item.instance_id)
+        wish = self.awareness.memory.get(record)
         assert wish is not None
         self.awareness.intentions.assess_offer(wish, self.state)
-        self.world.place_resting("apple", 180, ObjectFootprint(8, 8))
         for stamp in (0, .3):
             self.now = stamp
             observation = self.observe()
@@ -367,31 +374,45 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.interaction.memory_id, "stock")
         self.acknowledge()
         self.assertTrue(self.interaction.search_active)
-        self.assertFalse(any(cue.record_id == "wish" for cue in self.cues))
+        self.assertFalse(any(cue.record_id == record for cue in self.cues))
 
-    def test_unclear_occupied_place_does_not_block_other_loss_or_investigation(self):
-        subject = self.awareness.memory.get("stock")
-        assert subject is not None
-        self.awareness.memory.restore_snapshot((
-            replace(subject, instance_id="original"),
-            replace(subject, token="other", x=300, instance_id="elsewhere"),
-        ))
+    def test_replacement_waits_for_both_missing_bubbles_before_investigation(self):
+        self.awareness.memory.restore_snapshot(())
+        records = []
+        for old_x, new_x in ((100, 600), (300, 700)):
+            item = self.world.place_resting("apple", old_x, ObjectFootprint(8, 8))
+            record = self.awareness.memory.observe_find(ObjectObservation(
+                "earlier", "apple", "food", old_x, 0, True, 0,
+            ), now=0, record=None, claimed=frozenset(), maximum_distance=0,
+                instance_id=item.instance_id)
+            self.awareness.memory.mark_assessed(record)
+            records.append(record)
+            self.world.move_resting(item.instance_id, new_x, expected_revision=0)
         candidate = self.world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        self.behavior.request_orientation()
         for stamp in (0, .3, .6):
             self.now = stamp
             observation = self.observe()
         observation = self.finish_orientation()
         self.assertTrue(observation.absence_noticed)
-        self.assertEqual(self.interaction.memory_id, "other")
-        unresolved = self.awareness.memory.get("stock")
-        assert unresolved is not None
-        self.assertEqual(unresolved.place_status, "remembered")
-        self.acknowledge()
+        self.assertEqual({item.token for item in self.awareness.memory.snapshot()
+                          if item.place_status == "missing"}, set(records))
+        for record in records:
+            self.assertEqual((self.cues[-1].event, self.cues[-1].record_id),
+                             ("object_place_missing", record))
+            self.assertEqual(self.behavior.advance(None, blocked=True), Hold())
+            self.acknowledge()
+        self.assertEqual(self.cues[-1].event, "object_search")
+        self.assertEqual(self.behavior.advance_search(blocked=False), Hold())
         self.acknowledge()
         self.assertTrue(self.interaction.search_active)
-        self.assertEqual(self.behavior.advance_search(
-            blocked=False, position=SearchPosition(50, 750, 100),
-        ), Hold())
+        for _ in range(6):
+            self.now += .2
+            observation = self.observe()
+            self.behavior.advance(observation.goal, blocked=observation.blocked,
+                                  search_position=SearchPosition(50, 750, 100))
+            if self.interaction.phase == "approach":
+                break
         record = self.interaction.memory_id
         assert record is not None
         self.assertEqual(self.awareness.instance_for_record(record),
@@ -400,6 +421,9 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertTrue(self.interaction.search_active)
         self.assertEqual(self.cues[-1].event, "object_approach")
         self.assertNotIn("object_notice", [cue.event for cue in self.cues])
+        known = self.awareness.memory.get(record)
+        assert known is not None
+        self.assertFalse(known.recognized)
 
     def test_close_unknown_pair_releases_orphan_and_selects_observed_portion(self):
         self.awareness.memory.restore_snapshot(())

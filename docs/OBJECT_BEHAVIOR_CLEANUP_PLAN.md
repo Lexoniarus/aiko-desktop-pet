@@ -147,10 +147,27 @@ relocation and the same learned portion at its exact place remain recognized.
    require unknown occupancy to conceal learned absence. Preserve coverage/dwell,
    unobserved-location privacy, distinct physical portions, and unknown-place
    presence evidence. Run the focused object suite and pinned static checks.
-2. Correct the native replacement regression and verify actual named missing
-   bubbles finish before candidate pickup, including the same-type replacement
+2. Verify actual named missing bubbles finish before candidate pickup with native
+   timers, including the same-type replacement
    and the restarted close-portion search. Update the current architecture rule.
 3. Run the full suite, static and documentation gates; record results below.
    Use isolated saves, keep small local commits, and do not push or merge.
 
-Status: planned; implementation and verification pending.
+Status: policy and component corrections verified; native timer regression and
+final full verification pending.
+
+The corrected absence, distant-coverage and coordinator regressions first fail
+on the unchanged policy (four cases, five failing assertions/subtests). The policy
+now distinguishes the same acquired portion at its exact place from an unknown
+replacement, without inspecting the replacement's catalog identity. Existing
+unknown-place occupancy evidence remains local. Tests requiring the obsolete
+learned-place exception have been replaced, rather than retained alongside the
+new expectation. A continuing-wish fixture now supplies actual learned physical
+references; the restart fixture uses actual sprite footprints before saving, so
+edge clamping cannot silently move its synthetic learned place on restore.
+
+The staged policy snapshot passes 216 targeted tests in 5.236 seconds, including
+the corrected native replacement and restarted close-portion search at 1x/2x.
+Ruff 0.13.2, strict Mypy 1.18.2 (187 sources), and Pyright 1.1.414 pass with Python
+3.11.9 and Pillow 11.3.0. The first type-check commands omitted Pillow; correcting
+the verification environment resolved those import errors without source edits.

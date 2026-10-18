@@ -27,13 +27,16 @@ class WorldGuiTests(unittest.TestCase):
         runtime._controls_active = lambda: True
         self.look_at(runtime._body_x() + 3 * runtime.width)
         area = runtime.world.snapshot().surface.width
-        portions = [runtime.world.place_resting(
-                        kind, area - 16 if kind == "onigiri"
-                        else runtime._body_x() + offset, ObjectFootprint(8, 8))
-                    for kind, offset in (("dango", runtime.width),
-                                         ("dango", 1.1 * runtime.width),
-                                         ("energy_drink", 1.4 * runtime.width),
-                                         ("onigiri", 1.5 * runtime.width))]
+        portions = []
+        for kind, offset in (("dango", runtime.width),
+                             ("dango", 1.1 * runtime.width),
+                             ("energy_drink", 1.4 * runtime.width),
+                             ("onigiri", 1.5 * runtime.width)):
+            image = runtime.view.image(kind, scale)
+            footprint = ObjectFootprint(image.width() / 2, image.width() / 2)
+            x = (area - footprint.right if kind == "onigiri"
+                 else runtime._body_x() + offset)
+            portions.append(runtime.world.place_resting(kind, x, footprint))
         self.observe_and_acknowledge()
         for item in portions:
             kind = "drink" if item.definition_id == "energy_drink" else "food"
@@ -41,9 +44,10 @@ class WorldGuiTests(unittest.TestCase):
             if item.definition_id == "onigiri" and observed is None:
                 # Historical identified stock may lie beyond today's local
                 # notice field. First hand/face acquisition is covered elsewhere.
+                assert item.position is not None
                 record = runtime.awareness.memory.observe_find(ObjectObservation(
                     "earlier_far_place", item.definition_id, kind,
-                    area - 16, 0, True, runtime.now,
+                    item.position.x, 0, True, runtime.now,
                 ), now=runtime.now, record=None, claimed=frozenset(),
                     maximum_distance=0, instance_id=item.instance_id)
             else:
@@ -1497,7 +1501,7 @@ class WorldGuiTests(unittest.TestCase):
             self.assertAlmostEqual(app.state.energy, 100, delta=.01)
             self.assertIsNone(app.state.food.last_food_id)
 
-    def test_unseen_cookie_replacement_does_not_get_consumed_as_known_apple(self):
+    def test_missing_apple_is_announced_before_unknown_replacement_inspection(self):
         world = self.app._world
         world._controls_active = lambda: True
         first = world.world.place_resting(
@@ -1520,14 +1524,25 @@ class WorldGuiTests(unittest.TestCase):
         assert recalled is not None
         self.assertIsNone(recalled.identity)
         self.assertNotEqual(recalled.token, record)
-        # Suppress the separate remembered-food wish; this case exercises
-        # curiosity about the replacement, not the known-loss priority route.
+        # Loss priority applies even without appetite for the remembered apple.
         set_test_pet_values(self.app.state, satiety=100)
         world._controls_active = lambda: False
         world.now = .7
         world.update(time.monotonic())
         self.finish_orientation()
+        self.assertEqual(world.interaction.phase, "notice_absence")
+        missing = world.awareness.memory.get(record)
+        assert missing is not None
+        self.assertEqual(missing.place_status, "missing")
         self.complete_feedback()
+        self.assertEqual(world.interaction.phase, "search")
+        self.complete_feedback()
+        for _ in range(8):
+            world.now += .2
+            world.update(time.monotonic())
+            if world.interaction.phase == "approach":
+                break
+        self.assertEqual(world.interaction.phase, "approach")
         self.complete_feedback()
         self.assertEqual(world.interaction.phase, "pick_up")
         self.finish_pickup()
@@ -1537,9 +1552,13 @@ class WorldGuiTests(unittest.TestCase):
         self.assertIsNone(self.app.state.food.last_food_id)
         set_test_pet_values(self.app.state, satiety=50)
         self.finish_inspection()
+        self.assertEqual(world.interaction.phase, "put_down")
+        self.assertIsNone(self.app.state.food.last_food_id)
+        self.finish_clip("put_down")
         self.assertEqual(world.world.get(replacement.instance_id).state,
-                         ObjectState.CONSUMED)
-        self.assertEqual(self.app.state.food.last_food_id, "cookie")
+                         ObjectState.RESTING)
+        self.assertTrue(world.interaction.search_active)
+        self.assertEqual(world.awareness.memory.get(record), missing)
 
     def test_unpresented_unknown_item_is_accepted_and_identified_in_hands(self):
         world = self.app._world

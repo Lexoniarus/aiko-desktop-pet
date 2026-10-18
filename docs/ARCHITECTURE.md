@@ -612,11 +612,14 @@ A nonmatching find is safely placed, or released from the episode with player cu
 before the task continues; ordinary use retains its decision/consumption path.
 `object_absence.py` owns local negative sensory evidence: covered remembered
 places, continuous attention/dwell and raw occupants, including unnoticed ones.
-The awareness bridge resolves current custody first, then marks confirmed empty
-places missing and retains unacknowledged sensory facts until the coordinator can
-handle them. Identified different occupants do not hide an absent portion.
-Unknown/pending occupancy postpones only that place; other empty places and a
-required investigation remain possible. Free walking and search patrol observe
+The awareness bridge resolves current custody first, then marks confirmed absent
+portions missing and retains unacknowledged sensory facts until the coordinator
+can handle them. A different occupant, including an unidentified replacement,
+does not conceal a learned loss. The same learned portion must still occupy its
+exact remembered place; that check never identifies a replacement or reveals a
+hidden new location. Unknown places retain their local presence evidence.
+All confirmed losses receive their own completed bubble before the next search
+candidate is approached. Free walking and search patrol observe
 their forward field; item commitment and other interactions exclude unrelated
 sightings, empty-place evidence and transport, including during focused approach.
 After focus release, visible-place evidence starts fresh. While it is pending,

@@ -22,7 +22,7 @@ class _EmptyPlace:
 
 
 class ObjectAbsencePerception:
-    """Require continuous local coverage, including pending positive evidence."""
+    """Require covered evidence that the remembered portion is no longer there."""
 
     def __init__(self) -> None:
         self._places: dict[str, _EmptyPlace] = {}
@@ -77,9 +77,17 @@ class ObjectAbsencePerception:
         remembered: ObjectKnowledge, candidate: ObjectCandidate,
         identified: Mapping[str, ObjectKnowledge] | None,
     ) -> bool:
+        if remembered.recognized:
+            if not remembered.at_place(x=candidate.x, height=candidate.height,
+                                       resting=candidate.resting):
+                return False
+            if remembered.instance_id is not None:
+                # An acquired reference confirms only this exact learned place;
+                # it grants no identity or location to a replacement sighting.
+                return candidate.token == remembered.instance_id
         occupant = identified.get(candidate.token) if identified is not None else None
         if occupant is None:
-            return True  # Pending/unknown occupancy first needs investigation.
+            return not remembered.recognized
         return (occupant.token == remembered.token
                 or remembered.instance_id is not None
                 and occupant.instance_id == remembered.instance_id

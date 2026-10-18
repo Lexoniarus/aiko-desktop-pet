@@ -80,16 +80,21 @@ class ObjectOrientationAwarenessTests(unittest.TestCase):
         self.assertEqual(len(self.awareness.memory.snapshot()), 1)
         self.assertEqual(self.awareness.absences, ())
 
-    def test_distant_unknown_occupant_is_neither_false_absence_nor_identification(self):
+    def test_distant_unknown_replacement_does_not_hide_loss_or_gain_identity(self):
         item, record = self.learned(100)
         self.world.move_resting(item.instance_id, 2000, expected_revision=0)
         replacement = self.world.place_resting("cookie", 100, ObjectFootprint(8, 8))
         for now in (0, .3, .6):
             self.observe(now, -1)
-        self.assertEqual(self.awareness.absences, ())
+        self.assertEqual(tuple(item.token for item in self.awareness.absences),
+                         (record,))
         self.assertFalse(self.awareness.checking_absence)
         self.assertIsNone(self.awareness.known_instance(replacement.instance_id))
-        self.assertIsNotNone(self.awareness.memory.get(record))
+        known = self.awareness.memory.get(record)
+        assert known is not None
+        self.assertEqual(known.place_status, "missing")
+        self.assertEqual((known.identity, known.x), ("cookie", 100))
+        self.assertIsNone(self.awareness.known_instance(item.instance_id))
         self.assertEqual(len(self.awareness.memory.snapshot()), 1)
 
     def test_coverage_requires_actual_survey_and_fresh_uninterrupted_evidence(self):
