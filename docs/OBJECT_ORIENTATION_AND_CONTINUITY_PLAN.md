@@ -188,7 +188,7 @@ proof before deleting a test or its guarded production branch.
 | Same module: `test_hidden_boundary_missing_and_own_custody_places_supply_no_loss` | Its far-place fixture is also unidentified, so that exclusion remains valid alongside custody, bounds, and already-missing checks. | Retain these assertions; do not turn an unknown sighting into globally checkable knowledge to satisfy the new learned-place rule. |
 | [test_object_awareness](../tests/test_object_awareness.py): `test_close_learned_pair_survives_restart_and_repeated_focus_changes` | Fresh instrumentation observed 120 calls combining non-null `committed` with `survey`. Live committed item attention is `object`, or unavailable under an overriding activity. The focused candidate filter is not exercised. | Replace the unreachable production-context combination with inputs derived from the common attention policy. Keep restart, close/coincident pairs, and distinct same-type portions. |
 | Same module: `test_focused_empty_place_waits_for_unnoticed_occupant` | Fresh instrumentation observed the same mismatch on three committed calls. | Repair the fixture and name/claims as needed; preserve occupied-place protection without declaring this free-survey setup a valid focused path. |
-| [test_object_behavior](../tests/test_object_behavior.py): `test_changed_approach_finishes_old_episode_before_new_notice` | Directly injects a different goal into `advance` while an approach is active, bypassing committed Intentions selection. The live runtime normally passes `observe(...).goal`. Synchronous offer effects also exist between the two calls. | **Removal candidate, not yet proven dead:** trace those intervening callbacks and all callers. If no normal path can change the subject, remove this artificial test and the fallback branch together; keep commitment/no-hijack coverage. Otherwise document the actual trigger and test that trigger. |
+| [test_object_behavior](../tests/test_object_behavior.py): `test_changed_approach_finishes_old_episode_before_new_notice` | Directly injects a different goal into `advance` while an approach is active, bypassing committed Intentions selection. The live runtime normally passes `observe(...).goal`. Synchronous offer effects also exist between the two calls. | Removed in Stage 4a after auditing all production callers. DesktopWorldRuntime passes the immutable observation goal; synchronous offer appraisal rejects approach, and presentation cannot replace its episode. Committed Intentions returns only the same subject. Native no-hijack and pair/restart coverage remains. |
 | Awareness: `test_unseen_relocation_is_a_new_find_and_both_discovery_orders_reconcile` | The ordinary "identify first, inspect old places later" ordering is no longer the desired behavior. This is not proof all low-level reversed fact orders are impossible. | Rewrite the regular flow as orientation, confirmed loss, search candidate, permitted identification, reunion. Keep low-level order tolerance only where a reachable protected boundary requires it. |
 | [test_object_memory](../tests/test_object_memory.py): `test_found_before_or_after_missing_resolves_one_old_place` | Memory is an evidence consumer; occupied unresolved places, an already committed examination, or supported recovery can yield different fact order. | Retain until a caller/recovery audit proves a branch unnecessary. Do not weaken same-type ambiguity or erase learned experience to shorten the suite. |
 | Awareness: `test_ground_focus_excludes_neighbours_and_their_cursor_take`, `test_hand_focus_defers_unrelated_sightings_and_losses_to_a_fresh_look` | Distinct floor-focus and hand-focus boundaries remain reachable. | Preserve both; update the post-release part to the explicit orientation sequence. |
@@ -199,7 +199,7 @@ proof before deleting a test or its guarded production branch.
 | Behavior: `test_endpoint_waits_for_local_evidence_and_collects_another_loss` | A loss already detectable before patrol now belongs to initial orientation. A genuinely later loss during patrol remains reachable. | Move the former proof into orientation coverage; retain the latter with an actual post-start change. |
 | Behavior: `test_unclear_occupied_place_does_not_block_other_loss_or_investigation` | An unknown occupant prevents a false empty-place inference but must not stall all other work. | Preserve and bind its release to completed orientation, not forced identification before the check. |
 | [test_world_gui](../tests/test_world_gui.py): shared relocated-portion search at scale one/two | Current old places initially fit the near field; that does not prove whole-taskbar orientation. | Extend the existing main scenario to both sides and distant places. Do not keep a duplicate scenario solely for its convenient old near-field arrangement. |
-| Same module: `test_absent_remembered_instance_requires_attentive_local_search` | Correct confirmed-loss/restart boundary with an outdated local-only assumption. | Rename/adapt to deliberate remembered-place checks; preserve bounded search and no search from a missing handle alone. |
+| Same module: `test_absent_remembered_instance_requires_deliberate_place_check` | Correct confirmed-loss/restart boundary with an outdated local-only assumption. | Rename/adapt to deliberate remembered-place checks; preserve bounded search and no search from a missing handle alone. |
 | Same module: fast observed cursor relocation at scale one/two | Valid fast path misses between-tick reacquisition after a look away, longer drag, and own-feedback interruption. | Extend a shared helper with these concrete paths and real release/settling. Cover wanted and unwanted known portions without multiplying every unrelated state combination. |
 | Same module: petting/conversation focus; [test_world_runtime_flow](../tests/test_world_runtime_flow.py): `test_conversation_holds_environment_until_actual_sequence_completion` | Fast component checks and real sequence timers verify different boundaries. | Keep both layers. Assert actual release, visible left/right orientation, then losses before ordinary new identification. |
 | Retrieval: `test_restored_conflicting_knowledge_requires_hand_inspection`; [test_object_consumption](../tests/test_object_consumption.py): `test_place_hypothesis_cannot_consume_a_different_catalog_item` | Reachable saved-data conflict and consumption safety boundaries; not pet-hand teleport fixtures. | Preserve both guards and tests. |
@@ -209,10 +209,11 @@ The old R1–R3 teleport/forced-binding tests and `_replace_recalled_portion`
 helper were already removed in the earlier plan. They are not new removal work.
 Physics does not eliminate legitimate release-to-hand acquisition.
 
-No additional entire current test has yet been proved redundant solely by this
-review. Two production-context fixtures are demonstrably invalid; one shared-range
-contract is superseded; the injected goal-switch test requires the callback audit
-above. This is deliberately more precise than a blanket edge-case cleanup.
+The implementation removed the audited injected goal-switch test and its fallback,
+and the ordinary identify-before-orientation permutation from Awareness. It repaired
+focus contexts rather than deleting their safety assertions. Low-level Memory
+evidence-order tolerance remains, because already committed examinations and
+deferred preinspection loss receipts can supply that order legitimately.
 
 ## Acceptance cases that protect the state distinctions
 
@@ -328,7 +329,7 @@ references, and `git diff --check` are validated as part of delivery.
 | 1 coverage and orientation value | Complete at policy/sensor level | `f1fc8a6`, `dbb8b80`, `3f422f9`; live behavior wiring remains Stage 3. |
 | 2 witnessed acquisition and own feedback | Complete | `a148296` acquisition and `62c161a` live feedback scope; verification below. |
 | 3 orientation and search integration | Complete | `90a754a` and `37c4365`; both-side loss collection, current-wish pause, and search-related candidate feedback verified. |
-| 4 proven cleanup | Not started | No implementation commit. |
+| 4 proven cleanup | Complete | `8fe556b` and `946d590`; repaired focus fixtures and removed audited duplicate/dead paths. |
 | 5 final regression and native acceptance | Not started | No implementation commit. |
 
 ## Implementation ledger
@@ -418,3 +419,24 @@ references, and `git diff --check` are validated as part of delivery.
   before loss, and actual multi-bubble timers preserve each named receipt.
   The staged tree passes 214 object tests plus six native restart/face/timer cases
   in 37.237 seconds, and all three static gates. No merge.
+
+- Stage 4a `8fe556b`: correct committed/free attention fixtures through the shared
+  policy, including close/coincident learned portions, selected-place occupancy,
+  actual hand inspection, and observed transport. A free curiosity-after-gap test
+  no longer fabricates a committed action. Ordinary unobserved recovery now tests
+  actual empty-place evidence before candidate inspection, rather than injecting
+  a missing flag or running the reverse ordinary order. Memory's lower-level
+  order tolerance and readable preinspection-loss reconciliation remain covered.
+  A genuinely later patrol loss now comes from moving real learned stock after
+  route start. The injected goal-switch test and its two-line fallback are removed
+  following the caller/callback proof above. The exact staged tree passes 213
+  object tests and three native commitment/restart checks (216 total, 5.447 seconds),
+  plus all three static gates.
+- Stage 4b: remove the identical pickup-attention dispatch, the unused boolean
+  World-access wrapper (the subject read remains), and the renderer's second action
+  cancellation during game transitions. Canonical ActionPlayback cancellation stays
+  in the shell. Native game coverage now explicitly asserts one renderer cancellation
+  on close, alongside deadline release and restored gaze. Isolated renderer setup
+  models that owner cancellation before its mode change. The staged tree passes
+  88 attention/access/animation/reaction/game/architecture checks in 13.098 seconds,
+  Ruff, strict Mypy (187 sources), and Pyright. No merge.
