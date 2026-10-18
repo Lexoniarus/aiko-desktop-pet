@@ -43,7 +43,7 @@ still need focused integration coverage.
 | --- | --- | --- | --- |
 | 1 | Move six asset/overlay tests from FoodGuiTests to standalone Tk/AnimatedPet fixtures. | All icon alpha, authored anchors, stacking, scale and timer assertions; four real menu/carry tests stay in FoodGuiTests. Canonical display assets retain their asset tests and direct view-cache coverage. | Complete |
 | 2 | Shorten the conversation focus integration scenario using a short test-only reaction with actual Tk timers. | Real care dispatch, silent cue focus, unobserved relocation and missing-first orientation; authored story/sequence semantics retain scheduler tests. | Complete |
-| 3 | Replace two complete edge investigation timer replays with one real-motion right-edge scale-two pickup smoke. | Both-scale/edge geometry matrix, full ordinary native investigation, reach recheck at attachment and frame/release tests remain. | Pending |
+| 3 | Replace two complete edge investigation timer replays with one real-motion right-edge scale-two pickup smoke. | Both-scale/edge geometry matrix, full ordinary native investigation, reach recheck at attachment and frame/release tests remain. | Complete |
 | 4 | Replace duplicated long multi-loss bubble replays with deterministic presenter/player/coordinator coverage and fast physical search integration. | All named missing bubbles and matching receipts before candidate investigation; same-type replacement, multi-relocation, native hover and busy-reply cases remain covered. | Pending |
 
 Do not remove a test merely because it sets up state directly: owner-level
@@ -90,3 +90,23 @@ Validation: native conversation test plus object attention, story playback and
 reaction playback: 25 tests in 2.729 seconds, no skips. The previous sampled
 conversation test alone took 18.514 seconds. Ruff passes. Existing Tk teardown
 ThemeChanged stderr appeared without test failure.
+
+### Stage 3 completed
+
+Two complete edge investigation timer replays and their helper are replaced by
+one right-edge scale-two smoke ending at actual PET_HELD attachment. It verifies
+initial inadmissibility, actual approach/pickup phases, the geometric reach at
+attachment, on-track movement and unchanged energy. No acquisition is forced.
+
+The new assertion exposed a fixture timing issue: the old test placed the item
+before syncing World geometry after changing scale. A later tick reclamped it.
+The replacement synchronizes geometry before placement, as the fast geometry
+fixture already does. This is a test setup correction, not a runtime change or
+proof of the user's reported visible jump.
+
+Validation: new native pickup, ground geometry, playback metadata and the native
+frame-four negative reach test: 7 tests in 8.443 seconds. Retained full native
+satiated investigation and fast deferred-drink/restart retrieval: 2 tests in
+24.185 seconds. No skips; Ruff passes. The same-boundary left/right scale matrix
+remains in GroundApproachTests, alongside native left-scale-two round-trip and
+left-scale-one negative reach coverage.

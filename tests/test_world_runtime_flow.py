@@ -10,6 +10,7 @@ from unittest.mock import patch
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.mind.reaction_sequence import Cue
@@ -448,65 +449,46 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.app.root.mainloop()
         return trace
 
-    def _edge_investigation(self, scale, side):
+    def test_right_edge_scale_two_pickup_uses_actual_motion_and_attachment(self):
         app, world = self.app, self.app._world
+        scale = 2
         app.settings.scale = scale
         app._window.resize()
         app._animated.reload_sprites()
+        world._sync_geometry()
         set_test_pet_values(app.state, energy=65)
         track = world._track()
-        boundary = track.left if side == "left" else track.right - world.width
-        app._place_x(boundary + (60 * scale if side == "left" else -60 * scale))
+        boundary = track.right - world.width
+        app._place_x(boundary - 60 * scale)
         image = world.view.image("energy_drink", scale)
         footprint = ObjectFootprint(image.width() / 2, image.width() / 2)
-        x = (
-            footprint.left
-            if side == "left"
-            else world.world.snapshot().surface.width - footprint.right
+        item = world.world.place_resting(
+            "energy_drink", world.world.snapshot().surface.width - footprint.right,
+            footprint,
         )
-        item = world.world.place_resting("energy_drink", x, footprint)
+        assert item.position is not None
+        object_x = track.left + item.position.x
+        self.assertFalse(world._can_acquire(item.instance_id))
         trace = self.run_until(
-            lambda: (
-                (known := world.awareness.known_instance(item.instance_id)) is not None
-                and known.assessed
-                and world.world.get(item.instance_id).state == ObjectState.RESTING
-                and not world.interaction.active
-                and world.orientation_side() is None
-            ),
-            30,
+            lambda: world.world.get(item.instance_id).state == ObjectState.PET_HELD,
+            12,
         )
-        self.assertFalse(world.interaction.active, trace)
-        self.assertTrue(
-            {
-                "approach",
-                "pick_up",
-                "inspect",
-                "recognize",
-                "decide",
-                "put_down",
-            }.issubset({row[1] for row in trace}),
-            trace,
-        )
-        self.assertNotIn("eat", {row[1] for row in trace})
+        self.assertEqual(world.world.get(item.instance_id).state,
+                         ObjectState.PET_HELD, trace)
         current_x = app.settings.x
         assert current_x is not None
         self.assertAlmostEqual(current_x, boundary, delta=2)
+        self.assertTrue(track.can_grasp_ground(
+            object_x, current_x, world.width,
+            world.width * BALANCE.number("object_behavior", "reach_widths"),
+        ))
+        self.assertIn("approach", {row[1] for row in trace})
+        self.assertIn("pick_up", {row[1] for row in trace})
         for row in trace:
             self.assertGreaterEqual(row[4], track.left)
             self.assertLessEqual(row[4] + world.width, track.right)
-        placed = world.world.get(item.instance_id)
-        assert placed.position is not None
-        self.assertEqual(placed.position.x, world._body_x())
-        self.assertNotEqual(placed.position.x, x)
-        self.assertIsNone(world._visual.object_target)
         self.assertGreater(app.state.energy, 64)
         self.assertLess(app.state.energy, 66)
-
-    def test_left_edge_investigation_at_scale_one_uses_actual_timers_and_motion(self):
-        self._edge_investigation(1, "left")
-
-    def test_right_edge_investigation_at_scale_two_uses_actual_timers_and_motion(self):
-        self._edge_investigation(2, "right")
 
     def test_satiated_food_is_investigated_put_down_and_not_repeated(self):
         world = self.app._world
