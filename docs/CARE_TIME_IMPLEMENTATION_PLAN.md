@@ -868,9 +868,9 @@ not become a second permanent implementation.
 #### 5B. Define rules, then implement the emotional and wish models
 
 Continue discussing the remaining Moodlet and wish rules before implementation.
-The recorded poking, petting, repetitive-food and withholding proposals below
-establish concrete candidates; the remaining examples establish direction, not
-a complete approved balance:
+The recorded poking, petting, repetitive-food, withholding and relocation
+proposals below establish concrete candidates; the remaining examples establish
+direction, not a complete approved balance:
 
 - Repeated poking, excessive/unwelcome petting, repeatedly eating the same food,
   withholding a wanted object, disrupting known object locations and fulfilling
@@ -1150,10 +1150,61 @@ resolved situation without refunding previously applied points. Exact emotional
 effects on willingness to accept other interactions remain open; this proposal
 does not create a blanket action lock.
 
-Next discussion: relocating objects and disrupting familiar places. Define
-qualifying perceived changes, emotional intensity/decay and any independently
-justified relationship consequence without confusing them with withholding or
-granting hidden World knowledge.
+##### Recorded proposal: relocating objects and disrupting familiar places, 2026-10-19
+
+Status: owner-requested design proposal, not implemented. Working Moodlet label:
+"My familiar arrangement has been disturbed". Require a learned object and a
+familiar location, then a relevant perceived disruption of that expectation:
+
+- Aiko confirms that the known place is empty and must search for the object.
+- Or she observes the user relocate the known object to a clearly different
+  place. Reuse subjective observation/association rather than polling hidden
+  World positions or treating an opaque object handle as recognition.
+
+Normal handovers, Aiko's own put-down actions and minor movement within the same
+placement area do not automatically qualify. Unknown objects do not yet have a
+familiar place for this purpose. The exact spatial qualification should use the
+existing perception/place model; no new fixed pixel distance is approved here.
+
+| Intensity | Qualifying escalation | Total contribution to numeric mood target | Emotional quality |
+| --- | --- | --- | --- |
+| 1 | First confirmed disruption | -5 points | Irritation or uncertainty about the changed arrangement |
+| 2 | Another independent relocation/disruption while active | -10 points | Clear annoyance about disorder |
+| 3 | Another independent disruption | -15 points | Strong annoyance about repeated changes |
+
+Keep one entry capped at three. A completed relocation/disruption is one
+experience: do not count every drag-motion update, repeated perception check,
+missing-place cue or subsequent reunion as a new event. Multiple independently
+perceived relocation events may stack. Apply the total contribution for the
+current level to the mood target, retaining actual-mood response timing and
+separate emotional interpretation.
+
+After each thirty real minutes without a newly confirmed disruption, reduce
+intensity by one: 3 -> 2 -> 1 -> expired. Full after-effects from intensity three
+last ninety minutes without reinforcement. A new qualifying event renews the
+current quiet period and can escalate to the cap. Ongoing search alone does not
+produce additional stacks. Finding an object resolves the relevant search and
+updates acquired place knowledge; it does not instantly clear the impression.
+Decay continues through sleep, standby and closed-app time. Do not manufacture
+unobserved relocation events or blame from a restored World snapshot.
+
+Separate emotional disturbance from attribution: an empty familiar place can
+justify the Moodlet without proving that the user caused it. A personal
+accusation or relationship loss needs a supported user connection, such as an
+observed take-and-relocate sequence. Finding an object elsewhere alone does not
+establish that connection or grant unsupported physical identity knowledge.
+
+For a qualifying user-attributed event, propose a separate 0.25-point friendship
+loss, capped at one point per rolling hour. Preserve the rolling budget across
+restart/new episodes through existing aggregate/history ownership. There is no
+additional loss for Moodlet existence, repeated search, reunion, refresh or
+expiry. Finding/returning an object does not automatically refund past losses.
+Do not automatically charge a single take as both withholding and relocation;
+a later independent rearrangement may qualify as a separate event.
+
+Next discussion: concrete food wishes and the positive Moodlet for fulfillment.
+Wish selection, frequency, lifetime, attribution, rewards and emotional duration
+remain open; no earlier illustrative wish numbers are approved by this proposal.
 
 #### 5C. Connect status, expression and interaction decisions
 
