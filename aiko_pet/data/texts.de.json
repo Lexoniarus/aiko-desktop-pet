@@ -2,6 +2,9 @@
   "version": 1,
   "locale": "de",
   "messages": {
+    "social.intro.single": "Ich hab einen Spruch für dich.",
+    "social.intro.twopart": "Hey, kennst du den schon?",
+    "social.intro.fact": "Weißt du, was ich interessant finde?",
     "care.sleep_start": "Ich kuschle mich zum Schlafen hin. Bis nach meinem Nickerchen.",
     "care.sleep_wake": "Mhm … die Augen sind wieder offen. Hallo zurück.",
     "care.play_tired": "Ich möchte mit dir spielen, aber erst brauche ich etwas Schlaf.",

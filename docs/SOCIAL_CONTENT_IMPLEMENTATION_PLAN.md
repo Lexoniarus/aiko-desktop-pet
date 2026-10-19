@@ -295,4 +295,7 @@ this first delivery.
 
 ## Delivery record
 
-- Planning baseline preserved before implementation; stages A–D pending.
+- `dd8d6bb`: planning baseline preserved before implementation (9 documentation
+  checks). Content preparation now keeps Single, Two Parts and facts distinct,
+  retains sources and rejects incomplete or oversized responses. Five focused
+  preparation tests and six text-catalogue tests pass; menu integration follows.
