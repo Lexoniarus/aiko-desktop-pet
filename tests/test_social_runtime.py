@@ -98,3 +98,13 @@ class SocialRuntimeTests(unittest.TestCase):
         self.assertFalse(self.started)
         self.assertFalse(self.runtime.waiting)
         self.assertTrue(self.worker.closed)
+
+    def test_ready_before_wait_callback_skips_stale_holding_presentation(self):
+        self.runtime.select(SocialCategory.SINGLE)
+        wait = self.deferred.pop()
+        self.worker.complete(1)
+        self.runtime.poll()
+        wait()
+        self.assertFalse(self.holding)
+        self.deferred.pop()()
+        self.assertEqual(len(self.started), 1)

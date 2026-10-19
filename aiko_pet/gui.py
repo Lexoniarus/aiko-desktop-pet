@@ -607,7 +607,7 @@ class DesktopPet:
     def _defer_social(self, action: Callable[[], None]) -> None:
         # Admission is rechecked after World clears its pending-action marker.
         def schedule() -> None:
-            self.root.after_idle(action)
+            self.root.after(0, action)
 
         self._world.interrupt(schedule)
 

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Literal
 
 from ..application.social_content import PreparedSocialContent, SocialCategory
 from ..application.social_coordinator import SocialContentCoordinator, SocialSelection
@@ -28,14 +28,14 @@ class SocialConversationRuntime:
         self.content = content
         self._ports = ports
         self._token: object | None = None
-        self._waiting = False
+        self._phase: Literal["idle", "fetching", "admitting"] = "idle"
         self._closed = False
         self._status = "social.hint"
         self._last_content: PreparedSocialContent | None = None
 
     @property
     def waiting(self) -> bool:
-        return self._waiting
+        return self._phase != "idle"
 
     def snapshot(self) -> tuple[str, PreparedSocialContent | None]:
         key = self._status if self.content.enabled else "social.disabled"
@@ -48,7 +48,7 @@ class SocialConversationRuntime:
 
     def cancel(self) -> None:
         self._token = None
-        self._waiting = False
+        self._phase = "idle"
         self.content.cancel_selection()
         self._ports.clear_wait()
         self._status = "social.hint"
@@ -62,11 +62,12 @@ class SocialConversationRuntime:
         self._token = token
         selection = self.content.select(category)
         if selection.status == "waiting":
-            self._waiting = True
+            self._phase = "fetching"
             self._status = "social.waiting"
 
             def wait() -> None:
-                if self._token is token and self._waiting and not self._closed:
+                if (self._token is token and self._phase == "fetching"
+                        and not self._closed):
                     if not self._ports.can_start():
                         self.cancel()
                         return
@@ -81,14 +82,14 @@ class SocialConversationRuntime:
 
     def _present(self, selection: SocialSelection) -> None:
         if selection.status != "ready" or selection.content is None:
-            self._waiting = False
+            self._phase = "idle"
             self._token = None
             self._ports.clear_wait()
             self._status = ("social.disabled" if selection.status == "disabled"
                             else "social.error")
             return
         item, token = selection.content, self._token
-        self._waiting = True  # Also protects a deferred foreground handover.
+        self._phase = "admitting"
 
         def begin() -> None:
             if self._closed or self._token is not token or not self.content.enabled:
@@ -97,7 +98,7 @@ class SocialConversationRuntime:
             if not self._ports.can_start():
                 self.cancel()
                 return
-            self._waiting = False
+            self._phase = "idle"
             self._token = None
             if self._ports.start(item):
                 self.content.accept(item)
@@ -112,7 +113,7 @@ class SocialConversationRuntime:
     def poll(self) -> None:
         if self._closed:
             return
-        if self._waiting and not self._ports.can_wait():
+        if self.waiting and not self._ports.can_wait():
             self.cancel()
         selection = self.content.poll()
         if selection is not None and self._token is not None:

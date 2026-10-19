@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import tempfile
 import time
 import tkinter as tk
@@ -36,6 +37,11 @@ class SocialGuiTests(unittest.TestCase):
             social_worker=self.worker,
         )
         self.addCleanup(self.pet.quit)
+        self.callback_errors: list[BaseException] = []
+        self.pet.root.report_callback_exception = (
+            lambda _kind, error, _trace: self.callback_errors.append(error)
+        )
+        self.addCleanup(lambda: self.assertEqual(self.callback_errors, []))
         self.pet._runtime.stop()
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False
@@ -183,3 +189,38 @@ class SocialGuiTests(unittest.TestCase):
         self.assertIsNone(self.pet._hover.social_menu)
         self.assertEqual(self.pet._reaction_player.event, "talk")
         self.assertEqual(self.pet.state.social, 36)
+
+    def test_save_reopen_keeps_opt_in_and_shared_rewards_without_content_cache(self):
+        self.enable()
+        self.menu().choose(SocialCategory.SINGLE)
+        self.worker.complete(1)
+        self.pet._social_runtime.poll()
+        self.pet.root.update()
+        friendship = self.pet.state.friendship
+        store = self.pet.store
+        self.pet.quit()
+        saved = json.loads(store.path.read_text(encoding="utf-8"))
+        self.assertEqual(saved["version"], 1)
+        self.assertTrue(saved["settings"]["online_social"])
+        self.assertNotIn("jokeapi:", store.path.read_text(encoding="utf-8"))
+        worker = ManualSocialWorker()
+        reopened = DesktopPet(store=store, social_worker=worker)
+        reopened.root.report_callback_exception = (
+            lambda _kind, error, _trace: self.callback_errors.append(error)
+        )
+        self.addCleanup(reopened.quit)
+        reopened._runtime.stop()
+        self.assertTrue(reopened.settings.online_social)
+        self.assertEqual(len(worker.requests), 1)
+        self.assertTrue(all(reopened._social_runtime.content.count(c) == 0
+                            for c in SocialCategory))
+        reopened._reaction_player.cancel()
+        reopened._action_playback.cancel_at(time.monotonic())
+        reopened._social_runtime.select(SocialCategory.FACT)
+        worker.complete(2)
+        reopened._social_runtime.poll()
+        worker.complete(3)
+        reopened._social_runtime.poll()
+        reopened.root.update()
+        self.assertEqual(reopened._reaction_player.event, "talk")
+        self.assertAlmostEqual(reopened.state.friendship, friendship, places=4)
