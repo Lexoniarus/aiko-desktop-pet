@@ -26,6 +26,7 @@ from .hover_contracts import HoverActions
 from .rock_paper_scissors_window import RockPaperScissorsWindow
 from .settings_contracts import SettingsActions
 from .settings_window import SettingsWindow
+from .tic_tac_toe_window import TicTacToeWindow
 
 
 @dataclass(frozen=True, slots=True)
@@ -217,7 +218,8 @@ class HoverUi:
         y = (toolbar.window.winfo_rooty() + toolbar.window.winfo_height()
              if toolbar else 200)
         self.game_menu = GameMenu(
-            self.root, x, y, choices=(GameId.ROCK_PAPER_SCISSORS,),
+            self.root, x, y,
+            choices=(GameId.ROCK_PAPER_SCISSORS, GameId.TIC_TAC_TOE),
             selected=self.open_game, closed=self._game_menu_closed,
             always_on_top=self._ports.always_on_top(), skin=self._skin,
         )
@@ -226,7 +228,7 @@ class HoverUi:
     def open_game(self, game_id: GameId) -> None:
         if self.game_open or not self._ports.can_interact("play"):
             return
-        if game_id is not GameId.ROCK_PAPER_SCISSORS:
+        if game_id not in (GameId.ROCK_PAPER_SCISSORS, GameId.TIC_TAC_TOE):
             raise ValueError("Game is not available")
         self.close_game_menu()
         token = object()
@@ -249,7 +251,26 @@ class HoverUi:
         self.close_food_menu()
         self._ports.game_speech.start()
         try:
-            self.game_window = RockPaperScissorsWindow(
+            if game_id is GameId.TIC_TAC_TOE:
+                self.game_window = TicTacToeWindow(
+                    self.root, on_closed=self._game_closed,
+                    dialogue=self._ports.game_dialogue,
+                    speak=self._ports.game_speech.say,
+                    animate=self._ports.game_speech.animate,
+                    always_on_top=self._ports.always_on_top(), skin=self._skin,
+                )
+            else:
+                self.game_window = self._create_rps()
+        except Exception:
+            self._ports.game_speech.stop()
+            raise
+        if self.toolbar is not None:
+            self.toolbar.refresh_actions()
+        self.game_window.greet()
+        self._ports.restore_stack()
+
+    def _create_rps(self) -> RockPaperScissorsWindow:
+        return RockPaperScissorsWindow(
                 self.root,
                 on_closed=self._game_closed,
                 dialogue=self._ports.game_dialogue,
@@ -259,14 +280,7 @@ class HoverUi:
                 animate=self._ports.game_speech.animate,
                 always_on_top=self._ports.always_on_top(),
                 skin=self._skin,
-            )
-        except Exception:
-            self._ports.game_speech.stop()
-            raise
-        if self.toolbar is not None:
-            self.toolbar.refresh_actions()
-        self.game_window.greet()
-        self._ports.restore_stack()
+        )
 
     def close_game(self) -> None:
         self._pending_game = None

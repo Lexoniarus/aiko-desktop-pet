@@ -404,5 +404,10 @@
     "recovery_minimum_session_seconds": 120,
     "recovery_recent_work_seconds": 180,
     "resting_after_seconds": 300
+  },
+  "game_tic_tac_toe": {
+    "base_fun_per_completed_unit": 9.0,
+    "energy_cost_per_completed_unit": 0.7,
+    "social_gain_per_completed_unit": 0.9
   }
 }

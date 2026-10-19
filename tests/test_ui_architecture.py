@@ -17,6 +17,8 @@ UTILITY_VIEWS = (
     "ui/windows/rock_paper_scissors_window.py",
     "ui/windows/hover_ui.py",
     "ui/windows/game_menu.py",
+    "ui/windows/game_panel.py",
+    "ui/windows/tic_tac_toe_window.py",
 )
 
 

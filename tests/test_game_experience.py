@@ -91,6 +91,19 @@ class GameExperienceTests(unittest.TestCase):
         self.assertEqual(result.fun_gained, 0)
         self.assertEqual(encode_pet_state(self.state), original)
 
+    def test_tic_tac_toe_uses_explicit_profile_and_generic_completion(self) -> None:
+        from aiko_pet.pet.fun import GAME_FUN_PROFILES
+
+        self.assertGreater(
+            GAME_FUN_PROFILES["tic_tac_toe"].base_fun_per_completed_unit,
+            GAME_FUN_PROFILES["rock_paper_scissors"].base_fun_per_completed_unit,
+        )
+        outcome = self.router.complete_game(
+            experience_from_session(SessionSummary(GameId.TIC_TAC_TOE, wins=1)),
+            inputs=self.runtime,
+        )
+        self.assertGreater(outcome.fun_gained, 0)
+
     def test_future_game_needs_only_a_profile_not_new_calculator(self) -> None:
         # There is intentionally no RPS dependency in the general fun domain.
         from aiko_pet.pet.fun import GAME_FUN_PROFILES, GameFunProfile

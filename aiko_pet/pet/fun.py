@@ -58,17 +58,18 @@ class GameFunProfile:
 
 
 GAME_FUN_PROFILES: dict[str, GameFunProfile] = {
-    "rock_paper_scissors": GameFunProfile(
+    game: GameFunProfile(
         base_fun_per_completed_unit=BALANCE.number(
-            "game_rock_paper_scissors", "base_fun_per_completed_unit"
+            f"game_{game}", "base_fun_per_completed_unit"
         ),
         energy_cost_per_completed_unit=BALANCE.number(
-            "game_rock_paper_scissors", "energy_cost_per_completed_unit"
+            f"game_{game}", "energy_cost_per_completed_unit"
         ),
         social_gain_per_completed_unit=BALANCE.number(
-            "game_rock_paper_scissors", "social_gain_per_completed_unit"
+            f"game_{game}", "social_gain_per_completed_unit"
         ),
-    ),
+    )
+    for game in ("rock_paper_scissors", "tic_tac_toe")
 }
 
 

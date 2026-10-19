@@ -145,6 +145,13 @@
     "game.select": "Spiel auswählen",
     "game.name.rock_paper_scissors": "Schere–Stein–Papier",
     "game.name.tic_tac_toe": "Tic-Tac-Toe",
-    "game.name.blackjack": "Blackjack"
+    "game.name.blackjack": "Blackjack",
+    "game.next": "Nächste Runde",
+    "game.score": "Du: {player}   Aiko: {aiko}   Unentschieden: {draws}",
+    "game.player_turn": "Du bist dran.",
+    "game.aiko_turn": "Aiko überlegt …",
+    "game.player_win": "Du hast gewonnen.",
+    "game.aiko_win": "Aiko hat gewonnen.",
+    "game.draw": "Unentschieden."
   }
 }
