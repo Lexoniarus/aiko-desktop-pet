@@ -1,4 +1,4 @@
-"""Consume active session intervals exactly once, independent of wall time."""
+"""Consume elapsed life time once, including suspend, with explicit fallback."""
 
 from __future__ import annotations
 
@@ -25,36 +25,69 @@ class SessionInputs:
 
 
 class ActiveSessionClock:
-    """The supplied uptime reader excludes system suspend and hibernation."""
+    """Use suspend-inclusive uptime; wall time only bridges unavailable reads.
 
-    def __init__(self, reader: Callable[[], float | None]) -> None:
+    Both anchors advance on every consumption so source recovery cannot replay
+    a fallback interval. Known uptime wins over wall/DST/manual clock changes.
+    """
+
+    def __init__(
+        self, reader: Callable[[], float | None],
+        *, wall_time: Callable[[], float] | None = None,
+    ) -> None:
         self._reader = reader
         self._anchor = self._sample()
+        self._wall_anchor = self._finite(wall_time()) if wall_time else None
+
+    @staticmethod
+    def _finite(value: float | None) -> float | None:
+        return value if value is not None and math.isfinite(value) else None
 
     def _sample(self) -> float | None:
         value = self._reader()
-        return value if value is not None and math.isfinite(value) else None
+        return self._finite(value)
 
-    def consume(self) -> float:
-        """Reset after unavailable/backward readings rather than invent time."""
+    def capture_checkpoint(self) -> tuple[float | None, float | None]:
+        return self._anchor, self._wall_anchor
+
+    def restore_checkpoint(
+        self, checkpoint: tuple[float | None, float | None],
+    ) -> None:
+        self._anchor, self._wall_anchor = checkpoint
+
+    def consume(self, *, wall_time: float | None = None) -> float:
+        """Consume known elapsed time or a nonnegative wall-clock fallback."""
         previous, current = self._anchor, self._sample()
+        previous_wall, current_wall = self._wall_anchor, self._finite(wall_time)
         self._anchor = current
-        if previous is None or current is None:
-            return 0.0
-        return max(0.0, current - previous)
+        self._wall_anchor = current_wall
+        if previous is not None and current is not None and current >= previous:
+            return current - previous
+        if previous_wall is not None and current_wall is not None:
+            return max(0.0, current_wall - previous_wall)
+        return 0.0
 
 
 def advance_session_time(
     state: PetState, clock: ActiveSessionClock, inputs: SessionInputs,
 ) -> None:
     """Consume one shared interval and forward the full live-time contract."""
-    state.advance(
-        inputs.wall_time,
-        auto_routine=inputs.auto_routine,
-        allow_bedtime=inputs.allow_bedtime,
-        allow_nap=inputs.allow_nap,
-        interrupt_nap=inputs.interrupt_nap,
-        effort=inputs.effort,
-        elapsed_seconds=clock.consume(),
-        food_activity=inputs.food_activity,
-    )
+    if not math.isfinite(inputs.wall_time):
+        return
+    checkpoint = state.capture_checkpoint()
+    clock_checkpoint = clock.capture_checkpoint()
+    try:
+        state.advance(
+            inputs.wall_time,
+            auto_routine=inputs.auto_routine,
+            allow_bedtime=inputs.allow_bedtime,
+            allow_nap=inputs.allow_nap,
+            interrupt_nap=inputs.interrupt_nap,
+            effort=inputs.effort,
+            elapsed_seconds=clock.consume(wall_time=inputs.wall_time),
+            food_activity=inputs.food_activity,
+        )
+    except Exception:
+        state.restore_checkpoint(checkpoint)
+        clock.restore_checkpoint(clock_checkpoint)
+        raise

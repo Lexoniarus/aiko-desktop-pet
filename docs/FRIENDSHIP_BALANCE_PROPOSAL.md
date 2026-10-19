@@ -1,5 +1,10 @@
 # Friendship balance proposal
 
+> **Planning update, 2026-10-19:** The latest curve and combined care examples
+> are the baseline for the [active care/time implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
+> Earlier alternatives and discussion-status disclaimers below remain historical
+> context. Implementation and the bounded remaining decisions are still pending.
+
 > **Discussion proposal only — no implementation approval.** Recorded on
 > 2026-10-19 on `feature/social-optimization`, from code baseline `b519da4`.
 > Expanded on the same date with progressive upkeep and timed neglect rules.

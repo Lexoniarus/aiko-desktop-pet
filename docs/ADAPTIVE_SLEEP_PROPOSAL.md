@@ -1,5 +1,10 @@
 # Adaptive sleep proposal
 
+> **Planning update, 2026-10-19:** The latest simplified model is the baseline
+> for the [active care/time implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
+> Original discussion-status disclaimers below remain historical context;
+> implementation and the explicitly remaining transition details are pending.
+
 > **Discussion proposal only — no implementation approval.** Recorded on
 > 2026-10-19 on `feature/social-optimization`, alongside code baseline `b190694`.
 > The owner requested preservation of the proposed sleep, wake and habit-learning

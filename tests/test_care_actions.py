@@ -33,9 +33,9 @@ class CareActionRulesTests(unittest.TestCase):
     def test_each_care_action_retains_its_specific_effect(self) -> None:
         moment = stamp()
         expected = {
-            "talk": ("social", 100.0, "vorbeischaust"),
+            "talk": ("social", 100.0, "Geschichte"),
             "pet": ("affection", 100.0, "tut gut"),
-            "energy_drink": ("energy", 85.0, "geholfen"),
+            "energy_drink": ("energy", 85.0, "hilft"),
         }
         for action, (attribute, value, reply) in expected.items():
             with self.subTest(action=action):
@@ -65,7 +65,8 @@ class CareActionRulesTests(unittest.TestCase):
     def test_rejected_actions_leave_sleep_and_relationship_untouched(self) -> None:
         state = PetState(energy=4, sleeping=True, sleep_origin="manual")
         before = encode_pet_state(state)
-        self.assertIn("müde", format_care_response(state.interact("play", now=stamp())))
+        result = state.interact("play", now=stamp())
+        self.assertIn("Energie", format_care_response(result))
         self.assertEqual(before, encode_pet_state(state))
         with self.assertRaises(ValueError):
             state.interact("unknown", now=stamp())
@@ -84,7 +85,7 @@ class CareActionRulesTests(unittest.TestCase):
         self.assertTrue(context.night)
         state = PetState(updated_at=night_time)
         result = state.interact("sleep", now=night_time)
-        self.assertIn("Gute Nacht", format_care_response(result))
+        self.assertIn("Schlafmodus", format_care_response(result))
         self.assertTrue(state.sleeping)
         self.assertEqual(state.sleep_origin, "manual")
         state.interact("talk", now=night_time + 1)

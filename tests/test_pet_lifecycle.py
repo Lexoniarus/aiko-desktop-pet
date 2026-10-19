@@ -8,12 +8,8 @@ from datetime import datetime
 
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.lifecycle import (
-    MAX_CATCHUP_SECONDS,
     MAX_LIVE_EFFORT_SECONDS,
     plan_pet_time,
-)
-from aiko_pet.pet.lifecycle import (
-    MAX_CATCHUP_SECONDS as POLICY_CATCHUP,
 )
 from aiko_pet.pet.lifecycle import (
     MAX_LIVE_EFFORT_SECONDS as POLICY_LIVE_WINDOW,
@@ -76,12 +72,11 @@ class PetTimelineTests(unittest.TestCase):
             "friendship_day", "friendship_gained_today", "care_types_today",
             "care_last_rewards", "sleeping", "updated_at", "meals_date",
             "meals_today", "sleep_origin", "auto_sleep_night", "nap_until",
-            "auto_nap_day", "food", "fun",
+            "auto_nap_day", "food", "fun", "time",
         }
         self.assertEqual(set(encode_pet_state(PetState())), expected)
 
-    def test_legacy_constants_are_preserved(self) -> None:
-        self.assertEqual(MAX_CATCHUP_SECONDS, POLICY_CATCHUP)
+    def test_observation_window_is_preserved(self) -> None:
         self.assertEqual(MAX_LIVE_EFFORT_SECONDS, POLICY_LIVE_WINDOW)
 
     def test_public_advance_consumes_a_bounded_timeline(self) -> None:
@@ -101,13 +96,13 @@ class PetTimelineTests(unittest.TestCase):
                 state.advance(moment + 3600, auto_routine=routine, effort=0.8)
                 self.assertEqual(state.updated_at, moment + 3600)
 
-    def test_catchup_is_bounded_without_routine(self) -> None:
+    def test_full_week_is_consumed_without_routine(self) -> None:
         state = PetState(updated_at=local_stamp())
         state.advance(local_stamp() + 86400.0 * 7)
-        self.assertLessEqual(state.satiety, 12.0)
-        self.assertGreater(state.mood, 0.0)
-        self.assertLess(state.mood, 43.0)
-        self.assertAlmostEqual(state.energy, 27.0)
+        self.assertEqual(state.satiety, 0)
+        self.assertAlmostEqual(state.mood, 0)
+        self.assertEqual(state.energy, 0)
+        self.assertEqual(state.lived_seconds, 7 * 86400)
 
     def test_telemetry_is_not_extrapolated_across_offline_hours(self) -> None:
         calm = PetState(updated_at=local_stamp())

@@ -60,7 +60,7 @@ class OfflineProgressTests(unittest.TestCase):
         self.assertLess(session.state.satiety, 75)
         self.assertEqual(session.state.friendship, 15)
 
-    def test_offline_breakfast_is_nutrition_without_human_care_rewards(self) -> None:
+    def test_offline_time_does_not_generate_food_or_human_care(self) -> None:
         now = local_stamp(10)
         saved = PetState(
             satiety=20,
@@ -75,9 +75,10 @@ class OfflineProgressTests(unittest.TestCase):
         self.store.save(saved, PetSettings(auto_routine=True), adaptive=memory)
         original = self.store.path.read_bytes()
         session = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
-        self.assertIn("breakfast", session.state.meals_today)
-        self.assertIsNotNone(session.state.food.last_food_id)
-        self.assertGreater(session.state.satiety, 20)
+        self.assertEqual(session.state.meals_today, [])
+        self.assertIsNone(session.state.food.last_food_id)
+        self.assertEqual(session.state.satiety, 0)
+        self.assertEqual(session.state.lived_seconds, 3 * 3600)
         self.assertFalse(session.state.sleeping)
         self.assertEqual(session.state.friendship, 40)
         self.assertEqual(session.state.care_types_today, ["pet"])
@@ -100,9 +101,9 @@ class OfflineProgressTests(unittest.TestCase):
         self.assertEqual(live.meals_today, [])
         self.assertIsNone(live.food.last_food_id)
 
-    def test_long_absence_is_bounded_and_backward_clock_does_not_decay(self) -> None:
+    def test_long_absence_is_complete_and_backward_clock_does_not_decay(self) -> None:
         now = local_stamp(15)
-        for age, expected_energy in ((30 * 86400, 52), (-3600, 100)):
+        for age, expected_energy in ((30 * 86400, 0), (-3600, 100)):
             with self.subTest(age=age):
                 self.store.save(
                     PetState(energy=100, updated_at=now - age),
@@ -111,6 +112,7 @@ class OfflineProgressTests(unittest.TestCase):
                 result = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
                 self.assertAlmostEqual(result.state.energy, expected_energy)
                 self.assertEqual(result.state.updated_at, now)
+                self.assertEqual(result.state.lived_seconds, max(0, age))
 
     def test_saving_and_restarting_does_not_repeat_the_closed_interval(self) -> None:
         now = local_stamp(15)

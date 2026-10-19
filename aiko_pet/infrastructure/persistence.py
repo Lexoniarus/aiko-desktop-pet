@@ -20,7 +20,7 @@ from ..pet.state import PetState
 from ..world.contracts import ObjectInteraction, WorldSnapshot
 from .item_assets import load_item_catalog
 from .object_memory_codec import decode_object_memory, encode_object_memory
-from .pet_codec import decode_pet_state, encode_pet_state
+from .pet_codec import decode_pet_state, encode_pet_state, valid_pet_time
 from .world_catalog import build_consumable_definitions
 from .world_codec import decode_world, encode_world
 
@@ -157,12 +157,18 @@ class StateStore:
             payload = json.loads(contents.decode("utf-8"))
         except (ValueError, UnicodeError):
             payload = None
+        pet_data = payload.get("pet") if isinstance(payload, dict) else None
+        invalid_time = (
+            isinstance(pet_data, dict) and "time" in pet_data
+            and not valid_pet_time(pet_data["time"])
+        )
         if (
             isinstance(payload, dict)
             and type(payload.get("version")) is int
             and payload["version"] == SCHEMA_VERSION
             and not self._invalid_world
             and not self._invalid_memory
+            and not invalid_time
         ):
             return
         backup = self.path.with_name(

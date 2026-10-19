@@ -71,6 +71,8 @@ jobs:
             "test_taskbar.py",
             "test_character_assets.py",
             "test_active_time.py",
+            "test_elapsed_time.py",
+            "test_time_persistence.py",
             "test_care_requests.py",
             "test_care_results.py",
             "test_assets.py",

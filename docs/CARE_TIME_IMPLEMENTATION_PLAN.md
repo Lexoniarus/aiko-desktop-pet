@@ -1,0 +1,305 @@
+# Care, relationship and real-time implementation plan
+
+> **Active implementation plan; stage 1 implemented locally.** Requested on 2026-10-19
+> on `feature/social-optimization`, reviewed against clean baseline `42de63a`.
+> The owner accepted the latest discussed balance as a sufficient starting
+> point for implementation planning. This document plans that first delivery.
+> The later stage-1 execution is recorded below; stages 2–6 remain pending.
+
+## Goal and boundaries
+
+Make Aiko's condition and relationship evolve coherently over real time,
+including closed-app and standby intervals. Demanding, distributed care should
+support level 10 with normal human sleep; four adequately supplied daily care
+phases should support approximately levels 7–8. Needs can reach zero without
+death. This foundation must give later conversations and games meaningful,
+reliable context.
+
+Use the latest sections of these documents as the planning baseline:
+
+- [Needs, care, consumption modifiers and combined days](NEEDS_BALANCE_PROPOSAL.md).
+- [Mood target, deficit limits and decline/recovery](MOOD_BALANCE_PROPOSAL.md).
+- [Friendship gains, rolling ceilings, progressive loss and neglect](FRIENDSHIP_BALANCE_PROPOSAL.md).
+- [Simple adaptive sleep, manual priority and food breaks](ADAPTIVE_SLEEP_PROPOSAL.md).
+
+Earlier, explicitly superseded examples are not alternative requirements.
+The proposals remain design evidence, not descriptions of the current runtime.
+Record implementation decisions here and update maintained behavior guides
+when the corresponding behavior actually ships.
+
+This delivery does not add content APIs, translation, jokes/facts, another
+minigame, new cursor behavior, the full Moodlet/stacking system or durable
+emotional memories. It does not reopen the authored dialogue rewrite. Future
+resource types may use the same contracts, but only existing food/drinks are
+implemented now.
+
+## Current gaps and ownership
+
+Follow [the canonical architecture](ARCHITECTURE.md). `PetState` remains the
+single mutable pet aggregate, backed by immutable `PetValues`; pure policies
+calculate changes. World owns actual portions and custody, object memory owns
+acquired knowledge, application services coordinate their effects, and desktop
+adapters own OS observations and Tk playback.
+
+| Area | Current code to change | Required outcome |
+| --- | --- | --- |
+| Elapsed time | `application/active_time.py`, `infrastructure/active_time.py`, `pet/lifecycle.py` | The current live clock excludes suspension and catch-up is capped at eight hours. Replace those limits with exactly-once elapsed-time advancement, including standby and longer absences. |
+| Restoration | `application/session.py`, `pet/state.py` | Restore currently advances pet state before coordinating World and can provide catalogue-based self-care. Reconstruct the paired state chronologically using finite, actually available resources. |
+| Need consumption/care | `pet/need_decay.py`, `pet/food.py`, `pet/fun.py`, `pet/care_actions.py`, balance/food JSON | Apply the discussed rates, rewards and bounded consumption modifiers. Remove overlapping fasting/reserve accelerators from the new model. |
+| Mood | `pet/mood.py` and its callers | Replace unequal weights, friendship/workload bonuses or penalties, exponential adjustment and instant care alignment with the discussed target and timed response. |
+| Friendship | `pet/friendship.py`, care/game/consumption entry points | Replace calendar-day accounting with rolling shared ceilings; persist qualified contact, absence and bounded neglect history. |
+| Sleep and learning | `pet/lifecycle.py`, `pet/mind/adaptive.py`, `adaptive_models.py`, `adaptive_policy.py` | Learn a simple recurring quiet window from actual input/unavailability, without hardware-driven sleep or weighted habit scoring. |
+| Presentation | Read snapshots, status/view models, mind/click/emote policies and relevant dialogue filters | Keep needs, actual mood, relationship and observed situation distinct; positive expressions must be reachable below the need-only mood maximum of 80. |
+| Persistence | `infrastructure/pet_codec.py`, `persistence.py`, paired World/object-memory codecs | Round-trip new histories and sleep episodes without resetting timers, replaying consumption or inventing old evidence. |
+
+No second time simulator, relationship store or movement writer is introduced.
+The application may coordinate chronological steps, but domain and World owners
+remain authoritative for their respective changes.
+
+## Delivery order
+
+Stage 1 now supplies the time/storage foundation. Keep commits reviewable, but integrate the complete
+foundation before promoting it to main: changing numbers alone would leave
+incompatible time, sleep and save behavior in place.
+
+### Stage-1 execution record, 2026-10-19
+
+Implementation started from `6eb0918` on `feature/social-optimization`, retaining
+the earlier local planning documents and subsequent authored text changes.
+The shared live clock now uses suspend-inclusive uptime with explicit wall
+fallback; restoration and live calls use the same streaming domain time plan,
+without the eight-hour truncation. `PetValues.lived_seconds` is persisted in
+optional `pet.time` v1, while outer saves remain v1. It survives checkpoints,
+wall rebasing, saves and restarts; missing history starts neutral. Invalid/future
+time records preserve pet progress and require an original-file backup.
+
+Historical input/load and current sleep-activity flags are not applied across
+the whole absence. The obsolete catalogue self-care path is removed. Existing
+need/care/mood coefficients, friendship gains and sleep policy are retained;
+there is no new absence penalty or adaptive sleep algorithm in this stage.
+Finite World stock remains unchanged while closed until stage 4 implements its
+actual coordinated consumption.
+
+The foundation defines the time basis for later bounded histories without
+writing unused placeholder records now:
+
+| Later state | Contract and owner |
+| --- | --- |
+| Reward entries / qualified contact | `PetValues`; events/contact on the elapsed axis, retained only for required rolling windows; missing contact is unknown. |
+| Critical/zero-need history | `PetValues`; per-need elapsed intervals clipped to the last 24 hours, coalesced rather than raw input logs. |
+| Sleep episode / manual protection / failed search | `PetValues`; elapsed deadlines and actual sleep duration, with stable episode identity. |
+| Learned quiet window | Adaptive memory; coarse observed timing, separate from elapsed life time and objective World state. |
+
+The concrete records and migrations accompany stages 3/4 when their transitions
+exist. No old app timestamp is promoted to valid care or learned inactivity.
+With automatic routine disabled, elapsed time still passes while scheduled
+sleep remains disabled. Across process/reboot gaps, positive wall differences
+are elapsed: without observations, a forward clock correction is indistinguishable
+from a genuine absence. Live valid uptime avoids that ambiguity.
+
+Validation and actual Windows resume acceptance are recorded in the
+[time smoke checklist](WORLD_SMOKE_TEST.md#real-time-foundation-follow-up).
+The existing World acceptance does not sign off this later clock change.
+
+Compatibility changes: `plan_pet_time()` now returns an iterable `TimePlan`,
+not a materialized tuple; its elapsed duration is explicit. The unused
+`MAX_CATCHUP_SECONDS` constant, packaged catch-up limit and catalogue-only
+`PetState.advance(self_care=...)` path are removed after checking repository
+callers. Existing public care/advance/checkpoint ownership remains intact.
+
+### 1. Define time, history and save contracts
+
+- Define one chronological advancement path shared by ticks, accepted care,
+  completed game rounds, restoration and resume. Advance to an action's time
+  before evaluating its pre-care needs or reward; consume each interval once.
+- Separate elapsed duration from local schedule time. Use a suspend-inclusive
+  elapsed source during a running session, with wall-clock reconstruction
+  across process/computer restarts. Specify missing-clock fallback, backward
+  clock changes, forward corrections, timezone/DST and reboot behavior; never
+  produce negative duration or treat a known clock correction as extra lived
+  hours. An unknown closed interval cannot prove whether the clock was changed.
+- Remove the eight-hour truncation through bounded working memory and
+  chronological chunks/event boundaries, rather than a larger elapsed-time cap
+  or an unbounded list of five-minute steps. Do not project current telemetry
+  across unobserved intervals.
+- Define bounded rolling reward entries, qualifying contact, per-need critical
+  and zero intervals, sleep episode/protection/failed-search fields, and the
+  small learned-window record. Need/relationship state belongs in `PetValues`;
+  learned expectations belong in adaptive memory. Define each owner explicitly.
+- Design version-one-compatible optional fields and legacy readers before
+  writing them. Preserve existing needs, friendship, mood, World portions and
+  object knowledge; do not reset progress or clamp an old mood to a new target
+  instantly. Do not infer old valid contact from hover/app timestamps or invent
+  past neglect. Define a first-upgrade baseline at migration time for missing
+  history; subsequent saves must resume the recorded history normally.
+- Include the new fields in checkpoints, rollback and paired save recovery.
+  Preserve `AIKO_SAVE_PATH` and existing user settings. Document the meaning of
+  disabling automatic routine under the new model; time still passes.
+
+Exit: deterministic clock and save tests cover restart, resume, malformed/missing
+optional fields and replay prevention. The contract supports later stages
+without enabling incomplete runtime behavior.
+
+### 2. Implement needs, care and mood together
+
+- Put the agreed awake/sleep rates and food/care values in their existing JSON
+  owners; extend typed validation instead of introducing a second balance table.
+- Keep base hunger independent of load. Apply the approximately 30% CPU/GPU
+  threshold, +20% maximum hardware hunger, +10% input hunger, +25% combined cap,
+  and at most +0.5 energy/hour hardware surcharge while awake. No direct
+  hardware effect on fun, social, affection, mood or sleep; no sleep surcharge.
+- Reduce digestion protection to 25%; reserve use is one minute per awake
+  minute and 0.3 per sleeping minute, capped at 175 minutes. Omit the additional
+  fasting hunger acceleration and activity-based reserve speedup.
+- Apply talk, petting, accepted food/drink and completed-round effects once.
+  Rejected actions and requests to open a game do not receive completion gains.
+  Preserve the agreed game-session diminishing returns and cap.
+- Compute the 0–80 need base, summed deficit deductions and strictest target
+  limit. Advance actual mood at the agreed decline ceiling or two points/minute
+  recovery, without overshoot, instant care bonuses or feedback into needs.
+- Audit legacy food/game experience and workload paths so they cannot silently
+  reintroduce removed numerical mood effects. Keep factual dialogue evidence
+  separate from those effects.
+
+Exit: known care sequences have the stated effects; zero needs, multiple
+deficits, changing targets and sleep transitions remain numerically consistent.
+
+### 3. Implement friendship, contact and neglect
+
+- Apply nominal gains, the pre-care need-above-80 reduction, same-type timing,
+  and the shared rolling +0.75/two-hour and +5/24-hour ceilings in that order.
+  Reward exhaustion must not suppress real need care or qualified contact.
+- Persist only genuine accepted personal care/completed play as relationship
+  contact. Ordinary computer input, hover, app opening, declined commands and
+  autonomous eating do not renew it. Separate interrupted from completed actions.
+- Apply the piecewise absence rates and latest progressive factor curve.
+  Recompute the factor as friendship changes; direct bounded negative actions
+  do not receive this passive-loss multiplier.
+- Maintain the previous 24 real hours of per-need critical/zero duration. Charge
+  only an eligible, currently critical need; recovering energy during actual
+  sleep does not add new energy neglect. Feeding stops the current charge but
+  does not erase the history. Histories expire by time.
+- For every chronological interval, apply the progressive factor to the
+  greater of absence loss and the strongest eligible neglect rate. Do not sum
+  all deficient needs or take the maximum only after whole-day totals.
+- Connect existing click/object-withholding evidence to the discussed bounded
+  penalties. Specify the exact episode/boundary recognition before coding that
+  part; clicks that advance/read a story are not annoyance events. Returning an
+  object stops ongoing withholding, without refunding the past penalty.
+
+Exit: normal sleep, care with no remaining reward, repeated actions, missed
+visits and sustained neglect produce distinct, restart-safe outcomes. No
+automatic relationship refund comes from refilling needs.
+
+### 4. Integrate adaptive sleep and finite closed-time care
+
+- Reuse coarse actual mouse/keyboard-presence observations, not their content.
+  Distinguish repeated meaningful input, a single jitter, 15-minute inactivity,
+  known off/standby and unknown closed-app time. No background input monitor,
+  application-title collection or weighted confidence model is needed.
+- Implement the tentative 23:00–07:00 window, three/seven recurring quiet-phase
+  milestones, resistance to one-off exceptions and at most 30 minutes/day
+  adjustment. Do not train from manual commands, app timestamps or load.
+- Implement the recorded manual-command priority and 30-minute protection,
+  exhaustion at energy at most 10, ordinary naps/main sleep, scheduled waking,
+  sustained-return conditions and energy gates. Track actual sleep time across
+  short care breaks; full energy alone must not end main sleep early.
+- During unobserved closed time, follow the saved expected rhythm without
+  pretending to have observed 15 minutes of inactivity or a user return.
+  Reconstruct scheduled waking at its historical time, not at app reopening.
+- Handle satiety-at-most-20 care breaks toward at least 40 using remembered,
+  accessible food. At zero with no known food, allow the live bounded five-minute
+  search; a failed search must not restart on every tick or reopening.
+- Restore World and acquired object knowledge before reconstructing resource
+  use. Closed-time care may consume only previously identified, saved,
+  accessible, actual stock; it cannot discover unknown replacements, generate
+  catalogue meals or award personal social/friendship credit. Other need types
+  do not cause sleep-time food searches or invented autonomous activities.
+- Coordinate atomic portion removal, nutrition, memory and time progress using
+  existing `ObjectConsumption`/World ownership. Adapt the entry point for
+  historical timestamps without requiring Tk or synthesizing an animation.
+  Reopening shows the resulting state/stock rather than replaying every action.
+
+Exit: the same known timeline produces equivalent domain/resource results live,
+through a closed interval or across standby, within stated numerical tolerance.
+Different evidence may legitimately produce different discovery/learning.
+
+### 5. Connect the foundation to expression and conversation context
+
+- Project actual needs, target/actual mood, friendship stage, sleep reason and
+  genuine absence/contact context through existing typed reads where needed.
+  Do not make UI code recalculate authoritative rewards or state.
+- Audit mood labels, cheerful/playful filters and idle emotes against the new
+  scale. Existing mood thresholds above 80 cannot remain the sole route to
+  ordinary positive behavior. Set reachable thresholds against both example
+  days and record them as presentation tuning.
+- Remove hardware-only tired/withdrawn social conclusions. Preserve authored
+  remarks about genuinely observed desktop load where their evidence is valid.
+- A mood around 48–60 or a change from friendship level 10 to 9 is not itself
+  an offended return. Feed actual absence/negative-event context to applicable
+  existing reactions. A new persistent offended state, its duration/recovery
+  and richer emotional memory remain separate design work.
+- Keep toolbar/care availability, sleeping action handling, gameplay completion
+  and bubble playback consistent with the new state. Preserve the existing
+  authored German sequences; edit individual wording only where the changed
+  semantics require it. Update the review workbook only for actual text edits.
+
+Exit: normal well-cared-for Aiko can look and sound positive; tired/hungry and
+relationship-related reactions have distinct, evidenced reasons.
+
+### 6. Verify integrated behavior and document the delivered system
+
+Turn the arithmetic scenarios into tests of production policies with injected
+time and isolated saves. The discussion calculations are expected behavior,
+not a substitute for these tests. Keep schedule inputs/assumptions visible;
+use tolerance and event assertions rather than brittle rounded-table snapshots.
+
+| Scenario | Required evidence |
+| --- | --- |
+| Eight distributed care phases, 23:00–07:00 sleep | All needs stay above 40; mood roughly 57–78; the selected 95-start friendship day earns 5 and loses 4 overnight, maintaining level 10. Energy reaches 100 around 06:40 without premature waking. |
+| Four sufficiently supplied care phases | The [bundled schedule](NEEDS_BALANCE_PROPOSAL.md#combined-four-phase-average-care-day) settles near 69–71 friendship, levels 7–8, with +3/-3 daily. All needs remain above 40 and actual mood is roughly 48–79. |
+| Four visits with insufficient food/talk | Visit count alone cannot guarantee the target relationship. The shorter comparison reaches hunger/social deficits and neglect; do not award adequate-care results from contact frequency alone. |
+| Morning/evening care and prolonged absence | The lower curve softens ordinary sparse care; there is no guaranteed level floor. Verify the absence/neglect maximum, resource exhaustion and zero needs without death or hidden supply. |
+| Empty/limited/unknown food stock | Consume only valid finite portions once. Unknown items remain unknown while closed; failed searches, rejected food and rollback do not create nutrition/contact. |
+| Manual sleep/wake, early return, exhaustion and hunger | Check each priority collision, manual protection expiry, cumulative actual sleep, nap/recovery endpoints and food-break return. |
+| Three/seven recurring quiet phases and one exception | Learn from permitted observations only; no jitter, heavy background computation or app restart substitutes for actual human input. |
+| Restart, standby, 8+ hours, multi-day gaps and clock changes | No truncated needs/relationship time, replayed rewards/food or invented activity; histories remain bounded and advancement stays practical. |
+| Legacy/new saves, repeated loads and failed joint commits | Preserve valid progress and portion custody; no invented historical neglect, timer reset or partial World/Pet update. |
+
+Build on `test_active_time`, `test_pet_lifecycle`, `test_offline_progress`,
+`test_session_restoration`, `test_food`, `test_fun_mood`,
+`test_friendship_policy`, adaptive/care/game tests, checkpoints and paired
+World/object-memory persistence tests. Add focused new test owners where the
+new behavior does not fit an existing responsibility. Keep architecture/import,
+resource validation and UI projection coverage intact.
+
+Before delivery, run the full suite, Ruff, strict Mypy and Pyright using
+[Contributing](../CONTRIBUTING.md#development-workflow), then verify remote CI
+for the actual proposed commit. Perform real Windows checks with an isolated
+`AIKO_SAVE_PATH`: meaningful input versus jitter, active background load,
+sleep/manual wake, actual suspend/resume, close/reopen with finite food stock,
+game/story clicks and Tk playback/care availability. Arithmetic or headless
+tests do not satisfy desktop acceptance.
+
+Update architecture, food, fun/mood, saves and relevant World/smoke guides when
+the behavior is implemented. Record the migration and actual validation in the
+changelog; archive this plan only after delivery. No merge is implied here.
+
+## Small decisions to settle inside the relevant stage
+
+The overall model is sufficiently specified. These are bounded details to
+record before their implementation, not reasons to restart the design:
+
+| Detail | Starting approach / decision needed |
+| --- | --- |
+| Reserve fade and high-fun saturation | Start with the calculated linear reserve fade (full protection from 80 reserve minutes, now capped at 25%) and retain the existing high-fun reward reduction. Verify both schedules with those choices. |
+| Same-type rewards and old variety bonus | Start with no extra same-type friendship reward inside two hours and no separate variety bonus, as in the combined calculations. Need care and qualified contact remain possible. Specify whether an unrewarded repetition moves the eligibility anchor; do not let exhausted shared budgets accidentally create unlimited eligibility. |
+| Input/load normalization | Reuse available coarse observations; validate the approximately 30% CPU/GPU threshold and input range with idle, office and heavy-load cases. Do not interpret RAM occupancy as evidence of human presence. |
+| Quiet-phase grouping and nap duration | Choose one simple main quiet phase per day, an explicit timing-similarity rule and one deterministic duration within the discussed 60–90-minute nap range. Preserve the three/seven milestones and adjustment limit; avoid extra scoring, weekday models or new sensors. |
+| Episode boundaries and conflicting care | Specify when a sleep phase ends, when a genuinely new offer permits another search, and the low-energy hunger-break collision after manual protection. Keep acute care bounded and return to needed recovery. Specify when an explicit care command wakes Aiko versus being deferred. |
+| Negative-interaction episodes | Use actual existing click/withholding evidence and the discussed limits; define the warning/boundary and episode resets before adding numerical penalties. Do not infer intent from every click. |
+| Positive expressions and old settings | Choose reachable mood thresholds without forcing routine care to maximum mood; record how current routine/preferences map to the new autonomous behavior. |
+
+If one of these changes the accepted care burden or relationship outcome,
+bring that specific tradeoff back for discussion. Routine contract and
+implementation choices do not require reopening the agreed balance.

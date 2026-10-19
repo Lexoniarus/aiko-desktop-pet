@@ -128,7 +128,8 @@ class DomainTransitionTests(unittest.TestCase):
             auto_routine=True, effort=0.8,
         )
         self.assertIsNotNone(steps)
-        self.assertGreater(len(steps or ()), 0)
+        assert steps is not None
+        self.assertIsNotNone(next(iter(steps), None))
         self.assertEqual(encode_pet_state(state), before)
         self.assertTrue(transition.sleeping)
         self.assertFalse(state.sleeping)

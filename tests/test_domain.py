@@ -2,7 +2,6 @@ import unittest
 from datetime import datetime
 
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
-from aiko_pet.pet.lifecycle import MAX_CATCHUP_SECONDS
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.value_rules import clamp_need_value
 from aiko_pet.ui.view_models.care_text import format_care_response
@@ -31,11 +30,14 @@ class PetStateTests(unittest.TestCase):
         self.assertEqual(state.energy, 96)
         self.assertAlmostEqual(state.satiety, 70.8)
 
-    def test_offline_gap_is_capped(self):
+    def test_offline_gap_is_fully_consumed(self):
         state = PetState(updated_at=NOW + 100)
-        state.advance(NOW + 100 + MAX_CATCHUP_SECONDS * 9)
-        self.assertLessEqual(state.satiety, 12)
-        self.assertEqual(state.updated_at, NOW + 100 + MAX_CATCHUP_SECONDS * 9)
+        duration = 72 * 3600
+        state.advance(NOW + 100 + duration)
+        self.assertEqual(state.satiety, 0)
+        self.assertEqual(state.energy, 0)
+        self.assertEqual(state.lived_seconds, duration)
+        self.assertEqual(state.updated_at, NOW + 100 + duration)
 
     def test_clock_going_backwards_does_not_penalize(self):
         state = PetState(updated_at=NOW + 5000)
@@ -53,7 +55,7 @@ class PetStateTests(unittest.TestCase):
 
     def test_play_when_exhausted_does_not_apply_cost(self):
         state = PetState(mood=20, energy=7)
-        self.assertIn("müde", format_care_response(state.interact("play")))
+        self.assertIn("Energie", format_care_response(state.interact("play")))
         self.assertEqual((state.mood, state.energy), (20, 7))
 
     def test_sleep_toggle_and_feeding_wakes(self):

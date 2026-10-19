@@ -1,4 +1,4 @@
-"""Pure daily-routine and bounded-time planning for the pet aggregate.
+"""Pure daily-routine and streaming elapsed-time planning for the aggregate.
 
 Policies calculate transitions and time steps; PetState owns every mutation.
 """
@@ -6,13 +6,14 @@ Policies calculate transitions and time steps; PetState owns every mutation.
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 from dataclasses import dataclass
 from typing import Protocol
 
 from .balance import BALANCE
+from .food import FoodActivity
 from .routine import TimeContext, context_at
 
-MAX_CATCHUP_SECONDS = BALANCE.integer("simulation", "maximum_catchup_seconds")
 SIMULATION_STEP_SECONDS = BALANCE.integer("simulation", "step_seconds")
 # Live telemetry is never projected across a restart/suspend or offline gap.
 MAX_LIVE_EFFORT_SECONDS = BALANCE.number("simulation", "maximum_live_effort_seconds")
@@ -55,6 +56,41 @@ class SimulationStep:
     hours: float
     context: TimeContext | None
     effort: float | None
+    food_activity: FoodActivity | None = None
+    observed: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class TimePlan:
+    """Full elapsed duration with constant-memory iteration, never an age cap."""
+
+    now: float
+    elapsed_seconds: float
+    auto_routine: bool
+    effort: float | None
+    food_activity: FoodActivity | None
+
+    def __iter__(self) -> Iterator[SimulationStep]:
+        cursor = self.now - self.elapsed_seconds
+        known_since = self.now - min(self.elapsed_seconds, MAX_LIVE_EFFORT_SECONDS)
+        while cursor < self.now:
+            if self.auto_routine:
+                # Align the grid across calls instead of drifting after restart.
+                boundary = (math.floor(cursor / SIMULATION_STEP_SECONDS) + 1)
+                end = min(self.now, boundary * SIMULATION_STEP_SECONDS)
+            else:
+                end = self.now
+            if cursor < known_since < end:
+                end = known_since
+            observed = cursor >= known_since
+            yield SimulationStep(
+                hours=(end - cursor) / 3600.0,
+                context=context_at(cursor) if self.auto_routine else None,
+                effort=self.effort if observed else None,
+                food_activity=self.food_activity if observed else None,
+                observed=observed,
+            )
+            cursor = end
 
 
 def calculate_daily_routine(
@@ -117,39 +153,17 @@ def plan_pet_time(
     auto_routine: bool = False,
     effort: float | None = None,
     elapsed_seconds: float | None = None,
-) -> tuple[SimulationStep, ...] | None:
-    """Plan the old bounded catch-up, never projecting stale telemetry."""
+    food_activity: FoodActivity | None = None,
+) -> TimePlan | None:
+    """Plan all elapsed time; current observations cover only a recent tail."""
     if not math.isfinite(now):
         return None
     duration = now - updated_at if elapsed_seconds is None else elapsed_seconds
     if not math.isfinite(duration):
         return None
-    elapsed = max(0.0, min(MAX_CATCHUP_SECONDS, duration))
+    elapsed = max(0.0, duration)
     if type(effort) not in (int, float):
         effort = None
     elif effort is not None and (not math.isfinite(effort) or not 0.0 <= effort <= 1.0):
         effort = None
-    known_since = now - min(elapsed, MAX_LIVE_EFFORT_SECONDS)
-    if not auto_routine:
-        if effort is None:
-            return (SimulationStep(elapsed / 3600.0, None, None),)
-        unseen_seconds = max(0.0, known_since - (now - elapsed))
-        return (
-            SimulationStep(unseen_seconds / 3600.0, None, None),
-            SimulationStep((now - known_since) / 3600.0, None, effort),
-        )
-    steps: list[SimulationStep] = []
-    cursor = now - elapsed
-    while cursor < now:
-        next_cursor = min(now, cursor + SIMULATION_STEP_SECONDS)
-        if effort is not None and cursor < known_since < next_cursor:
-            next_cursor = known_since
-        steps.append(
-            SimulationStep(
-                hours=(next_cursor - cursor) / 3600.0,
-                context=context_at((cursor + next_cursor) / 2),
-                effort=effort if cursor >= known_since else None,
-            )
-        )
-        cursor = next_cursor
-    return tuple(steps)
+    return TimePlan(now, elapsed, auto_routine, effort, food_activity)

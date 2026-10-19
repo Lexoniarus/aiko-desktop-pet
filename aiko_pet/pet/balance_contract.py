@@ -152,7 +152,6 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "stride_pixels_at_scale_one": "integer",
     },
     "simulation": {
-        "maximum_catchup_seconds": "integer",
         "step_seconds": "integer",
         "maximum_live_effort_seconds": "number",
         "nap_seconds": "integer",

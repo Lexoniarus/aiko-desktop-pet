@@ -221,8 +221,8 @@ def advance_food(
 ) -> FoodProgress:
     """Integrate digestion and hunger in five-minute steps, not once per tick.
 
-    All input time comes from the host's *active session clock*. This method
-    never computes the gap from wall timestamps after a program restart.
+    The aggregate supplies elapsed life time, including closed/standby time.
+    This method never reads clocks or reconstructs observations itself.
     """
     if not math.isfinite(hours) or hours <= 0.0:
         return FoodProgress(satiety, food)

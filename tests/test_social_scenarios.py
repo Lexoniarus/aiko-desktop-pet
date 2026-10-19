@@ -389,19 +389,25 @@ class CatalogueContractTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     Line.parse(data)
 
-    def test_all_sequence_text_is_short_and_no_fiction_or_hardware(self):
+    def test_sequence_copy_is_short_and_hardware_has_observation_context(self):
         for line in DialogueBook.from_file().lines:
             for beat in line.beats:
                 if beat.kind != "text":
                     continue
                 self.assertLessEqual(len(beat.content), 125)
-                for forbidden in ("Academy", "Kobe", "GPU", "CPU", "RAM"):
+                for forbidden in ("Academy", "Kobe"):
                     self.assertIsNone(
                         re.search(
                             r"\b" + re.escape(forbidden) + r"\b",
                             beat.content,
                             flags=re.IGNORECASE,
                         )
+                    )
+                if re.search(r"\b(CPU|GPU|RAM)\b", beat.content, re.IGNORECASE):
+                    self.assertTrue(
+                        line.event.startswith("computer_")
+                        or line.event in {"work_long_thought", "pet_during_work"},
+                        line.id,
                     )
 
     def test_all_new_events_have_actual_authored_lines(self):

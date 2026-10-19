@@ -11,7 +11,9 @@
 
 This is the current, editable food design. It supersedes historical v0.11/v0.12
 feeding constants. The goal is three normal meals and optional snacks over a
-16-hour active day, with no mandatory meal alarm. Reopening now reconstructs bounded closed time with optional scheduled self-care; see [data and saves](DATA_AND_SAVES.md).
+16-hour active day, with no mandatory meal alarm. Real-time reconstruction now
+includes closed time and standby without an absence cap; see
+[data and saves](DATA_AND_SAVES.md). The new balance remains a separate proposal.
 
 ## One source per responsibility
 
@@ -97,12 +99,14 @@ hunger. `PetState` owns nutrition and delegates calculations to
 
 ## Session time and compatibility
 
-The pet's active-session clock is authoritative. Saving and loading the
-existing version-one JSON adds an optional nested `pet.food` value;
-old saves load with neutral food state. Closing Aiko, suspending Windows or
-restarting a computer does not consume food or digest the reserve while the
-simulation is stopped. Only a bounded, simulated active interval progresses
-hunger.
+Elapsed life time is authoritative, including closed-app time and standby.
+The existing version-one JSON retains optional nested `pet.food` and adds
+`pet.time`; old saves load with neutral missing fields. Hunger and digestion
+advance for the whole elapsed interval, using existing rates. Recent measured
+load/input is not projected across unobserved hours. Time advancement does not
+generate catalogue meals or consume World stock while closed; finite-stock
+closed-time care remains a later stage. Live autonomous consumption still uses
+actual World portions and its normal acquisition/consumption sequence.
 
 ## Food graphics, scale and animation
 

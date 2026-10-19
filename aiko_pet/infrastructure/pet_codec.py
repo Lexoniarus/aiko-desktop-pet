@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import time
+from datetime import datetime
 from typing import Any
 
 from ..pet.balance import BALANCE
@@ -30,6 +31,10 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
     except (TypeError, ValueError, OverflowError):
         timestamp = current
     if not math.isfinite(timestamp):
+        timestamp = current
+    try:
+        datetime.fromtimestamp(timestamp)
+    except (ValueError, OSError, OverflowError):
         timestamp = current
     meals = value.get("meals_today")
     if not isinstance(meals, list):
@@ -86,6 +91,7 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
         if isinstance(value.get("auto_nap_day"), str)
         and len(value.get("auto_nap_day", "")) == 10
         else "",
+        lived_seconds=_load_lived_seconds(value.get("time")),
     )
 
 
@@ -103,6 +109,7 @@ def encode_pet_state(state: PetState) -> dict[str, Any]:
         "care_last_rewards": dict(state.care_last_rewards),
         "sleeping": state.sleeping,
         "updated_at": state.updated_at,
+        "time": {"version": 1, "lived_seconds": state.lived_seconds},
         "meals_date": state.meals_date,
         "meals_today": list(state.meals_today),
         "sleep_origin": state.sleep_origin,
@@ -112,6 +119,27 @@ def encode_pet_state(state: PetState) -> dict[str, Any]:
         "food": encode_food_state(state.food),
         "fun": round(state.fun, 4),
     }
+
+
+def valid_pet_time(raw: Any) -> bool:
+    """Validate the optional elapsed axis without accepting bools or NaNs."""
+    structure_valid = (
+        isinstance(raw, dict)
+        and type(raw.get("version")) is int
+        and raw["version"] == 1
+        and type(raw.get("lived_seconds")) in (int, float)
+    )
+    if not structure_valid:
+        return False
+    try:
+        return math.isfinite(raw["lived_seconds"]) and raw["lived_seconds"] >= 0
+    except OverflowError:
+        return False
+
+
+def _load_lived_seconds(raw: Any) -> float:
+    # Missing/invalid history never claims prior care, activity or neglect.
+    return float(raw["lived_seconds"]) if valid_pet_time(raw) else 0.0
 
 
 def _load_care_types(raw: Any) -> list[str]:

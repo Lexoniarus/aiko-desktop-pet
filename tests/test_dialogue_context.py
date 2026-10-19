@@ -98,7 +98,9 @@ class DialogueContextTests(unittest.TestCase):
                 line = next(x for x in book.lines if x.id == chosen.line_id)
                 self.assertIn(stage, line.stages)
 
-    def test_48_stories_have_single_emotion_and_desktop_stage_distribution(self) -> None:
+    def test_48_stories_have_single_emotion_and_desktop_stage_distribution(
+        self,
+    ) -> None:
         stories = [x for x in self.mind.book.lines if x.presentation == "story"]
         self.assertEqual(len(stories), 48)
         expected = Counter(

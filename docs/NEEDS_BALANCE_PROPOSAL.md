@@ -1,5 +1,11 @@
 # Need balance and daily care proposal
 
+> **Planning update, 2026-10-19:** The owner accepted the latest combined
+> care examples as a suitable starting point for implementation planning.
+> See the [active care/time implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
+> Earlier recording disclaimers below describe the original discussion status;
+> none of these values is implemented by this documentation update.
+
 > **Discussion proposal only — no implementation approval.** Recorded on
 > 2026-10-19 on `feature/social-optimization`, alongside code baseline `b190694`.
 > The owner requested preservation of the discussed need values, example day,
@@ -414,6 +420,68 @@ or current production refusal/playback behavior. The reserve fade curve,
 actual input/load scaling, expression thresholds and possible care refusal
 rules remain design questions. No files or saves were changed by the arithmetic
 and no implementation was authorized by recording it.
+
+## Combined four-phase average-care day
+
+The owner accepted this later comparison as the average-care baseline for
+implementation planning. It uses the same light-office modifiers, reserve
+curve, accepted-action assumptions, mood calculation and 23:00–07:00 sleep
+as the combined eight-phase day above. The care is bundled into four longer
+visits; fewer visits do not mean that less total nutrition or conversation
+will automatically suffice.
+
+| Time | Accepted care in order |
+| --- | --- |
+| 07:00 | Onigiri, talk, pet, three RPS rounds |
+| 13:00 | Sandwich, apple, two talks, pet, three RPS rounds |
+| 19:00 | Sandwich, talk, pet, three RPS rounds |
+| 23:00 | Dorayaki, talk, pet, then manual Sleep |
+
+That is five food portions, five accepted conversations, four petting actions
+and three three-round game sessions, matching the eight-phase day's total
+care. The second midday talk improves social need but receives no extra
+same-type friendship reward inside two hours. Visits must allow these actions
+to finish; the calculation does not measure conversation/animation duration
+or bypass an actual runtime rejection or busy state.
+
+Repeat the independent arithmetic for 241 days, starting friendship at 70,
+retaining rolling histories and reporting the final settled day rather than
+resetting friendship for the report. One-minute steps produce the following
+post-care need values and new target mood. Actual mood still approaches the
+target over time; it does not jump with the care action.
+
+| Time | Satiety | Energy | Fun | Social | Affection | Target mood |
+| --- | --- | --- | --- | --- | --- | --- |
+| 07:00 | 100 | 97.5 | 100 | 100 | 100 | 79.6 |
+| 13:00 | 100 | 76 | 100 | 100 | 89 | 74.4 |
+| 19:00 | 92.3 | 55.5 | 100 | 82.8 | 78 | 65.4 |
+| 23:00 | 83.4 | 42.5 | 88 | 79.8 | 79 | 59.6 |
+| Next 07:00, before care | 72.2 | 100 | 88 | 77 | 77 | 66.3 |
+
+Across the settled day, minimum satiety is approximately 51.9, energy 42.5,
+fun 82, social 50.8 and affection 53. All food is accepted, all needs stay
+above 40 and no neglect, nap, recovery or sleep-time food break is triggered.
+Actual mood ranges approximately **47.8–79.1**; it starts and finishes the
+repeating day around 66.3. Energy again reaches 100 around 06:40 and normal
+sleep continues until 07:00. These are arithmetic results, not a runtime test.
+
+Each visit actually earns the shared ceiling of +0.75, totaling **+3**. The
+progressive absence loss also settles at approximately **-3 per day**, without
+an additional neglect charge. Friendship varies approximately **69.2–70.8**,
+crossing levels **7–8**, rather than maintaining level 10. This is the intended
+average-care relationship; its moderate mood is not itself evidence of offense.
+
+The shorter comparison with no extra midday apple and only one midday talk
+does not maintain equivalent needs. Under repeated-day arithmetic, satiety and
+social need reach zero, actual mood can reach zero, and friendship settles
+around 50–51 (levels 5–6) with sustained neglect. Four visits alone therefore
+cannot certify good care. The accepted baseline is the sufficiently supplied
+four-phase schedule, without retuning away its required care quantities.
+
+The one-minute arithmetic reproduces the preceding discussion. A finer
+15-second comparison gave minimum satiety about 51.88 and actual mood about
+47.79–79.14, preserving the same relationship outcome. Production-policy,
+save/resume and Windows verification remain tasks in the implementation plan.
 
 ## Relationship consequences of the example
 

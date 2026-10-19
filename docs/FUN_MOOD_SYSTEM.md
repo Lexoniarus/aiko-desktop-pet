@@ -73,7 +73,10 @@ minigame must be completed.
 
 Old saves without `fun` load at 75. Previously saved mood values
 are preserved initially and gradually follow the new formula.
-On reopening, bounded closed time now advances needs and mood. Routine sleep and self-served main meals apply only during this reconstruction when automatic routine is enabled. Windows suspend remains excluded from the running-session clock. See [data and saves](DATA_AND_SAVES.md).
+Full closed time and standby now advance needs and mood, using the existing
+balance. Automatic routine can apply existing scheduled sleep; time alone no
+longer creates self-served catalogue meals. The new mood/need balance and
+adaptive sleep remain later stages. See [data and saves](DATA_AND_SAVES.md).
 
 ## Verification
 

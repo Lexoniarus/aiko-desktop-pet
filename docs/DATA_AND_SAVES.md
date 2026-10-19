@@ -36,8 +36,8 @@ Balance values use names that state their meaning and units. Integer counters
 and milliseconds cannot be booleans or fractional numbers. Fractions and
 probabilities stay within 0..1; mood weights add up to one; interval minimums
 cannot exceed their maximums; simulation divisors and steps must be positive.
-Simulation steps cannot exceed five minutes, and the catch-up limit cannot
-exceed seven days. The shipped catch-up limit remains eight hours.
+Simulation steps cannot exceed five minutes. Elapsed-time advancement has no
+catch-up age limit; the former eight-hour limit and its parameter are removed.
 
 Adding a new parameter, text key or dialogue event requires updating the
 corresponding typed consumer and its contract in `pet/balance_contract.py`,
@@ -108,6 +108,21 @@ saved to four decimal places. Older version-one saves missing newer optional
 fields retain their existing defaults. Raw hardware samples, window titles,
 keystrokes, pending dialogue and unfinished game rounds are not saved.
 
+The optional `pet.time` section has its own `version: 1` and nonnegative finite
+`lived_seconds`. This is the aggregate-owned elapsed axis since introducing
+this record, including subsequently reconstructed closed time. It is not an
+uptime, wall timestamp or claim about observed user activity. It survives
+wall-clock rebasing and checkpoints. Legacy saves start at zero without
+inventing earlier contact, rewards or neglect history; existing progress is
+retained. Malformed/future time sections start neutral, preserving pet progress,
+and the original file is backed up before replacement. Outer save version is 1.
+
+Later reward/neglect histories can use this elapsed axis for rolling intervals;
+they are not implemented by the time foundation. The planned owners are
+`PetValues` for relationship/critical-need/sleep episodes and adaptive memory for
+learned expectations. Missing qualifying contact remains unknown, not inferred
+from an app timestamp. The new time record does not populate those histories.
+
 Normal saves occur about every 55 seconds and after the application's existing
 care, preference and orderly shutdown paths. `StateStore` writes a temporary
 UTF-8 JSON file beside the save, flushes and synchronizes it, then replaces
@@ -119,19 +134,23 @@ session, its original bytes are first preserved beside it under a unique
 the backup prevents replacement of the original file. Valid saves do not
 produce these backup files on every autosave.
 
-## Closed time and self-care
+## Real time, closed sessions and standby
 
 > This section describes the current runtime. The separate
 > [adaptive sleep proposal](ADAPTIVE_SLEEP_PROPOSAL.md) records unimplemented
-> learned sleep/wake timings and full elapsed-time continuation, together with
+> learned sleep/wake timings, together with
 > the [need balance proposal](NEEDS_BALANCE_PROPOSAL.md). These candidates do
-> not replace the existing time, manual-sleep or self-care behavior below.
+> not replace the existing need rates or manual-sleep behavior below. The first
+> [implementation stage](CARE_TIME_IMPLEMENTATION_PLAN.md) now supplies real-time
+> advancement; new care balance, friendship loss and adaptive sleep are pending.
 
 Loading JSON only decodes data. `PetSessionRestorer` subsequently calculates
-closed time from `pet.updated_at` to the current clock, bounded by
-`simulation.maximum_catchup_seconds` in `balance.json` (eight hours by default).
-For longer absences it simulates the most recent bounded interval. Missing
-or corrupt saves do not generate catch-up; a backwards clock produces none.
+closed time from `pet.updated_at` to the current clock, without truncating the
+absence. `pet.lifecycle.TimePlan` streams chronological steps rather than
+allocating a list proportional to the gap. Missing or corrupt saves do not
+generate catch-up; a backwards clock produces zero elapsed time and rebases
+the next anchor. The obsolete `simulation.maximum_catchup_seconds` setting has
+been removed; no need/care balance coefficients changed in this stage.
 
 `StateStore.load_session()` reads state, settings and adaptive memory together
 into one `LoadedPetData` snapshot. The old partial `load()` and `load_memory()`
@@ -139,23 +158,45 @@ wrappers have been retired; loading this snapshot never advances time itself.
 
 During this calculation there is no observed workload, inferred user input,
 human care reward, friendship gain or fabricated rhythm learning. Needs and
-digestion still progress. With `auto_routine` enabled, scheduled sleep can
-restore energy and due main meals can be eaten without a human care reward.
-Meals use the existing nutrition catalogue, fullness limit and daily meal
-markers. Sleep requested manually remains a manual sleep until woken.
+digestion still progress. With `auto_routine` enabled, the existing scheduled
+sleep can restore energy. Sleep requested manually retains its existing manual
+behavior until the adaptive-sleep stage. Turning automatic routine off disables
+scheduled sleep, not the passage of time. Catalogue-based automatic meals have
+been removed: elapsed time cannot generate portions or personal care credit.
 
 After restoration, the timestamp is anchored at the current time. The shared
 `ActiveSessionClock` then consumes running-session time exactly once across
-ticks, care and saves; Windows suspend is excluded from that live clock.
+ticks, care, completed games and saves. Windows uses `GetTickCount64`, Linux
+uses `CLOCK_BOOTTIME`; both include suspend while ignoring wall-clock changes.
+These semantics are documented by
+[Microsoft](https://learn.microsoft.com/windows/win32/sysinfo/windows-time) and
+[Python](https://docs.python.org/3.11/library/time.html#time.CLOCK_BOOTTIME).
+If uptime is unavailable or resets, a nonnegative wall-time difference bridges
+that interval. Both anchors advance together so recovery does not replay it.
+Failed live advancement restores the pet checkpoint and clock anchors together.
+The live clock is aligned with the closed-time endpoint before loading and
+catch-up work, so time spent initializing the application remains part of the
+next live interval instead of being lost or counted twice.
 `application.active_time.SessionInputs` carries the shared live-time context;
 ticks, care and completed games use the same `advance_session_time()` function.
-Closed-time wall-clock reconstruction cannot distinguish shutdown, suspend
-or a forward clock correction, so all are subject to the same bounded rule.
+Closed-time reconstruction and wall-time fallback cannot distinguish a real
+absence from an unobserved forward clock correction. Positive wall differences
+are treated as elapsed; no eight-hour cap hides the uncertainty. During a
+running session, a valid suspend-inclusive uptime takes precedence over wall
+corrections. DST/timezone changes affect local schedule labels, not elapsed
+duration. Known uptime is not serialized across a computer reboot.
 
-Scheduled self-served meals are enabled only for closed-time reconstruction.
-Live autonomous consumption instead requires an observed/remembered World
-portion and the normal interaction sequence. Turning off automatic routine
-disables automatic offline sleep/meals; live object behavior remains available.
+The latest hardware/input snapshot covers only the existing 30-second recent
+observation window, not hours of unseen time. Current bedtime/nap activity flags
+likewise do not rewrite historical routine decisions. Older intervals carry
+unknown activity. Active observation time remains separate: existing
+`active_uptime_seconds()` still excludes suspend for World physics/perception,
+and closed time creates no sensory evidence or learned human activity.
+
+Live autonomous consumption requires an observed/remembered World portion and
+the normal interaction sequence. Closed-time use of identified finite stock,
+sleep food breaks and simple learned sleep windows remain later stages. In the
+interim, restored stock is unchanged and cannot supply invisible catalogue meals.
 
 ## Joint World recovery
 

@@ -93,7 +93,7 @@ German fallback wording is selected only by `ui/view_models/care_text.py`.
 - `care_actions.py`: `CareTransition` for care actions and their rewards.
 - `need_decay.py`: `NeedLevels` for time and measured effort.
 - `friendship.py`: relationship gains, cooldowns and daily limits.
-- `lifecycle.py` and `routine.py`: bounded catch-up, sleep and daily schedule.
+- `lifecycle.py` and `routine.py`: streaming full-time advancement, sleep and daily schedule.
 
 Food and localized UI content now have distinct, validated JSON owners:
 `data/balance.json` holds the initial values and named gameplay parameters;
@@ -132,7 +132,7 @@ belongs to `ui/view_models/text_de.py`.
 - `ApplicationRouter` accepts owner-thread care commands and validated, bounded incoming notifications. An external HTTP or IPC server is **not implemented**.
 - `ActivityCoordinator` consumes hardware samples and coordinates adaptive observations and elapsed-time pet state.
 - `AttentionCoordinator` controls spontaneous lines, non-interrupting notifications and idle gestures.
-- `PetSessionRestorer` restores saved data through a narrow reader port, then simulates bounded closed time with unknown workload and optional routine self-care before anchoring the live clock.
+- `PetSessionRestorer` restores saved data through a narrow reader port, then advances full closed time with unknown activity and existing routine sleep before anchoring the live clock. It never generates meals.
 - `PetReadSnapshot` is an immutable, language-neutral copy for presentation and potential future read-only adapters.
 - `application/ports.py` describes capabilities such as `ComputerReadings`, not concrete OS drivers.
 - `application/assembly.py` builds the single care/game/activity/cursor
@@ -235,10 +235,14 @@ legacy defaults, malformed-value handling and four-decimal save rounding.
 `from_dict`/`to_dict` methods. Existing saves retain their version-one shape.
 
 - Storage decodes/writes data but does not simulate elapsed pet time.
-  - The application simulates bounded closed time after decoding. A shared
+  - The application reconstructs full closed time after decoding. A shared
     `ActiveSessionClock` consumes each interval once across ticks, care, settings
-    and saving. Windows uses unbiased interrupt time; Linux uses CLOCK_MONOTONIC.
-    Live standby is excluded. On reopening, closed wall time is reconstructed up to the configured limit, including routine sleep and offline-only meals.
+    and saving. Life time uses suspend-inclusive `GetTickCount64` on Windows
+    and `CLOCK_BOOTTIME` on Linux, with wall-time fallback on missing reads.
+    Existing active uptime remains separate for observation/physics. A streaming
+    domain plan handles long gaps without truncating them or generating meals.
+    Optional `pet.time` persists the aggregate's elapsed axis; checkpoints and
+    joint atomic saves include it. See [time and migration](DATA_AND_SAVES.md).
 - Tests use temporary save files, never the user's production save.
 - No cloud, login, browser integration, microphone listener or network service is started.
 
@@ -345,7 +349,8 @@ behavior. Missing sensors stay unknown; uptime never acts as an exhaustion
 multiplier. Learned summaries use a local weekday/hour profile, not process
 names, typed text or browser content. Observation and learning can be disabled
 independently, and learned rhythm can be cleared without resetting pet progress.
-Live progression uses active-session time; reopening additionally simulates bounded closed wall time. See [data and saves](DATA_AND_SAVES.md).
+Life time includes standby and reconstructed closed wall time; observed activity
+does not extend across those unknown gaps. See [data and saves](DATA_AND_SAVES.md).
 
 `pet/mind/catalog.py` validates and selects authored German lines from
 `data/dialogues.de.json`. `infrastructure/character_mind.py` supplies Aiko's

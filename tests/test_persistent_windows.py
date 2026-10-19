@@ -94,9 +94,13 @@ class PersistentWindowTests(unittest.TestCase):
                 for child in frame.winfo_children()
                 if isinstance(child, tk.Label)
             ]
-            self.assertTrue(
-                any("Bis später" in str(label.cget("text")) for label in labels)
-            )
+            farewell_texts = {
+                line.text for line in self.pet.mind.book.lines
+                if line.event == "farewell"
+            }
+            self.assertTrue(farewell_texts.intersection(
+                str(label.cget("text")) for label in labels
+            ))
             self.pet._farewell.begin()
             self.assertEqual(len(scheduled), 1)
             finish = scheduled[0][1]

@@ -39,7 +39,7 @@ from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
 from .desktop.window_stack import WindowStack
 from .desktop.world_access import WorldRuntimeAccess
 from .desktop.world_runtime import DesktopWorldRuntime
-from .infrastructure.active_time import active_uptime_seconds
+from .infrastructure.active_time import elapsed_uptime_seconds
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.character_mind import make_aiko_mind
 from .infrastructure.hardware.monitor import ActivityMonitor
@@ -75,7 +75,8 @@ class DesktopPet:
         activity_monitor: ActivityMonitor | None = None,
     ) -> None:
         self.store = store or StateStore()
-        session = PetSessionRestorer(self.store).restore()
+        active_clock = ActiveSessionClock(elapsed_uptime_seconds, wall_time=time.time)
+        session = PetSessionRestorer(self.store, clock=active_clock).restore()
         self.state = session.state
         self.settings = session.settings
         self.adaptive = session.adaptive
@@ -132,7 +133,6 @@ class DesktopPet:
             self.store, self.state, self.settings, self.adaptive,
         )
         self.mind = make_aiko_mind(started_at=self._persistence.last_saved)
-        active_clock = ActiveSessionClock(active_uptime_seconds)
         self.activity_monitor = activity_monitor or ActivityMonitor()
         self.activity_monitor.set_enabled(self.settings.observe_computer)
         services = assemble_application(

@@ -36,6 +36,7 @@ class PetValues:
     auto_nap_day: str
     food: FoodState
     fun: float
+    lived_seconds: float = 0.0
 
 
 @dataclass(frozen=True, slots=True)

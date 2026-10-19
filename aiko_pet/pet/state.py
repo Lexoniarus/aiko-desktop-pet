@@ -16,12 +16,10 @@ from .care_actions import (
 from .care_result import CareResult
 from .consumption import ConsumptionOrigin
 from .food import (
-    FOOD_CATALOG,
     FoodActivity,
     FoodId,
     FoodState,
     advance_food,
-    eat_food,
 )
 from .friendship import (
     calculate_friendship_reward,
@@ -70,6 +68,7 @@ class PetState:
         auto_nap_day: str = "",
         food: FoodState | None = None,
         fun: float = BALANCE.number("initial", "fun"),
+        lived_seconds: float = 0.0,
     ) -> None:
         self._values = PetValues(
             satiety=satiety, mood=mood, energy=energy, social=social,
@@ -84,6 +83,7 @@ class PetState:
             sleep_origin=sleep_origin, auto_sleep_night=auto_sleep_night,
             nap_until=nap_until, auto_nap_day=auto_nap_day,
             food=FoodState() if food is None else food, fun=fun,
+            lived_seconds=lived_seconds,
         )
 
     def __repr__(self) -> str:
@@ -158,6 +158,11 @@ class PetState:
     @property
     def updated_at(self) -> float:
         return self._values.updated_at
+
+    @property
+    def lived_seconds(self) -> float:
+        """Durable elapsed axis for future histories, independent of wall jumps."""
+        return self._values.lived_seconds
 
     @property
     def meals_date(self) -> str:
@@ -275,28 +280,6 @@ class PetState:
             )
         )
 
-    def _provide_own_meal(self, context: TimeContext) -> None:
-        """Eat a due main meal without crediting human attention or friendship."""
-        meal = self.due_meal(context)
-        if self.sleeping or meal is None:
-            return
-        meal_foods = tuple(
-            key for key, profile in FOOD_CATALOG.items() if profile.category == "meal"
-        )
-        if not meal_foods:
-            return
-        # Prefer variety without inventing another nutrition/menu catalogue.
-        food_id = next(
-            (key for key in meal_foods if key != self.food.last_food_id),
-            meal_foods[0],
-        )
-        intake = eat_food(self.food, self.satiety, food_id)
-        if intake.accepted:
-            self._change(
-                satiety=intake.satiety, food=intake.food,
-                meals_today=(*self._values.meals_today, meal),
-            )
-
     def record_game_experience(
         self,
         experience: GameExperience,
@@ -328,21 +311,21 @@ class PetState:
         effort: float | None = None,
         elapsed_seconds: float | None = None,
         food_activity: FoodActivity | None = None,
-        self_care: bool = False,
     ) -> None:
-        """Execute bounded time steps, keeping mutation inside PetState."""
+        """Execute all elapsed time; only recent observations affect its tail."""
         steps = plan_pet_time(
             self.updated_at,
             now,
             auto_routine=auto_routine,
             effort=effort,
             elapsed_seconds=elapsed_seconds,
+            food_activity=food_activity,
         )
         if steps is None:
             return
         if not auto_routine:
             for step in steps:
-                self._decay(step.hours, None, step.effort, food_activity)
+                self._decay(step.hours, None, step.effort, step.food_activity)
             self._roll_meals(context_at(now))
         else:
             for step in steps:
@@ -350,21 +333,20 @@ class PetState:
                     continue
                 self.update_daily_routine(
                     step.context,
-                    allow_bedtime=allow_bedtime is not False,
-                    allow_nap=allow_nap,
-                    interrupt_nap=interrupt_nap,
+                    allow_bedtime=not step.observed or allow_bedtime is not False,
+                    allow_nap=step.observed and allow_nap,
+                    interrupt_nap=step.observed and interrupt_nap,
                 )
-                self._decay(step.hours, step.context, step.effort, food_activity)
-                if self_care:
-                    self._provide_own_meal(step.context)
+                self._decay(step.hours, step.context, step.effort, step.food_activity)
             self.update_daily_routine(
                 context_at(now),
                 allow_bedtime=allow_bedtime is not False,
                 allow_nap=allow_nap,
             )
-            if self_care:
-                self._provide_own_meal(context_at(now))
-        self._change(updated_at=now)
+        self._change(
+            updated_at=now,
+            lived_seconds=self.lived_seconds + steps.elapsed_seconds,
+        )
 
     def apply_object_withholding(self, loss: float) -> float:
         """Commit a bounded application decision without manufacturing care."""
@@ -452,7 +434,7 @@ class PetState:
         self.restore_checkpoint(snapshot.capture_checkpoint())
 
     def anchor_live_session(self, now: float) -> None:
-        """Set the live wall-time anchor after bounded closed-time progression."""
+        """Rebase wall time without resetting the durable elapsed axis."""
         self._change(updated_at=now)
 
     def _apply_care_transition(

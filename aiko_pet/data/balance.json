@@ -119,7 +119,6 @@
     "stride_pixels_at_scale_one": 68
   },
   "simulation": {
-    "maximum_catchup_seconds": 28800,
     "step_seconds": 300,
     "maximum_live_effort_seconds": 30.0,
     "nap_seconds": 2700

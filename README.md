@@ -98,10 +98,11 @@ Aiko runs locally. The current application does **not** send telemetry to a serv
 
 Her workload observations are drawn from local CPU/GPU utilization, memory pressure, uptime and user-idle timing. They do not inspect files, process/application names, browser content, typed text or microphone input. Optional NVIDIA sampling uses local OS tooling. Learned rhythm summaries and pet progress are stored locally in the save file.
 
-Needs progress during the running session. Reopening also reconstructs closed
-time, up to eight hours by default. With automatic routine enabled, Aiko sleeps
-and eats due main meals during this reconstruction. Live supply uses offered
-or autonomously collected World portions. Live PC suspend is excluded from the running-session clock.
+Needs progress over real elapsed time, including closed-app and PC standby
+intervals, without an eight-hour absence cap. With automatic routine enabled,
+the existing scheduled sleep also runs during reconstruction. Time progression
+does not generate meals; live supply uses offered or autonomously collected
+World portions. Closed-time consumption of saved stock is a later delivery step.
 [Save format, backups, time rules and editable JSON data →](docs/DATA_AND_SAVES.md)
 The real clock still determines meals and daily routine. Friendship remains a
 separate, slowly earned bond with the existing daily limits.

@@ -14,6 +14,51 @@ checklists and test totals are [history](history/README.md), not outstanding wor
 on the accepted flow. PR #10 remains draft and unmerged. CI for a new pushed
 commit must be checked separately; see the [documentation index](README.md).
 
+## Real-time foundation follow-up
+
+The 2026-10-19 time/save foundation changes elapsed-time behavior after the
+reported World acceptance. Automated coverage checks suspend-inclusive API
+selection, simulated standby, source failure/recovery, long closed intervals,
+save migration and replay prevention. It does not constitute a physical
+standby/resume acceptance run. Current Windows interactive resume sign-off is
+**pending**; do not reuse the earlier World sign-off for it.
+
+Completed local checks for this stage on Windows/Python 3.11.9:
+
+- The full working-tree suite passed **1,166 tests in 259.455 seconds**, with
+  no unittest failures, errors or skips. Ruff 0.13.2, strict Mypy 1.18.2
+  (188 source files) and Pyright 1.1.414 passed. This is local evidence for the
+  uncommitted stage, not a remote CI result or physical resume sign-off.
+- Nineteen new elapsed-time/persistence cases cover source recovery, simulated
+  standby, rollback, initialization, long gaps and optional-record migration.
+- Both actual Windows uptime readers were exercised; the suspend-inclusive
+  reader advanced a real short live interval independently of the active reader.
+- Three native Tk launcher runs reused one isolated system-temp save. A
+  substituted 12-hour closed interval was counted in full once, two real World
+  portions survived, no catalogue meal appeared and the next reopening did not
+  replay the interval. This is a launch/save/reopen check, not physical standby.
+
+Native Tk printed `ThemeChanged` diagnostics while destroying test windows
+during the full suite. The unittest result above is passed; those teardown
+messages do not supply evidence for actual standby/resume behavior.
+
+Use a temporary save or the isolated launcher below, never the normal save.
+For this stage, new care/need/friendship/sleep balance is not active.
+
+- Run briefly, save/close, wait and reopen the same isolated save. Check that
+  needs/digestion and `pet.time.lived_seconds` include the closed interval and
+  that a second reopen does not replay it.
+- Keep the isolated app running across a real Windows standby/resume. Compare
+  elapsed progress with the wall interval; World physics/perception must not
+  acquire fictitious observations or replay hours of motion. Check toolbar,
+  sleeping presentation, care callbacks and bubble timers after resuming.
+- Compare a manual wall-clock correction during an active session against
+  normal elapsed progression only in an appropriate test environment. Do not
+  change the user's system clock merely to run this checklist. Automated injected
+  clocks cover forward/backward changes without that machine-wide action.
+- Confirm existing stock survives close/reopen unchanged. No catalogue meal
+  should appear; closed-time consumption of actual stock is a later stage.
+
 ## Isolated launcher
 
 Close other Aiko instances when doing a practical smoke run. Use

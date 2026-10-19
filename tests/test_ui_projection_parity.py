@@ -132,14 +132,16 @@ class UiProjectionParityTests(unittest.TestCase):
 
     def test_workload_and_percent_copy_matches_original_thresholds(self) -> None:
         cases = (
-            (ComputerSnapshot(), "Ich orientiere mich noch ..."),
+            (ComputerSnapshot(), "Ohne aktuelle Messwerte rate ich lieber nicht, "
+             "wie beschäftigt der Rechner ist."),
             (ComputerSnapshot(cpu=15, measured_at=10),
-             "Ich habe gerade etwas Ruhe."),
-            (ComputerSnapshot(cpu=45, measured_at=10), "Ich bin beschäftigt."),
+             "Der Rechner hat im Moment ziemlich wenig zu tun."),
+            (ComputerSnapshot(cpu=45, measured_at=10),
+             "Auf dem Rechner ist gerade etwas mehr los."),
             (ComputerSnapshot(cpu=75, measured_at=10),
-             "Ich habe ordentlich zu tun."),
+             "Die Systemlast ist im Moment deutlich erhöht."),
             (ComputerSnapshot(cpu=95, gpu=90, measured_at=10),
-             "Ich bin gerade voll konzentriert."),
+             "Der Rechner ist gerade ziemlich stark ausgelastet."),
         )
         for reading, expected in cases:
             with self.subTest(cpu=reading.cpu):

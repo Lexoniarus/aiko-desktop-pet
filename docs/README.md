@@ -27,9 +27,15 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+- Local real-time/save-foundation verification on 2026-10-19 passed **1,166
+  tests in 259.455 seconds**, Ruff, strict Mypy and Pyright. A native isolated
+  launch/save/reopen check counted a substituted 12-hour absence once and
+  preserved finite stock. Actual physical standby/resume acceptance remains
+  [pending separately](WORLD_SMOKE_TEST.md#real-time-foundation-follow-up).
 - Maintainer-reported desktop acceptance for the current World interaction flow
   is **passed**, recorded 2026-10-18. This does not invent individual sign-offs for
-  every old matrix cell. The latest work after that report changed tests/docs only.
+  every old matrix cell. Later time-foundation changes have their own
+  [validation and resume checklist](WORLD_SMOKE_TEST.md#real-time-foundation-follow-up).
 - Local full verification at `5f1bdea`: **1,146 tests in 258.742 seconds**, no
   failures, errors or skips, using Python 3.11.9, Pillow 11.3.0 and native Tk.
   Ruff 0.13.2, strict Mypy 1.18.2 (188 source files) and Pyright 1.1.414 passed.
@@ -78,13 +84,21 @@ and presentation owners but does not depend on online sources or translation.
 
 ## Balance proposals
 
+The latest discussed need, mood, friendship and simple sleep model has now been
+accepted as the basis for [implementation planning](CARE_TIME_IMPLEMENTATION_PLAN.md).
+The real-time/save foundation is now implemented locally; later balance,
+friendship and sleep stages are pending. The original discussion disclaimers and superseded
+examples remain historical context; the plan identifies the latest baseline
+and the small details to settle during delivery. Maintained guides distinguish
+the implemented time foundation from those future balance values.
+
 The [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) preserves the
 candidate care gains, real-time absence losses and negative-interaction values
 discussed on 2026-10-19, including the later progressive upkeep factor and timed
 neglect rules. The latest revision has shared +0.75/two-hour and +5/24-hour gain
 ceilings, gentler lower upkeep, factor 2 at level 10 and comparisons from two
 to eight daily care visits. Earlier factors and unscaled examples are labeled
-separately. It is unapproved tuning; no values apply to the running application.
+separately. It remains unimplemented tuning; no values apply to the running application.
 
 The [need balance and daily care proposal](NEEDS_BALANCE_PROPOSAL.md) records
 real-time need rates, care/food effects and an eight-period example day with
@@ -97,6 +111,10 @@ examples; normal elapsed time requires feeding independently of hardware load.
 The [combined example day](NEEDS_BALANCE_PROPOSAL.md#combined-example-day-with-needs-mood-sleep-and-friendship)
 now calculates the five needs, target/actual mood, normal sleep and individually
 credited friendship together, with explicit assumptions and no runtime claim.
+The later [four-phase combined day](NEEDS_BALANCE_PROPOSAL.md#combined-four-phase-average-care-day)
+bundles sufficient care into four visits and settles around levels 7–8, with
+need minima above 40 and actual mood around 48–79. Four visits with insufficient
+food/talk do not produce the same result.
 
 The [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) records the equal need
 contributions, deficit deductions and target limits, faster decline under severe

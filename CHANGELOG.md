@@ -8,6 +8,17 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Advance full real elapsed time across closed sessions and live standby;
+  remove the eight-hour cap and stream long routine timelines. Keep active
+  World observation/physics time separate, bound recent telemetry to its
+  observed tail and restore pet/clock checkpoints together on failed progress.
+- Add optional `pet.time` v1 with aggregate-owned elapsed seconds, preserving
+  outer save v1, legacy progress and atomic paired saves. Back up malformed or
+  future time records before replacement. Remove catalogue-generated offline
+  meals; actual finite-stock closed-time care remains a later stage.
+- Align the required placeholders for the existing meal fallback with its
+  already-authored text, fixing startup catalogue validation without changing
+  German wording. Existing need, care, mood and friendship coefficients remain.
 - Add individual food/drink portions with cursor carrying, relocation, falling,
   damped rebounds, safe reachable placement, handover and autonomous pickup.
 - Keep learned identity, current desire, visible tracking and missing-subject
@@ -32,6 +43,19 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Tests and documentation
 
+- Add real-time regression coverage for suspend-inclusive clocks, source
+  fallback/recovery, shared rollback, full long-gap advancement, initialization
+  time, legacy/new time records and backup/replay safety. Include the new
+  elapsed-time and persistence suites in Windows CI. Refresh obsolete copy
+  expectations for the branch's existing authored text without rewriting it.
+  Local full verification: 1,166 tests, Ruff, strict Mypy and Pyright passed;
+  isolated native restart checks passed. Physical Windows resume is pending.
+- Add the active care/time implementation plan for the latest discussed needs,
+  mood, progressive friendship and simple adaptive sleep baseline. Record code
+  ownership, staged delivery, save/time migration, finite closed-time resource
+  use, remaining details and production/Windows acceptance criteria. Preserve
+  the accepted combined four-phase care example supporting levels 7–8.
+  Planning documentation only; no runtime, balance JSON or save changes.
 - Record the combined proposed example day across needs, digestion/input
   modifiers, target/actual mood, normal sleep and individually credited
   friendship. Preserve assumptions, repeated-day values and numerical sensitivity;

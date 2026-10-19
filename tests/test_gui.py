@@ -368,11 +368,11 @@ class TaskbarPetGuiTests(unittest.TestCase):
         with patch.object(self.app.activity_monitor, "latest", return_value=first):
             self.app._activity.react_to_computer(base, self.app.context)
             self.toolbar.refresh()
-            self.assertIn("Ruhe", self.toolbar.workload.cget("text"))
+            self.assertIn("wenig zu tun", self.toolbar.workload.cget("text"))
         with patch.object(self.app.activity_monitor, "latest", return_value=second):
             self.app._activity.react_to_computer(base + 7, self.app.context)
             self.toolbar.refresh()
-            self.assertIn("zu tun", self.toolbar.workload.cget("text"))
+            self.assertIn("deutlich erhöht", self.toolbar.workload.cget("text"))
             self.assertIsNotNone(self.app._activity.pending_computer_line)
             self.app._activity.react_to_computer(base + 10, self.app.context)
         self.assertTrue(self.toolbar.visible)

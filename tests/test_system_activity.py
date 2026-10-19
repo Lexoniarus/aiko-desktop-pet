@@ -382,7 +382,7 @@ class VoiceTests(unittest.TestCase):
         )
         self.assertIsNone(workload_events.maybe_event(reading(cpu=95), 1200))
 
-    def test_every_computer_line_is_characterful_and_never_names_sensors(self):
+    def test_computer_variants_do_not_claim_unobservable_user_work(self):
         from collections import Counter
 
         book = DialogueBook.from_file()
@@ -402,16 +402,11 @@ class VoiceTests(unittest.TestCase):
             with self.subTest(event=event):
                 self.assertGreaterEqual(counts[event], 5)
         forbidden = (
-            "cpu",
-            "gpu",
-            "ram",
-            "grafikkarte",
-            "prozessor",
-            "vram",
-            "auslastung",
-            "rechenzyklen",
-            "kern",
-            "speicher",
+            "ich sehe deine fenster",
+            "ich lese deine",
+            "deine geöffneten programme",
+            "du arbeitest seit",
+            "ich arbeite seit",
         )
         for line in book.lines:
             if not line.event.startswith("computer_"):

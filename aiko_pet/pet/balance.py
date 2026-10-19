@@ -112,8 +112,6 @@ def parse_balance(raw: Any) -> BalanceCatalog:
             raise ValueError(f"balance.{section}.{key} must be positive")
     if catalog.integer("simulation", "step_seconds") > 300:
         raise ValueError("Simulation steps must not exceed five minutes")
-    if catalog.integer("simulation", "maximum_catchup_seconds") > 7 * 86400:
-        raise ValueError("Catch-up must not exceed seven days")
     dialogue = sections["dialogue"]
     if (
         not 1 <= dialogue["default_weight"] <= 10
