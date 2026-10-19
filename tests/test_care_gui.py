@@ -68,6 +68,10 @@ class CareGuiTests(unittest.TestCase):
         set_test_pet_values(self.app.state, social=9)
         set_test_pet_values(self.app.state, energy=12)
         self.toolbar.buttons["talk"].invoke()
+        menu = self.app._hover.social_menu
+        assert menu is not None
+        self.assertEqual(self.app.state.social, 9)
+        menu.choose(None)
         self.assertAlmostEqual(self.app.state.social, 35, places=2)
         self.assertEqual(self.toolbar.buttons["feed"].cget("state"), "disabled")
         self.finish_response()
