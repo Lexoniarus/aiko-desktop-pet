@@ -45,7 +45,10 @@ class SocialContentCoordinator:
         self._waiting: SocialCategory | None = None
         self._offered: PreparedSocialContent | None = None
         self._failed: set[SocialCategory] = set()
-        self._recent: deque[PreparedSocialContent] = deque(maxlen=40)
+        self._recent: dict[SocialCategory, deque[PreparedSocialContent]] = {
+            category: deque(maxlen=2) for category in SocialCategory
+        }
+        self._duplicate_attempts = dict.fromkeys(SocialCategory, 0)
 
     @property
     def enabled(self) -> bool:
@@ -65,6 +68,7 @@ class SocialContentCoordinator:
         self._enabled = enabled
         self.cancel_selection()
         self._failed.clear()
+        self._duplicate_attempts = dict.fromkeys(SocialCategory, 0)
         for buffer in self._buffers.values():
             buffer.clear()
         self._pump()
@@ -75,12 +79,13 @@ class SocialContentCoordinator:
         self.cancel_selection()
         if not self.enabled:
             return SocialSelection("disabled")
+        self._failed.discard(category)
+        self._duplicate_attempts[category] = 0
         if self._buffers[category]:
             content = self._buffers[category].popleft()
             self._offered = content
             self._pump()
             return SocialSelection("ready", content)
-        self._failed.discard(category)
         self._waiting = category
         self._pump()
         return SocialSelection("waiting")
@@ -94,10 +99,11 @@ class SocialContentCoordinator:
         if self._offered is not content:
             raise ValueError("Conversation is no longer offered")
         self._offered = None
-        self._recent.append(content)
+        self._recent[content.category].append(content)
 
     def _duplicate(self, item: PreparedSocialContent) -> bool:
-        known = (*self._recent, *((self._offered,) if self._offered else ()),
+        known = (*(entry for recent in self._recent.values() for entry in recent),
+                 *((self._offered,) if self._offered else ()),
                  *(entry for buffer in self._buffers.values()
                                  for entry in buffer))
         return any(entry.identity == item.identity
@@ -114,18 +120,27 @@ class SocialContentCoordinator:
                 self._request = None
                 if self.enabled and generation == self._generation:
                     item = result.content
-                    if (item is None or result.category != category
-                            or item.category != category or self._duplicate(item)):
+                    valid = (item is not None and result.category == category
+                             and item.category == category)
+                    duplicate = valid and item is not None and self._duplicate(item)
+                    if duplicate and self._duplicate_attempts[category] < 3:
+                        # Random endpoints can repeat. Retry individually, at most
+                        # three times per fill, without an endless fetch loop.
+                        self._duplicate_attempts[category] += 1
+                    elif not valid or duplicate:
                         self._failed.add(category)
                         if self._waiting == category:
                             self._waiting = None
                             update = SocialSelection("error")
-                    elif self._waiting == category:
-                        self._waiting = None
-                        self._offered = item
-                        update = SocialSelection("ready", item)
                     else:
-                        self._buffers[category].append(item)
+                        assert item is not None
+                        self._duplicate_attempts[category] = 0
+                        if self._waiting == category:
+                            self._waiting = None
+                            self._offered = item
+                            update = SocialSelection("ready", item)
+                        else:
+                            self._buffers[category].append(item)
         self._pump()
         return update
 

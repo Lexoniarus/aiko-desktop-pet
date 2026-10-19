@@ -213,6 +213,13 @@ or other authored entertainment.
   delivered content and duplicate items in ready or in-flight slots. Keep the
   Single and Two Parts buffers distinct. Record an item as delivered only when
   its playback is accepted.
+- Live warming exposed duplicate responses from JokeAPI. Keep the last two
+  delivered items per category in repetition history, in addition to ready and
+  offered items. Older deliveries can become eligible again so a small provider
+  pool is not permanently exhausted. A duplicate permits at most three further
+  individual attempts for that slot; persistent duplication pauses that category
+  and reports failure to a waiting user. Other retrieval/preparation failures
+  still do not start an automatic retry loop.
 - Do not persist external content in this first delivery. Keep source and
   attribution metadata attached to prepared content rather than losing it when
   converting to playback beats.

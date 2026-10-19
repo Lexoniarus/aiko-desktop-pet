@@ -155,3 +155,33 @@ class SocialCoordinatorTests(unittest.TestCase):
         self.social.cancel_selection()
         with self.assertRaises(ValueError):
             self.social.accept(offered.content)
+
+    def test_duplicates_retry_individually_then_report_failure_at_the_bound(self):
+        self.social.set_enabled(True)
+        self.social.select(SocialCategory.SINGLE)
+        self.worker.complete(1)
+        offered = self.social.poll()
+        assert offered is not None and offered.content is not None
+        self.social.accept(offered.content)
+        self.social.select(SocialCategory.SINGLE)
+        for _ in range(3):
+            self.worker.complete(1)
+            self.assertIsNone(self.social.poll())
+            self.assertTrue(self.social.waiting)
+            self.assertEqual(self.worker.requests[-1][0], SocialCategory.SINGLE)
+        self.worker.complete(1)
+        update = self.social.poll()
+        assert update is not None
+        self.assertEqual(update.status, "error")
+        self.assertFalse(self.social.waiting)
+        self.assertNotEqual(self.worker.requests[-1][0], SocialCategory.SINGLE)
+
+    def test_old_deliveries_become_eligible_after_two_newer_items(self) -> None:
+        self.social.set_enabled(True)
+        for identifier in (1, 2, 3, 1):
+            self.social.select(SocialCategory.SINGLE)
+            self.worker.complete(identifier)
+            update = self.social.poll()
+            assert update is not None and update.content is not None
+            self.assertEqual(update.status, "ready")
+            self.social.accept(update.content)
