@@ -1,0 +1,2531 @@
+{
+  "version": 1,
+  "size": [
+    384,
+    416
+  ],
+  "source_archive_sha256": "50f2a755c07dce6bbd9f602c3c85daaeebcf407079fea54179eab831c8ae89b1",
+  "pickup_archive_sha256": "da581da6b4fd8f37c87be2d44244d146b6c7faa8b754f0f8a2d9cb5e81c19914",
+  "frames": [
+    {
+      "path": "attack/00.png",
+      "source": "attack/frames-native/01.png",
+      "status": "original_hd",
+      "sha256": "9e9d99dd8b654f69c0033a42d0da5a6c0c3c99e9c065d4b41a7e4f5d4b68feda",
+      "source_bbox": [
+        3,
+        3,
+        293,
+        479
+      ],
+      "reference_bbox": [
+        47,
+        37,
+        143,
+        196
+      ],
+      "aspect_rescale_ratio": 0.991,
+      "silhouette_iou": 0.9801,
+      "bytes": 99593
+    },
+    {
+      "path": "attack/01.png",
+      "source": "attack/frames-native/02.png",
+      "status": "original_hd",
+      "sha256": "cbc0df13b1384f9da030c500c0bac39dbfd11811e91245e0c16f14ea0a5754f0",
+      "source_bbox": [
+        3,
+        3,
+        295,
+        480
+      ],
+      "reference_bbox": [
+        44,
+        37,
+        140,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9863,
+      "silhouette_iou": 0.9793,
+      "bytes": 101519
+    },
+    {
+      "path": "attack/02.png",
+      "source": "attack/frames-native/03.png",
+      "status": "original_hd",
+      "sha256": "ce22c497b10c6ed3fb62ef2b34bdcc1badcf8b2429e43268cbf9e7b0f46b06fe",
+      "source_bbox": [
+        2,
+        2,
+        345,
+        482
+      ],
+      "reference_bbox": [
+        37,
+        36,
+        151,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9971,
+      "silhouette_iou": 0.9781,
+      "bytes": 107698
+    },
+    {
+      "path": "attack/03.png",
+      "source": "attack/frames-native/04.png",
+      "status": "original_hd",
+      "sha256": "61f27376369a15d7eeaeb86915b26ffc29b00f96458de524aec0eb658e8c7132",
+      "source_bbox": [
+        4,
+        3,
+        317,
+        478
+      ],
+      "reference_bbox": [
+        46,
+        37,
+        150,
+        195
+      ],
+      "aspect_rescale_ratio": 0.9989,
+      "silhouette_iou": 0.9755,
+      "bytes": 102182
+    },
+    {
+      "path": "attack/04.png",
+      "source": "attack/frames-native/05.png",
+      "status": "original_hd",
+      "sha256": "4c6cc2e150e717258026a02b7d413a074a48630d3d7bdf3f27a3624c885ee47f",
+      "source_bbox": [
+        3,
+        3,
+        345,
+        477
+      ],
+      "reference_bbox": [
+        39,
+        38,
+        153,
+        196
+      ],
+      "aspect_rescale_ratio": 1.0,
+      "silhouette_iou": 0.9824,
+      "bytes": 109199
+    },
+    {
+      "path": "attack/05.png",
+      "source": "attack/frames-native/06.png",
+      "status": "original_hd",
+      "sha256": "21a86ff551c8c0c46334e87b39462ab0231820f79beef18a2deac2a2a7018ca1",
+      "source_bbox": [
+        3,
+        2,
+        305,
+        485
+      ],
+      "reference_bbox": [
+        40,
+        35,
+        140,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9934,
+      "silhouette_iou": 0.981,
+      "bytes": 106143
+    },
+    {
+      "path": "attack/06.png",
+      "source": "attack/frames-native/07.png",
+      "status": "original_hd",
+      "sha256": "72a68ef4a4a5f19b269dea75f01b621388c69f39793750e3d0d1a2ddfd0f0a1d",
+      "source_bbox": [
+        2,
+        2,
+        310,
+        485
+      ],
+      "reference_bbox": [
+        42,
+        35,
+        144,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9935,
+      "silhouette_iou": 0.9796,
+      "bytes": 105725
+    },
+    {
+      "path": "attack/07.png",
+      "source": "attack/frames-native/08.png",
+      "status": "original_hd",
+      "sha256": "5a5809d6f6e8a4a057c892ffd6fa4dd4ae7f4f0f90e9f98eb11c09eb79a2c52f",
+      "source_bbox": [
+        2,
+        2,
+        304,
+        486
+      ],
+      "reference_bbox": [
+        42,
+        34,
+        142,
+        195
+      ],
+      "aspect_rescale_ratio": 0.9954,
+      "silhouette_iou": 0.9814,
+      "bytes": 103642
+    },
+    {
+      "path": "eat/00.png",
+      "source": "eat/frames-native/01.png",
+      "status": "original_hd",
+      "sha256": "b63654f3b157c40f0f3e95d8bb16fce3d3ee5a01f2c57c0def2b19f6741b14cf",
+      "source_bbox": [
+        3,
+        3,
+        295,
+        463
+      ],
+      "reference_bbox": [
+        46,
+        38,
+        146,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9971,
+      "silhouette_iou": 0.9857,
+      "bytes": 99389
+    },
+    {
+      "path": "eat/01.png",
+      "source": "eat/frames-native/02.png",
+      "status": "original_hd",
+      "sha256": "4fa860a02cb5027369ad4633ab9309b71118a6fdf00f5a5e5d05a397b3845f1f",
+      "source_bbox": [
+        3,
+        2,
+        299,
+        464
+      ],
+      "reference_bbox": [
+        46,
+        37,
+        146,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9816,
+      "silhouette_iou": 0.9791,
+      "bytes": 99036
+    },
+    {
+      "path": "eat/02.png",
+      "source": "eat/frames-native/03.png",
+      "status": "original_hd",
+      "sha256": "243d654d075d426de402da940f01f236f68dfadc244bbef71216cdd1c232bcb0",
+      "source_bbox": [
+        3,
+        3,
+        297,
+        465
+      ],
+      "reference_bbox": [
+        46,
+        37,
+        146,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9883,
+      "silhouette_iou": 0.9827,
+      "bytes": 98985
+    },
+    {
+      "path": "eat/03.png",
+      "source": "eat/frames-native/04.png",
+      "status": "original_hd",
+      "sha256": "a66ba968763a734955174850677b2a871b9c04fc7d26b7d8b583f3be0cc278e4",
+      "source_bbox": [
+        2,
+        3,
+        297,
+        465
+      ],
+      "reference_bbox": [
+        46,
+        37,
+        146,
+        196
+      ],
+      "aspect_rescale_ratio": 0.985,
+      "silhouette_iou": 0.9784,
+      "bytes": 98442
+    },
+    {
+      "path": "eat/04.png",
+      "source": "eat/frames-native/05.png",
+      "status": "original_hd",
+      "sha256": "2cf91c2de34ff8ca07b62b072cd9e333f3c1dd8ee681ce08cb1302c1af07d550",
+      "source_bbox": [
+        2,
+        2,
+        306,
+        468
+      ],
+      "reference_bbox": [
+        44,
+        36,
+        148,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9964,
+      "silhouette_iou": 0.9798,
+      "bytes": 102557
+    },
+    {
+      "path": "eat/05.png",
+      "source": "eat/frames-native/06.png",
+      "status": "original_hd",
+      "sha256": "908225e29d3edb882518a330a2d7a3552be992992ed41c004f29a25479df3400",
+      "source_bbox": [
+        3,
+        3,
+        303,
+        467
+      ],
+      "reference_bbox": [
+        45,
+        37,
+        147,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9922,
+      "silhouette_iou": 0.9714,
+      "bytes": 99584
+    },
+    {
+      "path": "eat/06.png",
+      "source": "eat/frames-native/07.png",
+      "status": "original_hd",
+      "sha256": "c4fc6f0e98d6499c8bd1ced704bb92ce74092739389c4bdbc310df02c9993394",
+      "source_bbox": [
+        3,
+        3,
+        303,
+        466
+      ],
+      "reference_bbox": [
+        45,
+        37,
+        147,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9901,
+      "silhouette_iou": 0.9778,
+      "bytes": 99903
+    },
+    {
+      "path": "eat/07.png",
+      "source": "eat/eat-source-equal-slots.png#tile=7",
+      "status": "recovered_original_hd_sheet",
+      "sha256": "0bc2129d338c29ad67cb5a58567c05321689c7b7fae985dd92be86fba57fde54",
+      "source_bbox": [
+        14,
+        14,
+        318,
+        484
+      ],
+      "reference_bbox": [
+        44,
+        35,
+        148,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9987,
+      "silhouette_iou": 0.9738,
+      "bytes": 104180
+    },
+    {
+      "path": "failed/00.png",
+      "source": "source-frames/failed/00.png",
+      "status": "original_hd",
+      "sha256": "454c7175d1e9917d2c506ad6289bf40e5bd8fda6d42850f896bc45b69661752c",
+      "source_bbox": [
+        5,
+        9,
+        262,
+        452
+      ],
+      "reference_bbox": [
+        51,
+        40,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0027,
+      "silhouette_iou": 0.9787,
+      "bytes": 86916
+    },
+    {
+      "path": "failed/01.png",
+      "source": "source-frames/failed/01.png",
+      "status": "original_hd",
+      "sha256": "68c3b9467a6074de00f962f27ddd86bb27b63f9192e8b584bfe4cad5cfef7a48",
+      "source_bbox": [
+        7,
+        11,
+        262,
+        451
+      ],
+      "reference_bbox": [
+        51,
+        41,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 0.999,
+      "silhouette_iou": 0.9693,
+      "bytes": 85367
+    },
+    {
+      "path": "failed/02.png",
+      "source": "source-frames/failed/02.png",
+      "status": "original_hd",
+      "sha256": "1264094ee3e7d92465a812cce8a0fc54c80a64571211a628c3fda99b7a6250c6",
+      "source_bbox": [
+        8,
+        22,
+        259,
+        451
+      ],
+      "reference_bbox": [
+        52,
+        45,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0047,
+      "silhouette_iou": 0.9829,
+      "bytes": 83254
+    },
+    {
+      "path": "failed/03.png",
+      "source": "source-frames/failed/03.png",
+      "status": "original_hd",
+      "sha256": "49348ba1aca473710587a4c5076b9f1822989014ba828670c7013fa76ef6a0cf",
+      "source_bbox": [
+        9,
+        57,
+        259,
+        452
+      ],
+      "reference_bbox": [
+        52,
+        57,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0107,
+      "silhouette_iou": 0.9847,
+      "bytes": 76823
+    },
+    {
+      "path": "failed/04.png",
+      "source": "source-frames/failed/04.png",
+      "status": "original_hd",
+      "sha256": "6876b904e1c7cc5b6c420eaebcb154787dde4b592fda502f1e460f097f142f8e",
+      "source_bbox": [
+        12,
+        84,
+        257,
+        452
+      ],
+      "reference_bbox": [
+        53,
+        66,
+        138,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0053,
+      "silhouette_iou": 0.9854,
+      "bytes": 70455
+    },
+    {
+      "path": "failed/05.png",
+      "source": "source-frames/failed/05.png",
+      "status": "original_hd",
+      "sha256": "152faa608c1b6f9def59155fc5494362bff4d94313bef9fd2712dda4b5bc0fbf",
+      "source_bbox": [
+        8,
+        21,
+        260,
+        451
+      ],
+      "reference_bbox": [
+        52,
+        44,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9963,
+      "silhouette_iou": 0.9821,
+      "bytes": 84004
+    },
+    {
+      "path": "failed/06.png",
+      "source": "source-frames/failed/06.png",
+      "status": "original_hd",
+      "sha256": "ad88c031966a156f67db66b0b423f64f22f8fced147aefaf165c5cc54c883db9",
+      "source_bbox": [
+        6,
+        6,
+        262,
+        451
+      ],
+      "reference_bbox": [
+        51,
+        39,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0046,
+      "silhouette_iou": 0.9899,
+      "bytes": 89168
+    },
+    {
+      "path": "failed/07.png",
+      "source": "source-frames/failed/07.png",
+      "status": "original_hd",
+      "sha256": "f5f996a4bd2ae874b0ba239c37e2633d6afbb6202eba3167d8cbd4c41416a095",
+      "source_bbox": [
+        5,
+        5,
+        264,
+        451
+      ],
+      "reference_bbox": [
+        51,
+        39,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9952,
+      "silhouette_iou": 0.9791,
+      "bytes": 88722
+    },
+    {
+      "path": "idle/00.png",
+      "source": "source-frames/idle/00.png",
+      "status": "original_hd",
+      "sha256": "1ad4669b62edcdadcd18636f61dc5fa0911f9ec01e45b5b533ffe39feddb3743",
+      "source_bbox": [
+        5,
+        5,
+        340,
+        588
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        140,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9929,
+      "silhouette_iou": 0.9855,
+      "bytes": 89746
+    },
+    {
+      "path": "idle/01.png",
+      "source": "source-frames/idle/01.png",
+      "status": "original_hd",
+      "sha256": "04e385844143ba80d903d9475734c8daf0fc80a22dbf29029349e3dcb02e3884",
+      "source_bbox": [
+        5,
+        5,
+        340,
+        588
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        140,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9929,
+      "silhouette_iou": 0.9838,
+      "bytes": 89401
+    },
+    {
+      "path": "idle/02.png",
+      "source": "source-frames/idle/02.png",
+      "status": "original_hd",
+      "sha256": "729a063d153cf5fc77bc1eef9cc6be5ed8cf4300b577ce938521d661061f2e11",
+      "source_bbox": [
+        7,
+        6,
+        338,
+        588
+      ],
+      "reference_bbox": [
+        51,
+        39,
+        139,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9983,
+      "silhouette_iou": 0.9653,
+      "bytes": 87753
+    },
+    {
+      "path": "idle/03.png",
+      "source": "inbetweens/idle/generated/02-03.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "e460d92047180d27c2820a681d38d8ec4eb1d5d17d95fcc697ebd3df2ec0d08c",
+      "source_bbox": [
+        335,
+        260,
+        896,
+        1207
+      ],
+      "reference_bbox": [
+        50,
+        38,
+        142,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9955,
+      "silhouette_iou": 0.9872,
+      "bytes": 86241
+    },
+    {
+      "path": "idle/04.png",
+      "source": "source-frames/idle/03.png",
+      "status": "original_hd",
+      "sha256": "3bd4b66867ed5eb965fcc2fb49fc463fde3928eb00c824284f3ac95b44da0ac8",
+      "source_bbox": [
+        6,
+        6,
+        338,
+        588
+      ],
+      "reference_bbox": [
+        51,
+        39,
+        140,
+        194
+      ],
+      "aspect_rescale_ratio": 1.0066,
+      "silhouette_iou": 0.9855,
+      "bytes": 88208
+    },
+    {
+      "path": "idle/05.png",
+      "source": "inbetweens/idle/generated/03-04.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "1aa0d3b21399eb509d14bafd9c4a2314686a97c4dfbafb09873a5fe3483fbb58",
+      "source_bbox": [
+        332,
+        255,
+        885,
+        1200
+      ],
+      "reference_bbox": [
+        50,
+        38,
+        142,
+        194
+      ],
+      "aspect_rescale_ratio": 1.0078,
+      "silhouette_iou": 0.9919,
+      "bytes": 87373
+    },
+    {
+      "path": "idle/06.png",
+      "source": "source-frames/idle/04.png",
+      "status": "original_hd",
+      "sha256": "aa1e58157882161538f9c154e702f9908c54fa525ae442d7598be0e5b77edca4",
+      "source_bbox": [
+        7,
+        6,
+        338,
+        588
+      ],
+      "reference_bbox": [
+        51,
+        39,
+        139,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9983,
+      "silhouette_iou": 0.9652,
+      "bytes": 88758
+    },
+    {
+      "path": "idle/07.png",
+      "source": "source-frames/idle/05.png",
+      "status": "original_hd",
+      "sha256": "f7abcbbfa64252dd2c043f1462e80f5641ee3188252b7c1100b557d1b1c34f02",
+      "source_bbox": [
+        5,
+        6,
+        339,
+        588
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        140,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9941,
+      "silhouette_iou": 0.9847,
+      "bytes": 89665
+    },
+    {
+      "path": "jumping/00.png",
+      "source": "source-frames/jumping/00.png",
+      "status": "original_hd",
+      "sha256": "c4440c4139d96e1ab20e049e909963814b19dd8f3f5b93193658b7528ce54eea",
+      "source_bbox": [
+        9,
+        145,
+        388,
+        695
+      ],
+      "reference_bbox": [
+        52,
+        70,
+        138,
+        194
+      ],
+      "aspect_rescale_ratio": 1.0065,
+      "silhouette_iou": 0.9725,
+      "bytes": 72698
+    },
+    {
+      "path": "jumping/01.png",
+      "source": "inbetweens/jumping/generated/new-0-1.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "1ec0b40264aa8c180850265ca2dac5f21a206103406a7bdaf0a461cfb3c8d632",
+      "source_bbox": [
+        334,
+        375,
+        880,
+        1192
+      ],
+      "reference_bbox": [
+        53,
+        60,
+        138,
+        190
+      ],
+      "aspect_rescale_ratio": 0.9784,
+      "silhouette_iou": 0.9779,
+      "bytes": 72492
+    },
+    {
+      "path": "jumping/02.png",
+      "source": "source-frames/jumping/01.png",
+      "status": "original_hd",
+      "sha256": "70f748beb7224c1fb49c01ca2f7e8d8ab3663ac7593b3135bbae1d98339f0430",
+      "source_bbox": [
+        8,
+        66,
+        390,
+        652
+      ],
+      "reference_bbox": [
+        52,
+        52,
+        139,
+        184
+      ],
+      "aspect_rescale_ratio": 1.0111,
+      "silhouette_iou": 0.9893,
+      "bytes": 75772
+    },
+    {
+      "path": "jumping/03.png",
+      "source": "source-frames/jumping/02.png",
+      "status": "original_hd",
+      "sha256": "e5b21beeb629dcccdc8e5c2163d98a8c27f1d7cd58c1a403bf915cb9fa931d69",
+      "source_bbox": [
+        5,
+        5,
+        393,
+        604
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        139,
+        173
+      ],
+      "aspect_rescale_ratio": 1.0063,
+      "silhouette_iou": 0.9655,
+      "bytes": 79369
+    },
+    {
+      "path": "jumping/04.png",
+      "source": "inbetweens/jumping/generated/new-2-3.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "f4d713e8c9d76ab5194b581eab5c08a9818f1c1c5b3ca785d323da96f00d74c0",
+      "source_bbox": [
+        339,
+        275,
+        888,
+        1101
+      ],
+      "reference_bbox": [
+        50,
+        46,
+        141,
+        182
+      ],
+      "aspect_rescale_ratio": 1.0067,
+      "silhouette_iou": 0.9935,
+      "bytes": 76770
+    },
+    {
+      "path": "jumping/05.png",
+      "source": "source-frames/jumping/03.png",
+      "status": "original_hd",
+      "sha256": "b1463998e653d54c8cb628639bacdc54f584ca59397f811f7a40e5af57fb2583",
+      "source_bbox": [
+        6,
+        78,
+        391,
+        674
+      ],
+      "reference_bbox": [
+        52,
+        55,
+        139,
+        189
+      ],
+      "aspect_rescale_ratio": 1.0051,
+      "silhouette_iou": 0.983,
+      "bytes": 77587
+    },
+    {
+      "path": "jumping/06.png",
+      "source": "inbetweens/jumping/generated/new-3-4.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "e11cc8ff042b9d2c7e7cf541eb21eac92cf2ff0f84d667f554469837a3d4de54",
+      "source_bbox": [
+        346,
+        409,
+        867,
+        1172
+      ],
+      "reference_bbox": [
+        52,
+        60,
+        140,
+        192
+      ],
+      "aspect_rescale_ratio": 0.9763,
+      "silhouette_iou": 0.9711,
+      "bytes": 73596
+    },
+    {
+      "path": "jumping/07.png",
+      "source": "source-frames/jumping/04.png",
+      "status": "original_hd",
+      "sha256": "849ae51d7f41b7143ed5709b2eae38a77885ff88cfaf416fa53c9caa88a32c40",
+      "source_bbox": [
+        12,
+        126,
+        387,
+        695
+      ],
+      "reference_bbox": [
+        53,
+        65,
+        138,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9998,
+      "silhouette_iou": 0.979,
+      "bytes": 74289
+    },
+    {
+      "path": "look/00.png",
+      "source": "decoded/look-row-9.png#tile=0",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "1a0bc8e33559fa65b394f4136fee1a3c2b43683c6b05639bb3eaa489f47750d6",
+      "source_bbox": [
+        54,
+        203,
+        272,
+        580
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9882,
+      "silhouette_iou": 0.9772,
+      "bytes": 92962
+    },
+    {
+      "path": "look/01.png",
+      "source": "decoded/look-row-9.png#tile=1",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "b130ed5b81baadf2d78aa5bd28a77ec03719d8afc547572bdc0e63d56993e71e",
+      "source_bbox": [
+        0,
+        200,
+        265,
+        580
+      ],
+      "reference_bbox": [
+        48,
+        39,
+        133,
+        194
+      ],
+      "aspect_rescale_ratio": 0.7864,
+      "silhouette_iou": 0.6775,
+      "bytes": 74664
+    },
+    {
+      "path": "look/02.png",
+      "source": "decoded/look-row-9.png#tile=2",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "4df9f46656bc74192e4a0111b251ae6a2a9c2968e63a9a976845c7ca121cf92e",
+      "source_bbox": [
+        50,
+        198,
+        263,
+        580
+      ],
+      "reference_bbox": [
+        47,
+        38,
+        132,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9772,
+      "silhouette_iou": 0.9771,
+      "bytes": 91497
+    },
+    {
+      "path": "look/03.png",
+      "source": "decoded/look-row-9.png#tile=3",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "de66c6b39dfee3ce42e2626ed7499adc587c71bde6876bed1decc6a5db0ba073",
+      "source_bbox": [
+        46,
+        198,
+        256,
+        580
+      ],
+      "reference_bbox": [
+        49,
+        38,
+        134,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9911,
+      "silhouette_iou": 0.9802,
+      "bytes": 91509
+    },
+    {
+      "path": "look/04.png",
+      "source": "decoded/look-row-9.png#tile=4",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "9d2278d65cd00769954af541d47cffd1a53e757705066702c7636be3892b374c",
+      "source_bbox": [
+        36,
+        200,
+        244,
+        580
+      ],
+      "reference_bbox": [
+        48,
+        39,
+        132,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9901,
+      "silhouette_iou": 0.9825,
+      "bytes": 89185
+    },
+    {
+      "path": "look/05.png",
+      "source": "decoded/look-row-9.png#tile=5",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "7f844fb1da5acd9fe6976ff95458acdeeef2d0f33651755a742971ccb687282f",
+      "source_bbox": [
+        28,
+        202,
+        240,
+        580
+      ],
+      "reference_bbox": [
+        48,
+        40,
+        134,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9957,
+      "silhouette_iou": 0.9711,
+      "bytes": 89931
+    },
+    {
+      "path": "look/06.png",
+      "source": "decoded/look-row-9.png#tile=6",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "b0971a050b715b7a39e2cb0ef79fdb4ee8b5dca8000df4c82d3cd9f8b67396aa",
+      "source_bbox": [
+        25,
+        207,
+        238,
+        580
+      ],
+      "reference_bbox": [
+        48,
+        42,
+        134,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9908,
+      "silhouette_iou": 0.9699,
+      "bytes": 89015
+    },
+    {
+      "path": "look/07.png",
+      "source": "decoded/look-row-9.png#tile=7",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "a37345ca0a25b1038f606282eab10f06c14c47215c28944c5e20249025d600f7",
+      "source_bbox": [
+        13,
+        216,
+        220,
+        580
+      ],
+      "reference_bbox": [
+        50,
+        45,
+        134,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9913,
+      "silhouette_iou": 0.9682,
+      "bytes": 85771
+    },
+    {
+      "path": "look/08.png",
+      "source": "decoded/look-row-10.png#tile=0",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "c8abca4ceac8088a7379c60bec11d654d556dfc7803411023a2ebc7061e6c525",
+      "source_bbox": [
+        13,
+        124,
+        219,
+        493
+      ],
+      "reference_bbox": [
+        54,
+        44,
+        139,
+        194
+      ],
+      "aspect_rescale_ratio": 1.015,
+      "silhouette_iou": 0.9462,
+      "bytes": 86839
+    },
+    {
+      "path": "look/09.png",
+      "source": "decoded/look-row-10.png#tile=1",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "e600e1f8358d4b940d1b2f5bd40f92c0ecbecf80ac2e0cdcdaffa93843b7b989",
+      "source_bbox": [
+        0,
+        124,
+        219,
+        493
+      ],
+      "reference_bbox": [
+        54,
+        44,
+        138,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9436,
+      "silhouette_iou": 0.8428,
+      "bytes": 82088
+    },
+    {
+      "path": "look/10.png",
+      "source": "decoded/look-row-10.png#tile=2",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "2e219a2f7a77eec3594a4857f3e0f1f4a42a5d769c377aa12b982a2b7cb63b63",
+      "source_bbox": [
+        0,
+        124,
+        220,
+        493
+      ],
+      "reference_bbox": [
+        55,
+        43,
+        139,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9331,
+      "silhouette_iou": 0.8781,
+      "bytes": 82453
+    },
+    {
+      "path": "look/11.png",
+      "source": "decoded/look-row-10.png#tile=3",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "baeb9b7f0faf256caefecf19a65ba6cb1f0b927cb4b67914acee2f8a6f33e2d2",
+      "source_bbox": [
+        0,
+        124,
+        216,
+        493
+      ],
+      "reference_bbox": [
+        55,
+        43,
+        138,
+        194
+      ],
+      "aspect_rescale_ratio": 0.939,
+      "silhouette_iou": 0.8973,
+      "bytes": 83028
+    },
+    {
+      "path": "look/12.png",
+      "source": "decoded/look-row-10.png#tile=4",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "309c9f3c9003c2071fd2c6170463c4b19ed113c8ccab643f2703b7136eccb926",
+      "source_bbox": [
+        9,
+        124,
+        217,
+        493
+      ],
+      "reference_bbox": [
+        55,
+        44,
+        139,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9935,
+      "silhouette_iou": 0.9729,
+      "bytes": 85879
+    },
+    {
+      "path": "look/13.png",
+      "source": "decoded/look-row-10.png#tile=5",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "d6adcd8ddfe0b73a83415a39f645014e0b92210a66264de3dc7da5ea31c6f087",
+      "source_bbox": [
+        4,
+        123,
+        220,
+        493
+      ],
+      "reference_bbox": [
+        56,
+        43,
+        142,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9756,
+      "silhouette_iou": 0.9771,
+      "bytes": 85701
+    },
+    {
+      "path": "look/14.png",
+      "source": "decoded/look-row-10.png#tile=6",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "4862fe194b2a6bfc2aaf51fb5a1216e085d5071575c260cb599a9c2612519c52",
+      "source_bbox": [
+        0,
+        123,
+        219,
+        493
+      ],
+      "reference_bbox": [
+        57,
+        43,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9399,
+      "silhouette_iou": 0.8921,
+      "bytes": 83101
+    },
+    {
+      "path": "look/15.png",
+      "source": "decoded/look-row-10.png#tile=7",
+      "status": "original_hd_gaze_atlas",
+      "sha256": "cea978a0a49406f94cb3b26b3480844497fced59c8db7fdb09901d240a6ae768",
+      "source_bbox": [
+        4,
+        123,
+        215,
+        493
+      ],
+      "reference_bbox": [
+        55,
+        43,
+        140,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9871,
+      "silhouette_iou": 0.9806,
+      "bytes": 85628
+    },
+    {
+      "path": "petting/00.png",
+      "source": "petting/frames-native/01.png",
+      "status": "original_hd",
+      "sha256": "6d2c067e7c6b5032e2fd5b256dded4efec2ce8ebb5ee7bb7c1e7d47c14d9cf2f",
+      "source_bbox": [
+        4,
+        2,
+        268,
+        480
+      ],
+      "reference_bbox": [
+        52,
+        37,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9907,
+      "silhouette_iou": 0.9853,
+      "bytes": 93744
+    },
+    {
+      "path": "petting/01.png",
+      "source": "petting/frames-native/02.png",
+      "status": "original_hd",
+      "sha256": "8758c18eb39d1fe8becaae42b3672f5c75245d5c334c3df2c418670314db4bb2",
+      "source_bbox": [
+        2,
+        2,
+        262,
+        585
+      ],
+      "reference_bbox": [
+        53,
+        3,
+        138,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9875,
+      "silhouette_iou": 0.9602,
+      "bytes": 102167
+    },
+    {
+      "path": "petting/02.png",
+      "source": "petting/frames-native/03.png",
+      "status": "original_hd",
+      "sha256": "99741b05cc4ea1e9bac9d3a3eabeef443bd513297299ab65d63a33230676a39d",
+      "source_bbox": [
+        4,
+        3,
+        265,
+        496
+      ],
+      "reference_bbox": [
+        52,
+        32,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 1.002,
+      "silhouette_iou": 0.9878,
+      "bytes": 97006
+    },
+    {
+      "path": "petting/03.png",
+      "source": "petting/frames-native/04.png",
+      "status": "original_hd",
+      "sha256": "e960e6537bdfbc98730388199a7991b5e1bfea2c6fc0e29873a75f319acfb330",
+      "source_bbox": [
+        3,
+        3,
+        267,
+        488
+      ],
+      "reference_bbox": [
+        53,
+        35,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9813,
+      "silhouette_iou": 0.9684,
+      "bytes": 95116
+    },
+    {
+      "path": "petting/04.png",
+      "source": "petting/frames-native/05.png",
+      "status": "original_hd",
+      "sha256": "d628fd2972405fe9bedadd5e900e16cd7e0eae8b10a8ec92c23cf4e02095a933",
+      "source_bbox": [
+        4,
+        3,
+        265,
+        489
+      ],
+      "reference_bbox": [
+        54,
+        35,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9831,
+      "silhouette_iou": 0.9626,
+      "bytes": 93777
+    },
+    {
+      "path": "petting/05.png",
+      "source": "petting/frames-native/06.png",
+      "status": "original_hd",
+      "sha256": "42c904334540cb4ead7c61f75462092556f9745a67252b40086b113d530fbc21",
+      "source_bbox": [
+        4,
+        3,
+        258,
+        488
+      ],
+      "reference_bbox": [
+        54,
+        35,
+        137,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9844,
+      "silhouette_iou": 0.9691,
+      "bytes": 93858
+    },
+    {
+      "path": "petting/06.png",
+      "source": "petting/frames-native/07.png",
+      "status": "original_hd",
+      "sha256": "d4d20172b6b50dcfb6d7f116dd9186df10cc0cba82c47b2080d7ed1b87cfae54",
+      "source_bbox": [
+        2,
+        3,
+        260,
+        585
+      ],
+      "reference_bbox": [
+        53,
+        3,
+        138,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9935,
+      "silhouette_iou": 0.9721,
+      "bytes": 103101
+    },
+    {
+      "path": "petting/07.png",
+      "source": "petting/frames-native/08.png",
+      "status": "original_hd",
+      "sha256": "bcc4c7b3e4c6c71ed2e87583d5decf605af2b58af62b9b32bf31005b691c51b6",
+      "source_bbox": [
+        3,
+        3,
+        263,
+        481
+      ],
+      "reference_bbox": [
+        53,
+        37,
+        138,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9828,
+      "silhouette_iou": 0.9776,
+      "bytes": 92146
+    },
+    {
+      "path": "pick_up/00.png",
+      "source": "Registriert_Hochaufloesend/01.png",
+      "status": "original_hd_pickup",
+      "sha256": "84b0eebb7ac0cf541bf7bab9302a2f16e0934fe9f0d84fe2ddb32b68c366db5a",
+      "source_bbox": [
+        155,
+        278,
+        840,
+        1479
+      ],
+      "reference_bbox": [
+        49,
+        39,
+        137,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9827,
+      "silhouette_iou": 0.9604,
+      "bytes": 84818
+    },
+    {
+      "path": "pick_up/01.png",
+      "source": "Registriert_Hochaufloesend/02.png",
+      "status": "original_hd_pickup",
+      "sha256": "01aa5303e7633824b548d6f0109856f859a340fed1737cfb607b39d51f9b745a",
+      "source_bbox": [
+        157,
+        301,
+        845,
+        1479
+      ],
+      "reference_bbox": [
+        50,
+        42,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9895,
+      "silhouette_iou": 0.9693,
+      "bytes": 82536
+    },
+    {
+      "path": "pick_up/02.png",
+      "source": "Registriert_Hochaufloesend/03.png",
+      "status": "original_hd_pickup",
+      "sha256": "6c2c49e628c643ca32715a49c94e4de5bc228d503882b2cbf521bad43b6ca198",
+      "source_bbox": [
+        147,
+        422,
+        852,
+        1480
+      ],
+      "reference_bbox": [
+        49,
+        58,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9787,
+      "silhouette_iou": 0.9737,
+      "bytes": 81155
+    },
+    {
+      "path": "pick_up/03.png",
+      "source": "Registriert_Hochaufloesend/04.png",
+      "status": "original_hd_pickup",
+      "sha256": "3772ea8245d61b3a38afd7f6613b4f21a2c03ad56f7981f428d8c80fc93470b0",
+      "source_bbox": [
+        150,
+        397,
+        864,
+        1479
+      ],
+      "reference_bbox": [
+        49,
+        55,
+        141,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9888,
+      "silhouette_iou": 0.9771,
+      "bytes": 82490
+    },
+    {
+      "path": "pick_up/04.png",
+      "source": "Registriert_Hochaufloesend/05.png",
+      "status": "original_hd_pickup",
+      "sha256": "7517e6d2a494cbe2e5cda15c9062f82ee6709a93cd25b528524f61a65d94effe",
+      "source_bbox": [
+        162,
+        415,
+        835,
+        1478
+      ],
+      "reference_bbox": [
+        50,
+        57,
+        136,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9772,
+      "silhouette_iou": 0.9554,
+      "bytes": 77975
+    },
+    {
+      "path": "pick_up/05.png",
+      "source": "Registriert_Hochaufloesend/06.png",
+      "status": "original_hd_pickup",
+      "sha256": "a69719d41377e104c1301d2b44e991dd65828d4f213a894fb9a9c778fa8fe744",
+      "source_bbox": [
+        182,
+        348,
+        820,
+        1479
+      ],
+      "reference_bbox": [
+        53,
+        48,
+        135,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9822,
+      "silhouette_iou": 0.9785,
+      "bytes": 73641
+    },
+    {
+      "path": "pick_up/06.png",
+      "source": "Registriert_Hochaufloesend/07.png",
+      "status": "original_hd_pickup",
+      "sha256": "2f30232101d0305146f4d1bc2d5dff25865fdec9a7c4e472e2e19dba57c6594f",
+      "source_bbox": [
+        170,
+        335,
+        832,
+        1479
+      ],
+      "reference_bbox": [
+        51,
+        47,
+        137,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9974,
+      "silhouette_iou": 0.976,
+      "bytes": 77456
+    },
+    {
+      "path": "pick_up/07.png",
+      "source": "Registriert_Hochaufloesend/08.png",
+      "status": "original_hd_pickup",
+      "sha256": "3d5e87a2e80cabc8ff8a6cc341e9f3bd180df9fec9bc091ca51f1cebf2427605",
+      "source_bbox": [
+        152,
+        341,
+        853,
+        1479
+      ],
+      "reference_bbox": [
+        49,
+        47,
+        139,
+        196
+      ],
+      "aspect_rescale_ratio": 0.9806,
+      "silhouette_iou": 0.9737,
+      "bytes": 79453
+    },
+    {
+      "path": "review/00.png",
+      "source": "source-frames/review/00.png",
+      "status": "original_hd",
+      "sha256": "3b31e4c0aae919e4180d3aca4c4b6f9580d66ebe6e108df6185829275465c509",
+      "source_bbox": [
+        11,
+        5,
+        322,
+        539
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9859,
+      "silhouette_iou": 0.9763,
+      "bytes": 89252
+    },
+    {
+      "path": "review/01.png",
+      "source": "decoded/review.png#tile=1",
+      "status": "recovered_original_hd_sheet",
+      "sha256": "57e6009a7ccec59ab78849a7b4ecf9ee508ac9f34919e75d356b8236c90ebb71",
+      "source_bbox": [
+        41,
+        107,
+        354,
+        641
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        141,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9906,
+      "silhouette_iou": 0.9684,
+      "bytes": 89503
+    },
+    {
+      "path": "review/02.png",
+      "source": "inbetweens/review/generated/01-02.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "8cb9b7af27a99d8ff9a6e4b309cdfa3c51f6298f2fb251446f2198003a329d2f",
+      "source_bbox": [
+        356,
+        257,
+        855,
+        1138
+      ],
+      "reference_bbox": [
+        54,
+        41,
+        139,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9809,
+      "silhouette_iou": 0.9555,
+      "bytes": 79163
+    },
+    {
+      "path": "review/03.png",
+      "source": "source-frames/review/02.png",
+      "status": "original_hd",
+      "sha256": "1e76760f3dfe46831bd4defca4fae62722c210701051cfcf9c5020e3387d13a6",
+      "source_bbox": [
+        7,
+        25,
+        326,
+        540
+      ],
+      "reference_bbox": [
+        50,
+        44,
+        142,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9968,
+      "silhouette_iou": 0.9667,
+      "bytes": 88880
+    },
+    {
+      "path": "review/04.png",
+      "source": "source-frames/review/03.png",
+      "status": "original_hd",
+      "sha256": "11162a7e28bd8231785c132bb44ff2ae6078b3f825def260753d61f384c76356",
+      "source_bbox": [
+        5,
+        21,
+        329,
+        539
+      ],
+      "reference_bbox": [
+        49,
+        43,
+        142,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9912,
+      "silhouette_iou": 0.9798,
+      "bytes": 90008
+    },
+    {
+      "path": "review/05.png",
+      "source": "inbetweens/review/generated/03-04.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "045b3adf093ce568056e0da5933a2e71dc737da459f2d5b35c80fe8df2bef4d5",
+      "source_bbox": [
+        344,
+        242,
+        891,
+        1180
+      ],
+      "reference_bbox": [
+        51,
+        40,
+        140,
+        194
+      ],
+      "aspect_rescale_ratio": 0.991,
+      "silhouette_iou": 0.976,
+      "bytes": 81432
+    },
+    {
+      "path": "review/06.png",
+      "source": "source-frames/review/04.png",
+      "status": "original_hd",
+      "sha256": "00974ae6a135db7918cff7f990b480e67ebf37bf82269d296736a3b81170b8f7",
+      "source_bbox": [
+        11,
+        5,
+        322,
+        539
+      ],
+      "reference_bbox": [
+        51,
+        39,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9923,
+      "silhouette_iou": 0.9726,
+      "bytes": 85309
+    },
+    {
+      "path": "review/07.png",
+      "source": "source-frames/review/05.png",
+      "status": "original_hd",
+      "sha256": "9074c5209376db3925c91276825f975821bf9e215e08ddb3b3843d196a085824",
+      "source_bbox": [
+        11,
+        5,
+        323,
+        540
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        141,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9957,
+      "silhouette_iou": 0.9702,
+      "bytes": 89183
+    },
+    {
+      "path": "running-left/00.png",
+      "source": "source-frames/running-left/00.png",
+      "status": "original_hd",
+      "sha256": "49ad5923b683aaea0bd714486ad287299a1d6e937e7ec3fe46998b9fab5be863",
+      "source_bbox": [
+        5,
+        8,
+        224,
+        380
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9899,
+      "silhouette_iou": 0.9815,
+      "bytes": 88587
+    },
+    {
+      "path": "running-left/01.png",
+      "source": "source-frames/running-left/01.png",
+      "status": "original_hd",
+      "sha256": "d11256f0e8406685aa40294decf8d05e0b92117e47ef3a7ce853e669e09ff827",
+      "source_bbox": [
+        8,
+        8,
+        221,
+        386
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9975,
+      "silhouette_iou": 0.9852,
+      "bytes": 82559
+    },
+    {
+      "path": "running-left/02.png",
+      "source": "source-frames/running-left/02.png",
+      "status": "original_hd",
+      "sha256": "78194e6e88ddb93fdbb530a14078263f9e540eda43d2e7f27647656ae56eb0cf",
+      "source_bbox": [
+        4,
+        8,
+        224,
+        381
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9881,
+      "silhouette_iou": 0.9788,
+      "bytes": 84521
+    },
+    {
+      "path": "running-left/03.png",
+      "source": "source-frames/running-left/03.png",
+      "status": "original_hd",
+      "sha256": "6755c2f68890bb29bd0db182fb4266f79035527cef982eec246178b52f6e923a",
+      "source_bbox": [
+        7,
+        8,
+        222,
+        380
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9854,
+      "silhouette_iou": 0.9756,
+      "bytes": 82552
+    },
+    {
+      "path": "running-left/04.png",
+      "source": "source-frames/running-left/04.png",
+      "status": "original_hd",
+      "sha256": "c970dc1f7ec942ecdc09b162c5cb30e41174177926829a1fd25a5133f6fb826f",
+      "source_bbox": [
+        6,
+        7,
+        223,
+        380
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        139,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9904,
+      "silhouette_iou": 0.972,
+      "bytes": 88301
+    },
+    {
+      "path": "running-left/05.png",
+      "source": "source-frames/running-left/05.png",
+      "status": "original_hd",
+      "sha256": "15c712966c6416e7c99ff2cf63a91d7b7c7101b90e5bbe8c82f5278522af938a",
+      "source_bbox": [
+        5,
+        5,
+        225,
+        387
+      ],
+      "reference_bbox": [
+        52,
+        39,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9922,
+      "silhouette_iou": 0.9792,
+      "bytes": 82130
+    },
+    {
+      "path": "running-left/06.png",
+      "source": "source-frames/running-left/06.png",
+      "status": "original_hd",
+      "sha256": "a9741f2658dadb006de6b9de295a9e91b6d0d8eee3103d3530ee4738654a7811",
+      "source_bbox": [
+        8,
+        8,
+        222,
+        381
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9927,
+      "silhouette_iou": 0.9868,
+      "bytes": 84123
+    },
+    {
+      "path": "running-left/07.png",
+      "source": "source-frames/running-left/07.png",
+      "status": "original_hd",
+      "sha256": "2644070c2534ba49c032ea3a189aa02729a26c1b7dc360431f67f7da7c0b9ee5",
+      "source_bbox": [
+        8,
+        9,
+        222,
+        383
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        192
+      ],
+      "aspect_rescale_ratio": 0.9888,
+      "silhouette_iou": 0.9817,
+      "bytes": 81723
+    },
+    {
+      "path": "running-right/00.png",
+      "source": "source-frames/running-right/00.png",
+      "status": "original_hd",
+      "sha256": "49b1ca4a8db5aae13edbb0832f101527a5a2abfebd6f35b8ccabffeeb85940d9",
+      "source_bbox": [
+        5,
+        8,
+        224,
+        380
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9899,
+      "silhouette_iou": 0.9811,
+      "bytes": 88257
+    },
+    {
+      "path": "running-right/01.png",
+      "source": "source-frames/running-right/01.png",
+      "status": "original_hd",
+      "sha256": "d076af6b8a378f9cbf77253d8a516100676b67ba12bf33a322d8320f484ecacb",
+      "source_bbox": [
+        9,
+        8,
+        222,
+        386
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9975,
+      "silhouette_iou": 0.9852,
+      "bytes": 82488
+    },
+    {
+      "path": "running-right/02.png",
+      "source": "source-frames/running-right/02.png",
+      "status": "original_hd",
+      "sha256": "e14460a86809fd7a28e966ce812eee1178dc8f3a97ce2d63f905498b31d0c242",
+      "source_bbox": [
+        5,
+        8,
+        225,
+        381
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9881,
+      "silhouette_iou": 0.9844,
+      "bytes": 84291
+    },
+    {
+      "path": "running-right/03.png",
+      "source": "source-frames/running-right/03.png",
+      "status": "original_hd",
+      "sha256": "d391339be5cdba344711e065fdf04129f474533a82ac4fffd15452a7b08fa824",
+      "source_bbox": [
+        7,
+        8,
+        222,
+        380
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9854,
+      "silhouette_iou": 0.9764,
+      "bytes": 82234
+    },
+    {
+      "path": "running-right/04.png",
+      "source": "source-frames/running-right/04.png",
+      "status": "original_hd",
+      "sha256": "96331550548d21d62327c71e3719c45844cbbc0e0dc651d5a1d5ba67f0adf70f",
+      "source_bbox": [
+        6,
+        7,
+        223,
+        380
+      ],
+      "reference_bbox": [
+        52,
+        40,
+        140,
+        191
+      ],
+      "aspect_rescale_ratio": 1.0017,
+      "silhouette_iou": 0.9788,
+      "bytes": 89016
+    },
+    {
+      "path": "running-right/05.png",
+      "source": "source-frames/running-right/05.png",
+      "status": "original_hd",
+      "sha256": "8561fd3362eba7af23ed28045a46cae6dfa2a9426cd754c7b526ea18501cc880",
+      "source_bbox": [
+        5,
+        5,
+        225,
+        387
+      ],
+      "reference_bbox": [
+        52,
+        39,
+        140,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9922,
+      "silhouette_iou": 0.9792,
+      "bytes": 81925
+    },
+    {
+      "path": "running-right/06.png",
+      "source": "source-frames/running-right/06.png",
+      "status": "original_hd",
+      "sha256": "214ba6307ae7dc4ec9064a3e2fc0785a6ee9cb0943a60a68b4e0020ff50eb916",
+      "source_bbox": [
+        8,
+        8,
+        222,
+        381
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        191
+      ],
+      "aspect_rescale_ratio": 0.9927,
+      "silhouette_iou": 0.9868,
+      "bytes": 83994
+    },
+    {
+      "path": "running-right/07.png",
+      "source": "source-frames/running-right/07.png",
+      "status": "original_hd",
+      "sha256": "ca3a1db884e56cacb208f339f47baa748b801cb9d579a379a15414d6286bd7aa",
+      "source_bbox": [
+        8,
+        9,
+        222,
+        383
+      ],
+      "reference_bbox": [
+        53,
+        40,
+        139,
+        192
+      ],
+      "aspect_rescale_ratio": 0.9888,
+      "silhouette_iou": 0.9817,
+      "bytes": 81657
+    },
+    {
+      "path": "sleep/00.png",
+      "source": "sleep/frames-native/01.png",
+      "status": "original_hd",
+      "sha256": "e4d4bc96633e4c1d4a67722fdc1b14672c1f98e0028d51551ad9f8023c8d7c49",
+      "source_bbox": [
+        3,
+        3,
+        351,
+        293
+      ],
+      "reference_bbox": [
+        7,
+        47,
+        185,
+        195
+      ],
+      "aspect_rescale_ratio": 1.0023,
+      "silhouette_iou": 0.9881,
+      "bytes": 121841
+    },
+    {
+      "path": "sleep/01.png",
+      "source": "sleep/frames-native/02.png",
+      "status": "original_hd",
+      "sha256": "cd8f14e59d32c9bf077b098dca0e0a71e40f66ce5bd83e54280885fd8fd4bbe7",
+      "source_bbox": [
+        3,
+        3,
+        351,
+        293
+      ],
+      "reference_bbox": [
+        6,
+        47,
+        185,
+        195
+      ],
+      "aspect_rescale_ratio": 1.0079,
+      "silhouette_iou": 0.9825,
+      "bytes": 123218
+    },
+    {
+      "path": "sleep/02.png",
+      "source": "inbetweens/sleep/generated/new-1-2.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "89531d1cad51fa6bae5b807c8cf28df351935502e4f073c18cc9928139329290",
+      "source_bbox": [
+        46,
+        142,
+        1344,
+        1100
+      ],
+      "reference_bbox": [
+        6,
+        47,
+        185,
+        195
+      ],
+      "aspect_rescale_ratio": 0.8927,
+      "silhouette_iou": 0.9539,
+      "bytes": 109559
+    },
+    {
+      "path": "sleep/03.png",
+      "source": "sleep/frames-native/03.png",
+      "status": "original_hd",
+      "sha256": "c8dfffe88888c5f3fef2e124695d88ac502c8b7c099971d60eda937e5ea2e62d",
+      "source_bbox": [
+        3,
+        5,
+        351,
+        297
+      ],
+      "reference_bbox": [
+        7,
+        45,
+        185,
+        195
+      ],
+      "aspect_rescale_ratio": 0.9957,
+      "silhouette_iou": 0.9879,
+      "bytes": 124634
+    },
+    {
+      "path": "sleep/04.png",
+      "source": "sleep/frames-native/04.png",
+      "status": "original_hd",
+      "sha256": "e1485fec40a4f130345f3ae214a455f0a87d331e589f68747b827c4b288436c0",
+      "source_bbox": [
+        3,
+        3,
+        351,
+        298
+      ],
+      "reference_bbox": [
+        7,
+        44,
+        185,
+        195
+      ],
+      "aspect_rescale_ratio": 0.9993,
+      "silhouette_iou": 0.9905,
+      "bytes": 124606
+    },
+    {
+      "path": "sleep/05.png",
+      "source": "inbetweens/sleep/generated/new-3-4.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "c428e19690ac0443b6af40bf68ff476445acf03a20cbac79d76fc991d1039921",
+      "source_bbox": [
+        43,
+        107,
+        1339,
+        1099
+      ],
+      "reference_bbox": [
+        7,
+        44,
+        185,
+        195
+      ],
+      "aspect_rescale_ratio": 0.9023,
+      "silhouette_iou": 0.9629,
+      "bytes": 113351
+    },
+    {
+      "path": "sleep/06.png",
+      "source": "sleep/frames-native/05.png",
+      "status": "original_hd",
+      "sha256": "2af65eb998835dbac83a9182dcbfcfd7e5e0b895a463afc4a2f563a683b6cc50",
+      "source_bbox": [
+        3,
+        3,
+        352,
+        294
+      ],
+      "reference_bbox": [
+        7,
+        46,
+        185,
+        195
+      ],
+      "aspect_rescale_ratio": 0.9961,
+      "silhouette_iou": 0.9866,
+      "bytes": 122898
+    },
+    {
+      "path": "sleep/07.png",
+      "source": "sleep/frames-native/06.png",
+      "status": "original_hd",
+      "sha256": "bcb700f3496d4aaad1f9901079a45f7c96a7d9395543a8d7637a56f29027b05e",
+      "source_bbox": [
+        3,
+        2,
+        351,
+        292
+      ],
+      "reference_bbox": [
+        7,
+        47,
+        185,
+        195
+      ],
+      "aspect_rescale_ratio": 1.0023,
+      "silhouette_iou": 0.9809,
+      "bytes": 121191
+    },
+    {
+      "path": "waiting/00.png",
+      "source": "source-frames/waiting/00.png",
+      "status": "original_hd",
+      "sha256": "6dbbda3fbe46273c0a8818c74d0812fc85f6ddc73c27d4c487c4f0afe992980e",
+      "source_bbox": [
+        7,
+        5,
+        279,
+        456
+      ],
+      "reference_bbox": [
+        49,
+        39,
+        142,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0013,
+      "silhouette_iou": 0.983,
+      "bytes": 90010
+    },
+    {
+      "path": "waiting/01.png",
+      "source": "source-frames/waiting/01.png",
+      "status": "original_hd",
+      "sha256": "d46155a4c98d515fa15d28ded0e61f8a1c881865f434be31db8238026023cb83",
+      "source_bbox": [
+        5,
+        5,
+        281,
+        456
+      ],
+      "reference_bbox": [
+        48,
+        39,
+        143,
+        193
+      ],
+      "aspect_rescale_ratio": 1.008,
+      "silhouette_iou": 0.9876,
+      "bytes": 91619
+    },
+    {
+      "path": "waiting/02.png",
+      "source": "inbetweens/waiting/generated/01-02.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "ca792af0aca551c26fad8971623fb193a2145a8cd342e3d19f09367b4678c009",
+      "source_bbox": [
+        309,
+        258,
+        915,
+        1198
+      ],
+      "reference_bbox": [
+        47,
+        38,
+        145,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9744,
+      "silhouette_iou": 0.9796,
+      "bytes": 86778
+    },
+    {
+      "path": "waiting/03.png",
+      "source": "source-frames/waiting/02.png",
+      "status": "original_hd",
+      "sha256": "1096f446574d7346ebd898c4298a48497eb242a1655fa8afa21fe373fb624bff",
+      "source_bbox": [
+        7,
+        5,
+        279,
+        456
+      ],
+      "reference_bbox": [
+        49,
+        39,
+        142,
+        193
+      ],
+      "aspect_rescale_ratio": 1.0013,
+      "silhouette_iou": 0.9828,
+      "bytes": 88791
+    },
+    {
+      "path": "waiting/04.png",
+      "source": "inbetweens/waiting/generated/02-03.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "957c842ece0684f17939d07513374676c708747b5663313df2a1bce3e040ba6d",
+      "source_bbox": [
+        310,
+        249,
+        918,
+        1206
+      ],
+      "reference_bbox": [
+        46,
+        38,
+        145,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9989,
+      "silhouette_iou": 0.9891,
+      "bytes": 88850
+    },
+    {
+      "path": "waiting/05.png",
+      "source": "source-frames/waiting/03.png",
+      "status": "original_hd",
+      "sha256": "4ff753651e191c31cd62e3a50c40906b6e96ea2a9bb6bc947d9f85e4537bb239",
+      "source_bbox": [
+        5,
+        5,
+        280,
+        456
+      ],
+      "reference_bbox": [
+        48,
+        39,
+        142,
+        193
+      ],
+      "aspect_rescale_ratio": 1.001,
+      "silhouette_iou": 0.9772,
+      "bytes": 91103
+    },
+    {
+      "path": "waiting/06.png",
+      "source": "source-frames/waiting/04.png",
+      "status": "original_hd",
+      "sha256": "074e558e05ef84c497cff08c00ecbcaf032cf1a40782ceb7cf68fd7698e7bebc",
+      "source_bbox": [
+        7,
+        5,
+        278,
+        456
+      ],
+      "reference_bbox": [
+        49,
+        39,
+        142,
+        193
+      ],
+      "aspect_rescale_ratio": 1.005,
+      "silhouette_iou": 0.9876,
+      "bytes": 89289
+    },
+    {
+      "path": "waiting/07.png",
+      "source": "source-frames/waiting/05.png",
+      "status": "original_hd",
+      "sha256": "bbba87c3bf64677ff3aa5be3a38877218683949286d0a18ff1a2fbeb7b893e30",
+      "source_bbox": [
+        6,
+        5,
+        279,
+        456
+      ],
+      "reference_bbox": [
+        49,
+        39,
+        142,
+        193
+      ],
+      "aspect_rescale_ratio": 0.9976,
+      "silhouette_iou": 0.9816,
+      "bytes": 89711
+    },
+    {
+      "path": "waving/00.png",
+      "source": "source-frames/waving/00.png",
+      "status": "original_hd",
+      "sha256": "b595a26cbdd235bd103f31cc421b3cf86006de071324a6ec2c156d01929e2b7b",
+      "source_bbox": [
+        8,
+        5,
+        398,
+        671
+      ],
+      "reference_bbox": [
+        50,
+        38,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9962,
+      "silhouette_iou": 0.9882,
+      "bytes": 90058
+    },
+    {
+      "path": "waving/01.png",
+      "source": "inbetweens/waving/native/new-0-1-0.5.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "58d79e6dbc3b818ea0353b76aef1c8016737540eec407bdd82722b78189117b1",
+      "source_bbox": [
+        335,
+        259,
+        908,
+        1199
+      ],
+      "reference_bbox": [
+        48,
+        38,
+        143,
+        194
+      ],
+      "aspect_rescale_ratio": 0.999,
+      "silhouette_iou": 0.9923,
+      "bytes": 88318
+    },
+    {
+      "path": "waving/02.png",
+      "source": "source-frames/waving/01.png",
+      "status": "original_hd",
+      "sha256": "97271c3a3e11385ec39d4ed0c78b947a7bd58d6fdff2011b45b22910da44dfb4",
+      "source_bbox": [
+        9,
+        4,
+        398,
+        670
+      ],
+      "reference_bbox": [
+        50,
+        38,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9987,
+      "silhouette_iou": 0.9918,
+      "bytes": 89792
+    },
+    {
+      "path": "waving/03.png",
+      "source": "inbetweens/waving/native/new-1-2-0.5.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "7f244db5f7efb76c824aa93c6a7e918635f4cbecf00e2fe1168d79107df3b2fd",
+      "source_bbox": [
+        329,
+        246,
+        906,
+        1204
+      ],
+      "reference_bbox": [
+        48,
+        38,
+        142,
+        194
+      ],
+      "aspect_rescale_ratio": 1.0004,
+      "silhouette_iou": 0.9938,
+      "bytes": 88405
+    },
+    {
+      "path": "waving/04.png",
+      "source": "source-frames/waving/02.png",
+      "status": "original_hd",
+      "sha256": "d9f2245d72aba6687a0be24350284f55d5c82d4ade5ab77caafe25851f793ef4",
+      "source_bbox": [
+        5,
+        5,
+        402,
+        671
+      ],
+      "reference_bbox": [
+        49,
+        38,
+        142,
+        194
+      ],
+      "aspect_rescale_ratio": 1.0001,
+      "silhouette_iou": 0.9903,
+      "bytes": 89448
+    },
+    {
+      "path": "waving/05.png",
+      "source": "inbetweens/waving/native/new-2-3-0.333.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "842ed086df7feecbb1c874a1595ee9f3a712c74ffd859f53971622f7b34f15d5",
+      "source_bbox": [
+        321,
+        144,
+        919,
+        1163
+      ],
+      "reference_bbox": [
+        50,
+        38,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 0.994,
+      "silhouette_iou": 0.9694,
+      "bytes": 85743
+    },
+    {
+      "path": "waving/06.png",
+      "source": "inbetweens/waving/native/new-2-3-0.667.png",
+      "status": "generated_intermediate_hd",
+      "sha256": "03edbb4434880fc4d6a05c3f0b957cc091cceb9db8220bf3fdde79912f94d908",
+      "source_bbox": [
+        337,
+        241,
+        892,
+        1194
+      ],
+      "reference_bbox": [
+        50,
+        38,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 1.0017,
+      "silhouette_iou": 0.9918,
+      "bytes": 86245
+    },
+    {
+      "path": "waving/07.png",
+      "source": "source-frames/waving/03.png",
+      "status": "original_hd",
+      "sha256": "72f95c84ade9495b95fdcef841d928c41b415b0f16699747ff571bd4fccab45e",
+      "source_bbox": [
+        10,
+        5,
+        398,
+        671
+      ],
+      "reference_bbox": [
+        51,
+        38,
+        141,
+        194
+      ],
+      "aspect_rescale_ratio": 0.9903,
+      "silhouette_iou": 0.9812,
+      "bytes": 88653
+    }
+  ]
+}
