@@ -36,7 +36,12 @@ def decide_object_use(
     if state.sleeping:
         return ObjectUseDecision(False, "unavailable")
     drink = known.kind == "drink"
+    if drink and state.sleep_episode.care_break:
+        return ObjectUseDecision(False, "not_needed")
     level = state.energy if drink else state.satiety
+    if (state.sleep_episode.care_break
+            and level >= BALANCE.number("sleep", "food_target")):
+        return ObjectUseDecision(False, "not_needed")
     capacity = 100 if drink else FOOD_BALANCE.too_full_to_eat_threshold
     threshold = (
         capacity

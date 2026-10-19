@@ -9,17 +9,112 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.application.object_feedback import FeedbackReceipt
+from aiko_pet.application.object_interaction_state import SearchPosition
 from aiko_pet.desktop.geometry import FOOT_BASELINE
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.mind.object_perception import ObjectObservation
+from aiko_pet.pet.sleep import SleepEpisode
 from aiko_pet.ui.view_models.object_reactions import format_object_reaction
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from tools.pet_test_support import set_test_pet_values
 
 
 class WorldGuiTests(unittest.TestCase):
+    def sleeping_care_fixture(self):
+        now = time.time()
+        set_test_pet_values(
+            self.app.state, sleeping=True, satiety=0, energy=20, lived_seconds=1801,
+            sleep_episode=SleepEpisode("main", 0, 1801, now + 7200, 1800),
+        )
+
+    def test_sleep_food_break_uses_native_known_pickup_without_human_credit(self):
+        runtime = self.app._world
+        item = runtime.world.place_resting(
+            "sandwich", runtime._body_x(), ObjectFootprint(8, 8),
+        )
+        runtime._controls_active = lambda: True
+        self.observe_and_acknowledge()
+        self.seed_previous_identification(item.instance_id, "sandwich", "food")
+        record = runtime.awareness.record_for_instance(item.instance_id)
+        assert record is not None
+        runtime.awareness.memory.mark_assessed(record)
+        runtime._controls_active = lambda: False
+        self.sleeping_care_fixture()
+        before = self.app.state.friendship_history.last_contact
+        self.app._activity.advance_state(time.time())
+        self.assertTrue(self.app.state.sleep_episode.care_break)
+        self.assertFalse(self.app.state.sleeping)
+        self.look_at(runtime._body_x())
+        for _ in range(8):
+            runtime.now += .3
+            runtime.update(time.monotonic())
+            self.complete_feedback()
+        self.assertEqual(runtime.interaction.phase, "pick_up")
+        self.finish_pickup()
+        self.finish_inspection()
+        self.complete_feedback()
+        self.assertEqual(runtime.world.get(item.instance_id).state,
+                         ObjectState.CONSUMED)
+        self.assertGreater(self.app.state.satiety, 30)
+        self.assertEqual(self.app.state.friendship_history.last_contact, before)
+        self.assertEqual(self.app.state.sleep_episode.started, 0)
+
+    def test_sleep_break_timeout_puts_down_before_returning_to_sleep(self):
+        runtime = self.app._world
+        item = runtime.world.place_resting("sandwich", runtime._body_x(),
+                                           ObjectFootprint(8, 8))
+        self.observe_and_acknowledge()
+        self.finish_pickup()
+        self.assertEqual(runtime.world.get(item.instance_id).state,
+                         ObjectState.PET_HELD)
+        now = time.time()
+        set_test_pet_values(
+            self.app.state, sleeping=False, satiety=0, energy=20, lived_seconds=2200,
+            sleep_episode=SleepEpisode("main", 0, 1800, now + 7200,
+                                       care_break=True, search_until=2100),
+        )
+        self.app._activity.advance_state(time.time())
+        self.assertFalse(self.app.state.sleeping)
+        runtime.update(time.monotonic())
+        self.assertEqual(runtime.interaction.phase, "put_down")
+        self.assertFalse(self.app.state.sleeping)
+        self.finish_clip("put_down")
+        self.complete_feedback()
+        self.assertEqual(runtime.world.get(item.instance_id).state, ObjectState.RESTING)
+        self.assertTrue(self.app.state.sleeping)
+        self.assertTrue(self.app.state.sleep_episode.food_failed)
+
+    def test_zero_food_sleep_search_stops_after_one_route_and_restart(self):
+        runtime = self.app._world
+        self.sleeping_care_fixture()
+        self.app._activity.advance_state(time.time())
+        runtime.update(time.monotonic())
+        self.assertTrue(runtime.interaction.acute_food_search)
+        for _ in range(5):
+            if not runtime.interaction.searching:
+                break
+            track = runtime._track()
+            destination = runtime.interaction.search_destination(SearchPosition(
+                runtime.width / 2,
+                track.right - track.left - runtime.width / 2,
+                runtime._body_x(),
+            ))
+            assert destination is not None
+            self.app._place_x(track.left + destination - runtime.width / 2)
+            runtime.now += .3
+            runtime.update(time.monotonic())
+        self.assertTrue(self.app.state.sleeping)
+        self.assertTrue(self.app.state.sleep_episode.food_failed)
+        self.assertFalse(runtime.interaction.search_active)
+        self.restart()
+        self.assertTrue(self.app.state.sleep_episode.food_failed)
+        for _ in range(3):
+            self.app._activity.advance_state(time.time())
+            self.app._world.update(time.monotonic())
+            self.assertFalse(self.app._world.interaction.search_active)
+
     def test_onigiri_subjective_reunion_keeps_new_world_identity(self):
         app, runtime = self.app, self.app._world
         app._place_x(runtime._track().left)

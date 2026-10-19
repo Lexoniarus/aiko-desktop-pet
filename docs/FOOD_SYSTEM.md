@@ -3,8 +3,8 @@
 > This guide describes stage 2 on `feature/social-optimization`. The
 > [need balance proposal](NEEDS_BALANCE_PROPOSAL.md) preserves the discussion
 > and daily schedules. Progressive friendship is implemented in stage 3;
-> adaptive sleep remains later work
-> of the [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
+> stage 4 supplies [adaptive sleep and finite unattended care](SLEEP_SYSTEM.md)
+> in the [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
 
 The baseline requires several daily care phases, including normal meals and
 snacks. Office use still consumes food. Real-time reconstruction includes
@@ -81,7 +81,7 @@ does not grant human social/adaptive/friendship credit. See
 `FoodActivityHistory.observe` and `current_food_activity`. Fresh CPU/GPU
 utilization enters through `telemetry.consumption_load` (the larger sensor
 value); RAM/VRAM occupancy does not add consumption. The existing broader
-`workload_intensity` remains for grounded dialogue and the legacy routine. Actual input evidence is obtained from the
+`workload_intensity` remains for grounded dialogue; it does not decide sleep. Actual input evidence is obtained from the
 Windows *last-input age*, sampled cursor displacement and current mouse-button
 edges. No key names, keycodes, typed text, application titles, click
 coordinates, or full event histories are stored. Only short anonymous
@@ -111,10 +111,12 @@ Elapsed life time is authoritative, including closed-app time and standby.
 The existing version-one JSON retains optional nested `pet.food` and adds
 `pet.time`; old saves load with neutral missing fields. Hunger and digestion
 advance for the whole elapsed interval, using the rates above. Recent measured
-load/input is not projected across unobserved hours. Time advancement does not
-generate catalogue meals or consume World stock while closed; finite-stock
-closed-time care remains a later stage. Live autonomous consumption still uses
-actual World portions and its normal acquisition/consumption sequence.
+load/input is not projected across unobserved hours. Time advancement cannot
+generate catalogue meals. Stage 4 coordinates finite acquired World stock while
+closed, using the same atomic intake owner after restoring World and knowledge.
+Sleep food breaks preserve the episode and apply awake rates during actual
+care; unknown food stays unknown while closed. Live intake retains its normal
+perception/acquisition/animation sequence. See [sleep rules](SLEEP_SYSTEM.md).
 
 ## Food graphics, scale and animation
 

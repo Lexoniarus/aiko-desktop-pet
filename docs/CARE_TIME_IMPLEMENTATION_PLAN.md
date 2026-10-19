@@ -1,11 +1,11 @@
 # Care, relationship and real-time implementation plan
 
-> **Active implementation plan; stages 1–3 implemented and verified.** Requested on 2026-10-19
+> **Active implementation plan; stages 1–4 implemented.** Requested on 2026-10-19
 > on `feature/social-optimization`, reviewed against clean baseline `42de63a`.
 > The owner accepted the latest discussed balance as a sufficient starting
 > point for implementation planning. This document plans that first delivery.
 > Stages 1–3, B1 and B2 are implemented and verified below.
-> Stages 4–6 remain pending.
+> Stage 4 has the verification limits recorded below; stages 5–6 remain pending.
 
 ## Goal and boundaries
 
@@ -97,7 +97,8 @@ incompatible time, sleep and save behavior in place.
 | B1: idle repeated-click regression | Implemented in the separate fix commit containing this record; 1,185 tests, pinned static checks and native Windows clicks passed; no new friendship penalty |
 | B2: object recognition and German dialogue | [Detailed plan](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); Implemented as `4757da7` and `b984078`, pushed; 1,203 tests and pinned static checks passed; isolated real-timer native Onigiri flow passed (21 text bubbles); no save migration |
 | Stage 3: friendship, contact and neglect | Implemented in the separate feature commit containing this record; 1,226 Windows tests and pinned static checks passed; native return/input/care/save/reopen passed |
-| Stages 4–6 | Pending |
+| Stage 4: adaptive sleep and finite unattended care | Implemented in the feature commit containing this record; 91 final focused tests and pinned static checks passed; full-suite and desktop acceptance limits recorded below |
+| Stages 5–6 | Pending |
 
 ### B2 execution record, 2026-10-19
 
@@ -403,6 +404,91 @@ Deliver this as a separate bugfix before stage 3 attaches the agreed negative
 friendship effects. The acceptance requirements above remain regression checks;
 The separate physical-standby acceptance remains pending. Stage 3 and B2
 were subsequently delivered and verified as recorded above.
+
+### Stage-4 implementation decisions, 2026-10-19
+
+The existing time planner remains the chronological owner; PetState applies
+sleep policies and numeric need integration. Application coordination supplies
+finite World resources between its bounded steps. Live ticks, care boundaries
+and restoration use that same path; restoration restores the paired World and
+knowledge before advancing time. No desktop animation is synthesized offline.
+
+- A quiet phase is one observed continuous interval of at least four hours,
+  ending with two minutes of repeated input. Last-input timestamp changes are
+  anonymous presence evidence; an isolated event does not finish a phase.
+  Gaps longer than the sampling limit are unknown unless the host explicitly
+  reports suspension. Restart/app closure alone never trains a phase.
+- Keep at most seven completed phases, at most one per local day. Start and end
+  must both be within 90 minutes of the candidate window. Three matching
+  phases establish a tendency, seven establish the learned window. Median
+  endpoints resist isolated exceptions; move each endpoint at most 30 minutes
+  per local day. The tentative window is 23:00–07:00. Learning and hardware
+  observation preferences remain independent; forgetting resets this window.
+- An unobserved expected window starts sleep 15 minutes after its start, or
+  immediately when reconstruction begins inside that window after that point.
+  This is a schedule assumption, never a learned observation. Outside it,
+  unknown closed time cannot establish a nap; exhaustion can cause recovery.
+- Naps last 75 minutes. Manual sleep chooses main sleep inside the expected
+  window and a nap outside it; its 30-minute protection applies in either case.
+  Manual waking and explicit accepted personal care keep Aiko awake for
+  30 minutes. Rejected care and a bare game request do not wake her.
+- Exhaustion waits for an already committed direct interaction to finish.
+  After manual protection, energy at most 10 starts recovery toward 40.
+  Main sleep ends at its expected endpoint with energy at least 40; an early
+  return additionally needs two minutes of repeated input, four actual slept
+  hours and energy at least 60. Recovery continues into main sleep if quiet.
+- Historical intake requires prior identification and appraisal, not a new
+  offline decision about unassessed food. Outside sleep, acquired valid stock
+  follows the existing autonomous appetite thresholds; exhaustion takes
+  precedence over a drink. Unobserved current stock never renews personal contact.
+- A care break belongs to its sleep episode and excludes awake time from its
+  actual sleep duration. Reconstructed intake uses one awake minute per portion.
+  Manual sleep protection defers it. Remembered actual
+  food at satiety at most 20 starts a check even if the actual place has changed;
+  only valid physical stock can supply intake, toward at least 40. Energy has no
+  priority over a bounded food break, then recovery/main priorities reapply.
+- With no valid stock at zero, one live five-minute search per episode uses
+  existing perception/search owners. Failure survives restart, including naps
+  and recovery. A newly identified valid offer permits another attempt; manual
+  waking ends the episode. Closed time neither discovers nor searches unknown
+  food. A saved live search expires at its historical deadline while closed.
+  Expiration first uses the existing safe put-down path if an unconsumed item
+  is held. Suspended unfinished custody is never completed by fake animation;
+  sleep onset waits for safe completion when that live owner resumes.
+- Automatic routine off prevents new scheduled sleep/naps/recovery; an
+  existing sleep/manual episode still reaches its protected endpoint. All
+  needs, relationship time and finite food consumption continue. Hardware
+  load changes need consumption only and never decides sleep or quiet-window learning.
+
+### Stage-4 verification record, 2026-10-19
+
+The last complete Windows/Python 3.11 run executed **1,271 tests in 302.911
+seconds**: 1,269 passed and two newly added acute-food search fixtures failed.
+Both fixtures incorrectly started above the new food-break target of 40;
+they now start hungry. The final focused run passed **91 tests**: 15 sleep
+priority, 16 finite-stock/restoration, 12 quiet-learning, 43 object-behavior
+and five desktop-session owner tests. These run without creating Tk windows
+or injecting OS input. Production code did not change after that full run.
+Ruff 0.13.2, strict Mypy 1.18.2 (197 source files) and Pyright 1.1.414 passed.
+This is not a claim of a fully green final 1,271-case rerun.
+
+Earlier isolated native component checks passed the food-break pickup,
+bounded search/restart and safe put-down regressions. An instrumented native
+probe also exercised closed-stock restoration, save/reopen, manual commands
+and sustained input. However, that probe deliberately held an idle sprite
+frame while setting a sleeping fixture. The owner reported the contradictory
+Wake command and visible animation. That was a test-harness defect, not valid
+sleep-animation acceptance. The probe ended and no further visible tests or
+OS input injection were performed after the owner's correction. The normal
+save and running user instance were left untouched.
+
+The owner's instruction takes precedence over repeating the full graphical
+suite on their working desktop. Final full-suite rerun, visual sleep/wake
+acceptance and physical suspend/resume therefore remain outstanding. Preserve
+this limitation when reviewing or promoting the branch; headless/static checks
+do not replace those checks. The separately dispatched remote static audit
+is checked against the pushed SHA; it does not run the full test workflow.
+Stages 5–6 and merging remain separate work.
 
 ### 4. Integrate adaptive sleep and finite closed-time care
 

@@ -5,7 +5,8 @@
 > [food](FOOD_SYSTEM.md) and [fun/mood](FUN_MOOD_SYSTEM.md) guides. Production
 > tests reproduce both repeated-day need/mood schedules within 0.1 point.
 > Their explicit manual sleep is a scenario assumption; new friendship and
-> learned sleep rules are still pending. Earlier disclaimers preserve history.
+> learned sleep rules now follow [stage 4](SLEEP_SYSTEM.md). Earlier disclaimers
+> preserve history.
 
 > **Planning update, 2026-10-19:** The owner accepted the latest combined
 > care examples as a suitable starting point for implementation planning.

@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Protocol
 
 from ..pet.food import FoodActivity
+from ..pet.sleep import SleepContext
 from ..pet.state import PetState
 
 
@@ -22,6 +23,13 @@ class SessionInputs:
     interrupt_nap: bool
     effort: float | None
     food_activity: FoodActivity | None = None
+    sleep_context: SleepContext | None = None
+
+
+class TimeProgression(Protocol):
+    def advance(
+        self, state: PetState, inputs: SessionInputs, elapsed: float,
+    ) -> None: ...
 
 
 class ActiveSessionClock:
@@ -35,9 +43,27 @@ class ActiveSessionClock:
         self, reader: Callable[[], float | None],
         *, wall_time: Callable[[], float] | None = None,
     ) -> None:
+        self._progression: TimeProgression | None = None
         self._reader = reader
         self._anchor = self._sample()
         self._wall_anchor = self._finite(wall_time()) if wall_time else None
+
+    def bind_progression(self, progression: TimeProgression) -> None:
+        """Attach paired World time once the desktop has restored those owners."""
+        self._progression = progression
+
+    def advance(self, state: PetState, inputs: SessionInputs) -> None:
+        elapsed = self.consume(wall_time=inputs.wall_time)
+        if self._progression is not None:
+            self._progression.advance(state, inputs, elapsed)
+        else:
+            state.advance(
+                inputs.wall_time, auto_routine=inputs.auto_routine,
+                allow_bedtime=inputs.allow_bedtime, allow_nap=inputs.allow_nap,
+                interrupt_nap=inputs.interrupt_nap, effort=inputs.effort,
+                elapsed_seconds=elapsed, food_activity=inputs.food_activity,
+                sleep_context=inputs.sleep_context,
+            )
 
     @staticmethod
     def _finite(value: float | None) -> float | None:
@@ -77,16 +103,7 @@ def advance_session_time(
     checkpoint = state.capture_checkpoint()
     clock_checkpoint = clock.capture_checkpoint()
     try:
-        state.advance(
-            inputs.wall_time,
-            auto_routine=inputs.auto_routine,
-            allow_bedtime=inputs.allow_bedtime,
-            allow_nap=inputs.allow_nap,
-            interrupt_nap=inputs.interrupt_nap,
-            effort=inputs.effort,
-            elapsed_seconds=clock.consume(wall_time=inputs.wall_time),
-            food_activity=inputs.food_activity,
-        )
+        clock.advance(state, inputs)
     except Exception:
         state.restore_checkpoint(checkpoint)
         clock.restore_checkpoint(clock_checkpoint)

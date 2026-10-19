@@ -74,7 +74,7 @@ class PetTimelineTests(unittest.TestCase):
             "friendship_day", "friendship_gained_today", "care_types_today",
             "care_last_rewards", "sleeping", "updated_at", "meals_date",
             "meals_today", "sleep_origin", "auto_sleep_night", "nap_until",
-            "auto_nap_day", "food", "fun", "time", "relationship",
+            "auto_nap_day", "food", "fun", "time", "relationship", "sleep_episode",
         }
         self.assertEqual(set(encode_pet_state(PetState())), expected)
 
@@ -121,7 +121,7 @@ class PetTimelineTests(unittest.TestCase):
         second.advance(local_stamp() + 3600.0, effort=None)
         self.assertEqual(encode_pet_state(first), encode_pet_state(second))
 
-    def test_automatic_sleep_can_be_prevented_by_work(self) -> None:
+    def test_input_blocks_onset_without_arbitrarily_waking_main_sleep(self) -> None:
         context = context_at(local_stamp(hour=23, minute=45))
         state = PetState(updated_at=context.local.timestamp())
         state.update_daily_routine(context, allow_bedtime=False)
@@ -130,7 +130,7 @@ class PetTimelineTests(unittest.TestCase):
         self.assertTrue(state.sleeping)
         self.assertEqual(state.sleep_origin, "routine")
         state.update_daily_routine(context, allow_bedtime=False)
-        self.assertFalse(state.sleeping)
+        self.assertTrue(state.sleeping)
 
 
 if __name__ == "__main__":

@@ -46,7 +46,8 @@ messages do not supply evidence for actual standby/resume behavior.
 Use a temporary save or the isolated launcher below, never the normal save.
 For that stage, new care/need/friendship/sleep balance was not active.
 Stage 2 now supplies the numeric need/mood rules in the maintained guides;
-stage 3 now supplies friendship loss; adaptive sleep remains pending.
+stage 3 supplies friendship loss; stage 4 now supplies adaptive sleep and finite
+stock care, recorded in the separate acceptance section below.
 
 - Run briefly, save/close, wait and reopen the same isolated save. Check that
   needs/digestion and `pet.time.lived_seconds` include the closed interval and
@@ -250,3 +251,54 @@ actual reach/attachment, input, hover, animation timers, handover and restart.
 Renderer tests use standalone Tk components rather than fictional World pickup.
 See [tests and current evidence](README.md#validation-and-acceptance) and
 [contribution commands](../CONTRIBUTING.md).
+
+## Stage-4 adaptive sleep and finite stock, 2026-10-19
+
+Stage 4 uses the maintained [sleep rules](SLEEP_SYSTEM.md) and
+[active plan](CARE_TIME_IMPLEMENTATION_PLAN.md). This partial evidence is separate
+from the earlier World flow and from physical machine suspension.
+
+The isolated native Windows probe used a system-temp StateStore, real Tk,
+Windows last-input reads and injected mouse movement at a verified opaque
+sprite point. The pointer was restored and the normal save was untouched.
+
+- Reconstruct an overnight-to-midday interval from two identified/appraised
+  sandwiches and one unknown Onigiri. Both real sandwiches were consumed once;
+  the unknown portion remained. The midday state was already awake, with no
+  renewed personal contact, reward or autonomous social gain.
+- Save, close and reopen the same native app. No portion or interval replayed;
+  subsequent need change matched the short real interval.
+- Execute manual Sleep/Wake through the native application command path.
+  Verify its durable 30-minute protection and no fabricated personal contact.
+- Supply already-slept duration only as an explicit isolated fixture. Poll real
+  OS input and real clocks: a single brief movement did not wake main sleep.
+  Twenty-five repeated injected movements produced a real sustained return;
+  instrumented domain waking occurred after **123.5 seconds** of activity,
+  with sufficient energy and four fixture sleeping hours. The visible toolbar
+  then displayed **Schlafen**. This does not claim four hours of smoke-test time.
+
+The probe deliberately held an idle sprite frame while applying its sleeping
+fixture. The owner reported the contradictory visible animation and Wake
+command. This was a test-harness defect: the timing observations above do not
+establish correct visible sleep animation. Two other probe attempts did not
+complete; no repeated successful acceptance is claimed. The test instance ended,
+and further visible probes and OS input injection stopped after the owner's
+correction. Visual sleep/wake acceptance remains pending.
+
+The native component regressions additionally drive real pickup/inspection/
+consumption frames during a sleep food break, one existing search route and
+restart after failure. Expiration with an unconsumed held item completes real
+put-down before returning to sleep. Component fixtures acknowledge bubble
+receipts directly; the separate input probe above used actual real timers.
+
+The first full run exposed superseded fixed-night/permanent-manual-sleep test
+expectations and a real unappraised-stock restoration gap. The final code
+preserves unappraised portions and requires previous appraisal for historical
+intake. Focused cases verify safe custody, wrong remembered places, valid stock
+return, bounded failure and exact paired rollback. Full Windows/static results
+are recorded with stage 4 in the active plan.
+
+Physical standby/resume remains **pending**. Injected suspend-inclusive clocks,
+paired-stock equivalence and both actual Windows uptime readers are automated
+coverage, not permission to suspend the user's working computer or a claim of
+physical resume acceptance. Stages 5–6 and promotion to main remain separate.

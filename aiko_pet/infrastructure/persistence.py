@@ -16,12 +16,14 @@ from ..application.session import LoadedPetData
 from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.mind.adaptive_models import AdaptiveMemory
 from ..pet.mind.object_knowledge import ObjectMemorySnapshot
+from ..pet.mind.quiet_rhythm import QuietWindow
 from ..pet.state import PetState
 from ..world.contracts import ObjectInteraction, WorldSnapshot
 from .friendship_codec import valid_friendship
 from .item_assets import load_item_catalog
 from .object_memory_codec import decode_object_memory, encode_object_memory
 from .pet_codec import decode_pet_state, encode_pet_state, valid_pet_time
+from .sleep_codec import valid_sleep
 from .world_catalog import build_consumable_definitions
 from .world_codec import decode_world, encode_world
 
@@ -171,6 +173,21 @@ class StateStore:
                 if isinstance(pet_data.get("time"), dict) else 0,
             ))
         )
+        invalid_sleep = (
+            isinstance(pet_data, dict) and "sleep_episode" in pet_data
+            and (invalid_time or not valid_sleep(
+                pet_data["sleep_episode"],
+                pet_data.get("time", {}).get("lived_seconds", 0)
+                if isinstance(pet_data.get("time"), dict) else 0,
+            ))
+        )
+        invalid_quiet = False
+        adaptive = payload.get("adaptive") if isinstance(payload, dict) else None
+        if isinstance(adaptive, dict) and "quiet_window" in adaptive:
+            try:
+                QuietWindow.from_dict(adaptive["quiet_window"])
+            except (ValueError, TypeError, KeyError, OverflowError):
+                invalid_quiet = True
         if (
             isinstance(payload, dict)
             and type(payload.get("version")) is int
@@ -179,6 +196,7 @@ class StateStore:
             and not self._invalid_memory
             and not invalid_time
             and not invalid_relationship
+            and not invalid_sleep and not invalid_quiet
         ):
             return
         backup = self.path.with_name(

@@ -37,7 +37,8 @@ Balance values use names that state their meaning and units. Integer counters
 and milliseconds cannot be booleans or fractional numbers. Fractions and
 probabilities stay within 0..1; mood anchors, response rates and hardware ranges are consistent; interval minimums
 cannot exceed their maximums; simulation divisors and steps must be positive.
-Simulation steps cannot exceed five minutes. Elapsed-time advancement has no
+The shared sleep/resource grid uses the numeric need interval (15 seconds);
+the unused former five-minute routine interval is removed. Elapsed-time advancement has no
 catch-up age limit; the former eight-hour limit and its parameter are removed.
 
 Adding a new parameter, text key or dialogue event requires updating the
@@ -119,7 +120,7 @@ The existing top-level sections are unchanged:
 | `settings` | Window positions, size and behaviour/observation preferences |
 | `adaptive` | Aggregated learned weekday/hour patterns and bounded rhythm state; optional in older saves |
 | `world` | Optional separately versioned World snapshot (`version: 1`), surface, active portions, revisions and next instance ID |
-| `object_memory` | Optional subjective records (`version: 2`, v1 readable): learned type/assessment, relative active age, place status, possible source links, allocation provenance and own-placement disposition |
+| `object_memory` | Optional subjective records (`version: 3`, v1/v2 readable): learned type/assessment, relative active age, place status, possible source links, allocation provenance and own-placement disposition |
 
 `pet.updated_at` is a Unix wall-clock timestamp in seconds. Need values are
 saved to four decimal places. Older version-one saves missing newer optional
@@ -136,7 +137,7 @@ retained. Malformed/future time sections start neutral, preserving pet progress,
 and the original file is backed up before replacement. Outer save version is 1.
 
 Stage 3 now uses this elapsed axis for rolling relationship and critical-need
-histories inside `PetValues`. Future sleep episodes share that owner; learned
+histories inside `PetValues`. Sleep episodes share that owner; learned
 expectations remain in adaptive memory. Missing qualifying contact remains
 unknown, not inferred from an app timestamp or from the time record alone.
 
@@ -171,15 +172,27 @@ just like invalid time records. Strict validation rejects future timestamps,
 unknown fields/actions, invalid durations, overlapping spans and exceeded budgets.
 See [friendship rules](FRIENDSHIP_SYSTEM.md) for care/contact qualification.
 
+## Sleep history and learned expectation
+
+Optional `pet.sleep_episode` v1 belongs to `PetValues`: type, elapsed start,
+actual sleeping seconds, expected wall-time endpoint, manual/search/intake
+elapsed deadlines and failed food-source evidence. Short awake food breaks
+retain the episode. Failed source IDs describe current attempted stock, not an
+input-event log; the saved list is bounded to 4,096 entries. Optional
+`adaptive.quiet_window` v1 stores the expected local endpoints, at most seven
+coarse completed phases and the last adjustment day. Actual input sampling and
+current return detection remain session-local.
+
+Legacy records preserve needs/World/relationship without inferring historical
+sleep duration, manual grace or observed quiet. Corrupt/future optional records
+require preservation of original bytes before replacement. No new top-level
+schema or settings file is introduced. See [sleep rules](SLEEP_SYSTEM.md).
+
 ## Real time, closed sessions and standby
 
-> This section describes the current runtime. The separate
-> [adaptive sleep proposal](ADAPTIVE_SLEEP_PROPOSAL.md) records unimplemented
-> learned sleep/wake timings, together with
-> the [need balance proposal](NEEDS_BALANCE_PROPOSAL.md). Stages 1–3 of the
-> [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md) supply real-time
-> advancement, need/mood balance and progressive friendship. Adaptive sleep
-> remains pending; manual sleep still follows the existing routine policy.
+> Stages 1–4 of the [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md)
+> provide real time, need/mood balance, friendship and adaptive sleep with finite
+> stock. See the maintained [sleep guide](SLEEP_SYSTEM.md) for current priorities.
 
 Loading JSON only decodes data. `PetSessionRestorer` subsequently calculates
 closed time from `pet.updated_at` to the current clock, without truncating the
@@ -198,11 +211,11 @@ wrappers have been retired; loading this snapshot never advances time itself.
 During this calculation there is no observed workload, inferred user input,
 human care reward, friendship gain or fabricated rhythm learning. Needs and
 digestion and the recorded relationship timeline still progress. No contact
-clock is renewed merely by opening the app. With `auto_routine` enabled, the existing scheduled
-sleep can restore energy. Sleep requested manually retains its existing manual
-behavior until the adaptive-sleep stage. Turning automatic routine off disables
-scheduled sleep, not the passage of time. Catalogue-based automatic meals have
-been removed: elapsed time cannot generate portions or personal care credit.
+clock is renewed merely by opening the app. Expected sleep can restore energy;
+manual commands retain 30 minutes of elapsed protection. Turning automatic
+routine off disables new automatic sleep, not elapsed time or an existing
+protected episode's endpoint. Elapsed time cannot generate catalogue portions
+or personal care credit.
 
 After restoration, the timestamp is anchored at the current time. The shared
 `ActiveSessionClock` then consumes running-session time exactly once across
@@ -234,9 +247,12 @@ unknown activity. Active observation time remains separate: existing
 and closed time creates no sensory evidence or learned human activity.
 
 Live autonomous consumption requires an observed/remembered World portion and
-the normal interaction sequence. Closed-time use of identified finite stock,
-sleep food breaks and simple learned sleep windows remain later stages. In the
-interim, restored stock is unchanged and cannot supply invisible catalogue meals.
+the normal interaction sequence. Restoration constructs World and acquired
+knowledge before `CareTimeProgression` coordinates closed-time consumption.
+Only previously identified, actually accessible stock can be used. The same
+`ObjectConsumption` transaction owns removal, nutrition and memory; a failed
+joint progression restores pet/World/memory and the live clock together.
+Reopening presents the result without historical Tk playback.
 
 ## Joint World recovery
 

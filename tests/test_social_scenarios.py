@@ -53,9 +53,6 @@ def scene(
         uptime_hours=uptime,
         prolonged_work_seconds=duration,
         rest_seconds=rest,
-        can_sleep=False,
-        should_wake=False,
-        can_nap=False,
     )
 
 

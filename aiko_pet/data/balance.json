@@ -149,9 +149,7 @@
     "stride_pixels_at_scale_one": 68
   },
   "simulation": {
-    "step_seconds": 300,
     "maximum_live_effort_seconds": 30.0,
-    "nap_seconds": 2700,
     "needs_step_seconds": 15.0
   },
   "care_requests": {
@@ -163,22 +161,6 @@
     "base_fun_per_completed_unit": 6.0,
     "energy_cost_per_completed_unit": 0.5,
     "social_gain_per_completed_unit": 0.6
-  },
-  "adaptive_sleep": {
-    "working_effort_threshold": 0.75,
-    "working_settled_threshold": 0.59,
-    "recovery_minimum_session_seconds": 120,
-    "recovery_recent_work_seconds": 180,
-    "resting_after_seconds": 300,
-    "quiet_maximum_effort": 0.38,
-    "quiet_minimum_idle_seconds": 180,
-    "night_forced_sleep_energy": 17,
-    "rest_sleep_energy": 23,
-    "rest_sleep_after_seconds": 1800,
-    "nap_after_rest_seconds": 900,
-    "nap_low_energy": 18,
-    "nap_expected_quiet_energy": 35,
-    "nap_expected_effort": 0.32
   },
   "adaptive_learning": {
     "maximum_decay_days": 365,
@@ -388,5 +370,39 @@
     "tracking_gap_seconds": 1.0,
     "tracking_jump_widths": 1.0,
     "memory_place_widths": 0.25
+  },
+  "sleep": {
+    "quiet_seconds": 900,
+    "return_seconds": 120,
+    "manual_protection_seconds": 1800,
+    "nap_seconds": 4500,
+    "exhaustion_energy": 10,
+    "nap_energy": 25,
+    "wake_energy": 40,
+    "nap_wake_energy": 25,
+    "early_main_energy": 60,
+    "early_main_sleep_seconds": 14400,
+    "food_trigger": 20,
+    "food_target": 40,
+    "search_seconds": 300,
+    "minimum_phase_seconds": 14400,
+    "phase_similarity_minutes": 90,
+    "maximum_daily_shift_minutes": 30,
+    "tendency_phases": 3,
+    "learned_phases": 7,
+    "input_gap_seconds": 30,
+    "sample_gap_seconds": 60,
+    "minimum_input_events": 3,
+    "default_start_minute": 1380,
+    "default_end_minute": 420,
+    "portion_seconds": 60,
+    "maximum_phase_seconds": 57600
+  },
+  "activity_modes": {
+    "working_effort_threshold": 0.75,
+    "working_settled_threshold": 0.59,
+    "recovery_minimum_session_seconds": 120,
+    "recovery_recent_work_seconds": 180,
+    "resting_after_seconds": 300
   }
 }

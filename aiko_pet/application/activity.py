@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Callable
 
 from ..pet.balance import BALANCE
@@ -14,6 +14,7 @@ from ..pet.mind.adaptive_models import Observation
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.workload_events import WorkloadEventDetector
 from ..pet.routine import TimeContext, context_at
+from ..pet.sleep import SleepContext
 from ..pet.state import PetState
 from ..telemetry import ComputerSnapshot, consumption_load, workload_intensity
 from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
@@ -71,6 +72,7 @@ class ActivityCoordinator:
         self.last_adaptive_sample = 0.0
         self.pending_computer_line: tuple[str, float] | None = None
         self.food_activity_history = FoodActivityHistory()
+        self._unavailable_seconds = 0.0
 
     def set_observation_enabled(self, enabled: bool) -> None:
         """Stop or restart measured workload and clear old session readings."""
@@ -84,31 +86,33 @@ class ActivityCoordinator:
             self.mind.set_situation(None)
             self.food_activity_history = FoodActivityHistory()
 
+    def note_unavailable(self, seconds: float) -> None:
+        """Accept only host-measured suspension, never app closure as evidence."""
+        self._unavailable_seconds = max(self._unavailable_seconds, seconds)
+
+    def sleep_context(self) -> SleepContext:
+        return replace(self.adaptive.sleep_context(observed=True),
+                       blocked=(self.callbacks.defer_routine()
+                                or time.monotonic() < self.callbacks.action_until()
+                                or self.callbacks.speech_busy()))
+
     def should_interrupt_nap(self) -> bool:
-        behaviour = self.adaptive.current
-        return bool(
-            self.settings.observe_computer
-            and behaviour is not None
-            and behaviour.should_wake
+        return self.sleep_context().active_seconds >= BALANCE.number(
+            "sleep", "return_seconds",
         )
 
     def allow_nap(self) -> bool:
-        if self.callbacks.defer_routine():
-            return False
-        behaviour = self.adaptive.current
-        return bool(
-            self.settings.observe_computer
-            and behaviour is not None
-            and behaviour.can_nap
-        )
+        context = self.sleep_context()
+        return (not context.blocked and context.idle_seconds is not None
+                and context.idle_seconds >= BALANCE.number("sleep", "quiet_seconds")
+                and self.state.energy <= BALANCE.number("sleep", "nap_energy"))
 
     def allow_bedtime(self) -> bool | None:
-        if self.callbacks.defer_routine():
+        context = self.sleep_context()
+        if context.blocked:
             return False
-        behaviour = self.adaptive.current
-        if not self.settings.observe_computer or behaviour is None:
-            return None
-        return behaviour.can_sleep
+        return (context.idle_seconds >= BALANCE.number("sleep", "quiet_seconds")
+                if context.idle_seconds is not None else None)
 
     def _live_reading(self) -> ComputerSnapshot | None:
         """Never project a stale hardware sample into unseen time."""
@@ -149,6 +153,7 @@ class ActivityCoordinator:
             interrupt_nap=self.should_interrupt_nap(),
             effort=self.live_effort(),
             food_activity=self.observed_food_activity(),
+            sleep_context=self.sleep_context(),
         )
 
     def observe_adaptive(self, now: float, stamp: float) -> None:
@@ -184,6 +189,13 @@ class ActivityCoordinator:
     def advance_state(self, wall_time: float) -> None:
         """Sample real input and workload before progressing pet hunger."""
         now = time.monotonic()
+        self.adaptive.observe_input(
+            wall=wall_time, monotonic=now,
+            idle_seconds=self.callbacks.read_idle_seconds(),
+            learn=self.settings.learn_rhythm,
+            unavailable_seconds=self._unavailable_seconds,
+        )
+        self._unavailable_seconds = 0.0
         machine_load = self.live_consumption_load()
         self.food_activity_history.observe(
             now=now,
@@ -209,6 +221,7 @@ class ActivityCoordinator:
             interrupt_nap=self.should_interrupt_nap(),
             effort=machine_load,
             food_activity=self.food_activity_history.current_food_activity(now),
+            sleep_context=self.sleep_context(),
         )
         advance_session_time(self.state, self._clock, inputs)
 

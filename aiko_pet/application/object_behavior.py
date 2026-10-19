@@ -177,6 +177,8 @@ class ObjectBehaviorCoordinator:
             or facts.game_open
             or (facts.controls_active and not interaction.active)
             or self._state.sleeping or facts.playback_busy
+            or (self._state.sleep_episode.care_break
+                and self._state.satiety >= BALANCE.number("sleep", "food_target"))
         )
         goal = awareness.update(
             snapshot, self._state, now=now, x=x, height=0, width=width,
@@ -438,6 +440,20 @@ class ObjectBehaviorCoordinator:
                 return Hold()
         if blocked:
             return Hold()
+        if interaction.acute_food_search:
+            if self._state.satiety >= BALANCE.number("sleep", "food_target"):
+                return Hold()
+            for known in self._awareness.memory.snapshot():
+                if (known.token in observed and known.kind == "food" and known.resting
+                        and known.place_status == "remembered"
+                        and decide_object_use(known, self._state).consume):
+                    goal = ObjectGoal(
+                        known.token, known.identity, known.kind, known.x, known.height,
+                        known.observed_at,
+                    )
+                    self._awareness.intentions.adopt(goal)
+                    interaction.begin_goal(goal)
+                    return Hold()
         if self._awareness.checking_absence or self._awareness.checking_notice:
             return Hold()
         candidates = [item for item in self._awareness.memory.snapshot()

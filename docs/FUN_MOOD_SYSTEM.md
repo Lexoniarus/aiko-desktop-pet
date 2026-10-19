@@ -3,8 +3,9 @@
 > This guide describes stage 2 on `feature/social-optimization`. The
 > [mood](MOOD_BALANCE_PROPOSAL.md) and [need proposals](NEEDS_BALANCE_PROPOSAL.md)
 > retain the agreed design evidence. Progressive friendship now follows the
-> [stage-3 rules](FRIENDSHIP_SYSTEM.md); adaptive sleep and expression
-> tuning remain later stages of the [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
+> [stage-3 rules](FRIENDSHIP_SYSTEM.md); stage 4 supplies [adaptive sleep](SLEEP_SYSTEM.md).
+> Expression tuning remains a later stage of the
+> [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
 
 Fun is one need; mood summarizes the five needs over time. Several short play
 sessions per active day support good care without fixed appointments.

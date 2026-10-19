@@ -170,5 +170,10 @@ uses its bounded, deduplicated social effects.
 Outer save v1 contains World v1 and optional memory v3, with legacy memory v1/v2
 readers. Learned facts survive restart; current observations, presentation clocks,
 tracking and action receipts do not. Transient surviving portions recover safely
-on ground without inventing witnessed positions. World consumption is not
-simulated while closed. See [data and saves](DATA_AND_SAVES.md).
+on ground without inventing witnessed positions. Stage 4 reconstructs finite
+closed-time intake only from previously identified, appraised portions still
+accessible at their acquired remembered places. It cannot discover unknown
+replacements. `ObjectConsumption.apply_portion` is the shared atomic intake
+owner; restoration loads World and memory before time progression. Live food
+breaks reuse the existing SearchTask and safe put-down path before sleep.
+See [sleep rules](SLEEP_SYSTEM.md) and [data and saves](DATA_AND_SAVES.md).

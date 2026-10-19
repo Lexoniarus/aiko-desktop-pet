@@ -24,8 +24,9 @@ class PetStateTests(unittest.TestCase):
         self.assertAlmostEqual(state.energy, 72)
 
     def test_sleep_replenishes_energy(self):
-        state = PetState(energy=30, sleeping=True, updated_at=NOW + 1000)
-        state.advance(NOW + 1000 + 3 * 3600)
+        night = datetime(2026, 10, 12, 23).timestamp()
+        state = PetState(energy=30, sleeping=True, updated_at=night)
+        state.advance(night + 3 * 3600)
         self.assertAlmostEqual(state.energy, 52.5)
         self.assertAlmostEqual(state.satiety, 70.8)
 

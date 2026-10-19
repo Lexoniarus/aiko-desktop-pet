@@ -60,6 +60,26 @@ def parse_balance(raw: Any) -> BalanceCatalog:
                 raise ValueError(f"balance.{section}: {key} exceeds {upper}")
         sections[section] = MappingProxyType(values)
     catalog = BalanceCatalog(MappingProxyType(sections))
+    sleep = sections["sleep"]
+    if (any(value <= 0 for key, value in sleep.items()
+            if key not in ("default_start_minute", "default_end_minute"))
+            or not 3600 <= sleep["nap_seconds"] <= 5400
+            or not 0 <= sleep["default_start_minute"] < 1440
+            or not 0 <= sleep["default_end_minute"] < 1440
+            or not sleep["minimum_phase_seconds"] <= (
+                sleep["default_end_minute"] - sleep["default_start_minute"]
+            ) % 1440 * 60 <= sleep["maximum_phase_seconds"] <= 86400
+            or sleep["portion_seconds"] > sleep["search_seconds"]
+            or not 2 <= sleep["minimum_input_events"] <= 128
+            or not 0 < sleep["nap_wake_energy"] <= sleep["wake_energy"]
+            or not sleep["exhaustion_energy"] < sleep["nap_energy"]
+            < sleep["wake_energy"] <= sleep["early_main_energy"] <= 100
+            or not sleep["food_trigger"] < sleep["food_target"] <= 100
+            or not 2 <= sleep["tendency_phases"] < sleep["learned_phases"] <= 7
+            or sleep["maximum_daily_shift_minutes"] > 30
+            or sleep["sample_gap_seconds"] > 60
+            or sleep["input_gap_seconds"] > sleep["return_seconds"]):
+        raise ValueError("Invalid sleep priorities or quiet-window balance")
     withholding = sections["object_withholding"]
     if (any(value <= 0 for value in withholding.values())
             or withholding["friendship_loss"] > 100
@@ -127,7 +147,6 @@ def parse_balance(raw: Any) -> BalanceCatalog:
         ("food_activity", "bucket_seconds"),
         ("food_activity", "short_window_minutes"),
         ("food_activity", "long_window_minutes"),
-        ("simulation", "step_seconds"),
         ("simulation", "needs_step_seconds"),
         ("needs", "hardware_intensity_span"),
         ("adaptive_learning", "effort_smoothing_seconds"),
@@ -135,8 +154,6 @@ def parse_balance(raw: Any) -> BalanceCatalog:
     ):
         if catalog.number(section, key) <= 0:
             raise ValueError(f"balance.{section}.{key} must be positive")
-    if catalog.integer("simulation", "step_seconds") > 300:
-        raise ValueError("Simulation steps must not exceed five minutes")
     dialogue = sections["dialogue"]
     if (
         not 1 <= dialogue["default_weight"] <= 10

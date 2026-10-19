@@ -15,6 +15,7 @@ from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.adaptive_models import SLOTS, AdaptiveMemory, Observation
 from aiko_pet.pet.routine import context_at
+from aiko_pet.pet.sleep import SleepContext
 from aiko_pet.pet.state import PetState
 
 
@@ -34,15 +35,15 @@ class AdaptiveBehaviourTests(unittest.TestCase):
             stamp = start + tick * 30
             hour = context_at(stamp).local.hour
             hard = 10 <= hour < 14
-            view = engine.observe(
+            engine.observe(
                 Observation(stamp, 0.90 if hard else 0.05,
                             0 if hard else 4000, uptime_hours=tick / 120),
                 tick * 30.0, energy=state.energy, sleeping=state.sleeping,
             )
             state.advance(stamp, auto_routine=True,
-                          allow_bedtime=view.can_sleep,
-                          allow_nap=view.can_nap,
-                          interrupt_nap=view.should_wake)
+                          sleep_context=engine.observe_input(
+                              wall=stamp, monotonic=tick * 30.,
+                              idle_seconds=0 if hard else 4000))
             if context_at(stamp).night and state.sleeping:
                 observed_night_sleep = True
         self.assertTrue(observed_night_sleep)
@@ -53,62 +54,48 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         self.assertGreater(engine.memory.hour_seconds[10], 0)
         self.assertLess(engine.memory.strain, 70)
 
-    def test_idle_pc_sleeps_at_night_but_real_computation_keeps_her_awake(self):
+    def test_background_computation_does_not_prevent_night_sleep(self):
         start = local_stamp("2026-10-12", 23, 40)
-        engine = AdaptiveRoutine()
-        state = PetState(updated_at=start, energy=65)
-        for tick in range(140):
-            stamp = start + tick * 30
-            view = engine.observe(
-                Observation(stamp, 0.98, 5000, uptime_hours=72),
-                tick * 30.0, energy=state.energy, sleeping=state.sleeping,
-            )
-            state.advance(stamp, auto_routine=True,
-                          allow_bedtime=view.can_sleep)
-            self.assertFalse(state.sleeping)
-        for tick in range(140, 170):
-            stamp = start + tick * 30
-            view = engine.observe(
-                Observation(stamp, 0.04, 5000, uptime_hours=73),
-                tick * 30.0, energy=state.energy, sleeping=state.sleeping,
-            )
-            state.advance(stamp, auto_routine=True,
-                          allow_bedtime=view.can_sleep)
-        self.assertTrue(state.sleeping)
-        self.assertEqual(state.sleep_origin, "routine")
-        self.assertGreater(engine.memory.last_session_seconds, 3600)
+        for effort in (.04, .98):
+            engine = AdaptiveRoutine()
+            state = PetState(updated_at=start, energy=65)
+            for tick in range(140):
+                stamp = start + tick * 30
+                engine.observe(Observation(stamp, effort, 5000), tick * 30.,
+                               energy=state.energy, sleeping=state.sleeping)
+                state.advance(stamp, auto_routine=True,
+                              sleep_context=engine.observe_input(
+                                  wall=stamp, monotonic=tick * 30., idle_seconds=5000))
+            self.assertTrue(state.sleeping)
+            self.assertEqual(state.sleep_episode.kind, "main")
 
     def test_manual_sleep_is_not_overridden_by_work(self):
         now = local_stamp("2026-10-12", 23, 50)
         pet = PetState(updated_at=now, sleeping=True, sleep_origin="manual")
         pet.advance(now + 100, auto_routine=True, allow_bedtime=False)
         self.assertTrue(pet.sleeping)
-        self.assertEqual(pet.sleep_origin, "manual")
+        self.assertEqual(pet.sleep_episode.kind, "main")
 
     def test_night_activity_alone_is_not_forced_bedtime(self):
         now = local_stamp("2026-10-13", 1)
-        engine = AdaptiveRoutine()
-        view = engine.observe(Observation(now, 0.05, 0, 18), 10,
-                              energy=80, sleeping=False)
-        self.assertFalse(view.can_sleep)
-        low = engine.observe(Observation(now + 30, 0.05, 0, 18), 40,
-                             energy=12, sleeping=False)
-        self.assertTrue(low.can_sleep)
+        state = PetState(updated_at=now, energy=12)
+        state.advance(now, auto_routine=True,
+                      sleep_context=SleepContext(idle_seconds=0, observed=True))
+        self.assertFalse(state.sleeping)
 
     def test_daytime_nap_ends_and_cannot_repeat_indefinitely(self):
         start = local_stamp("2026-10-12", 14)
-        state = PetState(updated_at=start, energy=8)
+        state = PetState(updated_at=start, energy=20)
         engine = AdaptiveRoutine()
         begun, finished = False, False
         for tick in range(160):
             stamp = start + tick * 30
-            view = engine.observe(Observation(stamp, 0.04, 5000, 72),
+            engine.observe(Observation(stamp, 0.04, 5000, 72),
                                   tick * 30.0, energy=state.energy,
                                   sleeping=state.sleeping)
             state.advance(stamp, auto_routine=True,
-                          allow_bedtime=view.can_sleep,
-                          allow_nap=view.can_nap,
-                          interrupt_nap=view.should_wake)
+                          sleep_context=engine.observe_input(
+                              wall=stamp, monotonic=tick * 30., idle_seconds=5000))
             if state.sleep_origin == "nap":
                 begun = True
             if begun and not state.sleeping:
@@ -183,7 +170,7 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         self.assertTrue(reading.expectation_confident)
         self.assertAlmostEqual(reading.expected_effort, 0.88, places=2)
 
-    def test_learned_quiet_hour_allows_short_daytime_rest(self):
+    def test_learned_low_load_is_not_a_learned_sleep_window(self):
         start = local_stamp("2026-10-12", 14)
         engine = AdaptiveRoutine()
         clock = 0
@@ -211,7 +198,7 @@ class AdaptiveBehaviourTests(unittest.TestCase):
         assert current is not None
         assert current.expected_effort is not None
         self.assertTrue(current.expectation_confident)
-        self.assertTrue(current.can_nap)
+        self.assertEqual(engine.memory.quiet_window.phases, ())
         self.assertLess(current.expected_effort, .32)
 
     def test_uptime_is_context_and_never_converted_to_strain(self):

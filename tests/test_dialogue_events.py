@@ -43,7 +43,6 @@ def busy_situation() -> Behaviour:
         expected_effort=None, expectation_confident=False,
         present=True, uptime_hours=5,
         prolonged_work_seconds=1800, rest_seconds=0,
-        can_sleep=False, should_wake=False, can_nap=False,
     )
 
 

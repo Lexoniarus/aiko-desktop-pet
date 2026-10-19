@@ -96,7 +96,7 @@ class DailyNeedScheduleTests(unittest.TestCase):
                 self.assertLessEqual(sum(e.amount for e in
                                          pet.friendship_history.rewards), 5)
                 self.assertEqual(accepted, 5)
-                self.assertTrue(pet.sleeping)
+                self.assertFalse(pet.sleeping)
                 self.assertEqual(pet.energy, 100)
                 for key, actual, expected in zip(NEEDS, minima, expected_needs):
                     with self.subTest(need=key):

@@ -13,8 +13,8 @@ from typing import Protocol
 from .balance import BALANCE
 from .food import FoodActivity
 from .routine import TimeContext, context_at
+from .sleep import SleepContext, SleepEpisode, sleep_transition
 
-SIMULATION_STEP_SECONDS = BALANCE.integer("simulation", "step_seconds")
 # Live telemetry is never projected across a restart/suspend or offline gap.
 MAX_LIVE_EFFORT_SECONDS = BALANCE.number("simulation", "maximum_live_effort_seconds")
 
@@ -37,6 +37,15 @@ class RoutineValues(Protocol):
     @property
     def auto_nap_day(self) -> str: ...
 
+    @property
+    def energy(self) -> float: ...
+
+    @property
+    def lived_seconds(self) -> float: ...
+
+    @property
+    def sleep_episode(self) -> SleepEpisode: ...
+
 
 @dataclass(frozen=True, slots=True)
 class RoutineTransition:
@@ -47,6 +56,7 @@ class RoutineTransition:
     nap_until: float
     auto_sleep_night: str
     auto_nap_day: str
+    episode: SleepEpisode
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,8 +86,9 @@ class TimePlan:
         while cursor < self.now:
             if self.auto_routine:
                 # Align the grid across calls instead of drifting after restart.
-                boundary = (math.floor(cursor / SIMULATION_STEP_SECONDS) + 1)
-                end = min(self.now, boundary * SIMULATION_STEP_SECONDS)
+                step_seconds = BALANCE.number("simulation", "needs_step_seconds")
+                boundary = math.floor(cursor / step_seconds) + 1
+                end = min(self.now, boundary * step_seconds)
             else:
                 end = self.now
             if cursor < known_since < end:
@@ -101,48 +112,27 @@ def calculate_daily_routine(
     allow_nap: bool = False,
     interrupt_nap: bool = False,
     effort: float | None = None,
+    sleep_context: SleepContext | None = None,
+    automatic: bool = True,
 ) -> RoutineTransition:
-    """Apply the established sleep priority to local values, without writes."""
-    sleeping = record.sleeping
-    origin = record.sleep_origin
-    nap_until = record.nap_until
-    night = record.auto_sleep_night
-    nap_day = record.auto_nap_day
-    stamp = context.local.timestamp()
-    if origin == "nap" and (stamp >= nap_until or interrupt_nap):
-        sleeping = False
-        origin = ""
-        nap_until = 0.0
-    if not allow_bedtime and origin == "routine":
-        sleeping = False
-        origin = ""
-        night = ""
-    if context.night and allow_bedtime:
-        if origin == "nap":
-            origin = "routine"
-            nap_until = 0.0
-            night = context.night_key
-        if night != context.night_key:
-            night = context.night_key
-            if not sleeping:
-                sleeping = True
-                origin = "routine"
-    elif sleeping and origin == "routine":
-        sleeping = False
-        origin = ""
-    elif (
-        not context.night and allow_nap and not sleeping and nap_day != context.day_key
-    ):
-        sleeping = True
-        origin = "nap"
-        nap_until = stamp + BALANCE.integer("simulation", "nap_seconds")
-        nap_day = context.day_key
+    """Apply sleep priorities; legacy routine fields remain compatibility reads."""
+    observation = sleep_context or SleepContext.permissions(
+        allow_bedtime, allow_nap, interrupt_nap,
+    )
+    result = sleep_transition(
+        record.sleep_episode, sleeping=record.sleeping, energy=record.energy,
+        elapsed=record.lived_seconds, wall=context.local.timestamp(),
+        context=observation, automatic=automatic,
+    )
+    origin = {"main": "routine", "nap": "nap", "recovery": "recovery"}.get(
+        result.episode.kind, "",
+    ) if result.sleeping else ""
     return RoutineTransition(
-        sleeping=sleeping,
-        sleep_origin=origin,
-        nap_until=nap_until,
-        auto_sleep_night=night,
-        auto_nap_day=nap_day,
+        result.sleeping, origin,
+        result.episode.wake_wall if origin == "nap" else 0.0,
+        context.night_key if origin == "routine" else record.auto_sleep_night,
+        context.day_key if origin == "nap" else record.auto_nap_day,
+        result.episode,
     )
 
 

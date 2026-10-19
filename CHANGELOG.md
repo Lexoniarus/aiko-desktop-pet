@@ -8,6 +8,26 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Implement adaptive sleep with one aggregate-owned episode and the existing
+  chronological need integrator: 23:00–07:00 tentative expectation, simple
+  three/seven-phase quiet learning, bounded daily adjustment, manual protection,
+  exhaustion recovery and actual sleeping-time/early-return gates. Remove the
+  former hardware-dependent sleep policy and its unused coefficients.
+- Restore World and acquired knowledge before closed-time resource use. Consume
+  only finite identified/appraised stock at its remembered accessible place,
+  through the shared atomic consumption owner; unknown food stays unknown.
+  Sleep food breaks reuse normal native search/pickup/intake and safe put-down.
+- Persist optional sleep episodes and quiet windows inside outer save v1,
+  including search failure, actual sleeping duration and real-time deadlines.
+  Preserve old progress and original-byte backups for malformed/future records;
+  keep relationship migration neutral across split resource reconstruction.
+- Pass 91 final focused tests and pinned static checks. Record isolated native
+  stock/save/command and Tk food/search/put-down evidence separately from the
+  incomplete final full-suite rerun. The input probe's frozen idle sprite was
+  an invalid visual sleep fixture; further visible/input-injecting probes stopped
+  after owner feedback. Maintain rules in `docs/SLEEP_SYSTEM.md`; visual sleep,
+  physical standby and later expression/context acceptance remain separate.
+
 - Implement progressive friendship on the existing elapsed axis: shared rolling
   +0.75/two-hour and +5/24-hour credit, qualified personal contact independent
   of reward exhaustion, same-type timing and high-need reductions. Replace

@@ -100,9 +100,12 @@ Her workload observations are drawn from local CPU/GPU utilization, memory press
 
 Needs progress over real elapsed time, including closed-app and PC standby
 intervals, without an eight-hour absence cap. With automatic routine enabled,
-the existing scheduled sleep also runs during reconstruction. Time progression
-does not generate meals; live supply uses offered or autonomously collected
-World portions. Closed-time consumption of saved stock is a later delivery step.
+the saved expected sleep window runs during reconstruction. Manual commands
+retain 30 minutes of protection; recurring quiet phases learn from anonymous
+actual input and known suspension, independently of hardware load. Closed-time
+care uses only identified, appraised, accessible real World portions and never
+generates meals or discovers unknown food. Live food breaks use the normal
+pickup/inspection/eating path. [Current sleep rules →](docs/SLEEP_SYSTEM.md)
 [Save format, backups, time rules and editable JSON data →](docs/DATA_AND_SAVES.md)
 The real clock still determines meals and daily routine. Friendship remains a
 separate bond with shared rolling care limits, progressive real-time absence

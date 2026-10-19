@@ -55,9 +55,9 @@ class OfflineProgressTests(unittest.TestCase):
             PetSettings(auto_routine=True),
         )
         session = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
-        self.assertTrue(session.state.sleeping)
-        self.assertEqual(session.state.sleep_origin, "routine")
-        self.assertAlmostEqual(session.state.energy, 20 - .5 * 3 + 7.5 * 7.5)
+        self.assertFalse(session.state.sleeping)
+        self.assertEqual(session.state.sleep_origin, "")
+        self.assertAlmostEqual(session.state.energy, 20 - .25 * 3 + 7.5 * 7.75)
         self.assertLess(session.state.satiety, 75)
         self.assertAlmostEqual(session.state.friendship, passive_friendship(15, 2))
         self.assertIsNone(session.state.friendship_history.last_contact)

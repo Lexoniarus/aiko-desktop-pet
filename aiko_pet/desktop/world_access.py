@@ -25,9 +25,7 @@ class WorldRuntimeAccess:
 
     def defer_routine(self) -> bool:
         runtime = self._runtime
-        return runtime is not None and (
-            runtime.interaction.active or runtime.user_action_pending
-        )
+        return runtime is not None and runtime.defer_sleep()
 
     def focused(self) -> bool:
         runtime = self._runtime

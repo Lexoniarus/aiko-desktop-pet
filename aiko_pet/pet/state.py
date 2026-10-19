@@ -36,6 +36,7 @@ from .need_decay import (
     calculate_need_decay,
 )
 from .routine import TimeContext, context_at, due_meal
+from .sleep import SleepContext, SleepEpisode, manual_command
 from .state_values import PetValues, PreparedItemConsumption
 from .status_hints import MoodHint, choose_mood_hint
 from .value_rules import clamp_need_value
@@ -70,6 +71,7 @@ class PetState:
         fun: float = BALANCE.number("initial", "fun"),
         lived_seconds: float = 0.0,
         relationship: FriendshipHistory | None = None,
+        sleep_episode: SleepEpisode | None = None,
     ) -> None:
         self._values = PetValues(
             satiety=satiety, mood=mood, energy=energy, social=social,
@@ -85,6 +87,7 @@ class PetState:
             nap_until=nap_until, auto_nap_day=auto_nap_day,
             food=FoodState() if food is None else food, fun=fun,
             lived_seconds=lived_seconds,
+            sleep_episode=sleep_episode or SleepEpisode(),
             relationship=(FriendshipHistory(baseline=lived_seconds)
                           if relationship is None else relationship),
         )
@@ -155,6 +158,10 @@ class PetState:
         return self._values.friendship_gained_today
 
     @property
+    def sleep_episode(self) -> SleepEpisode:
+        return self._values.sleep_episode
+
+    @property
     def sleeping(self) -> bool:
         return self._values.sleeping
 
@@ -223,6 +230,8 @@ class PetState:
         allow_nap: bool = False,
         interrupt_nap: bool = False,
         effort: float | None = None,
+        sleep_context: SleepContext | None = None,
+        automatic: bool = True,
     ) -> None:
         """Apply an evaluated sleep transition without exposing private hooks."""
         self._roll_meals(context)
@@ -232,13 +241,13 @@ class PetState:
             allow_bedtime=allow_bedtime,
             allow_nap=allow_nap,
             interrupt_nap=interrupt_nap,
-            effort=effort,
+            effort=effort, sleep_context=sleep_context, automatic=automatic,
         )
         self._change(
             sleeping=transition.sleeping, sleep_origin=transition.sleep_origin,
             nap_until=transition.nap_until,
             auto_sleep_night=transition.auto_sleep_night,
-            auto_nap_day=transition.auto_nap_day,
+            auto_nap_day=transition.auto_nap_day, sleep_episode=transition.episode,
         )
 
     def _decay(
@@ -263,6 +272,10 @@ class PetState:
             food=progress.food, fun=progress.fun,
             friendship=relationship.points, relationship=relationship.history,
             lived_seconds=relationship.elapsed,
+            sleep_episode=(replace(
+                self.sleep_episode,
+                slept_seconds=self.sleep_episode.slept_seconds + hours * 3600,
+            ) if self.sleeping else self.sleep_episode),
         )
 
     def record_game_experience(
@@ -303,12 +316,13 @@ class PetState:
         effort: float | None = None,
         elapsed_seconds: float | None = None,
         food_activity: FoodActivity | None = None,
+        sleep_context: SleepContext | None = None,
     ) -> None:
         """Execute all elapsed time; only recent observations affect its tail."""
         steps = plan_pet_time(
             self.updated_at,
             now,
-            auto_routine=auto_routine,
+            auto_routine=auto_routine or bool(self.sleep_episode.kind) or self.sleeping,
             effort=effort,
             elapsed_seconds=elapsed_seconds,
             food_activity=food_activity,
@@ -316,31 +330,32 @@ class PetState:
         if steps is None:
             return
         end_elapsed = self.lived_seconds + steps.elapsed_seconds
-        if not auto_routine:
-            for step in steps:
-                self._decay(step.hours, step.effort, step.food_activity)
-            self._roll_meals(context_at(now))
-        else:
-            for step in steps:
-                if step.context is None:
-                    continue
+        observation = sleep_context or SleepContext.permissions(
+            allow_bedtime, allow_nap, interrupt_nap,
+        )
+        for step in steps:
+            if step.context is not None:
                 self.update_daily_routine(
-                    step.context,
-                    allow_bedtime=not step.observed or allow_bedtime is not False,
-                    allow_nap=step.observed and allow_nap,
-                    interrupt_nap=step.observed and interrupt_nap,
+                    step.context, automatic=auto_routine,
+                    sleep_context=observation.earlier(
+                        max(0, now - step.context.local.timestamp()),
+                    ) if step.observed else observation.unobserved(),
                 )
-                self._decay(step.hours, step.effort, step.food_activity)
+            self._decay(step.hours, step.effort, step.food_activity)
+        self._roll_meals(context_at(now))
+        if auto_routine or self.sleep_episode.kind or self.sleeping:
             self.update_daily_routine(
-                context_at(now),
-                allow_bedtime=allow_bedtime is not False,
-                allow_nap=allow_nap,
+                context_at(now), automatic=auto_routine, sleep_context=observation,
             )
         self._change(
             updated_at=now,
             lived_seconds=end_elapsed,
             relationship=start_history(self.friendship_history, end_elapsed),
         )
+
+    def begin_relationship_migration(self) -> None:
+        """Retain an unknown historical baseline during coordinated catch-up."""
+        self._change(relationship=replace(self.friendship_history, baseline=None))
 
     def apply_object_withholding(self, loss: float) -> float:
         """Commit a bounded application decision without manufacturing care."""
@@ -385,6 +400,7 @@ class PetState:
         *,
         now: float | None = None,
         food_id: FoodId | None = None,
+        sleep_context: SleepContext | None = None,
     ) -> CareResult:
         """Commit one care transition and its friendship reward atomically."""
         stamp = resolve_care_time(now)
@@ -394,7 +410,47 @@ class PetState:
             now=stamp,
             food_id=food_id,
         )
-        return self._apply_care_transition(transition, stamp)
+        was_sleeping = self.sleeping
+        result = self._apply_care_transition(transition, stamp)
+        if transition.changed:
+            if action == "sleep":
+                decision = manual_command(
+                    self.sleep_episode, sleeping=not transition.sleeping,
+                    elapsed=self.lived_seconds, wall=stamp,
+                    context=sleep_context or SleepContext(),
+                )
+                self._change(sleeping=decision.sleeping, sleep_episode=decision.episode)
+            elif was_sleeping or self.sleep_episode.kind:
+                self._change(sleep_episode=SleepEpisode(
+                    protect_until=self.lived_seconds + BALANCE.number(
+                        "sleep", "manual_protection_seconds",
+                    ),
+                ))
+        return result
+
+    def begin_sleep_care(self, *, search: bool) -> None:
+        """Enter one bounded awake break without resetting the sleep episode."""
+        self._change(sleeping=False, sleep_origin="", sleep_episode=replace(
+            self.sleep_episode, care_break=True,
+            search_until=self.lived_seconds + BALANCE.number("sleep", "search_seconds")
+            if search else self.lived_seconds,
+        ))
+
+    def note_sleep_intake(self) -> None:
+        if self.sleep_episode.care_break:
+            self._change(sleep_episode=replace(
+                self.sleep_episode, intake_until=self.lived_seconds + BALANCE.number(
+                    "sleep", "portion_seconds",
+                ),
+            ))
+
+    def end_sleep_care(
+        self, *, failed: bool, sources: tuple[str, ...] = (),
+    ) -> None:
+        self._change(sleeping=True, sleep_episode=replace(
+            self.sleep_episode, care_break=False, search_until=0, intake_until=0,
+            food_failed=failed, failed_food_sources=sources if failed else (),
+        ))
 
     def consume_item(
         self, item_id: str, origin: ConsumptionOrigin, *, now: float,

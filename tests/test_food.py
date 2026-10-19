@@ -216,7 +216,7 @@ class FoodPolicyTests(unittest.TestCase):
         self.assertLessEqual(pet.satiety, 100)
         pet.interact("sleep", now=day + 16 * 3600)
         pet.advance(day + 24 * 3600, auto_routine=False)
-        self.assertTrue(pet.sleeping)
+        self.assertFalse(pet.sleeping)
         self.assertGreater(pet.satiety, 0)
 
 

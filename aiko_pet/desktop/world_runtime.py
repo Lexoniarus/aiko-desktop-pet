@@ -12,6 +12,7 @@ from collections.abc import Callable
 from dataclasses import replace
 
 from ..application.active_time import ActiveSessionClock, SessionInputs
+from ..application.care_time import CareTimeProgression
 from ..application.controller import CareOutcome
 from ..application.object_awareness import (
     ObjectAwareness,
@@ -69,6 +70,10 @@ from .walk_runtime import WalkDriver
 
 
 class DesktopWorldRuntime:
+    def defer_sleep(self) -> bool:
+        return (self.interaction.active or self.user_action_pending
+                or self._game_open())
+
     def object_status(self) -> ObjectStatusSnapshot:
         return snapshot_object_status(
             self.world.snapshot(), self.awareness.memory.snapshot(),
@@ -107,6 +112,7 @@ class DesktopWorldRuntime:
         self.awareness = ObjectAwareness(
             restored_memory if restored_world is not None else None,
         )
+        clock.bind_progression(CareTimeProgression(self.world, self.awareness.memory))
         self._consumption = ObjectConsumption(
             state, mind, adaptive, clock=clock, memory=self.awareness.memory,
         )
@@ -265,12 +271,27 @@ class DesktopWorldRuntime:
         overlay.select(item_id)
 
     def _completed(self, token: str, consumed: bool) -> None:
+        if not token:
+            self._finish_sleep_care()
         self.awareness.intentions.complete(token, self.now, consumed=consumed)
         self._behavior.request_orientation()
         self._walk.movement.set_goal(None)
         self._visual.object_target = None
         self._contact = None
         self._care = None
+        if token:
+            self._save()
+
+    def _finish_sleep_care(self) -> None:
+        if not self.state.sleep_episode.care_break:
+            return
+        self.state.end_sleep_care(
+            failed=self.state.satiety < BALANCE.number("sleep", "food_target"),
+            sources=tuple(known.token for known in
+                ObjectConsumption.remembered_stock(
+                    self.world, self.awareness.memory,
+                ))[:4096],
+        )
         self._save()
 
     def _ground_x(self, token: str) -> float:
@@ -341,6 +362,23 @@ class DesktopWorldRuntime:
     def update(self, _now: float) -> None:
         if self._closed:
             return
+        episode = self.state.sleep_episode
+        if episode.care_break:
+            finishing = (self.state.lived_seconds >= episode.search_until
+                         or self.state.satiety >= BALANCE.number("sleep", "food_target")
+                         and self.state.lived_seconds >= episode.intake_until)
+            if finishing:
+                if self.interaction.active:
+                    self.interaction.interrupt(self._finish_sleep_care)
+                else:
+                    self._finish_sleep_care()
+            elif (not self.interaction.active and self.state.satiety <= 0
+                    and not ObjectConsumption.remembered_stock(
+                        self.world, self.awareness.memory,
+                    )):
+                self.interaction.start_food_search()
+        elif self.state.sleeping and self.interaction.active:
+            self.interaction.interrupt(lambda: None)
         self.interaction.update()
         snapshot = self.world.snapshot()
         if self.cursor.carrying and not self.cursor.inside:

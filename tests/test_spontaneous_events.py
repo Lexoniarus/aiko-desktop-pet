@@ -24,8 +24,7 @@ def scenario(*, mode: ActivityMode = "working", duration: float = 300):
         expected_effort=None, expectation_confident=False,
         present=True, uptime_hours=8.0,
         prolonged_work_seconds=duration,
-        rest_seconds=0, can_sleep=False,
-        should_wake=False, can_nap=False,
+        rest_seconds=0,
     )
 
 

@@ -251,6 +251,11 @@ class ObjectInteractionCoordinator:
         if (self._search is None or not self.search_ready
                 or not self._search.route_complete):
             return
+        if self._search.acute_food:
+            self._search = None
+            self._finish(False)
+            self._stop()
+            return
         self._search = None
         self._set_phase(CuePhase("missing"))
         self._stop()
@@ -259,6 +264,11 @@ class ObjectInteractionCoordinator:
     def _resume_search(self) -> None:
         task = self._search
         subject = task.next_subject if task is not None else None
+        if task is not None and task.acute_food:
+            self._start("", ConsumptionOrigin.AUTONOMOUS)
+            self._set_phase(SearchPhase())
+            self._phase_feedback.completed = True
+            return
         if subject is None:
             self._search = None
             self._missing_feedback.clear()
@@ -405,6 +415,19 @@ class ObjectInteractionCoordinator:
         self._announce("object_place_missing")
         return True
 
+    @property
+    def acute_food_search(self) -> bool:
+        return self._search is not None and self._search.acute_food
+
+    def start_food_search(self) -> None:
+        """Use the same route/investigation owner without a fictitious lost item."""
+        if self.active:
+            return
+        self._search = SearchTask(None, known=self._memory.snapshot())
+        self._start("", ConsumptionOrigin.AUTONOMOUS)
+        self._set_phase(SearchPhase())
+        self._phase_feedback.completed = True
+
     def start_search(self) -> None:
         """Start one task for confirmed missing learned portions."""
         if (self.phase not in ("approach", "notice_absence")
@@ -459,6 +482,9 @@ class ObjectInteractionCoordinator:
     def _complete_recognition(self, token: str) -> None:
         """Recheck losses accepted while the recognition cue was being read."""
         if self._search is None:
+            self._consider_use()
+            return
+        if self._search.acute_food:
             self._consider_use()
             return
         known = self._memory.get(token)

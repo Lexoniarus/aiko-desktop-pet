@@ -94,7 +94,7 @@ class AffectionNeedTests(unittest.TestCase):
         self.assertLess(working.satiety, idle.satiety)
 
     def test_affection_slowly_declines_during_sleep_without_affecting_trust(self):
-        start = stamp()
+        start = datetime(2026, 10, 12, 23).timestamp()
         state = PetState(
             updated_at=start,
             affection=30,

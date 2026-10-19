@@ -112,10 +112,11 @@ class SearchRoute:
 class SearchTask:
     """One pass and its missing portions, retained across candidate actions."""
 
-    __slots__ = ("_missing", "_route", "_unreachable", "_findings")
+    __slots__ = ("_missing", "_route", "_unreachable", "_findings", "acute_food")
 
     def __init__(
-        self, subject: ObjectKnowledge, *, known: tuple[ObjectKnowledge, ...] = (),
+        self, subject: ObjectKnowledge | None, *,
+        known: tuple[ObjectKnowledge, ...] = (),
     ) -> None:
         self._missing: dict[str, ObjectKnowledge] = {}
         self._route: SearchRoute | None = None
@@ -126,7 +127,9 @@ class SearchTask:
         self._findings = {key for item in known if item.recognized
                           and item.place_status == "remembered"
                           for key in (item.token, item.instance_id) if key is not None}
-        self.add(subject)
+        self.acute_food = subject is None
+        if subject is not None:
+            self.add(subject)
 
     @property
     def next_subject(self) -> ObjectKnowledge | None:

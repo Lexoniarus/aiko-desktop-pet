@@ -20,6 +20,7 @@ from ..pet.routine import MEAL_NAMES
 from ..pet.state import PetState
 from ..pet.value_rules import bounded_number, clamp_need_value, clamp_saved_time
 from .friendship_codec import decode_friendship, encode_friendship, valid_friendship
+from .sleep_codec import decode_sleep, encode_sleep, valid_sleep
 
 
 def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
@@ -48,7 +49,7 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
         meals_date = ""
     sleeping = value.get("sleeping") is True
     origin = value.get("sleep_origin")
-    if origin not in ("routine", "manual", "nap"):
+    if origin not in ("routine", "manual", "nap", "recovery"):
         origin = "manual" if sleeping else ""
     night_key = value.get("auto_sleep_night")
     if not isinstance(night_key, str) or len(night_key) > 10:
@@ -98,6 +99,9 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
         and len(value.get("auto_nap_day", "")) == 10
         else "",
         lived_seconds=elapsed, relationship=relationship,
+        sleep_episode=decode_sleep(value["sleep_episode"], elapsed)
+        if "sleep_episode" in value and valid_sleep(value["sleep_episode"], elapsed)
+        else None,
     )
 
 
@@ -117,6 +121,7 @@ def encode_pet_state(state: PetState) -> dict[str, Any]:
         "updated_at": state.updated_at,
         "time": {"version": 1, "lived_seconds": state.lived_seconds},
         "relationship": encode_friendship(state.friendship_history),
+        "sleep_episode": encode_sleep(state.sleep_episode),
         "meals_date": state.meals_date,
         "meals_today": list(state.meals_today),
         "sleep_origin": state.sleep_origin,

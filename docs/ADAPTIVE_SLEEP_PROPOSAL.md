@@ -1,9 +1,10 @@
 # Adaptive sleep proposal
 
-> **Planning update, 2026-10-19:** The latest simplified model is the baseline
-> for the [active care/time implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
-> Original discussion-status disclaimers below remain historical context;
-> implementation and the explicitly remaining transition details are pending.
+> **Implementation update, 2026-10-19:** Stage 4 implements the simplified
+> model on `feature/social-optimization`; current rules and bounded delivery
+> choices are in [Sleep rules](SLEEP_SYSTEM.md) and the
+> [active implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md). Original
+> discussion disclaimers and superseded examples below remain historical evidence.
 
 > **Discussion proposal only — no implementation approval.** Recorded on
 > 2026-10-19 on `feature/social-optimization`, alongside code baseline `b190694`.

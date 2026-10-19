@@ -61,6 +61,7 @@ class CareController:
             command.action,
             now=inputs.wall_time,
             food_id=command.food_id,
+            sleep_context=self._adaptive.sleep_context(),
         )
         event = self._mind.care_event(result, before)
         if result.effect not in (

@@ -16,6 +16,7 @@ and test-cleanup plans.
 | Toolbar, action availability, details and native windows | [UI window contract](UI_WINDOW_CONTRACT.md) |
 | Packaged JSON, save versions, recovery and time | [Data and saves](DATA_AND_SAVES.md) |
 | Food, digestion, workload and item graphics | [Food system](FOOD_SYSTEM.md) |
+| Adaptive sleep, input learning and finite closed-time care | [Sleep rules](SLEEP_SYSTEM.md) |
 | Progressive friendship, personal contact and neglect | [Friendship rules](FRIENDSHIP_SYSTEM.md) |
 | Need rewards and overall mood | [Fun and mood](FUN_MOOD_SYSTEM.md) |
 | Animation profile and playback timing | [Animation timing](ANIMATION_TIMING_PROFILE.md) |
@@ -119,10 +120,10 @@ The latest discussed need, mood, friendship and simple sleep model has now been
 accepted as the basis for [implementation planning](CARE_TIME_IMPLEMENTATION_PLAN.md).
 The real-time/save foundation is committed and pushed (`59cab63`); stage 2
 now implements need/mood balance, and stage 3 supplies progressive friendship.
-Adaptive sleep remains pending. The original discussion disclaimers and superseded
-examples remain historical context; the plan identifies the latest baseline
+Stage 4 supplies [adaptive sleep and finite unattended care](SLEEP_SYSTEM.md).
+The original discussion disclaimers and superseded examples remain historical context; the plan identifies the latest baseline
 and the small details to settle during delivery. Maintained guides distinguish
-implemented numeric/relationship rules from the later sleep work. Separate
+implemented rules from remaining expression/context tuning. Separate
 fixes cover [idle repeated clicks](CARE_TIME_IMPLEMENTATION_PLAN.md#b1-restore-annoyance-from-repeated-direct-clicks-while-idle)
 and [subjective object reunion/German phrases](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md),
 both implemented and verified. The latter link is the completed delivery record.
@@ -154,8 +155,8 @@ food/talk do not produce the same result.
 
 The [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) records the equal need
 contributions, deficit deductions and target limits, faster decline under severe
-deficits, two-point-per-minute recovery and real-time examples. It is likewise
-an unimplemented discussion proposal; contextual Moodlets remain separate work.
+deficits, two-point-per-minute recovery and real-time examples. Its current numeric rules are implemented in [Fun and mood](FUN_MOOD_SYSTEM.md);
+contextual Moodlets remain separate work.
 
 The [adaptive sleep proposal](ADAPTIVE_SLEEP_PROPOSAL.md) records the learned
 quiet window, three/seven-phase learning milestones, 15-minute sleep onset,
@@ -166,7 +167,7 @@ and weighted scoring are excluded. It also records conflict priority, 30-minute
 manual-control protection and sleep-type wake thresholds. Food breaks use satiety thresholds
 20/40, one bounded zero-hunger search and identified available stock while closed.
 Expected rhythm remains distinct from observed activity, and remaining transition
-details stay explicit; no runtime changes apply.
+details are resolved in the [stage-4 runtime guide](SLEEP_SYSTEM.md).
 
 ## Dialogue editorial review
 

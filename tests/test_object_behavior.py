@@ -36,6 +36,39 @@ from tools.pet_test_support import set_test_pet_values
 
 
 class ObjectBehaviorTests(unittest.TestCase):
+    def test_acute_food_search_uses_existing_route_without_inventing_a_loss(self):
+        set_test_pet_values(self.state, satiety=0)
+        self.awareness.memory.restore_snapshot(())
+        self.interaction.start_food_search()
+        self.assertTrue(self.interaction.search_ready)
+        self.assertEqual(self.awareness.memory.snapshot(), ())
+        self.assertEqual(self.cues, [])
+        first = self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 50),
+        )
+        self.assertEqual(first, SearchMotion(750, .5))
+        self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 750),
+        )
+        self.assertFalse(self.interaction.search_active)
+        self.assertFalse(self.interaction.active)
+        self.assertEqual(self.awareness.memory.snapshot(), ())
+        self.assertEqual(self.cues, [])
+
+    def test_acute_food_search_uses_normal_investigation_of_unknown_find(self):
+        set_test_pet_values(self.state, satiety=0)
+        self.awareness.memory.restore_snapshot(())
+        self.interaction.start_food_search()
+        observation = ObjectObservation("candidate", None, None, 240, 0, True, 0)
+        self.awareness.memory.update((observation,), now=0)
+        self.awareness.observations = (observation,)
+        motion = self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 50),
+        )
+        self.assertEqual(motion, Hold())
+        self.assertEqual(self.interaction.phase, "approach")
+        self.assertTrue(self.interaction.search_active)
+
     def test_endpoint_waits_for_local_evidence_and_collects_another_loss(self):
         subject = self.awareness.memory.get("stock")
         assert subject is not None
