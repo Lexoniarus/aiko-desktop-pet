@@ -211,7 +211,7 @@ from the pet aggregate and its needs. `CarePresenter` uses the result's action
 and consumed item directly instead of accepting a second copy of that action.
 
 `ui/windows/` owns `HoverUi`, the pinnable `ActionToolbar`, `FoodMenu`,
-`SettingsWindow`, and the rock-paper-scissors window. Controls are
+`SettingsWindow`, the game selector and three game windows. Controls are
 independently movable where applicable. `ui/common/` owns reusable skin and
 window-dragging helpers; `ui/view_models/` owns `DesktopPresentation`,
 immutable status/hover/settings contracts, projections and localized UI copy.
@@ -219,6 +219,25 @@ immutable status/hover/settings contracts, projections and localized UI copy.
 No user-facing window owns PetState transitions. Actions are sent to the
 application boundary through named callbacks. The pet sprite and the utility
 windows are distinct UI owners even though both use Tkinter.
+
+### Minigame owners
+
+`games/` owns each transient session's rules and score, with frozen card/board
+reads and a common `SessionSummary`. `HoverUi` owns the sole active `GameWindow`
+and a cancellable pending selection while World finishes interruption. Its
+submenu has no game/care effect. Per-game sequences under `ui/windows/` own
+turn/reveal pacing through injected timers; the game owns result settlement.
+The application summary adapter uses the existing game-experience coordinator.
+
+`ui/pet_view/BlackjackHandPresenter` (in `blackjack_hand_presenter.py`) owns the
+separate floating-card window and visual hover/flip timers. It receives a
+masked `HandView`, not a hidden hand or World state. `GamePanel` supplies small
+window chrome for the two new player panels; it owns no rules. The root-local
+`PlayingCardImages` cache is shared by both Blackjack views.
+`desktop/game_assembly.py` composes these existing boundaries and native effects;
+`WindowStack` remains the z-order owner. Placement and preference changes update
+the same card presenter. Speech, pet movement, World custody and saved pet state
+retain their owners. See the [delivery record](MINIGAME_IMPLEMENTATION_PLAN.md).
 
 `presentation/`, `personality/` and the former root-level `ui/*.py` widget
 forwarders have been **removed**. Runtime and tests import directly from the

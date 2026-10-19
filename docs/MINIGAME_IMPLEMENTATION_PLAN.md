@@ -1,6 +1,6 @@
 # Three-game selection and presentation plan
 
-Status: implementation authorized on 2026-10-19; delivery in progress.
+Status: implementation complete on the feature branch; final validation pending.
 The owner selected Blackjack and Tic-Tac-Toe alongside the existing
 Rock–Paper–Scissors (RPS). The owner authorized stepwise implementation, small
 commits and targeted tests, with full-suite validation only at the end.
@@ -91,7 +91,8 @@ Checked against `feature/social-optimization` at `7049869`,
 [Architecture](ARCHITECTURE.md), [UI window ownership](UI_WINDOW_CONTRACT.md)
 and the actual game/window/desktop code. The governing rule is one owner per
 mutable state or external side effect, connected through small typed ports.
-Paths marked **new** below are proposed homes, not existing implementations.
+The target-owner table below is now implemented; **new** identifies the files
+introduced by this delivery. The code baseline above records the pre-change audit.
 
 ### Existing seams that need a bounded change
 
@@ -223,8 +224,9 @@ no UI-owned need writes, new reward system, persistent statistics or save migrat
   Windows visual acceptance remains separately recorded and subject to the
   owner's existing authorization limits.
 
-This documentation update itself creates no implementation commits and runs no
-game, GUI or full-suite tests.
+The initial planning edits ran no tests; subsequent authorized delivery and its
+targeted results are recorded below. Final full-suite validation follows all
+implementation/integration steps.
 
 Keep technical documentation/code in English and visible copy in German.
 Reuse the existing presentation skin and authored animation clips. The concrete
@@ -276,7 +278,7 @@ Adding a useful dependency remains an option: the current installer processes
   existing typed boundary, with no parallel custom rule implementation.
 
 No new game content API, generative opponent or translation pipeline is needed.
-Implementation authorization remains separate from this documented assessment.
+The owner subsequently authorized implementation on the assessed baseline.
 
 ## Focused acceptance
 
@@ -310,7 +312,7 @@ Implementation authorization remains separate from this documented assessment.
   Preserve the existing restrictions on visible test windows, mouse control
   and remote CI. Any desktop check outside that scope needs later authorization.
 - Update asset notices and maintained UI/fun/architecture documentation with
-  the delivered behavior. This plan records no completed implementation/tests.
+  the delivered behavior. The delivery evidence below records actual checks.
 
 ## Delivery evidence
 
@@ -331,3 +333,4 @@ windows or mouse injection. Each row names the modules passed to
 | 8: Blackjack integration | 89 targeted Xvfb tests passed (1.958s): Blackjack rules/sequence/GUI, Tic-Tac-Toe GUI, menu, game experience/fun, text/dialogue/resource validation, desktop lifecycle/input and architecture boundaries. Changed-file Ruff and focused strict Mypy passed. The initial per-hand profile is 8 fun / 0.6 energy / 0.8 social. Player-only cards, persistent desktop hand across speech, flip cancellation, failed native setup, resize/placement/topmost effects and shutdown cleanup are covered. |
 | Visual/integration follow-up | Inspected actual Tk/Xvfb captures of menu, Blackjack and Tic-Tac-Toe in a temporary directory. Widened menu buttons to fit RPS's name, bounded the new headers, centered board content, moved the hand below Aiko's face and reserved taskbar space. Linux uses the same opaque fallback as the sprite; Windows keeps the color key. 19 focused menu/hand/model/new-game GUI tests passed (1.989s), plus changed-file Ruff and focused Mypy. No native Windows visual acceptance is claimed. |
 | Capture consumer typing | The RPS media helper explicitly narrows the selected common window to `RockPaperScissorsWindow` before using RPS-only controls. Focused strict Mypy and Ruff passed; 49 RPS sequence/media and architecture/canonical-boundary tests passed (0.692s). The capture helper itself was not launched on the working desktop. |
+| 9: integrated contracts | 76 targeted Xvfb tests passed (3.832s): menu, game experience, all three game GUIs, desktop lifecycle and UI/desktop/canonical architecture guards. Maintained architecture/UI/fun/save/asset/smoke guides and the feature/main distinction were reconciled with the delivered code. Full-suite validation is the following final gate. |

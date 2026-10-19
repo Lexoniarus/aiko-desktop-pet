@@ -12,13 +12,17 @@ sessions per active day support good care without fixed appointments.
 
 ## Editable JSON settings
 
-Tune `fun`, `mood`, `needs`, `food` and `game_rock_paper_scissors` in
+Tune `fun`, `mood`, `needs`, `food` and the three `game_*` profiles in
 `aiko_pet/data/balance.json`; the existing typed parameter objects read that
 validated resource. Food nutrition remains in `food_catalog.json`.
 
 Fun falls 3 points per awake hour and does not decay while sleeping. Each
 completed RPS round gives 6 fun, costs 0.5 energy and gives 0.6 social,
 regardless of win/draw/loss. Outcome evidence remains available for reactions.
+The new profiles are 9 fun / 0.7 energy / 0.9 social per completed Tic-Tac-Toe
+board, and 8 fun / 0.6 energy / 0.8 social per completed Blackjack hand. These
+initial values give longer units more base credit without changing the shared
+diminishing-return policy; they are not measured playtime equivalences.
 The first three rounds receive full fun credit, rounds four through six 60%,
 and later rounds 25%, with a 20-point session cap. The existing high-fun
 reduction starts above 85, declining linearly to 75% reward at 100.
@@ -70,10 +74,15 @@ What a unit means and how strongly it is rewarded is a per-game profile.
 Rock–Paper–Scissors currently maps each *revealed round* to one unit;
 the user's score `wins` maps to Aiko's setbacks and `losses` to Aiko wins.
 
-The `RockPaperScissorsWindow` reports its immutable `Score` exactly
-once upon closing; `HoverUi` passes it to the application; its RPS
-adapter creates the generic experience; `GameExperienceCoordinator`
+Each window reports one immutable `games.contracts.SessionSummary` exactly
+once upon closing. Its counts use the player's perspective and are derived
+from the game's own score. `HoverUi` passes the summary to the application;
+`experience_from_session` creates the generic experience; `GameExperienceCoordinator`
 updates `PetState`. The minigame and its UI never adjust needs directly.
+
+Blackjack and Tic-Tac-Toe settle the required completed reveal/turn before
+crediting their game-owned score. Closing during a pending reveal or bot turn
+does not count it; closing during the subsequent reaction retains that unit.
 
 Only actual completed play awards fun. Leaving the game window open,
 starting a round without reaching reveal, or closing an empty game

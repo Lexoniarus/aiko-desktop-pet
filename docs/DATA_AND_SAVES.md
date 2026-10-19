@@ -12,6 +12,7 @@
 | `aiko_pet/data/routine.de.json` | Weekday/weekend schedules, activity labels and meal windows |
 | `aiko_pet/assets/animation_timing.json` | Frame holds and playback sequences |
 | `aiko_pet/assets/items/items.json` | Item images, icons and hand pivots |
+| `aiko_pet/assets/playing_cards/provenance.json` | Imported Kenney card filenames, source package and hashes; independent of World items |
 | `aiko_pet/assets/animations.json` | Prepared character frames and provenance metadata |
 
 Python owns rules, types, supported semantic IDs and technical constants such
@@ -23,6 +24,12 @@ their defaults come from the validated balance resource.
 Resource files are loaded once and exposed as immutable catalogues. Restart
 Aiko after editing them. There is no runtime network download, arbitrary code
 execution or extra pip dependency for this data layer.
+
+RPS, Blackjack and Tic-Tac-Toe sessions are temporary. Their scores, decks,
+boards and hidden/revealed cards are not serialized. Closing reports completed
+units through the existing application game-experience path before final save;
+only the resulting pet care values/bookkeeping persist. No save migration was
+introduced for the additional games.
 
 ## Validation and editing
 

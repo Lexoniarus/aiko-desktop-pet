@@ -8,6 +8,17 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Add the Spielen submenu with Rock–Paper–Scissors, Blackjack and Tic-Tac-Toe.
+  Keep RPS's round flow; add explicit next-round controls, local rules and
+  outcome-neutral need profiles for the two new games. All session scores and
+  game state remain transient, with one completion summary through the existing
+  care coordinator. No runtime dependency or save migration is added.
+- Import 52 Kenney Playing Cards Pack faces and one back under CC0, with license
+  and source hashes. Keep player Blackjack cards/controls in the window and
+  Aiko's masked/revealed hand in a separate desktop presenter with hover, flip
+  and cancellation. Add targeted rule/UI/lifecycle and ownership coverage; the
+  [delivery plan](docs/MINIGAME_IMPLEMENTATION_PLAN.md) records actual checks.
+
 - Correct stage-4 time ownership: keep the clock responsible for elapsed time,
   inject one session progression through application ports and apply each
   planned step once. Preserve neutral legacy migration and live World care.

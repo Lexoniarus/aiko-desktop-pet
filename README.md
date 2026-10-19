@@ -21,16 +21,30 @@
 screenshot). The current 112-pose Anime character, Kenney panel, and German
 dialogue are shown together. Documentation is in English.*
 
-## Play with Aiko (Rock–Paper–Scissors)
+## Play with Aiko
+
+**Spielen** opens a selection of **Schere–Stein–Papier**, **Blackjack** and
+**Tic-Tac-Toe** in this feature checkout. Blackjack and Tic-Tac-Toe are not yet
+merged into `main`. Only one game is open at a time; closing it restores Aiko's
+ordinary behavior. Merely opening the selector grants no game reward.
+
+In Blackjack, your cards and hit/stand controls belong to the player window.
+Aiko's hand floats in front of her on the desktop, with one card face down until
+her turn. She flips it and draws under fixed dealer rules. Hover highlights a
+card without revealing it early. There are no stakes or extra betting actions.
+Tic-Tac-Toe uses one shared board against a simple local opponent, alternating
+the starting player between completed rounds. Both offer **Nächste Runde**.
 
 Aiko's character bubble shows **only her own choice** and her reactions.
 The independent, always-open Kenney-styled player panel shows **your selected
 hand**, the round counter, your wins, Aiko's wins and draws. The counters belong
 only to the currently opened minigame window and are never saved.
 
-Other games, libraries and external data sources have been discussed only as
-**unapproved possibilities**, with **no selected next game or implementation
-order**. See the [minigame candidate catalogue and integration research](docs/MINIGAME_CANDIDATES.md).
+All games run locally with Tk and the Python standard library. Completed hands
+or boards count as play; an unfinished round does not. The
+[delivery plan](docs/MINIGAME_IMPLEMENTATION_PLAN.md) records owners, library
+assessment and validation. Other entries in the
+[candidate catalogue](docs/MINIGAME_CANDIDATES.md) remain research ideas.
 
 ![Rock–Paper–Scissors with the separate player panel and Aiko's actual speech bubble](vorschau/Aiko_RPS_Aufgedeckt.png)
 
@@ -58,7 +72,7 @@ preview gallery.
 ## What she does
 
 - **Lives on your desktop.** Short, slower taskbar walks with 1–3 minute pauses, intermittent blinking, spontaneous glances, jumping, waving, resting and 16-direction cursor gaze.
-- **Needs a little care.** Feed, play Rock–Paper–Scissors, talk, pet, sleep/wake or offer an energy drink. Meals and snacks provide different satiety and digestion effects. Enjoyment, social needs and affection develop separately, with occasional friendly requests.
+- **Needs a little care.** Feed, play, talk, pet, sleep/wake or offer an energy drink. Meals and snacks provide different satiety and digestion effects. Enjoyment, social needs and affection develop separately, with occasional friendly requests.
 - **Has her own voice.** Handwritten German reactions vary with mood, time, repeated clicks, interruptions and recent interactions. Authored stories vary across four friendship stages and current needs. Talk plays several bubbles with emotes and pauses; left-click Aiko to advance a story.
 - **Notices actual workload.** Local CPU/GPU and memory observations inform her working/resting behavior, without inventing the application or task you are using. Missing sensors remain unknown.
 - **Learns a gentle rhythm.** Locally aggregated activity evidence helps her adapt to regular working and resting periods.

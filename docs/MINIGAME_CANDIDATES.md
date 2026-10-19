@@ -3,9 +3,10 @@
 > **Exploratory reference only — not an approved roadmap.**
 >
 > Blackjack and Tic-Tac-Toe were explicitly selected on 2026-10-19; their
-> agreed scope is recorded in the separate
-> [implementation plan](MINIGAME_IMPLEMENTATION_PLAN.md), with implementation
-> still awaiting authorization. All other entries remain research only.
+> implementation is recorded in the separate
+> [delivery plan](MINIGAME_IMPLEMENTATION_PLAN.md). Both are implemented on
+> `feature/social-optimization`, not yet merged into main. All other entries
+> remain research only.
 > Inclusion of a game, algorithm, API or library below does not select it.
 > Candidate effort and duration estimates are provisional comparison aids,
 > not rankings or priorities.
@@ -244,11 +245,11 @@ sequence, deadline or acceptance decision.
 ## Decision status and how to update this reference
 
 - **Implemented today:** Rock–Paper–Scissors on `main`.
-- **Selected additions:** Blackjack and Tic-Tac-Toe, with the Spielen submenu
+- **Implemented feature-branch additions:** Blackjack and Tic-Tac-Toe, with the Spielen submenu
   and desktop-card presentation described in the
-  [planning-only implementation plan](MINIGAME_IMPLEMENTATION_PLAN.md).
+  [implementation and delivery plan](MINIGAME_IMPLEMENTATION_PLAN.md).
 - **All remaining entries:** optional research candidates only.
-- **Implementation authorization:** pending; only documentation was requested.
+- **Implementation authorization:** granted on 2026-10-19; no merge authorized.
 - **Proposed delivery stages:** see the separate plan; no schedule is committed.
 - **Approved additional APIs, engines or paid AI services:** none.
 - **Approved schedule, budget expenditure or dependency change:** none.

@@ -46,6 +46,29 @@ additional domain aggregate is introduced.
 
 ## Presence versus interaction
 
+### Games
+
+`Spielen` opens one transient submenu for RPS, Blackjack and Tic-Tac-Toe.
+Escape/outside dismissal closes the selector without starting play. Selection
+uses the existing contact admission and World interruption; one pending token
+prevents duplicate starts. The resumed callback rechecks sleep readiness without
+rejecting World's own pending-action reservation. Settings remain independent.
+
+`HoverUi` owns the one active game through `GameWindow` and includes the selector
+in interaction detection, topmost propagation, stacking and cleanup. Game
+sequences cancel timers before closing; one summary is credited before final
+save. Scores, boards and decks never enter the save.
+
+In Blackjack the player panel contains only player cards/total and controls.
+Aiko's masked/revealed hand is a separate anchored desktop overlay, lower in
+front of her so her face and speech remain readable. Hover raises a visible
+card; clicks do not reveal, feed, pick up or count as pet teasing. The hand
+persists across speech changes and disappears on close/failure/shutdown.
+It is not a World item. Tic-Tac-Toe has one shared board and desktop reactions.
+Both new panels use explicit next-round controls; RPS keeps its existing flow.
+
+### Contact and ordinary controls
+
 Direct sprite clicks may interrupt an earlier **click reply**, allowing repeated
 left/right clicks to reach the existing teasing/irritation policy. This does
 not unlock toolbar actions during playback. Care, games, sleep and committed

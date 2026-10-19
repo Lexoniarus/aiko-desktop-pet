@@ -99,8 +99,9 @@ application contracts and explicitly unimplemented external transports.
 approved roadmap or a dependency list for the running application.
 The separate [three-game implementation plan](MINIGAME_IMPLEMENTATION_PLAN.md)
 records the selected Blackjack/Tic-Tac-Toe scope, the Spielen submenu and the
-player-window/desktop-card split. It is planning only, not authorization to
-implement or a claim that either game is already available.
+player-window/desktop-card split, delivered on the current feature branch.
+Its per-commit evidence distinguishes targeted checks, final validation and
+separate native Windows acceptance. These additions are not merged into main.
 
 ## Preserved product concepts
 

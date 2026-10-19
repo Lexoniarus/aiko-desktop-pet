@@ -1,5 +1,31 @@
 # World desktop acceptance and repeatable smoke checks
 
+## Three-game native acceptance — pending separately
+
+The feature branch adds the Spielen selector, Blackjack and Tic-Tac-Toe.
+Targeted rules, timer, Tk/Xvfb and cleanup checks are recorded in the
+[minigame delivery plan](MINIGAME_IMPLEMENTATION_PLAN.md). Actual Tk/Xvfb
+captures were inspected; those do not establish native Windows behavior.
+Do not run working-desktop windows or mouse probes without later authorization.
+
+When native acceptance is authorized, use an isolated save and check:
+
+- Spielen shows exactly the three games; Escape/outside dismissal starts no
+  game, and repeat/deferred selection never opens two sessions.
+- RPS retains separate player/Aiko hands, its countdown and existing controls.
+- Tic-Tac-Toe blocks input during Aiko's turn, highlights the winning line,
+  alternates starts and restarts cleanly after a win or draw.
+- Blackjack shows only player cards in its panel. Aiko's hand floats below her
+  face, retains its card back through hover/click and flips only after the
+  player's turn or an immediate natural/bust result. Speech never replaces it.
+- At 1x/2x and both desktop edges, long hands stay readable above the taskbar;
+  Windows color-key transparency leaves no Magenta frame. Show/flip/hover do
+  not activate another window or trigger pet teasing, dragging or World pickup.
+- Move/resize Aiko and toggle topmost while playing. Cards follow the existing
+  owners and disappear on close, failed start and shutdown, including mid-flip.
+- Only completed units affect care once; reopening has a fresh score, and
+  closing an unfinished round gives no reward. The normal save stays untouched.
+
 ## Acceptance status
 
 The maintainer reports that desktop acceptance for the current object-interaction
