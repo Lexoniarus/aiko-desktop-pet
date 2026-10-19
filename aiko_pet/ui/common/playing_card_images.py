@@ -2,6 +2,7 @@
 
 import tkinter as tk
 from pathlib import Path
+from typing import Any, cast
 
 from ...asset_paths import PLAYING_CARDS_DIR
 from ...games.playing_cards import Card
@@ -22,7 +23,11 @@ class PlayingCardImages:
         key = card, scale, compression
         if key not in self._images:
             if compression != 1:
-                result = self.get(card, scale).subsample(compression, 1)
+                # Python 3.13's Tk stubs reject a numeric vertical factor.
+                # Preserve the existing horizontal-only image compression.
+                result = self.get(card, scale).subsample(
+                    compression, cast(Any, 1),
+                )
             else:
                 filename = card.asset_name if card else "card_back.png"
                 source = tk.PhotoImage(
