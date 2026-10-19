@@ -52,6 +52,14 @@ class SpeechPresenter:
         self.pending_timer: str | None = None
         self.emote_images: dict[str, tk.PhotoImage] = {}
         self.game_hand_images: dict[Move, tk.PhotoImage] = {}
+        root.bind("<Destroy>", lambda event: (
+            self.release_images() if event.widget is root else None
+        ), add="+")
+
+    def release_images(self) -> None:
+        """Release cached images at root destruction on Tk's owner thread."""
+        self.emote_images.clear()
+        self.game_hand_images.clear()
 
     def _new_window(self) -> tk.Toplevel:
         window = tk.Toplevel(self._root)

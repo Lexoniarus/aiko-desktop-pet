@@ -34,7 +34,13 @@ class WorldAssetShutdownTests(unittest.TestCase):
                                            ObjectFootprint(16, 16))
             app._world._sync_view()
             ground = weakref.ref(app._world.view.image("onigiri", 2))
-            images = original, food, zoomed, warped, ground
+            skin = tuple(weakref.ref(image)
+                         for image in app._hover._skin.buttons.values())
+            assert app._hover._skin.banner is not None
+            banner = weakref.ref(app._hover._skin.banner)
+            app._speech.show_emote("heart", 500)
+            emote = weakref.ref(app._speech.emote_images["heart"])
+            images = original, food, zoomed, warped, ground, *skin, banner, emote
             self.assertTrue(all(reference() is not None for reference in images))
             app.quit()
             # No gc.collect(), process exit or loss of the app reference needed.

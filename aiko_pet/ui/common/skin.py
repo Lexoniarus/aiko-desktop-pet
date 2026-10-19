@@ -25,7 +25,7 @@ class AikoSkin:
         except tk.TclError:
             fonts = set()
         self.font = "Kenney Mini" if "Kenney Mini" in fonts else "Segoe UI"
-        self.banner = tk.PhotoImage(
+        self.banner: tk.PhotoImage | None = tk.PhotoImage(
             master=root, file=str(KENNEY_UI_DIR / "toolbar_banner.png"),
         )
         self.buttons = {
@@ -34,6 +34,14 @@ class AikoSkin:
             )
             for name in ("regular", "wide", "small")
         }
+        root.bind("<Destroy>", lambda event: (
+            self.release_images() if event.widget is root else None
+        ), add="+")
+
+    def release_images(self) -> None:
+        """Dispose root-local Tk assets on the owner thread, before later GC."""
+        self.buttons.clear()
+        self.banner = None
 
     def frame(self, parent: tk.Misc) -> tk.Frame:
         return tk.Frame(
@@ -42,6 +50,8 @@ class AikoSkin:
         )
 
     def header(self, parent: tk.Misc, text: str) -> tk.Label:
+        if self.banner is None:
+            raise RuntimeError("Skin assets have been released")
         return tk.Label(
             parent, text=text, image=self.banner, compound="center",
             font=(self.font, 10, "bold"), fg="#FFFFFF", bg=self.accent,
