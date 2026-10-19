@@ -19,7 +19,7 @@ from ..pet.state import PetState
 from ..world.contracts import WorldSnapshot
 from ..world.state import WorldState
 from .active_time import ActiveSessionClock, SessionInputs
-from .care_time import CareTimeProgression
+from .session_time import SessionTimeProgression
 from .settings import PetSettings
 
 
@@ -92,11 +92,11 @@ class PetSessionRestorer:
         if loaded.restored_from_save and math.isfinite(elapsed) and elapsed > 0:
             context = adaptive.sleep_context()
             if world is not None:
-                CareTimeProgression(world, memory).advance(
+                SessionTimeProgression(world, memory).advance(
                     loaded.state, SessionInputs(now, 0, loaded.settings.auto_routine,
                                                 None, False, False, None,
                                                 sleep_context=context),
-                    elapsed, live=False,
+                    elapsed, reconstruct=True,
                 )
             else:
                 loaded.state.advance(

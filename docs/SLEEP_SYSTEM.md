@@ -101,7 +101,17 @@ adaptive memory. The former hardware-dependent sleep policy and its coefficients
 are removed. Existing workload classification/hourly expectations remain for
 grounded work conversation only; neither can choose sleep or train QuietWindow.
 
-`CareTimeProgression` coordinates those existing owners with World resources;
+`SessionTimeProgression` in `application/session_time.py` coordinates those
+existing owners with World resources through explicit application injection.
+The clock contains no World callback. It plans the elapsed interval once and
+uses `PetState.advance_time_step()` rather than recursively calling `advance()`.
+First-save relationship history is finalized once at the whole interval's end.
+The common `sleep_care_complete()` policy decides when care ends; the live
+interaction owner still performs safe put-down before finishing. Historical
+awake intake uses the existing object-use policy, including a known drink
+when hunger cannot be supplied by any available food.
+
+
 `ObjectConsumption.apply_portion` supplies one atomic World/Pet/object-memory
 transaction for historical and animated intake. It does not own another pet,
 clock, resource catalogue, search or movement writer. Restoration constructs

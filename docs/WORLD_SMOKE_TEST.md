@@ -295,10 +295,64 @@ The first full run exposed superseded fixed-night/permanent-manual-sleep test
 expectations and a real unappraised-stock restoration gap. The final code
 preserves unappraised portions and requires previous appraisal for historical
 intake. Focused cases verify safe custody, wrong remembered places, valid stock
-return, bounded failure and exact paired rollback. Full Windows/static results
+return, bounded failure and exact paired rollback. Automated results and platform limits
 are recorded with stage 4 in the active plan.
 
 Physical standby/resume remains **pending**. Injected suspend-inclusive clocks,
 paired-stock equivalence and both actual Windows uptime readers are automated
 coverage, not permission to suspend the user's working computer or a claim of
 physical resume acceptance. Stages 5–6 and promotion to main remain separate.
+
+## Stage-4 owner checks on the actual machine
+
+> **Proposed checklist on hold.** The owner requested architecture and
+> verification-scope discussion first. These are not agreed mandatory owner
+> tasks, and they do not authorize any new run. The active plan's stage-4
+> scope correction takes precedence.
+
+Do these at the owner's chosen time. The agent must not launch local test
+windows, inject mouse/keyboard input, suspend the computer or rewrite save
+values to create a scene. Use ordinary app controls and real time; do not
+freeze rendering or change the system clock. Check the feature-branch build,
+not an older process that was already running before the code changed.
+A separate save selected through `AIKO_SAVE_PATH` can keep these observations
+independent of normal progress; the agent must not create a visible instance
+without a new explicit request.
+
+Record the branch revision, approximate start/end times, observed state and
+pass/fail for each check. No private input trace is needed.
+
+| Check | Owner action and expected observation | Status |
+| --- | --- | --- |
+| Visible manual Sleep/Wake | When Aiko is free, choose Sleep. After transient feedback, the actual sleeping pose and Wake control must agree. Choose Wake; normal awake animation and the Sleep control must return, without a permanent idle frame or contradictory command. | Pending owner observation |
+| Ordinary main sleep and return | With automatic routine enabled, leave the app running during the expected night window. After 15 minutes of real quiet, Aiko should sleep. One brief input is insufficient. After at least four actual sleeping hours and energy at least 60, two minutes of repeated ordinary input can end sleep early; otherwise the saved expected endpoint requires energy at least 40. A real food break may briefly show awake behavior. Observe the visible transition, without fixture timestamps. | Pending owner observation |
+| Physical standby/resume | At a convenient break, note time, needs and any placed stock, then suspend the machine with Aiko running. Resume after at least 15 minutes, or use a normal overnight suspension. Needs and sleep must reflect elapsed time once; energy may recover during sleep. The app must remain responsive with consistent animation/controls. An immediate save/close/reopen must not replay the absence or consume the same stock twice. | Pending owner observation |
+
+A closed-app overnight observation with a few already identified/appraised
+portions and a separate unknown portion is an additional useful integration
+check: only actual eligible saved portions may be consumed, and reopening must
+show the resulting stock without playback. Automated restoration and native
+component tests cover this path; it does not require another injected desktop
+probe. The three/seven-phase learning milestones and long-duration priority
+collisions are covered with injected policy time, so accepting the algorithm
+does not require waiting seven real days. Its personal fit can be observed
+later during normal use.
+
+## Stage-4 correction: local automated verification, 2026-10-19
+
+The corrected application graph retains live autonomous care and adaptive
+sleep. Clock measurement, shared time application and reconstructed resource
+use now have explicit owners; active movement/intake remains in World.
+
+A frozen checkout ran locally under Linux/Python 3.11 and Xvfb in a disposable,
+network-disabled container: **1,273 tests in 176.808 seconds**, eight Windows-
+only skips, no failures/errors. **130 affected headless Windows tests** also
+passed in **7.626 seconds**. Static checks passed. No visible test windows,
+mouse injection, normal-save writes or GitHub CI were used for this correction.
+The three real-timer cases above ten seconds are individually justified in
+[the active plan](CARE_TIME_IMPLEMENTATION_PLAN.md#local-verification-and-individual-slow-test-review).
+All cases terminate automatically; the frozen-frame desktop probe was not used.
+
+This verifies automatic domain/application and virtual-display behavior.
+Physical suspend/resume and visible Windows animation remain unperformed,
+separate acceptance. The earlier owner checklist remains a proposal on hold.

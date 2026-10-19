@@ -137,10 +137,15 @@ class ElapsedAdvancementTests(unittest.TestCase):
         assert plan is not None
         self.assertNotIsInstance(plan, (tuple, list))
         self.assertAlmostEqual(sum(step.hours for step in plan), duration / 3600)
-        pet = PetState(updated_at=NOW)
+
+    def test_multi_day_state_advance_does_not_cap_time_or_invent_food(self) -> None:
+        # Three days cover repeated sleep cycles and exhaust a low initial bond.
+        # Thirty-day stream coverage belongs to the planner test above.
+        duration = 3 * 86400
+        pet = PetState(updated_at=NOW, friendship=1)
         pet.advance(NOW + duration, auto_routine=True)
         self.assertEqual(pet.lived_seconds, duration)
-        self.assertEqual(pet.friendship, 0)  # The complete known absence is charged.
+        self.assertEqual(pet.friendship, 0)
         self.assertIsNone(pet.food.last_food_id)
 
     def test_current_activity_flags_do_not_cancel_unobserved_night_sleep(self) -> None:

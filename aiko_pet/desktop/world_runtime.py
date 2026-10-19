@@ -12,7 +12,6 @@ from collections.abc import Callable
 from dataclasses import replace
 
 from ..application.active_time import ActiveSessionClock, SessionInputs
-from ..application.care_time import CareTimeProgression
 from ..application.controller import CareOutcome
 from ..application.object_awareness import (
     ObjectAwareness,
@@ -31,6 +30,7 @@ from ..application.object_interaction_state import SearchPosition
 from ..application.object_relationship import ObjectRelationship
 from ..application.object_status import ObjectStatusSnapshot, snapshot_object_status
 from ..application.session import WorldSessionSnapshot
+from ..application.session_time import SessionTimeProgression
 from ..application.settings import PetSettings
 from ..infrastructure.active_time import active_uptime_seconds
 from ..infrastructure.world_catalog import build_consumable_definitions
@@ -51,6 +51,7 @@ from ..pet.mind.object_decisions import (
 )
 from ..pet.mind.object_knowledge import ObjectMemorySnapshot
 from ..pet.routine import context_at
+from ..pet.sleep import sleep_care_complete
 from ..pet.state import PetState
 from ..ui.pet_view.action_playback import ActionPlayback
 from ..ui.pet_view.animated_pet import AnimatedPet
@@ -112,9 +113,12 @@ class DesktopWorldRuntime:
         self.awareness = ObjectAwareness(
             restored_memory if restored_world is not None else None,
         )
-        clock.bind_progression(CareTimeProgression(self.world, self.awareness.memory))
+        self.time_progression = SessionTimeProgression(
+            self.world, self.awareness.memory,
+        )
         self._consumption = ObjectConsumption(
             state, mind, adaptive, clock=clock, memory=self.awareness.memory,
+            progression=self.time_progression,
         )
         self._relationship = ObjectRelationship(state, mind)
         self.view = WorldView(root, items, pickup=self.begin_relocate)
@@ -283,16 +287,8 @@ class DesktopWorldRuntime:
             self._save()
 
     def _finish_sleep_care(self) -> None:
-        if not self.state.sleep_episode.care_break:
-            return
-        self.state.end_sleep_care(
-            failed=self.state.satiety < BALANCE.number("sleep", "food_target"),
-            sources=tuple(known.token for known in
-                ObjectConsumption.remembered_stock(
-                    self.world, self.awareness.memory,
-                ))[:4096],
-        )
-        self._save()
+        if self.time_progression.finish_sleep_care(self.state):
+            self._save()
 
     def _ground_x(self, token: str) -> float:
         item = self.world.get(token)
@@ -364,9 +360,9 @@ class DesktopWorldRuntime:
             return
         episode = self.state.sleep_episode
         if episode.care_break:
-            finishing = (self.state.lived_seconds >= episode.search_until
-                         or self.state.satiety >= BALANCE.number("sleep", "food_target")
-                         and self.state.lived_seconds >= episode.intake_until)
+            finishing = sleep_care_complete(
+                episode, satiety=self.state.satiety, elapsed=self.state.lived_seconds,
+            )
             if finishing:
                 if self.interaction.active:
                     self.interaction.interrupt(self._finish_sleep_care)

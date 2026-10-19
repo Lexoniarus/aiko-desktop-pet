@@ -8,6 +8,18 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Correct stage-4 time ownership: keep the clock responsible for elapsed time,
+  inject one session progression through application ports and apply each
+  planned step once. Preserve neutral legacy migration and live World care.
+- Share sleep-care completion and existing intake decisions; eligible known
+  drinks are no longer blocked by hunger with no available food. Clarify sleep
+  policy names and add the early-wake energy boundary regression.
+- Consolidate resource equivalence cases, separate monthly planner coverage
+  from shorter multi-day state coverage, and review all tests over ten seconds.
+  Verify 1,273 local virtual-display cases (eight Windows-only skips), 130
+  headless Windows cases and pinned static checks. Remove the temporary manual
+  full-CI extension; physical Windows acceptance remains separate.
+
 - Implement adaptive sleep with one aggregate-owned episode and the existing
   chronological need integrator: 23:00–07:00 tentative expectation, simple
   three/seven-phase quiet learning, bounded daily adjustment, manual protection,

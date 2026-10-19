@@ -6,7 +6,7 @@ from dataclasses import dataclass, replace
 from statistics import median
 from typing import Any
 
-from ..sleep import setting
+from ..sleep import sleep_setting
 
 
 def distance(a: float, b: float) -> float:
@@ -22,8 +22,8 @@ class QuietPhase:
 
 @dataclass(frozen=True, slots=True)
 class QuietWindow:
-    start: float = setting("default_start_minute")
-    end: float = setting("default_end_minute")
+    start: float = sleep_setting("default_start_minute")
+    end: float = sleep_setting("default_end_minute")
     phases: tuple[QuietPhase, ...] = ()
     adjusted_day: str = ""
 
@@ -33,9 +33,9 @@ class QuietWindow:
             (
                 sum(
                     abs(distance(p.start, anchor.start))
-                    <= setting("phase_similarity_minutes")
+                    <= sleep_setting("phase_similarity_minutes")
                     and abs(distance(p.end, anchor.end))
-                    <= setting("phase_similarity_minutes")
+                    <= sleep_setting("phase_similarity_minutes")
                     for p in self.phases
                 )
                 for anchor in self.phases
@@ -46,16 +46,16 @@ class QuietWindow:
     def record(self, phase: QuietPhase) -> QuietWindow:
         if any(p.day == phase.day for p in self.phases):
             return self
-        phases = (*self.phases, phase)[-int(setting("learned_phases")) :]
+        phases = (*self.phases, phase)[-int(sleep_setting("learned_phases")) :]
         # Largest similar cluster; ties prefer the established window.
         groups = [
             tuple(
                 p
                 for p in phases
                 if abs(distance(p.start, anchor.start))
-                <= setting("phase_similarity_minutes")
+                <= sleep_setting("phase_similarity_minutes")
                 and abs(distance(p.end, anchor.end))
-                <= setting("phase_similarity_minutes")
+                <= sleep_setting("phase_similarity_minutes")
             )
             for anchor in phases
         ]
@@ -63,9 +63,10 @@ class QuietWindow:
             groups, key=lambda g: (len(g), -abs(distance(g[0].start, self.start)))
         )
         updated = replace(self, phases=phases)
-        if len(group) < setting("tendency_phases") or self.adjusted_day == phase.day:
+        if (len(group) < sleep_setting("tendency_phases")
+                or self.adjusted_day == phase.day):
             return updated
-        limit = setting("maximum_daily_shift_minutes")
+        limit = sleep_setting("maximum_daily_shift_minutes")
 
         starts = [distance(p.start, self.start) for p in group]
         duration = (self.end - self.start) % 1440
@@ -131,7 +132,8 @@ class QuietWindow:
             return value
 
         phases = raw.get("phases")
-        if not isinstance(phases, list) or len(phases) > setting("learned_phases"):
+        if (not isinstance(phases, list)
+                or len(phases) > sleep_setting("learned_phases")):
             raise ValueError("Invalid quiet phases")
         if any(
             not isinstance(p, dict) or set(p) != {"day", "start", "end"} for p in phases
@@ -144,8 +146,8 @@ class QuietWindow:
         )
         if len(entries) != len(phases) or len({p.day for p in entries}) != len(entries):
             raise ValueError("Invalid quiet phase dates")
-        minimum = setting("minimum_phase_seconds") / 60
-        maximum = setting("maximum_phase_seconds") / 60
+        minimum = sleep_setting("minimum_phase_seconds") / 60
+        maximum = sleep_setting("maximum_phase_seconds") / 60
         if any(not minimum <= (p.end - p.start) % 1440 <= maximum for p in entries):
             raise ValueError("Invalid observed quiet duration")
         start, end = minute(raw.get("start")), minute(raw.get("end"))

@@ -15,9 +15,9 @@ from aiko_pet.application.active_time import (
     SessionInputs,
     advance_session_time,
 )
-from aiko_pet.application.care_time import CareTimeProgression
 from aiko_pet.application.object_consumption import ObjectConsumption
 from aiko_pet.application.session import PetSessionRestorer
+from aiko_pet.application.session_time import SessionTimeProgression
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.infrastructure.persistence import StateStore
@@ -48,7 +48,7 @@ class SleepResourceTests(unittest.TestCase):
             build_consumable_definitions(DEFAULT_CATALOG, load_item_catalog()),
         )
         self.memory = ObjectMemory()
-        self.progression = CareTimeProgression(self.world, self.memory)
+        self.progression = SessionTimeProgression(self.world, self.memory)
         self.pet = PetState(satiety=18, energy=20, updated_at=START)
         self.pet.interact("sleep", now=START)
 
@@ -79,7 +79,7 @@ class SleepResourceTests(unittest.TestCase):
             self.pet,
             inputs(START + seconds),
             START + seconds - self.pet.updated_at,
-            live=live,
+            reconstruct=not live,
         )
 
     def test_actual_known_food_reaches_target_and_counts_awake_break(self):
@@ -231,13 +231,14 @@ class SleepResourceTests(unittest.TestCase):
         )
         uptime = [0.0]
         clock = ActiveSessionClock(lambda: uptime[0])
-        clock.bind_progression(self.progression)
         uptime[0] = 3600
         with patch.object(
             self.memory, "record_consumption", side_effect=RuntimeError("failed")
         ):
             with self.assertRaises(RuntimeError):
-                advance_session_time(self.pet, clock, inputs(START + 3600))
+                advance_session_time(
+                    self.pet, clock, inputs(START + 3600), progression=self.progression,
+                )
         self.assertEqual(
             (
                 self.pet.capture_checkpoint(),
@@ -246,62 +247,55 @@ class SleepResourceTests(unittest.TestCase):
             ),
             before,
         )
-        advance_session_time(self.pet, clock, inputs(START + 3600))
+        advance_session_time(
+            self.pet, clock, inputs(START + 3600), progression=self.progression,
+        )
         self.assertEqual(self.pet.lived_seconds, 3600)
         self.assertEqual(self.world.snapshot().objects[0].state, ObjectState.CONSUMED)
 
-    def test_closed_and_small_unobserved_steps_agree_and_do_not_repeat(self):
+    def test_batch_steps_and_standby_agree_on_finite_stock(self):
         self.food("sandwich")
-        initial = (
-            self.pet.capture_checkpoint(),
-            self.world.snapshot(),
-            self.memory.snapshot(),
-        )
-        self.advance(8 * 3600)
-        expected = (
-            self.pet.capture_checkpoint(),
-            self.world.snapshot(),
-            self.memory.snapshot(),
-        )
-        self.pet.restore_checkpoint(initial[0])
-        self.world.restore_snapshot(initial[1])
-        self.memory.restore_snapshot(initial[2])
-        for seconds in range(15, 8 * 3600 + 1, 15):
-            self.advance(seconds)
-        self.assertEqual(self.world.snapshot(), expected[1])
-        for name in ("satiety", "energy", "social", "affection", "mood", "friendship"):
-            self.assertAlmostEqual(
-                getattr(self.pet, name), getattr(expected[0], name), delta=0.01
-            )
-        before = self.pet.capture_checkpoint(), self.world.snapshot()
-        self.advance(8 * 3600)
-        self.assertEqual((self.pet.capture_checkpoint(), self.world.snapshot()), before)
+        initial = (self.pet.capture_checkpoint(), self.world.snapshot(),
+                   self.memory.snapshot())
+        self.advance(3600)
+        expected = (self.pet.capture_checkpoint(), self.world.snapshot(),
+                    self.memory.snapshot())
+        for mode in ("steps", "standby"):
+            with self.subTest(mode=mode):
+                self.pet.restore_checkpoint(initial[0])
+                self.world.restore_snapshot(initial[1])
+                self.memory.restore_snapshot(initial[2])
+                if mode == "steps":
+                    for seconds in range(15, 3601, 15):
+                        self.advance(seconds)
+                else:
+                    uptime = [100.0]
+                    clock = ActiveSessionClock(lambda: uptime[0])
+                    uptime[0] += 3600
+                    advance_session_time(
+                        self.pet, clock, inputs(START + 3600),
+                        progression=self.progression,
+                    )
+                self.assertEqual(self.world.snapshot(), expected[1])
+                self.assertEqual(self.memory.snapshot(), expected[2])
+                for name in ("satiety", "energy", "social", "affection",
+                             "mood", "friendship"):
+                    self.assertAlmostEqual(
+                        getattr(self.pet, name), getattr(expected[0], name), delta=.01,
+                    )
 
-    def test_suspend_inclusive_clock_matches_closed_stock_reconstruction(self):
-        self.food("sandwich")
-        initial = (
-            self.pet.capture_checkpoint(),
-            self.world.snapshot(),
-            self.memory.snapshot(),
+    def test_awake_hunger_without_food_does_not_block_known_drink(self):
+        self.pet = PetState(satiety=0, energy=40, updated_at=START + 13 * 3600)
+        drink = self.food("energy_drink")
+        before = self.pet.friendship_history.last_contact
+        self.progression.advance(
+            self.pet, inputs(START + 13 * 3600 + 60, automatic=False), 60,
+            reconstruct=True,
         )
-        self.advance(8 * 3600)
-        expected = self.pet.capture_checkpoint(), self.world.snapshot()
-        self.pet.restore_checkpoint(initial[0])
-        self.world.restore_snapshot(initial[1])
-        self.memory.restore_snapshot(initial[2])
-        uptime = [100.0]
-        clock = ActiveSessionClock(lambda: uptime[0])
-        clock.bind_progression(self.progression)
-        uptime[0] += 8 * 3600
-        advance_session_time(self.pet, clock, inputs(START + 8 * 3600))
-        for name in ("satiety", "energy", "mood", "friendship"):
-            self.assertAlmostEqual(
-                getattr(self.pet, name), getattr(expected[0], name), delta=0.01
-            )
-        self.assertEqual(self.world.snapshot(), expected[1])
-        before = encode_pet_state(self.pet)
-        advance_session_time(self.pet, clock, inputs(START + 8 * 3600))
-        self.assertEqual(encode_pet_state(self.pet), before)
+        self.assertEqual(self.world.get(drink.instance_id).state, ObjectState.CONSUMED)
+        self.assertGreater(self.pet.energy, 40)
+        self.assertEqual(self.pet.friendship_history.last_contact, before)
+        self.assertEqual(self.pet.friendship_history.rewards, ())
 
     def test_legacy_relationship_migration_is_neutral_across_resource_steps(self):
         self.food("sandwich")

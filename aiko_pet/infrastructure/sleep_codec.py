@@ -6,7 +6,7 @@ import math
 from dataclasses import asdict
 from typing import Any
 
-from ..pet.sleep import SleepEpisode, setting
+from ..pet.sleep import SleepEpisode, sleep_setting
 
 
 def encode_sleep(episode: SleepEpisode) -> dict[str, Any]:
@@ -55,9 +55,10 @@ def decode_sleep(raw: Any, elapsed: float) -> SleepEpisode:
     if (
         raw["started"] > elapsed
         or raw["slept_seconds"] > elapsed - raw["started"] + 0.01
-        or raw["protect_until"] > elapsed + setting("manual_protection_seconds") + .01
-        or raw["search_until"] > elapsed + setting("search_seconds") + .01
-        or raw["intake_until"] > elapsed + setting("portion_seconds") + .01
+        or raw["protect_until"]
+        > elapsed + sleep_setting("manual_protection_seconds") + .01
+        or raw["search_until"] > elapsed + sleep_setting("search_seconds") + .01
+        or raw["intake_until"] > elapsed + sleep_setting("portion_seconds") + .01
         or raw["wake_wall"] > 4_000_000_000
         or (not raw["kind"] and (raw["care_break"] or raw["food_failed"]))
     ):

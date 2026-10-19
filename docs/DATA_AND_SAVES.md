@@ -248,7 +248,7 @@ and closed time creates no sensory evidence or learned human activity.
 
 Live autonomous consumption requires an observed/remembered World portion and
 the normal interaction sequence. Restoration constructs World and acquired
-knowledge before `CareTimeProgression` coordinates closed-time consumption.
+knowledge before `SessionTimeProgression` coordinates closed-time consumption.
 Only previously identified, actually accessible stock can be used. The same
 `ObjectConsumption` transaction owns removal, nutrition and memory; a failed
 joint progression restores pet/World/memory and the live clock together.

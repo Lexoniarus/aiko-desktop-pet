@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from .balance import BALANCE
 
 
-def setting(name: str) -> float:
+def sleep_setting(name: str) -> float:
     return BALANCE.number("sleep", name)
 
 
@@ -32,8 +32,8 @@ class SleepEpisode:
 class SleepContext:
     """Expected local window plus fresh anonymous input, never hardware load."""
 
-    start_minute: float = setting("default_start_minute")
-    end_minute: float = setting("default_end_minute")
+    start_minute: float = sleep_setting("default_start_minute")
+    end_minute: float = sleep_setting("default_end_minute")
     idle_seconds: float | None = None
     active_seconds: float = 0.0
     blocked: bool = False
@@ -48,13 +48,13 @@ class SleepContext:
     ) -> SleepContext:
         return cls(
             idle_seconds=(
-                setting("quiet_seconds")
+                sleep_setting("quiet_seconds")
                 if bedtime is True or nap
                 else 0.0
                 if bedtime is False
                 else None
             ),
-            active_seconds=setting("return_seconds") if interrupt else 0.0,
+            active_seconds=sleep_setting("return_seconds") if interrupt else 0.0,
             blocked=bedtime is False and not nap,
             observed=bedtime is not None or nap or interrupt,
         )
@@ -91,20 +91,19 @@ class SleepTransition:
     episode: SleepEpisode
 
 
-def manual_command(
-    episode: SleepEpisode,
+def calculate_manual_sleep_transition(
     *,
     sleeping: bool,
     elapsed: float,
     wall: float,
     context: SleepContext,
 ) -> SleepTransition:
-    protection = elapsed + setting("manual_protection_seconds")
+    protection = elapsed + sleep_setting("manual_protection_seconds")
     if sleeping:
         return SleepTransition(False, SleepEpisode(protect_until=protection))
     inside, _, end = context.window(wall)
     kind = "main" if inside else "nap"
-    wake = end if inside else wall + setting("nap_seconds")
+    wake = end if inside else wall + sleep_setting("nap_seconds")
     return SleepTransition(True, SleepEpisode(kind, elapsed, 0, wake, protection))
 
 
@@ -120,12 +119,12 @@ def sleep_transition(
 ) -> SleepTransition:
     """Evaluate manual grace, recovery, endpoints, return and ordinary sleep."""
     inside, start, end = context.window(wall)
-    quiet = context.idle_seconds is not None and context.idle_seconds >= setting(
+    quiet = context.idle_seconds is not None and context.idle_seconds >= sleep_setting(
         "quiet_seconds"
     )
     if not context.observed:
-        quiet = inside and wall >= start + setting("quiet_seconds")
-    active = context.active_seconds >= setting("return_seconds")
+        quiet = inside and wall >= start + sleep_setting("quiet_seconds")
+    active = context.active_seconds >= sleep_setting("return_seconds")
     if elapsed < episode.protect_until:
         return SleepTransition(sleeping, episode)
     if episode.care_break:
@@ -137,40 +136,50 @@ def sleep_transition(
                 "main" if inside else "nap",
                 elapsed,
                 0,
-                end if inside else wall + setting("nap_seconds"),
+                end if inside else wall + sleep_setting("nap_seconds"),
             )
-        if episode.kind == "nap" and energy <= setting("exhaustion_energy"):
+        if episode.kind == "nap" and energy <= sleep_setting("exhaustion_energy"):
             episode = replace(episode, kind="recovery")
         if episode.kind == "main":
-            wake = wall >= episode.wake_wall and energy >= setting("wake_energy")
+            wake = wall >= episode.wake_wall and energy >= sleep_setting("wake_energy")
             wake |= (
                 active
-                and energy >= setting("early_main_energy")
-                and episode.slept_seconds >= setting("early_main_sleep_seconds")
+                and energy >= sleep_setting("early_main_energy")
+                and episode.slept_seconds >= sleep_setting("early_main_sleep_seconds")
             )
         elif episode.kind == "recovery":
-            wake = energy >= setting("wake_energy")
+            wake = energy >= sleep_setting("wake_energy")
             if wake and inside and quiet and automatic:
                 return SleepTransition(
                     True, replace(episode, kind="main", wake_wall=end)
                 )
         else:
             wake = (
-                wall >= episode.wake_wall and energy >= setting("nap_wake_energy")
-            ) or (active and energy >= setting("nap_wake_energy"))
+                wall >= episode.wake_wall and energy >= sleep_setting("nap_wake_energy")
+            ) or (active and energy >= sleep_setting("nap_wake_energy"))
         if wake:
             return SleepTransition(False, SleepEpisode())
         return SleepTransition(True, episode)
     if not automatic or context.blocked:
         return SleepTransition(False, episode)
     kind = ""
-    if energy <= setting("exhaustion_energy"):
+    if energy <= sleep_setting("exhaustion_energy"):
         kind = "recovery"
     elif inside and quiet:
         kind = "main"
-    elif not inside and quiet and energy <= setting("nap_energy"):
+    elif not inside and quiet and energy <= sleep_setting("nap_energy"):
         kind = "nap"
     if not kind:
         return SleepTransition(False, episode)
-    wake_wall = end if kind == "main" else wall + setting("nap_seconds")
+    wake_wall = end if kind == "main" else wall + sleep_setting("nap_seconds")
     return SleepTransition(True, SleepEpisode(kind, elapsed, 0, wake_wall))
+
+
+def sleep_care_complete(
+    episode: SleepEpisode, *, satiety: float, elapsed: float,
+) -> bool:
+    """One completion rule for reconstructed care and safe live interruption."""
+    return episode.care_break and (
+        elapsed >= episode.search_until
+        or (satiety >= sleep_setting("food_target") and elapsed >= episode.intake_until)
+    )

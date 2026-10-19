@@ -138,7 +138,7 @@ class DesktopPet:
         services = assemble_application(
             state=self.state, settings=self.settings, mind=self.mind,
             adaptive=self.adaptive, monitor=self.activity_monitor,
-            clock=active_clock,
+            clock=active_clock, progression=self._world_access,
             callbacks=ActivityCallbacks(
                 speech_busy=lambda: self._reaction_player.pending_timer is not None,
                 read_idle_seconds=idle_seconds_windows,

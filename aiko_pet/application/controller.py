@@ -10,7 +10,12 @@ from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
 from ..pet.routine import TimeContext, context_at
 from ..pet.state import PetState
-from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
+from .active_time import (
+    ActiveSessionClock,
+    SessionInputs,
+    TimeProgression,
+    advance_session_time,
+)
 from .commands import CareCommand
 
 
@@ -41,15 +46,19 @@ class CareController:
         adaptive: AdaptiveRoutine,
         *,
         clock: ActiveSessionClock,
+        progression: TimeProgression | None = None,
     ) -> None:
         self._state = state
         self._mind = mind
         self._adaptive = adaptive
         self._clock = clock
+        self._progression = progression
 
     def execute(self, command: CareCommand, inputs: SessionInputs) -> CareOutcome:
         """Preserve the original ordering of time, dialogue and care changes."""
-        advance_session_time(self._state, self._clock, inputs)
+        advance_session_time(
+            self._state, self._clock, inputs, progression=self._progression,
+        )
         self._adaptive.note_interaction(inputs.wall_time)
         context = context_at(inputs.wall_time)
         before = self._mind.observe_care(

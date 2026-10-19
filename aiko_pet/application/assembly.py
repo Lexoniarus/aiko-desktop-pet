@@ -8,7 +8,7 @@ from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.workload_events import WorkloadEventDetector
 from ..pet.state import PetState
-from .active_time import ActiveSessionClock
+from .active_time import ActiveSessionClock, TimeProgression
 from .activity import ActivityCallbacks, ActivityCoordinator
 from .controller import CareController
 from .cursor_observation import CursorObservation
@@ -32,18 +32,19 @@ def assemble_application(
     *, state: PetState, settings: PetSettings, mind: PetMind,
     adaptive: AdaptiveRoutine, monitor: ComputerObservation,
     callbacks: ActivityCallbacks, clock: ActiveSessionClock,
+    progression: TimeProgression | None = None,
 ) -> ApplicationComponents:
     """Build one coherent graph; no duplicate pet or conversation memory."""
     cursor_observation = CursorObservation(mind.cursor_attention)
     router = ApplicationRouter(
-        CareController(state, mind, adaptive, clock=clock),
+        CareController(state, mind, adaptive, clock=clock, progression=progression),
         game_experience=GameExperienceCoordinator(
-            state, mind, adaptive, clock=clock,
+            state, mind, adaptive, clock=clock, progression=progression,
         ),
     )
     workload_events = WorkloadEventDetector()
     activity = ActivityCoordinator(
         state, settings, mind, adaptive, workload_events, monitor,
-        callbacks, clock=clock,
+        callbacks, clock=clock, progression=progression,
     )
     return ApplicationComponents(router, activity, workload_events, cursor_observation)

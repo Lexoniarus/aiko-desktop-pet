@@ -13,7 +13,12 @@ from ..pet.fun import GameExperience
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.state import PetState
-from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
+from .active_time import (
+    ActiveSessionClock,
+    SessionInputs,
+    TimeProgression,
+    advance_session_time,
+)
 
 
 def experience_from_rock_paper_scissors(score: Score) -> GameExperience:
@@ -41,11 +46,13 @@ class GameExperienceCoordinator:
     def __init__(
         self, state: PetState, mind: PetMind, adaptive: AdaptiveRoutine, *,
         clock: ActiveSessionClock,
+        progression: TimeProgression | None = None,
     ) -> None:
         self._state = state
         self._mind = mind
         self._adaptive = adaptive
         self._clock = clock
+        self._progression = progression
 
     def complete(
         self, experience: GameExperience, inputs: SessionInputs,
@@ -53,7 +60,9 @@ class GameExperienceCoordinator:
         """Account for elapsed awake time, then commit exactly one session."""
         if experience.completed_units == 0:
             return GameExperienceOutcome(0.0, self._state.fun)
-        advance_session_time(self._state, self._clock, inputs)
+        advance_session_time(
+            self._state, self._clock, inputs, progression=self._progression,
+        )
         gained = self._state.record_game_experience(
             experience, now=inputs.wall_time,
         )

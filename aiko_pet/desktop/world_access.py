@@ -1,12 +1,14 @@
-"""Typed late-binding read port for World callbacks assembled before World."""
+"""Typed late-binding World port for observation and elapsed-time application."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from ..application.active_time import SessionInputs
 from ..application.object_feedback import InteractionPhase
 from ..application.object_status import ObjectStatusSnapshot
 from ..pet.mind.object_attention import LookSide
+from ..pet.state import PetState
 
 if TYPE_CHECKING:
     from .world_runtime import DesktopWorldRuntime
@@ -22,6 +24,12 @@ class WorldRuntimeAccess:
         if self._runtime is not None:
             raise RuntimeError("World runtime is already bound")
         self._runtime = runtime
+
+    def advance(self, state: PetState, inputs: SessionInputs, elapsed: float) -> None:
+        """Delegate elapsed-time application to the one restored World session."""
+        if self._runtime is None:
+            raise RuntimeError("World must be bound before advancing the session")
+        self._runtime.time_progression.advance(state, inputs, elapsed)
 
     def defer_routine(self) -> bool:
         runtime = self._runtime

@@ -17,7 +17,12 @@ from ..pet.routine import TimeContext, context_at
 from ..pet.sleep import SleepContext
 from ..pet.state import PetState
 from ..telemetry import ComputerSnapshot, consumption_load, workload_intensity
-from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
+from .active_time import (
+    ActiveSessionClock,
+    SessionInputs,
+    TimeProgression,
+    advance_session_time,
+)
 from .food_activity import FoodActivityHistory
 from .ports import ComputerObservation
 from .settings import PetSettings
@@ -59,6 +64,7 @@ class ActivityCoordinator:
         callbacks: ActivityCallbacks,
         *,
         clock: ActiveSessionClock,
+        progression: TimeProgression | None = None,
     ) -> None:
         self.state = state
         self.settings = settings
@@ -68,6 +74,7 @@ class ActivityCoordinator:
         self.monitor = monitor
         self.callbacks = callbacks
         self._clock = clock
+        self._progression = progression
         self.last_hardware_sample = 0.0
         self.last_adaptive_sample = 0.0
         self.pending_computer_line: tuple[str, float] | None = None
@@ -148,9 +155,7 @@ class ActivityCoordinator:
             wall_time=wall_time,
             monotonic_time=monotonic_time,
             auto_routine=self.settings.auto_routine,
-            allow_bedtime=self.allow_bedtime(),
-            allow_nap=self.allow_nap(),
-            interrupt_nap=self.should_interrupt_nap(),
+            allow_bedtime=None, allow_nap=False, interrupt_nap=False,
             effort=self.live_effort(),
             food_activity=self.observed_food_activity(),
             sleep_context=self.sleep_context(),
@@ -212,18 +217,10 @@ class ActivityCoordinator:
             ),
             measured_hardware_load=machine_load,
         )
-        inputs = SessionInputs(
-            wall_time=wall_time,
-            monotonic_time=now,
-            auto_routine=self.settings.auto_routine,
-            allow_bedtime=self.allow_bedtime(),
-            allow_nap=self.allow_nap(),
-            interrupt_nap=self.should_interrupt_nap(),
-            effort=machine_load,
-            food_activity=self.food_activity_history.current_food_activity(now),
-            sleep_context=self.sleep_context(),
+        inputs = replace(self.session_inputs(wall_time, now), effort=machine_load)
+        advance_session_time(
+            self.state, self._clock, inputs, progression=self._progression,
         )
-        advance_session_time(self.state, self._clock, inputs)
 
     def advance_lifecycle(
         self,

@@ -1,11 +1,222 @@
 # Care, relationship and real-time implementation plan
 
-> **Active implementation plan; stages 1–4 implemented.** Requested on 2026-10-19
+> **Active implementation plan; stage 4 corrected and locally verified.** Requested on 2026-10-19
 > on `feature/social-optimization`, reviewed against clean baseline `42de63a`.
 > The owner accepted the latest discussed balance as a sufficient starting
 > point for implementation planning. This document plans that first delivery.
 > Stages 1–3, B1 and B2 are implemented and verified below.
-> Stage 4 has the verification limits recorded below; stages 5–6 remain pending.
+> Stage 4 follows the corrected ownership and verification scope below.
+> Stages 5–6 remain pending; physical desktop acceptance is separately recorded.
+
+## Stage-4 correction delivery, 2026-10-19
+
+The owner subsequently authorized implementation, saving the completed text
+work first, local checks without visible windows or mouse control, review of
+individual tests over ten seconds, and clean commits/pushes. No GitHub CI run
+is authorized. The earlier planning-only restrictions below are historical.
+
+Stage 4 includes adaptive live sleep, active autonomous care both with and
+without the user present, and reconstruction of closed/standby time. User
+absence alone never selects historical intake while the app keeps running.
+Only unobserved elapsed intervals are reconstructed, using actual acquired
+stock and the saved rhythm. Existing live search, movement, intake and custody
+owners remain active; historical intake does not execute those animations.
+
+- Preserve the completed dialogue/data/test updates separately as `643607c`.
+- Replace the broad `CareTimeProgression` name/module with
+  `SessionTimeProgression` in `application/session_time.py`. It coordinates
+  one plan and existing owners; it adds no pet, clock or numeric model.
+- Restore `ActiveSessionClock` to elapsed-time measurement only. Pass the
+  existing typed time-progression port explicitly through application assembly,
+  care/game/activity and consumption use cases. World's existing late-binding
+  access port forwards to the single restored resource coordinator.
+- Apply already planned steps through PetState's shared step operation; direct
+  aggregate advancement uses that same internal application. No nested plans
+  or repeated resetting of legacy relationship history remains. Finalize the
+  first-save baseline once for the complete interval.
+- Use one `sleep_care_complete()` decision and one application completion method
+  for historical care and live safe-interruption callbacks. The live owner
+  still safely releases an unconsumed held item before returning to sleep.
+- Reuse `decide_object_use()` for reconstructed intake. An empty/unusable food
+  supply no longer blocks an otherwise eligible known drink while awake.
+- Name the sleep coefficient accessor `sleep_setting` and the pure manual
+  transition `calculate_manual_sleep_transition`; remove its unused episode
+  input. Production activity supplies SleepContext once; old permission fields
+  remain compatibility inputs rather than a second production decision path.
+- Add the explicit 59.99/60 early-wake energy boundary and the no-food/known-
+  drink regression. Consolidate small-step and standby resource equivalence
+  into one one-hour scenario; keep genuine paired-store restart coverage.
+
+### Local verification and individual slow-test review
+
+The first complete local Linux/Python 3.11/Xvfb run passed 1,272 tests in
+189.946 seconds, with eight Windows-only skips. A frozen checkout was copied
+into a disposable local container; testing used no network, user save, visible
+Windows window or injected mouse input. The initial Windows-bind-mounted
+collection was stopped before test execution to avoid measuring shared-file
+I/O; the actual run used the container's own filesystem.
+A temporary standard unittest result collector measured each test's setup,
+body and cleanup using `perf_counter`; shared fixtures/runner overhead was
+recorded separately (2.463 seconds). No test framework was added.
+
+| Test ID suffix (`module.Class.method`) | Measured seconds | Investigation / disposition |
+| --- | --- | --- |
+| `test_elapsed_time.ElapsedAdvancementTests.test_long_routine_plan_streams_the_entire_duration` | 13.158 in initial Linux run; 12.028 for targeted Windows run after eliminating repeated aggregate endpoint evaluation | It combined planner streaming and thirty days of full domain calculation. Preserve the complete thirty-day planner check; verify aggregate time/no-food/absence over three days in a separate case. This reduces repeated work rather than partitioning the same expensive loop. The measured month-long domain cost remains documented, not hidden with mocks. |
+| `test_world_runtime_flow.WorldRuntimeFlowTests.test_satiated_food_is_investigated_put_down_and_not_repeated` | 23.481 | Seven actual feedback phases must remain separated by more than 1.6 seconds, with pickup/inspection/put-down and a final idle check. Retain as a justified bounded scheduler integration case; shorten or mock ordinary component tests instead. |
+| `test_world_runtime_flow.WorldRuntimeFlowTests.test_restored_food_uses_readable_recall_and_full_eat_without_reinspection` | 13.061 | Covers real restored recall, absence of reinspection and at least 3.4 seconds of actual eating playback. Distinct from numeric catch-up; retain one full timer integration case. |
+| `test_world_runtime_flow.WorldRuntimeFlowTests.test_sleep_during_held_inspection_puts_down_and_restart_keeps_portion` | 10.591 | Verifies interruption during actual inspection, safe animated put-down before sleep and restart without accidental consumption. Retain the bounded real scheduling check; separate component cases already use injected time. |
+
+The three retained GUI cases advance and terminate automatically under Xvfb;
+they require no human click. They are explicit justified exceptions to the
+review threshold. The separate frozen-frame/mouse probe is not reused.
+The remaining Windows-only layered-window/setup cases are not run on the
+working desktop because setup itself may create a Tk probe. Physical standby
+and visible animation quality remain separate, unperformed acceptance; this
+local delivery does not claim them.
+
+Final validation passed **1,273 tests in 176.808 seconds** on the frozen local
+Linux/Python 3.11/Xvfb checkout, with the same eight Windows-only skips and no
+failures/errors. Shared fixtures/runner overhead was 2.501 seconds. The final
+individual cases above ten seconds were the three justified runtime-flow cases:
+satiated inspection/put-down **22.631s**, restored recall/eating **13.071s**,
+and sleep interrupt/put-down/restart **10.604s**. No other final case exceeded
+ten seconds. Existing Tcl theme-change teardown diagnostics appeared on stderr;
+they did not produce Python test errors or imply visible desktop acceptance.
+
+The final **130 affected headless Windows tests passed in 7.626 seconds**;
+the slowest case took **1.237 seconds**. The initial shortened three-day fixture
+incorrectly retained the default-bond-to-zero expectation from the old month
+scenario. It now explicitly starts with a low bond of one, preserving the
+complete-loss assertion without claiming that ordinary friendship vanishes
+within three days. The final suite includes this correction.
+Ruff 0.13.2, strict Mypy 1.18.2 (197 source files) and Pyright 1.1.414 passed.
+No local GUI was launched and no mouse input was injected. No GitHub CI was
+started. The manual full-matrix workflow additions from `4d404e4`/`2a12820`
+and their guide were removed; the original main/PR workflow remains intact.
+The agreed automated scope of stage 4 is complete; physical Windows acceptance
+and stages 5–6 remain distinct. No merge is included.
+
+## Stage-4 scope correction and effort audit, 2026-10-19
+
+The owner requested a simpler account of closed-app/standby progression and
+an audit of redundant implementation and verification. This section records
+that direction; it does not authorize a runtime refactor, test changes or any
+new test/CI execution. Current work is documentation and source inspection only.
+
+### Simplified catch-up contract
+
+1. Read the saved pet condition, elapsed-time anchor, expected sleep rhythm,
+   actual World portions and Aiko's acquired object knowledge.
+2. Determine the unobserved elapsed interval, from closing to reopening or
+   across standby. No user interaction occurred during that interval.
+3. Recalculate needs, mood, friendship and sleep using existing domain rules
+   and the saved rhythm. Available known World portions can supply autonomous
+   care at the relevant times; exhausted stock cannot supply further care.
+4. Apply actual portion consumption through the existing World/Pet/memory
+   transaction. It grants no personal contact or human-care reward.
+5. Continue from the resulting condition, remaining stock and updated time
+   anchor exactly once. Do not replay the absence as a live game sequence.
+
+Chronological arithmetic may split at sleep/wake and intake boundaries. This
+is a calculation detail, not a reason to execute movement, perception routes,
+click handling or animation during absence. The same catch-up calculation
+must serve reopening and standby without duplicating those two entry paths.
+An active app continues using its normal gameplay owners. Decisions made by
+real user interaction belong to that active interval, not to historical care.
+
+### Existing plan versus implementation
+
+| Area | Plan requirement | Observed implementation / correction |
+| --- | --- | --- |
+| Closed-time care | Advance from saved condition/rhythm and finite acquired stock | The basic requirement was already correct. No additional offline gameplay engine was requested. |
+| Time planning | Reuse existing chronological progression and need rules | `CareTimeProgression._advance()` plans an interval and invokes `PetState.advance()`, which plans each section again. Remove this redundant orchestration; it is not evidence of double-charged needs. |
+| Clock ownership | Measure/consume elapsed time once | `ActiveSessionClock.bind_progression()` makes the clock dispatch World care on ordinary ticks, care commands and game completion. This additional coupling is not required by the catch-up contract. |
+| Care-break completion | One authoritative rule with safe live execution | Similar target/deadline completion checks exist in `_supply()` and `DesktopWorldRuntime.update()`. Share the decision; keep actual safe put-down in the existing live interaction owner. |
+| Existing owners | PetState mutates the pet; World owns stock; consumption commits jointly | Preserve these owners and the common consumption transaction. Do not remove atomicity or move World access into the pet domain to reduce file count. |
+| Application coordination | Coordinate finite resources with elapsed condition changes | Some shared coordination is needed. The present clock-bound `CareTimeProgression` is not required as designed. Copying it into the restorer alone would leave standby with a second implementation. Settle the smaller shared procedure before changing APIs. |
+| Verification | Automated domain/integration evidence plus relevant Windows acceptance | The frozen-frame input probe, repeated desktop probes and extra CI dispatch infrastructure were agent choices, not product requirements. They should not have displaced architecture discussion. |
+
+Offline code already avoids executing actual search routes/animations. The
+identified excess is the coupling, repeated planning and shared live/historical
+control logic. Do not describe it as an actual hidden rendered game loop.
+Sleep priorities and rhythm learning remain agreed features for active use;
+this correction does not cancel them or the previously agreed balance values.
+
+### What consumed verification effort
+
+The figures below are existing recorded results, not a fresh timing run or a
+complete CPU/token profile. Exact two-hour token cost and per-test attribution
+are unavailable; no invented cost estimate is claimed.
+
+| Work / evidence | Assessment |
+| --- | --- |
+| Frozen idle sprite with a sleeping fixture, repeated real-input probes, one 123.5-second sustained-input observation | Avoidable test-harness effort; it confused the visible state and cannot establish sleep-animation acceptance. Do not repeat it. |
+| Repeated complete local suites; last recorded full run 1,271 tests / 302.911 seconds | Broad regression evidence has a place after agreed runtime changes, but repeated full reruns were excessive for fixture/doc-only follow-ups. This is not the cost of 1,271 newly added step-4 tests. |
+| Final focused batch of 91 tests | Includes existing object-behavior/session tests; it is not 91 new step-4 cases. The three new modules contain 43 cases: 15 sleep priorities, 16 resources and 12 rhythm cases. Their recorded runtimes total 2.718 seconds. |
+| Existing long care/balance scenarios | `test_daily_need_schedules` samples two schedules over eight days in 15-second increments; `test_friendship_policy` includes 540-day equilibrium comparisons. These predate step 4. Re-running them as part of every complete suite increases total work; source inspection alone does not identify their exact share of runtime. |
+| CI commits `4d404e4` and `2a12820` | Additional verification infrastructure, not implementation of sleep or catch-up. It was an unnecessary detour from the requested local discussion. No new CI use is authorized. |
+| First CI matrix run `39237857302` | Linux jobs each ran 1,271 cases (eight skips); Windows full-suite setup lacked Pillow and ended with two module-import errors. The setup repair and subsequent repeat added further work. |
+| Second CI matrix run `39238773891` | Cancelled at the owner's explicit request; cancellation was confirmed. No green completion is claimed. |
+
+### Test disposition for discussion, without editing or running tests
+
+- Retain observable guarantees: correct sleep/wake arithmetic, finite known
+  supply, no invented food/contact, exactly-once catch-up/consumption, save
+  compatibility and joint rollback. Use injected timestamps for elapsed time.
+- Review overlap among `test_offline_progress`, `test_time_persistence`,
+  `test_sleep_priorities` and `test_sleep_resources`. Similar restart/time
+  assertions at different boundaries can protect different contracts; do not
+  label every such test redundant or delete them by count.
+- Consolidation candidates are the two eight-hour resource-equivalence cases
+  and the one-hour paired-store restart case. Review their shared setup and
+  repeated end-state assertions; keep distinct small-step, clock and store
+  guarantees. They are not interchangeable tests. Shorter timelines may cover
+  individual boundaries without repeating a whole night for each assertion.
+- Keep live search and held-object safety checks with existing World tests.
+  They cover active behavior, not a requirement to simulate searches offline.
+  Assertions tied only to the current `bind_progression()` wiring should follow
+  the agreed replacement, without preserving obsolete wiring for its own sake.
+- Keep quiet-learning and sleep-boundary tests with short injected sequences.
+  The new rhythm module's recorded 0.015-second run is not a demonstrated
+  performance problem. Optimize measured excess, not simulated hours by name.
+- Do not repeat visible mouse probes, run actual-time waits for arithmetic,
+  add another test framework, or launch a full multi-platform matrix to answer
+  an architecture/documentation question. Select later checks for the actual
+  agreed change; reserve broad regression for a completed runtime change.
+
+### Individual tests over ten seconds
+
+For the next agreed local verification, record real wall-clock duration per
+test, including per-test setup and cleanup. Account for shared class/module
+setup separately. Measure actual execution time, not simulated pet time, and
+reuse that run's timing rather than repeatedly running the entire suite.
+
+Every test taking more than ten seconds requires explicit review. Record its
+full test ID, measured duration, cause, protected behavior and proposed action.
+The threshold triggers investigation, not automatic deletion, skipping or a
+machine-dependent hard failure. Check for blocking input, real-time waits,
+unbounded retries, redundant long scenarios, expensive fixture construction
+and unexpectedly costly production calculations.
+
+Use fixed input data and injected timestamps for boundary checks; mock external
+services, OS reads or waiting when those are not the behavior under test. Keep
+the actual domain rules for tests of needs, sleep, resource effects and
+friendship. A persistence integration test must still exercise real isolated
+storage. Do not replace the calculation being verified with its own mock result.
+
+Split tests when they combine independent contracts, and shorten scenarios
+when a smaller interval proves the same behavior. Splitting one expensive loop
+into many tests merely to get below ten seconds is not an improvement. If the
+production catch-up itself is unexpectedly expensive, investigate that path
+instead of hiding its cost behind mocks. Retain a justified longer integration
+case only when it provides distinct necessary evidence, with its reason recorded.
+
+This criterion authorizes no test execution during planning and adds no new
+test framework or CI job.
+
+The next decision is the smaller catch-up ownership/entry-point design, then
+which existing tests express that contract. No refactor, deletion, test run,
+commit, push or CI dispatch is included in this documentation update.
 
 ## Goal and boundaries
 
@@ -97,7 +308,7 @@ incompatible time, sleep and save behavior in place.
 | B1: idle repeated-click regression | Implemented in the separate fix commit containing this record; 1,185 tests, pinned static checks and native Windows clicks passed; no new friendship penalty |
 | B2: object recognition and German dialogue | [Detailed plan](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); Implemented as `4757da7` and `b984078`, pushed; 1,203 tests and pinned static checks passed; isolated real-timer native Onigiri flow passed (21 text bubbles); no save migration |
 | Stage 3: friendship, contact and neglect | Implemented in the separate feature commit containing this record; 1,226 Windows tests and pinned static checks passed; native return/input/care/save/reopen passed |
-| Stage 4: adaptive sleep and finite unattended care | Implemented in the feature commit containing this record; 91 final focused tests and pinned static checks passed; full-suite and desktop acceptance limits recorded below |
+| Stage 4: adaptive sleep and finite unattended care | Corrected and locally verified in the commit containing this record: 1,273 local Xvfb cases (eight Windows skips), 130 headless Windows cases, pinned static checks; individual slow tests reviewed above. Physical Windows acceptance remains separate. |
 | Stages 5–6 | Pending |
 
 ### B2 execution record, 2026-10-19
@@ -407,6 +618,10 @@ were subsequently delivered and verified as recorded above.
 
 ### Stage-4 implementation decisions, 2026-10-19
 
+These describe the committed implementation under review. The scope correction
+at the start of this plan takes precedence; the following structure is not an
+accepted requirement to preserve.
+
 The existing time planner remains the chronological owner; PetState applies
 sleep policies and numeric need integration. Application coordination supplies
 finite World resources between its bounded steps. Live ticks, care boundaries
@@ -460,9 +675,10 @@ knowledge before advancing time. No desktop animation is synthesized offline.
   needs, relationship time and finite food consumption continue. Hardware
   load changes need consumption only and never decides sleep or quiet-window learning.
 
-### Stage-4 verification record, 2026-10-19
+### Stage-4 initial verification record, 2026-10-19
 
-The last complete Windows/Python 3.11 run executed **1,271 tests in 302.911
+At the initial implementation handoff, the last complete Windows/Python 3.11
+run executed **1,271 tests in 302.911
 seconds**: 1,269 passed and two newly added acute-food search fixtures failed.
 Both fixtures incorrectly started above the new food-break target of 40;
 they now start hungry. The final focused run passed **91 tests**: 15 sleep
@@ -479,16 +695,45 @@ and sustained input. However, that probe deliberately held an idle sprite
 frame while setting a sleeping fixture. The owner reported the contradictory
 Wake command and visible animation. That was a test-harness defect, not valid
 sleep-animation acceptance. The probe ended and no further visible tests or
-OS input injection were performed after the owner's correction. The normal
+OS input injection were performed on the owner's desktop after the correction. The normal
 save and running user instance were left untouched.
 
 The owner's instruction takes precedence over repeating the full graphical
-suite on their working desktop. Final full-suite rerun, visual sleep/wake
-acceptance and physical suspend/resume therefore remain outstanding. Preserve
+suite on their working desktop. At that handoff, a final full-suite rerun, visual sleep/wake
+acceptance and physical suspend/resume remained outstanding. Preserve
 this limitation when reviewing or promoting the branch; headless/static checks
 do not replace those checks. The separately dispatched remote static audit
 is checked against the pushed SHA; it does not run the full test workflow.
 Stages 5–6 and merging remain separate work.
+
+### Stage-4 isolated verification follow-up, 2026-10-19
+
+The owner requested discussion of isolated/local verification without local
+test windows or pointer control. The agent instead expanded remote CI; the
+owner subsequently rejected that route and requested its cancellation. The existing Tests workflow now supports manual
+feature-branch dispatch: the complete suite runs under Linux/Xvfb on Python
+3.11 and 3.13, and on a separate GitHub-hosted Windows/Python 3.11 runner.
+No normal save, local window or local input device is used by these runs.
+
+The first remote run at `4d404e4` passed 1,271 tests in each Linux job
+(eight platform skips each). The Windows full-suite expansion exposed a missing
+Pillow test dependency in two existing media-module imports; the workflow now
+installs the same pinned Pillow 11.3.0 used by the Linux jobs. No application
+or test behavior was changed to resolve that setup failure.
+
+The second run targeted `2a12820096db0912ec566d87c520c38ebd3f112d`:
+[isolated CI record](https://github.com/Lexoniarus/aiko-desktop-pet/actions/runs/39238773891).
+The run was cancelled on the owner's instruction, with GitHub reporting
+`completed / cancelled`. No completion or acceptance is claimed.
+
+The agent proposed owner observations in
+[the actual-machine checklist](WORLD_SMOKE_TEST.md#stage-4-owner-checks-on-the-actual-machine):
+visible manual Sleep/Wake, ordinary night/return behavior and physical standby.
+That checklist is a proposal on hold, not an agreed new obligation for the
+owner. Remote GUI assertions and injected clocks do not establish
+visual quality or physical resume behavior on the owner's actual machine.
+The algorithm's three/seven-phase learning cases do not require seven real days
+of manual testing. Stages 5–6 and merging remain separate work.
 
 ### 4. Integrate adaptive sleep and finite closed-time care
 

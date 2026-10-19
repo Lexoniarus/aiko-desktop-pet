@@ -28,6 +28,7 @@ from .friendship import (
 from .friendship_history import FriendshipHistory, FriendshipProgress
 from .fun import GameExperience, calculate_game_session_fun
 from .lifecycle import (
+    SimulationStep,
     calculate_daily_routine,
     plan_pet_time,
 )
@@ -36,7 +37,7 @@ from .need_decay import (
     calculate_need_decay,
 )
 from .routine import TimeContext, context_at, due_meal
-from .sleep import SleepContext, SleepEpisode, manual_command
+from .sleep import SleepContext, SleepEpisode, calculate_manual_sleep_transition
 from .state_values import PetValues, PreparedItemConsumption
 from .status_hints import MoodHint, choose_mood_hint
 from .value_rules import clamp_need_value
@@ -333,29 +334,61 @@ class PetState:
         observation = sleep_context or SleepContext.permissions(
             allow_bedtime, allow_nap, interrupt_nap,
         )
+        wall = now - steps.elapsed_seconds
         for step in steps:
-            if step.context is not None:
-                self.update_daily_routine(
-                    step.context, automatic=auto_routine,
-                    sleep_context=observation.earlier(
-                        max(0, now - step.context.local.timestamp()),
-                    ) if step.observed else observation.unobserved(),
-                )
-            self._decay(step.hours, step.effort, step.food_activity)
-        self._roll_meals(context_at(now))
-        if auto_routine or self.sleep_episode.kind or self.sleeping:
-            self.update_daily_routine(
-                context_at(now), automatic=auto_routine, sleep_context=observation,
+            wall += step.hours * 3600
+            self._apply_time_step(
+                step, now=wall, auto_routine=auto_routine,
+                sleep_context=(observation.earlier(max(0, now - wall))
+                               if step.observed else observation.unobserved()),
             )
-        self._change(
-            updated_at=now,
-            lived_seconds=end_elapsed,
-            relationship=start_history(self.friendship_history, end_elapsed),
+        self.finish_time_advance(
+            now, lived_seconds=end_elapsed, auto_routine=auto_routine,
+            sleep_context=observation,
         )
 
-    def begin_relationship_migration(self) -> None:
-        """Retain an unknown historical baseline during coordinated catch-up."""
-        self._change(relationship=replace(self.friendship_history, baseline=None))
+    def advance_time_step(
+        self, step: SimulationStep, *, now: float, auto_routine: bool,
+        sleep_context: SleepContext,
+    ) -> None:
+        """Expose the completed boundary for application-owned resource effects."""
+        self._apply_time_step(
+            step, now=now, auto_routine=auto_routine, sleep_context=sleep_context,
+        )
+        self._update_sleep_endpoint(now, auto_routine, sleep_context)
+
+    def _apply_time_step(
+        self, step: SimulationStep, *, now: float, auto_routine: bool,
+        sleep_context: SleepContext,
+    ) -> None:
+        """Apply one planned interval without planning or initializing history."""
+        if step.context is not None:
+            self.update_daily_routine(
+                step.context, automatic=auto_routine,
+                sleep_context=sleep_context.earlier(step.hours * 3600),
+            )
+        self._decay(step.hours, step.effort, step.food_activity)
+        self._change(updated_at=now)
+
+    def _update_sleep_endpoint(
+        self, now: float, automatic: bool, context: SleepContext,
+    ) -> None:
+        self._roll_meals(context_at(now))
+        if automatic or self.sleep_episode.kind or self.sleeping:
+            self.update_daily_routine(
+                context_at(now), automatic=automatic, sleep_context=context,
+            )
+
+    def finish_time_advance(
+        self, now: float, *, lived_seconds: float, auto_routine: bool,
+        sleep_context: SleepContext,
+    ) -> None:
+        """Finalize a whole interval, including neutral first-save migration."""
+        self._update_sleep_endpoint(now, auto_routine, sleep_context)
+        self._change(
+            updated_at=now, lived_seconds=lived_seconds,
+            relationship=start_history(self.friendship_history, lived_seconds),
+        )
 
     def apply_object_withholding(self, loss: float) -> float:
         """Commit a bounded application decision without manufacturing care."""
@@ -414,8 +447,8 @@ class PetState:
         result = self._apply_care_transition(transition, stamp)
         if transition.changed:
             if action == "sleep":
-                decision = manual_command(
-                    self.sleep_episode, sleeping=not transition.sleeping,
+                decision = calculate_manual_sleep_transition(
+                    sleeping=not transition.sleeping,
                     elapsed=self.lived_seconds, wall=stamp,
                     context=sleep_context or SleepContext(),
                 )

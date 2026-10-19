@@ -16,7 +16,12 @@ from ..pet.state import PetState
 from ..pet.state_values import PreparedItemConsumption
 from ..world.contracts import ObjectState
 from ..world.state import WorldState
-from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
+from .active_time import (
+    ActiveSessionClock,
+    SessionInputs,
+    TimeProgression,
+    advance_session_time,
+)
 from .controller import CareOutcome
 
 
@@ -34,12 +39,14 @@ class ObjectConsumption:
         adaptive: AdaptiveRoutine,
         *,
         clock: ActiveSessionClock,
+        progression: TimeProgression | None = None,
         memory: ObjectMemory,
     ) -> None:
         self._state = state
         self._mind = mind
         self._adaptive = adaptive
         self._clock = clock
+        self._progression = progression
         self._memory = memory
         self._receipts: OrderedDict[
             str, tuple[str, str, ConsumptionOrigin, ConsumptionOutcome]
@@ -59,7 +66,9 @@ class ObjectConsumption:
             if previous[:3] != (instance_id, memory_id, origin):
                 raise ValueError("Conflicting consumption interaction")
             return previous[3]
-        advance_session_time(self._state, self._clock, inputs)
+        advance_session_time(
+            self._state, self._clock, inputs, progression=self._progression,
+        )
         item = world.get(instance_id)
         if item.state != ObjectState.PET_HELD:
             return ConsumptionOutcome(False)

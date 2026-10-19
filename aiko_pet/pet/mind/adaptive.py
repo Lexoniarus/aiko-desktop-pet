@@ -11,7 +11,7 @@ from datetime import datetime
 
 from ..balance import BALANCE
 from ..routine import TimeContext, context_at
-from ..sleep import SleepContext, setting
+from ..sleep import SleepContext, sleep_setting
 from .adaptive_models import (
     DAILY_DECAY,
     MAX_OBSERVATION_SECONDS,
@@ -326,7 +326,7 @@ class AdaptiveRoutine:
         if (
             previous is None
             or gap < 0
-            or gap > setting("sample_gap_seconds")
+            or gap > sleep_setting("sample_gap_seconds")
             or previous_wall is None
             or abs((wall - previous_wall) - gap) > 5
         ):
@@ -338,7 +338,7 @@ class AdaptiveRoutine:
             can_bridge = (previous_wall is not None
                           and abs((wall - previous_wall) - gap) <= 5
                           and unavailable_seconds
-                          >= gap - setting("sample_gap_seconds"))
+                          >= gap - sleep_setting("sample_gap_seconds"))
             bridge_existing = can_bridge and self._quiet_since is not None
             self._quiet_since = (
                 self._quiet_since if bridge_existing
@@ -361,32 +361,33 @@ class AdaptiveRoutine:
         if event:
             if (
                 self._last_event_mono is None
-                or monotonic - self._last_event_mono > setting("input_gap_seconds")
+                or monotonic - self._last_event_mono
+                > sleep_setting("input_gap_seconds")
             ):
                 self._active_since, self._input_events = monotonic, 0
             self._input_events = min(
-                int(setting("minimum_input_events")), self._input_events + 1
+                int(sleep_setting("minimum_input_events")), self._input_events + 1
             )
             self._last_event_mono = monotonic
         active = (
             monotonic - self._active_since
             if self._active_since is not None
             and self._last_event_mono is not None
-            and monotonic - self._last_event_mono <= setting("input_gap_seconds")
-            and self._input_events >= setting("minimum_input_events")
+            and monotonic - self._last_event_mono <= sleep_setting("input_gap_seconds")
+            and self._input_events >= sleep_setting("minimum_input_events")
             else 0.0
         )
-        if self._quiet_since is None and idle_seconds >= setting("quiet_seconds"):
+        if self._quiet_since is None and idle_seconds >= sleep_setting("quiet_seconds"):
             # Never backfill quiet time before this process actually observed it.
             self._quiet_since = max(event_wall, self._input_start)
             self._quiet_learnable = learn
-        if self._quiet_since is not None and active >= setting("return_seconds"):
+        if self._quiet_since is not None and active >= sleep_setting("return_seconds"):
             finish = wall - active
             if (
                 learn and self._quiet_learnable
-                and setting("minimum_phase_seconds")
+                and sleep_setting("minimum_phase_seconds")
                 <= finish - self._quiet_since
-                <= setting("maximum_phase_seconds")
+                <= sleep_setting("maximum_phase_seconds")
             ):
                 start_local = datetime.fromtimestamp(self._quiet_since)
                 end_local = datetime.fromtimestamp(finish)
@@ -401,7 +402,7 @@ class AdaptiveRoutine:
         # A jitter does not cancel an established quiet interval. Until a repeated
         # return is recognized, ordinary sleep remains possible during that phase.
         quiet_idle = idle_seconds
-        if self._quiet_since is not None and self._input_events < setting(
+        if self._quiet_since is not None and self._input_events < sleep_setting(
             "minimum_input_events"
         ):
             quiet_idle = max(idle_seconds, wall - self._quiet_since)

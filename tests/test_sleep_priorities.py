@@ -6,7 +6,7 @@ import unittest
 from datetime import datetime
 
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
-from aiko_pet.pet.sleep import SleepContext
+from aiko_pet.pet.sleep import SleepContext, SleepEpisode
 from aiko_pet.pet.state import PetState
 
 
@@ -62,6 +62,19 @@ class SleepPriorityTests(unittest.TestCase):
         self.assertTrue(pet.sleeping)
         pet.advance(stamp(3, day=13), auto_routine=True, sleep_context=ACTIVE)
         self.assertFalse(pet.sleeping)
+
+    def test_early_main_wake_requires_energy_at_least_60(self):
+        for energy, sleeping in ((59.99, True), (60, False)):
+            with self.subTest(energy=energy):
+                pet = PetState(
+                    energy=energy, sleeping=True, updated_at=stamp(3, day=13),
+                    lived_seconds=4 * 3600,
+                    sleep_episode=SleepEpisode(
+                        "main", 0, 4 * 3600, stamp(7, day=13),
+                    ),
+                )
+                pet.advance(stamp(3, day=13), auto_routine=True, sleep_context=ACTIVE)
+                self.assertEqual(pet.sleeping, sleeping)
 
     def test_single_jitter_does_not_wake(self):
         pet = PetState(energy=80, updated_at=stamp(23))
