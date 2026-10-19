@@ -867,9 +867,9 @@ not become a second permanent implementation.
 
 #### 5B. Define rules, then implement the emotional and wish models
 
-The next discussion must settle the first Moodlet and wish rules before their
-implementation. The owner's concrete examples establish direction, not a
-complete approved balance:
+Continue discussing the remaining Moodlet and wish rules before implementation.
+The recorded poking proposal below establishes the first concrete candidate;
+the other examples establish direction, not a complete approved balance:
 
 - Repeated poking, excessive/unwelcome petting, repeatedly eating the same food,
   withholding a wanted object, disrupting known object locations and fulfilling
@@ -909,6 +909,64 @@ codec/checkpoint path so restart, failed transactions and repeated loads neither
 erase active impressions nor replay fulfillment/rewards. Existing impressions
 age over closed/standby time; new events require actual permitted evidence.
 Legacy saves must not acquire fabricated historical impressions or wishes.
+
+##### Recorded proposal: repeated poking, 2026-10-19
+
+Status: owner-requested design proposal, not implemented. This records the
+latest five-point-per-level discussion; the intervening suggestion of one,
+two and three numerical penalty points is superseded. Overall emotional-state
+selection and interaction-specific willingness rules remain to be defined.
+
+Keep numeric mood (the need-based general condition plus defined modifiers)
+distinct from emotional state (the overall emotional disposition, including
+how Aiko currently feels toward the user). These interact, but good care/high
+numeric mood does not prevent irritation with the user, and physical exhaustion
+does not prevent emotional warmth. Enduring friendship remains a separate value.
+
+Working Moodlet label: "Annoyed by repeated poking". The existing immediate
+complaint/gesture remains a direct reaction. Create the Moodlet only when Aiko
+has communicated a clear boundary during a repeated-poking episode and a later
+qualifying poke disregards it. Use the existing intentional-click admission and
+episode recognition; ordinary isolated clicks, story-advance clicks, hover and
+technically blocked inputs do not qualify.
+
+| Intensity | Qualifying escalation | Total contribution to numeric mood target | Emotional quality |
+| --- | --- | --- | --- |
+| 1 | First qualifying poke after the boundary | -5 points | Mild irritation directed toward the user |
+| 2 | Three further qualifying pokes while the Moodlet is active | -10 points | Clear annoyance |
+| 3 | Another three qualifying pokes | -15 points | Strong irritation |
+
+Maintain one Moodlet entry with a maximum intensity of three. These are total
+contributions for the current level, not cumulative -5/-10/-15 deductions.
+Change the mood target and retain the timed adjustment of actual numeric mood;
+do not instantly subtract another five points from current mood on each poke.
+
+After every twenty real minutes without a further qualifying poke, reduce
+intensity by one: 3 -> 2 -> 1 -> expired. Starting from levels one, two or three
+therefore requires twenty, forty or sixty quiet minutes respectively for full
+expiry. A further qualifying poke renews the current twenty-minute quiet period
+and counts toward escalation. At maximum intensity it only renews that period;
+neither strength nor an accumulated expiry backlog grows without bound. A later
+click episode must pass normal annoyance/boundary recognition again, while the
+remaining Moodlet intensity persists across episodes.
+
+The Moodlet's cause and emotional intensity feed emotional-state interpretation
+and speech separately from its numeric contribution. Other needs and Moodlets
+still participate; this Moodlet does not unconditionally force the same overall
+label for its entire lifetime. Irritation can remain emotionally significant
+despite a high numeric mood. Concrete interaction refusals are still open and
+must not be inferred as a blanket lock from the numeric penalty.
+
+Quiet time includes closed-app and standby intervals on the existing elapsed
+axis. Sleep commands, food, positive experiences and restart do not erase the
+Moodlet; positive impressions may coexist with it. Preserve existing immediate
+responses and separately applied friendship consequences. Creation, escalation
+or continued existence of this Moodlet adds no automatic friendship deduction.
+
+Next discussion: excessive/unwelcome petting, including friendship-dependent
+tolerance, pre-action affection, a communicated boundary, repetition and the
+distinction between an unwanted attempt and accepted care. No petting Moodlet
+thresholds, penalties or durations are approved by this poking proposal.
 
 #### 5C. Connect status, expression and interaction decisions
 
