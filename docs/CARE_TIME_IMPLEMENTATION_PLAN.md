@@ -7,6 +7,10 @@
 > Stages 1–3, B1 and B2 are implemented and verified below.
 > Stage 4 follows the corrected ownership and verification scope below.
 > Stages 5–6 remain pending; physical desktop acceptance is separately recorded.
+> The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
+> mood, emotional state, wishes and expression before changing dialogue wording.
+> This expansion is planning only; concrete Moodlet/wish rules are not settled
+> and no implementation or test execution is authorized by this planning update.
 
 ## Stage-4 correction delivery, 2026-10-19
 
@@ -239,11 +243,15 @@ The proposals remain design evidence, not descriptions of the current runtime.
 Record implementation decisions here and update maintained behavior guides
 when the corresponding behavior actually ships.
 
-This delivery does not add content APIs, translation, jokes/facts, another
-minigame, new cursor behavior, the full Moodlet/stacking system or durable
-emotional memories. It does not reopen the authored dialogue rewrite. Future
-resource types may use the same contracts, but only existing food/drinks are
-implemented now.
+The original stages 1–4 exclude content APIs, translation, jokes/facts, another
+minigame, new cursor behavior, the full Moodlet/stacking system and durable
+emotional memories. The subsequent stage-5 planning expansion below introduces
+the proposed Moodlet, wish and emotional-state foundation before expression
+integration. Its concrete behavior still requires discussion; this does not
+retroactively add that behavior to the completed stages. External content APIs,
+new games and longer-term emotional memory remain outside the current defined
+scope. Preserve the completed authored dialogue rewrite. Future resource types
+may use the same contracts, but only existing food/drinks are implemented now.
 
 ## Baseline gaps and ownership
 
@@ -768,28 +776,166 @@ Exit: the same known timeline produces equivalent domain/resource results live,
 through a closed interval or across standby, within stated numerical tolerance.
 Different evidence may legitimately produce different discovery/learning.
 
-### 5. Connect the foundation to expression and conversation context
+### 5. Separate the emotional foundation, then connect expression
 
-- Project actual needs, target/actual mood, friendship stage, sleep reason and
-  genuine absence/contact context through existing typed reads where needed.
-  Do not make UI code recalculate authoritative rewards or state.
-- Audit mood labels, cheerful/playful filters and idle emotes against the new
-  scale. Existing mood thresholds above 80 cannot remain the sole route to
-  ordinary positive behavior. Set reachable thresholds against both example
-  days and record them as presentation tuning.
-- Remove hardware-only tired/withdrawn social conclusions. Preserve authored
-  remarks about genuinely observed desktop load where their evidence is valid.
-- A mood around 48–60 or a change from friendship level 10 to 9 is not itself
-  an offended return. Feed actual absence/negative-event context to applicable
-  existing reactions. A new persistent offended state, its duration/recovery
-  and richer emotional memory remain separate design work.
-- Keep toolbar/care availability, sleeping action handling, gameplay completion
-  and bubble playback consistent with the new state. Preserve the existing
-  authored German sequences; edit individual wording only where the changed
-  semantics require it. Update the review workbook only for actual text edits.
+#### Planning amendment and authorization, 2026-10-19
 
-Exit: normal well-cared-for Aiko can look and sound positive; tired/hungry and
-relationship-related reactions have distinct, evidenced reasons.
+The owner accepted the responsibility split and requested that the refactor be
+recorded in English in this overall plan. This replaces the previous assumption
+that expression thresholds should be adjusted before introducing Moodlets and
+wishes. The current authorization covers documentation only: do not implement,
+rewrite dialogue or execute tests. Discuss the concrete Moodlet and wish rules
+next, then obtain implementation direction for the resulting defined scope.
+Module and function names below are proposed implementation targets, not claims
+about files or behavior already delivered.
+
+#### 5A. Refactor vocabulary, models and responsibilities
+
+Keep these concepts distinct in domain types, functions, dialogue conditions
+and UI contracts:
+
+| Concept | Meaning and responsibility |
+| --- | --- |
+| Needs | The five care values: satiety, energy, fun, social and affection. Numeric mood and friendship are not needs. |
+| Need conditions and relevant history | Interpret current care values and qualifying duration/repetition, such as being hungry now versus repeatedly experiencing prolonged hunger. A physical/need condition is not itself an emotion. |
+| Immediate reactions and direct consequences | A current complaint, gesture or response to an interaction, and any separately defined immediate care/relationship consequence. These do not require a Moodlet and retain their own timing. |
+| Moodlets | Concurrent emotional impressions with an identified cause, strength, duration and defined stacking/escalation behavior. They can influence numeric mood, speech and willingness to accept particular interactions. |
+| Numeric mood | The overall 0–100 value, combining the need-derived contribution and active Moodlet contributions through the agreed response timing. The present need-only maximum of 80 is not the final Moodlet balance. |
+| Emotional state | The qualitative overall emotional interpretation of numeric mood and the active emotional composition. Equal numeric mood values can have different emotional labels. Hunger and sleep state remain separate facts. |
+| Wishes | Concrete, time-bounded desired experiences with eligibility and fulfillment conditions. Initially food; later interactions may support jokes or specific games. Wish outcomes can create Moodlets under explicitly defined rules. |
+| Expression and action selection | Select dialogue topics, tone, immediate responses, gestures and interaction decisions using the relevant distinct inputs. A direct hunger statement can occur while the overall emotional state is positive. |
+
+A need may directly influence numeric mood, independently prompt an immediate
+utterance, and also produce a Moodlet when its separately defined duration,
+repetition or context qualifies. Multiple effects from one cause are legitimate
+when intentional. Do not automatically create a Moodlet whenever a need is
+fulfilled or deficient, or accidentally apply the same numeric effect twice.
+
+Source inspection identified these concrete refactoring points:
+
+- `NeedLevels` in `pet/need_decay.py` currently contains mood, while fun is
+  carried separately. `NeedProgress`/`calculate_need_decay()` also include food,
+  mood and relationship advancement despite their narrow names.
+- `PetMind.emotion()` mixes sleep, need conditions, situational inputs and
+  temporary irritation/warmth with the overall emotional interpretation.
+- `DialogueContext.mood` is a string label rather than numeric mood;
+  `DialogueContext.states` unions this label with need conditions. The catalogue
+  validates both `moods` and `needs` using the same `EMOTIONS` vocabulary.
+- `MoodHint`/`choose_mood_hint()` represent general status advice, including
+  need, sleep and calendar context, rather than only mood or emotion.
+- `PetReadSnapshot.needs` and the UI contracts currently group mood and
+  friendship with needs. Separate their semantic data even if the toolbar
+  continues to render all of them as adjacent bars.
+- `PetMind.after_care()` combines contact/action tracking, temporary warmth and
+  clearing irritation on a sleep command. Review each effect separately;
+  neither blanket removal nor automatic conversion into a Moodlet is correct.
+
+| Proposed module | Responsibility and function/model direction |
+| --- | --- |
+| `pet/needs.py` (new) | Canonical immutable `NeedLevels` containing all five needs; typed current conditions from a pure function such as `assess_need_conditions()`. Reuse existing applicable care/exposure histories rather than adding another copy of them. |
+| `pet/progression.py` (refactor of `pet/need_decay.py`) | Retain the existing chronological numeric calculation under accurate names such as `calculate_pet_progression()` and `PetProgress`. Return needs, mood, food and relationship progress as distinct result fields. This is the existing domain integration responsibility, not another time planner. |
+| `pet/mood.py` (extend) | Rename need-only `MoodFactors` to `NeedMoodFactors` and the present target calculation to `calculate_need_mood_target()`. Compose that contribution with Moodlet effects in `calculate_mood_target()`; retain the clear `advance_mood()` responsibility. |
+| `pet/moodlets.py` (new) | Immutable Moodlet models and pure rules for qualifying creation, refresh/escalation, contribution and expiry. Specify each rule after the pending product discussion. |
+| `pet/emotions.py` (new) | Canonical emotional-state vocabulary and pure overall interpretation, for example `derive_emotional_state()`. Replace the mixed responsibility of `PetMind.emotion()`; do not maintain a second independent numeric mood or emotional store. |
+| `pet/wishes.py` (new) | Immutable wish models and explicit eligibility, selection, fulfillment and expiry decisions. Begin with actual supported food IDs; do not implement future joke/game capabilities merely to populate wishes. |
+| `pet/status_hints.py` (retain, clarify) | Rename `MoodHint`, `choose_mood_hint()` and associated callers/formatters to `StatusHint`, `choose_status_hint()` and equivalent status-specific names. Keep advice distinct from emotional state. |
+| `pet/mind/` (refactor existing consumers) | Keep perception, interpretation, conversation and immediate reaction/action selection. Consume the canonical conditions, emotional state, Moodlets and wishes without owning another active Moodlet/wish collection. Split broad hooks such as `after_care()` into explicit responsibilities where necessary. |
+
+`PetState` remains the single mutable persisted pet aggregate. Active Moodlets,
+wishes and required bounded histories belong in its frozen `PetValues`, with
+aggregate-owned transitions and existing checkpoint/rollback semantics. Pure
+policy results are not additional live state owners. Derive current conditions
+and overall emotional state from authoritative inputs through shared rules.
+Keep core value types independent of `PetMind`, UI and infrastructure to avoid
+import cycles. OOP ownership does not require a mutable manager for every rule.
+
+Reuse the existing clock, elapsed axis (`lived_seconds`), time plan and
+application `SessionTimeProgression`. Move/refactor the current numeric loop
+rather than creating additional timers, background loops or a second offline
+simulator. Moodlet/wish effects must be evaluated at their relevant elapsed
+times, including expiry within an interval, rather than only at reopening.
+
+Migrate domain callers, dialogue schema/validation, catalogue selection
+conditions, presentation contracts, tests and maintained documentation together.
+Use distinct typed categories for numeric mood, emotional state, need
+conditions, sleep/lifecycle facts, Moodlets and wishes. Do not preserve the
+mixed `states` union as the new canonical interface. Reclassify authored
+catalogue filters without rewriting their text sequences as part of renaming.
+Inspect repository/script/documentation consumers before removing old names;
+any necessary migration adapter must have a specific owner and removal scope,
+not become a second permanent implementation.
+
+#### 5B. Define rules, then implement the emotional and wish models
+
+The next discussion must settle the first Moodlet and wish rules before their
+implementation. The owner's concrete examples establish direction, not a
+complete approved balance:
+
+- Repeated poking, excessive/unwelcome petting, repeatedly eating the same food,
+  withholding a wanted object, disrupting known object locations and fulfilling
+  a concrete wish are the initial candidate experiences.
+- Define exact qualifying evidence, episode boundaries, strength, duration,
+  stacking/refresh limits, resolution and cooldowns for each. Distinguish
+  ending a provoking situation from ending its emotional after-effect.
+- Define which prolonged/repeated need experiences qualify for Moodlets in
+  addition to the direct need contribution. Reuse observable/acquired evidence;
+  do not invent user actions, unseen object knowledge or personal care offline.
+- Keep friendship consequences separate from the continuing Moodlet. Existing
+  click/withholding penalties must not be applied again merely because a
+  Moodlet exists. Additional relationship rules require explicit agreement.
+- Set how Moodlet contributions combine with numeric mood, existing deficit
+  limits and recovery rates; define the overall emotional labels and their
+  selection/priority rules. Short-lived direct responses retain distinct roles.
+- Set wish eligibility, selection, supported targets, concurrency, lifetime,
+  fulfillment, repetition and consequences of expiry. No suggested frequency,
+  active-wish limit, duration, bonus or expiry penalty is approved yet.
+- Define how individual Moodlets affect speech and specific interaction
+  willingness. Technical foreground/playback locks remain separate from a
+  semantic refusal, which can have its own explanation. Preserve repeated-click
+  behavior and story advancement rather than globally disabling interaction.
+
+An ongoing social wish for a particular food is distinct from
+`ObjectIntentions.goal`, the existing concrete object-action intention. The wish
+may influence selection; existing perception, search, movement, acquisition and
+consumption owners still execute that action. Clarify the existing object-level
+"wish" terminology where needed without creating a competing goal owner.
+
+Commit fulfillment and any associated Moodlet at the defined domain event. For
+food, use actual accepted consumption and the existing joint World/Pet/memory
+transaction, not placement, an offer, bubble playback or animation completion.
+Do not assume autonomous intake proves that the user personally fulfilled a
+social wish; discuss attribution in the concrete wish rule. Extend the existing
+codec/checkpoint path so restart, failed transactions and repeated loads neither
+erase active impressions nor replay fulfillment/rewards. Existing impressions
+age over closed/standby time; new events require actual permitted evidence.
+Legacy saves must not acquire fabricated historical impressions or wishes.
+
+#### 5C. Connect status, expression and interaction decisions
+
+- Extend `PetReadSnapshot`, presentation projections and toolbar contracts with
+  distinct needs, numeric mood, emotional state, active Moodlets and wishes.
+  Show Moodlets and wishes in the existing status UI alongside the care values;
+  include understandable causes/targets and relevant strength/remaining time.
+  UI formatting must not own expiry, reward or emotional calculations.
+- Project target/actual mood, friendship stage, sleep reason and genuine
+  absence/contact context through existing typed reads where required.
+- Use the same emotional interpretation for status, conversation and behavior.
+  Direct need statements must remain available independently of that label.
+- Audit cheerful/playful filters and idle emotes against the final composition.
+  Ordinary positive behavior must be reachable under normal good care; reserve
+  any higher thresholds for deliberately defined positive emotional experiences.
+  Do not settle these thresholds before the Moodlet/emotion rules are agreed.
+- Remove hardware-only emotional conclusions while preserving statements about
+  genuinely observed desktop load. Moderate numeric mood or friendship 10-to-9
+  alone is not evidence of relationship offense.
+- Keep toolbar availability, sleep handling, game completion and bubble playback
+  consistent. Preserve the authored German sequences; change individual wording
+  only when approved semantics require it. Update the review workbook only for
+  actual text edits.
+
+Exit: the code and UI expose separate, clearly named layers; immediate reactions,
+need effects, lasting Moodlets, wishes, numeric mood, overall emotional state and
+relationship consequences remain distinguishable and share the existing owners.
 
 ### 6. Verify integrated behavior and document the delivered system
 
@@ -797,6 +943,10 @@ Turn the arithmetic scenarios into tests of production policies with injected
 time and isolated saves. The discussion calculations are expected behavior,
 not a substitute for these tests. Keep schedule inputs/assumptions visible;
 use tolerance and event assertions rather than brittle rounded-table snapshots.
+The existing numerical examples below describe the care foundation without
+new Moodlet/wish effects. Preserve that baseline coverage and add separately
+specified emotional scenarios after stage-5 rules are agreed; do not silently
+change the reference outcomes to accommodate unapproved bonuses or penalties.
 
 | Scenario | Required evidence |
 | --- | --- |
@@ -817,13 +967,21 @@ World/object-memory persistence tests. Add focused new test owners where the
 new behavior does not fit an existing responsibility. Keep architecture/import,
 resource validation and UI projection coverage intact.
 
-Before delivery, run the full suite, Ruff, strict Mypy and Pyright using
-[Contributing](../CONTRIBUTING.md#development-workflow), then verify remote CI
-for the actual proposed commit. Perform real Windows checks with an isolated
-`AIKO_SAVE_PATH`: meaningful input versus jitter, active background load,
-sleep/manual wake, actual suspend/resume, close/reopen with finite food stock,
-game/story clicks and Tk playback/care availability. Arithmetic or headless
-tests do not satisfy desktop acceptance.
+For a subsequently authorized implementation, run appropriate focused checks,
+the complete local suite and the static gates in
+[Contributing](../CONTRIBUTING.md#development-workflow). Retain
+the owner's restrictions: no GitHub CI execution, visible test windows or mouse
+control on the working desktop. Use injected time, isolated saves and focused
+policy/projection/transaction checks; use the established isolated local GUI
+environment only when actual scheduling integration needs it. Review individual
+tests exceeding ten seconds, recording their cause and disposition rather than
+automatically deleting them or masking their domain work with mocks. This
+documentation amendment itself does not authorize test execution.
+
+Record physical Windows acceptance separately: meaningful input versus jitter,
+sleep/manual wake, actual suspend/resume, finite-stock close/reopen and native
+playback/input behavior cannot be claimed from arithmetic or headless checks.
+Do not launch such desktop checks without a later change to the owner's scope.
 
 Update architecture, food, fun/mood, saves and relevant World/smoke guides when
 the behavior is implemented. Record the migration and actual validation in the
@@ -831,8 +989,9 @@ changelog; archive this plan only after delivery. No merge is implied here.
 
 ## Small decisions to settle inside the relevant stage
 
-The overall model is sufficiently specified. These are bounded details to
-record before their implementation, not reasons to restart the design:
+The stages 1–4 care foundation is sufficiently specified. The existing bounded
+details below remain separate from the newly required stage-5 Moodlet, wish and
+emotional-state discussion; that expanded behavior is not yet fully specified.
 
 | Detail | Starting approach / decision needed |
 | --- | --- |
@@ -842,7 +1001,7 @@ record before their implementation, not reasons to restart the design:
 | Quiet-phase grouping and nap duration | Choose one simple main quiet phase per day, an explicit timing-similarity rule and one deterministic duration within the discussed 60–90-minute nap range. Preserve the three/seven milestones and adjustment limit; avoid extra scoring, weekday models or new sensors. |
 | Episode boundaries and conflicting care | Specify when a sleep phase ends, when a genuinely new offer permits another search, and the low-energy hunger-break collision after manual protection. Keep acute care bounded and return to needed recovery. Specify when an explicit care command wakes Aiko versus being deferred. |
 | Negative-interaction episodes | Resolved in stage 3: existing selected boundary events warn within the current click burst; only later admitted clicks qualify. Existing claimed-object episode evidence retains 18-second/three-take escalation. Durable rolling caps survive episode/restart boundaries. |
-| Positive expressions and old settings | Choose reachable mood thresholds without forcing routine care to maximum mood; record how current routine/preferences map to the new autonomous behavior. |
+| Positive expressions and old settings | Resolve after stage-5 Moodlet/emotional-state rules: choose reachable thresholds without forcing routine care to maximum mood; record how current routine/preferences map to behavior. |
 
 If one of these changes the accepted care burden or relationship outcome,
 bring that specific tradeoff back for discussion. Routine contract and
