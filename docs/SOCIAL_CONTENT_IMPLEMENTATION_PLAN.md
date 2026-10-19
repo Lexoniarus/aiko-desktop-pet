@@ -299,3 +299,17 @@ this first delivery.
   checks). Content preparation now keeps Single, Two Parts and facts distinct,
   retains sources and rejects incomplete or oversized responses. Five focused
   preparation tests and six text-catalogue tests pass; menu integration follows.
+- `2f7728b`: separate API formats and complete source-aware reaction preparation.
+- `2e08a56`: API variants share the existing `talk` transition and friendship
+  history; 3 focused care cases and 8 existing application-boundary cases passed.
+- `bf25e96`: individual background HTTP fetches and three bounded buffers;
+  8 coordinator and 3 HTTP/worker cases passed with fixed provider fixtures.
+- `285bbea`: persisted opt-in under the existing settings owner; 3 settings-model,
+  2 ownership and 7 preference cases passed. Missing/invalid opt-in stays off.
+- `e3388a8`: waiting and deferred playback admission; 5 focused runtime cases
+  passed without early care credit.
+- Menu/desktop integration: 7 new isolated-save native Tk cases, 33 existing
+  GUI cases, 8 independent settings cases, 4 story GUI cases and 12 persistent
+  window cases passed. Contact (10), lifecycle (4), scheduler (4) and dependency
+  graph (4) checks passed. Scoped Ruff, strict Mypy and Pyright checks passed.
+  The complete suite and final repository-wide static checks are still pending.

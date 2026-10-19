@@ -84,6 +84,8 @@ def prepare_social_content(
             raise ValueError("Invalid fact identity")
         identity = f"uselessfacts:{identifier}"
         source = _text(payload.get("source"))
+        if len(source) > 120:
+            raise ValueError("Oversized source name")
         source_url = _url(payload.get("source_url"))
         permalink = _url(payload.get("permalink"))
         parts = (_text(payload.get("text")),)

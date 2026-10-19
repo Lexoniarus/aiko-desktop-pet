@@ -38,6 +38,7 @@ class ContactPorts:
     foreground_active: Callable[[], bool] = lambda: False
     playback_active: Callable[[], bool] = lambda: False
     reaction_event: Callable[[], str | None] = lambda: None
+    care_holding: Callable[[], bool] = lambda: False
 
 
 class ContactCoordinator:
@@ -62,7 +63,7 @@ class ContactCoordinator:
             return False
         if self._state.sleeping:
             return action == "sleep"  # Waking ends the current lifecycle action.
-        return not self._ports.playback_active()
+        return self._ports.care_holding() or not self._ports.playback_active()
 
     def record_contact(self, now: float) -> None:
         self._mind.last_contact = now
@@ -70,7 +71,7 @@ class ContactCoordinator:
     def enter(self) -> None:
         """Preserve toolbar and walk-interruption order on pointer entry."""
         now = time.monotonic()
-        if not self.can_interact("pet"):
+        if self._ports.care_holding() or not self.can_interact("pet"):
             self._ports.mark_hover(now)
             self._ports.show_toolbar()
             return

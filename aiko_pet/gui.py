@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import time
 import tkinter as tk
+from collections.abc import Callable
 from tkinter import font as tkfont
 from tkinter import messagebox
 
@@ -20,6 +21,11 @@ from .application.contact import ContactCoordinator, ContactPorts
 from .application.game_experience import experience_from_session
 from .application.session import PetSessionRestorer
 from .application.settings import SettingKey
+from .application.social_content import PreparedSocialContent
+from .application.social_coordinator import (
+    SocialContentCoordinator,
+    SocialContentWorker,
+)
 from .config import load_env_file
 from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation
 from .desktop.attention_runtime import AttentionRuntimePorts, DesktopAttentionRuntime
@@ -37,6 +43,7 @@ from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
 from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
+from .desktop.social_runtime import SocialConversationRuntime, SocialRuntimePorts
 from .desktop.window_stack import WindowStack
 from .desktop.world_access import WorldRuntimeAccess
 from .desktop.world_runtime import DesktopWorldRuntime
@@ -45,6 +52,7 @@ from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.character_mind import make_aiko_mind
 from .infrastructure.hardware.monitor import ActivityMonitor
 from .infrastructure.persistence import StateStore
+from .infrastructure.social_api import HttpSocialContentWorker
 from .pet.content import GERMAN_TEXT
 from .pet.food import FoodId
 from .pet.mind.catalog import Reaction
@@ -70,10 +78,12 @@ class DesktopPet:
     """
 
     _overlay_stack: WindowStack
+    _social_runtime: SocialConversationRuntime
 
     def __init__(
         self, *, store: StateStore | None = None,
         activity_monitor: ActivityMonitor | None = None,
+        social_worker: SocialContentWorker | None = None,
     ) -> None:
         self.store = store or StateStore()
         active_clock = ActiveSessionClock(elapsed_uptime_seconds, wall_time=time.time)
@@ -121,6 +131,7 @@ class DesktopPet:
                     self._session_runtime.refresh(now)
                 ),
                 observe_objects=lambda now: self._world.update(now),
+                poll_social=lambda: self._social_runtime.poll(),
             ),
             schedule=self.root.after,
             cancel=self.root.after_cancel,
@@ -141,7 +152,8 @@ class DesktopPet:
             adaptive=self.adaptive, monitor=self.activity_monitor,
             clock=active_clock, progression=self._world_access,
             callbacks=ActivityCallbacks(
-                speech_busy=lambda: self._reaction_player.pending_timer is not None,
+                speech_busy=lambda: (self._reaction_player.pending_timer is not None
+                                     or self._social_runtime.waiting),
                 read_idle_seconds=idle_seconds_windows,
                 start_review=lambda now: self._start_action(
                     "review", 1.4, started_at=now,
@@ -160,6 +172,9 @@ class DesktopPet:
         self.application = services.router
         self.workload_events = services.workload_events
         self._activity = services.activity
+        social_content = SocialContentCoordinator(
+            social_worker if social_worker is not None else HttpSocialContentWorker(),
+        )
         visuals = assemble_animation(
             root=self.root, canvas=self.canvas,
             state=self.state, settings=self.settings, adaptive=self.adaptive,
@@ -181,6 +196,7 @@ class DesktopPet:
                 orientation_side=self._world_access.orientation_side,
                 feedback_subject=lambda: self._reaction_player.subject,
                 activity_active=lambda: (time.monotonic() < self._action_playback.until
+                    or self._social_runtime.waiting
                     or ((self._reaction_player.pending_timer is not None
                          or self._speech.bubble is not None)
                         and not self._world_access.contact_feedback_active())),
@@ -251,6 +267,10 @@ class DesktopPet:
                 can_interact=lambda action: self._contact.can_interact(action),
                 game_ready=lambda: not self.state.sleeping,
                 cards=self._game_visuals.ports,
+                social_selected=lambda category: self._social_runtime.select(category),
+                social_cancel=lambda: self._social_runtime.cancel(),
+                social_enabled=lambda: self.settings.online_social,
+                social_snapshot=lambda: self._social_runtime.snapshot(),
                 food_choices=self._food_choices,
                 feed=lambda selected: self._world.begin_carry(selected),
                 defer_game=lambda action: self._world.interrupt(action),
@@ -303,6 +323,9 @@ class DesktopPet:
                     or self._reaction_player.pending_timer is not None
                     or self._speech.bubble is not None),
                 reaction_event=lambda: self._reaction_player.event,
+                care_holding=lambda: (self._social_runtime.waiting
+                                      and self._reaction_player.event
+                                      in (None, "social_wait")),
             ),
         )
         self._input = DesktopInput(
@@ -340,6 +363,7 @@ class DesktopPet:
                 bubble_visible=lambda: self._speech.bubble is not None,
                 reaction_pending=lambda: (
                     self._reaction_player.pending_timer is not None
+                    or self._social_runtime.waiting
                 ),
                 walking=lambda: (
                     self._walk.movement.remaining_distance != 0
@@ -398,6 +422,9 @@ class DesktopPet:
                 place_x=self._place_x,
                 save=self._save,
                 set_context=self._set_context,
+                social_sources_changed=lambda enabled: (
+                    self._social_runtime.set_enabled(enabled)
+                ),
             ),
         )
         self._lifecycle = DesktopLifecycle(
@@ -413,6 +440,7 @@ class DesktopPet:
             place_initially=self._place_initially,
             save=self._save,
             stop_animation=self._animated.close,
+            stop_social=lambda: self._social_runtime.close(),
         )
         self._farewell = FarewellSequence(
             wording=lambda: self.mind.contact_text(
@@ -431,7 +459,8 @@ class DesktopPet:
             playback=self._action_playback, inputs=self._activity.session_inputs,
             game_open=lambda: self._hover.game_open,
             controls_active=lambda: (self._hover.interaction_active
-                                     or self._reaction_player.story_active),
+                                     or self._reaction_player.story_active
+                                     or self._social_runtime.waiting),
             present_feedback=ObjectFeedbackPresenter(
                 self._reaction_player, self._item_catalog,
             ).show,
@@ -443,6 +472,22 @@ class DesktopPet:
         )
         self._world_access.bind(self._world)
         self._persistence.attach_world(self._world.save_snapshot)
+        self._social_runtime = SocialConversationRuntime(
+            social_content, SocialRuntimePorts(
+                can_start=lambda: (
+                    not self._closed and self._contact.can_interact("talk")
+                ),
+                defer=self._defer_social,
+                start=self._start_social_conversation,
+                show_wait=lambda reaction: self._reaction_player.play(
+                    reaction, animate=False,
+                ),
+                clear_wait=self._clear_social_wait,
+                can_wait=lambda: (not self._closed and not self.state.sleeping
+                                  and not self._hover.game_open),
+            ),
+        )
+        self._social_runtime.set_enabled(self.settings.online_social)
         self._lifecycle.start()
 
     def _object_feedback_active(self) -> bool:
@@ -530,18 +575,23 @@ class DesktopPet:
 
     def interact(
         self, action: str, *, food_id: FoodId | None = None,
+        conversation: PreparedSocialContent | None = None,
     ) -> None:
         """Run a care command through the shared application boundary."""
+        if conversation is None:
+            self._social_runtime.cancel()
         if self._world.cursor.carrying:
             self._world.cursor.cancel()
         if (self._world.interaction.active
                 or self._world.awareness.intentions.goal is not None):
-            self._world.interrupt(lambda: self.interact(action, food_id=food_id))
+            self._world.interrupt(lambda: self.interact(
+                action, food_id=food_id, conversation=conversation,
+            ))
             return
         stamp = time.time()
         now = time.monotonic()
         result = self.application.dispatch(
-            CareCommand.from_action(action, food_id=food_id),
+            CareCommand.from_action(action, food_id=food_id, conversation=conversation),
             inputs=self._activity.session_inputs(stamp, now),
         )
         self.context = result.context
@@ -549,6 +599,23 @@ class DesktopPet:
             result, now=now, sleeping=self.state.sleeping,
         )
         self._save()
+
+    def _clear_social_wait(self) -> None:
+        if self._reaction_player.event == "social_wait":
+            self._reaction_player.cancel()
+
+    def _defer_social(self, action: Callable[[], None]) -> None:
+        # Admission is rechecked after World clears its pending-action marker.
+        def schedule() -> None:
+            self.root.after_idle(action)
+
+        self._world.interrupt(schedule)
+
+    def _start_social_conversation(self, content: PreparedSocialContent) -> bool:
+        if self._closed or not self._contact.can_interact("talk"):
+            return False
+        self.interact("talk", conversation=content)
+        return True
 
     def set_topmost(self, value: bool) -> None:
         self._preferences.set_topmost(value)

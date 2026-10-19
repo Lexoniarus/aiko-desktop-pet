@@ -18,6 +18,7 @@ class SocialRuntimePorts:
     start: Callable[[PreparedSocialContent], bool]
     show_wait: Callable[[Reaction], None]
     clear_wait: Callable[[], None]
+    can_wait: Callable[[], bool] = lambda: True
 
 
 class SocialConversationRuntime:
@@ -56,6 +57,7 @@ class SocialConversationRuntime:
         if self._closed or not self._ports.can_start():
             return
         self.cancel()
+        self._last_content = None
         token = object()
         self._token = token
         selection = self.content.select(category)
@@ -109,6 +111,8 @@ class SocialConversationRuntime:
     def poll(self) -> None:
         if self._closed:
             return
+        if self._waiting and not self._ports.can_wait():
+            self.cancel()
         selection = self.content.poll()
         if selection is not None and self._token is not None:
             self._present(selection)

@@ -31,7 +31,7 @@ class StandaloneSettingsTests(unittest.TestCase):
                 ("always_on_top", True), ("auto_walk", True),
                 ("auto_routine", True), ("follow_cursor", True),
                 ("spontaneous_talk", True), ("observe_computer", True),
-                ("learn_rhythm", False),
+                ("learn_rhythm", False), ("online_social", False),
             ),
         )
         self.window = SettingsWindow(

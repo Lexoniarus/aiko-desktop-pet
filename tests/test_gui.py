@@ -96,7 +96,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
             for child in action_row.winfo_children()
             if "text" in child.keys()
         ]
-        self.assertIn("Reden", labels)
+        self.assertIn("Unterhalten", labels)
         extra_row = bar.buttons["sleep"].master
         extra_labels = [
             child.cget("text")
