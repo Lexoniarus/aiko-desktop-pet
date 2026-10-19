@@ -67,12 +67,19 @@ Tic-Tac-Toe construction destroys its partial panel without reporting a
 completed session; `HoverUi` still owns releasing the pending/mode state.
 
 In Blackjack the player panel contains only player cards/total and controls.
+Player cards use 2x integer scaling, with bounded overlap in a 480-pixel hand
+area. The native draw button displays a cached pile composed from the existing
+back and supports ordinary button focus/activation. It owns no deck state.
 Aiko's masked/revealed hand is a separate anchored desktop overlay, lower in
 front of her so her face and speech remain readable. Hover raises a visible
 card; clicks do not reveal, feed, pick up or count as pet teasing. The hand
 persists across speech changes and disappears on close/failure/shutdown.
 It is not a World item. Tic-Tac-Toe has one shared board and desktop reactions.
-Both new panels use explicit next-round controls; RPS keeps its existing flow.
+Blackjack keeps each result visible for 2.8 seconds, then automatically starts
+the next hand with a freshly masked dealer and the same session score. Its
+sequence owns this delay through its existing cancellable timer; close cancels
+the restart and preserves only completed units. `GamePanel` offers an optional
+next-round button, used by Tic-Tac-Toe. RPS keeps its existing flow.
 
 ### Contact and ordinary controls
 

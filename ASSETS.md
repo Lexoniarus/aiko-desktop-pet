@@ -128,6 +128,10 @@ one back from `PNG/Cards (large)`, unmodified 64×64 PNG canvases under
 [license](LICENSES/KENNEY_PLAYING_CARDS_CC0.txt) states CC0 and voluntary credit.
 `provenance.json` records the source pack, bundle, source subdirectory and
 SHA-256 for each selected original. No runtime Dropbox access is needed.
+The large 64×64 canvases are the largest PNG variant in this pack. Blackjack
+player cards use 2x integer scaling (128×128 canvases); the draw control layers
+the same scaled back at runtime. Aiko's hand retains its own 1x/2x scale.
+No additional asset export or modified source bitmap is distributed.
 
 The project uses artwork from these Kenney asset packs:
 

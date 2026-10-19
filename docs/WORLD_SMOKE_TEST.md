@@ -6,6 +6,9 @@ The feature branch adds the Spielen selector, Blackjack and Tic-Tac-Toe.
 Targeted rules, timer, Tk/Xvfb and cleanup checks are recorded in the
 [minigame delivery plan](MINIGAME_IMPLEMENTATION_PLAN.md). Actual Tk/Xvfb
 captures were inspected; those do not establish native Windows behavior.
+The owner reported an acceptable initial playtest before requesting larger
+Blackjack player cards, a draw pile and automatic next hands. The updated
+player panel and restart timing require a subsequent practical playtest.
 Do not run working-desktop windows or mouse probes without later authorization.
 
 When native acceptance is authorized, use an isolated save and check:
@@ -20,6 +23,10 @@ When native acceptance is authorized, use an isolated save and check:
 - Blackjack shows only player cards in its panel. Aiko's hand floats below her
   face, retains its card back through hover/click and flips only after the
   player's turn or an immediate natural/bust result. Speech never replaces it.
+- Blackjack player cards are clearly larger, the clickable back pile draws
+  exactly one card, and controls stay blocked during dealer/result playback.
+  After 2.8 seconds the next hand starts automatically with a concealed hole
+  card and the accumulated score. Closing during the pause prevents restart.
 - At 1x/2x and both desktop edges, long hands stay readable above the taskbar;
   Windows color-key transparency leaves no Magenta frame. Show/flip/hover do
   not activate another window or trigger pet teasing, dragging or World pickup.

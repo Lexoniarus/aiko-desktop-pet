@@ -16,8 +16,9 @@ No merge is authorized.
 - One game window/session at a time. While a game is open, further selection
   is disabled. Preserve existing RPS behavior.
 - The new games allow any number of rounds. Show temporary player/Aiko/draw
-  counts, a result and **Nächste Runde** after each round; no automatic restart.
-  RPS retains its existing hand-selection controls and round flow.
+  counts and a result. Following the owner's playtest feedback, Blackjack
+  automatically starts the next hand after 2.8 seconds; Tic-Tac-Toe offers
+  **Nächste Runde**. RPS retains its hand-selection controls and round flow.
 - Aiko remains on the desktop and uses existing speech, emotes and animations.
   Her speech bubble carries comments, not the Blackjack card layout.
 - Closing releases the game presentation and restores ordinary behavior.
@@ -26,9 +27,11 @@ No merge is authorized.
 
 ## Blackjack
 
-**Player window:** the player's cards and total, **Karte ziehen**, **Bleiben**,
-result, session score and next-round control. No duplicate of Aiko's cards or
-separate Aiko-hand display in this window.
+**Player window:** the player's cards at 2x integer scale and total, a clickable
+back pile for **Karte ziehen**, **Bleiben**, result and session score. Results
+remain visible for 2.8 seconds before an automatic fresh hand; close cancels
+that pending restart. No duplicate of Aiko's cards or separate Aiko-hand
+display in this window.
 
 **Aiko on the desktop:** her entire hand floats as a compact group in front of
 or beside her. Initially one card is face up and one face down. Additional
@@ -70,6 +73,10 @@ in the large set. Plan to import only the 52 faces plus `card_back.png` from
 pixel style and using integer scaling where appropriate. Its `License.txt`
 states CC0 and voluntary attribution. Record provenance and preserve the
 license with the eventual import; no new artwork is needed.
+The playtest follow-up rechecked the source sizes (16, 32 and 64 pixels): the
+existing large originals are retained, with 128×128 player-card canvases and a
+runtime composite of the same back for the draw control. Aiko's scale is
+independent of this player-only enlargement.
 
 ## Tic-Tac-Toe
 
@@ -388,3 +395,46 @@ This evidence and the UI/smoke contract updates are documentation only. No
 subsequent production or test changes, working-desktop probes, normal-save
 writes, pushes or merges were performed. The pre-existing social-content
 documentation changes remain outside these correction commits.
+
+## Blackjack playtest follow-up — 2026-10-19
+
+The owner reported the three-game playtest acceptable and requested a larger
+player hand, drawing through a pile and automatic next hands for Blackjack.
+These decisions supersede the initial Blackjack manual-next-round controls
+recorded in the original delivery sequence. Tic-Tac-Toe's controls and Aiko's
+desktop hand retain their existing behavior.
+
+| Commit | Bounded implementation | Focused validation |
+| --- | --- | --- |
+| `fd66cdf` | Render player cards on 128×128 canvases in a 480×144 hand area. Reuse the existing integer-scaled image cache. Compose three copies of the same back into a cached native draw-button image, without introducing deck state or new assets. Release that image with the shared cache on close. | 58 Xvfb tests passed (3.523s): `test_blackjack_gui`, `test_blackjack_hand_presenter`, `test_playing_card_assets`, `test_game_menu`, `test_tic_tac_toe_gui`, `test_game_models`, `test_ui_architecture`. Checks cover larger player cards, unchanged Aiko size, long-hand bounds, clickable/disabled drawing, transparent layered backs and image release. Affected Ruff, strict Mypy and Pyright passed. |
+| `4af6de3` | Use `BlackjackSequence`'s single cancellable timer for the 2.8-second result pause and next hand. Derive the transition from the game's settled result; add no second phase/score owner. Remove Blackjack's manual-next methods and omit `GamePanel`'s now-optional button there. | 87 Xvfb tests passed (3.848s): `test_blackjack`, `test_blackjack_sequence`, `test_blackjack_gui`, `test_blackjack_hand_presenter`, `test_tic_tac_toe_gui`, `test_game_menu`, `test_game_experience`, `test_fun_mood`, `test_desktop_lifecycle`, `test_ui_architecture`. Injected-clock checks cover timing, blocked input, accumulated score, re-masking, consecutive naturals and cancelled/stale restart callbacks. An actual Tk timer also restarts a hand in the host-wiring test. Affected Ruff, strict Mypy and Pyright passed. |
+
+Rechecked the local Playing Cards Pack PNG variants: 16×16, 32×32 and 64×64.
+The existing imported 64×64 originals are the largest variant. No replacement
+asset or extra runtime dependency is needed. Actual Tk/Xvfb captures of two
+and four enlarged player cards, the result pause and the following hand were
+inspected. A separate real 2.8-second Tk-timer probe confirmed automatic
+restart, preserved score and a newly concealed dealer card. These checks used
+temporary saves and the existing local network-disabled container; no
+working-desktop window or mouse probe was run. The current player-panel/native
+acceptance checklist includes this follow-up.
+
+Full-suite and full static validation follow completion of both implementation
+commits; the final results below identify their frozen source.
+
+Final gate at `4af6de3d345822e100913fab9d99420c8f29cb33`:
+
+- Full isolated suite: **1,332 tests in 177.510s, eight platform skips,
+  zero failures/errors**, using
+  `PYTHONPATH=tests xvfb-run -a python -m unittest discover -s tests -q`.
+  The existing Tcl theme teardown diagnostics did not produce test failures.
+- Full Ruff passed: `python -m ruff check aiko_pet tests main.py tools`.
+- Full strict Mypy passed for 212 files:
+  `python -m mypy --strict --no-incremental aiko_pet main.py tools`.
+- Full Pyright passed with zero errors/warnings:
+  `python -m pyright --project pyrightconfig.json`.
+
+The following documentation reconciliation changes no production or test code.
+Pre-existing social-content documentation remains outside these commits. No
+normal-save writes, working-desktop probes, remote CI, pushes or merges were
+performed for this follow-up.

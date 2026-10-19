@@ -28,12 +28,15 @@ dialogue are shown together. Documentation is in English.*
 merged into `main`. Only one game is open at a time; closing it restores Aiko's
 ordinary behavior. Merely opening the selector grants no game reward.
 
-In Blackjack, your cards and hit/stand controls belong to the player window.
+In Blackjack, your enlarged cards and hit/stand controls belong to the player
+window. Click the card-back pile for **Karte ziehen** or choose **Bleiben**.
 Aiko's hand floats in front of her on the desktop, with one card face down until
 her turn. She flips it and draws under fixed dealer rules. Hover highlights a
 card without revealing it early. There are no stakes or extra betting actions.
-Tic-Tac-Toe uses one shared board against a simple local opponent, alternating
-the starting player between completed rounds. Both offer **Nächste Runde**.
+The result stays visible for 2.8 seconds before the next hand starts
+automatically, retaining the session score. Tic-Tac-Toe uses one shared board
+against a simple local opponent, alternating the starting player between
+completed rounds and offering **Nächste Runde**.
 
 Aiko's character bubble shows **only her own choice** and her reactions.
 The independent, always-open Kenney-styled player panel shows **your selected

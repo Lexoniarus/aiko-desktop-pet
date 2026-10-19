@@ -9,7 +9,7 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 ### Added and changed
 
 - Add the Spielen submenu with Rock–Paper–Scissors, Blackjack and Tic-Tac-Toe.
-  Keep RPS's round flow; add explicit next-round controls, local rules and
+  Keep RPS's round flow; add local rules and
   outcome-neutral need profiles for the two new games. All session scores and
   game state remain transient, with one completion summary through the existing
   care coordinator. No runtime dependency or save migration is added.
@@ -18,6 +18,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   Aiko's masked/revealed hand in a separate desktop presenter with hover, flip
   and cancellation. Add targeted rule/UI/lifecycle and ownership coverage; the
   [delivery plan](docs/MINIGAME_IMPLEMENTATION_PLAN.md) records actual checks.
+- Enlarge Blackjack player cards with 2x integer scaling and use a clickable
+  pile of the existing card backs for drawing. Start the next hand automatically
+  after a 2.8-second result pause, preserving the session score and cancelling
+  the pending restart on close. Aiko's desktop cards retain their own scale;
+  Tic-Tac-Toe keeps its explicit next-round control.
 
 - Correct stage-4 time ownership: keep the clock responsible for elapsed time,
   inject one session progression through application ports and apply each
