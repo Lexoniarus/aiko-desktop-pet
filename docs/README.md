@@ -80,8 +80,31 @@ and presentation owners but does not depend on online sources or translation.
 
 The [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) preserves the
 candidate care gains, real-time absence losses and negative-interaction values
-discussed on 2026-10-19. It is unapproved tuning, with explicit examples and open
-questions; the values have not been applied to the running application.
+discussed on 2026-10-19, including the later progressive upkeep factor and timed
+neglect rules. Earlier unscaled examples are labeled separately. It is unapproved
+tuning; the values have not been applied to the running application.
+
+The [need balance and daily care proposal](NEEDS_BALANCE_PROPOSAL.md) records
+real-time need rates, care/food effects and an eight-period example day with
+eight hours of sleep. It connects demanding level-10 maintenance with a good
+relationship under average care. The arithmetic is illustrative, not a runtime
+playtest; revised energy values and withdrawn suggestions are explicit.
+
+The [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) records the equal need
+contributions, deficit deductions and target limits, faster decline under severe
+deficits, two-point-per-minute recovery and real-time examples. It is likewise
+an unimplemented discussion proposal; contextual Moodlets remain separate work.
+
+The [adaptive sleep proposal](ADAPTIVE_SLEEP_PROPOSAL.md) records the learned
+quiet window, three/seven-phase learning milestones, 15-minute sleep onset,
+nap/recovery rules, early-waking conditions and real-time continuation while
+closed or suspended. Habit learning uses only actual repeated mouse/keyboard
+input, inactivity and known off/standby state; app timestamps, manual commands
+and weighted scoring are excluded. It also records conflict priority, 30-minute
+manual-control protection and sleep-type wake thresholds. Food breaks use satiety thresholds
+20/40, one bounded zero-hunger search and identified available stock while closed.
+Expected rhythm remains distinct from observed activity, and remaining transition
+details stay explicit; no runtime changes apply.
 
 ## Dialogue editorial review
 

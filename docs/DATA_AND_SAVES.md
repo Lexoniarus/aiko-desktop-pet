@@ -121,6 +121,12 @@ produce these backup files on every autosave.
 
 ## Closed time and self-care
 
+> This section describes the current runtime. The separate
+> [adaptive sleep proposal](ADAPTIVE_SLEEP_PROPOSAL.md) records unimplemented
+> learned sleep/wake timings and full elapsed-time continuation, together with
+> the [need balance proposal](NEEDS_BALANCE_PROPOSAL.md). These candidates do
+> not replace the existing time, manual-sleep or self-care behavior below.
+
 Loading JSON only decodes data. `PetSessionRestorer` subsequently calculates
 closed time from `pet.updated_at` to the current clock, bounded by
 `simulation.maximum_catchup_seconds` in `balance.json` (eight hours by default).

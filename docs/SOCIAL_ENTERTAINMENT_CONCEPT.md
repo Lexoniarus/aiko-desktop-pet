@@ -26,6 +26,16 @@ The later [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) records
 candidate relationship gains/losses and real-time absence consequences. It is
 separate from this preserved content-provider concept and is not implemented.
 
+The [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) separately records need
+contributions, critical-deficit penalties and real-time decline/recovery timings.
+It also preserves discussion values only, without implementing Moodlets or
+changing runtime balance.
+
+The [need balance and daily care proposal](NEEDS_BALANCE_PROPOSAL.md) connects
+care effects and real-time need rates to an example day with normal sleep.
+The friendship proposal also records progressive upkeep and sustained neglect;
+these remain unimplemented balance candidates, separate from content providers.
+
 ## Product direction
 
 Aiko should offer small, varied moments of entertainment on her own initiative,

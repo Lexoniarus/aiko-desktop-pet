@@ -1,5 +1,13 @@
 # Fun and mood — prototype tuning guide
 
+> This guide describes the current runtime. The later
+> [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) preserves unimplemented
+> discussion values for need contributions, deficits and real-time recovery.
+> Those candidate values do not replace the current rules below.
+> The [need balance and example day](NEEDS_BALANCE_PROPOSAL.md) likewise records
+> proposed care/rate changes, including revised energy and RPS values, rather
+> than the current runtime configuration.
+
 Fun and mood now have **different responsibilities**. The target experience
 is to play **three or four times per active day, with two or three completed
 rounds per session**. These are optional, not fixed appointments.

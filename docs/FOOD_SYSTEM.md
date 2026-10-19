@@ -1,5 +1,10 @@
 # Food system — practical tuning guide
 
+> This guide describes the current implementation. The separate
+> [need balance and daily care proposal](NEEDS_BALANCE_PROPOSAL.md) preserves
+> discussion candidates and an illustrative day; it does not replace the
+> runtime food, time or care rules below.
+
 This is the current, editable food design. It supersedes historical v0.11/v0.12
 feeding constants. The goal is three normal meals and optional snacks over a
 16-hour active day, with no mandatory meal alarm. Reopening now reconstructs bounded closed time with optional scheduled self-care; see [data and saves](DATA_AND_SAVES.md).

@@ -32,6 +32,30 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Tests and documentation
 
+- Simplify the proposed habit learner to actual repeated input, 15-minute
+  inactivity and known off/standby state. Retain three/seven quiet-phase
+  milestones and gradual adjustment; exclude weighted scoring and extra signals
+  from app timestamps, manual controls or workload. Runtime learning is unchanged.
+- Record proposed food breaks during sleep: satiety at most 20 triggers known-food
+  use toward at least 40, zero satiety permits a bounded five-minute search, and
+  failed searches do not loop within one main sleep phase. Preserve manual-sleep
+  protection, actual sleep-time accounting and identified-stock limits while
+  closed. No application, balance or save changes.
+- Extend the adaptive sleep proposal with conflict priority, 30-minute protection
+  for manual Sleep/Wake, exhaustion recovery, sleep-type endpoint conditions and
+  worked conflict examples. Record resolved design candidates without changing
+  application behavior or saves.
+- Preserve the unimplemented adaptive sleep proposal: habit-learning milestones,
+  sleep-onset and wake timings, naps/recovery, manual controls and chronological
+  continuation while closed or suspended. Separate expected rhythm from observed
+  activity and retain unresolved transition details as design questions.
+- Preserve the unimplemented need/care balance and repeated-day example with
+  eight hours of sleep. Extend the friendship proposal with progressive upkeep,
+  rolling neglect thresholds and non-additive overlap with absence. Label
+  superseded suggestions and original unscaled arithmetic explicitly.
+- Record the unimplemented mood balance proposal: equal need contributions,
+  critical-deficit deductions and target limits, real-time decline rates,
+  slower recovery and worked examples. Keep current runtime guidance separate.
 - Record the unapproved friendship balance proposal, including personal-care
   gains, progressive real-time absence losses, negative interaction values,
   level/progression examples and open decisions. Runtime balance is unchanged.
