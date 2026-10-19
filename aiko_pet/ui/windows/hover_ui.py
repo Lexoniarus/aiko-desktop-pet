@@ -296,15 +296,15 @@ class HoverUi:
 
     def _create_rps(self) -> RockPaperScissorsWindow:
         return RockPaperScissorsWindow(
-                self.root,
-                on_closed=self._game_closed,
-                dialogue=self._ports.game_dialogue,
-                speak=self._ports.game_speech.say,
-                emote=self._ports.game_speech.emote,
-                hand=self._ports.game_speech.hand,
-                animate=self._ports.game_speech.animate,
-                always_on_top=self._ports.always_on_top(),
-                skin=self._skin,
+            self.root,
+            on_closed=self._game_closed,
+            dialogue=self._ports.game_dialogue,
+            speak=self._ports.game_speech.say,
+            emote=self._ports.game_speech.emote,
+            hand=self._ports.game_speech.hand,
+            animate=self._ports.game_speech.animate,
+            always_on_top=self._ports.always_on_top(),
+            skin=self._skin,
         )
 
     def close_game(self) -> None:
