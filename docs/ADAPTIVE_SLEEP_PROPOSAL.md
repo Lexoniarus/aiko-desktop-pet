@@ -93,6 +93,10 @@ in progress. Do not end a game or conversation merely because bedtime arrives.
 Continued actual user activity postpones normal sleep onset. The clock alone
 does not force sleep. CPU/GPU load from a download or computation does not by
 itself keep Aiko awake: machine workload and human presence are distinct.
+Under the later [consumption-modifier proposal](NEEDS_BALANCE_PROPOSAL.md#proposed-consumption-modifiers),
+hardware can increase awake hunger/energy consumption but supplies no direct
+sleep signal. Sleep can still follow the resulting energy level; while Aiko
+sleeps, hardware surcharges do not apply.
 
 Outside the expected main quiet phase:
 
@@ -323,9 +327,11 @@ human feeding.
 
 Contact-related friendship loss continues over real time. Sleeping, automatic
 waking and autonomous care do not award personal friendship or renew care
-contact. At high friendship, an eight-hour contact gap has approximately two
-points of reference absence loss under the separate progressive proposal;
-there is no additional night exemption.
+contact. An eight-hour contact gap has two points of reference absence loss.
+Under the latest friendship revision, level 10 has factor 2, making this
+approximately **four actual friendship points**, not the earlier two-point
+night. Adequately rewarded distributed daytime care can cover this within the
+rolling +5/24-hour ceiling; there is no additional night exemption.
 
 While energy is actually increasing during restorative sleep, the proposed
 energy-neglect clock and energy-neglect deduction pause. Earlier history is
@@ -334,6 +340,11 @@ continue to be assessed under their own rules. Mood follows the evolving needs
 and its separate decline/recovery proposal.
 
 ## Remaining decisions and future verification
+
+The [combined example day](NEEDS_BALANCE_PROPOSAL.md#combined-example-day-with-needs-mood-sleep-and-friendship)
+now records the normal branch with manual Sleep at 23:00, full energy around
+06:40 and scheduled Wake at 07:00. No nap, exhaustion recovery or food break
+is triggered; it is an arithmetic consistency check, not a runtime playtest.
 
 - Verify recurring quiet-phase recognition and the three/seven-phase milestones
   using only actual repeated input, inactivity and known off/standby state.

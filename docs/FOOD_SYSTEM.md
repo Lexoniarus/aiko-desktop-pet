@@ -4,6 +4,10 @@
 > [need balance and daily care proposal](NEEDS_BALANCE_PROPOSAL.md) preserves
 > discussion candidates and an illustrative day; it does not replace the
 > runtime food, time or care rules below.
+> Its later [consumption modifiers](NEEDS_BALANCE_PROPOSAL.md#proposed-consumption-modifiers)
+> propose bounded hardware/input surcharges and weaker reserve protection,
+> omitting fasting acceleration and activity-based reserve speedup. Those
+> candidate replacements have not been applied to the existing implementation.
 
 This is the current, editable food design. It supersedes historical v0.11/v0.12
 feeding constants. The goal is three normal meals and optional snacks over a

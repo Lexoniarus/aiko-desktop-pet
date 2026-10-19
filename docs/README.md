@@ -81,14 +81,22 @@ and presentation owners but does not depend on online sources or translation.
 The [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) preserves the
 candidate care gains, real-time absence losses and negative-interaction values
 discussed on 2026-10-19, including the later progressive upkeep factor and timed
-neglect rules. Earlier unscaled examples are labeled separately. It is unapproved
-tuning; the values have not been applied to the running application.
+neglect rules. The latest revision has shared +0.75/two-hour and +5/24-hour gain
+ceilings, gentler lower upkeep, factor 2 at level 10 and comparisons from two
+to eight daily care visits. Earlier factors and unscaled examples are labeled
+separately. It is unapproved tuning; no values apply to the running application.
 
 The [need balance and daily care proposal](NEEDS_BALANCE_PROPOSAL.md) records
 real-time need rates, care/food effects and an eight-period example day with
 eight hours of sleep. It connects demanding level-10 maintenance with a good
 relationship under average care. The arithmetic is illustrative, not a runtime
-playtest; revised energy values and withdrawn suggestions are explicit.
+playtest; revised energy values and withdrawn suggestions are explicit. The
+later consumption section records bounded hardware/input hunger surcharges,
+weaker digestion protection, a smaller energy surcharge and repeated-day food
+examples; normal elapsed time requires feeding independently of hardware load.
+The [combined example day](NEEDS_BALANCE_PROPOSAL.md#combined-example-day-with-needs-mood-sleep-and-friendship)
+now calculates the five needs, target/actual mood, normal sleep and individually
+credited friendship together, with explicit assumptions and no runtime claim.
 
 The [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) records the equal need
 contributions, deficit deductions and target limits, faster decline under severe

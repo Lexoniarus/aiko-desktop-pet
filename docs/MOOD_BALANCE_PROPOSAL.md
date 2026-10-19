@@ -43,9 +43,11 @@ range is reserved for later experience effects; full needs alone do not
 automatically mean maximum mood. Friendship has no generic bonus in this
 proposed need base.
 
-This records the discussed mood design, not changes to existing workload or
-energy policies. The later Moodlet design must not infer social experiences
-from computer utilization.
+The later [consumption-modifier proposal](NEEDS_BALANCE_PROPOSAL.md#proposed-consumption-modifiers)
+now restricts hardware effects to additional hunger/energy consumption. Hardware
+has no direct mood penalty or social-Moodlet trigger in that candidate; mood
+responds to the resulting needs. This supersedes the earlier open modifier
+scope in the discussion, not the currently implemented workload/energy rules.
 
 ## Proposed deficit penalties and target limits
 
@@ -173,6 +175,12 @@ rate retroactively to the entire absence. Changes in needs, resource use and
 target direction must be accounted for in their actual order.
 
 ## Open questions before implementation
+
+The [combined example day](NEEDS_BALANCE_PROPOSAL.md#combined-example-day-with-needs-mood-sleep-and-friendship)
+records a normal-care calculation with actual mood approximately 57–78, no
+critical deficits, and recovery toward each updated care target. It distinguishes
+target from actual mood and leaves expression thresholds/refusal rules open;
+it is not a runtime test or final approval of the scale's presentation.
 
 - Confirm or revise these candidate values through integrated scenarios and
   practical desktop use; none of the timings are playtest results.

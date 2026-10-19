@@ -32,6 +32,20 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Tests and documentation
 
+- Record the combined proposed example day across needs, digestion/input
+  modifiers, target/actual mood, normal sleep and individually credited
+  friendship. Preserve assumptions, repeated-day values and numerical sensitivity;
+  distinguish this arithmetic consistency check from implementation or playtests.
+- Preserve proposed consumption modifiers: independent base hunger, bounded
+  hardware/input surcharges, at most 25% digestion protection and a smaller
+  energy surcharge. Record omitted fasting/reserve accelerators, closed-time
+  behavior and food-only repeated-day examples; link the mood/sleep boundaries.
+  No runtime, balance JSON or save changes.
+- Record the latest proposed friendship curve and daily comparisons: shared
+  rolling +0.75/two-hour and +5/24-hour reward ceilings, gentler lower upkeep,
+  factor 2 from 90 points and a maintainable smaller morning/evening relationship.
+  Update cross-references and overnight examples; distinguish isolated arithmetic
+  from integrated need/neglect balance. No runtime, balance JSON or save changes.
 - Simplify the proposed habit learner to actual repeated input, 15-minute
   inactivity and known off/standby state. Retain three/seven quiet-phase
   milestones and gradual adjustment; exclude weighted scoring and extra signals

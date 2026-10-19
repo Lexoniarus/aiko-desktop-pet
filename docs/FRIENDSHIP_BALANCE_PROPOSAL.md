@@ -3,6 +3,8 @@
 > **Discussion proposal only — no implementation approval.** Recorded on
 > 2026-10-19 on `feature/social-optimization`, from code baseline `b519da4`.
 > Expanded on the same date with progressive upkeep and timed neglect rules.
+> The latest revision adds shared reward ceilings, a gentler lower upkeep curve
+> and repeated-day comparisons; earlier factors/examples are marked separately.
 > The owner requested preservation of these candidate values. These values are
 > not shipped settings, an accepted final
 > specification or evidence of playtested balance. Runtime code, JSON balance,
@@ -26,6 +28,9 @@ Related references: [social and entertainment concept](SOCIAL_ENTERTAINMENT_CONC
   everyday life. Average good care should support a good relationship around
   levels 7–8. Level 9 remains close; crossing below level 10 is not itself an
   offended-return trigger. There is no mandatory hourly interaction schedule.
+- Regular morning/evening care should be able to maintain a smaller relationship
+  instead of inevitably reaching zero. This is a balance target under adequate
+  actual care, not a protected minimum despite neglect or negative actions.
 - Real time continues while the application is open, closed or the computer is
   suspended. The proposed relationship loss must not inherit the current
   eight-hour closed-time reconstruction limit.
@@ -71,7 +76,7 @@ These are friendship points, not changes to satiety, energy, fun, social or
 affection. Need-replenishment candidates are recorded in the separate
 [need balance proposal](NEEDS_BALANCE_PROPOSAL.md).
 
-| Interaction | Candidate gain | Qualification |
+| Interaction | Nominal candidate gain before shared ceilings | Qualification |
 | --- | --- | --- |
 | Personally handed-over food | +0.9 | Actually accepted and consumed; not merely placing a portion nearby |
 | Personally handed-over energy drink | +0.25 | Actually accepted and used |
@@ -83,13 +88,18 @@ affection. Need-replenishment candidates are recorded in the separate
 
 Proposed limits and qualification rules:
 
-- At most **+5 friendship within 24 hours**. Whether the budget is a rolling
-  interval or another real-time accounting scheme remains to be settled; it
-  must not be silently confused with the current calendar-day rule.
+- At most **+0.75 friendship within any rolling two-hour interval**, shared
+  across all care types. Bundling several actions into one visit still helps
+  needs, but does not award a large relationship increase all at once.
+- At most **+5 friendship within any rolling 24-hour interval**. This latest
+  candidate resolves the earlier rolling-versus-calendar question in favor of
+  rolling time; it differs from the current calendar-day runtime rule.
 - The same care type receives its full gain at most **once per two hours**.
   The exact handling of intervening repetitions remains open.
 - If the corresponding need is already **above 80**, award **25%** of the gain.
   Accepted relationship contact can matter without an urgent need.
+- The shared ceilings limit actual credited gains after ordinary qualification
+  and reductions. They are not guaranteed awards per visit or per time window.
 - Rejected, unperformed or repeatedly clicked commands are not multiple care
   events. Consumed portions, completed rounds and genuine accepted interaction
   remain authoritative.
@@ -98,7 +108,9 @@ Proposed limits and qualification rules:
   distinct questions.
 
 The earlier baseline's variety bonus is recorded above for comparison. Its
-retention or replacement has not been decided by this proposal.
+retention or replacement has not been decided by this proposal; it must not
+bypass the new shared ceilings. The old uncapped-per-visit +5/day comparison
+is superseded by the shared two-hour ceiling.
 
 The temporary suggestion of awarding friendship only after every need reaches
 40 was withdrawn. A positive interaction can count while another need is low;
@@ -180,8 +192,9 @@ overnight contact gap per day:
 These are arithmetic illustrations of the proposed rates, not results from
 an integrated simulation, verified daily schedules or practical playtests.
 Thresholds, reward budgets and contact qualification can change feasibility.
-They also precede the progressive factor; 25/38/75 days must not be presented
-as the expanded proposal's verified leveling times.
+They also precede the progressive factor and shared two-hour reward ceiling;
+25/38/75 days must not be presented as the expanded proposal's verified
+leveling times or feasibility for those overnight care gaps.
 
 ## Proposed progressive relationship upkeep
 
@@ -192,15 +205,25 @@ absence/neglect loss, with continuous linear interpolation between anchors:
 
 | Current friendship | Display level | Passive-loss factor |
 | --- | --- | --- |
-| 15 | 2 | 0.25 |
-| 45 | 5 | 0.50 |
+| 0 | 1 | 0.05 |
+| 35 | 4 | 0.15 |
+| 50 | 6 | 0.35 |
 | 70 | 8 | 0.75 |
-| 95 | 10 | 1.00 |
+| 90 through 100 | 10 | 2.00 |
 
-Use 0.25 below 15 and 1.00 above 95. Reevaluate from current friendship as
-time progresses; crossing a display level does not create a rate jump.
-The +5 care-gain budget is not multiplied by this upkeep factor. This proposal
-does not additionally scale the separately bounded clicking/withholding losses.
+Interpolate between the anchors at 0, 35, 50, 70 and 90; keep 2.00 from 90
+through 100. Reevaluate from current friendship as time progresses; crossing
+a display level does not create a rate jump. At zero, 0.05 is a loss-rate
+factor, not an award or a positive minimum friendship value.
+The +0.75/two-hour and +5/24-hour gain ceilings are not multiplied by this upkeep
+factor. This proposal does not additionally scale the separately bounded
+clicking/withholding losses.
+
+This replaces the earlier anchors (15: 0.25, 45: 0.50, 70: 0.75, 95: 1.00).
+An intermediate stricter lower curve could push morning/evening care to zero;
+that result is explicitly superseded by the gentler lower anchors above.
+The more demanding upper factor of 2.00 from 90 remains part of the latest
+comparison, not the old factor of 1.00 at high friendship.
 
 The target experience is attentive distributed care for level 10, average good
 care maintaining approximately levels 7–8, and gradual changes across weaker
@@ -210,11 +233,84 @@ For contacts at 07:00, 13:00, 19:00 and 23:00, the two six-hour gaps cost one
 reference point each, the four-hour gap costs zero and the eight-hour night
 costs two: four in total. Around 70 friendship, 0.75 gives approximately three
 points of loss. If actual care earns +3, that is approximately maintenance;
-near level 10 the same care slowly loses ground. The factor changes during
-the day, so these are explanatory estimates rather than exact equilibria.
+the shared two-hour ceiling now makes +3 the maximum for those four visits.
+At level 10 the reference four-point loss is multiplied by 2, giving up to
+eight before factor changes, so +3 no longer maintains that level. The factor
+changes during the day; these are explanations, not exact fixed-factor paths.
 
 See the [eight-period high-care day](NEEDS_BALANCE_PROPOSAL.md) for the
 corresponding need values and a feasible eight-hour night without energy drinks.
+
+## Latest daily friendship comparisons
+
+The following isolates friendship upkeep. All schedules use valid personal
+care at the listed times, with an eight-hour 23:00–07:00 overnight contact gap.
+Every care visit still renews valid contact if its reward budget is exhausted.
+It is not merely opening the app or clicking Aiko.
+
+### Calculation assumptions
+
+- Use the latest piecewise-linear factor above and the existing proposed
+  reference absence-rate intervals, continuously updating from current points.
+- Assume enough qualified, accepted care to earn up to 0.75 at each visit,
+  subject to the shared rolling two-hour and 24-hour ceilings. All listed
+  visits are at least two hours apart. These are earned-gain upper scenarios,
+  not guaranteed gains from one arbitrary action or automatic rewards for time.
+- Exclude neglect, clicking/withholding losses and autonomous friendship gains.
+  This is not a simulation of need satisfaction, item availability, sleep
+  decisions, workload, dialogue or Moodlets. Those can alter real feasibility.
+- Integrate passive loss in one-minute intervals. For the first-day column,
+  start at 95 immediately before 07:00 care with no previous rewards using the
+  budget, and finish before the next 07:00 care. Repeat the schedule for 540
+  days to illustrate the settled within-day range, clamping friendship to 0–100.
+
+| Care pattern and times | Maximum credited gain per 24 hours | Reference absence loss before factor | First-day change from 95 | Approximate repeated-day range | Display level in that range |
+| --- | --- | --- | --- | --- | --- |
+| Eight: 07:00, 09:30, 12:00, 14:30, 17:00, 19:00, 21:00, 23:00 | +5.00 | 2 | +1.00 | 96–100 | 10 |
+| Six: 07:00, 10:00, 13:00, 16:00, 19:00, 23:00 | +4.50 | 2 | +0.50 | 96–100 | 10 |
+| Five: 07:00, 11:00, 15:00, 19:00, 23:00 | +3.75 | 2 | -0.25 | 86.2–89.9 | 9 |
+| Four: 07:00, 13:00, 19:00, 23:00 | +3.00 | 4 | -5.00 | 69.2–70.8 | 7–8 |
+| Three: 07:00, 15:00, 23:00 | +2.25 | 6 | -9.39 | 50.9–51.6 | 6 |
+| Two: 07:00 and 23:00 | +1.50 | 10 | -15.84 | 34.2–35.4 | 4 |
+
+These are numerical discussion illustrations, not production-policy tests,
+playtested balance or exact analytic equilibria. The first-day drop remains
+large for a previously close relationship with sparse care, but lower-level
+upkeep becomes milder as the relationship settles. Less actual reward or
+additional negative influences can lower these ranges.
+
+### Why morning/evening care can sustain a smaller relationship
+
+Two fully rewarded care visits can earn 2 * 0.75 = 1.5. Their 16-hour daytime
+and eight-hour overnight gaps cost 8 + 2 = 10 reference points. Around 35
+friendship, factor 0.15 makes that approximately 1.5, explaining the smaller
+relationship's maintenance point. Starting from the existing 15 points, the
+same simplified schedule also builds toward this range (about +0.56 on its
+first day), rather than only preserving a previously acquired level.
+
+Level 4 is not a guaranteed floor. Without continued adequate care, or with
+neglect/annoyance, points can fall further. The factor at zero neither restores
+points nor cancels losses. The intended outcome is a maintainable smaller
+relationship, not immunity from consequences.
+
+### Why distributed care matters at the upper end
+
+Near level 10, an eight-hour contact gap now costs two reference points times
+factor 2, approximately four actual points; it is not the old two-point night.
+Six to eight adequately rewarded visits can cover that cost. Five visits can
+earn only 3.75, making permanently holding level 10 harder; four are bounded
+to +3 and settle near levels 7–8 under the isolated assumptions above.
+
+The earlier lower-curve comparison placing three visits near 30 and two visits
+near zero is superseded. Only the latest gentler table should be used when
+discussing the current candidate daily outcomes.
+
+The later [combined example day](NEEDS_BALANCE_PROPOSAL.md#combined-example-day-with-needs-mood-sleep-and-friendship)
+checks the eight-period schedule against individual pre-care need values and
+actual rolling reward allowances. In that normal-care model, the listed actions
+do earn +5, with no neglect and four overnight points lost: 95 before morning
+care, 100 by evening and 96 the next morning. Other rows above still represent
+isolated maximum-gain comparisons, not full need/acceptance simulations.
 
 ## Proposed sustained-neglect rules
 
@@ -273,9 +369,11 @@ their own bounded episode rules; they do not replace passive loss.
 
 ### Neglect arithmetic examples
 
-These isolate neglect, assume no stronger absence rate, no prior critical
-history in the window and an unscaled reference factor of 1. They are not
-exact changing-friendship trajectories.
+These isolate neglect, assume no stronger absence rate and no prior critical
+history in the window, and show **unscaled reference** losses. They are not
+high-level actual losses: the latest factor is 2 at level 10 and lower below
+that. Apply it once after choosing the stronger passive rate; a changing factor
+also changes the actual trajectory.
 
 | Need history | Reference neglect loss |
 | --- | --- |
@@ -335,8 +433,12 @@ generic hunger/fatigue Moodlets or authorize runtime changes.
   unscaled three-day consequence is not its current predicted trajectory.
 - Define accepted relationship contact precisely, including abbreviated play,
   interrupted conversations, personal handovers and reward-limited care.
-- Resolve reward-budget windows, repeat handling, reduced-gain ordering and
-  the former variety bonus.
+- Resolve same-type repetition inside two hours, reduced-gain ordering and the
+  former variety bonus within the shared ceilings. Rolling two-hour and 24-hour
+  budget windows are the latest candidate, not an open calendar-day alternative.
+- Validate the latest daily comparisons against actual accepted care, need
+  trajectories, sleep and combined neglect; they currently bound credited
+  gains rather than proving all schedules supply every need adequately.
 - Define clicking/withholding episodes and their exact loss-rate limits.
 - Specify durable time accounting, idempotence, restart/suspend reconstruction
   and normal clock corrections without creating a second friendship owner.
