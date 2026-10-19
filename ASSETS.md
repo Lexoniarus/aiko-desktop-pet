@@ -122,6 +122,13 @@ available in Git history, for example the
 
 ## 3. Kenney game assets — CC0 1.0
 
+The **Playing Cards Pack (1.0)** contributes exactly 52 standard card faces and
+one back from `PNG/Cards (large)`, unmodified 64×64 PNG canvases under
+`aiko_pet/assets/playing_cards/`. The bundled
+[license](LICENSES/KENNEY_PLAYING_CARDS_CC0.txt) states CC0 and voluntary credit.
+`provenance.json` records the source pack, bundle, source subdirectory and
+SHA-256 for each selected original. No runtime Dropbox access is needed.
+
 The project uses artwork from these Kenney asset packs:
 
 - **Kenney Emote Pack (1.0):** pixel emotes under `aiko_pet/assets/emotes/`.
