@@ -467,6 +467,10 @@ class HoverUi:
             if window is not None:
                 window.window.wm_attributes("-topmost", enabled)
 
+    def refresh_toolbar(self) -> None:
+        if self.toolbar is not None:
+            self.toolbar.refresh()
+
     def refresh_status(self) -> None:
         """Status is now an optional section of the existing toolbar."""
         if self.toolbar is not None:

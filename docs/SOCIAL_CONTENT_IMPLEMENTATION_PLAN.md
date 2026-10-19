@@ -320,3 +320,24 @@ this first delivery.
   window cases passed. Contact (10), lifecycle (4), scheduler (4) and dependency
   graph (4) checks passed. Scoped Ruff, strict Mypy and Pyright checks passed.
   The complete suite and final repository-wide static checks are still pending.
+- `105440a`: menu and desktop integration; `dd2e94d` reserves an offered item
+  until actual playback acceptance. `072ada3` bounds duplicate retries and
+  recent history after the live API check exposed repeated Single responses.
+- `7ebbba4`: invalidate a queued holding callback when content is already ready.
+  Eight native social GUI cases now include save/reopen, saved opt-in, uncached
+  provider content and the shared reward interval across categories/restarts.
+  Six focused social-runtime and twelve buffer cases passed.
+- Final native validation exposed retained skin/speech Tk images. The expanded
+  shutdown regression first failed, then passed with `0dabb1f`, which releases
+  those root-local caches on Tk's owner thread. The next full run completed
+  normally: **1,370 tests in 319.942 seconds**, with two failures (game-menu
+  mapping measurement and the unchanged 640-line GUI architecture limit).
+- `76d27f4` updates the older care test to select Plaudern from the new menu.
+  `e87c698` measures Blackjack card bounds after actual native mapping. The
+  game-menu measurement receives the same mapping-event correction, retaining
+  its text-width assertion. Care/social dispatch and presenter construction
+  move to `DesktopCareRuntime`; toolbar refresh stays with `HoverUi`.
+  The composition root is 637 lines, below the unchanged guard. Focused
+  architecture (26), dependencies (4), social GUI (8), application GUI (7), care
+  GUI (6), follow-up GUI (4) and game-menu (10) cases pass. Final full
+  validation after these corrections remains pending.

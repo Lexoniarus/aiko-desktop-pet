@@ -97,6 +97,9 @@ friendship history. No runtime dependency or translation model is added.
 - `infrastructure/social_api.py` owns bounded HTTP reads and the data-only worker.
 - `desktop/social_runtime.py` coordinates holding and deferred admission through
   existing World, care and presentation callbacks.
+- `desktop/care_runtime.py` owns deliberate care dispatch, care presentation and
+  Social-to-World admission wiring. `gui.py` composes that owner and keeps its
+  existing public care entry point.
 - `ui/windows/social_menu.py` presents choices/status/source links; `HoverUi`
   owns its stacking, hover, topmost, dismissal and cleanup.
 
