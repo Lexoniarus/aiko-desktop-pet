@@ -397,7 +397,7 @@ class ObjectInteractionCoordinator:
             self._start(known.token, ConsumptionOrigin.AUTONOMOUS)
         self._episode.identity, self._episode.kind = known.identity, known.kind
         if known.recognized:
-            self._search = SearchTask(known)
+            self._search = SearchTask(known, known=self._memory.snapshot())
         # Confirmed absence comes before other discoveries even if Aiko
         # does not currently need to consume that remembered item.
         self._set_phase(CuePhase("notice_absence"))
@@ -419,7 +419,7 @@ class ObjectInteractionCoordinator:
             return
         self._memory.mark_missing(self.memory_id)
         if self._search is None:
-            self._search = SearchTask(known)
+            self._search = SearchTask(known, known=self._memory.snapshot())
         self._set_phase(SearchPhase())
         self._stop()
         self._announce("object_search")
@@ -438,6 +438,7 @@ class ObjectInteractionCoordinator:
         subject = self._search.resolve(known) if self._search is not None else None
         if subject is None:
             return False
+        known = self._memory.reunite_search(subject, known.token)
         self._missing_feedback = deque(
             item for item in self._missing_feedback if item.token != subject.token
         )

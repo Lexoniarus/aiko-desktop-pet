@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Reunite a missing subjective object with one newly identified same-kind
+  portion during search, preserving actual World facts and transferring
+  remembered assessment and saved-for-later intent. Retire the old missing
+  record, exclude known stock and unseen findings, and keep ordinary stock
+  recognition strict. Verify existing save compatibility and 1,194 tests.
+
 - Restore rapid direct sprite clicks during an existing click reply, so the
   original teasing counter and irritation escalation remain reachable. Keep
   care/game/object actions exclusive and story-reading clicks exempt. The
@@ -27,7 +33,7 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   in validated JSON and outer saves v1; add production-policy daily scenarios.
 - Record separate fixes for blocked idle repeated clicks and subjective
   same-kind object reunion with natural German noun phrases. B1 is implemented;
-  B2 remains planned.
+  B2 subjective reunion is implemented; German phrase work is in progress.
 
 - Advance full real elapsed time across closed sessions and live standby;
   remove the eight-hour cap and stream long routine timelines. Keep active

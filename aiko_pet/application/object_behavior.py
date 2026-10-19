@@ -431,8 +431,9 @@ class ObjectBehaviorCoordinator:
             return None
         if not interaction.search_ready:
             return Hold()
+        observed = {seen.token for seen in self._awareness.observations}
         for known in self._awareness.memory.snapshot():
-            if (known.place_status == "remembered"
+            if (known.token in observed and known.place_status == "remembered"
                     and interaction.found(known.token)):
                 return Hold()
         if blocked:

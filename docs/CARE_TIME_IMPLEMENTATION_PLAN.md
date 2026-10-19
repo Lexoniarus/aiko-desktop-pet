@@ -5,7 +5,7 @@
 > The owner accepted the latest discussed balance as a sufficient starting
 > point for implementation planning. This document plans that first delivery.
 > Stages 1 and 2 and B1 are implemented and verified below.
-> Stages 3–6 and B2 remain pending.
+> Stages 3–6 remain pending; B2 is in progress.
 
 ## Goal and boundaries
 
@@ -95,7 +95,7 @@ incompatible time, sleep and save behavior in place.
 | Stage 1: time and storage | `59cab63`, pushed to `feature/social-optimization`; 1,166 tests and pinned static checks passed; physical suspend/resume remains pending |
 | Stage 2: needs and mood | Implemented in the separate feature commit containing this record; 1,177 tests and pinned static checks passed; isolated native care/save/reopen passed |
 | B1: idle repeated-click regression | Implemented in the separate fix commit containing this record; 1,185 tests, pinned static checks and native Windows clicks passed; no new friendship penalty |
-| B2: object recognition and German dialogue | [Detailed plan](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); pending, separately scoped from stage 2 |
+| B2: object recognition and German dialogue | [Detailed plan](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); Part A verified with 1,194 tests and static checks; German phrases and integrated acceptance in progress, separately scoped from stage 2 |
 | Stages 3–6 | Pending |
 
 ### Stage-1 execution record, 2026-10-19

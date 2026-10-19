@@ -1,7 +1,9 @@
 """Headless integration of required object feedback and search readiness."""
 
 import unittest
+from dataclasses import replace
 from typing import NoReturn
+from unittest.mock import patch
 
 from aiko_pet.application.object_feedback import FeedbackReceipt, ObjectFeedback
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
@@ -17,6 +19,53 @@ from tools.reaction_test_support import FakeScheduler
 
 
 class ObjectFeedbackFlowTests(unittest.TestCase):
+    def test_different_same_kind_find_announces_reunion_only_after_identification(self):
+        self.memory.update((ObjectObservation(
+            "old", "onigiri", "food", 100, 0, True, 0,
+        ),), now=0)
+        self.memory.mark_assessed("old")
+        self.memory.note_placement("old", x=100, height=0, now=0, deferred=True)
+        self.memory.restore_snapshot(tuple(
+            replace(item, instance_id="object_1") for item in self.memory.snapshot()
+        ))
+        self.memory.mark_missing("old")
+        subject = self.memory.get("old")
+        assert subject is not None
+        self.coordinator.notice_absence(subject)
+        for _ in range(2):
+            token = self.player.pending_timer
+            assert token is not None
+            self.scheduler.fire(token)
+            self.coordinator.update()
+        self.assertTrue(self.coordinator.search_ready)
+        found = self.memory.observe_find(ObjectObservation(
+            "sighting", None, None, 600, 0, True, 1,
+        ), now=1, record=None, claimed=frozenset(), maximum_distance=25,
+            instance_id="object_3")
+        self.assertFalse(self.coordinator.found(found))
+        self.assertNotIn("object_found", [cue.event for cue in self.presented])
+        self.memory.observe_find(ObjectObservation(
+            "sighting", "onigiri", "food", 600, 80, False, 2,
+        ), now=2, record=found, claimed=frozenset(), maximum_distance=25,
+            preserve_record=True, instance_id="object_3")
+        world = self.world.snapshot()
+        self.assertTrue(self.coordinator.found(found))
+        self.assertEqual(self.presented[-1].event, "object_found")
+        self.assertEqual(self.presented[-1].record_id, found)
+        self.assertIn("Onigiri", self.visible[-1][0])
+        self.assertIsNone(self.memory.get("old"))
+        known = self.memory.get(found)
+        assert known is not None
+        self.assertTrue(known.assessed)
+        self.assertEqual(known.disposition, "deferred")
+        self.assertEqual(known.instance_id, "object_3")
+        self.assertEqual(self.world.snapshot(), world)
+        self.assertFalse(self.coordinator.found(found))
+        self.assertEqual([cue.event for cue in self.presented].count("object_found"), 1)
+        # This feedback-only fixture has no physical completion/abort adapters.
+        with patch.object(self.coordinator, "receive_feedback"):
+            self.player.cancel()
+
     def setUp(self) -> None:
         self.world = WorldState(WorldSurface(800, 600), ())
         self.memory = ObjectMemory()

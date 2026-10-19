@@ -1,6 +1,6 @@
 # Object recognition and natural German dialogue fix plan
 
-> **B2 — planned, not implemented.** Target: `feature/social-optimization`.
+> **B2 — in progress.** Target: `feature/social-optimization`.
 > Added on 2026-10-19 from the owner's supplied fix plan and Onigiri example.
 > Track delivery in the [care/social implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
 
@@ -24,7 +24,7 @@ This is a correction within the existing search mechanism. Keep
 `object_recognized` and `object_found` distinct; no second search service,
 perception system or memory store is needed.
 
-## Current evidence and ownership
+## Baseline evidence and ownership
 
 The current `SearchTask._match()` requires equal instance IDs for subjects
 with physical references; identity/kind-only matching is limited to an
@@ -53,6 +53,16 @@ nutrition/item IDs unchanged; a spoken-name override must not duplicate the
 whole food catalogue.
 
 ## A. Subjective reunion and memory consistency
+
+Part A now uses the existing search task's chronological same-kind matching and
+an explicit `ObjectMemory.reunite_search()` transition. Found physical facts
+remain intact; the old subjective subject is retired. Existing known stock and
+already assigned findings are excluded until a newly confirmed loss reopens an
+episode. Patrol reunion requires current observation, not memory alone.
+The acquired-reference and association invariants round-trip through existing
+memory v3 / outer save v1; no new persisted field or migration is needed.
+Part A passed all 1,194 native Windows unit/Tk tests in 260.058 seconds,
+Ruff, strict Mypy and Pyright. Parts B and C remain in progress.
 
 Relaxing search matching alone is insufficient: it could announce “mein
 Onigiri” while retaining the old missing entry as an unresolved memory.

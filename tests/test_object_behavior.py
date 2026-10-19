@@ -167,7 +167,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.interaction.search_progress, .5)
         self.assertEqual([cue.event for cue in self.cues].count("object_search"), 1)
 
-    def test_other_same_type_portion_cannot_end_physical_subject_search(self):
+    def test_first_identified_same_type_portion_ends_subjective_search(self):
         subject = self.awareness.memory.get("stock")
         assert subject is not None
         self.awareness.memory.restore_snapshot((replace(
@@ -181,12 +181,16 @@ class ObjectBehaviorTests(unittest.TestCase):
         ))
         self.assertIsInstance(self.behavior.advance(
             other, blocked=False, search_position=SearchPosition(50, 750, 100),
-        ), SearchMotion)
-        self.assertEqual(self.interaction.memory_id, "stock")
-        self.assertNotIn("object_found", [cue.event for cue in self.cues])
-        # The fact entry uses the same physical-subject guard as patrol findings.
+        ), Hold)
+        self.assertEqual(self.interaction.memory_id, other.token)
+        self.assertEqual(self.cues[-1].event, "object_found")
+        self.assertIsNone(self.awareness.memory.get("stock"))
+        found = self.awareness.memory.get(other.token)
+        assert found is not None
+        self.assertEqual(found.instance_id, "object_2")
+        # Repeating an already-used fact cannot resolve another subject.
         self.assertFalse(self.interaction.found(other.token))
-        self.assertEqual(self.interaction.phase, "search")
+        self.assertEqual(self.interaction.phase, "found")
 
     def test_verified_physical_reunion_survives_old_memory_record_reconciliation(self):
         subject = self.awareness.memory.get("stock")
@@ -205,6 +209,15 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.behavior.advance(goal, blocked=False), Hold())
         self.assertEqual(self.interaction.phase, "found")
         self.assertEqual(self.cues[-1].event, "object_found")
+
+    def test_remembered_but_unseen_same_kind_stock_cannot_end_search(self):
+        self.start_search()
+        self.alternative(observed=False)
+        self.assertIsInstance(self.behavior.advance_search(
+            blocked=False, position=SearchPosition(50, 750, 100),
+        ), SearchMotion)
+        self.assertEqual(self.interaction.phase, "search")
+        self.assertIsNotNone(self.awareness.memory.get("stock"))
 
     def setUp(self):
         self.state = PetState(satiety=50, energy=100)

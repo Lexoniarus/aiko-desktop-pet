@@ -80,8 +80,18 @@ SearchPhase describes patrol movement, rather than the whole recovery task.
 
 Aiko examines reachable unknown candidates through the ordinary hand-inspection
 path during the search. Valid hand/face identification can reunite a missing
-portion with its learned history and produce a grounded found bubble. A different
-learned portion of the same type cannot replace a bound missing subject.
+portion with its learned history and produce a grounded found bubble. During
+this search, a newly identified portion of the same identity/kind can resolve
+the oldest matching missing subject even when its physical instance differs.
+Unknown or wrong-kind candidates cannot resolve it. Existing known stock is
+excluded; a current observation is required, and each finding resolves at most
+one subject. A newly confirmed loss can reopen a portion for a later search.
+
+ObjectMemory transfers the missing subject's assessment and saved-for-later
+intention, retires that subjective record and keeps the finding's actual World
+reference, position and observation time. Ordinary stock recognition outside
+a search remains strict. Existing memory v3 / outer save v1 fields suffice;
+round-trip tests cover reference and source-association consistency.
 Nonmatching candidates are safely put down or remain in player custody before
 the same task continues. Unrelated appetite-driven consumption waits.
 
