@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
+    "game.select": frozenset(),
+    "game.name.rock_paper_scissors": frozenset(),
+    "game.name.tic_tac_toe": frozenset(),
+    "game.name.blackjack": frozenset(),
     "world.outside": frozenset(),
     "world.unknown_item": frozenset(),
     "care.sleep_start": frozenset([]),

@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ...application.settings import SettingKey
-from ...games.contracts import SessionSummary
+from ...games.contracts import GameId, SessionSummary
 from ..common.skin import AikoSkin
 from ..view_models.contracts import (
     HoverAnchor,
@@ -20,6 +20,7 @@ from ..view_models.food_models import FoodChoice, FoodChoiceId
 from .action_toolbar import ActionToolbar
 from .food_menu import FoodMenu
 from .game_contracts import GameWindow
+from .game_menu import GameMenu
 from .game_speech import GameSpeech
 from .hover_contracts import HoverActions
 from .rock_paper_scissors_window import RockPaperScissorsWindow
@@ -55,6 +56,7 @@ class HoverUiPorts:
     defer_game: Callable[[Callable[[], None]], None] | None = None
     game_dialogue: Callable[[str], str] | None = None
     can_interact: Callable[[str], bool] = lambda _action: True
+    game_ready: Callable[[], bool] = lambda: True
 
 
 class HoverUi:
@@ -74,6 +76,8 @@ class HoverUi:
         self.settings_window: SettingsWindow | None = None
         self.game_window: GameWindow | None = None
         self.food_menu: FoodMenu | None = None
+        self.game_menu: GameMenu | None = None
+        self._pending_game: object | None = None
         self._settings_position: tuple[int, int] | None = None
         self._keep_open = False
         self.last_hover = -100.0
@@ -85,7 +89,17 @@ class HoverUi:
 
     @property
     def game_open(self) -> bool:
-        return self.game_window is not None
+        return self.game_window is not None or self._pending_game is not None
+
+    @property
+    def control_windows(self) -> tuple[tk.Toplevel, ...]:
+        """Back-to-front transient controls; settings remain above speech."""
+        windows = [self.toolbar.window] if self.toolbar and self.toolbar.visible else []
+        windows.extend(
+            view.window for view in (self.game_window, self.food_menu, self.game_menu)
+            if view is not None
+        )
+        return tuple(windows)
 
     @property
     def settings_engaged(self) -> bool:
@@ -117,13 +131,16 @@ class HoverUi:
             self.root.winfo_pointerx(),
             self.root.winfo_pointery(),
         )
-        return bool(using_toolbar or using_food or self.settings_engaged)
+        using_games = self.game_menu is not None and self.game_menu.contains_pointer(
+            self.root.winfo_pointerx(), self.root.winfo_pointery(),
+        )
+        return bool(using_toolbar or using_food or using_games or self.settings_engaged)
 
     def _interact(self, action: str) -> None:
         if not self._ports.can_interact(action):
             return
         if action == "play":
-            self.open_game()
+            self.open_game_menu()
         elif action == "feed" and self._ports.feed is not None:
             self.open_food_menu()
         elif not self.game_open:
@@ -141,6 +158,7 @@ class HoverUi:
         """Reuse one selection window; no domain mutations before choice."""
         if self.game_open or not self._ports.can_interact("feed"):
             return
+        self.close_game_menu()
         if self.food_menu is not None:
             self.food_menu.focus()
             return
@@ -180,15 +198,54 @@ class HoverUi:
                 self.toolbar.refresh()
             self.refresh_status()
 
-    def open_game(self) -> None:
+    def close_game_menu(self) -> None:
+        if self.game_menu is not None:
+            self.game_menu.close()
+
+    def _game_menu_closed(self) -> None:
+        self.game_menu = None
+
+    def open_game_menu(self) -> None:
         if self.game_open or not self._ports.can_interact("play"):
             return
-        if self._ports.defer_game is not None:
-            self._ports.defer_game(self._open_game_now)
-        else:
-            self._open_game_now()
+        if self.game_menu is not None:
+            self.game_menu.focus()
+            return
+        self.close_food_menu()
+        toolbar = self.toolbar
+        x = toolbar.window.winfo_rootx() if toolbar else 200
+        y = (toolbar.window.winfo_rooty() + toolbar.window.winfo_height()
+             if toolbar else 200)
+        self.game_menu = GameMenu(
+            self.root, x, y, choices=(GameId.ROCK_PAPER_SCISSORS,),
+            selected=self.open_game, closed=self._game_menu_closed,
+            always_on_top=self._ports.always_on_top(), skin=self._skin,
+        )
+        self._ports.restore_stack()
 
-    def _open_game_now(self) -> None:
+    def open_game(self, game_id: GameId) -> None:
+        if self.game_open or not self._ports.can_interact("play"):
+            return
+        if game_id is not GameId.ROCK_PAPER_SCISSORS:
+            raise ValueError("Game is not available")
+        self.close_game_menu()
+        token = object()
+        self._pending_game = token
+        try:
+            if self._ports.defer_game is not None:
+                self._ports.defer_game(lambda: self._open_game_now(game_id, token))
+            else:
+                self._open_game_now(game_id, token)
+        except Exception:
+            self._pending_game = None
+            raise
+
+    def _open_game_now(self, game_id: GameId, token: object) -> None:
+        if self._pending_game is not token:
+            return
+        self._pending_game = None
+        if self.game_window is not None or not self._ports.game_ready():
+            return
         self.close_food_menu()
         self._ports.game_speech.start()
         try:
@@ -212,6 +269,8 @@ class HoverUi:
         self._ports.restore_stack()
 
     def close_game(self) -> None:
+        self._pending_game = None
+        self.close_game_menu()
         if self.game_window is not None:
             self.game_window.close()
 
@@ -297,6 +356,7 @@ class HoverUi:
             self.settings_window,
             self.game_window,
             self.food_menu,
+            self.game_menu,
         ):
             if window is not None:
                 window.window.wm_attributes("-topmost", enabled)
@@ -327,6 +387,8 @@ class HoverUi:
     def dismiss_outside(self, x: int, y: int) -> None:
         """Outside clicks dismiss only transient controls, never settings."""
         menu = self.food_menu
+        if self.game_menu is not None and not self.game_menu.contains_pointer(x, y):
+            self.close_game_menu()
         if menu is not None and not menu.contains_pointer(x, y):
             if not self.pointer_inside(x, y):
                 menu.close()
@@ -361,6 +423,7 @@ class HoverUi:
 
     def close_toolbar(self) -> None:
         self.close_food_menu()
+        self.close_game_menu()
         if self.toolbar is not None:
             self.toolbar.close()
             self.toolbar = None

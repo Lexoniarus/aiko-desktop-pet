@@ -12,6 +12,7 @@ from unittest.mock import patch
 
 from aiko_pet.application.commands import NotificationCommand
 from aiko_pet.application.events import IncomingNotification
+from aiko_pet.games.contracts import GameId
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
@@ -225,7 +226,7 @@ class PersistentWindowTests(unittest.TestCase):
     def test_shared_skin_is_reused_by_all_three_windows(self) -> None:
         bar = self.toolbar()
         settings = self.settings()
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         game = self.pet._hover.game_window
         assert game is not None
         self.assertIs(bar.skin, settings.skin)

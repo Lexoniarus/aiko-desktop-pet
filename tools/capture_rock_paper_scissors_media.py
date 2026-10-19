@@ -12,6 +12,7 @@ import tempfile
 import time
 from pathlib import Path
 
+from aiko_pet.games.contracts import GameId
 from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
@@ -79,6 +80,9 @@ def record_media() -> None:
             toolbar = hover.toolbar
             assert toolbar is not None
             toolbar.buttons["play"].invoke()
+            menu = hover.game_menu
+            assert menu is not None
+            menu.choose(GameId.ROCK_PAPER_SCISSORS)
             game = hover.game_window
             assert game is not None
             hover.dismiss_outside(-999, -999)

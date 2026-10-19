@@ -9,6 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from aiko_pet.games.contracts import GameId
 from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
@@ -48,6 +49,9 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         assert toolbar is not None
         previous_mood = self.pet.state.mood
         toolbar.buttons["play"].invoke()
+        menu = self.pet._hover.game_menu
+        assert menu is not None
+        menu.choose(GameId.ROCK_PAPER_SCISSORS)
         game = self.pet._hover.game_window
         assert game is not None
         self.assertTrue(self.pet._hover.game_open)
@@ -84,13 +88,13 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
             patch("aiko_pet.ui.windows.hover_ui.RockPaperScissorsWindow") as create,
         ):
             toolbar.buttons["play"].invoke()
-            self.pet._hover.open_game()
+            self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         focus.assert_not_called()
         create.assert_not_called()
         self.assertIs(self.pet._hover.game_window, game)
 
     def test_player_and_aiko_reveal_separately_and_update_ui(self) -> None:
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         game = self.pet._hover.game_window
         assert game is not None
         self.assertTrue(self.pet._animated._game_mode)
@@ -166,7 +170,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertEqual(game.score.games, 1)
 
     def test_second_round_replaces_highlight_not_score(self) -> None:
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         game = self.pet._hover.game_window
         assert game is not None
         game._sequence._game._random_index = lambda _size: 0
@@ -192,7 +196,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
 
     def test_player_hand_cannot_shrink_or_clip_after_any_selection(self) -> None:
         """Window size and canvas pixels remain fixed for the entire session."""
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         game = self.pet._hover.game_window
         assert game is not None
         # Windows delivers native visibility/layout events after idle work.
@@ -230,7 +234,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
             self.assertEqual(game.buttons[move].cget("state"), "normal")
 
     def test_cursor_tracking_stays_paused_during_game(self) -> None:
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         visual = self.pet._animated
         self.assertTrue(self.pet.settings.follow_cursor)
         self.assertIsNone(
@@ -260,7 +264,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         )
 
     def test_close_cancels_outstanding_bubble_and_session(self) -> None:
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         game = self.pet._hover.game_window
         assert game is not None
         game.choose(Move.PAPER)
@@ -272,7 +276,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertIsNone(self.pet._speech.bubble)
         stale()
         self.assertIsNone(self.pet._speech.bubble)
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         replacement = self.pet._hover.game_window
         assert replacement is not None
         self.assertIsNot(game, replacement)
@@ -280,7 +284,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertEqual(replacement.score_labels["games"].cget("text"), "0")
 
     def test_completed_round_awards_fun_once_when_window_closes(self) -> None:
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         game = self.pet._hover.game_window
         assert game is not None
         before = self.pet.state.fun
@@ -295,20 +299,20 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.assertGreater(awarded, before)
         game.close()
         self.assertEqual(self.pet.state.fun, awarded)
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         again = self.pet._hover.game_window
         assert again is not None
         self.assertEqual(again.score.games, 0)
         self.assertEqual(self.pet.state.fun, awarded)
 
     def test_unrevealed_round_and_empty_window_give_no_fun(self) -> None:
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         empty = self.pet._hover.game_window
         assert empty is not None
         before = self.pet.state.fun
         empty.close()
         self.assertEqual(self.pet.state.fun, before)
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         pending = self.pet._hover.game_window
         assert pending is not None
         pending.choose(Move.PAPER)
@@ -320,6 +324,9 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         panel = self.pet._hover.toolbar
         assert panel is not None
         panel.buttons["play"].invoke()
+        menu = self.pet._hover.game_menu
+        assert menu is not None
+        menu.choose(GameId.ROCK_PAPER_SCISSORS)
         self.assertTrue(self.pet._hover.game_open)
         game = self.pet._hover.game_window
         assert game is not None

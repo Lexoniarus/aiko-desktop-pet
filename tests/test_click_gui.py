@@ -9,6 +9,7 @@ import unittest
 from pathlib import Path
 
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.games.contracts import GameId
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
@@ -64,7 +65,7 @@ class ClickGuiTests(unittest.TestCase):
 
         self.pet._reaction_player.cancel()
         self.pet._action_playback.cancel_at(time.monotonic())
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         self.assertTrue(self.pet._hover.game_open)
         for _ in range(4):
             self.click()

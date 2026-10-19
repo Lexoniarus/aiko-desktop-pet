@@ -9,6 +9,7 @@ import unittest
 from pathlib import Path
 
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.games.contracts import GameId
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.state import PetState
@@ -97,7 +98,7 @@ class StoryGuiTests(unittest.TestCase):
         self.pet.interact("talk")
         self.pet.interact("pet")
         self.assertFalse(self.pet._reaction_player.story_active)
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         self.assertFalse(self.pet._hover.game_open)
         # The next UI action starts after care playback and speech complete.
         # Authored two-bubble care can exceed six seconds; wait for its actual
@@ -110,7 +111,7 @@ class StoryGuiTests(unittest.TestCase):
             self.pet.root.update()
             time.sleep(.02)
         self.assertTrue(self.pet._contact.can_interact("play"))
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         chosen = next(
             line
             for line in self.pet.mind.book.lines

@@ -141,6 +141,10 @@
     "ui.save_failed": "Spielstand konnte nicht gespeichert werden:\n{failure}",
     "ui.window_title": "Aiko Desktop Pet",
     "world.outside": "Dort kann ich es nicht ablegen. Mein Weg endet vorher.",
-    "world.unknown_item": "Gegenstand"
+    "world.unknown_item": "Gegenstand",
+    "game.select": "Spiel auswählen",
+    "game.name.rock_paper_scissors": "Schere–Stein–Papier",
+    "game.name.tic_tac_toe": "Tic-Tac-Toe",
+    "game.name.blackjack": "Blackjack"
   }
 }

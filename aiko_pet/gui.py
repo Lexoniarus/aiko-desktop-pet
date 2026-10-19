@@ -245,6 +245,7 @@ class DesktopPet:
                 anchor=self._views.anchor,
                 care=self.interact,
                 can_interact=lambda action: self._contact.can_interact(action),
+                game_ready=lambda: not self.state.sleeping,
                 food_choices=self._food_choices,
                 feed=lambda selected: self._world.begin_carry(selected),
                 defer_game=lambda action: self._world.interrupt(action),
@@ -454,12 +455,7 @@ class DesktopPet:
         windows: list[tk.Tk | tk.Toplevel] = [self.root]
         if hasattr(self, "_world"):
             windows.extend(self._world.view.windows)
-        if self._hover.toolbar is not None and self._hover.toolbar.visible:
-            windows.append(self._hover.toolbar.window)
-        if self._hover.game_window is not None:
-            windows.append(self._hover.game_window.window)
-        if self._hover.food_menu is not None:
-            windows.append(self._hover.food_menu.window)
+        windows.extend(self._hover.control_windows)
         if self._speech.bubble is not None:
             windows.append(self._speech.bubble)
         if self._hover.settings_window is not None:

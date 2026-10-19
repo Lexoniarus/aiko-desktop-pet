@@ -133,7 +133,10 @@ Paths marked **new** below are proposed homes, not existing implementations.
   application game registry or extra busy flag in `DesktopPet`. Reserve one
   pending selection while `defer_game` completes World interruption, so a
   second selection cannot queue another session. Recheck admission before
-  construction and release the reservation on failure/cancellation.
+  construction and release the reservation on failure/cancellation. The
+  resumed callback uses `game_ready` for a fresh sleep check: the original
+  `can_interact` check includes World's own still-active interruption
+  reservation and must not reject that already-admitted callback.
 - Include the game submenu in `interaction_active`, outside-dismissal,
   topmost handling, overlay enumeration and toolbar/shutdown cleanup alongside
   the existing transient food menu. Opening a selector never starts
@@ -319,3 +322,4 @@ windows or mouse injection. Each row names the modules passed to
 | Step | Targeted result |
 | --- | --- |
 | 1: shared completion contracts | 57 tests passed (1.726s): `test_rock_paper_scissors`, `test_rock_paper_scissors_sequence`, `test_rock_paper_scissors_gui`, `test_game_experience`, `test_ui_architecture`, `test_desktop_boundary`, `test_desktop_lifecycle`. Changed-file Ruff and focused strict Mypy (`hover_ui.py`, `gui.py`) passed. |
+| 2: selection menu | 76 tests passed (9.438s): `test_game_menu`, `test_rock_paper_scissors_gui`, `test_hover_isolation`, `test_click_gui`, `test_story_gui`, `test_persistent_windows`, `test_desktop_input`, `test_desktop_lifecycle`, `test_ui_architecture`, `test_content_catalog`. Changed-file Ruff and focused strict Mypy passed. Existing Tcl theme teardown diagnostics were not Python failures. |
