@@ -4,7 +4,7 @@
 > on `feature/social-optimization`, reviewed against clean baseline `42de63a`.
 > The owner accepted the latest discussed balance as a sufficient starting
 > point for implementation planning. This document plans that first delivery.
-> Stage 1 is recorded below; stage 2 is in progress. Stages 3–6 and bugfix B1
+> Stage 1 is recorded below; stage 2 is in progress. Stages 3–6 and bugfixes B1/B2
 > remain pending.
 
 ## Goal and boundaries
@@ -57,6 +57,12 @@ No second time simulator, relationship store or movement writer is introduced.
 The application may coordinate chronological steps, but domain and World owners
 remain authoritative for their respective changes.
 
+The owner additionally requested [B2: subjective object reunion and natural
+German object dialogue](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md). Its three
+steps (memory/search association, grammatical phrases, integrated regression)
+are a separately scoped follow-up. Preserve its Onigiri acceptance sequence;
+do not fold its runtime or dialogue edits into unfinished stage 2.
+
 ### Implementation and review constraints
 
 Follow [Contributing](../CONTRIBUTING.md) and the existing object boundaries.
@@ -89,6 +95,7 @@ incompatible time, sleep and save behavior in place.
 | Stage 1: time and storage | `59cab63`, pushed to `feature/social-optimization`; 1,166 tests and pinned static checks passed; physical suspend/resume remains pending |
 | Stage 2: needs and mood | In progress; consolidate numeric integration in the existing pure policy before final validation and its separate commit |
 | B1: idle repeated-click regression | Planned below; resolve before stage 3 connects negative click effects |
+| B2: object recognition and German dialogue | [Detailed plan](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); pending, separately scoped from stage 2 |
 | Stages 3–6 | Pending |
 
 ### Stage-1 execution record, 2026-10-19
