@@ -53,11 +53,18 @@ Escape/outside dismissal closes the selector without starting play. Selection
 uses the existing contact admission and World interruption; one pending token
 prevents duplicate starts. The resumed callback rechecks sleep readiness without
 rejecting World's own pending-action reservation. Settings remain independent.
+The toolbar belongs to the selector's interaction area: delayed focus checks
+and global polling of the opening click must leave the selector open while
+the pointer is still on the toolbar. A click outside both dismisses it.
 
 `HoverUi` owns the one active game through `GameWindow` and includes the selector
 in interaction detection, topmost propagation, stacking and cleanup. Game
 sequences cancel timers before closing; one summary is credited before final
 save. Scores, boards and decks never enter the save.
+The selector and all three player windows route `WM_DELETE_WINDOW` through
+their existing close handlers, just like explicit Close/Escape. Failed
+Tic-Tac-Toe construction destroys its partial panel without reporting a
+completed session; `HoverUi` still owns releasing the pending/mode state.
 
 In Blackjack the player panel contains only player cards/total and controls.
 Aiko's masked/revealed hand is a separate anchored desktop overlay, lower in

@@ -349,3 +349,42 @@ Native Windows acceptance remains the explicit checklist in
 [World smoke checks](WORLD_SMOKE_TEST.md#three-game-native-acceptance--pending-separately),
 not a claim inferred from Xvfb. Pre-existing social-content documentation edits
 remain outside these game commits.
+
+## Review corrections — 2026-10-19
+
+The subsequent review reproduced three lifecycle defects. Each correction was
+implemented in its existing owner and committed separately after focused checks.
+The new regression checks failed before their respective corrections; they
+exercise real Tk button/focus events, the registered `WM_DELETE_WINDOW`
+callbacks, and injected construction failures, rather than only invoking game
+selection or normal close methods directly.
+
+| Commit | Correction and ownership | Focused validation |
+| --- | --- | --- |
+| `a52f610` | `HoverUi` keeps the toolbar in the selector's interaction area, so delayed focus checks and global polling of the opening click cannot dismiss it. True outside dismissal is preserved, without an extra grace timer. | 64 Xvfb tests passed (4.218s): `test_game_menu`, `test_hover_isolation`, `test_click_gui`, `test_persistent_windows`, `test_desktop_input_controller`, `test_desktop_input`, `test_ui_architecture`. Changed-file Ruff, strict Mypy and Pyright passed. |
+| `ddddd1a` | `GameMenu` and shared `GamePanel` route system close through their existing owners. The same missing connection was corrected in RPS's own window, retaining its separate presentation. No second teardown owner was added. | 74 Xvfb tests passed (4.832s): `test_game_menu`, `test_blackjack_gui`, `test_blackjack_sequence`, `test_blackjack_hand_presenter`, `test_tic_tac_toe_gui`, `test_tic_tac_toe_sequence`, `test_rock_paper_scissors_gui`, `test_rock_paper_scissors_sequence`, `test_desktop_lifecycle`, `test_ui_architecture`. Checks cover pending turns/flips, empty card cache, stale callbacks, reopening and once-only completed-hand rewards. Changed-file Ruff, strict Mypy and Pyright passed. |
+| `d569b40` | `TicTacToeWindow` destroys its own partial panel if setup fails. It does not emit completion for a session the host never accepted; `HoverUi` retains reservation and mode cleanup. | 60 Xvfb tests passed (3.238s): `test_tic_tac_toe_gui`, `test_tic_tac_toe_sequence`, `test_game_menu`, `test_blackjack_gui`, `test_game_experience`, `test_ui_architecture`, `test_desktop_lifecycle`. Both initial rendering and panel-show failure leave no extra root children, no reward or game mode, and allow a fresh session. Changed-file Ruff, strict Mypy and Pyright passed. |
+
+The complete suite and full static gates were started only after all three
+production corrections were committed. They use the same isolated local setup
+as delivery above. Native Windows acceptance remains separate; the smoke
+checklist now explicitly includes opening-click persistence and system close.
+
+Final validation of the corrected code at
+`d569b40711b5efc43d07fb5557a49f921cb36a14`:
+
+- `PYTHONPATH=tests xvfb-run -a python -m unittest discover -s tests -q`:
+  **1,325 tests in 178.653s, eight platform skips, zero failures/errors**.
+  The network-disabled local container used a frozen source snapshot;
+  prepared-asset checks did not alter the checkout. Existing Tcl theme
+  teardown diagnostics did not produce unittest failures.
+- Full `python -m ruff check aiko_pet tests main.py tools` passed.
+- Full `python -m mypy --strict --no-incremental aiko_pet main.py tools`
+  passed for 212 source files.
+- Full `python -m pyright --project pyrightconfig.json` passed with zero
+  errors/warnings.
+
+This evidence and the UI/smoke contract updates are documentation only. No
+subsequent production or test changes, working-desktop probes, normal-save
+writes, pushes or merges were performed. The pre-existing social-content
+documentation changes remain outside these correction commits.

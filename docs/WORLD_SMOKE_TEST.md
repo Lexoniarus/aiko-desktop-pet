@@ -12,6 +12,8 @@ When native acceptance is authorized, use an isolated save and check:
 
 - Spielen shows exactly the three games; Escape/outside dismissal starts no
   game, and repeat/deferred selection never opens two sessions.
+- Click Spielen and leave the pointer on the opening button before moving
+  into the selector. It stays open and each game remains selectable.
 - RPS retains separate player/Aiko hands, its countdown and existing controls.
 - Tic-Tac-Toe blocks input during Aiko's turn, highlights the winning line,
   alternates starts and restarts cleanly after a win or draw.
@@ -23,6 +25,9 @@ When native acceptance is authorized, use an isolated save and check:
   not activate another window or trigger pet teasing, dragging or World pickup.
 - Move/resize Aiko and toggle topmost while playing. Cards follow the existing
   owners and disappear on close, failed start and shutdown, including mid-flip.
+- Close each game and the selector through the window manager as well as its
+  Close/Escape controls. Pending turns/flips stop, cards and speech disappear,
+  and another game opens normally without leaving Aiko in game mode.
 - Only completed units affect care once; reopening has a fresh score, and
   closing an unfinished round gives no reward. The normal save stays untouched.
 
