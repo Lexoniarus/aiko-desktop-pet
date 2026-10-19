@@ -224,3 +224,22 @@ class SocialGuiTests(unittest.TestCase):
         reopened.root.update()
         self.assertEqual(reopened._reaction_player.event, "talk")
         self.assertAlmostEqual(reopened.state.friendship, friendship, places=4)
+
+    def test_expired_holding_bubble_still_blocks_sprite_replies_but_allows_care(self):
+        self.enable()
+        self.menu().choose(SocialCategory.SINGLE)
+        self.pet.root.update()
+        player = self.pet._reaction_player
+        assert player.pending_timer is not None
+        self.pet.root.after_cancel(player.pending_timer)
+        player._complete(player.generation)
+        self.assertTrue(self.pet._social_runtime.waiting)
+        self.assertIsNone(player.event)
+        before = list(self.pet.mind.clicks)
+        self.pet._contact.click("left")
+        self.pet._contact.enter()
+        self.assertEqual(list(self.pet.mind.clicks), before)
+        self.assertIsNone(player.event)
+        self.assertTrue(self.pet._contact.can_interact("pet"))
+        self.pet._hover._interact("pet")
+        self.assertFalse(self.pet._social_runtime.waiting)

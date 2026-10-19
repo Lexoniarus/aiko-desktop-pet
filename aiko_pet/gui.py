@@ -311,6 +311,7 @@ class DesktopPet:
                 foreground_active=lambda: (self._object_feedback_active()
                     or self._world_access.defer_routine()),
                 playback_active=lambda: (time.monotonic() < self._action_playback.until
+                    or self._social_runtime.waiting
                     or self._reaction_player.pending_timer is not None
                     or self._speech.bubble is not None),
                 reaction_event=lambda: self._reaction_player.event,

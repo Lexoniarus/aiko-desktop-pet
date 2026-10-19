@@ -337,7 +337,12 @@ this first delivery.
   game-menu measurement receives the same mapping-event correction, retaining
   its text-width assertion. Care/social dispatch and presenter construction
   move to `DesktopCareRuntime`; toolbar refresh stays with `HoverUi`.
-  The composition root is 637 lines, below the unchanged guard. Focused
+  The composition root remains below the unchanged 640-line guard. Focused
   architecture (26), dependencies (4), social GUI (8), application GUI (7), care
   GUI (6), follow-up GUI (4) and game-menu (10) cases pass. Final full
   validation after these corrections remains pending.
+- A further targeted case covers an expired holding bubble while its request is
+  still pending: sprite clicks/hover cannot introduce another reply, but care
+  remains available to cancel waiting. This brings the social GUI cases to nine;
+  all nine, the 26 architecture cases and ten contact cases pass. The in-progress
+  recheck was intentionally interrupted for this correction and is not a pass.
