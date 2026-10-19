@@ -1,8 +1,8 @@
 # Object recognition and natural German dialogue fix plan
 
-> **B2 — in progress.** Target: `feature/social-optimization`.
+> **B2 — completed and verified on 2026-10-19.** Target: `feature/social-optimization`.
 > Added on 2026-10-19 from the owner's supplied fix plan and Onigiri example.
-> Track delivery in the [care/social implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
+> Track delivery in the [care/social implementation plan](../CARE_TIME_IMPLEMENTATION_PLAN.md).
 
 ## Intended behavior
 
@@ -136,8 +136,18 @@ in 271.518 seconds**, with no unittest failures, errors or skips. Ruff 0.13.2,
 strict Mypy 1.18.2 (190 source files) and Pyright 1.1.414 passed. The complete
 Onigiri test exercises real perception, pickup, inspection and placement,
 including a different finding and later identification of the original portion.
-A separate real-bubble-timer native probe and its final acceptance record are
-the remaining Part-C delivery step.
+Part A is `4757da7`; Part B and integrated regression are `b984078`, both
+pushed. Part C completes the acceptance documentation without changing runtime.
+
+A separate isolated Windows/Tk probe passed in **70.520 seconds** with **21
+rendered text bubbles**. It reused the complete Onigiri integration scenario,
+retained real `after` callbacks/dwell, and checked each visible native Label
+against the selected, formatted text. Perception time, movement and animation
+frames were driven through the existing test fixture; this was not a manual
+drag/drop run. It exercised ordinary identification twice, one subjective
+reunion with a different World ID, remembered deferred placement, and no
+consumption while full. The normal save was never used. See the maintained
+[B2 smoke record](../WORLD_SMOKE_TEST.md#b2-subjective-reunion-and-german-dialogue-2026-10-19).
 
 
 | Test owner | Required checks |

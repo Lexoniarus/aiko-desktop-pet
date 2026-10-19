@@ -104,6 +104,47 @@ is still visible, then repeat during petting, a game, a conversation story and
 object inspection. Only the idle click-reply burst should escalate teasing;
 left-story clicks advance reading and other active interactions remain exclusive.
 
+## B2 subjective reunion and German dialogue, 2026-10-19
+
+Implemented in `4757da7` (search/memory) and `b984078` (German phrases and
+integration). Full Windows/Python 3.11.9 verification passed **1,203 tests in
+271.518 seconds**, without unittest failures/errors/skips, plus Ruff 0.13.2,
+strict Mypy 1.18.2 (190 source files) and Pyright 1.1.414.
+
+A separate isolated native Tk probe reused
+`WorldGuiTests.test_onigiri_subjective_reunion_keeps_new_world_identity`,
+but retained real reaction-player `after` callbacks and bubble dwell. Each
+selected text was checked against an actual visible native Label. The probe
+passed in **70.520 seconds** with **21 displayed text bubbles**. The fixture
+drove perception time, movement and animation frames; this is a native
+playback/integration check, not a claim of manually dragging every item. Its
+temporary save was cleaned up; the normal user save was never read or written.
+
+The observed flow was unknown notice → real pickup/hand identification
+(“Ah, ein Onigiri!”) → full/defer/put-down → checked missing place
+(“Moment, mein Onigiri ist nicht mehr da. Eben lag es noch hier.”) → search
+→ inspect a different physical Onigiri → one found cue
+(“Ah, mein Onigiri. Ich hatte dich schon abgeschrieben.”) → safe deferred
+placement → rediscover/identify the original portion as an ordinary new
+exemplar (“Oh, ein Onigiri! Jetzt erkenne ich es.”). Both physical portions
+remained real, resting World objects; no food was consumed while full.
+
+Owner regressions additionally cover unknown/wrong-kind exclusion, one finding
+per missing subject, multiple missing portions, currently observed evidence,
+existing-stock exclusion, save/restart and ordinary strict stock matching. All
+138 object sequences were reviewed, including every full beat sequence, and
+rendered for all eleven consumables plus unknown identity. The
+[review workbook](DIALOGUE_REVIEW.md) retains baseline copy and implemented
+proposals. This record completes B2 and does not sign off later sleep or
+physical standby work.
+
+Repeat practically with the isolated launcher below: let a full Aiko identify
+and save an Onigiri, move it away outside her attention, let her check the old
+place, then place a new Onigiri in reach. Identification during search should
+produce one possessive found response; another identification after that
+search is an indefinite new-portion response. Unknown sightings alone must
+not produce a named found response.
+
 ## Isolated launcher
 
 Close other Aiko instances when doing a practical smoke run. Use

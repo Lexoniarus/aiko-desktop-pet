@@ -27,6 +27,15 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+- B2 on 2026-10-19: `4757da7` adds subjective search reunion and `b984078`
+  adds natural German object phrases and integrated regression. **1,203 native
+  Windows tests in 271.518 seconds** passed without failures/errors/skips,
+  alongside pinned Ruff/Mypy/Pyright (190 source files). The separate
+  [real-timer Onigiri probe](WORLD_SMOKE_TEST.md#b2-subjective-reunion-and-german-dialogue-2026-10-19)
+  passed in 70.520 seconds with 21 rendered text labels. All 138 object
+  sequences were reviewed, 90 changed; the workbook preserves baseline copy
+  and records delivered replacements. Save versions and menu names are unchanged.
+
 - B1 direct-click verification on 2026-10-19 passed **1,185 tests in 269.433
   seconds**, without failures, errors or skips, plus pinned Ruff/Mypy/Pyright.
   Actual Windows-injected left-only and mixed-button bursts reached counts
@@ -105,7 +114,8 @@ examples remain historical context; the plan identifies the latest baseline
 and the small details to settle during delivery. Maintained guides distinguish
 implemented numeric rules from the later friendship/sleep work. Separate
 fixes cover [idle repeated clicks](CARE_TIME_IMPLEMENTATION_PLAN.md#b1-restore-annoyance-from-repeated-direct-clicks-while-idle)
-and [subjective object reunion/German phrases](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md).
+and [subjective object reunion/German phrases](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md),
+both implemented and verified. The latter link is the completed delivery record.
 
 The [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) preserves the
 candidate care gains, real-time absence losses and negative-interaction values

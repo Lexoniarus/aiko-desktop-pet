@@ -41,8 +41,9 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   in validated JSON and outer saves v1; add production-policy daily scenarios.
 - Record separate fixes for blocked idle repeated clicks and subjective
   same-kind object reunion with natural German noun phrases. B1 is implemented;
-  B2 subjective reunion and German phrases are implemented; final native
-  playback acceptance is in progress.
+  B2 subjective reunion and German phrases are implemented and verified,
+  including 21 actual visible text bubbles with real timers in an isolated
+  native Onigiri flow. Archive the completed B2 delivery record.
 
 - Advance full real elapsed time across closed sessions and live standby;
   remove the eight-hour cap and stream long routine timelines. Keep active

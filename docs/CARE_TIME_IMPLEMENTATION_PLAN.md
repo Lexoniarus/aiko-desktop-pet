@@ -4,8 +4,8 @@
 > on `feature/social-optimization`, reviewed against clean baseline `42de63a`.
 > The owner accepted the latest discussed balance as a sufficient starting
 > point for implementation planning. This document plans that first delivery.
-> Stages 1 and 2 and B1 are implemented and verified below.
-> Stages 3–6 remain pending; B2 is in progress.
+> Stages 1 and 2, B1 and B2 are implemented and verified below.
+> Stages 3–6 remain pending.
 
 ## Goal and boundaries
 
@@ -58,7 +58,7 @@ The application may coordinate chronological steps, but domain and World owners
 remain authoritative for their respective changes.
 
 The owner additionally requested [B2: subjective object reunion and natural
-German object dialogue](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md). Its three
+German object dialogue](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md). Its three
 steps (memory/search association, grammatical phrases, integrated regression)
 are a separately scoped follow-up. Preserve its Onigiri acceptance sequence;
 do not fold its runtime or dialogue edits into unfinished stage 2.
@@ -95,8 +95,32 @@ incompatible time, sleep and save behavior in place.
 | Stage 1: time and storage | `59cab63`, pushed to `feature/social-optimization`; 1,166 tests and pinned static checks passed; physical suspend/resume remains pending |
 | Stage 2: needs and mood | Implemented in the separate feature commit containing this record; 1,177 tests and pinned static checks passed; isolated native care/save/reopen passed |
 | B1: idle repeated-click regression | Implemented in the separate fix commit containing this record; 1,185 tests, pinned static checks and native Windows clicks passed; no new friendship penalty |
-| B2: object recognition and German dialogue | [Detailed plan](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); Part A verified with 1,194 tests and static checks; German phrases and integrated regression verified with 1,203 tests and static checks; final native playback acceptance in progress, separately scoped from stage 2 |
+| B2: object recognition and German dialogue | [Detailed plan](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); Implemented as `4757da7` and `b984078`, pushed; 1,203 tests and pinned static checks passed; isolated real-timer native Onigiri flow passed (21 text bubbles); no save migration |
 | Stages 3–6 | Pending |
+
+### B2 execution record, 2026-10-19
+
+The [completed B2 record](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md)
+records the original scope, owner decisions and verification. SearchTask
+resolves one newly identified same-kind finding; ObjectMemory transfers
+subjective history and retires the missing record without changing World
+identity. Ordinary stock recognition remains strict. Existing memory v3 /
+outer save v1 round-trip without migration.
+
+All 138 object sequences were reviewed, 90 changed, and three care fallbacks
+aligned with full German phrases. Selection filters, IDs, non-text beats and
+other dialogue families are unchanged. The review workbook preserves all
+1,068 baseline rows and records the 141 scoped reviews/replacements. The
+existing content owner loads grammar metadata; a pure UI formatter supplies
+the finite article/case/possessive/pronoun forms.
+
+Full Windows verification passed **1,203 tests in 271.518 seconds**, no
+failures/errors/skips, Ruff 0.13.2, strict Mypy 1.18.2 (190 source files) and
+Pyright 1.1.414. A separate native probe passed in **70.520 seconds**, checking
+21 actual visible text labels with real bubble dwell/timers; the existing
+fixture drove sensory ticks and animation frames. See the
+[smoke record](WORLD_SMOKE_TEST.md#b2-subjective-reunion-and-german-dialogue-2026-10-19).
+This completes B2, not friendship, adaptive sleep or physical standby.
 
 ### Stage-1 execution record, 2026-10-19
 
@@ -315,7 +339,8 @@ Implemented scope and retained regression requirements:
 
 Deliver this as a separate bugfix before stage 3 attaches the agreed negative
 friendship effects. The acceptance requirements above remain regression checks;
-stage 3, B2 and the separate physical-standby acceptance are still pending.
+stage 3 and the separate physical-standby acceptance are still pending.
+B2 was subsequently delivered in the separate fixes recorded above.
 
 ### 4. Integrate adaptive sleep and finite closed-time care
 
