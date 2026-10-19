@@ -6,7 +6,6 @@ import hashlib
 import json
 import tkinter as tk
 import unittest
-from pathlib import Path
 
 from aiko_pet.asset_paths import ASSET_ROOT
 from aiko_pet.infrastructure.character_assets import load_character_catalog
