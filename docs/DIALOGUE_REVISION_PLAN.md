@@ -133,8 +133,31 @@ Die Zuwendungs- oder Freundschaftswerte selbst, die Pflegeeffekte und die
 Animationen der Aktionen wurden nicht verändert. Eine ablehnende Äußerung
 ist daher noch keine neue mechanische Ablehnungsregel.
 
-Abschlussprüfung: Alle **1.271 bestehenden Tests** bestanden; Ruff und
+Abschlussprüfung der ersten Gesamtüberarbeitung: Alle **1.271 bestehenden Tests** bestanden; Ruff und
 `git diff --check` ebenfalls erfolgreich. Alte wörtliche Texterwartungen in
 fünf Testdateien wurden an die neue Fassung angepasst. Die Prüfungen der
 Pflegeeffekte, Zustände, Objektgrammatik und vorhandenen Sprites bleiben erhalten.
 Es wurden keine Python-Laufzeitmodule geändert.
+
+## Nacharbeit: Mehrfach-Klick-Reaktionen
+
+72 bestehende Folgen in zwölf Mehrfach-Klick-Anlässen wurden gezielt angepasst.
+Stufenfilter, Zustandsauswahl, IDs, Gewichte und Klickgrenzen bleiben erhalten;
+der Katalog enthält weiterhin 1.052 Folgen. Die Reaktionen unterscheiden wie
+bisher zwischen niedriger/vertrauter und hoher/enger Freundschaft sowie
+normaler, verspielter, müder, zurückgezogener und arbeitender Aiko.
+
+„Du willst mich wohl ärgern, was?“ bleibt eine einzelne frühe Variante.
+Danach sagt sie, was ihr unangenehm ist und dass sie aufhören möchte.
+Verspieltheit zeigt sich in anfänglicher Nachsicht, nicht in endloser Zustimmung.
+Die letzten Reaktionen setzen eine klare Grenze, ohne die Absicht des Users
+erneut zu benennen oder ihre eigenen Eigenschaften zu erklären.
+
+55 passende vorhandene Emotes ergänzen die Folgen: zunächst fragend oder
+spielerisch, später unwohl, erschöpft oder verärgert. Vier frühe Varianten
+beginnen mit einem Emote. Bei Beschwerden erscheint zuerst der Text, danach
+gegebenenfalls das Emote. Späte ablehnende Varianten verwenden keine
+Winke-Animation mehr. Es wurden keine neuen Assets oder Laufzeitregeln ergänzt.
+
+Geprüft mit 61 bestehenden Dialog-, Klick- und Wiedergabetests sowie 60
+simulierten Klickfolgen über vier Freundschaftsstufen und fünf Zustände.

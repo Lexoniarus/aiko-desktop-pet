@@ -11737,12 +11737,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "alert"
-        },
-        {
           "kind": "text",
           "content": "Bitte unterbrich mich nicht immer wieder bei der Arbeit."
+        },
+        {
+          "kind": "emote",
+          "content": "alert"
         }
       ],
       "stages": [
@@ -11761,12 +11761,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "alert"
+          "kind": "text",
+          "content": "So verliere ich den Faden. Lass mich bitte weitermachen."
         },
         {
-          "kind": "text",
-          "content": "Ich habe dich gehört. Ich brauche meinen Kopf gerade für etwas anderes."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -11785,12 +11785,8 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "alert"
-        },
-        {
           "kind": "text",
-          "content": "Das wiederholte Anklicken stört mich beim Arbeiten."
+          "content": "Das stört mich beim Arbeiten. Ich möchte mich konzentrieren."
         }
       ],
       "stages": [
@@ -11809,12 +11805,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "alert"
+          "kind": "text",
+          "content": "Ich habe dich gesehen, du. Jetzt lass mich bitte weiterarbeiten."
         },
         {
-          "kind": "text",
-          "content": "Du, ich freue mich über dich. Aber dauernd dazwischenstupsen hilft mir gerade nicht."
+          "kind": "emote",
+          "content": "alert"
         }
       ],
       "stages": [
@@ -11833,12 +11829,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "alert"
+          "kind": "text",
+          "content": "He, so komme ich dauernd raus. Lass mich erst fertig werden."
         },
         {
-          "kind": "text",
-          "content": "Noch ein Klick? Lass mich bitte weiterarbeiten."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -11857,12 +11853,8 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "alert"
-        },
-        {
           "kind": "text",
-          "content": "Ich will das hier fertig bekommen. Hör bitte mit dem Stupsen auf."
+          "content": "Ich würde gern fertig werden. Bitte lenk mich nicht ständig ab."
         }
       ],
       "stages": [
@@ -11881,12 +11873,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Jetzt bitte aufhören. Ich muss bei meiner Arbeit bleiben."
         },
         {
-          "kind": "text",
-          "content": "Jetzt bitte Schluss mit dem Anklicken. Ich muss arbeiten."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -11905,12 +11897,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Ich möchte nicht weiter unterbrochen werden."
         },
         {
-          "kind": "text",
-          "content": "Lass mich bitte meine Arbeit beenden. Die Klicks stören mich."
+          "kind": "emote",
+          "content": "alert"
         }
       ],
       "stages": [
@@ -11929,12 +11921,8 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
-          "content": "Ich möchte bei der Arbeit jetzt nicht mehr unterbrochen werden."
+          "content": "Lass mich bitte fertig arbeiten. Die vielen Klicks stören mich."
         }
       ],
       "stages": [
@@ -11953,12 +11941,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
           "content": "He, genug! Ich versuche hier, etwas fertig zu bekommen."
+        },
+        {
+          "kind": "emote",
+          "content": "anger"
         }
       ],
       "stages": [
@@ -11977,12 +11965,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Du weißt, dass ich arbeite. Lass mich jetzt bitte dranbleiben."
         },
         {
-          "kind": "text",
-          "content": "Du weißt, dass ich arbeite. Jetzt lass mich bitte dranbleiben."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -12001,12 +11989,8 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
-          "content": "Ich bin nicht zum Dauerstupsen hier. Lass mich weiterarbeiten."
+          "content": "So kann ich mich nicht konzentrieren. Jetzt hör bitte auf."
         }
       ],
       "stages": [
@@ -12170,11 +12154,11 @@
       "beats": [
         {
           "kind": "emote",
-          "content": "alert"
+          "content": "question"
         },
         {
           "kind": "text",
-          "content": "Du hast schon mehrmals geklickt. Ich habe dich bemerkt."
+          "content": "Ja? Ich habe dich schon bemerkt."
         }
       ],
       "stages": [
@@ -12193,12 +12177,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "alert"
+          "kind": "text",
+          "content": "Du musst mich nicht so oft antippen. Ich bin ja da."
         },
         {
-          "kind": "text",
-          "content": "Noch ein Klick? Du musst mich nicht so oft antippen."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -12217,12 +12201,8 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "alert"
-        },
-        {
           "kind": "text",
-          "content": "Ich bin ja da. Bitte nicht immer wieder stupsen."
+          "content": "Bitte nicht immer wieder. Einmal reicht mir."
         }
       ],
       "stages": [
@@ -12242,7 +12222,7 @@
       "beats": [
         {
           "kind": "emote",
-          "content": "alert"
+          "content": "question"
         },
         {
           "kind": "text",
@@ -12265,12 +12245,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "alert"
+          "kind": "text",
+          "content": "He, ich schaue doch schon zu dir!"
         },
         {
-          "kind": "text",
-          "content": "He, ich habe dich doch schon gesehen."
+          "kind": "emote",
+          "content": "alert"
         }
       ],
       "stages": [
@@ -12289,12 +12269,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "alert"
+          "kind": "text",
+          "content": "Na, du. Ein bisschen weniger davon, ja?"
         },
         {
-          "kind": "text",
-          "content": "Noch ein Stupser? Du testest gerade meine Geduld."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -12314,11 +12294,11 @@
       "beats": [
         {
           "kind": "emote",
-          "content": "question"
+          "content": "faceHappy"
         },
         {
           "kind": "text",
-          "content": "Schon wieder? Das ist ein bisschen frech."
+          "content": "Huch! Du schon wieder. Jetzt habe ich dich aber gesehen."
         }
       ],
       "stages": [
@@ -12337,12 +12317,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "He, so oft musst du mich nicht antippen."
         },
         {
-          "kind": "text",
-          "content": "Du stupst mich wohl gern. Übertreib es bitte nicht."
+          "kind": "emote",
+          "content": "question"
         }
       ],
       "stages": [
@@ -12361,12 +12341,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Ein bisschen frech ist das schon. Nicht übertreiben, bitte."
         },
         {
-          "kind": "text",
-          "content": "He, ich habe deine Klicks schon bemerkt. Langsam reicht's."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -12386,11 +12366,11 @@
       "beats": [
         {
           "kind": "emote",
-          "content": "question"
+          "content": "laugh"
         },
         {
           "kind": "text",
-          "content": "Hihi, du willst mich ärgern. Noch komme ich damit klar."
+          "content": "Hihi … he! Nicht die ganze Zeit, du."
         }
       ],
       "stages": [
@@ -12409,12 +12389,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Du gibst wohl keine Ruhe, hm? Langsam wird es mir zu viel."
         },
         {
-          "kind": "text",
-          "content": "Na, du Klickfrechdachs. Ein bisschen weniger davon, ja?"
+          "kind": "emote",
+          "content": "question"
         }
       ],
       "stages": [
@@ -12433,12 +12413,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Ich muss ja schon lachen. Jetzt reicht mir das Antippen aber."
         },
         {
-          "kind": "text",
-          "content": "He! Lass mir wenigstens Zeit, zwischen deinen Stupsern zurückzugucken."
+          "kind": "emote",
+          "content": "faceHappy"
         }
       ],
       "stages": [
@@ -12457,12 +12437,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Bitte lass das. Mir ist gerade nicht danach."
         },
         {
-          "kind": "text",
-          "content": "Bitte lass das wiederholte Anklicken. Mir ist gerade nicht danach."
+          "kind": "emote",
+          "content": "faceSad"
         }
       ],
       "stages": [
@@ -12481,12 +12461,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Ich habe dich bemerkt. Mehr möchte ich gerade nicht."
         },
         {
-          "kind": "text",
-          "content": "Ich habe dich bemerkt. Mehr Stupser möchte ich nicht."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -12505,12 +12485,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Das ist mir heute zu viel. Lass mich bitte etwas für mich sein."
         },
         {
-          "kind": "text",
-          "content": "Das ist gerade zu viel für mich. Bitte lass mich."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -12529,12 +12509,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Du, ich bin heute nicht gut drauf. Bitte hör auf damit."
         },
         {
-          "kind": "text",
-          "content": "Du, heute vertrage ich dein Gepiekse nicht gut. Hör bitte auf."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -12553,12 +12533,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Heute mag ich das gar nicht. Lass es bitte gut sein."
         },
         {
-          "kind": "text",
-          "content": "Ich möchte gerade nicht so oft angestupst werden."
+          "kind": "emote",
+          "content": "faceSad"
         }
       ],
       "stages": [
@@ -12577,12 +12557,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Ich würde dich gerade lieber ohne die vielen Klicks bei mir haben."
         },
         {
-          "kind": "text",
-          "content": "Bitte lass es gut sein. Mir ist heute nicht nach Ärgern."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -12601,12 +12581,12 @@
       "cooldown_seconds": 20,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
           "content": "Bitte hör auf, so oft zu klicken. Das ist unangenehm."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -12625,12 +12605,12 @@
       "cooldown_seconds": 20,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Ich mag das nicht. Lass es bitte."
         },
         {
-          "kind": "text",
-          "content": "Du ärgerst mich damit. Lass es bitte."
+          "kind": "emote",
+          "content": "alert"
         }
       ],
       "stages": [
@@ -12649,12 +12629,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Das wird mir zu viel. Ich möchte, dass du aufhörst."
         },
         {
-          "kind": "text",
-          "content": "Das sind zu viele Stupser. Ich möchte das nicht."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -12673,12 +12653,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "He! Das mag ich nicht. Hör bitte auf."
         },
         {
-          "kind": "text",
-          "content": "He! Jetzt ärgerst du mich wirklich."
+          "kind": "emote",
+          "content": "anger"
         }
       ],
       "stages": [
@@ -12698,7 +12678,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Genug gepiekst. Lass mich bitte wieder in Ruhe stehen."
+          "content": "Hmpf. Lass mich bitte wieder in Ruhe stehen."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -12718,7 +12702,11 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hmpf. Das macht mir keinen Spaß mehr. Hör auf damit."
+          "content": "Das macht mir keinen Spaß mehr. Jetzt hör bitte auf damit."
+        },
+        {
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -12729,7 +12717,7 @@
     {
       "id": "v010-click_tease-01",
       "event": "click_tease",
-      "animation": "waving",
+      "animation": "waiting",
       "moods": [],
       "periods": [],
       "weekdays": [],
@@ -12737,12 +12725,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "So langsam wird mir das zu viel."
         },
         {
-          "kind": "text",
-          "content": "Das ständige Stupsen wird mir langsam zu viel."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -12761,12 +12749,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Ich habe ja mitgelacht. Aber dauernd möchte ich das nicht."
         },
         {
-          "kind": "text",
-          "content": "He, auch bei guter Laune mag ich nicht dauernd angeklickt werden."
+          "kind": "emote",
+          "content": "question"
         }
       ],
       "stages": [
@@ -12777,7 +12765,7 @@
     {
       "id": "v010-click_tease-03",
       "event": "click_tease",
-      "animation": "waving",
+      "animation": "waiting",
       "moods": [],
       "periods": [],
       "weekdays": [],
@@ -12785,12 +12773,8 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
           "kind": "text",
-          "content": "So, jetzt aber genug mit dem Antippen."
+          "content": "Jetzt hätte ich gern eine Pause davon."
         }
       ],
       "stages": [
@@ -12809,12 +12793,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "He, langsam ist es nicht mehr lustig."
         },
         {
-          "kind": "text",
-          "content": "Hihi … he! Jetzt wird aus dem Spaß langsam Ärgern."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -12833,12 +12817,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Hihi … genug, du. Ich möchte jetzt aufhören."
         },
         {
-          "kind": "text",
-          "content": "Du hast mein Lachen bekommen. Jetzt lass bitte die Klickerei."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -12849,7 +12833,7 @@
     {
       "id": "voice-click_tease-friend-close-01",
       "event": "click_tease",
-      "animation": "waving",
+      "animation": "waiting",
       "moods": [],
       "periods": [],
       "weekdays": [],
@@ -12857,12 +12841,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Ein bisschen Spaß hatte ich. Jetzt reicht es mir aber."
         },
         {
-          "kind": "text",
-          "content": "Na, du. Ich bin verspielt, aber das Gepiekse reicht langsam."
+          "kind": "emote",
+          "content": "question"
         }
       ],
       "stages": [
@@ -12881,12 +12865,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
           "kind": "text",
           "content": "Bitte hör jetzt auf. Es ist nicht mehr lustig für mich."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -12905,12 +12889,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Ich habe genug davon. Bitte lass mich jetzt."
         },
         {
-          "kind": "text",
-          "content": "Du machst weiter, obwohl ich genug davon habe."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -12921,7 +12905,7 @@
     {
       "id": "v010-click_tease_more-03",
       "event": "click_tease_more",
-      "animation": "waving",
+      "animation": "review",
       "moods": [],
       "periods": [],
       "weekdays": [],
@@ -12929,12 +12913,8 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
           "kind": "text",
-          "content": "Die Klickerei nervt inzwischen. Lass das bitte."
+          "content": "Nein, ich möchte das nicht weiter mitmachen."
         }
       ],
       "stages": [
@@ -12953,12 +12933,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Hmpf. Jetzt reicht es mir wirklich."
         },
         {
-          "kind": "text",
-          "content": "Hmpf. Jetzt reicht's auch mir."
+          "kind": "emote",
+          "content": "anger"
         }
       ],
       "stages": [
@@ -12977,12 +12957,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
+          "kind": "text",
+          "content": "Ich habe dich gebeten aufzuhören. Das meinte ich auch so."
         },
         {
-          "kind": "text",
-          "content": "Du übertreibst es mit dem Stupsen. Hör auf."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -13001,12 +12981,8 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "question"
-        },
-        {
           "kind": "text",
-          "content": "So, Schluss damit. Meine gute Laune ist kein Freibrief."
+          "content": "Ich habe gelacht, ja. Aber jetzt ist trotzdem genug."
         }
       ],
       "stages": [
@@ -13025,12 +13001,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Ich möchte jetzt nicht mehr angeklickt werden."
         },
         {
-          "kind": "text",
-          "content": "Ich möchte jetzt keine weiteren Klicks."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -13049,12 +13025,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Hör bitte auf. Das gefällt mir nicht."
         },
         {
-          "kind": "text",
-          "content": "Hör bitte auf, mich dauernd anzutippen."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -13073,12 +13049,8 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
-          "content": "Das reicht. Ich möchte jetzt Abstand von der Klickerei."
+          "content": "Das reicht mir. Lass mich jetzt bitte."
         }
       ],
       "stages": [
@@ -13097,12 +13069,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Jetzt reicht’s. Lass mich bitte."
         },
         {
-          "kind": "text",
-          "content": "Genug! Du sollst mich jetzt bitte nicht weiter ärgern."
+          "kind": "emote",
+          "content": "anger"
         }
       ],
       "stages": [
@@ -13121,12 +13093,12 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Ich meine es ernst. Schluss jetzt."
         },
         {
-          "kind": "text",
-          "content": "Ich meine es ernst. Kein Stupser mehr."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -13145,12 +13117,8 @@
       "cooldown_seconds": 110,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
-          "content": "Du kannst die Maustaste wieder loslassen. Ich habe genug davon."
+          "content": "Du, genug. Ich will das nicht mehr."
         }
       ],
       "stages": [
@@ -13169,12 +13137,8 @@
       "cooldown_seconds": 90,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
-          "content": "Ich habe dich gebeten aufzuhören. Jetzt möchte ich keine Klicks mehr."
+          "content": "Ich habe dich gebeten aufzuhören. Bitte lass mich jetzt."
         }
       ],
       "stages": [
@@ -13193,12 +13157,12 @@
       "cooldown_seconds": 90,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Nein. Ich möchte das nicht mehr."
         },
         {
-          "kind": "text",
-          "content": "Bitte lass mich jetzt. Ich mag das nicht weiter mitmachen."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -13217,12 +13181,8 @@
       "cooldown_seconds": 90,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
-          "content": "Schluss mit dem Anklicken. Ich brauche Abstand davon."
+          "content": "Bitte lass es jetzt gut sein. Ich möchte das nicht mehr."
         }
       ],
       "stages": [
@@ -13241,12 +13201,12 @@
       "cooldown_seconds": 90,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Schluss jetzt. Ich habe wirklich genug."
         },
         {
-          "kind": "text",
-          "content": "Hmpf. Jetzt reicht's mit dem Gepiekse. Ich meine es ernst."
+          "kind": "emote",
+          "content": "anger"
         }
       ],
       "stages": [
@@ -13265,12 +13225,8 @@
       "cooldown_seconds": 90,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
-          "content": "Du, Schluss jetzt. Ich will nicht weiter angestupst werden."
+          "content": "Du, ich will das nicht. Hör auf."
         }
       ],
       "stages": [
@@ -13289,12 +13245,12 @@
       "cooldown_seconds": 90,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Hmpf. Ich habe Nein gesagt."
         },
         {
-          "kind": "text",
-          "content": "Genug ist genug. Lass die Maustaste jetzt bitte von mir weg."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -13457,12 +13413,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "sleeps"
+          "kind": "text",
+          "content": "Ich bin müde. Bitte lass das wiederholte Anklicken."
         },
         {
-          "kind": "text",
-          "content": "Ich bin müde. Bitte hör auf, mich ständig anzuklicken."
+          "kind": "emote",
+          "content": "sleeps"
         }
       ],
       "stages": [
@@ -13481,12 +13437,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "sleeps"
+          "kind": "text",
+          "content": "Das strengt mich gerade an. Ich möchte mich ausruhen."
         },
         {
-          "kind": "text",
-          "content": "Das viele Stupsen strengt mich gerade an."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -13505,12 +13461,8 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "sleeps"
-        },
-        {
           "kind": "text",
-          "content": "Ich möchte mich ausruhen. Lass die Klickerei bitte."
+          "content": "Mir fallen die Augen zu. Bitte lass mich in Ruhe."
         }
       ],
       "stages": [
@@ -13529,12 +13481,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "sleeps"
+          "kind": "text",
+          "content": "Du, ich bin schon so müde. Das ist mir jetzt zu viel."
         },
         {
-          "kind": "text",
-          "content": "Du hast vielleicht Energie. Meine reicht gerade nicht für dein Gepiekse."
+          "kind": "emote",
+          "content": "sleeps"
         }
       ],
       "stages": [
@@ -13553,12 +13505,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "sleeps"
+          "kind": "text",
+          "content": "He, lass mich bitte. Ich will mich ausruhen."
         },
         {
-          "kind": "text",
-          "content": "He, ich bin doch schon müde. Jetzt lass mich bitte."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -13577,12 +13529,8 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "sleeps"
-        },
-        {
           "kind": "text",
-          "content": "Schluss mit dem Stupsen. Meine Augen brauchen eine Pause."
+          "content": "Ich bekomme die Augen kaum noch auf. Jetzt ist bitte Schluss."
         }
       ],
       "stages": [
@@ -13721,12 +13669,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Ich möchte gerade Abstand. Bitte hör auf."
         },
         {
-          "kind": "text",
-          "content": "Jetzt möchte ich wirklich nicht mehr angeklickt werden."
+          "kind": "emote",
+          "content": "faceSad"
         }
       ],
       "stages": [
@@ -13745,12 +13693,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Das tut mir gerade nicht gut. Lass mich bitte."
         },
         {
-          "kind": "text",
-          "content": "Bitte respektiere, dass ich gerade Abstand brauche."
+          "kind": "emote",
+          "content": "drops"
         }
       ],
       "stages": [
@@ -13769,12 +13717,8 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
-          "content": "Du stupst weiter. Das macht es für mich nicht besser."
+          "content": "Bitte nicht noch einmal. Mir geht es heute schon nicht gut."
         }
       ],
       "stages": [
@@ -13793,12 +13737,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Du, das ist mir heute wirklich zu viel. Hör bitte auf."
         },
         {
-          "kind": "text",
-          "content": "Du, ich habe heute keine Geduld dafür. Hör auf mit dem Klicken."
+          "kind": "emote",
+          "content": "cloud"
         }
       ],
       "stages": [
@@ -13817,12 +13761,12 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
+          "kind": "text",
+          "content": "Ich bin schon nicht gut drauf. Mach es mir bitte nicht noch schwerer."
         },
         {
-          "kind": "text",
-          "content": "Ich brauche dich gerade ohne Gepiekse. Lass es bitte."
+          "kind": "emote",
+          "content": "faceSad"
         }
       ],
       "stages": [
@@ -13841,12 +13785,8 @@
       "cooldown_seconds": 105,
       "beats": [
         {
-          "kind": "emote",
-          "content": "anger"
-        },
-        {
           "kind": "text",
-          "content": "He, genug. Mir geht es damit gerade wirklich nicht gut."
+          "content": "He, genug. Ich möchte gerade einfach etwas für mich sein."
         }
       ],
       "stages": [
