@@ -868,8 +868,9 @@ not become a second permanent implementation.
 #### 5B. Define rules, then implement the emotional and wish models
 
 Continue discussing the remaining Moodlet and wish rules before implementation.
-The recorded poking and petting proposals below establish concrete candidates;
-the remaining examples establish direction, not a complete approved balance:
+The recorded poking, petting and repetitive-food proposals below establish
+concrete candidates; the remaining examples establish direction, not a complete
+approved balance:
 
 - Repeated poking, excessive/unwelcome petting, repeatedly eating the same food,
   withholding a wanted object, disrupting known object locations and fulfilling
@@ -1028,9 +1029,76 @@ requests blocked before delivery by technical playback/foreground admission.
 These rules do not impose a global action lock and do not alter story clicks or
 the separate repeated-poking proposal.
 
-Next discussion: repeatedly eating the same food. No food Moodlet trigger,
-strength, duration, refusal or friendship consequence is settled by the above
-petting proposal.
+##### Recorded proposal: repetitive food and requesting variety, 2026-10-19
+
+Status: owner-requested design proposal, not implemented. Working Moodlet label:
+"Always the same food". Existing code detects the third consecutive identical
+food intake using bounded food-ID history; it does not currently timestamp that
+history or implement the following Moodlet/request rules.
+
+Create intensity one on the third actually consumed portion of the same food
+in succession within twenty-four real hours. A different consumed food breaks
+the sequence. Energy drinks neither count as food nor break the sequence as
+variety. Placement, offers, refused portions and repeated presentation do not
+count as intake. Emotional monotony can arise from autonomous consumption as
+well as personal feeding; it does not itself establish human responsibility.
+
+| Intensity | Total contribution to numeric mood target | Emotional quality |
+| --- | --- | --- |
+| 1 | -5 points | Mild food weariness and wanting variety |
+| 2 | -10 points | Clear dissatisfaction with the repetitive food |
+| 3 | -15 points | Strong food weariness |
+
+Each further actual intake continuing the same sequence while the Moodlet is
+active increases current intensity by one, capped at three. Renew the current
+four-hour quiet period. If the Moodlet has expired, a new qualifying repetitive
+intake starts at one rather than restoring the previous intensity. Contributions
+are total values per level; actual mood follows its normal timed response.
+
+After every four real hours without another qualifying repetition, reduce
+intensity by one: 3 -> 2 -> 1 -> expired. Full recovery from intensity three
+therefore takes twelve hours without reinforcement. Different food ends the
+repetition sequence but does not instantly erase the emotional after-effect.
+Use the existing elapsed axis through sleep, standby and closed-app time;
+restart does not reset history or timers. Do not add reduced satiety gains or
+automatic food refusal to this proposal. Hungry Aiko can eat while expressing
+displeasure about the lack of variety.
+
+At initial Moodlet creation, Aiko explicitly requests a different food next
+time. If creation occurs during autonomous/unattended or closed-app care,
+communicate the request at the next suitable user contact. It becomes a
+communicated request when the relevant bubble is visibly presented during
+that contact; no reading confirmation is required. An internally queued line
+alone does not establish that the user has received the request.
+
+The request remains active until a different food is actually consumed, or
+twenty-four real hours after communication, whichever occurs first. A later
+request must be communicated again before renewed penalties qualify. Its
+lifetime is distinct from Moodlet decay. This general request for variety is
+not a concrete food wish and does not automatically grant a wish reward.
+
+Separate relationship consequences during a communicated, active request:
+
+- Count actual personally supplied/consumed portions of the same food that
+  prompted the request. Mere placement, rejected offers and autonomous intake
+  do not count as ignored personal requests; do not infer handover origin from
+  historical self-care.
+- The first such intake prompts a reminder in its normal eating reaction and
+  costs no friendship. Each subsequent such intake costs 0.25 points.
+- Cap these food-variety-request losses at one point per rolling twenty-four
+  hours, independently of Moodlet intensity/refresh. Preserve the relevant
+  request, counter and relationship allowance across restart using existing
+  aggregate/history ownership; do not invent older uncommunicated requests.
+- Consuming a different food fulfills the request and ends its ignored-request
+  count. The rolling loss allowance is not refunded/reset, previous losses
+  remain and the Moodlet continues its separate decay.
+- Do not deduct friendship on Moodlet creation, passive existence, escalation
+  or expiry alone, or on request expiry/no further feeding. Existing neglect
+  rules remain separately responsible for inadequate care.
+
+Next discussion: withholding a wanted object. Its precise Moodlet trigger,
+escalation, after-effect and interaction consequences remain open; inspect the
+existing withholding episode and relationship loss before proposing changes.
 
 #### 5C. Connect status, expression and interaction decisions
 
