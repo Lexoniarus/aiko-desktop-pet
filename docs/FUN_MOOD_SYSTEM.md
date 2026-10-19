@@ -1,43 +1,64 @@
 # Fun and mood — prototype tuning guide
 
-> This guide describes the current runtime. The later
-> [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) preserves unimplemented
-> discussion values for need contributions, deficits and real-time recovery.
-> Those candidate values do not replace the current rules below.
-> The [need balance and example day](NEEDS_BALANCE_PROPOSAL.md) likewise records
-> proposed care/rate changes, including revised energy and RPS values, rather
-> than the current runtime configuration.
+> This guide describes stage 2 on `feature/social-optimization`. The
+> [mood](MOOD_BALANCE_PROPOSAL.md) and [need proposals](NEEDS_BALANCE_PROPOSAL.md)
+> retain the agreed design evidence. Friendship, adaptive sleep and expression
+> tuning remain later stages of the [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
 
-Fun and mood now have **different responsibilities**. The target experience
-is to play **three or four times per active day, with two or three completed
-rounds per session**. These are optional, not fixed appointments.
+Fun is one need; mood summarizes the five needs over time. Several short play
+sessions per active day support good care without fixed appointments.
 
 ## Editable JSON settings
 
-Tune the `fun`, `mood` and `game_rock_paper_scissors` sections of
-`aiko_pet/data/balance.json`. The existing `FUN_BALANCE` and `MOOD_BALANCE`
-parameter objects read their defaults from this validated resource.
+Tune `fun`, `mood`, `needs`, `food` and `game_rock_paper_scissors` in
+`aiko_pet/data/balance.json`; the existing typed parameter objects read that
+validated resource. Food nutrition remains in `food_catalog.json`.
 
-The fun-need policy is in `aiko_pet/pet/fun.py`. Its `FUN_BALANCE` contains
-a 2.6-point-per-awake-hour fun decline (41.6 points over 16 waking hours),
-zero boredom decay while sleeping, diminishing returns for long continuous
-sessions and a 20-point cap per completed session.
+Fun falls 3 points per awake hour and does not decay while sleeping. Each
+completed RPS round gives 6 fun, costs 0.5 energy and gives 0.6 social,
+regardless of win/draw/loss. Outcome evidence remains available for reactions.
+The first three rounds receive full fun credit, rounds four through six 60%,
+and later rounds 25%, with a 20-point session cap. The existing high-fun
+reduction starts above 85, declining linearly to 75% reward at 100.
 
-Each game's relative reward lives in `GAME_FUN_PROFILES`. RPS awards
-5.4 fun per completed round, plus 0.6 for an Aiko win, 0.25 for a draw,
-and zero extra for an Aiko loss. A loss still grants base enjoyment.
-The first three completed rounds receive full credit, rounds four through
-six get 60%, and later rounds 25%. These are tentative tuning values.
+Other need rates per real hour are:
 
-`aiko_pet/pet/mood.py` defines `MOOD_BALANCE` and pure functions for
-the emotional whole. Its target is influenced by the five underlying
-needs (fun, food, energy, social, affection), critical deficits, actual
-workload strain and a small positive long-term friendship effect.
-Mood smoothly approaches its target. **Mood never influences fun or any
-other need**, avoiding feedback loops. Direct care responds immediately
-but gently as it improves a real need; food retains a brief enjoyment/
-repetition reaction. The old unconditional minus-four-per-hour mood
-rule is replaced.
+| Need | Awake | Sleeping |
+| --- | --- | --- |
+| Satiety | -8 before bounded food/activity modifiers | -1.4 |
+| Energy | -3, plus at most 0.5 for hardware | +7.5 |
+| Social | -8 | -0.35 |
+| Affection | -6 | -0.25 |
+
+Talking gives +26 social and costs 1 energy. Petting gives +25 affection and
++2 social. Accepted personal food gives its nutrition and +1 social; an
+energy drink gives +10 energy. All values clamp at 0–100; zero does not kill
+Aiko. See [food](FOOD_SYSTEM.md) for reserve and hardware/input modifiers.
+
+## Need-derived mood
+
+`pet/mood.py` calculates the target as `0.16 * sum(five needs)` minus each
+need's deficit deduction, capped by the strictest deficit limit. Friendship
+and hardware add no separate numeric mood effect. Interpolate between anchors:
+
+| Lowest/individual need | Individual deduction | Target limit | Decline ceiling, points/minute |
+| --- | --- | --- | --- |
+| 40 or higher | 0 | 100 | 1 |
+| 25 | 5 | 60 | 3 |
+| 10 | 12 | 45 | 6 |
+| 0 | 20 | 30 | 10 |
+
+Deductions sum across needs, and the lowest need determines the decline
+ceiling. The need-only target is at most 80. Actual mood approaches the changing
+target without overshoot; recovery is 2 points/minute with no extra delay.
+Care, food, repeat food and completed games never change mood instantly.
+Mood has no feedback effect on needs or rewards; Moodlets remain deferred.
+
+`pet/need_decay.py` is the single pure numeric integration owner. It calls
+food/fun/mood policies in chronological intervals of at most 15 seconds, then
+returns frozen `NeedProgress`. Only `PetState` applies that result to its
+existing frozen `PetValues`. The time plan still owns observation and routine
+boundaries; this calculation reads no clocks and introduces no second state.
 
 ## Game-neutral pipeline
 
@@ -55,7 +76,7 @@ updates `PetState`. The minigame and its UI never adjust needs directly.
 Only actual completed play awards fun. Leaving the game window open,
 starting a round without reaching reveal, or closing an empty game
 awards **nothing**. The round score remains transient, including on
-application shutdown; only Aiko's adjusted fun, mood, energy, social
+application shutdown; only Aiko's adjusted fun, energy, social
 and existing friendship bookkeeping are saved.
 
 The game is closed before the final save both during Aiko's goodbye
@@ -74,9 +95,9 @@ minigame must be completed.
 Old saves without `fun` load at 75. Previously saved mood values
 are preserved initially and gradually follow the new formula.
 Full closed time and standby now advance needs and mood, using the existing
-balance. Automatic routine can apply existing scheduled sleep; time alone no
-longer creates self-served catalogue meals. The new mood/need balance and
-adaptive sleep remain later stages. See [data and saves](DATA_AND_SAVES.md).
+stage-2 balance. Automatic routine can apply existing scheduled sleep; time alone no
+longer creates self-served catalogue meals. Adaptive sleep remains a later stage. Expression filters above 80 are
+explicitly pending stage 5; this numeric change does not retune dialogue labels. See [data and saves](DATA_AND_SAVES.md).
 
 ## Verification
 

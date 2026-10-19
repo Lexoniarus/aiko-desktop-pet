@@ -27,6 +27,13 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+- Stage-2 need/mood verification on 2026-10-19 passed **1,177 tests in 258.671
+  seconds**, with no failures, errors or skips. Ruff 0.13.2, strict Mypy 1.18.2
+  (188 application files) and Pyright 1.1.414 passed. Two isolated native Tk
+  launches verified restored values, care and save/reopen without replay;
+  [physical standby acceptance remains pending](WORLD_SMOKE_TEST.md#stage-2-numeric-balance-check-2026-10-19).
+  These are local results; ordinary feature pushes do not trigger full remote CI.
+
 - Local real-time/save-foundation verification on 2026-10-19 passed **1,166
   tests in 259.455 seconds**, Ruff, strict Mypy and Pyright. A native isolated
   launch/save/reopen check counted a substituted 12-hour absence once and
@@ -86,11 +93,13 @@ and presentation owners but does not depend on online sources or translation.
 
 The latest discussed need, mood, friendship and simple sleep model has now been
 accepted as the basis for [implementation planning](CARE_TIME_IMPLEMENTATION_PLAN.md).
-The real-time/save foundation is now implemented locally; later balance,
-friendship and sleep stages are pending. The original discussion disclaimers and superseded
+The real-time/save foundation is committed and pushed (`59cab63`); stage 2
+now implements need/mood balance. Friendship and sleep stages remain pending. The original discussion disclaimers and superseded
 examples remain historical context; the plan identifies the latest baseline
 and the small details to settle during delivery. Maintained guides distinguish
-the implemented time foundation from those future balance values.
+implemented numeric rules from the later friendship/sleep work. Separate
+fixes cover [idle repeated clicks](CARE_TIME_IMPLEMENTATION_PLAN.md#b1-restore-annoyance-from-repeated-direct-clicks-while-idle)
+and [subjective object reunion/German phrases](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md).
 
 The [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) preserves the
 candidate care gains, real-time absence losses and negative-interaction values

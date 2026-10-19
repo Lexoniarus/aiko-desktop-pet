@@ -19,18 +19,16 @@ from .food import (
     FoodActivity,
     FoodId,
     FoodState,
-    advance_food,
 )
 from .friendship import (
     calculate_friendship_reward,
     friendship_after_withholding,
 )
-from .fun import GameExperience, advance_fun, calculate_game_session_fun
+from .fun import GameExperience, calculate_game_session_fun
 from .lifecycle import (
     calculate_daily_routine,
     plan_pet_time,
 )
-from .mood import MoodFactors, calculate_mood_target, reflect_care_in_mood
 from .need_decay import (
     NeedLevels,
     calculate_need_decay,
@@ -237,47 +235,18 @@ class PetState:
     def _decay(
         self,
         hours: float,
-        context: TimeContext | None,
         effort: float | None = None,
         food_activity: FoodActivity | None = None,
     ) -> None:
-        """Update nutrition and the other needs in one aggregate transition."""
-        food_progress = advance_food(
-            self.food,
-            self.satiety,
-            hours,
-            sleeping=self.sleeping,
-            activity=(
-                food_activity
-                if food_activity is not None
-                else FoodActivity(hardware_load=effort or 0.0)
-            ),
+        """Commit the pure policy's immutable result as one aggregate update."""
+        progress = calculate_need_decay(
+            self, hours, effort, food_activity=food_activity,
         )
-        self._set_needs(
-            calculate_need_decay(
-                self,
-                hours,
-                context,
-                effort,
-                food_progress=food_progress,
-            )
-        )
+        needs = progress.needs
         self._change(
-            food=food_progress.food,
-            fun=advance_fun(self.fun, hours, sleeping=self.sleeping),
-        )
-
-    def _mood_target(self) -> float:
-        """Read current needs; mood itself never feeds any of them back."""
-        return calculate_mood_target(
-            MoodFactors(
-                satiety=self.satiety,
-                energy=self.energy,
-                fun=self.fun,
-                social=self.social,
-                affection=self.affection,
-                friendship=self.friendship,
-            )
+            satiety=needs.satiety, mood=needs.mood, energy=needs.energy,
+            social=needs.social, affection=needs.affection,
+            food=progress.food, fun=progress.fun,
         )
 
     def record_game_experience(
@@ -297,7 +266,6 @@ class PetState:
             social=clamp_need_value(self.social + reward.social_gain, 0.0),
         )
         self._credit_friendship("play", now, before)
-        self._change(mood=reflect_care_in_mood(self.mood, self._mood_target()))
         return self.fun - before
 
     def advance(
@@ -325,7 +293,7 @@ class PetState:
             return
         if not auto_routine:
             for step in steps:
-                self._decay(step.hours, None, step.effort, step.food_activity)
+                self._decay(step.hours, step.effort, step.food_activity)
             self._roll_meals(context_at(now))
         else:
             for step in steps:
@@ -337,7 +305,7 @@ class PetState:
                     allow_nap=step.observed and allow_nap,
                     interrupt_nap=step.observed and interrupt_nap,
                 )
-                self._decay(step.hours, step.context, step.effort, step.food_activity)
+                self._decay(step.hours, step.effort, step.food_activity)
             self.update_daily_routine(
                 context_at(now),
                 allow_bedtime=allow_bedtime is not False,
@@ -440,7 +408,6 @@ class PetState:
     def _apply_care_transition(
         self, transition: CareTransition, stamp: float,
     ) -> CareResult:
-        action = transition.result.action
         if not transition.changed:
             return transition.result
         self._set_needs(transition.needs)
@@ -465,11 +432,6 @@ class PetState:
                 stamp,
                 transition.need_before,
             )
-        if action in ("feed", "pet", "talk", "energy_drink"):
-            self._change(mood=reflect_care_in_mood(
-                self.mood, self._mood_target(),
-                experience_points=transition.mood_experience,
-            ))
         return transition.result
 
     def due_meal(self, context: TimeContext) -> str | None:

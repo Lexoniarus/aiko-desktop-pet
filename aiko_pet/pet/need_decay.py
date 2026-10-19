@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Protocol
 
 from .balance import BALANCE
-from .food import FoodActivity, FoodProgress, FoodState, advance_food
+from .food import (
+    FoodActivity,
+    FoodState,
+    advance_food,
+    hardware_consumption_fraction,
+)
 from .fun import advance_fun
 from .mood import MoodFactors, advance_mood, calculate_mood_target
-from .routine import TimeContext
 from .value_rules import clamp_need_value
 
 
@@ -21,6 +26,12 @@ class NeedValues(Protocol):
 
     @property
     def satiety(self) -> float: ...
+
+    @property
+    def food(self) -> FoodState: ...
+
+    @property
+    def fun(self) -> float: ...
 
     @property
     def mood(self) -> float: ...
@@ -46,106 +57,69 @@ class NeedLevels:
     affection: float
 
 
+@dataclass(frozen=True, slots=True)
+class NeedProgress:
+    """Transient calculation result; not another pet aggregate or save record."""
+
+    needs: NeedLevels
+    fun: float
+    food: FoodState
+
+
 def calculate_need_decay(
     record: NeedValues,
     hours: float,
-    context: TimeContext | None,
     effort: float | None = None,
     *,
     food_activity: FoodActivity | None = None,
-    food_progress: FoodProgress | None = None,
-) -> NeedLevels:
-    """Compute all needs while delegating hunger to the food policy."""
-    progress = (
-        food_progress
-        if food_progress is not None
-        else advance_food(
-            getattr(record, "food", FoodState()),
-            record.satiety,
-            hours,
-            sleeping=record.sleeping,
-            activity=(
-                food_activity
-                if food_activity is not None
-                else FoodActivity(hardware_load=effort or 0.0)
-            ),
-        )
+) -> NeedProgress:
+    """Integrate changing needs and mood without mutating the input aggregate.
+
+    The existing time plan supplies routine/observation boundaries. This policy
+    only integrates their numeric effects, using bounded temporary storage and
+    the same calculation path for live, closed-app and suspended time.
+    """
+    satiety, energy = record.satiety, record.energy
+    social, affection = record.social, record.affection
+    mood, fun, food = record.mood, record.fun, record.food
+    activity = (
+        food_activity if food_activity is not None
+        else FoodActivity(hardware_load=effort or 0.0)
     )
     if record.sleeping:
-        energy = clamp_need_value(
-            record.energy
-            + hours * BALANCE.number("needs", "sleeping_energy_gain_per_hour")
-        )
-        social = clamp_need_value(
-            record.social
-            - hours * BALANCE.number("needs", "sleeping_social_loss_per_hour")
-        )
-        affection = clamp_need_value(
-            record.affection
-            - hours * BALANCE.number("needs", "sleeping_affection_loss_per_hour")
-        )
-        intensity = 0.0
+        energy_rate = BALANCE.number("needs", "sleeping_energy_gain_per_hour")
+        social_rate = BALANCE.number("needs", "sleeping_social_loss_per_hour")
+        affection_rate = BALANCE.number("needs", "sleeping_affection_loss_per_hour")
     else:
-        # Verified CPU/GPU work adds strain; fun itself is independent.
-        intensity = (
-            0.0
-            if effort is None
-            else max(
-                0.0,
-                min(
-                    1.0,
-                    (effort - BALANCE.number("needs", "hardware_intensity_baseline"))
-                    / BALANCE.number("needs", "hardware_intensity_span"),
-                ),
-            )
+        intensity = hardware_consumption_fraction(activity.hardware_load)
+        energy_rate = -(
+            BALANCE.number("needs", "awake_energy_loss_per_hour")
+            + BALANCE.number("needs", "hardware_energy_loss_per_hour") * intensity
         )
-        energy = clamp_need_value(
-            record.energy
-            - hours
-            * (
-                BALANCE.number("needs", "awake_energy_loss_per_hour")
-                + BALANCE.number("needs", "hardware_energy_loss_per_hour") * intensity
-            )
+        social_rate = BALANCE.number("needs", "awake_social_loss_per_hour")
+        affection_rate = BALANCE.number("needs", "awake_affection_loss_per_hour")
+    remaining = hours * 3600 if math.isfinite(hours) and hours > 0 else 0.0
+    step_limit = BALANCE.number("simulation", "needs_step_seconds")
+    while remaining > 1e-9:
+        seconds = min(remaining, step_limit)
+        step_hours = seconds / 3600
+        progress = advance_food(
+            food, satiety, step_hours, sleeping=record.sleeping, activity=activity,
         )
-        social = clamp_need_value(
-            record.social
-            - hours
-            * (
-                BALANCE.number("needs", "awake_social_loss_per_hour")
-                + BALANCE.number("needs", "hardware_social_loss_per_hour") * intensity
-            )
+        satiety, food = progress.satiety, progress.food
+        energy = clamp_need_value(energy + step_hours * energy_rate)
+        social = clamp_need_value(social - step_hours * social_rate)
+        affection = clamp_need_value(affection - step_hours * affection_rate)
+        fun = advance_fun(fun, step_hours, sleeping=record.sleeping)
+        target = calculate_mood_target(MoodFactors(
+            satiety=satiety, energy=energy, fun=fun,
+            social=social, affection=affection,
+        ))
+        mood = advance_mood(
+            mood, target, step_hours,
+            lowest_need=min(satiety, energy, fun, social, affection),
         )
-        affection = clamp_need_value(
-            record.affection
-            - hours * BALANCE.number("needs", "awake_affection_loss_per_hour")
-        )
-    next_fun = advance_fun(
-        getattr(record, "fun", BALANCE.number("initial", "fun")),
-        hours,
-        sleeping=record.sleeping,
-    )
-    target = calculate_mood_target(
-        MoodFactors(
-            satiety=progress.satiety,
-            energy=energy,
-            fun=next_fun,
-            social=social,
-            affection=affection,
-            friendship=getattr(
-                record, "friendship", BALANCE.number("initial", "friendship")
-            ),
-            workload_intensity=intensity,
-        )
-    )
-    return NeedLevels(
-        satiety=progress.satiety,
-        mood=advance_mood(
-            record.mood,
-            target,
-            hours,
-            sleeping=record.sleeping,
-        ),
-        energy=energy,
-        social=social,
-        affection=affection,
+        remaining -= seconds
+    return NeedProgress(
+        NeedLevels(satiety, mood, energy, social, affection), fun, food,
     )

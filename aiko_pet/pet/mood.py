@@ -1,8 +1,4 @@
-"""Aiko's overall mood is a smoothed consequence, not another care need.
-
-Needs and lived workload can affect mood. Mood never modifies enjoyment,
-nutrition, energy, affection, social need, friendship or game scoring.
-"""
+"""Need-derived mood target and real-time response, without feedback loops."""
 
 from __future__ import annotations
 
@@ -14,41 +10,27 @@ from .value_rules import clamp_need_value
 
 
 @dataclass(frozen=True, slots=True)
-class MoodBalance:
-    """Editable, named contributions to Aiko's aggregate emotional state."""
+class NeedMoodAnchor:
+    threshold: float
+    deduction: float
+    target_limit: float
+    decline_points_per_minute: float
 
-    fun_weight: float = BALANCE.number("mood", "fun_weight")
-    satiety_weight: float = BALANCE.number("mood", "satiety_weight")
-    energy_weight: float = BALANCE.number("mood", "energy_weight")
-    social_weight: float = BALANCE.number("mood", "social_weight")
-    affection_weight: float = BALANCE.number("mood", "affection_weight")
-    friendship_bonus_per_point_above_start: float = BALANCE.number(
-        "mood", "friendship_bonus_per_point_above_start"
+
+@dataclass(frozen=True, slots=True)
+class MoodBalance:
+    need_weight: float = BALANCE.number("mood", "need_weight")
+    recovery_points_per_minute: float = BALANCE.number(
+        "mood", "recovery_points_per_minute",
     )
-    initial_friendship_points: float = BALANCE.number(
-        "mood", "initial_friendship_points"
-    )
-    critical_need_threshold: float = BALANCE.number("mood", "critical_need_threshold")
-    critical_need_penalty_per_missing_point: float = BALANCE.number(
-        "mood", "critical_need_penalty_per_missing_point"
-    )
-    workload_mood_penalty_at_full_intensity: float = BALANCE.number(
-        "mood", "workload_mood_penalty_at_full_intensity"
-    )
-    awake_mood_adjustment_speed_per_hour: float = BALANCE.number(
-        "mood", "awake_mood_adjustment_speed_per_hour"
-    )
-    sleeping_mood_adjustment_speed_per_hour: float = BALANCE.number(
-        "mood", "sleeping_mood_adjustment_speed_per_hour"
-    )
-    immediate_care_alignment_fraction: float = BALANCE.number(
-        "mood", "immediate_care_alignment_fraction"
-    )
-    immediate_experience_impact_fraction: float = BALANCE.number(
-        "mood", "immediate_experience_impact_fraction"
-    )
-    maximum_immediate_experience_points: float = BALANCE.number(
-        "mood", "maximum_immediate_experience_points"
+    anchors: tuple[NeedMoodAnchor, ...] = tuple(
+        NeedMoodAnchor(
+            BALANCE.number("mood", f"{name}_need_threshold"),
+            BALANCE.number("mood", f"{name}_need_deduction"),
+            BALANCE.number("mood", f"{name}_need_target_limit"),
+            BALANCE.number("mood", f"{name}_decline_points_per_minute"),
+        )
+        for name in ("zero", "critical", "low", "healthy")
     )
 
 
@@ -57,90 +39,67 @@ MOOD_BALANCE = MoodBalance()
 
 @dataclass(frozen=True, slots=True)
 class MoodFactors:
-    """The actual needs, friendship and workload, never the current mood."""
+    """Only actual needs contribute; relationship and hardware are separate."""
 
     satiety: float
     energy: float
     fun: float
     social: float
     affection: float
-    friendship: float = BALANCE.number("initial", "friendship")
-    workload_intensity: float = 0.0
+
+    @property
+    def needs(self) -> tuple[float, ...]:
+        return tuple(clamp_need_value(value) for value in (
+            self.satiety, self.energy, self.fun, self.social, self.affection,
+        ))
+
+
+def need_mood_factors(value: float) -> NeedMoodAnchor:
+    """Interpolate shortage impact continuously between the JSON anchors."""
+    value = clamp_need_value(value)
+    anchors = MOOD_BALANCE.anchors
+    if value <= anchors[0].threshold:
+        return anchors[0]
+    for low, high in zip(anchors, anchors[1:]):
+        if value <= high.threshold:
+            progress = (value - low.threshold) / (high.threshold - low.threshold)
+            return NeedMoodAnchor(
+                value,
+                low.deduction + progress * (high.deduction - low.deduction),
+                low.target_limit + progress * (high.target_limit - low.target_limit),
+                low.decline_points_per_minute + progress * (
+                    high.decline_points_per_minute - low.decline_points_per_minute
+                ),
+            )
+    return anchors[-1]
 
 
 def calculate_mood_target(factors: MoodFactors) -> float:
-    """Combine needs and critical shortages, without feedback into needs."""
-    balance = MOOD_BALANCE
-    target = (
-        factors.fun * balance.fun_weight
-        + factors.satiety * balance.satiety_weight
-        + factors.energy * balance.energy_weight
-        + factors.social * balance.social_weight
-        + factors.affection * balance.affection_weight
+    """Sum deficits and respect the strongest limit; never duplicate Moodlets."""
+    needs = factors.needs
+    impacts = tuple(need_mood_factors(value) for value in needs)
+    target = sum(needs) * MOOD_BALANCE.need_weight - sum(
+        impact.deduction for impact in impacts
     )
-    target += (
-        max(
-            0.0,
-            factors.friendship - balance.initial_friendship_points,
-        )
-        * balance.friendship_bonus_per_point_above_start
-    )
-    lowest_need = min(
-        factors.fun,
-        factors.satiety,
-        factors.energy,
-        factors.social,
-        factors.affection,
-    )
-    target -= (
-        max(
-            0.0,
-            balance.critical_need_threshold - lowest_need,
-        )
-        * balance.critical_need_penalty_per_missing_point
-    )
-    target -= (
-        max(0.0, min(1.0, factors.workload_intensity))
-        * balance.workload_mood_penalty_at_full_intensity
-    )
-    return clamp_need_value(target)
+    return max(0.0, min(target, *(impact.target_limit for impact in impacts)))
 
 
 def advance_mood(
-    current_mood: float,
-    target_mood: float,
-    hours: float,
-    *,
-    sleeping: bool,
+    current_mood: float, target_mood: float, hours: float, *, lowest_need: float,
 ) -> float:
-    """Approach the overall state smoothly instead of applying flat decay."""
+    """Approach a constant target at bounded points/minute, without overshoot.
+
+    The need policy subdivides changing needs chronologically. No care action,
+    sleep flag or hardware sample causes an independent instant mood change.
+    """
+    current = clamp_need_value(current_mood)
+    target = clamp_need_value(target_mood)
     if not math.isfinite(hours) or hours <= 0:
-        return clamp_need_value(current_mood)
-    speed = (
-        MOOD_BALANCE.sleeping_mood_adjustment_speed_per_hour
-        if sleeping
-        else MOOD_BALANCE.awake_mood_adjustment_speed_per_hour
-    )
-    progress = 1.0 - math.exp(-speed * hours)
-    return clamp_need_value(
-        current_mood + (target_mood - current_mood) * progress,
-    )
-
-
-def reflect_care_in_mood(
-    current_mood: float,
-    target_mood: float,
-    *,
-    experience_points: float = 0.0,
-) -> float:
-    """Small immediate response to care; the ordinary target later prevails."""
-    balance = MOOD_BALANCE
-    experience = max(
-        -balance.maximum_immediate_experience_points,
-        min(balance.maximum_immediate_experience_points, experience_points),
-    )
-    return clamp_need_value(
-        current_mood
-        + (target_mood - current_mood) * balance.immediate_care_alignment_fraction
-        + experience * balance.immediate_experience_impact_fraction
-    )
+        return current
+    if target >= current:
+        return min(
+            target,
+            current + hours * 60 * MOOD_BALANCE.recovery_points_per_minute,
+        )
+    rate = need_mood_factors(lowest_need).decline_points_per_minute
+    return max(target, current - hours * 60 * rate)

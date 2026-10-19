@@ -40,12 +40,12 @@ class OfflineProgressTests(unittest.TestCase):
         clock = ActiveSessionClock(lambda: uptime[0])
         # Starting the live clock cannot consume the closed hour again.
         session.state.advance(now, elapsed_seconds=clock.consume())
-        self.assertAlmostEqual(session.state.energy, 94)
+        self.assertAlmostEqual(session.state.energy, 97)
         uptime[0] += 60
         session.state.advance(now + 60, elapsed_seconds=clock.consume())
-        self.assertAlmostEqual(session.state.energy, 93.9)
+        self.assertAlmostEqual(session.state.energy, 96.95)
         session.state.advance(now + 60, elapsed_seconds=clock.consume())
-        self.assertAlmostEqual(session.state.energy, 93.9)
+        self.assertAlmostEqual(session.state.energy, 96.95)
 
     def test_offline_routine_sleeps_at_night_and_recovers_energy(self) -> None:
         now = local_stamp(7, day=13)
@@ -56,7 +56,7 @@ class OfflineProgressTests(unittest.TestCase):
         session = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
         self.assertTrue(session.state.sleeping)
         self.assertEqual(session.state.sleep_origin, "routine")
-        self.assertEqual(session.state.energy, 100)
+        self.assertAlmostEqual(session.state.energy, 20 - .5 * 3 + 7.5 * 7.5)
         self.assertLess(session.state.satiety, 75)
         self.assertEqual(session.state.friendship, 15)
 

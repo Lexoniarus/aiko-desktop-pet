@@ -19,15 +19,14 @@ class PetStateTests(unittest.TestCase):
         state = PetState(updated_at=NOW + 1000)
         state.advance(NOW + 1000 + 3600)
         self.assertAlmostEqual(state.satiety, 67)
-        self.assertGreater(state.mood, 69)
-        self.assertLess(state.mood, 75)
-        self.assertAlmostEqual(state.fun, 72.4)
-        self.assertAlmostEqual(state.energy, 69)
+        self.assertAlmostEqual(state.mood, 55.52)
+        self.assertAlmostEqual(state.fun, 72)
+        self.assertAlmostEqual(state.energy, 72)
 
     def test_sleep_replenishes_energy(self):
         state = PetState(energy=30, sleeping=True, updated_at=NOW + 1000)
         state.advance(NOW + 1000 + 3 * 3600)
-        self.assertEqual(state.energy, 96)
+        self.assertAlmostEqual(state.energy, 52.5)
         self.assertAlmostEqual(state.satiety, 70.8)
 
     def test_offline_gap_is_fully_consumed(self):

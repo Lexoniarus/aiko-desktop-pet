@@ -61,7 +61,7 @@ class DailyRoutineTests(unittest.TestCase):
         self.assertEqual(state.sleep_origin, "routine")
         state.advance(local_time("2026-10-13", 7, 45), auto_routine=True)
         self.assertFalse(state.sleeping)
-        self.assertGreater(state.energy, 90)
+        self.assertAlmostEqual(state.energy, 20 - 3 / 6 + 7.5 * 8 - 3 / 4)
         self.assertGreater(state.satiety, 50)
 
     def test_manual_wake_stays_respected_until_next_night(self):
@@ -113,7 +113,7 @@ class DailyRoutineTests(unittest.TestCase):
         state = PetState(updated_at=local_time("2026-10-12", 22, 55))
         state.advance(local_time("2026-10-12", 23, 15), auto_routine=False)
         self.assertFalse(state.sleeping)
-        self.assertEqual(state.energy, 75 - 6 / 3)
+        self.assertAlmostEqual(state.energy, 75 - 3 / 3)
 
     def test_legacy_sleep_is_treated_as_manual(self):
         state = decode_pet_state({

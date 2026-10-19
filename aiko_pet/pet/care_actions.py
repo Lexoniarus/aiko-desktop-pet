@@ -82,7 +82,6 @@ class CareTransition:
     reward_action: str | None = None
     need_before: float = 0.0
     food: FoodState | None = None
-    mood_experience: float = 0.0
 
 
 def plan_care_action(
@@ -242,7 +241,6 @@ def plan_care_action(
         meals_date=meals_date,
         meals_today=tuple(meals),
         food=intake.food,
-        mood_experience=intake.mood_change,
         needs=replace(
             result.needs,
             satiety=intake.satiety,

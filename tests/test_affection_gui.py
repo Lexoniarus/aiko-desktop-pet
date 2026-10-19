@@ -4,6 +4,7 @@ import tempfile
 import tkinter as tk
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
@@ -68,11 +69,13 @@ class AffectionGuiTests(unittest.TestCase):
         set_test_pet_values(self.app.state, social=15)
         set_test_pet_values(self.app.state, energy=44)
         set_test_pet_values(self.app.state, mood=20)
-        self.toolbar.buttons["pet"].invoke()
+        # Isolate the button effect from real time spent creating native windows.
+        with patch.object(self.app._activity._clock, "consume", return_value=0):
+            self.toolbar.buttons["pet"].invoke()
         self.assertAlmostEqual(self.app.state.affection, 35, places=2)
         self.assertAlmostEqual(self.app.state.energy, 44, places=2)
         self.assertAlmostEqual(self.app.state.social, 17, places=2)
-        self.assertGreater(self.app.state.mood, 20)
+        self.assertEqual(self.app.state.mood, 20)
         self.toolbar.refresh()
         self.assertIn("35%", self.toolbar.needs["affection"][2].cget("text"))
 

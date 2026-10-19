@@ -28,7 +28,8 @@ Completed local checks for this stage on Windows/Python 3.11.9:
 - The full working-tree suite passed **1,166 tests in 259.455 seconds**, with
   no unittest failures, errors or skips. Ruff 0.13.2, strict Mypy 1.18.2
   (188 source files) and Pyright 1.1.414 passed. This is local evidence for the
-  uncommitted stage, not a remote CI result or physical resume sign-off.
+  foundation committed as `59cab63`, not a remote CI result or physical
+  resume sign-off.
 - Nineteen new elapsed-time/persistence cases cover source recovery, simulated
   standby, rollback, initialization, long gaps and optional-record migration.
 - Both actual Windows uptime readers were exercised; the suspend-inclusive
@@ -43,7 +44,9 @@ during the full suite. The unittest result above is passed; those teardown
 messages do not supply evidence for actual standby/resume behavior.
 
 Use a temporary save or the isolated launcher below, never the normal save.
-For this stage, new care/need/friendship/sleep balance is not active.
+For that stage, new care/need/friendship/sleep balance was not active.
+Stage 2 now supplies the numeric need/mood rules in the maintained guides;
+friendship loss and adaptive sleep remain pending.
 
 - Run briefly, save/close, wait and reopen the same isolated save. Check that
   needs/digestion and `pet.time.lived_seconds` include the closed interval and
@@ -58,6 +61,20 @@ For this stage, new care/need/friendship/sleep balance is not active.
   clocks cover forward/backward changes without that machine-wide action.
 - Confirm existing stock survives close/reopen unchanged. No catalogue meal
   should appear; closed-time consumption of actual stock is a later stage.
+
+## Stage-2 numeric balance check, 2026-10-19
+
+Two native `DesktopPet` launches used a separate system-temp save. A substituted
+one-hour awake absence restored satiety approximately 67, energy 72 and mood
+55.52 from the default needs with saved mood 30. Personal petting through
+`DesktopPet.interact()` added 25 affection, with no instant energy/mood reward.
+The normal save/close/reopen path retained progress without replaying that hour.
+The regular user save was not used. This is an actual Tk lifecycle/care wiring
+check, not a physical standby test or visual acceptance of the later click and
+object-dialogue fixes. Those fixes remain planned.
+
+The full validation totals for stage 2 are recorded in the implementation plan
+and documentation index. Use the launcher below for later hands-on acceptance.
 
 ## Isolated launcher
 

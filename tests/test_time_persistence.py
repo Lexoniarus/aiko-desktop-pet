@@ -14,8 +14,7 @@ from aiko_pet.application.active_time import (
     SessionInputs,
     advance_session_time,
 )
-from aiko_pet.application.session import PetSessionRestorer
-from aiko_pet.application.session import LoadedPetData
+from aiko_pet.application.session import LoadedPetData, PetSessionRestorer
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
@@ -59,7 +58,9 @@ class TimePersistenceTests(unittest.TestCase):
         self.assertEqual(session.state.energy, 0)
         self.store.save(session.state, session.settings)
         restarted = PetSessionRestorer(self.store, wall_time=lambda: end).restore()
-        self.assertEqual(restarted.state, session.state)
+        self.assertEqual(
+            encode_pet_state(restarted.state), encode_pet_state(session.state),
+        )
         self.assertEqual(json.loads(self.store.path.read_text())["version"], 1)
 
     def test_closed_and_standby_paths_agree_on_the_same_unknown_interval(self) -> None:

@@ -82,7 +82,7 @@ class GameExperienceTests(unittest.TestCase):
         from aiko_pet.pet.fun import GAME_FUN_PROFILES, GameFunProfile
 
         GAME_FUN_PROFILES["test_quiz"] = GameFunProfile(
-            4.0, 1.0, 0.0, 0.0, 0.2, 0.3,
+            4.0, 0.2, 0.3,
         )
         try:
             outcome = self.router.complete_game(

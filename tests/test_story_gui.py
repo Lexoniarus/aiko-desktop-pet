@@ -100,7 +100,11 @@ class StoryGuiTests(unittest.TestCase):
         self.pet._hover.open_game()
         self.assertFalse(self.pet._hover.game_open)
         # The next UI action starts after care playback and speech complete.
-        deadline = time.monotonic() + 6
+        # Authored two-bubble care can exceed six seconds; wait for its actual
+        # sequence budget instead of assuming one short line was selected.
+        deadline = time.monotonic() + 2 + sum(
+            cue.duration_ms for cue in self.pet._reaction_player.cues
+        ) / 1000
         while (not self.pet._contact.can_interact("play")
                and time.monotonic() < deadline):
             self.pet.root.update()

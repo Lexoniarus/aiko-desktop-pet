@@ -1,5 +1,12 @@
 # Need balance and daily care proposal
 
+> **Implementation update:** Stage 2 now applies the latest numeric need/care,
+> consumption and mood rules on `feature/social-optimization`; see the maintained
+> [food](FOOD_SYSTEM.md) and [fun/mood](FUN_MOOD_SYSTEM.md) guides. Production
+> tests reproduce both repeated-day need/mood schedules within 0.1 point.
+> Their explicit manual sleep is a scenario assumption; new friendship and
+> learned sleep rules are still pending. Earlier disclaimers preserve history.
+
 > **Planning update, 2026-10-19:** The owner accepted the latest combined
 > care examples as a suitable starting point for implementation planning.
 > See the [active care/time implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).

@@ -3,19 +3,13 @@
   "food": {
     "too_full_to_eat_threshold": 96.0,
     "maximum_recent_foods": 8,
-    "repeated_food_mood_penalty": 6.0,
     "consecutive_repeats_before_dislike": 2,
-    "internal_simulation_step_minutes": 5.0,
     "digestion_speed_during_sleep": 0.3,
-    "digestion_speedup_from_activity": 0.6,
     "maximum_digest_reserve_minutes": 175.0,
     "digest_minutes_for_full_hunger_reduction": 80.0,
-    "maximum_digest_hunger_reduction": 0.55,
-    "maximum_long_fast_hunger_bonus": 0.25,
-    "additional_hunger_fraction_per_hour_without_food": 0.055,
-    "awake_hours_before_hunger_accelerates": 3.0,
-    "maximum_combined_activity_bonus": 0.35,
-    "maximum_user_input_hunger_bonus": 0.18,
+    "maximum_digest_hunger_reduction": 0.25,
+    "maximum_combined_activity_bonus": 0.25,
+    "maximum_user_input_hunger_bonus": 0.1,
     "maximum_hardware_hunger_bonus": 0.2,
     "sleeping_hunger_points_per_hour": 1.4,
     "awake_hunger_points_per_hour": 8.0
@@ -29,24 +23,27 @@
     "middle_reward_units_per_session": 6,
     "full_reward_units_per_session": 3,
     "sleeping_fun_loss_points_per_hour": 0.0,
-    "awake_fun_loss_points_per_hour": 2.6
+    "awake_fun_loss_points_per_hour": 3.0
   },
   "mood": {
-    "maximum_immediate_experience_points": 6.0,
-    "immediate_experience_impact_fraction": 0.35,
-    "immediate_care_alignment_fraction": 0.2,
-    "sleeping_mood_adjustment_speed_per_hour": 0.6,
-    "awake_mood_adjustment_speed_per_hour": 0.9,
-    "workload_mood_penalty_at_full_intensity": 3.0,
-    "critical_need_penalty_per_missing_point": 0.25,
-    "critical_need_threshold": 25.0,
-    "initial_friendship_points": 15.0,
-    "friendship_bonus_per_point_above_start": 0.04,
-    "affection_weight": 0.15,
-    "social_weight": 0.15,
-    "energy_weight": 0.2,
-    "satiety_weight": 0.2,
-    "fun_weight": 0.3
+    "need_weight": 0.16,
+    "healthy_need_threshold": 40.0,
+    "low_need_threshold": 25.0,
+    "critical_need_threshold": 10.0,
+    "zero_need_threshold": 0.0,
+    "healthy_need_deduction": 0.0,
+    "low_need_deduction": 5.0,
+    "critical_need_deduction": 12.0,
+    "zero_need_deduction": 20.0,
+    "healthy_need_target_limit": 100.0,
+    "low_need_target_limit": 60.0,
+    "critical_need_target_limit": 45.0,
+    "zero_need_target_limit": 30.0,
+    "healthy_decline_points_per_minute": 1.0,
+    "low_decline_points_per_minute": 3.0,
+    "critical_decline_points_per_minute": 6.0,
+    "zero_decline_points_per_minute": 10.0,
+    "recovery_points_per_minute": 2.0
   },
   "food_activity": {
     "recalculate_summary_after_seconds": 4.0,
@@ -69,16 +66,15 @@
     "fun": 75.0
   },
   "needs": {
-    "sleeping_energy_gain_per_hour": 22.0,
+    "sleeping_energy_gain_per_hour": 7.5,
     "sleeping_social_loss_per_hour": 0.35,
     "sleeping_affection_loss_per_hour": 0.25,
-    "awake_energy_loss_per_hour": 6.0,
-    "hardware_energy_loss_per_hour": 2.8,
+    "awake_energy_loss_per_hour": 3.0,
+    "hardware_energy_loss_per_hour": 0.5,
     "awake_social_loss_per_hour": 8.0,
-    "hardware_social_loss_per_hour": 0.35,
     "awake_affection_loss_per_hour": 6.0,
-    "hardware_intensity_baseline": 0.15,
-    "hardware_intensity_span": 0.85
+    "hardware_intensity_baseline": 0.3,
+    "hardware_intensity_span": 0.7
   },
   "care": {
     "play_minimum_energy": 8,
@@ -121,7 +117,8 @@
   "simulation": {
     "step_seconds": 300,
     "maximum_live_effort_seconds": 30.0,
-    "nap_seconds": 2700
+    "nap_seconds": 2700,
+    "needs_step_seconds": 15.0
   },
   "care_requests": {
     "need_threshold": 70,
@@ -129,10 +126,7 @@
     "post_care_quiet_seconds": 180
   },
   "game_rock_paper_scissors": {
-    "base_fun_per_completed_unit": 5.4,
-    "successful_unit_bonus": 0.6,
-    "neutral_unit_bonus": 0.25,
-    "setback_unit_bonus": 0.0,
+    "base_fun_per_completed_unit": 6.0,
     "energy_cost_per_completed_unit": 0.5,
     "social_gain_per_completed_unit": 0.6
   },

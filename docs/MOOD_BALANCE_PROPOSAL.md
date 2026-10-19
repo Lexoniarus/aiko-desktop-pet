@@ -1,5 +1,11 @@
 # Mood balance proposal
 
+> **Implementation update:** Stage 2 now applies the need-only target,
+> interpolated deficits/limits and minute-based response rates on
+> `feature/social-optimization`. See [current runtime](FUN_MOOD_SYSTEM.md).
+> Existing saved mood is retained and changes over elapsed time. Moodlets and
+> expression-threshold tuning remain deferred; earlier disclaimers are history.
+
 > **Planning update, 2026-10-19:** The latest discussed model is the baseline
 > for the [active care/time implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
 > Original discussion-status disclaimers below remain historical context;

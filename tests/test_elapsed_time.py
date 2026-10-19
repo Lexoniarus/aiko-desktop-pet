@@ -79,7 +79,7 @@ class ElapsedAdvancementTests(unittest.TestCase):
         uptime[0] += 10 * 3600
         advance_session_time(pet, clock, inputs(NOW + 10 * 3600))
         self.assertEqual(pet.lived_seconds, 10 * 3600)
-        self.assertEqual(pet.energy, 40)
+        self.assertAlmostEqual(pet.energy, 70)
         first = pet.capture_checkpoint()
         advance_session_time(pet, clock, inputs(NOW + 10 * 3600))
         self.assertEqual(pet.capture_checkpoint(), first)
@@ -104,7 +104,7 @@ class ElapsedAdvancementTests(unittest.TestCase):
         uptime[0] = 180
         advance_session_time(pet, clock, inputs(NOW + 80))
         self.assertEqual(pet.lived_seconds, 80)
-        self.assertAlmostEqual(pet.energy, 75 - 80 / 3600 * 6)
+        self.assertAlmostEqual(pet.energy, 75 - 80 / 3600 * 3)
 
     def test_invalid_timestamp_does_not_consume_a_valid_uptime_interval(self) -> None:
         uptime = [100.0]

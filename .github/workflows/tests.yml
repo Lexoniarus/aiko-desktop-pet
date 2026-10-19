@@ -73,6 +73,8 @@ jobs:
             "test_active_time.py",
             "test_elapsed_time.py",
             "test_time_persistence.py",
+            "test_need_mood_balance.py",
+            "test_daily_need_schedules.py",
             "test_care_requests.py",
             "test_care_results.py",
             "test_assets.py",

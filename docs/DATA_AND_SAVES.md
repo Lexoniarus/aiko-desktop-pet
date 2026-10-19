@@ -34,7 +34,7 @@ asset directory. Frame order, count and timing are checked together.
 
 Balance values use names that state their meaning and units. Integer counters
 and milliseconds cannot be booleans or fractional numbers. Fractions and
-probabilities stay within 0..1; mood weights add up to one; interval minimums
+probabilities stay within 0..1; mood anchors, response rates and hardware ranges are consistent; interval minimums
 cannot exceed their maximums; simulation divisors and steps must be positive.
 Simulation steps cannot exceed five minutes. Elapsed-time advancement has no
 catch-up age limit; the former eight-hour limit and its parameter are removed.
@@ -139,10 +139,10 @@ produce these backup files on every autosave.
 > This section describes the current runtime. The separate
 > [adaptive sleep proposal](ADAPTIVE_SLEEP_PROPOSAL.md) records unimplemented
 > learned sleep/wake timings, together with
-> the [need balance proposal](NEEDS_BALANCE_PROPOSAL.md). These candidates do
-> not replace the existing need rates or manual-sleep behavior below. The first
-> [implementation stage](CARE_TIME_IMPLEMENTATION_PLAN.md) now supplies real-time
-> advancement; new care balance, friendship loss and adaptive sleep are pending.
+> the [need balance proposal](NEEDS_BALANCE_PROPOSAL.md). Stages 1 and 2 of the
+> [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md) supply real-time
+> advancement and the new need/mood balance. Friendship loss and adaptive sleep
+> remain pending; manual sleep still follows the existing routine policy.
 
 Loading JSON only decodes data. `PetSessionRestorer` subsequently calculates
 closed time from `pet.updated_at` to the current clock, without truncating the
@@ -150,7 +150,9 @@ absence. `pet.lifecycle.TimePlan` streams chronological steps rather than
 allocating a list proportional to the gap. Missing or corrupt saves do not
 generate catch-up; a backwards clock produces zero elapsed time and rebases
 the next anchor. The obsolete `simulation.maximum_catchup_seconds` setting has
-been removed; no need/care balance coefficients changed in this stage.
+been removed. Stage 2 applies the [need/mood rates](FUN_MOOD_SYSTEM.md) through
+the same pure domain path. Existing saved mood is preserved on load and
+approaches its new target over elapsed time; no balance migration resets it.
 
 `StateStore.load_session()` reads state, settings and adaptive memory together
 into one `LoadedPetData` snapshot. The old partial `load()` and `load_memory()`

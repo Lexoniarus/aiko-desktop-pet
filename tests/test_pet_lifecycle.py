@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import unittest
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
+from aiko_pet.pet.food import FoodState
 from aiko_pet.pet.lifecycle import (
     MAX_LIVE_EFFORT_SECONDS,
     plan_pet_time,
@@ -27,6 +28,8 @@ class Needs:
     energy: float = 75.0
     social: float = 75.0
     affection: float = 75.0
+    fun: float = 75.0
+    food: FoodState = field(default_factory=FoodState)
 
 
 def local_stamp(hour: int = 12, minute: int = 0) -> float:
@@ -36,28 +39,27 @@ def local_stamp(hour: int = 12, minute: int = 0) -> float:
 class NeedDecayTests(unittest.TestCase):
     def test_normal_waking_decay_does_not_require_pet_state(self) -> None:
         needs = Needs()
-        result = calculate_need_decay(needs, 1, context=None)
+        result = calculate_need_decay(needs, 1).needs
         self.assertAlmostEqual(result.satiety, 67.0)
-        self.assertGreater(result.mood, 69.0)
-        self.assertLess(result.mood, 75.0)
-        self.assertAlmostEqual(result.energy, 69.0)
-        self.assertEqual(result.social, 67.0)
-        self.assertEqual(result.affection, 69.0)
+        self.assertAlmostEqual(result.mood, 55.52)
+        self.assertAlmostEqual(result.energy, 72.0)
+        self.assertAlmostEqual(result.social, 67.0)
+        self.assertAlmostEqual(result.affection, 69.0)
         self.assertEqual(needs.satiety, 75.0)
 
     def test_sleep_replenishes_energy_without_friendship_change(self) -> None:
         needs = Needs(sleeping=True, energy=40)
-        result = calculate_need_decay(needs, 1, context=None, effort=1.0)
-        self.assertEqual(result.energy, 62)
+        result = calculate_need_decay(needs, 1, effort=1.0).needs
+        self.assertAlmostEqual(result.energy, 47.5)
         self.assertAlmostEqual(result.satiety, 73.6)
-        self.assertEqual(result.affection, 74.75)
+        self.assertAlmostEqual(result.affection, 74.75)
         self.assertEqual(needs.energy, 40)
 
     def test_heavy_work_increases_waking_drain(self) -> None:
         relaxed = Needs()
         working = Needs()
-        relaxed_next = calculate_need_decay(relaxed, 1, context=None, effort=0)
-        working_next = calculate_need_decay(working, 1, context=None, effort=1)
+        relaxed_next = calculate_need_decay(relaxed, 1, effort=0).needs
+        working_next = calculate_need_decay(working, 1, effort=1).needs
         self.assertLess(working_next.satiety, relaxed_next.satiety)
         self.assertLess(working_next.energy, relaxed_next.energy)
         self.assertLess(working_next.mood, relaxed_next.mood)

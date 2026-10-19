@@ -1,10 +1,10 @@
 # Care, relationship and real-time implementation plan
 
-> **Active implementation plan; stage 1 committed and pushed.** Requested on 2026-10-19
+> **Active implementation plan; stages 1 and 2 implemented and verified.** Requested on 2026-10-19
 > on `feature/social-optimization`, reviewed against clean baseline `42de63a`.
 > The owner accepted the latest discussed balance as a sufficient starting
 > point for implementation planning. This document plans that first delivery.
-> Stage 1 is recorded below; stage 2 is in progress. Stages 3–6 and bugfixes B1/B2
+> Stages 1 and 2 are recorded below. Stages 3–6 and bugfixes B1/B2
 > remain pending.
 
 ## Goal and boundaries
@@ -93,7 +93,7 @@ incompatible time, sleep and save behavior in place.
 | Delivery | Status / evidence |
 | --- | --- |
 | Stage 1: time and storage | `59cab63`, pushed to `feature/social-optimization`; 1,166 tests and pinned static checks passed; physical suspend/resume remains pending |
-| Stage 2: needs and mood | In progress; consolidate numeric integration in the existing pure policy before final validation and its separate commit |
+| Stage 2: needs and mood | Implemented in the separate feature commit containing this record; 1,177 tests and pinned static checks passed; isolated native care/save/reopen passed |
 | B1: idle repeated-click regression | Planned below; resolve before stage 3 connects negative click effects |
 | B2: object recognition and German dialogue | [Detailed plan](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); pending, separately scoped from stage 2 |
 | Stages 3–6 | Pending |
@@ -142,6 +142,49 @@ not a materialized tuple; its elapsed duration is explicit. The unused
 `MAX_CATCHUP_SECONDS` constant, packaged catch-up limit and catalogue-only
 `PetState.advance(self_care=...)` path are removed after checking repository
 callers. Existing public care/advance/checkpoint ownership remains intact.
+
+### Stage-2 execution record, 2026-10-19
+
+The existing pure `need_decay.calculate_need_decay()` now owns numeric
+integration, including food, fun and actual mood, returning frozen
+`NeedProgress`. `PetState` commits that result in one aggregate transition.
+There is no second simulator, mutable need store, clock reader or settings
+catalogue. Its former context argument, `getattr` defaults and alternate
+precomputed-food pathway are removed after auditing repository consumers;
+care retains `NeedLevels` as its immutable partial transition value.
+
+The existing food policy integrates linear reserve fade analytically. The
+need policy uses at most 15-second intervals for changing mood targets;
+`TimePlan` retains routine and evidence boundaries. The existing rolling
+activity observer now consumes fresh max(CPU, GPU) utilization; RAM/VRAM is
+excluded. Its history is cleared when observation is disabled. The broader
+workload projection remains for grounded dialogue and the legacy routine;
+this stage does not claim to replace adaptive sleep.
+
+Food/care/game no longer grants instant mood or generic friendship/load mood
+bonuses. Removed obsolete balance/catalogue fields are coordinated with typed
+loaders and repository callers; saves remain v1 and preserve existing mood.
+Existing outcome evidence and repeated-food wording remain available.
+
+Production-policy tests run seven warm-up days plus the reported day for each
+approved schedule, using actual accepted food, talk, petting and completed
+three-round games. All five food portions are accepted, all needs remain above
+40, and the need minima and actual mood ranges match the proposal within 0.1
+point. Manual 23:00–07:00 sleep and light office activity are explicit inputs;
+these tests do not certify the still-pending friendship or learned-sleep stages.
+Final local verification on Windows/Python 3.11.9 passed **1,177 tests in
+258.671 seconds**, with no failures, errors or skips. Ruff 0.13.2, strict
+Mypy 1.18.2 (188 application files) and Pyright 1.1.414 passed. The story GUI
+regression now waits for the selected authored sequence's duration instead of
+assuming every care sequence completes in six seconds; runtime playback is
+unchanged. Maintained Markdown is UTF-8 and local-link checks pass.
+
+Two isolated native Tk launches verified the new one-hour restoration values,
+actual personal-care dispatch without instant mood gain, and save/reopen without
+replaying time; see the [smoke record](WORLD_SMOKE_TEST.md#stage-2-numeric-balance-check-2026-10-19).
+Physical standby/resume remains pending. These local checks do not claim remote
+full-suite CI: the test workflow runs on main pushes or pull requests, not plain
+feature-branch pushes. No merge or promotion to main is part of this delivery.
 
 ### 1. Define time, history and save contracts
 

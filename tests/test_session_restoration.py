@@ -98,7 +98,7 @@ class SessionRestorationTests(unittest.TestCase):
         settings = PetSettings(auto_routine=True)
         self.store.save(saved, settings)
         state, restored_settings, _memory = self.restore()
-        self.assertAlmostEqual(state.energy, 27)
+        self.assertAlmostEqual(state.energy, 28.5)
         self.assertTrue(restored_settings.auto_routine)
 
     def test_old_version_one_save_without_adaptive_data_still_loads(self) -> None:

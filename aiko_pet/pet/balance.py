@@ -96,7 +96,6 @@ def parse_balance(raw: Any) -> BalanceCatalog:
         if catalog.number(section, low) > catalog.number(section, high):
             raise ValueError(f"balance.{section}: {low} exceeds {high}")
     for section, key in (
-        ("food", "internal_simulation_step_minutes"),
         ("food", "digest_minutes_for_full_hunger_reduction"),
         ("food", "maximum_recent_foods"),
         ("food", "consecutive_repeats_before_dislike"),
@@ -104,6 +103,7 @@ def parse_balance(raw: Any) -> BalanceCatalog:
         ("food_activity", "short_window_minutes"),
         ("food_activity", "long_window_minutes"),
         ("simulation", "step_seconds"),
+        ("simulation", "needs_step_seconds"),
         ("needs", "hardware_intensity_span"),
         ("adaptive_learning", "effort_smoothing_seconds"),
         ("walk", "minimum_cycles"),
@@ -129,13 +129,37 @@ def parse_balance(raw: Any) -> BalanceCatalog:
         )
     ):
         raise ValueError("Invalid dialogue defaults or presentation timing")
+    mood = sections["mood"]
+    names = ("zero", "critical", "low", "healthy")
+    thresholds = [mood[f"{name}_need_threshold"] for name in names]
+    deductions = [mood[f"{name}_need_deduction"] for name in names]
+    limits = [mood[f"{name}_need_target_limit"] for name in names]
+    declines = [mood[f"{name}_decline_points_per_minute"] for name in names]
+    if (not 0 < mood["need_weight"] <= 0.2
+            or thresholds[0] != 0 or thresholds[-1] > 100
+            or any(a >= b for a, b in zip(thresholds, thresholds[1:]))
+            or deductions[-1] != 0 or deductions[0] > 100
+            or any(a < b for a, b in zip(deductions, deductions[1:]))
+            or limits[-1] != 100 or limits[0] > 100
+            or any(a > b for a, b in zip(limits, limits[1:]))
+            or declines[-1] <= 0
+            or any(a < b for a, b in zip(declines, declines[1:]))
+            or mood["recovery_points_per_minute"] <= 0):
+        raise ValueError("Invalid mood curve or response rates")
+    if catalog.number("simulation", "needs_step_seconds") > 60:
+        raise ValueError("Need integration steps must not exceed one minute")
     if not math.isclose(
-        sum(
-            value for key, value in sections["mood"].items() if key.endswith("_weight")
-        ),
-        1.0,
+        catalog.number("needs", "hardware_intensity_baseline")
+        + catalog.number("needs", "hardware_intensity_span"), 1.0,
     ):
-        raise ValueError("Mood weights must add up to one")
+        raise ValueError("Hardware threshold and span must cover 0..1")
+    food = sections["food"]
+    for key in ("maximum_combined_activity_bonus", "maximum_hardware_hunger_bonus",
+                "maximum_user_input_hunger_bonus", "maximum_digest_hunger_reduction"):
+        if food[key] > 1:
+            raise ValueError(f"balance.food.{key} must be within 0..1")
+    if catalog.number("fun", "high_fun_threshold") >= 100:
+        raise ValueError("High-fun reduction must start below 100")
     return catalog
 
 

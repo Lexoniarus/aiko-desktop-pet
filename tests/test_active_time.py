@@ -29,14 +29,58 @@ NOW = datetime(2026, 10, 13, 10).timestamp()
 
 
 class Monitor:
+    def __init__(self, reading: ComputerSnapshot | None = None) -> None:
+        self.reading = reading or ComputerSnapshot()
+
     def latest(self) -> ComputerSnapshot:
-        return ComputerSnapshot()
+        return self.reading
 
     def set_enabled(self, enabled: bool) -> None:
         pass
 
 
 class ActiveTimeTests(unittest.TestCase):
+    def test_consumption_uses_fresh_cpu_gpu_and_clears_disabled_history(self) -> None:
+        for cpu, gpu, hunger, energy in ((30, 0, 8, 3), (0, 100, 9.6, 3.5)):
+            with self.subTest(cpu=cpu, gpu=gpu):
+                uptime = [10000.0]
+                monitor = Monitor()
+                state = PetState(satiety=100, energy=100, updated_at=NOW)
+                coordinator = ActivityCoordinator(
+                    state, PetSettings(auto_routine=False),
+                    make_aiko_mind(started_at=0), AdaptiveRoutine(),
+                    WorkloadEventDetector(), monitor,
+                    ActivityCallbacks(lambda: None, lambda _: None, lambda *_: None,
+                                      lambda: 0, lambda: 0),
+                    clock=ActiveSessionClock(lambda: uptime[0]),
+                )
+                coordinator.food_activity_history.observe(
+                    now=9999, pointer=None, input_idle_seconds=None,
+                    mouse_buttons_down=None, measured_hardware_load=None,
+                )
+                with patch('aiko_pet.application.activity.time.monotonic',
+                           side_effect=lambda: uptime[0]):
+                    for seconds in range(3601):
+                        uptime[0] = 10000 + seconds
+                        monitor.reading = ComputerSnapshot(
+                            cpu=cpu, gpu=gpu, ram=100, gpu_memory=100,
+                            measured_at=uptime[0],
+                        )
+                        coordinator.advance_state(NOW + seconds)
+                    self.assertAlmostEqual(state.satiety, 100 - hunger)
+                    self.assertAlmostEqual(state.energy, 100 - energy)
+                    monitor.reading = ComputerSnapshot(
+                        ram=100, gpu_memory=100, measured_at=uptime[0],
+                    )
+                    self.assertIsNone(coordinator.live_consumption_load())
+                    monitor.reading = ComputerSnapshot(
+                        cpu=100, measured_at=uptime[0] - 1000,
+                    )
+                    self.assertIsNone(coordinator.live_consumption_load())
+                    coordinator.set_observation_enabled(False)
+                    self.assertEqual(coordinator.observed_food_activity().hardware_load,
+                                     0)
+
     def test_intervals_are_consumed_once_and_bad_readings_reset_anchor(self) -> None:
         readings = iter([10., 12., None, 20., 22., 15., 17., math.nan, 25., 26.])
         clock = ActiveSessionClock(lambda: next(readings))
@@ -86,11 +130,11 @@ class ActiveTimeTests(unittest.TestCase):
         inputs = SessionInputs(
             NOW + 3600, 3600, False, None, False, False, None,
         )
-        self.assertAlmostEqual(state.energy, 94)
+        self.assertAlmostEqual(state.energy, 97)
         care.execute(CareCommand('talk'), inputs)
-        self.assertAlmostEqual(state.energy, 93)
+        self.assertAlmostEqual(state.energy, 96)
         games.complete(GameExperience("rock_paper_scissors", 1), inputs)
-        self.assertAlmostEqual(state.energy, 92.5)
+        self.assertAlmostEqual(state.energy, 95.5)
         activity.advance_state(NOW + 3600)  # Save at the same instant.
         self.assertAlmostEqual(state.satiety, 92)
         activity.advance_state(NOW + 86400)  # Suspend/clock jump: uptime unchanged.
@@ -129,8 +173,9 @@ class HourlyCareTests(unittest.TestCase):
                 for seconds in range(10, 3601, 10):
                     state.advance(NOW + seconds, elapsed_seconds=10, effort=effort)
                 self.assertAlmostEqual(state.satiety, expected)
-                self.assertGreater(min(state.mood, state.energy, state.social,
+                self.assertGreater(min(state.energy, state.social,
                                        state.affection), 90)
+                self.assertTrue(70 < state.mood < 80)
                 state.interact('feed', now=NOW + 3600)
                 self.assertAlmostEqual(state.satiety, 100)
 
@@ -153,5 +198,5 @@ class HourlyCareTests(unittest.TestCase):
         state = self.full_state()
         set_test_pet_values(state, sleeping=True, energy=40)
         state.advance(NOW + 3600, elapsed_seconds=3600, effort=1.)
-        self.assertAlmostEqual(state.energy, 62)
+        self.assertAlmostEqual(state.energy, 47.5)
         self.assertAlmostEqual(state.satiety, 98.6)

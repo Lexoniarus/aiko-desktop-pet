@@ -51,8 +51,7 @@ class ResourceValidationTests(unittest.TestCase):
     def test_normalized_weights_still_reject_values_above_one(self) -> None:
         original = load_json(DATA / "balance.json")
         for section, key in (
-            ("mood", "fun_weight"),
-            ("mood", "social_weight"),
+            ("mood", "need_weight"),
             ("food_activity", "short_window_weight"),
             ("dialogue", "spontaneous_story_probability"),
         ):
@@ -170,9 +169,19 @@ class ResourceValidationTests(unittest.TestCase):
         for section, key, value in (
             ("food", "awake_hunger_points_per_hour", True),
             ("food", "awake_hunger_points_per_hour", -1),
-            ("food", "internal_simulation_step_minutes", 0),
+            ("simulation", "needs_step_seconds", 0),
             ("food", "maximum_recent_foods", 2.5),
-            ("mood", "fun_weight", 0.8),
+            ("mood", "need_weight", 0.8),
+            ("mood", "healthy_need_threshold", 25),
+            ("mood", "zero_need_threshold", 1),
+            ("mood", "critical_need_deduction", 4),
+            ("mood", "zero_need_target_limit", 65),
+            ("mood", "low_decline_points_per_minute", 0),
+            ("mood", "recovery_points_per_minute", 0),
+            ("simulation", "needs_step_seconds", 61),
+            ("needs", "hardware_intensity_span", 0.8),
+            ("food", "maximum_digest_hunger_reduction", 1.1),
+            ("food", "maximum_hardware_hunger_bonus", 1.1),
             ("walk", "pause_min_seconds", 181),
             ("fun", "late_unit_reward_fraction", float("inf")),
             ("ambient", "blink_gap_minimum_seconds", 9),

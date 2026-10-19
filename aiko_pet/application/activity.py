@@ -15,7 +15,7 @@ from ..pet.mind.catalog import Reaction
 from ..pet.mind.workload_events import WorkloadEventDetector
 from ..pet.routine import TimeContext, context_at
 from ..pet.state import PetState
-from ..telemetry import workload_intensity
+from ..telemetry import ComputerSnapshot, consumption_load, workload_intensity
 from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
 from .food_activity import FoodActivityHistory
 from .ports import ComputerObservation
@@ -82,6 +82,7 @@ class ActivityCoordinator:
         self.pending_computer_line = None
         if not enabled:
             self.mind.set_situation(None)
+            self.food_activity_history = FoodActivityHistory()
 
     def should_interrupt_nap(self) -> bool:
         behaviour = self.adaptive.current
@@ -109,7 +110,7 @@ class ActivityCoordinator:
             return None
         return behaviour.can_sleep
 
-    def live_effort(self) -> float | None:
+    def _live_reading(self) -> ComputerSnapshot | None:
         """Never project a stale hardware sample into unseen time."""
         if not self.settings.observe_computer:
             return None
@@ -121,7 +122,17 @@ class ActivityCoordinator:
             <= BALANCE.integer("activity", "live_effort_maximum_age_seconds")
         ):
             return None
-        return workload_intensity(reading)
+        return reading
+
+    def live_effort(self) -> float | None:
+        """Retain coarse observed workload for existing dialogue/routine policy."""
+        reading = self._live_reading()
+        return workload_intensity(reading) if reading is not None else None
+
+    def live_consumption_load(self) -> float | None:
+        """Only actual CPU/GPU utilization enters the smoothed need surcharge."""
+        reading = self._live_reading()
+        return consumption_load(reading) if reading is not None else None
 
     def session_inputs(
         self,
@@ -173,7 +184,7 @@ class ActivityCoordinator:
     def advance_state(self, wall_time: float) -> None:
         """Sample real input and workload before progressing pet hunger."""
         now = time.monotonic()
-        machine_load = self.live_effort()
+        machine_load = self.live_consumption_load()
         self.food_activity_history.observe(
             now=now,
             pointer=(

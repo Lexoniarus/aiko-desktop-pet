@@ -69,7 +69,7 @@ class NeedsAndBondTests(unittest.TestCase):
         state = PetState(social=12, satiety=28, mood=30, energy=60)
         state.interact("talk", now=timestamp())
         self.assertEqual(state.social, 38)
-        self.assertGreater(state.mood, 30)
+        self.assertEqual(state.mood, 30)
         self.assertEqual(state.satiety, 28)
         self.assertEqual(state.energy, 59)
         self.assertGreater(state.friendship, 15)
@@ -185,7 +185,7 @@ class NeedsAndBondTests(unittest.TestCase):
 
 
 class TelemetryEffortTests(unittest.TestCase):
-    def test_high_work_accelerates_all_three_affected_stats(self):
+    def test_high_work_only_adds_bounded_hunger_and_energy_costs(self):
         start = timestamp()
         calm = PetState(updated_at=start)
         busy = PetState(updated_at=start)
@@ -193,9 +193,12 @@ class TelemetryEffortTests(unittest.TestCase):
             point = start + step * 10
             calm.advance(point, effort=0.05)
             busy.advance(point, effort=1.0)
-        self.assertLess(busy.satiety, calm.satiety - 1.2)
-        self.assertLess(busy.mood, calm.mood - 1.5)
-        self.assertLess(busy.energy, calm.energy - 2.0)
+        self.assertAlmostEqual(calm.satiety - busy.satiety, 1.6)
+        self.assertAlmostEqual(calm.energy - busy.energy, .5)
+        self.assertAlmostEqual(calm.mood - busy.mood, .16 * (1.6 + .5))
+        self.assertAlmostEqual(calm.social, busy.social)
+        self.assertAlmostEqual(calm.affection, busy.affection)
+        self.assertAlmostEqual(calm.fun, busy.fun)
         self.assertAlmostEqual(busy.friendship, calm.friendship)
 
     def test_observed_load_cannot_be_extrapolated_over_offline_hours(self):

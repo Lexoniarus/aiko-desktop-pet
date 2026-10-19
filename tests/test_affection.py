@@ -39,7 +39,7 @@ class AffectionNeedTests(unittest.TestCase):
         state = PetState(affection=30, mood=25, social=40, energy=50)
         state.interact("pet", now=stamp())
         self.assertEqual(state.affection, 55)
-        self.assertGreater(state.mood, 25)
+        self.assertEqual(state.mood, 25)
         self.assertEqual(state.social, 42)
         self.assertEqual(state.energy, 50)
 
@@ -70,7 +70,7 @@ class AffectionNeedTests(unittest.TestCase):
         state = PetState(affection=21, social=19, mood=32)
         state.interact("talk", now=stamp())
         self.assertEqual(state.social, 45)
-        self.assertGreater(state.mood, 32)
+        self.assertEqual(state.mood, 32)
         self.assertEqual(state.affection, 21)
 
     def test_food_and_energy_drinks_do_not_refill_affection(self):

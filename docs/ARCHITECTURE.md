@@ -91,7 +91,10 @@ interprets the committed effect.
 German fallback wording is selected only by `ui/view_models/care_text.py`.
 
 - `care_actions.py`: `CareTransition` for care actions and their rewards.
-- `need_decay.py`: `NeedLevels` for time and measured effort.
+- `need_decay.py`: frozen `NeedProgress` for all numeric time progression,
+  including `NeedLevels`, fun and food. Integrates changing targets with the
+  existing pure food/fun/mood policies; `PetState` applies one result. It reads
+  no clocks, owns no mutable store and offers no alternate precomputed path.
 - `friendship.py`: relationship gains, cooldowns and daily limits.
 - `lifecycle.py` and `routine.py`: streaming full-time advancement, sleep and daily schedule.
 

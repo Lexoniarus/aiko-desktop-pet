@@ -72,13 +72,22 @@ class DomainTransitionTests(unittest.TestCase):
             updated_at=START, friendship=40, affection=25, social=18,
         )
         previous = encode_pet_state(state)
-        needs = calculate_need_decay(state, 1.0, context=None, effort=0.9)
+        needs = calculate_need_decay(state, 1.0, effort=0.9)
         friendship = calculate_friendship_reward(state, "pet", START, 25)
         self.assertEqual(encode_pet_state(state), previous)
-        self.assertNotEqual(needs.energy, state.energy)
+        self.assertNotEqual(needs.needs.energy, state.energy)
+        with self.assertRaises(FrozenInstanceError):
+            setattr(needs, "fun", 0)
         self.assertIsNotNone(friendship)
         assert friendship is not None
         self.assertGreater(friendship.friendship, state.friendship)
+
+    def test_invalid_duration_preserves_the_pure_need_result(self) -> None:
+        state = PetState(updated_at=START)
+        baseline = calculate_need_decay(state, 0)
+        for duration in (-1, float("nan"), float("inf")):
+            with self.subTest(hours=duration):
+                self.assertEqual(calculate_need_decay(state, duration), baseline)
 
     def test_need_policy_and_aggregate_use_identical_values(self) -> None:
         for sleeping in (True, False):
@@ -91,13 +100,15 @@ class DomainTransitionTests(unittest.TestCase):
                         updated_at=START,
                     )
                     before = encode_pet_state(state)
-                    expected = calculate_need_decay(state, 0.5, None, effort)
+                    expected = calculate_need_decay(state, 0.5, effort)
                     self.assertEqual(encode_pet_state(state), before)
-                    state._decay(0.5, None, effort)
+                    state._decay(0.5, effort)
+                    self.assertEqual(state.food, expected.food)
+                    self.assertEqual(state.fun, expected.fun)
                     for key in ("satiety", "mood", "energy", "social", "affection"):
                         with self.subTest(need=key):
                             self.assertAlmostEqual(
-                                getattr(state, key), getattr(expected, key),
+                                getattr(state, key), getattr(expected.needs, key),
                             )
 
     def test_friendship_transition_matches_aggregate_history(self) -> None:

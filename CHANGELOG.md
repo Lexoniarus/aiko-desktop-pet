@@ -8,6 +8,22 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Verify stage-2 needs/mood with 1,177 Windows unit/Tk tests, pinned Ruff/Mypy/
+  Pyright checks and two isolated native care/save/reopen launches. Physical
+  standby/resume and later interaction fixes remain pending.
+- Apply the agreed real-time awake/sleep need rates and bounded CPU/GPU/input
+  consumption surcharges. Retain food nutrition, reduce digestion protection
+  to 25% and remove fasting acceleration and activity-based reserve speedup.
+- Derive mood only from needs, interpolated deficit deductions and the strictest
+  target limit; decline at 1–10 points/minute by shortage and recover at two.
+  Remove instant food/care/game mood bonuses and workload/friendship additions.
+  Give all completed RPS outcomes the same base six fun per round.
+- Consolidate numeric progression in the existing pure need policy, returning
+  immutable `NeedProgress` to the sole mutable `PetState`. Keep coefficients
+  in validated JSON and outer saves v1; add production-policy daily scenarios.
+- Record separate fixes for blocked idle repeated clicks and subjective
+  same-kind object reunion with natural German noun phrases. Both remain planned.
+
 - Advance full real elapsed time across closed sessions and live standby;
   remove the eight-hour cap and stream long routine timelines. Keep active
   World observation/physics time separate, bound recent telemetry to its
@@ -18,7 +34,7 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   meals; actual finite-stock closed-time care remains a later stage.
 - Align the required placeholders for the existing meal fallback with its
   already-authored text, fixing startup catalogue validation without changing
-  German wording. Existing need, care, mood and friendship coefficients remain.
+  German wording. Friendship loss and learned sleep remain later stages.
 - Add individual food/drink portions with cursor carrying, relocation, falling,
   damped rebounds, safe reachable placement, handover and autonomous pickup.
 - Keep learned identity, current desire, visible tracking and missing-subject
