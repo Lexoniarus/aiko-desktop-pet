@@ -44,7 +44,7 @@ def compose_registered(
     )
     resized.putalpha(resized.getchannel("A").point(ALPHA_THRESHOLD))
     output = Image.new("RGBA", SIZE_2X)
-    output.paste(resized, target[:2])
+    output.paste(resized, (target[0], target[1]))
     return output
 
 
