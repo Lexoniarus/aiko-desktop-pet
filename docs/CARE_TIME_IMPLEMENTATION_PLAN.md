@@ -868,8 +868,8 @@ not become a second permanent implementation.
 #### 5B. Define rules, then implement the emotional and wish models
 
 Continue discussing the remaining Moodlet and wish rules before implementation.
-The recorded poking proposal below establishes the first concrete candidate;
-the other examples establish direction, not a complete approved balance:
+The recorded poking and petting proposals below establish concrete candidates;
+the remaining examples establish direction, not a complete approved balance:
 
 - Repeated poking, excessive/unwelcome petting, repeatedly eating the same food,
   withholding a wanted object, disrupting known object locations and fulfilling
@@ -963,10 +963,74 @@ Moodlet; positive impressions may coexist with it. Preserve existing immediate
 responses and separately applied friendship consequences. Creation, escalation
 or continued existence of this Moodlet adds no automatic friendship deduction.
 
-Next discussion: excessive/unwelcome petting, including friendship-dependent
-tolerance, pre-action affection, a communicated boundary, repetition and the
-distinction between an unwanted attempt and accepted care. No petting Moodlet
-thresholds, penalties or durations are approved by this poking proposal.
+##### Recorded proposal: excessive/unwelcome petting, 2026-10-19
+
+Status: owner-requested design proposal, not implemented. Working Moodlet label:
+"Too much closeness". Distinguish unwelcome proximity from the irritation caused
+by poking. Friendship affects tolerance, but does not remove personal boundaries.
+
+Evaluate affection before the requested action, using the current display
+friendship level:
+
+| Friendship level | Petting becomes unwelcome at pre-action affection |
+| --- | --- |
+| 1–2 | 60 or higher |
+| 3–5 | 80 or higher |
+| 6–10 | 90 or higher |
+
+An otherwise welcome stroke that raises affection across a threshold does not
+retroactively become unwanted. The first unwelcome attempt produces a direct
+verbal refusal/boundary without a Moodlet or friendship loss. Another unwelcome
+attempt within ten real minutes disregards that boundary and creates intensity
+one. Technical input locks do not constitute perceived petting attempts.
+
+| Intensity | Escalation | Total contribution to numeric mood target | Emotional quality | Refuse petting for |
+| --- | --- | --- | --- | --- |
+| 1 | First unwelcome attempt after the boundary | -5 points | Discomfort and wanting distance | 5 minutes |
+| 2 | Three further unwelcome attempts while active | -10 points | Feeling crowded/pressured | 10 minutes |
+| 3 | Another three unwelcome attempts | -15 points | Strong annoyance at ignored proximity boundaries | 20 minutes |
+
+Keep one entry capped at intensity three. Apply the total target contribution
+for the current intensity, not repeated instant deductions. Emotional quality
+and intensity independently inform the overall emotional interpretation and
+relevant speech. Friendship consequences below remain a separate event effect.
+
+Start the refusal deadline at the boundary-violating attempt. Each subsequent
+perceived request during refusal remains unwelcome, renews the deadline using
+the resulting intensity and counts toward escalation. Do not add successive
+refusal durations together. Once the deadline expires, reassess normal petting
+willingness from friendship and current affection; expiry is not guaranteed
+acceptance when the ordinary threshold is still met. Refusal can end before the
+emotional impression has fully faded. Other actions retain their own rules.
+
+After every twenty real minutes without a further unwelcome attempt, reduce
+Moodlet intensity by one, then expire after intensity one. Each such attempt
+renews the twenty-minute quiet period. Maximum-intensity quiet time is sixty
+minutes; no stacked expiry backlog accumulates. Moodlet ageing and refusal
+deadlines continue through closed-app time, standby and sleep. Commands or
+restart do not erase the impression or refund prior friendship loss.
+
+Separate relationship consequence:
+
+- The first boundary/refusal costs no friendship.
+- Each perceived attempt that ignores the expressed boundary or active refusal
+  costs 0.25 friendship points, including the attempt creating the Moodlet.
+- Limit these petting-boundary losses to one point per rolling ten minutes.
+  Use the existing elapsed axis and persisted relationship-budget ownership;
+  do not reset the allowance on a new episode or restart.
+- Creation, intensity changes, passive existence and expiry of the Moodlet do
+  not apply an additional loss. Respecting the boundary stops new violations;
+  subsequently accepted care does not automatically refund losses.
+
+A rejected attempt grants no affection increase, care reward or qualified care
+contact. Count a semantic refusal as a perceived boundary interaction; exclude
+requests blocked before delivery by technical playback/foreground admission.
+These rules do not impose a global action lock and do not alter story clicks or
+the separate repeated-poking proposal.
+
+Next discussion: repeatedly eating the same food. No food Moodlet trigger,
+strength, duration, refusal or friendship consequence is settled by the above
+petting proposal.
 
 #### 5C. Connect status, expression and interaction decisions
 
