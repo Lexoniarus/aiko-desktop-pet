@@ -46,6 +46,18 @@ additional domain aggregate is introduced.
 
 ## Presence versus interaction
 
+Direct sprite clicks may interrupt an earlier **click reply**, allowing repeated
+left/right clicks to reach the existing teasing/irritation policy. This does
+not unlock toolbar actions during playback. Care, games, sleep and committed
+World interactions retain their admission rules. Left clicks that advance a
+story are reading, not teasing; right clicks do not interrupt that story.
+
+`ReactionPlayer.event` exposes only the current sequence's semantic event and
+clears on completion/cancellation. `ContactCoordinator` reads it through the
+typed `ContactPorts.reaction_event` callback to distinguish click replies from
+other playback. World still admits object contact upstream; `PetMind.clicks`
+and the existing click policy remain the only click-history/escalation owners.
+
 Expanded details show a detached `ObjectStatusSnapshot`: **Auf dem Desktop**
 counts resting World portions; **Bekannt** counts identified memory portions,
 excluding superseded history; **Zugeordnet** counts those remembered at a place

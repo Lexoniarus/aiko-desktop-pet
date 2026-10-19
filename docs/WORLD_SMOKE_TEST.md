@@ -76,6 +76,34 @@ object-dialogue fixes. Those fixes remain planned.
 The full validation totals for stage 2 are recorded in the implementation plan
 and documentation index. Use the launcher below for later hands-on acceptance.
 
+## B1: direct click escalation, 2026-10-19
+
+Completed native Windows check: an isolated `DesktopPet` used a system-temp
+save, observation/routine/random walking disabled, and ordinary non-cheerful
+awake needs. After the sprite had rendered, a visible body pixel was verified
+as belonging to that canvas. Both a left-only burst and a mixed left/right
+burst of six actual Windows-injected button press/release pairs produced counts
+**1, 2, 3, 4, 5, 6**, `click_boundary` and an active irritation deadline.
+Pointer position was restored; the normal save was
+not used. Preliminary message-only and transparent-area probes did not deliver
+sprite clicks and are not counted as acceptance.
+
+Native Tk regression tests additionally exercise the real canvas bindings:
+care/game/sleep exclusion, left-story reading and right-story exclusion,
+replacement by non-click feedback, and committed World object contact.
+Reading and blocked input do not increase the teasing counter. Existing mood,
+care and friendship state are not changed by idle teasing clicks; the original
+temporary irritation remains in `PetMind`. This does not implement stage-3
+friendship penalties or sign off the separate standby test.
+
+The complete native Windows suite passed **1,185 tests in 269.433 seconds**;
+Ruff, strict Mypy and Pyright passed with the repository's pinned versions.
+
+Repeat with the isolated launcher: click idle Aiko repeatedly while her reply
+is still visible, then repeat during petting, a game, a conversation story and
+object inspection. Only the idle click-reply burst should escalate teasing;
+left-story clicks advance reading and other active interactions remain exclusive.
+
 ## Isolated launcher
 
 Close other Aiko instances when doing a practical smoke run. Use

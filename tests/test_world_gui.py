@@ -1091,8 +1091,9 @@ class WorldGuiTests(unittest.TestCase):
         phase = world.interaction.phase
         friendship = self.app.state.friendship
         self.app._on_enter()
-        self.app._on_click_left()
-        self.app._on_click_right()
+        for _ in range(4):
+            self.app.canvas.event_generate("<Button-1>", x=90, y=90)
+            self.app.canvas.event_generate("<Button-3>", x=90, y=90)
         world.begin_carry("energy_drink")
         world.cursor.cancel()
         self.assertEqual(world.interaction.memory_id, record)

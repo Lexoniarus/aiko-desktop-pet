@@ -87,7 +87,7 @@ class FollowupGuiTests(unittest.TestCase):
         self.pass_delay(1.86)
         self.assertEqual(self.text(), "Eine neue Antwort, die jetzt lesbar bleibt.")
 
-    def test_direct_click_keeps_foreground_followup_running(self):
+    def test_direct_click_keeps_care_followup_running(self):
         self.app._react(
             Reaction(
                 "test",
@@ -96,7 +96,7 @@ class FollowupGuiTests(unittest.TestCase):
                     Cue.text("Die laufende Antwort geht weiter."),
                 ),
                 "idle",
-                "click_left",
+                "care_pet",
             )
         )
         with patch.object(self.app.mind, "click", return_value=None) as click:

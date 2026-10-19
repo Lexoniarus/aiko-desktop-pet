@@ -80,6 +80,8 @@ jobs:
             "test_assets.py",
             "test_window_stack.py",
             "test_desktop_input.py",
+            "test_click_gui.py",
+            "test_contact_coordinator.py",
             "test_desktop_boundary.py",
             "test_gaze.py",
             "test_entrypoints_env.py",

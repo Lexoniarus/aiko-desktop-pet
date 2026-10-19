@@ -37,6 +37,7 @@ class ContactPorts:
     advance_story: Callable[[], bool] = lambda: False
     foreground_active: Callable[[], bool] = lambda: False
     playback_active: Callable[[], bool] = lambda: False
+    reaction_event: Callable[[], str | None] = lambda: None
 
 
 class ContactCoordinator:
@@ -98,8 +99,18 @@ class ContactCoordinator:
             self._mind.clicks.clear()
             self._mind.last_contact = time.monotonic()
             return
-        if (self._state.sleeping or self._ports.game_open()
-                or self._ports.playback_active()):
+        if self._state.sleeping or self._ports.game_open():
+            return
+        if self._ports.story_active():
+            return
+        # A click reply can be interrupted by the next click in the same burst.
+        # Real care/game playback stays exclusive; World admits object contact
+        # upstream through its existing request_contact/acknowledge_contact path.
+        event = self._ports.reaction_event()
+        click_reply = event is not None and (
+            event.startswith("click_") or event == "rapid_click"
+        )
+        if self._ports.playback_active() and not click_reply:
             return
         self.enter()
         now = time.monotonic()

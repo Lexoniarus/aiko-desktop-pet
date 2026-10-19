@@ -27,6 +27,12 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+- B1 direct-click verification on 2026-10-19 passed **1,185 tests in 269.433
+  seconds**, without failures, errors or skips, plus pinned Ruff/Mypy/Pyright.
+  Actual Windows-injected left-only and mixed-button bursts reached counts
+  1–6 and the existing irritation response in isolated sessions; care/game/
+  story/object exclusions remain covered by native Tk tests. See the
+  [B1 smoke record](WORLD_SMOKE_TEST.md#b1-direct-click-escalation-2026-10-19).
 - Stage-2 need/mood verification on 2026-10-19 passed **1,177 tests in 258.671
   seconds**, with no failures, errors or skips. Ruff 0.13.2, strict Mypy 1.18.2
   (188 application files) and Pyright 1.1.414 passed. Two isolated native Tk

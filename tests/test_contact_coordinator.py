@@ -13,6 +13,7 @@ from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import set_test_pet_values
 
 
 class ContactCoordinatorTests(unittest.TestCase):
@@ -28,6 +29,8 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.reactions: list[tuple[Reaction | None, int]] = []
         self.greet_enabled = True
         self.foreground = self.playback = False
+        self.game = self.story = False
+        self.event: str | None = None
         self.context = context_at(datetime(2026, 10, 12, 13).timestamp())
         self.contact = ContactCoordinator(
             state=self.state,
@@ -39,7 +42,7 @@ class ContactCoordinatorTests(unittest.TestCase):
                 mark_hover=self.hover,
                 interrupt_walk=self.interrupt,
                 show_toolbar=self.show,
-                game_open=lambda: False,
+                game_open=lambda: self.game,
                 cancel_followup=self.cancel,
                 hide_speech=self.hide,
                 react=lambda reaction, duration: self.reactions.append(
@@ -48,6 +51,8 @@ class ContactCoordinatorTests(unittest.TestCase):
                 should_greet=lambda _now: self.greet_enabled,
                 foreground_active=lambda: self.foreground,
                 playback_active=lambda: self.playback,
+                story_active=lambda: self.story,
+                reaction_event=lambda: self.event,
             ),
         )
 
@@ -87,6 +92,45 @@ class ContactCoordinatorTests(unittest.TestCase):
         choose.assert_called_once()
         noted.assert_called_once()
         self.assertEqual(self.reactions[-1], (reaction, 2800))
+
+    def test_click_replies_allow_escalation_without_unlocking_care(self) -> None:
+        self.playback = True
+        for index, event in enumerate(("click_left", "click_right", "click_notice",
+                                       "rapid_click")):
+            self.event = event
+            self.assertFalse(self.contact.can_interact("pet"))
+            self.assertFalse(self.contact.can_interact("play"))
+            with patch("aiko_pet.application.contact.time.monotonic",
+                       return_value=1000 + index / 10):
+                self.contact.click("left" if index % 2 == 0 else "right")
+        self.assertEqual(len(self.mind.clicks), 4)
+        self.assertGreater(self.mind.irritated_until, 1000.3)
+        reaction = self.reactions[-1][0]
+        assert reaction is not None
+        self.assertEqual(reaction.event, "rapid_click")
+
+    def test_other_playback_never_admits_teasing_clicks(self) -> None:
+        self.playback = True
+        for event in (None, "care_pet", "care_talk", "object_recognized",
+                      "game_greeting", "greeting"):
+            with self.subTest(event=event):
+                self.event = event
+                self.contact.click("left")
+                self.contact.click("right")
+        self.assertEqual(list(self.mind.clicks), [])
+        self.assertEqual(self.reactions, [])
+
+    def test_game_sleep_and_story_take_priority_over_click_feedback(self) -> None:
+        self.playback, self.event = True, "click_left"
+        for blocked in ("game", "sleep", "story"):
+            with self.subTest(blocked=blocked):
+                self.game = blocked == "game"
+                self.story = blocked == "story"
+                set_test_pet_values(self.state, sleeping=blocked == "sleep")
+                self.contact.click("left")
+                self.contact.click("right")
+        self.assertEqual(list(self.mind.clicks), [])
+        self.assertEqual(self.reactions, [])
 
     def test_no_reaction_hides_old_speech_and_cancels_followup(self) -> None:
         self.contact.react_to_click(None)

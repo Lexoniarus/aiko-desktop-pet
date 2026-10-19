@@ -4,8 +4,8 @@
 > on `feature/social-optimization`, reviewed against clean baseline `42de63a`.
 > The owner accepted the latest discussed balance as a sufficient starting
 > point for implementation planning. This document plans that first delivery.
-> Stages 1 and 2 are recorded below. Stages 3–6 and bugfixes B1/B2
-> remain pending.
+> Stages 1 and 2 and B1 are implemented and verified below.
+> Stages 3–6 and B2 remain pending.
 
 ## Goal and boundaries
 
@@ -94,7 +94,7 @@ incompatible time, sleep and save behavior in place.
 | --- | --- |
 | Stage 1: time and storage | `59cab63`, pushed to `feature/social-optimization`; 1,166 tests and pinned static checks passed; physical suspend/resume remains pending |
 | Stage 2: needs and mood | Implemented in the separate feature commit containing this record; 1,177 tests and pinned static checks passed; isolated native care/save/reopen passed |
-| B1: idle repeated-click regression | Planned below; resolve before stage 3 connects negative click effects |
+| B1: idle repeated-click regression | Implemented in the separate fix commit containing this record; 1,185 tests, pinned static checks and native Windows clicks passed; no new friendship penalty |
 | B2: object recognition and German dialogue | [Detailed plan](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); pending, separately scoped from stage 2 |
 | Stages 3–6 | Pending |
 
@@ -272,10 +272,34 @@ automatic relationship refund comes from refilling needs.
 
 ### B1. Restore annoyance from repeated direct clicks while idle
 
-User-reported regression after exclusive interaction admission was introduced:
+Implemented on 2026-10-19 after the user reported this regression:
 repeated direct clicks on otherwise idle Aiko are also blocked, so the existing
-annoyance escalation cannot be reached. Trace the actual admission gates before
-changing them; the precise blocking condition has not yet been verified.
+annoyance escalation cannot be reached. The traced cause was the shared
+`playback_active` gate blocking the click reply's own subsequent clicks.
+
+The existing `ReactionPlayer` now exposes its current semantic event, clearing
+it with the same completion/cancellation lifecycle. One typed contact port
+reads that event. `ContactCoordinator.click()` permits another click during
+`click_*`/`rapid_click` feedback; other playback and story guards remain in
+force. Toolbar availability is unchanged. World still admits committed-object
+contact upstream. There is no second counter, listener, click policy or mutable
+pet store, and no new numerical friendship loss in this fix.
+
+Native Windows mouse injection at a verified visible pixel of an isolated
+test Aiko produced the exact click counts 1–6, `click_boundary` and the existing
+irritation deadline for both left-only and mixed left/right bursts. The pointer
+was restored afterward; the normal save was not used. Focused
+application/playback/Tk regressions and all 48 World GUI tests passed.
+
+Final verification on Windows/Python 3.11.9 passed **1,185 tests in 269.433
+seconds**, without failures, errors or skips. Ruff 0.13.2, strict Mypy 1.18.2
+(188 application files) and Pyright 1.1.414 passed. The unchanged composition-root
+size/dependency guards pass; the existing follow-up GUI test now uses a care
+event to verify the still-exclusive care sequence instead of asserting the
+superseded rule for click replies. Local full-suite results do not claim remote
+full-suite CI; the separate static workflow can run against the pushed commit.
+
+Implemented scope and retained regression requirements:
 
 - Inspect the existing path through `desktop/input.py`, `desktop/pointer_runtime.py`,
   `application/contact.py` and the interaction-availability owner. Idle direct
@@ -290,8 +314,8 @@ changing them; the precise blocking condition has not yet been verified.
   a direct unit call to the reaction policy alone cannot establish the fix.
 
 Deliver this as a separate bugfix before stage 3 attaches the agreed negative
-friendship effects. Recording this item does not implement the input change or
-introduce the later numerical penalties in stage 2.
+friendship effects. The acceptance requirements above remain regression checks;
+stage 3, B2 and the separate physical-standby acceptance are still pending.
 
 ### 4. Integrate adaptive sleep and finite closed-time care
 

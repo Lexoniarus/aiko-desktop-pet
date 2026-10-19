@@ -25,6 +25,7 @@ class ReactionPlayerTests(unittest.TestCase):
         )
         self.assertEqual(done, [])
         self.assertEqual(self.player.subject, "known-item")
+        self.assertEqual(self.player.event, "object_inspect")
         token = self.active_token()
         delay, stale = self.scheduler.callbacks[token]
         self.assertGreaterEqual(delay, 1800)
@@ -33,6 +34,7 @@ class ReactionPlayerTests(unittest.TestCase):
         self.player.cancel()
         self.assertEqual(done, [True])
         self.assertIsNone(self.player.subject)
+        self.assertIsNone(self.player.event)
 
     def test_cancelled_feedback_cannot_clear_a_new_reactions_timer(self):
         done = []
@@ -51,10 +53,12 @@ class ReactionPlayerTests(unittest.TestCase):
         stale()
         self.assertEqual(self.active_token(), current)
         self.assertEqual(self.player.subject, "new-item")
+        self.assertEqual(self.player.event, "object_recognized")
         self.assertEqual(done, [False])
         self.scheduler.fire(current)
         self.assertEqual(done, [False, True])
         self.assertIsNone(self.player.subject)
+        self.assertIsNone(self.player.event)
 
     def test_unrelated_reaction_drops_subject_even_if_an_old_callback_arrives(self):
         self.player.play(Reaction.spoken("item", "Alt.", "idle", "object_offer"),
@@ -62,8 +66,12 @@ class ReactionPlayerTests(unittest.TestCase):
         stale = self.scheduler.callbacks[self.active_token()][1]
         self.player.play(Reaction.spoken("contact", "Hallo.", "idle", "click_left"))
         self.assertIsNone(self.player.subject)
+        self.assertEqual(self.player.event, "click_left")
         stale()
         self.assertIsNone(self.player.subject)
+        self.assertEqual(self.player.event, "click_left")
+        self.player.cancel()
+        self.assertIsNone(self.player.event)
 
     def setUp(self) -> None:
         self.scheduler = FakeScheduler()

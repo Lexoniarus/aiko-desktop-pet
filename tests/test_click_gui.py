@@ -1,0 +1,113 @@
+"""Direct sprite input reaches teasing while real interactions stay exclusive."""
+
+from __future__ import annotations
+
+import tempfile
+import time
+import tkinter as tk
+import unittest
+from pathlib import Path
+
+from aiko_pet.application.settings import PetSettings
+from aiko_pet.gui import DesktopPet
+from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.pet.mind.catalog import Reaction
+from aiko_pet.pet.state import PetState
+
+
+class ClickGuiTests(unittest.TestCase):
+    def setUp(self) -> None:
+        try:
+            probe = tk.Tk()
+            probe.destroy()
+        except tk.TclError as error:
+            self.skipTest(str(error))
+        directory = tempfile.TemporaryDirectory(prefix="aiko-click-test-")
+        self.addCleanup(directory.cleanup)
+        store = StateStore(Path(directory.name) / "state.json")
+        store.save(
+            PetState(friendship=50, mood=60, energy=80, social=75, affection=75),
+            PetSettings(auto_routine=False, observe_computer=False, auto_walk=False,
+                        spontaneous_talk=False, learn_rhythm=False),
+        )
+        self.pet = DesktopPet(store=store)
+        self.addCleanup(self.pet.quit)
+        self.pet._runtime.stop()
+        self.pet.root.update()
+
+    def click(self, button: int = 1) -> None:
+        self.pet.canvas.event_generate(f"<Button-{button}>", x=90, y=90)
+        self.pet.root.update()
+
+    def test_rapid_sprite_clicks_replace_replies_and_reach_irritation(self) -> None:
+        before = self.pet.state.capture_checkpoint()
+        for count in range(1, 7):
+            self.click(1 if count % 2 else 3)
+            self.assertEqual(len(self.pet.mind.clicks), count)
+            self.assertIsNotNone(self.pet._reaction_player.pending_timer)
+            self.assertFalse(self.pet._contact.can_interact("pet"))
+            self.assertFalse(self.pet._contact.can_interact("play"))
+        self.assertEqual(self.pet._reaction_player.event, "click_boundary")
+        self.assertGreater(self.pet.mind.irritated_until, time.monotonic())
+        self.assertEqual(self.pet.state.capture_checkpoint(), before)
+
+    def test_short_care_and_active_game_ignore_direct_clicks(self) -> None:
+        self.pet.interact("pet")
+        event = self.pet._reaction_player.event
+        before = self.pet.state.capture_checkpoint()
+        for _ in range(4):
+            self.click()
+            self.click(3)
+        self.assertEqual(list(self.pet.mind.clicks), [])
+        self.assertEqual(self.pet._reaction_player.event, event)
+        self.assertEqual(self.pet.state.capture_checkpoint(), before)
+
+        self.pet._reaction_player.cancel()
+        self.pet._action_playback.cancel_at(time.monotonic())
+        self.pet._hover.open_game()
+        self.assertTrue(self.pet._hover.game_open)
+        for _ in range(4):
+            self.click()
+            self.click(3)
+        self.assertEqual(list(self.pet.mind.clicks), [])
+        self.assertTrue(self.pet._hover.game_open)
+
+    def test_story_reading_including_right_clicks_does_not_tease(self) -> None:
+        self.pet.interact("talk")
+        player = self.pet._reaction_player
+        self.assertTrue(player.story_active)
+        before = self.pet.state.capture_checkpoint()
+        irritation = self.pet.mind.irritated_until
+        for _ in range(5):
+            self.click(3)
+        self.assertTrue(player.story_active)
+        for _ in range(sum(cue.kind == "text" for cue in player.cues) + 1):
+            self.click()
+        self.assertFalse(player.story_active)
+        self.assertEqual(list(self.pet.mind.clicks), [])
+        self.assertEqual(self.pet.mind.irritated_until, irritation)
+        self.assertEqual(self.pet.state.capture_checkpoint(), before)
+
+    def test_replaced_click_reply_cannot_unlock_other_playback(self) -> None:
+        self.click()
+        self.assertEqual(len(self.pet.mind.clicks), 1)
+        self.pet._react(Reaction.spoken("care", "Einen Moment.", "idle", "care_pet"))
+        for _ in range(4):
+            self.click()
+        self.assertEqual(len(self.pet.mind.clicks), 1)
+        self.assertEqual(self.pet._reaction_player.event, "care_pet")
+
+    def test_sleep_ignores_clicks_and_requires_the_explicit_wake_action(self) -> None:
+        self.pet.interact("sleep")
+        self.assertTrue(self.pet.state.sleeping)
+        for _ in range(4):
+            self.click()
+            self.click(3)
+        self.assertTrue(self.pet.state.sleeping)
+        self.assertEqual(list(self.pet.mind.clicks), [])
+        self.assertFalse(self.pet._contact.can_interact("pet"))
+        self.assertTrue(self.pet._contact.can_interact("sleep"))
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -279,8 +279,7 @@ class DesktopPet:
             ports=ContactPorts(
                 context=lambda: self.context,
                 toolbar_hidden=lambda: (
-                    self._hover.toolbar is None or not self._hover.toolbar.visible
-                ),
+                    self._hover.toolbar is None or not self._hover.toolbar.visible),
                 mark_hover=self._hover.note_sprite_hover,
                 interrupt_walk=lambda: self._world.interrupt(
                     self._walk.movement.interrupt),
@@ -297,6 +296,7 @@ class DesktopPet:
                 playback_active=lambda: (time.monotonic() < self._action_playback.until
                     or self._reaction_player.pending_timer is not None
                     or self._speech.bubble is not None),
+                reaction_event=lambda: self._reaction_player.event,
             ),
         )
         self._input = DesktopInput(
