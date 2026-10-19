@@ -53,8 +53,12 @@ class GamePanel:
     def show(self, root: tk.Tk) -> None:
         self.window.update_idletasks()
         width, height = self.window.winfo_reqwidth(), self.window.winfo_reqheight()
+        right = root.winfo_rootx() + root.winfo_width() + 12
+        beside = right if right + width <= root.winfo_screenwidth() else (
+            root.winfo_rootx() - width - 12
+        )
         x, y = bounded_position(
-            root.winfo_rootx() + root.winfo_width() + 12,
+            beside,
             root.winfo_rooty() - height // 2, width, height,
             root.winfo_screenwidth(), root.winfo_screenheight() - 45,
         )

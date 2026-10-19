@@ -96,3 +96,15 @@ class BlackjackGuiTests(unittest.TestCase):
         self.pet.quit()
         self.assertEqual(self.pet._game_visuals.hand.windows, ())
         self.assertEqual(self.pet._game_visuals.hand._hand, HandView())
+
+    def test_new_panel_uses_left_side_when_aiko_is_at_right_edge(self):
+        self.pet._place_x(10000)
+        self.pet.root.update_idletasks()
+        game = self.open_game(arranged_game(
+            card('10'), card('9'), card('8'), card('7'),
+        ))
+        game.window.update_idletasks()
+        self.assertLess(
+            game.window.winfo_x() + game.window.winfo_width(),
+            self.pet.root.winfo_x(),
+        )
