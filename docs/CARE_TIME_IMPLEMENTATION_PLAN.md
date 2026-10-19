@@ -868,9 +868,9 @@ not become a second permanent implementation.
 #### 5B. Define rules, then implement the emotional and wish models
 
 Continue discussing the remaining Moodlet and wish rules before implementation.
-The recorded negative-interaction, repetitive-food and food-wish proposals below
-establish concrete candidates; the remaining examples establish direction, not
-a complete approved balance:
+The recorded interaction, food-wish and prolonged-poor-care proposals below
+establish concrete candidates. Their integrated balance and the overall
+emotional-state vocabulary/selection still require discussion before implementation.
 
 - Repeated poking, excessive/unwelcome petting, repeatedly eating the same food,
   withholding a wanted object, disrupting known object locations and fulfilling
@@ -1269,9 +1269,71 @@ It is not an additional mandatory care task. Detailed candidate-selection
 tie-breaks and any unresolved interaction with existing reward qualification
 must be recorded before implementation, without silently changing care balance.
 
-Next discussion: emotional impressions from prolonged/repeated poor care.
-Review existing critical/zero exposure, need-derived mood and neglect-related
-friendship loss before specifying additional triggers, intensity and recovery.
+##### Recorded proposal: prolonged/repeated poor care, 2026-10-19
+
+Status: owner-requested design proposal, not implemented. Reuse the existing
+per-need critical/zero exposure over the preceding twenty-four elapsed hours,
+rather than another independent neglect history. A briefly low value is not
+enough to create an emotional impression. Current need condition, direct
+need-derived mood impact and emotional after-effects remain separate layers.
+
+| Source need | Working emotional impression |
+| --- | --- |
+| Satiety | Worn down by prolonged hunger |
+| Energy | Irritated by exhaustion |
+| Fun | Frustrated by prolonged lack of stimulation |
+| Social | Feeling alone |
+| Affection | Missing closeness |
+
+These are working labels, not new names for the immediate hungry/tired need
+conditions. They describe an emotional experience left by prolonged or repeated
+poor care; they do not prove deliberate neglect by the user.
+
+| Intensity | Accumulated time below 25 within the preceding twenty-four hours | Or accumulated time at zero in that window | Total mood-target contribution for this impression |
+| --- | --- | --- | --- |
+| 1 | Two hours | One hour | -5 points |
+| 2 | Four hours | Two hours | -10 points |
+| 3 | Six hours | Three hours | -15 points |
+
+Disjoint deficient periods accumulate. Zero exposure already contributes to
+critical exposure; use the qualifying intensity from the alternative thresholds,
+not their sum. Newly qualifying exposure creates/escalates an impression once;
+repeated status reads or time steps do not reapply the same transition.
+Maintain at most one impression per need, capped at intensity three.
+
+Propose a combined extra numeric mood-target deduction of at most fifteen points
+for this poor-care Moodlet group, rather than adding five maximum fifteen-point
+deductions. Multiple emotional impressions and their individual strengths remain
+available to emotional interpretation even when this group cap applies. The
+cap does not change the direct need-based calculation or silently define a
+global cap for the separately proposed interaction/food Moodlets.
+
+Start emotional recovery after the affected need has remained at forty or above
+for thirty continuous real minutes. Then lower the impression by one intensity
+level every two hours of recovery. A single accepted care action does not
+instantly erase it. Preserve the actual exposure history; unchanged old history
+alone must not recreate the impression after recovery. Additional poor exposure
+must be distinguished from repeated evaluation of an already handled threshold.
+Record any remaining exact retrigger/recovery interruption rules before coding.
+
+While actual sleep restores energy, it adds no new exhaustion exposure or stack.
+Other needs follow their existing sleep rules. Closed-app/standby reconstruction
+uses the actual modeled need trajectory and finite, known consumed resources;
+it is not evidence of deliberate user behavior. Emotional recovery/ageing uses
+the same elapsed axis, including sleep and closed intervals. Old saves must not
+acquire fabricated emotional history on migration.
+
+Add no separate friendship penalty for these Moodlets: existing absence and
+neglect policies already own that consequence. Creating, keeping, escalating
+or recovering an impression must not charge the existing loss a second time.
+These impressions alone must not block needed care. Aiko can accept help while
+still emotionally affected; improving needs and recovering emotionally have
+distinct timing and implications.
+
+Next discussion: the overall emotional-state vocabulary and deterministic
+selection from numeric mood, active emotional impressions and relevant context.
+Physical need labels, sleep state, immediate reactions and long-term friendship
+must remain distinct from that overall interpretation.
 
 #### 5C. Connect status, expression and interaction decisions
 
