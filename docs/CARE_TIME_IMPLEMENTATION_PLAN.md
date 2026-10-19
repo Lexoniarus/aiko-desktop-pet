@@ -868,9 +868,9 @@ not become a second permanent implementation.
 #### 5B. Define rules, then implement the emotional and wish models
 
 Continue discussing the remaining Moodlet and wish rules before implementation.
-The recorded poking, petting and repetitive-food proposals below establish
-concrete candidates; the remaining examples establish direction, not a complete
-approved balance:
+The recorded poking, petting, repetitive-food and withholding proposals below
+establish concrete candidates; the remaining examples establish direction, not
+a complete approved balance:
 
 - Repeated poking, excessive/unwelcome petting, repeatedly eating the same food,
   withholding a wanted object, disrupting known object locations and fulfilling
@@ -1096,9 +1096,64 @@ Separate relationship consequences during a communicated, active request:
   or expiry alone, or on request expiry/no further feeding. Existing neglect
   rules remain separately responsible for inadequate care.
 
-Next discussion: withholding a wanted object. Its precise Moodlet trigger,
-escalation, after-effect and interaction consequences remain open; inspect the
-existing withholding episode and relationship loss before proposing changes.
+##### Recorded proposal: withholding a wanted object, 2026-10-19
+
+Status: owner-requested design proposal, not implemented. Working Moodlet label:
+"You are keeping it from me". Reuse the existing observed-object interaction and
+withholding episode rather than creating another goal or independent detector.
+The qualifying subject is a concrete object Aiko actually wants, which she
+observes the user take away or continue holding back. Moving an arbitrary object
+is not automatically a withholding event.
+
+Keep the immediate request for return distinct from the emotional after-effect.
+Existing recognition becomes irritated after eighteen seconds of withholding or
+three takes within the same episode, evaluated at the next eligible reaction
+(the present request interval is ten seconds and feedback admission also applies).
+Create the Moodlet immediately when that first qualified irritation occurs,
+without an additional Moodlet-specific waiting period.
+
+| Intensity | Escalation | Total contribution to numeric mood target |
+| --- | --- | --- |
+| 1 | First qualified withholding irritation | -5 points |
+| 2 | Thirty further seconds of observed withholding after irritation starts | -10 points |
+| 3 | Another thirty observed seconds | -15 points |
+
+During an active Moodlet, a fresh observed take after return also raises the
+current intensity by one if Aiko still wants that object. Cap intensity at three
+and maintain one Moodlet entry, not one negative entry per reaction or object.
+The numeric values are total level contributions to the target; retain timed
+actual-mood adjustment. Emotional quality is frustration directed toward the
+user for deliberately denying a wanted object, separately considered when
+deriving emotional state and selecting relevant speech.
+
+While the provoking, observed withholding continues, do not start the quiet-time
+decay. Making the object accessible again ends that provocation and further
+withholding-related loss from it; it does not instantly remove the Moodlet.
+After every twenty quiet real minutes, reduce intensity by one:
+3 -> 2 -> 1 -> expired. Full after-effects therefore last twenty, forty or sixty
+minutes according to the intensity at resolution. A subsequent qualifying take
+can reactivate the provocation and escalate as above. Merely discovering an
+object at another place belongs to the separately discussed relocation case.
+
+Closed-app and standby time advance Moodlet decay. They do not establish further
+observed provocation, escalation or retrospective friendship charges. Preserve
+the distinction between existing live object behavior and elapsed-time ageing
+of an emotional impression; no historical user-interaction replay is introduced.
+Restart, sleep commands and unrelated care do not simply erase the impression.
+
+Preserve the existing separate friendship rule: qualifying withholding can cost
+0.5 points per thirty seconds, bounded to two points per rolling two minutes.
+Reuse its existing episode eligibility, transaction receipts and persisted
+aggregate-owned loss budget. Moodlet creation, escalation or continued existence
+does not add another deduction. Return stops future withholding loss from the
+resolved situation without refunding previously applied points. Exact emotional
+effects on willingness to accept other interactions remain open; this proposal
+does not create a blanket action lock.
+
+Next discussion: relocating objects and disrupting familiar places. Define
+qualifying perceived changes, emotional intensity/decay and any independently
+justified relationship consequence without confusing them with withholding or
+granting hidden World knowledge.
 
 #### 5C. Connect status, expression and interaction decisions
 
