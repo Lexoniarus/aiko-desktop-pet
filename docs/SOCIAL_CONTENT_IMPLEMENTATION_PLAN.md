@@ -1,6 +1,6 @@
 # Jokes and facts implementation plan
 
-> **Implementation authorized; delivery in progress.** Recorded on 2026-10-19 on
+> **Implemented and locally verified; not merged.** Recorded on 2026-10-19 on
 > `feature/social-optimization`, against checkout `7049869`. The owner selected
 > jokes and facts as the next social-content features and requested this plan
 > in the repository documentation. This records the discussed menu, effects and
@@ -8,7 +8,7 @@
 > implementation on the existing branch, with small commits, targeted tests
 > during delivery and the complete suite only at the end. Do not merge.
 
-Implementation starts from `e6aad99`. Delivery and actual validation are recorded
+Implementation started from `e6aad99`. Delivery and actual validation are recorded
 below; the initial planning baseline remains historical.
 
 The first delivery adds three API-content choices alongside existing authored
@@ -346,3 +346,29 @@ this first delivery.
   remains available to cancel waiting. This brings the social GUI cases to nine;
   all nine, the 26 architecture cases and ten contact cases pass. The in-progress
   recheck was intentionally interrupted for this correction and is not a pass.
+
+### Final verification
+
+Stages A–D are delivered on `feature/social-optimization`. The final frozen code
+snapshot is **`644c367`**; subsequent validation-record edits change documentation
+only.
+
+- Full native Windows Python 3.11.9 suite:
+  `python -X faulthandler -m unittest discover -s tests -v` passed
+  **1,371 tests in 301.549 seconds**, zero failures, errors or skips.
+- Full Ruff 0.13.2 passed across `aiko_pet tests main.py tools`.
+- Full strict Mypy 1.18.2 with `--no-incremental` passed for **218 source files**.
+- Full Pyright 1.1.414 passed with zero errors/warnings.
+- Separate live provider checks prepared all three formats and reached
+  **Single 2 / Two Parts 2 / facts 2** ready items through individual fetches.
+  An isolated native Tk host played all three API variants and cleared buffers
+  on opt-out. No normal save was used.
+- Nine deterministic isolated-save social GUI cases cover opt-in/disabled
+  choices, ready playback, holding/error/cancellation, source display, bounds,
+  Escape, introductions/punchline pauses and save/reopen with shared friendship.
+- Existing Tcl theme-teardown diagnostics still print during the large native
+  suite; this final process exited normally with the successful unittest result.
+
+The native checks are automated Tk assertions and the separate live-provider
+probe; they do not claim a new maintainer visual-playtest sign-off. All changes
+are committed locally. No push, remote CI dispatch or merge was performed.

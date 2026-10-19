@@ -30,6 +30,14 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+- Social API delivery on 2026-10-19: frozen code `644c367` passed **1,371 native
+  Windows tests in 301.549 seconds**, no failures/errors/skips, plus full pinned
+  Ruff, strict Mypy (218 source files) and Pyright. Separate live API checks
+  reached 2/2/2 ready buffers and exercised all three formats in an isolated
+  native Tk host. The [delivery record](SOCIAL_CONTENT_IMPLEMENTATION_PLAN.md#final-verification)
+  distinguishes focused checks, corrected failures and the final full gate.
+  Maintainer visual acceptance remains separate; no merge was performed.
+
 - Three-game delivery on 2026-10-19: the final `8dc61e7` snapshot passed
   **1,318 local Python 3.11/Xvfb tests in 177.825 seconds**, eight platform
   skips, no failures/errors. Full pinned Ruff/Mypy/Pyright passed (212 source
