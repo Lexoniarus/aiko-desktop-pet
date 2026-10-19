@@ -16,6 +16,7 @@ from aiko_pet.games.contracts import GameId
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
 from aiko_pet.ui.windows.settings_window import SettingsWindow
 from tools.pet_test_support import set_test_pet_values
 
@@ -228,7 +229,7 @@ class PersistentWindowTests(unittest.TestCase):
         settings = self.settings()
         self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         game = self.pet._hover.game_window
-        assert game is not None
+        assert isinstance(game, RockPaperScissorsWindow)
         self.assertIs(bar.skin, settings.skin)
         self.assertIs(bar.skin, game.skin)
 

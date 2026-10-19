@@ -27,7 +27,9 @@ class PlayingCardAssetTests(unittest.TestCase):
             with Image.open(path) as image:
                 self.assertEqual(image.size, (64, 64))
                 rgba = image.convert("RGBA")
-                self.assertEqual(rgba.getpixel((0, 0))[3], 0)
+                pixel = rgba.getpixel((0, 0))
+                assert isinstance(pixel, tuple)
+                self.assertEqual(pixel[3], 0)
                 self.assertIsNotNone(rgba.getbbox())
 
     def test_invalid_card_identity_cannot_escape_asset_directory(self):

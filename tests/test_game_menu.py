@@ -93,6 +93,7 @@ class GameMenuTests(unittest.TestCase):
                         GameId.ROCK_PAPER_SCISSORS, GameId.BLACKJACK):
             self.hover.open_game_menu()
             menu = self.hover.game_menu
+            assert menu is not None
             menu.choose(game_id)
             self.assertTrue(self.hover.game_open)
             self.assertTrue(self.pet._animated.game_mode)

@@ -31,6 +31,8 @@ class BlackjackHandPresenterTests(unittest.TestCase):
 
     def test_hover_does_not_reveal_or_forward_to_pet_input(self):
         self.hand.show(HandView((self.visible, None)))
+        assert self.hand.window is not None
+        assert self.hand.canvas is not None
         self.hand.window.update()
         event = tk.Event()
         event.x, event.y = 70, 25
@@ -45,6 +47,7 @@ class BlackjackHandPresenterTests(unittest.TestCase):
     def test_flip_switches_face_at_midpoint_and_hide_cancels_frames(self):
         self.hand.show(HandView((self.visible, None)))
         self.hand.show(HandView((self.visible, self.secret)), flip=True)
+        assert self.hand.canvas is not None
         self.assertEqual(
             self.hand.canvas.itemcget("card_1", "image"), str(self.images.get(None)),
         )
@@ -63,6 +66,7 @@ class BlackjackHandPresenterTests(unittest.TestCase):
     def test_move_scale_and_topmost_update_the_same_overlay(self):
         self.hand.show(HandView((self.visible, None)))
         window = self.hand.window
+        assert window is not None
         self.anchor = replace(self.anchor, x=1250, scale=2)
         self.hand.move()
         window.update_idletasks()

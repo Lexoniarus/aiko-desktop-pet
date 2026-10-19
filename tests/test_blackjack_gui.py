@@ -71,6 +71,7 @@ class BlackjackGuiTests(unittest.TestCase):
         self.open_game(arranged_game(card('10'), card('9'), card('8'), card('7')))
         hand = self.pet._game_visuals.hand
         window = hand.window
+        assert window is not None
         self.pet.toggle_scale()
         self.pet._place_x(1)
         self.assertIs(hand.window, window)

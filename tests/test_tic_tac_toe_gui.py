@@ -17,8 +17,9 @@ class TicTacToeGuiTests(unittest.TestCase):
         self.pet = DesktopPet(store=StateStore(Path(folder.name) / "save.json"))
         self.addCleanup(self.pet.quit)
         self.pet._hover.open_game(GameId.TIC_TAC_TOE)
-        self.game = self.pet._hover.game_window
-        assert isinstance(self.game, TicTacToeWindow)
+        game = self.pet._hover.game_window
+        assert isinstance(game, TicTacToeWindow)
+        self.game: TicTacToeWindow = game
         self.game._sequence.game._random_index = lambda _size: 0
 
     def test_buttons_result_next_round_and_once_only_reward(self):
