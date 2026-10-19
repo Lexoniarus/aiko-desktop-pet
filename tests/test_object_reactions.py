@@ -1,6 +1,7 @@
 """Required object phase dialogue is complete, safe and names only known items."""
 
 import unittest
+from string import Formatter
 from typing import get_args
 from unittest.mock import patch
 
@@ -26,7 +27,8 @@ class ObjectReactionTests(unittest.TestCase):
             reaction = Reaction(line.id, line.beats, line.animation, line.event)
             unknown = format_object_reaction(reaction, None, items).text
             known = format_object_reaction(reaction, "energy_drink", items).text
-            self.assertIn("etwas", unknown)
+            self.assertIn("Gegenstand", unknown)
+            self.assertNotIn("mein", unknown)
             self.assertNotIn("Energy", unknown)
             self.assertIn("Energy", known)
 
@@ -36,7 +38,10 @@ class ObjectReactionTests(unittest.TestCase):
             if line.event in ("object_offer", "object_refuse", "object_handover"):
                 text = " ".join(beat.content or "" for beat in line.beats
                                 if beat.kind == "text")
-                self.assertIn("{item}", text, line.id)
+                fields = {field for _, field, _, _ in Formatter().parse(text)
+                          if field is not None}
+                self.assertTrue(fields, line.id)
+                self.assertNotIn("item", fields, line.id)
 
     def test_object_playback_respects_configured_reading_time_after_formatting(self):
         raw = load_json(CATALOGUE.parent / "balance.json")
@@ -77,17 +82,21 @@ class ObjectReactionTests(unittest.TestCase):
     def test_formatter_uses_canonical_names_and_unknown_does_not_reveal_identity(self):
         items = load_item_catalog()
         reaction = Reaction(
-            "id", (Cue.text("Das ist {item}."),), "idle", "object_recognized"
+            "id", (Cue.text("Das ist {item_indef_nom}."),), "idle", "object_recognized"
         )
         self.assertEqual(
-            format_object_reaction(reaction, "onigiri", items).text, "Das ist Onigiri."
+            format_object_reaction(reaction, "onigiri", items).text,
+            "Das ist ein Onigiri."
         )
         self.assertEqual(
-            format_object_reaction(reaction, None, items).text, "Das ist etwas."
+            format_object_reaction(reaction, None, items).text,
+            "Das ist ein Gegenstand."
         )
 
     def test_object_templates_reject_attribute_access_and_format_expressions(self):
-        for text in ("{item.secret}", "{other}", "{item!r}", "{item:100}"):
+        for text in ("{item.secret}", "{other}", "{item!r}", "{item:100}",
+                     "{item_indef_nom.secret}", "{item_indef_gen}",
+                     "{item_def_acc!s}", "{item_def_nom:{item}}"):
             with self.assertRaisesRegex(ValueError, "placeholder"):
                 Line.parse(
                     dict(

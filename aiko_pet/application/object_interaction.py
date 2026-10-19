@@ -778,7 +778,10 @@ class ObjectInteractionCoordinator:
                 if (self.instance_id is not None
                         and self.world.get(self.instance_id).state
                         == ObjectState.PET_HELD):
-                    self._put_down()
+                    known = self._memory.get(token)
+                    self._put_down(defer_if_uninterrupted=(
+                        known is not None and known.disposition == "deferred"
+                    ))
                 else:
                     self._finish(False)
             if self.phase == previous:

@@ -101,6 +101,22 @@ the others. Actual endpoint coverage, completed local evidence and exhausted
 eligible candidates allow a final unsuccessful-search reaction. Time alone or
 one failed arrival does not manufacture confirmed absence or route completion.
 
+## Grounded German object speech
+
+Noticing an unknown item says “Gegenstand”, without leaking its type. Actual
+identification selects `object_recognized` with an indefinite phrase such as
+“Ah, ein Onigiri!” A matching active search instead selects `object_found`,
+for example “Ah, da ist ja wohl mein Onigiri!” Later identification outside
+that search remains an ordinary new-portion reaction. These are distinct
+semantic events, not a formatter guessing which memory was found.
+
+Complete object sequences use explicit case/article/possessive/pronoun fields.
+The same renderer covers all eleven consumables, without changing menu labels,
+animation beats or selection conditions. Unknown possessive templates fall
+back to a definite “der Gegenstand” rather than claiming personal ownership.
+A safely completed found-item put-down preserves transferred saved-for-later
+intent; an actual interruption still records interrupted placement.
+
 ## Hover, controls and busy replies
 
 Passive hover may open the toolbar during search or inspection without changing

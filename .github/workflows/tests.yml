@@ -60,6 +60,8 @@ jobs:
           $patterns = @(
             "test_world*.py",
             "test_object*.py",
+            "test_german_object_phrases.py",
+            "test_content_catalog.py",
             "test_pickup*.py",
             "test_goal_walk.py",
             "test_ground_approach.py",

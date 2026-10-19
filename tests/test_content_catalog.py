@@ -6,6 +6,7 @@ import json
 import unittest
 from pathlib import Path
 
+from aiko_pet.pet.care_result import CareEffect, CareResult
 from aiko_pet.pet.content import (
     GERMAN_TEXT,
     load_packaged_text_catalog,
@@ -13,6 +14,7 @@ from aiko_pet.pet.content import (
 )
 from aiko_pet.pet.mind.catalog import EMOTIONS
 from aiko_pet.pet.status_hints import MoodHint
+from aiko_pet.ui.view_models.care_text import format_care_response
 from aiko_pet.ui.view_models.text_de import (
     format_emotion_label,
     format_sleep_label,
@@ -21,6 +23,22 @@ from aiko_pet.ui.view_models.text_de import (
 
 
 class TextCatalogTests(unittest.TestCase):
+    def test_feeding_fallbacks_use_complete_food_phrases(self) -> None:
+        for effect, expected in (
+            (CareEffect.FOOD_MEAL,
+             "Ah, ein Onigiri! Eine richtige Mahlzeit. Danke, ich mache kurz Platz."),
+            (CareEffect.FOOD_REPEAT,
+             "Schon wieder ein Onigiri? Ich hätte beim nächsten Mal gern "
+             "etwas Abwechslung."),
+            (CareEffect.FOOD_SNACK, "Ein Onigiri"),
+        ):
+            result = CareResult("feed", effect, "onigiri", "lunch")
+            text = format_care_response(result)
+            if effect == CareEffect.FOOD_SNACK:
+                self.assertIn("ein Onigiri", text)
+            else:
+                self.assertEqual(text, expected)
+
     def test_packaged_copy_and_templates_are_read_only(self) -> None:
         path = (
             Path(__file__).resolve().parents[1] / "aiko_pet" / "data" / "texts.de.json"

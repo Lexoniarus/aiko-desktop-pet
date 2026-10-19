@@ -7,6 +7,7 @@
 | `aiko_pet/data/balance.json` | Initial values, care effects, hunger/digestion, fun/mood, friendship, movement, attention and adaptive behaviour parameters |
 | `aiko_pet/data/food_catalog.json` | Food IDs, display names, nutrition, categories and menu order |
 | `aiko_pet/data/texts.de.json` | UI wording, status templates, care fallback text, game labels and emergency farewell fallback |
+| `aiko_pet/data/object_grammar.de.json` | German grammatical gender and optional spoken-name override for every consumable; no duplicated nutrition/menu names |
 | `aiko_pet/data/dialogues.de.json` | Version-2 character sequences, relationship/state filters, stories and rotation |
 | `aiko_pet/data/routine.de.json` | Weekday/weekend schedules, activity labels and meal windows |
 | `aiko_pet/assets/animation_timing.json` | Frame holds and playback sequences |
@@ -55,7 +56,19 @@ has 1–125 characters and derived reading time; emote/pause beats may specify a
 bounded duration. Short reactions have at most two text beats, stories at most
 five. Named filters use supported `stages`, `moods`, simultaneous `needs`, day
 periods and weekdays; `requires_present` requires observed or direct contact.
-Item placeholders are allowed only on object events and only as `{item}`.
+Object placeholders are allowed only on object events. The finite contract in
+`pet/object_text_contract.py` permits bare `{item}` for compatibility plus
+`item_{indef|def|poss|pron}_{nom|acc|dat}` and sentence-initial `Item_...`
+variants: indefinite/definite/possessive noun phrases and pronouns in nominative,
+accusative and dative. Attribute/index access, conversions and format specs are
+rejected. No expression evaluation or general-purpose German language engine
+is involved. `pet/content.py` validates the grammar resource once against the
+canonical food IDs plus `energy_drink`; only presentation inflects it.
+Unknown identity uses “Gegenstand”; a possessive field becomes a definite
+reference rather than inventing ownership. A learned new portion uses an
+indefinite form; missing/found and saved-supply lines use possessives where
+subjective history supports them. Care food fallbacks use the same full
+indefinite nominative phrase. Menu names stay catalogue-owned and unchanged.
 Object formatting applies to every text beat, never to an emote or a pause.
 The resulting text determines its reading time through the dialogue balance
 values. Spontaneous story frequency and quiet time use
@@ -67,7 +80,12 @@ The editorial voice is quiet, dry, curious and sometimes cheeky. Clear wishes,
 charming competitiveness and sincere affection replace repeated denial of
 positive feelings. Relationship stages describe growing familiarity, not new
 care rules. Neither resource migration changes the version-one save schema;
-unfinished stories and rotation history remain session-local.
+unfinished stories and rotation history remain session-local. B2 search
+reunion transfers assessment/placement intent to the actual identified finding
+and retires the old subjective subject. Its acquired World reference remains
+factual. Existing object memory v3 / outer save v1 round-trip without migration;
+the search's current findings remain task-local, with known stock excluded when
+a task is rebuilt from saved missing subjects.
 
 ## Where progress is stored
 

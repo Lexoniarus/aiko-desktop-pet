@@ -2,8 +2,9 @@
 
 > **Editorial review only.** Created 2026-10-19 on
 > `feature/social-optimization`, from baseline `f4c6e3f`.
-> Runtime copy, selection rules, animations and saves are unchanged.
-> Every sequence starts **unreviewed**.
+> B2 review on 2026-10-19: all **138 object sequences** and **three food
+> fallbacks** reviewed. The 90 changed object proposals and three fallback
+> proposals are implemented on this branch; other review rows are unchanged.
 
 The review unit is one **complete sequence**, including all text bubbles in
 playback order. Review its combined thought, tone and ending together.
@@ -19,12 +20,16 @@ it does not by itself approve a runtime edit.
   sequences: **1,302 authored text bubbles** in total.
 - **16 additional review rows**: 12 care fallbacks, one combined RPS countdown,
   fallback farewell, invalid-placement feedback and a dynamic notification
-  template. Overall: **1,068 review rows**, initially 0 reviewed.
-- Source: [dialogues.de.json](../aiko_pet/data/dialogues.de.json), catalogue v2,
+  template. Overall: **1,068 review rows**; B2 marks **141 reviewed**.
+- Original snapshot: [dialogues.de.json](../aiko_pet/data/dialogues.de.json), catalogue v2,
   SHA-256 `3373c6d45ecbc854041d790b20ddb7d76d0ad0a1af154e4dc6f2e93c1d688b13`.
 - Additional bubble copy: [texts.de.json](../aiko_pet/data/texts.de.json).
   Status hints, toolbar/settings labels and game-panel labels that are not
   spoken in the character bubble are outside this workbook.
+- B2 runtime catalogue SHA-256: `83da025a28f1100630b44ce25de8551bfa2e2c3da924b07158a4b52cf5f1e9b7`.
+  Original sequence cells retain the baseline for comparison; implemented
+  replacements are in **New text proposal**. Blank proposal on a reviewed
+  object row means its full sequence was retained.
 - This is an editable review snapshot. Preserve IDs and review/proposal cells
   when reconciling later source changes; do not regenerate over reviewed work.
   Runtime wording remains owned by its JSON resources.
@@ -49,11 +54,14 @@ below. No row filters means no additional restrictions, not guaranteed speech.
 - **Short** can contain two text bubbles; **story** is a separate presentation.
 - **Cooldown/weight** are source seconds and base weight. Cooldown is a
   rotation preference that can be relaxed, not an absolute prohibition.
-- **Sequence** lists unchanged German text in numbered bubbles and includes
+- **Sequence** lists baseline German text in numbered bubbles and includes
   emotes/pauses at their actual positions. Emotes are assets, not spoken text.
   Default emotes last 800 ms and pauses 600 ms unless a duration is specified.
-- `{item}` is filled with a learned canonical item label, otherwise `etwas`.
-  Care fallbacks fill `{food}` and lowercase localized `{meal}`; external
+- B2 object proposals use explicit `item_{indef|def|poss|pron}_{nom|acc|dat}`
+  fields; capitalized `Item_...` starts a sentence. Names require learned
+  identity; unknown forms use “Gegenstand” and no invented possession. Legacy
+  `{item}` remains a bare-label field for compatibility. Care fallbacks fill
+  `{food}` with a complete indefinite nominative phrase; external
   notifications supply `{title}` and `{message}`. These are templates, not
   extra authored variants.
 - **Animation** is the catalogue suggestion. Care can replace it with petting/
@@ -1741,9 +1749,9 @@ Actually checked learned place lacks matching subject; separate cue per missing 
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-place-missing-here` | <strong>Bubble 1:</strong> Hier war doch {item}. Wo ist das hin? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-place-missing-noticed` | <strong>Bubble 1:</strong> Moment. {item} ist nicht mehr hier. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-place-missing-empty` | <strong>Bubble 1:</strong> {item} sehe ich hier gerade nicht mehr. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `object-place-missing-here` | <strong>Bubble 1:</strong> Hier war doch {item}. Wo ist das hin? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Hä? Wo ist denn {item_poss_nom} hin? |
+| `object-place-missing-noticed` | <strong>Bubble 1:</strong> Moment. {item} ist nicht mehr hier. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Moment, {item_poss_nom} ist nicht mehr da. Eben lag {item_pron_nom} noch hier. |
+| `object-place-missing-empty` | <strong>Bubble 1:</strong> {item} sehe ich hier gerade nicht mehr. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Hier ist {item_poss_nom} nicht mehr. Habe ich {item_pron_acc} übersehen? |
 
 ### object_notice
 
@@ -1751,9 +1759,9 @@ Autonomous object goal for identity not yet learned, before approach/inspection.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-notice-01` | <em>Emote: question (800 ms)</em><br><strong>Bubble 1:</strong> Hm? Da liegt etwas. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_notice-0001` | <strong>Bubble 1:</strong> Was liegt denn da? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_notice-0002` | <strong>Bubble 1:</strong> Hm. Das sieht interessant aus. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-notice-01` | <em>Emote: question (800 ms)</em><br><strong>Bubble 1:</strong> Hm? Da liegt etwas. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <em>Emote: question (800 ms)</em><br><strong>Bubble 1:</strong> Oh, da liegt ein Gegenstand! |
+| `voice-object_notice-0001` | <strong>Bubble 1:</strong> Was liegt denn da? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Was liegt denn da unten? Den Gegenstand will ich mir ansehen. |
+| `voice-object_notice-0002` | <strong>Bubble 1:</strong> Hm. Das sieht interessant aus. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_approach
 
@@ -1761,9 +1769,9 @@ Approach toward object, including unknown recovery candidate within existing sea
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-approach-01` | <strong>Bubble 1:</strong> Na gut. Jetzt will ich’s wissen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_approach-0005` | <strong>Bubble 1:</strong> Ich geh mal rüber. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_approach-0006` | <strong>Bubble 1:</strong> Das lasse ich mir nicht entgehen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-approach-01` | <strong>Bubble 1:</strong> Na gut. Jetzt will ich’s wissen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Na dann. Ich schaue mir den Gegenstand aus der Nähe an. |
+| `voice-object_approach-0005` | <strong>Bubble 1:</strong> Ich geh mal rüber. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
+| `voice-object_approach-0006` | <strong>Bubble 1:</strong> Das lasse ich mir nicht entgehen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_pick_up
 
@@ -1771,9 +1779,9 @@ Pickup phase after approach/reach and custody guards.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-pick-up-01` | <strong>Bubble 1:</strong> So. Einmal hoch damit. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_pick_up-0007` | <strong>Bubble 1:</strong> Dich schnapp ich mir kurz. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_pick_up-0008` | <strong>Bubble 1:</strong> Komm mal her, du. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-pick-up-01` | <strong>Bubble 1:</strong> So. Einmal hoch damit. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `voice-object_pick_up-0007` | <strong>Bubble 1:</strong> Dich schnapp ich mir kurz. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
+| `voice-object_pick_up-0008` | <strong>Bubble 1:</strong> Komm mal her, du. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_inspect
 
@@ -1781,9 +1789,9 @@ Deliberate in-hand inspection, including unknown items/type conflicts.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-inspect-01` | <strong>Bubble 1:</strong> Hm. Was bist du denn? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_inspect-0009` | <strong>Bubble 1:</strong> Moment … gleich hab ich’s. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_inspect-0010` | <strong>Bubble 1:</strong> Einen Moment noch. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-inspect-01` | <strong>Bubble 1:</strong> Hm. Was bist du denn? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `voice-object_inspect-0009` | <strong>Bubble 1:</strong> Moment … gleich hab ich’s. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
+| `voice-object_inspect-0010` | <strong>Bubble 1:</strong> Einen Moment noch. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_recognized
 
@@ -1791,9 +1799,9 @@ Identity actually acquired through inspection/presentation; can precede offer ap
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-recognized-01` | <strong>Bubble 1:</strong> Ah, {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_recognized-0011` | <strong>Bubble 1:</strong> {item}. Na also. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_recognized-0012` | <strong>Bubble 1:</strong> Ach, {item}. Alles klar. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-recognized-01` | <strong>Bubble 1:</strong> Ah, {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ah, {item_indef_nom}! |
+| `voice-object_recognized-0011` | <strong>Bubble 1:</strong> {item}. Na also. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Oh, {item_indef_nom}! Jetzt erkenne ich {item_pron_acc}. |
+| `voice-object_recognized-0012` | <strong>Bubble 1:</strong> Ach, {item}. Alles klar. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Na klar. Das ist {item_indef_nom}. |
 
 ### object_unknown
 
@@ -1801,9 +1809,9 @@ Use appraisal still says unrecognized; no permission to invent a known food iden
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-unknown-01` | <strong>Bubble 1:</strong> Hm. Das kann ich gerade nicht zuordnen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_unknown-0013` | <strong>Bubble 1:</strong> Da bin ich mir noch nicht sicher. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_unknown-0014` | <strong>Bubble 1:</strong> Hm. Ich weiß noch nicht, was das ist. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-unknown-01` | <strong>Bubble 1:</strong> Hm. Das kann ich gerade nicht zuordnen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Für diesen Gegenstand kenne ich noch keinen Namen. Da rate ich lieber nicht. |
+| `voice-object_unknown-0013` | <strong>Bubble 1:</strong> Da bin ich mir noch nicht sicher. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Hm, für diesen Gegenstand habe ich noch keinen passenden Namen gelernt. |
+| `voice-object_unknown-0014` | <strong>Bubble 1:</strong> Hm. Ich weiß noch nicht, was das ist. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_want
 
@@ -1811,9 +1819,9 @@ Autonomous held-object use appraisal chooses consume.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-want-01` | <strong>Bubble 1:</strong> Das kann ich gerade gut gebrauchen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_want-0015` | <strong>Bubble 1:</strong> Ja. Das passt gerade gut. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_want-0016` | <strong>Bubble 1:</strong> Das nehme ich mir jetzt. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-want-01` | <strong>Bubble 1:</strong> Das kann ich gerade gut gebrauchen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `voice-object_want-0015` | <strong>Bubble 1:</strong> Ja. Das passt gerade gut. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ja, genau das kann ich gerade gebrauchen. |
+| `voice-object_want-0016` | <strong>Bubble 1:</strong> Das nehme ich mir jetzt. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_later
 
@@ -1821,9 +1829,9 @@ Autonomous use appraisal declines consumption for a reason other than unknown id
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-later-01` | <strong>Bubble 1:</strong> Jetzt brauche ich das noch nicht. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_later-0017` | <strong>Bubble 1:</strong> Das hat noch ein bisschen Zeit. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_later-0018` | <strong>Bubble 1:</strong> Ich hebe es erst einmal auf. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-later-01` | <strong>Bubble 1:</strong> Jetzt brauche ich das noch nicht. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `voice-object_later-0017` | <strong>Bubble 1:</strong> Das hat noch ein bisschen Zeit. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
+| `voice-object_later-0018` | <strong>Bubble 1:</strong> Ich hebe es erst einmal auf. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_put_down
 
@@ -1831,9 +1839,9 @@ Safe put-down of held item; existing custody/interruption lifecycle applies.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-put-down-01` | <strong>Bubble 1:</strong> Ich setze das wieder ab. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_put_down-0021` | <strong>Bubble 1:</strong> Hier lasse ich das erst mal. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_put_down-0022` | <strong>Bubble 1:</strong> Das bleibt erst mal hier. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-put-down-01` | <strong>Bubble 1:</strong> Ich setze das wieder ab. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `voice-object_put_down-0021` | <strong>Bubble 1:</strong> Hier lasse ich das erst mal. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
+| `voice-object_put_down-0022` | <strong>Bubble 1:</strong> Das bleibt erst mal hier. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_handover
 
@@ -1841,21 +1849,21 @@ Actual user-offered portion handover, rather than merely noticing a nearby curso
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-handover-01` | <strong>Bubble 1:</strong> Danke für {item}. Das nehme ich gern. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_handover-0025` | <strong>Bubble 1:</strong> Danke. {item} passt gerade gut. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_handover-0026` | <strong>Bubble 1:</strong> Ja, danke. {item} kann ich gerade gebrauchen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-001` | <strong>Bubble 1:</strong> Danke fürs Geben. {item} nehme ich gern. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-002` | <strong>Bubble 1:</strong> Für mich? Danke für {item}. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-003` | <strong>Bubble 1:</strong> Danke. {item} passt mir gerade gut. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-004` | <strong>Bubble 1:</strong> Gute Idee. {item} kann ich gerade gebrauchen. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-005` | <strong>Bubble 1:</strong> Danke. Mit {item} wird meine Pause gleich besser. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-006` | <strong>Bubble 1:</strong> {item} nehme ich gern von dir. Danke. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-007` | <strong>Bubble 1:</strong> Danke, du. {item} passt genau. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-008` | <strong>Bubble 1:</strong> Du bringst mir {item}. Das freut mich. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-009` | <strong>Bubble 1:</strong> Danke. {item} wollte ich gerade haben. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-010` | <strong>Bubble 1:</strong> Danke, dass du an mich denkst. {item} nehme ich gern. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-011` | <strong>Bubble 1:</strong> Ich freue mich über {item}. Danke dir. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_handover-012` | <strong>Bubble 1:</strong> {item}, für mich. Schön. Danke. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-handover-01` | <strong>Bubble 1:</strong> Danke für {item}. Das nehme ich gern. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Für mich? {Item_indef_nom}? Danke, ich nehme {item_pron_acc} vorsichtig. |
+| `voice-object_handover-0025` | <strong>Bubble 1:</strong> Danke. {item} passt gerade gut. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Oh, {item_indef_nom}! Das kann ich jetzt gut brauchen. |
+| `voice-object_handover-0026` | <strong>Bubble 1:</strong> Ja, danke. {item} kann ich gerade gebrauchen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Du gibst mir {item_indef_acc}. Das war aufmerksam von dir. |
+| `situation-object_handover-001` | <strong>Bubble 1:</strong> Danke fürs Geben. {item} nehme ich gern. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ah, {item_indef_nom}. Danke! Ich muss mich noch ans Annehmen gewöhnen. |
+| `situation-object_handover-002` | <strong>Bubble 1:</strong> Für mich? Danke für {item}. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Das ist also für mich. {Item_indef_acc} nehme ich gern. |
+| `situation-object_handover-003` | <strong>Bubble 1:</strong> Danke. {item} passt mir gerade gut. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Danke, ich passe auf {item_def_acc} auf. |
+| `situation-object_handover-004` | <strong>Bubble 1:</strong> Gute Idee. {item} kann ich gerade gebrauchen. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_indef_nom} kommt gerade recht. Danke dir. |
+| `situation-object_handover-005` | <strong>Bubble 1:</strong> Danke. Mit {item} wird meine Pause gleich besser. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Du hast {item_indef_acc} dabei? Dann wird mein kleiner Vorrat interessanter. |
+| `situation-object_handover-006` | <strong>Bubble 1:</strong> {item} nehme ich gern von dir. Danke. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ich nehme {item_indef_acc}. {Item_pron_acc} halte ich lieber gut fest. |
+| `situation-object_handover-007` | <strong>Bubble 1:</strong> Danke, du. {item} passt genau. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Du hast an {item_indef_acc} gedacht. Das gefällt mir. |
+| `situation-object_handover-008` | <strong>Bubble 1:</strong> Du bringst mir {item}. Das freut mich. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Oh, {item_indef_nom} passt gerade gut. Danke! |
+| `situation-object_handover-009` | <strong>Bubble 1:</strong> Danke. {item} wollte ich gerade haben. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Danke. Ich mache erst einmal Platz für {item_def_acc}. |
+| `situation-object_handover-010` | <strong>Bubble 1:</strong> Danke, dass du an mich denkst. {item} nehme ich gern. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Das ist für mich? {Item_indef_acc} nehme ich gern von dir. |
+| `situation-object_handover-011` | <strong>Bubble 1:</strong> Ich freue mich über {item}. Danke dir. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Mit {item_indef_dat} hast du meine Aufmerksamkeit. Danke! |
+| `situation-object_handover-012` | <strong>Bubble 1:</strong> {item}, für mich. Schön. Danke. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_indef_acc} in meine Hände? Ein guter Plan. Danke dir. |
 
 ### object_offer
 
@@ -1863,27 +1871,27 @@ Known offered item appraised as consumable now; revised appraisal retains same e
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-offer-01` | <strong>Bubble 1:</strong> Ja, {item} hätte ich gerne. Gibst du es mir? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_offer-0027` | <strong>Bubble 1:</strong> {item} nehme ich gern. Magst du es mir geben? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_offer-0028` | <strong>Bubble 1:</strong> Ja, bitte. {item} passt gerade. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `expanded-object_offer-0130` | <strong>Bubble 1:</strong> Ja, bitte. {item} hätte ich gern. | Stage: acquaintance (Lv 1-2) or familiar (Lv 3-5)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `expanded-object_offer-0131` | <strong>Bubble 1:</strong> {item} wäre gerade willkommen. | Stage: acquaintance (Lv 1-2) or familiar (Lv 3-5)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `expanded-object_offer-0132` | <strong>Bubble 1:</strong> Gern. {item} passt mir gerade. | Stage: acquaintance (Lv 1-2) or familiar (Lv 3-5)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `expanded-object_offer-0154` | <strong>Bubble 1:</strong> Gut, dass du {item} anbietest. Das hätte ich gern. | Stage: friend (Lv 6-8) or close (Lv 9-10)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `expanded-object_offer-0155` | <strong>Bubble 1:</strong> Ja, bitte. {item} nehme ich gern. | Stage: friend (Lv 6-8) or close (Lv 9-10)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `expanded-object_offer-0156` | <strong>Bubble 1:</strong> {item} hätte ich gern von dir. | Stage: friend (Lv 6-8) or close (Lv 9-10)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-013` | <strong>Bubble 1:</strong> {item} hätte ich gern. Magst du es mir geben? | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-014` | <strong>Bubble 1:</strong> Ja, bitte. {item} kann ich gerade gebrauchen. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-015` | <strong>Bubble 1:</strong> Oh, {item} nehme ich gern an. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-016` | <strong>Bubble 1:</strong> Überzeugendes Angebot. {item} hätte ich gern. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-017` | <strong>Bubble 1:</strong> Ja, {item} passt zu meinen momentanen Plänen. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-018` | <strong>Bubble 1:</strong> {item} nehme ich. Eine interessante Aufmerksamkeit. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-019` | <strong>Bubble 1:</strong> Ja, gern. Danke, {item}s du es mir anbietest. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-020` | <strong>Bubble 1:</strong> {item} hätte ich jetzt gern von dir. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-021` | <strong>Bubble 1:</strong> {item} nehme ich gern. Gute Idee, es mir anzubieten. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-022` | <strong>Bubble 1:</strong> {item}? Gern. Deine Aufmerksamkeit freut mich. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-023` | <strong>Bubble 1:</strong> {item}? Ja, bitte. Darüber freue ich mich gerade. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_offer-024` | <strong>Bubble 1:</strong> {item} hätte ich gern. Schön, {item}s du an mich denkst. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-offer-01` | <strong>Bubble 1:</strong> Ja, {item} hätte ich gerne. Gibst du es mir? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Du bietest mir {item_indef_acc} an? Ja, {item_pron_acc} würde ich gern nehmen. |
+| `voice-object_offer-0027` | <strong>Bubble 1:</strong> {item} nehme ich gern. Magst du es mir geben? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Oh, {item_indef_nom}. Reichst du {item_pron_acc} mir bitte? |
+| `voice-object_offer-0028` | <strong>Bubble 1:</strong> Ja, bitte. {item} passt gerade. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Das kommt mir gelegen. {Item_indef_acc} hätte ich gern. |
+| `expanded-object_offer-0130` | <strong>Bubble 1:</strong> Ja, bitte. {item} hätte ich gern. | Stage: acquaintance (Lv 1-2) or familiar (Lv 3-5)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ja bitte. {Item_indef_nom} wäre jetzt eine gute Idee. |
+| `expanded-object_offer-0131` | <strong>Bubble 1:</strong> {item} wäre gerade willkommen. | Stage: acquaintance (Lv 1-2) or familiar (Lv 3-5)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_indef_nom}? Hm, das passt. {Item_pron_acc} nehme ich gern. |
+| `expanded-object_offer-0132` | <strong>Bubble 1:</strong> Gern. {item} passt mir gerade. | Stage: acquaintance (Lv 1-2) or familiar (Lv 3-5)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Bitte her damit. {Item_indef_acc} könnte ich gebrauchen. |
+| `expanded-object_offer-0154` | <strong>Bubble 1:</strong> Gut, dass du {item} anbietest. Das hätte ich gern. | Stage: friend (Lv 6-8) or close (Lv 9-10)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Du hast {item_indef_acc} im Angebot? Überzeugend. |
+| `expanded-object_offer-0155` | <strong>Bubble 1:</strong> Ja, bitte. {item} nehme ich gern. | Stage: friend (Lv 6-8) or close (Lv 9-10)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_indef_nom} klingt nach einer guten Idee. Ich bin dabei. |
+| `expanded-object_offer-0156` | <strong>Bubble 1:</strong> {item} hätte ich gern von dir. | Stage: friend (Lv 6-8) or close (Lv 9-10)<br>Mood/tone: hungry<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ja, bitte. Ich mache in meinen Händen Platz für {item_def_acc}. |
+| `situation-object_offer-013` | <strong>Bubble 1:</strong> {item} hätte ich gern. Magst du es mir geben? | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Für mich? Dann nehme ich {item_def_acc} gern. |
+| `situation-object_offer-014` | <strong>Bubble 1:</strong> Ja, bitte. {item} kann ich gerade gebrauchen. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Oh, {item_indef_nom}. {Item_pron_acc} würde ich gerne näher ansehen. |
+| `situation-object_offer-015` | <strong>Bubble 1:</strong> Oh, {item} nehme ich gern an. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ja. {Item_indef_nom} passt zu meinen Plänen. |
+| `situation-object_offer-016` | <strong>Bubble 1:</strong> Überzeugendes Angebot. {item} hätte ich gern. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Du weißt, wie man meine Neugier weckt: mit {item_indef_dat}. |
+| `situation-object_offer-017` | <strong>Bubble 1:</strong> Ja, {item} passt zu meinen momentanen Plänen. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Na gut. {Item_def_nom} darf gern zu mir herüber. |
+| `situation-object_offer-018` | <strong>Bubble 1:</strong> {item} nehme ich. Eine interessante Aufmerksamkeit. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Das Angebot mit {item_def_dat} nehme ich an. Gute Wahl! |
+| `situation-object_offer-019` | <strong>Bubble 1:</strong> Ja, gern. Danke, {item}s du es mir anbietest. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ich hätte {item_def_acc} gern. Gibst du {item_pron_acc} mir? |
+| `situation-object_offer-020` | <strong>Bubble 1:</strong> {item} hätte ich jetzt gern von dir. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_indef_nom}? Da sage ich nicht Nein. |
+| `situation-object_offer-021` | <strong>Bubble 1:</strong> {item} nehme ich gern. Gute Idee, es mir anzubieten. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ja, ich hätte {item_def_acc} gern. Du darfst loslassen. |
+| `situation-object_offer-022` | <strong>Bubble 1:</strong> {item}? Gern. Deine Aufmerksamkeit freut mich. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Du kannst mir {item_def_acc} geben. Ich passe darauf auf. |
+| `situation-object_offer-023` | <strong>Bubble 1:</strong> {item}? Ja, bitte. Darüber freue ich mich gerade. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Oh, {item_indef_nom} für mich? Ja, bitte! |
+| `situation-object_offer-024` | <strong>Bubble 1:</strong> {item} hätte ich gern. Schön, {item}s du an mich denkst. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Bei {item_indef_dat} werde ich schwach. Reichst du {item_pron_acc} mir? |
 
 ### object_refuse
 
@@ -1891,21 +1899,21 @@ Known offered item appraised as not consumable now; does not fabricate identity.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-refuse-01` | <strong>Bubble 1:</strong> {item}? Gerade brauche ich das nicht. Vielleicht später. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_refuse-0029` | <strong>Bubble 1:</strong> {item}? Gerade lieber nicht. Danke fürs Anbieten. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_refuse-0030` | <strong>Bubble 1:</strong> {item}? Nein danke. Im Moment brauche ich es nicht. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-025` | <strong>Bubble 1:</strong> {item}? Danke fürs Anbieten. Gerade brauche ich es nicht. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-026` | <strong>Bubble 1:</strong> {item}? Im Moment lieber nicht. Danke dir. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-027` | <strong>Bubble 1:</strong> {item}? Jetzt habe ich dafür keinen Bedarf. Später vielleicht. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-028` | <strong>Bubble 1:</strong> {item}? Ein gutes Angebot zu einem etwas unpassenden Zeitpunkt. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-029` | <strong>Bubble 1:</strong> {item}? Danke. Mein Bedarf macht gerade Pause. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-030` | <strong>Bubble 1:</strong> {item}? Gerade passt es mir weniger. Vielleicht später. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-031` | <strong>Bubble 1:</strong> {item}? Danke, du. Gerade brauche ich es nicht. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-032` | <strong>Bubble 1:</strong> {item}? Für später wäre es schön. Jetzt möchte ich noch warten. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-033` | <strong>Bubble 1:</strong> {item}? Das Angebot freut mich. Gerade passt es noch nicht. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-034` | <strong>Bubble 1:</strong> {item}? Schön, dass du an mich denkst. Jetzt brauche ich es gerade nicht. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-035` | <strong>Bubble 1:</strong> {item}? Gerade lieber nicht. Über deine Aufmerksamkeit freue ich mich trotzdem. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `situation-object_refuse-036` | <strong>Bubble 1:</strong> {item}? Danke, du. Ich möchte im Moment noch ein bisschen warten. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-refuse-01` | <strong>Bubble 1:</strong> {item}? Gerade brauche ich das nicht. Vielleicht später. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_indef_nom}? Danke, aber ich brauche gerade nichts. |
+| `voice-object_refuse-0029` | <strong>Bubble 1:</strong> {item}? Gerade lieber nicht. Danke fürs Anbieten. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ich sehe {item_def_acc}. Gerade sage ich dazu lieber Nein. |
+| `voice-object_refuse-0030` | <strong>Bubble 1:</strong> {item}? Nein danke. Im Moment brauche ich es nicht. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Das ist nett, aber {item_def_acc} brauche ich im Moment nicht. |
+| `situation-object_refuse-025` | <strong>Bubble 1:</strong> {item}? Danke fürs Anbieten. Gerade brauche ich es nicht. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_def_acc} lasse ich gerade lieber liegen. Danke trotzdem. |
+| `situation-object_refuse-026` | <strong>Bubble 1:</strong> {item}? Im Moment lieber nicht. Danke dir. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Nein danke. Für {item_indef_acc} ist gerade nicht der richtige Zeitpunkt. |
+| `situation-object_refuse-027` | <strong>Bubble 1:</strong> {item}? Jetzt habe ich dafür keinen Bedarf. Später vielleicht. | Stage: acquaintance (Lv 1-2)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Du kannst {item_def_acc} erst mal behalten. Vielleicht später. |
+| `situation-object_refuse-028` | <strong>Bubble 1:</strong> {item}? Ein gutes Angebot zu einem etwas unpassenden Zeitpunkt. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_indef_nom}? Im Augenblick passt das nicht. |
+| `situation-object_refuse-029` | <strong>Bubble 1:</strong> {item}? Danke. Mein Bedarf macht gerade Pause. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Über {item_def_acc} denke ich später gern noch mal nach. |
+| `situation-object_refuse-030` | <strong>Bubble 1:</strong> {item}? Gerade passt es mir weniger. Vielleicht später. | Stage: familiar (Lv 3-5)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ich glaube, {item_def_nom} muss noch ein bisschen warten. |
+| `situation-object_refuse-031` | <strong>Bubble 1:</strong> {item}? Danke, du. Gerade brauche ich es nicht. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Du meinst es gut, aber {item_def_acc} brauche ich gerade wirklich nicht. |
+| `situation-object_refuse-032` | <strong>Bubble 1:</strong> {item}? Für später wäre es schön. Jetzt möchte ich noch warten. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Danke, du. {Item_indef_nom} ist im Moment nicht das Richtige für mich. |
+| `situation-object_refuse-033` | <strong>Bubble 1:</strong> {item}? Das Angebot freut mich. Gerade passt es noch nicht. | Stage: friend (Lv 6-8)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Du darfst {item_def_acc} gern erst einmal wieder ablegen. |
+| `situation-object_refuse-034` | <strong>Bubble 1:</strong> {item}? Schön, dass du an mich denkst. Jetzt brauche ich es gerade nicht. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_def_acc} merke ich mir für später. Jetzt noch nicht. |
+| `situation-object_refuse-035` | <strong>Bubble 1:</strong> {item}? Gerade lieber nicht. Über deine Aufmerksamkeit freue ich mich trotzdem. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Auch bei dir sage ich manchmal Nein. {Item_def_acc} brauche ich gerade nicht. |
+| `situation-object_refuse-036` | <strong>Bubble 1:</strong> {item}? Danke, du. Ich möchte im Moment noch ein bisschen warten. | Stage: close (Lv 9-10)<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_indef_nom}? Lieb von dir, aber ich möchte lieber warten. |
 
 ### object_recall_food
 
@@ -1913,9 +1921,9 @@ Known food supply retrieved for new need, not deferred/continuing-wish branch.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-recall-food-01` | <strong>Bubble 1:</strong> Moment. Ich habe doch noch {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_recall_food-0031` | <strong>Bubble 1:</strong> Ich habe Hunger. Da liegt noch {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_recall_food-0032` | <strong>Bubble 1:</strong> Mein Vorrat ist gerade eine gute Idee: {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-recall-food-01` | <strong>Bubble 1:</strong> Moment. Ich habe doch noch {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ach richtig, da war noch {item_indef_nom}. Jetzt wäre ein guter Zeitpunkt. |
+| `voice-object_recall_food-0031` | <strong>Bubble 1:</strong> Ich habe Hunger. Da liegt noch {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Mein Magen erinnert mich an {item_def_acc}. Gut, dass noch etwas übrig ist. |
+| `voice-object_recall_food-0032` | <strong>Bubble 1:</strong> Mein Vorrat ist gerade eine gute Idee: {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Da ist noch {item_indef_nom}. Das kommt meinem Magen gerade recht. |
 
 ### object_recall_drink
 
@@ -1923,9 +1931,9 @@ Known drink supply retrieved for new need, not deferred/continuing-wish branch.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-recall-drink-01` | <strong>Bubble 1:</strong> Meine Energie wird knapp. Ich habe ja noch {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_recall_drink-0033` | <strong>Bubble 1:</strong> Etwas Energie wäre gut. Ich habe noch {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_recall_drink-0034` | <strong>Bubble 1:</strong> Ich werde müde. Zeit, nach {item} zu sehen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-recall-drink-01` | <strong>Bubble 1:</strong> Meine Energie wird knapp. Ich habe ja noch {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Meine Energie sinkt. Gut, dass ich noch {item_indef_acc} hier habe. |
+| `voice-object_recall_drink-0033` | <strong>Bubble 1:</strong> Etwas Energie wäre gut. Ich habe noch {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Vielleicht wäre jetzt der richtige Moment für {item_def_acc}. |
+| `voice-object_recall_drink-0034` | <strong>Bubble 1:</strong> Ich werde müde. Zeit, nach {item} zu sehen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Da war doch noch {item_indef_nom}. Mein müder Kopf erinnert sich gerade daran. |
 
 ### object_recall_saved_food
 
@@ -1933,9 +1941,9 @@ Known previously deferred food retrieved for new need.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-recall-saved-food-01` | <strong>Bubble 1:</strong> Gut, dass ich noch {item} aufgehoben habe. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_recall_saved_food-0035` | <strong>Bubble 1:</strong> Mein Vorrat für später: {item}. Jetzt passt es. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_recall_saved_food-0036` | <strong>Bubble 1:</strong> Ah, mein Vorrat: {item}. Gut, dass ich vorgesorgt habe. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-recall-saved-food-01` | <strong>Bubble 1:</strong> Gut, dass ich noch {item} aufgehoben habe. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_poss_nom} ist noch da. Heute zahlt sich Vorratshaltung aus. |
+| `voice-object_recall_saved_food-0035` | <strong>Bubble 1:</strong> Mein Vorrat für später: {item}. Jetzt passt es. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ich habe {item_poss_acc} für genau so einen hungrigen Moment aufgehoben. |
+| `voice-object_recall_saved_food-0036` | <strong>Bubble 1:</strong> Ah, mein Vorrat: {item}. Gut, dass ich vorgesorgt habe. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Na bitte, {item_poss_nom} ist noch da. Danke an mein früheres Ich. |
 
 ### object_recall_saved_drink
 
@@ -1943,9 +1951,9 @@ Known previously deferred drink retrieved for new need.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-recall-saved-drink-01` | <strong>Bubble 1:</strong> Meine Energie wird knapp. Zum Glück habe ich mir noch {item} aufgehoben. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_recall_saved_drink-0037` | <strong>Bubble 1:</strong> Gut, dass ich noch {item} für später habe. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_recall_saved_drink-0038` | <strong>Bubble 1:</strong> Jetzt kommt mein aufgehobenes Getränk gerade richtig: {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-recall-saved-drink-01` | <strong>Bubble 1:</strong> Meine Energie wird knapp. Zum Glück habe ich mir noch {item} aufgehoben. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ich habe {item_poss_acc} aufgehoben. Jetzt wäre etwas neue Energie willkommen. |
+| `voice-object_recall_saved_drink-0037` | <strong>Bubble 1:</strong> Gut, dass ich noch {item} für später habe. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Sieh an: {item_poss_nom} steht noch bereit. Mein Plan von vorhin funktioniert. |
+| `voice-object_recall_saved_drink-0038` | <strong>Bubble 1:</strong> Jetzt kommt mein aufgehobenes Getränk gerade richtig: {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_poss_nom} kommt mir gerade sehr gelegen. |
 
 ### object_consuming_food
 
@@ -1953,9 +1961,9 @@ Committed food consumption begins after confirmed custody/use permission.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-consuming-food-01` | <strong>Bubble 1:</strong> Gut. Jetzt habe ich Zeit für {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_consuming_food-0039` | <strong>Bubble 1:</strong> Ich esse jetzt in Ruhe. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_consuming_food-0040` | <strong>Bubble 1:</strong> So. Zeit für ein bisschen Stärkung. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-consuming-food-01` | <strong>Bubble 1:</strong> Gut. Jetzt habe ich Zeit für {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> So, jetzt esse ich {item_def_acc}. Das geht besser in Ruhe. |
+| `voice-object_consuming_food-0039` | <strong>Bubble 1:</strong> Ich esse jetzt in Ruhe. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
+| `voice-object_consuming_food-0040` | <strong>Bubble 1:</strong> So. Zeit für ein bisschen Stärkung. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_consuming_drink
 
@@ -1963,9 +1971,9 @@ Committed drink consumption begins after confirmed custody/use permission.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-consuming-drink-01` | <strong>Bubble 1:</strong> Ein bisschen neue Energie. Das passt gerade. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_consuming_drink-0041` | <strong>Bubble 1:</strong> Das kann ich gerade gut gebrauchen. Ein Schluck zuerst. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_consuming_drink-0042` | <strong>Bubble 1:</strong> Ich trinke erst einmal etwas. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-consuming-drink-01` | <strong>Bubble 1:</strong> Ein bisschen neue Energie. Das passt gerade. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `voice-object_consuming_drink-0041` | <strong>Bubble 1:</strong> Das kann ich gerade gut gebrauchen. Ein Schluck zuerst. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
+| `voice-object_consuming_drink-0042` | <strong>Bubble 1:</strong> Ich trinke erst einmal etwas. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_finished_food
 
@@ -1973,9 +1981,9 @@ Food animation completes. Prepared human-handover care dialogue replaces this ev
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-finished-food-01` | <strong>Bubble 1:</strong> Das war jetzt genau richtig. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_finished_food-0043` | <strong>Bubble 1:</strong> Das war eine gute Entscheidung. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_finished_food-0044` | <strong>Bubble 1:</strong> Jetzt fühlt sich mein Magen wieder wohler. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-finished-food-01` | <strong>Bubble 1:</strong> Das war jetzt genau richtig. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `voice-object_finished_food-0043` | <strong>Bubble 1:</strong> Das war eine gute Entscheidung. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
+| `voice-object_finished_food-0044` | <strong>Bubble 1:</strong> Jetzt fühlt sich mein Magen wieder wohler. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_finished_drink
 
@@ -1983,9 +1991,9 @@ Drink animation completes. Prepared human-handover care dialogue replaces this e
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-finished-drink-01` | <strong>Bubble 1:</strong> Das gibt mir wieder etwas Schwung. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_finished_drink-0045` | <strong>Bubble 1:</strong> Ah. Ich fühle mich wieder etwas wacher. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_finished_drink-0046` | <strong>Bubble 1:</strong> Das hat mir gerade gefehlt. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-finished-drink-01` | <strong>Bubble 1:</strong> Das gibt mir wieder etwas Schwung. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `voice-object_finished_drink-0045` | <strong>Bubble 1:</strong> Ah. Ich fühle mich wieder etwas wacher. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
+| `voice-object_finished_drink-0046` | <strong>Bubble 1:</strong> Das hat mir gerade gefehlt. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_missing
 
@@ -1993,9 +2001,9 @@ Committed interaction loses its subject; distinct from free-observation visual l
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-missing-01` | <strong>Bubble 1:</strong> Einmal alles abgesucht. Noch keine Spur. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `voice-object_missing-0047` | <strong>Bubble 1:</strong> Ich bin einmal durch. Noch fehlt etwas. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
-| `voice-object_missing-0048` | <strong>Bubble 1:</strong> Für jetzt habe ich überall nachgesehen. Noch fehlt etwas. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | No |  |
+| `object-missing-01` | <strong>Bubble 1:</strong> Einmal alles abgesucht. Noch keine Spur. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `voice-object_missing-0047` | <strong>Bubble 1:</strong> Ich bin einmal durch. Noch fehlt etwas. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
+| `voice-object_missing-0048` | <strong>Bubble 1:</strong> Für jetzt habe ich überall nachgesehen. Noch fehlt etwas. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 120 s; weight: 1 | Yes |  |
 
 ### object_search
 
@@ -2003,9 +2011,9 @@ Missing-subject search after verified absence, not visual occlusion alone.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-search-nearby` | <strong>Bubble 1:</strong> Wo ist {item} hin? Ich suche die ganze Taskleiste ab. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-search-place` | <strong>Bubble 1:</strong> Hier finde ich {item} gerade nicht. Ich laufe die Taskleiste ab. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-search-local` | <strong>Bubble 1:</strong> Hier war doch noch {item}. Ich suche bis zum anderen Ende. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `object-search-nearby` | <strong>Bubble 1:</strong> Wo ist {item} hin? Ich suche die ganze Taskleiste ab. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_poss_nom} ist nicht am gewohnten Platz. Ich schaue den Weg entlang. |
+| `object-search-place` | <strong>Bubble 1:</strong> Hier finde ich {item} gerade nicht. Ich laufe die Taskleiste ab. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ich suche {item_poss_acc}. Vielleicht finde ich {item_pron_acc} weiter drüben auf der Taskleiste. |
+| `object-search-local` | <strong>Bubble 1:</strong> Hier war doch noch {item}. Ich suche bis zum anderen Ende. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Hier war doch {item_poss_nom}. Ich schaue noch einmal nach. |
 
 ### object_found
 
@@ -2013,9 +2021,9 @@ Candidate verified as resolving a missing subject in existing search task.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-found-nearby` | <strong>Bubble 1:</strong> Ah, da ist {item} wieder. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-found-alternative` | <strong>Bubble 1:</strong> {item}. Wiedergefunden. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-found-supply` | <strong>Bubble 1:</strong> Da bist du ja, {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `object-found-nearby` | <strong>Bubble 1:</strong> Ah, da ist {item} wieder. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ah, da ist ja wohl {item_poss_nom}! |
+| `object-found-alternative` | <strong>Bubble 1:</strong> {item}. Wiedergefunden. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_poss_nom}! Da bist du ja. |
+| `object-found-supply` | <strong>Bubble 1:</strong> Da bist du ja, {item}. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ah, {item_poss_nom}. Ich hatte dich schon abgeschrieben. |
 
 ### object_busy
 
@@ -2023,9 +2031,9 @@ User contact during committed non-search object action, <=1 feedback per 8 s.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-busy-1` | <strong>Bubble 1:</strong> Warte einen kleinen Moment, ich will mir das da anschauen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-busy-2` | <strong>Bubble 1:</strong> Gleich. Ich bin gerade mit diesem Gegenstand beschäftigt. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-busy-3` | <strong>Bubble 1:</strong> Einen Augenblick bitte. Das hier möchte ich erst zu Ende anschauen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `object-busy-1` | <strong>Bubble 1:</strong> Warte einen kleinen Moment, ich will mir das da anschauen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `object-busy-2` | <strong>Bubble 1:</strong> Gleich. Ich bin gerade mit diesem Gegenstand beschäftigt. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ich halte gerade einen Gegenstand in den Händen. Gib mir noch einen Moment. |
+| `object-busy-3` | <strong>Bubble 1:</strong> Einen Augenblick bitte. Das hier möchte ich erst zu Ende anschauen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
 
 ### object_taken
 
@@ -2033,9 +2041,9 @@ User takes the same committed object, starting/updating withholding episode.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-taken-1` | <em>Emote: question (800 ms)</em><br><strong>Bubble 1:</strong> Huch, das wollte ich mir gerade anschauen! Gibst du es mir wieder? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-taken-2` | <em>Emote: question (800 ms)</em><br><strong>Bubble 1:</strong> Hey, ich war gerade auf dem Weg dorthin. Darf ich das noch anschauen? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-taken-3` | <em>Emote: question (800 ms)</em><br><strong>Bubble 1:</strong> Moment, genau das wollte ich mir ansehen. Legst du es bitte wieder hin? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `object-taken-1` | <em>Emote: question (800 ms)</em><br><strong>Bubble 1:</strong> Huch, das wollte ich mir gerade anschauen! Gibst du es mir wieder? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `object-taken-2` | <em>Emote: question (800 ms)</em><br><strong>Bubble 1:</strong> Hey, ich war gerade auf dem Weg dorthin. Darf ich das noch anschauen? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `object-taken-3` | <em>Emote: question (800 ms)</em><br><strong>Bubble 1:</strong> Moment, genau das wollte ich mir ansehen. Legst du es bitte wieder hin? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
 
 ### object_request_return
 
@@ -2043,9 +2051,9 @@ Committed item held away; >=10 s since request, <3 takes and <18 s held time (no
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-request-return-1` | <strong>Bubble 1:</strong> Kannst du das bitte wieder hinlegen? Ich möchte es noch anschauen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-request-return-2` | <strong>Bubble 1:</strong> Ich warte noch auf diesen Gegenstand. Gibst du ihn mir zurück? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-request-return-3` | <strong>Bubble 1:</strong> Darf ich jetzt weitermachen? Das wollte ich mir gerade ansehen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `object-request-return-1` | <strong>Bubble 1:</strong> Kannst du das bitte wieder hinlegen? Ich möchte es noch anschauen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `object-request-return-2` | <strong>Bubble 1:</strong> Ich warte noch auf diesen Gegenstand. Gibst du ihn mir zurück? | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `object-request-return-3` | <strong>Bubble 1:</strong> Darf ich jetzt weitermachen? Das wollte ich mir gerade ansehen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
 
 ### object_withheld
 
@@ -2053,9 +2061,9 @@ Same request gate, but >=3 takes or >=18 s held time makes response irritated.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-withheld-1` | <em>Emote: anger (800 ms)</em><br><strong>Bubble 1:</strong> Jetzt ärgert mich das. Bitte gib mir den Gegenstand wieder. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-withheld-2` | <em>Emote: anger (800 ms)</em><br><strong>Bubble 1:</strong> Du weißt doch, dass ich das anschauen will. Bitte leg es wieder hin. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-withheld-3` | <em>Emote: anger (800 ms)</em><br><strong>Bubble 1:</strong> Das ständige Wegnehmen finde ich nicht lustig. Ich möchte weitermachen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `object-withheld-1` | <em>Emote: anger (800 ms)</em><br><strong>Bubble 1:</strong> Jetzt ärgert mich das. Bitte gib mir den Gegenstand wieder. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <em>Emote: anger (800 ms)</em><br><strong>Bubble 1:</strong> Jetzt reicht's aber mit Wegnehmen. Ich möchte den Gegenstand zurück. |
+| `object-withheld-2` | <em>Emote: anger (800 ms)</em><br><strong>Bubble 1:</strong> Du weißt doch, dass ich das anschauen will. Bitte leg es wieder hin. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `object-withheld-3` | <em>Emote: anger (800 ms)</em><br><strong>Bubble 1:</strong> Das ständige Wegnehmen finde ich nicht lustig. Ich möchte weitermachen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
 
 ### object_returned
 
@@ -2063,9 +2071,9 @@ Same taken committed subject returned; existing episode resumes.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `object-returned-1` | <strong>Bubble 1:</strong> Danke. Dann mache ich hier weiter. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-returned-2` | <strong>Bubble 1:</strong> Da ist es wieder. Jetzt kann ich weitermachen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `object-returned-3` | <strong>Bubble 1:</strong> Gut, du hast es zurückgelegt. Ich mache weiter. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `object-returned-1` | <strong>Bubble 1:</strong> Danke. Dann mache ich hier weiter. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `object-returned-2` | <strong>Bubble 1:</strong> Da ist es wieder. Jetzt kann ich weitermachen. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `object-returned-3` | <strong>Bubble 1:</strong> Gut, du hast es zurückgelegt. Ich mache weiter. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
 
 ### object_consider_known
 
@@ -2073,9 +2081,9 @@ Autonomous goal for known identity, without known-supply retrieval/continuing-wi
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `continuity-object_consider_known-1` | <strong>Bubble 1:</strong> {item} kenne ich schon. Ich hole es mir kurz. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `continuity-object_consider_known-2` | <strong>Bubble 1:</strong> Da liegt {item}. Ich schaue, ob ich es gerade brauche. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `continuity-object_consider_known-3` | <strong>Bubble 1:</strong> {item}. Ich nehme es kurz in die Hand und entscheide dann. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `continuity-object_consider_known-1` | <strong>Bubble 1:</strong> {item} kenne ich schon. Ich hole es mir kurz. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_def_acc} kenne ich schon. Ich sehe nach, ob ich {item_pron_acc} jetzt brauche. |
+| `continuity-object_consider_known-2` | <strong>Bubble 1:</strong> Da liegt {item}. Ich schaue, ob ich es gerade brauche. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Da ist {item_def_nom}. Das könnte gleich interessant werden. |
+| `continuity-object_consider_known-3` | <strong>Bubble 1:</strong> {item}. Ich nehme es kurz in die Hand und entscheide dann. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Oh, {item_def_nom} wieder. Ich schaue beim Näherkommen, ob ich {item_pron_acc} nehme. |
 
 ### object_collect_wanted
 
@@ -2083,9 +2091,9 @@ Retrieving known supply for an existing continuing wish, no invented fresh desir
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `continuity-object_collect_wanted-1` | <strong>Bubble 1:</strong> {item} wollte ich gerade haben. Ich hole es mir. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `continuity-object_collect_wanted-2` | <strong>Bubble 1:</strong> Da liegt {item} jetzt. Das nehme ich mir. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `continuity-object_collect_wanted-3` | <strong>Bubble 1:</strong> Ja, {item} möchte ich noch. Ich hole es mir jetzt. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `continuity-object_collect_wanted-1` | <strong>Bubble 1:</strong> {item} wollte ich gerade haben. Ich hole es mir. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> {Item_def_acc} wollte ich noch. Ich gehe gleich hin. |
+| `continuity-object_collect_wanted-2` | <strong>Bubble 1:</strong> Da liegt {item} jetzt. Das nehme ich mir. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Da ist {item_def_nom}. Gut, dann hole ich {item_pron_acc} mir jetzt. |
+| `continuity-object_collect_wanted-3` | <strong>Bubble 1:</strong> Ja, {item} möchte ich noch. Ich hole es mir jetzt. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes | <strong>Bubble 1:</strong> Ich habe mich entschieden: {item_def_nom} soll nicht länger dort liegen. |
 
 ### object_busy_search
 
@@ -2093,9 +2101,9 @@ User contact during active search/inspection in search, same 8 s throttle.
 
 | ID | Complete current sequence | Variant conditions and playback | Reviewed? | New text proposal |
 | --- | --- | --- | --- | --- |
-| `contact-object_busy_search-1` | <strong>Bubble 1:</strong> Ich suche gerade etwas. Gleich bin ich wieder bei dir. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `contact-object_busy_search-2` | <strong>Bubble 1:</strong> Moment. Ich will erst finden, was hier fehlt. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
-| `contact-object_busy_search-3` | <strong>Bubble 1:</strong> Ich bin noch auf der Suche. Gib mir einen Augenblick. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | No |  |
+| `contact-object_busy_search-1` | <strong>Bubble 1:</strong> Ich suche gerade etwas. Gleich bin ich wieder bei dir. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `contact-object_busy_search-2` | <strong>Bubble 1:</strong> Moment. Ich will erst finden, was hier fehlt. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
+| `contact-object_busy_search-3` | <strong>Bubble 1:</strong> Ich bin noch auf der Suche. Gib mir einen Augenblick. | Stage: any<br>Mood/tone: any<br>Needs/states (all): none required<br>Period: any<br>Day: any<br>Presence: any<br>Presentation: short<br>Animation: idle<br>Cooldown: 0 s; weight: 1 | Yes |  |
 
 ## Rock-Paper-Scissors
 
@@ -2199,9 +2207,9 @@ a normal catalogue sequence. The countdown is reviewed as one complete flow.
 | `care.talk` | <strong>Bubble 1:</strong> Schön, dass du vorbeischaust. | No authored care reaction; CareEffect.CONVERSATION. | No |  |
 | `care.pet` | <strong>Bubble 1:</strong> Mhm. Das tut gut. | No authored care reaction; CareEffect.AFFECTION. | No |  |
 | `care.feed_satisfied` | <strong>Bubble 1:</strong> Ich bin schon satt. ...Wirklich. | No authored care reaction; CareEffect.FOOD_SATISFIED. | No |  |
-| `care.feed_repeat` | <strong>Bubble 1:</strong> Schon wieder {food}? ...Na gut. | No authored care reaction; CareEffect.FOOD_REPEAT; {food} is canonical consumed food display name. | No |  |
-| `care.feed_meal` | <strong>Bubble 1:</strong> Danke für das {meal}. | No authored care reaction; CareEffect.FOOD_MEAL; {meal} is lowercase localized meal label. | No |  |
-| `care.feed_snack` | <strong>Bubble 1:</strong> Mhm ... {food}! Danke. | No authored care reaction; CareEffect.FOOD_SNACK; {food} is canonical consumed food display name. | No |  |
+| `care.feed_repeat` | <strong>Bubble 1:</strong> Schon wieder {food}? ...Na gut. | No authored care reaction; CareEffect.FOOD_REPEAT; {food} is the complete indefinite nominative phrase for the consumed food. | Yes | <strong>Bubble 1:</strong> Schon wieder {food}? Ich hätte beim nächsten Mal gern etwas Abwechslung. |
+| `care.feed_meal` | <strong>Bubble 1:</strong> Danke für das {meal}. | No authored care reaction; CareEffect.FOOD_MEAL; {food} is the complete indefinite nominative phrase for the consumed food. | Yes | <strong>Bubble 1:</strong> Ah, {food}! Eine richtige Mahlzeit. Danke, ich mache kurz Platz. |
+| `care.feed_snack` | <strong>Bubble 1:</strong> Mhm ... {food}! Danke. | No authored care reaction; CareEffect.FOOD_SNACK; {food} is the complete indefinite nominative phrase for the consumed food. | Yes | <strong>Bubble 1:</strong> Oh, {food}! Den Snack nehme ich gern. |
 | `rps.countdown.1-3` | <strong>Bubble 1:</strong> Eins! <em>(800 ms)</em><br><strong>Bubble 2:</strong> Zwei! <em>(800 ms)</em><br><strong>Bubble 3:</strong> Drei! <em>(800 ms)</em><br><em>Then exclamation (700 ms), Aiko hand reveal (2,300 ms), outcome emote (850 ms), and one selected game result text.</em> | Accepted RPS hand choice while no round is busy. Player WIN selects game_player_win; LOSS selects game_aiko_win; DRAW selects game_draw. Greeting is separate. | No |  |
 | `farewell.text` | <strong>Bubble 1:</strong> Bis später. War schön mit dir. | FarewellSequence default without a wording callback. Normal desktop injects contextual catalogue farewell instead. Duration covers waving and reading. | No |  |
 | `world.outside` | <strong>Bubble 1:</strong> Hier kann ich das gerade nicht ablegen. | Cursor-item placement cannot produce a valid reachable placement; World feedback, 2,450 ms. | No |  |
@@ -2226,6 +2234,7 @@ fits the relationship/state, and any claim is grounded in what Aiko can know.
 Keep the original wording visible for comparison.
 
 Enter the complete replacement in **New text proposal**, numbering its bubbles
-and retaining meaningful pauses/emotes as needed. Blank means undecided.
-Review and discuss before changing runtime resources. This workbook adds no
-jokes, facts API integration, selection logic or runtime wording.
+and retaining meaningful pauses/emotes as needed. Blank means undecided on an unreviewed row, or retained on a reviewed row.
+Review and discuss before changing runtime resources; the scoped B2 proposals
+above are implemented under the owner's B2 request. Remaining rows are still
+editorial work. This review introduces no jokes or facts API integration.

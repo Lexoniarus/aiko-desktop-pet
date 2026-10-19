@@ -95,7 +95,7 @@ incompatible time, sleep and save behavior in place.
 | Stage 1: time and storage | `59cab63`, pushed to `feature/social-optimization`; 1,166 tests and pinned static checks passed; physical suspend/resume remains pending |
 | Stage 2: needs and mood | Implemented in the separate feature commit containing this record; 1,177 tests and pinned static checks passed; isolated native care/save/reopen passed |
 | B1: idle repeated-click regression | Implemented in the separate fix commit containing this record; 1,185 tests, pinned static checks and native Windows clicks passed; no new friendship penalty |
-| B2: object recognition and German dialogue | [Detailed plan](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); Part A verified with 1,194 tests and static checks; German phrases and integrated acceptance in progress, separately scoped from stage 2 |
+| B2: object recognition and German dialogue | [Detailed plan](OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); Part A verified with 1,194 tests and static checks; German phrases and integrated regression verified with 1,203 tests and static checks; final native playback acceptance in progress, separately scoped from stage 2 |
 | Stages 3–6 | Pending |
 
 ### Stage-1 execution record, 2026-10-19

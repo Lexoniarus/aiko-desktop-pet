@@ -61,8 +61,8 @@ already assigned findings are excluded until a newly confirmed loss reopens an
 episode. Patrol reunion requires current observation, not memory alone.
 The acquired-reference and association invariants round-trip through existing
 memory v3 / outer save v1; no new persisted field or migration is needed.
-Part A passed all 1,194 native Windows unit/Tk tests in 260.058 seconds,
-Ruff, strict Mypy and Pyright. Parts B and C remain in progress.
+Part A (`4757da7`, pushed) passed all 1,194 native Windows unit/Tk tests in 260.058 seconds,
+Ruff, strict Mypy and Pyright. Part B and integrated C verification are recorded below.
 
 Relaxing search matching alone is insufficient: it could announce “mein
 Onigiri” while retaining the old missing entry as an unresolved memory.
@@ -83,6 +83,27 @@ Onigiri” while retaining the old missing entry as an unresolved memory.
   migration is required. Do not assert compatibility without a round-trip test.
 
 ## B. Complete German phrases and sequence review
+
+Implemented: all 138 complete object sequences across 32 events reviewed;
+82 dynamic sequences and eight other object sequences rewritten (90 changed,
+48 retained). IDs, filters, emotes, pauses and non-object sequences are
+unchanged. The review workbook retains baseline wording and records the
+implemented replacements; its other rows are preserved. Three feeding
+fallbacks are also reviewed and use complete food phrases.
+
+The finite contract includes nominative, accusative and dative indefinite,
+definite, possessive and pronoun forms, plus sentence-start capitalization.
+All eleven consumables have validated gender metadata; only Energy-Drink
+needs a spoken-name override. Unknown identity becomes “Gegenstand”, with
+definite rather than invented possessive reference. Ordinary new identification
+uses an indefinite phrase. Existing content loading owns metadata validation;
+the pure UI formatter owns inflection. No change to menus or save versions.
+
+The native Onigiri integration additionally exposed a found-item put-down
+overwriting the transferred saved-for-later disposition. The existing
+coordinator now passes that remembered intent to its normal safe placement;
+an actual queued interruption still suppresses deferred placement.
+
 
 The supplied audit describes 138 object-dialogue sequences across 32 events,
 82 using `{item}` and 56 without it. Recount at implementation start and review
@@ -109,6 +130,15 @@ remain valid. Never reveal an item's name before identification. Keep the
 spoken language natural and local, with no model/API dependency.
 
 ## C. Verification and documentation
+
+Parts B and integrated regression passed **1,203 native Windows unit/Tk tests
+in 271.518 seconds**, with no unittest failures, errors or skips. Ruff 0.13.2,
+strict Mypy 1.18.2 (190 source files) and Pyright 1.1.414 passed. The complete
+Onigiri test exercises real perception, pickup, inspection and placement,
+including a different finding and later identification of the original portion.
+A separate real-bubble-timer native probe and its final acceptance record are
+the remaining Part-C delivery step.
+
 
 | Test owner | Required checks |
 | --- | --- |

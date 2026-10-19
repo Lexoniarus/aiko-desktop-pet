@@ -14,11 +14,118 @@ from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.mind.object_perception import ObjectObservation
+from aiko_pet.ui.view_models.object_reactions import format_object_reaction
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
 from tools.pet_test_support import set_test_pet_values
 
 
 class WorldGuiTests(unittest.TestCase):
+    def test_onigiri_subjective_reunion_keeps_new_world_identity(self):
+        app, runtime = self.app, self.app._world
+        app._place_x(runtime._track().left)
+        set_test_pet_values(app.state, satiety=100, energy=100)
+        self.look_at(runtime._body_x())
+        events, phrases = [], []
+        present = runtime._present_feedback
+
+        def capture(cue, reaction, done):
+            events.append(cue.event)
+            phrases.append(format_object_reaction(
+                reaction, cue.identity, runtime.view.items,
+            ).text)
+            present(cue, reaction, done)
+
+        runtime._present_feedback = capture
+        original = runtime.world.place_resting(
+            "onigiri", runtime._body_x(), ObjectFootprint(8, 8),
+        )
+        self.observe_and_acknowledge()
+        self.finish_pickup()
+        self.finish_inspection()
+        self.assertEqual(runtime.interaction.phase, "put_down")
+        self.finish_clip("put_down")
+        self.complete_feedback()
+        known = runtime.awareness.known_instance(original.instance_id)
+        assert known is not None
+        self.assertEqual((known.identity, known.assessed, known.disposition),
+                         ("onigiri", True, "deferred"))
+        self.assertEqual(events.count("object_recognized"), 1)
+        self.assertNotIn("object_found", events)
+        first_identification = next(phrase for event, phrase in zip(events, phrases)
+                                    if event == "object_recognized")
+        self.assertIn("ein Onigiri", first_identification)
+        # Unwitnessed movement changes real World facts, not Aiko's knowledge.
+        current = runtime.world.get(original.instance_id)
+        runtime.world.move_resting(
+            current.instance_id, runtime.world.snapshot().surface.width - 10,
+            expected_revision=current.revision,
+        )
+        replacement = runtime.world.place_resting(
+            "onigiri", runtime._body_x(), ObjectFootprint(8, 8),
+        )
+        self.observe_and_acknowledge()
+        for step in range(80):
+            runtime.now += .2
+            runtime.update(time.monotonic())
+            self.complete_feedback()
+            phase = runtime.interaction.phase
+            if phase == "pick_up":
+                self.finish_pickup()
+            elif phase == "inspect":
+                self.finish_inspection()
+            elif phase == "put_down":
+                self.finish_clip("put_down")
+            app._walk.step(time.monotonic() + step, .2,
+                           game_mode=False, attention_active=True)
+            if events.count("object_found") == 1 and phase == "idle":
+                break
+        self.assertEqual(events.count("object_place_missing"), 1)
+        self.assertEqual(events.count("object_found"), 1)
+        self.assertEqual(events.count("object_recognized"), 1)
+        self.assertFalse(runtime.interaction.search_active)
+        self.assertIsNone(runtime.awareness.memory.get(known.token))
+        found = runtime.awareness.known_instance(replacement.instance_id)
+        assert found is not None
+        self.assertEqual((found.instance_id, found.assessed, found.disposition),
+                         (replacement.instance_id, True, "deferred"))
+        self.assertEqual(runtime.world.get(original.instance_id).state,
+                         ObjectState.RESTING)
+        self.assertEqual(runtime.world.get(replacement.instance_id).state,
+                         ObjectState.RESTING)
+        for event, phrase in zip(events, phrases):
+            if event in ("object_place_missing", "object_found"):
+                self.assertIn("mein onigiri", phrase.casefold())
+        self.assertIsNone(app.state.food.last_food_id)
+        # The physically original portion is now another unknown exemplar.
+        current = runtime.world.get(original.instance_id)
+        runtime.world.move_resting(
+            current.instance_id, runtime._body_x() + .4 * runtime.width,
+            expected_revision=current.revision,
+        )
+        for step in range(80):
+            runtime.now += .2
+            runtime.update(time.monotonic())
+            self.complete_feedback()
+            phase = runtime.interaction.phase
+            if phase == "pick_up":
+                self.finish_pickup()
+            elif phase == "inspect":
+                self.finish_inspection()
+            elif phase == "put_down":
+                self.finish_clip("put_down")
+            app._walk.step(time.monotonic() + step, .2,
+                           game_mode=False, attention_active=True)
+            if events.count("object_recognized") == 2 and phase == "idle":
+                break
+        self.assertEqual(events.count("object_recognized"), 2,
+                         (runtime.interaction.phase, events,
+                          runtime.awareness.memory.snapshot()))
+        self.assertEqual(events.count("object_found"), 1)
+        learned = runtime.awareness.known_instance(original.instance_id)
+        assert learned is not None
+        self.assertNotEqual(learned.token, known.token)
+        self.assertEqual(learned.instance_id, original.instance_id)
+
     def _search_multiple_relocated_portions(self, scale):
         self._resize_for_search_test(scale)
         app, runtime = self.app, self.app._world

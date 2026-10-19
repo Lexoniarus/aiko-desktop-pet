@@ -3,7 +3,7 @@
 from ...pet.care_result import CareEffect, CareResult
 from ...pet.content import GERMAN_TEXT
 from ...pet.food_catalog import DEFAULT_CATALOG
-from ...pet.routine import MEAL_NAMES
+from .german_object_phrases import object_phrases
 
 _MESSAGES = {
     CareEffect.FOOD_SATISFIED: "care.feed_satisfied",
@@ -20,20 +20,19 @@ _MESSAGES = {
 
 def format_care_response(result: CareResult) -> str:
     """Keep wording and placeholders outside nutrition and care policies."""
-    if result.effect == CareEffect.FOOD_MEAL:
-        if result.meal_id is None:
-            raise ValueError("A consumed main meal needs a meal identifier")
-        return GERMAN_TEXT.format(
-            "care.feed_meal", meal=MEAL_NAMES[result.meal_id].lower(),
-        )
-    if result.effect in (CareEffect.FOOD_REPEAT, CareEffect.FOOD_SNACK):
+    if result.effect == CareEffect.FOOD_MEAL and result.meal_id is None:
+        raise ValueError("A consumed main meal needs a meal identifier")
+    food_keys = {
+        CareEffect.FOOD_MEAL: "care.feed_meal",
+        CareEffect.FOOD_REPEAT: "care.feed_repeat",
+        CareEffect.FOOD_SNACK: "care.feed_snack",
+    }
+    if result.effect in food_keys:
         if result.food_id is None:
             raise ValueError("Consumed food needs a food identifier")
-        key = (
-            "care.feed_repeat" if result.effect == CareEffect.FOOD_REPEAT
-            else "care.feed_snack"
-        )
+        profile = DEFAULT_CATALOG.foods[result.food_id]
         return GERMAN_TEXT.format(
-            key, food=DEFAULT_CATALOG.foods[result.food_id].display_name,
+            food_keys[result.effect],
+            food=object_phrases(result.food_id, profile.display_name)["item_indef_nom"],
         )
     return GERMAN_TEXT.format(_MESSAGES[result.effect])

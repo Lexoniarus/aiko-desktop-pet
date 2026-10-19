@@ -12,7 +12,7 @@
     "care.pet": "Mhm ... das Streicheln tut gut. Ich bleibe dafür sogar kurz stehen.",
     "care.feed_satisfied": "Danke! Aber mein Magen ist noch satt. Heb es lieber auf.",
     "care.feed_repeat": "Schon wieder {food}? Ich hätte beim nächsten Mal gern etwas Abwechslung.",
-    "care.feed_meal": "Oh, eine richtige Mahlzeit! Danke, ich mache kurz Platz.",
+    "care.feed_meal": "Ah, {food}! Eine richtige Mahlzeit. Danke, ich mache kurz Platz.",
     "care.feed_snack": "Oh, {food}! Den Snack nehme ich gern.",
     "mood.sleep_night": "Aiko schläft gerade ... gute Nacht.",
     "mood.sleep_rest": "Aiko ruht sich aus.",
@@ -141,6 +141,6 @@
     "ui.save_failed": "Spielstand konnte nicht gespeichert werden:\n{failure}",
     "ui.window_title": "Aiko Desktop Pet",
     "world.outside": "Dort kann ich es nicht ablegen. Mein Weg endet vorher.",
-    "world.unknown_item": "etwas"
+    "world.unknown_item": "Gegenstand"
   }
 }

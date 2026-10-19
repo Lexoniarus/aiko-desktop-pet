@@ -16,6 +16,7 @@ from typing import Any, Literal
 
 from ..balance import BALANCE
 from ..catalog_validation import load_json, object_fields
+from ..object_text_contract import OBJECT_TEXT_FIELDS
 from ..routine import TimeContext
 from .dialogue_context import DialogueContext, FriendshipStage
 from .dialogue_events import DIALOGUE_EVENTS
@@ -130,7 +131,7 @@ class Line:
             for _, field, spec, conversion in fields:
                 if field is not None and (
                     not data["event"].startswith("object_")
-                    or field != "item"
+                    or field not in OBJECT_TEXT_FIELDS
                     or spec
                     or conversion
                 ):

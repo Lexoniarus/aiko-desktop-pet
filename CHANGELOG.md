@@ -8,6 +8,14 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Review all 138 object sequences and improve 90 with complete German noun
+  phrases and pronouns. Keep names hidden before identification, distinguish
+  new-portion speech from subjective reunion, and share article/case formatting
+  with food fallbacks. Add strictly validated grammatical metadata without
+  renaming menus or changing saves. Preserve saved-for-later intent through
+  found-item placement. Verify 1,203 native Windows unit/Tk tests and static
+  checks; record full replacement sequences in the dialogue review workbook.
+
 - Reunite a missing subjective object with one newly identified same-kind
   portion during search, preserving actual World facts and transferring
   remembered assessment and saved-for-later intent. Retire the old missing
@@ -33,7 +41,8 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   in validated JSON and outer saves v1; add production-policy daily scenarios.
 - Record separate fixes for blocked idle repeated clicks and subjective
   same-kind object reunion with natural German noun phrases. B1 is implemented;
-  B2 subjective reunion is implemented; German phrase work is in progress.
+  B2 subjective reunion and German phrases are implemented; final native
+  playback acceptance is in progress.
 
 - Advance full real elapsed time across closed sessions and live standby;
   remove the eight-hour cap and stream long routine timelines. Keep active

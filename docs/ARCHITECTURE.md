@@ -104,6 +104,12 @@ Food and localized UI content now have distinct, validated JSON owners:
 `data/texts.de.json` holds care, mood, emotion, workload, status and
 game-message copy; `data/routine.de.json` holds day schedules;
 `data/dialogues.de.json` holds authored situational lines.
+`data/object_grammar.de.json` holds grammatical metadata only, validated and
+loaded by the existing `pet/content.py` owner. Immutable contracts and the
+finite placeholder set live in `pet/object_text_contract.py`; the pure
+`ui/view_models/german_object_phrases.py` inflects articles and pronouns for
+object reactions and care fallbacks. It makes no recognition, custody or
+search decisions and does not duplicate canonical food/menu names.
 `assets/items/items.json` holds only item paths, dimensions, pivots and
 weapon labels, not duplicate food names or menu icon conventions.
 `desktop/animation_assembly.py` loads one immutable `ItemCatalog` and
