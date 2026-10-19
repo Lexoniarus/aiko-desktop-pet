@@ -1,10 +1,11 @@
 # Care, relationship and real-time implementation plan
 
-> **Active implementation plan; stage 1 implemented locally.** Requested on 2026-10-19
+> **Active implementation plan; stage 1 committed and pushed.** Requested on 2026-10-19
 > on `feature/social-optimization`, reviewed against clean baseline `42de63a`.
 > The owner accepted the latest discussed balance as a sufficient starting
 > point for implementation planning. This document plans that first delivery.
-> The later stage-1 execution is recorded below; stages 2–6 remain pending.
+> Stage 1 is recorded below; stage 2 is in progress. Stages 3–6 and bugfix B1
+> remain pending.
 
 ## Goal and boundaries
 
@@ -56,11 +57,39 @@ No second time simulator, relationship store or movement writer is introduced.
 The application may coordinate chronological steps, but domain and World owners
 remain authoritative for their respective changes.
 
+### Implementation and review constraints
+
+Follow [Contributing](../CONTRIBUTING.md) and the existing object boundaries.
+Extend existing owners rather than introducing parallel services or stores:
+
+| Responsibility | Canonical owner |
+| --- | --- |
+| Mutable pet state and applying calculated transitions | `PetState`, backed by frozen `PetValues` |
+| Numeric need integration | Pure `pet/need_decay.py`; returns an immutable result, reads no clocks and mutates no aggregate |
+| Nutrition/reserve, fun and mood calculations | Existing pure `pet/food.py`, `pet/fun.py`, `pet/mood.py` |
+| Coefficients and their validation | Existing packaged balance/food JSON and typed loaders |
+| Elapsed-time planning and observation freshness | Existing time plan and application activity coordinator |
+| Click admission and annoyance escalation | Existing desktop/application input path and mind click policy |
+
+Each stage must audit obsolete callers and overlapping calculation paths,
+preserve import/dependency and checkpoint contracts, and pass the full test
+suite, Ruff, strict Mypy and Pyright before its implementation commit. Record
+the actual checks and remaining Windows acceptance separately. Commit and push
+each completed stage independently; do not mix later unfinished runtime work
+into an earlier stage's commit.
+
 ## Delivery order
 
 Stage 1 now supplies the time/storage foundation. Keep commits reviewable, but integrate the complete
 foundation before promoting it to main: changing numbers alone would leave
 incompatible time, sleep and save behavior in place.
+
+| Delivery | Status / evidence |
+| --- | --- |
+| Stage 1: time and storage | `59cab63`, pushed to `feature/social-optimization`; 1,166 tests and pinned static checks passed; physical suspend/resume remains pending |
+| Stage 2: needs and mood | In progress; consolidate numeric integration in the existing pure policy before final validation and its separate commit |
+| B1: idle repeated-click regression | Planned below; resolve before stage 3 connects negative click effects |
+| Stages 3–6 | Pending |
 
 ### Stage-1 execution record, 2026-10-19
 
@@ -190,6 +219,29 @@ deficits, changing targets and sleep transitions remain numerically consistent.
 Exit: normal sleep, care with no remaining reward, repeated actions, missed
 visits and sustained neglect produce distinct, restart-safe outcomes. No
 automatic relationship refund comes from refilling needs.
+
+### B1. Restore annoyance from repeated direct clicks while idle
+
+User-reported regression after exclusive interaction admission was introduced:
+repeated direct clicks on otherwise idle Aiko are also blocked, so the existing
+annoyance escalation cannot be reached. Trace the actual admission gates before
+changing them; the precise blocking condition has not yet been verified.
+
+- Inspect the existing path through `desktop/input.py`, `desktop/pointer_runtime.py`,
+  `application/contact.py` and the interaction-availability owner. Idle direct
+  clicks must reach the existing counter and `pet/mind/click_policy.py`.
+- Keep competing care/game/object actions exclusive during a real active
+  interaction. Do not solve this by globally removing the busy gate.
+- Keep clicks used to read or advance a bubble/story exempt from annoyance.
+  Reuse the existing click history, routing and escalation policy; introduce no
+  second click listener, counter or interaction state.
+- Verify repeated idle clicks through the actual input callback, active-action
+  exclusion and story-reading exemptions. Add an isolated Windows smoke check;
+  a direct unit call to the reaction policy alone cannot establish the fix.
+
+Deliver this as a separate bugfix before stage 3 attaches the agreed negative
+friendship effects. Recording this item does not implement the input change or
+introduce the later numerical penalties in stage 2.
 
 ### 4. Integrate adaptive sleep and finite closed-time care
 
