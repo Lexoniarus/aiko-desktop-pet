@@ -429,14 +429,15 @@ class HoverUi:
 
     def dismiss_outside(self, x: int, y: int) -> None:
         """Outside clicks dismiss only transient controls, never settings."""
+        # Focus checks and global polling can replay the menu-opening click.
+        if self.pointer_inside(x, y):
+            return
         menu = self.food_menu
         if self.game_menu is not None and not self.game_menu.contains_pointer(x, y):
             self.close_game_menu()
         if menu is not None and not menu.contains_pointer(x, y):
-            if not self.pointer_inside(x, y):
-                menu.close()
-        if not self.pointer_inside(x, y):
-            self._auto_hide_toolbar()
+            menu.close()
+        self._auto_hide_toolbar()
 
     def refresh_hover(self, now: float) -> None:
         toolbar = self.toolbar

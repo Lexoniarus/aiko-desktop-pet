@@ -1,6 +1,7 @@
 """Selection has no game effects; deferred admission has one owner."""
 
 import tempfile
+import tkinter as tk
 import unittest
 from dataclasses import replace
 from pathlib import Path
@@ -10,6 +11,8 @@ from unittest.mock import patch
 from aiko_pet.games.contracts import GameId
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.ui.windows.game_menu import GameMenu
+from aiko_pet.ui.windows.tic_tac_toe_window import TicTacToeWindow
 
 
 class GameMenuTests(unittest.TestCase):
@@ -21,6 +24,50 @@ class GameMenuTests(unittest.TestCase):
         self.hover = self.pet._hover
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False
+
+    def open_from_toolbar_click(self) -> GameMenu:
+        """Exercise Tk's press/release and focus path on the isolated display."""
+        self.pet._runtime.stop()
+        self.pet._save_hover_position(200, 100)
+        self.hover.show_toolbar()
+        self.pet.root.update()
+        toolbar = self.hover.toolbar
+        assert toolbar is not None
+        button = toolbar.buttons["play"]
+        button.focus_force()
+        self.pet.root.update()
+        x, y = button.winfo_width() // 2, button.winfo_height() // 2
+        button.event_generate("<Motion>", x=x, y=y, warp=True)
+        button.event_generate("<Enter>", x=x, y=y)
+        button.event_generate("<ButtonPress-1>", x=x, y=y)
+        button.event_generate("<ButtonRelease-1>", x=x, y=y)
+        menu = self.hover.game_menu
+        assert menu is not None
+        return menu
+
+    def test_opening_click_survives_delayed_focus_loss_and_allows_selection(self):
+        menu = self.open_from_toolbar_click()
+        finished = tk.BooleanVar(master=self.pet.root)
+        self.pet.root.after(150, lambda: finished.set(True))
+        self.pet.root.wait_variable(finished)
+        self.assertIs(self.hover.game_menu, menu)
+        button = menu.buttons[GameId.TIC_TAC_TOE]
+        x, y = button.winfo_width() // 2, button.winfo_height() // 2
+        button.event_generate("<Motion>", x=x, y=y, warp=True)
+        button.event_generate("<Enter>", x=x, y=y)
+        button.event_generate("<ButtonPress-1>", x=x, y=y)
+        button.event_generate("<ButtonRelease-1>", x=x, y=y)
+        self.assertIsNone(self.hover.game_menu)
+        self.assertIsInstance(self.hover.game_window, TicTacToeWindow)
+
+    def test_global_poll_of_opening_click_keeps_menu_but_outside_click_closes(self):
+        menu = self.open_from_toolbar_click()
+        with patch.object(self.pet._input.mouse, "clicked", return_value=True):
+            self.pet._input.poll_global_click()
+        self.assertIs(self.hover.game_menu, menu)
+        self.hover.dismiss_outside(-999, -999)
+        self.assertIsNone(self.hover.game_menu)
+        self.assertFalse(self.hover.game_open)
 
     def test_menu_does_not_start_game_or_award_and_outside_dismisses(self) -> None:
         before = self.pet.state.fun
