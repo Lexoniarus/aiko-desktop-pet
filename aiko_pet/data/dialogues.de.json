@@ -226,7 +226,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich kann immerhin zuhören. Mit dem Klicken kennst du dich besser aus."
+          "content": "Ich kann immerhin zurückwinken. Mit den Maustasten kennst du dich besser aus."
         }
       ],
       "presentation": "short"
@@ -708,7 +708,7 @@
         },
         {
           "kind": "text",
-          "content": "Du hast erstaunlich vorsichtige Hände. Das merke ich mir."
+          "content": "Du hast dir Zeit zum Streicheln genommen. Dafür bleibe ich sogar freiwillig kurz stehen."
         },
         {
           "kind": "emote",
@@ -979,7 +979,7 @@
         },
         {
           "kind": "text",
-          "content": "Oh, ein Snack! Das ist ein erfreulicher Fund."
+          "content": "Oh, ein Snack! Das ist ein erfreuliches Angebot."
         },
         {
           "kind": "emote",
@@ -1926,7 +1926,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Der Mauszeiger steht still. Ich frage mich, wie lange er das durchhält."
+          "content": "Manchmal frage ich mich, wie lange ein Mauszeiger wohl stillhalten kann. Bestimmt nicht so lange wie ich."
         }
       ],
       "presentation": "short"
@@ -2452,7 +2452,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Guten Morgen. Dein Mauszeiger scheint schon motivierter als meine Füße."
+          "content": "Guten Morgen. Hoffentlich kommt dein Mauszeiger heute nicht schneller in Schwung als meine Füße."
         }
       ],
       "presentation": "short"
@@ -4704,7 +4704,7 @@
         },
         {
           "kind": "text",
-          "content": "Wenn du wieder normal mit mir reden willst, bin ich später da."
+          "content": "Wenn du später wieder eine Geschichte hören willst, bin ich da."
         }
       ],
       "presentation": "short"
@@ -7335,7 +7335,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich kann dir ein paar Dinge über mein Leben hier unten erzählen. Was interessiert dich?"
+          "content": "Ich habe eine Theorie: Der Mauszeiger darf überall hin, ich habe einen festen Weg. Dafür habe ich die besseren Haare."
         }
       ],
       "presentation": "short"
@@ -7356,7 +7356,7 @@
         },
         {
           "kind": "text",
-          "content": "Du hast mich gerade angesprochen. Also gut: Ich bin ganz Ohr. So viel Ohr, wie ich eben habe."
+          "content": "Ich wohne praktisch auf der Taskleiste. Man könnte mich für ein Symbol halten. Ein sehr gesprächiges Symbol."
         }
       ],
       "presentation": "short"
@@ -7377,7 +7377,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich hatte gerade vor, den Mauszeiger zu beobachten. Dein Gespräch ist vermutlich spannender."
+          "content": "Ich wollte dem Mauszeiger einen Strafzettel geben. Dann fiel mir ein, dass er ihn einfach wegklicken könnte."
         }
       ],
       "presentation": "short"
@@ -7400,7 +7400,7 @@
         },
         {
           "kind": "text",
-          "content": "Endlich ein Gespräch, bei dem mein Gegenüber antworten kann. Hallo!"
+          "content": "Endlich jemand, dem ich etwas erzählen kann. Die Symbole hier unten haben erschreckend wenig Interesse."
         },
         {
           "kind": "emote",
@@ -7427,7 +7427,7 @@
         },
         {
           "kind": "text",
-          "content": "Mit Taskleistensymbolen zu plaudern funktioniert erstaunlich schlecht. Gut, dass du da bist."
+          "content": "Ich habe versucht, mir ein Gespräch mit der Taskleiste vorzustellen. Sie hätte wahrscheinlich nur geblinkt."
         },
         {
           "kind": "emote",
@@ -7454,7 +7454,7 @@
         },
         {
           "kind": "text",
-          "content": "Erzähl mir etwas. Ich hatte zuletzt hauptsächlich den Mauszeiger als Gesellschaft."
+          "content": "Schön, dass du für eine Geschichte vorbeischaust. Ich hätte sonst wieder Selbstgespräche geführt."
         },
         {
           "kind": "emote",
@@ -7481,7 +7481,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich wollte gerade den Papierkorb ansprechen. Zum Glück warst du schneller."
+          "content": "Ich wollte schon anfangen, dem Papierkorb meine Gedanken zu erzählen. Da bist du mir eindeutig lieber."
         },
         {
           "kind": "emote",
@@ -7565,7 +7565,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kommst genau richtig. Ich habe gerade einen ausgesprochen guten Platz zum Zuhören."
+          "content": "Für dich habe ich einen meiner seltenen Gedanken aufgehoben, der nicht mit Snacks beginnt. Ausnahmsweise."
         }
       ],
       "presentation": "short",
@@ -7778,7 +7778,7 @@
         },
         {
           "kind": "text",
-          "content": "Wenn du schon hier bist, magst du ein bisschen mit mir reden?"
+          "content": "Wenn du schon hier bist: Magst du dir eine meiner Geschichten anhören?"
         }
       ],
       "presentation": "short"
@@ -7795,7 +7795,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ja? Du kannst mir gern sagen, warum du mich anstupst."
+          "content": "Hm? Wenn du eine Geschichte hören willst, gibt es dafür sogar die Aktion 'Reden'."
         }
       ],
       "presentation": "short",
@@ -8192,7 +8192,7 @@
         },
         {
           "kind": "text",
-          "content": "Du kennst inzwischen die Stelle, an der ich am liebsten gestreichelt werde."
+          "content": "Du weißt inzwischen, wie du mich zum Grinsen bringst. Einmal Streicheln genügt meistens."
         },
         {
           "kind": "emote",
@@ -8738,7 +8738,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hast du Lust, mir etwas zu erzählen? Ich habe dem Mauszeiger schon genug zugesehen."
+          "content": "Mir ist gerade etwas über meinen kleinen Desktop-Weg eingefallen. Magst du es hören?"
         }
       ],
       "presentation": "short"
@@ -8755,7 +8755,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein kleines Gespräch wäre nett. Meine Sprechblase ist bereit."
+          "content": "Ich hätte Lust, dir etwas zu erzählen. Für eine Geschichte habe ich gerade genug Energie."
         }
       ],
       "presentation": "short"
@@ -10096,7 +10096,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo? Ich hätte gerade gern jemanden, der mir auch antwortet."
+          "content": "Hallo? Ich hätte eine kleine Geschichte für dich. Meine Sprechblase ist startklar."
         }
       ]
     },
@@ -14507,7 +14507,7 @@
         },
         {
           "kind": "text",
-          "content": "Wenn du mit mir reden möchtest, fang ruhig an. Ich brauche nur etwas länger."
+          "content": "Wenn du kurz bleibst, erzähle ich heute einfach etwas langsamer."
         }
       ]
     },
@@ -14645,7 +14645,7 @@
         },
         {
           "kind": "text",
-          "content": "Du bist mir als Gesprächspartner trotzdem lieber. Du kannst nämlich zurückreden."
+          "content": "Schön, dass du dir Zeit für meine Geschichten nimmst. Da rede ich wenigstens nicht nur mit Symbolen."
         }
       ]
     },
@@ -17694,7 +17694,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du ein bisschen mit mir reden? Ich bin noch nicht besonders geübt darin."
+          "content": "Darf ich dir etwas erzählen? Ich übe noch, nicht mitten im Satz abzuschweifen."
         }
       ]
     },
@@ -17715,7 +17715,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Mir wäre ein Gespräch lieber als noch eine Runde allein herumzulaufen."
+          "content": "Ich bin heute schon genug herumgelaufen. Vielleicht kann ich dir lieber etwas erzählen."
         }
       ]
     },
@@ -17736,7 +17736,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hast du kurz Zeit für mich? Ich möchte nicht immer nur die Taskleiste betrachten."
+          "content": "Hast du kurz Zeit? Ich würde dir gern von meinem seltsamen Nachbarn, dem Mauszeiger, erzählen."
         }
       ]
     },
@@ -17757,7 +17757,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe schon genug Selbstgespräche geführt. Jetzt wärst du dran."
+          "content": "Ich habe eine Theorie über die kleinen Symbole hier unten. Willst du sie hören?"
         }
       ]
     },
@@ -17778,7 +17778,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Eine Frage an dich hätte ich schon. Vielleicht sprechen wir erst mal miteinander?"
+          "content": "Ich hätte gerade eine Geschichte über meinen Spazierweg. Sie ist spannender, als die Strecke aussieht."
         }
       ]
     },
@@ -17799,7 +17799,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du herkommen? Ein bisschen Gespräch wäre mir gerade lieber als Ruhe."
+          "content": "Magst du kurz vorbeischauen? Ich habe eine ziemlich alberne Beobachtung für dich."
         }
       ]
     },
@@ -17820,7 +17820,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Kannst du mir etwas erzählen? Ich mag deine Gesellschaft inzwischen sehr."
+          "content": "Ich habe gerade Lust, dir etwas zu erzählen. Ganz ohne Spielregeln und Gewinner."
         }
       ]
     },
@@ -17841,7 +17841,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Meine Gedanken würden gern mal wieder mit deinen sprechen. Hast du Zeit?"
+          "content": "Ich habe einen Gedanken für dich aufgehoben. Keine Sorge, er ist nicht besonders schwer."
         }
       ]
     },
@@ -17862,7 +17862,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte kurz mit dir reden. Ganz ohne Spielpunkte."
+          "content": "Ich würde dir gern etwas erzählen. Meine Sprechblase hat schon auf ihren Einsatz gewartet."
         }
       ]
     },
@@ -17883,7 +17883,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du, ich würde gerade lieber deine Stimme hören als noch einen Mausklick."
+          "content": "Du, ich hätte gerade gern ein bisschen Aufmerksamkeit für eine meiner Geschichten."
         }
       ]
     },
@@ -17904,7 +17904,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Magst du mich für ein kleines Gespräch besuchen? Ich verspreche, nicht dauernd zu meckern."
+          "content": "Ich habe etwas auf dem Herzen. Oder besser gesagt: unter meinen viel zu großen Chibi-Haaren."
         }
       ]
     },
@@ -17925,7 +17925,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich hätte gern ein bisschen Zeit mit dir. Und vielleicht ein wirklich gutes Thema."
+          "content": "Ich hätte gern einen Moment mit dir. Ich erzähle sogar etwas, das nicht mit Essen anfängt. Vielleicht."
         }
       ]
     },
@@ -18093,7 +18093,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kennst die Stelle, an der ich besonders gern gestreichelt werde, oder?"
+          "content": "Ein bisschen Streicheln würde mir gerade guttun. Du weißt schon: die Aktion mit den Herzchen."
         }
       ]
     },
@@ -18597,7 +18597,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kannst mir etwas sagen. Vielleicht brauche ich nur einen Moment, bis ich antworte."
+          "content": "Ich wollte dir gerade etwas erzählen. Die hohe Systemlast hat mich nur kurz abgelenkt."
         }
       ]
     },
@@ -18618,7 +18618,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte dir richtig zuhören. Gib mir kurz Zeit, den Rechner im Blick zu behalten."
+          "content": "Ich habe noch eine Geschichte für dich. Erst muss ich meinen Blick von der Rechnerlast lösen."
         }
       ]
     },
@@ -18660,7 +18660,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich will nichts von deinem Gespräch verpassen. Kurz muss ich mich noch orientieren."
+          "content": "Ich will dir nichts Halbgares erzählen. Ich schaue erst kurz auf die Auslastung."
         }
       ]
     },
@@ -20990,7 +20990,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Hallo! Ich bin Aiko. Falls du Fragen zu meinem kleinen Platz hier hast: nur zu."
+          "content": "Ich heiße Aiko und wohne hier unten. Der Rest des Desktops ist eher mein Ausblick als mein Spazierweg."
         }
       ]
     },
@@ -21008,7 +21008,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich kenne meinen Weg hier unten schon ganz gut. Was würdest du als Erstes erkunden?"
+          "content": "Meine erste wichtige Entdeckung hier: Der Bildschirmrand kommt schneller, als man denkt."
         }
       ]
     },
@@ -21026,7 +21026,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe noch nicht alle Möglichkeiten hier ausprobiert. Du auch nicht, oder?"
+          "content": "Ich kann mich zwar nicht in einen Ordner verkriechen, aber dafür meinen eigenen Weg entlanglaufen."
         }
       ]
     },
@@ -21044,7 +21044,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Wenn ich den Mauszeiger zu lange ansehe, wird mir schwindlig. Du steuerst den wirklich absichtlich?"
+          "content": "Der Mauszeiger ist ein ziemlicher Angeber. Keine Füße, aber Kurven wie auf einer Rennstrecke."
         }
       ]
     },
@@ -21062,7 +21062,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich habe heute schon einige Schritte auf der Taskleiste gesammelt. Ganz ohne Schrittzähler."
+          "content": "Ich brauche keinen Schrittzähler. Nach links ist irgendwann Schluss, und nach rechts leider auch."
         }
       ]
     },
@@ -21080,7 +21080,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich könnte über meine Spaziergänge reden. Es gibt überraschend viele Wege zwischen links und rechts."
+          "content": "Mein Spazierweg hat genau zwei Richtungen. Trotzdem überlege ich erstaunlich oft, welche ich nehmen soll."
         }
       ]
     },
@@ -21098,7 +21098,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Weißt du, worüber ich mich freue? Dass du auch mal nur zum Reden zu mir kommst."
+          "content": "Ich finde, eine gute Unterhaltung braucht keinen Sieger. Das ist deutlich entspannter als Schere, Stein, Papier."
         }
       ]
     },
@@ -21116,7 +21116,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Du kennst mein Lieblingsspiel inzwischen. Trotzdem verrate ich meine nächste Hand nicht."
+          "content": "Beim Spielen habe ich eine bewährte Strategie: meine Hand wählen und anschließend behaupten, es war Absicht."
         }
       ]
     },
@@ -21134,7 +21134,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich mag, dass hier unten nicht alles nach Vorschrift laufen muss. Nicht einmal meine Spaziergänge."
+          "content": "Ich kann hier unten nicht einfach verschwinden. Aber ich kann so tun, als wäre ich mit wichtigen Dingen beschäftigt."
         }
       ]
     },
@@ -21152,7 +21152,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ein bisschen reden ist schön. Aber ich werde dir nicht jede meiner Schere-Stein-Papier-Taktiken verraten."
+          "content": "Mein größtes Geheimnis beim Spielen? Ich bin jedes Mal überzeugt, dass ich die nächste Runde gewinne."
         }
       ]
     },
@@ -21170,7 +21170,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Schön, dass du mich nicht bloß anklickst, sondern auch mit mir redest. Das ist ein Unterschied."
+          "content": "Bei 'Reden' gibt es keine Punkte und keine Revanche. Das ist vielleicht ganz gut für meinen Ehrgeiz."
         }
       ]
     },
@@ -21188,7 +21188,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Manchmal brauche ich keinen Snack und kein Spiel. Du kannst auch einfach etwas erzählen."
+          "content": "Manchmal habe ich mehr zu erzählen als zu tun. Praktisch, dass meine Sprechblase größer ist als mein Platz."
         }
       ]
     },
