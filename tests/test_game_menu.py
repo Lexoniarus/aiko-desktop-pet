@@ -99,6 +99,21 @@ class GameMenuTests(unittest.TestCase):
         self.assertIs(self.hover.game_window, game)
         self.assertIsNone(self.hover.game_menu)
 
+    def test_system_close_releases_menu_and_allows_reopening_without_play(self):
+        before = self.pet.state.fun
+        self.hover.open_game_menu()
+        menu = self.hover.game_menu
+        assert menu is not None
+        self.pet.root.tk.eval(menu.window.protocol("WM_DELETE_WINDOW"))
+        self.assertFalse(menu.window.winfo_exists())
+        self.assertIsNone(self.hover.game_menu)
+        self.hover.open_game_menu()
+        self.assertIsNotNone(self.hover.game_menu)
+        self.assertIsNot(self.hover.game_menu, menu)
+        self.assertFalse(self.hover.game_open)
+        self.assertFalse(self.pet._animated.game_mode)
+        self.assertEqual(self.pet.state.fun, before)
+
     def test_menu_labels_fit_their_buttons_and_escape_has_a_close_binding(self):
         self.hover.open_game_menu()
         menu = self.hover.game_menu

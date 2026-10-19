@@ -94,6 +94,25 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         create.assert_not_called()
         self.assertIs(self.pet._hover.game_window, game)
 
+    def test_system_close_cancels_pending_round_and_releases_game_mode(self):
+        before = self.pet.state.fun
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
+        game = self.pet._hover.game_window
+        assert isinstance(game, RockPaperScissorsWindow)
+        game.choose(Move.ROCK)
+        pending = game._sequence.pending_timer
+        assert pending is not None
+        self.pet.root.tk.eval(game.window.protocol("WM_DELETE_WINDOW"))
+        game._sequence.advance()
+        game.close()
+        self.assertNotIn(pending, self.pet.root.tk.call("after", "info"))
+        self.assertIsNone(game._sequence.pending_timer)
+        self.assertFalse(game.window.winfo_exists())
+        self.assertIsNone(self.pet._hover.game_window)
+        self.assertFalse(self.pet._animated.game_mode)
+        self.assertIsNone(self.pet._speech.bubble)
+        self.assertEqual(self.pet.state.fun, before)
+
     def test_player_and_aiko_reveal_separately_and_update_ui(self) -> None:
         self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         game = self.pet._hover.game_window

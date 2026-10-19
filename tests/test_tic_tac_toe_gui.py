@@ -49,3 +49,21 @@ class TicTacToeGuiTests(unittest.TestCase):
         self.game._sequence.advance()
         self.assertEqual(self.pet.state.fun, before)
         self.assertIsNone(self.game._sequence.pending_timer)
+
+    def test_system_close_cancels_pending_turn_and_releases_the_host(self):
+        before = self.pet.state.fun
+        self.game.buttons[0].invoke()
+        pending = self.game._sequence.pending_timer
+        assert pending is not None
+        self.pet.root.tk.eval(self.game.window.protocol("WM_DELETE_WINDOW"))
+        self.game._sequence.advance()
+        self.game.close()
+        self.assertNotIn(pending, self.pet.root.tk.call("after", "info"))
+        self.assertIsNone(self.game._sequence.pending_timer)
+        self.assertFalse(self.game.window.winfo_exists())
+        self.assertIsNone(self.pet._hover.game_window)
+        self.assertFalse(self.pet._animated.game_mode)
+        self.assertIsNone(self.pet._speech.bubble)
+        self.assertEqual(self.pet.state.fun, before)
+        self.pet._hover.open_game(GameId.TIC_TAC_TOE)
+        self.assertIsNotNone(self.pet._hover.game_window)

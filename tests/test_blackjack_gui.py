@@ -80,6 +80,39 @@ class BlackjackGuiTests(unittest.TestCase):
         attrs.assert_called_once_with('-topmost', False)
         self.assertTrue(hand._hand.cards)
 
+    def test_system_close_cleans_flip_and_rewards_only_completed_hands_once(self):
+        for completed in (False, True):
+            with self.subTest(completed=completed):
+                game = self.open_game(arranged_game(
+                    card('A'), card('8'), card('K'), card('9'),
+                ))
+                before = self.pet.state.fun
+                game._sequence.advance()
+                hand = self.pet._game_visuals.hand
+                flip_timer = hand.pending_timer
+                assert flip_timer is not None
+                if completed:
+                    game._sequence.advance()
+                self.pet.root.tk.eval(game.window.protocol('WM_DELETE_WINDOW'))
+                after = self.pet.state.fun
+                game._sequence.advance()
+                hand.advance_flip()
+                game.close()
+                self.assertNotIn(flip_timer, self.pet.root.tk.call('after', 'info'))
+                self.assertIsNone(game._sequence.pending_timer)
+                self.assertIsNone(hand.pending_timer)
+                self.assertEqual(hand.windows, ())
+                self.assertFalse(self.pet._game_visuals.images._images)
+                self.assertFalse(game.window.winfo_exists())
+                self.assertIsNone(self.pet._hover.game_window)
+                self.assertFalse(self.pet._animated.game_mode)
+                self.assertIsNone(self.pet._speech.bubble)
+                self.assertEqual(self.pet.state.fun, after)
+                if completed:
+                    self.assertGreater(after, before)
+                else:
+                    self.assertEqual(after, before)
+
     def test_failed_hand_presentation_closes_player_window_and_mode(self):
         hand = self.pet._game_visuals.hand
         with patch.object(hand, '_configure', side_effect=RuntimeError('native error')):

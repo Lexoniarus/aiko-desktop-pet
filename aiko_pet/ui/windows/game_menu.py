@@ -29,6 +29,7 @@ class GameMenu:
         self.window.wm_attributes("-topmost", always_on_top)
         if sys.platform == "win32":
             self.window.wm_attributes("-toolwindow", True)
+        self.window.protocol("WM_DELETE_WINDOW", self.close)
         self.window.bind("<Escape>", lambda _event: self.close())
         body = skin.frame(self.window)
         body.pack(fill="both", expand=True, padx=3, pady=3)
