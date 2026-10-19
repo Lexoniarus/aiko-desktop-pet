@@ -1,6 +1,7 @@
 name: Tests
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
@@ -55,6 +56,7 @@ jobs:
       - name: Import all desktop components on Windows
         run: python -c "import aiko_pet.gui, aiko_pet.desktop.global_input, aiko_pet.desktop.window_stack, aiko_pet.desktop.taskbar"
       - name: Check Windows setup and desktop boundaries
+        if: github.event_name != 'workflow_dispatch'
         shell: pwsh
         run: |
           $patterns = @(
@@ -139,3 +141,6 @@ jobs:
               exit $LASTEXITCODE
             }
           }
+      - name: Run full suite on isolated Windows runner
+        if: github.event_name == 'workflow_dispatch'
+        run: python -m unittest discover -s tests -q
