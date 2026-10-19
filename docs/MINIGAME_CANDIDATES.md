@@ -2,11 +2,13 @@
 
 > **Exploratory reference only — not an approved roadmap.**
 >
-> No additional game has been selected for implementation. There is **no
-> implementation order**, schedule, milestone, commitment, or approved scope
-> attached to any candidate below. Inclusion of a game, algorithm, API, or
-> library is **not an implementation decision**. Candidate effort and duration
-> estimates are provisional comparison aids, not rankings or priorities.
+> Blackjack and Tic-Tac-Toe were explicitly selected on 2026-10-19; their
+> agreed scope is recorded in the separate
+> [implementation plan](MINIGAME_IMPLEMENTATION_PLAN.md), with implementation
+> still awaiting authorization. All other entries remain research only.
+> Inclusion of a game, algorithm, API or library below does not select it.
+> Candidate effort and duration estimates are provisional comparison aids,
+> not rankings or priorities.
 
 This document records the game ideas, libraries, repositories, APIs, and
 evaluation criteria discussed for the Aiko Desktop Pet project in October 2026.
@@ -242,9 +244,12 @@ sequence, deadline or acceptance decision.
 ## Decision status and how to update this reference
 
 - **Implemented today:** Rock–Paper–Scissors on `main`.
-- **All other entries:** optional research candidates only.
-- **Chosen next game:** none.
-- **Approved implementation order:** none.
+- **Selected additions:** Blackjack and Tic-Tac-Toe, with the Spielen submenu
+  and desktop-card presentation described in the
+  [planning-only implementation plan](MINIGAME_IMPLEMENTATION_PLAN.md).
+- **All remaining entries:** optional research candidates only.
+- **Implementation authorization:** pending; only documentation was requested.
+- **Proposed delivery stages:** see the separate plan; no schedule is committed.
 - **Approved additional APIs, engines or paid AI services:** none.
 - **Approved schedule, budget expenditure or dependency change:** none.
 

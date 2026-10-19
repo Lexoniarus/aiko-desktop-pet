@@ -97,6 +97,10 @@ Detailed commit-specific evidence is in the
 application contracts and explicitly unimplemented external transports.
 [Minigame candidates](MINIGAME_CANDIDATES.md) are exploratory research, not an
 approved roadmap or a dependency list for the running application.
+The separate [three-game implementation plan](MINIGAME_IMPLEMENTATION_PLAN.md)
+records the selected Blackjack/Tic-Tac-Toe scope, the Spielen submenu and the
+player-window/desktop-card split. It is planning only, not authorization to
+implement or a claim that either game is already available.
 
 ## Preserved product concepts
 
