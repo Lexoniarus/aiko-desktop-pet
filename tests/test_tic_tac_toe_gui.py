@@ -3,6 +3,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from aiko_pet.games.contracts import GameId
 from aiko_pet.gui import DesktopPet
@@ -67,3 +68,31 @@ class TicTacToeGuiTests(unittest.TestCase):
         self.assertEqual(self.pet.state.fun, before)
         self.pet._hover.open_game(GameId.TIC_TAC_TOE)
         self.assertIsNotNone(self.pet._hover.game_window)
+
+    def test_failed_construction_releases_partial_panel_and_allows_retry(self):
+        for target in (
+            "aiko_pet.ui.windows.tic_tac_toe_window.TicTacToeWindow._present",
+            "aiko_pet.ui.windows.tic_tac_toe_window.GamePanel.show",
+        ):
+            with self.subTest(failure=target):
+                self.pet._hover.close_game()
+                before_widgets = set(self.pet.root.winfo_children())
+                before_fun = self.pet.state.fun
+                with (
+                    patch(target, side_effect=RuntimeError("panel setup failed")),
+                    patch.object(self.pet.application, "complete_game") as completed,
+                ):
+                    with self.assertRaisesRegex(RuntimeError, "panel setup failed"):
+                        self.pet._hover.open_game(GameId.TIC_TAC_TOE)
+                completed.assert_not_called()
+                self.assertEqual(set(self.pet.root.winfo_children()), before_widgets)
+                self.assertFalse(self.pet._hover.game_open)
+                self.assertIsNone(self.pet._hover.game_window)
+                self.assertFalse(self.pet._animated.game_mode)
+                self.assertIsNone(self.pet._speech.bubble)
+                self.assertEqual(self.pet.state.fun, before_fun)
+                self.pet._hover.open_game(GameId.TIC_TAC_TOE)
+                game = self.pet._hover.game_window
+                assert isinstance(game, TicTacToeWindow)
+                self.assertEqual(len(game.buttons), 9)
+                self.assertEqual(game._sequence.game.score.games, 0)

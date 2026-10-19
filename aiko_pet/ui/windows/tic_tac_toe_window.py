@@ -29,21 +29,27 @@ class TicTacToeWindow:
             next_round=self.next_round, skin=skin, always_on_top=always_on_top,
         )
         self.window = self._panel.window
-        self.buttons: list[tk.Button] = []
-        for i in range(9):
-            button = tk.Button(
-                self._panel.body, text=" ", width=4, height=2,
-                font=(skin.font, 18, "bold"), bg=skin.panel, fg=skin.text,
-                disabledforeground=skin.text, command=partial(self.choose, i),
+        try:
+            self.buttons: list[tk.Button] = []
+            for i in range(9):
+                button = tk.Button(
+                    self._panel.body, text=" ", width=4, height=2,
+                    font=(skin.font, 18, "bold"), bg=skin.panel, fg=skin.text,
+                    disabledforeground=skin.text, command=partial(self.choose, i),
+                )
+                button.grid(row=i // 3, column=i % 3, padx=3, pady=3)
+                self.buttons.append(button)
+            self._sequence = TicTacToeSequence(
+                schedule=self.window.after, cancel=self.window.after_cancel,
+                present=self._present, say=speak, animate=animate, dialogue=dialogue,
             )
-            button.grid(row=i // 3, column=i % 3, padx=3, pady=3)
-            self.buttons.append(button)
-        self._sequence = TicTacToeSequence(
-            schedule=self.window.after, cancel=self.window.after_cancel,
-            present=self._present, say=speak, animate=animate, dialogue=dialogue,
-        )
-        self._present(self._sequence.game.board, self._sequence.game.score)
-        self._panel.show(root)
+            self._present(self._sequence.game.board, self._sequence.game.score)
+            self._panel.show(root)
+        except Exception:
+            # Admission failed; the host still owns mode/completion cleanup.
+            self._closed = True
+            self._panel.destroy()
+            raise
 
     def greet(self) -> None:
         self._sequence.greet()
