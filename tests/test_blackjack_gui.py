@@ -97,7 +97,9 @@ class BlackjackGuiTests(unittest.TestCase):
         ))
         table = Table(STANDARD_DECK[:11], (None,), 20, Phase.PLAYER, None)
         game._present(table, game._sequence.game.score)
-        game.window.update_idletasks()
+        # Windows maps the native panel through normal events, not only idle work.
+        game.window.update()
+        self.assertTrue(game.player_cards.winfo_ismapped())
         for item in game.player_cards.find_all():
             bounds = game.player_cards.bbox(item)
             assert bounds is not None
