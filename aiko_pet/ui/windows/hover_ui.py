@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ...application.settings import SettingKey
-from ...games.rock_paper_scissors import Score
+from ...games.contracts import SessionSummary
 from ..common.skin import AikoSkin
 from ..view_models.contracts import (
     HoverAnchor,
@@ -19,6 +19,7 @@ from ..view_models.contracts import (
 from ..view_models.food_models import FoodChoice, FoodChoiceId
 from .action_toolbar import ActionToolbar
 from .food_menu import FoodMenu
+from .game_contracts import GameWindow
 from .game_speech import GameSpeech
 from .hover_contracts import HoverActions
 from .rock_paper_scissors_window import RockPaperScissorsWindow
@@ -50,7 +51,7 @@ class HoverUiPorts:
     game_speech: GameSpeech
     food_choices: tuple[FoodChoice, ...]
     feed: Callable[[FoodChoiceId], None] | None = None
-    game_completed: Callable[[Score], object] | None = None
+    game_completed: Callable[[SessionSummary], object] | None = None
     defer_game: Callable[[Callable[[], None]], None] | None = None
     game_dialogue: Callable[[str], str] | None = None
     can_interact: Callable[[str], bool] = lambda _action: True
@@ -71,7 +72,7 @@ class HoverUi:
         self._skin = AikoSkin(root)
         self.toolbar: ActionToolbar | None = None
         self.settings_window: SettingsWindow | None = None
-        self.game_window: RockPaperScissorsWindow | None = None
+        self.game_window: GameWindow | None = None
         self.food_menu: FoodMenu | None = None
         self._settings_position: tuple[int, int] | None = None
         self._keep_open = False
@@ -166,7 +167,7 @@ class HoverUi:
         if self.food_menu is not None:
             self.food_menu.close()
 
-    def _game_closed(self, completed: Score) -> None:
+    def _game_closed(self, completed: SessionSummary) -> None:
         """Pass real rounds to the application, then clear the transient UI."""
         try:
             if completed.games and self._ports.game_completed is not None:

@@ -8,6 +8,7 @@ from collections.abc import Callable
 from functools import partial
 
 from ...asset_paths import GAME_HANDS_DIR
+from ...games.contracts import GameId, SessionSummary
 from ...games.rock_paper_scissors import Move, Score
 from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
@@ -34,7 +35,7 @@ class RockPaperScissorsWindow:
         self,
         root: tk.Tk,
         *,
-        on_closed: Callable[[Score], None],
+        on_closed: Callable[[SessionSummary], None],
         speak: Callable[[str, int], None],
         emote: Callable[[str, int], None],
         hand: Callable[[Move, int], None],
@@ -288,4 +289,7 @@ class RockPaperScissorsWindow:
         self._sequence.close()
         self._drag.close()
         self.window.destroy()
-        self._on_closed(completed)
+        self._on_closed(SessionSummary(
+            GameId.ROCK_PAPER_SCISSORS,
+            completed.wins, completed.losses, completed.draws,
+        ))

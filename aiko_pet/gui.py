@@ -17,7 +17,7 @@ from .application.assembly import assemble_application
 from .application.attention import AttentionCoordinator
 from .application.commands import CareCommand
 from .application.contact import ContactCoordinator, ContactPorts
-from .application.game_experience import experience_from_rock_paper_scissors
+from .application.game_experience import experience_from_session
 from .application.session import PetSessionRestorer
 from .application.settings import SettingKey
 from .config import load_env_file
@@ -249,7 +249,7 @@ class DesktopPet:
                 feed=lambda selected: self._world.begin_carry(selected),
                 defer_game=lambda action: self._world.interrupt(action),
                 game_completed=lambda score: self.application.complete_game(
-                    experience_from_rock_paper_scissors(score),
+                    experience_from_session(score),
                     inputs=self._activity.session_inputs(time.time(), time.monotonic()),
                 ),
                 open_sprite_hover=self._on_enter,

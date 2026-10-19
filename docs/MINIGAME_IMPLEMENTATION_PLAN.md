@@ -308,3 +308,14 @@ Implementation authorization remains separate from this documented assessment.
   and remote CI. Any desktop check outside that scope needs later authorization.
 - Update asset notices and maintained UI/fun/architecture documentation with
   the delivered behavior. This plan records no completed implementation/tests.
+
+## Delivery evidence
+
+Targeted GUI checks use the existing local `aiko-local-tests:py311` image,
+with a frozen source snapshot, Xvfb, disabled networking and no working-desktop
+windows or mouse injection. Each row names the modules passed to
+`PYTHONPATH=tests xvfb-run -a python -m unittest <modules> -q`.
+
+| Step | Targeted result |
+| --- | --- |
+| 1: shared completion contracts | 57 tests passed (1.726s): `test_rock_paper_scissors`, `test_rock_paper_scissors_sequence`, `test_rock_paper_scissors_gui`, `test_game_experience`, `test_ui_architecture`, `test_desktop_boundary`, `test_desktop_lifecycle`. Changed-file Ruff and focused strict Mypy (`hover_ui.py`, `gui.py`) passed. |

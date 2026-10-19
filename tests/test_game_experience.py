@@ -10,8 +10,10 @@ from aiko_pet.application.controller import CareController
 from aiko_pet.application.game_experience import (
     GameExperienceCoordinator,
     experience_from_rock_paper_scissors,
+    experience_from_session,
 )
 from aiko_pet.application.router import ApplicationRouter
+from aiko_pet.games.contracts import GameId, SessionSummary
 from aiko_pet.games.rock_paper_scissors import Score
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
@@ -25,6 +27,18 @@ def timestamp() -> float:
 
 
 class GameExperienceTests(unittest.TestCase):
+    def test_shared_summary_preserves_orientation_for_each_game(self) -> None:
+        for game in GameId:
+            result = experience_from_session(SessionSummary(game, 2, 1, 3))
+            self.assertEqual(result.game_id, game.value)
+            self.assertEqual(result.completed_units, 6)
+            self.assertEqual(result.successful_units, 1)
+            self.assertEqual(result.setback_units, 2)
+
+    def test_summary_rejects_invalid_counts(self) -> None:
+        with self.assertRaises(ValueError):
+            SessionSummary(GameId.BLACKJACK, wins=-1)
+
     def setUp(self) -> None:
         self.state = PetState(fun=35, updated_at=timestamp())
         self.mind = make_aiko_mind(started_at=0.0)

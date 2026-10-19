@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ..games.contracts import GameId, SessionSummary
 from ..games.rock_paper_scissors import Score
 from ..pet.fun import GameExperience
 from ..pet.mind import PetMind
@@ -23,12 +24,19 @@ from .active_time import (
 
 def experience_from_rock_paper_scissors(score: Score) -> GameExperience:
     """The existing RPS score is from the *player's* perspective."""
+    return experience_from_session(SessionSummary(
+        GameId.ROCK_PAPER_SCISSORS, score.wins, score.losses, score.draws,
+    ))
+
+
+def experience_from_session(summary: SessionSummary) -> GameExperience:
+    """Translate once from player results to Aiko's care experience."""
     return GameExperience(
-        game_id="rock_paper_scissors",
-        completed_units=score.games,
-        successful_units=score.losses,  # Aiko won.
-        neutral_units=score.draws,
-        setback_units=score.wins,       # The player won.
+        game_id=summary.game_id.value,
+        completed_units=summary.games,
+        successful_units=summary.losses,
+        neutral_units=summary.draws,
+        setback_units=summary.wins,
     )
 
 
