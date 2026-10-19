@@ -152,6 +152,9 @@
     "game.aiko_turn": "Aiko überlegt …",
     "game.player_win": "Du hast gewonnen.",
     "game.aiko_win": "Aiko hat gewonnen.",
-    "game.draw": "Unentschieden."
+    "game.draw": "Unentschieden.",
+    "blackjack.hit": "Karte ziehen",
+    "blackjack.stand": "Bleiben",
+    "blackjack.total": "Deine Punkte: {total}"
   }
 }

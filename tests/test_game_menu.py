@@ -27,7 +27,7 @@ class GameMenuTests(unittest.TestCase):
         menu = self.hover.game_menu
         assert menu is not None
         self.assertEqual(
-            set(menu.buttons), {GameId.ROCK_PAPER_SCISSORS, GameId.TIC_TAC_TOE},
+            set(menu.buttons), set(GameId),
         )
         self.assertFalse(self.hover.game_open)
         self.assertFalse(self.pet._animated.game_mode)

@@ -190,6 +190,11 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "interval_seconds": "integer",
         "post_care_quiet_seconds": "integer",
     },
+    "game_blackjack": {
+        "base_fun_per_completed_unit": "number",
+        "energy_cost_per_completed_unit": "number",
+        "social_gain_per_completed_unit": "number",
+    },
     "game_tic_tac_toe": {
         "base_fun_per_completed_unit": "number",
         "energy_cost_per_completed_unit": "number",

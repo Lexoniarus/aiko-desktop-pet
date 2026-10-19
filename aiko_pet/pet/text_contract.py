@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
+    "blackjack.hit": frozenset([]),
+    "blackjack.stand": frozenset([]),
+    "blackjack.total": frozenset(['total']),
     'game.next': frozenset([]),
     'game.score': frozenset(['player', 'aiko', 'draws']),
     'game.player_turn': frozenset([]),

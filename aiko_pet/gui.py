@@ -24,6 +24,7 @@ from .config import load_env_file
 from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation
 from .desktop.attention_runtime import AttentionRuntimePorts, DesktopAttentionRuntime
 from .desktop.farewell import FarewellSequence
+from .desktop.game_assembly import assemble_game_visuals, collect_overlay_windows
 from .desktop.global_input import (
     idle_seconds_windows,
     mouse_buttons_down_windows,
@@ -221,6 +222,9 @@ class DesktopPet:
         self._overlay_stack = WindowStack(
             self._overlay_windows, enabled=self.settings.always_on_top,
         )
+        self._game_visuals = assemble_game_visuals(
+            self._window, self.settings, self._overlay_stack.restore,
+        )
         self._maintenance = DesktopMaintenance(
             check_taskbar=self._window.update_track,
             reposition=lambda: self._place_x(
@@ -246,6 +250,7 @@ class DesktopPet:
                 care=self.interact,
                 can_interact=lambda action: self._contact.can_interact(action),
                 game_ready=lambda: not self.state.sleeping,
+                cards=self._game_visuals.ports,
                 food_choices=self._food_choices,
                 feed=lambda selected: self._world.begin_carry(selected),
                 defer_game=lambda action: self._world.interrupt(action),
@@ -452,15 +457,10 @@ class DesktopPet:
 
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
-        windows: list[tk.Tk | tk.Toplevel] = [self.root]
-        if hasattr(self, "_world"):
-            windows.extend(self._world.view.windows)
-        windows.extend(self._hover.control_windows)
-        if self._speech.bubble is not None:
-            windows.append(self._speech.bubble)
-        if self._hover.settings_window is not None:
-            windows.append(self._hover.settings_window.window)
-        return windows
+        return collect_overlay_windows(
+            self.root, self._world.view.windows if hasattr(self, "_world") else (),
+            self._hover, self._speech, self._game_visuals.hand,
+        )
 
     def _place_initially(self) -> None:
         self._place_x(self._window.initial_x())
@@ -471,6 +471,7 @@ class DesktopPet:
         if self._hover.toolbar is not None and self._hover.toolbar.visible:
             self._hover.toolbar.place()
         self._speech.move()
+        self._game_visuals.hand.move()
 
     def _set_context(self, context: TimeContext) -> None:
         """Update the session's current local-time snapshot."""

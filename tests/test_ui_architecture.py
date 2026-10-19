@@ -19,6 +19,7 @@ UTILITY_VIEWS = (
     "ui/windows/game_menu.py",
     "ui/windows/game_panel.py",
     "ui/windows/tic_tac_toe_window.py",
+    "ui/windows/blackjack_window.py",
 )
 
 

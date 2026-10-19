@@ -18,8 +18,9 @@ from ..view_models.contracts import (
 )
 from ..view_models.food_models import FoodChoice, FoodChoiceId
 from .action_toolbar import ActionToolbar
+from .blackjack_window import BlackjackWindow
 from .food_menu import FoodMenu
-from .game_contracts import GameWindow
+from .game_contracts import GameCardPorts, GameWindow
 from .game_menu import GameMenu
 from .game_speech import GameSpeech
 from .hover_contracts import HoverActions
@@ -58,6 +59,7 @@ class HoverUiPorts:
     game_dialogue: Callable[[str], str] | None = None
     can_interact: Callable[[str], bool] = lambda _action: True
     game_ready: Callable[[], bool] = lambda: True
+    cards: GameCardPorts | None = None
 
 
 class HoverUi:
@@ -193,7 +195,11 @@ class HoverUi:
                 self._ports.game_completed(completed)
         finally:
             self.game_window = None
-            self._ports.game_speech.stop()
+            try:
+                if self._ports.cards is not None:
+                    self._ports.cards.clear()
+            finally:
+                self._ports.game_speech.stop()
             self.last_hover = time.monotonic()
             if self.toolbar is not None:
                 self.toolbar.refresh()
@@ -219,7 +225,8 @@ class HoverUi:
              if toolbar else 200)
         self.game_menu = GameMenu(
             self.root, x, y,
-            choices=(GameId.ROCK_PAPER_SCISSORS, GameId.TIC_TAC_TOE),
+            choices=(GameId.ROCK_PAPER_SCISSORS, GameId.TIC_TAC_TOE)
+            + ((GameId.BLACKJACK,) if self._ports.cards is not None else ()),
             selected=self.open_game, closed=self._game_menu_closed,
             always_on_top=self._ports.always_on_top(), skin=self._skin,
         )
@@ -228,7 +235,7 @@ class HoverUi:
     def open_game(self, game_id: GameId) -> None:
         if self.game_open or not self._ports.can_interact("play"):
             return
-        if game_id not in (GameId.ROCK_PAPER_SCISSORS, GameId.TIC_TAC_TOE):
+        if not isinstance(game_id, GameId):
             raise ValueError("Game is not available")
         self.close_game_menu()
         token = object()
@@ -251,7 +258,17 @@ class HoverUi:
         self.close_food_menu()
         self._ports.game_speech.start()
         try:
-            if game_id is GameId.TIC_TAC_TOE:
+            if game_id is GameId.BLACKJACK:
+                if self._ports.cards is None:
+                    raise RuntimeError("Card presentation is unavailable")
+                self.game_window = BlackjackWindow(
+                    self.root, on_closed=self._game_closed, cards=self._ports.cards,
+                    dialogue=self._ports.game_dialogue,
+                    speak=self._ports.game_speech.say,
+                    animate=self._ports.game_speech.animate,
+                    always_on_top=self._ports.always_on_top(), skin=self._skin,
+                )
+            elif game_id is GameId.TIC_TAC_TOE:
                 self.game_window = TicTacToeWindow(
                     self.root, on_closed=self._game_closed,
                     dialogue=self._ports.game_dialogue,
@@ -261,13 +278,20 @@ class HoverUi:
                 )
             else:
                 self.game_window = self._create_rps()
+            self.game_window.greet()
+            self._ports.restore_stack()
         except Exception:
-            self._ports.game_speech.stop()
+            if self.game_window is not None:
+                self.game_window.close()
+            else:
+                try:
+                    if self._ports.cards is not None:
+                        self._ports.cards.clear()
+                finally:
+                    self._ports.game_speech.stop()
             raise
         if self.toolbar is not None:
             self.toolbar.refresh_actions()
-        self.game_window.greet()
-        self._ports.restore_stack()
 
     def _create_rps(self) -> RockPaperScissorsWindow:
         return RockPaperScissorsWindow(
@@ -287,6 +311,8 @@ class HoverUi:
         self.close_game_menu()
         if self.game_window is not None:
             self.game_window.close()
+        elif self._ports.cards is not None:
+            self._ports.cards.clear()
 
     def show_toolbar(self) -> None:
         if self.toolbar is None:
@@ -365,6 +391,8 @@ class HoverUi:
             self.settings_window.close()
 
     def set_topmost(self, enabled: bool) -> None:
+        if self._ports.cards is not None:
+            self._ports.cards.set_topmost(enabled)
         for window in (
             self.toolbar,
             self.settings_window,

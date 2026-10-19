@@ -69,7 +69,7 @@ GAME_FUN_PROFILES: dict[str, GameFunProfile] = {
             f"game_{game}", "social_gain_per_completed_unit"
         ),
     )
-    for game in ("rock_paper_scissors", "tic_tac_toe")
+    for game in ("rock_paper_scissors", "tic_tac_toe", "blackjack")
 }
 
 

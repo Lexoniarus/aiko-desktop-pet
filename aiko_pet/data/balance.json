@@ -409,5 +409,10 @@
     "base_fun_per_completed_unit": 9.0,
     "energy_cost_per_completed_unit": 0.7,
     "social_gain_per_completed_unit": 0.9
+  },
+  "game_blackjack": {
+    "base_fun_per_completed_unit": 8.0,
+    "energy_cost_per_completed_unit": 0.6,
+    "social_gain_per_completed_unit": 0.8
   }
 }

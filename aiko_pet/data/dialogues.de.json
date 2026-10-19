@@ -23216,6 +23216,50 @@
         "friend",
         "close"
       ]
+    },
+    {
+      "id": "game_blackjack_greeting-1",
+      "event": "game_blackjack_greeting",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich gebe die Karten. Du entscheidest, wann es genug ist."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_blackjack_greeting-2",
+      "event": "game_blackjack_greeting",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Deine Karten liegen bereit. Eine von meinen bleibt erst einmal verdeckt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
     }
   ]
 }
