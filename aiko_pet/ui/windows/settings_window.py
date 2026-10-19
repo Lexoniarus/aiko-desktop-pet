@@ -86,6 +86,9 @@ class SettingsWindow:
             body, "observe_computer", GERMAN_TEXT.format("settings.observe_computer")
         )
         self._option(body, "learn_rhythm", GERMAN_TEXT.format("settings.learn_rhythm"))
+        self._option(
+            body, "online_social", GERMAN_TEXT.format("settings.online_social"),
+        )
         self._heading(body, GERMAN_TEXT.format("settings.local_heading"))
         self.forget_button = self.skin.button(
             body,

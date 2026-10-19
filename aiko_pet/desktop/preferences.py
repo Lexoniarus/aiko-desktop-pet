@@ -31,6 +31,7 @@ class DesktopPreferencePorts:
     place_x: Callable[[float], None]
     save: Callable[[], None]
     set_context: Callable[[TimeContext], None]
+    social_sources_changed: Callable[[bool], None] = lambda _enabled: None
 
 
 class DesktopPreferences:
@@ -67,6 +68,7 @@ class DesktopPreferences:
             "spontaneous_talk": self.set_spontaneous_talk,
             "observe_computer": self.set_observe_computer,
             "learn_rhythm": self.set_learn_rhythm,
+            "online_social": self.set_online_social,
         }
         handler = handlers.get(name)
         if handler is None:
@@ -106,6 +108,11 @@ class DesktopPreferences:
 
     def set_learn_rhythm(self, enabled: bool) -> None:
         self._settings.learn_rhythm = bool(enabled)
+        self._ports.save()
+
+    def set_online_social(self, enabled: bool) -> None:
+        self._settings.online_social = bool(enabled)
+        self._ports.social_sources_changed(self._settings.online_social)
         self._ports.save()
 
     def forget_rhythm(self) -> None:

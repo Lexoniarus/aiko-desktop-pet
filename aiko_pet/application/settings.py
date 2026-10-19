@@ -8,6 +8,7 @@ from typing import Any, Literal
 SettingKey = Literal[
     "always_on_top", "auto_walk", "auto_routine", "follow_cursor",
     "spontaneous_talk", "observe_computer", "learn_rhythm",
+    "online_social",
 ]
 
 
@@ -21,6 +22,7 @@ class PetBehaviorSettings:
     spontaneous_talk: bool = True
     observe_computer: bool = True
     learn_rhythm: bool = True
+    online_social: bool = False
 
 
 @dataclass
@@ -59,6 +61,7 @@ class PetSettings:
         learn_rhythm: bool = True,
         toolbar_x: int | None = None,
         toolbar_y: int | None = None,
+        online_social: bool = False,
     ) -> None:
         self.desktop = DesktopDisplaySettings(
             x=x,
@@ -75,6 +78,7 @@ class PetSettings:
             spontaneous_talk=spontaneous_talk,
             observe_computer=observe_computer,
             learn_rhythm=learn_rhythm,
+            online_social=online_social,
         )
 
     @property
@@ -158,6 +162,14 @@ class PetSettings:
         self.behavior.learn_rhythm = value
 
     @property
+    def online_social(self) -> bool:
+        return self.behavior.online_social
+
+    @online_social.setter
+    def online_social(self, value: bool) -> None:
+        self.behavior.online_social = value
+
+    @property
     def toolbar_x(self) -> int | None:
         return self.desktop.toolbar_x
 
@@ -196,6 +208,7 @@ class PetSettings:
             learn_rhythm=payload.get("learn_rhythm") is not False,
             toolbar_x=coordinate(payload.get("toolbar_x")),
             toolbar_y=coordinate(payload.get("toolbar_y")),
+            online_social=payload.get("online_social") is True,
         )
 
     def to_dict(self) -> dict[str, int | bool | None]:
@@ -212,4 +225,5 @@ class PetSettings:
             "learn_rhythm": self.learn_rhythm,
             "toolbar_x": self.toolbar_x,
             "toolbar_y": self.toolbar_y,
+            "online_social": self.online_social,
         }

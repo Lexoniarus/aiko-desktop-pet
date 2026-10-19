@@ -140,5 +140,6 @@ def project_settings(settings: PetSettings) -> SettingsSnapshot:
             ("spontaneous_talk", settings.spontaneous_talk),
             ("observe_computer", settings.observe_computer),
             ("learn_rhythm", settings.learn_rhythm),
+            ("online_social", settings.online_social),
         ),
     )
