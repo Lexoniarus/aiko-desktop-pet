@@ -7,7 +7,9 @@ from unittest.mock import patch
 
 from test_blackjack import arranged_game, card
 
+from aiko_pet.games.blackjack import Phase, Table
 from aiko_pet.games.contracts import GameId
+from aiko_pet.games.playing_cards import STANDARD_DECK
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.view_models.game_models import HandView
@@ -66,6 +68,40 @@ class BlackjackGuiTests(unittest.TestCase):
         self.pet._game_visuals.hand.advance_flip()
         self.assertEqual(self.pet.state.fun, before)
         self.assertEqual(self.pet._game_visuals.hand.windows, ())
+
+    def test_player_cards_are_larger_and_the_draw_pile_is_the_hit_control(self):
+        game = self.open_game(arranged_game(
+            card('2'), card('9'), card('3'), card('7'), card('4'),
+        ))
+        for item in game.player_cards.find_all():
+            image = game.player_cards.itemcget(item, 'image')
+            self.assertEqual(self.pet.root.tk.call('image', 'width', image), 128)
+        hand = self.pet._game_visuals.hand
+        assert hand.canvas is not None
+        aiko_image = hand.canvas.itemcget('card_0', 'image')
+        self.assertEqual(self.pet.root.tk.call('image', 'width', aiko_image), 64)
+        pile = self.pet._game_visuals.images.draw_pile()
+        self.assertEqual(game.hit_button.cget('image'), str(pile))
+        game.hit_button.invoke()
+        self.assertEqual(len(game._sequence.game.table.player), 3)
+        game.stand_button.invoke()
+        game.hit_button.invoke()
+        self.assertEqual(len(game._sequence.game.table.player), 3)
+
+    def test_long_player_hand_stays_inside_the_larger_card_area(self):
+        game = self.open_game(arranged_game(
+            card('2'), card('9'), card('3'), card('7'),
+        ))
+        table = Table(STANDARD_DECK[:11], (None,), 20, Phase.PLAYER, None)
+        game._present(table, game._sequence.game.score)
+        game.window.update_idletasks()
+        for item in game.player_cards.find_all():
+            bounds = game.player_cards.bbox(item)
+            assert bounds is not None
+            self.assertGreaterEqual(bounds[0], 0)
+            self.assertGreaterEqual(bounds[1], 0)
+            self.assertLessEqual(bounds[2], game.player_cards.winfo_width())
+            self.assertLessEqual(bounds[3], game.player_cards.winfo_height())
 
     def test_scale_move_and_topmost_are_forwarded_to_the_same_hand(self):
         self.open_game(arranged_game(card('10'), card('9'), card('8'), card('7')))

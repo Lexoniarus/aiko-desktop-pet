@@ -12,6 +12,7 @@ class PlayingCardImages:
         self._root = root
         self._directory = directory
         self._images: dict[tuple[Card | None, int, int], tk.PhotoImage] = {}
+        self._piles: dict[int, tk.PhotoImage] = {}
 
     def get(
         self, card: Card | None, scale: int = 1, compression: int = 1,
@@ -31,6 +32,24 @@ class PlayingCardImages:
             self._images[key] = result
         return self._images[key]
 
+    def draw_pile(self, scale: int = 2) -> tk.PhotoImage:
+        """Layer the existing back into a visual draw control, without deck state."""
+        back = self.get(None, scale)
+        if scale not in self._piles:
+            step = 4 * scale
+            pile = tk.PhotoImage(
+                master=self._root, width=back.width() + 2 * step,
+                height=back.height() + 2 * step,
+            )
+            for offset in (2 * step, step, 0):
+                pile.tk.call(
+                    str(pile), "copy", str(back), "-to", offset, offset,
+                    "-compositingrule", "overlay",
+                )
+            self._piles[scale] = pile
+        return self._piles[scale]
+
     def clear(self) -> None:
         """Release references on the Tk thread after card widgets are destroyed."""
         self._images.clear()
+        self._piles.clear()

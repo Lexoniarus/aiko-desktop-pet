@@ -59,3 +59,17 @@ class PlayingCardImageTests(unittest.TestCase):
         self.assertNotIn(name, self.root.tk.call("image", "names"))
         with self.assertRaises(ValueError):
             self.images.get(card, 3)
+
+    def test_draw_pile_reuses_back_preserves_transparency_and_releases(self):
+        back = self.images.get(None, 2)
+        pile = self.images.draw_pile()
+        self.assertIs(pile, self.images.draw_pile())
+        self.assertEqual((pile.width(), pile.height()), (144, 144))
+        self.assertTrue(pile.transparency_get(0, 0))
+        self.assertFalse(pile.transparency_get(23, 40))
+        self.assertFalse(pile.transparency_get(115, 40))
+        self.assertTrue(back.transparency_get(115, 40))
+        name = str(pile)
+        del pile
+        self.images.clear()
+        self.assertNotIn(name, self.root.tk.call("image", "names"))

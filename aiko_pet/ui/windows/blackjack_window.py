@@ -16,6 +16,9 @@ from .game_panel import GamePanel
 
 
 class BlackjackWindow:
+    PLAYER_CARD_SCALE = 2
+    HAND_WIDTH = 480
+
     def __init__(
         self, root: tk.Tk, *, on_closed: Callable[[SessionSummary], None],
         cards: GameCardPorts, speak: Callable[[str, int], None],
@@ -32,7 +35,8 @@ class BlackjackWindow:
         self.window = self._panel.window
         try:
             self.player_cards = tk.Canvas(
-                self._panel.body, width=360, height=72, bg=skin.background,
+                self._panel.body, width=self.HAND_WIDTH, height=144,
+                bg=skin.background,
                 bd=0, highlightthickness=0,
             )
             self.player_cards.pack()
@@ -41,14 +45,23 @@ class BlackjackWindow:
                 font=(skin.font, 11),
             )
             self.total.pack(pady=6)
-            self.hit_button = skin.button(
-                self._panel.body, GERMAN_TEXT.format("blackjack.hit"), self.hit,
+            controls = skin.frame(self._panel.body)
+            controls.pack(pady=3)
+            self.hit_button = tk.Button(
+                controls, text=GERMAN_TEXT.format("blackjack.hit"),
+                image=cards.images.draw_pile(self.PLAYER_CARD_SCALE),
+                compound="top", command=self.hit, font=(skin.font, 10),
+                bg=skin.background, fg=skin.text,
+                activebackground=skin.panel, activeforeground=skin.accent,
+                disabledforeground=skin.muted, bd=0, relief="flat",
+                highlightthickness=1, highlightbackground=skin.border,
+                highlightcolor=skin.accent, cursor="hand2",
             )
-            self.hit_button.pack(fill="x", pady=3)
+            self.hit_button.pack(side="left", padx=(0, 20))
             self.stand_button = skin.button(
-                self._panel.body, GERMAN_TEXT.format("blackjack.stand"), self.stand,
+                controls, GERMAN_TEXT.format("blackjack.stand"), self.stand,
             )
-            self.stand_button.pack(fill="x", pady=3)
+            self.stand_button.pack(side="left")
             self._sequence = BlackjackSequence(
                 schedule=self.window.after, cancel=self.window.after_cancel,
                 present=self._present, hand=cards.show, say=speak,
@@ -65,10 +78,14 @@ class BlackjackWindow:
 
     def _present(self, table: Table, score: SessionSummary) -> None:
         self.player_cards.delete("all")
-        step = min(46, 296 // max(1, len(table.player) - 1))
+        width = 64 * self.PLAYER_CARD_SCALE
+        step = min(92, (self.HAND_WIDTH - width - 16)
+                   // max(1, len(table.player) - 1))
+        left = (self.HAND_WIDTH - width - (len(table.player) - 1) * step) // 2
         for i, card in enumerate(table.player):
             self.player_cards.create_image(
-                32 + i * step, 36, image=self._cards.images.get(card),
+                left + width // 2 + i * step, 72,
+                image=self._cards.images.get(card, self.PLAYER_CARD_SCALE),
             )
         self.total.configure(text=GERMAN_TEXT.format(
             "blackjack.total", total=str(table.player_total),
