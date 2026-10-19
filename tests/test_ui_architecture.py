@@ -25,11 +25,14 @@ UTILITY_VIEWS = (
 
 class UiDependencyRules(unittest.TestCase):
     def test_new_game_rules_and_hand_preserve_dependency_boundaries(self) -> None:
+        rule_imports = (
+            "tkinter", "ui", "desktop", "pet", "world", "application", "infrastructure",
+        )
         for relative, forbidden in (
-            ("games/blackjack.py", ("tkinter", ".ui", ".desktop", ".pet", ".world")),
-            ("games/tic_tac_toe.py", ("tkinter", ".ui", ".desktop", ".pet", ".world")),
+            ("games/blackjack.py", rule_imports),
+            ("games/tic_tac_toe.py", rule_imports),
             ("ui/pet_view/blackjack_hand_presenter.py",
-             (".world", ".gui", "ctypes", ".pet.state")),
+             ("world", "gui", "ctypes", "state")),
         ):
             tree = ast.parse((ROOT / relative).read_text("utf-8"))
             imports = [
@@ -40,7 +43,7 @@ class UiDependencyRules(unittest.TestCase):
                 for alias in node.names
             ]
             for module in imports:
-                self.assertFalse(any(name in module for name in forbidden), module)
+                self.assertFalse(set(module.split(".")).intersection(forbidden), module)
 
     def test_gui_composition_root_stays_bounded(self) -> None:
         source = (ROOT / "gui.py").read_text("utf-8")

@@ -23260,6 +23260,116 @@
         "friend",
         "close"
       ]
+    },
+    {
+      "id": "game_ttt_greeting-3",
+      "event": "game_ttt_greeting",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mal sehen, wer zuerst drei zusammenbekommt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_blackjack_greeting-3",
+      "event": "game_blackjack_greeting",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Wir spielen eine Hand. Ich gebe die Karten."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_player_win-3",
+      "event": "game_round_player_win",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Runde geht an dich. Ich würde es gern noch einmal versuchen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_aiko_win-3",
+      "event": "game_round_aiko_win",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diesmal war ich vorn. Noch eine?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_round_draw-3",
+      "event": "game_round_draw",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Keiner liegt vorn. Ein fairer Gleichstand."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
     }
   ]
 }
