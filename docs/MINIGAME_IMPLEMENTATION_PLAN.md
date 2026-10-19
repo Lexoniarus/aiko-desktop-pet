@@ -1,6 +1,7 @@
 # Three-game selection and presentation plan
 
-Status: implementation complete on the feature branch; final validation pending.
+Status: implemented and locally verified on the feature branch, 2026-10-19.
+Native Windows visual/input acceptance remains separate; no merge performed.
 The owner selected Blackjack and Tic-Tac-Toe alongside the existing
 Rock–Paper–Scissors (RPS). The owner authorized stepwise implementation, small
 commits and targeted tests, with full-suite validation only at the end.
@@ -338,3 +339,13 @@ windows or mouse injection. Each row names the modules passed to
 | Headless Windows | 94 focused rules/sequence/application/model/resource/architecture tests passed (1.013s), using the local Python environment without creating any Tk window. Full GUI verification remains in the isolated Linux display. |
 | First final full-suite gate | Snapshot `9a30b68`: 1,317 tests in 177.661s, eight Windows-only skips, two failures. The new events needed the catalogue's existing minimum of three variants per relationship; the media-output mock needed the concrete selected RPS window specification. Added the missing variants and updated that fixture without weakening assertions. Also made the new import guard compare module segments. 52 targeted capture/dialogue/architecture/new-game GUI checks passed (2.110s), plus affected Ruff/Pyright. The full suite is rerun on this correction. |
 | Right-edge panel placement | A final geometry review found that the new player panels should prefer Aiko's left side when no space remains on her right. Interrupted the second full run before any result, corrected shared `GamePanel` placement and added the actual-host edge regression. Ten focused new-game GUI/model checks passed (1.075s), plus affected Ruff/Mypy/Pyright. A fresh final full run follows this production correction. |
+| Final full-suite gate — passed | Frozen source at `8dc61e7b9583a8288245084a74247243fe3585d1`: **1,318 tests in 177.825s, eight platform skips, zero failures/errors**. Command: `PYTHONPATH=tests xvfb-run -a python -m unittest discover -s tests -q`, Python 3.11 in the local network-disabled container. The existing Tcl theme teardown messages did not produce Python errors. Prepared-asset checks ran inside the disposable snapshot, preserving the working tree. |
+| Final static gates — passed | On the same implementation tree: `python -m ruff check aiko_pet tests main.py tools`; `python -m mypy --strict --no-incremental aiko_pet main.py tools` (212 source files); `python -m pyright --project pyrightconfig.json` (zero errors/warnings). Versions: Ruff 0.13.2, Mypy 1.18.2, Pyright 1.1.414. This final evidence edit changes documentation only and does not require another full-suite run. |
+
+All nine planned delivery stages are complete, with separate bounded corrective
+commits documented above. No runtime dependency, save migration, normal-save
+write, working-desktop window/mouse probe, remote CI, push or merge was performed.
+Native Windows acceptance remains the explicit checklist in
+[World smoke checks](WORLD_SMOKE_TEST.md#three-game-native-acceptance--pending-separately),
+not a claim inferred from Xvfb. Pre-existing social-content documentation edits
+remain outside these game commits.

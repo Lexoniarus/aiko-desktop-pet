@@ -29,6 +29,14 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+- Three-game delivery on 2026-10-19: the final `8dc61e7` snapshot passed
+  **1,318 local Python 3.11/Xvfb tests in 177.825 seconds**, eight platform
+  skips, no failures/errors. Full pinned Ruff/Mypy/Pyright passed (212 source
+  files for Mypy), alongside per-commit targeted checks and 94 headless Windows
+  cases. The [delivery record](MINIGAME_IMPLEMENTATION_PLAN.md#delivery-evidence)
+  includes corrections and actual Tk capture review. Native Windows card
+  transparency/focus/input acceptance remains separate; no merge was performed.
+
 - Stage 3 on 2026-10-19 passed **1,226 native Windows tests in 282.452
   seconds**, no failures/errors/skips, plus pinned Ruff/Mypy/Pyright (193
   application/tool source files). Six production-policy daily comparisons,
