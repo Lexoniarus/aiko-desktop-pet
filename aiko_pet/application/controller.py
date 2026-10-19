@@ -78,13 +78,16 @@ class CareController:
             CareEffect.DRINK_SATISFIED,
         ):
             self._mind.after_care(command.action, inputs.monotonic_time)
-        reaction = (command.conversation.reaction if command.conversation is not None
-                    else self._mind.select_reaction(
-            event,
-            self._state,
-            context,
-            inputs.monotonic_time,
-            tone=before.tone,
-            dialogue=before.dialogue,
-        ))
+        reaction: Reaction | None
+        if command.conversation is not None:
+            reaction = command.conversation.reaction
+        else:
+            reaction = self._mind.select_reaction(
+                event,
+                self._state,
+                context,
+                inputs.monotonic_time,
+                tone=before.tone,
+                dialogue=before.dialogue,
+            )
         return CareOutcome(result, reaction, context)

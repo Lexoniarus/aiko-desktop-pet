@@ -131,3 +131,27 @@ class SocialCoordinatorTests(unittest.TestCase):
         self.assertEqual(self.social.select(SocialCategory.SINGLE).status, "disabled")
         self.social.set_enabled(True)
         self.assertEqual(len(self.worker.requests), 1)
+
+    def test_offer_is_reserved_until_acceptance_and_cannot_be_accepted_twice(self):
+        self.social.set_enabled(True)
+        self.social.select(SocialCategory.SINGLE)
+        self.worker.complete(1)
+        offered = self.social.poll()
+        assert offered is not None and offered.content is not None
+        # Refill is already in flight before deferred playback begins.
+        self.worker.complete(1)
+        self.social.poll()
+        self.assertEqual(self.social.count(SocialCategory.SINGLE), 0)
+        self.social.accept(offered.content)
+        with self.assertRaises(ValueError):
+            self.social.accept(offered.content)
+
+    def test_cancelled_offer_is_not_recorded_as_delivered(self) -> None:
+        self.social.set_enabled(True)
+        self.social.select(SocialCategory.SINGLE)
+        self.worker.complete(1)
+        offered = self.social.poll()
+        assert offered is not None and offered.content is not None
+        self.social.cancel_selection()
+        with self.assertRaises(ValueError):
+            self.social.accept(offered.content)

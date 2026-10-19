@@ -104,6 +104,7 @@ class SocialConversationRuntime:
                 self._last_content = item
                 self._status = "social.started"
             else:
+                self.content.cancel_selection()
                 self._status = "social.error"
 
         self._ports.defer(begin)

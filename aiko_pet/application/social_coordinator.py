@@ -43,6 +43,7 @@ class SocialContentCoordinator:
         self._generation = 0
         self._request: tuple[object, SocialCategory, int] | None = None
         self._waiting: SocialCategory | None = None
+        self._offered: PreparedSocialContent | None = None
         self._failed: set[SocialCategory] = set()
         self._recent: deque[PreparedSocialContent] = deque(maxlen=40)
 
@@ -62,7 +63,7 @@ class SocialContentCoordinator:
             return
         self._generation += 1
         self._enabled = enabled
-        self._waiting = None
+        self.cancel_selection()
         self._failed.clear()
         for buffer in self._buffers.values():
             buffer.clear()
@@ -71,11 +72,12 @@ class SocialContentCoordinator:
     def select(self, category: SocialCategory) -> SocialSelection:
         if not isinstance(category, SocialCategory):
             raise ValueError("Unknown social category")
-        self._waiting = None
+        self.cancel_selection()
         if not self.enabled:
             return SocialSelection("disabled")
         if self._buffers[category]:
             content = self._buffers[category].popleft()
+            self._offered = content
             self._pump()
             return SocialSelection("ready", content)
         self._failed.discard(category)
@@ -85,13 +87,18 @@ class SocialContentCoordinator:
 
     def cancel_selection(self) -> None:
         self._waiting = None
+        self._offered = None
 
     def accept(self, content: PreparedSocialContent) -> None:
         """Call once when actual playback is accepted, never while warming."""
+        if self._offered is not content:
+            raise ValueError("Conversation is no longer offered")
+        self._offered = None
         self._recent.append(content)
 
     def _duplicate(self, item: PreparedSocialContent) -> bool:
-        known = (*self._recent, *(entry for buffer in self._buffers.values()
+        known = (*self._recent, *((self._offered,) if self._offered else ()),
+                 *(entry for buffer in self._buffers.values()
                                  for entry in buffer))
         return any(entry.identity == item.identity
                    or entry.fingerprint == item.fingerprint for entry in known)
@@ -115,6 +122,7 @@ class SocialContentCoordinator:
                             update = SocialSelection("error")
                     elif self._waiting == category:
                         self._waiting = None
+                        self._offered = item
                         update = SocialSelection("ready", item)
                     else:
                         self._buffers[category].append(item)
