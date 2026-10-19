@@ -1,6 +1,7 @@
 """Actual host wiring keeps Aiko's cards outside the player's panel."""
 
 import tempfile
+import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -13,6 +14,7 @@ from aiko_pet.games.playing_cards import STANDARD_DECK
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.view_models.game_models import HandView
+from aiko_pet.ui.windows.blackjack_sequence import BlackjackSequence
 from aiko_pet.ui.windows.blackjack_window import BlackjackWindow
 
 
@@ -51,7 +53,8 @@ class BlackjackGuiTests(unittest.TestCase):
             hand.advance_flip()
         before = self.pet.state.fun
         game._sequence.advance()
-        self.assertEqual(game._panel.next_button.cget('state'), 'normal')
+        self.assertIsNone(game._panel.next_button)
+        self.assertIsNotNone(game._sequence.pending_timer)
         game.close()
         self.assertGreater(self.pet.state.fun, before)
         self.assertIsNone(hand.window)
@@ -116,6 +119,24 @@ class BlackjackGuiTests(unittest.TestCase):
         attrs.assert_called_once_with('-topmost', False)
         self.assertTrue(hand._hand.cards)
 
+    def test_result_timer_starts_the_next_hand_with_a_fresh_masked_dealer(self):
+        with patch.object(BlackjackSequence, 'RESULT_PAUSE_MS', 20):
+            game = self.open_game(arranged_game(
+                card('10'), card('9'), card('8'), card('7'), card('K'),
+            ))
+            game.stand()
+            game._sequence.advance()
+            game._sequence.advance()
+            self.assertEqual(game._sequence.game.score.games, 1)
+            self.assertIsNone(game._panel.next_button)
+            done = tk.BooleanVar(master=self.pet.root)
+            self.pet.root.after(60, lambda: done.set(True))
+            self.pet.root.wait_variable(done)
+        self.assertIsNone(game._sequence.game.table.result)
+        self.assertIsNone(self.pet._game_visuals.hand._hand.cards[1])
+        self.assertEqual(game._sequence.game.score.games, 1)
+        self.assertEqual(game.hit_button.cget('state'), 'normal')
+
     def test_system_close_cleans_flip_and_rewards_only_completed_hands_once(self):
         for completed in (False, True):
             with self.subTest(completed=completed):
@@ -139,6 +160,7 @@ class BlackjackGuiTests(unittest.TestCase):
                 self.assertIsNone(hand.pending_timer)
                 self.assertEqual(hand.windows, ())
                 self.assertFalse(self.pet._game_visuals.images._images)
+                self.assertFalse(self.pet._game_visuals.images._piles)
                 self.assertFalse(game.window.winfo_exists())
                 self.assertIsNone(self.pet._hover.game_window)
                 self.assertFalse(self.pet._animated.game_mode)

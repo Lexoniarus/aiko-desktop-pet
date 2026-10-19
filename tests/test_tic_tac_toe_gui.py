@@ -31,10 +31,12 @@ class TicTacToeGuiTests(unittest.TestCase):
             self.assertTrue(all(b.cget("state") == "disabled" for b in game.buttons))
             game._sequence.advance()
         game.buttons[7].invoke()
-        self.assertEqual(game._panel.next_button.cget("state"), "normal")
+        next_button = game._panel.next_button
+        assert next_button is not None
+        self.assertEqual(next_button.cget("state"), "normal")
         self.assertEqual(game.buttons[7].cget("bg"), game.skin.accent)
         self.assertEqual(self.pet.state.fun, before)
-        game._panel.next_button.invoke()
+        next_button.invoke()
         self.assertEqual(game._sequence.game.board.turn, "O")
         game.close()
         after = self.pet.state.fun

@@ -11,6 +11,8 @@ from .rock_paper_scissors_dialogue import GameDialogue
 
 
 class BlackjackSequence:
+    RESULT_PAUSE_MS = 2800
+
     def __init__(
         self, *, schedule: Callable[[int, Callable[[], None]], str],
         cancel: Callable[[str], None], present: Callable[[Table, SessionSummary], None],
@@ -65,6 +67,11 @@ class BlackjackSequence:
             return
         self._cancel(self.pending_timer)
         self.pending_timer = None
+        if self.game.table.result is not None:
+            self.game.next_round()
+            self._publish()
+            self._continue()
+            return
         if self._revealing:
             self._revealing = False
             self.game.reveal_dealer()
@@ -84,16 +91,11 @@ class BlackjackSequence:
             assert result is not None
             clip = {"win": "failed", "loss": "jumping", "draw": "waving"}[result]
             self._animate(clip)
-            self._say(self._dialogue(event[result]), 2800)
+            self._say(self._dialogue(event[result]), self.RESULT_PAUSE_MS)
+            self.pending_timer = self._schedule(self.RESULT_PAUSE_MS, self.advance)
         else:
             self._publish()
             self.pending_timer = self._schedule(600, self.advance)
-
-    def next_round(self) -> None:
-        if not self._closed:
-            self.game.next_round()
-            self._publish()
-            self._continue()
 
     def close(self) -> SessionSummary:
         if not self._closed:

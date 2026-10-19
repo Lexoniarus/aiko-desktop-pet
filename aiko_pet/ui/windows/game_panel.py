@@ -15,7 +15,7 @@ from ..common.window_drag import WindowDrag, bounded_position
 class GamePanel:
     def __init__(
         self, root: tk.Tk, title: str, *, close: Callable[[], None],
-        next_round: Callable[[], None], skin: AikoSkin, always_on_top: bool,
+        next_round: Callable[[], None] | None, skin: AikoSkin, always_on_top: bool,
     ) -> None:
         self.window = tk.Toplevel(root)
         self.window.withdraw()
@@ -42,11 +42,13 @@ class GamePanel:
             outer, bg=skin.background, fg=skin.text, font=(skin.font, 9),
         )
         self.score.pack(fill="x", padx=10, pady=5)
-        self.next_button = skin.button(
-            outer, GERMAN_TEXT.format("game.next"), next_round, size="wide",
-        )
-        self.next_button.configure(state="disabled")
-        self.next_button.pack(fill="x", padx=12, pady=4)
+        self.next_button: tk.Button | None = None
+        if next_round is not None:
+            self.next_button = skin.button(
+                outer, GERMAN_TEXT.format("game.next"), next_round, size="wide",
+            )
+            self.next_button.configure(state="disabled")
+            self.next_button.pack(fill="x", padx=12, pady=4)
         skin.button(outer, GERMAN_TEXT.format("ui.close"), close).pack(
             anchor="e", padx=12, pady=(4, 10),
         )
@@ -72,7 +74,8 @@ class GamePanel:
             "game.score", player=str(score.wins), aiko=str(score.losses),
             draws=str(score.draws),
         ))
-        self.next_button.configure(state="normal" if finished else "disabled")
+        if self.next_button is not None:
+            self.next_button.configure(state="normal" if finished else "disabled")
 
     def destroy(self) -> None:
         self._drag.close()

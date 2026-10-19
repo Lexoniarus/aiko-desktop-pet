@@ -30,7 +30,7 @@ class BlackjackWindow:
         self.skin = skin
         self._panel = GamePanel(
             root, GERMAN_TEXT.format("game.name.blackjack"), close=self.close,
-            next_round=self.next_round, skin=skin, always_on_top=always_on_top,
+            next_round=None, skin=skin, always_on_top=always_on_top,
         )
         self.window = self._panel.window
         try:
@@ -111,9 +111,6 @@ class BlackjackWindow:
     def stand(self) -> None:
         if not self._closed:
             self._sequence.stand()
-
-    def next_round(self) -> None:
-        self._sequence.next_round()
 
     def set_topmost(self, enabled: bool) -> None:
         self.window.wm_attributes("-topmost", enabled)
