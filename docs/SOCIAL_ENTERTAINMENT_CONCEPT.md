@@ -18,6 +18,16 @@ Related references: [current architecture](ARCHITECTURE.md),
 [adaptive cursor concept](ADAPTIVE_CURSOR_CONCEPT.md) and
 [integration boundaries](INTEGRATION_ARCHITECTURE.md).
 
+The owner selected jokes and facts for the next social-content delivery. The
+[jokes and facts implementation plan](SOCIAL_CONTENT_IMPLEMENTATION_PLAN.md)
+records the **Unterhalten** menu, shared conversation effects,
+separate Single and Two Parts choices, fact introductions and two individually
+prepared API items per category. The selected delivery uses API entertainment
+content exclusively, without an authored local catalogue or local fallback;
+existing **Plaudern** remains available. These later decisions supersede earlier
+fallback assumptions for the new choices; the broader concept below remains
+preserved. The plan is documentation only and does not authorize implementation.
+
 The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) records complete
 existing sequences and their conditions for individual editorial review before
 any wording changes. Its review status and proposals do not change runtime copy.
