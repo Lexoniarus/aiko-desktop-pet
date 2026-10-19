@@ -92,10 +92,12 @@ class CareActionRulesTests(unittest.TestCase):
         self.assertFalse(state.sleeping)
         self.assertEqual(state.auto_sleep_night, context.night_key)
 
-    def test_drinks_and_sleep_never_credit_friendship(self) -> None:
+    def test_accepted_drink_credits_friendship_but_sleep_does_not(self) -> None:
         state = PetState(updated_at=stamp())
         before = state.friendship
         state.interact("energy_drink", now=stamp())
+        self.assertAlmostEqual(state.friendship - before, .25)
+        before = state.friendship
         state.interact("sleep", now=stamp() + 1)
         self.assertEqual(state.friendship, before)
 

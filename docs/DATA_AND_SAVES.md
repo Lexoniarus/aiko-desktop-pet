@@ -135,11 +135,10 @@ inventing earlier contact, rewards or neglect history; existing progress is
 retained. Malformed/future time sections start neutral, preserving pet progress,
 and the original file is backed up before replacement. Outer save version is 1.
 
-Later reward/neglect histories can use this elapsed axis for rolling intervals;
-they are not implemented by the time foundation. The planned owners are
-`PetValues` for relationship/critical-need/sleep episodes and adaptive memory for
-learned expectations. Missing qualifying contact remains unknown, not inferred
-from an app timestamp. The new time record does not populate those histories.
+Stage 3 now uses this elapsed axis for rolling relationship and critical-need
+histories inside `PetValues`. Future sleep episodes share that owner; learned
+expectations remain in adaptive memory. Missing qualifying contact remains
+unknown, not inferred from an app timestamp or from the time record alone.
 
 Normal saves occur about every 55 seconds and after the application's existing
 care, preference and orderly shutdown paths. `StateStore` writes a temporary
@@ -152,15 +151,35 @@ session, its original bytes are first preserved beside it under a unique
 the backup prevents replacement of the original file. Valid saves do not
 produce these backup files on every autosave.
 
+## Relationship history
+
+Stage 3 adds optional `pet.relationship` v1 alongside the unchanged outer save
+v1. Baseline, last qualifying contact, per-type eligibility, actual rolling
+reward entries, per-need critical/zero exposure and direct-action budgets use
+`pet.time.lived_seconds`, never inferred mouse activity or wall-clock age.
+Exposure has minute resolution and coalesces homogeneous buckets into spans;
+its default 24-hour history is bounded to 1,441 spans. Reward/event histories
+are bounded by their finite action set, timing and caps. Legacy calendar
+reward fields remain compatibility metadata, not a second active calculation.
+
+New histories are part of the complete immutable checkpoint and joint rollback.
+Absent or malformed history preserves pet progress and starts tracking at
+first upgrade reconstruction completion, without retroactive loss or invented
+personal contact. Once saved, that baseline survives restart. Unsupported or
+invalid records cause the original bytes to be backed up before replacement,
+just like invalid time records. Strict validation rejects future timestamps,
+unknown fields/actions, invalid durations, overlapping spans and exceeded budgets.
+See [friendship rules](FRIENDSHIP_SYSTEM.md) for care/contact qualification.
+
 ## Real time, closed sessions and standby
 
 > This section describes the current runtime. The separate
 > [adaptive sleep proposal](ADAPTIVE_SLEEP_PROPOSAL.md) records unimplemented
 > learned sleep/wake timings, together with
-> the [need balance proposal](NEEDS_BALANCE_PROPOSAL.md). Stages 1 and 2 of the
+> the [need balance proposal](NEEDS_BALANCE_PROPOSAL.md). Stages 1–3 of the
 > [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md) supply real-time
-> advancement and the new need/mood balance. Friendship loss and adaptive sleep
-> remain pending; manual sleep still follows the existing routine policy.
+> advancement, need/mood balance and progressive friendship. Adaptive sleep
+> remains pending; manual sleep still follows the existing routine policy.
 
 Loading JSON only decodes data. `PetSessionRestorer` subsequently calculates
 closed time from `pet.updated_at` to the current clock, without truncating the
@@ -178,7 +197,8 @@ wrappers have been retired; loading this snapshot never advances time itself.
 
 During this calculation there is no observed workload, inferred user input,
 human care reward, friendship gain or fabricated rhythm learning. Needs and
-digestion still progress. With `auto_routine` enabled, the existing scheduled
+digestion and the recorded relationship timeline still progress. No contact
+clock is renewed merely by opening the app. With `auto_routine` enabled, the existing scheduled
 sleep can restore energy. Sleep requested manually retains its existing manual
 behavior until the adaptive-sleep stage. Turning automatic routine off disables
 scheduled sleep, not the passage of time. Catalogue-based automatic meals have

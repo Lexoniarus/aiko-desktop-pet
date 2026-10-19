@@ -74,7 +74,7 @@ class PetTimelineTests(unittest.TestCase):
             "friendship_day", "friendship_gained_today", "care_types_today",
             "care_last_rewards", "sleeping", "updated_at", "meals_date",
             "meals_today", "sleep_origin", "auto_sleep_night", "nap_until",
-            "auto_nap_day", "food", "fun", "time",
+            "auto_nap_day", "food", "fun", "time", "relationship",
         }
         self.assertEqual(set(encode_pet_state(PetState())), expected)
 

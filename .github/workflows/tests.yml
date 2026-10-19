@@ -99,6 +99,7 @@ jobs:
             "test_dialogue_events.py",
             "test_spontaneous_events.py",
             "test_friendship_policy.py",
+            "test_friendship_neglect.py",
             "test_care_actions.py",
             "test_pet_lifecycle.py",
             "test_domain_transitions.py",

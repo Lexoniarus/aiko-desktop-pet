@@ -62,12 +62,37 @@ def parse_balance(raw: Any) -> BalanceCatalog:
     catalog = BalanceCatalog(MappingProxyType(sections))
     withholding = sections["object_withholding"]
     if (any(value <= 0 for value in withholding.values())
-            or withholding["friendship_loss"] > withholding["maximum_episode_loss"]
-            or withholding["maximum_episode_loss"] > 100
+            or withholding["friendship_loss"] > 100
             or withholding["request_interval_seconds"] > withholding["grace_seconds"]
             or withholding["request_interval_seconds"]
             > withholding["loss_interval_seconds"]):
         raise ValueError("Invalid object withholding balance")
+    relationship = sections["friendship"]
+    points = [0., *(relationship[f"{name}_points"]
+                    for name in ("lower", "middle", "higher", "peak")), 100.]
+    factors = [relationship[f"{name}_factor"]
+               for name in ("zero", "lower", "middle", "higher", "peak")]
+    times = [relationship[f"absence_{name}_seconds"]
+             for name in ("grace", "middle", "long", "extended")]
+    if (any(a >= b for a, b in zip(points, points[1:]))
+            or any(a > b for a, b in zip(factors, factors[1:]))
+            or any(a >= b for a, b in zip(times, times[1:]))
+            or any(value <= 0 for value in relationship.values())
+            or not relationship["short_cap"] <= relationship["daily_cap"] <= 100
+            or relationship["short_window_seconds"]
+            > relationship["history_window_seconds"]
+            or not 15 <= relationship["history_bucket_seconds"] <= 60
+            or relationship["history_window_seconds"]
+            % relationship["history_bucket_seconds"]
+            or not (relationship["zero_allowance_seconds"]
+                    <= relationship["critical_allowance_seconds"]
+                    < relationship["strong_neglect_seconds"]
+                    <= relationship["history_window_seconds"])
+            or not (relationship["critical_need"]
+                    <= relationship["need_threshold"] <= 100)
+            or relationship["click_loss"] > relationship["click_cap"]
+            or withholding["friendship_loss"] > relationship["withholding_cap"]):
+        raise ValueError("Invalid progressive friendship balance")
     objects = sections["object_behavior"]
     if (
         objects["reach_widths"] >= objects["notice_widths"]

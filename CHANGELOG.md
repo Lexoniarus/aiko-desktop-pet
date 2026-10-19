@@ -8,6 +8,25 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Implement progressive friendship on the existing elapsed axis: shared rolling
+  +0.75/two-hour and +5/24-hour credit, qualified personal contact independent
+  of reward exhaustion, same-type timing and high-need reductions. Replace
+  calendar eligibility and the variety bonus; personally used drinks now count.
+- Integrate piecewise absence and bounded rolling per-need neglect alongside
+  existing numeric need steps, choosing the strongest passive rate per interval
+  and continuously scaling by the relationship curve. Restorative sleep exempts
+  recovering energy; contact/refills do not erase neglect history.
+- Apply bounded click losses only after an existing boundary warning and
+  claimed-object withholding losses through the existing coordinators. Persist
+  shared negative budgets across episodes/restarts, without rewarding return.
+- Add optional version-one relationship history inside unchanged outer save v1,
+  strict decoding/backups and checkpoint coverage. Legacy progress is preserved
+  without inventing historical care or charging unrecorded past neglect.
+- Verify 1,226 Windows tests, pinned static checks and an isolated native
+  eight-hour return, injected clicks, visible labels and care/save/reopen.
+  Record current behavior in `docs/FRIENDSHIP_SYSTEM.md`; later sleep and
+  expression stages remain pending.
+
 - Review all 138 object sequences and improve 90 with complete German noun
   phrases and pronouns. Keep names hidden before identification, distinguish
   new-portion speech from subjective reunion, and share article/case formatting

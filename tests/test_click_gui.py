@@ -72,6 +72,24 @@ class ClickGuiTests(unittest.TestCase):
         self.assertEqual(list(self.pet.mind.clicks), [])
         self.assertTrue(self.pet._hover.game_open)
 
+    def test_only_continued_clicks_after_boundary_cost_friendship(self) -> None:
+        before = self.pet.state.friendship
+        for _ in range(6):
+            self.click()
+        self.assertEqual(self.pet._reaction_player.event, "click_boundary")
+        self.assertEqual(self.pet.state.friendship, before)
+        self.click(3)
+        self.assertAlmostEqual(self.pet.state.friendship, before - .25)
+        for _ in range(12):
+            self.click()
+        # The final reply's remaining animation still blocks extra input.
+        self.assertAlmostEqual(self.pet.state.friendship, before - .75)
+        self.pet._action_playback.cancel_at(time.monotonic())
+        for _ in range(12):
+            self.click()
+        self.assertAlmostEqual(self.pet.state.friendship, before - 1)
+        self.assertIsNone(self.pet.state.friendship_history.last_contact)
+
     def test_story_reading_including_right_clicks_does_not_tease(self) -> None:
         self.pet.interact("talk")
         player = self.pet._reaction_player

@@ -47,6 +47,7 @@ class DailyNeedScheduleTests(unittest.TestCase):
                 pet = PetState(
                     satiety=100, energy=100, fun=100, social=100,
                     affection=100, mood=80, updated_at=START,
+                    friendship=95 if len(schedule) == 8 else 70,
                 )
                 minima = [100.0] * 5
                 mood_min, mood_max = 100.0, 0.0
@@ -85,6 +86,15 @@ class DailyNeedScheduleTests(unittest.TestCase):
                                     accepted += 1
                             else:
                                 pet.interact(action, now=stamp)
+                if len(schedule) == 8:
+                    self.assertAlmostEqual(pet.friendship, 96, delta=.01)
+                    self.assertEqual(pet.friendship_level, 10)
+                else:
+                    self.assertGreater(pet.friendship, 69)
+                    self.assertLess(pet.friendship, 71)
+                self.assertEqual(pet.friendship_history.critical, ())
+                self.assertLessEqual(sum(e.amount for e in
+                                         pet.friendship_history.rewards), 5)
                 self.assertEqual(accepted, 5)
                 self.assertTrue(pet.sleeping)
                 self.assertEqual(pet.energy, 100)

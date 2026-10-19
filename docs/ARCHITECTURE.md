@@ -95,7 +95,9 @@ German fallback wording is selected only by `ui/view_models/care_text.py`.
   including `NeedLevels`, fun and food. Integrates changing targets with the
   existing pure food/fun/mood policies; `PetState` applies one result. It reads
   no clocks, owns no mutable store and offers no alternate precomputed path.
-- `friendship.py`: relationship gains, cooldowns and daily limits.
+- `friendship.py`: rolling relationship credits, contact and direct penalty caps.
+- `friendship_decay.py`: progressive passive loss during the existing need steps;
+  `friendship_history.py`: immutable elapsed-axis evidence inside PetValues.
 - `lifecycle.py` and `routine.py`: streaming full-time advancement, sleep and daily schedule.
 
 Food and localized UI content now have distinct, validated JSON owners:
@@ -645,11 +647,15 @@ Ambient feedback cannot replace action speech.
 
 `pet/mind/object_withholding.py` calculates immutable active-time episode decisions.
 The interaction owns the episode and only evaluates currently observed user-held
-custody. `application/object_relationship.py` deduplicates social effects and owns
-the cross-episode loss cooldown. `PetMind` owns temporary irritation; `PetState`
-commits friendship changes through the pure friendship policy. Loss preserves
-care reward history/daily caps, is saved normally, and creates no return bonus.
-Episode/request/cursor state is session-local; no save-schema change is required.
+custody. `application/object_relationship.py` deduplicates social effects;
+`PetState` applies shared durable rolling penalty caps through the pure
+friendship policy. `PetMind` owns temporary irritation and the warning within
+its existing click burst; the contact coordinator admits later annoyance
+without counting story-reading or blocked input. Loss preserves reward history
+and creates no return bonus. Episode/request/cursor state stays session-local;
+`pet.relationship` v1 saves contact, credit, neglect and penalty histories on
+`lived_seconds`, inside the existing outer save v1. See the
+[current friendship rules](FRIENDSHIP_SYSTEM.md).
 `application/object_custody.py` commits confirmed acquisition and placement in
 World and memory together, restoring both owners on failure. The interaction
 coordinator retains animation deduplication, cue receipts and phase ordering.

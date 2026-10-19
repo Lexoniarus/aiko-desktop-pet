@@ -130,35 +130,38 @@ class NeedsAndBondTests(unittest.TestCase):
         self.assertEqual((state.mood, state.social, state.friendship), (75, 75, 15))
 
     def test_friendship_is_bond_not_spammable_status_bar(self):
-        state = PetState()
         start = timestamp()
+        state = PetState(updated_at=start)
         state.interact("pet", now=start)
         first = state.friendship
         for i in range(100):
             state.interact("pet", now=start + i + 1)
         self.assertAlmostEqual(state.friendship, first)
-        # Only another genuine need for care may earn trust after cooldown.
+        # A repeat after two elapsed hours may earn credit again.
+        state.advance(start + 7200)
         set_test_pet_values(state, affection=55)
-        state.interact("pet", now=start + 13 * 60)
+        state.interact("pet", now=start + 7200)
         self.assertGreater(state.friendship, first)
 
     def test_friendship_daily_cap_and_new_day(self):
-        state = PetState(friendship=31)
         start = timestamp()
+        state = PetState(friendship=31, updated_at=start)
         for k in range(30):
+            state.advance(start + 900 * k)
             for action in ("feed", "pet", "talk", "play", "energy_drink"):
                 set_test_pet_values(state, energy=65)
                 state.interact(action, now=start + 900 * k)
         self.assertLessEqual(state.friendship, 31 + 7.000001)
+        state.advance(start + 24 * 3600 + 1)
         previous = state.friendship
         set_test_pet_values(state, social=30)
         state.interact("talk", now=start + 24 * 3600 + 1)
         self.assertGreater(state.friendship, previous)
 
-    def test_friendship_does_not_decay_offline_or_during_busy_work(self):
+    def test_friendship_decays_over_offline_contact_absence(self):
         state = PetState(friendship=67, updated_at=timestamp())
         state.advance(timestamp() + 3600 * 24, effort=1.0)
-        self.assertEqual(state.friendship, 67)
+        self.assertLess(state.friendship, 67)
         self.assertLess(state.social, 75)
 
     def test_all_values_survive_real_store_roundtrip(self):

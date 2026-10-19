@@ -47,11 +47,7 @@ def choose_withholding_response(
     if irritated and now - episode.escalated_at >= BALANCE.number(
         "object_withholding", "loss_interval_seconds",
     ):
-        loss = min(
-            BALANCE.number("object_withholding", "friendship_loss"),
-            max(0.0, BALANCE.number("object_withholding", "maximum_episode_loss")
-                - episode.charged_loss),
-        )
+        loss = BALANCE.number("object_withholding", "friendship_loss")
     return WithholdingResponse(
         replace(episode, requested_at=now,
                 escalated_at=now if loss else episode.escalated_at,

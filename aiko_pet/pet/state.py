@@ -21,9 +21,11 @@ from .food import (
     FoodState,
 )
 from .friendship import (
+    apply_negative_event,
     calculate_friendship_reward,
-    friendship_after_withholding,
+    start_history,
 )
+from .friendship_history import FriendshipHistory, FriendshipProgress
 from .fun import GameExperience, calculate_game_session_fun
 from .lifecycle import (
     calculate_daily_routine,
@@ -67,6 +69,7 @@ class PetState:
         food: FoodState | None = None,
         fun: float = BALANCE.number("initial", "fun"),
         lived_seconds: float = 0.0,
+        relationship: FriendshipHistory | None = None,
     ) -> None:
         self._values = PetValues(
             satiety=satiety, mood=mood, energy=energy, social=social,
@@ -82,6 +85,8 @@ class PetState:
             nap_until=nap_until, auto_nap_day=auto_nap_day,
             food=FoodState() if food is None else food, fun=fun,
             lived_seconds=lived_seconds,
+            relationship=(FriendshipHistory(baseline=lived_seconds)
+                          if relationship is None else relationship),
         )
 
     def __repr__(self) -> str:
@@ -191,6 +196,10 @@ class PetState:
         return self._values.fun
 
     @property
+    def friendship_history(self) -> FriendshipHistory:
+        return self._values.relationship
+
+    @property
     def friendship_level(self) -> int:
         """Display level (1..10), derived from the durable 0..100 bond."""
         return min(10, 1 + int(self.friendship // 10))
@@ -241,12 +250,19 @@ class PetState:
         """Commit the pure policy's immutable result as one aggregate update."""
         progress = calculate_need_decay(
             self, hours, effort, food_activity=food_activity,
+            relationship=FriendshipProgress(
+                self.friendship, self.friendship_history, self.lived_seconds,
+            ),
         )
+        assert progress.relationship is not None
+        relationship = progress.relationship
         needs = progress.needs
         self._change(
             satiety=needs.satiety, mood=needs.mood, energy=needs.energy,
             social=needs.social, affection=needs.affection,
             food=progress.food, fun=progress.fun,
+            friendship=relationship.points, relationship=relationship.history,
+            lived_seconds=relationship.elapsed,
         )
 
     def record_game_experience(
@@ -265,7 +281,15 @@ class PetState:
             energy=clamp_need_value(self.energy - reward.energy_cost, 0.0),
             social=clamp_need_value(self.social + reward.social_gain, 0.0),
         )
-        self._credit_friendship("play", now, before)
+        if experience.completed_units >= BALANCE.integer(
+            "friendship", "minimum_play_rounds",
+        ):
+            self._credit_friendship("play", now, before)
+        else:
+            self._change(relationship=replace(
+                start_history(self.friendship_history, self.lived_seconds),
+                last_contact=self.lived_seconds,
+            ))
         return self.fun - before
 
     def advance(
@@ -291,6 +315,7 @@ class PetState:
         )
         if steps is None:
             return
+        end_elapsed = self.lived_seconds + steps.elapsed_seconds
         if not auto_routine:
             for step in steps:
                 self._decay(step.hours, step.effort, step.food_activity)
@@ -313,13 +338,18 @@ class PetState:
             )
         self._change(
             updated_at=now,
-            lived_seconds=self.lived_seconds + steps.elapsed_seconds,
+            lived_seconds=end_elapsed,
+            relationship=start_history(self.friendship_history, end_elapsed),
         )
 
     def apply_object_withholding(self, loss: float) -> float:
         """Commit a bounded application decision without manufacturing care."""
+        return self.apply_relationship_penalty("withholding", loss)
+
+    def apply_relationship_penalty(self, kind: str, loss: float) -> float:
         previous = self.friendship
-        self._change(friendship=friendship_after_withholding(previous, loss))
+        progress = apply_negative_event(self, kind, loss)
+        self._change(friendship=progress.points, relationship=progress.history)
         return previous - self.friendship
 
     def _credit_friendship(
@@ -337,11 +367,16 @@ class PetState:
         )
         if transition is None:
             return
+        history = transition.history
+        legacy_rewards = self.care_last_rewards
+        if transition.points > self.friendship:
+            legacy_rewards[action] = stamp
         self._change(
-            friendship=transition.friendship, friendship_day=transition.day,
-            friendship_gained_today=transition.gained_today,
-            care_types_today=transition.care_types,
-            care_last_rewards=transition.last_rewards,
+            friendship=transition.points, relationship=history,
+            friendship_gained_today=sum(e.amount for e in history.rewards),
+            friendship_day=context_at(stamp).day_key,
+            care_types_today=tuple(dict.fromkeys(e.kind for e in history.rewards)),
+            care_last_rewards=tuple(legacy_rewards.items()),
         )
 
     def interact(

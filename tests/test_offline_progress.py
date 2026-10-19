@@ -14,6 +14,7 @@ from aiko_pet.application.session import PetSessionRestorer
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
+from aiko_pet.pet.friendship_decay import passive_friendship
 from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory
 from aiko_pet.pet.state import PetState
 
@@ -58,7 +59,8 @@ class OfflineProgressTests(unittest.TestCase):
         self.assertEqual(session.state.sleep_origin, "routine")
         self.assertAlmostEqual(session.state.energy, 20 - .5 * 3 + 7.5 * 7.5)
         self.assertLess(session.state.satiety, 75)
-        self.assertEqual(session.state.friendship, 15)
+        self.assertAlmostEqual(session.state.friendship, passive_friendship(15, 2))
+        self.assertIsNone(session.state.friendship_history.last_contact)
 
     def test_offline_time_does_not_generate_food_or_human_care(self) -> None:
         now = local_stamp(10)
@@ -80,7 +82,9 @@ class OfflineProgressTests(unittest.TestCase):
         self.assertEqual(session.state.satiety, 0)
         self.assertEqual(session.state.lived_seconds, 3 * 3600)
         self.assertFalse(session.state.sleeping)
-        self.assertEqual(session.state.friendship, 40)
+        self.assertLess(session.state.friendship, 40)
+        self.assertIsNone(session.state.friendship_history.last_contact)
+        self.assertEqual(session.state.friendship_history.rewards, ())
         self.assertEqual(session.state.care_types_today, ["pet"])
         self.assertEqual(session.state.care_last_rewards, saved.care_last_rewards)
         self.assertEqual(session.adaptive.memory.hour_seconds, memory.hour_seconds)

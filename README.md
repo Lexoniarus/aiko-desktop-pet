@@ -105,7 +105,10 @@ does not generate meals; live supply uses offered or autonomously collected
 World portions. Closed-time consumption of saved stock is a later delivery step.
 [Save format, backups, time rules and editable JSON data →](docs/DATA_AND_SAVES.md)
 The real clock still determines meals and daily routine. Friendship remains a
-separate, slowly earned bond with the existing daily limits.
+separate bond with shared rolling care limits, progressive real-time absence
+loss and sustained-neglect history. Personal care renews contact even when
+its reward is exhausted; hover, app opening and autonomous eating do not.
+[Current friendship rules →](docs/FRIENDSHIP_SYSTEM.md)
 
 Disable **Observe computer** or **Learn rhythm** individually from the settings panel if you do not want those behaviors. See [rhythm and dialogue ownership](docs/ARCHITECTURE.md#rhythm-and-dialogue) for the current implementation.
 

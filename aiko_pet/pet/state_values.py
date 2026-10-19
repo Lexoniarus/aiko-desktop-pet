@@ -10,6 +10,7 @@ from dataclasses import dataclass
 
 from .care_result import CareResult
 from .food import FoodState
+from .friendship_history import FriendshipHistory
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,6 +38,7 @@ class PetValues:
     food: FoodState
     fun: float
     lived_seconds: float = 0.0
+    relationship: FriendshipHistory = FriendshipHistory()
 
 
 @dataclass(frozen=True, slots=True)

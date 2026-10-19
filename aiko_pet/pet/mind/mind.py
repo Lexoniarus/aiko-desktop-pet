@@ -53,6 +53,8 @@ class PetMind:
         self.rng = rng or random.Random()
         self.book = book
         self.clicks: deque[float] = deque(maxlen=self.MAX_CLICKS_IN_BURST)
+        self.click_annoyance = False
+        self._click_warned = False
         self.irritated_until = -1.0
         self.warm_until = -1.0
         self.last_contact = started_at
@@ -212,6 +214,9 @@ class PetMind:
         self.last_contact = now
         if self.clicks and now - self.clicks[-1] > self.CLICK_WINDOW_SECONDS:
             self.clicks.clear()
+        if not self.clicks:
+            self._click_warned = False
+        self.click_annoyance = self._click_warned and not state.sleeping
         self.clicks.append(now)
         count = len(self.clicks)
         if state.sleeping:
@@ -237,7 +242,12 @@ class PetMind:
             self.irritated_until = max(
                 self.irritated_until, now + BALANCE.number("mind", "irritation_seconds")
             )
-        return self.select_reaction(decision.event, state, context, now)
+        reaction = self.select_reaction(decision.event, state, context, now)
+        if reaction is not None and decision.event in (
+            "click_boundary", "click_work_boundary", "click_withdrawn_boundary",
+        ):
+            self._click_warned = True
+        return reaction
 
     def observe_care(
         self,

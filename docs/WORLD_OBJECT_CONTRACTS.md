@@ -101,6 +101,17 @@ the others. Actual endpoint coverage, completed local evidence and exhausted
 eligible candidates allow a final unsuccessful-search reaction. Time alone or
 one failed arrival does not manufacture confirmed absence or route completion.
 
+## Relationship consequences of personal contact
+
+Actual personal intake renews friendship contact and may earn bounded rolling
+credit; placing an item or autonomous eating does not. The existing observed
+withholding episode can request 0.5 loss after three takes or eighteen seconds
+held, then once per thirty seconds while it continues. PetState's saved rolling
+budget limits all episodes together to two points per two minutes. Returning
+stops future holding losses without refunding them. No physical item identity
+or custody change is inferred from a relationship consequence. See the
+[friendship guide](FRIENDSHIP_SYSTEM.md) for passive loss and qualification.
+
 ## Grounded German object speech
 
 Noticing an unknown item says “Gegenstand”, without leaking its type. Actual

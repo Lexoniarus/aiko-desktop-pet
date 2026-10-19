@@ -1300,19 +1300,19 @@ class WorldGuiTests(unittest.TestCase):
             world.now += .5
             world.update(time.monotonic())
             self.complete_feedback()
-        self.assertAlmostEqual(self.app.state.friendship, initial - .15)
+        self.assertAlmostEqual(self.app.state.friendship, initial - .5)
         self.assertEqual(self.app.mind.emotion(self.app.state, time.monotonic()),
                          "irritated")
         self.assertEqual(world.interaction.phase, "await_return")
         stored = self.app.store.load_session().state
-        self.assertAlmostEqual(stored.friendship, initial - .15)
+        self.assertAlmostEqual(stored.friendship, initial - .5)
         world.cursor.cancel()
         self.complete_feedback()
         self.complete_feedback()
-        self.assertAlmostEqual(self.app.state.friendship, initial - .15)
+        self.assertAlmostEqual(self.app.state.friendship, initial - .5)
         self.restart()
         self.assertFalse(self.app._world.interaction.active)
-        self.assertAlmostEqual(self.app.state.friendship, initial - .15)
+        self.assertAlmostEqual(self.app.state.friendship, initial - .5)
 
     def test_absent_remembered_instance_requires_deliberate_place_check(self):
         world = self.app._world

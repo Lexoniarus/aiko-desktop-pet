@@ -140,7 +140,7 @@ class ElapsedAdvancementTests(unittest.TestCase):
         pet = PetState(updated_at=NOW)
         pet.advance(NOW + duration, auto_routine=True)
         self.assertEqual(pet.lived_seconds, duration)
-        self.assertEqual(pet.friendship, 15)  # No new relationship model yet.
+        self.assertEqual(pet.friendship, 0)  # The complete known absence is charged.
         self.assertIsNone(pet.food.last_food_id)
 
     def test_current_activity_flags_do_not_cancel_unobserved_night_sleep(self) -> None:

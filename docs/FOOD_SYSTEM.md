@@ -2,7 +2,8 @@
 
 > This guide describes stage 2 on `feature/social-optimization`. The
 > [need balance proposal](NEEDS_BALANCE_PROPOSAL.md) preserves the discussion
-> and daily schedules. Friendship loss and adaptive sleep remain later stages
+> and daily schedules. Progressive friendship is implemented in stage 3;
+> adaptive sleep remains later work
 > of the [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
 
 The baseline requires several daily care phases, including normal meals and

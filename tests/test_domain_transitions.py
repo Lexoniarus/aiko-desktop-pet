@@ -80,7 +80,7 @@ class DomainTransitionTests(unittest.TestCase):
             setattr(needs, "fun", 0)
         self.assertIsNotNone(friendship)
         assert friendship is not None
-        self.assertGreater(friendship.friendship, state.friendship)
+        self.assertGreater(friendship.points, state.friendship)
 
     def test_invalid_duration_preserves_the_pure_need_result(self) -> None:
         state = PetState(updated_at=START)
@@ -121,10 +121,10 @@ class DomainTransitionTests(unittest.TestCase):
         assert decision is not None
         self.assertEqual(encode_pet_state(state), original)
         state._credit_friendship("pet", START, 30)
-        self.assertEqual(state.friendship, decision.friendship)
-        self.assertEqual(state.friendship_day, decision.day)
-        self.assertEqual(state.friendship_gained_today, decision.gained_today)
-        self.assertEqual(tuple(state.care_types_today), decision.care_types)
+        self.assertEqual(state.friendship, decision.points)
+        self.assertEqual(state.friendship_history, decision.history)
+        self.assertEqual(state.friendship_gained_today,
+                         sum(e.amount for e in decision.history.rewards))
         unchanged = encode_pet_state(state)
         state._credit_friendship("pet", START + 10, 0)
         self.assertEqual(encode_pet_state(state), unchanged)

@@ -1,11 +1,11 @@
 # Care, relationship and real-time implementation plan
 
-> **Active implementation plan; stages 1 and 2 implemented and verified.** Requested on 2026-10-19
+> **Active implementation plan; stages 1–3 implemented and verified.** Requested on 2026-10-19
 > on `feature/social-optimization`, reviewed against clean baseline `42de63a`.
 > The owner accepted the latest discussed balance as a sufficient starting
 > point for implementation planning. This document plans that first delivery.
-> Stages 1 and 2, B1 and B2 are implemented and verified below.
-> Stages 3–6 remain pending.
+> Stages 1–3, B1 and B2 are implemented and verified below.
+> Stages 4–6 remain pending.
 
 ## Goal and boundaries
 
@@ -34,7 +34,7 @@ emotional memories. It does not reopen the authored dialogue rewrite. Future
 resource types may use the same contracts, but only existing food/drinks are
 implemented now.
 
-## Current gaps and ownership
+## Baseline gaps and ownership
 
 Follow [the canonical architecture](ARCHITECTURE.md). `PetState` remains the
 single mutable pet aggregate, backed by immutable `PetValues`; pure policies
@@ -96,7 +96,8 @@ incompatible time, sleep and save behavior in place.
 | Stage 2: needs and mood | Implemented in the separate feature commit containing this record; 1,177 tests and pinned static checks passed; isolated native care/save/reopen passed |
 | B1: idle repeated-click regression | Implemented in the separate fix commit containing this record; 1,185 tests, pinned static checks and native Windows clicks passed; no new friendship penalty |
 | B2: object recognition and German dialogue | [Detailed plan](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); Implemented as `4757da7` and `b984078`, pushed; 1,203 tests and pinned static checks passed; isolated real-timer native Onigiri flow passed (21 text bubbles); no save migration |
-| Stages 3–6 | Pending |
+| Stage 3: friendship, contact and neglect | Implemented in the separate feature commit containing this record; 1,226 Windows tests and pinned static checks passed; native return/input/care/save/reopen passed |
+| Stages 4–6 | Pending |
 
 ### B2 execution record, 2026-10-19
 
@@ -195,7 +196,8 @@ approved schedule, using actual accepted food, talk, petting and completed
 three-round games. All five food portions are accepted, all needs remain above
 40, and the need minima and actual mood ranges match the proposal within 0.1
 point. Manual 23:00–07:00 sleep and light office activity are explicit inputs;
-these tests do not certify the still-pending friendship or learned-sleep stages.
+these stage-2 tests did not certify friendship or learned sleep; the stage-3
+verification is recorded separately below.
 Final local verification on Windows/Python 3.11.9 passed **1,177 tests in
 258.671 seconds**, with no failures, errors or skips. Ruff 0.13.2, strict
 Mypy 1.18.2 (188 application files) and Pyright 1.1.414 passed. The story GUI
@@ -266,6 +268,66 @@ without enabling incomplete runtime behavior.
 
 Exit: known care sequences have the stated effects; zero needs, multiple
 deficits, changing targets and sleep transitions remain numerically consistent.
+
+### Stage-3 implementation decisions, 2026-10-19
+
+Implemented from clean baseline `0b43549`. The canonical pure friendship
+policy returns immutable history/point transitions applied only by PetState.
+All history uses `lived_seconds`, not wall-clock timestamps. Legacy saves start
+tracking at first upgrade/reconstruction completion; no historical contact or
+neglect is inferred. Existing legacy reward fields remain compatibility reads,
+not a second reward calculation.
+
+An eligible same-type attempt anchors the two-hour interval even if the shared
+budget or 100-point limit leaves no credit. Earlier repetitions do not move
+that anchor. No variety bonus remains. Accepted talk/petting count at the
+existing committed care transition; interrupting later presentation cannot
+create a second contact/reward. Declined or pre-commit cancelled care does not
+count. One completed play round is contact; at least two qualify for reward.
+Personally consumed food/drink count at actual intake, not placement or offer.
+
+Neglect uses bounded minute buckets of per-need critical/zero exposure in the
+preceding 24 hours. It preserves disjoint episodes and expires by lived time;
+within-bucket distribution/expiry has at most one-minute resolution. Needs and
+relationship share chronological numeric integration. Passive scaling is
+integrated continuously across factor anchors, not once per day.
+
+Click warnings are the existing `click_boundary`, `click_work_boundary` and
+`click_withdrawn_boundary` events. Only a later admitted click in that existing
+burst can deduct 0.25, bounded to 1 per rolling minute. Story-reading and
+blocked clicks never qualify. Existing withdrawal evidence retains the
+18-second grace or three takes, then 0.5 per 30 seconds, globally bounded to
+2 per rolling two minutes. The aggregate persists both negative-action budgets
+so reopening/new episodes cannot reset them. Return stops future holding
+charges without a refund; offline time invents no negative events.
+
+### Stage-3 verification record, 2026-10-19
+
+Final Windows/Python 3.11.9 verification passed **1,226 tests in 282.452
+seconds**, with no failures, errors or skips. Ruff 0.13.2, strict Mypy 1.18.2
+(193 application/tool source files) and Pyright 1.1.414 passed. The first
+integration run identified superseded expectations for zero offline loss,
+calendar rewards and the variety bonus; those cases now assert the approved
+rules. Architecture, checkpoint, World and dialogue gates remain intact.
+
+Production policies reproduce the six isolated daily care comparisons over
+540 days. The actual eight-/four-phase care-and-need scenarios also pass:
+no need below 40, no neglect, high care at about 96–100 and average care at
+about 69–71. Neglect tests cover disjoint exposure, zero grace, per-interval
+max rather than sum/day-total max, expiry, sleep-energy exemption, migration,
+rollback/save history and a bounded 30-day gap.
+
+The separate [native Windows record](WORLD_SMOKE_TEST.md#stage-3-friendship-contact-and-neglect-2026-10-19)
+verified an isolated eight-hour return from 95 to about 91, reopening without
+replay, seven injected mouse clicks with -0.25 only after a boundary, accepted
+care and reward-limited care after restart. UI labels showed the current value
+and level. The normal save was untouched. New runtime friendship rules are
+maintained in [FRIENDSHIP_SYSTEM.md](FRIENDSHIP_SYSTEM.md).
+
+No merge is included. Feature pushes do not run the full remote test workflow;
+the separately dispatched static audit is checked for the actual pushed SHA.
+Stages 4–6, adaptive sleep/finite closed-time stock care and physical standby
+acceptance remain separate work.
 
 ### 3. Implement friendship, contact and neglect
 
@@ -339,8 +401,8 @@ Implemented scope and retained regression requirements:
 
 Deliver this as a separate bugfix before stage 3 attaches the agreed negative
 friendship effects. The acceptance requirements above remain regression checks;
-stage 3 and the separate physical-standby acceptance are still pending.
-B2 was subsequently delivered in the separate fixes recorded above.
+The separate physical-standby acceptance remains pending. Stage 3 and B2
+were subsequently delivered and verified as recorded above.
 
 ### 4. Integrate adaptive sleep and finite closed-time care
 
@@ -444,11 +506,11 @@ record before their implementation, not reasons to restart the design:
 | Detail | Starting approach / decision needed |
 | --- | --- |
 | Reserve fade and high-fun saturation | Start with the calculated linear reserve fade (full protection from 80 reserve minutes, now capped at 25%) and retain the existing high-fun reward reduction. Verify both schedules with those choices. |
-| Same-type rewards and old variety bonus | Start with no extra same-type friendship reward inside two hours and no separate variety bonus, as in the combined calculations. Need care and qualified contact remain possible. Specify whether an unrewarded repetition moves the eligibility anchor; do not let exhausted shared budgets accidentally create unlimited eligibility. |
+| Same-type rewards and old variety bonus | Resolved in stage 3: no variety bonus; early repetitions do not move the anchor; eligible attempts consume the interval even without remaining reward; qualified contact is independent. |
 | Input/load normalization | Reuse available coarse observations; validate the approximately 30% CPU/GPU threshold and input range with idle, office and heavy-load cases. Do not interpret RAM occupancy as evidence of human presence. |
 | Quiet-phase grouping and nap duration | Choose one simple main quiet phase per day, an explicit timing-similarity rule and one deterministic duration within the discussed 60–90-minute nap range. Preserve the three/seven milestones and adjustment limit; avoid extra scoring, weekday models or new sensors. |
 | Episode boundaries and conflicting care | Specify when a sleep phase ends, when a genuinely new offer permits another search, and the low-energy hunger-break collision after manual protection. Keep acute care bounded and return to needed recovery. Specify when an explicit care command wakes Aiko versus being deferred. |
-| Negative-interaction episodes | Use actual existing click/withholding evidence and the discussed limits; define the warning/boundary and episode resets before adding numerical penalties. Do not infer intent from every click. |
+| Negative-interaction episodes | Resolved in stage 3: existing selected boundary events warn within the current click burst; only later admitted clicks qualify. Existing claimed-object episode evidence retains 18-second/three-take escalation. Durable rolling caps survive episode/restart boundaries. |
 | Positive expressions and old settings | Choose reachable mood thresholds without forcing routine care to maximum mood; record how current routine/preferences map to the new autonomous behavior. |
 
 If one of these changes the accepted care burden or relationship outcome,

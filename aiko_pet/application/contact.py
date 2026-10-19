@@ -115,14 +115,14 @@ class ContactCoordinator:
         self.enter()
         now = time.monotonic()
         self._adaptive.note_interaction(time.time())
-        self.react_to_click(
-            self._mind.click(
-                button,
-                self._state,
-                self._ports.context(),
-                now,
-            )
+        reaction = self._mind.click(
+            button, self._state, self._ports.context(), now,
         )
+        if self._mind.click_annoyance:
+            self._state.apply_relationship_penalty(
+                "click", BALANCE.number("friendship", "click_loss"),
+            )
+        self.react_to_click(reaction)
 
     def react_to_click(self, reaction: Reaction | None) -> None:
         if self._ports.game_open():

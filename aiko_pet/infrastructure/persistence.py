@@ -18,6 +18,7 @@ from ..pet.mind.adaptive_models import AdaptiveMemory
 from ..pet.mind.object_knowledge import ObjectMemorySnapshot
 from ..pet.state import PetState
 from ..world.contracts import ObjectInteraction, WorldSnapshot
+from .friendship_codec import valid_friendship
 from .item_assets import load_item_catalog
 from .object_memory_codec import decode_object_memory, encode_object_memory
 from .pet_codec import decode_pet_state, encode_pet_state, valid_pet_time
@@ -162,6 +163,14 @@ class StateStore:
             isinstance(pet_data, dict) and "time" in pet_data
             and not valid_pet_time(pet_data["time"])
         )
+        invalid_relationship = (
+            isinstance(pet_data, dict) and "relationship" in pet_data
+            and (invalid_time or not valid_friendship(
+                pet_data["relationship"],
+                pet_data.get("time", {}).get("lived_seconds", 0)
+                if isinstance(pet_data.get("time"), dict) else 0,
+            ))
+        )
         if (
             isinstance(payload, dict)
             and type(payload.get("version")) is int
@@ -169,6 +178,7 @@ class StateStore:
             and not self._invalid_world
             and not self._invalid_memory
             and not invalid_time
+            and not invalid_relationship
         ):
             return
         backup = self.path.with_name(

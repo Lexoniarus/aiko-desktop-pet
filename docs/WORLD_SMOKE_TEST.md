@@ -46,7 +46,7 @@ messages do not supply evidence for actual standby/resume behavior.
 Use a temporary save or the isolated launcher below, never the normal save.
 For that stage, new care/need/friendship/sleep balance was not active.
 Stage 2 now supplies the numeric need/mood rules in the maintained guides;
-friendship loss and adaptive sleep remain pending.
+stage 3 now supplies friendship loss; adaptive sleep remains pending.
 
 - Run briefly, save/close, wait and reopen the same isolated save. Check that
   needs/digestion and `pet.time.lived_seconds` include the closed interval and
@@ -144,6 +144,41 @@ place, then place a new Onigiri in reach. Identification during search should
 produce one possessive found response; another identification after that
 search is an indefinite new-portion response. Unknown sightings alone must
 not produce a named found response.
+
+## Stage-3 friendship, contact and neglect, 2026-10-19
+
+The completed stage passed **1,226 Windows tests in 282.452 seconds** and
+pinned Ruff, strict Mypy (193 application/tool source files) and Pyright.
+The direct-canvas regression separately verifies the rolling one-point click
+cap, continuing after the prior reply animation ends, and preserves blocked
+care/game/story input. Claimed-object native coverage verifies -0.5, receipt
+idempotence, return without refund, actual save and restart.
+
+A separate native probe created its own system-temp save with genuine
+accepted petting followed by manual sleep eight hours earlier. Normal desktop
+restoration produced approximately **95 → 91** friendship and energy 100.
+Closing/reopening the same save deducted only the short new interval, not
+another eight hours. Explicit waking did not renew care contact.
+
+For stable injected-input verification the probe then stopped background
+render/greeting timers, selected an opaque visible sprite pixel and checked
+`WindowFromPoint` against the actual canvas before sending Windows mouse
+button events. Seven delivered clicks reached counts 1–7: count 6 displayed
+`click_boundary` with no loss, and count 7 deducted **0.25**. The contact clock
+remained unchanged. A preliminary run with rendering active missed one
+injected click and is not counted as completed input acceptance.
+
+Actual accepted petting then awarded the high-need reduced **0.25**, renewed
+contact and displayed native German speech. The toolbar showed
+`Freundschaft  91% · Lv 10`. Save/reopen retained the histories; an immediate
+accepted repeat renewed contact without another award. The pointer was
+restored and all probe windows closed. Only the isolated save was read/written.
+
+This is native restoration, input, visible-label and care/save acceptance.
+The eight-hour gap was constructed in the isolated fixture; it is not a claim
+of waiting eight hours or physically suspending Windows. Physical standby and
+adaptive sleep remain separate. See [current friendship rules](FRIENDSHIP_SYSTEM.md)
+and the [stage-3 plan record](CARE_TIME_IMPLEMENTATION_PLAN.md#stage-3-verification-record-2026-10-19).
 
 ## Isolated launcher
 

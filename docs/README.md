@@ -16,6 +16,7 @@ and test-cleanup plans.
 | Toolbar, action availability, details and native windows | [UI window contract](UI_WINDOW_CONTRACT.md) |
 | Packaged JSON, save versions, recovery and time | [Data and saves](DATA_AND_SAVES.md) |
 | Food, digestion, workload and item graphics | [Food system](FOOD_SYSTEM.md) |
+| Progressive friendship, personal contact and neglect | [Friendship rules](FRIENDSHIP_SYSTEM.md) |
 | Need rewards and overall mood | [Fun and mood](FUN_MOOD_SYSTEM.md) |
 | Animation profile and playback timing | [Animation timing](ANIMATION_TIMING_PROFILE.md) |
 | Source installation on Windows | [Windows setup](WINDOWS_SETUP.md) |
@@ -26,6 +27,14 @@ and test-cleanup plans.
 [CHANGELOG](../CHANGELOG.md) summarizes current unreleased changes and milestones.
 
 ## Validation and acceptance
+
+- Stage 3 on 2026-10-19 passed **1,226 native Windows tests in 282.452
+  seconds**, no failures/errors/skips, plus pinned Ruff/Mypy/Pyright (193
+  application/tool source files). Six production-policy daily comparisons,
+  both actual care schedules, rolling caps, sustained neglect, migration and
+  restart passed. The isolated [native return/input/care probe](WORLD_SMOKE_TEST.md#stage-3-friendship-contact-and-neglect-2026-10-19)
+  also passed; the [active plan](CARE_TIME_IMPLEMENTATION_PLAN.md) records
+  stage 3 complete. Sleep and physical-standby acceptance remain separate.
 
 - B2 on 2026-10-19: `4757da7` adds subjective search reunion and `b984078`
   adds natural German object phrases and integrated regression. **1,203 native
@@ -109,10 +118,11 @@ and presentation owners but does not depend on online sources or translation.
 The latest discussed need, mood, friendship and simple sleep model has now been
 accepted as the basis for [implementation planning](CARE_TIME_IMPLEMENTATION_PLAN.md).
 The real-time/save foundation is committed and pushed (`59cab63`); stage 2
-now implements need/mood balance. Friendship and sleep stages remain pending. The original discussion disclaimers and superseded
+now implements need/mood balance, and stage 3 supplies progressive friendship.
+Adaptive sleep remains pending. The original discussion disclaimers and superseded
 examples remain historical context; the plan identifies the latest baseline
 and the small details to settle during delivery. Maintained guides distinguish
-implemented numeric rules from the later friendship/sleep work. Separate
+implemented numeric/relationship rules from the later sleep work. Separate
 fixes cover [idle repeated clicks](CARE_TIME_IMPLEMENTATION_PLAN.md#b1-restore-annoyance-from-repeated-direct-clicks-while-idle)
 and [subjective object reunion/German phrases](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md),
 both implemented and verified. The latter link is the completed delivery record.
@@ -123,7 +133,8 @@ discussed on 2026-10-19, including the later progressive upkeep factor and timed
 neglect rules. The latest revision has shared +0.75/two-hour and +5/24-hour gain
 ceilings, gentler lower upkeep, factor 2 at level 10 and comparisons from two
 to eight daily care visits. Earlier factors and unscaled examples are labeled
-separately. It remains unimplemented tuning; no values apply to the running application.
+separately. The historical proposal disclaimers describe its original discussion status;
+the latest curve is now implemented in [stage 3](FRIENDSHIP_SYSTEM.md).
 
 The [need balance and daily care proposal](NEEDS_BALANCE_PROPOSAL.md) records
 real-time need rates, care/food effects and an eight-period example day with

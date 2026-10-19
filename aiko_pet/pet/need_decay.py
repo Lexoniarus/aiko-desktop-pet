@@ -13,6 +13,8 @@ from .food import (
     advance_food,
     hardware_consumption_fraction,
 )
+from .friendship_decay import advance_friendship
+from .friendship_history import FriendshipProgress
 from .fun import advance_fun
 from .mood import MoodFactors, advance_mood, calculate_mood_target
 from .value_rules import clamp_need_value
@@ -64,6 +66,7 @@ class NeedProgress:
     needs: NeedLevels
     fun: float
     food: FoodState
+    relationship: FriendshipProgress | None = None
 
 
 def calculate_need_decay(
@@ -72,6 +75,7 @@ def calculate_need_decay(
     effort: float | None = None,
     *,
     food_activity: FoodActivity | None = None,
+    relationship: FriendshipProgress | None = None,
 ) -> NeedProgress:
     """Integrate changing needs and mood without mutating the input aggregate.
 
@@ -103,6 +107,7 @@ def calculate_need_decay(
     while remaining > 1e-9:
         seconds = min(remaining, step_limit)
         step_hours = seconds / 3600
+        before = (satiety, energy, fun, social, affection)
         progress = advance_food(
             food, satiety, step_hours, sleeping=record.sleeping, activity=activity,
         )
@@ -119,7 +124,12 @@ def calculate_need_decay(
             mood, target, step_hours,
             lowest_need=min(satiety, energy, fun, social, affection),
         )
+        if relationship is not None:
+            relationship = advance_friendship(
+                relationship, seconds, before,
+                (satiety, energy, fun, social, affection), sleeping=record.sleeping,
+            )
         remaining -= seconds
     return NeedProgress(
-        NeedLevels(satiety, mood, energy, social, affection), fun, food,
+        NeedLevels(satiety, mood, energy, social, affection), fun, food, relationship,
     )

@@ -64,6 +64,14 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.show.assert_called_once()
         self.assertEqual(self.reactions, [(None, 2800)])
 
+    def test_hover_greeting_and_ui_contact_do_not_renew_durable_care(self) -> None:
+        history = self.state.friendship_history
+        self.contact.enter()
+        self.contact.greet()
+        self.contact.record_contact(1000)
+        self.contact.click("left")
+        self.assertEqual(self.state.friendship_history, history)
+
     def test_busy_hover_only_opens_ui_and_busy_playback_ignores_clicks(self) -> None:
         for owner in ("foreground", "playback"):
             with self.subTest(owner=owner):

@@ -169,6 +169,7 @@ def plan_care_action(
                 ),
             ),
             result=CareResult("energy_drink", CareEffect.DRINK_CONSUMED),
+            reward_action="energy_drink", need_before=state.energy,
         )
     need_before = float(getattr(state, CARE_PRIMARY_NEED[action]))
     result = replace(
