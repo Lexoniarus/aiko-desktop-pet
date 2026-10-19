@@ -26,8 +26,12 @@ class _ScaledFrames(Sequence[tk.PhotoImage]):
         hd_paths: dict[str, Path], root: tk.Tk,
     ) -> None:
         self._originals = originals
+        self._hd_paths = hd_paths
+        self._root = root
         self._scale = scale
         self._zoomed = zoomed
+        self._hd_paths = hd_paths
+        self._root = root
         self._hd_paths = hd_paths
         self._root = root
 
@@ -120,6 +124,7 @@ class CharacterSpriteCache:
 
     def __init__(self, root: tk.Tk, catalog: CharacterCatalog) -> None:
         originals: dict[str, tuple[tk.PhotoImage, ...]] = {}
+        hd_paths: dict[str, tuple[Path, ...]] = {}
         by_path: dict[Path, tk.PhotoImage] = {}
         for state, clip in catalog.clips.items():
             loaded: list[tk.PhotoImage] = []
@@ -137,6 +142,11 @@ class CharacterSpriteCache:
                     by_path[path] = frame
                 loaded.append(frame)
             originals[state] = tuple(loaded)
+            hd_paths[state] = tuple(
+                frame.file.parents[2] / "frames_2x" / frame.file.parent.name
+                / frame.file.name
+                for frame in clip.frames
+            )
         self._originals = originals
         self._hd_paths = _hd_assets_by_original(by_path)
         self._shared_zoomed: dict[str, tk.PhotoImage] = {}
@@ -150,6 +160,7 @@ class CharacterSpriteCache:
             self._views[scale] = {
                 name: _ScaledFrames(
                     frames, scale=scale, zoomed=self._shared_zoomed,
+                    hd_paths=self._hd_paths[name], root=self._root,
                     hd_paths=self._hd_paths, root=self._root,
                 )
                 for name, frames in self._originals.items()
@@ -164,3 +175,4 @@ class CharacterSpriteCache:
         self._shared_zoomed.clear()
         self._hd_paths.clear()
         self._originals.clear()
+        self._hd_paths.clear()
