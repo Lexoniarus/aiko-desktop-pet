@@ -28,10 +28,11 @@ class GamePanel:
         outer = skin.frame(self.window)
         outer.pack(fill="both", expand=True, padx=3, pady=3)
         header = skin.header(outer, title)
+        header.configure(width=360)
         header.pack(fill="x")
         self._drag = WindowDrag(self.window, header)
         self.body = skin.frame(outer)
-        self.body.pack(fill="both", expand=True, padx=12, pady=10)
+        self.body.pack(padx=12, pady=10)
         self.status = tk.Label(
             outer, bg=skin.background, fg=skin.text, font=(skin.font, 10),
         )
@@ -41,7 +42,7 @@ class GamePanel:
         )
         self.score.pack(fill="x", padx=10, pady=5)
         self.next_button = skin.button(
-            outer, GERMAN_TEXT.format("game.next"), next_round,
+            outer, GERMAN_TEXT.format("game.next"), next_round, size="wide",
         )
         self.next_button.configure(state="disabled")
         self.next_button.pack(fill="x", padx=12, pady=4)
@@ -55,7 +56,7 @@ class GamePanel:
         x, y = bounded_position(
             root.winfo_rootx() + root.winfo_width() + 12,
             root.winfo_rooty() - height // 2, width, height,
-            root.winfo_screenwidth(), root.winfo_screenheight(),
+            root.winfo_screenwidth(), root.winfo_screenheight() - 45,
         )
         self.window.geometry(f"{width}x{height}+{x}+{y}")
         self.window.deiconify()

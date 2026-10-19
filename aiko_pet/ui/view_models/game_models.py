@@ -48,6 +48,6 @@ def place_hand(count: int, anchor: HandAnchor) -> HandLayout:
         anchor.x + (anchor.width - width) // 2, anchor.right - width,
     ))
     y = max(anchor.top, min(
-        anchor.y + anchor.height // 3, anchor.bottom - height,
+        anchor.y + anchor.height * 3 // 5, anchor.bottom - height,
     ))
     return HandLayout(x, y, width, height, step)

@@ -225,8 +225,9 @@ class HoverUi:
              if toolbar else 200)
         self.game_menu = GameMenu(
             self.root, x, y,
-            choices=(GameId.ROCK_PAPER_SCISSORS, GameId.TIC_TAC_TOE)
-            + ((GameId.BLACKJACK,) if self._ports.cards is not None else ()),
+            choices=(GameId.ROCK_PAPER_SCISSORS,)
+            + ((GameId.BLACKJACK,) if self._ports.cards is not None else ())
+            + (GameId.TIC_TAC_TOE,),
             selected=self.open_game, closed=self._game_menu_closed,
             always_on_top=self._ports.always_on_top(), skin=self._skin,
         )

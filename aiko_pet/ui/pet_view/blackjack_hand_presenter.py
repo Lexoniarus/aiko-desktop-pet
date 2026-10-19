@@ -20,6 +20,7 @@ class BlackjackHandPresenter:
         self._root, self._images, self._anchor = root, images, anchor
         self._topmost, self._configure = topmost, configure_window
         self._restore_stack = restore_stack
+        self._background = "#ff00ff" if sys.platform == "win32" else "#202733"
         self.window: tk.Toplevel | None = None
         self.canvas: tk.Canvas | None = None
         self._hand = HandView()
@@ -49,13 +50,13 @@ class BlackjackHandPresenter:
             self.window = tk.Toplevel(self._root)
             self.window.withdraw()
             self.window.overrideredirect(True)
-            self.window.configure(bg="#ff00ff")
+            self.window.configure(bg=self._background)
             self.window.wm_attributes("-topmost", self._topmost())
             if sys.platform == "win32":
                 self.window.wm_attributes("-toolwindow", True)
                 self.window.wm_attributes("-transparentcolor", "#ff00ff")
             self.canvas = tk.Canvas(
-                self.window, bg="#ff00ff", bd=0, highlightthickness=0,
+                self.window, bg=self._background, bd=0, highlightthickness=0,
             )
             self.canvas.pack()
             self.canvas.bind("<Motion>", self._motion)

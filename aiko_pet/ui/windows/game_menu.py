@@ -32,12 +32,14 @@ class GameMenu:
         self.window.bind("<Escape>", lambda _event: self.close())
         body = skin.frame(self.window)
         body.pack(fill="both", expand=True, padx=3, pady=3)
-        skin.header(body, GERMAN_TEXT.format("game.select")).pack(fill="x")
+        header = skin.header(body, GERMAN_TEXT.format("game.select"))
+        header.configure(width=240, cursor="arrow")
+        header.pack(fill="x")
         self.buttons: dict[GameId, tk.Button] = {}
         for game in choices:
             button = skin.button(
                 body, GERMAN_TEXT.format(f"game.name.{game.value}"),
-                partial(self.choose, game),
+                partial(self.choose, game), size="wide",
             )
             button.pack(fill="x", padx=10, pady=4)
             self.buttons[game] = button
@@ -47,10 +49,11 @@ class GameMenu:
         self.window.update_idletasks()
         x, y = bounded_position(
             x, y, self.window.winfo_reqwidth(), self.window.winfo_reqheight(),
-            root.winfo_screenwidth(), root.winfo_screenheight(),
+            root.winfo_screenwidth(), root.winfo_screenheight() - 45,
         )
         self.window.geometry(f"+{x}+{y}")
         self.window.deiconify()
+        self.window.focus_set()
 
     def choose(self, game: GameId) -> None:
         if not self._closed and game in self.buttons:
