@@ -868,9 +868,9 @@ not become a second permanent implementation.
 #### 5B. Define rules, then implement the emotional and wish models
 
 Continue discussing the remaining Moodlet and wish rules before implementation.
-The recorded poking, petting, repetitive-food, withholding and relocation
-proposals below establish concrete candidates; the remaining examples establish
-direction, not a complete approved balance:
+The recorded negative-interaction, repetitive-food and food-wish proposals below
+establish concrete candidates; the remaining examples establish direction, not
+a complete approved balance:
 
 - Repeated poking, excessive/unwelcome petting, repeatedly eating the same food,
   withholding a wanted object, disrupting known object locations and fulfilling
@@ -887,9 +887,10 @@ direction, not a complete approved balance:
 - Set how Moodlet contributions combine with numeric mood, existing deficit
   limits and recovery rates; define the overall emotional labels and their
   selection/priority rules. Short-lived direct responses retain distinct roles.
-- Set wish eligibility, selection, supported targets, concurrency, lifetime,
-  fulfillment, repetition and consequences of expiry. No suggested frequency,
-  active-wish limit, duration, bonus or expiry penalty is approved yet.
+- The food-wish proposal below records candidate eligibility, concurrency,
+  lifetime, fulfillment, repetition and expiry behavior. Complete any remaining
+  selection details and integrated balancing before implementation; this does
+  not approve future wish types or turn the proposal into shipped behavior.
 - Define how individual Moodlets affect speech and specific interaction
   willingness. Technical foreground/playback locks remain separate from a
   semantic refusal, which can have its own explanation. Preserve repeated-click
@@ -1202,9 +1203,75 @@ expiry. Finding/returning an object does not automatically refund past losses.
 Do not automatically charge a single take as both withholding and relocation;
 a later independent rearrangement may qualify as a separate event.
 
-Next discussion: concrete food wishes and the positive Moodlet for fulfillment.
-Wish selection, frequency, lifetime, attribution, rewards and emotional duration
-remain open; no earlier illustrative wish numbers are approved by this proposal.
+##### Recorded proposal: food wishes and fulfillment, 2026-10-19
+
+Status: owner-requested design proposal, not implemented. A food wish expresses
+specific appetite, such as wanting an apple later; it need not require low
+satiety. Immediate hunger or exhaustion takes priority over generating another
+wish. Wishes are opportunities for additional positive experiences, distinct
+from the ordinary care requirements and general requests for food variety.
+
+| Rule | Candidate value |
+| --- | --- |
+| Concurrent active wishes | One initially |
+| New-wish limit | Two per rolling twenty-four hours |
+| Minimum interval between wish creation | Six real hours |
+| Wish lifetime | Four real hours |
+| Wish creation | While Aiko is awake and the application is running |
+| Target | A specific implemented food ID; a matching portion need not currently exist on the desktop |
+| Presentation | Specific food and remaining time in the existing status UI, with occasional appropriate bubble expression |
+
+Choose from suitable existing food types with variety in mind; do not request
+the food whose repetition is currently upsetting her. A wish does not prove
+that any matching World object exists, is visible or has been identified.
+Do not generate a backlog of hypothetical wishes while the app is closed.
+Save an existing wish and advance its deadline through sleep, standby and
+closed-app time instead of renewing it on restart.
+
+Fulfill the wish once when a matching portion is actually accepted and consumed
+within its active lifetime. Placement, an offer, a selected menu item or bubble
+playback alone does not fulfill it. Preserve ordinary satiety/acceptance rules.
+Other food remains consumable under its own rules; it does not satisfy the
+specific wish, which remains until fulfillment or expiry.
+
+Working fulfillment Moodlet label: "Exactly what I wanted". Propose a total
+five-point positive contribution to numeric mood target for two real hours,
+with actual mood following its normal timed response. Emotional quality is joy
+and satisfaction; personal fulfillment can additionally support warmth toward
+the user. The immediate happy response at intake remains distinct from the
+lasting impression. Positive and negative impressions coexist; fulfillment
+does not erase irritation, prior losses or other Moodlets.
+
+Initially do not stack the intensity of this fulfillment Moodlet. Another
+genuinely fulfilled wish would renew its two-hour duration rather than create
+multiple copies or a larger bonus. Repeated portions after one wish's completion
+are not additional fulfillments. The creation limits above remain independent
+of the emotional duration; reaching another wish is not an excuse to bypass them.
+
+Autonomous consumption can satisfy the active food wish and create the positive
+impression, without implying that the user personally supplied it. This also
+applies to valid, finite known-stock intake reconstructed before the wish's
+deadline. Do not invent handovers, personal gratitude or relationship credit
+from self-care. Use the existing consumption origin and joint World/Pet/memory
+transaction to apply fulfillment, impression and any eligible reward once.
+
+For a personal handover fulfilling the wish, propose a nominal additional
+0.25 friendship points within the existing shared rolling reward ceilings:
+0.75 points per two hours and five points per twenty-four hours. It does not
+create another independent reward allowance. Ordinary food credit still follows
+its existing rules; effective additional wish credit depends on remaining
+allowance. Exhausted friendship reward capacity does not prevent fulfillment
+or the positive Moodlet. Persist completion and reward accounting so repeated
+loads/retries cannot replay either effect.
+
+An unfulfilled wish expires without a negative Moodlet or friendship deduction.
+It is not an additional mandatory care task. Detailed candidate-selection
+tie-breaks and any unresolved interaction with existing reward qualification
+must be recorded before implementation, without silently changing care balance.
+
+Next discussion: emotional impressions from prolonged/repeated poor care.
+Review existing critical/zero exposure, need-derived mood and neglect-related
+friendship loss before specifying additional triggers, intensity and recovery.
 
 #### 5C. Connect status, expression and interaction decisions
 
