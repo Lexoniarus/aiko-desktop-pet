@@ -31,7 +31,7 @@ class TextCatalogTests(unittest.TestCase):
         self.assertEqual(load_packaged_text_catalog(), loaded)
         self.assertEqual(
             GERMAN_TEXT.format("care.feed_repeat", food="Apfel"),
-            "Schon wieder Apfel? ...Na gut.",
+            "Schon wieder Apfel? Ich hätte beim nächsten Mal gern etwas Abwechslung.",
         )
 
     def test_emotion_and_duplicate_status_copy_have_one_json_owner(self) -> None:
