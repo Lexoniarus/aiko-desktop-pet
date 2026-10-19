@@ -50,12 +50,12 @@ class PetStateTests(unittest.TestCase):
         before = encode_pet_state(state)
         self.assertIn("Spiel", format_care_response(state.interact("play")))
         self.assertEqual(encode_pet_state(state), before)
-        self.assertIn("tut gut", format_care_response(state.interact("pet")))
+        self.assertIn("streicheln", format_care_response(state.interact("pet")))
         self.assertEqual(state.affection, 100)
 
     def test_play_when_exhausted_does_not_apply_cost(self):
         state = PetState(mood=20, energy=7)
-        self.assertIn("Energie", format_care_response(state.interact("play")))
+        self.assertIn("Schlaf", format_care_response(state.interact("play")))
         self.assertEqual((state.mood, state.energy), (20, 7))
 
     def test_sleep_toggle_and_feeding_wakes(self):

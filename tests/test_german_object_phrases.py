@@ -98,7 +98,7 @@ class GermanObjectPhraseTests(unittest.TestCase):
             "object-recognized-01": "Ah, ein Onigiri!",
             "voice-object_recognized-0011": "Oh, ein Onigiri! Jetzt erkenne ich es.",
             "object-place-missing-here": "Hä? Wo ist denn mein Onigiri hin?",
-            "object-found-nearby": "Ah, da ist ja wohl mein Onigiri!",
+            "object-found-nearby": "Ah, da ist mein Onigiri.",
         }
         for key, text in expected.items():
             line = lines[key]

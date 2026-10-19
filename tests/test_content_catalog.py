@@ -26,7 +26,7 @@ class TextCatalogTests(unittest.TestCase):
     def test_feeding_fallbacks_use_complete_food_phrases(self) -> None:
         for effect, expected in (
             (CareEffect.FOOD_MEAL,
-             "Ah, ein Onigiri! Eine richtige Mahlzeit. Danke, ich mache kurz Platz."),
+             "Oh, ein Onigiri! Du hast an mein Essen gedacht. Danke!"),
             (CareEffect.FOOD_REPEAT,
              "Schon wieder ein Onigiri? Ich hätte beim nächsten Mal gern "
              "etwas Abwechslung."),

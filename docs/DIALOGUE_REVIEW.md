@@ -1,5 +1,10 @@
 # Bubble dialogue review workbook
 
+> **Historical wording snapshot.** The subsequent complete German dialogue
+> revision is documented in [DIALOGUE_REVISION_PLAN.md](DIALOGUE_REVISION_PLAN.md).
+> The rows below preserve the earlier originals and B2 review decisions;
+> current runtime wording and filters are owned by `aiko_pet/data/dialogues.de.json`.
+
 > **Editorial review only.** Created 2026-10-19 on
 > `feature/social-optimization`, from baseline `f4c6e3f`.
 > B2 review on 2026-10-19: all **138 object sequences** and **three food

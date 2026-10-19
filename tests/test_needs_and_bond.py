@@ -97,7 +97,8 @@ class NeedsAndBondTests(unittest.TestCase):
         self.assertEqual(state.energy, 100)
         before = encode_pet_state(state)
         self.assertIn(
-            "voll", format_care_response(state.interact("energy_drink", now=start + 8))
+            "wach genug",
+            format_care_response(state.interact("energy_drink", now=start + 8)),
         )
         self.assertEqual(before, encode_pet_state(state))
 
