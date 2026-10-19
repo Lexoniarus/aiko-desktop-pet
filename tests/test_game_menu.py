@@ -118,7 +118,8 @@ class GameMenuTests(unittest.TestCase):
         self.hover.open_game_menu()
         menu = self.hover.game_menu
         assert menu is not None
-        menu.window.update_idletasks()
+        menu.window.update()
+        self.assertTrue(menu.window.winfo_ismapped())
         self.assertEqual(list(menu.buttons), [
             GameId.ROCK_PAPER_SCISSORS, GameId.BLACKJACK, GameId.TIC_TAC_TOE,
         ])
