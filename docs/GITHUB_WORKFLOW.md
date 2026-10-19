@@ -16,21 +16,6 @@ The default branch is `main`. The first public feature baseline was v0.13; the c
 
 The one-off upload helper used for initial publication is **not part of the maintained repository**. Development should use normal Git and pull requests, not a script that copies a local folder and pushes directly to `main`.
 
-## Isolated verification of a feature branch
-
-The existing Tests workflow can also be dispatched manually with
-`gh workflow run tests.yml --ref <branch>`. A manual run executes the complete
-suite on Linux/Python 3.11 and 3.13 under Xvfb, plus the complete suite on a
-GitHub-hosted Windows/Python 3.11 runner. Ordinary PR/main runs retain the
-existing selected Windows boundary checks. Static diagnostics run in the
-Linux jobs in both modes.
-
-These test windows belong to disposable remote runners. Nothing is launched
-on the contributor's working desktop, no local pointer is driven and local
-save files are not uploaded. The run's head SHA must match the proposed
-runtime changes. CI cannot establish visible animation quality on a user's
-machine or physical suspend/resume behavior; record those checks separately.
-
 ## Public repository metadata
 
 GitHub's **About** description, topics and social preview are configured
