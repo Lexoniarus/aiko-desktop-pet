@@ -8,6 +8,13 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Add Unterhalten with existing Plaudern and separate API-only Single, Two Parts
+  and fact choices. Prepare two items per category through individual background
+  fetches after saved opt-in; preserve sources, introductions, punchline pauses
+  and shared talk care/friendship rules. Cancel stale waiting selections and
+  report failures without substitute content. Provider payloads remain in memory;
+  [social content](docs/SOCIAL_CONTENT.md) records behavior and owners.
+
 - Add the Spielen submenu with Rock–Paper–Scissors, Blackjack and Tic-Tac-Toe.
   Keep RPS's round flow; add local rules and
   outcome-neutral need profiles for the two new games. All session scores and

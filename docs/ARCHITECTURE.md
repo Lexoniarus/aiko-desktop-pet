@@ -4,6 +4,13 @@ Aiko Desktop Pet is a local-first Windows companion built with Python 3.11+, Tki
 
 The key design principle: **one owner per mutable state or external side effect**, with small, named interfaces between components. Imports point directly to the packages that own each responsibility.
 
+Optional [social API content](SOCIAL_CONTENT.md) uses an explicit opt-in. The
+application owns source-aware preparation and three two-item buffers through a
+worker port; `infrastructure/social_api.py` owns the single HTTP worker. Desktop
+coordination admits prepared content through the existing `talk` transition and
+reaction player. It creates no additional pet aggregate, settings owner or
+persistent content cache.
+
 Current behavior is defined in the [World contract](WORLD_OBJECT_CONTRACTS.md).
 The [documentation index](README.md) separates maintained guides, validation and
 accepted desktop behavior from [completed delivery history](history/README.md).

@@ -46,6 +46,21 @@ additional domain aggregate is introduced.
 
 ## Presence versus interaction
 
+### Conversations
+
+`Unterhalten` opens one transient selector for Plaudern, API Single, API Two Parts
+and facts. `HoverUi` includes it in control stacking, topmost propagation,
+hover detection and outside/Escape dismissal. Closing cancels pending content,
+not an already accepted story. Source controls reserve their layout space so
+revealing attribution does not move the menu outside the screen.
+
+An empty API buffer uses the existing speech/player surface for one holding
+line. The application exposes this holding state through a narrow contact port:
+deliberate care may replace it, while incidental hover/click replies do not.
+Actual conversation playback retains the normal care lock and reading-click
+behavior. Deferred start rechecks permission after World releases its own
+pending-action marker. See [social content](SOCIAL_CONTENT.md).
+
 ### Games
 
 `Spielen` opens one transient submenu for RPS, Blackjack and Tic-Tac-Toe.

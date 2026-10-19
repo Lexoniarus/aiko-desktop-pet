@@ -25,6 +25,11 @@ Resource files are loaded once and exposed as immutable catalogues. Restart
 Aiko after editing them. There is no runtime network download, arbitrary code
 execution or extra pip dependency for this data layer.
 
+Optional [social API content](SOCIAL_CONTENT.md) is separate from the packaged
+catalogues. The existing settings owner persists `online_social`, default false;
+only a saved Boolean true enables it. Provider content, preparation buffers and
+pending requests are session-local and never enter the version-one save.
+
 RPS, Blackjack and Tic-Tac-Toe sessions are temporary. Their scores, decks,
 boards and hidden/revealed cards are not serialized. Closing reports completed
 units through the existing application game-experience path before final save;

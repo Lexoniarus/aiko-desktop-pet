@@ -26,7 +26,10 @@ prepared API items per category. The selected delivery uses API entertainment
 content exclusively, without an authored local catalogue or local fallback;
 existing **Plaudern** remains available. These later decisions supersede earlier
 fallback assumptions for the new choices; the broader concept below remains
-preserved. The plan is documentation only and does not authorize implementation.
+preserved. Implementation was subsequently authorized and delivered on the
+feature branch; [current social behavior](SOCIAL_CONTENT.md) describes the
+runtime, and the plan records actual verification. Broader translation,
+horoscope and spontaneous-content ideas below remain future work.
 
 The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) records complete
 existing sequences and their conditions for individual editorial review before

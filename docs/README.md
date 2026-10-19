@@ -19,6 +19,7 @@ and test-cleanup plans.
 | Adaptive sleep, input learning and finite closed-time care | [Sleep rules](SLEEP_SYSTEM.md) |
 | Progressive friendship, personal contact and neglect | [Friendship rules](FRIENDSHIP_SYSTEM.md) |
 | Need rewards and overall mood | [Fun and mood](FUN_MOOD_SYSTEM.md) |
+| Unterhalten, API-only Single/Two Parts/facts, warming and shared care | [Social content](SOCIAL_CONTENT.md) |
 | Animation profile and playback timing | [Animation timing](ANIMATION_TIMING_PROFILE.md) |
 | Source installation on Windows | [Windows setup](WINDOWS_SETUP.md) |
 | Branches, reviews and CI | [Development workflow](GITHUB_WORKFLOW.md) |

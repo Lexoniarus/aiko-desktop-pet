@@ -113,6 +113,13 @@ By default, Aiko stores progress outside the repository at:
 
 Aiko runs locally. The current application does **not** send telemetry to a server, start an HTTP service, require a subscription or call an external AI inference API.
 
+The **Unterhalten** menu keeps authored **Plaudern** and adds separate Single,
+Two Parts and fact choices. These use JokeAPI and Random Useless Facts only after
+enabling **Onlinequellen für Witze und Fakten verwenden** in settings. Requests
+send no pet state, learned rhythm or workload observations. Two items per
+category are prepared individually in memory; there is no downloaded-content
+save or authored entertainment fallback. [Social content and sources →](docs/SOCIAL_CONTENT.md)
+
 Her workload observations are drawn from local CPU/GPU utilization, memory pressure, uptime and user-idle timing. They do not inspect files, process/application names, browser content, typed text or microphone input. Optional NVIDIA sampling uses local OS tooling. Learned rhythm summaries and pet progress are stored locally in the save file.
 
 Needs progress over real elapsed time, including closed-app and PC standby
