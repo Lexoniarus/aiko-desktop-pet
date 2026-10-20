@@ -1487,6 +1487,47 @@ by this proposal. Completion, stacking and each bubble/punchline must not
 repeat ordinary talk credit. Reconcile cross-family/group caps and wish
 creation/concurrency pacing in the integrated balance before implementation.
 
+##### Recorded proposal: affection wish and fulfillment Moodlet, 2026-10-20
+
+Status: owner-requested design proposal, not implemented. Initially use one
+concrete affection wish: "I want to be petted." Desired closeness can arise
+while the affection need is adequately supplied; a deficit is not required.
+Do not create several nominally different wishes for the same existing action.
+
+| Rule | Candidate value |
+| --- | --- |
+| Inner wish lifetime | Four real hours |
+| Expression | Friendship level at least three and numeric mood at least fifty, with petting currently welcome |
+| Fulfillment | One actually accepted petting interaction within the wish lifetime, including when the wish was unspoken |
+| Working fulfillment Moodlet | Feeling secure / warmth and connection (German working label: Geborgen) |
+| Initial strength and duration | Level one, a total +5-point mood-target contribution for two real hours |
+| Stacking | Another genuinely fulfilled, separate affection wish adds one level, capped at three (+5 / +10 / +15 total) |
+| Decay | Reduce by one level every two real hours without another qualifying fulfillment |
+
+Expression readiness does not determine whether Aiko can have the inner wish.
+Keep it separate from fulfillment and current action willingness. A wish does
+not override a refusal, an active petting boundary or ordinary friendship/
+affection acceptance thresholds. Rejected or technically blocked attempts do
+not fulfill it. Urgent needs and ongoing reactions retain speech priority.
+Opening status or queueing a request is not actual spoken expression.
+
+Apply ordinary affection care at its existing accepted interaction transition,
+then resolve the qualifying wish once with its lasting emotional impression.
+Repeated petting after that wish was fulfilled does not create another wish
+bonus or stack; a later independent wish must actually exist and be fulfilled.
+Renew the current two-hour interval on a qualifying additional fulfillment,
+without appending an unbounded expiry backlog. Apply elapsed decay first; an
+expired impression starts at level one. Advance wish deadlines and Moodlet
+ageing through standby and closed-app time on the existing elapsed axis.
+
+Numeric mood follows its normal timed response. Positive and negative
+impressions can coexist. A separate targeted mitigation rule may shorten an
+eligible negative impression, but this wish does not itself erase a boundary
+violation or refund friendship losses. Keep friendship reward accounting
+separate under existing shared limits; no additional reward amount is fixed
+here. Reconcile wish creation/concurrency and cross-family numeric caps before
+implementation, rather than silently assigning another reward allowance.
+
 ##### Open design requirement: positive experiences and negative Moodlets, 2026-10-20
 
 The owner requests explicit consideration of whether playing, social activity
@@ -1518,7 +1559,7 @@ and how repeated inputs are bounded. Preserve existing care-driven recovery,
 explicit interaction boundaries and separate friendship accounting. A positive
 wish must not silently bypass a refusal or treat a laugh, gift or win as proof
 that prior mistreatment was forgiven. Concrete mappings and values are the
-next discussion, alongside affection wishes; do not change existing proposals
+next discussion after the recorded affection wish; do not change existing proposals
 or implement an automatic cleansing effect without that agreement.
 
 ##### Recorded proposal: prolonged/repeated poor care, 2026-10-19
