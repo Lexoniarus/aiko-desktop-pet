@@ -8,6 +8,13 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Qualify hunger, exhaustion, stimulation, loneliness and closeness after-effects
+  from the existing rolling care history. Persist bounded handled-exposure
+  markers, preserve fresh residual burden and timed recovery through interruptions
+  and reopen, and use actual finite stock/sleep trajectories. Keep friendship
+  loss separate. Fix near-full minute coalescing and avoid redundant emotional
+  work in the fully represented zero-needs tail without shortening its tests.
+
 - Connect negative interaction experiences to Moodlets: delivered poke/petting
   boundaries, actual food repetition and variety requests, observed wanted-object
   withholding and subjective arrangement disruption. Preserve separate capped
@@ -20,8 +27,8 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   Compose capped positive/negative contributions with need-based mood through
   the existing progression path, splitting at expiry and recovery boundaries.
   Preserve timed mood response, critical-need ceilings and unobserved closed-time
-  ageing. Negative interaction triggers are delivered; poor-care exposure and
-  wish fulfillment remain later slices.
+  ageing. Negative interaction and poor-care triggers are delivered; wish
+  lifecycle and fulfillment remain later slices.
 
 - Persist immutable Moodlet episodes and inner wishes in the existing PetValues
   checkpoint and version-one save, including relief usage, original deadlines,

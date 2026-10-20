@@ -121,6 +121,12 @@ and helpful duration relief never add loss, refund it or create another reward.
 Each penalty kind is pruned by its own window; longer food budgets do not retain
 unbounded minute-by-minute click history.
 
+Stage 5B.5 reads this same bounded history to qualify prolonged-poor-care
+Moodlets. Processing watermarks are owned by MoodletState; the original care
+history is neither reset nor copied. Creating, escalating, recovering or keeping
+these after-effects adds no relationship penalty and no new contact/reward.
+Existing absence and neglect remain the sole passive friendship rules.
+
 ## Ownership and save compatibility
 
 `PetState` remains the sole mutable pet aggregate. Immutable
@@ -146,5 +152,5 @@ combined eight-phase day maintains level 10 around 96–100; the sufficiently
 supplied four-phase day stays around 69–71. Under the isolated adequate-care
 assumption, morning/evening visits settle around 34–36, rather than zero.
 Sparse contact is not a protected minimum against unmet needs or harassment.
-Adaptive sleep, closed-time stock consumption and richer offended-return
-expression/Moodlets remain separate stages.
+Adaptive sleep, finite closed-time stock consumption and negative Moodlets are
+delivered in their separate stages. Richer emotional expression remains later work.

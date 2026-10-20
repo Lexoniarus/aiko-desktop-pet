@@ -15,7 +15,8 @@
 > supplies typed definitions and JSON catalogues; 5B.2 adds aggregate-owned
 > state and storage. 5B.3 delivers Moodlet lifetime/relief and numeric mood
 > composition. 5B.4 now connects negative interaction experiences and targeted
-> helpful-action relief. Poor-care exposure and later wish/emotion/UI work
+> helpful-action relief. 5B.5 delivers prolonged-poor-care after-effects and
+> accounted exposure. Wish lifecycle/fulfillment, overall emotion and status UI
 > remain for the following slices.
 
 ## Stage-4 correction delivery, 2026-10-19
@@ -3085,3 +3086,15 @@ No windows, mouse steering, GitHub CI or full-suite run was performed.
 wish fulfillment, overall emotional interpretation and status UI remain in their
 recorded later slices. The full suite and final overall OOP audit remain the
 agreed end-of-refactor checks.
+
+
+5B.5 code delivery commits on `feature/social-optimization`:
+
+| Commit | Coherent change |
+| --- | --- |
+| `f51519a` | Shared bounded exposure reader and optional durable processing markers |
+| `67582fc` | Pure qualification/recovery accounting and exact minute coalescing |
+| `f927c9c` | Integration into existing numeric/closed-time progression and resource checks |
+
+Each unit was locally checked and pushed with `[skip ci]`. The documentation
+follow-up updates the ownership, storage and mood/friendship guides to this state.

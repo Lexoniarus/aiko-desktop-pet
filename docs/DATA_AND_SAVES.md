@@ -118,9 +118,9 @@ future sections are not partially interpreted: other valid pet values survive,
 and StateStore preserves the original file before replacing it through its
 existing atomic-save path. No separate save, clock or emotional score is added.
 Stage 5B.3 now advances existing episodes and their numeric mood effects through
-the shared progression path. Stage 5B.4 now supplies negative interaction facts;
-prolonged-poor-care exposure triggers remain later work. Decoding never advances
-stored episodes or invents triggers.
+the shared progression path. Stages 5B.4/5B.5 supply negative interaction and
+prolonged-poor-care triggers. Decoding never advances stored episodes or invents
+triggers.
 
 The optional `moodlets.interactions` extension stores communicated poke/petting
 boundaries, the independent petting-refusal deadline and bounded food repetition
@@ -133,6 +133,23 @@ Relationship penalties remain in `relationship.penalties`: each kind retains
 only its own rolling window, including petting, food-variety and relocation
 caps. Request expiry/new episodes/restart do not refund those budgets. Transient
 observed cursor-take attribution is never reconstructed from saved World truth.
+
+The optional `moodlets.poor_care` extension records a baseline and exactly five
+processing cursors, indexed by the canonical need names. Each cursor contains
+an accounted watermark, the latest handled threshold watermark, handled level
+and an open-exposure-cycle flag. Watermarks contain elapsed time and consumed
+critical/zero duration in the anchor minute, so partial minutes and coalesced
+full spans can share the original history without rounding replay or duplication.
+This is bounded processing metadata, not another exposure record collection.
+
+Missing older sections remain uninitialized until the next valid progression
+endpoint; existing old care history is not replayed into new emotions. Need
+improvement alone does not discard the unaccounted remainder. Actual qualified
+recovery closes already handled burden; the remaining amount stays in the same
+rolling 24-hour history. Markers, current stage progress and relief usage survive
+checkpoint, save/reopen and paired Pet/World consumption rollback. Future markers,
+invalid levels/flags, missing/unknown needs and malformed offsets invalidate the
+optional Moodlet section under the existing backup/preservation rules.
 
 ## Optional wish state
 

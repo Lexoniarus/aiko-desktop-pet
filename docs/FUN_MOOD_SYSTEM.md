@@ -1,6 +1,6 @@
 # Fun and mood — prototype tuning guide
 
-> This guide describes the care/fun/mood foundation and delivered stages 5B.3/5B.4 on
+> This guide describes the care/fun/mood foundation and delivered stages 5B.3 through 5B.5 on
 > `feature/social-optimization`. The
 > [mood](MOOD_BALANCE_PROPOSAL.md) and [need proposals](NEEDS_BALANCE_PROPOSAL.md)
 > retain the agreed design evidence. Progressive friendship now follows the
@@ -102,8 +102,39 @@ completed social sequences and shared play match targeted relief; existing
 quiet/resolution/stable-recovery gates and per-level allowances still apply.
 These functions accept qualified facts at an already-advanced endpoint; they do
 not infer acceptance or user blame. Direct friendship consequences stay separate.
-Poor-care exposure triggers, wish fulfillment, overall emotional labels and the
-VN UI remain pending slices of the active plan.
+Stage 5B.5 also creates the five poor-care after-effects from actual modeled
+need trajectories in live, closed and standby intervals. Wish lifecycle and
+fulfillment, overall emotional labels and the VN UI remain later plan slices.
+
+### Prolonged poor care
+
+Satiety, energy, fun, social and affection each have one separate impression:
+`hunger_worn`, `exhaustion_irritated`, `unstimulated`, `lonely` and
+`missing_closeness`. The canonical relationship/care history supplies exposure;
+small processing markers distinguish handled burden from new residual time.
+
+| Intensity | Time below 25 in the last 24 hours | Alternative time at zero |
+| --- | --- | --- |
+| 1 | 2 hours | 1 hour |
+| 2 | 4 hours | 2 hours |
+| 3 | 6 hours | 3 hours |
+
+The two routes are alternatives, not added durations or deductions. Existing
+strengths are -5/-10/-15 per family, with a -15 combined poor-care group cap.
+Needs continue to affect numeric mood directly; the emotional after-effect
+changes its target through the same timed response and adds no friendship loss.
+Actual restorative sleep does not add exhaustion exposure; other needs retain
+their actual sleep trajectories. Finite acquired food can prevent hunger burden.
+
+At 40+, require 30 continuous healthy minutes before recovering one tier every
+two hours. A new drop below 40 pauses earned progress and restarts qualification.
+Brief improvement or the 25–40 range is not emotional recovery. Disjoint deficits
+continue accumulating; genuinely new higher burden can escalate, but old handled
+history cannot restore an expired impression. Qualified recovery consumes only
+handled thresholds, preserving fresh subthreshold remainder. At the maximum,
+existing burden is represented without refresh or a queued later stack.
+Needed care remains available; helpful relief keeps its existing qualification
+and once-per-tier rules. No death or new general interaction lock is introduced.
 
 ## Game-neutral pipeline
 

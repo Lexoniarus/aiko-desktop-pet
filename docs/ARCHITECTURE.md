@@ -208,8 +208,20 @@ can create food monotony but never human culpability. Short-lived custody and
 observed-time trigger anchors stay in the existing object episode/perception;
 refusal/request/intake evidence belongs to the aggregate and its existing save.
 
-Prolonged-poor-care exposure triggers, wish fulfillment and overall emotional
-interpretation remain for later stages.
+`pet/need_exposure.py` reads the existing bounded relationship/care history.
+`pet/poor_care.py` qualifies the five lasting poor-care impressions, using frozen
+processing markers in MoodletState rather than another history or simulation.
+The same progression loop advances original exposure, emotional recovery and
+numeric mood; it splits at actual zero/25/40 and new burden thresholds. A
+qualified emotional recovery closes handled thresholds while preserving fresh
+residual exposure. Inadequate care or a brief improvement does not reset that
+cycle. Old history before the processing baseline is not retroactively emotional.
+The existing Moodlet lifetime owner retains pause/resume and relief allowances;
+PetState remains the single mutation owner. Pure numeric calls without supplied
+relationship evidence do not invent an absent history or qualify poor-care events.
+
+Wish lifecycle/fulfillment and overall emotional interpretation remain for later
+stages.
 
 ## Application layer
 
