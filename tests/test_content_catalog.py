@@ -12,11 +12,11 @@ from aiko_pet.pet.content import (
     load_packaged_text_catalog,
     parse_text_catalog,
 )
-from aiko_pet.pet.mind.catalog import EMOTIONS
+from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.status_hints import StatusHint
 from aiko_pet.ui.view_models.care_text import format_care_response
 from aiko_pet.ui.view_models.text_de import (
-    format_emotion_label,
+    format_emotional_state,
     format_sleep_label,
     observation_disabled_text,
 )
@@ -25,11 +25,15 @@ from aiko_pet.ui.view_models.text_de import (
 class TextCatalogTests(unittest.TestCase):
     def test_feeding_fallbacks_use_complete_food_phrases(self) -> None:
         for effect, expected in (
-            (CareEffect.FOOD_MEAL,
-             "Oh, ein Onigiri! Du hast an mein Essen gedacht. Danke!"),
-            (CareEffect.FOOD_REPEAT,
-             "Schon wieder ein Onigiri? Ich hätte beim nächsten Mal gern "
-             "etwas Abwechslung."),
+            (
+                CareEffect.FOOD_MEAL,
+                "Oh, ein Onigiri! Du hast an mein Essen gedacht. Danke!",
+            ),
+            (
+                CareEffect.FOOD_REPEAT,
+                "Schon wieder ein Onigiri? Ich hätte beim nächsten Mal gern "
+                "etwas Abwechslung.",
+            ),
             (CareEffect.FOOD_SNACK, "Ein Onigiri"),
         ):
             result = CareResult("feed", effect, "onigiri", "lunch")
@@ -54,25 +58,28 @@ class TextCatalogTests(unittest.TestCase):
 
     def test_emotion_and_duplicate_status_copy_have_one_json_owner(self) -> None:
         expected_labels = {
-            "asleep": "Schläfrig",
-            "irritated": "Gereizt",
-            "tired": "Müde",
-            "hungry": "Hungrig",
-            "withdrawn": "Nachdenklich",
-            "warm": "Zugewandt",
-            "playful": "Verspielt",
-            "calm": "Gelassen",
-            "lonely": "Vermisst Gesellschaft",
-            "seeking_affection": "Wünscht Zuwendung",
+            EmotionalState.CHEERFUL: "Fröhlich",
+            EmotionalState.PROUD: "Stolz",
+            EmotionalState.RELIEVED: "Erleichtert",
+            EmotionalState.AFFECTIONATE: "Zugewandt",
+            EmotionalState.IRRITATED: "Gereizt",
+            EmotionalState.CROWDED: "Bedrängt",
+            EmotionalState.FRUSTRATED: "Frustriert",
+            EmotionalState.DOWNCAST: "Niedergeschlagen",
+            EmotionalState.LONELY: "Einsam",
+            EmotionalState.AMBIVALENT: "Zwiegespalten",
+            EmotionalState.SUBDUED: "Gedrückt",
+            EmotionalState.CALM: "Gelassen",
+            EmotionalState.SATISFIED: "Zufrieden",
         }
         self.assertEqual(
             {key for key in GERMAN_TEXT.messages if key.startswith("emotion.")},
-            {f"emotion.{emotion}" for emotion in EMOTIONS},
+            {f"emotion.{emotion}" for emotion in EmotionalState},
         )
         for emotion, expected in expected_labels.items():
             with self.subTest(emotion=emotion):
                 self.assertEqual(
-                    format_emotion_label(emotion),
+                    format_emotional_state(emotion),
                     f"Stimmung: {expected}",
                 )
         self.assertEqual(format_sleep_label(True), "Wecken")

@@ -50,7 +50,7 @@ class ClickGuiTests(unittest.TestCase):
             self.assertFalse(self.pet._contact.can_interact("pet"))
             self.assertFalse(self.pet._contact.can_interact("play"))
         self.assertEqual(self.pet._reaction_player.event, "click_boundary")
-        self.assertGreater(self.pet.mind.irritated_until, time.monotonic())
+        self.assertGreater(self.pet.mind.irritation_reaction_until, time.monotonic())
         self.assertEqual(self.pet.state.capture_checkpoint(), before)
 
     def test_short_care_and_active_game_ignore_direct_clicks(self) -> None:
@@ -97,7 +97,7 @@ class ClickGuiTests(unittest.TestCase):
         player = self.pet._reaction_player
         self.assertTrue(player.story_active)
         before = self.pet.state.capture_checkpoint()
-        irritation = self.pet.mind.irritated_until
+        irritation = self.pet.mind.irritation_reaction_until
         for _ in range(5):
             self.click(3)
         self.assertTrue(player.story_active)
@@ -105,7 +105,7 @@ class ClickGuiTests(unittest.TestCase):
             self.click()
         self.assertFalse(player.story_active)
         self.assertEqual(list(self.pet.mind.clicks), [])
-        self.assertEqual(self.pet.mind.irritated_until, irritation)
+        self.assertEqual(self.pet.mind.irritation_reaction_until, irritation)
         self.assertEqual(self.pet.state.capture_checkpoint(), before)
 
     def test_replaced_click_reply_cannot_unlock_other_playback(self) -> None:
@@ -132,7 +132,7 @@ class ClickGuiTests(unittest.TestCase):
         self.click(3)
         self.assertFalse(self.pet.state.sleeping)
         self.assertEqual(self.pet._reaction_player.event, "click_wake")
-        self.assertGreater(self.pet.mind.irritated_until, time.monotonic())
+        self.assertGreater(self.pet.mind.irritation_reaction_until, time.monotonic())
         self.assertNotEqual(self.pet._animated.frame_clock.active_key, ("sleep", None))
         self.assertEqual(self.pet.state.friendship_history, history)
         loaded = self.pet.store.load_session()

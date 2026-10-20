@@ -16,6 +16,7 @@ from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.care_actions import plan_care_action
 from aiko_pet.pet.lifecycle import MAX_LIVE_EFFORT_SECONDS
 from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
+from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.view_models.care_text import format_care_response
@@ -198,8 +199,8 @@ class TelemetryEffortTests(unittest.TestCase):
             calm.advance(point, effort=0.05)
             busy.advance(point, effort=1.0)
         self.assertAlmostEqual(calm.satiety - busy.satiety, 1.6)
-        self.assertAlmostEqual(calm.energy - busy.energy, .5)
-        self.assertAlmostEqual(calm.mood - busy.mood, .16 * (1.6 + .5))
+        self.assertAlmostEqual(calm.energy - busy.energy, 0.5)
+        self.assertAlmostEqual(calm.mood - busy.mood, 0.16 * (1.6 + 0.5))
         self.assertAlmostEqual(calm.social, busy.social)
         self.assertAlmostEqual(calm.affection, busy.affection)
         self.assertAlmostEqual(calm.fun, busy.fun)
@@ -253,7 +254,12 @@ class SocialDialogueTests(unittest.TestCase):
 
     def test_social_deficit_is_distinct_emotion_and_dialogue(self):
         state = PetState(social=15)
-        self.assertEqual(self.mind.emotion(state, 50), "lonely")
+        self.assertIn(
+            NeedCondition.LOW_SOCIAL,
+            self.mind.dialogue_context(
+                state, context_at(1800000000), 50
+            ).need_conditions,
+        )
         self.assertEqual(
             require_reaction(
                 self.mind.select_spontaneous_reaction(state, self.context, 50)

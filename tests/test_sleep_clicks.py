@@ -12,7 +12,10 @@ from aiko_pet.application.commands import CareCommand
 from aiko_pet.application.controller import CareController
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
-from aiko_pet.pet.mind.dialogue_context import FriendshipStage
+from aiko_pet.pet.mind.dialogue_context import (
+    FriendshipStage,
+    ReactionTone,
+)
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from tools.pet_test_support import set_test_pet_values
@@ -25,13 +28,19 @@ class SleepClickTests(unittest.TestCase):
         self.mind = make_aiko_mind(started_at=0)
         self.adaptive = AdaptiveRoutine()
         self.controller = CareController(
-            self.state, self.mind, self.adaptive,
+            self.state,
+            self.mind,
+            self.adaptive,
             clock=ActiveSessionClock(lambda: 0.0),
         )
         self.inputs = SessionInputs(
-            wall_time=self.wall, monotonic_time=100,
-            auto_routine=False, allow_bedtime=None, allow_nap=False,
-            interrupt_nap=False, effort=None,
+            wall_time=self.wall,
+            monotonic_time=100,
+            auto_routine=False,
+            allow_bedtime=None,
+            allow_nap=False,
+            interrupt_nap=False,
+            effort=None,
         )
         self.context = context_at(self.wall)
 
@@ -39,7 +48,10 @@ class SleepClickTests(unittest.TestCase):
         checkpoint = self.state.capture_checkpoint()
         for index in range(4):
             reaction = self.mind.click(
-                "left", self.state, self.context, 10 + index / 10,
+                "left",
+                self.state,
+                self.context,
+                10 + index / 10,
             )
             self.assertEqual(self.mind.click_wakes, index == 3)
             if index < 3:
@@ -62,14 +74,16 @@ class SleepClickTests(unittest.TestCase):
         history = self.state.friendship_history
         needs = (self.state.energy, self.state.social, self.state.affection)
         outcome = self.controller.execute(
-            CareCommand("sleep", wake_from_clicks=True), self.inputs,
+            CareCommand("sleep", wake_from_clicks=True),
+            self.inputs,
         )
         self.assertFalse(self.state.sleeping)
-        self.assertEqual((self.state.energy, self.state.social, self.state.affection),
-                         needs)
+        self.assertEqual(
+            (self.state.energy, self.state.social, self.state.affection), needs
+        )
         self.assertEqual(self.state.friendship_history, history)
         self.assertEqual(self.mind._last_care_at, -1)
-        self.assertEqual(self.mind.emotion(self.state, 100), "irritated")
+        self.assertEqual(self.mind.reaction_tone(100), ReactionTone.IRRITATED)
         assert outcome.reaction is not None
         self.assertEqual(outcome.reaction.event, "click_wake")
         self.state.advance(self.wall + 29 * 60, auto_routine=True)
@@ -80,7 +94,8 @@ class SleepClickTests(unittest.TestCase):
     def test_click_wake_is_idempotent_if_sleep_ended_before_dispatch(self) -> None:
         set_test_pet_values(self.state, sleeping=False)
         self.controller.execute(
-            CareCommand("sleep", wake_from_clicks=True), self.inputs,
+            CareCommand("sleep", wake_from_clicks=True),
+            self.inputs,
         )
         self.assertFalse(self.state.sleeping)
 
@@ -88,11 +103,12 @@ class SleepClickTests(unittest.TestCase):
         set_test_pet_values(self.state, energy=100)
         self.state.interact("sleep", now=self.wall)  # End the initial legacy sleep.
         self.state.interact("sleep", now=self.wall)
-        inputs = replace(self.inputs,
-                         wall_time=datetime(2026, 10, 21, 8).timestamp())
+        inputs = replace(self.inputs, wall_time=datetime(2026, 10, 21, 8).timestamp())
         ticks = iter((0.0, 9 * 3600.0))
         controller = CareController(
-            self.state, self.mind, self.adaptive,
+            self.state,
+            self.mind,
+            self.adaptive,
             clock=ActiveSessionClock(lambda: next(ticks)),
         )
         with patch.object(self.state, "interact", wraps=self.state.interact) as toggle:
@@ -111,8 +127,13 @@ class SleepClickTests(unittest.TestCase):
             texts = set()
             for index in range(3):
                 reaction = self.mind.select_reaction(
-                    "click_wake", self.state, self.context, 100 + index,
-                    dialogue=replace(context, stage=stage, mood="irritated"),
+                    "click_wake",
+                    self.state,
+                    self.context,
+                    100 + index,
+                    dialogue=replace(
+                        context, stage=stage, reaction_tone=ReactionTone.IRRITATED,
+                    ),
                 )
                 assert reaction is not None
                 texts.add(reaction.text)

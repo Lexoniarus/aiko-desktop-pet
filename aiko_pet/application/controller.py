@@ -111,7 +111,7 @@ class CareController:
             CareEffect.AFFECTION_REFUSED,
         ):
             self._mind.record_care_contact(inputs.monotonic_time)
-            self._mind.after_care(command.action, inputs.monotonic_time)
+            self._mind.record_accepted_care(command.action, inputs.monotonic_time)
         reaction: Reaction | None
         if command.conversation is not None:
             reaction = command.conversation.reaction
@@ -121,7 +121,6 @@ class CareController:
                 self._state,
                 context,
                 inputs.monotonic_time,
-                tone=before.tone,
                 dialogue=before.dialogue,
             )
         if result.effect == CareEffect.CONVERSATION and reaction is not None:

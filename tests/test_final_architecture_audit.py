@@ -32,18 +32,24 @@ class FinalArchitectureTests(unittest.TestCase):
         for observing in (False, True):
             with self.subTest(observing=observing):
                 hover = project_hover(
-                    snapshot_pet(state), context, reading,
+                    snapshot_pet(state),
+                    context,
+                    reading,
                     observe_computer=observing,
                 )
                 status = project_status(
-                    snapshot_pet(state), context,
-                    mind.emotion(state, 1000.0), None, reading,
+                    snapshot_pet(state),
+                    context,
+                    mind.emotional_state(state).primary,
+                    None,
+                    reading,
                     observe_computer=observing,
                 )
                 self.assertEqual(hover.feed_label, "Mittagessen")
                 self.assertIn("Montag", hover.header)
                 self.assertEqual(
-                    status.hint, "Ein kleiner Snack wäre schön ...",
+                    status.hint,
+                    "Ein kleiner Snack wäre schön ...",
                 )
                 if observing:
                     self.assertIn("CPU 82 %", hover.hardware_line)

@@ -28,7 +28,12 @@ class GermanObjectPhraseTests(unittest.TestCase):
     def test_all_consumables_have_complete_cases_and_pronouns(self):
         items = load_item_catalog()
         masculine = {
-            "apple", "dango", "donut", "cookie", "cupcake", "energy_drink",
+            "apple",
+            "dango",
+            "donut",
+            "cookie",
+            "cupcake",
+            "energy_drink",
         }
         neuter = {"onigiri", "sandwich", "taiyaki", "melonpan", "dorayaki"}
         self.assertEqual(set(items.foods), masculine | neuter)
@@ -38,11 +43,35 @@ class GermanObjectPhraseTests(unittest.TestCase):
                 noun = "Energy-Drink" if identity == "energy_drink" else item.label
                 self.assertEqual(set(forms), OBJECT_TEXT_FIELDS)
                 expected = (
-                    ("ein", "einen", "einem", "der", "den", "dem",
-                     "mein", "meinen", "meinem", "er", "ihn", "ihm")
-                    if identity in masculine else
-                    ("ein", "ein", "einem", "das", "das", "dem",
-                     "mein", "mein", "meinem", "es", "es", "ihm")
+                    (
+                        "ein",
+                        "einen",
+                        "einem",
+                        "der",
+                        "den",
+                        "dem",
+                        "mein",
+                        "meinen",
+                        "meinem",
+                        "er",
+                        "ihn",
+                        "ihm",
+                    )
+                    if identity in masculine
+                    else (
+                        "ein",
+                        "ein",
+                        "einem",
+                        "das",
+                        "das",
+                        "dem",
+                        "mein",
+                        "mein",
+                        "meinem",
+                        "es",
+                        "es",
+                        "ihm",
+                    )
                 )
                 for index, form in enumerate(("indef", "def", "poss", "pron")):
                     for offset, case in enumerate(("nom", "acc", "dat")):
@@ -65,8 +94,11 @@ class GermanObjectPhraseTests(unittest.TestCase):
         self.assertEqual(forms["item_poss_dat"], "meiner Birne")
         self.assertEqual(forms["item_pron_acc"], "sie")
         self.assertEqual(forms["item_pron_dat"], "ihr")
-        for identity, label in ((None, "Onigiri"), ("unlearned", "Onigiri"),
-                                ("onigiri", None)):
+        for identity, label in (
+            (None, "Onigiri"),
+            ("unlearned", "Onigiri"),
+            ("onigiri", None),
+        ):
             unknown = object_phrases(identity, label)
             self.assertEqual(unknown["item_indef_nom"], "ein Gegenstand")
             self.assertEqual(unknown["item_poss_nom"], "der Gegenstand")
@@ -104,16 +136,23 @@ class GermanObjectPhraseTests(unittest.TestCase):
             line = lines[key]
             result = format_object_reaction(
                 Reaction(line.id, line.beats, line.animation, line.event),
-                "onigiri", load_item_catalog(),
+                "onigiri",
+                load_item_catalog(),
             )
             self.assertEqual(result.text, text)
         for text in ("{item_indef_nom}", "{Item_poss_acc}"):
             with self.assertRaisesRegex(ValueError, "placeholder"):
-                Line.parse(dict(
-                    id="bad", event="click_notice", animation="idle",
-                    beats=[dict(kind="text", content=text)],
-                    moods=[], periods=[], weekdays=[],
-                ))
+                Line.parse(
+                    dict(
+                        id="bad",
+                        event="click_notice",
+                        animation="idle",
+                        beats=[dict(kind="text", content=text)],
+                        conditions=[],
+                        periods=[],
+                        weekdays=[],
+                    )
+                )
 
 
 class ObjectGrammarResourceTests(unittest.TestCase):
@@ -130,13 +169,22 @@ class ObjectGrammarResourceTests(unittest.TestCase):
     def test_malformed_metadata_is_rejected_at_load(self):
         original = load_json(self.path)
         invalid = []
-        for key, value in (("version", True), ("version", 2), ("locale", "en"),
-                           ("extra", True), ("objects", [])):
+        for key, value in (
+            ("version", True),
+            ("version", 2),
+            ("locale", "en"),
+            ("extra", True),
+            ("objects", []),
+        ):
             raw = copy.deepcopy(original)
             raw[key] = value
             invalid.append(raw)
-        for row in ({}, {"gender": "plural"}, {"gender": []},
-                    {"gender": "neuter", "name": "Onigiri"}):
+        for row in (
+            {},
+            {"gender": "plural"},
+            {"gender": []},
+            {"gender": "neuter", "name": "Onigiri"},
+        ):
             raw = copy.deepcopy(original)
             raw["objects"]["onigiri"] = row
             invalid.append(raw)

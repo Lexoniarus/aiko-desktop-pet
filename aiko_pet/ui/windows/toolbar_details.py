@@ -13,16 +13,29 @@ class ToolbarDetails:
     """Render the former status-only information without duplicating actions."""
 
     def __init__(
-        self, parent: tk.Widget, skin: AikoSkin,
+        self,
+        parent: tk.Widget,
+        skin: AikoSkin,
         snapshot: Callable[[], StatusSnapshot],
     ) -> None:
         self._snapshot = snapshot
         self.frame = tk.Frame(parent, bg=skin.panel)
         self._labels: dict[str, tk.Label] = {}
-        for name in ("emotion", "hint", "objects_line", "next_event", "activity_line"):
+        for name in (
+            "emotional_state_label",
+            "hint",
+            "objects_line",
+            "next_event",
+            "activity_line",
+        ):
             label = tk.Label(
-                self.frame, text="", bg=skin.panel, fg=skin.text,
-                font=(skin.font, 9), anchor="w", justify="left",
+                self.frame,
+                text="",
+                bg=skin.panel,
+                fg=skin.text,
+                font=(skin.font, 9),
+                anchor="w",
+                justify="left",
                 wraplength=420,
             )
             label.pack(fill="x", padx=10, pady=3)

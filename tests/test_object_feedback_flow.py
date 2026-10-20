@@ -20,14 +20,27 @@ from tools.reaction_test_support import FakeScheduler
 
 class ObjectFeedbackFlowTests(unittest.TestCase):
     def test_different_same_kind_find_announces_reunion_only_after_identification(self):
-        self.memory.update((ObjectObservation(
-            "old", "onigiri", "food", 100, 0, True, 0,
-        ),), now=0)
+        self.memory.update(
+            (
+                ObjectObservation(
+                    "old",
+                    "onigiri",
+                    "food",
+                    100,
+                    0,
+                    True,
+                    0,
+                ),
+            ),
+            now=0,
+        )
         self.memory.mark_assessed("old")
         self.memory.note_placement("old", x=100, height=0, now=0, deferred=True)
-        self.memory.restore_snapshot(tuple(
-            replace(item, instance_id="object_1") for item in self.memory.snapshot()
-        ))
+        self.memory.restore_snapshot(
+            tuple(
+                replace(item, instance_id="object_1") for item in self.memory.snapshot()
+            )
+        )
         self.memory.mark_missing("old")
         subject = self.memory.get("old")
         assert subject is not None
@@ -38,16 +51,41 @@ class ObjectFeedbackFlowTests(unittest.TestCase):
             self.scheduler.fire(token)
             self.coordinator.update()
         self.assertTrue(self.coordinator.search_ready)
-        found = self.memory.observe_find(ObjectObservation(
-            "sighting", None, None, 600, 0, True, 1,
-        ), now=1, record=None, claimed=frozenset(), maximum_distance=25,
-            instance_id="object_3")
+        found = self.memory.observe_find(
+            ObjectObservation(
+                "sighting",
+                None,
+                None,
+                600,
+                0,
+                True,
+                1,
+            ),
+            now=1,
+            record=None,
+            claimed=frozenset(),
+            maximum_distance=25,
+            instance_id="object_3",
+        )
         self.assertFalse(self.coordinator.found(found))
         self.assertNotIn("object_found", [cue.event for cue in self.presented])
-        self.memory.observe_find(ObjectObservation(
-            "sighting", "onigiri", "food", 600, 80, False, 2,
-        ), now=2, record=found, claimed=frozenset(), maximum_distance=25,
-            preserve_record=True, instance_id="object_3")
+        self.memory.observe_find(
+            ObjectObservation(
+                "sighting",
+                "onigiri",
+                "food",
+                600,
+                80,
+                False,
+                2,
+            ),
+            now=2,
+            record=found,
+            claimed=frozenset(),
+            maximum_distance=25,
+            preserve_record=True,
+            instance_id="object_3",
+        )
         world = self.world.snapshot()
         self.assertTrue(self.coordinator.found(found))
         self.assertEqual(self.presented[-1].event, "object_found")
@@ -78,25 +116,35 @@ class ObjectFeedbackFlowTests(unittest.TestCase):
             self.fail("Feedback playback must not perform a physical item action")
 
         self.player = ReactionPlayer(
-            schedule=self.scheduler.schedule, cancel_timer=self.scheduler.cancel,
+            schedule=self.scheduler.schedule,
+            cancel_timer=self.scheduler.cancel,
             display_text=lambda text, ms: self.visible.append((text, ms)),
             display_emote=lambda _text, _ms: None,
             start_action=unexpected_effect,
-            mark_spoken=lambda: None, is_closed=lambda: False,
+            mark_spoken=lambda: None,
+            is_closed=lambda: False,
         )
         self.addCleanup(self.player.cancel)
         self.presenter = ObjectFeedbackPresenter(self.player, load_item_catalog())
         self.book = DialogueBook.from_file()
         self.coordinator = ObjectInteractionCoordinator(
-            self.world, memory=self.memory,
-            play=unexpected_effect, stop=lambda: None, select_item=unexpected_effect,
-            consume=unexpected_effect, can_acquire=unexpected_effect,
-            ground_x=unexpected_effect, hand_type_conflicts=unexpected_effect,
-            completed=unexpected_effect, decide=unexpected_effect,
+            self.world,
+            memory=self.memory,
+            play=unexpected_effect,
+            stop=lambda: None,
+            select_item=unexpected_effect,
+            consume=unexpected_effect,
+            can_acquire=unexpected_effect,
+            ground_x=unexpected_effect,
+            hand_type_conflicts=unexpected_effect,
+            completed=unexpected_effect,
+            decide=unexpected_effect,
             resolve_instance=lambda _record: None,
             record_for_instance=lambda _instance: None,
-            feedback=self.present, cancel_feedback=self.player.cancel,
-            now=lambda: 0, inspection_seconds=0,
+            feedback=self.present,
+            cancel_feedback=self.player.cancel,
+            now=lambda: 0,
+            inspection_seconds=0,
         )
 
     def received(self, receipt: FeedbackReceipt) -> None:
@@ -105,19 +153,38 @@ class ObjectFeedbackFlowTests(unittest.TestCase):
 
     def present(self, cue: ObjectFeedback) -> None:
         self.presented.append(cue)
-        line = next(line for line in self.book.lines if line.event == cue.event
-                    and not line.moods and not line.periods and not line.weekdays)
-        self.presenter.show(cue, Reaction(line.id, line.beats, line.animation,
-                                          line.event), self.received)
+        line = next(
+            line
+            for line in self.book.lines
+            if line.event == cue.event
+            and not line.conditions
+            and not line.periods
+            and not line.weekdays
+        )
+        self.presenter.show(
+            cue,
+            Reaction(line.id, line.beats, line.animation, line.event),
+            self.received,
+        )
 
     def test_named_losses_wait_for_presented_text_before_search_is_ready(self):
         # Geometry and orientation admit these confirmed losses upstream.
         records = []
         for identity in ("dango", "energy_drink", "onigiri"):
-            self.memory.update((ObjectObservation(
-                identity, identity, "drink" if identity == "energy_drink" else "food",
-                100, 0, True, 0,
-            ),), now=0)
+            self.memory.update(
+                (
+                    ObjectObservation(
+                        identity,
+                        identity,
+                        "drink" if identity == "energy_drink" else "food",
+                        100,
+                        0,
+                        True,
+                        0,
+                    ),
+                ),
+                now=0,
+            )
             self.memory.mark_missing(identity)
             known = self.memory.get(identity)
             assert known is not None
@@ -130,8 +197,9 @@ class ObjectFeedbackFlowTests(unittest.TestCase):
             self.assertFalse(self.coordinator.search_ready)
             self.assertEqual(len(self.presented), index + 1)
             cue = self.presented[-1]
-            self.assertEqual(cue.event, "object_place_missing" if expected
-                             else "object_search")
+            self.assertEqual(
+                cue.event, "object_place_missing" if expected else "object_search"
+            )
             if expected:
                 self.assertIn(expected, self.visible[-1][0])
                 self.assertEqual(cue.record_id, records[index])

@@ -124,5 +124,5 @@ class GameExperienceCoordinator:
             arrangement_ready=self._arrangement_ready(),
         )
         self._adaptive.note_interaction(inputs.wall_time)
-        self._mind.after_care("play", inputs.monotonic_time)
+        self._mind.record_accepted_care("play", inputs.monotonic_time)
         return GameExperienceOutcome(gained, self._state.fun)

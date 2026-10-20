@@ -36,10 +36,14 @@ class ObjectReactionTests(unittest.TestCase):
         book = DialogueBook.from_file()
         for line in book.lines:
             if line.event in ("object_offer", "object_refuse", "object_handover"):
-                text = " ".join(beat.content or "" for beat in line.beats
-                                if beat.kind == "text")
-                fields = {field for _, field, _, _ in Formatter().parse(text)
-                          if field is not None}
+                text = " ".join(
+                    beat.content or "" for beat in line.beats if beat.kind == "text"
+                )
+                fields = {
+                    field
+                    for _, field, _, _ in Formatter().parse(text)
+                    if field is not None
+                }
                 self.assertTrue(fields, line.id)
                 self.assertNotIn("item", fields, line.id)
 
@@ -53,13 +57,15 @@ class ObjectReactionTests(unittest.TestCase):
             display_emote=lambda _text, _ms: None,
             display_text=lambda _text, _ms: None,
             start_action=lambda _clip, _duration: None,
-            mark_spoken=lambda: None, is_closed=lambda: False,
+            mark_spoken=lambda: None,
+            is_closed=lambda: False,
         )
         presenter = ObjectFeedbackPresenter(player, load_item_catalog())
         with patch("aiko_pet.pet.mind.reaction_sequence.BALANCE", parse_balance(raw)):
             presenter.show(
-                ObjectFeedback(FeedbackKey("test", 1), "object_recognized",
-                               "object_1", "onigiri"),
+                ObjectFeedback(
+                    FeedbackKey("test", 1), "object_recognized", "object_1", "onigiri"
+                ),
                 Reaction.spoken("id", "Das ist {item}.", "idle", "object_recognized"),
                 lambda _receipt: None,
             )
@@ -71,7 +77,7 @@ class ObjectReactionTests(unittest.TestCase):
             self.assertTrue(
                 any(
                     line.event == event
-                    and not line.moods
+                    and not line.conditions
                     and not line.periods
                     and not line.weekdays
                     for line in book.lines
@@ -86,17 +92,24 @@ class ObjectReactionTests(unittest.TestCase):
         )
         self.assertEqual(
             format_object_reaction(reaction, "onigiri", items).text,
-            "Das ist ein Onigiri."
+            "Das ist ein Onigiri.",
         )
         self.assertEqual(
             format_object_reaction(reaction, None, items).text,
-            "Das ist ein Gegenstand."
+            "Das ist ein Gegenstand.",
         )
 
     def test_object_templates_reject_attribute_access_and_format_expressions(self):
-        for text in ("{item.secret}", "{other}", "{item!r}", "{item:100}",
-                     "{item_indef_nom.secret}", "{item_indef_gen}",
-                     "{item_def_acc!s}", "{item_def_nom:{item}}"):
+        for text in (
+            "{item.secret}",
+            "{other}",
+            "{item!r}",
+            "{item:100}",
+            "{item_indef_nom.secret}",
+            "{item_indef_gen}",
+            "{item_def_acc!s}",
+            "{item_def_nom:{item}}",
+        ):
             with self.assertRaisesRegex(ValueError, "placeholder"):
                 Line.parse(
                     dict(
@@ -104,7 +117,7 @@ class ObjectReactionTests(unittest.TestCase):
                         event="object_recognized",
                         beats=[dict(kind="text", content=text)],
                         animation="idle",
-                        moods=[],
+                        conditions=[],
                         periods=[],
                         weekdays=[],
                     )

@@ -114,7 +114,7 @@ class ContactCoordinatorTests(unittest.TestCase):
                        return_value=1000 + index / 10):
                 self.contact.click("left" if index % 2 == 0 else "right")
         self.assertEqual(len(self.mind.clicks), 4)
-        self.assertGreater(self.mind.irritated_until, 1000.3)
+        self.assertGreater(self.mind.irritation_reaction_until, 1000.3)
         reaction = self.reactions[-1][0]
         assert reaction is not None
         self.assertEqual(reaction.event, "rapid_click")

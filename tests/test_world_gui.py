@@ -13,6 +13,7 @@ from aiko_pet.application.object_interaction_state import SearchPosition
 from aiko_pet.desktop.geometry import FOOT_BASELINE
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
+from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.sleep import SleepEpisode
 from aiko_pet.ui.view_models.object_reactions import format_object_reaction
@@ -1460,8 +1461,10 @@ class WorldGuiTests(unittest.TestCase):
             world.update(time.monotonic())
             self.complete_feedback()
         self.assertAlmostEqual(self.app.state.friendship, initial - .5)
-        self.assertEqual(self.app.mind.emotion(self.app.state, time.monotonic()),
-                         "irritated")
+        self.assertEqual(
+            self.app.mind.emotional_state(self.app.state).primary,
+            EmotionalState.FRUSTRATED,
+        )
         self.assertEqual(world.interaction.phase, "await_return")
         stored = self.app.store.load_session().state
         self.assertAlmostEqual(stored.friendship, initial - .5)

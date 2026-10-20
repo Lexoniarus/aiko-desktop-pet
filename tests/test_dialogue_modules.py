@@ -16,6 +16,7 @@ from aiko_pet.pet.mind.catalog import (
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.mind.work_episode import WorkEpisodeMemory
 from aiko_pet.pet.routine import context_at
+from tools.dialogue_test_support import dialogue_context
 
 
 class DialogueModulesTests(unittest.TestCase):
@@ -35,7 +36,7 @@ class DialogueModulesTests(unittest.TestCase):
             id="smoke",
             event="greeting",
             animation="idle",
-            moods=(),
+            conditions=(),
             periods=(),
             weekdays=(),
             weight=1,
@@ -44,7 +45,7 @@ class DialogueModulesTests(unittest.TestCase):
         )
         book = DialogueBook((line,), rng=random.Random(8))
         context = context_at(1760281200)
-        result = book.choose("greeting", "calm", context, 100.0)
+        result = book.choose("greeting", dialogue_context(context), 100.0)
         self.assertIsInstance(result, Reaction)
         assert result is not None
         self.assertEqual(result.text, "Hallo!")

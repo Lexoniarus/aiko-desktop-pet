@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .emotions import EmotionalState
 from .moodlets import MoodletId
 from .wishes import WishId
 
@@ -23,14 +24,14 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "social.source": frozenset({"source"}),
     "blackjack.hit": frozenset([]),
     "blackjack.stand": frozenset([]),
-    "blackjack.total": frozenset(['total']),
-    'game.next': frozenset([]),
-    'game.score': frozenset(['player', 'aiko', 'draws']),
-    'game.player_turn': frozenset([]),
-    'game.aiko_turn': frozenset([]),
-    'game.player_win': frozenset([]),
-    'game.aiko_win': frozenset([]),
-    'game.draw': frozenset([]),
+    "blackjack.total": frozenset(["total"]),
+    "game.next": frozenset([]),
+    "game.score": frozenset(["player", "aiko", "draws"]),
+    "game.player_turn": frozenset([]),
+    "game.aiko_turn": frozenset([]),
+    "game.player_win": frozenset([]),
+    "game.aiko_win": frozenset([]),
+    "game.draw": frozenset([]),
     "game.select": frozenset(),
     "game.name.rock_paper_scissors": frozenset(),
     "game.name.tic_tac_toe": frozenset(),
@@ -92,16 +93,6 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "rps.countdown.1": frozenset([]),
     "rps.countdown.2": frozenset([]),
     "rps.countdown.3": frozenset([]),
-    "emotion.asleep": frozenset([]),
-    "emotion.irritated": frozenset([]),
-    "emotion.tired": frozenset([]),
-    "emotion.hungry": frozenset([]),
-    "emotion.withdrawn": frozenset([]),
-    "emotion.warm": frozenset([]),
-    "emotion.playful": frozenset([]),
-    "emotion.calm": frozenset([]),
-    "emotion.lonely": frozenset([]),
-    "emotion.seeking_affection": frozenset([]),
     "ui.emotion_label": frozenset(["emotion"]),
     "ui.sleep_wake": frozenset([]),
     "ui.sleep_start": frozenset([]),
@@ -180,11 +171,13 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
 
 TEXT_FIELDS.update({
     f"moodlet.{key}.{field}": frozenset()
-    for key in MoodletId for field in ("label", "description")
+    for key in MoodletId
+    for field in ("label", "description")
 })
 TEXT_FIELDS.update({
     f"wish.{key}.{field}": frozenset()
-    for key in WishId for field in ("label", "description")
+    for key in WishId
+    for field in ("label", "description")
 })
 TEXT_FIELDS.update({
     f"wish.{key}.utterance": (
@@ -193,5 +186,8 @@ TEXT_FIELDS.update({
         else frozenset({"target"})
         if key in (WishId.FOOD, WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS)
         else frozenset()
-    ) for key in WishId
+    )
+    for key in WishId
 })
+
+TEXT_FIELDS.update({f"emotion.{state}": frozenset() for state in EmotionalState})

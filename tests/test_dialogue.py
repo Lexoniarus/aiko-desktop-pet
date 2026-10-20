@@ -10,6 +10,7 @@ from tempfile import TemporaryDirectory
 
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.care_actions import plan_care_action
+from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.catalog import (
     ANIMATIONS,
     CATALOGUE,
@@ -17,8 +18,11 @@ from aiko_pet.pet.mind.catalog import (
     Line,
     Reaction,
 )
+from aiko_pet.pet.mind.dialogue_context import ReactionTone, SituationalCondition
+from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from tools.dialogue_test_support import dialogue_context
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -101,31 +105,52 @@ class VoiceCatalogueTests(unittest.TestCase):
         self.assertEqual(casual.animation, "waving")
 
     def test_rotation_avoids_immediately_repeating_with_fresh_lines(self):
+        context = dialogue_context(self.context)
+        matches = [
+            line
+            for line in self.book.lines
+            if line.event == "click_left" and line.matches(context)
+        ]
+        rank = max(line.specificity(context) for line in matches)
+        pool = [line for line in matches if line.specificity(context) == rank]
+        self.assertGreaterEqual(len(pool), 3)
         ids = [
-            require_reaction(
-                self.book.choose("click_left", "calm", self.context, 100 + i)
-            ).line_id
-            for i in range(6)
+            require_reaction(self.book.choose("click_left", context, 100 + i)).line_id
+            for i in range(len(pool))
         ]
         self.assertEqual(len(ids), len(set(ids)))
 
     def test_weighted_selection_respects_period_and_emotion(self):
         morning = ctx(hour=8)
-        response = self.book.choose("morning", "calm", morning, 500)
+        response = self.book.choose("morning", dialogue_context(morning), 500)
         self.assertIsNotNone(response)
-        self.assertIsNone(self.book.choose("morning", "calm", ctx(hour=17), 501))
-        self.assertIsNotNone(self.book.choose("night", "calm", ctx(hour=0), 600))
-        self.assertIsNone(self.book.choose("hungry", "calm", morning, 500))
-        self.assertIsNotNone(self.book.choose("hungry", "hungry", morning, 500))
+        self.assertIsNone(
+            self.book.choose("morning", dialogue_context(ctx(hour=17)), 501)
+        )
+        self.assertIsNotNone(
+            self.book.choose("night", dialogue_context(ctx(hour=0)), 600)
+        )
+        self.assertIsNone(self.book.choose("hungry", dialogue_context(morning), 500))
+        self.assertIsNotNone(
+            self.book.choose(
+                "hungry",
+                dialogue_context(
+                    morning, need_conditions=frozenset({NeedCondition.LOW_SATIETY})
+                ),
+                500,
+            )
+        )
 
     def test_fallback_rotation_when_every_phrase_is_recent(self):
         for i in range(26):
             self.assertIsNotNone(
-                self.book.choose("click_right", "calm", self.context, 10 + i)
+                self.book.choose("click_right", dialogue_context(self.context), 10 + i)
             )
 
     def test_missing_event_is_explicit(self):
-        self.assertIsNone(self.book.choose("unknown", "calm", self.context, 500))
+        self.assertIsNone(
+            self.book.choose("unknown", dialogue_context(self.context), 500)
+        )
 
     def test_malformed_lines_and_duplicate_ids_are_rejected(self):
         data = json.loads(CATALOGUE.read_text("utf-8"))
@@ -147,14 +172,37 @@ class EmotionTests(unittest.TestCase):
         self.context = ctx()
 
     def test_priority_sleep_rapid_click_tired_hungry_low_mood(self):
-        self.assertEqual(self.mind.emotion(PetState(sleeping=True), 10), "asleep")
-        self.mind.irritated_until = 100
-        self.assertEqual(self.mind.emotion(self.state, 50), "irritated")
-        self.assertEqual(self.mind.emotion(PetState(energy=7), 101), "tired")
-        self.assertEqual(self.mind.emotion(PetState(satiety=14), 101), "hungry")
-        self.assertEqual(self.mind.emotion(PetState(mood=12), 101), "withdrawn")
-        self.assertEqual(self.mind.emotion(PetState(mood=97), 101), "playful")
-        self.assertEqual(self.mind.emotion(self.state, 101), "calm")
+        self.assertTrue(
+            self.mind.dialogue_context(
+                PetState(sleeping=True), context_at(1800000000), 10
+            ).sleeping
+        )
+        self.mind.irritation_reaction_until = 100
+        self.assertEqual(self.mind.reaction_tone(50), ReactionTone.IRRITATED)
+        self.assertIn(
+            NeedCondition.LOW_ENERGY,
+            self.mind.dialogue_context(
+                PetState(energy=7), context_at(1800000000), 101
+            ).need_conditions,
+        )
+        self.assertIn(
+            NeedCondition.LOW_SATIETY,
+            self.mind.dialogue_context(
+                PetState(satiety=14), context_at(1800000000), 101
+            ).need_conditions,
+        )
+        self.assertEqual(
+            self.mind.emotional_state(PetState(mood=12)).primary, EmotionalState.SUBDUED
+        )
+        self.assertIn(
+            SituationalCondition.PLAYFUL,
+            self.mind.dialogue_context(
+                PetState(mood=97), context_at(1800000000), 101
+            ).situational_conditions,
+        )
+        self.assertEqual(
+            self.mind.emotional_state(self.state).primary, EmotionalState.SATISFIED
+        )
 
     def test_rising_click_pressure_changes_reaction(self):
         events = [
@@ -164,14 +212,16 @@ class EmotionTests(unittest.TestCase):
         self.assertEqual(
             events, ["click_left", "click_left", "click_notice", "rapid_click"]
         )
-        self.assertEqual(self.mind.emotion(self.state, 15), "irritated")
+        self.assertEqual(self.mind.reaction_tone(15), ReactionTone.IRRITATED)
         self.assertEqual(
             require_reaction(
                 self.mind.click("right", self.state, self.context, 30)
             ).event,
             "click_right",
         )
-        self.assertEqual(self.mind.emotion(self.state, 30), "calm")
+        self.assertEqual(
+            self.mind.emotional_state(self.state).primary, EmotionalState.SATISFIED
+        )
 
     def test_both_mouse_buttons_have_distinct_speech_triggers(self):
         left = self.mind.click("left", self.state, self.context, 20)
@@ -201,13 +251,15 @@ class EmotionTests(unittest.TestCase):
                     ).result,
                     self.mind.observe_care(self.state, self.context, 10),
                 ),
-                self.mind.emotion(self.state, 10),
+                self.mind.emotional_state(self.state).primary,
             ),
-            ("pet", "calm"),
+            ("pet", EmotionalState.SATISFIED),
         )
-        self.mind.after_care("pet", 10)
-        self.assertEqual(self.mind.emotion(self.state, 11), "warm")
-        self.assertEqual(self.mind.emotion(self.state, 81), "calm")
+        self.mind.record_accepted_care("pet", 10)
+        self.assertEqual(self.mind.reaction_tone(11), ReactionTone.WARM)
+        self.assertEqual(
+            self.mind.emotional_state(self.state).primary, EmotionalState.SATISFIED
+        )
 
     def test_feeding_uses_meal_snack_full(self):
         breakfast = ctx(hour=8)

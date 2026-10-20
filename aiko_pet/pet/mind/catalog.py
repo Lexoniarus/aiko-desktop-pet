@@ -15,11 +15,19 @@ from string import Formatter
 from typing import Any, Literal
 
 from ..balance import BALANCE
-from ..catalog_validation import load_json, object_fields
+from ..catalog_validation import enum_value, load_json, object_fields
+from ..emotions import EmotionalState
 from ..interaction_events import SocialCompletion
+from ..moodlets import EmotionalDirection
+from ..needs import NeedCondition
 from ..object_text_contract import OBJECT_TEXT_FIELDS
-from ..routine import TimeContext
-from .dialogue_context import DialogueContext, FriendshipStage
+from .dialogue_context import (
+    DialogueConditions,
+    DialogueContext,
+    FriendshipStage,
+    ReactionTone,
+    SituationalCondition,
+)
 from .dialogue_events import DIALOGUE_EVENTS
 from .reaction_sequence import Cue
 
@@ -35,18 +43,6 @@ ANIMATIONS = frozenset({
     "eat",
     "petting",
 })
-EMOTIONS = frozenset({
-    "asleep",
-    "irritated",
-    "tired",
-    "hungry",
-    "withdrawn",
-    "warm",
-    "playful",
-    "calm",
-    "lonely",
-    "seeking_affection",
-})
 PERIODS = frozenset({
     "night",
     "breakfast",
@@ -58,19 +54,78 @@ PERIODS = frozenset({
 })
 
 
+def _parse_conditions(raw: Any) -> tuple[DialogueConditions, ...]:
+    if not isinstance(raw, list) or len(raw) > 8:
+        raise ValueError("Invalid dialogue condition alternatives")
+    result = []
+    for value in raw:
+        row = object_fields(
+            value,
+            (),
+            optional=(
+                "emotional_states",
+                "emotional_directions",
+                "need_conditions",
+                "reaction_tones",
+                "situational_conditions",
+                "sleeping",
+            ),
+            context="dialogue conditions",
+        )
+        if not row or "sleeping" in row and type(row["sleeping"]) is not bool:
+            raise ValueError("Empty or invalid dialogue conditions")
+        for key in (
+            "emotional_states",
+            "emotional_directions",
+            "need_conditions",
+            "reaction_tones",
+            "situational_conditions",
+        ):
+            items = row.get(key, [])
+            if not isinstance(items, list) or not all(
+                isinstance(i, str) for i in items
+            ):
+                raise ValueError("Invalid typed dialogue condition")
+        result.append(
+            DialogueConditions(
+                frozenset(
+                    enum_value(v, EmotionalState, context="emotional state")
+                    for v in row.get("emotional_states", [])
+                ),
+                frozenset(
+                    enum_value(v, EmotionalDirection, context="emotional direction")
+                    for v in row.get("emotional_directions", [])
+                ),
+                frozenset(
+                    enum_value(v, NeedCondition, context="need condition")
+                    for v in row.get("need_conditions", [])
+                ),
+                frozenset(
+                    enum_value(v, ReactionTone, context="reaction tone")
+                    for v in row.get("reaction_tones", [])
+                ),
+                frozenset(
+                    enum_value(v, SituationalCondition, context="situation")
+                    for v in row.get("situational_conditions", [])
+                ),
+                row.get("sleeping"),
+            )
+        )
+    return tuple(result)
+
+
 @dataclass(frozen=True)
 class Line:
     id: str
     event: str
     beats: tuple[Cue, ...]
     animation: str
-    moods: tuple[str, ...]
+    conditions: tuple[DialogueConditions, ...]
     periods: tuple[str, ...]
     weekdays: tuple[int, ...]
     weight: int = BALANCE.integer("dialogue", "default_weight")
     cooldown_seconds: float = BALANCE.integer("dialogue", "default_cooldown_seconds")
     stages: tuple[FriendshipStage, ...] = ()
-    needs: frozenset[str] = frozenset()
     presentation: Literal["short", "story"] = "short"
     requires_present: bool = False
 
@@ -82,12 +137,12 @@ class Line:
     def parse(cls, raw: Any) -> Line:
         data = object_fields(
             raw,
-            ("id", "event", "beats", "animation", "moods", "periods", "weekdays"),
+            ("id", "event", "beats", "animation", "periods", "weekdays"),
             optional=(
                 "weight",
                 "cooldown_seconds",
                 "stages",
-                "needs",
+                "conditions",
                 "presentation",
                 "requires_present",
             ),
@@ -99,10 +154,8 @@ class Line:
         if data["event"] not in DIALOGUE_EVENTS or data["animation"] not in ANIMATIONS:
             raise ValueError("Unknown dialogue event or animation")
         for key, allowed in (
-            ("moods", EMOTIONS),
             ("periods", PERIODS),
             ("stages", frozenset(FriendshipStage)),
-            ("needs", EMOTIONS),
         ):
             values = data.get(key, [])
             if not isinstance(values, list) or any(
@@ -157,48 +210,38 @@ class Line:
             data["event"],
             beats,
             data["animation"],
-            tuple(data["moods"]),
+            _parse_conditions(data.get("conditions", [])),
             tuple(data["periods"]),
             tuple(days),
             weight,
             float(cooldown),
             tuple(FriendshipStage(s) for s in data.get("stages", [])),
-            frozenset(data.get("needs", [])),
             presentation,
             present,
         )
 
-    def matches(
-        self,
-        emotion: str,
-        context: TimeContext,
-        dialogue: DialogueContext | None = None,
-    ) -> bool:
+    def matches(self, context: DialogueContext) -> bool:
         return (
-            (not self.moods or emotion in self.moods)
-            and (not self.periods or context.period in self.periods)
-            and (not self.weekdays or context.local.weekday() in self.weekdays)
-            and (
-                not self.stages
-                or dialogue is not None
-                and dialogue.stage in self.stages
-            )
-            and (
-                not self.needs or dialogue is not None and self.needs <= dialogue.states
-            )
-            and (
-                not self.requires_present
-                or dialogue is not None
-                and dialogue.present is True
-            )
+            (not self.conditions or any(c.matches(context) for c in self.conditions))
+            and (not self.periods or context.time.period in self.periods)
+            and (not self.weekdays or context.time.local.weekday() in self.weekdays)
+            and (not self.stages or context.stage in self.stages)
+            and (not self.requires_present or context.present is True)
         )
 
-    def specificity(self) -> int:
-        return bool(self.moods) + bool(self.stages) + len(self.needs)
+    def specificity(self, context: DialogueContext) -> tuple[int, int]:
+        rank = max(
+            (c.specificity(context) for c in self.conditions if c.matches(context)),
+            default=(0, 0),
+        )
+        return bool(self.stages) + rank[0], rank[1]
 
     def selection_weight(self) -> int:
         return self.weight * (
-            1 + 2 * bool(self.moods) + 2 * bool(self.periods) + 2 * bool(self.weekdays)
+            1
+            + 2 * bool(self.conditions)
+            + 2 * bool(self.periods)
+            + 2 * bool(self.weekdays)
         )
 
 
@@ -248,7 +291,7 @@ class DialogueBook:
         )
         if (
             type(data["catalogue_version"]) is not int
-            or data["catalogue_version"] != 2
+            or data["catalogue_version"] != 3
             or data["language"] != "de"
         ):
             raise ValueError("Unsupported dialogue catalogue version")
@@ -259,24 +302,24 @@ class DialogueBook:
     def choose(
         self,
         event: str,
-        emotion: str,
-        context: TimeContext,
+        context: DialogueContext,
         now: float,
         *,
-        dialogue: DialogueContext | None = None,
         presentation: Literal["short", "story"] | None = None,
     ) -> Reaction | None:
         candidates = [
             line
             for line in self.lines
             if line.event == event
-            and line.matches(emotion, context, dialogue)
+            and line.matches(context)
             and (presentation is None or line.presentation == presentation)
         ]
         if not candidates:
             return None
-        specificity = max(line.specificity() for line in candidates)
-        candidates = [line for line in candidates if line.specificity() == specificity]
+        specificity = max(line.specificity(context) for line in candidates)
+        candidates = [
+            line for line in candidates if line.specificity(context) == specificity
+        ]
         if candidates[0].presentation == "story":
             unseen = [line for line in candidates if line.id not in self._story_used]
             if not unseen:

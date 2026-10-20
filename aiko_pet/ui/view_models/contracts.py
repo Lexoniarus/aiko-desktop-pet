@@ -44,7 +44,7 @@ class StatusSnapshot:
     today: str
     next_event: str
     hint: str
-    emotion: str
+    emotional_state_label: str
     sleep_label: str
     hardware_line: str
     activity_line: str

@@ -32,7 +32,7 @@ class CharacterMindInjectionTests(unittest.TestCase):
             id="custom",
             event="greeting",
             animation="idle",
-            moods=(),
+            conditions=(),
             periods=(),
             weekdays=(),
             weight=1,

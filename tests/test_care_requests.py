@@ -67,7 +67,7 @@ class CareRequestTests(unittest.TestCase):
 
     def test_accepted_care_has_three_minute_grace(self) -> None:
         set_test_pet_values(self.state, satiety=60)
-        self.mind.after_care('pet', 1000)
+        self.mind.record_accepted_care('pet', 1000)
         self.assertFalse(self.attention.spontaneous(
             1179, self.context, toolbar_visible=False,
         ).due)

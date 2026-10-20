@@ -81,9 +81,9 @@ class ObjectWithholdingTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 state.apply_object_withholding(loss)
         mind = PetMind(DialogueBook.from_file())
-        mind.irritated_until = 1000
+        mind.irritation_reaction_until = 1000
         mind.note_object_withholding(1)
-        self.assertEqual(mind.irritated_until, 1000)
+        self.assertEqual(mind.irritation_reaction_until, 1000)
 
     def test_invalid_withholding_tuning_is_rejected(self):
         for key, value in (("repeated_takes", 0), ("maximum_episode_loss", .01),

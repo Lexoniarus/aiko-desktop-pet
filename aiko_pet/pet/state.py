@@ -155,6 +155,17 @@ class PetState:
         return list(self._values.meals_today)
 
     @property
+    def needs(self) -> NeedLevels:
+        """Detached five-need read; mood and relationship remain separate."""
+        return NeedLevels(
+            self.satiety,
+            self.energy,
+            self.fun,
+            self.social,
+            self.affection,
+        )
+
+    @property
     def satiety(self) -> float:
         return self._values.satiety
 

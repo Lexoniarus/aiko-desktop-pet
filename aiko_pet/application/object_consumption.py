@@ -94,14 +94,15 @@ class ObjectConsumption:
             assert before is not None
             self._mind.record_care_contact(inputs.monotonic_time)
             self._adaptive.note_interaction(inputs.wall_time)
-            self._mind.after_care(prepared.result.action, inputs.monotonic_time)
+            self._mind.record_accepted_care(
+                prepared.result.action, inputs.monotonic_time,
+            )
             reaction = self._mind.select_reaction(
                 food_variety_event(self._state, prepared.result)
                 or self._mind.care_event(prepared.result, before),
                 self._state,
                 context,
                 inputs.monotonic_time,
-                tone=before.tone,
                 dialogue=before.dialogue,
             )
             outcome = ConsumptionOutcome(

@@ -9,6 +9,7 @@ from __future__ import annotations
 from ...application.read_snapshot import PetReadSnapshot
 from ...pet.balance import BALANCE
 from ...pet.content import GERMAN_TEXT
+from ...pet.emotions import EmotionalState
 from ...pet.routine import MEAL_NAMES, TimeContext, due_meal
 from ...pet.status_hints import StatusHint, choose_status_hint
 from ...telemetry import ComputerSnapshot, workload_intensity
@@ -33,11 +34,11 @@ def format_schedule_line(context: TimeContext) -> str:
     )
 
 
-def format_emotion_label(emotion: str) -> str:
-    """Render the current semantic PetMind emotion without domain UI copy."""
+def format_emotional_state(emotion: EmotionalState) -> str:
+    """Render the derived overall feeling without domain UI copy."""
     return GERMAN_TEXT.format(
         "ui.emotion_label",
-        emotion=GERMAN_TEXT.format(f"emotion.{emotion}"),
+        emotion=GERMAN_TEXT.format(f"emotion.{emotion.value}"),
     )
 
 

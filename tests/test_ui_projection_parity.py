@@ -12,6 +12,7 @@ from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
+from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.routine import MEAL_NAMES, context_at
 from aiko_pet.pet.state import PetState
@@ -51,13 +52,19 @@ class UiProjectionParityTests(unittest.TestCase):
         state = PetState()
         set_test_pet_values(state, fun=42)
         view = project_status(
-            snapshot_pet(state), context_at(at(8)), "calm", None, ComputerSnapshot(),
+            snapshot_pet(state),
+            context_at(at(8)),
+            EmotionalState.CALM,
+            None,
+            ComputerSnapshot(),
             observe_computer=False,
             objects=ObjectStatusSnapshot(desktop=5, known=4, assigned=2, missing=2),
         )
         self.assertEqual(view.status_value("fun"), 42)
-        self.assertEqual(view.objects_line,
-                         "Auf dem Desktop: 5 · Bekannt: 4\nZugeordnet: 2 · Vermisst: 2")
+        self.assertEqual(
+            view.objects_line,
+            "Auf dem Desktop: 5 · Bekannt: 4\nZugeordnet: 2 · Vermisst: 2",
+        )
 
     def test_snapshot_copies_mutable_pet_values(self) -> None:
         state = PetState(satiety=19, affection=28, meals_today=["breakfast"])
@@ -69,9 +76,16 @@ class UiProjectionParityTests(unittest.TestCase):
         self.assertEqual(snapshot.affection, 28)
         self.assertEqual(snapshot.meals_today, ("breakfast",))
         self.assertEqual(snapshot.needs.satiety, 19)
-        self.assertEqual(set(snapshot.needs.__dataclass_fields__), {
-            "satiety", "energy", "fun", "social", "affection",
-        })
+        self.assertEqual(
+            set(snapshot.needs.__dataclass_fields__),
+            {
+                "satiety",
+                "energy",
+                "fun",
+                "social",
+                "affection",
+            },
+        )
         with self.assertRaises(FrozenInstanceError):
             setattr(snapshot, "sleeping", True)
 
@@ -84,14 +98,18 @@ class UiProjectionParityTests(unittest.TestCase):
             PetState(social=10),
             PetState(affection=10),
             PetState(mood=10),
-            PetState(satiety=99, mood=99, energy=99,
-                     social=99, affection=99),
+            PetState(satiety=99, mood=99, energy=99, social=99, affection=99),
         )
         for stamp in (at(2), at(8), at(13), at(18), at(23), at(10, day=18)):
             context = context_at(stamp)
             weekdays = (
-                "Montag", "Dienstag", "Mittwoch", "Donnerstag",
-                "Freitag", "Samstag", "Sonntag",
+                "Montag",
+                "Dienstag",
+                "Mittwoch",
+                "Donnerstag",
+                "Freitag",
+                "Samstag",
+                "Sonntag",
             )
             self.assertEqual(
                 format_day_label(context),
@@ -108,7 +126,8 @@ class UiProjectionParityTests(unittest.TestCase):
                     meal = state.due_meal(context)
                     expected_label = MEAL_NAMES[meal] if meal is not None else "Snack"
                     self.assertEqual(
-                        format_feed_label(snapshot, context), expected_label,
+                        format_feed_label(snapshot, context),
+                        expected_label,
                     )
                     self.assertEqual(
                         format_status_hint(snapshot, context),
@@ -135,23 +154,37 @@ class UiProjectionParityTests(unittest.TestCase):
 
     def test_workload_and_percent_copy_matches_original_thresholds(self) -> None:
         cases = (
-            (ComputerSnapshot(), "Ohne aktuelle Messwerte rate ich lieber nicht, "
-             "wie beschäftigt der Rechner ist."),
-            (ComputerSnapshot(cpu=15, measured_at=10),
-             "Der Rechner hat im Moment ziemlich wenig zu tun."),
-            (ComputerSnapshot(cpu=45, measured_at=10),
-             "Auf dem Rechner ist gerade etwas mehr los."),
-            (ComputerSnapshot(cpu=75, measured_at=10),
-             "Die Systemlast ist im Moment deutlich erhöht."),
-            (ComputerSnapshot(cpu=95, gpu=90, measured_at=10),
-             "Der Rechner ist gerade ziemlich stark ausgelastet."),
+            (
+                ComputerSnapshot(),
+                "Ohne aktuelle Messwerte rate ich lieber nicht, "
+                "wie beschäftigt der Rechner ist.",
+            ),
+            (
+                ComputerSnapshot(cpu=15, measured_at=10),
+                "Der Rechner hat im Moment ziemlich wenig zu tun.",
+            ),
+            (
+                ComputerSnapshot(cpu=45, measured_at=10),
+                "Auf dem Rechner ist gerade etwas mehr los.",
+            ),
+            (
+                ComputerSnapshot(cpu=75, measured_at=10),
+                "Die Systemlast ist im Moment deutlich erhöht.",
+            ),
+            (
+                ComputerSnapshot(cpu=95, gpu=90, measured_at=10),
+                "Der Rechner ist gerade ziemlich stark ausgelastet.",
+            ),
         )
         for reading, expected in cases:
             with self.subTest(cpu=reading.cpu):
                 self.assertEqual(describe_workload(reading), expected)
         for value, expected in (
-            (None, "–"), (0, "0 %"), (50.4, "50 %"),
-            (99.8, "100 %"), (150, "100 %"),
+            (None, "–"),
+            (0, "0 %"),
+            (50.4, "50 %"),
+            (99.8, "100 %"),
+            (150, "100 %"),
         ):
             with self.subTest(percent=value):
                 self.assertEqual(format_percent(value), expected)
@@ -176,22 +209,34 @@ class UiProjectionParityTests(unittest.TestCase):
                             before = encode_pet_state(state)
                             copy = snapshot_pet(state)
                             hover = project_hover(
-                                copy, context, reading,
+                                copy,
+                                context,
+                                reading,
                                 observe_computer=enabled,
                             )
                             status = project_status(
-                                copy, context, mind.emotion(state, 1000),
-                                None, reading, observe_computer=enabled,
+                                copy,
+                                context,
+                                mind.emotional_state(state).primary,
+                                None,
+                                reading,
+                                observe_computer=enabled,
                             )
                             for key in (
-                                "satiety", "mood", "energy", "social",
-                                "affection", "friendship",
+                                "satiety",
+                                "mood",
+                                "energy",
+                                "social",
+                                "affection",
+                                "friendship",
                             ):
                                 self.assertEqual(
-                                    hover.status_value(key), getattr(state, key),
+                                    hover.status_value(key),
+                                    getattr(state, key),
                                 )
                                 self.assertEqual(
-                                    status.status_value(key), getattr(state, key),
+                                    status.status_value(key),
+                                    getattr(state, key),
                                 )
                             expected = "Wecken" if state.sleeping else "Schlafen"
                             self.assertEqual(hover.sleep_label, expected)
@@ -208,7 +253,11 @@ class UiProjectionParityTests(unittest.TestCase):
     def test_desktop_adapter_owns_only_read_projections_and_geometry(self) -> None:
         state = PetState(energy=39)
         settings = PetSettings(
-            x=150, y=430, scale=2, toolbar_x=25, toolbar_y=35,
+            x=150,
+            y=430,
+            scale=2,
+            toolbar_x=25,
+            toolbar_y=35,
             observe_computer=True,
         )
         mind = make_aiko_mind(started_at=0.0, rng=random.Random(10))
@@ -216,15 +265,27 @@ class UiProjectionParityTests(unittest.TestCase):
             ComputerSnapshot(cpu=83, measured_at=100),
         )
         source = DesktopPresentation(
-            state, settings, mind, AdaptiveRoutine(), readings,
+            state,
+            settings,
+            mind,
+            AdaptiveRoutine(),
+            readings,
             context=lambda: context_at(at(15)),
             sprite_size=lambda: (256, 416),
         )
         original = source.hover()
         self.assertIn("CPU 83 %", original.hardware_line)
-        self.assertEqual(source.anchor(), HoverAnchor(
-            150, 430, 256, 416, 25, 35,
-        ))
+        self.assertEqual(
+            source.anchor(),
+            HoverAnchor(
+                150,
+                430,
+                256,
+                416,
+                25,
+                35,
+            ),
+        )
         self.assertEqual(source.settings_view().value("auto_walk"), True)
         set_test_pet_values(state, energy=70)
         self.assertEqual(original.status_value("energy"), 39)

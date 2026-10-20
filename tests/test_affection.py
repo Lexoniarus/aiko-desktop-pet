@@ -14,13 +14,15 @@ from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state
 from aiko_pet.pet.care_actions import plan_care_action
+from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.friendship import FRIENDSHIP_DAILY_CAP
 from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
+from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import StatusHint
-from aiko_pet.ui.view_models.text_de import format_emotion_label, status_hint_text
+from aiko_pet.ui.view_models.text_de import format_emotional_state, status_hint_text
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -140,8 +142,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
                 state = PetState(energy=60)
                 set_test_pet_values(state, **{value: 100})
                 state.interact(action, now=stamp())
-                self.assertEqual(state.friendship,
-                                 15.25 if action == "talk" else 15)
+                self.assertEqual(state.friendship, 15.25 if action == "talk" else 15)
 
     def test_first_useful_care_rewards_friendship_but_spam_does_not(self):
         state = PetState(affection=25, updated_at=stamp())
@@ -175,8 +176,10 @@ class MeaningfulFriendshipTests(unittest.TestCase):
         self.assertGreater(diverse.social, repeated.social)
         self.assertGreater(diverse.satiety, repeated.satiety)
         self.assertEqual(diverse.care_types_today, ["feed"])
-        self.assertEqual(set(dict(diverse.friendship_history.eligible)),
-                         {"feed", "pet", "talk", "play"})
+        self.assertEqual(
+            set(dict(diverse.friendship_history.eligible)),
+            {"feed", "pet", "talk", "play"},
+        )
 
     def test_drinks_and_sleep_do_not_build_friendship_by_button_mashing(self):
         state = PetState(energy=0, friendship=42)
@@ -189,8 +192,9 @@ class MeaningfulFriendshipTests(unittest.TestCase):
 
     def test_bond_is_capped_per_day_then_can_progress_next_day(self):
         start = stamp()
-        state = PetState(affection=0, social=0, mood=0, satiety=0, energy=65,
-                         updated_at=start)
+        state = PetState(
+            affection=0, social=0, mood=0, satiety=0, energy=65, updated_at=start
+        )
         for i in range(20):
             state.advance(start + 16 * 60 * i)
             for action, attribute in (
@@ -266,8 +270,9 @@ class MeaningfulFriendshipTests(unittest.TestCase):
             session_data = store.load_session(now=stamp() + 1)
             restored, _ = session_data.state, session_data.settings
             self.assertEqual(restored.care_types_today, ["pet"])
-            self.assertEqual(set(dict(restored.friendship_history.eligible)),
-                             {"pet", "talk"})
+            self.assertEqual(
+                set(dict(restored.friendship_history.eligible)), {"pet", "talk"}
+            )
             self.assertEqual(restored.friendship_history, state.friendship_history)
             self.assertEqual(restored.care_last_rewards, state.care_last_rewards)
             self.assertEqual(restored.friendship, state.friendship)
@@ -293,10 +298,15 @@ class AffectionDialogueTests(unittest.TestCase):
 
     def test_low_affection_is_not_social_loneliness(self):
         state = PetState(social=70, affection=12)
-        self.assertEqual(self.mind.emotion(state, 50), "seeking_affection")
+        self.assertIn(
+            NeedCondition.LOW_AFFECTION,
+            self.mind.dialogue_context(
+                state, context_at(1800000000), 50
+            ).need_conditions,
+        )
         self.assertEqual(
-            format_emotion_label("seeking_affection"),
-            "Stimmung: Wünscht Zuwendung",
+            format_emotional_state(EmotionalState.SATISFIED),
+            "Stimmung: Zufrieden",
         )
         self.assertEqual(
             require_reaction(self.mind.click("left", state, self.context, 50)).event,
@@ -327,7 +337,12 @@ class AffectionDialogueTests(unittest.TestCase):
 
     def test_existing_social_shortage_still_has_own_priority(self):
         state = PetState(social=10, affection=10)
-        self.assertEqual(self.mind.emotion(state, 50), "lonely")
+        self.assertIn(
+            NeedCondition.LOW_SOCIAL,
+            self.mind.dialogue_context(
+                state, context_at(1800000000), 50
+            ).need_conditions,
+        )
         self.assertEqual(
             require_reaction(self.mind.click("left", state, self.context, 50)).event,
             "click_lonely",

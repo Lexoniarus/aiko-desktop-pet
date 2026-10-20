@@ -12,9 +12,11 @@ import unittest
 from datetime import datetime
 
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.adaptive_models import Behaviour
 from aiko_pet.pet.mind.adaptive_policy import ActivityMode
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
+from aiko_pet.pet.mind.dialogue_context import ReactionTone, SituationalCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from tools.pet_test_support import set_test_pet_values
@@ -83,14 +85,16 @@ class ClickStoryTests(unittest.TestCase):
                 None,
             ],
         )
-        self.assertEqual(self.mind.emotion(self.state, 30), "irritated")
+        self.assertEqual(self.mind.reaction_tone(30), ReactionTone.IRRITATED)
         self.assertEqual(
             require_reaction(
                 self.mind.click("right", self.state, self.context, 50)
             ).event,
             "click_right",
         )
-        self.assertEqual(self.mind.emotion(self.state, 50), "calm")
+        self.assertEqual(
+            self.mind.emotional_state(self.state).primary, EmotionalState.SATISFIED
+        )
 
     def test_good_mood_turns_provocation_into_playful_teasing(self):
         set_test_pet_values(self.state, mood=94)
@@ -112,7 +116,12 @@ class ClickStoryTests(unittest.TestCase):
                 "click_last_word",
             ],
         )
-        self.assertEqual(self.mind.emotion(self.state, 58), "playful")
+        self.assertIn(
+            SituationalCondition.PLAYFUL,
+            self.mind.dialogue_context(
+                self.state, context_at(1800000000), 58
+            ).situational_conditions,
+        )
 
     def test_low_energy_and_recent_care_change_early_clicks(self):
         set_test_pet_values(self.state, energy=19)
@@ -123,7 +132,7 @@ class ClickStoryTests(unittest.TestCase):
             "click_sleepy",
         )
         new_mind = make_aiko_mind(started_at=0.0, rng=random.Random(1))
-        new_mind.after_care("pet", 30)
+        new_mind.record_accepted_care("pet", 30)
         self.assertEqual(
             require_reaction(
                 new_mind.click("left", PetState(), self.context, 35)
@@ -181,7 +190,7 @@ class ClickStoryTests(unittest.TestCase):
         self.assertTrue(self.mind.click_wakes)
         # The application commits waking; dialogue selection cannot mutate her.
         self.assertTrue(self.state.sleeping)
-        self.assertEqual(self.mind.irritated_until, -1)
+        self.assertEqual(self.mind.irritation_reaction_until, -1)
 
     def test_work_interruption_and_recovery_payoff(self):
         self.mind.set_situation(scene(duration=150), now=20)

@@ -3275,3 +3275,33 @@ suite was run. Physical Windows acceptance is not claimed by these checks.
 followed by 5C's combined status/UI implementation. The final complete suite,
 slow-test review and broad final OOP review remain part of the full refactor's
 closing stage, as requested.
+
+
+### 5B.8 implementation record: interpretation and dialogue contracts
+
+The first unit derives an immutable `EmotionalComposition` from every active
+Moodlet's intensity, preserving all causes, directions and known attribution.
+It has no clock, stored emotional score or interaction lock. No-Moodlet numeric
+thresholds live in the existing balance catalogue. Legacy cause attribution
+remains unknown; newly observed interaction/fulfillment facts supply their origin.
+
+The second unit replaces the mixed mind/dialogue vocabulary coherently:
+`PetMind.emotional_state()` derives the overall composition;
+`reaction_tone()` exposes only short-lived reactions;
+`DialogueContext` carries `mood_value`, `emotions`, `need_conditions`,
+`situational_conditions`, sleep, presence and relationship facts separately.
+`record_accepted_care()` records accepted timing and delegates the existing short
+care reaction; a sleep command never removes lasting Moodlets.
+
+Dialogue catalogue schema 3 uses explicit `conditions`: alternatives are OR,
+fields within a clause are AND. Typed fields distinguish emotional states,
+secondary emotional directions, need conditions, reaction tones and situational
+conditions. All 1,082 identities and authored text/emote beats are unchanged.
+The canonical status-label consumer is migrated with the schema; the new VN
+layout remains 5C. Existing interaction admission/locks are unchanged.
+
+Validation is targeted and headless. Focused strict Mypy uses silent dependency
+following because unrestricted dependency checking reports the pre-existing
+`world/state.py:291` local-variable narrowing error (also present at `871d050`).
+That unrelated World code is unchanged. Pyright checks the migrated production
+and test contracts normally. No windows, pointer control or CI are used.

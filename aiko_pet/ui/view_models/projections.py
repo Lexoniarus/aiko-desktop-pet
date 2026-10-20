@@ -6,6 +6,7 @@ from ...application.object_status import ObjectStatusSnapshot
 from ...application.read_snapshot import PetReadSnapshot
 from ...application.settings import PetSettings
 from ...pet.content import GERMAN_TEXT
+from ...pet.emotions import EmotionalState
 from ...pet.food import FOOD_CATALOG
 from ...pet.mind.adaptive_models import Behaviour
 from ...pet.routine import TimeContext
@@ -14,7 +15,7 @@ from .contracts import HoverSnapshot, SettingsSnapshot, StatusSnapshot
 from .text_de import (
     describe_workload,
     format_day_label,
-    format_emotion_label,
+    format_emotional_state,
     format_feed_label,
     format_percent,
     format_schedule_line,
@@ -28,9 +29,13 @@ def _status_values(pet: PetReadSnapshot) -> tuple[tuple[str, float], ...]:
     """Presentation order for care, mood and relationship, not a need model."""
     needs = pet.needs
     return (
-        ("satiety", needs.satiety), ("mood", pet.mood), ("fun", needs.fun),
-        ("energy", needs.energy), ("social", needs.social),
-        ("affection", needs.affection), ("friendship", pet.friendship),
+        ("satiety", needs.satiety),
+        ("mood", pet.mood),
+        ("fun", needs.fun),
+        ("energy", needs.energy),
+        ("social", needs.social),
+        ("affection", needs.affection),
+        ("friendship", pet.friendship),
     )
 
 
@@ -79,7 +84,7 @@ def project_hover(
 def project_status(
     pet: PetReadSnapshot,
     context: TimeContext,
-    emotion: str,
+    emotional_state: EmotionalState,
     situation: Behaviour | None,
     computer: ComputerSnapshot,
     *,
@@ -125,15 +130,18 @@ def project_status(
         today=format_day_label(context),
         next_event=format_schedule_line(context),
         hint=format_status_hint(pet, context),
-        emotion=format_emotion_label(emotion),
+        emotional_state_label=format_emotional_state(emotional_state),
         sleep_label=format_sleep_label(pet.sleeping),
         hardware_line=hardware,
         activity_line=activity,
         status_values=_status_values(pet),
         friendship_level=pet.friendship_level,
         objects_line=GERMAN_TEXT.format(
-            "ui.object_status", desktop=str(objects.desktop), known=str(objects.known),
-            assigned=str(objects.assigned), missing=str(objects.missing),
+            "ui.object_status",
+            desktop=str(objects.desktop),
+            known=str(objects.known),
+            assigned=str(objects.assigned),
+            missing=str(objects.missing),
         ),
     )
 
