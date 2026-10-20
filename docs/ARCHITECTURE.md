@@ -173,8 +173,18 @@ against supported categories in focused tests. Labels/descriptions stay in
 `texts.de.json`. Both catalogues detach nested values into frozen dataclasses,
 tuples and read-only mappings.
 
-These are definitions only: active episodes/wishes, save integration, progression,
-fulfillment and emotional interpretation are not yet connected to the runtime.
+`MoodletState`/`MoodletEpisode` and `WishState`/`ActiveWish`/`GameWishProgress`
+are frozen values owned by `PetValues` and exposed read-only by `PetState`.
+Focused `infrastructure/moodlet_codec.py` and `wish_codec.py` extend the existing
+`pet_codec.py` entry point and outer version-one atomic save. Checkpoint/restore
+includes both collections in the existing Pet/World/memory transaction.
+Elapsed timestamps refer to `lived_seconds`; loading never advances them or
+creates emotional evidence. Wish IDs and per-area pacing survive removed wishes;
+round progress is bounded to the objective and does not become a second game
+session/score owner. Friendship rewards retain their existing history owner.
+
+State/storage are now connected; automatic creation, progression, relief,
+fulfillment and overall emotional interpretation remain for later stages.
 
 ## Application layer
 

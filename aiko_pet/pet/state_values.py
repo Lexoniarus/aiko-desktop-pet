@@ -13,6 +13,7 @@ from .food import FoodState
 from .friendship_history import FriendshipHistory
 from .moodlets import MoodletState
 from .sleep import SleepEpisode
+from .wishes import WishState
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,6 +44,7 @@ class PetValues:
     relationship: FriendshipHistory = FriendshipHistory()
     sleep_episode: SleepEpisode = SleepEpisode()
     moodlets: MoodletState = MoodletState()
+    wishes: WishState = WishState()
 
 
 @dataclass(frozen=True, slots=True)

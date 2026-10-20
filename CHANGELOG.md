@@ -8,10 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
-- Persist immutable Moodlet episodes in the existing PetValues checkpoint and
-  version-one save, including per-level relief usage and recovery progress.
-  Preserve corrupt optional sections in the existing backup path; legacy saves
-  start empty without invented experiences. Active triggering/ageing follows later.
+- Persist immutable Moodlet episodes and inner wishes in the existing PetValues
+  checkpoint and version-one save, including relief usage, original deadlines,
+  expression/pacing evidence and bounded game-wish progress. Preserve corrupt
+  optional sections in the existing backup path; legacy saves start empty.
+  Verify joint rollback with populated emotional state. Automatic creation,
+  ageing and fulfillment follow later.
 
 - Add typed, immutable definitions and validated JSON catalogues for the 18
   planned Moodlet families and 11 wish forms, shared balance parameters and

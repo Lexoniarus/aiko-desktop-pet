@@ -12,8 +12,8 @@
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
-> now supplies typed definitions and JSON catalogues; active episodes, wishes,
-> persistence and behavior integration remain for 5B.2 onward.
+> supplies typed definitions and JSON catalogues; 5B.2 adds aggregate-owned
+> state and storage. Progression and behavior integration remain for 5B.3 onward.
 
 ## Stage-4 correction delivery, 2026-10-19
 
@@ -356,8 +356,8 @@ The refreshed read-only review on 2026-10-20 confirms that 5A has delivered
 `needs.py`, `progression.py` and status-specific vocabulary. `PetMind.emotion()`
 still mixes need/lifecycle facts with emotional labels, and
 `DialogueContext.states` still merges those inputs. The 5B.1 Moodlet/wish
-definitions and catalogue loaders are now delivered below; active collections,
-policies and final emotional interpretation remain pending.
+definitions/catalogue loaders and 5B.2 owned collections/codecs are delivered
+below; progression policies and final emotional interpretation remain pending.
 `PetState`/frozen `PetValues`, `SessionTimeProgression`,
 existing World custody and the current application coordinators remain the
 correct owners. The delivered menu/action/placement separation is the baseline
@@ -2337,7 +2337,8 @@ the wish's effective extra reward is zero, while its emotional outcome remains.
 ##### Documented inventory and decisions before implementation, 2026-10-20
 
 Counts below originally inventoried the agreed design; 5B.1 now supplies its
-typed catalogue definitions. Active runtime collections remain unimplemented.
+typed catalogue definitions. 5B.2 now stores owned collections; automatic
+creation, progression and fulfillment remain unimplemented.
 Count wish objectives before substituting individual food IDs or game IDs;
 count lasting Moodlet types/families, not intensity levels, emotional labels,
 immediate reactions, requests or separate copies for each qualifying activity.
@@ -2521,7 +2522,53 @@ bookkeeping remains with the later 5B.4/5B.5 policies, using the existing owners
 checkpoint, three repository, eight consumption/rollback and eight elapsed-time
 persistence cases. The slowest case took 0.680 seconds; none exceeded ten seconds.
 Scoped Ruff, strict Mypy and Pyright passed for the six affected source modules.
-No GUI, mouse, external API or CI was used. Wish state/codecs follow separately.
+No GUI, mouse, external API or CI was used. This unit was committed and pushed
+as `a3e120a`; wish state/codecs follow in the next unit.
+
+###### 5B.2 completion: owned wishes, bounded progress and joint rollback
+
+`ActiveWish`, `GameWishProgress` and `WishState` now belong to the same immutable
+PetValues checkpoint. The focused `wish_codec.py` extends the existing pet/save
+entry point with another optional version-one section. Store stable instance
+IDs, concrete targets, original elapsed deadlines, actual expression evidence
+and at most the objective's round count of unique completed-round identities
+with Aiko's win/loss counts. Shared play also retains its session token; no
+board, deck, ordinary game session score or API payload is saved.
+
+Keep at most three active wishes and one per area. Persist the bounded four-area
+creation anchors and last actual expression even after wishes end. Derive the
+global last creation time from those anchors rather than storing it twice.
+Monotonic instance allocation survives an empty active collection; a removed
+wish is not resurrected on load. This supplies identity/pacing evidence for later
+once-only fulfillment; it does not yet implement or claim reward execution.
+Relationship amounts and rolling budgets remain solely in friendship history.
+
+Codecs strictly reject invalid IDs/targets, duplicate instances/areas/rounds,
+unbounded or inconsistent counters, invalid types/nonfinite numbers and
+impossible timelines. Original deadlines are preserved, including already past
+deadlines: loading does not expire wishes, reset timers, generate wishes,
+speak, reconstruct play or grant emotional/friendship effects. Missing legacy
+wish data is empty. One invalid optional section does not discard other valid
+pet state. Existing StateStore corruption checks share one validation path for
+relationship, sleep, Moodlet and wish sections before atomic replacement.
+
+The existing handover-failure test now seeds both collections and changes them
+before the injected failure, proving full Pet/World/memory rollback without a
+second transaction or a parallel aggregate. Captures/deep copies remain frozen
+and detached through the existing checkpoint owner.
+
+Final selected local checks: 43 tests passed (14 emotional persistence, eight
+consumption/rollback, six checkpoint, three repository, eight elapsed-time and
+four World persistence cases). Slowest individual test: 0.697 seconds; none
+exceeded ten seconds. Scoped Ruff, strict Mypy and Pyright passed for the eight
+affected source modules and the selected tests where applicable. Only injected
+times and temporary saves were used; no GUI, mouse, external API or GitHub CI.
+No full suite was run; that remains the agreed integrated completion gate.
+
+5B.2 is complete. Next is 5B.3's pure Moodlet lifetime/relief rules and numeric
+composition in the existing progression path. Trigger-specific evidence and
+poor-care exposure accounting follow in 5B.4/5B.5; wish decisions follow in
+5B.6/5B.7. No extra clock, manager, save or active simulation was introduced.
 
 #### 5C. Connect status, expression and interaction decisions
 

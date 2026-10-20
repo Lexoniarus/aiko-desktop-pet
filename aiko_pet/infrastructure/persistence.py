@@ -25,6 +25,7 @@ from .moodlet_codec import valid_moodlets
 from .object_memory_codec import decode_object_memory, encode_object_memory
 from .pet_codec import decode_pet_state, encode_pet_state, valid_pet_time
 from .sleep_codec import valid_sleep
+from .wish_codec import valid_wishes
 from .world_catalog import build_consumable_definitions
 from .world_codec import decode_world, encode_world
 
@@ -166,31 +167,19 @@ class StateStore:
             isinstance(pet_data, dict) and "time" in pet_data
             and not valid_pet_time(pet_data["time"])
         )
-        invalid_relationship = (
-            isinstance(pet_data, dict) and "relationship" in pet_data
-            and (invalid_time or not valid_friendship(
-                pet_data["relationship"],
-                pet_data.get("time", {}).get("lived_seconds", 0)
-                if isinstance(pet_data.get("time"), dict) else 0,
-            ))
-        )
-        invalid_sleep = (
-            isinstance(pet_data, dict) and "sleep_episode" in pet_data
-            and (invalid_time or not valid_sleep(
-                pet_data["sleep_episode"],
-                pet_data.get("time", {}).get("lived_seconds", 0)
-                if isinstance(pet_data.get("time"), dict) else 0,
-            ))
-        )
+        invalid_sections = False
+        if isinstance(pet_data, dict):
+            saved_time = pet_data.get("time")
+            elapsed = (saved_time.get("lived_seconds", 0)
+                       if isinstance(saved_time, dict) else 0)
+            invalid_sections = any(
+                invalid_time or not validate(pet_data[key], elapsed)
+                for key, validate in (
+                    ("relationship", valid_friendship), ("sleep_episode", valid_sleep),
+                    ("moodlets", valid_moodlets), ("wishes", valid_wishes),
+                ) if key in pet_data
+            )
         invalid_quiet = False
-        invalid_moodlets = (
-            isinstance(pet_data, dict) and "moodlets" in pet_data
-            and (invalid_time or not valid_moodlets(
-                pet_data["moodlets"],
-                pet_data.get("time", {}).get("lived_seconds", 0)
-                if isinstance(pet_data.get("time"), dict) else 0,
-            ))
-        )
         adaptive = payload.get("adaptive") if isinstance(payload, dict) else None
         if isinstance(adaptive, dict) and "quiet_window" in adaptive:
             try:
@@ -204,8 +193,7 @@ class StateStore:
             and not self._invalid_world
             and not self._invalid_memory
             and not invalid_time
-            and not invalid_relationship
-            and not invalid_sleep and not invalid_quiet and not invalid_moodlets
+            and not invalid_sections and not invalid_quiet
         ):
             return
         backup = self.path.with_name(

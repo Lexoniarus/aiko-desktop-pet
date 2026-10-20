@@ -14,8 +14,16 @@ from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.moodlet_codec import decode_moodlets, encode_moodlets
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+from aiko_pet.infrastructure.wish_codec import decode_wishes, encode_wishes
 from aiko_pet.pet.moodlets import MoodletEpisode, MoodletId, MoodletState
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.wishes import (
+    ActiveWish,
+    GameWishProgress,
+    WishArea,
+    WishId,
+    WishState,
+)
 
 WALL = 1_800_000_000.0
 ELAPSED = 1000.0
@@ -30,6 +38,15 @@ def moodlet_state() -> MoodletState:
                        decay_paused=True),
         MoodletEpisode(7, MoodletId.PRIDE, 2, 800, 850, 3600),
     ))
+
+
+def wish_state() -> WishState:
+    return WishState(6, (
+        ActiveWish(1, WishId.FOOD, "apple", 100, 14500),
+        ActiveWish(3, WishId.WIN_OVERALL, "blackjack", 200, 14600, 900,
+                   GameWishProgress(("session-a:1", "session-b:1"), 1, 1)),
+        ActiveWish(5, WishId.PET, "pet", 300, 14700),
+    ), ((WishArea.FOOD, 100), (WishArea.GAMES, 200), (WishArea.AFFECTION, 300)), 900)
 
 
 class MoodletPersistenceTests(unittest.TestCase):
@@ -149,3 +166,135 @@ class MoodletPersistenceTests(unittest.TestCase):
             store.save(PetState(updated_at=WALL), PetSettings())
             self.assertEqual([p.read_bytes() for p in
                               Path(folder).glob("*.aiko-save-backup")], [corrupt])
+
+
+class WishPersistenceTests(unittest.TestCase):
+    def test_round_trip_preserves_unspoken_spoken_and_cross_session_goals(self):
+        pet = PetState(lived_seconds=ELAPSED, updated_at=WALL,
+                       moodlets=moodlet_state(), wishes=wish_state())
+        raw = json.loads(json.dumps(encode_pet_state(pet), allow_nan=False))
+        for now in (WALL, WALL + 86400, WALL - 86400):
+            loaded = decode_pet_state(raw, now=now)
+            self.assertEqual(loaded.capture_checkpoint(), pet.capture_checkpoint())
+            self.assertIsNone(loaded.wishes.active[0].expressed_at)
+            self.assertEqual(loaded.wishes.active[1].game,
+                             GameWishProgress(("session-a:1", "session-b:1"), 1, 1))
+        # The codec stores even past deadlines unchanged; progression resolves them.
+        self.assertEqual(decode_wishes(raw["wishes"], 20000), pet.wishes)
+
+    def test_completed_identity_and_pacing_survive_an_empty_active_collection(self):
+        retired = replace(wish_state(), active=())
+        loaded = decode_wishes(encode_wishes(retired), ELAPSED)
+        self.assertEqual(loaded, retired)
+        self.assertEqual(loaded.next_instance_id, 6)
+        self.assertEqual(loaded.last_created_at, 300)
+        self.assertEqual(loaded.last_expressed_at, 900)
+        self.assertEqual(loaded.active, ())
+        raw = encode_wishes(retired)
+        raw["next_instance_id"] = 1
+        with self.assertRaises(ValueError):
+            decode_wishes(raw, ELAPSED)
+        self.assertEqual(decode_pet_state({"satiety": 42}, now=WALL).wishes,
+                         WishState())
+
+    def test_shared_play_keeps_its_session_and_bounded_round_receipts(self):
+        wish = ActiveWish(1, WishId.PLAY_GAME, "tic_tac_toe", 200, 14600,
+                          game=GameWishProgress(("session-a:1",), 0, 1, "session-a"))
+        state = WishState(2, (wish,), ((WishArea.GAMES, 200),))
+        raw = encode_wishes(state)
+        decoded = decode_wishes(raw, ELAPSED)
+        self.assertEqual(decoded, state)
+        raw["active"][0]["game"]["round_ids"].clear()
+        self.assertEqual(decoded.active[0].game.round_ids, ("session-a:1",))
+
+    def test_bad_counts_targets_timestamps_and_progress_are_rejected(self):
+        original = encode_wishes(wish_state())
+        for field, bad in (
+            ("version", True), ("version", 2), ("next_instance_id", 5),
+            ("active", original["active"] * 2),
+            ("last_created_by_area", {"sleep": 100}),
+            ("last_created_by_area", {"food": 1001}),
+            ("last_expressed_at", None), ("last_expressed_at", float("nan")),
+        ):
+            raw = copy.deepcopy(original)
+            raw[field] = bad
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                decode_wishes(raw, ELAPSED)
+        for field, bad in (
+            ("instance_id", True), ("definition_id", "sleep"),
+            ("target_id", "energy_drink"), ("target_id", {}),
+            ("created_at", -1), ("created_at", 1001), ("created_at", 99),
+            ("expires_at", 14501), ("expires_at", 100), ("expires_at", float("inf")),
+            ("expressed_at", 99), ("expressed_at", 1001), ("unexpected", "field"),
+        ):
+            raw = copy.deepcopy(original)
+            raw["active"][0][field] = bad
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                decode_wishes(raw, ELAPSED)
+        for field, bad in (
+            ("wins", 3), ("wins", True), ("losses", 2),
+            ("round_ids", ["one"] * 2), ("round_ids", ["1", "2", "3", "4"]),
+            ("round_ids", [True]), ("session_id", "x" * 129),
+        ):
+            raw = copy.deepcopy(original)
+            raw["active"][1]["game"][field] = bad
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                decode_wishes(raw, ELAPSED)
+        for duplicate in ("instance", "area"):
+            raw = copy.deepcopy(original)
+            if duplicate == "instance":
+                raw["active"][1]["instance_id"] = 1
+            else:
+                raw["active"][1] = {**raw["active"][0], "instance_id": 3}
+            with self.subTest(duplicate=duplicate), self.assertRaises(ValueError):
+                decode_wishes(raw, ELAPSED)
+
+    def test_nongame_and_sessionless_shared_play_cannot_claim_round_progress(self):
+        raw = encode_wishes(wish_state())
+        raw["active"][0]["game"]["session_id"] = "not-a-food-event"
+        with self.assertRaises(ValueError):
+            decode_wishes(raw, ELAPSED)
+        raw = encode_wishes(wish_state())
+        raw["active"][1]["definition_id"] = "play_game"
+        with self.assertRaises(ValueError):
+            decode_wishes(raw, ELAPSED)
+
+    def test_complete_checkpoint_owns_and_restores_both_collections(self):
+        pet = PetState(updated_at=WALL, lived_seconds=ELAPSED,
+                       moodlets=moodlet_state(), wishes=wish_state())
+        before = pet.capture_checkpoint()
+        with self.assertRaises(AttributeError):
+            cast(Any, pet).wishes = WishState()
+        with self.assertRaises(FrozenInstanceError):
+            cast(Any, pet.wishes.active[1].game).wins = 3
+        pet.restore_checkpoint(replace(before, moodlets=MoodletState(),
+                                       wishes=WishState()))
+        pet.restore_checkpoint(before)
+        self.assertEqual(copy.deepcopy(pet).capture_checkpoint(), before)
+        self.assertEqual(pet.wishes, wish_state())
+
+    def test_store_restores_both_and_only_discards_an_invalid_wish_section(self):
+        with tempfile.TemporaryDirectory() as folder:
+            store = StateStore(Path(folder) / "state.json")
+            pet = PetState(updated_at=WALL, lived_seconds=ELAPSED,
+                           moodlets=moodlet_state(), wishes=wish_state())
+            store.save(pet, PetSettings())
+            self.assertEqual(store.load_session(now=WALL).state, pet)
+            for invalid in (None, {"version": 999}):
+                raw: dict[str, Any] = dict(version=1, pet=encode_pet_state(pet))
+                raw["pet"]["wishes"] = invalid
+                original = json.dumps(raw).encode()
+                store.path.write_bytes(original)
+                restored = store.load_session(now=WALL)
+                self.assertEqual(restored.state.wishes, WishState())
+                self.assertEqual(restored.state.moodlets, pet.moodlets)
+                store.save(restored.state, restored.settings)
+                self.assertIn(original, [p.read_bytes() for p in
+                                         Path(folder).glob("*.aiko-save-backup")])
+            # Cold replacement must also preserve invalid optional wish data.
+            store.path.write_bytes(original)
+            previous_backups = len(tuple(Path(folder).glob("*.aiko-save-backup")))
+            store.save(pet, PetSettings())
+            self.assertEqual(len(tuple(Path(folder).glob("*.aiko-save-backup"))),
+                             previous_backups + 1)
+            self.assertEqual(store.load_session(now=WALL).state, pet)

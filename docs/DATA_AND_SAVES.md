@@ -5,6 +5,8 @@
 | Resource | Owns |
 | --- | --- |
 | `aiko_pet/data/balance.json` | Initial values, care effects, hunger/digestion, fun/mood, friendship, movement, attention and adaptive behaviour parameters |
+| `aiko_pet/data/moodlets.json` | Eighteen typed Moodlet family definitions and per-type parameters |
+| `aiko_pet/data/wishes.json` | Eleven wish objectives, supported targets, round scope and positive fulfillment references |
 | `aiko_pet/data/food_catalog.json` | Food IDs, display names, nutrition, categories and menu order |
 | `aiko_pet/data/texts.de.json` | UI wording, status templates, care fallback text, game labels and emergency farewell fallback |
 | `aiko_pet/data/object_grammar.de.json` | German grammatical gender and optional spoken-name override for every consumable; no duplicated nutrition/menu names |
@@ -33,8 +35,10 @@ pending requests are session-local and never enter the version-one save.
 RPS, Blackjack and Tic-Tac-Toe sessions are temporary. Their scores, decks,
 boards and hidden/revealed cards are not serialized. Closing reports completed
 units through the existing application game-experience path before final save;
-only the resulting pet care values/bookkeeping persist. No save migration was
-introduced for the additional games.
+ordinary session scores still do not persist. Optional inner wishes may now
+store only a bounded objective block (round identities and win/loss counts),
+not the game session itself. Game-to-wish reporting is a later implementation
+step; the storage contract does not reconstruct or replay games.
 
 ## Validation and editing
 
@@ -114,6 +118,30 @@ future sections are not partially interpreted: other valid pet values survive,
 and StateStore preserves the original file before replacing it through its
 existing atomic-save path. No separate save, clock or emotional score is added.
 Actual episode creation, ageing and emotional effects follow in later stages.
+
+## Optional wish state
+
+`pet.wishes` has a focused version-one codec in that same outer save. `WishState`
+is frozen and owned in `PetValues` alongside Moodlets. Persist up to three active
+wishes, at most one per area, with stable instance IDs, catalogue objective and
+concrete target IDs, elapsed creation/expiry times and actual expression times.
+Keep original deadlines on load, even when already expired; domain progression
+will resolve expiry later. Do not infer speech from a queued/displayed status.
+
+Game wish progress stores only the objective's bounded round identities and
+Aiko's win/loss counts. Shared play includes a session token to distinguish its
+single-session requirement. Normal decks/boards/session scores remain transient.
+Creation anchors for at most four areas and the last actual wish expression
+survive ended wishes; the global creation anchor is derived from those entries.
+The next instance ID is retained when the active collection becomes empty.
+These values support later duplicate-safe fulfillment; no reward is generated
+by decoding, and no parallel relationship accounting is stored in wishes.
+
+Missing old sections stay empty. Invalid sections preserve valid Moodlet/care
+values, and the existing atomic repository backs up the original bytes before
+replacement, including when saving without first loading. Whole-Pet checkpoints
+include both collections, so the existing joint consumption transaction can
+restore them together with World custody and subjective object memory.
 
 ## Where progress is stored
 

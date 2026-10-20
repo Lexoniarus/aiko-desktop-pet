@@ -40,6 +40,7 @@ from .sleep import SleepContext, SleepEpisode, calculate_manual_sleep_transition
 from .state_values import PetValues, PreparedItemConsumption
 from .status_hints import StatusHint, choose_status_hint
 from .value_rules import clamp_need_value
+from .wishes import WishState
 
 
 class PetState:
@@ -73,6 +74,7 @@ class PetState:
         relationship: FriendshipHistory | None = None,
         sleep_episode: SleepEpisode | None = None,
         moodlets: MoodletState | None = None,
+        wishes: WishState | None = None,
     ) -> None:
         self._values = PetValues(
             satiety=satiety, mood=mood, energy=energy, social=social,
@@ -91,6 +93,7 @@ class PetState:
             sleep_episode=sleep_episode or SleepEpisode(),
             moodlets=(MoodletState(baseline=lived_seconds)
                       if moodlets is None else moodlets),
+            wishes=WishState() if wishes is None else wishes,
             relationship=(FriendshipHistory(baseline=lived_seconds)
                           if relationship is None else relationship),
         )
@@ -213,6 +216,11 @@ class PetState:
     def moodlets(self) -> MoodletState:
         """Immutable episode values, owned by the complete pet checkpoint."""
         return self._values.moodlets
+
+    @property
+    def wishes(self) -> WishState:
+        """Immutable inner wishes; reading them neither expresses nor fulfills them."""
+        return self._values.wishes
 
     @property
     def friendship_level(self) -> int:
