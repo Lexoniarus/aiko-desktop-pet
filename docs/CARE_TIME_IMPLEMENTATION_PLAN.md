@@ -2403,6 +2403,33 @@ proportionate and local; no GUI tests, timing runs or CI were performed here.
 
 ##### 5B readiness and small implementation slices, 2026-10-20
 
+###### 5B.6 implementation conventions
+
+- Evaluate creation once at the current endpoint of each live desktop lifecycle
+  tick, after elapsed progression and sleep transitions. The first awake live
+  evaluation may create one wish immediately; no separate startup clock or
+  persisted random schedule is required. Closed/standby reconstruction only
+  expires existing wishes. A return may create one current wish, never a backlog.
+- Expire deadlines at `elapsed >= expires_at` before selection or disclosure.
+  Creation uses the saved global/area anchors and allocates at most one identity
+  per evaluation. Future fulfillment at the exact deadline is too late (5B.7).
+- Randomly choose an eligible area, then an objective form and concrete target,
+  using the existing Mind RNG. This avoids weighting games by their five forms
+  or food by its ten targets. Exclude the food currently causing monotony and
+  favor another area while the crowded/petting-boundary impression is active.
+  Low friendship, mood or adequate needs do not exclude other inner wishes.
+- Online opt-in admits supported API objectives for creation. Disclosure also
+  requires an already prepared item in that category's existing warm buffer;
+  inspecting readiness neither fetches nor reserves content. Petting uses the
+  existing pure acceptance decision; games use the existing energy threshold.
+  These temporary restrictions never alter an existing wish or its deadline.
+- At a free speaking opportunity, urgent care takes priority, then the oldest
+  eligible unspoken wish (instance ID breaks equal-time ties), then ordinary
+  commentary. A wish is one concrete text cue with its instance ID attached.
+  Actual text presentation acknowledges that ID on the canonical elapsed axis;
+  selection, cancellation before text and stale/expired receipts do not count.
+  Expression has no care, contact, friendship or Moodlet effects.
+
 The pre-5B.1 read-only code comparison found no existing Moodlet/wish files or
 collections. The 5B.1 delivery record below supersedes that file-status snapshot.
 `PetValues` already owns immutable care/relationship/sleep state;

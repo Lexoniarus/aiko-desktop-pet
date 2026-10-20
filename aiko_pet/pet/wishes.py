@@ -1,8 +1,11 @@
 """Immutable wish definitions and aggregate-owned inner wish progress."""
 
-from dataclasses import dataclass
+import random
+from dataclasses import dataclass, replace
 from enum import StrEnum
+from typing import Mapping
 
+from .balance import BALANCE
 from .moodlets import MoodletId
 
 
@@ -97,3 +100,169 @@ class WishState:
     @property
     def last_created_at(self) -> float | None:
         return max((stamp for _, stamp in self.last_created_by_area), default=None)
+
+
+@dataclass(frozen=True, slots=True)
+class WishContext:
+    """Current capabilities/acceptance, never proof of World stock or contact."""
+
+    online_social: bool = False
+    prepared_social: frozenset[str] = frozenset()
+    petting_welcome: bool = True
+    games_ready: bool = True
+    crowded: bool = False
+    repetitive_food: str | None = None
+
+
+class WishRestriction(StrEnum):
+    ONLINE_UNAVAILABLE = "online_unavailable"
+    PETTING_UNWELCOME = "petting_unwelcome"
+    GAME_TIRED = "game_tired"
+
+
+def expire_wishes(state: WishState, *, elapsed: float) -> WishState:
+    """Age original deadlines in all time paths; retain identity/pacing evidence."""
+    active = tuple(w for w in state.active if elapsed < w.expires_at)
+    return replace(state, active=active) if active != state.active else state
+
+
+def create_wish(
+    state: WishState,
+    *,
+    elapsed: float,
+    sleeping: bool,
+    context: WishContext,
+    definitions: Mapping[WishId, WishDefinition],
+    rng: random.Random,
+) -> WishState:
+    """One current live opportunity, not a reconstruction of missed wishes."""
+    state = expire_wishes(state, elapsed=elapsed)
+    last = state.last_created_at
+    if (
+        sleeping
+        or len(state.active) >= BALANCE.integer("wishes", "maximum_active")
+        or last is not None
+        and elapsed - last < BALANCE.integer("wishes", "creation_interval_seconds")
+    ):
+        return state
+    occupied = {definitions[w.definition_id].area for w in state.active}
+    anchors = dict(state.last_created_by_area)
+    candidates: dict[WishArea, list[tuple[WishDefinition, tuple[str, ...]]]] = {}
+    for definition in definitions.values():
+        area = definition.area
+        if (
+            area in occupied
+            or area in anchors
+            and elapsed - anchors[area]
+            < BALANCE.integer("wishes", "same_area_interval_seconds")
+            or area == WishArea.AFFECTION
+            and context.crowded
+            or definition.id in (WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT)
+            and not context.online_social
+        ):
+            continue
+        targets = tuple(
+            t
+            for t in definition.targets
+            if area != WishArea.FOOD or t != context.repetitive_food
+        )
+        if targets:
+            candidates.setdefault(area, []).append((definition, targets))
+    if not candidates:
+        return state
+    area = rng.choice(tuple(candidates))
+    definition, targets = rng.choice(candidates[area])
+    wish = ActiveWish(
+        state.next_instance_id,
+        definition.id,
+        rng.choice(targets),
+        elapsed,
+        elapsed + BALANCE.integer("wishes", "lifetime_seconds"),
+    )
+    anchors[area] = elapsed
+    return replace(
+        state,
+        next_instance_id=state.next_instance_id + 1,
+        active=(*state.active, wish),
+        last_created_by_area=tuple((a, anchors[a]) for a in WishArea if a in anchors),
+    )
+
+
+def wish_restriction(
+    wish: ActiveWish,
+    context: WishContext,
+    definitions: Mapping[WishId, WishDefinition],
+) -> WishRestriction | None:
+    """Readable temporary restrictions, also reusable by the later status UI."""
+    if wish.definition_id in (WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT) and (
+        not context.online_social or wish.target_id not in context.prepared_social
+    ):
+        return WishRestriction.ONLINE_UNAVAILABLE
+    if wish.definition_id == WishId.PET and not context.petting_welcome:
+        return WishRestriction.PETTING_UNWELCOME
+    if (
+        definitions[wish.definition_id].area == WishArea.GAMES
+        and not context.games_ready
+    ):
+        return WishRestriction.GAME_TIRED
+    return None
+
+
+def wish_to_express(
+    state: WishState,
+    *,
+    elapsed: float,
+    sleeping: bool,
+    friendship_level: int,
+    mood: float,
+    context: WishContext,
+    definitions: Mapping[WishId, WishDefinition],
+) -> ActiveWish | None:
+    """Select an unspoken wish; actual speech admission remains application-owned."""
+    if (
+        sleeping
+        or friendship_level < BALANCE.integer("wishes", "disclosure_friendship_level")
+        or mood < BALANCE.number("wishes", "disclosure_mood_threshold")
+        or state.last_expressed_at is not None
+        and elapsed - state.last_expressed_at
+        < BALANCE.integer("wishes", "disclosure_interval_seconds")
+    ):
+        return None
+    return min(
+        (
+            w
+            for w in state.active
+            if w.created_at <= elapsed < w.expires_at
+            and w.expressed_at is None
+            and wish_restriction(w, context, definitions) is None
+        ),
+        key=lambda w: (w.created_at, w.instance_id),
+        default=None,
+    )
+
+
+def acknowledge_wish_expression(
+    state: WishState,
+    instance_id: int,
+    *,
+    elapsed: float,
+) -> WishState:
+    """A concrete presented cue acknowledges one live identity, exactly once."""
+    wish = next((w for w in state.active if w.instance_id == instance_id), None)
+    if (
+        wish is None
+        or wish.expressed_at is not None
+        or not wish.created_at <= elapsed < wish.expires_at
+        or state.last_expressed_at is not None
+        and elapsed - state.last_expressed_at
+        < BALANCE.integer("wishes", "disclosure_interval_seconds")
+    ):
+        return state
+    return replace(
+        state,
+        last_expressed_at=elapsed,
+        active=tuple(
+            replace(w, expressed_at=elapsed) if w.instance_id == instance_id else w
+            for w in state.active
+        ),
+    )

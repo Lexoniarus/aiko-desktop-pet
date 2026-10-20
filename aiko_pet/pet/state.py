@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import random
 import time
 from copy import deepcopy
 from dataclasses import replace
@@ -48,7 +49,14 @@ from .sleep import SleepContext, SleepEpisode, calculate_manual_sleep_transition
 from .state_values import PetValues, PreparedItemConsumption
 from .status_hints import StatusHint, choose_status_hint
 from .value_rules import clamp_need_value
-from .wishes import WishState
+from .wish_catalog import WISH_CATALOG
+from .wishes import (
+    WishContext,
+    WishState,
+    acknowledge_wish_expression,
+    create_wish,
+    expire_wishes,
+)
 
 
 class PetState:
@@ -299,11 +307,25 @@ class PetState:
             moodlets=progress.moodlets,
             friendship=relationship.points, relationship=relationship.history,
             lived_seconds=relationship.elapsed,
+            wishes=expire_wishes(self.wishes, elapsed=relationship.elapsed),
             sleep_episode=(replace(
                 self.sleep_episode,
                 slept_seconds=self.sleep_episode.slept_seconds + hours * 3600,
             ) if self.sleeping else self.sleep_episode),
         )
+
+    def evaluate_wishes(self, context: WishContext, *, rng: random.Random) -> None:
+        """Admit one current live desire; time reconstruction never calls this."""
+        self._change(wishes=create_wish(
+            self.wishes, elapsed=self.lived_seconds, sleeping=self.sleeping,
+            context=context, definitions=WISH_CATALOG.definitions, rng=rng,
+        ))
+
+    def note_wish_expression(self, instance_id: int) -> None:
+        """Record actual presentation without granting care or relationship credit."""
+        self._change(wishes=acknowledge_wish_expression(
+            self.wishes, instance_id, elapsed=self.lived_seconds,
+        ))
 
     def record_game_experience(
         self,
@@ -419,6 +441,7 @@ class PetState:
         self._update_sleep_endpoint(now, auto_routine, sleep_context)
         self._change(
             updated_at=now, lived_seconds=lived_seconds,
+            wishes=expire_wishes(self.wishes, elapsed=lived_seconds),
             relationship=start_history(self.friendship_history, lived_seconds),
         )
 
