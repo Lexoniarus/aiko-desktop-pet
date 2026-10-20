@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tkinter as tk
 
+from ...pet.content import GERMAN_TEXT
 from .skin import AikoSkin
 
 
@@ -108,7 +109,9 @@ class StatusReadout:
 
     def refresh(self, value: float, *, suffix: str = "") -> None:
         amount = max(0, min(100, value))
-        text = f"{self._title}   {amount:.0f} / 100{suffix}"
+        text = GERMAN_TEXT.format(
+            "vn.status_value", title=self._title, percent=f"{amount:.0f}", suffix=suffix
+        )
         if self.label.cget("text") != text:
             self.label.configure(text=text)
         self.canvas.coords(self._fill, *fill_geometry(amount, self._width))

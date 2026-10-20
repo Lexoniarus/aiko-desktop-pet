@@ -43,28 +43,27 @@ class AffectionGuiTests(unittest.TestCase):
         toolbar = self.toolbar
         self.assertEqual(len(toolbar.READOUTS), 7)
         self.assertEqual(len(toolbar.readouts), 7)
-        mood = toolbar.readouts["mood"][0]
-        assert isinstance(mood.master, tk.Frame)
-        self.assertEqual(int(mood.master.grid_info()["columnspan"]), 3)
+        mood = toolbar.readouts["mood"].canvas
+        previous = mood.winfo_rooty()
         for key in ("satiety", "fun", "energy", "social", "affection", "friendship"):
-            bar = toolbar.readouts[key][0]
-            assert isinstance(bar.master, tk.Frame)
-            self.assertGreater(int(bar.master.grid_info()["row"]), 0)
-        fun_cell = toolbar.readouts["fun"][0].master
-        assert isinstance(fun_cell, tk.Frame)
-        self.assertEqual(int(fun_cell.grid_info()["column"]), 1)
+            readout = toolbar.readouts[key]
+            self.assertGreater(readout.canvas.winfo_rooty(), previous)
+            previous = readout.canvas.winfo_rooty()
         for key in toolbar.readouts:
             set_test_pet_values(self.app.state, **{key: 100})
         toolbar.refresh()
         self.app.root.update()
         toolbar.refresh()
-        self.assertGreater(mood.winfo_width(), toolbar.readouts["fun"][0].winfo_width())
-        for key, (bar, rect, label) in toolbar.readouts.items():
-            self.assertEqual(bar.coords(rect)[2], bar.winfo_width(), key)
-            self.assertIn("100%", label.cget("text"))
-        self.assertIn("Zuwendung", toolbar.readouts["affection"][2].cget("text"))
-        self.assertIn("Spaß", toolbar.readouts["fun"][2].cget("text"))
-        self.assertIn("Lv 10", toolbar.readouts["friendship"][2].cget("text"))
+        self.assertLess(
+            mood.winfo_width(), toolbar.readouts["fun"].canvas.winfo_width()
+        )
+        for key, readout in toolbar.readouts.items():
+            bar, rect, label = readout.canvas, readout._fill, readout.label
+            self.assertEqual(max(bar.coords(rect)[::2]), bar.winfo_width() - 2, key)
+            self.assertIn("100 / 100", label.cget("text"))
+        self.assertIn("Zuwendung", toolbar.readouts["affection"].label.cget("text"))
+        self.assertIn("Spaß", toolbar.readouts["fun"].label.cget("text"))
+        self.assertIn("Lv 10", toolbar.readouts["friendship"].label.cget("text"))
 
     def test_pet_button_refills_affection_without_refilling_energy(self):
         set_test_pet_values(self.app.state, affection=10)
@@ -79,7 +78,7 @@ class AffectionGuiTests(unittest.TestCase):
         self.assertAlmostEqual(self.app.state.social, 17, places=2)
         self.assertEqual(self.app.state.mood, 20)
         self.toolbar.refresh()
-        self.assertIn("35%", self.toolbar.readouts["affection"][2].cget("text"))
+        self.assertIn("35 / 100", self.toolbar.readouts["affection"].label.cget("text"))
 
     def test_pinned_status_shows_affection_and_existing_controls(self):
         before = self.toolbar
@@ -90,8 +89,8 @@ class AffectionGuiTests(unittest.TestCase):
         set_test_pet_values(self.app.state, affection=46)
         set_test_pet_values(self.app.state, friendship=93)
         self.toolbar.refresh()
-        self.assertIn("46%", self.toolbar.readouts["affection"][2].cget("text"))
-        self.assertIn("Lv 10", self.toolbar.readouts["friendship"][2].cget("text"))
+        self.assertIn("46 / 100", self.toolbar.readouts["affection"].label.cget("text"))
+        self.assertIn("Lv 10", self.toolbar.readouts["friendship"].label.cget("text"))
         self.assertIsNotNone(self.toolbar.settings_button)
 
     def test_settings_survive_toolbar_hide_and_reopen(self):

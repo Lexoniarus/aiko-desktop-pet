@@ -215,8 +215,8 @@ class EmoteTkTests(unittest.TestCase):
         self.pet.root.update()
         self.assertTrue(
             all(
-                bar.readouts[k][0].coords(bar.readouts[k][1])[2]
-                == bar.readouts[k][0].winfo_width()
+                max(bar.readouts[k].canvas.coords(bar.readouts[k]._fill)[::2])
+                == bar.readouts[k].canvas.winfo_width() - 2
                 for k in bar.readouts
             )
         )

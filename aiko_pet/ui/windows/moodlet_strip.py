@@ -22,7 +22,11 @@ class MoodletStrip:
             font=(skin.font, 9, "bold"),
         ).pack(anchor="w")
         self._scroll = ScrollRegion(
-            self.frame, skin, width=620, height=82, horizontal=True
+            self.frame,
+            skin,
+            width=620,
+            height=max(82, 44 + skin.small_line_height * 3),
+            horizontal=True,
         )
         self._scroll.frame.pack(fill="x")
         self._skin, self._tips = skin, tips
@@ -57,9 +61,9 @@ class MoodletStrip:
                 compound="top",
                 wraplength=90,
                 width=96,
-                height=78,
+                height=max(78, 44 + self._skin.small_line_height * 3),
                 font=(self._skin.font, 8),
-                bg=self._skin.background,
+                bg="#F7E9EF" if item.value.polarity == "negative" else "#EAF2F8",
                 fg=self._skin.text,
                 highlightthickness=1,
                 highlightbackground=self._skin.background,

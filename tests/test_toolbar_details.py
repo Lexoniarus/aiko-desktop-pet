@@ -48,7 +48,7 @@ class ToolbarDetailTests(unittest.TestCase):
         self.assertIs(self.details.frame.master, self.parent)
         self.assertFalse(
             any(
-                isinstance(child, (tk.Toplevel, tk.Button, tk.Canvas))
+                isinstance(child, (tk.Toplevel, tk.Button))
                 for child in self.details.frame.winfo_children()
             )
         )

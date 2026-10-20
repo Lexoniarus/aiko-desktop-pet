@@ -99,12 +99,13 @@ class PersistentWindowTests(unittest.TestCase):
                 if isinstance(child, tk.Label)
             ]
             farewell_texts = {
-                line.text for line in self.pet.mind.book.lines
+                line.text
+                for line in self.pet.mind.book.lines
                 if line.event == "farewell"
             }
-            self.assertTrue(farewell_texts.intersection(
-                str(label.cget("text")) for label in labels
-            ))
+            self.assertTrue(
+                farewell_texts.intersection(str(label.cget("text")) for label in labels)
+            )
             self.pet._farewell.begin()
             self.assertEqual(len(scheduled), 1)
             finish = scheduled[0][1]
@@ -184,7 +185,7 @@ class PersistentWindowTests(unittest.TestCase):
         window.window.geometry("+80+60")
         self.pet.root.update_idletasks()
         self.pet.center()
-        window.scale_button.invoke()
+        window.scale_buttons[2].invoke()
         self.pet._hover.refresh_settings()
         self.pet.root.update_idletasks()
         self.assertEqual(

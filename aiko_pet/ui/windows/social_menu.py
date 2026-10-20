@@ -8,6 +8,7 @@ from typing import Callable
 
 from ...application.social_content import PreparedSocialContent, SocialCategory
 from ...pet.content import GERMAN_TEXT
+from ..common.image_button import update_button_state
 from ..common.skin import AikoSkin
 from .embedded_selector import EmbeddedSelector
 
@@ -76,10 +77,8 @@ class SocialMenu(EmbeddedSelector):
             return
         allowed, enabled = self._can_interact(), self._enabled()
         for category, button in self.buttons.items():
-            button.configure(
-                state="normal"
-                if allowed and (category is None or enabled)
-                else "disabled"
+            update_button_state(
+                button, enabled=allowed and (category is None or enabled)
             )
         status, _source = self._snapshot()
         text = status if enabled else GERMAN_TEXT.format("social.disabled")

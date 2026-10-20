@@ -5,6 +5,7 @@ from dataclasses import FrozenInstanceError, replace
 
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.pet.emotions import EmotionalState
+from aiko_pet.pet.friendship_history import FriendshipHistory
 from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
 from aiko_pet.pet.moodlets import (
     MoodletAttribution,
@@ -29,6 +30,38 @@ from tools.pet_test_support import set_test_pet_values
 
 
 class EmotionalReadTests(unittest.TestCase):
+    def test_status_uses_real_target_sleep_reason_stage_and_known_contact(self):
+        state = PetState(
+            satiety=100,
+            energy=100,
+            fun=100,
+            social=100,
+            affection=100,
+            mood=53,
+            friendship=0,
+            sleeping=True,
+            sleep_origin="manual",
+            lived_seconds=1800,
+            relationship=FriendshipHistory(last_contact=600),
+        )
+        before = state.capture_checkpoint()
+        read = snapshot_pet(state)
+        self.assertEqual(read.mood_target, 80)
+        self.assertEqual(read.mood, 53)
+        self.assertEqual(read.contact_absence_seconds, 1200)
+        view = project_status(
+            read,
+            context_at(1_800_000_000),
+            None,
+            ComputerSnapshot(),
+            observe_computer=False,
+        )
+        self.assertIn("80 / 100", view.wellbeing_line)
+        self.assertIn("Bekanntschaft", view.relationship_line)
+        self.assertEqual(view.sleep_context_line, "Manuell schlafen gelegt.")
+        self.assertIn("20 Min.", view.contact_line)
+        self.assertEqual(state.capture_checkpoint(), before)
+
     def test_all_families_reach_both_views_with_full_composition_and_localized_copy(
         self,
     ):

@@ -5,7 +5,6 @@ import tkinter as tk
 import unittest
 from dataclasses import replace
 from pathlib import Path
-from tkinter import font as tkfont
 from unittest.mock import patch
 
 from aiko_pet.games.contracts import GameId
@@ -30,16 +29,28 @@ class GameMenuTests(unittest.TestCase):
         self.pet.settings.spontaneous_talk = False
         self.pointer = (0, 0)
         self.pointer_widget = None
-        self.enterContext(patch.object(self.pet.root, "winfo_pointerx",
-                                       side_effect=lambda: self.pointer[0]))
-        self.enterContext(patch.object(self.pet.root, "winfo_pointery",
-                                       side_effect=lambda: self.pointer[1]))
-        self.enterContext(patch.object(
-            self.pet.root, "winfo_containing", side_effect=lambda x, y:
-            self.pointer_widget if (x, y) == self.pointer else None,
-        ))
-        self.enterContext(patch.object(self.pet._input.mouse, "clicked",
-                                       return_value=False))
+        self.enterContext(
+            patch.object(
+                self.pet.root, "winfo_pointerx", side_effect=lambda: self.pointer[0]
+            )
+        )
+        self.enterContext(
+            patch.object(
+                self.pet.root, "winfo_pointery", side_effect=lambda: self.pointer[1]
+            )
+        )
+        self.enterContext(
+            patch.object(
+                self.pet.root,
+                "winfo_containing",
+                side_effect=lambda x, y: (
+                    self.pointer_widget if (x, y) == self.pointer else None
+                ),
+            )
+        )
+        self.enterContext(
+            patch.object(self.pet._input.mouse, "clicked", return_value=False)
+        )
 
     def point_at(self, widget: tk.Widget, x: int, y: int) -> None:
         self.pointer = widget.winfo_rootx() + x, widget.winfo_rooty() + y
@@ -70,9 +81,9 @@ class GameMenuTests(unittest.TestCase):
         assert toolbar is not None
         toolbar.buttons["play"].event_generate("<FocusOut>")
         self.assertTrue(self.pet._input._focus_timers)
-        self.timing.advance(.099)
+        self.timing.advance(0.099)
         self.assertIs(self.hover.game_menu, menu)
-        self.timing.advance(.001)
+        self.timing.advance(0.001)
         self.assertFalse(self.pet._input._focus_timers)
         self.assertIs(self.hover.game_menu, menu)
         button = menu.buttons[GameId.TIC_TAC_TOE]
@@ -98,13 +109,14 @@ class GameMenuTests(unittest.TestCase):
         menu = self.hover.game_menu
         assert menu is not None
         self.assertEqual(
-            set(menu.buttons), set(GameId),
+            set(menu.buttons),
+            set(GameId),
         )
         self.assertFalse(self.hover.game_open)
         self.assertFalse(self.pet._animated.game_mode)
-        self.assertIn(menu.window, self.pet._overlay_windows())
+        self.assertIn(menu.frame.winfo_toplevel(), self.pet._overlay_windows())
         self.hover.set_topmost(False)
-        self.assertFalse(menu.window.wm_attributes("-topmost"))
+        self.assertFalse(menu.frame.winfo_toplevel().wm_attributes("-topmost"))
         self.hover.dismiss_outside(-999, -999)
         self.assertIsNone(self.hover.game_menu)
         self.assertEqual(self.pet.state.fun, before)
@@ -122,13 +134,13 @@ class GameMenuTests(unittest.TestCase):
         self.assertIs(self.hover.game_window, game)
         self.assertIsNone(self.hover.game_menu)
 
-    def test_system_close_releases_menu_and_allows_reopening_without_play(self):
+    def test_back_releases_menu_and_allows_reopening_without_play(self):
         before = self.pet.state.fun
         self.hover.open_game_menu()
         menu = self.hover.game_menu
         assert menu is not None
-        self.pet.root.tk.eval(menu.window.protocol("WM_DELETE_WINDOW"))
-        self.assertFalse(menu.window.winfo_exists())
+        menu.back.invoke()
+        self.assertFalse(menu.frame.winfo_exists())
         self.assertIsNone(self.hover.game_menu)
         self.hover.open_game_menu()
         self.assertIsNotNone(self.hover.game_menu)
@@ -141,15 +153,19 @@ class GameMenuTests(unittest.TestCase):
         self.hover.open_game_menu()
         menu = self.hover.game_menu
         assert menu is not None
-        menu.window.update()
-        self.assertTrue(menu.window.winfo_ismapped())
-        self.assertEqual(list(menu.buttons), [
-            GameId.ROCK_PAPER_SCISSORS, GameId.BLACKJACK, GameId.TIC_TAC_TOE,
-        ])
+        menu.frame.winfo_toplevel().update()
+        self.assertTrue(menu.frame.winfo_toplevel().winfo_ismapped())
+        self.assertEqual(
+            list(menu.buttons),
+            [
+                GameId.ROCK_PAPER_SCISSORS,
+                GameId.BLACKJACK,
+                GameId.TIC_TAC_TOE,
+            ],
+        )
         for button in menu.buttons.values():
-            font = tkfont.Font(root=self.pet.root, font=button.cget("font"))
-            self.assertLess(font.measure(button.cget("text")), button.winfo_width())
-        self.assertTrue(menu.window.bind("<Escape>"))
+            self.assertLessEqual(int(button.cget("wraplength")), button.winfo_width())
+        self.assertTrue(menu.frame.winfo_toplevel().bind("<Escape>"))
 
     def test_deferred_selection_is_reserved_and_stale_callback_cannot_start(self):
         callbacks = []
@@ -175,8 +191,12 @@ class GameMenuTests(unittest.TestCase):
 
     def test_each_menu_choice_closes_cleanly_and_starts_a_fresh_session(self):
         before = self.pet.state.fun
-        for game_id in (GameId.BLACKJACK, GameId.TIC_TAC_TOE,
-                        GameId.ROCK_PAPER_SCISSORS, GameId.BLACKJACK):
+        for game_id in (
+            GameId.BLACKJACK,
+            GameId.TIC_TAC_TOE,
+            GameId.ROCK_PAPER_SCISSORS,
+            GameId.BLACKJACK,
+        ):
             self.hover.open_game_menu()
             menu = self.hover.game_menu
             assert menu is not None

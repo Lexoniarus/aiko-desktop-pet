@@ -296,6 +296,12 @@
     "vn.settings.off": "Aus",
     "vn.sleep_context": "Schlaf: {reason}",
     "vn.graphic_licenses": "Lizenzhinweise öffnen",
-    "vn.project_files": "Projektinformationen öffnen"
+    "vn.project_files": "Projektinformationen öffnen",
+    "vn.rounds_short": "{completed}/{required} Runden",
+    "vn.wish_meta": "{time} · {state}",
+    "vn.wish_spoken_tag": "geäußert",
+    "vn.wish_inner_tag": "innerer Wunsch",
+    "vn.wish_unavailable_tag": "Gerade nicht möglich",
+    "vn.status_value": "{title}   {percent} / 100{suffix}"
   }
 }

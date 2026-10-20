@@ -132,7 +132,7 @@ class Widget:
     def xview(self, *args: Any) -> None:
         pass
 
-    yview = xview_scroll = yview_scroll = yview_moveto = xview
+    yview = xview_scroll = yview_scroll = yview_moveto = xview_moveto = xview
 
     def destroy(self) -> None:
         self.destroyed = True
@@ -168,6 +168,7 @@ class Skin:
     text = "#3E4C61"
     muted = accent = "#65758A"
     font = "Segoe UI"
+    small_line_height = 11
 
     def __init__(self, *_args: Any) -> None:
         self.images = Images()

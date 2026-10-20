@@ -2,7 +2,7 @@
 
 import unittest
 from typing import Any, cast
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
@@ -13,6 +13,8 @@ from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import ActiveWish, WishId, WishState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.common.description_tip import tip_position
+from aiko_pet.ui.common.image_button import ImageButton
+from aiko_pet.ui.common.scroll_region import ScrollRegion
 from aiko_pet.ui.common.status_readout import fill_geometry, readout_color
 from aiko_pet.ui.view_models.contracts import HoverAnchor
 from aiko_pet.ui.view_models.emotional_text import MOODLET_ICONS, wish_description
@@ -43,6 +45,45 @@ class VnStatusTests(unittest.TestCase):
         self.assertEqual(tip_position(600, 100, 150, 300, 100, 680, 800), (380, 154))
         self.assertEqual(tip_position(20, 700, 750, 300, 100, 680, 800), (20, 596))
 
+    def test_focus_reveals_overflow_without_a_global_input_hook(self):
+        region = ScrollRegion.__new__(ScrollRegion)
+        canvas, body, target = Mock(), Mock(), Mock()
+        region.canvas, region.body = cast(Any, canvas), cast(Any, body)
+        region._horizontal = True
+        canvas.winfo_rootx.return_value = 0
+        canvas.winfo_width.return_value = 100
+        canvas.xview.return_value = (0, 0.25)
+        body.winfo_reqwidth.return_value = 400
+        target.winfo_rootx.return_value = 250
+        target.winfo_width.return_value = 50
+        region._focus_visible(cast(Any, Mock(widget=target)))
+        canvas.xview_moveto.assert_called_once_with(0.5)
+        target.focus_set.assert_not_called()
+
+    def test_disabled_art_wins_and_persistent_selection_survives_pointer_feedback(self):
+        button = ImageButton.__new__(ImageButton)
+        button._art = cast(
+            Any,
+            {
+                state: state
+                for state in ("normal", "hover", "pressed", "disabled", "active")
+            },
+        )
+        button._hover = button._pressed = button._selected = False
+        with (
+            patch.object(ImageButton, "cget", return_value="disabled"),
+            patch("tkinter.Button.configure") as configure,
+        ):
+            button.set_selected(True)
+            button._feedback(hover=True, pressed=True)
+            self.assertEqual(configure.call_args.kwargs["image"], "disabled")
+        with (
+            patch.object(ImageButton, "cget", return_value="normal"),
+            patch("tkinter.Button.configure") as configure,
+        ):
+            button._feedback(pressed=False)
+            self.assertEqual(configure.call_args.kwargs["image"], "active")
+
     def test_refresh_keeps_identity_and_placement_admission(
         self,
     ):
@@ -52,6 +93,8 @@ class VnStatusTests(unittest.TestCase):
         )
         state = PetState(
             sleeping=True,
+            mood=33,
+            friendship=71,
             moodlets=MoodletState(active=episodes),
             wishes=WishState(active=(ActiveWish(1, WishId.FACT, "fact", 0, 14400),)),
         )
@@ -93,6 +136,9 @@ class VnStatusTests(unittest.TestCase):
                 skin=cast(Any, Skin()),
             )
             toolbar.refresh()
+            self.assertEqual(len(toolbar.readouts), 7)
+            self.assertIn("33 / 100", toolbar.readouts["mood"].label.cget("text"))
+            self.assertIn("Lv 8", toolbar.readouts["friendship"].label.cget("text"))
             cards = toolbar.moodlets._scroll.body.winfo_children()
             self.assertEqual(len(cards), 18)
             toolbar.refresh()

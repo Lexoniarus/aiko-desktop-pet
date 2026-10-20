@@ -10,7 +10,7 @@ from typing import Callable
 
 from ...pet.content import GERMAN_TEXT
 from ..common.description_tip import DescriptionTip
-from ..common.image_button import ImageButton
+from ..common.image_button import ImageButton, update_button_state
 from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..common.status_readout import StatusReadout
@@ -67,6 +67,9 @@ class ActionToolbar:
         title = tk.Frame(self.outer, bg=self.skin.title)
         title.pack(fill="x")
         self.today = self.skin.header(title, GERMAN_TEXT.format("vn.brand"))
+        self.today.configure(
+            image=self.skin.images.icon("ui_sparkle", 24), compound="left"
+        )
         self.today.pack(side="left")
         self.settings_button = self.skin.button(
             title,
@@ -153,7 +156,7 @@ class ActionToolbar:
         care = tk.Frame(content, bg=self.skin.background)
         care.pack(fill="x")
         self.interaction_column = tk.Frame(
-            care, bg=self.skin.background, width=254, height=348
+            care, bg=self.skin.background, width=254, height=360
         )
         self.interaction_column.pack(side="right", padx=(10, 0))
         self.interaction_column.pack_propagate(False)
@@ -163,9 +166,13 @@ class ActionToolbar:
         values.pack(side="left", fill="both", expand=True)
         for key, text, icon in self.READOUTS[1:]:
             readout = StatusReadout(
-                values, self.skin, title=text, icon=icon, friendship=key == "friendship"
+                self._care_row(values),
+                self.skin,
+                title=text,
+                icon=icon,
+                friendship=key == "friendship",
             )
-            readout.frame.pack(fill="x", pady=(0, 5), ipady=2)
+            readout.frame.pack(fill="both", expand=True, pady=(1, 5))
             self.readouts[key] = readout
         self.buttons: dict[str, ImageButton] = {}
         for action, text, icon, submenu in (
@@ -176,23 +183,23 @@ class ActionToolbar:
             ("pet", "ui.pet", "action_pet", False),
         ):
             button = self.skin.button(
-                self.actions_frame,
+                self._care_row(self.actions_frame),
                 GERMAN_TEXT.format(text) + ("  ›" if submenu else ""),
                 partial(actions.interact, action),
                 size="action",
                 icon=self.skin.images.icon(icon, 24),
             )
-            button.pack(pady=(0, 3))
+            button.pack(pady=(1, 5))
             self.buttons[action] = button
         tk.Label(
-            self.actions_frame,
+            self._care_row(self.actions_frame),
             text=GERMAN_TEXT.format("vn.friendship_context"),
             wraplength=220,
             bg=self.skin.background,
             fg=self.skin.muted,
             font=(self.skin.font, 9),
             pady=8,
-        ).pack(fill="x")
+        ).pack(fill="both", expand=True)
         self.hardware = self._context_label(content)
         self.workload = self._context_label(content)
         self.food_info = self._context_label(content)
@@ -221,6 +228,12 @@ class ActionToolbar:
         )
         label.pack(fill="x", pady=2)
         return label
+
+    def _care_row(self, parent: tk.Misc) -> tk.Frame:
+        row = tk.Frame(parent, bg=self.skin.background, height=60)
+        row.pack(fill="x")
+        row.pack_propagate(False)
+        return row
 
     @property
     def dragging(self) -> bool:
@@ -266,7 +279,7 @@ class ActionToolbar:
                 if action == "place_item"
                 else self._actions.can_interact(action)
             )
-            button.configure(state="normal" if allowed else "disabled")
+            update_button_state(button, enabled=allowed)
 
     def _open_settings(self) -> None:
         self._actions.open_settings(

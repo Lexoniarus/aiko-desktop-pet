@@ -20,6 +20,7 @@ class CreditsPanel:
         self.frame = tk.Frame(parent, bg=skin.background)
         self._snapshot = snapshot
         self._current: ContentCredit | None = None
+        self._last_view: CreditsSnapshot | None = None
         self._skin = skin
         self._heading("vn.credits.apis")
         for name, url in (
@@ -86,7 +87,11 @@ class CreditsPanel:
         return label
 
     def refresh(self) -> None:
-        source = self._snapshot().accepted
+        view = self._snapshot()
+        if view == self._last_view:
+            return
+        self._last_view = view
+        source = view.accepted
         self._current = source
         text = (
             f"{source.provider}\n{source.source}"

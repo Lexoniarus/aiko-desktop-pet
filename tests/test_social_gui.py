@@ -38,8 +38,8 @@ class SocialGuiTests(unittest.TestCase):
         )
         self.addCleanup(self.pet.quit)
         self.callback_errors: list[BaseException] = []
-        self.pet.root.report_callback_exception = (
-            lambda _kind, error, _trace: self.callback_errors.append(error)
+        self.pet.root.report_callback_exception = lambda _kind, error, _trace: (
+            self.callback_errors.append(error)
         )
         self.addCleanup(lambda: self.assertEqual(self.callback_errors, []))
         self.pet._runtime.stop()
@@ -71,7 +71,7 @@ class SocialGuiTests(unittest.TestCase):
         self.assertEqual(len(menu.buttons), 4)
         self.assertFalse(self.worker.requests)
         self.assertEqual(self.pet.state.social, 10)
-        self.assertIn(menu.window, self.pet._overlay_windows())
+        self.assertIn(menu.frame.winfo_toplevel(), self.pet._overlay_windows())
         for category in SocialCategory:
             self.assertEqual(menu.buttons[category].cget("state"), "disabled")
         menu.choose(None)
@@ -97,7 +97,11 @@ class SocialGuiTests(unittest.TestCase):
         self.pet._reaction_player.advance_story()
         self.assertEqual(self.pet.state.social, 36)
         menu.refresh()
-        self.assertEqual(menu.source_button.cget("text"), "Quelle: JokeAPI")
+        self.pet._hover.open_settings(100, 100)
+        settings = self.pet._hover.settings_window
+        assert settings is not None
+        settings.select_section("credits")
+        self.assertEqual(settings.credits.source_button.cget("text"), "Quelle: JokeAPI")
 
     def test_ready_content_starts_without_waiting_and_excludes_other_care(self):
         self.enable()
@@ -179,12 +183,20 @@ class SocialGuiTests(unittest.TestCase):
         self.pet.root.update()
         menu.refresh()
         self.pet.root.update_idletasks()
-        self.assertGreaterEqual(menu.window.winfo_x(), 0)
-        self.assertGreaterEqual(menu.window.winfo_y(), 0)
-        self.assertLessEqual(menu.window.winfo_x() + menu.window.winfo_width(), width)
-        self.assertLessEqual(menu.window.winfo_y() + menu.window.winfo_height(), height)
-        menu.window.focus_force()
-        menu.window.event_generate("<Escape>")
+        self.assertGreaterEqual(menu.frame.winfo_toplevel().winfo_x(), 0)
+        self.assertGreaterEqual(menu.frame.winfo_toplevel().winfo_y(), 0)
+        self.assertLessEqual(
+            menu.frame.winfo_toplevel().winfo_x()
+            + menu.frame.winfo_toplevel().winfo_width(),
+            width,
+        )
+        self.assertLessEqual(
+            menu.frame.winfo_toplevel().winfo_y()
+            + menu.frame.winfo_toplevel().winfo_height(),
+            height,
+        )
+        menu.frame.winfo_toplevel().focus_force()
+        menu.frame.winfo_toplevel().event_generate("<Escape>")
         self.pet.root.update()
         self.assertIsNone(self.pet._hover.social_menu)
         self.assertEqual(self.pet._reaction_player.event, "talk")
@@ -205,15 +217,16 @@ class SocialGuiTests(unittest.TestCase):
         self.assertNotIn("jokeapi:", store.path.read_text(encoding="utf-8"))
         worker = ManualSocialWorker()
         reopened = create_test_desktop(store=store, social_worker=worker)
-        reopened.root.report_callback_exception = (
-            lambda _kind, error, _trace: self.callback_errors.append(error)
+        reopened.root.report_callback_exception = lambda _kind, error, _trace: (
+            self.callback_errors.append(error)
         )
         self.addCleanup(reopened.quit)
         reopened._runtime.stop()
         self.assertTrue(reopened.settings.online_social)
         self.assertEqual(len(worker.requests), 1)
-        self.assertTrue(all(reopened._social_runtime.content.count(c) == 0
-                            for c in SocialCategory))
+        self.assertTrue(
+            all(reopened._social_runtime.content.count(c) == 0 for c in SocialCategory)
+        )
         reopened._reaction_player.cancel()
         reopened._action_playback.cancel_at(time.monotonic())
         reopened._social_runtime.select(SocialCategory.FACT)

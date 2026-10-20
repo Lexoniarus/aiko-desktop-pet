@@ -16,7 +16,6 @@ from ..view_models.emotional_text import (
     wish_badge,
     wish_description,
     wish_icon,
-    wish_progress,
 )
 
 
@@ -37,7 +36,11 @@ class WishPanel:
             font=(skin.font, 9, "bold"),
         ).pack(anchor="w")
         self._scroll = ScrollRegion(
-            self.frame, skin, width=620, height=116, horizontal=True
+            self.frame,
+            skin,
+            width=620,
+            height=max(116, skin.small_line_height * 8 + 16),
+            horizontal=True,
         )
         self._scroll.frame.pack(fill="x")
         self._skin, self._tips = skin, tips
@@ -72,11 +75,29 @@ class WishPanel:
             text = "\n".join(
                 p
                 for p in (
-                    item.label,
                     item.target_label,
-                    wish_progress(item),
-                    duration_text(item.value.remaining_seconds),
-                    item.restriction_label,
+                    item.label if item.label != item.target_label else "",
+                    (
+                        GERMAN_TEXT.format(
+                            "vn.rounds_short",
+                            completed=str(item.value.game.completed_rounds),
+                            required=str(item.value.game.required_rounds),
+                        )
+                        if item.value.game is not None
+                        else ""
+                    ),
+                    GERMAN_TEXT.format(
+                        "vn.wish_meta",
+                        time=duration_text(item.value.remaining_seconds),
+                        state=GERMAN_TEXT.format(
+                            "vn.wish_spoken_tag"
+                            if item.value.expressed
+                            else "vn.wish_inner_tag"
+                        ),
+                    ),
+                    GERMAN_TEXT.format("vn.wish_unavailable_tag")
+                    if item.restriction_label
+                    else "",
                 )
                 if p
             )
@@ -88,7 +109,7 @@ class WishPanel:
         card = tk.Frame(
             self._scroll.body,
             width=198,
-            height=112,
+            height=max(112, skin.small_line_height * 8 + 12),
             bg="#FFFCFD",
             highlightthickness=1,
             highlightbackground=skin.border,

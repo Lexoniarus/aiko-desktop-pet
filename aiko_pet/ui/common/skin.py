@@ -22,6 +22,9 @@ class AikoSkin:
     def __init__(self, root: tk.Tk) -> None:
         fonts = set(tkfont.families(root=root))
         self.font = "Segoe UI" if "Segoe UI" in fonts else "Arial"
+        self.small_line_height = tkfont.Font(
+            root=root, family=self.font, size=8
+        ).metrics("linespace")
         self.images = IconImages(root)
 
     def release_images(self) -> None:

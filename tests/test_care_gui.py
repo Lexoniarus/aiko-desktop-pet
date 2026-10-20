@@ -73,7 +73,7 @@ class CareGuiTests(unittest.TestCase):
         self.assertNotIn("energy_drink", self.toolbar.buttons)
         self.assertFalse(self.app._hover.keep_open)
         self.toolbar.refresh()
-        self.assertIn("35%", self.toolbar.readouts["social"][2].cget("text"))
+        self.assertIn("35 / 100", self.toolbar.readouts["social"].label.cget("text"))
 
     def test_foreground_care_owns_buttons_and_passive_hover_until_completion(self):
         for action in ("pet", "talk"):
@@ -82,9 +82,13 @@ class CareGuiTests(unittest.TestCase):
                 self.toolbar.refresh()
                 generation = self.app._reaction_player.generation
                 social = self.app.state.social
-                self.assertTrue(all(button.cget("state") == "disabled"
-                                    for action, button in self.toolbar.buttons.items()
-                                    if action != "place_item"))
+                self.assertTrue(
+                    all(
+                        button.cget("state") == "disabled"
+                        for action, button in self.toolbar.buttons.items()
+                        if action != "place_item"
+                    )
+                )
                 self.toolbar.buttons["talk"].invoke()
                 self.app._hover._interact("talk")
                 self.assertEqual(self.app.state.social, social)
@@ -100,8 +104,12 @@ class CareGuiTests(unittest.TestCase):
                 self.assertEqual(self.toolbar.pin_button.cget("state"), "normal")
                 self.assertEqual(self.toolbar.settings_button.cget("state"), "normal")
                 self.finish_response()
-                self.assertTrue(all(button.cget("state") == "normal"
-                                    for button in self.toolbar.buttons.values()))
+                self.assertTrue(
+                    all(
+                        button.cget("state") == "normal"
+                        for button in self.toolbar.buttons.values()
+                    )
+                )
         set_test_pet_values(self.app.state, sleeping=True)
         self.toolbar.refresh()
         self.assertEqual(self.toolbar.buttons["sleep"].cget("state"), "normal")
@@ -110,19 +118,28 @@ class CareGuiTests(unittest.TestCase):
     def test_relationship_and_needs_in_pinned_toolbar(self):
         self.app._hover.open_status()
         self.assertTrue(self.app._hover.keep_open)
-        self.assertEqual(set(self.toolbar.readouts), {
-            "satiety", "fun", "mood", "energy", "social", "affection", "friendship",
-        })
+        self.assertEqual(
+            set(self.toolbar.readouts),
+            {
+                "satiety",
+                "fun",
+                "mood",
+                "energy",
+                "social",
+                "affection",
+                "friendship",
+            },
+        )
         set_test_pet_values(self.app.state, friendship=85)
         self.toolbar.refresh()
-        self.assertIn("Lv 9", self.toolbar.readouts["friendship"][2].cget("text"))
+        self.assertIn("Lv 9", self.toolbar.readouts["friendship"].label.cget("text"))
 
     def test_lagged_or_disabled_hardware_has_no_live_effort(self):
         snapshot = ComputerSnapshot(cpu=97, gpu=88, measured_at=time.monotonic())
         with patch.object(self.app.activity_monitor, "latest", return_value=snapshot):
             live_effort = self.app._activity.live_effort()
             assert live_effort is not None
-            self.assertGreater(live_effort, .9)
+            self.assertGreater(live_effort, 0.9)
             self.app.settings.observe_computer = False
             self.assertIsNone(self.app._activity.live_effort())
             self.app.settings.observe_computer = True

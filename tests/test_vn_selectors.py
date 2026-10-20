@@ -67,6 +67,7 @@ class EmbeddedSelectorTests(unittest.TestCase):
 
     def test_selectors_share_toolbar_and_stale_placement_cannot_bypass_admission(self):
         self.allowed = False
+        self.ui.game_window = Mock()
         self.ui.open_food_menu()
         menu = self.ui.food_menu
         assert menu and self.ui.toolbar

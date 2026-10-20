@@ -8,6 +8,12 @@ from typing import Any, Callable
 from .icon_images import IconImages
 
 
+def update_button_state(button: tk.Button, *, enabled: bool) -> None:
+    """Project permission only when it changes; keep native enabled hover state."""
+    if (button.cget("state") != "disabled") != enabled:
+        button.configure(state="normal" if enabled else "disabled")
+
+
 class ImageButton(tk.Button):
     def __init__(
         self,

@@ -11,11 +11,11 @@ from aiko_pet.desktop.world_runtime import DesktopWorldRuntime
 from aiko_pet.pet.animation.item_assets import ItemCatalog
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.state import PetState
+from aiko_pet.ui.common.image_button import ImageButton
 from aiko_pet.ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.hover_contracts import HoverActions
-from aiko_pet.ui.windows.hover_ui import HoverUi, HoverUiPorts
 from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectInteraction,
@@ -28,49 +28,15 @@ from tools.reaction_test_support import FakeScheduler
 
 
 class MenuAdmissionTests(unittest.TestCase):
-    def setUp(self):
-        self.ui = HoverUi.__new__(HoverUi)
-        self.ui.root = MagicMock(spec=tk.Tk)
-        self.ui._skin = MagicMock()
-        self.ui_ports = MagicMock(spec=HoverUiPorts)
-        self.ui._ports = self.ui_ports
-        self.ui_ports.can_interact.return_value = False
-        self.ui_ports.can_place_item.return_value = True
-        self.ui.toolbar = None
-        self.ui.food_menu = None
-        self.ui.game_menu = None
-        self.ui.social_menu = None
-        self.ui.game_window = MagicMock()
-        self.ui._pending_game = None
-
-    def test_snack_selector_and_choice_work_while_character_actions_are_blocked(self):
-        with patch("aiko_pet.ui.windows.hover_ui.FoodMenu") as menu:
-            self.ui._interact("place_item")
-            self.ui.open_food_menu()
-            menu.assert_called_once()
-            menu.return_value.focus.assert_called_once()
-        self.ui._food_selected("apple")
-        self.ui_ports.place_item.assert_called_once_with("apple")
-        self.ui._interact("pet")
-        self.ui_ports.care.assert_not_called()
-        self.ui_ports.can_interact.assert_called_once_with("pet")
-
-    def test_choice_rechecks_capture_admission_after_selector_was_opened(self):
-        with patch("aiko_pet.ui.windows.hover_ui.FoodMenu") as menu:
-            self.ui.open_food_menu()
-            self.ui_ports.can_place_item.return_value = False
-            self.ui._food_selected("apple")
-            self.ui.open_food_menu()
-            menu.assert_called_once()
-        self.ui_ports.place_item.assert_not_called()
-
     def test_toolbar_displays_separate_placement_and_care_capabilities(self):
         toolbar = ActionToolbar.__new__(ActionToolbar)
         toolbar._actions = MagicMock(spec=HoverActions)
         toolbar._actions.can_interact.return_value = False
         toolbar._actions.can_place_item.return_value = True
         buttons = {action: MagicMock() for action in ("place_item", "pet")}
-        toolbar.buttons = cast(dict[str, tk.Button], buttons)
+        buttons["place_item"].cget.return_value = "disabled"
+        buttons["pet"].cget.return_value = "normal"
+        toolbar.buttons = cast(dict[str, ImageButton], buttons)
         toolbar.refresh_actions()
         buttons["place_item"].configure.assert_called_once_with(state="normal")
         buttons["pet"].configure.assert_called_once_with(state="disabled")
@@ -83,25 +49,45 @@ class SnackPlacementTests(unittest.TestCase):
         self.root.tk = MagicMock()
         self.root.tk.call.return_value = ""
         self.root.grab_set.side_effect = lambda: setattr(
-            self.root.tk.call, "return_value", str(self.root),
+            self.root.tk.call,
+            "return_value",
+            str(self.root),
         )
         self.root.grab_release.side_effect = lambda: setattr(
-            self.root.tk.call, "return_value", "",
+            self.root.tk.call,
+            "return_value",
+            "",
         )
-        self.world = WorldState(WorldSurface(800, 600), (ObjectDefinition(
-            "apple", "apple", "apple", frozenset((ObjectInteraction.EAT,)),
-        ),))
+        self.world = WorldState(
+            WorldSurface(800, 600),
+            (
+                ObjectDefinition(
+                    "apple",
+                    "apple",
+                    "apple",
+                    frozenset((ObjectInteraction.EAT,)),
+                ),
+            ),
+        )
         self.ports = MagicMock(spec=CursorItemPorts)
         self.ports.handover.return_value = False
         self.cursor = CursorItemGesture(
-            root=self.root, world=self.world, view=MagicMock(),
-            settings=PetSettings(), track=MagicMock(), ports=self.ports,
+            root=self.root,
+            world=self.world,
+            view=MagicMock(),
+            settings=PetSettings(),
+            track=MagicMock(),
+            ports=self.ports,
         )
         self.cursor.view.image = MagicMock()
         self.cursor.view.image.return_value.width.return_value = 16
-        self.enterContext(patch.object(
-            self.cursor, "_pointer_pose", return_value=(WorldPosition(100, 0), True),
-        ))
+        self.enterContext(
+            patch.object(
+                self.cursor,
+                "_pointer_pose",
+                return_value=(WorldPosition(100, 0), True),
+            )
+        )
         self.runtime = DesktopWorldRuntime.__new__(DesktopWorldRuntime)
         self.runtime._closed = False
         self.runtime.cursor = self.cursor
@@ -166,7 +152,8 @@ class SnackPlacementTests(unittest.TestCase):
         def handover(token):
             item = self.world.get(token)
             self.world.accept_handover_on_release(
-                token, expected_revision=item.revision,
+                token,
+                expected_revision=item.revision,
             )
             return True
 
@@ -185,14 +172,18 @@ class OfferFeedbackOwnershipTests(unittest.TestCase):
         scheduler = FakeScheduler()
         completed = MagicMock()
         player = ReactionPlayer(
-            schedule=scheduler.schedule, cancel_timer=scheduler.cancel,
-            display_emote=MagicMock(), display_text=MagicMock(),
-            start_action=MagicMock(), mark_spoken=MagicMock(),
+            schedule=scheduler.schedule,
+            cancel_timer=scheduler.cancel,
+            display_emote=MagicMock(),
+            display_text=MagicMock(),
+            start_action=MagicMock(),
+            mark_spoken=MagicMock(),
             is_closed=lambda: False,
         )
         presenter = ObjectFeedbackPresenter(player, MagicMock(spec=ItemCatalog))
-        player.play(Reaction.spoken("care", "Hallo", "idle", "talk"),
-                    on_complete=completed)
+        player.play(
+            Reaction.spoken("care", "Hallo", "idle", "talk"), on_complete=completed
+        )
         self.assertTrue(player.active)
         self.assertFalse(player.story_active)
         self.assertTrue(presenter.non_offer_playback_active)

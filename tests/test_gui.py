@@ -109,8 +109,10 @@ class TaskbarPetGuiTests(unittest.TestCase):
         bar.buttons["place_item"].invoke()
         menu = self.app._hover.food_menu
         assert menu is not None
-        with patch("aiko_pet.application.active_time.ActiveSessionClock.consume",
-                   return_value=0):
+        with patch(
+            "aiko_pet.application.active_time.ActiveSessionClock.consume",
+            return_value=0,
+        ):
             menu.buttons["onigiri"].invoke()
         self.assertEqual(self.app.state.satiety, 75)
         self.assertTrue(self.app._world.cursor.carrying)
@@ -133,26 +135,21 @@ class TaskbarPetGuiTests(unittest.TestCase):
             {"satiety", "fun", "mood", "energy", "social", "affection", "friendship"},
         )
         for key, _title, _color in bar.READOUTS:
-            canvas, rect, label = bar.readouts[key]
-            self.assertIn("%", label.cget("text"))
-            self.assertGreater(canvas.coords(rect)[2], 0)
+            readout = bar.readouts[key]
+            canvas, rect, label = readout.canvas, readout._fill, readout.label
+            self.assertIn("/ 100", label.cget("text"))
+            self.assertGreater(max(canvas.coords(rect)[::2]), 0)
         set_test_pet_values(self.app.state, mood=22)
         set_test_pet_values(self.app.state, satiety=36)
         set_test_pet_values(self.app.state, energy=95)
         bar.refresh()
-        self.assertIn("22%", bar.readouts["mood"][2].cget("text"))
-        self.assertIn("36%", bar.readouts["satiety"][2].cget("text"))
-        self.assertIn("95%", bar.readouts["energy"][2].cget("text"))
+        self.assertIn("22 / 100", bar.readouts["mood"].label.cget("text"))
+        self.assertIn("36 / 100", bar.readouts["satiety"].label.cget("text"))
+        self.assertIn("95 / 100", bar.readouts["energy"].label.cget("text"))
         self.app.root.update()
         self.assertEqual(
-            bar.readouts["mood"][0].coords(bar.readouts["mood"][1])[2],
-            round(
-                max(
-                    bar.readouts["mood"][0].winfo_width(),
-                    bar.readouts["mood"][0].winfo_reqwidth(),
-                )
-                * 0.22
-            ),
+            max(bar.readouts["mood"].canvas.coords(bar.readouts["mood"]._fill)[::2]),
+            2 + (bar.readouts["mood"].canvas.winfo_reqwidth() - 4) * 0.22,
         )
 
     def test_busy_computer_makes_aiko_concentrate_instead_of_walking(self):
@@ -176,7 +173,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.set_observe_computer(False)
         self.assertFalse(self.app.settings.observe_computer)
         self.assertIn("deaktiviert", self.toolbar.hardware.cget("text"))
-        self.assertIn("Sättigung", self.toolbar.readouts["satiety"][2].cget("text"))
+        self.assertIn("Sättigung", self.toolbar.readouts["satiety"].label.cget("text"))
         self.app.set_observe_computer(True)
         self.assertTrue(self.app.settings.observe_computer)
         self.assertIn("CPU", self.toolbar.hardware.cget("text"))
@@ -218,14 +215,16 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.root.update()
         self.toolbar.refresh()
         for key, _title, _color in self.toolbar.READOUTS:
-            bar, rect, text = self.toolbar.readouts[key]
-            self.assertEqual(bar.coords(rect)[2], bar.winfo_width(), key)
-            self.assertIn("100%", text.cget("text"))
-        self.assertIn("Lv 10", self.toolbar.readouts["friendship"][2].cget("text"))
+            readout = self.toolbar.readouts[key]
+            bar, rect, text = readout.canvas, readout._fill, readout.label
+            self.assertEqual(max(bar.coords(rect)[::2]), bar.winfo_width() - 2, key)
+            self.assertIn("100 / 100", text.cget("text"))
+        self.assertIn("Lv 10", self.toolbar.readouts["friendship"].label.cget("text"))
         set_test_pet_values(self.app.state, mood=25)
         self.toolbar.refresh()
-        bar, rect, _text = self.toolbar.readouts["mood"]
-        self.assertEqual(bar.coords(rect)[2], round(bar.winfo_width() * 0.25))
+        readout = self.toolbar.readouts["mood"]
+        bar, rect, _text = readout.canvas, readout._fill, readout.label
+        self.assertEqual(max(bar.coords(rect)[::2]), 2 + (bar.winfo_width() - 4) * 0.25)
 
     def test_side_by_side_bridge_keeps_hover_active(self):
         self.app._on_enter()
@@ -489,7 +488,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         )
         deadline = time.monotonic() + 6
         while not self.app._contact.can_interact("pet") and time.monotonic() < deadline:
-            self.timing.advance(.02)
+            self.timing.advance(0.02)
         self.assertTrue(self.app._contact.can_interact("pet"))
         self.app._on_click_right()
         self.assertIsNotNone(self.app._speech.bubble)

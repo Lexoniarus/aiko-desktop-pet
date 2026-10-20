@@ -61,7 +61,10 @@ class ScrollRegion:
             ("Left", -1),
             ("Right", 1),
         ):
-            self.canvas.bind(f"<{key}>", partial(self._key_scroll, amount))
+            self.canvas.bind_class(
+                self._tag, f"<{key}>", partial(self._key_scroll, amount)
+            )
+        self.canvas.bind_class(self._tag, "<FocusIn>", self._focus_visible)
         self.body.bind("<Configure>", self._content_changed)
         self.canvas.bind("<Configure>", self._viewport_changed)
         self.frame.bind("<Destroy>", self._destroyed, add="+")
@@ -75,7 +78,7 @@ class ScrollRegion:
             if any(t.startswith("VnScroll") and t != self._tag for t in tags):
                 return
             if self._tag not in tags:
-                widget.bindtags((tags[0], self._tag, *tags[1:]))
+                widget.bindtags((self._tag, *tags))
             for child in widget.winfo_children():
                 visit(child)
 
@@ -83,6 +86,30 @@ class ScrollRegion:
 
     def _key_scroll(self, amount: int, _event: tk.Event) -> str:
         return self._scroll(amount)
+
+    def _focus_visible(self, event: tk.Event) -> None:
+        """Tabbing to an offscreen card/choice reveals it without stealing focus."""
+        widget = event.widget
+        if widget is self.canvas:
+            return
+        if self._horizontal:
+            low = widget.winfo_rootx() - self.canvas.winfo_rootx()
+            high = low + widget.winfo_width()
+            extent, total = self.canvas.winfo_width(), self.body.winfo_reqwidth()
+            offset = low if low < 0 else max(0, high - extent)
+            if offset and total > 0:
+                self.canvas.xview_moveto(
+                    max(0, self.canvas.xview()[0] + offset / total)
+                )
+        else:
+            low = widget.winfo_rooty() - self.canvas.winfo_rooty()
+            high = low + widget.winfo_height()
+            extent, total = self.canvas.winfo_height(), self.body.winfo_reqheight()
+            offset = low if low < 0 else max(0, high - extent)
+            if offset and total > 0:
+                self.canvas.yview_moveto(
+                    max(0, self.canvas.yview()[0] + offset / total)
+                )
 
     def _scroll(self, amount: int) -> str:
         if self._horizontal:
@@ -104,5 +131,16 @@ class ScrollRegion:
 
     def _destroyed(self, event: tk.Event) -> None:
         if event.widget is self.frame:
-            for sequence in ("<MouseWheel>", "<Button-4>", "<Button-5>"):
+            for sequence in (
+                "<MouseWheel>",
+                "<Button-4>",
+                "<Button-5>",
+                "<FocusIn>",
+                "<Up>",
+                "<Down>",
+                "<Prior>",
+                "<Next>",
+                "<Left>",
+                "<Right>",
+            ):
                 self.canvas.unbind_class(self._tag, sequence)

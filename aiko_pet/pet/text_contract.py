@@ -250,3 +250,13 @@ TEXT_FIELDS.update({
     "vn.graphic_licenses": frozenset(),
     "vn.project_files": frozenset(),
 })
+
+TEXT_FIELDS.update({
+    "vn.rounds_short": frozenset({"completed", "required"}),
+    "vn.wish_meta": frozenset({"time", "state"}),
+    "vn.wish_spoken_tag": frozenset(),
+    "vn.wish_inner_tag": frozenset(),
+    "vn.wish_unavailable_tag": frozenset(),
+})
+
+TEXT_FIELDS["vn.status_value"] = frozenset({"title", "percent", "suffix"})

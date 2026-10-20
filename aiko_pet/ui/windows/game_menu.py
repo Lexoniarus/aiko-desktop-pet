@@ -9,6 +9,7 @@ from typing import Callable
 from ...asset_paths import PLAYING_CARDS_DIR
 from ...games.contracts import GameId
 from ...pet.content import GERMAN_TEXT
+from ..common.image_button import update_button_state
 from ..common.skin import AikoSkin
 from ..view_models.emotional_text import GAME_ICONS
 from .embedded_selector import EmbeddedSelector
@@ -50,8 +51,9 @@ class GameMenu(EmbeddedSelector):
 
     def refresh(self) -> None:
         if not self._closed:
+            allowed = self._can_select()
             for button in self.buttons.values():
-                button.configure(state="normal" if self._can_select() else "disabled")
+                update_button_state(button, enabled=allowed)
 
     def choose(self, game: GameId) -> None:
         if self._closed or game not in self.buttons or not self._can_select():

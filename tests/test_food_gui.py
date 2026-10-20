@@ -40,12 +40,24 @@ class FoodGuiTests(unittest.TestCase):
         assert menu is not None
         self.assertEqual(
             set(menu.buttons),
-            {"onigiri", "sandwich", "taiyaki", "apple", "dango",
-             "donut", "cookie", "melonpan", "cupcake", "dorayaki",
-             "energy_drink"},
+            {
+                "onigiri",
+                "sandwich",
+                "taiyaki",
+                "apple",
+                "dango",
+                "donut",
+                "cookie",
+                "melonpan",
+                "cupcake",
+                "dorayaki",
+                "energy_drink",
+            },
         )
-        self.assertEqual(len(menu.images), 11)
-        self.assertEqual(menu.columns, 6)
+        self.assertTrue(all(button.cget("image") for button in menu.buttons.values()))
+        toolbar = self.pet._hover.toolbar
+        assert toolbar is not None
+        self.assertIs(menu.frame.master, toolbar.interaction_column)
         self.assertEqual(self.pet.state.satiety, 75)
         menu.buttons["apple"].invoke()
         self.assertIsNone(self.pet._hover.food_menu)
@@ -72,8 +84,10 @@ class FoodGuiTests(unittest.TestCase):
         assert bar is not None
         # Menu selection starts a gesture at either capacity. Refusal requires
         # later hand/face evidence and is covered by World interaction tests.
-        with patch("aiko_pet.application.active_time.ActiveSessionClock.consume",
-                   return_value=0):
+        with patch(
+            "aiko_pet.application.active_time.ActiveSessionClock.consume",
+            return_value=0,
+        ):
             for energy in (40, 100):
                 with self.subTest(energy=energy):
                     set_test_pet_values(self.pet.state, energy=energy, satiety=30)
@@ -84,8 +98,9 @@ class FoodGuiTests(unittest.TestCase):
                     bar.buttons["place_item"].invoke()
                     menu = self.pet._hover.food_menu
                     assert menu is not None
-                    self.assertEqual(menu.buttons["energy_drink"].cget("text"),
-                                     "Energy Drink")
+                    self.assertEqual(
+                        menu.buttons["energy_drink"].cget("text"), "Energy Drink"
+                    )
                     menu.buttons["energy_drink"].invoke()
                     self.assertIsNone(self.pet._hover.food_menu)
                     token = self.pet._world.cursor.instance_id
@@ -96,14 +111,16 @@ class FoodGuiTests(unittest.TestCase):
                     self.assertEqual(self.pet._world.interaction.phase, "idle")
                     self.assertEqual(self.pet.state.energy, energy)
                     self.assertEqual(self.pet.state.satiety, 30)
-                    self.assertEqual(self.pet.state.food.recent_food_ids,
-                                     old_food_history)
+                    self.assertEqual(
+                        self.pet.state.food.recent_food_ids, old_food_history
+                    )
                     self.assertEqual(self.pet.state.food.remaining_digest_minutes, 0)
                     self.assertEqual(self.pet.state.fun, old_fun)
                     self.assertEqual(self.pet.state.friendship, old_friendship)
                     self.assertIsNone(self.pet._animated.food_overlay.current_food_id)
-                    self.assertNotEqual(self.pet._animated.frame_clock.active_key,
-                                        ("eat", None))
+                    self.assertNotEqual(
+                        self.pet._animated.frame_clock.active_key, ("eat", None)
+                    )
                     self.pet._world.cursor.cancel()
 
 

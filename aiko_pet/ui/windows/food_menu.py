@@ -7,6 +7,7 @@ from functools import partial
 from typing import Callable
 
 from ...pet.content import GERMAN_TEXT
+from ..common.image_button import update_button_state
 from ..common.skin import AikoSkin
 from ..view_models.food_models import FoodChoice, FoodChoiceId
 from .embedded_selector import EmbeddedSelector
@@ -44,8 +45,9 @@ class FoodMenu(EmbeddedSelector):
 
     def refresh(self) -> None:
         if not self._closed:
+            allowed = self._can_select()
             for button in self.buttons.values():
-                button.configure(state="normal" if self._can_select() else "disabled")
+                update_button_state(button, enabled=allowed)
 
     def choose(self, food_id: FoodChoiceId) -> None:
         if self._closed or food_id not in self.buttons or not self._can_select():
