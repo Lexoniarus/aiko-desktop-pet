@@ -1676,11 +1676,58 @@ These impressions alone must not block needed care. Aiko can accept help while
 still emotionally affected; improving needs and recovering emotionally have
 distinct timing and implications.
 
-Further discussion: balance positive and negative impressions, define the
-fulfillment Moodlets for each wish type and when wishes are expressed, then
-settle the overall emotional-state vocabulary/selection from numeric mood, active emotional
-impressions and relevant context. Physical need labels, sleep state, immediate
-reactions and long-term friendship remain distinct from that interpretation.
+##### Recorded proposal: overall emotional-state selection, 2026-10-20
+
+Status: owner-requested design proposal, not implemented. Derive one overall
+emotional interpretation from numeric mood, the active Moodlet composition and
+relevant interaction context. Do not create another care bar, mutable emotion
+score or independently persisted collection. Physical need conditions, sleep,
+immediate reactions and enduring friendship remain distinct inputs/facts.
+
+Numeric mood combines the need-derived contribution and defined Moodlet
+modifiers under the agreed caps and response timing. Emotional interpretation
+also retains each impression's cause, direction, intensity and user attribution.
+Equal positive and negative numeric contributions do not erase those facts:
++10 pride and -10 irritation have zero net numeric contribution while both
+remain emotionally relevant. Numeric contribution caps must not discard active
+impressions or lower their emotional intensity merely to match the bar.
+
+Candidate emotional directions include joy, pride, relief, connection/warmth,
+irritation, feeling crowded, uncertainty, frustration and loneliness. Group
+impressions by the direction they actually support. In each direction, start
+with its strongest active Moodlet's intensity. A further independent aligned
+impression adds one support level, capped at three. Repetitions already handled
+by that Moodlet's own stacking do not also count as independent support.
+
+The strongest direction sets the primary emotional state. Other active
+impressions still color speech, gestures, attitude toward the user and specific
+interaction willingness. For equally strong directions, an ongoing boundary
+violation takes priority; otherwise prefer the most recently created or
+genuinely intensified impression. A timer-only refresh does not change primary
+state merely by being newer. Preserve the underlying facts for every decision.
+
+| Active emotional composition | Candidate primary state and retained nuance |
+| --- | --- |
+| Pride level three, irritation level one | Proud, but still somewhat short with the user |
+| Feeling secure level one, feeling crowded level three | Crowded; the positive closeness memory remains, and the current petting boundary still applies |
+| Joy level two, loneliness level one | Joyful, with a remaining desire for contact |
+| Several strong poor-care impressions | Frustrated, lonely or downcast according to their composition, not one automatic label for all deficits |
+
+Without clearly shaping Moodlets, general numeric mood may distinguish
+satisfied, calm and subdued. Exact fallback thresholds and the final label
+vocabulary remain to be settled. A need statement can coexist with a positive
+emotional state: Aiko can feel warmly toward the user while physically tired.
+A friendlier primary state does not automatically lift a concrete refusal.
+
+Positive experiences can both change the emotional composition and shorten
+eligible negative impressions through the separately recorded relief rules.
+An overall label alone must not erase Moodlets, reset their clocks, refund
+relationship losses or grant wish/care rewards.
+
+Further discussion: settle common positive/negative contribution caps and their
+interaction with existing group caps and need-deficit limits, reconcile wish
+creation/concurrency pacing, and complete remaining vocabulary/selection details
+before implementing stage 5.
 
 #### 5C. Connect status, expression and interaction decisions
 
