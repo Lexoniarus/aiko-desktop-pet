@@ -8,6 +8,7 @@ from typing import Callable
 
 from .icon_images import IconImages
 from .image_button import ImageButton
+from .panel_surface import PanelSurface
 
 
 class AikoSkin:
@@ -39,6 +40,9 @@ class AikoSkin:
             bd=0,
         )
 
+    def surface(self, parent: tk.Misc) -> PanelSurface:
+        return PanelSurface(parent, self.images)
+
     def header(self, parent: tk.Misc, text: str) -> tk.Label:
         return tk.Label(
             parent,
@@ -59,6 +63,7 @@ class AikoSkin:
         *,
         size: str = "regular",
         icon: tk.PhotoImage | None = None,
+        align_left: bool = False,
     ) -> ImageButton:
         return ImageButton(
             parent,
@@ -68,4 +73,5 @@ class AikoSkin:
             size=size,
             font=self.font,
             icon=icon,
+            align_left=align_left,
         )

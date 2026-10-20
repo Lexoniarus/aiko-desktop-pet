@@ -86,6 +86,12 @@ class Widget:
     def update_idletasks(self) -> None:
         pass
 
+    def after_idle(self, *_args: Any) -> str:
+        return "idle-layout"
+
+    def after_cancel(self, *_args: Any) -> None:
+        pass
+
     def wm_attributes(self, *args: Any) -> None:
         pass
 
@@ -117,6 +123,10 @@ class Widget:
         return 1
 
     create_image = create_polygon = create_rectangle = create_window
+    create_oval = create_window
+
+    def grid_columnconfigure(self, *args: Any, **kwargs: Any) -> None:
+        pass
 
     def coords(self, *args: Any, **kwargs: Any) -> None:
         pass
@@ -176,11 +186,20 @@ class Skin:
     def frame(self, parent: Any) -> Widget:
         return Widget(parent)
 
+    def surface(self, parent: Any) -> Surface:
+        return Surface(parent)
+
     def header(self, parent: Any, text: str) -> Widget:
         return Widget(parent, text=text)
 
     def button(self, parent: Any, text: str, command: Any, **kwargs: Any) -> Widget:
         return Widget(parent, text=text, command=command)
+
+
+class Surface:
+    def __init__(self, parent: Any) -> None:
+        self.frame = Widget(parent)
+        self.body = Widget(self.frame)
 
 
 @contextmanager

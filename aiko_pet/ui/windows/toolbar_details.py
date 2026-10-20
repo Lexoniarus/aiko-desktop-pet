@@ -21,8 +21,13 @@ class ToolbarDetails:
         snapshot: Callable[[], StatusSnapshot],
     ) -> None:
         self._snapshot = snapshot
-        self._scroll = ScrollRegion(parent, skin, width=620, height=228)
-        self.frame = self._scroll.frame
+        self._surface = skin.surface(parent)
+        self.frame = self._surface.frame
+        self._scroll = ScrollRegion(
+            self._surface.body, skin, width=600, height=228,
+            autohide=True, fit_content=True, max_height=228,
+        )
+        self._scroll.frame.pack(fill="both", expand=True)
         self._labels: dict[str, tk.Label] = {}
         for group, icon, names in (
             (
@@ -43,22 +48,20 @@ class ToolbarDetails:
         ):
             section = tk.Frame(
                 self._scroll.body,
-                bg=skin.panel,
-                padx=8,
+                bg=skin.background,
+                padx=4,
                 pady=8,
-                highlightthickness=1,
-                highlightbackground=skin.border,
             )
             section.pack(fill="x", pady=3)
-            tk.Label(section, image=skin.images.icon(icon), bg=skin.panel).pack(
+            tk.Label(section, image=skin.images.icon(icon), bg=skin.background).pack(
                 side="left", anchor="n", padx=(0, 8)
             )
-            body = tk.Frame(section, bg=skin.panel)
+            body = tk.Frame(section, bg=skin.background)
             body.pack(fill="both", expand=True)
             tk.Label(
                 body,
                 text=GERMAN_TEXT.format(f"vn.details.{group}"),
-                bg=skin.panel,
+                bg=skin.background,
                 fg=skin.text,
                 font=(skin.font, 10, "bold"),
                 anchor="w",
@@ -66,7 +69,7 @@ class ToolbarDetails:
             for name in names:
                 label = tk.Label(
                     body,
-                    bg=skin.panel,
+                    bg=skin.background,
                     fg=skin.text,
                     font=(skin.font, 9),
                     anchor="w",
@@ -75,12 +78,16 @@ class ToolbarDetails:
                 )
                 label.pack(fill="x", pady=2)
                 self._labels[name] = label
-        self.frame.bind("<Configure>", self._resize)
+            if group != "objects":
+                tk.Frame(
+                    self._scroll.body, bg=skin.border, height=1,
+                ).pack(fill="x", padx=4)
+        self.frame.bind("<Configure>", self._resize, add="+")
         self._scroll.adopt()
 
     def _resize(self, event: tk.Event) -> None:
         for label in self._labels.values():
-            label.configure(wraplength=max(80, event.width - 24))
+            label.configure(wraplength=max(80, event.width - 84))
 
     def refresh(self) -> None:
         view = self._snapshot()

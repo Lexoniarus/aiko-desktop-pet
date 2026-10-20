@@ -70,6 +70,7 @@ class VnStatusTests(unittest.TestCase):
             },
         )
         button._hover = button._pressed = button._selected = False
+        button._copy = button._chevron = None
         with (
             patch.object(ImageButton, "cget", return_value="disabled"),
             patch("tkinter.Button.configure") as configure,

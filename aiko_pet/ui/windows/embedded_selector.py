@@ -21,21 +21,26 @@ class EmbeddedSelector:
     ) -> None:
         self._closed = False
         self._on_closed = closed
-        self.frame = tk.Frame(parent, bg=skin.background)
+        self._surface = skin.surface(parent)
+        self.frame = self._surface.frame
         self.frame.pack(fill="both", expand=True)
+        header = tk.Frame(self._surface.body, bg=skin.background)
+        header.pack(fill="x")
         self.back = skin.button(
-            self.frame, GERMAN_TEXT.format("vn.back"), self.close, size="action"
+            header, GERMAN_TEXT.format("vn.back"), self.close, size="menu_back"
         )
-        self.back.pack(fill="x")
+        self.back.pack(side="right")
         tk.Label(
-            self.frame,
+            header,
             text=title,
             bg=skin.background,
             fg=skin.text,
             font=(skin.font, 10, "bold"),
             anchor="w",
-        ).pack(fill="x", pady=5)
-        self.scroll = ScrollRegion(self.frame, skin, width=242, height=240)
+        ).pack(side="left", pady=5)
+        self.scroll = ScrollRegion(
+            self._surface.body, skin, width=230, height=240, autohide=True,
+        )
         self.scroll.frame.pack(fill="both", expand=True)
 
     def contains_pointer(self, x: int, y: int) -> bool:

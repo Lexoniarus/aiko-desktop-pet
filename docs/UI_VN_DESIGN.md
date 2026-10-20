@@ -1,5 +1,28 @@
 # Aiko VN interface direction — 2026-10-20
 
+**Main-menu refinement (2026-10-20):** the owner authorized bringing the native
+main menu closer to the approved reference. The menu now fits its content up to
+the available-height cap, keeps the footer accessible, hides scrollbars when
+content fits, and releases empty context/row space. The six care rows retain a
+354 px interaction column; selector changes keep the same outer geometry.
+Moodlets use individual illustrated halos and wrapped tags. Wishes show three
+separate target/objective/time cards with the prepared panel artwork. That same
+panel source frames embedded selectors, in-window descriptions and the shared
+expanded-details region; details use separators rather than separate blue boxes.
+Main-menu buttons align their icons and text together, with navigation marks on
+the right. Separate derived button sizes serve food, game, social and back choices.
+The original source PNGs and approved external previews are unchanged.
+
+The actual Tk widgets were inspected in a disposable native review window with
+illustrative read snapshots and an additional system title bar for capture.
+Native regression checks cover fit/overflow/removal, three-wish layout, selector
+geometry, details with limited height, panel resizing and enabled/disabled input.
+This is not acceptance of every Windows DPI/monitor configuration or of the
+production borderless window stack. Game windows and their movement are explicitly
+outside this refinement; they remain a separate owner-requested next step.
+Validation passed: 1,616 tests in the complete Windows suite, 66 additional
+menu/UI regression checks on the final refinement, Ruff, strict Mypy and Pyright.
+
 **Implementation update (5C, 2026-10-20):** main status/menu, embedded selectors,
 shared VN assets and settings/Credits are implemented on `feature/social-optimization`.
 The preparation-only authorization statements below describe the historical

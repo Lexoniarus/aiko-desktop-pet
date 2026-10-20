@@ -93,6 +93,7 @@ class ActionToolbar:
             actions.toggle_pin,
             size="footer",
             icon=self.skin.images.icon("ui_pin", 24),
+            align_left=True,
         )
         self.pin_button.pack(side="left", padx=2)
         self.details_button = self.skin.button(
@@ -102,14 +103,17 @@ class ActionToolbar:
             size="footer",
         )
         self.details_button.pack(side="right", padx=2)
-        body = ScrollRegion(
+        self.body = body = ScrollRegion(
             self.outer,
             self.skin,
-            width=660,
-            height=min(790, max(240, root.winfo_screenheight() - 180)),
+            width=676,
+            height=1,
+            autohide=True,
+            fit_content=True,
+            max_height=max(160, root.winfo_screenheight() - 160),
         )
         body.frame.pack(fill="both", expand=True)
-        content = tk.Frame(body.body, bg=self.skin.background, padx=12, pady=10)
+        content = tk.Frame(body.body, bg=self.skin.background, padx=16, pady=12)
         content.pack(fill="both", expand=True)
         self.tips = DescriptionTip(self.outer, self.skin)
         summary = tk.Frame(
@@ -121,6 +125,10 @@ class ActionToolbar:
             highlightbackground=self.skin.border,
         )
         summary.pack(fill="x")
+        tk.Label(
+            summary, image=self.skin.images.icon("detail_wellbeing", 40),
+            bg=self.skin.panel,
+        ).pack(side="left", padx=(0, 8))
         copy = tk.Frame(summary, bg=self.skin.panel)
         copy.pack(side="left", fill="both", expand=True)
         self.emotion = tk.Label(
@@ -129,6 +137,8 @@ class ActionToolbar:
             fg=self.skin.text,
             font=(self.skin.font, 12, "bold"),
             anchor="w",
+            wraplength=330,
+            justify="left",
         )
         self.emotion.pack(fill="x")
         self.wellbeing = tk.Label(
@@ -137,6 +147,8 @@ class ActionToolbar:
             fg=self.skin.muted,
             font=(self.skin.font, 8),
             anchor="w",
+            wraplength=330,
+            justify="left",
         )
         self.wellbeing.pack(fill="x")
         self.readouts: dict[str, StatusReadout] = {}
@@ -156,9 +168,9 @@ class ActionToolbar:
         care = tk.Frame(content, bg=self.skin.background)
         care.pack(fill="x")
         self.interaction_column = tk.Frame(
-            care, bg=self.skin.background, width=254, height=360
+            care, bg=self.skin.background, width=254, height=354
         )
-        self.interaction_column.pack(side="right", padx=(10, 0))
+        self.interaction_column.pack(side="right", padx=(13, 0))
         self.interaction_column.pack_propagate(False)
         self.actions_frame = tk.Frame(self.interaction_column, bg=self.skin.background)
         self.actions_frame.pack(fill="both", expand=True)
@@ -187,7 +199,8 @@ class ActionToolbar:
                 GERMAN_TEXT.format(text) + ("  ›" if submenu else ""),
                 partial(actions.interact, action),
                 size="action",
-                icon=self.skin.images.icon(icon, 24),
+                icon=self.skin.images.icon(icon, 32),
+                align_left=True,
             )
             button.pack(pady=(1, 5))
             self.buttons[action] = button
@@ -200,9 +213,14 @@ class ActionToolbar:
             font=(self.skin.font, 9),
             pady=8,
         ).pack(fill="both", expand=True)
-        self.hardware = self._context_label(content)
-        self.workload = self._context_label(content)
-        self.food_info = self._context_label(content)
+        context = tk.Frame(content, bg=self.skin.background)
+        context.pack(fill="x", pady=(6, 0))
+        self.hardware = self._context_label(context)
+        self.hardware.configure(
+            image=self.skin.images.icon("system_computer", 24), compound="left",
+        )
+        self.workload = self._context_label(context)
+        self.food_info = self._context_label(context)
         self.details = (
             ToolbarDetails(content, self.skin, status_snapshot)
             if status_snapshot is not None
@@ -230,7 +248,7 @@ class ActionToolbar:
         return label
 
     def _care_row(self, parent: tk.Misc) -> tk.Frame:
-        row = tk.Frame(parent, bg=self.skin.background, height=60)
+        row = tk.Frame(parent, bg=self.skin.background, height=59)
         row.pack(fill="x")
         row.pack_propagate(False)
         return row
@@ -267,6 +285,10 @@ class ActionToolbar:
                 "ui.details_hide" if self._details_open else "ui.details_show"
             )
         )
+        if self.visible:
+            self.place()
+            if self._details_open:
+                self.body.canvas.yview_moveto(1)
 
     def refresh_details(self) -> None:
         if self._details_open and self.details is not None:
@@ -314,6 +336,11 @@ class ActionToolbar:
         ):
             if widget.cget("text") != text:
                 widget.configure(text=text)
+        for label in (self.hardware, self.workload, self.food_info):
+            if label.cget("text"):
+                label.pack(fill="x", pady=2)
+            else:
+                label.pack_forget()
         for key, readout in self.readouts.items():
             suffix = (
                 GERMAN_TEXT.format(
@@ -326,6 +353,8 @@ class ActionToolbar:
         self.moodlets.refresh(view.emotional.moodlets)
         self.wishes.refresh(view.emotional.wishes)
         self.refresh_details()
+        if self.visible:
+            self.place()
 
     def contains_pointer(self, px: int, py: int) -> bool:
         if not self.visible:

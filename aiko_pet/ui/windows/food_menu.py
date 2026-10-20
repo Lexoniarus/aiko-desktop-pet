@@ -34,8 +34,9 @@ class FoodMenu(EmbeddedSelector):
                 self.scroll.body,
                 f"{choice.name}\n{choice.benefit_label}",
                 partial(self.choose, choice.id),
-                size="action",
-                icon=skin.images.file(choice.image_path, 24),
+                size="menu_choice",
+                icon=skin.images.file(choice.image_path, 32),
+                align_left=True,
             )
             button.pack(fill="x", pady=2)
             button.bind("<ButtonPress-1>", partial(self._press, choice.id))

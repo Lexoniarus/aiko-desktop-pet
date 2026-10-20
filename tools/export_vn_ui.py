@@ -17,6 +17,10 @@ SIZES = {
     "wide": (280, 44),
     "action": (246, 50),
     "footer": (306, 40),
+    "menu_choice": (216, 54),
+    "menu_back": (74, 30),
+    "menu_game": (216, 68),
+    "menu_social": (216, 40),
 }
 
 

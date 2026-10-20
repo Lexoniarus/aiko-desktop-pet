@@ -25,8 +25,10 @@ class MoodletStrip:
             self.frame,
             skin,
             width=620,
-            height=max(82, 44 + skin.small_line_height * 3),
+            height=1,
             horizontal=True,
+            autohide=True,
+            fit_content=True,
         )
         self._scroll.frame.pack(fill="x")
         self._skin, self._tips = skin, tips
@@ -49,32 +51,48 @@ class MoodletStrip:
                 bg=self._skin.background,
                 fg=self._skin.muted,
                 font=(self._skin.font, 9),
-                pady=20,
+                pady=10,
             ).pack()
         for item in items:
-            label = tk.Label(
-                self._scroll.body,
-                text=item.label,
-                image=self._skin.images.icon(
+            card = tk.Frame(self._scroll.body, bg=self._skin.background)
+            card.pack(side="left", padx=3)
+            halo = tk.Canvas(
+                card, width=42, height=42, bg=self._skin.background,
+                bd=0, highlightthickness=0,
+            )
+            halo.pack()
+            halo.create_oval(
+                1, 1, 41, 41, outline="",
+                fill="#F7E9EF" if item.value.polarity == "negative" else "#EAF2F8",
+            )
+            halo.create_image(
+                21, 21, image=self._skin.images.icon(
                     MOODLET_ICONS[item.value.definition_id], 40
                 ),
-                compound="top",
+            )
+            label = tk.Label(
+                card,
+                text=item.label,
                 wraplength=90,
-                width=96,
-                height=max(78, 44 + self._skin.small_line_height * 3),
+                width=13,
                 font=(self._skin.font, 8),
-                bg="#F7E9EF" if item.value.polarity == "negative" else "#EAF2F8",
+                bg=self._skin.background,
                 fg=self._skin.text,
                 highlightthickness=1,
                 highlightbackground=self._skin.background,
                 highlightcolor=self._skin.accent,
             )
-            label.pack(side="left", padx=2)
+            label.pack(pady=(2, 0))
+            self._tips.attach(
+                halo, partial(self._description, item.value.instance_id),
+                focusable=False,
+            )
             self._tips.attach(
                 label,
                 partial(self._description, item.value.instance_id),
             )
         self._scroll.adopt()
+        self._scroll.refresh_layout()
 
     def _description(self, key: int) -> str:
         return moodlet_description(self._items[key])

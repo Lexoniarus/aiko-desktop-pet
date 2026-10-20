@@ -26,17 +26,11 @@ def tip_position(
 class DescriptionTip:
     def __init__(self, parent: tk.Misc, skin: AikoSkin) -> None:
         self._parent = parent
-        self._frame = tk.Frame(
-            parent,
-            bg="#FFFCFD",
-            highlightthickness=1,
-            highlightbackground=skin.border,
-            padx=12,
-            pady=9,
-        )
+        self._surface = skin.surface(parent)
+        self._frame = self._surface.frame
         self._label = tk.Label(
-            self._frame,
-            bg="#FFFCFD",
+            self._surface.body,
+            bg=skin.background,
             fg=skin.text,
             font=(skin.font, 9),
             justify="left",
@@ -46,8 +40,10 @@ class DescriptionTip:
         self._anchor: tk.Widget | None = None
         parent.bind("<Unmap>", lambda _e: self.hide(), add="+")
 
-    def attach(self, widget: tk.Widget, text: Callable[[], str]) -> None:
-        widget.configure({"takefocus": True})
+    def attach(
+        self, widget: tk.Widget, text: Callable[[], str], *, focusable: bool = True,
+    ) -> None:
+        widget.configure({"takefocus": focusable})
         for sequence in ("<Enter>", "<FocusIn>"):
             widget.bind(sequence, partial(self._show_event, widget, text), add="+")
         for sequence in ("<Leave>", "<FocusOut>", "<Escape>"):

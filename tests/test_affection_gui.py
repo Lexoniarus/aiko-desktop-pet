@@ -10,6 +10,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
+from tools.tk_test_time import ControlledTkTime
 
 
 class AffectionGuiTests(unittest.TestCase):
@@ -22,6 +23,7 @@ class AffectionGuiTests(unittest.TestCase):
         root.destroy()
 
     def setUp(self):
+        self.enterContext(ControlledTkTime())
         self.tempdir = tempfile.TemporaryDirectory()
         self.addCleanup(self.tempdir.cleanup)
         self.app = create_test_desktop(

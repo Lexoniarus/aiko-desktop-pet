@@ -33,16 +33,17 @@ class GameMenu(EmbeddedSelector):
         self.buttons: dict[GameId, tk.Button] = {}
         for game in choices:
             image = (
-                skin.images.file(PLAYING_CARDS_DIR / "card_spades_A.png", 24)
+                skin.images.file(PLAYING_CARDS_DIR / "card_spades_A.png", 40)
                 if game is GameId.BLACKJACK
-                else skin.images.icon(GAME_ICONS[game.value], 24)
+                else skin.images.icon(GAME_ICONS[game.value], 40)
             )
             button = skin.button(
                 self.scroll.body,
                 GERMAN_TEXT.format(f"game.name.{game.value}"),
                 partial(self.choose, game),
-                size="action",
+                size="menu_game",
                 icon=image,
+                align_left=True,
             )
             button.pack(fill="x", pady=4)
             self.buttons[game] = button

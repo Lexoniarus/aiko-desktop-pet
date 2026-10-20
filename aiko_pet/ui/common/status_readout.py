@@ -67,18 +67,25 @@ class StatusReadout:
     ) -> None:
         self.frame = tk.Frame(
             parent,
-            bg=skin.panel,
-            padx=8,
-            pady=5,
-            highlightthickness=1,
-            highlightbackground=skin.border,
+            bg=skin.background if icon is not None else skin.panel,
         )
+        self._backdrop = tk.Canvas(
+            self.frame, bg=self.frame.cget("bg"), bd=0, highlightthickness=0,
+        )
+        self._backdrop.place(x=0, y=0, relwidth=1, relheight=1)
+        self._outline = self._backdrop.create_polygon(
+            0, 0, 0, 0, fill=skin.panel,
+            outline=skin.border if icon is not None else skin.panel, smooth=True,
+        )
+        self.frame.bind("<Configure>", self._resize, add="+")
+        body = tk.Frame(self.frame, bg=skin.panel)
+        body.pack(fill="both", expand=True, padx=9, pady=6)
         self._width, self._friendship = width, friendship
         if icon is not None:
-            tk.Label(self.frame, image=skin.images.icon(icon), bg=skin.panel).pack(
+            tk.Label(body, image=skin.images.icon(icon), bg=skin.panel).pack(
                 side="left", padx=(0, 8)
             )
-        content = tk.Frame(self.frame, bg=skin.panel)
+        content = tk.Frame(body, bg=skin.panel)
         content.pack(fill="both", expand=True)
         self.label = tk.Label(
             content,
@@ -106,6 +113,15 @@ class StatusReadout:
             anchor="nw",
         )
         self._title = title
+
+    def _resize(self, event: tk.Event) -> None:
+        width, height, radius = event.width - 1, event.height - 1, 9
+        self._backdrop.coords(
+            self._outline,
+            radius, 1, width - radius, 1, width, 1, width, radius,
+            width, height - radius, width, height, width - radius, height,
+            radius, height, 1, height, 1, height - radius, 1, radius, 1, 1,
+        )
 
     def refresh(self, value: float, *, suffix: str = "") -> None:
         amount = max(0, min(100, value))

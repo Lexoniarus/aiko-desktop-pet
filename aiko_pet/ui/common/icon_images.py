@@ -34,6 +34,36 @@ class IconImages:
     def surface(self, key: str) -> tk.PhotoImage:
         return self._load(self._catalog["surfaces"][key])
 
+    def panel_art(self, width: int, height: int) -> tk.PhotoImage:
+        """Keep rounded source corners; tile quiet center strips with native Tk.
+
+        The view owns this size-specific image, avoiding an unbounded resize cache.
+        No runtime Pillow dependency or changes to the source artwork are needed.
+        """
+        source = self.surface("panel_surface.panel")
+        width, height = max(1, width), max(1, height)
+        cap = min(12, width // 2, height // 2)
+        sw, sh = source.width(), source.height()
+        sx = (0, cap, sw - cap, sw)
+        sy = (0, cap, sh - cap, sh)
+        dx, dy = (0, cap, width - cap, width), (0, cap, height - cap, height)
+        result = tk.PhotoImage(master=self._root, width=width, height=height)
+        for row in range(3):
+            for col in range(3):
+                if dx[col + 1] <= dx[col] or dy[row + 1] <= dy[row]:
+                    continue
+                # One quiet center row/column extends without repeating gradients.
+                left = sw // 2 if col == 1 else sx[col]
+                top = sh // 2 if row == 1 else sy[row]
+                right = left + 1 if col == 1 else sx[col + 1]
+                bottom = top + 1 if row == 1 else sy[row + 1]
+                result.tk.call(
+                    str(result), "copy", str(source),
+                    "-from", left, top, right, bottom,
+                    "-to", dx[col], dy[row], dx[col + 1], dy[row + 1],
+                )
+        return result
+
     def button_art(
         self, state: str, size: str, icon: tk.PhotoImage | None
     ) -> tk.PhotoImage:
@@ -62,7 +92,13 @@ class IconImages:
         if key not in self._images:
             image = tk.PhotoImage(master=self._root, file=str(path))
             factor = max(1, (max(image.width(), image.height()) + size - 1) // size)
-            self._images[key] = image.subsample(factor) if factor > 1 else image
+            content = image.subsample(factor) if factor > 1 else image
+            canvas = tk.PhotoImage(master=self._root, width=size, height=size)
+            canvas.tk.call(
+                str(canvas), "copy", str(content), "-to",
+                (size - content.width()) // 2, (size - content.height()) // 2,
+            )
+            self._images[key] = canvas
         return self._images[key]
 
     def _destroyed(self, event: tk.Event) -> None:

@@ -44,8 +44,9 @@ class SocialMenu(EmbeddedSelector):
                 self.scroll.body,
                 GERMAN_TEXT.format(key),
                 partial(self.choose, category),
-                size="action",
+                size="menu_social",
                 icon=skin.images.icon(icon, 24),
+                align_left=True,
             )
             button.pack(fill="x", pady=2)
             self.buttons[category] = button
