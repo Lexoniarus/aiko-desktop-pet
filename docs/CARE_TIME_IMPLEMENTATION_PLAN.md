@@ -373,12 +373,13 @@ visual snapshot: its copied documentation does not supersede the maintained
 plan and design documents in the checkout. It is not a runtime dependency.
 
 The structural foundation can begin once the ongoing correction baseline is
-secured. The four material product decisions listed under "Documented inventory
+secured. The remaining material product decisions listed under "Documented inventory
 and decisions before implementation" remain gates for their affected behavior,
 not a reason to reopen every hypothetical edge case or delay unrelated naming
-work. In particular, do not silently invent food/game disclosure thresholds,
-final emotion mappings, renewed relief allowances or additional friendship
-bonuses. Resolve each relevant decision before its policy/catalogue commit.
+work. Apply the subsequently agreed wish-disclosure/lifecycle rules below;
+do not silently invent final emotion mappings, renewed relief allowances or
+additional friendship bonuses. Resolve each relevant decision before its
+policy/catalogue commit.
 This review ran no application tests and changed no runtime behavior.
 
 ## Delivery order
@@ -2033,16 +2034,25 @@ impressions or lower their emotional intensity merely to match the bar.
 Candidate emotional directions include joy, pride, relief, connection/warmth,
 irritation, feeling crowded, uncertainty, frustration and loneliness. Group
 impressions by the direction they actually support. In each direction, start
-with its strongest active Moodlet's intensity. A further independent aligned
-impression adds one support level, capped at three. Repetitions already handled
-by that Moodlet's own stacking do not also count as independent support.
+with the complete set of active impressions, not only the strongest one.
+The owner subsequently clarified that every active Moodlet must contribute to
+the resulting overall emotional composition. There is no fixed global count
+limit on active Moodlets; catalogue-specific stacking/copy rules still apply.
+The limit of three concurrent wishes is unrelated to Moodlet concurrency.
+Numeric mood-contribution caps do not truncate this emotional evidence.
 
-The strongest direction sets the primary emotional state. Other active
-impressions still color speech, gestures, attitude toward the user and specific
-interaction willingness. For equally strong directions, an ongoing boundary
-violation takes priority; otherwise prefer the most recently created or
+This clarification supersedes the earlier candidate calculation of the strongest
+impression plus aligned support capped at three. The aggregation formula,
+direction-to-label mapping and numeric-mood thresholds are now being discussed;
+do not implement that older support cap as the final interpretation rule.
+
+Derive the primary label from the complete composition; retain other active
+impressions for speech, gestures, attitude toward the user and specific
+interaction willingness. The earlier candidate tie rule gives an ongoing boundary
+violation priority; otherwise prefer the most recently created or
 genuinely intensified impression. A timer-only refresh does not change primary
-state merely by being newer. Preserve the underlying facts for every decision.
+state merely by being newer. This tie convention remains subject to the final
+aggregate selection rule. Preserve the underlying facts for every decision.
 
 | Active emotional composition | Candidate primary state and retained nuance |
 | --- | --- |
@@ -2162,6 +2172,45 @@ restart renewal or offline generation/backlog.
 The following consistency review records remaining decisions, not additional
 approved behavior or implementation authorization.
 
+##### Agreed wish disclosure and temporary unavailability, 2026-10-20
+
+Status: owner-confirmed rules for implementation, not implemented. This resolves
+the previously open food/game disclosure thresholds and common temporary-
+unavailability policy. Keep the existing four-hour lifetime, inner-wish pacing,
+semantic fulfillment rules and independent relationship accounting.
+
+- Food and game wishes use the same initial disclosure conditions as social
+  and affection wishes: friendship level at least three and numeric mood at
+  least fifty. Aiko must be awake with a free speaking opportunity. Urgent care
+  and ongoing reactions take priority. An unavailable desired activity is not
+  announced as an immediately actionable request.
+- Each wish is initially voiced at most once; distinct wish utterances are at
+  least thirty real minutes apart. Count disclosure only when the concrete
+  wish text is actually presented, not when queued or merely shown in status.
+  Speaking does not restart a wish or grant a Moodlet/reward.
+- Food wishes require no hunger, and game wishes require no fun deficit.
+  Express game wishes before a round or in a suitable pause without interrupting
+  ongoing gameplay or changing an existing objective's scoring rules. A matching
+  food portion need not already exist on the desktop; the user may supply it.
+- Low friendship, low mood or a temporary activity restriction does not remove
+  an inner wish or prevent otherwise qualifying fulfillment. All active inner
+  wishes remain visible in status regardless of disclosure.
+- A temporarily unfulfillable wish keeps its original deadline and occupied
+  slot. Do not pause, extend, replace or renew it. This includes a previously
+  created API wish after online content is disabled/unavailable, or an affection
+  wish during a temporary petting refusal. Preserve creation-time capability
+  rules: disabled APIs do not become candidates for new API wishes.
+- If the activity becomes available before expiry, the wish can be fulfilled
+  normally. An unspoken wish may then be voiced if all disclosure conditions
+  hold. A previously voiced wish is not automatically repeated. Show a known
+  temporary restriction readably in status; absence of a desktop food portion
+  alone is not such a restriction.
+- Unfulfilled expiry is neutral: no negative Moodlet and no friendship loss.
+  Existing dissatisfaction, neglect or boundaries retain their own independent
+  rules; wish expiry creates no additional penalty. Sleep, closed-app time and
+  standby continue to age the original deadline without generating utterance
+  backlogs or personal interactions.
+
 ##### Design consistency review: Moodlets and wishes, 2026-10-20
 
 Scope: read-only review of the recorded design and its existing ownership
@@ -2186,10 +2235,13 @@ completion conventions below concern other event types or simultaneous events.
 | --- | --- |
 | Relief allowance across refresh/escalation | Once-per-current-stage relief needs an exact stage identity when a provocation renews the timer, increases intensity or happens at the cap. Avoid making another five-minute credit available merely by poking again and restarting the same timer. |
 | Complete emotional vocabulary and mapping | Assign each Moodlet its direction and attribution, define satisfied/calm/subdued fallback thresholds, and settle exact ties. The grouped support rule alone does not specify every label or interaction response. |
-| Wish selection and disclosure details | Define initial creation on a fresh save/start, selection among four areas for three slots, variation between specific targets, and the disclosure conditions for food/game wishes; the level-three/mood-fifty candidates are explicit for social/affection only. |
-| Wish lifecycle when circumstances change | Decide the fate of an active API wish after opt-out/unavailability and of an affection wish during a new refusal. Define one neutral expiry/failure policy across areas and which event is actual spoken disclosure, without equating status visibility with communication. |
 | Separate wish relationship rewards | Food has a candidate additional 0.25-point personal-fulfillment reward; no additional amount is fixed for game/social/affection wishes. Define whether they add anything beyond ordinary eligible care, within existing shared budgets. |
-| Completion and time-boundary semantics | Game-round start/deadline rules and cross-session/restart progress are recorded. Set conventions for non-game activities and simultaneous events; resolve each semantic completion once so duplicate delivery cannot replay relief, fulfillment or rewards. |
+
+Wish disclosure and temporary unavailability are resolved by the owner-confirmed
+rules above. Initial creation/candidate selection and equal-time completion
+ordering remain implementation conventions within the recorded scope, not
+additional product workshops. Resolve semantic completion once so duplicate
+delivery cannot replay relief, fulfillment or rewards.
 
 ##### Documented inventory and decisions before implementation, 2026-10-20
 
@@ -2228,20 +2280,18 @@ copies and intensity per Moodlet; numeric caps do not delete parallel entries.
 The eight positive versus ten negative types do not by themselves prove or
 disprove balanced daily outcomes, which also depend on triggers and duration.
 
-The following four product decisions remain material before implementing the
+The following three product decisions remain material before implementing the
 first version; this review does not add answers without owner agreement:
 
-1. Wish lifecycle and disclosure: settle food/game expression readiness and
-   handling of temporary refusal, source opt-out/unavailability and neutral
-   expiry/failure consistently across areas.
-2. Emotional interpretation and behavior: complete direction/label mapping and
+1. Emotional interpretation and behavior: complete all-Moodlet aggregation,
+   direction/label mapping and
    fallback thresholds, and define whether any specific refusals beyond the
    recorded petting boundary belong in the first version. Do not infer blanket
    locks from a negative mood or silently prevent necessary care.
-3. Relief eligibility after timer refresh/escalation: settle what starts a new
+2. Relief eligibility after timer refresh/escalation: settle what starts a new
    eligible stage. Ordinary recovery pause/resume already retains used credit;
    a new provocation must not silently make helpful-action credit repeatable.
-4. Additional wish friendship rewards: decide whether game/social/affection
+3. Additional wish friendship rewards: decide whether game/social/affection
    fulfillment adds anything beyond ordinary care; only food currently has a
    nominal additional 0.25-point candidate, always inside shared budgets.
 
