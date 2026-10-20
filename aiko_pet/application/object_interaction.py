@@ -4,10 +4,16 @@ from __future__ import annotations
 
 from collections import deque
 from collections.abc import Callable
+from dataclasses import replace
 
 from ..pet.animation.character import PlaybackEvent
 from ..pet.balance import BALANCE
 from ..pet.consumption import ConsumptionOrigin
+from ..pet.interaction_events import (
+    InteractionEvent,
+    WithholdingEnded,
+    WithholdingObserved,
+)
 from ..pet.mind.object_decisions import ObjectUseContext, ObjectUseDecision
 from ..pet.mind.object_events import ObjectEvent
 from ..pet.mind.object_intentions import ObjectGoal
@@ -55,6 +61,8 @@ class ObjectInteractionCoordinator:
         decide: Callable[[str, ObjectUseContext], ObjectUseDecision],
         feedback: Callable[[ObjectFeedback], None], cancel_feedback: Callable[[], None],
         now: Callable[[], float], inspection_seconds: float,
+        experience: Callable[[InteractionEvent], object] = lambda _event: None,
+        withholding_active: Callable[[], bool] = lambda: False,
         withholding: Callable[[str, float], None] = lambda _key, _loss: None,
     ) -> None:
         self.world = world
@@ -77,6 +85,8 @@ class ObjectInteractionCoordinator:
         self._next_contact_feedback = 0.0
         self._withholding_serial = 0
         self._on_withholding = withholding
+        self._experience = experience
+        self._withholding_active = withholding_active
 
     @property
     def _episode(self) -> InteractionEpisode:
@@ -154,7 +164,17 @@ class ObjectInteractionCoordinator:
                 and self.world.get(self.instance_id).state == ObjectState.PET_HELD):
             return False
         self._episode.instance_id = None
+        wants = self._decide(record, self._episode.use_context).consume
         self._episode.withholding = self._episode.withholding.taken(self._now())
+        if wants:
+            existing_impression = self._withholding_active()
+            self._experience(WithholdingObserved(repeated_take=True))
+            # A repeated take already reinforces an existing impression; the
+            # first subsequent complaint must not count the same take again.
+            if existing_impression:
+                self._episode.withholding = replace(
+                    self._episode.withholding, moodlet_trigger_at=self._now(),
+                )
         self._set_phase(WaitingPhase("await_return"))
         self._stop()
         self._announce("object_taken")
@@ -166,8 +186,10 @@ class ObjectInteractionCoordinator:
         if not isinstance(phase, WaitingPhase):
             return
         episode = self._episode
-        if state != ObjectState.USER_HELD:
+        if (state != ObjectState.USER_HELD
+                and episode.withholding.held_since is not None):
             episode.withholding = episode.withholding.returned()
+            self._experience(WithholdingEnded())
         if phase.name in ("recognize_offer", "decide_offer"):
             # Motion cannot replace an unfinished recognition/decision cue.
             return
@@ -195,11 +217,16 @@ class ObjectInteractionCoordinator:
             self._announce("object_returned")
         elif (state == ObjectState.USER_HELD and phase.feedback.completed
               and not phase.feedback.blocking_aside):
+            if not self._decide(episode.memory_id, episode.use_context).consume:
+                episode.withholding = episode.withholding.returned()
+                self._experience(WithholdingEnded())
+                return
             response = choose_withholding_response(episode.withholding, self._now())
             if response is not None:
                 episode.withholding = response.episode
                 self.request_feedback(response.event)
                 if response.irritated:
+                    self._experience(WithholdingObserved(response.reinforces_moodlet))
                     self._withholding_serial += 1
                     self._on_withholding(
                         f"{episode.interaction_id}/withholding_{self._withholding_serial}",
@@ -852,6 +879,10 @@ class ObjectInteractionCoordinator:
     def _finish(self, consumed: bool) -> None:
         token = self.instance_id
         record = self.memory_id
+        if self._active_episode is not None and (
+            self._episode.withholding.held_since is not None
+        ):
+            self._experience(WithholdingEnded())
         self._active_episode = None
         self._set_phase(IdlePhase())
         self._select_item(None)

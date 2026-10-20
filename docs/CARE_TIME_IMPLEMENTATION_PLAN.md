@@ -2908,3 +2908,30 @@ Validation: 81 scoped headless tests passed, including actual intake origin,
 World transaction rollback, corruption/legacy storage, request delivery,
 expiry, bounded evidence and budget preservation. Longest test 0.258 s.
 Scoped Ruff, strict Mypy and Pyright passed. Object integration remains next.
+
+
+##### 5B.4 delivery: withholding and familiar arrangement (2026-10-20)
+
+The existing withholding episode now qualifies initial irritation and separate
+30-observed-second reinforcement. Its existing direct-loss receipts/budget are
+unchanged. A fresh take can reinforce an existing impression once; the next
+complaint does not count that same take twice. Reappraisal requires the concrete
+object still to be wanted. Return, interrupted ownership or no longer wanting
+it resolves the cause without erasing the impression. Unobserved elapsed time
+ages it without manufacturing further provocation or direct loss.
+
+ObjectAwareness retains only the current witnessed take's learned origin until
+observed settling or loss of continuity. It emits one semantic relocation fact
+when that same recognized subject settles outside the existing placement area;
+no new pixel threshold or hidden-position lookup was added. Minor moves,
+unknown objects and Aiko's own custody/put-down do not qualify. The native
+adapter excludes the same take when the existing interaction has claimed it as
+withholding. A checked empty familiar place independently creates an unattributed
+impression when its existing notice is accepted; continued search does not stack.
+Only witnessed relocation charges the separately persisted rolling hourly budget.
+
+Validation: 137 scoped headless tests passed, including subjective continuity,
+small/unknown/excluded moves, actual withholding admission/escalation/return,
+request clocks, independent loss budgets, save reload and World transaction
+rollback. Longest individual test 0.275 s. Scoped Ruff, strict Mypy and Pyright
+passed. Targeted helpful-action matching and final documentation follow next.

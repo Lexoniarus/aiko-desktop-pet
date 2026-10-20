@@ -509,6 +509,10 @@ class ObjectAwarenessTests(unittest.TestCase):
         self.assertEqual((known.token, known.identity, known.resting),
                          (record, "apple", True))
         self.assertIsNone(awareness.intentions.goal)
+        self.assertEqual(len(awareness.disruptions), 1)
+        self.assertTrue(awareness.disruptions[0].attributed)
+        observe(1.4)
+        self.assertEqual(awareness.disruptions, ())
         # Settling releases the special cursor track. A hidden later move is new.
         awareness.update(world.snapshot(), state, now=1.5, x=100,
                          height=0, width=100,

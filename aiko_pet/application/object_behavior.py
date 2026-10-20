@@ -6,6 +6,7 @@ import math
 from dataclasses import dataclass
 
 from ..pet.balance import BALANCE
+from ..pet.interaction_events import ArrangementDisrupted
 from ..pet.mind.object_attention import LookSide, ObjectAttention
 from ..pet.mind.object_decisions import (
     ObjectUseContext,
@@ -199,6 +200,8 @@ class ObjectBehaviorCoordinator:
             is not None or transport else None,
             known_coverage=coverage, defer_selection=pending or revisit,
         )
+        for disruption in awareness.disruptions:
+            self._state.experience_interaction(disruption)
         if pending and not bound:
             self._orientation = self._orientation.advance(
                 now=now, attention=attention, known=memory_before,
@@ -339,6 +342,8 @@ class ObjectBehaviorCoordinator:
             previous = interaction.phase
             if interaction.notice_absence(absent):
                 awareness.acknowledge_absence(absent.token)
+                if absent.recognized:
+                    self._state.experience_interaction(ArrangementDisrupted())
                 if previous != interaction.phase:
                     absence_gaze = GazeTarget(absent.x, absent.height)
         return absence_gaze

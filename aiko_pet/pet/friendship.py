@@ -9,7 +9,12 @@ from typing import Protocol
 from .balance import BALANCE
 from .friendship_history import FriendshipHistory, FriendshipProgress, RelationshipEvent
 from .moodlet_catalog import MOODLET_CATALOG
-from .moodlets import FoodMonotonyParameters, MoodletId, PettingParameters
+from .moodlets import (
+    FoodMonotonyParameters,
+    MoodletId,
+    PettingParameters,
+    RelocationParameters,
+)
 from .value_rules import clamp_need_value
 
 FRIENDSHIP_REWARD_INTERVAL = BALANCE.integer("friendship", "reward_interval_seconds")
@@ -137,7 +142,9 @@ def apply_negative_event(
     )
 
 
-PENALTY_KINDS = frozenset(("click", "withholding", "petting", "food_variety"))
+PENALTY_KINDS = frozenset((
+    "click", "withholding", "petting", "food_variety", "relocation",
+))
 
 
 def penalty_budget(kind: str) -> tuple[float, float]:
@@ -145,10 +152,13 @@ def penalty_budget(kind: str) -> tuple[float, float]:
     if kind in ("click", "withholding"):
         return (BALANCE.number("friendship", f"{kind}_window_seconds"),
                 BALANCE.number("friendship", f"{kind}_cap"))
-    if kind in ("petting", "food_variety"):
-        key = MoodletId.CROWDED if kind == "petting" else MoodletId.FOOD_MONOTONY
+    if kind in ("petting", "food_variety", "relocation"):
+        key = {"petting": MoodletId.CROWDED, "food_variety": MoodletId.FOOD_MONOTONY,
+               "relocation": MoodletId.DISRUPTED}[kind]
         parameters = MOODLET_CATALOG.definitions[key].parameters
-        assert isinstance(parameters, (PettingParameters, FoodMonotonyParameters))
+        assert isinstance(parameters, (
+            PettingParameters, FoodMonotonyParameters, RelocationParameters,
+        ))
         return (parameters.friendship_loss_window_seconds,
                 parameters.friendship_loss_cap_points)
     raise ValueError("Unknown relationship penalty")

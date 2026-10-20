@@ -42,4 +42,23 @@ class FoodConsumed:
     personal: bool
 
 
-InteractionEvent = Poked | PettingAttempted | BoundaryCommunicated | FoodConsumed
+@dataclass(frozen=True, slots=True)
+class WithholdingObserved:
+    reinforce: bool = True
+    repeated_take: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class WithholdingEnded:
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class ArrangementDisrupted:
+    attributed: bool = False
+
+
+InteractionEvent = (
+    Poked | PettingAttempted | BoundaryCommunicated | FoodConsumed
+    | WithholdingObserved | WithholdingEnded | ArrangementDisrupted
+)

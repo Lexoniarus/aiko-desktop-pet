@@ -12,6 +12,8 @@ from aiko_pet.pet.mind.object_decisions import ObjectUseDecision
 from aiko_pet.pet.mind.object_intentions import ObjectGoal
 from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.mind.object_perception import ObjectObservation
+from aiko_pet.pet.moodlets import MoodletId
+from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectFootprint,
@@ -21,6 +23,7 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
+from tools.pet_test_support import set_test_pet_values
 
 
 class ObjectInteractionTests(unittest.TestCase):
@@ -37,6 +40,7 @@ class ObjectInteractionTests(unittest.TestCase):
         self.cancel_reports_previous = False
         self.cancelled_feedback = []
         self.stamp = 0
+        self.pet = PetState(friendship=50)
         self.decision = ObjectUseDecision(True, "hungry")
 
         def feedback(cue):
@@ -80,6 +84,10 @@ class ObjectInteractionTests(unittest.TestCase):
             decide=lambda _token, _origin: self.decision,
             feedback=feedback, cancel_feedback=cancel_feedback, now=lambda: self.stamp,
             inspection_seconds=0,
+            experience=self.pet.experience_interaction,
+            withholding_active=lambda: any(
+                e.definition_id == MoodletId.WITHHELD
+                for e in self.pet.moodlets.active),
         )
 
     def start_investigation(self):
@@ -557,3 +565,51 @@ class ObjectInteractionTests(unittest.TestCase):
         self.coordinator.receive(PlaybackEvent(2, "put_down", 0, finished=True))
         self.assertEqual(self.coordinator.phase, "idle")
         self.assertEqual(self.consumed, [])
+
+    def test_withholding_moodlet_uses_irritation_and_thirty_observed_seconds(self):
+        self.start_investigation()
+        taken = self.world.take_resting(self.item.instance_id, expected_revision=0)
+        self.coordinator.target_taken(self.item.instance_id)
+        self.assertFalse(self.pet.moodlets.active)
+        for stamp, level in ((10, 0), (20, 1), (30, 1), (40, 1), (50, 2),
+                             (60, 2), (70, 2), (80, 3)):
+            self.stamp = stamp
+            set_test_pet_values(self.pet, lived_seconds=stamp)
+            self.coordinator.observe_target_state(ObjectState.USER_HELD)
+            self.coordinator.update()
+            self.assertEqual(self.pet.moodlets.active[0].level
+                             if self.pet.moodlets.active else 0, level)
+        self.assertEqual(self.pet.friendship, 50)  # No second direct penalty.
+        self.assertTrue(self.pet.moodlets.active[0].decay_paused)
+        self.world.return_user_held(taken.instance_id, 110,
+                                    expected_revision=taken.revision)
+        self.coordinator.observe_target_state(ObjectState.RESTING)
+        self.assertFalse(self.pet.moodlets.active[0].decay_paused)
+        self.assertEqual(self.pet.moodlets.active[0].level, 3)
+
+    def test_unwanted_object_has_no_withholding_emotion_and_retake_counts_once(self):
+        self.start_investigation()
+        taken = self.world.take_resting(self.item.instance_id, expected_revision=0)
+        self.coordinator.target_taken(self.item.instance_id)
+        self.stamp = 20
+        self.decision = ObjectUseDecision(False, "not_needed")
+        self.coordinator.observe_target_state(ObjectState.USER_HELD)
+        self.assertFalse(self.pet.moodlets.active)
+        self.world.return_user_held(taken.instance_id, 100,
+                                    expected_revision=taken.revision)
+        self.coordinator.observe_target_state(ObjectState.RESTING)
+        self.decision = ObjectUseDecision(True, "hungry")
+        item = self.world.get(taken.instance_id)
+        self.world.take_resting(item.instance_id, expected_revision=item.revision)
+        self.coordinator.target_taken(item.instance_id)
+        self.stamp = 40
+        self.coordinator.observe_target_state(ObjectState.USER_HELD)
+        self.coordinator.update()
+        self.assertEqual(self.pet.moodlets.active[0].level, 1)
+        self.coordinator.observe_target_state(ObjectState.RESTING)
+        self.stamp = 41
+        self.coordinator.target_taken(item.instance_id)
+        self.assertEqual(self.pet.moodlets.active[0].level, 2)
+        self.stamp = 61
+        self.coordinator.observe_target_state(ObjectState.USER_HELD)
+        self.assertEqual(self.pet.moodlets.active[0].level, 2)

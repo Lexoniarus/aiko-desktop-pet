@@ -51,6 +51,7 @@ from ..pet.mind.object_decisions import (
     ObjectUseDecision,
 )
 from ..pet.mind.object_knowledge import ObjectMemorySnapshot
+from ..pet.moodlets import MoodletId
 from ..pet.routine import context_at
 from ..pet.sleep import sleep_care_complete
 from ..pet.state import PetState
@@ -155,6 +156,9 @@ class DesktopWorldRuntime:
                 "object_behavior", "inspection_seconds",
             ),
             withholding=self._withheld,
+            experience=state.experience_interaction,
+            withholding_active=lambda: any(
+                e.definition_id == MoodletId.WITHHELD for e in state.moodlets.active),
         )
         self._behavior = ObjectBehaviorCoordinator(
             state, self.awareness, self.interaction, self.world,
@@ -265,10 +269,10 @@ class DesktopWorldRuntime:
         return outcome.accepted
 
     def _withheld(self, key: str, loss: float) -> None:
-        if self._relationship.withheld(
+        self._relationship.withheld(
             key, loss, active_time=self.now, monotonic_time=time.monotonic(),
-        ) > 0:
-            self._save()
+        )
+        self._save()
 
     def _select_item(self, item_id: str | None) -> None:
         overlay = self._animated.food_overlay
@@ -571,6 +575,7 @@ class DesktopWorldRuntime:
                 )
                 self._behavior.request_orientation()
                 if record is not None and self.interaction.target_taken(record):
+                    self.awareness.exclude_withholding_relocation(record)
                     self._walk.movement.set_goal(None)
 
         self._request_relocation(acquire)

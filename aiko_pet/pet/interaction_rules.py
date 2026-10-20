@@ -5,11 +5,14 @@ from typing import Mapping
 
 from .balance import BALANCE
 from .interaction_events import (
+    ArrangementDisrupted,
     BoundaryCommunicated,
     FoodConsumed,
     FoodRepetitionMemory,
     InteractionEvent,
     Poked,
+    WithholdingEnded,
+    WithholdingObserved,
 )
 from .moodlets import (
     FoodMonotonyParameters,
@@ -17,8 +20,10 @@ from .moodlets import (
     MoodletId,
     MoodletState,
     PettingParameters,
+    RelocationParameters,
     reinforce_moodlet,
     relieve_moodlet,
+    resolve_moodlet_cause,
 )
 
 
@@ -61,6 +66,32 @@ def apply_interaction_event(
         return InteractionConsequences(state)
     if isinstance(event, FoodConsumed):
         return _consume_food(state, event, elapsed=elapsed, definitions=definitions)
+    if isinstance(event, (WithholdingObserved, WithholdingEnded)):
+        episode = next((e for e in state.active
+                        if e.definition_id == MoodletId.WITHHELD), None)
+        if isinstance(event, WithholdingEnded):
+            if episode is not None:
+                state = resolve_moodlet_cause(state, episode.instance_id,
+                                             definitions=definitions)
+        elif episode is not None or not event.repeated_take:
+            if event.reinforce or episode is None:
+                state = reinforce_moodlet(state, MoodletId.WITHHELD, elapsed=elapsed,
+                                          definitions=definitions)
+            else:
+                state = replace(state, active=tuple(
+                    replace(e, decay_paused=True) if e == episode else e
+                    for e in state.active
+                ))
+        return InteractionConsequences(state)
+    if isinstance(event, ArrangementDisrupted):
+        state = reinforce_moodlet(state, MoodletId.DISRUPTED, elapsed=elapsed,
+                                  definitions=definitions)
+        relocation = definitions[MoodletId.DISRUPTED].parameters
+        assert isinstance(relocation, RelocationParameters)
+        return InteractionConsequences(
+            state, penalty_kind="relocation" if event.attributed else "",
+            penalty_points=relocation.friendship_loss_points if event.attributed else 0,
+        )
     parameters = definitions[MoodletId.CROWDED].parameters
     assert isinstance(parameters, PettingParameters)
     threshold = next(t.affection_threshold for t in parameters.tolerances
