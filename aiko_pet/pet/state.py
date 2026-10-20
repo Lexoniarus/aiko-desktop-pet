@@ -671,6 +671,10 @@ class PetState:
             ), personal=personal)
         elif transition.result.effect == CareEffect.AFFECTION:
             self.experience_interaction(HelpfulInteraction("petting"))
+            self._apply_wish_resolution(fulfill_activity_wish(
+                self.wishes, WishArea.AFFECTION, "pet", elapsed=self.lived_seconds,
+                definitions=WISH_CATALOG.definitions,
+            ), personal=personal)
         return transition.result
 
     def due_meal(self, context: TimeContext) -> str | None:
