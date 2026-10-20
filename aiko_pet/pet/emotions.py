@@ -51,6 +51,17 @@ class EmotionalComposition:
     influences: tuple[EmotionalInfluence, ...] = ()
 
 
+def supports_positive_expression(composition: EmotionalComposition) -> bool:
+    """Ordinary positive expression follows the same primary feeling as status."""
+    return composition.primary in (
+        EmotionalState.CHEERFUL,
+        EmotionalState.PROUD,
+        EmotionalState.RELIEVED,
+        EmotionalState.AFFECTIONATE,
+        EmotionalState.SATISFIED,
+    )
+
+
 def derive_emotional_state(
     mood_value: float,
     episodes: tuple[MoodletEpisode, ...],

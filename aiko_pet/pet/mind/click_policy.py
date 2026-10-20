@@ -10,6 +10,11 @@ from dataclasses import dataclass
 from typing import Literal
 
 from ..balance import BALANCE
+from ..emotions import (
+    EmotionalComposition,
+    EmotionalState,
+    supports_positive_expression,
+)
 from ..routine import TimeContext
 from ..state import PetState
 from .adaptive_models import Behaviour
@@ -57,6 +62,7 @@ def choose_click_reaction(
     button: ClickButton,
     click_count: int,
     state: PetState,
+    emotions: EmotionalComposition,
     context: TimeContext,
     situation: Behaviour | None,
     recovering: bool,
@@ -73,14 +79,15 @@ def choose_click_reaction(
     busy = situation is not None and situation.focused
     cheerful = (
         state.mood >= BALANCE.integer("click", "cheerful_mood")
+        and supports_positive_expression(emotions)
         and state.energy >= BALANCE.integer("click", "cheerful_energy")
         and not busy
     )
-    withdrawn = state.mood <= BALANCE.integer("click", "withdrawn_mood") and not busy
-    tired = state.energy <= BALANCE.integer("click", "tired_energy") or (
-        situation is not None
-        and situation.strain >= BALANCE.integer("click", "tired_strain")
+    withdrawn = (
+        emotions.primary in (EmotionalState.SUBDUED, EmotionalState.DOWNCAST)
+        and not busy
     )
+    tired = state.energy <= BALANCE.integer("click", "tired_energy")
     event: ClickEvent
 
     if busy:
@@ -109,9 +116,11 @@ def choose_click_reaction(
             event = "click_affection_low"
         elif context.night and not cheerful:
             event = "click_night"
-        elif state.affection >= BALANCE.integer(
-            "click", "at_ease_affection"
-        ) and state.mood >= BALANCE.integer("click", "close_mood"):
+        elif (
+            state.affection >= BALANCE.integer("click", "at_ease_affection")
+            and state.mood >= BALANCE.integer("click", "close_mood")
+            and supports_positive_expression(emotions)
+        ):
             event = "click_at_ease"
         else:
             event = "click_left" if button == "left" else "click_right"

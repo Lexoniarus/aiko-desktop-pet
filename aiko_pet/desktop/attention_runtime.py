@@ -95,6 +95,7 @@ class DesktopAttentionRuntime:
             satiety=state.satiety,
             mood=state.mood,
             affection=state.affection,
+            emotions=self.attention.mind.emotional_state(state),
         )
         self._presenter.show_idle_emote(emote)
 

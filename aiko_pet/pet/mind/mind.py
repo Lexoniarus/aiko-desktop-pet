@@ -13,7 +13,12 @@ from typing import Literal
 from ..balance import BALANCE
 from ..care_result import CareEffect, CareResult
 from ..content import GERMAN_TEXT
-from ..emotions import EmotionalComposition, EmotionalState, derive_emotional_state
+from ..emotions import (
+    EmotionalComposition,
+    EmotionalState,
+    derive_emotional_state,
+    supports_positive_expression,
+)
 from ..food_catalog import DEFAULT_CATALOG
 from ..moodlet_catalog import MOODLET_CATALOG
 from ..needs import NeedCondition, assess_need_conditions
@@ -132,6 +137,7 @@ class PetMind:
         present: bool | None = None,
     ) -> DialogueContext:
         situation = self.situation
+        emotions = self.emotional_state(state)
         conditions: set[SituationalCondition] = set()
         if (
             state.energy <= BALANCE.number("mind", "tired_energy")
@@ -142,6 +148,7 @@ class PetMind:
             conditions.add(SituationalCondition.FATIGUED)
         if (
             state.mood >= BALANCE.number("mind", "playful_mood")
+            and supports_positive_expression(emotions)
             and state.fun >= BALANCE.number("mind", "playful_fun")
             and state.energy >= BALANCE.number("mind", "playful_energy")
         ):
@@ -149,7 +156,7 @@ class PetMind:
         return DialogueContext(
             stage=FriendshipStage.from_level(state.friendship_level),
             mood_value=state.mood,
-            emotions=self.emotional_state(state),
+            emotions=emotions,
             time=context,
             need_conditions=assess_need_conditions(state.needs),
             reaction_tone=self.reaction_tone(now),
@@ -249,6 +256,7 @@ class PetMind:
             button=button,
             click_count=count,
             state=state,
+            emotions=self.emotional_state(state),
             context=context,
             situation=self.situation,
             recovering=self.work.recovering(now),

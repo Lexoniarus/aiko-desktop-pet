@@ -269,9 +269,7 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
     "click": {
         "cheerful_mood": "integer",
         "cheerful_energy": "integer",
-        "withdrawn_mood": "integer",
         "tired_energy": "integer",
-        "tired_strain": "integer",
         "initial_click_count": "integer",
         "work_repeat_click_count": "integer",
         "work_boundary_click_count": "integer",
@@ -336,7 +334,6 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "withdrawn_work_mood": "integer",
         "tired_energy": "integer",
         "hungry_satiety": "integer",
-        "withdrawn_mood": "integer",
         "lonely_social": "integer",
         "low_affection": "integer",
         "playful_mood": "integer",
@@ -357,7 +354,6 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
     "idle_emotes": {
         "tired_energy": "integer",
         "hungry_satiety": "integer",
-        "sad_mood": "integer",
         "low_affection": "integer",
         "happy_mood": "integer",
     },

@@ -5,6 +5,7 @@ from __future__ import annotations
 import unittest
 
 from aiko_pet.pet.animation.idle_emote import choose_idle_emote
+from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
@@ -61,8 +62,10 @@ class ReactionPlayerTests(unittest.TestCase):
         self.assertIsNone(self.player.event)
 
     def test_unrelated_reaction_drops_subject_even_if_an_old_callback_arrives(self):
-        self.player.play(Reaction.spoken("item", "Alt.", "idle", "object_offer"),
-                         subject="known-item")
+        self.player.play(
+            Reaction.spoken("item", "Alt.", "idle", "object_offer"),
+            subject="known-item",
+        )
         stale = self.scheduler.callbacks[self.active_token()][1]
         self.player.play(Reaction.spoken("contact", "Hallo.", "idle", "click_left"))
         self.assertIsNone(self.player.subject)
@@ -116,11 +119,13 @@ class ReactionPlayerTests(unittest.TestCase):
         self.player.play(reaction)
         self.assertEqual(self.actions, [("waiting", 1.625)])
         self.assertEqual(
-            self.rendered, [("text", "Oh.", reaction.beats[0].duration_ms)],
+            self.rendered,
+            [("text", "Oh.", reaction.beats[0].duration_ms)],
         )
         token = self.active_token()
         self.assertEqual(
-            self.scheduler.callbacks[token][0], reaction.beats[0].duration_ms,
+            self.scheduler.callbacks[token][0],
+            reaction.beats[0].duration_ms,
         )
         self.scheduler.fire(token)
         self.assertEqual(
@@ -254,29 +259,65 @@ class ReactionPlayerTests(unittest.TestCase):
 
 
 class IdleEmoteTests(unittest.TestCase):
-    def test_original_threshold_priority_is_preserved(self) -> None:
+    def test_physical_priority_and_shared_emotional_cues(self) -> None:
         self.assertEqual(
-            choose_idle_emote(energy=0, satiety=0, mood=0, affection=0),
+            choose_idle_emote(
+                energy=0,
+                satiety=0,
+                mood=0,
+                affection=0,
+                emotions=EmotionalComposition(EmotionalState.SUBDUED),
+            ),
             "sleeps",
         )
         self.assertEqual(
-            choose_idle_emote(energy=20, satiety=0, mood=0, affection=0),
+            choose_idle_emote(
+                energy=20,
+                satiety=0,
+                mood=0,
+                affection=0,
+                emotions=EmotionalComposition(EmotionalState.SUBDUED),
+            ),
             "drops",
         )
         self.assertEqual(
-            choose_idle_emote(energy=20, satiety=18, mood=0, affection=0),
+            choose_idle_emote(
+                energy=20,
+                satiety=18,
+                mood=0,
+                affection=0,
+                emotions=EmotionalComposition(EmotionalState.SUBDUED),
+            ),
             "faceSad",
         )
         self.assertEqual(
-            choose_idle_emote(energy=20, satiety=18, mood=18, affection=0),
+            choose_idle_emote(
+                energy=20,
+                satiety=18,
+                mood=60,
+                affection=0,
+                emotions=EmotionalComposition(EmotionalState.CALM),
+            ),
             "heart",
         )
         self.assertEqual(
-            choose_idle_emote(energy=20, satiety=18, mood=89, affection=18),
+            choose_idle_emote(
+                energy=20,
+                satiety=18,
+                mood=89,
+                affection=18,
+                emotions=EmotionalComposition(EmotionalState.SATISFIED),
+            ),
             "star",
         )
         self.assertEqual(
-            choose_idle_emote(energy=20, satiety=18, mood=88, affection=18),
+            choose_idle_emote(
+                energy=20,
+                satiety=18,
+                mood=69,
+                affection=18,
+                emotions=EmotionalComposition(EmotionalState.CALM),
+            ),
             "idea",
         )
 

@@ -6,12 +6,14 @@ import unittest
 from datetime import datetime
 from typing import cast
 
+from aiko_pet.pet.emotions import derive_emotional_state
 from aiko_pet.pet.mind.adaptive_models import Behaviour
 from aiko_pet.pet.mind.click_policy import (
     ClickButton,
     ClickDecision,
     choose_click_reaction,
 )
+from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 
@@ -26,10 +28,14 @@ def decision(
     recently_petted: bool = False,
 ) -> ClickDecision:
     stamp = datetime(2026, 10, 12, 15).timestamp()
+    pet = state or PetState()
     return choose_click_reaction(
         button=button,
         click_count=count,
-        state=state or PetState(),
+        state=pet,
+        emotions=derive_emotional_state(
+            pet.mood, pet.moodlets.active, definitions=MOODLET_CATALOG.definitions
+        ),
         context=context_at(stamp),
         situation=situation,
         recovering=recovering,
@@ -39,10 +45,15 @@ def decision(
 
 def busy_situation() -> Behaviour:
     return Behaviour(
-        mode="working", strain=55, effort=0.85,
-        expected_effort=None, expectation_confident=False,
-        present=True, uptime_hours=5,
-        prolonged_work_seconds=1800, rest_seconds=0,
+        mode="working",
+        strain=55,
+        effort=0.85,
+        expected_effort=None,
+        expectation_confident=False,
+        present=True,
+        uptime_hours=5,
+        prolonged_work_seconds=1800,
+        rest_seconds=0,
     )
 
 
@@ -73,8 +84,9 @@ class ClickDecisionTests(unittest.TestCase):
         sleeper = PetState(sleeping=True)
         for button in ("left", "right"):
             for count in range(1, 5):
-                selected = decision(button=cast(ClickButton, button), count=count,
-                                    state=sleeper)
+                selected = decision(
+                    button=cast(ClickButton, button), count=count, state=sleeper
+                )
                 self.assertEqual(selected.wakes, count == 4)
                 self.assertFalse(selected.irritates)
 
@@ -92,14 +104,16 @@ class ClickDecisionTests(unittest.TestCase):
 
     def test_tired_and_recovering_have_contextual_priority(self) -> None:
         self.assertEqual(
-            decision(state=PetState(energy=20)).event, "click_sleepy",
+            decision(state=PetState(energy=20)).event,
+            "click_sleepy",
         )
         self.assertEqual(decision(recovering=True).event, "click_after_work")
         self.assertEqual(decision(recently_petted=True).event, "click_flustered")
 
     def test_low_affection_is_not_social_loneliness(self) -> None:
         self.assertEqual(
-            decision(state=PetState(social=20)).event, "click_lonely",
+            decision(state=PetState(social=20)).event,
+            "click_lonely",
         )
         self.assertEqual(
             decision(state=PetState(affection=20)).event,

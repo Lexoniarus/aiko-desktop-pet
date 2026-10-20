@@ -191,9 +191,7 @@
   "click": {
     "cheerful_mood": 82,
     "cheerful_energy": 45,
-    "withdrawn_mood": 28,
     "tired_energy": 26,
-    "tired_strain": 72,
     "initial_click_count": 2,
     "work_repeat_click_count": 4,
     "work_boundary_click_count": 6,
@@ -261,10 +259,9 @@
     "withdrawn_work_mood": 48,
     "tired_energy": 25,
     "hungry_satiety": 25,
-    "withdrawn_mood": 28,
     "lonely_social": 23,
     "low_affection": 23,
-    "playful_mood": 82,
+    "playful_mood": 70,
     "playful_fun": 45,
     "playful_energy": 45,
     "petted_click_window_seconds": 50,
@@ -282,9 +279,8 @@
   "idle_emotes": {
     "tired_energy": 20,
     "hungry_satiety": 18,
-    "sad_mood": 18,
     "low_affection": 18,
-    "happy_mood": 88
+    "happy_mood": 70
   },
   "cursor": {
     "attention_interval_seconds": 6.0,
