@@ -296,8 +296,13 @@ flags, objective counters and current temporary restrictions. The status label
 is derived from that snapshot, rather than stored independently.
 `DesktopPresentation` receives the existing attention owner's `wish_context`
 read port; it needs neither a Mind object nor a clock. Reading cannot consume
-API buffers, advance time, acknowledge speech or apply rewards. The combined
-VN layout, icon strips and wish panel remain 5C.
+API buffers, advance time, acknowledge speech or apply rewards. Stage 5C renders these values in the existing status window through
+`MoodletStrip`, `WishPanel` and shared VN controls. Embedded selector frames
+replace only the interaction column; HoverUi remains the sole transient-menu
+and visibility owner. Settings keeps its independent window, with four page
+views and central `CreditsPanel`; the latter receives detached metadata via
+`project_credits()` from the existing social snapshot. No new native submenu,
+window manager, state store, API queue or preference store is introduced.
 
 ## Application layer
 
@@ -975,3 +980,26 @@ For local commands, source changes and review expectations see
 records current local evidence and acceptance; [CHANGELOG](../CHANGELOG.md)
 summarizes unreleased changes and verified milestones. Prior refactor plans and
 review ledgers are [historical records](history/README.md), not active blockers.
+
+
+## VN presentation delivery (5C)
+
+`ui/common/icon_images.py` is the one root-local image owner. The development-only
+`tools/export_vn_ui.py` normalizes the 46 approved masters and exports shared
+nine-slice button/control sizes from eight source surfaces into `assets/ui`.
+Their runtime catalogue records source hashes. Tk alone loads/composes the
+exports; runtime remains standard-library-only. `image_button.py` preserves
+native invocation and adds disabled/hover/press/active artwork, independent
+keyboard focus and explicit destruction cleanup. `scroll_region.py` owns local
+scroll bindings and focus reveal; `description_tip.py` renders in-window passive
+details. These are UI behaviors, not new domain or input-capture authorities.
+
+Numeric target mood, current value, relationship stage, actual sleep reason and
+known contact age flow through `PetReadSnapshot` and existing pure projections.
+No clock or elapsed progression runs on a read. The same emotional composition
+now colors click/dialogue/idle expression. Normal positive stories/idle stars
+are reachable from good care at mood 70; the longer playful click sequence
+retains 82 and its previous escalation policy. Negative/ambivalent compositions
+do not produce contradictory positive expression. Observed work may still
+select work dialogue; hardware strain alone no longer claims sleepy clicks.
+All authored German dialogue sequences remain unchanged.

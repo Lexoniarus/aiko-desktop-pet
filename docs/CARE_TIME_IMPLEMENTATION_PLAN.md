@@ -8,7 +8,8 @@
 > Stage 4 follows the corrected ownership and verification scope below.
 > Stage 5's needs/progression/status foundation and menu/action/placement
 > decoupling are delivered below. Moodlet/wish/emotion integration is delivered
-> through 5B.8; 5C and stage 6 remain pending. Physical desktop acceptance is
+> through 5B.8 and the 5C VN status/menu implementation is delivered; stage 6
+> remains pending. Physical desktop acceptance is
 > separately recorded.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
@@ -21,7 +22,8 @@
 > actual spoken disclosure. 5B.7 delivers fulfillment, positive Moodlets and the
 > shared-pot personal bonus for food, affection, games and social activities.
 > 5B.8 delivers full emotional interpretation, typed dialogue schema 3 and
-> immutable emotional/wish read contracts. The VN status layout remains 5C.
+> immutable emotional/wish read contracts. 5C now delivers the VN status/menu,
+> embedded selectors and settings/Credits; native visual acceptance remains separate.
 
 ## Stage-4 correction delivery, 2026-10-19
 
@@ -3383,3 +3385,80 @@ Tests are targeted, local and headless, including fake-widget integration where
 needed. No Tk interpreter/window, browser preview, mouse control or GitHub CI
 is launched. Inspect selected test durations; the full suite remains stage 6.
 Native DPI/font/geometry/input acceptance remains a separate manual checklist.
+
+
+### 5C delivery and scoped review, 2026-10-20
+
+Implemented the approved main-menu and settings/Credits scope against the local
+reference bundle and recorded source pack. No additional preview or asset
+regeneration was needed. The existing gameplay layouts, rules, sequence owners,
+Blackjack card originals and live World/placement path were preserved.
+
+| Commit | Delivered unit |
+| --- | --- |
+| `9820d15` | Deterministic exports for 46 icons and eight selected control masters; source hashes, common sizes, cap-preserving controls and root-local image ownership |
+| `269a141` | Combined VN status window: emotional summary and numeric mood, full Moodlet strip, inner wishes, care columns, passive details and shared controls |
+| `fd6a19f` | Embedded Snack/Spielen/Unterhalten frames in the existing right column; rechecked placement/care admission and retained deferred game owner |
+| `8f6c434` | Four-page nonmodal settings, immediate native checkboxes and projected size segments; central detached provider/original-source/API-entry Credits |
+| `bf31e05` | Shared emotional expression for dialogue/click/idle; reachable ordinary positives and removal of hardware-only sleepy conclusions |
+| `3f0568f` | Keyboard overflow reveal, compact spoken/inner wish metadata, matched care/action rows, redraw suppression, targeted tests and migrated native-view test contracts |
+
+The toolbar keeps its one existing native window, position/pin/visibility owner
+and topmost semantics. Summary, Moodlets, wishes and readouts remain in the same
+window while selectors replace only the interaction column. Friendship has no
+invented direct action. Moodlet descriptions expose cause, current intensity,
+individual contribution, known origin, stage/total decay work and paused recovery.
+Wishes expose concrete target/art, win/non-loss badges, bounded round progress,
+original remaining time, disclosure state and temporary restriction. The UI does
+not infer fulfilled wishes, stock, emotional events or expiry from its display.
+
+`PetReadSnapshot` additionally carries the existing pure numeric target, actual
+sleep reason, relationship stage and known contact age. Reads do not advance
+clocks or apply effects. UI caches hold only render state and frozen projections;
+PetState remains the sole pet aggregate. Current credits come from the existing
+accepted-content snapshot with no second source history, requests or save fields.
+
+The common skin selects installed Segoe UI with a system fallback, and does not
+bundle fonts. Runtime stays standard-library-only; Pillow is confined to the
+reproducible development export/tests. Original UI masters are unchanged. The
+root-local image cache and per-widget destruction release assets on the owner
+thread. Local scroll tags, focus reveal and passive in-window descriptions add
+no global input hook, native tooltip window, animation timer or domain clock.
+Disabled/hover/pressed/active visuals and keyboard focus remain distinct. Numeric
+fills use one continuously varying value color; friendship stays blue. Care and
+action rows share height; wished-for targets reuse the existing food/card assets.
+
+The expression audit enables ordinary positive story/idle behavior at numeric
+mood 70, provided the shared composition supports it. Deliberate extended playful
+clicking retains its higher 82 threshold and existing escalation/boundaries.
+Negative or ambivalent composition cannot be mislabeled as cheerful because the
+bar is high. Click withdrawal uses the shared subdued/downcast interpretation;
+physical exhaustion remains an energy fact, not a hardware-only feeling. Four
+unused mixed/old threshold keys were removed with their consumers. A full JSON comparison confirms that all 1,082
+authored dialogue sequences are unchanged; no editorial workbook update was needed. Moderate mood/lower friendship creates no invented offense.
+
+Three obsolete mock-only checks were consolidated into stronger window-free
+status/embedded-selector coverage. Remaining affected native fixtures were
+migrated to frame ownership, new readout contracts, segmented size controls and
+root-local images, but were **not executed**. These migrations do not turn
+headless checks into native visual acceptance.
+
+Final verification: **230 targeted headless tests passed in 1.781 seconds**;
+slowest individual test **0.293 seconds**, none over ten seconds. Tests cover
+asset/source hashes, rounded/color semantics, full-family passivity, original
+wish reads, real command/selector ownership through widget doubles, stale
+admission and pending game cancellation, settings/Credits, emotional expression,
+existing contact/placement policies, persistence and architectural boundaries.
+Ruff and Pyright pass every changed Python file since `3071033`; strict Mypy
+passes all **29 changed production files** with `--follow-imports=silent`.
+The previously recorded unchanged World dependency diagnostic remains outside
+that scoped Mypy claim. The composition root remains **638 lines**; checked
+World/game rules and authored dialogue are unchanged. `git diff --check` passes.
+
+No test window, native Tk interpreter, browser, mouse control, CI workflow or
+full-suite run was launched. All commits use `[skip ci]` and are pushed to the
+social-optimization branch. The actual-size Windows/DPI/font/geometry/input and
+shutdown acceptance checklist is in `UI_WINDOW_CONTRACT.md`; it remains manual.
+The broad final OOP review and complete suite remain the next **stage 6**, not
+part of this targeted implementation delivery. 5C implementation is complete
+within this explicitly headless verification scope.

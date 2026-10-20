@@ -1,5 +1,12 @@
 # Aiko VN interface direction — 2026-10-20
 
+**Implementation update (5C, 2026-10-20):** main status/menu, embedded selectors,
+shared VN assets and settings/Credits are implemented on `feature/social-optimization`.
+The preparation-only authorization statements below describe the historical
+approval pass. The external reference bundle and original masters are unchanged.
+The three gameplay layouts/artwork remain with their existing owners; native
+Windows/DPI/input acceptance has not been executed in this headless delivery.
+
 Status: full interactive main-menu design approved by the owner on 2026-10-20,
 including the wish area, filled embedded selectors and expanded details.
 The matching settings and separate Credits design was also visually approved by

@@ -206,7 +206,13 @@ mixed label. Existing need priority and interaction-specific boundaries remain;
 an overall label creates no reward or blanket refusal. Passive snapshots expose
 all eighteen families and eleven wish forms, including unspoken wishes, paused
 recovery, original deadlines, round progress and temporary restrictions. Reading
-never advances or fulfills them. The VN status layout remains a subsequent step.
+never advances or fulfills them. Stage 5C now presents these records in the combined status UI. The pure
+numeric target, real sleep reason, relationship stage and known contact age
+are detached alongside actual mood. Moodlets/wishes remain passive views.
+Ordinary positive stories/idle emotes are reachable at mood 70, while the
+longer playful click sequence retains 82 and its existing boundaries. The
+same overall composition gates positive expression; hardware strain alone
+does not imply emotional offense or sleepy clicks.
 
 ## Verification
 

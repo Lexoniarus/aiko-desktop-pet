@@ -1,5 +1,12 @@
 # Aiko VN menu icons — source set v1
 
+**Implementation update (5C, 2026-10-20):** main status/menu, embedded selectors,
+shared VN assets and settings/Credits are implemented on `feature/social-optimization`.
+The preparation-only authorization statements below describe the historical
+approval pass. The external reference bundle and original masters are unchanged.
+The three gameplay layouts/artwork remain with their existing owners; native
+Windows/DPI/input acceptance has not been executed in this headless delivery.
+
 Prepared 2026-10-20 with the built-in Imagegen tool for the owner-approved
 [VN interface direction](../../../docs/UI_VN_DESIGN.md). This folder contains
 original transparent PNG source candidates and generation provenance. Nothing

@@ -15,11 +15,18 @@
 
 **Windows 10/11 · Python 3.11+ · local-first · no cloud account or AI API.**
 
-![The current Aiko Anime character and the current Kenney sci-fi hover panel](vorschau/Aiko_Current_Hover.png)
+![Earlier Anime Aiko and Kenney hover UI baseline](vorschau/Aiko_Current_Hover.png)
 
 *Actual Tk application capture on Linux/Xvfb (not a native Windows desktop
-screenshot). The current 112-pose Anime character, Kenney panel, and German
+screenshot). This earlier 112-pose Anime character, Kenney panel, and German
 dialogue are shown together. Documentation is in English.*
+
+
+On `feature/social-optimization`, stage 5C now implements the approved VN care
+menu with Moodlets, wishes, embedded selectors and settings/Credits. Screenshots
+retain the earlier visual baseline; no new native capture was made during
+the headless delivery. See [the current UI contract](docs/UI_WINDOW_CONTRACT.md)
+and [implementation record](docs/CARE_TIME_IMPLEMENTATION_PLAN.md).
 
 ## Play with Aiko
 

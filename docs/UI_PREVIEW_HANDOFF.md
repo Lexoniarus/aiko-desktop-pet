@@ -1,5 +1,12 @@
 # VN UI preparation — shared local handoff
 
+**Implementation update (5C, 2026-10-20):** main status/menu, embedded selectors,
+shared VN assets and settings/Credits are implemented on `feature/social-optimization`.
+The preparation-only authorization statements below describe the historical
+approval pass. The external reference bundle and original masters are unchanged.
+The three gameplay layouts/artwork remain with their existing owners; native
+Windows/DPI/input acceptance has not been executed in this headless delivery.
+
 Design/asset preparations completed and all three reference groups approved by
 the owner on 2026-10-20. This is the entry point for other local chats continuing
 the UI work. Read [the canonical design](UI_VN_DESIGN.md) first.

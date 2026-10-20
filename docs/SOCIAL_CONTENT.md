@@ -120,3 +120,15 @@ distinct from automated native Tk assertions; no maintainer sign-off is implied.
 
 See [architecture](ARCHITECTURE.md), [window behavior](UI_WINDOW_CONTRACT.md) and
 [data and saves](DATA_AND_SAVES.md).
+
+
+## VN menu and Credits (5C)
+
+The four choices now occupy the existing main menu's right interaction column,
+with Zurück, scrolling and current preparation/error/opt-out feedback. Closing
+still cancels only pending content. The provider and last accepted item's
+original-source/API-entry links moved to the settings window's separate Credits
+page. Its immutable projection reads existing accepted metadata; it does not
+fetch, reserve, replay, persist or maintain another source history. The original
+source and API provider remain distinct, and missing URLs disable only their
+corresponding links. Existing shared-care and playback completion rules remain.

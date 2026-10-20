@@ -8,6 +8,14 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Implement the approved VN status/menu: shared emotional summary, all-family
+  Moodlet strip, inner/spoken wishes and original-deadline/progress details,
+  vertical care readouts and embedded Snack/Spielen/Unterhalten selection.
+  Add matching immediate settings navigation and central source-aware Credits.
+  Keep existing placement, admission, game and content owners; add no runtime
+  dependency. Align ordinary positive expression with the emotional composition
+  while preserving deliberate click escalation and authored dialogue sequences.
+
 - Derive overall emotional state from the complete active Moodlet composition,
   independently of numeric caps, needs, sleep and short reactions. Preserve
   known cause attribution with backward-compatible local storage. Migrate

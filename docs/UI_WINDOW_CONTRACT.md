@@ -1,14 +1,17 @@
 # UI window contract — care controls and passive World items
 
-The [VN interface direction](UI_VN_DESIGN.md) records the approved future
-appearance, embedded-selector layout and Moodlet provision. It is currently
-documentation/asset preparation only; the behavior below describes the runtime.
+The main-menu and settings scope of the [approved VN interface](UI_VN_DESIGN.md)
+is implemented in stage 5C on `feature/social-optimization`. Its local approved
+references are identified in [the handoff](UI_PREVIEW_HANDOFF.md). Validation in
+this delivery is headless; native Windows/DPI/input acceptance remains separate.
 
 ## Window behavior
 
-Aiko exposes one `ActionToolbar` with a wide overall mood bar above six individual
-indicators (satiety, fun, energy, social, affection, friendship), care buttons,
-local computer status, and expandable `ToolbarDetails`. There is no second
+Aiko exposes one `ActionToolbar`: white Aiko/settings header, shared emotional
+summary and numeric mood, horizontal `MoodletStrip`, dedicated `WishPanel`,
+six vertical readouts on the left and a narrower interaction column on the right.
+Computer/context lines and one Offen-halten/detail footer complete the menu.
+The scrollable expanded `ToolbarDetails` stays inside that window. There is no second
 status/actions window. The F2 status action reveals and pins the existing
 toolbar. Clicking `Offen halten` keeps it visible when the pointer leaves or
 a foreign window receives a click; `Pin lösen` restores automatic hiding.
@@ -26,8 +29,10 @@ version-one JSON save. Existing draggable toolbar position persistence and
 reset behavior remain unchanged.
 
 `SettingsWindow` is a persistent, nonmodal, independently movable window
-styled with the same Kenney Sci-Fi visual controls as the care toolbar and
-the existing Rock-Paper-Scissors game. Outside clicks, changing an option,
+styled with the shared rose/blue VN controls. Its Darstellung, Verhalten,
+Lokale Daten and Credits navigation stays available beside a scrolling page.
+Scale uses two projected 1×/2× segments. Existing eight native checkboxes show
+An/Aus and apply immediately; there is no new preference store or Save action. Outside clicks, changing an option,
 moving Aiko, hiding the hover toolbar, and resizing Aiko do not close or move
 settings. Explicitly invoking settings again focuses its one existing instance.
 Close or Escape only closes settings. Reopening it in the same running session
@@ -58,11 +63,14 @@ additional domain aggregate is introduced.
 
 ### Conversations
 
-`Unterhalten` opens one transient selector for Plaudern, API Single, API Two Parts
-and facts. `HoverUi` includes it in control stacking, topmost propagation,
-hover detection and outside/Escape dismissal. Closing cancels pending content,
-not an already accepted story. Source controls reserve their layout space so
-revealing attribution does not move the menu outside the screen.
+`Unterhalten` replaces the right interaction column with an embedded selector
+for Plaudern, API Single, API Two Parts and facts. `HoverUi` still owns its
+lifetime and admission. Loading/error/opt-out text uses the existing social
+snapshot, without another request queue. Zurück/Escape/outside dismissal cancels
+pending content, not an already accepted story. Provider, source and API-entry
+links now live in the independently movable settings window's Credits page.
+`project_credits()` detaches only the latest accepted metadata; there is no
+second source history or content request.
 
 An empty API buffer uses the existing speech/player surface for one holding
 line. The application exposes this holding state through a narrow contact port:
@@ -73,7 +81,7 @@ pending-action marker. See [social content](SOCIAL_CONTENT.md).
 
 ### Games
 
-`Spielen` opens one transient submenu for RPS, Blackjack and Tic-Tac-Toe.
+`Spielen` opens an embedded right-column selector for RPS, Blackjack and Tic-Tac-Toe.
 Escape/outside dismissal closes the selector without starting play. Selection
 uses the existing contact admission and World interruption; one pending token
 prevents duplicate starts. The resumed callback rechecks sleep readiness without
@@ -82,12 +90,13 @@ The toolbar belongs to the selector's interaction area: delayed focus checks
 and global polling of the opening click must leave the selector open while
 the pointer is still on the toolbar. A click outside both dismisses it.
 
-`HoverUi` owns the one active game through `GameWindow` and includes the selector
-in interaction detection, topmost propagation, stacking and cleanup. Game
+`HoverUi` owns the one active game through `GameWindow`. Embedded selectors
+are frames in the toolbar, not extra control windows. Their geometry leaves
+the summary, Moodlets, wishes and left readouts in place. Game
 sequences cancel timers before closing; one summary is credited before final
 save. Scores, boards and decks never enter the save.
-The selector and all three player windows route `WM_DELETE_WINDOW` through
-their existing close handlers, just like explicit Close/Escape. Failed
+The three player windows retain their `WM_DELETE_WINDOW` handlers. Embedded
+selectors use their existing close callbacks through Zurück/Escape instead. Failed
 Tic-Tac-Toe construction destroys its partial panel without reporting a
 completed session; `HoverUi` still owns releasing the pending/mode state.
 
@@ -168,3 +177,42 @@ earlier window consolidation preserved the existing character and save values.
 Gallery screenshots may show earlier settings/status layouts. Their historical
 illustration scope is stated in the [media gallery](MEDIA_GALLERY.md); the
 maintained behavior contract is this document.
+
+
+## Passive emotional presentation and shared assets
+
+`MoodletStrip` shows every active impression (horizontal overflow), its own icon
+and wrapped tag. Hover/focus/tap reads cause, intensity, individual contribution,
+known attribution, remaining stage/total decay work, paused decay and recovery
+wait. No widget runs creation, aging, relief or emotional selection.
+`WishPanel` shows the concrete food/game/social/care target, objective scope and
+bounded progress, remaining original deadline, inner/spoken marker and temporary
+unavailability. Full details stay keyboard/hover/tap accessible. Both panels
+retain widget identity and scroll position while read-side time changes.
+Descriptions use an in-window, clamped passive overlay, not another Toplevel.
+
+Readouts layer the prepared track, dynamic rounded/clipped fill and transparent
+rim. All of the filled portion changes green/yellow/orange/red with the value;
+friendship remains blue. Numbers remain visible. Focus outlines are independent
+of button selection. The one pin is rendered from HoverUi's existing state.
+The shared root-local `IconImages` owns packaged art and composed icon/buttons;
+widget destruction drops button references and root destruction releases the
+cache on the owner thread. No Pillow dependency was added to runtime.
+
+Scroll regions use local bind tags, wheel/keyboard access and automatic reveal
+of focused overflow; they do not install a global input hook. Content and details
+scroll without extra windows. UI feedback is immediate, with no added animation
+timers or continuous effects.
+
+### Remaining native acceptance (not executed during 5C)
+
+- Compare the live menu to the approved main/settings references at 100/125/150%
+  Windows DPI, including German wrapping and actual icon/tag sizes.
+- Check clamping, pin/drag/topmost, details scrolling and all three embedded
+  selectors on the user's screen; inspect empty and all-family overflow states.
+- Check Tab/arrows/wheel/Space/Enter/Escape, focused overflow reveal and tooltip
+  placement without obscuring its entry or care controls.
+- Check placement while sleeping/acting/in a game, and ordinary game-close flow
+  using an isolated save. Verify settings remain independently movable.
+- Check image cleanup on shutdown and multiple reopenings. These native tests
+  remain distinct from the green headless owner/command and pixel-export checks.
