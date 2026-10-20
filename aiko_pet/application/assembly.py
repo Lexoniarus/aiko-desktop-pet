@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from ..pet.mind import PetMind
@@ -33,6 +34,7 @@ def assemble_application(
     adaptive: AdaptiveRoutine, monitor: ComputerObservation,
     callbacks: ActivityCallbacks, clock: ActiveSessionClock,
     progression: TimeProgression | None = None,
+    arrangement_ready: Callable[[], bool] = lambda: False,
 ) -> ApplicationComponents:
     """Build one coherent graph; no duplicate pet or conversation memory."""
     cursor_observation = CursorObservation(mind.cursor_attention)
@@ -40,6 +42,7 @@ def assemble_application(
         CareController(state, mind, adaptive, clock=clock, progression=progression),
         game_experience=GameExperienceCoordinator(
             state, mind, adaptive, clock=clock, progression=progression,
+            arrangement_ready=arrangement_ready,
         ),
     )
     workload_events = WorkloadEventDetector()

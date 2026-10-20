@@ -104,6 +104,16 @@ class CarePresenterTests(unittest.TestCase):
         self.assertEqual(reaction.animation, "idle")
         self.cancel_followup.assert_not_called()
 
+    def test_refused_petting_has_no_petting_animation(self):
+        outcome = CareOutcome(CareResult("pet", CareEffect.AFFECTION_REFUSED),
+                              None, self.context)
+        self.presenter.present(outcome, now=100, sleeping=False)
+        self.start_action.assert_not_called()
+        self.set_item.assert_not_called()
+        self.show_text.assert_called_once_with(
+            format_care_response(outcome.result), 2450,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Callable
 
+from ...pet.interaction_events import SocialCompletion
 from ...pet.mind.catalog import Reaction
 from ...pet.mind.reaction_sequence import Cue
 
@@ -27,8 +28,11 @@ class ReactionPlayer:
         is_closed: Callable[[], bool],
         hide_speech: TimerCallback = lambda: None,
         on_text: Callable[[str], None] = lambda _event: None,
+        social_completed: Callable[[SocialCompletion], None] = lambda _kind: None,
     ) -> None:
         self._on_text = on_text
+        self._social_completed = social_completed
+        self._completed_social: SocialCompletion | None = None
         self._text_reported = False
         self._schedule = schedule
         self._cancel_timer = cancel_timer
@@ -90,6 +94,7 @@ class ReactionPlayer:
         self._story = False
         self._subject = None
         self._event = None
+        self._completed_social = None
         self._index = -1
         self._hide_speech()
         completion, self._completion = self._completion, None
@@ -111,6 +116,7 @@ class ReactionPlayer:
         self._completion = on_complete
         self._subject = subject
         self._event = reaction.event
+        self._completed_social = reaction.completed_social
         self._text_reported = False
         if animate and reaction.animation != "idle":
             self._start_action(reaction.animation, min(2.0, duration_ms / 1600))
@@ -166,7 +172,10 @@ class ReactionPlayer:
         self._story = False
         self._subject = None
         self._event = None
+        social, self._completed_social = self._completed_social, None
         self._hide_speech()
         completion, self._completion = self._completion, None
         if completion is not None:
             completion(True)
+        if social is not None:
+            self._social_completed(social)

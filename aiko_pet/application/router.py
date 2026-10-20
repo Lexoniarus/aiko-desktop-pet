@@ -6,6 +6,7 @@ from threading import get_ident
 from typing import overload
 
 from ..pet.fun import GameExperience
+from ..pet.interaction_events import SocialCompletion
 from .active_time import SessionInputs
 from .commands import (
     ApplicationCommand,
@@ -64,6 +65,18 @@ class ApplicationRouter:
                 raise ValueError("Care actions require trusted care inputs")
             return self._care.execute(command, inputs)
         raise TypeError("Unknown application command")
+
+    def advance_time(self, inputs: SessionInputs) -> None:
+        """Advance admitted contact through the same session clock as care."""
+        self._require_owner_thread()
+        self._care.advance_time(inputs)
+
+    def complete_social(
+        self, kind: SocialCompletion, *, inputs: SessionInputs, arrangement_ready: bool,
+    ) -> None:
+        """Receive a finished accepted sequence on the existing owner thread."""
+        self._require_owner_thread()
+        self._care.complete_social(kind, inputs, arrangement_ready=arrangement_ready)
 
     def complete_game(
         self, experience: GameExperience, *, inputs: SessionInputs,

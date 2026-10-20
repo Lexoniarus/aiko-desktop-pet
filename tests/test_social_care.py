@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 from datetime import datetime
 from unittest.mock import patch
 
@@ -39,7 +40,10 @@ class SocialCareTests(unittest.TestCase):
                     CareCommand("talk", conversation=prepared), inputs,
                 )
                 select.assert_not_called()
-            self.assertIs(outcome.reaction, prepared.reaction)
+            self.assertEqual(outcome.reaction, replace(
+                prepared.reaction, completed_social="social",
+            ))
+            self.assertIsNone(prepared.reaction.completed_social)
             self.assertEqual(state.social, 10 + 26 * (index + 1))
             self.assertEqual(state.energy, 80 - (index + 1))
             self.assertEqual(mind._last_care_action, "talk")

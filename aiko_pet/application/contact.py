@@ -11,7 +11,7 @@ from dataclasses import dataclass, replace
 from typing import Callable
 
 from ..pet.balance import BALANCE
-from ..pet.interaction_events import Poked
+from ..pet.interaction_events import BoundaryCommunicated, Poked
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
@@ -67,6 +67,9 @@ class ContactCoordinator:
         if self._state.sleeping:
             return action == "sleep"  # Waking ends the current lifecycle action.
         return self._ports.care_holding() or not self._ports.playback_active()
+
+    def note_text(self, event: str) -> None:
+        acknowledge_interaction_text(self._state, event)
 
     def record_contact(self, now: float) -> None:
         self._mind.last_contact = now
@@ -167,3 +170,13 @@ class ContactCoordinator:
             ),
             BALANCE.integer("dialogue", "greeting_reaction_ms"),
         )
+
+
+def acknowledge_interaction_text(state: PetState, event: str) -> None:
+    """Translate actually presented feedback into language-neutral boundary facts."""
+    if event in ("click_boundary", "click_work_boundary", "click_withdrawn_boundary"):
+        state.experience_interaction(BoundaryCommunicated("poking"))
+    elif event == "feed_variety_request":
+        state.experience_interaction(BoundaryCommunicated("food_variety"))
+    elif event == "pet_refused":
+        state.experience_interaction(BoundaryCommunicated("petting"))

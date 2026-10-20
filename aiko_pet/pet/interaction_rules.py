@@ -9,6 +9,7 @@ from .interaction_events import (
     BoundaryCommunicated,
     FoodConsumed,
     FoodRepetitionMemory,
+    HelpfulInteraction,
     InteractionEvent,
     Poked,
     WithholdingEnded,
@@ -66,6 +67,25 @@ def apply_interaction_event(
         return InteractionConsequences(state)
     if isinstance(event, FoodConsumed):
         return _consume_food(state, event, elapsed=elapsed, definitions=definitions)
+    if isinstance(event, HelpfulInteraction):
+        eligible: set[MoodletId] = set()
+        if event.kind in ("chat", "play"):
+            eligible.update((MoodletId.POKING, MoodletId.CROWDED, MoodletId.WITHHELD))
+            if event.arrangement_ready:
+                eligible.add(MoodletId.DISRUPTED)
+        if event.kind in ("chat", "social"):
+            eligible.add(MoodletId.LONELY)
+        if event.kind == "petting":
+            eligible.update((MoodletId.POKING, MoodletId.MISSING_CLOSENESS))
+        if event.kind == "play":
+            eligible.add(MoodletId.UNSTIMULATED)
+        if event.kind == "meal":
+            eligible.add(MoodletId.HUNGER_WORN)
+        for impression in state.active:
+            if impression.definition_id in eligible:
+                state = relieve_moodlet(state, impression.instance_id, elapsed=elapsed,
+                                       definitions=definitions)
+        return InteractionConsequences(state)
     if isinstance(event, (WithholdingObserved, WithholdingEnded)):
         episode = next((e for e in state.active
                         if e.definition_id == MoodletId.WITHHELD), None)
@@ -145,7 +165,7 @@ def _consume_food(
         if ignored > parameters.free_ignored_portions:
             penalty = parameters.friendship_loss_points
     if len(memory.intakes) == count:
-        if episode is None and not requested:
+        if not requested:
             memory = replace(memory, request_pending=True, requested_at=None,
                              ignored_portions=0)
         state = reinforce_moodlet(state, MoodletId.FOOD_MONOTONY, elapsed=elapsed,

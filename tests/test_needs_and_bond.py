@@ -75,13 +75,13 @@ class NeedsAndBondTests(unittest.TestCase):
         self.assertGreater(state.friendship, 15)
 
     def test_feeding_does_not_substitute_for_social_care(self):
-        state = PetState(social=8, satiety=10)
+        state = PetState(social=8, satiety=10, affection=50)
         state.interact("feed", now=timestamp())
         self.assertEqual(state.social, 9)
         self.assertEqual(state.satiety, 40)
         state.interact("pet", now=timestamp() + 1)
         self.assertEqual(state.social, 11)
-        self.assertEqual(state.affection, 100)
+        self.assertEqual(state.affection, 75)
         before = encode_pet_state(state)
         state.interact("play", now=timestamp() + 2)
         self.assertEqual(encode_pet_state(state), before)

@@ -21,6 +21,10 @@ from .food import (
     eat_food,
 )
 from .friendship import CARE_PRIMARY_NEED
+from .interaction_events import PettingAttempted
+from .interaction_rules import InteractionConsequences, apply_interaction_event
+from .moodlet_catalog import MOODLET_CATALOG
+from .moodlets import MoodletState
 from .needs import NeedLevels
 from .routine import context_at
 from .value_rules import clamp_need_value
@@ -65,6 +69,15 @@ class CareValues(Protocol):
     @property
     def food(self) -> FoodState: ...
 
+    @property
+    def moodlets(self) -> MoodletState: ...
+
+    @property
+    def friendship_level(self) -> int: ...
+
+    @property
+    def lived_seconds(self) -> float: ...
+
 
 @dataclass(frozen=True, slots=True)
 class CareTransition:
@@ -82,6 +95,7 @@ class CareTransition:
     reward_action: str | None = None
     need_before: float = 0.0
     food: FoodState | None = None
+    interaction: InteractionConsequences | None = None
 
 
 def plan_care_action(
@@ -113,6 +127,14 @@ def plan_care_action(
         meals_date=state.meals_date,
         meals_today=tuple(state.meals_today),
     )
+    if action == "pet":
+        interaction = apply_interaction_event(
+            state.moodlets, PettingAttempted(state.affection, state.friendship_level),
+            elapsed=state.lived_seconds, definitions=MOODLET_CATALOG.definitions,
+        )
+        if interaction.refused:
+            return replace(unchanged, interaction=interaction,
+                           result=CareResult("pet", CareEffect.AFFECTION_REFUSED))
     if action == "sleep":
         sleeping = not state.sleeping
         night_key = state.auto_sleep_night

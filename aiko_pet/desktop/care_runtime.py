@@ -8,7 +8,7 @@ from collections.abc import Callable
 
 from ..application.active_time import SessionInputs
 from ..application.commands import CareCommand
-from ..application.contact import ContactCoordinator
+from ..application.contact import ContactCoordinator, acknowledge_interaction_text
 from ..application.router import ApplicationRouter
 from ..application.social_content import PreparedSocialContent
 from ..application.social_coordinator import (
@@ -17,6 +17,7 @@ from ..application.social_coordinator import (
 )
 from ..infrastructure.social_api import HttpSocialContentWorker
 from ..pet.food import FoodId
+from ..pet.interaction_events import SocialCompletion
 from ..pet.mind.catalog import Reaction
 from ..pet.routine import TimeContext
 from ..pet.state import PetState
@@ -51,7 +52,7 @@ class DesktopCareRuntime:
             start_action=start_action, cancel_followup=player.cancel,
             react=react, show_text=speech.show_text,
             refresh_toolbar=hover.refresh_toolbar, refresh_status=hover.refresh_status,
-            text_presented=state.note_interaction_text,
+            text_presented=lambda event: acknowledge_interaction_text(state, event),
         ))
         self._inputs, self._set_context, self._save = inputs, set_context, save
         self._is_closed = is_closed
@@ -91,6 +92,16 @@ class DesktopCareRuntime:
         )
         self._set_context(outcome.context)
         self._presenter.present(outcome, now=now, sleeping=self._state.sleeping)
+        self._save()
+
+    def advance_time(self) -> None:
+        self._router.advance_time(self._inputs(time.time(), time.monotonic()))
+
+    def complete_social(self, kind: SocialCompletion) -> None:
+        self._router.complete_social(
+            kind, inputs=self._inputs(time.time(), time.monotonic()),
+            arrangement_ready=self._world.arrangement_ready(),
+        )
         self._save()
 
     def wake_from_clicks(self) -> None:

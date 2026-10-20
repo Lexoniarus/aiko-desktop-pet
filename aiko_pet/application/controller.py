@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from ..pet.care_result import CareEffect, CareResult
+from ..pet.interaction_events import HelpfulInteraction, SocialCompletion
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
@@ -55,11 +56,20 @@ class CareController:
         self._clock = clock
         self._progression = progression
 
-    def execute(self, command: CareCommand, inputs: SessionInputs) -> CareOutcome:
-        """Preserve the original ordering of time, dialogue and care changes."""
+    def advance_time(self, inputs: SessionInputs) -> None:
         advance_session_time(
             self._state, self._clock, inputs, progression=self._progression,
         )
+
+    def complete_social(
+        self, kind: SocialCompletion, inputs: SessionInputs, *, arrangement_ready: bool,
+    ) -> None:
+        self.advance_time(inputs)
+        self._state.experience_interaction(HelpfulInteraction(kind, arrangement_ready))
+
+    def execute(self, command: CareCommand, inputs: SessionInputs) -> CareOutcome:
+        """Preserve the original ordering of time, dialogue and care changes."""
+        self.advance_time(inputs)
         self._adaptive.note_interaction(inputs.wall_time)
         context = context_at(inputs.wall_time)
         if command.wake_from_clicks:
@@ -109,4 +119,8 @@ class CareController:
                 tone=before.tone,
                 dialogue=before.dialogue,
             )
+        if result.effect == CareEffect.CONVERSATION and reaction is not None:
+            reaction = replace(reaction, completed_social=(
+                "social" if command.conversation is not None else "chat"
+            ))
         return CareOutcome(result, reaction, context)

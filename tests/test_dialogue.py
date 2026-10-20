@@ -190,6 +190,7 @@ class EmotionTests(unittest.TestCase):
         self.assertTrue(self.state.sleeping)
 
     def test_pre_action_tone_preserved_and_warmth_temporary(self):
+        set_test_pet_values(self.state, affection=50)  # Welcome, not boundary refusal.
         self.assertEqual(
             (
                 self.mind.care_event(

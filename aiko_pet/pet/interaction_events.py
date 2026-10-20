@@ -1,6 +1,7 @@
 """Bounded interaction evidence and immutable facts; no dispatcher or clock."""
 
 from dataclasses import dataclass
+from typing import Literal
 
 
 @dataclass(frozen=True, slots=True)
@@ -58,7 +59,17 @@ class ArrangementDisrupted:
     attributed: bool = False
 
 
+SocialCompletion = Literal["chat", "social"]
+
+
+@dataclass(frozen=True, slots=True)
+class HelpfulInteraction:
+    kind: Literal["chat", "social", "petting", "play", "meal"]
+    arrangement_ready: bool = False
+
+
 InteractionEvent = (
     Poked | PettingAttempted | BoundaryCommunicated | FoodConsumed
     | WithholdingObserved | WithholdingEnded | ArrangementDisrupted
+    | HelpfulInteraction
 )

@@ -39,7 +39,7 @@ class CareActionRulesTests(unittest.TestCase):
         }
         for action, (attribute, value, reply) in expected.items():
             with self.subTest(action=action):
-                state = PetState(updated_at=moment)
+                state = PetState(updated_at=moment, friendship=50)
                 text = format_care_response(state.interact(action, now=moment))
                 self.assertEqual(getattr(state, attribute), value)
                 self.assertIn(reply, text)

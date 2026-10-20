@@ -4,6 +4,7 @@ import unittest
 from dataclasses import replace
 from unittest.mock import Mock
 
+from aiko_pet.application.contact import acknowledge_interaction_text
 from aiko_pet.infrastructure.moodlet_codec import decode_moodlets, encode_moodlets
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.care_result import CareEffect
@@ -18,7 +19,7 @@ class NegativeInteractionTests(unittest.TestCase):
         pet = PetState(friendship=50)
         pet.experience_interaction(Poked(True))
         self.assertFalse(pet.moodlets.active)
-        pet.note_interaction_text("click_boundary")
+        acknowledge_interaction_text(pet, "click_boundary")
         for count in range(7):
             pet.experience_interaction(Poked(True))
             self.assertEqual(pet.moodlets.active[0].level, 1 + count // 3)
@@ -47,7 +48,8 @@ class NegativeInteractionTests(unittest.TestCase):
                                 cancel_timer=Mock(), display_emote=Mock(),
                                 display_text=Mock(), start_action=Mock(),
                                 mark_spoken=Mock(), is_closed=lambda: False,
-                                on_text=pet.note_interaction_text)
+                                on_text=lambda event: acknowledge_interaction_text(
+                                    pet, event))
         player.play(reaction)
         self.assertIsNone(pet.moodlets.interactions.poke_boundary_at)
         player.cancel()
@@ -63,7 +65,7 @@ class NegativeInteractionTests(unittest.TestCase):
         self.assertEqual(pet.interact("pet").effect, CareEffect.AFFECTION_REFUSED)
         self.assertFalse(pet.moodlets.active)
         self.assertEqual(pet.friendship_history, history)
-        pet.note_interaction_text("pet_refused")
+        acknowledge_interaction_text(pet, "pet_refused")
         for count in range(7):
             self.assertEqual(pet.interact("pet").effect, CareEffect.AFFECTION_REFUSED)
             self.assertEqual(pet.moodlets.active[0].level, 1 + count // 3)
@@ -74,7 +76,7 @@ class NegativeInteractionTests(unittest.TestCase):
 
     def test_refusal_and_budget_survive_restart_without_creating_care(self):
         pet = PetState(affection=95, friendship=50)
-        pet.note_interaction_text("pet_refused")
+        acknowledge_interaction_text(pet, "pet_refused")
         pet.interact("pet")
         pet = decode_pet_state(encode_pet_state(pet), now=pet.updated_at)
         pet.interact("pet")
@@ -86,7 +88,7 @@ class NegativeInteractionTests(unittest.TestCase):
         self.assertEqual(pet.interact("pet").effect, CareEffect.AFFECTION)
         self.assertGreater(pet.affection, 60)
         self.assertEqual(pet.interact("pet").effect, CareEffect.AFFECTION_REFUSED)
-        pet.note_interaction_text("pet_refused")
+        acknowledge_interaction_text(pet, "pet_refused")
         pet.interact("pet")
         from tools.pet_test_support import set_test_pet_values
 
@@ -104,3 +106,17 @@ class NegativeInteractionTests(unittest.TestCase):
         saved["interactions"]["petting_boundary_at"] = 101
         with self.assertRaises(ValueError):
             decode_moodlets(saved, 100)
+
+    def test_pure_care_plan_and_commit_share_petting_acceptance(self):
+        from aiko_pet.pet.care_actions import plan_care_action
+
+        for friendship, affection, refused in ((0, 59, False), (0, 60, True),
+                                               (50, 89, False), (50, 90, True)):
+            with self.subTest(friendship=friendship, affection=affection):
+                pet = PetState(friendship=friendship, affection=affection)
+                checkpoint = pet.capture_checkpoint()
+                plan = plan_care_action(pet, "pet", now=pet.updated_at)
+                self.assertEqual(pet.capture_checkpoint(), checkpoint)
+                result = pet.interact("pet", now=pet.updated_at)
+                self.assertEqual(result, plan.result)
+                self.assertEqual(result.effect == CareEffect.AFFECTION_REFUSED, refused)

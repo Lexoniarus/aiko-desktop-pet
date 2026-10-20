@@ -20,6 +20,7 @@ from .food import (
     FoodId,
     FoodState,
 )
+from .food_catalog import DEFAULT_CATALOG
 from .friendship import (
     apply_negative_event,
     calculate_friendship_reward,
@@ -28,12 +29,11 @@ from .friendship import (
 from .friendship_history import FriendshipHistory, FriendshipProgress
 from .fun import GameExperience, calculate_game_session_fun
 from .interaction_events import (
-    BoundaryCommunicated,
     FoodConsumed,
+    HelpfulInteraction,
     InteractionEvent,
-    PettingAttempted,
 )
-from .interaction_rules import apply_interaction_event
+from .interaction_rules import InteractionConsequences, apply_interaction_event
 from .lifecycle import (
     SimulationStep,
     calculate_daily_routine,
@@ -310,6 +310,7 @@ class PetState:
         experience: GameExperience,
         *,
         now: float,
+        arrangement_ready: bool = False,
     ) -> float:
         """Commit one finished minigame, retaining no session statistics."""
         reward = calculate_game_session_fun(experience, self.fun)
@@ -325,6 +326,7 @@ class PetState:
             "friendship", "minimum_play_rounds",
         ):
             self._credit_friendship("play", now, before)
+            self.experience_interaction(HelpfulInteraction("play", arrangement_ready))
         else:
             self._change(relationship=replace(
                 start_history(self.friendship_history, self.lived_seconds),
@@ -420,23 +422,16 @@ class PetState:
             relationship=start_history(self.friendship_history, lived_seconds),
         )
 
-    def note_interaction_text(self, event: str) -> None:
-        """A presentation receipt, never merely a selected or queued reaction."""
-        if event in (
-            "click_boundary", "click_work_boundary", "click_withdrawn_boundary",
-        ):
-            self.experience_interaction(BoundaryCommunicated("poking"))
-        elif event == "feed_variety_request":
-            self.experience_interaction(BoundaryCommunicated("food_variety"))
-        elif event == "pet_refused":
-            self.experience_interaction(BoundaryCommunicated("petting"))
-
     def experience_interaction(self, event: InteractionEvent) -> bool:
         """Commit a perceived fact; continuing emotions never repeat direct loss."""
         effects = apply_interaction_event(
             self.moodlets, event, elapsed=self.lived_seconds,
             definitions=MOODLET_CATALOG.definitions,
         )
+        self._commit_interaction(effects)
+        return effects.refused
+
+    def _commit_interaction(self, effects: InteractionConsequences) -> None:
         changes: dict[str, Any] = {"moodlets": effects.moodlets}
         if effects.penalty_kind:
             friendship = apply_negative_event(
@@ -445,7 +440,6 @@ class PetState:
             changes.update(friendship=friendship.points,
                            relationship=friendship.history)
         self._change(**changes)
-        return effects.refused
 
     def apply_object_withholding(self, loss: float) -> float:
         """Commit a bounded application decision without manufacturing care."""
@@ -494,10 +488,6 @@ class PetState:
     ) -> CareResult:
         """Commit one care transition and its friendship reward atomically."""
         stamp = resolve_care_time(now)
-        if action == "pet" and self.experience_interaction(PettingAttempted(
-            self.affection, self.friendship_level,
-        )):
-            return CareResult("pet", CareEffect.AFFECTION_REFUSED)
         transition = plan_care_action(
             self,
             action,
@@ -595,6 +585,8 @@ class PetState:
     def _apply_care_transition(
         self, transition: CareTransition, stamp: float, *, personal: bool = True,
     ) -> CareResult:
+        if transition.interaction is not None:
+            self._commit_interaction(transition.interaction)
         if not transition.changed:
             return transition.result
         self._set_needs(transition.needs)
@@ -624,6 +616,10 @@ class PetState:
             self.experience_interaction(FoodConsumed(
                 transition.result.food_id, personal,
             ))
+            if DEFAULT_CATALOG.foods[transition.result.food_id].category == "meal":
+                self.experience_interaction(HelpfulInteraction("meal"))
+        elif transition.result.effect == CareEffect.AFFECTION:
+            self.experience_interaction(HelpfulInteraction("petting"))
         return transition.result
 
     def due_meal(self, context: TimeContext) -> str | None:

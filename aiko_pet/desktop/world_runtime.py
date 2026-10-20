@@ -181,6 +181,10 @@ class DesktopWorldRuntime:
         )
         self._timer = root.after(33, self._frame)
 
+    def arrangement_ready(self) -> bool:
+        return (not self.interaction.search_active and not self.awareness.absences
+                and not self.awareness.checking_absence)
+
     def memory_snapshot(self) -> ObjectMemorySnapshot:
         return self.awareness.memory.export(now=self.now)
 

@@ -2,6 +2,7 @@
 
 import unittest
 
+from aiko_pet.application.contact import acknowledge_interaction_text
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.consumption import ConsumptionOrigin
 from aiko_pet.pet.interaction_events import FoodConsumed
@@ -51,7 +52,7 @@ class FoodMoodletEventTests(unittest.TestCase):
         for _ in range(4):
             self.intake(pet, personal=True)
         self.assertEqual(pet.friendship, 50)
-        pet.note_interaction_text("feed_variety_request")
+        acknowledge_interaction_text(pet, "feed_variety_request")
         self.intake(pet, personal=True)
         self.assertEqual(pet.friendship, 50)
         self.intake(pet)  # Autonomous food cannot disregard a personal request.
@@ -64,7 +65,7 @@ class FoodMoodletEventTests(unittest.TestCase):
         self.intake(pet, "onigiri", personal=True)
         for _ in range(3):
             self.intake(pet, personal=True)
-        pet.note_interaction_text("feed_variety_request")
+        acknowledge_interaction_text(pet, "feed_variety_request")
         self.intake(pet, personal=True)
         self.intake(pet, personal=True)
         self.assertEqual(pet.friendship, 49)  # New request cannot refund the cap.
@@ -73,11 +74,12 @@ class FoodMoodletEventTests(unittest.TestCase):
         pet = PetState(friendship=50)
         for _ in range(3):
             self.intake(pet)
-        pet.note_interaction_text("feed_variety_request")
+        acknowledge_interaction_text(pet, "feed_variety_request")
         self.intake(pet, personal=True, at=86400)
         self.assertEqual(pet.friendship, 50)
-        pet.note_interaction_text("feed_variety_reminder")
-        self.assertEqual(pet.moodlets.interactions.food.requested_at, 0)
+        acknowledge_interaction_text(pet, "feed_variety_reminder")
+        self.assertIsNone(pet.moodlets.interactions.food.requested_at)
+        self.assertTrue(pet.moodlets.interactions.food.request_pending)
 
     def test_extended_evidence_survives_rollback_and_malformed_food_is_rejected(self):
         pet = PetState()

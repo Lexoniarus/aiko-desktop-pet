@@ -6,6 +6,7 @@ receives their brief, immutable summary at close and never persists it.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from ..games.contracts import GameId, SessionSummary
@@ -55,12 +56,14 @@ class GameExperienceCoordinator:
         self, state: PetState, mind: PetMind, adaptive: AdaptiveRoutine, *,
         clock: ActiveSessionClock,
         progression: TimeProgression | None = None,
+        arrangement_ready: Callable[[], bool] = lambda: False,
     ) -> None:
         self._state = state
         self._mind = mind
         self._adaptive = adaptive
         self._clock = clock
         self._progression = progression
+        self._arrangement_ready = arrangement_ready
 
     def complete(
         self, experience: GameExperience, inputs: SessionInputs,
@@ -73,6 +76,7 @@ class GameExperienceCoordinator:
         )
         gained = self._state.record_game_experience(
             experience, now=inputs.wall_time,
+            arrangement_ready=self._arrangement_ready(),
         )
         self._adaptive.note_interaction(inputs.wall_time)
         self._mind.after_care("play", inputs.monotonic_time)

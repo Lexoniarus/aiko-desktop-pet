@@ -35,6 +35,11 @@ class WorldRuntimeAccess:
         runtime = self._runtime
         return runtime is not None and runtime.defer_sleep()
 
+    def arrangement_ready(self) -> bool:
+        """Only resolved live search/place evidence permits conversational relief."""
+        runtime = self._runtime
+        return runtime is not None and runtime.arrangement_ready()
+
     def focused(self) -> bool:
         runtime = self._runtime
         return (runtime is not None

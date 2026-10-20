@@ -145,6 +145,7 @@ class DesktopPet:
             state=self.state, settings=self.settings, mind=self.mind,
             adaptive=self.adaptive, monitor=self.activity_monitor,
             clock=active_clock, progression=self._world_access,
+            arrangement_ready=self._world_access.arrangement_ready,
             callbacks=ActivityCallbacks(
                 speech_busy=lambda: (self._reaction_player.pending_timer is not None
                                      or self._social_runtime.waiting),
@@ -215,11 +216,11 @@ class DesktopPet:
         )
         self._reaction_player = ReactionPlayer(
             hide_speech=self._speech.hide,
-            schedule=self.root.after,
-            cancel_timer=self.root.after_cancel,
+            schedule=self.root.after, cancel_timer=self.root.after_cancel,
             display_emote=self._speech.show_emote,
             display_text=self._speech.show_text,
-            on_text=self.state.note_interaction_text,
+            on_text=lambda event: self._contact.note_text(event),
+            social_completed=lambda kind: self._care_runtime.complete_social(kind),
             start_action=self._start_action,
             mark_spoken=self._mark_reaction_spoken,
             is_closed=lambda: self._closed,
@@ -293,8 +294,7 @@ class DesktopPet:
         self._contact = ContactCoordinator(
             state=self.state, mind=self.mind, adaptive=self.adaptive,
             ports=ContactPorts(
-                advance_time=lambda: self._session_runtime.advance_lifecycle(
-                    time.monotonic(), time.time()),
+                advance_time=lambda: self._care_runtime.advance_time(),
                 context=lambda: self.context,
                 toolbar_hidden=lambda: (
                     self._hover.toolbar is None or not self._hover.toolbar.visible),

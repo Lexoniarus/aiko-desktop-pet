@@ -113,8 +113,9 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
         deadline = number_value(facts["petting_refused_until"], minimum=0,
                                 maximum=elapsed + max(petting.refusal_seconds),
                                 context="petting refusal")
-        memory = InteractionMemory(anchors[0], anchors[1], deadline,
-                                   _decode_food(facts.get("food"), baseline, elapsed))
+        food = (_decode_food(facts["food"], baseline, elapsed)
+                if "food" in facts else FoodRepetitionMemory())
+        memory = InteractionMemory(anchors[0], anchors[1], deadline, food)
     return MoodletState(baseline, next_id, tuple(episodes), memory)
 
 
@@ -153,8 +154,6 @@ def encode_moodlets(state: MoodletState) -> dict[str, Any]:
 
 
 def _decode_food(raw: Any, baseline: float, elapsed: float) -> FoodRepetitionMemory:
-    if raw is None:
-        return FoodRepetitionMemory()
     row = object_fields(raw, ("food_id", "intakes", "request_pending", "requested_at",
                               "ignored_portions"), context="food repetition evidence")
     food = row["food_id"]

@@ -16,6 +16,7 @@ from typing import Any, Literal
 
 from ..balance import BALANCE
 from ..catalog_validation import load_json, object_fields
+from ..interaction_events import SocialCompletion
 from ..object_text_contract import OBJECT_TEXT_FIELDS
 from ..routine import TimeContext
 from .dialogue_context import DialogueContext, FriendshipStage
@@ -210,6 +211,7 @@ class Reaction:
     animation: str
     event: str
     presentation: Literal["short", "story"] = "short"
+    completed_social: SocialCompletion | None = None
 
     @property
     def text(self) -> str:
