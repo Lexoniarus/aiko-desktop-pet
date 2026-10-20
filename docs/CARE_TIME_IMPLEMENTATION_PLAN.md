@@ -376,8 +376,8 @@ The structural foundation can begin once the ongoing correction baseline is
 secured. The remaining material product decisions listed under "Documented inventory
 and decisions before implementation" remain gates for their affected behavior,
 not a reason to reopen every hypothetical edge case or delay unrelated naming
-work. Apply the subsequently agreed wish-disclosure/lifecycle rules below;
-do not silently invent final emotion mappings, renewed relief allowances or
+work. Apply the subsequently agreed wish-disclosure/lifecycle and emotional
+composition rules below; do not silently invent renewed relief allowances or
 additional friendship bonuses. Resolve each relevant decision before its
 policy/catalogue commit.
 This review ran no application tests and changed no runtime behavior.
@@ -2015,9 +2015,9 @@ current recovery stage. A brief renewed deficit pauses recovery and contributes
 new exposure without restoring the historical maximum. These are emotional
 rules; they do not erase care evidence or add/refund friendship effects.
 
-##### Recorded proposal: overall emotional-state selection, 2026-10-20
+##### Agreed rules: overall emotional-state selection, 2026-10-20
 
-Status: owner-requested design proposal, not implemented. Derive one overall
+Status: owner-confirmed rules for implementation, not implemented. Derive one overall
 emotional interpretation from numeric mood, the active Moodlet composition and
 relevant interaction context. Do not create another care bar, mutable emotion
 score or independently persisted collection. Physical need conditions, sleep,
@@ -2031,9 +2031,8 @@ Equal positive and negative numeric contributions do not erase those facts:
 remain emotionally relevant. Numeric contribution caps must not discard active
 impressions or lower their emotional intensity merely to match the bar.
 
-Candidate emotional directions include joy, pride, relief, connection/warmth,
-irritation, feeling crowded, uncertainty, frustration and loneliness. Group
-impressions by the direction they actually support. In each direction, start
+The confirmed emotional directions and their family assignments are listed
+below. Group impressions by the direction they actually support. In each direction, start
 with the complete set of active impressions, not only the strongest one.
 The owner subsequently clarified that every active Moodlet must contribute to
 the resulting overall emotional composition. There is no fixed global count
@@ -2041,31 +2040,55 @@ limit on active Moodlets; catalogue-specific stacking/copy rules still apply.
 The limit of three concurrent wishes is unrelated to Moodlet concurrency.
 Numeric mood-contribution caps do not truncate this emotional evidence.
 
-This clarification supersedes the earlier candidate calculation of the strongest
-impression plus aligned support capped at three. The aggregation formula,
-direction-to-label mapping and numeric-mood thresholds are now being discussed;
-do not implement that older support cap as the final interpretation rule.
+The owner confirms the following aggregation in place of the earlier strongest-
+impression/support-cap candidate:
 
-Derive the primary label from the complete composition; retain other active
-impressions for speech, gestures, attitude toward the user and specific
-interaction willingness. The earlier candidate tie rule gives an ongoing boundary
-violation priority; otherwise prefer the most recently created or
-genuinely intensified impression. A timer-only refresh does not change primary
-state merely by being newer. This tie convention remains subject to the final
-aggregate selection rule. Preserve the underlying facts for every decision.
+1. Each active Moodlet contributes its current emotional intensity, one, two
+   or three. This is distinct from its numeric mood-target point contribution.
+   Count the active impression's intensity once; do not count its stacking
+   occurrences again as independent impressions.
+2. Sum all positive intensities, all negative intensities, and contributions
+   within each emotional direction. Every active impression participates;
+   numeric mood caps do not cap these emotional sums.
+3. If one polarity has the greater total, select the primary label from that
+   side's strongest combined direction. Losing-side impressions remain relevant
+   to wording, attitude and any independently defined interaction boundaries.
+4. If positive and negative totals are equal and nonzero, use **Zwiegespalten**
+   (ambivalent), retaining the concrete directions on both sides. With no active
+   Moodlets, use the numeric-mood fallback table below instead.
 
-| Active emotional composition | Candidate primary state and retained nuance |
+| Primary emotional label | Contributing documented Moodlet families |
 | --- | --- |
-| Pride level three, irritation level one | Proud, but still somewhat short with the user |
-| Feeling secure level one, feeling crowded level three | Crowded; the positive closeness memory remains, and the current petting boundary still applies |
-| Joy level two, loneliness level one | Joyful, with a remaining desire for contact |
-| Several strong poor-care impressions | Frustrated, lonely or downcast according to their composition, not one automatic label for all deficits |
+| Fröhlich (cheerful) | Specific food-wish fulfillment; shared-play enjoyment; social cheerfulness; social enthusiasm |
+| Stolz (proud) | Achievement/pride from fulfilled game-success goals |
+| Erleichtert (relieved) | Fulfilled game non-loss goals |
+| Zugewandt (warm toward the user) | Social connection; affection fulfillment/feeling secure |
+| Gereizt (irritated) | Repeated poking; repetitive food; prolonged-exhaustion after-effect |
+| Bedrängt (crowded) | Excessive/unwelcome closeness |
+| Frustriert (frustrated) | Withholding; disrupted familiar arrangement; prolonged lack of stimulation |
+| Niedergeschlagen (downcast) | Prolonged-hunger emotional after-effect |
+| Einsam (lonely) | Prolonged lack of social contact; prolonged lack of affection |
 
-Without clearly shaping Moodlets, general numeric mood may distinguish
-satisfied, calm and subdued. Exact fallback thresholds and the final label
-vocabulary remain to be settled. A need statement can coexist with a positive
-emotional state: Aiko can feel warmly toward the user while physically tired.
-A friendlier primary state does not automatically lift a concrete refusal.
+This assigns all eighteen documented families, not eighteen independent stores.
+The German labels and English explanations above define presentation meaning;
+English Python identifiers and localized keys belong to the coordinated schema change.
+Equal-ranked directions within the winning side require a deterministic tie
+convention using retained cause/time evidence, recorded during implementation;
+it must not override the agreed polarity totals or require another emotion store.
+
+| Numeric mood with no active Moodlets | Fallback label |
+| --- | --- |
+| Less than 40 | Gedrückt (subdued) |
+| At least 40 and less than 70 | Gelassen (calm) |
+| At least 70 | Zufrieden (satisfied) |
+
+With active impressions, their full composition sets the emotional label while
+numeric mood continues to describe general wellbeing. Four independent positive
+level-one impressions can outweigh one negative level-three impression; the
+negative impression still colors the response and retains its specific boundary.
+The same numeric mood can produce different emotional labels. Need statements,
+care priorities and specific boundaries remain independently effective. This
+approval introduces no additional blanket interaction refusals or new reward.
 
 Positive experiences can both change the emotional composition and shorten
 eligible negative impressions through the separately recorded relief rules.
@@ -2234,11 +2257,11 @@ completion conventions below concern other event types or simultaneous events.
 | Remaining decision | Why it matters / example to settle before implementation |
 | --- | --- |
 | Relief allowance across refresh/escalation | Once-per-current-stage relief needs an exact stage identity when a provocation renews the timer, increases intensity or happens at the cap. Avoid making another five-minute credit available merely by poking again and restarting the same timer. |
-| Complete emotional vocabulary and mapping | Assign each Moodlet its direction and attribution, define satisfied/calm/subdued fallback thresholds, and settle exact ties. The grouped support rule alone does not specify every label or interaction response. |
 | Separate wish relationship rewards | Food has a candidate additional 0.25-point personal-fulfillment reward; no additional amount is fixed for game/social/affection wishes. Define whether they add anything beyond ordinary eligible care, within existing shared budgets. |
 
-Wish disclosure and temporary unavailability are resolved by the owner-confirmed
-rules above. Initial creation/candidate selection and equal-time completion
+Wish disclosure, temporary unavailability and emotional aggregation/labels/mood
+thresholds are resolved by the owner-confirmed rules above. Initial
+creation/candidate selection, equal-ranked direction ties and equal-time completion
 ordering remain implementation conventions within the recorded scope, not
 additional product workshops. Resolve semantic completion once so duplicate
 delivery cannot replay relief, fulfillment or rewards.
@@ -2280,18 +2303,13 @@ copies and intensity per Moodlet; numeric caps do not delete parallel entries.
 The eight positive versus ten negative types do not by themselves prove or
 disprove balanced daily outcomes, which also depend on triggers and duration.
 
-The following three product decisions remain material before implementing the
+The following two product decisions remain material before implementing the
 first version; this review does not add answers without owner agreement:
 
-1. Emotional interpretation and behavior: complete all-Moodlet aggregation,
-   direction/label mapping and
-   fallback thresholds, and define whether any specific refusals beyond the
-   recorded petting boundary belong in the first version. Do not infer blanket
-   locks from a negative mood or silently prevent necessary care.
-2. Relief eligibility after timer refresh/escalation: settle what starts a new
+1. Relief eligibility after timer refresh/escalation: settle what starts a new
    eligible stage. Ordinary recovery pause/resume already retains used credit;
    a new provocation must not silently make helpful-action credit repeatable.
-3. Additional wish friendship rewards: decide whether game/social/affection
+2. Additional wish friendship rewards: decide whether game/social/affection
    fulfillment adds anything beyond ordinary care; only food currently has a
    nominal additional 0.25-point candidate, always inside shared budgets.
 
