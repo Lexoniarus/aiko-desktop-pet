@@ -21,7 +21,7 @@ from .food import (
     eat_food,
 )
 from .friendship import CARE_PRIMARY_NEED
-from .need_decay import NeedLevels
+from .needs import NeedLevels
 from .routine import context_at
 from .value_rules import clamp_need_value
 
@@ -48,7 +48,7 @@ class CareValues(Protocol):
     def satiety(self) -> float: ...
 
     @property
-    def mood(self) -> float: ...
+    def fun(self) -> float: ...
 
     @property
     def social(self) -> float: ...
@@ -68,7 +68,7 @@ class CareValues(Protocol):
 
 @dataclass(frozen=True, slots=True)
 class CareTransition:
-    """A validated full snapshot of one care action's intended changes."""
+    """A validated value describing one care action's intended changes."""
 
     result: CareResult
     changed: bool
@@ -101,8 +101,8 @@ def plan_care_action(
         changed=False,
         needs=NeedLevels(
             state.satiety,
-            state.mood,
             state.energy,
+            state.fun,
             state.social,
             state.affection,
         ),

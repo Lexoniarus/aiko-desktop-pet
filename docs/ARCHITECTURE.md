@@ -98,8 +98,10 @@ interprets the committed effect.
 German fallback wording is selected only by `ui/view_models/care_text.py`.
 
 - `care_actions.py`: `CareTransition` for care actions and their rewards.
+- `needs.py`: frozen `NeedLevels` contains exactly satiety, energy, fun, social
+  and affection. Mood and friendship are separate values, not care needs.
 - `need_decay.py`: frozen `NeedProgress` for all numeric time progression,
-  including `NeedLevels`, fun and food. Integrates changing targets with the
+  with separate need, mood, food and relationship results. Integrates targets with the
   existing pure food/fun/mood policies; `PetState` applies one result. It reads
   no clocks, owns no mutable store and offers no alternate precomputed path.
 - `friendship.py`: rolling relationship credits, contact and direct penalty caps.

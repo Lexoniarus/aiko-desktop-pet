@@ -17,6 +17,7 @@ from .friendship_decay import advance_friendship
 from .friendship_history import FriendshipProgress
 from .fun import advance_fun
 from .mood import MoodFactors, advance_mood, calculate_mood_target
+from .needs import NeedLevels
 from .value_rules import clamp_need_value
 
 
@@ -49,22 +50,11 @@ class NeedValues(Protocol):
 
 
 @dataclass(frozen=True, slots=True)
-class NeedLevels:
-    """Calculated next values, not a mutable reference to the pet."""
-
-    satiety: float
-    mood: float
-    energy: float
-    social: float
-    affection: float
-
-
-@dataclass(frozen=True, slots=True)
 class NeedProgress:
     """Transient calculation result; not another pet aggregate or save record."""
 
     needs: NeedLevels
-    fun: float
+    mood: float
     food: FoodState
     relationship: FriendshipProgress | None = None
 
@@ -131,5 +121,5 @@ def calculate_need_decay(
             )
         remaining -= seconds
     return NeedProgress(
-        NeedLevels(satiety, mood, energy, social, affection), fun, food, relationship,
+        NeedLevels(satiety, energy, fun, social, affection), mood, food, relationship,
     )

@@ -77,7 +77,10 @@ class DomainTransitionTests(unittest.TestCase):
         self.assertEqual(encode_pet_state(state), previous)
         self.assertNotEqual(needs.needs.energy, state.energy)
         with self.assertRaises(FrozenInstanceError):
-            setattr(needs, "fun", 0)
+            setattr(needs.needs, "fun", 0)
+        self.assertEqual(set(needs.needs.__dataclass_fields__), {
+            "satiety", "energy", "fun", "social", "affection",
+        })
         self.assertIsNotNone(friendship)
         assert friendship is not None
         self.assertGreater(friendship.points, state.friendship)
@@ -104,8 +107,8 @@ class DomainTransitionTests(unittest.TestCase):
                     self.assertEqual(encode_pet_state(state), before)
                     state._decay(0.5, effort)
                     self.assertEqual(state.food, expected.food)
-                    self.assertEqual(state.fun, expected.fun)
-                    for key in ("satiety", "mood", "energy", "social", "affection"):
+                    self.assertEqual(state.mood, expected.mood)
+                    for key in ("satiety", "fun", "energy", "social", "affection"):
                         with self.subTest(need=key):
                             self.assertAlmostEqual(
                                 getattr(state, key), getattr(expected.needs, key),

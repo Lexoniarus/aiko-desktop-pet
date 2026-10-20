@@ -32,10 +32,8 @@ from .lifecycle import (
     calculate_daily_routine,
     plan_pet_time,
 )
-from .need_decay import (
-    NeedLevels,
-    calculate_need_decay,
-)
+from .need_decay import calculate_need_decay
+from .needs import NeedLevels
 from .routine import TimeContext, context_at, due_meal
 from .sleep import SleepContext, SleepEpisode, calculate_manual_sleep_transition
 from .state_values import PetValues, PreparedItemConsumption
@@ -219,7 +217,7 @@ class PetState:
     def _set_needs(self, values: NeedLevels) -> None:
         """Commit validated need values together inside the pet aggregate."""
         self._change(
-            satiety=values.satiety, mood=values.mood, energy=values.energy,
+            satiety=values.satiety, energy=values.energy, fun=values.fun,
             social=values.social, affection=values.affection,
         )
 
@@ -268,9 +266,9 @@ class PetState:
         relationship = progress.relationship
         needs = progress.needs
         self._change(
-            satiety=needs.satiety, mood=needs.mood, energy=needs.energy,
+            satiety=needs.satiety, mood=progress.mood, energy=needs.energy,
             social=needs.social, affection=needs.affection,
-            food=progress.food, fun=progress.fun,
+            food=progress.food, fun=needs.fun,
             friendship=relationship.points, relationship=relationship.history,
             lived_seconds=relationship.elapsed,
             sleep_episode=(replace(

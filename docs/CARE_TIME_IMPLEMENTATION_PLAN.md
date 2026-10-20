@@ -868,6 +868,28 @@ about files or behavior already delivered.
 
 #### 5A. Refactor vocabulary, models and responsibilities
 
+##### Structural implementation record, 2026-10-20
+
+The owner authorized the needs/progression/status slice of 5A with all existing
+corrections retained, small commits and targeted local checks. The complete
+starting correction/design baseline is `9540527`, pushed before 5A edits.
+An additional local patch/source backup was preserved outside the checkout.
+The earlier full-suite records describe their recorded revisions, not a new
+full-suite claim for this refactor.
+
+1. **Five-need value boundary:** `pet/needs.py` now owns immutable `NeedLevels`
+   with satiety, energy, fun, social and affection. Care and elapsed progression
+   share that value; mood and relationship remain separate results. Care no
+   longer rewrites a captured mood as though it were a need. Existing serialized
+   pet fields and numerical policies are unchanged. The targeted domain,
+   lifecycle-calculation, checkpoint, food and care batches passed 42 tests in
+   0.395 seconds combined; the slowest was 0.278 seconds. Targeted Ruff and strict
+   Mypy passed. No new test window or mouse input was used.
+
+The later typed need-condition/dialogue-context migration and final emotional
+interpretation still belong with the agreed 5B semantics. This structural slice
+does not invent Moodlet triggers, emotion labels or wish policies.
+
 Keep these concepts distinct in domain types, functions, dialogue conditions
 and UI contracts:
 

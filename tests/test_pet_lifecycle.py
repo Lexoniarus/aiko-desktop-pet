@@ -39,9 +39,10 @@ def local_stamp(hour: int = 12, minute: int = 0) -> float:
 class NeedDecayTests(unittest.TestCase):
     def test_normal_waking_decay_does_not_require_pet_state(self) -> None:
         needs = Needs()
-        result = calculate_need_decay(needs, 1).needs
+        progress = calculate_need_decay(needs, 1)
+        result = progress.needs
         self.assertAlmostEqual(result.satiety, 67.0)
-        self.assertAlmostEqual(result.mood, 55.52)
+        self.assertAlmostEqual(progress.mood, 55.52)
         self.assertAlmostEqual(result.energy, 72.0)
         self.assertAlmostEqual(result.social, 67.0)
         self.assertAlmostEqual(result.affection, 69.0)
@@ -58,12 +59,12 @@ class NeedDecayTests(unittest.TestCase):
     def test_heavy_work_increases_waking_drain(self) -> None:
         relaxed = Needs()
         working = Needs()
-        relaxed_next = calculate_need_decay(relaxed, 1, effort=0).needs
-        working_next = calculate_need_decay(working, 1, effort=1).needs
-        self.assertLess(working_next.satiety, relaxed_next.satiety)
-        self.assertLess(working_next.energy, relaxed_next.energy)
+        relaxed_next = calculate_need_decay(relaxed, 1, effort=0)
+        working_next = calculate_need_decay(working, 1, effort=1)
+        self.assertLess(working_next.needs.satiety, relaxed_next.needs.satiety)
+        self.assertLess(working_next.needs.energy, relaxed_next.needs.energy)
         self.assertLess(working_next.mood, relaxed_next.mood)
-        self.assertEqual(working_next.affection, relaxed_next.affection)
+        self.assertEqual(working_next.needs.affection, relaxed_next.needs.affection)
         self.assertEqual(working.energy, relaxed.energy)
 
 
