@@ -164,8 +164,17 @@ belongs to `ui/view_models/text_de.py`.
 emotional directions. `pet/moodlet_catalog.py` strictly loads all eighteen
 families from `data/moodlets.json`, with shared caps/recovery settings in the
 existing balance catalogue and descriptions in the existing German text owner.
-These are definitions only: active episodes, save integration, progression and
-emotional interpretation are not yet connected to the runtime.
+`pet/wishes.py` and `pet/wish_catalog.py` provide the eleven wish objective
+forms in `data/wishes.json`, referencing actual food/game targets and positive
+Moodlet definitions. Shared creation/disclosure settings and the nominal wish
+friendship bonus live in the existing balance catalogue. The pet package does
+not import application social preparation; social objective IDs are checked
+against supported categories in focused tests. Labels/descriptions stay in
+`texts.de.json`. Both catalogues detach nested values into frozen dataclasses,
+tuples and read-only mappings.
+
+These are definitions only: active episodes/wishes, save integration, progression,
+fulfillment and emotional interpretation are not yet connected to the runtime.
 
 ## Application layer
 

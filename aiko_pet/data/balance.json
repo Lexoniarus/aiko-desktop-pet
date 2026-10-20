@@ -432,5 +432,16 @@
     "zero_level_one_seconds": 3600,
     "zero_level_two_seconds": 7200,
     "zero_level_three_seconds": 10800
+  },
+  "wishes": {
+    "maximum_active": 3,
+    "maximum_per_area": 1,
+    "lifetime_seconds": 14400,
+    "creation_interval_seconds": 3600,
+    "same_area_interval_seconds": 5400,
+    "disclosure_interval_seconds": 1800,
+    "disclosure_friendship_level": 3,
+    "disclosure_mood_threshold": 50,
+    "friendship_bonus_points": 0.25
   }
 }

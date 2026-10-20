@@ -3,6 +3,17 @@
 from __future__ import annotations
 
 BALANCE_FIELDS: dict[str, dict[str, str]] = {
+    "wishes": {
+        "maximum_active": "integer",
+        "maximum_per_area": "integer",
+        "lifetime_seconds": "integer",
+        "creation_interval_seconds": "integer",
+        "same_area_interval_seconds": "integer",
+        "disclosure_interval_seconds": "integer",
+        "disclosure_friendship_level": "integer",
+        "disclosure_mood_threshold": "number",
+        "friendship_bonus_points": "number",
+    },
     "moodlets": {
         "positive_cap_points": "number",
         "negative_cap_points": "number",

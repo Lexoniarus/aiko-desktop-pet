@@ -8,9 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
-- Add typed, immutable definitions and a validated JSON catalogue for the 18
-  planned Moodlet families, shared balance parameters and German descriptions.
-  This supplies definitions only; no active Moodlets or gameplay/save changes.
+- Add typed, immutable definitions and validated JSON catalogues for the 18
+  planned Moodlet families and 11 wish forms, shared balance parameters and
+  German descriptions. Validate activity and positive fulfillment references.
+  This supplies definitions only; no active Moodlets/wishes or gameplay/save
+  changes.
 
 - Separate the five care needs from numeric mood and friendship. Give the
   existing pet progression and status-advice contracts explicit names while

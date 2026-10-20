@@ -1,0 +1,145 @@
+{
+  "version": 1,
+  "wishes": [
+    {
+      "id": "food",
+      "area": "food",
+      "target_kind": "food",
+      "targets": [
+        "onigiri",
+        "sandwich",
+        "taiyaki",
+        "apple",
+        "dango",
+        "donut",
+        "cookie",
+        "melonpan",
+        "cupcake",
+        "dorayaki"
+      ],
+      "fulfillment_moodlet": "food_fulfilled",
+      "fulfillment_level": 1,
+      "round_count": 0
+    },
+    {
+      "id": "play_game",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack"
+      ],
+      "fulfillment_moodlet": "shared_play",
+      "fulfillment_level": 1,
+      "round_count": 2
+    },
+    {
+      "id": "win_round",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack"
+      ],
+      "fulfillment_moodlet": "pride",
+      "fulfillment_level": 1,
+      "round_count": 1
+    },
+    {
+      "id": "avoid_round_loss",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack"
+      ],
+      "fulfillment_moodlet": "relief",
+      "fulfillment_level": 1,
+      "round_count": 1
+    },
+    {
+      "id": "win_overall",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack"
+      ],
+      "fulfillment_moodlet": "pride",
+      "fulfillment_level": 2,
+      "round_count": 3
+    },
+    {
+      "id": "avoid_overall_loss",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack"
+      ],
+      "fulfillment_moodlet": "relief",
+      "fulfillment_level": 2,
+      "round_count": 3
+    },
+    {
+      "id": "chat",
+      "area": "social",
+      "target_kind": "social",
+      "targets": [
+        "chat"
+      ],
+      "fulfillment_moodlet": "connection",
+      "fulfillment_level": 1,
+      "round_count": 0
+    },
+    {
+      "id": "single",
+      "area": "social",
+      "target_kind": "social",
+      "targets": [
+        "single"
+      ],
+      "fulfillment_moodlet": "cheerful",
+      "fulfillment_level": 1,
+      "round_count": 0
+    },
+    {
+      "id": "twopart",
+      "area": "social",
+      "target_kind": "social",
+      "targets": [
+        "twopart"
+      ],
+      "fulfillment_moodlet": "cheerful",
+      "fulfillment_level": 1,
+      "round_count": 0
+    },
+    {
+      "id": "fact",
+      "area": "social",
+      "target_kind": "social",
+      "targets": [
+        "fact"
+      ],
+      "fulfillment_moodlet": "enthusiastic",
+      "fulfillment_level": 1,
+      "round_count": 0
+    },
+    {
+      "id": "pet",
+      "area": "affection",
+      "target_kind": "care",
+      "targets": [
+        "pet"
+      ],
+      "fulfillment_moodlet": "secure",
+      "fulfillment_level": 1,
+      "round_count": 0
+    }
+  ]
+}

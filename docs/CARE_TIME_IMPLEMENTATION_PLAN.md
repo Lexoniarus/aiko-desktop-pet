@@ -11,9 +11,9 @@
 > remain pending; physical desktop acceptance is separately recorded.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
-> The first-version Moodlet/wish product rules are now settled below, including
-> wish friendship bonuses. The remaining 5B delivery slices are planned, not
-> implemented; this documentation update authorizes no code or test execution.
+> The first-version Moodlet/wish product rules are settled below. Stage 5B.1
+> now supplies typed definitions and JSON catalogues; active episodes, wishes,
+> persistence and behavior integration remain for 5B.2 onward.
 
 ## Stage-4 correction delivery, 2026-10-19
 
@@ -355,9 +355,10 @@ No merge or additional desktop acceptance is implied.
 The refreshed read-only review on 2026-10-20 confirms that 5A has delivered
 `needs.py`, `progression.py` and status-specific vocabulary. `PetMind.emotion()`
 still mixes need/lifecycle facts with emotional labels, and
-`DialogueContext.states` still merges those inputs. The proposed Moodlet/wish/
-emotion modules remain implementation targets, not duplicate files already
-introduced. `PetState`/frozen `PetValues`, `SessionTimeProgression`,
+`DialogueContext.states` still merges those inputs. The 5B.1 Moodlet/wish
+definitions and catalogue loaders are now delivered below; active collections,
+policies and final emotional interpretation remain pending.
+`PetState`/frozen `PetValues`, `SessionTimeProgression`,
 existing World custody and the current application coordinators remain the
 correct owners. The delivered menu/action/placement separation is the baseline
 to retain, including the independent `place_item` capability.
@@ -2335,7 +2336,8 @@ the wish's effective extra reward is zero, while its emotional outcome remains.
 
 ##### Documented inventory and decisions before implementation, 2026-10-20
 
-Counts below describe recorded design candidates, not implemented runtime types.
+Counts below originally inventoried the agreed design; 5B.1 now supplies its
+typed catalogue definitions. Active runtime collections remain unimplemented.
 Count wish objectives before substituting individual food IDs or game IDs;
 count lasting Moodlet types/families, not intensity levels, emotional labels,
 immediate reactions, requests or separate copies for each qualifying activity.
@@ -2395,8 +2397,9 @@ proportionate and local; no GUI tests, timing runs or CI were performed here.
 
 ##### 5B readiness and small implementation slices, 2026-10-20
 
-Read-only code comparison confirms that the planned 5B files and collections do
-not yet exist. `PetValues` already owns immutable care/relationship/sleep state;
+The pre-5B.1 read-only code comparison found no existing Moodlet/wish files or
+collections. The 5B.1 delivery record below supersedes that file-status snapshot.
+`PetValues` already owns immutable care/relationship/sleep state;
 extend it and the single `pet_codec.py` entry point, not a second pet save.
 `PetState` applies pure policy results, and `progression.py`/the existing session
 time plan remain responsible for numeric elapsed advancement. Do not introduce
@@ -2464,8 +2467,36 @@ Focused local verification: nine Moodlet catalogue cases, ten existing resource
 validation cases and six existing text catalogue cases passed (25 total).
 The slowest individual case took 0.034 seconds; none exceeded ten seconds.
 Scoped Ruff, strict Mypy and Pyright passed for the six affected source modules.
-The wish catalogue is the next separate 5B.1 unit. No GUI, mouse, CI or full-suite
-run was used.
+No GUI, mouse, CI or full-suite run was used. This unit was committed and pushed
+as `0b4bd62`.
+
+###### 5B.1 completion: wish catalogue and shared tuning
+
+The second implementation unit adds immutable definitions for all eleven wish
+forms and strict `data/wishes.json` loading. Validate food targets against the
+existing food catalogue, game targets against `GameId`, and social targets
+against their objective contracts; a focused test also checks the actual
+application `SocialCategory` values without introducing a pet-to-application
+import. Validate each positive fulfillment Moodlet's group and initial level,
+round scope, immutable targets and localized label/description keys.
+
+The `wishes` balance section owns creation/concurrency/disclosure settings and
+the common 0.25-point nominal bonus. Existing care parameters, rolling friendship
+ceilings, saves and runtime behavior remain unchanged. No active wish creation,
+selection, completion, UI rendering or reward transition is enabled here.
+
+Final selected local batch: 31 tests passed (nine Moodlet catalogue, six wish
+catalogue, ten existing resource validation and six existing text catalogue
+cases). The slowest individual test took 0.033 seconds in that batch; none
+exceeded ten seconds. Scoped Ruff, strict Mypy and Pyright passed. These checks
+read packaged JSON through production loaders and use malformed-data fixtures;
+no desktop instance, external API, save migration, GUI, mouse or CI was used.
+The full suite remains deferred to the completed refactor. Architecture and
+changelog now describe definitions as delivered, separately from active state.
+
+5B.1 is complete. Continue with 5B.2 only on the owner's next implementation
+instruction: owned immutable state, focused codecs and existing save/checkpoint
+integration. Do not add another aggregate, save or clock.
 
 #### 5C. Connect status, expression and interaction decisions
 

@@ -114,6 +114,17 @@ def parse_balance(raw: Any) -> BalanceCatalog:
             or withholding["friendship_loss"] > relationship["withholding_cap"]):
         raise ValueError("Invalid progressive friendship balance")
     objects = sections["object_behavior"]
+    wishes = sections["wishes"]
+    if (any(value <= 0 for value in wishes.values())
+            or not wishes["maximum_per_area"] == 1
+            <= wishes["maximum_active"] <= 4
+            or not 1 <= wishes["disclosure_friendship_level"] <= 10
+            or wishes["disclosure_mood_threshold"] > 100
+            or wishes["friendship_bonus_points"] > relationship["short_cap"]
+            or not wishes["creation_interval_seconds"]
+            <= wishes["same_area_interval_seconds"] <= wishes["lifetime_seconds"]
+            or wishes["disclosure_interval_seconds"] > wishes["lifetime_seconds"]):
+        raise ValueError("Invalid wish pacing, disclosure or shared-budget bonus")
     impressions = sections["moodlets"]
     critical = [impressions[f"critical_level_{name}_seconds"]
                 for name in ("one", "two", "three")]

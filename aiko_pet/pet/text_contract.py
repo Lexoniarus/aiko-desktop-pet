@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .moodlets import MoodletId
+from .wishes import WishId
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
     "social.intro.single": frozenset(),
@@ -179,4 +180,8 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
 TEXT_FIELDS.update({
     f"moodlet.{key}.{field}": frozenset()
     for key in MoodletId for field in ("label", "description")
+})
+TEXT_FIELDS.update({
+    f"wish.{key}.{field}": frozenset()
+    for key in WishId for field in ("label", "description")
 })
