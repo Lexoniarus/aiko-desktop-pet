@@ -1373,13 +1373,63 @@ including when the wish was unspoken. Do not award all variant Moodlets just
 because one winning round happens to satisfy their abstract conditions. Ordinary
 round reactions remain separate from the lasting fulfillment impression.
 
-Strength, duration, stacking and cross-family combination of these fulfillment
-Moodlets are the next discussion and are not fixed by this variant table.
+Strength, duration, stacking and cross-family combination are specified in the
+following recorded proposal, separately from the wish variants above.
 Keep ordinary fun/care gains independent of victory. An unfavorable fair game
 result is not user mistreatment and does not itself justify relationship loss.
 Any disappointment or repeated-loss Moodlet requires its own separately agreed
 rule rather than automatic punishment for an unfulfilled game wish. Existing
 shared friendship reward limits must not be bypassed by changing game or goal.
+
+##### Recorded proposal: game-wish fulfillment Moodlets, 2026-10-20
+
+Status: owner-requested design proposal, not implemented. Distinguish three
+emotional families: enjoyment of shared time, pride/achievement, and relief.
+The fulfilled wish determines its one appropriate family; do not grant all
+families or an additional generic fulfillment Moodlet for the same wish.
+
+| Fulfilled wish | Emotional family | Initial level / total mood-target contribution | Decay without another fulfillment |
+| --- | --- | --- | --- |
+| Play the named game together | Enjoyment of shared time | Level 1 / +5 points | Two real hours |
+| Win a round in the named game | Pride/achievement | Level 1 / +5 points | Two real hours |
+| Win overall in the named game | Pride/achievement | Level 2 / +10 points | Four real hours |
+| Do not lose the next round in the named game | Relief | Level 1 / +5 points | Two real hours |
+| Do not lose overall in the named game | Relief | Level 2 / +10 points | Four real hours |
+
+Each family has at most one active Moodlet with three intensity levels, whose
+total contributions are +5, +10 and +15 points respectively. Numeric mood
+follows its existing timed response to the composed target; fulfillment is not
+an immediate jump in the mood bar. The emotional qualities remain distinct
+inputs to the overall emotional state and attitude toward the user.
+
+After each two-real-hour interval without another qualifying fulfillment in
+that family, reduce its level by one; remove it after level one expires. Thus
+levels one, two and three last at most two, four and six hours respectively
+without another fulfillment. Age the same persisted state through normal
+running, standby and closed-app time using the shared elapsed-time foundation.
+
+Another genuinely fulfilled, separate wish in the same family raises its
+current level by one for a shared-play or single-round goal, or by two for an
+overall-result goal, capped at level three. Start a new two-hour interval at
+that fulfillment rather than appending an unbounded duration backlog. Apply
+elapsed decay before the new fulfillment; an already expired impression starts
+again at the goal's initial level. Changing games does not create a separate
+copy of pride, relief or shared enjoyment. Replaying a completion signal,
+ordinary later rounds and repeated clicks do not fulfill an already completed
+wish again. Wish creation/expression pacing remains a separate design rule.
+
+The three families can coexist. Cap their combined numeric mood-target bonus
+at +15 points, while retaining each family's own intensity and emotional
+quality for overall-state composition. This is a game-wish group cap, not a
+new global cap for every positive Moodlet. Existing food-wish rules remain
+separate. Positive fulfillment does not erase negative impressions, refund
+losses or bypass an unrelated interaction boundary; joy about a win can
+coexist with irritation toward the user.
+
+Moodlet creation, stacking, refresh and decay do not themselves grant or repeat
+a friendship reward. Any separately eligible wish/care reward retains the
+existing shared friendship accounting and ceilings. Ordinary immediate game
+reactions and need effects remain separate from the lasting impression.
 
 ##### Recorded proposal: prolonged/repeated poor care, 2026-10-19
 
