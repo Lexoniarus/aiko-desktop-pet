@@ -30,6 +30,7 @@ from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.sleep import SleepContext
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldSurface
 from aiko_pet.world.state import WorldState
 
@@ -84,6 +85,11 @@ class SleepResourceTests(unittest.TestCase):
         )
 
     def test_actual_known_food_reaches_target_and_counts_awake_break(self):
+        self.pet.restore_checkpoint(replace(
+            self.pet.capture_checkpoint(), wishes=WishState(2, (
+                ActiveWish(1, WishId.FOOD, "apple", 0, 14400),
+            ), ((WishArea.FOOD, 0),)),
+        ))
         for _ in range(4):
             self.food()
         before_contact = self.pet.friendship_history.last_contact
@@ -97,6 +103,9 @@ class SleepResourceTests(unittest.TestCase):
         self.assertTrue(self.pet.sleeping)
         self.assertEqual(self.pet.friendship_history.last_contact, before_contact)
         self.assertEqual(self.pet.friendship_history.rewards, ())
+        self.assertFalse(self.pet.wishes.active)
+        self.assertEqual(self.pet.moodlets.active[0].definition_id,
+                         MoodletId.FOOD_FULFILLED)
         self.assertAlmostEqual(
             self.pet.social,
             75 - 0.35 * (1 - len(consumed) / 60) - 8 * len(consumed) / 60,

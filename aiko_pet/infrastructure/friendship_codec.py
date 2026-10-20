@@ -36,9 +36,11 @@ def _number(raw: Any, maximum: float) -> float:
 def _events(
     raw: Any, elapsed: float, *, penalties: bool
 ) -> tuple[RelationshipEvent, ...]:
-    limit = 65 if penalties else 65 + math.ceil(
-        BALANCE.number("friendship", "history_window_seconds")
-        / BALANCE.number("wishes", "creation_interval_seconds"),
+    # Include wishes carried into the window, not only newly created wishes.
+    limit = 65 if penalties else (
+        65 + math.ceil(BALANCE.number("friendship", "history_window_seconds")
+                       / BALANCE.number("wishes", "creation_interval_seconds"))
+        + BALANCE.integer("wishes", "maximum_active")
     )
     if not isinstance(raw, list) or len(raw) > limit:
         raise ValueError("Unbounded relationship event history")

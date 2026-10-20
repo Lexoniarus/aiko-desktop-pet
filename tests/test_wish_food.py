@@ -3,6 +3,10 @@
 import unittest
 from dataclasses import replace
 
+from aiko_pet.infrastructure.friendship_codec import (
+    decode_friendship,
+    encode_friendship,
+)
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.consumption import ConsumptionOrigin
 from aiko_pet.pet.friendship_history import FriendshipHistory, RelationshipEvent
@@ -37,6 +41,40 @@ def food_pet(**values):
 
 
 class FoodWishTests(unittest.TestCase):
+    def test_common_ledger_capacity_includes_wish_credits_and_stays_bounded(self):
+        history = FriendshipHistory(0, rewards=tuple(
+            RelationshipEvent(i * 900, "wish" if i % 3 == 0 else "feed", .001)
+            for i in range(92)
+        ))
+        raw = encode_friendship(history)
+        self.assertEqual(decode_friendship(raw, 86400), history)
+        raw["rewards"].append(dict(at=83000, kind="wish", amount=.001))
+        with self.assertRaises(ValueError):
+            decode_friendship(raw, 86400)
+
+    def test_daily_allowance_and_friendship_ceiling_clip_without_later_topup(self):
+        for daily_limited in (True, False):
+            now = 100000
+            history = FriendshipHistory(
+                0, eligible=(("feed", now - 100),),
+                rewards=tuple(RelationshipEvent(now - (7 - i) * 12000, "wish", .7)
+                              for i in range(7)) if daily_limited else (),
+            )
+            pet = food_pet(relationship=history)
+            pet.restore_checkpoint(replace(
+                pet.capture_checkpoint(), lived_seconds=now,
+                friendship=50 if daily_limited else 99.9,
+                wishes=WishState(2, (ActiveWish(
+                    1, WishId.FOOD, "apple", now, now + 14400,
+                ),), ((WishArea.FOOD, now),)),
+            ))
+            pet.consume_item("apple", ConsumptionOrigin.HANDOVER, now=WALL)
+            self.assertAlmostEqual(pet.friendship_history.rewards[-1].amount, .1)
+            self.assertFalse(pet.wishes.active)
+            loaded = decode_pet_state(encode_pet_state(pet), now=WALL)
+            self.assertEqual(loaded.friendship_history, pet.friendship_history)
+            self.assertFalse(loaded.wishes.active)
+
     def test_unspoken_personal_intake_grants_ordinary_credit_before_wish_once(self):
         pet = food_pet()
         pet.restore_checkpoint(replace(pet.capture_checkpoint(), satiety=81))
