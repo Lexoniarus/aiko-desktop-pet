@@ -838,8 +838,118 @@ Source inspection identified these concrete refactoring points:
 | `pet/moodlets.py` (new) | Immutable Moodlet models and pure rules for qualifying creation, refresh/escalation, contribution and expiry. Specify each rule after the pending product discussion. |
 | `pet/emotions.py` (new) | Canonical emotional-state vocabulary and pure overall interpretation, for example `derive_emotional_state()`. Replace the mixed responsibility of `PetMind.emotion()`; do not maintain a second independent numeric mood or emotional store. |
 | `pet/wishes.py` (new) | Immutable inner-wish models and separate selection, expression-eligibility, fulfillment and expiry decisions. Produce the defined Moodlet outcome only from qualifying fulfillment within the wish period. Cover supported food IDs and the now implemented games/social categories; do not build additional activities merely to populate wishes. |
+| `pet/interaction_events.py` (new) | Small immutable semantic facts such as accepted food/petting, ignored boundaries, game-round completion and full social-sequence completion. Existing owners supply the facts through direct calls; no new event bus, detector or mutable manager. |
 | `pet/status_hints.py` (retain, clarify) | Rename `MoodHint`, `choose_mood_hint()` and associated callers/formatters to `StatusHint`, `choose_status_hint()` and equivalent status-specific names. Keep advice distinct from emotional state. |
 | `pet/mind/` (refactor existing consumers) | Keep perception, interpretation, conversation and immediate reaction/action selection. Consume the canonical conditions, emotional state, Moodlets and wishes without owning another active Moodlet/wish collection. Split broad hooks such as `after_care()` into explicit responsibilities where necessary. |
+
+##### Accepted module/data/UI integration direction, 2026-10-20
+
+The owner accepts the module responsibility proposal and requests that the new
+VN UI be included in the same planned refactor. This update records and saves
+the plan and prepared design/artwork; it does not implement Python, replace
+runtime assets or authorize tests/desktop control in this documentation turn.
+
+Use the existing package layout. Core needs, wishes, lasting impressions and
+overall emotional interpretation live in `pet/`; perception and reaction
+selection remain in `pet/mind/`. A `NeedLevels` value is not another mutable
+need store. Overall emotional state is derived, not independently persisted.
+
+Make the data flow explicit: an existing application coordinator receives a
+real interaction result; `PetState` evaluates wish progress and Moodlet rules
+and commits the resulting owned values atomically; shared numeric mood and
+emotional interpretation feed immutable read projections for UI and dialogue.
+Wish evaluation can return a `WishFulfillment` value for Moodlet rules to
+interpret. A wish's mere existence or expression creates no emotional bonus.
+Food/care effects and related fulfillment must stay within their existing
+checkpoint/transaction scope rather than gaining a second partial commit.
+
+Extend `CareController`, `ContactCoordinator`, `GameExperienceCoordinator` and
+the existing object interaction coordination at their respective evidence
+boundaries. Reuse the reaction player's completion callback for social content
+and add semantic round-start/completion reporting at the existing game owners.
+Do not infer facts from German text, emotes or animation names. The specific
+object goal in `ObjectIntentions.goal` remains distinct from general wishes.
+
+| Additional file / existing owner | Planned responsibility |
+| --- | --- |
+| `pet/moodlet_catalog.py` (new) | Read-only typed definitions and validation for the Moodlet data catalogue; no mutable impressions or transition execution |
+| `pet/wish_catalog.py` (new) | Read-only typed definitions and validation for wish objective forms and their references; no active wish collection |
+| `infrastructure/moodlet_codec.py` (new) | Encode/decode active Moodlets and required bounded emotional progress through the existing pet save |
+| `infrastructure/wish_codec.py` (new) | Encode/decode active wishes, disclosure evidence and bounded objective progress through that same save |
+| `infrastructure/pet_codec.py` (extend) | Keep the single pet-save entry point and invoke the focused codecs, following existing friendship/sleep codec patterns |
+| `application/read_snapshot.py`, `ui/view_models/contracts.py` and projections (extend) | Carry separate numeric mood, emotional state, need conditions, Moodlets and wishes to consumers |
+| `ui/windows/moodlet_strip.py` (new) | Embedded passive Moodlet symbols/tags and details, rendered from projections |
+| `ui/windows/wish_panel.py` (new) | Embedded display of up to three inner wishes, their concrete targets, progress and remaining time |
+| `ui/common/icon_images.py` (new) | One root-local cache/lifecycle for prepared UI symbol images; no domain decisions |
+| `ui/common/skin.py` (extend) | Shared VN colors, font/control appearance and use of the shared image owner |
+| `ui/windows/action_toolbar.py`, `toolbar_details.py`, `hover_ui.py` (refactor) | Compose the approved main-menu layout and retain existing window, visibility, pin and detail ownership |
+
+Keep Python names aligned with the separated layers: `NeedMoodFactors` for
+need-only mood inputs; `calculate_need_mood_target()` and composed
+`calculate_mood_target()` for numeric mood; `EmotionalState` and
+`derive_emotional_state()` for overall feeling. Replace the ambiguous dialogue
+`mood` string/merged `states` with distinct fields such as `mood_value`,
+`emotional_state` and `need_conditions`. Keep `StatusHint` separate from all
+of these. Existing immediate `Reaction`/player behavior remains distinct from
+lasting Moodlets; review existing short timers individually when splitting
+`PetMind.after_care()`, rather than creating a second interpretation of mood.
+
+###### JSON ownership
+
+The current numeric `BalanceCatalog` accepts named numeric sections, while
+existing catalogue loaders already establish typed, validated JSON ownership.
+Use that pattern for structured definitions instead of putting executable
+conditions into JSON or duplicating the same tuning number in Python defaults.
+The following files are implementation targets, not new live resources in this
+documentation update:
+
+| Resource | Data it owns |
+| --- | --- |
+| Existing `data/balance.json` | Shared caps, general creation/disclosure spacing, common recovery thresholds and global tuning parameters |
+| New `data/moodlets.json` | Stable Moodlet definitions: polarity, emotional direction, level contributions, per-type duration and named per-type trigger/recovery parameters |
+| New `data/wishes.json` | Stable objective definitions, area/target kind, scope parameters such as round count, and the associated fulfillment impression/initial level |
+| Existing `data/texts.de.json` and `data/dialogues.de.json` | Localized labels/descriptions and authored utterances respectively |
+| Future packaged `assets/ui/catalog.json` | Runtime UI icon IDs and exported image paths, derived deliberately from the prepared artwork mapping |
+
+Give each parameter one canonical resource owner: shared values belong in
+balance, per-type values in the relevant catalogue, and translations in the
+existing text resources. Validate required fields, stable IDs, references,
+ranges and units; use explicit `_seconds`, `_points` and `_level` names.
+The numeric balance parser currently rejects negative values, so signed
+Moodlet effects belong in their typed catalogue representation, not an
+unreviewed negative field in the existing numeric loader. Python retains
+qualifying-evidence rules, ordering, transitions, atomic application and the
+algorithms for stacking/expiry/selection. JSON is not a scripting language.
+
+Keep prepared provenance, source prompts and `catalog_mapping.json` outside
+the runtime as design/export inputs. Promote only the required stable mapping
+and correctly sized exports into the packaged UI resource owner. No parallel
+hard-coded icon catalogue or food/game ID list should become another authority.
+
+###### Integrated VN UI scope
+
+Use [the approved VN direction](UI_VN_DESIGN.md) and its three preserved
+reference boards as the visual target for stage 5C, alongside the domain/read
+model work. The [prepared source pack](../assets/ui-vn/v1/README.md) now includes
+46 PNG sources with [coverage for all 18 Moodlet families and 11 wish forms](../assets/ui-vn/v1/MOODLETS_AND_WISHES.md).
+This is source coverage, not runtime integration or native visual acceptance.
+
+The same main hover/status window presents the overall mood/emotion summary,
+Moodlet strip, dedicated wish panel, six left-side need/relationship readouts,
+right-side actions/embedded selectors and expandable details. The wish panel
+extends the concept, which previously illustrated Moodlets but no dedicated
+wish area. Keep wishes distinct from fulfilled impressions and preserve their
+visibility when navigating selectors. Views only display supplied state and
+invoke existing action ports; no timers, wish selection, expiry or rewards in
+widgets. Refactor existing selector owners into embedded views rather than
+keeping an additional native selector implementation alongside them.
+
+Retain existing Blackjack card artwork. Gameplay-window restyling and replacing
+gameplay symbols are separate from the main-menu integration and are not
+prerequisites for Moodlet/wish state. Normalize/export the prepared UI source
+icons deliberately for native Tk sizes, preserving source masters and image
+cleanup ownership. Required validation at implementation time remains local
+and isolated; do not introduce a CI run or uncontrolled desktop test session.
 
 `PetState` remains the single mutable persisted pet aggregate. Active Moodlets,
 wishes and required bounded histories belong in its frozen `PetValues`, with
@@ -2009,6 +2119,10 @@ proportionate and local; no GUI tests, timing runs or CI were performed here.
 
 #### 5C. Connect status, expression and interaction decisions
 
+- Implement the main-menu scope of [the VN UI plan](UI_VN_DESIGN.md) together
+  with the following read-model integration, using the recorded source pack
+  and the module/data ownership above. This is part of stage 5C rather than a
+  separate provisional menu with another state owner.
 - Extend `PetReadSnapshot`, presentation projections and toolbar contracts with
   distinct needs, numeric mood, emotional state, active Moodlets and wishes.
   Show Moodlets and wishes in the existing status UI alongside the care values;
