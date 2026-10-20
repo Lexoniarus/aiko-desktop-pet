@@ -158,4 +158,63 @@ Ruff, strict Mypy and Pyright. These checks cover this asset change; the broader
 interactive desktop acceptance listed above remains separate.
 
 The truncated `review/01` and `eat/07` source PNGs described above have intact
-original-sheet recovery sources; they are not additional regeneration tasks.
+original-sheet recovery sources. Recovery resolves their file-corruption
+issue; the separate visual-cohesion backlog for eating is recorded below.
+
+### Eating source restored after comparison
+
+On **2026-10-20**, the owner requested restoration of the previous eight HD
+eating PNGs after reviewing Idle, pickup, holding and eating together. The
+alternative Library strip was a different drawing version: its smaller head
+and longer body changed the proportions at the clip boundaries. Global width
+and height adjustments were rejected and remain external previews only.
+
+The previous archive-derived eating PNGs and manifest records are restored
+exactly. The exporter again uses the two archives above; it does not require
+the alternative Library image. Its temporary HD-only food-anchor overrides
+are removed with that source change. Original food anchors, animation events,
+timing and pickup's held final pose retain their existing behavior.
+
+This restoration adds no scale or position corrections. The larger head and
+shorter body of the eating drawing remain visible relative to idle and pickup,
+as they do in the original 1x artwork. The full chain must therefore be judged
+as a sequence; matching feet or outer bounds alone does not establish visual
+continuity. All 1x assets and the other HD clips remain unchanged.
+
+Native Windows Tk playback verifies all eight pickup and eight eating phases,
+the held final pickup image, direct handover using that same image, attachment
+and bite events, and the final idle pose with the food hidden. The measured
+shoe baseline is 388 throughout. Existing lateral shoe-center variation and
+the head-width changes (idle 178, final pickup 180, eating endpoints 200 and
+208 HD pixels) are retained rather than corrected in this restoration. All
+120 outputs reproduce from the original archives into an empty export folder.
+
+### Open artwork task: regenerate a cohesive eating sequence
+
+**Status: regeneration required; current artwork accepted for continued use.**
+On **2026-10-20**, the owner accepted the restored eating sequence with its
+visible drawing differences and requested that the remaining artwork work be
+recorded. The affected set is `eat/00` through `eat/07`; review and regenerate
+the inconsistent poses together as one animation sequence.
+
+The compact impression is primarily inherited from the generated artwork:
+larger head, shorter torso and very short legs relative to idle and pickup.
+The archived generation prompt explicitly requests these proportions. Direct
+source checks reproduce all eight shipped HD frames and match all eight native
+1x poses after their established alpha conversion. The HD exporter changes
+width relative to height by only -0.13% to -1.84%; it does not vertically
+compress the character. Global width/height stretching did not resolve the
+drawing differences and is not an accepted correction.
+
+For the future generation pass, use the canonical idle pose and pickup's
+final held pose as shared character/proportion references. Check the complete
+`idle -> pick_up -> hold -> eat -> idle` chain, including direct handover,
+instead of accepting isolated frames on matching height or shoe baseline.
+Keep head/body/leg proportions, costume, foot placement and food-grip contact
+consistent through the eight eating poses and their entry/exit transitions.
+Retain the existing event/timing and overlay contracts when integrating the
+replacement art.
+
+This is an open visual-quality task, not a runtime or file-corruption defect.
+The restored assets remain in use without further size adjustments. No image
+generation or 1x/2x asset changes are part of this documentation decision.

@@ -72,6 +72,10 @@ Original imported artwork is not cropped or overwritten. Preparation uses
 `python -m tools.prepare_character_assets`; Pillow is required only for that
 build step, not for running the desktop app.
 
+Known artwork work: the restored eating sequence remains in use, with
+regeneration required for its inconsistent proportions relative to idle and
+pickup. See the [eating regeneration backlog](docs/HD_CHARACTER_SPRITES.md#open-artwork-task-regenerate-a-cohesive-eating-sequence).
+
 The prepared eating anchors move six source pixels downward relative to the
 imported overlay hints, allowing native-size Onigiri to overlap the fingers
 instead of ending above them. Preparation records this calibration in runtime
