@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Persist immutable Moodlet episodes in the existing PetValues checkpoint and
+  version-one save, including per-level relief usage and recovery progress.
+  Preserve corrupt optional sections in the existing backup path; legacy saves
+  start empty without invented experiences. Active triggering/ageing follows later.
+
 - Add typed, immutable definitions and validated JSON catalogues for the 18
   planned Moodlet families and 11 wish forms, shared balance parameters and
   German descriptions. Validate activity and positive fulfillment references.

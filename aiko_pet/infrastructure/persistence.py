@@ -21,6 +21,7 @@ from ..pet.state import PetState
 from ..world.contracts import ObjectInteraction, WorldSnapshot
 from .friendship_codec import valid_friendship
 from .item_assets import load_item_catalog
+from .moodlet_codec import valid_moodlets
 from .object_memory_codec import decode_object_memory, encode_object_memory
 from .pet_codec import decode_pet_state, encode_pet_state, valid_pet_time
 from .sleep_codec import valid_sleep
@@ -182,6 +183,14 @@ class StateStore:
             ))
         )
         invalid_quiet = False
+        invalid_moodlets = (
+            isinstance(pet_data, dict) and "moodlets" in pet_data
+            and (invalid_time or not valid_moodlets(
+                pet_data["moodlets"],
+                pet_data.get("time", {}).get("lived_seconds", 0)
+                if isinstance(pet_data.get("time"), dict) else 0,
+            ))
+        )
         adaptive = payload.get("adaptive") if isinstance(payload, dict) else None
         if isinstance(adaptive, dict) and "quiet_window" in adaptive:
             try:
@@ -196,7 +205,7 @@ class StateStore:
             and not self._invalid_memory
             and not invalid_time
             and not invalid_relationship
-            and not invalid_sleep and not invalid_quiet
+            and not invalid_sleep and not invalid_quiet and not invalid_moodlets
         ):
             return
         backup = self.path.with_name(

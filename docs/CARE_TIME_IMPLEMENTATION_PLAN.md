@@ -2498,6 +2498,31 @@ changelog now describe definitions as delivered, separately from active state.
 instruction: owned immutable state, focused codecs and existing save/checkpoint
 integration. Do not add another aggregate, save or clock.
 
+###### 5B.2 first unit: owned Moodlet state and storage
+
+`MoodletEpisode` and `MoodletState` are frozen values in `PetValues`, exposed
+read-only by `PetState`. Each episode retains its stable instance/family IDs,
+level, cause time, remaining current-stage seconds, used relief levels, bounded
+pending repetition count and pause/recovery qualification. Remaining time is
+anchored to the owning pet's existing `lived_seconds`; no new clock is added.
+The per-section ID counter survives ended episodes. At most one episode per
+supported family is stored, not an artificial three-Moodlet display cap.
+
+Technical migration contract: absent/invalid sections create empty emotional
+state at the current saved elapsed baseline, never from older care history.
+The focused `moodlet_codec.py` validates the optional version-one section;
+`pet_codec.py` remains the single pet entry point and the outer save stays v1.
+Existing StateStore backup and atomic replacement handle invalid new sections,
+including replacement without first loading. Loading performs no ageing,
+triggering, relief or relationship change. Evidence-specific trigger/exposure
+bookkeeping remains with the later 5B.4/5B.5 policies, using the existing owners.
+
+32 focused local tests passed: seven new emotional persistence cases, six
+checkpoint, three repository, eight consumption/rollback and eight elapsed-time
+persistence cases. The slowest case took 0.680 seconds; none exceeded ten seconds.
+Scoped Ruff, strict Mypy and Pyright passed for the six affected source modules.
+No GUI, mouse, external API or CI was used. Wish state/codecs follow separately.
+
 #### 5C. Connect status, expression and interaction decisions
 
 - Implement the main-menu scope of [the VN UI plan](UI_VN_DESIGN.md) together

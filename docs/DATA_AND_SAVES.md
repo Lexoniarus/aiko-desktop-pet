@@ -100,6 +100,21 @@ factual. Existing object memory v3 / outer save v1 round-trip without migration;
 the search's current findings remain task-local, with known stock excluded when
 a task is rebuilt from saved missing subjects.
 
+## Optional Moodlet state
+
+The existing outer version-one save now includes optional `pet.moodlets` with
+its own version-one codec. Frozen episode values belong to `PetValues`, and the
+complete existing checkpoint/restore path includes them. Store stable instance
+IDs, family IDs, intensity, elapsed timestamps, remaining stage time and consumed
+per-level relief allowances together. The latter survive refresh/escalation and
+recovery pauses; loading does not grant new allowances or advance the timers.
+
+Missing legacy sections start empty at the saved elapsed baseline. Invalid or
+future sections are not partially interpreted: other valid pet values survive,
+and StateStore preserves the original file before replacing it through its
+existing atomic-save path. No separate save, clock or emotional score is added.
+Actual episode creation, ageing and emotional effects follow in later stages.
+
 ## Where progress is stored
 
 On Windows, paste this into Explorer's address bar:

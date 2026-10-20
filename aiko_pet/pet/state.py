@@ -32,6 +32,7 @@ from .lifecycle import (
     calculate_daily_routine,
     plan_pet_time,
 )
+from .moodlets import MoodletState
 from .needs import NeedLevels
 from .progression import calculate_pet_progression
 from .routine import TimeContext, context_at, due_meal
@@ -71,6 +72,7 @@ class PetState:
         lived_seconds: float = 0.0,
         relationship: FriendshipHistory | None = None,
         sleep_episode: SleepEpisode | None = None,
+        moodlets: MoodletState | None = None,
     ) -> None:
         self._values = PetValues(
             satiety=satiety, mood=mood, energy=energy, social=social,
@@ -87,6 +89,8 @@ class PetState:
             food=FoodState() if food is None else food, fun=fun,
             lived_seconds=lived_seconds,
             sleep_episode=sleep_episode or SleepEpisode(),
+            moodlets=(MoodletState(baseline=lived_seconds)
+                      if moodlets is None else moodlets),
             relationship=(FriendshipHistory(baseline=lived_seconds)
                           if relationship is None else relationship),
         )
@@ -204,6 +208,11 @@ class PetState:
     @property
     def friendship_history(self) -> FriendshipHistory:
         return self._values.relationship
+
+    @property
+    def moodlets(self) -> MoodletState:
+        """Immutable episode values, owned by the complete pet checkpoint."""
+        return self._values.moodlets
 
     @property
     def friendship_level(self) -> int:

@@ -1,4 +1,4 @@
-"""Immutable Moodlet definitions; active episodes and transitions follow later.
+"""Immutable Moodlet definitions and aggregate-owned episode values.
 
 Emotional directions describe individual impressions, not the derived overall
 emotional state. None of these values owns a timer or mutable pet collection.
@@ -142,3 +142,36 @@ class MoodletDefinition:
     @property
     def description_key(self) -> str:
         return f"moodlet.{self.id}.description"
+
+
+@dataclass(frozen=True, slots=True)
+class MoodletEpisode:
+    """Remaining stage time is anchored at the owning pet's lived_seconds.
+
+    Relief usage belongs to this entire episode, including refresh, escalation
+    and paused recovery. These values do not themselves advance any clock.
+    """
+
+    instance_id: int
+    definition_id: MoodletId
+    level: int
+    started_at: float
+    last_trigger_at: float
+    remaining_seconds: float
+    relieved_levels: tuple[int, ...] = ()
+    pending_repetitions: int = 0
+    decay_paused: bool = False
+    recovery_since: float | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class MoodletState:
+    """One entry per family, with no separate live store or emotional score.
+
+    The baseline prevents old care history from becoming invented emotional
+    evidence on migration. Instanced IDs are never reused after an episode ends.
+    """
+
+    baseline: float = 0.0
+    next_instance_id: int = 1
+    active: tuple[MoodletEpisode, ...] = ()

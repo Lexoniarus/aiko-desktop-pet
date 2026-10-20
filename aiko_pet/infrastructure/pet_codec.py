@@ -20,6 +20,7 @@ from ..pet.routine import MEAL_NAMES
 from ..pet.state import PetState
 from ..pet.value_rules import bounded_number, clamp_need_value, clamp_saved_time
 from .friendship_codec import decode_friendship, encode_friendship, valid_friendship
+from .moodlet_codec import decode_moodlets, encode_moodlets
 from .sleep_codec import decode_sleep, encode_sleep, valid_sleep
 
 
@@ -58,6 +59,12 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
     relationship = FriendshipHistory()
     if "relationship" in value and valid_friendship(value["relationship"], elapsed):
         relationship = decode_friendship(value["relationship"], elapsed)
+    moodlets = None
+    if "moodlets" in value:
+        try:
+            moodlets = decode_moodlets(value["moodlets"], elapsed)
+        except (ValueError, TypeError, OverflowError):
+            pass  # Preserve valid care; StateStore backs up the original on save.
     return PetState(
         satiety=clamp_need_value(
             value.get("satiety"), BALANCE.number("initial", "satiety")
@@ -99,6 +106,7 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
         and len(value.get("auto_nap_day", "")) == 10
         else "",
         lived_seconds=elapsed, relationship=relationship,
+        moodlets=moodlets,
         sleep_episode=decode_sleep(value["sleep_episode"], elapsed)
         if "sleep_episode" in value and valid_sleep(value["sleep_episode"], elapsed)
         else None,
@@ -122,6 +130,7 @@ def encode_pet_state(state: PetState) -> dict[str, Any]:
         "time": {"version": 1, "lived_seconds": state.lived_seconds},
         "relationship": encode_friendship(state.friendship_history),
         "sleep_episode": encode_sleep(state.sleep_episode),
+        "moodlets": encode_moodlets(state.moodlets),
         "meals_date": state.meals_date,
         "meals_today": list(state.meals_today),
         "sleep_origin": state.sleep_origin,

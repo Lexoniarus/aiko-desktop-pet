@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from .care_result import CareResult
 from .food import FoodState
 from .friendship_history import FriendshipHistory
+from .moodlets import MoodletState
 from .sleep import SleepEpisode
 
 
@@ -41,6 +42,7 @@ class PetValues:
     lived_seconds: float = 0.0
     relationship: FriendshipHistory = FriendshipHistory()
     sleep_episode: SleepEpisode = SleepEpisode()
+    moodlets: MoodletState = MoodletState()
 
 
 @dataclass(frozen=True, slots=True)
