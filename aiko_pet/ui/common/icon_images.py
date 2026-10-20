@@ -34,13 +34,35 @@ class IconImages:
     def surface(self, key: str) -> tk.PhotoImage:
         return self._load(self._catalog["surfaces"][key])
 
-    def file(self, path: Path) -> tk.PhotoImage:
+    def button_art(
+        self, state: str, size: str, icon: tk.PhotoImage | None
+    ) -> tk.PhotoImage:
+        base = self.surface(f"button_{state}.{size}")
+        if icon is None:
+            return base
+        key = f"button:{state}:{size}:{icon}"
+        if key not in self._images:
+            combined = base.copy()
+            combined.tk.call(
+                str(combined),
+                "copy",
+                str(icon),
+                "-to",
+                8,
+                max(0, (base.height() - icon.height()) // 2),
+            )
+            self._images[key] = combined
+        return self._images[key]
+
+    def file(self, path: Path, size: int = 32) -> tk.PhotoImage:
         """Existing item/card image, shared by all menu/wish consumers."""
         if self._released:
             raise RuntimeError("UI images have been released")
-        key = str(path.resolve())
+        key = f"{path.resolve()}:{size}"
         if key not in self._images:
-            self._images[key] = tk.PhotoImage(master=self._root, file=str(path))
+            image = tk.PhotoImage(master=self._root, file=str(path))
+            factor = max(1, (max(image.width(), image.height()) + size - 1) // size)
+            self._images[key] = image.subsample(factor) if factor > 1 else image
         return self._images[key]
 
     def _destroyed(self, event: tk.Event) -> None:

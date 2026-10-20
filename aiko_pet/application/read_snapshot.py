@@ -6,6 +6,8 @@ from dataclasses import dataclass
 
 from ..pet.balance import BALANCE
 from ..pet.emotions import EmotionalComposition, derive_emotional_state
+from ..pet.mind.dialogue_context import FriendshipStage
+from ..pet.mood import NeedMoodFactors, calculate_mood_target
 from ..pet.moodlet_catalog import MOODLET_CATALOG
 from ..pet.moodlets import (
     EmotionalDirection,
@@ -13,6 +15,7 @@ from ..pet.moodlets import (
     MoodletDecay,
     MoodletId,
     MoodletPolarity,
+    calculate_moodlet_contributions,
 )
 from ..pet.needs import NeedCondition, NeedLevels, assess_need_conditions
 from ..pet.state import PetState
@@ -149,6 +152,10 @@ class PetReadSnapshot:
     need_conditions: frozenset[NeedCondition]
     moodlets: tuple[MoodletRead, ...]
     wishes: tuple[WishRead, ...]
+    mood_target: float
+    friendship_stage: FriendshipStage
+    sleep_reason: str
+    contact_absence_seconds: float | None
     last_food_id: str | None = None
     food_digest_minutes: float = 0.0
     fun: float = BALANCE.number("initial", "fun")
@@ -191,6 +198,29 @@ def snapshot_pet(
         need_conditions=assess_need_conditions(state.needs),
         moodlets=_moodlet_reads(state),
         wishes=_wish_reads(state, wish_context),
+        mood_target=calculate_mood_target(
+            NeedMoodFactors(
+                state.satiety, state.energy, state.fun, state.social, state.affection
+            ),
+            calculate_moodlet_contributions(
+                state.moodlets, definitions=MOODLET_CATALOG.definitions
+            ),
+        ),
+        friendship_stage=FriendshipStage.from_level(state.friendship_level),
+        sleep_reason=(
+            "care_break"
+            if state.sleep_episode.care_break
+            else "manual"
+            if state.sleeping and state.sleep_origin == "manual"
+            else state.sleep_episode.kind or "unknown"
+            if state.sleeping
+            else "awake"
+        ),
+        contact_absence_seconds=(
+            max(0, state.lived_seconds - state.friendship_history.last_contact)
+            if state.friendship_history.last_contact is not None
+            else None
+        ),
         last_food_id=state.food.last_food_id,
         food_digest_minutes=state.food.remaining_digest_minutes,
         fun=state.fun,

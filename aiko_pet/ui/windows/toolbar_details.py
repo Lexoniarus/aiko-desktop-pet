@@ -5,6 +5,8 @@ from __future__ import annotations
 import tkinter as tk
 from typing import Callable
 
+from ...pet.content import GERMAN_TEXT
+from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..view_models.contracts import StatusSnapshot
 
@@ -19,28 +21,62 @@ class ToolbarDetails:
         snapshot: Callable[[], StatusSnapshot],
     ) -> None:
         self._snapshot = snapshot
-        self.frame = tk.Frame(parent, bg=skin.panel)
+        self._scroll = ScrollRegion(parent, skin, width=620, height=228)
+        self.frame = self._scroll.frame
         self._labels: dict[str, tk.Label] = {}
-        for name in (
-            "emotional_state_label",
-            "hint",
-            "objects_line",
-            "next_event",
-            "activity_line",
+        for group, icon, names in (
+            (
+                "wellbeing",
+                "detail_wellbeing",
+                (
+                    "emotional_state_label",
+                    "hint",
+                    "wellbeing_line",
+                    "relationship_line",
+                    "sleep_context_line",
+                    "contact_line",
+                ),
+            ),
+            ("rhythm", "detail_rhythm", ("activity_line",)),
+            ("next", "detail_next", ("next_event",)),
+            ("objects", "detail_objects", ("objects_line",)),
         ):
-            label = tk.Label(
-                self.frame,
-                text="",
+            section = tk.Frame(
+                self._scroll.body,
+                bg=skin.panel,
+                padx=8,
+                pady=8,
+                highlightthickness=1,
+                highlightbackground=skin.border,
+            )
+            section.pack(fill="x", pady=3)
+            tk.Label(section, image=skin.images.icon(icon), bg=skin.panel).pack(
+                side="left", anchor="n", padx=(0, 8)
+            )
+            body = tk.Frame(section, bg=skin.panel)
+            body.pack(fill="both", expand=True)
+            tk.Label(
+                body,
+                text=GERMAN_TEXT.format(f"vn.details.{group}"),
                 bg=skin.panel,
                 fg=skin.text,
-                font=(skin.font, 9),
+                font=(skin.font, 10, "bold"),
                 anchor="w",
-                justify="left",
-                wraplength=420,
-            )
-            label.pack(fill="x", padx=10, pady=3)
-            self._labels[name] = label
+            ).pack(fill="x")
+            for name in names:
+                label = tk.Label(
+                    body,
+                    bg=skin.panel,
+                    fg=skin.text,
+                    font=(skin.font, 9),
+                    anchor="w",
+                    justify="left",
+                    wraplength=550,
+                )
+                label.pack(fill="x", pady=2)
+                self._labels[name] = label
         self.frame.bind("<Configure>", self._resize)
+        self._scroll.adopt()
 
     def _resize(self, event: tk.Event) -> None:
         for label in self._labels.values():

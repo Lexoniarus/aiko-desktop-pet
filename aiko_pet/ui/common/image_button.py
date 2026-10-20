@@ -18,9 +18,10 @@ class ImageButton(tk.Button):
         images: IconImages,
         size: str,
         font: str,
+        icon: tk.PhotoImage | None = None,
     ) -> None:
         self._art = {
-            state: images.surface(f"button_{state}.{size}")
+            state: images.button_art(state, size, icon)
             for state in ("normal", "hover", "pressed", "disabled", "active")
         }
         self._hover = False
@@ -45,7 +46,7 @@ class ImageButton(tk.Button):
             highlightbackground="#FCF7F9",
             highlightcolor="#657F9D",
             takefocus=True,
-            wraplength=220,
+            wraplength=max(40, self._art["normal"].width() - 80),
         )
         self.bind("<Enter>", lambda _e: self._feedback(hover=True), add="+")
         self.bind(

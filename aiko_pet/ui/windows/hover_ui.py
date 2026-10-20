@@ -388,6 +388,7 @@ class HoverUi:
                 self.root,
                 snapshot=self._ports.hover_snapshot,
                 status_snapshot=self._ports.status_snapshot,
+                food_choices=self._ports.food_choices,
                 anchor=self._ports.anchor,
                 actions=HoverActions(
                     interact=self._interact,

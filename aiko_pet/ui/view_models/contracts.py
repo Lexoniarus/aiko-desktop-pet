@@ -50,6 +50,7 @@ class HoverSnapshot:
     workload_line: str
     emotional: EmotionalSnapshot
     food_line: str = ""
+    wellbeing_line: str = ""
 
     def status_value(self, key: str) -> float:
         for name, value in self.status_values:
@@ -80,6 +81,10 @@ class StatusSnapshot:
     friendship_level: int
     emotional: EmotionalSnapshot
     objects_line: str = ""
+    wellbeing_line: str = ""
+    relationship_line: str = ""
+    sleep_context_line: str = ""
+    contact_line: str = ""
 
     @property
     def emotional_state_label(self) -> str:

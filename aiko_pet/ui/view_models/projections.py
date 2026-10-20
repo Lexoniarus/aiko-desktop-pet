@@ -19,6 +19,7 @@ from .contracts import (
     StatusSnapshot,
     WishView,
 )
+from .emotional_text import duration_text
 from .text_de import (
     describe_workload,
     format_day_label,
@@ -115,6 +116,9 @@ def project_hover(
         status_values=_status_values(pet),
         friendship_level=pet.friendship_level,
         emotional=_emotional_snapshot(pet),
+        wellbeing_line=GERMAN_TEXT.format(
+            "vn.wellbeing", target=f"{pet.mood_target:.0f}"
+        ),
         hardware_line=hardware,
         workload_line=workload,
         food_line=(
@@ -183,6 +187,22 @@ def project_status(
         status_values=_status_values(pet),
         friendship_level=pet.friendship_level,
         emotional=_emotional_snapshot(pet),
+        wellbeing_line=GERMAN_TEXT.format(
+            "vn.wellbeing", target=f"{pet.mood_target:.0f}"
+        ),
+        relationship_line=GERMAN_TEXT.format(
+            "vn.relationship",
+            stage=GERMAN_TEXT.format(f"vn.stage.{pet.friendship_stage}"),
+            level=str(pet.friendship_level),
+        ),
+        sleep_context_line=GERMAN_TEXT.format(f"vn.sleep.{pet.sleep_reason}"),
+        contact_line=(
+            GERMAN_TEXT.format(
+                "vn.contact_known", time=duration_text(pet.contact_absence_seconds)
+            )
+            if pet.contact_absence_seconds is not None
+            else GERMAN_TEXT.format("vn.contact_unknown")
+        ),
         objects_line=GERMAN_TEXT.format(
             "ui.object_status",
             desktop=str(objects.desktop),
