@@ -2144,6 +2144,82 @@ proportionate and local; no GUI tests, timing runs or CI were performed here.
   only when approved semantics require it. Update the review workbook only for
   actual text edits.
 
+##### Menu, character action and item-placement decoupling, 2026-10-20
+
+Status: code review completed; corrections planned, not implemented. The owner
+reports that object discovery appears to stall while the pointer is over the
+menu and that Snacks is disabled during character actions. No runtime freeze
+was reproduced, no tests were executed and no desktop input was generated for
+this review. Include these corrections in stage 5C and its integrated VN menu.
+
+Confirmed coupling in the existing code:
+
+- `HoverUi.interaction_active` combines pointer/menu engagement and settings
+  engagement. `gui.py` passes it as `controls_active` to `DesktopWorldRuntime`
+  and under the misleading name `toolbar_visible` to animation/walk assembly.
+  `ObjectBehaviorCoordinator.observe` blocks autonomous object selection when
+  controls are engaged and no object interaction is active. This can hold the
+  transition into discovery/approach while the menu is being used.
+- Existing committed object interactions already bypass that particular
+  controls gate, and `WalkRuntime.step` exempts committed goals from toolbar
+  suppression. `choose_animation_priority` has no menu input, and the World
+  motion/cursor frame loop is not gated by menu engagement. Therefore the
+  reported apparent animation stall is not yet evidence of a frozen clip
+  timer. Preserve these distinctions when implementing and diagnosing it.
+- The Snack button, `HoverUi._interact`, `open_food_menu` and `_food_selected`
+  use the generic `can_interact("feed")` admission path; the latter two also
+  reject an open game. `ContactCoordinator.can_interact` rejects foreground
+  object actions, games, sleep and busy playback as appropriate for direct
+  character interactions. However, the Snack callback actually calls
+  `DesktopWorldRuntime.begin_carry`, creating a held World item for placement.
+  Supplying an item is incorrectly subject to direct-care admission.
+- `begin_carry` also uses `_request_gesture`. With an active object interaction,
+  that helper starts the cursor gesture directly. Otherwise it calls
+  `interrupt`, cancelling intentions, the walk goal and object gaze. Thus
+  simply preparing new stock can unnecessarily interrupt an uncommitted object
+  intention. Review this path separately from taking an existing wanted item.
+- `CursorItemGesture.release` already separates attempted handover from
+  ordinary World release: when handover does not occur, an inside drop places
+  the finite item in the World. Reuse this custody path rather than adding a
+  second placement implementation.
+
+Required ownership and behavior:
+
+1. Separate menu engagement, actual character-action admission and cursor item
+   placement. Use explicit port/fact names such as `menu_engaged` and
+   `can_place_item` rather than overloading `toolbar_visible`, `controls_active`
+   or `feed`. Update the existing callers together. Menu engagement can govern
+   menu lifetime and incidental chatter without holding object discovery,
+   recognition, committed movement or action completion. Preserve independently
+   justified sleep, game and exclusive-action rules for Aiko's behavior.
+2. Keep Snacks available while Aiko acts, sleeps or plays. Use the same
+   placement capability for the button, selector opening and selection
+   callback; remove character-state and game admission from these placement
+   paths. Retain valid World geometry and single cursor-capture ownership.
+   Availability must not silently replace an already held item or steal an
+   unrelated input gesture.
+3. Preparing and dropping a new portion must not cancel Aiko's unrelated
+   intention, restart her discovery or interrupt her current animation/action.
+   Keep actual handover/consumption subject to the existing perception,
+   willingness, interaction and atomic custody rules. Deliberately taking or
+   withholding an existing wanted object retains its separate consequences.
+4. Keep the existing owners: `HoverUi`/toolbar and embedded selectors present
+   capabilities; application policies decide character admission;
+   `DesktopWorldRuntime` and `CursorItemGesture` coordinate World placement;
+   object interaction and animation owners complete their own actions. Add no
+   parallel action manager, World writer or timer loop. Audit each consumer of
+   the broad engagement flags rather than removing every guard indiscriminately.
+
+Implementation verification must be local and headless, using existing test
+seams and injected pointer/clock/action facts. Cover menu engagement during
+object selection and committed approach, uninterrupted action completion,
+placement during a busy action/sleep/game, exactly-once item creation/release,
+and unchanged rejection/handover and capture ownership. Keep these checks
+focused; investigate any test exceeding ten seconds. No native test windows,
+desktop mouse control or GitHub-CI run is part of this work. A later visual
+confirmation of the originally reported stall must be distinguished from
+these deterministic policy checks.
+
 Exit: the code and UI expose separate, clearly named layers; immediate reactions,
 need effects, lasting Moodlets, wishes, numeric mood, overall emotional state and
 relationship consequences remain distinguishable and share the existing owners.
