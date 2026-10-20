@@ -1350,14 +1350,14 @@ from the player's perspective; the application adapter already reverses wins
 and losses into `GameExperience`. A completed Blackjack hand is one round;
 draws are completed rounds. Opening a menu/window, selecting a move or leaving
 a round unfinished does not qualify. Other games do not satisfy the named-game
-goal. Do not count rounds completed before the wish existed.
+goal. The lifecycle proposal below further requires rounds to start after wish
+creation; no round already underway at that point qualifies.
 
 Fix the scope before play rather than letting a convenient window-close time
 define an overall victory. For block goals, evaluate the predetermined completed
 block, not a favorable prefix. The next-round goal is distinct from eventually
-finding a non-loss later in the window. Record any remaining failed-attempt or
-retry lifecycle details before implementation; never silently change the goal
-after an unfavorable result.
+finding a non-loss later in the window. Apply the recorded lifecycle proposal
+below; never silently change the goal after an unfavorable result.
 
 Use the actual qualifying round/block completion time to determine whether it
 falls within the wish window. A later window close must not invalidate a goal
@@ -1382,6 +1382,47 @@ result is not user mistreatment and does not itself justify relationship loss.
 Any disappointment or repeated-loss Moodlet requires its own separately agreed
 rule rather than automatic punishment for an unfulfilled game wish. Existing
 shared friendship reward limits must not be bypassed by changing game or goal.
+
+##### Recorded proposal: game-wish failure, retries and cross-session progress, 2026-10-20
+
+Status: owner-requested design proposal, not implemented. Distinguish retryable
+attempts from a goal bound to one specific round or fixed block. Keep each
+wish's original four-real-hour deadline and evaluate from Aiko's perspective.
+
+| Wish | Fulfillment or unsuccessful end | Retry under the same wish |
+| --- | --- | --- |
+| Play the named game together | Fulfilled by two completed rounds in one session; otherwise expires at its deadline | Yes. A session with only one round does not end the wish, but another session must itself contain two completed qualifying rounds |
+| Win a round in the named game | Fulfilled by the first qualifying win; otherwise expires at its deadline | Yes. Losses/draws leave the wish active, across sessions within its lifetime |
+| Do not lose the next round in the named game | The next qualifying completed round resolves it: a win/draw fulfills it; a loss immediately ends it unfulfilled | No. A later round is not the originally desired next round |
+| Win overall in the named game | Evaluate after the next three completed qualifying rounds: more wins than losses fulfills it; any other result ends it unfulfilled | No fresh three-round block within that wish |
+| Do not lose overall in the named game | Evaluate after the next three completed qualifying rounds: at least as many wins as losses fulfills it; any other result ends it unfulfilled | No fresh three-round block within that wish |
+
+Draws count as completed rounds. An all-draw block satisfies the overall
+non-loss goal, but not the overall win goal. Always evaluate the whole fixed
+three-round block, even when its eventual outcome becomes certain earlier.
+An incomplete block expires if its original deadline arrives first.
+
+Fixed-block progress spans sessions, game-window closes and application
+restarts. For example, one win and one loss in the first session plus a win
+in the second produce a 2:1 block and fulfill the overall win wish. Other
+games do not alter it. Do not reset finished wish rounds or choose a favorable
+prefix by closing/reopening the window. Preserve only bounded canonical wish
+progress, not another game score owner or reconstructed boards/decks.
+
+Only rounds started after wish creation qualify, and they must finish no later
+than its deadline, including equality at that time. Interrupted/abandoned
+rounds count as neither wins nor losses; completed qualifying progress remains.
+Closing a window later does not invalidate fulfillment already achieved in
+time. Closed-app and standby time continue to age the wish; do not replay games.
+
+An unsuccessful end or expiry is initially neutral: no fulfillment Moodlet and
+no additional friendship loss. Ordinary game reactions and fun/care effects
+remain separate. A later win cannot retrospectively fulfill an ended wish.
+Aiko can continue playing and may later have a genuinely new similar wish,
+subject to regular selection, the sixty-minute global spacing and ninety-minute
+game-area spacing, measured from their respective previous wish creation times.
+Ending a wish frees a slot without automatically generating a replacement or
+resetting those intervals. The same-wish retry rule creates no extra rewards.
 
 ##### Recorded proposal: game-wish fulfillment Moodlets, 2026-10-20
 
@@ -1883,15 +1924,18 @@ superseded above. The later recovery-interruption/renewed-exposure proposal now
 resolves that previously open policy. No conflicting new values are approved
 by this review.
 
+Game-goal failure, retries, cross-session progress and eligible game-round
+timing are now specified in the later recorded lifecycle proposal. Remaining
+completion conventions below concern other event types or simultaneous events.
+
 | Remaining decision | Why it matters / example to settle before implementation |
 | --- | --- |
-| Unsuccessful game-goal lifecycle | Losing the next round makes that specific non-loss goal unattainable. Decide whether it ends neutrally immediately or stays visibly failed until expiry; do not silently redefine it as a later round. Define whether an unsuccessful fixed block may be retried and whether block progress spans sessions. |
 | Relief allowance across refresh/escalation | Once-per-current-stage relief needs an exact stage identity when a provocation renews the timer, increases intensity or happens at the cap. Avoid making another five-minute credit available merely by poking again and restarting the same timer. |
 | Complete emotional vocabulary and mapping | Assign each Moodlet its direction and attribution, define satisfied/calm/subdued fallback thresholds, and settle exact ties. The grouped support rule alone does not specify every label or interaction response. |
 | Wish selection and disclosure details | Define initial creation on a fresh save/start, selection among four areas for three slots, variation between specific targets, and the disclosure conditions for food/game wishes; the level-three/mood-fifty candidates are explicit for social/affection only. |
 | Wish lifecycle when circumstances change | Decide the fate of an active API wish after opt-out/unavailability and of an affection wish during a new refusal. Define one neutral expiry/failure policy across areas and which event is actual spoken disclosure, without equating status visibility with communication. |
 | Separate wish relationship rewards | Food has a candidate additional 0.25-point personal-fulfillment reward; no additional amount is fixed for game/social/affection wishes. Define whether they add anything beyond ordinary eligible care, within existing shared budgets. |
-| Completion and time-boundary semantics | Resolve fulfillment at its actual semantic event, including exact expiry equality and an action/round already underway at wish creation. Preserve bounded game progress across restart where needed; duplicate completion must not replay relief, fulfillment or rewards. |
+| Completion and time-boundary semantics | Game-round start/deadline rules and cross-session/restart progress are recorded. Set conventions for non-game activities and simultaneous events; resolve each semantic completion once so duplicate delivery cannot replay relief, fulfillment or rewards. |
 
 ##### Documented inventory and decisions before implementation, 2026-10-20
 
@@ -1930,22 +1974,20 @@ copies and intensity per Moodlet; numeric caps do not delete parallel entries.
 The eight positive versus ten negative types do not by themselves prove or
 disprove balanced daily outcomes, which also depend on triggers and duration.
 
-The following five product decisions remain material before implementing the
+The following four product decisions remain material before implementing the
 first version; this review does not add answers without owner agreement:
 
-1. Game-goal lifecycle: resolve failed next-round/fixed-block goals, retries and
-   whether a block spans sessions. Keep ordinary play independent of victory.
-2. Wish lifecycle and disclosure: settle food/game expression readiness and
+1. Wish lifecycle and disclosure: settle food/game expression readiness and
    handling of temporary refusal, source opt-out/unavailability and neutral
    expiry/failure consistently across areas.
-3. Emotional interpretation and behavior: complete direction/label mapping and
+2. Emotional interpretation and behavior: complete direction/label mapping and
    fallback thresholds, and define whether any specific refusals beyond the
    recorded petting boundary belong in the first version. Do not infer blanket
    locks from a negative mood or silently prevent necessary care.
-4. Relief eligibility after timer refresh/escalation: settle what starts a new
+3. Relief eligibility after timer refresh/escalation: settle what starts a new
    eligible stage. Ordinary recovery pause/resume already retains used credit;
    a new provocation must not silently make helpful-action credit repeatable.
-5. Additional wish friendship rewards: decide whether game/social/affection
+4. Additional wish friendship rewards: decide whether game/social/affection
    fulfillment adds anything beyond ordinary care; only food currently has a
    nominal additional 0.25-point candidate, always inside shared budgets.
 
