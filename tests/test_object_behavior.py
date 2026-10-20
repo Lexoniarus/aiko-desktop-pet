@@ -23,6 +23,7 @@ from aiko_pet.pet.mind.object_attention import ObjectAttention
 from aiko_pet.pet.mind.object_decisions import ObjectUseContext
 from aiko_pet.pet.mind.object_intentions import ObjectGoal
 from aiko_pet.pet.mind.object_perception import ConsumableKind, ObjectObservation
+from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import (
     ObjectDefinition,
@@ -374,6 +375,8 @@ class ObjectBehaviorTests(unittest.TestCase):
         return item, replace(goal, identity="apple", kind="food")
 
     def test_fresh_place_check_keeps_its_look_before_turning_to_a_new_find(self):
+        self.assertEqual(self.state.moodlets.active, ())
+        friendship = self.state.friendship
         subject = self.awareness.memory.get("stock")
         assert subject is not None
         self.awareness.memory.restore_snapshot((replace(subject, x=400),))
@@ -390,6 +393,15 @@ class ObjectBehaviorTests(unittest.TestCase):
         observation = self.finish_orientation()
         self.assertTrue(observation.absence_noticed)
         self.assertEqual(self.interaction.phase, "notice_absence")
+        self.assertTrue(self.interaction.search_active)
+        impression, = self.state.moodlets.active
+        self.assertEqual(impression.definition_id, MoodletId.DISRUPTED)
+        self.assertEqual(impression.level, 1)
+        self.assertEqual(self.state.friendship, friendship)
+        before = self.state.moodlets
+        self.now += .2
+        self.observe()
+        self.assertEqual(self.state.moodlets, before)
         self.assertNotIn("object_notice", [cue.event for cue in self.cues])
 
     def test_place_check_precedes_a_continuing_consumption_wish(self):
@@ -1314,3 +1326,5 @@ class ObjectBehaviorTests(unittest.TestCase):
                 self.assertEqual(len(self.awareness.memory.snapshot()), 2)
                 self.assertTrue(all(known.recognized
                                     for known in self.awareness.memory.snapshot()))
+                self.assertEqual(self.state.moodlets.active, ())
+                self.assertEqual(self.state.friendship, 15)

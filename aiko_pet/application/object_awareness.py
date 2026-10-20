@@ -7,7 +7,6 @@ from dataclasses import replace
 from typing import Literal
 
 from ..pet.balance import BALANCE
-from ..pet.interaction_events import ArrangementDisrupted
 from ..pet.mind.object_absence import ObjectAbsencePerception
 from ..pet.mind.object_attention import KnownPlaceCoverage, ObjectAttention
 from ..pet.mind.object_decisions import ObjectUseDecision
@@ -61,8 +60,6 @@ class ObjectAwareness:
         self.intentions = ObjectIntentions()
         self.observations: tuple[ObjectObservation, ...] = ()
         self.checking_notice = False
-        self._relocation_origin: ObjectKnowledge | None = None
-        self.disruptions: tuple[ArrangementDisrupted, ...] = ()
         self._world_revision = -1
         self._tracker = ObjectTracker(maximum_gap=BALANCE.number(
             "object_behavior", "tracking_gap_seconds",
@@ -70,16 +67,6 @@ class ObjectAwareness:
         self._sighting_records: dict[str, str] = {}
         self._world_records: dict[str, str] = {}
         self._owned_records: dict[str, str] = {}
-
-    def exclude_withholding_relocation(self, record: str) -> None:
-        """One witnessed take belongs to withholding, never both penalties."""
-        if (self._relocation_origin is not None
-                and self._relocation_origin.token == record):
-            self._relocation_origin = None
-
-    def _remember_take(self, known: ObjectKnowledge) -> None:
-        if known.recognized and known.resting:
-            self._relocation_origin = known
 
     @property
     def absences(self) -> tuple[ObjectKnowledge, ...]:
@@ -143,7 +130,6 @@ class ObjectAwareness:
             return False
         # The witnessed take is already custody evidence. Do not wait for a
         # held-frame sample: a whole cursor gesture can occur between ticks.
-        self._remember_take(known)
         self.memory.note_acquired(record, now=now)
         return True
 
@@ -185,7 +171,6 @@ class ObjectAwareness:
                                   if item.token != known.token) + (ObjectObservation(
             known.token, None, None, *position, False, now,
         ),)
-        self._remember_take(known)
         self.memory.note_acquired(known.token, now=now)
         return known.token
 
@@ -278,7 +263,6 @@ class ObjectAwareness:
         known_coverage: KnownPlaceCoverage | None = None,
         defer_selection: bool = False,
     ) -> ObjectGoal | None:
-        self.disruptions = ()
         candidates, own_actions, held = self._collect_candidates(
             world, held_pose=held_pose, presentation=presentation,
             inspecting=inspecting,
@@ -354,15 +338,6 @@ class ObjectAwareness:
                 ),
                 instance_id=instance,
             )
-            origin = self._relocation_origin
-            if origin is not None and record == origin.token:
-                if instance in own_actions:
-                    self._relocation_origin = None
-                elif seen.resting:
-                    if math.hypot(seen.x - origin.x, seen.height - origin.height
-                                  ) > place_radius:
-                        self.disruptions = (ArrangementDisrupted(attributed=True),)
-                    self._relocation_origin = None
             claimed.add(record)
             records[seen.token] = record
             if instance is not None:
@@ -377,8 +352,6 @@ class ObjectAwareness:
                     self._tracker.follow_taken(instance)
                 elif item.state == ObjectState.RESTING and instance == following:
                     self._tracker.stop_following()
-        if self._tracker.following_instance is None:
-            self._relocation_origin = None
         self._sighting_records, self._world_records = records, world_records
         self._owned_records = held
         self.observations = tuple(observations)

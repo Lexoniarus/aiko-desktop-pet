@@ -265,8 +265,12 @@ relationship ledger, independently of the continuing impression. No event bus
 or additional mutable owner is introduced. The application translates visible
 text receipts into boundary facts. Explicit metadata on accepted social
 reactions yields completion only after the entire existing playback sequence.
-Object owners qualify wanted-object withholding and subjective arrangement
-changes; actual attribution is required for relocation loss. Closed-time intake
+Object owners qualify wanted-object withholding separately from confirmed
+learned-place loss. Only absence admitted to the existing missing-object search
+creates the disrupted-arrangement Moodlet. Continuously observed transport and
+placement update subjective knowledge without that Moodlet or relocation loss;
+there is no second relocation-origin tracker or competing trigger. Missing-place
+evidence alone never proves user blame. Closed-time intake
 can create food monotony but never human culpability. Short-lived custody and
 observed-time trigger anchors stay in the existing object episode/perception;
 refusal/request/intake evidence belongs to the aggregate and its existing save.

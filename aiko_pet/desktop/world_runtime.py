@@ -579,7 +579,6 @@ class DesktopWorldRuntime:
                 )
                 self._behavior.request_orientation()
                 if record is not None and self.interaction.target_taken(record):
-                    self.awareness.exclude_withholding_relocation(record)
                     self._walk.movement.set_goal(None)
 
         self._request_relocation(acquire)

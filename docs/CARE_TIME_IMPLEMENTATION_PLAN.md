@@ -1427,6 +1427,11 @@ does not create a blanket action lock.
 
 ##### Recorded proposal: relocating objects and disrupting familiar places, 2026-10-19
 
+The witnessed-relocation trigger below is superseded by the owner-approved
+practical correction at the end of this plan. Only confirmed learned-place
+absence admitted to search now qualifies this Moodlet; witnessed transport alone
+does not. Existing withholding remains a separate interaction.
+
 Status: owner-requested design proposal, not implemented. Working Moodlet label:
 "My familiar arrangement has been disturbed". Require a learned object and a
 familiar location, then a relevant perceived disruption of that expectation:
@@ -3616,3 +3621,38 @@ wish lifecycle/fulfillment areas, expression, storage and passive reads, the
 desktop attention seam, shared friendship policy, resources and public docs.
 Ruff passes repository-wide; strict Mypy passes the changed domain/application/
 codec owners with silent dependency traversal. The full-suite gate is not claimed.
+
+## Practical acceptance correction: disrupted familiar place, 2026-10-20
+
+The owner clarified that "Vertauschter Platz" describes discovering an unseen
+change that requires search, rather than disliking every observed rearrangement.
+The sole production trigger remains `ObjectBehaviorCoordinator._notice_absences()`:
+the existing perception owner must confirm a missing learned place, and the
+existing interaction owner must admit it to its missing-object SearchTask.
+Ordinary observation/take/placement updates acquired knowledge without producing
+this Moodlet or a relocation friendship penalty. Unknown portions cannot establish
+a missing familiar place. Mere lack of visibility, a drag, World coordinates,
+stock exhaustion or an acute hunger search do not substitute for that evidence.
+
+Remove the obsolete relocation-origin field, its witnessed-move event collection,
+its extra application dispatch and the withholding-specific exclusion hook.
+Keep the existing visual tracker, perception, memory continuity, safe custody,
+live searches, handovers and wanted-object withholding unchanged. There is no
+replacement tracking subsystem. The admitted absence is acknowledged once;
+continued search and subsequent finding do not add stacks or instantly erase
+the impression. Existing saved episodes and relationship history remain valid
+and age normally, without inventing a retroactive refund or clearing memory.
+
+Coverage now lives with the existing headless behavior/perception owners:
+observed transport preserves learned identity/place without emotional or
+friendship consequences; a fresh confirmed absence creates one level-one Moodlet
+and a real SearchTask, with no duplicate on repeated updates. The obsolete raw
+observed-move event test is consolidated into those behavioral checks. Existing
+domain stacking/capped-attribution and separate withholding regressions remain.
+
+Local verification: **113 targeted tests passed in 0.251s**, longest **0.080s**,
+none over ten seconds. Tk/Toplevel construction is explicitly prohibited. The
+target includes behavior, awareness, interaction, withholding, placement admission
+and German object-reaction contracts. Scoped strict typing and repository-wide
+Ruff/Pyright checks accompany these targeted checks; no GUI, mouse control,
+CI workflow or new full-suite run is part of this correction request.

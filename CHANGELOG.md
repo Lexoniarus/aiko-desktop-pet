@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Trigger "Vertauschter Platz" only when a learned place is confirmed empty and
+  admitted to missing-object search. Observed item relocation updates knowledge
+  without this Moodlet or an automatic friendship penalty. Preserve separate
+  wanted-object withholding, acquired knowledge and existing saved after-effects.
+
 - Keep three normal inner wishes instead of adding only one per hour. Refill
   available areas after one saved twelve-minute vacancy pause, preserving
   original expiry, independent speech, exactly-once fulfillment and shared
