@@ -57,6 +57,11 @@ class ImageButton(tk.Button):
         for sequence in ("<ButtonRelease-1>", "<KeyRelease-space>"):
             self.bind(sequence, lambda _e: self._feedback(pressed=False), add="+")
         self.bind("<Return>", lambda _e: self.invoke())
+        self.bind("<Destroy>", self._destroyed, add="+")
+
+    def _destroyed(self, event: tk.Event) -> None:
+        if event.widget is self:
+            self._art.clear()
 
     def _feedback(
         self, *, hover: bool | None = None, pressed: bool | None = None

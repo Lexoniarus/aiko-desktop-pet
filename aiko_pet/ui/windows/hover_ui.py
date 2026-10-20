@@ -67,9 +67,10 @@ class HoverUiPorts:
     social_selected: Callable[[SocialCategory], None] | None = None
     social_cancel: Callable[[], None] = lambda: None
     social_enabled: Callable[[], bool] = lambda: False
-    social_snapshot: Callable[
-        [], tuple[str, PreparedSocialContent | None]
-    ] = lambda: ("", None)
+    social_snapshot: Callable[[], tuple[str, PreparedSocialContent | None]] = lambda: (
+        "",
+        None,
+    )
 
 
 class HoverUi:
@@ -109,12 +110,8 @@ class HoverUi:
     def control_windows(self) -> tuple[tk.Toplevel, ...]:
         """Back-to-front transient controls; settings remain above speech."""
         windows = [self.toolbar.window] if self.toolbar and self.toolbar.visible else []
-        windows.extend(
-            view.window for view in (
-                self.game_window, self.food_menu, self.game_menu, self.social_menu,
-            )
-            if view is not None
-        )
+        if self.game_window is not None:
+            windows.append(self.game_window.window)
         return tuple(windows)
 
     @property
@@ -142,20 +139,12 @@ class HoverUi:
                 )
             )
         )
-        menu = self.food_menu
-        using_food = menu is not None and menu.contains_pointer(
-            self.root.winfo_pointerx(),
-            self.root.winfo_pointery(),
+        return bool(
+            using_toolbar
+            or self.settings_engaged
+            or toolbar is not None
+            and toolbar.keyboard_engaged
         )
-        using_games = self.game_menu is not None and self.game_menu.contains_pointer(
-            self.root.winfo_pointerx(), self.root.winfo_pointery(),
-        )
-        using_social = (self.social_menu is not None
-                        and self.social_menu.contains_pointer(
-                            self.root.winfo_pointerx(), self.root.winfo_pointery(),
-                        ))
-        return bool(using_toolbar or using_food or using_games or using_social
-                    or self.settings_engaged)
 
     def _interact(self, action: str) -> None:
         if action == "place_item":
@@ -174,13 +163,15 @@ class HoverUi:
 
     def _food_menu_closed(self) -> None:
         self.food_menu = None
+        if self.toolbar is not None:
+            self.toolbar.close_selector()
 
     def _food_selected(self, food_id: FoodChoiceId) -> None:
         if self._ports.place_item is not None and self._ports.can_place_item():
             self._ports.place_item(food_id)
 
     def open_food_menu(self) -> None:
-        """Reuse one selection window; no domain mutations before choice."""
+        """Reuse one embedded placement view; no domain mutations before choice."""
         if self._ports.place_item is None or not self._ports.can_place_item():
             return
         self.close_social_menu()
@@ -188,22 +179,15 @@ class HoverUi:
         if self.food_menu is not None:
             self.food_menu.focus()
             return
-        toolbar = self.toolbar
-        x = toolbar.window.winfo_rootx() if toolbar is not None else 200
-        y = (
-            toolbar.window.winfo_rooty() + toolbar.window.winfo_height()
-            if toolbar is not None
-            else 200
-        )
+        self.show_toolbar()
+        assert self.toolbar is not None
         self.food_menu = FoodMenu(
-            self.root,
-            x,
-            y,
+            self.toolbar.selector_parent(self.close_food_menu),
             choices=self._ports.food_choices,
             selected=self._food_selected,
             closed=self._food_menu_closed,
-            always_on_top=self._ports.always_on_top(),
             skin=self._skin,
+            can_select=self._ports.can_place_item,
         )
         self._ports.restore_stack()
 
@@ -234,6 +218,8 @@ class HoverUi:
 
     def _game_menu_closed(self) -> None:
         self.game_menu = None
+        if self.toolbar is not None:
+            self.toolbar.close_selector()
 
     def open_game_menu(self) -> None:
         if self.game_open or not self._ports.can_interact("play"):
@@ -243,17 +229,17 @@ class HoverUi:
             self.game_menu.focus()
             return
         self.close_food_menu()
-        toolbar = self.toolbar
-        x = toolbar.window.winfo_rootx() if toolbar else 200
-        y = (toolbar.window.winfo_rooty() + toolbar.window.winfo_height()
-             if toolbar else 200)
+        self.show_toolbar()
+        assert self.toolbar is not None
         self.game_menu = GameMenu(
-            self.root, x, y,
+            self.toolbar.selector_parent(self.close_game_menu),
             choices=(GameId.ROCK_PAPER_SCISSORS,)
             + ((GameId.BLACKJACK,) if self._ports.cards is not None else ())
             + (GameId.TIC_TAC_TOE,),
-            selected=self.open_game, closed=self._game_menu_closed,
-            always_on_top=self._ports.always_on_top(), skin=self._skin,
+            selected=self.open_game,
+            closed=self._game_menu_closed,
+            skin=self._skin,
+            can_select=lambda: not self.game_open and self._ports.can_interact("play"),
         )
         self._ports.restore_stack()
 
@@ -288,21 +274,26 @@ class HoverUi:
                 if self._ports.cards is None:
                     raise RuntimeError("Card presentation is unavailable")
                 self.game_window = BlackjackWindow(
-                    self.root, on_closed=self._game_closed, cards=self._ports.cards,
+                    self.root,
+                    on_closed=self._game_closed,
+                    cards=self._ports.cards,
                     dialogue=self._ports.game_dialogue,
                     round_event=self._ports.game_round,
                     speak=self._ports.game_speech.say,
                     animate=self._ports.game_speech.animate,
-                    always_on_top=self._ports.always_on_top(), skin=self._skin,
+                    always_on_top=self._ports.always_on_top(),
+                    skin=self._skin,
                 )
             elif game_id is GameId.TIC_TAC_TOE:
                 self.game_window = TicTacToeWindow(
-                    self.root, on_closed=self._game_closed,
+                    self.root,
+                    on_closed=self._game_closed,
                     dialogue=self._ports.game_dialogue,
                     round_event=self._ports.game_round,
                     speak=self._ports.game_speech.say,
                     animate=self._ports.game_speech.animate,
-                    always_on_top=self._ports.always_on_top(), skin=self._skin,
+                    always_on_top=self._ports.always_on_top(),
+                    skin=self._skin,
                 )
             else:
                 self.game_window = self._create_rps()
@@ -351,17 +342,16 @@ class HoverUi:
             return
         self.close_food_menu()
         self.close_game_menu()
-        toolbar = self.toolbar
-        x = toolbar.window.winfo_rootx() if toolbar else 200
-        y = (toolbar.window.winfo_rooty() + toolbar.window.winfo_height()
-             if toolbar else 200)
+        self.show_toolbar()
+        assert self.toolbar is not None
         self.social_menu = SocialMenu(
-            self.root, x, y, selected=self._social_selected,
+            self.toolbar.selector_parent(self.close_social_menu),
+            selected=self._social_selected,
             closed=self._social_menu_closed,
             enabled=self._ports.social_enabled,
             can_interact=lambda: self._ports.can_interact("talk"),
             snapshot=self._ports.social_snapshot,
-            always_on_top=self._ports.always_on_top(), skin=self._skin,
+            skin=self._skin,
         )
         self._ports.restore_stack()
 
@@ -376,6 +366,8 @@ class HoverUi:
 
     def _social_menu_closed(self) -> None:
         self.social_menu = None
+        if self.toolbar is not None:
+            self.toolbar.close_selector()
         self._ports.social_cancel()
 
     def close_social_menu(self) -> None:
@@ -467,9 +459,6 @@ class HoverUi:
             self.toolbar,
             self.settings_window,
             self.game_window,
-            self.food_menu,
-            self.game_menu,
-            self.social_menu,
         ):
             if window is not None:
                 window.window.wm_attributes("-topmost", enabled)
@@ -516,8 +505,9 @@ class HoverUi:
         self._auto_hide_toolbar()
 
     def refresh_hover(self, now: float) -> None:
-        if self.social_menu is not None:
-            self.social_menu.refresh()
+        for menu in (self.food_menu, self.game_menu, self.social_menu):
+            if menu is not None:
+                menu.refresh()
         toolbar = self.toolbar
         if toolbar is not None:
             toolbar.refresh_actions()
