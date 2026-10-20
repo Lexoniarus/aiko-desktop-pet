@@ -23,6 +23,16 @@ from aiko_pet.pet.state import PetState
 
 
 class PoorCareEvidenceTests(unittest.TestCase):
+    def test_subnanosecond_minute_tail_is_not_coalesced_before_it_is_complete(self):
+        progress = FriendshipProgress(50, FriendshipHistory(baseline=0), 0)
+        low = (0, 100, 100, 100, 100)
+        progress = advance_friendship(progress, 120 - 1e-9, low, low, sleeping=False)
+        progress = advance_friendship(progress, 1e-9, low, low, sleeping=False)
+        buckets = progress.history.critical
+        self.assertEqual(len(buckets), 1)
+        self.assertEqual((buckets[0].start, buckets[0].width), (0, 120))
+        self.assertAlmostEqual(buckets[0].critical[0], 120, places=7)
+
     def test_partial_anchor_minute_and_later_coalescing_preserve_exact_exposure(self):
         progress = FriendshipProgress(50, FriendshipHistory(baseline=0), 0)
         low = (0, 100, 100, 100, 100)

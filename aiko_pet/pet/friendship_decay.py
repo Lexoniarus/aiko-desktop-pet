@@ -132,7 +132,8 @@ def _append(
             )
             for a, b in zip(first, last)
         )
-        if matching and abs(older.start + older.width - bucket_start) < 1e-7:
+        if (matching and end >= bucket_start + size
+                and abs(older.start + older.width - bucket_start) < 1e-7):
             kept.pop()
             updated = CriticalBucket(
                 older.start,

@@ -3018,3 +3018,30 @@ passed in 6.714 s. The existing 30-day bounded-history case took 5.961 s; no cas
 exceeded ten seconds. Scoped Ruff, strict Mypy and Pyright passed. These checks
 were local and headless; no full suite, windows, mouse control or GitHub CI.
 Trigger/recovery integration is the next commit within this same 5B.5 slice.
+
+
+##### 5B.5 delivery: qualification and accounted burden (2026-10-20)
+
+Pure `pet/poor_care.py` qualifies the five catalogued after-effects from that
+same history. Alternative critical/zero thresholds select the maximum eligible
+level; they are never added. It records a newly handled threshold once and raises
+an existing impression only when the genuinely new level exceeds its current
+intensity. At the maximum, additional burden is represented by that active
+impression, without timer refresh or a backlog of future stacks.
+
+The accounting cycle includes disjoint deficits until recovery actually
+qualifies. Merely crossing 25, remaining between 25 and 40, or briefly reaching
+40 cannot consume handled burden or reset its escalation cycle. After 30 stable
+minutes at 40+, handled thresholds are closed while the not-yet-qualified
+remainder survives in the canonical history. Stable recovery, stage progress
+through interruption and once-per-level relief remain owned by `moodlets.py`.
+No separate friendship loss, contact or care rejection is introduced.
+
+Fifteen focused reader/accounting/policy cases passed within the targeted
+selection, including fresh residual burden through reload and recovery.
+The new exact chronology also exposed a pre-existing minute coalescing edge:
+a near-full minute could merge before its final nanosecond, then overlap its
+own tiny tail on the next update. Full-minute merging now additionally requires
+actual arrival at the minute end; the unchanged split/reload history test and a
+small direct regression case pass. Watermark offsets are bounded against floating
+round-off before storage. Scoped Ruff, strict Mypy and Pyright passed.

@@ -40,8 +40,9 @@ def mark_exposure(
     anchor = math.floor(now / size) * size
     for bucket in reversed(buckets):
         if bucket.start <= anchor < bucket.start + bucket.width:
-            return ExposureMark(now, bucket.critical[index] * size / bucket.width,
-                                bucket.zero[index] * size / bucket.width)
+            critical = min(size, max(0.0, bucket.critical[index] * size / bucket.width))
+            zero = min(critical, max(0.0, bucket.zero[index] * size / bucket.width))
+            return ExposureMark(now, critical, zero)
     return ExposureMark(now)
 
 
