@@ -19,8 +19,8 @@ from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-from aiko_pet.pet.status_hints import MoodHint
-from aiko_pet.ui.view_models.text_de import format_emotion_label, mood_hint_text
+from aiko_pet.pet.status_hints import StatusHint
+from aiko_pet.ui.view_models.text_de import format_emotion_label, status_hint_text
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -118,12 +118,12 @@ class AffectionNeedTests(unittest.TestCase):
     def test_affection_need_is_clamped_and_status_hint_is_distinct(self):
         state = decode_pet_state({"affection": "nan", "social": 80}, now=stamp())
         self.assertEqual(state.affection, 75)
-        affection_hint = PetState(affection=5).mood_hint()
-        social_hint = PetState(social=5, affection=85).mood_hint()
-        self.assertIs(affection_hint, MoodHint.NEEDS_AFFECTION)
-        self.assertIs(social_hint, MoodHint.LONELY)
-        self.assertIn("Geste", mood_hint_text(affection_hint))
-        self.assertIn("Gesellschaft", mood_hint_text(social_hint))
+        affection_hint = PetState(affection=5).status_hint()
+        social_hint = PetState(social=5, affection=85).status_hint()
+        self.assertIs(affection_hint, StatusHint.NEEDS_AFFECTION)
+        self.assertIs(social_hint, StatusHint.LONELY)
+        self.assertIn("Geste", status_hint_text(affection_hint))
+        self.assertIn("Gesellschaft", status_hint_text(social_hint))
         self.assertEqual(decode_pet_state({"affection": -7}).affection, 0)
         self.assertEqual(decode_pet_state({"affection": 700}).affection, 100)
 

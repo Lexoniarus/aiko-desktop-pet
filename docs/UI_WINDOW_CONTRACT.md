@@ -15,6 +15,12 @@ a foreign window receives a click; `Pin lösen` restores automatic hiding.
 Position pinning, visibility pinning, and `Immer im Vordergrund` remain
 independent concepts.
 
+These seven readouts are presentation values, not seven care needs. The semantic
+snapshot exposes five-field `NeedLevels` separately from numeric mood and
+friendship. UI projections combine them as `status_values`; the toolbar uses
+`READOUTS`/`readouts` and the existing shared status-hint policy. This vocabulary
+change preserves bar order, labels, care availability and window behavior.
+
 The pin affects only the current session; it does not add keys to the
 version-one JSON save. Existing draggable toolbar position persistence and
 reset behavior remain unchanged.

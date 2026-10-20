@@ -16,14 +16,14 @@ class HoverSnapshot:
     header: str
     sleep_label: str
     feed_label: str
-    needs: tuple[tuple[str, float], ...]
+    status_values: tuple[tuple[str, float], ...]
     friendship_level: int
     hardware_line: str
     workload_line: str
     food_line: str = ""
 
-    def need_value(self, key: str) -> float:
-        for name, value in self.needs:
+    def status_value(self, key: str) -> float:
+        for name, value in self.status_values:
             if name == key:
                 return value
         raise KeyError(key)
@@ -48,12 +48,12 @@ class StatusSnapshot:
     sleep_label: str
     hardware_line: str
     activity_line: str
-    needs: tuple[tuple[str, float], ...]
+    status_values: tuple[tuple[str, float], ...]
     friendship_level: int
     objects_line: str = ""
 
-    def need_value(self, key: str) -> float:
-        for name, value in self.needs:
+    def status_value(self, key: str) -> float:
+        for name, value in self.status_values:
             if key == name:
                 return value
         raise KeyError(key)

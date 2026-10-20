@@ -22,7 +22,7 @@ class ToolbarDetailTests(unittest.TestCase):
             today="Montag", next_event="Pause", hint="Gut",
             emotion="Stimmung: Gelassen", sleep_label="Schlafen",
             hardware_line="Rechnerbeobachtung deaktiviert",
-            activity_line="Mein Rhythmus: ruhig", needs=(("energy", 55),),
+            activity_line="Mein Rhythmus: ruhig", status_values=(("energy", 55),),
             friendship_level=3,
             objects_line="Auf dem Desktop: 5 · Bekannt: 5\nZugeordnet: 5 · Vermisst: 0",
         )

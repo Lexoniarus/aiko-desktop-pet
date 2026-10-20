@@ -15,7 +15,7 @@ from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.routine import MEAL_NAMES, context_at
 from aiko_pet.pet.state import PetState
-from aiko_pet.pet.status_hints import MoodHint
+from aiko_pet.pet.status_hints import StatusHint
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.view_models.contracts import (
     HoverAnchor,
@@ -26,10 +26,10 @@ from aiko_pet.ui.view_models.text_de import (
     describe_workload,
     format_day_label,
     format_feed_label,
-    format_mood_hint,
     format_percent,
     format_schedule_line,
-    mood_hint_text,
+    format_status_hint,
+    status_hint_text,
 )
 from tools.pet_test_support import set_test_pet_values
 
@@ -55,7 +55,7 @@ class UiProjectionParityTests(unittest.TestCase):
             observe_computer=False,
             objects=ObjectStatusSnapshot(desktop=5, known=4, assigned=2, missing=2),
         )
-        self.assertEqual(view.need_value("fun"), 42)
+        self.assertEqual(view.status_value("fun"), 42)
         self.assertEqual(view.objects_line,
                          "Auf dem Desktop: 5 · Bekannt: 4\nZugeordnet: 2 · Vermisst: 2")
 
@@ -68,7 +68,10 @@ class UiProjectionParityTests(unittest.TestCase):
         self.assertEqual(snapshot.satiety, 19)
         self.assertEqual(snapshot.affection, 28)
         self.assertEqual(snapshot.meals_today, ("breakfast",))
-        self.assertEqual(snapshot.needs[0], ("satiety", 19))
+        self.assertEqual(snapshot.needs.satiety, 19)
+        self.assertEqual(set(snapshot.needs.__dataclass_fields__), {
+            "satiety", "energy", "fun", "social", "affection",
+        })
         with self.assertRaises(FrozenInstanceError):
             setattr(snapshot, "sleeping", True)
 
@@ -108,25 +111,25 @@ class UiProjectionParityTests(unittest.TestCase):
                         format_feed_label(snapshot, context), expected_label,
                     )
                     self.assertEqual(
-                        format_mood_hint(snapshot, context),
-                        mood_hint_text(state.mood_hint(context), context),
+                        format_status_hint(snapshot, context),
+                        status_hint_text(state.status_hint(context), context),
                     )
                     self.assertEqual(
-                        format_mood_hint(snapshot),
-                        mood_hint_text(state.mood_hint()),
+                        format_status_hint(snapshot),
+                        status_hint_text(state.status_hint()),
                     )
 
     def test_pet_hint_is_typed_and_wording_is_selected_by_ui(self) -> None:
         state = PetState(satiety=10, energy=10)
-        self.assertIs(state.mood_hint(), MoodHint.HUNGRY)
+        self.assertIs(state.status_hint(), StatusHint.HUNGRY)
         self.assertEqual(
-            mood_hint_text(state.mood_hint()),
+            status_hint_text(state.status_hint()),
             "Ein kleiner Snack wäre schön ...",
         )
         set_test_pet_values(state, sleeping=True)
-        self.assertIs(state.mood_hint(context_at(at(2))), MoodHint.SLEEP_NIGHT)
+        self.assertIs(state.status_hint(context_at(at(2))), StatusHint.SLEEP_NIGHT)
         self.assertEqual(
-            mood_hint_text(state.mood_hint(context_at(at(2)))),
+            status_hint_text(state.status_hint(context_at(at(2)))),
             "Aiko schläft gerade ... gute Nacht.",
         )
 
@@ -185,10 +188,10 @@ class UiProjectionParityTests(unittest.TestCase):
                                 "affection", "friendship",
                             ):
                                 self.assertEqual(
-                                    hover.need_value(key), getattr(state, key),
+                                    hover.status_value(key), getattr(state, key),
                                 )
                                 self.assertEqual(
-                                    status.need_value(key), getattr(state, key),
+                                    status.status_value(key), getattr(state, key),
                                 )
                             expected = "Wecken" if state.sleeping else "Schlafen"
                             self.assertEqual(hover.sleep_label, expected)
@@ -224,9 +227,9 @@ class UiProjectionParityTests(unittest.TestCase):
         ))
         self.assertEqual(source.settings_view().value("auto_walk"), True)
         set_test_pet_values(state, energy=70)
-        self.assertEqual(original.need_value("energy"), 39)
-        self.assertEqual(source.hover().need_value("energy"), 70)
-        self.assertEqual(source.status().need_value("energy"), 70)
+        self.assertEqual(original.status_value("energy"), 39)
+        self.assertEqual(source.hover().status_value("energy"), 70)
+        self.assertEqual(source.status().status_value("energy"), 70)
 
 
 if __name__ == "__main__":

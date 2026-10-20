@@ -8,6 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Separate the five care needs from numeric mood and friendship. Give the
+  existing pet progression and status-advice contracts explicit names while
+  preserving balance, save fields, German wording and the seven status readouts.
+
 - Preserve a newly noticed unknown item's investigation through both orientation
   looks. Look back and require fresh perception before approach on either side;
   keep new-item curiosity separate from missing-stock searches.

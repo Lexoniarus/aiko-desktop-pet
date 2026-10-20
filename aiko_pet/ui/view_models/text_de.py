@@ -10,7 +10,7 @@ from ...application.read_snapshot import PetReadSnapshot
 from ...pet.balance import BALANCE
 from ...pet.content import GERMAN_TEXT
 from ...pet.routine import MEAL_NAMES, TimeContext, due_meal
-from ...pet.status_hints import MoodHint, choose_mood_hint
+from ...pet.status_hints import StatusHint, choose_status_hint
 from ...telemetry import ComputerSnapshot, workload_intensity
 
 WEEKDAYS = tuple(GERMAN_TEXT.format(f"weekday.{i}") for i in range(7))
@@ -61,24 +61,24 @@ def format_feed_label(pet: PetReadSnapshot, context: TimeContext) -> str:
     return MEAL_NAMES[meal] if meal is not None else GERMAN_TEXT.format("ui.snack")
 
 
-def mood_hint_text(hint: MoodHint, context: TimeContext | None = None) -> str:
+def status_hint_text(hint: StatusHint, context: TimeContext | None = None) -> str:
     """Render a semantic status hint using validated German JSON copy."""
-    if hint is MoodHint.MEAL_TIME:
+    if hint is StatusHint.MEAL_TIME:
         if context is None or context.meal is None:
             raise ValueError("Meal-time text needs a meal context")
         return GERMAN_TEXT.format(
-            "mood.meal_time",
+            "status_hint.meal_time",
             meal=MEAL_NAMES[context.meal].lower(),
         )
-    return GERMAN_TEXT.format(f"mood.{hint.value}")
+    return GERMAN_TEXT.format(f"status_hint.{hint.value}")
 
 
-def format_mood_hint(
+def format_status_hint(
     pet: PetReadSnapshot,
     context: TimeContext | None = None,
 ) -> str:
     """Format the shared pet-owned hint without duplicating its rules."""
-    return mood_hint_text(choose_mood_hint(pet, context), context)
+    return status_hint_text(choose_status_hint(pet, context), context)
 
 
 def format_percent(number: float | None) -> str:

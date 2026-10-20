@@ -13,13 +13,13 @@ class ReadContractTests(unittest.TestCase):
         status = StatusSnapshot(
             today="Montag", next_event="", hint="", emotion="",
             sleep_label="", hardware_line="", activity_line="",
-            needs=(("energy", 72),), friendship_level=2,
+            status_values=(("energy", 72),), friendship_level=2,
         )
-        self.assertEqual(status.need_value("energy"), 72)
+        self.assertEqual(status.status_value("energy"), 72)
         with self.assertRaises(FrozenInstanceError):
             setattr(status, "friendship_level", 10)
         with self.assertRaises(KeyError):
-            status.need_value("unknown")
+            status.status_value("unknown")
 
 
 if __name__ == "__main__":

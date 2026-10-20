@@ -73,7 +73,7 @@ class CareGuiTests(unittest.TestCase):
         self.assertNotIn("energy_drink", self.toolbar.buttons)
         self.assertFalse(self.app._hover.keep_open)
         self.toolbar.refresh()
-        self.assertIn("35%", self.toolbar.needs["social"][2].cget("text"))
+        self.assertIn("35%", self.toolbar.readouts["social"][2].cget("text"))
 
     def test_foreground_care_owns_buttons_and_passive_hover_until_completion(self):
         for action in ("pet", "talk"):
@@ -110,12 +110,12 @@ class CareGuiTests(unittest.TestCase):
     def test_relationship_and_needs_in_pinned_toolbar(self):
         self.app._hover.open_status()
         self.assertTrue(self.app._hover.keep_open)
-        self.assertEqual(set(self.toolbar.needs), {
+        self.assertEqual(set(self.toolbar.readouts), {
             "satiety", "fun", "mood", "energy", "social", "affection", "friendship",
         })
         set_test_pet_values(self.app.state, friendship=85)
         self.toolbar.refresh()
-        self.assertIn("Lv 9", self.toolbar.needs["friendship"][2].cget("text"))
+        self.assertIn("Lv 9", self.toolbar.readouts["friendship"][2].cget("text"))
 
     def test_lagged_or_disabled_hardware_has_no_live_effort(self):
         snapshot = ComputerSnapshot(cpu=97, gpu=88, measured_at=time.monotonic())

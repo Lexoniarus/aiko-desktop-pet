@@ -16,12 +16,22 @@ from .text_de import (
     format_day_label,
     format_emotion_label,
     format_feed_label,
-    format_mood_hint,
     format_percent,
     format_schedule_line,
     format_sleep_label,
+    format_status_hint,
     observation_disabled_text,
 )
+
+
+def _status_values(pet: PetReadSnapshot) -> tuple[tuple[str, float], ...]:
+    """Presentation order for care, mood and relationship, not a need model."""
+    needs = pet.needs
+    return (
+        ("satiety", needs.satiety), ("mood", pet.mood), ("fun", needs.fun),
+        ("energy", needs.energy), ("social", needs.social),
+        ("affection", needs.affection), ("friendship", pet.friendship),
+    )
 
 
 def project_hover(
@@ -50,7 +60,7 @@ def project_hover(
         ),
         sleep_label=format_sleep_label(pet.sleeping),
         feed_label=format_feed_label(pet, context),
-        needs=pet.needs,
+        status_values=_status_values(pet),
         friendship_level=pet.friendship_level,
         hardware_line=hardware,
         workload_line=workload,
@@ -114,12 +124,12 @@ def project_status(
     return StatusSnapshot(
         today=format_day_label(context),
         next_event=format_schedule_line(context),
-        hint=format_mood_hint(pet, context),
+        hint=format_status_hint(pet, context),
         emotion=format_emotion_label(emotion),
         sleep_label=format_sleep_label(pet.sleeping),
         hardware_line=hardware,
         activity_line=activity,
-        needs=pet.needs,
+        status_values=_status_values(pet),
         friendship_level=pet.friendship_level,
         objects_line=GERMAN_TEXT.format(
             "ui.object_status", desktop=str(objects.desktop), known=str(objects.known),

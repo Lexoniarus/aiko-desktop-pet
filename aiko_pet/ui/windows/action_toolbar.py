@@ -19,14 +19,14 @@ from .toolbar_details import ToolbarDetails
 class ActionToolbar:
     """Render care, pin state and optional details; HoverUi owns visibility."""
 
-    NEEDS = (
-        ("mood", GERMAN_TEXT.format("need.mood"), "#95ddc1"),
+    READOUTS = (
+        ("mood", GERMAN_TEXT.format("status.mood"), "#95ddc1"),
         ("satiety", GERMAN_TEXT.format("need.satiety"), "#f5bd7a"),
         ("fun", GERMAN_TEXT.format("need.fun"), "#f2d67b"),
         ("energy", GERMAN_TEXT.format("need.energy"), "#98c9f5"),
         ("social", GERMAN_TEXT.format("need.social"), "#dda9ef"),
         ("affection", GERMAN_TEXT.format("need.affection"), "#f0a5be"),
-        ("friendship", GERMAN_TEXT.format("need.friendship"), "#ffb9c2"),
+        ("friendship", GERMAN_TEXT.format("status.friendship"), "#ffb9c2"),
     )
     BAR_WIDTH = 92
 
@@ -65,13 +65,13 @@ class ActionToolbar:
             moved=actions.move_speech,
             dropped=self._drag_dropped,
         )
-        needs_frame = tk.Frame(outer, bg=self.skin.background)
-        needs_frame.pack(fill="x", padx=7, pady=(1, 5))
-        self.needs: dict[str, tuple[tk.Canvas, int, tk.Label]] = {}
+        readouts_frame = tk.Frame(outer, bg=self.skin.background)
+        readouts_frame.pack(fill="x", padx=7, pady=(1, 5))
+        self.readouts: dict[str, tuple[tk.Canvas, int, tk.Label]] = {}
         for column in range(3):
-            needs_frame.columnconfigure(column, weight=1, uniform="needs")
-        for i, (key, _title, color) in enumerate(self.NEEDS):
-            cell = tk.Frame(needs_frame, bg=self.skin.background)
+            readouts_frame.columnconfigure(column, weight=1, uniform="readouts")
+        for i, (key, _title, color) in enumerate(self.READOUTS):
+            cell = tk.Frame(readouts_frame, bg=self.skin.background)
             if key == "mood":
                 cell.grid(row=0, column=0, columnspan=3, sticky="ew", padx=3,
                           pady=(2, 7))
@@ -99,8 +99,8 @@ class ActionToolbar:
             )
             rect = bar.create_rectangle(0, 0, 1, 10, outline="", fill=color)
             bar.pack(fill="x", pady=(3, 3))
-            self.needs[key] = (bar, rect, label)
-            bar.bind("<Configure>", partial(self._on_need_resize, key))
+            self.readouts[key] = (bar, rect, label)
+            bar.bind("<Configure>", partial(self._on_readout_resize, key))
         actions_frame = tk.Frame(outer, bg=self.skin.background)
         actions_frame.pack(fill="x", padx=5)
         actions_row = tk.Frame(actions_frame, bg=self.skin.background)
@@ -237,15 +237,15 @@ class ActionToolbar:
             button.winfo_rooty(),
         )
 
-    def _on_need_resize(self, key: str, event: tk.Event) -> None:
-        self._resize_need(key, event.width)
+    def _on_readout_resize(self, key: str, event: tk.Event) -> None:
+        self._resize_readout(key, event.width)
 
-    def _resize_need(self, key: str, width: int | None = None) -> None:
-        bar, rect, _label = self.needs[key]
+    def _resize_readout(self, key: str, width: int | None = None) -> None:
+        bar, rect, _label = self.readouts[key]
         actual_width = width if width is not None else bar.winfo_width()
         if actual_width <= 1:
             actual_width = bar.winfo_reqwidth()
-        amount = max(0.0, min(100.0, self._current.need_value(key)))
+        amount = max(0.0, min(100.0, self._current.status_value(key)))
         bar.coords(rect, 0, 0, round(actual_width * amount / 100),
                    bar.winfo_reqheight())
 
@@ -265,11 +265,11 @@ class ActionToolbar:
             if widget.cget("text") != value:
                 widget.configure(text=value)
                 changed = True
-        for key, title, _color in self.NEEDS:
-            amount = max(0, min(100, view.need_value(key)))
-            _bar, _rect, label = self.needs[key]
+        for key, title, _color in self.READOUTS:
+            amount = max(0, min(100, view.status_value(key)))
+            _bar, _rect, label = self.readouts[key]
             text = GERMAN_TEXT.format(
-                "ui.need_value",
+                "ui.status_value",
                 title=title,
                 percent=f"{amount:.0f}",
             )
@@ -280,7 +280,7 @@ class ActionToolbar:
                 )
             if label.cget("text") != text:
                 label.configure(text=text)
-            self._resize_need(key)
+            self._resize_readout(key)
         self.refresh_details()
         if changed and self.visible:
             self.place()

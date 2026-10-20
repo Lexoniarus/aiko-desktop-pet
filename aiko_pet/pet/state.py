@@ -37,7 +37,7 @@ from .progression import calculate_pet_progression
 from .routine import TimeContext, context_at, due_meal
 from .sleep import SleepContext, SleepEpisode, calculate_manual_sleep_transition
 from .state_values import PetValues, PreparedItemConsumption
-from .status_hints import MoodHint, choose_mood_hint
+from .status_hints import StatusHint, choose_status_hint
 from .value_rules import clamp_need_value
 
 
@@ -564,6 +564,6 @@ class PetState:
             meals_today=self.meals_today,
         )
 
-    def mood_hint(self, context: TimeContext | None = None) -> MoodHint:
+    def status_hint(self, context: TimeContext | None = None) -> StatusHint:
         """Return the semantic status hint, not a language-specific sentence."""
-        return choose_mood_hint(self, context)
+        return choose_status_hint(self, context)

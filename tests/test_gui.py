@@ -129,27 +129,27 @@ class TaskbarPetGuiTests(unittest.TestCase):
         bar = self.toolbar
         self.assertFalse(hasattr(self.app._hover, "status_panel"))
         self.assertEqual(
-            set(bar.needs),
+            set(bar.readouts),
             {"satiety", "fun", "mood", "energy", "social", "affection", "friendship"},
         )
-        for key, _title, _color in bar.NEEDS:
-            canvas, rect, label = bar.needs[key]
+        for key, _title, _color in bar.READOUTS:
+            canvas, rect, label = bar.readouts[key]
             self.assertIn("%", label.cget("text"))
             self.assertGreater(canvas.coords(rect)[2], 0)
         set_test_pet_values(self.app.state, mood=22)
         set_test_pet_values(self.app.state, satiety=36)
         set_test_pet_values(self.app.state, energy=95)
         bar.refresh()
-        self.assertIn("22%", bar.needs["mood"][2].cget("text"))
-        self.assertIn("36%", bar.needs["satiety"][2].cget("text"))
-        self.assertIn("95%", bar.needs["energy"][2].cget("text"))
+        self.assertIn("22%", bar.readouts["mood"][2].cget("text"))
+        self.assertIn("36%", bar.readouts["satiety"][2].cget("text"))
+        self.assertIn("95%", bar.readouts["energy"][2].cget("text"))
         self.app.root.update()
         self.assertEqual(
-            bar.needs["mood"][0].coords(bar.needs["mood"][1])[2],
+            bar.readouts["mood"][0].coords(bar.readouts["mood"][1])[2],
             round(
                 max(
-                    bar.needs["mood"][0].winfo_width(),
-                    bar.needs["mood"][0].winfo_reqwidth(),
+                    bar.readouts["mood"][0].winfo_width(),
+                    bar.readouts["mood"][0].winfo_reqwidth(),
                 )
                 * 0.22
             ),
@@ -176,7 +176,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.set_observe_computer(False)
         self.assertFalse(self.app.settings.observe_computer)
         self.assertIn("deaktiviert", self.toolbar.hardware.cget("text"))
-        self.assertIn("Sättigung", self.toolbar.needs["satiety"][2].cget("text"))
+        self.assertIn("Sättigung", self.toolbar.readouts["satiety"][2].cget("text"))
         self.app.set_observe_computer(True)
         self.assertTrue(self.app.settings.observe_computer)
         self.assertIn("CPU", self.toolbar.hardware.cget("text"))
@@ -217,14 +217,14 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app._on_enter()
         self.app.root.update()
         self.toolbar.refresh()
-        for key, _title, _color in self.toolbar.NEEDS:
-            bar, rect, text = self.toolbar.needs[key]
+        for key, _title, _color in self.toolbar.READOUTS:
+            bar, rect, text = self.toolbar.readouts[key]
             self.assertEqual(bar.coords(rect)[2], bar.winfo_width(), key)
             self.assertIn("100%", text.cget("text"))
-        self.assertIn("Lv 10", self.toolbar.needs["friendship"][2].cget("text"))
+        self.assertIn("Lv 10", self.toolbar.readouts["friendship"][2].cget("text"))
         set_test_pet_values(self.app.state, mood=25)
         self.toolbar.refresh()
-        bar, rect, _text = self.toolbar.needs["mood"]
+        bar, rect, _text = self.toolbar.readouts["mood"]
         self.assertEqual(bar.coords(rect)[2], round(bar.winfo_width() * 0.25))
 
     def test_side_by_side_bridge_keeps_hover_active(self):

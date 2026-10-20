@@ -66,7 +66,7 @@ class IndependentHoverTests(unittest.TestCase):
     def test_rendering_updates_from_snapshot_not_game_object(self) -> None:
         set_test_pet_values(self.state, energy=14)
         self.panel.refresh()
-        self.assertIn("14%", self.panel.needs["energy"][2].cget("text"))
+        self.assertIn("14%", self.panel.readouts["energy"][2].cget("text"))
         self.assertIn("CPU 42 %", self.panel.hardware.cget("text"))
 
     def test_saved_drag_and_reset_flow_through_callback(self) -> None:

@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..pet.balance import BALANCE
+from ..pet.needs import NeedLevels
 from ..pet.state import PetState
 
 
@@ -27,15 +28,10 @@ class PetReadSnapshot:
     fun: float = BALANCE.number("initial", "fun")
 
     @property
-    def needs(self) -> tuple[tuple[str, float], ...]:
-        return (
-            ("satiety", self.satiety),
-            ("mood", self.mood),
-            ("fun", self.fun),
-            ("energy", self.energy),
-            ("social", self.social),
-            ("affection", self.affection),
-            ("friendship", self.friendship),
+    def needs(self) -> NeedLevels:
+        """Exactly five care values; mood and friendship stay separate reads."""
+        return NeedLevels(
+            self.satiety, self.energy, self.fun, self.social, self.affection,
         )
 
 

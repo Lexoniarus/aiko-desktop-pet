@@ -13,7 +13,7 @@ from aiko_pet.pet.content import (
     parse_text_catalog,
 )
 from aiko_pet.pet.mind.catalog import EMOTIONS
-from aiko_pet.pet.status_hints import MoodHint
+from aiko_pet.pet.status_hints import StatusHint
 from aiko_pet.ui.view_models.care_text import format_care_response
 from aiko_pet.ui.view_models.text_de import (
     format_emotion_label,
@@ -105,10 +105,10 @@ class TextCatalogTests(unittest.TestCase):
         with self.assertRaises(KeyError):
             countdown_line(4)
 
-    def test_all_mood_hint_keys_have_a_german_translation(self) -> None:
+    def test_all_status_hint_keys_have_a_german_translation(self) -> None:
         self.assertEqual(
-            {f"mood.{hint.value}" for hint in MoodHint},
-            {k for k in GERMAN_TEXT.messages if k.startswith("mood.")},
+            {f"status_hint.{hint.value}" for hint in StatusHint},
+            {k for k in GERMAN_TEXT.messages if k.startswith("status_hint.")},
         )
 
     def test_invalid_templates_and_catalogues_are_rejected(self) -> None:

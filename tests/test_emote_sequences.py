@@ -195,7 +195,7 @@ class EmoteTkTests(unittest.TestCase):
         self.pet.root.update()
         self.assertTrue(bar.today.cget("image"))
         self.assertTrue(bar.buttons["place_item"].cget("image"))
-        self.assertEqual(len(bar.needs), 7)
+        self.assertEqual(len(bar.readouts), 7)
         self.assertTrue(
             all(
                 name in bar.buttons
@@ -209,15 +209,15 @@ class EmoteTkTests(unittest.TestCase):
             )
         )
         self.assertNotIn("energy_drink", bar.buttons)
-        for key in bar.needs:
+        for key in bar.readouts:
             set_test_pet_values(self.pet.state, **{key: 100})
         bar.refresh()
         self.pet.root.update()
         self.assertTrue(
             all(
-                bar.needs[k][0].coords(bar.needs[k][1])[2]
-                == bar.needs[k][0].winfo_width()
-                for k in bar.needs
+                bar.readouts[k][0].coords(bar.readouts[k][1])[2]
+                == bar.readouts[k][0].winfo_width()
+                for k in bar.readouts
             )
         )
 

@@ -6,8 +6,9 @@
 > point for implementation planning. This document plans that first delivery.
 > Stages 1–3, B1 and B2 are implemented and verified below.
 > Stage 4 follows the corrected ownership and verification scope below.
-> Stages 5–6 remain pending except for the stage-5C menu/action/placement
-> decoupling delivered below; physical desktop acceptance is separately recorded.
+> Stage 5's needs/progression/status foundation and menu/action/placement
+> decoupling are delivered below. Moodlet/wish/emotion integration and stage 6
+> remain pending; physical desktop acceptance is separately recorded.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > This expansion is planning only; concrete Moodlet/wish rules are not settled
@@ -898,6 +899,26 @@ full-suite claim for this refactor.
    and strict Mypy. Twelve serialized care/awake/sleep progression outcomes
    match the pre-refactor baseline exactly. Save fields and balance JSON remain
    unchanged; no full-suite run was performed.
+
+3. **Status advice and read contracts:** renamed `StatusHint`,
+   `StatusHintValues`, `choose_status_hint()`, `PetState.status_hint()` and
+   presentation formatters together. Status-copy keys now use `status_hint.*`
+   and `ui.status_value`, with mood/friendship labels under `status.*` rather
+   than `need.*`; the German catalogue is otherwise byte-for-value
+   equivalent after the key mapping. `PetReadSnapshot.needs` returns five-field
+   `NeedLevels`; numeric mood and friendship remain separate reads. Only UI
+   projections assemble the seven `status_values`; toolbar `READOUTS`/`readouts`
+   render them without classifying all seven as needs. Existing native fixtures
+   migrated with the contract; targeted local tests construct no Tk windows.
+   The final focused status/projection/catalogue/architecture batch passed
+   66 tests in 0.575 seconds (slowest 0.274 seconds), including a headless
+   toolbar-formatting contract check. Targeted Ruff, strict Mypy and Pyright
+   passed. Native fixture execution and the complete suite remain deferred;
+   no runtime visual acceptance is claimed.
+
+The requested structural 5A slice is complete; full typed emotional context and
+Moodlet/wish behavior remain later work. No composed-Moodlet calculation,
+balance change, new mutable owner or runtime UI restyling was introduced.
 
 The later typed need-condition/dialogue-context migration and final emotional
 interpretation still belong with the agreed 5B semantics. This structural slice

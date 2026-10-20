@@ -151,9 +151,9 @@ No extra need integrator, clock, search, movement writer or pet store is added.
 
 **`pet/mind/adaptive.py`** learns coarse local daily patterns from observations. Unknown hardware readings do not become fabricated activity. No application names, process titles or content are collected for this version.
 
-`PetState.mood_hint()` now returns a typed `MoodHint` key from
+`PetState.status_hint()` returns a typed `StatusHint` key from
 `pet/status_hints.py`. The exact same pure policy works on the immutable
-`PetReadSnapshot`; only `ui/view_models/text_de.py` selects German mood
+`PetReadSnapshot`; only `ui/view_models/text_de.py` selects German status
 wording. `PetState.due_meal()` returns a due meal ID, and the UI decides
 whether to display a meal name or "Snack". Historical localized helpers
 `TimeContext.label`, `TimeContext.schedule_line` and
@@ -322,6 +322,10 @@ The care/storage follow-up also changes these Python call contracts:
 
 | Previous call | Current owner/contract |
 | --- | --- |
+| `MoodHint`, `MoodHintState`, `choose_mood_hint()`, `PetState.mood_hint()` | `StatusHint`, `StatusHintValues`, `choose_status_hint()`, `PetState.status_hint()` |
+| `format_mood_hint()`, `mood_hint_text()`, text keys `mood.*` | `format_status_hint()`, `status_hint_text()`, `status_hint.*`; German wording unchanged |
+| Seven-entry `PetReadSnapshot.needs` | Five-field immutable `NeedLevels`; numeric mood and friendship remain separate snapshot fields |
+| UI `needs`/`need_value()`, toolbar `NEEDS`/`needs` | Presentation `status_values`/`status_value()`, toolbar `READOUTS`/`readouts`; seven displayed bars remain unchanged |
 | `pet.need_decay`, `NeedProgress`, `calculate_need_decay()` | `pet.progression`, `PetProgress`, `calculate_pet_progression()`; five `NeedLevels` fields live in `pet.needs` |
 | `MoodFactors`, need-only `calculate_mood_target()` | `NeedMoodFactors`, `calculate_need_mood_target()`; composed Moodlet targets remain later work |
 | Hover `feed` callback / Snack button `feed` action | `place_item` callback/action with independent `can_place_item`; direct domain feeding remains `feed` |

@@ -242,7 +242,7 @@ class UiDependencyRules(unittest.TestCase):
             with self.subTest(module=relative):
                 source = (ROOT / relative).read_text("utf-8")
                 for expression in (
-                    ".mood_hint(",
+                    ".status_hint(",
                     ".feed_label(",
                     ".schedule_line",
                     ".label",
