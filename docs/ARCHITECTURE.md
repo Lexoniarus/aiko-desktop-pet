@@ -183,6 +183,29 @@ creates emotional evidence. Wish IDs and per-area pacing survive removed wishes;
 round progress is bounded to the objective and does not become a second game
 session/score owner. Friendship rewards retain their existing history owner.
 
+`pet/wishes.py` also owns pure creation, original-deadline expiry, temporary
+restrictions and disclosure eligibility. The existing `PetState` progression
+expires wishes during live, closed and standby time. Creation is a separate
+live-endpoint operation: `DesktopAttentionRuntime.handle_time_progress()` asks
+the existing `AttentionCoordinator` to evaluate one current opportunity, even
+while presentation is occupied. It never reconstructs missed wishes. Candidate
+selection uses the existing Mind RNG and saved area/global pacing anchors.
+
+`WishContext` is a frozen current capability/acceptance input, not another
+state/history owner. Attention reads pure existing petting admission, game
+energy rules, Moodlet context and online opt-in. The existing social runtime
+exposes prepared categories without fetching or reserving a buffer item.
+Temporary restrictions retain each wish's identity, slot and original deadline;
+their typed reason can feed the later status projection.
+
+At a free speech opportunity, care urgency precedes wishes and ordinary
+commentary. PetMind renders the concrete wish from `texts.de.json` and attaches
+its instance ID to the existing immutable `Reaction`. The existing
+`ReactionPlayer` acknowledges that ID only after the text display succeeds;
+the aggregate ignores duplicate, absent and expired IDs. There is no second
+player or wish queue, and disclosure grants no contact, care or emotional
+reward. Fulfillment remains 5B.7; the combined status presentation remains 5C.
+
 `pet/moodlets.py` now owns pure tier ageing, bounded reinforcement, resolution
 and per-level relief. Definitions are supplied by the canonical catalogue;
 shared coefficients remain in balance JSON. `pet/mood.py` composes the capped

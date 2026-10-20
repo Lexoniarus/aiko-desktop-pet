@@ -169,6 +169,22 @@ The next instance ID is retained when the active collection becomes empty.
 These values support later duplicate-safe fulfillment; no reward is generated
 by decoding, and no parallel relationship accounting is stored in wishes.
 
+Stage 5B.6 now uses these existing fields for live creation and actual speech.
+The first awake live evaluation may create one wish; subsequent creation obeys
+the saved sixty-minute global and ninety-minute area intervals. The three-slot,
+one-per-area limits apply before allocation. No new save version, first-start
+timer or random backlog is introduced. All time paths remove a wish at its
+original four-hour deadline without a penalty, retaining its retired identity
+and pacing anchors. A restart can create one current wish only after live
+evaluation resumes, never a sequence attributed to the closed interval.
+
+Only an actually presented wish text records `expressed_at` and the shared
+thirty-minute expression anchor. Merely selecting text, showing status or
+canceling before text does not count. Temporary activity restrictions and low
+trust/mood preserve the original stored wish; they do not pause or extend it.
+Wording for all eleven forms is validated in `texts.de.json`, with canonical
+food/game labels and objective round counts interpolated at presentation.
+
 Missing old sections stay empty. Invalid sections preserve valid Moodlet/care
 values, and the existing atomic repository backs up the original bytes before
 replacement, including when saving without first loading. Whole-Pet checkpoints

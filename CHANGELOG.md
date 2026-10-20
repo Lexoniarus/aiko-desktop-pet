@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Add paced inner wish creation, original-deadline expiry through live/closed/
+  standby time and independent speech eligibility. Reuse existing Mind, attention
+  and reaction playback for concrete German requests and actual text receipts.
+  Preserve temporary unavailable wishes and saved expression pacing; queueing,
+  expiry and expression grant no care, friendship or Moodlet effects.
+
 - Qualify hunger, exhaustion, stimulation, loneliness and closeness after-effects
   from the existing rolling care history. Persist bounded handled-exposure
   markers, preserve fresh residual burden and timed recovery through interruptions
@@ -27,8 +33,8 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   Compose capped positive/negative contributions with need-based mood through
   the existing progression path, splitting at expiry and recovery boundaries.
   Preserve timed mood response, critical-need ceilings and unobserved closed-time
-  ageing. Negative interaction and poor-care triggers are delivered; wish
-  lifecycle and fulfillment remain later slices.
+  ageing. Negative interaction and poor-care triggers and wish lifecycle are
+  delivered; wish fulfillment remains a later slice.
 
 - Persist immutable Moodlet episodes and inner wishes in the existing PetValues
   checkpoint and version-one save, including relief usage, original deadlines,

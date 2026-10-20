@@ -16,7 +16,8 @@
 > state and storage. 5B.3 delivers Moodlet lifetime/relief and numeric mood
 > composition. 5B.4 now connects negative interaction experiences and targeted
 > helpful-action relief. 5B.5 delivers prolonged-poor-care after-effects and
-> accounted exposure. Wish lifecycle/fulfillment, overall emotion and status UI
+> accounted exposure. 5B.6 now delivers paced inner wishes, real-time expiry and
+> actual spoken disclosure. Wish fulfillment, overall emotion and status UI
 > remain for the following slices.
 
 ## Stage-4 correction delivery, 2026-10-19
@@ -3125,3 +3126,61 @@ agreed end-of-refactor checks.
 
 Each unit was locally checked and pushed with `[skip ci]`. The documentation
 follow-up updates the ownership, storage and mood/friendship guides to this state.
+
+
+##### 5B.6 completion: live wish lifecycle and actual disclosure (2026-10-20)
+
+The implementation conventions above were recorded before coding. Pure
+`wishes.py` policies now apply creation/area spacing, three slots, four-hour
+original deadlines, contextual selection, temporary restrictions, oldest-first
+eligible disclosure and exactly-once actual expression. Definitions are
+injected into policy; the existing catalogue and balance remain authoritative.
+
+PetState owns all changes. Its existing progression and endpoint finalization
+expire wishes on both direct and World-coordinated time paths. Neither decoding
+nor closed/standby reconstruction creates wishes or personal interactions.
+The existing desktop attention endpoint separately evaluates at most one
+current awake opportunity, including while menus/actions occupy presentation.
+Creation uses Mind's RNG across eligible areas, forms and concrete targets.
+
+Attention reuses existing pure petting admission and game energy rules. Online
+opt-in admits supported API candidates; a read-only view of the existing warm
+buffers gates immediate API disclosure without fetching/reserving content.
+Disabled sources, unavailable prepared content and temporary petting/game
+restrictions retain the original wish and deadline. Urgent needs, existing
+reactions, foreground actions and gameplay retain speech priority.
+
+PetMind renders all eleven objective forms with canonical targets and round
+counts through validated German resources. The existing immutable Reaction
+carries a wish instance ID; ReactionPlayer reports it after actual text display.
+Selection/status are not disclosure. Cancellation before text, stale callbacks,
+duplicate receipts and expired/missing identities cannot replay expression.
+The existing optional v1 save fields persist the result and expression spacing.
+Creation, expiry and speech do not grant need, friendship or Moodlet effects.
+
+| Commit | Coherent change |
+| --- | --- |
+| `2fbb8de` | Recorded conventions, pure lifecycle/disclosure rules and aggregate time ownership |
+| `0048e49` | Live attention integration, concrete requests, actual playback receipts and closed/standby checks |
+
+Final targeted local verification: **146 headless tests passed in 2.541 seconds**.
+The longest individual case took **0.329 seconds**; no selected test exceeded
+10 seconds. The selected modules cover wish lifecycle/catalogue/expression,
+emotional persistence and mood progression, attention decisions/desktop wiring,
+reaction playback, social readiness, text/Mind catalogues, architecture guards,
+session restoration and finite-stock sleep resources. Ruff passed for changed
+Python files; strict Mypy and Pyright passed for all ten changed production
+modules. Pyright also checked the affected/new test modules.
+
+Focused ownership review found no extra mutable Pet owner, clock, save store,
+conversation player, wish queue, offline generation loop or reward ledger.
+The GUI composition root remains within its existing 640-line gate. Tests use
+explicit timestamps, temporary stores and FakeScheduler callbacks; none opens
+a window, controls the mouse, calls an API or waits for gameplay time. Both
+code commits were locally checked and pushed with `[skip ci]`. No GitHub CI,
+full-suite run, merge or physical desktop acceptance was performed.
+
+5B.6 is complete. Next is **5B.7**, split into food, affection, games and social
+fulfillment with their real completion boundaries, positive Moodlets and
+independent capped friendship bonus. Overall emotional reads (5B.8), combined
+status UI (5C), the final full suite and final broad OOP review remain planned.

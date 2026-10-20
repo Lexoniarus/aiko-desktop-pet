@@ -1,6 +1,6 @@
 # Fun and mood — prototype tuning guide
 
-> This guide describes the care/fun/mood foundation and delivered stages 5B.3 through 5B.5 on
+> This guide describes the care/fun/mood foundation and delivered stages 5B.3 through 5B.6 on
 > `feature/social-optimization`. The
 > [mood](MOOD_BALANCE_PROPOSAL.md) and [need proposals](NEEDS_BALANCE_PROPOSAL.md)
 > retain the agreed design evidence. Progressive friendship now follows the
@@ -181,6 +181,17 @@ longer creates self-served catalogue meals. Adaptive sleep remains a later stage
 explicitly pending stage 5; this numeric change does not retune dialogue labels. See [data and saves](DATA_AND_SAVES.md).
 
 ## Verification
+
+Stage 5B.6 adds inner wishes without changing need, numeric mood, Moodlet or
+friendship values merely for wanting or speaking. Up to three wishes coexist,
+one per area, for four real hours. Creation is live and awake, spaced sixty
+minutes globally and ninety minutes per area. Low mood/trust does not suppress
+inner wishes. Disclosure needs level three, mood fifty, an available activity
+and a free speaking opportunity; urgent care retains priority. Only actual
+text presentation counts, once per wish and thirty minutes apart. Original
+deadlines continue through sleep, closure and standby, without offline
+generation or expiry penalties. Fulfillment impressions and independent
+relationship bonuses remain the separate 5B.7 slice.
 
 `tests/test_fun_mood.py` and `tests/test_game_experience.py` validate
 domain math, multiple sessions/day, game-neutral adapters and persistence.
