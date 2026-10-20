@@ -206,6 +206,11 @@ timers or continuous effects.
 
 ### Remaining native acceptance (not executed during 5C)
 
+Stage 6 subsequently runs the complete automated native-widget suite on an
+isolated Linux/Xvfb display for candidate `b72ed21`, including game placement,
+selector ownership, completion and cleanup. It does not establish the physical
+Windows/DPI/input checks below or validate subsequent parallel UI refinements.
+
 - Compare the live menu to the approved main/settings references at 100/125/150%
   Windows DPI, including German wrapping and actual icon/tag sizes.
 - Check clamping, pin/drag/topmost, details scrolling and all three embedded

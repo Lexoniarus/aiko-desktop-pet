@@ -8,6 +8,14 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Record the care/Moodlet/wish refactor's intermediate local OOP review and full
+  regression run for baseline `b72ed21`: 1,599 successful tests and eight Windows-only
+  skips in 95.133 seconds, none over ten seconds; repository-wide pinned static
+  checks pass. Correct oversized textual game headers and obsolete native test
+  fixtures, retaining actual domain effects and isolated storage. Subsequent
+  UI and behavior corrections require a new final stage-6 gate; physical Windows
+  acceptance remains separate.
+
 - Implement the approved VN status/menu: shared emotional summary, all-family
   Moodlet strip, inner/spoken wishes and original-deadline/progress details,
   vertical care readouts and embedded Snack/Spielen/Unterhalten selection.

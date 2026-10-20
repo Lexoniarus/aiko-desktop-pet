@@ -8,9 +8,12 @@
 > Stage 4 follows the corrected ownership and verification scope below.
 > Stage 5's needs/progression/status foundation and menu/action/placement
 > decoupling are delivered below. Moodlet/wish/emotion integration is delivered
-> through 5B.8 and the 5C VN status/menu implementation is delivered; stage 6
-> remains pending. Physical desktop acceptance is
-> separately recorded.
+> through 5B.8 and the 5C VN status/menu implementation is delivered. Stage 6's
+> full local suite and OOP review pass for baseline `b72ed21`. The owner requested
+> the completed UI refinements and the later practical wish/disruption corrections
+> in the final candidate. Their final integrated gate remains pending; only the
+> explicitly recorded baseline has full-suite evidence. Physical desktop acceptance
+> is separately recorded.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
@@ -3462,3 +3465,110 @@ shutdown acceptance checklist is in `UI_WINDOW_CONTRACT.md`; it remains manual.
 The broad final OOP review and complete suite remain the next **stage 6**, not
 part of this targeted implementation delivery. 5C implementation is complete
 within this explicitly headless verification scope.
+
+## Stage-6 integrated review, 2026-10-20
+
+The owner authorized the full local suite, individual timing review and final
+OOP audit, with small correction commits and pushes. This record applies to
+the frozen implementation baseline `b72ed21`, including corrections below.
+The owner subsequently requested the completed parallel UI refinements in the
+final candidate. Their inclusion requires an integrated final check, rather
+than inheriting the baseline's validation result.
+
+### Ownership and dependency review
+
+| Responsibility | Reviewed owners and conclusion |
+| --- | --- |
+| Mutable pet state | `pet/state.py` alone replaces `PetValues`. Needs, relationship history, sleep, Moodlets and wishes remain immutable aggregate-owned values; widgets/coordinators do not write `_values`. |
+| Numeric progression | `pet/progression.py` integrates the existing need, food, mood, relationship and emotional rules chronologically. `NeedLevels` contains exactly five needs. Numeric mood, relationship, emotional composition and immediate reaction tone remain separate. |
+| Time and offline resources | `ActiveSessionClock` measures and consumes intervals; `SessionTimeProgression` coordinates the existing Pet/World/memory owners with rollback. `PetSessionRestorer` reconstructs only unobserved time. Live search, movement, pickup, inspection and consumption retain their existing owners. There is no animation/gameplay replay or second resource inventory while closed. |
+| Moodlets and recovery | `interaction_rules.py` qualifies semantic experiences; `moodlets.py` handles stages, stacking and relief. `poor_care.py` reads the existing bounded care history and accounts handled exposure. Persistent friendship penalties remain separate from lasting emotional modifiers. |
+| Wishes and completion | `wishes.py` owns pure creation, deadlines, expression eligibility and bounded objective progress. Application attention, care, game and playback owners provide actual evidence. PetState commits retirement, fulfillment Moodlets and personal reward through the existing capped reward ledger. Reads/queueing do not grant rewards. |
+| Emotional interpretation | `emotions.py` derives the overall feeling from all active impressions without another mutable emotional store. Numeric caps do not hide emotional influences. Physical hints and short reaction tone do not substitute for overall emotion. |
+| Persistence | Existing version-one storage uses focused codecs for immutable values and the paired World/memory save. No second save format, clock or preference store was introduced. Legacy/malformed sections, checkpoints and repeated loads retain separate coverage. |
+| Presentation | `application/read_snapshot.py` copies immutable semantic data; `ui/view_models/` localizes it. Toolbar, Moodlet strip, wishes and embedded selectors present snapshots/capabilities, without advancing pet time or fulfilling desires. UI keyboard-engagement timing is presentation-only. |
+| Dependencies and composition | The complete resolved import graph is acyclic. Pet rules share only immutable `games/contracts.py` IDs/outcome types, not game implementations or scores. The root remains 638 lines. Existing Mind, World, application and UI boundaries require no additional aggregate, manager or event bus. |
+
+The architecture gate previously rejected any parent-relative Pet import,
+including the intended canonical immutable game contracts. It now checks
+resolved dependencies and explicitly rejects all game implementation imports
+from Pet. Existing forbidden UI/application/World/OS boundaries remain intact;
+there is no parallel list of game IDs to satisfy an import-spelling rule.
+
+### Corrections and focused verification
+
+- `a5f6892`: annotate World's broad motion-update state and distinguish scalar
+  icon size from surface dimensions in the development exporter. This resolves
+  all repository-wide strict Mypy diagnostics, including the previously scoped-out
+  World diagnostic, without changing motion or exported pixels.
+- `8b61ce8`: remove the old image-header pixel width from GamePanel's now textual
+  header. Tk interpreted 360 as characters, making native game windows several
+  thousand pixels wide. The existing right-edge Blackjack placement regression
+  verifies the correction. Migrate stale VN label/details expectations, retaining
+  distinct emotional state and physical sleep-hint assertions.
+- `85c96e2`: use the existing controlled Tk clock for click/RPS/Tic-Tac-Toe effect
+  assertions. Keep actual widgets, application completion and temporary saves;
+  do not replace domain effects with mock results. Initialize calendar state
+  before exact click checkpoints and assert the intentional boundary receipt.
+  Accepted-petting fixtures start below refusal tolerance. The mood-recovery
+  fixture supplies enough energy/fun for its target to rise. Learned-object
+  orientation is requested after its fixture history is installed; unknown
+  targets remain outside the near field but inside the radial eye-level sight
+  range, with background stock placed within desktop bounds. Withholding uses
+  an actually recognized wanted portion. No production perception, refusal,
+  friendship or mood rule was weakened to satisfy these old assumptions.
+- `b72ed21`: enforce the resolved shared-contract boundary and document it.
+
+The first full run found 21 assertion failures and three errors among 1,607
+tests. The above corrections passed all **176 affected tests in 27.774 seconds**
+on local Linux/Python 3.11/Xvfb; no individual case exceeded one second. Existing
+domain cases remained responsible for daily arithmetic, while native cases
+retained distinct widget, scheduling, custody and persistence responsibilities.
+No new test framework, duplicated scenario matrix or production module was added.
+
+### Intermediate local validation before concurrent UI completion
+
+The frozen candidate passes **1,607 discovered tests in 95.133 seconds**:
+**1,599 successful, eight Windows-only skips, zero failures/errors**. The skipped
+cases are seven Windows installer/environment checks and one native layered-window
+hit-test. They were not run on the working desktop, where setup can create native
+probes. Shared fixture/runner overhead is **3.271 seconds**, outside per-test
+setup/body/cleanup timings. The longest individual cases are:
+
+| Test ID (`module.Class.method`) | Seconds | Review |
+| --- | --- | --- |
+| `test_offline_progress.OfflineProgressTests.test_long_absence_is_complete_and_backward_clock_does_not_decay` | 6.891 | Thirty-day production restoration and backward-clock case, with real isolated storage; no wall-clock waiting. |
+| `test_friendship_neglect.FriendshipNeglectTests.test_long_gaps_keep_bounded_history_and_reference_consistency` | 6.091 | Thirty-day bounded relationship history and codec round-trip; distinct from the restoration use case. |
+| `test_daily_need_schedules.DailyNeedScheduleTests.test_settled_eight_and_four_phase_days_match_discussion` | 5.760 | Both approved eight-day settling schedules through real care/need rules; preserve their numerical baseline. |
+
+**No individual test exceeds ten seconds**, in either complete run. The three
+historically slow stage-4 native runtime cases now use the existing controlled
+clock: satiated investigation/put-down **0.587s**, restored recall/eating **0.538s**,
+and held-inspection sleep/restart **0.822s**. They still execute actual native
+widget callbacks and custody transitions without human clicks or real reading/
+animation waits. No further splitting, deletion or mock substitution was needed.
+
+Repository-wide pinned **Ruff 0.13.2**, **strict Mypy 1.18.2** (250 source files,
+`--no-incremental`, without silenced imports) and **Pyright 1.1.414** pass on the
+same frozen candidate. Static checks run locally on Windows/Python 3.11.9; the
+full suite runs locally on Linux/Python 3.11.2 with real Tk and Xvfb. Existing
+Tcl theme-change teardown diagnostics still appear on stderr without Python
+test/callback failures; these are not visual acceptance evidence.
+
+The container uses its own extracted checkout and filesystem, `--network none`,
+an unexposed Xvfb display and temporary saves. It has no host display, mouse
+injection or user-save mount. A temporary standard unittest result collector
+measures setup/body/cleanup per test with `perf_counter`, records shared fixture
+and runner overhead separately, and aborts with a traceback after a 90-second
+individual stall. The complete run also has a bounded timeout. Timing artifacts
+stay in ignored local data; there is no permanent additional runner/framework.
+
+Windows DPI/font appearance, actual desktop input, suspend/resume and visual
+animation acceptance remain the separate manual checklist in
+`UI_WINDOW_CONTRACT.md`. Offscreen native-widget success does not establish
+physical Windows acceptance. No GitHub CI, visible desktop window, browser,
+mouse control, merge or live user-save test was used.
+
+This establishes the reviewed baseline. Completed parallel UI refinements and
+the additional native button-input regression are to join the final source
+candidate and integrated validation record.
