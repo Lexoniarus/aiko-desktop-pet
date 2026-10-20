@@ -51,6 +51,7 @@ class DesktopCareRuntime:
             start_action=start_action, cancel_followup=player.cancel,
             react=react, show_text=speech.show_text,
             refresh_toolbar=hover.refresh_toolbar, refresh_status=hover.refresh_status,
+            text_presented=state.note_interaction_text,
         ))
         self._inputs, self._set_context, self._save = inputs, set_context, save
         self._is_closed = is_closed

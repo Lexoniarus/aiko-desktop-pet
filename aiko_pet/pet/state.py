@@ -13,7 +13,7 @@ from .care_actions import (
     plan_care_action,
     resolve_care_time,
 )
-from .care_result import CareResult
+from .care_result import CareEffect, CareResult
 from .consumption import ConsumptionOrigin
 from .food import (
     FoodActivity,
@@ -27,11 +27,14 @@ from .friendship import (
 )
 from .friendship_history import FriendshipHistory, FriendshipProgress
 from .fun import GameExperience, calculate_game_session_fun
+from .interaction_events import BoundaryCommunicated, InteractionEvent, PettingAttempted
+from .interaction_rules import apply_interaction_event
 from .lifecycle import (
     SimulationStep,
     calculate_daily_routine,
     plan_pet_time,
 )
+from .moodlet_catalog import MOODLET_CATALOG
 from .moodlets import MoodletState
 from .needs import NeedLevels
 from .progression import calculate_pet_progression
@@ -412,6 +415,31 @@ class PetState:
             relationship=start_history(self.friendship_history, lived_seconds),
         )
 
+    def note_interaction_text(self, event: str) -> None:
+        """A presentation receipt, never merely a selected or queued reaction."""
+        if event in (
+            "click_boundary", "click_work_boundary", "click_withdrawn_boundary",
+        ):
+            self.experience_interaction(BoundaryCommunicated("poking"))
+        elif event == "pet_refused":
+            self.experience_interaction(BoundaryCommunicated("petting"))
+
+    def experience_interaction(self, event: InteractionEvent) -> bool:
+        """Commit a perceived fact; continuing emotions never repeat direct loss."""
+        effects = apply_interaction_event(
+            self.moodlets, event, elapsed=self.lived_seconds,
+            definitions=MOODLET_CATALOG.definitions,
+        )
+        changes: dict[str, Any] = {"moodlets": effects.moodlets}
+        if effects.penalty_kind:
+            friendship = apply_negative_event(
+                self, effects.penalty_kind, effects.penalty_points,
+            )
+            changes.update(friendship=friendship.points,
+                           relationship=friendship.history)
+        self._change(**changes)
+        return effects.refused
+
     def apply_object_withholding(self, loss: float) -> float:
         """Commit a bounded application decision without manufacturing care."""
         return self.apply_relationship_penalty("withholding", loss)
@@ -459,6 +487,10 @@ class PetState:
     ) -> CareResult:
         """Commit one care transition and its friendship reward atomically."""
         stamp = resolve_care_time(now)
+        if action == "pet" and self.experience_interaction(PettingAttempted(
+            self.affection, self.friendship_level,
+        )):
+            return CareResult("pet", CareEffect.AFFECTION_REFUSED)
         transition = plan_care_action(
             self,
             action,

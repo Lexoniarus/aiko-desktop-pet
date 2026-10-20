@@ -11,6 +11,7 @@ DIALOGUE_EVENTS = frozenset({
     "game_round_aiko_win",
     "game_round_draw",
     "affection_low",
+    "pet_refused",
     "after_work_thought",
     "care_request_feed",
     "care_request_pet",

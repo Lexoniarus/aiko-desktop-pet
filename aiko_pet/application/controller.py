@@ -76,7 +76,7 @@ class CareController:
                 "click_wake", self._state, context, inputs.monotonic_time,
             )
             return CareOutcome(result, wake_reaction, context)
-        before = self._mind.observe_care(
+        before = self._mind.preview_care(
             self._state,
             context,
             inputs.monotonic_time,
@@ -91,7 +91,9 @@ class CareController:
         if result.effect not in (
             CareEffect.PLAY_TIRED,
             CareEffect.DRINK_SATISFIED,
+            CareEffect.AFFECTION_REFUSED,
         ):
+            self._mind.record_care_contact(inputs.monotonic_time)
             self._mind.after_care(command.action, inputs.monotonic_time)
         reaction: Reaction | None
         if command.conversation is not None:

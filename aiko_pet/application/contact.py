@@ -11,6 +11,7 @@ from dataclasses import dataclass, replace
 from typing import Callable
 
 from ..pet.balance import BALANCE
+from ..pet.interaction_events import Poked
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
@@ -39,6 +40,7 @@ class ContactPorts:
     playback_active: Callable[[], bool] = lambda: False
     reaction_event: Callable[[], str | None] = lambda: None
     care_holding: Callable[[], bool] = lambda: False
+    advance_time: Callable[[], None] = lambda: None
     wake_from_clicks: Callable[[], None] = lambda: None
 
 
@@ -115,6 +117,7 @@ class ContactCoordinator:
         sleep_reply = self._state.sleeping and event == "sleep"
         if self._ports.playback_active() and not (click_reply or sleep_reply):
             return
+        self._ports.advance_time()
         self.enter()
         now = time.monotonic()
         self._adaptive.note_interaction(time.time())
@@ -124,6 +127,8 @@ class ContactCoordinator:
         if self._state.sleeping and self._mind.click_wakes:
             self._ports.wake_from_clicks()
             return
+        if not self._state.sleeping:
+            self._state.experience_interaction(Poked(len(self._mind.clicks) > 1))
         if self._mind.click_annoyance:
             self._state.apply_relationship_penalty(
                 "click", BALANCE.number("friendship", "click_loss"),

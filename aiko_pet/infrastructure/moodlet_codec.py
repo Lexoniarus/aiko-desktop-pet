@@ -10,6 +10,7 @@ from ..pet.catalog_validation import (
     number_value,
     object_fields,
 )
+from ..pet.interaction_events import InteractionMemory
 from ..pet.moodlet_catalog import MOODLET_CATALOG
 from ..pet.moodlets import (
     MoodletDecay,
@@ -24,7 +25,7 @@ from ..pet.moodlets import (
 def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
     """Reject corrupt sections as a whole; callers retain unrelated pet values."""
     row = object_fields(raw, ("version", "baseline", "next_instance_id", "active"),
-                        context="moodlets")
+                        optional=("interactions",), context="moodlets")
     if type(row["version"]) is not int or row["version"] != 1:
         raise ValueError("Unsupported saved Moodlet version")
     baseline = number_value(row["baseline"], minimum=0, maximum=elapsed,
@@ -96,7 +97,21 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
         ))
         instances.add(instance)
         families.add(key)
-    return MoodletState(baseline, next_id, tuple(episodes))
+    memory = InteractionMemory()
+    if "interactions" in row:
+        facts = object_fields(row["interactions"], (
+            "poke_boundary_at", "petting_boundary_at", "petting_refused_until",
+        ), context="interaction evidence")
+        anchors = tuple(None if facts[key] is None else number_value(
+            facts[key], minimum=baseline, maximum=elapsed, context=key,
+        ) for key in ("poke_boundary_at", "petting_boundary_at"))
+        petting = MOODLET_CATALOG.definitions[MoodletId.CROWDED].parameters
+        assert isinstance(petting, PettingParameters)
+        deadline = number_value(facts["petting_refused_until"], minimum=0,
+                                maximum=elapsed + max(petting.refusal_seconds),
+                                context="petting refusal")
+        memory = InteractionMemory(anchors[0], anchors[1], deadline)
+    return MoodletState(baseline, next_id, tuple(episodes), memory)
 
 
 def valid_moodlets(raw: Any, elapsed: float) -> bool:
@@ -110,6 +125,11 @@ def valid_moodlets(raw: Any, elapsed: float) -> bool:
 def encode_moodlets(state: MoodletState) -> dict[str, Any]:
     return dict(
         version=1, baseline=state.baseline, next_instance_id=state.next_instance_id,
+        interactions=dict(
+            poke_boundary_at=state.interactions.poke_boundary_at,
+            petting_boundary_at=state.interactions.petting_boundary_at,
+            petting_refused_until=state.interactions.petting_refused_until,
+        ),
         active=[dict(
             instance_id=e.instance_id, definition_id=e.definition_id.value,
             level=e.level, started_at=e.started_at, last_trigger_at=e.last_trigger_at,

@@ -12,6 +12,7 @@ from enum import StrEnum
 from typing import Literal, Mapping
 
 from .balance import BALANCE
+from .interaction_events import InteractionMemory
 from .needs import NeedLevels
 
 
@@ -181,6 +182,7 @@ class MoodletState:
     baseline: float = 0.0
     next_instance_id: int = 1
     active: tuple[MoodletEpisode, ...] = ()
+    interactions: InteractionMemory = InteractionMemory()
 
 
 @dataclass(frozen=True, slots=True)

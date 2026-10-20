@@ -26,7 +26,10 @@ class ReactionPlayer:
         mark_spoken: TimerCallback,
         is_closed: Callable[[], bool],
         hide_speech: TimerCallback = lambda: None,
+        on_text: Callable[[str], None] = lambda _event: None,
     ) -> None:
+        self._on_text = on_text
+        self._text_reported = False
         self._schedule = schedule
         self._cancel_timer = cancel_timer
         self._display_emote = display_emote
@@ -108,6 +111,7 @@ class ReactionPlayer:
         self._completion = on_complete
         self._subject = subject
         self._event = reaction.event
+        self._text_reported = False
         if animate and reaction.animation != "idle":
             self._start_action(reaction.animation, min(2.0, duration_ms / 1600))
         self._cues = reaction.beats
@@ -143,6 +147,9 @@ class ReactionPlayer:
             self._display_emote(cue.content, cue.duration_ms)
         elif cue.kind == "text":
             self._display_text(cue.content, cue.duration_ms)
+            if not self._text_reported and self._event is not None:
+                self._text_reported = True
+                self._on_text(self._event)
         else:
             self._hide_speech()
         self._mark_spoken()

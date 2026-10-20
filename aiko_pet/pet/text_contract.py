@@ -44,6 +44,7 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "care.energy_full": frozenset([]),
     "care.energy_success": frozenset([]),
     "care.talk": frozenset([]),
+    "care.pet_refused": frozenset(),
     "care.pet": frozenset([]),
     "care.feed_satisfied": frozenset([]),
     "care.feed_repeat": frozenset(["food"]),

@@ -7,7 +7,7 @@ from typing import Any, cast
 
 from ..pet.balance import BALANCE
 from ..pet.catalog_validation import object_fields
-from ..pet.friendship import CARE_FRIENDSHIP_GAIN
+from ..pet.friendship import CARE_FRIENDSHIP_GAIN, PENALTY_KINDS, penalty_budget
 from ..pet.friendship_history import (
     CriticalBucket,
     FriendshipHistory,
@@ -33,7 +33,7 @@ def _events(
 ) -> tuple[RelationshipEvent, ...]:
     if not isinstance(raw, list) or len(raw) > 65:
         raise ValueError("Unbounded relationship event history")
-    allowed = {"click", "withholding"} if penalties else set(CARE_FRIENDSHIP_GAIN)
+    allowed = PENALTY_KINDS if penalties else set(CARE_FRIENDSHIP_GAIN)
     events = []
     previous = -1.0
     for value in raw:
@@ -50,8 +50,7 @@ def _events(
         previous = stamp
     for i, event in enumerate(events):
         if penalties:
-            window = BALANCE.number("friendship", f"{event.kind}_window_seconds")
-            cap = BALANCE.number("friendship", f"{event.kind}_cap")
+            window, cap = penalty_budget(event.kind)
         else:
             window = BALANCE.number("friendship", "short_window_seconds")
             cap = BALANCE.number("friendship", "short_cap")

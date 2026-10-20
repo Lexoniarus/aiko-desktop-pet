@@ -27,6 +27,7 @@ class CareEffect(StrEnum):
     DRINK_CONSUMED = "drink_consumed"
     CONVERSATION = "conversation"
     AFFECTION = "affection"
+    AFFECTION_REFUSED = "affection_refused"
     SLEEP_STARTED = "sleep_started"
     SLEEP_ENDED = "sleep_ended"
 

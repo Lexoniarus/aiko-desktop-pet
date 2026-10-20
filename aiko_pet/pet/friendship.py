@@ -8,6 +8,8 @@ from typing import Protocol
 
 from .balance import BALANCE
 from .friendship_history import FriendshipHistory, FriendshipProgress, RelationshipEvent
+from .moodlet_catalog import MOODLET_CATALOG
+from .moodlets import MoodletId, PettingParameters
 from .value_rules import clamp_need_value
 
 FRIENDSHIP_REWARD_INTERVAL = BALANCE.integer("friendship", "reward_interval_seconds")
@@ -49,16 +51,8 @@ def prune_history(history: FriendshipHistory, now: float) -> FriendshipHistory:
         eligible=tuple(
             (a, t) for a, t in history.eligible if t > now - FRIENDSHIP_REWARD_INTERVAL
         ),
-        penalties=tuple(
-            e
-            for e in history.penalties
-            if e.at
-            > now
-            - max(
-                BALANCE.number("friendship", "click_window_seconds"),
-                BALANCE.number("friendship", "withholding_window_seconds"),
-            )
-        ),
+        penalties=tuple(e for e in history.penalties
+                        if e.at > now - penalty_budget(e.kind)[0]),
     )
 
 
@@ -120,19 +114,17 @@ def apply_negative_event(
     loss: float,
 ) -> FriendshipProgress:
     """Durable rolling caps survive new episodes, restart and wall-clock changes."""
-    if kind not in ("click", "withholding"):
-        raise ValueError("Unknown relationship penalty")
+    window, cap = penalty_budget(kind)
     friendship_after_withholding(record.friendship, loss)  # Validate before changes.
     now = record.lived_seconds
     history = prune_history(start_history(record.friendship_history, now), now)
-    window = BALANCE.number("friendship", f"{kind}_window_seconds")
     used = sum(
         e.amount for e in history.penalties if e.kind == kind and e.at > now - window
     )
     amount = max(
         0.0,
         min(
-            loss, record.friendship, BALANCE.number("friendship", f"{kind}_cap") - used
+            loss, record.friendship, cap - used
         ),
     )
     events = history.penalties
@@ -143,3 +135,19 @@ def apply_negative_event(
         replace(history, penalties=events),
         now,
     )
+
+
+PENALTY_KINDS = frozenset(("click", "withholding", "petting"))
+
+
+def penalty_budget(kind: str) -> tuple[float, float]:
+    """One lookup shared by live policy, pruning and save validation."""
+    if kind in ("click", "withholding"):
+        return (BALANCE.number("friendship", f"{kind}_window_seconds"),
+                BALANCE.number("friendship", f"{kind}_cap"))
+    if kind == "petting":
+        parameters = MOODLET_CATALOG.definitions[MoodletId.CROWDED].parameters
+        assert isinstance(parameters, PettingParameters)
+        return (parameters.friendship_loss_window_seconds,
+                parameters.friendship_loss_cap_points)
+    raise ValueError("Unknown relationship penalty")

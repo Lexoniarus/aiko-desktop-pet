@@ -2861,3 +2861,27 @@ emotional-state discussion; that expanded behavior is not yet fully specified.
 If one of these changes the accepted care burden or relationship outcome,
 bring that specific tradeoff back for discussion. Routine contract and
 implementation choices do not require reopening the agreed balance.
+
+
+##### 5B.4 delivery: contact boundaries (2026-10-20)
+
+Implemented poking and unwelcome petting through immutable facts in
+`pet/interaction_events.py` and pure decisions in `pet/interaction_rules.py`.
+The latter separates trigger qualification from the existing lifetime rules in
+`moodlets.py`; neither module owns mutable state or a clock. `PetState` commits
+consequences and retains all durable boundary/refusal evidence inside its
+existing Moodlet value. The optional codec extension accepts earlier 5B saves.
+
+A first actually displayed text cue acknowledges the boundary; selected,
+queued or cancelled-before-text reactions do not. Accepted click admission
+advances the existing session clock before qualifying pokes. Existing direct
+click penalties remain separate. Unwelcome petting grants no care/contact,
+friendship reward or petting animation. Refusal deadlines and the separate
+rolling ten-minute loss budget survive restart; penalties prune by their own
+window, rather than retaining short-window click history for longer budgets.
+
+Validation: 83 scoped headless tests passed (contact, care results/presentation,
+negative interactions, persistence, friendship, reaction playback and resource
+contracts); longest individual test 0.259 s. Scoped Ruff, strict Mypy and
+Pyright passed. No windows, mouse control, CI or full-suite execution.
+Food and object integrations remain in this same 5B.4 slice.

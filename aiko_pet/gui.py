@@ -219,6 +219,7 @@ class DesktopPet:
             cancel_timer=self.root.after_cancel,
             display_emote=self._speech.show_emote,
             display_text=self._speech.show_text,
+            on_text=self.state.note_interaction_text,
             start_action=self._start_action,
             mark_spoken=self._mark_reaction_spoken,
             is_closed=lambda: self._closed,
@@ -292,6 +293,8 @@ class DesktopPet:
         self._contact = ContactCoordinator(
             state=self.state, mind=self.mind, adaptive=self.adaptive,
             ports=ContactPorts(
+                advance_time=lambda: self._session_runtime.advance_lifecycle(
+                    time.monotonic(), time.time()),
                 context=lambda: self.context,
                 toolbar_hidden=lambda: (
                     self._hover.toolbar is None or not self._hover.toolbar.visible),

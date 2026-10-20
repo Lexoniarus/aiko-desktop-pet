@@ -326,6 +326,8 @@ class PetMind:
         if action == "sleep":
             return "wake" if effect == CareEffect.SLEEP_ENDED else "sleep"
         if action == "pet":
+            if effect == CareEffect.AFFECTION_REFUSED:
+                return "pet_refused"
             if self.situation is not None and self.situation.focused:
                 return "pet_during_work"
             if before.affection <= BALANCE.integer("mind", "care_low_affection"):
