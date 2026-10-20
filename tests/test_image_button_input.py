@@ -52,6 +52,24 @@ class ImageButtonInputTests(unittest.TestCase):
         self.root.update()
         self.assertEqual(self.calls, ["choose"])
 
+    def test_press_can_close_selector_before_release_without_duplicate_command(self):
+        errors = []
+        self.root.report_callback_exception = lambda *_args: errors.append(_args[1])
+
+        def choose(_event):
+            self.calls.append("place")
+            self.button.destroy()
+            return "break"
+
+        self.button.bind("<ButtonPress-1>", choose)
+        label = self.button._copy
+        assert label is not None
+        label.event_generate("<ButtonPress-1>", x=2, y=2)
+        self.root.update()
+        self.assertEqual(self.calls, ["place"])
+        self.assertFalse(self.button.winfo_exists())
+        self.assertEqual(errors, [])
+
 
 if __name__ == "__main__":
     unittest.main()
