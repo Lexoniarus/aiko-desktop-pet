@@ -178,7 +178,7 @@ class SleepPriorityTests(unittest.TestCase):
                 decode_sleep({**original, key: value}, 0)
 
     def test_latest_manual_command_wins_and_explicit_care_wakes(self):
-        pet = PetState(updated_at=stamp(23))
+        pet = PetState(affection=10, updated_at=stamp(23))
         for _ in range(3):
             pet.interact("sleep", now=stamp(23))
         self.assertTrue(pet.sleeping)

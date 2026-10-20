@@ -54,7 +54,7 @@ class NeedMoodBalanceTests(unittest.TestCase):
             )
 
     def test_shortages_change_target_without_instant_care_or_game_mood_bonuses(self):
-        pet = PetState(satiety=5, social=5, affection=5, energy=5, fun=5,
+        pet = PetState(satiety=5, social=5, affection=5, energy=50, fun=50,
                        mood=8, updated_at=NOW)
         for action in ("feed", "talk", "pet", "energy_drink", "feed", "feed"):
             pet.interact(action, now=NOW)

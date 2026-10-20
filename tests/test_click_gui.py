@@ -6,6 +6,7 @@ import tempfile
 import time
 import tkinter as tk
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
@@ -15,6 +16,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.state import PetState
 from tools.desktop_test_support import create_test_desktop
+from tools.tk_test_time import ControlledTkTime
 
 
 class ClickGuiTests(unittest.TestCase):
@@ -24,6 +26,7 @@ class ClickGuiTests(unittest.TestCase):
             probe.destroy()
         except tk.TclError as error:
             self.skipTest(str(error))
+        self.timing = self.enterContext(ControlledTkTime())
         directory = tempfile.TemporaryDirectory(prefix="aiko-click-test-")
         self.addCleanup(directory.cleanup)
         store = StateStore(Path(directory.name) / "state.json")
@@ -36,6 +39,7 @@ class ClickGuiTests(unittest.TestCase):
         self.addCleanup(self.pet.quit)
         self.pet._runtime.stop()
         self.pet.root.update()
+        self.pet._activity.advance_state(time.time())
 
     def click(self, button: int = 1) -> None:
         self.pet.canvas.event_generate(f"<Button-{button}>", x=90, y=90)
@@ -51,7 +55,12 @@ class ClickGuiTests(unittest.TestCase):
             self.assertFalse(self.pet._contact.can_interact("play"))
         self.assertEqual(self.pet._reaction_player.event, "click_boundary")
         self.assertGreater(self.pet.mind.irritation_reaction_until, time.monotonic())
-        self.assertEqual(self.pet.state.capture_checkpoint(), before)
+        self.assertEqual(self.pet.state.capture_checkpoint(), replace(
+            before, moodlets=replace(before.moodlets, interactions=replace(
+                before.moodlets.interactions,
+                poke_boundary_at=self.pet.state.lived_seconds,
+            )),
+        ))
 
     def test_short_care_and_active_game_ignore_direct_clicks(self) -> None:
         self.pet.interact("pet")

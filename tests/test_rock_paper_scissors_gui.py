@@ -15,6 +15,7 @@ from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
 from tools.desktop_test_support import create_test_desktop
+from tools.tk_test_time import ControlledTkTime
 
 
 def bubble_text(pet: DesktopPet) -> str | None:
@@ -38,6 +39,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         display.destroy()
 
     def setUp(self) -> None:
+        self.timing = self.enterContext(ControlledTkTime())
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         self.pet = create_test_desktop(
@@ -59,7 +61,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         game = self.pet._hover.game_window
         assert isinstance(game, RockPaperScissorsWindow)
         self.assertTrue(self.pet._hover.game_open)
-        self.assertEqual(game.window.cget("bg"), "#8E9CB1")
+        self.assertEqual(game.window.cget("bg"), game.skin.border)
         self.assertTrue(game.window.overrideredirect())
         self.assertEqual(game.score.games, 0)
         self.assertEqual(self.pet.state.mood, previous_mood)

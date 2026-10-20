@@ -9,10 +9,12 @@ from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.tic_tac_toe_window import TicTacToeWindow
 from tools.desktop_test_support import create_test_desktop
+from tools.tk_test_time import ControlledTkTime
 
 
 class TicTacToeGuiTests(unittest.TestCase):
     def setUp(self):
+        self.timing = self.enterContext(ControlledTkTime())
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         self.pet = create_test_desktop(

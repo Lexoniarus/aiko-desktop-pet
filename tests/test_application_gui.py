@@ -75,6 +75,7 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.assertIsNotNone(self.pet._speech.bubble)
 
     def test_care_uses_new_one_shot_clips_and_sleep_cancels_them(self) -> None:
+        set_test_pet_values(self.pet.state, affection=10)
         self.pet.interact("feed")
         self.assertEqual(self.pet._action_playback.clip_id, "eat")
         self.assertEqual(self.pet._animated.frame_clock.active_key, ("eat", None))

@@ -778,11 +778,16 @@ class WorldGuiTests(unittest.TestCase):
         ), now=runtime.now, record=None, claimed=frozenset(), maximum_distance=0,
             instance_id=stock.instance_id)
         runtime.awareness.memory.mark_assessed(record)
+        runtime._behavior.request_orientation()
         target = runtime.world.place_resting(
-            "dango", base + side * 1.5 * width, ObjectFootprint(8, 8),
+            # Beyond the near field, but inside the radial notice distance
+            # measured from the eyes (including their height above ground).
+            "dango", base + side * 1.25 * width, ObjectFootprint(8, 8),
         )
         runtime.world.place_resting(
-            "apple", base + side * 2.1 * width, ObjectFootprint(8, 8),
+            "apple", runtime.world.snapshot().surface.ground_x(
+                max(0, base + side * 2.1 * width), ObjectFootprint(8, 8),
+            ), ObjectFootprint(8, 8),
         )
         assert target.position is not None
         self.look_at(target.position.x)
@@ -1452,6 +1457,7 @@ class WorldGuiTests(unittest.TestCase):
         item = world.world.place_resting("apple", world._body_x() + 70,
                                          ObjectFootprint(8, 8))
         self.observe_and_acknowledge()
+        self.seed_previous_identification(item.instance_id, "apple", "food")
         world.begin_relocate(item.instance_id, item.revision)
         self.complete_feedback()
         initial = self.app.state.friendship
