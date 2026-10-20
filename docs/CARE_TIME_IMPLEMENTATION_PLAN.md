@@ -2057,6 +2057,14 @@ rules; they do not erase care evidence or add/refund friendship effects.
 
 ##### Agreed rules: overall emotional-state selection, 2026-10-20
 
+Implementation conventions for 5B.8: compare complete direction intensity sums
+within the winning polarity. Equal direction sums prefer the most recently
+triggered cause, then the strongest individual impression, then the stable
+EmotionalDirection declaration order. No active impression is discarded by a
+numeric contribution cap. Attribution describes the last qualifying cause's
+known origin (user, autonomous or unknown); old episodes without that optional
+fact remain unknown. Neither reading nor migration fabricates attribution.
+
 Status: owner-confirmed rules for implementation, not implemented. Derive one overall
 emotional interpretation from numeric mood, the active Moodlet composition and
 relevant interaction context. Do not create another care bar, mutable emotion

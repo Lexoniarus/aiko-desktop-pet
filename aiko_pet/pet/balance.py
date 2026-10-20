@@ -60,6 +60,9 @@ def parse_balance(raw: Any) -> BalanceCatalog:
                 raise ValueError(f"balance.{section}: {key} exceeds {upper}")
         sections[section] = MappingProxyType(values)
     catalog = BalanceCatalog(MappingProxyType(sections))
+    if not (0 < catalog.number("emotions", "subdued_below_mood")
+            < catalog.number("emotions", "satisfied_at_mood") <= 100):
+        raise ValueError("Invalid emotional fallback thresholds")
     sleep = sections["sleep"]
     if (any(value <= 0 for key, value in sleep.items()
             if key not in ("default_start_minute", "default_end_minute"))

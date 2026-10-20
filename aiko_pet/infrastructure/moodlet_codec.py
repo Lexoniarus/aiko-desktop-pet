@@ -16,6 +16,7 @@ from ..pet.interaction_events import FoodRepetitionMemory, InteractionMemory
 from ..pet.moodlet_catalog import MOODLET_CATALOG
 from ..pet.moodlets import (
     FoodMonotonyParameters,
+    MoodletAttribution,
     MoodletDecay,
     MoodletEpisode,
     MoodletId,
@@ -47,7 +48,7 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
             "instance_id", "definition_id", "level", "started_at", "last_trigger_at",
             "remaining_seconds", "relieved_levels", "pending_repetitions",
             "decay_paused", "recovery_since",
-        ), context="Moodlet episode")
+        ), optional=("attribution",), context="Moodlet episode")
         key = enum_value(entry["definition_id"], MoodletId, context="Moodlet family")
         definition = MOODLET_CATALOG.definitions[key]
         instance = integer_value(entry["instance_id"], minimum=1,
@@ -98,6 +99,8 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
         episodes.append(MoodletEpisode(
             instance, key, level, started, trigger, remaining, relieved, pending,
             entry["decay_paused"], recovery,
+            enum_value(entry.get("attribution", "unknown"), MoodletAttribution,
+                       context="Moodlet attribution"),
         ))
         instances.add(instance)
         families.add(key)
@@ -152,6 +155,7 @@ def encode_moodlets(state: MoodletState) -> dict[str, Any]:
             relieved_levels=list(e.relieved_levels),
             pending_repetitions=e.pending_repetitions, decay_paused=e.decay_paused,
             recovery_since=e.recovery_since,
+            attribution=e.attribution.value,
         ) for e in state.active],
     )
     if state.poor_care is not None:

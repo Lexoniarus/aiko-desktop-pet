@@ -43,6 +43,12 @@ class MoodletPolarity(StrEnum):
     NEGATIVE = "negative"
 
 
+class MoodletAttribution(StrEnum):
+    UNKNOWN = "unknown"
+    USER = "user"
+    AUTONOMOUS = "autonomous"
+
+
 class EmotionalDirection(StrEnum):
     CHEERFUL = "cheerful"
     PROUD = "proud"
@@ -170,6 +176,7 @@ class MoodletEpisode:
     pending_repetitions: int = 0
     decay_paused: bool = False
     recovery_since: float | None = None
+    attribution: MoodletAttribution = MoodletAttribution.UNKNOWN
 
 
 @dataclass(frozen=True, slots=True)
@@ -342,6 +349,7 @@ def next_moodlet_boundary(
 def reinforce_moodlet(
     state: MoodletState, definition_id: MoodletId, *, elapsed: float,
     definitions: Mapping[MoodletId, MoodletDefinition], level: int = 1,
+    attribution: MoodletAttribution = MoodletAttribution.UNKNOWN,
 ) -> MoodletState:
     """Apply already-qualified evidence at an already-advanced pet endpoint.
 
@@ -382,6 +390,7 @@ def reinforce_moodlet(
             remaining_seconds=float(definition.decay_stage_seconds),
             pending_repetitions=pending, recovery_since=None,
             decay_paused=definition.decay != MoodletDecay.QUIET_TIME,
+            attribution=attribution,
         )
         return replace(state, active=tuple(active))
     if state.next_instance_id >= 2**63 - 1:
@@ -390,6 +399,7 @@ def reinforce_moodlet(
         state.next_instance_id, definition_id, level, elapsed, elapsed,
         float(definition.decay_stage_seconds),
         decay_paused=definition.decay != MoodletDecay.QUIET_TIME,
+        attribution=attribution,
     )
     return replace(state, next_instance_id=state.next_instance_id + 1,
                    active=(*state.active, episode))

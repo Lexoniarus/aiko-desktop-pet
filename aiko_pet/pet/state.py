@@ -44,7 +44,7 @@ from .lifecycle import (
     plan_pet_time,
 )
 from .moodlet_catalog import MOODLET_CATALOG
-from .moodlets import MoodletState, reinforce_moodlet
+from .moodlets import MoodletAttribution, MoodletState, reinforce_moodlet
 from .needs import NeedLevels
 from .progression import calculate_pet_progression
 from .routine import TimeContext, context_at, due_meal
@@ -345,6 +345,8 @@ class PetState:
         moodlets = reinforce_moodlet(
             self.moodlets, definition.fulfillment_moodlet, elapsed=self.lived_seconds,
             definitions=MOODLET_CATALOG.definitions, level=definition.fulfillment_level,
+            attribution=(MoodletAttribution.USER if personal
+                         else MoodletAttribution.AUTONOMOUS),
         )
         relationship = (calculate_wish_friendship_reward(self) if personal
                         else FriendshipProgress(

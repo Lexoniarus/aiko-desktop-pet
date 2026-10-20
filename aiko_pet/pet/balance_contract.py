@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 BALANCE_FIELDS: dict[str, dict[str, str]] = {
+    "emotions": {
+        "subdued_below_mood": "number",
+        "satisfied_at_mood": "number",
+    },
     "wishes": {
         "maximum_active": "integer",
         "maximum_per_area": "integer",
