@@ -173,6 +173,11 @@ against supported categories in focused tests. Labels/descriptions stay in
 `texts.de.json`. Both catalogues detach nested values into frozen dataclasses,
 tuples and read-only mappings.
 
+Pet rules share only `games/contracts.py`'s immutable game IDs and outcome type;
+they never import game implementations, sessions or scores. The package boundary
+gate checks resolved import targets, including this narrow shared-contract rule,
+rather than treating relative-import depth as a domain boundary.
+
 `MoodletState`/`MoodletEpisode` and `WishState`/`ActiveWish`/`GameWishProgress`
 are frozen values owned by `PetValues` and exposed read-only by `PetState`.
 Focused `infrastructure/moodlet_codec.py` and `wish_codec.py` extend the existing
