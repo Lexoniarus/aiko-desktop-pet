@@ -376,9 +376,9 @@ The structural foundation can begin once the ongoing correction baseline is
 secured. The remaining material product decisions listed under "Documented inventory
 and decisions before implementation" remain gates for their affected behavior,
 not a reason to reopen every hypothetical edge case or delay unrelated naming
-work. Apply the subsequently agreed wish-disclosure/lifecycle and emotional
-composition rules below; do not silently invent renewed relief allowances or
-additional friendship bonuses. Resolve each relevant decision before its
+work. Apply the subsequently agreed wish-disclosure/lifecycle, emotional
+composition and relief-eligibility rules below. Additional wish friendship
+bonuses remain the material product decision to resolve before their affected
 policy/catalogue commit.
 This review ran no application tests and changed no runtime behavior.
 
@@ -1859,9 +1859,9 @@ refusal or treat a laugh, gift or win as proof that prior mistreatment was
 forgiven. Interpret the following targeted reductions alongside the earlier
 decay rules; they do not authorize a general automatic cleansing effect.
 
-##### Recorded proposal: targeted shortening of negative Moodlets, 2026-10-20
+##### Agreed rules: targeted shortening of negative Moodlets, 2026-10-20
 
-Status: owner-requested design proposal, not implemented. Deduct the listed
+Status: owner-confirmed design rules, not implemented. Deduct the listed
 credit from the remaining duration of the current intensity/decay stage, not
 from every remaining stage or directly from intensity/numeric mood.
 
@@ -1878,18 +1878,40 @@ from every remaining stage or directly from intensity/numeric mood.
 | Worn down by prolonged hunger | One actually consumed meal | Thirty minutes |
 | Irritated by exhaustion | Actual sleep and stable energy recovery | No additional flat credit; preserve existing recovery |
 
-For this proposal, shared play means at least two completed rounds in one
+For these rules, shared play means at least two completed rounds in one
 session, regardless of winner. Social completion means the whole sequence,
 including the punchline or fact introduction as applicable. Menu selection,
 waiting, interrupted sequences, rejected actions and duplicate event delivery
 do not qualify. Petting retains its ordinary willingness/acceptance rules.
 
-Grant at most one reduction per Moodlet and current decay stage. Further
-clicks, changing social categories or switching games do not grant another
-credit for that stage. If the stage has less time left than the credit, end
-that stage and discard the excess; do not carry credit into the next stage.
-That next stage starts with its normal duration. Apply ordinary elapsed ageing
-before the interaction so an already expired impression cannot be credited.
+Grant at most one reduction per intensity level within one continuous Moodlet
+episode. An episode lasts from creation until the impression fully ends,
+including timer extensions, escalation and recovery pauses. Each Moodlet keeps
+its own used-level allowances; revisiting a level does not create a new one.
+
+| Situation during the same episode | Renewed relief eligibility |
+| --- | --- |
+| Another helpful interaction on a level already shortened | None |
+| Provocation refreshes the timer, including at maximum intensity | No reset |
+| Intensity changes to a level not yet shortened in this episode | One reduction, after that impression's prerequisites are satisfied |
+| Intensity returns to a previously shortened level | Its allowance remains used |
+| Recovery pauses and later resumes | Allowances remain unchanged |
+| Sleep, app closure, standby or save reload | Preserve allowances; elapsed ageing still applies |
+| Impression fully ends and a later qualifying event creates a genuinely new episode | Fresh per-level allowances |
+
+A new episode still requires the existing trigger and exposure rules. Previously
+accounted-for poor-care history must not recreate an ended impression or renew
+its allowances. A new provocation must satisfy the existing quiet-time rules
+again before relief can qualify, even on a previously unused level.
+
+One completed qualifying interaction shortens only the currently active level
+of each eligible Moodlet. Further clicks, changing social categories or
+switching games do not renew a used allowance. If the level has less time left
+than the credit, end that stage and discard the excess; do not carry credit
+into the next stage. That next stage starts with its normal duration and needs
+another completed qualifying interaction if its allowance is still unused.
+Apply ordinary elapsed ageing before the interaction so an already expired
+impression cannot be credited.
 
 For prolonged-poor-care impressions, first require the affected need to have
 remained at forty or above for thirty continuous real minutes, as already
@@ -1911,8 +1933,11 @@ neither refunds previous friendship losses nor creates another reward budget.
 
 Example: poking irritation at level two has fourteen minutes left in its
 current twenty-minute stage. A qualifying conversation after respected quiet
-reduces that remainder to nine minutes. Its subsequent level-one stage starts
-with the normal twenty minutes and its own once-per-stage relief eligibility.
+reduces that remainder to nine minutes and uses level two's allowance. Renewed
+poking escalates it to level three; that level can receive its first reduction
+after the required quiet time. A later return to level two keeps its allowance
+used. Level one can still receive one reduction if it has not been shortened
+during this episode. Reloading the save does not reset any used allowance.
 
 ##### Recorded proposal: prolonged/repeated poor care, 2026-10-19
 
@@ -1990,7 +2015,8 @@ independently to each affected need and its existing poor-care impression.
 
 The thirty-minute qualification does not itself count toward the two-hour
 decay stage. Pausing and resuming does not renew a relief allowance already
-used for that stage. Example: after eighty minutes of earned recovery, a drop
+used for that intensity level during the continuous Moodlet episode. Example:
+after eighty minutes of earned recovery, a drop
 to thirty-eight pauses the stage. Following renewed supply and thirty stable
 minutes, forty minutes remain, rather than a new two-hour stage.
 
@@ -2256,11 +2282,11 @@ completion conventions below concern other event types or simultaneous events.
 
 | Remaining decision | Why it matters / example to settle before implementation |
 | --- | --- |
-| Relief allowance across refresh/escalation | Once-per-current-stage relief needs an exact stage identity when a provocation renews the timer, increases intensity or happens at the cap. Avoid making another five-minute credit available merely by poking again and restarting the same timer. |
 | Separate wish relationship rewards | Food has a candidate additional 0.25-point personal-fulfillment reward; no additional amount is fixed for game/social/affection wishes. Define whether they add anything beyond ordinary eligible care, within existing shared budgets. |
 
-Wish disclosure, temporary unavailability and emotional aggregation/labels/mood
-thresholds are resolved by the owner-confirmed rules above. Initial
+Wish disclosure, temporary unavailability, emotional aggregation/labels/mood
+thresholds and relief eligibility across refresh/escalation are resolved by the
+owner-confirmed rules above. Initial
 creation/candidate selection, equal-ranked direction ties and equal-time completion
 ordering remain implementation conventions within the recorded scope, not
 additional product workshops. Resolve semantic completion once so duplicate
@@ -2303,15 +2329,12 @@ copies and intensity per Moodlet; numeric caps do not delete parallel entries.
 The eight positive versus ten negative types do not by themselves prove or
 disprove balanced daily outcomes, which also depend on triggers and duration.
 
-The following two product decisions remain material before implementing the
-first version; this review does not add answers without owner agreement:
-
-1. Relief eligibility after timer refresh/escalation: settle what starts a new
-   eligible stage. Ordinary recovery pause/resume already retains used credit;
-   a new provocation must not silently make helpful-action credit repeatable.
-2. Additional wish friendship rewards: decide whether game/social/affection
-   fulfillment adds anything beyond ordinary care; only food currently has a
-   nominal additional 0.25-point candidate, always inside shared budgets.
+One product decision remains material before implementing its affected behavior:
+additional wish friendship rewards. Decide whether game/social/affection
+fulfillment adds anything beyond ordinary care; only food currently has a
+nominal additional 0.25-point candidate, always inside shared budgets. This
+review does not add an answer without owner agreement. Relief eligibility is
+now specified in the owner-confirmed targeted-shortening rules above.
 
 First-creation timing, a simple selection method consistent with agreed context
 and pacing, exact equal-time event ordering, bounded progress/exposure records,
