@@ -30,6 +30,7 @@ CARE_PRIMARY_NEED = {
     "talk": "social",
     "energy_drink": "energy",
 }
+REWARD_KINDS = frozenset((*CARE_FRIENDSHIP_GAIN, "wish"))
 LEGACY_REWARD_ACTIONS = ("sleep",)
 
 
@@ -86,17 +87,7 @@ def calculate_friendship_reward(
     gain = CARE_FRIENDSHIP_GAIN[action]
     if need_before > BALANCE.number("friendship", "need_threshold"):
         gain *= BALANCE.number("friendship", "satisfied_reward_fraction")
-    short = BALANCE.number("friendship", "short_window_seconds")
-    gain = max(
-        0.0,
-        min(
-            gain,
-            100 - record.friendship,
-            FRIENDSHIP_DAILY_CAP - sum(e.amount for e in history.rewards),
-            BALANCE.number("friendship", "short_cap")
-            - sum(e.amount for e in history.rewards if e.at > now - short),
-        ),
-    )
+    gain = _available_reward(record.friendship, history, now, gain)
     events = history.rewards
     if gain > 1e-12:
         events += (RelationshipEvent(now, action, gain),)
@@ -105,6 +96,30 @@ def calculate_friendship_reward(
         replace(history, rewards=events, eligible=tuple(anchors.items())),
         now,
     )
+
+
+def _available_reward(
+    points: float, history: FriendshipHistory, elapsed: float, requested: float,
+) -> float:
+    short = BALANCE.number("friendship", "short_window_seconds")
+    return max(0.0, min(
+        requested, 100 - points,
+        FRIENDSHIP_DAILY_CAP - sum(e.amount for e in history.rewards),
+        BALANCE.number("friendship", "short_cap")
+        - sum(e.amount for e in history.rewards if e.at > elapsed - short),
+    ))
+
+
+def calculate_wish_friendship_reward(record: FriendshipRecord) -> FriendshipProgress:
+    """One retired personal wish shares the ordinary pot, without interval changes."""
+    now = record.lived_seconds
+    history = prune_history(start_history(record.friendship_history, now), now)
+    gain = _available_reward(record.friendship, history, now,
+                             BALANCE.number("wishes", "friendship_bonus_points"))
+    if gain > 1e-12:
+        history = replace(history, rewards=(*history.rewards,
+                                           RelationshipEvent(now, "wish", gain)))
+    return FriendshipProgress(clamp_need_value(record.friendship + gain), history, now)
 
 
 def friendship_after_withholding(friendship: float, loss: float) -> float:

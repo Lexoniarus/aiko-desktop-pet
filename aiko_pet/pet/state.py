@@ -25,6 +25,7 @@ from .food_catalog import DEFAULT_CATALOG
 from .friendship import (
     apply_negative_event,
     calculate_friendship_reward,
+    calculate_wish_friendship_reward,
     start_history,
 )
 from .friendship_history import FriendshipHistory, FriendshipProgress
@@ -41,7 +42,7 @@ from .lifecycle import (
     plan_pet_time,
 )
 from .moodlet_catalog import MOODLET_CATALOG
-from .moodlets import MoodletState
+from .moodlets import MoodletState, reinforce_moodlet
 from .needs import NeedLevels
 from .progression import calculate_pet_progression
 from .routine import TimeContext, context_at, due_meal
@@ -51,11 +52,14 @@ from .status_hints import StatusHint, choose_status_hint
 from .value_rules import clamp_need_value
 from .wish_catalog import WISH_CATALOG
 from .wishes import (
+    WishArea,
     WishContext,
+    WishResolution,
     WishState,
     acknowledge_wish_expression,
     create_wish,
     expire_wishes,
+    fulfill_activity_wish,
 )
 
 
@@ -326,6 +330,26 @@ class PetState:
         self._change(wishes=acknowledge_wish_expression(
             self.wishes, instance_id, elapsed=self.lived_seconds,
         ))
+
+    def _apply_wish_resolution(
+        self, resolution: WishResolution, *, personal: bool,
+    ) -> None:
+        """Commit retirement, lasting impression and shared-pot bonus together."""
+        if resolution.fulfilled is None:
+            self._change(wishes=resolution.state)
+            return
+        definition = resolution.fulfilled
+        moodlets = reinforce_moodlet(
+            self.moodlets, definition.fulfillment_moodlet, elapsed=self.lived_seconds,
+            definitions=MOODLET_CATALOG.definitions, level=definition.fulfillment_level,
+        )
+        relationship = (calculate_wish_friendship_reward(self) if personal
+                        else FriendshipProgress(
+                            self.friendship, self.friendship_history,
+                            self.lived_seconds,
+                        ))
+        self._change(wishes=resolution.state, moodlets=moodlets,
+                     friendship=relationship.points, relationship=relationship.history)
 
     def record_game_experience(
         self,
@@ -641,6 +665,10 @@ class PetState:
             ))
             if DEFAULT_CATALOG.foods[transition.result.food_id].category == "meal":
                 self.experience_interaction(HelpfulInteraction("meal"))
+            self._apply_wish_resolution(fulfill_activity_wish(
+                self.wishes, WishArea.FOOD, transition.result.food_id,
+                elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
+            ), personal=personal)
         elif transition.result.effect == CareEffect.AFFECTION:
             self.experience_interaction(HelpfulInteraction("petting"))
         return transition.result

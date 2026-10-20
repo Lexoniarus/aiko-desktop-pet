@@ -120,6 +120,32 @@ class WishRestriction(StrEnum):
     GAME_TIRED = "game_tired"
 
 
+@dataclass(frozen=True, slots=True)
+class WishResolution:
+    """Retired/progressed state and its one qualifying emotional outcome."""
+
+    state: WishState
+    fulfilled: WishDefinition | None = None
+
+
+def fulfill_activity_wish(
+    state: WishState, area: WishArea, target_id: str, *, elapsed: float,
+    definitions: Mapping[WishId, WishDefinition], instance_id: int | None = None,
+) -> WishResolution:
+    """Called only after actual accepted intake/care or full social completion."""
+    wish = next((w for w in state.active
+                 if definitions[w.definition_id].area == area
+                 and w.target_id == target_id
+                 and (instance_id is None or w.instance_id == instance_id)
+                 and w.created_at <= elapsed < w.expires_at), None)
+    if wish is None:
+        return WishResolution(state)
+    return WishResolution(replace(
+        state, active=tuple(w for w in state.active
+                            if w.instance_id != wish.instance_id),
+    ), definitions[wish.definition_id])
+
+
 def expire_wishes(state: WishState, *, elapsed: float) -> WishState:
     """Age original deadlines in all time paths; retain identity/pacing evidence."""
     active = tuple(w for w in state.active if elapsed < w.expires_at)
