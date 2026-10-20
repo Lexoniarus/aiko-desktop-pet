@@ -3619,7 +3619,7 @@ Local verification for this correction: **109 targeted tests passed in 1.233s**;
 the slowest case was **0.310s**, none exceeded ten seconds. These include all
 wish lifecycle/fulfillment areas, expression, storage and passive reads, the
 desktop attention seam, shared friendship policy, resources and public docs.
-Ruff passes repository-wide; strict Mypy passes the changed domain/application/
+Ruff passes the configured source/test/tool scope; strict Mypy passes the changed domain/application/
 codec owners with silent dependency traversal. The full-suite gate is not claimed.
 
 ## Practical acceptance correction: disrupted familiar place, 2026-10-20
@@ -3653,6 +3653,20 @@ domain stacking/capped-attribution and separate withholding regressions remain.
 Local verification: **113 targeted tests passed in 0.251s**, longest **0.080s**,
 none over ten seconds. Tk/Toplevel construction is explicitly prohibited. The
 target includes behavior, awareness, interaction, withholding, placement admission
-and German object-reaction contracts. Scoped strict typing and repository-wide
+and German object-reaction contracts. Scoped strict typing and the configured
 Ruff/Pyright checks accompany these targeted checks; no GUI, mouse control,
 CI workflow or new full-suite run is part of this correction request.
+
+### Combined correction verification
+
+The combined targeted set passes **226 tests in 1.829s**, with a longest case of
+**0.307s** and no case over ten seconds. The local runner prohibits Tk/Toplevel
+construction. Ruff passes the configured `aiko_pet tests main.py tools` scope;
+strict non-incremental Mypy passes all **255** application/tool source files and
+Pyright reports zero errors or warnings. Two inherited native ttk button calls
+need explicit callable casts for the pinned Mypy stubs; these annotations preserve
+the same widget methods, arguments and behavior without another state owner.
+
+Both behavior corrections are committed and pushed on `feature/social-optimization`.
+This is targeted regression evidence; the final integrated stage-6 full-suite gate
+remains pending after the completed UI changes and these practical corrections.

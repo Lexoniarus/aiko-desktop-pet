@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import tkinter as tk
 from tkinter import ttk
-from typing import Any, Callable
+from typing import Any, Callable, cast
 
 from .icon_images import IconImages
 
@@ -46,13 +46,16 @@ class ImageButton(ttk.Button):
 
     def set_selected(self, selected: bool) -> None:
         """Native selected state survives hover, presses and disabled state."""
-        self.state(["selected" if selected else "!selected"])
+        cast(Callable[[list[str]], object], self.state)(
+            ["selected" if selected else "!selected"],
+        )
 
     def cget(self, key: str) -> Any:
         if key == "text":
             return self._text
         if key == "state":
-            return "disabled" if self.instate(["disabled"]) else "normal"
+            is_disabled = cast(Callable[[list[str]], bool], self.instate)
+            return "disabled" if is_disabled(["disabled"]) else "normal"
         return super().cget(key)
 
     def configure(self, cnf: Any = None, **kwargs: Any) -> Any:
