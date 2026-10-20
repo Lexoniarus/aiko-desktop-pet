@@ -11,6 +11,7 @@ from ...application.settings import SettingKey
 from ...application.social_content import PreparedSocialContent, SocialCategory
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ..common.skin import AikoSkin
+from ..common.window_geometry import BoundsAt
 from ..view_models.contracts import (
     HoverAnchor,
     HoverSnapshot,
@@ -65,6 +66,7 @@ class HoverUiPorts:
     can_interact: Callable[[str], bool] = lambda _action: True
     game_ready: Callable[[], bool] = lambda: True
     cards: GameCardPorts | None = None
+    game_bounds_at: BoundsAt | None = None
     social_selected: Callable[[SocialCategory], None] | None = None
     social_cancel: Callable[[], None] = lambda: None
     social_enabled: Callable[[], bool] = lambda: False
@@ -82,11 +84,12 @@ class HoverUi:
         root: tk.Tk,
         canvas: tk.Canvas,
         ports: HoverUiPorts,
+        *, skin: AikoSkin | None = None,
     ) -> None:
         self.root = root
         self.canvas = canvas
         self._ports = ports
-        self._skin = AikoSkin(root)
+        self._skin = skin if skin is not None else AikoSkin(root)
         self.toolbar: ActionToolbar | None = None
         self.settings_window: SettingsWindow | None = None
         self.game_window: GameWindow | None = None
@@ -286,6 +289,7 @@ class HoverUi:
                     animate=self._ports.game_speech.animate,
                     always_on_top=self._ports.always_on_top(),
                     skin=self._skin,
+                    bounds_at=self._ports.game_bounds_at,
                 )
             elif game_id is GameId.TIC_TAC_TOE:
                 self.game_window = TicTacToeWindow(
@@ -297,6 +301,7 @@ class HoverUi:
                     animate=self._ports.game_speech.animate,
                     always_on_top=self._ports.always_on_top(),
                     skin=self._skin,
+                    bounds_at=self._ports.game_bounds_at,
                 )
             else:
                 self.game_window = self._create_rps()
@@ -327,6 +332,7 @@ class HoverUi:
             animate=self._ports.game_speech.animate,
             always_on_top=self._ports.always_on_top(),
             skin=self._skin,
+            bounds_at=self._ports.game_bounds_at,
         )
 
     def close_game(self) -> None:

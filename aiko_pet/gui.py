@@ -212,6 +212,7 @@ class DesktopPet:
             always_on_top=lambda: self.settings.always_on_top,
             restore_stack=lambda: self._overlay_stack.restore(),
             transparent_color=MAGENTA,
+            ui_images=self._window.skin.images,
         )
         self._reaction_player = ReactionPlayer(
             hide_speech=self._speech.hide,
@@ -257,6 +258,7 @@ class DesktopPet:
                 can_interact=lambda action: self._contact.can_interact(action),
                 game_ready=lambda: not self.state.sleeping,
                 cards=self._game_visuals.ports,
+                game_bounds_at=self._window.work_area_at,
                 social_selected=lambda category: self._social_runtime.select(category),
                 social_cancel=lambda: self._social_runtime.cancel(),
                 social_enabled=lambda: self.settings.online_social,
@@ -287,7 +289,7 @@ class DesktopPet:
                     self._set_game_mode,
                     lambda name: self._start_action(name, 0),
                 ),
-            ),
+            ), skin=self._window.skin,
         )
         self._contact = ContactCoordinator(
             state=self.state, mind=self.mind, adaptive=self.adaptive,

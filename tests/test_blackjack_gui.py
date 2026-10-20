@@ -112,13 +112,21 @@ class BlackjackGuiTests(unittest.TestCase):
             self.assertLessEqual(bounds[3], game.player_cards.winfo_height())
 
     def test_scale_move_and_topmost_are_forwarded_to_the_same_hand(self):
-        self.open_game(arranged_game(card('10'), card('9'), card('8'), card('7')))
+        game = self.open_game(arranged_game(
+            card('10'), card('9'), card('8'), card('7'),
+        ))
+        self.pet.root.update()
+        player_geometry = game.window.winfo_geometry()
         hand = self.pet._game_visuals.hand
         window = hand.window
         assert window is not None
+        hand_geometry = window.winfo_geometry()
         self.pet.toggle_scale()
         self.pet._place_x(1)
+        self.pet.root.update()
+        self.assertEqual(game.window.winfo_geometry(), player_geometry)
         self.assertIs(hand.window, window)
+        self.assertNotEqual(window.winfo_geometry(), hand_geometry)
         with patch.object(window, 'wm_attributes', wraps=window.wm_attributes) as attrs:
             self.pet._preferences.set_topmost(False)
         attrs.assert_called_once_with('-topmost', False)

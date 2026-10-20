@@ -26,11 +26,14 @@ class ImageButton(tk.Button):
         font: str,
         icon: tk.PhotoImage | None = None,
         align_left: bool = False,
+        stacked: bool = False,
     ) -> None:
+        self._images, self._size, self._stacked = images, size, stacked
+        self._face: tk.Label | None = None
         self._copy: tk.Label | None = None
         self._chevron: tk.Label | None = None
         self._art = {
-            state: images.button_art(state, size, icon)
+            state: images.button_art(state, size, icon, stacked=stacked)
             for state in ("normal", "hover", "pressed", "disabled", "active")
         }
         self._hover = False
@@ -41,7 +44,7 @@ class ImageButton(tk.Button):
             text=text,
             command=command,
             image=self._art["normal"],
-            compound="none" if align_left else "center",
+            compound="none" if align_left or stacked else "center",
             font=(font, 8 if size == "menu_back" else 10),
             fg="#3E4C61",
             bg="#FCF7F9",
@@ -56,7 +59,10 @@ class ImageButton(tk.Button):
             highlightcolor="#657F9D",
             takefocus=True,
             wraplength=max(
-                40, self._art["normal"].width() - (16 if size == "menu_back" else 80)
+                40, self._art["normal"].width() - (
+                    24 if size.startswith("game_") else 16 if size == "menu_back"
+                    else 80
+                )
             ),
         )
         self.bind("<Enter>", lambda _e: self._feedback(hover=True), add="+")
@@ -69,16 +75,32 @@ class ImageButton(tk.Button):
             self.bind(sequence, lambda _e: self._feedback(pressed=False), add="+")
         self.bind("<Return>", lambda _e: self.invoke())
         self.bind("<Destroy>", self._destroyed, add="+")
-        if align_left:
-            left = 16 + icon.width() if icon is not None else 14
+        if stacked:
+            # Preserve the authored disabled artwork instead of Tk stippling it.
+            self._face = tk.Label(
+                self, image=self._art["normal"], bg="#FCF7F9", bd=0,
+                padx=0, pady=0, cursor="hand2",
+            )
+            self._face.place(x=2, y=2)
+            for sequence in (
+                "<Enter>", "<Leave>", "<ButtonPress-1>", "<ButtonRelease-1>",
+            ):
+                self._face.bind(sequence, self._forward(sequence))
+        if align_left or stacked:
+            left = 12 if stacked else 16 + icon.width() if icon is not None else 14
             copy_width = max(40, self._art["normal"].width() - left - 28)
+            if stacked:
+                copy_width = self._art["normal"].width() - 24
             self._copy = tk.Label(
-                self, font=(font, 10), fg="#3E4C61", anchor="w",
-                justify="left", bd=0, padx=0, pady=0, cursor="hand2",
+                self, font=(font, 10), fg="#3E4C61",
+                anchor="center" if stacked else "w",
+                justify="center" if stacked else "left",
+                bd=0, padx=0, pady=0, cursor="hand2",
                 wraplength=copy_width,
             )
             self._copy.place(
-                x=left, rely=0.5, anchor="w", width=copy_width,
+                x=left, rely=0.83 if stacked else 0.5,
+                anchor="w", width=copy_width,
             )
             self._chevron = tk.Label(
                 self, font=(font, 13), fg="#97667F", bd=0, padx=0, pady=0,
@@ -136,9 +158,14 @@ class ImageButton(tk.Button):
             else "normal"
         )
         super().configure(image=self._art[state])
+        if self._face is not None:
+            self._face.configure(image=self._art[state])
         if self._copy is not None and self._chevron is not None:
-            art = self._art[state]
-            color = art.get(art.width() // 2, art.height() // 2)
+            art = self._images.surface(f"button_{state}.{self._size}")
+            color = art.get(
+                art.width() // 2,
+                round(art.height() * (0.83 if self._stacked else 0.5)),
+            )
             background = "#{:02x}{:02x}{:02x}".format(*color)
             for label in (self._copy, self._chevron):
                 label.configure(

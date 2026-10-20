@@ -64,6 +64,7 @@ class AikoSkin:
         size: str = "regular",
         icon: tk.PhotoImage | None = None,
         align_left: bool = False,
+        stacked: bool = False,
     ) -> ImageButton:
         return ImageButton(
             parent,
@@ -74,4 +75,5 @@ class AikoSkin:
             font=self.font,
             icon=icon,
             align_left=align_left,
+            stacked=stacked,
         )

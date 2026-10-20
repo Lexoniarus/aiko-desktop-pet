@@ -52,6 +52,28 @@ class ImageButtonInputTests(unittest.TestCase):
         self.assertFalse(self.button.winfo_exists())
         self.assertEqual(errors, [])
 
+    def test_stacked_choice_art_forwards_once_and_respects_disabled_input(self):
+        button = self.skin.button(
+            self.root, "Stein", lambda: self.calls.append("stone"),
+            size="game_choice", icon=self.skin.images.icon("play_rps_rock", 64),
+            stacked=True,
+        )
+        button.pack()
+        self.root.update()
+        face = button._face
+        assert face is not None
+        face.event_generate("<Enter>", x=20, y=20)
+        face.event_generate("<ButtonPress-1>", x=20, y=20)
+        face.event_generate("<ButtonRelease-1>", x=20, y=20)
+        self.root.update()
+        self.assertEqual(self.calls, ["stone"])
+        button.configure(state="disabled")
+        self.assertEqual(face.cget("image"), str(button._art["disabled"]))
+        face.event_generate("<ButtonPress-1>", x=20, y=20)
+        face.event_generate("<ButtonRelease-1>", x=20, y=20)
+        self.root.update()
+        self.assertEqual(self.calls, ["stone"])
+
 
 if __name__ == "__main__":
     unittest.main()

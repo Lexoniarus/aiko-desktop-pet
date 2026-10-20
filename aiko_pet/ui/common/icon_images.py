@@ -65,12 +65,13 @@ class IconImages:
         return result
 
     def button_art(
-        self, state: str, size: str, icon: tk.PhotoImage | None
+        self, state: str, size: str, icon: tk.PhotoImage | None,
+        *, stacked: bool = False,
     ) -> tk.PhotoImage:
         base = self.surface(f"button_{state}.{size}")
         if icon is None:
             return base
-        key = f"button:{state}:{size}:{icon}"
+        key = f"button:{state}:{size}:{icon}:{stacked}"
         if key not in self._images:
             combined = base.copy()
             combined.tk.call(
@@ -78,8 +79,8 @@ class IconImages:
                 "copy",
                 str(icon),
                 "-to",
-                8,
-                max(0, (base.height() - icon.height()) // 2),
+                (base.width() - icon.width()) // 2 if stacked else 8,
+                10 if stacked else max(0, (base.height() - icon.height()) // 2),
             )
             self._images[key] = combined
         return self._images[key]

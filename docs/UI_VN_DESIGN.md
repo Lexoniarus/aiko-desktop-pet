@@ -1,5 +1,55 @@
 # Aiko VN interface direction — 2026-10-20
 
+**Game-window refinement (2026-10-20):** the owner authorized implementing the
+three approved game surfaces after the main-menu refinement. All three now use
+the shared white title, near-white rose body, blue passive readouts, rose action
+buttons, phase/result area and separate Du/Aiko/Remis/Runden counters. Credits
+remain in settings. Existing sequences, rules, rewards and save format are unchanged.
+
+- Schere–Stein–Papier uses the prepared stone, palm and V-hand in the choices,
+  player reveal and Aiko's own bubble. The previous player hand remains during
+  the next countdown. Choosing another sign starts the next round.
+- Tic-Tac-Toe uses the prepared blue X and rose O on a square board with a
+  legend and winning-field highlights. Occupied marks retain full-color art
+  despite disabled native input. Nächste Runde and alternating starters remain.
+- Blackjack retains every original card face/back/frame. Its 128 px player
+  cards overlap inside the existing 480 px hand; a narrow window scrolls that
+  hand horizontally. The original pile is the draw control; Bleiben is a
+  separate rose button. Only player cards and points are in the game window.
+  Aiko's concealed/revealed cards remain with her figure; the automatic
+  next hand after 2.8 seconds is unchanged.
+
+**Movement contract:** each player window is placed once beside Aiko, preferring
+the right side, then the left, and clamped to the monitor's usable work area.
+It subsequently stays where opened or dragged, including when Aiko moves or
+changes scale. Dragging is available across the custom title and its text/icon,
+excluding the close control and game content. The Windows monitor adapter
+accounts for taskbar insets and negative monitor origins; pointer position
+selects the work area during dragging. Only Aiko's own hand/cards and speech
+follow her. Window position is session-local, without new save settings.
+
+The shared game frame owns placement, dragging, passive status/counters and
+the accessible footer. Each game view owns its content; existing sequence
+objects retain gameplay/timer ownership. The desktop injects the work-area
+query. Native horizontal/vertical scrolling keeps content available on small
+work areas without shrinking the original Blackjack card assets. Derived
+button sizes are exported from the approved sources; masters and the external
+clickable references remain unchanged.
+
+Native Windows inspection used disposable real Tk game widgets with mocked
+output ports and an extra system title bar for capture. It covered all three
+layouts and custom-title dragging. Regression checks cover stationary player
+geometry while Aiko moves/scales, following Aiko overlays, work-area placement,
+negative origins, narrow layouts, square tokens and existing game sequences.
+This does not establish acceptance for every Windows DPI/multimonitor setup
+or the complete production borderless focus/z-order stack.
+
+Validation: the complete Windows run exercised 1,626 tests. One older headless
+ImageButton fixture required the new optional artwork-label member; after that
+fixture-only correction, all 87 VN/game/menu/window-architecture regression
+checks passed together. Ruff, strict Mypy and Pyright passed. All 393 exported
+UI images/catalog files reproduce byte-for-byte from the unchanged masters.
+
 **Main-menu refinement (2026-10-20):** the owner authorized bringing the native
 main menu closer to the approved reference. The menu now fits its content up to
 the available-height cap, keeps the footer accessible, hides scrollbars when

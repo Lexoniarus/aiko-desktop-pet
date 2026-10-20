@@ -21,6 +21,10 @@ SIZES = {
     "menu_back": (74, 30),
     "menu_game": (216, 68),
     "menu_social": (216, 40),
+    "game_choice": (154, 110),
+    "game_close": (128, 40),
+    "game_next": (174, 40),
+    "game_stand": (160, 44),
 }
 
 
@@ -31,17 +35,21 @@ def optical_crop(image: Image.Image) -> Image.Image:
     return image.crop(bounds)
 
 
-def nine_slice(image: Image.Image, size: tuple[int, int]) -> Image.Image:
+def nine_slice(
+    image: Image.Image, size: tuple[int, int], *, border_height: int | None = None,
+) -> Image.Image:
     """Preserve cap proportions; scale only quiet edges/center between caps."""
     width, height = size
-    # Normalize border thickness to the target height before slicing corners.
-    scale = height / image.height
+    # Tall choice cards keep the same fine border as shorter action buttons.
+    source_height = min(height, border_height) if border_height is not None else height
+    scale = source_height / image.height
     image = image.resize(
-        (max(height * 2, round(image.width * scale)), height), Image.Resampling.LANCZOS
+        (max(source_height * 2, round(image.width * scale)), source_height),
+        Image.Resampling.LANCZOS,
     )
-    cap = min(height // 3, width // 3)
+    cap = min(source_height // 3, height // 3, width // 3)
     source_x = (0, cap, image.width - cap, image.width)
-    source_y = (0, cap, height - cap, height)
+    source_y = (0, cap, source_height - cap, source_height)
     dest_x = (0, cap, width - cap, width)
     dest_y = (0, cap, height - cap, height)
     result = Image.new("RGBA", size)
@@ -101,7 +109,9 @@ def export() -> None:
         )
         for name, target_size in variants_to_export.items():
             filename = f"{path.stem}_{name}.png"
-            nine_slice(image, target_size).save(DEST / filename, optimize=True)
+            nine_slice(
+                image, target_size, border_height=50 if name == "game_choice" else None,
+            ).save(DEST / filename, optimize=True)
             surfaces[f"{path.stem}.{name}"] = filename
     manifest = {
         "version": 1,

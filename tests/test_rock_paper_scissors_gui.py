@@ -84,7 +84,11 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
             "hidden",
         )
         for move in Move:
-            self.assertEqual(game.hand_images[move].width(), 72)
+            self.assertEqual(game.hand_images[move].width(), 96)
+            self.assertIs(
+                game.hand_images[move],
+                game.skin.images.icon(f"play_rps_{move.value}", 96),
+            )
         self.pet._hover.dismiss_outside(-999, -999)
         self.assertIs(self.pet._hover.game_window, game)
         self.assertTrue(game.window.winfo_exists())
@@ -247,7 +251,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
             left, top, right, bottom = bounds
             self.assertGreaterEqual(left, 0)
             self.assertGreaterEqual(top, 0)
-            self.assertEqual((right - left, bottom - top), (72, 72))
+            self.assertEqual((right - left, bottom - top), (96, 96))
             self.assertLessEqual(right, slot[0])
             self.assertLessEqual(bottom, slot[1])
             self.assertEqual(

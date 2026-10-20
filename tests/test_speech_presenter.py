@@ -66,9 +66,11 @@ class SpeechPresenterTests(unittest.TestCase):
         assert bubble is not None
         self.assertEqual(len(bubble.winfo_children()), 2)
         self.assertEqual(set(self.presenter.game_hand_images), {Move.ROCK})
-        self.assertEqual(self.presenter.game_hand_images[Move.ROCK].width(), 72)
+        self.assertEqual(self.presenter.game_hand_images[Move.ROCK].width(), 64)
         frame = bubble.winfo_children()[0]
-        panel = frame.winfo_children()[0]
+        panel = next(
+            child for child in frame.winfo_children() if isinstance(child, tk.Frame)
+        )
         labels = [
             str(child.cget("text")) for child in panel.winfo_children()
             if isinstance(child, tk.Label)
@@ -76,6 +78,12 @@ class SpeechPresenterTests(unittest.TestCase):
         self.assertIn("Ich nehme ...", labels)
         self.assertNotIn("Du", labels)
         self.assertIsNotNone(self.presenter.pending_timer)
+        self.root.update_idletasks()
+        position = bubble.winfo_geometry()
+        self.anchor = SpeechAnchor(460, 500, 128)
+        self.presenter.move()
+        self.root.update_idletasks()
+        self.assertNotEqual(bubble.winfo_geometry(), position)
         self.presenter.show_text("Wieder normal", 2000)
         self.assertIsNotNone(self.presenter.bubble)
 

@@ -71,6 +71,8 @@ class VnStatusTests(unittest.TestCase):
         )
         button._hover = button._pressed = button._selected = False
         button._copy = button._chevron = None
+        face = Mock()
+        button._face = cast(Any, face)
         with (
             patch.object(ImageButton, "cget", return_value="disabled"),
             patch("tkinter.Button.configure") as configure,
@@ -78,12 +80,14 @@ class VnStatusTests(unittest.TestCase):
             button.set_selected(True)
             button._feedback(hover=True, pressed=True)
             self.assertEqual(configure.call_args.kwargs["image"], "disabled")
+            self.assertEqual(face.configure.call_args.kwargs["image"], "disabled")
         with (
             patch.object(ImageButton, "cget", return_value="normal"),
             patch("tkinter.Button.configure") as configure,
         ):
             button._feedback(pressed=False)
             self.assertEqual(configure.call_args.kwargs["image"], "active")
+            self.assertEqual(face.configure.call_args.kwargs["image"], "active")
 
     def test_refresh_keeps_identity_and_placement_admission(
         self,
