@@ -11,8 +11,9 @@
 > remain pending; physical desktop acceptance is separately recorded.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
-> This expansion is planning only; concrete Moodlet/wish rules are not settled
-> and no implementation or test execution is authorized by this planning update.
+> The first-version Moodlet/wish product rules are now settled below, including
+> wish friendship bonuses. The remaining 5B delivery slices are planned, not
+> implemented; this documentation update authorizes no code or test execution.
 
 ## Stage-4 correction delivery, 2026-10-19
 
@@ -249,7 +250,7 @@ The original stages 1–4 exclude content APIs, translation, jokes/facts, anothe
 minigame, new cursor behavior, the full Moodlet/stacking system and durable
 emotional memories. The subsequent stage-5 planning expansion below introduces
 the proposed Moodlet, wish and emotional-state foundation before expression
-integration. Its concrete behavior still requires discussion; this does not
+integration. Its first-version behavior is now specified below; this does not
 retroactively add that behavior to the completed stages. External content APIs,
 new games and longer-term emotional memory remain outside the current defined
 scope. Preserve the completed authored dialogue rewrite. Future resource types
@@ -319,12 +320,12 @@ intermediate commit appear complete.
 | --- | --- | --- |
 | 0 | Finish and separately commit the already ongoing object-investigation/test corrections and approved design documentation. Preserve their authors' work and establish the actual starting revision before overlapping edits. | Only the affected object/World contracts and the corrected failing cases; record their real outcome rather than inheriting an older green result. |
 | 1 | Structural foundation: all five needs in `needs.py`; rename/move existing numeric progression and status hints with their callers. Preserve current numerical behavior and single clock/aggregate ownership. | Existing need, mood, progression, save/checkpoint and affected import-boundary tests; no new test for a mere rename. |
-| 2 | Typed Moodlet/wish catalogue contracts, immutable owned values and focused codecs integrated with `PetValues`/the existing pet save. Settle the material product decisions below before encoding their values or semantics. | Catalogue references/validation, legacy-save defaults, bounded histories, elapsed deadlines and existing checkpoint/rollback cases. |
-| 3 | Qualifying interaction evidence and transitions, in small groups: direct negative experiences, poor-care after-effects, then wish creation/disclosure/actual fulfillment and positive impressions. Keep each event and its exactly-once application in one coherent change. | Existing care/contact/object/game/social owners and the relevant policy/transaction cases; deterministic time and actual semantic completion facts. |
-| 4 | Numeric Moodlet composition, elapsed expiry/relief and final emotional interpretation; migrate dialogue context/schema and their consumers to the distinct typed layers together. This completes the relevant vocabulary work from 5A. | Focused cap/stacking/recovery timelines, selected closed-time boundaries, catalogue filters and status/dialogue projections; preserve authored wording unless explicitly required. |
+| 2 | Typed Moodlet/wish catalogue contracts, immutable owned values and focused codecs integrated with `PetValues`/the existing pet save. Product rules are settled; use the finer 5B slices below. | Catalogue references/validation, legacy-save defaults, bounded histories, elapsed deadlines and existing checkpoint/rollback cases. |
+| 3 | Deliver the shared Moodlet lifetime/contribution policy first, then qualifying interaction evidence and transitions in small groups: direct negative experiences, poor-care after-effects and individual wish areas. Keep each event and its exactly-once application in one coherent change. | Existing care/contact/object/game/social owners and relevant policy/transaction cases; injected time, boundary-aware progression and actual semantic completion facts. |
+| 4 | Complete final emotional interpretation and migrate dialogue context/schema and their consumers to the distinct typed layers together. This completes the relevant vocabulary work from 5A and builds on the shared expiry/relief/numeric composition policy. | Focused emotional-composition, catalogue-filter and status/dialogue projection checks; preserve authored wording unless explicitly required. |
 | 5 | Export/package the approved artwork, root-local image ownership and shared VN skin/control rendering. | Required resource/mapping validation and focused image-lifecycle/export checks; do not regenerate approved sources or introduce preview HTML as runtime data. |
 | 6 | Main status window, Moodlet strip, wish row, embedded selectors and details, split further by existing view ownership where useful. Preserve the delivered menu/action/placement separation. | Read projections, action ports, selector lifecycle, single window/capture ownership and focused rendering contracts. |
-| 7 | Matching settings navigation and separate Credits view, preserving existing preference commands and accepted-content metadata. Game-screen restyling remains separate pending visual approval. | Existing settings actions and source projections, absent/available metadata, local navigation and image cleanup; no new source history. |
+| 7 | Matching settings navigation and separate Credits view, preserving existing preference commands and accepted-content metadata. The now-approved game-screen restyling remains a separate UI unit, not a 5B prerequisite. | Existing settings actions and source projections, absent/available metadata, local navigation and image cleanup; no new source history. |
 | 8 | Integrated completion, final OOP review and final full local suite/static gates. | The complete final candidate, with test durations and any remaining native acceptance explicitly reported. |
 
 During implementation, select the smallest existing test owners that establish
@@ -351,35 +352,35 @@ No merge or additional desktop acceptance is implied.
 
 #### Readiness review against the current checkout and reference bundle
 
-Read-only review on 2026-10-20 confirms that `NeedLevels`/`NeedProgress` still
-live in `need_decay.py`, `PetMind.emotion()` still mixes need/lifecycle facts
-with emotional labels, and `DialogueContext.states` still merges those inputs.
-The proposed new modules are implementation targets, not duplicate files
-already introduced. `PetState`/frozen `PetValues`, `SessionTimeProgression`,
+The refreshed read-only review on 2026-10-20 confirms that 5A has delivered
+`needs.py`, `progression.py` and status-specific vocabulary. `PetMind.emotion()`
+still mixes need/lifecycle facts with emotional labels, and
+`DialogueContext.states` still merges those inputs. The proposed Moodlet/wish/
+emotion modules remain implementation targets, not duplicate files already
+introduced. `PetState`/frozen `PetValues`, `SessionTimeProgression`,
 existing World custody and the current application coordinators remain the
 correct owners. The delivered menu/action/placement separation is the baseline
 to retain, including the independent `place_item` capability.
 
 The durable visual companion is now present outside the Git checkout at
 `E:\aiko-desktop-pet\design-previews\vn-ui-2026-10-20\index.html`.
-Its manifest covers 229 files; this review verified all file sizes/hashes and
+The earlier reference review verified the manifest's 229 file sizes/hashes and
 found no missing local links in its six HTML pages. It includes 46 icon masters
 and eight control/panel masters, covering 18 Moodlet families and 11 wish forms.
 This establishes local reference availability, not runtime or rendered/native
-acceptance. Main menu and settings/Credits are recorded as owner-approved;
-gameplay surfaces remain draft references awaiting visual approval. The full
+acceptance. The refreshed check confirms the external index/main-menu files
+remain present. The maintained UI design/handoff now records main menu,
+settings/Credits and all three game surfaces as owner-approved. The full
 interactive main menu supersedes the earlier image boards. The bundle is a
 visual snapshot: its copied documentation does not supersede the maintained
 plan and design documents in the checkout. It is not a runtime dependency.
 
-The structural foundation can begin once the ongoing correction baseline is
-secured. The remaining material product decisions listed under "Documented inventory
-and decisions before implementation" remain gates for their affected behavior,
-not a reason to reopen every hypothetical edge case or delay unrelated naming
-work. Apply the subsequently agreed wish-disclosure/lifecycle, emotional
-composition and relief-eligibility rules below. Additional wish friendship
-bonuses remain the material product decision to resolve before their affected
-policy/catalogue commit.
+The correction baseline and 5A are secured. The owner-confirmed wish-disclosure/
+lifecycle, emotional composition, relief eligibility and wish friendship bonus
+rules below close the previously listed 5B product decisions. Remaining work is
+implementation contracts and delivery, as detailed under "5B readiness and
+small implementation slices"; do not reopen hypothetical product cases or
+interpret this readiness review as implementation authorization.
 This review ran no application tests and changed no runtime behavior.
 
 ## Delivery order
@@ -970,7 +971,7 @@ Source inspection identified these concrete refactoring points:
 | `pet/needs.py` (new) | Canonical immutable `NeedLevels` containing all five needs; typed current conditions from a pure function such as `assess_need_conditions()`. Reuse existing applicable care/exposure histories rather than adding another copy of them. |
 | `pet/progression.py` (refactor of `pet/need_decay.py`) | Retain the existing chronological numeric calculation under accurate names such as `calculate_pet_progression()` and `PetProgress`. Return needs, mood, food and relationship progress as distinct result fields. This is the existing domain integration responsibility, not another time planner. |
 | `pet/mood.py` (extend) | Rename need-only `MoodFactors` to `NeedMoodFactors` and the present target calculation to `calculate_need_mood_target()`. Compose that contribution with Moodlet effects in `calculate_mood_target()`; retain the clear `advance_mood()` responsibility. |
-| `pet/moodlets.py` (new) | Immutable Moodlet models and pure rules for qualifying creation, refresh/escalation, contribution and expiry. Specify each rule after the pending product discussion. |
+| `pet/moodlets.py` (new) | Immutable Moodlet models and pure rules for qualifying creation, refresh/escalation, contribution and expiry under the agreed product rules below. |
 | `pet/emotions.py` (new) | Canonical emotional-state vocabulary and pure overall interpretation, for example `derive_emotional_state()`. Replace the mixed responsibility of `PetMind.emotion()`; do not maintain a second independent numeric mood or emotional store. |
 | `pet/wishes.py` (new) | Immutable inner-wish models and separate selection, expression-eligibility, fulfillment and expiry decisions. Produce the defined Moodlet outcome only from qualifying fulfillment within the wish period. Cover supported food IDs and the now implemented games/social categories; do not build additional activities merely to populate wishes. |
 | `pet/interaction_events.py` (new) | Small immutable semantic facts such as accepted food/petting, ignored boundaries, game-round completion and full social-sequence completion. Existing owners supply the facts through direct calls; no new event bus, detector or mutable manager. |
@@ -1122,32 +1123,35 @@ not become a second permanent implementation.
 
 #### 5B. Define rules, then implement the emotional and wish models
 
-Continue discussing the remaining Moodlet and wish rules before implementation.
-The recorded interaction, food-wish and prolonged-poor-care proposals below
-establish concrete candidates. Their integrated balance and the overall
-emotional-state vocabulary/selection still require discussion before implementation.
+The first-version product discussion is complete. The recorded interaction,
+wish, prolonged-poor-care, contribution, emotional-state and relationship rules
+below establish the agreed implementation scope. Later owner-confirmed rules
+explicitly supersede the earlier open questions/food-only candidates; historical
+"proposal" headings do not reopen those decisions. No implementation is
+authorized by this planning update. The checklist below names delivery
+responsibilities, not additional product workshops:
 
 - Repeated poking, excessive/unwelcome petting, repeatedly eating the same food,
   withholding a wanted object, disrupting known object locations and fulfilling
   a concrete wish are the initial candidate experiences.
-- Define exact qualifying evidence, episode boundaries, strength, duration,
-  stacking/refresh limits, resolution and cooldowns for each. Distinguish
+- Implement the agreed qualifying evidence, episode boundaries, strength,
+  duration, stacking/refresh limits, resolution and cooldowns for each. Distinguish
   ending a provoking situation from ending its emotional after-effect.
-- Define which prolonged/repeated need experiences qualify for Moodlets in
-  addition to the direct need contribution. Reuse observable/acquired evidence;
+- Apply the defined prolonged/repeated need experiences that qualify for
+  Moodlets in addition to the direct need contribution. Reuse observable/acquired evidence;
   do not invent user actions, unseen object knowledge or personal care offline.
 - Keep friendship consequences separate from the continuing Moodlet. Existing
   click/withholding penalties must not be applied again merely because a
   Moodlet exists. Additional relationship rules require explicit agreement.
-- Set how Moodlet contributions combine with numeric mood, existing deficit
-  limits and recovery rates; define the overall emotional labels and their
+- Apply the agreed Moodlet composition with numeric mood, existing deficit
+  limits and recovery rates, and the defined overall emotional labels and their
   selection/priority rules. Short-lived direct responses retain distinct roles.
-- The food-wish proposal below records candidate eligibility, concurrency,
-  lifetime, fulfillment, repetition and expiry behavior. Complete any remaining
-  selection details and integrated balancing before implementation; this does
-  not approve future wish types or turn the proposal into shipped behavior.
-- Define how individual Moodlets affect speech and specific interaction
-  willingness. Technical foreground/playback locks remain separate from a
+- Apply the shared four-area wish rules, including eligibility, concurrency,
+  lifetime, fulfillment, repetition and expiry. Record remaining technical
+  selection conventions within that scope before coding; do not add future
+  wish types or treat the documented design as shipped behavior.
+- Apply the defined effects of individual Moodlets on speech and specific
+  interaction willingness. Technical foreground/playback locks remain separate from a
   semantic refusal, which can have its own explanation. Preserve repeated-click
   behavior and story advancement rather than globally disabling interaction.
 
@@ -1510,7 +1514,7 @@ API Single/Two Parts and facts. See [minigames](MINIGAME_IMPLEMENTATION_PLAN.md)
 and [social content](SOCIAL_CONTENT.md). This clarification therefore supersedes
 the earlier food-only future-activity assumption. Capability/online-source
 availability remains distinct from social trust. Wish-specific fulfillment
-Moodlets and completion rules for those activities still require discussion.
+Moodlets and completion rules for those activities are specified below.
 Preserve API-only entertainment, opt-in and source ownership; neither unavailable API
 content nor an unplayed UI selection proves an ignored or fulfilled wish.
 
@@ -1567,8 +1571,9 @@ deadline. Do not invent handovers, personal gratitude or relationship credit
 from self-care. Use the existing consumption origin and joint World/Pet/memory
 transaction to apply fulfillment, impression and any eligible reward once.
 
-For a personal handover fulfilling the wish, propose a nominal additional
-0.25 friendship points within the existing shared rolling reward ceilings:
+For a personal handover fulfilling the wish, the later agreed common bonus
+confirms a nominal additional 0.25 friendship points within the existing shared
+rolling reward ceilings:
 0.75 points per two hours and five points per twenty-four hours. It does not
 create another independent reward allowance. Ordinary food credit still follows
 its existing rules; effective additional wish credit depends on remaining
@@ -1578,8 +1583,8 @@ loads/retries cannot replay either effect.
 
 An unfulfilled wish expires without a negative Moodlet or friendship deduction.
 It is not an additional mandatory care task. Detailed candidate-selection
-tie-breaks and any unresolved interaction with existing reward qualification
-must be recorded before implementation, without silently changing care balance.
+tie-breaks remain implementation conventions; the later agreed common bonus
+resolves reward qualification without changing the shared care reward ceilings.
 
 ##### Recorded proposal: game-wish variants, 2026-10-20
 
@@ -1823,9 +1828,10 @@ Numeric mood follows its normal timed response. Positive and negative
 impressions can coexist. A separate targeted mitigation rule may shorten an
 eligible negative impression, but this wish does not itself erase a boundary
 violation or refund friendship losses. Keep friendship reward accounting
-separate under existing shared limits; no additional reward amount is fixed
-here. Apply the later common-contribution-cap and shared wish-creation proposals
-before implementation, rather than silently assigning another reward allowance.
+separate under existing shared limits; the later agreed wish friendship bonus
+section fixes the additional amount. Apply the common-contribution-cap and
+shared wish-creation proposals before implementation, rather than silently
+assigning another reward allowance.
 
 ##### Design reference: positive experiences and negative Moodlets, 2026-10-20
 
@@ -2218,8 +2224,8 @@ Keep creation, disclosure, actual fulfillment and emotional after-effects
 distinct. Existing deadlines continue through closed/standby time, without
 restart renewal or offline generation/backlog.
 
-The following consistency review records remaining decisions, not additional
-approved behavior or implementation authorization.
+The following consistency review records how the remaining decisions were
+resolved by the owner-confirmed rules. It authorizes no implementation.
 
 ##### Agreed wish disclosure and temporary unavailability, 2026-10-20
 
@@ -2280,17 +2286,52 @@ Game-goal failure, retries, cross-session progress and eligible game-round
 timing are now specified in the later recorded lifecycle proposal. Remaining
 completion conventions below concern other event types or simultaneous events.
 
-| Remaining decision | Why it matters / example to settle before implementation |
-| --- | --- |
-| Separate wish relationship rewards | Food has a candidate additional 0.25-point personal-fulfillment reward; no additional amount is fixed for game/social/affection wishes. Define whether they add anything beyond ordinary eligible care, within existing shared budgets. |
-
 Wish disclosure, temporary unavailability, emotional aggregation/labels/mood
-thresholds and relief eligibility across refresh/escalation are resolved by the
-owner-confirmed rules above. Initial
-creation/candidate selection, equal-ranked direction ties and equal-time completion
-ordering remain implementation conventions within the recorded scope, not
+thresholds, relief eligibility across refresh/escalation and the separate wish
+friendship reward below are now resolved. Initial creation/candidate selection,
+equal-ranked direction ties and equal-time completion ordering remain
+implementation conventions within the recorded scope, not
 additional product workshops. Resolve semantic completion once so duplicate
 delivery cannot replay relief, fulfillment or rewards.
+
+##### Agreed rules: wish fulfillment friendship bonuses, 2026-10-20
+
+Status: owner-confirmed design rules, not implemented. A qualifying personal
+fulfillment may add a nominal 0.25 friendship points once per wish, independently
+of its positive Moodlet. This confirms the earlier personal food-handover bonus
+and extends the same amount to the other three wish areas.
+
+| Wish area | Qualifying fulfillment | Nominal additional friendship reward |
+| --- | --- | --- |
+| Food | Personal handover actually consumed under the food-wish rules | +0.25 points |
+| Games | Actual shared play or the specified round/overall result under the game-wish rules | +0.25 points |
+| Social | The desired complete conversation/content sequence | +0.25 points |
+| Affection | Actually accepted petting fulfilling the active wish | +0.25 points |
+
+The wish must already exist and be fulfilled within its lifetime. Expression is
+not required. All game objective forms use the same relationship bonus; larger
+goals retain their separately agreed stronger/longer fulfillment Moodlets.
+Rejected attempts, interrupted social sequences, failed/expired wishes, later
+ordinary rounds and Moodlet stacking/ageing alone grant no additional reward.
+Autonomous food intake can still fulfill a wish/create its impression, but does
+not imply personal user care or grant this friendship bonus, including offline.
+
+Ordinary care rewards and wish bonuses share the existing rolling ceilings of
+0.75 points per two hours and five points per twenty-four hours. Do not create
+a separate wish budget or increase those caps. When the same completion grants
+both, account for ordinary care first and grant the wish bonus only from the
+remaining allowance and room below friendship 100. An ordinary action's reward
+interval can suppress its ordinary reward without disqualifying the distinct
+wish bonus; all common ceilings still apply. Keep ordinary qualification and
+its interval anchors unchanged.
+
+An exhausted allowance can reduce the effective bonus or make it zero without
+blocking fulfillment or its positive Moodlet. Persist the completion and reward
+accounting atomically with the existing action transaction; no later top-up,
+retry, duplicated callback or repeated load may replay that wish's bonus.
+Example: an eligible ordinary +0.25 action plus a +0.25 wish bonus yields +0.50
+when both budgets have room. If ordinary care already fills the two-hour cap,
+the wish's effective extra reward is zero, while its emotional outcome remains.
 
 ##### Documented inventory and decisions before implementation, 2026-10-20
 
@@ -2329,12 +2370,12 @@ copies and intensity per Moodlet; numeric caps do not delete parallel entries.
 The eight positive versus ten negative types do not by themselves prove or
 disprove balanced daily outcomes, which also depend on triggers and duration.
 
-One product decision remains material before implementing its affected behavior:
-additional wish friendship rewards. Decide whether game/social/affection
-fulfillment adds anything beyond ordinary care; only food currently has a
-nominal additional 0.25-point candidate, always inside shared budgets. This
-review does not add an answer without owner agreement. Relief eligibility is
-now specified in the owner-confirmed targeted-shortening rules above.
+No previously listed product decision remains unresolved for the first 5B
+version. The owner-confirmed common wish bonus closes the final open reward
+question; disclosure, temporary unavailability, game-goal lifecycle, emotional
+composition/thresholds, recovery and relief eligibility are specified above.
+This is readiness of the design, not evidence of implemented or balanced runtime
+behavior and not authorization to begin coding during this documentation turn.
 
 First-creation timing, a simple selection method consistent with agreed context
 and pacing, exact equal-time event ordering, bounded progress/exposure records,
@@ -2351,6 +2392,63 @@ simultaneous positive/negative impressions, recovery interruption and reopen
 behavior. This review does not establish observed frequency or balanced
 day-to-day outcomes from the candidate selection rules. Keep that review
 proportionate and local; no GUI tests, timing runs or CI were performed here.
+
+##### 5B readiness and small implementation slices, 2026-10-20
+
+Read-only code comparison confirms that the planned 5B files and collections do
+not yet exist. `PetValues` already owns immutable care/relationship/sleep state;
+extend it and the single `pet_codec.py` entry point, not a second pet save.
+`PetState` applies pure policy results, and `progression.py`/the existing session
+time plan remain responsible for numeric elapsed advancement. Do not introduce
+another clock, active simulation or mutable Moodlet/wish manager.
+
+Concrete integration work remains, rather than further product decisions:
+
+- `GameExperienceCoordinator.complete()` currently receives a game summary at
+  session close. Add actual round-start/result evidence through the existing
+  game owners for time-bound objectives; retain ordinary session care accounting
+  once. Translate player-perspective results to Aiko's perspective once.
+- The existing reaction player already reports completion/cancellation. Connect
+  complete social sequences to semantic fulfillment/relief, not menu selection
+  or care admission. Leave ordinary talk-care timing under its existing owner.
+- Existing care/contact/object owners must supply accepted intake/petting,
+  boundary violations, observed withholding and reacquired/relocated objects.
+  Preserve acquired knowledge and the joint World/Pet transaction, including
+  autonomous food fulfillment without invented personal gratitude.
+- `PetMind.emotion()` and dialogue context/catalogue filters still combine
+  need/lifecycle facts with emotions. Migrate their callers to distinct typed
+  reads, preserving immediate reactions and authored sequences rather than
+  duplicating that interpretation in the UI.
+
+The following refines orders 2-4 above. Each row is a focused delivery slice;
+split the explicitly grouped integrations into separate small commits. Commit
+and push each completed unit with its actual targeted checks recorded. This
+sequence is a plan only; no Python, JSON, runtime asset or test is changed here.
+
+| Slice | Implementation scope and canonical owners | Targeted verification after implementation is authorized |
+| --- | --- | --- |
+| 5B.1 Definitions | Add `pet/moodlet_catalog.py`, `pet/wish_catalog.py`, their typed value definitions in `moodlets.py`/`wishes.py`, and packaged `data/moodlets.json`/`data/wishes.json`. Put shared tuning, including the common wish bonus, in the existing balance owner. Keep conditions/algorithms in Python and labels in existing localization resources. | Catalogue validity, references to actual foods/games/social categories, units/ranges and resource packaging; no live sessions. |
+| 5B.2 Owned storage | Add immutable active collections/bounded episode and objective progress to `PetValues`, focused `moodlet_codec.py`/`wish_codec.py` codecs and aggregate access through `PetState`. Extend the existing save/checkpoint entry points. | Existing checkpoint/rollback and save cases: legacy saves start without invented experiences, round-trip preserves deadlines and used relief/reward evidence. |
+| 5B.3 Shared Moodlet progression | Implement creation/refresh/stacking/expiry and per-episode relief policies in `moodlets.py`; compose numeric effects in `mood.py` and advance them at the relevant boundaries in the existing progression/time path. Keep pure lifecycle and numeric integration as separate coherent commits if needed. | Injected timelines for 3-2-1 decay, refresh/escalation, used-level relief, group/global caps, zero-need limits and expiry within a closed/standby interval; no real-time waiting. |
+| 5B.4 Direct negative experiences | Add small immutable semantic facts in `interaction_events.py`; integrate poking, unwelcome petting, food repetition, withholding and disturbed arrangement through existing owners. Separate contact/care and object integrations into commits. | Affected admission, actual evidence, persistence and transaction cases; direct friendship penalties occur once, independently of continuing Moodlets. |
+| 5B.5 Poor-care after-effects | Reuse existing bounded exposure and chronology for hunger, exhaustion, stimulation, social and affection impressions; implement stable recovery, pause/resume and accounted-for exposure. | Focused production-policy cases for threshold crossing, recovery interruption, no replay of old burden and reopen; no second neglect history or offline action replay. |
+| 5B.6 Wish lifecycle | Implement creation/selection, expiry and separate disclosure eligibility in `wishes.py`; use `PetState` and existing speaking owners for actual disclosure evidence. Record simple first-evaluation, selection and simultaneous-event conventions before this slice. | Three-slot/one-per-area limits, creation/disclosure spacing, unspoken wishes, actual displayed speech, temporary unavailability and expiry through closed time without offline generation. |
+| 5B.7 Wish fulfillment by area | Deliver food, affection, games and social as separate commits using their existing owners and transactions. Include the area's positive Moodlet and once-per-wish friendship bonus with its real fulfillment boundary. Games require round evidence; social requires the whole sequence. | Selected area-specific acceptance/completion cases, ordinary care plus wish budget clipping, no bonus replay or invented offline personal care; finite-stock food and retained game-objective progress where applicable. |
+| 5B.8 Emotional interpretation and reads | Add `emotions.py`/`derive_emotional_state()`, replace mixed mind/dialogue vocabulary and migrate schema, catalogue filters and actual consumers together. Extend immutable snapshots/view-model contracts for the 18 families and 11 wish forms. Keep schema/caller migration coherent; split passive read projections where independent. | All active Moodlets influence the label; polarity/direction and no-Moodlet thresholds, independent need/sleep facts, existing catalogue selection and read projections. Preserve authored wording and existing locks. |
+
+5B completion means the domain, save, time, semantic events and shared emotional
+reads agree under targeted local checks. The approved VN layout, icon exports,
+Moodlet strip, wish panel, embedded selectors and settings/Credits remain 5C;
+their ownership/read contracts are considered during 5B, without a provisional
+UI or another source of truth. The approved game surfaces remain a separate UI
+unit. No visual/native acceptance follows from domain readiness.
+
+Use existing tests where they own the contract, add only distinct missing
+behavior, inject time and isolate saves. Track individual durations and review
+anything exceeding ten seconds during each slice. Run the complete local suite
+and full static gates only after the complete refactor, including 5C and the
+final OOP review, as already agreed. No GitHub CI, visible test windows or mouse
+control is authorized; this planning turn runs no tests at all.
 
 #### 5C. Connect status, expression and interaction decisions
 
