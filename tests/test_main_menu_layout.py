@@ -171,13 +171,16 @@ class MainMenuLayoutTests(unittest.TestCase):
 
     def test_label_pointer_events_use_the_native_button_and_disabled_gate(self) -> None:
         button = self.toolbar.buttons["pet"]
-        assert button._copy is not None
-        for state, expected in (("disabled", []), ("normal", ["pet"])):
-            button.configure(state=state)
-            for sequence in ("<Enter>", "<ButtonPress-1>", "<ButtonRelease-1>"):
-                button._copy.event_generate(sequence, x=5, y=5)
-            self.root.update()
-            self.assertEqual(self.calls, expected)
+        for label in (button._copy, button._chevron):
+            assert label is not None
+            with self.subTest(child=str(label)):
+                self.calls.clear()
+                for state, expected in (("disabled", []), ("normal", ["pet"])):
+                    button.configure(state=state)
+                    for sequence in ("<Enter>", "<ButtonPress-1>", "<ButtonRelease-1>"):
+                        label.event_generate(sequence, x=5, y=5)
+                    self.root.update()
+                    self.assertEqual(self.calls, expected)
 
 
 if __name__ == "__main__":
