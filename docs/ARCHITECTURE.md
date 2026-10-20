@@ -93,7 +93,7 @@ satiety or energy thresholds. `application/active_time.py` owns the immutable
 `SessionInputs` record used by ticks, care and completed games. Its
 `advance_session_time()` function consumes the shared clock interval exactly
 once and forwards the same schedule, workload and nutrition context. The mind
-captures pre-care tone and conversation context before mutation, then
+captures pre-care conversation context before mutation, then
 interprets the committed effect.
 German fallback wording is selected only by `ui/view_models/care_text.py`.
 
@@ -272,8 +272,32 @@ The existing Moodlet lifetime owner retains pause/resume and relief allowances;
 PetState remains the single mutation owner. Pure numeric calls without supplied
 relationship evidence do not invent an absent history or qualify poor-care events.
 
-Wish lifecycle/fulfillment are delivered. Overall emotional interpretation and
-the combined status UI remain for later stages.
+Wish lifecycle/fulfillment and overall emotional interpretation are delivered.
+`pet/emotions.py` derives a frozen `EmotionalComposition` from every active
+Moodlet's intensity, retaining all directions, causes and known attribution.
+It owns no state, timer, reward or refusal. Positive/negative totals select the
+winning polarity; its strongest combined direction selects the label. Equal
+nonzero totals produce ambivalence. Without Moodlets, numeric mood supplies
+subdued below 40, calm below 70 and satisfied from 70. Numeric caps never
+truncate emotional evidence.
+
+`PetMind.emotional_state()` and the application snapshot call that same pure
+policy. `reaction_tone()` exposes the independent short irritation/warmth
+reaction; `record_accepted_care()` records accepted timing and starts the
+existing brief care response. Sleep never clears lasting Moodlets.
+`DialogueContext` separates numeric mood, emotional composition, typed need
+conditions, situational fatigue/playfulness, sleep, presence and relationship.
+
+`application/read_snapshot.py` exposes frozen `MoodletRead`, `WishRead` and
+bounded `GameWishRead` values on the aggregate's existing elapsed axis. Hover
+and status projections share one `EmotionalSnapshot`, with German labels,
+concrete targets, remaining stage/deadline work, paused recovery, expression
+flags, objective counters and current temporary restrictions. The status label
+is derived from that snapshot, rather than stored independently.
+`DesktopPresentation` receives the existing attention owner's `wish_context`
+read port; it needs neither a Mind object nor a clock. Reading cannot consume
+API buffers, advance time, acknowledge speech or apply rewards. The combined
+VN layout, icon strips and wish panel remain 5C.
 
 ## Application layer
 
@@ -437,6 +461,9 @@ The care/storage follow-up also changes these Python call contracts:
 
 | Previous call | Current owner/contract |
 | --- | --- |
+| `PetMind.emotion()`, dialogue `mood`/merged `states` | `PetMind.emotional_state()` and typed `DialogueContext.emotions`, `mood_value`, `need_conditions`, `reaction_tone`, `situational_conditions` |
+| `PetMind.after_care()`, `irritated_until`, `warm_until` | `record_accepted_care()`, `irritation_reaction_until`, `warm_reaction_until`; lasting impressions remain separate |
+| `DialogueBook.choose(event, emotion, time, now, dialogue=...)` | `choose(event, context, now, presentation=...)` with a single immutable `DialogueContext` |
 | `MoodHint`, `MoodHintState`, `choose_mood_hint()`, `PetState.mood_hint()` | `StatusHint`, `StatusHintValues`, `choose_status_hint()`, `PetState.status_hint()` |
 | `format_mood_hint()`, `mood_hint_text()`, text keys `mood.*` | `format_status_hint()`, `status_hint_text()`, `status_hint.*`; German wording unchanged |
 | Seven-entry `PetReadSnapshot.needs` | Five-field immutable `NeedLevels`; numeric mood and friendship remain separate snapshot fields |
@@ -498,8 +525,8 @@ Python code imports the removed paths; such callers need the mappings below.
 | `desktop.compatibility.DesktopCompatibility` | Owning `DesktopPet` components; no replacement facade |
 
 Hover/status projectors accept `application.read_snapshot.snapshot_pet(state)`
-instead of a mutable `PetState`. The status projector accepts the selected
-emotion string rather than a `PetMind` object and timestamp. `DesktopPresentation`
+instead of a mutable `PetState`. The status projector reads the composition
+from that snapshot, without a second emotion argument. `DesktopPresentation`
 provides desktop views without exposing the old public component handles.
 
 Legacy desktop accesses such as `pet.toolbar`, `pet._bubble`, `pet.say()` and
@@ -561,12 +588,15 @@ its effects, including before a friendship level boundary is crossed.
 Relationship filters never relax during rotation or fallback. Specific need
 and mood variants take priority over suitable general wording.
 
-Catalogue version 2 owns ordered text, emote and pause beats. `Reaction` carries
+Catalogue version 3 retains ordered text, emote and pause beats. Its explicit
+`conditions` are alternative AND clauses: typed emotional states/directions,
+need conditions, short reaction tones, situation and sleep remain separate.
+The old `moods`/`needs` filters and mixed `EMOTIONS` vocabulary are retired. `Reaction` carries
 that immutable sequence and a short/story presentation mode. The UI only plays
 it: one speech surface, length-based reading time (58 ms/character, 1.8–8 s),
 800 ms default emotes and 600 ms deliberate pauses. There are 48 authored talk
-stories, twelve per relationship stage, covering calm, playful, tired,
-withdrawn/irritated, hungry, lonely, affection-seeking and warm moments.
+stories, twelve per relationship stage, with independent emotional, need,
+short-reaction and situational variants.
 Stories exhaust their matching rotation pool before repeating. Warm moments
 also admit suitable calm stories, keeping repeated contact varied after care.
 

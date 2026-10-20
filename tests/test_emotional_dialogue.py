@@ -83,8 +83,12 @@ class EmotionalDialogueTests(unittest.TestCase):
             id="typed",
             event=original.event,
             conditions=[],
+            animation="idle",
+            periods=[],
+            weekdays=[],
             beats=[dict(kind="text", content="Hallo.")],
         )
+        self.assertEqual(Line.parse(raw).id, "typed")
         for key, value in (
             ("moods", ["hungry"]),
             ("conditions", [{"emotional_states": ["hungry"]}]),

@@ -7,8 +7,9 @@
 > Stages 1–3, B1 and B2 are implemented and verified below.
 > Stage 4 follows the corrected ownership and verification scope below.
 > Stage 5's needs/progression/status foundation and menu/action/placement
-> decoupling are delivered below. Moodlet/wish/emotion integration and stage 6
-> remain pending; physical desktop acceptance is separately recorded.
+> decoupling are delivered below. Moodlet/wish/emotion integration is delivered
+> through 5B.8; 5C and stage 6 remain pending. Physical desktop acceptance is
+> separately recorded.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
@@ -19,7 +20,8 @@
 > accounted exposure. 5B.6 now delivers paced inner wishes, real-time expiry and
 > actual spoken disclosure. 5B.7 delivers fulfillment, positive Moodlets and the
 > shared-pot personal bonus for food, affection, games and social activities.
-> Overall emotion and status UI remain for the following slices.
+> 5B.8 delivers full emotional interpretation, typed dialogue schema 3 and
+> immutable emotional/wish read contracts. The VN status layout remains 5C.
 
 ## Stage-4 correction delivery, 2026-10-19
 
@@ -2065,7 +2067,7 @@ numeric contribution cap. Attribution describes the last qualifying cause's
 known origin (user, autonomous or unknown); old episodes without that optional
 fact remain unknown. Neither reading nor migration fabricates attribution.
 
-Status: owner-confirmed rules for implementation, not implemented. Derive one overall
+Status: implemented in 5B.8; see the implementation record below. Derive one overall
 emotional interpretation from numeric mood, the active Moodlet composition and
 relevant interaction context. Do not create another care bar, mutable emotion
 score or independently persisted collection. Physical need conditions, sleep,
@@ -3324,3 +3326,40 @@ current care/API acceptance and prepared-category reads. It no longer needs a
 Mind reference or reads a clock. Reading never expires/creates/expresses a wish,
 commits care, reserves content, changes friendship or advances an impression.
 The main-menu layout, new icon strips and wish panels remain the separate 5C.
+
+
+### 5B.8 completion and focused OOP review, 2026-10-20
+
+Delivered on `feature/social-optimization` in three coherent feature units:
+`d6a6046` (pure composition and known source retention), `eafb567` (atomic
+catalogue/Mind/caller vocabulary migration) and `8a05227` (passive application
+and presentation reads). The final audit tightens the parser rejection fixture
+to start from a valid line, removes an unused specificity argument and updates
+maintained documentation. The UI architecture guard now inspects Python
+attribute access instead of rejecting `.label` in legitimate resource-key strings.
+
+OOP review: `PetState`/`PetValues` remain the sole mutable/persisted Pet owner;
+`emotions.py` is pure interpretation, reused by Mind and snapshots. No second
+emotional score, store, time axis, scheduler, wish manager or interaction lock
+was added. Read projections hold frozen values, not live aggregate handles.
+Current wish availability is supplied by the existing attention read port;
+World truth/knowledge, content preparation and playback keep their own owners.
+The composition root remains within its existing 640-line limit (638 lines).
+
+5B.8 is complete. The next UI work is **5C**, using the prepared VN plan and
+references. The full suite and final overall OOP review remain **stage 6**,
+after the complete refactor. Native visual/input acceptance stays manual and
+separate; this delivery launches no windows, uses no pointer control, and
+starts no GitHub CI. All commits use `[skip ci]`.
+
+
+Final local verification for 5B.8: **253 targeted headless tests passed in
+6.437 seconds**. Slowest individual case was the existing 72-hour adaptive
+scenario at **2.338 seconds**; no selected case exceeded ten seconds.
+Ruff passed all changed Python files since `871d050`; Pyright reported zero
+errors/warnings for those files; strict Mypy passed all 23 changed production
+files with `--follow-imports=silent` (the known unchanged World dependency
+limitation is recorded above). A direct baseline comparison confirms all
+1,082 authored dialogue identities/beats are unchanged. Legacy production/test
+call searches and `git diff --check` are clean. No full-suite, native-window,
+pointer-control or GitHub-CI run was performed.

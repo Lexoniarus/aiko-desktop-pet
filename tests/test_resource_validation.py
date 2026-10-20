@@ -129,7 +129,7 @@ class ResourceValidationTests(unittest.TestCase):
         original = load_json(DATA / "dialogues.de.json")["lines"][0]
         for key, value in (
             ("event", "__misspelled_event__"),
-            ("moods", [{}]),
+            ("conditions", [{"emotional_states": [{}]}]),
             ("periods", [[]]),
             ("cooldown_seconds", float("nan")),
         ):
@@ -141,7 +141,7 @@ class ResourceValidationTests(unittest.TestCase):
     def test_boolean_and_float_versions_are_not_schema_versions(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
             file = Path(folder) / "dialogues.json"
-            for version in (True, 1.0):
+            for version in (True, 3.0, 2):
                 raw = load_json(DATA / "dialogues.de.json")
                 raw["catalogue_version"] = version
                 file.write_text(json.dumps(raw), encoding="utf-8")

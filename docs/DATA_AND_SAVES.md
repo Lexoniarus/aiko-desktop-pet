@@ -37,15 +37,15 @@ boards and hidden/revealed cards are not serialized. Closing reports completed
 units through the existing application game-experience path before final save;
 ordinary session scores still do not persist. Optional inner wishes may now
 store only a bounded objective block (round identities and win/loss counts),
-not the game session itself. Game-to-wish reporting is a later implementation
-step; the storage contract does not reconstruct or replay games.
+not the game session itself. Game-to-wish reporting consumes actual round results;
+the storage contract does not reconstruct or replay games.
 
 ## Validation and editing
 
 Resources reject duplicate JSON keys, non-finite numbers, unsupported versions,
 missing required fields and unknown fields. Text keys must match their
 consumer contract, and placeholders must have exactly the required names.
-Dialogue events, emotions, day periods and animations must be supported IDs.
+Dialogue events, typed condition domains, day periods and animations must be supported IDs.
 Nutrition IDs must match visual item IDs; asset paths must stay within their
 asset directory. Frame order, count and timing are checked together.
 
@@ -67,12 +67,20 @@ Run the resource validation and functional tests before sharing changed data.
 
 Spoken character game reactions live in the dialogue catalogue; countdowns,
 player-facing labels, status displays and emergency care fallback wording stay
-in the text catalogue. Catalogue version 2 replaces the former first-text,
-follow-up and before/after-emote fields with one `beats` list. Each text beat
+in the text catalogue. Catalogue version 3 retains the ordered `beats` list
+introduced in version 2, replacing the mixed condition vocabulary. Each text beat
 has 1–125 characters and derived reading time; emote/pause beats may specify a
 bounded duration. Short reactions have at most two text beats, stories at most
-five. Named filters use supported `stages`, `moods`, simultaneous `needs`, day
-periods and weekdays; `requires_present` requires observed or direct contact.
+five. Named filters use supported `stages`, day periods and weekdays;
+`requires_present` requires observed or direct contact. `conditions` contains
+alternative clauses (OR), whose populated fields combine (AND):
+`emotional_states`, `emotional_directions`, `need_conditions`, `reaction_tones`,
+`situational_conditions` and boolean `sleeping`. State/tone choices within one
+field are alternatives; directions/needs/situations require every listed fact.
+For example, `low_satiety` never qualifies as an emotional state, while `proud`
+never qualifies as a care condition. Old `moods`/`needs` keys are rejected.
+All 1,082 catalogue IDs and their authored text/emote beats were preserved in
+this schema migration; display labels live in `texts.de.json`.
 Object placeholders are allowed only on object events. The finite contract in
 `pet/object_text_contract.py` permits bare `{item}` for compatibility plus
 `item_{indef|def|poss|pron}_{nom|acc|dat}` and sentence-initial `Item_...`
@@ -150,6 +158,13 @@ rolling 24-hour history. Markers, current stage progress and relief usage surviv
 checkpoint, save/reopen and paired Pet/World consumption rollback. Future markers,
 invalid levels/flags, missing/unknown needs and malformed offsets invalidate the
 optional Moodlet section under the existing backup/preservation rules.
+
+Each active Moodlet may additionally store `attribution`: `user`, `autonomous`
+or `unknown`. This describes the latest qualifying cause's known origin;
+episodes saved before 5B.8 default to unknown. Loading never fabricates blame.
+The optional section and outer save remain version one. Overall emotional
+composition, localized labels, current wish restrictions and read-side
+countdowns are derived, never serialized as a second source of truth.
 
 ## Optional wish state
 

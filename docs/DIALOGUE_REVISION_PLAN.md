@@ -4,6 +4,15 @@ Stand: 19. Oktober 2026. Grundlage ist die im Gespräch abgestimmte Stimme von
 Desktop-Aiko. Dieser Plan betrifft die vorhandenen gesprochenen Texte, nicht
 VN-Aiko oder eine Änderung des Verhaltenssystems.
 
+
+Aktueller technischer Stand (5B.8): Katalogschema 3 trennt emotionale
+Gesamtstimmung, Bedürfnisbedingungen, kurze Reaktionstöne und Situationen.
+Alle 1.082 aktuellen Eintrags-IDs und ihre Text-/Emote-Folgen wurden beim
+Schemawechsel unverändert übernommen. Die unten genannten 1.052 Einträge
+bezeichnen den damaligen redaktionellen Ausgangsstand. Die Umsetzung und die
+Filterzuständigkeiten sind im englischen Gesamtplan sowie in
+[Data and saves](DATA_AND_SAVES.md#character-copy) dokumentiert.
+
 ## Umfang und Vorgehen
 
 1. Alle 1.052 bisherigen Katalogfolgen als vollständige Aussagen prüfen.

@@ -8,6 +8,13 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Derive overall emotional state from the complete active Moodlet composition,
+  independently of numeric caps, needs, sleep and short reactions. Preserve
+  known cause attribution with backward-compatible local storage. Migrate
+  dialogue filters to typed schema 3 without changing authored beats, and expose
+  immutable Moodlet/wish details through the existing hover/status read boundary.
+  The new VN layout remains a separate implementation slice.
+
 - Fulfill food, affection, game and social wishes at actual accepted/completed
   boundaries. Apply their positive Moodlets and capped personal bonus using
   existing aggregate, reward and playback owners. Preserve finite-stock offline

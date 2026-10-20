@@ -80,7 +80,7 @@ class DialogueConditions:
             and (self.sleeping is None or self.sleeping == context.sleeping)
         )
 
-    def specificity(self, context: DialogueContext) -> tuple[int, int]:
+    def specificity(self) -> tuple[int, int]:
         size = (
             bool(self.emotional_states)
             + len(self.emotional_directions)

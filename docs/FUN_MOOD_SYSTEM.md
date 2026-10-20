@@ -189,6 +189,25 @@ stage-2 balance. Automatic routine can apply existing scheduled sleep; time alon
 longer creates self-served catalogue meals. Adaptive sleep remains a later stage. Expression filters above 80 are
 explicitly pending stage 5; this numeric change does not retune dialogue labels. See [data and saves](DATA_AND_SAVES.md).
 
+## Overall emotional interpretation and reads
+
+Numeric mood remains the timed need/Moodlet wellbeing value. The separate
+`EmotionalComposition` is a pure interpretation of every active impression's
+current intensity (1/2/3), independent of numeric contribution caps. Sum each
+polarity and direction; the stronger polarity's greatest combined direction
+sets the primary state. Equal nonzero totals yield Zwiegespalten. Direction
+ties prefer the latest trigger, then strongest individual impression, then
+stable enum order. No-Moodlet fallback: Gedrückt below 40, Gelassen at 40–<70,
+Zufrieden from 70. All causes and secondary directions remain readable.
+
+Physical needs, sleep, short irritation/warmth and friendship are separate facts.
+They coexist in dialogue context rather than replacing one another with a
+mixed label. Existing need priority and interaction-specific boundaries remain;
+an overall label creates no reward or blanket refusal. Passive snapshots expose
+all eighteen families and eleven wish forms, including unspoken wishes, paused
+recovery, original deadlines, round progress and temporary restrictions. Reading
+never advances or fulfills them. The VN status layout remains a subsequent step.
+
 ## Verification
 
 Stage 5B.6 adds inner wishes without changing need, numeric mood, Moodlet or

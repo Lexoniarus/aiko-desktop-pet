@@ -231,7 +231,7 @@ class Line:
 
     def specificity(self, context: DialogueContext) -> tuple[int, int]:
         rank = max(
-            (c.specificity(context) for c in self.conditions if c.matches(context)),
+            (c.specificity() for c in self.conditions if c.matches(context)),
             default=(0, 0),
         )
         return bool(self.stages) + rank[0], rank[1]
