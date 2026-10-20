@@ -1243,11 +1243,12 @@ of an unspoken wish does not establish deliberate ignoring by the user. Prior
 general requests, such as the communicated request for food variety, retain
 their own evidence and consequences; do not confuse them with an inner wish.
 
-The food-wish numbers below remain earlier design candidates. Reconcile inner
-wish pacing/concurrency/lifetime separately from expression frequency and
-cooldowns before implementation. In particular, do not reinterpret earlier
-creation limits as a ban on having wishes at low friendship or poor wellbeing.
-No new numerical emotion or expression thresholds are approved in this update.
+The food-only pacing candidates below are superseded by the later recorded
+shared wish-creation/concurrency proposal. Keep inner-wish pacing separate from
+expression frequency and cooldowns. Do not reinterpret creation limits as a ban
+on having wishes at low friendship or poor wellbeing. This historical
+clarification itself introduced no numerical expression thresholds; later
+wish-specific proposals define their own candidate disclosure rules.
 
 The current checkout now supports RPS, Blackjack and Tic-Tac-Toe, and Plaudern,
 API Single/Two Parts and facts. See [minigames](MINIGAME_IMPLEMENTATION_PLAN.md)
@@ -1269,9 +1270,9 @@ experiences, distinct from care requirements and general requests for variety.
 
 | Rule | Candidate value |
 | --- | --- |
-| Concurrent active wishes | Earlier candidate: one initially; inner/expression pacing must be reconciled under the later clarification |
-| New-wish limit | Earlier candidate: two per rolling twenty-four hours; distinguish inner-wish selection from expression limits before implementation |
-| Minimum interval between wish creation | Earlier candidate: six real hours; reconsider its role separately from expression cooldowns |
+| Concurrent active wishes | Earlier one-wish candidate superseded by the shared proposal: up to three across areas, at most one food wish |
+| New-wish limit | Earlier two-per-day candidate superseded; shared proposal adds no daily counter |
+| Minimum interval between wish creation | Earlier six-hour candidate superseded by shared sixty-minute global / ninety-minute same-area spacing |
 | Wish lifetime | Four real hours |
 | Wish creation | While Aiko is awake and the application is running |
 | Target | A specific implemented food ID; a matching portion need not currently exist on the desktop |
@@ -1301,8 +1302,8 @@ does not erase irritation, prior losses or other Moodlets.
 Initially do not stack the intensity of this fulfillment Moodlet. Another
 genuinely fulfilled wish would renew its two-hour duration rather than create
 multiple copies or a larger bonus. Repeated portions after one wish's completion
-are not additional fulfillments. The creation limits above remain independent
-of the emotional duration; reaching another wish is not an excuse to bypass them.
+are not additional fulfillments. Shared wish-creation limits remain independent
+of emotional duration; reaching another wish is not an excuse to bypass them.
 
 Autonomous consumption can satisfy the active food wish and create the positive
 impression, without implying that the user personally supplied it. This also
@@ -1332,8 +1333,9 @@ shared activity itself or a particular outcome in RPS, Blackjack or Tic-Tac-Toe.
 These are distinct motives, each defined by game ID, objective and round scope
 when the wish becomes active. Preserve the distinction between having a wish
 and expressing it; low friendship or poor wellbeing does not erase the desire.
-The earlier four-hour game-wish window and creation/expression pacing remain
-design candidates, not new implementation authorization from this record.
+The later shared wish-creation proposal specifies the four-hour lifetime and
+creation/expression pacing. These remain design candidates, not implementation
+authorization.
 
 | Wish variant | Qualifying fulfillment within the wish window | Candidate emotional after-effect |
 | --- | --- | --- |
@@ -1485,8 +1487,8 @@ Any friendship reward is separate from the lasting impression and remains
 within the existing shared care/reward limits. No additional amount is fixed
 by this proposal. Completion, stacking and each bubble/punchline must not
 repeat ordinary talk credit. Apply the later common-contribution-cap proposal
-when balancing these families. Wish creation/concurrency pacing still requires
-discussion before implementation.
+when balancing these families, alongside the later shared wish-creation and
+concurrency proposal.
 
 ##### Recorded proposal: affection wish and fulfillment Moodlet, 2026-10-20
 
@@ -1526,9 +1528,8 @@ impressions can coexist. A separate targeted mitigation rule may shorten an
 eligible negative impression, but this wish does not itself erase a boundary
 violation or refund friendship losses. Keep friendship reward accounting
 separate under existing shared limits; no additional reward amount is fixed
-here. Apply the later common-contribution-cap proposal and reconcile wish
-creation/concurrency before implementation, rather than silently assigning
-another reward allowance.
+here. Apply the later common-contribution-cap and shared wish-creation proposals
+before implementation, rather than silently assigning another reward allowance.
 
 ##### Design reference: positive experiences and negative Moodlets, 2026-10-20
 
@@ -1775,8 +1776,87 @@ clear an interaction boundary or refund friendship losses to enforce a numeric
 cap. Positive experiences can still fulfill wishes and affect interpretation
 when no additional numeric bonus is available.
 
-Further discussion: reconcile wish creation/concurrency pacing and complete
-remaining vocabulary/selection details before implementing stage 5.
+##### Recorded proposal: shared wish creation and concurrency, 2026-10-20
+
+Status: owner-requested design proposal, not implemented. This replaces the
+earlier food-only candidates of one active wish, two new wishes per day and
+six-hour creation spacing. It does not authorize changes to runtime behavior.
+
+| Rule | Candidate value |
+| --- | --- |
+| Concurrent inner wishes | At most three in total |
+| Area distribution | At most one each from food, games, social activity and affection |
+| Lifetime | Four real hours from each wish's creation |
+| Global creation spacing | At least sixty real minutes between new wishes, across all areas |
+| Same-area creation spacing | At least ninety real minutes since the last wish created in that area |
+| Additional daily creation limit | None initially; spacing and occupied slots already constrain frequency |
+| Creation availability | Aiko is awake and the app is running |
+| Closed app, standby or sleep | Existing wishes age; do not generate retrospective wish sequences |
+| Expression pacing | At most one newly voiced wish per thirty real minutes, with one expression per wish initially |
+
+With an available slot and both creation intervals satisfied, choose among
+currently plausible candidates. Context defines suitable possibilities; some
+random selection provides variety. Do not roll an unconditional creation chance
+on every input or require a deficient need as the automatic trigger.
+
+- Food: appetite for a concrete implemented food ID, including while adequately
+  supplied. Prefer variety when repetitive food is upsetting her. A matching
+  portion need not exist on the desktop, and a wish proves no object knowledge.
+- Games: desire for a particular game or an outcome/achievement. Actual recent
+  results may inform selection, for example wanting a success after a loss;
+  do not invent prior results or create an automatic punishment for losing.
+- Social: desire to chat or share funny/interesting content through supported
+  choices. API candidates respect enabled online sources and actual capability.
+- Affection: desire for closeness even with an adequately filled affection
+  need. Recently feeling crowded favors another activity during selection.
+
+Low friendship or poor numeric mood does not prevent inner wishes. Expression
+retains the separately recorded comfort/trust conditions, plus the shared
+thirty-minute disclosure spacing and current speech priority. All active wishes
+remain visible in status, whether spoken or unspoken; reading status is not
+actual expression. Speaking neither duplicates a wish nor restarts its lifetime.
+
+Fulfillment frees a slot without resetting or bypassing creation spacing. An
+active positive fulfillment Moodlet does not prevent a later independent wish
+in that area; otherwise the agreed intensity stacking would be artificially
+disabled. Generate no wish retroactively to match a just-completed action.
+Keep creation, disclosure, actual fulfillment and emotional after-effects
+distinct. Existing deadlines continue through closed/standby time, without
+restart renewal or offline generation/backlog.
+
+The following consistency review records remaining decisions, not additional
+approved behavior or implementation authorization.
+
+##### Design consistency review: Moodlets and wishes, 2026-10-20
+
+Scope: read-only review of the recorded design and its existing ownership
+constraints, not a runtime audit, test result or implementation sign-off.
+The model consistently separates needs, immediate reactions, inner wishes,
+expression, fulfillment, lasting impressions, numeric mood, overall emotional
+interpretation and relationship consequences. Shared limits do not discard
+emotional evidence; positive fulfillment can coexist with targeted negative
+relief. Persisted elapsed-time ownership does not require replaying offline
+personal interactions or building another active simulation.
+
+The obsolete food-only concurrency/creation limits have been explicitly
+superseded above. No conflicting new values are approved by this review.
+
+| Remaining decision | Why it matters / example to settle before implementation |
+| --- | --- |
+| Unsuccessful game-goal lifecycle | Losing the next round makes that specific non-loss goal unattainable. Decide whether it ends neutrally immediately or stays visibly failed until expiry; do not silently redefine it as a later round. Define whether an unsuccessful fixed block may be retried and whether block progress spans sessions. |
+| Recovery interruption and retrigger after poor care | Define what a drop below forty does to the thirty-minute qualification and an already running recovery stage. Previously handled exposure still inside the twenty-four-hour history must not recreate level three without a defined new qualifying experience. |
+| Relief allowance across refresh/escalation | Once-per-current-stage relief needs an exact stage identity when a provocation renews the timer, increases intensity or happens at the cap. Avoid making another five-minute credit available merely by poking again and restarting the same timer. |
+| Complete emotional vocabulary and mapping | Assign each Moodlet its direction and attribution, define satisfied/calm/subdued fallback thresholds, and settle exact ties. The grouped support rule alone does not specify every label or interaction response. |
+| Wish selection and disclosure details | Define initial creation on a fresh save/start, selection among four areas for three slots, variation between specific targets, and the disclosure conditions for food/game wishes; the level-three/mood-fifty candidates are explicit for social/affection only. |
+| Wish lifecycle when circumstances change | Decide the fate of an active API wish after opt-out/unavailability and of an affection wish during a new refusal. Define one neutral expiry/failure policy across areas and which event is actual spoken disclosure, without equating status visibility with communication. |
+| Separate wish relationship rewards | Food has a candidate additional 0.25-point personal-fulfillment reward; no additional amount is fixed for game/social/affection wishes. Define whether they add anything beyond ordinary eligible care, within existing shared budgets. |
+| Completion and time-boundary semantics | Resolve fulfillment at its actual semantic event, including exact expiry equality and an action/round already underway at wish creation. Preserve bounded game progress across restart where needed; duplicate completion must not replay relief, fulfillment or rewards. |
+
+Before implementation, walk through a few explicit timelines for stacking,
+simultaneous positive/negative impressions, recovery interruption and reopen
+behavior. This review does not establish observed frequency or balanced
+day-to-day outcomes from the candidate selection rules. Keep that review
+proportionate and local; no GUI tests, timing runs or CI were performed here.
 
 #### 5C. Connect status, expression and interaction decisions
 
