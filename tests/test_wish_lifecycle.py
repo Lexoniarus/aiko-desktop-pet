@@ -1,10 +1,22 @@
 """Headless wish opportunities, original deadlines and durable disclosure."""
 
 import random
+import tempfile
 import unittest
 from dataclasses import replace
+from pathlib import Path
 
+from aiko_pet.application.active_time import (
+    ActiveSessionClock,
+    SessionInputs,
+    advance_session_time,
+)
+from aiko_pet.application.session import PetSessionRestorer
+from aiko_pet.application.session_time import SessionTimeProgression
+from aiko_pet.application.settings import PetSettings
+from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
+from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import (
@@ -18,6 +30,8 @@ from aiko_pet.pet.wishes import (
     expire_wishes,
     wish_to_express,
 )
+from aiko_pet.world.contracts import WorldSurface
+from aiko_pet.world.state import WorldState
 
 DEFINITIONS = WISH_CATALOG.definitions
 
@@ -35,13 +49,88 @@ def create(
     )
 
 
-def select(state, elapsed=0, **kwargs):
-    args = dict(sleeping=False, friendship_level=3, mood=50, context=WishContext())
-    args.update(kwargs)
-    return wish_to_express(state, elapsed=elapsed, definitions=DEFINITIONS, **args)
+def select(
+    state,
+    elapsed=0,
+    *,
+    sleeping=False,
+    friendship_level=3,
+    mood=50,
+    context=WishContext(),
+):
+    return wish_to_express(
+        state,
+        elapsed=elapsed,
+        definitions=DEFINITIONS,
+        sleeping=sleeping,
+        friendship_level=friendship_level,
+        mood=mood,
+        context=context,
+    )
 
 
 class WishLifecycleTests(unittest.TestCase):
+    def test_closed_and_standby_expiry_share_time_with_or_without_world(self):
+        wall = 1800000000.0
+        for with_world in (False, True):
+            with (
+                self.subTest(world=with_world),
+                tempfile.TemporaryDirectory() as folder,
+            ):
+                wishes = WishState(
+                    2,
+                    (
+                        ActiveWish(
+                            1,
+                            WishId.FOOD,
+                            "apple",
+                            0,
+                            14400,
+                        ),
+                    ),
+                    ((WishArea.FOOD, 0),),
+                )
+                pet = PetState(updated_at=wall, lived_seconds=14000, wishes=wishes)
+                world = WorldState(WorldSurface(800, 600), ()) if with_world else None
+                progression = (
+                    SessionTimeProgression(world, ObjectMemory())
+                    if world is not None
+                    else None
+                )
+                settings = PetSettings(auto_routine=False)
+                store = StateStore(Path(folder) / "state.json")
+                store.save(pet, settings, world=world.snapshot() if world else None)
+                closed = PetSessionRestorer(
+                    store, wall_time=lambda: wall + 400
+                ).restore()
+                uptime = [10.0]
+                clock = ActiveSessionClock(lambda: uptime[0])
+                uptime[0] += 400
+                advance_session_time(
+                    pet,
+                    clock,
+                    SessionInputs(
+                        wall + 400,
+                        0,
+                        False,
+                        None,
+                        False,
+                        False,
+                        None,
+                    ),
+                    progression=progression,
+                )
+                self.assertEqual(pet.wishes, closed.state.wishes)
+                self.assertEqual(pet.wishes.active, ())
+                self.assertEqual(pet.wishes.next_instance_id, 2)
+                self.assertEqual(pet.lived_seconds, 14400)
+                self.assertEqual(closed.state.lived_seconds, 14400)
+                store.save(closed.state, settings)
+                again = PetSessionRestorer(
+                    store, wall_time=lambda: wall + 400
+                ).restore()
+                self.assertEqual(again.state.wishes, pet.wishes)
+
     def test_first_evaluation_and_area_limits_are_not_need_rewards(self):
         state = create()
         self.assertEqual(len(state.active), 1)
@@ -107,13 +196,13 @@ class WishLifecycleTests(unittest.TestCase):
 
     def test_inner_wish_survives_disclosure_thresholds_and_temporary_restrictions(self):
         state = create(definitions={WishId.PET: DEFINITIONS[WishId.PET]})
-        for kwargs in (
-            dict(friendship_level=2),
-            dict(mood=49),
-            dict(sleeping=True),
-            dict(context=WishContext(petting_welcome=False)),
+        for result in (
+            select(state, friendship_level=2),
+            select(state, mood=49),
+            select(state, sleeping=True),
+            select(state, context=WishContext(petting_welcome=False)),
         ):
-            self.assertIsNone(select(state, **kwargs))
+            self.assertIsNone(result)
         self.assertEqual(select(state), state.active[0])
         self.assertIsNone(state.active[0].expressed_at)
         self.assertEqual(state.active[0].expires_at, 14400)
@@ -142,12 +231,16 @@ class WishLifecycleTests(unittest.TestCase):
             ),
             ((WishArea.FOOD, 0), (WishArea.SOCIAL, 3600), (WishArea.AFFECTION, 7200)),
         )
-        self.assertEqual(select(state, 7200).instance_id, 1)
+        selected = select(state, 7200)
+        assert selected is not None
+        self.assertEqual(selected.instance_id, 1)
         state = acknowledge_wish_expression(state, 1, elapsed=7200)
         self.assertEqual(acknowledge_wish_expression(state, 1, elapsed=7201), state)
         self.assertEqual(acknowledge_wish_expression(state, 999, elapsed=7201), state)
         self.assertIsNone(select(state, 8999))
-        self.assertEqual(select(state, 9000).instance_id, 2)
+        selected = select(state, 9000)
+        assert selected is not None
+        self.assertEqual(selected.instance_id, 2)
         self.assertEqual(acknowledge_wish_expression(state, 2, elapsed=8999), state)
         self.assertEqual(acknowledge_wish_expression(state, 2, elapsed=18000), state)
         pet = PetState(lived_seconds=7200, wishes=state)

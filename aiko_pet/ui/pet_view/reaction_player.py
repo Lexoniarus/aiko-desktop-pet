@@ -28,10 +28,13 @@ class ReactionPlayer:
         is_closed: Callable[[], bool],
         hide_speech: TimerCallback = lambda: None,
         on_text: Callable[[str], None] = lambda _event: None,
+        on_wish_text: Callable[[int], None] = lambda _instance: None,
         social_completed: Callable[[SocialCompletion], None] = lambda _kind: None,
     ) -> None:
         self._on_text = on_text
         self._social_completed = social_completed
+        self._on_wish_text = on_wish_text
+        self._wish_instance_id: int | None = None
         self._completed_social: SocialCompletion | None = None
         self._text_reported = False
         self._schedule = schedule
@@ -94,6 +97,7 @@ class ReactionPlayer:
         self._story = False
         self._subject = None
         self._event = None
+        self._wish_instance_id = None
         self._completed_social = None
         self._index = -1
         self._hide_speech()
@@ -116,6 +120,7 @@ class ReactionPlayer:
         self._completion = on_complete
         self._subject = subject
         self._event = reaction.event
+        self._wish_instance_id = reaction.wish_instance_id
         self._completed_social = reaction.completed_social
         self._text_reported = False
         if animate and reaction.animation != "idle":
@@ -155,9 +160,14 @@ class ReactionPlayer:
             self._display_text(cue.content, cue.duration_ms)
             if not self._text_reported and self._event is not None:
                 self._text_reported = True
+                wish_instance_id = self._wish_instance_id
                 self._on_text(self._event)
+                if wish_instance_id is not None:
+                    self._on_wish_text(wish_instance_id)
         else:
             self._hide_speech()
+        if generation != self._generation:
+            return
         self._mark_spoken()
         self._pending_timer = self._schedule(
             cue.duration_ms,
@@ -172,6 +182,7 @@ class ReactionPlayer:
         self._story = False
         self._subject = None
         self._event = None
+        self._wish_instance_id = None
         social, self._completed_social = self._completed_social, None
         self._hide_speech()
         completion, self._completion = self._completion, None

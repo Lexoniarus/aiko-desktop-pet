@@ -37,6 +37,12 @@ class SocialConversationRuntime:
     def waiting(self) -> bool:
         return self._phase != "idle"
 
+    @property
+    def prepared_categories(self) -> frozenset[str]:
+        """Read existing warm stock without fetching, selecting or reserving it."""
+        return frozenset(c.value for c in SocialCategory
+                         if self.content.enabled and self.content.count(c))
+
     def snapshot(self) -> tuple[str, PreparedSocialContent | None]:
         key = self._status if self.content.enabled else "social.disabled"
         return GERMAN_TEXT.format(key), self._last_content

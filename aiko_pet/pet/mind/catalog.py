@@ -212,6 +212,7 @@ class Reaction:
     event: str
     presentation: Literal["short", "story"] = "short"
     completed_social: SocialCompletion | None = None
+    wish_instance_id: int | None = None
 
     @property
     def text(self) -> str:

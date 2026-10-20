@@ -47,6 +47,7 @@ class DesktopAttentionRuntime:
 
     def handle_time_progress(self, progress: TimeProgress, now: float) -> None:
         """Present period transitions, leaving domain dialogue to attention."""
+        self.attention.evaluate_wishes()
         if not progress.period_changed:
             return
         self._ports.refresh_toolbar()

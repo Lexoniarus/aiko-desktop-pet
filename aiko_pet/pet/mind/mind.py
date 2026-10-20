@@ -12,13 +12,18 @@ from typing import Literal
 
 from ..balance import BALANCE
 from ..care_result import CareEffect, CareResult
+from ..content import GERMAN_TEXT
+from ..food_catalog import DEFAULT_CATALOG
 from ..routine import TimeContext
 from ..state import PetState
+from ..wish_catalog import WISH_CATALOG
+from ..wishes import ActiveWish, WishArea
 from .adaptive_models import Behaviour
 from .catalog import DialogueBook, Reaction
 from .click_policy import ClickButton, choose_click_reaction
 from .cursor_attention import CursorAttention
 from .dialogue_context import DialogueContext, FriendshipStage
+from .reaction_sequence import Cue
 from .work_episode import WorkEpisodeMemory
 
 
@@ -195,6 +200,22 @@ class PetMind:
         if reaction is not None and reaction.presentation == "story":
             self.clicks.clear()
         return reaction
+
+    def wish_reaction(self, wish: ActiveWish) -> Reaction:
+        """Render one admitted concrete desire; selection alone is not speech."""
+        definition = WISH_CATALOG.definitions[wish.definition_id]
+        values: dict[str, str] = {}
+        if definition.area == WishArea.FOOD:
+            values["target"] = DEFAULT_CATALOG.foods[wish.target_id].display_name
+        elif definition.area == WishArea.GAMES:
+            values["target"] = GERMAN_TEXT.format(f"game.name.{wish.target_id}")
+            if definition.round_count > 1:
+                values["rounds"] = str(definition.round_count)
+        text = GERMAN_TEXT.format(f"wish.{wish.definition_id}.utterance", **values)
+        return Reaction(
+            f"wish-{wish.instance_id}", (Cue.text(text),), "idle", "wish_expression",
+            wish_instance_id=wish.instance_id,
+        )
 
     def contact_text(
         self, event: str, state: PetState, context: TimeContext, now: float

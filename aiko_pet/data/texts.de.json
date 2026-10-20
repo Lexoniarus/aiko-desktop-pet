@@ -229,6 +229,17 @@
     "wish.fact.label": "Einen Fakt teilen",
     "wish.fact.description": "Aiko möchte einen interessanten Fakt mit dir teilen.",
     "wish.pet.label": "Gestreichelt werden",
-    "wish.pet.description": "Aiko möchte gestreichelt werden, wenn ihr die Nähe willkommen ist."
+    "wish.pet.description": "Aiko möchte gestreichelt werden, wenn ihr die Nähe willkommen ist.",
+    "wish.food.utterance": "Mmh, {target} ... Darauf hätte ich jetzt Appetit.",
+    "wish.play_game.utterance": "Ich hätte Lust auf {target} mit dir. Wie wäre es mit {rounds} Runden zusammen?",
+    "wish.win_round.utterance": "Die nächste Runde {target} würde ich gern gewinnen. Spielst du mit mir?",
+    "wish.avoid_round_loss.utterance": "Die nächste Runde {target} möchte ich nicht verlieren. Ein Unentschieden wäre auch okay.",
+    "wish.win_overall.utterance": "Bei {target} möchte ich in den nächsten {rounds} Runden insgesamt vorn liegen. Probieren wir es?",
+    "wish.avoid_overall_loss.utterance": "Bei {target} möchte ich nach {rounds} Runden mindestens gleichauf sein. Magst du mitspielen?",
+    "wish.chat.utterance": "Ich würde gern ein bisschen mit dir plaudern. Hast du einen Moment für mich?",
+    "wish.single.utterance": "Ich würde dir gern einen kleinen Spruch erzählen. Magst du hören?",
+    "wish.twopart.utterance": "Ich hätte Lust, dir einen Witz zu erzählen. Hast du kurz Zeit?",
+    "wish.fact.utterance": "Ich würde gern einen kuriosen Fakt mit dir teilen. Neugierig?",
+    "wish.pet.utterance": "Ein bisschen Streicheln wäre jetzt schön. Magst du?"
   }
 }

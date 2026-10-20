@@ -35,6 +35,19 @@ class SocialRuntimeTests(unittest.TestCase):
         self.started.append(item)
         return True
 
+    def test_wish_readiness_only_observes_existing_prepared_categories(self):
+        self.assertEqual(self.runtime.prepared_categories, frozenset())
+        self.worker.complete(1)
+        self.runtime.poll()
+        before = self.content.count(SocialCategory.SINGLE)
+        for _ in range(2):
+            self.assertEqual(self.runtime.prepared_categories, frozenset({"single"}))
+        self.assertEqual(self.content.count(SocialCategory.SINGLE), before)
+        self.assertFalse(self.runtime.waiting)
+        self.assertFalse(self.started)
+        self.runtime.set_enabled(False)
+        self.assertEqual(self.runtime.prepared_categories, frozenset())
+
     def test_empty_buffer_holds_once_until_ready_without_awarding_early(self):
         self.runtime.select(SocialCategory.SINGLE)
         self.deferred.pop()()

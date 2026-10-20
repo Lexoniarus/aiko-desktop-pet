@@ -59,6 +59,7 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         self.toolbar_refresh.assert_not_called()
         self.attention.select_sleep_transition_reaction.assert_not_called()
         self.presenter.show_reaction.assert_not_called()
+        self.attention.evaluate_wishes.assert_called_once_with()
 
     def test_period_change_without_sleep_refreshes_only_toolbar(self) -> None:
         self.runtime.handle_time_progress(

@@ -8,13 +8,19 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass
+from typing import Callable
 
 from ..pet.balance import BALANCE
+from ..pet.care_actions import plan_care_action
+from ..pet.care_result import CareEffect
 from ..pet.mind import PetMind
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.workload_events import WorkloadEventDetector
+from ..pet.moodlets import MoodletId
 from ..pet.routine import TimeContext
 from ..pet.state import PetState
+from ..pet.wish_catalog import WISH_CATALOG
+from ..pet.wishes import WishContext, wish_to_express
 from .care_requests import choose_care_request
 from .events import IncomingNotification
 from .ports import ComputerReadings
@@ -43,6 +49,7 @@ class AttentionCoordinator:
         router: ApplicationRouter,
         *,
         started_at: float,
+        prepared_social: Callable[[], frozenset[str]] = frozenset,
     ) -> None:
         self.state = state
         self.settings = settings
@@ -50,6 +57,7 @@ class AttentionCoordinator:
         self.workload_events = workload_events
         self.monitor = monitor
         self.router = router
+        self._prepared_social = prepared_social
         self.last_spoken = -1000.0
         self.next_care_request = started_at
         self.next_comment = started_at + random.uniform(
@@ -67,6 +75,30 @@ class AttentionCoordinator:
 
     def mark_spoken(self, now: float) -> None:
         self.last_spoken = now
+
+    def wish_context(self) -> WishContext:
+        """Read existing capabilities and care admission without executing care."""
+        active = {e.definition_id for e in self.state.moodlets.active}
+        return WishContext(
+            online_social=self.settings.online_social,
+            prepared_social=self._prepared_social(),
+            petting_welcome=plan_care_action(
+                self.state, "pet", now=self.state.updated_at,
+            ).result.effect != CareEffect.AFFECTION_REFUSED,
+            games_ready=self.state.energy >= BALANCE.integer(
+                "care", "play_minimum_energy",
+            ),
+            crowded=MoodletId.CROWDED in active,
+            repetitive_food=(self.state.moodlets.interactions.food.food_id
+                             if MoodletId.FOOD_MONOTONY in active else None),
+        )
+
+    def evaluate_wishes(self) -> None:
+        """One live endpoint, including while menus/actions occupy presentation."""
+        self.state.evaluate_wishes(self.wish_context(), rng=self.mind.rng)
+
+    def note_wish_text(self, instance_id: int) -> None:
+        self.state.note_wish_expression(instance_id)
 
     def reschedule_comment(self, now: float) -> None:
         self.next_comment = now + random.uniform(
@@ -220,6 +252,19 @@ class AttentionCoordinator:
                     "care_requests", "interval_seconds"
                 )
                 return SpontaneousChoice(True, reaction)
+        if min(self.state.satiety, self.state.energy, self.state.fun,
+               self.state.social, self.state.affection) > BALANCE.number(
+                   "friendship", "critical_need",
+               ):
+            wish = wish_to_express(
+                self.state.wishes, elapsed=self.state.lived_seconds,
+                sleeping=self.state.sleeping,
+                friendship_level=self.state.friendship_level,
+                mood=self.state.mood, context=self.wish_context(),
+                definitions=WISH_CATALOG.definitions,
+            )
+            if wish is not None:
+                return SpontaneousChoice(True, self.mind.wish_reaction(wish))
         if now < self.next_comment:
             return SpontaneousChoice(False)
         self.next_comment = now + random.uniform(

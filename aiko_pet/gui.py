@@ -202,10 +202,10 @@ class DesktopPet:
             self.state, self.settings, self.mind, self.workload_events,
             self.activity_monitor, self.application,
             started_at=self._persistence.last_saved,
+            prepared_social=lambda: self._social_runtime.prepared_categories,
         )
         self._speech = SpeechPresenter(
-            root=self.root,
-            anchor=lambda: SpeechAnchor(
+            root=self.root, anchor=lambda: SpeechAnchor(
                 x=self.settings.x or 0, y=self.settings.y or 0,
                 width=self._window.width,
             ),
@@ -220,14 +220,14 @@ class DesktopPet:
             display_emote=self._speech.show_emote,
             display_text=self._speech.show_text,
             on_text=lambda event: self._contact.note_text(event),
+            on_wish_text=self._attention.note_wish_text,
             social_completed=lambda kind: self._care_runtime.complete_social(kind),
             start_action=self._start_action,
             mark_spoken=self._mark_reaction_spoken,
             is_closed=lambda: self._closed,
         )
         self._overlay_stack = WindowStack(
-            self._overlay_windows, enabled=self.settings.always_on_top,
-        )
+            self._overlay_windows, enabled=self.settings.always_on_top)
         self._game_visuals = assemble_game_visuals(
             self._window, self.settings, self._overlay_stack.restore,
         )
