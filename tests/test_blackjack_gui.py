@@ -1,7 +1,6 @@
 """Actual host wiring keeps Aiko's cards outside the player's panel."""
 
 import tempfile
-import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -11,18 +10,22 @@ from test_blackjack import arranged_game, card
 from aiko_pet.games.blackjack import Phase, Table
 from aiko_pet.games.contracts import GameId
 from aiko_pet.games.playing_cards import STANDARD_DECK
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.view_models.game_models import HandView
 from aiko_pet.ui.windows.blackjack_sequence import BlackjackSequence
 from aiko_pet.ui.windows.blackjack_window import BlackjackWindow
+from tools.desktop_test_support import create_test_desktop
+from tools.tk_test_time import ControlledTkTime
 
 
 class BlackjackGuiTests(unittest.TestCase):
     def setUp(self):
+        self.timing = self.enterContext(ControlledTkTime())
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(folder.name) / 'save.json'))
+        self.pet = create_test_desktop(
+            store=StateStore(Path(folder.name) / 'save.json'),
+        )
         self.addCleanup(self.pet.quit)
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False
@@ -122,18 +125,17 @@ class BlackjackGuiTests(unittest.TestCase):
         self.assertTrue(hand._hand.cards)
 
     def test_result_timer_starts_the_next_hand_with_a_fresh_masked_dealer(self):
-        with patch.object(BlackjackSequence, 'RESULT_PAUSE_MS', 20):
-            game = self.open_game(arranged_game(
-                card('10'), card('9'), card('8'), card('7'), card('K'),
-            ))
-            game.stand()
-            game._sequence.advance()
-            game._sequence.advance()
-            self.assertEqual(game._sequence.game.score.games, 1)
-            self.assertIsNone(game._panel.next_button)
-            done = tk.BooleanVar(master=self.pet.root)
-            self.pet.root.after(60, lambda: done.set(True))
-            self.pet.root.wait_variable(done)
+        game = self.open_game(arranged_game(
+            card('10'), card('9'), card('8'), card('7'), card('K'),
+        ))
+        game.stand()
+        game._sequence.advance()
+        game._sequence.advance()
+        self.assertEqual(game._sequence.game.score.games, 1)
+        self.assertIsNone(game._panel.next_button)
+        self.timing.advance((BlackjackSequence.RESULT_PAUSE_MS - 1) / 1000)
+        self.assertIsNotNone(game._sequence.game.table.result)
+        self.timing.advance(.001)
         self.assertIsNone(game._sequence.game.table.result)
         self.assertIsNone(self.pet._game_visuals.hand._hand.cards[1])
         self.assertEqual(game._sequence.game.score.games, 1)

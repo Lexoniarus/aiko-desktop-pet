@@ -13,11 +13,11 @@ from unittest.mock import patch
 from aiko_pet.application.commands import NotificationCommand
 from aiko_pet.application.events import IncomingNotification
 from aiko_pet.games.contracts import GameId
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
 from aiko_pet.ui.windows.settings_window import SettingsWindow
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -33,7 +33,9 @@ class PersistentWindowTests(unittest.TestCase):
     def setUp(self) -> None:
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(folder.name) / "state.json"))
+        self.pet = create_test_desktop(
+            store=StateStore(Path(folder.name) / "state.json"),
+        )
         self.addCleanup(self.pet.quit)
         self.pet._runtime.stop()
         self.pet.settings.auto_routine = False

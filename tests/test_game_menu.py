@@ -9,24 +9,46 @@ from tkinter import font as tkfont
 from unittest.mock import patch
 
 from aiko_pet.games.contracts import GameId
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.game_menu import GameMenu
 from aiko_pet.ui.windows.tic_tac_toe_window import TicTacToeWindow
+from tools.desktop_test_support import create_test_desktop
+from tools.tk_test_time import ControlledTkTime
 
 
 class GameMenuTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.timing = self.enterContext(ControlledTkTime())
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(folder.name) / "save.json"))
+        self.pet = create_test_desktop(
+            store=StateStore(Path(folder.name) / "save.json"),
+        )
         self.addCleanup(self.pet.quit)
         self.hover = self.pet._hover
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False
+        self.pointer = (0, 0)
+        self.pointer_widget = None
+        self.enterContext(patch.object(self.pet.root, "winfo_pointerx",
+                                       side_effect=lambda: self.pointer[0]))
+        self.enterContext(patch.object(self.pet.root, "winfo_pointery",
+                                       side_effect=lambda: self.pointer[1]))
+        self.enterContext(patch.object(
+            self.pet.root, "winfo_containing", side_effect=lambda x, y:
+            self.pointer_widget if (x, y) == self.pointer else None,
+        ))
+        self.enterContext(patch.object(self.pet._input.mouse, "clicked",
+                                       return_value=False))
+
+    def point_at(self, widget: tk.Widget, x: int, y: int) -> None:
+        self.pointer = widget.winfo_rootx() + x, widget.winfo_rooty() + y
+        self.pointer_widget = widget
+        widget.event_generate("<Motion>", x=x, y=y)
+        widget.event_generate("<Enter>", x=x, y=y)
 
     def open_from_toolbar_click(self) -> GameMenu:
-        """Exercise Tk's press/release and focus path on the isolated display."""
+        """Exercise real bindings with simulated input, without cursor warping."""
         self.pet._runtime.stop()
         self.pet._save_hover_position(200, 100)
         self.hover.show_toolbar()
@@ -34,11 +56,8 @@ class GameMenuTests(unittest.TestCase):
         toolbar = self.hover.toolbar
         assert toolbar is not None
         button = toolbar.buttons["play"]
-        button.focus_force()
-        self.pet.root.update()
         x, y = button.winfo_width() // 2, button.winfo_height() // 2
-        button.event_generate("<Motion>", x=x, y=y, warp=True)
-        button.event_generate("<Enter>", x=x, y=y)
+        self.point_at(button, x, y)
         button.event_generate("<ButtonPress-1>", x=x, y=y)
         button.event_generate("<ButtonRelease-1>", x=x, y=y)
         menu = self.hover.game_menu
@@ -47,14 +66,18 @@ class GameMenuTests(unittest.TestCase):
 
     def test_opening_click_survives_delayed_focus_loss_and_allows_selection(self):
         menu = self.open_from_toolbar_click()
-        finished = tk.BooleanVar(master=self.pet.root)
-        self.pet.root.after(150, lambda: finished.set(True))
-        self.pet.root.wait_variable(finished)
+        toolbar = self.hover.toolbar
+        assert toolbar is not None
+        toolbar.buttons["play"].event_generate("<FocusOut>")
+        self.assertTrue(self.pet._input._focus_timers)
+        self.timing.advance(.099)
+        self.assertIs(self.hover.game_menu, menu)
+        self.timing.advance(.001)
+        self.assertFalse(self.pet._input._focus_timers)
         self.assertIs(self.hover.game_menu, menu)
         button = menu.buttons[GameId.TIC_TAC_TOE]
         x, y = button.winfo_width() // 2, button.winfo_height() // 2
-        button.event_generate("<Motion>", x=x, y=y, warp=True)
-        button.event_generate("<Enter>", x=x, y=y)
+        self.point_at(button, x, y)
         button.event_generate("<ButtonPress-1>", x=x, y=y)
         button.event_generate("<ButtonRelease-1>", x=x, y=y)
         self.assertIsNone(self.hover.game_menu)

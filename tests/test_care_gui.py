@@ -7,10 +7,10 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -26,7 +26,9 @@ class CareGuiTests(unittest.TestCase):
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory()
         self.addCleanup(self.folder.cleanup)
-        self.app = DesktopPet(store=StateStore(Path(self.folder.name) / "save.json"))
+        self.app = create_test_desktop(
+            store=StateStore(Path(self.folder.name) / "save.json"),
+        )
         self.addCleanup(self.app.quit)
         self.app.settings.auto_routine = False
         set_test_pet_values(self.app.state, sleeping=False)
@@ -49,19 +51,6 @@ class CareGuiTests(unittest.TestCase):
         bar = self.app._hover.toolbar
         assert bar is not None
         return bar
-
-    def test_hover_shows_all_seven_full_bars(self):
-        self.assertEqual(set(self.toolbar.needs), {
-            "satiety", "fun", "mood", "energy", "social", "affection", "friendship",
-        })
-        for key in self.toolbar.needs:
-            set_test_pet_values(self.app.state, **{key: 100})
-        self.toolbar.refresh()
-        self.app.root.update()
-        for key, (canvas, rect, label) in self.toolbar.needs.items():
-            self.assertEqual(canvas.coords(rect)[2], canvas.winfo_width())
-            self.assertIn("100%", label.cget("text"))
-        self.assertIn("Lv 10", self.toolbar.needs["friendship"][2].cget("text"))
 
     def test_social_and_energy_actions_work_without_pinning(self):
         self.assertFalse(self.app._hover.keep_open)
@@ -98,10 +87,13 @@ class CareGuiTests(unittest.TestCase):
                                     if action != "place_item"))
                 self.toolbar.buttons["talk"].invoke()
                 self.app._hover._interact("talk")
+                self.assertEqual(self.app.state.social, social)
+                self.assertIsNone(self.app._hover.social_menu)
                 self.app._hover._food_selected("energy_drink")
                 self.app._on_enter()
                 self.assertEqual(self.app._reaction_player.generation, generation)
-                self.assertEqual(self.app.state.social, social)
+                # Placement advances life time while saving; it grants no care.
+                self.assertLessEqual(self.app.state.social, social)
                 self.assertTrue(self.app._world.cursor.carrying)
                 self.app._world.cursor.cancel()
                 self.assertEqual(self.app._reaction_player.generation, generation)

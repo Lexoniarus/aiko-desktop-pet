@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from ..pet.balance import BALANCE
@@ -186,6 +187,8 @@ class ObjectBehaviorCoordinator:
             or (self._state.sleep_episode.care_break
                 and self._state.satiety >= BALANCE.number("sleep", "food_target"))
         )
+        revisit = (not blocked and not bound
+                   and self._pending_investigation() is not None)
         goal = awareness.update(
             snapshot, self._state, now=now, x=x, height=0, width=width,
             attention=attention,
@@ -194,7 +197,7 @@ class ObjectBehaviorCoordinator:
             inspecting=interaction.inspection_record,
             presentation=presentation if not pending or interaction.focus_record
             is not None or transport else None,
-            known_coverage=coverage, defer_selection=pending,
+            known_coverage=coverage, defer_selection=pending or revisit,
         )
         if pending and not bound:
             self._orientation = self._orientation.advance(
@@ -203,7 +206,7 @@ class ObjectBehaviorCoordinator:
                 duration=BALANCE.number("object_behavior", "absence_seconds"),
                 maximum_gap=BALANCE.number("object_behavior", "tracking_gap_seconds"),
             )
-            if self._orientation.complete:
+            if self._orientation.complete and not revisit:
                 goal = awareness.choose_goal(
                     self._state, x=x, now=now,
                     blocked=blocked or interaction.search_active, committed=focus,
@@ -231,6 +234,11 @@ class ObjectBehaviorCoordinator:
         absence_gaze = self._notice_absences(facts, attention=attention)
         if absence_gaze is not None:
             return BehaviorObservation(goal, blocked, absence_gaze, True, False)
+        if revisit and not interaction.active:
+            recheck = self._revisit_investigation(attention=attention, now=now)
+            if recheck is not None:
+                return recheck
+            goal = awareness.choose_goal(self._state, x=x, now=now, blocked=blocked)
         gaze_target = self._observation_gaze(
             goal, focus=focus, attention=attention, x=x,
         )
@@ -238,6 +246,45 @@ class ObjectBehaviorCoordinator:
             goal, blocked, gaze_target,
             False, not (awareness.checking_absence or awareness.absences),
         )
+
+    def _pending_investigation(self) -> ObjectKnowledge | None:
+        """Read a selected new find, never a missing-item search candidate."""
+        if self._interaction.active or self._interaction.search_active:
+            return None
+        goal = self._awareness.intentions.goal
+        known = (self._awareness.memory.get(goal.token)
+                 if goal is not None and goal.purpose == "investigate" else None)
+        if (known is not None and not known.recognized and known.resting
+                and known.place_status == "remembered"):
+            return known
+        return None
+
+    def _revisit_investigation(
+        self, *, attention: ObjectAttention, now: float,
+    ) -> BehaviorObservation | None:
+        """Look back after orientation; only fresh sensing can admit approach.
+
+        The intention remains with ObjectIntentions. Remembering this unknown
+        place grants neither an executable World binding nor a SearchTask.
+        """
+        awareness = self._awareness
+        known = self._pending_investigation()
+        if known is None or any(seen.token == known.token
+                                for seen in awareness.observations):
+            return None
+        distance = math.hypot(known.x - attention.origin[0],
+                              known.height - attention.origin[1])
+        if (distance <= attention.width * BALANCE.number(
+            "object_behavior", "notice_widths",
+        ) and (not attention.sees(known.x, known.height)
+               or awareness.checking_notice or awareness.checking_absence
+               or awareness.absences)):
+            return BehaviorObservation(None, True, GazeTarget(known.x, known.height),
+                                       False, False)
+        # Out of range or unresolved after a covered look: release curiosity
+        # without claiming a learned portion is missing or starting a patrol.
+        awareness.intentions.cancel(now)
+        return None
 
     def _check_approach_goal(
         self, goal: ObjectGoal | None, *, attention: ObjectAttention,

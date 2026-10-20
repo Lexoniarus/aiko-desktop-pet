@@ -8,12 +8,13 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.routine import context_at
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.settings_window import SettingsWindow
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
+from tools.tk_test_time import ControlledTkTime
 
 
 class TaskbarPetGuiTests(unittest.TestCase):
@@ -27,9 +28,12 @@ class TaskbarPetGuiTests(unittest.TestCase):
         probe.destroy()
 
     def setUp(self):
+        self.timing = self.enterContext(ControlledTkTime())
         self.folder = tempfile.TemporaryDirectory()
         self.addCleanup(self.folder.cleanup)
-        self.app = DesktopPet(store=StateStore(Path(self.folder.name) / "state.json"))
+        self.app = create_test_desktop(
+            store=StateStore(Path(self.folder.name) / "state.json"),
+        )
         self.addCleanup(self.app.quit)
         self.app.root.update_idletasks()
         # GUI tests must not depend on whether the test runner's local time
@@ -64,18 +68,16 @@ class TaskbarPetGuiTests(unittest.TestCase):
         assert bubble is not None
         return bubble
 
-    def test_mind_owns_live_cursor_attention(self):
+    def test_composition_shares_the_canonical_state_owners(self):
         self.assertIs(
             self.app._cursor_observation.attention,
             self.app.mind.cursor_attention,
         )
 
-    def test_animation_assembly_has_single_state_owners(self):
         self.assertIs(self.app._animation.ambient, self.app._animated._ambient)
         self.assertIs(self.app._animation._walk, self.app._walk)
         self.assertIs(self.app._animation._visual, self.app._visual)
 
-    def test_attention_presentation_has_one_owning_component(self):
         self.assertIs(
             self.app._attention_runtime.attention,
             self.app._attention,
@@ -219,6 +221,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
             bar, rect, text = self.toolbar.needs[key]
             self.assertEqual(bar.coords(rect)[2], bar.winfo_width(), key)
             self.assertIn("100%", text.cget("text"))
+        self.assertIn("Lv 10", self.toolbar.needs["friendship"][2].cget("text"))
         set_test_pet_values(self.app.state, mood=25)
         self.toolbar.refresh()
         bar, rect, _text = self.toolbar.needs["mood"]
@@ -486,8 +489,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         )
         deadline = time.monotonic() + 6
         while not self.app._contact.can_interact("pet") and time.monotonic() < deadline:
-            self.app.root.update()
-            time.sleep(.02)
+            self.timing.advance(.02)
         self.assertTrue(self.app._contact.can_interact("pet"))
         self.app._on_click_right()
         self.assertIsNotNone(self.app._speech.bubble)

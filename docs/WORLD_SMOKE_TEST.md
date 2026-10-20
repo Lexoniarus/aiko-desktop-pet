@@ -254,6 +254,10 @@ The maintained [World rules](WORLD_OBJECT_CONTRACTS.md) define expected behavior
 1. Drop an unknown portion. Aiko notices, approaches, picks up and inspects it
    before identifying it. Depending on appetite she consumes it or safely puts it
    down. Full energy does not prevent selecting a drink into cursor custody.
+   With identified stock already present, repeat with two new unknown portions
+   to her left, then to her right. The selected investigation survives both
+   orientation looks; she looks back and confirms the item before approaching.
+   This must not start a missing-stock search or identify the new portion early.
 2. Present an unknown portion deliberately before her face. Verify identification
    and assessment, then actual release for handover. Passing through the face
    region must not identify; a deliberate known refusal must remain effective.
@@ -394,3 +398,92 @@ All cases terminate automatically; the frozen-frame desktop probe was not used.
 This verifies automatic domain/application and virtual-display behavior.
 Physical suspend/resume and visible Windows animation remain unperformed,
 separate acceptance. The earlier owner checklist remains a proposal on hold.
+
+## Controlled Tk test time, 2026-10-20
+
+The automated World runtime-flow tests now execute scheduled callbacks with
+[ControlledTkTime](../tools/tk_test_time.py), while retaining real Tk widgets,
+native geometry, movement, speech, pickup and intake wiring. Their reading and
+animation budgets are unchanged; virtual time reaches each deadline without
+waiting for that duration on the host. Phase ordering, complete playback,
+cancellation and exactly-once effects remain assertions rather than shortcuts
+through private phase-completion methods.
+
+Speech/emote, story, functional GUI, menu-focus and Blackjack timer tests use
+the same scoped clock. Short standalone animation checks retain native Tk
+event-loop timer delivery. Physical standby, user input and visible acceptance
+still follow the separate owner checklist above. All automated pet instances
+continue to use temporary saves.
+
+The local Windows/Python 3.11 checkout passed **1,437 tests in 215.901 seconds**;
+the preceding real-delay run took 319.446 seconds for 1,424 tests. This measured
+run was about 32% shorter despite the added clock and concurrent feature cases.
+Ruff, strict Mypy and Pyright passed. Installer/process-start and CPU-heavy
+policy simulations remain part of the suite; this change does not shorten
+application playback durations or replace separate physical acceptance.
+
+## Remaining suite cost and duplicate review, 2026-10-20
+
+A per-test wall/CPU profile of 1,436 tests measured 231.487 seconds, including
+fixture setup and cleanup. The groups below are disjoint; class fixtures and
+runner/report overhead account for the remaining 2.001 seconds.
+
+| Test group | Wall seconds | Test-interpreter CPU seconds |
+| --- | ---: | ---: |
+| Integrated GUI, World flows and animation | 106.694 | 101.781 |
+| Windows installer and launchers | 70.144 | 1.719 |
+| Daily schedules, friendship neglect and offline progress | 18.226 | 18.109 |
+| Other domain, asset, component and architecture checks | 34.422 | 33.203 |
+
+Child-process CPU is excluded from the interpreter column. Installer time
+includes actual PowerShell, venv, pip, import and launcher work in disposable
+copies. The same seven installer tests took 45.450 seconds in the preceding
+profile; host/process-start variability prevents a reliable overall speedup
+claim against the earlier 215.901-second run. GUI profiling attributes most of
+a simple wiring case to application setup, especially Tk roots and real images.
+
+The duplicate full-bar assertion is consolidated with its Level-10 assertion
+preserved. Canonical-owner assertions share one application setup; Tk display
+probes run once per class in the World/story fixtures. Download repair/reboot
+cases exercise the real installer helper without repeating full venv/pip setup;
+one automatic-install integration, explicit installation/repeat, broken-venv
+recovery, shortcut and both launcher checks remain. All eight download/error
+scenarios retain their checks. The disabled-monitor loop is driven directly
+instead of waiting for its half-second retry, with a separate real-thread test.
+
+GUI fixtures now use
+[create_test_desktop](../tools/desktop_test_support.py), composing the real pet
+with a threadless monitor. Two earlier profiling attempts exposed sensor-thread
+GC disposing old Tk interpreters on the wrong thread; general widget tests do
+not need real GPU subprocesses. Dedicated hardware/provider and worker tests
+still cover that boundary. The carried-item hop test also keeps its synthetic
+pointer active through perception, preserving both scale checks independently
+of the user's actual pointer location.
+
+No slow gameplay scenario was proven unreachable. Month-long absence,
+friendship-history bounds and eight-day schedules check distinct behaviors and
+remain. The two short native frame-timer checks and bounded thread/process
+readiness polling remain; they do not wait through gameplay reading/cooldowns.
+
+The profiled run passed 1,435 cases and found one stale mock-call
+expectation for the concurrently extended optional `cursor_gaze_point` input.
+After updating that exact expectation, 41 animation/runtime, cursor-pose,
+World-flow and hardware tests passed in 10.973 seconds. The separate 54-case
+World GUI run also passed. Ruff, strict Mypy (223 source files) and
+Pyright passed. Only test fixtures/checks and test guidance changed in this
+audit; existing production work, the running pet and personal save were retained.
+
+A later documentation-only rerun reported missing UI-preview targets in four
+documents after parallel local asset relocation (`controls/drafts`,
+`controls/preview.html`, `main-menu/preview.html`, `games/README.md`). The current
+documents now refer to [the shared local handoff](UI_PREVIEW_HANDOFF.md), which
+locates the external bundle without requiring private examples in a public
+checkout. The archive entry points, drafts directory and handoff section anchor
+were verified on disk; all nine repository/documentation tests passed. Existing
+local asset relocation and design work were preserved.
+
+After the reference cleanup, a fresh full Windows/Python 3.11 run passed all
+**1,436 tests in 181.734 seconds**, including the installer and documentation
+checks. Every test pet used a temporary save; the live process and personal
+save remained untouched. This final run also confirms the corrected optional
+gaze-input expectation and controlled-pointer World checks together.

@@ -8,6 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Preserve a newly noticed unknown item's investigation through both orientation
+  looks. Look back and require fresh perception before approach on either side;
+  keep new-item curiosity separate from missing-stock searches.
+
 - Add Unterhalten with existing Plaudern and separate API-only Single, Two Parts
   and fact choices. Prepare two items per category through individual background
   fetches after saved opt-in; preserve sources, introductions, punchline pauses

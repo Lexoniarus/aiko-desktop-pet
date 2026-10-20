@@ -8,9 +8,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.world.contracts import ObjectState
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -26,7 +26,7 @@ class FoodGuiTests(unittest.TestCase):
     def setUp(self) -> None:
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(temp.name) / "pet.json"))
+        self.pet = create_test_desktop(store=StateStore(Path(temp.name) / "pet.json"))
         self.addCleanup(self.pet.quit)
         self.pet.settings.auto_routine = False
         set_test_pet_values(self.pet.state, sleeping=False)

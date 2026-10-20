@@ -6,16 +6,18 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.games.contracts import GameId
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.tic_tac_toe_window import TicTacToeWindow
+from tools.desktop_test_support import create_test_desktop
 
 
 class TicTacToeGuiTests(unittest.TestCase):
     def setUp(self):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(folder.name) / "save.json"))
+        self.pet = create_test_desktop(
+            store=StateStore(Path(folder.name) / "save.json"),
+        )
         self.addCleanup(self.pet.quit)
         self.pet._hover.open_game(GameId.TIC_TAC_TOE)
         game = self.pet._hover.game_window

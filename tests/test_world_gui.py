@@ -11,13 +11,13 @@ from unittest.mock import patch
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction_state import SearchPosition
 from aiko_pet.desktop.geometry import FOOT_BASELINE
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.sleep import SleepEpisode
 from aiko_pet.ui.view_models.object_reactions import format_object_reaction
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -764,6 +764,61 @@ class WorldGuiTests(unittest.TestCase):
         self.app._animated.reload_sprites()
         self.app._world._sync_geometry()
 
+    def _new_unknown_investigation_after_native_orientation(self, side):
+        self._resize_for_search_test(2)
+        app, runtime = self.app, self.app._world
+        set_test_pet_values(app.state, satiety=100, energy=100)
+        track = runtime._track()
+        app._place_x(track.left + (track.right - track.left - runtime.width) / 2)
+        base, width = runtime._body_x(), runtime.width
+        stock = runtime.world.place_resting("apple", base, ObjectFootprint(8, 8))
+        record = runtime.awareness.memory.observe_find(ObjectObservation(
+            "earlier", "apple", "food", base, 0, True, runtime.now,
+        ), now=runtime.now, record=None, claimed=frozenset(), maximum_distance=0,
+            instance_id=stock.instance_id)
+        runtime.awareness.memory.mark_assessed(record)
+        target = runtime.world.place_resting(
+            "dango", base + side * 1.5 * width, ObjectFootprint(8, 8),
+        )
+        runtime.world.place_resting(
+            "apple", base + side * 2.1 * width, ObjectFootprint(8, 8),
+        )
+        assert target.position is not None
+        self.look_at(target.position.x)
+        looks = set()
+        for _ in range(60):
+            runtime.now += .1
+            runtime.update(time.monotonic())
+            self.assertFalse(runtime.interaction.search_active)
+            if runtime.orientation_side() is not None:
+                looks.add(runtime.orientation_side())
+                self.assertIsNone(app._walk.movement.goal_x)
+            if runtime.interaction.active:
+                break
+        self.assertEqual(looks, {-1, 1})
+        self.assertEqual(runtime.interaction.phase, "notice")
+        goal = runtime.awareness.intentions.goal
+        assert goal is not None
+        self.assertEqual(goal.purpose, "investigate")
+        self.assertEqual(runtime.awareness.instance_for_record(goal.token),
+                         target.instance_id)
+        known = runtime.awareness.memory.get(goal.token)
+        assert known is not None
+        self.assertIsNone(known.identity)
+        self.assertEqual(runtime._visual.object_target,
+                         (track.left + target.position.x, track.ground_y))
+        self.complete_feedback()
+        self.complete_feedback()
+        self.assertEqual(runtime.interaction.phase, "approach")
+        self.assertIsNotNone(app._walk.movement.goal_x)
+        self.assertFalse(runtime.interaction.search_active)
+
+    def test_new_unknown_left_item_resumes_after_native_orientation_at_scale_two(self):
+        self._new_unknown_investigation_after_native_orientation(-1)
+
+    def test_new_unknown_right_item_resumes_after_native_orientation_at_scale_two(self):
+        self._new_unknown_investigation_after_native_orientation(1)
+
     def _relocated_unknown_pair_after_inspection(self, scale):
         self._resize_for_search_test(scale)
         runtime = self.app._world
@@ -1103,16 +1158,21 @@ class WorldGuiTests(unittest.TestCase):
             done(FeedbackReceipt(current.key, True))
             self.assertTrue(world.cursor.offer_ready)
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         try:
             root = tk.Tk()
             root.update_idletasks()
             root.destroy()
         except tk.TclError as error:
-            self.skipTest(str(error))
+            raise unittest.SkipTest(str(error)) from error
+
+    def setUp(self):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.app = DesktopPet(store=StateStore(Path(folder.name) / "state.json"))
+        self.app = create_test_desktop(
+            store=StateStore(Path(folder.name) / "state.json"),
+        )
         self.addCleanup(self.app.quit)
         self.app._runtime.stop()
         self.settle_native_positions()
@@ -1182,7 +1242,7 @@ class WorldGuiTests(unittest.TestCase):
     def restart(self):
         store = self.app.store
         self.app.quit()
-        self.app = DesktopPet(store=store)
+        self.app = create_test_desktop(store=store)
         self.addCleanup(self.app.quit)
         self.app._runtime.stop()
         self.settle_native_positions()
@@ -1323,6 +1383,7 @@ class WorldGuiTests(unittest.TestCase):
                 item = world.world.place_resting(
                     "apple", world._body_x() + 70 * scale, ObjectFootprint(8, 8),
                 )
+                self.look_at(world._body_x() + 70 * scale)
                 self.observe_and_acknowledge()
                 record = world.interaction.memory_id
                 episode = world.interaction.feedback_key.interaction_id
@@ -1335,22 +1396,25 @@ class WorldGuiTests(unittest.TestCase):
                     patch.object(self.app.root, "winfo_pointery", return_value=100),
                 ):
                     world.cursor._move_carry()
-                world.now += .15
-                world.update(time.monotonic())
-                self.assertEqual(world.interaction.phase, "await_return")
-                self.assertEqual(world.awareness.record_for_instance(item.instance_id),
-                                 record)
-                held = world.world.get(item.instance_id)
-                assert held.position is not None
-                self.assertEqual(world._visual.object_target, (
-                    world._track().left + held.position.x,
-                    world._track().ground_y - held.position.height,
-                ))
-                self.complete_feedback()
-                self.assertEqual(world.interaction.phase, "await_return")
-                known = world.awareness.memory.get(record)
-                assert known is not None
-                self.assertIsNone(known.identity)
+                    # Perception must see the same pointer that moved the item;
+                    # the user's live pointer can be anywhere during this test.
+                    world.now += .15
+                    world.update(time.monotonic())
+                    self.assertEqual(world.interaction.phase, "await_return")
+                    self.assertEqual(
+                        world.awareness.record_for_instance(item.instance_id), record,
+                    )
+                    held = world.world.get(item.instance_id)
+                    assert held.position is not None
+                    self.assertEqual(world._visual.object_target, (
+                        world._track().left + held.position.x,
+                        world._track().ground_y - held.position.height,
+                    ))
+                    self.complete_feedback()
+                    self.assertEqual(world.interaction.phase, "await_return")
+                    known = world.awareness.memory.get(record)
+                    assert known is not None
+                    self.assertIsNone(known.identity)
                 with (
                     patch.object(self.app.root, "winfo_pointerx",
                                  return_value=int(world._body_x()) + 120 * scale),
@@ -1540,7 +1604,8 @@ class WorldGuiTests(unittest.TestCase):
             world.update(time.monotonic())
 
     def complete_feedback(self):
-        # Component assertions skip cue dwell; runtime-flow tests use real timers.
+        # Component assertions skip cue dwell; runtime-flow tests drive the full
+        # callback sequence with controlled time and real Tk widgets.
         player = self.app._reaction_player
         if player.pending_timer is not None:
             self.app.root.after_cancel(player.pending_timer)
@@ -1869,7 +1934,7 @@ class WorldGuiTests(unittest.TestCase):
                                              ObjectFootprint(8, 8))
         store = app.store
         app.quit()
-        restored = DesktopPet(store=store)
+        restored = create_test_desktop(store=store)
         self.addCleanup(restored.quit)
         snapshot = restored._world.world.snapshot()
         self.assertEqual(len(snapshot.objects), 1)

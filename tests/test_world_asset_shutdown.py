@@ -6,9 +6,9 @@ import unittest
 import weakref
 from pathlib import Path
 
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.world.contracts import ObjectFootprint
+from tools.desktop_test_support import create_test_desktop
 
 
 class WorldAssetShutdownTests(unittest.TestCase):
@@ -19,7 +19,7 @@ class WorldAssetShutdownTests(unittest.TestCase):
         except tk.TclError as error:
             self.skipTest(str(error))
         with tempfile.TemporaryDirectory() as folder:
-            app = DesktopPet(store=StateStore(Path(folder) / "state.json"))
+            app = create_test_desktop(store=StateStore(Path(folder) / "state.json"))
             self.addCleanup(app.quit)
             animated = app._animated
             original = weakref.ref(animated.sprites["idle"][0])

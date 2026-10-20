@@ -1,4 +1,4 @@
-"""Characterize object behavior through real Tk timers and desktop gates."""
+"""Exercise real Tk widgets and desktop gates with controlled event time."""
 
 import tempfile
 import time
@@ -8,7 +8,6 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.mind.catalog import Reaction
@@ -16,16 +15,22 @@ from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
+from tools.tk_test_time import ControlledTkTime
 
 
 class WorldRuntimeFlowTests(unittest.TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         try:
             root = tk.Tk()
             root.destroy()
         except tk.TclError as error:
-            self.skipTest(str(error))
+            raise unittest.SkipTest(str(error)) from error
+
+    def setUp(self):
+        self.timing = self.enterContext(ControlledTkTime())
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         store = StateStore(Path(folder.name) / "state.json")
@@ -39,7 +44,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                 spontaneous_talk=False,
             ),
         )
-        self.app = DesktopPet(store=store)
+        self.app = create_test_desktop(store=store)
         self.addCleanup(self.app.quit)
         greeting = self.app._runtime.scheduled_greeting
         if greeting is not None:
@@ -97,7 +102,6 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         app.root.update_idletasks()
         pointer = (app.root.winfo_rootx() + app.root.winfo_width() // 2,
                    app.root.winfo_rooty() + app.root.winfo_height() // 2)
-        self.assertTrue(app._hover.pointer_inside(*pointer))
         direction = -1 if app._walk.movement.remaining_distance < 0 else 1
         candidate = world.world.place_resting(
             "onigiri", world._body_x() + direction * 1.5 * world.width,
@@ -107,7 +111,11 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         with (
             patch.object(app.root, "winfo_pointerx", return_value=pointer[0]),
             patch.object(app.root, "winfo_pointery", return_value=pointer[1]),
+            # The simulated hover belongs to this sprite even when another
+            # application covers it on the machine running these timer tests.
+            patch.object(app.root, "winfo_containing", return_value=app.canvas),
         ):
+            self.assertTrue(app._hover.pointer_inside(*pointer))
             trace = self.run_until(lambda: world.interaction.phase == "approach", 3)
             self.assertEqual(world.interaction.phase, "approach", trace)
             self.assertTrue(app._hover.menu_engaged)
@@ -120,8 +128,12 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             social = app.state.social
             toolbar.buttons["talk"].invoke()
             app._hover._interact("talk")
-            app._hover._food_selected("energy_drink")
             self.assertEqual(app.state.social, social)
+            self.assertIsNone(app._hover.social_menu)
+            app._hover._food_selected("energy_drink")
+            # Placement saves and advances measured life time. Natural need
+            # decay is valid; blocked talk and stock placement grant no care.
+            self.assertLessEqual(app.state.social, social)
             self.assertTrue(world.cursor.carrying)
             world.cursor.cancel()
             before = app.settings.x
@@ -261,7 +273,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         )
         store = self.app.store
         self.app.quit()
-        self.app = DesktopPet(store=store)
+        self.app = create_test_desktop(store=store)
         self.addCleanup(self.app.quit)
         greeting = self.app._runtime.scheduled_greeting
         if greeting is not None:
@@ -337,13 +349,12 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             text = self.bubble_text()
             if text and (not self.bubbles or self.bubbles[-1][2] != text):
                 self.bubbles.append((world.now, world.interaction.phase, text))
-            if predicate() or time.monotonic() >= until:
-                self.app.root.quit()
-            else:
-                self.app.root.after(25, sample)
 
-        self.app.root.after(1, sample)
-        self.app.root.mainloop()
+        while True:
+            sample()
+            if predicate() or time.monotonic() + 1e-9 >= until:
+                break
+            self.timing.advance(min(.025, until - time.monotonic()))
         return trace
 
     def test_right_edge_scale_two_pickup_uses_actual_motion_and_attachment(self):
@@ -451,7 +462,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.assertIsNone(self.app.state.food.last_food_id)
         store = self.app.store
         self.app.quit()
-        restored = DesktopPet(store=store)
+        restored = create_test_desktop(store=store)
         self.addCleanup(restored.quit)
         saved = restored._world.world.get(item.instance_id)
         self.assertEqual(saved.state, ObjectState.RESTING)
@@ -459,18 +470,26 @@ class WorldRuntimeFlowTests(unittest.TestCase):
 
     def test_handover_is_staged_and_cursor_entry_preserves_full_drink_animation(self):
         world = self.app._world
+        self.app.root.update_idletasks()
+        eyes = self.app._animated.cursor_eye_position
+        image = world.view.image("energy_drink", self.app.settings.scale)
+        sprite = world.view.items.foods["energy_drink"].sprites[self.app.settings.scale]
+        # Present the item's displayed center at the actual eyes, independent
+        # of startup placement, desktop geometry and source sprite pivots.
+        pointer = (int(eyes[0] + sprite.pivot[0] - image.width() / 2),
+                   int(eyes[1] + sprite.pivot[1] - image.height() / 2))
         self.enterContext(
             patch.object(
                 self.app.root,
                 "winfo_pointerx",
-                return_value=(self.app.settings.x or 0) + 96,
+                return_value=pointer[0],
             )
         )
         self.enterContext(
             patch.object(
                 self.app.root,
                 "winfo_pointery",
-                return_value=world._track().ground_y - 80,
+                return_value=pointer[1],
             )
         )
         self.enterContext(

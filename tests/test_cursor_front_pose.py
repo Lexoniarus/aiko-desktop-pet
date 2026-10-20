@@ -23,7 +23,6 @@ from aiko_pet.desktop.visual_observation import (
 from aiko_pet.desktop.walk_runtime import WalkDriver
 from aiko_pet.desktop.world_access import WorldRuntimeAccess
 from aiko_pet.desktop.world_runtime import DesktopWorldRuntime
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.character_assets import load_character_catalog
 from aiko_pet.infrastructure.item_assets import load_item_catalog
 from aiko_pet.infrastructure.persistence import StateStore
@@ -34,6 +33,7 @@ from aiko_pet.pet.animation.priority import RenderDecision
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from aiko_pet.world.contracts import ObjectState
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -199,7 +199,7 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
             scale=scale, auto_walk=False, auto_routine=False, observe_computer=False,
             learn_rhythm=False, spontaneous_talk=False,
         ))
-        app = DesktopPet(store=store)
+        app = create_test_desktop(store=store)
         self.addCleanup(app.quit)
         app._runtime.stop()
         greeting = app._runtime.scheduled_greeting

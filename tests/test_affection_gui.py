@@ -6,9 +6,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -24,7 +24,9 @@ class AffectionGuiTests(unittest.TestCase):
     def setUp(self):
         self.tempdir = tempfile.TemporaryDirectory()
         self.addCleanup(self.tempdir.cleanup)
-        self.app = DesktopPet(store=StateStore(Path(self.tempdir.name) / "pet.json"))
+        self.app = create_test_desktop(
+            store=StateStore(Path(self.tempdir.name) / "pet.json"),
+        )
         self.addCleanup(self.app.quit)
         self.app.settings.auto_routine = False
         set_test_pet_values(self.app.state, sleeping=False)

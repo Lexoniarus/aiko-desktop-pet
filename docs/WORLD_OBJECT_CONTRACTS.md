@@ -61,6 +61,15 @@ new ordinary goals also request fresh coverage. Each side needs its own
 continuous look. This covers already learned places across the taskbar without
 revealing distant unknown items. No eligible learned places means no empty scan.
 
+A selected investigation of a newly noticed unknown portion stays with
+`ObjectIntentions` during both looks. Afterwards Aiko looks back at that
+remembered place and waits for a fresh observation before beginning approach.
+The final scan direction must not discard the investigation on the other side.
+This is new-item curiosity, not a `SearchTask`: it grants no identity, follows no
+unobserved relocation and starts no lost-stock patrol. A checked empty unknown
+place uses the existing unknown-absence acknowledgement; an out-of-range place
+releases the attempt without claiming absence.
+
 All eligible old places are checked before the initial missing-item feedback
 seizes attention. Every confirmed missing known portion joins one SearchTask and
 gets its own readable, named bubble before candidate investigation begins.

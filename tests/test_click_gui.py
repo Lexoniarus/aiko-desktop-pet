@@ -11,10 +11,10 @@ from unittest.mock import patch
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.games.contracts import GameId
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.state import PetState
+from tools.desktop_test_support import create_test_desktop
 
 
 class ClickGuiTests(unittest.TestCase):
@@ -32,7 +32,7 @@ class ClickGuiTests(unittest.TestCase):
             PetSettings(auto_routine=False, observe_computer=False, auto_walk=False,
                         spontaneous_talk=False, learn_rhythm=False),
         )
-        self.pet = DesktopPet(store=store)
+        self.pet = create_test_desktop(store=store)
         self.addCleanup(self.pet.quit)
         self.pet._runtime.stop()
         self.pet.root.update()

@@ -14,6 +14,7 @@ from aiko_pet.games.rock_paper_scissors import Move
 from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.rock_paper_scissors_window import RockPaperScissorsWindow
+from tools.desktop_test_support import create_test_desktop
 
 
 def bubble_text(pet: DesktopPet) -> str | None:
@@ -39,7 +40,9 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
     def setUp(self) -> None:
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(folder.name) / "save.json"))
+        self.pet = create_test_desktop(
+            store=StateStore(Path(folder.name) / "save.json"),
+        )
         self.addCleanup(self.pet.quit)
         self.pet.settings.auto_routine = False
         self.pet.settings.spontaneous_talk = False

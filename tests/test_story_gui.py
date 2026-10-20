@@ -10,18 +10,23 @@ from pathlib import Path
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.games.contracts import GameId
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.state import PetState
+from tools.desktop_test_support import create_test_desktop
+from tools.tk_test_time import ControlledTkTime
 
 
 class StoryGuiTests(unittest.TestCase):
-    def setUp(self) -> None:
+    @classmethod
+    def setUpClass(cls) -> None:
         try:
             probe = tk.Tk()
             probe.destroy()
         except tk.TclError as error:
-            self.skipTest(str(error))
+            raise unittest.SkipTest(str(error)) from error
+
+    def setUp(self) -> None:
+        self.timing = self.enterContext(ControlledTkTime())
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         store = StateStore(Path(directory.name) / "state.json")
@@ -33,7 +38,7 @@ class StoryGuiTests(unittest.TestCase):
                 auto_walk=False,
             ),
         )
-        self.pet = DesktopPet(store=store)
+        self.pet = create_test_desktop(store=store)
         self.addCleanup(self.pet.quit)
         self.pet._runtime.stop()
         self.pet.root.update()
@@ -101,15 +106,13 @@ class StoryGuiTests(unittest.TestCase):
         self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         self.assertFalse(self.pet._hover.game_open)
         # The next UI action starts after care playback and speech complete.
-        # Authored two-bubble care can exceed six seconds; wait for its actual
-        # sequence budget instead of assuming one short line was selected.
+        # Exercise the authored sequence budget without waiting in real time.
         deadline = time.monotonic() + 2 + sum(
             cue.duration_ms for cue in self.pet._reaction_player.cues
         ) / 1000
         while (not self.pet._contact.can_interact("play")
                and time.monotonic() < deadline):
-            self.pet.root.update()
-            time.sleep(.02)
+            self.timing.advance(.02)
         self.assertTrue(self.pet._contact.can_interact("play"))
         self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         chosen = next(

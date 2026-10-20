@@ -1,17 +1,17 @@
 """Kenney-style coherent emote -> text -> emote reactions."""
 
 import tempfile
-import time
 import tkinter as tk
 import unittest
 from pathlib import Path
 
 from aiko_pet.asset_paths import EMOTE_IMAGE_DIR, KENNEY_UI_DIR
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import CATALOGUE, DialogueBook, Line, Reaction
 from aiko_pet.pet.mind.reaction_sequence import EMOTES, Cue
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
+from tools.tk_test_time import ControlledTkTime
 
 
 class EmoteDomainTests(unittest.TestCase):
@@ -68,9 +68,10 @@ class EmoteTkTests(unittest.TestCase):
         root.destroy()
 
     def setUp(self):
+        self.timing = self.enterContext(ControlledTkTime())
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(temp.name) / "state.json"))
+        self.pet = create_test_desktop(store=StateStore(Path(temp.name) / "state.json"))
         self.addCleanup(self.pet.quit)
         if self.pet._runtime.scheduled_greeting:
             self.pet.root.after_cancel(self.pet._runtime.scheduled_greeting)
@@ -82,8 +83,7 @@ class EmoteTkTests(unittest.TestCase):
         self.pet._runtime.scheduled_tick = None
 
     def progress(self, milliseconds: int) -> None:
-        time.sleep(milliseconds / 1000)
-        self.pet.root.update()
+        self.timing.advance(milliseconds / 1000)
 
     def is_emote(self) -> bool:
         if not self.pet._speech.bubble:

@@ -33,6 +33,29 @@ The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11. Run
 
 6. Open a pull request to `main`. Describe changed behavior, tests and any Windows-specific manual checks. Do not merge with failing CI.
 
+Test behavior and effects without waiting through gameplay timers, reading times
+or cooldowns. Use explicit timestamps, a controlled clock or the existing
+`FakeScheduler` in [tools/reaction_test_support.py](tools/reaction_test_support.py)
+to advance time and invoke scheduled callbacks. Check deadlines, phase ordering,
+effects and cancellation directly. Keep real-time waits limited to short native
+event-loop checks that actually need them; do not replay full dialogue or
+animation durations merely to reach the next assertion.
+
+For integrated widget flows, enter
+`ControlledTkTime` from [tools/tk_test_time.py](tools/tk_test_time.py) before
+constructing the test's pet and register pet cleanup afterwards. Its `advance()`
+executes due callbacks chronologically, including nested timers and cancellation,
+while keeping wall, monotonic and active-session clocks aligned. Native widget
+events still run through Tk. Keep its patches scoped to the isolated test process
+and use a temporary save; never attach this driver to a running user instance.
+
+Construct integrated GUI fixtures with `create_test_desktop` from
+[tools/desktop_test_support.py](tools/desktop_test_support.py). It composes the
+real desktop with a threadless activity monitor; GUI cases inject the readings
+they need. Real sensor sampling and worker scheduling belong to the dedicated
+hardware tests. This avoids repeated GPU subprocesses and prevents sensor-thread
+garbage collection from disposing old Tk interpreters on the wrong thread.
+
 CI enforces PEP 8 whitespace, blank lines and 88-character lines, unused imports,
 import ordering and Python identifier conventions across application code,
 tests and tools. Ruff preview rules are enabled with its pinned version; only

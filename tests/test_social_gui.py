@@ -13,9 +13,9 @@ from unittest.mock import patch
 from test_social_coordinator import ManualSocialWorker
 
 from aiko_pet.application.social_content import SocialCategory
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.ui.windows.social_menu import SocialMenu
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -32,7 +32,7 @@ class SocialGuiTests(unittest.TestCase):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         self.worker = ManualSocialWorker()
-        self.pet = DesktopPet(
+        self.pet = create_test_desktop(
             store=StateStore(Path(folder.name) / "state.json"),
             social_worker=self.worker,
         )
@@ -204,7 +204,7 @@ class SocialGuiTests(unittest.TestCase):
         self.assertTrue(saved["settings"]["online_social"])
         self.assertNotIn("jokeapi:", store.path.read_text(encoding="utf-8"))
         worker = ManualSocialWorker()
-        reopened = DesktopPet(store=store, social_worker=worker)
+        reopened = create_test_desktop(store=store, social_worker=worker)
         reopened.root.report_callback_exception = (
             lambda _kind, error, _trace: self.callback_errors.append(error)
         )
