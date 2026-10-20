@@ -1663,7 +1663,7 @@ level every two hours of recovery. A single accepted care action does not
 instantly erase it. Preserve the actual exposure history; unchanged old history
 alone must not recreate the impression after recovery. Additional poor exposure
 must be distinguished from repeated evaluation of an already handled threshold.
-Record any remaining exact retrigger/recovery interruption rules before coding.
+The following recovery proposal specifies interruption and renewed exposure.
 
 While actual sleep restores energy, it adds no new exhaustion exposure or stack.
 Other needs follow their existing sleep rules. Closed-app/standby reconstruction
@@ -1678,6 +1678,46 @@ or recovering an impression must not charge the existing loss a second time.
 These impressions alone must not block needed care. Aiko can accept help while
 still emotionally affected; improving needs and recovering emotionally have
 distinct timing and implications.
+
+##### Recorded proposal: poor-care recovery interruption and renewed exposure, 2026-10-20
+
+Status: owner-requested design proposal, not implemented. Apply these rules
+independently to each affected need and its existing poor-care impression.
+
+| Situation | Candidate recovery behavior |
+| --- | --- |
+| Initial thirty-minute qualification has not completed | Require thirty continuous real minutes at forty or above; a drop below forty restarts that qualification |
+| Recovery is already running and the need drops below forty | Pause emotional decay, retaining earned progress in the current two-hour stage |
+| Need reaches forty or above again after an interruption | Require another thirty stable minutes, then resume the retained stage progress |
+| Need is at least twenty-five but below forty | No emotional recovery and no new critical exposure |
+| Need is below twenty-five, or at zero | Accumulate new critical/zero exposure under the existing thresholds; do not escalate immediately merely for crossing forty |
+
+The thirty-minute qualification does not itself count toward the two-hour
+decay stage. Pausing and resuming does not renew a relief allowance already
+used for that stage. Example: after eighty minutes of earned recovery, a drop
+to thirty-eight pauses the stage. Following renewed supply and thirty stable
+minutes, forty minutes remain, rather than a new two-hour stage.
+
+Retain the existing twenty-four-hour exposure history for care and friendship
+rules. Track which exposure has already been accounted for emotionally; that
+same burden cannot recreate or restore an impression merely because it remains
+in the history. Reuse existing bounded history ownership, not a second neglect
+simulation or an independently reset copy of the care history.
+
+New, not-yet-accounted-for deficient periods still accumulate within twenty-four
+real hours even when separated by care. Thirty stable minutes do not discard
+such unaccounted exposure. Determine renewed burden from new exposure only:
+level one after two hours below twenty-five or one hour at zero; level two
+after four/two hours respectively; level three after six/three hours. Zero
+already contributes to critical duration; use the qualifying alternative
+level rather than adding the two routes.
+
+If the impression has expired, create it at the newly qualifying level. If it
+still exists, raise it only when that newly qualifying level exceeds current
+intensity; do not add the levels together. A genuine increase restarts the
+current recovery stage. A brief renewed deficit pauses recovery and contributes
+new exposure without restoring the historical maximum. These are emotional
+rules; they do not erase care evidence or add/refund friendship effects.
 
 ##### Recorded proposal: overall emotional-state selection, 2026-10-20
 
@@ -1839,18 +1879,85 @@ relief. Persisted elapsed-time ownership does not require replaying offline
 personal interactions or building another active simulation.
 
 The obsolete food-only concurrency/creation limits have been explicitly
-superseded above. No conflicting new values are approved by this review.
+superseded above. The later recovery-interruption/renewed-exposure proposal now
+resolves that previously open policy. No conflicting new values are approved
+by this review.
 
 | Remaining decision | Why it matters / example to settle before implementation |
 | --- | --- |
 | Unsuccessful game-goal lifecycle | Losing the next round makes that specific non-loss goal unattainable. Decide whether it ends neutrally immediately or stays visibly failed until expiry; do not silently redefine it as a later round. Define whether an unsuccessful fixed block may be retried and whether block progress spans sessions. |
-| Recovery interruption and retrigger after poor care | Define what a drop below forty does to the thirty-minute qualification and an already running recovery stage. Previously handled exposure still inside the twenty-four-hour history must not recreate level three without a defined new qualifying experience. |
 | Relief allowance across refresh/escalation | Once-per-current-stage relief needs an exact stage identity when a provocation renews the timer, increases intensity or happens at the cap. Avoid making another five-minute credit available merely by poking again and restarting the same timer. |
 | Complete emotional vocabulary and mapping | Assign each Moodlet its direction and attribution, define satisfied/calm/subdued fallback thresholds, and settle exact ties. The grouped support rule alone does not specify every label or interaction response. |
 | Wish selection and disclosure details | Define initial creation on a fresh save/start, selection among four areas for three slots, variation between specific targets, and the disclosure conditions for food/game wishes; the level-three/mood-fifty candidates are explicit for social/affection only. |
 | Wish lifecycle when circumstances change | Decide the fate of an active API wish after opt-out/unavailability and of an affection wish during a new refusal. Define one neutral expiry/failure policy across areas and which event is actual spoken disclosure, without equating status visibility with communication. |
 | Separate wish relationship rewards | Food has a candidate additional 0.25-point personal-fulfillment reward; no additional amount is fixed for game/social/affection wishes. Define whether they add anything beyond ordinary eligible care, within existing shared budgets. |
 | Completion and time-boundary semantics | Resolve fulfillment at its actual semantic event, including exact expiry equality and an action/round already underway at wish creation. Preserve bounded game progress across restart where needed; duplicate completion must not replay relief, fulfillment or rewards. |
+
+##### Documented inventory and decisions before implementation, 2026-10-20
+
+Counts below describe recorded design candidates, not implemented runtime types.
+Count wish objectives before substituting individual food IDs or game IDs;
+count lasting Moodlet types/families, not intensity levels, emotional labels,
+immediate reactions, requests or separate copies for each qualifying activity.
+
+| Wish area | Documented objective forms | Count |
+| --- | --- | --- |
+| Food | Want a specific implemented food | 1 |
+| Games | Play a named game; win a round; do not lose the next round; win overall; do not lose overall | 5 |
+| Social | Chat; tell an API Single; tell an API Two Parts; share a fact | 4 |
+| Affection | Be petted | 1 |
+| Total | Four areas; up to three concurrent wishes and at most one per area | 11 |
+
+There can be many concrete targets within those forms. For example, the five
+game objectives can target each of the three implemented games. This does not
+create fifteen independent positive Moodlet families or reward allowances.
+
+| Moodlet group | Documented distinct types/families | Count |
+| --- | --- | --- |
+| Positive food-wish fulfillment | Exactly what I wanted | 1 |
+| Positive game-wish fulfillment | Shared-play enjoyment; pride/achievement; relief | 3 |
+| Positive social-wish fulfillment | Connection; cheerfulness shared by Single/Two Parts; enthusiasm | 3 |
+| Positive affection-wish fulfillment | Feeling secure / Geborgen | 1 |
+| Positive subtotal | Fulfillment impressions | 8 |
+| Negative interaction/food impressions | Repeated poking; excessive closeness; repetitive food; withholding; disrupted arrangement | 5 |
+| Negative prolonged-poor-care impressions | Hunger; exhaustion; lack of stimulation; loneliness; missing closeness, each as an emotional after-effect rather than the immediate need condition | 5 |
+| Negative subtotal | Interaction and prolonged-poor-care impressions | 10 |
+| Total | Positive and negative types/families | 18 |
+
+Eighteen is a catalogue count, not a three-entry Moodlet display/storage cap.
+The three-concurrent limit applies to wishes. Existing rules already bound
+copies and intensity per Moodlet; numeric caps do not delete parallel entries.
+The eight positive versus ten negative types do not by themselves prove or
+disprove balanced daily outcomes, which also depend on triggers and duration.
+
+The following five product decisions remain material before implementing the
+first version; this review does not add answers without owner agreement:
+
+1. Game-goal lifecycle: resolve failed next-round/fixed-block goals, retries and
+   whether a block spans sessions. Keep ordinary play independent of victory.
+2. Wish lifecycle and disclosure: settle food/game expression readiness and
+   handling of temporary refusal, source opt-out/unavailability and neutral
+   expiry/failure consistently across areas.
+3. Emotional interpretation and behavior: complete direction/label mapping and
+   fallback thresholds, and define whether any specific refusals beyond the
+   recorded petting boundary belong in the first version. Do not infer blanket
+   locks from a negative mood or silently prevent necessary care.
+4. Relief eligibility after timer refresh/escalation: settle what starts a new
+   eligible stage. Ordinary recovery pause/resume already retains used credit;
+   a new provocation must not silently make helpful-action credit repeatable.
+5. Additional wish friendship rewards: decide whether game/social/affection
+   fulfillment adds anything beyond ordinary care; only food currently has a
+   nominal additional 0.25-point candidate, always inside shared budgets.
+
+First-creation timing, a simple selection method consistent with agreed context
+and pacing, exact equal-time event ordering, bounded progress/exposure records,
+save migration and exactly-once application also require concrete implementation
+contracts. They need no new emotional subsystem or separate product workshop
+for every internal field. Record reasonable conventions within the agreed scope
+before coding, preserving canonical owners and the no-invented-history rules.
+Detailed selection probabilities, final display wording and later numerical
+fine-tuning can follow the first coherent version; no additional wish or Moodlet
+catalogue is required just to begin implementing the agreed foundation.
 
 Before implementation, walk through a few explicit timelines for stacking,
 simultaneous positive/negative impressions, recovery interruption and reopen
