@@ -188,7 +188,7 @@ class EmoteTkTests(unittest.TestCase):
         self.pet._attention_runtime.idle_emote()
         self.assertTrue(self.is_emote())
 
-    def test_hud_uses_kenney_assets_and_keeps_seven_values(self):
+    def test_hud_uses_vn_assets_and_keeps_seven_values(self):
         self.pet._on_enter()
         bar = self.pet._hover.toolbar
         assert bar is not None

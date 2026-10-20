@@ -92,20 +92,8 @@ class TaskbarPetGuiTests(unittest.TestCase):
             set(bar.buttons),
             {"place_item", "play", "pet", "sleep", "talk"},
         )
-        action_row = bar.buttons["place_item"].master
-        labels = [
-            child.cget("text")
-            for child in action_row.winfo_children()
-            if "text" in child.keys()
-        ]
-        self.assertIn("Unterhalten", labels)
-        extra_row = bar.buttons["sleep"].master
-        extra_labels = [
-            child.cget("text")
-            for child in extra_row.winfo_children()
-            if "text" in child.keys()
-        ]
-        self.assertIn("Offen halten", extra_labels)
+        self.assertEqual(bar.buttons["talk"].cget("text"), "Unterhalten  ›")
+        self.assertEqual(bar.pin_button.cget("text"), "Offen halten")
         bar.buttons["place_item"].invoke()
         menu = self.app._hover.food_menu
         assert menu is not None
@@ -437,7 +425,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.set_follow_cursor(False)
         self.assertIsNone(self.app._visual.gaze_direction((99999, -99999)))
 
-    def test_hover_bar_has_clock_and_meal_aware_button(self):
+    def test_hover_bar_has_brand_and_meal_aware_button(self):
         from datetime import datetime
 
         from aiko_pet.pet.routine import context_at
@@ -446,11 +434,13 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.app.context = context_at(morning)
         set_test_pet_values(self.app.state, meals_date="")
         self.app._on_enter()
-        self.assertIn("Montag", self.toolbar.today.cget("text"))
-        self.assertEqual(self.toolbar.buttons["place_item"].cget("text"), "Frühstück")
+        self.assertEqual(self.toolbar.today.cget("text"), "Aiko")
+        self.assertEqual(
+            self.toolbar.buttons["place_item"].cget("text"), "Frühstück  ›",
+        )
         self.app.state.interact("feed", now=morning)
         self.toolbar.refresh()
-        self.assertEqual(self.toolbar.buttons["place_item"].cget("text"), "Snack")
+        self.assertEqual(self.toolbar.buttons["place_item"].cget("text"), "Snack  ›")
 
     def test_startup_geometry_is_explicitly_applied_before_first_frame(self):
         # Covers the original flash at (0,0) and saved coordinates which
@@ -544,13 +534,16 @@ class TaskbarPetGuiTests(unittest.TestCase):
             self.app._greet_on_start()
             spoken.assert_not_called()
 
-    def test_status_details_show_emotion_in_toolbar(self):
+    def test_status_details_separate_emotion_from_physical_sleep_hint(self):
         self.app._hover.open_status()
         self.toolbar.toggle_details()
         set_test_pet_values(self.app.state, energy=8)
         self.toolbar.refresh()
         assert self.toolbar.details is not None
-        self.assertIn("Müde", self.toolbar.details.text("emotion"))
+        self.assertEqual(
+            self.toolbar.details.text("emotional_state_label"), "Stimmung: Zufrieden",
+        )
+        self.assertIn("Schlaf", self.toolbar.details.text("hint"))
 
     def test_scaling_keeps_feet_on_taskbar(self):
         self.app.toggle_scale()

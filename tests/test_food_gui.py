@@ -99,7 +99,8 @@ class FoodGuiTests(unittest.TestCase):
                     menu = self.pet._hover.food_menu
                     assert menu is not None
                     self.assertEqual(
-                        menu.buttons["energy_drink"].cget("text"), "Energy Drink"
+                        menu.buttons["energy_drink"].cget("text"),
+                        "Energy Drink\n+10 Energie",
                     )
                     menu.buttons["energy_drink"].invoke()
                     self.assertIsNone(self.pet._hover.food_menu)

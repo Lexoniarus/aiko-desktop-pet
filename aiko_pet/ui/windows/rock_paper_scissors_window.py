@@ -1,4 +1,4 @@
-"""Kenney-styled player panel: input, private hand, and session scoreboard."""
+"""Player panel: input, private hand, and transient session scoreboard."""
 
 from __future__ import annotations
 

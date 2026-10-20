@@ -29,7 +29,6 @@ class GamePanel:
         outer = skin.frame(self.window)
         outer.pack(fill="both", expand=True, padx=3, pady=3)
         header = skin.header(outer, title)
-        header.configure(width=360)
         header.pack(fill="x")
         self._drag = WindowDrag(self.window, header)
         self.body = skin.frame(outer)
