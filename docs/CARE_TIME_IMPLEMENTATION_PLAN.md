@@ -2885,3 +2885,26 @@ negative interactions, persistence, friendship, reaction playback and resource
 contracts); longest individual test 0.259 s. Scoped Ruff, strict Mypy and
 Pyright passed. No windows, mouse control, CI or full-suite execution.
 Food and object integrations remain in this same 5B.4 slice.
+
+
+##### 5B.4 delivery: food repetition and communicated variety (2026-10-20)
+
+Canonical accepted intake now supplies `FoodConsumed`, including explicit
+personal/autonomous origin inside the existing joint consumption transaction.
+A bounded timestamp sequence (using the existing repetition count) qualifies
+food monotony within 24 elapsed hours; drinks do not count or break it. Actual
+different food breaks the sequence/request and applies existing tier-limited
+relief, without deleting the Moodlet or changing nutrition rules.
+
+Request, delivery timestamp and bounded ignored-portion count live inside the
+same aggregate-owned interaction evidence. Personal meal reactions and the next
+eligible pointer contact can present the pending request. Only a text receipt
+marks communication. The first ignored personal portion reminds without loss;
+subsequent ones use the existing relationship ledger with a separate rolling
+24-hour cap. Autonomous or reconstructed intake never blames the user. A new
+request/different food cannot refund that ledger; restart preserves both.
+
+Validation: 81 scoped headless tests passed, including actual intake origin,
+World transaction rollback, corruption/legacy storage, request delivery,
+expiry, bounded evidence and budget preservation. Longest test 0.258 s.
+Scoped Ruff, strict Mypy and Pyright passed. Object integration remains next.

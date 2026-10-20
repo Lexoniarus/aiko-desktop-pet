@@ -87,6 +87,10 @@ class ContactCoordinator:
             if self._ports.toolbar_hidden() and not self._ports.story_active()
             else None
         )
+        if self._state.moodlets.interactions.food.request_pending:
+            reaction = self._mind.select_reaction(
+                "feed_variety_request", self._state, self._ports.context(), now,
+            )
         self._ports.mark_hover(now)
         self._ports.interrupt_walk()
         self._ports.show_toolbar()

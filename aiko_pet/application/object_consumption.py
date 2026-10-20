@@ -22,6 +22,7 @@ from .active_time import (
     TimeProgression,
     advance_session_time,
 )
+from .care_requests import food_variety_event
 from .controller import CareOutcome
 
 
@@ -95,7 +96,8 @@ class ObjectConsumption:
             self._adaptive.note_interaction(inputs.wall_time)
             self._mind.after_care(prepared.result.action, inputs.monotonic_time)
             reaction = self._mind.select_reaction(
-                self._mind.care_event(prepared.result, before),
+                food_variety_event(self._state, prepared.result)
+                or self._mind.care_event(prepared.result, before),
                 self._state,
                 context,
                 inputs.monotonic_time,

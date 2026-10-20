@@ -3,6 +3,38 @@
   "language": "de",
   "lines": [
     {
+      "id": "feed-variety-request",
+      "event": "feed_variety_request",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Das war jetzt öfter dasselbe. Könnte ich beim nächsten Mal etwas anderes essen?"
+        }
+      ]
+    },
+    {
+      "id": "feed-variety-reminder",
+      "event": "feed_variety_reminder",
+      "animation": "idle",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich esse es, aber ich hatte dich doch um etwas anderes gebeten."
+        }
+      ]
+    },
+    {
       "id": "pet-refused-boundary",
       "event": "pet_refused",
       "animation": "idle",

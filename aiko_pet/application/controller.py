@@ -16,6 +16,7 @@ from .active_time import (
     TimeProgression,
     advance_session_time,
 )
+from .care_requests import food_variety_event
 from .commands import CareCommand
 
 
@@ -87,7 +88,8 @@ class CareController:
             food_id=command.food_id,
             sleep_context=self._adaptive.sleep_context(),
         )
-        event = self._mind.care_event(result, before)
+        event = (food_variety_event(self._state, result)
+                 or self._mind.care_event(result, before))
         if result.effect not in (
             CareEffect.PLAY_TIRED,
             CareEffect.DRINK_SATISFIED,

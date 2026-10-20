@@ -27,7 +27,12 @@ from .friendship import (
 )
 from .friendship_history import FriendshipHistory, FriendshipProgress
 from .fun import GameExperience, calculate_game_session_fun
-from .interaction_events import BoundaryCommunicated, InteractionEvent, PettingAttempted
+from .interaction_events import (
+    BoundaryCommunicated,
+    FoodConsumed,
+    InteractionEvent,
+    PettingAttempted,
+)
 from .interaction_rules import apply_interaction_event
 from .lifecycle import (
     SimulationStep,
@@ -421,6 +426,8 @@ class PetState:
             "click_boundary", "click_work_boundary", "click_withdrawn_boundary",
         ):
             self.experience_interaction(BoundaryCommunicated("poking"))
+        elif event == "feed_variety_request":
+            self.experience_interaction(BoundaryCommunicated("food_variety"))
         elif event == "pet_refused":
             self.experience_interaction(BoundaryCommunicated("petting"))
 
@@ -555,7 +562,9 @@ class PetState:
                 transition, reward_action=None,
                 needs=replace(transition.needs, social=self.social),
             )
-        return self._apply_care_transition(transition, now)
+        return self._apply_care_transition(
+            transition, now, personal=origin == ConsumptionOrigin.HANDOVER,
+        )
 
     def capture_checkpoint(self) -> PetValues:
         """The already immutable complete value is a safe independent capture."""
@@ -584,7 +593,7 @@ class PetState:
         self._change(updated_at=now)
 
     def _apply_care_transition(
-        self, transition: CareTransition, stamp: float,
+        self, transition: CareTransition, stamp: float, *, personal: bool = True,
     ) -> CareResult:
         if not transition.changed:
             return transition.result
@@ -610,6 +619,11 @@ class PetState:
                 stamp,
                 transition.need_before,
             )
+        if transition.result.food_consumed:
+            assert transition.result.food_id is not None
+            self.experience_interaction(FoodConsumed(
+                transition.result.food_id, personal,
+            ))
         return transition.result
 
     def due_meal(self, context: TimeContext) -> str | None:

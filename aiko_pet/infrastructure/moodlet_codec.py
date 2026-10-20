@@ -4,15 +4,18 @@ from __future__ import annotations
 
 from typing import Any
 
+from ..pet.balance import BALANCE
 from ..pet.catalog_validation import (
     enum_value,
     integer_value,
     number_value,
     object_fields,
 )
-from ..pet.interaction_events import InteractionMemory
+from ..pet.food_catalog import DEFAULT_CATALOG
+from ..pet.interaction_events import FoodRepetitionMemory, InteractionMemory
 from ..pet.moodlet_catalog import MOODLET_CATALOG
 from ..pet.moodlets import (
+    FoodMonotonyParameters,
     MoodletDecay,
     MoodletEpisode,
     MoodletId,
@@ -101,7 +104,7 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
     if "interactions" in row:
         facts = object_fields(row["interactions"], (
             "poke_boundary_at", "petting_boundary_at", "petting_refused_until",
-        ), context="interaction evidence")
+        ), optional=("food",), context="interaction evidence")
         anchors = tuple(None if facts[key] is None else number_value(
             facts[key], minimum=baseline, maximum=elapsed, context=key,
         ) for key in ("poke_boundary_at", "petting_boundary_at"))
@@ -110,7 +113,8 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
         deadline = number_value(facts["petting_refused_until"], minimum=0,
                                 maximum=elapsed + max(petting.refusal_seconds),
                                 context="petting refusal")
-        memory = InteractionMemory(anchors[0], anchors[1], deadline)
+        memory = InteractionMemory(anchors[0], anchors[1], deadline,
+                                   _decode_food(facts.get("food"), baseline, elapsed))
     return MoodletState(baseline, next_id, tuple(episodes), memory)
 
 
@@ -129,6 +133,13 @@ def encode_moodlets(state: MoodletState) -> dict[str, Any]:
             poke_boundary_at=state.interactions.poke_boundary_at,
             petting_boundary_at=state.interactions.petting_boundary_at,
             petting_refused_until=state.interactions.petting_refused_until,
+            food=dict(
+                food_id=state.interactions.food.food_id,
+                intakes=list(state.interactions.food.intakes),
+                request_pending=state.interactions.food.request_pending,
+                requested_at=state.interactions.food.requested_at,
+                ignored_portions=state.interactions.food.ignored_portions,
+            ),
         ),
         active=[dict(
             instance_id=e.instance_id, definition_id=e.definition_id.value,
@@ -139,3 +150,40 @@ def encode_moodlets(state: MoodletState) -> dict[str, Any]:
             recovery_since=e.recovery_since,
         ) for e in state.active],
     )
+
+
+def _decode_food(raw: Any, baseline: float, elapsed: float) -> FoodRepetitionMemory:
+    if raw is None:
+        return FoodRepetitionMemory()
+    row = object_fields(raw, ("food_id", "intakes", "request_pending", "requested_at",
+                              "ignored_portions"), context="food repetition evidence")
+    food = row["food_id"]
+    if food is not None and (
+        not isinstance(food, str) or food not in DEFAULT_CATALOG.foods
+    ):
+        raise ValueError("Unknown repetition food")
+    count = BALANCE.integer("food", "consecutive_repeats_before_dislike") + 1
+    if not isinstance(row["intakes"], list) or len(row["intakes"]) > count:
+        raise ValueError("Unbounded food repetition history")
+    intakes = tuple(number_value(t, minimum=baseline, maximum=elapsed,
+                                 context="food intake") for t in row["intakes"])
+    if tuple(sorted(intakes)) != intakes:
+        raise ValueError("Unordered food intake evidence")
+    if type(row["request_pending"]) is not bool:
+        raise ValueError("Food request pending must be boolean")
+    requested = None if row["requested_at"] is None else number_value(
+        row["requested_at"], minimum=baseline, maximum=elapsed,
+        context="communicated food request",
+    )
+    parameters = MOODLET_CATALOG.definitions[MoodletId.FOOD_MONOTONY].parameters
+    assert isinstance(parameters, FoodMonotonyParameters)
+    ignored = integer_value(row["ignored_portions"], minimum=0,
+                            maximum=parameters.free_ignored_portions + 1,
+                            context="ignored food requests")
+    if (food is None and (intakes or requested is not None or row["request_pending"])
+            or food is not None and not intakes
+            or row["request_pending"] and requested is not None
+            or ignored and requested is None):
+        raise ValueError("Inconsistent food repetition evidence")
+    return FoodRepetitionMemory(food, intakes, row["request_pending"],
+                                requested, ignored)

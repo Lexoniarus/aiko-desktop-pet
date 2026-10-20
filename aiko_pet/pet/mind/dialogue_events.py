@@ -12,6 +12,8 @@ DIALOGUE_EVENTS = frozenset({
     "game_round_draw",
     "affection_low",
     "pet_refused",
+    "feed_variety_request",
+    "feed_variety_reminder",
     "after_work_thought",
     "care_request_feed",
     "care_request_pet",

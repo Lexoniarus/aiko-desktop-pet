@@ -4,10 +4,20 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True, slots=True)
+class FoodRepetitionMemory:
+    food_id: str | None = None
+    intakes: tuple[float, ...] = ()
+    request_pending: bool = False
+    requested_at: float | None = None
+    ignored_portions: int = 0
+
+
+@dataclass(frozen=True, slots=True)
 class InteractionMemory:
     poke_boundary_at: float | None = None
     petting_boundary_at: float | None = None
     petting_refused_until: float = 0.0
+    food: FoodRepetitionMemory = FoodRepetitionMemory()
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,4 +36,10 @@ class BoundaryCommunicated:
     kind: str
 
 
-InteractionEvent = Poked | PettingAttempted | BoundaryCommunicated
+@dataclass(frozen=True, slots=True)
+class FoodConsumed:
+    food_id: str
+    personal: bool
+
+
+InteractionEvent = Poked | PettingAttempted | BoundaryCommunicated | FoodConsumed
