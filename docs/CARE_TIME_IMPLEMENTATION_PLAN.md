@@ -395,7 +395,8 @@ incompatible time, sleep and save behavior in place.
 | B2: object recognition and German dialogue | [Detailed plan](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md); Implemented as `4757da7` and `b984078`, pushed; 1,203 tests and pinned static checks passed; isolated real-timer native Onigiri flow passed (21 text bubbles); no save migration |
 | Stage 3: friendship, contact and neglect | Implemented in the separate feature commit containing this record; 1,226 Windows tests and pinned static checks passed; native return/input/care/save/reopen passed |
 | Stage 4: adaptive sleep and finite unattended care | Corrected and locally verified in the commit containing this record: 1,273 local Xvfb cases (eight Windows skips), 130 headless Windows cases, pinned static checks; individual slow tests reviewed above. Physical Windows acceptance remains separate. |
-| Stages 5–6 | Pending |
+| Stage 5A structural foundation: needs, progression and status vocabulary | Delivered as `9a9c307`, `138714b` and `1b2ef2c`; 42/70/66 focused tests passed with targeted static checks. See the structural implementation record below. |
+| Remaining stage 5 and stage 6 | Moodlet/wish/emotional-context integration and the VN UI remain pending; the earlier menu/action/placement correction is retained. Full-suite and final OOP acceptance belong to the completed refactor. |
 
 ### B2 execution record, 2026-10-19
 
