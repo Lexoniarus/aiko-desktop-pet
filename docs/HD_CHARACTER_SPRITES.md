@@ -218,3 +218,18 @@ replacement art.
 This is an open visual-quality task, not a runtime or file-corruption defect.
 The restored assets remain in use without further size adjustments. No image
 generation or 1x/2x asset changes are part of this documentation decision.
+
+### Forward gaze and empty-hand offer preview
+
+The sixteen direction images are complemented by the existing neutral
+`idle/00` pose when the cursor is within 17 native pixels of the eye anchor
+(34 at 2x). Entering this region clears the previous direction and holds a
+forward gaze instead of keeping a sideways look or choosing an ambient glance.
+Normal gaze timeout and sleep, game, action and movement priorities still apply.
+
+For an identified, wanted cursor item that currently satisfies the established
+handover/reach checks, the passive renderer uses the final `pick_up/07` pose
+with empty hands. This preview emits no pickup events, transfers no custody and
+awards no nutrition; release still performs the existing handover. The preview
+disappears when eligibility is lost. It cannot show a stale food overlay from
+a previous action. Both scales reuse their existing PNGs without asset changes.

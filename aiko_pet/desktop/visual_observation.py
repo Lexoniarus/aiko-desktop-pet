@@ -135,9 +135,10 @@ class DesktopVisualObservation:
             game_mode=game_mode,
         )
         direction = self._gaze(attention)
+        forward = attention.direction is not None and direction is None
         busy = (
             self._monitor.latest().is_busy()
-            if attention.mode != "unavailable" and direction is None
+            if attention.mode != "unavailable" and direction is None and not forward
             and self._settings.observe_computer else False
         )
-        return PassiveObservation(direction, busy)
+        return PassiveObservation(direction, busy, forward_gaze=forward)

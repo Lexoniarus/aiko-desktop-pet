@@ -45,6 +45,7 @@ class AnimationRuntimePorts:
     action_until: Callable[[], float]
     action_clip_id: Callable[[], str]
     attention_until: Callable[[], float]
+    ready_for_handover: Callable[[], bool] = lambda: False
 
 
 class DesktopAnimationRuntime:
@@ -117,11 +118,19 @@ class DesktopAnimationRuntime:
         observation = self._visual.observe(
             now, pointer, last_pointer_move, game_mode,
         )
+        if self._ports.ready_for_handover():
+            self.ambient.suspend(now)
+            return RenderDecision(
+                SpriteSelection("pick_up", fixed_frame=len(
+                    self._assets.clips["pick_up"].frames,
+                ) - 1), clear_action=True,
+            )
         selection = self.ambient.select_passive_animation(
             now, gaze_direction=observation.gaze_direction,
             observing_computer=self._settings.observe_computer,
             computer_busy=observation.computer_busy,
             energy=self._state.energy, mood=self._state.mood,
             satiety=self._state.satiety,
+            forward_gaze=observation.forward_gaze,
         )
         return RenderDecision(selection, clear_action=True)

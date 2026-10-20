@@ -109,6 +109,7 @@ class AmbientDirector:
         energy: float,
         mood: float,
         satiety: float,
+        forward_gaze: bool = False,
     ) -> SpriteSelection:
         """Choose the passive pose and preserve ambient timing on gaze."""
         choice = choose_passive_animation(
@@ -118,13 +119,15 @@ class AmbientDirector:
             energy=energy,
             mood=mood,
             satiety=satiety,
+            forward_gaze=forward_gaze,
         )
         if choice.animation == "idle" and choice.fixed_frame is None:
             return self.choose(now)
         self.suspend(
             now,
             keep_pose_motion=(
-                choice.animation == "look" and choice.fixed_frame is not None
+                forward_gaze
+                or choice.animation == "look" and choice.fixed_frame is not None
             ),
         )
         return choice

@@ -330,6 +330,16 @@ class DesktopWorldRuntime:
             facts=self._behavior_facts(),
         )
 
+    def ready_for_handover(self) -> bool:
+        """Offer empty hands only while a wanted cursor item can be received.
+
+        This is visual readiness, not custody: release still performs the
+        actual handover through the existing interaction coordinator.
+        """
+        token = self.cursor.instance_id
+        return (token is not None and self.cursor.inside and self.cursor.offer_ready
+                and self._can_acquire(token))
+
     def _capture_contact(self, token: str) -> None:
         item = self.world.get(token)
         if item.position is None:

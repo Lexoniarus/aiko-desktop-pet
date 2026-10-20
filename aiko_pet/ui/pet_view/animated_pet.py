@@ -308,6 +308,10 @@ class AnimatedPet:
         )
         if decision.clear_action:
             self._active_action = None
+            if (decision.sprite.animation == "pick_up"
+                    and decision.sprite.fixed_frame is not None):
+                # Empty hands are a visual offer; the cursor still owns the item.
+                self.food_overlay.select(None)
         self.show_frame(
             decision.sprite.animation, now, fixed=decision.sprite.fixed_frame,
         )

@@ -31,7 +31,7 @@ def gaze_sector(
     dx = pointer_x - eyes_x
     dy = pointer_y - eyes_y
     if math.hypot(dx, dy) < 17 * max(1, scale):
-        return previous  # Avoid jitter when the pointer is near the eyes.
+        return None  # Face the viewer instead of retaining a sideways glance.
     angle = math.degrees(math.atan2(dx, -dy)) % 360
     if previous is not None and 0 <= previous < SECTORS:
         # Hold the old sector until the pointer clears the boundary by 3 degrees.

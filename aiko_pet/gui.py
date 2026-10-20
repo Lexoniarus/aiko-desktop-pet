@@ -181,10 +181,7 @@ class DesktopPet:
                 action_clip_id=lambda: self._action_playback.clip_id,
                 attention_until=lambda: self.mind.cursor_attention.attention_until,
                 extend_action=self._action_playback.extend,
-                object_focus=self._world_access.focused,
-                object_phase=self._world_access.phase,
-                following_subject=self._world_access.following_record,
-                orientation_side=self._world_access.orientation_side,
+                world=self._world_access,
                 feedback_subject=lambda: self._reaction_player.subject,
                 activity_active=lambda: (time.monotonic() < self._action_playback.until
                     or self._social_runtime.waiting
