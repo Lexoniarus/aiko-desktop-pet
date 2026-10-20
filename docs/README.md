@@ -14,6 +14,7 @@ and test-cleanup plans.
 | Attention, identification, learned-place checks, search and custody | [World behavior](WORLD_OBJECT_CONTRACTS.md) |
 | Desktop acceptance and repeatable isolated-save checks | [World smoke guide](WORLD_SMOKE_TEST.md) |
 | Toolbar, action availability, details and native windows | [UI window contract](UI_WINDOW_CONTRACT.md) |
+| Approved VN visual direction, menu structure and prepared icons; not implemented | [VN interface design](UI_VN_DESIGN.md) |
 | Packaged JSON, save versions, recovery and time | [Data and saves](DATA_AND_SAVES.md) |
 | Food, digestion, workload and item graphics | [Food system](FOOD_SYSTEM.md) |
 | Adaptive sleep, input learning and finite closed-time care | [Sleep rules](SLEEP_SYSTEM.md) |

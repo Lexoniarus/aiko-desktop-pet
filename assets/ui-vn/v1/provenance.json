@@ -1,0 +1,1593 @@
+{
+  "created": "2026-10-20",
+  "generator": "OpenAI built-in Imagegen tool",
+  "runtime_integrated": false,
+  "source_outputs_modified": false,
+  "blackjack_artwork": "existing files preserved; no replacement generated",
+  "icons": [
+    {
+      "id": "status_satiety",
+      "group": "status",
+      "file": "icons/status_satiety.png",
+      "generator_output_name": "exec-9cdb0332-ec3e-49e8-8a4a-9a615367b7dc.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "7b35ba1719b437f824c40f99dd6abb96045adccd50668219d1958fe1430e4b18",
+      "bytes": 571668,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7033,
+      "visible_bbox_alpha32": [
+        212,
+        268,
+        1064,
+        1020
+      ],
+      "low_alpha_fringe_pixels": 8522,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "status_fun",
+      "group": "status",
+      "file": "icons/status_fun.png",
+      "generator_output_name": "exec-fc5f8ea8-f868-47ed-b69e-0885f5e8ec23.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+      "bytes": 636558,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.697,
+      "visible_bbox_alpha32": [
+        119,
+        272,
+        1134,
+        995
+      ],
+      "low_alpha_fringe_pixels": 7983,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "status_energy",
+      "group": "status",
+      "file": "icons/status_energy.png",
+      "generator_output_name": "exec-67d1d607-d07c-4cbd-b5ac-8657f46e79ba.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "913732e7de70fa4f336b0b5162c226cb6d20e987924696951b0f5f9a5707417e",
+      "bytes": 518308,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.716,
+      "visible_bbox_alpha32": [
+        139,
+        337,
+        1175,
+        946
+      ],
+      "low_alpha_fringe_pixels": 5491,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "status_social",
+      "group": "status",
+      "file": "icons/status_social.png",
+      "generator_output_name": "exec-ae119267-e1da-47a7-9401-fe1f04edb71e.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "bd41d94cb2328ef9e5a3d10f99edf7b6b0171f5ba580f423ddfeada7fe342b6e",
+      "bytes": 625775,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6911,
+      "visible_bbox_alpha32": [
+        159,
+        250,
+        1101,
+        1013
+      ],
+      "low_alpha_fringe_pixels": 5042,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "status_affection",
+      "group": "status",
+      "file": "icons/status_affection.png",
+      "generator_output_name": "exec-fbce61aa-de56-47dc-b142-47af4afb8ea7.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "8802011c218d8fc6192a21db468d0405a13f900588073c89ae4cc45cc9e5e068",
+      "bytes": 470771,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7686,
+      "visible_bbox_alpha32": [
+        233,
+        276,
+        1088,
+        989
+      ],
+      "low_alpha_fringe_pixels": 5485,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "status_friendship",
+      "group": "status",
+      "file": "icons/status_friendship.png",
+      "generator_output_name": "exec-e907aa1d-ec25-4aa7-a046-76b42e1bef26.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "b495d12e080dc2c949cd4838e02788b774a6f9daba700afa32ac7a3edbabda05",
+      "bytes": 623039,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6716,
+      "visible_bbox_alpha32": [
+        129,
+        183,
+        1129,
+        1065
+      ],
+      "low_alpha_fringe_pixels": 5814,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "action_sleep",
+      "group": "actions",
+      "file": "icons/action_sleep.png",
+      "generator_output_name": "exec-5163b3c4-06c1-46b6-b5f0-3334fb5467c1.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "0d7605f6a699ab8a87823df3f9a38261a70b09e2ac023df532d47a55e6dbe7c4",
+      "bytes": 550893,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7455,
+      "visible_bbox_alpha32": [
+        199,
+        235,
+        1055,
+        1054
+      ],
+      "low_alpha_fringe_pixels": 7812,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "action_pet",
+      "group": "actions",
+      "file": "icons/action_pet.png",
+      "generator_output_name": "exec-c3944acf-cdf2-46f9-8ab5-f4b27478b5eb.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "ddba7d76299d27d0f14c4a39e3f67a04bff4daedf5d9733b82dbde6587785de3",
+      "bytes": 540712,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7507,
+      "visible_bbox_alpha32": [
+        170,
+        255,
+        1131,
+        992
+      ],
+      "low_alpha_fringe_pixels": 9725,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "detail_wellbeing",
+      "group": "details",
+      "file": "icons/detail_wellbeing.png",
+      "generator_output_name": "exec-633ca179-8429-4e04-90e8-fc3414c82b5d.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "10718a1c8e3c81fa6daf1e252180ff7039cdffe393ebe681b0962adc6e24b2a7",
+      "bytes": 542604,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7108,
+      "visible_bbox_alpha32": [
+        215,
+        267,
+        1038,
+        1001
+      ],
+      "low_alpha_fringe_pixels": 4913,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "ui_sparkle",
+      "group": "controls",
+      "file": "icons/ui_sparkle.png",
+      "generator_output_name": "exec-9dadb19f-3528-46b1-8eba-5c922fe493d4.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "9d4a327c8d5162bff3cd19cc90408b88d77c0310e8d6b648c7635575bdd8d525",
+      "bytes": 319649,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.8643,
+      "visible_bbox_alpha32": [
+        270,
+        243,
+        985,
+        1011
+      ],
+      "low_alpha_fringe_pixels": 4777,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "ui_pin",
+      "group": "controls",
+      "file": "icons/ui_pin.png",
+      "generator_output_name": "exec-dd6020e8-2126-468c-a29a-a903d74579c2.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "4d06fead770cef01e5a05181b806c6121127bb3cf7339a855e5c63b5572ef929",
+      "bytes": 341344,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.8501,
+      "visible_bbox_alpha32": [
+        369,
+        231,
+        987,
+        1031
+      ],
+      "low_alpha_fringe_pixels": 4421,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "ui_settings",
+      "group": "controls",
+      "file": "icons/ui_settings.png",
+      "generator_output_name": "exec-6216d1b0-9a79-44b3-bc2f-81d2aadfbe1d.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "905642f62eb63d3f3cfb7c325fb54ebb5e43cb33ba1ef4a3d0bc01aee78a1e28",
+      "bytes": 628816,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7118,
+      "visible_bbox_alpha32": [
+        193,
+        208,
+        1060,
+        1053
+      ],
+      "low_alpha_fringe_pixels": 7209,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "detail_rhythm",
+      "group": "details",
+      "file": "icons/detail_rhythm.png",
+      "generator_output_name": "exec-1ca14458-87df-4025-ac39-31991e40fd55.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "fc36110546be53780dce6169a38f7705c249a767b629c6873cb5f3260cfaeab2",
+      "bytes": 488381,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7522,
+      "visible_bbox_alpha32": [
+        227,
+        230,
+        1038,
+        1061
+      ],
+      "low_alpha_fringe_pixels": 5327,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "detail_next",
+      "group": "details",
+      "file": "icons/detail_next.png",
+      "generator_output_name": "exec-22456f4f-e298-4b25-9772-c0728365d39e.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "f4f8e47958d0efb2848b7b5d449dadb966d3e7b131b60cef048550954080ed9a",
+      "bytes": 680066,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6135,
+      "visible_bbox_alpha32": [
+        229,
+        214,
+        1025,
+        1055
+      ],
+      "low_alpha_fringe_pixels": 6295,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "detail_objects",
+      "group": "details",
+      "file": "icons/detail_objects.png",
+      "generator_output_name": "exec-6e459e9b-2320-4ed8-89ca-f2224a4ef600.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "3a6aabfc496bcd637660b3e4563b2c19ab7be23cb585026485199ea4a0a95f15",
+      "bytes": 589357,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6317,
+      "visible_bbox_alpha32": [
+        183,
+        279,
+        1074,
+        998
+      ],
+      "low_alpha_fringe_pixels": 4624,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "system_computer",
+      "group": "details",
+      "file": "icons/system_computer.png",
+      "generator_output_name": "exec-de080217-9672-4f27-b9e9-a1957ed78c19.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "490a07e13e23e3373b3d8b5adfee52dba7e485bca74fabd98e88b53db61e059f",
+      "bytes": 820412,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.5406,
+      "visible_bbox_alpha32": [
+        148,
+        237,
+        1108,
+        1096
+      ],
+      "low_alpha_fringe_pixels": 7668,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "game_rps",
+      "group": "games",
+      "file": "icons/game_rps.png",
+      "generator_output_name": "exec-c7870df9-75a5-4251-8d73-a02d6bdfc847.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "68770e967715708a310ab02df2c11c8ddd01bf6ce80c8a00943ca8550aa8891a",
+      "bytes": 510014,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.8028,
+      "visible_bbox_alpha32": [
+        80,
+        456,
+        1221,
+        882
+      ],
+      "low_alpha_fringe_pixels": 15326,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "game_tic_tac_toe",
+      "group": "games",
+      "file": "icons/game_tic_tac_toe.png",
+      "generator_output_name": "exec-e0232eb1-3a5b-4fc5-b4c5-16b4fef56073.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "89bce821f3698c324518ae16b01518be7d3c654b6da99fe4c8bb30be2bd820d5",
+      "bytes": 485393,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.8124,
+      "visible_bbox_alpha32": [
+        228,
+        255,
+        1027,
+        1040
+      ],
+      "low_alpha_fringe_pixels": 25321,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "moodlet_secure",
+      "group": "moodlets",
+      "file": "icons/moodlet_secure.png",
+      "generator_output_name": "exec-1a641ec3-0960-4801-bfdc-6d7c72c1497b.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97",
+      "bytes": 668889,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6698,
+      "visible_bbox_alpha32": [
+        156,
+        282,
+        1099,
+        988
+      ],
+      "low_alpha_fringe_pixels": 6831,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "moodlet_pride",
+      "group": "moodlets",
+      "file": "icons/moodlet_pride.png",
+      "generator_output_name": "exec-063b0c4d-be73-451a-af08-f0d1966c30f0.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "6af98a56c0d2f4bc4d6dad9afc913995e839d8ebc4e5251cf3fb511a07d69fb5",
+      "bytes": 475774,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7769,
+      "visible_bbox_alpha32": [
+        272,
+        193,
+        1060,
+        1066
+      ],
+      "low_alpha_fringe_pixels": 7869,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "moodlet_relief",
+      "group": "moodlets",
+      "file": "icons/moodlet_relief.png",
+      "generator_output_name": "exec-eb63880f-45ac-46a1-8e53-78f73a71d251.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "8fe1264392669d64d0c98562dbbc593cf532208a0fb7839f99e0eaa249fc734f",
+      "bytes": 531716,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7546,
+      "visible_bbox_alpha32": [
+        174,
+        266,
+        1146,
+        985
+      ],
+      "low_alpha_fringe_pixels": 8418,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "moodlet_annoyed",
+      "group": "moodlets",
+      "file": "icons/moodlet_annoyed.png",
+      "generator_output_name": "exec-df2fb752-8ba0-4bb0-8730-1d8f0921ff59.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png"
+      ],
+      "sha256": "87a63b71c6c96229be81c37bf2740ffc4bca447ac3e247f08ce87ba7e49db703",
+      "bytes": 621618,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6709,
+      "visible_bbox_alpha32": [
+        225,
+        188,
+        1094,
+        1037
+      ],
+      "low_alpha_fringe_pixels": 7101,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be"
+      }
+    },
+    {
+      "id": "play_ttt_x",
+      "group": "gameplay",
+      "file": "icons/play_ttt_x.png",
+      "generator_output_name": "exec-b9e30c56-be98-4d7d-8fcd-00939e5837ea.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png",
+        "icons/game_tic_tac_toe.png"
+      ],
+      "sha256": "d00b4809f8ca74919ef09430d9828581d21276e06d35b8dbffc3722bd08a2586",
+      "bytes": 582258,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7209,
+      "visible_bbox_alpha32": [
+        246,
+        286,
+        1008,
+        1011
+      ],
+      "low_alpha_fringe_pixels": 8162,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be",
+        "icons/game_tic_tac_toe.png": "89bce821f3698c324518ae16b01518be7d3c654b6da99fe4c8bb30be2bd820d5"
+      }
+    },
+    {
+      "id": "play_ttt_o",
+      "group": "gameplay",
+      "file": "icons/play_ttt_o.png",
+      "generator_output_name": "exec-818f8caa-5822-4fd7-8d6a-5aca0f93bde1.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png",
+        "icons/game_tic_tac_toe.png"
+      ],
+      "sha256": "d63c6ed51c4025e763a75a70206af3dc42ca4cb80c944df859aab191ce90cdda",
+      "bytes": 623198,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6693,
+      "visible_bbox_alpha32": [
+        177,
+        200,
+        1074,
+        1082
+      ],
+      "low_alpha_fringe_pixels": 6751,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be",
+        "icons/game_tic_tac_toe.png": "89bce821f3698c324518ae16b01518be7d3c654b6da99fe4c8bb30be2bd820d5"
+      }
+    },
+    {
+      "id": "play_rps_scissors",
+      "group": "gameplay",
+      "file": "icons/play_rps_scissors.png",
+      "generator_output_name": "exec-d5e87a4f-e429-4331-ad64-5b13a3cef397.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png",
+        "icons/game_rps.png"
+      ],
+      "sha256": "fc3aaa257a44d2d0eee61cb2b68bdfe5c797d95ef9b52b2b0868ad6a725e983c",
+      "bytes": 593323,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.696,
+      "visible_bbox_alpha32": [
+        252,
+        200,
+        986,
+        1094
+      ],
+      "low_alpha_fringe_pixels": 5523,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be",
+        "icons/game_rps.png": "68770e967715708a310ab02df2c11c8ddd01bf6ce80c8a00943ca8550aa8891a"
+      }
+    },
+    {
+      "id": "play_rps_rock",
+      "group": "gameplay",
+      "file": "icons/play_rps_rock.png",
+      "generator_output_name": "exec-5954b813-318a-47b0-a0b4-a87619f32433.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png",
+        "icons/game_rps.png"
+      ],
+      "sha256": "f7b6cad354f73ca0414b022f98ff41f60d63253705b677b84a1fccd7fd9a5386",
+      "bytes": 528815,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7347,
+      "visible_bbox_alpha32": [
+        227,
+        324,
+        1041,
+        1007
+      ],
+      "low_alpha_fringe_pixels": 3872,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be",
+        "icons/game_rps.png": "68770e967715708a310ab02df2c11c8ddd01bf6ce80c8a00943ca8550aa8891a"
+      }
+    },
+    {
+      "id": "play_rps_paper",
+      "group": "gameplay",
+      "file": "icons/play_rps_paper.png",
+      "generator_output_name": "exec-4b83314d-fb21-40c4-86d0-bf19c16b8a4d.png",
+      "references": [
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png",
+        "icons/game_rps.png"
+      ],
+      "sha256": "c6a48c78b9ba8ce3842f74146ff54eb851b103f1d5081f916ac991e1d62f83c1",
+      "bytes": 752054,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.5852,
+      "visible_bbox_alpha32": [
+        122,
+        169,
+        1131,
+        1136
+      ],
+      "low_alpha_fringe_pixels": 7016,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "../../../docs/media/ui-vn-2026-10-20/rose-details.png": "c47c98b64adb417dd95ec55abc189145adf25928cfcb9af8ec2a84c68bfde4be",
+        "icons/game_rps.png": "68770e967715708a310ab02df2c11c8ddd01bf6ce80c8a00943ca8550aa8891a"
+      }
+    },
+    {
+      "id": "moodlet_food_fulfilled",
+      "group": "moodlets_positive",
+      "label": "Genau das Gewünschte",
+      "semantic_role": "food_wish_fulfillment",
+      "file": "icons/moodlet_food_fulfilled.png",
+      "generator_output_name": "exec-6e924447-731c-4452-98ed-2948c4b846a5.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "cf0a8a64677cd05277c3163a906f401775196b58b6f0b58cf10d3f5155efb108",
+      "bytes": 606672,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7055,
+      "visible_bbox_alpha32": [
+        137,
+        259,
+        1119,
+        1062
+      ],
+      "low_alpha_fringe_pixels": 7516,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_shared_play",
+      "group": "moodlets_positive",
+      "label": "Gemeinsame Spielfreude",
+      "semantic_role": "shared_play_enjoyment",
+      "file": "icons/moodlet_shared_play.png",
+      "generator_output_name": "exec-3ec28363-b321-417d-801a-39d317a5fded.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "7d5008c4434fbb55722d557cc3854080d7cf107c347abe683feccfe1998e5120",
+      "bytes": 592262,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7342,
+      "visible_bbox_alpha32": [
+        169,
+        301,
+        1086,
+        1063
+      ],
+      "low_alpha_fringe_pixels": 10200,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_connection",
+      "group": "moodlets_positive",
+      "label": "Verbundenheit",
+      "semantic_role": "social_connection",
+      "file": "icons/moodlet_connection.png",
+      "generator_output_name": "exec-3a30e6e1-9244-450a-92bf-f397e3a566e4.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "01c524478818e01bdcfa5da539cd3d3bcc92c9da3fce134e13ddbc1a29a132c3",
+      "bytes": 593615,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7321,
+      "visible_bbox_alpha32": [
+        175,
+        315,
+        1100,
+        997
+      ],
+      "low_alpha_fringe_pixels": 7552,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_cheerful",
+      "group": "moodlets_positive",
+      "label": "Heiterkeit",
+      "semantic_role": "social_cheerfulness",
+      "file": "icons/moodlet_cheerful.png",
+      "generator_output_name": "exec-5ca5971e-907f-45b5-8957-2b8307eddc85.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "80af26d443cb35e8deeded9e50b0684a1b9208407c29da84cc29077c7853ab52",
+      "bytes": 643336,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6841,
+      "visible_bbox_alpha32": [
+        187,
+        274,
+        1141,
+        1033
+      ],
+      "low_alpha_fringe_pixels": 6067,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_enthusiastic",
+      "group": "moodlets_positive",
+      "label": "Begeisterung",
+      "semantic_role": "social_enthusiasm",
+      "file": "icons/moodlet_enthusiastic.png",
+      "generator_output_name": "exec-090ef401-bc63-40a1-b1f4-3064e6aef709.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "bc49717f985f8f1ab63aa744cf2ebb9612d6b68dbb3b176bd453ac7741c37359",
+      "bytes": 665922,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6839,
+      "visible_bbox_alpha32": [
+        213,
+        210,
+        1106,
+        1046
+      ],
+      "low_alpha_fringe_pixels": 6340,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_crowded",
+      "group": "moodlets_negative",
+      "label": "Zu viel Nähe",
+      "semantic_role": "unwelcome_closeness",
+      "file": "icons/moodlet_crowded.png",
+      "generator_output_name": "exec-ddbf810f-3934-4ee6-96ae-a9cbb6ce609d.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "5b1c091503dc3e24a271c09dc3b764f2415225452fcbbac781eff5145db8e777",
+      "bytes": 592389,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7089,
+      "visible_bbox_alpha32": [
+        219,
+        244,
+        1072,
+        1059
+      ],
+      "low_alpha_fringe_pixels": 9307,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_food_monotony",
+      "group": "moodlets_negative",
+      "label": "Immer dasselbe Essen",
+      "semantic_role": "repetitive_food",
+      "file": "icons/moodlet_food_monotony.png",
+      "generator_output_name": "exec-4a05ace3-e137-4f50-94e6-90049ee6a7d8.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "3da5ff8b90ddc02a7bf7201db73c4f3c0e0a50d2c38328cfe1a280074bdd8acf",
+      "bytes": 631376,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.69,
+      "visible_bbox_alpha32": [
+        156,
+        246,
+        1100,
+        1036
+      ],
+      "low_alpha_fringe_pixels": 9322,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_withheld",
+      "group": "moodlets_negative",
+      "label": "Vorenthalten",
+      "semantic_role": "wanted_object_withheld",
+      "file": "icons/moodlet_withheld.png",
+      "generator_output_name": "exec-1077e987-0031-4cac-bb22-74ce74fe34e6.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "f50b6eea8859876d40d752eb051a80d0cbcb06dc07d3a349b788a9aefe691858",
+      "bytes": 513521,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7819,
+      "visible_bbox_alpha32": [
+        126,
+        249,
+        1130,
+        1075
+      ],
+      "low_alpha_fringe_pixels": 7916,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_disrupted",
+      "group": "moodlets_negative",
+      "label": "Vertrauter Platz verändert",
+      "semantic_role": "familiar_arrangement_disrupted",
+      "file": "icons/moodlet_disrupted.png",
+      "generator_output_name": "exec-82c43a22-d982-47b1-8449-ab3be84c5f91.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "50cab2e9c01b2baa3023db2824402ee94044a4dee0806f1ba8bc79d07e724818",
+      "bytes": 421863,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.8246,
+      "visible_bbox_alpha32": [
+        157,
+        352,
+        1126,
+        969
+      ],
+      "low_alpha_fringe_pixels": 13604,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_hunger_worn",
+      "group": "moodlets_negative",
+      "label": "Vom Hunger zermürbt",
+      "semantic_role": "prolonged_hunger_aftereffect",
+      "file": "icons/moodlet_hunger_worn.png",
+      "generator_output_name": "exec-76bb8711-e644-4a6d-8359-04a1236d13e4.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "13eda7a3bd11d981d9b302d8ac59be242a0d6804be12f43ee0250447d23c304b",
+      "bytes": 564896,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7301,
+      "visible_bbox_alpha32": [
+        206,
+        262,
+        1048,
+        1042
+      ],
+      "low_alpha_fringe_pixels": 9230,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_exhaustion_irritated",
+      "group": "moodlets_negative",
+      "label": "Von Erschöpfung gereizt",
+      "semantic_role": "prolonged_exhaustion_aftereffect",
+      "file": "icons/moodlet_exhaustion_irritated.png",
+      "generator_output_name": "exec-1e78dce9-d650-4e42-b28b-6c62f8491448.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "44debe72fb3599995cfdac929bb44f7017406113af0b2e26195c6d42c15d5033",
+      "bytes": 652299,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6651,
+      "visible_bbox_alpha32": [
+        121,
+        275,
+        1183,
+        983
+      ],
+      "low_alpha_fringe_pixels": 6266,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_unstimulated",
+      "group": "moodlets_negative",
+      "label": "Lange unterfordert",
+      "semantic_role": "prolonged_lack_of_stimulation",
+      "file": "icons/moodlet_unstimulated.png",
+      "generator_output_name": "exec-43c962a2-9027-45d0-bcd6-11e8a9f46ce9.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "f48e111a7ec17adbaf1e47f2b83ba08c406ea17c04fda36e6627513efd29c6a1",
+      "bytes": 723526,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6515,
+      "visible_bbox_alpha32": [
+        141,
+        167,
+        1113,
+        1145
+      ],
+      "low_alpha_fringe_pixels": 9623,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_lonely",
+      "group": "moodlets_negative",
+      "label": "Einsam",
+      "semantic_role": "prolonged_lack_of_contact",
+      "file": "icons/moodlet_lonely.png",
+      "generator_output_name": "exec-31580222-e028-4fdb-900f-ac13e9736d5b.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "cc62a9fe33a3dc56513b675f79dfd9c13053eb4257a8260a8e0dcda442245ebc",
+      "bytes": 566145,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.7359,
+      "visible_bbox_alpha32": [
+        177,
+        295,
+        1118,
+        1009
+      ],
+      "low_alpha_fringe_pixels": 8433,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "moodlet_missing_closeness",
+      "group": "moodlets_negative",
+      "label": "Nähe fehlt",
+      "semantic_role": "prolonged_missing_affection",
+      "file": "icons/moodlet_missing_closeness.png",
+      "generator_output_name": "exec-0f7b1623-d704-4a28-922b-07631bed3084.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "b100521cfbaf7f7366d90c1366333c981ceea50b409bb073bd330dfb47fc11d6",
+      "bytes": 637993,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6941,
+      "visible_bbox_alpha32": [
+        147,
+        297,
+        1108,
+        1024
+      ],
+      "low_alpha_fringe_pixels": 8695,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "wish_thought_bubble",
+      "group": "wishes",
+      "label": "Wunschmarkierung",
+      "semantic_role": "wish_marker",
+      "file": "icons/wish_thought_bubble.png",
+      "generator_output_name": "exec-7892c31f-543d-4f5e-8ebf-6b2875b502c4.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "11c7d3ea5f2852baa4a5fc15ae541f161b544d25e6ce669607e3f21e508fb3c5",
+      "bytes": 425858,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.8334,
+      "visible_bbox_alpha32": [
+        112,
+        171,
+        1174,
+        1122
+      ],
+      "low_alpha_fringe_pixels": 22575,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "wish_protection_shield",
+      "group": "wishes",
+      "label": "Nicht verlieren",
+      "semantic_role": "game_nonloss_objective",
+      "file": "icons/wish_protection_shield.png",
+      "generator_output_name": "exec-17e4850a-8cb1-4437-891f-f146db07f26c.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "659cadbde6f67030df60f6e29942fb456e33250a95009067a918c9ebd055c1ab",
+      "bytes": 668402,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6648,
+      "visible_bbox_alpha32": [
+        228,
+        191,
+        1026,
+        1084
+      ],
+      "low_alpha_fringe_pixels": 4747,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "wish_single",
+      "group": "wishes",
+      "label": "Spruch erzählen",
+      "semantic_role": "social_single_objective",
+      "file": "icons/wish_single.png",
+      "generator_output_name": "exec-85e6e923-1f5a-42ec-bbaf-5229d9235263.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "b017e140bea28ee02a789a967e0bf28b84b4f18da18cba23a730b5ef5158961e",
+      "bytes": 649103,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6889,
+      "visible_bbox_alpha32": [
+        182,
+        261,
+        1125,
+        1020
+      ],
+      "low_alpha_fringe_pixels": 7583,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "wish_twopart",
+      "group": "wishes",
+      "label": "Witz erzählen",
+      "semantic_role": "social_twopart_objective",
+      "file": "icons/wish_twopart.png",
+      "generator_output_name": "exec-05a7cfa0-68b1-4bbb-aa5d-fb596bbcf38c.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "ca5c0a0dd054e061d2442353254552e33126ec8d817d499267eae55a3ef0f1ad",
+      "bytes": 737392,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.647,
+      "visible_bbox_alpha32": [
+        122,
+        234,
+        1144,
+        1056
+      ],
+      "low_alpha_fringe_pixels": 6467,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    },
+    {
+      "id": "wish_fact",
+      "group": "wishes",
+      "label": "Fakt teilen",
+      "semantic_role": "social_fact_objective",
+      "file": "icons/wish_fact.png",
+      "generator_output_name": "exec-46996cbf-5749-4fe7-940f-c32287de2c07.png",
+      "references": [
+        "icons/status_fun.png",
+        "icons/moodlet_secure.png"
+      ],
+      "sha256": "4932817b4c1f19d922cb2b51e5b777ffdbb9e10c5b778bfe24a9c0c4c480d5e9",
+      "bytes": 646732,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "fully_transparent_fraction": 0.6813,
+      "visible_bbox_alpha32": [
+        216,
+        262,
+        1040,
+        1028
+      ],
+      "low_alpha_fringe_pixels": 4873,
+      "visible_content_uncut": true,
+      "reference_sha256": {
+        "icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+        "icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97"
+      }
+    }
+  ],
+  "validation": {
+    "status": "passed",
+    "count": 46,
+    "catalogue": {
+      "moodlet_families": 18,
+      "positive": 8,
+      "negative": 10,
+      "wish_forms": 11,
+      "new_moodlet_sources": 14,
+      "new_wish_components": 5
+    },
+    "checks": [
+      "46 unique expected PNG sources",
+      "real alpha and uncut visible silhouettes",
+      "existing source and Blackjack hashes unchanged",
+      "18 Moodlet and 11 wish mappings",
+      "transparent thought-bubble center",
+      "prompt/reference/documentation/gallery paths",
+      "source hashes and dimensions"
+    ],
+    "retained_sources_verified": 81,
+    "thought_bubble_center_alpha": 0,
+    "source_note": "Unmodified generated masters. Low-alpha fringe and optical-scale normalization remain for a later export pass. No native application integration performed.",
+    "failures": [],
+    "browser_preview_check": "Not performed: browser tool rejected local file URL; no workaround attempted. Preview file and all source/link paths were checked on the filesystem."
+  }
+}

@@ -1,5 +1,9 @@
 # UI window contract — care controls and passive World items
 
+The [VN interface direction](UI_VN_DESIGN.md) records the approved future
+appearance, embedded-selector layout and Moodlet provision. It is currently
+documentation/asset preparation only; the behavior below describes the runtime.
+
 ## Window behavior
 
 Aiko exposes one `ActionToolbar` with a wide overall mood bar above six individual

@@ -2,6 +2,12 @@
 
 This repository includes original project content, AI-generated character artwork, and third-party Kenney game assets. Their origins are documented separately.
 
+The new [VN menu icon sources](assets/ui-vn/v1/README.md) are generated
+preparation artwork for the [approved UI direction](docs/UI_VN_DESIGN.md), not
+runtime replacements. Their prompts and file provenance are recorded with the
+sources. Existing playing cards/card frames and their Kenney attribution remain
+unchanged. This preparation pass does not amend existing license terms.
+
 ## 1. Project source code — MIT
 
 Unless a file identifies a different license, the project's own source code is distributed under the [MIT License](LICENSE). MIT permits copying, modification, redistribution, sublicensing, and commercial use, subject to preserving the required copyright and license notices. Public availability is not an additional usage restriction.
