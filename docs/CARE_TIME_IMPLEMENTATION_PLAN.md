@@ -802,7 +802,7 @@ and UI contracts:
 | Moodlets | Concurrent emotional impressions with an identified cause, strength, duration and defined stacking/escalation behavior. They can influence numeric mood, speech and willingness to accept particular interactions. |
 | Numeric mood | The overall 0–100 value, combining the need-derived contribution and active Moodlet contributions through the agreed response timing. The present need-only maximum of 80 is not the final Moodlet balance. |
 | Emotional state | The qualitative overall emotional interpretation of numeric mood and the active emotional composition. Equal numeric mood values can have different emotional labels. Hunger and sleep state remain separate facts. |
-| Wishes | Inner desired experiences, distinct from whether Aiko chooses to express them. Low friendship or poor wellbeing does not remove her wishes. An active wish can itself create a Moodlet; expression and fulfillment are separate transitions. Use the currently supported food, game and social activities. |
+| Wishes | Inner desired experiences, distinct from whether Aiko chooses to express them. Low friendship or poor wellbeing does not remove her wishes. A wish itself creates no Moodlet; actual fulfillment within its lifetime can create the defined fulfillment Moodlet. Expression and fulfillment are separate transitions. Use the currently supported food, game and social activities. |
 | Expression and action selection | Select dialogue topics, tone, immediate responses, gestures and interaction decisions using the relevant distinct inputs. A direct hunger statement can occur while the overall emotional state is positive. |
 
 A need may directly influence numeric mood, independently prompt an immediate
@@ -837,7 +837,7 @@ Source inspection identified these concrete refactoring points:
 | `pet/mood.py` (extend) | Rename need-only `MoodFactors` to `NeedMoodFactors` and the present target calculation to `calculate_need_mood_target()`. Compose that contribution with Moodlet effects in `calculate_mood_target()`; retain the clear `advance_mood()` responsibility. |
 | `pet/moodlets.py` (new) | Immutable Moodlet models and pure rules for qualifying creation, refresh/escalation, contribution and expiry. Specify each rule after the pending product discussion. |
 | `pet/emotions.py` (new) | Canonical emotional-state vocabulary and pure overall interpretation, for example `derive_emotional_state()`. Replace the mixed responsibility of `PetMind.emotion()`; do not maintain a second independent numeric mood or emotional store. |
-| `pet/wishes.py` (new) | Immutable inner-wish models and separate selection, emotional-effect, expression-eligibility, fulfillment and expiry decisions. Cover supported food IDs and the now implemented games/social categories; do not build additional activities merely to populate wishes. |
+| `pet/wishes.py` (new) | Immutable inner-wish models and separate selection, expression-eligibility, fulfillment and expiry decisions. Produce the defined Moodlet outcome only from qualifying fulfillment within the wish period. Cover supported food IDs and the now implemented games/social categories; do not build additional activities merely to populate wishes. |
 | `pet/status_hints.py` (retain, clarify) | Rename `MoodHint`, `choose_mood_hint()` and associated callers/formatters to `StatusHint`, `choose_status_hint()` and equivalent status-specific names. Keep advice distinct from emotional state. |
 | `pet/mind/` (refactor existing consumers) | Keep perception, interpretation, conversation and immediate reaction/action selection. Consume the canonical conditions, emotional state, Moodlets and wishes without owning another active Moodlet/wish collection. Split broad hooks such as `after_care()` into explicit responsibilities where necessary. |
 
@@ -1218,9 +1218,15 @@ Separate these facts and transitions:
 | Layer | Meaning |
 | --- | --- |
 | Inner wish | Aiko wants a concrete experience, whether or not she communicates it. |
-| Wish-related Moodlet | Having the active wish can already produce an emotional impression, such as anticipation, curiosity or longing. Exact qualifying types, contributions and duration are the next discussion, not yet approved values. |
 | Wish expression | A context-dependent communication decision, governed by wellbeing, friendship/trust and the current interaction. Speaking does not create a second wish. |
-| Wish fulfillment | The desired activity actually occurs under its own completion rule. It can create its own fulfillment impression independently of prior expression. |
+| Wish fulfillment | The desired activity actually occurs under its own completion rule within the wish period, independently of prior expression. |
+| Fulfillment Moodlet | The defined emotional after-effect is created only after that qualifying fulfillment, not from having, displaying or expressing the wish. |
+
+The wish itself grants no anticipation/longing Moodlet, numeric mood modifier
+or relationship reward. A wish describes "I want to do X"; completing X within
+the wish period is the trigger for the defined positive impression. This applies
+equally to unspoken and spoken wishes. No preparatory Moodlet is replaced or
+rewarded again at completion, because none is created by the wish's existence.
 
 Keep one canonical wish record with its communication status/evidence rather
 than separate mutable inner and spoken wish collections. `PetState`/`PetValues`
@@ -1247,9 +1253,9 @@ The current checkout now supports RPS, Blackjack and Tic-Tac-Toe, and Plaudern,
 API Single/Two Parts and facts. See [minigames](MINIGAME_IMPLEMENTATION_PLAN.md)
 and [social content](SOCIAL_CONTENT.md). This clarification therefore supersedes
 the earlier food-only future-activity assumption. Capability/online-source
-availability remains distinct from social trust. Wish-specific emotional effects
-and completion rules for those activities still require discussion. Preserve
-API-only entertainment, opt-in and source ownership; neither unavailable API
+availability remains distinct from social trust. Wish-specific fulfillment
+Moodlets and completion rules for those activities still require discussion.
+Preserve API-only entertainment, opt-in and source ownership; neither unavailable API
 content nor an unplayed UI selection proves an ignored or fulfilled wish.
 
 ##### Recorded proposal: food wishes and fulfillment, 2026-10-19
@@ -1380,9 +1386,9 @@ These impressions alone must not block needed care. Aiko can accept help while
 still emotionally affected; improving needs and recovering emotionally have
 distinct timing and implications.
 
-Further discussion: balance positive and negative impressions, define which
-inner wishes create Moodlets and when they are expressed, then settle the
-overall emotional-state vocabulary/selection from numeric mood, active emotional
+Further discussion: balance positive and negative impressions, define the
+fulfillment Moodlets for each wish type and when wishes are expressed, then
+settle the overall emotional-state vocabulary/selection from numeric mood, active emotional
 impressions and relevant context. Physical need labels, sleep state, immediate
 reactions and long-term friendship remain distinct from that interpretation.
 
