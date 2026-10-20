@@ -13,7 +13,9 @@
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
 > supplies typed definitions and JSON catalogues; 5B.2 adds aggregate-owned
-> state and storage. Progression and behavior integration remain for 5B.3 onward.
+> state and storage. 5B.3 delivers Moodlet lifetime/relief and numeric mood
+> composition. Qualifying interaction evidence and later wish/emotion/UI work
+> remain for the following slices.
 
 ## Stage-4 correction delivery, 2026-10-19
 
@@ -357,7 +359,8 @@ The refreshed read-only review on 2026-10-20 confirms that 5A has delivered
 still mixes need/lifecycle facts with emotional labels, and
 `DialogueContext.states` still merges those inputs. The 5B.1 Moodlet/wish
 definitions/catalogue loaders and 5B.2 owned collections/codecs are delivered
-below; progression policies and final emotional interpretation remain pending.
+below. 5B.3 now integrates Moodlet lifetime and numeric mood progression;
+qualifying events and final emotional interpretation remain pending.
 `PetState`/frozen `PetValues`, `SessionTimeProgression`,
 existing World custody and the current application coordinators remain the
 correct owners. The delivered menu/action/placement separation is the baseline
@@ -2595,8 +2598,58 @@ and target-specific helpful-action matching remain later-stage responsibilities.
 26 targeted local cases passed: twelve new pure timeline cases and fourteen
 existing emotional storage cases. Slowest individual test: 0.008 seconds; none
 over ten seconds. Scoped Ruff, strict Mypy and Pyright passed. No GUI, mouse,
-external API, CI or full-suite run. Numeric composition/progression integration
-is the next separate 5B.3 unit.
+external API, CI or full-suite run. This unit was committed and pushed as
+`1e650cc`; numeric integration follows in the next unit.
+
+###### 5B.3 completion: numeric composition and existing time-path integration
+
+`calculate_moodlet_contributions()` applies per-family strengths, game/social
+and poor-care group caps, then separate common +20/-30 limits. It retains all
+active emotional evidence. `calculate_mood_target()` composes those signed
+contributions with the existing need-derived target and reapplies the final
+need-deficit ceiling and 0-100 clamp. Existing timed decline/recovery rates
+remain the sole adjustment of actual mood; no instant mood or friendship award.
+
+The existing `calculate_pet_progression()` loop now returns the owned Moodlet
+state alongside needs/mood/food/relationship progress. `PetState` commits the
+result in its existing single update. The numerical need update is factored
+once for evaluation at shorter boundaries, not duplicated in another integrator.
+Intervals split at Moodlet tier/expiry boundaries, stable recovery qualification
+and need crossings of forty. Each preceding interval uses its previous emotional
+effect; a later expiry is not retroactively applied to the whole interval.
+Remaining stage time and recovery qualification stay on `lived_seconds`.
+
+Both restoration paths explicitly mark reconstructed time unobserved, including
+a short closed interval inside the ordinary observation-freshness tail. That
+ages a previously observed withholding after-effect without inventing continued
+provocation. SessionTimeProgression retains its paired World/Pet/memory owner;
+no offline action player, extra timer or separate simulation is added. Live
+intervals retain the existing observation boundaries. Storage still only decodes;
+application/domain time advancement consumes the interval once.
+
+Targeted verification covered 111 distinct local cases across: twelve pure
+Moodlet timelines, ten composition/integration cases, fourteen emotional saves,
+eight need/mood balance, ten domain transitions, ten pet lifecycle, eight elapsed
+persistence, eight offline progression, sixteen sleep priorities, eight joint
+consumption/rollback and seven session restoration cases. Selected cases were
+rerun only after relevant fixes. Scoped Ruff, strict Mypy and Pyright passed.
+The slowest case was the existing long-absence/backward-clock scenario at 5.332
+seconds; none exceeded ten seconds. A full-day scenario with all eighteen
+families took 0.314 seconds and retained only the still-unrecovered poor-care
+impressions. The existing full-week numeric scenario took 1.403 seconds.
+
+Updated the older exact save-key assertion to include the already delivered
+5B.2 optional Moodlet/wish sections, preserving all old field assertions. The
+restart comparison respects the existing four-decimal numeric save rounding
+while checking exact elapsed time and emotional state. No GUI windows, mouse,
+external API or GitHub CI; no full-suite run. All saves are temporary/injected.
+
+5B.3 is complete. Qualifying direct experiences, cause-specific evidence and
+completed helpful-action matching remain 5B.4; poor-care trigger/exposure
+accounting remains 5B.5. Wishes and final emotional labels follow their own
+slices. The pure trigger/relief APIs require already-qualified semantic facts
+at an already-advanced pet endpoint; they do not independently detect clicks,
+intake, play, speech, refusal or user responsibility.
 
 #### 5C. Connect status, expression and interaction decisions
 

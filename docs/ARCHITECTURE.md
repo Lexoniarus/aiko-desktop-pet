@@ -183,7 +183,17 @@ creates emotional evidence. Wish IDs and per-area pacing survive removed wishes;
 round progress is bounded to the objective and does not become a second game
 session/score owner. Friendship rewards retain their existing history owner.
 
-State/storage are now connected; automatic creation, progression, relief,
+`pet/moodlets.py` now owns pure tier ageing, bounded reinforcement, resolution
+and per-level relief. Definitions are supplied by the canonical catalogue;
+shared coefficients remain in balance JSON. `pet/mood.py` composes the capped
+contributions with need-based mood, and `pet/progression.py` splits its existing
+numeric steps at emotional/recovery boundaries. Its frozen result includes
+Moodlet state, committed once by PetState with the existing elapsed progress.
+Reconstructed time is explicitly unobserved on both restoration paths, so it
+ages after-effects without inventing continued user provocation. No additional
+clock, replay loop, mutable manager or numeric mood writer is introduced.
+
+Actual interaction/exposure triggers, semantic helpful-action matching, wish
 fulfillment and overall emotional interpretation remain for later stages.
 
 ## Application layer

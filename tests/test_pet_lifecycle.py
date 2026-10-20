@@ -15,6 +15,7 @@ from aiko_pet.pet.lifecycle import (
 from aiko_pet.pet.lifecycle import (
     MAX_LIVE_EFFORT_SECONDS as POLICY_LIVE_WINDOW,
 )
+from aiko_pet.pet.moodlets import MoodletState
 from aiko_pet.pet.progression import calculate_pet_progression
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
@@ -30,6 +31,8 @@ class Needs:
     affection: float = 75.0
     fun: float = 75.0
     food: FoodState = field(default_factory=FoodState)
+    moodlets: MoodletState = MoodletState()
+    lived_seconds: float = 0.0
 
 
 def local_stamp(hour: int = 12, minute: int = 0) -> float:
@@ -69,13 +72,14 @@ class PetProgressionTests(unittest.TestCase):
 
 
 class PetTimelineTests(unittest.TestCase):
-    def test_save_keys_still_match_original_schema(self) -> None:
+    def test_save_keys_preserve_legacy_fields_and_versioned_extensions(self) -> None:
         expected = {
             "satiety", "mood", "energy", "social", "affection", "friendship",
             "friendship_day", "friendship_gained_today", "care_types_today",
             "care_last_rewards", "sleeping", "updated_at", "meals_date",
             "meals_today", "sleep_origin", "auto_sleep_night", "nap_until",
             "auto_nap_day", "food", "fun", "time", "relationship", "sleep_episode",
+            "moodlets", "wishes",
         }
         self.assertEqual(set(encode_pet_state(PetState())), expected)
 

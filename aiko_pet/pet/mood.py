@@ -1,4 +1,4 @@
-"""Need-derived mood target and real-time response, without feedback loops."""
+"""Need and Moodlet mood composition and timed response, without feedback loops."""
 
 from __future__ import annotations
 
@@ -6,6 +6,7 @@ import math
 from dataclasses import dataclass
 
 from .balance import BALANCE
+from .moodlets import MoodletContributions
 from .value_rules import clamp_need_value
 
 
@@ -82,6 +83,19 @@ def calculate_need_mood_target(factors: NeedMoodFactors) -> float:
         impact.deduction for impact in impacts
     )
     return max(0.0, min(target, *(impact.target_limit for impact in impacts)))
+
+
+def calculate_mood_target(
+    factors: NeedMoodFactors,
+    contributions: MoodletContributions = MoodletContributions(),
+) -> float:
+    """Compose capped emotional effects, retaining the final need-deficit ceiling."""
+    target = calculate_need_mood_target(factors)
+    if contributions.positive_points == 0 and contributions.negative_points == 0:
+        return target
+    target += contributions.positive_points + contributions.negative_points
+    return max(0, min(100, target, *(need_mood_factors(v).target_limit
+                                   for v in factors.needs)))
 
 
 def advance_mood(

@@ -101,7 +101,7 @@ class PetSessionRestorer:
             else:
                 loaded.state.advance(
                     now, auto_routine=loaded.settings.auto_routine,
-                    elapsed_seconds=elapsed, sleep_context=context,
+                    elapsed_seconds=elapsed, sleep_context=context, observed=False,
                 )
         loaded.state.anchor_live_session(now)
         return RestoredPetSession(

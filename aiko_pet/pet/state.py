@@ -271,10 +271,12 @@ class PetState:
         hours: float,
         effort: float | None = None,
         food_activity: FoodActivity | None = None,
+        *, observed: bool = True,
     ) -> None:
         """Commit the pure policy's immutable result as one aggregate update."""
         progress = calculate_pet_progression(
             self, hours, effort, food_activity=food_activity,
+            observed=observed,
             relationship=FriendshipProgress(
                 self.friendship, self.friendship_history, self.lived_seconds,
             ),
@@ -286,6 +288,7 @@ class PetState:
             satiety=needs.satiety, mood=progress.mood, energy=needs.energy,
             social=needs.social, affection=needs.affection,
             food=progress.food, fun=needs.fun,
+            moodlets=progress.moodlets,
             friendship=relationship.points, relationship=relationship.history,
             lived_seconds=relationship.elapsed,
             sleep_episode=(replace(
@@ -333,6 +336,7 @@ class PetState:
         elapsed_seconds: float | None = None,
         food_activity: FoodActivity | None = None,
         sleep_context: SleepContext | None = None,
+        observed: bool = True,
     ) -> None:
         """Execute all elapsed time; only recent observations affect its tail."""
         steps = plan_pet_time(
@@ -351,6 +355,8 @@ class PetState:
         )
         wall = now - steps.elapsed_seconds
         for step in steps:
+            if not observed:
+                step = replace(step, observed=False)
             wall += step.hours * 3600
             self._apply_time_step(
                 step, now=wall, auto_routine=auto_routine,
@@ -382,7 +388,8 @@ class PetState:
                 step.context, automatic=auto_routine,
                 sleep_context=sleep_context.earlier(step.hours * 3600),
             )
-        self._advance_progression(step.hours, step.effort, step.food_activity)
+        self._advance_progression(step.hours, step.effort, step.food_activity,
+                                  observed=step.observed)
         self._change(updated_at=now)
 
     def _update_sleep_endpoint(

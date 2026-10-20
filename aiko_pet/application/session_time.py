@@ -62,7 +62,8 @@ class SessionTimeProgression:
             )
             wall += step.hours * 3600
             state.advance_time_step(
-                step, now=wall, auto_routine=inputs.auto_routine,
+                replace(step, observed=observed), now=wall,
+                auto_routine=inputs.auto_routine,
                 sleep_context=(context.earlier(max(0, inputs.wall_time - wall))
                                if observed else replace(context.unobserved(),
                                                         blocked=held)),

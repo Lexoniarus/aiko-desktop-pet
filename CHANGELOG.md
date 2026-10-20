@@ -8,18 +8,23 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Add pure Moodlet lifetime, bounded stacking/refresh and per-level relief rules.
+  Compose capped positive/negative contributions with need-based mood through
+  the existing progression path, splitting at expiry and recovery boundaries.
+  Preserve timed mood response, critical-need ceilings and unobserved closed-time
+  ageing. Qualifying interaction/wish triggers remain later work.
+
 - Persist immutable Moodlet episodes and inner wishes in the existing PetValues
   checkpoint and version-one save, including relief usage, original deadlines,
   expression/pacing evidence and bounded game-wish progress. Preserve corrupt
   optional sections in the existing backup path; legacy saves start empty.
-  Verify joint rollback with populated emotional state. Automatic creation,
-  ageing and fulfillment follow later.
+  Verify joint rollback with populated emotional state. Automatic interaction
+  triggers and wish fulfillment follow later.
 
 - Add typed, immutable definitions and validated JSON catalogues for the 18
   planned Moodlet families and 11 wish forms, shared balance parameters and
   German descriptions. Validate activity and positive fulfillment references.
-  This supplies definitions only; no active Moodlets/wishes or gameplay/save
-  changes.
+  Keep catalogue records separate from aggregate-owned state and transition rules.
 
 - Separate the five care needs from numeric mood and friendship. Give the
   existing pet progression and status-advice contracts explicit names while

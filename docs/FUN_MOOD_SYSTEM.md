@@ -1,13 +1,15 @@
 # Fun and mood — prototype tuning guide
 
-> This guide describes stage 2 on `feature/social-optimization`. The
+> This guide describes the care/fun/mood foundation and delivered stage 5B.3 on
+> `feature/social-optimization`. The
 > [mood](MOOD_BALANCE_PROPOSAL.md) and [need proposals](NEEDS_BALANCE_PROPOSAL.md)
 > retain the agreed design evidence. Progressive friendship now follows the
 > [stage-3 rules](FRIENDSHIP_SYSTEM.md); stage 4 supplies [adaptive sleep](SLEEP_SYSTEM.md).
 > Expression tuning remains a later stage of the
 > [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
 
-Fun is one need; mood summarizes the five needs over time. Several short play
+Fun is one need; mood summarizes the five needs and active Moodlet contributions
+over time. Several short play
 sessions per active day support good care without fixed appointments.
 
 ## Editable JSON settings
@@ -58,13 +60,46 @@ Deductions sum across needs, and the lowest need determines the decline
 ceiling. The need-only target is at most 80. Actual mood approaches the changing
 target without overshoot; recovery is 2 points/minute with no extra delay.
 Care, food, repeat food and completed games never change mood instantly.
-Mood has no feedback effect on needs or rewards; Moodlets remain deferred.
+Mood has no feedback effect on needs or rewards. Stage 5B.3 now composes existing
+Moodlets through the same timed response; automatic qualifying triggers follow
+in later slices of the implementation plan.
 
 `pet/progression.py` is the single pure numeric integration owner. It calls
 food/fun/mood policies in chronological intervals of at most 15 seconds, then
 returns frozen `PetProgress`. Only `PetState` applies that result to its
 existing frozen `PetValues`. The time plan still owns observation and routine
 boundaries; this calculation reads no clocks and introduces no second state.
+
+## Moodlet composition and elapsed time
+
+`calculate_moodlet_contributions()` reads each active family's current total
+level contribution. Apply game-wish +15, social-wish +15 and poor-care -15 group
+limits first, then separately cap all positive effects at +20 and all negative
+effects at -30. Combine those effects with the need-derived target, clamp to
+0-100 and retain the strictest need ceiling. A zero need still limits the final
+target to thirty. A numeric cap does not remove or weaken emotional evidence.
+
+The pure rules in `pet/moodlets.py` provide 3-2-1 expiry, bounded refresh/stacking
+and per-episode relief usage. Negative poking/closeness relief still requires
+five minutes of quiet. Existing poor-care impressions require thirty stable
+minutes at a need of at least forty before their two-hour recovery stages run;
+a renewed drop pauses the remaining stage and requires stable qualification
+again. One qualified helpful completion shortens only the current eligible tier,
+discarding excess and retaining its used allowance through later escalation.
+Friendship and petting-refusal deadlines are separate effects.
+
+The existing progression loop splits at tier/expiry, recovery qualification and
+need-crossing boundaries. Before a boundary, actual mood still approaches the
+previous target at its ordinary rate. Moodlet time continues through sleep,
+closed time and unknown suspend intervals. Reconstructed time cannot extend an
+observed withholding pause or generate negative user-interaction evidence.
+Both application restoration paths use that same progression owner, including
+short closed intervals; saves do not perform their own simulation.
+
+No direct interaction or wish creates a Moodlet yet: evidence adapters and
+semantic completion matching are later slices. These functions accept qualified
+facts at an already-advanced endpoint; they do not infer acceptance or user blame.
+Overall emotional labels and the VN UI also remain separate pending work.
 
 ## Game-neutral pipeline
 

@@ -117,7 +117,9 @@ Missing legacy sections start empty at the saved elapsed baseline. Invalid or
 future sections are not partially interpreted: other valid pet values survive,
 and StateStore preserves the original file before replacing it through its
 existing atomic-save path. No separate save, clock or emotional score is added.
-Actual episode creation, ageing and emotional effects follow in later stages.
+Stage 5B.3 now advances existing episodes and their numeric mood effects through
+the shared progression path. Qualifying interaction/exposure triggers remain
+later work; decoding itself never changes the stored episode state.
 
 ## Optional wish state
 

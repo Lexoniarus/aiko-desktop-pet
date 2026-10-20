@@ -183,10 +183,46 @@ class MoodletState:
     active: tuple[MoodletEpisode, ...] = ()
 
 
+@dataclass(frozen=True, slots=True)
+class MoodletContributions:
+    """Separately capped signed numeric effects; episodes remain unchanged."""
+
+    positive_points: float = 0.0
+    negative_points: float = 0.0
+
+
+def calculate_moodlet_contributions(
+    state: MoodletState, *, definitions: Mapping[MoodletId, MoodletDefinition],
+) -> MoodletContributions:
+    if not state.active:
+        return MoodletContributions()
+    groups: dict[MoodletGroup, float] = {}
+    for episode in state.active:
+        definition = definitions[episode.definition_id]
+        groups[definition.group] = (groups.get(definition.group, 0)
+                                    + definition.level_points[episode.level - 1])
+    for group, field in (
+        (MoodletGroup.GAME_WISH, "game_wish_cap_points"),
+        (MoodletGroup.SOCIAL_WISH, "social_wish_cap_points"),
+        (MoodletGroup.POOR_CARE, "poor_care_cap_points"),
+    ):
+        value = groups.get(group, 0)
+        limit = BALANCE.number("moodlets", field)
+        groups[group] = max(-limit, min(limit, value))
+    return MoodletContributions(
+        min(BALANCE.number("moodlets", "positive_cap_points"),
+            sum(max(0, value) for value in groups.values())),
+        max(-BALANCE.number("moodlets", "negative_cap_points"),
+            sum(min(0, value) for value in groups.values())),
+    )
+
+
 def _age_episode(
     episode: MoodletEpisode, seconds: float, definition: MoodletDefinition,
 ) -> MoodletEpisode | None:
     """At most three stages; long gaps never create an elapsed-time replay."""
+    if seconds == 0 and episode.remaining_seconds > 0:
+        return episode
     level, remaining = episode.level, episode.remaining_seconds
     while seconds >= remaining:
         seconds -= remaining
@@ -210,6 +246,8 @@ def _recover_episode(
     threshold = BALANCE.number("moodlets", "recovery_need_threshold")
     end = elapsed + seconds
     if low < threshold and high < threshold:
+        if episode.decay_paused and episode.recovery_since is None:
+            return episode
         return replace(episode, decay_paused=True, recovery_since=None)
     healthy_start, healthy_end = elapsed, end
     if low < threshold <= high:
@@ -252,11 +290,13 @@ def advance_moodlets(
                                       seconds=seconds, before=before, after=after)
         else:
             paused = episode.decay_paused and observed
-            result = _age_episode(replace(episode, decay_paused=paused),
-                                  0 if paused else seconds, definition)
+            current = (episode if paused == episode.decay_paused
+                       else replace(episode, decay_paused=paused))
+            result = _age_episode(current, 0 if paused else seconds, definition)
         if result is not None:
             active.append(result)
-    return replace(state, active=tuple(active))
+    values = tuple(active)
+    return state if values == state.active else replace(state, active=values)
 
 
 def next_moodlet_boundary(
