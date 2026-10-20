@@ -298,11 +298,87 @@ Extend existing owners rather than introducing parallel services or stores:
 | Click admission and annoyance escalation | Existing desktop/application input path and mind click policy |
 
 Each stage must audit obsolete callers and overlapping calculation paths,
-preserve import/dependency and checkpoint contracts, and pass the full test
-suite, Ruff, strict Mypy and Pyright before its implementation commit. Record
-the actual checks and remaining Windows acceptance separately. Commit and push
-each completed stage independently; do not mix later unfinished runtime work
-into an earlier stage's commit.
+preserve import/dependency and checkpoint contracts, and pass focused tests and
+static checks appropriate to the changed contract before its implementation
+commit. The owner explicitly requests small commits and targeted checks during
+the refactor; the complete local suite and repository-wide static gates belong
+to the final integrated candidate, not every intermediate commit. Record the
+actual checks and remaining Windows acceptance separately. Commit and push each
+coherent completed unit independently; do not mix unfinished later work into it.
+
+### Remaining refactor: commit and verification sequence, 2026-10-20
+
+This owner-requested workflow supersedes earlier instructions to run the full
+suite before each stage commit. Stages 5A-5C describe responsibilities, not three
+large commits. Keep each migration reviewable and leave one canonical owner
+after each completed unit; do not retain a parallel implementation to make an
+intermediate commit appear complete.
+
+| Order | Coherent commit scope | Targeted verification |
+| --- | --- | --- |
+| 0 | Finish and separately commit the already ongoing object-investigation/test corrections and approved design documentation. Preserve their authors' work and establish the actual starting revision before overlapping edits. | Only the affected object/World contracts and the corrected failing cases; record their real outcome rather than inheriting an older green result. |
+| 1 | Structural foundation: all five needs in `needs.py`; rename/move existing numeric progression and status hints with their callers. Preserve current numerical behavior and single clock/aggregate ownership. | Existing need, mood, progression, save/checkpoint and affected import-boundary tests; no new test for a mere rename. |
+| 2 | Typed Moodlet/wish catalogue contracts, immutable owned values and focused codecs integrated with `PetValues`/the existing pet save. Settle the material product decisions below before encoding their values or semantics. | Catalogue references/validation, legacy-save defaults, bounded histories, elapsed deadlines and existing checkpoint/rollback cases. |
+| 3 | Qualifying interaction evidence and transitions, in small groups: direct negative experiences, poor-care after-effects, then wish creation/disclosure/actual fulfillment and positive impressions. Keep each event and its exactly-once application in one coherent change. | Existing care/contact/object/game/social owners and the relevant policy/transaction cases; deterministic time and actual semantic completion facts. |
+| 4 | Numeric Moodlet composition, elapsed expiry/relief and final emotional interpretation; migrate dialogue context/schema and their consumers to the distinct typed layers together. This completes the relevant vocabulary work from 5A. | Focused cap/stacking/recovery timelines, selected closed-time boundaries, catalogue filters and status/dialogue projections; preserve authored wording unless explicitly required. |
+| 5 | Export/package the approved artwork, root-local image ownership and shared VN skin/control rendering. | Required resource/mapping validation and focused image-lifecycle/export checks; do not regenerate approved sources or introduce preview HTML as runtime data. |
+| 6 | Main status window, Moodlet strip, wish row, embedded selectors and details, split further by existing view ownership where useful. Preserve the delivered menu/action/placement separation. | Read projections, action ports, selector lifecycle, single window/capture ownership and focused rendering contracts. |
+| 7 | Matching settings navigation and separate Credits view, preserving existing preference commands and accepted-content metadata. Game-screen restyling remains separate pending visual approval. | Existing settings actions and source projections, absent/available metadata, local navigation and image cleanup; no new source history. |
+| 8 | Integrated completion, final OOP review and final full local suite/static gates. | The complete final candidate, with test durations and any remaining native acceptance explicitly reported. |
+
+During implementation, select the smallest existing test owners that establish
+the changed behavior and its actual callers. Add a test only for a distinct
+contract/regression that existing coverage cannot establish. Remove or merge a
+redundant test only after identifying the surviving owner and coverage; do not
+weaken a semantic assertion to make the refactor green. Track per-test runtime
+in the selected batches, not only the batch total. Investigate each test over
+ten seconds: explain the cause, then split unrelated scenarios, inject time or
+mock slow external boundaries where appropriate. Keep domain calculations real
+when those calculations are what the test is meant to verify. This review runs
+alongside the small commits rather than being deferred to a final test explosion.
+
+At completion, review package dependencies, class/function names, state and
+timer ownership, obsolete callers, duplicated calculations, JSON-versus-policy
+boundaries, transaction/codec consistency and passive UI contracts. Correct
+findings in focused commits, then run the complete suite and full Ruff, strict
+Mypy and Pyright gates on the final candidate. Use the established isolated
+local environment for GUI-dependent cases; no test windows or mouse control on
+the working desktop and no GitHub CI. If final checks uncover a defect, diagnose
+and fix it with focused checks before repeating the affected final gate. Record
+individual slow tests and their disposition, not merely a total pass count.
+No merge or additional desktop acceptance is implied.
+
+#### Readiness review against the current checkout and reference bundle
+
+Read-only review on 2026-10-20 confirms that `NeedLevels`/`NeedProgress` still
+live in `need_decay.py`, `PetMind.emotion()` still mixes need/lifecycle facts
+with emotional labels, and `DialogueContext.states` still merges those inputs.
+The proposed new modules are implementation targets, not duplicate files
+already introduced. `PetState`/frozen `PetValues`, `SessionTimeProgression`,
+existing World custody and the current application coordinators remain the
+correct owners. The delivered menu/action/placement separation is the baseline
+to retain, including the independent `place_item` capability.
+
+The durable visual companion is now present outside the Git checkout at
+`E:\aiko-desktop-pet\design-previews\vn-ui-2026-10-20\index.html`.
+Its manifest covers 229 files; this review verified all file sizes/hashes and
+found no missing local links in its six HTML pages. It includes 46 icon masters
+and eight control/panel masters, covering 18 Moodlet families and 11 wish forms.
+This establishes local reference availability, not runtime or rendered/native
+acceptance. Main menu and settings/Credits are recorded as owner-approved;
+gameplay surfaces remain draft references awaiting visual approval. The full
+interactive main menu supersedes the earlier image boards. The bundle is a
+visual snapshot: its copied documentation does not supersede the maintained
+plan and design documents in the checkout. It is not a runtime dependency.
+
+The structural foundation can begin once the ongoing correction baseline is
+secured. The four material product decisions listed under "Documented inventory
+and decisions before implementation" remain gates for their affected behavior,
+not a reason to reopen every hypothetical edge case or delay unrelated naming
+work. In particular, do not silently invent food/game disclosure thresholds,
+final emotion mappings, renewed relief allowances or additional friendship
+bonuses. Resolve each relevant decision before its policy/catalogue commit.
+This review ran no application tests and changed no runtime behavior.
 
 ## Delivery order
 
@@ -884,6 +960,7 @@ object goal in `ObjectIntentions.goal` remains distinct from general wishes.
 | `ui/common/icon_images.py` (new) | One root-local cache/lifecycle for prepared UI symbol images; no domain decisions |
 | `ui/common/skin.py` (extend) | Shared VN colors, font/control appearance and use of the shared image owner |
 | `ui/windows/action_toolbar.py`, `toolbar_details.py`, `hover_ui.py` (refactor) | Compose the approved main-menu layout and retain existing window, visibility, pin and detail ownership |
+| `ui/windows/settings_window.py` (refactor), `ui/windows/credits_panel.py` (new embedded view) | Apply the approved settings navigation and Credits placement in the existing settings-window owner; consume existing preference commands and detached accepted-content metadata, with no additional native window, settings store or source-history owner |
 
 Keep Python names aligned with the separated layers: `NeedMoodFactors` for
 need-only mood inputs; `calculate_need_mood_target()` and composed
@@ -929,17 +1006,19 @@ hard-coded icon catalogue or food/game ID list should become another authority.
 
 ###### Integrated VN UI scope
 
-Use [the approved VN direction](UI_VN_DESIGN.md) and its three preserved
-reference boards as the visual target for stage 5C, alongside the domain/read
+Use [the approved VN direction](UI_VN_DESIGN.md) and the
+[full interactive main-menu reference](../assets/ui-vn/v1/main-menu/preview.html),
+visually approved by the owner on 2026-10-20, as the visual target for stage 5C.
+The three earlier boards remain supporting history. This accompanies the domain/read
 model work. The [prepared source pack](../assets/ui-vn/v1/README.md) now includes
 46 PNG sources with [coverage for all 18 Moodlet families and 11 wish forms](../assets/ui-vn/v1/MOODLETS_AND_WISHES.md).
 This is source coverage, not runtime integration or native visual acceptance.
 
 The same main hover/status window presents the overall mood/emotion summary,
 Moodlet strip, dedicated wish panel, six left-side need/relationship readouts,
-right-side actions/embedded selectors and expandable details. The wish panel
-extends the concept, which previously illustrated Moodlets but no dedicated
-wish area. Keep wishes distinct from fulfilled impressions and preserve their
+right-side actions/embedded selectors and expandable details. The approved full
+concept places the wish row between Moodlets and care columns and uses one
+footer keep-open control. Keep wishes distinct from fulfilled impressions and preserve their
 visibility when navigating selectors. Views only display supplied state and
 invoke existing action ports; no timers, wish selection, expiry or rewards in
 widgets. Refactor existing selector owners into embedded views rather than
@@ -951,6 +1030,13 @@ prerequisites for Moodlet/wish state. Normalize/export the prepared UI source
 icons deliberately for native Tk sizes, preserving source masters and image
 cleanup ownership. Required validation at implementation time remains local
 and isolated; do not introduce a CI run or uncontrolled desktop test session.
+
+Also integrate the subsequently approved settings/Credits direction in that
+same UI delivery, following the small commit sequence above. Move the current
+social source/provider/API-item presentation into the separate Credits view
+within settings. Read the existing `DesktopSocialRuntime.snapshot()` metadata
+through a detached projection; preserve absent values and opt-in behavior.
+No new API request, persisted attribution history or content owner is required.
 
 `PetState` remains the single mutable persisted pet aggregate. Active Moodlets,
 wishes and required bounded histories belong in its frozen `PetValues`, with
@@ -2288,8 +2374,9 @@ World/object-memory persistence tests. Add focused new test owners where the
 new behavior does not fit an existing responsibility. Keep architecture/import,
 resource validation and UI projection coverage intact.
 
-For a subsequently authorized implementation, run appropriate focused checks,
-the complete local suite and the static gates in
+During implementation, use the focused checks in the small-commit sequence
+above. Once the complete refactor and final OOP review are finished, run the
+complete local suite and repository-wide static gates in
 [Contributing](../CONTRIBUTING.md#development-workflow). Retain
 the owner's restrictions: no GitHub CI execution, visible test windows or mouse
 control on the working desktop. Use injected time, isolated saves and focused
