@@ -217,9 +217,11 @@ does not imply emotional offense or sleepy clicks.
 ## Verification
 
 Stage 5B.6 adds inner wishes without changing need, numeric mood, Moodlet or
-friendship values merely for wanting or speaking. Up to three wishes coexist,
-one per area, for four real hours. Creation is live and awake, spaced sixty
-minutes globally and ninety minutes per area. Low mood/trust does not suppress
+friendship values merely for wanting or speaking. Three wishes are the normal
+inner stock, one per area, for four real hours each. Awake live evaluation fills
+free slots at startup/return, or after the saved twelve-minute vacancy pause.
+Further retirements do not postpone that pause. Expiry uses the original real-time
+deadline and closed time never generates wishes. Low mood/trust does not suppress
 inner wishes. Disclosure needs level three, mood fifty, an available activity
 and a free speaking opportunity; urgent care retains priority. Only actual
 text presentation counts, once per wish and thirty minutes apart. Original

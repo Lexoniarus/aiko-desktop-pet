@@ -178,20 +178,20 @@ will resolve expiry later. Do not infer speech from a queued/displayed status.
 Game wish progress stores only the objective's bounded round identities and
 Aiko's win/loss counts. Shared play includes a session token to distinguish its
 single-session requirement. Normal decks/boards/session scores remain transient.
-Creation anchors for at most four areas and the last actual wish expression
-survive ended wishes; the global creation anchor is derived from those entries.
+Creation evidence for at most four areas and the last actual wish expression
+survive ended wishes. The optional elapsed `refill_not_before` deadline also
+survives retirement and restart; legacy v1 records without it remain valid.
 The next instance ID is retained when the active collection becomes empty.
 These values support later duplicate-safe fulfillment; no reward is generated
 by decoding, and no parallel relationship accounting is stored in wishes.
 
-Stage 5B.6 now uses these existing fields for live creation and actual speech.
-The first awake live evaluation may create one wish; subsequent creation obeys
-the saved sixty-minute global and ninety-minute area intervals. The three-slot,
-one-per-area limits apply before allocation. No new save version, first-start
-timer or random backlog is introduced. All time paths remove a wish at its
-original four-hour deadline without a penalty, retaining its retired identity
-and pacing anchors. A restart can create one current wish only after live
-evaluation resumes, never a sequence attributed to the closed interval.
+Awake live evaluation fills the normal three-wish stock, at most one per area.
+Retirement starts a twelve-minute refill pause; later vacancies do not postpone
+it. Expiry schedules from its original deadline, including closed time. No new
+save version, independent timer or retrospective wish sequence is introduced.
+All time paths remove a wish at its original four-hour deadline without a penalty,
+retaining its retired identity and creation evidence. A restart fills only current
+free slots after live evaluation resumes and any saved refill deadline is due.
 
 Only an actually presented wish text records `expressed_at` and the shared
 thirty-minute expression anchor. Merely selecting text, showing status or

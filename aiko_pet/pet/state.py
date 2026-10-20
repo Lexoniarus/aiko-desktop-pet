@@ -59,10 +59,10 @@ from .wishes import (
     WishResolution,
     WishState,
     acknowledge_wish_expression,
-    create_wish,
     expire_wishes,
     fulfill_activity_wish,
     progress_game_wish,
+    replenish_wishes,
 )
 
 
@@ -333,8 +333,8 @@ class PetState:
         )
 
     def evaluate_wishes(self, context: WishContext, *, rng: random.Random) -> None:
-        """Admit one current live desire; time reconstruction never calls this."""
-        self._change(wishes=create_wish(
+        """Replenish current live desires; time reconstruction never calls this."""
+        self._change(wishes=replenish_wishes(
             self.wishes, elapsed=self.lived_seconds, sleeping=self.sleeping,
             context=context, definitions=WISH_CATALOG.definitions, rng=rng,
         ))

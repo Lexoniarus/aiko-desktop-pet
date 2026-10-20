@@ -188,6 +188,9 @@ class WishPersistenceTests(unittest.TestCase):
         self.assertEqual(loaded, retired)
         self.assertEqual(loaded.next_instance_id, 6)
         self.assertEqual(loaded.last_created_at, 300)
+        legacy = encode_wishes(wish_state())
+        legacy.pop("refill_not_before")
+        self.assertIsNone(decode_wishes(legacy, ELAPSED).refill_not_before)
         self.assertEqual(loaded.last_expressed_at, 900)
         self.assertEqual(loaded.active, ())
         raw = encode_wishes(retired)
@@ -215,6 +218,8 @@ class WishPersistenceTests(unittest.TestCase):
             ("last_created_by_area", {"sleep": 100}),
             ("last_created_by_area", {"food": 1001}),
             ("last_expressed_at", None), ("last_expressed_at", float("nan")),
+            ("refill_not_before", -1), ("refill_not_before", True),
+            ("refill_not_before", float("inf")), ("refill_not_before", 1721),
         ):
             raw = copy.deepcopy(original)
             raw[field] = bad

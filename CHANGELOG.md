@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Keep three normal inner wishes instead of adding only one per hour. Refill
+  available areas after one saved twelve-minute vacancy pause, preserving
+  original expiry, independent speech, exactly-once fulfillment and shared
+  friendship caps. Load older wish records without resetting their active wishes.
+
 - Record the care/Moodlet/wish refactor's intermediate local OOP review and full
   regression run for baseline `b72ed21`: 1,599 successful tests and eight Windows-only
   skips in 95.133 seconds, none over ten seconds; repository-wide pinned static

@@ -120,8 +120,7 @@ class WishCatalogTests(unittest.TestCase):
         self.assertEqual(BALANCE.integer("wishes", "maximum_active"), 3)
         self.assertEqual(BALANCE.integer("wishes", "maximum_per_area"), 1)
         self.assertEqual(BALANCE.integer("wishes", "lifetime_seconds"), 14400)
-        self.assertEqual(BALANCE.integer("wishes", "creation_interval_seconds"), 3600)
-        self.assertEqual(BALANCE.integer("wishes", "same_area_interval_seconds"), 5400)
+        self.assertEqual(BALANCE.integer("wishes", "refill_delay_seconds"), 720)
         self.assertEqual(BALANCE.integer("wishes", "disclosure_interval_seconds"), 1800)
         self.assertEqual(BALANCE.integer("wishes", "disclosure_friendship_level"), 3)
         self.assertEqual(BALANCE.number("wishes", "disclosure_mood_threshold"), 50)
@@ -131,7 +130,7 @@ class WishCatalogTests(unittest.TestCase):
             ("maximum_active", 5), ("maximum_per_area", 2),
             ("disclosure_friendship_level", 11), ("disclosure_mood_threshold", 101),
             ("friendship_bonus_points", 1), ("friendship_bonus_points", True),
-            ("creation_interval_seconds", 6000), ("same_area_interval_seconds", 15000),
+            ("refill_delay_seconds", 15000),
             ("lifetime_seconds", 0),
         ):
             raw = copy.deepcopy(original)

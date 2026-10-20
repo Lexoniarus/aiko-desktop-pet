@@ -166,7 +166,7 @@ class WishExpressionTests(unittest.TestCase):
         )
         self.settings.spontaneous_talk = False
         self.attention.evaluate_wishes()
-        self.assertEqual(len(self.state.wishes.active), 1)
+        self.assertEqual(len(self.state.wishes.active), 3)
         self.assertFalse(self.select().due)
 
     def test_all_eleven_forms_render_actual_targets_and_goal_scope(self):

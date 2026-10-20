@@ -39,7 +39,8 @@ def _events(
     # Include wishes carried into the window, not only newly created wishes.
     limit = 65 if penalties else (
         65 + math.ceil(BALANCE.number("friendship", "history_window_seconds")
-                       / BALANCE.number("wishes", "creation_interval_seconds"))
+                       / BALANCE.number("wishes", "refill_delay_seconds"))
+        * BALANCE.integer("wishes", "maximum_active")
         + BALANCE.integer("wishes", "maximum_active")
     )
     if not isinstance(raw, list) or len(raw) > limit:

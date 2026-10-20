@@ -124,8 +124,7 @@ def parse_balance(raw: Any) -> BalanceCatalog:
             or not 1 <= wishes["disclosure_friendship_level"] <= 10
             or wishes["disclosure_mood_threshold"] > 100
             or wishes["friendship_bonus_points"] > relationship["short_cap"]
-            or not wishes["creation_interval_seconds"]
-            <= wishes["same_area_interval_seconds"] <= wishes["lifetime_seconds"]
+            or wishes["refill_delay_seconds"] > wishes["lifetime_seconds"]
             or wishes["disclosure_interval_seconds"] > wishes["lifetime_seconds"]):
         raise ValueError("Invalid wish pacing, disclosure or shared-budget bonus")
     impressions = sections["moodlets"]

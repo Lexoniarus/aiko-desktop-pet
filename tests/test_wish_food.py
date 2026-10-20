@@ -43,12 +43,12 @@ def food_pet(**values):
 class FoodWishTests(unittest.TestCase):
     def test_common_ledger_capacity_includes_wish_credits_and_stays_bounded(self):
         history = FriendshipHistory(0, rewards=tuple(
-            RelationshipEvent(i * 900, "wish" if i % 3 == 0 else "feed", .001)
-            for i in range(92)
+            RelationshipEvent(i * 200, "wish" if i % 3 == 0 else "feed", .001)
+            for i in range(428)
         ))
         raw = encode_friendship(history)
         self.assertEqual(decode_friendship(raw, 86400), history)
-        raw["rewards"].append(dict(at=83000, kind="wish", amount=.001))
+        raw["rewards"].append(dict(at=85500, kind="wish", amount=.001))
         with self.assertRaises(ValueError):
             decode_friendship(raw, 86400)
 

@@ -26,8 +26,9 @@ from aiko_pet.pet.wishes import (
     WishId,
     WishState,
     acknowledge_wish_expression,
-    create_wish,
     expire_wishes,
+    fulfill_activity_wish,
+    replenish_wishes,
     wish_to_express,
 )
 from aiko_pet.world.contracts import WorldSurface
@@ -39,7 +40,7 @@ DEFINITIONS = WISH_CATALOG.definitions
 def create(
     state=WishState(), elapsed=0, context=WishContext(), definitions=DEFINITIONS
 ):
-    return create_wish(
+    return replenish_wishes(
         state,
         elapsed=elapsed,
         sleeping=False,
@@ -133,25 +134,55 @@ class WishLifecycleTests(unittest.TestCase):
 
     def test_first_evaluation_and_area_limits_are_not_need_rewards(self):
         state = create()
-        self.assertEqual(len(state.active), 1)
+        self.assertEqual(len(state.active), 3)
         self.assertEqual(state.active[0].expires_at, 14400)
         self.assertEqual(create(state, 3599), state)
-        state = create(state, 3600)
-        state = create(state, 7200)
         self.assertEqual(len(state.active), 3)
         self.assertEqual(
             len({DEFINITIONS[w.definition_id].area for w in state.active}), 3
         )
         self.assertEqual(create(state, 10800), state)
 
-    def test_removed_wish_preserves_global_and_area_cooldowns_and_identity(self):
+    def test_refill_pause_starts_at_fulfillment_and_survives_reload(self):
         definitions = {WishId.FOOD: DEFINITIONS[WishId.FOOD]}
         state = create(definitions=definitions)
-        state = replace(state, active=())
-        self.assertEqual(create(state, 3600, definitions=definitions), state)
-        later = create(state, 5400, definitions=definitions)
+        state = fulfill_activity_wish(
+            state, WishArea.FOOD, state.active[0].target_id, elapsed=1000,
+            definitions=definitions,
+        ).state
+        self.assertEqual(state.refill_not_before, 1720)
+        pet = PetState(lived_seconds=1000, wishes=state)
+        loaded = decode_pet_state(encode_pet_state(pet), now=1800000000)
+        self.assertEqual(loaded.wishes, state)
+        self.assertEqual(create(loaded.wishes, 1719, definitions=definitions), state)
+        later = create(loaded.wishes, 1720, definitions=definitions)
         self.assertEqual(later.active[0].instance_id, 2)
-        self.assertEqual(later.active[0].created_at, 5400)
+        self.assertEqual(later.active[0].created_at, 1720)
+        self.assertIsNone(later.refill_not_before)
+
+    def test_multiple_vacancies_share_one_pause_and_fresh_identities(self):
+        state = create()
+        for elapsed, wish in zip((100, 200, 300), state.active):
+            state = fulfill_activity_wish(
+                state, DEFINITIONS[wish.definition_id].area, wish.target_id,
+                elapsed=elapsed, definitions=DEFINITIONS,
+            ).state
+        self.assertEqual(state.refill_not_before, 820)
+        self.assertEqual(create(state, 819), state)
+        refilled = create(state, 820)
+        self.assertEqual(len(refilled.active), 3)
+        self.assertEqual({w.instance_id for w in refilled.active}, {4, 5, 6})
+        self.assertEqual(create(refilled, 820), refilled)
+
+    def test_expiry_uses_original_deadline_and_return_fills_only_current_stock(self):
+        state = create()
+        expired = expire_wishes(state, elapsed=14400)
+        self.assertEqual(expired.refill_not_before, 15120)
+        self.assertEqual(create(expired, 15119), expired)
+        returned = create(expired, 72000)
+        self.assertEqual(len(returned.active), 3)
+        self.assertTrue(all(w.created_at == 72000 for w in returned.active))
+        self.assertEqual(returned.next_instance_id, 7)
 
     def test_selection_respects_capability_and_food_variety(self):
         definitions = {WishId.FACT: DEFINITIONS[WishId.FACT]}
@@ -179,10 +210,10 @@ class WishLifecycleTests(unittest.TestCase):
         pet = PetState(updated_at=1800000000, wishes=wishes)
         pet.advance(1800014400, elapsed_seconds=14400, observed=False)
         self.assertEqual(pet.wishes.active, ())
-        self.assertEqual(pet.wishes.next_instance_id, 2)
+        self.assertEqual(pet.wishes.next_instance_id, 4)
         self.assertEqual(pet.wishes.last_created_by_area, wishes.last_created_by_area)
         self.assertFalse(pet.moodlets.active)  # Four hours are not prolonged neglect.
-        sleeping = create_wish(
+        sleeping = replenish_wishes(
             wishes,
             elapsed=14400,
             sleeping=True,
@@ -191,7 +222,7 @@ class WishLifecycleTests(unittest.TestCase):
             rng=random.Random(7),
         )
         self.assertEqual(sleeping.active, ())
-        self.assertEqual(sleeping.next_instance_id, 2)
+        self.assertEqual(sleeping.next_instance_id, 4)
         self.assertEqual(expire_wishes(wishes, elapsed=14399), wishes)
 
     def test_inner_wish_survives_disclosure_thresholds_and_temporary_restrictions(self):
@@ -251,11 +282,11 @@ class WishLifecycleTests(unittest.TestCase):
         loaded.note_wish_expression(2)  # Spacing still applies after load.
         self.assertEqual(loaded.capture_checkpoint(), checkpoint)
 
-    def test_return_creates_one_wish_without_other_effects(self):
+    def test_return_replenishes_three_current_wishes_without_other_effects(self):
         pet = PetState(lived_seconds=72000)
         before = pet.capture_checkpoint()
         pet.evaluate_wishes(WishContext(), rng=random.Random(7))
-        self.assertEqual(len(pet.wishes.active), 1)
+        self.assertEqual(len(pet.wishes.active), 3)
         self.assertEqual(pet.wishes.active[0].created_at, 72000)
         self.assertEqual(
             replace(pet.capture_checkpoint(), wishes=before.wishes), before

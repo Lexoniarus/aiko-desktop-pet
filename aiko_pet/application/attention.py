@@ -94,7 +94,7 @@ class AttentionCoordinator:
         )
 
     def evaluate_wishes(self) -> None:
-        """One live endpoint, including while menus/actions occupy presentation."""
+        """Replenish inner stock at a live endpoint, independent of presentation."""
         self.state.evaluate_wishes(self.wish_context(), rng=self.mind.rng)
 
     def note_wish_text(self, instance_id: int) -> None:

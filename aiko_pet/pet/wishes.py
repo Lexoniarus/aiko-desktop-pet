@@ -85,7 +85,7 @@ class ActiveWish:
 
 @dataclass(frozen=True, slots=True)
 class WishState:
-    """Stable identities and bounded pacing evidence survive removed wishes.
+    """Stable identities, creation evidence and a refill deadline survive retirement.
 
     Removing a fulfilled/ended wish retires its identity; an event for that
     identity cannot find an active wish again after a save/reload. Relationship
@@ -96,6 +96,7 @@ class WishState:
     active: tuple[ActiveWish, ...] = ()
     last_created_by_area: tuple[tuple[WishArea, float], ...] = ()
     last_expressed_at: float | None = None
+    refill_not_before: float | None = None
 
     @property
     def last_created_at(self) -> float | None:
@@ -140,16 +141,24 @@ def fulfill_activity_wish(
                  and w.created_at <= elapsed < w.expires_at), None)
     if wish is None:
         return WishResolution(state)
-    return _retire_wish(state, wish, definitions[wish.definition_id])
+    return _retire_wish(state, wish, definitions[wish.definition_id], elapsed=elapsed)
 
 
 def _retire_wish(
     state: WishState, wish: ActiveWish, fulfilled: WishDefinition | None,
+    *, elapsed: float,
 ) -> WishResolution:
     return WishResolution(replace(
         state, active=tuple(w for w in state.active
                             if w.instance_id != wish.instance_id),
+        refill_not_before=_refill_deadline(state, elapsed),
     ), fulfilled)
+
+
+def _refill_deadline(state: WishState, elapsed: float) -> float:
+    """One vacancy starts a pause; later retirements cannot postpone it."""
+    return (state.refill_not_before if state.refill_not_before is not None else
+            elapsed + BALANCE.integer("wishes", "refill_delay_seconds"))
 
 
 def progress_game_wish(
@@ -169,10 +178,11 @@ def progress_game_wish(
     key = definition.id
     if key == WishId.WIN_ROUND:
         if outcome == "win":
-            return _retire_wish(state, wish, definition)
+            return _retire_wish(state, wish, definition, elapsed=elapsed)
         progress = GameWishProgress((round_id,), 0, int(outcome == "loss"))
     elif key == WishId.AVOID_ROUND_LOSS:
-        return _retire_wish(state, wish, definition if outcome != "loss" else None)
+        return _retire_wish(state, wish, definition if outcome != "loss" else None,
+                            elapsed=elapsed)
     else:
         before = wish.game
         if key == WishId.PLAY_GAME and before.session_id != session_id:
@@ -187,7 +197,8 @@ def progress_game_wish(
                    or key == WishId.WIN_OVERALL and progress.wins > progress.losses
                    or key == WishId.AVOID_OVERALL_LOSS
                    and progress.wins >= progress.losses)
-            return _retire_wish(state, wish, definition if won else None)
+            return _retire_wish(state, wish, definition if won else None,
+                                elapsed=elapsed)
     return WishResolution(replace(state, active=tuple(
         replace(w, game=progress) if w.instance_id == instance_id else w
         for w in state.active
@@ -197,10 +208,14 @@ def progress_game_wish(
 def expire_wishes(state: WishState, *, elapsed: float) -> WishState:
     """Age original deadlines in all time paths; retain identity/pacing evidence."""
     active = tuple(w for w in state.active if elapsed < w.expires_at)
-    return replace(state, active=active) if active != state.active else state
+    if active == state.active:
+        return state
+    first_expiry = min(w.expires_at for w in state.active if elapsed >= w.expires_at)
+    return replace(state, active=active,
+                   refill_not_before=_refill_deadline(state, first_expiry))
 
 
-def create_wish(
+def replenish_wishes(
     state: WishState,
     *,
     elapsed: float,
@@ -209,14 +224,12 @@ def create_wish(
     definitions: Mapping[WishId, WishDefinition],
     rng: random.Random,
 ) -> WishState:
-    """One current live opportunity, not a reconstruction of missed wishes."""
+    """Fill the normal three-slot stock at this awake live endpoint only."""
     state = expire_wishes(state, elapsed=elapsed)
-    last = state.last_created_at
     if (
         sleeping
         or len(state.active) >= BALANCE.integer("wishes", "maximum_active")
-        or last is not None
-        and elapsed - last < BALANCE.integer("wishes", "creation_interval_seconds")
+        or state.refill_not_before is not None and elapsed < state.refill_not_before
     ):
         return state
     occupied = {definitions[w.definition_id].area for w in state.active}
@@ -226,9 +239,6 @@ def create_wish(
         area = definition.area
         if (
             area in occupied
-            or area in anchors
-            and elapsed - anchors[area]
-            < BALANCE.integer("wishes", "same_area_interval_seconds")
             or area == WishArea.AFFECTION
             and context.crowded
             or definition.id in (WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT)
@@ -242,23 +252,25 @@ def create_wish(
         )
         if targets:
             candidates.setdefault(area, []).append((definition, targets))
-    if not candidates:
-        return state
-    area = rng.choice(tuple(candidates))
-    definition, targets = rng.choice(candidates[area])
-    wish = ActiveWish(
-        state.next_instance_id,
-        definition.id,
-        rng.choice(targets),
-        elapsed,
-        elapsed + BALANCE.integer("wishes", "lifetime_seconds"),
-    )
-    anchors[area] = elapsed
+    active = list(state.active)
+    next_id = state.next_instance_id
+    while candidates and len(active) < BALANCE.integer("wishes", "maximum_active"):
+        area = rng.choice(tuple(candidates))
+        definition, targets = rng.choice(candidates.pop(area))
+        if next_id >= 2**63 - 1:
+            raise ValueError("Wish instance allocation exhausted")
+        active.append(ActiveWish(
+            next_id, definition.id, rng.choice(targets), elapsed,
+            elapsed + BALANCE.integer("wishes", "lifetime_seconds"),
+        ))
+        next_id += 1
+        anchors[area] = elapsed
     return replace(
         state,
-        next_instance_id=state.next_instance_id + 1,
-        active=(*state.active, wish),
+        next_instance_id=next_id,
+        active=tuple(active),
         last_created_by_area=tuple((a, anchors[a]) for a in WishArea if a in anchors),
+        refill_not_before=None,
     )
 
 

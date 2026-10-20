@@ -2201,6 +2201,10 @@ when no additional numeric bonus is available.
 
 ##### Recorded proposal: shared wish creation and concurrency, 2026-10-20
 
+The creation-spacing rows below are historical. The owner-approved practical
+correction at the end of this plan replaces them with normal three-wish stock
+and a twelve-minute refill pause; independent expression rules remain valid.
+
 Status: owner-requested design proposal, not implemented. This replaces the
 earlier food-only candidates of one active wish, two new wishes per day and
 six-hour creation spacing. It does not authorize changes to runtime behavior.
@@ -3572,3 +3576,43 @@ mouse control, merge or live user-save test was used.
 This establishes the reviewed baseline. Completed parallel UI refinements and
 the additional native button-input regression are to join the final source
 candidate and integrated validation record.
+
+## Practical acceptance corrections: inner wish stock, 2026-10-20
+
+The owner explicitly approved **three inner wishes as the normal stock**, with
+a **10–15-minute refill pause**. The implemented fixed value is twelve minutes
+(`wishes.refill_delay_seconds = 720`), replacing the old global sixty-minute and
+same-area ninety-minute creation locks. `maximum_active = 3` is the normal target
+as well as the cap; one wish per area, current plausible candidates, original
+four-hour deadlines, separate speech conditions and existing reward caps remain.
+
+`replenish_wishes()` fills free slots at the first awake live endpoint. Retiring
+a wish through fulfillment or game-goal failure starts a single aggregate-owned
+refill deadline; later retirements do not push it back. When ready, the next
+awake live evaluation fills the available areas together. Expiry starts the
+same pause from the earliest expired original deadline, not from application
+restart. Sleep/closed/standby time advances deadlines but creates no wishes;
+return fills only the current stock, never a historical sequence. If current
+capability leaves fewer candidates, keep the valid wishes and fill later when
+an area becomes eligible. Wanting, filling and speaking still grant no reward.
+
+`WishState.refill_not_before` is an optional field in existing wish storage v1.
+Existing records lacking it retain their active IDs, deadlines, progress and
+expression evidence; empty/part-filled legacy stock may replenish immediately.
+The bounded creation anchors remain evidence, not a second generation clock.
+The relationship codec's maximum event count includes three completions per
+refill interval plus carried wishes; actual friendship point caps are unchanged.
+
+Verification uses injected elapsed timestamps and isolated save round-trips:
+three-slot startup/return, exact refill boundary, multiple vacancies without
+delay extension, original-deadline expiry, no offline generation, legacy decoding,
+all fulfillment areas, speech separation and capped rewards. Native Tk/Toplevel
+construction is prohibited in the local test process. The final full-suite
+stage-6 gate remains pending rather than being inherited from the old baseline.
+
+Local verification for this correction: **109 targeted tests passed in 1.233s**;
+the slowest case was **0.310s**, none exceeded ten seconds. These include all
+wish lifecycle/fulfillment areas, expression, storage and passive reads, the
+desktop attention seam, shared friendship policy, resources and public docs.
+Ruff passes repository-wide; strict Mypy passes the changed domain/application/
+codec owners with silent dependency traversal. The full-suite gate is not claimed.

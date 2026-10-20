@@ -184,7 +184,8 @@ Focused `infrastructure/moodlet_codec.py` and `wish_codec.py` extend the existin
 `pet_codec.py` entry point and outer version-one atomic save. Checkpoint/restore
 includes both collections in the existing Pet/World/memory transaction.
 Elapsed timestamps refer to `lived_seconds`; loading never advances them or
-creates emotional evidence. Wish IDs and per-area pacing survive removed wishes;
+creates emotional evidence. Wish IDs, creation evidence and refill deadlines survive
+removed wishes;
 round progress is bounded to the objective and does not become a second game
 session/score owner. Friendship rewards retain their existing history owner.
 
@@ -192,9 +193,14 @@ session/score owner. Friendship rewards retain their existing history owner.
 restrictions and disclosure eligibility. The existing `PetState` progression
 expires wishes during live, closed and standby time. Creation is a separate
 live-endpoint operation: `DesktopAttentionRuntime.handle_time_progress()` asks
-the existing `AttentionCoordinator` to evaluate one current opportunity, even
-while presentation is occupied. It never reconstructs missed wishes. Candidate
-selection uses the existing Mind RNG and saved area/global pacing anchors.
+the existing `AttentionCoordinator` to replenish the normal three inner wishes,
+even while presentation is occupied. `replenish_wishes()` fills available areas
+at the current endpoint using the existing Mind RNG. Retirement starts one saved
+twelve-minute refill pause; further vacancies do not postpone it. Four-hour
+expiry uses its original deadline, including offline, while generation remains
+awake/live only. Legacy saves without a refill deadline can fill available slots
+at the next live evaluation. The old global/hour and same-area/ninety-minute
+creation locks are removed; one wish per area and independent disclosure remain.
 
 `WishContext` is a frozen current capability/acceptance input, not another
 state/history owner. Attention reads pure existing petting admission, game

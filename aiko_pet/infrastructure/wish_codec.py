@@ -46,7 +46,7 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
     row = object_fields(raw, (
         "version", "next_instance_id", "active", "last_created_by_area",
         "last_expressed_at",
-    ), context="wishes")
+    ), optional=("refill_not_before",), context="wishes")
     if type(row["version"]) is not int or row["version"] != 1:
         raise ValueError("Unsupported saved wish version")
     next_id = integer_value(row["next_instance_id"], minimum=1,
@@ -106,7 +106,14 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
                                  _game_progress(entry["game"], key)))
         instances.add(instance)
         areas.add(definition.area)
-    return WishState(next_id, tuple(active), created, expressed)
+    refill = (None if row.get("refill_not_before") is None else number_value(
+        row["refill_not_before"], minimum=0,
+        maximum=elapsed + BALANCE.integer("wishes", "refill_delay_seconds"),
+        context="wish refill deadline",
+    ))
+    if refill is not None and not created:
+        raise ValueError("Wish refill lacks creation evidence")
+    return WishState(next_id, tuple(active), created, expressed, refill)
 
 
 def valid_wishes(raw: Any, elapsed: float) -> bool:
@@ -122,6 +129,7 @@ def encode_wishes(state: WishState) -> dict[str, Any]:
         version=1, next_instance_id=state.next_instance_id,
         last_created_by_area={a.value: at for a, at in state.last_created_by_area},
         last_expressed_at=state.last_expressed_at,
+        refill_not_before=state.refill_not_before,
         active=[dict(
             instance_id=w.instance_id, definition_id=w.definition_id.value,
             target_id=w.target_id, created_at=w.created_at, expires_at=w.expires_at,
