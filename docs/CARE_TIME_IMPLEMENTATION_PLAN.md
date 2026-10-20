@@ -1325,6 +1325,62 @@ It is not an additional mandatory care task. Detailed candidate-selection
 tie-breaks and any unresolved interaction with existing reward qualification
 must be recorded before implementation, without silently changing care balance.
 
+##### Recorded proposal: game-wish variants, 2026-10-20
+
+Status: owner-requested design proposal, not implemented. Aiko can want the
+shared activity itself or a particular outcome in RPS, Blackjack or Tic-Tac-Toe.
+These are distinct motives, each defined by game ID, objective and round scope
+when the wish becomes active. Preserve the distinction between having a wish
+and expressing it; low friendship or poor wellbeing does not erase the desire.
+The earlier four-hour game-wish window and creation/expression pacing remain
+design candidates, not new implementation authorization from this record.
+
+| Wish variant | Qualifying fulfillment within the wish window | Candidate emotional after-effect |
+| --- | --- | --- |
+| Play the named game together | Complete the agreed round count in that game; initial candidate is two completed rounds in one session, regardless of winner | Enjoyment of shared play |
+| Win a round in the named game | Win at least one qualifying round before the wish expires | A sense of achievement / pride |
+| Do not lose the next round in the named game | The next qualifying completed round is a win or draw | Relief |
+| Win overall in the named game | In a predetermined round block, Aiko has more wins than losses; initial block candidate is the next three completed rounds | Satisfaction with the overall success |
+| Do not lose overall in the named game | In that block, Aiko has at least as many wins as losses; an all-draw block qualifies | Relief about the overall result |
+
+Evaluate results from Aiko's perspective. Existing `SessionSummary` counts are
+from the player's perspective; the application adapter already reverses wins
+and losses into `GameExperience`. A completed Blackjack hand is one round;
+draws are completed rounds. Opening a menu/window, selecting a move or leaving
+a round unfinished does not qualify. Other games do not satisfy the named-game
+goal. Do not count rounds completed before the wish existed.
+
+Fix the scope before play rather than letting a convenient window-close time
+define an overall victory. For block goals, evaluate the predetermined completed
+block, not a favorable prefix. The next-round goal is distinct from eventually
+finding a non-loss later in the window. Record any remaining failed-attempt or
+retry lifecycle details before implementation; never silently change the goal
+after an unfavorable result.
+
+Use the actual qualifying round/block completion time to determine whether it
+falls within the wish window. A later window close must not invalidate a goal
+already fulfilled in time. Ordinary care currently receives a brief game
+summary on close. Immediate wish resolution therefore needs a semantic round
+completion signal from the existing game owners through application
+coordination; do not infer outcomes from speech, animation or UI labels.
+Keep only the bounded wish progress needed by its scope, not saved decks,
+boards, full game sessions or another score owner. Session totals alone cannot
+prove an ordered win/loss streak; such future goals need explicit evidence.
+
+Having, displaying or expressing the wish creates no Moodlet. Exactly one
+qualifying fulfillment creates the Moodlet appropriate to that wish's motive,
+including when the wish was unspoken. Do not award all variant Moodlets just
+because one winning round happens to satisfy their abstract conditions. Ordinary
+round reactions remain separate from the lasting fulfillment impression.
+
+Strength, duration, stacking and cross-family combination of these fulfillment
+Moodlets are the next discussion and are not fixed by this variant table.
+Keep ordinary fun/care gains independent of victory. An unfavorable fair game
+result is not user mistreatment and does not itself justify relationship loss.
+Any disappointment or repeated-loss Moodlet requires its own separately agreed
+rule rather than automatic punishment for an unfulfilled game wish. Existing
+shared friendship reward limits must not be bypassed by changing game or goal.
+
 ##### Recorded proposal: prolonged/repeated poor care, 2026-10-19
 
 Status: owner-requested design proposal, not implemented. Reuse the existing
