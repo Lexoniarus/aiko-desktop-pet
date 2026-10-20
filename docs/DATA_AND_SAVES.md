@@ -185,6 +185,21 @@ trust/mood preserve the original stored wish; they do not pause or extend it.
 Wording for all eleven forms is validated in `texts.de.json`, with canonical
 food/game labels and objective round counts interpolated at presentation.
 
+Stage 5B.7 retires the matching stable identity on actual fulfillment, leaving
+creation/disclosure pacing intact. Its positive Moodlet and eligible personal
+bonus commit with that retirement in the existing aggregate/action transaction.
+Autonomous food intake has no personal bonus. `relationship.rewards` accepts
+`wish` alongside ordinary care kinds; both share the unchanged two-hour/day
+ceilings. The bounded reward-list capacity additionally allows the maximum
+creation cadence plus three wishes carried into the history window. No separate
+wish budget, completion archive, save file or top-up queue is introduced.
+
+Fixed game-block progress survives window closes and reloads. Shared play resets
+partial progress for a different session; an eventual round-win objective keeps
+only the last unsuccessful round identity while retrying. Actual pending rounds
+and social playback stay transient, so restart does not replay or complete them.
+Only qualifying started/settled rounds can extend persisted objective progress.
+
 Missing old sections stay empty. Invalid sections preserve valid Moodlet/care
 values, and the existing atomic repository backs up the original bytes before
 replacement, including when saving without first loading. Whole-Pet checkpoints

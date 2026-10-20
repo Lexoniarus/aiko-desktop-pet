@@ -27,7 +27,7 @@ move that anchor. Limits constrain actual credited gain, never need care or
 qualified contact. Loss does not reopen a reward budget.
 
 Accepted personal care renews contact even with no remaining reward. A
-completed one-round game is contact, but earns no friendship award. Opening
+completed one-round game is contact, but earns no ordinary friendship award. Opening
 a game, cancelling before any completed round, rejected food/drink, sleep,
 wake, hover, ordinary input, app opening and autonomous intake do not renew
 it. Autonomous consumption still supplies its actual need normally.
@@ -38,6 +38,22 @@ already accepted interaction or credit it again. A blocked/pre-commit
 cancelled command never counts. Games keep their existing once-only close
 summary; handovers count only at committed consumption. Callers advance the
 shared session clock before committing care or completed play.
+
+Stage 5B.7 adds a separate nominal **0.25** reward for a personally fulfilled
+pre-existing wish: accepted matching food/petting, a qualifying game objective
+or the entire desired social sequence. It uses the same reward history and
+unchanged 0.75/two-hour and five/day ceilings, plus room below friendship 100.
+Ordinary credit is applied first when the same transition grants both. An
+ordinary action's interval can suppress its ordinary credit without excluding
+the wish bonus. Bonus exhaustion never prevents fulfillment or its Moodlet.
+
+Game wish credit occurs at its actual round/block result; ordinary session
+credit retains the separate once-only close boundary. The same common pot
+limits both; closing later cannot repeat the wish credit. Social care still
+commits at playback admission, with the wish bonus only after full completion.
+Autonomous food can fulfill and create an impression, including closed-time
+known-stock intake, but has no personal bonus. Ended identity and reward history
+persist together, with no later top-up or replay after reload.
 
 ## Passive loss
 

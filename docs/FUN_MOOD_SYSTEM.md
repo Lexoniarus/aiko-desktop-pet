@@ -1,6 +1,6 @@
 # Fun and mood — prototype tuning guide
 
-> This guide describes the care/fun/mood foundation and delivered stages 5B.3 through 5B.6 on
+> This guide describes the care/fun/mood foundation and delivered stages 5B.3 through 5B.7 on
 > `feature/social-optimization`. The
 > [mood](MOOD_BALANCE_PROPOSAL.md) and [need proposals](NEEDS_BALANCE_PROPOSAL.md)
 > retain the agreed design evidence. Progressive friendship now follows the
@@ -158,7 +158,16 @@ Only actual completed play awards fun. Leaving the game window open,
 starting a round without reaching reveal, or closing an empty game
 awards **nothing**. The round score remains transient, including on
 application shutdown; only Aiko's adjusted fun, energy, social
-and existing friendship bookkeeping are saved.
+and existing friendship bookkeeping are saved, alongside bounded wish progress
+and any fulfilled wish's Moodlet.
+
+Actual round start/result facts also reach the existing application coordinator
+through each game's sequence. Only the wish captured at round start can qualify.
+Result translation from player to Aiko occurs once. Shared play needs two rounds
+in one session; round wins can retry; next-round non-loss resolves on that one
+round; overall goals evaluate their full next-three-round block across sessions.
+Wish resolution is immediate at the actual result, independent of later window
+close. It does not duplicate ordinary session care. Failed goals end neutrally.
 
 The game is closed before the final save both during Aiko's goodbye
 animation and on direct shutdown. It cannot credit a session twice.
@@ -190,8 +199,18 @@ inner wishes. Disclosure needs level three, mood fifty, an available activity
 and a free speaking opportunity; urgent care retains priority. Only actual
 text presentation counts, once per wish and thirty minutes apart. Original
 deadlines continue through sleep, closure and standby, without offline
-generation or expiry penalties. Fulfillment impressions and independent
-relationship bonuses remain the separate 5B.7 slice.
+generation or expiry penalties.
+
+Stage 5B.7 resolves actual desired intake, welcome petting, qualifying game
+rounds/blocks and complete matching social sequences. The wish's catalogue
+selects one positive family and initial strength. Existing Moodlet rules own
+refresh/stacking, two-hour tiers and group/global caps. Food stays at one level;
+overall game goals add two levels of pride/relief; other fulfillment starts/adds
+one, up to the family's existing maximum. Numeric mood follows its timed response.
+Unspoken wishes qualify normally. Personal completion may add 0.25 friendship
+points from the same ordinary reward pot; autonomous food grants the impression
+without relationship credit. Aborted sequences and unsuccessful/expired goals
+grant no fulfillment effect or extra loss.
 
 `tests/test_fun_mood.py` and `tests/test_game_experience.py` validate
 domain math, multiple sessions/day, game-neutral adapters and persistence.

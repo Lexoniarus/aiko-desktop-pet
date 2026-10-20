@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Fulfill food, affection, game and social wishes at actual accepted/completed
+  boundaries. Apply their positive Moodlets and capped personal bonus using
+  existing aggregate, reward and playback owners. Preserve finite-stock offline
+  food fulfillment without personal credit; persist bounded game objectives
+  across sessions/restarts, with real round evidence and neutral failure.
+
 - Add paced inner wish creation, original-deadline expiry through live/closed/
   standby time and independent speech eligibility. Reuse existing Mind, attention
   and reaction playback for concrete German requests and actual text receipts.
@@ -34,7 +40,7 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   the existing progression path, splitting at expiry and recovery boundaries.
   Preserve timed mood response, critical-need ceilings and unobserved closed-time
   ageing. Negative interaction and poor-care triggers and wish lifecycle are
-  delivered; wish fulfillment remains a later slice.
+  delivered, including wish fulfillment and its positive impressions.
 
 - Persist immutable Moodlet episodes and inner wishes in the existing PetValues
   checkpoint and version-one save, including relief usage, original deadlines,

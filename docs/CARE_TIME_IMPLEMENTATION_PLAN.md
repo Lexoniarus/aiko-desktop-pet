@@ -17,8 +17,9 @@
 > composition. 5B.4 now connects negative interaction experiences and targeted
 > helpful-action relief. 5B.5 delivers prolonged-poor-care after-effects and
 > accounted exposure. 5B.6 now delivers paced inner wishes, real-time expiry and
-> actual spoken disclosure. Wish fulfillment, overall emotion and status UI
-> remain for the following slices.
+> actual spoken disclosure. 5B.7 delivers fulfillment, positive Moodlets and the
+> shared-pot personal bonus for food, affection, games and social activities.
+> Overall emotion and status UI remain for the following slices.
 
 ## Stage-4 correction delivery, 2026-10-19
 
@@ -3184,3 +3185,85 @@ full-suite run, merge or physical desktop acceptance was performed.
 fulfillment with their real completion boundaries, positive Moodlets and
 independent capped friendship bonus. Overall emotional reads (5B.8), combined
 status UI (5C), the final full suite and final broad OOP review remain planned.
+
+
+##### 5B.7 completion: actual fulfillment and shared-budget bonus (2026-10-20)
+
+All four areas now resolve pre-existing, spoken or unspoken wishes through their
+actual accepted/completed boundaries. Pure `fulfill_activity_wish()` and
+`progress_game_wish()` return frozen `WishResolution` values. PetState retires the
+identity and commits the catalogue's positive Moodlet/strength and eligible
+personal friendship credit together. Creation/disclosure anchors are retained.
+Existing Moodlet reinforcement, elapsed ageing, tier durations and group/global
+caps remain authoritative; no direct numeric mood jump is introduced.
+
+| Area | Actual boundary and retained ownership |
+| --- | --- |
+| Food | Matching accepted consumption inside the existing care/World/Pet/Memory transaction. Handover may grant the personal bonus after ordinary credit. Autonomous live or reconstructed finite known-stock intake grants the impression without personal credit/contact. Wrong food, placement, unused offers and rejected intake cannot fulfill. Food fulfillment remains a one-level refresh. |
+| Affection | Actually accepted petting, after ordinary care credit. Existing refusal/acceptance policy remains authoritative. Rejection does not fulfill or override a boundary. Distinct later fulfilled wishes stack the existing security family. |
+| Games | Actual started and settled round facts from RPS, Blackjack and Tic-Tac-Toe sequences through the existing router/coordinator. Capture the current wish at start, translate player results once, and resolve immediately at the real qualifying result. Ordinary session care remains once on close. |
+| Social | Actual whole-sequence completion through the existing ReactionPlayer. Frozen SocialCompletion carries the admitted category and optional pre-existing wish ID; menu choice, fetching, intro/first bubble and interrupted playback do not qualify. Ordinary talk care remains at admission. |
+
+Round-win wishes allow unsuccessful retries within the original lifetime.
+Next-round non-loss resolves on that one round; losing ends it neutrally. Fixed
+three-round win/non-loss blocks wait for the whole block, including draws, and
+retain only bounded progress across sessions/reloads. Shared play requires two
+qualifying rounds in one session; changing session resets its partial progress.
+Only rounds whose start captured that wish can count. The existing game
+coordinator owns one transient pending attempt; no game replay, saved deck/board,
+second score, event bus or clock is added. Canceled/unplayed rounds do not count.
+Completed/failed wish identities cannot be rewarded again after close/reload.
+
+Deadline precedence follows the later recorded **5B.6 endpoint convention**:
+expire at `elapsed >= expires_at` before applying completion. Thus equality is
+too late, superseding the older game proposal's inclusive-deadline sentence.
+New round starts can capture only an already-existing wish; a round underway
+when it was created, or a wish first created during a social sequence, does not
+retrospectively adopt that activity. Old playback metadata cannot fulfill a
+newer replacement wish. Original deadlines and neutral failure are preserved.
+
+The nominal personal bonus is 0.25 from the **existing** 0.75/two-hour and
+five/day reward pot, with room below friendship 100. The ordinary action's
+eligibility interval is unchanged and cannot suppress an otherwise valid wish
+bonus. Same-transition food/petting applies ordinary credit first; social care
+precedes its later completion. Game round/block wish credit and ordinary
+session-close credit are separate real boundaries sharing the same pot.
+Budget exhaustion may clip credit to zero without preventing retirement or the
+Moodlet; no top-up is queued. Autonomous food has no personal credit. The existing
+relationship codec accepts the `wish` reward kind and keeps a bounded list sized
+for ordinary events, maximum wish creation cadence and three carried-in wishes.
+Outer save v1, full-Pet checkpoints and existing corruption backups are retained.
+
+| Commit | Coherent change and targeted local check |
+| --- | --- |
+| `e448bfc` | Food fulfillment, common reward allowance and persisted wish-credit kind; 46 selected tests passed in 0.670s |
+| `dbee93a` | Accepted affection fulfillment and unchanged refusal boundaries; 21 selected tests passed in 0.072s |
+| `347fa07` | Bounded game objectives, actual round evidence and existing sequence/window wiring; 69 selected tests passed in 0.389s |
+| `e73de5b` | Typed admitted social completion metadata and full-sequence fulfillment; 60 selected tests passed in 0.222s |
+| `0293976` | Carried-in wish allowance in bounded shared history, daily/100-point clipping and finite-stock offline fulfillment checks |
+
+Final combined **targeted local** verification passed **214 tests in 3.663s**.
+The longest individual test was **0.340s**; no selected case exceeded ten seconds.
+This covers all four wish areas, lifecycle/disclosure, catalogue/persistence,
+consumption and rollback, ordinary friendship/care, actual game sequence phases,
+social playback and API preparation fixtures, finite-stock sleep resources,
+Moodlet response and architecture guards. Only the three relevant codec/history
+cases were selected from the broader neglect module; its unrelated month-long
+simulation was not repeated for this slice. Ruff passed across changed Python
+files; strict scoped Mypy passed all **18** changed production modules; Pyright
+passed those modules and all **10** affected/new test modules.
+
+Focused ownership review confirms one Pet aggregate, unchanged time/resource
+owners, one Moodlet progression path, one friendship budget/history and the
+existing reaction player. Game attempt and social completion metadata are
+transient activity evidence; only the agreed bounded wish progress is saved.
+The GUI composition root stays within its existing architecture limit. All
+checks used explicit timestamps, injected callbacks and temporary stores: no
+visible test window, mouse control, network/API fetch or GitHub CI run. All
+implementation units were committed/pushed with `[skip ci]`; no merge or full
+suite was run. Physical Windows acceptance is not claimed by these checks.
+
+5B.7 is complete. Next is **5B.8: emotional interpretation and immutable reads**,
+followed by 5C's combined status/UI implementation. The final complete suite,
+slow-test review and broad final OOP review remain part of the full refactor's
+closing stage, as requested.

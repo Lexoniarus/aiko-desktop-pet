@@ -204,7 +204,36 @@ its instance ID to the existing immutable `Reaction`. The existing
 `ReactionPlayer` acknowledges that ID only after the text display succeeds;
 the aggregate ignores duplicate, absent and expired IDs. There is no second
 player or wish queue, and disclosure grants no contact, care or emotional
-reward. Fulfillment remains 5B.7; the combined status presentation remains 5C.
+reward. Fulfillment is delivered below; the combined status presentation remains 5C.
+
+Stage 5B.7 uses pure `fulfill_activity_wish()` and `progress_game_wish()` results
+in the existing `wishes.py`. `PetState._apply_wish_resolution()` commits retirement,
+the catalogue's one positive Moodlet family/strength and any shared-pot personal
+reward together. Creation anchors and allocation survive retirement. The existing
+Moodlet reinforcement/progression owners retain stacking, refresh, decay and
+numeric caps; fulfillment does not jump numeric mood or erase negative episodes.
+
+Accepted food intake and welcome petting resolve through the existing care
+transition after ordinary credit. Autonomous intake uses the same food match
+inside the existing World/Pet/Memory transaction, including finite known stock
+reconstructed before the deadline, without personal reward/contact.
+
+The three existing game sequences emit immutable player-perspective
+`games.contracts.GameRoundEvent` start/settled-result facts through typed window
+ports, the router and `GameExperienceCoordinator.observe_round()`. That existing
+coordinator holds one transient pending attempt (identity, elapsed start and
+pre-existing wish ID), translates the result once, and retires the attempt after
+a successful commit. No score, board, deck or unplayed round is reconstructed.
+Only bounded objective progress persists. Normal session care still occurs once
+at window close; immediate wish resolution occurs at the qualifying round, not
+at a convenient later close. The common reward budget constrains both boundaries.
+
+`SocialCompletion` now carries the admitted category and optional existing wish
+identity through the same `Reaction`/`ReactionPlayer` lifecycle. The existing
+controller applies helpful relief and category-specific fulfillment only after
+the whole sequence completes. Cancellation, an unrelated/expired/replaced wish,
+preparation and a wish first created during playback cannot grant the outcome.
+Desktop coordination saves completed social/round outcomes using existing storage.
 
 `pet/moodlets.py` now owns pure tier ageing, bounded reinforcement, resolution
 and per-level relief. Definitions are supplied by the canonical catalogue;
@@ -243,8 +272,8 @@ The existing Moodlet lifetime owner retains pause/resume and relief allowances;
 PetState remains the single mutation owner. Pure numeric calls without supplied
 relationship evidence do not invent an absent history or qualify poor-care events.
 
-Wish lifecycle/fulfillment and overall emotional interpretation remain for later
-stages.
+Wish lifecycle/fulfillment are delivered. Overall emotional interpretation and
+the combined status UI remain for later stages.
 
 ## Application layer
 

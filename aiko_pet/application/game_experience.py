@@ -1,7 +1,8 @@
 """Translate individual minigames into one game-agnostic care experience.
 
-Session scores live in the game and its window only. This coordinator
-receives their brief, immutable summary at close and never persists it.
+Session scores live in the game and its window only. This coordinator receives
+actual round boundaries for wishes and the immutable ordinary-care summary at
+close. Only bounded wish progress persists; the current round attempt is transient.
 """
 
 from __future__ import annotations
