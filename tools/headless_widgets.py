@@ -104,6 +104,9 @@ class Widget:
 
     def invoke(self) -> Any:
         if self.cget("state") != "disabled":
+            if "variable" in self.options:
+                variable = self.options["variable"]
+                variable.set(not variable.get())
             return self.options["command"]()
         return None
 
@@ -129,7 +132,7 @@ class Widget:
     def xview(self, *args: Any) -> None:
         pass
 
-    yview = xview_scroll = yview_scroll = xview
+    yview = xview_scroll = yview_scroll = yview_moveto = xview
 
     def destroy(self) -> None:
         self.destroyed = True
@@ -137,6 +140,17 @@ class Widget:
             child.destroy()
         if isinstance(self.master, Widget):
             self.master.children.remove(self)
+
+
+class Boolean:
+    def __init__(self, **kwargs: Any) -> None:
+        self._value = False
+
+    def get(self) -> bool:
+        return self._value
+
+    def set(self, value: bool) -> None:
+        self._value = value
 
 
 class Images:
@@ -179,6 +193,8 @@ def widgets() -> Iterator[None]:
             Scrollbar=Widget,
             Toplevel=Widget,
             Button=Widget,
+            Checkbutton=Widget,
+            BooleanVar=Boolean,
         ),
         patch("tkinter.Tk", side_effect=AssertionError("Native windows prohibited")),
     ):

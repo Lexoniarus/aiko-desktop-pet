@@ -17,6 +17,7 @@ from ..view_models.contracts import (
     SettingsSnapshot,
     StatusSnapshot,
 )
+from ..view_models.credits import project_credits
 from ..view_models.food_models import FoodChoice, FoodChoiceId
 from .action_toolbar import ActionToolbar
 from .blackjack_window import BlackjackWindow
@@ -189,6 +190,7 @@ class HoverUi:
             skin=self._skin,
             can_select=self._ports.can_place_item,
         )
+        self.food_menu.focus()
         self._ports.restore_stack()
 
     def close_food_menu(self) -> None:
@@ -241,6 +243,7 @@ class HoverUi:
             skin=self._skin,
             can_select=lambda: not self.game_open and self._ports.can_interact("play"),
         )
+        self.game_menu.focus()
         self._ports.restore_stack()
 
     def open_game(self, game_id: GameId) -> None:
@@ -353,6 +356,7 @@ class HoverUi:
             snapshot=self._ports.social_snapshot,
             skin=self._skin,
         )
+        self.social_menu.focus()
         self._ports.restore_stack()
 
     def _social_selected(self, category: SocialCategory | None) -> None:
@@ -444,6 +448,7 @@ class HoverUi:
             always_on_top=self._ports.always_on_top(),
             skin=self._skin,
             position=self._settings_position,
+            credits_snapshot=lambda: project_credits(self._ports.social_snapshot()[1]),
         )
         self.settings_window.focus()
         self._ports.restore_stack()
@@ -505,6 +510,8 @@ class HoverUi:
         self._auto_hide_toolbar()
 
     def refresh_hover(self, now: float) -> None:
+        if self.settings_window is not None:
+            self.settings_window.refresh_credits()
         for menu in (self.food_menu, self.game_menu, self.social_menu):
             if menu is not None:
                 menu.refresh()

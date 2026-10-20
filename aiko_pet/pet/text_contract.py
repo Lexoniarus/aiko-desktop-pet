@@ -245,3 +245,8 @@ TEXT_FIELDS.update({
     "vn.settings.off": frozenset([]),
     "vn.sleep_context": frozenset(["reason"]),
 })
+
+TEXT_FIELDS.update({
+    "vn.graphic_licenses": frozenset(),
+    "vn.project_files": frozenset(),
+})

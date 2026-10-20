@@ -294,6 +294,8 @@
     "vn.credits.project_copy": "Aiko Desktop Pet · Chibi-Personifizierung deines PCs. Projekt- und Lizenzinformationen stehen im mitgelieferten README und den Lizenzdateien.",
     "vn.settings.on": "An",
     "vn.settings.off": "Aus",
-    "vn.sleep_context": "Schlaf: {reason}"
+    "vn.sleep_context": "Schlaf: {reason}",
+    "vn.graphic_licenses": "Lizenzhinweise öffnen",
+    "vn.project_files": "Projektinformationen öffnen"
   }
 }
