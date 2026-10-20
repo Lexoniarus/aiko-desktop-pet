@@ -1,0 +1,323 @@
+{
+  "version": 1,
+  "moodlets": [
+    {
+      "id": "food_fulfilled",
+      "polarity": "positive",
+      "direction": "cheerful",
+      "group": "food_wish",
+      "level_points": [
+        5
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 0,
+      "parameters": null
+    },
+    {
+      "id": "shared_play",
+      "polarity": "positive",
+      "direction": "cheerful",
+      "group": "game_wish",
+      "level_points": [
+        5,
+        10,
+        15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 0,
+      "parameters": null
+    },
+    {
+      "id": "pride",
+      "polarity": "positive",
+      "direction": "proud",
+      "group": "game_wish",
+      "level_points": [
+        5,
+        10,
+        15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 0,
+      "parameters": null
+    },
+    {
+      "id": "relief",
+      "polarity": "positive",
+      "direction": "relieved",
+      "group": "game_wish",
+      "level_points": [
+        5,
+        10,
+        15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 0,
+      "parameters": null
+    },
+    {
+      "id": "connection",
+      "polarity": "positive",
+      "direction": "affectionate",
+      "group": "social_wish",
+      "level_points": [
+        5,
+        10,
+        15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 0,
+      "parameters": null
+    },
+    {
+      "id": "cheerful",
+      "polarity": "positive",
+      "direction": "cheerful",
+      "group": "social_wish",
+      "level_points": [
+        5,
+        10,
+        15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 0,
+      "parameters": null
+    },
+    {
+      "id": "enthusiastic",
+      "polarity": "positive",
+      "direction": "cheerful",
+      "group": "social_wish",
+      "level_points": [
+        5,
+        10,
+        15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 0,
+      "parameters": null
+    },
+    {
+      "id": "secure",
+      "polarity": "positive",
+      "direction": "affectionate",
+      "group": "affection_wish",
+      "level_points": [
+        5,
+        10,
+        15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 0,
+      "parameters": null
+    },
+    {
+      "id": "poking",
+      "polarity": "negative",
+      "direction": "irritated",
+      "group": "interaction",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 1200,
+      "relief_seconds": 300,
+      "parameters": {
+        "escalation_pokes": 3
+      }
+    },
+    {
+      "id": "crowded",
+      "polarity": "negative",
+      "direction": "crowded",
+      "group": "interaction",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 1200,
+      "relief_seconds": 300,
+      "parameters": {
+        "escalation_attempts": 3,
+        "boundary_window_seconds": 600,
+        "refusal_seconds": [
+          300,
+          600,
+          1200
+        ],
+        "tolerances": [
+          {
+            "maximum_friendship_level": 2,
+            "affection_threshold": 60
+          },
+          {
+            "maximum_friendship_level": 5,
+            "affection_threshold": 80
+          },
+          {
+            "maximum_friendship_level": 10,
+            "affection_threshold": 90
+          }
+        ],
+        "friendship_loss_points": 0.25,
+        "friendship_loss_cap_points": 1,
+        "friendship_loss_window_seconds": 600
+      }
+    },
+    {
+      "id": "food_monotony",
+      "polarity": "negative",
+      "direction": "irritated",
+      "group": "interaction",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 14400,
+      "relief_seconds": 3600,
+      "parameters": {
+        "sequence_window_seconds": 86400,
+        "request_lifetime_seconds": 86400,
+        "free_ignored_portions": 1,
+        "friendship_loss_points": 0.25,
+        "friendship_loss_cap_points": 1,
+        "friendship_loss_window_seconds": 86400
+      }
+    },
+    {
+      "id": "withheld",
+      "polarity": "negative",
+      "direction": "frustrated",
+      "group": "interaction",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "resolved_quiet_time",
+      "decay_stage_seconds": 1200,
+      "relief_seconds": 300,
+      "parameters": {
+        "escalation_seconds": 30
+      }
+    },
+    {
+      "id": "disrupted",
+      "polarity": "negative",
+      "direction": "frustrated",
+      "group": "interaction",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 1800,
+      "relief_seconds": 300,
+      "parameters": {
+        "friendship_loss_points": 0.25,
+        "friendship_loss_cap_points": 1,
+        "friendship_loss_window_seconds": 3600
+      }
+    },
+    {
+      "id": "hunger_worn",
+      "polarity": "negative",
+      "direction": "downcast",
+      "group": "poor_care",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "stable_recovery",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 1800,
+      "parameters": {
+        "need": "satiety"
+      }
+    },
+    {
+      "id": "exhaustion_irritated",
+      "polarity": "negative",
+      "direction": "irritated",
+      "group": "poor_care",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "stable_recovery",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 0,
+      "parameters": {
+        "need": "energy"
+      }
+    },
+    {
+      "id": "unstimulated",
+      "polarity": "negative",
+      "direction": "frustrated",
+      "group": "poor_care",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "stable_recovery",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 1800,
+      "parameters": {
+        "need": "fun"
+      }
+    },
+    {
+      "id": "lonely",
+      "polarity": "negative",
+      "direction": "lonely",
+      "group": "poor_care",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "stable_recovery",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 1800,
+      "parameters": {
+        "need": "social"
+      }
+    },
+    {
+      "id": "missing_closeness",
+      "polarity": "negative",
+      "direction": "lonely",
+      "group": "poor_care",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "stable_recovery",
+      "decay_stage_seconds": 7200,
+      "relief_seconds": 1800,
+      "parameters": {
+        "need": "affection"
+      }
+    }
+  ]
+}

@@ -114,6 +114,25 @@ def parse_balance(raw: Any) -> BalanceCatalog:
             or withholding["friendship_loss"] > relationship["withholding_cap"]):
         raise ValueError("Invalid progressive friendship balance")
     objects = sections["object_behavior"]
+    impressions = sections["moodlets"]
+    critical = [impressions[f"critical_level_{name}_seconds"]
+                for name in ("one", "two", "three")]
+    zero = [impressions[f"zero_level_{name}_seconds"]
+            for name in ("one", "two", "three")]
+    if (any(value <= 0 for value in impressions.values())
+            or any(value > 100 for key, value in impressions.items()
+                   if key.endswith("_points"))
+            or impressions["game_wish_cap_points"] > impressions["positive_cap_points"]
+            or impressions["social_wish_cap_points"]
+            > impressions["positive_cap_points"]
+            or impressions["poor_care_cap_points"] > impressions["negative_cap_points"]
+            or not relationship["critical_need"]
+            <= impressions["recovery_need_threshold"] <= 100
+            or any(a >= b for a, b in zip(critical, critical[1:]))
+            or any(a >= b for a, b in zip(zero, zero[1:]))
+            or any(a > b for a, b in zip(zero, critical))
+            or critical[-1] > relationship["history_window_seconds"]):
+        raise ValueError("Invalid Moodlet caps or poor-care recovery balance")
     if (
         objects["reach_widths"] >= objects["notice_widths"]
         or objects["notice_seconds"] > objects["recognize_seconds"]

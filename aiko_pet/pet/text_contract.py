@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from .moodlets import MoodletId
+
 TEXT_FIELDS: dict[str, frozenset[str]] = {
     "social.intro.single": frozenset(),
     "social.intro.twopart": frozenset(),
@@ -173,3 +175,8 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "ui.save_failed": frozenset(["failure"]),
     "ui.window_title": frozenset([]),
 }
+
+TEXT_FIELDS.update({
+    f"moodlet.{key}.{field}": frozenset()
+    for key in MoodletId for field in ("label", "description")
+})

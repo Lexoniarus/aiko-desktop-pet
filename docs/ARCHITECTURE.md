@@ -160,6 +160,13 @@ whether to display a meal name or "Snack". Historical localized helpers
 `TimeContext.greeting()` have been removed; localized weekday/status display
 belongs to `ui/view_models/text_de.py`.
 
+`pet/moodlets.py` defines immutable Moodlet catalogue values and distinct
+emotional directions. `pet/moodlet_catalog.py` strictly loads all eighteen
+families from `data/moodlets.json`, with shared caps/recovery settings in the
+existing balance catalogue and descriptions in the existing German text owner.
+These are definitions only: active episodes, save integration, progression and
+emotional interpretation are not yet connected to the runtime.
+
 ## Application layer
 
 - `CareController.execute()` advances pet time, coordinates the character's care event, applies the command and returns a presentation-independent `CareOutcome`.

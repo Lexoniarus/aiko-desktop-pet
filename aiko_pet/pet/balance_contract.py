@@ -3,6 +3,23 @@
 from __future__ import annotations
 
 BALANCE_FIELDS: dict[str, dict[str, str]] = {
+    "moodlets": {
+        "positive_cap_points": "number",
+        "negative_cap_points": "number",
+        "game_wish_cap_points": "number",
+        "social_wish_cap_points": "number",
+        "poor_care_cap_points": "number",
+        "recovery_need_threshold": "number",
+        "recovery_stable_seconds": "integer",
+        "relief_quiet_seconds": "integer",
+        "relief_shared_play_rounds": "integer",
+        "critical_level_one_seconds": "integer",
+        "critical_level_two_seconds": "integer",
+        "critical_level_three_seconds": "integer",
+        "zero_level_one_seconds": "integer",
+        "zero_level_two_seconds": "integer",
+        "zero_level_three_seconds": "integer",
+    },
     "object_behavior": {
         "notice_widths": "number",
         "notice_seconds": "number",

@@ -2450,6 +2450,23 @@ and full static gates only after the complete refactor, including 5C and the
 final OOP review, as already agreed. No GitHub CI, visible test windows or mouse
 control is authorized; this planning turn runs no tests at all.
 
+###### 5B.1 delivery record: Moodlet catalogue foundation
+
+The first implementation unit adds immutable definitions for all eighteen
+Moodlet families, typed per-trigger parameters and a strict read-only loader
+for `data/moodlets.json`. Shared caps/recovery settings extend the existing
+balance owner; German labels/descriptions extend the existing text resource.
+The food repetition count and initial withholding/direct-loss values remain
+with their existing owners. No active episodes, save fields, progression,
+interaction handling or UI behavior are introduced in this unit.
+
+Focused local verification: nine Moodlet catalogue cases, ten existing resource
+validation cases and six existing text catalogue cases passed (25 total).
+The slowest individual case took 0.034 seconds; none exceeded ten seconds.
+Scoped Ruff, strict Mypy and Pyright passed for the six affected source modules.
+The wish catalogue is the next separate 5B.1 unit. No GUI, mouse, CI or full-suite
+run was used.
+
 #### 5C. Connect status, expression and interaction decisions
 
 - Implement the main-menu scope of [the VN UI plan](UI_VN_DESIGN.md) together

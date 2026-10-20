@@ -415,5 +415,22 @@
     "base_fun_per_completed_unit": 8.0,
     "energy_cost_per_completed_unit": 0.6,
     "social_gain_per_completed_unit": 0.8
+  },
+  "moodlets": {
+    "positive_cap_points": 20,
+    "negative_cap_points": 30,
+    "game_wish_cap_points": 15,
+    "social_wish_cap_points": 15,
+    "poor_care_cap_points": 15,
+    "recovery_need_threshold": 40,
+    "recovery_stable_seconds": 1800,
+    "relief_quiet_seconds": 300,
+    "relief_shared_play_rounds": 2,
+    "critical_level_one_seconds": 7200,
+    "critical_level_two_seconds": 14400,
+    "critical_level_three_seconds": 21600,
+    "zero_level_one_seconds": 3600,
+    "zero_level_two_seconds": 7200,
+    "zero_level_three_seconds": 10800
   }
 }
