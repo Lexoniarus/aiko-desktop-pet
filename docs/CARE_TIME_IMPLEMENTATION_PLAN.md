@@ -2994,3 +2994,27 @@ Code delivery commits on `feature/social-optimization`:
 
 Each commit was locally checked and pushed with `[skip ci]`. The following
 documentation commit records this completed slice and updates the system guides.
+
+
+##### 5B.5 delivery: shared exposure reader and durable processing markers (2026-10-20)
+
+`pet/need_exposure.py` now owns the original rolling-window read calculation,
+extracted unchanged from friendship decay. Its watermark reader excludes already
+handled emotional burden while retaining exact offsets in a partially filled
+minute; the existing history can still coalesce full minutes. It neither records
+another need timeline nor integrates another simulation.
+
+Frozen `PoorCareEvidence` and five `PoorCareCursor` values belong to the existing
+Moodlet aggregate value. Two watermarks per need distinguish the previously
+accounted burden from thresholds handled in the current deficient stretch.
+The optional existing-save extension has strict decoding in
+`infrastructure/poor_care_codec.py`; missing old evidence remains uninitialized,
+so the later progression integration can start at the current elapsed endpoint
+without replaying legacy care history. Loading/checkpointing never ages or
+creates impressions. Friendship history, its loss rules and ownership are retained.
+
+Validation: 30 focused exposure, friendship-neglect and emotional-storage tests
+passed in 6.714 s. The existing 30-day bounded-history case took 5.961 s; no case
+exceeded ten seconds. Scoped Ruff, strict Mypy and Pyright passed. These checks
+were local and headless; no full suite, windows, mouse control or GitHub CI.
+Trigger/recovery integration is the next commit within this same 5B.5 slice.

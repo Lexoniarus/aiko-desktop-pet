@@ -13,6 +13,7 @@ from .friendship_history import (
     FriendshipProgress,
     NeedDurations,
 )
+from .need_exposure import exposure_totals
 
 
 def _setting(key: str) -> float:
@@ -74,24 +75,6 @@ def absence_rate(age: float) -> float:
         if age <= _setting(f"absence_{boundary}_seconds"):
             return _setting(f"absence_{rate}_rate")
     return _setting("absence_extended_rate")
-
-
-def _totals(
-    buckets: tuple[CriticalBucket, ...], now: float
-) -> tuple[
-    NeedDurations,
-    NeedDurations,
-]:
-    cutoff = now - _setting("history_window_seconds")
-    critical, zero = [0.0] * 5, [0.0] * 5
-    for bucket in buckets:
-        fraction = min(
-            1.0, max(0.0, (bucket.start + bucket.width - cutoff) / bucket.width)
-        )
-        for i in range(5):
-            critical[i] += bucket.critical[i] * fraction
-            zero[i] += bucket.zero[i] * fraction
-    return cast(NeedDurations, tuple(critical)), cast(NeedDurations, tuple(zero))
 
 
 def _append(
@@ -236,9 +219,9 @@ def advance_friendship(
         zero = tuple(
             a == b == 0 and critical[i] for i, (a, b) in enumerate(zip(before, after))
         )
-        initial = _totals(buckets, start + left)
+        initial = exposure_totals(buckets, start + left)
         buckets = _append(buckets, start + left, start + right, critical, zero)
-        final = _totals(buckets, start + right)
+        final = exposure_totals(buckets, start + right)
         boundaries = {0.0, 1.0}
         for kind, (first, last) in enumerate(zip(initial, final)):
             for i, (a, b) in enumerate(zip(first, last)):

@@ -23,12 +23,13 @@ from ..pet.moodlets import (
     PettingParameters,
     PokingParameters,
 )
+from .poor_care_codec import decode_poor_care, encode_poor_care
 
 
 def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
     """Reject corrupt sections as a whole; callers retain unrelated pet values."""
     row = object_fields(raw, ("version", "baseline", "next_instance_id", "active"),
-                        optional=("interactions",), context="moodlets")
+                        optional=("interactions", "poor_care"), context="moodlets")
     if type(row["version"]) is not int or row["version"] != 1:
         raise ValueError("Unsupported saved Moodlet version")
     baseline = number_value(row["baseline"], minimum=0, maximum=elapsed,
@@ -116,7 +117,9 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
         food = (_decode_food(facts["food"], baseline, elapsed)
                 if "food" in facts else FoodRepetitionMemory())
         memory = InteractionMemory(anchors[0], anchors[1], deadline, food)
-    return MoodletState(baseline, next_id, tuple(episodes), memory)
+    poor_care = (decode_poor_care(row["poor_care"], baseline, elapsed)
+                 if "poor_care" in row else None)
+    return MoodletState(baseline, next_id, tuple(episodes), memory, poor_care)
 
 
 def valid_moodlets(raw: Any, elapsed: float) -> bool:
@@ -128,7 +131,7 @@ def valid_moodlets(raw: Any, elapsed: float) -> bool:
 
 
 def encode_moodlets(state: MoodletState) -> dict[str, Any]:
-    return dict(
+    encoded = dict(
         version=1, baseline=state.baseline, next_instance_id=state.next_instance_id,
         interactions=dict(
             poke_boundary_at=state.interactions.poke_boundary_at,
@@ -151,6 +154,9 @@ def encode_moodlets(state: MoodletState) -> dict[str, Any]:
             recovery_since=e.recovery_since,
         ) for e in state.active],
     )
+    if state.poor_care is not None:
+        encoded["poor_care"] = encode_poor_care(state.poor_care)
+    return encoded
 
 
 def _decode_food(raw: Any, baseline: float, elapsed: float) -> FoodRepetitionMemory:

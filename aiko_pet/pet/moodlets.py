@@ -13,6 +13,7 @@ from typing import Literal, Mapping
 
 from .balance import BALANCE
 from .interaction_events import InteractionMemory
+from .need_exposure import ExposureMark
 from .needs import NeedLevels
 
 
@@ -172,6 +173,20 @@ class MoodletEpisode:
 
 
 @dataclass(frozen=True, slots=True)
+class PoorCareCursor:
+    accounted: ExposureMark
+    handled: ExposureMark
+    handled_level: int = 0
+    exposed: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class PoorCareEvidence:
+    baseline: float
+    needs: tuple[PoorCareCursor, ...]
+
+
+@dataclass(frozen=True, slots=True)
 class MoodletState:
     """One entry per family, with no separate live store or emotional score.
 
@@ -183,6 +198,7 @@ class MoodletState:
     next_instance_id: int = 1
     active: tuple[MoodletEpisode, ...] = ()
     interactions: InteractionMemory = InteractionMemory()
+    poor_care: PoorCareEvidence | None = None
 
 
 @dataclass(frozen=True, slots=True)
