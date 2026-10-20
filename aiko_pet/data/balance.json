@@ -204,7 +204,8 @@
     "withdrawn_weary_click_count": 6,
     "tease_more_click_count": 7,
     "last_boundary_click_count": 8,
-    "irritation_click_count": 4
+    "irritation_click_count": 4,
+    "sleep_wake_click_count": 4
   },
   "workload_dialogue": {
     "minimum_voice_interval_seconds": 370.0,

@@ -255,6 +255,7 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "tease_more_click_count": "integer",
         "last_boundary_click_count": "integer",
         "irritation_click_count": "integer",
+        "sleep_wake_click_count": "integer",
     },
     "workload_dialogue": {
         "minimum_voice_interval_seconds": "number",

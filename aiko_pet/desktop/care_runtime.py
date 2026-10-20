@@ -69,6 +69,7 @@ class DesktopCareRuntime:
     def interact(
         self, action: str, *, food_id: FoodId | None = None,
         conversation: PreparedSocialContent | None = None,
+        wake_from_clicks: bool = False,
     ) -> None:
         if conversation is None:
             self.social.cancel()
@@ -78,16 +79,22 @@ class DesktopCareRuntime:
                 or self._world.awareness.intentions.goal is not None):
             self._world.interrupt(lambda: self.interact(
                 action, food_id=food_id, conversation=conversation,
+                wake_from_clicks=wake_from_clicks,
             ))
             return
         stamp, now = time.time(), time.monotonic()
         outcome = self._router.dispatch(
-            CareCommand.from_action(action, food_id=food_id, conversation=conversation),
+            CareCommand.from_action(action, food_id=food_id, conversation=conversation,
+                                    wake_from_clicks=wake_from_clicks),
             inputs=self._inputs(stamp, now),
         )
         self._set_context(outcome.context)
         self._presenter.present(outcome, now=now, sleeping=self._state.sleeping)
         self._save()
+
+    def wake_from_clicks(self) -> None:
+        """Present and persist deliberate waking through the normal care owner."""
+        self.interact("sleep", wake_from_clicks=True)
 
     def _clear_wait(self) -> None:
         if self._player.event == "social_wait":

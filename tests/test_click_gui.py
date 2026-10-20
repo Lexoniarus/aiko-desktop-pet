@@ -7,6 +7,7 @@ import time
 import tkinter as tk
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.games.contracts import GameId
@@ -116,16 +117,53 @@ class ClickGuiTests(unittest.TestCase):
         self.assertEqual(len(self.pet.mind.clicks), 1)
         self.assertEqual(self.pet._reaction_player.event, "care_pet")
 
-    def test_sleep_ignores_clicks_and_requires_the_explicit_wake_action(self) -> None:
+    def test_sleep_clicks_request_quiet_then_wake_with_irritated_feedback(self) -> None:
         self.pet.interact("sleep")
         self.assertTrue(self.pet.state.sleeping)
-        for _ in range(4):
-            self.click()
-            self.click(3)
+        history = self.pet.state.friendship_history
+        for count in range(1, 4):
+            self.click(1 if count % 2 else 3)
+            self.assertTrue(self.pet.state.sleeping)
+            self.assertEqual(self.pet._reaction_player.event, "sleep_click")
+            self.assertEqual(len(self.pet.mind.clicks), count)
+            self.assertEqual(self.pet._animated.frame_clock.active_key, ("sleep", None))
+            self.assertFalse(self.pet._contact.can_interact("pet"))
+            self.assertTrue(self.pet._contact.can_interact("sleep"))
+        self.click(3)
+        self.assertFalse(self.pet.state.sleeping)
+        self.assertEqual(self.pet._reaction_player.event, "click_wake")
+        self.assertGreater(self.pet.mind.irritated_until, time.monotonic())
+        self.assertNotEqual(self.pet._animated.frame_clock.active_key, ("sleep", None))
+        self.assertEqual(self.pet.state.friendship_history, history)
+        loaded = self.pet.store.load_session()
+        self.assertFalse(loaded.state.sleeping)
+
+    def test_sleep_click_pause_resets_the_burst_and_menu_wake_still_works(self) -> None:
+        self.pet.interact("sleep")
+        now = time.monotonic()
+        for index, stamp in enumerate((now, now + 0.1, now + 8, now + 8.1)):
+            with patch("aiko_pet.application.contact.time.monotonic",
+                       return_value=stamp):
+                self.click(1 if index % 2 else 3)
         self.assertTrue(self.pet.state.sleeping)
-        self.assertEqual(list(self.pet.mind.clicks), [])
-        self.assertFalse(self.pet._contact.can_interact("pet"))
-        self.assertTrue(self.pet._contact.can_interact("sleep"))
+        self.assertEqual(len(self.pet.mind.clicks), 2)
+        self.pet.interact("sleep")
+        self.assertFalse(self.pet.state.sleeping)
+        self.assertEqual(self.pet._reaction_player.event, "wake")
+
+    def test_sleep_is_clickable_at_both_sprite_scales(self) -> None:
+        for scale in (1, 2):
+            with self.subTest(scale=scale):
+                if self.pet.settings.scale != scale:
+                    self.pet.toggle_scale()
+                self.pet.interact("sleep")
+                self.click()
+                self.assertTrue(self.pet.state.sleeping)
+                self.assertEqual(self.pet._reaction_player.event, "sleep_click")
+                for _ in range(3):
+                    self.click(3)
+                self.assertFalse(self.pet.state.sleeping)
+                self.assertEqual(self.pet._reaction_player.event, "click_wake")
 
 
 if __name__ == "__main__":

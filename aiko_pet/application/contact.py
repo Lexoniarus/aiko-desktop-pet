@@ -39,6 +39,7 @@ class ContactPorts:
     playback_active: Callable[[], bool] = lambda: False
     reaction_event: Callable[[], str | None] = lambda: None
     care_holding: Callable[[], bool] = lambda: False
+    wake_from_clicks: Callable[[], None] = lambda: None
 
 
 class ContactCoordinator:
@@ -100,7 +101,7 @@ class ContactCoordinator:
             self._mind.clicks.clear()
             self._mind.last_contact = time.monotonic()
             return
-        if self._state.sleeping or self._ports.game_open():
+        if self._ports.game_open():
             return
         if self._ports.story_active():
             return
@@ -109,9 +110,10 @@ class ContactCoordinator:
         # upstream through its existing request_contact/acknowledge_contact path.
         event = self._ports.reaction_event()
         click_reply = event is not None and (
-            event.startswith("click_") or event == "rapid_click"
+            event.startswith("click_") or event in ("rapid_click", "sleep_click")
         )
-        if self._ports.playback_active() and not click_reply:
+        sleep_reply = self._state.sleeping and event == "sleep"
+        if self._ports.playback_active() and not (click_reply or sleep_reply):
             return
         self.enter()
         now = time.monotonic()
@@ -119,6 +121,9 @@ class ContactCoordinator:
         reaction = self._mind.click(
             button, self._state, self._ports.context(), now,
         )
+        if self._state.sleeping and self._mind.click_wakes:
+            self._ports.wake_from_clicks()
+            return
         if self._mind.click_annoyance:
             self._state.apply_relationship_penalty(
                 "click", BALANCE.number("friendship", "click_loss"),

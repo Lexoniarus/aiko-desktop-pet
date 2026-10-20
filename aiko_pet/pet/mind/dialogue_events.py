@@ -38,6 +38,7 @@ DIALOGUE_EVENTS = frozenset({
     "click_withdrawn_boundary",
     "click_work_boundary",
     "click_work_repeat",
+    "click_wake",
     "computer_effort_easing",
     "computer_effort_heavy",
     "computer_effort_peak",

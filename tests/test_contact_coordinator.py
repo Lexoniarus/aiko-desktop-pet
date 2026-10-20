@@ -26,6 +26,7 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.show = Mock()
         self.cancel = Mock()
         self.hide = Mock()
+        self.wake = Mock()
         self.reactions: list[tuple[Reaction | None, int]] = []
         self.greet_enabled = True
         self.foreground = self.playback = False
@@ -53,6 +54,7 @@ class ContactCoordinatorTests(unittest.TestCase):
                 playback_active=lambda: self.playback,
                 story_active=lambda: self.story,
                 reaction_event=lambda: self.event,
+                wake_from_clicks=self.wake,
             ),
         )
 
@@ -128,17 +130,41 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.assertEqual(list(self.mind.clicks), [])
         self.assertEqual(self.reactions, [])
 
-    def test_game_sleep_and_story_take_priority_over_click_feedback(self) -> None:
+    def test_game_and_story_take_priority_over_click_feedback(self) -> None:
         self.playback, self.event = True, "click_left"
-        for blocked in ("game", "sleep", "story"):
+        for blocked in ("game", "story"):
             with self.subTest(blocked=blocked):
                 self.game = blocked == "game"
                 self.story = blocked == "story"
-                set_test_pet_values(self.state, sleeping=blocked == "sleep")
                 self.contact.click("left")
                 self.contact.click("right")
         self.assertEqual(list(self.mind.clicks), [])
         self.assertEqual(self.reactions, [])
+
+    def test_sleep_replies_remain_interruptible_until_fourth_click_wakes(self) -> None:
+        set_test_pet_values(self.state, sleeping=True)
+        self.playback, self.event = True, "sleep"
+        for count in range(1, 5):
+            with patch("aiko_pet.application.contact.time.monotonic",
+                       return_value=1000 + count / 10):
+                self.contact.click("left" if count % 2 else "right")
+            if count < 4:
+                reaction = self.reactions[-1][0]
+                assert reaction is not None
+                self.assertEqual(reaction.event, "sleep_click")
+                self.event = reaction.event
+                self.wake.assert_not_called()
+        self.wake.assert_called_once_with()
+        self.assertEqual(len(self.reactions), 3)
+        self.assertFalse(self.contact.can_interact("pet"))
+        self.assertTrue(self.contact.can_interact("sleep"))
+
+    def test_sleep_does_not_admit_clicks_during_unrelated_playback(self) -> None:
+        set_test_pet_values(self.state, sleeping=True)
+        self.playback, self.event = True, "care_pet"
+        self.contact.click("left")
+        self.assertEqual(list(self.mind.clicks), [])
+        self.wake.assert_not_called()
 
     def test_no_reaction_hides_old_speech_and_cancels_followup(self) -> None:
         self.contact.react_to_click(None)

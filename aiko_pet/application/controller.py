@@ -61,6 +61,21 @@ class CareController:
         )
         self._adaptive.note_interaction(inputs.wall_time)
         context = context_at(inputs.wall_time)
+        if command.wake_from_clicks:
+            # Time progression may already have ended sleep. This command only
+            # wakes; replaying a sleep toggle must never put her back to bed.
+            result = (
+                self._state.interact(
+                    "sleep", now=inputs.wall_time,
+                    sleep_context=self._adaptive.sleep_context(),
+                ) if self._state.sleeping
+                else CareResult("sleep", CareEffect.SLEEP_ENDED)
+            )
+            self._mind.note_sleep_disturbance(inputs.monotonic_time)
+            wake_reaction = self._mind.select_reaction(
+                "click_wake", self._state, context, inputs.monotonic_time,
+            )
+            return CareOutcome(result, wake_reaction, context)
         before = self._mind.observe_care(
             self._state,
             context,

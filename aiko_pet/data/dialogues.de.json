@@ -23370,6 +23370,294 @@
         "friend",
         "close"
       ]
+    },
+    {
+      "id": "click-wake-acquaintance-01",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt bin ich wach. Bitte klick mich nicht aus dem Schlaf."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "click-wake-acquaintance-02",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte um Ruhe gebeten. So geweckt zu werden ist unangenehm."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "click-wake-acquaintance-03",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Huch … ich bin wach. Das war mir zu viel Geklicke."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "acquaintance"
+      ]
+    },
+    {
+      "id": "click-wake-familiar-01",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mmpf … jetzt bin ich wach. Das war kein sanftes Wecken."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "click-wake-familiar-02",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte noch schlafen. Bitte hör mit dem Geklicke auf."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "click-wake-familiar-03",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Schon gut, ich bin wach. Aber so mag ich nicht geweckt werden."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "familiar"
+      ]
+    },
+    {
+      "id": "click-wake-friend-01",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Uff … ich bin wach. Du, das viele Klicken war gerade echt unangenehm."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "click-wake-friend-02",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hatte doch um Ruhe gebeten. Jetzt bin ich wach und ein bisschen grummelig."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "click-wake-friend-03",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mmpf. Schlaf vorbei. Bitte weck mich nächstes Mal etwas sanfter."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "friend"
+      ]
+    },
+    {
+      "id": "click-wake-close-01",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast mich wachgeklickt. Mmpf. Gerade bin ich wirklich grummelig."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "click-wake-close-02",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich bin wach, du. Aber meine Bitte um Ruhe war ernst gemeint."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "close"
+      ]
+    },
+    {
+      "id": "click-wake-close-03",
+      "event": "click_wake",
+      "animation": "waiting",
+      "moods": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "So … jetzt bin ich wach. Nähe mag ich, aus dem Schlaf geklickt werden nicht."
+        },
+        {
+          "kind": "emote",
+          "content": "anger",
+          "duration_ms": 700
+        }
+      ],
+      "stages": [
+        "close"
+      ]
     }
   ]
 }

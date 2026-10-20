@@ -36,6 +36,13 @@ controls hardware sampling, independently of sleep input observations.
   care wakes Aiko with the same protection; rejected care and bare game requests
   do not. Manual sleep chooses main sleep inside the expected window and a
   75-minute nap outside it.
+- Direct left/right clicks on sleeping Aiko first use the existing requests to
+  let her sleep, without interrupting the bed animation. Four clicks in the
+  current burst wake her with an irritated, friendship-stage-specific reply.
+  A pause longer than 7.5 seconds resets that burst. This deliberate disturbance
+  uses the existing wake protection and grants no energy or care credit.
+  Reading clicks, games and unrelated exclusive playback remain protected;
+  sleep-entry and sleep-click replies can be replaced by the next sleep click.
 - After protection, exhaustion at energy at most 10 starts recovery toward 40,
   once an already committed action/game has finished. Activity cannot prevent
   this recovery. If still quiet inside the expected window at 40, continue main

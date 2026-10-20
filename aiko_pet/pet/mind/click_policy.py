@@ -49,6 +49,7 @@ class ClickDecision:
 
     event: ClickEvent | None
     irritates: bool = False
+    wakes: bool = False
 
 
 def choose_click_reaction(
@@ -65,7 +66,10 @@ def choose_click_reaction(
     if button not in ("left", "right"):
         raise ValueError("Unknown mouse button")
     if state.sleeping:
-        return ClickDecision("sleep_click")
+        return ClickDecision(
+            "sleep_click",
+            wakes=click_count >= BALANCE.integer("click", "sleep_wake_click_count"),
+        )
     busy = situation is not None and situation.focused
     cheerful = (
         state.mood >= BALANCE.integer("click", "cheerful_mood")

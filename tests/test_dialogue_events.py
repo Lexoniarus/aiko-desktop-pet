@@ -69,6 +69,15 @@ class ClickDecisionTests(unittest.TestCase):
                     expected,
                 )
 
+    def test_sleep_waking_counts_both_buttons_after_the_quiet_requests(self) -> None:
+        sleeper = PetState(sleeping=True)
+        for button in ("left", "right"):
+            for count in range(1, 5):
+                selected = decision(button=cast(ClickButton, button), count=count,
+                                    state=sleeper)
+                self.assertEqual(selected.wakes, count == 4)
+                self.assertFalse(selected.irritates)
+
     def test_withdrawn_aiko_stops_at_seven_clicks(self) -> None:
         sad = PetState(mood=20)
         self.assertEqual(decision(count=3, state=sad).event, "click_notice_withdrawn")

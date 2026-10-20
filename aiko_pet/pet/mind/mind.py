@@ -54,6 +54,8 @@ class PetMind:
         self.book = book
         self.clicks: deque[float] = deque(maxlen=self.MAX_CLICKS_IN_BURST)
         self.click_annoyance = False
+        self.click_wakes = False
+        self._clicks_during_sleep = False
         self._click_warned = False
         self.irritated_until = -1.0
         self.warm_until = -1.0
@@ -72,6 +74,14 @@ class PetMind:
         self.irritated_until = max(
             self.irritated_until, now + BALANCE.number("mind", "irritation_seconds"),
         )
+
+    def note_sleep_disturbance(self, now: float) -> None:
+        """Remember the explicit boundary after being woken by repeated pokes."""
+        self.irritated_until = max(
+            self.irritated_until, now + BALANCE.number("mind", "irritation_seconds"),
+        )
+        self._click_warned = True
+        self._clicks_during_sleep = False
 
     def set_situation(
         self,
@@ -212,17 +222,19 @@ class PetMind:
         if button not in ("left", "right"):
             raise ValueError("Unknown mouse button")
         self.last_contact = now
+        if state.sleeping != self._clicks_during_sleep:
+            self.clicks.clear()
+        self._clicks_during_sleep = state.sleeping
         if self.clicks and now - self.clicks[-1] > self.CLICK_WINDOW_SECONDS:
             self.clicks.clear()
         if not self.clicks:
             self._click_warned = False
         self.click_annoyance = self._click_warned and not state.sleeping
+        self.click_wakes = False
         self.clicks.append(now)
         count = len(self.clicks)
-        if state.sleeping:
-            return self.select_reaction("sleep_click", state, context, now)
-
-        self.work.note_click(self.situation)
+        if not state.sleeping:
+            self.work.note_click(self.situation)
         decision = choose_click_reaction(
             button=button,
             click_count=count,
@@ -236,6 +248,9 @@ class PetMind:
                 < BALANCE.integer("mind", "petted_click_window_seconds")
             ),
         )
+        if decision.wakes:
+            self.click_wakes = True
+            return None
         if decision.event is None:
             return None
         if decision.irritates:

@@ -318,6 +318,7 @@ class DesktopPet:
                 care_holding=lambda: (self._social_runtime.waiting
                                       and self._reaction_player.event
                                       in (None, "social_wait")),
+                wake_from_clicks=lambda: self._care_runtime.wake_from_clicks(),
             ),
         )
         self._input = DesktopInput(

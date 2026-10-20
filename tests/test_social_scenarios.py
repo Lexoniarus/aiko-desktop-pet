@@ -170,12 +170,16 @@ class ClickStoryTests(unittest.TestCase):
             all("CPU" not in r.text and "GPU" not in r.text for r in reactions)
         )
 
-    def test_sleep_does_not_wake_and_is_not_click_spam(self):
+    def test_sleep_requests_quiet_before_requesting_a_wake_transition(self):
         set_test_pet_values(self.state, sleeping=True)
-        for i in range(12):
+        for i in range(3):
             r = self.mind.click("left", self.state, self.context, 30 + i)
             assert r is not None
             self.assertEqual(r.event, "sleep_click")
+            self.assertFalse(self.mind.click_wakes)
+        self.assertIsNone(self.mind.click("left", self.state, self.context, 33))
+        self.assertTrue(self.mind.click_wakes)
+        # The application commits waking; dialogue selection cannot mutate her.
         self.assertTrue(self.state.sleeping)
         self.assertEqual(self.mind.irritated_until, -1)
 
