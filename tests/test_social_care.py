@@ -14,6 +14,7 @@ from aiko_pet.application.commands import CareCommand
 from aiko_pet.application.controller import CareController
 from aiko_pet.application.social_content import SocialCategory, prepare_social_content
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.pet.interaction_events import SocialCompletion
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
 
@@ -41,7 +42,7 @@ class SocialCareTests(unittest.TestCase):
                 )
                 select.assert_not_called()
             self.assertEqual(outcome.reaction, replace(
-                prepared.reaction, completed_social="social",
+                prepared.reaction, completed_social=SocialCompletion(category.value),
             ))
             self.assertIsNone(prepared.reaction.completed_social)
             self.assertEqual(state.social, 10 + 26 * (index + 1))

@@ -220,7 +220,7 @@ class DesktopPet:
             display_text=self._speech.show_text,
             on_text=lambda event: self._contact.note_text(event),
             on_wish_text=self._attention.note_wish_text,
-            social_completed=lambda kind: self._care_runtime.complete_social(kind),
+            social_completed=lambda result: self._care_runtime.complete_social(result),
             start_action=self._start_action,
             mark_spoken=self._mark_reaction_spoken,
             is_closed=lambda: self._closed,

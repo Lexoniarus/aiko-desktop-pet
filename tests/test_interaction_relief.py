@@ -5,7 +5,11 @@ from dataclasses import replace
 
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.fun import GameExperience
-from aiko_pet.pet.interaction_events import HelpfulInteraction, WithholdingEnded
+from aiko_pet.pet.interaction_events import (
+    HelpfulInteraction,
+    SocialCompletion,
+    WithholdingEnded,
+)
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.moodlets import MoodletEpisode, MoodletId, MoodletState
@@ -88,7 +92,7 @@ class InteractionReliefTests(unittest.TestCase):
 
         def finish(kind):
             completed.append(kind)
-            pet.experience_interaction(HelpfulInteraction(kind))
+            pet.experience_interaction(HelpfulInteraction(kind.kind))
 
         player = ReactionPlayer(
             schedule=scheduler.schedule, cancel_timer=scheduler.cancel,
@@ -97,7 +101,7 @@ class InteractionReliefTests(unittest.TestCase):
             is_closed=lambda: False, social_completed=finish,
         )
         reaction = Reaction("chat", (Cue.text("Eins."), Cue.text("Zwei.")),
-                            "idle", "talk", completed_social="chat")
+                            "idle", "talk", completed_social=SocialCompletion("chat"))
         player.play(reaction)
         token = player.pending_timer
         assert token is not None
@@ -115,12 +119,13 @@ class InteractionReliefTests(unittest.TestCase):
         stale = scheduler.callbacks[token][1]
         scheduler.fire(token)
         stale()
-        self.assertEqual(completed, ["chat"])
+        self.assertEqual(completed, [SocialCompletion("chat")])
         self.assertEqual(pet.moodlets.active[0].remaining_seconds, 600)
         player.play(replace(reaction, completed_social=None))
         while player.pending_timer is not None:
             scheduler.fire(player.pending_timer)
-        self.assertEqual(completed, ["chat"])  # Ambient dialogue is not human care.
+        # Ambient dialogue is not human care.
+        self.assertEqual(completed, [SocialCompletion("chat")])
 
     def test_application_completion_advances_shared_clock_without_second_care(self):
         from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
@@ -140,18 +145,22 @@ class InteractionReliefTests(unittest.TestCase):
         inputs = SessionInputs(wall, 0, False, None, False, False, None)
         outcome = controller.execute(CareCommand("talk"), inputs)
         assert outcome.reaction is not None
-        self.assertEqual(outcome.reaction.completed_social, "chat")
+        self.assertEqual(outcome.reaction.completed_social, SocialCompletion("chat"))
         self.assertEqual(pet.moodlets.active[0].remaining_seconds, 1200)
         friendship = pet.friendship
         uptime[0] = 300
-        controller.complete_social("chat", replace(inputs, wall_time=wall + 300,
-                                                   monotonic_time=300),
-                                   arrangement_ready=False)
+        controller.complete_social(
+            SocialCompletion("chat"),
+            replace(inputs, wall_time=wall + 300, monotonic_time=300),
+            arrangement_ready=False,
+        )
         self.assertEqual(pet.lived_seconds, 300)
         self.assertEqual(pet.moodlets.active[0].remaining_seconds, 600)
         self.assertEqual(pet.friendship, friendship)
-        controller.complete_social("chat", replace(inputs, wall_time=wall + 300,
-                                                   monotonic_time=300),
-                                   arrangement_ready=False)
+        controller.complete_social(
+            SocialCompletion("chat"),
+            replace(inputs, wall_time=wall + 300, monotonic_time=300),
+            arrangement_ready=False,
+        )
         self.assertEqual(pet.lived_seconds, 300)
         self.assertEqual(pet.moodlets.active[0].remaining_seconds, 600)

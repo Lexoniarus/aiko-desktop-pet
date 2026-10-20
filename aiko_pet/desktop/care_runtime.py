@@ -113,9 +113,9 @@ class DesktopCareRuntime:
         )
         self._save()
 
-    def complete_social(self, kind: SocialCompletion) -> None:
+    def complete_social(self, completion: SocialCompletion) -> None:
         self._router.complete_social(
-            kind, inputs=self._inputs(time.time(), time.monotonic()),
+            completion, inputs=self._inputs(time.time(), time.monotonic()),
             arrangement_ready=self._world.arrangement_ready(),
         )
         self._save()

@@ -73,11 +73,14 @@ class ApplicationRouter:
         self._care.advance_time(inputs)
 
     def complete_social(
-        self, kind: SocialCompletion, *, inputs: SessionInputs, arrangement_ready: bool,
+        self, completion: SocialCompletion, *, inputs: SessionInputs,
+        arrangement_ready: bool,
     ) -> None:
         """Receive a finished accepted sequence on the existing owner thread."""
         self._require_owner_thread()
-        self._care.complete_social(kind, inputs, arrangement_ready=arrangement_ready)
+        self._care.complete_social(
+            completion, inputs, arrangement_ready=arrangement_ready,
+        )
 
     def observe_game_round(
         self, event: GameRoundEvent, *, inputs: SessionInputs,

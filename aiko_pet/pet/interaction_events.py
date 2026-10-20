@@ -59,7 +59,23 @@ class ArrangementDisrupted:
     attributed: bool = False
 
 
-SocialCompletion = Literal["chat", "social"]
+@dataclass(frozen=True, slots=True)
+class SocialCompletion:
+    """Admitted category and optional pre-existing wish, carried through playback."""
+
+    category: str
+    wish_instance_id: int | None = None
+
+    def __post_init__(self) -> None:
+        if (self.category not in ("chat", "single", "twopart", "fact")
+                or self.wish_instance_id is not None
+                and (type(self.wish_instance_id) is not int
+                     or self.wish_instance_id < 1)):
+            raise ValueError("Invalid social completion evidence")
+
+    @property
+    def kind(self) -> Literal["chat", "social"]:
+        return "chat" if self.category == "chat" else "social"
 
 
 @dataclass(frozen=True, slots=True)

@@ -5,12 +5,14 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 
 from ..pet.care_result import CareEffect, CareResult
-from ..pet.interaction_events import HelpfulInteraction, SocialCompletion
+from ..pet.interaction_events import SocialCompletion
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
 from ..pet.routine import TimeContext, context_at
 from ..pet.state import PetState
+from ..pet.wish_catalog import WISH_CATALOG
+from ..pet.wishes import WishArea
 from .active_time import (
     ActiveSessionClock,
     SessionInputs,
@@ -62,10 +64,13 @@ class CareController:
         )
 
     def complete_social(
-        self, kind: SocialCompletion, inputs: SessionInputs, *, arrangement_ready: bool,
+        self, completion: SocialCompletion, inputs: SessionInputs, *,
+        arrangement_ready: bool,
     ) -> None:
         self.advance_time(inputs)
-        self._state.experience_interaction(HelpfulInteraction(kind, arrangement_ready))
+        self._state.complete_social_experience(
+            completion, arrangement_ready=arrangement_ready,
+        )
 
     def execute(self, command: CareCommand, inputs: SessionInputs) -> CareOutcome:
         """Preserve the original ordering of time, dialogue and care changes."""
@@ -120,7 +125,12 @@ class CareController:
                 dialogue=before.dialogue,
             )
         if result.effect == CareEffect.CONVERSATION and reaction is not None:
-            reaction = replace(reaction, completed_social=(
-                "social" if command.conversation is not None else "chat"
+            category = (command.conversation.category.value
+                        if command.conversation is not None else "chat")
+            wish = next((w for w in self._state.wishes.active
+                         if WISH_CATALOG.definitions[w.definition_id].area
+                         == WishArea.SOCIAL and w.target_id == category), None)
+            reaction = replace(reaction, completed_social=SocialCompletion(
+                category, wish.instance_id if wish else None,
             ))
         return CareOutcome(result, reaction, context)

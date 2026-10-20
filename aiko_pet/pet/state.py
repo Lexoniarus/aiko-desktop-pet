@@ -35,6 +35,7 @@ from .interaction_events import (
     FoodConsumed,
     HelpfulInteraction,
     InteractionEvent,
+    SocialCompletion,
 )
 from .interaction_rules import InteractionConsequences, apply_interaction_event
 from .lifecycle import (
@@ -352,6 +353,19 @@ class PetState:
                         ))
         self._change(wishes=resolution.state, moodlets=moodlets,
                      friendship=relationship.points, relationship=relationship.history)
+
+    def complete_social_experience(
+        self, completion: SocialCompletion, *, arrangement_ready: bool = False,
+    ) -> None:
+        self.experience_interaction(HelpfulInteraction(
+            completion.kind, arrangement_ready,
+        ))
+        if completion.wish_instance_id is not None:
+            self._apply_wish_resolution(fulfill_activity_wish(
+                self.wishes, WishArea.SOCIAL, completion.category,
+                elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
+                instance_id=completion.wish_instance_id,
+            ), personal=True)
 
     def complete_wish_round(
         self, instance_id: int, *, game_id: str, session_id: str, round_id: str,
