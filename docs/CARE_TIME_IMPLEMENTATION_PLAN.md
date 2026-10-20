@@ -1528,7 +1528,7 @@ separate under existing shared limits; no additional reward amount is fixed
 here. Reconcile wish creation/concurrency and cross-family numeric caps before
 implementation, rather than silently assigning another reward allowance.
 
-##### Open design requirement: positive experiences and negative Moodlets, 2026-10-20
+##### Design reference: positive experiences and negative Moodlets, 2026-10-20
 
 The owner requests explicit consideration of whether playing, social activity
 and welcome affection can mitigate relevant negative impressions. Distinguish
@@ -1536,7 +1536,8 @@ numeric positive/negative contributions, overall emotional interpretation,
 addressing the original cause, and actual recovery of the negative Moodlet.
 Coexistence alone does not define a targeted recovery effect. Do not use the
 earlier no-automatic-erasure rule to preclude a separately agreed, cause-specific
-mitigation rule; no such numerical rule is approved by this record yet.
+mitigation rule. The recorded proposal below now specifies candidate mappings
+and numerical reductions; implementation remains unauthorized.
 
 The owner identifies The Sims 3 and The Sims 4 as the general product reference
 for this design. Use concrete named impressions, identifiable causes, strengths,
@@ -1553,14 +1554,66 @@ numbers, three-level decay or wish rewards reproduce Sims rules exactly.
 Keep those candidate values explicit; discuss any change between fixed-duration
 and phased-decay models rather than silently replacing the recorded proposals.
 
-Discuss which actual accepted/completed experiences help which causes, whether
-a wish must be fulfilled, how recovery is accelerated or intensity reduced,
-and how repeated inputs are bounded. Preserve existing care-driven recovery,
-explicit interaction boundaries and separate friendship accounting. A positive
-wish must not silently bypass a refusal or treat a laugh, gift or win as proof
-that prior mistreatment was forgiven. Concrete mappings and values are the
-next discussion after the recorded affection wish; do not change existing proposals
-or implement an automatic cleansing effect without that agreement.
+Preserve existing care-driven recovery, explicit interaction boundaries and
+separate friendship accounting. A positive wish must not silently bypass a
+refusal or treat a laugh, gift or win as proof that prior mistreatment was
+forgiven. Interpret the following targeted reductions alongside the earlier
+decay rules; they do not authorize a general automatic cleansing effect.
+
+##### Recorded proposal: targeted shortening of negative Moodlets, 2026-10-20
+
+Status: owner-requested design proposal, not implemented. Deduct the listed
+credit from the remaining duration of the current intensity/decay stage, not
+from every remaining stage or directly from intensity/numeric mood.
+
+| Negative impression | Qualifying helpful interaction and prerequisite | Reduction of the current stage |
+| --- | --- | --- |
+| Annoyed by repeated poking | After five minutes without another provocation: complete Plaudern, shared play, or welcome accepted petting | Five minutes |
+| Too much closeness / feeling crowded | After five minutes of respected distance: complete Plaudern or shared play | Five minutes |
+| Always the same food | Actually accept and consume a different food | Sixty minutes |
+| A wanted object was withheld | Object is accessible again, followed by complete Plaudern or shared play | Five minutes |
+| Familiar arrangement was disturbed | Search is complete or the new position is recognized, followed by complete Plaudern or shared play | Five minutes |
+| Feeling alone after prolonged lack of contact | Complete one social interaction: Plaudern, API Single, API Two Parts, or fact | Thirty minutes |
+| Frustrated after prolonged lack of stimulation | Shared play | Thirty minutes |
+| Missing closeness | One accepted petting interaction | Thirty minutes |
+| Worn down by prolonged hunger | One actually consumed meal | Thirty minutes |
+| Irritated by exhaustion | Actual sleep and stable energy recovery | No additional flat credit; preserve existing recovery |
+
+For this proposal, shared play means at least two completed rounds in one
+session, regardless of winner. Social completion means the whole sequence,
+including the punchline or fact introduction as applicable. Menu selection,
+waiting, interrupted sequences, rejected actions and duplicate event delivery
+do not qualify. Petting retains its ordinary willingness/acceptance rules.
+
+Grant at most one reduction per Moodlet and current decay stage. Further
+clicks, changing social categories or switching games do not grant another
+credit for that stage. If the stage has less time left than the credit, end
+that stage and discard the excess; do not carry credit into the next stage.
+That next stage starts with its normal duration. Apply ordinary elapsed ageing
+before the interaction so an already expired impression cannot be credited.
+
+For prolonged-poor-care impressions, first require the affected need to have
+remained at forty or above for thirty continuous real minutes, as already
+proposed. Only subsequent qualifying care can accelerate that impression's
+emotional recovery. Do not accumulate credits before this recovery gate opens.
+Actual sleep restores energy under existing rules without a new flat emotional
+credit. Need recovery and emotional recovery remain distinct.
+
+Shortening the crowded/closeness impression does not shorten its separate
+petting-refusal deadline. Renewed boundary violations follow their existing
+escalation/quiet-time rules. Returning an object ends the provoking situation;
+the additional shortening requires the subsequent qualifying interaction.
+
+No active or expressed wish is required for targeted relief. An interaction
+can independently fulfill a genuine wish and mitigate an eligible negative
+impression under these rules. Keep ordinary care, the positive wish impression,
+negative-duration relief and any relationship effect distinguishable. Relief
+neither refunds previous friendship losses nor creates another reward budget.
+
+Example: poking irritation at level two has fourteen minutes left in its
+current twenty-minute stage. A qualifying conversation after respected quiet
+reduces that remainder to nine minutes. Its subsequent level-one stage starts
+with the normal twenty minutes and its own once-per-stage relief eligibility.
 
 ##### Recorded proposal: prolonged/repeated poor care, 2026-10-19
 
