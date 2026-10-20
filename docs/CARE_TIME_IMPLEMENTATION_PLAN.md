@@ -1484,8 +1484,9 @@ fulfillment or stack. Numeric mood retains its normal timed response.
 Any friendship reward is separate from the lasting impression and remains
 within the existing shared care/reward limits. No additional amount is fixed
 by this proposal. Completion, stacking and each bubble/punchline must not
-repeat ordinary talk credit. Reconcile cross-family/group caps and wish
-creation/concurrency pacing in the integrated balance before implementation.
+repeat ordinary talk credit. Apply the later common-contribution-cap proposal
+when balancing these families. Wish creation/concurrency pacing still requires
+discussion before implementation.
 
 ##### Recorded proposal: affection wish and fulfillment Moodlet, 2026-10-20
 
@@ -1525,8 +1526,9 @@ impressions can coexist. A separate targeted mitigation rule may shorten an
 eligible negative impression, but this wish does not itself erase a boundary
 violation or refund friendship losses. Keep friendship reward accounting
 separate under existing shared limits; no additional reward amount is fixed
-here. Reconcile wish creation/concurrency and cross-family numeric caps before
-implementation, rather than silently assigning another reward allowance.
+here. Apply the later common-contribution-cap proposal and reconcile wish
+creation/concurrency before implementation, rather than silently assigning
+another reward allowance.
 
 ##### Design reference: positive experiences and negative Moodlets, 2026-10-20
 
@@ -1724,10 +1726,57 @@ eligible negative impressions through the separately recorded relief rules.
 An overall label alone must not erase Moodlets, reset their clocks, refund
 relationship losses or grant wish/care rewards.
 
-Further discussion: settle common positive/negative contribution caps and their
-interaction with existing group caps and need-deficit limits, reconcile wish
-creation/concurrency pacing, and complete remaining vocabulary/selection details
-before implementing stage 5.
+##### Recorded proposal: common Moodlet contribution caps, 2026-10-20
+
+Status: owner-requested design proposal, not implemented. Cap positive and
+negative numeric mood-target contributions separately, preserving individual
+and group limits before applying their common limits.
+
+| Scope | Candidate numeric contribution limit |
+| --- | --- |
+| One stackable Moodlet | Up to +15 or -15 points under its own rules |
+| Food-wish fulfillment | +5 points, with no intensity stacking, as already proposed |
+| All game-wish fulfillment families | +15 points combined, as already proposed |
+| All social-wish fulfillment families | +15 points combined |
+| Affection-wish fulfillment | Up to +15 points |
+| All prolonged-poor-care impressions | -15 points combined, as already proposed |
+| All positive Moodlets across groups | +20 points combined |
+| All negative Moodlets across groups | -30 points combined |
+
+First assess each Moodlet under its own intensity and stacking rules, then
+apply the relevant group caps. Sum the resulting positive contributions and
+cap at +20; separately sum negative magnitudes and cap at thirty. Only then
+combine positive and negative contributions with the need-derived mood value.
+Do not net unlimited positive/negative sums before applying the two common
+caps. These caps are not new rolling reward budgets or friendship rules.
+
+Clamp the resulting target to 0-100 and retain the existing need-deficit target
+limits on that final value. In particular, one need at zero still limits the
+target to at most thirty even with many positive impressions. Actual numeric
+mood retains its existing timed response; reaching or leaving a cap does not
+cause an independent instant bar change. Need-only mood reaches at most eighty,
+so very good care and up to twenty positive points can together reach one
+hundred. Negative impressions can have a larger combined effect, while the
+thirty-point limit prevents unbounded deductions merely from parallel entries.
+
+| Need-derived mood | Positive contribution after caps | Negative contribution after caps | Target before any stricter need limit |
+| --- | --- | --- | --- |
+| 80 | +20 | 0 | 100 |
+| 70 | +15 | -10 | 75 |
+| 80 | +20 | -30 | 70 |
+| 50 | +5 | -30 | 25 |
+
+The limits affect numeric contributions only. Retain every active impression's
+own intensity, cause, remaining duration and emotional relevance even when
+its group/common numeric cap is reached. Aiko can therefore have numeric mood
+seventy and still feel strongly crowded or irritated. Do not truncate the
+active collection, suppress wish fulfillment, change emotional-state ranking,
+clear an interaction boundary or refund friendship losses to enforce a numeric
+cap. Positive experiences can still fulfill wishes and affect interpretation
+when no additional numeric bonus is available.
+
+Further discussion: reconcile wish creation/concurrency pacing and complete
+remaining vocabulary/selection details before implementing stage 5.
 
 #### 5C. Connect status, expression and interaction decisions
 
