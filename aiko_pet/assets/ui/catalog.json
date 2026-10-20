@@ -1,0 +1,507 @@
+{
+  "version": 1,
+  "icons": {
+    "action_pet": {
+      "24": "action_pet_24.png",
+      "32": "action_pet_32.png",
+      "40": "action_pet_40.png",
+      "48": "action_pet_48.png",
+      "64": "action_pet_64.png",
+      "96": "action_pet_96.png",
+      "128": "action_pet_128.png"
+    },
+    "action_sleep": {
+      "24": "action_sleep_24.png",
+      "32": "action_sleep_32.png",
+      "40": "action_sleep_40.png",
+      "48": "action_sleep_48.png",
+      "64": "action_sleep_64.png",
+      "96": "action_sleep_96.png",
+      "128": "action_sleep_128.png"
+    },
+    "detail_next": {
+      "24": "detail_next_24.png",
+      "32": "detail_next_32.png",
+      "40": "detail_next_40.png",
+      "48": "detail_next_48.png",
+      "64": "detail_next_64.png",
+      "96": "detail_next_96.png",
+      "128": "detail_next_128.png"
+    },
+    "detail_objects": {
+      "24": "detail_objects_24.png",
+      "32": "detail_objects_32.png",
+      "40": "detail_objects_40.png",
+      "48": "detail_objects_48.png",
+      "64": "detail_objects_64.png",
+      "96": "detail_objects_96.png",
+      "128": "detail_objects_128.png"
+    },
+    "detail_rhythm": {
+      "24": "detail_rhythm_24.png",
+      "32": "detail_rhythm_32.png",
+      "40": "detail_rhythm_40.png",
+      "48": "detail_rhythm_48.png",
+      "64": "detail_rhythm_64.png",
+      "96": "detail_rhythm_96.png",
+      "128": "detail_rhythm_128.png"
+    },
+    "detail_wellbeing": {
+      "24": "detail_wellbeing_24.png",
+      "32": "detail_wellbeing_32.png",
+      "40": "detail_wellbeing_40.png",
+      "48": "detail_wellbeing_48.png",
+      "64": "detail_wellbeing_64.png",
+      "96": "detail_wellbeing_96.png",
+      "128": "detail_wellbeing_128.png"
+    },
+    "game_rps": {
+      "24": "game_rps_24.png",
+      "32": "game_rps_32.png",
+      "40": "game_rps_40.png",
+      "48": "game_rps_48.png",
+      "64": "game_rps_64.png",
+      "96": "game_rps_96.png",
+      "128": "game_rps_128.png"
+    },
+    "game_tic_tac_toe": {
+      "24": "game_tic_tac_toe_24.png",
+      "32": "game_tic_tac_toe_32.png",
+      "40": "game_tic_tac_toe_40.png",
+      "48": "game_tic_tac_toe_48.png",
+      "64": "game_tic_tac_toe_64.png",
+      "96": "game_tic_tac_toe_96.png",
+      "128": "game_tic_tac_toe_128.png"
+    },
+    "moodlet_annoyed": {
+      "24": "moodlet_annoyed_24.png",
+      "32": "moodlet_annoyed_32.png",
+      "40": "moodlet_annoyed_40.png",
+      "48": "moodlet_annoyed_48.png",
+      "64": "moodlet_annoyed_64.png",
+      "96": "moodlet_annoyed_96.png",
+      "128": "moodlet_annoyed_128.png"
+    },
+    "moodlet_cheerful": {
+      "24": "moodlet_cheerful_24.png",
+      "32": "moodlet_cheerful_32.png",
+      "40": "moodlet_cheerful_40.png",
+      "48": "moodlet_cheerful_48.png",
+      "64": "moodlet_cheerful_64.png",
+      "96": "moodlet_cheerful_96.png",
+      "128": "moodlet_cheerful_128.png"
+    },
+    "moodlet_connection": {
+      "24": "moodlet_connection_24.png",
+      "32": "moodlet_connection_32.png",
+      "40": "moodlet_connection_40.png",
+      "48": "moodlet_connection_48.png",
+      "64": "moodlet_connection_64.png",
+      "96": "moodlet_connection_96.png",
+      "128": "moodlet_connection_128.png"
+    },
+    "moodlet_crowded": {
+      "24": "moodlet_crowded_24.png",
+      "32": "moodlet_crowded_32.png",
+      "40": "moodlet_crowded_40.png",
+      "48": "moodlet_crowded_48.png",
+      "64": "moodlet_crowded_64.png",
+      "96": "moodlet_crowded_96.png",
+      "128": "moodlet_crowded_128.png"
+    },
+    "moodlet_disrupted": {
+      "24": "moodlet_disrupted_24.png",
+      "32": "moodlet_disrupted_32.png",
+      "40": "moodlet_disrupted_40.png",
+      "48": "moodlet_disrupted_48.png",
+      "64": "moodlet_disrupted_64.png",
+      "96": "moodlet_disrupted_96.png",
+      "128": "moodlet_disrupted_128.png"
+    },
+    "moodlet_enthusiastic": {
+      "24": "moodlet_enthusiastic_24.png",
+      "32": "moodlet_enthusiastic_32.png",
+      "40": "moodlet_enthusiastic_40.png",
+      "48": "moodlet_enthusiastic_48.png",
+      "64": "moodlet_enthusiastic_64.png",
+      "96": "moodlet_enthusiastic_96.png",
+      "128": "moodlet_enthusiastic_128.png"
+    },
+    "moodlet_exhaustion_irritated": {
+      "24": "moodlet_exhaustion_irritated_24.png",
+      "32": "moodlet_exhaustion_irritated_32.png",
+      "40": "moodlet_exhaustion_irritated_40.png",
+      "48": "moodlet_exhaustion_irritated_48.png",
+      "64": "moodlet_exhaustion_irritated_64.png",
+      "96": "moodlet_exhaustion_irritated_96.png",
+      "128": "moodlet_exhaustion_irritated_128.png"
+    },
+    "moodlet_food_fulfilled": {
+      "24": "moodlet_food_fulfilled_24.png",
+      "32": "moodlet_food_fulfilled_32.png",
+      "40": "moodlet_food_fulfilled_40.png",
+      "48": "moodlet_food_fulfilled_48.png",
+      "64": "moodlet_food_fulfilled_64.png",
+      "96": "moodlet_food_fulfilled_96.png",
+      "128": "moodlet_food_fulfilled_128.png"
+    },
+    "moodlet_food_monotony": {
+      "24": "moodlet_food_monotony_24.png",
+      "32": "moodlet_food_monotony_32.png",
+      "40": "moodlet_food_monotony_40.png",
+      "48": "moodlet_food_monotony_48.png",
+      "64": "moodlet_food_monotony_64.png",
+      "96": "moodlet_food_monotony_96.png",
+      "128": "moodlet_food_monotony_128.png"
+    },
+    "moodlet_hunger_worn": {
+      "24": "moodlet_hunger_worn_24.png",
+      "32": "moodlet_hunger_worn_32.png",
+      "40": "moodlet_hunger_worn_40.png",
+      "48": "moodlet_hunger_worn_48.png",
+      "64": "moodlet_hunger_worn_64.png",
+      "96": "moodlet_hunger_worn_96.png",
+      "128": "moodlet_hunger_worn_128.png"
+    },
+    "moodlet_lonely": {
+      "24": "moodlet_lonely_24.png",
+      "32": "moodlet_lonely_32.png",
+      "40": "moodlet_lonely_40.png",
+      "48": "moodlet_lonely_48.png",
+      "64": "moodlet_lonely_64.png",
+      "96": "moodlet_lonely_96.png",
+      "128": "moodlet_lonely_128.png"
+    },
+    "moodlet_missing_closeness": {
+      "24": "moodlet_missing_closeness_24.png",
+      "32": "moodlet_missing_closeness_32.png",
+      "40": "moodlet_missing_closeness_40.png",
+      "48": "moodlet_missing_closeness_48.png",
+      "64": "moodlet_missing_closeness_64.png",
+      "96": "moodlet_missing_closeness_96.png",
+      "128": "moodlet_missing_closeness_128.png"
+    },
+    "moodlet_pride": {
+      "24": "moodlet_pride_24.png",
+      "32": "moodlet_pride_32.png",
+      "40": "moodlet_pride_40.png",
+      "48": "moodlet_pride_48.png",
+      "64": "moodlet_pride_64.png",
+      "96": "moodlet_pride_96.png",
+      "128": "moodlet_pride_128.png"
+    },
+    "moodlet_relief": {
+      "24": "moodlet_relief_24.png",
+      "32": "moodlet_relief_32.png",
+      "40": "moodlet_relief_40.png",
+      "48": "moodlet_relief_48.png",
+      "64": "moodlet_relief_64.png",
+      "96": "moodlet_relief_96.png",
+      "128": "moodlet_relief_128.png"
+    },
+    "moodlet_secure": {
+      "24": "moodlet_secure_24.png",
+      "32": "moodlet_secure_32.png",
+      "40": "moodlet_secure_40.png",
+      "48": "moodlet_secure_48.png",
+      "64": "moodlet_secure_64.png",
+      "96": "moodlet_secure_96.png",
+      "128": "moodlet_secure_128.png"
+    },
+    "moodlet_shared_play": {
+      "24": "moodlet_shared_play_24.png",
+      "32": "moodlet_shared_play_32.png",
+      "40": "moodlet_shared_play_40.png",
+      "48": "moodlet_shared_play_48.png",
+      "64": "moodlet_shared_play_64.png",
+      "96": "moodlet_shared_play_96.png",
+      "128": "moodlet_shared_play_128.png"
+    },
+    "moodlet_unstimulated": {
+      "24": "moodlet_unstimulated_24.png",
+      "32": "moodlet_unstimulated_32.png",
+      "40": "moodlet_unstimulated_40.png",
+      "48": "moodlet_unstimulated_48.png",
+      "64": "moodlet_unstimulated_64.png",
+      "96": "moodlet_unstimulated_96.png",
+      "128": "moodlet_unstimulated_128.png"
+    },
+    "moodlet_withheld": {
+      "24": "moodlet_withheld_24.png",
+      "32": "moodlet_withheld_32.png",
+      "40": "moodlet_withheld_40.png",
+      "48": "moodlet_withheld_48.png",
+      "64": "moodlet_withheld_64.png",
+      "96": "moodlet_withheld_96.png",
+      "128": "moodlet_withheld_128.png"
+    },
+    "play_rps_paper": {
+      "24": "play_rps_paper_24.png",
+      "32": "play_rps_paper_32.png",
+      "40": "play_rps_paper_40.png",
+      "48": "play_rps_paper_48.png",
+      "64": "play_rps_paper_64.png",
+      "96": "play_rps_paper_96.png",
+      "128": "play_rps_paper_128.png"
+    },
+    "play_rps_rock": {
+      "24": "play_rps_rock_24.png",
+      "32": "play_rps_rock_32.png",
+      "40": "play_rps_rock_40.png",
+      "48": "play_rps_rock_48.png",
+      "64": "play_rps_rock_64.png",
+      "96": "play_rps_rock_96.png",
+      "128": "play_rps_rock_128.png"
+    },
+    "play_rps_scissors": {
+      "24": "play_rps_scissors_24.png",
+      "32": "play_rps_scissors_32.png",
+      "40": "play_rps_scissors_40.png",
+      "48": "play_rps_scissors_48.png",
+      "64": "play_rps_scissors_64.png",
+      "96": "play_rps_scissors_96.png",
+      "128": "play_rps_scissors_128.png"
+    },
+    "play_ttt_o": {
+      "24": "play_ttt_o_24.png",
+      "32": "play_ttt_o_32.png",
+      "40": "play_ttt_o_40.png",
+      "48": "play_ttt_o_48.png",
+      "64": "play_ttt_o_64.png",
+      "96": "play_ttt_o_96.png",
+      "128": "play_ttt_o_128.png"
+    },
+    "play_ttt_x": {
+      "24": "play_ttt_x_24.png",
+      "32": "play_ttt_x_32.png",
+      "40": "play_ttt_x_40.png",
+      "48": "play_ttt_x_48.png",
+      "64": "play_ttt_x_64.png",
+      "96": "play_ttt_x_96.png",
+      "128": "play_ttt_x_128.png"
+    },
+    "status_affection": {
+      "24": "status_affection_24.png",
+      "32": "status_affection_32.png",
+      "40": "status_affection_40.png",
+      "48": "status_affection_48.png",
+      "64": "status_affection_64.png",
+      "96": "status_affection_96.png",
+      "128": "status_affection_128.png"
+    },
+    "status_energy": {
+      "24": "status_energy_24.png",
+      "32": "status_energy_32.png",
+      "40": "status_energy_40.png",
+      "48": "status_energy_48.png",
+      "64": "status_energy_64.png",
+      "96": "status_energy_96.png",
+      "128": "status_energy_128.png"
+    },
+    "status_friendship": {
+      "24": "status_friendship_24.png",
+      "32": "status_friendship_32.png",
+      "40": "status_friendship_40.png",
+      "48": "status_friendship_48.png",
+      "64": "status_friendship_64.png",
+      "96": "status_friendship_96.png",
+      "128": "status_friendship_128.png"
+    },
+    "status_fun": {
+      "24": "status_fun_24.png",
+      "32": "status_fun_32.png",
+      "40": "status_fun_40.png",
+      "48": "status_fun_48.png",
+      "64": "status_fun_64.png",
+      "96": "status_fun_96.png",
+      "128": "status_fun_128.png"
+    },
+    "status_satiety": {
+      "24": "status_satiety_24.png",
+      "32": "status_satiety_32.png",
+      "40": "status_satiety_40.png",
+      "48": "status_satiety_48.png",
+      "64": "status_satiety_64.png",
+      "96": "status_satiety_96.png",
+      "128": "status_satiety_128.png"
+    },
+    "status_social": {
+      "24": "status_social_24.png",
+      "32": "status_social_32.png",
+      "40": "status_social_40.png",
+      "48": "status_social_48.png",
+      "64": "status_social_64.png",
+      "96": "status_social_96.png",
+      "128": "status_social_128.png"
+    },
+    "system_computer": {
+      "24": "system_computer_24.png",
+      "32": "system_computer_32.png",
+      "40": "system_computer_40.png",
+      "48": "system_computer_48.png",
+      "64": "system_computer_64.png",
+      "96": "system_computer_96.png",
+      "128": "system_computer_128.png"
+    },
+    "ui_pin": {
+      "24": "ui_pin_24.png",
+      "32": "ui_pin_32.png",
+      "40": "ui_pin_40.png",
+      "48": "ui_pin_48.png",
+      "64": "ui_pin_64.png",
+      "96": "ui_pin_96.png",
+      "128": "ui_pin_128.png"
+    },
+    "ui_settings": {
+      "24": "ui_settings_24.png",
+      "32": "ui_settings_32.png",
+      "40": "ui_settings_40.png",
+      "48": "ui_settings_48.png",
+      "64": "ui_settings_64.png",
+      "96": "ui_settings_96.png",
+      "128": "ui_settings_128.png"
+    },
+    "ui_sparkle": {
+      "24": "ui_sparkle_24.png",
+      "32": "ui_sparkle_32.png",
+      "40": "ui_sparkle_40.png",
+      "48": "ui_sparkle_48.png",
+      "64": "ui_sparkle_64.png",
+      "96": "ui_sparkle_96.png",
+      "128": "ui_sparkle_128.png"
+    },
+    "wish_fact": {
+      "24": "wish_fact_24.png",
+      "32": "wish_fact_32.png",
+      "40": "wish_fact_40.png",
+      "48": "wish_fact_48.png",
+      "64": "wish_fact_64.png",
+      "96": "wish_fact_96.png",
+      "128": "wish_fact_128.png"
+    },
+    "wish_protection_shield": {
+      "24": "wish_protection_shield_24.png",
+      "32": "wish_protection_shield_32.png",
+      "40": "wish_protection_shield_40.png",
+      "48": "wish_protection_shield_48.png",
+      "64": "wish_protection_shield_64.png",
+      "96": "wish_protection_shield_96.png",
+      "128": "wish_protection_shield_128.png"
+    },
+    "wish_single": {
+      "24": "wish_single_24.png",
+      "32": "wish_single_32.png",
+      "40": "wish_single_40.png",
+      "48": "wish_single_48.png",
+      "64": "wish_single_64.png",
+      "96": "wish_single_96.png",
+      "128": "wish_single_128.png"
+    },
+    "wish_thought_bubble": {
+      "24": "wish_thought_bubble_24.png",
+      "32": "wish_thought_bubble_32.png",
+      "40": "wish_thought_bubble_40.png",
+      "48": "wish_thought_bubble_48.png",
+      "64": "wish_thought_bubble_64.png",
+      "96": "wish_thought_bubble_96.png",
+      "128": "wish_thought_bubble_128.png"
+    },
+    "wish_twopart": {
+      "24": "wish_twopart_24.png",
+      "32": "wish_twopart_32.png",
+      "40": "wish_twopart_40.png",
+      "48": "wish_twopart_48.png",
+      "64": "wish_twopart_64.png",
+      "96": "wish_twopart_96.png",
+      "128": "wish_twopart_128.png"
+    }
+  },
+  "surfaces": {
+    "button_active.small": "button_active_small.png",
+    "button_active.regular": "button_active_regular.png",
+    "button_active.wide": "button_active_wide.png",
+    "button_active.action": "button_active_action.png",
+    "button_active.footer": "button_active_footer.png",
+    "button_disabled.small": "button_disabled_small.png",
+    "button_disabled.regular": "button_disabled_regular.png",
+    "button_disabled.wide": "button_disabled_wide.png",
+    "button_disabled.action": "button_disabled_action.png",
+    "button_disabled.footer": "button_disabled_footer.png",
+    "button_hover.small": "button_hover_small.png",
+    "button_hover.regular": "button_hover_regular.png",
+    "button_hover.wide": "button_hover_wide.png",
+    "button_hover.action": "button_hover_action.png",
+    "button_hover.footer": "button_hover_footer.png",
+    "button_normal.small": "button_normal_small.png",
+    "button_normal.regular": "button_normal_regular.png",
+    "button_normal.wide": "button_normal_wide.png",
+    "button_normal.action": "button_normal_action.png",
+    "button_normal.footer": "button_normal_footer.png",
+    "button_pressed.small": "button_pressed_small.png",
+    "button_pressed.regular": "button_pressed_regular.png",
+    "button_pressed.wide": "button_pressed_wide.png",
+    "button_pressed.action": "button_pressed_action.png",
+    "button_pressed.footer": "button_pressed_footer.png",
+    "panel_surface.panel": "panel_surface_panel.png",
+    "status_frame_overlay.176": "status_frame_overlay_176.png",
+    "status_frame_overlay.280": "status_frame_overlay_280.png",
+    "status_track.176": "status_track_176.png",
+    "status_track.280": "status_track_280.png"
+  },
+  "source_sha256": {
+    "assets/ui-vn/v1/icons/action_pet.png": "ddba7d76299d27d0f14c4a39e3f67a04bff4daedf5d9733b82dbde6587785de3",
+    "assets/ui-vn/v1/icons/action_sleep.png": "0d7605f6a699ab8a87823df3f9a38261a70b09e2ac023df532d47a55e6dbe7c4",
+    "assets/ui-vn/v1/icons/detail_next.png": "f4f8e47958d0efb2848b7b5d449dadb966d3e7b131b60cef048550954080ed9a",
+    "assets/ui-vn/v1/icons/detail_objects.png": "3a6aabfc496bcd637660b3e4563b2c19ab7be23cb585026485199ea4a0a95f15",
+    "assets/ui-vn/v1/icons/detail_rhythm.png": "fc36110546be53780dce6169a38f7705c249a767b629c6873cb5f3260cfaeab2",
+    "assets/ui-vn/v1/icons/detail_wellbeing.png": "10718a1c8e3c81fa6daf1e252180ff7039cdffe393ebe681b0962adc6e24b2a7",
+    "assets/ui-vn/v1/icons/game_rps.png": "68770e967715708a310ab02df2c11c8ddd01bf6ce80c8a00943ca8550aa8891a",
+    "assets/ui-vn/v1/icons/game_tic_tac_toe.png": "89bce821f3698c324518ae16b01518be7d3c654b6da99fe4c8bb30be2bd820d5",
+    "assets/ui-vn/v1/icons/moodlet_annoyed.png": "87a63b71c6c96229be81c37bf2740ffc4bca447ac3e247f08ce87ba7e49db703",
+    "assets/ui-vn/v1/icons/moodlet_cheerful.png": "80af26d443cb35e8deeded9e50b0684a1b9208407c29da84cc29077c7853ab52",
+    "assets/ui-vn/v1/icons/moodlet_connection.png": "01c524478818e01bdcfa5da539cd3d3bcc92c9da3fce134e13ddbc1a29a132c3",
+    "assets/ui-vn/v1/icons/moodlet_crowded.png": "5b1c091503dc3e24a271c09dc3b764f2415225452fcbbac781eff5145db8e777",
+    "assets/ui-vn/v1/icons/moodlet_disrupted.png": "50cab2e9c01b2baa3023db2824402ee94044a4dee0806f1ba8bc79d07e724818",
+    "assets/ui-vn/v1/icons/moodlet_enthusiastic.png": "bc49717f985f8f1ab63aa744cf2ebb9612d6b68dbb3b176bd453ac7741c37359",
+    "assets/ui-vn/v1/icons/moodlet_exhaustion_irritated.png": "44debe72fb3599995cfdac929bb44f7017406113af0b2e26195c6d42c15d5033",
+    "assets/ui-vn/v1/icons/moodlet_food_fulfilled.png": "cf0a8a64677cd05277c3163a906f401775196b58b6f0b58cf10d3f5155efb108",
+    "assets/ui-vn/v1/icons/moodlet_food_monotony.png": "3da5ff8b90ddc02a7bf7201db73c4f3c0e0a50d2c38328cfe1a280074bdd8acf",
+    "assets/ui-vn/v1/icons/moodlet_hunger_worn.png": "13eda7a3bd11d981d9b302d8ac59be242a0d6804be12f43ee0250447d23c304b",
+    "assets/ui-vn/v1/icons/moodlet_lonely.png": "cc62a9fe33a3dc56513b675f79dfd9c13053eb4257a8260a8e0dcda442245ebc",
+    "assets/ui-vn/v1/icons/moodlet_missing_closeness.png": "b100521cfbaf7f7366d90c1366333c981ceea50b409bb073bd330dfb47fc11d6",
+    "assets/ui-vn/v1/icons/moodlet_pride.png": "6af98a56c0d2f4bc4d6dad9afc913995e839d8ebc4e5251cf3fb511a07d69fb5",
+    "assets/ui-vn/v1/icons/moodlet_relief.png": "8fe1264392669d64d0c98562dbbc593cf532208a0fb7839f99e0eaa249fc734f",
+    "assets/ui-vn/v1/icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97",
+    "assets/ui-vn/v1/icons/moodlet_shared_play.png": "7d5008c4434fbb55722d557cc3854080d7cf107c347abe683feccfe1998e5120",
+    "assets/ui-vn/v1/icons/moodlet_unstimulated.png": "f48e111a7ec17adbaf1e47f2b83ba08c406ea17c04fda36e6627513efd29c6a1",
+    "assets/ui-vn/v1/icons/moodlet_withheld.png": "f50b6eea8859876d40d752eb051a80d0cbcb06dc07d3a349b788a9aefe691858",
+    "assets/ui-vn/v1/icons/play_rps_paper.png": "c6a48c78b9ba8ce3842f74146ff54eb851b103f1d5081f916ac991e1d62f83c1",
+    "assets/ui-vn/v1/icons/play_rps_rock.png": "f7b6cad354f73ca0414b022f98ff41f60d63253705b677b84a1fccd7fd9a5386",
+    "assets/ui-vn/v1/icons/play_rps_scissors.png": "fc3aaa257a44d2d0eee61cb2b68bdfe5c797d95ef9b52b2b0868ad6a725e983c",
+    "assets/ui-vn/v1/icons/play_ttt_o.png": "d63c6ed51c4025e763a75a70206af3dc42ca4cb80c944df859aab191ce90cdda",
+    "assets/ui-vn/v1/icons/play_ttt_x.png": "d00b4809f8ca74919ef09430d9828581d21276e06d35b8dbffc3722bd08a2586",
+    "assets/ui-vn/v1/icons/status_affection.png": "8802011c218d8fc6192a21db468d0405a13f900588073c89ae4cc45cc9e5e068",
+    "assets/ui-vn/v1/icons/status_energy.png": "913732e7de70fa4f336b0b5162c226cb6d20e987924696951b0f5f9a5707417e",
+    "assets/ui-vn/v1/icons/status_friendship.png": "b495d12e080dc2c949cd4838e02788b774a6f9daba700afa32ac7a3edbabda05",
+    "assets/ui-vn/v1/icons/status_fun.png": "1b01a80d438de45d5e5f4858c882656114cb24c77116750ed05e6e83d218643c",
+    "assets/ui-vn/v1/icons/status_satiety.png": "7b35ba1719b437f824c40f99dd6abb96045adccd50668219d1958fe1430e4b18",
+    "assets/ui-vn/v1/icons/status_social.png": "bd41d94cb2328ef9e5a3d10f99edf7b6b0171f5ba580f423ddfeada7fe342b6e",
+    "assets/ui-vn/v1/icons/system_computer.png": "490a07e13e23e3373b3d8b5adfee52dba7e485bca74fabd98e88b53db61e059f",
+    "assets/ui-vn/v1/icons/ui_pin.png": "4d06fead770cef01e5a05181b806c6121127bb3cf7339a855e5c63b5572ef929",
+    "assets/ui-vn/v1/icons/ui_settings.png": "905642f62eb63d3f3cfb7c325fb54ebb5e43cb33ba1ef4a3d0bc01aee78a1e28",
+    "assets/ui-vn/v1/icons/ui_sparkle.png": "9d4a327c8d5162bff3cd19cc90408b88d77c0310e8d6b648c7635575bdd8d525",
+    "assets/ui-vn/v1/icons/wish_fact.png": "4932817b4c1f19d922cb2b51e5b777ffdbb9e10c5b778bfe24a9c0c4c480d5e9",
+    "assets/ui-vn/v1/icons/wish_protection_shield.png": "659cadbde6f67030df60f6e29942fb456e33250a95009067a918c9ebd055c1ab",
+    "assets/ui-vn/v1/icons/wish_single.png": "b017e140bea28ee02a789a967e0bf28b84b4f18da18cba23a730b5ef5158961e",
+    "assets/ui-vn/v1/icons/wish_thought_bubble.png": "11c7d3ea5f2852baa4a5fc15ae541f161b544d25e6ce669607e3f21e508fb3c5",
+    "assets/ui-vn/v1/icons/wish_twopart.png": "ca5c0a0dd054e061d2442353254552e33126ec8d817d499267eae55a3ef0f1ad",
+    "assets/ui-vn/v1/controls/button_active.png": "fde555232b7df64aec84cf9adf6d142c531779be5aaffcb35dc46311c245eb97",
+    "assets/ui-vn/v1/controls/button_disabled.png": "4e4b0d3f470b2e03a106d40882a58316269c1add86f765d8a0434b100820d20f",
+    "assets/ui-vn/v1/controls/button_hover.png": "3a104507b3bd993f8fbc8876bfeadf239b802d6111373bf3bf074ffc9385c390",
+    "assets/ui-vn/v1/controls/button_normal.png": "cf81862e36e76f54725314ef587bc97d7adcccc46cdbab1840487e5f8928d631",
+    "assets/ui-vn/v1/controls/button_pressed.png": "2f177eb5feb7af93837621d180afce3ce5cc299aa057a0dab29074183b544cab",
+    "assets/ui-vn/v1/controls/panel_surface.png": "22b2ff1a18425a1c1ece6715b913e876d965c77d2d6bf87363026ffc811f6a2e",
+    "assets/ui-vn/v1/controls/status_frame_overlay.png": "ac174fb88e85b103446cc05c4f4e0e7af50cc922b71e618ce594f2c23e24cfac",
+    "assets/ui-vn/v1/controls/status_track.png": "1b80fedb7807ba53c2d199414d5ad5c894184c617b6f57cce1f3267dea58838f"
+  }
+}

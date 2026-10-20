@@ -3363,3 +3363,23 @@ limitation is recorded above). A direct baseline comparison confirms all
 1,082 authored dialogue identities/beats are unchanged. Legacy production/test
 call searches and `git diff --check` are clean. No full-suite, native-window,
 pointer-control or GitHub-CI run was performed.
+
+
+### 5C implementation sequence, 2026-10-20
+
+Owner-authorized implementation starts from clean `3071033`. The approved local
+bundle is available at `../design-previews/vn-ui-2026-10-20/`; main-menu,
+settings/Credits and control references were read together with the canonical
+VN guide. Original source artwork stays untouched. No new preview is required.
+
+Deliver small coherent commits: (1) deterministic runtime exports/root-local
+image ownership and shared control primitives; (2) passive Moodlet/wish and
+status presentation; (3) embedded selectors, preserving admission/placement;
+(4) matching settings and central Credits; (5) emotional expression audit,
+focused integration checks and documentation. Preserve existing game flow,
+Blackjack cards, preference/content owners and all authored dialogue beats.
+
+Tests are targeted, local and headless, including fake-widget integration where
+needed. No Tk interpreter/window, browser preview, mouse control or GitHub CI
+is launched. Inspect selected test durations; the full suite remains stage 6.
+Native DPI/font/geometry/input acceptance remains a separate manual checklist.
