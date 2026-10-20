@@ -2,7 +2,7 @@
 
 import unittest
 from typing import Any, cast
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
@@ -13,7 +13,6 @@ from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import ActiveWish, WishId, WishState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.common.description_tip import tip_position
-from aiko_pet.ui.common.image_button import ImageButton
 from aiko_pet.ui.common.scroll_region import ScrollRegion
 from aiko_pet.ui.common.status_readout import fill_geometry, readout_color
 from aiko_pet.ui.view_models.contracts import HoverAnchor
@@ -59,35 +58,6 @@ class VnStatusTests(unittest.TestCase):
         region._focus_visible(cast(Any, Mock(widget=target)))
         canvas.xview_moveto.assert_called_once_with(0.5)
         target.focus_set.assert_not_called()
-
-    def test_disabled_art_wins_and_persistent_selection_survives_pointer_feedback(self):
-        button = ImageButton.__new__(ImageButton)
-        button._art = cast(
-            Any,
-            {
-                state: state
-                for state in ("normal", "hover", "pressed", "disabled", "active")
-            },
-        )
-        button._hover = button._pressed = button._selected = False
-        button._copy = button._chevron = None
-        face = Mock()
-        button._face = cast(Any, face)
-        with (
-            patch.object(ImageButton, "cget", return_value="disabled"),
-            patch("tkinter.Button.configure") as configure,
-        ):
-            button.set_selected(True)
-            button._feedback(hover=True, pressed=True)
-            self.assertEqual(configure.call_args.kwargs["image"], "disabled")
-            self.assertEqual(face.configure.call_args.kwargs["image"], "disabled")
-        with (
-            patch.object(ImageButton, "cget", return_value="normal"),
-            patch("tkinter.Button.configure") as configure,
-        ):
-            button._feedback(pressed=False)
-            self.assertEqual(configure.call_args.kwargs["image"], "active")
-            self.assertEqual(face.configure.call_args.kwargs["image"], "active")
 
     def test_refresh_keeps_identity_and_placement_admission(
         self,

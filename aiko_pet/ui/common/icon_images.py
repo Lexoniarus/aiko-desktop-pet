@@ -7,6 +7,7 @@ from pathlib import Path
 
 from ...asset_paths import ASSET_ROOT
 from ...pet.catalog_validation import load_json
+from .button_styles import ButtonStyles
 
 
 class IconImages:
@@ -16,6 +17,7 @@ class IconImages:
         self._catalog = load_json(self._directory / "catalog.json")
         self._images: dict[str, tk.PhotoImage] = {}
         self._released = False
+        self._buttons: ButtonStyles | None = None
         root.bind("<Destroy>", self._destroyed, add="+")
 
     def _load(self, filename: str) -> tk.PhotoImage:
@@ -64,26 +66,13 @@ class IconImages:
                 )
         return result
 
-    def button_art(
-        self, state: str, size: str, icon: tk.PhotoImage | None,
-        *, stacked: bool = False,
-    ) -> tk.PhotoImage:
-        base = self.surface(f"button_{state}.{size}")
-        if icon is None:
-            return base
-        key = f"button:{state}:{size}:{icon}:{stacked}"
-        if key not in self._images:
-            combined = base.copy()
-            combined.tk.call(
-                str(combined),
-                "copy",
-                str(icon),
-                "-to",
-                (base.width() - icon.width()) // 2 if stacked else 8,
-                10 if stacked else max(0, (base.height() - icon.height()) // 2),
-            )
-            self._images[key] = combined
-        return self._images[key]
+    @property
+    def buttons(self) -> ButtonStyles:
+        if self._released:
+            raise RuntimeError("UI images have been released")
+        if self._buttons is None:
+            self._buttons = ButtonStyles(self._root, self.surface)
+        return self._buttons
 
     def file(self, path: Path, size: int = 32) -> tk.PhotoImage:
         """Existing item/card image, shared by all menu/wish consumers."""
@@ -107,5 +96,6 @@ class IconImages:
             self.release()
 
     def release(self) -> None:
+        self._buttons = None
         self._images.clear()
         self._released = True

@@ -1,5 +1,23 @@
 # Aiko VN interface direction — 2026-10-20
 
+**Atomic button rendering (2026-10-20):** the owner accepted the overall visual
+appearance and reported delayed/missing Snack labels while scrolling. The
+shared `ImageButton` now uses one native ttk button window. Prepared rose frame
+states, icon, multiline text, right-hand submenu arrow and keyboard focus are
+drawn together by its native style layout. Separate overlaid Label windows,
+manual hover repainting and forwarded pointer events have been removed.
+`IconImages` owns a lazy, root-local `ButtonStyles` cache shared by menus,
+settings and game controls. Native disabled/pressed/hover/selected state drives
+both input and appearance; callers still own commands and permission snapshots.
+Repeated scrolling/reopening reuses styles and leaves no independently mapped
+text/icon children. Original artwork, game rules and wish scheduling are unchanged.
+
+Validation passed: 1,627 complete Windows tests, 84 targeted menu/settings/game
+checks, Ruff, strict Mypy and Pyright. Native Windows inspection of the real
+Snack selector covered scrolling down to lower entries and back to the top
+without hovering the rows. Text and icons remained visible together. A separate
+native check confirmed compact frame sizing and crisp disabled game symbols.
+
 **Game-window refinement (2026-10-20):** the owner authorized implementing the
 three approved game surfaces after the main-menu refinement. All three now use
 the shared white title, near-white rose body, blue passive readouts, rose action

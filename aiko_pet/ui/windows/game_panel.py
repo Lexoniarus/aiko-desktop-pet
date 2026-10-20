@@ -9,7 +9,7 @@ from collections.abc import Callable
 from ...asset_paths import PLAYING_CARDS_DIR
 from ...games.contracts import GameId, SessionSummary
 from ...pet.content import GERMAN_TEXT
-from ..common.image_button import update_button_state
+from ..common.image_button import ImageButton, update_button_state
 from ..common.rounded_panel import RoundedPanel
 from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
@@ -83,7 +83,7 @@ class GamePanel:
             footer, GERMAN_TEXT.format('ui.close'), close, size='game_close',
         )
         self.close_button.grid(row=0, column=1, sticky='e')
-        self.next_button: tk.Button | None = None
+        self.next_button: ImageButton | None = None
         if next_round is not None:
             self.next_button = skin.button(
                 footer, GERMAN_TEXT.format('game.next'), next_round, size='game_next',

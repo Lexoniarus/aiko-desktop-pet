@@ -159,7 +159,10 @@ class GameSurfaceLayoutTests(unittest.TestCase):
         assert isinstance(game, BlackjackWindow)
         drag = game._panel._drag
         self.assertFalse(game._panel.header_close.bind('<B1-Motion>'))
-        self.assertGreaterEqual(int(game._panel.close_button.cget('wraplength')), 100)
+        wrap = self.skin.images.buttons.style.lookup(
+            game._panel.close_button.cget('style'), 'wraplength',
+        )
+        self.assertGreaterEqual(int(wrap), 100)
         self.assertTrue(game._panel.title.bind('<B1-Motion>'))
         event = tk.Event()
         event.x_root = game.window.winfo_x() + 10

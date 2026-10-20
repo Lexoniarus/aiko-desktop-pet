@@ -9,7 +9,7 @@ from functools import partial
 from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.rock_paper_scissors import Move, Score
 from ...pet.content import GERMAN_TEXT
-from ..common.image_button import update_button_state
+from ..common.image_button import ImageButton, update_button_state
 from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..common.window_geometry import BoundsAt
@@ -62,7 +62,7 @@ class RockPaperScissorsWindow:
             )
             self._choices_scroll.frame.pack(fill='x')
             choices = self._choices_scroll.body
-            self.buttons: dict[Move, tk.Button] = {}
+            self.buttons: dict[Move, ImageButton] = {}
             for move, label in _MOVES:
                 button = self.skin.button(
                     choices, label, partial(self.choose, move), size='game_choice',

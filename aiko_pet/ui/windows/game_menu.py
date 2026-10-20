@@ -9,7 +9,7 @@ from typing import Callable
 from ...asset_paths import PLAYING_CARDS_DIR
 from ...games.contracts import GameId
 from ...pet.content import GERMAN_TEXT
-from ..common.image_button import update_button_state
+from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from ..view_models.emotional_text import GAME_ICONS
 from .embedded_selector import EmbeddedSelector
@@ -30,7 +30,7 @@ class GameMenu(EmbeddedSelector):
             parent, skin, title=GERMAN_TEXT.format("game.select"), closed=closed
         )
         self._selected, self._can_select = selected, can_select
-        self.buttons: dict[GameId, tk.Button] = {}
+        self.buttons: dict[GameId, ImageButton] = {}
         for game in choices:
             image = (
                 skin.images.file(PLAYING_CARDS_DIR / "card_spades_A.png", 40)

@@ -7,7 +7,7 @@ from functools import partial
 from typing import Callable
 
 from ...pet.content import GERMAN_TEXT
-from ..common.image_button import update_button_state
+from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from ..view_models.food_models import FoodChoice, FoodChoiceId
 from .embedded_selector import EmbeddedSelector
@@ -28,7 +28,7 @@ class FoodMenu(EmbeddedSelector):
             parent, skin, title=GERMAN_TEXT.format("food.header"), closed=closed
         )
         self._selected, self._can_select = selected, can_select
-        self.buttons: dict[str, tk.Button] = {}
+        self.buttons: dict[str, ImageButton] = {}
         for choice in choices:
             button = skin.button(
                 self.scroll.body,

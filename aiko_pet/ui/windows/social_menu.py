@@ -8,7 +8,7 @@ from typing import Callable
 
 from ...application.social_content import PreparedSocialContent, SocialCategory
 from ...pet.content import GERMAN_TEXT
-from ..common.image_button import update_button_state
+from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
 from .embedded_selector import EmbeddedSelector
 
@@ -34,7 +34,7 @@ class SocialMenu(EmbeddedSelector):
             can_interact,
         )
         self._snapshot = snapshot
-        self.buttons: dict[SocialCategory | None, tk.Button] = {}
+        self.buttons: dict[SocialCategory | None, ImageButton] = {}
         for category in (None, *SocialCategory):
             key = (
                 "social.plain" if category is None else f"social.name.{category.value}"

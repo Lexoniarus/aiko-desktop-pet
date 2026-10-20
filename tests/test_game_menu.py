@@ -164,7 +164,10 @@ class GameMenuTests(unittest.TestCase):
             ],
         )
         for button in menu.buttons.values():
-            self.assertLessEqual(int(button.cget("wraplength")), button.winfo_width())
+            wrap = self.hover._skin.images.buttons.style.lookup(
+                button.cget("style"), "wraplength",
+            )
+            self.assertLessEqual(int(wrap), button.winfo_width())
         self.assertTrue(menu.frame.winfo_toplevel().bind("<Escape>"))
 
     def test_deferred_selection_is_reserved_and_stale_callback_cannot_start(self):

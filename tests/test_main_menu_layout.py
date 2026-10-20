@@ -133,8 +133,10 @@ class MainMenuLayoutTests(unittest.TestCase):
         assert details is not None
         self.assertIsNotNone(details._surface._image)
         button = self.toolbar.buttons["pet"]
-        assert button._copy is not None and button._chevron is not None
-        self.assertEqual(button._copy.cget("text"), button.cget("text"))
+        self.assertEqual(button.winfo_children(), [])
+        self.assertEqual(
+            button.tk.call(str(button), "cget", "-text"), button.cget("text"),
+        )
         button.configure(state="disabled")
         button.invoke()
         self.assertEqual(self.calls, [])
@@ -143,8 +145,7 @@ class MainMenuLayoutTests(unittest.TestCase):
         self.assertEqual(self.calls, ["pet"])
         button.configure(text="Test ›")
         self.assertEqual(button.cget("text"), "Test ›")
-        self.assertEqual(button._copy.cget("text"), "Test")
-        self.assertEqual(button._chevron.cget("text"), "›")
+        self.assertEqual(button.tk.call(str(button), "cget", "-text"), "Test")
 
     def test_panel_resizing_preserves_corners_without_growing_cache(self) -> None:
         source = self.skin.images.surface("panel_surface.panel")
@@ -169,16 +170,15 @@ class MainMenuLayoutTests(unittest.TestCase):
         self.assertTrue(self.toolbar.pin_button.winfo_ismapped())
         self.assertTrue(self.toolbar.details_button.winfo_ismapped())
 
-    def test_label_pointer_events_use_the_native_button_and_disabled_gate(self) -> None:
+    def test_entire_button_uses_one_native_pointer_and_disabled_gate(self) -> None:
         button = self.toolbar.buttons["pet"]
-        for label in (button._copy, button._chevron):
-            assert label is not None
-            with self.subTest(child=str(label)):
+        for x in (8, 80, button.winfo_width() - 18):
+            with self.subTest(x=x):
                 self.calls.clear()
                 for state, expected in (("disabled", []), ("normal", ["pet"])):
                     button.configure(state=state)
                     for sequence in ("<Enter>", "<ButtonPress-1>", "<ButtonRelease-1>"):
-                        label.event_generate(sequence, x=5, y=5)
+                        button.event_generate(sequence, x=x, y=15)
                     self.root.update()
                     self.assertEqual(self.calls, expected)
 
