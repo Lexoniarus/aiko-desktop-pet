@@ -76,3 +76,11 @@ logs/
 # Generic walking has no application caller; directional clips are used instead.
 /assets/aiko-anime-8-frames/aiko-anime-compact/animations-8/running/
 /aiko_pet/assets/frames/running/
+
+# Local VN review examples and rejected raster attempts are preserved outside Git.
+# See docs/UI_PREVIEW_HANDOFF.md for the shared reference bundle.
+/assets/ui-vn/v1/main-menu/
+/assets/ui-vn/v1/settings/
+/assets/ui-vn/v1/games/
+/assets/ui-vn/v1/controls/preview.html
+/assets/ui-vn/v1/controls/drafts/

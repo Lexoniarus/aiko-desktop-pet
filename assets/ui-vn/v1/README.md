@@ -19,6 +19,17 @@ are unchanged until separately authorized integration.
 
 ## Sources and review
 
+- [Approved interface design](../../../docs/UI_VN_DESIGN.md) records the main menu,
+  settings, separate Credits and three game surfaces approved on 2026-10-20.
+  Design/asset preparation is complete; application integration is not authorized.
+- [Shared local handoff](../../../docs/UI_PREVIEW_HANDOFF.md) locates the approved
+  clickable references outside the checkout. Example pages and rejected image
+  attempts are deliberately not versioned production resources.
+- [Button, status-bar and panel sources](controls/README.md) document eight selected
+  control sources, five button states, a shared panel/tooltip surface, dynamic
+  green-to-red fill and fixed-blue friendship. Focus, scrolling and transitions
+  are UI-rendered specifications. Original selected source pixels are unchanged.
+
 - [Icon gallery](preview.html) displays originals on the chosen rose background,
   alongside small-size previews. It is a standalone asset-review document,
   not a replacement application UI.
@@ -85,7 +96,10 @@ Additional owner-approved gameplay source files:
 | [play_rps_rock.png](icons/play_rps_rock.png) | Blue rock symbol |
 | [play_rps_paper.png](icons/play_rps_paper.png) | Open palm |
 
-The pack now contains 46 PNG sources. The table above lists the initial 27;
+The icon catalogue contains 46 PNG sources; the separate controls folder adds
+eight selected control/panel sources. Four excluded exploratory drafts remain
+in the external local reference bundle, with their hashes/prompts retained here.
+The table above lists the initial 27 icons;
 the [extension inventory](MOODLETS_AND_WISHES.md) maps the 14 additional Moodlet
 motives and five wish components. Full combined checks are in provenance.json.
 The artwork covers the documented candidate catalogue without implementing

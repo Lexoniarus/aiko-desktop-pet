@@ -1589,5 +1589,12 @@
     "source_note": "Unmodified generated masters. Low-alpha fringe and optical-scale normalization remain for a later export pass. No native application integration performed.",
     "failures": [],
     "browser_preview_check": "Not performed: browser tool rejected local file URL; no workaround attempted. Preview file and all source/link paths were checked on the filesystem."
+  },
+  "related_artwork": {
+    "controls": {
+      "manifest": "controls/provenance.json",
+      "selected_sources": 8,
+      "excluded_drafts": 4
+    }
   }
 }

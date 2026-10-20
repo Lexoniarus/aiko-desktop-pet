@@ -36,6 +36,13 @@ The menu retains the most recently accepted item's source and API-entry links.
 Links open only when clicked. Source metadata remains attached to the prepared
 item; it is not added to Aiko's personal experiences or World knowledge.
 
+The later owner-approved [settings/Credits design](UI_VN_DESIGN.md#approved-settings-and-separate-credits)
+places provider information and these per-item source/API-entry links in a
+dedicated Credits view rather than an interaction/game menu. This is a
+preview/documentation decision only: current runtime placement above remains
+unchanged until implementation is separately authorized. Retain the same
+accepted-item metadata and ownership; do not add a parallel attribution history.
+
 ## Warm buffers and waiting
 
 There are three independent in-memory buffers, each targeting two ready items:

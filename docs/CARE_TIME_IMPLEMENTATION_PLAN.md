@@ -1007,7 +1007,7 @@ hard-coded icon catalogue or food/game ID list should become another authority.
 ###### Integrated VN UI scope
 
 Use [the approved VN direction](UI_VN_DESIGN.md) and the
-[full interactive main-menu reference](../assets/ui-vn/v1/main-menu/preview.html),
+[full interactive main-menu reference](UI_PREVIEW_HANDOFF.md#reference-entry-points),
 visually approved by the owner on 2026-10-20, as the visual target for stage 5C.
 The three earlier boards remain supporting history. This accompanies the domain/read
 model work. The [prepared source pack](../assets/ui-vn/v1/README.md) now includes
