@@ -16,11 +16,50 @@ only the reduced 2x **runtime assets** and their provenance are shipped.
 They retain the project's restricted Aiko artwork terms, **not MIT**.
 
 Every 2x output is listed by path, source image/crop and SHA-256 in
-`aiko_pet/assets/frames_2x/manifest.json`. The build preserves the original
-1x sprite's alpha-128 silhouette bounds and baseline, uses Lanczos-resampled
-color data from the higher-resolution source, then thresholds alpha at 128 for
-native Windows transparent-window compatibility. The rendering canvas stays
-384 × 416; no application geometry is changed.
+`aiko_pet/assets/frames_2x/manifest.json`. Regular clips preserve the original
+1x sprite's alpha-128 silhouette bounds and baseline. Gaze poses use connected
+figures from the native `decoded/look-row-9.png` and
+`decoded/look-row-10-before-registration.png` sources. Their hair can cross
+equal-width tile boundaries, so rectangular eight-way division is unsuitable.
+Each extracted figure retains its original RGB and edge alpha, with neighboring
+figures excluded.
+
+The gaze exporter uses one base proportional scale per source row, calibrated
+against the median shoe span of its 1x references. Each pose is translated to
+its doubled 1x foot center (with the small lateral tuning below) and ground
+baseline. Width and height are not
+independently stretched to match the head silhouette. Integer image dimensions
+introduce less than 0.4% aspect-ratio rounding; horizontal foot-anchor error is
+at most half a 2x pixel against the tuned target, and vertical error is zero
+for all 16 corrected poses.
+
+The left gaze poses (`look/09` through `look/15`) additionally receive a small
+proportional size adjustment before resizing from the native source. Left and
+up-left use +2.3%; a smoothstep blend reduces this toward the unchanged down
+pose (`look/08`): +0.36%, +1.15% and +1.94% for `09`, `10` and `11`.
+The up-to-up-left height change is now one 2x pixel (309 to 310), previously
+seven (309 to 302); neighboring left poses differ by at most three pixels.
+This compensates for the inherited size discontinuity without equalizing
+every head tilt. Both axes share the same factor, with integer rounding only;
+foot centers and the ground baseline are registered after the adjustment.
+The manifest records the adjustment and effective scale for each affected pose.
+The rightward, up and down poses retain their previous PNG bytes.
+
+Two inherited lateral foot jumps receive integer translations only: `look/10`
+and `look/15` move one 2x pixel left; `look/11` and `look/14` move one pixel
+right. Each targeted transition (`10` to `11`, `14` to `15`) now moves the
+visible foot center by 0.5 instead of 2.5 pixels. Neighbor transitions,
+including `15` to `00`, remain at most 1.5 pixels apart over the full loop.
+The translation is applied after coordinate rounding and preserves every
+RGBA pixel, silhouette size, proportional scale and foot baseline. The
+manifest records the original reference anchor and horizontal adjustment
+alongside the tuned target and its rounding error.
+
+Color resampling uses Lanczos, followed by alpha thresholding at 128 for native
+Windows transparent-window compatibility. The canvas stays 384 × 416;
+application geometry and all 1x assets remain unchanged. Rebuilding an existing
+export preserves encoded PNG bytes when the RGBA pixels match, so unrelated
+assets are retained exactly.
 
 To reproduce on a machine where both approved owner archives are available:
 
@@ -49,6 +88,19 @@ merely a magnified 1x substitute.
   HD assets retain the original `PhotoImage.zoom(2)` fallback.
 - Image dimensions, alpha, completeness, SHA-256 and true-vs-zoom difference
   have dedicated tests. The current 1x sprite hashes are verified separately.
+- Gaze regressions cover cross-cell hair, near-transparent source bridges,
+  proportional row scaling, tuned size and lateral transitions, pixel-exact
+  translations and the shipped sprites' measured foot anchors.
+  Sleep regressions cover the stationary bed, pillow and character, all eight
+  blanket phases, the loop join, mirrored breathing phases and native timing.
+- The 2026-10-20 gaze correction was reproduced into an empty export folder:
+  all 120 outputs matched the shipped RGBA pixels. All 16 gaze PNGs changed;
+  all 120 native PNGs and the other 104 HD PNGs remained byte-identical.
+  Native Windows Tk loaded all 16 gaze directions at both scales and released
+  their cache successfully. This loading check does not replace the practical
+  animation and overlay acceptance below.
+  The isolated Linux/Xvfb suite passed 1,390 tests (eight skipped); Ruff, strict
+  Mypy and repository-wide Pyright also passed.
 - The gameplay engine, frame events, head micro-sway, food/weapon overlays and
   1x/2x item windows still use their existing contracts. Their visual alignment
   should be checked at 2x on **native Windows** before considering the feature
@@ -59,7 +111,51 @@ merely a magnified 1x substitute.
 Verify idle/blinking, both walks, jumping, greeting/waving, waiting, review,
 sleep, petting, eating, attack reserve, the full pickup/put-down sequence, all
 16 cursor-gaze directions, overlay hand anchors and sprite feet at 1x/2x.
-Look direction 022.5° (`look/01`) is a source-outline outlier (silhouette IoU
-0.678 versus the old 1x), though it is higher-resolution and holds the same
-canvas bounds; compare its real transition against the adjacent gaze frames.
+Look direction 022.5° (`look/01`) now uses the same proportional registration
+as its neighbors. Its old rectangular crop included part of another figure,
+which compressed Aiko horizontally and shifted her foot anchor right. The
+original and 1x pose are valid: no regeneration is needed. The corrected 2x
+silhouette IoU is 0.9644 against 1x, with a 0.5-pixel horizontal anchor error
+and no vertical error. Compare its transition against the adjacent gaze frames.
 Do **not** claim this practical acceptance solely from green CI.
+
+### Approved stationary sleep cycle at 2x
+
+Owner approval on **2026-10-20** replaces the earlier temporary hold on HD
+`sleep/02` and `sleep/05`. Inspection found that the old HD export used whole
+generated intermediates, while the pixel version already composited a fixed
+character. The HD originals also differed in bed geometry between poses.
+No new image generation was needed for the approved correction.
+
+`tools/character_sleep_export.py` now builds the approved smoothed preview
+directly from two complete archive originals. `sleep/frames-native/01.png`
+supplies the stationary bed, pillow, head, body and hands; the blue blanket
+from `sleep/frames-native/04.png` supplies its raised phase. Both are registered
+against their existing 1x reference poses before composition. The blanket joins
+ease into the stationary shoulder and bed. Eight cosine samples interpolate
+the contour and existing texture, preserving the approved preview's RGBA pixels.
+All pixels outside the blanket envelope, and the character and wooden bed
+within it, stay identical to the rest frame. No whole-character scaling occurs.
+
+The measured maximum contour movements over `00→01→…→07→00` are
+**2, 6, 6, 3, 3, 6, 6, 2 HD pixels**. The former `02→03` jump is reduced from
+17 to six pixels; the loop join moves at most two. The eight discrete poses
+retain their existing durations (4,000 ms total), order and `(96, 195)` native
+anchor. Mirrored phases `01/07`, `02/06` and `03/05` match exactly.
+`sleep/00` retains its PNG bytes; the other seven HD sleep PNGs are replaced.
+All 120 1x PNGs and every other HD PNG remain byte-identical to the pre-change
+checkout. The 1x sleep artwork is intentionally unchanged; its older appearance
+does not indicate a pending HD regeneration requirement.
+
+The exporter records both anchor sources, their registration measurements and
+each breathing factor in the manifest. Rebuilding requires the owner archives,
+not local preview files. All eight shipped outputs match the approved smoothed
+preview exactly and can be reproduced into an empty output directory.
+The shipped cycle also completed two full passes plus a loop restart through
+the native Windows Tk sprite cache, with all eight HD frames loaded and the
+cache released afterward. Dedicated sleep, gaze and HD/cache tests pass, as do
+Ruff, strict Mypy and Pyright. These checks cover this asset change; the broader
+interactive desktop acceptance listed above remains separate.
+
+The truncated `review/01` and `eat/07` source PNGs described above have intact
+original-sheet recovery sources; they are not additional regeneration tasks.

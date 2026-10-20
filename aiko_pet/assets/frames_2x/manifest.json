@@ -849,14 +849,14 @@
     },
     {
       "path": "look/00.png",
-      "source": "decoded/look-row-9.png#tile=0",
+      "source": "decoded/look-row-9.png#component=0",
       "status": "original_hd_gaze_atlas",
-      "sha256": "1a0bc8e33559fa65b394f4136fee1a3c2b43683c6b05639bb3eaa489f47750d6",
+      "sha256": "7780530a8ad94bcda9a57af8883f1e9e2f074f55a622b60990b45f0429868035",
       "source_bbox": [
-        54,
-        203,
-        272,
-        580
+        4,
+        3,
+        224,
+        380
       ],
       "reference_bbox": [
         52,
@@ -864,20 +864,44 @@
         140,
         194
       ],
-      "aspect_rescale_ratio": 0.9882,
-      "silhouette_iou": 0.9772,
-      "bytes": 92962
+      "aspect_rescale_ratio": 1.0026,
+      "silhouette_iou": 0.9758,
+      "source_crop": [
+        50,
+        200,
+        277,
+        583
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.8181818181818182,
+      "source_foot_anchor": [
+        112.0,
+        380
+      ],
+      "target_foot_anchor": [
+        191,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "bytes": 85773
     },
     {
       "path": "look/01.png",
-      "source": "decoded/look-row-9.png#tile=1",
+      "source": "decoded/look-row-9.png#component=1",
       "status": "original_hd_gaze_atlas",
-      "sha256": "b130ed5b81baadf2d78aa5bd28a77ec03719d8afc547572bdc0e63d56993e71e",
+      "sha256": "5be79e831f1912dac65a00d5e29bf5bf477932340f95176df7372d94914a43d8",
       "source_bbox": [
-        0,
-        200,
-        265,
-        580
+        3,
+        3,
+        213,
+        383
       ],
       "reference_bbox": [
         48,
@@ -885,20 +909,44 @@
         133,
         194
       ],
-      "aspect_rescale_ratio": 0.7864,
-      "silhouette_iou": 0.6775,
-      "bytes": 74664
+      "aspect_rescale_ratio": 1.001,
+      "silhouette_iou": 0.9644,
+      "source_crop": [
+        324,
+        197,
+        540,
+        583
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.8181818181818182,
+      "source_foot_anchor": [
+        120.5,
+        383
+      ],
+      "target_foot_anchor": [
+        192,
+        388
+      ],
+      "rendered_foot_anchor": [
+        192.5,
+        388
+      ],
+      "foot_anchor_error": [
+        0.5,
+        0
+      ],
+      "bytes": 84621
     },
     {
       "path": "look/02.png",
-      "source": "decoded/look-row-9.png#tile=2",
+      "source": "decoded/look-row-9.png#component=2",
       "status": "original_hd_gaze_atlas",
-      "sha256": "4df9f46656bc74192e4a0111b251ae6a2a9c2968e63a9a976845c7ca121cf92e",
+      "sha256": "99d8e5174733521e9ea0ba1b2fb00069cd86c52be8746b7c24bc8aba1f8b4f74",
       "source_bbox": [
-        50,
-        198,
-        263,
-        580
+        3,
+        2,
+        216,
+        384
       ],
       "reference_bbox": [
         47,
@@ -906,20 +954,44 @@
         132,
         194
       ],
-      "aspect_rescale_ratio": 0.9772,
-      "silhouette_iou": 0.9771,
-      "bytes": 91497
+      "aspect_rescale_ratio": 0.9989,
+      "silhouette_iou": 0.9756,
+      "source_crop": [
+        590,
+        196,
+        810,
+        583
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.8181818181818182,
+      "source_foot_anchor": [
+        124.5,
+        384
+      ],
+      "target_foot_anchor": [
+        191,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.5,
+        388
+      ],
+      "foot_anchor_error": [
+        0.5,
+        0
+      ],
+      "bytes": 85052
     },
     {
       "path": "look/03.png",
-      "source": "decoded/look-row-9.png#tile=3",
+      "source": "decoded/look-row-9.png#component=3",
       "status": "original_hd_gaze_atlas",
-      "sha256": "de66c6b39dfee3ce42e2626ed7499adc587c71bde6876bed1decc6a5db0ba073",
+      "sha256": "b7812c8db360bdb4abc6bd0c3690cdad2cd1a6e96318462bcf88a6e18cba21a5",
       "source_bbox": [
-        46,
-        198,
-        256,
-        580
+        3,
+        4,
+        213,
+        386
       ],
       "reference_bbox": [
         49,
@@ -927,20 +999,44 @@
         134,
         194
       ],
-      "aspect_rescale_ratio": 0.9911,
-      "silhouette_iou": 0.9802,
-      "bytes": 91509
+      "aspect_rescale_ratio": 1.0034,
+      "silhouette_iou": 0.9791,
+      "source_crop": [
+        857,
+        194,
+        1074,
+        583
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.8181818181818182,
+      "source_foot_anchor": [
+        119.0,
+        386
+      ],
+      "target_foot_anchor": [
+        192,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.5,
+        388
+      ],
+      "foot_anchor_error": [
+        -0.5,
+        0
+      ],
+      "bytes": 84216
     },
     {
       "path": "look/04.png",
-      "source": "decoded/look-row-9.png#tile=4",
+      "source": "decoded/look-row-9.png#component=4",
       "status": "original_hd_gaze_atlas",
-      "sha256": "9d2278d65cd00769954af541d47cffd1a53e757705066702c7636be3892b374c",
+      "sha256": "60a199ffa1fdfafc45be798b72703f70f70c08774044c1b1ee25ec41045684cd",
       "source_bbox": [
-        36,
-        200,
-        244,
-        580
+        3,
+        3,
+        211,
+        383
       ],
       "reference_bbox": [
         48,
@@ -948,20 +1044,44 @@
         132,
         194
       ],
-      "aspect_rescale_ratio": 0.9901,
-      "silhouette_iou": 0.9825,
-      "bytes": 89185
+      "aspect_rescale_ratio": 0.9999,
+      "silhouette_iou": 0.9622,
+      "source_crop": [
+        1119,
+        197,
+        1334,
+        583
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.8181818181818182,
+      "source_foot_anchor": [
+        120.5,
+        383
+      ],
+      "target_foot_anchor": [
+        190,
+        388
+      ],
+      "rendered_foot_anchor": [
+        190.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "bytes": 82068
     },
     {
       "path": "look/05.png",
-      "source": "decoded/look-row-9.png#tile=5",
+      "source": "decoded/look-row-9.png#component=5",
       "status": "original_hd_gaze_atlas",
-      "sha256": "7f844fb1da5acd9fe6976ff95458acdeeef2d0f33651755a742971ccb687282f",
+      "sha256": "01d5092364a0aa96cebabd0fd0d616397010e94d3715f375e6f2087c54b8c15d",
       "source_bbox": [
-        28,
-        202,
-        240,
-        580
+        3,
+        3,
+        215,
+        381
       ],
       "reference_bbox": [
         48,
@@ -969,20 +1089,44 @@
         134,
         194
       ],
-      "aspect_rescale_ratio": 0.9957,
-      "silhouette_iou": 0.9711,
-      "bytes": 89931
+      "aspect_rescale_ratio": 0.9996,
+      "silhouette_iou": 0.9736,
+      "source_crop": [
+        1383,
+        199,
+        1602,
+        583
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.8181818181818182,
+      "source_foot_anchor": [
+        119.0,
+        381
+      ],
+      "target_foot_anchor": [
+        191,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "bytes": 82581
     },
     {
       "path": "look/06.png",
-      "source": "decoded/look-row-9.png#tile=6",
+      "source": "decoded/look-row-9.png#component=6",
       "status": "original_hd_gaze_atlas",
-      "sha256": "b0971a050b715b7a39e2cb0ef79fdb4ee8b5dca8000df4c82d3cd9f8b67396aa",
+      "sha256": "2846068211a351f3dda2b8ba0f4e04c7af3ba373b5816d8cf1280856cfbd1d4b",
       "source_bbox": [
-        25,
-        207,
-        238,
-        580
+        3,
+        3,
+        216,
+        376
       ],
       "reference_bbox": [
         48,
@@ -990,20 +1134,44 @@
         134,
         194
       ],
-      "aspect_rescale_ratio": 0.9908,
-      "silhouette_iou": 0.9699,
-      "bytes": 89015
+      "aspect_rescale_ratio": 0.9993,
+      "silhouette_iou": 0.9667,
+      "source_crop": [
+        1651,
+        204,
+        1870,
+        583
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.8181818181818182,
+      "source_foot_anchor": [
+        119.0,
+        376
+      ],
+      "target_foot_anchor": [
+        190,
+        388
+      ],
+      "rendered_foot_anchor": [
+        190.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "bytes": 81825
     },
     {
       "path": "look/07.png",
-      "source": "decoded/look-row-9.png#tile=7",
+      "source": "decoded/look-row-9.png#component=7",
       "status": "original_hd_gaze_atlas",
-      "sha256": "a37345ca0a25b1038f606282eab10f06c14c47215c28944c5e20249025d600f7",
+      "sha256": "4ca3adc02be47f122f489ade2fe39a9b9d37dd85f6131d33d4aa736ddcb8a112",
       "source_bbox": [
-        13,
-        216,
-        220,
-        580
+        3,
+        3,
+        210,
+        367
       ],
       "reference_bbox": [
         50,
@@ -1011,20 +1179,44 @@
         134,
         194
       ],
-      "aspect_rescale_ratio": 0.9913,
-      "silhouette_iou": 0.9682,
-      "bytes": 85771
+      "aspect_rescale_ratio": 0.9986,
+      "silhouette_iou": 0.9798,
+      "source_crop": [
+        1910,
+        213,
+        2124,
+        583
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.8181818181818182,
+      "source_foot_anchor": [
+        113.5,
+        367
+      ],
+      "target_foot_anchor": [
+        191,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.5,
+        388
+      ],
+      "foot_anchor_error": [
+        0.5,
+        0
+      ],
+      "bytes": 78443
     },
     {
       "path": "look/08.png",
-      "source": "decoded/look-row-10.png#tile=0",
+      "source": "decoded/look-row-10-before-registration.png#component=0",
       "status": "original_hd_gaze_atlas",
-      "sha256": "c8abca4ceac8088a7379c60bec11d654d556dfc7803411023a2ebc7061e6c525",
+      "sha256": "6d6733e562a74c3ab15c393d7302033f10af1fa3ca0e25350d59e68639095875",
       "source_bbox": [
-        13,
-        124,
-        219,
-        493
+        3,
+        3,
+        262,
+        459
       ],
       "reference_bbox": [
         54,
@@ -1032,20 +1224,44 @@
         139,
         194
       ],
-      "aspect_rescale_ratio": 1.015,
-      "silhouette_iou": 0.9462,
-      "bytes": 86839
+      "aspect_rescale_ratio": 1.0022,
+      "silhouette_iou": 0.9816,
+      "source_crop": [
+        13,
+        151,
+        279,
+        613
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.6605504587155964,
+      "source_foot_anchor": [
+        132.5,
+        459
+      ],
+      "target_foot_anchor": [
+        192,
+        388
+      ],
+      "rendered_foot_anchor": [
+        192.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "bytes": 78986
     },
     {
       "path": "look/09.png",
-      "source": "decoded/look-row-10.png#tile=1",
+      "source": "decoded/look-row-10-before-registration.png#component=1",
       "status": "original_hd_gaze_atlas",
-      "sha256": "e600e1f8358d4b940d1b2f5bd40f92c0ecbecf80ac2e0cdcdaffa93843b7b989",
+      "sha256": "6f4a3c413cf444a465c3a78ca404578c3f714d26e2de80cede4cdb03bba1c4b0",
       "source_bbox": [
-        0,
-        124,
-        219,
-        493
+        4,
+        3,
+        262,
+        459
       ],
       "reference_bbox": [
         54,
@@ -1053,20 +1269,46 @@
         138,
         194
       ],
-      "aspect_rescale_ratio": 0.9436,
-      "silhouette_iou": 0.8428,
-      "bytes": 82088
+      "aspect_rescale_ratio": 1.0027,
+      "silhouette_iou": 0.9714,
+      "source_crop": [
+        285,
+        151,
+        550,
+        613
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.6605504587155964,
+      "scale_adjustment": 1.00359375,
+      "effective_scale": 0.6629243119266056,
+      "source_foot_anchor": [
+        131.5,
+        459
+      ],
+      "target_foot_anchor": [
+        191,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "bytes": 79434
     },
     {
       "path": "look/10.png",
-      "source": "decoded/look-row-10.png#tile=2",
+      "source": "decoded/look-row-10-before-registration.png#component=2",
       "status": "original_hd_gaze_atlas",
-      "sha256": "2e219a2f7a77eec3594a4857f3e0f1f4a42a5d769c377aa12b982a2b7cb63b63",
+      "sha256": "4b048cb66e5e52a1136ff21d7d5fcda873b22b2e3ea00a39f1a77860b2db691d",
       "source_bbox": [
-        0,
-        124,
-        220,
-        493
+        3,
+        3,
+        262,
+        460
       ],
       "reference_bbox": [
         55,
@@ -1074,20 +1316,51 @@
         139,
         194
       ],
-      "aspect_rescale_ratio": 0.9331,
-      "silhouette_iou": 0.8781,
-      "bytes": 82453
+      "aspect_rescale_ratio": 1.0027,
+      "silhouette_iou": 0.9563,
+      "source_crop": [
+        554,
+        150,
+        820,
+        613
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.6605504587155964,
+      "horizontal_anchor_adjustment": -1,
+      "reference_foot_anchor": [
+        192,
+        388
+      ],
+      "scale_adjustment": 1.0115,
+      "effective_scale": 0.6681467889908258,
+      "source_foot_anchor": [
+        128.5,
+        460
+      ],
+      "target_foot_anchor": [
+        191,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.5,
+        388
+      ],
+      "foot_anchor_error": [
+        0.5,
+        0
+      ],
+      "bytes": 80282
     },
     {
       "path": "look/11.png",
-      "source": "decoded/look-row-10.png#tile=3",
+      "source": "decoded/look-row-10-before-registration.png#component=3",
       "status": "original_hd_gaze_atlas",
-      "sha256": "baeb9b7f0faf256caefecf19a65ba6cb1f0b927cb4b67914acee2f8a6f33e2d2",
+      "sha256": "f574046cdf702f2c82c5bb8de7c6e58c176649de780cd66f1f021716fb029606",
       "source_bbox": [
-        0,
-        124,
-        216,
-        493
+        4,
+        3,
+        259,
+        459
       ],
       "reference_bbox": [
         55,
@@ -1095,20 +1368,51 @@
         138,
         194
       ],
-      "aspect_rescale_ratio": 0.939,
-      "silhouette_iou": 0.8973,
-      "bytes": 83028
+      "aspect_rescale_ratio": 0.9978,
+      "silhouette_iou": 0.9243,
+      "source_crop": [
+        823,
+        151,
+        1088,
+        613
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.6605504587155964,
+      "horizontal_anchor_adjustment": 1,
+      "reference_foot_anchor": [
+        190,
+        388
+      ],
+      "scale_adjustment": 1.01940625,
+      "effective_scale": 0.673369266055046,
+      "source_foot_anchor": [
+        128.0,
+        459
+      ],
+      "target_foot_anchor": [
+        191,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "bytes": 81583
     },
     {
       "path": "look/12.png",
-      "source": "decoded/look-row-10.png#tile=4",
+      "source": "decoded/look-row-10-before-registration.png#component=4",
       "status": "original_hd_gaze_atlas",
-      "sha256": "309c9f3c9003c2071fd2c6170463c4b19ed113c8ccab643f2703b7136eccb926",
+      "sha256": "b90f99a07984c848fc03325edae8ead99fb1c365a79db08404a68960c6c3e306",
       "source_bbox": [
-        9,
-        124,
-        217,
-        493
+        4,
+        3,
+        262,
+        459
       ],
       "reference_bbox": [
         55,
@@ -1116,20 +1420,46 @@
         139,
         194
       ],
-      "aspect_rescale_ratio": 0.9935,
-      "silhouette_iou": 0.9729,
-      "bytes": 85879
+      "aspect_rescale_ratio": 1.0002,
+      "silhouette_iou": 0.908,
+      "source_crop": [
+        1093,
+        151,
+        1358,
+        613
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.6605504587155964,
+      "scale_adjustment": 1.023,
+      "effective_scale": 0.675743119266055,
+      "source_foot_anchor": [
+        125.5,
+        459
+      ],
+      "target_foot_anchor": [
+        190,
+        388
+      ],
+      "rendered_foot_anchor": [
+        190.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "bytes": 82362
     },
     {
       "path": "look/13.png",
-      "source": "decoded/look-row-10.png#tile=5",
+      "source": "decoded/look-row-10-before-registration.png#component=5",
       "status": "original_hd_gaze_atlas",
-      "sha256": "d6adcd8ddfe0b73a83415a39f645014e0b92210a66264de3dc7da5ea31c6f087",
+      "sha256": "c7e806ce434226f0b76077eeec9fa9e8931be4a7c767d6f62c223955f1d631d2",
       "source_bbox": [
         4,
-        123,
-        220,
-        493
+        3,
+        274,
+        461
       ],
       "reference_bbox": [
         56,
@@ -1137,20 +1467,46 @@
         142,
         194
       ],
-      "aspect_rescale_ratio": 0.9756,
-      "silhouette_iou": 0.9771,
-      "bytes": 85701
+      "aspect_rescale_ratio": 0.9976,
+      "silhouette_iou": 0.9054,
+      "source_crop": [
+        1358,
+        149,
+        1635,
+        613
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.6605504587155964,
+      "scale_adjustment": 1.023,
+      "effective_scale": 0.675743119266055,
+      "source_foot_anchor": [
+        125.0,
+        461
+      ],
+      "target_foot_anchor": [
+        190,
+        388
+      ],
+      "rendered_foot_anchor": [
+        190.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "bytes": 82984
     },
     {
       "path": "look/14.png",
-      "source": "decoded/look-row-10.png#tile=6",
+      "source": "decoded/look-row-10-before-registration.png#component=6",
       "status": "original_hd_gaze_atlas",
-      "sha256": "4862fe194b2a6bfc2aaf51fb5a1216e085d5071575c260cb599a9c2612519c52",
+      "sha256": "80ef07efeb1e46e1fcdecbac867ea5defe7d05add87c3627748ca1f9551367a2",
       "source_bbox": [
-        0,
-        123,
-        219,
-        493
+        3,
+        3,
+        263,
+        461
       ],
       "reference_bbox": [
         57,
@@ -1158,20 +1514,51 @@
         141,
         194
       ],
-      "aspect_rescale_ratio": 0.9399,
-      "silhouette_iou": 0.8921,
-      "bytes": 83101
+      "aspect_rescale_ratio": 0.9962,
+      "silhouette_iou": 0.9071,
+      "source_crop": [
+        1639,
+        149,
+        1906,
+        613
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.6605504587155964,
+      "horizontal_anchor_adjustment": 1,
+      "reference_foot_anchor": [
+        190,
+        388
+      ],
+      "scale_adjustment": 1.023,
+      "effective_scale": 0.675743119266055,
+      "source_foot_anchor": [
+        121.0,
+        461
+      ],
+      "target_foot_anchor": [
+        191,
+        388
+      ],
+      "rendered_foot_anchor": [
+        190.5,
+        388
+      ],
+      "foot_anchor_error": [
+        -0.5,
+        0
+      ],
+      "bytes": 81641
     },
     {
       "path": "look/15.png",
-      "source": "decoded/look-row-10.png#tile=7",
+      "source": "decoded/look-row-10-before-registration.png#component=7",
       "status": "original_hd_gaze_atlas",
-      "sha256": "cea978a0a49406f94cb3b26b3480844497fced59c8db7fdb09901d240a6ae768",
+      "sha256": "7c07f9a26eee3600c3d68d5ba438bdd80b63c6be5740c940046d443f3025742d",
       "source_bbox": [
-        4,
-        123,
-        215,
-        493
+        5,
+        3,
+        267,
+        461
       ],
       "reference_bbox": [
         55,
@@ -1179,9 +1566,40 @@
         140,
         194
       ],
-      "aspect_rescale_ratio": 0.9871,
-      "silhouette_iou": 0.9806,
-      "bytes": 85628
+      "aspect_rescale_ratio": 0.9961,
+      "silhouette_iou": 0.9047,
+      "source_crop": [
+        1900,
+        149,
+        2170,
+        613
+      ],
+      "registration": "uniform_row_scale_foot_anchor",
+      "row_scale": 0.6605504587155964,
+      "horizontal_anchor_adjustment": -1,
+      "reference_foot_anchor": [
+        192,
+        388
+      ],
+      "scale_adjustment": 1.023,
+      "effective_scale": 0.675743119266055,
+      "source_foot_anchor": [
+        130.5,
+        461
+      ],
+      "target_foot_anchor": [
+        191,
+        388
+      ],
+      "rendered_foot_anchor": [
+        191.0,
+        388
+      ],
+      "foot_anchor_error": [
+        0.0,
+        0
+      ],
+      "bytes": 82382
     },
     {
       "path": "petting/00.png",
@@ -2025,171 +2443,403 @@
     },
     {
       "path": "sleep/00.png",
-      "source": "sleep/frames-native/01.png",
-      "status": "original_hd",
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
       "sha256": "e4d4bc96633e4c1d4a67722fdc1b14672c1f98e0028d51551ad9f8023c8d7c49",
-      "source_bbox": [
-        3,
-        3,
-        351,
-        293
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.0,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
       ],
-      "reference_bbox": [
-        7,
-        47,
-        185,
-        195
-      ],
-      "aspect_rescale_ratio": 1.0023,
-      "silhouette_iou": 0.9881,
       "bytes": 121841
     },
     {
       "path": "sleep/01.png",
-      "source": "sleep/frames-native/02.png",
-      "status": "original_hd",
-      "sha256": "cd8f14e59d32c9bf077b098dca0e0a71e40f66ce5bd83e54280885fd8fd4bbe7",
-      "source_bbox": [
-        3,
-        3,
-        351,
-        293
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "deeb808f99bbdf8b1d8d7b7db82672cfa5df9b0c6ca34d3b2b9018cb5fb4fe14",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.146446609407,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
       ],
-      "reference_bbox": [
-        6,
-        47,
-        185,
-        195
-      ],
-      "aspect_rescale_ratio": 1.0079,
-      "silhouette_iou": 0.9825,
-      "bytes": 123218
+      "bytes": 121166
     },
     {
       "path": "sleep/02.png",
-      "source": "inbetweens/sleep/generated/new-1-2.png",
-      "status": "generated_intermediate_hd",
-      "sha256": "89531d1cad51fa6bae5b807c8cf28df351935502e4f073c18cc9928139329290",
-      "source_bbox": [
-        46,
-        142,
-        1344,
-        1100
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "5963cbba39daf58a13a9d6e260827c6f0b402358ef5293a7e69c3e2b08107a07",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.5,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
       ],
-      "reference_bbox": [
-        6,
-        47,
-        185,
-        195
-      ],
-      "aspect_rescale_ratio": 0.8927,
-      "silhouette_iou": 0.9539,
-      "bytes": 109559
+      "bytes": 121565
     },
     {
       "path": "sleep/03.png",
-      "source": "sleep/frames-native/03.png",
-      "status": "original_hd",
-      "sha256": "c8dfffe88888c5f3fef2e124695d88ac502c8b7c099971d60eda937e5ea2e62d",
-      "source_bbox": [
-        3,
-        5,
-        351,
-        297
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "0b7b955d172518360c0a49d148a77150caaac6414cc64f7e508139bc9add2a39",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.853553390593,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
       ],
-      "reference_bbox": [
-        7,
-        45,
-        185,
-        195
-      ],
-      "aspect_rescale_ratio": 0.9957,
-      "silhouette_iou": 0.9879,
-      "bytes": 124634
+      "bytes": 122103
     },
     {
       "path": "sleep/04.png",
-      "source": "sleep/frames-native/04.png",
-      "status": "original_hd",
-      "sha256": "e1485fec40a4f130345f3ae214a455f0a87d331e589f68747b827c4b288436c0",
-      "source_bbox": [
-        3,
-        3,
-        351,
-        298
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "a7eb9fe79d03f5e901c95534a35bb02fa47273d85a6524d2fb0968eca3b4f002",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 1.0,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
       ],
-      "reference_bbox": [
-        7,
-        44,
-        185,
-        195
-      ],
-      "aspect_rescale_ratio": 0.9993,
-      "silhouette_iou": 0.9905,
-      "bytes": 124606
+      "bytes": 122473
     },
     {
       "path": "sleep/05.png",
-      "source": "inbetweens/sleep/generated/new-3-4.png",
-      "status": "generated_intermediate_hd",
-      "sha256": "c428e19690ac0443b6af40bf68ff476445acf03a20cbac79d76fc991d1039921",
-      "source_bbox": [
-        43,
-        107,
-        1339,
-        1099
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "0b7b955d172518360c0a49d148a77150caaac6414cc64f7e508139bc9add2a39",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.853553390593,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
       ],
-      "reference_bbox": [
-        7,
-        44,
-        185,
-        195
-      ],
-      "aspect_rescale_ratio": 0.9023,
-      "silhouette_iou": 0.9629,
-      "bytes": 113351
+      "bytes": 122103
     },
     {
       "path": "sleep/06.png",
-      "source": "sleep/frames-native/05.png",
-      "status": "original_hd",
-      "sha256": "2af65eb998835dbac83a9182dcbfcfd7e5e0b895a463afc4a2f563a683b6cc50",
-      "source_bbox": [
-        3,
-        3,
-        352,
-        294
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "5963cbba39daf58a13a9d6e260827c6f0b402358ef5293a7e69c3e2b08107a07",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.5,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
       ],
-      "reference_bbox": [
-        7,
-        46,
-        185,
-        195
-      ],
-      "aspect_rescale_ratio": 0.9961,
-      "silhouette_iou": 0.9866,
-      "bytes": 122898
+      "bytes": 121565
     },
     {
       "path": "sleep/07.png",
-      "source": "sleep/frames-native/06.png",
-      "status": "original_hd",
-      "sha256": "bcb700f3496d4aaad1f9901079a45f7c96a7d9395543a8d7637a56f29027b05e",
-      "source_bbox": [
-        3,
-        2,
-        351,
-        292
+      "source": "sleep/frames-native/01.png#blanket=sleep/frames-native/04.png",
+      "status": "original_hd_fixed_base_blanket_cycle",
+      "sha256": "deeb808f99bbdf8b1d8d7b7db82672cfa5df9b0c6ca34d3b2b9018cb5fb4fe14",
+      "aspect_rescale_ratio": null,
+      "silhouette_iou": null,
+      "fixed_base_source": "sleep/frames-native/01.png",
+      "blanket_peak_source": "sleep/frames-native/04.png",
+      "base_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          293
+        ],
+        "reference_bbox": [
+          7,
+          47,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 1.0023,
+        "silhouette_iou": 0.9881
+      },
+      "blanket_registration": {
+        "source_bbox": [
+          3,
+          3,
+          351,
+          298
+        ],
+        "reference_bbox": [
+          7,
+          44,
+          185,
+          195
+        ],
+        "aspect_rescale_ratio": 0.9993,
+        "silhouette_iou": 0.9905
+      },
+      "blanket_blend_factor": 0.146446609407,
+      "blanket_mask_bbox": [
+        237,
+        231,
+        346,
+        314
       ],
-      "reference_bbox": [
-        7,
-        47,
-        185,
-        195
-      ],
-      "aspect_rescale_ratio": 1.0023,
-      "silhouette_iou": 0.9809,
-      "bytes": 121191
+      "bytes": 121166
     },
     {
       "path": "waiting/00.png",

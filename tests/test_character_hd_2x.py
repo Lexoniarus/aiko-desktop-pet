@@ -58,7 +58,7 @@ class HighResolutionCharacterTests(unittest.TestCase):
                     self.assertEqual(source.mode, "RGBA")
                     alpha = source.getchannel("A")
                     self.assertEqual(alpha.getextrema(), (0, 255))
-                    values = set(alpha.getdata())
+                    values = set(alpha.tobytes())
                     self.assertEqual(values, {0, 255})
 
     def test_app_retains_exact_original_native_frame_catalogue(self) -> None:
@@ -106,11 +106,11 @@ class TrueHDSpriteCacheTests(unittest.TestCase):
         self.assertEqual((native_again.width(), native_again.height()),
                          (192, 208))
 
-    def test_all_look_and_pickup_frames_are_available_at_true_2x(self) -> None:
-        for state, frames in (("look", 16), ("pick_up", 8)):
+    def test_look_pickup_and_sleep_frames_are_available_at_true_2x(self) -> None:
+        for state, frames in (("look", 16), ("pick_up", 8), ("sleep", 8)):
             images = self.cache.for_scale(2)[state]
             self.assertEqual(len(images), frames)
-            for idx in (0, frames - 1):
+            for idx in range(frames):
                 self.assertEqual(
                     (images[idx].width(), images[idx].height()), (384, 416),
                 )

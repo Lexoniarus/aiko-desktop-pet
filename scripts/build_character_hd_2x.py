@@ -10,10 +10,18 @@ import csv
 import hashlib
 import io
 import json
+import sys
 import zipfile
 from pathlib import Path
 
-from PIL import Image, ImageFile
+from PIL import Image
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from tools.character_gaze_export import (  # noqa: E402
+    gaze_foot_offset_x, left_gaze_scale_adjustment, register_gaze_row,
+)
+from tools.character_sleep_export import build_sleep_cycle  # noqa: E402
 
 SIZE = (384, 416)
 BASE = 'aiko-anime-compact/'
@@ -100,17 +108,25 @@ def source_frame(z: zipfile.ZipFile, st: str, idx: int, kind: str, source_index:
     return image, file, status
 
 
-def gaze_sources(z: zipfile.ZipFile) -> tuple[list[Image.Image], list[str]]:
-    frames: list[Image.Image] = []
-    names: list[str] = []
-    for part, row in enumerate(('decoded/look-row-9.png','decoded/look-row-10.png')):
+def gaze_frames(z: zipfile.ZipFile, gazedata: dict) -> list[tuple]:
+    """Register all native connected gaze poses proportionally by their feet."""
+    frames = []
+    rows = ('decoded/look-row-9.png', 'decoded/look-row-10-before-registration.png')
+    for part, row in enumerate(rows):
         image = decode(z.read(BASE+row))
-        for i in range(8):
-            x0=round(image.width*i/8);x1=round(image.width*(i+1)/8)
-            piece=image.crop((x0,0,x1,image.height))
-            frames.append(piece)
-            names.append(f'{row}#tile={i}')
-    return frames,names
+        references = [
+            decode(z.read(BASE+'animations-8/look-directions/'+item['file']))
+            for item in gazedata['directions'][part*8:(part+1)*8]
+        ]
+        registered = register_gaze_row(
+            image, references,
+            scale_adjustments=[left_gaze_scale_adjustment(part*8+i) for i in range(8)],
+            horizontal_offsets=[gaze_foot_offset_x(part*8+i) for i in range(8)],
+        )
+        for i, (result, info) in enumerate(registered):
+            source = f'{row}#component={i}'
+            frames.append((result, source, info))
+    return frames
 
 
 def export(archive:Path,pickup_archive:Path,target:Path) -> dict:
@@ -120,30 +136,64 @@ def export(archive:Path,pickup_archive:Path,target:Path) -> dict:
         prov=json.loads(z.read(BASE+'animations-8/provenance.json'))
         for record in prov:
             state=record['state'];i=record['frame']-1
-            if state in SKIP:continue
+            if state in SKIP or state == 'sleep':continue
             lo=decode(z.read(f'{BASE}animations-8/{state}/frames/{i+1:02d}.png'))
             high,source,status=source_frame(z,state,i,record['kind'],record.get('source_index'))
             rel=f'{state}/{i:02d}.png'
             result,info=fit(high,lo)
             generated.append((rel,source,status,result,info))
+        # Rebuild the approved stationary-bed cycle from two complete HD
+        # originals. Raw generated intermediates move the character and bed.
+        rest_source = 'sleep/frames-native/01.png'
+        raised_source = 'sleep/frames-native/04.png'
+        rest, rest_info = fit(
+            decode(z.read(BASE+rest_source)),
+            decode(z.read(BASE+'animations-8/sleep/frames/01.png')),
+        )
+        raised, raised_info = fit(
+            decode(z.read(BASE+raised_source)),
+            decode(z.read(BASE+'animations-8/sleep/frames/05.png')),
+        )
+        cycle = build_sleep_cycle(rest, raised)
+        for i, result in enumerate(cycle.frames):
+            info = {
+                'aspect_rescale_ratio': None, 'silhouette_iou': None,
+                'fixed_base_source': rest_source,
+                'blanket_peak_source': raised_source,
+                'base_registration': rest_info,
+                'blanket_registration': raised_info,
+                'blanket_blend_factor': cycle.factors[i],
+                'blanket_mask_bbox': list(cycle.mask.getbbox()),
+            }
+            generated.append((f'sleep/{i:02d}.png',
+                              f'{rest_source}#blanket={raised_source}',
+                              'original_hd_fixed_base_blanket_cycle', result, info))
         for i in range(8):
             lo=decode(pp.read(f'Laufzeit_192x208/{i+1:02d}.png'))
             high=decode(pp.read(f'Registriert_Hochaufloesend/{i+1:02d}.png'))
             result,info=fit(high,lo)
             generated.append((f'pick_up/{i:02d}.png',f'Registriert_Hochaufloesend/{i+1:02d}.png','original_hd_pickup',result,info))
-        gaze,source_names=gaze_sources(z)
         gazedata=json.loads(z.read(BASE+'animations-8/look-directions/directions.json'))
-        for i,item in enumerate(gazedata['directions']):
-            lo=decode(z.read(BASE+'animations-8/look-directions/'+item['file']))
-            result,info=fit(gaze[i],lo)
-            generated.append((f'look/{i:02d}.png',source_names[i],'original_hd_gaze_atlas',result,info))
+        for i, (result, source, info) in enumerate(gaze_frames(z, gazedata)):
+            generated.append((f'look/{i:02d}.png',source,'original_hd_gaze_atlas',result,info))
     generated.sort(key=lambda x:x[0])
     if len(generated)!=120 or len({x[0] for x in generated})!=120:
         raise ValueError(f'Expected 120 unique Aiko poses, received {len(generated)}')
     files=[]
     for rel,source,status,image,info in generated:
         dst=target/rel;dst.parent.mkdir(parents=True,exist_ok=True)
-        image.save(dst,optimize=True)
+        # Preserve existing encodings when only unrelated poses are rebuilt.
+        # PNG compression can differ between platforms despite identical RGBA.
+        same_pixels = False
+        if dst.is_file():
+            try:
+                with Image.open(dst) as existing:
+                    same_pixels = (existing.size == image.size
+                                   and existing.convert('RGBA').tobytes() == image.tobytes())
+            except OSError:
+                pass
+        if not same_pixels:
+            image.save(dst,optimize=True)
         record={'path':rel,'source':source,'status':status,'sha256':hashlib.sha256(dst.read_bytes()).hexdigest(), **info,'bytes':dst.stat().st_size}
         files.append(record)
     archive_sha=hashlib.sha256(archive.read_bytes()).hexdigest()
@@ -151,7 +201,8 @@ def export(archive:Path,pickup_archive:Path,target:Path) -> dict:
     manifest={'version':1,'size':list(SIZE),'source_archive_sha256':archive_sha,'pickup_archive_sha256':pickup_sha,'frames':files}
     (target/'manifest.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
     with (target.parent/'aiko_hd_2x_audit.csv').open('w',newline='',encoding='utf-8-sig') as f:
-        out=csv.DictWriter(f,fieldnames=list(files[0].keys()));out.writeheader();out.writerows(files)
+        fields = list(dict.fromkeys(key for record in files for key in record))
+        out=csv.DictWriter(f,fieldnames=fields);out.writeheader();out.writerows(files)
     return manifest
 
 if __name__=='__main__':
