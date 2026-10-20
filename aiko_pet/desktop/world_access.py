@@ -60,6 +60,11 @@ class WorldRuntimeAccess:
         """Read live offer eligibility without initiating an interaction."""
         return self._runtime is not None and self._runtime.ready_for_handover()
 
+    def cursor_gaze_point(self) -> tuple[float, float] | None:
+        """Read the visible center of the currently followed cursor item."""
+        return (self._runtime.cursor_gaze_point()
+                if self._runtime is not None else None)
+
     def object_status(self) -> ObjectStatusSnapshot:
         """Expose detached diagnostics through the existing late-binding port."""
         return (self._runtime.object_status() if self._runtime is not None

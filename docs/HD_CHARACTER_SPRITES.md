@@ -229,7 +229,14 @@ Normal gaze timeout and sleep, game, action and movement priorities still apply.
 
 For an identified, wanted cursor item that currently satisfies the established
 handover/reach checks, the passive renderer uses the final `pick_up/07` pose
-with empty hands. This preview emits no pickup events, transfers no custody and
+with empty hands only when the displayed item center is within 24 native pixels
+of that frame's authored food/hand anchor (48 at 2x). Holding an item directly
+in front of her face retains the forward gaze; other positions retain directional
+gaze. Cursor-item gaze follows the displayed center, accounting for the item's
+pivot and size, rather than its bottom edge. Moving between face and hands
+changes the pose without releasing the item.
+
+This preview emits no pickup events, transfers no custody and
 awards no nutrition; release still performs the existing handover. The preview
 disappears when eligibility is lost. It cannot show a stale food overlay from
 a previous action. Both scales reuse their existing PNGs without asset changes.

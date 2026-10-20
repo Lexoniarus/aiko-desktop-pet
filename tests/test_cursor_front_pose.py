@@ -15,7 +15,11 @@ from aiko_pet.desktop.animation_runtime import (
     AnimationRuntimePorts,
     DesktopAnimationRuntime,
 )
-from aiko_pet.desktop.visual_observation import DesktopVisualObservation
+from aiko_pet.desktop.geometry import FOOT_BASELINE
+from aiko_pet.desktop.visual_observation import (
+    DesktopVisualObservation,
+    VisualAttentionPorts,
+)
 from aiko_pet.desktop.walk_runtime import WalkDriver
 from aiko_pet.desktop.world_access import WorldRuntimeAccess
 from aiko_pet.desktop.world_runtime import DesktopWorldRuntime
@@ -60,6 +64,21 @@ class ForwardGazeTests(unittest.TestCase):
         self.assertFalse(observer.observe(11, (100, 200), 11, True).forward_gaze)
         settings.follow_cursor = False
         self.assertFalse(observer.observe(12, (100, 200), 12, False).forward_gaze)
+
+    def test_item_center_adjusts_rendered_gaze_without_rewriting_sensor_target(self):
+        observer = DesktopVisualObservation(
+            settings=PetSettings(), monitor=MagicMock(), eyes=lambda: (100, 200),
+            attention=VisualAttentionPorts(following_subject=lambda: "known_item"),
+        )
+        observer.object_target = (100, 230)
+        before = observer.attention((100, 220), pointer_recent=True)
+        rendered = observer.observe(1, (100, 220), 1, False,
+                                    cursor_gaze_point=(100, 200))
+        self.assertTrue(rendered.forward_gaze)
+        self.assertEqual(observer.object_target, (100, 230))
+        self.assertEqual(observer.attention((100, 220), pointer_recent=True), before)
+        self.assertFalse(observer.observe(1, (100, 220), 1, True,
+                                          cursor_gaze_point=(100, 200)).forward_gaze)
 
 
 class CursorPoseRuntimeTests(unittest.TestCase):
@@ -114,10 +133,13 @@ class CursorPoseRuntimeTests(unittest.TestCase):
     def test_late_world_port_reads_current_eligibility(self):
         access = WorldRuntimeAccess()
         self.assertFalse(access.ready_for_handover())
+        self.assertIsNone(access.cursor_gaze_point())
         world = MagicMock(spec=DesktopWorldRuntime)
         world.ready_for_handover.return_value = True
+        world.cursor_gaze_point.return_value = (100, 200)
         access.bind(cast(DesktopWorldRuntime, world))
         self.assertTrue(access.ready_for_handover())
+        self.assertEqual(access.cursor_gaze_point(), (100, 200))
         world.ready_for_handover.return_value = False
         self.assertFalse(access.ready_for_handover())
 
@@ -159,7 +181,13 @@ class EmptyHandPreviewTests(unittest.TestCase):
 
 
 class HandoverPreviewIntegrationTests(unittest.TestCase):
-    def test_ready_hands_leave_cursor_custody_unchanged_until_release(self):
+    def test_face_hand_and_side_positions_at_native_scale(self):
+        self.exercise_offer_positions(1)
+
+    def test_face_hand_and_side_positions_at_double_scale(self):
+        self.exercise_offer_positions(2)
+
+    def exercise_offer_positions(self, scale):
         try:
             probe = tk.Tk()
             probe.destroy()
@@ -168,7 +196,7 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
         directory = self.enterContext(tempfile.TemporaryDirectory())
         store = StateStore(Path(directory) / "state.json")
         store.save(PetState(satiety=76, energy=60), PetSettings(
-            scale=2, auto_walk=False, auto_routine=False, observe_computer=False,
+            scale=scale, auto_walk=False, auto_routine=False, observe_computer=False,
             learn_rhythm=False, spontaneous_talk=False,
         ))
         app = DesktopPet(store=store)
@@ -184,14 +212,14 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
         world._timer = None
         app.root.update_idletasks()
         eyes = app._animated.cursor_eye_position
-        image = world.view.image("energy_drink", 2)
-        sprite = world.view.items.foods["energy_drink"].sprites[2]
+        image = world.view.image("energy_drink", scale)
+        sprite = world.view.items.foods["energy_drink"].sprites[scale]
         pointer = (int(eyes[0] + sprite.pivot[0] - image.width() / 2),
                    int(eyes[1] + sprite.pivot[1] - image.height() / 2))
-        self.enterContext(patch.object(app.root, "winfo_pointerx",
-                                      return_value=pointer[0]))
-        self.enterContext(patch.object(app.root, "winfo_pointery",
-                                      return_value=pointer[1]))
+        pointer_x = self.enterContext(patch.object(app.root, "winfo_pointerx",
+                                                 return_value=pointer[0]))
+        pointer_y = self.enterContext(patch.object(app.root, "winfo_pointery",
+                                                 return_value=pointer[1]))
         self.enterContext(patch(
             "aiko_pet.desktop.cursor_item_gesture.mouse_buttons_down_windows",
             return_value=(True, False),
@@ -209,11 +237,42 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
             if player.pending_timer is not None:
                 app.root.after_cancel(player.pending_timer)
                 player._complete(player.generation)
-            if world.ready_for_handover():
+            if world.cursor.offer_ready and world._can_acquire(token):
                 break
+        self.assertTrue(world.cursor.offer_ready)
+        self.assertTrue(world._can_acquire(token))
+
+        def render_at(center):
+            pointer = (int(center[0] + sprite.pivot[0] - image.width() / 2),
+                       int(center[1] + sprite.pivot[1] - image.height() / 2))
+            pointer_x.return_value, pointer_y.return_value = pointer
+            world.cursor.update()
+            world.now += .05
+            world.update(time.monotonic())
+            app._animated.render(time.monotonic(), pointer)
+            self.assertEqual(world.world.get(token).state, ObjectState.USER_HELD)
+            return app._animated.frame_clock.active_key
+
+        self.assertEqual(render_at(eyes), ("idle", 0))
+        self.assertFalse(world.ready_for_handover())
+        clip = app._animated.assets.clips["pick_up"]
+        hand_anchor = clip.frames[-1].food_anchor
+        assert hand_anchor is not None
+        hands = ((app.settings.x or 0) + (96 - clip.anchor[0]
+                                         + hand_anchor[0]) * scale,
+                 (app.settings.y or 0) + (FOOT_BASELINE - clip.anchor[1]
+                                         + hand_anchor[1]) * scale)
+        self.assertEqual(render_at(hands), ("pick_up", 7))
         self.assertTrue(world.ready_for_handover())
-        app._animated.render(time.monotonic(), pointer)
-        self.assertEqual(app._animated.frame_clock.active_key, ("pick_up", 7))
+        self.assertEqual(render_at((eyes[0], eyes[1] + 12 * scale)), ("idle", 0))
+        self.assertFalse(world.ready_for_handover())
+        self.assertEqual(render_at((eyes[0] + 80 * scale, eyes[1])), ("look", 4))
+        self.assertFalse(world.ready_for_handover())
+        self.assertEqual(render_at((hands[0] + 23 * scale, hands[1])),
+                         ("pick_up", 7))
+        self.assertNotEqual(render_at((hands[0] + 25 * scale, hands[1])),
+                            ("pick_up", 7))
+        self.assertEqual(render_at(hands), ("pick_up", 7))
         self.assertEqual(world.world.get(token).state, ObjectState.USER_HELD)
         self.assertEqual(world.interaction.phase, "idle")
         self.assertLess(app.state.energy, 61)
@@ -225,6 +284,8 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
         set_test_pet_values(app.state, energy=100)
         self.assertFalse(world.ready_for_handover())  # A live refusal hides hands.
         set_test_pet_values(app.state, energy=60)
+        # Face-level release keeps the established handover rules as well.
+        self.assertEqual(render_at(eyes), ("idle", 0))
         world.cursor.release()
         self.assertFalse(world.ready_for_handover())
         self.assertEqual(world.world.get(token).state, ObjectState.PET_HELD)

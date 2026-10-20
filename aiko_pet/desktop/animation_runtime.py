@@ -46,6 +46,7 @@ class AnimationRuntimePorts:
     action_clip_id: Callable[[], str]
     attention_until: Callable[[], float]
     ready_for_handover: Callable[[], bool] = lambda: False
+    cursor_gaze_point: Callable[[], tuple[float, float] | None] = lambda: None
 
 
 class DesktopAnimationRuntime:
@@ -117,6 +118,7 @@ class DesktopAnimationRuntime:
 
         observation = self._visual.observe(
             now, pointer, last_pointer_move, game_mode,
+            cursor_gaze_point=self._ports.cursor_gaze_point(),
         )
         if self._ports.ready_for_handover():
             self.ambient.suspend(now)

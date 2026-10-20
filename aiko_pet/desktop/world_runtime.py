@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import math
 import time
 import tkinter as tk
 from collections import deque
@@ -64,7 +65,7 @@ from ..world.contracts import (
 )
 from ..world.state import WorldOperationError, WorldState
 from .cursor_item_gesture import CursorItemGesture, CursorItemPorts
-from .geometry import GroundApproach, TaskbarTrack
+from .geometry import FOOT_BASELINE, GroundApproach, TaskbarTrack
 from .global_input import mouse_buttons_down_windows
 from .visual_observation import DesktopVisualObservation
 from .walk_runtime import WalkDriver
@@ -331,14 +332,44 @@ class DesktopWorldRuntime:
         )
 
     def ready_for_handover(self) -> bool:
-        """Offer empty hands only while a wanted cursor item can be received.
+        """Show empty hands for a wanted item near the authored hand anchor.
 
         This is visual readiness, not custody: release still performs the
         actual handover through the existing interaction coordinator.
         """
         token = self.cursor.instance_id
-        return (token is not None and self.cursor.inside and self.cursor.offer_ready
-                and self._can_acquire(token))
+        if (token is None or not self.cursor.inside or not self.cursor.offer_ready
+                or not self._can_acquire(token)):
+            return False
+        eyes = self._animated.cursor_eye_position
+        presentation = self.cursor.presentation(eyes, self.width)
+        clip = self._animated.assets.clips["pick_up"]
+        anchor = clip.frames[-1].food_anchor
+        if presentation is None or anchor is None:
+            return False
+        scale = self.settings.scale
+        hand_x = (self.settings.x or 0) + (FRAME_WIDTH / 2 - clip.anchor[0]
+                                         + anchor[0]) * scale
+        hand_y = (self.settings.y or 0) + (FOOT_BASELINE - clip.anchor[1]
+                                         + anchor[1]) * scale
+        pose = presentation[1]
+        return math.hypot(eyes[0] + pose.x * self.width - hand_x,
+                          eyes[1] + pose.y * self.width - hand_y) <= 24 * scale
+
+    def cursor_gaze_point(self) -> tuple[float, float] | None:
+        """Project the followed portion's visible center for sprite gaze only."""
+        token = self.cursor.instance_id
+        followed = self.awareness.following_record
+        if (token is None or followed is None
+                or followed != self.awareness.record_for_instance(token)
+                or self.interaction.focus_record not in (None, followed)):
+            return None
+        eyes = self._animated.cursor_eye_position
+        presentation = self.cursor.presentation(eyes, self.width)
+        if presentation is None:
+            return None
+        pose = presentation[1]
+        return eyes[0] + pose.x * self.width, eyes[1] + pose.y * self.width
 
     def _capture_contact(self, token: str) -> None:
         item = self.world.get(token)

@@ -91,6 +91,7 @@ def assemble_animation(
             action_clip_id=ports.action_clip_id,
             attention_until=ports.attention_until,
             ready_for_handover=ports.world.ready_for_handover,
+            cursor_gaze_point=ports.world.cursor_gaze_point,
         ),
     )
     items = load_item_catalog()
