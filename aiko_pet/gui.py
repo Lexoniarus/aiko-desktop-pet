@@ -239,11 +239,12 @@ class DesktopPet:
             started_at=self._runtime.last_tick,
         )
         self._views = DesktopPresentation(
-            self.state, self.settings, self.mind, self.adaptive,
+            self.state, self.settings, self.adaptive,
             self.activity_monitor,
             context=lambda: self.context,
             sprite_size=lambda: (self._window.width, self._window.height),
             object_status=self._world_access.object_status,
+            wish_context=self._attention.wish_context,
         )
         self._hover = HoverUi(
             self.root, self.canvas,

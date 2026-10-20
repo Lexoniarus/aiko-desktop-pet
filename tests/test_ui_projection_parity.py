@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import random
 import unittest
 from dataclasses import FrozenInstanceError
 from datetime import datetime
@@ -10,13 +9,12 @@ from datetime import datetime
 from aiko_pet.application.object_status import ObjectStatusSnapshot
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
-from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.routine import MEAL_NAMES, context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import StatusHint
+from aiko_pet.pet.wishes import ActiveWish, WishContext, WishId, WishState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.view_models.contracts import (
     HoverAnchor,
@@ -54,7 +52,6 @@ class UiProjectionParityTests(unittest.TestCase):
         view = project_status(
             snapshot_pet(state),
             context_at(at(8)),
-            EmotionalState.CALM,
             None,
             ComputerSnapshot(),
             observe_computer=False,
@@ -190,7 +187,6 @@ class UiProjectionParityTests(unittest.TestCase):
                 self.assertEqual(format_percent(value), expected)
 
     def test_hover_and_status_keep_needs_and_observation_preferences(self) -> None:
-        mind = make_aiko_mind(started_at=0.0, rng=random.Random(9))
         states = (
             PetState(),
             PetState(sleeping=True),
@@ -217,7 +213,6 @@ class UiProjectionParityTests(unittest.TestCase):
                             status = project_status(
                                 copy,
                                 context,
-                                mind.emotional_state(state).primary,
                                 None,
                                 reading,
                                 observe_computer=enabled,
@@ -251,7 +246,11 @@ class UiProjectionParityTests(unittest.TestCase):
                             self.assertEqual(encode_pet_state(state), before)
 
     def test_desktop_adapter_owns_only_read_projections_and_geometry(self) -> None:
-        state = PetState(energy=39)
+        state = PetState(
+            energy=39,
+            wishes=WishState(active=(ActiveWish(1, WishId.FACT, "fact", 0, 14400),)),
+        )
+        prepared = {"fact"}
         settings = PetSettings(
             x=150,
             y=430,
@@ -260,20 +259,28 @@ class UiProjectionParityTests(unittest.TestCase):
             toolbar_y=35,
             observe_computer=True,
         )
-        mind = make_aiko_mind(started_at=0.0, rng=random.Random(10))
         readings = StaticMonitor(
             ComputerSnapshot(cpu=83, measured_at=100),
         )
         source = DesktopPresentation(
             state,
             settings,
-            mind,
             AdaptiveRoutine(),
             readings,
             context=lambda: context_at(at(15)),
             sprite_size=lambda: (256, 416),
+            wish_context=lambda: WishContext(
+                online_social=True,
+                prepared_social=frozenset(prepared),
+            ),
         )
+        checkpoint = state.capture_checkpoint()
         original = source.hover()
+        self.assertIsNone(original.emotional.wishes[0].value.restriction)
+        prepared.clear()
+        self.assertTrue(source.status().emotional.wishes[0].restriction_label)
+        self.assertIsNone(original.emotional.wishes[0].value.restriction)
+        self.assertEqual(state.capture_checkpoint(), checkpoint)
         self.assertIn("CPU 83 %", original.hardware_line)
         self.assertEqual(
             source.anchor(),

@@ -5,8 +5,129 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..pet.balance import BALANCE
-from ..pet.needs import NeedLevels
+from ..pet.emotions import EmotionalComposition, derive_emotional_state
+from ..pet.moodlet_catalog import MOODLET_CATALOG
+from ..pet.moodlets import (
+    EmotionalDirection,
+    MoodletAttribution,
+    MoodletDecay,
+    MoodletId,
+    MoodletPolarity,
+)
+from ..pet.needs import NeedCondition, NeedLevels, assess_need_conditions
 from ..pet.state import PetState
+from ..pet.wish_catalog import WISH_CATALOG
+from ..pet.wishes import (
+    WishArea,
+    WishContext,
+    WishId,
+    WishRestriction,
+    WishTargetKind,
+    wish_restriction,
+)
+
+
+@dataclass(frozen=True, slots=True)
+class MoodletRead:
+    """Current stage time, not an invented wall-clock expiry while paused."""
+
+    instance_id: int
+    definition_id: MoodletId
+    level: int
+    polarity: MoodletPolarity
+    direction: EmotionalDirection
+    attribution: MoodletAttribution
+    mood_points: int
+    remaining_stage_seconds: float
+    remaining_decay_seconds: float
+    decay: MoodletDecay
+    decay_paused: bool
+    recovery_wait_seconds: float | None
+
+
+@dataclass(frozen=True, slots=True)
+class GameWishRead:
+    completed_rounds: int
+    required_rounds: int
+    wins: int
+    losses: int
+
+
+@dataclass(frozen=True, slots=True)
+class WishRead:
+    """An inner wish remains readable regardless of whether it was spoken."""
+
+    instance_id: int
+    definition_id: WishId
+    area: WishArea
+    target_kind: WishTargetKind
+    target_id: str
+    remaining_seconds: float
+    expressed: bool
+    restriction: WishRestriction | None
+    game: GameWishRead | None
+
+
+def _moodlet_reads(state: PetState) -> tuple[MoodletRead, ...]:
+    result = []
+    for episode in state.moodlets.active:
+        definition = MOODLET_CATALOG.definitions[episode.definition_id]
+        result.append(
+            MoodletRead(
+                episode.instance_id,
+                episode.definition_id,
+                episode.level,
+                definition.polarity,
+                definition.direction,
+                episode.attribution,
+                definition.level_points[episode.level - 1],
+                episode.remaining_seconds,
+                episode.remaining_seconds
+                + (episode.level - 1) * definition.decay_stage_seconds,
+                definition.decay,
+                episode.decay_paused,
+                (
+                    max(
+                        0,
+                        episode.recovery_since
+                        + BALANCE.number("moodlets", "recovery_stable_seconds")
+                        - state.lived_seconds,
+                    )
+                    if episode.recovery_since is not None
+                    else None
+                ),
+            )
+        )
+    return tuple(result)
+
+
+def _wish_reads(state: PetState, context: WishContext) -> tuple[WishRead, ...]:
+    result = []
+    for wish in state.wishes.active:
+        definition = WISH_CATALOG.definitions[wish.definition_id]
+        result.append(
+            WishRead(
+                wish.instance_id,
+                wish.definition_id,
+                definition.area,
+                definition.target_kind,
+                wish.target_id,
+                max(0, wish.expires_at - state.lived_seconds),
+                wish.expressed_at is not None,
+                wish_restriction(wish, context, WISH_CATALOG.definitions),
+                (
+                    GameWishRead(
+                        len(wish.game.round_ids),
+                        definition.round_count,
+                        wish.game.wins,
+                        wish.game.losses,
+                    )
+                    if definition.area == WishArea.GAMES
+                    else None
+                ),
+            )
+        )
+    return tuple(result)
 
 
 @dataclass(frozen=True, slots=True)
@@ -23,6 +144,11 @@ class PetReadSnapshot:
     sleeping: bool
     meals_date: str
     meals_today: tuple[str, ...]
+    lived_seconds: float
+    emotions: EmotionalComposition
+    need_conditions: frozenset[NeedCondition]
+    moodlets: tuple[MoodletRead, ...]
+    wishes: tuple[WishRead, ...]
     last_food_id: str | None = None
     food_digest_minutes: float = 0.0
     fun: float = BALANCE.number("initial", "fun")
@@ -31,11 +157,19 @@ class PetReadSnapshot:
     def needs(self) -> NeedLevels:
         """Exactly five care values; mood and friendship stay separate reads."""
         return NeedLevels(
-            self.satiety, self.energy, self.fun, self.social, self.affection,
+            self.satiety,
+            self.energy,
+            self.fun,
+            self.social,
+            self.affection,
         )
 
 
-def snapshot_pet(state: PetState) -> PetReadSnapshot:
+def snapshot_pet(
+    state: PetState,
+    *,
+    wish_context: WishContext = WishContext(),
+) -> PetReadSnapshot:
     """Copy a pet's current read-side values, without computing UI text."""
     return PetReadSnapshot(
         satiety=state.satiety,
@@ -48,6 +182,15 @@ def snapshot_pet(state: PetState) -> PetReadSnapshot:
         sleeping=state.sleeping,
         meals_date=state.meals_date,
         meals_today=tuple(state.meals_today),
+        lived_seconds=state.lived_seconds,
+        emotions=derive_emotional_state(
+            state.mood,
+            state.moodlets.active,
+            definitions=MOODLET_CATALOG.definitions,
+        ),
+        need_conditions=assess_need_conditions(state.needs),
+        moodlets=_moodlet_reads(state),
+        wishes=_wish_reads(state, wish_context),
         last_food_id=state.food.last_food_id,
         food_digest_minutes=state.food.remaining_digest_minutes,
         fun=state.fun,

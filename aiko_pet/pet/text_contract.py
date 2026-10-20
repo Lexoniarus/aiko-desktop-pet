@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from .emotions import EmotionalState
 from .moodlets import MoodletId
-from .wishes import WishId
+from .wishes import WishId, WishRestriction
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
     "social.intro.single": frozenset(),
@@ -191,3 +191,7 @@ TEXT_FIELDS.update({
 })
 
 TEXT_FIELDS.update({f"emotion.{state}": frozenset() for state in EmotionalState})
+
+TEXT_FIELDS.update({
+    f"wish.restriction.{key}": frozenset() for key in WishRestriction
+})

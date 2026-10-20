@@ -6,12 +6,19 @@ from ...application.object_status import ObjectStatusSnapshot
 from ...application.read_snapshot import PetReadSnapshot
 from ...application.settings import PetSettings
 from ...pet.content import GERMAN_TEXT
-from ...pet.emotions import EmotionalState
 from ...pet.food import FOOD_CATALOG
 from ...pet.mind.adaptive_models import Behaviour
 from ...pet.routine import TimeContext
+from ...pet.wishes import WishTargetKind
 from ...telemetry import ComputerSnapshot
-from .contracts import HoverSnapshot, SettingsSnapshot, StatusSnapshot
+from .contracts import (
+    EmotionalSnapshot,
+    HoverSnapshot,
+    MoodletView,
+    SettingsSnapshot,
+    StatusSnapshot,
+    WishView,
+)
 from .text_de import (
     describe_workload,
     format_day_label,
@@ -36,6 +43,46 @@ def _status_values(pet: PetReadSnapshot) -> tuple[tuple[str, float], ...]:
         ("social", needs.social),
         ("affection", needs.affection),
         ("friendship", pet.friendship),
+    )
+
+
+def _emotional_snapshot(pet: PetReadSnapshot) -> EmotionalSnapshot:
+    wishes = []
+    for wish in pet.wishes:
+        label = GERMAN_TEXT.format(f"wish.{wish.definition_id}.label")
+        target = (
+            FOOD_CATALOG[wish.target_id].display_name
+            if wish.target_kind == WishTargetKind.FOOD
+            else GERMAN_TEXT.format(f"game.name.{wish.target_id}")
+            if wish.target_kind == WishTargetKind.GAME
+            else label
+        )
+        wishes.append(
+            WishView(
+                wish,
+                label,
+                GERMAN_TEXT.format(f"wish.{wish.definition_id}.description"),
+                target,
+                (
+                    GERMAN_TEXT.format(f"wish.restriction.{wish.restriction}")
+                    if wish.restriction is not None
+                    else ""
+                ),
+            )
+        )
+    return EmotionalSnapshot(
+        pet.emotions,
+        format_emotional_state(pet.emotions.primary),
+        pet.need_conditions,
+        tuple(
+            MoodletView(
+                m,
+                GERMAN_TEXT.format(f"moodlet.{m.definition_id}.label"),
+                GERMAN_TEXT.format(f"moodlet.{m.definition_id}.description"),
+            )
+            for m in pet.moodlets
+        ),
+        tuple(wishes),
     )
 
 
@@ -67,6 +114,7 @@ def project_hover(
         feed_label=format_feed_label(pet, context),
         status_values=_status_values(pet),
         friendship_level=pet.friendship_level,
+        emotional=_emotional_snapshot(pet),
         hardware_line=hardware,
         workload_line=workload,
         food_line=(
@@ -84,7 +132,6 @@ def project_hover(
 def project_status(
     pet: PetReadSnapshot,
     context: TimeContext,
-    emotional_state: EmotionalState,
     situation: Behaviour | None,
     computer: ComputerSnapshot,
     *,
@@ -130,12 +177,12 @@ def project_status(
         today=format_day_label(context),
         next_event=format_schedule_line(context),
         hint=format_status_hint(pet, context),
-        emotional_state_label=format_emotional_state(emotional_state),
         sleep_label=format_sleep_label(pet.sleeping),
         hardware_line=hardware,
         activity_line=activity,
         status_values=_status_values(pet),
         friendship_level=pet.friendship_level,
+        emotional=_emotional_snapshot(pet),
         objects_line=GERMAN_TEXT.format(
             "ui.object_status",
             desktop=str(objects.desktop),

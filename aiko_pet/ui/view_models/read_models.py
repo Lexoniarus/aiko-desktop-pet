@@ -12,10 +12,10 @@ from ...application.object_status import ObjectStatusSnapshot
 from ...application.ports import ComputerReadings
 from ...application.read_snapshot import snapshot_pet
 from ...application.settings import PetSettings
-from ...pet.mind import PetMind
 from ...pet.mind.adaptive import AdaptiveRoutine
 from ...pet.routine import TimeContext
 from ...pet.state import PetState
+from ...pet.wishes import WishContext
 from ...telemetry import ComputerSnapshot
 from .contracts import (
     HoverAnchor,
@@ -33,26 +33,26 @@ class DesktopPresentation:
         self,
         state: PetState,
         settings: PetSettings,
-        mind: PetMind,
         adaptive: AdaptiveRoutine,
         monitor: ComputerReadings,
         *,
         context: Callable[[], TimeContext],
         sprite_size: Callable[[], tuple[int, int]],
+        wish_context: Callable[[], WishContext],
         object_status: Callable[[], ObjectStatusSnapshot] = ObjectStatusSnapshot,
     ) -> None:
         self._state = state
         self._settings = settings
-        self._mind = mind
         self._adaptive = adaptive
         self._monitor = monitor
         self._context = context
         self._sprite_size = sprite_size
         self._object_status = object_status
+        self._wish_context = wish_context
 
     def hover(self) -> HoverSnapshot:
         return project_hover(
-            snapshot_pet(self._state),
+            snapshot_pet(self._state, wish_context=self._wish_context()),
             self._context(),
             self._monitor.latest(),
             observe_computer=self._settings.observe_computer,
@@ -65,9 +65,8 @@ class DesktopPresentation:
             else ComputerSnapshot()
         )
         return project_status(
-            snapshot_pet(self._state),
+            snapshot_pet(self._state, wish_context=self._wish_context()),
             self._context(),
-            self._mind.emotional_state(self._state).primary,
             self._adaptive.current,
             computer,
             observe_computer=self._settings.observe_computer,

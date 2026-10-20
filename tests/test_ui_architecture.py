@@ -240,15 +240,14 @@ class UiDependencyRules(unittest.TestCase):
         )
         for relative in files:
             with self.subTest(module=relative):
-                source = (ROOT / relative).read_text("utf-8")
-                for expression in (
-                    ".status_hint(",
-                    ".feed_label(",
-                    ".schedule_line",
-                    ".label",
-                    ".greeting(",
+                tree = ast.parse((ROOT / relative).read_text("utf-8"))
+                # Inspect Python access, not '.label' inside a localized JSON key.
+                accessed = {node.attr for node in ast.walk(tree)
+                            if isinstance(node, ast.Attribute)}
+                for name in (
+                    "status_hint", "feed_label", "schedule_line", "label", "greeting",
                 ):
-                    self.assertNotIn(expression, source)
+                    self.assertNotIn(name, accessed)
 
     def test_runtime_consumes_named_ports_not_legacy_private_stages(self) -> None:
         source = (ROOT / "desktop/runtime.py").read_text("utf-8")

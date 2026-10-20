@@ -3305,3 +3305,22 @@ following because unrestricted dependency checking reports the pre-existing
 `world/state.py:291` local-variable narrowing error (also present at `871d050`).
 That unrelated World code is unchanged. Pyright checks the migrated production
 and test contracts normally. No windows, pointer control or CI are used.
+
+
+The third 5B.8 unit extends `application/read_snapshot.py` with frozen
+`MoodletRead`, `WishRead` and bounded `GameWishRead` values. Both hover and status
+contracts share an `EmotionalSnapshot`: complete composition, independent need
+conditions, localized Moodlet details and inner/spoken wish details. The status
+label is a property of that same snapshot, not a second editable interpretation.
+All eighteen families and eleven objective forms use the existing catalogues.
+
+Snapshots measure remaining time only against the aggregate's `lived_seconds`.
+Moodlets report current-stage/total decay work, pause state and any remaining
+stable-recovery wait; paused work is not a promised expiry timestamp. Wishes
+report their original remaining deadline, concrete target, expression flag,
+bounded round counters and the existing `wish_restriction()` result.
+`DesktopPresentation` now injects `AttentionCoordinator.wish_context()` to reuse
+current care/API acceptance and prepared-category reads. It no longer needs a
+Mind reference or reads a clock. Reading never expires/creates/expresses a wish,
+commits care, reserves content, changes friendship or advances an impression.
+The main-menu layout, new icon strips and wish panels remain the separate 5C.
