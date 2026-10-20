@@ -291,7 +291,7 @@ Extend existing owners rather than introducing parallel services or stores:
 | Responsibility | Canonical owner |
 | --- | --- |
 | Mutable pet state and applying calculated transitions | `PetState`, backed by frozen `PetValues` |
-| Numeric need integration | Pure `pet/need_decay.py`; returns an immutable result, reads no clocks and mutates no aggregate |
+| Numeric pet progression | Pure `pet/progression.py`; returns separate need/mood/food/relationship results, reads no clocks and mutates no aggregate |
 | Nutrition/reserve, fun and mood calculations | Existing pure `pet/food.py`, `pet/fun.py`, `pet/mood.py` |
 | Coefficients and their validation | Existing packaged balance/food JSON and typed loaders |
 | Elapsed-time planning and observation freshness | Existing time plan and application activity coordinator |
@@ -885,6 +885,19 @@ full-suite claim for this refactor.
    lifecycle-calculation, checkpoint, food and care batches passed 42 tests in
    0.395 seconds combined; the slowest was 0.278 seconds. Targeted Ruff and strict
    Mypy passed. No new test window or mouse input was used.
+
+2. **Existing progression, accurately named:** moved `need_decay.py` to
+   `progression.py` with `ProgressionValues`, `PetProgress` and
+   `calculate_pet_progression()`. `PetState._advance_progression()` applies its
+   result through the same existing chronological path. Need-only mood inputs
+   and policy are now `NeedMoodFactors`/`calculate_need_mood_target()`; no empty
+   composed-Moodlet wrapper or second integrator was added. All code/test callers
+   and maintained system guides migrated; the old module was removed without
+   a compatibility shim. Seventy focused progression, mood and architecture
+   tests passed in 1.169 seconds (slowest 0.337 seconds), as did targeted Ruff
+   and strict Mypy. Twelve serialized care/awake/sleep progression outcomes
+   match the pre-refactor baseline exactly. Save fields and balance JSON remain
+   unchanged; no full-suite run was performed.
 
 The later typed need-condition/dialogue-context migration and final emotional
 interpretation still belong with the agreed 5B semantics. This structural slice

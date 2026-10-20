@@ -15,7 +15,7 @@ from aiko_pet.pet.lifecycle import (
 from aiko_pet.pet.lifecycle import (
     MAX_LIVE_EFFORT_SECONDS as POLICY_LIVE_WINDOW,
 )
-from aiko_pet.pet.need_decay import calculate_need_decay
+from aiko_pet.pet.progression import calculate_pet_progression
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 
@@ -36,10 +36,10 @@ def local_stamp(hour: int = 12, minute: int = 0) -> float:
     return datetime(2026, 10, 12, hour, minute).timestamp()
 
 
-class NeedDecayTests(unittest.TestCase):
+class PetProgressionTests(unittest.TestCase):
     def test_normal_waking_decay_does_not_require_pet_state(self) -> None:
         needs = Needs()
-        progress = calculate_need_decay(needs, 1)
+        progress = calculate_pet_progression(needs, 1)
         result = progress.needs
         self.assertAlmostEqual(result.satiety, 67.0)
         self.assertAlmostEqual(progress.mood, 55.52)
@@ -50,7 +50,7 @@ class NeedDecayTests(unittest.TestCase):
 
     def test_sleep_replenishes_energy_without_friendship_change(self) -> None:
         needs = Needs(sleeping=True, energy=40)
-        result = calculate_need_decay(needs, 1, effort=1.0).needs
+        result = calculate_pet_progression(needs, 1, effort=1.0).needs
         self.assertAlmostEqual(result.energy, 47.5)
         self.assertAlmostEqual(result.satiety, 73.6)
         self.assertAlmostEqual(result.affection, 74.75)
@@ -59,8 +59,8 @@ class NeedDecayTests(unittest.TestCase):
     def test_heavy_work_increases_waking_drain(self) -> None:
         relaxed = Needs()
         working = Needs()
-        relaxed_next = calculate_need_decay(relaxed, 1, effort=0)
-        working_next = calculate_need_decay(working, 1, effort=1)
+        relaxed_next = calculate_pet_progression(relaxed, 1, effort=0)
+        working_next = calculate_pet_progression(working, 1, effort=1)
         self.assertLess(working_next.needs.satiety, relaxed_next.needs.satiety)
         self.assertLess(working_next.needs.energy, relaxed_next.needs.energy)
         self.assertLess(working_next.mood, relaxed_next.mood)

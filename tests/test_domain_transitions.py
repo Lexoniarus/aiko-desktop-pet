@@ -18,7 +18,7 @@ from aiko_pet.pet.lifecycle import (
     calculate_daily_routine,
     plan_pet_time,
 )
-from aiko_pet.pet.need_decay import calculate_need_decay
+from aiko_pet.pet.progression import calculate_pet_progression
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 
@@ -72,7 +72,7 @@ class DomainTransitionTests(unittest.TestCase):
             updated_at=START, friendship=40, affection=25, social=18,
         )
         previous = encode_pet_state(state)
-        needs = calculate_need_decay(state, 1.0, effort=0.9)
+        needs = calculate_pet_progression(state, 1.0, effort=0.9)
         friendship = calculate_friendship_reward(state, "pet", START, 25)
         self.assertEqual(encode_pet_state(state), previous)
         self.assertNotEqual(needs.needs.energy, state.energy)
@@ -87,10 +87,10 @@ class DomainTransitionTests(unittest.TestCase):
 
     def test_invalid_duration_preserves_the_pure_need_result(self) -> None:
         state = PetState(updated_at=START)
-        baseline = calculate_need_decay(state, 0)
+        baseline = calculate_pet_progression(state, 0)
         for duration in (-1, float("nan"), float("inf")):
             with self.subTest(hours=duration):
-                self.assertEqual(calculate_need_decay(state, duration), baseline)
+                self.assertEqual(calculate_pet_progression(state, duration), baseline)
 
     def test_need_policy_and_aggregate_use_identical_values(self) -> None:
         for sleeping in (True, False):
@@ -103,9 +103,9 @@ class DomainTransitionTests(unittest.TestCase):
                         updated_at=START,
                     )
                     before = encode_pet_state(state)
-                    expected = calculate_need_decay(state, 0.5, effort)
+                    expected = calculate_pet_progression(state, 0.5, effort)
                     self.assertEqual(encode_pet_state(state), before)
-                    state._decay(0.5, effort)
+                    state._advance_progression(0.5, effort)
                     self.assertEqual(state.food, expected.food)
                     self.assertEqual(state.mood, expected.mood)
                     for key in ("satiety", "fun", "energy", "social", "affection"):

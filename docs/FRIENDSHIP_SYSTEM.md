@@ -111,7 +111,7 @@ reset those caps. Offline time does not invent clicking/withholding events.
 `PetState` remains the sole mutable pet aggregate. Immutable
 `FriendshipHistory` lives in its complete `PetValues` checkpoint. Pure
 `friendship.py` calculates rewards/direct penalties; `friendship_decay.py`
-integrates passive loss alongside `need_decay.py`. There is no second clock,
+integrates passive loss alongside `progression.py`. There is no second clock,
 relationship service or mutable history store.
 
 The optional `pet.relationship` v1 record uses `pet.time.lived_seconds` for

@@ -1,4 +1,4 @@
-"""Pure need-decay rules; the pet aggregate owns applying their results."""
+"""Pure chronological pet progression; PetState owns applying the result."""
 
 from __future__ import annotations
 
@@ -16,13 +16,13 @@ from .food import (
 from .friendship_decay import advance_friendship
 from .friendship_history import FriendshipProgress
 from .fun import advance_fun
-from .mood import MoodFactors, advance_mood, calculate_mood_target
+from .mood import NeedMoodFactors, advance_mood, calculate_need_mood_target
 from .needs import NeedLevels
 from .value_rules import clamp_need_value
 
 
-class NeedValues(Protocol):
-    """Read-only need values; policies cannot write back to the pet."""
+class ProgressionValues(Protocol):
+    """Read-only numeric pet inputs; policies cannot write back to the pet."""
 
     @property
     def sleeping(self) -> bool: ...
@@ -50,7 +50,7 @@ class NeedValues(Protocol):
 
 
 @dataclass(frozen=True, slots=True)
-class NeedProgress:
+class PetProgress:
     """Transient calculation result; not another pet aggregate or save record."""
 
     needs: NeedLevels
@@ -59,14 +59,14 @@ class NeedProgress:
     relationship: FriendshipProgress | None = None
 
 
-def calculate_need_decay(
-    record: NeedValues,
+def calculate_pet_progression(
+    record: ProgressionValues,
     hours: float,
     effort: float | None = None,
     *,
     food_activity: FoodActivity | None = None,
     relationship: FriendshipProgress | None = None,
-) -> NeedProgress:
+) -> PetProgress:
     """Integrate changing needs and mood without mutating the input aggregate.
 
     The existing time plan supplies routine/observation boundaries. This policy
@@ -106,7 +106,7 @@ def calculate_need_decay(
         social = clamp_need_value(social - step_hours * social_rate)
         affection = clamp_need_value(affection - step_hours * affection_rate)
         fun = advance_fun(fun, step_hours, sleeping=record.sleeping)
-        target = calculate_mood_target(MoodFactors(
+        target = calculate_need_mood_target(NeedMoodFactors(
             satiety=satiety, energy=energy, fun=fun,
             social=social, affection=affection,
         ))
@@ -120,6 +120,6 @@ def calculate_need_decay(
                 (satiety, energy, fun, social, affection), sleeping=record.sleeping,
             )
         remaining -= seconds
-    return NeedProgress(
+    return PetProgress(
         NeedLevels(satiety, energy, fun, social, affection), mood, food, relationship,
     )

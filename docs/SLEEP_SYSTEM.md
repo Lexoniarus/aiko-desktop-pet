@@ -102,7 +102,7 @@ Reopening displays the resulting state and stock, without replaying animations.
 
 `PetState` owns immutable `SleepEpisode` in its complete `PetValues` checkpoint.
 `pet/sleep.py` calculates priorities; `pet/lifecycle.py` supplies the shared
-chronological grid; `pet/need_decay.py` remains the only numeric need integrator.
+chronological grid; `pet/progression.py` remains the only numeric need integrator.
 `AdaptiveRoutine` owns anonymous observations and `QuietWindow` in its existing
 adaptive memory. The former hardware-dependent sleep policy and its coefficients
 are removed. Existing workload classification/hourly expectations remain for

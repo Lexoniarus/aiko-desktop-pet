@@ -32,8 +32,8 @@ from .lifecycle import (
     calculate_daily_routine,
     plan_pet_time,
 )
-from .need_decay import calculate_need_decay
 from .needs import NeedLevels
+from .progression import calculate_pet_progression
 from .routine import TimeContext, context_at, due_meal
 from .sleep import SleepContext, SleepEpisode, calculate_manual_sleep_transition
 from .state_values import PetValues, PreparedItemConsumption
@@ -249,14 +249,14 @@ class PetState:
             auto_nap_day=transition.auto_nap_day, sleep_episode=transition.episode,
         )
 
-    def _decay(
+    def _advance_progression(
         self,
         hours: float,
         effort: float | None = None,
         food_activity: FoodActivity | None = None,
     ) -> None:
         """Commit the pure policy's immutable result as one aggregate update."""
-        progress = calculate_need_decay(
+        progress = calculate_pet_progression(
             self, hours, effort, food_activity=food_activity,
             relationship=FriendshipProgress(
                 self.friendship, self.friendship_history, self.lived_seconds,
@@ -365,7 +365,7 @@ class PetState:
                 step.context, automatic=auto_routine,
                 sleep_context=sleep_context.earlier(step.hours * 3600),
             )
-        self._decay(step.hours, step.effort, step.food_activity)
+        self._advance_progression(step.hours, step.effort, step.food_activity)
         self._change(updated_at=now)
 
     def _update_sleep_endpoint(

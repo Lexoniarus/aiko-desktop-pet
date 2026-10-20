@@ -69,7 +69,7 @@ all runtime coupling between composed services.
 
 **`pet/state.py — PetState`** is the only mutable, persisted pet aggregate. Its public `interact(action, now=...)` and `advance(now, ...)` operations commit care and elapsed-time state changes. Pure policy modules in `pet/` calculate immutable decisions:
 
-Stages 6-7 complete PetState encapsulation. NeedValues, CareValues,
+Stages 6-7 complete PetState encapsulation. ProgressionValues, CareValues,
 RoutineValues and FriendshipRecord expose read-only properties and
 Sequence/Mapping policy inputs. PetState retains one frozen
 `pet/state_values.py::PetValues` value, replacing it only within owned
@@ -100,7 +100,7 @@ German fallback wording is selected only by `ui/view_models/care_text.py`.
 - `care_actions.py`: `CareTransition` for care actions and their rewards.
 - `needs.py`: frozen `NeedLevels` contains exactly satiety, energy, fun, social
   and affection. Mood and friendship are separate values, not care needs.
-- `need_decay.py`: frozen `NeedProgress` for all numeric time progression,
+- `progression.py`: frozen `PetProgress` for all numeric time progression,
   with separate need, mood, food and relationship results. Integrates targets with the
   existing pure food/fun/mood policies; `PetState` applies one result. It reads
   no clocks, owns no mutable store and offers no alternate precomputed path.
@@ -322,6 +322,8 @@ The care/storage follow-up also changes these Python call contracts:
 
 | Previous call | Current owner/contract |
 | --- | --- |
+| `pet.need_decay`, `NeedProgress`, `calculate_need_decay()` | `pet.progression`, `PetProgress`, `calculate_pet_progression()`; five `NeedLevels` fields live in `pet.needs` |
+| `MoodFactors`, need-only `calculate_mood_target()` | `NeedMoodFactors`, `calculate_need_mood_target()`; composed Moodlet targets remain later work |
 | Hover `feed` callback / Snack button `feed` action | `place_item` callback/action with independent `can_place_item`; direct domain feeding remains `feed` |
 | `HoverUi.interaction_active`, walk/assembly `toolbar_visible`, attention-runtime `toolbar_active` | `menu_engaged`; actual visibility remains distinct in session UI refresh |
 | World `controls_active` | `character_action_busy`, sampled from actual character playback/waiting without menu hover |
@@ -359,7 +361,7 @@ Python code imports the removed paths; such callers need the mappings below.
 | Removed path under `aiko_pet` | Canonical owner |
 | --- | --- |
 | `domain` | `pet.state.PetState`; care/friendship/time constants and functions in their respective `pet` policy modules |
-| `care_actions`, `friendship`, `need_decay`, `routine`, `value_rules` | Modules of the same name under `pet` |
+| `care_actions`, `friendship`, `routine`, `value_rules` | Modules of the same name under `pet` |
 | `pet_lifecycle` | `pet.lifecycle` |
 | `adaptive`, `adaptive_models`, `adaptive_policy`, `work_episode`, `reaction_sequence` | Modules of the same name under `pet.mind` |
 | `dialogue` | `pet.mind.mind.PetMind` and `pet.mind.catalog` types |

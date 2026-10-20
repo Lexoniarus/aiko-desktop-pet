@@ -7,7 +7,7 @@ from datetime import datetime
 
 from aiko_pet.pet.food import FoodActivity, FoodState, advance_food
 from aiko_pet.pet.fun import GameExperience
-from aiko_pet.pet.mood import MoodFactors, advance_mood, calculate_mood_target
+from aiko_pet.pet.mood import NeedMoodFactors, advance_mood, calculate_need_mood_target
 from aiko_pet.pet.state import PetState
 
 NOW = datetime(2026, 10, 19, 7).timestamp()
@@ -17,20 +17,26 @@ NEEDS = ("satiety", "energy", "fun", "social", "affection")
 class NeedMoodBalanceTests(unittest.TestCase):
     def test_documented_targets_and_combined_shortages(self) -> None:
         self.assertEqual(
-            calculate_mood_target(MoodFactors(100, 100, 100, 100, 100)), 80,
+            calculate_need_mood_target(NeedMoodFactors(100, 100, 100, 100, 100)), 80,
         )
-        self.assertEqual(calculate_mood_target(MoodFactors(80, 80, 80, 80, 80)), 64)
+        self.assertEqual(
+            calculate_need_mood_target(NeedMoodFactors(80, 80, 80, 80, 80)), 64,
+        )
         for key in NEEDS:
             for value, expected in ((25, 60), (10, 45), (0, 30), (5, 37.5),
                                     (17.5, 52.5)):
                 values = dict.fromkeys(NEEDS, 100.0)
                 values[key] = value
                 with self.subTest(need=key, value=value):
-                    self.assertAlmostEqual(calculate_mood_target(MoodFactors(**values)),
+                    self.assertAlmostEqual(calculate_need_mood_target(NeedMoodFactors(**values)),
                                            expected)
-        self.assertEqual(calculate_mood_target(MoodFactors(0, 0, 100, 100, 100)), 8)
-        self.assertEqual(calculate_mood_target(MoodFactors(0, 50, 50, 50, 50)), 12)
-        self.assertEqual(calculate_mood_target(MoodFactors(0, 0, 0, 0, 0)), 0)
+        self.assertEqual(
+            calculate_need_mood_target(NeedMoodFactors(0, 0, 100, 100, 100)), 8,
+        )
+        self.assertEqual(
+            calculate_need_mood_target(NeedMoodFactors(0, 50, 50, 50, 50)), 12,
+        )
+        self.assertEqual(calculate_need_mood_target(NeedMoodFactors(0, 0, 0, 0, 0)), 0)
 
     def test_constant_target_decline_and_recovery_have_real_minute_rates(self) -> None:
         for need, rate in ((40, 1), (25, 3), (10, 6), (0, 10), (17.5, 4.5)):

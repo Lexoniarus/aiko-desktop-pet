@@ -38,7 +38,7 @@ MOOD_BALANCE = MoodBalance()
 
 
 @dataclass(frozen=True, slots=True)
-class MoodFactors:
+class NeedMoodFactors:
     """Only actual needs contribute; relationship and hardware are separate."""
 
     satiety: float
@@ -74,8 +74,8 @@ def need_mood_factors(value: float) -> NeedMoodAnchor:
     return anchors[-1]
 
 
-def calculate_mood_target(factors: MoodFactors) -> float:
-    """Sum deficits and respect the strongest limit; never duplicate Moodlets."""
+def calculate_need_mood_target(factors: NeedMoodFactors) -> float:
+    """Calculate the need-only target under the strongest deficit limit."""
     needs = factors.needs
     impacts = tuple(need_mood_factors(value) for value in needs)
     target = sum(needs) * MOOD_BALANCE.need_weight - sum(

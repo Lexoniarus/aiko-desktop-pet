@@ -101,8 +101,8 @@ social reaction to being alone belongs to a separate feature.
 The activity observer lives in the application layer. Windows input adapter
 functions live in `desktop/global_input.py`, and UI widgets cannot modify
 hunger. `PetState` owns nutrition and delegates calculations to
-`pet/food.py`; the existing pure `pet/need_decay.py` integrates all needs and
-actual mood in at most 15-second intervals, returning frozen `NeedProgress`.
+`pet/food.py`; the existing pure `pet/progression.py` integrates all needs and
+actual mood in at most 15-second intervals, returning frozen `PetProgress`.
 `PetState` commits the result without another numeric calculation path.
 
 ## Session time and compatibility

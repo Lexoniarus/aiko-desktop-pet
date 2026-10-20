@@ -60,9 +60,9 @@ target without overshoot; recovery is 2 points/minute with no extra delay.
 Care, food, repeat food and completed games never change mood instantly.
 Mood has no feedback effect on needs or rewards; Moodlets remain deferred.
 
-`pet/need_decay.py` is the single pure numeric integration owner. It calls
+`pet/progression.py` is the single pure numeric integration owner. It calls
 food/fun/mood policies in chronological intervals of at most 15 seconds, then
-returns frozen `NeedProgress`. Only `PetState` applies that result to its
+returns frozen `PetProgress`. Only `PetState` applies that result to its
 existing frozen `PetValues`. The time plan still owns observation and routine
 boundaries; this calculation reads no clocks and introduces no second state.
 

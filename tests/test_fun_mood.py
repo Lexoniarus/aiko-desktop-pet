@@ -15,9 +15,9 @@ from aiko_pet.pet.fun import (
     completed_unit_reward_fraction,
 )
 from aiko_pet.pet.mood import (
-    MoodFactors,
+    NeedMoodFactors,
     advance_mood,
-    calculate_mood_target,
+    calculate_need_mood_target,
 )
 from aiko_pet.pet.state import PetState
 
@@ -101,8 +101,8 @@ class FunMoodTests(unittest.TestCase):
         self.assertLess(pet.fun, 90)
 
     def test_mood_responds_to_all_needs_with_equal_contributions(self) -> None:
-        normal = MoodFactors(75, 75, 75, 75, 75)
-        self.assertAlmostEqual(calculate_mood_target(normal), 60.0)
+        normal = NeedMoodFactors(75, 75, 75, 75, 75)
+        self.assertAlmostEqual(calculate_need_mood_target(normal), 60.0)
         for key in ("satiety", "energy", "fun", "social", "affection"):
             with self.subTest(need=key):
                 modified = {name: 75.0 for name in (
@@ -110,7 +110,7 @@ class FunMoodTests(unittest.TestCase):
                 )}
                 modified[key] = 10
                 self.assertLess(
-                    calculate_mood_target(MoodFactors(**modified)), 60,
+                    calculate_need_mood_target(NeedMoodFactors(**modified)), 60,
                 )
 
     def test_mood_is_smoothed_and_never_changes_fun(self) -> None:

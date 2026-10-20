@@ -183,7 +183,7 @@ class UiDependencyRules(unittest.TestCase):
         for relative in (
             "pet/care_actions.py",
             "pet/friendship.py",
-            "pet/need_decay.py",
+            "pet/progression.py",
             "pet/lifecycle.py",
         ):
             with self.subTest(policy=relative):
@@ -218,7 +218,7 @@ class UiDependencyRules(unittest.TestCase):
         self.assertFalse(calls.intersection(forbidden))
         for policy in (
             "plan_care_action",
-            "calculate_need_decay",
+            "calculate_pet_progression",
             "calculate_friendship_reward",
             "plan_pet_time",
             "calculate_daily_routine",
