@@ -110,18 +110,20 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         ):
             trace = self.run_until(lambda: world.interaction.phase == "approach", 3)
             self.assertEqual(world.interaction.phase, "approach", trace)
-            self.assertTrue(app._hover.interaction_active)
+            self.assertTrue(app._hover.menu_engaged)
             self.assertIsNotNone(app._hover.toolbar)
             toolbar = app._hover.toolbar
             assert toolbar is not None
             self.assertTrue(all(button.cget("state") == "disabled"
-                                for button in toolbar.buttons.values()))
+                                for action, button in toolbar.buttons.items()
+                                if action != "place_item"))
             social = app.state.social
             toolbar.buttons["talk"].invoke()
             app._hover._interact("talk")
             app._hover._food_selected("energy_drink")
             self.assertEqual(app.state.social, social)
-            self.assertFalse(world.cursor.carrying)
+            self.assertTrue(world.cursor.carrying)
+            world.cursor.cancel()
             before = app.settings.x
             self.run_for(.2)
             self.assertNotEqual(app.settings.x, before)
@@ -156,11 +158,12 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                 self.assertTrue(world.interaction.contact_feedback_active)
                 self.assertEqual(self.feedback[-1][1], "object_busy_search")
                 self.assertTrue(self.bubble_text())
-                self.assertTrue(app._hover.interaction_active)
+                self.assertTrue(app._hover.menu_engaged)
                 toolbar = app._hover.toolbar
                 assert toolbar is not None
                 self.assertTrue(all(button.cget("state") == "disabled"
-                                    for button in toolbar.buttons.values()))
+                                    for action, button in toolbar.buttons.items()
+                                    if action != "place_item"))
                 before = app.settings.x
                 progress = world.interaction.search_progress
                 self.run_for(.35)

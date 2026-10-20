@@ -227,6 +227,20 @@ No user-facing window owns PetState transitions. Actions are sent to the
 application boundary through named callbacks. The pet sprite and the utility
 windows are distinct UI owners even though both use Tkinter.
 
+Menu engagement (`HoverUi.menu_engaged`) only suppresses incidental chatter
+and uncommitted wandering. It is not character-action ownership and does not
+block World discovery or committed object movement. `BehaviorFacts` receives
+`character_action_busy` from actual non-offer reaction playback/online waiting,
+with sleep, games and animation playback retaining their separate rules.
+
+Snacks use the `place_item` command and `can_place_item` capability, independently
+of direct-care `can_interact`. `DesktopWorldRuntime.begin_carry` prepares finite
+World stock without interrupting Aiko. `CursorItemGesture` admits one capture,
+preserves an existing held portion and refuses a foreign Tk grab. Normal release
+still attempts authorized handover before dropping the item. Offer previews
+retain their existing handover eligibility; `ObjectFeedbackPresenter` only
+cancels its own offer/refusal speech when a cursor gesture is cancelled.
+
 ### Minigame owners
 
 `games/` owns each transient session's rules and score, with frozen card/board
@@ -306,6 +320,9 @@ The care/storage follow-up also changes these Python call contracts:
 
 | Previous call | Current owner/contract |
 | --- | --- |
+| Hover `feed` callback / Snack button `feed` action | `place_item` callback/action with independent `can_place_item`; direct domain feeding remains `feed` |
+| `HoverUi.interaction_active`, walk/assembly `toolbar_visible`, attention-runtime `toolbar_active` | `menu_engaged`; actual visibility remains distinct in session UI refresh |
+| World `controls_active` | `character_action_busy`, sampled from actual character playback/waiting without menu hover |
 | `PetState.interact()` returning German text | Returns `pet.care_result.CareResult`; UI uses `format_care_response` |
 | `PetState.from_dict` / `to_dict` | `infrastructure.pet_codec.decode_pet_state` / `encode_pet_state` |
 | `FoodState.from_dict` / `to_dict` | `infrastructure.pet_codec.decode_food_state` / `encode_food_state` |

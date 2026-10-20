@@ -556,13 +556,14 @@ class ObjectBehaviorTests(unittest.TestCase):
         )
         self.assertTrue(unavailable.blocked)
         self.assertIsNone(unavailable.goal)
-        for facts in (BehaviorFacts(carrying=True), BehaviorFacts(controls_active=True),
+        for facts in (BehaviorFacts(carrying=True),
+                      BehaviorFacts(character_action_busy=True),
                       BehaviorFacts(game_open=True), BehaviorFacts(playback_busy=True)):
             with self.subTest(facts=facts):
                 self.assertTrue(self.observe(facts=facts).blocked)
         self.interaction.begin_goal(ObjectGoal("stock", "apple", "food", 100, 0, 0))
         self.assertFalse(self.observe(facts=BehaviorFacts(
-            carrying=True, controls_active=True,
+            carrying=True, character_action_busy=True,
         )).blocked)
         self.assertTrue(self.observe(facts=BehaviorFacts(game_open=True)).blocked)
         set_test_pet_values(self.state, sleeping=True)
@@ -576,7 +577,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         for stamp in (0, .3):
             observation = self.behavior.observe(
                 self.world.snapshot(), now=stamp, x=100, width=100,
-                presentation=None, facts=BehaviorFacts(controls_active=True),
+                presentation=None, facts=BehaviorFacts(character_action_busy=True),
                 attention=attention,
             )
         self.assertIsNone(observation.goal)
@@ -656,6 +657,39 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertEqual(self.completed, [("stock", False)])
         self.assertEqual(self.actions, [])
 
+    def test_snack_preview_does_not_replace_busy_dialogue_or_wake_sleep(self):
+        item, _goal = self.observed_stock()
+        self.awareness.observations = tuple(
+            replace(seen, presented=True) for seen in self.awareness.observations
+        )
+        self.assertIsNotNone(self.behavior.assess_offer(
+            item.instance_id, facts=BehaviorFacts(),
+        ))
+        for facts in (BehaviorFacts(character_action_busy=True),
+                      BehaviorFacts(game_open=True), BehaviorFacts(playback_busy=True)):
+            with self.subTest(facts=facts):
+                self.assertIsNone(self.behavior.assess_offer(
+                    item.instance_id, facts=facts,
+                ))
+        set_test_pet_values(self.state, sleeping=True)
+        self.assertIsNone(self.behavior.assess_offer(
+            item.instance_id, facts=BehaviorFacts(),
+        ))
+        self.assertEqual(self.cues, [])
+
+    def test_stock_changes_preserve_current_orientation_and_object_goal(self):
+        self.behavior.request_orientation()
+        orientation = self.behavior._orientation
+        self.behavior.refresh_after_placement()
+        self.assertIs(self.behavior._orientation, orientation)
+        _item, goal = self.observed_stock()
+        self.behavior.advance(goal, blocked=False)
+        phase = self.interaction.phase
+        intention = self.awareness.intentions.goal
+        self.behavior.refresh_after_placement()
+        self.assertEqual(self.interaction.phase, phase)
+        self.assertEqual(self.awareness.intentions.goal, intention)
+
     def test_native_reach_alone_cannot_authorize_an_unseen_or_stale_offer(self):
         item, goal = self.observed_stock()
 
@@ -673,6 +707,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertFalse(allowed(now=.8))
         self.assertFalse(allowed(facts=BehaviorFacts(playback_busy=True)))
         self.assertFalse(allowed(facts=BehaviorFacts(game_open=True)))
+        self.assertFalse(allowed(facts=BehaviorFacts(character_action_busy=True)))
         set_test_pet_values(self.state, satiety=100)
         self.assertFalse(allowed())
         set_test_pet_values(self.state, satiety=50)
@@ -704,6 +739,7 @@ class ObjectBehaviorTests(unittest.TestCase):
         self.assertFalse(allowed(now=self.now + .6))
         self.assertFalse(allowed(facts=BehaviorFacts(game_open=True)))
         self.assertFalse(allowed(facts=BehaviorFacts(playback_busy=True)))
+        self.assertFalse(allowed(facts=BehaviorFacts(character_action_busy=True)))
         self.awareness.observations = ()
         self.assertFalse(allowed())
         latest = self.awareness.memory.get(goal.token)
@@ -828,7 +864,7 @@ class ObjectBehaviorTests(unittest.TestCase):
 
     def test_blocking_pauses_search_and_explicit_interruption_cancels_it(self):
         self.start_search()
-        observation = self.observe(facts=BehaviorFacts(controls_active=True))
+        observation = self.observe(facts=BehaviorFacts(character_action_busy=True))
         self.assertFalse(observation.blocked)
         self.assertIsInstance(self.behavior.advance_search(
             blocked=observation.blocked, position=SearchPosition(50, 750, 100),

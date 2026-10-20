@@ -17,3 +17,4 @@ class HoverActions:
     move_speech: Callable[[], None]
     restore_stack: Callable[[], bool]
     can_interact: Callable[[str], bool] = lambda _action: True
+    can_place_item: Callable[[], bool] = lambda: True

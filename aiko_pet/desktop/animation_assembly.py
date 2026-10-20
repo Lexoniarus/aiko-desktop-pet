@@ -31,7 +31,7 @@ class AnimationAssemblyPorts:
     """Host callbacks needed to connect the owners, not a GUI shell."""
 
     track: Callable[[], HorizontalTrack]
-    toolbar_visible: Callable[[], bool]
+    menu_engaged: Callable[[], bool]
     place_x: Callable[[float], None]
     walk_finished: Callable[[float], None]
     gaze_origin: Callable[[], tuple[float, float]]
@@ -71,7 +71,7 @@ def assemble_animation(
         walk_cycle_seconds=assets.clips["running-left"].duration_seconds,
         ports=WalkDriverPorts(
             track=ports.track,
-            toolbar_visible=ports.toolbar_visible,
+            menu_engaged=ports.menu_engaged,
             place_x=ports.place_x,
             walk_finished=ports.walk_finished,
             committed_goal=ports.object_focus,

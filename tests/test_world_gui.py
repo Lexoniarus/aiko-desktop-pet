@@ -34,13 +34,13 @@ class WorldGuiTests(unittest.TestCase):
         item = runtime.world.place_resting(
             "sandwich", runtime._body_x(), ObjectFootprint(8, 8),
         )
-        runtime._controls_active = lambda: True
+        runtime._character_action_busy = lambda: True
         self.observe_and_acknowledge()
         self.seed_previous_identification(item.instance_id, "sandwich", "food")
         record = runtime.awareness.record_for_instance(item.instance_id)
         assert record is not None
         runtime.awareness.memory.mark_assessed(record)
-        runtime._controls_active = lambda: False
+        runtime._character_action_busy = lambda: False
         self.sleeping_care_fixture()
         before = self.app.state.friendship_history.last_contact
         self.app._activity.advance_state(time.time())
@@ -226,7 +226,7 @@ class WorldGuiTests(unittest.TestCase):
         app, runtime = self.app, self.app._world
         app._place_x(runtime._track().left)
         set_test_pet_values(app.state, satiety=100, energy=100)
-        runtime._controls_active = lambda: True
+        runtime._character_action_busy = lambda: True
         self.look_at(runtime._body_x() + 3 * runtime.width)
         area = runtime.world.snapshot().surface.width
         portions = []
@@ -406,7 +406,7 @@ class WorldGuiTests(unittest.TestCase):
         app, runtime = self.app, self.app._world
         app._place_x(runtime._track().left + runtime.width)
         set_test_pet_values(app.state, satiety=100, energy=100)
-        runtime._controls_active = lambda: True
+        runtime._character_action_busy = lambda: True
         self.look_at(runtime._body_x() + runtime.width)
         known_item = runtime.world.place_resting(
             "cookie", runtime._body_x() + .2 * runtime.width, ObjectFootprint(8, 8),
@@ -417,8 +417,8 @@ class WorldGuiTests(unittest.TestCase):
         assert record is not None
         runtime.awareness.memory.mark_assessed(record)
         original = runtime.awareness.memory.get(record)
-        runtime._controls_active = lambda: (
-            app._hover.interaction_active or app._reaction_player.story_active
+        runtime._character_action_busy = lambda: (
+            app._reaction_player.story_active or app._social_runtime.waiting
         )
         app.interact(action)
         self.assertEqual(runtime._attention().mode, "unavailable")
@@ -477,7 +477,7 @@ class WorldGuiTests(unittest.TestCase):
         app, runtime = self.app, self.app._world
         app._place_x(runtime._track().left)
         set_test_pet_values(app.state, satiety=100, energy=100)
-        runtime._controls_active = lambda: True
+        runtime._character_action_busy = lambda: True
         drink = runtime.world.place_resting("energy_drink", runtime._body_x(),
                                             ObjectFootprint(8, 8))
         self.observe_and_acknowledge()
@@ -489,7 +489,7 @@ class WorldGuiTests(unittest.TestCase):
         runtime.world.move_resting(drink.instance_id,
                                    runtime.world.snapshot().surface.width * .9,
                                    expected_revision=current.revision)
-        runtime._controls_active = lambda: False
+        runtime._character_action_busy = lambda: False
         for _ in range(4):
             runtime.now += .3
             runtime.update(time.monotonic())
@@ -549,7 +549,7 @@ class WorldGuiTests(unittest.TestCase):
         app, runtime = self.app, self.app._world
         app._place_x(runtime._track().left)
         set_test_pet_values(app.state, satiety=100, energy=100)
-        runtime._controls_active = lambda: True
+        runtime._character_action_busy = lambda: True
         item = runtime.world.place_resting(
             "dango", runtime._body_x() + 2 * runtime.width, ObjectFootprint(8, 8),
         )
@@ -560,7 +560,7 @@ class WorldGuiTests(unittest.TestCase):
         record = runtime.awareness.record_for_instance(item.instance_id)
         assert record is not None
         runtime.awareness.memory.mark_assessed(record)
-        runtime._controls_active = lambda: False
+        runtime._character_action_busy = lambda: False
         self.look_at(runtime._body_x() - runtime.width)
         for _ in range(2):
             runtime.now += .3
@@ -926,7 +926,7 @@ class WorldGuiTests(unittest.TestCase):
         world = self.app._world
         item = world.world.place_resting("cookie", world._body_x(),
                                          ObjectFootprint(8, 8))
-        world._controls_active = lambda: True
+        world._character_action_busy = lambda: True
         self.observe_and_acknowledge()
         self.seed_previous_identification(item.instance_id, "cookie", "food")
         known = world.awareness.known_instance(item.instance_id)
@@ -967,7 +967,7 @@ class WorldGuiTests(unittest.TestCase):
         app, world = self.app, self.app._world
         item = world.world.place_resting("cookie", world._body_x(),
                                          ObjectFootprint(8, 8))
-        world._controls_active = lambda: True
+        world._character_action_busy = lambda: True
         self.observe_and_acknowledge()
         self.seed_previous_identification(item.instance_id, "cookie", "food")
         known = world.awareness.known_instance(item.instance_id)
@@ -975,7 +975,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(known.identity, "cookie")
         self.assertFalse(known.assessed)
         self.assertFalse(world.interaction.active)
-        world._controls_active = lambda: False
+        world._character_action_busy = lambda: False
         with (
             patch.object(app.root, "winfo_pointerx",
                          return_value=world._track().right - 40),
@@ -1126,7 +1126,7 @@ class WorldGuiTests(unittest.TestCase):
         set_test_pet_values(self.app.state, sleeping=False)
         set_test_pet_values(self.app.state, satiety=50)
         self.app._action_playback.cancel_at(time.monotonic())
-        world._controls_active = lambda: False
+        world._character_action_busy = lambda: False
 
     def settle_native_positions(self):
         # Manual ticks must let Tk apply a requested move before reading eyes.
@@ -1190,7 +1190,7 @@ class WorldGuiTests(unittest.TestCase):
         assert world._timer is not None
         self.app.root.after_cancel(world._timer)
         world._timer = None
-        world._controls_active = lambda: False
+        world._character_action_busy = lambda: False
         self.app._action_playback.cancel_at(time.monotonic())
 
     def test_deferred_drink_survives_cold_restore_and_known_retrieval(self):
@@ -1721,7 +1721,7 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_missing_apple_is_announced_before_unknown_replacement_inspection(self):
         world = self.app._world
-        world._controls_active = lambda: True
+        world._character_action_busy = lambda: True
         first = world.world.place_resting(
             "apple", world._body_x(), ObjectFootprint(8, 8),
         )
@@ -1744,7 +1744,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertNotEqual(recalled.token, record)
         # Loss priority applies even without appetite for the remembered apple.
         set_test_pet_values(self.app.state, satiety=100)
-        world._controls_active = lambda: False
+        world._character_action_busy = lambda: False
         world.now = .7
         world.update(time.monotonic())
         self.finish_orientation()

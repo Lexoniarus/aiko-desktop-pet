@@ -74,7 +74,7 @@ class BehaviorFacts:
     """Host facts sampled on the owner thread, without native object references."""
 
     game_open: bool = False
-    controls_active: bool = False
+    character_action_busy: bool = False
     carrying: bool = False
     playback_busy: bool = False
     user_action_pending: bool = False
@@ -135,6 +135,12 @@ class ObjectBehaviorCoordinator:
             ) else None,
         )
 
+    def refresh_after_placement(self) -> None:
+        """Notice changed stock when idle, preserving current looks and goals."""
+        if (self._orientation.complete and not self._interaction.active
+                and self._awareness.intentions.goal is None):
+            self.request_orientation()
+
     def _followed_knowledge(self) -> ObjectKnowledge | None:
         record = self._awareness.following_record
         return self._awareness.memory.get(record) if record is not None else None
@@ -175,7 +181,7 @@ class ObjectBehaviorCoordinator:
              and not interaction.searching and interaction.phase != "found")
             or (facts.carrying and interaction.focus_record is None)
             or facts.game_open
-            or (facts.controls_active and not interaction.active)
+            or (facts.character_action_busy and not interaction.active)
             or self._state.sleeping or facts.playback_busy
             or (self._state.sleep_episode.care_break
                 and self._state.satiety >= BALANCE.number("sleep", "food_target"))
@@ -277,7 +283,7 @@ class ObjectBehaviorCoordinator:
         interaction, awareness = self._interaction, self._awareness
         can_react = (not self._state.sleeping and not facts.game_open
                      and attention.mode != "unavailable"
-                     and (not facts.controls_active or interaction.active)
+                     and (not facts.character_action_busy or interaction.active)
                      and not facts.user_action_pending
                      and not facts.playback_busy)
         losses = sorted(awareness.absences, key=lambda item: not item.recognized)
@@ -379,7 +385,9 @@ class ObjectBehaviorCoordinator:
         record = self._awareness.record_for_instance(instance)
         returning = (self._interaction.waiting_for_target
                      and record == self._interaction.memory_id)
-        if (facts.game_open or self._interaction.active and not returning
+        if (self._state.sleeping or facts.game_open
+                or self._interaction.active and not returning
+                or facts.character_action_busy and not returning
                 or facts.playback_busy):
             return None
         decision = (self._awareness.assess_offer(record, self._state)
@@ -393,7 +401,8 @@ class ObjectBehaviorCoordinator:
         offer_ready: bool, now: float, facts: BehaviorFacts,
     ) -> bool:
         """Combine current sensory/episode eligibility with native reach evidence."""
-        if self._state.sleeping or facts.game_open:
+        if (self._state.sleeping or facts.game_open
+                or facts.character_action_busy and not self._interaction.active):
             return False
         known = self._awareness.known_instance(instance)
         if known is None:
@@ -419,8 +428,6 @@ class ObjectBehaviorCoordinator:
                         for seen in self._awareness.observations)
                 and reachable
             )
-        if facts.controls_active and not self._interaction.active:
-            return False
         return object_state == ObjectState.RESTING and reachable
 
     def advance_search(

@@ -35,7 +35,7 @@ class FoodGuiTests(unittest.TestCase):
     def test_selecting_from_eleven_foods_carries_without_feeding(self) -> None:
         bar = self.pet._hover.toolbar
         assert bar is not None
-        bar.buttons["feed"].invoke()
+        bar.buttons["place_item"].invoke()
         menu = self.pet._hover.food_menu
         assert menu is not None
         self.assertEqual(
@@ -81,7 +81,7 @@ class FoodGuiTests(unittest.TestCase):
                     old_friendship = self.pet.state.friendship
                     old_food_history = self.pet.state.food.recent_food_ids
                     self.assertFalse(self.pet._world.cursor.carrying)
-                    bar.buttons["feed"].invoke()
+                    bar.buttons["place_item"].invoke()
                     menu = self.pet._hover.food_menu
                     assert menu is not None
                     self.assertEqual(menu.buttons["energy_drink"].cget("text"),

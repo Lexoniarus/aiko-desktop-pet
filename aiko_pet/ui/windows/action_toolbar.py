@@ -109,7 +109,7 @@ class ActionToolbar:
         extra_row.pack(fill="x")
         self.buttons: dict[str, tk.Button] = {}
         for action, title, parent in (
-            ("feed", GERMAN_TEXT.format("ui.snack"), actions_row),
+            ("place_item", GERMAN_TEXT.format("ui.snack"), actions_row),
             ("play", GERMAN_TEXT.format("ui.play"), actions_row),
             ("pet", GERMAN_TEXT.format("ui.pet"), actions_row),
             ("talk", GERMAN_TEXT.format("ui.talk"), actions_row),
@@ -211,8 +211,10 @@ class ActionToolbar:
     def refresh_actions(self) -> None:
         """Project current permission; the controller rechecks on invocation."""
         for action, button in self.buttons.items():
+            allowed = (self._actions.can_place_item() if action == "place_item"
+                       else self._actions.can_interact(action))
             state: Literal["normal", "disabled"] = (
-                "normal" if self._actions.can_interact(action) else "disabled"
+                "normal" if allowed else "disabled"
             )
             if button.cget("state") != state:
                 button.configure(state=state)
@@ -254,7 +256,7 @@ class ActionToolbar:
         changed = False
         for widget, value in (
             (self.buttons["sleep"], view.sleep_label),
-            (self.buttons["feed"], view.feed_label),
+            (self.buttons["place_item"], view.feed_label),
             (self.today, view.header),
             (self.hardware, view.hardware_line),
             (self.workload, view.workload_line),

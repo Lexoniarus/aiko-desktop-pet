@@ -57,6 +57,11 @@ class ReactionPlayer:
         return self._pending_timer
 
     @property
+    def active(self) -> bool:
+        """A short reaction or story still owns its authored playback sequence."""
+        return bool(self._cues)
+
+    @property
     def story_active(self) -> bool:
         return self._story and bool(self._cues)
 

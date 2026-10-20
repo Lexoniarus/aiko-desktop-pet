@@ -73,9 +73,9 @@ class CareGuiTests(unittest.TestCase):
         self.assertEqual(self.app.state.social, 9)
         menu.choose(None)
         self.assertAlmostEqual(self.app.state.social, 35, places=2)
-        self.assertEqual(self.toolbar.buttons["feed"].cget("state"), "disabled")
+        self.assertEqual(self.toolbar.buttons["place_item"].cget("state"), "normal")
         self.finish_response()
-        self.toolbar.buttons["feed"].invoke()
+        self.toolbar.buttons["place_item"].invoke()
         menu = self.app._hover.food_menu
         assert menu is not None
         menu.buttons["energy_drink"].invoke()
@@ -94,14 +94,17 @@ class CareGuiTests(unittest.TestCase):
                 generation = self.app._reaction_player.generation
                 social = self.app.state.social
                 self.assertTrue(all(button.cget("state") == "disabled"
-                                    for button in self.toolbar.buttons.values()))
+                                    for action, button in self.toolbar.buttons.items()
+                                    if action != "place_item"))
                 self.toolbar.buttons["talk"].invoke()
                 self.app._hover._interact("talk")
                 self.app._hover._food_selected("energy_drink")
                 self.app._on_enter()
                 self.assertEqual(self.app._reaction_player.generation, generation)
                 self.assertEqual(self.app.state.social, social)
-                self.assertFalse(self.app._world.cursor.carrying)
+                self.assertTrue(self.app._world.cursor.carrying)
+                self.app._world.cursor.cancel()
+                self.assertEqual(self.app._reaction_player.generation, generation)
                 self.assertEqual(self.toolbar.pin_button.cget("state"), "normal")
                 self.assertEqual(self.toolbar.settings_button.cget("state"), "normal")
                 self.finish_response()

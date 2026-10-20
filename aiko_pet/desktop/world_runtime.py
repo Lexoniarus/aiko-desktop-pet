@@ -86,10 +86,11 @@ class DesktopWorldRuntime:
         clock: ActiveSessionClock, track: Callable[[], TaskbarTrack],
         walk: WalkDriver, visual: DesktopVisualObservation, animated: AnimatedPet,
         playback: ActionPlayback, inputs: Callable[[float, float], SessionInputs],
-        game_open: Callable[[], bool], controls_active: Callable[[], bool],
+        game_open: Callable[[], bool], character_action_busy: Callable[[], bool],
         present_feedback: Callable[
             [ObjectFeedback, Reaction, Callable[[FeedbackReceipt], None]], None
-        ], cancel_feedback: Callable[[], None], feedback: Callable[[str], None],
+        ], cancel_feedback: Callable[[], None],
+        cancel_offer_feedback: Callable[[], None], feedback: Callable[[str], None],
         save: Callable[[], None],
         restored_world: WorldSnapshot | None = None,
         restored_memory: ObjectMemorySnapshot | None = None,
@@ -98,11 +99,12 @@ class DesktopWorldRuntime:
         self._track, self._walk, self._visual = track, walk, visual
         self._animated, self._playback = animated, playback
         self._inputs, self._game_open = inputs, game_open
-        self._controls_active = controls_active
+        self._character_action_busy = character_action_busy
         self._present_feedback = present_feedback
         self._save, self._mind = save, mind
         self._care: CareOutcome | None = None
         self._cancel_feedback = cancel_feedback
+        self._cancel_offer_feedback = cancel_offer_feedback
         self._motion_parameters = motion_parameters()
         self.world = WorldState(self._surface(), build_consumable_definitions(
             DEFAULT_CATALOG, items,
@@ -169,7 +171,7 @@ class DesktopWorldRuntime:
                 cancel_feedback=self._cancel_offer, save=save,
                 sync_view=self._sync_view,
                 outside=lambda: feedback(GERMAN_TEXT.format("world.outside")),
-                finished=self._behavior.request_orientation,
+                finished=self._behavior.refresh_after_placement,
             ),
         )
         self._timer = root.after(33, self._frame)
@@ -208,7 +210,8 @@ class DesktopWorldRuntime:
 
     def _behavior_facts(self) -> BehaviorFacts:
         return BehaviorFacts(
-            game_open=self._game_open(), controls_active=self._controls_active(),
+            game_open=self._game_open(),
+            character_action_busy=self._character_action_busy(),
             carrying=self.cursor.carrying,
             playback_busy=time.monotonic() < self._playback.until,
             user_action_pending=self.user_action_pending,
@@ -474,16 +477,19 @@ class DesktopWorldRuntime:
 
         self.interaction.interrupt(perform)
 
+    @property
+    def can_place_item(self) -> bool:
+        """World supply depends on gesture ownership, not character admission."""
+        return not self._closed and self.cursor.can_begin
+
     def begin_carry(self, item_id: str) -> None:
+        """Prepare new stock without interrupting Aiko's current intention."""
+        if not self.can_place_item:
+            return
         self._sync_geometry()
+        self.cursor.begin(item_id)
 
-        def begin() -> None:
-            self._behavior.request_orientation()
-            self.cursor.begin(item_id)
-
-        self._request_gesture(begin)
-
-    def _request_gesture(self, action: Callable[[], None]) -> None:
+    def _request_relocation(self, action: Callable[[], None]) -> None:
         if self.interaction.active:
             action()
             return
@@ -501,9 +507,11 @@ class DesktopWorldRuntime:
 
     def _cancel_offer(self) -> None:
         if not self.interaction.active:
-            self._cancel_feedback()
+            self._cancel_offer_feedback()
 
     def begin_relocate(self, token: str, revision: int) -> None:
+        if not self.can_place_item:
+            return
         self._sync_geometry()
         item = self.world.get(token)
         if (self.cursor.carrying or item.state != ObjectState.RESTING
@@ -524,7 +532,7 @@ class DesktopWorldRuntime:
                 if record is not None and self.interaction.target_taken(record):
                     self._walk.movement.set_goal(None)
 
-        self._request_gesture(acquire)
+        self._request_relocation(acquire)
 
     def _assess_offer(self, token: str) -> ObjectUseDecision | None:
         return self._behavior.assess_offer(token, facts=self._behavior_facts())

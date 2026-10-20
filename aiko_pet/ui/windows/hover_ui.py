@@ -55,7 +55,8 @@ class HoverUiPorts:
     always_on_top: Callable[[], bool]
     game_speech: GameSpeech
     food_choices: tuple[FoodChoice, ...]
-    feed: Callable[[FoodChoiceId], None] | None = None
+    place_item: Callable[[FoodChoiceId], None] | None = None
+    can_place_item: Callable[[], bool] = lambda: True
     game_completed: Callable[[SessionSummary], object] | None = None
     defer_game: Callable[[Callable[[], None]], None] | None = None
     game_dialogue: Callable[[str], str] | None = None
@@ -125,8 +126,8 @@ class HoverUi:
         )
 
     @property
-    def interaction_active(self) -> bool:
-        """Mapped/pinned windows alone must not suppress autonomous behavior."""
+    def menu_engaged(self) -> bool:
+        """Menu use suppresses incidental chatter/wandering, not object actions."""
         toolbar = self.toolbar
         using_toolbar = (
             toolbar is not None
@@ -156,6 +157,9 @@ class HoverUi:
                     or self.settings_engaged)
 
     def _interact(self, action: str) -> None:
+        if action == "place_item":
+            self.open_food_menu()
+            return
         if not self._ports.can_interact(action):
             return
         if action == "talk" and self._ports.social_selected is not None:
@@ -164,8 +168,6 @@ class HoverUi:
         self.close_social_menu()
         if action == "play":
             self.open_game_menu()
-        elif action == "feed" and self._ports.feed is not None:
-            self.open_food_menu()
         elif not self.game_open:
             self._ports.care(action)
 
@@ -173,13 +175,12 @@ class HoverUi:
         self.food_menu = None
 
     def _food_selected(self, food_id: FoodChoiceId) -> None:
-        if (self._ports.feed is not None and not self.game_open
-                and self._ports.can_interact("feed")):
-            self._ports.feed(food_id)
+        if self._ports.place_item is not None and self._ports.can_place_item():
+            self._ports.place_item(food_id)
 
     def open_food_menu(self) -> None:
         """Reuse one selection window; no domain mutations before choice."""
-        if self.game_open or not self._ports.can_interact("feed"):
+        if self._ports.place_item is None or not self._ports.can_place_item():
             return
         self.close_social_menu()
         self.close_game_menu()
@@ -392,6 +393,7 @@ class HoverUi:
                     move_speech=self._ports.move_speech,
                     restore_stack=self._ports.restore_stack,
                     can_interact=self._ports.can_interact,
+                    can_place_item=self._ports.can_place_item,
                 ),
                 always_on_top=self._ports.always_on_top(),
                 skin=self._skin,

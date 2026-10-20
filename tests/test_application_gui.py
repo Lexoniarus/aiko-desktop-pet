@@ -153,12 +153,12 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         with patch.object(self.pet.root, "winfo_containing",
                           return_value=self.pet.canvas):
             self.pet._tick()
-            self.assertTrue(self.pet._hover.interaction_active)
+            self.assertTrue(self.pet._hover.menu_engaged)
             self.assertIsNone(self._bubble_text())
         self.pet._hover.last_hover = time.monotonic() - 10
         self.pet._attention.last_spoken = time.monotonic() - 10
         self.pet._tick()
-        self.assertFalse(self.pet._hover.interaction_active)
+        self.assertFalse(self.pet._hover.menu_engaged)
         self.assertEqual(self._bubble_text(), "Kalender: Termin gleich.")
 
 

@@ -232,7 +232,7 @@ class WalkControllerTests(unittest.TestCase):
             speed_pixels_per_second=68 / 1.28, stride_pixels=68,
             track=self.track, sprite_width=128, energy=80,
             auto_walk=True, sleeping=False, attention_active=False,
-            toolbar_visible=False, observing_computer=False,
+            menu_engaged=False, observing_computer=False,
             computer_busy=False, quiet_period=False,
         )
         return replace(defaults, **overrides)
@@ -275,7 +275,7 @@ class WalkControllerTests(unittest.TestCase):
         self.assertEqual(self.walker.next_walk_at, 190)
 
     def test_hover_and_manual_disabled_walk_cancel_distance(self) -> None:
-        for settings in ({"toolbar_visible": True}, {"auto_walk": False},
+        for settings in ({"menu_engaged": True}, {"auto_walk": False},
                          {"attention_active": True}, {"sleeping": True}):
             with self.subTest(settings=settings):
                 self.walker.remaining_distance = 100

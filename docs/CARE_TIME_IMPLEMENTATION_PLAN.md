@@ -6,7 +6,8 @@
 > point for implementation planning. This document plans that first delivery.
 > Stages 1–3, B1 and B2 are implemented and verified below.
 > Stage 4 follows the corrected ownership and verification scope below.
-> Stages 5–6 remain pending; physical desktop acceptance is separately recorded.
+> Stages 5–6 remain pending except for the stage-5C menu/action/placement
+> decoupling delivered below; physical desktop acceptance is separately recorded.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > This expansion is planning only; concrete Moodlet/wish rules are not settled
@@ -2146,7 +2147,7 @@ proportionate and local; no GUI tests, timing runs or CI were performed here.
 
 ##### Menu, character action and item-placement decoupling, 2026-10-20
 
-Status: code review completed; corrections planned, not implemented. The owner
+Initial review: corrections planned, not implemented at that point. The owner
 reports that object discovery appears to stall while the pointer is over the
 menu and that Snacks is disabled during character actions. No runtime freeze
 was reproduced, no tests were executed and no desktop input was generated for
@@ -2219,6 +2220,39 @@ focused; investigate any test exceeding ten seconds. No native test windows,
 desktop mouse control or GitHub-CI run is part of this work. A later visual
 confirmation of the originally reported stall must be distinguished from
 these deterministic policy checks.
+
+###### Delivery record
+
+The owner subsequently authorized this correction package. Implemented in the
+existing owners without new production modules, timers or mutable managers:
+
+- Renamed menu engagement ports separately from actual character playback.
+  World behavior no longer reads menu engagement. Idle wandering and incidental
+  chatter retain their menu-use suppression; committed object movement remains
+  independent of it.
+- The toolbar and food-selector entry/selection use `place_item` and
+  `can_place_item`, independent of care, sleep and games. Cursor capture is
+  rechecked at execution; repeated requests preserve the already held portion.
+- Preparing stock bypasses the old intention/animation interruption route.
+  Post-gesture orientation refresh only starts when idle; it does not reset
+  an ongoing look, goal or interaction.
+  Relocating existing objects retains its explicit interaction path and checks
+  capture availability before interruption.
+- Busy character speech, sleep and games still prevent unsolicited offer
+  previews and intake. The offer's own preview does not block its authorized
+  handover. Cancelling a cursor gesture cancels only offer/refusal feedback,
+  preserving unrelated care dialogue and object episodes.
+- Updated existing internal callers and native-test expectations together;
+  documented the renamed contracts in [Architecture](ARCHITECTURE.md).
+
+Local verification: 169 focused policy, coordination, playback, movement and
+architecture tests passed with Tk/Toplevel construction explicitly prohibited.
+The complete run took about one second; no individual test exceeded ten
+seconds. Repository-wide Ruff, strict Mypy (221 source files) and Pyright passed.
+Native tests were updated but not executed. No test windows, desktop mouse
+control or GitHub CI were used. The reported visual stall still needs separate
+owner-observed confirmation; these checks establish the corrected code paths,
+not a native visual acceptance claim. The rest of stage 5 remains pending.
 
 Exit: the code and UI expose separate, clearly named layers; immediate reactions,
 need effects, lasting Moodlets, wishes, numeric mood, overall emotional state and

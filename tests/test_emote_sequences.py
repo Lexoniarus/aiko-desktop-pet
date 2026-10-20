@@ -194,13 +194,13 @@ class EmoteTkTests(unittest.TestCase):
         assert bar is not None
         self.pet.root.update()
         self.assertTrue(bar.today.cget("image"))
-        self.assertTrue(bar.buttons["feed"].cget("image"))
+        self.assertTrue(bar.buttons["place_item"].cget("image"))
         self.assertEqual(len(bar.needs), 7)
         self.assertTrue(
             all(
                 name in bar.buttons
                 for name in (
-                    "feed",
+                    "place_item",
                     "play",
                     "pet",
                     "talk",

@@ -197,12 +197,12 @@ class PersistentWindowTests(unittest.TestCase):
         self.pet._hover.open_status()
         self.settings()
         with self.outside():
-            self.assertFalse(self.pet._hover.interaction_active)
+            self.assertFalse(self.pet._hover.menu_engaged)
             self.assertFalse(self.pet._hover.settings_engaged)
         bar = self.toolbar()
         with self.outside():
             bar.pin_button.invoke()
-            self.assertTrue(self.pet._hover.interaction_active)
+            self.assertTrue(self.pet._hover.menu_engaged)
 
     def test_notification_is_delivered_with_idle_pinned_windows(self) -> None:
         self.pet._hover.open_status()

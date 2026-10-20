@@ -1,7 +1,7 @@
 """Desktop walk driving is separate from sprite rendering and Tk timing."""
 
 import unittest
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from aiko_pet.desktop.geometry import TaskbarTrack
 from aiko_pet.desktop.walk_runtime import WalkDriver, WalkDriverPorts
@@ -49,7 +49,7 @@ class WalkDriverTests(unittest.TestCase):
             walk_cycle_seconds=1.28,
             ports=WalkDriverPorts(
                 track=lambda: TaskbarTrack(0, 800, 800),
-                toolbar_visible=lambda: False,
+                menu_engaged=lambda: False,
                 place_x=place,
                 walk_finished=self.finished.append,
             ),
@@ -74,6 +74,26 @@ class WalkDriverTests(unittest.TestCase):
         )
         self.assertEqual(self.settings.x, 100)
         self.assertEqual(self.driver.movement.remaining_distance, -40)
+
+    def test_menu_use_preserves_committed_object_approach(self) -> None:
+        self.driver.ports = replace(
+            self.driver.ports, menu_engaged=lambda: True, committed_goal=lambda: True,
+        )
+        self.driver.movement.set_goal(112)
+        self.assertEqual(
+            self.driver.step(100, .5, game_mode=False, attention_active=True),
+            "running-right",
+        )
+        self.assertEqual(self.settings.x, 112)
+        self.assertEqual(self.driver.movement.goal_x, 112)
+
+    def test_menu_use_still_holds_incidental_wandering(self) -> None:
+        self.driver.ports = replace(self.driver.ports, menu_engaged=lambda: True)
+        self.driver.movement.remaining_distance = 12
+        self.assertIsNone(
+            self.driver.step(100, .5, game_mode=False, attention_active=False),
+        )
+        self.assertEqual(self.settings.x, 100)
 
     def test_disable_auto_walk_cancels_active_motion(self) -> None:
         self.driver.movement.remaining_distance = 40

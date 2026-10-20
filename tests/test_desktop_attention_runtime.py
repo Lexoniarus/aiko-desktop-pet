@@ -28,7 +28,7 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
             AttentionRuntimePorts(
                 context=lambda: self.context,
                 game_open=lambda: False,
-                toolbar_active=lambda: False,
+                menu_engaged=lambda: False,
                 settings_engaged=lambda: False,
                 bubble_visible=lambda: False,
                 reaction_pending=lambda: False,

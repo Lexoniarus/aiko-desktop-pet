@@ -172,7 +172,7 @@ class DesktopPet:
             monitor=self.activity_monitor, assets=self._character_assets,
             ports=AnimationAssemblyPorts(
                 track=lambda: self._window.track,
-                toolbar_visible=lambda: self._hover.interaction_active,
+                menu_engaged=lambda: self._hover.menu_engaged,
                 place_x=self._place_x,
                 walk_finished=self._on_walk_finished,
                 gaze_origin=self._window.gaze_origin,
@@ -263,7 +263,8 @@ class DesktopPet:
                 social_enabled=lambda: self.settings.online_social,
                 social_snapshot=lambda: self._social_runtime.snapshot(),
                 food_choices=self._food_choices,
-                feed=lambda selected: self._world.begin_carry(selected),
+                place_item=lambda selected: self._world.begin_carry(selected),
+                can_place_item=lambda: self._world.can_place_item,
                 defer_game=lambda action: self._world.interrupt(action),
                 game_completed=lambda score: self.application.complete_game(
                     experience_from_session(score),
@@ -351,7 +352,7 @@ class DesktopPet:
             AttentionRuntimePorts(
                 context=lambda: self.context,
                 game_open=lambda: self._hover.game_open,
-                toolbar_active=lambda: self._hover.interaction_active,
+                menu_engaged=lambda: self._hover.menu_engaged,
                 settings_engaged=lambda: self._hover.settings_engaged,
                 bubble_visible=lambda: self._speech.bubble is not None,
                 reaction_pending=lambda: (
@@ -432,6 +433,9 @@ class DesktopPet:
             say=self._speech.show_text, finish=self.quit,
             seconds=self._character_assets.clips["waving-greeting"].duration_seconds,
         )
+        object_feedback = ObjectFeedbackPresenter(
+            self._reaction_player, self._item_catalog,
+        )
         self._world = DesktopWorldRuntime(
             root=self.root, state=self.state, settings=self.settings,
             mind=self.mind, adaptive=self.adaptive, items=self._item_catalog,
@@ -439,16 +443,13 @@ class DesktopPet:
             walk=self._walk, visual=self._visual, animated=self._animated,
             playback=self._action_playback, inputs=self._activity.session_inputs,
             game_open=lambda: self._hover.game_open,
-            controls_active=lambda: (self._hover.interaction_active
-                                     or self._reaction_player.story_active
-                                     or self._social_runtime.waiting),
-            present_feedback=ObjectFeedbackPresenter(
-                self._reaction_player, self._item_catalog,
-            ).show,
+            character_action_busy=lambda: (object_feedback.non_offer_playback_active
+                                         or self._social_runtime.waiting),
+            present_feedback=object_feedback.show,
             cancel_feedback=self._reaction_player.cancel,
+            cancel_offer_feedback=object_feedback.cancel_offer,
             feedback=lambda text: self._speech.show_text(text, 2450),
-            save=self._save,
-            restored_world=session.world,
+            save=self._save, restored_world=session.world,
             restored_memory=session.object_memory,
         )
         self._world_access.bind(self._world)

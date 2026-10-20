@@ -58,7 +58,7 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
             walk_cycle_seconds=assets.clips["running-left"].duration_seconds,
             ports=WalkDriverPorts(
                 track=lambda: TaskbarTrack(0, 800, 800),
-                toolbar_visible=lambda: False,
+                menu_engaged=lambda: False,
                 place_x=self._place_x,
                 walk_finished=lambda _now: None,
             ),

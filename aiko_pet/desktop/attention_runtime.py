@@ -22,7 +22,7 @@ class AttentionRuntimePorts:
 
     context: Callable[[], TimeContext]
     game_open: Callable[[], bool]
-    toolbar_active: Callable[[], bool]
+    menu_engaged: Callable[[], bool]
     settings_engaged: Callable[[], bool]
     bubble_visible: Callable[[], bool]
     reaction_pending: Callable[[], bool]
@@ -72,7 +72,7 @@ class DesktopAttentionRuntime:
             screen_width,
             now,
             self._ports.context(),
-            toolbar_visible=self._ports.toolbar_active(),
+            toolbar_visible=self._ports.menu_engaged(),
         )
         if reaction is not None:
             self._presenter.show_reaction(reaction, 2600)
@@ -105,7 +105,7 @@ class DesktopAttentionRuntime:
             now,
             action_until=ports.action_until(),
             walking=ports.walking(),
-            toolbar_visible=ports.toolbar_active(),
+            toolbar_visible=ports.menu_engaged(),
         )
         if animation is not None:
             self._presenter.show_animation(animation, 1.6)
@@ -118,7 +118,7 @@ class DesktopAttentionRuntime:
         choice = self.attention.spontaneous(
             now,
             ports.context(),
-            toolbar_visible=ports.toolbar_active(),
+            toolbar_visible=ports.menu_engaged(),
             action_until=ports.action_until(),
             bubble_visible=ports.bubble_visible(),
             popup_visible=ports.settings_engaged(),
@@ -135,7 +135,7 @@ class DesktopAttentionRuntime:
             action_until=ports.action_until(),
             bubble_visible=ports.bubble_visible(),
             popup_visible=ports.settings_engaged(),
-            toolbar_visible=ports.toolbar_active(),
+            toolbar_visible=ports.menu_engaged(),
         )
         if note is None:
             return

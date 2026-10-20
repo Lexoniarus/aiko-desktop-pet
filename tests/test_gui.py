@@ -88,9 +88,9 @@ class TaskbarPetGuiTests(unittest.TestCase):
         self.assertTrue(bar.visible)
         self.assertEqual(
             set(bar.buttons),
-            {"feed", "play", "pet", "sleep", "talk"},
+            {"place_item", "play", "pet", "sleep", "talk"},
         )
-        action_row = bar.buttons["feed"].master
+        action_row = bar.buttons["place_item"].master
         labels = [
             child.cget("text")
             for child in action_row.winfo_children()
@@ -104,7 +104,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
             if "text" in child.keys()
         ]
         self.assertIn("Offen halten", extra_labels)
-        bar.buttons["feed"].invoke()
+        bar.buttons["place_item"].invoke()
         menu = self.app._hover.food_menu
         assert menu is not None
         with patch("aiko_pet.application.active_time.ActiveSessionClock.consume",
@@ -445,10 +445,10 @@ class TaskbarPetGuiTests(unittest.TestCase):
         set_test_pet_values(self.app.state, meals_date="")
         self.app._on_enter()
         self.assertIn("Montag", self.toolbar.today.cget("text"))
-        self.assertEqual(self.toolbar.buttons["feed"].cget("text"), "Frühstück")
+        self.assertEqual(self.toolbar.buttons["place_item"].cget("text"), "Frühstück")
         self.app.state.interact("feed", now=morning)
         self.toolbar.refresh()
-        self.assertEqual(self.toolbar.buttons["feed"].cget("text"), "Snack")
+        self.assertEqual(self.toolbar.buttons["place_item"].cget("text"), "Snack")
 
     def test_startup_geometry_is_explicitly_applied_before_first_frame(self):
         # Covers the original flash at (0,0) and saved coordinates which
