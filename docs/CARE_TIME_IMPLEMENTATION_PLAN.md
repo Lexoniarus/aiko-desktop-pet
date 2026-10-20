@@ -2570,6 +2570,34 @@ composition in the existing progression path. Trigger-specific evidence and
 poor-care exposure accounting follow in 5B.4/5B.5; wish decisions follow in
 5B.6/5B.7. No extra clock, manager, save or active simulation was introduced.
 
+###### 5B.3 first unit: pure Moodlet lifetime, stacking and relief
+
+The existing `pet/moodlets.py` owner now calculates immutable episode transitions
+from explicit elapsed intervals and catalogue definitions: bounded tier decay,
+refresh/escalation, positive fulfillment strength, absolute newly-qualified
+poor-care intensity, cause resolution and once-per-level relief. It creates no
+clock, mutable manager, relationship effect or interaction detector.
+
+Technical contracts: callers advance the pet before applying newly qualified
+trigger/relief facts; later 5B.4/5B.7 owners match actual accepted/completed actions
+and suppress duplicate event delivery. Quiet tier decay clears pending escalation
+counts but retains used relief levels and the episode identity. Refresh and
+escalation never reset relief usage. One helpful completion shortens only the
+current tier and discards surplus time; complete expiry retires the episode ID.
+
+Existing poor-care impressions require thirty continuous healthy minutes before
+recovery, retain current-tier progress through interruptions and requalify after
+a new drop. Linear need segments identify the healthy portion of an interval.
+Unobserved time ends an observed withholding pause and ages its after-effect;
+it never synthesizes additional withholding/escalation. Exposure-trigger creation
+and target-specific helpful-action matching remain later-stage responsibilities.
+
+26 targeted local cases passed: twelve new pure timeline cases and fourteen
+existing emotional storage cases. Slowest individual test: 0.008 seconds; none
+over ten seconds. Scoped Ruff, strict Mypy and Pyright passed. No GUI, mouse,
+external API, CI or full-suite run. Numeric composition/progression integration
+is the next separate 5B.3 unit.
+
 #### 5C. Connect status, expression and interaction decisions
 
 - Implement the main-menu scope of [the VN UI plan](UI_VN_DESIGN.md) together
