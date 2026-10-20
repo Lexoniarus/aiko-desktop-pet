@@ -1431,6 +1431,96 @@ a friendship reward. Any separately eligible wish/care reward retains the
 existing shared friendship accounting and ceilings. Ordinary immediate game
 reactions and need effects remain separate from the lasting impression.
 
+##### Recorded proposal: social wishes and fulfillment Moodlets, 2026-10-20
+
+Status: owner-requested design proposal, not implemented. Use the four existing
+social choices, with authored contextual dialogue for Plaudern and API-only
+content for Single, Two Parts and facts. Preserve online-source opt-in and the
+existing source/preparation owners; do not introduce authored fallback jokes
+or facts. Wish fulfillment is distinct from ordinary talk care admission.
+
+| Inner wish | Qualifying fulfillment within its lifetime | Working fulfillment impression / emotional quality |
+| --- | --- | --- |
+| Chat with the user | A complete ordinary Plaudern dialogue sequence is played | Glad we talked / connection |
+| Tell the user a Spruch (API Single) | The complete API Single sequence is played | Shared something funny / cheerfulness |
+| Tell the user a joke (Witz) | The complete API Two Parts sequence, including setup and punchline, is played | Shared something funny / cheerfulness |
+| Tell the user a curious fact | The introduction and complete API fact sequence are played | Shared something interesting / enthusiasm |
+
+Propose a four-real-hour wish lifetime. Having, displaying or expressing a
+wish creates no Moodlet. Initial expression thresholds are friendship level
+three or higher and numeric mood at least fifty; urgent needs and ongoing
+reactions take precedence in speech. These are disclosure thresholds, not
+eligibility requirements for the inner wish or its fulfillment. Actual spoken
+expression still requires evidence; queueing a line is insufficient.
+
+Resolve each wish once on actual full-sequence completion within its lifetime,
+including an unspoken wish. Opening the menu, fetching/preparing content, a
+holding line and interrupted playback do not fulfill it. Do not infer that the
+user laughed, learned something or approved from clicks, elapsed time or a
+completed sequence. The activity wish is to share the content, not to prove
+an unobservable audience reaction. Target existing content categories rather
+than unsupported topic-specific fact retrieval.
+
+Ordinary accepted talk care continues to commit at playback admission under
+its existing rules. A later interruption does not undo those effects, but
+cannot grant the separate completion-based wish impression. Use the existing
+playback lifecycle through application coordination for completion evidence;
+do not create another conversation player or reward owner. Technical failure,
+unavailable content and wish expiry produce no penalty or invented evidence
+of user mistreatment. Source settings remain authoritative.
+
+Each qualifying fulfillment starts its emotional family at level one: a total
++5-point mood-target contribution for two real hours. Spruch and Witz share
+one cheerfulness family, not separate additive copies. Connection, cheerfulness
+and enthusiasm remain distinct emotional impressions. Another genuinely
+fulfilled, separate wish in the same family adds one intensity level, capped
+at three (+5 / +10 / +15 total), and renews the current two-hour interval.
+Reduce intensity by one every two real hours without another fulfillment;
+apply elapsed decay before a later fulfillment, including standby/closed time.
+An expired impression starts again at level one. Ordinary subsequent talk,
+reading clicks and duplicate completion delivery do not create another wish
+fulfillment or stack. Numeric mood retains its normal timed response.
+
+Any friendship reward is separate from the lasting impression and remains
+within the existing shared care/reward limits. No additional amount is fixed
+by this proposal. Completion, stacking and each bubble/punchline must not
+repeat ordinary talk credit. Reconcile cross-family/group caps and wish
+creation/concurrency pacing in the integrated balance before implementation.
+
+##### Open design requirement: positive experiences and negative Moodlets, 2026-10-20
+
+The owner requests explicit consideration of whether playing, social activity
+and welcome affection can mitigate relevant negative impressions. Distinguish
+numeric positive/negative contributions, overall emotional interpretation,
+addressing the original cause, and actual recovery of the negative Moodlet.
+Coexistence alone does not define a targeted recovery effect. Do not use the
+earlier no-automatic-erasure rule to preclude a separately agreed, cause-specific
+mitigation rule; no such numerical rule is approved by this record yet.
+
+The owner identifies The Sims 3 and The Sims 4 as the general product reference
+for this design. Use concrete named impressions, identifiable causes, strengths,
+and understandable remaining durations in status, with multiple impressions
+contributing to the overall emotional state. The official
+[The Sims 3 manual](https://eaassets-a.akamaihd.net/eahelp/manuals/the-sims-3-manual_PC.pdf)
+describes temporary Moodlets affecting mood and behavior and displaying their
+duration. The official
+[The Sims 4 manual](https://eaassets-a.akamaihd.net/eahelp/manuals/the-sims-4-xbox-one-anz.pdf)
+distinguishes predetermined durations from condition-dependent effects and
+explains both emotional contributions and actions that shorten negative
+Moodlets. These are reference mechanics, not evidence that Aiko's candidate
+numbers, three-level decay or wish rewards reproduce Sims rules exactly.
+Keep those candidate values explicit; discuss any change between fixed-duration
+and phased-decay models rather than silently replacing the recorded proposals.
+
+Discuss which actual accepted/completed experiences help which causes, whether
+a wish must be fulfilled, how recovery is accelerated or intensity reduced,
+and how repeated inputs are bounded. Preserve existing care-driven recovery,
+explicit interaction boundaries and separate friendship accounting. A positive
+wish must not silently bypass a refusal or treat a laugh, gift or win as proof
+that prior mistreatment was forgiven. Concrete mappings and values are the
+next discussion, alongside affection wishes; do not change existing proposals
+or implement an automatic cleansing effect without that agreement.
+
 ##### Recorded proposal: prolonged/repeated poor care, 2026-10-19
 
 Status: owner-requested design proposal, not implemented. Reuse the existing
