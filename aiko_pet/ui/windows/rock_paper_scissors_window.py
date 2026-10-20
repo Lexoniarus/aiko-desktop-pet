@@ -8,7 +8,7 @@ from collections.abc import Callable
 from functools import partial
 
 from ...asset_paths import GAME_HANDS_DIR
-from ...games.contracts import GameId, SessionSummary
+from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.rock_paper_scissors import Move, Score
 from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
@@ -43,6 +43,7 @@ class RockPaperScissorsWindow:
         always_on_top: bool,
         skin: AikoSkin | None = None,
         dialogue: Callable[[str], str] | None = None,
+        round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
     ) -> None:
         self._on_closed = on_closed
         self._closed = False
@@ -189,7 +190,7 @@ class RockPaperScissorsWindow:
         )
         self.close_button.pack(anchor="e", padx=13, pady=(0, 9))
         self._sequence = RockPaperScissorsSequence(
-            dialogue=dialogue,
+            dialogue=dialogue, round_event=round_event,
             schedule=self.window.after,
             cancel=self.window.after_cancel,
             say=speak,

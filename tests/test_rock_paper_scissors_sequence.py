@@ -5,6 +5,7 @@ from __future__ import annotations
 import unittest
 from collections.abc import Callable
 
+from aiko_pet.games.contracts import GameRoundEvent
 from aiko_pet.games.rock_paper_scissors import Move, Outcome, Round, Score
 from aiko_pet.ui.windows.rock_paper_scissors_dialogue import GameDialogue, outcome_event
 from aiko_pet.ui.windows.rock_paper_scissors_sequence import (
@@ -38,6 +39,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         self.reveals: list[tuple[Move, Score]] = []
         self.busy: list[bool] = []
         self.animations: list[str] = []
+        self.rounds: list[GameRoundEvent] = []
         self.flow = RockPaperScissorsSequence(
             schedule=self.clock.schedule,
             cancel=self.clock.cancel,
@@ -51,6 +53,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
             ),
             animate=self.animations.append,
             set_busy=self.busy.append,
+            round_event=self.rounds.append,
         )
 
     def step(self) -> None:
@@ -63,6 +66,7 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
         self.flow.greet()
         self.assertEqual(self.animations, ["waving-greeting"])
         self.flow.choose(Move.ROCK)
+        self.assertEqual([e.outcome for e in self.rounds], [None])
         self.assertEqual(self.events[-1], ("text", "Eins!"))
         self.assertEqual(self.busy, [True])
         for expected in ("Zwei!", "Drei!"):
@@ -81,6 +85,8 @@ class RockPaperScissorsSequenceTests(unittest.TestCase):
             ],
         )
         self.assertEqual(self.flow.score.games, 1)
+        self.assertEqual([e.outcome for e in self.rounds], [None, "win"])
+        self.assertEqual(self.rounds[0].identity, self.rounds[1].identity)
         self.step()
         self.assertEqual(self.animations[-1], "failed")
         self.assertEqual(self.events[-1], ("emote", "drops"))

@@ -7,7 +7,7 @@ from collections.abc import Callable
 from typing import Literal
 
 from ...games.blackjack import Phase, Table
-from ...games.contracts import SessionSummary
+from ...games.contracts import GameRoundEvent, SessionSummary
 from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
 from .blackjack_sequence import BlackjackSequence
@@ -24,6 +24,7 @@ class BlackjackWindow:
         cards: GameCardPorts, speak: Callable[[str, int], None],
         animate: Callable[[str], None], always_on_top: bool, skin: AikoSkin,
         dialogue: Callable[[str], str] | None = None,
+        round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
     ) -> None:
         self._closed = False
         self._on_closed, self._cards = on_closed, cards
@@ -66,6 +67,7 @@ class BlackjackWindow:
                 schedule=self.window.after, cancel=self.window.after_cancel,
                 present=self._present, hand=cards.show, say=speak,
                 animate=animate, dialogue=dialogue,
+                round_event=round_event,
             )
             self._present(self._sequence.game.table, self._sequence.game.score)
             self._panel.show(root)

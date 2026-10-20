@@ -16,7 +16,6 @@ from .application.activity import ActivityCallbacks
 from .application.assembly import assemble_application
 from .application.attention import AttentionCoordinator
 from .application.contact import ContactCoordinator, ContactPorts
-from .application.game_experience import experience_from_session
 from .application.session import PetSessionRestorer
 from .application.settings import SettingKey
 from .application.social_content import PreparedSocialContent
@@ -265,10 +264,8 @@ class DesktopPet:
                 place_item=lambda selected: self._world.begin_carry(selected),
                 can_place_item=lambda: self._world.can_place_item,
                 defer_game=lambda action: self._world.interrupt(action),
-                game_completed=lambda score: self.application.complete_game(
-                    experience_from_session(score),
-                    inputs=self._activity.session_inputs(time.time(), time.monotonic()),
-                ),
+                game_completed=lambda score: self._care_runtime.complete_game(score),
+                game_round=lambda event: self._care_runtime.observe_game_round(event),
                 open_sprite_hover=self._on_enter,
                 record_contact=lambda now: self._contact.record_contact(now),
                 save_position=self._save_hover_position,

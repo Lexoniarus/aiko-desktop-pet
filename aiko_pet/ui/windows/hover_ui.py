@@ -9,7 +9,7 @@ from typing import Callable
 
 from ...application.settings import SettingKey
 from ...application.social_content import PreparedSocialContent, SocialCategory
-from ...games.contracts import GameId, SessionSummary
+from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ..common.skin import AikoSkin
 from ..view_models.contracts import (
     HoverAnchor,
@@ -58,6 +58,7 @@ class HoverUiPorts:
     place_item: Callable[[FoodChoiceId], None] | None = None
     can_place_item: Callable[[], bool] = lambda: True
     game_completed: Callable[[SessionSummary], object] | None = None
+    game_round: Callable[[GameRoundEvent], None] = lambda _event: None
     defer_game: Callable[[Callable[[], None]], None] | None = None
     game_dialogue: Callable[[str], str] | None = None
     can_interact: Callable[[str], bool] = lambda _action: True
@@ -213,7 +214,7 @@ class HoverUi:
     def _game_closed(self, completed: SessionSummary) -> None:
         """Pass real rounds to the application, then clear the transient UI."""
         try:
-            if completed.games and self._ports.game_completed is not None:
+            if self._ports.game_completed is not None:
                 self._ports.game_completed(completed)
         finally:
             self.game_window = None
@@ -289,6 +290,7 @@ class HoverUi:
                 self.game_window = BlackjackWindow(
                     self.root, on_closed=self._game_closed, cards=self._ports.cards,
                     dialogue=self._ports.game_dialogue,
+                    round_event=self._ports.game_round,
                     speak=self._ports.game_speech.say,
                     animate=self._ports.game_speech.animate,
                     always_on_top=self._ports.always_on_top(), skin=self._skin,
@@ -297,6 +299,7 @@ class HoverUi:
                 self.game_window = TicTacToeWindow(
                     self.root, on_closed=self._game_closed,
                     dialogue=self._ports.game_dialogue,
+                    round_event=self._ports.game_round,
                     speak=self._ports.game_speech.say,
                     animate=self._ports.game_speech.animate,
                     always_on_top=self._ports.always_on_top(), skin=self._skin,
@@ -323,6 +326,7 @@ class HoverUi:
             self.root,
             on_closed=self._game_closed,
             dialogue=self._ports.game_dialogue,
+            round_event=self._ports.game_round,
             speak=self._ports.game_speech.say,
             emote=self._ports.game_speech.emote,
             hand=self._ports.game_speech.hand,

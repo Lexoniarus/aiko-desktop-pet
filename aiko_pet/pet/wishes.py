@@ -3,7 +3,7 @@
 import random
 from dataclasses import dataclass, replace
 from enum import StrEnum
-from typing import Mapping
+from typing import Literal, Mapping
 
 from .balance import BALANCE
 from .moodlets import MoodletId
@@ -140,10 +140,58 @@ def fulfill_activity_wish(
                  and w.created_at <= elapsed < w.expires_at), None)
     if wish is None:
         return WishResolution(state)
+    return _retire_wish(state, wish, definitions[wish.definition_id])
+
+
+def _retire_wish(
+    state: WishState, wish: ActiveWish, fulfilled: WishDefinition | None,
+) -> WishResolution:
     return WishResolution(replace(
         state, active=tuple(w for w in state.active
                             if w.instance_id != wish.instance_id),
-    ), definitions[wish.definition_id])
+    ), fulfilled)
+
+
+def progress_game_wish(
+    state: WishState, instance_id: int, *, game_id: str, session_id: str,
+    round_id: str, started_at: float, elapsed: float,
+    outcome: Literal["win", "loss", "draw"],
+    definitions: Mapping[WishId, WishDefinition],
+) -> WishResolution:
+    """One real qualifying round, from Aiko's perspective; no session score."""
+    wish = next((w for w in state.active if w.instance_id == instance_id), None)
+    if (wish is None or wish.target_id != game_id
+            or definitions[wish.definition_id].area != WishArea.GAMES
+            or not wish.created_at <= started_at <= elapsed < wish.expires_at
+            or round_id in wish.game.round_ids):
+        return WishResolution(state)
+    definition = definitions[wish.definition_id]
+    key = definition.id
+    if key == WishId.WIN_ROUND:
+        if outcome == "win":
+            return _retire_wish(state, wish, definition)
+        progress = GameWishProgress((round_id,), 0, int(outcome == "loss"))
+    elif key == WishId.AVOID_ROUND_LOSS:
+        return _retire_wish(state, wish, definition if outcome != "loss" else None)
+    else:
+        before = wish.game
+        if key == WishId.PLAY_GAME and before.session_id != session_id:
+            before = GameWishProgress(session_id=session_id)
+        progress = GameWishProgress(
+            (*before.round_ids, round_id), before.wins + (outcome == "win"),
+            before.losses + (outcome == "loss"),
+            session_id if key == WishId.PLAY_GAME else None,
+        )
+        if len(progress.round_ids) >= definition.round_count:
+            won = (key == WishId.PLAY_GAME
+                   or key == WishId.WIN_OVERALL and progress.wins > progress.losses
+                   or key == WishId.AVOID_OVERALL_LOSS
+                   and progress.wins >= progress.losses)
+            return _retire_wish(state, wish, definition if won else None)
+    return WishResolution(replace(state, active=tuple(
+        replace(w, game=progress) if w.instance_id == instance_id else w
+        for w in state.active
+    )))
 
 
 def expire_wishes(state: WishState, *, elapsed: float) -> WishState:

@@ -8,7 +8,9 @@ No Tk dependency lives here, and every pending cue is cancellable.
 from __future__ import annotations
 
 from collections.abc import Callable
+from uuid import uuid4
 
+from ...games.contracts import GameId, GameRoundEvent
 from ...games.rock_paper_scissors import (
     Move,
     Outcome,
@@ -60,6 +62,7 @@ class RockPaperScissorsSequence:
         animate: PlayAnimation,
         set_busy: SetBusy,
         dialogue: Callable[[str], str] | None = None,
+        round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
     ) -> None:
         self._dialogue = dialogue if dialogue is not None else GameDialogue().choose
         self._schedule = schedule
@@ -75,6 +78,8 @@ class RockPaperScissorsSequence:
         self._phase = 0
         self._result: Round | None = None
         self._closed = False
+        self._session_id = uuid4().hex
+        self._round_event = round_event
 
     @property
     def score(self) -> Score:
@@ -98,6 +103,9 @@ class RockPaperScissorsSequence:
         if self._closed or self.busy:
             return
         self._game.begin(move)
+        self._round_event(GameRoundEvent(
+            GameId.ROCK_PAPER_SCISSORS, self._session_id, self.score.games + 1,
+        ))
         self._set_busy(True)
         self._phase = 1
         self._emit_text(countdown_line(1), self.COUNT_MS)
@@ -128,6 +136,10 @@ class RockPaperScissorsSequence:
         elif self._phase == 4:
             result = self._game.reveal()
             self._result = result
+            self._round_event(GameRoundEvent(
+                GameId.ROCK_PAPER_SCISSORS, self._session_id, self.score.games,
+                result.outcome.value,
+            ))
             self._phase = 5
             # Both views reveal at the same instant, in their own owners.
             self._reveal_player(result.player, self._game.score)

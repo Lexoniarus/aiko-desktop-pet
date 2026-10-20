@@ -9,12 +9,14 @@ from collections.abc import Callable
 from ..application.active_time import SessionInputs
 from ..application.commands import CareCommand
 from ..application.contact import ContactCoordinator, acknowledge_interaction_text
+from ..application.game_experience import experience_from_session
 from ..application.router import ApplicationRouter
 from ..application.social_content import PreparedSocialContent
 from ..application.social_coordinator import (
     SocialContentCoordinator,
     SocialContentWorker,
 )
+from ..games.contracts import GameRoundEvent, SessionSummary
 from ..infrastructure.social_api import HttpSocialContentWorker
 from ..pet.food import FoodId
 from ..pet.interaction_events import SocialCompletion
@@ -96,6 +98,20 @@ class DesktopCareRuntime:
 
     def advance_time(self) -> None:
         self._router.advance_time(self._inputs(time.time(), time.monotonic()))
+
+    def observe_game_round(self, event: GameRoundEvent) -> None:
+        self._router.observe_game_round(
+            event, inputs=self._inputs(time.time(), time.monotonic()),
+        )
+        if event.outcome is not None:
+            self._save()
+
+    def complete_game(self, summary: SessionSummary) -> None:
+        self._router.complete_game(
+            experience_from_session(summary),
+            inputs=self._inputs(time.time(), time.monotonic()),
+        )
+        self._save()
 
     def complete_social(self, kind: SocialCompletion) -> None:
         self._router.complete_social(

@@ -6,7 +6,7 @@ import tkinter as tk
 from collections.abc import Callable
 from functools import partial
 
-from ...games.contracts import SessionSummary
+from ...games.contracts import GameRoundEvent, SessionSummary
 from ...games.tic_tac_toe import Board
 from ...pet.content import GERMAN_TEXT
 from ..common.skin import AikoSkin
@@ -20,6 +20,7 @@ class TicTacToeWindow:
         speak: Callable[[str, int], None], animate: Callable[[str], None],
         always_on_top: bool, skin: AikoSkin,
         dialogue: Callable[[str], str] | None = None,
+        round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
     ) -> None:
         self._closed = False
         self._on_closed = on_closed
@@ -42,6 +43,7 @@ class TicTacToeWindow:
             self._sequence = TicTacToeSequence(
                 schedule=self.window.after, cancel=self.window.after_cancel,
                 present=self._present, say=speak, animate=animate, dialogue=dialogue,
+                round_event=round_event,
             )
             self._present(self._sequence.game.board, self._sequence.game.score)
             self._panel.show(root)

@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from uuid import uuid4
 
 from ...games.blackjack import Blackjack, Phase, Table
-from ...games.contracts import SessionSummary
+from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ..view_models.game_models import HandView, project_dealer_hand
 from .rock_paper_scissors_dialogue import GameDialogue
 
@@ -18,6 +19,7 @@ class BlackjackSequence:
         cancel: Callable[[str], None], present: Callable[[Table, SessionSummary], None],
         hand: Callable[[HandView, bool], None], say: Callable[[str, int], None],
         animate: Callable[[str], None], dialogue: Callable[[str], str] | None = None,
+        round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
         game: Blackjack | None = None,
     ) -> None:
         self.game = game if game is not None else Blackjack()
@@ -26,12 +28,17 @@ class BlackjackSequence:
         self._say, self._animate = say, animate
         self._dialogue = dialogue if dialogue is not None else GameDialogue().choose
         self._closed = False
+        self._session_id = uuid4().hex
+        self._round_event = round_event
         self._revealing = False
         self.pending_timer: str | None = None
 
     def greet(self) -> None:
         if self._closed:
             return
+        self._round_event(GameRoundEvent(
+            GameId.BLACKJACK, self._session_id, self.game.score.games + 1,
+        ))
         self._say(self._dialogue("game_blackjack_greeting"), 2800)
         self._publish()
         self._continue()
@@ -69,6 +76,9 @@ class BlackjackSequence:
         self.pending_timer = None
         if self.game.table.result is not None:
             self.game.next_round()
+            self._round_event(GameRoundEvent(
+                GameId.BLACKJACK, self._session_id, self.game.score.games + 1,
+            ))
             self._publish()
             self._continue()
             return
@@ -89,6 +99,9 @@ class BlackjackSequence:
                 "draw": "game_round_draw",
             }
             assert result is not None
+            self._round_event(GameRoundEvent(
+                GameId.BLACKJACK, self._session_id, self.game.score.games, result,
+            ))
             clip = {"win": "failed", "loss": "jumping", "draw": "waving"}[result]
             self._animate(clip)
             self._say(self._dialogue(event[result]), self.RESULT_PAUSE_MS)

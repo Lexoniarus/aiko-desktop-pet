@@ -15,6 +15,7 @@ class BlackjackSequenceTests(unittest.TestCase):
         self.views = []
         self.lines = []
         self.delays = []
+        self.rounds = []
 
         def schedule(delay, callback):
             self.delays.append(delay)
@@ -27,6 +28,7 @@ class BlackjackSequenceTests(unittest.TestCase):
             hand=lambda view, flip: self.hands.append((view, flip)),
             say=lambda line, _ms: self.lines.append(line), animate=lambda _name: None,
             dialogue=lambda event: event, game=game,
+            round_event=self.rounds.append,
         )
         flow.greet()
         return flow
@@ -40,6 +42,8 @@ class BlackjackSequenceTests(unittest.TestCase):
         self.assertEqual(flow.game.score.games, 0)
         flow.advance()
         self.assertEqual(self.views[-1][0].result, 'win')
+        self.assertEqual([e.outcome for e in self.rounds], [None, 'win'])
+        self.assertEqual(self.rounds[0].identity, self.rounds[1].identity)
         self.assertEqual(flow.close().wins, 1)
         self.assertEqual(flow.close().games, 1)
         self.assertEqual(self.hands[-1][0].cards, ())

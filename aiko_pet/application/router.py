@@ -5,6 +5,7 @@ from __future__ import annotations
 from threading import get_ident
 from typing import overload
 
+from ..games.contracts import GameRoundEvent
 from ..pet.fun import GameExperience
 from ..pet.interaction_events import SocialCompletion
 from .active_time import SessionInputs
@@ -77,6 +78,14 @@ class ApplicationRouter:
         """Receive a finished accepted sequence on the existing owner thread."""
         self._require_owner_thread()
         self._care.complete_social(kind, inputs, arrangement_ready=arrangement_ready)
+
+    def observe_game_round(
+        self, event: GameRoundEvent, *, inputs: SessionInputs,
+    ) -> None:
+        self._require_owner_thread()
+        if self._game_experience is None:
+            raise RuntimeError("No game experience coordinator is installed")
+        self._game_experience.observe_round(event, inputs)
 
     def complete_game(
         self, experience: GameExperience, *, inputs: SessionInputs,

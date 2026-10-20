@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from uuid import uuid4
 
-from ...games.contracts import SessionSummary
+from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.tic_tac_toe import Board, TicTacToe
 from .rock_paper_scissors_dialogue import GameDialogue
 
@@ -15,6 +16,7 @@ class TicTacToeSequence:
         cancel: Callable[[str], None], present: Callable[[Board, SessionSummary], None],
         say: Callable[[str, int], None], animate: Callable[[str], None],
         dialogue: Callable[[str], str] | None = None,
+        round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
         game: TicTacToe | None = None,
     ) -> None:
         self.game = game if game is not None else TicTacToe()
@@ -23,8 +25,13 @@ class TicTacToeSequence:
         self._dialogue = dialogue if dialogue is not None else GameDialogue().choose
         self.pending_timer: str | None = None
         self._closed = False
+        self._session_id = uuid4().hex
+        self._round_event = round_event
 
     def greet(self) -> None:
+        self._round_event(GameRoundEvent(
+            GameId.TIC_TAC_TOE, self._session_id, self.game.score.games + 1,
+        ))
         self._say(self._dialogue("game_ttt_greeting"), 2800)
         self._present(self.game.board, self.game.score)
 
@@ -38,6 +45,11 @@ class TicTacToeSequence:
         board = self.game.board
         if board.winner is not None:
             self.game.settle()
+            self._round_event(GameRoundEvent(
+                GameId.TIC_TAC_TOE, self._session_id, self.game.score.games,
+                "win" if board.winner == "X" else
+                "loss" if board.winner == "O" else "draw",
+            ))
             event = {
                 "X": "game_round_player_win", "O": "game_round_aiko_win",
                 "": "game_round_draw",
@@ -59,6 +71,9 @@ class TicTacToeSequence:
     def next_round(self) -> None:
         if not self._closed:
             self.game.next_round()
+            self._round_event(GameRoundEvent(
+                GameId.TIC_TAC_TOE, self._session_id, self.game.score.games + 1,
+            ))
             self._after_move()
 
     def close(self) -> SessionSummary:

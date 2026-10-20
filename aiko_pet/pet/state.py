@@ -8,6 +8,7 @@ from copy import deepcopy
 from dataclasses import replace
 from typing import Any
 
+from ..games.contracts import RoundOutcome
 from .balance import BALANCE
 from .care_actions import (
     CareTransition,
@@ -60,6 +61,7 @@ from .wishes import (
     create_wish,
     expire_wishes,
     fulfill_activity_wish,
+    progress_game_wish,
 )
 
 
@@ -350,6 +352,16 @@ class PetState:
                         ))
         self._change(wishes=resolution.state, moodlets=moodlets,
                      friendship=relationship.points, relationship=relationship.history)
+
+    def complete_wish_round(
+        self, instance_id: int, *, game_id: str, session_id: str, round_id: str,
+        started_at: float, outcome: RoundOutcome,
+    ) -> None:
+        self._apply_wish_resolution(progress_game_wish(
+            self.wishes, instance_id, game_id=game_id, session_id=session_id,
+            round_id=round_id, started_at=started_at, elapsed=self.lived_seconds,
+            outcome=outcome, definitions=WISH_CATALOG.definitions,
+        ), personal=True)
 
     def record_game_experience(
         self,
