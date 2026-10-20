@@ -3045,3 +3045,43 @@ own tiny tail on the next update. Full-minute merging now additionally requires
 actual arrival at the minute end; the unchanged split/reload history test and a
 small direct regression case pass. Watermark offsets are bounded against floating
 round-off before storage. Scoped Ruff, strict Mypy and Pyright passed.
+
+
+##### 5B.5 completion: existing chronology and isolated verification (2026-10-20)
+
+`calculate_pet_progression()` now prepares processing markers, advances the one
+friendship/care history and qualifies poor-care impressions at the actual numeric
+endpoint. Its existing loop splits at zero/25/40 crossings and newly reachable
+emotional thresholds. Crossings read the canonical need calculation, including
+clamped-zero arrival, rather than counting a whole partly depleted step as zero.
+Threshold search only reads the bounded history; no second time progression or
+historical user-action playback was added. Pure numeric calls without relationship
+evidence still age existing impressions without inventing a missing care history.
+PetState continues to commit the combined frozen result once.
+
+Both closed-app and standby paths use this integration. Actual finite, acquired
+food consumption can prevent prolonged hunger; unrecognized stock cannot. Sleep
+restoring energy adds no exhaustion exposure. Existing stable recovery, retained
+stage progress, relief allowances and checkpoint/World rollback are preserved.
+No new direct relationship penalty, qualified care contact or care lock is added.
+
+The unchanged 30-day regression initially took 12.241 s after integration. Review
+found repeated emotional work after all five zero needs were already represented
+by five paused maximum impressions. This constant tail now bypasses redundant
+emotional qualification/ageing only while there are no other Moodlet families;
+canonical need/history/mood advancement continues. A separate regression proves
+that other positive impressions still expire and needed food is accepted. The
+month scenario is retained rather than shortened or replaced with a mock.
+
+Final targeted local validation: 171 cases passed in 15.702 s across the three
+new poor-care modules and affected lifetime/composition, friendship, numeric
+progression, persistence, finite resources/rollback, relief and architecture
+modules. The existing 30-day test took 8.111 s; the week case took 2.467 s.
+No final individual test exceeded ten seconds. Ruff passed for all changed Python
+files, and strict Mypy/Pyright passed for all seven changed production modules.
+No windows, mouse steering, GitHub CI or full-suite run was performed.
+
+5B.5 is complete. The next slice is 5B.6 (inner wish lifecycle and disclosure);
+wish fulfillment, overall emotional interpretation and status UI remain in their
+recorded later slices. The full suite and final overall OOP audit remain the
+agreed end-of-refactor checks.

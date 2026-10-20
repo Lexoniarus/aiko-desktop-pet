@@ -14,18 +14,23 @@ from .food import (
     hardware_consumption_fraction,
 )
 from .friendship_decay import advance_friendship
-from .friendship_history import FriendshipProgress
+from .friendship_history import NEED_NAMES, FriendshipProgress
 from .fun import advance_fun
 from .mood import NeedMoodFactors, advance_mood, calculate_mood_target
 from .moodlet_catalog import MOODLET_CATALOG
 from .moodlets import (
     MoodletState,
-    PoorCareParameters,
     advance_moodlets,
     calculate_moodlet_contributions,
     next_moodlet_boundary,
 )
 from .needs import NeedLevels
+from .poor_care import (
+    next_poor_care_boundary,
+    poor_care_at_capacity,
+    prepare_poor_care,
+    qualify_poor_care,
+)
 from .value_rules import clamp_need_value
 
 
@@ -89,22 +94,35 @@ def _advance_needs(
     ), progress.food
 
 
-def _recovery_crossing(
-    state: MoodletState, before: NeedLevels, after: NeedLevels, seconds: float,
+def _need_crossing(
+    before: NeedLevels, after: NeedLevels, food: FoodState, seconds: float, *,
+    sleeping: bool, activity: FoodActivity, rates: tuple[float, float, float],
 ) -> float:
-    """Split existing numeric steps at actual recovery-threshold crossings."""
-    if not state.active:
+    """Use canonical needs at zero, critical and recovery crossings.
+
+    A clamped zero endpoint alone cannot show how much of a step was at zero.
+    Only these rare crossings require root finding; there is no extra time loop.
+    """
+    if before == after:
         return seconds
-    threshold = BALANCE.number("moodlets", "recovery_need_threshold")
     boundary = seconds
-    for episode in state.active:
-        parameters = MOODLET_CATALOG.definitions[episode.definition_id].parameters
-        if not isinstance(parameters, PoorCareParameters):
-            continue
-        low, high = (float(getattr(needs, parameters.need))
-                     for needs in (before, after))
-        if min(low, high) < threshold < max(low, high):
-            boundary = min(boundary, seconds * (threshold - low) / (high - low))
+    for name in NEED_NAMES:
+        low, high = float(getattr(before, name)), float(getattr(after, name))
+        for threshold in (0.0, BALANCE.number("friendship", "critical_need"),
+                          BALANCE.number("moodlets", "recovery_need_threshold")):
+            if not (low < threshold <= high or high <= threshold < low):
+                continue
+            left, right = 0.0, seconds
+            for _ in range(36):
+                middle = (left + right) / 2
+                at, _ = _advance_needs(before, food, middle / 3600, sleeping=sleeping,
+                                       activity=activity, rates=rates)
+                value = float(getattr(at, name))
+                if (value > threshold if high < low else value < threshold):
+                    left = middle
+                else:
+                    right = middle
+            boundary = min(boundary, max(1e-7, right))
     return boundary
 
 
@@ -146,10 +164,15 @@ def calculate_pet_progression(
         affection_rate = BALANCE.number("needs", "awake_affection_loss_per_hour")
     remaining = hours * 3600 if math.isfinite(hours) and hours > 0 else 0.0
     step_limit = BALANCE.number("simulation", "needs_step_seconds")
+    represented = False
     while remaining > 1e-9:
         before_needs = NeedLevels(satiety, energy, fun, social, affection)
+        if relationship is not None and not represented:
+            moodlets = prepare_poor_care(
+                moodlets, relationship.history, elapsed=elapsed,
+            )
         seconds = min(remaining, step_limit)
-        if moodlets.active:
+        if moodlets.active and not represented:
             moodlets = advance_moodlets(
                 moodlets, 0, elapsed=elapsed, before=before_needs, after=before_needs,
                 definitions=definitions, observed=observed,
@@ -161,13 +184,27 @@ def calculate_pet_progression(
             before_needs, food, seconds / 3600, sleeping=record.sleeping,
             activity=activity, rates=(energy_rate, social_rate, affection_rate),
         )
-        crossing = _recovery_crossing(moodlets, before_needs, after_needs, seconds)
+        crossing = _need_crossing(
+            before_needs, after_needs, food, seconds, sleeping=record.sleeping,
+            activity=activity, rates=(energy_rate, social_rate, affection_rate),
+        )
         if crossing < seconds:
             seconds = crossing
             after_needs, next_food = _advance_needs(
                 before_needs, food, seconds / 3600, sleeping=record.sleeping,
                 activity=activity, rates=(energy_rate, social_rate, affection_rate),
             )
+        if relationship is not None and not represented:
+            boundary = next_poor_care_boundary(
+                moodlets, relationship.history, elapsed=elapsed, seconds=seconds,
+                before=before_needs, after=after_needs, sleeping=record.sleeping,
+            )
+            if boundary < seconds:
+                seconds = boundary
+                after_needs, next_food = _advance_needs(
+                    before_needs, food, seconds / 3600, sleeping=record.sleeping,
+                    activity=activity, rates=(energy_rate, social_rate, affection_rate),
+                )
         step_hours = seconds / 3600
         before = (satiety, energy, fun, social, affection)
         satiety, energy, fun = after_needs.satiety, after_needs.energy, after_needs.fun
@@ -185,10 +222,20 @@ def calculate_pet_progression(
                 relationship, seconds, before,
                 (satiety, energy, fun, social, affection), sleeping=record.sleeping,
             )
-        if moodlets.active:
+        if moodlets.active and not represented:
             moodlets = advance_moodlets(
                 moodlets, seconds, elapsed=elapsed, before=before_needs,
                 after=after_needs, definitions=definitions, observed=observed,
+            )
+        if relationship is not None and not represented:
+            moodlets = qualify_poor_care(
+                moodlets, relationship.history, elapsed=elapsed + seconds,
+                before=before_needs, after=after_needs, sleeping=record.sleeping,
+                definitions=definitions,
+            )
+            represented = poor_care_at_capacity(
+                moodlets, after_needs, sleeping=record.sleeping,
+                definitions=definitions,
             )
         elapsed += seconds
         remaining -= seconds

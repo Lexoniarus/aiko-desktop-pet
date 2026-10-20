@@ -27,6 +27,7 @@ from aiko_pet.pet.food_catalog import DEFAULT_CATALOG
 from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory
 from aiko_pet.pet.mind.object_knowledge import ObjectKnowledge
 from aiko_pet.pet.mind.object_memory import ObjectMemory
+from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.sleep import SleepContext
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldSurface
@@ -368,3 +369,18 @@ class SleepResourceTests(unittest.TestCase):
                 )
                 backups = list(Path(folder).glob("*.aiko-save-backup"))
                 self.assertEqual(backups[0].read_bytes(), original)
+
+    def test_prolonged_hunger_uses_only_actual_known_stock(self):
+        self.food()
+        self.advance(3 * 3600)
+        self.assertNotIn(MoodletId.HUNGER_WORN,
+                         [e.definition_id for e in self.pet.moodlets.active])
+        self.assertEqual(sum(o.state == ObjectState.CONSUMED
+                             for o in self.world.snapshot().objects), 1)
+        self.setUp()
+        unknown = self.food(known=False)
+        self.advance(3 * 3600)
+        hunger = next(e for e in self.pet.moodlets.active
+                      if e.definition_id == MoodletId.HUNGER_WORN)
+        self.assertEqual(hunger.level, 1)
+        self.assertEqual(self.world.get(unknown.instance_id).state, ObjectState.RESTING)
