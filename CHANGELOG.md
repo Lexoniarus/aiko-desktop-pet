@@ -8,18 +8,27 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Connect negative interaction experiences to Moodlets: delivered poke/petting
+  boundaries, actual food repetition and variety requests, observed wanted-object
+  withholding and subjective arrangement disruption. Preserve separate capped
+  friendship losses and backward-compatible bounded interaction evidence.
+  Match targeted relief to accepted care, fully completed conversations and
+  shared play; cancellation, technical locks and unobserved user actions do not
+  qualify. Keep petting refusal and numeric mood progression separate.
+
 - Add pure Moodlet lifetime, bounded stacking/refresh and per-level relief rules.
   Compose capped positive/negative contributions with need-based mood through
   the existing progression path, splitting at expiry and recovery boundaries.
   Preserve timed mood response, critical-need ceilings and unobserved closed-time
-  ageing. Qualifying interaction/wish triggers remain later work.
+  ageing. Negative interaction triggers are delivered; poor-care exposure and
+  wish fulfillment remain later slices.
 
 - Persist immutable Moodlet episodes and inner wishes in the existing PetValues
   checkpoint and version-one save, including relief usage, original deadlines,
   expression/pacing evidence and bounded game-wish progress. Preserve corrupt
   optional sections in the existing backup path; legacy saves start empty.
-  Verify joint rollback with populated emotional state. Automatic interaction
-  triggers and wish fulfillment follow later.
+  Verify joint rollback with populated emotional state. Wish fulfillment
+  follows in its separate planned slice.
 
 - Add typed, immutable definitions and validated JSON catalogues for the 18
   planned Moodlet families and 11 wish forms, shared balance parameters and

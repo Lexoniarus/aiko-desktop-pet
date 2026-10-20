@@ -50,8 +50,14 @@ not change nutrition. Sleep has no reserve protection or activity surcharge.
 No fasting accelerator or activity-based reserve speedup remains.
 
 Snacks do not reset `awake_hours_since_main_meal`. Repeated identical food
-retains its history and German `feed_repeat` reaction, without a numerical
-mood penalty or nutrition reduction. Food at satiety 96 or higher is refused.
+retains its nutrition history without nutrition reduction. Stage 5B.4 adds a
+separate emotional impression on the third consecutive actual identical intake
+within 24 elapsed hours. A displayed variety request is required before repeated
+personal feeding can incur the separate friendship penalty. Different food breaks
+the sequence/request and shortens the current impression tier once; energy drinks
+neither count nor provide variety. Autonomous/historical intake can be monotonous
+without establishing a personally ignored request. Food at satiety 96 or higher
+is refused.
 Accepted personal feeding gives +1 social; autonomous eating gives nutrition
 without human social/friendship credit. Food no longer grants instant mood.
 

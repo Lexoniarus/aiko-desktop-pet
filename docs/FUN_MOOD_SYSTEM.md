@@ -1,6 +1,6 @@
 # Fun and mood — prototype tuning guide
 
-> This guide describes the care/fun/mood foundation and delivered stage 5B.3 on
+> This guide describes the care/fun/mood foundation and delivered stages 5B.3/5B.4 on
 > `feature/social-optimization`. The
 > [mood](MOOD_BALANCE_PROPOSAL.md) and [need proposals](NEEDS_BALANCE_PROPOSAL.md)
 > retain the agreed design evidence. Progressive friendship now follows the
@@ -61,8 +61,8 @@ ceiling. The need-only target is at most 80. Actual mood approaches the changing
 target without overshoot; recovery is 2 points/minute with no extra delay.
 Care, food, repeat food and completed games never change mood instantly.
 Mood has no feedback effect on needs or rewards. Stage 5B.3 now composes existing
-Moodlets through the same timed response; automatic qualifying triggers follow
-in later slices of the implementation plan.
+Moodlets through the same timed response; stage 5B.4 supplies direct negative
+interaction triggers and targeted helpful-action matching.
 
 `pet/progression.py` is the single pure numeric integration owner. It calls
 food/fun/mood policies in chronological intervals of at most 15 seconds, then
@@ -96,10 +96,14 @@ observed withholding pause or generate negative user-interaction evidence.
 Both application restoration paths use that same progression owner, including
 short closed intervals; saves do not perform their own simulation.
 
-No direct interaction or wish creates a Moodlet yet: evidence adapters and
-semantic completion matching are later slices. These functions accept qualified
-facts at an already-advanced endpoint; they do not infer acceptance or user blame.
-Overall emotional labels and the VN UI also remain separate pending work.
+Negative interactions now qualify poking, unwelcome petting, food monotony,
+wanted-object withholding and familiar-arrangement disruption. Accepted care,
+completed social sequences and shared play match targeted relief; existing
+quiet/resolution/stable-recovery gates and per-level allowances still apply.
+These functions accept qualified facts at an already-advanced endpoint; they do
+not infer acceptance or user blame. Direct friendship consequences stay separate.
+Poor-care exposure triggers, wish fulfillment, overall emotional labels and the
+VN UI remain pending slices of the active plan.
 
 ## Game-neutral pipeline
 

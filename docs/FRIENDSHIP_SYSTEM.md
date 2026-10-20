@@ -106,6 +106,21 @@ The existing application coordinators admit evidence and deduplicate receipts;
 PetState applies durable caps. Restarting or beginning another episode cannot
 reset those caps. Offline time does not invent clicking/withholding events.
 
+Stage 5B.4 adds distinct event penalties, using that same persisted ledger:
+
+| Perceived event | Separate loss | Rolling cap |
+| --- | --- | --- |
+| Unwelcome petting after a communicated boundary/active refusal | 0.25 | 1 per 10 minutes |
+| Same personal food after a communicated variety request; first ignored portion is free | 0.25 | 1 per 24 hours |
+| Independent witnessed relocation of a known object outside its familiar area | 0.25 | 1 per hour |
+
+A refused stroke grants no care reward/contact. Unknown causes of an empty
+familiar place can create an impression without blame. The same take is not
+charged both as withholding and relocation. Moodlet existence/stacking/expiry
+and helpful duration relief never add loss, refund it or create another reward.
+Each penalty kind is pruned by its own window; longer food budgets do not retain
+unbounded minute-by-minute click history.
+
 ## Ownership and save compatibility
 
 `PetState` remains the sole mutable pet aggregate. Immutable

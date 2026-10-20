@@ -193,8 +193,23 @@ Reconstructed time is explicitly unobserved on both restoration paths, so it
 ages after-effects without inventing continued user provocation. No additional
 clock, replay loop, mutable manager or numeric mood writer is introduced.
 
-Actual interaction/exposure triggers, semantic helpful-action matching, wish
-fulfillment and overall emotional interpretation remain for later stages.
+`pet/interaction_events.py` defines immutable perceived facts and bounded
+interaction evidence. Pure `interaction_rules.py` qualifies negative experiences
+and helpful-action matching; it delegates stacking/ageing/relief to `moodlets.py`.
+`plan_care_action()` owns petting admission and returns the same immutable
+consequences that PetState commits. Direct friendship losses use the existing
+relationship ledger, independently of the continuing impression. No event bus
+or additional mutable owner is introduced. The application translates visible
+text receipts into boundary facts. Explicit metadata on accepted social
+reactions yields completion only after the entire existing playback sequence.
+Object owners qualify wanted-object withholding and subjective arrangement
+changes; actual attribution is required for relocation loss. Closed-time intake
+can create food monotony but never human culpability. Short-lived custody and
+observed-time trigger anchors stay in the existing object episode/perception;
+refusal/request/intake evidence belongs to the aggregate and its existing save.
+
+Prolonged-poor-care exposure triggers, wish fulfillment and overall emotional
+interpretation remain for later stages.
 
 ## Application layer
 
@@ -363,7 +378,7 @@ The care/storage follow-up also changes these Python call contracts:
 | Seven-entry `PetReadSnapshot.needs` | Five-field immutable `NeedLevels`; numeric mood and friendship remain separate snapshot fields |
 | UI `needs`/`need_value()`, toolbar `NEEDS`/`needs` | Presentation `status_values`/`status_value()`, toolbar `READOUTS`/`readouts`; seven displayed bars remain unchanged |
 | `pet.need_decay`, `NeedProgress`, `calculate_need_decay()` | `pet.progression`, `PetProgress`, `calculate_pet_progression()`; five `NeedLevels` fields live in `pet.needs` |
-| `MoodFactors`, need-only `calculate_mood_target()` | `NeedMoodFactors`, `calculate_need_mood_target()`; composed Moodlet targets remain later work |
+| `MoodFactors`, need-only `calculate_mood_target()` | `NeedMoodFactors`, `calculate_need_mood_target()`; composed Moodlet targets use the shared progression owner |
 | Hover `feed` callback / Snack button `feed` action | `place_item` callback/action with independent `can_place_item`; direct domain feeding remains `feed` |
 | `HoverUi.interaction_active`, walk/assembly `toolbar_visible`, attention-runtime `toolbar_active` | `menu_engaged`; actual visibility remains distinct in session UI refresh |
 | World `controls_active` | `character_action_busy`, sampled from actual character playback/waiting without menu hover |

@@ -14,7 +14,8 @@
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
 > supplies typed definitions and JSON catalogues; 5B.2 adds aggregate-owned
 > state and storage. 5B.3 delivers Moodlet lifetime/relief and numeric mood
-> composition. Qualifying interaction evidence and later wish/emotion/UI work
+> composition. 5B.4 now connects negative interaction experiences and targeted
+> helpful-action relief. Poor-care exposure and later wish/emotion/UI work
 > remain for the following slices.
 
 ## Stage-4 correction delivery, 2026-10-19
@@ -2935,3 +2936,61 @@ small/unknown/excluded moves, actual withholding admission/escalation/return,
 request clocks, independent loss budgets, save reload and World transaction
 rollback. Longest individual test 0.275 s. Scoped Ruff, strict Mypy and Pyright
 passed. Targeted helpful-action matching and final documentation follow next.
+
+
+##### 5B.4 completion: helpful actions and ownership review (2026-10-20)
+
+Completed matching uses the same immutable facts and pure interaction policy.
+Accepted petting, actual main meals and sessions with at least two completed
+rounds supply helpful facts through the existing care/consumption/game owners.
+Personal chat and prepared API conversations carry explicit completion metadata
+only after accepted care. ReactionPlayer reports that fact once after the whole
+sequence; cancellation, stale callbacks, waiting and ambient dialogue cannot
+claim completion. Chat/shared play can shorten resolved withholding; arrangement
+relief additionally reads resolved live search/place evidence through the existing
+World port. The lifetime owner still enforces quiet/stable-recovery gates and
+one allowance per intensity for the entire episode. No helpful action refunds
+friendship or shortens the separate petting-refusal deadline.
+
+Final ownership review keeps petting admission in `plan_care_action`, returning
+immutable interaction consequences even for a refusal with no care changes.
+PetState commits those consequences through one named helper. Presentation event
+names are translated into domain facts by `application/contact.py`, not by the
+pet aggregate. No event bus, manager, parallel clock/history store or second
+numeric mood writer was introduced. Care tests that assumed unlimited petting
+now explicitly seed welcome affection/trust or assert refusal without reward.
+A continuing food sequence whose request expired must communicate a fresh
+request before further ignored-request charges can qualify.
+
+5B.4 is implemented. Negative interaction families are now live; 5B.5 remains
+responsible for prolonged-poor-care exposure/triggering, followed by wish,
+overall emotion and status UI slices. Existing stored poor-care episodes can
+already receive qualified relief under their established recovery gate.
+The complete-suite and final overall OOP audit remain the planned end-of-refactor
+gates. No visible desktop acceptance is claimed by these local headless checks.
+
+
+Final 5B.4 verification: 361 selected headless cases across the affected care,
+Moodlet, storage, dialogue/playback, object, friendship and architecture modules
+passed in 4.219 s. The longest individual test was 0.376 s; no case required
+investigation under the ten-second threshold. The selection explicitly checks
+that every requested test module contains cases, and excludes GUI tests and the
+full suite. Ruff passed for all changed Python files; strict Mypy and Pyright
+passed for all 31 changed production modules. The pure care-plan/aggregate parity
+and existing dependency/composition-root limits are preserved. The final full
+suite and broader OOP audit remain the agreed end-of-refactor tasks, not a gate
+silently substituted for these targeted checks. No GitHub CI was requested or
+started; commits carry the CI skip marker.
+
+
+Code delivery commits on `feature/social-optimization`:
+
+| Commit | Coherent change |
+| --- | --- |
+| `2f333f1` | Poking, communicated boundaries and unwelcome petting |
+| `e7bc487` | Actual food repetition, variety request and personal loss budget |
+| `c175195` | Observed withholding, familiar arrangement and attribution |
+| `ada8209` | Helpful-action completion, pure care admission and final ownership corrections |
+
+Each commit was locally checked and pushed with `[skip ci]`. The following
+documentation commit records this completed slice and updates the system guides.

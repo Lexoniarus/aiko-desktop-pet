@@ -118,8 +118,21 @@ future sections are not partially interpreted: other valid pet values survive,
 and StateStore preserves the original file before replacing it through its
 existing atomic-save path. No separate save, clock or emotional score is added.
 Stage 5B.3 now advances existing episodes and their numeric mood effects through
-the shared progression path. Qualifying interaction/exposure triggers remain
-later work; decoding itself never changes the stored episode state.
+the shared progression path. Stage 5B.4 now supplies negative interaction facts;
+prolonged-poor-care exposure triggers remain later work. Decoding never advances
+stored episodes or invents triggers.
+
+The optional `moodlets.interactions` extension stores communicated poke/petting
+boundaries, the independent petting-refusal deadline and bounded food repetition
+evidence (current food, at most the configured repetition count of elapsed intake
+timestamps, pending/communicated variety request and saturated ignored-portion
+count). Earlier 5B saves lacking this extension start with neutral evidence.
+Unknown food IDs, future evidence, invalid counters and inconsistent request
+fields invalidate that optional Moodlet section, preserving unrelated pet values.
+Relationship penalties remain in `relationship.penalties`: each kind retains
+only its own rolling window, including petting, food-variety and relocation
+caps. Request expiry/new episodes/restart do not refund those budgets. Transient
+observed cursor-take attribution is never reconstructed from saved World truth.
 
 ## Optional wish state
 
