@@ -284,8 +284,10 @@ class WorldState:
                 self._surface.ground_interval(item.footprint), parameters,
                 ceiling=self._surface.height,
             )
-            state = (ObjectState.RESTING if result.motion is None else
-                     ObjectState.BOUNCING if result.contacted else item.state)
+            state: ObjectState = (
+                ObjectState.RESTING if result.motion is None else
+                ObjectState.BOUNCING if result.contacted else item.state
+            )
             updates.append((item, state, WorldPosition(result.x, result.height),
                             result.motion))
         for item, state, position, motion in updates:

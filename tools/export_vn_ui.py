@@ -95,9 +95,9 @@ def export() -> None:
             if path.stem.startswith("status_")
             else {"panel": (300, 160)}
         )
-        for name, size in variants_to_export.items():
+        for name, target_size in variants_to_export.items():
             filename = f"{path.stem}_{name}.png"
-            nine_slice(image, size).save(DEST / filename, optimize=True)
+            nine_slice(image, target_size).save(DEST / filename, optimize=True)
             surfaces[f"{path.stem}.{name}"] = filename
     manifest = {
         "version": 1,
