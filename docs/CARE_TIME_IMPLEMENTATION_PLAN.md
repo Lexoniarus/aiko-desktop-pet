@@ -802,7 +802,7 @@ and UI contracts:
 | Moodlets | Concurrent emotional impressions with an identified cause, strength, duration and defined stacking/escalation behavior. They can influence numeric mood, speech and willingness to accept particular interactions. |
 | Numeric mood | The overall 0–100 value, combining the need-derived contribution and active Moodlet contributions through the agreed response timing. The present need-only maximum of 80 is not the final Moodlet balance. |
 | Emotional state | The qualitative overall emotional interpretation of numeric mood and the active emotional composition. Equal numeric mood values can have different emotional labels. Hunger and sleep state remain separate facts. |
-| Wishes | Concrete, time-bounded desired experiences with eligibility and fulfillment conditions. Initially food; later interactions may support jokes or specific games. Wish outcomes can create Moodlets under explicitly defined rules. |
+| Wishes | Inner desired experiences, distinct from whether Aiko chooses to express them. Low friendship or poor wellbeing does not remove her wishes. An active wish can itself create a Moodlet; expression and fulfillment are separate transitions. Use the currently supported food, game and social activities. |
 | Expression and action selection | Select dialogue topics, tone, immediate responses, gestures and interaction decisions using the relevant distinct inputs. A direct hunger statement can occur while the overall emotional state is positive. |
 
 A need may directly influence numeric mood, independently prompt an immediate
@@ -837,7 +837,7 @@ Source inspection identified these concrete refactoring points:
 | `pet/mood.py` (extend) | Rename need-only `MoodFactors` to `NeedMoodFactors` and the present target calculation to `calculate_need_mood_target()`. Compose that contribution with Moodlet effects in `calculate_mood_target()`; retain the clear `advance_mood()` responsibility. |
 | `pet/moodlets.py` (new) | Immutable Moodlet models and pure rules for qualifying creation, refresh/escalation, contribution and expiry. Specify each rule after the pending product discussion. |
 | `pet/emotions.py` (new) | Canonical emotional-state vocabulary and pure overall interpretation, for example `derive_emotional_state()`. Replace the mixed responsibility of `PetMind.emotion()`; do not maintain a second independent numeric mood or emotional store. |
-| `pet/wishes.py` (new) | Immutable wish models and explicit eligibility, selection, fulfillment and expiry decisions. Begin with actual supported food IDs; do not implement future joke/game capabilities merely to populate wishes. |
+| `pet/wishes.py` (new) | Immutable inner-wish models and separate selection, emotional-effect, expression-eligibility, fulfillment and expiry decisions. Cover supported food IDs and the now implemented games/social categories; do not build additional activities merely to populate wishes. |
 | `pet/status_hints.py` (retain, clarify) | Rename `MoodHint`, `choose_mood_hint()` and associated callers/formatters to `StatusHint`, `choose_status_hint()` and equivalent status-specific names. Keep advice distinct from emotional state. |
 | `pet/mind/` (refactor existing consumers) | Keep perception, interpretation, conversation and immediate reaction/action selection. Consume the canonical conditions, emotional state, Moodlets and wishes without owning another active Moodlet/wish collection. Split broad hooks such as `after_care()` into explicit responsibilities where necessary. |
 
@@ -1203,23 +1203,73 @@ expiry. Finding/returning an object does not automatically refund past losses.
 Do not automatically charge a single take as both withholding and relocation;
 a later independent rearrangement may qualify as a separate event.
 
+##### Recorded distinction: inner wishes and expressed wishes, 2026-10-20
+
+Status: owner-requested planning clarification, not implemented. Wishes remain
+part of Aiko's inner experience regardless of friendship or current wellbeing.
+Feeling comfortable and having sufficient trust govern whether she expresses
+a wish to the user, not whether she can have it. Do not suppress inner wishes
+merely because she is unwell, irritated, unfamiliar with the user or currently
+unwilling to ask for something. Urgent needs can take priority in action and
+speech without deleting or denying an existing desire.
+
+Separate these facts and transitions:
+
+| Layer | Meaning |
+| --- | --- |
+| Inner wish | Aiko wants a concrete experience, whether or not she communicates it. |
+| Wish-related Moodlet | Having the active wish can already produce an emotional impression, such as anticipation, curiosity or longing. Exact qualifying types, contributions and duration are the next discussion, not yet approved values. |
+| Wish expression | A context-dependent communication decision, governed by wellbeing, friendship/trust and the current interaction. Speaking does not create a second wish. |
+| Wish fulfillment | The desired activity actually occurs under its own completion rule. It can create its own fulfillment impression independently of prior expression. |
+
+Keep one canonical wish record with its communication status/evidence rather
+than separate mutable inner and spoken wish collections. `PetState`/`PetValues`
+own persistent wish state, emotional effects and transitions. Pure wish rules
+assess creation/selection separately from readiness to express. Mind/application
+consumers arrange an appropriate utterance and record actual communication;
+queueing a line alone is not an expressed wish. The existing user-visible status
+UI may show the inner wish and whether Aiko has voiced it. Opening that UI or
+the user reading it is not evidence that Aiko spoke or perceived communication.
+
+An unspoken wish may still be fulfilled. Recognize the actual event and its
+origin; do not require prior expression for satisfaction. Lack of fulfillment
+of an unspoken wish does not establish deliberate ignoring by the user. Prior
+general requests, such as the communicated request for food variety, retain
+their own evidence and consequences; do not confuse them with an inner wish.
+
+The food-wish numbers below remain earlier design candidates. Reconcile inner
+wish pacing/concurrency/lifetime separately from expression frequency and
+cooldowns before implementation. In particular, do not reinterpret earlier
+creation limits as a ban on having wishes at low friendship or poor wellbeing.
+No new numerical emotion or expression thresholds are approved in this update.
+
+The current checkout now supports RPS, Blackjack and Tic-Tac-Toe, and Plaudern,
+API Single/Two Parts and facts. See [minigames](MINIGAME_IMPLEMENTATION_PLAN.md)
+and [social content](SOCIAL_CONTENT.md). This clarification therefore supersedes
+the earlier food-only future-activity assumption. Capability/online-source
+availability remains distinct from social trust. Wish-specific emotional effects
+and completion rules for those activities still require discussion. Preserve
+API-only entertainment, opt-in and source ownership; neither unavailable API
+content nor an unplayed UI selection proves an ignored or fulfilled wish.
+
 ##### Recorded proposal: food wishes and fulfillment, 2026-10-19
 
-Status: owner-requested design proposal, not implemented. A food wish expresses
-specific appetite, such as wanting an apple later; it need not require low
-satiety. Immediate hunger or exhaustion takes priority over generating another
-wish. Wishes are opportunities for additional positive experiences, distinct
-from the ordinary care requirements and general requests for food variety.
+Status: owner-requested design proposal, not implemented, subject to the
+2026-10-20 inner/expression clarification above. A food wish represents specific
+appetite, such as wanting an apple later; it need not require low satiety.
+Immediate hunger or exhaustion can take priority in action/speech without
+preventing inner desire. Wishes are opportunities for additional positive
+experiences, distinct from care requirements and general requests for variety.
 
 | Rule | Candidate value |
 | --- | --- |
-| Concurrent active wishes | One initially |
-| New-wish limit | Two per rolling twenty-four hours |
-| Minimum interval between wish creation | Six real hours |
+| Concurrent active wishes | Earlier candidate: one initially; inner/expression pacing must be reconciled under the later clarification |
+| New-wish limit | Earlier candidate: two per rolling twenty-four hours; distinguish inner-wish selection from expression limits before implementation |
+| Minimum interval between wish creation | Earlier candidate: six real hours; reconsider its role separately from expression cooldowns |
 | Wish lifetime | Four real hours |
 | Wish creation | While Aiko is awake and the application is running |
 | Target | A specific implemented food ID; a matching portion need not currently exist on the desktop |
-| Presentation | Specific food and remaining time in the existing status UI, with occasional appropriate bubble expression |
+| Presentation | Specific inner wish and remaining time in status, distinguished from an actual context-qualified spoken request |
 
 Choose from suitable existing food types with variety in mind; do not request
 the food whose repetition is currently upsetting her. A wish does not prove
@@ -1330,10 +1380,11 @@ These impressions alone must not block needed care. Aiko can accept help while
 still emotionally affected; improving needs and recovering emotionally have
 distinct timing and implications.
 
-Next discussion: the overall emotional-state vocabulary and deterministic
-selection from numeric mood, active emotional impressions and relevant context.
-Physical need labels, sleep state, immediate reactions and long-term friendship
-must remain distinct from that overall interpretation.
+Further discussion: balance positive and negative impressions, define which
+inner wishes create Moodlets and when they are expressed, then settle the
+overall emotional-state vocabulary/selection from numeric mood, active emotional
+impressions and relevant context. Physical need labels, sleep state, immediate
+reactions and long-term friendship remain distinct from that interpretation.
 
 #### 5C. Connect status, expression and interaction decisions
 
