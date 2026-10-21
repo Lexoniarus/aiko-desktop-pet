@@ -15,8 +15,9 @@
 > explicitly recorded baseline has full-suite evidence. Physical desktop acceptance
 > is separately recorded.
 > The 2026-10-21 need-aware wish and menu-admission amendment below is approved
-> for planning only and remains unimplemented. Revised petting stages are still
-> being discussed; settle these practical behavior corrections before final tests.
+> for planning only and remains unimplemented. The subsequent petting/UI/social
+> amendments below are also planning decisions; complete their later authorized
+> implementation before final tests.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
@@ -1245,8 +1246,8 @@ or continued existence of this Moodlet adds no automatic friendship deduction.
 ##### Recorded proposal: excessive/unwelcome petting, 2026-10-19
 
 Historical basis: the 2026-10-21 practical review supersedes immediate refusal
-as the intended first response to sufficient affection. Revised intermediate
-stages and repetition counts remain under discussion; runtime is unchanged.
+as the intended first response to sufficient affection. The agreed intermediate
+stages and repetition counts are recorded in the amendment below; runtime is unchanged.
 
 Status: owner-requested design proposal, not implemented. Working Moodlet label:
 "Too much closeness". Distinguish unwelcome proximity from the irritation caused
@@ -3764,11 +3765,126 @@ and refill pacing; independently check selector navigation, interruption of
 incidental speech and protection of actual committed actions. Reuse existing
 headless contract tests with injected time. No windows, mouse control or CI.
 
-### Decisions still open after this amendment
+### Friendship investigation remains separate
 
-The petting flow must distinguish welcome care, accepted "enough" feedback,
-a clearly communicated boundary and repeated disregard before a lasting
-Moodlet. Concrete counts/timing are the next discussion; this amendment does
-not silently approve replacement petting thresholds or repetition values.
 The reported friendship plateau needs a separate gain/loss balance diagnosis;
 no friendship tuning change or save modification is approved by this record.
+
+### Agreed staged petting boundary, 2026-10-21
+
+The owner accepted the following proposal while adding the UI/social points
+below. This records product rules, not implementation authorization.
+
+Retain the pre-action affection tolerance of 60 at friendship levels 1–2,
+80 at levels 3–5 and 90 at levels 6–10. Below that tolerance, petting is welcome
+and grants ordinary accepted care. An otherwise welcome stroke that crosses
+the tolerance remains welcome and is not retroactively counted as excess.
+
+| Additional attempt while affection is already sufficient | Response | Consequence |
+| --- | --- | --- |
+| First | Accept the stroke with friendly "enough" feedback | No Moodlet or direct friendship loss |
+| Second | Accept the stroke with firmer "really enough" feedback | No Moodlet or direct friendship loss |
+| Third | Refuse this stroke and explicitly ask for no further petting | Clear boundary, still no Moodlet or direct friendship loss |
+| Next attempt after the expressed boundary | Refuse; acknowledge disregard | Create crowded Moodlet level one and apply the separate boundary-loss policy |
+
+Only semantic additional attempts count, never welcome care, UI reads or input
+blocked before delivery. The warning sequence resets after ten minutes without
+another additional attempt; within that window it continues. The actual display
+of the clear boundary is authoritative for subsequent disregard, not selection
+of a response that has not yet been shown. Persist the required bounded evidence
+with existing pet-owned interaction memory so reopening cannot bypass it.
+
+Retain three further boundary violations per Moodlet-level increase, capped at
+three. Refusal lasts five/ten/twenty minutes at levels one/two/three, renewed by
+the resulting level on each perceived violation rather than accumulating time.
+Each disregard after the explicit boundary costs 0.25 friendship, capped at one
+point per rolling ten minutes. Quiet-time decay remains one Moodlet level per
+twenty minutes without another violation, including closed/standby time.
+
+After the current response ends, the petting control becomes technically
+operable again; a semantic refusal must be expressed by Aiko rather than a
+permanent disabled button. During actual refusal there is no petting animation,
+affection gain, accepted-care credit or wish completion. Expiry of a refusal
+reassesses current willingness rather than erasing the emotional impression.
+An affection wish also requires willingness below the applicable tolerance;
+the general need threshold must not create a desire for already unwelcome care.
+
+### Toolbar movement and compact footer controls
+
+Extend dragging from the name label to the complete top bar, including its
+empty background and title contents. Move Settings out of that bar into the
+footer, next to Pin/Unpin. Both controls use matching compact, narrower button
+dimensions with a centered icon and no adjacent visible pin text. Show pin
+state through the existing selected/artwork treatment; retain meaningful
+tooltips/accessibility labels for both actions. Keep the existing Details
+control and other navigation rather than treating the footer change as removal.
+
+Current code attaches `WindowDrag` only to `ActionToolbar.today`. Reuse its
+existing multi-handle support for the title container and child surfaces;
+do not install another movement controller or global pointer bindings. Keep
+existing position persistence, drag callbacks, speech placement and hover
+lifecycle. `set_pinned()` must retain selected-state feedback without restoring
+a visible text label. Reuse the existing button/icon styling owner.
+
+### Object details: discovery is distinct from identification
+
+The current `ObjectStatusSnapshot` exposes actual desktop count and remembered
+known/assigned/missing counts, filtering out unrecognized sightings. Add clear
+read-only reporting for these different stages:
+
+- Not discovered: actual desktop objects Aiko has not yet observed.
+- Discovered but unidentified: she has observed a thing but has not identified it.
+- Identified/known: acquired identity knowledge, with assignment and missing
+  status retaining their separate meanings.
+
+World stock and subjective knowledge are different dimensions, not one set of
+interchangeable totals. Do not compute "undiscovered" as desktop minus known:
+known can include missing memories and observed unknowns are not identified.
+Use existing World/perception/memory evidence in the application read projection;
+verify associations before claiming exact current-object counts. Ambiguous
+associations must not silently become identified or undiscovered objects.
+This diagnostic display must neither reveal hidden identity to Mind nor discover
+objects, check remembered places, trigger searches or alter emotional state.
+Keep one read model and localized labels, not an extra discovery inventory.
+
+### API entertainment framing and last-ten repetition protection
+
+Make all three API categories playful authored presentations around unchanged
+provider content, through the existing `Reaction`/`Cue` sequence:
+
+| Category | Framing direction |
+| --- | --- |
+| Spruch / Single | For example, "Hey, ich hab neulich folgenden Spruch gehört." |
+| Witz / Two Parts | For example, "Hey, ich hab folgenden Witz für dich." followed by setup and punchline with suitable timing |
+| Kurioser Fakt | For example, "Das hab ich neulich im Internet gesehen ..." followed by the complete provider fact |
+
+Use restrained varied reactions such as a suitable emote or "hihi" where it fits
+the actual content; do not insert the same laugh into every sequence or spoil a
+punchline. These are framing examples, not final approved catalogue wording.
+Do not fabricate authored replacement jokes/facts, translate/rewrite provider
+content, create personal memories from the intro, truncate text to make room,
+or duplicate need/reward/wish effects for extra presentation beats. Review the
+current five-text-beat limit alongside framing; retain content validation and
+bounded playback rather than silently dropping provider words.
+
+`SocialContentCoordinator` already checks namespaced provider identity and a
+normalized text fingerprint against offered, buffered and recent entries. Its
+recent window is currently only two delivered items per category. Extend the
+target to the **last ten admitted contents per API category**, retaining the
+cross-category identity/fingerprint comparison and existing reservation rules.
+An incrementing local counter would identify fetches, not repeated content, and
+is not a substitute for this existing content-identity comparison.
+
+Record history only when playback is actually admitted, not when warming or
+merely selecting content. Keep this anti-repeat history distinct from full-
+sequence wish fulfillment. Preserve at most three additional duplicate fetch
+attempts per refill and stop with the existing recoverable error if uniqueness
+cannot be obtained; no unbounded retry loop or repeated-item fallback.
+Plan a bounded persistence extension in the existing local save path for recent
+provider IDs/fingerprints so restart does not routinely replay the same window;
+do not persist warm buffers/full API stories or create another save store.
+
+Later focused checks belong to existing drag/button, object read-projection,
+social preparation/coordinator and save contracts. Test these headlessly with
+controlled callbacks and fake API responses after implementation is authorized;
+no test windows, mouse control, live API requests or CI during planning.
