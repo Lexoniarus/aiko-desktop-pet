@@ -5195,3 +5195,25 @@ contracts, not Windows/Tk visual acceptance or a repaired native hang.
 Both Moodlet defects are corrected in separate pushed commits. The menu hang
 remains an explicit open item before slice 9; the full-suite/final review gate
 has not started and is not represented by these selected checks.
+
+### Menu correction 1: stable vertical scrollbar geometry
+
+Autohiding vertical ScrollRegion bars now live in a fixed ten-pixel gutter.
+The gutter remains packed while only its scrollbar child is hidden. Therefore
+neither transient overflow against an old allocation nor genuine overflow can
+change the parent's requested width or the canvas width and feed another text
+reflow. A hidden bar leaves that narrow gutter empty; horizontal rows retain
+ordinary overflow/height behavior. The existing ScrollRegion still owns fit,
+actual viewport measurement, scrolling and destruction; no domain/runtime owner
+or extra scheduler was introduced. This corrects the demonstrated width change,
+not a proven native AppHang cause. A temporary bar decision during allocation
+may still occur, but it cannot resize its parent or its viewport.
+
+The new requested-versus-allocated geometry regressions fail against the old
+code with 686 != 676 and pass with the gutter. They retain capped-content and
+actual parent-clipping scrolling, plus horizontal removal/offset reset. These
+are explicit pack-request doubles, not a claimed native geometry simulation.
+Selected scrolling, VN status and menu admission checks pass 21 tests in 0.095
+seconds (longest 0.070); scoped Ruff, strict Mypy and Pyright pass. No test exceeds
+ten seconds. Native constructors are blocked; no windows, native input or CI.
+The next small correction examines synchronous idle draining during placement.

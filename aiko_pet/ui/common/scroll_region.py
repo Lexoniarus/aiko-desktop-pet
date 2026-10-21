@@ -41,8 +41,15 @@ class ScrollRegion:
         self._bar_visible = not autohide
         self._layout_idle: str | None = None
         self._item = self.canvas.create_window(0, 0, window=self.body, anchor="nw")
+        # Autohiding must not change the viewport width and reflow its content.
+        # A fixed gutter also breaks the parent-size/overflow feedback cycle.
+        self._gutter: tk.Frame | None = None
+        if autohide and not horizontal:
+            self._gutter = tk.Frame(self.frame, width=10, height=1, bg=color)
+            self._gutter.pack(side="right", fill="y")
+            self._gutter.pack_propagate(False)
         self.scrollbar = tk.Scrollbar(
-            self.frame,
+            self._gutter if self._gutter is not None else self.frame,
             orient="horizontal" if horizontal else "vertical",
             command=self.canvas.xview if horizontal else self.canvas.yview,
             width=10,
@@ -178,10 +185,13 @@ class ScrollRegion:
             return
         self._bar_visible = visible
         if visible:
-            self.scrollbar.pack(
-                side="bottom" if self._horizontal else "right",
-                fill="x" if self._horizontal else "y", before=self.canvas,
-            )
+            if self._gutter is not None:
+                self.scrollbar.pack(fill="both", expand=True)
+            else:
+                self.scrollbar.pack(
+                    side="bottom" if self._horizontal else "right",
+                    fill="x" if self._horizontal else "y", before=self.canvas,
+                )
         else:
             self.scrollbar.pack_forget()
             if self._horizontal:
