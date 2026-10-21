@@ -5,6 +5,7 @@ import math
 from ...pet.content import GERMAN_TEXT
 from ...pet.wishes import WishId, WishObjective, WishTargetKind
 from .contracts import MoodletView, WishView
+from .moodlet_causes import cause_description
 
 MOODLET_ICONS = {
     "food_fulfilled": "moodlet_food_fulfilled",
@@ -62,6 +63,7 @@ def moodlet_description(view: MoodletView) -> str:
             total=duration_text(value.remaining_decay_seconds),
         )
     )
+    parts.extend(cause_description(cause) for cause in value.causes)
     return "\n".join(parts)
 
 
@@ -90,9 +92,11 @@ def wish_description(view: WishView) -> str:
         view.target_label,
         view.description,
         wish_progress(view),
-        GERMAN_TEXT.format(
-            "vn.wish_remaining", time=duration_text(view.value.remaining_seconds)
-        ),
+        (GERMAN_TEXT.format("vn.wish_pinned") if view.value.pinned
+         else GERMAN_TEXT.format(
+             "vn.wish_remaining", time=duration_text(view.value.remaining_seconds)
+         )),
+        GERMAN_TEXT.format("vn.wish_controls"),
         GERMAN_TEXT.format(
             "vn.wish_spoken" if view.value.expressed else "vn.wish_inner"
         ),

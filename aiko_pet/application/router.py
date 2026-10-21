@@ -72,6 +72,17 @@ class ApplicationRouter:
         self._require_owner_thread()
         self._care.advance_time(inputs)
 
+    def set_wish_pinned(
+        self, instance_id: int, pinned: bool, *, inputs: SessionInputs,
+    ) -> None:
+        """UI preference, not personal contact or a care reward."""
+        self._require_owner_thread()
+        self._care.set_wish_pinned(instance_id, pinned, inputs)
+
+    def dismiss_wish(self, instance_id: int, *, inputs: SessionInputs) -> None:
+        self._require_owner_thread()
+        self._care.dismiss_wish(instance_id, inputs)
+
     def complete_social(
         self, completion: SocialCompletion, *, inputs: SessionInputs,
         arrangement_ready: bool,

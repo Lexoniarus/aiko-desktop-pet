@@ -8,6 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Add per-wish icon pins and neutral right-click dismissal through existing
+  persisted wish rules. Show each active Moodlet's real stored causes, original
+  objective and actual results, preserving unknown legacy causes.
+
 - Separate opening Snack/Play/Talk selectors from starting their concrete
   actions. Let short incidental comments and click replies yield to deliberate
   care while retaining story, game-session and World custody protections.

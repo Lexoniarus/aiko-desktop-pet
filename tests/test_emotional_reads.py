@@ -9,9 +9,14 @@ from aiko_pet.pet.friendship_history import FriendshipHistory
 from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
 from aiko_pet.pet.moodlets import (
     MoodletAttribution,
+    MoodletCause,
+    MoodletCauseKind,
     MoodletEpisode,
+    MoodletGameResult,
     MoodletId,
+    MoodletOutcome,
     MoodletState,
+    MoodletWishCause,
 )
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
@@ -27,12 +32,54 @@ from aiko_pet.pet.wishes import (
     WishState,
 )
 from aiko_pet.telemetry import ComputerSnapshot
-from aiko_pet.ui.view_models.emotional_text import MOODLET_ICONS, wish_progress
+from aiko_pet.ui.view_models.emotional_text import (
+    MOODLET_ICONS,
+    moodlet_description,
+    wish_progress,
+)
+from aiko_pet.ui.view_models.moodlet_causes import cause_description
 from aiko_pet.ui.view_models.projections import project_hover, project_status
 from tools.pet_test_support import set_test_pet_values
 
 
 class EmotionalReadTests(unittest.TestCase):
+    def test_all_tiers_show_only_real_causes_and_the_original_goal(self):
+        causes = tuple(MoodletCause(
+            MoodletCauseKind.WISH_FULFILLED, i, f"round:{i}",
+            wish=MoodletWishCause(i, "win_overall", game, "total_wins", 3),
+            target_id=game, outcome=MoodletOutcome.WIN,
+            game=MoodletGameResult(MoodletOutcome.DRAW, 7, 3, 2),
+        ) for i, game in enumerate(("blackjack", "tic_tac_toe",
+                                   "rock_paper_scissors"), 1))
+        for level, receipts in ((1, causes), (2, causes[:1]), (3, causes)):
+            pet = PetState(moodlets=MoodletState(active=(MoodletEpisode(
+                1, MoodletId.PRIDE, level, 0, 3, 100, causes=receipts,
+            ),)))
+            before = pet.capture_checkpoint()
+            view = project_hover(snapshot_pet(pet), context_at(1800000000),
+                                 ComputerSnapshot(), observe_computer=False)
+            text = moodlet_description(view.emotional.moodlets[0])
+            self.assertEqual(text.count("Wunsch erfüllt"), len(receipts))
+            self.assertIn("Blackjack", text)
+            self.assertIn("Ursprüngliche Zielmenge: 3", text)
+            self.assertIn("Letzte Runde: unentschieden", text)
+            self.assertIn("Ergebnis des Wunsches/Erlebnisses: gewonnen", text)
+            self.assertEqual(pet.capture_checkpoint(), before)
+
+    def test_food_cause_distinguishes_avoided_target_from_actual_handover(self):
+        cause = MoodletCause(
+            MoodletCauseKind.WISH_FULFILLED, 1, "offer:1",
+            wish=MoodletWishCause(1, "avoid_food", "donut", "food_handover", 0),
+            target_id="apple", outcome=MoodletOutcome.HANDOVER,
+        )
+        text = cause_description(cause)
+        self.assertIn("Donut", text)
+        self.assertIn("Tatsächlich: Apfel", text)
+        self.assertIn("übergeben", text)
+        legacy = cause_description(MoodletCause(MoodletCauseKind.LEGACY, 0))
+        self.assertIn("nicht gespeichert", legacy)
+        self.assertNotIn("mit dir", legacy)
+
     def test_status_uses_real_target_sleep_reason_stage_and_known_contact(self):
         state = PetState(
             satiety=100,

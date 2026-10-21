@@ -7,6 +7,27 @@ from .moodlets import MoodletId
 from .wishes import GAME_GOAL_TEXT_VARIANTS, WishId, WishObjective, WishRestriction
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
+    "vn.wish_pinned": frozenset([]),
+    "vn.wish_controls": frozenset([]),
+    "vn.cause_unknown_target": frozenset([]),
+    "vn.cause_wish": frozenset(['wish', 'target']),
+    "vn.cause_goal_count": frozenset(['count']),
+    "vn.cause_target": frozenset(['target']),
+    "vn.cause_result": frozenset(['result']),
+    "vn.cause_game": frozenset(['round', 'rounds', 'wins', 'losses']),
+    "vn.cause.legacy": frozenset([]),
+    "vn.cause.wish_fulfilled": frozenset([]),
+    "vn.cause.wish_failed": frozenset([]),
+    "vn.cause.interaction": frozenset([]),
+    "vn.cause.poor_care": frozenset([]),
+    "vn.outcome.unknown": frozenset([]),
+    "vn.outcome.completed": frozenset([]),
+    "vn.outcome.win": frozenset([]),
+    "vn.outcome.loss": frozenset([]),
+    "vn.outcome.draw": frozenset([]),
+    "vn.outcome.handover": frozenset([]),
+    "vn.outcome.intake": frozenset([]),
+
     "social.intro.single": frozenset(),
     "social.intro.twopart": frozenset(),
     "social.intro.fact": frozenset(),

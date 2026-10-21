@@ -48,6 +48,7 @@ class DesktopCareRuntime:
     ) -> None:
         self._root, self._state, self._router = root, state, router
         self._world, self._contact = world, contact
+        self._hover = hover
         self._player = player
         self._cancel_action = cancel_action
         self._presenter = CarePresenter(CareViewPorts(
@@ -102,6 +103,20 @@ class DesktopCareRuntime:
 
     def advance_time(self) -> None:
         self._router.advance_time(self._inputs(time.time(), time.monotonic()))
+
+    def set_wish_pinned(self, instance_id: int, pinned: bool) -> None:
+        self._router.set_wish_pinned(
+            instance_id, pinned, inputs=self._inputs(time.time(), time.monotonic()),
+        )
+        self._save()
+        self._hover.refresh_toolbar()
+
+    def dismiss_wish(self, instance_id: int) -> None:
+        self._router.dismiss_wish(
+            instance_id, inputs=self._inputs(time.time(), time.monotonic()),
+        )
+        self._save()
+        self._hover.refresh_toolbar()
 
     def observe_game_round(self, event: GameRoundEvent) -> None:
         self._router.observe_game_round(

@@ -63,6 +63,8 @@ class HoverUiPorts:
     game_round: Callable[[GameRoundEvent], None] = lambda _event: None
     defer_game: Callable[[Callable[[], None]], None] | None = None
     game_dialogue: Callable[[str], str] | None = None
+    pin_wish: Callable[[int, bool], None] = lambda _id, _pinned: None
+    dismiss_wish: Callable[[int], None] = lambda _id: None
     can_interact: Callable[[str], bool] = lambda _action: True
     game_ready: Callable[[], bool] = lambda: True
     cards: GameCardPorts | None = None
@@ -398,6 +400,8 @@ class HoverUi:
                     move_speech=self._ports.move_speech,
                     restore_stack=self._ports.restore_stack,
                     can_interact=self._ports.can_interact,
+                    pin_wish=self._ports.pin_wish,
+                    dismiss_wish=self._ports.dismiss_wish,
                     can_place_item=self._ports.can_place_item,
                 ),
                 always_on_top=self._ports.always_on_top(),

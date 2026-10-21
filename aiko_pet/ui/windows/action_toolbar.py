@@ -163,6 +163,7 @@ class ActionToolbar:
             self.skin,
             self.tips,
             {choice.id: choice.image_path for choice in food_choices},
+            pin_wish=actions.pin_wish, dismiss_wish=actions.dismiss_wish,
         )
         self.wishes.frame.pack(fill="x", pady=(4, 8))
         care = tk.Frame(content, bg=self.skin.background)

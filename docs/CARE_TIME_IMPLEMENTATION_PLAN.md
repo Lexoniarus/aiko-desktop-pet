@@ -4956,3 +4956,24 @@ Selected window-free contact, menu/placement, playback and VN checks pass
 43 tests in 0.302 seconds (longest 0.059 seconds, none over ten).
 Ruff, scoped strict Mypy and Pyright pass. Native Tk/Toplevel constructors
 were blocked; no test windows, pointer control, live APIs or CI were used.
+
+### Slice 7 delivery B: individual wish controls and concrete cause readouts
+
+WishPanel provides a selected icon pin on each card and neutral right-click
+dismissal on its contents. It projects saved pin state and no-expiry wording
+without replacing cards on time/pin refresh. Callbacks cross HoverUi's explicit
+ports, DesktopCareRuntime and the existing application router/controller;
+PetState remains the sole writer. Actual elapsed time is accounted before the
+command and the result is saved/refreshed, without recording care/contact.
+
+Moodlet descriptions localize their stored original wish, target, goal count,
+actual offered/consumed food and settled game result. Overall objective result
+and last-round result stay separate. Each real cause is shown at every current
+tier; a higher initial tier does not fabricate extra causes. Legacy unknown
+causes stay explicit, and all data still expires with its existing episode.
+
+Selected command/persistence, emotional readout, catalogue, VN and application
+checks pass 30 tests in 0.190 seconds (longest 0.033 seconds, none over ten).
+Tests block native constructors and use widget doubles, isolated in-memory
+saves and actual router/domain transitions. Scoped Ruff, strict Mypy and Pyright
+pass. No native windows, pointer automation, live APIs or CI were used.

@@ -329,6 +329,26 @@
     "wish.goal.total_wins.description": "Aiko möchte Siege im gewünschten Spiel sammeln, auch über mehrere Sitzungen und ohne Siegesserie.",
     "wish.goal.total_wins.utterance": "Bei {target} möchte ich insgesamt {rounds} Siege sammeln. Magst du mitspielen?",
     "vn.game_wins_progress": "{wins}/{required} Siege · {completed} Runden, {losses} Niederlagen",
-    "vn.wins_short": "{completed}/{required} Siege"
+    "vn.wins_short": "{completed}/{required} Siege",
+    "vn.wish_pinned": "Fixiert · ohne Zeitablauf",
+    "vn.wish_controls": "Pin: Wunsch fixieren oder lösen. Rechtsklick: Wunsch entfernen.",
+    "vn.cause_unknown_target": "Unbekanntes Ziel",
+    "vn.cause_wish": "Wunsch: {wish} · {target}",
+    "vn.cause_goal_count": "Ursprüngliche Zielmenge: {count}",
+    "vn.cause_target": "Tatsächlich: {target}",
+    "vn.cause_result": "Ergebnis des Wunsches/Erlebnisses: {result}",
+    "vn.cause_game": "Letzte Runde: {round} · Insgesamt {rounds} Runden, {wins} Siege, {losses} Niederlagen",
+    "vn.cause.legacy": "Der konkrete Auslöser wurde nicht gespeichert.",
+    "vn.cause.wish_fulfilled": "Wunsch erfüllt",
+    "vn.cause.wish_failed": "Spielwunsch gescheitert",
+    "vn.cause.interaction": "Interaktionserlebnis",
+    "vn.cause.poor_care": "Länger schlechte Versorgung",
+    "vn.outcome.unknown": "nicht bekannt",
+    "vn.outcome.completed": "abgeschlossen",
+    "vn.outcome.win": "gewonnen",
+    "vn.outcome.loss": "verloren",
+    "vn.outcome.draw": "unentschieden",
+    "vn.outcome.handover": "übergeben",
+    "vn.outcome.intake": "gegessen"
   }
 }

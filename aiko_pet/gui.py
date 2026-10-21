@@ -255,6 +255,10 @@ class DesktopPet:
                 settings_snapshot=self._views.settings_view,
                 anchor=self._views.anchor,
                 care=self.interact,
+                pin_wish=lambda key, pinned: self._care_runtime.set_wish_pinned(
+                    key, pinned,
+                ),
+                dismiss_wish=lambda key: self._care_runtime.dismiss_wish(key),
                 can_interact=lambda action: self._contact.can_interact(action),
                 game_ready=lambda: self._contact.can_interact("play"),
                 cards=self._game_visuals.ports,

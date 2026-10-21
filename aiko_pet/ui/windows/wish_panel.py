@@ -3,11 +3,12 @@
 import tkinter as tk
 from functools import partial
 from pathlib import Path
-from typing import Mapping
+from typing import Callable, Mapping
 
 from ...asset_paths import PLAYING_CARDS_DIR
 from ...pet.content import GERMAN_TEXT
 from ..common.description_tip import DescriptionTip
+from ..common.image_button import ImageButton
 from ..common.panel_surface import PanelSurface
 from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
@@ -27,7 +28,9 @@ class WishPanel:
         parent: tk.Misc,
         skin: AikoSkin,
         tips: DescriptionTip,
-        food_icons: Mapping[str, Path],
+        food_icons: Mapping[str, Path], *,
+        pin_wish: Callable[[int, bool], None] = lambda _id, _pinned: None,
+        dismiss_wish: Callable[[int], None] = lambda _id: None,
     ) -> None:
         self.frame = tk.Frame(parent, bg=skin.background)
         tk.Label(
@@ -49,6 +52,8 @@ class WishPanel:
         self._scroll.frame.pack(fill="x")
         self._skin, self._tips = skin, tips
         self._food_icons = food_icons
+        self._pin_wish, self._dismiss_wish = pin_wish, dismiss_wish
+        self._pins: dict[int, ImageButton] = {}
         self._ids: tuple[int, ...] | None = None
         self._items: dict[int, WishView] = {}
         self._labels: dict[int, tk.Label] = {}
@@ -65,6 +70,7 @@ class WishPanel:
             self._labels.clear()
             self._objectives.clear()
             self._meta.clear()
+            self._pins.clear()
             for child in self._scroll.body.winfo_children():
                 child.destroy()
             self._cards.clear()
@@ -94,7 +100,8 @@ class WishPanel:
                 p for p in (
                     GERMAN_TEXT.format(
                         "vn.wish_meta",
-                        time=duration_text(item.value.remaining_seconds),
+                        time=(GERMAN_TEXT.format("vn.wish_pinned") if item.value.pinned
+                              else duration_text(item.value.remaining_seconds)),
                         state=GERMAN_TEXT.format(
                             "vn.wish_spoken_tag"
                             if item.value.expressed
@@ -114,6 +121,7 @@ class WishPanel:
             ):
                 if widget.cget("text") != text:
                     widget.configure(text=text)
+            self._pins[key].set_selected(item.value.pinned)
         self._scroll.refresh_layout()
 
     def _card(self, item: WishView) -> None:
@@ -164,15 +172,39 @@ class WishPanel:
             wraplength=180, justify="left", anchor="w",
         )
         meta.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(4, 0))
+        pin = skin.button(
+            card, "", partial(self._toggle_pin, item.value.instance_id),
+            size="small", icon=skin.images.icon("ui_pin", 24),
+        )
+        pin.grid(row=0, column=2, sticky="ne", padx=(4, 0))
+        self._pins[item.value.instance_id] = pin
+        self._tips.attach(pin, lambda: GERMAN_TEXT.format("vn.wish_controls"))
         self._labels[item.value.instance_id] = label
         self._objectives[item.value.instance_id] = objective
         self._meta[item.value.instance_id] = meta
-        for widget in (surface.frame, card, icon, label, objective, meta):
+        for widget in (surface.frame, card, icon, label, objective, meta, pin):
+            widget.bind(
+                "<Button-3>", partial(self._dismiss, item.value.instance_id), add="+",
+            )
+            if widget is pin:
+                continue
             self._tips.attach(
                 widget,
                 partial(self._description, item.value.instance_id),
                 focusable=widget is surface.frame,
             )
+
+    def _toggle_pin(self, key: int) -> None:
+        item = self._items.get(key)
+        if item is not None:
+            self._tips.hide()
+            self._pin_wish(key, not item.value.pinned)
+
+    def _dismiss(self, key: int, _event: tk.Event) -> str:
+        if key in self._items:
+            self._tips.hide()
+            self._dismiss_wish(key)
+        return "break"
 
     def _description(self, key: int) -> str:
         return wish_description(self._items[key])

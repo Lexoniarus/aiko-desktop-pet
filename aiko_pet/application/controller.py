@@ -63,6 +63,16 @@ class CareController:
             self._state, self._clock, inputs, progression=self._progression,
         )
 
+    def set_wish_pinned(
+        self, instance_id: int, pinned: bool, inputs: SessionInputs,
+    ) -> None:
+        self.advance_time(inputs)
+        self._state.set_wish_pinned(instance_id, pinned)
+
+    def dismiss_wish(self, instance_id: int, inputs: SessionInputs) -> None:
+        self.advance_time(inputs)
+        self._state.dismiss_wish(instance_id)
+
     def complete_social(
         self, completion: SocialCompletion, inputs: SessionInputs, *,
         arrangement_ready: bool,
