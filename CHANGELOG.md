@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Drag the care window from its whole top bar. Place matching icon-only Pin
+  and Settings controls in its footer, retaining Details and focus descriptions.
+  Distinguish undiscovered objects, unidentified sightings and uncertain
+  associations without granting Aiko hidden identity or location knowledge.
+
 - Add per-wish icon pins and neutral right-click dismissal through existing
   persisted wish rules. Show each active Moodlet's real stored causes, original
   objective and actual results, preserving unknown legacy causes.

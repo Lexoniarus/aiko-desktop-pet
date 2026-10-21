@@ -15,16 +15,18 @@
 > explicitly recorded baseline has full-suite evidence. Physical desktop acceptance
 > is separately recorded.
 > The 2026-10-21 need-aware wish and staged-petting amendments are delivered
-> below; menu admission and the UI/social amendments remain planned. Complete
-> their later authorized implementation before final tests.
+> below; the UI/menu amendments are delivered in slice 7. The social/API
+> amendment remains pending before the final integrated tests.
 > The latest 2026-10-21 continuous-friendship amendment replaces the earlier
 > capped care/wish reward model. Its 30-second
 > balance values are approved; their incremental runtime delivery is recorded below.
-> The later corrections are delivered incrementally below. Slices 1–6 supply
+> The later corrections are delivered incrementally below. Slices 1–7 supply
 > definitions/storage, need-aware eligibility, weighted selection, lifecycle and
 > game/food completion with concrete Moodlet causes, and staged petting
 > boundaries, the carried-item absence correction and continuous friendship/status
-> cadence. The remaining UI/admission and API changes remain pending.
+> cadence, menu admission, wish controls and status details. API presentation
+> and recent-content protection remain pending in slice 8; the final integrated
+> suite and OOP review remain slice 9.
 > Existing game goals retain their original meaning and progress, as approved
 > by the owner.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
@@ -4977,3 +4979,50 @@ checks pass 30 tests in 0.190 seconds (longest 0.033 seconds, none over ten).
 Tests block native constructors and use widget doubles, isolated in-memory
 saves and actual router/domain transitions. Scoped Ruff, strict Mypy and Pyright
 pass. No native windows, pointer automation, live APIs or CI were used.
+
+### Slice 7 delivery C: toolbar movement, footer and discovery details
+
+The whole title surface and its label share the existing WindowDrag. Pin and
+Settings now sit beside each other in the footer, using the same 40-by-40 source
+button art, symmetric padding and centered icons. Selected state represents
+pinning without restoring visible text. Keyboard-focus/hover descriptions and
+the Details control remain available. Position persistence and speech movement
+still use the existing callbacks; no new pointer hook or movement owner exists.
+
+ObjectStatusSnapshot adds undiscovered stock, unidentified sightings and
+explicit unresolved associations. The projection uses acquired instance
+bindings and the current awareness tracker, never desktop-minus-known,
+geometry-based identification or catalogue identity. Old unbound sightings
+can make unmatched stock uncertain; that stock is reported as unresolved rather
+than falsely undiscovered. Learned/missing knowledge remains an independent
+dimension and can outnumber current desktop portions. Diagnostics do not poll
+perception, discover items, check places, start searches or write memory.
+
+The deferred game callback rechecks actual admission after the World's own
+pending marker clears. The existing interrupt owner provides this explicit
+after-release ordering; normal care retains its protected ordering and social
+waiting retains its existing scheduling. Game opening otherwise keeps its
+existing synchronous callback behavior and one pending reservation. Headless
+tests cover both the marker ordering and rejection of a no-longer-valid choice.
+
+A focused architecture check caught the composition root's size boundary.
+Font selection now belongs to the existing shared AikoSkin, and cursor-motion
+delivery binds directly to DesktopAttentionRuntime after checking all callers.
+The remaining native test caller follows that canonical owner. The unchanged
+640-line guard passes; no exception or second feature owner was added.
+
+Final selected step-7 verification passes **126 tests in 0.995 seconds**.
+The longest individual test is the import-cycle check at **0.217 seconds**;
+none exceeds ten seconds. Scoped Ruff, strict Mypy (19 source/helper files),
+Pyright (all changed Python files), dependency and UI architecture checks pass.
+Existing native assertions were migrated for icon-only pinning, available
+navigation, interruptible click feedback and the World callback signature;
+those native tests were inspected and statically checked, not executed.
+
+All executed UI tests use widget doubles with native Tk/Toplevel construction
+blocked. No test window, mouse control, live API, normal save mutation, full
+suite or GitHub CI was used. Physical layout/input acceptance is still manual.
+
+Slice 7 is complete. Slice 8 is the separate API entertainment framing and
+last-ten repetition protection; slice 9 remains the final integrated suite,
+slow-test audit and OOP review after the authorized changes are complete.

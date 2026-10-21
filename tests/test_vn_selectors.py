@@ -9,6 +9,7 @@ from unittest.mock import Mock, patch
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.application.social_content import SocialCategory
+from aiko_pet.games.contracts import GameId
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
@@ -98,6 +99,17 @@ class EmbeddedSelectorTests(unittest.TestCase):
         self.assertFalse(self.ui.game_open)
         self.assertIsNone(self.ui.game_window)
         self.assertEqual(self.toplevel.call_count, 1)
+
+    def test_pending_game_rechecks_before_any_character_or_window_effect(self):
+        self.ui._ports = replace(self.ports, game_ready=lambda: self.allowed)
+        self.ui.open_game(GameId.TIC_TAC_TOE)
+        self.assertTrue(self.ui.game_open)
+        self.allowed = False
+        self.deferred[0]()
+        self.assertFalse(self.ui.game_open)
+        self.assertIsNone(self.ui.game_window)
+        cast(Mock, self.ports.game_speech.start).assert_not_called()
+        self.assertEqual(self.toplevel.call_count, 0)
 
     def test_social_opt_out_loading_back_and_single_window_switching(self):
         self.ui.open_food_menu()

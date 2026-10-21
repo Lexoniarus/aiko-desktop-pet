@@ -51,8 +51,8 @@ class ClickGuiTests(unittest.TestCase):
             self.click(1 if count % 2 else 3)
             self.assertEqual(len(self.pet.mind.clicks), count)
             self.assertIsNotNone(self.pet._reaction_player.pending_timer)
-            self.assertFalse(self.pet._contact.can_interact("pet"))
-            self.assertFalse(self.pet._contact.can_interact("play"))
+            self.assertTrue(self.pet._contact.can_interact("pet"))
+            self.assertTrue(self.pet._contact.can_interact("play"))
         self.assertEqual(self.pet._reaction_player.event, "click_boundary")
         self.assertGreater(self.pet.mind.irritation_reaction_until, time.monotonic())
         self.assertEqual(self.pet.state.capture_checkpoint(), replace(

@@ -86,13 +86,17 @@ class CareGuiTests(unittest.TestCase):
                     all(
                         button.cget("state") == "disabled"
                         for action, button in self.toolbar.buttons.items()
-                        if action != "place_item"
+                        if action not in ("place_item", "talk", "play")
                     )
                 )
                 self.toolbar.buttons["talk"].invoke()
                 self.app._hover._interact("talk")
                 self.assertEqual(self.app.state.social, social)
-                self.assertIsNone(self.app._hover.social_menu)
+                menu = self.app._hover.social_menu
+                assert menu is not None
+                menu.choose(None)
+                self.assertEqual(self.app.state.social, social)
+                self.app._hover.close_social_menu()
                 self.app._hover._food_selected("energy_drink")
                 self.app._on_enter()
                 self.assertEqual(self.app._reaction_player.generation, generation)
@@ -113,7 +117,12 @@ class CareGuiTests(unittest.TestCase):
         set_test_pet_values(self.app.state, sleeping=True)
         self.toolbar.refresh()
         self.assertEqual(self.toolbar.buttons["sleep"].cget("state"), "normal")
-        self.assertEqual(self.toolbar.buttons["play"].cget("state"), "disabled")
+        self.assertEqual(self.toolbar.buttons["play"].cget("state"), "normal")
+        self.app._hover._interact("play")
+        menu = self.app._hover.game_menu
+        assert menu is not None
+        self.assertTrue(all(button.cget("state") == "disabled"
+                            for button in menu.buttons.values()))
 
     def test_relationship_and_needs_in_pinned_toolbar(self):
         self.app._hover.open_status()

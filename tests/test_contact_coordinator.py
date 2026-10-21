@@ -130,13 +130,13 @@ class ContactCoordinatorTests(unittest.TestCase):
         noted.assert_called_once()
         self.assertEqual(self.reactions[-1], (reaction, 2800))
 
-    def test_click_replies_allow_escalation_without_unlocking_care(self) -> None:
-        self.playback = True
+    def test_click_replies_allow_escalation_and_yield_to_deliberate_care(self) -> None:
+        self.playback = self.incidental = True
         for index, event in enumerate(("click_left", "click_right", "click_notice",
                                        "rapid_click")):
             self.event = event
-            self.assertFalse(self.contact.can_interact("pet"))
-            self.assertFalse(self.contact.can_interact("play"))
+            self.assertTrue(self.contact.can_interact("pet"))
+            self.assertTrue(self.contact.can_interact("play"))
             with patch("aiko_pet.application.contact.time.monotonic",
                        return_value=1000 + index / 10):
                 self.contact.click("left" if index % 2 == 0 else "right")

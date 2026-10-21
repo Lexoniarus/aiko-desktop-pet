@@ -94,7 +94,7 @@ class StoryGuiTests(unittest.TestCase):
         self.pet._attention.next_comment = -1000000
         self.pet._action_playback.until = 0
         self.pet._maybe_speak_spontaneously(time.monotonic())
-        self.pet._on_cursor_moved(200, 1920, time.monotonic())
+        self.pet._attention_runtime.cursor_moved(200, 1920, time.monotonic())
         self.pet._on_walk_finished(time.monotonic())
         self.assertEqual(tuple(self.pet.mind.book.recent), recent)
         self.assertTrue(player.story_active)

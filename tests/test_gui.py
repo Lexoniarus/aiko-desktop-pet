@@ -93,7 +93,7 @@ class TaskbarPetGuiTests(unittest.TestCase):
             {"place_item", "play", "pet", "sleep", "talk"},
         )
         self.assertEqual(bar.buttons["talk"].cget("text"), "Unterhalten  ›")
-        self.assertEqual(bar.pin_button.cget("text"), "Offen halten")
+        self.assertEqual(bar.pin_button.cget("text"), "")
         bar.buttons["place_item"].invoke()
         menu = self.app._hover.food_menu
         assert menu is not None

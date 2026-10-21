@@ -1108,3 +1108,19 @@ retains 82 and its previous escalation policy. Negative/ambivalent compositions
 do not produce contradictory positive expression. Observed work may still
 select work dialogue; hardware strain alone no longer claims sleepy clicks.
 All authored German dialogue sequences remain unchanged.
+
+Numeric toolbar refreshes do not arbitrate character interaction. HoverUi and
+ActionToolbar separate selector navigation from actual action admission;
+ContactCoordinator reads real foreground/game/sleep owners and ReactionPlayer's
+sequence-owned incidental provenance. Stories remain exclusive. World interrupt
+ordering releases the pending marker before deferred game admission while
+retaining protected care ordering; no second busy flag is introduced.
+
+Wish pin/dismiss callbacks pass through DesktopCareRuntime and the existing
+router/controller to PetState, including shared elapsed-time accounting and
+saving. WishPanel only projects saved state. Moodlet cause text lives in the pure
+UI projection module, using original goal snapshots and actual retained results;
+it does not infer causes from tiers or archive ended episodes. Object diagnostics
+combine detached World stock, learned bindings and current tracker associations.
+Unknown sightings, identified knowledge and actual undiscovered/uncertain stock
+are separate read dimensions, with no discovery or memory mutation on a read.

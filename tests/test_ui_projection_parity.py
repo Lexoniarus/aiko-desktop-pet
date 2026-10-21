@@ -55,12 +55,15 @@ class UiProjectionParityTests(unittest.TestCase):
             None,
             ComputerSnapshot(),
             observe_computer=False,
-            objects=ObjectStatusSnapshot(desktop=5, known=4, assigned=2, missing=2),
+            objects=ObjectStatusSnapshot(desktop=5, known=4, assigned=2, missing=2,
+                                         undiscovered=1, unidentified=2, unresolved=1),
         )
         self.assertEqual(view.status_value("fun"), 42)
         self.assertEqual(
             view.objects_line,
-            "Auf dem Desktop: 5 · Bekannt: 4\nZugeordnet: 2 · Vermisst: 2",
+            "Auf dem Desktop: 5 · Bekannt: 4\n"
+            "Noch nicht entdeckt: 1 · Entdeckt, nicht identifiziert: 2\n"
+            "Zugeordnet: 2 · Vermisst: 2 · Zuordnung unklar: 1",
         )
 
     def test_snapshot_copies_mutable_pet_values(self) -> None:

@@ -209,6 +209,9 @@ def project_status(
         objects_line=GERMAN_TEXT.format(
             "ui.object_status",
             desktop=str(objects.desktop),
+            undiscovered=str(objects.undiscovered),
+            unidentified=str(objects.unidentified),
+            unresolved=str(objects.unresolved),
             known=str(objects.known),
             assigned=str(objects.assigned),
             missing=str(objects.missing),

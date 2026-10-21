@@ -172,7 +172,10 @@ class GameMenuTests(unittest.TestCase):
 
     def test_deferred_selection_is_reserved_and_stale_callback_cannot_start(self):
         callbacks = []
-        with patch.object(self.pet._world, "interrupt", side_effect=callbacks.append):
+        with patch.object(
+            self.pet._world, "interrupt",
+            side_effect=lambda action, **_kwargs: callbacks.append(action),
+        ):
             self.hover.open_game(GameId.ROCK_PAPER_SCISSORS)
             self.hover.open_game(GameId.ROCK_PAPER_SCISSORS)
             self.assertTrue(self.hover.game_open)
@@ -215,7 +218,10 @@ class GameMenuTests(unittest.TestCase):
 
     def test_recheck_admission_and_shutdown_clear_pending_selection(self) -> None:
         callbacks = []
-        with patch.object(self.pet._world, "interrupt", side_effect=callbacks.append):
+        with patch.object(
+            self.pet._world, "interrupt",
+            side_effect=lambda action, **_kwargs: callbacks.append(action),
+        ):
             self.hover.open_game(GameId.ROCK_PAPER_SCISSORS)
             original = self.hover._ports
             self.hover._ports = replace(original, game_ready=lambda: False)

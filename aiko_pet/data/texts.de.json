@@ -140,7 +140,7 @@
     "activity.familiar_suffix": " · eingespielter Tagesrhythmus",
     "activity.summary": "Mein Rhythmus: {summary} · Beanspruchung {strain}/100",
     "activity.uptime_suffix": " · Rechnerlaufzeit {hours} h",
-    "ui.object_status": "Auf dem Desktop: {desktop} · Bekannt: {known}\nZugeordnet: {assigned} · Vermisst: {missing}",
+    "ui.object_status": "Auf dem Desktop: {desktop} · Bekannt: {known}\nNoch nicht entdeckt: {undiscovered} · Entdeckt, nicht identifiziert: {unidentified}\nZugeordnet: {assigned} · Vermisst: {missing} · Zuordnung unklar: {unresolved}",
     "ui.status_value": "{title}  {percent}%",
     "ui.friendship_level_suffix": " · Lv {level}",
     "settings.scale": "Größe: {scale}× · wechseln",

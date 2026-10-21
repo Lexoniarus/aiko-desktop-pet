@@ -23,6 +23,7 @@ class AikoSkin:
     def __init__(self, root: tk.Tk) -> None:
         fonts = set(tkfont.families(root=root))
         self.font = "Segoe UI" if "Segoe UI" in fonts else "Arial"
+        self.speech_font = "Kenney Mini" if "Kenney Mini" in fonts else "Segoe UI"
         self.small_line_height = tkfont.Font(
             root=root, family=self.font, size=8
         ).metrics("linespace")

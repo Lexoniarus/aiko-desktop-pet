@@ -12,6 +12,7 @@ from aiko_pet.application.object_consumption import ObjectConsumption
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.desktop.cursor_item_gesture import CursorItemGesture, CursorItemPorts
 from aiko_pet.desktop.world_runtime import DesktopWorldRuntime
+from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.animation.item_assets import ItemCatalog
@@ -74,10 +75,25 @@ class MenuAdmissionTests(unittest.TestCase):
             social.assert_called_once()
             self.assertFalse(social.call_args.kwargs["can_interact"]())
             ui._social_selected(None)
-            ui.open_game("rock_paper_scissors")
+            ui.open_game(GameId.ROCK_PAPER_SCISSORS)
             ui._ports.care.assert_not_called()
             ui._ports.defer_game.assert_not_called()
             ui._ports.record_contact.assert_not_called()
+
+    def test_game_admission_runs_after_pending_release_while_care_stays_protected(self):
+        world = DesktopWorldRuntime.__new__(DesktopWorldRuntime)
+        world.awareness, world._walk = MagicMock(), MagicMock()
+        world._visual, world.interaction = MagicMock(), MagicMock()
+        world.interaction.active = False
+        world.interaction.interrupt.side_effect = lambda callback: callback()
+        world.user_action_pending, world.now = False, 0
+        world._game_open = lambda: False
+        observed = []
+        world.interrupt(lambda: observed.append(world.defer_sleep()))
+        world.interrupt(lambda: observed.append(world.defer_sleep()),
+                        after_release=True)
+        self.assertEqual(observed, [True, False])
+        self.assertFalse(world.user_action_pending)
 
     def test_incidental_player_metadata_resets_and_never_unlocks_stories(self):
         scheduler = FakeScheduler()

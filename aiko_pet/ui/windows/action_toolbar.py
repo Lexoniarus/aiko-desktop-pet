@@ -71,17 +71,10 @@ class ActionToolbar:
             image=self.skin.images.icon("ui_sparkle", 24), compound="left"
         )
         self.today.pack(side="left")
-        self.settings_button = self.skin.button(
-            title,
-            "",
-            self._open_settings,
-            size="small",
-            icon=self.skin.images.icon("ui_settings", 24),
-        )
-        self.settings_button.pack(side="right", padx=8, pady=4)
         self._drag = WindowDrag(
             self.window,
-            self.today,
+            title,
+            handles=(self.today,),
             moved=actions.move_speech,
             dropped=self._drag_dropped,
         )
@@ -91,11 +84,15 @@ class ActionToolbar:
             footer,
             "",
             actions.toggle_pin,
-            size="footer",
+            size="small",
             icon=self.skin.images.icon("ui_pin", 24),
-            align_left=True,
         )
         self.pin_button.pack(side="left", padx=2)
+        self.settings_button = self.skin.button(
+            footer, "", self._open_settings, size="small",
+            icon=self.skin.images.icon("ui_settings", 24),
+        )
+        self.settings_button.pack(side="left", padx=2)
         self.details_button = self.skin.button(
             footer,
             GERMAN_TEXT.format("ui.details_show"),
@@ -116,6 +113,13 @@ class ActionToolbar:
         content = tk.Frame(body.body, bg=self.skin.background, padx=16, pady=12)
         content.pack(fill="both", expand=True)
         self.tips = DescriptionTip(self.outer, self.skin)
+        self._pinned = False
+        self.tips.attach(self.pin_button, lambda: GERMAN_TEXT.format(
+            "ui.pin_release" if self._pinned else "ui.pin_keep",
+        ))
+        self.tips.attach(self.settings_button, lambda: GERMAN_TEXT.format(
+            "settings.window_title",
+        ))
         summary = tk.Frame(
             content,
             bg=self.skin.panel,
@@ -266,10 +270,8 @@ class ActionToolbar:
         return self.visible and time.monotonic() - self._last_key < 2
 
     def set_pinned(self, enabled: bool) -> None:
+        self._pinned = enabled
         self.pin_button.set_selected(enabled)
-        self.pin_button.configure(
-            text=GERMAN_TEXT.format("ui.pin_release" if enabled else "ui.pin_keep")
-        )
 
     def toggle_details(self) -> None:
         if self.details is None:

@@ -177,7 +177,7 @@ class Skin:
     title = "#FFFFFF"
     text = "#3E4C61"
     muted = accent = "#65758A"
-    font = "Segoe UI"
+    font = speech_font = "Segoe UI"
     small_line_height = 11
 
     def __init__(self, *_args: Any) -> None:
@@ -193,7 +193,7 @@ class Skin:
         return Widget(parent, text=text)
 
     def button(self, parent: Any, text: str, command: Any, **kwargs: Any) -> Widget:
-        return Widget(parent, text=text, command=command)
+        return Widget(parent, text=text, command=command, **kwargs)
 
 
 class Surface:

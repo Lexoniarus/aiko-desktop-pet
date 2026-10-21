@@ -56,7 +56,8 @@ class ButtonStyles:
         self.style.configure(
             name, font=(font, 8 if size == "menu_back" else 10),
             foreground="#3E4C61", background="#FCF7F9", borderwidth=0,
-            padding=(10, 4, 12, 4), space=8, wraplength=wrap,
+            padding=(4, 4, 4, 4) if size == "small" else (10, 4, 12, 4),
+            space=8, wraplength=wrap,
             anchor="w" if align_left else "center",
             justify="left" if align_left else "center",
             focusthickness=1, focuscolor="#657F9D", embossed=False, stipple="",

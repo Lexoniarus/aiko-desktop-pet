@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import time
 import tkinter as tk
-from tkinter import font as tkfont
+from functools import partial
 from tkinter import messagebox
 
 from .application.active_time import ActiveSessionClock
@@ -91,11 +91,6 @@ class DesktopPet:
         self.canvas = self._window.canvas
         self.background = self._window.background
         self._world_access = WorldRuntimeAccess()
-        self._speech_font = (
-            "Kenney Mini"
-            if "Kenney Mini" in set(tkfont.families(root=self.root))
-            else "Segoe UI"
-        )
         self._runtime = DesktopRuntime(
             DesktopTickPorts(
                 is_closed=lambda: self._closed,
@@ -208,7 +203,7 @@ class DesktopPet:
                 x=self.settings.x or 0, y=self.settings.y or 0,
                 width=self._window.width,
             ),
-            font_name=self._speech_font,
+            font_name=self._window.skin.speech_font,
             always_on_top=lambda: self.settings.always_on_top,
             restore_stack=lambda: self._overlay_stack.restore(),
             transparent_color=MAGENTA,
@@ -255,9 +250,7 @@ class DesktopPet:
                 settings_snapshot=self._views.settings_view,
                 anchor=self._views.anchor,
                 care=self.interact,
-                pin_wish=lambda key, pinned: self._care_runtime.set_wish_pinned(
-                    key, pinned,
-                ),
+                pin_wish=lambda key, pin: self._care_runtime.set_wish_pinned(key, pin),
                 dismiss_wish=lambda key: self._care_runtime.dismiss_wish(key),
                 can_interact=lambda action: self._contact.can_interact(action),
                 game_ready=lambda: self._contact.can_interact("play"),
@@ -270,7 +263,9 @@ class DesktopPet:
                 food_choices=self._food_choices,
                 place_item=lambda selected: self._world.begin_carry(selected),
                 can_place_item=lambda: self._world.can_place_item,
-                defer_game=lambda action: self._world.interrupt(action),
+                defer_game=lambda action: self._world.interrupt(
+                    action, after_release=True,
+                ),
                 game_completed=lambda score: self._care_runtime.complete_game(score),
                 game_round=lambda event: self._care_runtime.observe_game_round(event),
                 open_sprite_hover=self._on_enter,
@@ -309,7 +304,7 @@ class DesktopPet:
                 game_open=lambda: self._hover.game_open,
                 cancel_followup=self._reaction_player.cancel,
                 hide_speech=lambda: self._speech.hide(),
-                react=lambda reaction, duration: self._react(reaction, duration),
+                react=partial(self._react, incidental=True),
                 should_greet=lambda now: self._attention.should_greet(now),
                 story_active=lambda: self._reaction_player.story_active,
                 advance_story=self._reaction_player.advance_story,
@@ -344,9 +339,7 @@ class DesktopPet:
             start_action=lambda name, duration: self._start_action(
                 name, duration,
             ),
-            react=lambda reaction, duration: self._react(
-                reaction, duration, incidental=True,
-            ),
+            react=partial(self._react, incidental=True),
             show_emote=lambda emote, duration: self._speech.show_emote(
                 emote, duration,
             ),
@@ -379,7 +372,7 @@ class DesktopPet:
                 sample=self._input.pointer_sample,
                 game_mode=lambda: self._animated.game_mode,
                 eyes=lambda: self._animated.cursor_eye_position,
-                on_motion=self._on_cursor_moved,
+                on_motion=self._attention_runtime.cursor_moved,
             ),
         )
         self._session_runtime = DesktopSessionRuntime(
@@ -596,11 +589,6 @@ class DesktopPet:
 
     def center(self) -> None:
         self._preferences.center()
-
-    def _on_cursor_moved(
-        self, distance: float, screen_width: int, now: float,
-    ) -> None:
-        self._attention_runtime.cursor_moved(distance, screen_width, now)
 
     def _on_walk_finished(self, now: float) -> None:
         self._attention_runtime.walk_finished(now)

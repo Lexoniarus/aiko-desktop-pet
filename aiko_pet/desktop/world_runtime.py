@@ -78,8 +78,14 @@ class DesktopWorldRuntime:
                 or self._game_open())
 
     def object_status(self) -> ObjectStatusSnapshot:
+        world = self.world.snapshot()
         return snapshot_object_status(
-            self.world.snapshot(), self.awareness.memory.snapshot(),
+            world, self.awareness.memory.snapshot(),
+            observed_bindings=tuple(
+                (item.instance_id, record) for item in world.objects
+                if (record := self.awareness.record_for_instance(item.instance_id))
+                is not None
+            ),
         )
 
     def __init__(
@@ -531,7 +537,10 @@ class DesktopWorldRuntime:
         if not self.interaction.acknowledge_contact():
             self.interrupt(action)
 
-    def interrupt(self, action: Callable[[], None]) -> None:
+    def interrupt(
+        self, action: Callable[[], None], *, after_release: bool = False,
+    ) -> None:
+        """Keep care protected; game admission runs after its pending flag clears."""
         self.awareness.intentions.cancel(self.now)
         self._walk.movement.set_goal(None)
         self._visual.object_target = None
@@ -539,9 +548,12 @@ class DesktopWorldRuntime:
 
         def perform() -> None:
             try:
-                action()
+                if not after_release:
+                    action()
             finally:
                 self.user_action_pending = False
+            if after_release:
+                action()
 
         self.interaction.interrupt(perform)
 

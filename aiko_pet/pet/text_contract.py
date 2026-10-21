@@ -190,7 +190,10 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "activity.familiar_suffix": frozenset([]),
     "activity.summary": frozenset(["strain", "summary"]),
     "activity.uptime_suffix": frozenset(["hours"]),
-    "ui.object_status": frozenset(["desktop", "known", "assigned", "missing"]),
+    "ui.object_status": frozenset([
+        "desktop", "known", "assigned", "missing",
+        "undiscovered", "unidentified", "unresolved",
+    ]),
     "ui.status_value": frozenset(["percent", "title"]),
     "ui.friendship_level_suffix": frozenset(["level"]),
     "settings.scale": frozenset(["scale"]),
