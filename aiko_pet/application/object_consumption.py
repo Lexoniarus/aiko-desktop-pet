@@ -53,6 +53,27 @@ class ObjectConsumption:
             str, tuple[str, str, ConsumptionOrigin, ConsumptionOutcome]
         ] = OrderedDict()
 
+    def acknowledge_handover(
+        self, world: WorldState, instance_id: str, inputs: SessionInputs, *,
+        memory_id: str,
+    ) -> None:
+        """Caller admitted a perceived release; refusal is not successful intake."""
+        advance_session_time(
+            self._state, self._clock, inputs, progression=self._progression,
+        )
+        item, known = world.get(instance_id), self._memory.get(memory_id)
+        if (self._state.sleeping or item.state not in (
+                ObjectState.USER_HELD, ObjectState.PET_HELD,
+            )
+                or known is None or not known.recognized or known.kind != "food"):
+            return
+        definition = next(d for d in world.snapshot().definitions
+                          if d.definition_id == item.definition_id)
+        if definition.food_id is not None and known.identity == definition.food_id:
+            self._state.complete_food_handover(
+                definition.food_id, object_id=instance_id,
+            )
+
     def commit(
         self,
         world: WorldState,
@@ -167,7 +188,8 @@ class ObjectConsumption:
         known = memory.get(memory_id)
         if known is None or known.identity != consumable:
             return None
-        prepared = state.prepare_item_consumption(consumable, origin, now=now)
+        prepared = state.prepare_item_consumption(consumable, origin, now=now,
+                                                   object_id=instance_id)
         if prepared is None:
             return None
         checkpoint, physical, cognitive = (

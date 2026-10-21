@@ -403,9 +403,7 @@ class WishLifecycleTests(unittest.TestCase):
                 definitions={WishId.PET: DEFINITIONS[WishId.PET]},
             ).active
         )
-        # The later completion slice activates this form; test its suitability
-        # contract now without enabling unsupported handover completion in runtime.
-        avoid = replace(DEFINITIONS[WishId.AVOID_FOOD], selection_weight=1)
+        avoid = DEFINITIONS[WishId.AVOID_FOOD]
         definitions = {avoid.id: avoid}
         self.assertFalse(create(definitions=definitions).active)
         varied = create(context=WishContext(repetitive_food="apple"),

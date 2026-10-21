@@ -64,6 +64,7 @@ class ObjectInteractionCoordinator:
         experience: Callable[[InteractionEvent], object] = lambda _event: None,
         withholding_active: Callable[[], bool] = lambda: False,
         withholding: Callable[[str, float], None] = lambda _key, _loss: None,
+        acknowledge_handover: Callable[[str, str], None] = lambda _item, _record: None,
     ) -> None:
         self.world = world
         self._custody = ObjectCustody(world, memory)
@@ -87,6 +88,7 @@ class ObjectInteractionCoordinator:
         self._on_withholding = withholding
         self._experience = experience
         self._withholding_active = withholding_active
+        self._acknowledge_handover = acknowledge_handover
 
     @property
     def _episode(self) -> InteractionEpisode:
@@ -411,6 +413,7 @@ class ObjectInteractionCoordinator:
         decision = self._decide(self.memory_id, self._episode.use_context)
         if decision.reason not in ("unrecognized", "unavailable"):
             self._memory.mark_assessed(self.memory_id)
+            self._acknowledge_known_handover()
         self._set_phase(DecisionPhase(decision))
         self._announce(
             "object_want" if decision.consume else
@@ -482,6 +485,14 @@ class ObjectInteractionCoordinator:
             return False
         self.update()
         return True
+
+    def _acknowledge_known_handover(self) -> None:
+        episode = self._episode
+        if (episode.origin == ConsumptionOrigin.HANDOVER
+                and not episode.handover_acknowledged and self._known_identity()
+                and episode.instance_id is not None):
+            self._acknowledge_handover(episode.instance_id, episode.memory_id)
+            episode.handover_acknowledged = True
 
     def _reunite(self, known: ObjectKnowledge) -> bool:
         """Resolve one learned portion and announce its result for every entry."""
@@ -570,6 +581,7 @@ class ObjectInteractionCoordinator:
         self._select_item(item.definition_id)
         self._play("hold_item")
         if self._known_identity():
+            self._acknowledge_known_handover()
             self._set_phase(CuePhase("handover"))
             self._announce("object_handover")
         else:

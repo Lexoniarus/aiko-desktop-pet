@@ -159,6 +159,7 @@ class DesktopWorldRuntime:
             experience=state.experience_interaction,
             withholding_active=lambda: any(
                 e.definition_id == MoodletId.WITHHELD for e in state.moodlets.active),
+            acknowledge_handover=self._acknowledge_food_handover,
         )
         self._behavior = ObjectBehaviorCoordinator(
             state, self.awareness, self.interaction, self.world,
@@ -170,7 +171,7 @@ class DesktopWorldRuntime:
             track=track,
             ports=CursorItemPorts(
                 capture_contact=self._capture_contact,
-                handover=self.interaction.offer_on_release,
+                handover=self._handover_on_release,
                 assess_offer=self._assess_offer, present_offer=self._present_offer,
                 known_instance=self.awareness.known_instance,
                 cancel_feedback=self._cancel_offer, save=save,
@@ -321,12 +322,8 @@ class DesktopWorldRuntime:
             return False
         if item.position is None:
             return False
-        distance = abs(item.position.x - self._body_x())
         if item.state == ObjectState.USER_HELD:
-            reachable = (
-                distance <= self.width * .3
-                and self.width * .05 <= item.position.height <= self.width * .9
-            )
+            reachable = self._within_handover_reach(token)
         else:
             track = self._track()
             reachable = track.can_grasp_ground(
@@ -337,6 +334,27 @@ class DesktopWorldRuntime:
             token, object_state=item.state, reachable=reachable,
             offer_ready=self.cursor.offer_ready, now=self.now,
             facts=self._behavior_facts(),
+        )
+
+    def _within_handover_reach(self, token: str) -> bool:
+        item = self.world.get(token)
+        return (item.state == ObjectState.USER_HELD and item.position is not None
+                and abs(item.position.x - self._body_x()) <= self.width * .3
+                and self.width * .05 <= item.position.height <= self.width * .9)
+
+    def _handover_on_release(self, token: str) -> bool:
+        decision = (self._assess_offer(token)
+                    if self._within_handover_reach(token) else None)
+        if decision is not None and not decision.consume:
+            known = self.awareness.known_instance(token)
+            if known is not None:
+                self._acknowledge_food_handover(token, known.token)
+        return self.interaction.offer_on_release(token)
+
+    def _acknowledge_food_handover(self, token: str, record: str) -> None:
+        self._consumption.acknowledge_handover(
+            self.world, token, self._inputs(time.time(), time.monotonic()),
+            memory_id=record,
         )
 
     def ready_for_handover(self) -> bool:

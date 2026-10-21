@@ -33,6 +33,7 @@ class InteractionEpisode:
     identity: str | None = None
     kind: ConsumableKind | None = None
     retrieving: bool = False
+    handover_acknowledged: bool = False
     queued: Callable[[], None] | None = None
     seen: set[PlaybackEvent] = field(default_factory=set)
     effects: set[tuple[int, str]] = field(default_factory=set)

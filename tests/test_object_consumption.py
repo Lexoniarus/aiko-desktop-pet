@@ -168,6 +168,9 @@ class ObjectConsumptionTests(unittest.TestCase):
             memory_id=self.item.instance_id,
         ).accepted)
         self.assertGreater(self.pet.friendship, before.friendship)
+        cause = next(e for e in self.pet.moodlets.active
+                     if e.definition_id == MoodletId.FOOD_FULFILLED).causes[0]
+        self.assertEqual(cause.object_id, self.item.instance_id)
 
     def test_failure_after_world_mutation_restores_both_owners(self):
         before = self.world.snapshot()

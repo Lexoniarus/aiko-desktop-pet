@@ -14,16 +14,16 @@
 > in the final candidate. Their final integrated gate remains pending; only the
 > explicitly recorded baseline has full-suite evidence. Physical desktop acceptance
 > is separately recorded.
-> The 2026-10-21 need-aware wish and menu-admission amendment below is approved
-> for planning only and remains unimplemented. The subsequent petting/UI/social
-> amendments below are also planning decisions; complete their later authorized
-> implementation before final tests.
+> The 2026-10-21 need-aware wish amendment is delivered below; menu admission
+> and the subsequent petting/UI/social amendments remain planned. Complete
+> their later authorized implementation before final tests.
 > The latest 2026-10-21 continuous-friendship amendment replaces the earlier
 > capped care/wish reward model for the next implementation. Its 30-second
 > balance values are approved for planning; runtime still uses the old model.
-> The later corrections are delivered incrementally below. Slices 1 and 2 supply
-> definitions/storage and need-aware eligibility, weighted selection and lifecycle.
-> New completion rules, interaction, relationship and UI changes remain pending.
+> The later corrections are delivered incrementally below. Slices 1–3 supply
+> definitions/storage, need-aware eligibility, weighted selection, lifecycle and
+> game/food completion with concrete Moodlet causes. Interaction, relationship
+> and the remaining UI changes remain pending.
 > Existing game goals retain their original meaning and progress, as approved
 > by the owner.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
@@ -4673,3 +4673,45 @@ stacking/decay and objective/result distinction. Scoped Ruff, strict Mypy and
 Pyright pass; no full suite or GitHub CI. The following food commit activates
 acknowledged-handover avoidance and adds acquired portion identities to intake
 causes through the existing World/Pet transaction.
+
+### Slice 3 delivery: acknowledged food handover and actual intake causes
+
+Food avoidance now participates in selection only with an actual repetitive-food
+reason and the existing food need gate. The original unwanted food remains in
+the wish snapshot. A personally perceived release near Aiko fulfills the wish
+even when the offered food is that unwanted food or she refuses it. The cause
+records the actual offered food, portion, handover outcome and original objective.
+Ordinary matching food wishes still require actual intake. Actual eating and
+food-monotony effects remain independent and can coexist with fulfillment.
+
+The existing cursor release owns the gesture and save. Recognized refusal is
+acknowledged at that release; accepted handover is acknowledged by the existing
+object interaction episode, after physical custody succeeds or after an unknown
+food is identified in Aiko's hands. One transient episode flag prevents repeated
+phase callbacks. `ObjectConsumption` validates existing custody and acquired
+identity, advances the shared time owner and delegates to `PetState`. No accepted
+care, contact, nutrition or consumption is fabricated by a refused handover.
+Preview, cancellation, ground placement and unperceived release do not fulfill it.
+Autonomous intake cannot fulfill the personal handover objective or earn its bonus.
+
+The existing prepared World/Pet/Memory intake transaction supplies the actual
+portion ID to positive intake causes, including offline intake without personal
+credit. Its rollback covers wish retirement and causes together with existing
+pet and World effects. Duplicate completion after save/reload has no second
+reward or impression. Full cause tooltips and pin/dismiss controls remain slice 7;
+the existing capped positive reward policy remains until its slice 6 replacement.
+
+The combined targeted wish, progression, persistence, object interaction/intake,
+headless gesture, offline/restoration and dependency checks pass **232 tests in
+9.505 seconds**. No individual test exceeds ten seconds; the longest is the
+existing complete long-absence/backward-clock check at **8.017 seconds**. Native
+Tk/Toplevel constructors were blocked, while fake-root callback fixtures retained
+their actual production gesture/coordinator paths. Scoped Ruff, strict Mypy and
+Pyright pass. No full suite, native test window, mouse control, user-save mutation,
+live API request or GitHub CI was used.
+
+Slice 3 is complete. Slices 4–8 retain their separate scopes above, particularly
+petting boundaries, carried-item absence, continuous friendship, UI admission and
+cause presentation, and API framing/history. The integrated suite and final OOP
+gate remain slice 9 after those authorized changes; this targeted pass does not
+replace that final gate.

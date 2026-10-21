@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Fulfill evidence-gated food-avoidance wishes on a perceived personal handover,
+  including the unwanted food or a later refusal. Keep previews, ground placement,
+  autonomous intake and actual nutrition separate. Preserve original wish targets
+  and actual offered/eaten portion identities in active Moodlet causes through
+  the existing handover and transactional consumption owners.
+
 - Resolve new game wishes by their saved objective: accumulate two rounds or
   three wins across sessions, or settle an explicit next-round goal once.
   Preserve older goals. Failed non-loss wishes create downcast disappointment
@@ -18,7 +24,7 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   and quietly retire supplied unpinned wishes at 90. Preserve full-needs game
   and social wishes, the shared twelve-minute refill and actual-care completion
   before cleanup. Apply the agreed game-form weights within area-first selection;
-  new goal meanings and food-avoidance activation follow with their matchers.
+  new goal meanings and food avoidance now use their corresponding matchers.
 
 - Protect pinned wishes from elapsed expiry and supplied-need retirement, including
   closed/standby time, actual fulfillment and later first disclosure. Provide
@@ -27,15 +33,15 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   UI controls follow in the planned UI slice.
 
 - Define explicit wish objective meanings, the approved game-selection weights,
-  a dormant food-avoidance wish and the downcast "Doch verloren" Moodlet.
-  Selection/completion wiring follows separately; existing game behavior is
-  preserved during the definitions-and-storage delivery.
+  food avoidance and the downcast "Doch verloren" Moodlet. New selection and
+  completion use these definitions while preserving existing saved game goals.
 
 - Preserve each saved wish's original objective/count and progress independently
   of newer catalogue meanings. Store pin data, bounded cumulative progress and
   up to three precise cause snapshots per active Moodlet in the existing atomic
   version-one save/checkpoint. Legacy causes remain explicitly unknown; expiry
-  removes the episode's cause data. New selection, triggers and UI follow later.
+  removes the episode's cause data. Full cause details and pin controls in the
+  UI follow in the planned UI slice.
 
 - Trigger "Vertauschter Platz" only when a learned place is confirmed empty and
   admitted to missing-object search. Observed item relocation updates knowledge

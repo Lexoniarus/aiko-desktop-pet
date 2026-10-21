@@ -173,14 +173,33 @@ against supported categories in focused tests. Labels/descriptions stay in
 `texts.de.json`. Both catalogues detach nested values into frozen dataclasses,
 tuples and read-only mappings.
 
-The latest definitions-and-storage slice includes the dormant food-avoidance
-objective (zero selection weight) and downcast `disappointed` family; their
-gameplay triggers are not wired yet. Game selection applies catalogue weights
-within an eligible area; non-game forms retain equal selection. `WishGoal`/`WishObjective`
+Food avoidance is eligible only with an actual repetitive-food reason and the
+food need gate. Failed non-loss game wishes create the downcast `disappointed`
+family without an instantaneous friendship penalty. Game selection applies
+catalogue weights within an eligible area; non-game forms retain equal selection.
+`WishGoal`/`WishObjective`
 preserve each active wish's original meaning and count independently of newer
 catalogue meanings. Older saves migrate to their actual delivered objectives,
-and current creation keeps those variants until new matching is wired. The
-persisted pin flag protects lifecycle now; pin/dismiss UI controls follow separately.
+and new creation snapshots the current catalogue goal: cumulative rounds/wins
+across sessions, strict next-round results or the fixed overall-result block.
+`GameWishRead.required_count` is interpreted in the original objective's unit.
+The persisted pin flag protects lifecycle now; pin/dismiss UI controls follow separately.
+
+`PetState` commits wish retirement and bounded concrete Moodlet causes together.
+Causes retain the original wish/target, semantic receipt, actor and actual outcome;
+game causes distinguish objective outcome from final-round result/counts. At most
+three actual causes live with each active Moodlet, without a completed-wish archive.
+Duplicate receipts cannot reinforce or refresh the same impression.
+
+`ObjectConsumption` admits a personally perceived food release through the
+existing cursor/interaction handover owners, including a recognized refusal or
+identification after taking the food. This fulfills food avoidance once even if
+the offered food was unwanted, without fabricating nutrition or accepted contact.
+Preview, ground placement and autonomous intake cannot substitute for handover.
+Ordinary food wishes require actual matching intake; the existing prepared
+World/Pet/Memory consumption transaction includes the portion ID in its cause
+and preserves rollback and offline attribution. Physical care and food-monotony
+consequences remain independent. No extra event store or progression clock exists.
 
 Pet rules share only `games/contracts.py`'s immutable game IDs and outcome type;
 they never import game implementations, sessions or scores. The package boundary

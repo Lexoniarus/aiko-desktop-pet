@@ -5,12 +5,21 @@ import unittest
 from typing import cast
 from unittest.mock import MagicMock, patch
 
+from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
+from aiko_pet.application.object_consumption import ObjectConsumption
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.desktop.cursor_item_gesture import CursorItemGesture, CursorItemPorts
 from aiko_pet.desktop.world_runtime import DesktopWorldRuntime
+from aiko_pet.infrastructure.character_mind import make_aiko_mind
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.animation.item_assets import ItemCatalog
+from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.catalog import Reaction
+from aiko_pet.pet.mind.object_memory import ObjectMemory
+from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.wish_catalog import WISH_CATALOG
+from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 from aiko_pet.ui.common.image_button import ImageButton
 from aiko_pet.ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
@@ -104,6 +113,61 @@ class SnackPlacementTests(unittest.TestCase):
         self.runtime._game_open = MagicMock(return_value=True)
         self.runtime._character_action_busy = MagicMock(return_value=True)
         self.enterContext(patch.object(self.runtime, "_sync_geometry"))
+
+    def test_only_perceived_release_fulfills_avoidance_even_when_declined(self):
+        for mode in ("declined", "unperceived", "ground", "cancelled"):
+            with self.subTest(mode=mode):
+                pet = PetState(updated_at=1800000000, lived_seconds=100, satiety=100,
+                               friendship=50, wishes=WishState(2, (ActiveWish(
+                                   1, WishId.AVOID_FOOD, "apple", 0, 14400,
+                                   goal=WISH_CATALOG.definitions[WishId.AVOID_FOOD].goal,
+                                   pinned=True,
+                               ),), ((WishArea.FOOD, 0),)))
+                memory = ObjectMemory()
+                self.runtime.state = pet
+                self.runtime.world = self.world
+                self.runtime.settings = PetSettings(scale=1)
+                self.runtime._body_x = MagicMock(return_value=100)
+                self.runtime._consumption = ObjectConsumption(
+                    pet, make_aiko_mind(started_at=0), AdaptiveRoutine(),
+                    clock=ActiveSessionClock(lambda: 0), memory=memory,
+                )
+                self.runtime._inputs = MagicMock(return_value=SessionInputs(
+                    1800000000, 0, False, None, False, False, None,
+                ))
+                decision = None if mode == "unperceived" else MagicMock(consume=False)
+                self.runtime._assess_offer = MagicMock(return_value=decision)
+                self.interaction.offer_on_release.return_value = False
+                self.ports.handover.side_effect = self.runtime._handover_on_release
+                self.ports.assess_offer.return_value = decision
+                position = WorldPosition(100, 0 if mode == "ground" else 70)
+                with patch.object(self.cursor, "_pointer_pose",
+                                  return_value=(position, True)):
+                    self.cursor.begin("apple")
+                    token = self.cursor.instance_id
+                    assert token is not None
+                    memory.update((ObjectObservation(token, "apple", "food",
+                                                      100, 70, False, 0),), now=0)
+                    known = memory.get(token)
+                    self.awareness.known_instance.return_value = known
+                    self.ports.known_instance.return_value = known
+                    self.cursor.observe_offer()
+                    self.assertTrue(pet.wishes.active)  # Preview is not handover.
+                    if mode == "cancelled":
+                        self.cursor.cancel()
+                    else:
+                        self.cursor.release()
+                self.assertEqual(pet.satiety, 100)
+                self.assertIsNone(pet.friendship_history.last_contact)
+                self.assertEqual(bool(pet.wishes.active), mode != "declined")
+                if mode == "declined":
+                    cause = pet.moodlets.active[0].causes[0]
+                    self.assertEqual(cause.object_id, token)
+                    self.assertEqual([r.kind for r in pet.friendship_history.rewards],
+                                     ["wish"])
+                    loaded = decode_pet_state(encode_pet_state(pet), now=1800000000)
+                    self.assertEqual(loaded.wishes, pet.wishes)
+                    self.assertEqual(loaded.moodlets, pet.moodlets)
 
     def test_busy_action_or_sleep_does_not_block_stock_or_interrupt_aiko(self):
         for sleeping in (False, True):

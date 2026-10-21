@@ -73,9 +73,7 @@ class WishCatalogTests(unittest.TestCase):
         self.assertEqual(definitions[WishId.SINGLE].fulfillment_moodlet,
                          definitions[WishId.TWO_PARTS].fulfillment_moodlet)
 
-    def test_new_goal_meanings_and_weights_are_explicit_without_activating_avoidance(
-        self,
-    ):
+    def test_goal_meanings_and_weights_include_evidence_gated_food_avoidance(self):
         definitions = WISH_CATALOG.definitions
         self.assertEqual({key: definitions[key].selection_weight for key in (
             WishId.PLAY_GAME, WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS,
@@ -91,7 +89,7 @@ class WishCatalogTests(unittest.TestCase):
                          WishObjective.NEXT_WIN)
         avoid = definitions[WishId.AVOID_FOOD]
         self.assertEqual((avoid.area, avoid.goal.objective, avoid.selection_weight),
-                         (WishArea.FOOD, WishObjective.FOOD_HANDOVER, 0))
+                         (WishArea.FOOD, WishObjective.FOOD_HANDOVER, 1))
         self.assertEqual(avoid.targets, definitions[WishId.FOOD].targets)
         state = WishState()
         self.assertEqual(replenish_wishes(

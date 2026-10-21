@@ -149,8 +149,8 @@ class GameWishProgress:
 class ActiveWish:
     """An original goal, pin and progress owned by the existing pet aggregate.
 
-    Older constructors keep delivered v1 meanings; new creation must supply
-    its catalogue goal explicitly when the corresponding rules are wired.
+    Older constructors keep delivered v1 meanings; current creation supplies
+    its catalogue goal explicitly alongside the matching resolution rules.
     """
 
     instance_id: int
@@ -261,6 +261,27 @@ def fulfill_activity_wish(
                           event_id=f"wish:{wish.instance_id}:fulfilled",
                           outcome=MoodletOutcome.INTAKE if area == WishArea.FOOD
                           else MoodletOutcome.COMPLETED, object_id=object_id),
+    )
+
+
+def fulfill_food_handover_wish(
+    state: WishState, food_id: str, *, elapsed: float, object_id: str,
+    definitions: Mapping[WishId, WishDefinition],
+) -> WishResolution:
+    """A qualified personal offer resolves avoidance, never ordinary intake wishes."""
+    wish = next((w for w in state.active
+                 if w.goal_snapshot.objective == WishObjective.FOOD_HANDOVER
+                 and definitions[w.definition_id].area == WishArea.FOOD
+                 and food_id in definitions[w.definition_id].targets
+                 and w.is_active_at(elapsed)), None)
+    if wish is None:
+        return WishResolution(state)
+    return _retire_wish(
+        state, wish, definitions[wish.definition_id], elapsed=elapsed,
+        cause=_wish_cause(wish, elapsed=elapsed,
+                          event_id=f"wish:{wish.instance_id}:handover",
+                          outcome=MoodletOutcome.HANDOVER, target_id=food_id,
+                          object_id=object_id),
     )
 
 

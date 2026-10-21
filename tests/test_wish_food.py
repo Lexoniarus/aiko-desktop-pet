@@ -10,14 +10,15 @@ from aiko_pet.infrastructure.friendship_codec import (
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.consumption import ConsumptionOrigin
 from aiko_pet.pet.friendship_history import FriendshipHistory, RelationshipEvent
-from aiko_pet.pet.moodlets import MoodletId
+from aiko_pet.pet.moodlets import MoodletAttribution, MoodletId, MoodletOutcome
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 
 WALL = 1800000000.0
 
 
-def food_pet(**values):
+def food_pet(wish_id=WishId.FOOD, **values):
     return PetState(
         updated_at=WALL,
         lived_seconds=100,
@@ -28,10 +29,11 @@ def food_pet(**values):
             (
                 ActiveWish(
                     1,
-                    WishId.FOOD,
+                    wish_id,
                     "apple",
                     0,
                     14400,
+                    goal=WISH_CATALOG.definitions[wish_id].goal,
                 ),
             ),
             ((WishArea.FOOD, 0),),
@@ -41,6 +43,66 @@ def food_pet(**values):
 
 
 class FoodWishTests(unittest.TestCase):
+    def test_avoidance_handover_accepts_any_food_without_intake(self):
+        for actual in ("apple", "cookie"):
+            with self.subTest(actual=actual):
+                pet = food_pet(WishId.AVOID_FOOD)
+                needs, contact = pet.needs, pet.friendship_history.last_contact
+                pet.complete_food_handover(actual, object_id="portion:1")
+                self.assertFalse(pet.wishes.active)
+                self.assertEqual(pet.needs, needs)
+                self.assertEqual(pet.friendship_history.last_contact, contact)
+                self.assertEqual([e.kind for e in pet.friendship_history.rewards],
+                                 ["wish"])
+                cause = pet.moodlets.active[0].causes[0]
+                self.assertEqual(cause.outcome, MoodletOutcome.HANDOVER)
+                self.assertEqual(cause.target_id, actual)
+                self.assertEqual(cause.object_id, "portion:1")
+                assert cause.wish is not None
+                self.assertEqual(cause.wish.target_id, "apple")
+                pet = decode_pet_state(encode_pet_state(pet), now=WALL)
+                before = pet.capture_checkpoint()
+                pet.complete_food_handover(actual, object_id="portion:1")
+                self.assertEqual(pet.capture_checkpoint(), before)
+
+    def test_food_intake_and_personal_handover_cannot_substitute_for_each_other(self):
+        pet = food_pet()
+        pet.complete_food_handover("apple", object_id="portion:1")
+        self.assertTrue(pet.wishes.active)
+        self.assertFalse(pet.moodlets.active)
+        pet = food_pet(WishId.AVOID_FOOD)
+        pet.consume_item("apple", ConsumptionOrigin.AUTONOMOUS, now=WALL,
+                         object_id="portion:1")
+        self.assertTrue(pet.wishes.active)
+        self.assertFalse(pet.moodlets.active)
+
+    def test_real_intake_stays_separate_and_monotony_can_coexist_with_fulfillment(self):
+        pet = food_pet(WishId.AVOID_FOOD)
+        for _ in range(3):
+            pet.consume_item("apple", ConsumptionOrigin.AUTONOMOUS, now=WALL)
+        self.assertIn(MoodletId.FOOD_MONOTONY,
+                      {e.definition_id for e in pet.moodlets.active})
+        pet.complete_food_handover("apple", object_id="portion:4")
+        fulfillment = next(e for e in pet.moodlets.active
+                           if e.definition_id == MoodletId.FOOD_FULFILLED)
+        pet.consume_item("apple", ConsumptionOrigin.HANDOVER, now=WALL,
+                         object_id="portion:4")
+        self.assertFalse(pet.wishes.active)
+        self.assertEqual(next(e for e in pet.moodlets.active
+                              if e.definition_id == MoodletId.FOOD_FULFILLED),
+                         fulfillment)
+
+    def test_actual_food_portion_and_autonomous_attribution_survive_save(self):
+        pet = food_pet()
+        pet.consume_item("apple", ConsumptionOrigin.AUTONOMOUS, now=WALL,
+                         object_id="portion:1")
+        pet = decode_pet_state(encode_pet_state(pet), now=WALL)
+        cause = pet.moodlets.active[0].causes[0]
+        self.assertEqual(cause.object_id, "portion:1")
+        self.assertEqual(cause.outcome, MoodletOutcome.INTAKE)
+        self.assertEqual(cause.attribution, MoodletAttribution.AUTONOMOUS)
+        self.assertEqual(pet.friendship, 50)
+
     def test_common_ledger_capacity_includes_wish_credits_and_stays_bounded(self):
         history = FriendshipHistory(0, rewards=tuple(
             RelationshipEvent(i * 200, "wish" if i % 3 == 0 else "feed", .001)

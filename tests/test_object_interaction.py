@@ -39,6 +39,7 @@ class ObjectInteractionTests(unittest.TestCase):
         self.delay_feedback = False
         self.cancel_reports_previous = False
         self.cancelled_feedback = []
+        self.handovers = []
         self.stamp = 0
         self.pet = PetState(friendship=50)
         self.decision = ObjectUseDecision(True, "hungry")
@@ -88,7 +89,31 @@ class ObjectInteractionTests(unittest.TestCase):
             withholding_active=lambda: any(
                 e.definition_id == MoodletId.WITHHELD
                 for e in self.pet.moodlets.active),
+            acknowledge_handover=lambda item, record: self.handovers.append(
+                (item, record),
+            ),
         )
+
+    def test_unknown_personal_handover_is_acknowledged_once_after_identification(self):
+        self.delay_feedback = True
+        self.coordinator._inspection_seconds = 1
+        self.decision = ObjectUseDecision(False, "not_needed")
+        item = self.world.create_held("apple", WorldPosition(100, 50),
+                                     ObjectFootprint(8, 8))
+        self.memory.update((ObjectObservation(item.instance_id, None, None,
+                                              100, 50, False, 0),), now=0)
+        self.assertTrue(self.coordinator.offer_on_release(item.instance_id))
+        self.assertEqual(self.handovers, [])
+        self.acknowledge()
+        self.memory.update((ObjectObservation(item.instance_id, "apple", "food",
+                                              100, 50, False, 1),), now=1)
+        self.stamp = 1
+        self.coordinator.update()
+        self.acknowledge()
+        self.assertEqual(self.handovers, [(item.instance_id, item.instance_id)])
+        self.acknowledge()
+        self.coordinator.update()
+        self.assertEqual(len(self.handovers), 1)
 
     def start_investigation(self):
         # Acknowledge only approach cues; retain each case's pickup cue timing.

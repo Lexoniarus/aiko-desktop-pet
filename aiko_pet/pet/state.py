@@ -68,6 +68,7 @@ from .wishes import (
     dismiss_wish,
     expire_wishes,
     fulfill_activity_wish,
+    fulfill_food_handover_wish,
     progress_game_wish,
     replenish_wishes,
     set_wish_pinned,
@@ -421,6 +422,13 @@ class PetState:
             outcome=outcome, definitions=WISH_CATALOG.definitions,
         ), personal=True)
 
+    def complete_food_handover(self, food_id: str, *, object_id: str) -> None:
+        """An admitted personal offer is distinct from nutrition and accepted care."""
+        self._apply_wish_resolution(fulfill_food_handover_wish(
+            self.wishes, food_id, elapsed=self.lived_seconds, object_id=object_id,
+            definitions=WISH_CATALOG.definitions,
+        ), personal=True)
+
     def record_game_experience(
         self,
         experience: GameExperience,
@@ -655,6 +663,7 @@ class PetState:
 
     def consume_item(
         self, item_id: str, origin: ConsumptionOrigin, *, now: float,
+        object_id: str | None = None,
     ) -> CareResult | None:
         """Use canonical nutrition; autonomous intake is not human attention."""
         if self.sleeping:
@@ -671,6 +680,7 @@ class PetState:
             )
         return self._apply_care_transition(
             transition, now, personal=origin == ConsumptionOrigin.HANDOVER,
+            object_id=object_id,
         )
 
     def capture_checkpoint(self) -> PetValues:
@@ -683,10 +693,11 @@ class PetState:
 
     def prepare_item_consumption(
         self, item_id: str, origin: ConsumptionOrigin, *, now: float,
+        object_id: str | None = None,
     ) -> PreparedItemConsumption | None:
         """Plan a complete consumption transition without mutating this pet."""
         working = deepcopy(self)
-        result = working.consume_item(item_id, origin, now=now)
+        result = working.consume_item(item_id, origin, now=now, object_id=object_id)
         if result is None or result.consumed_item_id is None:
             return None
         return PreparedItemConsumption(working.capture_checkpoint(), result)
@@ -701,6 +712,7 @@ class PetState:
 
     def _apply_care_transition(
         self, transition: CareTransition, stamp: float, *, personal: bool = True,
+        object_id: str | None = None,
     ) -> CareResult:
         if transition.interaction is not None:
             self._commit_interaction(transition.interaction)
@@ -738,6 +750,7 @@ class PetState:
             self._apply_wish_resolution(fulfill_activity_wish(
                 self.wishes, WishArea.FOOD, transition.result.food_id,
                 elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
+                object_id=object_id,
             ), personal=personal)
         elif transition.result.effect == CareEffect.AFFECTION:
             self.experience_interaction(HelpfulInteraction("petting"))

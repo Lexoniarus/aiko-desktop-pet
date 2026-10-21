@@ -43,7 +43,7 @@
       "fulfillment_level": 1,
       "round_count": 0,
       "objective": "food_handover",
-      "selection_weight": 0
+      "selection_weight": 1
     },
     {
       "id": "play_game",
