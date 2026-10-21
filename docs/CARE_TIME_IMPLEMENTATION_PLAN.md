@@ -5131,3 +5131,24 @@ Selected real contact/player, negative-interaction and playback checks pass
 Mypy and Pyright pass. Native constructors were blocked; no windows, pointer
 control, CI or full suite. Withholding and the menu investigation follow
 separately; this record does not claim them fixed.
+
+### Withholding: committed curiosity is distinct from wanting to consume
+
+Both take admission and continued observed withholding previously required a
+positive consumption decision. Unknown objects correctly cannot have that
+decision, so withholding a committed investigation target silently ended its
+emotional episode. ObjectInteractionCoordinator now checks its existing focus
+and subjective memory: an unidentified committed target retains curiosity;
+an identified target still uses the ordinary current use decision. Unrelated
+unknown items never acquire withholding interest. No identity is inferred from
+World, and no new interest manager or second episode/timer was introduced.
+
+The real unknown-memory regression keeps Aiko fully fed and the item USER_HELD:
+requests remain gentle at ten seconds, become irritated with a level-one
+Moodlet at twenty, and reinforce at fifty/eighty observed seconds. Identity,
+consumption and handover remain absent. Returning it releases paused decay.
+Known unwanted items and repeated-take accounting retain their existing rules.
+Selected interaction, withholding and event checks pass 34 tests in 0.035
+seconds, longest 0.015 seconds; none exceeds ten seconds. Native constructors
+are blocked. Scoped Ruff, strict Mypy and Pyright pass. No windows, pointer
+control, CI, normal-save writes or full suite.

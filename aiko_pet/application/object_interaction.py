@@ -155,6 +155,14 @@ class ObjectInteractionCoordinator:
         state.appraisal.latest = decision
         self.update()
 
+    def _wants_target(self, record: str) -> bool:
+        """Retain committed curiosity until identification permits a use decision."""
+        known = self._memory.get(record)
+        if record != self.focus_record or known is None:
+            return False
+        return (not known.recognized
+                or self._decide(record, self._episode.use_context).consume)
+
     def target_taken(self, record: str) -> bool:
         """Pause only an observed successful take before Aiko owns the item."""
         if self.focus_record != record or self.phase not in (
@@ -166,7 +174,7 @@ class ObjectInteractionCoordinator:
                 and self.world.get(self.instance_id).state == ObjectState.PET_HELD):
             return False
         self._episode.instance_id = None
-        wants = self._decide(record, self._episode.use_context).consume
+        wants = self._wants_target(record)
         self._episode.withholding = self._episode.withholding.taken(self._now())
         if wants:
             existing_impression = self._withholding_active()
@@ -219,7 +227,7 @@ class ObjectInteractionCoordinator:
             self._announce("object_returned")
         elif (state == ObjectState.USER_HELD and phase.feedback.completed
               and not phase.feedback.blocking_aside):
-            if not self._decide(episode.memory_id, episode.use_context).consume:
+            if not self._wants_target(episode.memory_id):
                 episode.withholding = episode.withholding.returned()
                 self._experience(WithholdingEnded())
                 return
