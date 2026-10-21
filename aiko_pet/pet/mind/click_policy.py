@@ -48,6 +48,14 @@ ClickEvent = Literal[
 ]
 
 
+# Every actual final warning is a boundary, including the cheerful path's
+# last word before silence. Selection and delivered-text receipts share this.
+POKING_BOUNDARY_EVENTS = frozenset({
+    "click_boundary", "click_work_boundary", "click_withdrawn_boundary",
+    "click_last_word",
+})
+
+
 @dataclass(frozen=True)
 class ClickDecision:
     """Selected catalogue event and the previous irritation side effect."""

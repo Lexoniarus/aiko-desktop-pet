@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 from datetime import datetime
 from unittest.mock import Mock, patch
 
@@ -11,9 +12,12 @@ from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
+from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
+from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
 from tools.pet_test_support import set_test_pet_values
+from tools.reaction_test_support import FakeScheduler
 
 
 class ContactCoordinatorTests(unittest.TestCase):
@@ -70,6 +74,37 @@ class ContactCoordinatorTests(unittest.TestCase):
             setattr(self, owner, False)
         self.incidental = False
         self.assertFalse(self.contact.can_interact("talk"))
+
+    def test_cheerful_final_warning_then_silence_still_creates_poking_moodlet(self):
+        set_test_pet_values(self.state, mood=95, energy=100, friendship=75,
+                            satiety=100, fun=100, social=100, affection=100)
+        scheduler = FakeScheduler()
+        player = ReactionPlayer(
+            schedule=scheduler.schedule, cancel_timer=scheduler.cancel,
+            display_text=Mock(), display_emote=Mock(), start_action=Mock(),
+            mark_spoken=Mock(), is_closed=lambda: False,
+            on_text=self.contact.note_text,
+        )
+        self.contact._ports = replace(
+            self.contact._ports, toolbar_hidden=lambda: False,
+            cancel_followup=player.cancel,
+            playback_active=lambda: player.active,
+            interruptible_playback=lambda: player.interruptible,
+            reaction_event=lambda: player.event,
+            react=lambda reaction, duration: player.play(reaction, duration),
+        )
+        for count in range(1, 9):
+            with patch("aiko_pet.application.contact.time.monotonic",
+                       return_value=1000 + count / 10):
+                self.contact.click("left")
+        self.assertEqual(player.event, "click_last_word")
+        self.assertIsNotNone(self.state.moodlets.interactions.poke_boundary_at)
+        self.assertFalse(self.state.moodlets.active)
+        with patch("aiko_pet.application.contact.time.monotonic", return_value=1001):
+            self.contact.click("left")
+        self.assertFalse(player.active)  # No new line after the final warning.
+        episode = self.state.moodlets.active[0]
+        self.assertEqual((episode.definition_id, episode.level), (MoodletId.POKING, 1))
 
     def test_hover_opens_toolbar_and_interrupts_walk(self) -> None:
         with patch.object(self.mind, "return_to_pet", return_value=None):

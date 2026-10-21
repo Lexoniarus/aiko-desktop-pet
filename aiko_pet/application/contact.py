@@ -15,7 +15,7 @@ from ..pet.interaction_events import BoundaryCommunicated, Poked
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.catalog import Reaction
-from ..pet.mind.click_policy import ClickButton
+from ..pet.mind.click_policy import POKING_BOUNDARY_EVENTS, ClickButton
 from ..pet.routine import TimeContext
 from ..pet.state import PetState
 
@@ -180,7 +180,7 @@ class ContactCoordinator:
 
 def acknowledge_interaction_text(state: PetState, event: str) -> None:
     """Translate actually presented feedback into language-neutral boundary facts."""
-    if event in ("click_boundary", "click_work_boundary", "click_withdrawn_boundary"):
+    if event in POKING_BOUNDARY_EVENTS:
         state.experience_interaction(BoundaryCommunicated("poking"))
     elif event == "feed_variety_request":
         state.experience_interaction(BoundaryCommunicated("food_variety"))

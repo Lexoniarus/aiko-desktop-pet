@@ -5108,3 +5108,26 @@ Slice 8 is complete in separate framing, history-definition/coordinator and
 persistence-integration commits. Slice 9 remains the final integrated local
 suite, explicit investigation of tests over ten seconds and final OOP review;
 there is no claim of that full-suite gate or manual desktop acceptance here.
+
+## Practical corrections before slice 9, 2026-10-21
+
+The owner reported a Windows-unresponsive menu with changing dimensions, a
+missing poking Moodlet after final click silence, and no withholding escalation
+for an unidentified object already selected for investigation. The menu had no
+Python traceback; a specific native crash cause is not established. Slice 9
+remains deferred until these corrections/investigations are recorded.
+
+### Poking: final warning before silence
+
+The cheerful click path reaches click_last_word without the earlier boundary
+events. That actual warning now belongs to the shared POKING_BOUNDARY_EVENTS
+contract used by click policy bookkeeping and delivered-text acknowledgement.
+The next continuing poke creates the existing impression even when no further
+dialogue is selected. Selecting/cancelling an unshown line still grants no
+delivered boundary; stacking and direct penalty limits remain separate.
+
+Selected real contact/player, negative-interaction and playback checks pass
+41 headless tests in 0.266 seconds (longest 0.022 seconds). Scoped Ruff, strict
+Mypy and Pyright pass. Native constructors were blocked; no windows, pointer
+control, CI or full suite. Withholding and the menu investigation follow
+separately; this record does not claim them fixed.

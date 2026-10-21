@@ -29,7 +29,7 @@ from ..wish_catalog import WISH_CATALOG
 from ..wishes import ActiveWish, WishArea, wish_text_key
 from .adaptive_models import Behaviour
 from .catalog import DialogueBook, Reaction
-from .click_policy import ClickButton, choose_click_reaction
+from .click_policy import POKING_BOUNDARY_EVENTS, ClickButton, choose_click_reaction
 from .cursor_attention import CursorAttention
 from .dialogue_context import (
     DialogueContext,
@@ -279,11 +279,7 @@ class PetMind:
                 now + BALANCE.number("mind", "irritation_seconds"),
             )
         reaction = self.select_reaction(decision.event, state, context, now)
-        if reaction is not None and decision.event in (
-            "click_boundary",
-            "click_work_boundary",
-            "click_withdrawn_boundary",
-        ):
+        if reaction is not None and decision.event in POKING_BOUNDARY_EVENTS:
             self._click_warned = True
         return reaction
 
