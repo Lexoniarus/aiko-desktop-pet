@@ -9,19 +9,36 @@ import unittest
 from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
 from typing import Any, cast
+from unittest.mock import patch
 
+from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.moodlet_codec import decode_moodlets, encode_moodlets
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.infrastructure.wish_codec import decode_wishes, encode_wishes
-from aiko_pet.pet.moodlets import MoodletEpisode, MoodletId, MoodletState
+from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
+from aiko_pet.pet.moodlets import (
+    MoodletAttribution,
+    MoodletCause,
+    MoodletCauseKind,
+    MoodletEpisode,
+    MoodletId,
+    MoodletOutcome,
+    MoodletState,
+    MoodletWishCause,
+    advance_moodlets,
+)
+from aiko_pet.pet.needs import NeedLevels
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.wish_catalog import WISH_CATALOG, WishCatalog
 from aiko_pet.pet.wishes import (
     ActiveWish,
     GameWishProgress,
     WishArea,
+    WishGoal,
     WishId,
+    WishObjective,
     WishState,
 )
 
@@ -50,6 +67,124 @@ def wish_state() -> WishState:
 
 
 class MoodletPersistenceTests(unittest.TestCase):
+    def test_old_episode_has_explicit_unknown_cause_without_inventing_a_wish(self):
+        raw = encode_moodlets(moodlet_state())
+        for episode in raw["active"]:
+            del episode["causes"]
+            episode.pop("attribution")
+        restored = decode_moodlets(raw, ELAPSED)
+        for episode in restored.active:
+            self.assertEqual(episode.causes, (MoodletCause(
+                MoodletCauseKind.LEGACY, episode.last_trigger_at,
+            ),))
+            self.assertIsNone(episode.causes[0].wish)
+        self.assertEqual(decode_moodlets(encode_moodlets(restored), ELAPSED), restored)
+
+    def test_three_latest_real_causes_survive_save_checkpoint_and_decay_only(self):
+        episode = MoodletEpisode(1, MoodletId.PRIDE, 3, 100, 100, 7200)
+        for number, game in enumerate(("blackjack", "tic_tac_toe",
+                                        "blackjack", "rock_paper_scissors"), 1):
+            cause = MoodletCause(
+                MoodletCauseKind.WISH_FULFILLED, 100 * number, f"round:{number}",
+                MoodletAttribution.USER,
+                MoodletWishCause(number, "win_overall", game, "total_wins", 3),
+                game, MoodletOutcome.WIN,
+            )
+            episode = replace(episode, last_trigger_at=100 * number).with_cause(cause)
+            self.assertEqual(episode.with_cause(cause), episode)
+        self.assertEqual([c.wish.instance_id for c in episode.causes if c.wish],
+                         [2, 3, 4])
+        pet = PetState(updated_at=WALL, lived_seconds=ELAPSED,
+                       moodlets=MoodletState(100, 2, (episode,)))
+        checkpoint = pet.capture_checkpoint()
+        with tempfile.TemporaryDirectory() as folder:
+            store = StateStore(Path(folder) / "state.json")
+            store.save(pet, PetSettings())
+            pet = store.load_session(now=WALL).state
+        self.assertEqual(pet.capture_checkpoint(), checkpoint)
+        self.assertFalse(pet.wishes.active)  # No ended-wish archive is necessary.
+        read = snapshot_pet(pet)
+        self.assertEqual(read.moodlets[0].causes, episode.causes)
+        with self.assertRaises(FrozenInstanceError):
+            cast(Any, read.moodlets[0].causes[0].wish).target_id = "apple"
+        healthy = NeedLevels(80, 80, 80, 80, 80)
+        for seconds, tier in ((7200, 2), (14400, 1)):
+            aged = advance_moodlets(pet.moodlets, seconds, elapsed=ELAPSED,
+                                    before=healthy, after=healthy,
+                                    definitions=MOODLET_CATALOG.definitions)
+            self.assertEqual(aged.active[0].level, tier)
+            self.assertEqual(aged.active[0].causes, episode.causes)
+        ended = advance_moodlets(pet.moodlets, 21600, elapsed=ELAPSED,
+                                 before=healthy, after=healthy,
+                                 definitions=MOODLET_CATALOG.definitions)
+        self.assertEqual(encode_moodlets(ended)["active"], [])
+        pet.restore_checkpoint(replace(checkpoint, moodlets=ended))
+        pet.restore_checkpoint(checkpoint)
+        self.assertEqual(pet.moodlets.active[0].causes, episode.causes)
+
+    def test_one_large_success_has_one_cause_and_refused_food_has_handover_evidence(
+        self,
+    ):
+        for key, level, source, outcome, actual in (
+            (MoodletId.PRIDE, 2,
+             MoodletWishCause(1, "win_overall", "blackjack", "total_wins", 3),
+             MoodletOutcome.WIN, "blackjack"),
+            (MoodletId.FOOD_FULFILLED, 1,
+             MoodletWishCause(2, "avoid_food", "apple", "food_handover", 0),
+             MoodletOutcome.HANDOVER, "apple"),
+            (MoodletId.DISAPPOINTED, 1,
+             MoodletWishCause(3, "avoid_round_loss", "blackjack", "next_non_loss", 1),
+             MoodletOutcome.LOSS, "blackjack"),
+        ):
+            with self.subTest(key=key):
+                cause = MoodletCause(MoodletCauseKind.WISH_FAILED
+                                     if key == MoodletId.DISAPPOINTED
+                                     else MoodletCauseKind.WISH_FULFILLED,
+                                     100, "receipt:1", wish=source,
+                                     target_id=actual, outcome=outcome)
+                episode = MoodletEpisode(1, key, level, 100, 100, 100,
+                                         causes=(cause,))
+                state = MoodletState(0, 2, (episode,))
+                self.assertEqual(decode_moodlets(encode_moodlets(state), ELAPSED),
+                                 state)
+                self.assertEqual(len(episode.causes), 1)
+
+    def test_corrupt_unbounded_or_incompatible_cause_evidence_is_rejected(self):
+        cause = MoodletCause(
+            MoodletCauseKind.WISH_FULFILLED, 850, "round:1",
+            wish=MoodletWishCause(1, "win_overall", "blackjack", "total_wins", 3),
+            outcome=MoodletOutcome.WIN,
+        )
+        episode = MoodletEpisode(1, MoodletId.PRIDE, 2, 800, 850, 100,
+                                 causes=(cause,))
+        original = encode_moodlets(MoodletState(100, 2, (episode,)))
+        with self.assertRaises(ValueError):
+            episode.with_cause(MoodletCause(MoodletCauseKind.LEGACY, 850))
+        for field, bad in (
+            ("kind", "made_up"), ("kind", "wish_failed"),
+            ("occurred_at", 799), ("occurred_at", 851),
+            ("occurred_at", float("nan")), ("event_id", "x" * 129),
+            ("event_id", None), ("wish", None), ("target_id", "apple"),
+            ("outcome", "unknown"), ("object_id", {}), ("extra", "field"),
+        ):
+            raw = copy.deepcopy(original)
+            raw["active"][0]["causes"][0][field] = bad
+            with self.subTest(field=field, bad=bad), self.assertRaises(ValueError):
+                decode_moodlets(raw, ELAPSED)
+        for field, bad in (("definition_id", "missing"), ("objective", "retry_win"),
+                           ("required_count", True), ("instance_id", 0),
+                           ("target_id", "apple")):
+            raw = copy.deepcopy(original)
+            raw["active"][0]["causes"][0]["wish"][field] = bad
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                decode_moodlets(raw, ELAPSED)
+        for causes in ([], original["active"][0]["causes"] * 2,
+                       original["active"][0]["causes"] * 4):
+            raw = copy.deepcopy(original)
+            raw["active"][0]["causes"] = causes
+            with self.subTest(causes=len(causes)), self.assertRaises(ValueError):
+                decode_moodlets(raw, ELAPSED)
+
     def test_round_trip_retains_all_parallel_episodes_and_used_relief(self):
         state = PetState(lived_seconds=ELAPSED, updated_at=WALL,
                          moodlets=moodlet_state())
@@ -169,6 +304,95 @@ class MoodletPersistenceTests(unittest.TestCase):
 
 
 class WishPersistenceTests(unittest.TestCase):
+    def test_legacy_game_goals_keep_their_original_meaning_and_progress(self):
+        for key, objective, progress in (
+            (WishId.PLAY_GAME, WishObjective.SESSION_ROUNDS,
+             GameWishProgress(("a:1",), 1, 0, "a")),
+            (WishId.WIN_ROUND, WishObjective.RETRY_WIN,
+             GameWishProgress(("a:1",), 0, 1)),
+            (WishId.WIN_OVERALL, WishObjective.BLOCK_MAJORITY,
+             GameWishProgress(("a:1", "b:1"), 1, 1)),
+        ):
+            with self.subTest(key=key):
+                wish = ActiveWish(1, key, "blackjack", 100, 14500, game=progress)
+                original = WishState(2, (wish,), ((WishArea.GAMES, 100),))
+                raw = encode_wishes(original)
+                del raw["active"][0]["goal"]
+                del raw["active"][0]["pinned"]
+                del raw["active"][0]["game"]["completed_rounds"]
+                restored = decode_wishes(raw, ELAPSED)
+                self.assertEqual(restored, original)
+                self.assertEqual(restored.active[0].goal_snapshot.objective, objective)
+                self.assertEqual(decode_wishes(encode_wishes(restored), ELAPSED),
+                                 original)
+
+    def test_pinned_cumulative_goal_keeps_large_counts_with_bounded_receipts(self):
+        wish = ActiveWish(
+            1, WishId.WIN_OVERALL, "blackjack", 100, 14500,
+            game=GameWishProgress(("a:9999", "a:10000"), 2, 9998, None, 10000),
+            goal=WishGoal(WishObjective.TOTAL_WINS, 3), pinned=True,
+        )
+        state = WishState(2, (wish,), ((WishArea.GAMES, 100),))
+        # Decoding is passive, including after the original unpinned deadline.
+        self.assertEqual(decode_wishes(encode_wishes(state), 20000), state)
+        pet = PetState(updated_at=WALL, lived_seconds=20000, wishes=state)
+        before = pet.capture_checkpoint()
+        loaded = decode_pet_state(encode_pet_state(pet), now=WALL)
+        self.assertEqual(loaded.capture_checkpoint(), before)
+        read = snapshot_pet(loaded).wishes[0]
+        self.assertTrue(read.pinned)
+        self.assertEqual(read.goal, wish.goal_snapshot)
+        self.assertIsNotNone(read.game)
+        assert read.game is not None
+        self.assertEqual(read.game.completed_rounds, 10000)
+        self.assertEqual(read.game.required_rounds, 3)
+        self.assertEqual(len(wish.game.round_ids), 2)
+
+    def test_original_count_survives_catalogue_tuning_and_legacy_majority_completes(
+        self,
+    ):
+        state = wish_state()
+        definitions = dict(WISH_CATALOG.definitions)
+        definitions[WishId.WIN_OVERALL] = replace(
+            definitions[WishId.WIN_OVERALL], round_count=5,
+            goal=WishGoal(WishObjective.TOTAL_WINS, 5),
+        )
+        with patch("aiko_pet.infrastructure.wish_codec.WISH_CATALOG",
+                   WishCatalog(definitions)):
+            loaded = decode_wishes(encode_wishes(state), ELAPSED)
+        self.assertEqual(loaded.active[1].goal_snapshot,
+                         WishGoal(WishObjective.BLOCK_MAJORITY, 3))
+        pet = PetState(updated_at=WALL, lived_seconds=ELAPSED, wishes=loaded)
+        pet.complete_wish_round(instance_id=3, game_id="blackjack", session_id="c",
+                                round_id="c:1", started_at=950, outcome="win")
+        self.assertNotIn(3, [w.instance_id for w in pet.wishes.active])
+        self.assertEqual(pet.moodlets.active[0].definition_id, MoodletId.PRIDE)
+        self.assertEqual(pet.moodlets.active[0].level, 2)
+        cumulative = replace(state.active[1],
+                             goal=WishGoal(WishObjective.TOTAL_WINS, 3))
+        state = replace(state, active=(state.active[0], cumulative, state.active[2]))
+        with patch("aiko_pet.infrastructure.wish_codec.WISH_CATALOG",
+                   WishCatalog(definitions)):
+            loaded = decode_wishes(encode_wishes(state), ELAPSED)
+        self.assertEqual(loaded.active[1].goal_snapshot.required_count, 3)
+
+    def test_explicit_goal_pin_and_attempt_count_reject_corruption(self):
+        original = encode_wishes(wish_state())
+        for field, bad in (("pinned", 1), ("goal", None),
+                           ("goal", dict(objective="total_wins", required_count=True)),
+                           ("goal", dict(objective="next_win", required_count=1))):
+            raw = copy.deepcopy(original)
+            raw["active"][1][field] = bad
+            with self.subTest(field=field, bad=bad), self.assertRaises(ValueError):
+                decode_wishes(raw, ELAPSED)
+        for field, bad in (("completed_rounds", True), ("completed_rounds", 10000),
+                           ("completed_rounds", 1), ("round_ids", [str(i) for i
+                                                                  in range(101)])):
+            raw = copy.deepcopy(original)
+            raw["active"][1]["game"][field] = bad
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                decode_wishes(raw, ELAPSED)
+
     def test_round_trip_preserves_unspoken_spoken_and_cross_session_goals(self):
         pet = PetState(lived_seconds=ELAPSED, updated_at=WALL,
                        moodlets=moodlet_state(), wishes=wish_state())

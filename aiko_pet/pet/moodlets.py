@@ -16,6 +16,8 @@ from .interaction_events import InteractionMemory
 from .need_exposure import ExposureMark
 from .needs import NeedLevels
 
+MAX_MOODLET_CAUSES = 3
+
 
 class MoodletId(StrEnum):
     FOOD_FULFILLED = "food_fulfilled"
@@ -48,6 +50,51 @@ class MoodletAttribution(StrEnum):
     UNKNOWN = "unknown"
     USER = "user"
     AUTONOMOUS = "autonomous"
+
+
+class MoodletCauseKind(StrEnum):
+    LEGACY = "legacy"
+    WISH_FULFILLED = "wish_fulfilled"
+    WISH_FAILED = "wish_failed"
+    INTERACTION = "interaction"
+    POOR_CARE = "poor_care"
+
+
+class MoodletOutcome(StrEnum):
+    UNKNOWN = "unknown"
+    COMPLETED = "completed"
+    WIN = "win"
+    LOSS = "loss"
+    DRAW = "draw"
+    HANDOVER = "handover"
+    INTAKE = "intake"
+
+
+@dataclass(frozen=True, slots=True)
+class MoodletWishCause:
+    """A retired wish snapshot; stable catalogue keys avoid a domain import cycle.
+
+    The existing infrastructure codecs validate these keys against wish types
+    and catalogue targets. No active-wish reference or rendered text is retained.
+    """
+
+    instance_id: int
+    definition_id: str
+    target_id: str
+    objective: str
+    required_count: int
+
+
+@dataclass(frozen=True, slots=True)
+class MoodletCause:
+    kind: MoodletCauseKind
+    occurred_at: float
+    event_id: str | None = None
+    attribution: MoodletAttribution = MoodletAttribution.UNKNOWN
+    wish: MoodletWishCause | None = None
+    target_id: str | None = None
+    outcome: MoodletOutcome = MoodletOutcome.UNKNOWN
+    object_id: str | None = None
 
 
 class EmotionalDirection(StrEnum):
@@ -179,6 +226,28 @@ class MoodletEpisode:
     decay_paused: bool = False
     recovery_since: float | None = None
     attribution: MoodletAttribution = MoodletAttribution.UNKNOWN
+    causes: tuple[MoodletCause, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.causes:
+            object.__setattr__(self, "causes", (MoodletCause(
+                MoodletCauseKind.LEGACY, self.last_trigger_at,
+                attribution=self.attribution,
+            ),))
+
+    def with_cause(self, cause: MoodletCause) -> MoodletEpisode:
+        """Keep the latest three real receipts; passive decay never calls this."""
+        if (not math.isfinite(cause.occurred_at)
+                or not self.started_at <= cause.occurred_at <= self.last_trigger_at
+                or cause.kind == MoodletCauseKind.LEGACY or not cause.event_id):
+            raise ValueError("Moodlet cause must belong to its active episode")
+        if any(c.kind == cause.kind and c.event_id == cause.event_id
+               for c in self.causes):
+            return self
+        known = tuple(c for c in self.causes if c.kind != MoodletCauseKind.LEGACY)
+        if known and cause.occurred_at < known[-1].occurred_at:
+            raise ValueError("Moodlet causes must follow event time")
+        return replace(self, causes=(*known, cause)[-MAX_MOODLET_CAUSES:])
 
 
 @dataclass(frozen=True, slots=True)

@@ -8,6 +8,8 @@ from typing import Literal, Mapping
 from .balance import BALANCE
 from .moodlets import MoodletId
 
+MAX_WISH_ROUND_RECEIPTS = 100
+
 
 class WishId(StrEnum):
     FOOD = "food"
@@ -103,20 +105,31 @@ class WishDefinition:
 
 @dataclass(frozen=True, slots=True)
 class GameWishProgress:
-    """Only the bounded objective block, never a board, deck or session score.
+    """Bounded round receipts plus counts, never a board, deck or session score.
 
-    Completed round identities support duplicate detection. A session token
-    distinguishes the shared-play objective's single-session progress.
+    A total count need not grow receipt storage for a long-pinned goal. The
+    session token preserves the older shared-play single-session objective.
     """
 
     round_ids: tuple[str, ...] = ()
     wins: int = 0
     losses: int = 0
     session_id: str | None = None
+    completed_rounds: int = 0
+
+    def __post_init__(self) -> None:
+        if self.completed_rounds == 0 and self.round_ids:
+            object.__setattr__(self, "completed_rounds", len(self.round_ids))
 
 
 @dataclass(frozen=True, slots=True)
 class ActiveWish:
+    """An original goal, pin and progress owned by the existing pet aggregate.
+
+    Older constructors keep delivered v1 meanings; new creation must supply
+    its catalogue goal explicitly when the corresponding rules are wired.
+    """
+
     instance_id: int
     definition_id: WishId
     target_id: str
@@ -124,6 +137,18 @@ class ActiveWish:
     expires_at: float
     expressed_at: float | None = None
     game: GameWishProgress = GameWishProgress()
+    goal: WishGoal | None = None
+    pinned: bool = False
+
+    def __post_init__(self) -> None:
+        if self.goal is None:
+            object.__setattr__(self, "goal", legacy_wish_goal(self.definition_id))
+
+    @property
+    def goal_snapshot(self) -> WishGoal:
+        """An instance's original objective survives later catalogue changes."""
+        assert self.goal is not None
+        return self.goal
 
 
 @dataclass(frozen=True, slots=True)
@@ -235,7 +260,7 @@ def progress_game_wish(
             before.losses + (outcome == "loss"),
             session_id if key == WishId.PLAY_GAME else None,
         )
-        if len(progress.round_ids) >= definition.round_count:
+        if len(progress.round_ids) >= wish.goal_snapshot.required_count:
             won = (key == WishId.PLAY_GAME
                    or key == WishId.WIN_OVERALL and progress.wins > progress.losses
                    or key == WishId.AVOID_OVERALL_LOSS

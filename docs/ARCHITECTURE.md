@@ -161,10 +161,10 @@ whether to display a meal name or "Snack". Historical localized helpers
 belongs to `ui/view_models/text_de.py`.
 
 `pet/moodlets.py` defines immutable Moodlet catalogue values and distinct
-emotional directions. `pet/moodlet_catalog.py` strictly loads all eighteen
+emotional directions. `pet/moodlet_catalog.py` strictly loads nineteen
 families from `data/moodlets.json`, with shared caps/recovery settings in the
 existing balance catalogue and descriptions in the existing German text owner.
-`pet/wishes.py` and `pet/wish_catalog.py` provide the eleven wish objective
+`pet/wishes.py` and `pet/wish_catalog.py` provide twelve wish objective
 forms in `data/wishes.json`, referencing actual food/game targets and positive
 Moodlet definitions. Shared creation/disclosure settings and the nominal wish
 friendship bonus live in the existing balance catalogue. The pet package does
@@ -172,6 +172,15 @@ not import application social preparation; social objective IDs are checked
 against supported categories in focused tests. Labels/descriptions stay in
 `texts.de.json`. Both catalogues detach nested values into frozen dataclasses,
 tuples and read-only mappings.
+
+The latest definitions-and-storage slice includes the dormant food-avoidance
+objective (zero selection weight) and downcast `disappointed` family; their
+gameplay triggers are not wired yet. Game selection weights are catalogued,
+while weighted selection remains a later delivery. `WishGoal`/`WishObjective`
+preserve each active wish's original meaning and count independently of newer
+catalogue meanings. Older saves migrate to their actual delivered objectives,
+and current creation keeps those variants until new matching is wired. The
+persisted pin flag is available as data; pin controls/lifecycle follow separately.
 
 Pet rules share only `games/contracts.py`'s immutable game IDs and outcome type;
 they never import game implementations, sessions or scores. The package boundary
@@ -186,8 +195,14 @@ includes both collections in the existing Pet/World/memory transaction.
 Elapsed timestamps refer to `lived_seconds`; loading never advances them or
 creates emotional evidence. Wish IDs, creation evidence and refill deadlines survive
 removed wishes;
-round progress is bounded to the objective and does not become a second game
-session/score owner. Friendship rewards retain their existing history owner.
+round receipts are bounded independently of cumulative attempt counts and never
+become a second game session/score owner. `MoodletCause`/`MoodletWishCause` preserve
+at most three real, language-neutral trigger snapshots within the active episode.
+Their wish keys are validated by codecs, avoiding a domain import cycle. Old
+episodes have explicit unknown evidence; expiry removes causes with their episode.
+Immutable application reads expose original goals, pins and causes, without
+owning history or changing the UI. Friendship rewards retain their existing
+history owner.
 
 `pet/wishes.py` also owns pure creation, original-deadline expiry, temporary
 restrictions and disclosure eligibility. The existing `PetState` progression

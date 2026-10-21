@@ -12,7 +12,41 @@ from ..pet.catalog_validation import (
     object_fields,
 )
 from ..pet.wish_catalog import WISH_CATALOG
-from ..pet.wishes import ActiveWish, GameWishProgress, WishArea, WishId, WishState
+from ..pet.wishes import (
+    MAX_WISH_ROUND_RECEIPTS,
+    ActiveWish,
+    GameWishProgress,
+    WishArea,
+    WishGoal,
+    WishId,
+    WishObjective,
+    WishState,
+    legacy_wish_goal,
+)
+
+
+def decode_wish_goal(raw: Any, key: WishId) -> WishGoal:
+    """Validate an explicit original goal, including preserved pre-migration forms."""
+    row = object_fields(raw, ("objective", "required_count"), context="wish goal")
+    goal = WishGoal(
+        enum_value(row["objective"], WishObjective, context="wish goal objective"),
+        integer_value(row["required_count"], minimum=0, maximum=100,
+                      context="wish goal count"),
+    )
+    allowed: tuple[WishGoal, ...] = (WISH_CATALOG.definitions[key].goal,)
+    if key != WishId.AVOID_FOOD:
+        allowed += (legacy_wish_goal(key),)
+    if (goal.objective not in {g.objective for g in allowed}
+            or (WISH_CATALOG.definitions[key].area == WishArea.GAMES)
+            != (goal.required_count > 0)
+            or key in (WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS)
+            and goal.required_count != 1):
+        raise ValueError("Incompatible saved wish objective/count")
+    return goal
+
+
+def encode_wish_goal(goal: WishGoal) -> dict[str, Any]:
+    return dict(objective=goal.objective.value, required_count=goal.required_count)
 
 
 def _token(raw: Any) -> str:
@@ -21,25 +55,37 @@ def _token(raw: Any) -> str:
     return raw
 
 
-def _game_progress(raw: Any, key: WishId) -> GameWishProgress:
+def _game_progress(raw: Any, key: WishId, goal: WishGoal) -> GameWishProgress:
     row = object_fields(raw, ("round_ids", "wins", "losses", "session_id"),
+                        optional=("completed_rounds",),
                         context="game wish progress")
     definition = WISH_CATALOG.definitions[key]
     ids = row["round_ids"]
-    if not isinstance(ids, list) or len(ids) > definition.round_count:
+    if not isinstance(ids, list) or len(ids) > MAX_WISH_ROUND_RECEIPTS:
         raise ValueError("Unbounded wish round progress")
     rounds = tuple(_token(v) for v in ids)
     if len(rounds) != len(set(rounds)):
         raise ValueError("Duplicate completed wish round")
-    wins = integer_value(row["wins"], minimum=0, maximum=len(rounds),
+    cumulative_wins = goal.objective == WishObjective.TOTAL_WINS
+    count = integer_value(row.get("completed_rounds", len(rounds)),
+                          minimum=len(rounds),
+                          maximum=2**63 - 1 if cumulative_wins else goal.required_count,
+                          context="wish completed rounds")
+    if (bool(count) != bool(rounds)
+            or not cumulative_wins and count != len(rounds)):
+        raise ValueError("Wish progress lacks bounded round evidence")
+    wins = integer_value(row["wins"], minimum=0, maximum=count,
                          context="wish wins")
-    losses = integer_value(row["losses"], minimum=0, maximum=len(rounds) - wins,
+    losses = integer_value(row["losses"], minimum=0, maximum=count - wins,
                            context="wish losses")
+    if cumulative_wins and wins > goal.required_count:
+        raise ValueError("Excess cumulative wish wins")
     session = None if row["session_id"] is None else _token(row["session_id"])
     if (definition.area != WishArea.GAMES and (rounds or session is not None)
-            or key == WishId.PLAY_GAME and rounds and session is None):
+            or goal.objective == WishObjective.SESSION_ROUNDS
+            and rounds and session is None):
         raise ValueError("Incompatible game wish session/progress")
-    return GameWishProgress(rounds, wins, losses, session)
+    return GameWishProgress(rounds, wins, losses, session, count)
 
 
 def decode_wishes(raw: Any, elapsed: float) -> WishState:
@@ -75,11 +121,18 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
         entry = object_fields(value, (
             "instance_id", "definition_id", "target_id", "created_at", "expires_at",
             "expressed_at", "game",
-        ), context="active wish")
+        ), optional=("goal", "pinned"), context="active wish")
         instance = integer_value(entry["instance_id"], minimum=1,
                                  maximum=next_id - 1, context="wish instance")
         key = enum_value(entry["definition_id"], WishId, context="wish objective")
         definition = WISH_CATALOG.definitions[key]
+        if "goal" in entry:
+            goal = decode_wish_goal(entry["goal"], key)
+        else:
+            goal = legacy_wish_goal(key)
+        pinned = entry.get("pinned", False)
+        if type(pinned) is not bool:
+            raise ValueError("Wish pin must be a boolean")
         if instance in instances or definition.area in areas:
             raise ValueError("Duplicate wish instance or area")
         target = entry["target_id"]
@@ -102,8 +155,10 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
         )
         if spoken is not None and (expressed is None or expressed < spoken):
             raise ValueError("Missing last wish expression evidence")
-        active.append(ActiveWish(instance, key, target, start, end, spoken,
-                                 _game_progress(entry["game"], key)))
+        active.append(ActiveWish(
+            instance, key, target, start, end, spoken,
+            _game_progress(entry["game"], key, goal), goal, pinned,
+        ))
         instances.add(instance)
         areas.add(definition.area)
     refill = (None if row.get("refill_not_before") is None else number_value(
@@ -134,7 +189,9 @@ def encode_wishes(state: WishState) -> dict[str, Any]:
             instance_id=w.instance_id, definition_id=w.definition_id.value,
             target_id=w.target_id, created_at=w.created_at, expires_at=w.expires_at,
             expressed_at=w.expressed_at,
+            goal=encode_wish_goal(w.goal_snapshot), pinned=w.pinned,
             game=dict(round_ids=list(w.game.round_ids), wins=w.game.wins,
-                      losses=w.game.losses, session_id=w.game.session_id),
+                      losses=w.game.losses, session_id=w.game.session_id,
+                      completed_rounds=w.game.completed_rounds),
         ) for w in state.active],
     )

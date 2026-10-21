@@ -12,6 +12,7 @@ from ..pet.moodlet_catalog import MOODLET_CATALOG
 from ..pet.moodlets import (
     EmotionalDirection,
     MoodletAttribution,
+    MoodletCause,
     MoodletDecay,
     MoodletId,
     MoodletPolarity,
@@ -23,6 +24,7 @@ from ..pet.wish_catalog import WISH_CATALOG
 from ..pet.wishes import (
     WishArea,
     WishContext,
+    WishGoal,
     WishId,
     WishRestriction,
     WishTargetKind,
@@ -46,6 +48,7 @@ class MoodletRead:
     decay: MoodletDecay
     decay_paused: bool
     recovery_wait_seconds: float | None
+    causes: tuple[MoodletCause, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -69,6 +72,8 @@ class WishRead:
     expressed: bool
     restriction: WishRestriction | None
     game: GameWishRead | None
+    goal: WishGoal | None = None
+    pinned: bool = False
 
 
 def _moodlet_reads(state: PetState) -> tuple[MoodletRead, ...]:
@@ -99,6 +104,7 @@ def _moodlet_reads(state: PetState) -> tuple[MoodletRead, ...]:
                     if episode.recovery_since is not None
                     else None
                 ),
+                episode.causes,
             )
         )
     return tuple(result)
@@ -120,14 +126,16 @@ def _wish_reads(state: PetState, context: WishContext) -> tuple[WishRead, ...]:
                 wish_restriction(wish, context, WISH_CATALOG.definitions),
                 (
                     GameWishRead(
-                        len(wish.game.round_ids),
-                        definition.round_count,
+                        wish.game.completed_rounds,
+                        wish.goal_snapshot.required_count,
                         wish.game.wins,
                         wish.game.losses,
                     )
                     if definition.area == WishArea.GAMES
                     else None
                 ),
+                wish.goal_snapshot,
+                wish.pinned,
             )
         )
     return tuple(result)

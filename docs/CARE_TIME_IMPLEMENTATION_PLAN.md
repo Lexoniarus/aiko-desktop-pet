@@ -21,9 +21,10 @@
 > The latest 2026-10-21 continuous-friendship amendment replaces the earlier
 > capped care/wish reward model for the next implementation. Its 30-second
 > balance values are approved for planning; runtime still uses the old model.
-> The later wish-mix and carried-object absence amendments below are also
-> planning-only. Their delivery sequence and the saved-goal migration decision
-> are recorded at the end of this document.
+> The later corrections are delivered incrementally below. Slice 1's definitions
+> and storage are delivered; the remaining selection, interaction, relationship
+> and UI changes are not yet implemented. Existing game goals retain their
+> original meaning and progress, as approved by the owner.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
@@ -4492,3 +4493,47 @@ It has no gameplay trigger yet. German resource keys are complete and validated.
 The catalogue/lifecycle/content target passes **32 tests in 0.116 seconds**,
 longest **0.036 seconds**, with Tk/Toplevel construction explicitly blocked.
 Scoped pinned Ruff and strict Mypy pass. No desktop windows, full suite or CI.
+
+### Slice 1 delivery: original goals, pins and active cause storage
+
+`ActiveWish` now carries its immutable original `WishGoal` and persisted pin flag.
+Missing goal data explicitly migrates to the original delivered meanings:
+single-session shared play, retryable win and a three-round majority. Neither
+loading nor a catalogue count change rewrites stored original progress, target,
+identity or deadline. Existing game completion reads the original required count.
+The new generator/completion semantics and pin controls remain for later slices;
+current generation still creates the delivered original goal variants.
+
+`GameWishProgress` separates total completed-round count from bounded receipt
+storage. The codec accepts large cumulative attempt counts with at most one
+hundred recent round identities, without a saved session/score archive. Future
+cumulative matching and technical duplicate admission remain the existing game
+coordinator/domain owners' responsibility, not the cause history's job.
+
+`MoodletEpisode` now retains immutable `MoodletCause`/`MoodletWishCause` snapshots:
+source wish identity and original objective/count/target, actual outcome, concrete
+target/object where relevant, event identity, elapsed timestamp and attribution.
+Stable wish keys are validated in infrastructure without a circular pet-domain
+import. `with_cause()` preserves the latest three distinct real receipts; the
+normal elapsed decay retains their snapshots until the episode ends. One weighted
+level-two success can still have one cause. Old episodes get a single explicitly
+unknown/legacy record, not an invented wish, game, food or historical event.
+Actual trigger wiring remains pending in the later completion/interaction slices.
+
+The existing version-one codecs store these optional additions in the same
+atomic save. `PetValues` checkpoint/restore owns them; `PetReadSnapshot` exposes
+the same frozen causes, original objective and pin data passively. There is no
+separate mutable store, ended-wish archive, reward replay, clock or UI behavior
+change. Corrupt new evidence uses the existing section rejection and original-file
+backup behavior. The user's live save was not opened or changed.
+
+Combined targeted verification: **87 tests pass in 0.693 seconds**, longest
+**0.220 seconds**, none over ten seconds. Coverage includes old/new save and
+temporary-file store round trips, original-goal continuation, pinned progress
+data, cause bounds/retention, atomic checkpoints, immutable reads and the existing
+dependency/import boundary gates. After centralizing receipt/cause bounds in
+their domain owners, the **22 storage tests pass in 0.037 seconds** as well.
+Tk/Toplevel construction was explicitly blocked in both processes. Scoped
+pinned Ruff, strict Mypy and Pyright pass; no full suite, desktop automation,
+live API call or GitHub CI was used. Slice 1 is complete; slice 2 remains pending
+the owner's authorization.

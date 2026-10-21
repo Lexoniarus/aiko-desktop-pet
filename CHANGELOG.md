@@ -13,6 +13,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   Selection/completion wiring follows separately; existing game behavior is
   preserved during the definitions-and-storage delivery.
 
+- Preserve each saved wish's original objective/count and progress independently
+  of newer catalogue meanings. Store pin data, bounded cumulative progress and
+  up to three precise cause snapshots per active Moodlet in the existing atomic
+  version-one save/checkpoint. Legacy causes remain explicitly unknown; expiry
+  removes the episode's cause data. New selection, triggers and UI follow later.
+
 - Trigger "Vertauschter Platz" only when a learned place is confirmed empty and
   admitted to missing-object search. Observed item relocation updates knowledge
   without this Moodlet or an automatic friendship penalty. Preserve separate

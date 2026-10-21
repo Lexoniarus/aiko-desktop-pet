@@ -78,8 +78,8 @@ class EmotionalReadTests(unittest.TestCase):
             read, time, None, ComputerSnapshot(), observe_computer=False
         )
         self.assertEqual(hover.emotional, status.emotional)
-        self.assertEqual(len(status.emotional.moodlets), 18)
-        self.assertEqual(len(read.emotions.influences), 18)
+        self.assertEqual(len(status.emotional.moodlets), 19)
+        self.assertEqual(len(read.emotions.influences), 19)
         self.assertEqual(
             {m.value.definition_id for m in status.emotional.moodlets}, set(MoodletId)
         )
@@ -98,6 +98,7 @@ class EmotionalReadTests(unittest.TestCase):
                     0,
                     14400,
                     game=GameWishProgress(("session:1",), 1),
+                    goal=definition.goal,
                 )
                 state = PetState(lived_seconds=3600, wishes=WishState(active=(wish,)))
                 read = snapshot_pet(state).wishes[0]

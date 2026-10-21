@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import random
 import unittest
 from dataclasses import FrozenInstanceError
 from pathlib import Path
@@ -22,7 +23,14 @@ from aiko_pet.pet.wish_catalog import (
     load_packaged_wish_catalog,
     parse_wish_catalog,
 )
-from aiko_pet.pet.wishes import WishArea, WishId, WishObjective
+from aiko_pet.pet.wishes import (
+    WishArea,
+    WishContext,
+    WishId,
+    WishObjective,
+    WishState,
+    replenish_wishes,
+)
 
 DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
 
@@ -84,6 +92,11 @@ class WishCatalogTests(unittest.TestCase):
         self.assertEqual((avoid.area, avoid.goal.objective, avoid.selection_weight),
                          (WishArea.FOOD, WishObjective.FOOD_HANDOVER, 0))
         self.assertEqual(avoid.targets, definitions[WishId.FOOD].targets)
+        state = WishState()
+        self.assertEqual(replenish_wishes(
+            state, elapsed=0, sleeping=False, context=WishContext(),
+            definitions={avoid.id: avoid}, rng=random.Random(1),
+        ), state)
 
     def test_definitions_targets_and_collections_are_read_only(self):
         with self.assertRaises(TypeError):
