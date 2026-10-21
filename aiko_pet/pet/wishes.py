@@ -6,7 +6,14 @@ from enum import StrEnum
 from typing import Literal, Mapping
 
 from .balance import BALANCE
-from .moodlets import MoodletId
+from .moodlets import (
+    MoodletCause,
+    MoodletCauseKind,
+    MoodletGameResult,
+    MoodletId,
+    MoodletOutcome,
+    MoodletWishCause,
+)
 from .needs import NeedLevels
 
 MAX_WISH_ROUND_RECEIPTS = 100
@@ -61,6 +68,21 @@ class WishObjective(StrEnum):
 class WishGoal:
     objective: WishObjective
     required_count: int
+
+
+GAME_GOAL_TEXT_VARIANTS = (
+    WishObjective.TOTAL_ROUNDS, WishObjective.NEXT_WIN, WishObjective.TOTAL_WINS,
+)
+
+
+def wish_text_key(
+    key: WishId, goal: WishGoal | None,
+    field: Literal["label", "description", "utterance"],
+) -> str:
+    """Preserve original goal wording when a catalogue ID acquires a new meaning."""
+    prefix = (f"wish.goal.{goal.objective}" if goal is not None
+              and goal.objective in GAME_GOAL_TEXT_VARIANTS else f"wish.{key}")
+    return f"{prefix}.{field}"
 
 
 def legacy_wish_goal(key: WishId) -> WishGoal:
@@ -200,32 +222,82 @@ class WishResolution:
 
     state: WishState
     fulfilled: WishDefinition | None = None
+    cause: MoodletCause | None = None
+
+
+def _wish_cause(
+    wish: ActiveWish, *, elapsed: float, event_id: str, outcome: MoodletOutcome,
+    failed: bool = False, target_id: str | None = None,
+    object_id: str | None = None, game: MoodletGameResult | None = None,
+) -> MoodletCause:
+    goal = wish.goal_snapshot
+    return MoodletCause(
+        MoodletCauseKind.WISH_FAILED if failed else MoodletCauseKind.WISH_FULFILLED,
+        elapsed, event_id,
+        wish=MoodletWishCause(wish.instance_id, wish.definition_id.value,
+                             wish.target_id, goal.objective.value, goal.required_count),
+        target_id=wish.target_id if target_id is None else target_id,
+        outcome=outcome, object_id=object_id, game=game,
+    )
 
 
 def fulfill_activity_wish(
     state: WishState, area: WishArea, target_id: str, *, elapsed: float,
     definitions: Mapping[WishId, WishDefinition], instance_id: int | None = None,
+    object_id: str | None = None,
 ) -> WishResolution:
     """Called only after actual accepted intake/care or full social completion."""
     wish = next((w for w in state.active
                  if definitions[w.definition_id].area == area
                  and w.target_id == target_id
+                 and w.goal_snapshot.objective != WishObjective.FOOD_HANDOVER
                  and (instance_id is None or w.instance_id == instance_id)
                  and w.is_active_at(elapsed)), None)
     if wish is None:
         return WishResolution(state)
-    return _retire_wish(state, wish, definitions[wish.definition_id], elapsed=elapsed)
+    return _retire_wish(
+        state, wish, definitions[wish.definition_id], elapsed=elapsed,
+        cause=_wish_cause(wish, elapsed=elapsed,
+                          event_id=f"wish:{wish.instance_id}:fulfilled",
+                          outcome=MoodletOutcome.INTAKE if area == WishArea.FOOD
+                          else MoodletOutcome.COMPLETED, object_id=object_id),
+    )
 
 
 def _retire_wish(
     state: WishState, wish: ActiveWish, fulfilled: WishDefinition | None,
-    *, elapsed: float,
+    *, elapsed: float, cause: MoodletCause | None = None,
 ) -> WishResolution:
     return WishResolution(replace(
         state, active=tuple(w for w in state.active
                             if w.instance_id != wish.instance_id),
         refill_not_before=_refill_deadline(state, elapsed),
-    ), fulfilled)
+    ), fulfilled, cause)
+
+
+def _game_result(
+    goal: WishGoal, progress: GameWishProgress, outcome: Literal["win", "loss", "draw"],
+) -> tuple[bool, bool, MoodletOutcome]:
+    """Completion and success are properties of the original goal, not its ID."""
+    objective = goal.objective
+    if objective in (WishObjective.RETRY_WIN, WishObjective.NEXT_WIN):
+        won = outcome == "win"
+        return won or objective == WishObjective.NEXT_WIN, won, MoodletOutcome(outcome)
+    if objective == WishObjective.NEXT_NON_LOSS:
+        return True, outcome != "loss", MoodletOutcome(outcome)
+    if objective == WishObjective.TOTAL_WINS:
+        return progress.wins >= goal.required_count, True, MoodletOutcome.WIN
+    if objective in (WishObjective.SESSION_ROUNDS, WishObjective.TOTAL_ROUNDS):
+        return (progress.completed_rounds >= goal.required_count, True,
+                MoodletOutcome.COMPLETED)
+    if objective not in (WishObjective.BLOCK_MAJORITY, WishObjective.BLOCK_NON_LOSS):
+        raise ValueError("Unsupported game wish objective")
+    result = (MoodletOutcome.WIN if progress.wins > progress.losses
+              else MoodletOutcome.DRAW if progress.wins == progress.losses
+              else MoodletOutcome.LOSS)
+    success = (result == MoodletOutcome.WIN or result == MoodletOutcome.DRAW
+               and objective == WishObjective.BLOCK_NON_LOSS)
+    return progress.completed_rounds >= goal.required_count, success, result
 
 
 def _refill_deadline(state: WishState, elapsed: float) -> float:
@@ -248,31 +320,34 @@ def progress_game_wish(
             or not wish.is_active_at(elapsed)
             or round_id in wish.game.round_ids):
         return WishResolution(state)
-    definition = definitions[wish.definition_id]
-    key = definition.id
-    if key == WishId.WIN_ROUND:
-        if outcome == "win":
-            return _retire_wish(state, wish, definition, elapsed=elapsed)
-        progress = GameWishProgress((round_id,), 0, int(outcome == "loss"))
-    elif key == WishId.AVOID_ROUND_LOSS:
-        return _retire_wish(state, wish, definition if outcome != "loss" else None,
-                            elapsed=elapsed)
-    else:
-        before = wish.game
-        if key == WishId.PLAY_GAME and before.session_id != session_id:
-            before = GameWishProgress(session_id=session_id)
-        progress = GameWishProgress(
-            (*before.round_ids, round_id), before.wins + (outcome == "win"),
-            before.losses + (outcome == "loss"),
-            session_id if key == WishId.PLAY_GAME else None,
-        )
-        if len(progress.round_ids) >= wish.goal_snapshot.required_count:
-            won = (key == WishId.PLAY_GAME
-                   or key == WishId.WIN_OVERALL and progress.wins > progress.losses
-                   or key == WishId.AVOID_OVERALL_LOSS
-                   and progress.wins >= progress.losses)
-            return _retire_wish(state, wish, definition if won else None,
-                                elapsed=elapsed)
+    definition, goal = definitions[wish.definition_id], wish.goal_snapshot
+    before = wish.game
+    if (goal.objective == WishObjective.RETRY_WIN
+            or goal.objective == WishObjective.SESSION_ROUNDS
+            and before.session_id != session_id):
+        before = GameWishProgress()
+    if before.completed_rounds >= 2**63 - 1:
+        raise ValueError("Wish attempt count exhausted")
+    progress = GameWishProgress(
+        (*before.round_ids, round_id)[-MAX_WISH_ROUND_RECEIPTS:],
+        before.wins + (outcome == "win"), before.losses + (outcome == "loss"),
+        session_id if goal.objective == WishObjective.SESSION_ROUNDS else None,
+        before.completed_rounds + 1,
+    )
+    finished, success, result = _game_result(goal, progress, outcome)
+    if finished:
+        disappointed = (not success and goal.objective in (
+            WishObjective.NEXT_NON_LOSS, WishObjective.BLOCK_NON_LOSS,
+        ))
+        cause = (_wish_cause(
+            wish, elapsed=elapsed, event_id=round_id, outcome=result,
+            failed=disappointed, game=MoodletGameResult(
+                MoodletOutcome(outcome), progress.completed_rounds,
+                progress.wins, progress.losses,
+            ),
+        ) if success or disappointed else None)
+        return _retire_wish(state, wish, definition if success else None,
+                            elapsed=elapsed, cause=cause)
     return WishResolution(replace(state, active=tuple(
         replace(w, game=progress) if w.instance_id == instance_id else w
         for w in state.active
@@ -400,10 +475,7 @@ def replenish_wishes(
         active.append(ActiveWish(
             next_id, definition.id, rng.choice(targets), elapsed,
             elapsed + BALANCE.integer("wishes", "lifetime_seconds"),
-            # Step 3 switches new game meanings together with their matchers.
-            # Never change a stored goal to compensate for missing wiring.
-            goal=(legacy_wish_goal(definition.id) if area == WishArea.GAMES
-                  else definition.goal),
+            goal=definition.goal,
         ))
         next_id += 1
         anchors[area] = elapsed

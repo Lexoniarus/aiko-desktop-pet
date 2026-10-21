@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Resolve new game wishes by their saved objective: accumulate two rounds or
+  three wins across sessions, or settle an explicit next-round goal once.
+  Preserve older goals. Failed non-loss wishes create downcast disappointment
+  without a direct friendship penalty. Retain the concrete goal, final result
+  and counts in bounded active Moodlet causes; show wins separately from rounds.
+
 - Make new food/affection wishes depend on current need and petting willingness,
   and quietly retire supplied unpinned wishes at 90. Preserve full-needs game
   and social wishes, the shared twelve-minute refill and actual-care completion

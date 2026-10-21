@@ -9,7 +9,7 @@ from ...pet.content import GERMAN_TEXT
 from ...pet.food import FOOD_CATALOG
 from ...pet.mind.adaptive_models import Behaviour
 from ...pet.routine import TimeContext
-from ...pet.wishes import WishTargetKind
+from ...pet.wishes import WishTargetKind, wish_text_key
 from ...telemetry import ComputerSnapshot
 from .contracts import (
     EmotionalSnapshot,
@@ -50,7 +50,9 @@ def _status_values(pet: PetReadSnapshot) -> tuple[tuple[str, float], ...]:
 def _emotional_snapshot(pet: PetReadSnapshot) -> EmotionalSnapshot:
     wishes = []
     for wish in pet.wishes:
-        label = GERMAN_TEXT.format(f"wish.{wish.definition_id}.label")
+        label = GERMAN_TEXT.format(
+            wish_text_key(wish.definition_id, wish.goal, "label"),
+        )
         target = (
             FOOD_CATALOG[wish.target_id].display_name
             if wish.target_kind == WishTargetKind.FOOD
@@ -62,7 +64,8 @@ def _emotional_snapshot(pet: PetReadSnapshot) -> EmotionalSnapshot:
             WishView(
                 wish,
                 label,
-                GERMAN_TEXT.format(f"wish.{wish.definition_id}.description"),
+                GERMAN_TEXT.format(wish_text_key(wish.definition_id, wish.goal,
+                                                "description")),
                 target,
                 (
                     GERMAN_TEXT.format(f"wish.restriction.{wish.restriction}")

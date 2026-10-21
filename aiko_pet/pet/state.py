@@ -44,7 +44,13 @@ from .lifecycle import (
     plan_pet_time,
 )
 from .moodlet_catalog import MOODLET_CATALOG
-from .moodlets import MoodletAttribution, MoodletState, reinforce_moodlet
+from .moodlets import (
+    MoodletAttribution,
+    MoodletCauseKind,
+    MoodletId,
+    MoodletState,
+    reinforce_moodlet,
+)
 from .needs import NeedLevels
 from .progression import calculate_pet_progression
 from .routine import TimeContext, context_at, due_meal
@@ -365,14 +371,24 @@ class PetState:
     ) -> None:
         """Commit retirement, lasting impression and shared-pot bonus together."""
         if resolution.fulfilled is None:
-            self._change(wishes=resolution.state)
+            moodlets = self.moodlets
+            if (resolution.cause is not None
+                    and resolution.cause.kind == MoodletCauseKind.WISH_FAILED):
+                moodlets = reinforce_moodlet(
+                    moodlets, MoodletId.DISAPPOINTED, elapsed=self.lived_seconds,
+                    definitions=MOODLET_CATALOG.definitions, cause=resolution.cause,
+                )
+            self._change(wishes=resolution.state, moodlets=moodlets)
             return
         definition = resolution.fulfilled
+        attribution = (MoodletAttribution.USER if personal
+                       else MoodletAttribution.AUTONOMOUS)
         moodlets = reinforce_moodlet(
             self.moodlets, definition.fulfillment_moodlet, elapsed=self.lived_seconds,
             definitions=MOODLET_CATALOG.definitions, level=definition.fulfillment_level,
-            attribution=(MoodletAttribution.USER if personal
-                         else MoodletAttribution.AUTONOMOUS),
+            attribution=attribution,
+            cause=(replace(resolution.cause, attribution=attribution)
+                   if resolution.cause is not None else None),
         )
         relationship = (calculate_wish_friendship_reward(self) if personal
                         else FriendshipProgress(

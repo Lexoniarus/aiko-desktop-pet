@@ -20,11 +20,14 @@ from aiko_pet.pet.wishes import (
     ActiveWish,
     GameWishProgress,
     WishContext,
+    WishGoal,
     WishId,
+    WishObjective,
     WishRestriction,
     WishState,
 )
 from aiko_pet.telemetry import ComputerSnapshot
+from aiko_pet.ui.view_models.emotional_text import MOODLET_ICONS, wish_progress
 from aiko_pet.ui.view_models.projections import project_hover, project_status
 from tools.pet_test_support import set_test_pet_values
 
@@ -80,6 +83,7 @@ class EmotionalReadTests(unittest.TestCase):
         self.assertEqual(hover.emotional, status.emotional)
         self.assertEqual(len(status.emotional.moodlets), 19)
         self.assertEqual(len(read.emotions.influences), 19)
+        self.assertTrue(set(MoodletId) <= set(MOODLET_ICONS))
         self.assertEqual(
             {m.value.definition_id for m in status.emotional.moodlets}, set(MoodletId)
         )
@@ -87,6 +91,26 @@ class EmotionalReadTests(unittest.TestCase):
             all(m.label and m.description for m in status.emotional.moodlets)
         )
         self.assertEqual(state.capture_checkpoint(), before)
+
+    def test_cumulative_wins_show_wins_and_keep_legacy_block_wording_distinct(self):
+        for goal, expected_label, compact in (
+            (WishGoal(WishObjective.TOTAL_WINS, 3), "Siege sammeln", "2/3 Siege"),
+            (WishGoal(WishObjective.BLOCK_MAJORITY, 3), "Insgesamt gewinnen",
+             "2/3 Runden"),
+        ):
+            total = goal.objective == WishObjective.TOTAL_WINS
+            rounds, wins = (5, 2) if total else (2, 1)
+            state = PetState(wishes=WishState(active=(ActiveWish(
+                1, WishId.WIN_OVERALL, "blackjack", 0, 14400,
+                game=GameWishProgress(tuple(f"a:{i}" for i in range(rounds)),
+                                      wins, 1, None, rounds), goal=goal,
+            ),)))
+            view = project_hover(snapshot_pet(state), context_at(1800000000),
+                                 ComputerSnapshot(), observe_computer=False)
+            wish = view.emotional.wishes[0]
+            self.assertEqual(wish.label, expected_label)
+            self.assertEqual(wish_progress(wish, compact=True), compact)
+            self.assertIn("5 Runden" if total else "2/3 Runden", wish_progress(wish))
 
     def test_each_wish_form_exposes_inner_spoken_target_and_objective_progress(self):
         for key, definition in WISH_CATALOG.definitions.items():

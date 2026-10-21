@@ -17,6 +17,7 @@ from ..view_models.emotional_text import (
     wish_badge,
     wish_description,
     wish_icon,
+    wish_progress,
 )
 
 
@@ -85,15 +86,7 @@ class WishPanel:
                 p
                 for p in (
                     item.label if item.label != item.target_label else "",
-                    (
-                        GERMAN_TEXT.format(
-                            "vn.rounds_short",
-                            completed=str(item.value.game.completed_rounds),
-                            required=str(item.value.game.required_rounds),
-                        )
-                        if item.value.game is not None
-                        else ""
-                    ),
+                    wish_progress(item, compact=True),
                 )
                 if p
             )

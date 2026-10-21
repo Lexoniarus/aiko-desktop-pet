@@ -345,7 +345,7 @@ class WishPersistenceTests(unittest.TestCase):
         self.assertIsNotNone(read.game)
         assert read.game is not None
         self.assertEqual(read.game.completed_rounds, 10000)
-        self.assertEqual(read.game.required_rounds, 3)
+        self.assertEqual(read.game.required_count, 3)
         self.assertEqual(len(wish.game.round_ids), 2)
 
     def test_original_count_survives_catalogue_tuning_and_legacy_majority_completes(

@@ -236,7 +236,7 @@ class WishLifecycleTests(unittest.TestCase):
         self.assertFalse(pet.wishes.active)
         self.assertEqual(pet.moodlets.active[0].definition_id, MoodletId.FOOD_FULFILLED)
 
-    def test_game_weights_apply_within_area_and_preserve_current_goal_meanings(self):
+    def test_game_weights_apply_within_area_and_capture_current_catalogue_goals(self):
         definitions = {key: d for key, d in DEFINITIONS.items()
                        if d.area == WishArea.GAMES}
         rng = random.Random(4)
@@ -249,9 +249,7 @@ class WishLifecycleTests(unittest.TestCase):
                 )
             wish = state.active[0]
             counts[wish.definition_id] += 1
-            self.assertEqual(wish.goal_snapshot, ActiveWish(
-                1, wish.definition_id, wish.target_id, 0, 14400,
-            ).goal_snapshot)
+            self.assertEqual(wish.goal_snapshot, definitions[wish.definition_id].goal)
         self.assertEqual(counts, {WishId.PLAY_GAME: 60, WishId.WIN_ROUND: 10,
                                   WishId.AVOID_ROUND_LOSS: 15,
                                   WishId.WIN_OVERALL: 10,

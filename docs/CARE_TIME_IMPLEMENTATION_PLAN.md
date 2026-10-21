@@ -4635,3 +4635,41 @@ The targeted progression/storage checks pass **35 tests in 0.033 seconds**,
 longest **0.010 seconds**. Scoped Ruff, strict Mypy and Pyright pass. Native
 window construction was blocked; no full suite, mouse control or CI. Gameplay
 activation follows in the separate game and food commits below.
+
+### Slice 3 delivery: original-goal game resolution and outcome causes
+
+New game wishes now snapshot the current catalogue goal together with its
+working matcher. Two total rounds and three total wins accumulate across
+sessions/restarts; losses/draws do not reset cumulative wins. Next-round victory
+resolves on the first result. Previously stored retry/session/majority goals
+continue to resolve their original meanings. Original deadlines/pins, precise
+round admission and pre-existing-wish capture remain unchanged.
+
+Failed next-round/block non-loss wishes create `disappointed` exactly once,
+including a lost block whose final round itself was a draw. The cause preserves
+both objective outcome and actual final-round outcome/counts. Expiry, abandoned
+rounds, missing starts and unrelated results do not create disappointment. No
+instant relationship deduction accompanies fair defeat. Reinforcement uses the
+existing 30-minute stage, maximum three tiers and bounded three actual causes;
+positive victory impressions can coexist with the disappointment.
+
+`WishResolution` carries the qualified cause into `PetState`, which commits
+retirement, impression and any already-existing positive wish allowance. Shared
+activity fulfillment also retains its real target/objective rather than a
+deleted-wish reference. Cumulative progress keeps total counts and at most one
+hundred recent receipts; the application still admits actual start/result pairs,
+not historical game replays. No game score store or second event dispatcher exists.
+
+Minimal existing presentation contracts now distinguish cumulative versus legacy
+goal wording and display wins as wins. `GameWishRead.required_count` replaces the
+misleading `required_rounds` name at all repository callers. Full cause/pin UI
+presentation remains slice 7. Disappointment reuses the existing negative game
+icon; no artwork was generated or replaced and no native fixture was opened.
+
+The focused game/lifecycle/disclosure/read/progression/storage set passes
+**86 tests in 0.357 seconds**, longest **0.070 seconds**, including 150 unsuccessful
+cumulative attempts, saved progress, legacy continuation, one-shot failure,
+stacking/decay and objective/result distinction. Scoped Ruff, strict Mypy and
+Pyright pass; no full suite or GitHub CI. The following food commit activates
+acknowledged-handover avoidance and adds acquired portion identities to intake
+causes through the existing World/Pet transaction.

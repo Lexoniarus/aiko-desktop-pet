@@ -212,7 +212,7 @@
     "wish.food.label": "Bestimmtes Essen",
     "wish.food.description": "Aiko möchte ein bestimmtes Essen essen.",
     "wish.play_game.label": "Gemeinsam spielen",
-    "wish.play_game.description": "Aiko möchte ein bestimmtes Spiel gemeinsam spielen.",
+    "wish.play_game.description": "Aiko möchte die Runden eines bestimmten Spiels in einer gemeinsamen Sitzung spielen.",
     "wish.win_round.label": "Eine Runde gewinnen",
     "wish.win_round.description": "Aiko möchte eine Runde eines bestimmten Spiels gewinnen.",
     "wish.avoid_round_loss.label": "Die nächste Runde nicht verlieren",
@@ -233,7 +233,7 @@
     "wish.pet.description": "Aiko möchte gestreichelt werden, wenn ihr die Nähe willkommen ist.",
     "wish.food.utterance": "Mmh, {target} ... Darauf hätte ich jetzt Appetit.",
     "wish.play_game.utterance": "Ich hätte Lust auf {target} mit dir. Wie wäre es mit {rounds} Runden zusammen?",
-    "wish.win_round.utterance": "Die nächste Runde {target} würde ich gern gewinnen. Spielst du mit mir?",
+    "wish.win_round.utterance": "Ich würde bei {target} gern eine Runde gewinnen. Spielst du mit mir?",
     "wish.avoid_round_loss.utterance": "Die nächste Runde {target} möchte ich nicht verlieren. Ein Unentschieden wäre auch okay.",
     "wish.win_overall.utterance": "Bei {target} möchte ich in den nächsten {rounds} Runden insgesamt vorn liegen. Probieren wir es?",
     "wish.avoid_overall_loss.utterance": "Bei {target} möchte ich nach {rounds} Runden mindestens gleichauf sein. Magst du mitspielen?",
@@ -315,6 +315,17 @@
     "wish.avoid_food.description": "Aiko möchte ein bestimmtes Essen gerade nicht essen.",
     "wish.avoid_food.utterance": "Heute mal etwas anderes als {target}, bitte.",
     "moodlet.disappointed.label": "Doch verloren",
-    "moodlet.disappointed.description": "Aiko hat verloren, obwohl sie sich gewünscht hatte, nicht zu verlieren."
+    "moodlet.disappointed.description": "Aiko hat verloren, obwohl sie sich gewünscht hatte, nicht zu verlieren.",
+    "wish.goal.total_rounds.label": "Gemeinsam Runden spielen",
+    "wish.goal.total_rounds.description": "Aiko möchte Runden eines bestimmten Spiels sammeln, auch über mehrere Sitzungen.",
+    "wish.goal.total_rounds.utterance": "Ich hätte Lust auf insgesamt {rounds} Runden {target} mit dir. Wir können sie auch aufteilen.",
+    "wish.goal.next_win.label": "Die nächste Runde gewinnen",
+    "wish.goal.next_win.description": "Aiko möchte genau die nächste Runde des gewünschten Spiels gewinnen.",
+    "wish.goal.next_win.utterance": "Die nächste Runde {target} würde ich gern gewinnen. Spielst du mit mir?",
+    "wish.goal.total_wins.label": "Siege sammeln",
+    "wish.goal.total_wins.description": "Aiko möchte Siege im gewünschten Spiel sammeln, auch über mehrere Sitzungen und ohne Siegesserie.",
+    "wish.goal.total_wins.utterance": "Bei {target} möchte ich insgesamt {rounds} Siege sammeln. Magst du mitspielen?",
+    "vn.game_wins_progress": "{wins}/{required} Siege · {completed} Runden, {losses} Niederlagen",
+    "vn.wins_short": "{completed}/{required} Siege"
   }
 }

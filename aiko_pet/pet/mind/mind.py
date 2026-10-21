@@ -24,8 +24,9 @@ from ..moodlet_catalog import MOODLET_CATALOG
 from ..needs import NeedCondition, assess_need_conditions
 from ..routine import TimeContext
 from ..state import PetState
+from ..text_contract import TEXT_FIELDS
 from ..wish_catalog import WISH_CATALOG
-from ..wishes import ActiveWish, WishArea
+from ..wishes import ActiveWish, WishArea, wish_text_key
 from .adaptive_models import Behaviour
 from .catalog import DialogueBook, Reaction
 from .click_policy import ClickButton, choose_click_reaction
@@ -197,14 +198,15 @@ class PetMind:
     def wish_reaction(self, wish: ActiveWish) -> Reaction:
         """Render one admitted concrete desire; selection alone is not speech."""
         definition = WISH_CATALOG.definitions[wish.definition_id]
+        key = wish_text_key(wish.definition_id, wish.goal_snapshot, "utterance")
         values: dict[str, str] = {}
         if definition.area == WishArea.FOOD:
             values["target"] = DEFAULT_CATALOG.foods[wish.target_id].display_name
         elif definition.area == WishArea.GAMES:
             values["target"] = GERMAN_TEXT.format(f"game.name.{wish.target_id}")
-            if definition.round_count > 1:
+            if "rounds" in TEXT_FIELDS[key]:
                 values["rounds"] = str(wish.goal_snapshot.required_count)
-        text = GERMAN_TEXT.format(f"wish.{wish.definition_id}.utterance", **values)
+        text = GERMAN_TEXT.format(key, **values)
         return Reaction(
             f"wish-{wish.instance_id}",
             (Cue.text(text),),

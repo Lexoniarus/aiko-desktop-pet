@@ -3,7 +3,7 @@
 import math
 
 from ...pet.content import GERMAN_TEXT
-from ...pet.wishes import WishId, WishTargetKind
+from ...pet.wishes import WishId, WishObjective, WishTargetKind
 from .contracts import MoodletView, WishView
 
 MOODLET_ICONS = {
@@ -25,6 +25,7 @@ MOODLET_ICONS = {
     "unstimulated": "moodlet_unstimulated",
     "lonely": "moodlet_lonely",
     "missing_closeness": "moodlet_missing_closeness",
+    "disappointed": "moodlet_unstimulated",
 }
 GAME_ICONS = {"rock_paper_scissors": "game_rps", "tic_tac_toe": "game_tic_tac_toe"}
 
@@ -64,18 +65,22 @@ def moodlet_description(view: MoodletView) -> str:
     return "\n".join(parts)
 
 
-def wish_progress(view: WishView) -> str:
+def wish_progress(view: WishView, *, compact: bool = False) -> str:
     game = view.value.game
-    return (
-        GERMAN_TEXT.format(
-            "vn.game_progress",
-            completed=str(game.completed_rounds),
-            required=str(game.required_rounds),
-            wins=str(game.wins),
-            losses=str(game.losses),
+    if game is None:
+        return ""
+    wins_goal = (view.value.goal is not None
+                 and view.value.goal.objective == WishObjective.TOTAL_WINS)
+    if compact:
+        return GERMAN_TEXT.format(
+            "vn.wins_short" if wins_goal else "vn.rounds_short",
+            completed=str(game.wins if wins_goal else game.completed_rounds),
+            required=str(game.required_count),
         )
-        if game is not None
-        else ""
+    return GERMAN_TEXT.format(
+        "vn.game_wins_progress" if wins_goal else "vn.game_progress",
+        completed=str(game.completed_rounds), required=str(game.required_count),
+        wins=str(game.wins), losses=str(game.losses),
     )
 
 

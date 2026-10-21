@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from .emotions import EmotionalState
 from .moodlets import MoodletId
-from .wishes import WishId, WishRestriction
+from .wishes import GAME_GOAL_TEXT_VARIANTS, WishId, WishObjective, WishRestriction
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
     "social.intro.single": frozenset(),
@@ -200,6 +200,19 @@ TEXT_FIELDS.update({
 })
 
 TEXT_FIELDS.update({f"emotion.{state}": frozenset() for state in EmotionalState})
+
+TEXT_FIELDS.update({
+    f"wish.goal.{goal}.{field}": (
+        frozenset({"target"}) if goal == WishObjective.NEXT_WIN
+        else frozenset({"target", "rounds"})
+    ) if field == "utterance" else frozenset()
+    for goal in GAME_GOAL_TEXT_VARIANTS
+    for field in ("label", "description", "utterance")
+})
+TEXT_FIELDS.update({
+    "vn.game_wins_progress": frozenset({"completed", "required", "wins", "losses"}),
+    "vn.wins_short": frozenset({"completed", "required"}),
+})
 
 TEXT_FIELDS.update({f"wish.restriction.{key}": frozenset() for key in WishRestriction})
 

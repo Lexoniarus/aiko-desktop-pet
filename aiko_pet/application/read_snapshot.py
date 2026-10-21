@@ -54,7 +54,7 @@ class MoodletRead:
 @dataclass(frozen=True, slots=True)
 class GameWishRead:
     completed_rounds: int
-    required_rounds: int
+    required_count: int
     wins: int
     losses: int
 
