@@ -5152,3 +5152,46 @@ Selected interaction, withholding and event checks pass 34 tests in 0.035
 seconds, longest 0.015 seconds; none exceeds ten seconds. Native constructors
 are blocked. Scoped Ruff, strict Mypy and Pyright pass. No windows, pointer
 control, CI, normal-save writes or full suite.
+
+### Menu hang: bounded investigation, native cause remains open
+
+No app, debug launcher, test window or native input was started. The investigation
+followed ActionToolbar.refresh/place, WishPanel, ToolbarDetails, PanelSurface,
+ScrollRegion and the object-feedback/animation idle-event path. Panel artwork is
+placed rather than packed, and retained images are view-owned; no second object
+loop or new movement writer was found in these paths.
+
+A window-free probe separated requested content dimensions from allocated canvas
+dimensions (the ordinary widget doubles equate them). With content growing from
+100 to 160 pixels, fit_content requests height 160 while _sync_scrollbar still
+reads allocated height 100 and shows the vertical bar. After allocation reaches
+160, the same bar hides. This demonstrates an unnecessary width/geometry
+transition, not a self-sustaining loop or the reported Windows hang.
+
+Two additional contributors require focused layout work: WishPanel.refresh
+invalidates layout on every snapshot even when rendered text/identity is unchanged;
+ActionToolbar.place synchronously calls update_idletasks on every visible refresh.
+That call drains all idle work, including World playback-event delivery, inside
+presentation refresh. The code evidence makes this an investigation target, but
+neither reentrant runaway nor causation by unknown-object discovery has been
+reproduced. No speculative runtime layout rewrite is included in these Moodlet
+fixes. A future correction must retain actual constrained-viewport scrolling and
+initial placement, not hide the symptom by removing overflow protection.
+
+Read-only Windows application-event checks found a Python 3.14 AppHangB1 record
+and older Python 3.11 Tcl failures. This checkout's venv uses Python 3.11.9. Those
+records do not identify this session/script or establish its hang stack; no WER
+report, machine identifier or user save was copied into Git. There is no reliable
+Python stack trace for the reported occurrence.
+
+The existing headless VN status, menu admission/decoupling, object feedback,
+placement geometry and UI/dependency guards pass 53 tests in 0.638 seconds
+(longest 0.222 seconds). Three additional existing behavior checks cover unknown
+discovery, return waiting and unpresented-object inspection in 0.004 seconds.
+Native constructors were blocked in each run. No test exceeded ten seconds;
+native geometry tests were deliberately not run. These checks establish owner
+contracts, not Windows/Tk visual acceptance or a repaired native hang.
+
+Both Moodlet defects are corrected in separate pushed commits. The menu hang
+remains an explicit open item before slice 9; the full-suite/final review gate
+has not started and is not represented by these selected checks.

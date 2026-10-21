@@ -8,6 +8,13 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Count the actually delivered final poking warning before subsequent silent
+  clicks, so continued boundary violations create the existing poking Moodlet.
+  Escalate observed withholding of an unknown committed investigation target
+  without granting identity or assuming hunger. Keep unrelated items and known
+  unwanted food outside that emotional episode. The reported menu hang remains
+  under investigation; no native-hang fix is claimed.
+
 - Persist the last ten admitted API content IDs/fingerprints per category in
   the existing atomic save. Compare IDs and normalized text across categories,
   buffers and offers; retain bounded retries without duplicate fallback.
