@@ -195,8 +195,8 @@ class WishPanel:
         self._tips.attach(cast(tk.Widget, widget), partial(self._description, key),
                           focusable=focusable)
         # Replace the tip's tap toggle; hover/focus/keyboard still read details.
-        widget.bind("<Button-1>", partial(self._dismiss, key))
-        widget.bind("<Button-3>", partial(self._pin, key))
+        widget.bind("<Button-3>", partial(self._dismiss, key))
+        widget.bind("<Button-1>", partial(self._pin, key))
         for child in widget.winfo_children():
             self._bind_card_controls(child, key)
 

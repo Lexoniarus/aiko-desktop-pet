@@ -4090,9 +4090,9 @@ change friendship. Future speaking behavior is explicitly a later task.
 
 #### Manual wish pinning and removal
 
-The current card controls (corrected on 2026-10-21) are right-click to pin and
-left-click to dismiss, with a passive pin symbol only for pinned wishes and no
-pin button. Repeated right-click keeps the wish pinned. The owner explicitly
+The current card controls (corrected on 2026-10-21) are left-click to pin and
+right-click to dismiss, with a passive pin symbol only for pinned wishes and no
+pin button. Repeated left-click keeps the wish pinned. The owner explicitly
 confirmed that **pinning prevents expiry**:
 a pinned wish can remain beyond the normal four-hour deadline until fulfilled
 or manually dismissed. Preserve the same identity, concrete target and real
@@ -5278,10 +5278,10 @@ acceptance is outstanding. Slice 9 is deliberately not started by this work.
 
 ### Wish-card control correction, 2026-10-21
 
-The owner's corrected gesture is right-click to pin, left-click to dismiss.
+The owner's final corrected gesture is left-click to pin, right-click to dismiss.
 There is no separate pin button. A passive 24-pixel pin symbol is drawn only
-for a pinned wish; repeated right-click leaves it pinned rather than toggling
-it off. Left-click also removes a pinned wish. Bind these controls to the whole
+for a pinned wish; repeated left-click leaves it pinned rather than toggling
+it off. Right-click also removes a pinned wish. Bind these controls to the whole
 card subtree, including passive artwork/padding, content and the pin symbol.
 Return break so the gesture does not also toggle the description or propagate
 as another action. Hover/focus and Enter/Space keep description access.
@@ -5301,3 +5301,10 @@ rejects button construction and checks the same gestures on every surface. Passi
 marker states are asserted without native drawing. Ruff, scoped strict Mypy and
 Pyright pass. No test exceeds ten seconds; no test windows, native input, CI or
 full suite. Slice 9 and the original native-hang acceptance remain outstanding.
+
+Final gesture clarification: left-click pins; right-click releases/removes the
+wish from the displayed active wishes, including a pinned wish. Passive pin
+artwork remains unchanged. The callback regression and all current control
+wording use that final assignment. Eight selected command/persistence and German
+catalog tests pass in 0.057 seconds (longest 0.036); scoped Ruff, strict Mypy and
+Pyright pass. No native windows, input automation, CI or full-suite run.

@@ -65,7 +65,7 @@ class WishControlTests(unittest.TestCase):
                 marker.assert_called_with(panel._pin_icons[1], "pin", state="hidden")
             cards = panel._scroll.body.winfo_children()
             label = cast(Any, panel._labels[1])
-            self.assertEqual(label.bindings["<Button-3>"](Mock()), "break")
+            self.assertEqual(label.bindings["<Button-1>"](Mock()), "break")
             self.assertTrue(pet.wishes.active[0].pinned)
             with patch.object(panel._pin_icons[1], "itemconfigure") as marker:
                 panel.refresh(views())
@@ -73,12 +73,12 @@ class WishControlTests(unittest.TestCase):
             self.assertEqual(panel._scroll.body.winfo_children(), cards)
             self.assertIn("ohne Zeitablauf", panel._meta[1].cget("text"))
             self.assertNotIn("Noch", wish_description(views()[0]))
-            # Right-click again keeps the wish pinned without another save.
-            label.bindings["<Button-3>"](Mock())
+            # Left-click again keeps the wish pinned without another save.
+            label.bindings["<Button-1>"](Mock())
             self.assertTrue(pet.wishes.active[0].pinned)
             self.assertEqual(len(saved), 1)
-            # Left-click even the passive pin removes the wish, not its Moodlet.
-            cast(Any, panel._pin_icons[1]).bindings["<Button-1>"](Mock())
+            # Right-click even the passive pin removes the wish, not its Moodlet.
+            cast(Any, panel._pin_icons[1]).bindings["<Button-3>"](Mock())
             panel.refresh(views())
             self.assertFalse(pet.wishes.active)
             self.assertEqual(pet.wishes.refill_not_before, 720)
@@ -124,10 +124,10 @@ class WishControlTests(unittest.TestCase):
             def check(widget):
                 pin.reset_mock()
                 dismiss.reset_mock()
-                self.assertEqual(widget.bindings["<Button-3>"](Mock()), "break")
+                self.assertEqual(widget.bindings["<Button-1>"](Mock()), "break")
                 pin.assert_called_once_with(1, True)
                 dismiss.assert_not_called()
-                self.assertEqual(widget.bindings["<Button-1>"](Mock()), "break")
+                self.assertEqual(widget.bindings["<Button-3>"](Mock()), "break")
                 dismiss.assert_called_once_with(1)
                 for child in widget.winfo_children():
                     check(child)
