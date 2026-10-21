@@ -155,7 +155,7 @@ class WishCatalogTests(unittest.TestCase):
                                text_keys=set(GERMAN_TEXT.messages)
                                - {"wish.pet.description"})
 
-    def test_shared_pacing_and_bonus_have_one_balance_owner(self):
+    def test_shared_pacing_has_one_owner_and_rejects_the_retired_bonus(self):
         self.assertEqual(BALANCE.integer("wishes", "maximum_active"), 3)
         self.assertEqual(BALANCE.integer("wishes", "maximum_per_area"), 1)
         self.assertEqual(BALANCE.integer("wishes", "lifetime_seconds"), 14400)
@@ -163,7 +163,7 @@ class WishCatalogTests(unittest.TestCase):
         self.assertEqual(BALANCE.integer("wishes", "disclosure_interval_seconds"), 1800)
         self.assertEqual(BALANCE.integer("wishes", "disclosure_friendship_level"), 3)
         self.assertEqual(BALANCE.number("wishes", "disclosure_mood_threshold"), 50)
-        self.assertEqual(BALANCE.number("wishes", "friendship_bonus_points"), .25)
+        self.assertNotIn("friendship_bonus_points", BALANCE.sections["wishes"])
         self.assertEqual(BALANCE.number("wishes", "creation_need_threshold"), 70)
         self.assertEqual(BALANCE.number("wishes", "relevance_need_threshold"), 90)
         original = load_json(DATA / "balance.json")

@@ -167,8 +167,8 @@ families from `data/moodlets.json`, with shared caps/recovery settings in the
 existing balance catalogue and descriptions in the existing German text owner.
 `pet/wishes.py` and `pet/wish_catalog.py` provide twelve wish objective
 forms in `data/wishes.json`, referencing actual food/game targets and positive
-Moodlet definitions. Shared creation/disclosure settings and the nominal wish
-friendship bonus live in the existing balance catalogue. The pet package does
+Moodlet definitions. Shared creation/disclosure settings and continuous
+relationship rates live in the existing balance catalogue. The pet package does
 not import application social preparation; social objective IDs are checked
 against supported categories in focused tests. Labels/descriptions stay in
 `texts.de.json`. Both catalogues detach nested values into frozen dataclasses,
@@ -299,6 +299,14 @@ Positive and negative factors are evaluated together across point anchors rather
 than applying gain and loss as independent ordered passes. Existing Moodlet tier,
 expiry and recovery boundaries prevent endpoint-only charging; no second clock,
 event archive or pet state exists.
+
+`ActivityCoordinator.advance_lifecycle()` samples ordinary numeric status through
+the same `ActiveSessionClock` at 30-second intervals. Subthreshold reads retain
+the clock's existing anchors; forced actions and saves consume the complete
+pending interval immediately, without a second timer or replay. Input/rhythm
+sampling and character rendering keep their existing cadence. The passive status
+readout displays up to two decimal places, three for friendship, with a German
+decimal comma and compact whole values. Stored gameplay floats remain unrounded.
 
 `SocialCompletion` now carries the admitted category and optional existing wish
 identity through the same `Reaction`/`ReactionPlayer` lifecycle. The existing

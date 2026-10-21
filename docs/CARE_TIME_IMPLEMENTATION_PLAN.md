@@ -18,13 +18,13 @@
 > below; menu admission and the UI/social amendments remain planned. Complete
 > their later authorized implementation before final tests.
 > The latest 2026-10-21 continuous-friendship amendment replaces the earlier
-> capped care/wish reward model for the next implementation. Its 30-second
+> capped care/wish reward model. Its 30-second
 > balance values are approved; their incremental runtime delivery is recorded below.
-> The later corrections are delivered incrementally below. Slices 1–5 supply
+> The later corrections are delivered incrementally below. Slices 1–6 supply
 > definitions/storage, need-aware eligibility, weighted selection, lifecycle and
 > game/food completion with concrete Moodlet causes, and staged petting
-> boundaries and the carried-item absence correction. Relationship and the
-> remaining UI changes remain pending.
+> boundaries, the carried-item absence correction and continuous friendship/status
+> cadence. The remaining UI/admission and API changes remain pending.
 > Existing game goals retain their original meaning and progress, as approved
 > by the owner.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
@@ -4902,3 +4902,39 @@ not a promise of generated wishes or practical daily gameplay acceptance.
 Scoped Ruff, strict Mypy and Pyright pass. The next delivery connects normal
 30-second sampling and visible fractional readouts; full-suite/OOP acceptance
 remains slice 9. No test windows, mouse control, live APIs or GitHub CI.
+
+### Slice 6 delivery: shared status cadence and visible precision
+
+Normal lifecycle sampling now uses the existing clock's 30-second minimum.
+Subthreshold reads retain both anchors, including wall fallback initialization
+when uptime is unavailable. Actual care, game/object commits and persistence
+continue to force complete elapsed consumption. There is no secondary accumulator,
+timer, movement cadence or new pet state. Input/rhythm observations continue at
+their existing cadence; needs, numeric mood and friendship advance together.
+Suspend/closed-time reconstruction still uses the same chronological policies
+and actual existing finite stock, with no retrospective user interaction.
+
+The current passive readout shows small real changes with up to two decimal
+places for needs/mood and three for friendship, localized with a decimal comma.
+Whole values stay compact. Full gameplay floats survive save/reopen; the status
+view does not round or write state. No native layout, pin controls or general
+menu admission work is included in this slice.
+
+The final selected cadence/readout/scheduler, offline/restoration, wish lifecycle,
+Moodlet/poor-care and dependency checks pass **99 tests in 12.049 seconds**.
+The longest individual case is the existing full long-absence/backward-clock
+check at **9.593 seconds**; none exceeds ten seconds. Existing 30-day neglect
+coverage was separately timed at 8.542 seconds. Both remain complete arithmetic
+checks without real waits or UI; no production cutoff or weakened fixture was
+introduced to hide their runtime. Two old VN fixture assumptions (family count
+and an avoidance wish without its explicit goal) now use the current catalogue
+contracts. Scoped Ruff, strict Mypy and Pyright pass.
+
+A final narrow resource/wish/Moodlet/withholding catalogue check passes another
+31 tests in 0.137 seconds, including rejection of the retired wish-bonus setting.
+
+All slice-6 delivery uses targeted local tests with Tk/Toplevel construction
+blocked. No full suite, native test window, mouse control, live API, user-save
+mutation or GitHub CI was used. Slice 6 is complete; slice 7 retains general
+admission/menu behavior, wish controls and remaining status details, followed by
+API work and the final integrated suite/OOP gate in slice 9.

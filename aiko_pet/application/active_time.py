@@ -63,22 +63,32 @@ class ActiveSessionClock:
     ) -> None:
         self._anchor, self._wall_anchor = checkpoint
 
-    def consume(self, *, wall_time: float | None = None) -> float:
+    def consume(
+        self, *, wall_time: float | None = None, minimum_seconds: float = 0,
+    ) -> float:
         """Consume known elapsed time or a nonnegative wall-clock fallback."""
         previous, current = self._anchor, self._sample()
         previous_wall, current_wall = self._wall_anchor, self._finite(wall_time)
-        self._anchor = current
-        self._wall_anchor = current_wall
         if previous is not None and current is not None and current >= previous:
-            return current - previous
-        if previous_wall is not None and current_wall is not None:
-            return max(0.0, current_wall - previous_wall)
-        return 0.0
+            elapsed = current - previous
+        elif previous_wall is not None and current_wall is not None:
+            elapsed = max(0.0, current_wall - previous_wall)
+        else:
+            elapsed = 0.0
+        if elapsed < minimum_seconds:
+            if previous_wall is None and (
+                previous is None or current is None or current < previous
+            ):
+                self._anchor, self._wall_anchor = current, current_wall
+            return 0.0  # Retain initialized anchors; no elapsed fraction is lost.
+        self._anchor, self._wall_anchor = current, current_wall
+        return elapsed
 
 
 def advance_session_time(
     state: PetState, clock: ActiveSessionClock, inputs: SessionInputs,
     *, progression: TimeProgression | None = None,
+    minimum_seconds: float = 0,
 ) -> None:
     """Consume one shared interval and forward the full live-time contract."""
     if not math.isfinite(inputs.wall_time):
@@ -86,7 +96,10 @@ def advance_session_time(
     checkpoint = state.capture_checkpoint()
     clock_checkpoint = clock.capture_checkpoint()
     try:
-        elapsed = clock.consume(wall_time=inputs.wall_time)
+        elapsed = clock.consume(wall_time=inputs.wall_time,
+                                minimum_seconds=minimum_seconds)
+        if elapsed == 0 and minimum_seconds > 0:
+            return
         if progression is not None:
             progression.advance(state, inputs, elapsed)
         else:

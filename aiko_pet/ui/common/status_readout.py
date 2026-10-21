@@ -5,6 +5,7 @@ from __future__ import annotations
 import tkinter as tk
 
 from ...pet.content import GERMAN_TEXT
+from ..view_models.text_de import format_status_amount
 from .skin import AikoSkin
 
 
@@ -126,7 +127,9 @@ class StatusReadout:
     def refresh(self, value: float, *, suffix: str = "") -> None:
         amount = max(0, min(100, value))
         text = GERMAN_TEXT.format(
-            "vn.status_value", title=self._title, percent=f"{amount:.0f}", suffix=suffix
+            "vn.status_value", title=self._title,
+            percent=format_status_amount(amount, friendship=self._friendship),
+            suffix=suffix,
         )
         if self.label.cget("text") != text:
             self.label.configure(text=text)

@@ -21,6 +21,7 @@ from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.fun import GameExperience
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
+from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
 from tools.pet_test_support import set_test_pet_values
@@ -40,6 +41,43 @@ class Monitor:
 
 
 class ActiveTimeTests(unittest.TestCase):
+    def test_gated_wall_fallback_initializes_when_uptime_is_unavailable(self):
+        clock = ActiveSessionClock(lambda: None)
+        self.assertEqual(clock.consume(wall_time=NOW, minimum_seconds=30), 0)
+        self.assertEqual(clock.consume(wall_time=NOW + 29, minimum_seconds=30), 0)
+        self.assertEqual(clock.consume(wall_time=NOW + 30, minimum_seconds=30), 30)
+
+    def test_status_cadence_keeps_elapsed_fractions_and_actions_flush_immediately(self):
+        uptime = [0.0]
+        clock = ActiveSessionClock(lambda: uptime[0], wall_time=lambda: NOW)
+        state = PetState(satiety=100, energy=100, updated_at=NOW)
+        mind, adaptive = make_aiko_mind(started_at=0), AdaptiveRoutine()
+        activity = ActivityCoordinator(
+            state, PetSettings(auto_routine=False), mind, adaptive,
+            WorkloadEventDetector(), Monitor(),
+            ActivityCallbacks(lambda: None, lambda _: None, lambda *_: None,
+                              lambda: 0, lambda: 0), clock=clock,
+        )
+        care = CareController(state, mind, adaptive, clock=clock)
+        before = state.capture_checkpoint()
+        for second in (1, 15, 29.9):
+            uptime[0] = second
+            activity.advance_lifecycle(second, NOW + second, context_at(NOW))
+            self.assertEqual(state.capture_checkpoint(), before)
+        uptime[0] = 30
+        activity.advance_lifecycle(30, NOW + 30, context_at(NOW))
+        self.assertEqual(state.lived_seconds, 30)
+        self.assertLess(state.satiety, 100)
+        uptime[0] = 35
+        inputs = SessionInputs(NOW + 35, 35, False, None, False, False, None)
+        care.execute(CareCommand("talk"), inputs)
+        self.assertEqual(state.lived_seconds, 35)
+        activity.advance_state(NOW + 35)  # Saving cannot charge that interval twice.
+        self.assertEqual(state.lived_seconds, 35)
+        uptime[0] = 65
+        activity.advance_lifecycle(65, NOW + 65, context_at(NOW))
+        self.assertEqual(state.lived_seconds, 65)
+
     def test_consumption_uses_fresh_cpu_gpu_and_clears_disabled_history(self) -> None:
         for cpu, gpu, hunger, energy in ((30, 0, 8, 3), (0, 100, 9.6, 3.5)):
             with self.subTest(cpu=cpu, gpu=gpu):

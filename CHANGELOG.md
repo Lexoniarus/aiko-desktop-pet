@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Advance normal status on a shared 30-second cadence while actions and saves
+  consume elapsed time immediately. Display fractional need/mood values and
+  thousandths of friendship so small changes remain visible; keep the existing
+  render/input cadence and suspend-safe clock.
+
 - Replace instantaneous care/wish friendship bonuses with continuous mood,
   active Moodlet and absence/neglect contributions using progressive gain/loss
   factors. Keep real accepted contact and explicit boundary penalties separate.

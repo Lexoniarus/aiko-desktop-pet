@@ -93,6 +93,13 @@ def format_percent(number: float | None) -> str:
     )
 
 
+def format_status_amount(value: float, *, friendship: bool = False) -> str:
+    """Expose small elapsed changes while leaving whole values compact."""
+    precision = 3 if friendship else 2
+    return (f"{max(0, min(100, value)):.{precision}f}"
+            .rstrip("0").rstrip(".").replace(".", ","))
+
+
 def describe_workload(snapshot: ComputerSnapshot) -> str:
     """Aiko describes observed effort, not fabricated applications."""
     effort = workload_intensity(snapshot)

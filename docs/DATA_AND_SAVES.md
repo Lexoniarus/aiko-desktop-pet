@@ -166,6 +166,16 @@ The optional section and outer save remain version one. Overall emotional
 composition, localized labels, current wish restrictions and read-side
 countdowns are derived, never serialized as a second source of truth.
 
+## Continuous relationship and status precision
+
+Continuous friendship uses the existing `relationship` record and elapsed axis.
+Its optional `continuous_since` marks policy activation after an older save's
+already elapsed catch-up. Points, accepted-contact/neglect history and historical
+credit metadata are preserved, without refunds or replay. Current care and wishes
+do not create instantaneous credits; old reward fields/limits remain solely for
+v1 compatibility. Main status floats are saved at full precision. Normal status
+advances on the shared 30-second clock; actions and saves flush pending time.
+
 ## Optional wish state
 
 `pet.wishes` has a focused version-one codec in that same outer save. `WishState`

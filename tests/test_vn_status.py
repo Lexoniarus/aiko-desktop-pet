@@ -14,7 +14,11 @@ from aiko_pet.pet.wishes import ActiveWish, WishId, WishState
 from aiko_pet.telemetry import ComputerSnapshot
 from aiko_pet.ui.common.description_tip import tip_position
 from aiko_pet.ui.common.scroll_region import ScrollRegion
-from aiko_pet.ui.common.status_readout import fill_geometry, readout_color
+from aiko_pet.ui.common.status_readout import (
+    StatusReadout,
+    fill_geometry,
+    readout_color,
+)
 from aiko_pet.ui.view_models.contracts import HoverAnchor
 from aiko_pet.ui.view_models.emotional_text import MOODLET_ICONS, wish_description
 from aiko_pet.ui.view_models.projections import project_hover, project_status
@@ -24,6 +28,19 @@ from tools.headless_widgets import Skin, Widget, widgets
 
 
 class VnStatusTests(unittest.TestCase):
+    def test_small_real_status_changes_are_visible_without_rounding_the_state(self):
+        readout = StatusReadout.__new__(StatusReadout)
+        readout.label, readout.canvas = cast(Any, Mock()), cast(Any, Mock())
+        readout._fill, readout._width = 1, 280
+        readout._title, readout._friendship = "Sättigung", False
+        readout.refresh(69.98)
+        self.assertIn("69,98", readout.label.configure.call_args.kwargs["text"])
+        readout._title, readout._friendship = "Freundschaft", True
+        readout.refresh(56.003)
+        self.assertIn("56,003", readout.label.configure.call_args.kwargs["text"])
+        readout.refresh(56)
+        self.assertIn("56 / 100", readout.label.configure.call_args.kwargs["text"])
+
     def test_colors_and_fill_keep_zero_full_and_friendship_meaning(
         self,
     ):
@@ -115,7 +132,7 @@ class VnStatusTests(unittest.TestCase):
             self.assertIn("33 / 100", toolbar.readouts["mood"].label.cget("text"))
             self.assertIn("Lv 8", toolbar.readouts["friendship"].label.cget("text"))
             cards = toolbar.moodlets._scroll.body.winfo_children()
-            self.assertEqual(len(cards), 18)
+            self.assertEqual(len(cards), len(MOODLET_CATALOG.definitions))
             toolbar.refresh()
             self.assertEqual(toolbar.moodlets._scroll.body.winfo_children(), cards)
             toolbar.buttons["pet"].invoke()
@@ -133,7 +150,8 @@ class VnStatusTests(unittest.TestCase):
         for key, definition in WISH_CATALOG.definitions.items():
             state = PetState(
                 wishes=WishState(
-                    active=(ActiveWish(1, key, definition.targets[0], 0, 14400),)
+                active=(ActiveWish(1, key, definition.targets[0], 0, 14400,
+                                   goal=definition.goal),)
                 )
             )
             view = project_hover(

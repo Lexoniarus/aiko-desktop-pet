@@ -191,7 +191,7 @@ class ActivityCoordinator:
         """Return recent measured work for a care command between ticks."""
         return self.food_activity_history.current_food_activity(time.monotonic())
 
-    def advance_state(self, wall_time: float) -> None:
+    def advance_state(self, wall_time: float, *, force: bool = True) -> None:
         """Sample real input and workload before progressing pet hunger."""
         now = time.monotonic()
         self.adaptive.observe_input(
@@ -220,6 +220,8 @@ class ActivityCoordinator:
         inputs = replace(self.session_inputs(wall_time, now), effort=machine_load)
         advance_session_time(
             self.state, self._clock, inputs, progression=self._progression,
+            minimum_seconds=(0 if force else
+                             BALANCE.number("simulation", "status_interval_seconds")),
         )
 
     def advance_lifecycle(
@@ -232,7 +234,7 @@ class ActivityCoordinator:
         was_sleeping = self.state.sleeping
         previous_period = (previous.day_key, previous.period)
         self.observe_adaptive(now, wall_time)
-        self.advance_state(wall_time)
+        self.advance_state(wall_time, force=False)
         context = context_at(wall_time)
         return TimeProgress(
             context=context,
