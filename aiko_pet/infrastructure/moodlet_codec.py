@@ -67,10 +67,11 @@ def _decode_causes(
     causes = []
     receipts: set[tuple[MoodletCauseKind, str | None, int | None]] = set()
     previous = started
+    levels: set[int] = set()
     for value in raw:
         row = object_fields(value, ("kind", "occurred_at", "event_id", "attribution",
                                     "wish", "target_id", "outcome", "object_id"),
-                            optional=("game",), context="Moodlet cause")
+                            optional=("game", "level"), context="Moodlet cause")
         kind = enum_value(row["kind"], MoodletCauseKind, context="Moodlet cause kind")
         at = number_value(row["occurred_at"], minimum=previous, maximum=trigger,
                           context="Moodlet cause time")
@@ -80,6 +81,15 @@ def _decode_causes(
         outcome = enum_value(row["outcome"], MoodletOutcome, context="Moodlet outcome")
         wish = None if row["wish"] is None else _wish_cause(row["wish"])
         game = None if row.get("game") is None else _game_result(row["game"])
+        level = (None if row.get("level") is None else integer_value(
+            row["level"], minimum=1,
+            maximum=len(MOODLET_CATALOG.definitions[key].level_points),
+            context="Moodlet cause stage",
+        ))
+        if level is not None:
+            if level in levels or kind == MoodletCauseKind.LEGACY:
+                raise ValueError("Moodlet cause stage must be real and unique")
+            levels.add(level)
         if (kind == MoodletCauseKind.LEGACY and (
                 len(raw) != 1 or event is not None or wish is not None
                 or target is not None or object_id is not None
@@ -112,7 +122,7 @@ def _decode_causes(
             kind, at, event,
             enum_value(row["attribution"], MoodletAttribution,
                        context="Moodlet cause attribution"),
-            wish, target, outcome, object_id, game,
+            wish, target, outcome, object_id, game, level,
         )
         if cause.receipt in receipts:
             raise ValueError("Duplicate Moodlet cause receipt")
@@ -144,7 +154,7 @@ def _game_result(raw: Any) -> MoodletGameResult:
 def _encode_cause(cause: MoodletCause) -> dict[str, Any]:
     wish = cause.wish
     return dict(
-        kind=cause.kind.value, occurred_at=cause.occurred_at,
+        kind=cause.kind.value, occurred_at=cause.occurred_at, level=cause.level,
         event_id=cause.event_id, attribution=cause.attribution.value,
         target_id=cause.target_id, outcome=cause.outcome.value,
         object_id=cause.object_id,

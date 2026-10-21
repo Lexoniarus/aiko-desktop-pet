@@ -118,7 +118,7 @@ class GameWishTests(unittest.TestCase):
             complete(pet, "loss", instance_id=instance)
             self.assertEqual(pet.capture_checkpoint(), before)
         causes = pet.moodlets.active[0].causes
-        self.assertEqual([c.wish.instance_id for c in causes if c.wish], [2, 3, 4])
+        self.assertEqual([c.wish.instance_id for c in causes if c.wish], [1, 2, 4])
         healthy = NeedLevels(80, 80, 80, 80, 80)
         for seconds, expected in ((1800, 2), (3600, 1), (5400, 0)):
             aged = advance_moodlets(pet.moodlets, seconds, elapsed=100,

@@ -63,13 +63,40 @@ class MoodletProgressionTests(unittest.TestCase):
             self.assertEqual(same, state)  # Duplicate delivery cannot refresh a tier.
             state = decode_moodlets(encode_moodlets(state), at)
         self.assertEqual([c.wish.instance_id for c in state.active[0].causes if c.wish],
-                         [2, 3, 4])
+                         [1, 4])
         self.assertEqual(state.active[0].level, 3)
-        self.assertEqual(len(age(state, 7200, at=40).active[0].causes), 3)
+        self.assertEqual([c.level for c in state.active[0].causes], [2, 3])
+        self.assertEqual(len(age(state, 7200, at=40).active[0].causes), 2)
         raw = encode_moodlets(state)
         raw["active"][0]["causes"][0]["game"]["wins"] = 6
         with self.assertRaises(ValueError):
             decode_moodlets(raw, 40)
+
+    def test_relief_refreshes_only_its_current_stage_after_many_successes(self):
+        state = MoodletState()
+        for number in range(1, 31):
+            cause = MoodletCause(
+                MoodletCauseKind.WISH_FULFILLED, number, f"relief:{number}",
+                wish=MoodletWishCause(number, "avoid_round_loss", "blackjack",
+                                      "next_non_loss", 1),
+                target_id="blackjack", outcome=MoodletOutcome.DRAW,
+            )
+            state = reinforce_moodlet(state, MoodletId.RELIEF, elapsed=number,
+                                     definitions=DEFINITIONS, cause=cause)
+            self.assertLessEqual(len(state.active[0].causes), 3)
+        self.assertEqual([c.level for c in state.active[0].causes], [1, 2, 3])
+        self.assertEqual([c.event_id for c in state.active[0].causes],
+                         ["relief:1", "relief:2", "relief:30"])
+        state = decode_moodlets(encode_moodlets(state), 30)
+        state = age(state, DEFINITIONS[MoodletId.RELIEF].decay_stage_seconds, at=30)
+        self.assertEqual(state.active[0].level, 2)
+        new = replace(state.active[0].causes[-1], occurred_at=40, event_id="relief:new",
+                      wish=MoodletWishCause(31, "avoid_round_loss", "blackjack",
+                                            "next_non_loss", 1))
+        state = reinforce_moodlet(state, MoodletId.RELIEF, elapsed=40,
+                                 definitions=DEFINITIONS, cause=new)
+        self.assertEqual([c.event_id for c in state.active[0].causes],
+                         ["relief:1", "relief:2", "relief:new"])
 
     def test_quiet_time_decays_three_two_one_without_replaying_a_long_gap(self):
         state = trigger(MoodletState(), MoodletId.DISRUPTED)

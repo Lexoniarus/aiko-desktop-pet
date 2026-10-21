@@ -80,7 +80,7 @@ class MoodletPersistenceTests(unittest.TestCase):
             self.assertIsNone(episode.causes[0].wish)
         self.assertEqual(decode_moodlets(encode_moodlets(restored), ELAPSED), restored)
 
-    def test_three_latest_real_causes_survive_save_checkpoint_and_decay_only(self):
+    def test_one_cause_per_stage_survives_save_checkpoint_and_decay_only(self):
         episode = MoodletEpisode(1, MoodletId.PRIDE, 3, 100, 100, 7200)
         for number, game in enumerate(("blackjack", "tic_tac_toe",
                                         "blackjack", "rock_paper_scissors"), 1):
@@ -90,10 +90,11 @@ class MoodletPersistenceTests(unittest.TestCase):
                 MoodletWishCause(number, "win_overall", game, "total_wins", 3),
                 game, MoodletOutcome.WIN,
             )
-            episode = replace(episode, last_trigger_at=100 * number).with_cause(cause)
+            episode = replace(episode, level=min(number, 3),
+                              last_trigger_at=100 * number).with_cause(cause)
             self.assertEqual(episode.with_cause(cause), episode)
         self.assertEqual([c.wish.instance_id for c in episode.causes if c.wish],
-                         [2, 3, 4])
+                         [1, 2, 4])
         pet = PetState(updated_at=WALL, lived_seconds=ELAPSED,
                        moodlets=MoodletState(100, 2, (episode,)))
         checkpoint = pet.capture_checkpoint()
@@ -121,6 +122,29 @@ class MoodletPersistenceTests(unittest.TestCase):
         pet.restore_checkpoint(replace(checkpoint, moodlets=ended))
         pet.restore_checkpoint(checkpoint)
         self.assertEqual(pet.moodlets.active[0].causes, episode.causes)
+
+    def test_old_rolling_causes_keep_one_real_cause_without_inventing_stages(self):
+        episode = MoodletEpisode(1, MoodletId.PRIDE, 3, 100, 300, 100)
+        for number in (1, 2, 3):
+            cause = MoodletCause(
+                MoodletCauseKind.WISH_FULFILLED, 100 * number, f"round:{number}",
+                wish=MoodletWishCause(number, "win_overall", "blackjack",
+                                      "total_wins", 3),
+                target_id="blackjack", outcome=MoodletOutcome.WIN,
+            )
+            episode = replace(episode, level=number,
+                              last_trigger_at=100 * number).with_cause(cause)
+        original = MoodletState(0, 2, (episode,))
+        raw = encode_moodlets(original)
+        for row in raw["active"][0]["causes"]:
+            del row["level"]
+        restored = decode_moodlets(raw, ELAPSED)
+        self.assertEqual(restored.active[0].level, 3)
+        self.assertEqual(len(restored.active[0].causes), 1)
+        cause = restored.active[0].causes[0]
+        self.assertIsNone(cause.level)
+        self.assertEqual(cause.event_id, "round:3")
+        self.assertEqual(decode_moodlets(encode_moodlets(restored), ELAPSED), restored)
 
     def test_one_large_success_has_one_cause_and_refused_food_has_handover_evidence(
         self,
@@ -162,6 +186,7 @@ class MoodletPersistenceTests(unittest.TestCase):
             episode.with_cause(MoodletCause(MoodletCauseKind.LEGACY, 850))
         for field, bad in (
             ("kind", "made_up"), ("kind", "wish_failed"),
+            ("level", 0), ("level", 4), ("level", True),
             ("occurred_at", 799), ("occurred_at", 851),
             ("occurred_at", float("nan")), ("event_id", "x" * 129),
             ("event_id", None), ("wish", None), ("target_id", "apple"),
@@ -178,6 +203,15 @@ class MoodletPersistenceTests(unittest.TestCase):
             raw["active"][0]["causes"][0]["wish"][field] = bad
             with self.subTest(field=field), self.assertRaises(ValueError):
                 decode_moodlets(raw, ELAPSED)
+        same_stage = copy.deepcopy(original)
+        first = same_stage["active"][0]["causes"][0]
+        first["level"] = 1
+        second = copy.deepcopy(first)
+        second["event_id"] = "round:2"
+        second["wish"]["instance_id"] = 2
+        same_stage["active"][0]["causes"].append(second)
+        with self.assertRaises(ValueError):
+            decode_moodlets(same_stage, ELAPSED)
         for causes in ([], original["active"][0]["causes"] * 2,
                        original["active"][0]["causes"] * 4):
             raw = copy.deepcopy(original)

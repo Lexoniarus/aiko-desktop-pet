@@ -48,7 +48,7 @@ class EmotionalReadTests(unittest.TestCase):
             MoodletCauseKind.WISH_FULFILLED, i, f"round:{i}",
             wish=MoodletWishCause(i, "win_overall", game, "total_wins", 3),
             target_id=game, outcome=MoodletOutcome.WIN,
-            game=MoodletGameResult(MoodletOutcome.DRAW, 7, 3, 2),
+            game=MoodletGameResult(MoodletOutcome.DRAW, 7, 3, 2), level=i,
         ) for i, game in enumerate(("blackjack", "tic_tac_toe",
                                    "rock_paper_scissors"), 1))
         for level, receipts in ((1, causes), (2, causes[:1]), (3, causes)):

@@ -5321,3 +5321,27 @@ no wish-lifetime policy or UI-owned pin state was introduced. Eight selected
 window-free command/persistence and catalog checks pass in 0.064 seconds
 (longest 0.043). Ruff, strict scoped Mypy and Pyright pass. No test windows,
 input automation, CI or full-suite run; slice 9 remains deferred.
+
+### Moodlet cause correction: one real event per reached stage
+
+The former cap was already three receipts, but they were a rolling list unrelated
+to intensity stages. MoodletCause now stores its actual reached level. The existing
+MoodletEpisode owner keeps one receipt per stage; further evidence replaces only
+that stage's receipt. Passive decay preserves this bounded episode history until
+the episode ends. Direct entry at stage two does not fabricate a stage-one event.
+The same three-cause ceiling, aggregate, clocks and save path remain canonical.
+
+The optional level field is validated by the existing version-one codec. Duplicate
+or invalid stage assignments are rejected. Old unassigned rolling receipts collapse
+to their latest real event with unknown stage; no historical assignment is inferred,
+and the episode's intensity/timing and original goal/result remain intact. Once
+new qualified staged evidence arrives it replaces that unassigned legacy context.
+No user save was read or written; migration checks use temporary test saves.
+
+Selected progression, emotional persistence/read, game and food wish checks pass
+69 tests in 0.126 seconds (longest 0.057), plus the two changed corruption/refresh
+checks pass after final fixture corrections. Regressions cover thirty relief
+successes, stable stage-one/two causes, stage-three refresh, duplicate delivery,
+decay, save/reload and old receipt migration. Scoped Ruff, strict Mypy and Pyright
+pass. No test exceeds ten seconds; no windows, native input, CI or full suite.
+Hover copy/behavior follows separately; slice 9 remains deferred.
