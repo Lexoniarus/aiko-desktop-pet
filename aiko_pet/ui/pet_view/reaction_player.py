@@ -53,6 +53,7 @@ class ReactionPlayer:
         self._story = False
         self._subject: str | None = None
         self._event: str | None = None
+        self._incidental = False
 
     @property
     def generation(self) -> int:
@@ -85,6 +86,15 @@ class ReactionPlayer:
         """Semantic event of the current sequence, with the same lifecycle."""
         return self._event
 
+    @property
+    def interruptible(self) -> bool:
+        """Only incidental speech/click replies yield to deliberate interaction."""
+        event = self._event or ""
+        return self.active and not self.story_active and (
+            self._incidental or event.startswith("click_")
+            or event in ("rapid_click", "sleep_click")
+        )
+
     def _invalidate_timer(self) -> None:
         if self._pending_timer is not None:
             self._cancel_timer(self._pending_timer)
@@ -97,6 +107,7 @@ class ReactionPlayer:
         self._story = False
         self._subject = None
         self._event = None
+        self._incidental = False
         self._wish_instance_id = None
         self._completed_social = None
         self._index = -1
@@ -113,6 +124,7 @@ class ReactionPlayer:
         animate: bool = True,
         on_complete: Callable[[bool], None] | None = None,
         subject: str | None = None,
+        incidental: bool = False,
     ) -> None:
         if reaction is None:
             return
@@ -120,6 +132,7 @@ class ReactionPlayer:
         self._completion = on_complete
         self._subject = subject
         self._event = reaction.event
+        self._incidental = incidental
         self._wish_instance_id = reaction.wish_instance_id
         self._completed_social = reaction.completed_social
         self._text_reported = False
@@ -182,6 +195,7 @@ class ReactionPlayer:
         self._story = False
         self._subject = None
         self._event = None
+        self._incidental = False
         self._wish_instance_id = None
         social, self._completed_social = self._completed_social, None
         self._hide_speech()

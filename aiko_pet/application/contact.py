@@ -38,6 +38,7 @@ class ContactPorts:
     advance_story: Callable[[], bool] = lambda: False
     foreground_active: Callable[[], bool] = lambda: False
     playback_active: Callable[[], bool] = lambda: False
+    interruptible_playback: Callable[[], bool] = lambda: False
     reaction_event: Callable[[], str | None] = lambda: None
     care_holding: Callable[[], bool] = lambda: False
     advance_time: Callable[[], None] = lambda: None
@@ -66,7 +67,10 @@ class ContactCoordinator:
             return False
         if self._state.sleeping:
             return action == "sleep"  # Waking ends the current lifecycle action.
-        return self._ports.care_holding() or not self._ports.playback_active()
+        return not self._ports.story_active() and (
+            self._ports.care_holding() or not self._ports.playback_active()
+            or self._ports.interruptible_playback()
+        )
 
     def note_text(self, event: str) -> None:
         acknowledge_interaction_text(self._state, event)
@@ -122,7 +126,9 @@ class ContactCoordinator:
             event.startswith("click_") or event in ("rapid_click", "sleep_click")
         )
         sleep_reply = self._state.sleeping and event == "sleep"
-        if self._ports.playback_active() and not (click_reply or sleep_reply):
+        if self._ports.playback_active() and not (
+            click_reply or sleep_reply or self._ports.interruptible_playback()
+        ):
             return
         self._ports.advance_time()
         self.enter()

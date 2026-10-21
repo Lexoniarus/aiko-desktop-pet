@@ -8,6 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Separate opening Snack/Play/Talk selectors from starting their concrete
+  actions. Let short incidental comments and click replies yield to deliberate
+  care while retaining story, game-session and World custody protections.
+
 - Advance normal status on a shared 30-second cadence while actions and saves
   consume elapsed time immediately. Display fractional need/mood values and
   thousandths of friendship so small changes remain visible; keep the existing

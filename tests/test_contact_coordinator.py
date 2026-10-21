@@ -29,6 +29,7 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.wake = Mock()
         self.reactions: list[tuple[Reaction | None, int]] = []
         self.greet_enabled = True
+        self.incidental = False
         self.foreground = self.playback = False
         self.game = self.story = False
         self.event: str | None = None
@@ -54,9 +55,21 @@ class ContactCoordinatorTests(unittest.TestCase):
                 playback_active=lambda: self.playback,
                 story_active=lambda: self.story,
                 reaction_event=lambda: self.event,
+                interruptible_playback=lambda: self.incidental,
                 wake_from_clicks=self.wake,
             ),
         )
+
+    def test_incidental_playback_yields_but_real_owners_still_block(self):
+        self.playback = self.incidental = True
+        for action in ("pet", "talk", "play", "sleep"):
+            self.assertTrue(self.contact.can_interact(action))
+        for owner in ("foreground", "game", "story"):
+            setattr(self, owner, True)
+            self.assertFalse(self.contact.can_interact("pet"))
+            setattr(self, owner, False)
+        self.incidental = False
+        self.assertFalse(self.contact.can_interact("talk"))
 
     def test_hover_opens_toolbar_and_interrupts_walk(self) -> None:
         with patch.object(self.mind, "return_to_pet", return_value=None):

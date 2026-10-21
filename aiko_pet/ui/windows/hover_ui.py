@@ -154,15 +154,13 @@ class HoverUi:
         if action == "place_item":
             self.open_food_menu()
             return
-        if not self._ports.can_interact(action):
-            return
         if action == "talk" and self._ports.social_selected is not None:
             self.open_social_menu()
             return
         self.close_social_menu()
         if action == "play":
             self.open_game_menu()
-        elif not self.game_open:
+        elif not self.game_open and self._ports.can_interact(action):
             self._ports.care(action)
 
     def _food_menu_closed(self) -> None:
@@ -176,7 +174,7 @@ class HoverUi:
 
     def open_food_menu(self) -> None:
         """Reuse one embedded placement view; no domain mutations before choice."""
-        if self._ports.place_item is None or not self._ports.can_place_item():
+        if self._ports.place_item is None:
             return
         self.close_social_menu()
         self.close_game_menu()
@@ -227,7 +225,7 @@ class HoverUi:
             self.toolbar.close_selector()
 
     def open_game_menu(self) -> None:
-        if self.game_open or not self._ports.can_interact("play"):
+        if self.game_open:
             return
         self.close_social_menu()
         if self.game_menu is not None:
@@ -344,7 +342,7 @@ class HoverUi:
             self._ports.cards.clear()
 
     def open_social_menu(self) -> None:
-        if self.game_open or not self._ports.can_interact("talk"):
+        if self.game_open:
             return
         if self.social_menu is not None:
             self.social_menu.focus()

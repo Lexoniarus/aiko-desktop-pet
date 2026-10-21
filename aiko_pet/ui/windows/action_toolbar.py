@@ -297,8 +297,7 @@ class ActionToolbar:
     def refresh_actions(self) -> None:
         for action, button in self.buttons.items():
             allowed = (
-                self._actions.can_place_item()
-                if action == "place_item"
+                True if action in ("place_item", "play", "talk")
                 else self._actions.can_interact(action)
             )
             update_button_state(button, enabled=allowed)

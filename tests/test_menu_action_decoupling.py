@@ -2,6 +2,7 @@
 
 import tkinter as tk
 import unittest
+from dataclasses import replace
 from typing import cast
 from unittest.mock import MagicMock, patch
 
@@ -26,6 +27,7 @@ from aiko_pet.ui.pet_view.object_feedback_presenter import ObjectFeedbackPresent
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
 from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.hover_contracts import HoverActions
+from aiko_pet.ui.windows.hover_ui import HoverUi, HoverUiPorts
 from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectFootprint,
@@ -53,6 +55,52 @@ class MenuAdmissionTests(unittest.TestCase):
         buttons["place_item"].configure.assert_called_once_with(state="normal")
         buttons["pet"].configure.assert_called_once_with(state="disabled")
         toolbar._actions.can_interact.assert_called_once_with("pet")
+
+    def test_selectors_open_while_actions_block_and_choices_recheck_admission(self):
+        ui = HoverUi.__new__(HoverUi)
+        ui._ports = MagicMock(spec=HoverUiPorts)
+        ui._ports.can_interact.return_value = False
+        ui.game_window = ui._pending_game = None
+        ui.food_menu = ui.game_menu = ui.social_menu = None
+        ui.toolbar = MagicMock()
+        ui._skin = MagicMock()
+        with patch.object(ui, "show_toolbar"), \
+             patch("aiko_pet.ui.windows.hover_ui.GameMenu") as game, \
+             patch("aiko_pet.ui.windows.hover_ui.SocialMenu") as social:
+            ui._interact("play")
+            game.assert_called_once()
+            self.assertFalse(game.call_args.kwargs["can_select"]())
+            ui._interact("talk")
+            social.assert_called_once()
+            self.assertFalse(social.call_args.kwargs["can_interact"]())
+            ui._social_selected(None)
+            ui.open_game("rock_paper_scissors")
+            ui._ports.care.assert_not_called()
+            ui._ports.defer_game.assert_not_called()
+            ui._ports.record_contact.assert_not_called()
+
+    def test_incidental_player_metadata_resets_and_never_unlocks_stories(self):
+        scheduler = FakeScheduler()
+        player = ReactionPlayer(
+            schedule=scheduler.schedule, cancel_timer=scheduler.cancel,
+            display_emote=MagicMock(), display_text=MagicMock(),
+            start_action=MagicMock(), mark_spoken=MagicMock(),
+            is_closed=lambda: False,
+        )
+        comment = Reaction.spoken("comment", "Hallo", "idle", "idle")
+        player.play(comment, incidental=True)
+        self.assertTrue(player.interruptible)
+        token = player.pending_timer
+        assert token is not None
+        stale = scheduler.callbacks[token][1]
+        player.play(Reaction.spoken("care", "Hallo", "idle", "talk"))
+        self.assertFalse(player.interruptible)
+        stale()
+        self.assertEqual(player.event, "talk")
+        player.play(replace(comment, presentation="story"), incidental=True)
+        self.assertFalse(player.interruptible)
+        player.cancel()
+        self.assertFalse(player.interruptible)
 
 
 class SnackPlacementTests(unittest.TestCase):

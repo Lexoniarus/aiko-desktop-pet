@@ -49,6 +49,7 @@ class DesktopCareRuntime:
         self._root, self._state, self._router = root, state, router
         self._world, self._contact = world, contact
         self._player = player
+        self._cancel_action = cancel_action
         self._presenter = CarePresenter(CareViewPorts(
             set_item=animated.set_food_overlay, cancel_action=cancel_action,
             start_action=start_action, cancel_followup=player.cancel,
@@ -87,6 +88,9 @@ class DesktopCareRuntime:
             ))
             return
         stamp, now = time.time(), time.monotonic()
+        if self._player.interruptible:
+            self._player.cancel()
+            self._cancel_action(now)
         outcome = self._router.dispatch(
             CareCommand.from_action(action, food_id=food_id, conversation=conversation,
                                     wake_from_clicks=wake_from_clicks),

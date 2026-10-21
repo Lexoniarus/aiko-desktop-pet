@@ -256,7 +256,7 @@ class DesktopPet:
                 anchor=self._views.anchor,
                 care=self.interact,
                 can_interact=lambda action: self._contact.can_interact(action),
-                game_ready=lambda: not self.state.sleeping,
+                game_ready=lambda: self._contact.can_interact("play"),
                 cards=self._game_visuals.ports,
                 game_bounds_at=self._window.work_area_at,
                 social_selected=lambda category: self._social_runtime.select(category),
@@ -315,6 +315,7 @@ class DesktopPet:
                     or self._social_runtime.waiting
                     or self._reaction_player.pending_timer is not None
                     or self._speech.bubble is not None),
+                interruptible_playback=lambda: self._reaction_player.interruptible,
                 reaction_event=lambda: self._reaction_player.event,
                 care_holding=lambda: (self._social_runtime.waiting
                                       and self._reaction_player.event
@@ -339,7 +340,9 @@ class DesktopPet:
             start_action=lambda name, duration: self._start_action(
                 name, duration,
             ),
-            react=lambda reaction, duration: self._react(reaction, duration),
+            react=lambda reaction, duration: self._react(
+                reaction, duration, incidental=True,
+            ),
             show_emote=lambda emote, duration: self._speech.show_emote(
                 emote, duration,
             ),
@@ -523,12 +526,16 @@ class DesktopPet:
     def _mark_reaction_spoken(self) -> None:
         self._attention.mark_spoken(time.monotonic())
 
-    def _react(self, reaction: Reaction | None, duration_ms: int = 2600) -> None:
+    def _react(
+        self, reaction: Reaction | None, duration_ms: int = 2600, *,
+        incidental: bool = False,
+    ) -> None:
         """Delegate the timeline; the GUI only renders visual effects."""
         if self._hover.game_open or self._object_feedback_active():
             return
         self._reaction_player.play(
             reaction, duration_ms, animate=not self.state.sleeping,
+            incidental=incidental,
         )
 
     def _apply_setting(self, name: SettingKey, value: bool) -> None:

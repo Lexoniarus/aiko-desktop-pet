@@ -4938,3 +4938,21 @@ blocked. No full suite, native test window, mouse control, live API, user-save
 mutation or GitHub CI was used. Slice 6 is complete; slice 7 retains general
 admission/menu behavior, wish controls and remaining status details, followed by
 API work and the final integrated suite/OOP gate in slice 9.
+
+### Slice 7 delivery A: navigation and deliberate admission
+
+Selectors open independently of character playback; selecting food, a game or
+social content still checks the existing capability at the point of execution.
+The game window/pending-session owner still prevents duplicates and rechecks
+admission after deferred World release. Opening selectors earns no care/contact.
+
+ReactionPlayer retains incidental provenance with its own sequence lifecycle;
+short attention comments and click replies may yield, stories never do.
+ContactCoordinator combines this read with foreground, sleep and game ownership.
+Care cancellation uses the existing player/action owners; real care, social
+completion and object custody are not globally unlocked.
+
+Selected window-free contact, menu/placement, playback and VN checks pass
+43 tests in 0.302 seconds (longest 0.059 seconds, none over ten).
+Ruff, scoped strict Mypy and Pyright pass. Native Tk/Toplevel constructors
+were blocked; no test windows, pointer control, live APIs or CI were used.
