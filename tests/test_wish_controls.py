@@ -77,24 +77,37 @@ class WishControlTests(unittest.TestCase):
             label.bindings["<Button-1>"](Mock())
             self.assertTrue(pet.wishes.active[0].pinned)
             self.assertEqual(len(saved), 1)
-            # Right-click even the passive pin removes the wish, not its Moodlet.
+            # The first right-click only unpins, preserving identity and deadline.
+            before_unpin = pet.wishes.active[0]
             cast(Any, panel._pin_icons[1]).bindings["<Button-3>"](Mock())
+            self.assertEqual(len(pet.wishes.active), 1)
+            self.assertFalse(pet.wishes.active[0].pinned)
+            self.assertEqual(pet.wishes.active[0].instance_id, before_unpin.instance_id)
+            self.assertEqual(pet.wishes.active[0].expires_at, before_unpin.expires_at)
+            with patch.object(panel._pin_icons[1], "itemconfigure") as marker:
+                panel.refresh(views())
+                marker.assert_called_once_with("pin", state="hidden")
+            self.assertEqual(panel._scroll.body.winfo_children(), cards)
+            unpinned_save = decode_pet_state(saved[-1], now=wall)
+            self.assertFalse(unpinned_save.wishes.active[0].pinned)
+            # Only the next right-click removes the now unpinned wish.
+            label.bindings["<Button-3>"](Mock())
             panel.refresh(views())
             self.assertFalse(pet.wishes.active)
             self.assertEqual(pet.wishes.refill_not_before, 720)
             self.assertEqual(pet.moodlets, initial_moodlets)
             self.assertEqual(pet.friendship_history, relationship)
-            self.assertEqual(len(saved), 2)
+            self.assertEqual(len(saved), 3)
             loaded = decode_pet_state(saved[-1], now=wall)
             self.assertEqual(loaded.wishes, pet.wishes)
             self.assertEqual(loaded.moodlets, pet.moodlets)
             first = decode_pet_state(saved[0], now=wall)
             self.assertTrue(first.wishes.active[0].pinned)
-            self.assertEqual(runtime._hover.refresh_toolbar.call_count, 2)
+            self.assertEqual(runtime._hover.refresh_toolbar.call_count, 3)
             # A queued callback for a retired card is harmless.
-            panel._dismiss(1, cast(Any, Mock()))
+            panel._unpin_or_dismiss(1, cast(Any, Mock()))
             panel._pin(1, cast(Any, Mock()))
-            self.assertEqual(len(saved), 2)
+            self.assertEqual(len(saved), 3)
 
     def test_all_card_surfaces_share_controls_without_constructing_a_button(self):
         pet = PetState(wishes=WishState(active=(

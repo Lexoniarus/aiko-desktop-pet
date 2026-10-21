@@ -4091,8 +4091,8 @@ change friendship. Future speaking behavior is explicitly a later task.
 #### Manual wish pinning and removal
 
 The current card controls (corrected on 2026-10-21) are left-click to pin and
-right-click to dismiss, with a passive pin symbol only for pinned wishes and no
-pin button. Repeated left-click keeps the wish pinned. The owner explicitly
+right-click to unpin a pinned wish or dismiss an already unpinned wish,
+with a passive pin symbol only for pinned wishes and no pin button. Repeated left-click keeps the wish pinned. The owner explicitly
 confirmed that **pinning prevents expiry**:
 a pinned wish can remain beyond the normal four-hour deadline until fulfilled
 or manually dismissed. Preserve the same identity, concrete target and real
@@ -5278,10 +5278,12 @@ acceptance is outstanding. Slice 9 is deliberately not started by this work.
 
 ### Wish-card control correction, 2026-10-21
 
-The owner's final corrected gesture is left-click to pin, right-click to dismiss.
+The owner's final gesture is left-click to pin; right-click unpins a pinned wish
+or dismisses an already unpinned wish.
 There is no separate pin button. A passive 24-pixel pin symbol is drawn only
 for a pinned wish; repeated left-click leaves it pinned rather than toggling
-it off. Right-click also removes a pinned wish. Bind these controls to the whole
+it off. Right-click first removes the pin; another right-click dismisses the
+unpinned wish. Bind these controls to the whole
 card subtree, including passive artwork/padding, content and the pin symbol.
 Return break so the gesture does not also toggle the description or propagate
 as another action. Hover/focus and Enter/Space keep description access.
@@ -5302,9 +5304,20 @@ marker states are asserted without native drawing. Ruff, scoped strict Mypy and
 Pyright pass. No test exceeds ten seconds; no test windows, native input, CI or
 full suite. Slice 9 and the original native-hang acceptance remain outstanding.
 
-Final gesture clarification: left-click pins; right-click releases/removes the
-wish from the displayed active wishes, including a pinned wish. Passive pin
+Final gesture clarification: left-click pins; right-click first unpins a pinned
+wish. Another right-click removes the now unpinned wish from the active wishes. Passive pin
 artwork remains unchanged. The callback regression and all current control
 wording use that final assignment. Eight selected command/persistence and German
 catalog tests pass in 0.057 seconds (longest 0.036); scoped Ruff, strict Mypy and
 Pyright pass. No native windows, input automation, CI or full-suite run.
+
+Two-stage right-click correction: WishPanel._unpin_or_dismiss routes a pinned
+wish only to the existing unpin command; a right-click on an already unpinned
+wish routes to dismissal. The card regression checks the first click preserves
+its live identity/deadline and rendered card, hides the pin, and persists the
+unpinned state. The second click retires it neutrally and starts the existing
+refill interval. Ordinary expiry/relevance rules still apply after unpinning;
+no wish-lifetime policy or UI-owned pin state was introduced. Eight selected
+window-free command/persistence and catalog checks pass in 0.064 seconds
+(longest 0.043). Ruff, strict scoped Mypy and Pyright pass. No test windows,
+input automation, CI or full-suite run; slice 9 remains deferred.

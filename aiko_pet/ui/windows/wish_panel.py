@@ -195,7 +195,7 @@ class WishPanel:
         self._tips.attach(cast(tk.Widget, widget), partial(self._description, key),
                           focusable=focusable)
         # Replace the tip's tap toggle; hover/focus/keyboard still read details.
-        widget.bind("<Button-3>", partial(self._dismiss, key))
+        widget.bind("<Button-3>", partial(self._unpin_or_dismiss, key))
         widget.bind("<Button-1>", partial(self._pin, key))
         for child in widget.winfo_children():
             self._bind_card_controls(child, key)
@@ -207,10 +207,14 @@ class WishPanel:
             self._pin_wish(key, True)
         return "break"
 
-    def _dismiss(self, key: int, _event: tk.Event) -> str:
-        if key in self._items:
+    def _unpin_or_dismiss(self, key: int, _event: tk.Event) -> str:
+        item = self._items.get(key)
+        if item is not None:
             self._tips.hide()
-            self._dismiss_wish(key)
+            if item.value.pinned:
+                self._pin_wish(key, False)
+            else:
+                self._dismiss_wish(key)
         return "break"
 
     def _description(self, key: int) -> str:
