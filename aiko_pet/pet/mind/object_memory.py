@@ -252,6 +252,12 @@ class ObjectMemory:
         self._known[token] = replace(known, place_status="missing")
         self._reconcile_sources()
 
+    def retract_missing(self, token: str) -> None:
+        """Withdraw an unadmitted absence without learning a place or identity."""
+        known = self.get(token)
+        if known is not None and known.place_status == "missing":
+            self._known[token] = replace(known, place_status="remembered")
+
     def _reconcile_sources(self) -> None:
         # A unique same-type find may precede the confirmation that its old
         # location is missing, or follow it. Both orders preserve the

@@ -31,6 +31,10 @@ class ObjectAbsencePerception:
     def checking(self) -> bool:
         return any(not place.confirmed for place in self._places.values())
 
+    def discard(self, record: str) -> None:
+        """Withdraw invalidated local evidence; a later check must start afresh."""
+        self._places.pop(record, None)
+
     def observe(
         self, known: tuple[ObjectKnowledge, ...],
         occupants: tuple[ObjectCandidate, ...],

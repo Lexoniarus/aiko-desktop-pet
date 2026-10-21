@@ -4786,3 +4786,26 @@ test windows, mouse control, user-save mutation, live APIs or GitHub CI.
 
 Slice 4 is complete. Slice 5 remains the carried-object absence correction;
 the remaining relationship, UI and API work precedes the final slice 9 gate.
+
+### Slice 5 delivery: custody excludes premature learned-place absence
+
+The owner authorized the carried-item search correction. The existing awareness
+owner now excludes learned portions in user/pet custody or unsettled motion from
+empty-place checks. It uses already acquired instance references or current
+sensory bindings only; no definition/type matching grants hidden identity or a
+new remembered position. An optional physical snapshot can supply custody when
+the desktop's sensory snapshot hides an off-screen cursor item.
+
+`suspend_absence()` discards only that portion's transient dwell and queued loss.
+If its loss was still pending admission and the remembered place is unchanged,
+the existing memory owner withdraws just the missing flag. It does not rewrite
+identity, coordinates, observation time or admitted search history. After actual
+settlement elsewhere a new covered check is required before loss can be queued
+again. An admitted missing state remains intact. No save format, tracker or
+Moodlet/UI filter is added.
+
+The focused awareness, perception, memory, behavior and reunion checks pass
+**100 tests in 0.035 seconds**; scoped Ruff, strict Mypy and Pyright pass. Native
+window constructors were blocked. The next small commit connects full custody
+and between-frame gesture admission and covers practical callback sequences;
+no full suite, test windows, mouse control or CI was used.
