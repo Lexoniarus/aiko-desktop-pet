@@ -64,7 +64,8 @@ class WishPanel:
     def refresh(self, items: tuple[WishView, ...]) -> None:
         self._items = {v.value.instance_id: v for v in items}
         ids = tuple(self._items)
-        if ids != self._ids:
+        layout_changed = ids != self._ids
+        if layout_changed:
             self._tips.hide()
             self._ids = ids
             self._labels.clear()
@@ -121,8 +122,10 @@ class WishPanel:
             ):
                 if widget.cget("text") != text:
                     widget.configure(text=text)
+                    layout_changed = True
             self._pins[key].set_selected(item.value.pinned)
-        self._scroll.refresh_layout()
+        if layout_changed:
+            self._scroll.refresh_layout()
 
     def _card(self, item: WishView) -> None:
         skin = self._skin

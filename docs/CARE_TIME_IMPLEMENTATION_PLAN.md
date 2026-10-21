@@ -5245,3 +5245,30 @@ seconds (longest 0.041). Scoped Ruff, strict Mypy and Pyright pass. Native
 constructors are blocked; no windows, native input, live saves, CI or full suite.
 The original Windows hang remains unconfirmed until native runtime evidence
 exists; slice 9 remains deferred.
+
+### Menu correction 3: invalidate wish layout only for visible changes
+
+WishPanel still refreshes its current immutable items for descriptions and pin
+commands on every snapshot. It now requests layout only when card identity or
+rendered target/objective/meta text changes. Unchanged snapshots and precise
+rest-time updates within the same displayed minute do not enqueue layout work.
+Actual minute, pin, restriction/progress text, additions and removals retain
+invalidation through the same ScrollRegion. No second UI state model or timer
+was added, and retained cards/scroll position remain intact.
+
+The new regression fails before the change with four unnecessary refresh_layout
+calls. It verifies no calls for identical/sub-minute display updates while current
+item values remain available, and one call each for a changed displayed minute,
+pinning and card removal. Empty unchanged rows also remain passive. Selected
+placement, wish-control and UI/dependency checks pass 35 tests in 0.455 seconds
+(longest 0.213). Scoped Ruff, strict Mypy and Pyright pass. No test exceeds ten
+seconds. All executed tests are local and window-free; native constructors are
+blocked. No mouse control, CI, normal-save changes or full-suite run occurred.
+
+The isolated evidence now covers a repaired geometry-feedback source and repaired
+nested idle delivery during recurring menu refresh, plus redundant wish layout
+requests. It still does not identify a native stack for the owner's original
+Windows-unresponsive occurrence. Initial show and explicit Details changes retain
+a one-time idle settlement; tooltip show also retains its existing settlement.
+These paths no longer recurse through recurring place, but native Windows/Tk
+acceptance is outstanding. Slice 9 is deliberately not started by this work.

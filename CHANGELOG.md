@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Keep autohiding vertical scrollbars in a fixed ten-pixel gutter so overflow
+  changes cannot resize/reflow the menu. Keep recurring toolbar placement out
+  of World idle-event delivery and correct position on settled window resize.
+  Recalculate wish layout only when rendered cards/text change. The original
+  Windows-unresponsive occurrence remains unconfirmed by native runtime evidence.
+
 - Count the actually delivered final poking warning before subsequent silent
   clicks, so continued boundary violations create the existing poking Moodlet.
   Escalate observed withholding of an unknown committed investigation target
