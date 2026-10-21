@@ -36,13 +36,14 @@ class MoodletCatalogTests(unittest.TestCase):
     def test_packaged_families_preserve_approved_strengths_and_durations(self):
         catalog = load_packaged_moodlet_catalog()
         self.assertEqual(catalog, MOODLET_CATALOG)
-        self.assertEqual(len(catalog.definitions), 18)
+        self.assertEqual(len(catalog.definitions), 19)
         self.assertEqual(sum(d.polarity == MoodletPolarity.POSITIVE
                              for d in catalog.definitions.values()), 8)
         for key, seconds in (
             (MoodletId.POKING, 1200), (MoodletId.CROWDED, 1200),
             (MoodletId.WITHHELD, 1200), (MoodletId.DISRUPTED, 1800),
             (MoodletId.FOOD_MONOTONY, 14400),
+            (MoodletId.DISAPPOINTED, 1800),
         ):
             definition = catalog.definitions[key]
             self.assertEqual(definition.decay_stage_seconds, seconds)
@@ -87,7 +88,8 @@ class MoodletCatalogTests(unittest.TestCase):
             "irritated": {"poking", "food_monotony", "exhaustion_irritated"},
             "crowded": {"crowded"},
             "frustrated": {"withheld", "disrupted", "unstimulated"},
-            "downcast": {"hunger_worn"}, "lonely": {"lonely", "missing_closeness"},
+            "downcast": {"hunger_worn", "disappointed"},
+            "lonely": {"lonely", "missing_closeness"},
         }
         self.assertEqual({direction.value: {
             d.id.value for d in MOODLET_CATALOG.definitions.values()
@@ -127,6 +129,8 @@ class MoodletCatalogTests(unittest.TestCase):
             ("poking", "decay_stage_secondz", 1200),
             ("secure", "relief_seconds", 300),
             ("secure", "parameters", {}),
+            ("disappointed", "group", "game_wish"),
+            ("disappointed", "direction", "irritated"),
         ):
             raw = copy.deepcopy(self.raw)
             row = next(r for r in raw["moodlets"] if r["id"] == key)

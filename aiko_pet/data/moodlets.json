@@ -318,6 +318,21 @@
       "parameters": {
         "need": "affection"
       }
+    },
+    {
+      "id": "disappointed",
+      "polarity": "negative",
+      "direction": "downcast",
+      "group": "game_setback",
+      "level_points": [
+        -5,
+        -10,
+        -15
+      ],
+      "decay": "quiet_time",
+      "decay_stage_seconds": 1800,
+      "relief_seconds": 0,
+      "parameters": null
     }
   ]
 }

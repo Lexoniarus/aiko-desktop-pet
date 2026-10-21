@@ -22,7 +22,7 @@ from aiko_pet.pet.wish_catalog import (
     load_packaged_wish_catalog,
     parse_wish_catalog,
 )
-from aiko_pet.pet.wishes import WishArea, WishId
+from aiko_pet.pet.wishes import WishArea, WishId, WishObjective
 
 DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
 
@@ -31,10 +31,10 @@ class WishCatalogTests(unittest.TestCase):
     def setUp(self) -> None:
         self.raw = load_json(DATA / "wishes.json")
 
-    def test_eleven_forms_reference_the_actual_food_games_and_social_choices(self):
+    def test_twelve_forms_reference_the_actual_food_games_and_social_choices(self):
         catalog = load_packaged_wish_catalog()
         self.assertEqual(catalog, WISH_CATALOG)
-        self.assertEqual(len(catalog.definitions), 11)
+        self.assertEqual(len(catalog.definitions), 12)
         self.assertEqual(set(catalog.definitions[WishId.FOOD].targets),
                          set(DEFAULT_CATALOG.foods))
         social = {t for d in catalog.definitions.values()
@@ -63,6 +63,27 @@ class WishCatalogTests(unittest.TestCase):
                                  (rounds, moodlet, level))
         self.assertEqual(definitions[WishId.SINGLE].fulfillment_moodlet,
                          definitions[WishId.TWO_PARTS].fulfillment_moodlet)
+
+    def test_new_goal_meanings_and_weights_are_explicit_without_activating_avoidance(
+        self,
+    ):
+        definitions = WISH_CATALOG.definitions
+        self.assertEqual({key: definitions[key].selection_weight for key in (
+            WishId.PLAY_GAME, WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS,
+            WishId.WIN_OVERALL, WishId.AVOID_OVERALL_LOSS,
+        )}, {WishId.PLAY_GAME: 60, WishId.WIN_ROUND: 10,
+             WishId.AVOID_ROUND_LOSS: 15, WishId.WIN_OVERALL: 10,
+             WishId.AVOID_OVERALL_LOSS: 5})
+        self.assertEqual(definitions[WishId.WIN_OVERALL].goal.objective,
+                         WishObjective.TOTAL_WINS)
+        self.assertEqual(definitions[WishId.PLAY_GAME].goal.objective,
+                         WishObjective.TOTAL_ROUNDS)
+        self.assertEqual(definitions[WishId.WIN_ROUND].goal.objective,
+                         WishObjective.NEXT_WIN)
+        avoid = definitions[WishId.AVOID_FOOD]
+        self.assertEqual((avoid.area, avoid.goal.objective, avoid.selection_weight),
+                         (WishArea.FOOD, WishObjective.FOOD_HANDOVER, 0))
+        self.assertEqual(avoid.targets, definitions[WishId.FOOD].targets)
 
     def test_definitions_targets_and_collections_are_read_only(self):
         with self.assertRaises(TypeError):
@@ -94,6 +115,11 @@ class WishCatalogTests(unittest.TestCase):
             ("food", "fulfillment_moodlet", "poking"),
             ("food", "fulfillment_moodlet", "pride"),
             ("food", "round_cuont", 0),
+            ("food", "selection_weight", True),
+            ("food", "selection_weight", -1),
+            ("food", "selection_weight", 101),
+            ("play_game", "objective", "session_rounds"),
+            ("avoid_food", "objective", "food_intake"),
         ):
             raw = copy.deepcopy(self.raw)
             next(r for r in raw["wishes"] if r["id"] == key)[field] = bad

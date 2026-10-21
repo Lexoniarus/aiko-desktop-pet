@@ -175,11 +175,17 @@ def parse_moodlet_catalog(
         )
         positive_group = group not in (
             MoodletGroup.INTERACTION, MoodletGroup.POOR_CARE,
+            MoodletGroup.GAME_SETBACK,
         )
         parameters = _parameters(key, row["parameters"])
         positive = polarity == MoodletPolarity.POSITIVE
         if (positive != positive_direction or positive != positive_group
-                or positive != (parameters is None)
+                or (positive or key == MoodletId.DISAPPOINTED)
+                != (parameters is None)
+                or (group == MoodletGroup.GAME_SETBACK)
+                != (key == MoodletId.DISAPPOINTED)
+                or key == MoodletId.DISAPPOINTED
+                and direction != EmotionalDirection.DOWNCAST
                 or (group == MoodletGroup.POOR_CARE)
                 != isinstance(parameters, PoorCareParameters)):
             raise ValueError(f"{key}: inconsistent polarity, direction or group")

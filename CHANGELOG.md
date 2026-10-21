@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Define explicit wish objective meanings, the approved game-selection weights,
+  a dormant food-avoidance wish and the downcast "Doch verloren" Moodlet.
+  Selection/completion wiring follows separately; existing game behavior is
+  preserved during the definitions-and-storage delivery.
+
 - Trigger "Vertauschter Platz" only when a learned place is confirmed empty and
   admitted to missing-object search. Observed item relocation updates knowledge
   without this Moodlet or an automatic friendship penalty. Preserve separate

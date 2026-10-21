@@ -310,6 +310,11 @@
     "vn.wish_spoken_tag": "geäußert",
     "vn.wish_inner_tag": "innerer Wunsch",
     "vn.wish_unavailable_tag": "Gerade nicht möglich",
-    "vn.status_value": "{title}   {percent} / 100{suffix}"
+    "vn.status_value": "{title}   {percent} / 100{suffix}",
+    "wish.avoid_food.label": "Abwechslung beim Essen",
+    "wish.avoid_food.description": "Aiko möchte ein bestimmtes Essen gerade nicht essen.",
+    "wish.avoid_food.utterance": "Heute mal etwas anderes als {target}, bitte.",
+    "moodlet.disappointed.label": "Doch verloren",
+    "moodlet.disappointed.description": "Aiko hat verloren, obwohl sie sich gewünscht hatte, nicht zu verlieren."
   }
 }

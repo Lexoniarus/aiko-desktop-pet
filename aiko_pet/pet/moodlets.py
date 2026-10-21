@@ -36,6 +36,7 @@ class MoodletId(StrEnum):
     UNSTIMULATED = "unstimulated"
     LONELY = "lonely"
     MISSING_CLOSENESS = "missing_closeness"
+    DISAPPOINTED = "disappointed"
 
 
 class MoodletPolarity(StrEnum):
@@ -68,6 +69,7 @@ class MoodletGroup(StrEnum):
     AFFECTION_WISH = "affection_wish"
     INTERACTION = "interaction"
     POOR_CARE = "poor_care"
+    GAME_SETBACK = "game_setback"
 
 
 class MoodletDecay(StrEnum):

@@ -4444,12 +4444,12 @@ game goals currently have older meanings. In particular, `win_overall` means
 a majority in three rounds, rather than three accumulated wins, and `win_round`
 currently permits retries. Do not silently reinterpret their saved progress.
 
-Recommended migration, pending owner agreement: retain each valid active
+Owner-approved migration: retain each valid active
 wish's original objective and progress until resolution/expiry, and use the
 new objective rules for newly created wishes. Express objective semantics in
 the same typed wish model and codec, not a parallel legacy wish service.
-Neutral retirement/refill of these old goals is an alternative requiring an
-explicit decision because it discards valid progress. New friendship policy
+Do not neutrally retire/refill these old goals and discard valid progress.
+New friendship policy
 must preserve actual points and contact/neglect history without retroactive
 refunds or replay of old positive credits; record its transition boundary in
 the existing progression/save contract.
@@ -4474,3 +4474,21 @@ GitHub CI. These are extensions of canonical owners, not authorization for
 new managers, duplicate stores, conversational archives or a second simulator.
 This readiness update changes documentation only; no implementation or tests
 have been performed for these amendments.
+
+### Slice 1 delivery: catalogue definitions
+
+The owner authorized definitions and storage only, with small commits and
+targeted local checks. `WishGoal`/`WishObjective` now distinguish stable goal
+meanings from catalogue IDs. The catalogue declares the new cumulative/next-
+round meanings and the approved 60/10/15/10/5 game weights. Existing runtime
+selection and game resolution are not switched to those meanings in this slice.
+The new food-avoidance definition is present with zero selection weight until
+its need-aware lifecycle and acknowledged-handover completion are wired in the
+later slices. A zero-weight definition is never selected by the existing path.
+The negative `disappointed` family is defined as downcast, -5/-10/-15, with
+thirty-minute quiet stages and no direct relationship penalty or relief rule.
+It has no gameplay trigger yet. German resource keys are complete and validated.
+
+The catalogue/lifecycle/content target passes **32 tests in 0.116 seconds**,
+longest **0.036 seconds**, with Tk/Toplevel construction explicitly blocked.
+Scoped pinned Ruff and strict Mypy pass. No desktop windows, full suite or CI.

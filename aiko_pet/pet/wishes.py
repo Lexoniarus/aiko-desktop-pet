@@ -11,6 +11,7 @@ from .moodlets import MoodletId
 
 class WishId(StrEnum):
     FOOD = "food"
+    AVOID_FOOD = "avoid_food"
     PLAY_GAME = "play_game"
     WIN_ROUND = "win_round"
     AVOID_ROUND_LOSS = "avoid_round_loss"
@@ -37,6 +38,46 @@ class WishTargetKind(StrEnum):
     CARE = "care"
 
 
+class WishObjective(StrEnum):
+    """Stable goal meanings, independent of a catalogue ID's current wording."""
+
+    FOOD_INTAKE = "food_intake"
+    FOOD_HANDOVER = "food_handover"
+    ACTIVITY = "activity"
+    SESSION_ROUNDS = "session_rounds"
+    TOTAL_ROUNDS = "total_rounds"
+    RETRY_WIN = "retry_win"
+    NEXT_WIN = "next_win"
+    NEXT_NON_LOSS = "next_non_loss"
+    BLOCK_MAJORITY = "block_majority"
+    TOTAL_WINS = "total_wins"
+    BLOCK_NON_LOSS = "block_non_loss"
+
+
+@dataclass(frozen=True, slots=True)
+class WishGoal:
+    objective: WishObjective
+    required_count: int
+
+
+def legacy_wish_goal(key: WishId) -> WishGoal:
+    """Freeze the delivered v1 semantics without consulting a mutable catalogue."""
+    games = {
+        WishId.PLAY_GAME: WishGoal(WishObjective.SESSION_ROUNDS, 2),
+        WishId.WIN_ROUND: WishGoal(WishObjective.RETRY_WIN, 1),
+        WishId.AVOID_ROUND_LOSS: WishGoal(WishObjective.NEXT_NON_LOSS, 1),
+        WishId.WIN_OVERALL: WishGoal(WishObjective.BLOCK_MAJORITY, 3),
+        WishId.AVOID_OVERALL_LOSS: WishGoal(WishObjective.BLOCK_NON_LOSS, 3),
+    }
+    if key in games:
+        return games[key]
+    if key == WishId.FOOD:
+        return WishGoal(WishObjective.FOOD_INTAKE, 0)
+    if key == WishId.AVOID_FOOD:
+        raise ValueError("Food avoidance has no legacy objective")
+    return WishGoal(WishObjective.ACTIVITY, 0)
+
+
 @dataclass(frozen=True, slots=True)
 class WishDefinition:
     """Supported targets and a fulfillment outcome; no deadlines or progress."""
@@ -48,6 +89,8 @@ class WishDefinition:
     fulfillment_moodlet: MoodletId
     fulfillment_level: int
     round_count: int
+    goal: WishGoal
+    selection_weight: int
 
     @property
     def label_key(self) -> str:
@@ -238,7 +281,8 @@ def replenish_wishes(
     for definition in definitions.values():
         area = definition.area
         if (
-            area in occupied
+            definition.selection_weight == 0
+            or area in occupied
             or area == WishArea.AFFECTION
             and context.crowded
             or definition.id in (WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT)

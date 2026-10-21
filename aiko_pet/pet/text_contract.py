@@ -192,7 +192,8 @@ TEXT_FIELDS.update({
         frozenset({"target", "rounds"})
         if key in (WishId.PLAY_GAME, WishId.WIN_OVERALL, WishId.AVOID_OVERALL_LOSS)
         else frozenset({"target"})
-        if key in (WishId.FOOD, WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS)
+        if key in (WishId.FOOD, WishId.AVOID_FOOD,
+                   WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS)
         else frozenset()
     )
     for key in WishId
