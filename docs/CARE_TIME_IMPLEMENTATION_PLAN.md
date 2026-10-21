@@ -3247,6 +3247,10 @@ caps remain authoritative; no direct numeric mood jump is introduced.
 | Games | Actual started and settled round facts from RPS, Blackjack and Tic-Tac-Toe sequences through the existing router/coordinator. Capture the current wish at start, translate player results once, and resolve immediately at the real qualifying result. Ordinary session care remains once on close. |
 | Social | Actual whole-sequence completion through the existing ReactionPlayer. Frozen SocialCompletion carries the admitted category and optional pre-existing wish ID; menu choice, fetching, intro/first bubble and interrupted playback do not qualify. Ordinary talk care remains at admission. |
 
+The later 2026-10-21 food-avoidance wish amendment introduces an explicit
+handover-based exception for that new objective, including subsequent refusal.
+It does not silently migrate every existing positive food wish to that boundary.
+
 Round-win wishes allow unsuccessful retries within the original lifetime.
 Next-round non-loss resolves on that one round; losing ends it neutrally. Fixed
 three-round win/non-loss blocks wait for the whole block, including draws, and
@@ -3981,15 +3985,42 @@ the disappointment. Preserve the concrete failed objective, game and result
 in every tier's cause display and append subsequent real qualifying causes
 when stacking. Passive decay does not invent new experiences.
 
-#### Possible avoidance-of-food objective
+#### Agreed food-avoidance wish
 
-Record the owner's additional candidate: when hungry, Aiko may want **not to
-eat a particular named food**. This is distinct from requesting a particular
-food or the existing food-monotony impression. Do not implement a wish rewarded
-by simply not feeding her. The concrete qualification window, whether eating
-an alternative fulfills it, and what a matching intake means for failure or
-refusal remain to be settled before adding a catalogue objective. Apply the
-food need/acceptance rules, not the game/social exemption.
+Status: owner-approved planning rules, not implemented. Aiko may want **not to
+eat a particular named food** when satiety is at most 70 and there is an actual
+reason for variety, such as repeated consumption of that food. Choose a concrete
+food from existing evidence rather than inventing a random dislike. This is
+an objective in the existing food area, not another concurrent food slot.
+The normal deadline, pinning, shared refill, disclosure and applicable food
+relevance rules remain authoritative.
+
+The owner explicitly confirmed that **a targeted acknowledged personal food
+handover fulfills this wish**, even if the food is the named unwanted food,
+and even if Aiko subsequently refuses to eat it. An alternative food also
+qualifies. Mere desktop placement, no feeding at all or a selection/drag that
+never reaches a perceived handover does not fulfill it. Preserve the boundary
+as an application/World interaction fact, not a widget click or invented intake.
+
+| What happens after the qualifying handover | Wish and care consequence |
+| --- | --- |
+| Aiko declines the food | The wish stays fulfilled; no nutrition without intake |
+| Aiko eats an alternative food | The wish stays fulfilled; commit normal real intake once |
+| Aiko eats the named unwanted food | The wish stays fulfilled; independently evaluate actual intake under existing food-monotony rules |
+
+Use the existing ordinary food-wish fulfillment impression and shared personal
+wish bonus policy, once per wish. A refusal must not masquerade as ordinary
+successful feeding, nutrition or its care credit. Actual later consumption
+retains its own ordinary effects and does not replay the wish reward. An active
+positive handover-fulfillment impression may coexist with a food-monotony
+impression justified by actual eating. No additional negative family or automatic
+friendship loss is introduced by handover alone; the separately agreed policy
+for repeatedly ignoring a communicated variety request remains unchanged.
+
+The Moodlet cause records the food to avoid, actual food handed over, and that
+handover fulfilled the wish. A subsequent real intake is a separate fact with
+its own evidence; do not retroactively convert the retired wish into failure.
+No additional experience archive or future speech behavior is part of this rule.
 
 #### Preserve precise emotional and wish evidence
 
@@ -4076,3 +4107,49 @@ source-wish retirement without losing an active Moodlet's cause snapshot.
 The game/social exemption also needs full-needs creation/retention checks;
 food/affection retain their narrower need and willingness rules. No tests or
 runtime changes are authorized by this planning amendment.
+
+### Remaining decisions and implementation readiness, 2026-10-21
+
+This check applies to the latest practical amendments, not historical proposal
+sections whose old open questions were settled in later delivery records.
+The food-avoidance rules above are now settled. Creation/relevance thresholds,
+game/social exemptions, refill timing, cumulative quantities, explicit next-
+round resolution, defeat Moodlet tuning, staged petting, basic pin/dismiss
+controls and active-only cause lifetime are already recorded.
+
+Only three closely scoped product decisions still need confirmation:
+
+1. **Pinning versus need-based retirement.** Time protection is agreed, but
+   whether a pinned food/affection wish survives the 90-point relevance check
+   remains open. Suggested rule: pinning preserves the chosen wish until its
+   actual resolution or manual removal, while care willingness/refusal and real
+   fulfillment conditions still apply. This is a suggestion, not approval.
+2. **Bounded cause selection.** Three real
+   stacked experiences must remain readable, but repeated maximum-tier refresh
+   needs a replacement rule. Suggested bound: retain the three latest distinct
+   real trigger records and keep them through passive decay until episode end.
+3. **Intensity versus trigger count.** Current catalogue values can start a Moodlet directly at level two for
+   one fulfilled overall goal. Decide whether to retain that weighted strength
+   with one genuine cause, or change it so the ordinary one-trigger/one-tier
+   example is mandatory. Never fabricate multiple causes to match an intensity.
+   These are suggestions to resolve the cause model, not new implemented rules.
+
+The reported friendship plateau is an outstanding diagnosis, not evidence for
+an approved rebalance. Review real saved gains/losses and display rounding
+before proposing a behavior change. Only one current snapshot was inspected;
+its credits do not establish a multi-day net balance or prove a frozen value.
+
+Remaining implementation checks are engineering work under existing owners:
+precise unknown/discovered/identified read projections; native title/footer
+bindings; admitted handover versus intake; bounded progress for a pinned
+cumulative goal despite arbitrarily many unsuccessful attempts; save migration
+and accurate per-tier causes; API framing and last-ten duplicate protection.
+Do not turn these into more hypothetical product scenarios. Technical duplicate
+receipts, reward caps and needed care histories remain separate from short-lived
+conversational cause data. Future dialogue generation remains out of scope.
+
+No Python, JSON catalogue, save or test is changed by this readiness record.
+Once the remaining decisions are settled and implementation is authorized,
+deliver small coherent commits with targeted headless local checks and duration
+review. The integrated full suite and final OOP acceptance remain the last step;
+no desktop test windows, mouse control or GitHub CI.
