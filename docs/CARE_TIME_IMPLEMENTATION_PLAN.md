@@ -14,6 +14,9 @@
 > in the final candidate. Their final integrated gate remains pending; only the
 > explicitly recorded baseline has full-suite evidence. Physical desktop acceptance
 > is separately recorded.
+> The 2026-10-21 need-aware wish and menu-admission amendment below is approved
+> for planning only and remains unimplemented. Revised petting stages are still
+> being discussed; settle these practical behavior corrections before final tests.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
@@ -1241,6 +1244,10 @@ or continued existence of this Moodlet adds no automatic friendship deduction.
 
 ##### Recorded proposal: excessive/unwelcome petting, 2026-10-19
 
+Historical basis: the 2026-10-21 practical review supersedes immediate refusal
+as the intended first response to sufficient affection. Revised intermediate
+stages and repetition counts remain under discussion; runtime is unchanged.
+
 Status: owner-requested design proposal, not implemented. Working Moodlet label:
 "Too much closeness". Distinguish unwelcome proximity from the irritation caused
 by poking. Friendship affects tolerance, but does not remove personal boundaries.
@@ -2209,6 +2216,8 @@ when no additional numeric bonus is available.
 The creation-spacing rows below are historical. The owner-approved practical
 correction at the end of this plan replaces them with normal three-wish stock
 and a twelve-minute refill pause; independent expression rules remain valid.
+The 2026-10-21 amendment also supersedes the unrestricted need-independent
+selection described below, including food/affection wishes despite full needs.
 
 Status: owner-requested design proposal, not implemented. This replaces the
 earlier food-only candidates of one active wish, two new wishes per day and
@@ -3670,3 +3679,96 @@ the same widget methods, arguments and behavior without another state owner.
 Both behavior corrections are committed and pushed on `feature/social-optimization`.
 This is targeted regression evidence; the final integrated stage-6 full-suite gate
 remains pending after the completed UI changes and these practical corrections.
+
+## Practical behavior planning amendment, 2026-10-21
+
+Status: owner-approved rules to record, **not implementation authorization**.
+The current runtime does not yet implement this amendment. No tests are run for
+this documentation step. Complete these behavior decisions and their later
+authorized corrections before the final integrated stage-6 suite.
+
+### Need-aware wish creation, relevance and replacement
+
+Use the corresponding current need as candidate eligibility, in addition to
+existing capabilities, boundaries and target selection:
+
+| Wish area | Corresponding need | New candidate eligible at |
+| --- | --- | --- |
+| Food | Satiety | 70 or below |
+| Games, including outcome goals | Fun | 70 or below |
+| Social conversation/content | Social | 70 or below |
+| Affection | Affection | 70 or below |
+
+These are relevance gates, not automatic wish triggers or automatic emotional
+effects. Existing Mind RNG still chooses among suitable concrete objectives.
+Retain at most one wish per area and at most three overall. Three is the normal
+target **when enough appropriate areas are eligible**, rather than a mandatory
+stock filled with incompatible wishes. Fewer or no wishes is valid when needs
+are already well supplied. Low friendship does not itself remove inner wishes;
+comfort/trust, temporary availability and speech pacing still gate disclosure.
+
+At existing live wish evaluation, retain an active wish below 90 on its
+corresponding need, subject to its original deadline and objective rules. If
+another activity supplies that need to 90 or above, silently retire the now
+inappropriate wish without a fulfillment Moodlet, friendship bonus or penalty.
+Distinguish this from actual fulfillment: when the concrete desired activity
+qualifies, resolve its existing wish normally, including when that very activity
+raises the need to 90 or above. Relevance cleanup must not preempt its earned
+completion, and must not erase already earned fulfillment Moodlets.
+
+Retain the shared persisted twelve-minute refill pause. Relevance retirement
+joins the existing vacancy/retirement policy; later vacancies do not postpone
+an already started pause. When due, choose only currently eligible areas.
+Do not randomly exchange still-relevant wishes, renew original four-hour
+deadlines, manufacture retrospective offline wishes or substitute another
+game goal midway through its progress. Existing objective failure and expiry
+remain separate ways to end a wish. The 70/90 separation avoids churn around
+one threshold and does not introduce another mutable need or desire score.
+
+### Separate menu navigation from action admission and incidental speech
+
+Opening the Snacks, Spielen or Unterhalten selector is navigation, not care,
+gameplay or social playback. A currently displayed comment, click reply or
+character action must not impose its action-admission lock on opening those
+selectors. Keep valid menu/window lifecycle constraints, including prevention
+of duplicate game sessions, separate from eligibility of concrete selections.
+Snack placement retains its existing cursor/World admission and remains
+available independently of Aiko's action playback.
+
+Starting a concrete permitted interaction may cancel incidental spontaneous
+comments and simple click replies through the existing cancellable reaction
+player. Playback being active is not sufficient evidence of an exclusive action.
+Deliberate social/story playback, active games, actual care and object custody
+retain their own applicable admission/completion/cancellation rules. Do not
+globally unlock every playback or bypass World handover/consumption safety.
+Opening a selector itself creates no care contact, reward or wish fulfillment.
+
+### Ownership and focused verification for the later implementation
+
+Keep `PetState` as the sole mutable pet aggregate. Put wish relevance and
+retirement policy in existing `pet/wishes.py`, with need values from canonical
+read contracts and tuning in the existing JSON balance owner. Attention provides
+live context; passive UI reads do not mutate wishes. Extend existing immutable
+values/codecs only where actual new durable evidence is needed; add no parallel
+wish manager, clock or reward ledger.
+
+Refine existing `ContactCoordinator` admission and `HoverUi`/toolbar navigation
+seams, using the semantic ownership of actual actions and the existing reaction
+player cancellation path. Avoid a second UI busy flag or duplicate playback
+state. Keep accepted care, semantic boundaries and persistent petting evidence
+in the existing care/interaction owners when its revised rules are settled.
+
+Later targeted checks should cover 70/90 relevance boundaries, valid fewer-than-
+three stock, silent retirement versus actual fulfillment, preserved objectives
+and refill pacing; independently check selector navigation, interruption of
+incidental speech and protection of actual committed actions. Reuse existing
+headless contract tests with injected time. No windows, mouse control or CI.
+
+### Decisions still open after this amendment
+
+The petting flow must distinguish welcome care, accepted "enough" feedback,
+a clearly communicated boundary and repeated disregard before a lasting
+Moodlet. Concrete counts/timing are the next discussion; this amendment does
+not silently approve replacement petting thresholds or repetition values.
+The reported friendship plateau needs a separate gain/loss balance diagnosis;
+no friendship tuning change or save modification is approved by this record.
