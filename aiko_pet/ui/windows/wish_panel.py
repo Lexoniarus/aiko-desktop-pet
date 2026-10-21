@@ -3,12 +3,11 @@
 import tkinter as tk
 from functools import partial
 from pathlib import Path
-from typing import Callable, Mapping
+from typing import Callable, Mapping, cast
 
 from ...asset_paths import PLAYING_CARDS_DIR
 from ...pet.content import GERMAN_TEXT
 from ..common.description_tip import DescriptionTip
-from ..common.image_button import ImageButton
 from ..common.panel_surface import PanelSurface
 from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
@@ -53,7 +52,7 @@ class WishPanel:
         self._skin, self._tips = skin, tips
         self._food_icons = food_icons
         self._pin_wish, self._dismiss_wish = pin_wish, dismiss_wish
-        self._pins: dict[int, ImageButton] = {}
+        self._pin_icons: dict[int, tk.Canvas] = {}
         self._ids: tuple[int, ...] | None = None
         self._items: dict[int, WishView] = {}
         self._labels: dict[int, tk.Label] = {}
@@ -71,7 +70,7 @@ class WishPanel:
             self._labels.clear()
             self._objectives.clear()
             self._meta.clear()
-            self._pins.clear()
+            self._pin_icons.clear()
             for child in self._scroll.body.winfo_children():
                 child.destroy()
             self._cards.clear()
@@ -123,7 +122,9 @@ class WishPanel:
                 if widget.cget("text") != text:
                     widget.configure(text=text)
                     layout_changed = True
-            self._pins[key].set_selected(item.value.pinned)
+            self._pin_icons[key].itemconfigure(
+                "pin", state="normal" if item.value.pinned else "hidden",
+            )
         if layout_changed:
             self._scroll.refresh_layout()
 
@@ -175,33 +176,36 @@ class WishPanel:
             wraplength=180, justify="left", anchor="w",
         )
         meta.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(4, 0))
-        pin = skin.button(
-            card, "", partial(self._toggle_pin, item.value.instance_id),
-            size="small", icon=skin.images.icon("ui_pin", 24),
+        pin = tk.Canvas(
+            card, width=24, height=24, bg=skin.background, highlightthickness=0,
         )
+        pin.create_image(12, 12, image=skin.images.icon("ui_pin", 24),
+                         tags="pin", state="hidden")
         pin.grid(row=0, column=2, sticky="ne", padx=(4, 0))
-        self._pins[item.value.instance_id] = pin
-        self._tips.attach(pin, lambda: GERMAN_TEXT.format("vn.wish_controls"))
+        self._pin_icons[item.value.instance_id] = pin
         self._labels[item.value.instance_id] = label
         self._objectives[item.value.instance_id] = objective
         self._meta[item.value.instance_id] = meta
-        for widget in (surface.frame, card, icon, label, objective, meta, pin):
-            widget.bind(
-                "<Button-3>", partial(self._dismiss, item.value.instance_id), add="+",
-            )
-            if widget is pin:
-                continue
-            self._tips.attach(
-                widget,
-                partial(self._description, item.value.instance_id),
-                focusable=widget is surface.frame,
-            )
+        self._bind_card_controls(surface.frame, item.value.instance_id, focusable=True)
 
-    def _toggle_pin(self, key: int) -> None:
+    def _bind_card_controls(
+        self, widget: tk.Misc, key: int, *, focusable: bool = False,
+    ) -> None:
+        """Every card surface, including its passive artwork, owns the same clicks."""
+        self._tips.attach(cast(tk.Widget, widget), partial(self._description, key),
+                          focusable=focusable)
+        # Replace the tip's tap toggle; hover/focus/keyboard still read details.
+        widget.bind("<Button-1>", partial(self._dismiss, key))
+        widget.bind("<Button-3>", partial(self._pin, key))
+        for child in widget.winfo_children():
+            self._bind_card_controls(child, key)
+
+    def _pin(self, key: int, _event: tk.Event) -> str:
         item = self._items.get(key)
-        if item is not None:
+        if item is not None and not item.value.pinned:
             self._tips.hide()
-            self._pin_wish(key, not item.value.pinned)
+            self._pin_wish(key, True)
+        return "break"
 
     def _dismiss(self, key: int, _event: tk.Event) -> str:
         if key in self._items:

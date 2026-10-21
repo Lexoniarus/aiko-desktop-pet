@@ -130,8 +130,9 @@ class ToolbarLayoutTests(unittest.TestCase):
             layout.assert_called_once()
             layout.reset_mock()
             pinned = replace(updated, value=replace(updated.value, pinned=True))
-            refresh_wish(pinned)
-            self.assertTrue(panel._pins[1].cget("selected"))
+            with patch.object(panel._pin_icons[1], "itemconfigure") as marker:
+                refresh_wish(pinned)
+                marker.assert_called_once_with("pin", state="normal")
             layout.assert_called_once()
             layout.reset_mock()
             self.view = replace(view, emotional=replace(view.emotional, wishes=()))

@@ -35,8 +35,9 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   Distinguish undiscovered objects, unidentified sightings and uncertain
   associations without granting Aiko hidden identity or location knowledge.
 
-- Add per-wish icon pins and neutral right-click dismissal through existing
-  persisted wish rules. Show each active Moodlet's real stored causes, original
+- Pin wishes by right-click and dismiss them neutrally by left-click through
+  existing persisted wish rules. Show only a passive pin symbol for pinned wishes;
+  omit separate pin buttons. Show each active Moodlet's real stored causes, original
   objective and actual results, preserving unknown legacy causes.
 
 - Separate opening Snack/Play/Talk selectors from starting their concrete

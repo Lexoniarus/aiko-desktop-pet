@@ -331,7 +331,7 @@
     "vn.game_wins_progress": "{wins}/{required} Siege · {completed} Runden, {losses} Niederlagen",
     "vn.wins_short": "{completed}/{required} Siege",
     "vn.wish_pinned": "Fixiert · ohne Zeitablauf",
-    "vn.wish_controls": "Pin: Wunsch fixieren oder lösen. Rechtsklick: Wunsch entfernen.",
+    "vn.wish_controls": "Rechtsklick: Wunsch fixieren. Linksklick: Wunsch entfernen.",
     "vn.cause_unknown_target": "Unbekanntes Ziel",
     "vn.cause_wish": "Wunsch: {wish} · {target}",
     "vn.cause_goal_count": "Ursprüngliche Zielmenge: {count}",

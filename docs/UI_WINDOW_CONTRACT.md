@@ -187,8 +187,12 @@ known attribution, remaining stage/total decay work, paused decay and recovery
 wait. No widget runs creation, aging, relief or emotional selection.
 `WishPanel` shows the concrete food/game/social/care target, objective scope and
 bounded progress, remaining original deadline, inner/spoken marker and temporary
-unavailability. Full details stay keyboard/hover/tap accessible. Both panels
-retain widget identity and scroll position while read-side time changes.
+unavailability. Right-click anywhere on a wish card pins the wish; repeating
+right-click keeps it pinned. Left-click dismisses it, including a pinned wish.
+There is no pin button: a passive pin symbol is visible only while pinned.
+Hover/focus and Enter/Space retain description access; card clicks take precedence
+over description tapping. Both panels retain widget identity and scroll position
+while read-side time changes.
 Descriptions use an in-window, clamped passive overlay, not another Toplevel.
 
 Readouts layer the prepared track, dynamic rounded/clipped fill and transparent

@@ -4090,8 +4090,10 @@ change friendship. Future speaking behavior is explicitly a later task.
 
 #### Manual wish pinning and removal
 
-The owner wants to pin individual wishes and dismiss individual wishes with a
-right click. The owner explicitly confirmed that **pinning prevents expiry**:
+The current card controls (corrected on 2026-10-21) are right-click to pin and
+left-click to dismiss, with a passive pin symbol only for pinned wishes and no
+pin button. Repeated right-click keeps the wish pinned. The owner explicitly
+confirmed that **pinning prevents expiry**:
 a pinned wish can remain beyond the normal four-hour deadline until fulfilled
 or manually dismissed. Preserve the same identity, concrete target and real
 progress rather than creating a replacement wish. An actually failed explicit
@@ -4100,7 +4102,7 @@ retry-until-success or undo the agreed failure Moodlet.
 
 Plan a persisted pin flag on the existing ActiveWish value and use the existing
 wish panel for pin/dismiss controls. Pinned wishes still occupy their ordinary
-slot and area; they are not extra hidden wishes. A right-click dismissal ends
+slot and area; they are not extra hidden wishes. Manual dismissal ends
 the wish without fulfillment reward or an invented disappointment Moodlet and
 uses the existing twelve-minute vacancy/refill policy. Never remove or erase
 an already active Moodlet just because its source wish is dismissed.
@@ -4961,8 +4963,9 @@ were blocked; no test windows, pointer control, live APIs or CI were used.
 
 ### Slice 7 delivery B: individual wish controls and concrete cause readouts
 
-WishPanel provides a selected icon pin on each card and neutral right-click
-dismissal on its contents. It projects saved pin state and no-expiry wording
+This slice originally provided a selected pin button and right-click dismissal;
+that gesture is superseded by the wish-card correction recorded below.
+WishPanel projects saved pin state and no-expiry wording
 without replacing cards on time/pin refresh. Callbacks cross HoverUi's explicit
 ports, DesktopCareRuntime and the existing application router/controller;
 PetState remains the sole writer. Actual elapsed time is accounted before the
@@ -5272,3 +5275,29 @@ Windows-unresponsive occurrence. Initial show and explicit Details changes retai
 a one-time idle settlement; tooltip show also retains its existing settlement.
 These paths no longer recurse through recurring place, but native Windows/Tk
 acceptance is outstanding. Slice 9 is deliberately not started by this work.
+
+### Wish-card control correction, 2026-10-21
+
+The owner's corrected gesture is right-click to pin, left-click to dismiss.
+There is no separate pin button. A passive 24-pixel pin symbol is drawn only
+for a pinned wish; repeated right-click leaves it pinned rather than toggling
+it off. Left-click also removes a pinned wish. Bind these controls to the whole
+card subtree, including passive artwork/padding, content and the pin symbol.
+Return break so the gesture does not also toggle the description or propagate
+as another action. Hover/focus and Enter/Space keep description access.
+
+WishPanel renders the existing saved pin state and invokes the same application
+commands. No additional pin state, expiry timer or persistence path was added.
+Manual dismissal remains neutral, preserves existing Moodlets, and retains the
+existing twelve-minute refill. Text catalog, current UI contract and planning
+rules now describe the corrected gestures; older delivery wording is explicitly
+marked superseded.
+
+Selected window-free controls, placement, VN status and German text-catalog checks
+pass 18 tests in 0.064 seconds (longest 0.029). The real command/codec regression
+checks pin persistence, idempotent repeat pinning, pinned dismissal, neutral
+Moodlet/friendship history and harmless stale callbacks. A card-subtree regression
+rejects button construction and checks the same gestures on every surface. Passive
+marker states are asserted without native drawing. Ruff, scoped strict Mypy and
+Pyright pass. No test exceeds ten seconds; no test windows, native input, CI or
+full suite. Slice 9 and the original native-hang acceptance remain outstanding.

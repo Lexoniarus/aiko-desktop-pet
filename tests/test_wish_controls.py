@@ -2,7 +2,7 @@
 
 import unittest
 from typing import Any, cast
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.controller import CareController
@@ -25,7 +25,7 @@ from tools.headless_widgets import Skin, Widget, widgets
 
 
 class WishControlTests(unittest.TestCase):
-    def test_pin_and_right_click_use_existing_commands_and_persist_neutrally(self):
+    def test_card_clicks_pin_and_dismiss_through_existing_persisted_commands(self):
         wall = 1800000000
         pet = PetState(
             updated_at=wall,
@@ -60,31 +60,76 @@ class WishControlTests(unittest.TestCase):
                               DescriptionTip(cast(Any, root), cast(Any, skin)), {},
                               pin_wish=runtime.set_wish_pinned,
                               dismiss_wish=runtime.dismiss_wish)
-            panel.refresh(views())
+            with patch.object(Widget, "itemconfigure", autospec=True) as marker:
+                panel.refresh(views())
+                marker.assert_called_with(panel._pin_icons[1], "pin", state="hidden")
             cards = panel._scroll.body.winfo_children()
-            panel._pins[1].invoke()
+            label = cast(Any, panel._labels[1])
+            self.assertEqual(label.bindings["<Button-3>"](Mock()), "break")
             self.assertTrue(pet.wishes.active[0].pinned)
-            panel.refresh(views())
+            with patch.object(panel._pin_icons[1], "itemconfigure") as marker:
+                panel.refresh(views())
+                marker.assert_called_once_with("pin", state="normal")
             self.assertEqual(panel._scroll.body.winfo_children(), cards)
-            self.assertTrue(panel._pins[1].cget("selected"))
             self.assertIn("ohne Zeitablauf", panel._meta[1].cget("text"))
             self.assertNotIn("Noch", wish_description(views()[0]))
-            panel._pins[1].invoke()
-            self.assertFalse(pet.wishes.active[0].pinned)
-            # Right click any card content; remove the real wish, not its Moodlet.
-            cast(Widget, cast(Any, panel._labels[1])).bindings["<Button-3>"](Mock())
+            # Right-click again keeps the wish pinned without another save.
+            label.bindings["<Button-3>"](Mock())
+            self.assertTrue(pet.wishes.active[0].pinned)
+            self.assertEqual(len(saved), 1)
+            # Left-click even the passive pin removes the wish, not its Moodlet.
+            cast(Any, panel._pin_icons[1]).bindings["<Button-1>"](Mock())
             panel.refresh(views())
             self.assertFalse(pet.wishes.active)
             self.assertEqual(pet.wishes.refill_not_before, 720)
             self.assertEqual(pet.moodlets, initial_moodlets)
             self.assertEqual(pet.friendship_history, relationship)
-            self.assertEqual(len(saved), 3)
+            self.assertEqual(len(saved), 2)
             loaded = decode_pet_state(saved[-1], now=wall)
             self.assertEqual(loaded.wishes, pet.wishes)
             self.assertEqual(loaded.moodlets, pet.moodlets)
             first = decode_pet_state(saved[0], now=wall)
             self.assertTrue(first.wishes.active[0].pinned)
-            self.assertEqual(runtime._hover.refresh_toolbar.call_count, 3)
+            self.assertEqual(runtime._hover.refresh_toolbar.call_count, 2)
             # A queued callback for a retired card is harmless.
             panel._dismiss(1, cast(Any, Mock()))
-            self.assertEqual(len(saved), 3)
+            panel._pin(1, cast(Any, Mock()))
+            self.assertEqual(len(saved), 2)
+
+    def test_all_card_surfaces_share_controls_without_constructing_a_button(self):
+        pet = PetState(wishes=WishState(active=(
+            ActiveWish(1, WishId.FACT, "fact", 0, 14400),
+        )))
+        view = project_hover(snapshot_pet(pet), context_at(1800000000),
+                             ComputerSnapshot(), observe_computer=False)
+        with widgets():
+            skin, root = Skin(), Widget()
+            surface_factory = skin.surface
+
+            def surface(parent):
+                result = surface_factory(parent)
+                Widget(result.frame)  # Passive artwork behind the body/padding.
+                return result
+
+            with (
+                patch.object(skin, "surface", surface),
+                patch.object(skin, "button", side_effect=AssertionError("No button")),
+            ):
+                pin, dismiss = Mock(), Mock()
+                panel = WishPanel(cast(Any, root), cast(Any, skin),
+                                  DescriptionTip(cast(Any, root), cast(Any, skin)), {},
+                                  pin_wish=pin, dismiss_wish=dismiss)
+                panel.refresh(view.emotional.wishes)
+
+            def check(widget):
+                pin.reset_mock()
+                dismiss.reset_mock()
+                self.assertEqual(widget.bindings["<Button-3>"](Mock()), "break")
+                pin.assert_called_once_with(1, True)
+                dismiss.assert_not_called()
+                self.assertEqual(widget.bindings["<Button-1>"](Mock()), "break")
+                dismiss.assert_called_once_with(1)
+                for child in widget.winfo_children():
+                    check(child)
+
+            check(panel._cards[0].frame)
