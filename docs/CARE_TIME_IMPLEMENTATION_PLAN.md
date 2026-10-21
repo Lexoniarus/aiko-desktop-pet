@@ -18,6 +18,9 @@
 > for planning only and remains unimplemented. The subsequent petting/UI/social
 > amendments below are also planning decisions; complete their later authorized
 > implementation before final tests.
+> The latest 2026-10-21 continuous-friendship amendment replaces the earlier
+> capped care/wish reward model for the next implementation. Its 30-second
+> balance values are approved for planning; runtime still uses the old model.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
@@ -4138,6 +4141,10 @@ planning rules, not implementation authorization:
 
 ### Read-only friendship-balance review, 2026-10-21
 
+Historical runtime diagnosis: the owner subsequently clarified that this capped
+model omits the desired ongoing emotional relationship effects. The continuous
+friendship amendment below supersedes it as the next implementation contract.
+
 The owner requested diagnosis without implementation, tests or save mutation.
 Source inspection and a read-only current save review establish the following:
 
@@ -4185,3 +4192,153 @@ the owner's next authorization. Deliver small coherent commits with targeted
 headless local checks and duration
 review. The integrated full suite and final OOP acceptance remain the last step;
 no desktop test windows, mouse control or GitHub CI.
+
+## Continuous friendship and 30-second status balance, 2026-10-21
+
+Status: owner-approved values to record, **not implementation authorization**.
+Replace ordinary instantaneous care/wish friendship credits and their two-hour/
+24-hour reward pools with a time-based relationship balance. Wish fulfillment
+still creates its defined Moodlet; it must not also replay the old 0.25 wish
+bonus or ordinary feed/play/pet/talk reward. Existing explicit boundary-violation
+effects remain separate once-only event consequences, not repeated tick charges.
+The earlier bonus references, including the food-avoidance paragraph, are
+superseded only for friendship accounting. Nutrition, contact, emotional effects
+and actual objective-fulfillment boundaries retain their agreed meanings.
+
+### Contributions per 30 seconds of actual elapsed time
+
+Use existing numeric mood as the bounded baseline. Do not add the previously
+suggested per-need supply bonus as another source; supply already affects mood.
+
+| Numeric mood | Raw friendship contribution per 30 seconds |
+| --- | --- |
+| 0–20 | -0.004 |
+| Between 20 and 40 | Linear from -0.004 to zero |
+| 40–60 | Zero |
+| Between 60 and 80 | Linear from zero to +0.002 |
+| 80–100 | +0.002 |
+
+The positive baseline requires real accepted personal-care contact within the
+preceding four hours. App startup, hover, ordinary input or menu operation do
+not renew it. Negative baseline mood remains effective without recent contact.
+This is a bounded baseline contribution, not an exhausted relationship budget.
+
+| Active Moodlet tier | Positive raw contribution | Negative raw contribution |
+| --- | --- | --- |
+| 1 | +0.003 | -0.006 |
+| 2 | +0.006 | -0.012 |
+| 3 | +0.009 | -0.018 |
+
+Sum all active families at their actual intensity; do not truncate them using
+the separate numeric-mood contribution caps. Preserve the defined family
+lifetimes, escalation, quiet decay and relief rules. Cause snapshots are evidence,
+not a second bonus source. A fair defeat has no instantaneous friendship penalty;
+its qualifying active disappointment Moodlet now has this ongoing influence.
+
+### Progressive factors and passive losses
+
+Interpolate linearly between these friendship-point anchors:
+
+| Current friendship points | 0 | 35 | 50 | 70 | 90–100 |
+| --- | --- | --- | --- | --- | --- |
+| Positive factor | 1 | 1 | 1 | 0.60 | 0.35 |
+| Negative factor | 0.05 | 0.15 | 0.35 | 0.75 | 2 |
+
+Multiply positive baseline plus positive Moodlets by the positive factor.
+Multiply negative baseline magnitude, negative Moodlet magnitudes and the
+passive-loss reference by the negative factor, then subtract that total.
+Reevaluate from current friendship rather than freezing a factor for the day.
+Keep the numeric relationship scale 0–100; no ordinary reward cooldown or daily
+point pot suppresses these ongoing effects.
+
+Retain the previously agreed reference absence schedule: zero for the first
+four hours after accepted care, 0.5 points/hour after four through twelve hours,
+1/hour after twelve through twenty-four, 1.5/hour after twenty-four through
+forty-eight, and 2/hour thereafter. Convert the applicable elapsed portion to
+30-second units. Retain neglect qualification/reference rates and actual-sleep
+energy exemption; use the stronger of absence and neglect for the passive
+reference, not their sum. Negative emotional impressions remain additional.
+
+Update needs, numeric mood and friendship on a shared 30-second status cadence
+with immediate actual-action feedback. Keep unrounded internal values. Split
+or proportionately account for any expiry, creation, tier or contact threshold
+inside an interval, including closed/standby catch-up; do not charge only the
+effects visible at its end or replay offline gameplay. Use the existing pet
+aggregate/progression/elapsed clock, not another simulator, store or timer owner.
+Friendly level-ten petting must not be rejected solely because affection is
+full; need saturation and willingness to enjoy trusted contact remain distinct.
+
+### Isolated arithmetic evidence and its limits
+
+The discussion calculation iterated 160 repeated 24-hour model days in
+30-second steps, including an eight-hour 23:00–07:00 night. Average-care contact
+times were 07:00, 13:00, 19:00 and 23:00; intensive times were 07:00, 09:30,
+12:00, 14:30, 17:00, 19:00, 21:00 and 23:00. Numeric mood was deliberately held
+at 65 or 75 respectively. Each assumed simple fulfillment supplied an independent
+two-hour tier-one positive contribution, without outcome weighting or stacking.
+No neglect, negative Moodlets or direct negative actions were assumed.
+
+| Model scenario | Assumed simple fulfillments/day | Settled within-day friendship range |
+| --- | --- | --- |
+| Four contacts, mood 65 | Four, one per phase | 65.059–66.388 (level seven) |
+| Four contacts, mood 65 | Eight, two per phase | 72.371–74.284 (level eight) |
+| Eight contacts, mood 75 | Eight, one per phase | 85.198–88.820 (level nine) |
+| Eight contacts, mood 75 | Twelve, alternating two/one per phase | 96–100 (level ten) |
+
+The four-fulfillment scenario converged to the same range from starts of 15
+and 95. The twelve-fulfillment scenario also reached the same final range from
+both starts. At 70 friendship and mood 80, two negative tier-one Moodlets give
++0.0012 baseline minus 0.009 emotional influence: **-0.0078 per 30 seconds**.
+This establishes the intended direction despite good numeric mood.
+
+These are scenario arithmetic, not application tests, a simulated wish generator
+or practical gameplay acceptance. Reaching 100 clips surplus positive gain at
+the numeric bound; it is not another time-budget cap. Actual wishes, failures,
+stacking and varying numeric mood can change the results substantially. No
+implementation, catalogue, live save, test window, mouse control or CI was used.
+
+### Wish-fulfillment feasibility review
+
+The existing selection policy chooses an area first, then a definition within
+that area and then a concrete target; game forms are currently equally weighted.
+With the planned exemptions, games and social remain candidate areas at full
+fun/social. Ordinary food/affection candidates require needs at most 70 and
+applicable willingness, so they cannot be counted as guaranteed extras each visit.
+All three slots are shared, with one per area; unavailable or pinned objectives
+can occupy a slot and reduce practical turnover.
+
+The twelve-minute refill pause is much shorter than the example two-to-six-hour
+daytime visit gaps and does not impose a four/eight/twelve daily limit. It does
+matter within a short phase: dismissing/failing a wish does not immediately
+provide another easy replacement. Four-hour expiry means an unfinished goal
+cannot automatically carry over a six-hour average-care gap unless pinned.
+No closed/sleep backlog generates extra success opportunities on return.
+
+An entire matching chat/content sequence is controllably fulfillable, subject
+to real availability. An inner wish can be fulfilled without spoken disclosure;
+the thirty-minute expression interval is not a fulfillment limit. API failures
+can leave a particular social objective temporarily unavailable; offline opt-out
+still leaves ordinary chat as a candidate. Menus/introductions are not completion.
+Games require the named game and actual qualifying results. Two completed rounds
+are planable; next-round wins/non-losses and three accumulated wins are not
+guaranteed by an arbitrary short game visit. Playing only RPS cannot fulfill a
+Blackjack or Tic-Tac-Toe objective.
+
+For scale only, an exact independent fair-RPS benchmark with a fresh equally
+selected game form and three completed rounds has success probabilities 1,
+1/3, 2/3, 1/27 and 17/27 for play-two, win-next, avoid-next-loss, total-three-wins
+and the existing three-round overall-non-loss block respectively. Its mean is
+8/15, about 53 percent. Pairing one such opportunity with one completed social
+wish per visit gives about 6.1 successes at four visits or 12.3 at eight visits.
+This is not a forecast for Blackjack/Tic-Tac-Toe, random target availability,
+fixed/pinned goals carried over multiple phases or actual wish generation.
+Failed non-loss wishes can also create a negative Moodlet, while larger goals
+can create stronger positive tiers: success count alone does not fix the balance.
+
+Conclusion: four daily fulfillments are plausible, eight are achievable with
+wish-aware care, and twelve are feasible for an intensive day but not guaranteed
+merely by eight visits. Preserve this distinction in acceptance criteria. Before
+claiming practical balance, use actual generated objectives and their timing,
+real outcomes, slot occupancy and failure impressions in the later targeted
+checks; do not silently assume every visited slot becomes a positive tier-one
+impression. No new weighting rule or easier objective is approved by this review.
