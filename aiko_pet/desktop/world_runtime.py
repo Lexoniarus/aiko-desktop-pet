@@ -178,6 +178,7 @@ class DesktopWorldRuntime:
                 sync_view=self._sync_view,
                 outside=lambda: feedback(GERMAN_TEXT.format("world.outside")),
                 finished=self._behavior.refresh_after_placement,
+                existing_taken=self.awareness.suspend_absence,
             ),
         )
         self._timer = root.after(33, self._frame)

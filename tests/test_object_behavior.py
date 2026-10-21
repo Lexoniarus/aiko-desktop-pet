@@ -16,27 +16,121 @@ from aiko_pet.application.object_behavior import (
     SearchMotion,
     choose_object_attention,
 )
+from aiko_pet.application.object_consumption import ObjectConsumption
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction import ObjectInteractionCoordinator
 from aiko_pet.application.object_interaction_state import SearchPosition
+from aiko_pet.pet.consumption import ConsumptionOrigin
 from aiko_pet.pet.mind.object_attention import ObjectAttention
 from aiko_pet.pet.mind.object_decisions import ObjectUseContext
 from aiko_pet.pet.mind.object_intentions import ObjectGoal
-from aiko_pet.pet.mind.object_perception import ConsumableKind, ObjectObservation
+from aiko_pet.pet.mind.object_perception import (
+    ConsumableKind,
+    ItemPresentation,
+    ObjectObservation,
+)
 from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 from aiko_pet.world.contracts import (
     ObjectDefinition,
     ObjectFootprint,
     ObjectInteraction,
     ObjectState,
+    WorldPosition,
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
-from tools.pet_test_support import set_test_pet_values
+from tools.pet_test_support import object_test_attention, set_test_pet_values
 
 
 class ObjectBehaviorTests(unittest.TestCase):
+    def test_unnoticed_carried_item_is_not_missing_even_outside_sensory_snapshot(self):
+        item, goal = self.observed_stock()
+        original = self.awareness.memory.get(goal.token)
+        held = self.world.take_resting(item.instance_id, expected_revision=0)
+        self.world.move_held(held.instance_id, WorldPosition(700, 400),
+                              expected_revision=held.revision)
+        # The native adapter omits an off-screen cursor item from perception.
+        sensory = replace(self.world.snapshot(), objects=())
+        for now in (.6, .9, 1.2, 1.5, 1.8, 2.1, 2.4):
+            observation = self.behavior.observe(
+                sensory, now=now, x=100, width=100, presentation=None,
+                facts=BehaviorFacts(carrying=True, playback_busy=now == .6),
+                attention=object_test_attention(100, width=100),
+            )
+            self.assertFalse(observation.absence_noticed)
+            self.assertFalse(self.awareness.absences)
+            self.assertFalse(self.awareness.checking_absence)
+        self.assertEqual(self.awareness.memory.get(goal.token), original)
+        self.assertFalse(self.interaction.search_active)
+        self.assertEqual(self.cues, [])
+        self.assertFalse(self.state.moodlets.active)
+        current = self.world.get(item.instance_id)
+        falling = self.world.release(item.instance_id,
+                                     expected_revision=current.revision)
+        self.assertFalse(self.state.moodlets.active)
+        self.world.land(item.instance_id, expected_revision=falling.revision)
+        self.assertFalse(self.state.moodlets.active)  # Placement itself is no trigger.
+        self.now = 2.7
+        self.behavior.request_orientation()
+        self.finish_orientation()
+        self.assertTrue(self.interaction.search_active)
+        self.assertIn("object_place_missing", [cue.event for cue in self.cues])
+        self.assertEqual([e.definition_id for e in self.state.moodlets.active],
+                         [MoodletId.DISRUPTED])
+
+    def test_pending_loss_does_not_survive_a_perceived_handover_and_actual_intake(self):
+        item, goal = self.observed_stock()
+        self.state.restore_checkpoint(replace(self.state.capture_checkpoint(),
+                                               wishes=WishState(2, (ActiveWish(
+                                                   1, WishId.FOOD, "apple", 0, 14400,
+                                               ),), ((WishArea.FOOD, 0),))))
+        moved = self.world.move_resting(item.instance_id, 700, expected_revision=0)
+        for now in (.6, .9, 1.2):
+            self.awareness.update(self.world.snapshot(), self.state, now=now, x=100,
+                                  height=0, width=100, blocked=True,
+                                  attention=object_test_attention(100, width=100,
+                                                                   direction=(-1, 0)))
+        self.assertEqual(len(self.awareness.absences), 1)
+        held = self.world.take_resting(item.instance_id,
+                                      expected_revision=moved.revision)
+        self.awareness.suspend_absence(item.instance_id)
+        self.world.move_held(held.instance_id, WorldPosition(100, 30),
+                              expected_revision=held.revision)
+        for now in (1.5, 1.8, 2.1, 2.4, 2.7, 3.0, 3.3):
+            self.awareness.update(
+                self.world.snapshot(), self.state, now=now, x=100, height=0,
+                width=100, blocked=True,
+                attention=object_test_attention(100, width=100, mode="cursor"),
+                presentation=(item.instance_id, ItemPresentation("offer", 0, 0)),
+            )
+        record = self.awareness.record_for_instance(item.instance_id)
+        assert record is not None
+        recognized = self.awareness.memory.get(record)
+        assert recognized is not None
+        self.assertEqual((recognized.identity, recognized.instance_id),
+                         ("apple", item.instance_id))
+        self.assertTrue(self.state.wishes.active)  # Holding is not matching intake.
+        self.now = 3.3
+        self.interaction._can_acquire = lambda _instance: True
+        self.assertTrue(self.interaction.offer_on_release(item.instance_id))
+        self.observe()
+        self.assertFalse(self.awareness.absences)
+        self.assertIsNotNone(ObjectConsumption.apply_portion(
+            self.state, self.world, self.awareness.memory,
+            item.instance_id, record, ConsumptionOrigin.HANDOVER,
+            now=1800000000,
+        ))
+        self.assertFalse(self.state.wishes.active)
+        self.assertEqual(self.world.get(item.instance_id).state, ObjectState.CONSUMED)
+        self.observe()
+        self.assertFalse(self.awareness.absences)
+        self.assertFalse(self.interaction.search_active)
+        self.assertNotIn("object_place_missing", [cue.event for cue in self.cues])
+        self.assertEqual([e.definition_id for e in self.state.moodlets.active],
+                         [MoodletId.FOOD_FULFILLED])
+
     def test_acute_food_search_uses_existing_route_without_inventing_a_loss(self):
         set_test_pet_values(self.state, satiety=0)
         self.awareness.memory.restore_snapshot(())

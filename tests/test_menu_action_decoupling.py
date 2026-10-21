@@ -6,6 +6,7 @@ from typing import cast
 from unittest.mock import MagicMock, patch
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
+from aiko_pet.application.object_awareness import ObjectAwareness
 from aiko_pet.application.object_consumption import ObjectConsumption
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.desktop.cursor_item_gesture import CursorItemGesture, CursorItemPorts
@@ -27,12 +28,14 @@ from aiko_pet.ui.windows.action_toolbar import ActionToolbar
 from aiko_pet.ui.windows.hover_contracts import HoverActions
 from aiko_pet.world.contracts import (
     ObjectDefinition,
+    ObjectFootprint,
     ObjectInteraction,
     ObjectState,
     WorldPosition,
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
+from tools.pet_test_support import object_test_attention
 from tools.reaction_test_support import FakeScheduler
 
 
@@ -113,6 +116,47 @@ class SnackPlacementTests(unittest.TestCase):
         self.runtime._game_open = MagicMock(return_value=True)
         self.runtime._character_action_busy = MagicMock(return_value=True)
         self.enterContext(patch.object(self.runtime, "_sync_geometry"))
+
+    def test_quick_cancel_withdraws_queued_loss_before_first_gesture_save(self):
+        awareness, pet = ObjectAwareness(), PetState()
+        item = self.world.place_resting("apple", 100, ObjectFootprint(8, 8))
+        record = awareness.memory.observe_find(ObjectObservation(
+            "known", "apple", "food", 100, 0, True, 0,
+        ), now=0, record="known", claimed=frozenset(), maximum_distance=0,
+            instance_id=item.instance_id)
+        displaced = self.world.move_resting(item.instance_id, 700, expected_revision=0)
+        for now in (0, .3, .6):
+            awareness.update(self.world.snapshot(), pet, now=now, x=100, height=0,
+                             width=100, blocked=True,
+                             attention=object_test_attention(100, width=100,
+                                                              direction=(-1, 0)))
+        self.assertEqual(len(awareness.absences), 1)
+        returned = self.world.move_resting(item.instance_id, 100,
+                                           expected_revision=displaced.revision)
+        self.ports.existing_taken.side_effect = awareness.suspend_absence
+        saved = []
+        self.ports.save.side_effect = lambda: saved.append(awareness.memory.snapshot())
+        self.assertFalse(self.cursor.begin_existing(item.instance_id, 0))
+        self.assertEqual(len(awareness.absences), 1)
+        self.ports.existing_taken.assert_not_called()
+        self.assertTrue(self.cursor.begin_existing(item.instance_id, returned.revision))
+        self.assertFalse(awareness.absences)
+        self.cursor.cancel()  # No sensor update between take and cancellation.
+        self.ports.existing_taken.assert_called_once_with(item.instance_id)
+        self.assertEqual(len(saved), 2)
+        self.assertTrue(all(entry.place_status == "remembered"
+                            for snapshot in saved for entry in snapshot))
+        for now in (.9, 1.2, 1.5):
+            awareness.update(self.world.snapshot(), pet, now=now, x=100, height=0,
+                             width=100, blocked=False,
+                             attention=object_test_attention(100, width=100))
+        self.assertFalse(awareness.absences)
+        self.assertFalse(awareness.checking_absence)
+        known = awareness.memory.get(record)
+        assert known is not None
+        self.assertEqual((known.x, known.place_status), (100, "remembered"))
+        self.assertEqual(self.world.get(item.instance_id).position,
+                         WorldPosition(100, 0))
 
     def test_only_perceived_release_fulfills_avoidance_even_when_declined(self):
         for mode in ("declined", "unperceived", "ground", "cancelled"):

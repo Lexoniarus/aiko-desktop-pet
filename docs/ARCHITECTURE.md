@@ -322,7 +322,15 @@ text receipts into boundary facts. Explicit metadata on accepted social
 reactions yields completion only after the entire existing playback sequence.
 Object owners qualify wanted-object withholding separately from confirmed
 learned-place loss. Only absence admitted to the existing missing-object search
-creates the disrupted-arrangement Moodlet. Continuously observed transport and
+creates the disrupted-arrangement Moodlet. `ObjectAwareness` uses physical custody
+only to exclude held/unsettled learned portions and withdraw their queued,
+unadmitted absence and dwell. It preserves coordinates, identity and observed
+time, and does not undo admitted searches or emotional consequences. The existing
+memory owner can retract the pending missing flag without a fabricated sighting.
+Behavior supplies the full World custody snapshot independently of filtered
+sensory candidates, including off-screen cursor items. New absence needs a fresh
+covered check after actual settlement; there is no parallel relocation tracker.
+Continuously observed transport and
 placement update subjective knowledge without that Moodlet or relocation loss;
 there is no second relocation-origin tracker or competing trigger. Missing-place
 evidence alone never proves user blame. Closed-time intake
@@ -1006,8 +1014,10 @@ Alternatively, Aiko may accept a still-unknown portion on release in the
 valid handover area and actually identify it in her hands before deciding.
 A known approved handover takes the shorter confirmation route. Unknown ground
 finds retain inspection/decision. Resting-item press acquires the same portion
-through the same gesture. Escape/capture loss or off-monitor release removes new
-chooser portions and returns existing portions to their safe source place.
+through the same gesture. Its `existing_taken` callback withdraws pending absence
+after successful custody transfer and before the first gesture save, including
+take-and-cancel between sensor updates. Escape/capture loss or off-monitor release
+removes new chooser portions and returns existing portions to their safe source place.
 Delayed gesture requests recheck the button after animated interruption.
 Existing native toolbar/game rules remain in their owners.
 All three item presentations use manifest-referenced binary-alpha display copies

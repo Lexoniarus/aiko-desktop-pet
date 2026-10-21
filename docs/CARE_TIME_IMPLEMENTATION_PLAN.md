@@ -20,11 +20,11 @@
 > The latest 2026-10-21 continuous-friendship amendment replaces the earlier
 > capped care/wish reward model for the next implementation. Its 30-second
 > balance values are approved for planning; runtime still uses the old model.
-> The later corrections are delivered incrementally below. Slices 1–4 supply
+> The later corrections are delivered incrementally below. Slices 1–5 supply
 > definitions/storage, need-aware eligibility, weighted selection, lifecycle and
 > game/food completion with concrete Moodlet causes, and staged petting
-> boundaries. Carried-item absence, relationship and the remaining UI changes
-> remain pending.
+> boundaries and the carried-item absence correction. Relationship and the
+> remaining UI changes remain pending.
 > Existing game goals retain their original meaning and progress, as approved
 > by the owner.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
@@ -4809,3 +4809,36 @@ The focused awareness, perception, memory, behavior and reunion checks pass
 window constructors were blocked. The next small commit connects full custody
 and between-frame gesture admission and covers practical callback sequences;
 no full suite, test windows, mouse control or CI was used.
+
+### Slice 5 delivery: gesture and full-custody integration
+
+`ObjectBehaviorCoordinator` supplies the existing full World snapshot as custody
+evidence independently of sensory candidates. Hiding an off-screen cursor item
+cannot therefore turn its old place into a loss. The native gesture's bounded
+`existing_taken` callback suspends that portion's pending absence immediately
+after successful acquisition and before its first save. Failed/stale takes do
+not call it. This covers take/cancel or take/handover between perception frames;
+no new gesture history, object tracker or mutable owner is introduced.
+
+The focused callbacks use actual World, awareness, behavior, custody and intake
+owners with fake native ports. They verify an unnoticed take during incidental
+speech, off-screen carry, between-frame cancellation with no stale missing flag
+in the first save, a queued loss followed by face recognition/handover/intake,
+and the real later unseen-placement path. Holding/presentation does not fulfill
+a positive food wish; matching intake still does. Neither release nor settlement
+directly creates disruption: the later covered old-place check and admitted
+search do. Existing observed transport, search/reunion, finite intake and wanted-
+object withholding regressions remain green. No existing admitted search or
+persisted emotional consequence is rolled back by this correction.
+
+The combined targeted set passes **180 tests in 1.196 seconds**, longest
+**0.221 seconds**, none over ten seconds. Scoped Ruff, strict Mypy (six production
+files) and Pyright pass; dependency/import checks retain acyclic OOP boundaries.
+Tk/Toplevel construction was blocked and native gesture positions were injected.
+No test windows, mouse control, live API calls, user-save changes, full suite or
+GitHub CI was used. Both delivery commits use `[skip ci]` and are pushed on the
+existing social-optimization branch.
+
+Slice 5 is complete. Continuous friendship/status cadence remains slice 6;
+the UI/admission and API amendments follow separately before the final integrated
+suite and OOP review in slice 9.

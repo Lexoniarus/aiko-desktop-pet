@@ -196,6 +196,7 @@ class ObjectBehaviorCoordinator:
             blocked=blocked or interaction.search_active, held_pose=(x, width * .4),
             committed=focus,
             inspecting=interaction.inspection_record,
+            custody=self._world.snapshot(),
             presentation=presentation if not pending or interaction.focus_record
             is not None or transport else None,
             known_coverage=coverage, defer_selection=pending or revisit,

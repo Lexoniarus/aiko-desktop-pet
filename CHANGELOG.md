@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Exclude carried and unsettled learned portions from missing-place checks.
+  Withdraw their unadmitted loss feedback before a relocation gesture's first
+  save, including quick cancellation and off-screen carry. Preserve acquired
+  knowledge, actual handover/intake and separate observed withholding; require
+  real settlement and a fresh old-place check before unseen-displacement search.
+
 - Stage petting boundaries: accept two additional strokes with progressively
   firmer feedback, then refuse; only disregard of a displayed boundary creates
   crowded after-effects and bounded friendship loss. Preserve warning evidence

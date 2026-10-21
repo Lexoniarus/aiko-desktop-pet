@@ -30,6 +30,7 @@ class CursorItemPorts:
     sync_view: Callable[[], None]
     outside: Callable[[], None]
     finished: Callable[[], None] = lambda: None
+    existing_taken: Callable[[str], object] = lambda _instance: None
 
 
 class CursorItemGesture:
@@ -99,6 +100,7 @@ class CursorItemGesture:
             return False
         assert item.position is not None
         self._return_x = item.position.x
+        self._ports.existing_taken(token)
         self._start(token)
         return self.carrying
 
