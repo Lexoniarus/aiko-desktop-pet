@@ -123,6 +123,8 @@ def parse_balance(raw: Any) -> BalanceCatalog:
             <= wishes["maximum_active"] <= 4
             or not 1 <= wishes["disclosure_friendship_level"] <= 10
             or wishes["disclosure_mood_threshold"] > 100
+            or not wishes["creation_need_threshold"]
+            < wishes["relevance_need_threshold"] <= 100
             or wishes["friendship_bonus_points"] > relationship["short_cap"]
             or wishes["refill_delay_seconds"] > wishes["lifetime_seconds"]
             or wishes["disclosure_interval_seconds"] > wishes["lifetime_seconds"]):

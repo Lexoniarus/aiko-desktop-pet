@@ -7,6 +7,7 @@ from typing import Literal, Mapping
 
 from .balance import BALANCE
 from .moodlets import MoodletId
+from .needs import NeedLevels
 
 MAX_WISH_ROUND_RECEIPTS = 100
 
@@ -283,17 +284,57 @@ def expire_wishes(state: WishState, *, elapsed: float) -> WishState:
                    refill_not_before=_refill_deadline(state, first_expiry))
 
 
+def retire_irrelevant_wishes(
+    state: WishState, *, elapsed: float, needs: NeedLevels,
+    definitions: Mapping[WishId, WishDefinition],
+) -> WishState:
+    """Quietly release supplied food/affection wishes at a live endpoint only."""
+    threshold = BALANCE.number("wishes", "relevance_need_threshold")
+    active = tuple(w for w in state.active if w.pinned or not (
+        definitions[w.definition_id].area == WishArea.FOOD
+        and needs.satiety >= threshold
+        or definitions[w.definition_id].area == WishArea.AFFECTION
+        and needs.affection >= threshold
+    ))
+    return state if active == state.active else replace(
+        state, active=active, refill_not_before=_refill_deadline(state, elapsed),
+    )
+
+
+def _candidate_targets(
+    definition: WishDefinition, *, needs: NeedLevels, context: WishContext,
+) -> tuple[str, ...]:
+    """Current suitability never extends or replaces an existing objective."""
+    threshold = BALANCE.number("wishes", "creation_need_threshold")
+    if (definition.selection_weight == 0
+            or definition.area == WishArea.FOOD and needs.satiety > threshold
+            or definition.area == WishArea.AFFECTION
+            and (needs.affection > threshold or context.crowded
+                 or not context.petting_welcome)
+            or definition.id in (WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT)
+            and not context.online_social):
+        return ()
+    if definition.id == WishId.AVOID_FOOD:
+        return tuple(t for t in definition.targets if t == context.repetitive_food)
+    if definition.area == WishArea.FOOD:
+        return tuple(t for t in definition.targets if t != context.repetitive_food)
+    return definition.targets
+
+
 def replenish_wishes(
     state: WishState,
     *,
     elapsed: float,
     sleeping: bool,
+    needs: NeedLevels,
     context: WishContext,
     definitions: Mapping[WishId, WishDefinition],
     rng: random.Random,
 ) -> WishState:
     """Fill the normal three-slot stock at this awake live endpoint only."""
     state = expire_wishes(state, elapsed=elapsed)
+    state = retire_irrelevant_wishes(state, elapsed=elapsed, needs=needs,
+                                    definitions=definitions)
     if (
         sleeping
         or len(state.active) >= BALANCE.integer("wishes", "maximum_active")
@@ -305,32 +346,28 @@ def replenish_wishes(
     candidates: dict[WishArea, list[tuple[WishDefinition, tuple[str, ...]]]] = {}
     for definition in definitions.values():
         area = definition.area
-        if (
-            definition.selection_weight == 0
-            or area in occupied
-            or area == WishArea.AFFECTION
-            and context.crowded
-            or definition.id in (WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT)
-            and not context.online_social
-        ):
+        if area in occupied:
             continue
-        targets = tuple(
-            t
-            for t in definition.targets
-            if area != WishArea.FOOD or t != context.repetitive_food
-        )
+        targets = _candidate_targets(definition, needs=needs, context=context)
         if targets:
             candidates.setdefault(area, []).append((definition, targets))
     active = list(state.active)
     next_id = state.next_instance_id
     while candidates and len(active) < BALANCE.integer("wishes", "maximum_active"):
         area = rng.choice(tuple(candidates))
-        definition, targets = rng.choice(candidates.pop(area))
+        forms = candidates.pop(area)
+        definition, targets = (rng.choices(
+            forms, weights=[d.selection_weight for d, _targets in forms], k=1,
+        )[0] if area == WishArea.GAMES else rng.choice(forms))
         if next_id >= 2**63 - 1:
             raise ValueError("Wish instance allocation exhausted")
         active.append(ActiveWish(
             next_id, definition.id, rng.choice(targets), elapsed,
             elapsed + BALANCE.integer("wishes", "lifetime_seconds"),
+            # Step 3 switches new game meanings together with their matchers.
+            # Never change a stored goal to compensate for missing wiring.
+            goal=(legacy_wish_goal(definition.id) if area == WishArea.GAMES
+                  else definition.goal),
         ))
         next_id += 1
         anchors[area] = elapsed
@@ -339,7 +376,8 @@ def replenish_wishes(
         next_instance_id=next_id,
         active=tuple(active),
         last_created_by_area=tuple((a, anchors[a]) for a in WishArea if a in anchors),
-        refill_not_before=None,
+        refill_not_before=(None if next_id != state.next_instance_id
+                           else state.refill_not_before),
     )
 
 

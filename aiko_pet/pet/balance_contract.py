@@ -16,6 +16,8 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "disclosure_friendship_level": "integer",
         "disclosure_mood_threshold": "number",
         "friendship_bonus_points": "number",
+        "creation_need_threshold": "number",
+        "relevance_need_threshold": "number",
     },
     "moodlets": {
         "positive_cap_points": "number",

@@ -4537,3 +4537,40 @@ Tk/Toplevel construction was explicitly blocked in both processes. Scoped
 pinned Ruff, strict Mypy and Pyright pass; no full suite, desktop automation,
 live API call or GitHub CI was used. Slice 1 is complete; slice 2 remains pending
 the owner's authorization.
+
+### Slice 2 delivery: need-aware eligibility and weighted selection
+
+The owner authorized slice 2 with small commits and targeted local checks only.
+`PetState.evaluate_wishes()` passes the aggregate's current immutable `NeedLevels`
+to the existing pure wish policy. The balance catalogue owns the inclusive
+creation threshold of 70 and live relevance threshold of 90; validation requires
+the latter to be larger and at most 100. New food/affection wishes respect their
+own need and existing affection willingness/boundaries. Games/social have no
+fun/social gate; a temporary game-energy restriction suppresses disclosure,
+not the inner desire. API opt-in still gates creation of API wishes.
+
+At live evaluation, supplied unpinned food/affection wishes retire neutrally
+through the existing shared twelve-minute refill deadline. Actual matching
+intake/accepted petting resolve first through their existing care transaction;
+subsequent relevance cleanup cannot remove the earned impression. No new
+offline creation or relevance pass is added to reconstruction. Relevant wishes
+keep their original target, progress and deadline; unavailable activities do
+not cause random replacement. A due refill with no eligible candidate keeps
+its original deadline until actual refill, instead of starting a new wait.
+
+Selection remains area-first, then applies 60/10/15/10/5 weights only within
+games, then chooses a supported target. Social definitions remain equally
+selected. Existing and newly generated game instances still use the delivered
+original goal meanings in this intermediate slice: slice 3 switches new goal
+snapshots together with their corresponding completion rules. Food avoidance
+also stays at zero weight until its acknowledged-handover completion is wired.
+Its candidate rule already requires a concrete repetitive-food reason/target.
+This prevents unsupported goal semantics from becoming live during the sequence.
+
+The focused lifecycle/catalogue/disclosure target passes **30 tests in 0.188
+seconds**, longest **0.035 seconds**, none over ten seconds. Checks cover exact
+weight intervals, 70/90 boundaries, fewer appropriate areas, temporary restrictions,
+neutral retirement and matching-intake ordering with fake time. Pinned wishes
+already bypass relevance cleanup; complete pin/expiry/manual-removal behavior
+follows in the next small commit. Scoped Ruff, strict Mypy and Pyright pass.
+Tk/Toplevel creation was blocked; no full suite, mouse control, live save or CI.

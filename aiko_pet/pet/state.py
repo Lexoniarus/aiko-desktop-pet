@@ -336,6 +336,7 @@ class PetState:
         """Replenish current live desires; time reconstruction never calls this."""
         self._change(wishes=replenish_wishes(
             self.wishes, elapsed=self.lived_seconds, sleeping=self.sleeping,
+            needs=self.needs,
             context=context, definitions=WISH_CATALOG.definitions, rng=rng,
         ))
 

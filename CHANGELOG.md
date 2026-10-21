@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Make new food/affection wishes depend on current need and petting willingness,
+  and quietly retire supplied unpinned wishes at 90. Preserve full-needs game
+  and social wishes, the shared twelve-minute refill and actual-care completion
+  before cleanup. Apply the agreed game-form weights within area-first selection;
+  new goal meanings and food-avoidance activation follow with their matchers.
+
 - Define explicit wish objective meanings, the approved game-selection weights,
   a dormant food-avoidance wish and the downcast "Doch verloren" Moodlet.
   Selection/completion wiring follows separately; existing game behavior is

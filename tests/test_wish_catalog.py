@@ -18,6 +18,7 @@ from aiko_pet.pet.content import GERMAN_TEXT
 from aiko_pet.pet.food_catalog import DEFAULT_CATALOG
 from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG, MoodletCatalog
 from aiko_pet.pet.moodlets import MoodletId
+from aiko_pet.pet.needs import NeedLevels
 from aiko_pet.pet.wish_catalog import (
     WISH_CATALOG,
     load_packaged_wish_catalog,
@@ -95,6 +96,7 @@ class WishCatalogTests(unittest.TestCase):
         state = WishState()
         self.assertEqual(replenish_wishes(
             state, elapsed=0, sleeping=False, context=WishContext(),
+            needs=NeedLevels(50, 80, 100, 100, 50),
             definitions={avoid.id: avoid}, rng=random.Random(1),
         ), state)
 
@@ -164,6 +166,8 @@ class WishCatalogTests(unittest.TestCase):
         self.assertEqual(BALANCE.integer("wishes", "disclosure_friendship_level"), 3)
         self.assertEqual(BALANCE.number("wishes", "disclosure_mood_threshold"), 50)
         self.assertEqual(BALANCE.number("wishes", "friendship_bonus_points"), .25)
+        self.assertEqual(BALANCE.number("wishes", "creation_need_threshold"), 70)
+        self.assertEqual(BALANCE.number("wishes", "relevance_need_threshold"), 90)
         original = load_json(DATA / "balance.json")
         for key, bad in (
             ("maximum_active", 5), ("maximum_per_area", 2),
@@ -171,6 +175,9 @@ class WishCatalogTests(unittest.TestCase):
             ("friendship_bonus_points", 1), ("friendship_bonus_points", True),
             ("refill_delay_seconds", 15000),
             ("lifetime_seconds", 0),
+            ("creation_need_threshold", 90),
+            ("relevance_need_threshold", 70),
+            ("relevance_need_threshold", 101),
         ):
             raw = copy.deepcopy(original)
             raw["wishes"][key] = bad

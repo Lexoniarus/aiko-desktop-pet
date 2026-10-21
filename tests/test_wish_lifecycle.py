@@ -3,8 +3,10 @@
 import random
 import tempfile
 import unittest
+from collections import Counter
 from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 
 from aiko_pet.application.active_time import (
     ActiveSessionClock,
@@ -17,6 +19,8 @@ from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.mind.object_memory import ObjectMemory
+from aiko_pet.pet.moodlets import MoodletId
+from aiko_pet.pet.needs import NeedLevels
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import (
@@ -29,21 +33,25 @@ from aiko_pet.pet.wishes import (
     expire_wishes,
     fulfill_activity_wish,
     replenish_wishes,
+    retire_irrelevant_wishes,
     wish_to_express,
 )
 from aiko_pet.world.contracts import WorldSurface
 from aiko_pet.world.state import WorldState
 
 DEFINITIONS = WISH_CATALOG.definitions
+NEEDS = NeedLevels(50, 80, 100, 100, 50)
 
 
 def create(
-    state=WishState(), elapsed=0, context=WishContext(), definitions=DEFINITIONS
+    state=WishState(), elapsed=0, context=WishContext(), definitions=DEFINITIONS,
+    needs=NEEDS,
 ):
     return replenish_wishes(
         state,
         elapsed=elapsed,
         sleeping=False,
+        needs=needs,
         context=context,
         definitions=definitions,
         rng=random.Random(7),
@@ -71,6 +79,102 @@ def select(
 
 
 class WishLifecycleTests(unittest.TestCase):
+    def test_food_and_affection_creation_use_current_needs_and_willingness(self):
+        definitions = {key: DEFINITIONS[key] for key in (WishId.FOOD, WishId.PET)}
+        for value, count in ((0, 2), (70, 2), (70.01, 0), (90, 0), (100, 0)):
+            with self.subTest(value=value):
+                wishes = create(needs=replace(NEEDS, satiety=value, affection=value),
+                                definitions=definitions)
+                self.assertEqual(len(wishes.active), count)
+        denied = create(context=WishContext(petting_welcome=False),
+                        definitions=definitions)
+        self.assertEqual([w.definition_id for w in denied.active], [WishId.FOOD])
+
+    def test_full_fun_social_and_temporary_game_restriction_do_not_block_inner_goals(
+        self,
+    ):
+        full = NeedLevels(100, 0, 100, 100, 100)
+        wishes = create(needs=full, context=WishContext(games_ready=False))
+        self.assertEqual({DEFINITIONS[w.definition_id].area for w in wishes.active},
+                         {WishArea.GAMES, WishArea.SOCIAL})
+        self.assertEqual(len(wishes.active), 2)
+        self.assertEqual(create(wishes, 100, needs=full), wishes)
+
+    def test_only_supplied_unpinned_food_affection_retire_with_one_refill_pause(self):
+        wishes = WishState(4, (
+            ActiveWish(1, WishId.FOOD, "apple", 0, 14400),
+            ActiveWish(2, WishId.PET, "pet", 0, 14400),
+            ActiveWish(3, WishId.PLAY_GAME, "blackjack", 0, 14400),
+        ), ((WishArea.FOOD, 0), (WishArea.GAMES, 0), (WishArea.AFFECTION, 0)))
+        unchanged = create(wishes, 100, needs=replace(NEEDS, satiety=89.99,
+                                                     affection=89.99))
+        self.assertEqual(unchanged, wishes)
+        first = create(wishes, 100, needs=replace(NEEDS, satiety=90))
+        self.assertEqual({w.instance_id for w in first.active}, {2, 3})
+        self.assertEqual(first.refill_not_before, 820)
+        later = create(first, 200, needs=replace(NEEDS, satiety=100, affection=90))
+        self.assertEqual({w.instance_id for w in later.active}, {3})
+        self.assertEqual(later.refill_not_before, 820)
+        pinned = replace(wishes, active=tuple(replace(w, pinned=True)
+                                              for w in wishes.active))
+        self.assertEqual(retire_irrelevant_wishes(
+            pinned, elapsed=100, needs=NeedLevels(100, 100, 100, 100, 100),
+            definitions=DEFINITIONS,
+        ), pinned)
+
+    def test_live_relevance_cleanup_is_neutral_and_desired_care_completes_first(self):
+        wishes = WishState(2, (ActiveWish(1, WishId.FOOD, "apple", 0, 14400),),
+                           ((WishArea.FOOD, 0),))
+        pet = PetState(satiety=90, lived_seconds=100, wishes=wishes)
+        before = pet.capture_checkpoint()
+        pet.evaluate_wishes(WishContext(), rng=random.Random(7))
+        self.assertEqual(pet.wishes.active, ())
+        self.assertEqual(pet.wishes.refill_not_before, 820)
+        self.assertEqual(replace(pet.capture_checkpoint(), wishes=before.wishes),
+                         before)
+        pet = PetState(satiety=81, lived_seconds=100, wishes=wishes)
+        result = pet.interact("feed", food_id="apple", now=1800000000)
+        self.assertTrue(result.food_consumed)
+        self.assertGreaterEqual(pet.satiety, 90)
+        pet.evaluate_wishes(WishContext(), rng=random.Random(7))
+        self.assertFalse(pet.wishes.active)
+        self.assertEqual(pet.moodlets.active[0].definition_id, MoodletId.FOOD_FULFILLED)
+
+    def test_game_weights_apply_within_area_and_preserve_current_goal_meanings(self):
+        definitions = {key: d for key, d in DEFINITIONS.items()
+                       if d.area == WishArea.GAMES}
+        rng = random.Random(4)
+        counts = Counter()
+        for ticket in range(100):
+            with patch.object(rng, "random", return_value=(ticket + .5) / 100):
+                state = replenish_wishes(
+                    WishState(), elapsed=0, sleeping=False, needs=NEEDS,
+                    context=WishContext(), definitions=definitions, rng=rng,
+                )
+            wish = state.active[0]
+            counts[wish.definition_id] += 1
+            self.assertEqual(wish.goal_snapshot, ActiveWish(
+                1, wish.definition_id, wish.target_id, 0, 14400,
+            ).goal_snapshot)
+        self.assertEqual(counts, {WishId.PLAY_GAME: 60, WishId.WIN_ROUND: 10,
+                                  WishId.AVOID_ROUND_LOSS: 15,
+                                  WishId.WIN_OVERALL: 10,
+                                  WishId.AVOID_OVERALL_LOSS: 5})
+
+    def test_due_refill_without_eligible_candidates_does_not_restart_the_pause(self):
+        definitions = {WishId.FOOD: DEFINITIONS[WishId.FOOD]}
+        state = create(definitions=definitions)
+        state = fulfill_activity_wish(
+            state, WishArea.FOOD, state.active[0].target_id, elapsed=100,
+            definitions=definitions,
+        ).state
+        waiting = create(state, 820, needs=replace(NEEDS, satiety=100),
+                         definitions=definitions)
+        self.assertEqual(waiting, state)
+        refilled = create(waiting, 900, definitions=definitions)
+        self.assertEqual(refilled.active[0].created_at, 900)
+        self.assertIsNone(refilled.refill_not_before)
+
     def test_closed_and_standby_expiry_share_time_with_or_without_world(self):
         wall = 1800000000.0
         for with_world in (False, True):
@@ -217,6 +321,7 @@ class WishLifecycleTests(unittest.TestCase):
             wishes,
             elapsed=14400,
             sleeping=True,
+            needs=NEEDS,
             context=WishContext(),
             definitions=DEFINITIONS,
             rng=random.Random(7),
@@ -283,7 +388,7 @@ class WishLifecycleTests(unittest.TestCase):
         self.assertEqual(loaded.capture_checkpoint(), checkpoint)
 
     def test_return_replenishes_three_current_wishes_without_other_effects(self):
-        pet = PetState(lived_seconds=72000)
+        pet = PetState(lived_seconds=72000, satiety=50)
         before = pet.capture_checkpoint()
         pet.evaluate_wishes(WishContext(), rng=random.Random(7))
         self.assertEqual(len(pet.wishes.active), 3)

@@ -162,6 +162,7 @@ class WishExpressionTests(unittest.TestCase):
                 wishes=WishState(),
                 mood=0,
                 friendship=0,
+                satiety=60,
             )
         )
         self.settings.spontaneous_talk = False
@@ -169,12 +170,13 @@ class WishExpressionTests(unittest.TestCase):
         self.assertEqual(len(self.state.wishes.active), 3)
         self.assertFalse(self.select().due)
 
-    def test_all_eleven_forms_render_actual_targets_and_goal_scope(self):
+    def test_all_twelve_forms_render_actual_targets_and_goal_scope(self):
         for definition in WISH_CATALOG.definitions.values():
             for target in definition.targets:
                 with self.subTest(objective=definition.id, target=target):
                     reaction = self.mind.wish_reaction(
-                        ActiveWish(5, definition.id, target, 0, 14400)
+                        ActiveWish(5, definition.id, target, 0, 14400,
+                                   goal=definition.goal)
                     )
                     self.assertEqual(len(reaction.beats), 1)
                     self.assertEqual(reaction.wish_instance_id, 5)

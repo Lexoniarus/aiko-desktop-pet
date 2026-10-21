@@ -441,6 +441,8 @@
     "disclosure_interval_seconds": 1800,
     "disclosure_friendship_level": 3,
     "disclosure_mood_threshold": 50,
-    "friendship_bonus_points": 0.25
+    "friendship_bonus_points": 0.25,
+    "creation_need_threshold": 70.0,
+    "relevance_need_threshold": 90.0
   }
 }
