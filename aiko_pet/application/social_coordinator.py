@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import Literal, Protocol
 
 from .social_content import PreparedSocialContent, SocialCategory
+from .social_history import SocialContentHistory, SocialContentReceipt
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,7 +34,10 @@ class SocialSelection:
 class SocialContentCoordinator:
     """Workers return data only; readiness never changes pet needs or rewards."""
 
-    def __init__(self, worker: SocialContentWorker) -> None:
+    def __init__(
+        self, worker: SocialContentWorker, *,
+        history: SocialContentHistory = SocialContentHistory(),
+    ) -> None:
         self._worker = worker
         self._buffers: dict[SocialCategory, deque[PreparedSocialContent]] = {
             category: deque() for category in SocialCategory
@@ -45,10 +49,13 @@ class SocialContentCoordinator:
         self._waiting: SocialCategory | None = None
         self._offered: PreparedSocialContent | None = None
         self._failed: set[SocialCategory] = set()
-        self._recent: dict[SocialCategory, deque[PreparedSocialContent]] = {
-            category: deque(maxlen=2) for category in SocialCategory
-        }
+        self._history = history
         self._duplicate_attempts = dict.fromkeys(SocialCategory, 0)
+
+    @property
+    def history(self) -> SocialContentHistory:
+        """Detached admission receipts; reading never reserves or consumes content."""
+        return self._history
 
     @property
     def enabled(self) -> bool:
@@ -99,10 +106,12 @@ class SocialContentCoordinator:
         if self._offered is not content:
             raise ValueError("Conversation is no longer offered")
         self._offered = None
-        self._recent[content.category].append(content)
+        self._history = self._history.admitted(SocialContentReceipt(
+            content.category, content.identity, content.fingerprint,
+        ))
 
     def _duplicate(self, item: PreparedSocialContent) -> bool:
-        known = (*(entry for recent in self._recent.values() for entry in recent),
+        known = (*self._history.entries,
                  *((self._offered,) if self._offered else ()),
                  *(entry for buffer in self._buffers.values()
                                  for entry in buffer))

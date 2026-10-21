@@ -5046,3 +5046,26 @@ and text-catalogue checks pass 33 tests in 0.218 seconds (longest 0.066 seconds)
 Scoped Ruff, strict Mypy and Pyright pass. All executed checks block native
 Tk/Toplevel construction; no live API, test window, mouse control or CI.
 Persistence and the ten-content history remain the next slice-8 commit.
+
+### Slice 8 delivery B: ten admitted receipts and bounded codec
+
+SocialContentCoordinator now owns one immutable SocialContentHistory value
+instead of retaining two full prepared stories per category. Each admission
+keeps the ten latest receipts for that category (at most thirty total), storing
+only category, namespaced provider identity and normalized text fingerprint.
+Offers, buffers and all categories still share identity/fingerprint checks.
+Normalized whitespace, case and setup/delivery boundaries cannot disguise the
+same text. Provider identity lengths are bounded at preparation as well.
+
+Warming, selecting and cancellation leave admission history unchanged.
+Opt-out/re-enable retains receipts while clearing only transient buffers.
+An older item becomes eligible after ten later admissions in its category;
+duplicates still receive only three additional fetch attempts per fill.
+The version-one receipt codec rejects invalid namespaces/digests, duplicates,
+unknown fields and excessive per-category or total counts.
+
+Selected receipt codec, coordinator, preparation and cancellation checks pass
+31 tests in 0.004 seconds (longest below 0.001 seconds). Scoped Ruff, strict Mypy
+and Pyright pass. Native constructors were blocked, and no APIs were called.
+The next commit wires this bounded value into the existing session/save path;
+this commit does not yet claim restart persistence.

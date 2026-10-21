@@ -80,7 +80,8 @@ def prepare_social_content(
         if payload.get("language") != "de":
             raise ValueError("Fact is not German")
         identifier = payload.get("id")
-        if not isinstance(identifier, str) or not identifier or len(identifier) > 128:
+        if (not isinstance(identifier, str) or not identifier or len(identifier) > 128
+                or any(char.isspace() or ord(char) < 32 for char in identifier)):
             raise ValueError("Invalid fact identity")
         identity = f"uselessfacts:{identifier}"
         source = _text(payload.get("source"))
@@ -99,7 +100,7 @@ def prepare_social_content(
                 ))):
             raise ValueError("Joke language, type or safety flags rejected")
         identifier = payload.get("id")
-        if type(identifier) is not int or identifier < 0:
+        if type(identifier) is not int or identifier < 0 or len(str(identifier)) > 128:
             raise ValueError("Invalid joke identity")
         identity = f"jokeapi:{identifier}"
         source = "JokeAPI"
@@ -111,7 +112,7 @@ def prepare_social_content(
                  if category == SocialCategory.SINGLE else (
                      _text(payload.get("setup")), _text(payload.get("delivery")),
                  ))
-    fingerprint = hashlib.sha256("\n".join(parts).casefold().encode()).hexdigest()
+    fingerprint = hashlib.sha256(" ".join(parts).casefold().encode()).hexdigest()
     # Stable variation belongs to the prepared sequence, not mutable playback.
     # Only provider text participates in duplicate detection.
     variant = int(fingerprint[:2], 16) % 3

@@ -176,12 +176,53 @@ class SocialCoordinatorTests(unittest.TestCase):
         self.assertFalse(self.social.waiting)
         self.assertNotEqual(self.worker.requests[-1][0], SocialCategory.SINGLE)
 
-    def test_old_deliveries_become_eligible_after_two_newer_items(self) -> None:
+    def test_old_deliveries_become_eligible_after_ten_newer_items(self) -> None:
         self.social.set_enabled(True)
-        for identifier in (1, 2, 3, 1):
+        for identifier in (*range(1, 12), 1):
             self.social.select(SocialCategory.SINGLE)
             self.worker.complete(identifier)
             update = self.social.poll()
             assert update is not None and update.content is not None
             self.assertEqual(update.status, "ready")
             self.social.accept(update.content)
+
+    def test_all_ten_receipts_block_provider_ids_and_content_across_categories(self):
+        self.social.set_enabled(True)
+        for identifier in range(1, 11):
+            self.social.select(SocialCategory.SINGLE)
+            self.worker.complete(identifier)
+            offered = self.social.poll()
+            assert offered is not None and offered.content is not None
+            self.social.accept(offered.content)
+        history = self.social.history
+        self.assertEqual(len(history.entries), 10)
+        restored = SocialContentCoordinator(ManualSocialWorker(), history=history)
+        for entry in history.entries:
+            # Same namespaced provider ID, different words and category.
+            payload = joke_payload(SocialCategory.TWO_PARTS,
+                                   int(entry.identity.split(":")[1]))
+            item = prepare_social_content(SocialCategory.TWO_PARTS, payload)
+            self.assertTrue(restored._duplicate(item))
+            # Changed ID/provider, normalized words still match.
+            payload = fact_payload("new")
+            payload["text"] = "  TEST   " + entry.identity.split(":")[1] + ".  "
+            self.assertTrue(restored._duplicate(
+                prepare_social_content(SocialCategory.FACT, payload),
+            ))
+        self.assertEqual(restored.history, history)
+        self.social.set_enabled(False)
+        self.social.set_enabled(True)
+        self.assertEqual(self.social.history, history)
+
+    def test_unaccepted_content_and_cancellation_do_not_write_receipts(self):
+        self.social.set_enabled(True)
+        self.worker.complete(1)
+        self.social.poll()
+        self.assertFalse(self.social.history.entries)
+        offered = self.social.select(SocialCategory.SINGLE)
+        assert offered.content is not None
+        self.assertFalse(self.social.history.entries)
+        self.social.cancel_selection()
+        with self.assertRaises(ValueError):
+            self.social.accept(offered.content)
+        self.assertFalse(self.social.history.entries)
