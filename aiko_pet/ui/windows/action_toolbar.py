@@ -236,6 +236,7 @@ class ActionToolbar:
         self._last_placement: tuple[int, int, int, int] | None = None
         self._selector_closed: Callable[[], None] | None = None
         self._last_key = float("-inf")
+        self.window.bind("<Configure>", self._configured, add="+")
         self.window.bind("<KeyPress>", self._key_pressed, add="+")
         self.window.bind("<Escape>", lambda _e: self.close_selector())
         body.adopt()
@@ -289,6 +290,8 @@ class ActionToolbar:
             )
         )
         if self.visible:
+            # Explicit expansion needs its new scroll extent before revealing it.
+            self.window.update_idletasks()
             self.place()
             if self._details_open:
                 self.body.canvas.yview_moveto(1)
@@ -389,10 +392,16 @@ class ActionToolbar:
             pinned=anchor.pinned_x is not None,
         )
 
+    def _configured(self, event: tk.Event) -> None:
+        # Toplevel bindtags also receive child Configure events. Only the actual
+        # window allocation needs a placement correction after Tk settles it.
+        if event.widget is self.window and self.visible:
+            self.place()
+
     def place(self) -> None:
+        """Read current geometry without draining unrelated World idle work."""
         if self.dragging:
             return
-        self.window.update_idletasks()
         width = self.window.winfo_reqwidth()
         height = self.window.winfo_reqheight()
         x, y = HoverGeometry.placement(
@@ -426,6 +435,8 @@ class ActionToolbar:
         if self.visible:
             return
         self.refresh()
+        # Settle once before first mapping; recurring refresh/place stays passive.
+        self.window.update_idletasks()
         self.place()
         self.window.deiconify()
         self.visible = True

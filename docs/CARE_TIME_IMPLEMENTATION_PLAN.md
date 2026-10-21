@@ -5217,3 +5217,31 @@ Selected scrolling, VN status and menu admission checks pass 21 tests in 0.095
 seconds (longest 0.070); scoped Ruff, strict Mypy and Pyright pass. No test exceeds
 ten seconds. Native constructors are blocked; no windows, native input or CI.
 The next small correction examines synchronous idle draining during placement.
+
+### Menu correction 2: recurring placement does not drain World idle events
+
+A second headless regression now demonstrates the ordering defect with the real
+DesktopWorldRuntime event queue: a queued pick-up completion is delivered inside
+ActionToolbar.refresh because place calls update_idletasks. Before this change
+the assertion that delivery remains pending fails. This proves nested idle work,
+not the original native AppHang or an infinite loop.
+
+ActionToolbar.place now only reads current geometry and sets changed coordinates.
+A guarded Toplevel Configure handler corrects position when Tk allocates a new
+size; child Configure events are ignored, equal placements are not reissued,
+and the existing drag/visibility guards remain authoritative. No additional timer,
+layout controller or World event writer was added. The initial show still settles
+geometry once before mapping. Explicit Details expansion still settles once to
+reveal the new scroll extent; these user operations no longer indirectly re-enter
+idle draining through recurring placement. These bounded explicit operations
+retain their previous layout contract and are not claimed completely asynchronous.
+
+The before/after regression keeps the World event pending across normal refresh,
+then delivers it once when the fake event loop is explicitly advanced. Further
+checks cover initial size settlement, screen clamping after resize, child-event
+filtering, no duplicate placement, hidden windows and active dragging. Selected
+placement, VN status, object feedback and geometry checks pass 14 tests in 0.082
+seconds (longest 0.041). Scoped Ruff, strict Mypy and Pyright pass. Native
+constructors are blocked; no windows, native input, live saves, CI or full suite.
+The original Windows hang remains unconfirmed until native runtime evidence
+exists; slice 9 remains deferred.
