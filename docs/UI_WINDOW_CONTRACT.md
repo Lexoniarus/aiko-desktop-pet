@@ -184,7 +184,12 @@ maintained behavior contract is this document.
 `MoodletStrip` shows every active impression (horizontal overflow), its own icon
 and wrapped tag. Hover/focus/tap reads cause, intensity, individual contribution,
 known attribution, remaining stage/total decay work, paused decay and recovery
-wait. No widget runs creation, aging, relief or emotional selection.
+wait. The existing episode stores at most one real cause per reached stage
+(three maximum). Hover rows show concise original goal/target/result details by
+stage; repeated same-stage evidence refreshes only that stage's cause. A stronger
+initial event does not fabricate lower-stage causes. Old unstaged receipts retain
+one latest real event with unknown stage. No widget runs creation, aging, relief
+or emotional selection.
 `WishPanel` shows the concrete food/game/social/care target, objective scope and
 bounded progress, remaining original deadline, inner/spoken marker and temporary
 unavailability. Left-click anywhere on a wish card pins the wish; repeating
@@ -195,6 +200,9 @@ Hover/focus and Enter/Space retain description access; card clicks take preceden
 over description tapping. Both panels retain widget identity and scroll position
 while read-side time changes.
 Descriptions use an in-window, clamped passive overlay, not another Toplevel.
+Its width is bounded by 420 pixels and its parent's available width. Hover ownership
+includes the current icon/card and description so overlapping content does not
+hide and reopen itself. Leaving both regions or dismissing by keyboard closes it.
 
 Readouts layer the prepared track, dynamic rounded/clipped fill and transparent
 rim. All of the filled portion changes green/yellow/orange/red with the value;

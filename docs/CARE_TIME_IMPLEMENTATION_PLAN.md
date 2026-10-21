@@ -4140,9 +4140,9 @@ planning rules, not implementation authorization:
    from expiry and automatic 90-point relevance retirement until actual
    resolution or manual removal. Current care willingness/refusal and real
    fulfillment conditions remain unchanged.
-2. **Bounded cause selection.** Retain the three latest distinct real trigger
-   records per active Moodlet episode. On another qualifying trigger, append
-   the actual new cause and drop the oldest if needed. Preserve these records
+2. **Bounded cause selection.** Retain one real trigger per reached stage,
+   at most three per active Moodlet episode. Further evidence refreshes only
+   the record for that stage, retaining the other stage records. Preserve them
    through passive decay until the episode ends; no rendered dialogue archive.
 3. **Intensity versus trigger count.** Retain the existing weighted strength:
    one fulfilled larger game goal may directly create level two with one real
@@ -4520,8 +4520,9 @@ coordinator/domain owners' responsibility, not the cause history's job.
 source wish identity and original objective/count/target, actual outcome, concrete
 target/object where relevant, event identity, elapsed timestamp and attribution.
 Stable wish keys are validated in infrastructure without a circular pet-domain
-import. `with_cause()` preserves the latest three distinct real receipts; the
-normal elapsed decay retains their snapshots until the episode ends. One weighted
+import. This slice originally retained the latest three distinct real receipts;
+the later per-stage correction supersedes that rolling selection. Normal elapsed
+decay retains the bounded snapshots until the episode ends. One weighted
 level-two success can still have one cause. Old episodes get a single explicitly
 unknown/legacy record, not an invented wish, game, food or historical event.
 Actual trigger wiring remains pending in the later completion/interaction slices.
@@ -5345,3 +5346,33 @@ successes, stable stage-one/two causes, stage-three refresh, duplicate delivery,
 decay, save/reload and old receipt migration. Scoped Ruff, strict Mypy and Pyright
 pass. No test exceeds ten seconds; no windows, native input, CI or full suite.
 Hover copy/behavior follows separately; slice 9 remains deferred.
+
+### Moodlet hover correction: compact stage causes and stable pointer ownership
+
+Moodlet descriptions combine family, current stage and mood contribution in the
+heading, followed by short meaning/decay/context lines. Each stored cause shows
+its actual stage, original goal/target and real outcome. Game counts and last-round
+result remain distinct from the overall goal result; food avoidance retains a
+different actually handed-over food. Full wish explanations, repeated identical
+targets and per-cause attribution paragraphs are removed. Short attribution tags
+preserve known personal/autonomous differences; all original evidence remains in
+the immutable read value. Cause rows are displayed by stage even after refresh of
+an earlier stage. A representative three-stage Relief hover has ten logical lines;
+the read regression bounds the three-cause sample to eleven lines/1100 characters.
+
+The existing DescriptionTip now allows up to 420 pixels within its parent's width
+to reduce wrapping. It owns hover jointly over the current anchor and its existing
+in-window description. Leaving an icon because the description overlaps it no
+longer immediately hides the description and starts a hide/Enter/show cycle.
+Leaving both regions hides it; old-anchor Leave events do not close a newly shown
+card. FocusOut/Escape and parent Unmap retain dismissal. There is no new window,
+input hook, timer or alternate tooltip owner. Initial tooltip measurement still
+uses its existing one-time idle settlement; this is not claimed to diagnose the
+older Windows AppHang fully.
+
+The overlap and old-anchor regressions fail against the old Leave policy. Selected
+hover, emotional read, copy, VN status, wish controls, placement and UI-boundary
+checks pass 56 tests in 0.121 seconds (longest 0.035). Scoped Ruff, strict Mypy and
+Pyright pass. Pointer locations and geometry are supplied only by widget doubles;
+native constructors are blocked. No test exceeds ten seconds. No live save, native
+window, desktop pointer automation, CI or full suite. Slice 9 remains deferred.

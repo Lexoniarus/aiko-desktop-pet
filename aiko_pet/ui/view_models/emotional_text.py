@@ -39,13 +39,11 @@ def duration_text(seconds: float) -> str:
 def moodlet_description(view: MoodletView) -> str:
     value = view.value
     parts = [
-        view.label,
-        view.description,
-        GERMAN_TEXT.format(
-            "vn.moodlet_strength",
-            level=str(value.level),
+        view.label + " · " + GERMAN_TEXT.format(
+            "vn.moodlet_strength", level=str(value.level),
             points=f"{value.mood_points:+d}",
         ),
+        view.description,
         GERMAN_TEXT.format(f"vn.attribution.{value.attribution}"),
     ]
     if value.decay_paused:
@@ -63,7 +61,9 @@ def moodlet_description(view: MoodletView) -> str:
             total=duration_text(value.remaining_decay_seconds),
         )
     )
-    parts.extend(cause_description(cause) for cause in value.causes)
+    parts.extend(cause_description(cause) for cause in sorted(
+        value.causes, key=lambda cause: cause.level or 0,
+    ))
     return "\n".join(parts)
 
 

@@ -38,6 +38,7 @@ class DescriptionTip:
         )
         self._label.pack(fill="both", expand=True)
         self._anchor: tk.Widget | None = None
+        self._frame.bind("<Leave>", self._pointer_left, add="+")
         parent.bind("<Unmap>", lambda _e: self.hide(), add="+")
 
     def attach(
@@ -46,10 +47,25 @@ class DescriptionTip:
         widget.configure({"takefocus": focusable})
         for sequence in ("<Enter>", "<FocusIn>"):
             widget.bind(sequence, partial(self._show_event, widget, text), add="+")
-        for sequence in ("<Leave>", "<FocusOut>", "<Escape>"):
+        widget.bind("<Leave>", self._pointer_left, add="+")
+        for sequence in ("<FocusOut>", "<Escape>"):
             widget.bind(sequence, lambda _e: self.hide(), add="+")
         for sequence in ("<Button-1>", "<Return>", "<space>"):
             widget.bind(sequence, partial(self._toggle_event, widget, text), add="+")
+
+    def _pointer_left(self, _event: tk.Event) -> None:
+        """An overlapping description retains hover until both regions are left."""
+        if self._anchor is None:
+            return
+        px, py = self._parent.winfo_pointerx(), self._parent.winfo_pointery()
+        for widget in (self._anchor, self._frame):
+            if not widget.winfo_ismapped():
+                continue
+            x, y = widget.winfo_rootx(), widget.winfo_rooty()
+            if (x <= px < x + widget.winfo_width()
+                    and y <= py < y + widget.winfo_height()):
+                return
+        self.hide()
 
     def _show_event(
         self, widget: tk.Widget, text: Callable[[], str], _event: tk.Event
@@ -68,7 +84,7 @@ class DescriptionTip:
             self.show(widget, text)
 
     def show(self, widget: tk.Widget, text: str) -> None:
-        width = min(320, max(80, self._parent.winfo_width() - 12))
+        width = min(420, max(80, self._parent.winfo_width() - 12))
         self._label.configure(text=text, wraplength=width - 24)
         self._frame.update_idletasks()
         x, y = tip_position(

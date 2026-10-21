@@ -60,10 +60,16 @@ class EmotionalReadTests(unittest.TestCase):
                                  ComputerSnapshot(), observe_computer=False)
             text = moodlet_description(view.emotional.moodlets[0])
             self.assertEqual(text.count("Wunsch erfüllt"), len(receipts))
+            for cause in receipts:
+                self.assertIn(f"Stufe {cause.level}: Wunsch erfüllt", text)
+            self.assertLessEqual(len(text.splitlines()), 11)
+            self.assertLess(len(text), 1100)
+            self.assertNotIn("auch über mehrere Sitzungen", text)
+            self.assertEqual(text.count("Blackjack"), 1)
             self.assertIn("Blackjack", text)
-            self.assertIn("Ursprüngliche Zielmenge: 3", text)
+            self.assertIn("Ziel: 3", text)
             self.assertIn("Letzte Runde: unentschieden", text)
-            self.assertIn("Ergebnis des Wunsches/Erlebnisses: gewonnen", text)
+            self.assertIn("Ergebnis: gewonnen", text)
             self.assertEqual(pet.capture_checkpoint(), before)
 
     def test_food_cause_distinguishes_avoided_target_from_actual_handover(self):

@@ -2,7 +2,7 @@
 
 from ...pet.content import GERMAN_TEXT
 from ...pet.food import FOOD_CATALOG
-from ...pet.moodlets import MoodletCause, MoodletCauseKind
+from ...pet.moodlets import MoodletAttribution, MoodletCause, MoodletCauseKind
 from ...pet.wishes import WishGoal, WishId, WishObjective, wish_text_key
 
 
@@ -21,7 +21,7 @@ def _target_label(target: str) -> str:
 
 
 def cause_description(cause: MoodletCause) -> str:
-    """Use the original goal snapshot and settled result, never current wishes."""
+    """Compact actual stage/goal/result; full evidence stays in the read value."""
     parts = [GERMAN_TEXT.format(f"vn.cause.{cause.kind}")]
     wish = cause.wish
     if wish is not None:
@@ -33,29 +33,32 @@ def cause_description(cause: MoodletCause) -> str:
             )),
             target=_target_label(wish.target_id),
         ))
-        parts.append(GERMAN_TEXT.format(wish_text_key(
-            WishId(wish.definition_id), goal, "description",
-        )))
-        if goal.required_count:
+        if goal.required_count > 1:
             parts.append(GERMAN_TEXT.format(
                 "vn.cause_goal_count", count=str(goal.required_count),
             ))
-    if cause.target_id is not None:
+    if (cause.target_id is not None
+            and (wish is None or cause.target_id != wish.target_id)):
         parts.append(GERMAN_TEXT.format(
             "vn.cause_target", target=_target_label(cause.target_id),
         ))
-    if cause.kind != MoodletCauseKind.LEGACY:
+    if (cause.kind != MoodletCauseKind.LEGACY
+            and (cause.game is None or cause.game.round_outcome != cause.outcome)):
         parts.append(GERMAN_TEXT.format(
             "vn.cause_result",
             result=GERMAN_TEXT.format(f"vn.outcome.{cause.outcome}"),
         ))
-        parts.append(GERMAN_TEXT.format(f"vn.attribution.{cause.attribution}"))
-    if cause.game is not None:
-        game = cause.game
-        parts.append(GERMAN_TEXT.format(
-            "vn.cause_game",
-            round=GERMAN_TEXT.format(f"vn.outcome.{game.round_outcome}"),
-            rounds=str(game.completed_rounds), wins=str(game.wins),
-            losses=str(game.losses),
-        ))
-    return "\n".join(parts)
+    if cause.attribution != MoodletAttribution.UNKNOWN:
+        parts.append(GERMAN_TEXT.format(f"vn.cause_by.{cause.attribution}"))
+    summary = " · ".join(parts)
+    if cause.level is not None:
+        summary = GERMAN_TEXT.format("vn.cause_stage", level=str(cause.level),
+                                     cause=summary)
+    if cause.game is None:
+        return summary
+    game = cause.game
+    return summary + "\n" + GERMAN_TEXT.format(
+        "vn.cause_game",
+        round=GERMAN_TEXT.format(f"vn.outcome.{game.round_outcome}"),
+        rounds=str(game.completed_rounds), wins=str(game.wins), losses=str(game.losses),
+    )
