@@ -86,6 +86,16 @@ class MoodletWishCause:
 
 
 @dataclass(frozen=True, slots=True)
+class MoodletGameResult:
+    """The settled round and objective counts, all from Aiko's perspective."""
+
+    round_outcome: MoodletOutcome
+    completed_rounds: int
+    wins: int
+    losses: int
+
+
+@dataclass(frozen=True, slots=True)
 class MoodletCause:
     kind: MoodletCauseKind
     occurred_at: float
@@ -95,6 +105,11 @@ class MoodletCause:
     target_id: str | None = None
     outcome: MoodletOutcome = MoodletOutcome.UNKNOWN
     object_id: str | None = None
+    game: MoodletGameResult | None = None
+
+    @property
+    def receipt(self) -> tuple[MoodletCauseKind, str | None, int | None]:
+        return self.kind, self.event_id, self.wish.instance_id if self.wish else None
 
 
 class EmotionalDirection(StrEnum):
@@ -241,8 +256,7 @@ class MoodletEpisode:
                 or not self.started_at <= cause.occurred_at <= self.last_trigger_at
                 or cause.kind == MoodletCauseKind.LEGACY or not cause.event_id):
             raise ValueError("Moodlet cause must belong to its active episode")
-        if any(c.kind == cause.kind and c.event_id == cause.event_id
-               for c in self.causes):
+        if any(c.receipt == cause.receipt for c in self.causes):
             return self
         known = tuple(c for c in self.causes if c.kind != MoodletCauseKind.LEGACY)
         if known and cause.occurred_at < known[-1].occurred_at:
@@ -421,6 +435,7 @@ def reinforce_moodlet(
     state: MoodletState, definition_id: MoodletId, *, elapsed: float,
     definitions: Mapping[MoodletId, MoodletDefinition], level: int = 1,
     attribution: MoodletAttribution = MoodletAttribution.UNKNOWN,
+    cause: MoodletCause | None = None,
 ) -> MoodletState:
     """Apply already-qualified evidence at an already-advanced pet endpoint.
 
@@ -439,6 +454,9 @@ def reinforce_moodlet(
     for index, episode in enumerate(active):
         if episode.definition_id != definition_id:
             continue
+        if cause is not None and any(c.receipt == cause.receipt
+                                     for c in episode.causes):
+            return state
         if elapsed < episode.last_trigger_at:
             raise ValueError("Moodlet evidence cannot precede its last trigger")
         parameters = definition.parameters
@@ -463,6 +481,8 @@ def reinforce_moodlet(
             decay_paused=definition.decay != MoodletDecay.QUIET_TIME,
             attribution=attribution,
         )
+        if cause is not None:
+            active[index] = active[index].with_cause(cause)
         return replace(state, active=tuple(active))
     if state.next_instance_id >= 2**63 - 1:
         raise ValueError("Moodlet instance allocation exhausted")
@@ -472,6 +492,8 @@ def reinforce_moodlet(
         decay_paused=definition.decay != MoodletDecay.QUIET_TIME,
         attribution=attribution,
     )
+    if cause is not None:
+        episode = episode.with_cause(cause)
     return replace(state, next_instance_id=state.next_instance_id + 1,
                    active=(*state.active, episode))
 

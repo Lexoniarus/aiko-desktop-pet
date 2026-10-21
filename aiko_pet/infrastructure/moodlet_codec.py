@@ -22,6 +22,7 @@ from ..pet.moodlets import (
     MoodletCauseKind,
     MoodletDecay,
     MoodletEpisode,
+    MoodletGameResult,
     MoodletId,
     MoodletOutcome,
     MoodletState,
@@ -64,12 +65,12 @@ def _decode_causes(
     if not isinstance(raw, list) or not 1 <= len(raw) <= MAX_MOODLET_CAUSES:
         raise ValueError("Moodlet needs one to three bounded causes")
     causes = []
-    receipts: set[tuple[MoodletCauseKind, str | None]] = set()
+    receipts: set[tuple[MoodletCauseKind, str | None, int | None]] = set()
     previous = started
     for value in raw:
         row = object_fields(value, ("kind", "occurred_at", "event_id", "attribution",
                                     "wish", "target_id", "outcome", "object_id"),
-                            context="Moodlet cause")
+                            optional=("game",), context="Moodlet cause")
         kind = enum_value(row["kind"], MoodletCauseKind, context="Moodlet cause kind")
         at = number_value(row["occurred_at"], minimum=previous, maximum=trigger,
                           context="Moodlet cause time")
@@ -78,9 +79,11 @@ def _decode_causes(
         object_id = None if row["object_id"] is None else _token(row["object_id"])
         outcome = enum_value(row["outcome"], MoodletOutcome, context="Moodlet outcome")
         wish = None if row["wish"] is None else _wish_cause(row["wish"])
+        game = None if row.get("game") is None else _game_result(row["game"])
         if (kind == MoodletCauseKind.LEGACY and (
                 len(raw) != 1 or event is not None or wish is not None
                 or target is not None or object_id is not None
+                or game is not None
                 or outcome != MoodletOutcome.UNKNOWN)
                 or kind != MoodletCauseKind.LEGACY and event is None
                 or (kind in (MoodletCauseKind.WISH_FULFILLED,
@@ -88,6 +91,8 @@ def _decode_causes(
             raise ValueError("Inconsistent Moodlet cause evidence")
         if wish is not None:
             definition = WISH_CATALOG.definitions[WishId(wish.definition_id)]
+            if game is not None and definition.area != WishArea.GAMES:
+                raise ValueError("Game result requires a game wish cause")
             if kind == MoodletCauseKind.WISH_FULFILLED:
                 if (definition.fulfillment_moodlet != key
                         or outcome == MoodletOutcome.UNKNOWN):
@@ -101,17 +106,39 @@ def _decode_causes(
                     raise ValueError("Unknown actual food in Moodlet cause")
             elif target is not None and target != wish.target_id:
                 raise ValueError("Mismatched actual Moodlet target")
-        if (kind, event) in receipts:
-            raise ValueError("Duplicate Moodlet cause receipt")
-        receipts.add((kind, event))
-        causes.append(MoodletCause(
+        elif game is not None:
+            raise ValueError("Game result requires an original wish")
+        cause = MoodletCause(
             kind, at, event,
             enum_value(row["attribution"], MoodletAttribution,
                        context="Moodlet cause attribution"),
-            wish, target, outcome, object_id,
-        ))
+            wish, target, outcome, object_id, game,
+        )
+        if cause.receipt in receipts:
+            raise ValueError("Duplicate Moodlet cause receipt")
+        receipts.add(cause.receipt)
+        causes.append(cause)
         previous = at
     return tuple(causes)
+
+
+def _game_result(raw: Any) -> MoodletGameResult:
+    row = object_fields(raw, ("round_outcome", "completed_rounds", "wins", "losses"),
+                        context="Moodlet game result")
+    outcome = enum_value(row["round_outcome"], MoodletOutcome,
+                         context="Moodlet settled round outcome")
+    rounds = integer_value(row["completed_rounds"], minimum=1, maximum=2**63 - 1,
+                           context="Moodlet completed rounds")
+    wins = integer_value(row["wins"], minimum=0, maximum=rounds,
+                         context="Moodlet game wins")
+    losses = integer_value(row["losses"], minimum=0, maximum=rounds - wins,
+                           context="Moodlet game losses")
+    if (outcome not in (MoodletOutcome.WIN, MoodletOutcome.LOSS, MoodletOutcome.DRAW)
+            or outcome == MoodletOutcome.WIN and wins == 0
+            or outcome == MoodletOutcome.LOSS and losses == 0
+            or outcome == MoodletOutcome.DRAW and rounds == wins + losses):
+        raise ValueError("Inconsistent Moodlet settled game result")
+    return MoodletGameResult(outcome, rounds, wins, losses)
 
 
 def _encode_cause(cause: MoodletCause) -> dict[str, Any]:
@@ -121,6 +148,11 @@ def _encode_cause(cause: MoodletCause) -> dict[str, Any]:
         event_id=cause.event_id, attribution=cause.attribution.value,
         target_id=cause.target_id, outcome=cause.outcome.value,
         object_id=cause.object_id,
+        game=None if cause.game is None else dict(
+            round_outcome=cause.game.round_outcome.value,
+            completed_rounds=cause.game.completed_rounds,
+            wins=cause.game.wins, losses=cause.game.losses,
+        ),
         wish=None if wish is None else dict(
             instance_id=wish.instance_id, definition_id=wish.definition_id,
             target_id=wish.target_id, objective=wish.objective,

@@ -4617,3 +4617,21 @@ suite, test window, mouse control, live save mutation or GitHub CI was used.
 Slice 2 is complete. Slice 3 activates the new game-goal snapshots together with
 their completion/failure/cause rules and the food-avoidance handover objective;
 these are not silently enabled ahead of their matchers in the current runtime.
+
+### Slice 3 delivery: reinforcement retains concrete outcome evidence
+
+The owner authorized game/food fulfillment, failure and precise causes. The first
+small commit extends existing Moodlet reinforcement with an optional qualified
+cause. A duplicate semantic receipt cannot raise or refresh the episode. Receipts
+include the original wish identity so distinct wishes do not overwrite each other
+merely because source session labels repeat. Real stacking retains the latest
+three actual causes; weighted level two still needs only one real success.
+
+`MoodletGameResult` distinguishes the final actual round from the objective's
+outcome and retains completed/won/lost counts from Aiko's perspective, without
+keeping boards, decks or round histories. The existing v1 codec validates these
+optional snapshots and continues accepting earlier causes without that detail.
+The targeted progression/storage checks pass **35 tests in 0.033 seconds**,
+longest **0.010 seconds**. Scoped Ruff, strict Mypy and Pyright pass. Native
+window construction was blocked; no full suite, mouse control or CI. Gameplay
+activation follows in the separate game and food commits below.

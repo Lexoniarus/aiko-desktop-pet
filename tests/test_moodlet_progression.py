@@ -8,9 +8,14 @@ from dataclasses import replace
 from aiko_pet.infrastructure.moodlet_codec import decode_moodlets, encode_moodlets
 from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
 from aiko_pet.pet.moodlets import (
+    MoodletCause,
+    MoodletCauseKind,
     MoodletEpisode,
+    MoodletGameResult,
     MoodletId,
+    MoodletOutcome,
     MoodletState,
+    MoodletWishCause,
     advance_moodlets,
     next_moodlet_boundary,
     reinforce_moodlet,
@@ -40,6 +45,32 @@ def relieve(state, at, instance=1):
 
 
 class MoodletProgressionTests(unittest.TestCase):
+    def test_real_wish_causes_stack_once_and_keep_only_three_original_results(self):
+        state = MoodletState()
+        for number, game in enumerate(("blackjack", "tic_tac_toe", "blackjack",
+                                        "rock_paper_scissors"), 1):
+            at = number * 10
+            cause = MoodletCause(
+                MoodletCauseKind.WISH_FULFILLED, at, "session:1",
+                wish=MoodletWishCause(number, "win_overall", game, "total_wins", 3),
+                target_id=game, outcome=MoodletOutcome.WIN,
+                game=MoodletGameResult(MoodletOutcome.WIN, 5, 3, 1),
+            )
+            state = reinforce_moodlet(state, MoodletId.PRIDE, elapsed=at,
+                                     definitions=DEFINITIONS, level=2, cause=cause)
+            same = reinforce_moodlet(state, MoodletId.PRIDE, elapsed=at + 1,
+                                     definitions=DEFINITIONS, level=2, cause=cause)
+            self.assertEqual(same, state)  # Duplicate delivery cannot refresh a tier.
+            state = decode_moodlets(encode_moodlets(state), at)
+        self.assertEqual([c.wish.instance_id for c in state.active[0].causes if c.wish],
+                         [2, 3, 4])
+        self.assertEqual(state.active[0].level, 3)
+        self.assertEqual(len(age(state, 7200, at=40).active[0].causes), 3)
+        raw = encode_moodlets(state)
+        raw["active"][0]["causes"][0]["game"]["wins"] = 6
+        with self.assertRaises(ValueError):
+            decode_moodlets(raw, 40)
+
     def test_quiet_time_decays_three_two_one_without_replaying_a_long_gap(self):
         state = trigger(MoodletState(), MoodletId.DISRUPTED)
         state = trigger(trigger(state, MoodletId.DISRUPTED), MoodletId.DISRUPTED)
