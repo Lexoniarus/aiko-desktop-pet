@@ -3745,6 +3745,8 @@ one threshold and does not introduce another mutable need or desire score.
 Games and social wishes retain their original deadlines, fulfillment/failure
 rules and other actual capability constraints regardless of their need values;
 do not silently retire them just because fun/social reaches 90 or 100.
+The subsequently agreed pin override also protects pinned food/affection wishes
+from automatic 90-point relevance retirement; actual care boundaries still apply.
 
 ### Separate menu navigation from action admission and incidental speech
 
@@ -4092,11 +4094,12 @@ the wish without fulfillment reward or an invented disappointment Moodlet and
 uses the existing twelve-minute vacancy/refill policy. Never remove or erase
 an already active Moodlet just because its source wish is dismissed.
 
-The interaction between pinning and food/affection relevance retirement needs
-an explicit rule before implementation; confirmation of time protection alone
-does not silently authorize disregarding current care boundaries. Game/social
-wishes already have the separately agreed need-level exemption. No additional
-permanent wish archive or independent pin store is needed.
+The owner subsequently confirmed that pinning also prevents automatic
+food/affection relevance retirement at 90. Preserve the chosen wish until actual
+resolution or manual removal, while current care willingness/refusal and real
+fulfillment conditions remain authoritative. Pinning cannot force acceptance.
+Game/social wishes already have the separately agreed need-level exemption.
+No additional permanent wish archive or independent pin store is needed.
 
 Focused later checks should cover cross-session total progress, exact next-round
 resolution, one-shot failure Moodlets, preserved cause evidence at all tiers,
@@ -4117,27 +4120,55 @@ game/social exemptions, refill timing, cumulative quantities, explicit next-
 round resolution, defeat Moodlet tuning, staged petting, basic pin/dismiss
 controls and active-only cause lifetime are already recorded.
 
-Only three closely scoped product decisions still need confirmation:
+The owner approved the three remaining proposals; these are now settled
+planning rules, not implementation authorization:
 
-1. **Pinning versus need-based retirement.** Time protection is agreed, but
-   whether a pinned food/affection wish survives the 90-point relevance check
-   remains open. Suggested rule: pinning preserves the chosen wish until its
-   actual resolution or manual removal, while care willingness/refusal and real
-   fulfillment conditions still apply. This is a suggestion, not approval.
-2. **Bounded cause selection.** Three real
-   stacked experiences must remain readable, but repeated maximum-tier refresh
-   needs a replacement rule. Suggested bound: retain the three latest distinct
-   real trigger records and keep them through passive decay until episode end.
-3. **Intensity versus trigger count.** Current catalogue values can start a Moodlet directly at level two for
-   one fulfilled overall goal. Decide whether to retain that weighted strength
-   with one genuine cause, or change it so the ordinary one-trigger/one-tier
-   example is mandatory. Never fabricate multiple causes to match an intensity.
-   These are suggestions to resolve the cause model, not new implemented rules.
+1. **Pinning versus need-based retirement.** Pinning protects the chosen wish
+   from expiry and automatic 90-point relevance retirement until actual
+   resolution or manual removal. Current care willingness/refusal and real
+   fulfillment conditions remain unchanged.
+2. **Bounded cause selection.** Retain the three latest distinct real trigger
+   records per active Moodlet episode. On another qualifying trigger, append
+   the actual new cause and drop the oldest if needed. Preserve these records
+   through passive decay until the episode ends; no rendered dialogue archive.
+3. **Intensity versus trigger count.** Retain the existing weighted strength:
+   one fulfilled larger game goal may directly create level two with one real
+   cause. Intensity and cause count are distinct. Never fabricate extra causes
+   merely to make their count equal the displayed intensity.
 
-The reported friendship plateau is an outstanding diagnosis, not evidence for
-an approved rebalance. Review real saved gains/losses and display rounding
-before proposing a behavior change. Only one current snapshot was inspected;
-its credits do not establish a multi-day net balance or prove a frozen value.
+### Read-only friendship-balance review, 2026-10-21
+
+The owner requested diagnosis without implementation, tests or save mutation.
+Source inspection and a read-only current save review establish the following:
+
+- There is no level-six-specific ceiling. Points remain 0–100; display level
+  is `min(10, 1 + floor(points / 10))`, so level seven starts at 60. The numeric
+  UI readout rounds to a whole point and can hide smaller real changes.
+- Ordinary rewards and personal wish bonuses share 0.75 points per rolling
+  two hours and five per rolling 24 hours. Above 80 in the corresponding
+  pre-action need, ordinary rewards are reduced to 25 percent. Autonomous
+  eating, sleep and ordinary menu activity cannot manufacture personal credit.
+- An otherwise same-type-eligible action sets its two-hour reward anchor even
+  when the shared pot is empty. Repetition within its existing interval does
+  not renew that anchor. Accepted care still renews contact independently of
+  whether any reward is credited. This behavior matches the existing recorded
+  policy; changing it would be a separate balancing decision, not a bug fix.
+- Passive absence loss starts after four hours without qualified care contact,
+  includes sleep/standby and uses the existing progressively scaled rates.
+  Neglect can also charge under its recorded conditions. Neither Moodlet
+  existence nor fair game defeat independently adds relationship loss.
+- The current saved reward window and action anchors explain a short-term
+  plateau through an exhausted shared pot plus same-type intervals. A single
+  snapshot cannot establish a multi-day equilibrium or reconstruct every
+  past interaction and loss. Saved rewards are not a net daily balance.
+- Passive losses update points directly rather than creating an itemized loss
+  ledger; direct penalties are retained only for their own rolling windows.
+  Missing penalty entries therefore do not prove an entire day had no losses.
+
+No rebalance or gameplay telemetry/archive is introduced by this diagnosis.
+Keep private per-action save details out of repository documentation. Report
+the observed values to the owner with their snapshot/time limitations rather
+than claiming a frozen relationship value or inventing historical losses.
 
 Remaining implementation checks are engineering work under existing owners:
 precise unknown/discovered/identified read projections; native title/footer
@@ -4149,7 +4180,8 @@ receipts, reward caps and needed care histories remain separate from short-lived
 conversational cause data. Future dialogue generation remains out of scope.
 
 No Python, JSON catalogue, save or test is changed by this readiness record.
-Once the remaining decisions are settled and implementation is authorized,
-deliver small coherent commits with targeted headless local checks and duration
+The three remaining decisions are now settled; implementation still requires
+the owner's next authorization. Deliver small coherent commits with targeted
+headless local checks and duration
 review. The integrated full suite and final OOP acceptance remain the last step;
 no desktop test windows, mouse control or GitHub CI.
