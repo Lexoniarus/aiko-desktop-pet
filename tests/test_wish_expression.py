@@ -3,7 +3,7 @@
 import random
 import unittest
 from dataclasses import replace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from aiko_pet.application.attention import AttentionCoordinator
 from aiko_pet.application.settings import PetSettings
@@ -15,7 +15,7 @@ from aiko_pet.pet.mind.workload_events import WorkloadEventDetector
 from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
-from aiko_pet.pet.wish_catalog import WISH_CATALOG
+from aiko_pet.pet.wish_catalog import WISH_CATALOG, WishCatalog
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
 from tools.pet_test_support import set_test_pet_values
@@ -71,6 +71,32 @@ class WishExpressionTests(unittest.TestCase):
         return self.attention.spontaneous(
             1000, context_at(1800000000), toolbar_visible=False, **kwargs
         )
+
+    def test_pinned_wish_can_be_spoken_after_original_deadline_and_saved_once(self):
+        self.state.set_wish_pinned(1, True)
+        self.state.restore_checkpoint(replace(self.state.capture_checkpoint(),
+                                              lived_seconds=20000))
+        reaction = self.select().reaction
+        assert reaction is not None
+        self.assertEqual(reaction.wish_instance_id, 1)
+        self.player.play(reaction)
+        self.assertEqual(self.state.wishes.active[0].expressed_at, 20000)
+        self.assertEqual(self.state.wishes.active[0].expires_at, 14400)
+        loaded = decode_pet_state(encode_pet_state(self.state), now=1800000000)
+        self.assertEqual(loaded.wishes, self.state.wishes)
+        self.assertFalse(self.select().due)
+
+    def test_spoken_round_count_comes_from_original_goal_instead_of_current_catalogue(
+        self,
+    ):
+        definitions = dict(WISH_CATALOG.definitions)
+        definitions[WishId.WIN_OVERALL] = replace(definitions[WishId.WIN_OVERALL],
+                                                  round_count=5)
+        original = ActiveWish(1, WishId.WIN_OVERALL, "blackjack", 0, 14400)
+        with patch("aiko_pet.pet.mind.mind.WISH_CATALOG", WishCatalog(definitions)):
+            reaction = self.mind.wish_reaction(original)
+        self.assertIn("3", reaction.text)
+        self.assertNotIn("5", reaction.text)
 
     def test_selected_wish_is_concrete_but_unspoken_until_display_then_persists(self):
         before = self.state.capture_checkpoint()

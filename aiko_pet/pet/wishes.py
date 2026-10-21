@@ -151,6 +151,10 @@ class ActiveWish:
         assert self.goal is not None
         return self.goal
 
+    def is_active_at(self, elapsed: float) -> bool:
+        """Pinning protects the original identity without moving its deadline."""
+        return self.created_at <= elapsed and (self.pinned or elapsed < self.expires_at)
+
 
 @dataclass(frozen=True, slots=True)
 class WishState:
@@ -207,7 +211,7 @@ def fulfill_activity_wish(
                  if definitions[w.definition_id].area == area
                  and w.target_id == target_id
                  and (instance_id is None or w.instance_id == instance_id)
-                 and w.created_at <= elapsed < w.expires_at), None)
+                 and w.is_active_at(elapsed)), None)
     if wish is None:
         return WishResolution(state)
     return _retire_wish(state, wish, definitions[wish.definition_id], elapsed=elapsed)
@@ -240,7 +244,8 @@ def progress_game_wish(
     wish = next((w for w in state.active if w.instance_id == instance_id), None)
     if (wish is None or wish.target_id != game_id
             or definitions[wish.definition_id].area != WishArea.GAMES
-            or not wish.created_at <= started_at <= elapsed < wish.expires_at
+            or not wish.created_at <= started_at <= elapsed
+            or not wish.is_active_at(elapsed)
             or round_id in wish.game.round_ids):
         return WishResolution(state)
     definition = definitions[wish.definition_id]
@@ -276,12 +281,43 @@ def progress_game_wish(
 
 def expire_wishes(state: WishState, *, elapsed: float) -> WishState:
     """Age original deadlines in all time paths; retain identity/pacing evidence."""
-    active = tuple(w for w in state.active if elapsed < w.expires_at)
+    active = tuple(w for w in state.active if w.pinned or elapsed < w.expires_at)
     if active == state.active:
         return state
-    first_expiry = min(w.expires_at for w in state.active if elapsed >= w.expires_at)
+    first_expiry = min(w.expires_at for w in state.active
+                       if not w.pinned and elapsed >= w.expires_at)
     return replace(state, active=active,
                    refill_not_before=_refill_deadline(state, first_expiry))
+
+
+def set_wish_pinned(
+    state: WishState, instance_id: int, pinned: bool, *, elapsed: float,
+) -> WishState:
+    """Protect a live instance; unpinning never renews its original deadline."""
+    if type(pinned) is not bool:
+        raise ValueError("Wish pin must be a boolean")
+    state = expire_wishes(state, elapsed=elapsed)
+    wish = next((w for w in state.active if w.instance_id == instance_id
+                 and w.is_active_at(elapsed)), None)
+    if wish is None or wish.pinned == pinned:
+        return state
+    if not pinned and elapsed >= wish.expires_at:
+        # The newly unprotected vacancy starts now, not at a past protected time.
+        return _retire_wish(state, wish, None, elapsed=elapsed).state
+    return replace(state, active=tuple(
+        replace(w, pinned=pinned) if w.instance_id == instance_id else w
+        for w in state.active
+    ))
+
+
+def dismiss_wish(state: WishState, instance_id: int, *, elapsed: float) -> WishState:
+    """Manual retirement is neutral and uses the same vacancy/refill owner."""
+    state = expire_wishes(state, elapsed=elapsed)
+    wish = next((w for w in state.active if w.instance_id == instance_id
+                 and w.is_active_at(elapsed)), None)
+    return state if wish is None else _retire_wish(
+        state, wish, None, elapsed=elapsed,
+    ).state
 
 
 def retire_irrelevant_wishes(
@@ -425,7 +461,7 @@ def wish_to_express(
         (
             w
             for w in state.active
-            if w.created_at <= elapsed < w.expires_at
+            if w.is_active_at(elapsed)
             and w.expressed_at is None
             and wish_restriction(w, context, definitions) is None
         ),
@@ -445,7 +481,7 @@ def acknowledge_wish_expression(
     if (
         wish is None
         or wish.expressed_at is not None
-        or not wish.created_at <= elapsed < wish.expires_at
+        or not wish.is_active_at(elapsed)
         or state.last_expressed_at is not None
         and elapsed - state.last_expressed_at
         < BALANCE.integer("wishes", "disclosure_interval_seconds")

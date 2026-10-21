@@ -14,6 +14,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
   before cleanup. Apply the agreed game-form weights within area-first selection;
   new goal meanings and food-avoidance activation follow with their matchers.
 
+- Protect pinned wishes from elapsed expiry and supplied-need retirement, including
+  closed/standby time, actual fulfillment and later first disclosure. Provide
+  neutral aggregate pin/unpin/dismiss operations with one shared refill pause,
+  preserved original deadlines and no replayed care or emotional effects.
+  UI controls follow in the planned UI slice.
+
 - Define explicit wish objective meanings, the approved game-selection weights,
   a dormant food-avoidance wish and the downcast "Doch verloren" Moodlet.
   Selection/completion wiring follows separately; existing game behavior is

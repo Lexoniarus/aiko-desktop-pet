@@ -21,10 +21,11 @@
 > The latest 2026-10-21 continuous-friendship amendment replaces the earlier
 > capped care/wish reward model for the next implementation. Its 30-second
 > balance values are approved for planning; runtime still uses the old model.
-> The later corrections are delivered incrementally below. Slice 1's definitions
-> and storage are delivered; the remaining selection, interaction, relationship
-> and UI changes are not yet implemented. Existing game goals retain their
-> original meaning and progress, as approved by the owner.
+> The later corrections are delivered incrementally below. Slices 1 and 2 supply
+> definitions/storage and need-aware eligibility, weighted selection and lifecycle.
+> New completion rules, interaction, relationship and UI changes remain pending.
+> Existing game goals retain their original meaning and progress, as approved
+> by the owner.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
@@ -4574,3 +4575,45 @@ neutral retirement and matching-intake ordering with fake time. Pinned wishes
 already bypass relevance cleanup; complete pin/expiry/manual-removal behavior
 follows in the next small commit. Scoped Ruff, strict Mypy and Pyright pass.
 Tk/Toplevel creation was blocked; no full suite, mouse control, live save or CI.
+
+### Slice 2 delivery: pinning, neutral dismissal and protected lifetime
+
+`ActiveWish.is_active_at()` supplies one eligibility check for completion and
+actual disclosure/acknowledgment. Pinning keeps the original deadline unchanged,
+but protects the instance from expiry and live 90-point relevance retirement.
+The same expiry policy runs through existing live, closed and standby time paths;
+there is no special pin clock, replacement instance or additional persistence.
+Slots and areas remain occupied normally. Pinning cannot force actual intake or
+petting acceptance, and a qualifying next-round non-loss failure still retires
+its identity. Its disappointment trigger belongs to the separate slice 3.
+
+`PetState.set_wish_pinned()` and `dismiss_wish()` commit the existing pure
+transitions through the sole pet aggregate. Commands neither replenish desires
+nor grant care, contact, emotional effects or friendship rewards. Dismissal
+leaves all existing Moodlets/causes intact and shares the existing twelve-minute
+refill deadline; stale instance callbacks cannot affect another wish. Expired
+unpinned wishes cannot be revived. Unpinning before the original deadline
+restores ordinary expiry; unpinning after it closes the protected wish now and
+starts the current vacancy pause, without retroactively pretending it expired
+while protected. Other genuinely expired unpinned wishes retain their earlier
+shared deadline.
+
+A pinned wish can first be spoken after its original deadline. The existing
+codec now validates that real expression time against current elapsed time for
+pinned instances, while retaining the original bounded four-hour deadline and
+ordinary checks for unpinned ones. Save/reload preserves actual disclosure
+spacing and cannot replay it. Mind renders a stored goal's original round count
+rather than replacing it with today's catalogue count. Pin/dismiss UI controls
+remain the separately planned slice 7; this delivery provides their domain API.
+
+Combined targeted verification passes **108 tests in 1.029 seconds**, longest
+**0.206 seconds**, none over ten seconds. Existing suites cover wish eligibility,
+catalogue balance, disclosure callbacks, all fulfillment areas, saved/checkpoint
+state, immutable reads, attention integration and acyclic dependency boundaries.
+The closed-versus-standby test also covers pins with and without desktop stock.
+Tests use explicit time, temporary saves and fake callbacks with Tk/Toplevel
+construction blocked. Scoped pinned Ruff, strict Mypy and Pyright pass. No full
+suite, test window, mouse control, live save mutation or GitHub CI was used.
+Slice 2 is complete. Slice 3 activates the new game-goal snapshots together with
+their completion/failure/cause rules and the food-avoidance handover objective;
+these are not silently enabled ahead of their matchers in the current runtime.

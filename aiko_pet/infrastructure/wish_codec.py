@@ -149,7 +149,8 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
             raise ValueError("Missing wish creation anchor or empty lifetime")
         spoken = (
             None if entry["expressed_at"] is None else number_value(
-                entry["expressed_at"], minimum=start, maximum=min(end, elapsed),
+                entry["expressed_at"], minimum=start,
+                maximum=elapsed if pinned else min(end, elapsed),
                 context="wish expression",
             )
         )

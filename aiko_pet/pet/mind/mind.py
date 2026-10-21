@@ -203,7 +203,7 @@ class PetMind:
         elif definition.area == WishArea.GAMES:
             values["target"] = GERMAN_TEXT.format(f"game.name.{wish.target_id}")
             if definition.round_count > 1:
-                values["rounds"] = str(definition.round_count)
+                values["rounds"] = str(wish.goal_snapshot.required_count)
         text = GERMAN_TEXT.format(f"wish.{wish.definition_id}.utterance", **values)
         return Reaction(
             f"wish-{wish.instance_id}",

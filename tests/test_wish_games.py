@@ -2,6 +2,7 @@
 
 import unittest
 from dataclasses import replace
+from itertools import product
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.game_experience import GameExperienceCoordinator
@@ -61,8 +62,15 @@ class GameWishTests(unittest.TestCase):
         self.assertEqual(pet.capture_checkpoint(), before)
 
     def test_next_round_goal_resolves_once_and_loss_is_neutral(self):
-        for outcome in ("win", "draw", "loss"):
+        for outcome, pinned in product(("win", "draw", "loss"), (False, True)):
             pet = pet_with(WishId.AVOID_ROUND_LOSS)
+            if pinned:
+                pet.restore_checkpoint(replace(
+                    pet.capture_checkpoint(), lived_seconds=20000,
+                    wishes=replace(pet.wishes, active=(
+                        replace(pet.wishes.active[0], pinned=True),
+                    )),
+                ))
             complete(pet, outcome)
             self.assertFalse(pet.wishes.active)
             self.assertEqual(bool(pet.moodlets.active), outcome != "loss")

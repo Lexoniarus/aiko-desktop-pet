@@ -59,10 +59,12 @@ from .wishes import (
     WishResolution,
     WishState,
     acknowledge_wish_expression,
+    dismiss_wish,
     expire_wishes,
     fulfill_activity_wish,
     progress_game_wish,
     replenish_wishes,
+    set_wish_pinned,
 )
 
 
@@ -343,6 +345,18 @@ class PetState:
     def note_wish_expression(self, instance_id: int) -> None:
         """Record actual presentation without granting care or relationship credit."""
         self._change(wishes=acknowledge_wish_expression(
+            self.wishes, instance_id, elapsed=self.lived_seconds,
+        ))
+
+    def set_wish_pinned(self, instance_id: int, pinned: bool) -> None:
+        """Protect an existing wish; no care, speech or gameplay event is implied."""
+        self._change(wishes=set_wish_pinned(
+            self.wishes, instance_id, pinned, elapsed=self.lived_seconds,
+        ))
+
+    def dismiss_wish(self, instance_id: int) -> None:
+        """Retire a wish neutrally without erasing any existing impression."""
+        self._change(wishes=dismiss_wish(
             self.wishes, instance_id, elapsed=self.lived_seconds,
         ))
 

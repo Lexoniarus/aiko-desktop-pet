@@ -175,12 +175,12 @@ tuples and read-only mappings.
 
 The latest definitions-and-storage slice includes the dormant food-avoidance
 objective (zero selection weight) and downcast `disappointed` family; their
-gameplay triggers are not wired yet. Game selection weights are catalogued,
-while weighted selection remains a later delivery. `WishGoal`/`WishObjective`
+gameplay triggers are not wired yet. Game selection applies catalogue weights
+within an eligible area; non-game forms retain equal selection. `WishGoal`/`WishObjective`
 preserve each active wish's original meaning and count independently of newer
 catalogue meanings. Older saves migrate to their actual delivered objectives,
 and current creation keeps those variants until new matching is wired. The
-persisted pin flag is available as data; pin controls/lifecycle follow separately.
+persisted pin flag protects lifecycle now; pin/dismiss UI controls follow separately.
 
 Pet rules share only `games/contracts.py`'s immutable game IDs and outcome type;
 they never import game implementations, sessions or scores. The package boundary
@@ -210,12 +210,23 @@ expires wishes during live, closed and standby time. Creation is a separate
 live-endpoint operation: `DesktopAttentionRuntime.handle_time_progress()` asks
 the existing `AttentionCoordinator` to replenish the normal three inner wishes,
 even while presentation is occupied. `replenish_wishes()` fills available areas
-at the current endpoint using the existing Mind RNG. Retirement starts one saved
+at the current endpoint using the existing Mind RNG and aggregate-owned current
+`NeedLevels`. Food/affection creation requires their need at most 70 and existing
+petting willingness. At 90, live evaluation neutrally retires an unpinned supplied
+wish; actual matching care resolves first in its existing transaction. Games/social
+have no fun/social gate. Retirement starts one saved
 twelve-minute refill pause; further vacancies do not postpone it. Four-hour
-expiry uses its original deadline, including offline, while generation remains
+expiry uses its original deadline unless pinned, including offline; generation remains
 awake/live only. Legacy saves without a refill deadline can fill available slots
 at the next live evaluation. The old global/hour and same-area/ninety-minute
 creation locks are removed; one wish per area and independent disclosure remain.
+
+`ActiveWish.is_active_at()` consistently applies protected lifetime to fulfillment,
+speech selection and actual expression receipts. `PetState.set_wish_pinned()` and
+`dismiss_wish()` expose neutral aggregate-owned operations without new care or
+reward events. Unpinning cannot renew the original deadline or revive an expired
+unprotected instance. A late unpin starts its vacancy now; dismissal neither clears
+Moodlets nor resets another pending refill. No extra store or clock is introduced.
 
 `WishContext` is a frozen current capability/acceptance input, not another
 state/history owner. Attention reads pure existing petting admission, game
