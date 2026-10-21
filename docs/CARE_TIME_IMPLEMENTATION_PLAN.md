@@ -3907,9 +3907,10 @@ no test windows, mouse control, live API requests or CI during planning.
 
 ### Game objectives, failed non-loss wishes and precise causes, 2026-10-21
 
-Status: owner-requested planning additions, not implemented. The next discussion
-must settle only the genuinely missing objective/outcome/retention values below,
-not expand this into implementing a future conversation system.
+Status: owner-requested planning additions, not implemented. The owner subsequently
+accepted the cumulative quantities and defeat-Moodlet values below. Retention
+remains the next discussion; do not expand this into implementing a future
+conversation system.
 
 #### Total progress versus an explicitly next-round goal
 
@@ -3924,8 +3925,17 @@ perspective; opening menus, abandoned rounds and rounds in another game do not.
 Keep the exact objective visible and stored, including its target and progress.
 The earlier three-round majority definition is not automatically a cumulative
 win-count goal, and the old two-round same-session play rule is superseded for
-total-play wishes. Choose explicit quantity/wording before implementing the
-total-win goal rather than inventing a streak or silently reusing a majority.
+total-play wishes. The owner agreed the following quantities:
+
+| Cumulative wish | Required progress within the original four-hour lifetime |
+| --- | --- |
+| Play the named game together in total | Two completed rounds, independent of result, across sessions |
+| Win at the named game in total | Three wins from Aiko's perspective, across sessions; intervening losses/draws do not reset wins |
+
+For example, win/loss/win/draw/win fulfills the three-win objective. This is not
+two wins out of a fixed three-round block. Use explicit visible wording rather
+than the ambiguous "win overall" alone. Qualifying progress survives restarts
+without extending the deadline; the game/social need-level exemption remains.
 
 "Win the next round of game X" resolves on that next qualifying completed
 round: win fulfills it, loss/draw ends it unsuccessfully. It must not retry
@@ -3945,10 +3955,31 @@ cancellation, an unrelated game's loss or every ordinary loss without that wish.
 
 Fair defeat is not user mistreatment and adds no automatic friendship penalty.
 Deliver failure and its Moodlet exactly once through the existing game-event
-and Pet aggregate boundary, including across saves. The new negative family's
-strength, duration and stacking still need an explicit small balance decision;
-do not borrow another negative family's values implicitly. General repeated-
-loss emotions and failure effects for other objective forms remain separate.
+and Pet aggregate boundary, including across saves. General repeated-loss
+emotions and failure effects for other objective forms remain separate.
+
+The owner accepted the working label **"Doch verloren"** and these values:
+
+| Intensity | Qualifying experience | Total numeric mood-target modifier | Quiet decay from this tier |
+| --- | --- | --- | --- |
+| 1 | A concrete non-loss wish fails through its qualifying defeat | -5 | Expires after 30 minutes |
+| 2 | Another such wish fails while the episode is active | -10 | 30 minutes to level one, then 30 more to expiry |
+| 3 | Another such wish fails while level two is active | -15 | One tier per 30 minutes; 90 minutes to expiry |
+
+Each newly qualifying failed wish increases the current tier by one, capped at
+three, and resets the current tier's remaining time to 30 minutes. At tier
+three it refreshes that stage only; do not add an unbounded duration backlog.
+One failed wish contributes once, not once per round/callback/reload. Ordinary
+later losses without a corresponding new non-loss wish do not refresh or stack
+this episode. Decay continues in real elapsed closed-app/standby time.
+
+Its emotional direction is disappointed/downcast, not anger at the user. The
+listed modifiers affect the target under existing shared numeric caps; they
+are not instant deductions or an extra friendship loss. A later fulfilled win
+wish may create a positive impression alongside it, without instantly erasing
+the disappointment. Preserve the concrete failed objective, game and result
+in every tier's cause display and append subsequent real qualifying causes
+when stacking. Passive decay does not invent new experiences.
 
 #### Possible avoidance-of-food objective
 
