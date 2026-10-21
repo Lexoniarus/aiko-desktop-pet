@@ -1,7 +1,7 @@
 """Save already-advanced pet state and manage autosave cadence.
 
 Pet time progression belongs to the application layer; writing a snapshot
-never alters needs, daily rhythm, or the unchanged JSON schema.
+never alters needs, daily rhythm, or the version-one local save format.
 """
 
 from __future__ import annotations
@@ -11,6 +11,7 @@ from typing import Callable
 
 from ..application.session import WorldSessionSnapshot
 from ..application.settings import PetSettings
+from ..application.social_history import SocialContentHistory
 from ..infrastructure.persistence import StateStore
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.state import PetState
@@ -26,12 +27,14 @@ class DesktopPersistence:
         store: StateStore, state: PetState, settings: PetSettings,
         adaptive: AdaptiveRoutine, *,
         monotonic: Callable[[], float] = time.monotonic,
+        social_history: Callable[[], SocialContentHistory] = SocialContentHistory,
     ) -> None:
         self._store = store
         self._state = state
         self._settings = settings
         self._adaptive = adaptive
         self._monotonic = monotonic
+        self._social_history = social_history
         self.last_saved = monotonic()
         self._world: Callable[[], WorldSessionSnapshot] | None = None
 
@@ -47,17 +50,14 @@ class DesktopPersistence:
         """Write the current state and update timing even after I/O error."""
         failure: OSError | None = None
         try:
-            if self._world is None:
-                self._store.save(
-                    self._state, self._settings, adaptive=self._adaptive.memory,
-                )
-            else:
-                world = self._world()
-                self._store.save(
-                    self._state, self._settings, adaptive=self._adaptive.memory,
-                    world=world.world, world_recovery_x=world.recovery_x,
-                    object_memory=world.object_memory,
-                )
+            world = self._world() if self._world is not None else None
+            self._store.save(
+                self._state, self._settings, adaptive=self._adaptive.memory,
+                social_history=self._social_history(),
+                world=world.world if world is not None else None,
+                world_recovery_x=world.recovery_x if world is not None else 0,
+                object_memory=world.object_memory if world is not None else None,
+            )
         except OSError as error:
             failure = error
         self.last_saved = self._monotonic()

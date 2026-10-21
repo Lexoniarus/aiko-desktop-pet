@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Persist the last ten admitted API content IDs/fingerprints per category in
+  the existing atomic save. Compare IDs and normalized text across categories,
+  buffers and offers; retain bounded retries without duplicate fallback.
+  Keep preparation/cancellation separate from admission and full-story wishes.
+
 - Give API sayings, two-part jokes and facts three category-specific
   introductions and occasional final emotes. Preserve complete provider text,
   punchline timing and existing care/wish completion semantics.

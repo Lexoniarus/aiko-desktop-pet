@@ -16,6 +16,7 @@ from ..application.social_coordinator import (
     SocialContentCoordinator,
     SocialContentWorker,
 )
+from ..application.social_history import SocialContentHistory
 from ..games.contracts import GameRoundEvent, SessionSummary
 from ..infrastructure.social_api import HttpSocialContentWorker
 from ..pet.food import FoodId
@@ -45,6 +46,7 @@ class DesktopCareRuntime:
         set_context: Callable[[TimeContext], None], save: Callable[[], None],
         is_closed: Callable[[], bool], game_open: Callable[[], bool],
         social_worker: SocialContentWorker | None = None,
+        social_history: SocialContentHistory = SocialContentHistory(),
     ) -> None:
         self._root, self._state, self._router = root, state, router
         self._world, self._contact = world, contact
@@ -62,12 +64,13 @@ class DesktopCareRuntime:
         self._is_closed = is_closed
         content = SocialContentCoordinator(
             social_worker if social_worker is not None else HttpSocialContentWorker(),
+            history=social_history,
         )
         self.social = SocialConversationRuntime(content, SocialRuntimePorts(
             can_start=self._can_start_social,
             defer=self._defer_social, start=self._start_social,
             show_wait=lambda reaction: player.play(reaction, animate=False),
-            clear_wait=self._clear_wait,
+            clear_wait=self._clear_wait, persist_admission=save,
             can_wait=lambda: (not is_closed() and not state.sleeping
                               and not game_open()),
         ))
@@ -75,7 +78,7 @@ class DesktopCareRuntime:
     def interact(
         self, action: str, *, food_id: FoodId | None = None,
         conversation: PreparedSocialContent | None = None,
-        wake_from_clicks: bool = False,
+        wake_from_clicks: bool = False, persist: bool = True,
     ) -> None:
         if conversation is None:
             self.social.cancel()
@@ -85,7 +88,7 @@ class DesktopCareRuntime:
                 or self._world.awareness.intentions.goal is not None):
             self._world.interrupt(lambda: self.interact(
                 action, food_id=food_id, conversation=conversation,
-                wake_from_clicks=wake_from_clicks,
+                wake_from_clicks=wake_from_clicks, persist=persist,
             ))
             return
         stamp, now = time.time(), time.monotonic()
@@ -99,7 +102,8 @@ class DesktopCareRuntime:
         )
         self._set_context(outcome.context)
         self._presenter.present(outcome, now=now, sleeping=self._state.sleeping)
-        self._save()
+        if persist:
+            self._save()
 
     def advance_time(self) -> None:
         self._router.advance_time(self._inputs(time.time(), time.monotonic()))
@@ -160,5 +164,6 @@ class DesktopCareRuntime:
     def _start_social(self, content: PreparedSocialContent) -> bool:
         if not self._can_start_social():
             return False
-        self.interact("talk", conversation=content)
+        # The runtime saves care and the admitted receipt together after accept().
+        self.interact("talk", conversation=content, persist=False)
         return True

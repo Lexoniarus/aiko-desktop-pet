@@ -19,6 +19,7 @@ class SocialRuntimePorts:
     show_wait: Callable[[Reaction], None]
     clear_wait: Callable[[], None]
     can_wait: Callable[[], bool] = lambda: True
+    persist_admission: Callable[[], None] = lambda: None
 
 
 class SocialConversationRuntime:
@@ -110,6 +111,7 @@ class SocialConversationRuntime:
                 self.content.accept(item)
                 self._last_content = item
                 self._status = "social.started"
+                self._ports.persist_admission()
             else:
                 self.content.cancel_selection()
                 self._status = "social.error"

@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 from typing import Callable
+from unittest.mock import Mock
 
 from test_social_coordinator import ManualSocialWorker
 
@@ -121,3 +123,16 @@ class SocialRuntimeTests(unittest.TestCase):
         self.assertFalse(self.holding)
         self.deferred.pop()()
         self.assertEqual(len(self.started), 1)
+
+    def test_rejected_start_never_records_or_persists_admission(self):
+        persisted = Mock()
+        self.runtime._ports = replace(
+            self.runtime._ports, start=lambda _item: False,
+            persist_admission=persisted,
+        )
+        self.worker.complete(1)
+        self.runtime.poll()
+        self.runtime.select(SocialCategory.SINGLE)
+        self.deferred.pop()()
+        self.assertFalse(self.content.history.entries)
+        persisted.assert_not_called()

@@ -20,9 +20,12 @@ API choices show disabled controls with a settings hint.
 
 Single means one provider text field; it can contain a longer joke or dialogue.
 It is not rewritten into a separate authored sayings catalogue. Two Parts keeps
-setup and delivery distinct, with a 700 ms pause before the delivery. Facts
-always start with a short German introduction. Framing and the holding line
-are presentation copy, not substitute entertainment content.
+setup and delivery distinct, with a 700 ms pause before the delivery.
+Each category has three short German introductions in the existing text resource.
+A stable provider-text fingerprint varies the prepared introduction, sometimes
+adding a restrained happy/idea emote after the full content. No final emote
+precedes the punchline or takes a text slot. Framing and the holding line are
+presentation copy, not substitute entertainment or a personal-memory record.
 
 All items are prepared into the existing `Reaction`/`Cue` model, with at most
 125 characters per text beat and five text beats including the introduction.
@@ -65,11 +68,16 @@ attempt with a brief menu message; choosing the category retries. Failures never
 select local authored entertainment or silently switch to Plaudern. Other ready
 API items remain usable if the network subsequently becomes unavailable.
 
-Ready and offered items cannot duplicate one another. The last two delivered
-items per category also participate in repetition checking; older deliveries
-can become eligible again. Random-provider duplicates allow at most three
-further individual attempts per refill. Persistent duplicates pause that
-category instead of creating an endless request loop.
+Ready and offered items cannot duplicate one another. The last ten admitted
+contents per category also participate in repetition checking, including after
+restart. Namespaced provider IDs or normalized text fingerprints match across
+all three categories, including text split differently into setup/delivery.
+Only actual playback admission records a receipt; preparation, selection and
+cancellation do not. Ten newer admissions in its category release an older
+receipt, unless another category/buffer/offer still excludes it. Random-provider
+duplicates allow at most three further individual attempts per refill.
+Persistent duplicates pause that category instead of replaying a duplicate or
+creating an endless request loop. Explicit selection can retry later.
 
 Closing the menu, choosing another care action, disabling sources and shutdown
 invalidate pending playback. Stale worker results never trigger a conversation.
@@ -80,20 +88,33 @@ network call or allowing it to touch destroyed Tk widgets.
 ## Care and persistence
 
 Every accepted variant uses the existing `talk` care transition: **+26 social,
--1 energy, no direct fun gain**, with normal need clamping. All four choices
-share the same friendship category, eligibility interval and rolling budgets.
-Changing category never opens another friendship reward. See
+-1 energy, no direct fun gain**, with normal need clamping. Accepted personal
+contact feeds the continuous friendship policy; there is no instant care or
+wish friendship bonus. Changing category does not create another reward. See
 [friendship rules](FRIENDSHIP_SYSTEM.md) and [need effects](FUN_MOOD_SYSTEM.md).
 
 Menu opening, warming, the holding line and failed/cancelled preparation grant
 no care or qualified personal contact. When actual content playback is accepted,
-care commits once. Reading clicks, the punchline and completion grant nothing
-extra; later interruption does not undo accepted care.
+care commits once. Reading clicks, the punchline and extra framing beats grant
+no extra care; later interruption does not undo accepted care or its repeat
+receipt. A matching social wish still requires the complete sequence and may
+then create its existing fulfillment Moodlet.
 
 `settings.online_social` is an optional Boolean within the existing version-one
 save. Requests, ready buffers, source payloads and pending playback are never
-saved. Restart warms fresh items and preserves the existing pet and shared
-friendship history. No runtime dependency or translation model is added.
+saved. The optional outer `social_history` version-one section stores only up to
+ten receipts per category (thirty total): category, namespaced provider identity
+and SHA-256 fingerprint of normalized provider words. No provider words, source
+URLs, frame variants, buffers or pending tokens are stored. Opt-out clears
+buffers and retains receipts.
+
+The session restorer carries this value to the existing content coordinator
+before online warming starts. Actual admission saves care and its receipt
+together once through DesktopPersistence/StateStore; full-sequence wish
+completion remains a separate later event. Missing legacy history starts empty.
+Invalid history leaves valid pet/world values intact and uses the existing
+original-file backup path before a replacement save. No new store, dependency,
+translation model or elapsed-time simulator is added.
 
 ## Owners and verification
 
@@ -101,6 +122,9 @@ friendship history. No runtime dependency or translation model is added.
   source-aware reactions.
 - `application/social_coordinator.py` owns the buffers, offers, selection and
   repetition history through the `SocialContentWorker` port.
+- `application/social_history.py` supplies immutable bounded admission receipts;
+  `infrastructure/social_history_codec.py` validates their version-one save
+  representation, independently of provider stories and pet experiences.
 - `infrastructure/social_api.py` owns bounded HTTP reads and the data-only worker.
 - `desktop/social_runtime.py` coordinates holding and deferred admission through
   existing World, care and presentation callbacks.
@@ -132,3 +156,16 @@ page. Its immutable projection reads existing accepted metadata; it does not
 fetch, reserve, replay, persist or maintain another source history. The original
 source and API provider remain distinct, and missing URLs disable only their
 corresponding links. Existing shared-care and playback completion rules remain.
+
+## Slice 8 local verification, 2026-10-21
+
+The playful framing and persisted ten-content window pass 103 selected local
+headless tests in 0.711 seconds, with no individual case over 0.206 seconds.
+Fixtures cover complete provider text, category framing, whole-sequence wishes,
+reservation/cancellation, cross-category ID/text duplicates, bounded retries,
+per-category eviction, actual atomic saves, legacy/default recovery and restart.
+Native Tk/Toplevel construction was blocked, HTTP responses were faked, and
+temporary save files were isolated from the normal save. Scoped Ruff, strict
+Mypy and Pyright plus dependency/UI architecture checks pass. No native window,
+mouse control, live API request, CI or full-suite run was used for slice 8.
+The final integrated suite and OOP review remain slice 9.

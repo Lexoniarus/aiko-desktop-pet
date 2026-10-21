@@ -31,6 +31,14 @@ Optional [social API content](SOCIAL_CONTENT.md) is separate from the packaged
 catalogues. The existing settings owner persists `online_social`, default false;
 only a saved Boolean true enables it. Provider content, preparation buffers and
 pending requests are session-local and never enter the version-one save.
+The optional outer `social_history` version-one section stores only the last ten
+admitted provider IDs/text fingerprints per API category (thirty receipts total).
+The existing session restorer returns these immutable values to the content
+coordinator before warming; opt-out keeps them. Old saves default to an empty
+history. Invalid/excessive/duplicate receipts do not discard valid pet values;
+the existing original-file backup precedes replacement. Actual admission saves
+care and receipts together in the same atomic file, without saving provider
+words, full reactions, source URLs, warm stock or pending selections.
 
 RPS, Blackjack and Tic-Tac-Toe sessions are temporary. Their scores, decks,
 boards and hidden/revealed cards are not serialized. Closing reports completed

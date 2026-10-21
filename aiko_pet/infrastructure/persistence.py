@@ -13,6 +13,7 @@ from typing import Any
 
 from ..application import settings as app_settings
 from ..application.session import LoadedPetData
+from ..application.social_history import SocialContentHistory
 from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.mind.adaptive_models import AdaptiveMemory
 from ..pet.mind.object_knowledge import ObjectMemorySnapshot
@@ -25,6 +26,11 @@ from .moodlet_codec import valid_moodlets
 from .object_memory_codec import decode_object_memory, encode_object_memory
 from .pet_codec import decode_pet_state, encode_pet_state, valid_pet_time
 from .sleep_codec import valid_sleep
+from .social_history_codec import (
+    decode_social_history,
+    encode_social_history,
+    valid_social_history,
+)
 from .wish_codec import valid_wishes
 from .world_catalog import build_consumable_definitions
 from .world_codec import decode_world, encode_world
@@ -102,7 +108,16 @@ class StateStore:
                     saved_memory = memory
                 except (ValueError, TypeError, OverflowError):
                     self._invalid_memory = True
+        social_history = SocialContentHistory()
+        if "social_history" in payload:
+            try:
+                social_history = decode_social_history(payload["social_history"])
+            except (ValueError, TypeError, OverflowError):
+                # Pet/world recovery stays independent; preserve malformed input
+                # through the existing backup path before any replacement save.
+                pass
         return LoadedPetData(
+            social_history=social_history,
             state=decode_pet_state(payload.get("pet"), now=current),
             settings=app_settings.PetSettings.from_dict(payload.get("settings")),
             adaptive_memory=AdaptiveMemory.from_dict(payload.get("adaptive")),
@@ -114,7 +129,8 @@ class StateStore:
     def save(self, pet: PetState, settings: app_settings.PetSettings,
              *, adaptive: AdaptiveMemory | None = None,
              world: WorldSnapshot | None = None, world_recovery_x: float = 0,
-             object_memory: ObjectMemorySnapshot | None = None) -> None:
+             object_memory: ObjectMemorySnapshot | None = None,
+             social_history: SocialContentHistory | None = None) -> None:
         """Don't leave a half-written save on power loss or interruption."""
         if object_memory is not None and world is None:
             raise ValueError("Object memory requires its paired World snapshot")
@@ -125,6 +141,8 @@ class StateStore:
             "pet": encode_pet_state(pet),
             "settings": settings.to_dict(),
         }
+        if social_history is not None:
+            payload["social_history"] = encode_social_history(social_history)
         if adaptive is not None:
             payload["adaptive"] = adaptive.to_dict()
         if world is not None:
@@ -179,6 +197,8 @@ class StateStore:
                     ("moodlets", valid_moodlets), ("wishes", valid_wishes),
                 ) if key in pet_data
             )
+        invalid_social = (isinstance(payload, dict) and "social_history" in payload
+                          and not valid_social_history(payload["social_history"]))
         invalid_quiet = False
         adaptive = payload.get("adaptive") if isinstance(payload, dict) else None
         if isinstance(adaptive, dict) and "quiet_window" in adaptive:
@@ -193,7 +213,7 @@ class StateStore:
             and not self._invalid_world
             and not self._invalid_memory
             and not invalid_time
-            and not invalid_sections and not invalid_quiet
+            and not invalid_sections and not invalid_quiet and not invalid_social
         ):
             return
         backup = self.path.with_name(

@@ -18,7 +18,7 @@ class SocialContentReceipt:
 
 @dataclass(frozen=True, slots=True)
 class SocialContentHistory:
-    """Oldest to newest receipts; no provider words, URLs or pending playback."""
+    """Per-category ordered receipts; no provider words, URLs or playback."""
 
     entries: tuple[SocialContentReceipt, ...] = ()
 

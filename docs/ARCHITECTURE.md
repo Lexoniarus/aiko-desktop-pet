@@ -1124,3 +1124,14 @@ it does not infer causes from tiers or archive ended episodes. Object diagnostic
 combine detached World stock, learned bindings and current tracker associations.
 Unknown sightings, identified knowledge and actual undiscovered/uncertain stock
 are separate read dimensions, with no discovery or memory mutation on a read.
+
+The API repeat window is one immutable application value,
+`social_history.SocialContentHistory`, owned by SocialContentCoordinator.
+The existing session read contracts carry it through StateStore and
+PetSessionRestorer; the codec validates receipt-only data, at most ten entries
+per category. DesktopPersistence reads that same value in its one atomic save.
+SocialConversationRuntime persists only after the offered content is accepted
+for playback, combining the care commit and receipt without two admission
+writes. Whole-sequence social wish completion remains a separate event.
+Preparation, buffers, full provider text and presentation metadata remain
+transient; these receipts are not another pet experience archive.

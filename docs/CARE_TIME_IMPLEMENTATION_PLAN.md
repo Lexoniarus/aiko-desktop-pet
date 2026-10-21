@@ -16,17 +16,17 @@
 > is separately recorded.
 > The 2026-10-21 need-aware wish and staged-petting amendments are delivered
 > below; the UI/menu amendments are delivered in slice 7. The social/API
-> amendment remains pending before the final integrated tests.
+> amendment is delivered in slice 8. The final integrated tests remain slice 9.
 > The latest 2026-10-21 continuous-friendship amendment replaces the earlier
 > capped care/wish reward model. Its 30-second
 > balance values are approved; their incremental runtime delivery is recorded below.
-> The later corrections are delivered incrementally below. Slices 1–7 supply
+> The later corrections are delivered incrementally below. Slices 1–8 supply
 > definitions/storage, need-aware eligibility, weighted selection, lifecycle and
 > game/food completion with concrete Moodlet causes, and staged petting
 > boundaries, the carried-item absence correction and continuous friendship/status
-> cadence, menu admission, wish controls and status details. API presentation
-> and recent-content protection remain pending in slice 8; the final integrated
-> suite and OOP review remain slice 9.
+> cadence, menu admission, wish controls and status details, plus playful API
+> presentation and persisted ten-content repetition protection. The final
+> integrated suite, slow-test audit and OOP review remain slice 9.
 > Existing game goals retain their original meaning and progress, as approved
 > by the owner.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
@@ -5069,3 +5069,42 @@ Selected receipt codec, coordinator, preparation and cancellation checks pass
 and Pyright pass. Native constructors were blocked, and no APIs were called.
 The next commit wires this bounded value into the existing session/save path;
 this commit does not yet claim restart persistence.
+
+### Slice 8 delivery C: existing atomic save and admission wiring
+
+The optional outer version-one `social_history` section is decoded independently
+of pet/world state and passed through the existing loaded/restored session
+contracts. DesktopCareRuntime supplies it to the content coordinator before
+warming begins. DesktopPersistence reads the current immutable history through
+an explicit callback and writes it in the same StateStore atomic save as pet,
+settings, adaptive memory and the optional paired World/object-memory snapshot.
+
+API admission defers its ordinary care save until the content coordinator
+accepts the actual offered content. The existing social-runtime port then saves
+care and its receipt together once. Warming, cancellation, stale callbacks and
+rejected starts do not persist a receipt. A later full-sequence completion can
+fulfill the real social wish and save that event separately. Opt-out/close retain
+admitted receipts while clearing transient stock; no second store or full API
+story archive was introduced. Legacy saves start empty. Invalid/future history
+leaves valid pet/world data intact and uses the existing backup-before-replace
+path, including when a writer encounters the invalid file without a prior load.
+
+Final selected slice-8 checks pass **103 tests in 0.711 seconds**, longest
+**0.205 seconds** (import-cycle guard), with no test over ten seconds.
+Coverage includes provider-shaped responses, five-bubble content preservation,
+framing, cross-category provider/text matching, ten-per-category eviction,
+three additional duplicate attempts, cancellation and rejected admission,
+legacy/corrupt recovery, restart duplicate protection and an actual isolated
+care/playback/save flow. That flow checks one care-plus-receipt write at
+admission and the separate actual whole-sequence wish-completion write.
+
+Scoped Ruff, strict Mypy (11 changed source files), Pyright (all changed source
+and test files), dependency and the unchanged UI/composition architecture guards
+pass. Executed tests block native Tk/Toplevel construction. HTTP data is faked
+and local file writes use temporary saves. No test windows, mouse control,
+normal user-save mutation, live API requests, GitHub CI or full-suite run.
+
+Slice 8 is complete in separate framing, history-definition/coordinator and
+persistence-integration commits. Slice 9 remains the final integrated local
+suite, explicit investigation of tests over ten seconds and final OOP review;
+there is no claim of that full-suite gate or manual desktop acceptance here.

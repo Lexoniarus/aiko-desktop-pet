@@ -131,6 +131,7 @@ class DesktopPet:
         )
         self._persistence = DesktopPersistence(
             self.store, self.state, self.settings, self.adaptive,
+            social_history=lambda: self._social_runtime.content.history,
         )
         self.mind = make_aiko_mind(started_at=self._persistence.last_saved)
         self.activity_monitor = activity_monitor or ActivityMonitor()
@@ -464,7 +465,7 @@ class DesktopPet:
             player=self._reaction_player, inputs=self._activity.session_inputs,
             set_context=self._set_context, save=self._save,
             is_closed=lambda: self._closed, game_open=lambda: self._hover.game_open,
-            social_worker=social_worker,
+            social_worker=social_worker, social_history=session.social_history,
         )
         self._social_runtime = self._care_runtime.social
         self._social_runtime.set_enabled(self.settings.online_social)

@@ -52,6 +52,11 @@ class SocialHistoryCodecTests(unittest.TestCase):
             changed = deepcopy(raw)
             changed["entries"][0][field] = value
             invalid.append(changed)
+        excessive = deepcopy(raw)
+        excessive["entries"] = excessive["entries"][:10] + [dict(
+            category="single", identity="jokeapi:99", fingerprint="f" * 64,
+        )]
+        invalid.append(excessive)  # Eleven in one category, below the total cap.
         invalid += [dict(version=True, entries=[]), dict(version=2, entries=[]),
                     dict(version=1, entries=raw["entries"] + [raw["entries"][0]]),
                     dict(version=1, entries=[raw["entries"][0]] * 2)]

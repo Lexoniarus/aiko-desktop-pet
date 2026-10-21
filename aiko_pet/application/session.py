@@ -21,6 +21,7 @@ from ..world.state import WorldState
 from .active_time import ActiveSessionClock, SessionInputs
 from .session_time import SessionTimeProgression
 from .settings import PetSettings
+from .social_history import SocialContentHistory
 
 
 @dataclass(frozen=True, slots=True)
@@ -42,6 +43,7 @@ class LoadedPetData:
     restored_from_save: bool
     world: WorldSnapshot | None = None
     object_memory: ObjectMemorySnapshot | None = None
+    social_history: SocialContentHistory = SocialContentHistory()
 
 
 class SavedPetReader(Protocol):
@@ -59,6 +61,7 @@ class RestoredPetSession:
     adaptive: AdaptiveRoutine
     world: WorldSnapshot | None = None
     object_memory: ObjectMemorySnapshot | None = None
+    social_history: SocialContentHistory = SocialContentHistory()
 
 
 class PetSessionRestorer:
@@ -108,6 +111,7 @@ class PetSessionRestorer:
             state=loaded.state,
             settings=loaded.settings,
             adaptive=adaptive,
+            social_history=loaded.social_history,
             world=world.snapshot() if world is not None else None,
             object_memory=memory.export(now=0) if world is not None else None,
         )
