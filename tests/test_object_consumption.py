@@ -167,7 +167,7 @@ class ObjectConsumptionTests(unittest.TestCase):
             ConsumptionOrigin.HANDOVER, self.inputs,
             memory_id=self.item.instance_id,
         ).accepted)
-        self.assertGreater(self.pet.friendship, before.friendship)
+        self.assertEqual(self.pet.friendship, before.friendship)
         cause = next(e for e in self.pet.moodlets.active
                      if e.definition_id == MoodletId.FOOD_FULFILLED).causes[0]
         self.assertEqual(cause.object_id, self.item.instance_id)

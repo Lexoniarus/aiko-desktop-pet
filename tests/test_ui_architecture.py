@@ -219,7 +219,7 @@ class UiDependencyRules(unittest.TestCase):
         for policy in (
             "plan_care_action",
             "calculate_pet_progression",
-            "calculate_friendship_reward",
+            "record_accepted_contact",
             "plan_pet_time",
             "calculate_daily_routine",
         ):

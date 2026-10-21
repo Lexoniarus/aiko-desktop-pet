@@ -73,7 +73,7 @@ class NeedsAndBondTests(unittest.TestCase):
         self.assertEqual(state.mood, 30)
         self.assertEqual(state.satiety, 28)
         self.assertEqual(state.energy, 59)
-        self.assertGreater(state.friendship, 15)
+        self.assertEqual(state.friendship, 15)
 
     def test_feeding_does_not_substitute_for_social_care(self):
         state = PetState(social=8, satiety=10, affection=50)
@@ -139,26 +139,11 @@ class NeedsAndBondTests(unittest.TestCase):
         for i in range(100):
             state.interact("pet", now=start + i + 1)
         self.assertAlmostEqual(state.friendship, first)
-        # A repeat after two elapsed hours may earn credit again.
+        # Healthy elapsed time can improve the bond; another stroke has no bonus.
         state.advance(start + 7200)
         set_test_pet_values(state, affection=55)
         state.interact("pet", now=start + 7200)
         self.assertGreater(state.friendship, first)
-
-    def test_friendship_daily_cap_and_new_day(self):
-        start = timestamp()
-        state = PetState(friendship=31, updated_at=start)
-        for k in range(30):
-            state.advance(start + 900 * k)
-            for action in ("feed", "pet", "talk", "play", "energy_drink"):
-                set_test_pet_values(state, energy=65)
-                state.interact(action, now=start + 900 * k)
-        self.assertLessEqual(state.friendship, 31 + 7.000001)
-        state.advance(start + 24 * 3600 + 1)
-        previous = state.friendship
-        set_test_pet_values(state, social=30)
-        state.interact("talk", now=start + 24 * 3600 + 1)
-        self.assertGreater(state.friendship, previous)
 
     def test_friendship_decays_over_offline_contact_absence(self):
         state = PetState(friendship=67, updated_at=timestamp())
@@ -244,7 +229,8 @@ class TelemetryEffortTests(unittest.TestCase):
                 self.assertLess(working.satiety, idle.satiety)
         self.assertLess(working.mood, idle.mood)
         self.assertLess(working.energy, idle.energy)
-        self.assertEqual(working.friendship, 40)
+        self.assertGreater(working.friendship, 39.99)
+        self.assertLessEqual(working.friendship, 40)
 
 
 class SocialDialogueTests(unittest.TestCase):

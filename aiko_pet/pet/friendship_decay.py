@@ -1,4 +1,4 @@
-"""Chronological passive relationship loss over the existing need integration."""
+"""Chronological emotional balance and passive loss in existing need progression."""
 
 from __future__ import annotations
 
@@ -53,6 +53,10 @@ def balance_friendship(points: float, *, positive: float, negative: float) -> fl
         not 0 <= points <= 100 or min(positive, negative) < 0
     ):
         raise ValueError("Invalid relationship balance")
+    if positive == negative == 0 or points == 0 and positive == 0 or (
+        points == 100 and negative == 0
+    ):
+        return points
     gains, losses = _anchors(positive=True), _anchors()
     remaining = 1.0
     while remaining > 1e-12:
@@ -219,6 +223,9 @@ def advance_friendship(
     after: tuple[float, ...],
     *,
     sleeping: bool,
+    mood_before: float | None = None,
+    mood_after: float | None = None,
+    moodlets: MoodletState | None = None,
 ) -> FriendshipProgress:
     """Integrate a numeric need step; no clocks, aggregate writes or extra ticks."""
     start, history = progress.elapsed, progress.history
@@ -229,6 +236,25 @@ def advance_friendship(
     contact = (
         history.last_contact if history.last_contact is not None else history.baseline
     )
+    continuous = history.continuous_since
+
+    def advance_points(
+        points: float, left: float, right: float, passive: float,
+    ) -> float:
+        duration = right - left
+        if (continuous is None or start + (left + right) / 2 < continuous
+                or mood_before is None or mood_after is None):
+            return passive_friendship(points, passive * duration / 3600)
+        positive, negative = emotional_friendship_rates(
+            mood_before + (mood_after - mood_before) * left / seconds,
+            mood_before + (mood_after - mood_before) * right / seconds,
+            moodlets or MoodletState(), recent_contact=(history.last_contact is not None
+                and start + (left + right) / 2 - history.last_contact
+                < _setting("absence_grace_seconds")),
+        )
+        units = duration / BALANCE.number("simulation", "status_interval_seconds")
+        return balance_friendship(points, positive=positive * units,
+                                  negative=negative * units + passive * duration / 3600)
     if not history.critical and all(
         min(a, b) >= _setting("critical_need") or i == 1 and sleeping and b > a
         for i, (a, b) in enumerate(zip(before, after))
@@ -243,15 +269,15 @@ def advance_friendship(
             ),
         ]
         ages = (start - contact, start + seconds - contact)
-        reference = 0.0
+        points = progress.points
         for low, high in zip(age_boundaries, age_boundaries[1:] + [float("inf")]):
             duration = max(0.0, min(ages[1], high) - max(ages[0], low))
             if duration:
-                reference += (
-                    duration / 3600 * absence_rate(max(ages[0], low) + duration / 2)
-                )
+                left = max(ages[0], low) - ages[0]
+                points = advance_points(points, left, left + duration,
+                                        absence_rate(max(ages[0], low) + duration / 2))
         return FriendshipProgress(
-            passive_friendship(progress.points, reference),
+            points,
             prune_history(history, start + seconds),
             start + seconds,
         )
@@ -324,9 +350,8 @@ def advance_friendship(
                     )
                     neglect = max(neglect, _setting(f"{key}_loss_rate"))
             reference = max(absence_rate(elapsed - contact), neglect)
-            points = passive_friendship(
-                points, reference * (right - left) * (high - low) / 3600
-            )
+            points = advance_points(points, left + (right - left) * low,
+                                    left + (right - left) * high, reference)
     return FriendshipProgress(
         points,
         prune_history(replace(history, critical=buckets), start + seconds),

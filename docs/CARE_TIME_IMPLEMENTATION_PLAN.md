@@ -19,7 +19,7 @@
 > their later authorized implementation before final tests.
 > The latest 2026-10-21 continuous-friendship amendment replaces the earlier
 > capped care/wish reward model for the next implementation. Its 30-second
-> balance values are approved for planning; runtime still uses the old model.
+> balance values are approved; their incremental runtime delivery is recorded below.
 > The later corrections are delivered incrementally below. Slices 1–5 supply
 > definitions/storage, need-aware eligibility, weighted selection, lifecycle and
 > game/food completion with concrete Moodlet causes, and staged petting
@@ -4862,3 +4862,43 @@ Four focused rate/flow/migration tests pass, as do forty selected existing
 neglect, catalogue and persistence checks. Scoped Ruff, strict Mypy and Pyright
 pass. This commit does not activate the new balance or run the full suite; no
 test window, mouse control or CI was used.
+
+### Slice 6 delivery: continuous runtime relationship accounting
+
+The existing progression now accounts for mood before/after, all actual Moodlet
+tiers and passive absence/neglect in one progressive flow. Positive baseline
+requires accepted care within four hours; negative mood and Moodlets do not
+require it. Passive loss uses the stronger reference, not an added supply bonus.
+Contact/absence boundaries and existing need/neglect subdivisions retain their
+actual portions. Moodlet expiry/tier/recovery changes remain owned by the existing
+chronology. The common solver handles positive/negative effects simultaneously,
+including point-anchor crossings and saturation without an exhausted daily pot.
+
+`record_accepted_contact()` replaces ordinary reward calculation; `CareTransition`
+uses `contact_action`, with the unused pre-reward need removed. Wish resolution
+commits only the impression. Bare play, refusal and autonomous consumption do
+not manufacture contact, and direct boundary penalties still occur separately.
+The unused gain/fraction/wish-bonus settings and calculators are removed after
+checking production, codecs, tests and tools. Historical reward fields and their
+bounded validation/pruning remain solely for existing v1 data compatibility.
+
+New pets start with the continuous boundary at their current elapsed origin.
+Older saves finish their already elapsed catch-up using the existing reference
+loss rules, then record `continuous_since` once at that endpoint. Reopening or
+wall rebasing cannot reapply it, refund points, replay old credits or invent
+contact. Full status floats now survive the existing atomic save/checkpoint;
+there is no separate migration ledger or background simulation.
+
+The updated core ownership/care/wish/precision tests pass **218 selected checks
+in 3.319 seconds**, longest **0.528 seconds**. Another focused time/neglect/food/
+sleep-storage set passes 78 checks; its longest is the existing 30-day bounded-
+history case at **8.542 seconds**, below the ten-second review threshold.
+Obsolete instant-bonus/daily-pot scenarios are removed or rewritten around actual
+contact and continuing impressions. The approved four/eight-contact reference
+arithmetic now verifies average levels seven/eight and intensive level ten using
+event boundaries, not thousands of artificial GUI ticks. It remains arithmetic,
+not a promise of generated wishes or practical daily gameplay acceptance.
+
+Scoped Ruff, strict Mypy and Pyright pass. The next delivery connects normal
+30-second sampling and visible fractional readouts; full-suite/OOP acceptance
+remains slice 9. No test windows, mouse control, live APIs or GitHub CI.

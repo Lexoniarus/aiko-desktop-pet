@@ -101,7 +101,7 @@ class CanonicalImportTests(unittest.TestCase):
         from aiko_pet.pet import friendship
 
         self.assertFalse(hasattr(friendship, "award_friendship_for_care"))
-        self.assertTrue(hasattr(friendship, "calculate_friendship_reward"))
+        self.assertTrue(hasattr(friendship, "record_accepted_contact"))
 
     def test_progression_only_publishes_pure_calculation(self) -> None:
         from aiko_pet.pet import progression

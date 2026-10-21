@@ -10,8 +10,7 @@ from typing import Any
 from ..pet.balance import BALANCE
 from ..pet.food import FOOD_BALANCE, FOOD_CATALOG, FoodState
 from ..pet.friendship import (
-    CARE_FRIENDSHIP_GAIN,
-    CARE_PRIMARY_NEED,
+    CONTACT_ACTIONS,
     FRIENDSHIP_DAILY_CAP,
     LEGACY_REWARD_ACTIONS,
 )
@@ -123,12 +122,12 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
 
 def encode_pet_state(state: PetState) -> dict[str, Any]:
     return {
-        "satiety": round(state.satiety, 4),
-        "mood": round(state.mood, 4),
-        "energy": round(state.energy, 4),
-        "social": round(state.social, 4),
-        "affection": round(state.affection, 4),
-        "friendship": round(state.friendship, 4),
+        "satiety": state.satiety,
+        "mood": state.mood,
+        "energy": state.energy,
+        "social": state.social,
+        "affection": state.affection,
+        "friendship": state.friendship,
         "friendship_day": state.friendship_day,
         "friendship_gained_today": round(state.friendship_gained_today, 4),
         "care_types_today": list(state.care_types_today),
@@ -147,7 +146,7 @@ def encode_pet_state(state: PetState) -> dict[str, Any]:
         "nap_until": state.nap_until,
         "auto_nap_day": state.auto_nap_day,
         "food": encode_food_state(state.food),
-        "fun": round(state.fun, 4),
+        "fun": state.fun,
     }
 
 
@@ -175,7 +174,7 @@ def _load_lived_seconds(raw: Any) -> float:
 def _load_care_types(raw: Any) -> list[str]:
     if not isinstance(raw, list):
         return []
-    return [action for action in CARE_PRIMARY_NEED if action in raw]
+    return [action for action in CONTACT_ACTIONS if action in raw]
 
 
 def _load_reward_times(raw: Any) -> dict[str, float]:
@@ -183,7 +182,7 @@ def _load_reward_times(raw: Any) -> dict[str, float]:
         return {}
     return {
         action: clamp_saved_time(raw[action])
-        for action in (*CARE_FRIENDSHIP_GAIN, *LEGACY_REWARD_ACTIONS)
+        for action in (*CONTACT_ACTIONS, *LEGACY_REWARD_ACTIONS)
         if action in raw and clamp_saved_time(raw[action]) > 0
     }
 

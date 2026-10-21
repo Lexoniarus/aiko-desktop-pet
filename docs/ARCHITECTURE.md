@@ -97,15 +97,16 @@ captures pre-care conversation context before mutation, then
 interprets the committed effect.
 German fallback wording is selected only by `ui/view_models/care_text.py`.
 
-- `care_actions.py`: `CareTransition` for care actions and their rewards.
+- `care_actions.py`: `CareTransition` for care effects and accepted-contact evidence.
 - `needs.py`: frozen `NeedLevels` contains exactly satiety, energy, fun, social
   and affection. Mood and friendship are separate values, not care needs.
 - `progression.py`: frozen `PetProgress` for all numeric time progression,
   with separate need, mood, food and relationship results. Integrates targets with the
   existing pure food/fun/mood policies; `PetState` applies one result. It reads
   no clocks, owns no mutable store and offers no alternate precomputed path.
-- `friendship.py`: rolling relationship credits, contact and direct penalty caps.
-- `friendship_decay.py`: progressive passive loss during the existing need steps;
+- `friendship.py`: accepted contact, policy activation and direct penalty caps.
+- `friendship_decay.py`: simultaneous mood/Moodlet flow and progressive passive loss
+  during the existing need steps;
   `friendship_history.py`: immutable elapsed-axis evidence inside PetValues.
 - `lifecycle.py` and `routine.py`: streaming full-time advancement and local schedule.
 - `sleep.py`: immutable sleep episode/context and pure priority policy;
@@ -220,8 +221,13 @@ at most three real, language-neutral trigger snapshots within the active episode
 Their wish keys are validated by codecs, avoiding a domain import cycle. Old
 episodes have explicit unknown evidence; expiry removes causes with their episode.
 Immutable application reads expose original goals, pins and causes, without
-owning history or changing the UI. Friendship rewards retain their existing
-history owner.
+owning history or changing the UI. Relationship contact, neglect and direct losses
+retain their existing history owner. Its optional `continuous_since` boundary
+activates the new flow at the first accounted-for endpoint after migration.
+Old saved points/contact/critical history and historical credit metadata survive
+without refunds, replay or fabricated contact. Current care/wish effects no longer
+create credits or consume two-hour/daily pots. Those bounded old fields and their
+validation limits are legacy save metadata only; unused gain/bonus tuning is removed.
 
 `pet/wishes.py` also owns pure creation, original-deadline expiry, temporary
 restrictions and disclosure eligibility. The existing `PetState` progression
@@ -264,13 +270,13 @@ reward. Fulfillment is delivered below; the combined status presentation remains
 
 Stage 5B.7 uses pure `fulfill_activity_wish()` and `progress_game_wish()` results
 in the existing `wishes.py`. `PetState._apply_wish_resolution()` commits retirement,
-the catalogue's one positive Moodlet family/strength and any shared-pot personal
-reward together. Creation anchors and allocation survive retirement. The existing
+the catalogue's one positive Moodlet family/strength together. There is no instant
+wish bonus. Creation anchors and allocation survive retirement. The existing
 Moodlet reinforcement/progression owners retain stacking, refresh, decay and
 numeric caps; fulfillment does not jump numeric mood or erase negative episodes.
 
 Accepted food intake and welcome petting resolve through the existing care
-transition after ordinary credit. Autonomous intake uses the same food match
+transition after accepted-contact accounting. Autonomous intake uses the same food match
 inside the existing World/Pet/Memory transaction, including finite known stock
 reconstructed before the deadline, without personal reward/contact.
 
@@ -282,7 +288,17 @@ pre-existing wish ID), translates the result once, and retires the attempt after
 a successful commit. No score, board, deck or unplayed round is reconstructed.
 Only bounded objective progress persists. Normal session care still occurs once
 at window close; immediate wish resolution occurs at the qualifying round, not
-at a convenient later close. The common reward budget constrains both boundaries.
+at a convenient later close. Neither boundary grants an instantaneous point bonus.
+
+The existing numeric progression supplies mood before/after, actual active tiers
+and elapsed boundaries to `advance_friendship()`. Its baseline needs accepted
+contact within four hours for positive mood, while negative mood and all active
+Moodlet families contribute independently. The uncapped emotional sum and the
+stronger of absence/qualified neglect feed one progressive balance solver.
+Positive and negative factors are evaluated together across point anchors rather
+than applying gain and loss as independent ordered passes. Existing Moodlet tier,
+expiry and recovery boundaries prevent endpoint-only charging; no second clock,
+event archive or pet state exists.
 
 `SocialCompletion` now carries the admitted category and optional existing wish
 identity through the same `Reaction`/`ReactionPlayer` lifecycle. The existing
@@ -520,7 +536,8 @@ Hardware implementation details live in `infrastructure/hardware/`. `telemetry.C
 `infrastructure/persistence.py — StateStore` is the only implementation of the version-one atomic local JSON repository. The default Windows file is `%LOCALAPPDATA%\AikoDesktopPet\state.json`. The sole optional environment override, `AIKO_SAVE_PATH`, selects another **file path**. No `.env` is required.
 
 `infrastructure/pet_codec.py` owns pet/nutrition JSON translation: field names,
-legacy defaults, malformed-value handling and four-decimal save rounding.
+legacy defaults and malformed-value handling. Status values retain full floating
+precision in saves; existing food-duration compatibility fields retain rounding.
 `PetState` and `FoodState` contain gameplay values and transitions, with no
 `from_dict`/`to_dict` methods. Existing saves retain their version-one shape.
 

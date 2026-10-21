@@ -103,13 +103,6 @@
     "short_window_seconds": 7200,
     "history_window_seconds": 86400,
     "history_bucket_seconds": 60,
-    "need_threshold": 80.0,
-    "satisfied_reward_fraction": 0.25,
-    "feed_gain": 0.9,
-    "energy_drink_gain": 0.25,
-    "play_gain": 1.0,
-    "pet_gain": 1.0,
-    "talk_gain": 1.0,
     "minimum_play_rounds": 2,
     "absence_grace_seconds": 14400,
     "absence_middle_seconds": 43200,
@@ -455,7 +448,6 @@
     "disclosure_interval_seconds": 1800,
     "disclosure_friendship_level": 3,
     "disclosure_mood_threshold": 50,
-    "friendship_bonus_points": 0.25,
     "creation_need_threshold": 70.0,
     "relevance_need_threshold": 90.0
   }

@@ -25,9 +25,8 @@ from .food import (
 from .food_catalog import DEFAULT_CATALOG
 from .friendship import (
     apply_negative_event,
-    calculate_friendship_reward,
-    calculate_wish_friendship_reward,
-    start_history,
+    begin_continuous_friendship,
+    record_accepted_contact,
 )
 from .friendship_history import FriendshipHistory, FriendshipProgress
 from .fun import GameExperience, calculate_game_session_fun
@@ -126,7 +125,8 @@ class PetState:
             moodlets=(MoodletState(baseline=lived_seconds)
                       if moodlets is None else moodlets),
             wishes=WishState() if wishes is None else wishes,
-            relationship=(FriendshipHistory(baseline=lived_seconds)
+            relationship=(FriendshipHistory(baseline=lived_seconds,
+                                            continuous_since=lived_seconds)
                           if relationship is None else relationship),
         )
 
@@ -370,7 +370,7 @@ class PetState:
     def _apply_wish_resolution(
         self, resolution: WishResolution, *, personal: bool,
     ) -> None:
-        """Commit retirement, lasting impression and shared-pot bonus together."""
+        """Commit retirement and its lasting impression without an instant bonus."""
         if resolution.fulfilled is None:
             moodlets = self.moodlets
             if (resolution.cause is not None
@@ -391,13 +391,7 @@ class PetState:
             cause=(replace(resolution.cause, attribution=attribution)
                    if resolution.cause is not None else None),
         )
-        relationship = (calculate_wish_friendship_reward(self) if personal
-                        else FriendshipProgress(
-                            self.friendship, self.friendship_history,
-                            self.lived_seconds,
-                        ))
-        self._change(wishes=resolution.state, moodlets=moodlets,
-                     friendship=relationship.points, relationship=relationship.history)
+        self._change(wishes=resolution.state, moodlets=moodlets)
 
     def complete_social_experience(
         self, completion: SocialCompletion, *, arrangement_ready: bool = False,
@@ -446,16 +440,11 @@ class PetState:
             energy=clamp_need_value(self.energy - reward.energy_cost, 0.0),
             social=clamp_need_value(self.social + reward.social_gain, 0.0),
         )
+        self._record_accepted_contact("play", now)
         if experience.completed_units >= BALANCE.integer(
             "friendship", "minimum_play_rounds",
         ):
-            self._credit_friendship("play", now, before)
             self.experience_interaction(HelpfulInteraction("play", arrangement_ready))
-        else:
-            self._change(relationship=replace(
-                start_history(self.friendship_history, self.lived_seconds),
-                last_contact=self.lived_seconds,
-            ))
         return self.fun - before
 
     def advance(
@@ -544,7 +533,8 @@ class PetState:
         self._change(
             updated_at=now, lived_seconds=lived_seconds,
             wishes=expire_wishes(self.wishes, elapsed=lived_seconds),
-            relationship=start_history(self.friendship_history, lived_seconds),
+            relationship=begin_continuous_friendship(self.friendship_history,
+                                                      lived_seconds),
         )
 
     def experience_interaction(self, event: InteractionEvent) -> bool:
@@ -576,32 +566,11 @@ class PetState:
         self._change(friendship=progress.points, relationship=progress.history)
         return previous - self.friendship
 
-    def _credit_friendship(
-        self,
-        action: str,
-        stamp: float,
-        need_before: float,
-    ) -> None:
-        """Apply an immutable friendship decision to owned reward fields."""
-        transition = calculate_friendship_reward(
-            self,
-            action,
-            stamp,
-            need_before,
-        )
-        if transition is None:
-            return
-        history = transition.history
-        legacy_rewards = self.care_last_rewards
-        if transition.points > self.friendship:
-            legacy_rewards[action] = stamp
-        self._change(
-            friendship=transition.points, relationship=history,
-            friendship_gained_today=sum(e.amount for e in history.rewards),
-            friendship_day=context_at(stamp).day_key,
-            care_types_today=tuple(dict.fromkeys(e.kind for e in history.rewards)),
-            care_last_rewards=tuple(legacy_rewards.items()),
-        )
+    def _record_accepted_contact(self, action: str, stamp: float) -> None:
+        """Commit personal contact without reviving the retired reward ledger."""
+        progress = record_accepted_contact(self, action, stamp)
+        if progress is not None:
+            self._change(relationship=progress.history)
 
     def interact(
         self,
@@ -675,7 +644,7 @@ class PetState:
         )
         if origin == ConsumptionOrigin.AUTONOMOUS:
             transition = replace(
-                transition, reward_action=None,
+                transition, contact_action=None,
                 needs=replace(transition.needs, social=self.social),
             )
         return self._apply_care_transition(
@@ -708,7 +677,9 @@ class PetState:
 
     def anchor_live_session(self, now: float) -> None:
         """Rebase wall time without resetting the durable elapsed axis."""
-        self._change(updated_at=now)
+        self._change(updated_at=now, relationship=begin_continuous_friendship(
+            self.friendship_history, self.lived_seconds,
+        ))
 
     def _apply_care_transition(
         self, transition: CareTransition, stamp: float, *, personal: bool = True,
@@ -734,11 +705,10 @@ class PetState:
                 meals_date=transition.meals_date,
                 meals_today=transition.meals_today,
             )
-        if transition.reward_action is not None:
-            self._credit_friendship(
-                transition.reward_action,
+        if transition.contact_action is not None:
+            self._record_accepted_contact(
+                transition.contact_action,
                 stamp,
-                transition.need_before,
             )
         if transition.result.food_consumed:
             assert transition.result.food_id is not None

@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Replace instantaneous care/wish friendship bonuses with continuous mood,
+  active Moodlet and absence/neglect contributions using progressive gain/loss
+  factors. Keep real accepted contact and explicit boundary penalties separate.
+  Preserve old points/history and record the transition once after old-save
+  catch-up; retain full status precision without replaying historical credits.
+
 - Exclude carried and unsettled learned portions from missing-place checks.
   Withdraw their unadmitted loss feedback before a relocation gesture's first
   save, including quick cancellation and off-screen carry. Preserve acquired

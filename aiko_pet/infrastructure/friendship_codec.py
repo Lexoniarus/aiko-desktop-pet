@@ -8,7 +8,7 @@ from typing import Any, cast
 from ..pet.balance import BALANCE
 from ..pet.catalog_validation import object_fields
 from ..pet.friendship import (
-    CARE_FRIENDSHIP_GAIN,
+    CONTACT_ACTIONS,
     PENALTY_KINDS,
     REWARD_KINDS,
     penalty_budget,
@@ -114,7 +114,7 @@ def decode_friendship(raw: Any, elapsed: float) -> FriendshipHistory:
     eligible = object_fields(
         row["eligible"],
         (),
-        optional=CARE_FRIENDSHIP_GAIN,
+        optional=CONTACT_ACTIONS,
         context="relationship eligibility",
     )
     anchors = tuple((a, _number(t, elapsed)) for a, t in eligible.items())

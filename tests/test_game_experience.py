@@ -76,7 +76,7 @@ class GameExperienceTests(unittest.TestCase):
         self.assertEqual(self.state.fun, outcome.fun_after)
         self.assertGreater(self.state.social, 75)
         self.assertLess(self.state.energy, 75)
-        self.assertGreater(self.state.friendship, 15)
+        self.assertEqual(self.state.friendship, 15)
         saved = encode_pet_state(self.state)
         self.assertNotIn("score", saved)
         self.assertNotIn("completed_units", saved)

@@ -208,7 +208,7 @@ class SnackPlacementTests(unittest.TestCase):
                     cause = pet.moodlets.active[0].causes[0]
                     self.assertEqual(cause.object_id, token)
                     self.assertEqual([r.kind for r in pet.friendship_history.rewards],
-                                     ["wish"])
+                                     [])
                     loaded = decode_pet_state(encode_pet_state(pet), now=1800000000)
                     self.assertEqual(loaded.wishes, pet.wishes)
                     self.assertEqual(loaded.moodlets, pet.moodlets)

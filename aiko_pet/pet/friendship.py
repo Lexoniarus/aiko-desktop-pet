@@ -1,4 +1,4 @@
-"""Pure relationship rewards and bounded direct consequences; PetState commits."""
+"""Accepted contact and bounded direct consequences; PetState commits."""
 
 from __future__ import annotations
 
@@ -17,20 +17,11 @@ from .moodlets import (
 )
 from .value_rules import clamp_need_value
 
+# Retained only to validate/prune historical v1 reward metadata, never live budgets.
 FRIENDSHIP_REWARD_INTERVAL = BALANCE.integer("friendship", "reward_interval_seconds")
 FRIENDSHIP_DAILY_CAP = BALANCE.number("friendship", "daily_cap")
-CARE_FRIENDSHIP_GAIN = {
-    action: BALANCE.number("friendship", f"{action}_gain")
-    for action in ("feed", "play", "pet", "talk", "energy_drink")
-}
-CARE_PRIMARY_NEED = {
-    "feed": "satiety",
-    "play": "fun",
-    "pet": "affection",
-    "talk": "social",
-    "energy_drink": "energy",
-}
-REWARD_KINDS = frozenset((*CARE_FRIENDSHIP_GAIN, "wish"))
+CONTACT_ACTIONS = ("feed", "play", "pet", "talk", "energy_drink")
+REWARD_KINDS = frozenset((*CONTACT_ACTIONS, "wish"))
 LEGACY_REWARD_ACTIONS = ("sleep",)
 
 
@@ -62,64 +53,26 @@ def prune_history(history: FriendshipHistory, now: float) -> FriendshipHistory:
     )
 
 
-def calculate_friendship_reward(
-    record: FriendshipRecord,
-    action: str,
-    stamp: float,
-    need_before: float,
+def begin_continuous_friendship(
+    history: FriendshipHistory, now: float,
+) -> FriendshipHistory:
+    """Activate once at an accounted-for endpoint, without fabricated contact."""
+    history = start_history(history, now)
+    return (replace(history, continuous_since=now)
+            if history.continuous_since is None else history)
+
+
+def record_accepted_contact(
+    record: FriendshipRecord, action: str, stamp: float,
 ) -> FriendshipProgress | None:
-    """Accepted contact survives exhausted credit; elapsed time owns eligibility."""
-    if (
-        action not in CARE_FRIENDSHIP_GAIN
-        or not math.isfinite(stamp)
-        or stamp <= 0
-        or not math.isfinite(need_before)
-    ):
+    """Actual personal care renews contact; points change only through elapsed flow."""
+    if action not in CONTACT_ACTIONS or not math.isfinite(stamp) or stamp <= 0:
         return None
     now = record.lived_seconds
-    history = prune_history(start_history(record.friendship_history, now), now)
-    history = replace(history, last_contact=now)
-    anchors = dict(history.eligible)
-    if action in anchors and now - anchors[action] < FRIENDSHIP_REWARD_INTERVAL:
-        return FriendshipProgress(record.friendship, history, now)
-    # A qualifying attempt consumes its interval even when the common pot is empty.
-    anchors[action] = now
-    gain = CARE_FRIENDSHIP_GAIN[action]
-    if need_before > BALANCE.number("friendship", "need_threshold"):
-        gain *= BALANCE.number("friendship", "satisfied_reward_fraction")
-    gain = _available_reward(record.friendship, history, now, gain)
-    events = history.rewards
-    if gain > 1e-12:
-        events += (RelationshipEvent(now, action, gain),)
-    return FriendshipProgress(
-        clamp_need_value(record.friendship + gain),
-        replace(history, rewards=events, eligible=tuple(anchors.items())),
-        now,
-    )
-
-
-def _available_reward(
-    points: float, history: FriendshipHistory, elapsed: float, requested: float,
-) -> float:
-    short = BALANCE.number("friendship", "short_window_seconds")
-    return max(0.0, min(
-        requested, 100 - points,
-        FRIENDSHIP_DAILY_CAP - sum(e.amount for e in history.rewards),
-        BALANCE.number("friendship", "short_cap")
-        - sum(e.amount for e in history.rewards if e.at > elapsed - short),
-    ))
-
-
-def calculate_wish_friendship_reward(record: FriendshipRecord) -> FriendshipProgress:
-    """One retired personal wish shares the ordinary pot, without interval changes."""
-    now = record.lived_seconds
-    history = prune_history(start_history(record.friendship_history, now), now)
-    gain = _available_reward(record.friendship, history, now,
-                             BALANCE.number("wishes", "friendship_bonus_points"))
-    if gain > 1e-12:
-        history = replace(history, rewards=(*history.rewards,
-                                           RelationshipEvent(now, "wish", gain)))
-    return FriendshipProgress(clamp_need_value(record.friendship + gain), history, now)
+    history = prune_history(begin_continuous_friendship(record.friendship_history, now),
+                            now)
+    return FriendshipProgress(record.friendship, replace(history, last_contact=now),
+                              now)
 
 
 def friendship_after_withholding(friendship: float, loss: float) -> float:

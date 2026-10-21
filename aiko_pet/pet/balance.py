@@ -122,8 +122,7 @@ def parse_balance(raw: Any) -> BalanceCatalog:
                     <= relationship["critical_allowance_seconds"]
                     < relationship["strong_neglect_seconds"]
                     <= relationship["history_window_seconds"])
-            or not (relationship["critical_need"]
-                    <= relationship["need_threshold"] <= 100)
+            or relationship["critical_need"] > 100
             or relationship["click_loss"] > relationship["click_cap"]
             or withholding["friendship_loss"] > relationship["withholding_cap"]):
         raise ValueError("Invalid progressive friendship balance")
@@ -136,10 +135,9 @@ def parse_balance(raw: Any) -> BalanceCatalog:
             or wishes["disclosure_mood_threshold"] > 100
             or not wishes["creation_need_threshold"]
             < wishes["relevance_need_threshold"] <= 100
-            or wishes["friendship_bonus_points"] > relationship["short_cap"]
             or wishes["refill_delay_seconds"] > wishes["lifetime_seconds"]
             or wishes["disclosure_interval_seconds"] > wishes["lifetime_seconds"]):
-        raise ValueError("Invalid wish pacing, disclosure or shared-budget bonus")
+        raise ValueError("Invalid wish pacing or disclosure")
     impressions = sections["moodlets"]
     critical = [impressions[f"critical_level_{name}_seconds"]
                 for name in ("one", "two", "three")]

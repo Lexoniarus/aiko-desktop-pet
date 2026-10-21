@@ -80,7 +80,7 @@ class SocialWishTests(unittest.TestCase):
         while self.player.pending_timer is not None:
             self.scheduler.fire(self.player.pending_timer)
 
-    def test_all_four_categories_wait_for_whole_sequence_and_reward_once(self):
+    def test_all_four_categories_wait_for_whole_sequence_and_fulfill_once(self):
         for key, moodlet in (
             (WishId.CHAT, MoodletId.CONNECTION),
             (WishId.SINGLE, MoodletId.CHEERFUL),
@@ -92,19 +92,19 @@ class SocialWishTests(unittest.TestCase):
             self.assertEqual(reaction.completed_social, SocialCompletion(key.value, 1))
             self.assertTrue(self.pet.wishes.active)
             self.assertFalse(self.pet.moodlets.active)
-            self.assertEqual(self.pet.friendship, 50.25)
+            self.assertEqual(self.pet.friendship, 50)
             self.player.play(reaction)
             self.assertTrue(self.pet.wishes.active)  # First bubble is not completion.
             self.complete_playback()
             self.assertFalse(self.pet.wishes.active)
             self.assertEqual(self.pet.moodlets.active[0].definition_id, moodlet)
-            self.assertEqual(self.pet.friendship, 50.5)
+            self.assertEqual(self.pet.friendship, 50)
             loaded = decode_pet_state(encode_pet_state(self.pet), now=WALL)
             completion = reaction.completed_social
             assert completion is not None
             loaded.complete_social_experience(completion)
             self.assertEqual(loaded.moodlets.active, self.pet.moodlets.active)
-            self.assertEqual(loaded.friendship, 50.5)
+            self.assertEqual(loaded.friendship, 50)
 
     def test_interrupted_joke_and_stale_callback_preserve_wish_and_ordinary_care(self):
         self.make(WishId.TWO_PARTS)
@@ -116,7 +116,7 @@ class SocialWishTests(unittest.TestCase):
         stale()
         self.assertTrue(self.pet.wishes.active)
         self.assertFalse(self.pet.moodlets.active)
-        self.assertEqual(self.pet.friendship, 50.25)
+        self.assertEqual(self.pet.friendship, 50)
 
     def test_wish_created_during_conversation_is_not_retrospectively_adopted(self):
         self.make(WishId.CHAT)
@@ -148,7 +148,7 @@ class SocialWishTests(unittest.TestCase):
             self.complete_playback()
             self.assertEqual(bool(self.pet.wishes.active), replacement is not None)
             self.assertFalse(self.pet.moodlets.active)
-            self.assertEqual(self.pet.friendship, 50.25)
+            self.assertEqual(self.pet.friendship, 50)
 
     def test_other_category_does_not_fulfill_and_single_twopart_share_one_family(self):
         self.make(WishId.SINGLE)

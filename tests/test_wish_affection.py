@@ -27,7 +27,7 @@ def wishes(instance=1, created=0):
 
 
 class AffectionWishTests(unittest.TestCase):
-    def test_accepted_unspoken_wish_at_low_mood_has_impression_and_separate_bonus(self):
+    def test_accepted_unspoken_wish_at_low_mood_has_no_instant_bonus(self):
         pet = PetState(
             affection=10,
             mood=0,
@@ -44,10 +44,10 @@ class AffectionWishTests(unittest.TestCase):
         self.assertFalse(pet.wishes.active)
         self.assertEqual(pet.moodlets.active[0].definition_id, MoodletId.SECURE)
         self.assertEqual(pet.mood, 0)
-        self.assertAlmostEqual(pet.friendship, 50.25)
+        self.assertAlmostEqual(pet.friendship, 50)
         pet.interact("pet", now=1800000001)
         self.assertEqual(pet.moodlets.active[0].level, 1)
-        self.assertEqual(len(pet.friendship_history.rewards), 1)
+        self.assertEqual(len(pet.friendship_history.rewards), 0)
 
     def test_rejected_petting_never_fulfills_or_overrides_a_boundary(self):
         pet = PetState(affection=100, friendship=0, lived_seconds=100)

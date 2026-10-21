@@ -213,6 +213,7 @@ def calculate_pet_progression(
             satiety=satiety, energy=energy, fun=fun,
             social=social, affection=affection,
         ), calculate_moodlet_contributions(moodlets, definitions=definitions))
+        mood_before = mood
         mood = advance_mood(
             mood, target, step_hours,
             lowest_need=min(satiety, energy, fun, social, affection),
@@ -221,6 +222,7 @@ def calculate_pet_progression(
             relationship = advance_friendship(
                 relationship, seconds, before,
                 (satiety, energy, fun, social, affection), sleeping=record.sleeping,
+                mood_before=mood_before, mood_after=mood, moodlets=moodlets,
             )
         if moodlets.active and not represented:
             moodlets = advance_moodlets(

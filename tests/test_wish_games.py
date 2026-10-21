@@ -192,7 +192,7 @@ class GameWishTests(unittest.TestCase):
             self.assertEqual(pet.moodlets.active[0].definition_id,
                              MoodletId.DISAPPOINTED if outcome == "loss"
                              else MoodletId.RELIEF)
-            self.assertEqual(pet.friendship, 50 if outcome == "loss" else 50.25)
+            self.assertEqual(pet.friendship, 50)
             before = pet.capture_checkpoint()
             complete(pet, "win", 2)
             self.assertEqual(pet.capture_checkpoint(), before)
@@ -208,7 +208,7 @@ class GameWishTests(unittest.TestCase):
         self.assertFalse(pet.wishes.active)
         self.assertEqual(pet.moodlets.active[0].level, 2)
         self.assertEqual(pet.moodlets.active[0].remaining_seconds, 7200)
-        self.assertEqual(pet.friendship, 50.25)
+        self.assertEqual(pet.friendship, 50)
 
     def test_all_draws_relieve_nonloss_but_do_not_win_overall(self):
         for key in (WishId.AVOID_OVERALL_LOSS, WishId.WIN_OVERALL):
@@ -275,7 +275,7 @@ class GameWishTests(unittest.TestCase):
             coordinator.observe_round(finish, inputs)
             self.assertEqual(pet.capture_checkpoint(), before)
             self.assertFalse(pet.wishes.active)
-            self.assertEqual(pet.friendship, 50.25)
+            self.assertEqual(pet.friendship, 50)
             self.assertEqual(
                 pet.fun, 75
             )  # Ordinary session effects still wait for close.

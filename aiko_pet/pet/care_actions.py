@@ -20,7 +20,6 @@ from .food import (
     FoodState,
     eat_food,
 )
-from .friendship import CARE_PRIMARY_NEED
 from .interaction_events import PettingAttempted
 from .interaction_rules import InteractionConsequences, apply_interaction_event
 from .moodlet_catalog import MOODLET_CATALOG
@@ -92,8 +91,7 @@ class CareTransition:
     nap_until: float
     meals_date: str
     meals_today: tuple[str, ...]
-    reward_action: str | None = None
-    need_before: float = 0.0
+    contact_action: str | None = None
     food: FoodState | None = None
     interaction: InteractionConsequences | None = None
 
@@ -193,9 +191,8 @@ def plan_care_action(
                 ),
             ),
             result=CareResult("energy_drink", CareEffect.DRINK_CONSUMED),
-            reward_action="energy_drink", need_before=state.energy,
+            contact_action="energy_drink",
         )
-    need_before = float(getattr(state, CARE_PRIMARY_NEED[action]))
     result = replace(
         unchanged,
         changed=True,
@@ -203,8 +200,7 @@ def plan_care_action(
         sleep_origin=sleep_origin,
         nap_until=nap_until,
         auto_sleep_night=night_key,
-        reward_action=action,
-        need_before=need_before,
+        contact_action=action,
     )
     if action == "talk":
         return replace(

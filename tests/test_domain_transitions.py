@@ -12,7 +12,7 @@ from aiko_pet.pet.care_actions import (
     plan_care_action,
 )
 from aiko_pet.pet.friendship import (
-    calculate_friendship_reward,
+    record_accepted_contact,
 )
 from aiko_pet.pet.lifecycle import (
     calculate_daily_routine,
@@ -73,7 +73,7 @@ class DomainTransitionTests(unittest.TestCase):
         )
         previous = encode_pet_state(state)
         needs = calculate_pet_progression(state, 1.0, effort=0.9)
-        friendship = calculate_friendship_reward(state, "pet", START, 25)
+        friendship = record_accepted_contact(state, "pet", START)
         self.assertEqual(encode_pet_state(state), previous)
         self.assertNotEqual(needs.needs.energy, state.energy)
         with self.assertRaises(FrozenInstanceError):
@@ -83,7 +83,7 @@ class DomainTransitionTests(unittest.TestCase):
         })
         self.assertIsNotNone(friendship)
         assert friendship is not None
-        self.assertGreater(friendship.points, state.friendship)
+        self.assertEqual(friendship.points, state.friendship)
 
     def test_invalid_duration_preserves_the_pure_need_result(self) -> None:
         state = PetState(updated_at=START)
@@ -119,17 +119,17 @@ class DomainTransitionTests(unittest.TestCase):
             friendship=20, affection=30, updated_at=START,
         )
         original = encode_pet_state(state)
-        decision = calculate_friendship_reward(state, "pet", START, 30)
+        decision = record_accepted_contact(state, "pet", START)
         self.assertIsNotNone(decision)
         assert decision is not None
         self.assertEqual(encode_pet_state(state), original)
-        state._credit_friendship("pet", START, 30)
+        state._record_accepted_contact("pet", START)
         self.assertEqual(state.friendship, decision.points)
         self.assertEqual(state.friendship_history, decision.history)
         self.assertEqual(state.friendship_gained_today,
                          sum(e.amount for e in decision.history.rewards))
         unchanged = encode_pet_state(state)
-        state._credit_friendship("pet", START + 10, 0)
+        state._record_accepted_contact("pet", START + 10)
         self.assertEqual(encode_pet_state(state), unchanged)
 
     def test_timeline_plan_never_modifies_state(self) -> None:

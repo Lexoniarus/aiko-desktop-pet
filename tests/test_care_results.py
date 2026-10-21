@@ -113,14 +113,14 @@ class CareResultTests(unittest.TestCase):
                 self.assertEqual(result.consumed_item_id, food_id)
                 self.assertIn(profile.display_name, format_care_response(result))
 
-    def test_version_one_pet_payload_roundtrips_with_original_rounding(self) -> None:
+    def test_version_one_payload_preserves_full_status_precision(self) -> None:
         state = PetState(
             satiety=42.123456, updated_at=STAMP, friendship=18.987654,
             food=FoodState(remaining_digest_minutes=12.123456),
         )
         encoded = encode_pet_state(state)
-        self.assertEqual(encoded["satiety"], 42.1235)
-        self.assertEqual(encoded["friendship"], 18.9877)
+        self.assertEqual(encoded["satiety"], 42.123456)
+        self.assertEqual(encoded["friendship"], 18.987654)
         self.assertEqual(encoded["food"], {
             "remaining_digest_minutes": 12.1235,
             "awake_hours_since_last_food": 0.0,

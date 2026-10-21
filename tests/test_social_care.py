@@ -49,9 +49,8 @@ class SocialCareTests(unittest.TestCase):
             self.assertEqual(state.energy, 80 - (index + 1))
             self.assertEqual(mind._last_care_action, "talk")
             self.assertEqual(adaptive.memory.last_contact_wall, stamp)
-            self.assertEqual(len(state.friendship_history.eligible), 1)
-            self.assertEqual(state.friendship_history.eligible[0][0], "talk")
-        self.assertAlmostEqual(state.friendship, 15.75)
+            self.assertEqual(len(state.friendship_history.eligible), 0)
+        self.assertAlmostEqual(state.friendship, 15)
 
     def test_preparation_has_no_care_effect_and_other_actions_reject_content(self):
         state = PetState(social=10)

@@ -143,24 +143,24 @@ class MeaningfulFriendshipTests(unittest.TestCase):
                 set_test_pet_values(state, **{value: 100})
                 state.interact(action, now=stamp())
                 self.assertEqual(state.friendship,
-                                 15.25 if action in ("talk", "pet") else 15)
+                                 15)
 
-    def test_first_useful_care_rewards_friendship_but_spam_does_not(self):
+    def test_accepted_care_changes_needs_and_later_time_changes_friendship(self):
         state = PetState(affection=25, updated_at=stamp())
         state.interact("pet", now=stamp())
-        self.assertEqual(state.friendship, 15.75)
+        self.assertEqual(state.friendship, 15)
         for i in range(40):
             state.interact("pet", now=stamp() + i + 1)
-        self.assertEqual(state.friendship, 15.75)
+        self.assertEqual(state.friendship, 15)
         # Repetitions inside two hours do not move the eligibility anchor.
         state.interact("pet", now=stamp() + 20 * 60)
-        self.assertEqual(state.friendship, 15.75)
+        self.assertEqual(state.friendship, 15)
         state.advance(stamp() + 7200)
         set_test_pet_values(state, affection=40)
         state.interact("pet", now=stamp() + 7200)
-        self.assertGreater(state.friendship, 15.75)
+        self.assertGreater(state.friendship, 15)
 
-    def test_diverse_care_repairs_more_needs_without_bypassing_the_shared_cap(self):
+    def test_diverse_care_repairs_more_needs_without_instant_relationship_gain(self):
         diverse = PetState(affection=20, mood=20, social=20, satiety=20, energy=70)
         repeated = PetState(affection=20, mood=20, social=20, satiety=20, energy=70)
         start = stamp()
@@ -176,10 +176,10 @@ class MeaningfulFriendshipTests(unittest.TestCase):
         self.assertEqual(diverse.friendship, repeated.friendship)
         self.assertGreater(diverse.social, repeated.social)
         self.assertGreater(diverse.satiety, repeated.satiety)
-        self.assertEqual(diverse.care_types_today, ["feed"])
+        self.assertEqual(diverse.care_types_today, [])
         self.assertEqual(
             set(dict(diverse.friendship_history.eligible)),
-            {"feed", "pet", "talk", "play"},
+            set(),
         )
 
     def test_drinks_and_sleep_do_not_build_friendship_by_button_mashing(self):
@@ -188,32 +188,8 @@ class MeaningfulFriendshipTests(unittest.TestCase):
             state.interact("energy_drink", now=stamp() + i)
         state.interact("sleep", now=stamp() + 15)
         state.interact("sleep", now=stamp() + 16)
-        self.assertEqual(state.friendship, 42.25)
+        self.assertEqual(state.friendship, 42)
         self.assertEqual(state.energy, 100)
-
-    def test_bond_is_capped_per_day_then_can_progress_next_day(self):
-        start = stamp()
-        state = PetState(
-            affection=0, social=0, mood=0, satiety=0, energy=65, updated_at=start
-        )
-        for i in range(20):
-            state.advance(start + 16 * 60 * i)
-            for action, attribute in (
-                ("feed", "satiety"),
-                ("pet", "affection"),
-                ("talk", "social"),
-                ("play", "fun"),
-            ):
-                set_test_pet_values(state, **{attribute: 20})
-                set_test_pet_values(state, energy=65)
-                state.interact(action, now=start + 16 * 60 * i)
-        self.assertLessEqual(state.friendship, 15 + FRIENDSHIP_DAILY_CAP + 1e-6)
-        state.advance(start + 86400)
-        previous = state.friendship
-        set_test_pet_values(state, social=20)
-        state.interact("talk", now=start + 86400)
-        self.assertGreater(state.friendship, previous)
-        self.assertEqual(state.friendship_history.rewards[-1].kind, "talk")
 
     def test_old_save_preserves_existing_relationship_and_needs(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -270,9 +246,9 @@ class MeaningfulFriendshipTests(unittest.TestCase):
             store.save(state, PetSettings())
             session_data = store.load_session(now=stamp() + 1)
             restored, _ = session_data.state, session_data.settings
-            self.assertEqual(restored.care_types_today, ["pet"])
+            self.assertEqual(restored.care_types_today, [])
             self.assertEqual(
-                set(dict(restored.friendship_history.eligible)), {"pet", "talk"}
+                set(dict(restored.friendship_history.eligible)), set()
             )
             self.assertEqual(restored.friendship_history, state.friendship_history)
             self.assertEqual(restored.care_last_rewards, state.care_last_rewards)
