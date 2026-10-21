@@ -53,7 +53,7 @@ class CarePresenter:
         }.get(action)
         if visual == "eat" and outcome.consumed_item_id is None:
             visual = None
-        if outcome.result.effect == CareEffect.AFFECTION_REFUSED:
+        if outcome.result.affection_refused:
             visual = None
         reaction = outcome.reaction
         if visual is not None and not sleeping:

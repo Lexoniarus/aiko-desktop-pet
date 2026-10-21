@@ -35,6 +35,45 @@
       ]
     },
     {
+      "id": "pet-enough-gentle",
+      "event": "pet_enough",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {"kind": "text", "content": "Mhm, danke! Das reicht mir fürs Erste."}
+      ]
+    },
+    {
+      "id": "pet-enough-firm",
+      "event": "pet_enough_firm",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {"kind": "text", "content": "Wirklich, genug gekrault. Lass mich jetzt bitte kurz."}
+      ]
+    },
+    {
+      "id": "pet-boundary-ignored",
+      "event": "pet_boundary_ignored",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {"kind": "text", "content": "Ich hatte dich gerade gebeten aufzuhören. Bitte lass mir etwas Abstand."}
+      ]
+    },
+    {
       "id": "pet-refused-boundary",
       "event": "pet_refused",
       "animation": "idle",
@@ -5343,7 +5382,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "He … bitte nicht. Ich mag das gerade nicht."
+          "content": "He … langsam bitte. Ein bisschen Streicheln ist in Ordnung."
         }
       ],
       "stages": [
@@ -5362,7 +5401,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das ist mir gerade etwas zu viel Nähe."
+          "content": "So ist es okay. Ich muss mich an so viel Nähe noch gewöhnen."
         }
       ],
       "stages": [
@@ -5381,7 +5420,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bitte lass das Streicheln. Ich möchte es im Augenblick nicht."
+          "content": "Ein bisschen kannst du mich streicheln. Bitte ganz vorsichtig."
         }
       ],
       "stages": [
@@ -5799,7 +5838,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bitte nicht streicheln. Ich muss mich gerade konzentrieren."
+          "content": "Ein bisschen Streicheln geht. Ich muss mich dabei weiter konzentrieren."
         }
       ],
       "stages": [
@@ -5818,7 +5857,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Das stört mich im Augenblick. Ich bin noch am Arbeiten."
+          "content": "Ganz vorsichtig, ja? Ich bin noch am Arbeiten."
         }
       ],
       "stages": [
@@ -5837,7 +5876,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Lass mich bitte weiterarbeiten. Streicheln passt gerade nicht."
+          "content": "So ist es in Ordnung. Ich arbeite beim Streicheln einfach weiter."
         }
       ],
       "stages": [
@@ -18933,7 +18972,7 @@
         },
         {
           "kind": "text",
-          "content": "Ich bin müde und möchte gerade nicht gestreichelt werden."
+          "content": "Ich bin müde. Ganz sanft ist das Streicheln aber schön."
         }
       ],
       "stages": [
@@ -18952,7 +18991,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Bitte lass mich ausruhen. Das Streicheln ist mir gerade zu viel."
+          "content": "Mhm, so kann ich mich ein bisschen ausruhen. Bitte ganz langsam."
         }
       ],
       "stages": [
@@ -19085,7 +19124,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Nein, bitte nicht anfassen. Ich bin gerade schon gereizt."
+          "content": "Ich bin gerade gereizt. Bitte streichle mich ganz vorsichtig."
         }
       ],
       "stages": [
@@ -19104,7 +19143,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich möchte gerade Abstand. Bitte nicht streicheln."
+          "content": "Ein kleines bisschen ist okay. Ich bin gerade nur etwas knurrig."
         }
       ],
       "stages": [
@@ -19123,7 +19162,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Heute ist mir das Streicheln gerade zu viel. Bitte lass es."
+          "content": "Heute bin ich etwas knurrig. So ein bisschen Streicheln geht aber."
         }
       ],
       "stages": [
@@ -19142,7 +19181,7 @@
       "beats": [
         {
           "kind": "text",
-          "content": "Ich bin gerade knurrig. Streicheln möchte ich jetzt lieber nicht."
+          "content": "Ich bin gerade knurrig. Ganz sanft ist das Streicheln trotzdem okay."
         }
       ],
       "stages": [

@@ -50,12 +50,23 @@ class AffectionWishTests(unittest.TestCase):
         self.assertEqual(len(pet.friendship_history.rewards), 1)
 
     def test_rejected_petting_never_fulfills_or_overrides_a_boundary(self):
-        pet = PetState(affection=100, friendship=0, lived_seconds=100, wishes=wishes())
+        pet = PetState(affection=100, friendship=0, lived_seconds=100)
+        pet.interact("pet", now=1800000000)
+        pet.interact("pet", now=1800000000)
+        pet.restore_checkpoint(replace(pet.capture_checkpoint(), wishes=wishes()))
+        history = pet.friendship_history
         result = pet.interact("pet", now=1800000000)
         self.assertEqual(result.effect, CareEffect.AFFECTION_REFUSED)
         self.assertEqual(pet.wishes, wishes())
         self.assertFalse(pet.moodlets.active)
-        self.assertFalse(pet.friendship_history.rewards)
+        self.assertEqual(pet.friendship_history, history)
+
+    def test_accepted_extra_stroke_can_fulfill_pinned_wish_without_another_desire(self):
+        pinned = replace(wishes(), active=(replace(wishes().active[0], pinned=True),))
+        pet = PetState(affection=100, friendship=50, lived_seconds=100, wishes=pinned)
+        self.assertEqual(pet.interact("pet").effect, CareEffect.AFFECTION_ENOUGH)
+        self.assertFalse(pet.wishes.active)
+        self.assertEqual(pet.moodlets.active[0].definition_id, MoodletId.SECURE)
 
     def test_distinct_wishes_stack_security_and_keep_normal_two_hour_tiers(self):
         pet = PetState(affection=10, friendship=50, lived_seconds=100, wishes=wishes())

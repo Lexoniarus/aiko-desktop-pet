@@ -132,9 +132,11 @@ def plan_care_action(
             state.moodlets, PettingAttempted(state.affection, state.friendship_level),
             elapsed=state.lived_seconds, definitions=MOODLET_CATALOG.definitions,
         )
+        unchanged = replace(unchanged, interaction=interaction)
         if interaction.refused:
-            return replace(unchanged, interaction=interaction,
-                           result=CareResult("pet", CareEffect.AFFECTION_REFUSED))
+            assert interaction.petting_effect is not None
+            return replace(unchanged,
+                           result=CareResult("pet", interaction.petting_effect))
     if action == "sleep":
         sleeping = not state.sleeping
         night_key = state.auto_sleep_night
@@ -219,6 +221,8 @@ def plan_care_action(
             result=CareResult("talk", CareEffect.CONVERSATION),
         )
     if action == "pet":
+        assert result.interaction is not None
+        assert result.interaction.petting_effect is not None
         return replace(
             result,
             needs=replace(
@@ -230,7 +234,7 @@ def plan_care_action(
                     state.social + BALANCE.integer("care", "pet_social_gain")
                 ),
             ),
-            result=CareResult("pet", CareEffect.AFFECTION),
+            result=CareResult("pet", result.interaction.petting_effect),
         )
     selected_food = food_id if food_id is not None else DEFAULT_FOOD_ID
     profile = FOOD_CATALOG[selected_food]

@@ -305,7 +305,17 @@ clock, replay loop, mutable manager or numeric mood writer is introduced.
 interaction evidence. Pure `interaction_rules.py` qualifies negative experiences
 and helpful-action matching; it delegates stacking/ageing/relief to `moodlets.py`.
 `plan_care_action()` owns petting admission and returns the same immutable
-consequences that PetState commits. Direct friendship losses use the existing
+consequences that PetState commits. Two tolerated extra strokes receive distinct
+accepted-care effects and feedback; the third refuses, and only subsequent
+disregard of displayed refusal produces crowded and direct loss. A bounded count
+and last-additional-attempt timestamp live in `InteractionMemory` and save v1,
+alongside the communicated boundary and independent refusal deadline. Warning
+reset, refusal renewal and Moodlet decay share the existing elapsed axis.
+`CareResult.affection_accepted`/`affection_refused` keep controller, Mind, wish
+resolution and animation consistent. `petting_is_welcome()` separately exposes
+real willingness for wish eligibility without executing/spending an extra stroke.
+Level-ten trust permits full-affection contact while active refusal still binds.
+Direct friendship losses use the existing
 relationship ledger, independently of the continuing impression. No event bus
 or additional mutable owner is introduced. The application translates visible
 text receipts into boundary facts. Explicit metadata on accepted social

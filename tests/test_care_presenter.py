@@ -23,6 +23,7 @@ class CarePresenterTests(unittest.TestCase):
         self.show_text = Mock()
         self.refresh_toolbar = Mock()
         self.refresh_status = Mock()
+        self.text_presented = Mock()
         self.presenter = CarePresenter(
             CareViewPorts(
                 set_item=self.set_item,
@@ -33,6 +34,7 @@ class CarePresenterTests(unittest.TestCase):
                 show_text=self.show_text,
                 refresh_toolbar=self.refresh_toolbar,
                 refresh_status=self.refresh_status,
+                text_presented=self.text_presented,
             )
         )
         self.context = context_at(datetime(2026, 10, 12, 13).timestamp())
@@ -113,6 +115,25 @@ class CarePresenterTests(unittest.TestCase):
         self.show_text.assert_called_once_with(
             format_care_response(outcome.result), 2450,
         )
+
+    def test_extra_strokes_animate_but_refusals_wait_for_visible_boundary(self):
+        delivered = self.text_presented
+        for effect in (CareEffect.AFFECTION_ENOUGH, CareEffect.AFFECTION_ENOUGH_FIRM):
+            self.presenter.present(CareOutcome(CareResult("pet", effect), None,
+                                               self.context), now=100, sleeping=False)
+        self.assertEqual(self.start_action.call_count, 2)
+        delivered.assert_not_called()
+        self.presenter.present(CareOutcome(
+            CareResult("pet", CareEffect.AFFECTION_REFUSED), None, self.context,
+        ), now=100, sleeping=False)
+        delivered.assert_called_once_with("pet_refused")
+        self.presenter.present(CareOutcome(
+            CareResult("pet", CareEffect.AFFECTION_BOUNDARY_IGNORED),
+            Reaction("ignored", (Cue.text("Bitte Abstand."),), "idle",
+                     "pet_boundary_ignored"), self.context,
+        ), now=100, sleeping=False)
+        self.assertEqual(self.start_action.call_count, 2)
+        self.assertEqual(self.react.call_args.args[0].animation, "idle")
 
 
 if __name__ == "__main__":

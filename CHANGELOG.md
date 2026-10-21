@@ -8,6 +8,13 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Stage petting boundaries: accept two additional strokes with progressively
+  firmer feedback, then refuse; only disregard of a displayed boundary creates
+  crowded after-effects and bounded friendship loss. Preserve warning evidence
+  across restarts, reset the warning sequence after ten quiet minutes and retain
+  timed refusal independently. Trusted level-ten contact remains welcome at full
+  affection. Accepted-care dialogue no longer contradicts actual acceptance.
+
 - Fulfill evidence-gated food-avoidance wishes on a perceived personal handover,
   including the unwanted food or a later refusal. Keep previews, ground placement,
   autonomous intake and actual nutrition separate. Preserve original wish targets

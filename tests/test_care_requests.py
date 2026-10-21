@@ -40,6 +40,17 @@ class CareRequestTests(unittest.TestCase):
         self.attention.next_comment = float('inf')
         self.context = context_at(datetime(2026, 10, 13, 12).timestamp())
 
+    def test_wish_willingness_reads_do_not_spend_tolerated_extra_strokes(self):
+        set_test_pet_values(self.state, friendship=0, affection=60)
+        before = self.state.capture_checkpoint()
+        for _ in range(4):
+            self.assertFalse(self.attention.wish_context().petting_welcome)
+        self.assertEqual(self.state.capture_checkpoint(), before)
+        self.state.interact("pet")
+        self.assertEqual(self.state.moodlets.interactions.petting_excess_attempts, 1)
+        set_test_pet_values(self.state, affection=59)
+        self.assertTrue(self.attention.wish_context().petting_welcome)
+
     def test_threshold_and_all_tie_breaks(self) -> None:
         self.assertIsNone(choose_care_request(self.state))
         set_test_pet_values(self.state, satiety=70)

@@ -146,9 +146,14 @@ class WishLifecycleTests(unittest.TestCase):
             with self.subTest(key=key):
                 wish = ActiveWish(1, key, target, 0, 14400, pinned=True)
                 pet = PetState(lived_seconds=20000, friendship=0,
-                               satiety=100, affection=100, wishes=WishState(
-                                   2, (wish,), ((area, 0),),
-                               ))
+                               satiety=100, affection=100)
+                if key == WishId.PET:
+                    pet.interact("pet", now=1800000000)
+                    pet.interact("pet", now=1800000000)
+                pet.restore_checkpoint(replace(pet.capture_checkpoint(),
+                                               wishes=WishState(
+                                                   2, (wish,), ((area, 0),),
+                                               )))
                 pet.evaluate_wishes(WishContext(), rng=random.Random(7))
                 before = pet.capture_checkpoint()
                 food = "apple" if key == WishId.FOOD else None

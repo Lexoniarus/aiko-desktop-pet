@@ -14,16 +14,17 @@
 > in the final candidate. Their final integrated gate remains pending; only the
 > explicitly recorded baseline has full-suite evidence. Physical desktop acceptance
 > is separately recorded.
-> The 2026-10-21 need-aware wish amendment is delivered below; menu admission
-> and the subsequent petting/UI/social amendments remain planned. Complete
+> The 2026-10-21 need-aware wish and staged-petting amendments are delivered
+> below; menu admission and the UI/social amendments remain planned. Complete
 > their later authorized implementation before final tests.
 > The latest 2026-10-21 continuous-friendship amendment replaces the earlier
 > capped care/wish reward model for the next implementation. Its 30-second
 > balance values are approved for planning; runtime still uses the old model.
-> The later corrections are delivered incrementally below. Slices 1–3 supply
+> The later corrections are delivered incrementally below. Slices 1–4 supply
 > definitions/storage, need-aware eligibility, weighted selection, lifecycle and
-> game/food completion with concrete Moodlet causes. Interaction, relationship
-> and the remaining UI changes remain pending.
+> game/food completion with concrete Moodlet causes, and staged petting
+> boundaries. Carried-item absence, relationship and the remaining UI changes
+> remain pending.
 > Existing game goals retain their original meaning and progress, as approved
 > by the owner.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
@@ -4731,3 +4732,57 @@ catalogue, interaction, storage and checkpoint checks pass **46 tests in 0.070
 seconds**; scoped Ruff, strict Mypy and Pyright pass. Native window constructors
 were blocked; no full suite, mouse control or CI was used. Activation and actual
 feedback follow in the next commit.
+
+### Slice 4 delivery: staged acceptance, communicated refusal and trust
+
+The existing pure interaction policy now distinguishes genuinely welcome
+petting, two tolerated extra strokes, explicit refusal and disregard of a
+communicated boundary. Pre-action affection tolerances remain 60/80/90 by
+friendship group; crossing a threshold with a welcome stroke is not excess.
+The first two extra strokes are accepted care with distinct gentle/firm feedback.
+The third refuses without care, Moodlet or penalty. Further attempts still only
+repeat that refusal until its text is actually displayed. The existing reaction
+player's text receipt (or the presenter's displayed fallback) communicates the
+boundary; selecting or cancelling a reaction does not. Only later disregard
+creates/reinforces crowded and its separate capped direct penalty.
+
+Additional-attempt evidence advances only on delivered semantic care. After
+600 seconds without another such attempt, a new warning sequence starts when
+needed; an existing refusal deadline is still binding. Violations renew the
+deadline by current tier (300/600/1200 seconds), not by accumulated duration;
+three further violations raise a tier, at most three. Direct losses remain
+0.25 per violation and at most one point per rolling 600 seconds. Existing
+quiet-time Moodlet ageing continues one tier per 1200 seconds, including closed
+time; refusal expiry does not erase the impression. Level-ten trust permits
+full-affection contact but cannot bypass an unexpired refusal.
+
+`InteractionConsequences` derives refusal from its semantic petting effect;
+`CareResult` exposes accepted/refused categories for the existing aggregate,
+controller, Mind and presenter. `PetState` commits warning evidence with care
+and keeps refusal free of affection gain, accepted-care credit and wish rewards.
+The two accepted extra strokes can fulfill a still-active or pinned wish because
+they really are accepted contact. `AttentionCoordinator` reads the separate pure
+`petting_is_welcome()` policy, so tolerating an extra stroke cannot manufacture a
+new affection wish. UI reads/input blocked before care delivery cannot spend a
+warning. The existing contact/playback gate re-enables the button when feedback
+ends, letting Aiko express ongoing refusal instead of permanently disabling it.
+
+New zero-cooldown catalogue events and localized fallback text distinguish the
+three boundary responses. Existing accepted-petting lines that explicitly
+refused touch at low friendship, tiredness or irritation now communicate cautious
+acceptance; the domain's separate refusal events carry the actual refusal. No
+new module, UI layout, mutable aggregate, timer or history service was introduced.
+Continuous friendship and the general menu/admission amendment remain separate
+slices; existing ordinary accepted-care rewards are unchanged here.
+
+The targeted headless set passes **172 tests in 1.877 seconds**, with no test
+over ten seconds (longest **0.568 seconds**). It covers exact stages, original
+thresholds, persisted warnings/budgets, cancelled text receipts, rolling loss
+limits, timed refusal versus offline decay, level-ten willingness, wish
+eligibility/fulfillment, controller/presenter callbacks and acyclic ownership.
+Scoped Ruff, strict Mypy and Pyright pass. The accepted-dialogue correction is
+also checked through the affected catalogue/feedback tests. No full suite,
+test windows, mouse control, user-save mutation, live APIs or GitHub CI.
+
+Slice 4 is complete. Slice 5 remains the carried-object absence correction;
+the remaining relationship, UI and API work precedes the final slice 9 gate.

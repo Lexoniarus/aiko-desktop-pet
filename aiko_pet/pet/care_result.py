@@ -27,7 +27,10 @@ class CareEffect(StrEnum):
     DRINK_CONSUMED = "drink_consumed"
     CONVERSATION = "conversation"
     AFFECTION = "affection"
+    AFFECTION_ENOUGH = "affection_enough"
+    AFFECTION_ENOUGH_FIRM = "affection_enough_firm"
     AFFECTION_REFUSED = "affection_refused"
+    AFFECTION_BOUNDARY_IGNORED = "affection_boundary_ignored"
     SLEEP_STARTED = "sleep_started"
     SLEEP_ENDED = "sleep_ended"
 
@@ -40,6 +43,19 @@ class CareResult:
     effect: CareEffect
     food_id: FoodId | None = None
     meal_id: str | None = None
+
+    @property
+    def affection_accepted(self) -> bool:
+        return self.effect in (
+            CareEffect.AFFECTION, CareEffect.AFFECTION_ENOUGH,
+            CareEffect.AFFECTION_ENOUGH_FIRM,
+        )
+
+    @property
+    def affection_refused(self) -> bool:
+        return self.effect in (
+            CareEffect.AFFECTION_REFUSED, CareEffect.AFFECTION_BOUNDARY_IGNORED,
+        )
 
     @property
     def food_consumed(self) -> bool:

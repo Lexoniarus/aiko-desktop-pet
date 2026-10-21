@@ -142,7 +142,8 @@ class MeaningfulFriendshipTests(unittest.TestCase):
                 state = PetState(energy=60)
                 set_test_pet_values(state, **{value: 100})
                 state.interact(action, now=stamp())
-                self.assertEqual(state.friendship, 15.25 if action == "talk" else 15)
+                self.assertEqual(state.friendship,
+                                 15.25 if action in ("talk", "pet") else 15)
 
     def test_first_useful_care_rewards_friendship_but_spam_does_not(self):
         state = PetState(affection=25, updated_at=stamp())

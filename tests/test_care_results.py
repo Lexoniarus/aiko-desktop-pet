@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.commands import CareCommand
+from aiko_pet.application.contact import acknowledge_interaction_text
 from aiko_pet.application.controller import CareController
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
@@ -23,6 +24,28 @@ STAMP = datetime(2026, 10, 12, 16).astimezone().timestamp()
 
 
 class CareResultTests(unittest.TestCase):
+    def test_petting_feedback_follows_actual_stages_without_refusal_care(self):
+        state = PetState(affection=100, friendship=50, updated_at=STAMP)
+        mind = make_aiko_mind(started_at=0)
+        controller = CareController(state, mind, AdaptiveRoutine(),
+                                    clock=ActiveSessionClock(lambda: 0.0))
+        with patch.object(mind, "record_accepted_care") as accepted:
+            for effect, event in (
+                (CareEffect.AFFECTION_ENOUGH, "pet_enough"),
+                (CareEffect.AFFECTION_ENOUGH_FIRM, "pet_enough_firm"),
+                (CareEffect.AFFECTION_REFUSED, "pet_refused"),
+                (CareEffect.AFFECTION_BOUNDARY_IGNORED, "pet_boundary_ignored"),
+            ):
+                with self.subTest(event=event):
+                    outcome = controller.execute(CareCommand("pet"), self.inputs())
+                    self.assertEqual(outcome.result.effect, effect)
+                    assert outcome.reaction is not None
+                    self.assertEqual(outcome.reaction.event, event)
+                    self.assertTrue(format_care_response(outcome.result))
+                    if effect == CareEffect.AFFECTION_REFUSED:
+                        acknowledge_interaction_text(state, outcome.reaction.event)
+            self.assertEqual(accepted.call_count, 2)
+
     def controller(self, state: PetState) -> CareController:
         return CareController(
             state, make_aiko_mind(started_at=0), AdaptiveRoutine(),

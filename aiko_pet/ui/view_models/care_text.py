@@ -13,7 +13,10 @@ _MESSAGES = {
     CareEffect.DRINK_CONSUMED: "care.energy_success",
     CareEffect.CONVERSATION: "care.talk",
     CareEffect.AFFECTION: "care.pet",
+    CareEffect.AFFECTION_ENOUGH: "care.pet_enough",
+    CareEffect.AFFECTION_ENOUGH_FIRM: "care.pet_enough_firm",
     CareEffect.AFFECTION_REFUSED: "care.pet_refused",
+    CareEffect.AFFECTION_BOUNDARY_IGNORED: "care.pet_boundary_ignored",
     CareEffect.SLEEP_STARTED: "care.sleep_start",
     CareEffect.SLEEP_ENDED: "care.sleep_wake",
 }

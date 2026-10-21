@@ -11,11 +11,11 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ..pet.balance import BALANCE
-from ..pet.care_actions import plan_care_action
-from ..pet.care_result import CareEffect
+from ..pet.interaction_rules import petting_is_welcome
 from ..pet.mind import PetMind
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.workload_events import WorkloadEventDetector
+from ..pet.moodlet_catalog import MOODLET_CATALOG
 from ..pet.moodlets import MoodletId
 from ..pet.routine import TimeContext
 from ..pet.state import PetState
@@ -82,9 +82,12 @@ class AttentionCoordinator:
         return WishContext(
             online_social=self.settings.online_social,
             prepared_social=self._prepared_social(),
-            petting_welcome=plan_care_action(
-                self.state, "pet", now=self.state.updated_at,
-            ).result.effect != CareEffect.AFFECTION_REFUSED,
+            petting_welcome=petting_is_welcome(
+                self.state.moodlets, affection=self.state.affection,
+                friendship_level=self.state.friendship_level,
+                elapsed=self.state.lived_seconds,
+                definitions=MOODLET_CATALOG.definitions,
+            ),
             games_ready=self.state.energy >= BALANCE.integer(
                 "care", "play_minimum_energy",
             ),

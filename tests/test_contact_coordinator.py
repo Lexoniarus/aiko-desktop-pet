@@ -66,6 +66,20 @@ class ContactCoordinatorTests(unittest.TestCase):
         self.show.assert_called_once()
         self.assertEqual(self.reactions, [(None, 2800)])
 
+    def test_petting_refusal_is_semantic_and_playback_blocks_only_until_finished(self):
+        set_test_pet_values(self.state, affection=100)
+        for _ in range(3):
+            self.state.interact("pet")
+        self.contact.note_text("pet_refused")
+        self.state.interact("pet")
+        before = self.state.capture_checkpoint()
+        self.playback = True
+        self.assertFalse(self.contact.can_interact("pet"))
+        self.playback = False
+        for _ in range(4):
+            self.assertTrue(self.contact.can_interact("pet"))
+        self.assertEqual(self.state.capture_checkpoint(), before)
+
     def test_hover_greeting_and_ui_contact_do_not_renew_durable_care(self) -> None:
         history = self.state.friendship_history
         self.contact.enter()

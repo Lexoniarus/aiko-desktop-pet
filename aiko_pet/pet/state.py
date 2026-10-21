@@ -15,7 +15,7 @@ from .care_actions import (
     plan_care_action,
     resolve_care_time,
 )
-from .care_result import CareEffect, CareResult
+from .care_result import CareResult
 from .consumption import ConsumptionOrigin
 from .food import (
     FoodActivity,
@@ -752,7 +752,7 @@ class PetState:
                 elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
                 object_id=object_id,
             ), personal=personal)
-        elif transition.result.effect == CareEffect.AFFECTION:
+        elif transition.result.affection_accepted:
             self.experience_interaction(HelpfulInteraction("petting"))
             self._apply_wish_resolution(fulfill_activity_wish(
                 self.wishes, WishArea.AFFECTION, "pet", elapsed=self.lived_seconds,

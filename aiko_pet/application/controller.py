@@ -108,8 +108,7 @@ class CareController:
         if result.effect not in (
             CareEffect.PLAY_TIRED,
             CareEffect.DRINK_SATISFIED,
-            CareEffect.AFFECTION_REFUSED,
-        ):
+        ) and not result.affection_refused:
             self._mind.record_care_contact(inputs.monotonic_time)
             self._mind.record_accepted_care(command.action, inputs.monotonic_time)
         reaction: Reaction | None

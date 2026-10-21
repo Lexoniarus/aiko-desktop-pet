@@ -4,6 +4,7 @@ from dataclasses import dataclass, replace
 from typing import Mapping
 
 from .balance import BALANCE
+from .care_result import CareEffect
 from .interaction_events import (
     ArrangementDisrupted,
     BoundaryCommunicated,
@@ -11,6 +12,7 @@ from .interaction_events import (
     FoodRepetitionMemory,
     HelpfulInteraction,
     InteractionEvent,
+    PettingAttempted,
     Poked,
     WithholdingEnded,
     WithholdingObserved,
@@ -32,9 +34,29 @@ from .moodlets import (
 @dataclass(frozen=True, slots=True)
 class InteractionConsequences:
     moodlets: MoodletState
-    refused: bool = False
     penalty_kind: str = ""
     penalty_points: float = 0.0
+    petting_effect: CareEffect | None = None
+
+    @property
+    def refused(self) -> bool:
+        return self.petting_effect in (
+            CareEffect.AFFECTION_REFUSED, CareEffect.AFFECTION_BOUNDARY_IGNORED,
+        )
+
+
+def petting_is_welcome(
+    state: MoodletState, *, affection: float, friendship_level: int, elapsed: float,
+    definitions: Mapping[MoodletId, MoodletDefinition],
+) -> bool:
+    """Willingness is distinct from tolerating two additional strokes."""
+    parameters = definitions[MoodletId.CROWDED].parameters
+    assert isinstance(parameters, PettingParameters)
+    threshold = next(t.affection_threshold for t in parameters.tolerances
+                     if friendship_level <= t.maximum_friendship_level)
+    return (elapsed >= state.interactions.petting_refused_until
+            and (friendship_level >= parameters.trusted_friendship_level
+                 or affection < threshold))
 
 
 def apply_interaction_event(
@@ -46,6 +68,11 @@ def apply_interaction_event(
         if event.kind == "poking":
             memory = replace(memory, poke_boundary_at=elapsed)
         elif event.kind == "petting":
+            parameters = definitions[MoodletId.CROWDED].parameters
+            assert isinstance(parameters, PettingParameters)
+            if (memory.petting_excess_attempts <= parameters.accepted_excess_attempts
+                    and elapsed >= memory.petting_refused_until):
+                return InteractionConsequences(state)
             memory = replace(memory, petting_boundary_at=elapsed)
         elif event.kind == "food_variety":
             if not memory.food.request_pending:
@@ -118,18 +145,41 @@ def apply_interaction_event(
             state, penalty_kind="relocation" if event.attributed else "",
             penalty_points=relocation.friendship_loss_points if event.attributed else 0,
         )
+    return _attempt_petting(state, event, elapsed=elapsed, definitions=definitions)
+
+
+def _attempt_petting(
+    state: MoodletState, event: PettingAttempted, *, elapsed: float,
+    definitions: Mapping[MoodletId, MoodletDefinition],
+) -> InteractionConsequences:
     parameters = definitions[MoodletId.CROWDED].parameters
     assert isinstance(parameters, PettingParameters)
-    threshold = next(t.affection_threshold for t in parameters.tolerances
-                     if event.friendship_level <= t.maximum_friendship_level)
+    memory = state.interactions
     refusing = elapsed < memory.petting_refused_until
-    if not refusing and event.affection < threshold:
-        return InteractionConsequences(state)
-    warned = (memory.petting_boundary_at is not None
-              and elapsed - memory.petting_boundary_at
-              <= parameters.boundary_window_seconds)
-    if not refusing and not warned:
-        return InteractionConsequences(state, refused=True)
+    if petting_is_welcome(state, affection=event.affection,
+                          friendship_level=event.friendship_level, elapsed=elapsed,
+                          definitions=definitions):
+        return InteractionConsequences(state, petting_effect=CareEffect.AFFECTION)
+    quiet = (memory.petting_last_excess_at is None
+             or elapsed - memory.petting_last_excess_at
+             >= parameters.boundary_window_seconds)
+    if quiet and not refusing:
+        memory = replace(memory, petting_excess_attempts=0, petting_boundary_at=None)
+    boundary_communicated = memory.petting_boundary_at is not None
+    attempts = min(parameters.accepted_excess_attempts + 1,
+                   memory.petting_excess_attempts + 1)
+    if refusing:
+        attempts = parameters.accepted_excess_attempts + 1
+    memory = replace(memory, petting_excess_attempts=attempts,
+                     petting_last_excess_at=elapsed)
+    state = replace(state, interactions=memory)
+    if not boundary_communicated:
+        if refusing or attempts > parameters.accepted_excess_attempts:
+            effect = CareEffect.AFFECTION_REFUSED
+        else:
+            effect = (CareEffect.AFFECTION_ENOUGH if attempts == 1 else
+                      CareEffect.AFFECTION_ENOUGH_FIRM)
+        return InteractionConsequences(state, petting_effect=effect)
     state = reinforce_moodlet(state, MoodletId.CROWDED, elapsed=elapsed,
                               definitions=definitions,
                               attribution=MoodletAttribution.USER)
@@ -137,8 +187,11 @@ def apply_interaction_event(
     memory = replace(memory, petting_refused_until=(
         elapsed + parameters.refusal_seconds[episode.level - 1]
     ))
-    return InteractionConsequences(replace(state, interactions=memory), True,
-                                   "petting", parameters.friendship_loss_points)
+    return InteractionConsequences(
+        replace(state, interactions=memory), penalty_kind="petting",
+        penalty_points=parameters.friendship_loss_points,
+        petting_effect=CareEffect.AFFECTION_BOUNDARY_IGNORED,
+    )
 
 
 def _consume_food(
