@@ -3908,9 +3908,9 @@ no test windows, mouse control, live API requests or CI during planning.
 ### Game objectives, failed non-loss wishes and precise causes, 2026-10-21
 
 Status: owner-requested planning additions, not implemented. The owner subsequently
-accepted the cumulative quantities and defeat-Moodlet values below. Retention
-remains the next discussion; do not expand this into implementing a future
-conversation system.
+accepted the cumulative quantities and defeat-Moodlet values below, then clarified
+active-only cause storage and manual wish pinning/dismissal. No post-expiry
+experience archive is wanted; do not expand this into a future conversation system.
 
 #### Total progress versus an explicitly next-round goal
 
@@ -4016,19 +4016,63 @@ because a tier changes. UI wording is a projection of these facts, not the
 canonical evidence itself. Old saves lacking detailed causes must retain an
 explicit unknown/legacy cause rather than fabricated wish or game evidence.
 
-Persist a bounded factual record of ended wishes and emotional experiences for
-an agreed retention period beyond their active UI lifetime, with explicit
-fulfilled/failed/expired/relevance-ended reasons and their real timestamps.
-Its time horizon and size budget remain open; do not silently choose permanent
-memory, copy full games/API stories or create an independent event bus/store.
-Use canonical Pet-owned immutable values and the existing save/checkpoint path;
-Mind and future conversation read models consume the same evidence.
-This history does not itself extend a Moodlet, replay rewards, renew wishes,
-change friendship or implement the future conversation feature.
+The owner rejected the proposed additional retention/history layer. Store the
+relevant wish/objective and actual trigger details **directly with the active
+Moodlet** for exactly its active lifetime. Ended wishes need no independent
+archive: their necessary cause details remain as a small immutable snapshot in
+the resulting Moodlet, not a reference requiring a deleted ActiveWish to exist.
+When the Moodlet ends, its conversational cause details end with it. There is
+no seven-day retention period, separate ended-wish journal or longer-lived
+emotional-memory subsystem in this scope.
+
+For a three-tier episode raised by three qualifying experiences, retain the
+three real cause records, rather than only the newest game/wish. This provides
+future speech with the Moodlet itself, a concrete trigger, or their combination
+as context. Do not pre-generate dialogue variants or store rendered sentences.
+Retain those causes during ordinary tier decay until the episode fully ends;
+decay does not invent another cause. Repeated refresh at the maximum tier must
+keep cause storage bounded rather than becoming an unbounded event log.
+
+Extend existing immutable episode values in `pet/moodlets.py` with the small
+typed cause data needed for the actual trigger, and extend the existing codec,
+checkpoint and read projection together when implementation is authorized.
+Keep `PetState` as the only mutable owner. Save/reload preserves active causes,
+including across closed/standby time; normal elapsed expiry still removes them.
+Existing technical duplicate protection and relationship/care histories retain
+their own rules and are not replaced by conversational cause storage.
+
+This cause information does not extend an emotional effect, replay rewards or
+change friendship. Future speaking behavior is explicitly a later task.
+
+#### Manual wish pinning and removal
+
+The owner wants to pin individual wishes and dismiss individual wishes with a
+right click. The owner explicitly confirmed that **pinning prevents expiry**:
+a pinned wish can remain beyond the normal four-hour deadline until fulfilled
+or manually dismissed. Preserve the same identity, concrete target and real
+progress rather than creating a replacement wish. An actually failed explicit
+next-round objective still resolves as failed; pinning must not turn it into
+retry-until-success or undo the agreed failure Moodlet.
+
+Plan a persisted pin flag on the existing ActiveWish value and use the existing
+wish panel for pin/dismiss controls. Pinned wishes still occupy their ordinary
+slot and area; they are not extra hidden wishes. A right-click dismissal ends
+the wish without fulfillment reward or an invented disappointment Moodlet and
+uses the existing twelve-minute vacancy/refill policy. Never remove or erase
+an already active Moodlet just because its source wish is dismissed.
+
+The interaction between pinning and food/affection relevance retirement needs
+an explicit rule before implementation; confirmation of time protection alone
+does not silently authorize disregarding current care boundaries. Game/social
+wishes already have the separately agreed need-level exemption. No additional
+permanent wish archive or independent pin store is needed.
 
 Focused later checks should cover cross-session total progress, exact next-round
 resolution, one-shot failure Moodlets, preserved cause evidence at all tiers,
 multiple real stacking causes, legacy unknown causes and save/retention bounds.
+The retention boundary is now active Moodlet lifetime only, not an archive horizon.
+Include pin persistence, protected time expiry, explicit dismissal/refill and
+source-wish retirement without losing an active Moodlet's cause snapshot.
 The game/social exemption also needs full-needs creation/retention checks;
 food/affection retain their narrower need and willingness rules. No tests or
 runtime changes are authorized by this planning amendment.
