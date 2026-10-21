@@ -245,7 +245,8 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
     if "interactions" in row:
         facts = object_fields(row["interactions"], (
             "poke_boundary_at", "petting_boundary_at", "petting_refused_until",
-        ), optional=("food",), context="interaction evidence")
+        ), optional=("food", "petting_excess_attempts", "petting_last_excess_at"),
+            context="interaction evidence")
         anchors = tuple(None if facts[key] is None else number_value(
             facts[key], minimum=baseline, maximum=elapsed, context=key,
         ) for key in ("poke_boundary_at", "petting_boundary_at"))
@@ -256,7 +257,20 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
                                 context="petting refusal")
         food = (_decode_food(facts["food"], baseline, elapsed)
                 if "food" in facts else FoodRepetitionMemory())
-        memory = InteractionMemory(anchors[0], anchors[1], deadline, food)
+        attempts = integer_value(
+            facts.get("petting_excess_attempts",
+                      petting.accepted_excess_attempts + 1 if anchors[1] is not None
+                      else 0), minimum=0, maximum=petting.accepted_excess_attempts + 1,
+            context="petting additional attempts",
+        )
+        last = facts.get("petting_last_excess_at", anchors[1])
+        last = (None if last is None else number_value(
+            last, minimum=baseline, maximum=elapsed, context="last additional petting",
+        ))
+        if (attempts == 0) != (last is None):
+            raise ValueError("Petting count and time must describe the same sequence")
+        memory = InteractionMemory(anchors[0], anchors[1], deadline, food,
+                                   attempts, last)
     poor_care = (decode_poor_care(row["poor_care"], baseline, elapsed)
                  if "poor_care" in row else None)
     return MoodletState(baseline, next_id, tuple(episodes), memory, poor_care)
@@ -277,6 +291,8 @@ def encode_moodlets(state: MoodletState) -> dict[str, Any]:
             poke_boundary_at=state.interactions.poke_boundary_at,
             petting_boundary_at=state.interactions.petting_boundary_at,
             petting_refused_until=state.interactions.petting_refused_until,
+            petting_excess_attempts=state.interactions.petting_excess_attempts,
+            petting_last_excess_at=state.interactions.petting_last_excess_at,
             food=dict(
                 food_id=state.interactions.food.food_id,
                 intakes=list(state.interactions.food.intakes),

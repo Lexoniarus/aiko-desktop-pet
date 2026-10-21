@@ -67,6 +67,7 @@ def _parameters(key: MoodletId, value: Any) -> MoodletParameters:
         ))
     if key == MoodletId.CROWDED:
         row = object_fields(value, (
+            "accepted_excess_attempts", "trusted_friendship_level",
             "escalation_attempts", "boundary_window_seconds", "refusal_seconds",
             "tolerances", *_LOSS_FIELDS,
         ), context=context)
@@ -97,6 +98,10 @@ def _parameters(key: MoodletId, value: Any) -> MoodletParameters:
         ):
             raise ValueError(f"{context}: invalid friendship tolerance ordering")
         return PettingParameters(
+            integer_value(row["accepted_excess_attempts"], minimum=2, maximum=2,
+                          context=context),
+            integer_value(row["trusted_friendship_level"], minimum=1, maximum=10,
+                          context=context),
             integer_value(row["escalation_attempts"], minimum=1, maximum=100,
                           context=context),
             _seconds(row["boundary_window_seconds"], context), deadlines,

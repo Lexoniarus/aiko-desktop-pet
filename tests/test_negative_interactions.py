@@ -107,6 +107,32 @@ class NegativeInteractionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             decode_moodlets(saved, 100)
 
+    def test_petting_warning_evidence_roundtrips_and_migrates_legacy_boundary(self):
+        pet = PetState(lived_seconds=100)
+        memory = replace(pet.moodlets.interactions, petting_excess_attempts=2,
+                         petting_last_excess_at=100)
+        state = replace(pet.moodlets, interactions=memory)
+        self.assertEqual(decode_moodlets(encode_moodlets(state), 100), state)
+        legacy = encode_moodlets(pet.moodlets)
+        facts = legacy["interactions"]
+        facts.pop("petting_excess_attempts")
+        facts.pop("petting_last_excess_at")
+        facts["petting_boundary_at"] = 100
+        restored = decode_moodlets(legacy, 100).interactions
+        self.assertEqual(restored.petting_boundary_at, 100)
+        self.assertEqual(restored.petting_excess_attempts, 3)
+        self.assertEqual(restored.petting_last_excess_at, 100)
+
+    def test_petting_warning_storage_rejects_unbounded_or_incomplete_evidence(self):
+        for count, at in ((4, 100), (-1, None), (True, 100), (1, None),
+                          (0, 100), (2, 101)):
+            with self.subTest(count=count, at=at):
+                saved = encode_moodlets(PetState(lived_seconds=100).moodlets)
+                saved["interactions"].update(petting_excess_attempts=count,
+                                              petting_last_excess_at=at)
+                with self.assertRaises(ValueError):
+                    decode_moodlets(saved, 100)
+
     def test_pure_care_plan_and_commit_share_petting_acceptance(self):
         from aiko_pet.pet.care_actions import plan_care_action
 

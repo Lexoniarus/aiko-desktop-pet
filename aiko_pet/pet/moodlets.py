@@ -153,6 +153,8 @@ class PettingTolerance:
 
 @dataclass(frozen=True, slots=True)
 class PettingParameters:
+    accepted_excess_attempts: int
+    trusted_friendship_level: int
     escalation_attempts: int
     boundary_window_seconds: int
     refusal_seconds: tuple[int, ...]

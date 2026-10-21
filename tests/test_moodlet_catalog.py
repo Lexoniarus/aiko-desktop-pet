@@ -61,6 +61,8 @@ class MoodletCatalogTests(unittest.TestCase):
         self.assertIsInstance(crowded, PettingParameters)
         assert isinstance(crowded, PettingParameters)
         self.assertEqual(crowded.refusal_seconds, (300, 600, 1200))
+        self.assertEqual(crowded.accepted_excess_attempts, 2)
+        self.assertEqual(crowded.trusted_friendship_level, 10)
         self.assertEqual([(t.maximum_friendship_level, t.affection_threshold)
                           for t in crowded.tolerances], [(2, 60), (5, 80), (10, 90)])
         self.assertEqual((crowded.friendship_loss_points,

@@ -150,6 +150,8 @@
       "decay_stage_seconds": 1200,
       "relief_seconds": 300,
       "parameters": {
+        "accepted_excess_attempts": 2,
+        "trusted_friendship_level": 10,
         "escalation_attempts": 3,
         "boundary_window_seconds": 600,
         "refusal_seconds": [

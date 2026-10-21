@@ -4715,3 +4715,19 @@ petting boundaries, carried-item absence, continuous friendship, UI admission an
 cause presentation, and API framing/history. The integrated suite and final OOP
 gate remain slice 9 after those authorized changes; this targeted pass does not
 replace that final gate.
+
+### Slice 4 delivery: bounded petting warning storage
+
+The owner authorized staged petting boundaries. The first small commit adds the
+two accepted additional strokes and the level-ten trust exception to the existing
+typed Moodlet catalogue. Existing pet-owned interaction memory gains a bounded
+additional-attempt count and its last elapsed timestamp. The v1 codec validates
+and checkpoints both, without another store or clock. Older saves without these
+fields retain an already communicated boundary as a completed warning sequence;
+existing refusal deadlines and emotional episodes remain unchanged.
+
+This foundation does not yet activate the new reaction sequence. The targeted
+catalogue, interaction, storage and checkpoint checks pass **46 tests in 0.070
+seconds**; scoped Ruff, strict Mypy and Pyright pass. Native window constructors
+were blocked; no full suite, mouse control or CI was used. Activation and actual
+feedback follow in the next commit.

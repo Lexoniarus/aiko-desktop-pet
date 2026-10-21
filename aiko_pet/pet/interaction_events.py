@@ -19,6 +19,8 @@ class InteractionMemory:
     petting_boundary_at: float | None = None
     petting_refused_until: float = 0.0
     food: FoodRepetitionMemory = FoodRepetitionMemory()
+    petting_excess_attempts: int = 0
+    petting_last_excess_at: float | None = None
 
 
 @dataclass(frozen=True, slots=True)
