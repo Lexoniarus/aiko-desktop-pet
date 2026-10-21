@@ -54,9 +54,45 @@ class SocialContentTests(unittest.TestCase):
         text = "Ein Testwort &szlig; " * 15
         payload["joke"] = text
         item = prepare_social_content(SocialCategory.SINGLE, payload)
-        body = item.reaction.beats[1:]
+        body = [b for b in item.reaction.beats[1:] if b.kind == "text"]
         self.assertEqual(" ".join(b.content for b in body), text.strip())
         self.assertTrue(all(len(b.content) <= 125 for b in body))
+
+    def test_varied_framing_preserves_full_content_and_uses_only_a_final_emote(self):
+        for category in SocialCategory:
+            intros, endings = set(), set()
+            for i in range(24):
+                payload = (fact_payload(str(i)) if category == SocialCategory.FACT
+                           else joke_payload(category, i))
+                field = ("text" if category == SocialCategory.FACT else "joke"
+                         if category == SocialCategory.SINGLE else "delivery")
+                payload[field] = f"Vollständiger Anbietertext Nummer {i}."
+                item = prepare_social_content(category, payload)
+                texts = [b.content for b in item.reaction.beats if b.kind == "text"]
+                intros.add(texts[0])
+                endings.add(item.reaction.beats[-1].kind)
+                self.assertEqual(texts[-1], payload[field])
+                self.assertLessEqual(len(texts), 5)
+                self.assertTrue(all(len(text) <= 125 for text in texts))
+                emotes = [i for i, b in enumerate(item.reaction.beats)
+                          if b.kind == "emote"]
+                self.assertTrue(not emotes or emotes == [len(item.reaction.beats) - 1])
+                self.assertIsNone(item.reaction.completed_social)
+            self.assertEqual(len(intros), 3)
+            self.assertEqual(endings, {"text", "emote"})
+
+    def test_full_five_bubble_budget_preserves_all_words_with_framing(self):
+        payload = joke_payload(SocialCategory.TWO_PARTS)
+        payload["setup"] = "Frage " * 35
+        payload["delivery"] = "Antwort " * 25
+        item = prepare_social_content(SocialCategory.TWO_PARTS, payload)
+        texts = [b.content for b in item.reaction.beats if b.kind == "text"]
+        self.assertEqual(len(texts), 5)
+        self.assertEqual(" ".join(texts[1:]),
+                         " ".join((payload["setup"] + payload["delivery"]).split()))
+        payload["delivery"] += "Antwort " * 20
+        with self.assertRaises(ValueError):
+            prepare_social_content(SocialCategory.TWO_PARTS, payload)
 
     def test_mismatched_type_language_flags_and_missing_fields_are_rejected(self):
         for field, value in (("type", "twopart"), ("lang", "en"),

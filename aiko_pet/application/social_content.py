@@ -111,14 +111,23 @@ def prepare_social_content(
                  if category == SocialCategory.SINGLE else (
                      _text(payload.get("setup")), _text(payload.get("delivery")),
                  ))
-    beats = [Cue.text(GERMAN_TEXT.format(f"social.intro.{category.value}"))]
+    fingerprint = hashlib.sha256("\n".join(parts).casefold().encode()).hexdigest()
+    # Stable variation belongs to the prepared sequence, not mutable playback.
+    # Only provider text participates in duplicate detection.
+    variant = int(fingerprint[:2], 16) % 3
+    intro_key = f"social.intro.{category.value}" + (f"_alt{variant}" if variant else "")
+    beats = [Cue.text(GERMAN_TEXT.format(intro_key))]
     for index, part in enumerate(parts):
         if index:
             beats.append(Cue("pause", "", 700))
         beats.extend(_segments(part))
     if sum(beat.kind == "text" for beat in beats) > 5:
         raise ValueError("Social story exceeds five text bubbles")
-    fingerprint = hashlib.sha256("\n".join(parts).casefold().encode()).hexdigest()
+    # React after the complete provider content, never before a punchline.
+    # No extra text bubble displaces content from the existing five-text budget.
+    if int(fingerprint[2:4], 16) % 3 == 0:
+        emote = "idea" if category == SocialCategory.FACT else "faceHappy"
+        beats.append(Cue("emote", emote, 900))
     return PreparedSocialContent(
         category, identity, fingerprint, source, source_url, permalink,
         Reaction(identity, tuple(beats), "idle", "talk", presentation="story"),

@@ -5026,3 +5026,23 @@ suite or GitHub CI was used. Physical layout/input acceptance is still manual.
 Slice 7 is complete. Slice 8 is the separate API entertainment framing and
 last-ten repetition protection; slice 9 remains the final integrated suite,
 slow-test audit and OOP review after the authorized changes are complete.
+
+### Slice 8 delivery A: playful API presentation
+
+The existing social preparation owner now selects one of three localized,
+category-specific introductions. Stable provider-content fingerprints vary the
+prepared framing without another dialogue history or mutable playback selector.
+Some complete sequences finish with a restrained happy/idea emote; none adds a
+laugh before delivery, replaces provider words or manufactures personal memory.
+
+The existing five-text-beat budget remains explicit: one introduction plus
+up to four complete provider text segments, at most 125 characters per segment.
+A two-part joke retains the setup/delivery boundary and 700 ms pause.
+Optional final emotes consume no text slot. Oversized/incomplete content is
+still rejected rather than truncated or replaced with authored jokes/facts.
+
+Selected preparation, accepted-care, whole-sequence wish completion, playback
+and text-catalogue checks pass 33 tests in 0.218 seconds (longest 0.066 seconds).
+Scoped Ruff, strict Mypy and Pyright pass. All executed checks block native
+Tk/Toplevel construction; no live API, test window, mouse control or CI.
+Persistence and the ten-content history remain the next slice-8 commit.

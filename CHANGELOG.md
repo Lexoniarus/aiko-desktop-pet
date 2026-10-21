@@ -8,6 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Give API sayings, two-part jokes and facts three category-specific
+  introductions and occasional final emotes. Preserve complete provider text,
+  punchline timing and existing care/wish completion semantics.
+
 - Drag the care window from its whole top bar. Place matching icon-only Pin
   and Settings controls in its footer, retaining Details and focus descriptions.
   Distinguish undiscovered objects, unidentified sightings and uncertain

@@ -2,9 +2,9 @@
   "version": 1,
   "locale": "de",
   "messages": {
-    "social.intro.single": "Ich hab einen Spruch für dich.",
-    "social.intro.twopart": "Hey, kennst du den schon?",
-    "social.intro.fact": "Weißt du, was ich interessant finde?",
+    "social.intro.single": "Hey, ich hab einen Spruch aus dem Netz für dich.",
+    "social.intro.twopart": "Hey, ich hab einen Witz für dich. Bereit?",
+    "social.intro.fact": "Schau mal, ich hab im Internet etwas Kurioses gefunden.",
     "settings.online_social": "Onlinequellen für Witze und Fakten verwenden",
     "social.hint": "Worüber möchtest du dich unterhalten?",
     "social.disabled": "Für Sprüche, Witze und Fakten bitte Onlinequellen in den Einstellungen aktivieren.",
@@ -349,6 +349,12 @@
     "vn.outcome.loss": "verloren",
     "vn.outcome.draw": "unentschieden",
     "vn.outcome.handover": "übergeben",
-    "vn.outcome.intake": "gegessen"
+    "vn.outcome.intake": "gegessen",
+    "social.intro.single_alt1": "Magst du einen Spruch hören? Den hab ich im Netz gefunden.",
+    "social.intro.single_alt2": "Ich bin im Netz über einen Spruch gestolpert. Hör mal!",
+    "social.intro.twopart_alt1": "Warte, den Witz aus dem Netz muss ich dir erzählen!",
+    "social.intro.twopart_alt2": "Magst du einen Witz hören? Ich hab einen für dich.",
+    "social.intro.fact_alt1": "Ich hab einen kuriosen Fakt aus dem Netz für dich.",
+    "social.intro.fact_alt2": "Das stand gerade im Internet. Wusstest du das schon?"
   }
 }

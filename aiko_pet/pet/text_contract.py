@@ -7,6 +7,13 @@ from .moodlets import MoodletId
 from .wishes import GAME_GOAL_TEXT_VARIANTS, WishId, WishObjective, WishRestriction
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
+    "social.intro.single_alt1": frozenset(),
+    "social.intro.single_alt2": frozenset(),
+    "social.intro.twopart_alt1": frozenset(),
+    "social.intro.twopart_alt2": frozenset(),
+    "social.intro.fact_alt1": frozenset(),
+    "social.intro.fact_alt2": frozenset(),
+
     "vn.wish_pinned": frozenset([]),
     "vn.wish_controls": frozenset([]),
     "vn.cause_unknown_target": frozenset([]),
