@@ -1616,6 +1616,10 @@ resolves reward qualification without changing the shared care reward ceilings.
 
 ##### Recorded proposal: game-wish variants, 2026-10-20
 
+Historical: the 2026-10-21 game-objective amendment below supersedes single-
+session/streak assumptions for total goals and makes explicit next-round wins
+non-retryable. Do not infer a cumulative-win target from the old majority block.
+
 Status: owner-requested design proposal, not implemented. Aiko can want the
 shared activity itself or a particular outcome in RPS, Blackjack or Tic-Tac-Toe.
 These are distinct motives, each defined by game ID, objective and round scope
@@ -1672,6 +1676,11 @@ rule rather than automatic punishment for an unfulfilled game wish. Existing
 shared friendship reward limits must not be bypassed by changing game or goal.
 
 ##### Recorded proposal: game-wish failure, retries and cross-session progress, 2026-10-20
+
+Historical: consult the 2026-10-21 amendment for explicit next-round failure,
+cross-session total-play progress, disappointment after a failed non-loss wish
+and precise lasting cause records. Silent retirement alone is no longer the
+intended response to a witnessed defeat that violates a non-loss wish.
 
 Status: owner-requested design proposal, not implemented. Distinguish retryable
 attempts from a goal bound to one specific round or fixed block. Keep each
@@ -3690,27 +3699,31 @@ authorized corrections before the final integrated stage-6 suite.
 
 ### Need-aware wish creation, relevance and replacement
 
-Use the corresponding current need as candidate eligibility, in addition to
-existing capabilities, boundaries and target selection:
+Use the corresponding current need as candidate eligibility for food and
+affection, in addition to existing capabilities, boundaries and target selection.
+The owner's subsequent clarification exempts games and social wishes from
+need-level gating, including creation and the 90-point relevance retirement:
 
 | Wish area | Corresponding need | New candidate eligible at |
 | --- | --- | --- |
 | Food | Satiety | 70 or below |
-| Games, including outcome goals | Fun | 70 or below |
-| Social conversation/content | Social | 70 or below |
+| Games, including outcome goals | Fun | Any value; no need-level gate |
+| Social conversation/content | Social | Any value; no need-level gate |
 | Affection | Affection | 70 or below |
 
 These are relevance gates, not automatic wish triggers or automatic emotional
 effects. Existing Mind RNG still chooses among suitable concrete objectives.
 Retain at most one wish per area and at most three overall. Three is the normal
 target **when enough appropriate areas are eligible**, rather than a mandatory
-stock filled with incompatible wishes. Fewer or no wishes is valid when needs
-are already well supplied. Low friendship does not itself remove inner wishes;
+stock filled with incompatible wishes. Fewer wishes is valid when eligible
+areas are unavailable; full food/affection must not force those areas into the
+stock. Games/social can remain candidates even when their needs are full.
+Low friendship does not itself remove inner wishes;
 comfort/trust, temporary availability and speech pacing still gate disclosure.
 
-At existing live wish evaluation, retain an active wish below 90 on its
-corresponding need, subject to its original deadline and objective rules. If
-another activity supplies that need to 90 or above, silently retire the now
+For food/affection only, at existing live wish evaluation, retain an active wish
+below 90 on its corresponding need, subject to its original deadline and
+objective rules. If another activity supplies that need to 90 or above, retire the now
 inappropriate wish without a fulfillment Moodlet, friendship bonus or penalty.
 Distinguish this from actual fulfillment: when the concrete desired activity
 qualifies, resolve its existing wish normally, including when that very activity
@@ -3725,6 +3738,9 @@ deadlines, manufacture retrospective offline wishes or substitute another
 game goal midway through its progress. Existing objective failure and expiry
 remain separate ways to end a wish. The 70/90 separation avoids churn around
 one threshold and does not introduce another mutable need or desire score.
+Games and social wishes retain their original deadlines, fulfillment/failure
+rules and other actual capability constraints regardless of their need values;
+do not silently retire them just because fun/social reaches 90 or 100.
 
 ### Separate menu navigation from action admission and incidental speech
 
@@ -3888,3 +3904,100 @@ Later focused checks belong to existing drag/button, object read-projection,
 social preparation/coordinator and save contracts. Test these headlessly with
 controlled callbacks and fake API responses after implementation is authorized;
 no test windows, mouse control, live API requests or CI during planning.
+
+### Game objectives, failed non-loss wishes and precise causes, 2026-10-21
+
+Status: owner-requested planning additions, not implemented. The next discussion
+must settle only the genuinely missing objective/outcome/retention values below,
+not expand this into implementing a future conversation system.
+
+#### Total progress versus an explicitly next-round goal
+
+Total-play and total-win goals accumulate qualifying progress in the named game
+within the original wish window across sessions, game-window closes and saved
+restarts. They do not require one uninterrupted session or a consecutive-win
+streak. An intervening loss/draw does not reset accumulated wins for a total-win
+count. A total-play count includes completed rounds regardless of result.
+Only concrete qualifying post-creation rounds count, once each, from Aiko's
+perspective; opening menus, abandoned rounds and rounds in another game do not.
+
+Keep the exact objective visible and stored, including its target and progress.
+The earlier three-round majority definition is not automatically a cumulative
+win-count goal, and the old two-round same-session play rule is superseded for
+total-play wishes. Choose explicit quantity/wording before implementing the
+total-win goal rather than inventing a streak or silently reusing a majority.
+
+"Win the next round of game X" resolves on that next qualifying completed
+round: win fulfills it, loss/draw ends it unsuccessfully. It must not retry
+until an eventual win under the same identity. "Do not lose the next round of
+game X" fulfills on win/draw and fails on a loss. A cumulative/block non-loss
+goal must separately state its scope; do not equate it with a next-round goal.
+
+#### A lost game can violate a concrete wish
+
+If Aiko actually loses the qualifying round that her active non-loss wish
+concerned, retire that wish as failed and create an appropriate negative
+disappointment/lost-despite-hoping-not-to Moodlet. This is a specific emotional
+experience, not merely absence of a positive reward. Preserve the named game,
+failed objective, relevant round and actual result as its cause. Do not apply
+this failure effect to simple expiry, quitting before a result, a technical
+cancellation, an unrelated game's loss or every ordinary loss without that wish.
+
+Fair defeat is not user mistreatment and adds no automatic friendship penalty.
+Deliver failure and its Moodlet exactly once through the existing game-event
+and Pet aggregate boundary, including across saves. The new negative family's
+strength, duration and stacking still need an explicit small balance decision;
+do not borrow another negative family's values implicitly. General repeated-
+loss emotions and failure effects for other objective forms remain separate.
+
+#### Possible avoidance-of-food objective
+
+Record the owner's additional candidate: when hungry, Aiko may want **not to
+eat a particular named food**. This is distinct from requesting a particular
+food or the existing food-monotony impression. Do not implement a wish rewarded
+by simply not feeding her. The concrete qualification window, whether eating
+an alternative fulfills it, and what a matching intake means for failure or
+refusal remain to be settled before adding a catalogue objective. Apply the
+food need/acceptance rules, not the game/social exemption.
+
+#### Preserve precise emotional and wish evidence
+
+The owner explained that wishes and Moodlets are intended future conversation
+inputs. Current runtime values do not yet meet that precision requirement:
+active wishes store concrete targets/progress but are removed at retirement;
+Moodlet episodes store family, tier, times and broad user/autonomous/unknown
+attribution without the originating wish/game/food or detailed result.
+The current read/UI descriptions therefore cannot reconstruct a precise cause.
+
+Keep structured, language-neutral cause evidence through creation, refresh,
+stacking and 3-to-2-to-1 decay. Relevant fields include the originating wish
+instance and objective, concrete game/food/social target, qualifying event ID,
+event time, actual outcome and acquired actor/source attribution. Display the
+specific reason at every active tier, for example "Wish to win at Blackjack
+fulfilled", rather than only the generic family or its numeric strength.
+Keep family meanings accurate: successful victory/pride is distinct from shared
+play enjoyment even if both involve Blackjack.
+
+Stacking must not overwrite all earlier contributing causes with the newest
+target. Retain the actual qualifying causes for the active episode, distinguish
+refresh/strengthening from passive decay, and never invent another event merely
+because a tier changes. UI wording is a projection of these facts, not the
+canonical evidence itself. Old saves lacking detailed causes must retain an
+explicit unknown/legacy cause rather than fabricated wish or game evidence.
+
+Persist a bounded factual record of ended wishes and emotional experiences for
+an agreed retention period beyond their active UI lifetime, with explicit
+fulfilled/failed/expired/relevance-ended reasons and their real timestamps.
+Its time horizon and size budget remain open; do not silently choose permanent
+memory, copy full games/API stories or create an independent event bus/store.
+Use canonical Pet-owned immutable values and the existing save/checkpoint path;
+Mind and future conversation read models consume the same evidence.
+This history does not itself extend a Moodlet, replay rewards, renew wishes,
+change friendship or implement the future conversation feature.
+
+Focused later checks should cover cross-session total progress, exact next-round
+resolution, one-shot failure Moodlets, preserved cause evidence at all tiers,
+multiple real stacking causes, legacy unknown causes and save/retention bounds.
+The game/social exemption also needs full-needs creation/retention checks;
+food/affection retain their narrower need and willingness rules. No tests or
+runtime changes are authorized by this planning amendment.
