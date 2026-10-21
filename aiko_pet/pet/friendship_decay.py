@@ -13,6 +13,8 @@ from .friendship_history import (
     FriendshipProgress,
     NeedDurations,
 )
+from .moodlet_catalog import MOODLET_CATALOG
+from .moodlets import MoodletPolarity, MoodletState
 from .need_exposure import exposure_totals
 
 
@@ -28,40 +30,100 @@ def friendship_factor(points: float) -> float:
     return anchors[-1][1]
 
 
-def _anchors() -> tuple[tuple[float, float], ...]:
+def _anchors(*, positive: bool = False) -> tuple[tuple[float, float], ...]:
+    prefix = "positive_" if positive else ""
     return (
-        (0.0, _setting("zero_factor")),
+        (0.0, _setting(f"{prefix}zero_factor")),
         *(
-            (_setting(f"{name}_points"), _setting(f"{name}_factor"))
+            (_setting(f"{name}_points"), _setting(f"{prefix}{name}_factor"))
             for name in ("lower", "middle", "higher", "peak")
         ),
-        (100.0, _setting("peak_factor")),
+        (100.0, _setting(f"{prefix}peak_factor")),
     )
 
 
 def passive_friendship(points: float, reference_loss: float) -> float:
-    """Solve the linear factor segments exactly, including level crossings."""
-    if reference_loss <= 0 or points <= 0:
-        return points
-    anchors = _anchors()
-    remaining = reference_loss
-    while points > 1e-12 and remaining > 1e-12:
-        index = max(i for i, (x, _) in enumerate(anchors[:-1]) if x < points)
-        (low, factor), (high, final) = anchors[index : index + 2]
-        slope = (final - factor) / (high - low)
-        current = factor + slope * (points - low)
-        needed = (
-            math.log(current / factor) / slope if slope else (points - low) / factor
-        )
-        spend = min(needed, remaining)
-        if spend >= needed:
-            points = low
-        elif slope:
-            points = low + (current * math.exp(-slope * spend) - factor) / slope
-        else:
-            points -= factor * spend
+    """Reference-only projection using the same progressive balance solver."""
+    return balance_friendship(points, positive=0, negative=max(0, reference_loss))
+
+
+def balance_friendship(points: float, *, positive: float, negative: float) -> float:
+    """Integrate simultaneous contributions exactly through linear factor segments."""
+    if not all(math.isfinite(v) for v in (points, positive, negative)) or (
+        not 0 <= points <= 100 or min(positive, negative) < 0
+    ):
+        raise ValueError("Invalid relationship balance")
+    gains, losses = _anchors(positive=True), _anchors()
+    remaining = 1.0
+    while remaining > 1e-12:
+        # Both factor functions are continuous at anchors.
+        index = min(len(gains) - 2, max(i for i, (x, _) in enumerate(gains)
+                                       if x <= points))
+
+        def coefficients(i: int) -> tuple[float, float]:
+            (low, gain), (high, next_gain) = gains[i:i + 2]
+            loss, next_loss = losses[i][1], losses[i + 1][1]
+            slope = (positive * (next_gain - gain)
+                     - negative * (next_loss - loss)) / (high - low)
+            return slope, positive * gain - negative * loss - slope * low
+
+        slope, intercept = coefficients(index)
+        velocity = slope * points + intercept
+        if abs(velocity) < 1e-14 or points == 100 and velocity > 0 or (
+            points == 0 and velocity < 0
+        ):
+            break
+        if velocity < 0 and points == gains[index][0] and index:
+            index -= 1
+            slope, intercept = coefficients(index)
+            velocity = slope * points + intercept
+        boundary = gains[index + (velocity > 0)][0]
+        final_velocity = slope * boundary + intercept
+        crossing = (math.log(final_velocity / velocity) / slope
+                    if slope and final_velocity * velocity > 0 else
+                    (boundary - points) / velocity if not slope else math.inf)
+        spend = min(remaining, max(0, crossing))
+        points = (boundary if crossing <= remaining else
+                  points + velocity * math.expm1(slope * spend) / slope if slope else
+                  points + velocity * spend)
         remaining -= spend
-    return max(0.0, points)
+    return max(0.0, min(100.0, points))
+
+
+def emotional_friendship_rates(
+    before: float, after: float, moodlets: MoodletState, *, recent_contact: bool,
+) -> tuple[float, float]:
+    """Average raw amounts per status interval, without numeric-mood family caps."""
+    thresholds = tuple(_setting(key) for key in (
+        "mood_negative_floor", "mood_neutral_low", "mood_neutral_high",
+        "mood_positive_ceiling",
+    ))
+
+    def baseline(mood: float) -> tuple[float, float]:
+        low, neutral_low, neutral_high, high = thresholds
+        return (
+            _setting("mood_positive_rate") * max(0, min(1, (mood - neutral_high)
+                                                       / (high - neutral_high)))
+            if recent_contact else 0,
+            _setting("mood_negative_rate") * max(0, min(1, (neutral_low - mood)
+                                                       / (neutral_low - low))),
+        )
+
+    cuts = sorted({0.0, 1.0, *(max(0, min(1, (t - before) / (after - before)))
+                              for t in thresholds)} if after != before else {0.0, 1.0})
+    positive = negative = 0.0
+    for left, right in zip(cuts, cuts[1:]):
+        first, last = (baseline(before + (after - before) * at)
+                       for at in (left, right))
+        positive += (first[0] + last[0]) / 2 * (right - left)
+        negative += (first[1] + last[1]) / 2 * (right - left)
+    for episode in moodlets.active:
+        definition = MOODLET_CATALOG.definitions[episode.definition_id]
+        if definition.polarity == MoodletPolarity.POSITIVE:
+            positive += episode.level * _setting("positive_moodlet_rate")
+        else:
+            negative += episode.level * _setting("negative_moodlet_rate")
+    return positive, negative
 
 
 def absence_rate(age: float) -> float:

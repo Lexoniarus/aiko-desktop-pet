@@ -32,6 +32,7 @@ class FriendshipHistory:
     eligible: tuple[tuple[str, float], ...] = ()
     critical: tuple[CriticalBucket, ...] = ()
     penalties: tuple[RelationshipEvent, ...] = ()
+    continuous_since: float | None = None
 
 
 @dataclass(frozen=True, slots=True)

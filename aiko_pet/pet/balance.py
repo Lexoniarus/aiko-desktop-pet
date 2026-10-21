@@ -91,6 +91,17 @@ def parse_balance(raw: Any) -> BalanceCatalog:
             > withholding["loss_interval_seconds"]):
         raise ValueError("Invalid object withholding balance")
     relationship = sections["friendship"]
+    thresholds = [relationship[key] for key in (
+        "mood_negative_floor", "mood_neutral_low", "mood_neutral_high",
+        "mood_positive_ceiling",
+    )]
+    positive_factors = [relationship[f"positive_{name}_factor"]
+                        for name in ("zero", "lower", "middle", "higher", "peak")]
+    if (not 0 <= thresholds[0] < thresholds[1] <= thresholds[2]
+            < thresholds[3] <= 100
+            or any(a < b for a, b in zip(positive_factors, positive_factors[1:]))
+            or sections["simulation"]["status_interval_seconds"] <= 0):
+        raise ValueError("Invalid continuous relationship thresholds or cadence")
     points = [0., *(relationship[f"{name}_points"]
                     for name in ("lower", "middle", "higher", "peak")), 100.]
     factors = [relationship[f"{name}_factor"]

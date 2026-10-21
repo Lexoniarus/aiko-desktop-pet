@@ -98,6 +98,7 @@ def decode_friendship(raw: Any, elapsed: float) -> FriendshipHistory:
             "critical",
             "penalties",
         ),
+        optional=("continuous_since",),
         context="relationship",
     )
     if type(row["version"]) is not int or row["version"] != 1:
@@ -106,6 +107,8 @@ def decode_friendship(raw: Any, elapsed: float) -> FriendshipHistory:
     contact = (
         None if row["last_contact"] is None else _number(row["last_contact"], elapsed)
     )
+    continuous = row.get("continuous_since")
+    continuous = None if continuous is None else _number(continuous, elapsed)
     rewards = _events(row["rewards"], elapsed, penalties=False)
     penalties = _events(row["penalties"], elapsed, penalties=True)
     eligible = object_fields(
@@ -151,17 +154,19 @@ def decode_friendship(raw: Any, elapsed: float) -> FriendshipHistory:
         buckets.append(CriticalBucket(start, durations[0], durations[1], width))
         previous = start + width - 1e-7
     if baseline is None:
-        if contact is not None or rewards or anchors or buckets or penalties:
+        if (contact is not None or rewards or anchors or buckets or penalties
+                or continuous is not None):
             raise ValueError("Uninitialized relationship cannot claim history")
     elif (
         contact is not None
         and contact < baseline
         or any(e.at < baseline for e in (*rewards, *penalties))
         or any(t < baseline for _, t in anchors)
+        or continuous is not None and continuous < baseline
     ):
         raise ValueError("Relationship evidence precedes migration")
     return FriendshipHistory(
-        baseline, contact, rewards, anchors, tuple(buckets), penalties
+        baseline, contact, rewards, anchors, tuple(buckets), penalties, continuous
     )
 
 
@@ -181,6 +186,7 @@ def encode_friendship(history: FriendshipHistory) -> dict[str, Any]:
         version=1,
         baseline=history.baseline,
         last_contact=history.last_contact,
+        continuous_since=history.continuous_since,
         rewards=events(history.rewards),
         eligible=dict(history.eligible),
         critical=[

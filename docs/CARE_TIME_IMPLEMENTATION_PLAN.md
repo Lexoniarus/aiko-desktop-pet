@@ -4842,3 +4842,23 @@ existing social-optimization branch.
 Slice 5 is complete. Continuous friendship/status cadence remains slice 6;
 the UI/admission and API amendments follow separately before the final integrated
 suite and OOP review in slice 9.
+
+### Slice 6 delivery: balance values and durable policy boundary
+
+The owner authorized continuous relationship accounting and a shared 30-second
+status cadence. The first commit stores the agreed mood bands, uncapped per-tier
+Moodlet rates, progressive positive factors and cadence in the existing balance
+catalogue. The existing negative-factor anchors remain canonical. The pure
+friendship decay owner integrates simultaneous positive/negative flow across
+those linear segments, including equilibrium, level crossings and scale bounds;
+the reference-only passive projection reuses that same solver.
+
+An optional `continuous_since` field in the existing relationship save/checkpoint
+records the new policy's elapsed boundary. Old saves without it remain valid;
+no history, contact or points are rewritten by decoding. Actual runtime migration,
+reward removal and cadence activation follow in the next delivery.
+
+Four focused rate/flow/migration tests pass, as do forty selected existing
+neglect, catalogue and persistence checks. Scoped Ruff, strict Mypy and Pyright
+pass. This commit does not activate the new balance or run the full suite; no
+test window, mouse control or CI was used.

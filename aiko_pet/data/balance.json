@@ -140,7 +140,20 @@
     "click_window_seconds": 60,
     "click_cap": 1.0,
     "withholding_window_seconds": 120,
-    "withholding_cap": 2.0
+    "withholding_cap": 2.0,
+    "mood_negative_floor": 20.0,
+    "mood_neutral_low": 40.0,
+    "mood_neutral_high": 60.0,
+    "mood_positive_ceiling": 80.0,
+    "mood_positive_rate": 0.002,
+    "mood_negative_rate": 0.004,
+    "positive_moodlet_rate": 0.003,
+    "negative_moodlet_rate": 0.006,
+    "positive_zero_factor": 1.0,
+    "positive_lower_factor": 1.0,
+    "positive_middle_factor": 1.0,
+    "positive_higher_factor": 0.6,
+    "positive_peak_factor": 0.35
   },
   "walk": {
     "pause_min_seconds": 20,
@@ -154,7 +167,8 @@
   },
   "simulation": {
     "maximum_live_effort_seconds": 30.0,
-    "needs_step_seconds": 15.0
+    "needs_step_seconds": 15.0,
+    "status_interval_seconds": 30
   },
   "care_requests": {
     "need_threshold": 70,
