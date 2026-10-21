@@ -21,6 +21,9 @@
 > The latest 2026-10-21 continuous-friendship amendment replaces the earlier
 > capped care/wish reward model for the next implementation. Its 30-second
 > balance values are approved for planning; runtime still uses the old model.
+> The later wish-mix and carried-object absence amendments below are also
+> planning-only. Their delivery sequence and the saved-goal migration decision
+> are recorded at the end of this document.
 > The owner subsequently expanded stage 5 to separate needs, Moodlets, numeric
 > mood, emotional state, wishes and expression before changing dialogue wording.
 > The first-version Moodlet/wish product rules are settled below. Stage 5B.1
@@ -4341,4 +4344,133 @@ merely by eight visits. Preserve this distinction in acceptance criteria. Before
 claiming practical balance, use actual generated objectives and their timing,
 real outcomes, slot occupancy and failure impressions in the later targeted
 checks; do not silently assume every visited slot becomes a positive tier-one
-impression. No new weighting rule or easier objective is approved by this review.
+impression. This review itself approved no new weighting rule; the subsequent
+owner-approved wish mix below now supplies that rule for future implementation.
+
+## Approved wish selection mix, 2026-10-21
+
+Status: approved for documentation, not implementation. Preserve area-first
+selection; these weights apply only when selecting a new definition within the
+eligible game area. They are not daily quotas or weights for all wish areas.
+
+| Game wish form | Selection weight | Objective |
+| --- | --- | --- |
+| Play the named game | 60% | Complete two rounds across sessions, with any result |
+| Win the next round | 10% | Win the next qualifying round of the named game |
+| Avoid losing the next round | 15% | Win or draw the next qualifying round |
+| Accumulate wins | 10% | Accumulate three wins across sessions; losses/draws do not reset progress |
+| Avoid an overall loss | 5% | Finish the defined three-round block with wins at least equal to losses |
+
+This produces 60% activity, 25% short outcome and 15% larger objectives within
+games. Social wishes remain activity/completion objectives under existing
+eligibility and online opt-in; no new distribution between social content forms
+is approved here. With one game opportunity and one social opportunity, the
+illustrative combined mix is 80% activity and 20% outcome objectives. Actual
+area availability, occupied slots and pinned wishes can change that mixture.
+
+Keep at most three suitable wishes, one per area, four-hour unpinned lifetimes
+and the shared twelve-minute refill pause. Food/affection eligibility remains
+need/context dependent; games/social remain exempt from the need-90 rule.
+Do not automatically replace difficult wishes with easier ones or manufacture
+enough successes to meet a daily target. Preserve stronger fulfillment tiers
+for larger objectives.
+
+For comparison only, the earlier independent fair-RPS, fresh-goal, three-round
+benchmark gives approximately 77% game-goal success under these weights instead
+of 53% under equal selection. One such game opportunity plus one completed
+social wish per visit gives approximately 7.1 fulfillments at four visits or
+14.1 at eight visits. These figures exclude carryover, slot blocking, target
+availability and actual gameplay ability. They are not a generator simulation
+or a promise of daily friendship gain. Stronger positive tiers occur less often:
+the benchmark's integrated positive impression increases by only about five
+percent, despite the larger increase in fulfillment count. Verify actual
+weighted generation and friendship effects together during implementation.
+
+## Carried food is not a displaced familiar object, 2026-10-21
+
+The owner observed a known Teriyaki portion being picked up for personal
+handover while Aiko may have been making an incidental comment. Before it was
+put down elsewhere, Aiko treated its former place as missing and produced the
+disruption Moodlet. This is a planning-only correction to the earlier practical
+acceptance record, not evidence that the new case has already been fixed.
+
+Source inspection identifies the relevant gap: `WorldRuntime.begin_relocate()`
+uses attention-qualified `ObjectAwareness.witness_take()`. An unobserved take
+can leave the remembered resting place intact. `ObjectAbsencePerception`
+confirms an empty remembered place without a custody exclusion supplied by its
+application caller; `ObjectBehaviorCoordinator._notice_absences()` can then
+admit the search and emit `ArrangementDisrupted`. No runtime reproduction was
+performed, and the particular incidental comment is not established as the
+actual cause of this reported occurrence.
+
+Required behavior:
+
+- Picking up, carrying or presenting that portion must not start a new
+  missing-place search, absence complaint or disruption Moodlet for it, even
+  when the take was not witnessed or incidental speech is active. A previously
+  queued absence for the same portion must not become a delayed false reaction
+  during or after a successful offer.
+- Cancelling back to its original place, accepted handover and actual intake
+  must not manufacture relocation evidence. A positive food wish still needs
+  the already agreed actual matching intake; holding food near Aiko alone is
+  not fulfillment.
+- Only actual placement at a different resting location can make this gesture
+  eligible for the existing unseen-displacement case. The later covered check
+  of the old learned place and admission of a real search remain necessary;
+  neither release nor a World position change directly creates the Moodlet.
+  Observed transport/placement continues to update knowledge without it.
+- Genuine observed withholding of an already wanted object retains its own
+  trigger, timing and consequences. Offering food is not itself withholding.
+
+Reuse World custody and the existing gesture lifecycle in application-level
+absence/search admission. Physical custody may exclude an invalid reaction; it
+must not grant Aiko unseen identity, a new learned location or user blame.
+Keep subjective memory/perception in `pet/mind`, custody in `world`, and their
+coordination in the existing awareness/behavior/runtime owners. Do not add a
+second relocation tracker, global perception shutdown or UI Moodlet filter.
+
+Extend existing headless awareness/behavior tests with explicit sensor times
+and simulated custody: an unnoticed take during incidental speech, a carried
+offer, cancellation, accepted intake, and subsequent genuine unseen placement
+and search. Include a pending absence through handover and the unaffected
+withholding path. No native window, mouse, real-time wait or full-suite rerun
+is needed for this targeted correction.
+
+## Implementation readiness and small delivery steps, 2026-10-21
+
+The latest approved product rules are sufficient to implement the correction
+set after authorization. One concrete migration decision remains: saved active
+game goals currently have older meanings. In particular, `win_overall` means
+a majority in three rounds, rather than three accumulated wins, and `win_round`
+currently permits retries. Do not silently reinterpret their saved progress.
+
+Recommended migration, pending owner agreement: retain each valid active
+wish's original objective and progress until resolution/expiry, and use the
+new objective rules for newly created wishes. Express objective semantics in
+the same typed wish model and codec, not a parallel legacy wish service.
+Neutral retirement/refill of these old goals is an alternative requiring an
+explicit decision because it discards valid progress. New friendship policy
+must preserve actual points and contact/neglect history without retroactive
+refunds or replay of old positive credits; record its transition boundary in
+the existing progression/save contract.
+
+| Slice | Existing owners and concrete delivery | Focused local verification |
+| --- | --- | --- |
+| 1. Definitions and durable data | `pet/wishes.py`, `pet/moodlets.py`, existing catalog loaders/JSON and infrastructure codecs: weights, objective semantics, pin state, avoidance/defeat definitions and bounded causal snapshots. Separate catalogue and storage commits. | Strict catalogue contracts, old/new save round trips, valid progress preservation and atomic checkpoint restore. Keep import dependencies acyclic. |
+| 2. Wish eligibility and lifecycle | Existing wish rules and `application/attention.py`: need-aware food/affection, unrestricted game/social needs, weighted game forms, pin/dismiss, expiry/relevance and refill. | Deterministic eligible selection, exact weight boundaries, pinning and explicit elapsed-time expiry/refill; disclosure remains separate from creation. |
+| 3. Completion and emotional evidence | Existing game/social/food coordinators and pure wish resolution: cumulative objectives, strict next-round outcomes, disappointment and detailed real causes. Separate game and food commits, including the special acknowledged-handover avoidance goal. | Actual round/receipt fixtures, cross-session progress, failed outcomes, duplicate delivery and intake-versus-handover distinctions; bounded evidence even for long-pinned goals. |
+| 4. Petting boundaries | Existing care/interaction rules and Mind feedback: staged warnings/refusal, repeated boundary violations and friendship-dependent willingness, including trusted full-affection level ten. | Accepted care versus warning/refusal, exact repetition counts, quiet reset and one-time direct consequences; technical locks cannot count as attempts. |
+| 5. Carried-object absence correction | Existing World custody, awareness, behavior and gesture owners, as specified above. Keep search/withholding responsibilities separate. | Targeted existing awareness/behavior regressions for carried offers, queued absences, actual unseen placement and unchanged withholding. |
+| 6. Continuous friendship and status cadence | Existing `pet/friendship.py`, decay/progression and aggregate: approved mood/Moodlet/passive balance and shared elapsed time. Remove replaced ordinary instantaneous rewards/pots only after checking callers. | Fixed-time rate/boundary examples, positive/negative coexistence, contact gating, save transition and live/offline equivalence; no duplicate clock or historical gameplay replay. |
+| 7. Admission and status UI | Separate commits for navigation versus action start/incidental-speech interruption; wish pin/dismiss and Moodlet causes/readouts; full titlebar drag, footer icons and discovered/unidentified object projections. Existing application read models and UI owners remain canonical. | Headless admission/callback/read-model checks; navigation alone starts no interaction. No native widget construction or desktop automation. |
+| 8. API entertainment | Existing social preparation/coordinator/persistence: playful category-specific framing and ten admitted provider-key/fingerprint entries per category. Separate framing/history commits. | Fake responses and explicit admission receipts, bounded duplicate retries, cancellation and restart persistence; no live API calls or authored fallback jokes/facts. |
+| 9. Integrated acceptance | Check generated wish opportunities, outcome strengths and actual friendship progression together; complete final OOP/dependency review and the integrated local suite/static gates. | Full suite at the end, inspect individual tests exceeding ten seconds and consolidate redundant coverage. Native visual/input acceptance remains a separate user check. |
+
+Each authorized implementation slice uses small coherent English commits and
+pushes on `feature/social-optimization` with CI skipped. Use existing targeted
+headless checks with fake clocks/data and review their durations; do not rerun
+the full suite after each small commit. No test windows, mouse control or
+GitHub CI. These are extensions of canonical owners, not authorization for
+new managers, duplicate stores, conversational archives or a second simulator.
+This readiness update changes documentation only; no implementation or tests
+have been performed for these amendments.
