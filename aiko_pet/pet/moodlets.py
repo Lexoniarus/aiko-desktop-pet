@@ -106,7 +106,6 @@ class MoodletCause:
     outcome: MoodletOutcome = MoodletOutcome.UNKNOWN
     object_id: str | None = None
     game: MoodletGameResult | None = None
-    level: int | None = None
 
     @property
     def receipt(self) -> tuple[MoodletCauseKind, str | None, int | None]:
@@ -253,19 +252,13 @@ class MoodletEpisode:
                 attribution=self.attribution,
             ),))
 
-        elif all(c.level is None for c in self.causes):
-            # Old rolling receipts have no trustworthy stage association.
-            object.__setattr__(self, "causes", self.causes[-1:])
         else:
-            staged = tuple(c for c in self.causes if c.level is not None)
-            if (any(type(c.level) is not int or not 1 <= c.level <= MAX_MOODLET_CAUSES
-                    for c in staged if c.level is not None)
-                    or len({c.level for c in staged}) != len(staged)):
-                raise ValueError("Moodlet causes require distinct stages one to three")
-            object.__setattr__(self, "causes", staged)
+            object.__setattr__(self, "causes", self.causes[-min(
+                self.level, MAX_MOODLET_CAUSES,
+            ):])
 
     def with_cause(self, cause: MoodletCause) -> MoodletEpisode:
-        """Keep one actual receipt per reached stage; refresh only that stage."""
+        """Retain the latest real events up to current intensity (maximum three)."""
         if (not math.isfinite(cause.occurred_at)
                 or not self.started_at <= cause.occurred_at <= self.last_trigger_at
                 or cause.kind == MoodletCauseKind.LEGACY or not cause.event_id):
@@ -275,9 +268,7 @@ class MoodletEpisode:
         known = tuple(c for c in self.causes if c.kind != MoodletCauseKind.LEGACY)
         if known and cause.occurred_at < known[-1].occurred_at:
             raise ValueError("Moodlet causes must follow event time")
-        retained = tuple(c for c in known
-                         if c.level is not None and c.level != self.level)
-        return replace(self, causes=(*retained, replace(cause, level=self.level)))
+        return replace(self, causes=(*known, cause))
 
 
 @dataclass(frozen=True, slots=True)

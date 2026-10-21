@@ -8,10 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
-- Keep one concrete Moodlet cause per reached stage, at most three per episode.
-  Refresh only that stage's cause; migrate old unstaged receipts to their latest
-  real event without inventing stage history. Shorten hover summaries and keep
-  overlapping descriptions open while the pointer remains over them.
+- Retain the latest one/two/three concrete Moodlet causes according to current
+  intensity. Renewing level three keeps the latest three; decay trims to the lower
+  level. Preserve available old receipts without imposing historical stage slots.
+  Keep hover summaries compact and overlapping descriptions stable.
 
 - Keep autohiding vertical scrollbars in a fixed ten-pixel gutter so overflow
   changes cannot resize/reflow the menu. Keep recurring toolbar placement out

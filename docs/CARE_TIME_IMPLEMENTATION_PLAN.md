@@ -4073,9 +4073,9 @@ For a three-tier episode raised by three qualifying experiences, retain the
 three real cause records, rather than only the newest game/wish. This provides
 future speech with the Moodlet itself, a concrete trigger, or their combination
 as context. Do not pre-generate dialogue variants or store rendered sentences.
-Retain those causes during ordinary tier decay until the episode fully ends;
-decay does not invent another cause. Repeated refresh at the maximum tier must
-keep cause storage bounded rather than becoming an unbounded event log.
+The current clarification limits causes to active intensity: decay keeps the
+newest one/two causes at level one/two. Renewal at level three retains only the
+latest three. Decay never invents another cause or keeps a separate event log.
 
 Extend existing immutable episode values in `pet/moodlets.py` with the small
 typed cause data needed for the actual trigger, and extend the existing codec,
@@ -4140,10 +4140,11 @@ planning rules, not implementation authorization:
    from expiry and automatic 90-point relevance retirement until actual
    resolution or manual removal. Current care willingness/refusal and real
    fulfillment conditions remain unchanged.
-2. **Bounded cause selection.** Retain one real trigger per reached stage,
-   at most three per active Moodlet episode. Further evidence refreshes only
-   the record for that stage, retaining the other stage records. Preserve them
-   through passive decay until the episode ends; no rendered dialogue archive.
+2. **Bounded cause selection.** Keep the latest real trigger records up to
+   current intensity: one/two/three at level one/two/three. Each new qualifying
+   event appends its actual cause and drops the oldest beyond that limit.
+   Decay trims to the lower level. There is no fixed slot per historical stage
+   or rendered dialogue archive; missing old events must not be fabricated.
 3. **Intensity versus trigger count.** Retain the existing weighted strength:
    one fulfilled larger game goal may directly create level two with one real
    cause. Intensity and cause count are distinct. Never fabricate extra causes
@@ -5323,7 +5324,7 @@ window-free command/persistence and catalog checks pass in 0.064 seconds
 (longest 0.043). Ruff, strict scoped Mypy and Pyright pass. No test windows,
 input automation, CI or full-suite run; slice 9 remains deferred.
 
-### Moodlet cause correction: one real event per reached stage
+### Historical Moodlet cause correction: fixed stage slots (superseded below)
 
 The former cap was already three receipts, but they were a rolling list unrelated
 to intensity stages. MoodletCause now stores its actual reached level. The existing
@@ -5351,13 +5352,14 @@ Hover copy/behavior follows separately; slice 9 remains deferred.
 
 Moodlet descriptions combine family, current stage and mood contribution in the
 heading, followed by short meaning/decay/context lines. Each stored cause shows
-its actual stage, original goal/target and real outcome. Game counts and last-round
+its original goal/target and real outcome. The later rolling-cause clarification
+supersedes the initial fixed-stage labels. Game counts and last-round
 result remain distinct from the overall goal result; food avoidance retains a
 different actually handed-over food. Full wish explanations, repeated identical
 targets and per-cause attribution paragraphs are removed. Short attribution tags
 preserve known personal/autonomous differences; all original evidence remains in
-the immutable read value. Cause rows are displayed by stage even after refresh of
-an earlier stage. A representative three-stage Relief hover has ten logical lines;
+the immutable read value. Current rows follow the chronological rolling list,
+numbered as reasons rather than historical stages. A representative three-stage Relief hover has ten logical lines;
 the read regression bounds the three-cause sample to eleven lines/1100 characters.
 
 The existing DescriptionTip now allows up to 420 pixels within its parent's width
@@ -5376,3 +5378,36 @@ checks pass 56 tests in 0.121 seconds (longest 0.035). Scoped Ruff, strict Mypy 
 Pyright pass. Pointer locations and geometry are supplied only by widget doubles;
 native constructors are blocked. No test exceeds ten seconds. No live save, native
 window, desktop pointer automation, CI or full suite. Slice 9 remains deferred.
+
+### Final Moodlet cause clarification: latest causes limited by current intensity
+
+The owner clarified that the intended count is one/two/three real causes at
+current level one/two/three. Fixed historical stage slots were incorrect. The
+existing MoodletEpisode now bounds its chronological cause tuple by current
+intensity and the absolute limit of three. New evidence appends a real receipt;
+renewing level three rolls A/B/C to B/C/D. Passive decay trims to the newest
+receipts fitting the lower level. Direct stronger events and incomplete old saves
+still cannot fabricate additional events merely to fill the count.
+
+Remove the unused per-cause level from the domain value and new writer. The
+existing codec accepts/validates but ignores that superseded optional field,
+including multiple real events with the same old level. Unstaged old receipts
+are preserved up to the current limit, rather than collapsed to one. Duplicate
+technical receipts and corrupt data remain rejected. Cause chronology, original
+goal/result, PetState ownership and the shared atomic save stay unchanged.
+Already discarded records are not reconstructed and no live save was modified.
+
+Hover rows now read Reason 1/2/3 (localized as Grund), ordered chronologically;
+they no longer label a rolling cause as if it caused a historical stage. Compact
+text and the overlap fix remain in place. Current plan rules and the UI contract
+supersede the historical fixed-slot delivery record.
+
+The thirty-success Relief regression fails against the fixed-slot implementation
+at the fourth event (A/B/D instead of B/C/D). It now checks every intermediate
+count and receipt, renewal, decay and re-escalation. Existing persistence/read
+checks cover current-tier trimming, retained old receipts, codec cleanup,
+original game results and actual hover row counts. Selected progression,
+persistence, read, game/food wish, text and hover checks pass 78 tests in 0.147
+seconds (longest 0.051). Scoped Ruff, strict Mypy and Pyright pass. No test exceeds
+ten seconds. No native windows, mouse automation, live-save writes, CI or full
+suite; slice 9 remains deferred.

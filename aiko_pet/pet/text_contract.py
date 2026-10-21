@@ -17,7 +17,7 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "vn.wish_pinned": frozenset([]),
     "vn.wish_controls": frozenset([]),
     "vn.cause_unknown_target": frozenset([]),
-    "vn.cause_stage": frozenset(['level', 'cause']),
+    "vn.cause_entry": frozenset(['number', 'cause']),
     "vn.cause_by.user": frozenset(),
     "vn.cause_by.autonomous": frozenset(),
     "vn.cause_wish": frozenset(['wish', 'target']),

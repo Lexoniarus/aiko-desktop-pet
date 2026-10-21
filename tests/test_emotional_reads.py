@@ -48,10 +48,10 @@ class EmotionalReadTests(unittest.TestCase):
             MoodletCauseKind.WISH_FULFILLED, i, f"round:{i}",
             wish=MoodletWishCause(i, "win_overall", game, "total_wins", 3),
             target_id=game, outcome=MoodletOutcome.WIN,
-            game=MoodletGameResult(MoodletOutcome.DRAW, 7, 3, 2), level=i,
+            game=MoodletGameResult(MoodletOutcome.DRAW, 7, 3, 2),
         ) for i, game in enumerate(("blackjack", "tic_tac_toe",
                                    "rock_paper_scissors"), 1))
-        for level, receipts in ((1, causes), (2, causes[:1]), (3, causes)):
+        for level, receipts in ((1, causes), (2, causes), (3, causes)):
             pet = PetState(moodlets=MoodletState(active=(MoodletEpisode(
                 1, MoodletId.PRIDE, level, 0, 3, 100, causes=receipts,
             ),)))
@@ -59,14 +59,14 @@ class EmotionalReadTests(unittest.TestCase):
             view = project_hover(snapshot_pet(pet), context_at(1800000000),
                                  ComputerSnapshot(), observe_computer=False)
             text = moodlet_description(view.emotional.moodlets[0])
-            self.assertEqual(text.count("Wunsch erfüllt"), len(receipts))
-            for cause in receipts:
-                self.assertIn(f"Stufe {cause.level}: Wunsch erfüllt", text)
+            self.assertEqual(text.count("Wunsch erfüllt"), level)
+            self.assertEqual(len(view.emotional.moodlets[0].value.causes), level)
+            for index in range(1, level + 1):
+                self.assertIn(f"Grund {index}: Wunsch erfüllt", text)
             self.assertLessEqual(len(text.splitlines()), 11)
             self.assertLess(len(text), 1100)
             self.assertNotIn("auch über mehrere Sitzungen", text)
-            self.assertEqual(text.count("Blackjack"), 1)
-            self.assertIn("Blackjack", text)
+            self.assertEqual(text.count("Blackjack"), int(level == 3))
             self.assertIn("Ziel: 3", text)
             self.assertIn("Letzte Runde: unentschieden", text)
             self.assertIn("Ergebnis: gewonnen", text)

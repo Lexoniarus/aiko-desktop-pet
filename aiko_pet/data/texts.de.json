@@ -333,7 +333,7 @@
     "vn.wish_pinned": "Fixiert · ohne Zeitablauf",
     "vn.wish_controls": "Linksklick: Wunsch fixieren. Rechtsklick: Pin lösen; ohne Pin Wunsch entfernen.",
     "vn.cause_unknown_target": "Unbekanntes Ziel",
-    "vn.cause_stage": "Stufe {level}: {cause}",
+    "vn.cause_entry": "Grund {number}: {cause}",
     "vn.cause_by.user": "mit dir",
     "vn.cause_by.autonomous": "selbstständig",
     "vn.cause_wish": "{wish} · {target}",

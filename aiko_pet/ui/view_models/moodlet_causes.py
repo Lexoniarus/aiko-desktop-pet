@@ -21,7 +21,7 @@ def _target_label(target: str) -> str:
 
 
 def cause_description(cause: MoodletCause) -> str:
-    """Compact actual stage/goal/result; full evidence stays in the read value."""
+    """Compact actual goal/result; full evidence stays in the read value."""
     parts = [GERMAN_TEXT.format(f"vn.cause.{cause.kind}")]
     wish = cause.wish
     if wish is not None:
@@ -51,9 +51,6 @@ def cause_description(cause: MoodletCause) -> str:
     if cause.attribution != MoodletAttribution.UNKNOWN:
         parts.append(GERMAN_TEXT.format(f"vn.cause_by.{cause.attribution}"))
     summary = " · ".join(parts)
-    if cause.level is not None:
-        summary = GERMAN_TEXT.format("vn.cause_stage", level=str(cause.level),
-                                     cause=summary)
     if cause.game is None:
         return summary
     game = cause.game

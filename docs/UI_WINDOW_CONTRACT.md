@@ -184,11 +184,13 @@ maintained behavior contract is this document.
 `MoodletStrip` shows every active impression (horizontal overflow), its own icon
 and wrapped tag. Hover/focus/tap reads cause, intensity, individual contribution,
 known attribution, remaining stage/total decay work, paused decay and recovery
-wait. The existing episode stores at most one real cause per reached stage
-(three maximum). Hover rows show concise original goal/target/result details by
-stage; repeated same-stage evidence refreshes only that stage's cause. A stronger
-initial event does not fabricate lower-stage causes. Old unstaged receipts retain
-one latest real event with unknown stage. No widget runs creation, aging, relief
+wait. The existing episode retains the latest real causes up to its current
+intensity: one at level one, two at level two, three at level three. Renewing level
+three drops the oldest cause; decay trims the list to the latest causes fitting
+the lower level. Hover rows number these reasons, without claiming each event
+belongs to a historical stage. A stronger initial event or incomplete old save
+does not fabricate missing events. Old receipts retain all available real causes
+up to the current limit; obsolete per-cause stage metadata is ignored. No widget runs creation, aging, relief
 or emotional selection.
 `WishPanel` shows the concrete food/game/social/care target, objective scope and
 bounded progress, remaining original deadline, inner/spoken marker and temporary

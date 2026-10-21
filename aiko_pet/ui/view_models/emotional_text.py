@@ -61,9 +61,9 @@ def moodlet_description(view: MoodletView) -> str:
             total=duration_text(value.remaining_decay_seconds),
         )
     )
-    parts.extend(cause_description(cause) for cause in sorted(
-        value.causes, key=lambda cause: cause.level or 0,
-    ))
+    parts.extend(GERMAN_TEXT.format(
+        "vn.cause_entry", number=str(index), cause=cause_description(cause),
+    ) for index, cause in enumerate(value.causes, 1))
     return "\n".join(parts)
 
 
