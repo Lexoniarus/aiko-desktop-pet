@@ -7525,3 +7525,74 @@ Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, tests, text and documentation work is preserved. No runtime
 tests, application windows, mouse control, live-save access, database creation,
 migration or CI in this pass.
+
+
+### Proposed save paths, JSON import and persistence error handling
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Give SQLite its own file, preserve source JSON and make an
+existing supported database authoritative after successful import.
+
+| Configuration | Planned database | Legacy import candidate |
+| --- | --- | --- |
+| No `AIKO_SAVE_PATH` | `%LOCALAPPDATA%/AikoDesktopPet/state.sqlite3` on Windows | Previous `state.json` in that directory |
+| Custom path ending in `.json` | Same directory/stem with `.sqlite3` suffix | Exactly the configured JSON file |
+| Custom path ending in `.sqlite3`, `.sqlite` or `.db` | Exactly the configured database path | Same-stem `.json` beside it, only if the database does not exist |
+| Existing custom filename without a customary extension | Configured filename with `.sqlite3` appended | Exactly the old file, only if it is a supported JSON save |
+
+Continue platform-specific user-data directories elsewhere. Preserve OS
+environment precedence over optional `.env`, project-relative path resolution,
+user-directory/environment expansion and quoted paths. Existing `.json`
+configuration remains a compatibility alias; recommend a direct SQLite path
+for new configurations. A custom path selects only that save: do not search
+the default directory as another source or silently choose another destination.
+
+#### One-time legacy import
+
+1. Check the selected database first. If it is a supported Aiko database, load
+   only that database and ignore an older neighbouring JSON file.
+2. Without a database, validate the designated legacy source. Missing optional
+   sections in a supported older format are allowed; present invalid sections
+   must not be silently dropped. Reject unsupported formats.
+3. Create an unchanged backup of the source before import. Backup failure stops
+   the import; the original remains untouched.
+4. Build a temporary database and import all related values transactionally.
+   Validate relationships and complete domain values before publication.
+5. Publish only a successfully completed database as the active save. Preserve
+   the original JSON without overwriting or subsequently updating it. Record
+   import provenance including source format and import time in the database.
+
+Preserve instance identities, original wish goals/progress, Moodlet causes,
+stage budgets, settings and saved time anchors. Import itself advances no pet
+time. The existing application restorer subsequently performs ordinary offline
+progression once from those anchors; migration is not another simulation owner.
+If neither the database nor its designated legacy source exists, create a new
+save. An incomplete temporary import is never a valid active database, and an
+already existing database must not be overwritten by a competing import.
+
+#### Error and recovery policy
+
+| Failure | Proposed behavior |
+| --- | --- |
+| Damaged JSON or unsupported source format | Stop import, preserve the source and explain the affected path |
+| Import or post-import validation fails | Discard the incomplete temporary import; never activate a partial save |
+| Database belongs to a newer Aiko schema | Refuse opening for play; no downgrade or overwrite |
+| Damaged database or file is not an Aiko database | Stop; do not automatically load possibly stale JSON instead |
+| Missing permissions or locked database | Report the error; do not silently select another storage location |
+| Saving fails during play | Retain the last successfully committed save, visibly report unsaved state and retry persistence of the snapshot without replaying care actions |
+
+Before later schema migrations, create a consistent database backup through
+SQLite's backup interface. A failed migration must not leave a partially
+migrated active schema. Restore an older backup only through a deliberate
+choice because it can discard intervening progress; never silently pick an old
+save. The existing successful database remains the single active persistence
+source, not one side of permanent JSON/SQLite dual writing.
+
+Next define the bounded receipt for a real personal food handover whose identity
+is not yet known, including original wish context and one-time resolution after
+recognition. This amendment does not yet select that receipt's concrete fields.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, assets, tests, text and documentation work is preserved. No
+runtime tests, application windows, mouse control, personal-save reads, database
+creation/migration or CI in this pass.
