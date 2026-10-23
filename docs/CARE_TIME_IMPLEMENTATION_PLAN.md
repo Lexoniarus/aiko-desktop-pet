@@ -6016,7 +6016,7 @@ to enumerate hypothetical edge cases.
 | --- | --- |
 | Ten-minute refresh, absence and unpinning | Establish the shared refresh anchor, the single appropriate refresh on wake/return without offline wish generation, and whether an unpinned protected wish stays until the next refresh instead of disappearing on an old deadline. Left pins; right on pinned only unpins; right on unpinned dismisses remain the chosen gestures. |
 | New wish meanings and selection mix | Area weights and the 1.5 experience multiplier are proposed, but the new forms' base weights, experience validity and concrete goal scope are not. Define whether free-choice rounds can span different games and whether victory-oriented rematch targets the next round or a later win. Avoid arbitrarily filling these gaps in code. |
-| Food-avoidance / variety completion | Existing explicitly approved behavior counts perceived personal handover, even of the unwanted food and even if refused. The later replacement candidate asks for actual alternate-food intake. Choose the intended product rule; neither ordinary food-wish admission nor the timing proposal resolves this conflict. |
+| Food-avoidance / variety completion | The later food-wish-disregarded proposal below settles that expressly excluded food causes a negative outcome on recognized personal handover, even if put down; the former positive unwanted-handover rule is superseded. Keep the positive success condition for an alternative/variety objective explicit rather than inferring it from the negative outcome. |
 | Tier budgets during re-escalation and stronger goals | Specify what happens to partly consumed and previously extended lower tiers on renewed ascent. Also resolve two-tier success overflow and its real cause count: one stronger event must not be fabricated into two events solely to fill intensity rows. |
 | Positive experiences without a wish: scope | Current eight positive families are wish-driven, while most negative families arise independently. Decide whether the present revision retains that scope or includes specific positive everyday experiences. Do not automatically turn every need refill into another positive Moodlet. |
 
@@ -6056,3 +6056,82 @@ work. No new module/file names or extra state owners are selected in this pass.
 Documentation-only check: only this master plan is staged. Parallel local work
 is preserved; Markdown whitespace/diff reviewed. No runtime tests, application
 windows, pointer automation, live-save access or CI in this pass.
+
+
+### Proposed negative Moodlet: food wish disregarded
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Add a distinct negative family labeled Essenswunsch missachtet.
+Do not merge it into Immer dasselbe Essen: one records a specific disregarded
+wish, the other repeated actual monotonous intake.
+
+#### Qualified cause and handover distinction
+
+All three facts must exist:
+
+1. At personal handover, Aiko has an active wish explicitly excluding a
+   particular food.
+2. The player actually gives that excluded food into her hand.
+3. She recognizes which food she received.
+
+If the item is unidentified at handover, emotional qualification waits for
+identification and remains associated with the wish at that handover, rather
+than a newly generated unrelated wish. Putting the item down instead of eating
+it does not erase the handover experience. Mere cursor presentation, ground
+placement or autonomous intake cannot substitute for this personal handover.
+Repeated technical observations of one handover are not new social events.
+
+Wanting an apple alone is not explicit rejection of every other food. Require
+an actual excluded-food goal; do not punish every nonmatching ordinary offer.
+
+The owner clarified the common boundary: recognized personal handover of the
+wanted food produces the positive wish outcome; explicitly unwanted food produces
+the negative outcome even if laid down uneaten. This supersedes the historical
+positive award for handing over the excluded food. Desired food can still be
+eaten at full satiety, with existing need bounds; emotion and actual nutrition
+remain separate effects. Recognition may happen only after custody transfers.
+
+#### Intensity, duration and relationship effect
+
+| Intensity | Individual numeric mood contribution | Passive decay without further events |
+| --- | --- | --- |
+| Level 1 | -5 | Expire after thirty minutes |
+| Level 2 | -10 | Thirty minutes, then level 1 for thirty minutes |
+| Level 3 | -15 | Thirty minutes each through levels 3/2/1 |
+
+Another independently qualified unwanted handover increases intensity by one
+up to level 3 and renews the current tier to thirty minutes. At level 3, renew
+only that current tier to thirty minutes. Do not bank extra hours or apply the
+positive multi-tier extension policy. Ordinary numeric mood still approaches
+its target over time under existing caps; it does not jump on handover.
+
+Emotional direction is disappointed/hurt, using the existing downcast direction.
+Active negative tiers contribute through the existing continuous friendship
+policy. Add no separate instantaneous friendship penalty in this proposal.
+Store the actual wish/excluded-food/handover cause with the existing bounded
+active episode, not as a duplicate event or permanent archive.
+
+End the affected avoidance wish as failed on this qualified event. No positive
+fulfillment impression is granted; the negative episode outlives the wish and
+its next ten-minute refresh. Keep later new wishes distinct from the retired
+identity. Positive completion of an alternative/variety goal must retain its
+own explicit objective; this failure rule alone does not define it.
+
+#### Scope and next discussion
+
+The pinned-lifetime clarification remains: pin protection survives sleep,
+standby and app closure without expiry. Fulfillment ends the wish; unpinning
+ends protection and returns it to normal wish replacement. Left pins, first
+right unpins and right on an unpinned card dismisses remain the chosen gestures.
+The refresh anchor/return policy can be specified without reopening that
+protection or treating old four-hour expiry as the new proposed lifetime.
+
+Next define the new forms' exact selection weights and experience validity,
+retaining the proposed need-based area weights and a single 1.5 experience
+multiplier. No new form weights, Python/JSON IDs, modules or runtime changes
+are selected by this documentation amendment.
+
+Documentation-only check: only this master plan is staged. Parallel local
+runtime, test and other documentation work is preserved. Markdown whitespace/
+diff reviewed; no runtime tests, application windows, pointer automation,
+live-save access or CI in this pass.
