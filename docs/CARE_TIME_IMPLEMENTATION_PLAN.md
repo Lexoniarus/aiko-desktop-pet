@@ -7325,7 +7325,12 @@ one-way source/update path, not a second content editor. Preserve original
 wish/target facts in Moodlet causes after the active wish ends. Database
 relations must not erase those causes when an active wish is removed.
 
-#### New preparation step before the existing delivery slices
+#### Historical preparation order (superseded by the later delivery-order decision)
+
+The later "Agreed delivery order: features before SQLite and final OOP work"
+section supersedes the execution order in this historical proposal. The data
+model remains agreed preparation; implementing SQLite is no longer a prerequisite
+for the wish/Moodlet feature slices.
 
 Add a data-model/persistence preparation step before the earlier slice one:
 agree vocabulary, logical tables, relationships and retention; then implement
@@ -7884,3 +7889,72 @@ Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, assets, tests, text and documentation work is preserved. No
 runtime tests, application windows, mouse control, personal-save reads, database
 creation/migration or CI in this pass.
+
+
+### Agreed delivery order: features before SQLite and final OOP work
+
+**Planning direction recorded at the owner's request, 2026-10-23; no runtime
+implementation.** First implement the already discussed wish/Moodlet behavior
+on the current games and social features. Move SQLite implementation into the
+closing architecture/OOP refactor phase, followed by the final OOP review and
+complete local suite. This supersedes the earlier requirement to implement
+SQLite before the feature slices; the preceding data model/contracts remain
+the intended migration target.
+
+#### Build on the actual current activities
+
+The current working tree's `GameId` includes Rock Paper Scissors, Tic-Tac-Toe,
+Blackjack, Connect Four and Mastermind. At this review, `data/wishes.json` still
+lists only the first three games for game wishes. The social working contracts
+also include horoscope and provider-aware sayings, jokes and facts. Some of
+these additions are parallel, uncommitted work: preserve them and reconcile the
+finished baseline before feature implementation, without treating this planning
+pass as a runtime acceptance test or permission to rewrite parallel work.
+
+At feature kickoff, recheck the actual available activities, supported round
+events and social completion boundaries. Extend eligible targets and shared
+matching through the existing owners. New game IDs must not be silently excluded
+by old target lists; a menu/category entry alone must not imply that every wish
+variant is available or has a valid completion path. Retain result attribution
+from Aiko's perspective and the existing game/social event coordinators. No
+new minigame implementation or new horoscope-specific wish is implied here.
+
+#### Ordered work
+
+1. Reconcile the completed game/social baseline and map existing wish/Moodlet
+   delivery gaps against it. Preserve all valid parallel work and original
+   saved wish goals/progress.
+2. Resume the eight feature slices recorded under implementation readiness,
+   including their longer-term/overall-state extension: definitions, typed
+   state, progression/renewal, wish lifecycle/weights, shared activity matching,
+   food/affection integration, qualified positive/negative experiences and
+   longer-term patterns, then overall feelings and passive status/hover reads.
+   Split each area into small reviewable commits with targeted local checks.
+3. Verify the integrated feature behavior and actual generated wish opportunities
+   with deterministic targeted checks. In the earlier feature slice eight,
+   defer the complete-suite/final-OOP portion to the closing phase below.
+4. Perform the closing architecture/OOP refactor, source-organization cleanup
+   and SQLite migration using the agreed ownership, model, import and error
+   contracts. Split persistence work into its own small steps and verify the
+   final feature state survives migration. Keep dialogue-source organization
+   aligned with the existing single content owner.
+5. Finish with the final OOP/duplicate-structure review, complete local suite,
+   redundant-test review and investigation of tests exceeding ten seconds.
+   Correct findings in scoped commits and push the completed work.
+
+Clear OOP ownership and understandable function/module names apply throughout
+the feature work. Make necessary local extractions with the affected feature;
+do not postpone required domain boundaries until the final review. The deferred
+work is the cross-cutting refactor/storage conversion and final review.
+
+Until SQLite cutover, extend existing JSON codecs only as needed to preserve
+the new typed domain values. Use the already agreed stable identities, bounded
+causes, tier budgets and receipts so they map directly to the later schema.
+Keep one active writer; do not build a second state aggregate, permanent
+parallel backend or a disposable alternate history format. The feature-first
+order entails adapting the current codecs before the later adapter migration;
+keep those adaptations narrow rather than introducing new storage machinery.
+
+All implementation remains separately authorized. Continue with small commits,
+targeted local tests and scoped pushes; no test windows, mouse control or
+GitHub CI. This amendment changes only the plan and runs no runtime tests.
