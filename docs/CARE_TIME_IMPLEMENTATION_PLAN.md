@@ -7821,3 +7821,66 @@ Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, assets, tests, text and documentation work is preserved. No
 runtime tests, application windows, mouse control, personal-save reads, database
 creation/migration or CI in this pass.
+
+
+### Proposed final technical contracts before SQLite implementation
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** The preceding logical model covers the agreed persisted
+domains. Record these three technical decisions before dividing implementation
+into small, locally verified changes.
+
+#### Preserve the two food-history meanings explicitly
+
+Keep the short ordered list of recently eaten food IDs as a bounded list in
+`pet_state`. Store timestamped portions used by food-repetition processing in
+`food_intake_receipts`. These are distinct existing facts. Preserve original
+order, valid timestamps and existing limits through import; do not synthesize
+timestamps or merge records merely because their food ID matches. This uses
+the already permitted small typed list/snapshot representation within SQLite.
+
+#### Reject stale writes to the same save
+
+Use the shared save revision as an expected-revision guard. When saving a
+coherent snapshot, compare its expected persisted revision with the current
+database revision inside the same transaction as the write. Advance the
+revision only with a successful commit. Reject a stale write without changing
+the newer database state; do not retry by blindly overwriting the other
+session's progress. This also covers competing first saves/import publication
+through the already required no-overwrite initialization boundary.
+
+Distinct database paths remain independent saves. This decision adds no account
+model, permanent save-history table, automatic state merge or second domain
+writer. A failed/rolled-back write must not advance the caller's expected
+revision as though it had committed.
+
+#### Route storage failures through one application-facing contract
+
+The current desktop persistence path catches `OSError`. Introduce one typed
+application-facing storage failure contract covering access/I/O failures,
+database locks, stale revisions, invalid data and database/schema failures.
+The infrastructure adapter translates backend errors without exposing SQL
+exception handling to UI/domain owners. Preserve the already agreed distinct
+startup/import/save failure behavior; a read/import failure must not silently
+start a replacement game.
+
+On save failure, report unsaved state and retain the last successful database
+checkpoint. Retry only appropriate persistence failures using a coherent
+current snapshot; do not replay interactions, grant effects again, or override
+a stale-revision conflict. Preserve the existing autosave responsibility and
+separate domain progression from writing.
+
+Concrete SQL types, checks, indexes and versioned detail formats can be derived
+from these contracts during implementation. Existing Pet/World/Memory and
+application owners keep their rules; the SQLite adapter replaces persistence
+behind the existing session boundary. Legacy JSON becomes a one-time import
+path rather than a permanent parallel writer.
+
+Next discuss the implementation slices and targeted local validation for each.
+This amendment records only the three agreed technical contracts; it does not
+implement the adapter, create a database, run tests, or approve the next slices.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, assets, tests, text and documentation work is preserved. No
+runtime tests, application windows, mouse control, personal-save reads, database
+creation/migration or CI in this pass.
