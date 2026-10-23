@@ -24,6 +24,7 @@ from aiko_pet.pet.wish_catalog import (
     load_packaged_wish_catalog,
     parse_wish_catalog,
 )
+from aiko_pet.pet.wish_selection import replenish_wishes
 from aiko_pet.pet.wishes import (
     WishArea,
     WishContext,
@@ -32,7 +33,6 @@ from aiko_pet.pet.wishes import (
     WishObjective,
     WishState,
     WishTargetMode,
-    replenish_wishes,
     wish_text_key,
 )
 
@@ -97,11 +97,11 @@ class WishCatalogTests(unittest.TestCase):
                          (WishArea.FOOD, WishObjective.FOOD_HANDOVER, 1))
         self.assertEqual(avoid.targets, definitions[WishId.FOOD].targets)
         state = WishState()
-        self.assertEqual(replenish_wishes(
+        self.assertFalse(replenish_wishes(
             state, elapsed=0, sleeping=False, context=WishContext(),
             needs=NeedLevels(50, 80, 100, 100, 50),
             definitions={avoid.id: avoid}, rng=random.Random(1),
-        ), state)
+        ).active)
 
     def test_definitions_targets_and_collections_are_read_only(self):
         with self.assertRaises(TypeError):
@@ -218,10 +218,10 @@ class WishCatalogTests(unittest.TestCase):
             )
         }
         state = WishState()
-        self.assertEqual(replenish_wishes(
+        self.assertFalse(replenish_wishes(
             state, elapsed=100, sleeping=False, context=WishContext(online_social=True),
             needs=NeedLevels(0, 0, 0, 0, 0), definitions=pending, rng=random.Random(1),
-        ), state)
+        ).active)
 
     def test_invalid_target_modes_and_experience_requirements_are_rejected(self):
         for key, field, value in (

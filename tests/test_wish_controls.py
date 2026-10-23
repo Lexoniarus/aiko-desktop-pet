@@ -83,7 +83,7 @@ class WishControlTests(unittest.TestCase):
             self.assertEqual(len(pet.wishes.active), 1)
             self.assertFalse(pet.wishes.active[0].pinned)
             self.assertEqual(pet.wishes.active[0].instance_id, before_unpin.instance_id)
-            self.assertEqual(pet.wishes.active[0].expires_at, before_unpin.expires_at)
+            self.assertEqual(pet.wishes.active[0].expires_at, 600)
             with patch.object(panel._pin_icons[1], "itemconfigure") as marker:
                 panel.refresh(views())
                 marker.assert_called_once_with("pin", state="hidden")
@@ -94,7 +94,7 @@ class WishControlTests(unittest.TestCase):
             label.bindings["<Button-3>"](Mock())
             panel.refresh(views())
             self.assertFalse(pet.wishes.active)
-            self.assertEqual(pet.wishes.refresh_at, 720)
+            self.assertEqual(pet.wishes.refresh_at, 600)
             self.assertEqual(pet.moodlets, initial_moodlets)
             self.assertEqual(pet.friendship_history, relationship)
             self.assertEqual(len(saved), 3)

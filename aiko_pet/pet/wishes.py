@@ -1,6 +1,5 @@
 """Immutable wish definitions and aggregate-owned inner wish progress."""
 
-import random
 from dataclasses import dataclass, replace
 from enum import StrEnum
 from typing import Literal, Mapping
@@ -15,7 +14,6 @@ from .moodlets import (
     MoodletOutcome,
     MoodletWishCause,
 )
-from .needs import NeedLevels
 
 MAX_WISH_ROUND_RECEIPTS = 100
 
@@ -393,9 +391,9 @@ def _game_result(
 
 
 def _refresh_deadline(state: WishState, elapsed: float) -> float:
-    """One vacancy starts a pause; later retirements cannot postpone it."""
+    """Retirement keeps the shared refresh; legacy states acquire one deadline."""
     return (state.refresh_at if state.refresh_at is not None else
-            elapsed + BALANCE.integer("wishes", "refill_delay_seconds"))
+            elapsed + BALANCE.integer("wishes", "refresh_interval_seconds"))
 
 
 def progress_game_wish(
@@ -447,20 +445,21 @@ def progress_game_wish(
 
 
 def expire_wishes(state: WishState, *, elapsed: float) -> WishState:
-    """Age original deadlines in all time paths; retain identity/pacing evidence."""
+    """Expire unprotected desires without generating wishes or moving the clock."""
     active = tuple(w for w in state.active if w.pinned or elapsed < w.expires_at)
     if active == state.active:
         return state
     first_expiry = min(w.expires_at for w in state.active
                        if not w.pinned and elapsed >= w.expires_at)
     return replace(state, active=active,
-                   refresh_at=_refresh_deadline(state, first_expiry))
+                   refresh_at=state.refresh_at if state.refresh_at is not None
+                   else first_expiry)
 
 
 def set_wish_pinned(
     state: WishState, instance_id: int, pinned: bool, *, elapsed: float,
 ) -> WishState:
-    """Protect a live instance; unpinning never renews its original deadline."""
+    """Unpin until the next refresh, independent of obsolete four-hour expiry."""
     if type(pinned) is not bool:
         raise ValueError("Wish pin must be a boolean")
     state = expire_wishes(state, elapsed=elapsed)
@@ -468,11 +467,12 @@ def set_wish_pinned(
                  and w.is_active_at(elapsed)), None)
     if wish is None or wish.pinned == pinned:
         return state
-    if not pinned and elapsed >= wish.expires_at:
-        # The newly unprotected vacancy starts now, not at a past protected time.
-        return _retire_wish(state, wish, None, elapsed=elapsed).state
+    deadline = _refresh_deadline(state, elapsed)
+    if deadline <= elapsed:
+        deadline = elapsed + BALANCE.integer("wishes", "refresh_interval_seconds")
     return replace(state, active=tuple(
-        replace(w, pinned=pinned) if w.instance_id == instance_id else w
+        replace(w, pinned=pinned, expires_at=w.expires_at if pinned else deadline)
+        if w.instance_id == instance_id else w
         for w in state.active
     ))
 
@@ -485,107 +485,6 @@ def dismiss_wish(state: WishState, instance_id: int, *, elapsed: float) -> WishS
     return state if wish is None else _retire_wish(
         state, wish, None, elapsed=elapsed,
     ).state
-
-
-def retire_irrelevant_wishes(
-    state: WishState, *, elapsed: float, needs: NeedLevels,
-    definitions: Mapping[WishId, WishDefinition],
-) -> WishState:
-    """Quietly release supplied food/affection wishes at a live endpoint only."""
-    threshold = BALANCE.number("wishes", "relevance_need_threshold")
-    active = tuple(w for w in state.active if w.pinned or not (
-        definitions[w.definition_id].area == WishArea.FOOD
-        and needs.satiety >= threshold
-        or definitions[w.definition_id].area == WishArea.AFFECTION
-        and needs.affection >= threshold
-    ))
-    return state if active == state.active else replace(
-        state, active=active, refresh_at=_refresh_deadline(state, elapsed),
-    )
-
-
-def _candidate_targets(
-    definition: WishDefinition, *, needs: NeedLevels, context: WishContext,
-) -> tuple[str, ...]:
-    """Current suitability never extends or replaces an existing objective."""
-    # The current picker binds one concrete game/category. Flexible references
-    # and real experience assignment are introduced by the lifecycle slice.
-    if definition.experience is not None or (
-        definition.area in (WishArea.GAMES, WishArea.SOCIAL)
-        and definition.target_mode != WishTargetMode.EXACT
-    ):
-        return ()
-    threshold = BALANCE.number("wishes", "creation_need_threshold")
-    if (definition.selection_weight == 0
-            or definition.area == WishArea.FOOD and needs.satiety > threshold
-            or definition.area == WishArea.AFFECTION
-            and (needs.affection > threshold or context.crowded
-                 or not context.petting_welcome)
-            or definition.id in (WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT)
-            and not context.online_social):
-        return ()
-    if definition.id == WishId.AVOID_FOOD:
-        return tuple(t for t in definition.targets if t == context.repetitive_food)
-    if definition.area == WishArea.FOOD:
-        return tuple(t for t in definition.targets if t != context.repetitive_food)
-    return definition.targets
-
-
-def replenish_wishes(
-    state: WishState,
-    *,
-    elapsed: float,
-    sleeping: bool,
-    needs: NeedLevels,
-    context: WishContext,
-    definitions: Mapping[WishId, WishDefinition],
-    rng: random.Random,
-) -> WishState:
-    """Fill the normal three-slot stock at this awake live endpoint only."""
-    state = expire_wishes(state, elapsed=elapsed)
-    state = retire_irrelevant_wishes(state, elapsed=elapsed, needs=needs,
-                                    definitions=definitions)
-    if (
-        sleeping
-        or len(state.active) >= BALANCE.integer("wishes", "maximum_active")
-        or state.refresh_at is not None and elapsed < state.refresh_at
-    ):
-        return state
-    occupied = {definitions[w.definition_id].area for w in state.active}
-    anchors = dict(state.last_created_by_area)
-    candidates: dict[WishArea, list[tuple[WishDefinition, tuple[str, ...]]]] = {}
-    for definition in definitions.values():
-        area = definition.area
-        if area in occupied:
-            continue
-        targets = _candidate_targets(definition, needs=needs, context=context)
-        if targets:
-            candidates.setdefault(area, []).append((definition, targets))
-    active = list(state.active)
-    next_id = state.next_instance_id
-    while candidates and len(active) < BALANCE.integer("wishes", "maximum_active"):
-        area = rng.choice(tuple(candidates))
-        forms = candidates.pop(area)
-        definition, targets = (rng.choices(
-            forms, weights=[d.selection_weight for d, _targets in forms], k=1,
-        )[0] if area == WishArea.GAMES else rng.choice(forms))
-        if next_id >= 2**63 - 1:
-            raise ValueError("Wish instance allocation exhausted")
-        active.append(ActiveWish(
-            next_id, definition.id, rng.choice(targets), elapsed,
-            elapsed + BALANCE.integer("wishes", "lifetime_seconds"),
-            goal=definition.goal,
-        ))
-        next_id += 1
-        anchors[area] = elapsed
-    return replace(
-        state,
-        next_instance_id=next_id,
-        active=tuple(active),
-        last_created_by_area=tuple((a, anchors[a]) for a in WishArea if a in anchors),
-        refresh_at=(None if next_id != state.next_instance_id
-                           else state.refresh_at),
-    )
 
 
 def wish_restriction(

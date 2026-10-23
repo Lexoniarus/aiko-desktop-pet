@@ -8267,3 +8267,30 @@ The current system document was updated alongside this plan. Generated-wish/day
 acceptance and the final full suite/OOP review remain in their planned later
 steps. Parallel horoscope, UI, character and documentation work is preserved.
 No test windows, mouse control, live-save access, full suite or CI was used.
+
+
+### Delivery slice 4A: one shared wish rotation and pin lifecycle
+
+The awake picker now schedules one refresh every 600 elapsed seconds. New
+unpinned wishes share that deadline; fulfillment/dismissal keeps the deadline
+rather than starting another vacancy timer. Offline and sleep progression can
+expire wishes but cannot generate replacements. The next awake endpoint runs
+one due refresh and schedules the next deadline from that endpoint, with no
+backlog. All-pinned stock still advances this same schedule.
+
+Pins preserve identity, objective and progress across closure/sleep. Unpinning
+keeps the wish until the next refresh, including after its obsolete four-hour
+deadline; the codec accepts that bounded future deadline after a late unpin.
+Existing saved concrete game wishes retain their original objective, progress
+and original expiry. Old non-game wishes join the shared schedule. No care,
+Moodlet, friendship or speech credit is manufactured by these commands.
+
+Selection now lives in `pet/wish_selection.py`; immutable wish values and
+completion/disclosure rules remain in `pet/wishes.py`. `PetState` is still the
+only mutable owner. No forwarding API, UI clock or second wish store was added.
+Area/form weighting and flexible eligibility follow in the next small commit.
+
+Targeted local lifecycle, controls, storage and catalogue checks passed:
+28 tests in 0.060 seconds, slowest 0.029 seconds. Focused Ruff, strict Mypy and
+Pyright passed. Native Tk creation was blocked. No windows, mouse, live-save
+access, full suite or CI was used. Parallel changes are excluded from staging.

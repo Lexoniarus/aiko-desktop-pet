@@ -58,6 +58,7 @@ from .state_values import PetValues, PreparedItemConsumption
 from .status_hints import StatusHint, choose_status_hint
 from .value_rules import clamp_need_value
 from .wish_catalog import WISH_CATALOG
+from .wish_selection import replenish_wishes
 from .wishes import (
     WishArea,
     WishContext,
@@ -69,7 +70,6 @@ from .wishes import (
     fulfill_activity_wish,
     fulfill_food_handover_wish,
     progress_game_wish,
-    replenish_wishes,
     set_wish_pinned,
 )
 

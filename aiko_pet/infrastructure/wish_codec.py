@@ -135,9 +135,11 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
         start = number_value(entry["created_at"], minimum=0, maximum=elapsed,
                              context="wish creation")
         end = number_value(entry["expires_at"], minimum=start,
-                           maximum=start + BALANCE.integer(
+                           maximum=max(start + BALANCE.integer(
                                "wishes", "lifetime_seconds",
-                           ),
+                           ), elapsed + BALANCE.integer(
+                               "wishes", "refresh_interval_seconds",
+                           )),
                            context="wish deadline")
         if end <= start or dict(created).get(definition.area, -1) < start:
             raise ValueError("Missing wish creation anchor or empty lifetime")
