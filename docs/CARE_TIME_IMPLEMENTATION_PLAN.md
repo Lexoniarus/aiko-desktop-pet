@@ -6920,3 +6920,74 @@ stacking and decay, distinct from uncertainty after inconsistent treatment.
 Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, tests, text and documentation changes are preserved. No runtime
 tests, application windows, mouse control, live-save access or CI in this pass.
+
+
+### Proposed longer-term Moodlet: Auf der Hut
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Meaning: "I am cautious because my boundaries have repeatedly
+not been respected." Distinguish it from Verunsichert, which requires a pattern
+of inconsistent pleasant/upsetting treatment. Repeated upsetting interactions
+can qualify Auf der Hut without friendly encounters in between.
+
+#### Qualifying twenty-four-hour period
+
+All of the following must hold within twenty-four real elapsed hours:
+
+| Evidence | Proposed qualification |
+| --- | --- |
+| Repeated upsetting treatment | At least three independent qualified upsetting-interaction or boundary-violation incidents |
+| Distributed incidents | At least four hours between the first and last incident |
+| Actual interaction evidence | Real user actions meeting the already defined negative-experience rules |
+
+Examples include repeated poking that qualifies as an upsetting experience,
+continued petting despite an explicitly communicated boundary, or escalated
+withholding of a requested object. The same kind may recur in separate incidents.
+One continuous incident counts once: escalation levels during a single prolonged
+withholding episode do not become three independent incidents. Nor do repeated
+technical callbacks or speech updates supply new evidence.
+
+Isolated clicks, fair game defeats and ordinary absence do not qualify. Do not
+infer another user's intent or fabricate upsetting interactions during closure.
+Use bounded real semantic evidence through existing Pet/Moodlet owners.
+
+#### Strength, stacking and decay
+
+| Intensity | Qualified buildup | Numeric mood-target contribution |
+| --- | --- | --- |
+| Level 1 | First qualifying twenty-four-hour period | -5 |
+| Level 2 | Another qualifying twenty-four-hour period | -10 |
+| Level 3 | A third qualifying twenty-four-hour period | -15 |
+
+Keep one active episode with at most three levels. Account for each period
+once; further levels require new incidents rather than reuse of old evidence.
+Immediate upsetting-interaction impressions remain active independently.
+Auf der Hut describes the longer-term cautious attitude toward the user.
+
+Emotionally it supports reserved/tense reactions; its precise direction and
+overall-label mapping remain part of the upcoming composition review. Use
+intensity one/two/three, existing numeric caps and timed mood response, and the
+normal continuous friendship balance. Add no extra instant deduction or new
+blanket interaction lock. Specific refusals remain with their interaction rules.
+
+Each stage lasts thirty-six real hours. Without another qualifying pattern,
+lose one level after each thirty-six hours until expiry. A new qualifying
+period raises intensity by one, capped at three, and starts the current stage's
+thirty-six hours. At level three renew only the current thirty-six hours; bank
+no extra duration and do not apply the positive wish-family extension policy.
+Standby and application closure count toward decay.
+
+A friendly action may create a positive impression but does not instantly erase
+this longer-term caution. Positive longer-term episodes, including residual
+Vertrauensvoll, can coexist. Keep the actual qualifying-period cause within
+existing bounded episode evidence, without another permanent interaction log.
+Presentation example: "Auf der Hut - Stufe 2: Ich moechte erst mal ein bisschen
+vorsichtig sein."
+
+Next review all six longer-term families together for overlap, overall-emotion
+composition and combined friendship balance. Their per-family proposals do not
+settle mutual exclusion, compound-state thresholds or the integrated balance.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, tests, text and documentation changes are preserved. No runtime
+tests, application windows, mouse control, live-save access or CI in this pass.
