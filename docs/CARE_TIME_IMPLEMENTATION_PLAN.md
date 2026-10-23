@@ -6017,7 +6017,7 @@ to enumerate hypothetical edge cases.
 | Ten-minute refresh, absence and unpinning | Establish the shared refresh anchor, the single appropriate refresh on wake/return without offline wish generation, and whether an unpinned protected wish stays until the next refresh instead of disappearing on an old deadline. Left pins; right on pinned only unpins; right on unpinned dismisses remain the chosen gestures. |
 | New wish meanings and selection mix | The later variant-weight proposal below defines base weights, a thirty-minute experience window and flexible/rematch goal meanings. Remaining selection work is the priority among simultaneously matching wishes, without duplicating progress/outcomes or choosing retrospectively from a result. |
 | Food-avoidance / variety completion | The later food-wish-disregarded proposal below settles that expressly excluded food causes a negative outcome on recognized personal handover, even if put down; the former positive unwanted-handover rule is superseded. Keep the positive success condition for an alternative/variety objective explicit rather than inferring it from the negative outcome. |
-| Tier budgets during re-escalation and stronger goals | Specify what happens to partly consumed and previously extended lower tiers on renewed ascent. Also resolve two-tier success overflow and its real cause count: one stronger event must not be fabricated into two events solely to fill intensity rows. |
+| Tier budgets during re-escalation and stronger goals | The later ascent-budget proposal below settles the candidate rule: raise remaining tier budgets to at least base duration while preserving longer residuals; choose ascent or capped level-3 renewal, not both; one stronger outcome remains one real cause. This is proposed behavior, not an implemented storage change. |
 | Positive experiences without a wish: scope | Current eight positive families are wish-driven, while most negative families arise independently. Decide whether the present revision retains that scope or includes specific positive everyday experiences. Do not automatically turn every need refill into another positive Moodlet. |
 
 #### Known implementation work, not additional product questions
@@ -6251,3 +6251,65 @@ Food's one-tier timing and negative family decay policies remain separate.
 Documentation-only scope: only this master plan is staged; parallel local work
 is preserved. Markdown whitespace/diff reviewed; no runtime tests, app windows,
 pointer automation, live-save access or CI. No implementation is authorized.
+
+
+### Proposed ascent budgets and two-tier wish outcomes
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Apply this to positive multi-tier wish families only. Food's
+single-tier policy and negative family timing remain separate.
+
+#### Ascent and remaining budgets
+
+On an actual qualifying ascent, replenish each remaining tier up to at least
+its base duration, preserving any longer actual remaining duration:
+
+- Level 1: sixty minutes.
+- Level 2: forty-five minutes.
+- Level 3: forty-five minutes.
+
+For every tier through the newly reached intensity, the proposed rule is
+`new_remaining = min(90 minutes, max(old_remaining, base_duration))`, treating
+a genuinely new or fully spent upper tier as zero before this update. Keep
+longer residuals rather than resetting them down to base; do not reset every
+tier to its ninety-minute ceiling. Previously spent extension time is not
+separately credited again. Passive decay still spends the current tier, then
+uses the actual stored remaining duration of the next lower tier.
+
+Example: active level 2 has fifteen minutes remaining and level 1 has seventy.
+A one-tier success returns the family to level 3 with 45/45/70 minutes remaining
+in order 3/2/1. This rewards renewed activity while preserving the lower tier's
+longer residual, without inventing another event or restoring a full maximum.
+
+#### Stronger outcomes and overflow
+
+| Before a two-tier fulfillment | Proposed result |
+| --- | --- |
+| No active family | Start at level 2: 45 minutes at level 2 plus 60 at level 1 |
+| Level 1 | Ascend to level 3 using the same base-floor / longer-residual rule |
+| Level 2 | Ascend to level 3; discard excess intensity rather than adding another time bonus |
+| Already level 3 | Same renewal as an ordinary fulfillment: add ten minutes per remaining tier, each capped at ninety |
+
+A fulfillment causes either an ascent or renewal at an already reached level 3,
+not both. One-tier outcomes use the same ascent rule for their actual increase.
+There is no double application of an intermediate tier or overflow gift.
+Maximum remaining duration stays 270 minutes across the three tiers.
+
+A two-tier fulfillment is one actual experience and stores one concrete cause.
+Intensity is not a receipt count: keep up to one/two/three available real causes
+at current intensity, without duplicating a stronger event to fill every row.
+This explicitly resolves that earlier strength-versus-cause-count conflict as
+a proposal. No discarded past event is reconstructed.
+
+The prior conditional daily examples use this base-floor ascent sequence;
+recording it does not establish generated-wish availability or a runtime test
+pass. Persist actual tier budgets through the existing aggregate/checkpoint/
+codec owners when implementation is later authorized.
+
+Next discuss the scope and qualified triggers for positive emotional experiences
+without a pre-existing wish. No additional family, spontaneous trigger, strength,
+cooldown or duplicate-reward exception is selected by this amendment.
+
+Documentation-only check: only the master plan is staged; parallel local work
+is preserved. Markdown whitespace/diff reviewed; no runtime tests, app windows,
+mouse control, live-save access or CI.
