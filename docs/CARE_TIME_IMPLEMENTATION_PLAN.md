@@ -7596,3 +7596,79 @@ Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, assets, tests, text and documentation work is preserved. No
 runtime tests, application windows, mouse control, personal-save reads, database
 creation/migration or CI in this pass.
+
+
+### Proposed durable receipt for unidentified personal food handovers
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Add a bounded `food_handover_receipts` record for an actual
+personal transfer into Aiko's custody. Cursor presentation or placement nearby
+does not create this receipt. Known food can complete the same path immediately.
+
+| Proposed field | Meaning |
+| --- | --- |
+| `handover_id` | Stable identity of this actual handover |
+| `object_instance_id` | Exactly the transferred World instance |
+| `handed_over_elapsed_seconds` | Actual custody-transfer time |
+| `wish_context_snapshot` | Food wishes present at handover, with original goals and selection-priority facts |
+| `recognized_food_id` | Empty until actual identification |
+| `recognized_elapsed_seconds` | Actual identification time |
+| `status` | Awaiting identification, evaluated or cancelled |
+| `resolved_wish_instance_id` | Historical identity of the affected original wish, if any |
+| `accounted_wish_ids` | Bounded marker of snapshot wishes already settled elsewhere |
+
+Unknown identity prevents choosing a matching concrete food wish at handover.
+Capture at most the three then-existing food-wish candidates, including original
+target/goal, pin state and required priority facts. After recognition, match
+within this frozen context using the already agreed priority. Wishes created
+later cannot qualify for the old handover. Do not inspect World definition
+truth to grant Aiko knowledge before identification.
+
+#### One-time resolution
+
+1. Confirm the actual transfer and persist its identity/original wish context.
+2. Wait for genuine recognition to supply the food ID and recognition time.
+3. Evaluate matching original candidates, respecting already settled goals and
+   the existing explicit-unwanted-food negative rule.
+4. Apply the qualified desired/alternative-food positive outcome or the
+   expressly unwanted-food negative outcome once, even if the food is put down
+   uneaten after recognition.
+5. Save the receipt status, wish resolution and Moodlet cause coherently.
+
+The original handover time establishes which wish context applies. Recognition
+starts the new Moodlet's lifetime; the preserved cause retains both relevant
+facts. Regular wish rotation in between does not substitute a newer wish.
+Already accounted fulfillment must not be rewarded again: retain/update the
+bounded accounted-wish markers while related handovers remain pending.
+
+Nutrition remains a separate actual-consumption effect. Eating later changes
+satiety/digestion, not the same wish a second time. This extends the existing
+handover/recognition/consumption boundary rather than creating a second food
+interaction engine.
+
+#### Restart, cancellation and retention
+
+An open receipt survives restart. Loading alone grants no identity and replays
+no gift. Allow at most one open receipt per physical instance; a genuinely new
+handover has its own receipt identity, unlike repeated technical callbacks.
+
+If the transfer is actually withdrawn before recognition or the object is
+permanently removed, cancel without a wish Moodlet. Technical recovery placement
+during save/restore is not a user withdrawal. In particular, preserve this
+distinction when adapting the current World codec's safe-on-ground restoration.
+
+Keep evaluated receipts only while the handover/subsequent processing still
+needs their one-time marker. Transfer the relevant immutable facts into the
+Moodlet cause; do not build a permanent handover archive. Pending original-wish
+context must not require the active wish row to remain alive.
+
+Application coordination confirms the physical transfer and recognition through
+existing World/Memory paths. PetState owns wish/Moodlet evaluation and its
+durable values. SQLite persists a coherent result and runs no recognition or
+care logic. Next map the remaining existing persisted fields to the proposed
+tables before finalizing the first schema.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, assets, tests, text and documentation work is preserved. No
+runtime tests, application windows, mouse control, personal-save reads, database
+creation/migration or CI in this pass.
