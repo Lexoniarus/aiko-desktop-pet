@@ -7342,3 +7342,86 @@ added storage/source-organization scope still needs its concrete model review.
 This amendment authorizes documentation only. Parallel runtime, tests, text and
 documentation work is preserved. No runtime tests, application windows, mouse
 control, live-save access, database creation/migration or CI in this pass.
+
+
+### Proposed logical SQLite tables, relationships and owners
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Use one private database per save. This is the logical model
+for discussion, not executed DDL or a completed field-level schema contract.
+Authored dialogue, definitions and balance remain versioned JSON sources.
+
+| Proposed table group | Stored responsibility |
+| --- | --- |
+| `schema_migrations` | Applied structural migrations |
+| `save_state` | Save revision, last UTC checkpoint and the shared elapsed-time axis |
+| `pet_state`, `sleep_state` | Needs, mood, friendship, digestion reserve and current sleep state |
+| `app_settings` | Behavior preferences and persisted window geometry |
+| `world_state`, `world_objects` | Desktop surface, actual object instances, position, custody and lifecycle |
+| `object_memories`, `object_memory_sources` | Subjective knowledge, remembered places and possible associations |
+| `wish_state`, `wish_instances`, `wish_round_receipts` | Refresh schedule, active wishes, original goals, progress and bounded round evidence |
+| `moodlet_state`, `moodlet_episodes`, `moodlet_stage_state`, `moodlet_causes` | Active impressions, stage budgets, consumed relief allowances and concrete causes |
+| `interaction_state`, `food_intake_receipts` | Communicated boundaries, refusal deadlines and bounded repeated-food evidence |
+| `relationship_state`, `relationship_entries`, `need_exposure_buckets` | Contact anchors, existing relationship budgets and deficient-need durations |
+| `care_encounters`, `care_evidence`, `long_term_progress` | Bounded shared encounters, semantic evidence and already evaluated longer-term periods |
+| `adaptive_state`, `adaptive_hour_slots` | Learned rhythm and existing aggregate hour-of-week evidence |
+| `social_receipts`, `social_requests`, `provider_pauses` | Recent-content suppression and durable API request limits |
+
+Before switching storage, include the parallel daily-horoscope persistence
+contract, including daily status and continuation position. The table/field
+details for that feature must follow its actual owning application contract;
+this review does not alter or authorize the parallel implementation.
+
+#### Instance relationships and lifetime boundaries
+
+- A wish instance owns its bounded round receipts.
+- A Moodlet episode owns its stage values and bounded causes. Ending the episode
+  removes those dependent values; the existing one/two/three real-cause limit
+  remains a domain obligation.
+- Object memory may refer to an actually acquired World instance identity.
+  Unknown or merely possible identity remains open; a database join must not
+  grant subjective knowledge from World truth.
+- Each longer-term family has its own progress/processing record using the
+  shared evidence and elapsed axis, rather than an independent care history.
+- A complete persisted session is captured under one save revision.
+
+Use foreign keys for actual local instance relationships and enable their
+enforcement on each database connection. Catalogue IDs in external JSON remain
+validated through typed catalogue contracts; this proposal does not require a
+second editable catalogue database. New families use existing instance tables,
+not new tables/columns for each individual Moodlet or wish.
+
+A cause's original wish identity is historical evidence, not a required live
+foreign key into `wish_instances`. Preserve original target/objective/result
+facts after the active wish retires. Deleting an active wish must not cascade
+into the longer-lived cause. An unresolved food identification after personal
+handover likewise needs a bounded receipt retaining the wish context from that
+handover; exact fields/placement are part of the next detailed model review.
+
+#### Domain ownership and transaction boundary
+
+`PetState` and pure pet policies continue to calculate needs, friendship, wishes
+and Moodlets. `WorldState` owns physical objects; `ObjectMemory` owns acquired
+knowledge; application coordinators own semantic interaction assignment and
+closed-time reconstruction. Existing settings/adaptive/social owners retain
+their respective values. Tables do not become new independently mutable domain
+objects, and one table does not require one new service/repository class.
+
+The SQLite persistence adapter reads/writes a complete coherent snapshot behind
+the existing session/save boundary. Commit related changes in one transaction;
+UI widgets and the HTTP worker do not independently update individual tables.
+Loading values does not run care or offline progression inside SQL.
+
+The logical schema must preserve original goals, progress, stage budgets, relief
+usage and bounded semantic receipts during JSON import. Keep wall-clock restart
+anchors distinct from lived-time deadlines. A new content entry is normally a
+data change; a genuinely new persisted relationship may require a migration.
+
+Next discuss concrete fields, keys, optional values and retention for wish
+instances, Moodlet causes and longer-term evidence. Those field-level choices
+are not selected by recording this table model. Personal databases, source
+JSON and parallel runtime changes are untouched by this documentation pass.
+
+Documentation-only scope: only this master plan is changed and committed here.
+No runtime tests, application windows, mouse control, live-save access, database
+creation/migration or CI in this pass.
