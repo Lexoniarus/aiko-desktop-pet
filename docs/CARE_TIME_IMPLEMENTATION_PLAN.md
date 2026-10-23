@@ -6014,7 +6014,7 @@ to enumerate hypothetical edge cases.
 
 | Relevant decision | Why it still changes implementation |
 | --- | --- |
-| Ten-minute refresh, absence and unpinning | Establish the shared refresh anchor, the single appropriate refresh on wake/return without offline wish generation, and whether an unpinned protected wish stays until the next refresh instead of disappearing on an old deadline. Left pins; right on pinned only unpins; right on unpinned dismisses remain the chosen gestures. |
+| Ten-minute refresh, absence and unpinning | Resolved by the return-refresh rule below: perform one refresh on wake/return if due, without replaying missed rotations; retain pinned wishes and keep an unpinned wish until the next regular refresh rather than applying its old deadline. Left pins; right on pinned only unpins; right on unpinned dismisses remain the chosen gestures. |
 | New wish meanings and selection mix | The later variant-weight proposal below defines base weights, a thirty-minute experience window and flexible/rematch goal meanings. Remaining selection work is the priority among simultaneously matching wishes, without duplicating progress/outcomes or choosing retrospectively from a result. |
 | Food-avoidance / variety completion | The later food-wish-disregarded proposal below settles that expressly excluded food causes a negative outcome on recognized personal handover, even if put down; the former positive unwanted-handover rule is superseded. Keep the positive success condition for an alternative/variety objective explicit rather than inferring it from the negative outcome. |
 | Tier budgets during re-escalation and stronger goals | The later ascent-budget proposal below settles the candidate rule: raise remaining tier budgets to at least base duration while preserving longer residuals; choose ascent or capped level-3 renewal, not both; one stronger outcome remains one real cause. This is proposed behavior, not an implemented storage change. |
@@ -6397,3 +6397,34 @@ from this conditional arithmetic. Preserve integrated acceptance as later work.
 Documentation-only check: only this master plan is staged; concurrent work and
 existing commits are preserved. Markdown whitespace/diff reviewed; no runtime
 tests, application windows, mouse control, live-save access or CI in this pass.
+
+
+### Agreed wish refresh on wake and return
+
+**Planning decision recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Use the shared ten-minute wish refresh schedule. On waking
+or reopening the application, perform one refresh if that schedule is due;
+otherwise retain the current wishes until the next regular refresh. Do not
+replay missed rotations or generate a backlog of offline wishes or events.
+
+At that refresh, retain pinned wishes with their identities, goals and progress,
+replace unpinned wishes and fill available slots back to three. Pin protection
+continues through sleep, standby and application closure. Unpinning returns a
+wish to normal rotation: it remains until the next regular refresh rather than
+being removed immediately because of an obsolete four-hour deadline. Existing
+fulfillment and explicit dismissal rules still apply.
+
+Left-click pins; right-click on a pinned wish only unpins; a further right-click
+on the now unpinned wish dismisses it. Keep scheduling and eligibility in the
+existing pet/domain owners and persistence on the shared elapsed-time axis;
+add no UI timer or separate offline wish engine. Preserve the previously
+promised migration of existing saved game objectives and progress.
+
+This resolves the return/unpin policy in the remaining-decisions register above.
+Next discuss positive completion and relative form weights for food avoidance
+and variety. Recognized handover of explicitly unwanted food already has its
+separate negative outcome; no positive alternative-food rule or food-form
+weight is selected by this amendment.
+
+Documentation-only scope: only this master plan changes. No Python/JSON changes,
+runtime tests, application windows, pointer automation, live-save access or CI.
