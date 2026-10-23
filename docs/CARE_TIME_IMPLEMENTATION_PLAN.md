@@ -1,5 +1,10 @@
 # Care, relationship and real-time implementation plan
 
+> **Latest positive lifetime proposal, 2026-10-23:**
+> [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
+> replaces the earlier uniform 45-minute base for positive multi-tier families.
+> The single-tier food impression remains a separate open discussion.
+>
 > **Latest wish proposal, 2026-10-23:** the
 > [ten-minute rotation and additional objectives](#proposal-ten-minute-wish-rotation-and-additional-objectives-2026-10-23)
 > below are discussion proposals, not implemented behavior. They propose replacing
@@ -5693,6 +5698,10 @@ control, live-save access or CI.
 
 ### Proposed positive Moodlet tiers and renewal times
 
+**Historical timing candidate:** the uniform 45/45/45-minute base below is
+superseded by the later 60/45/45-minute proposal. Retain its progression/renewal
+principles except where that later proposal explicitly changes them.
+
 **Discussion proposal recorded at the owner's request, 2026-10-23.** Positive
 wish impressions should retain levels 1/2/3 and support long-lasting feelings
 from intensive engagement. This replaces the proposed positive multi-tier
@@ -5737,6 +5746,10 @@ recording these durations.
 
 
 ### Illustrative daily comparison for the proposed renewal model
+
+**Historical simplified comparison:** the constant-mood assumption and uniform
+45-minute base below are not the latest coupled need/mood calculation. See the
+later revised after-effect proposal for current discussion figures.
 
 **Independent discussion arithmetic, not runtime acceptance.** A standalone
 worksheet with no application imports used 30-second steps, current continuous
@@ -5823,3 +5836,79 @@ Documentation check: the final diff changes only this Markdown plan and
 `git diff --check` passes. The independent arithmetic above is a design
 worksheet, not a runtime test or implementation of the proposed policy.
 No application windows, pointer automation, live-save access or CI were used.
+
+
+### Revised positive after-effect proposal: 60/45/45 minutes
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; not runtime
+implementation.** Keep existing need decay, care amounts, numeric Moodlet points,
+group/global mood caps and continuous friendship rates/factors. Extend only the
+light positive after-effect, rather than all high-intensity periods.
+
+| Positive multi-tier intensity | Proposed base duration | Existing individual mood contribution |
+| --- | --- | --- |
+| Level 1 | 60 minutes, replacing 45 | +5 |
+| Level 2 | 45 minutes | +10 |
+| Level 3 | 45 minutes | +15 |
+
+Without later fulfillment, level 1 lasts 60 minutes; level 2 lasts 105 minutes
+through 2/1; level 3 lasts 150 minutes through 3/2/1. Ordinary qualifying
+fulfillment still starts/increases intensity. On already active level 3, add
+ten minutes to the remaining duration of each tier, capped at ninety minutes
+per tier. Do not reset all timers to full. Maximum banked remaining duration
+stays 270 minutes, so intensive engagement can sustain positive impressions
+without increasing the existing proposed absence buffer.
+
+An ascent uses the new current tier's base duration and preserves previously
+earned extensions without duplicate credit. Partly consumed tier budgets on
+re-escalation and stronger two-tier outcomes retain their previously recorded
+open details. Actual causes remain bounded by intensity; no duplicate event or
+extra archive is created merely because time is extended.
+
+The single-tier `food_fulfilled` family is explicitly excluded from this timing
+amendment. Its existing packaged two-hour lifetime is unchanged until a separate
+rule is discussed and implementation authorized. This amendment does not decide
+food-wish admission at full satiety, alter fulfillment evidence or create an
+additional wish outcome.
+
+#### Coupled need/mood arithmetic supporting this candidate
+
+The independent worksheet now derives numeric mood from actual care, hunger/
+digestion, fun diminishing returns, social/affection decay and energy rather
+than holding mood at 70. Use the same 07:00/13:00/19:00/22:30 phases, eight-hour
+23:00–07:00 sleep, light-office +5% awake hunger and no hardware energy surcharge.
+Begin from a cyclic adequately rested day with 100 morning energy. Conditional
+wish successes remain supplied, not proven by random selection or native UI.
+
+Both examples eat Onigiri, Sandwich plus apple, Sandwich, then Dorayaki, and
+receive four welcome petting actions. Average care includes eight social
+admissions, eight RPS rounds and twelve wish successes. Intensive care includes
+twenty social admissions, thirty-two RPS rounds and thirty-six wish successes,
+plus three accepted energy drinks within the existing phases. All modeled care
+is accepted; minima stay above neglect thresholds. The food exception is not
+used as a wish outcome, so its still-open lifetime does not affect this comparison.
+
+| Candidate / conditional schedule | Result |
+| --- | --- |
+| Uniform 45-minute base, average repeating day | About 66.5–68.0 friendship, level 7 |
+| Revised 60/45/45 base, average starting at 70 | Next morning about 69.98 |
+| Revised 60/45/45 base, average repeating day | About 69.9–71.7, levels 7–8 |
+| Revised 60/45/45 base, average starting at 90 | Next morning about 84.27; ordinary care cannot maintain level 10 |
+| Revised 60/45/45 base, intensive starting at 90 | Next morning about 90.84; repeating day about 96–100 |
+| Alternative uniform 60-minute base, intensive starting at 90 | Next morning about 92.35; larger extra benefit than the targeted level-1 extension |
+
+The selective extension therefore supports ordinary care more narrowly than
+raising all three tier lengths. It does not establish that every generated wish
+mix maintains these ranges. More or fewer actual successes, heavy workload,
+starting exhaustion, failures, negative impressions and unresolved admission
+rules can change the outcome. Retain integrated runtime acceptance as later
+work; this worksheet is not a test pass or authorization to change balance.
+
+Next discuss the single-tier food impression's base duration, renewal amount
+and cap, keeping wanting, actual completion, nutrition and emotional outcome
+separate. No food renewal numbers are selected by this amendment.
+
+Documentation-only scope: only this master plan is staged for this change;
+parallel local runtime, catalogue, test and other documentation edits are
+preserved. Markdown whitespace/diff reviewed; no runtime tests, application
+windows, mouse control, live-save access or CI in this pass.
