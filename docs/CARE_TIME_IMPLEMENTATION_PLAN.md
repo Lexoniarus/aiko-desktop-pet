@@ -6843,3 +6843,80 @@ clear distinction from the existing need-based loneliness after-effect.
 Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, tests, text and documentation changes are preserved. No runtime
 tests, application windows, mouse control, live-save access or CI in this pass.
+
+
+### Proposed longer-term Moodlet: Uebersehen
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Meaning: "I miss our shared moments." Represent longer-term
+lack of personal attention, even when available objects maintain physical care.
+Distinguish this from the existing loneliness after-effect, which qualifies
+through prolonged unmet needs. Neither full needs nor poor needs alone decides
+this personal-contact pattern.
+
+#### Qualifying twenty-four-hour period
+
+Both conditions must hold within twenty-four real elapsed hours:
+
+| Evidence | Proposed qualification |
+| --- | --- |
+| Little personal attention | At most one shared encounter in the entire period |
+| Long contact gap | At least eight hours without such an encounter while Aiko is awake |
+
+A shared encounter can include a full conversation/entertainment sequence,
+actual shared play with at least two rounds, welcome petting or a positively
+received personal food handover. Several actions within one care visit remain
+one encounter. Opening menus, placing food on the desktop or autonomous care
+does not replace personal contact.
+
+Sleep pauses accumulation of the eight-hour awake contact gap; it does not
+erase already accumulated awake time. Four contactless awake hours before
+sleep and four afterward therefore reach eight. An actual qualifying encounter
+ends the gap. Standby/application closure may contain contactless awake time
+according to Aiko's calculated sleep rhythm; do not invent personal encounters
+or assume the owner was actively ignoring her.
+
+Normal overnight absence alone does not qualify. Personal encounters in both
+the morning and evening also fail the "at most one encounter" condition, so
+this family does not automatically penalize that care pattern. This sleep rule
+belongs to this Moodlet's qualification; it does not silently change existing
+friendship absence rules.
+
+#### Strength, stacking and decay
+
+| Intensity | Qualified buildup | Numeric mood-target contribution |
+| --- | --- | --- |
+| Level 1 | First qualifying twenty-four-hour period | -5 |
+| Level 2 | Another qualifying twenty-four-hour period | -10 |
+| Level 3 | A third qualifying twenty-four-hour period | -15 |
+
+Keep one active episode with at most three levels. Each period counts once;
+already accounted contact gaps cannot create more levels through repeated
+window evaluation. Use actual qualifying-period evidence and the existing
+bounded Pet/Moodlet persistence owners, not a second neglect/history store.
+
+Emotionally it supports loneliness and feeling downcast; its precise direction
+and overall-label mapping remain part of the later composition review. Use
+intensity one/two/three, existing numeric caps and timed mood response, and
+normal continuous friendship effects. Add no extra instant friendship deduction.
+
+Each stage lasts thirty real hours. Without another qualifying period, lose
+one level after each thirty hours until expiry. A new qualifying period raises
+intensity by one, capped at three, and starts the current stage's thirty hours.
+At level three renew only the current thirty hours; bank no additional duration.
+All real time, including sleep, standby and application closure, counts toward
+decay. This differs deliberately from pausing the awake contact-gap accumulator.
+
+A return with actual shared activity ends the contact gap and may create
+positive impressions; it does not instantly erase the longer-term feeling.
+Presentation example: "Uebersehen - Stufe 2: Ein bisschen gemeinsame Zeit mit
+dir waere schoen." Describe the feeling without asserting deliberate rejection.
+
+Review its additional effect jointly with existing loneliness and friendship
+absence losses before accepting balance. The earlier daily worksheets do not
+include this family. Next discuss Auf der Hut: qualifying incidents, strength,
+stacking and decay, distinct from uncertainty after inconsistent treatment.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, tests, text and documentation changes are preserved. No runtime
+tests, application windows, mouse control, live-save access or CI in this pass.
