@@ -6520,3 +6520,94 @@ rates remain unchanged unless later evidence warrants a separate decision.
 Documentation-only scope: only this master plan is changed and committed here.
 Parallel documentation work is preserved. No Python/JSON changes, runtime tests,
 application windows, mouse control, live-save access or CI in this pass.
+
+
+### Scope extension: longer-term emotional impressions and overall feelings
+
+The owner subsequently added longer-term psychological impressions derived
+from repeated care/interaction patterns, plus a review of the overall emotional
+labels and their composition rules. The implementation-readiness statement
+above applies to the previously discussed wish/experience changes only; it does
+not settle this additional scope. Define these new impressions before extending
+the delivery plan. They remain Moodlets within the existing Pet aggregate,
+not random awards, another personality score or a second relationship store.
+
+### Proposed longer-term Moodlet: Vertrauensvoll
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Meaning: "I can rely on you." Derive this impression from
+reliable care and respectful personal experiences over time. Friendship level
+or full needs alone do not qualify it, and it does not require a prior wish.
+
+#### Qualifying twenty-four-hour period
+
+All of the following must hold for a qualifying period of twenty-four real
+elapsed hours:
+
+| Evidence | Proposed qualification |
+| --- | --- |
+| Distributed positive contact | At least three positive personal encounters, each separated from the next by at least two hours, with at least eight hours between the first and last |
+| Different shared experiences | At least two interaction kinds across those encounters: a completed conversation/entertainment sequence, actual shared play, welcome petting or a positively received personal food handover |
+| Sufficient care | No individual need spends a total of two hours below twenty-five, or one hour at zero, within the period |
+| Respectful treatment | No confirmed disregard of an explicitly communicated boundary during the period |
+
+Several actions in one encounter are not separate encounters: repeated strokes
+cannot manufacture distributed contact. A food handover counts as positive
+contact only when actually received positively. Use the existing poor-care
+threshold meanings; normal need fluctuations and normal eight-hour sleep are
+compatible with qualification. Available items can support care while absent,
+but application closure does not create fictional personal encounters.
+
+Account for each qualifying period once. The same care day must not increase
+intensity at every recalculation; subsequent increases require another actual
+qualifying twenty-four-hour period. Do not fabricate prior qualifying periods
+when loading a save without the required evidence.
+
+#### Strength, stacking and decay
+
+| Intensity | Qualified buildup | Numeric mood-target contribution |
+| --- | --- | --- |
+| Level 1 | First qualifying twenty-four-hour period | +5 |
+| Level 2 | Another qualifying twenty-four-hour period | +10 |
+| Level 3 | A third qualifying twenty-four-hour period | +15 |
+
+Keep one active episode with three intensity levels. Use current emotional
+intensity one/two/three in the overall feeling composition; numeric mood still
+follows existing caps and timed response. Active intensity participates in the
+existing continuous friendship balance, without an additional instant bonus.
+Trust does not override current petting refusal, personal boundaries or ordinary
+action admission. Its precise direction/overall-label mapping belongs to the
+upcoming emotional-composition discussion.
+
+Each stage lasts thirty-six real hours. Without a fresh qualifying period,
+level three falls to two after thirty-six hours, then to one after another
+thirty-six hours, then expires after another thirty-six. A new qualified period
+raises intensity by one, capped at three, and starts that current stage's
+thirty-six hours. At level three it renews only the current thirty-six hours.
+Do not accumulate additional duration or apply the wish-fulfillment 60/45/45
+ascent/extension policy to this longer-term family.
+
+Elapsed time includes standby and application closure. A nonqualifying care
+period provides no reinforcement; it does not instantly erase existing trust.
+Negative impressions can coexist and outweigh it in the present overall mood.
+The proposed three-day buildup can therefore have a multi-day after-effect.
+
+Presentation example: "Vertrauensvoll - Stufe 2: Bei dir fuehle ich mich sicher."
+Retain the actual qualifying-period cause through the existing bounded Moodlet
+evidence owners, without exposing the care formula in player-facing wording or
+adding a permanent event archive. Distinguish it from Geborgen: that existing
+family describes an immediate welcome-closeness experience; Vertrauensvoll
+describes longer-term reliability.
+
+Before accepting balance, recalculate the average/intensive day examples with
+this additional long-lived positive contribution. The earlier day worksheets
+do not include it and do not establish that its strength preserves the desired
+level-seven/eight versus level-ten distinction.
+
+Next discuss Wertgeschaetzt: qualifying experiences, strength, stacking and
+decay. Its concrete thresholds and the other longer-term families/overall-label
+extensions remain discussion work, not approved catalogue/runtime additions.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, tests, text and documentation changes are preserved. No runtime
+tests, application windows, mouse control, live-save access or CI in this pass.
