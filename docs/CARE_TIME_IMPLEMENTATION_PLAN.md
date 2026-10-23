@@ -6187,8 +6187,8 @@ proposal does not add provider calls or authored API fallback content.
 Keep exact semantic duplicate exclusion and the proposed normal stock of three
 with multiple wishes per area. A single completed activity must not silently
 complete both flexible and concrete wishes and grant duplicate Moodlet outcomes.
-The priority/assignment among simultaneously matching wishes is the next product
-decision; no priority ordering is selected by these weight tables.
+The weight tables themselves do not select a priority. The later matching-wish
+priority proposal below records the subsequent decision separately.
 
 The coupled daily balance examples still use supplied actual successes. These
 weights alone do not prove the frequency or mix of generated, pursued and
@@ -6199,3 +6199,55 @@ are selected here.
 Documentation-only scope: only the master plan is staged; parallel local work
 is preserved. Markdown whitespace/diff reviewed; no runtime tests, app windows,
 mouse control, live-save access or CI.
+
+
+### Proposed priority among matching wishes
+
+**Discussion proposal recorded at the owner's request, 2026-10-23.** Resolve
+simultaneously matching positive goals deterministically rather than randomly.
+This governs assigning actual activity evidence, not the independent weighted
+creation of wishes or the known treatment of expressly unwanted food.
+
+| Priority | Proposed selection rule |
+| --- | --- |
+| 1 | A matching pinned wish takes precedence |
+| 2 | Prefer a more specific matching objective/target over a flexible alternative |
+| 3 | Among otherwise equal candidates, prefer an already-started objective with actual saved progress |
+| 4 | Otherwise prefer the oldest matching wish; retain stable identity order for equal creation timestamps |
+
+Examples: an unpinned concrete Blackjack play wish outranks unpinned free-choice
+play. Pinning the free-choice goal gives it precedence instead. Among equally
+specific goals, actual existing progress wins over an unstarted alternative.
+Pinning changes pursuit priority as well as protection; it does not create an
+extra completion or physical care effect.
+
+Assign the wish before the outcome: at round start, social-sequence admission,
+or the actual handover/petting boundary. Preserve that assignment through the
+existing action/round identity. A lost round cannot be retrospectively reassigned
+to an easier play objective. For an unidentified personally handed-over item,
+retain the handover's original wish context until recognition permits a matching
+judgment; do not infer unknown food identity or choose from later-created wishes.
+
+One actual event advances at most one wish and fulfills at most one wish. Other
+matching goals remain active without receiving that same progress or completion.
+A multi-round goal therefore receives only its assigned real round receipts,
+not duplicated progress from another wish's attempt. Actual accepted care and
+its need changes remain independent from this one-wish emotional accounting.
+If the selected attempt does not meet its goal, apply that goal's own previously
+agreed progress/failure rule, without fallback completion of another wish.
+
+Expressly unwanted personal food remains a separate negative treatment event.
+Do not suppress Essenswunsch missachtet merely because a flexible positive goal
+could also match the activity. Preserve its explicit avoidance snapshot and
+failed-wish handling; priority is not a way to convert an unwanted handover into
+a positive reward. No positive or negative technical receipt may be applied twice.
+
+Next discuss positive Moodlet remaining times on renewed ascent and on stronger
+two-tier outcomes. The 60/45/45 base, ten-minute-per-tier level-3 extension and
+ninety-minute-per-tier cap are already the proposed baseline; treatment of
+partially consumed/extended lower tiers and ascent overflow remains open.
+Food's one-tier timing and negative family decay policies remain separate.
+
+Documentation-only scope: only this master plan is staged; parallel local work
+is preserved. Markdown whitespace/diff reviewed; no runtime tests, app windows,
+pointer automation, live-save access or CI. No implementation is authorized.
