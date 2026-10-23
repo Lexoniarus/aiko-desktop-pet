@@ -21,36 +21,20 @@ from ..pet.wishes import (
     WishId,
     WishObjective,
     WishState,
+    WishTargetMode,
     legacy_wish_goal,
 )
-
-
-def decode_wish_goal(raw: Any, key: WishId) -> WishGoal:
-    """Validate an explicit original goal, including preserved pre-migration forms."""
-    row = object_fields(raw, ("objective", "required_count"), context="wish goal")
-    goal = WishGoal(
-        enum_value(row["objective"], WishObjective, context="wish goal objective"),
-        integer_value(row["required_count"], minimum=0, maximum=100,
-                      context="wish goal count"),
-    )
-    allowed: tuple[WishGoal, ...] = (WISH_CATALOG.definitions[key].goal,)
-    try:
-        allowed += (legacy_wish_goal(key),)
-    except ValueError:
-        # Newly introduced forms have no historical goal to fabricate.
-        pass
-    if (goal.objective not in {g.objective for g in allowed}
-            or (WISH_CATALOG.definitions[key].area == WishArea.GAMES)
-            != (goal.required_count > 0)
-            or key in (WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS,
-                       WishId.REMATCH_GAME, WishId.COMEBACK_GAME)
-            and goal.required_count != 1):
-        raise ValueError("Incompatible saved wish objective/count")
-    return goal
-
-
-def encode_wish_goal(goal: WishGoal) -> dict[str, Any]:
-    return dict(objective=goal.objective.value, required_count=goal.required_count)
+from .food_handover_codec import decode_food_handovers, encode_food_handovers
+from .wish_snapshot_codec import (
+    decode_wish_goal as decode_wish_goal,
+)
+from .wish_snapshot_codec import (
+    decode_wish_target,
+    encode_wish_target,
+)
+from .wish_snapshot_codec import (
+    encode_wish_goal as encode_wish_goal,
+)
 
 
 def _token(raw: Any) -> str:
@@ -96,7 +80,7 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
     row = object_fields(raw, (
         "version", "next_instance_id", "active", "last_created_by_area",
         "last_expressed_at",
-    ), optional=("refill_not_before",), context="wishes")
+    ), optional=("refill_not_before", "refresh_at", "food_handovers"), context="wishes")
     if type(row["version"]) is not int or row["version"] != 1:
         raise ValueError("Unsupported saved wish version")
     next_id = integer_value(row["next_instance_id"], minimum=1,
@@ -120,12 +104,12 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
         raise ValueError("Unbounded active wishes")
     active: list[ActiveWish] = []
     instances: set[int] = set()
-    areas: set[WishArea] = set()
+    goals: set[tuple[WishId, WishGoal, WishTargetMode, str]] = set()
     for value in rows:
         entry = object_fields(value, (
             "instance_id", "definition_id", "target_id", "created_at", "expires_at",
             "expressed_at", "game",
-        ), optional=("goal", "pinned"), context="active wish")
+        ), optional=("goal", "pinned", "target"), context="active wish")
         instance = integer_value(entry["instance_id"], minimum=1,
                                  maximum=next_id - 1, context="wish instance")
         key = enum_value(entry["definition_id"], WishId, context="wish objective")
@@ -137,11 +121,17 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
         pinned = entry.get("pinned", False)
         if type(pinned) is not bool:
             raise ValueError("Wish pin must be a boolean")
-        if instance in instances or definition.area in areas:
-            raise ValueError("Duplicate wish instance or area")
-        target = entry["target_id"]
-        if not isinstance(target, str) or target not in definition.targets:
+        reference = entry["target_id"]
+        target = (None if entry.get("target") is None
+                  else decode_wish_target(entry["target"], key))
+        if (not isinstance(reference, str)
+                or target is None and reference not in definition.targets
+                or target is not None and reference != (target.target_id or "")):
             raise ValueError("Unknown or incompatible wish target")
+        signature = (key, goal, target.mode if target else WishTargetMode.EXACT,
+                     reference)
+        if instance in instances or signature in goals:
+            raise ValueError("Duplicate wish instance or goal")
         start = number_value(entry["created_at"], minimum=0, maximum=elapsed,
                              context="wish creation")
         end = number_value(entry["expires_at"], minimum=start,
@@ -149,7 +139,7 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
                                "wishes", "lifetime_seconds",
                            ),
                            context="wish deadline")
-        if end <= start or dict(created).get(definition.area) != start:
+        if end <= start or dict(created).get(definition.area, -1) < start:
             raise ValueError("Missing wish creation anchor or empty lifetime")
         spoken = (
             None if entry["expressed_at"] is None else number_value(
@@ -161,11 +151,11 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
         if spoken is not None and (expressed is None or expressed < spoken):
             raise ValueError("Missing last wish expression evidence")
         active.append(ActiveWish(
-            instance, key, target, start, end, spoken,
-            _game_progress(entry["game"], key, goal), goal, pinned,
+            instance, key, reference, start, end, spoken,
+            _game_progress(entry["game"], key, goal), goal, pinned, target,
         ))
         instances.add(instance)
-        areas.add(definition.area)
+        goals.add(signature)
     refill = (None if row.get("refill_not_before") is None else number_value(
         row["refill_not_before"], minimum=0,
         maximum=elapsed + BALANCE.integer("wishes", "refill_delay_seconds"),
@@ -173,7 +163,18 @@ def decode_wishes(raw: Any, elapsed: float) -> WishState:
     ))
     if refill is not None and not created:
         raise ValueError("Wish refill lacks creation evidence")
-    return WishState(next_id, tuple(active), created, expressed, refill)
+    refresh = None if row.get("refresh_at") is None else number_value(
+        row["refresh_at"], minimum=0,
+        maximum=elapsed + max(BALANCE.integer("wishes", "refresh_interval_seconds"),
+                              BALANCE.integer("wishes", "refill_delay_seconds")),
+        context="shared wish refresh deadline",
+    )
+    if refill is not None and refresh is not None and refill != refresh:
+        raise ValueError("Conflicting legacy and shared wish refresh deadlines")
+    if refresh is None:
+        refresh = refill
+    handovers = decode_food_handovers(row.get("food_handovers", []), elapsed, next_id)
+    return WishState(next_id, tuple(active), created, expressed, refresh, handovers)
 
 
 def valid_wishes(raw: Any, elapsed: float) -> bool:
@@ -189,12 +190,14 @@ def encode_wishes(state: WishState) -> dict[str, Any]:
         version=1, next_instance_id=state.next_instance_id,
         last_created_by_area={a.value: at for a, at in state.last_created_by_area},
         last_expressed_at=state.last_expressed_at,
-        refill_not_before=state.refill_not_before,
+        refresh_at=state.refresh_at,
+        food_handovers=encode_food_handovers(state.food_handovers),
         active=[dict(
             instance_id=w.instance_id, definition_id=w.definition_id.value,
             target_id=w.target_id, created_at=w.created_at, expires_at=w.expires_at,
             expressed_at=w.expressed_at,
             goal=encode_wish_goal(w.goal_snapshot), pinned=w.pinned,
+            target=None if w.target is None else encode_wish_target(w.target),
             game=dict(round_ids=list(w.game.round_ids), wins=w.game.wins,
                       losses=w.game.losses, session_id=w.game.session_id,
                       completed_rounds=w.game.completed_rounds),

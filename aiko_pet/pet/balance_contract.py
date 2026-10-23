@@ -12,6 +12,7 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "maximum_per_area": "integer",
         "lifetime_seconds": "integer",
         "refill_delay_seconds": "integer",
+        "refresh_interval_seconds": "integer",
         "disclosure_interval_seconds": "integer",
         "disclosure_friendship_level": "integer",
         "disclosure_mood_threshold": "number",
@@ -19,6 +20,7 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
         "relevance_need_threshold": "number",
     },
     "moodlets": {
+        "positive_stage_cap_seconds": "integer",
         "positive_cap_points": "number",
         "negative_cap_points": "number",
         "game_wish_cap_points": "number",

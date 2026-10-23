@@ -260,7 +260,6 @@ class WishState:
     active: tuple[ActiveWish, ...] = ()
     last_created_by_area: tuple[tuple[WishArea, float], ...] = ()
     last_expressed_at: float | None = None
-    refill_not_before: float | None = None
     refresh_at: float | None = None
     food_handovers: tuple[FoodHandoverReceipt, ...] = ()
 
@@ -363,7 +362,7 @@ def _retire_wish(
     return WishResolution(replace(
         state, active=tuple(w for w in state.active
                             if w.instance_id != wish.instance_id),
-        refill_not_before=_refill_deadline(state, elapsed),
+        refresh_at=_refresh_deadline(state, elapsed),
     ), fulfilled, cause)
 
 
@@ -392,9 +391,9 @@ def _game_result(
     return progress.completed_rounds >= goal.required_count, success, result
 
 
-def _refill_deadline(state: WishState, elapsed: float) -> float:
+def _refresh_deadline(state: WishState, elapsed: float) -> float:
     """One vacancy starts a pause; later retirements cannot postpone it."""
-    return (state.refill_not_before if state.refill_not_before is not None else
+    return (state.refresh_at if state.refresh_at is not None else
             elapsed + BALANCE.integer("wishes", "refill_delay_seconds"))
 
 
@@ -454,7 +453,7 @@ def expire_wishes(state: WishState, *, elapsed: float) -> WishState:
     first_expiry = min(w.expires_at for w in state.active
                        if not w.pinned and elapsed >= w.expires_at)
     return replace(state, active=active,
-                   refill_not_before=_refill_deadline(state, first_expiry))
+                   refresh_at=_refresh_deadline(state, first_expiry))
 
 
 def set_wish_pinned(
@@ -500,7 +499,7 @@ def retire_irrelevant_wishes(
         and needs.affection >= threshold
     ))
     return state if active == state.active else replace(
-        state, active=active, refill_not_before=_refill_deadline(state, elapsed),
+        state, active=active, refresh_at=_refresh_deadline(state, elapsed),
     )
 
 
@@ -548,7 +547,7 @@ def replenish_wishes(
     if (
         sleeping
         or len(state.active) >= BALANCE.integer("wishes", "maximum_active")
-        or state.refill_not_before is not None and elapsed < state.refill_not_before
+        or state.refresh_at is not None and elapsed < state.refresh_at
     ):
         return state
     occupied = {definitions[w.definition_id].area for w in state.active}
@@ -583,8 +582,8 @@ def replenish_wishes(
         next_instance_id=next_id,
         active=tuple(active),
         last_created_by_area=tuple((a, anchors[a]) for a in WishArea if a in anchors),
-        refill_not_before=(None if next_id != state.next_instance_id
-                           else state.refill_not_before),
+        refresh_at=(None if next_id != state.next_instance_id
+                           else state.refresh_at),
     )
 
 

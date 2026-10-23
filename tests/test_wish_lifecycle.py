@@ -96,11 +96,11 @@ class WishLifecycleTests(unittest.TestCase):
         self.assertEqual(pet.capture_checkpoint(), checkpoint)
         pet.dismiss_wish(first)
         self.assertNotIn(first, [w.instance_id for w in pet.wishes.active])
-        self.assertEqual(pet.wishes.refill_not_before, 820)
+        self.assertEqual(pet.wishes.refresh_at, 820)
         self.assertEqual(replace(pet.capture_checkpoint(), wishes=state), before)
         pet.restore_checkpoint(replace(pet.capture_checkpoint(), lived_seconds=200))
         pet.dismiss_wish(second)
-        self.assertEqual(pet.wishes.refill_not_before, 820)
+        self.assertEqual(pet.wishes.refresh_at, 820)
         self.assertEqual(pet.wishes.next_instance_id, state.next_instance_id)
         checkpoint = pet.capture_checkpoint()
         pet.dismiss_wish(first)  # A stale right-click cannot affect a replacement.
@@ -120,14 +120,14 @@ class WishLifecycleTests(unittest.TestCase):
                     self.assertFalse(expire_wishes(pet.wishes, elapsed=14400).active)
                 else:
                     self.assertFalse(pet.wishes.active)
-                    self.assertEqual(pet.wishes.refill_not_before, elapsed + 720)
+                    self.assertEqual(pet.wishes.refresh_at, elapsed + 720)
         pinned = ActiveWish(1, WishId.FOOD, "apple", 0, 14400, pinned=True)
         later = ActiveWish(2, WishId.CHAT, "chat", 3600, 18000)
         expired = expire_wishes(WishState(
             3, (pinned, later), ((WishArea.FOOD, 0), (WishArea.SOCIAL, 3600)),
         ), elapsed=20000)
         self.assertEqual(expired.active, (pinned,))
-        self.assertEqual(expired.refill_not_before, 18720)
+        self.assertEqual(expired.refresh_at, 18720)
 
     def test_expired_unpinned_goal_cannot_be_revived_by_a_pin_receipt(self):
         wish = ActiveWish(1, WishId.FOOD, "apple", 0, 14400)
@@ -136,7 +136,7 @@ class WishLifecycleTests(unittest.TestCase):
         ))
         pet.set_wish_pinned(1, True)
         self.assertFalse(pet.wishes.active)
-        self.assertEqual(pet.wishes.refill_not_before, 15120)
+        self.assertEqual(pet.wishes.refresh_at, 15120)
 
     def test_pinned_activity_stays_eligible_past_deadline_without_forcing_care(self):
         for key, target, area, action, need in (
@@ -163,7 +163,7 @@ class WishLifecycleTests(unittest.TestCase):
                 pet.restore_checkpoint(replace(before, **{need: 10}))
                 pet.interact(action, now=1800000000, food_id=food)
                 self.assertNotIn(wish, pet.wishes.active)
-                self.assertEqual(pet.wishes.refill_not_before, 20720)
+                self.assertEqual(pet.wishes.refresh_at, 20720)
                 self.assertEqual(pet.moodlets.active[0].definition_id,
                                  DEFINITIONS[key].fulfillment_moodlet)
 
@@ -212,10 +212,10 @@ class WishLifecycleTests(unittest.TestCase):
         self.assertEqual(unchanged, wishes)
         first = create(wishes, 100, needs=replace(NEEDS, satiety=90))
         self.assertEqual({w.instance_id for w in first.active}, {2, 3})
-        self.assertEqual(first.refill_not_before, 820)
+        self.assertEqual(first.refresh_at, 820)
         later = create(first, 200, needs=replace(NEEDS, satiety=100, affection=90))
         self.assertEqual({w.instance_id for w in later.active}, {3})
-        self.assertEqual(later.refill_not_before, 820)
+        self.assertEqual(later.refresh_at, 820)
         pinned = replace(wishes, active=tuple(replace(w, pinned=True)
                                               for w in wishes.active))
         self.assertEqual(retire_irrelevant_wishes(
@@ -230,7 +230,7 @@ class WishLifecycleTests(unittest.TestCase):
         before = pet.capture_checkpoint()
         pet.evaluate_wishes(WishContext(), rng=random.Random(7))
         self.assertEqual(pet.wishes.active, ())
-        self.assertEqual(pet.wishes.refill_not_before, 820)
+        self.assertEqual(pet.wishes.refresh_at, 820)
         self.assertEqual(replace(pet.capture_checkpoint(), wishes=before.wishes),
                          before)
         pet = PetState(satiety=81, lived_seconds=100, wishes=wishes)
@@ -272,7 +272,7 @@ class WishLifecycleTests(unittest.TestCase):
         self.assertEqual(waiting, state)
         refilled = create(waiting, 900, definitions=definitions)
         self.assertEqual(refilled.active[0].created_at, 900)
-        self.assertIsNone(refilled.refill_not_before)
+        self.assertIsNone(refilled.refresh_at)
 
     def test_closed_and_standby_expiry_share_time_with_or_without_world(self):
         wall = 1800000000.0
@@ -354,7 +354,7 @@ class WishLifecycleTests(unittest.TestCase):
             state, WishArea.FOOD, state.active[0].target_id, elapsed=1000,
             definitions=definitions,
         ).state
-        self.assertEqual(state.refill_not_before, 1720)
+        self.assertEqual(state.refresh_at, 1720)
         pet = PetState(lived_seconds=1000, wishes=state)
         loaded = decode_pet_state(encode_pet_state(pet), now=1800000000)
         self.assertEqual(loaded.wishes, state)
@@ -362,7 +362,7 @@ class WishLifecycleTests(unittest.TestCase):
         later = create(loaded.wishes, 1720, definitions=definitions)
         self.assertEqual(later.active[0].instance_id, 2)
         self.assertEqual(later.active[0].created_at, 1720)
-        self.assertIsNone(later.refill_not_before)
+        self.assertIsNone(later.refresh_at)
 
     def test_multiple_vacancies_share_one_pause_and_fresh_identities(self):
         state = create()
@@ -371,7 +371,7 @@ class WishLifecycleTests(unittest.TestCase):
                 state, DEFINITIONS[wish.definition_id].area, wish.target_id,
                 elapsed=elapsed, definitions=DEFINITIONS,
             ).state
-        self.assertEqual(state.refill_not_before, 820)
+        self.assertEqual(state.refresh_at, 820)
         self.assertEqual(create(state, 819), state)
         refilled = create(state, 820)
         self.assertEqual(len(refilled.active), 3)
@@ -381,7 +381,7 @@ class WishLifecycleTests(unittest.TestCase):
     def test_expiry_uses_original_deadline_and_return_fills_only_current_stock(self):
         state = create()
         expired = expire_wishes(state, elapsed=14400)
-        self.assertEqual(expired.refill_not_before, 15120)
+        self.assertEqual(expired.refresh_at, 15120)
         self.assertEqual(create(expired, 15119), expired)
         returned = create(expired, 72000)
         self.assertEqual(len(returned.active), 3)

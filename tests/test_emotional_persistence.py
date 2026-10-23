@@ -450,8 +450,8 @@ class WishPersistenceTests(unittest.TestCase):
         self.assertEqual(loaded.next_instance_id, 6)
         self.assertEqual(loaded.last_created_at, 300)
         legacy = encode_wishes(wish_state())
-        legacy.pop("refill_not_before")
-        self.assertIsNone(decode_wishes(legacy, ELAPSED).refill_not_before)
+        legacy.pop("refresh_at")
+        self.assertIsNone(decode_wishes(legacy, ELAPSED).refresh_at)
         self.assertEqual(loaded.last_expressed_at, 900)
         self.assertEqual(loaded.active, ())
         raw = encode_wishes(retired)
@@ -489,7 +489,7 @@ class WishPersistenceTests(unittest.TestCase):
         for field, bad in (
             ("instance_id", True), ("definition_id", "sleep"),
             ("target_id", "energy_drink"), ("target_id", {}),
-            ("created_at", -1), ("created_at", 1001), ("created_at", 99),
+            ("created_at", -1), ("created_at", 1001), ("created_at", 101),
             ("expires_at", 14501), ("expires_at", 100), ("expires_at", float("inf")),
             ("expressed_at", 99), ("expressed_at", 1001), ("unexpected", "field"),
         ):
@@ -506,7 +506,7 @@ class WishPersistenceTests(unittest.TestCase):
             raw["active"][1]["game"][field] = bad
             with self.subTest(field=field), self.assertRaises(ValueError):
                 decode_wishes(raw, ELAPSED)
-        for duplicate in ("instance", "area"):
+        for duplicate in ("instance", "goal"):
             raw = copy.deepcopy(original)
             if duplicate == "instance":
                 raw["active"][1]["instance_id"] = 1

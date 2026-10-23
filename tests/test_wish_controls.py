@@ -94,7 +94,7 @@ class WishControlTests(unittest.TestCase):
             label.bindings["<Button-3>"](Mock())
             panel.refresh(views())
             self.assertFalse(pet.wishes.active)
-            self.assertEqual(pet.wishes.refill_not_before, 720)
+            self.assertEqual(pet.wishes.refresh_at, 720)
             self.assertEqual(pet.moodlets, initial_moodlets)
             self.assertEqual(pet.friendship_history, relationship)
             self.assertEqual(len(saved), 3)
