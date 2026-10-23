@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Literal, Mapping
 from .balance import BALANCE
 from .care_evidence import CareEvidenceState, CarePeriodSummary
 from .interaction_events import InteractionMemory
-from .moodlet_patterns import LongTermPatternParameters
+from .moodlet_patterns import LongTermMoodletPolicy, LongTermPatternParameters
 from .moodlet_timing import age_moodlet, initial_stage_seconds, reinforced_stage_seconds
 from .need_exposure import ExposureMark
 from .needs import NeedLevels
@@ -230,6 +230,12 @@ MoodletParameters = (
 
 @dataclass(frozen=True, slots=True)
 class MoodletDefinition:
+    """Family metadata and fixed-stage duration, including the v1 wish fallback.
+
+    New positive wish stages use the shared balance profile; the old fixed
+    duration remains necessary to read already saved implicit lower stages.
+    """
+
     id: MoodletId
     polarity: MoodletPolarity
     direction: EmotionalDirection
@@ -348,14 +354,21 @@ class MoodletContributions:
 
 def calculate_moodlet_contributions(
     state: MoodletState, *, definitions: Mapping[MoodletId, MoodletDefinition],
+    long_term_policy: LongTermMoodletPolicy,
 ) -> MoodletContributions:
     if not state.active:
         return MoodletContributions()
     groups: dict[MoodletGroup, float] = {}
+    long_positive = long_negative = 0.0
     for episode in state.active:
         definition = definitions[episode.definition_id]
+        points = definition.level_points[episode.level - 1]
+        if definition.group == MoodletGroup.LONG_TERM:
+            long_positive += max(0, points)
+            long_negative += min(0, points)
+            continue
         groups[definition.group] = (groups.get(definition.group, 0)
-                                    + definition.level_points[episode.level - 1])
+                                    + points)
     for group, field in (
         (MoodletGroup.GAME_WISH, "game_wish_cap_points"),
         (MoodletGroup.SOCIAL_WISH, "social_wish_cap_points"),
@@ -366,9 +379,11 @@ def calculate_moodlet_contributions(
         groups[group] = max(-limit, min(limit, value))
     return MoodletContributions(
         min(BALANCE.number("moodlets", "positive_cap_points"),
-            sum(max(0, value) for value in groups.values())),
+            sum(max(0, value) for value in groups.values())
+            + min(long_term_policy.positive_mood_cap_points, long_positive)),
         max(-BALANCE.number("moodlets", "negative_cap_points"),
-            sum(min(0, value) for value in groups.values())),
+            sum(min(0, value) for value in groups.values())
+            + max(-long_term_policy.negative_mood_cap_points, long_negative)),
     )
 
 

@@ -51,7 +51,10 @@ class MoodletMoodTests(unittest.TestCase):
                                        d.decay_stage_seconds)
                          for i, d in enumerate(DEFINITIONS.values(), 1))
         state = MoodletState(0, len(episodes) + 1, episodes)
-        contributions = calculate_moodlet_contributions(state, definitions=DEFINITIONS)
+        contributions = calculate_moodlet_contributions(
+            state, definitions=DEFINITIONS,
+            long_term_policy=MOODLET_CATALOG.long_term_policy,
+        )
         self.assertEqual(contributions, MoodletContributions(20, -30))
         self.assertEqual(
             tuple(e.definition_id for e in state.active), tuple(DEFINITIONS),
@@ -64,6 +67,7 @@ class MoodletMoodTests(unittest.TestCase):
                                                 == group))
             self.assertEqual(calculate_moodlet_contributions(
                 subset, definitions=DEFINITIONS,
+                long_term_policy=MOODLET_CATALOG.long_term_policy,
             ), MoodletContributions(*expected))
 
     def test_final_composition_retains_zero_need_ceiling_and_clamps_to_zero(self):
@@ -136,26 +140,45 @@ class MoodletMoodTests(unittest.TestCase):
                          pet.moodlets)
 
     def test_closed_and_standby_paths_age_once_with_the_same_unknown_interval(self):
-        original = seeded_pet(MoodletId.POKING, level=3, remaining=1195)
-        with tempfile.TemporaryDirectory() as folder:
-            store = StateStore(Path(folder) / "state.json")
-            settings = PetSettings(auto_routine=False)
-            store.save(original, settings)
-            closed = PetSessionRestorer(store, wall_time=lambda: WALL + 3600).restore()
-            uptime = [10.0]
-            clock = ActiveSessionClock(lambda: uptime[0])
-            uptime[0] += 3600
-            advance_session_time(original, clock, SessionInputs(
-                WALL + 3600, 0, False, None, False, False, None,
-            ))
-            self.assertEqual(original.capture_checkpoint(),
-                             closed.state.capture_checkpoint())
-            self.assertEqual(original.moodlets.active, ())
-            store.save(closed.state, settings)
-            again = PetSessionRestorer(store, wall_time=lambda: WALL + 3600).restore()
-            self.assertEqual(encode_pet_state(again.state),
-                             encode_pet_state(closed.state))
-            self.assertEqual(again.state.lived_seconds, 3600)
+        for key in (MoodletId.POKING, MoodletId.PRIDE):
+            original = seeded_pet(key, level=3, remaining=1195)
+            if key == MoodletId.PRIDE:
+                original.restore_checkpoint(replace(
+                    original.capture_checkpoint(),
+                    moodlets=replace(original.moodlets, active=(
+                        replace(original.moodlets.active[0],
+                                lower_stage_seconds=(3600, 2700)),
+                    )),
+                ))
+            with tempfile.TemporaryDirectory() as folder:
+                store = StateStore(Path(folder) / "state.json")
+                settings = PetSettings(auto_routine=False)
+                store.save(original, settings)
+                closed = PetSessionRestorer(
+                    store, wall_time=lambda: WALL + 3600,
+                ).restore()
+                uptime = [10.0]
+                clock = ActiveSessionClock(lambda: uptime[0])
+                uptime[0] += 3600
+                advance_session_time(original, clock, SessionInputs(
+                    WALL + 3600, 0, False, None, False, False, None,
+                ))
+                self.assertEqual(original.capture_checkpoint(),
+                                 closed.state.capture_checkpoint())
+                if key == MoodletId.PRIDE:
+                    self.assertEqual(original.moodlets.active[0].level, 2)
+                    self.assertEqual(original.moodlets.active[0].remaining_seconds, 295)
+                    self.assertEqual(original.moodlets.active[0].lower_stage_seconds,
+                                     (3600,))
+                else:
+                    self.assertEqual(original.moodlets.active, ())
+                store.save(closed.state, settings)
+                again = PetSessionRestorer(
+                    store, wall_time=lambda: WALL + 3600,
+                ).restore()
+                self.assertEqual(encode_pet_state(again.state),
+                                 encode_pet_state(closed.state))
+                self.assertEqual(again.state.lived_seconds, 3600)
 
     def test_short_closed_interval_never_continues_observed_withholding(self):
         for with_world in (False, True):

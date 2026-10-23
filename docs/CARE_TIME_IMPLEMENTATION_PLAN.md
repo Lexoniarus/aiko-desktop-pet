@@ -8204,3 +8204,66 @@ Focused Ruff, strict Mypy and Pyright passed for the affected production files.
 Earlier isolated commits passed their own focused checks. Parallel horoscope,
 character, UI and documentation edits remain outside these commits. No full suite,
 test windows, mouse control, live-save access or CI was used.
+
+
+### Delivery slice 3: Moodlet stage progression and bounded renewal
+
+Positive wish-family timing is delivered in `01b5ccd`, independently verified
+with one hundred targeted tests before adding the long-term contribution policy.
+The existing `PetState`/progression path still owns time and commits results.
+`pet/moodlet_timing.py` provides pure stage-budget operations used by the existing
+Moodlet rules and passive duration reads; it is not a timer or another simulator.
+
+New positive multi-tier episodes receive sixty minutes for level one and
+forty-five minutes each for levels two and three. An ascent raises each remaining
+budget to its base floor while preserving longer residuals, capped at ninety
+minutes each. Already-level-three reinforcement adds ten minutes per remaining
+tier, capped at 270 minutes total. Two-tier outcomes use ascent or capped renewal,
+never both; overflow intensity grants no extra extension. Food remains one tier:
+sixty minutes initially, ten-minute renewals and a ninety-minute ceiling.
+These values belong to the shared balance catalogue, with validation against
+the stage cap. Family strengths and ordinary friendship rates remain unchanged.
+
+Ageing spends the actual current budget and then the actual stored lower budgets,
+trims causes to the new intensity and expires an episode once. The operation
+visits at most three tiers, including across a long elapsed gap. A stronger
+single outcome remains one actual cause; duplicate receipts do not extend time.
+No spent upper-tier extension is banked for a later ascent. Passive duration
+reads now sum the same actual budgets without mutating the Pet.
+
+Compatibility is deliberate: existing current-stage time and old implicit lower
+stages retain their original fixed catalogue duration until an actual qualified
+reinforcement applies the new bounded rule. The fixed positive family durations
+in the Moodlet catalogue therefore remain the v1-save read contract, rather than
+silently shortening old impressions during loading. New positive stages use the
+shared 60/45/45 balance profile and explicit lower budgets. Existing JSON codecs
+and whole-Pet checkpoints preserve these values without another save format.
+
+The six long-term families retain their own thirty-/thirty-six-hour stage clocks.
+One newly qualified period raises one level, up to three, and resets only the
+current fixed stage. They receive no wish-family duration banking or renewal.
+Their positive and negative numeric subtotals are independently capped at +5
+and -10 before existing global caps; opposite long-term feelings never cancel
+before those limits. Their reduced +0.00005/-0.00010 per-intensity friendship
+rates replace ordinary +0.003/-0.006 rates for those families. Full emotional
+intensities remain available to the overall feeling model.
+
+The existing progression boundary splitting applies mood and friendship effects
+until the actual stage endpoint, including an expiry inside a thirty-second
+status interval. Sleep, standby and closed time use that same path. Existing
+negative-family decay, withholding resolution, poor-care recovery qualification
+and relief allowances are preserved. No need decay, care gains, sleep policy,
+wish selection or action admission is changed. Actual long-term qualification
+and the new experience producers remain in slice seven; elapsed time alone
+does not manufacture positive encounters or bad treatment.
+
+The isolated staged integration passed **136 targeted tests in 1.161 seconds**,
+covering stage budgets/renewal, long-term caps/rates, existing negative/poor-care
+rules, actual time-path boundaries, persistence, passive reads, friendship-rate
+regressions and current game/food/social/affection completion. The slowest test
+took **0.433 seconds**; none exceeded ten seconds. Native Tk creation was blocked.
+Focused Ruff, strict Mypy and Pyright passed for the affected production files.
+The current system document was updated alongside this plan. Generated-wish/day
+acceptance and the final full suite/OOP review remain in their planned later
+steps. Parallel horoscope, UI, character and documentation work is preserved.
+No test windows, mouse control, live-save access, full suite or CI was used.

@@ -144,6 +144,7 @@ class PoorCareMoodletTests(unittest.TestCase):
                          [e.definition_id for e in self.state.active])
         self.assertEqual(calculate_moodlet_contributions(
             self.state, definitions=DEFINITIONS,
+            long_term_policy=MOODLET_CATALOG.long_term_policy,
         ).negative_points, -15)
         self.assertEqual(self.relationship.history.penalties, ())
 

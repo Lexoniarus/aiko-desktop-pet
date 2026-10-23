@@ -212,7 +212,10 @@ def calculate_pet_progression(
         target = calculate_mood_target(NeedMoodFactors(
             satiety=satiety, energy=energy, fun=fun,
             social=social, affection=affection,
-        ), calculate_moodlet_contributions(moodlets, definitions=definitions))
+        ), calculate_moodlet_contributions(
+            moodlets, definitions=definitions,
+            long_term_policy=MOODLET_CATALOG.long_term_policy,
+        ))
         mood_before = mood
         mood = advance_mood(
             mood, target, step_hours,

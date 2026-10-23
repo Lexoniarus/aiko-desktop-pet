@@ -77,19 +77,38 @@ boundaries; this calculation reads no clocks and introduces no second state.
 
 `calculate_moodlet_contributions()` reads each active family's current total
 level contribution. Apply game-wish +15, social-wish +15 and poor-care -15 group
-limits first, then separately cap all positive effects at +20 and all negative
+limits first. The six longer-term families have separate joint limits of +5
+positive and -10 negative; opposing long-term contributions are not netted.
+Then separately cap all positive effects at +20 and all negative
 effects at -30. Combine those effects with the need-derived target, clamp to
 0-100 and retain the strictest need ceiling. A zero need still limits the final
 target to thirty. A numeric cap does not remove or weaken emotional evidence.
 
-The pure rules in `pet/moodlets.py` provide 3-2-1 expiry, bounded refresh/stacking
-and per-episode relief usage. Negative poking/closeness relief still requires
+The pure rules in `pet/moodlets.py` and `pet/moodlet_timing.py` provide 3-2-1
+expiry, bounded renewal/stacking and per-episode relief usage. New positive
+multi-tier wish after-effects start with 60/45/45 minutes at levels 1/2/3.
+An ascent restores each remaining tier to at least its base, retaining longer
+residuals up to ninety minutes. An already level-three family gains ten minutes
+per remaining tier, up to 270 minutes total. Two-tier outcomes choose ascent
+or renewal, never both. Food starts at one sixty-minute tier, extends by ten
+minutes and caps at ninety. The balance catalogue owns these shared times;
+fixed family durations remain the legacy-save fallback for implicit lower tiers.
+Passive snapshots sum actual remaining budgets. Negative poking/closeness relief
+still requires
 five minutes of quiet. Existing poor-care impressions require thirty stable
 minutes at a need of at least forty before their two-hour recovery stages run;
 a renewed drop pauses the remaining stage and requires stable qualification
 again. One qualified helpful completion shortens only the current eligible tier,
 discarding excess and retaining its used allowance through later escalation.
 Friendship and petting-refusal deadlines are separate effects.
+
+Long-term families use their own fixed thirty-/thirty-six-hour stages. A newly
+qualified care period raises one level, up to three, and resets only the current
+stage. They never receive wish-family extensions. Their per-intensity friendship
+rates are +0.00005/-0.00010 per thirty seconds, replacing ordinary +0.003/-0.006
+rates for those families. Ordinary short-term rates and progressive factors
+remain unchanged. Pattern qualification itself is still a later feature slice;
+elapsed time alone does not create long-term feelings or imaginary encounters.
 
 The existing progression loop splits at tier/expiry, recovery qualification and
 need-crossing boundaries. Before a boundary, actual mood still approaches the
@@ -212,7 +231,7 @@ Physical needs, sleep, short irritation/warmth and friendship are separate facts
 They coexist in dialogue context rather than replacing one another with a
 mixed label. Existing need priority and interaction-specific boundaries remain;
 an overall label creates no reward or blanket refusal. Passive snapshots expose
-all nineteen families and twelve wish forms, including unspoken wishes, paused
+all supported Moodlet families and wish forms, including unspoken wishes, paused
 recovery, original deadlines, round progress and temporary restrictions. Reading
 never advances or fulfills them. Stage 5C now presents these records in the combined status UI. The pure
 numeric target, real sleep reason, relationship stage and known contact age
@@ -224,7 +243,8 @@ does not imply emotional offense or sleepy clicks.
 
 ## Wishes and fulfillment
 
-Three inner wishes are the normal stock, at most one per area. Awake live
+Storage supports three inner wishes, including several distinct goals in one
+area. The current live picker still chooses at most one per area. Awake live
 evaluation fills available slots initially or after the saved twelve-minute
 vacancy pause; further vacancies do not postpone it. Closed time never generates
 new wishes. Original lifetime is four real hours, except while pinned.
@@ -239,8 +259,9 @@ Temporary unavailability keeps the wish and its original deadline.
 
 Left-click pins a card. Right-click unpins a pinned wish; right-click on an
 unpinned wish dismisses it. Current late unpinning can retire the wish immediately
-if its original deadline passed. That conflict with the two-click expectation
-remains an [open decision](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23).
+if its original deadline passed. The already agreed correction keeps an unpinned
+wish until the next shared refresh; that lifecycle change is the next planned
+slice, together with the ten-minute rotation and new wish mix.
 
 Actual desired intake, welcome petting, qualifying game results and complete
 matching social sequences can fulfill wishes, including unspoken ones. The
@@ -254,16 +275,16 @@ Food fulfillment remains at one tier; overall game success adds two tiers of
 pride/relief; other successes add one within family limits. Episodes retain the
 latest actual causes up to current intensity (maximum three), trimming on decay
 and rolling on renewal. A single two-tier success still has only one actual
-cause. Whether strength and displayed cause count should be changed is open;
-no event is invented to fill a row. Negative interaction and poor-care triggers
+cause; no event is invented to fill a row. Negative interaction and poor-care triggers
 currently lack structured concrete causes and fall back to generic evidence.
 
 ## Verification scope
 
 Existing focused domain, persistence, game, social, UI-contract and hover checks
 are recorded by delivery in the master plan. These are historical results, not
-a fresh full-suite claim for current HEAD. Slice 9 still includes actual generated
-wish/balance integration, local suite/static gates, tests over ten seconds and
-OOP review. Native Windows/DPI/input acceptance remains separate; the original
+a fresh full-suite claim for current HEAD. Generated-wish/balance integration
+remains in the later feature acceptance; full-suite/static gates, tests over ten
+seconds and the final OOP review remain in the closing phase of the current
+master plan. Native Windows/DPI/input acceptance remains separate; the original
 reported AppHang is not conclusively diagnosed. Later concrete-experience speech
 is deliberately outside this delivery.

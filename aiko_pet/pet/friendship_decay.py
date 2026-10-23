@@ -14,7 +14,7 @@ from .friendship_history import (
     NeedDurations,
 )
 from .moodlet_catalog import MOODLET_CATALOG
-from .moodlets import MoodletPolarity, MoodletState
+from .moodlets import MoodletGroup, MoodletPolarity, MoodletState
 from .need_exposure import exposure_totals
 
 
@@ -123,10 +123,14 @@ def emotional_friendship_rates(
         negative += (first[1] + last[1]) / 2 * (right - left)
     for episode in moodlets.active:
         definition = MOODLET_CATALOG.definitions[episode.definition_id]
+        long_term = definition.group == MoodletGroup.LONG_TERM
+        policy = MOODLET_CATALOG.long_term_policy
         if definition.polarity == MoodletPolarity.POSITIVE:
-            positive += episode.level * _setting("positive_moodlet_rate")
+            positive += episode.level * (policy.positive_friendship_rate if long_term
+                                         else _setting("positive_moodlet_rate"))
         else:
-            negative += episode.level * _setting("negative_moodlet_rate")
+            negative += episode.level * (policy.negative_friendship_rate if long_term
+                                         else _setting("negative_moodlet_rate"))
     return positive, negative
 
 

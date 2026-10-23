@@ -212,6 +212,7 @@ def snapshot_pet(
             ),
             calculate_moodlet_contributions(
                 state.moodlets, definitions=MOODLET_CATALOG.definitions,
+                long_term_policy=MOODLET_CATALOG.long_term_policy,
             ),
         ),
         friendship_stage=FriendshipStage.from_level(state.friendship_level),
