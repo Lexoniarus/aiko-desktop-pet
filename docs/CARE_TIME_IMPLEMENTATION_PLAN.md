@@ -7249,3 +7249,96 @@ not additional hypothetical product-design scenarios to enumerate now.
 Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, tests, text and documentation changes are preserved. No runtime
 tests, application windows, mouse control, live-save access or CI in this pass.
+
+
+### Agreed data and dialogue-source organization
+
+**Planning direction recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Keep authored content/definitions as versioned JSON sources
+and adopt SQLite as the planned persistence backend for personal state and
+bounded history. Python continues to own domain rules and state transitions.
+Design the shared data model before adding the next catalogue extensions.
+
+#### Dialogue files follow their conversational purpose
+
+Split the current monolithic dialogue source by topic/occasion, rather than
+creating a separate catalogue for each overall emotional state. Suggested
+organization under `aiko_pet/data/dialogues/de/`:
+
+```text
+social/
+  chat.json
+  wish_expression.json
+  experience_reflections.json
+care/
+  food.json
+  petting.json
+  sleep.json
+objects/
+  discovery.json
+  searching.json
+games/
+  blackjack.json
+  rock_paper_scissors.json
+```
+
+This is the agreed organizing principle with illustrative file names, not a
+new runtime layout already in use. Each sequence has one canonical location
+and a stable ID. Its conditions determine the applicable friendship stage,
+overall feeling, needs and concrete experience; its ordered beats retain the
+complete text/emote sequence. Do not duplicate the same sequence in files for
+every matching mood or combination of Moodlets.
+
+The file answers "What is this conversation about?"; its conditions answer
+"When does this wording fit?" Extend the typed dialogue context/conditions for
+actual wishes, Moodlets and retained causes as needed. The current state/need
+filters alone cannot identify a particular fulfilled Blackjack wish. Keep
+unknown-object knowledge limits, placeholder validation and the single dialogue
+selection owner intact. File splitting alone is not the semantic integration.
+
+Plan an automatically generated readable view of occasion, conditions and full
+bubble sequence, filterable by such facts as Reserviert or a Moodlet family.
+Edit the canonical dialogue sources; do not maintain a second editable copy of
+the same wording in the review view. Load/validate the sources through one
+catalogue boundary and expose immutable content to consumers.
+
+#### SQLite direction and stable model boundaries
+
+The private database remains outside Git in the user's application-data folder.
+Version schema/migration source with the application. First use creates the
+database; an existing JSON save is backed up and imported once transactionally.
+Updates migrate the user's database rather than replacing it with a fresh file.
+There must be one active persistence owner, not permanent dual writing to JSON
+and SQLite. Preserve the existing save-location override contract during design.
+
+Model all already planned systems together before selecting the first SQLite
+schema. Moodlet episodes share structures for instances, stage budgets and
+bounded causes. Wishes share structures for instance identity, original goal,
+target and progress. New supported families, sentences or objective variants
+should normally be data additions within those structures, not new tables or
+one column per Moodlet. Genuine new data relationships may still require a
+versioned migration; do not promise a schema that can never evolve.
+
+Stable IDs connect definitions to personal instances. Authored catalogues remain
+the editable source of definitions; any derived database registry must have a
+one-way source/update path, not a second content editor. Preserve original
+wish/target facts in Moodlet causes after the active wish ends. Database
+relations must not erase those causes when an active wish is removed.
+
+#### New preparation step before the existing delivery slices
+
+Add a data-model/persistence preparation step before the earlier slice one:
+agree vocabulary, logical tables, relationships and retention; then implement
+the SQLite adapter/migrations and legacy import, and reorganize dialogue sources
+in small separately reviewable changes after explicit implementation approval.
+Concrete table/column and adapter names remain the next discussion, not selected
+by this organization amendment. Preserve existing domain owners and behavior;
+do not move care, offline progression, wish matching or dialogue selection into
+SQL. Subsequently continue the previously planned feature slices against that
+foundation, with targeted local checks and the final suite/OOP/slow-test review.
+
+The earlier readiness statement covers the agreed product behavior; the newly
+added storage/source-organization scope still needs its concrete model review.
+This amendment authorizes documentation only. Parallel runtime, tests, text and
+documentation work is preserved. No runtime tests, application windows, mouse
+control, live-save access, database creation/migration or CI in this pass.
