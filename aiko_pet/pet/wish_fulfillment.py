@@ -10,7 +10,7 @@ from .moodlets import (
     MoodletOutcome,
     MoodletWishCause,
 )
-from .wish_matching import wish_matches_activity
+from .wish_matching import assign_activity_wish, wish_matches_activity
 from .wishes import (
     MAX_WISH_ROUND_RECEIPTS,
     ActiveWish,
@@ -46,21 +46,25 @@ def _wish_cause(
 def fulfill_activity_wish(
     state: WishState, area: WishArea, target_id: str, *, elapsed: float,
     definitions: Mapping[WishId, WishDefinition], instance_id: int | None = None,
-    object_id: str | None = None,
+    object_id: str | None = None, event_id: str | None = None,
+    started_at: float | None = None,
 ) -> WishResolution:
-    """Called only after actual accepted intake/care or full social completion."""
-    wish = next((w for w in state.active
-                 if definitions[w.definition_id].area == area
-                 and w.target_id == target_id
-                 and w.goal_snapshot.objective != WishObjective.FOOD_HANDOVER
-                 and (instance_id is None or w.instance_id == instance_id)
-                 and w.is_active_at(elapsed)), None)
-    if wish is None:
+    """Resolve the admitted identity; a stale assignment never chooses a fallback."""
+    wish = (assign_activity_wish(state, area, target_id, elapsed=elapsed,
+                                 definitions=definitions) if instance_id is None
+            else next((w for w in state.active if w.instance_id == instance_id
+                       and w.is_active_at(elapsed)
+                       and w.goal_snapshot.objective != WishObjective.FOOD_HANDOVER
+                       and wish_matches_activity(w, area, target_id,
+                                                  definitions=definitions)), None))
+    if (wish is None or started_at is not None
+            and not wish.created_at <= started_at <= elapsed):
         return WishResolution(state)
     return _retire_wish(
         state, wish, definitions[wish.definition_id], elapsed=elapsed,
         cause=_wish_cause(wish, elapsed=elapsed,
-                          event_id=f"wish:{wish.instance_id}:fulfilled",
+                          event_id=event_id or f"wish:{wish.instance_id}:fulfilled",
+                          target_id=target_id,
                           outcome=MoodletOutcome.INTAKE if area == WishArea.FOOD
                           else MoodletOutcome.COMPLETED, object_id=object_id),
     )

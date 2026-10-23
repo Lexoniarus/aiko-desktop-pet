@@ -1,7 +1,8 @@
 """Bounded personal experience values, owned through Pet's existing Moodlet state.
 
 No values infer events, group visits, qualify care periods or duplicate need
-exposure buckets. Actual round facts now support wish eligibility. Encounter
+exposure buckets. Actual game/social facts support eligibility and completion.
+Encounter
 qualification and period evaluation belong to subsequent slices.
 """
 

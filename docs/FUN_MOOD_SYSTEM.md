@@ -186,8 +186,9 @@ Only actual completed play awards fun. Leaving the game window open,
 starting a round without reaching reveal, or closing an empty game
 awards **nothing**. The round score remains transient, including on
 application shutdown; only Aiko's adjusted fun, energy, social
-and existing friendship bookkeeping are saved, alongside bounded wish progress
-and any fulfilled wish's Moodlet.
+and existing friendship bookkeeping are saved, alongside bounded wish progress,
+actual completion evidence and any fulfilled wish's Moodlet. Actual round facts
+are not a separately persisted scoreboard or unfinished game session.
 
 Actual round start/result facts also reach the existing application coordinator
 through each game's sequence. Only the wish captured at round start can qualify.
@@ -281,11 +282,27 @@ Low mood/trust does not suppress inner wishes. Disclosure still requires level
 three, mood fifty, capability and a free speech opportunity. Actual presentation
 counts once per wish, at least thirty minutes apart; urgent care takes priority.
 
-Flexible forms now enter selection with fixed typed targets. Their shared
-matching/assignment and game/social completion are the next delivery slice;
-full-need wish admission and revised food-handover outcomes follow separately.
-The currently delivered completion rules below are not claims that those later
-integration slices are already complete.
+Flexible forms use shared matching and one pre-outcome assignment: pin first,
+then exact/excluded/free-choice target specificity, actual saved progress, age
+and stable identity. Equally concrete goals have no invented win-first ordering.
+Games capture the wish at round start; social sequences capture it at admission.
+Later pins, dismissal, expiry or creation cannot reassign an outcome or complete
+another matching wish as fallback. Full-need food/affection permission and revised
+food-handover outcomes remain the next delivery slice.
+
+Free-choice play counts assigned completed rounds across supported games and
+sessions. Game-change excludes its saved reference; simple rematch accepts any
+completed result; comeback permits retries until victory. Shared social wishes
+accept chat, saying, joke or fact and award their own connection family, while
+specific-category wishes retain their own family. Only the whole admitted social
+sequence counts; interruption produces no completion or technical receipt.
+
+Bounded actual game/social receipts use the existing Pet-owned care evidence.
+Social admission supplies a sequence identity and elapsed start, carried through
+playback without another timer/store. Repeated completed-round reports or social
+callbacks cannot award another wish or repeat helpful relief after a save/reload.
+Original typed wish meaning and actual completing game/category both survive in
+Moodlet causes. Ordinary physical care and session effects remain separate.
 
 Actual desired intake, welcome petting, qualifying game results and complete
 matching social sequences can fulfill wishes, including unspoken ones. The

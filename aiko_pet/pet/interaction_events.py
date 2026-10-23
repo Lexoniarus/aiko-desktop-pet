@@ -1,5 +1,6 @@
 """Bounded interaction evidence and immutable facts; no dispatcher or clock."""
 
+import math
 from dataclasses import dataclass
 from typing import Literal
 
@@ -63,10 +64,16 @@ class ArrangementDisrupted:
 
 @dataclass(frozen=True, slots=True)
 class SocialCompletion:
-    """Admitted category and optional pre-existing wish, carried through playback."""
+    """Admitted category/wish and actual sequence identity carried through playback.
+
+    Application admissions provide a sequence ID and elapsed start. Older direct
+    value callers may omit both; no history is fabricated for those values.
+    """
 
     category: str
     wish_instance_id: int | None = None
+    sequence_id: str | None = None
+    started_at: float | None = None
 
     def __post_init__(self) -> None:
         if (self.category not in ("chat", "single", "twopart", "fact")
@@ -74,6 +81,18 @@ class SocialCompletion:
                 and (type(self.wish_instance_id) is not int
                      or self.wish_instance_id < 1)):
             raise ValueError("Invalid social completion evidence")
+        if (self.sequence_id is None) != (self.started_at is None):
+            raise ValueError("Social admission identity requires its elapsed start")
+        if self.sequence_id is not None and (
+            not isinstance(self.sequence_id, str)
+            or not 1 <= len(self.sequence_id) <= 120
+        ):
+            raise ValueError("Invalid social sequence identity")
+        if self.started_at is not None and (
+            type(self.started_at) not in (int, float)
+            or not math.isfinite(self.started_at) or self.started_at < 0
+        ):
+            raise ValueError("Invalid social admission time")
 
     @property
     def kind(self) -> Literal["chat", "social"]:

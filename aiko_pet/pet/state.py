@@ -411,6 +411,17 @@ class PetState:
     def complete_social_experience(
         self, completion: SocialCompletion, *, arrangement_ready: bool = False,
     ) -> None:
+        if (completion.started_at is not None
+                and completion.started_at > self.lived_seconds):
+            return
+        receipt = (f"social:{completion.sequence_id}"
+                   if completion.sequence_id is not None else None)
+        if receipt is not None and not self._record_care_experience(CareExperience(
+            receipt, self.lived_seconds, CareActivity.SOCIAL, MoodletOutcome.COMPLETED,
+            WishArea.SOCIAL, WishTargetKind.SOCIAL, completion.category,
+            wish_instance_id=completion.wish_instance_id,
+        )):
+            return
         self.experience_interaction(HelpfulInteraction(
             completion.kind, arrangement_ready,
         ))
@@ -418,7 +429,8 @@ class PetState:
             self._apply_wish_resolution(fulfill_activity_wish(
                 self.wishes, WishArea.SOCIAL, completion.category,
                 elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
-                instance_id=completion.wish_instance_id,
+                instance_id=completion.wish_instance_id, event_id=receipt,
+                started_at=completion.started_at,
             ), personal=True)
 
     def record_completed_game_round(
@@ -429,14 +441,16 @@ class PetState:
         This is not a session score, positive encounter or emotional reward.
         Later care qualification enriches the same owned evidence store.
         """
+        return self._record_care_experience(CareExperience(
+            f"play:{game_id}:{round_id}", self.lived_seconds, CareActivity.PLAY,
+            MoodletOutcome(outcome), WishArea.GAMES, WishTargetKind.GAME, game_id,
+        ))
+
+    def _record_care_experience(self, event: CareExperience) -> bool:
+        """Use the existing bounded evidence store for unique actual completions."""
         evidence = self.moodlets.care_evidence or CareEvidenceState(self.lived_seconds)
-        receipt = f"play:{game_id}:{round_id}"
-        if any(e.receipt_id == receipt for e in evidence.experiences):
+        if any(e.receipt_id == event.receipt_id for e in evidence.experiences):
             return False
-        event = CareExperience(
-            receipt, self.lived_seconds, CareActivity.PLAY, MoodletOutcome(outcome),
-            WishArea.GAMES, WishTargetKind.GAME, game_id,
-        )
         self._change(moodlets=replace(self.moodlets, care_evidence=replace(
             evidence,
             experiences=(*evidence.experiences, event)[-MAX_CARE_EXPERIENCES:],

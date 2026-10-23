@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from uuid import uuid4
 
 from ..pet.care_result import CareEffect, CareResult
 from ..pet.interaction_events import SocialCompletion
@@ -12,6 +13,7 @@ from ..pet.mind.catalog import Reaction
 from ..pet.routine import TimeContext, context_at
 from ..pet.state import PetState
 from ..pet.wish_catalog import WISH_CATALOG
+from ..pet.wish_matching import assign_activity_wish
 from ..pet.wishes import WishArea
 from .active_time import (
     ActiveSessionClock,
@@ -135,10 +137,12 @@ class CareController:
         if result.effect == CareEffect.CONVERSATION and reaction is not None:
             category = (command.conversation.category.value
                         if command.conversation is not None else "chat")
-            wish = next((w for w in self._state.wishes.active
-                         if WISH_CATALOG.definitions[w.definition_id].area
-                         == WishArea.SOCIAL and w.target_id == category), None)
+            wish = assign_activity_wish(
+                self._state.wishes, WishArea.SOCIAL, category,
+                elapsed=self._state.lived_seconds, definitions=WISH_CATALOG.definitions,
+            )
             reaction = replace(reaction, completed_social=SocialCompletion(
                 category, wish.instance_id if wish else None,
+                sequence_id=uuid4().hex, started_at=self._state.lived_seconds,
             ))
         return CareOutcome(result, reaction, context)

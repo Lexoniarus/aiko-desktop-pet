@@ -8403,3 +8403,54 @@ storage tests passed: 56 targeted tests in 0.361 seconds, slowest 0.071 seconds.
 Focused Ruff, strict Mypy/Pyright passed. Native Tk creation was blocked; no
 windows, mouse control, live-save access, full suite or CI was used. Social
 admission/completion follows in its own commit; parallel work is preserved.
+
+
+### Delivery slice 5C: assigned social completion and technical receipts
+
+Social admission now uses the same deterministic matching rule and carries the
+selected wish identity plus an actual sequence ID/elapsed start through the
+existing immutable `SocialCompletion` and Reaction playback. No UI timer or
+provider call was added. A complete chat/saying/joke/fact can fulfill a free
+social wish; specific wishes still require their category. The assigned wish's
+catalogue determines the Moodlet family (free social uses connection). No
+completion is inferred from starting, an individual bubble or interrupted text.
+
+Completion resolves only the captured live identity, checks its original target
+and start, and never adopts a wish created during playback or falls back after
+dismissal/expiry. Moodlet causes retain the original goal/target and actual
+category and sequence receipt. Fulfillment/retirement preserves the shared
+refresh; actual need effects remain with admission and do not repeat at finish.
+
+Actual social completion records one bounded receipt in the existing
+`MoodletState.care_evidence`. A single aggregate append rule now serves actual
+rounds and social completion. Duplicate callbacks, including after reload and
+a relief cooldown, cannot repeat the wish outcome or helpful relief. These
+receipts qualify no positive encounter or long-term period by themselves;
+those producers remain slice seven. Legacy direct `SocialCompletion` value
+callers may omit both new admission fields; all production admissions supply
+both. No old interaction is fabricated during reading/migration.
+
+Nine new social admission/completion checks cover all four supported categories,
+priority changes, interruption/stale callbacks, no fallback or late adoption,
+distinct sequence identity, persistent duplicate protection and metadata bounds.
+Together with shared matching, game assignment, existing food/affection, care,
+negative relief, lifecycle, storage, catalogue and disclosure regressions:
+150 targeted tests passed in 0.988 seconds (slowest 0.073 seconds). Focused Ruff,
+strict Mypy and Pyright passed. The staged integration is checked separately
+before commit. Native Tk creation was blocked throughout discovery/execution;
+no windows, mouse control, live-save access, full suite or CI was used.
+
+Step five is delivered through shared domain matching/fulfillment, application
+admission and the existing Pet aggregate/evidence owner. Full-need food/affection
+permission and recognized handover semantics remain step six; qualified positive
+and long-term producers remain step seven; passive reads, actual generated-wish
+balance acceptance and the closing full-suite/OOP review remain step eight.
+Parallel horoscope/UI/assets changes are preserved and excluded from staging.
+
+
+Final isolated staged integration for step five: **150 targeted tests passed in
+0.989 seconds**, slowest **0.078 seconds**, none above ten seconds. Focused Ruff,
+strict Mypy and Pyright passed for all eight affected production files, with
+Ruff also checking all changed tests. The staged controller/test versions exclude
+the parallel horoscope hunks; their working copies retain those hunks. No live
+saves, test windows, mouse control, full suite or GitHub CI were used.

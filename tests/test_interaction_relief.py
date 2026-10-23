@@ -146,7 +146,11 @@ class InteractionReliefTests(unittest.TestCase):
         inputs = SessionInputs(wall, 0, False, None, False, False, None)
         outcome = controller.execute(CareCommand("talk"), inputs)
         assert outcome.reaction is not None
-        self.assertEqual(outcome.reaction.completed_social, SocialCompletion("chat"))
+        completion = outcome.reaction.completed_social
+        assert completion is not None
+        self.assertEqual(completion.category, "chat")
+        self.assertIsNone(completion.wish_instance_id)
+        self.assertIsNotNone(completion.sequence_id)
         self.assertEqual(pet.moodlets.active[0].remaining_seconds, 1200)
         elapsed_only = deepcopy(pet)
         control = CareController(
@@ -157,7 +161,7 @@ class InteractionReliefTests(unittest.TestCase):
         later = replace(inputs, wall_time=wall + 300, monotonic_time=300)
         control.advance_time(later)
         controller.complete_social(
-            SocialCompletion("chat"), later,
+            completion, later,
             arrangement_ready=False,
         )
         self.assertEqual(pet.lived_seconds, 300)
@@ -168,7 +172,7 @@ class InteractionReliefTests(unittest.TestCase):
         self.assertEqual(pet.friendship_history, elapsed_only.friendship_history)
         completed = pet.capture_checkpoint()
         controller.complete_social(
-            SocialCompletion("chat"), later,
+            completion, later,
             arrangement_ready=False,
         )
         self.assertEqual(pet.lived_seconds, 300)

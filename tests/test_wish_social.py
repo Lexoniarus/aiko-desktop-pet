@@ -13,7 +13,6 @@ from aiko_pet.application.controller import CareController
 from aiko_pet.application.social_content import SocialCategory, prepare_social_content
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
-from aiko_pet.pet.interaction_events import SocialCompletion
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.moodlets import MoodletId
 from aiko_pet.pet.state import PetState
@@ -90,7 +89,12 @@ class SocialWishTests(unittest.TestCase):
         ):
             self.make(key)
             reaction = self.execute(key)
-            self.assertEqual(reaction.completed_social, SocialCompletion(key.value, 1))
+            assert reaction.completed_social is not None
+            self.assertEqual((reaction.completed_social.category,
+                              reaction.completed_social.wish_instance_id),
+                             (key.value, 1))
+            self.assertEqual(reaction.completed_social.started_at, 100)
+            self.assertIsNotNone(reaction.completed_social.sequence_id)
             self.assertTrue(self.pet.wishes.active)
             self.assertFalse(self.pet.moodlets.active)
             self.assertEqual(self.pet.friendship, 50)
@@ -128,7 +132,9 @@ class SocialWishTests(unittest.TestCase):
             )
             reaction = outcome.reaction
             assert reaction is not None and reaction.completed_social is not None
-            self.assertEqual(reaction.completed_social, SocialCompletion("single", 1))
+            self.assertEqual((reaction.completed_social.category,
+                              reaction.completed_social.wish_instance_id),
+                             ("single", 1))
             social, energy = self.pet.social, self.pet.energy
             self.player.play(reaction)
             # Advance introduction and body: author credit is now being read.
