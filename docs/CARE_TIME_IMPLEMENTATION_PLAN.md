@@ -7147,3 +7147,105 @@ joint review. Recording these selection rules does not select a new rate.
 Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, text and documentation work is preserved. No runtime tests,
 application windows, mouse control, live-save access or CI in this pass.
+
+
+### Proposed joint mood limits and friendship rates for longer-term Moodlets
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Apply the following shared policy to Vertrauensvoll,
+Wertgeschaetzt, Zuversichtlich, Verunsichert, Uebersehen and Auf der Hut. This
+supersedes using ordinary short-term Moodlet friendship rates for these six
+families and adds limits to their previously proposed numeric contributions.
+
+| Joint policy for the six longer-term families | Proposed value |
+| --- | --- |
+| Combined positive numeric mood contribution | At most +5 points |
+| Combined negative numeric mood contribution | At most -10 points |
+| Positive friendship contribution per intensity level per thirty seconds | +0.00005 |
+| Negative friendship contribution per intensity level per thirty seconds | -0.00010 |
+
+Sum their nominal positive/negative mood contributions separately, apply the
+respective longer-term limits, then combine with other Moodlet contributions
+under the existing global positive/negative caps and final need-deficit limits.
+Do not net opposing longer-term feelings before applying these separate limits.
+Keep normal timed mood recovery/decline; no instantaneous jump on qualification.
+
+The six families retain their proposed one/two/three emotional intensities,
+nominal per-family mood values, qualification patterns, causes, stage durations
+and reinforcement rules. The shared cap limits their contribution to the mood
+bar; it does not remove episodes or reduce their full emotional influence in
+the proposed overall-state selection. Stronger levels still have stronger
+continuous friendship influence within the smaller rate schedule.
+
+Use the new friendship rates instead of, not in addition to, the current
++0.003/-0.006 short-term rates. They are one sixtieth of those rates. Continue
+to apply existing progressive gain/loss factors, mood-based friendship flow,
+absence and neglect rules. Add no instant bonus/deduction and no friendship
+effect for the selected emotional label. Do not change short-term wish/negative
+experience rates, need decay, care gains or sleep behavior in this amendment.
+
+At maximum intensity in all three positive families, the longer-term direct
+raw gain is 1.296 points per twenty-four hours. For all three negative families
+at maximum intensity the arithmetic raw loss is 2.592 points per twenty-four
+hours. These are contribution bounds before progressive factors, not promised
+net daily balances or a claim that all opposing patterns freshly qualify together.
+
+#### Conditional balance comparison
+
+Independent arithmetic retained the earlier four-phase average/intensive care
+schedules, eight-hour sleep, existing need/care formulas and supplied wish
+successes. No application imports, runtime tests or actual random generator were
+used. The following repeating-day comparisons assume all three positive
+longer-term families are maintained at level three:
+
+| Conditional comparison | Without longer-term families | With the proposed reduced policy |
+| --- | --- | --- |
+| Average care: repeating friendship range | 71.7-73.8 | 74.4-76.8 |
+| Intensive care: repeating friendship range | 96-100 | 96.1-100 |
+| Average care: mean numeric mood | 65.7 | 70.0 |
+| Intensive care: mean numeric mood | 73.9 | 77.3 |
+
+With average care starting at seventy, and each completed care day qualifying
+the three positive patterns, the illustrative successive morning values are
+70.5, 71.3, 72.1, 72.8 and 73.3. For a single good average-care day starting
+at seventy with Auf der Hut already at level three and a full remaining stage,
+the comparison ends near 69.6. Existing short-term impressions and absence
+effects are included; no fresh bad treatment is assumed in that recovery day.
+
+These conditional examples support average friendship level eight while
+intensive care can maintain level ten. Preserve validation of generated wish
+opportunities and real completion availability as later integrated acceptance;
+the worksheet is not proof of the implemented distribution or runtime behavior.
+
+### Readiness after the longer-term and overall-state extension
+
+The six per-family proposals, overlap distinctions, seventeen-state selection
+and reduced joint numeric/friendship policy now specify the added product scope
+sufficiently for implementation planning. No further mandatory product decision
+has been identified in this review. This is not an implementation authorization
+or a claim that current runtime already follows the proposals.
+
+Extend the existing eight delivery slices to include this scope: longer-term
+catalogue/policy definitions in slice one; bounded qualification evidence and
+compatible persistence in slice two; their independent stage clocks, numeric
+subtotals and friendship rates in slice three; per-family pattern qualification
+in slice seven, split into small reviewable commits; and full emotional
+composition, passive status/hover reads and integrated acceptance in slice eight.
+Keep wish lifecycle and interaction matching work in their existing slices.
+
+During implementation, establish deterministic single-accounting of qualified
+twenty-four-hour periods and semantic encounters/incidents on the shared elapsed
+axis. Preserve actual saved wish goals, progress, stage budgets and causes.
+Missing historical evidence is unknown; do not invent past qualifying periods
+or interactions. These are engineering/verification obligations within the
+existing Pet, application and infrastructure owners, not another history engine.
+
+Use targeted local checks per small commit. At completion run the full local
+suite, review OOP ownership and redundant tests, and investigate tests exceeding
+ten seconds. No test windows, mouse control or GitHub CI. The actual wish mix,
+joint long/shorter-term balance and old-save behavior remain acceptance work,
+not additional hypothetical product-design scenarios to enumerate now.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, tests, text and documentation changes are preserved. No runtime
+tests, application windows, mouse control, live-save access or CI in this pass.
