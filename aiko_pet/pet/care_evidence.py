@@ -49,6 +49,7 @@ class CareExperience:
     pleasant: bool = False
     upsetting: bool = False
     boundary_violated: bool = False
+    object_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
