@@ -5689,3 +5689,137 @@ option is later authorized; do not add another care path or save store.
 Documentation-only amendment: Markdown diff/scope reviewed and
 `git diff --check` passes. No runtime changes, tests, app windows, pointer
 control, live-save access or CI.
+
+
+### Proposed positive Moodlet tiers and renewal times
+
+**Discussion proposal recorded at the owner's request, 2026-10-23.** Positive
+wish impressions should retain levels 1/2/3 and support long-lasting feelings
+from intensive engagement. This replaces the proposed positive multi-tier
+family timing, not negative interaction or poor-care timing. No runtime changes
+are authorized.
+
+| Situation | Proposed effect of matching fulfillment |
+| --- | --- |
+| No active family | Start at level 1 for an ordinary one-tier outcome |
+| Level 1 | Advance to level 2 |
+| Level 2 | Advance to level 3 |
+| Already level 3 | Add ten minutes to the remaining duration of each of levels 3, 2 and 1 |
+
+- Base duration: 45 minutes per level. Without renewals, level 1 lasts 45
+  minutes; level 2 lasts 90 through 2/1; level 3 lasts 135 through 3/2/1.
+- An ascent starts the new current level with its base duration. Previously
+  earned extensions are retained; one completion must not receive duplicate
+  time credits for the same event. Exact handling of partially consumed lower
+  tiers during re-escalation remains to be made explicit before implementation.
+- At level 3, add time rather than resetting the whole episode to a full timer.
+  Cap the remaining duration of each tier at 90 minutes, permitting at most
+  270 minutes of remaining decay through all three levels after the last event.
+  Further actual fulfillment can keep an impression active during engagement;
+  it cannot bank unlimited duration for later absence.
+- Example: remaining tier times 20/45/45 minutes become 30/55/55 after one
+  matching level-3 fulfillment, total 110 to 140 minutes.
+- Existing larger overall-game outcomes may still add two intensity levels.
+  At level 3, initially propose the same ten-minute-per-tier extension rather
+  than multiplying renewal by outcome strength. Resolve mixed ascent/overflow
+  and cause-count semantics before implementation, without inventing events.
+- Food fulfillment remains the existing single-tier exception for now. Its
+  final strength/lifetime/renewal must be discussed separately; do not silently
+  assign it the three-tier scheme. Multiple families may coexist as before.
+- Existing numeric Moodlet points, group/global mood caps, continuous
+  friendship rates and progressive factors are not changed by this proposal.
+
+The intended consequence is sustained positive feelings for intensive shared
+activity without three quick successes automatically buying six hours of
+persistence. Whether average care supports levels 7–8 and intensive care level
+10 still requires explicitly scoped daily arithmetic; it is not established by
+recording these durations.
+
+
+### Illustrative daily comparison for the proposed renewal model
+
+**Independent discussion arithmetic, not runtime acceptance.** A standalone
+worksheet with no application imports used 30-second steps, current continuous
+relationship rates/progressive factors and the proposed 45-minute positive
+multi-tier lifetimes. No test runner or application was executed. Conditional
+success schedules do not prove generated-wish availability or actual admission
+and do not select new product rules.
+
+Common assumptions: waking 07:00–23:00, eight hours of sleep, sufficient physical
+care without neglect, no negative impressions/direct penalties in the baseline.
+The existing four-hour accepted-contact window controls positive numeric-mood
+flow. Numeric mood is held at 70 as an explicit comparison input, with separate
+constant-60/80 sensitivity bounds. This is not a computed joint need/digestion/
+mood trajectory. Moodlet time and absence continue overnight. Food's unresolved
+single-tier lifetime, two-tier victory outcomes, pinned goals and wish-based
+full-need admission are not needed for these examples.
+
+| Schedule | Conditional actual wish successes | Positive tier-hours/day | Absence reference/day |
+| --- | --- | --- | --- |
+| Average | At 07:00, 13:00, 19:00 and 22:30, fulfill shared play, connection and cheerfulness: three ordinary one-tier outcomes per visit, twelve total. Each expires before the next visit. | 9 | 4.25 points |
+| Intensive, 32 | In each phase, fulfill shared play and connection at minute 0/10/20/30: eight successes per phase, thirty-two total. | 48 | 3.5 points |
+| Intensive, 36 | Same as intensive-32, plus one cheerfulness wish at the start of each phase: nine per phase, thirty-six total. | 51 | 3.5 points |
+
+Intensive phases start at 07:00/13:00/19:00/22:30 and end at
+07:30/13:30/19:30/23:00. Engagement can be intermittent inside each phase;
+it is not assumed to require thirty continuous minutes of input. At most
+three wishes complete per refresh; unfulfilled alternatives rotate neutrally.
+The final evening fulfillment therefore coincides with the start of the
+eight-hour 23:00–07:00 sleep window, unlike the earlier rough
+23:00-start arithmetic. Ordinary care
+is included at these phases, not additional unmodeled contact between them.
+
+For each intensive shared-play/connection family, the first three successes
+raise levels 1/2/3; the fourth adds ten minutes to each remaining tier. Immediately
+after that fourth event, remaining times are 45/55/55 minutes. The evening
+impressions therefore expire at 01:35, without another fulfillment. Ascent uses
+base 45-minute lower tiers in this example; no previously extended tier has been
+spent and re-escalated. The remaining re-escalation policy is not resolved.
+
+| Case, constant mood 70 | Starting friendship | Next-morning friendship | Daily range |
+| --- | --- | --- | --- |
+| Average | 70 | 69.71 | 69.71–71.48 |
+| Average, initially level 10 | 90 | 84.10 | 84.10–90.45 |
+| Intensive, 32 | 90 | 89.76 | 89.76–93.76 |
+| Intensive, 36 | 70 | 77.01 | 70–79.55 |
+| Intensive, 36, initially level 10 | 90 | 90.14 | 90–94.14 |
+
+Under this exact repeating worksheet, average morning points settle near 68.6;
+intensive-32 near 88.2; intensive-36 near 96 after daytime clamping at 100.
+These are conditional periodic balances, not measured save progression or
+forecasts. At starting points 70 for average / 90 for intensive-36, changing
+constant mood from 60 to 80 changes daily balance from -1.24 to +0.59 /
+-0.57 to +0.85. The illustrative match to average levels 7–8 and intensive
+level 10 depends on actual numeric mood and successful wish mixture.
+
+One additional level-1 poking impression for twenty minutes at 19:30 changes
+the intensive-36, mood-70, starting-90 result from 90.14 to about 89.66, before
+any separate direct penalty or induced numeric-mood change. This isolates its
+elapsed contribution, not a complete harassment scenario.
+
+Physical care must also fund activity: assuming RPS for every shared-play goal,
+twelve successes include eight rounds and eight social admissions, costing
+12 energy/day beyond the awake baseline 48; eight hours of sleep restores 60.
+The intensive-32 variant includes thirty-two rounds and sixteen social
+admissions, costing 32 extra energy/day: two accepted +10 energy drinks can
+cover the daily reference deficit. Intensive-36 adds four social admissions,
+so its extra cost is 36 and total awake/action cost 84; three appropriately
+timed drinks provide a reference surplus before clamping. Keep these drinks
+within the listed care phases to preserve the contact comparison. Hardware,
+clamping, exact timing, food/affection willingness and the actual need/mood
+trajectory still require joint checking; these energy totals alone do not
+certify adequate care or an observed sleep schedule.
+
+Conclusion for discussion: the proposed renewal can support sustained positive
+feelings without requiring a response to every refresh. Thirty-two and
+thirty-six conditional successes straddle level-10 maintenance in this example.
+Do not retune decay or friendship solely from this illustration. Resolve
+remaining wish/food/admission and renewal semantics first; later integrated
+acceptance must use actual need/mood paths, generated opportunities, real
+completions and sleep/contact timing rather than assuming every desired wish.
+
+
+Documentation check: the final diff changes only this Markdown plan and
+`git diff --check` passes. The independent arithmetic above is a design
+worksheet, not a runtime test or implementation of the proposed policy.
+No application windows, pointer automation, live-save access or CI were used.
