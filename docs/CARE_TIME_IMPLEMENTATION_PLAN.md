@@ -6015,7 +6015,7 @@ to enumerate hypothetical edge cases.
 | Relevant decision | Why it still changes implementation |
 | --- | --- |
 | Ten-minute refresh, absence and unpinning | Establish the shared refresh anchor, the single appropriate refresh on wake/return without offline wish generation, and whether an unpinned protected wish stays until the next refresh instead of disappearing on an old deadline. Left pins; right on pinned only unpins; right on unpinned dismisses remain the chosen gestures. |
-| New wish meanings and selection mix | Area weights and the 1.5 experience multiplier are proposed, but the new forms' base weights, experience validity and concrete goal scope are not. Define whether free-choice rounds can span different games and whether victory-oriented rematch targets the next round or a later win. Avoid arbitrarily filling these gaps in code. |
+| New wish meanings and selection mix | The later variant-weight proposal below defines base weights, a thirty-minute experience window and flexible/rematch goal meanings. Remaining selection work is the priority among simultaneously matching wishes, without duplicating progress/outcomes or choosing retrospectively from a result. |
 | Food-avoidance / variety completion | The later food-wish-disregarded proposal below settles that expressly excluded food causes a negative outcome on recognized personal handover, even if put down; the former positive unwanted-handover rule is superseded. Keep the positive success condition for an alternative/variety objective explicit rather than inferring it from the negative outcome. |
 | Tier budgets during re-escalation and stronger goals | Specify what happens to partly consumed and previously extended lower tiers on renewed ascent. Also resolve two-tier success overflow and its real cause count: one stronger event must not be fabricated into two events solely to fill intensity rows. |
 | Positive experiences without a wish: scope | Current eight positive families are wish-driven, while most negative families arise independently. Decide whether the present revision retains that scope or includes specific positive everyday experiences. Do not automatically turn every need refill into another positive Moodlet. |
@@ -6135,3 +6135,67 @@ Documentation-only check: only this master plan is staged. Parallel local
 runtime, test and other documentation work is preserved. Markdown whitespace/
 diff reviewed; no runtime tests, application windows, pointer automation,
 live-save access or CI in this pass.
+
+
+### Proposed variant weights and thirty-minute experience window
+
+**Discussion proposal recorded at the owner's request, 2026-10-23.** Retain
+area-first selection: need weights choose the area for each free slot, then
+these relative weights choose an eligible form, then an allowed target. More
+game forms or target IDs must not multiply the area's overall chance.
+These weights are proposals, not current catalogue values or fixed percentages.
+
+| Game form | Base weight | Eligibility / goal |
+| --- | --- | --- |
+| Play any supported game | 30 | Complete two actual rounds, permitted across different games |
+| Play a particular game | 30 | Complete two actual rounds of that saved concrete game |
+| Win the next round | 10 | Existing strict next qualifying round objective |
+| Do not lose the next round | 15 | Existing strict next qualifying round non-loss objective |
+| Collect three wins | 10 | Existing cumulative wins across sessions, not necessarily consecutive |
+| Do not lose overall | 5 | Existing three-round overall non-loss objective |
+| Play something different | 10 | Actual recent play provides the excluded reference game; complete two rounds outside that game |
+| Have a rematch | 10 | Last completed round was an Aiko defeat; complete another round of that game, result irrelevant |
+| Win this time | 5 | Same recent defeat context; win a following round of that game, permitting retries within the wish's protected/unprotected lifetime |
+
+The last three are experience-driven forms. They enter selection only with
+qualifying evidence and receive the previously proposed 1.5 multiplier once:
+10 becomes 15; 5 becomes 7.5. Do not add or compound another event multiplier.
+Simple rematch and victory-oriented rematch from the same event must not be
+issued simultaneously. Keep reference game/objective fixed on each created
+wish rather than changing its meaning as later rounds occur.
+
+Experience validity is thirty real elapsed minutes. Rematch creation requires
+the latest completed round to have been a defeat from Aiko's perspective; a
+later round replaces that last-round fact. Only actual completed play supplies
+play-change evidence. This validity window gates new creation, not the lifetime
+of an already active/pinned goal. Pinned wishes retain their existing protection.
+No offline rounds, outcomes or emotional evidence are fabricated.
+
+| Social form | Base weight |
+| --- | --- |
+| Spend time talking, category freely chosen | 30 |
+| Specifically chat | 25 |
+| Tell a saying | 15 |
+| Tell a joke | 15 |
+| Share a fact | 15 |
+
+A complete supported social sequence is the fulfillment unit. Specific forms
+require their matching category; the flexible form allows any of those
+categories. Current capability/online rules still qualify the choices; this
+proposal does not add provider calls or authored API fallback content.
+
+Keep exact semantic duplicate exclusion and the proposed normal stock of three
+with multiple wishes per area. A single completed activity must not silently
+complete both flexible and concrete wishes and grant duplicate Moodlet outcomes.
+The priority/assignment among simultaneously matching wishes is the next product
+decision; no priority ordering is selected by these weight tables.
+
+The coupled daily balance examples still use supplied actual successes. These
+weights alone do not prove the frequency or mix of generated, pursued and
+completed wishes, nor authorize a rebalance of need decay or friendship.
+No new Python/JSON IDs, modules, persistent history owners or implementation
+are selected here.
+
+Documentation-only scope: only the master plan is staged; parallel local work
+is preserved. Markdown whitespace/diff reviewed; no runtime tests, app windows,
+mouse control, live-save access or CI.
