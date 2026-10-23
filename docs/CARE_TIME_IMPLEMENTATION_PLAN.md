@@ -5582,3 +5582,52 @@ the existing shared elapsed-time progression, current game/social event ports
 and passive UI read models. Do not introduce a second wish store, journal or
 clock. Any additional bounded evidence must be justified by the agreed concrete
 trigger before implementation.
+
+
+### Proposed creation conditions and need-consumption review
+
+**Discussion proposal recorded at the owner's request, 2026-10-23.** This
+extends the candidate list above; it does not authorize runtime/catalogue changes.
+Evaluate candidates at the proposed ten-minute refresh, retaining pinned wishes.
+
+| Candidate | Proposed condition for entering selection |
+| --- | --- |
+| Play something together, game freely chosen | Generally eligible during awake live time; low fun should increase its likelihood without full fun excluding it. |
+| Spend time talking, category freely chosen | Generally eligible during awake live time; low social should increase its likelihood without full social excluding it. Current category capabilities remain distinct from inner existence. |
+| Play something different | Actual previous completed play establishes the reference game; exclude that game from this candidate's targets. |
+| Have a rematch | Aiko lost the latest completed round; target that same game, with another completed round sufficient. |
+| Win this time | The same actual-defeat context can make a victory-oriented rematch eligible; select it as an alternative to the simple rematch, not both simultaneously for that event. |
+| Eat something different | Actual repeated-food evidence plus suitably low satiety; do not request eating merely because a refresh is due. |
+
+These conditions make candidates eligible; they do not force them into a slot
+or generate Moodlets. Concrete context lifetime and required bounded evidence
+remain to be agreed. Do not silently reinterpret the existing food-handover
+fulfillment rule as actual alternate-food intake.
+
+The owner additionally requested reviewing need consumption and care effects
+alongside selection weights. The systems must relate directly over the day,
+without making the ten-minute offer cadence a ten-minute care obligation.
+
+Current packaged baseline, read on 2026-10-23 (points per real hour):
+
+| Need | Awake baseline | Sleeping baseline | Existing principal replenishment |
+| --- | --- | --- | --- |
+| Satiety | -8 before digestion/activity modifiers | -1.4 | Actual food: +10 to +38 plus bounded digestive reserve |
+| Energy | -3, up to another -0.5 from hardware | +7.5 | Sleep; energy drink +10; interaction costs remain separate |
+| Fun | -3 | 0 | Completed RPS/Blackjack/Tic-Tac-Toe units +6/+8/+9 before diminishing returns/session limits |
+| Social | -8 | -0.35 | Accepted talk +26, with smaller gains from other actual care/play |
+| Affection | -6 | -0.25 | Welcome petting base +25; actual willingness/excess rules still apply |
+
+Food's awake hardware/input surcharge is bounded to +25%; digestive reserve
+protects at most 25% of awake hunger and fades as consumed. Sleep has no reserve
+protection/activity surcharge. These are current facts, not newly selected rates.
+
+Before implementation, agree need-based area weights and experience-based form
+weights together, then assess whether existing decay/care amounts provide
+reasonable multi-hour care intervals. Keep ten-minute optional opportunity,
+actual need depletion and Moodlet generation as distinct steps. Refresh/expiry
+alone must not be treated as neglect or a failed game outcome. This discussion
+selects no new decay rates, quotas, interaction deadlines or friendship balance.
+
+Documentation-only review: this amendment changes the master plan alone;
+`git diff --check` passes. No app, tests, desktop input or CI are run.
