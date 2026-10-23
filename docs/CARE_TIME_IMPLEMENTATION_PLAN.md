@@ -8294,3 +8294,63 @@ Targeted local lifecycle, controls, storage and catalogue checks passed:
 28 tests in 0.060 seconds, slowest 0.029 seconds. Focused Ruff, strict Mypy and
 Pyright passed. Native Tk creation was blocked. No windows, mouse, live-save
 access, full suite or CI was used. Parallel changes are excluded from staging.
+
+
+### Delivery slice 4B: weighted eligibility and flexible three-slot stock
+
+The canonical selector now chooses an eligible area by the corresponding need's
+1/3/5/7 weight (above 70 / above 40 / above 25 / at most 25), then a form by its
+catalogue weight, then one supported original target. More forms/targets do not
+multiply area weight. The area limit and obsolete food/affection creation and
+retirement thresholds were removed, rather than left as competing policies.
+Multiple different game/social goals can fill all three slots. Full needs alone
+exclude no area and do not retire existing wishes. Current explicit petting
+refusal and Too Much Closeness still block new affection wishes; willingness
+based on fullness is a different fact. API capability gates specific forms;
+content readiness and energy remain temporary disclosure/action restrictions.
+
+Catalogue form weights now implement the agreed game and social tables, plus
+70:30 concrete-food/shared-variety selection when repetitive-food evidence
+exists. Flexible ANY/EXCLUDE references bind their original typed meaning.
+Exact goal/target duplicates are excluded, including against pinned goals.
+Recent actual completed play enables game change. Only a latest round defeat
+from Aiko's perspective enables rematch/comeback alternatives; a later non-loss
+replaces that fact. These experience forms require evidence younger than 1800
+elapsed seconds and apply their 1.5 multiplier once. Already created/pinned
+references and progress do not change when later rounds occur.
+
+`GameExperienceCoordinator` records a valid completed round, even without a
+wish, through `PetState.record_completed_game_round()`. This uses the bounded
+`MoodletState.care_evidence` already introduced in slice two, not a new history
+or clock. Missing history remains unknown; results without an observed start
+and repeated callbacks cannot invent receipts. These factual receipts grant no
+emotional reward, encounter qualification or instantaneous friendship bonus.
+The later positive/long-term producers will use this same owned evidence store.
+
+The legacy four-hour lifetime and twelve-minute refill configuration remain
+strict old-save/history read bounds in infrastructure only. Runtime creation
+and retirement use the shared 600-second refresh, not those legacy values.
+`PetState` remains the only mutable owner and UI commands keep their existing
+two-step right-click behavior. No UI timer, API request or offline wish engine
+was added. Shared matching/assignment for newly selectable flexible forms is
+slice five; actual full-need food/affection permission and revised handover
+outcomes are slice six. This delivery does not claim those integrations or
+whole-day balance acceptance are complete.
+
+Verification covers deterministic area/form weights, need-band edges, full
+needs, capability/refusal separation, multiple goals per area and duplicates,
+experience-window boundaries, single rematch selection, original saved game
+progress, refresh/return/pins, bounded actual receipts and save round trips.
+Focused lifecycle/storage/catalogue/expression and existing game/food/social/
+affection regression checks use a native-Tk creation guard. The final measured
+result is recorded after the isolated staged integration below. Full-suite,
+generated-wish/day acceptance and closing OOP review remain in slice eight.
+
+
+Isolated staged integration result for slice four: **115 targeted tests passed
+in 0.572 seconds**, slowest **0.067 seconds**; none exceeded ten seconds.
+Focused Ruff, strict Mypy and Pyright passed for all nine affected production
+files and the changed tests (Ruff). Native Tk creation was blocked throughout
+loading and execution. No windows, mouse control, live-save access, full suite
+or CI was used. Only this delivery's paths/hunks are committed; parallel
+horoscope, UI, character assets and related documentation remain untouched.

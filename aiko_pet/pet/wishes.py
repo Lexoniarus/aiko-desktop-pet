@@ -5,6 +5,7 @@ from enum import StrEnum
 from typing import Literal, Mapping
 
 from .balance import BALANCE
+from .care_evidence import CareExperience
 from .food_handover import FoodHandoverReceipt
 from .moodlets import (
     MoodletCause,
@@ -268,7 +269,7 @@ class WishState:
 
 @dataclass(frozen=True, slots=True)
 class WishContext:
-    """Current capabilities/acceptance, never proof of World stock or contact."""
+    """Capabilities and bounded actual play context, without World-stock inference."""
 
     online_social: bool = False
     prepared_social: frozenset[str] = frozenset()
@@ -276,6 +277,8 @@ class WishContext:
     games_ready: bool = True
     crowded: bool = False
     repetitive_food: str | None = None
+    petting_refused: bool = False
+    recent_play: CareExperience | None = None
 
 
 class WishRestriction(StrEnum):

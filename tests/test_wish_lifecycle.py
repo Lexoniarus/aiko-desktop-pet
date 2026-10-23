@@ -89,7 +89,9 @@ class WishLifecycleTests(unittest.TestCase):
         self.assertEqual(create(later, 600), later)
 
     def test_fulfillment_and_dismissal_wait_for_existing_refresh(self):
-        state = create(definitions={WishId.FOOD: DEFINITIONS[WishId.FOOD]})
+        state = create(definitions={WishId.FOOD: replace(
+            DEFINITIONS[WishId.FOOD], targets=("apple",),
+        )})
         first = state.active[0]
         state = fulfill_activity_wish(
             state, WishArea.FOOD, first.target_id, elapsed=100,

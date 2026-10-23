@@ -129,12 +129,13 @@ def parse_balance(raw: Any) -> BalanceCatalog:
     objects = sections["object_behavior"]
     wishes = sections["wishes"]
     if (any(value <= 0 for value in wishes.values())
-            or not wishes["maximum_per_area"] == 1
-            <= wishes["maximum_active"] <= 4
+            or wishes["maximum_active"] != 3
             or not 1 <= wishes["disclosure_friendship_level"] <= 10
             or wishes["disclosure_mood_threshold"] > 100
-            or not wishes["creation_need_threshold"]
-            < wishes["relevance_need_threshold"] <= 100
+            or not wishes["need_low_threshold"] < wishes["need_medium_threshold"]
+            < wishes["need_high_threshold"] <= 100
+            or not wishes["area_weight_satisfied"] <= wishes["area_weight_moderate"]
+            <= wishes["area_weight_low"] <= wishes["area_weight_critical"]
             or wishes["refill_delay_seconds"] > wishes["lifetime_seconds"]
             or wishes["disclosure_interval_seconds"] > wishes["lifetime_seconds"]):
         raise ValueError("Invalid wish pacing or disclosure")

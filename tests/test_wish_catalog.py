@@ -83,7 +83,7 @@ class WishCatalogTests(unittest.TestCase):
         self.assertEqual({key: definitions[key].selection_weight for key in (
             WishId.PLAY_GAME, WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS,
             WishId.WIN_OVERALL, WishId.AVOID_OVERALL_LOSS,
-        )}, {WishId.PLAY_GAME: 60, WishId.WIN_ROUND: 10,
+        )}, {WishId.PLAY_GAME: 30, WishId.WIN_ROUND: 10,
              WishId.AVOID_ROUND_LOSS: 15, WishId.WIN_OVERALL: 10,
              WishId.AVOID_OVERALL_LOSS: 5})
         self.assertEqual(definitions[WishId.WIN_OVERALL].goal.objective,
@@ -94,7 +94,7 @@ class WishCatalogTests(unittest.TestCase):
                          WishObjective.NEXT_WIN)
         avoid = definitions[WishId.AVOID_FOOD]
         self.assertEqual((avoid.area, avoid.goal.objective, avoid.selection_weight),
-                         (WishArea.FOOD, WishObjective.FOOD_HANDOVER, 1))
+                         (WishArea.FOOD, WishObjective.FOOD_HANDOVER, 30))
         self.assertEqual(avoid.targets, definitions[WishId.FOOD].targets)
         state = WishState()
         self.assertFalse(replenish_wishes(
@@ -210,18 +210,20 @@ class WishCatalogTests(unittest.TestCase):
         for key in (WishId.PLAY_ANY_GAME, WishId.SOCIAL_ANY, WishId.PLAY_GAME):
             self.assertIsNone(WISH_CATALOG.definitions[key].experience)
 
-    def test_concrete_picker_does_not_misrepresent_flexible_or_experience_goals(self):
-        pending = {
-            key: WISH_CATALOG.definitions[key] for key in (
-                WishId.PLAY_ANY_GAME, WishId.PLAY_OTHER_GAME, WishId.REMATCH_GAME,
-                WishId.COMEBACK_GAME, WishId.SOCIAL_ANY,
-            )
-        }
-        state = WishState()
-        self.assertFalse(replenish_wishes(
-            state, elapsed=100, sleeping=False, context=WishContext(online_social=True),
-            needs=NeedLevels(0, 0, 0, 0, 0), definitions=pending, rng=random.Random(1),
-        ).active)
+    def test_flexible_forms_bind_their_meaning_without_inventing_experiences(self):
+        pool = {key: WISH_CATALOG.definitions[key] for key in (
+            WishId.PLAY_ANY_GAME, WishId.PLAY_OTHER_GAME, WishId.REMATCH_GAME,
+            WishId.COMEBACK_GAME, WishId.SOCIAL_ANY,
+        )}
+        state = replenish_wishes(
+            WishState(), elapsed=100, sleeping=False,
+            context=WishContext(online_social=True), needs=NeedLevels(0, 0, 0, 0, 0),
+            definitions=pool, rng=random.Random(1),
+        )
+        self.assertEqual({w.definition_id for w in state.active},
+                         {WishId.PLAY_ANY_GAME, WishId.SOCIAL_ANY})
+        self.assertTrue(all(w.target.mode == WishTargetMode.ANY for w in state.active))
+        self.assertTrue(all(w.target_id == "" for w in state.active))
 
     def test_invalid_target_modes_and_experience_requirements_are_rejected(self):
         for key, field, value in (
@@ -250,15 +252,16 @@ class WishCatalogTests(unittest.TestCase):
 
     def test_shared_pacing_has_one_owner_and_rejects_the_retired_bonus(self):
         self.assertEqual(BALANCE.integer("wishes", "maximum_active"), 3)
-        self.assertEqual(BALANCE.integer("wishes", "maximum_per_area"), 1)
+        self.assertNotIn("maximum_per_area", BALANCE.sections["wishes"])
         self.assertEqual(BALANCE.integer("wishes", "lifetime_seconds"), 14400)
         self.assertEqual(BALANCE.integer("wishes", "refill_delay_seconds"), 720)
         self.assertEqual(BALANCE.integer("wishes", "disclosure_interval_seconds"), 1800)
         self.assertEqual(BALANCE.integer("wishes", "disclosure_friendship_level"), 3)
         self.assertEqual(BALANCE.number("wishes", "disclosure_mood_threshold"), 50)
         self.assertNotIn("friendship_bonus_points", BALANCE.sections["wishes"])
-        self.assertEqual(BALANCE.number("wishes", "creation_need_threshold"), 70)
-        self.assertEqual(BALANCE.number("wishes", "relevance_need_threshold"), 90)
+        self.assertEqual(BALANCE.integer("wishes", "refresh_interval_seconds"), 600)
+        self.assertNotIn("creation_need_threshold", BALANCE.sections["wishes"])
+        self.assertNotIn("relevance_need_threshold", BALANCE.sections["wishes"])
         original = load_json(DATA / "balance.json")
         for key, bad in (
             ("maximum_active", 5), ("maximum_per_area", 2),
@@ -266,9 +269,9 @@ class WishCatalogTests(unittest.TestCase):
             ("friendship_bonus_points", 1), ("friendship_bonus_points", True),
             ("refill_delay_seconds", 15000),
             ("lifetime_seconds", 0),
-            ("creation_need_threshold", 90),
-            ("relevance_need_threshold", 70),
-            ("relevance_need_threshold", 101),
+            ("need_medium_threshold", 80), ("need_high_threshold", 101),
+            ("need_low_threshold", 40), ("area_weight_low", 2),
+            ("area_weight_satisfied", 0), ("refresh_interval_seconds", 0),
         ):
             raw = copy.deepcopy(original)
             raw["wishes"][key] = bad

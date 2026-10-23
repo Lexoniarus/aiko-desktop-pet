@@ -243,25 +243,49 @@ does not imply emotional offense or sleepy clicks.
 
 ## Wishes and fulfillment
 
-Storage supports three inner wishes, including several distinct goals in one
-area. The current live picker still chooses at most one per area. Awake live
-evaluation fills available slots initially or after the saved twelve-minute
-vacancy pause; further vacancies do not postpone it. Closed time never generates
-new wishes. Original lifetime is four real hours, except while pinned.
+The awake picker targets three inner wishes at each shared ten-minute refresh.
+Several distinct objectives/targets in one area can coexist; exact semantic
+duplicates cannot. Fulfillment or dismissal leaves a vacancy until that next
+refresh. Sleep/closed progression expires unprotected wishes but generates no
+new ones. Return/waking performs one due refresh, with no backlog. Returning
+before the deadline keeps the current stock.
 
-Food/affection creation requires the respective need at most 70, and affection
-also requires actual petting willingness. Unpinned supplied food/affection wishes
-retire at 90; games and social are exempt from this need gating. Low mood/trust
-does not suppress inner wishes. Disclosure requires friendship level three,
-mood fifty, current capability and a free speech opportunity; urgent care takes
-priority. Actual text presentation counts once per wish, thirty minutes apart.
-Temporary unavailability keeps the wish and its original deadline.
+Selection chooses the area first, then the eligible form, then its target.
+For each corresponding need, area weights are 1 above 70, 3 above 40 through 70,
+5 above 25 through 40 and 7 at 25 or lower. Full needs alone exclude no area
+and never retire an existing desire. Explicit petting refusal and Too Much
+Closeness block new affection wishes; physical fullness is separate. Specific
+API forms require online capability; unprepared content is a temporary speech
+restriction. Games remain inner possibilities even when too tired to play.
 
-Left-click pins a card. Right-click unpins a pinned wish; right-click on an
-unpinned wish dismisses it. Current late unpinning can retire the wish immediately
-if its original deadline passed. The already agreed correction keeps an unpinned
-wish until the next shared refresh; that lifecycle change is the next planned
-slice, together with the ten-minute rotation and new wish mix.
+Within games, any-game/concrete-game/next-win/next-nonloss/three-wins/overall-
+nonloss weights are 30/30/10/15/10/5. Recent actual play enables game change at
+weight 10; the latest actual round being a defeat enables simple/victory rematch
+at 10/5. These three experience forms receive 1.5 times their weight once, with
+a half-open thirty-minute creation window. Both rematches for the same reference
+cannot occupy slots together. Bounded actual round receipts use Pet's existing
+care evidence and survive saves; missing history is never inferred. Creating
+wishes or recording these facts alone grants no Moodlet or friendship credit.
+
+Social weights are 30 for free choice, 25 for chat and 15 each for saying,
+joke and fact. Food uses 70 for a concrete request and 30 for the shared variety/
+avoidance form, requiring actual repetitive-food evidence for its exclusion.
+No need-consumption or care-gain rate changed for this offer cadence.
+
+Left-click pins; right-click on a pinned card unpins; the next right-click
+removes the unpinned wish. Pins preserve identity, objective and progress through
+sleep and closure. Unpinning keeps the wish until the next regular refresh,
+including after an old deadline. Existing saved concrete game goals retain their
+original objective/progress and expiry; newly created goals use the shared clock.
+Low mood/trust does not suppress inner wishes. Disclosure still requires level
+three, mood fifty, capability and a free speech opportunity. Actual presentation
+counts once per wish, at least thirty minutes apart; urgent care takes priority.
+
+Flexible forms now enter selection with fixed typed targets. Their shared
+matching/assignment and game/social completion are the next delivery slice;
+full-need wish admission and revised food-handover outcomes follow separately.
+The currently delivered completion rules below are not claims that those later
+integration slices are already complete.
 
 Actual desired intake, welcome petting, qualifying game results and complete
 matching social sequences can fulfill wishes, including unspoken ones. The

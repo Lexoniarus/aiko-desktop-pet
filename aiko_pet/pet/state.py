@@ -15,6 +15,12 @@ from .care_actions import (
     plan_care_action,
     resolve_care_time,
 )
+from .care_evidence import (
+    MAX_CARE_EXPERIENCES,
+    CareActivity,
+    CareEvidenceState,
+    CareExperience,
+)
 from .care_result import CareResult
 from .consumption import ConsumptionOrigin
 from .food import (
@@ -47,6 +53,7 @@ from .moodlets import (
     MoodletAttribution,
     MoodletCauseKind,
     MoodletId,
+    MoodletOutcome,
     MoodletState,
     reinforce_moodlet,
 )
@@ -64,6 +71,7 @@ from .wishes import (
     WishContext,
     WishResolution,
     WishState,
+    WishTargetKind,
     acknowledge_wish_expression,
     dismiss_wish,
     expire_wishes,
@@ -343,10 +351,15 @@ class PetState:
 
     def evaluate_wishes(self, context: WishContext, *, rng: random.Random) -> None:
         """Replenish current live desires; time reconstruction never calls this."""
+        evidence = self.moodlets.care_evidence
+        last_play = (next((e for e in reversed(evidence.experiences)
+                           if e.activity == CareActivity.PLAY), None)
+                     if evidence else None)
         self._change(wishes=replenish_wishes(
             self.wishes, elapsed=self.lived_seconds, sleeping=self.sleeping,
             needs=self.needs,
-            context=context, definitions=WISH_CATALOG.definitions, rng=rng,
+            context=replace(context, recent_play=last_play),
+            definitions=WISH_CATALOG.definitions, rng=rng,
         ))
 
     def note_wish_expression(self, instance_id: int) -> None:
@@ -405,6 +418,27 @@ class PetState:
                 elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
                 instance_id=completion.wish_instance_id,
             ), personal=True)
+
+    def record_completed_game_round(
+        self, *, game_id: str, round_id: str, outcome: RoundOutcome,
+    ) -> None:
+        """Retain one actual round fact for wish eligibility, even without a wish.
+
+        This is not a session score, positive encounter or emotional reward.
+        Later care qualification enriches the same owned evidence store.
+        """
+        evidence = self.moodlets.care_evidence or CareEvidenceState(self.lived_seconds)
+        receipt = f"play:{game_id}:{round_id}"
+        if any(e.receipt_id == receipt for e in evidence.experiences):
+            return
+        event = CareExperience(
+            receipt, self.lived_seconds, CareActivity.PLAY, MoodletOutcome(outcome),
+            WishArea.GAMES, WishTargetKind.GAME, game_id,
+        )
+        self._change(moodlets=replace(self.moodlets, care_evidence=replace(
+            evidence,
+            experiences=(*evidence.experiences, event)[-MAX_CARE_EXPERIENCES:],
+        )))
 
     def complete_wish_round(
         self, instance_id: int, *, game_id: str, session_id: str, round_id: str,

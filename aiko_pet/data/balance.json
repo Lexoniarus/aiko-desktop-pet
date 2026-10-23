@@ -452,14 +452,18 @@
   },
   "wishes": {
     "maximum_active": 3,
-    "maximum_per_area": 1,
     "lifetime_seconds": 14400,
     "refill_delay_seconds": 720,
     "refresh_interval_seconds": 600,
     "disclosure_interval_seconds": 1800,
     "disclosure_friendship_level": 3,
     "disclosure_mood_threshold": 50,
-    "creation_need_threshold": 70.0,
-    "relevance_need_threshold": 90.0
+    "need_high_threshold": 70,
+    "need_medium_threshold": 40,
+    "need_low_threshold": 25,
+    "area_weight_satisfied": 1,
+    "area_weight_moderate": 3,
+    "area_weight_low": 5,
+    "area_weight_critical": 7
   }
 }

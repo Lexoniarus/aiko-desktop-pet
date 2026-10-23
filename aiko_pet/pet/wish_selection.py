@@ -1,48 +1,96 @@
 """Awake wish selection on Pet's shared elapsed axis; no UI or offline engine."""
 
 import random
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from typing import Mapping
 
 from .balance import BALANCE
+from .care_evidence import CareActivity
+from .moodlets import MoodletOutcome
 from .needs import NeedLevels
 from .wishes import (
     ActiveWish,
     WishArea,
     WishContext,
     WishDefinition,
+    WishExperienceKind,
     WishId,
     WishState,
+    WishTarget,
+    WishTargetKind,
     WishTargetMode,
     expire_wishes,
 )
 
 
-def _candidate_targets(
-    definition: WishDefinition, *, needs: NeedLevels, context: WishContext,
-) -> tuple[str, ...]:
-    """Current suitability never extends or replaces an existing objective."""
-    # The current picker binds one concrete game/category. Flexible references
-    # and real experience assignment are introduced by the lifecycle slice.
-    if definition.experience is not None or (
-        definition.area in (WishArea.GAMES, WishArea.SOCIAL)
-        and definition.target_mode != WishTargetMode.EXACT
-    ):
-        return ()
-    threshold = BALANCE.number("wishes", "creation_need_threshold")
+def wish_area_weight(area: WishArea, needs: NeedLevels) -> int:
+    """A high need bar lowers desire frequency without excluding its area."""
+    value = {WishArea.FOOD: needs.satiety, WishArea.GAMES: needs.fun,
+             WishArea.SOCIAL: needs.social, WishArea.AFFECTION: needs.affection}[area]
+    for threshold, band in (("high", "satisfied"), ("medium", "moderate"),
+                            ("low", "low")):
+        if value > BALANCE.number("wishes", f"need_{threshold}_threshold"):
+            return BALANCE.integer("wishes", f"area_weight_{band}")
+    return BALANCE.integer("wishes", "area_weight_critical")
+
+
+@dataclass(frozen=True, slots=True)
+class _Candidate:
+    definition: WishDefinition
+    targets: tuple[WishTarget, ...]
+    weight: float
+
+
+def _candidate(
+    definition: WishDefinition, *, elapsed: float, context: WishContext,
+    active: list[ActiveWish], definitions: Mapping[WishId, WishDefinition],
+) -> _Candidate | None:
+    """Actual capabilities and evidence gate creation, independently of speech."""
     if (definition.selection_weight == 0
-            or definition.area == WishArea.FOOD and needs.satiety > threshold
             or definition.area == WishArea.AFFECTION
-            and (needs.affection > threshold or context.crowded
-                 or not context.petting_welcome)
+            and (context.crowded or context.petting_refused)
             or definition.id in (WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT)
             and not context.online_social):
-        return ()
-    if definition.id == WishId.AVOID_FOOD:
-        return tuple(t for t in definition.targets if t == context.repetitive_food)
-    if definition.area == WishArea.FOOD:
-        return tuple(t for t in definition.targets if t != context.repetitive_food)
-    return definition.targets
+        return None
+    references: tuple[str | None, ...] = definition.targets
+    weight = float(definition.selection_weight)
+    if definition.experience is not None:
+        evidence = context.recent_play
+        requirement = definition.experience
+        if (evidence is None or evidence.activity != CareActivity.PLAY
+                or evidence.target_kind != WishTargetKind.GAME
+                or evidence.outcome not in (MoodletOutcome.WIN, MoodletOutcome.LOSS,
+                                            MoodletOutcome.DRAW)
+                or not 0 <= elapsed - evidence.occurred_at < requirement.window_seconds
+                or evidence.target_id not in definition.targets
+                or requirement.kind == WishExperienceKind.LAST_ROUND_LOSS
+                and evidence.outcome != MoodletOutcome.LOSS):
+            return None
+        references = (evidence.target_id,)
+        weight *= requirement.weight_multiplier
+        # Revanche variants for this reference are alternatives, never two slots.
+        if definition.id in (WishId.REMATCH_GAME, WishId.COMEBACK_GAME) and any(
+            w.definition_id in (WishId.REMATCH_GAME, WishId.COMEBACK_GAME)
+            and w.target_id == evidence.target_id for w in active
+        ):
+            return None
+    elif definition.id == WishId.AVOID_FOOD:
+        references = tuple(t for t in definition.targets
+                           if t == context.repetitive_food)
+    elif definition.target_mode == WishTargetMode.ANY:
+        references = (None,)
+    elif definition.area == WishArea.FOOD:
+        references = tuple(t for t in definition.targets
+                           if t != context.repetitive_food)
+    occupied = {
+        (w.goal_snapshot, w.target or WishTarget(
+            definitions[w.definition_id].target_kind,
+            definitions[w.definition_id].target_mode, w.target_id,
+        )) for w in active
+    }
+    targets = tuple(t for t in (definition.bind_target(r) for r in references)
+                    if (definition.goal, t) not in occupied)
+    return _Candidate(definition, targets, weight) if targets else None
 
 
 def replenish_wishes(
@@ -61,25 +109,26 @@ def replenish_wishes(
               if not w.pinned and w.target is None
               and definitions[w.definition_id].area != WishArea.GAMES else w
               for w in state.active]
-    occupied = {definitions[w.definition_id].area for w in active}
     anchors = dict(state.last_created_by_area)
-    candidates: dict[WishArea, list[tuple[WishDefinition, tuple[str, ...]]]] = {}
-    for definition in definitions.values():
-        if definition.area in occupied:
-            continue
-        targets = _candidate_targets(definition, needs=needs, context=context)
-        if targets:
-            candidates.setdefault(definition.area, []).append((definition, targets))
     next_id = state.next_instance_id
-    while candidates and len(active) < BALANCE.integer("wishes", "maximum_active"):
-        area = rng.choice(tuple(candidates))
-        forms = candidates.pop(area)
-        definition, targets = rng.choices(
-            forms, weights=[d.selection_weight for d, _targets in forms], k=1,
-        )[0]
+    while len(active) < BALANCE.integer("wishes", "maximum_active"):
+        candidates: dict[WishArea, list[_Candidate]] = {}
+        for definition in definitions.values():
+            candidate = _candidate(definition, elapsed=elapsed, context=context,
+                                   active=active, definitions=definitions)
+            if candidate is not None:
+                candidates.setdefault(definition.area, []).append(candidate)
+        if not candidates:
+            break
+        areas = tuple(candidates)
+        area = rng.choices(areas, weights=[wish_area_weight(a, needs) for a in areas],
+                           k=1)[0]
+        forms = candidates[area]
+        candidate = rng.choices(forms, weights=[c.weight for c in forms], k=1)[0]
+        definition = candidate.definition
         if next_id >= 2**63 - 1:
             raise ValueError("Wish instance allocation exhausted")
-        target = definition.bind_target(rng.choice(targets))
+        target = rng.choice(candidate.targets)
         active.append(ActiveWish(
             next_id, definition.id, target.target_id or "", elapsed, deadline,
             goal=definition.goal, target=target,

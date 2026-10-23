@@ -21,7 +21,7 @@
       "fulfillment_level": 1,
       "round_count": 0,
       "objective": "food_intake",
-      "selection_weight": 1,
+      "selection_weight": 70,
       "target_mode": "exact",
       "experience": null
     },
@@ -45,7 +45,7 @@
       "fulfillment_level": 1,
       "round_count": 0,
       "objective": "food_handover",
-      "selection_weight": 1,
+      "selection_weight": 30,
       "target_mode": "exclude",
       "experience": null
     },
@@ -64,7 +64,7 @@
       "fulfillment_level": 1,
       "round_count": 2,
       "objective": "total_rounds",
-      "selection_weight": 60,
+      "selection_weight": 30,
       "target_mode": "exact",
       "experience": null
     },
@@ -155,7 +155,7 @@
       "fulfillment_level": 1,
       "round_count": 0,
       "objective": "activity",
-      "selection_weight": 1,
+      "selection_weight": 25,
       "target_mode": "exact",
       "experience": null
     },
@@ -170,7 +170,7 @@
       "fulfillment_level": 1,
       "round_count": 0,
       "objective": "activity",
-      "selection_weight": 1,
+      "selection_weight": 15,
       "target_mode": "exact",
       "experience": null
     },
@@ -185,7 +185,7 @@
       "fulfillment_level": 1,
       "round_count": 0,
       "objective": "activity",
-      "selection_weight": 1,
+      "selection_weight": 15,
       "target_mode": "exact",
       "experience": null
     },
@@ -200,7 +200,7 @@
       "fulfillment_level": 1,
       "round_count": 0,
       "objective": "activity",
-      "selection_weight": 1,
+      "selection_weight": 15,
       "target_mode": "exact",
       "experience": null
     },

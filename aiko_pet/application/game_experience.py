@@ -2,7 +2,8 @@
 
 Session scores live in the game and its window only. This coordinator receives
 actual round boundaries for wishes and the immutable ordinary-care summary at
-close. Only bounded wish progress persists; the current round attempt is transient.
+close. Bounded wish progress and actual round evidence persist in Pet; the
+current round attempt is transient.
 """
 
 from __future__ import annotations
@@ -99,9 +100,12 @@ class GameExperienceCoordinator:
         advance_session_time(
             self._state, self._clock, inputs, progression=self._progression,
         )
+        outcome: RoundOutcome = ("loss" if event.outcome == "win" else
+                                 "win" if event.outcome == "loss" else "draw")
+        self._state.record_completed_game_round(
+            game_id=event.game_id.value, round_id=event.identity, outcome=outcome,
+        )
         if pending.wish_instance_id is not None:
-            outcome: RoundOutcome = ("loss" if event.outcome == "win" else
-                                     "win" if event.outcome == "loss" else "draw")
             self._state.complete_wish_round(
                 pending.wish_instance_id, game_id=event.game_id.value,
                 session_id=event.session_id, round_id=event.identity,

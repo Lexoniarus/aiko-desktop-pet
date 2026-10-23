@@ -92,6 +92,8 @@ class AttentionCoordinator:
                 "care", "play_minimum_energy",
             ),
             crowded=MoodletId.CROWDED in active,
+            petting_refused=(self.state.lived_seconds
+                             < self.state.moodlets.interactions.petting_refused_until),
             repetitive_food=(self.state.moodlets.interactions.food.food_id
                              if MoodletId.FOOD_MONOTONY in active else None),
         )

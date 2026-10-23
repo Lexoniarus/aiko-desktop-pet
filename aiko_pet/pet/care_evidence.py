@@ -1,7 +1,8 @@
 """Bounded personal experience values, owned through Pet's existing Moodlet state.
 
 No values infer events, group visits, qualify care periods or duplicate need
-exposure buckets. Producers and period evaluation belong to subsequent slices.
+exposure buckets. Actual round facts now support wish eligibility. Encounter
+qualification and period evaluation belong to subsequent slices.
 """
 
 from __future__ import annotations
