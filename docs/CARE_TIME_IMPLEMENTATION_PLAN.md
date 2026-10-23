@@ -7425,3 +7425,103 @@ JSON and parallel runtime changes are untouched by this documentation pass.
 Documentation-only scope: only this master plan is changed and committed here.
 No runtime tests, application windows, mouse control, live-save access, database
 creation/migration or CI in this pass.
+
+
+### Proposed fields for wishes, Moodlet causes and longer-term evidence
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Separate active goals, resulting emotional memories and
+bounded qualification evidence. Use shared elapsed seconds for domain times;
+retain the restart UTC anchor separately. The following names/meanings describe
+the field-level proposal, not executed SQL types or completed migration code.
+
+#### Active wish instances
+
+| Proposed `wish_instances` field | Meaning |
+| --- | --- |
+| `instance_id` | Stable wish identity, never reused |
+| `definition_id`, `area` | Wish variant and domain area |
+| `objective_id`, `required_count` | Original goal rule and quantity |
+| `target_kind` | Food, game, social or affection target kind |
+| `target_mode` | Concrete target, free choice or explicitly excluded target |
+| `target_id` | Concrete/reference target; empty for free choice |
+| `created_elapsed_seconds` | Actual creation time |
+| `last_expressed_elapsed_seconds` | Actual last expression; empty means not yet expressed |
+| `pinned` | Protection from regular rotation |
+| `completed_rounds`, `wins`, `losses` | Actual game-goal progress |
+
+The original objective, required count and target meaning are immutable after
+creation. Catalogue changes do not rewrite a started wish. Concrete Blackjack,
+any-game and other-than-Blackjack goals use these shared fields, not independent
+tables. Preserve original legacy goals/progress through import.
+
+The shared ten-minute due time belongs once in `wish_state`, rather than adding
+another independent expiry timer to each newly created wish. The bounded
+`wish_round_receipts` children belong to the active wish and retire with it.
+Pinned protection and unpin/next-refresh behavior remain as already agreed.
+
+#### Moodlet causes and bounded snapshots
+
+| Proposed `moodlet_causes` field | Meaning |
+| --- | --- |
+| `cause_id` | Technical row identity |
+| `episode_id` | Foreign key to the owning Moodlet episode |
+| `receipt_id` | Stable receipt of the actual semantic event |
+| `occurred_elapsed_seconds` | Actual event time |
+| `cause_kind` | Wish fulfilled/failed, interaction, poor care or longer-term pattern |
+| `attribution` | User, autonomous or unknown |
+| `target_kind`, `target_id` | Actual affected game, food or other target |
+| `outcome` | Such as won, lost, handed over or completed |
+| `source_wish_instance_id` | Original wish identity as historical evidence |
+| `wish_snapshot` | Original definition, objective, required count and target meaning |
+| `details_snapshot` | Additional real result/qualification facts |
+
+The original wish identity is not a required foreign key into active wishes.
+Keep enough source facts to describe the event after its wish ends. Explicitly
+permit small typed, versioned JSON snapshots inside SQLite for variant-specific
+details. Stable identity, relationships and common selection fields stay
+relational; these bounded snapshots are not an arbitrary state blob or another
+editable catalogue. Appropriate details include actual game counts or the
+qualifying care-period facts.
+
+Persist facts, not rendered recollection sentences. Dialogue sources later
+formulate those facts. Retain at most one/two/three available real causes at
+current episode intensity; a stronger single event is not duplicated. Ending
+the episode removes its causes. Duplicate-event handling must still respect
+independent patterns: the same real event may contribute to different families.
+
+#### Shared encounters, semantic evidence and per-family processing
+
+| Proposed table | Core fields/meaning |
+| --- | --- |
+| `care_encounters` | `encounter_id`, beginning and last qualified activity of a shared care visit |
+| `care_evidence` | `evidence_id`, stable semantic receipt, elapsed event time, optional encounter reference, event kind, area, outcome and actual target |
+| `long_term_progress` | Family identity, start of reliable evidence, current period start and fully processed period endpoint |
+
+The progress record also retains a small typed intermediate value where needed,
+for example accumulated contactless awake time for Uebersehen. Read deficient-need
+durations from the existing `need_exposure_buckets`; do not record another copy
+of that timeline. Use the common valid measurement baseline for twenty-four-hour
+periods and complete them once per family.
+
+Do not put a shared consumed flag on an encounter/evidence row. One encounter
+can support trust and appreciation independently; each family records which
+period it has already processed. Do not consume the same period repeatedly to
+raise the same family's intensity.
+
+Retain raw evidence only while needed for bounded qualification. An awarded
+longer-term episode receives its own bounded qualifying-period cause snapshot,
+which can outlive the underlying short-lived evidence. Exact row limits,
+cleanup sequencing and remaining pending-handover details belong to the next
+storage-contract review, not a permanent event archive.
+
+Pet/domain owners and application semantic-event paths decide fulfillment and
+qualification. SQLite enforces relationships and saves coherent results; SQL
+does not execute care or emotion rules. Remaining database constraints, full
+mapping of other persisted owners, import/path policy and recovery details still
+need a focused schema review before implementation.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, tests, text and documentation work is preserved. No runtime
+tests, application windows, mouse control, live-save access, database creation,
+migration or CI in this pass.
