@@ -48,6 +48,56 @@ class WishTargetKind(StrEnum):
     CARE = "care"
 
 
+class WishTargetMode(StrEnum):
+    EXACT = "exact"
+    ANY = "any"
+    EXCLUDE = "exclude"
+
+
+@dataclass(frozen=True, slots=True)
+class WishTarget:
+    """A fixed target meaning, independent of the activity eventually chosen."""
+
+    kind: WishTargetKind
+    mode: WishTargetMode
+    target_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.kind, WishTargetKind) or not isinstance(
+            self.mode, WishTargetMode,
+        ):
+            raise ValueError("Wish target requires typed kind and mode")
+        if self.mode == WishTargetMode.ANY:
+            if self.target_id is not None:
+                raise ValueError("Free-choice wish cannot bind a concrete target")
+        elif not isinstance(self.target_id, str) or not self.target_id:
+            raise ValueError("Concrete/excluded wish requires a reference target")
+
+    def matches(self, kind: WishTargetKind, target_id: str) -> bool:
+        """Match a validated activity identity within the same target kind."""
+        if kind != self.kind or not target_id:
+            return False
+        if self.mode == WishTargetMode.ANY:
+            return True
+        if self.mode == WishTargetMode.EXCLUDE:
+            return target_id != self.target_id
+        return target_id == self.target_id
+
+
+class WishExperienceKind(StrEnum):
+    RECENT_PLAY = "recent_play"
+    LAST_ROUND_LOSS = "last_round_loss"
+
+
+@dataclass(frozen=True, slots=True)
+class WishExperienceRequirement:
+    """Creation prerequisite data, not evidence that the experience happened."""
+
+    kind: WishExperienceKind
+    window_seconds: int
+    weight_multiplier: float
+
+
 class WishObjective(StrEnum):
     """Stable goal meanings, independent of a catalogue ID's current wording."""
 
@@ -116,6 +166,15 @@ class WishDefinition:
     round_count: int
     goal: WishGoal
     selection_weight: int
+    target_mode: WishTargetMode = WishTargetMode.EXACT
+    experience: WishExperienceRequirement | None = None
+
+    def bind_target(self, target_id: str | None = None) -> WishTarget:
+        """Freeze a concrete/excluded reference without choosing a free target."""
+        target = WishTarget(self.target_kind, self.target_mode, target_id)
+        if target_id is not None and target_id not in self.targets:
+            raise ValueError("Wish target is outside its supported activity pool")
+        return target
 
     @property
     def label_key(self) -> str:
