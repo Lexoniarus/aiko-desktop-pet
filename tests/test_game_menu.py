@@ -161,6 +161,7 @@ class GameMenuTests(unittest.TestCase):
                 GameId.ROCK_PAPER_SCISSORS,
                 GameId.BLACKJACK,
                 GameId.TIC_TAC_TOE,
+                GameId.CONNECT_FOUR,
             ],
         )
         for button in menu.buttons.values():

@@ -1,11 +1,18 @@
-# Three-game selection and presentation plan
+# Minigame delivery and expansion plan
 
-Status: implemented and locally verified on the feature branch, 2026-10-19.
+Delivered baseline: three games, implemented and locally verified on the feature
+branch, 2026-10-19. The [Connect Four extension](#connect-four-extension-vier-gewinnt)
+was authorized and implemented locally on 2026-10-23.
 Native Windows visual/input acceptance remains separate; no merge performed.
 The owner selected Blackjack and Tic-Tac-Toe alongside the existing
 Rock–Paper–Scissors (RPS). The owner authorized stepwise implementation, small
 commits and targeted tests, with full-suite validation only at the end.
 No merge is authorized.
+
+The original delivery sections and evidence below retain their three-game scope.
+The appended Connect Four section records its separate implementation and
+validation. A scoped Connect Four commit is authorized. No new dependency,
+balance values, push or merge is included.
 
 ## Agreed experience
 
@@ -438,3 +445,155 @@ The following documentation reconciliation changes no production or test code.
 Pre-existing social-content documentation remains outside these commits. No
 normal-save writes, working-desktop probes, remote CI, pushes or merges were
 performed for this follow-up.
+
+## Connect Four extension (Vier gewinnt)
+
+**Owner decision, 2026-10-23: implementation authorized and delivered locally.** Use yellow and red Kenney
+pieces, project-owned local game rules with a bounded opponent search, and
+contextual Aiko reactions. The experience below records the first implementation;
+opponent strength remains a tuning choice rather than a difficulty guarantee.
+The horoscope stays at its current prototype stage; its future hat/book scene
+is not a prerequisite or part of this game extension.
+
+### Round flow and player presentation
+
+- Add **Vier gewinnt** to Spielen through the existing single-game admission
+  and window lifecycle. Selecting it opens one shared seven-column, six-row
+  board in the player window; Aiko remains on the desktop as the opponent.
+- Give the player and Aiko fixed, clearly labelled yellow/red piece identities
+  throughout a session: yellow for the player, red for Aiko. Show the active turn
+  and temporary player/Aiko/draw counts. Keyboard keys 1–7 also select columns.
+- Hovering a legal column previews the next piece/landing position. Clicking
+  drops one piece into its lowest empty cell, with a short fall animation.
+  A full column cannot accept a move or consume a turn.
+- The player starts the first round; alternate the starter after each completed
+  round. Aiko makes one legal move after a short thinking pause and uses the
+  same fall presentation. Block extra drops during turn/fall resolution, while
+  keeping close available and the Tk event loop responsive.
+- Four or more connected pieces horizontally, vertically or diagonally win.
+  Highlight the winning cells, keeping a win on the final move distinct from
+  a full-board draw. Keep the settled result visible until **Nächste Runde**.
+- Count each completed round once. Closing cancels pending presentation/search
+  results and discards the unfinished round and transient session board/score.
+  Do not add persistent lifetime statistics or an automatic next-round timer.
+
+### Local rules and bounded opponent
+
+- Use a small project-owned rule implementation and a limited local
+  Minimax/Negamax search with Alpha-Beta pruning. No API, language model,
+  training service or new game-engine dependency is selected.
+- Aiko takes an immediate win, otherwise blocks an immediate playable player
+  win where possible. Evaluate further candidates using a bounded lookahead,
+  center access, expandable lines and opponent replies; avoid handing over an
+  immediate win when a safe move exists.
+- Search four individual moves ahead (two per participant), with Alpha-Beta
+  pruning and a 5,000-node ceiling. Search an immutable snapshot in one worker
+  thread; poll results on Tk after a minimum 650 ms thinking pause. Closing
+  signals cancellation and invalidates pending callbacks/results.
+- Vary equally rated legal choices without overriding immediate tactical wins
+  or defenses. Keep one normal strength initially; mood/friendship may affect
+  expression, but do not silently change playing strength or manufacture losses.
+- Reuse the current game's presentation/lifecycle helpers and suitable clearly
+  licensed components when they simplify integration. No easyAI, OpenSpiel or
+  PettingZoo package is approved for installation; a later library adoption
+  would require a concrete technical and license review.
+
+### Selected Kenney assets
+
+The local Dropbox **Kenney Game Assets All-in-1 3.4.0 / 2D assets / Boardgame
+Pack (1.0)** was inspected. Selected frontal pieces, relative to that pack:
+
+| Use | Existing source | Inspected format |
+| --- | --- | --- |
+| Yellow piece | `PNG/Pieces (Yellow)/pieceYellow_single10.png` | Transparent 64×64 PNG |
+| Red piece | `PNG/Pieces (Red)/pieceRed_single11.png` | Transparent 64×64 PNG |
+
+The supplied `License.txt` identifies CC0 and permits personal, educational and
+commercial use; [Kenney's pack page](https://kenney.nl/assets/boardgame-pack)
+also identifies CC0. Both originals are packaged under `assets/connect_four/`,
+with the supplied license and source paths/SHA-256 hashes in `provenance.json`.
+Runtime uses packaged assets rather than Dropbox.
+
+The source named Red looks orange in the current preview. Yellow/red is the
+selected color pair; the original palette is preserved and the legend labels
+both participants. The previously shown blue piece is not part of this pair.
+Draw the grid, hover preview and winning highlight with Tk and reuse the current
+window styling. No newly generated board/piece or character artwork is required
+for this first version.
+
+### Aiko's contextual reactions
+
+Keep Aiko's comments and emotes on the existing desktop speech surface, with
+occasional matching existing character clips. The shared board owns the player's
+input and piece layout. Emotes and text alternate on their existing surface.
+
+| Trigger | Proposed existing presentation | Draft German tone example |
+| --- | --- | --- |
+| Start | Calm/attentive standing pose | „Mhm. Vier in einer Reihe. Ich behalte deine Diagonalen im Auge.“ |
+| Aiko blocks a playable immediate win | Brief idea emote | „Ah-ah. Den vierten Platz lasse ich dir nicht einfach frei.“ |
+| Player blocks Aiko's playable immediate win | Brief head tilt | „Du hast die Lücke gesehen. Hmpf. Dann eben anders.“ |
+| Aiko wins | Short existing happy jump | „Vier! Hihi. Die Reihe gehört mir.“ |
+| Player wins | Restrained head tilt or sad emote, then normal posture | „Oh … vier. Gut gespielt. Ich möchte eine Revanche.“ |
+| Draw | Short pause | „Alles voll. Wir haben uns ziemlich gründlich gegenseitig aufgehalten.“ |
+
+The dialogue catalogue contains three variants per trigger (18 lines total).
+Existing `idle`, `review` and `jumping` clips accompany these cues; no new
+character frames are imported. Reactions follow actual board evidence; a floating
+three-piece pattern without a legal winning drop is not an immediate threat.
+Use sparse intermediate comments rather than speech every turn, readable
+length-based text durations and short emote beats. Preserve each line's reading
+opportunity; avoid a stale comment/result appearing over a new round.
+Final text remains capped at 125 characters. Text uses the shared conversation
+reading time, including the final second; emotes precede speech for 800 ms.
+Intermediate comments are separated by at least six moves. The short fall uses
+six 30 ms frames; player input and the next-round button wait until the current
+drop/reaction finishes, so another turn cannot replace a readable line.
+
+### Ownership and verification
+
+| Owner | Responsibility |
+| --- | --- |
+| `ConnectFourSession` under `games/` | Sole mutable board/turn/outcome/session-score owner; rules, legal moves and bounded opponent policy; immutable projections and injected randomness. No Tk, pet-state or World writes. |
+| `ConnectFourSequence` beside existing game sequences | Cancellable turn, thinking, drop and reaction pacing; drive the session without duplicating rules or score. Reject stale search results. |
+| `ConnectFourWindow` and the existing game host/presentation | Render snapshots and forward legal input; reuse `GamePanel`, `GameSpeech` and the single active-window owner. Pieces remain temporary game graphics, not World items or gifts. |
+| Existing game-experience application path | Typed identity/summary/round adapters use once-only completion in `GameExperienceCoordinator`. Reuse Tic-Tac-Toe's completed-round fun profile; no new friendship formula, wish targets, save fields or balance values. |
+
+Tests cover gravity/full columns, all winning directions (including longer and
+crossing lines), draw versus last-move win, alternating starters, immediate
+win/block decisions and search bounds. Controlled sequence tests cover reading
+time, emotes, duplicate input, cancellation and stale callbacks. Native Tk tests
+exercise the actual host with isolated saves, hover/click/drop presentation,
+result/revanche, once-only completion, failed construction and reopening.
+
+Development-worktree validation on 2026-10-23 (including the separate horoscope
+prototype and parallel character-asset work):
+
+- 23 new rule/search, controlled sequence, asset-provenance and native Tk tests
+  passed. An 88-test combined run also passed, including menu layout/admission,
+  game experience, existing wishes and the unchanged horoscope prototype.
+- Repository Ruff, strict whole-application Mypy (269 source files), Pyright
+  (including tests) and whitespace checks passed.
+- A native Windows preview with a temporary isolated save confirmed yellow/red
+  contrast, the legal-column preview, fall, winning highlight, readable desktop
+  speech and manual next-round controls. A separate real-worker turn through the
+  actual host completed correctly; a narrow 320×700 bounds test keeps the board
+  scrollable and the footer accessible. The red source retains Kenney's original
+  orange tone. Screenshots remain local outside Git.
+- A development probe over 19 legal opening/midgame snapshots measured roughly
+  4–38 ms per search on this machine. This is a sample, not a latency/difficulty
+  guarantee. Runtime still uses a cancellable worker and the 650 ms minimum pause.
+- Final complete native Windows suite: **1,810 tests passed in 247.846 seconds**
+  (`python -m unittest discover -s tests -q`). Existing character-export work was
+  preserved separately; game-specific expectation updates keep the wish catalogue
+  unchanged and verify that the fourth menu choice remains reachable by scrolling.
+
+The scoped Connect Four commit was also checked in a separate export of its
+staged contents, without the uncommitted horoscope or character-asset changes:
+**1,779 unit/GUI tests passed in 251.695 seconds**, together with Ruff, strict
+Mypy (263 source files), Pyright and the staged whitespace check. Shared files
+contain only the Connect Four additions; the existing wish targets stay intact.
+
+Horoscope application/codec/playback/settings logic remains at the existing
+prototype and is excluded from the Connect Four commit, together with parallel
+character-asset changes. This change adds no API, key, external service or runtime
+dependency. No push or merge is authorized.

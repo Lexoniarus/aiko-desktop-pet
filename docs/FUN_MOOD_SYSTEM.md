@@ -25,6 +25,9 @@ The new profiles are 9 fun / 0.7 energy / 0.9 social per completed Tic-Tac-Toe
 board, and 8 fun / 0.6 energy / 0.8 social per completed Blackjack hand. These
 initial values give longer units more base credit without changing the shared
 diminishing-return policy; they are not measured playtime equivalences.
+Connect Four reuses the existing Tic-Tac-Toe completed-board profile; it adds
+no balance values or game-specific wish targets. Its board and score remain
+transient, and ordinary game-experience effects use the existing coordinator.
 The first three rounds receive full fun credit, rounds four through six 60%,
 and later rounds 25%, with a 20-point session cap. The existing high-fun
 reduction starts above 85, declining linearly to 75% reward at 100.
@@ -151,7 +154,7 @@ from the game's own score. `HoverUi` passes the summary to the application;
 `experience_from_session` creates the generic experience; `GameExperienceCoordinator`
 updates `PetState`. The minigame and its UI never adjust needs directly.
 
-Blackjack and Tic-Tac-Toe settle the required completed reveal/turn before
+Blackjack, Tic-Tac-Toe and Connect Four settle the required completed reveal/turn before
 crediting their game-owned score. Closing during a pending reveal or bot turn
 does not count it; closing during the subsequent reaction retains that unit.
 

@@ -505,12 +505,20 @@ The application summary adapter uses the existing game-experience coordinator.
 `ui/pet_view/BlackjackHandPresenter` (in `blackjack_hand_presenter.py`) owns the
 separate floating-card window and visual hover/flip timers. It receives a
 masked `HandView`, not a hidden hand or World state. `GamePanel` supplies small
-window chrome for the two new player panels; it owns no rules. The root-local
+window chrome for the player panels; it owns no rules. The root-local
 `PlayingCardImages` cache is shared by both Blackjack views.
 `desktop/game_assembly.py` composes these existing boundaries and native effects;
 `WindowStack` remains the z-order owner. Placement and preference changes update
 the same card presenter. Speech, pet movement, World custody and saved pet state
 retain their owners. See the [delivery record](MINIGAME_IMPLEMENTATION_PLAN.md).
+
+`games/connect_four.py` owns Connect Four's board, gravity, outcome and transient
+score. Its bounded Alpha-Beta policy reads an immutable board copy and checks
+cancellation. `ConnectFourSequence` submits only that pure search to one worker;
+Tk polls its result and owns all drop/reaction callbacks. Closing signals the
+worker and invalidates callbacks before destroying widgets. `ConnectFourWindow`
+renders snapshots with packaged Kenney pieces and forwards column selections.
+No worker touches Tk, PetState or World, and no board/search state is persisted.
 
 `presentation/`, `personality/` and the former root-level `ui/*.py` widget
 forwarders have been **removed**. Runtime and tests import directly from the

@@ -30,8 +30,8 @@ and [implementation record](docs/CARE_TIME_IMPLEMENTATION_PLAN.md).
 
 ## Play with Aiko
 
-**Spielen** opens a selection of **Schere–Stein–Papier**, **Blackjack** and
-**Tic-Tac-Toe** in this feature checkout. Blackjack and Tic-Tac-Toe are not yet
+**Spielen** opens a selection of **Schere–Stein–Papier**, **Blackjack**,
+**Tic-Tac-Toe** and **Vier gewinnt** in this feature checkout. The additions are not yet
 merged into `main`. Only one game is open at a time; closing it restores Aiko's
 ordinary behavior. Merely opening the selector grants no game reward.
 
@@ -44,6 +44,13 @@ The result stays visible for 2.8 seconds before the next hand starts
 automatically, retaining the session score. Tic-Tac-Toe uses one shared board
 against a simple local opponent, alternating the starting player between
 completed rounds and offering **Nächste Runde**.
+
+Vier gewinnt uses a shared 7×6 board with yellow Kenney pieces for you and red
+pieces for Aiko. Hover previews a legal landing position; click a column or use
+keys 1–7 to drop a piece. Aiko plays with bounded local Alpha-Beta search and
+reacts through her existing animations, emotes and speech. Winning cells are
+highlighted; **Nächste Runde** alternates who starts. Her search and pending
+presentation are cancelled when the window closes.
 
 Aiko's character bubble shows **only her own choice** and her reactions.
 The independent, always-open Kenney-styled player panel shows **your selected

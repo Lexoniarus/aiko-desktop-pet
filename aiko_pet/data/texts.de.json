@@ -363,6 +363,10 @@
     "social.intro.twopart_alt1": "Warte, den Witz aus dem Netz muss ich dir erzählen!",
     "social.intro.twopart_alt2": "Magst du einen Witz hören? Ich hab einen für dich.",
     "social.intro.fact_alt1": "Ich hab einen kuriosen Fakt aus dem Netz für dich.",
-    "social.intro.fact_alt2": "Das stand gerade im Internet. Wusstest du das schon?"
+    "social.intro.fact_alt2": "Das stand gerade im Internet. Wusstest du das schon?",
+    "game.name.connect_four": "Vier gewinnt",
+    "connect_four.legend.player": "Du: Gelb",
+    "connect_four.legend.aiko": "Aiko: Rot",
+    "connect_four.wait": "Einen Moment ..."
   }
 }

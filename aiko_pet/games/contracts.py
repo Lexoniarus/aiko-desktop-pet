@@ -11,6 +11,7 @@ class GameId(str, Enum):
     ROCK_PAPER_SCISSORS = "rock_paper_scissors"
     TIC_TAC_TOE = "tic_tac_toe"
     BLACKJACK = "blackjack"
+    CONNECT_FOUR = "connect_four"
 
 
 @dataclass(frozen=True, slots=True)

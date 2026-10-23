@@ -6,7 +6,7 @@ import sys
 import tkinter as tk
 from collections.abc import Callable
 
-from ...asset_paths import PLAYING_CARDS_DIR
+from ...asset_paths import CONNECT_FOUR_DIR, PLAYING_CARDS_DIR
 from ...games.contracts import GameId, SessionSummary
 from ...pet.content import GERMAN_TEXT
 from ..common.image_button import ImageButton, update_button_state
@@ -50,6 +50,8 @@ class GamePanel:
         icon = (
             skin.images.file(PLAYING_CARDS_DIR / 'card_spades_A.png', 32)
             if game_id is GameId.BLACKJACK
+            else skin.images.file(CONNECT_FOUR_DIR / 'red.png', 32)
+            if game_id is GameId.CONNECT_FOUR
             else skin.images.icon(
                 'game_rps' if game_id is GameId.ROCK_PAPER_SCISSORS
                 else 'game_tic_tac_toe', 32,

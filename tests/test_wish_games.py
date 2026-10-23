@@ -250,7 +250,9 @@ class GameWishTests(unittest.TestCase):
         self.assertFalse(pet.moodlets.active)
 
     def test_application_captures_existing_wish_and_translates_each_game_once(self):
-        for game in GameId:
+        # Connect Four adds play, not a new set of wish targets.
+        for target in WISH_CATALOG.definitions[WishId.WIN_ROUND].targets:
+            game = GameId(target)
             pet = pet_with(WishId.WIN_ROUND)
             pet.restore_checkpoint(
                 replace(

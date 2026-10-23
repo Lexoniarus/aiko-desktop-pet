@@ -23420,6 +23420,402 @@
       "stages": [
         "close"
       ]
+    },
+    {
+      "id": "game_c4_greeting-1",
+      "event": "game_c4_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast Gelb, ich Rot. Vier in einer Reihe. Ich passe auf deine Diagonalen auf."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_greeting-2",
+      "event": "game_c4_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Vier gewinnt? Mhm. Du darfst anfangen. Ich suche mir schon mal einen guten Platz."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_greeting-3",
+      "event": "game_c4_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Gelb gegen Rot. Mal sehen, wer zuerst eine kleine Reihe zusammenbekommt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_block-1",
+      "event": "game_c4_block",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ah-ah. Den vierten Platz lasse ich dir nicht einfach frei."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_block-2",
+      "event": "game_c4_block",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da fehlt dir nur noch einer. Genau dort kommt jetzt mein Stein hin."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_block-3",
+      "event": "game_c4_block",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Deine Reihe ist mir aufgefallen. Ich stelle dir mal etwas in den Weg. Hihi."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_blocked-1",
+      "event": "game_c4_blocked",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du hast die Lücke gesehen. Hmpf. Dann eben anders."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_blocked-2",
+      "event": "game_c4_blocked",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh. Da wollte ich gerade meine Reihe fertig machen. Gut aufgepasst."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_blocked-3",
+      "event": "game_c4_blocked",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm. Das war mein freier Platz. Ich brauche wohl einen neuen Plan."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_aiko_win-1",
+      "event": "game_c4_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Vier! Hihi. Die Reihe gehört mir."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_aiko_win-2",
+      "event": "game_c4_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da sind sie: eins, zwei, drei, vier. Ich bin ein bisschen zufrieden mit mir."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_aiko_win-3",
+      "event": "game_c4_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Geschafft! Meine vier sind zusammen. Magst du eine Revanche?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_player_win-1",
+      "event": "game_c4_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Oh ... vier. Gut gespielt. Ich möchte eine Revanche."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_player_win-2",
+      "event": "game_c4_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Deine Reihe ist fertig. Mhm. Die hast du dir verdient."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_player_win-3",
+      "event": "game_c4_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da sind deine vier. Ich habe es gesehen ... nur leider etwas zu spät."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_draw-1",
+      "event": "game_c4_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Alles voll. Wir haben uns ziemlich gründlich gegenseitig aufgehalten."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_draw-2",
+      "event": "game_c4_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Kein Platz mehr und keine Viererreihe. Das war wohl ziemlich ausgeglichen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_c4_draw-3",
+      "event": "game_c4_draw",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Unentschieden. Mhm. Dann haben wir beide unsere Reihen gut bewacht."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
     }
   ]
 }

@@ -81,7 +81,8 @@ pending-action marker. See [social content](SOCIAL_CONTENT.md).
 
 ### Games
 
-`Spielen` opens an embedded right-column selector for RPS, Blackjack and Tic-Tac-Toe.
+`Spielen` opens an embedded right-column selector for RPS, Blackjack,
+Tic-Tac-Toe and Vier gewinnt.
 Escape/outside dismissal closes the selector without starting play. Selection
 uses the existing contact admission and World interruption; one pending token
 prevents duplicate starts. The resumed callback rechecks sleep readiness without
@@ -95,9 +96,9 @@ are frames in the toolbar, not extra control windows. Their geometry leaves
 the summary, Moodlets, wishes and left readouts in place. Game
 sequences cancel timers before closing; one summary is credited before final
 save. Scores, boards and decks never enter the save.
-The three player windows retain their `WM_DELETE_WINDOW` handlers. Embedded
+All player windows retain their `WM_DELETE_WINDOW` handlers. Embedded
 selectors use their existing close callbacks through Zurück/Escape instead. Failed
-Tic-Tac-Toe construction destroys its partial panel without reporting a
+Tic-Tac-Toe/Connect Four construction destroys its partial panel without reporting a
 completed session; `HoverUi` still owns releasing the pending/mode state.
 
 In Blackjack the player panel contains only player cards/total and controls.
@@ -113,7 +114,17 @@ Blackjack keeps each result visible for 2.8 seconds, then automatically starts
 the next hand with a freshly masked dealer and the same session score. Its
 sequence owns this delay through its existing cancellable timer; close cancels
 the restart and preserves only completed units. `GamePanel` offers an optional
-next-round button, used by Tic-Tac-Toe. RPS keeps its existing flow.
+next-round button, used by Tic-Tac-Toe and Connect Four. RPS keeps its existing flow.
+
+Connect Four uses one shared 7×6 board with yellow player pieces and red Aiko
+pieces from the packaged Kenney Boardgame Pack. A legal-column hover shows the
+next piece and landing position; click or keys 1–7 select a column. A short
+fall and Aiko's bounded background search block extra input. Completed rounds
+highlight all winning cells and wait for **Nächste Runde**; starters alternate.
+The sequence serializes sparse desktop comments/emotes with full reading time
+and cancels its timer/search on close. The board scrolls within the shared
+panel when screen space is limited; close and result controls remain outside
+the scrolling body. See the [implementation](MINIGAME_IMPLEMENTATION_PLAN.md#connect-four-extension-vier-gewinnt).
 
 ### Contact and ordinary controls
 

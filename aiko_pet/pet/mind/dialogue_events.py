@@ -5,6 +5,12 @@ from typing import get_args
 from .object_events import ObjectEvent
 
 DIALOGUE_EVENTS = frozenset({
+    "game_c4_greeting",
+    "game_c4_block",
+    "game_c4_blocked",
+    "game_c4_player_win",
+    "game_c4_aiko_win",
+    "game_c4_draw",
     "game_blackjack_greeting",
     "game_ttt_greeting",
     "game_round_player_win",

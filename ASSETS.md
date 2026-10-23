@@ -147,6 +147,12 @@ The project uses artwork from these Kenney asset packs:
 
 - **Kenney Emote Pack (1.0):** pixel emotes under `aiko_pet/assets/emotes/`.
 - **Kenney UI Pack: Sci-fi (2.0):** source and adapted panel/button graphics under `aiko_pet/assets/kenney_ui/`.
+- **Kenney Boardgame Pack (1.0):** unmodified transparent yellow/red pieces for
+  Vier gewinnt under `aiko_pet/assets/connect_four/`. The red source is
+  orange-toned. Pack-relative source paths and SHA-256 hashes are recorded in
+  [provenance.json](aiko_pet/assets/connect_four/provenance.json); the original
+  pack [license](aiko_pet/assets/connect_four/LICENSE.txt) is included. The board
+  and highlights are drawn with Tk; runtime needs no Dropbox access.
 
 The creator obtained the assets through a **paid Kenney Game Assets All-in-1 3.4.0 bundle**. The license files supplied with the packs identify the artwork as **Creative Commons Zero (CC0 1.0)**. Purchasing the bundle does not change those CC0 terms.
 

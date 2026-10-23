@@ -51,7 +51,11 @@ class WishCatalogTests(unittest.TestCase):
         self.assertEqual(social, {"chat", *(c.value for c in SocialCategory)})
         for definition in catalog.definitions.values():
             if definition.area == WishArea.GAMES:
-                self.assertEqual(set(definition.targets), {g.value for g in GameId})
+                self.assertEqual(set(definition.targets), {
+                    GameId.ROCK_PAPER_SCISSORS.value, GameId.TIC_TAC_TOE.value,
+                    GameId.BLACKJACK.value,
+                })
+                self.assertNotIn(GameId.CONNECT_FOUR.value, definition.targets)
         self.assertEqual(sum(d.area == WishArea.GAMES
                              for d in catalog.definitions.values()), 5)
 
