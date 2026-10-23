@@ -7745,3 +7745,79 @@ Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, assets, tests, text and documentation work is preserved. No
 runtime tests, application windows, mouse control, personal-save reads, database
 creation/migration or CI in this pass.
+
+
+### Proposed SQLite keys, optional relationships and deletion rules
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** One private database represents one save. Do not add account
+management or a repeated multi-save identifier to every table. The save revision
+identifies a coherent checkpoint, not a permanent archive of whole snapshots.
+
+| Proposed table/group | Proposed key |
+| --- | --- |
+| Singleton state/settings records, including `save_state`, `pet_state`, `sleep_state`, `wish_state` and other owner bookkeeping | One fixed row with `id = 1` per table |
+| `schema_migrations` | Unique structural migration version |
+| `wish_instances`, `moodlet_episodes` | Preserve existing numeric instance identities; never reuse them |
+| `world_objects`, `object_memories` | Preserve existing text object identity and subjective memory identity respectively; keep their namespaces distinct |
+| `wish_round_receipts` | Wish identity plus unique round signature including its session context |
+| `moodlet_stage_state` | Episode identity plus stage |
+| `moodlet_causes` | Technical row identity, with event receipt unique within the same episode |
+| `object_memory_sources` | Pair of associated subjective memory identities |
+| `care_encounters`, `care_evidence`, `food_handover_receipts` | Stable individual identity for each encounter, evidence item or handover |
+| `long_term_progress`, `poor_care_cursors` | Long-term family identity or need identity respectively |
+| `need_exposure_buckets` | Need identity plus interval beginning |
+| `adaptive_hour_slots`, `adaptive_quiet_phases` | Hour-of-week slot, or local day plus phase beginning respectively |
+| `relationship_entries`, `food_intake_receipts`, `social_requests`, `social_receipts` | Technical entry identity; retain ordering separately where meaningful |
+| `provider_pauses`, `horoscope_days` | Provider identity or local calendar date respectively |
+
+An event timestamp alone is not an identity: different events can share a time.
+Duplicate processing is constrained within the appropriate semantic consumer;
+one real event can still support different Moodlet/long-term families.
+
+#### Required, optional and historical relationships
+
+- A round receipt requires its owning active wish. Stage values and causes
+  require their owning Moodlet episode. Enforce these actual ownership links
+  with foreign keys.
+- A care-evidence row may reference a shared encounter, or have no encounter
+  when none occurred. Do not remove a referenced encounter while retained
+  evidence still needs it.
+- A cause's source wish identity and an object's acquired physical identity
+  are historical facts, not required live-instance foreign keys. Preserve
+  their original facts after the wish/object disappears. A pending handover
+  likewise retains original wish context independently of active wish rows.
+- Catalogue identities remain validated through the typed JSON contracts;
+  do not introduce a second editable catalogue database to enforce these IDs.
+- Use absent values only for genuinely absent facts: unknown food identity,
+  a wish not yet expressed, or no concrete target under a free-choice rule.
+  Required goals, progress counters and pin flags remain non-null values.
+
+#### Cleanup follows domain lifetimes
+
+| Domain transition | Proposed deletion/retention behavior |
+| --- | --- |
+| Wish fulfilled, dismissed or regularly rotated | Remove the active wish and its round receipts; preserve existing independent Moodlet causes |
+| Wish pinned | No time-based expiration or rotation |
+| Moodlet drops to a lower stage | Retain at most the latest one/two/three real causes according to current stage; do not invent missing causes |
+| Moodlet ends | Remove the episode and its dependent stages/causes together |
+| Physical object consumed/removed | Remove it from saved World stock; preserve acquired memories and existing causes |
+| Subjective memory forgotten | Remove its association edges without deleting other memories |
+| Handover evaluated/cancelled | Remove the receipt only after processing and any required duplicate-effect protection have finished |
+| Care/long-term evidence ages out | Evaluate all required windows first; preserve required intermediate progress in `long_term_progress`, then prune obsolete raw evidence |
+| API history/limits | Keep the last ten contents per category; prune request receipts and provider pauses according to their existing time windows |
+
+Use cascading deletion only for unambiguously owned child records or association
+edges. Domain owners decide wish retirement, episode ending, forgetting and
+handover cancellation; SQL does not make these care decisions or run timers.
+Persist the coordinated outcome in one transaction so cleanup cannot leave
+half-applied effects or broken relationships.
+
+Next review the complete proposed SQLite model for concrete implementation
+gaps. Recording these keys/relationships does not implement the schema, select
+every SQL column type/index, or authorize runtime/database changes.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, assets, tests, text and documentation work is preserved. No
+runtime tests, application windows, mouse control, personal-save reads, database
+creation/migration or CI in this pass.
