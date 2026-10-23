@@ -6991,3 +6991,70 @@ settle mutual exclusion, compound-state thresholds or the integrated balance.
 Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, tests, text and documentation changes are preserved. No runtime
 tests, application windows, mouse control, live-save access or CI in this pass.
+
+
+### Agreed distinctions and overlap review for the six longer-term families
+
+**Planning direction recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Retain the six distinct meanings below and allow concurrent
+episodes, including residual opposing feelings. These distinctions do not settle
+the combined strength or the upcoming overall-state selection thresholds.
+
+| Longer-term family | Distinct meaning | Principal overlap |
+| --- | --- | --- |
+| Vertrauensvoll | I can rely on you | A good care day may also build appreciation and optimism |
+| Wertgeschaetzt | My wishes matter | Wish successes can also be positive encounters supporting trust/optimism |
+| Zuversichtlich | Good things can happen | Success and pleasant activities often occur on the same good days |
+| Verunsichert | I do not know where I stand with you | Its negative incidents may also support a guarded attitude |
+| Uebersehen | I miss shared moments | Can coexist with need-based loneliness and existing absence losses |
+| Auf der Hut | I must be cautious about my boundaries | Repeated upsetting incidents can also occur within inconsistent treatment |
+
+The same real experiences may contribute to different, independently qualifying
+longer-term patterns. This is distinct from reusing already accounted evidence
+to award another level of the same family. Do not count repeated evaluation,
+callbacks or escalation messages as fresh incidents or qualifying periods.
+
+Preserve the existing per-family qualification conditions. Vertrauensvoll and
+Wertgeschaetzt require periods without confirmed boundary disregard, whereas
+the inconsistent/guarded patterns require upsetting incidents. Some opposing
+families therefore cannot newly qualify from the same period but can coexist
+through residual lifetimes. Similar contact-count constraints distinguish
+Uebersehen from families requiring several personal encounters. Do not add
+blanket mutual exclusion or erase an episode merely because its opposite
+appears. A previously trusting Aiko can now also feel cautious.
+
+The current overall-state algorithm compares complete positive/negative
+intensity totals, chooses the strongest direction of the winning side and uses
+Zwiegespalten only for an exact nonzero tie. This retains all influences but
+provides limited visible distinction for mixed feelings. Review that selection
+explicitly rather than assuming six new catalogue entries will diversify it.
+
+The previously discussed extension from thirteen to seventeen overall labels
+remains a candidate for the next selection-rule discussion:
+
+| Candidate additional overall state | Intended composition |
+| --- | --- |
+| Unbeschwert | Joy and safety with little emotional burden |
+| Zuversichtlich | Actual success and longer-term positive expectation |
+| Reserviert | Caution/uncertainty toward the user, possibly alongside warmth |
+| Angespannt | Combined uncertainty, pressure, irritation or frustration |
+
+An overall state is derived from the full composition. A same-named Moodlet is
+one input, not an unconditional label override. Preserve actual reasons and
+opposing influences for later expression without creating an independent
+mutable emotion score or a new event store.
+
+The three positive longer-term families at level three sum to a nominal +45
+numeric contribution and nine positive emotional-intensity points. Existing
+numeric caps limit mood contributions but do not truncate emotional composition
+or eliminate their continuous friendship influence. Analogous negative overlaps
+need joint review, including need-based loneliness and absence losses.
+
+The earlier average/intensive daily worksheets do not establish balance after
+these six additions. Define overall-state selection, including mixed feelings,
+then jointly review their strength against the level-seven/eight versus level-ten
+targets. This amendment changes neither contribution values nor friendship rates.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel documentation work is preserved. No runtime tests, application windows,
+mouse control, live-save access or CI in this pass.
