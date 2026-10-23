@@ -10,6 +10,7 @@ from .moodlets import (
     MoodletOutcome,
     MoodletWishCause,
 )
+from .wish_matching import wish_matches_activity
 from .wishes import (
     MAX_WISH_ROUND_RECEIPTS,
     ActiveWish,
@@ -130,8 +131,9 @@ def progress_game_wish(
 ) -> WishResolution:
     """One real qualifying round, from Aiko's perspective; no session score."""
     wish = next((w for w in state.active if w.instance_id == instance_id), None)
-    if (wish is None or wish.target_id != game_id
-            or definitions[wish.definition_id].area != WishArea.GAMES
+    if (wish is None or not wish_matches_activity(
+                wish, WishArea.GAMES, game_id, definitions=definitions,
+            )
             or not wish.created_at <= started_at <= elapsed
             or not wish.is_active_at(elapsed)
             or round_id in wish.game.round_ids):
@@ -157,7 +159,7 @@ def progress_game_wish(
         ))
         cause = (_wish_cause(
             wish, elapsed=elapsed, event_id=round_id, outcome=result,
-            failed=disappointed, game=MoodletGameResult(
+            failed=disappointed, target_id=game_id, game=MoodletGameResult(
                 MoodletOutcome(outcome), progress.completed_rounds,
                 progress.wins, progress.losses,
             ),

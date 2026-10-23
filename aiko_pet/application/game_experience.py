@@ -18,6 +18,7 @@ from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.state import PetState
 from ..pet.wish_catalog import WISH_CATALOG
+from ..pet.wish_matching import assign_activity_wish
 from ..pet.wishes import WishArea
 from .active_time import (
     ActiveSessionClock,
@@ -85,10 +86,10 @@ class GameExperienceCoordinator:
             advance_session_time(
                 self._state, self._clock, inputs, progression=self._progression,
             )
-            wish = next((w for w in self._state.wishes.active
-                         if WISH_CATALOG.definitions[w.definition_id].area
-                         == WishArea.GAMES
-                         and w.target_id == event.game_id.value), None)
+            wish = assign_activity_wish(
+                self._state.wishes, WishArea.GAMES, event.game_id.value,
+                elapsed=self._state.lived_seconds, definitions=WISH_CATALOG.definitions,
+            )
             self._round = _WishRoundAttempt(
                 event, self._state.lived_seconds, wish.instance_id if wish else None,
             )
@@ -102,9 +103,12 @@ class GameExperienceCoordinator:
         )
         outcome: RoundOutcome = ("loss" if event.outcome == "win" else
                                  "win" if event.outcome == "loss" else "draw")
-        self._state.record_completed_game_round(
+        recorded = self._state.record_completed_game_round(
             game_id=event.game_id.value, round_id=event.identity, outcome=outcome,
         )
+        if not recorded:
+            self._round = None
+            return
         if pending.wish_instance_id is not None:
             self._state.complete_wish_round(
                 pending.wish_instance_id, game_id=event.game_id.value,

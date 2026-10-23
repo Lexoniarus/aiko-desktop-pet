@@ -423,7 +423,7 @@ class PetState:
 
     def record_completed_game_round(
         self, *, game_id: str, round_id: str, outcome: RoundOutcome,
-    ) -> None:
+    ) -> bool:
         """Retain one actual round fact for wish eligibility, even without a wish.
 
         This is not a session score, positive encounter or emotional reward.
@@ -432,7 +432,7 @@ class PetState:
         evidence = self.moodlets.care_evidence or CareEvidenceState(self.lived_seconds)
         receipt = f"play:{game_id}:{round_id}"
         if any(e.receipt_id == receipt for e in evidence.experiences):
-            return
+            return False
         event = CareExperience(
             receipt, self.lived_seconds, CareActivity.PLAY, MoodletOutcome(outcome),
             WishArea.GAMES, WishTargetKind.GAME, game_id,
@@ -441,6 +441,7 @@ class PetState:
             evidence,
             experiences=(*evidence.experiences, event)[-MAX_CARE_EXPERIENCES:],
         )))
+        return True
 
     def complete_wish_round(
         self, instance_id: int, *, game_id: str, session_id: str, round_id: str,

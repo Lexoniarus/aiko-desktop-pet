@@ -8376,3 +8376,30 @@ Eight priority/matching tests and existing lifecycle/game/food/affection checks
 passed (46 targeted tests in 0.172 seconds; slowest 0.073 seconds). Focused
 strict Mypy/Pyright passed. Native Tk creation was blocked. No test windows,
 mouse control, live-save access, full suite or CI was used.
+
+
+### Delivery slice 5B: assigned game rounds and flexible completion
+
+`GameExperienceCoordinator` now uses shared matching at actual round start and
+carries that exact identity through the round. Later pin changes, dismissal,
+expiry or newly created wishes do not reassign the result. A failed win/non-loss
+attempt cannot fall back to another play goal. Existing original objectives,
+including legacy session/block goals and cumulative saved progress, retain their
+own success/failure rules and no instantaneous friendship bonus.
+
+Completion matches the saved exact/any/exclusion meaning against supported game
+IDs. Free-choice total rounds can span games/sessions; game-change excludes its
+saved reference; simple rematch accepts a completed result; comeback permits
+retrying until a victory. Moodlet causes retain both the original typed wish
+and the actual completing game/result. Existing stage/failure rules apply once.
+
+The already bounded actual-round evidence now also reports whether the receipt
+is new. A replayed start/result cannot advance another wish after retirement or
+reload. It uses the existing Pet-owned evidence store, not a second receipt log.
+Ordinary game/session care remains separate and unchanged.
+
+Eight new round-assignment checks plus existing matching, game, selection and
+storage tests passed: 56 targeted tests in 0.361 seconds, slowest 0.071 seconds.
+Focused Ruff, strict Mypy/Pyright passed. Native Tk creation was blocked; no
+windows, mouse control, live-save access, full suite or CI was used. Social
+admission/completion follows in its own commit; parallel work is preserved.
