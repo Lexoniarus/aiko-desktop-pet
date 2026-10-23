@@ -31,7 +31,7 @@ and [implementation record](docs/CARE_TIME_IMPLEMENTATION_PLAN.md).
 ## Play with Aiko
 
 **Spielen** opens a selection of **Schere–Stein–Papier**, **Blackjack**,
-**Tic-Tac-Toe** and **Vier gewinnt** in this feature checkout. The additions are not yet
+**Tic-Tac-Toe**, **Vier gewinnt** and **Mastermind** in this feature checkout. The additions are not yet
 merged into `main`. Only one game is open at a time; closing it restores Aiko's
 ordinary behavior. Merely opening the selector grants no game reward.
 
@@ -51,6 +51,13 @@ keys 1–7 to drop a piece. Aiko plays with bounded local Alpha-Beta search and
 reacts through her existing animations, emotes and speech. Winning cells are
 highlighted; **Nächste Runde** alternates who starts. Her search and pending
 presentation are cancelled when the window closes.
+
+Mastermind makes Aiko the code setter: four positions, six colors, repeated
+colors allowed, ten attempts and no timer. Drag Kenney pins from the palette
+into the current row of the ten prepared rows and press **Prüfen**. Aiko places
+black/white feedback marks beside each submitted guess, with numeric counts.
+Earlier rows remain visible. Her concealed code strip floats beside her on the
+desktop, reveals at round end and resets with **Nächste Runde**.
 
 Aiko's character bubble shows **only her own choice** and her reactions.
 The independent, always-open Kenney-styled player panel shows **your selected

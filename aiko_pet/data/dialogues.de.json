@@ -23816,6 +23816,336 @@
         "friend",
         "close"
       ]
+    },
+    {
+      "id": "game_mm_greeting-1",
+      "event": "game_mm_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Code steht. Vier Stellen, sechs Farben. Na, knackst du ihn?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_greeting-2",
+      "event": "game_mm_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die Farben bleiben erst mal unter Verschluss. Deine Hinweise verdienst du dir."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_greeting-3",
+      "event": "game_mm_greeting",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich hüte vier kleine Farbgeheimnisse. Du darfst anfangen."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_progress-1",
+      "event": "game_mm_progress",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mhm. Die Hinweise liegen vor dir. Ich halte meinen Code weiter gut versteckt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_progress-2",
+      "event": "game_mm_progress",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Du probierst dich durch. Lass dir Zeit, ich bleibe hier."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_progress-3",
+      "event": "game_mm_progress",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Noch ein Blick auf die Hinweise? Ich verrate jedenfalls keine Extrafarbe."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_last-1",
+      "event": "game_mm_last",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Noch ein Versuch. Lass dir Zeit, ich laufe dir nicht weg."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_last-2",
+      "event": "game_mm_last",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt kommt dein letzter Tipp. Schau ruhig noch einmal auf die Hinweise."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_last-3",
+      "event": "game_mm_last",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ein Versuch bleibt. Mhm ... ich bin gespannt auf deine Farben."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_player_win-1",
+      "event": "game_mm_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Geknackt! Hihi, du hast mich erwischt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_player_win-2",
+      "event": "game_mm_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Vier Treffer! Mein kleines Farbgeheimnis gehört jetzt dir."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_player_win-3",
+      "event": "game_mm_player_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Da ist mein Code! Gut kombiniert. Sollen wir noch eine Runde spielen?"
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_aiko_win-1",
+      "event": "game_mm_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Diesmal hat mein Code durchgehalten. Eine Revanche würde ich dir aber geben."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_aiko_win-2",
+      "event": "game_mm_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Jetzt kennst du meine Farben. Mhm, die waren heute gut versteckt."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
+    },
+    {
+      "id": "game_mm_aiko_win-3",
+      "event": "game_mm_aiko_win",
+      "animation": "idle",
+      "conditions": [],
+      "periods": [],
+      "weekdays": [],
+      "weight": 1,
+      "cooldown_seconds": 0,
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Zehn Versuche sind um. Lass uns meinen Code anschauen. Danach gern noch einmal."
+        }
+      ],
+      "stages": [
+        "acquaintance",
+        "familiar",
+        "friend",
+        "close"
+      ]
     }
   ]
 }

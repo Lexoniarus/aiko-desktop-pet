@@ -7,6 +7,23 @@ from .moodlets import MoodletId
 from .wishes import GAME_GOAL_TEXT_VARIANTS, WishId, WishObjective, WishRestriction
 
 TEXT_FIELDS: dict[str, frozenset[str]] = {
+    'game.name.mastermind': frozenset(set()),
+    'mastermind.code': frozenset(set()),
+    'mastermind.rules': frozenset(set()),
+    'mastermind.evaluating': frozenset(set()),
+    'mastermind.board.guesses': frozenset(set()),
+    'mastermind.board.feedback': frozenset(set()),
+    'mastermind.submit': frozenset(set()),
+    'mastermind.clear': frozenset(set()),
+    'mastermind.remaining': frozenset({'remaining'}),
+    'mastermind.feedback': frozenset({'misplaced', 'exact'}),
+    'mastermind.legend': frozenset(set()),
+    'mastermind.color.red': frozenset(set()),
+    'mastermind.color.yellow': frozenset(set()),
+    'mastermind.color.blue': frozenset(set()),
+    'mastermind.color.green': frozenset(set()),
+    'mastermind.color.purple': frozenset(set()),
+    'mastermind.color.white': frozenset(set()),
     "social.intro.single_alt1": frozenset(),
     "social.intro.single_alt2": frozenset(),
     "social.intro.twopart_alt1": frozenset(),

@@ -1,8 +1,4 @@
-"""Frameless Windows desktop companion using only Tkinter and prepared PNGs.
-
-Aiko lives along the Windows taskbar, follows the cursor with 16 hand-authored
-gaze sprites and exposes her care actions in a mouse-hover toolbar.
-"""
+"""Compose the frameless Windows desktop companion and its existing owners."""
 
 from __future__ import annotations
 
@@ -21,11 +17,11 @@ from .application.settings import SettingKey
 from .application.social_content import PreparedSocialContent
 from .application.social_coordinator import SocialContentWorker
 from .config import load_env_file
+from .desktop import game_assembly
 from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation
 from .desktop.attention_runtime import AttentionRuntimePorts, DesktopAttentionRuntime
 from .desktop.care_runtime import DesktopCareRuntime
 from .desktop.farewell import FarewellSequence
-from .desktop.game_assembly import assemble_game_visuals, collect_overlay_windows
 from .desktop.global_input import (
     idle_seconds_windows,
     mouse_buttons_down_windows,
@@ -223,8 +219,9 @@ class DesktopPet:
         )
         self._overlay_stack = WindowStack(
             self._overlay_windows, enabled=self.settings.always_on_top)
-        self._game_visuals = assemble_game_visuals(
+        self._game_visuals = game_assembly.assemble_game_visuals(
             self._window, self.settings, self._overlay_stack.restore,
+            occupied=lambda: game_assembly.occupied_bounds(self._hover, self._speech),
         )
         self._maintenance = DesktopMaintenance(
             check_taskbar=self._window.update_track,
@@ -254,7 +251,7 @@ class DesktopPet:
                 dismiss_wish=lambda key: self._care_runtime.dismiss_wish(key),
                 can_interact=lambda action: self._contact.can_interact(action),
                 game_ready=lambda: self._contact.can_interact("play"),
-                cards=self._game_visuals.ports,
+                cards=self._game_visuals.ports, codes=self._game_visuals.code_ports,
                 game_bounds_at=self._window.work_area_at,
                 social_selected=lambda category: self._social_runtime.select(category),
                 social_cancel=lambda: self._social_runtime.cancel(),
@@ -483,9 +480,9 @@ class DesktopPet:
 
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
-        return collect_overlay_windows(
+        return game_assembly.collect_overlay_windows(
             self.root, self._world.view.windows if hasattr(self, "_world") else (),
-            self._hover, self._speech, self._game_visuals.hand,
+            self._hover, self._speech, self._game_visuals.hand, self._game_visuals.code,
         )
 
     def _place_initially(self) -> None:
@@ -497,7 +494,7 @@ class DesktopPet:
         if self._hover.toolbar is not None and self._hover.toolbar.visible:
             self._hover.toolbar.place()
         self._speech.move()
-        self._game_visuals.hand.move()
+        self._game_visuals.move()
 
     def _set_context(self, context: TimeContext) -> None:
         """Update the session's current local-time snapshot."""

@@ -1,0 +1,33 @@
+{
+  "pack": "Kenney Boardgame Pack",
+  "version": "1.0",
+  "license": "CC0-1.0",
+  "source_url": "https://kenney.nl/assets/boardgame-pack",
+  "files": {
+    "blue.png": {
+      "source": "PNG/Pieces (Blue)/pieceBlue_single09.png",
+      "sha256": "6b7bb85a2460f03aed341fa439f26f69f8d0a43894abe36cff3aced6cd43b6a4"
+    },
+    "green.png": {
+      "source": "PNG/Pieces (Green)/pieceGreen_single10.png",
+      "sha256": "1e6f9b55f3fd54aa5f79673e92a5892dda3d7a5a70bcab782addcdb65421fe4f"
+    },
+    "purple.png": {
+      "source": "PNG/Pieces (Purple)/piecePurple_single11.png",
+      "sha256": "0e7e573451db46c7e99ce79f772ee2d86d7a4dae3f022e5df6f7d84af9397c83"
+    },
+    "white.png": {
+      "source": "PNG/Pieces (White)/pieceWhite_single10.png",
+      "sha256": "2f0c16a688dba49b9088aa97feae87a08777215944b44a734e420bb8fbafdec1"
+    },
+    "black.png": {
+      "source": "PNG/Pieces (Black)/pieceBlack_single10.png",
+      "sha256": "a4410a6ae364e04d6f402908ecfee701011051701564ee87e53f4b70dab2a1b7"
+    }
+  },
+  "shared_files": {
+    "red": "../connect_four/red.png",
+    "yellow": "../connect_four/yellow.png"
+  },
+  "changes": "PNG originals unchanged. License whitespace normalized."
+}

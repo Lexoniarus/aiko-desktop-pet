@@ -73,6 +73,7 @@ GAME_FUN_PROFILES: dict[str, GameFunProfile] = {
 }
 # Reuse the completed-board-round profile without adding or changing balance values.
 GAME_FUN_PROFILES["connect_four"] = GAME_FUN_PROFILES["tic_tac_toe"]
+GAME_FUN_PROFILES["mastermind"] = GAME_FUN_PROFILES["tic_tac_toe"]
 
 
 @dataclass(frozen=True, slots=True)

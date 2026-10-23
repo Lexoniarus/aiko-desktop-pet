@@ -154,6 +154,15 @@ The project uses artwork from these Kenney asset packs:
   pack [license](aiko_pet/assets/connect_four/LICENSE.txt) is included. The board
   and highlights are drawn with Tk; runtime needs no Dropbox access.
 
+Mastermind reuses those red/yellow Boardgame pieces. Five additional unmodified
+64×64 PNGs from the same CC0 pack (blue, green, purple, white and black) are
+packaged under `aiko_pet/assets/mastermind/`, with their source paths and SHA-256
+hashes in [provenance.json](aiko_pet/assets/mastermind/provenance.json) and the
+supplied [license](aiko_pet/assets/mastermind/LICENSE.txt). License text whitespace
+is normalized; its legal wording is unchanged. The board, feedback marks,
+white-piece backing and cover labels are drawn in Tk. No new character artwork,
+paid dependency or online asset fetch is involved.
+
 The creator obtained the assets through a **paid Kenney Game Assets All-in-1 3.4.0 bundle**. The license files supplied with the packs identify the artwork as **Creative Commons Zero (CC0 1.0)**. Purchasing the bundle does not change those CC0 terms.
 
 **Credit: Game assets by [Kenney](https://kenney.nl/).** Attribution is not required under the included CC0 license, but is voluntarily provided and appreciated.

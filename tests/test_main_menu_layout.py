@@ -115,10 +115,10 @@ class MainMenuLayoutTests(unittest.TestCase):
         self.root.update()
         self.assertEqual(self.toolbar.window.winfo_geometry(), before)
         self.assertIsNotNone(menu._surface._image)
-        # Four choices may overflow the fixed selector; the last remains reachable.
+        # Choices may overflow the fixed selector; the last remains reachable.
         menu.scroll.canvas.yview_moveto(1)
         self.root.update()
-        last = menu.buttons[GameId.CONNECT_FOUR]
+        last = menu.buttons[GameId.MASTERMIND]
         self.assertGreaterEqual(last.winfo_rooty(), menu.scroll.canvas.winfo_rooty())
         self.assertLessEqual(
             last.winfo_rooty() + last.winfo_height(),

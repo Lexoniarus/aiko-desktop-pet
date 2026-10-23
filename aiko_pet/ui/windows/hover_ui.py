@@ -24,10 +24,11 @@ from .action_toolbar import ActionToolbar
 from .blackjack_window import BlackjackWindow
 from .connect_four_window import ConnectFourWindow
 from .food_menu import FoodMenu
-from .game_contracts import GameCardPorts, GameWindow
+from .game_contracts import GameCardPorts, GameCodePorts, GameWindow
 from .game_menu import GameMenu
 from .game_speech import GameSpeech
 from .hover_contracts import HoverActions
+from .mastermind_window import MastermindWindow
 from .rock_paper_scissors_window import RockPaperScissorsWindow
 from .settings_contracts import SettingsActions
 from .settings_window import SettingsWindow
@@ -69,6 +70,7 @@ class HoverUiPorts:
     can_interact: Callable[[str], bool] = lambda _action: True
     game_ready: Callable[[], bool] = lambda: True
     cards: GameCardPorts | None = None
+    codes: GameCodePorts | None = None
     game_bounds_at: BoundsAt | None = None
     social_selected: Callable[[SocialCategory], None] | None = None
     social_cancel: Callable[[], None] = lambda: None
@@ -209,8 +211,7 @@ class HoverUi:
         finally:
             self.game_window = None
             try:
-                if self._ports.cards is not None:
-                    self._ports.cards.clear()
+                self._clear_game_visuals()
             finally:
                 self._ports.game_speech.stop()
             self.last_hover = time.monotonic()
@@ -241,7 +242,8 @@ class HoverUi:
             self.toolbar.selector_parent(self.close_game_menu),
             choices=(GameId.ROCK_PAPER_SCISSORS,)
             + ((GameId.BLACKJACK,) if self._ports.cards is not None else ())
-            + (GameId.TIC_TAC_TOE, GameId.CONNECT_FOUR),
+            + (GameId.TIC_TAC_TOE, GameId.CONNECT_FOUR)
+            + ((GameId.MASTERMIND,) if self._ports.codes is not None else ()),
             selected=self.open_game,
             closed=self._game_menu_closed,
             skin=self._skin,
@@ -292,6 +294,19 @@ class HoverUi:
                     skin=self._skin,
                     bounds_at=self._ports.game_bounds_at,
                 )
+            elif game_id is GameId.MASTERMIND:
+                if self._ports.codes is None:
+                    raise RuntimeError("Code presentation is unavailable")
+                self.game_window = MastermindWindow(
+                    self.root, on_closed=self._game_closed, codes=self._ports.codes,
+                    dialogue=self._ports.game_dialogue,
+                    round_event=self._ports.game_round,
+                    speak=self._ports.game_speech.say,
+                    animate=self._ports.game_speech.animate,
+                    emote=self._ports.game_speech.emote,
+                    always_on_top=self._ports.always_on_top(), skin=self._skin,
+                    bounds_at=self._ports.game_bounds_at,
+                )
             elif game_id is GameId.CONNECT_FOUR:
                 self.game_window = ConnectFourWindow(
                     self.root, on_closed=self._game_closed,
@@ -324,8 +339,7 @@ class HoverUi:
                 self.game_window.close()
             else:
                 try:
-                    if self._ports.cards is not None:
-                        self._ports.cards.clear()
+                    self._clear_game_visuals()
                 finally:
                     self._ports.game_speech.stop()
             raise
@@ -352,8 +366,14 @@ class HoverUi:
         self.close_game_menu()
         if self.game_window is not None:
             self.game_window.close()
-        elif self._ports.cards is not None:
+        else:
+            self._clear_game_visuals()
+
+    def _clear_game_visuals(self) -> None:
+        if self._ports.cards is not None:
             self._ports.cards.clear()
+        if self._ports.codes is not None:
+            self._ports.codes.clear()
 
     def open_social_menu(self) -> None:
         if self.game_open:
@@ -480,6 +500,8 @@ class HoverUi:
     def set_topmost(self, enabled: bool) -> None:
         if self._ports.cards is not None:
             self._ports.cards.set_topmost(enabled)
+        if self._ports.codes is not None:
+            self._ports.codes.set_topmost(enabled)
         for window in (
             self.toolbar,
             self.settings_window,

@@ -14,6 +14,11 @@ The appended Connect Four section records its separate implementation and
 validation. A scoped Connect Four commit is authorized. No new dependency,
 balance values, push or merge is included.
 
+The [Mastermind extension](#mastermind-extension) records its separately
+authorized local implementation: Aiko provides the code, with a concealed
+desktop strip, ten prepared drag-and-drop rows, Kenney pieces and local
+Python-standard-library rules. No Mastermind commit or merge is included.
+
 ## Agreed experience
 
 - **Spielen** opens a small submenu: **Schere–Stein–Papier**, **Blackjack**,
@@ -597,3 +602,207 @@ Horoscope application/codec/playback/settings logic remains at the existing
 prototype and is excluded from the Connect Four commit, together with parallel
 character-asset changes. This change adds no API, key, external service or runtime
 dependency. No push or merge is authorized.
+
+## Mastermind extension
+
+**Owner decision, 2026-10-23: implemented locally after explicit authorization.**
+Aiko is the code setter. The player solves her fixed code with packaged Kenney
+pieces and project-owned Python-standard-library rules. The corrected UI has
+**ten prepared attempt rows**, each with four empty pin slots and an adjacent
+feedback group. Drag pins from the palette into the active row; earlier submitted
+rows remain as the visible history. This is ten attempts within one round.
+The horoscope prototype and parallel character-asset work remain unchanged.
+No commit, push or merge is included in this implementation request.
+
+### Roles and round presentation
+
+- Aiko selects one code at the start and keeps it unchanged for the entire
+  round. The first version has no role reversal or solver playing as Aiko.
+- Keep a small code strip beside Aiko on the desktop throughout the round,
+  separate from both her speech bubble and the player's game window. It has
+  four concealed positions, matching the agreed code length.
+- Show identical neutral covers during play. Hovering or clicking the strip
+  must not reveal colors, positions or other hidden information.
+- The player window owns color selection, submitted guesses, their feedback
+  and round controls. Aiko comments on submitted guesses through her existing
+  text/emote surface, with readable shared conversation timing.
+- At a solved or exhausted round end, uncover the actual code sequentially
+  on the desktop, then present Aiko's result reaction. The code remains visible
+  for the result; a new round starts concealed again.
+- Use the Blackjack desktop-hand presentation as a reference for anchoring,
+  scaling, topmost preferences, stacking and cleanup. Give the code strip its
+  own side-placement calculation: choose the available side, switch sides near
+  a screen edge, and keep Aiko's face, speech and player controls readable.
+- Follow Aiko's position while the game is open. Closing or failed setup must
+  clear the strip and cancel pending reveal/reaction callbacks. The code and
+  round history remain transient game state, outside pet saves and World items.
+
+### Agreed Mastermind rules
+
+**Owner decision, 2026-10-23: implemented first-version rules.**
+
+| Rule | Selected behavior |
+| --- | --- |
+| Code length | Four positions, with order significant. |
+| Palette | Six colors: red, yellow, blue, green, purple and white. |
+| Attempts | Ten submitted guesses per round, without a time limit. |
+| Repeated colors | Allowed in both the secret and guesses, including the same color in all four positions. |
+| Secret | Selected once at the start and unchanged throughout the round. |
+
+Only a complete, explicitly confirmed four-color guess consumes an attempt.
+The player may edit the current guess freely before submission. Palette drops
+copy colors (allowing duplicates); dragging an existing draft pin swaps slots.
+Drops outside the active row, onto earlier/later rows or clipped board areas
+are rejected without changing the draft. Only **Prüfen** submits all four pins.
+Optional keys 1–6 select colors, Left/Right select a slot, Delete clears it and
+Enter confirms while the palette has focus. Four exact
+matches win, including on the tenth attempt; check this before declaring an
+exhausted-round loss. After ten unsuccessful guesses the round ends, and Aiko's
+desktop strip reveals the secret using the staged end-of-round presentation.
+
+Display feedback beside each submitted guess as a compact group of four marks:
+
+- A **black filled mark** means the correct color in the correct position.
+- A **white mark with a dark outline** means a correct color in another position.
+- Unused places remain neutral gray placeholders and do not count as matches.
+- Add explicit numeric counts, for example **"1 genau · 2 nur Farbe"**, and a
+  permanently visible legend. Color alone must not carry the explanation.
+- Group marks by feedback type; they must not map to individual guess positions
+  or reveal which positions are correct.
+
+Count each secret/guess piece at most once. Assign exact matches first, then
+count matching remaining colors by multiplicity, so repeated colors cannot
+inflate the result. Example: secret **red–red–blue–green**, guess
+**red–blue–red–yellow** yields **one exact and two misplaced** matches.
+
+### Existing Kenney assets
+
+The previously inspected local **Kenney Game Assets All-in-1 3.4.0 / 2D assets /
+Boardgame Pack (1.0)** contains matching frontal transparent 64×64 PNG pieces.
+Packaged source paths below are relative to that pack; filenames differ by
+color, so a shared numeric suffix must not be assumed.
+
+| Packaged use | Inspected source |
+| --- | --- |
+| Yellow code piece | `PNG/Pieces (Yellow)/pieceYellow_single10.png` |
+| Red code piece | `PNG/Pieces (Red)/pieceRed_single11.png` |
+| Blue code piece | `PNG/Pieces (Blue)/pieceBlue_single09.png` |
+| Green code piece | `PNG/Pieces (Green)/pieceGreen_single10.png` |
+| Purple code piece | `PNG/Pieces (Purple)/piecePurple_single11.png` |
+| White code piece | `PNG/Pieces (White)/pieceWhite_single10.png` |
+| Neutral cover | `PNG/Pieces (Black)/pieceBlack_single10.png` |
+
+The supplied license and [official pack page](https://kenney.nl/assets/boardgame-pack)
+identify CC0; the supplied text permits personal, educational and commercial
+use. Provenance and the license accompany the packaged import. Yellow and red
+are already packaged for Connect Four; reuse suitable existing assets rather
+than introducing duplicate copies. The red source retains its orange tone.
+Runtime uses packaged files, without depending on Dropbox.
+
+Draw the strip, cover framing and feedback fields with the existing Tk/VN
+styling. No new generated character or game artwork is needed for this initial
+version. White pieces have a contrasting backing. Palette labels and numbered
+pins supplement color; the neutral cover carries a question mark. The ten-row
+board scrolls when necessary, retaining the palette above it.
+
+### Local rules and library choice
+
+- Use the existing Python runtime and Tk interface. Select the secret locally
+  with standard-library random selection; use `collections.Counter` or equivalent
+  multiset counting for color feedback, including correct treatment of repeated
+  colors under the agreed rules.
+- Keep code generation and feedback in a small pure game-rule module. Aiko is
+  the code setter, so this version needs no opponent search, language model,
+  API, API key or paid service. It must be usable offline at no additional cost.
+- No new external package is selected. The researched PyMasterMind and
+  python-constraint2 alternatives remain unadopted; a future need for an Aiko
+  solver would require a separate decision and dependency/license review.
+
+### Implemented ownership and pacing
+
+| Owner | Responsibility |
+| --- | --- |
+| `MastermindSession` under `games/` | Sole owner of the secret, submitted guesses, feedback and result; expose immutable views and keep hidden colors out of unrevealed UI projections. No Tk, PetState or World writes. |
+| `MastermindSequence` beside the existing game sequences | Coordinate submission, feedback, staged reveal and Aiko's reactions with cancellable callbacks. |
+| `MastermindCodePresenter` under `ui/pet_view/` | Render only masked positions during play and revealed pieces at round end; own the anchored desktop strip and its cleanup, following the Blackjack pattern. |
+| `MastermindWindow` and existing game host | Own player input and round presentation; preserve single-game admission and forward actions to the session/sequence. |
+
+`MastermindDrag` owns only its local Tk grab and temporary drag image; it never
+attaches global input hooks or writes World state. Invalid drops preserve the
+draft. Closing releases the grab, destroys the image and cancels the sequence.
+`MastermindWindow` renders all ten rows immediately, with only the current row
+editable. `GameCodePorts` connects the passive code strip; the existing game host
+retains admission, topmost and once-only completion ownership.
+
+After confirmation Aiko places the four feedback marks at **90 ms intervals**.
+Their grouping remains unordered: exact marks first, then misplaced, then unused.
+Numeric counts appear after the fourth mark. Input stays blocked during this
+sequence. At a terminal guess, settlement occurs after that feedback finishes;
+closing earlier awards nothing. Closing during the subsequent code reveal keeps
+the completed unit. The four secret pieces reveal at **180 ms intervals**, then
+Aiko uses jumping/star for the player's win or review/idea for her own win.
+Emotes precede dialogue by **800 ms**. Authored lines use shared conversation
+reading time, including its final second; there is no automatic round restart.
+Sparse comments follow guesses 3 and 6 (question emote) and guess 9 (last attempt).
+
+`games/mastermind.py` uses `secrets.choice` and `collections.Counter`, without a
+solver, dependency or external service. `MastermindImages` reuses the red/yellow
+Connect Four files and loads only five additional unmodified CC0 PNGs (blue,
+green, purple, white and the black cover). `place_code` chooses a bounded side
+position while considering Aiko, speech and the player panel; the presenter
+receives only masked or explicitly revealed `CodeView` snapshots.
+
+No new balance values, friendship rules, wish targets or save fields are added.
+Mastermind reuses the existing Tic-Tac-Toe fun profile through an explicit alias.
+The existing game-experience adapter credits completed units on close exactly
+once. An unfinished round has no reward. Code, drafts and scores are transient.
+
+### Implementation verification
+
+Tests cover multiplicity with an independent exhaustive 6,561-pair oracle,
+invalid/incomplete guesses, the tenth-attempt win versus exhaustion, fixed secret
+ownership, serial feedback/reveal, cancellation and once-only settlement.
+Native Tk tests send actual drag press/motion/release events into prepared rows,
+check draft swaps, repeated colors, rejected drops, immutable submitted rows,
+local-grab cleanup, concealed-strip input, reopening, failure cleanup, narrow
+bounds and 1x/2x positioning. Native Windows previews use temporary isolated saves;
+preview images remain outside Git. Final check results are recorded below.
+
+Development-worktree verification on 2026-10-23:
+
+- **22 new Mastermind rule, sequence, native Tk and provenance tests passed**;
+  together with the existing UI architecture guards, **48 tests passed**.
+- Final complete native Windows suite after the drag-and-drop/layout corrections:
+  **1,837 tests passed in 250.775 seconds**
+  (`python -m unittest discover -s tests -q`).
+- Repository CI-scope Ruff (`aiko_pet tests main.py tools`), strict Mypy across
+  277 application/tool source files, Pyright including tests, and whitespace
+  checks passed. Existing unrelated local asset-build scripts remain untouched.
+- Native previews with temporary isolated saves checked the ten-row board,
+  partial/full code reveal, retained feedback and the 1x/2x strip. A native
+  320×700 bounds test also drags into the tenth row with the palette/confirmation
+  controls visible and verifies scroll/grab cleanup.
+- All five imported PNGs match their original pack files byte for byte; the
+  included CC0 license retains its original wording. Red/yellow files are reused.
+- Hash comparison against the starting worktree confirmed 73 other pre-existing
+  dirty/untracked files unchanged, including the horoscope implementation and
+  parallel character exports. Shared files contain the required game wiring,
+  text contracts, catalogue assertions and documentation additions.
+
+The preceding results were recorded during the original development pass before
+the Mastermind source was committed. Its native previews/full-suite checks are
+historical results and were not repeated for the following delivery.
+
+### Headless baseline delivery before wish slice 1A
+
+At the owner's request, secure the completed Mastermind implementation as a
+separate baseline commit before enabling its game wishes. Stage only Mastermind
+portions of shared files; preserve parallel horoscope and character-asset work.
+
+An isolated copy of the exact staged baseline passed **68 targeted tests in
+0.271 seconds**: Mastermind rules/sequence, pure placement/provenance, existing
+game experience and wishes, and UI architecture. `_tkinter.create` was blocked
+throughout this run, so it could not create native test windows. The slowest
+individual test took 0.057 seconds. Changed-file Ruff, strict Mypy for eighteen
+affected source files and focused Pyright passed. No full suite, mouse control
+or GitHub CI was run for this delivery. No merge is authorized or performed.

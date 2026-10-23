@@ -158,6 +158,11 @@ Blackjack, Tic-Tac-Toe and Connect Four settle the required completed reveal/tur
 crediting their game-owned score. Closing during a pending reveal or bot turn
 does not count it; closing during the subsequent reaction retains that unit.
 
+Mastermind settles after its four feedback marks are placed. Closing before
+that finishes credits nothing; closing during the subsequent secret reveal or
+result reaction retains the completed round. Its explicit profile alias reuses
+Tic-Tac-Toe values, without changing balance, friendship or wish targets.
+
 Only actual completed play awards fun. Leaving the game window open,
 starting a round without reaching reveal, or closing an empty game
 awards **nothing**. The round score remains transient, including on

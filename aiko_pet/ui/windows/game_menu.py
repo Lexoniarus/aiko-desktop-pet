@@ -6,7 +6,7 @@ import tkinter as tk
 from functools import partial
 from typing import Callable
 
-from ...asset_paths import CONNECT_FOUR_DIR, PLAYING_CARDS_DIR
+from ...asset_paths import CONNECT_FOUR_DIR, MASTERMIND_DIR, PLAYING_CARDS_DIR
 from ...games.contracts import GameId
 from ...pet.content import GERMAN_TEXT
 from ..common.image_button import ImageButton, update_button_state
@@ -37,6 +37,8 @@ class GameMenu(EmbeddedSelector):
                 if game is GameId.BLACKJACK
                 else skin.images.file(CONNECT_FOUR_DIR / "red.png", 40)
                 if game is GameId.CONNECT_FOUR
+                else skin.images.file(MASTERMIND_DIR / "blue.png", 40)
+                if game is GameId.MASTERMIND
                 else skin.images.icon(GAME_ICONS[game.value], 40)
             )
             button = skin.button(

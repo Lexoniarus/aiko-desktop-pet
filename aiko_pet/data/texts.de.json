@@ -367,6 +367,23 @@
     "game.name.connect_four": "Vier gewinnt",
     "connect_four.legend.player": "Du: Gelb",
     "connect_four.legend.aiko": "Aiko: Rot",
-    "connect_four.wait": "Einen Moment ..."
+    "connect_four.wait": "Einen Moment ...",
+    "game.name.mastermind": "Mastermind",
+    "mastermind.code": "Aikos Code",
+    "mastermind.rules": "4 Stellen · 6 Farben · 10 Versuche\nZiehe die Pins in die aktuelle Reihe und drücke Prüfen.\nFarben dürfen mehrfach vorkommen. Ohne Zeitlimit.",
+    "mastermind.evaluating": "Aiko setzt ihre Rückmeldungs-Pins …",
+    "mastermind.board.guesses": "Deine Versuche",
+    "mastermind.board.feedback": "Aikos Rückmeldung",
+    "mastermind.submit": "Prüfen",
+    "mastermind.clear": "Leeren",
+    "mastermind.remaining": "Noch {remaining} Versuche.",
+    "mastermind.feedback": "{exact} genau · {misplaced} nur Farbe",
+    "mastermind.legend": "Schwarz: Farbe und Platz richtig. Weiß: nur Farbe richtig.\nDie Markierungen verraten keine Positionen.",
+    "mastermind.color.red": "Rot",
+    "mastermind.color.yellow": "Gelb",
+    "mastermind.color.blue": "Blau",
+    "mastermind.color.green": "Grün",
+    "mastermind.color.purple": "Lila",
+    "mastermind.color.white": "Weiß"
   }
 }

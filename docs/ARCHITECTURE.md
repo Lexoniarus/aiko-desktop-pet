@@ -520,6 +520,18 @@ worker and invalidates callbacks before destroying widgets. `ConnectFourWindow`
 renders snapshots with packaged Kenney pieces and forwards column selections.
 No worker touches Tk, PetState or World, and no board/search state is persisted.
 
+`games/mastermind.py` owns the fixed secret, multiplicity-aware feedback and
+transient score. `MastermindSequence` serializes feedback, staged reveal and
+reactions with one cancellable timer. `MastermindWindow` owns ten prepared rows
+and the editable draft; `MastermindDrag` owns only the local grab/drag image.
+`MastermindCodePresenter` receives masked/revealed `CodeView` values, never the
+secret/session. It owns a separate side-anchored desktop overlay; pure
+`place_code` considers screen bounds and occupied window rectangles supplied by
+`desktop/game_assembly.py`. `MastermindImages` shares packaged red/yellow assets
+and caches the additional colors by Tk root and integer scale. The host clears
+both game overlays/caches on close, failure and shutdown. No game state or pin
+becomes a World object or save field.
+
 `presentation/`, `personality/` and the former root-level `ui/*.py` widget
 forwarders have been **removed**. Runtime and tests import directly from the
 owning `pet/`, `ui/`, or `infrastructure/` module. See the
