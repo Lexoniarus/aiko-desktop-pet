@@ -9,6 +9,7 @@ from ..pet.emotions import EmotionalComposition, derive_emotional_state
 from ..pet.mind.dialogue_context import FriendshipStage
 from ..pet.mood import NeedMoodFactors, calculate_mood_target
 from ..pet.moodlet_catalog import MOODLET_CATALOG
+from ..pet.moodlet_timing import stage_seconds
 from ..pet.moodlets import (
     EmotionalDirection,
     MoodletAttribution,
@@ -90,8 +91,7 @@ def _moodlet_reads(state: PetState) -> tuple[MoodletRead, ...]:
                 episode.attribution,
                 definition.level_points[episode.level - 1],
                 episode.remaining_seconds,
-                episode.remaining_seconds
-                + (episode.level - 1) * definition.decay_stage_seconds,
+                sum(stage_seconds(episode, definition)),
                 definition.decay,
                 episode.decay_paused,
                 (
@@ -211,7 +211,7 @@ def snapshot_pet(
                 state.satiety, state.energy, state.fun, state.social, state.affection
             ),
             calculate_moodlet_contributions(
-                state.moodlets, definitions=MOODLET_CATALOG.definitions
+                state.moodlets, definitions=MOODLET_CATALOG.definitions,
             ),
         ),
         friendship_stage=FriendshipStage.from_level(state.friendship_level),

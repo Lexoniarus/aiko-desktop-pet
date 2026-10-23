@@ -88,14 +88,16 @@ class MoodletProgressionTests(unittest.TestCase):
         self.assertEqual([c.event_id for c in state.active[0].causes],
                          ["relief:28", "relief:29", "relief:30"])
         state = decode_moodlets(encode_moodlets(state), 30)
-        state = age(state, DEFINITIONS[MoodletId.RELIEF].decay_stage_seconds, at=30)
+        duration = state.active[0].remaining_seconds
+        state = age(state, duration, at=30)
         self.assertEqual(state.active[0].level, 2)
         self.assertEqual([c.event_id for c in state.active[0].causes],
                          ["relief:29", "relief:30"])
-        new = replace(state.active[0].causes[-1], occurred_at=40, event_id="relief:new",
+        new = replace(state.active[0].causes[-1], occurred_at=40 + duration,
+                      event_id="relief:new",
                       wish=MoodletWishCause(31, "avoid_round_loss", "blackjack",
                                             "next_non_loss", 1))
-        state = reinforce_moodlet(state, MoodletId.RELIEF, elapsed=40,
+        state = reinforce_moodlet(state, MoodletId.RELIEF, elapsed=40 + duration,
                                  definitions=DEFINITIONS, cause=new)
         self.assertEqual([c.event_id for c in state.active[0].causes],
                          ["relief:29", "relief:30", "relief:new"])
@@ -126,15 +128,15 @@ class MoodletProgressionTests(unittest.TestCase):
             self.assertEqual((episode.level, episode.remaining_seconds), (3, 1200))
             self.assertEqual(state.next_instance_id, 2)
 
-    def test_fulfillment_stacks_by_its_strength_food_only_refreshes(self):
+    def test_fulfillment_stacks_by_strength_and_food_extends_its_only_tier(self):
         state = trigger(MoodletState(), MoodletId.PRIDE, level=2)
         state = trigger(state, MoodletId.PRIDE, at=10, level=2)
         self.assertEqual((state.active[0].level, state.active[0].remaining_seconds),
-                         (3, 7200))
+                         (3, 2700))
         food = trigger(MoodletState(), MoodletId.FOOD_FULFILLED)
-        food = trigger(age(food, 3600), MoodletId.FOOD_FULFILLED, at=3600)
+        food = trigger(age(food, 1800), MoodletId.FOOD_FULFILLED, at=1800)
         self.assertEqual((food.active[0].level, food.active[0].remaining_seconds),
-                         (1, 7200))
+                         (1, 2400))
         expired = age(state, 6 * 3600, at=10)
         renewed = trigger(expired, MoodletId.PRIDE, at=21610)
         self.assertEqual((renewed.active[0].instance_id, renewed.active[0].level),

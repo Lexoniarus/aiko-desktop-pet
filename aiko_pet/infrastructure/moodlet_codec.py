@@ -19,7 +19,6 @@ from ..pet.moodlets import (
     MoodletAttribution,
     MoodletDecay,
     MoodletEpisode,
-    MoodletGroup,
     MoodletId,
     MoodletState,
     PettingParameters,
@@ -67,10 +66,7 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
                                maximum=elapsed, context="Moodlet start")
         trigger = number_value(entry["last_trigger_at"], minimum=started,
                                maximum=elapsed, context="Moodlet trigger")
-        staged_positive = definition.group in (
-            MoodletGroup.FOOD_WISH, MoodletGroup.GAME_WISH,
-            MoodletGroup.SOCIAL_WISH, MoodletGroup.AFFECTION_WISH,
-        )
+        staged_positive = definition.uses_positive_stage_budgets
         cap = BALANCE.integer("moodlets", "positive_stage_cap_seconds")
         remaining = number_value(entry["remaining_seconds"], minimum=0,
                                  maximum=max(definition.decay_stage_seconds,

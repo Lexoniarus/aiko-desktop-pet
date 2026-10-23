@@ -144,6 +144,10 @@ def parse_balance(raw: Any) -> BalanceCatalog:
     zero = [impressions[f"zero_level_{name}_seconds"]
             for name in ("one", "two", "three")]
     if (any(value <= 0 for value in impressions.values())
+            or max(impressions["positive_level_one_seconds"],
+                   impressions["positive_upper_stage_seconds"],
+                   impressions["positive_renewal_seconds"])
+            > impressions["positive_stage_cap_seconds"]
             or any(value > 100 for key, value in impressions.items()
                    if key.endswith("_points"))
             or impressions["game_wish_cap_points"] > impressions["positive_cap_points"]

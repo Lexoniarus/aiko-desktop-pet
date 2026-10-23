@@ -68,7 +68,7 @@ class AffectionWishTests(unittest.TestCase):
         self.assertFalse(pet.wishes.active)
         self.assertEqual(pet.moodlets.active[0].definition_id, MoodletId.SECURE)
 
-    def test_distinct_wishes_stack_security_and_keep_normal_two_hour_tiers(self):
+    def test_distinct_wishes_stack_security_then_extend_each_existing_tier(self):
         pet = PetState(affection=10, friendship=50, lived_seconds=100, wishes=wishes())
         pet.interact("pet", now=1800000000)
         episode = pet.moodlets.active[0].instance_id
@@ -82,7 +82,7 @@ class AffectionWishTests(unittest.TestCase):
         self.assertEqual(len(pet.moodlets.active), 1)
         self.assertEqual(pet.moodlets.active[0].instance_id, episode)
         self.assertEqual(pet.moodlets.active[0].level, 3)
-        self.assertEqual(pet.moodlets.active[0].remaining_seconds, 7200)
+        self.assertEqual(pet.moodlets.active[0].remaining_seconds, 3300)
         self.assertLessEqual(
             sum(e.amount for e in pet.friendship_history.rewards), 0.75
         )

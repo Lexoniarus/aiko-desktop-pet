@@ -207,7 +207,7 @@ class GameWishTests(unittest.TestCase):
         complete(pet, "win", 1, "new-session")
         self.assertFalse(pet.wishes.active)
         self.assertEqual(pet.moodlets.active[0].level, 2)
-        self.assertEqual(pet.moodlets.active[0].remaining_seconds, 7200)
+        self.assertEqual(pet.moodlets.active[0].remaining_seconds, 2700)
         self.assertEqual(pet.friendship, 50)
 
     def test_all_draws_relieve_nonloss_but_do_not_win_overall(self):

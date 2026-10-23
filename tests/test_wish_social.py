@@ -203,7 +203,7 @@ class SocialWishTests(unittest.TestCase):
         self.assertEqual(len(self.pet.moodlets.active), 1)
         self.assertEqual(self.pet.moodlets.active[0].definition_id, MoodletId.CHEERFUL)
         self.assertEqual(self.pet.moodlets.active[0].level, 2)
-        self.assertEqual(self.pet.moodlets.active[0].remaining_seconds, 7200)
+        self.assertEqual(self.pet.moodlets.active[0].remaining_seconds, 2700)
         self.assertLessEqual(
             sum(e.amount for e in self.pet.friendship_history.rewards), 0.75
         )

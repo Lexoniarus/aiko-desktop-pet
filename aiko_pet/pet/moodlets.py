@@ -15,6 +15,7 @@ from .balance import BALANCE
 from .care_evidence import CareEvidenceState, CarePeriodSummary
 from .interaction_events import InteractionMemory
 from .moodlet_patterns import LongTermPatternParameters
+from .moodlet_timing import age_moodlet, initial_stage_seconds, reinforced_stage_seconds
 from .need_exposure import ExposureMark
 from .needs import NeedLevels
 
@@ -240,6 +241,14 @@ class MoodletDefinition:
     parameters: MoodletParameters
 
     @property
+    def uses_positive_stage_budgets(self) -> bool:
+        """Shared wish after-effects, distinct from fixed long-term stages."""
+        return self.polarity == MoodletPolarity.POSITIVE and self.group in (
+            MoodletGroup.FOOD_WISH, MoodletGroup.GAME_WISH,
+            MoodletGroup.SOCIAL_WISH, MoodletGroup.AFFECTION_WISH,
+        )
+
+    @property
     def label_key(self) -> str:
         return f"moodlet.{self.id}.label"
 
@@ -363,24 +372,6 @@ def calculate_moodlet_contributions(
     )
 
 
-def _age_episode(
-    episode: MoodletEpisode, seconds: float, definition: MoodletDefinition,
-) -> MoodletEpisode | None:
-    """At most three stages; long gaps never create an elapsed-time replay."""
-    if seconds == 0 and episode.remaining_seconds > 0:
-        return episode
-    level, remaining = episode.level, episode.remaining_seconds
-    while seconds >= remaining:
-        seconds -= remaining
-        level -= 1
-        if level == 0:
-            return None
-        remaining = float(definition.decay_stage_seconds)
-    return replace(episode, level=level, remaining_seconds=remaining - seconds,
-                   pending_repetitions=episode.pending_repetitions
-                   if level == episode.level else 0)
-
-
 def _recover_episode(
     episode: MoodletEpisode, definition: MoodletDefinition, *, elapsed: float,
     seconds: float, before: NeedLevels, after: NeedLevels,
@@ -404,7 +395,7 @@ def _recover_episode(
              if low >= threshold and episode.recovery_since is not None
              else healthy_start)
     ready = since + BALANCE.number("moodlets", "recovery_stable_seconds")
-    recovered = _age_episode(
+    recovered = age_moodlet(
         episode, max(0, healthy_end - max(healthy_start, ready)), definition,
     )
     if recovered is None:
@@ -438,7 +429,7 @@ def advance_moodlets(
             paused = episode.decay_paused and observed
             current = (episode if paused == episode.decay_paused
                        else replace(episode, decay_paused=paused))
-            result = _age_episode(current, 0 if paused else seconds, definition)
+            result = age_moodlet(current, 0 if paused else seconds, definition)
         if result is not None:
             active.append(result)
     values = tuple(active)
@@ -484,8 +475,9 @@ def reinforce_moodlet(
     if (not math.isfinite(elapsed) or elapsed < state.baseline
             or type(level) is not int or not 1 <= level <= maximum):
         raise ValueError("Invalid Moodlet trigger time or strength")
-    if definition.group == MoodletGroup.INTERACTION and level != 1:
-        raise ValueError("Interaction evidence starts at one intensity level")
+    if (definition.group in (MoodletGroup.INTERACTION, MoodletGroup.LONG_TERM)
+            and level != 1):
+        raise ValueError("Interaction/period evidence starts at one intensity level")
     active = list(state.active)
     for index, episode in enumerate(active):
         if episode.definition_id != definition_id:
@@ -510,9 +502,14 @@ def reinforce_moodlet(
             pending = 0 if pending >= limit or intensity == maximum else pending
         else:
             intensity = min(maximum, episode.level + level)
+        budgets = (reinforced_stage_seconds(episode, definition, intensity)
+                   if definition.uses_positive_stage_budgets
+                   else initial_stage_seconds(definition, intensity))
         active[index] = replace(
             episode, level=intensity, last_trigger_at=elapsed,
-            remaining_seconds=float(definition.decay_stage_seconds),
+            remaining_seconds=budgets[-1],
+            lower_stage_seconds=budgets[:-1]
+            if definition.uses_positive_stage_budgets else (),
             pending_repetitions=pending, recovery_since=None,
             decay_paused=definition.decay != MoodletDecay.QUIET_TIME,
             attribution=attribution,
@@ -522,11 +519,14 @@ def reinforce_moodlet(
         return replace(state, active=tuple(active))
     if state.next_instance_id >= 2**63 - 1:
         raise ValueError("Moodlet instance allocation exhausted")
+    budgets = initial_stage_seconds(definition, level)
     episode = MoodletEpisode(
         state.next_instance_id, definition_id, level, elapsed, elapsed,
-        float(definition.decay_stage_seconds),
+        budgets[-1],
         decay_paused=definition.decay != MoodletDecay.QUIET_TIME,
         attribution=attribution,
+        lower_stage_seconds=budgets[:-1]
+        if definition.uses_positive_stage_budgets else (),
     )
     if cause is not None:
         episode = episode.with_cause(cause)
@@ -575,7 +575,7 @@ def relieve_moodlet(
                         ))
         result: MoodletEpisode | None = episode
         if eligible:
-            result = _age_episode(replace(
+            result = age_moodlet(replace(
                 episode, relieved_levels=(*episode.relieved_levels, episode.level),
             ), min(episode.remaining_seconds, definition.relief_seconds), definition)
         if result is not None:

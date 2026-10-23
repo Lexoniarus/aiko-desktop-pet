@@ -124,7 +124,7 @@ class FoodWishTests(unittest.TestCase):
         )
         self.assertAlmostEqual(pet.friendship, 50)
         self.assertEqual(pet.moodlets.active[0].definition_id, MoodletId.FOOD_FULFILLED)
-        self.assertEqual(pet.moodlets.active[0].remaining_seconds, 7200)
+        self.assertEqual(pet.moodlets.active[0].remaining_seconds, 3600)
         loaded = decode_pet_state(encode_pet_state(pet), now=WALL)
         self.assertEqual(loaded.wishes, pet.wishes)
         self.assertEqual(loaded.friendship_history, pet.friendship_history)

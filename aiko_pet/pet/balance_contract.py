@@ -21,6 +21,9 @@ BALANCE_FIELDS: dict[str, dict[str, str]] = {
     },
     "moodlets": {
         "positive_stage_cap_seconds": "integer",
+        "positive_level_one_seconds": "integer",
+        "positive_upper_stage_seconds": "integer",
+        "positive_renewal_seconds": "integer",
         "positive_cap_points": "number",
         "negative_cap_points": "number",
         "game_wish_cap_points": "number",
