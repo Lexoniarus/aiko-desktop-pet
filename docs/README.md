@@ -19,7 +19,7 @@ and test-cleanup plans.
 | Packaged JSON, save versions, recovery and time | [Data and saves](DATA_AND_SAVES.md) |
 | Food, digestion, workload and item graphics | [Food system](FOOD_SYSTEM.md) |
 | Adaptive sleep, input learning and finite closed-time care | [Sleep rules](SLEEP_SYSTEM.md) |
-| Progressive friendship, personal contact and neglect | [Friendship rules](FRIENDSHIP_SYSTEM.md) |
+| Continuous friendship from mood/Moodlets, personal contact and neglect | [Friendship rules](FRIENDSHIP_SYSTEM.md) |
 | Need rewards and overall mood | [Fun and mood](FUN_MOOD_SYSTEM.md) |
 | Unterhalten, API-only Single/Two Parts/facts, warming and shared care | [Social content](SOCIAL_CONTENT.md) |
 | Animation profile and playback timing | [Animation timing](ANIMATION_TIMING_PROFILE.md) |
@@ -31,6 +31,13 @@ and test-cleanup plans.
 [CHANGELOG](../CHANGELOG.md) summarizes current unreleased changes and milestones.
 
 ## Validation and acceptance
+
+Current Social Optimization status (documentation audit, 2026-10-23): slices
+1–8 and later focused fixes are delivered. [Slice 9 and the open findings](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23)
+remain outstanding: concrete negative/poor-care causes, pin-expiry and weighted
+cause-count decisions, integrated balance/full-suite/OOP acceptance and the
+unconfirmed native AppHang. The historical results below apply to their named
+baselines, not automatically to current HEAD.
 
 - Social API delivery on 2026-10-19: frozen code `644c367` passed **1,371 native
   Windows tests in 301.549 seconds**, no failures/errors/skips, plus full pinned
@@ -155,11 +162,11 @@ both implemented and verified. The latter link is the completed delivery record.
 The [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) preserves the
 candidate care gains, real-time absence losses and negative-interaction values
 discussed on 2026-10-19, including the later progressive upkeep factor and timed
-neglect rules. The latest revision has shared +0.75/two-hour and +5/24-hour gain
-ceilings, gentler lower upkeep, factor 2 at level 10 and comparisons from two
-to eight daily care visits. Earlier factors and unscaled examples are labeled
-separately. The historical proposal disclaimers describe its original discussion status;
-the latest curve is now implemented in [stage 3](FRIENDSHIP_SYSTEM.md).
+neglect rules. Its stage-3 revision used shared +0.75/two-hour and +5/24-hour gain ceilings,
+gentler lower upkeep and comparisons from two to eight care visits. Those are
+historical figures. Current [continuous friendship](FRIENDSHIP_SYSTEM.md) replaces
+instant care/wish rewards with elapsed mood/Moodlet flow and progressive factors;
+old reward fields survive only as save compatibility metadata.
 
 The [need balance and daily care proposal](NEEDS_BALANCE_PROPOSAL.md) records
 real-time need rates, care/food effects and an eight-period example day with
@@ -171,16 +178,19 @@ weaker digestion protection, a smaller energy surcharge and repeated-day food
 examples; normal elapsed time requires feeding independently of hardware load.
 The [combined example day](NEEDS_BALANCE_PROPOSAL.md#combined-example-day-with-needs-mood-sleep-and-friendship)
 now calculates the five needs, target/actual mood, normal sleep and individually
-credited friendship together, with explicit assumptions and no runtime claim.
+credited friendship together under the historical reward model, with explicit
+assumptions and no current-runtime claim.
 The later [four-phase combined day](NEEDS_BALANCE_PROPOSAL.md#combined-four-phase-average-care-day)
 bundles sufficient care into four visits and settles around levels 7–8, with
 need minima above 40 and actual mood around 48–79. Four visits with insufficient
-food/talk do not produce the same result.
+food/talk do not produce the same result. Current generated wishes and continuous
+friendship must still be checked against the level-7–8/10 goals in slice 9.
 
 The [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) records the equal need
 contributions, deficit deductions and target limits, faster decline under severe
 deficits, two-point-per-minute recovery and real-time examples. Its current numeric rules are implemented in [Fun and mood](FUN_MOOD_SYSTEM.md);
-contextual Moodlets remain separate work.
+contextual Moodlets and the status UI are delivered; current open gaps and
+later experience-based dialogue are distinguished in the master plan.
 
 The [adaptive sleep proposal](ADAPTIVE_SLEEP_PROPOSAL.md) records the learned
 quiet window, three/seven-phase learning milestones, 15-minute sleep onset,
@@ -195,12 +205,13 @@ details are resolved in the [stage-4 runtime guide](SLEEP_SYSTEM.md).
 
 ## Dialogue editorial review
 
-The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) inventories every
-complete catalogue sequence and additional non-catalogue speech, with current
-event triggers, variant filters and ordered text/emote/pause beats. Each row
-has one review-status field and an initially empty whole-sequence proposal.
-It is an editorial snapshot for `feature/social-optimization`; the runtime
-catalogues remain the source of shipped wording. All entries start unreviewed.
+The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) is a historical
+whole-sequence snapshot, preserving original rows and B2 review decisions.
+It does not mean all current dialogue is unreviewed. The subsequent complete
+German revision and schema migration are recorded in the
+[dialogue revision plan](DIALOGUE_REVISION_PLAN.md); runtime JSON remains the
+source of current text and filters. Future speech about concrete active Moodlet
+causes is a separate planned conversation feature.
 
 ## Keeping documentation current
 

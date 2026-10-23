@@ -1,5 +1,12 @@
 # Care, relationship and real-time implementation plan
 
+> **Current documentation audit, 2026-10-23:** see the
+> [open-work register](#documentation-audit-and-open-work-2026-10-23) before
+> treating earlier delivery records as complete acceptance. This documentation
+> update authorizes no runtime change. Slices 1–8 have delivery evidence;
+> concrete negative/poor-care cause recording and two product conflicts remain
+> open, and slice 9 is pending. Earlier reward-pot rules below are historical.
+>
 > **Active implementation plan; stage 4 corrected and locally verified.** Requested on 2026-10-19
 > on `feature/social-optimization`, reviewed against clean baseline `42de63a`.
 > The owner accepted the latest discussed balance as a sufficient starting
@@ -38,7 +45,8 @@
 > helpful-action relief. 5B.5 delivers prolonged-poor-care after-effects and
 > accounted exposure. 5B.6 now delivers paced inner wishes, real-time expiry and
 > actual spoken disclosure. 5B.7 delivers fulfillment, positive Moodlets and the
-> shared-pot personal bonus for food, affection, games and social activities.
+> then-current shared-pot personal bonus for food, affection, games and social
+> activities; that bonus is superseded by the delivered continuous-friendship amendment.
 > 5B.8 delivers full emotional interpretation, typed dialogue schema 3 and
 > immutable emotional/wish read contracts. 5C now delivers the VN status/menu,
 > embedded selectors and settings/Credits; native visual acceptance remains separate.
@@ -5411,3 +5419,78 @@ persistence, read, game/food wish, text and hover checks pass 78 tests in 0.147
 seconds (longest 0.051). Scoped Ruff, strict Mypy and Pyright pass. No test exceeds
 ten seconds. No native windows, mouse automation, live-save writes, CI or full
 suite; slice 9 remains deferred.
+
+
+## Documentation audit and open work, 2026-10-23
+
+**Scope:** read-only implementation audit against `5d20d9c`, followed by the
+owner-approved documentation synchronization. No runtime/catalogue/save changes,
+new tests, native windows, mouse control or CI are authorized by this pass.
+Resolve the actual wish/Moodlet flow with the owner before further implementation.
+Delivery records above remain historical evidence at their stated baselines.
+
+### Open findings and decisions
+
+| Item | Observed current behavior | Remaining work or decision |
+| --- | --- | --- |
+| Concrete causes for negative/poor-care impressions | Wish success/failure supplies structured `MoodletCause` snapshots. `interaction_rules.py` and `poor_care.py` reinforce without `cause=`, leaving generic `legacy` evidence for poking, unwanted closeness, food monotony, withholding, disruption and modeled poor care. Their triggers/tiers and independent penalties already exist. | Complete the actual cause evidence in the existing aggregate/episode structure after discussion. Do not describe a generic fallback as a concrete interaction memory, invent absent object knowledge/user blame, or create another journal. |
+| Pin release after original expiry | Left-click pins; right-click on a pinned card unpins, and on an unpinned card dismisses. Pinning prevents expiry/relevance retirement. Current `set_wish_pinned()` retires immediately when unpinning after the original four-hour deadline; unprotected supplied food/affection can also retire at 90. | Reconcile the desired two-step gesture with automatic lifetime/relevance retirement. No new deadline, grace period or pause/resume semantics are selected by this audit. |
+| Weighted intensity versus number of reasons | A larger overall-game success starts/adds two tiers but represents one actual cause. Current retention is **at most** one/two/three real causes at intensity one/two/three; level-three renewal rolls the latest three. | Clarify how the literal one/two/three-reason expectation should relate to a single stronger event. Do not duplicate one event to fill rows or silently change approved outcome strength. Incomplete old saves can also contain fewer reasons; deleted history cannot be recreated. |
+| Current integrated acceptance | Slices 1–8 and later focused fixes have individual delivery evidence. The full local stage-6 gate belongs to `b72ed21`, not the current candidate. Reference day arithmetic is not acceptance of actual generated wishes and continuous friendship. | Slice 9 must combine actual wish opportunities/outcome strengths with relationship progression, check average level 7–8 and intensive level 10 goals, run the final local suite/static gates, inspect tests over ten seconds and finish the OOP/dependency review. |
+| Original native menu AppHang | The measured scrollbar-width change, repeated unchanged layout and hover-overlap mechanisms have focused fixes. No original Windows failure traceback or conclusive reproduction establishes the full native cause. | Keep the original AppHang unresolved rather than claim every menu hang is fixed. Native Windows/DPI/hover/input acceptance remains separate from headless checks. |
+
+### Current contracts that must not regress during discussion
+
+- `PetState` owns mutable pet state; frozen Moodlet/wish records live in
+  `PetValues` and the existing atomic save. World custody, subjective Mind
+  evidence, application coordination and passive UI reads retain distinct owners.
+- Three wishes are the normal stock, at most one per area, replenished after a
+  saved twelve-minute vacancy pause. New creation is awake/live only; the shared
+  elapsed axis handles expiry during sleep, closure and standby without an
+  offline interaction replay or wish backlog.
+- Food/affection creation uses need at most 70 and actual petting willingness;
+  unpinned supplied wishes retire at 90. Games/social are exempt. Inner existence
+  is distinct from actual spoken disclosure and temporary current capability.
+- Saved game wishes retain their original goal/count/progress. New cumulative
+  rounds and wins span sessions; strict next-round goals and the overall
+  non-loss block remain distinct objectives. Food avoidance follows the approved
+  perceived-handover rule even if the excluded food is then refused.
+- Care and wish fulfillment grant no instant friendship bonus or reward pot.
+  Numeric mood, all active Moodlet tiers and absence/neglect feed continuous
+  progressive balance; shared 30-second status sampling is not another clock.
+- Active Moodlets retain bounded real causes, not a permanent completed-wish
+  archive. Decay trims cause retention; current hover numbers chronological
+  reasons rather than historical tier slots. Localized text remains a read model.
+
+### Documentation synchronized in this pass
+
+`FRIENDSHIP_SYSTEM.md` now describes current continuous rates, accepted contact,
+progressive factors and the distinction between direct event penalties and
+elapsed Moodlet effects. `FUN_MOOD_SYSTEM.md` now reflects delivered emotional
+composition, wish/game rules, adaptive sleep and the VN status presentation.
+`DATA_AND_SAVES.md` now describes nineteen families/twelve wish forms, dialogue
+schema 3, full-precision status, original game-goal persistence, pinned lifetime,
+bounded real causes and compatibility-only credit metadata. Its closed-time
+section permits flow from existing emotional evidence without inventing contact.
+`ARCHITECTURE.md`, `UI_WINDOW_CONTRACT.md` and the documentation index distinguish
+current delivery from known cause/lifetime gaps and historical acceptance.
+
+The dialogue review workbook remains explicitly historical. Its review flags
+must not be interpreted as an unreviewed current runtime catalogue. Actual
+future speech about a particular active Moodlet, its cause or their combination
+remains later work; this audit does not introduce it. Exploratory minigames and
+preserved original concepts likewise do not become mandatory tasks for slice 9.
+External visual references retain their existing handoff/manifest authority;
+this pass does not regenerate, import or revalidate artwork.
+
+### Verification and next discussion
+
+The Markdown diff and documentation-only file scope were reviewed; local link
+targets exist and `git diff --check` passes. No runtime tests, static Python
+suite, native app launch or live-save access were performed in this pass. Preserve the documented small-commit, targeted-local-
+check workflow for any subsequently authorized implementation; final integrated
+checks remain slice 9, with no GitHub CI or desktop mouse automation.
+
+Next discuss the actual lifecycle of wishes and Moodlets, starting with the
+owner's observations. This register records gaps and conflicts; it is not
+approval to choose or implement their resolutions.
