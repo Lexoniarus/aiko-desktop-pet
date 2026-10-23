@@ -3,6 +3,7 @@
 import unittest
 from dataclasses import replace
 
+from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.care_result import CareEffect
 from aiko_pet.pet.friendship_history import FriendshipHistory
 from aiko_pet.pet.moodlets import MoodletId
@@ -53,7 +54,12 @@ class AffectionWishTests(unittest.TestCase):
         pet = PetState(affection=100, friendship=0, lived_seconds=100)
         pet.interact("pet", now=1800000000)
         pet.interact("pet", now=1800000000)
-        pet.restore_checkpoint(replace(pet.capture_checkpoint(), wishes=wishes()))
+        pet.restore_checkpoint(replace(
+            pet.capture_checkpoint(), wishes=wishes(), moodlets=replace(
+                pet.moodlets, interactions=replace(pet.moodlets.interactions,
+                                                  petting_refused_until=1000),
+            ),
+        ))
         history = pet.friendship_history
         result = pet.interact("pet", now=1800000000)
         self.assertEqual(result.effect, CareEffect.AFFECTION_REFUSED)
@@ -64,7 +70,7 @@ class AffectionWishTests(unittest.TestCase):
     def test_accepted_extra_stroke_can_fulfill_pinned_wish_without_another_desire(self):
         pinned = replace(wishes(), active=(replace(wishes().active[0], pinned=True),))
         pet = PetState(affection=100, friendship=50, lived_seconds=100, wishes=pinned)
-        self.assertEqual(pet.interact("pet").effect, CareEffect.AFFECTION_ENOUGH)
+        self.assertEqual(pet.interact("pet").effect, CareEffect.AFFECTION)
         self.assertFalse(pet.wishes.active)
         self.assertEqual(pet.moodlets.active[0].definition_id, MoodletId.SECURE)
 
@@ -86,3 +92,26 @@ class AffectionWishTests(unittest.TestCase):
         self.assertLessEqual(
             sum(e.amount for e in pet.friendship_history.rewards), 0.75
         )
+
+    def test_full_need_wish_is_welcome_without_excess_and_permission_is_one_use(self):
+        pet = PetState(affection=100, friendship=0, lived_seconds=100,
+                       wishes=wishes())
+        memory = pet.moodlets.interactions
+        result = pet.interact("pet", now=1800000000)
+        self.assertEqual(result.effect, CareEffect.AFFECTION)
+        self.assertEqual(pet.affection, 100)
+        self.assertEqual(pet.moodlets.interactions, memory)
+        self.assertFalse(pet.wishes.active)
+        self.assertEqual(pet.moodlets.active[0].definition_id, MoodletId.SECURE)
+        pet = decode_pet_state(encode_pet_state(pet), now=1800000000)
+        self.assertEqual(pet.interact("pet", now=1800000000).effect,
+                         CareEffect.AFFECTION_ENOUGH)
+        self.assertEqual(pet.moodlets.interactions.petting_excess_attempts, 1)
+        self.assertEqual(pet.moodlets.active[0].level, 1)
+
+    def test_expired_wish_does_not_bypass_full_need_tolerance(self):
+        pet = PetState(affection=100, friendship=0, lived_seconds=14400,
+                       wishes=wishes())
+        self.assertEqual(pet.interact("pet", now=1800000000).effect,
+                         CareEffect.AFFECTION_ENOUGH)
+        self.assertFalse(pet.moodlets.active)

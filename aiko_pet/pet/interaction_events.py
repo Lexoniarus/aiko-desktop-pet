@@ -33,6 +33,7 @@ class Poked:
 class PettingAttempted:
     affection: float
     friendship_level: int
+    wished_for: bool = False
 
 
 @dataclass(frozen=True, slots=True)

@@ -156,6 +156,9 @@ def _attempt_petting(
     assert isinstance(parameters, PettingParameters)
     memory = state.interactions
     refusing = elapsed < memory.petting_refused_until
+    if (event.wished_for and not refusing and not any(
+            e.definition_id == MoodletId.CROWDED for e in state.active)):
+        return InteractionConsequences(state, petting_effect=CareEffect.AFFECTION)
     if petting_is_welcome(state, affection=event.affection,
                           friendship_level=event.friendship_level, elapsed=elapsed,
                           definitions=definitions):

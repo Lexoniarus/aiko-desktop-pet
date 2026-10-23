@@ -775,10 +775,12 @@ class PetState:
             ), personal=personal)
         elif transition.result.affection_accepted:
             self.experience_interaction(HelpfulInteraction("petting"))
-            self._apply_wish_resolution(fulfill_activity_wish(
-                self.wishes, WishArea.AFFECTION, "pet", elapsed=self.lived_seconds,
-                definitions=WISH_CATALOG.definitions,
-            ), personal=personal)
+            if transition.wish_instance_id is not None:
+                self._apply_wish_resolution(fulfill_activity_wish(
+                    self.wishes, WishArea.AFFECTION, "pet", elapsed=self.lived_seconds,
+                    definitions=WISH_CATALOG.definitions,
+                    instance_id=transition.wish_instance_id,
+                ), personal=personal)
         return transition.result
 
     def due_meal(self, context: TimeContext) -> str | None:

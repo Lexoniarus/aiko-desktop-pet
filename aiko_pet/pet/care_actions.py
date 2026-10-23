@@ -27,6 +27,9 @@ from .moodlets import MoodletState
 from .needs import NeedLevels
 from .routine import context_at
 from .value_rules import clamp_need_value
+from .wish_catalog import WISH_CATALOG
+from .wish_matching import assign_activity_wish
+from .wishes import WishArea, WishState
 
 
 class CareValues(Protocol):
@@ -77,6 +80,9 @@ class CareValues(Protocol):
     @property
     def lived_seconds(self) -> float: ...
 
+    @property
+    def wishes(self) -> WishState: ...
+
 
 @dataclass(frozen=True, slots=True)
 class CareTransition:
@@ -94,6 +100,7 @@ class CareTransition:
     contact_action: str | None = None
     food: FoodState | None = None
     interaction: InteractionConsequences | None = None
+    wish_instance_id: int | None = None
 
 
 def plan_care_action(
@@ -126,11 +133,18 @@ def plan_care_action(
         meals_today=tuple(state.meals_today),
     )
     if action == "pet":
+        wish = assign_activity_wish(
+            state.wishes, WishArea.AFFECTION, "pet", elapsed=state.lived_seconds,
+            definitions=WISH_CATALOG.definitions,
+        )
         interaction = apply_interaction_event(
-            state.moodlets, PettingAttempted(state.affection, state.friendship_level),
+            state.moodlets, PettingAttempted(
+                state.affection, state.friendship_level, wished_for=wish is not None,
+            ),
             elapsed=state.lived_seconds, definitions=MOODLET_CATALOG.definitions,
         )
-        unchanged = replace(unchanged, interaction=interaction)
+        unchanged = replace(unchanged, interaction=interaction,
+                            wish_instance_id=wish.instance_id if wish else None)
         if interaction.refused:
             assert interaction.petting_effect is not None
             return replace(unchanged,

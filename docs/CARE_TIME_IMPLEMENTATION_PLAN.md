@@ -8454,3 +8454,23 @@ strict Mypy and Pyright passed for all eight affected production files, with
 Ruff also checking all changed tests. The staged controller/test versions exclude
 the parallel horoscope hunks; their working copies retain those hunks. No live
 saves, test windows, mouse control, full suite or GitHub CI were used.
+
+
+### Delivery slice 6A: wished-for affection at full needs
+
+Care admission captures one matching affection wish before applying petting.
+That actual wished-for stroke is welcome even at affection 100, clamps physical
+needs and fulfills its captured identity without incrementing excess strokes or
+communicating a fullness boundary. Completion is not continuing permission:
+subsequent unrequested strokes follow normal friendship/tolerance rules.
+
+An active explicit refusal still blocks the wish. Too Much Closeness is not
+bypassed by wish permission; normal independent recovery/willingness remains
+with the existing interaction rules. Sleep/manual care routing is unchanged.
+The existing pure care transition carries the assigned identity; PetState
+commits the same care/Moodlet path, with no extra store or instantaneous bonus.
+
+40 targeted affection, care-action and helpful-relief tests passed in 0.249
+seconds, slowest 0.041 seconds. Focused Ruff, strict Mypy and Pyright passed.
+Native Tk creation was blocked; no test windows, mouse, live-save access,
+full suite or CI was used. Food/recognition follows in separate commits.
