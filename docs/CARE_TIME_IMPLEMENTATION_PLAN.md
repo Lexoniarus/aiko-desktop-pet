@@ -1,5 +1,10 @@
 # Care, relationship and real-time implementation plan
 
+> **Latest wish proposal, 2026-10-23:** the
+> [ten-minute rotation and additional objectives](#proposal-ten-minute-wish-rotation-and-additional-objectives-2026-10-23)
+> below are discussion proposals, not implemented behavior. They propose replacing
+> the current four-hour lifetime, twelve-minute vacancy delay and one-per-area cap.
+>
 > **Current documentation audit, 2026-10-23:** see the
 > [open-work register](#documentation-audit-and-open-work-2026-10-23) before
 > treating earlier delivery records as complete acceptance. This documentation
@@ -5441,6 +5446,10 @@ Delivery records above remain historical evidence at their stated baselines.
 
 ### Current contracts that must not regress during discussion
 
+This audit records the implemented baseline, not a restriction against later
+owner-approved product changes. Wish lifetime, refill and area limits below are
+specifically reconsidered in the later ten-minute proposal.
+
 - `PetState` owns mutable pet state; frozen Moodlet/wish records live in
   `PetValues` and the existing atomic save. World custody, subjective Mind
   evidence, application coordination and passive UI reads retain distinct owners.
@@ -5494,3 +5503,82 @@ checks remain slice 9, with no GitHub CI or desktop mouse automation.
 Next discuss the actual lifecycle of wishes and Moodlets, starting with the
 owner's observations. This register records gaps and conflicts; it is not
 approval to choose or implement their resolutions.
+
+
+## Proposal: ten-minute wish rotation and additional objectives, 2026-10-23
+
+**Status: discussion proposal only.** The owner requested recording the
+following direction before defining concrete creation conditions. No Python,
+JSON catalogues, save migration, UI, runtime tests or live saves change in this
+pass. Current implementation remains the baseline described by the audit above.
+
+### Three slots and ten-minute rotation
+
+- Target three available wishes regardless of which areas currently qualify.
+  Replace the current one-wish-per-area restriction: multiple different game
+  or social wishes may occupy slots when food/affection are unsuitable.
+- At each ten-minute refresh, retain pinned wishes and renew unpinned wishes;
+  fill remaining slots back to three. A pinned wish occupies one of those three
+  slots and keeps its identity/objective/progress.
+- Fulfillment removes a wish between refreshes. Empty slots are refilled at the
+  next refresh, including when all three wishes have already been completed.
+  Thus three is the target at refresh, not an instantaneous replacement after
+  every completion.
+- This direction replaces the current unpinned four-hour lifetime and separate
+  twelve-minute vacancy delay, rather than adding another independent timer.
+- Exact simultaneous duplicates of the same objective and target should not
+  occupy multiple slots. Different objectives or targets can coexist within
+  the same area.
+- Food/affection suitability still depends on actual needs and willingness.
+  Low fun/social can make the corresponding activity wishes more likely;
+  filled fun/social must not exclude them. Exact weights remain to be agreed.
+  This proposal does not change need consumption rates or care amounts.
+- Selecting or expressing a wish still creates no Moodlet. Actual fulfillment
+  creates the associated impression; it remains independently active after the
+  wish retires. No instantaneous friendship reward is added.
+
+An unpinned cumulative game goal would also rotate after ten minutes under this
+direction; pinning would allow longer pursuit. Reconcile this proposed policy
+with the earlier protection of existing saved goals/progress before migration.
+Do not silently replace old saved goals or settle the outstanding late-unpin
+semantics. Concrete creation triggers and refresh handling during sleep/closure
+remain for focused discussion; no new offline interaction replay is proposed.
+
+### Additional wish candidates
+
+These describe product meanings, not approved Python/JSON IDs. Reuse existing
+Moodlet families unless a later explicit decision requires another family.
+
+| Candidate | Proposed fulfillment | Existing fulfillment family |
+| --- | --- | --- |
+| Play something together, game freely chosen | Complete two rounds in any supported game | `shared_play` / Gemeinsame Spielfreude |
+| Spend time talking, category freely chosen | Complete one supported chat, saying, joke or fact sequence | `connection` / Verbundenheit |
+| Play something different | Complete two rounds of a game different from the relevant previously played game | `shared_play` / Gemeinsame Spielfreude |
+| Have a rematch | After a defeat, complete another round of that same game; victory is not required | `shared_play` / Gemeinsame Spielfreude |
+| Win this time | After a defeat, win a following round of that same game | `pride` / Stolz |
+| Eat something different | Actually eat another food instead of the repetitive one | `food_fulfilled` / Genau das Gewünschte |
+
+The first two introduce flexible targets instead of always prescribing a
+specific game or social category. The game-change/rematch/comeback candidates
+are intended to follow actual experience rather than arbitrary unsupported
+history. Their creation evidence, goal scope, selection weights and whether
+an overlapping existing concrete objective is reused still require agreement.
+
+The last row refines the existing food-avoidance/variety form rather than adding
+a near-duplicate. Actual alternate-food intake conflicts with the current
+explicitly approved handover rule (even unwanted/refused food counts). Record
+this as a proposed replacement only; no fulfillment semantics change yet.
+
+### Next discussion and ownership
+
+Define when the flexible wishes and experience-driven candidates enter the
+selection pool, and how need-driven weighting works across the day. Do not
+confuse a past defeat that makes a rematch wish eligible with a new Moodlet
+created merely by having that wish. Existing failure Moodlets and independent
+interaction/poor-care triggers remain separate topics.
+
+Keep `PetState` as the aggregate owner, frozen wish/goal progress in `PetValues`,
+the existing shared elapsed-time progression, current game/social event ports
+and passive UI read models. Do not introduce a second wish store, journal or
+clock. Any additional bounded evidence must be justified by the agreed concrete
+trigger before implementation.
