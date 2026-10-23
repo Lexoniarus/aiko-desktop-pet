@@ -249,7 +249,7 @@ class ActiveWish:
 
 @dataclass(frozen=True, slots=True)
 class WishState:
-    """Stable identities, creation evidence and a refill deadline survive retirement.
+    """Stable identities and the single refresh deadline survive retirement.
 
     Removing a fulfilled/ended wish retires its identity; an event for that
     identity cannot find an active wish again after a save/reload. Relationship
@@ -305,7 +305,8 @@ def _wish_cause(
         MoodletCauseKind.WISH_FAILED if failed else MoodletCauseKind.WISH_FULFILLED,
         elapsed, event_id,
         wish=MoodletWishCause(wish.instance_id, wish.definition_id.value,
-                             wish.target_id, goal.objective.value, goal.required_count),
+                             wish.target_id, goal.objective.value, goal.required_count,
+                             target=wish.target),
         target_id=wish.target_id if target_id is None else target_id,
         outcome=outcome, object_id=object_id, game=game,
     )

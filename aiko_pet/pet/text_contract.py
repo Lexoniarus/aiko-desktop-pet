@@ -47,6 +47,7 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "vn.cause.wish_failed": frozenset([]),
     "vn.cause.interaction": frozenset([]),
     "vn.cause.poor_care": frozenset([]),
+    "vn.cause.long_term": frozenset([]),
     "vn.outcome.unknown": frozenset([]),
     "vn.outcome.completed": frozenset([]),
     "vn.outcome.win": frozenset([]),

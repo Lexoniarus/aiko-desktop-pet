@@ -254,6 +254,9 @@ class MoodletEpisode:
 
     Relief usage belongs to this entire episode, including refresh, escalation
     and paused recovery. These values do not themselves advance any clock.
+    Current-stage time stays in remaining_seconds; lower_stage_seconds stores
+    levels one upward, excluding the current level. Empty means legacy implicit
+    lower stages, never invented earned extensions.
     """
 
     instance_id: int

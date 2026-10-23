@@ -15,164 +15,26 @@ from ..pet.food_catalog import DEFAULT_CATALOG
 from ..pet.interaction_events import FoodRepetitionMemory, InteractionMemory
 from ..pet.moodlet_catalog import MOODLET_CATALOG
 from ..pet.moodlets import (
-    MAX_MOODLET_CAUSES,
     FoodMonotonyParameters,
     MoodletAttribution,
-    MoodletCause,
-    MoodletCauseKind,
     MoodletDecay,
     MoodletEpisode,
-    MoodletGameResult,
+    MoodletGroup,
     MoodletId,
-    MoodletOutcome,
     MoodletState,
-    MoodletWishCause,
     PettingParameters,
     PokingParameters,
 )
-from ..pet.wish_catalog import WISH_CATALOG
-from ..pet.wishes import WishArea, WishId
+from .care_evidence_codec import decode_care_evidence, encode_care_evidence
+from .moodlet_cause_codec import decode_moodlet_causes, encode_moodlet_cause
 from .poor_care_codec import decode_poor_care, encode_poor_care
-from .wish_codec import decode_wish_goal
-
-
-def _token(raw: Any) -> str:
-    if not isinstance(raw, str) or not 1 <= len(raw) <= 128:
-        raise ValueError("Invalid Moodlet cause identity")
-    return raw
-
-
-def _wish_cause(raw: Any) -> MoodletWishCause:
-    row = object_fields(raw, ("instance_id", "definition_id", "target_id",
-                              "objective", "required_count"),
-                        context="Moodlet source wish")
-    key = enum_value(row["definition_id"], WishId, context="Moodlet source wish")
-    goal = decode_wish_goal(dict(objective=row["objective"],
-                                 required_count=row["required_count"]), key)
-    target = _token(row["target_id"])
-    if target not in WISH_CATALOG.definitions[key].targets:
-        raise ValueError("Incompatible Moodlet source wish target")
-    return MoodletWishCause(
-        integer_value(row["instance_id"], minimum=1, maximum=2**63 - 2,
-                      context="Moodlet source wish instance"),
-        key.value, target, goal.objective.value, goal.required_count,
-    )
-
-
-def _decode_causes(
-    raw: Any, *, started: float, trigger: float, key: MoodletId,
-) -> tuple[MoodletCause, ...]:
-    if not isinstance(raw, list) or not 1 <= len(raw) <= MAX_MOODLET_CAUSES:
-        raise ValueError("Moodlet needs one to three bounded causes")
-    causes = []
-    receipts: set[tuple[MoodletCauseKind, str | None, int | None]] = set()
-    previous = started
-    for value in raw:
-        row = object_fields(value, ("kind", "occurred_at", "event_id", "attribution",
-                                    "wish", "target_id", "outcome", "object_id"),
-                            optional=("game", "level"), context="Moodlet cause")
-        kind = enum_value(row["kind"], MoodletCauseKind, context="Moodlet cause kind")
-        at = number_value(row["occurred_at"], minimum=previous, maximum=trigger,
-                          context="Moodlet cause time")
-        event = None if row["event_id"] is None else _token(row["event_id"])
-        target = None if row["target_id"] is None else _token(row["target_id"])
-        object_id = None if row["object_id"] is None else _token(row["object_id"])
-        outcome = enum_value(row["outcome"], MoodletOutcome, context="Moodlet outcome")
-        wish = None if row["wish"] is None else _wish_cause(row["wish"])
-        game = None if row.get("game") is None else _game_result(row["game"])
-        # Read the superseded per-stage metadata without using it to discard
-        # real receipts. New saves retain only the canonical chronological list.
-        if row.get("level") is not None:
-            integer_value(row["level"], minimum=1,
-                          maximum=len(MOODLET_CATALOG.definitions[key].level_points),
-                          context="Moodlet cause stage")
-            if kind == MoodletCauseKind.LEGACY:
-                raise ValueError("Legacy cause cannot have a known stage")
-        if (kind == MoodletCauseKind.LEGACY and (
-                len(raw) != 1 or event is not None or wish is not None
-                or target is not None or object_id is not None
-                or game is not None
-                or outcome != MoodletOutcome.UNKNOWN)
-                or kind != MoodletCauseKind.LEGACY and event is None
-                or (kind in (MoodletCauseKind.WISH_FULFILLED,
-                             MoodletCauseKind.WISH_FAILED)) != (wish is not None)):
-            raise ValueError("Inconsistent Moodlet cause evidence")
-        if wish is not None:
-            definition = WISH_CATALOG.definitions[WishId(wish.definition_id)]
-            if game is not None and definition.area != WishArea.GAMES:
-                raise ValueError("Game result requires a game wish cause")
-            if kind == MoodletCauseKind.WISH_FULFILLED:
-                if (definition.fulfillment_moodlet != key
-                        or outcome == MoodletOutcome.UNKNOWN):
-                    raise ValueError("Incompatible Moodlet fulfillment cause")
-            elif (key != MoodletId.DISAPPOINTED or outcome != MoodletOutcome.LOSS
-                  or definition.id not in (WishId.AVOID_ROUND_LOSS,
-                                            WishId.AVOID_OVERALL_LOSS)):
-                raise ValueError("Incompatible Moodlet failure cause")
-            if definition.area == WishArea.FOOD:
-                if target is not None and target not in DEFAULT_CATALOG.foods:
-                    raise ValueError("Unknown actual food in Moodlet cause")
-            elif target is not None and target != wish.target_id:
-                raise ValueError("Mismatched actual Moodlet target")
-        elif game is not None:
-            raise ValueError("Game result requires an original wish")
-        cause = MoodletCause(
-            kind, at, event,
-            enum_value(row["attribution"], MoodletAttribution,
-                       context="Moodlet cause attribution"),
-            wish, target, outcome, object_id, game,
-        )
-        if cause.receipt in receipts:
-            raise ValueError("Duplicate Moodlet cause receipt")
-        receipts.add(cause.receipt)
-        causes.append(cause)
-        previous = at
-    return tuple(causes)
-
-
-def _game_result(raw: Any) -> MoodletGameResult:
-    row = object_fields(raw, ("round_outcome", "completed_rounds", "wins", "losses"),
-                        context="Moodlet game result")
-    outcome = enum_value(row["round_outcome"], MoodletOutcome,
-                         context="Moodlet settled round outcome")
-    rounds = integer_value(row["completed_rounds"], minimum=1, maximum=2**63 - 1,
-                           context="Moodlet completed rounds")
-    wins = integer_value(row["wins"], minimum=0, maximum=rounds,
-                         context="Moodlet game wins")
-    losses = integer_value(row["losses"], minimum=0, maximum=rounds - wins,
-                           context="Moodlet game losses")
-    if (outcome not in (MoodletOutcome.WIN, MoodletOutcome.LOSS, MoodletOutcome.DRAW)
-            or outcome == MoodletOutcome.WIN and wins == 0
-            or outcome == MoodletOutcome.LOSS and losses == 0
-            or outcome == MoodletOutcome.DRAW and rounds == wins + losses):
-        raise ValueError("Inconsistent Moodlet settled game result")
-    return MoodletGameResult(outcome, rounds, wins, losses)
-
-
-def _encode_cause(cause: MoodletCause) -> dict[str, Any]:
-    wish = cause.wish
-    return dict(
-        kind=cause.kind.value, occurred_at=cause.occurred_at,
-        event_id=cause.event_id, attribution=cause.attribution.value,
-        target_id=cause.target_id, outcome=cause.outcome.value,
-        object_id=cause.object_id,
-        game=None if cause.game is None else dict(
-            round_outcome=cause.game.round_outcome.value,
-            completed_rounds=cause.game.completed_rounds,
-            wins=cause.game.wins, losses=cause.game.losses,
-        ),
-        wish=None if wish is None else dict(
-            instance_id=wish.instance_id, definition_id=wish.definition_id,
-            target_id=wish.target_id, objective=wish.objective,
-            required_count=wish.required_count,
-        ),
-    )
 
 
 def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
     """Reject corrupt sections as a whole; callers retain unrelated pet values."""
     row = object_fields(raw, ("version", "baseline", "next_instance_id", "active"),
-                        optional=("interactions", "poor_care"), context="moodlets")
+                        optional=("interactions", "poor_care", "care_evidence"),
+                        context="moodlets")
     if type(row["version"]) is not int or row["version"] != 1:
         raise ValueError("Unsupported saved Moodlet version")
     baseline = number_value(row["baseline"], minimum=0, maximum=elapsed,
@@ -190,7 +52,8 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
             "instance_id", "definition_id", "level", "started_at", "last_trigger_at",
             "remaining_seconds", "relieved_levels", "pending_repetitions",
             "decay_paused", "recovery_since",
-        ), optional=("attribution", "causes"), context="Moodlet episode")
+        ), optional=("attribution", "causes", "lower_stage_seconds"),
+            context="Moodlet episode")
         key = enum_value(entry["definition_id"], MoodletId, context="Moodlet family")
         definition = MOODLET_CATALOG.definitions[key]
         instance = integer_value(entry["instance_id"], minimum=1,
@@ -204,9 +67,22 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
                                maximum=elapsed, context="Moodlet start")
         trigger = number_value(entry["last_trigger_at"], minimum=started,
                                maximum=elapsed, context="Moodlet trigger")
+        staged_positive = definition.group in (
+            MoodletGroup.FOOD_WISH, MoodletGroup.GAME_WISH,
+            MoodletGroup.SOCIAL_WISH, MoodletGroup.AFFECTION_WISH,
+        )
+        cap = BALANCE.integer("moodlets", "positive_stage_cap_seconds")
         remaining = number_value(entry["remaining_seconds"], minimum=0,
-                                 maximum=definition.decay_stage_seconds,
+                                 maximum=max(definition.decay_stage_seconds,
+                                             cap if staged_positive else 0),
                                  context="Moodlet remaining stage")
+        lower_raw = entry.get("lower_stage_seconds", [])
+        if (not isinstance(lower_raw, list)
+                or lower_raw and (not staged_positive or len(lower_raw) != level - 1)):
+            raise ValueError("Incompatible lower Moodlet stage budgets")
+        lower = tuple(number_value(v, minimum=0, maximum=cap,
+                                   context="lower Moodlet stage remaining")
+                      for v in lower_raw)
         levels = entry["relieved_levels"]
         if not isinstance(levels, list) or len(levels) > len(definition.level_points):
             raise ValueError("Unbounded Moodlet relief usage")
@@ -238,14 +114,16 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
             raise ValueError("Only poor-care Moodlets have stable recovery")
         if (definition.decay == MoodletDecay.QUIET_TIME and entry["decay_paused"]):
             raise ValueError("Quiet-time Moodlets cannot pause their ageing")
-        causes = (_decode_causes(entry["causes"], started=started, trigger=trigger,
-                                 key=key) if "causes" in entry else ())
+        causes = (decode_moodlet_causes(
+            entry["causes"], started=started, trigger=trigger, key=key,
+            baseline=baseline,
+        ) if "causes" in entry else ())
         episodes.append(MoodletEpisode(
             instance, key, level, started, trigger, remaining, relieved, pending,
             entry["decay_paused"], recovery,
             enum_value(entry.get("attribution", "unknown"), MoodletAttribution,
                        context="Moodlet attribution"),
-            causes,
+            causes, lower,
         ))
         instances.add(instance)
         families.add(key)
@@ -281,7 +159,9 @@ def decode_moodlets(raw: Any, elapsed: float) -> MoodletState:
                                    attempts, last)
     poor_care = (decode_poor_care(row["poor_care"], baseline, elapsed)
                  if "poor_care" in row else None)
-    return MoodletState(baseline, next_id, tuple(episodes), memory, poor_care)
+    evidence = (None if "care_evidence" not in row else
+                decode_care_evidence(row["care_evidence"], baseline, elapsed))
+    return MoodletState(baseline, next_id, tuple(episodes), memory, poor_care, evidence)
 
 
 def valid_moodlets(raw: Any, elapsed: float) -> bool:
@@ -313,15 +193,18 @@ def encode_moodlets(state: MoodletState) -> dict[str, Any]:
             instance_id=e.instance_id, definition_id=e.definition_id.value,
             level=e.level, started_at=e.started_at, last_trigger_at=e.last_trigger_at,
             remaining_seconds=e.remaining_seconds,
+            lower_stage_seconds=list(e.lower_stage_seconds),
             relieved_levels=list(e.relieved_levels),
             pending_repetitions=e.pending_repetitions, decay_paused=e.decay_paused,
             recovery_since=e.recovery_since,
             attribution=e.attribution.value,
-            causes=[_encode_cause(c) for c in e.causes],
+            causes=[encode_moodlet_cause(c) for c in e.causes],
         ) for e in state.active],
     )
     if state.poor_care is not None:
         encoded["poor_care"] = encode_poor_care(state.poor_care)
+    if state.care_evidence is not None:
+        encoded["care_evidence"] = encode_care_evidence(state.care_evidence)
     return encoded
 
 

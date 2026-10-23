@@ -8122,3 +8122,85 @@ case took **0.389 seconds**; none exceeded ten seconds. Native Tk creation was
 blocked throughout. Focused Ruff, strict Mypy and Pyright passed. Parallel
 horoscope/character work is preserved outside these commits. No full suite,
 test windows, mouse control or CI was used.
+
+
+### Delivery slice 2: owned state and compatible JSON persistence
+
+The feature-first order continues with typed state and the existing JSON codecs;
+SQLite remains in the closing architecture phase. The type foundation is
+`3d714b9`, wish/transfer storage is `a09cb42`, and bounded care-evidence decoding
+is `512a81f`. The final integration adds Moodlet stage/cause persistence and
+whole-Pet checkpoint tests. These changes prepare storage, not the subsequent
+wish-selection, renewal or long-term qualification algorithms.
+
+#### Wishes and original transfer context
+
+Active wishes can retain an explicit frozen target kind/mode/reference, including
+free choice and exclusion. Preserve original goals, quantities, progress, pins
+and identity. Legacy instances without the new target value keep their original
+concrete reference. Several distinct goals in one area can round-trip within
+the existing three-slot total; duplicate identities or identical original goals
+remain invalid. An area's last creation anchor may be newer than its older
+surviving wishes.
+
+`WishState.refresh_at` is the single stored refresh deadline. Read the old
+`refill_not_before` key into that same value; never write both clocks. Reject
+conflicting supplied deadlines. Existing vacancy/refill behavior uses the renamed
+field without a pacing change. The authored ten-minute interval is now available
+in the balance catalogue; regular rotation and its new generation policy remain
+slice four. Existing original expiry dates and game progress are not rewritten.
+
+Personal food transfers have bounded immutable receipts: transfer identity,
+physical object identity, original time and up to three original food-wish
+snapshots with goals, target meanings and priority facts. Recognition identity/time,
+pending/evaluated/cancelled status and accounted/resolved wish identities remain
+distinct. At most one pending transfer references a physical instance; the
+overall bound is thirty-two retained receipts, not a permanent transfer archive.
+Pending original wishes need not remain active. Load never identifies food,
+replays a transfer, grants a reward or interprets technical ground placement as
+a user withdrawal. Actual creation/resolution/cancellation remains slice six.
+
+#### Moodlet budgets, causes and care evidence
+
+`MoodletEpisode.remaining_seconds` remains the current stage's single time value.
+`lower_stage_seconds` stores the lower levels in ascending order, excluding the
+current stage. Explicit positive lower-stage budgets are bounded at ninety
+minutes each. Empty lower-stage data denotes the old implicit schedule; loading
+does not invent earned extensions or truncate the existing saved current stage.
+Actual ascent, decay and renewal of these budgets remains slice three.
+
+Causes retain original typed wish targets separately from actual outcomes, the
+original food-transfer time separately from later recognition, and versioned
+long-term period summaries separately from short-lived raw evidence. The existing
+one/two/three-real-cause limit still applies. A stronger event remains one cause;
+no event is copied to fill missing rows. Historical positive unwanted-handover
+records remain historical facts; new explicit negative handover records have
+their own validated cause contract.
+
+`MoodletState.care_evidence` owns immutable encounters, semantic receipts and
+per-family period watermarks on the existing elapsed-time axis. Bounds are 128
+retained encounters and 512 real experience receipts, with one progress record
+per supported long-term family. Receipts reference real retained encounters;
+independent families can retain different processed endpoints for shared evidence.
+There is no shared consumed flag or copy of the need-exposure timeline. The
+future producer/evaluator must finish required processing before pruning evidence;
+the codec rejects overflow instead of silently dropping qualification facts.
+Missing legacy evidence remains unknown (`None`), with no invented encounters or
+processed care days. A bounded period summary can outlive its raw evidence while
+its owning Moodlet cause remains active.
+
+Shared wish snapshot validation and Moodlet cause serialization have dedicated
+infrastructure modules; PetState remains the sole mutable Pet aggregate. Existing
+save sections retain version one with optional extensions. Coherent whole-Pet
+capture/restore and the existing section-corruption recovery path remain in use.
+No extra backend, timer, UI writer, qualification engine or live-save migration
+is introduced.
+
+The isolated staged integration passed **162 targeted tests in 1.179 seconds**
+covering wish storage/lifecycle/activities, emotional persistence, care evidence,
+Moodlet progression/mood, passive reads and text contracts. The slowest case took
+**0.402 seconds**; none exceeded ten seconds. Native Tk creation was blocked.
+Focused Ruff, strict Mypy and Pyright passed for the affected production files.
+Earlier isolated commits passed their own focused checks. Parallel horoscope,
+character, UI and documentation edits remain outside these commits. No full suite,
+test windows, mouse control, live-save access or CI was used.
