@@ -15,6 +15,12 @@ from .catalog_validation import (
     object_fields,
 )
 from .content import GERMAN_TEXT
+from .moodlet_pattern_catalog import (
+    PATTERN_TYPES,
+    parse_long_term_policy,
+    parse_pattern_parameters,
+)
+from .moodlet_patterns import LongTermMoodletPolicy, LongTermPatternParameters
 from .moodlets import (
     EmotionalDirection,
     FoodMonotonyParameters,
@@ -36,6 +42,7 @@ from .moodlets import (
 @dataclass(frozen=True, slots=True)
 class MoodletCatalog:
     definitions: Mapping[MoodletId, MoodletDefinition]
+    long_term_policy: LongTermMoodletPolicy
 
 
 def _seconds(raw: Any, context: str, *, minimum: int = 1) -> int:
@@ -58,8 +65,12 @@ _LOSS_FIELDS = (
 )
 
 
-def _parameters(key: MoodletId, value: Any) -> MoodletParameters:
+def _parameters(
+    key: MoodletId, value: Any, policy: LongTermMoodletPolicy,
+) -> MoodletParameters:
     context = f"moodlets.{key}.parameters"
+    if key in PATTERN_TYPES:
+        return parse_pattern_parameters(key, value, policy)
     if key == MoodletId.POKING:
         row = object_fields(value, ("escalation_pokes",), context=context)
         return PokingParameters(integer_value(
@@ -144,9 +155,11 @@ def _parameters(key: MoodletId, value: Any) -> MoodletParameters:
 def parse_moodlet_catalog(
     raw: Any, *, text_keys: Collection[str] = GERMAN_TEXT.messages,
 ) -> MoodletCatalog:
-    data = object_fields(raw, ("version", "moodlets"), context="moodlets")
-    if type(data["version"]) is not int or data["version"] != 1:
+    data = object_fields(raw, ("version", "moodlets", "long_term_policy"),
+                         context="moodlets")
+    if type(data["version"]) is not int or data["version"] != 2:
         raise ValueError("Unsupported Moodlet catalogue version")
+    policy = parse_long_term_policy(data["long_term_policy"])
     rows = data["moodlets"]
     if not isinstance(rows, list) or not rows:
         raise ValueError("Moodlet catalogue must contain definitions")
@@ -177,20 +190,36 @@ def parse_moodlet_catalog(
         positive_direction = direction in (
             EmotionalDirection.CHEERFUL, EmotionalDirection.PROUD,
             EmotionalDirection.RELIEVED, EmotionalDirection.AFFECTIONATE,
+            EmotionalDirection.SAFE, EmotionalDirection.OPTIMISTIC,
         )
         positive_group = group not in (
             MoodletGroup.INTERACTION, MoodletGroup.POOR_CARE,
             MoodletGroup.GAME_SETBACK,
+            MoodletGroup.FOOD_SETBACK,
         )
-        parameters = _parameters(key, row["parameters"])
+        parameters = _parameters(key, row["parameters"], policy)
+        pattern = isinstance(parameters, LongTermPatternParameters)
+        pattern_direction = {
+            MoodletId.TRUSTING: EmotionalDirection.SAFE,
+            MoodletId.APPRECIATED: EmotionalDirection.AFFECTIONATE,
+            MoodletId.OPTIMISTIC: EmotionalDirection.OPTIMISTIC,
+            MoodletId.UNCERTAIN: EmotionalDirection.UNCERTAIN,
+            MoodletId.OVERLOOKED: EmotionalDirection.LONELY,
+            MoodletId.GUARDED: EmotionalDirection.GUARDED,
+        }.get(key)
+        setback = key in (MoodletId.DISAPPOINTED, MoodletId.FOOD_WISH_DISREGARDED)
         positive = polarity == MoodletPolarity.POSITIVE
-        if (positive != positive_direction or positive != positive_group
-                or (positive or key == MoodletId.DISAPPOINTED)
+        if (positive != positive_direction
+                or pattern and direction != pattern_direction
+                or group != MoodletGroup.LONG_TERM and positive != positive_group
+                or ((positive and not pattern) or setback)
                 != (parameters is None)
+                or (group == MoodletGroup.LONG_TERM) != pattern
+                or (group == MoodletGroup.FOOD_SETBACK)
+                != (key == MoodletId.FOOD_WISH_DISREGARDED)
                 or (group == MoodletGroup.GAME_SETBACK)
                 != (key == MoodletId.DISAPPOINTED)
-                or key == MoodletId.DISAPPOINTED
-                and direction != EmotionalDirection.DOWNCAST
+                or setback and direction != EmotionalDirection.DOWNCAST
                 or (group == MoodletGroup.POOR_CARE)
                 != isinstance(parameters, PoorCareParameters)):
             raise ValueError(f"{key}: inconsistent polarity, direction or group")
@@ -206,14 +235,14 @@ def parse_moodlet_catalog(
             _seconds(row["decay_stage_seconds"], str(key)),
             _seconds(row["relief_seconds"], str(key), minimum=0), parameters,
         )
-        if positive and definition.relief_seconds:
-            raise ValueError(f"{key}: positive impressions cannot receive relief")
+        if (positive or pattern or setback) and definition.relief_seconds:
+            raise ValueError(f"{key}: this impression cannot receive relief")
         if not {definition.label_key, definition.description_key} <= set(text_keys):
             raise ValueError(f"{key}: missing localized label or description")
         definitions[key] = definition
     if set(definitions) != set(MoodletId):
         raise ValueError("Moodlet catalogue must define every supported family")
-    return MoodletCatalog(MappingProxyType(definitions))
+    return MoodletCatalog(MappingProxyType(definitions), policy)
 
 
 def load_packaged_moodlet_catalog(

@@ -41,7 +41,13 @@ class EmotionalCompositionTests(unittest.TestCase):
         self.assertEqual(set(DEFINITIONS), set(MoodletId))
         for key, definition in DEFINITIONS.items():
             value = derive(episode(key))
-            self.assertEqual(value.primary.value, definition.direction.value)
+            expected = {
+                MoodletId.TRUSTING: EmotionalState.AFFECTIONATE,
+                MoodletId.UNCERTAIN: EmotionalState.TENSE,
+                MoodletId.GUARDED: EmotionalState.RESERVED,
+            }.get(key)
+            self.assertEqual(value.primary.value,
+                             expected.value if expected else definition.direction.value)
             self.assertEqual(value.influences[0].cause, key)
 
     def test_all_active_intensities_participate_without_numeric_caps(self):
@@ -51,9 +57,9 @@ class EmotionalCompositionTests(unittest.TestCase):
             if d.polarity == "positive"
         ]
         result = derive(*positive)
-        self.assertEqual(len(result.influences), 8)
-        self.assertEqual(result.positive_intensity, 22)
-        self.assertEqual(sum(n for _, n in result.directions), 22)
+        self.assertEqual(len(result.influences), 11)
+        self.assertEqual(result.positive_intensity, 31)
+        self.assertEqual(sum(n for _, n in result.directions), 31)
         self.assertEqual(result.primary, EmotionalState.CHEERFUL)
 
     def test_equal_positive_negative_preserve_both_as_ambivalent(self):

@@ -122,8 +122,10 @@ class EmotionalReadTests(unittest.TestCase):
         self,
     ):
         episodes = tuple(
-            MoodletEpisode(i, key, 1, 0, 0, 7200)
-            for i, key in enumerate(MOODLET_CATALOG.definitions, 1)
+            MoodletEpisode(i, key, 1, 0, 0, definition.decay_stage_seconds)
+            for i, (key, definition) in enumerate(
+                MOODLET_CATALOG.definitions.items(), 1,
+            )
         )
         state = PetState(moodlets=MoodletState(active=episodes))
         before = state.capture_checkpoint()
@@ -134,8 +136,8 @@ class EmotionalReadTests(unittest.TestCase):
             read, time, None, ComputerSnapshot(), observe_computer=False
         )
         self.assertEqual(hover.emotional, status.emotional)
-        self.assertEqual(len(status.emotional.moodlets), 19)
-        self.assertEqual(len(read.emotions.influences), 19)
+        self.assertEqual(len(status.emotional.moodlets), len(MoodletId))
+        self.assertEqual(len(read.emotions.influences), len(MoodletId))
         self.assertTrue(set(MoodletId) <= set(MOODLET_ICONS))
         self.assertEqual(
             {m.value.definition_id for m in status.emotional.moodlets}, set(MoodletId)

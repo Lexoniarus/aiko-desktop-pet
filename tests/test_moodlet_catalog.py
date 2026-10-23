@@ -16,6 +16,7 @@ from aiko_pet.pet.moodlet_catalog import (
     load_packaged_moodlet_catalog,
     parse_moodlet_catalog,
 )
+from aiko_pet.pet.moodlet_patterns import LongTermPatternParameters
 from aiko_pet.pet.moodlets import (
     EmotionalDirection,
     FoodMonotonyParameters,
@@ -36,20 +37,23 @@ class MoodletCatalogTests(unittest.TestCase):
     def test_packaged_families_preserve_approved_strengths_and_durations(self):
         catalog = load_packaged_moodlet_catalog()
         self.assertEqual(catalog, MOODLET_CATALOG)
-        self.assertEqual(len(catalog.definitions), 19)
+        self.assertEqual(len(catalog.definitions), 26)
         self.assertEqual(sum(d.polarity == MoodletPolarity.POSITIVE
-                             for d in catalog.definitions.values()), 8)
+                             for d in catalog.definitions.values()), 11)
         for key, seconds in (
             (MoodletId.POKING, 1200), (MoodletId.CROWDED, 1200),
             (MoodletId.WITHHELD, 1200), (MoodletId.DISRUPTED, 1800),
             (MoodletId.FOOD_MONOTONY, 14400),
             (MoodletId.DISAPPOINTED, 1800),
+            (MoodletId.FOOD_WISH_DISREGARDED, 1800),
         ):
             definition = catalog.definitions[key]
             self.assertEqual(definition.decay_stage_seconds, seconds)
             self.assertEqual(definition.level_points, (-5, -10, -15))
         for definition in catalog.definitions.values():
-            if definition.polarity == MoodletPolarity.POSITIVE:
+            if (definition.polarity == MoodletPolarity.POSITIVE
+                    and not isinstance(definition.parameters,
+                                       LongTermPatternParameters)):
                 self.assertEqual(definition.decay_stage_seconds, 7200)
                 self.assertEqual(definition.level_points,
                                  (5,) if definition.id == MoodletId.FOOD_FULFILLED
@@ -86,12 +90,14 @@ class MoodletCatalogTests(unittest.TestCase):
         expected = {
             "cheerful": {"food_fulfilled", "shared_play", "cheerful", "enthusiastic"},
             "proud": {"pride"}, "relieved": {"relief"},
-            "affectionate": {"connection", "secure"},
+            "affectionate": {"connection", "secure", "appreciated"},
             "irritated": {"poking", "food_monotony", "exhaustion_irritated"},
             "crowded": {"crowded"},
             "frustrated": {"withheld", "disrupted", "unstimulated"},
-            "downcast": {"hunger_worn", "disappointed"},
-            "lonely": {"lonely", "missing_closeness"},
+            "downcast": {"hunger_worn", "disappointed", "food_wish_disregarded"},
+            "lonely": {"lonely", "missing_closeness", "overlooked"},
+            "safe": {"trusting"}, "optimistic": {"optimistic"},
+            "uncertain": {"uncertain"}, "guarded": {"guarded"},
         }
         self.assertEqual({direction.value: {
             d.id.value for d in MOODLET_CATALOG.definitions.values()
@@ -108,7 +114,7 @@ class MoodletCatalogTests(unittest.TestCase):
             cast(Any, entries[MoodletId.CROWDED].parameters).refusal_seconds = ()
 
     def test_schema_rejects_bad_versions_missing_and_duplicate_families(self):
-        for version in (True, 1.0, 2):
+        for version in (True, 2.0, 1, 3):
             with self.subTest(version=version), self.assertRaises(ValueError):
                 parse_moodlet_catalog({**self.raw, "version": version})
         for rows in ([], self.raw["moodlets"][:-1],

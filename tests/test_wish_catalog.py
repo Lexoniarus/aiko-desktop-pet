@@ -150,7 +150,10 @@ class WishCatalogTests(unittest.TestCase):
         del definitions[MoodletId.FOOD_FULFILLED]
         with self.assertRaisesRegex(ValueError, "missing fulfillment Moodlet"):
             parse_wish_catalog(self.raw,
-                               moodlets=MoodletCatalog(MappingProxyType(definitions)))
+                               moodlets=MoodletCatalog(
+                                   MappingProxyType(definitions),
+                                   MOODLET_CATALOG.long_term_policy,
+                               ))
         with self.assertRaisesRegex(ValueError, "targets"):
             parse_wish_catalog(self.raw, food_ids={"apple"})
         with self.assertRaisesRegex(ValueError, "targets"):

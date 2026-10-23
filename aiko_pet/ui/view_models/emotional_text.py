@@ -27,6 +27,13 @@ MOODLET_ICONS = {
     "lonely": "moodlet_lonely",
     "missing_closeness": "moodlet_missing_closeness",
     "disappointed": "moodlet_unstimulated",
+    "food_wish_disregarded": "moodlet_food_monotony",
+    "trusting": "moodlet_secure",
+    "appreciated": "moodlet_connection",
+    "optimistic": "moodlet_pride",
+    "uncertain": "moodlet_unstimulated",
+    "overlooked": "moodlet_lonely",
+    "guarded": "moodlet_annoyed",
 }
 GAME_ICONS = {"rock_paper_scissors": "game_rps", "tic_tac_toe": "game_tic_tac_toe"}
 

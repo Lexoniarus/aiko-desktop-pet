@@ -188,18 +188,20 @@ class MoodletMoodTests(unittest.TestCase):
         ), 15, reconstruct=True)
         self.assertEqual(pet.capture_checkpoint(), expected.capture_checkpoint())
 
-    def test_full_day_expires_quiet_families_without_creating_new_emotions(self):
+    def test_full_day_expires_short_quiet_families_without_creating_emotions(self):
         episodes = tuple(MoodletEpisode(i, d.id, len(d.level_points), 0, 0,
                                        d.decay_stage_seconds)
-                         for i, d in enumerate(DEFINITIONS.values(), 1))
+                         for i, d in enumerate(DEFINITIONS.values(), 1)
+                         if d.group != MoodletGroup.LONG_TERM)
+        next_id = max(e.instance_id for e in episodes) + 1
         pet = PetState(updated_at=WALL, satiety=0, energy=0, social=0,
                        affection=0, fun=0, mood=0,
-                       moodlets=MoodletState(0, 19, episodes))
+                       moodlets=MoodletState(0, next_id, episodes))
         pet.advance(WALL + 86400, observed=False)
         self.assertEqual({e.definition_id for e in pet.moodlets.active}, {
             d.id for d in DEFINITIONS.values() if d.group == MoodletGroup.POOR_CARE
         })
-        self.assertEqual(pet.moodlets.next_instance_id, 19)
+        self.assertEqual(pet.moodlets.next_instance_id, next_id)
         self.assertTrue(all(e.decay_paused for e in pet.moodlets.active))
         self.assertEqual(pet.mood, 0)
         self.assertEqual(pet.lived_seconds, 86400)

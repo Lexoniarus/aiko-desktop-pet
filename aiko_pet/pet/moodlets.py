@@ -13,6 +13,7 @@ from typing import Literal, Mapping
 
 from .balance import BALANCE
 from .interaction_events import InteractionMemory
+from .moodlet_patterns import LongTermPatternParameters
 from .need_exposure import ExposureMark
 from .needs import NeedLevels
 
@@ -39,6 +40,13 @@ class MoodletId(StrEnum):
     LONELY = "lonely"
     MISSING_CLOSENESS = "missing_closeness"
     DISAPPOINTED = "disappointed"
+    FOOD_WISH_DISREGARDED = "food_wish_disregarded"
+    TRUSTING = "trusting"
+    APPRECIATED = "appreciated"
+    OPTIMISTIC = "optimistic"
+    UNCERTAIN = "uncertain"
+    OVERLOOKED = "overlooked"
+    GUARDED = "guarded"
 
 
 class MoodletPolarity(StrEnum):
@@ -123,6 +131,11 @@ class EmotionalDirection(StrEnum):
     DOWNCAST = "downcast"
     LONELY = "lonely"
 
+    SAFE = "safe"
+    OPTIMISTIC = "optimistic"
+    UNCERTAIN = "uncertain"
+    GUARDED = "guarded"
+
 
 class MoodletGroup(StrEnum):
     FOOD_WISH = "food_wish"
@@ -132,6 +145,8 @@ class MoodletGroup(StrEnum):
     INTERACTION = "interaction"
     POOR_CARE = "poor_care"
     GAME_SETBACK = "game_setback"
+    FOOD_SETBACK = "food_setback"
+    LONG_TERM = "long_term"
 
 
 class MoodletDecay(StrEnum):
@@ -199,7 +214,8 @@ class PoorCareParameters:
 
 MoodletParameters = (
     PokingParameters | PettingParameters | FoodMonotonyParameters
-    | WithholdingParameters | RelocationParameters | PoorCareParameters | None
+    | WithholdingParameters | RelocationParameters | PoorCareParameters
+    | LongTermPatternParameters | None
 )
 
 

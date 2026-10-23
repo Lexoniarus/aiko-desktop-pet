@@ -29,6 +29,9 @@ class EmotionalState(StrEnum):
     SUBDUED = "subdued"
     CALM = "calm"
     SATISFIED = "satisfied"
+    OPTIMISTIC = "optimistic"
+    RESERVED = "reserved"
+    TENSE = "tense"
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,6 +62,7 @@ def supports_positive_expression(composition: EmotionalComposition) -> bool:
         EmotionalState.RELIEVED,
         EmotionalState.AFFECTIONATE,
         EmotionalState.SATISFIED,
+        EmotionalState.OPTIMISTIC,
     )
 
 
@@ -123,5 +127,14 @@ def derive_emotional_state(
             (d for d, _ in directions if any(i.direction == d for i in winning)),
             key=rank,
         )
-        label = EmotionalState(direction.value)
+        # Individual pattern directions retain their meaning in the read model.
+        # Compound feeling-selection rules belong to the later emotion slice.
+        if direction == EmotionalDirection.SAFE:
+            label = EmotionalState.AFFECTIONATE
+        elif direction == EmotionalDirection.UNCERTAIN:
+            label = EmotionalState.TENSE
+        elif direction == EmotionalDirection.GUARDED:
+            label = EmotionalState.RESERVED
+        else:
+            label = EmotionalState(direction.value)
     return EmotionalComposition(label, positive, negative, directions, influences)

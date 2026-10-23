@@ -8052,3 +8052,73 @@ seconds**, including existing wish expression and emotional read-model tests.
 Its slowest individual case took 0.063 seconds, and native Tk creation remained
 blocked. Focused Ruff, strict Mypy and Pyright also passed on that isolated
 snapshot, independently of parallel uncommitted horoscope/character changes.
+
+
+### Delivery slice 1C: food-wish setback and longer-term definitions
+
+The immutable type foundation is committed as `1f639f6`. The existing authored
+Moodlet catalogue now has twenty-six families; all nineteen previous rows retain
+their original values. Authored catalogue version two adds `long_term_policy`;
+it does not change the saved-game version or import existing personal evidence.
+
+| Added family | Direction | Nominal mood points by level | Time per stage |
+| --- | --- | --- | --- |
+| `food_wish_disregarded` / Essenswunsch missachtet | Downcast | -5 / -10 / -15 | 30 minutes |
+| `trusting` / Vertrauensvoll | Safety | +5 / +10 / +15 | 36 hours |
+| `appreciated` / Wertgeschaetzt | Affection | +5 / +10 / +15 | 30 hours |
+| `optimistic` / Zuversichtlich | Optimism | +5 / +10 / +15 | 30 hours |
+| `uncertain` / Verunsichert | Uncertainty | -5 / -10 / -15 | 30 hours |
+| `overlooked` / Uebersehen | Loneliness | -5 / -10 / -15 | 30 hours |
+| `guarded` / Auf der Hut | Caution | -5 / -10 / -15 | 36 hours |
+
+The food setback has its own `food_setback` group and no direct friendship-loss
+parameters. Its later trigger must use the recognized personal handover and
+original explicitly excluded food context, even when put down uneaten; ordinary
+nonmatching food, autonomous intake or an unidentified transfer is insufficient.
+
+The six longer-term definitions share the `long_term` group and a twenty-four-hour
+qualification period. Frozen pattern values in `pet/moodlet_patterns.py` retain:
+
+- Trust: three encounters, two-hour gaps, eight-hour span, two activity kinds,
+  no first-level poor-care exposure and no communicated boundary violation.
+- Appreciation: three fulfilled wishes, two wish areas, two encounters separated
+  by two hours and no communicated boundary violation.
+- Optimism: three pleasant activities, two areas, two encounters separated by
+  two hours, one actual success and at most one activity of each kind per encounter.
+- Uncertainty: two independent pleasant-then-upsetting pairs with a two-hour
+  minimum gap between the upsetting incidents.
+- Overlooked: at most one encounter and an eight-hour accumulated awake contact
+  gap. Sleep pauses this gap; it does not erase earlier awake time.
+- Guarded: three independent upsetting incidents spanning at least four hours.
+
+Trust's exclusive `care_exposure_level_limit = 1` reuses the existing first
+poor-care exposure threshold meanings rather than duplicating their durations.
+Pattern values describe prerequisites, not observed incidents. The strict decoder
+in `pet/moodlet_pattern_catalog.py` rejects unknown fields, invalid counts, missing
+or crossed prerequisites and encounter schedules that cannot fit the period.
+
+The immutable shared policy records the agreed separate +5/-10 joint mood limits
+and +0.00005/-0.00010 per-intensity friendship rates per existing thirty-second
+interval. The negative limit/rate are stored as magnitudes. These are the future
+longer-term rates, replacing rather than adding ordinary short-term rates.
+
+German labels/descriptions and existing icon reuse make every definition readable
+through the current passive views. Individual safety, uncertainty and caution
+directions project to the agreed baseline labels affectionate, tense and reserved;
+optimism has its own label. Existing families' selection behavior is preserved.
+The later compound-selection rules, including carefree and mixed-feeling bands,
+remain pending. Psychological descriptions do not disclose care thresholds.
+
+**Scope boundary:** no new runtime trigger, qualifying-period evidence, timer,
+mutable collection, interaction lock or instant friendship adjustment is added.
+Activation, once-per-period qualification, stage reinforcement and applying the
+shared limits/rates remain in their planned subsequent slices. No SQLite or live
+save changes are included.
+
+The isolated staged delivery passed **94 targeted local tests in 0.670 seconds**
+across Moodlet catalogues, progression, mood, emotional composition/read models,
+existing persistence, wish catalogue and text contracts. The slowest individual
+case took **0.389 seconds**; none exceeded ten seconds. Native Tk creation was
+blocked throughout. Focused Ruff, strict Mypy and Pyright passed. Parallel
+horoscope/character work is preserved outside these commits. No full suite,
+test windows, mouse control or CI was used.
