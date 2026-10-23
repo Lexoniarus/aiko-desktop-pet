@@ -6015,8 +6015,8 @@ to enumerate hypothetical edge cases.
 | Relevant decision | Why it still changes implementation |
 | --- | --- |
 | Ten-minute refresh, absence and unpinning | Resolved by the return-refresh rule below: perform one refresh on wake/return if due, without replaying missed rotations; retain pinned wishes and keep an unpinned wish until the next regular refresh rather than applying its old deadline. Left pins; right on pinned only unpins; right on unpinned dismisses remain the chosen gestures. |
-| New wish meanings and selection mix | The later variant-weight proposal below defines base weights, a thirty-minute experience window and flexible/rematch goal meanings. Remaining selection work is the priority among simultaneously matching wishes, without duplicating progress/outcomes or choosing retrospectively from a result. |
-| Food-avoidance / variety completion | The later food-wish-disregarded proposal below settles that expressly excluded food causes a negative outcome on recognized personal handover, even if put down; the former positive unwanted-handover rule is superseded. Keep the positive success condition for an alternative/variety objective explicit rather than inferring it from the negative outcome. |
+| New wish meanings and selection mix | Resolved for implementation planning by the later variant-weight and matching-wish priority proposals: area-first selection, a thirty-minute experience window, fixed flexible/rematch goals, and one assigned wish per actual event. The food-form split is completed by the agreed 70:30 rule below. |
+| Food-avoidance / variety completion | Resolved by the agreed shared food form below: recognized personal handover of an alternative food succeeds; recognized handover of the explicitly excluded food fails and produces Essenswunsch missachtet. This supersedes the historical positive unwanted-handover and alternate-food-intake requirements. |
 | Tier budgets during re-escalation and stronger goals | The later ascent-budget proposal below settles the candidate rule: raise remaining tier budgets to at least base duration while preserving longer residuals; choose ascent or capped level-3 renewal, not both; one stronger outcome remains one real cause. This is proposed behavior, not an implemented storage change. |
 | Positive experiences without a wish: scope | The later positive-experience proposal below adds four qualified everyday experiences using existing families, without making every need refill emotional evidence. Its triggers and no-double-reward rule are proposed, not implemented. |
 
@@ -6428,3 +6428,95 @@ weight is selected by this amendment.
 
 Documentation-only scope: only this master plan changes. No Python/JSON changes,
 runtime tests, application windows, pointer automation, live-save access or CI.
+
+
+### Agreed shared food-avoidance / variety wish and 70:30 selection
+
+**Planning decision recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Treat food avoidance and food variety as one semantic wish
+form, for example "Something other than donut, please." Actual repeated-food
+experience supplies the explicitly excluded food. Do not create two simultaneous
+equivalent objectives merely by wording one as avoidance and one as variety.
+
+Within the food area, use these relative form weights:
+
+| Eligible food form | Relative weight |
+| --- | --- |
+| Request a particular food | 70 |
+| Request something other than the explicitly excluded repetitive food | 30 |
+
+The variety form requires actual qualifying repeated-food evidence. Without
+that evidence, select from concrete-food requests. Choose the area first using
+the agreed need-based area weights, then its eligible form, then the target;
+70:30 does not mean seventy/thirty percent of all wishes. Full satiety does not
+by itself exclude either form under the previously agreed full-need rules.
+
+#### Recognized personal handover determines the wish outcome
+
+| Actual personal handover | Outcome |
+| --- | --- |
+| An alternative food is handed over and recognized | Fulfill the shared avoidance/variety wish and award Genau das Gewuenschte / `food_fulfilled` |
+| The explicitly excluded food is handed over and recognized | Fail the wish and apply Essenswunsch missachtet, even if the item is put down uneaten |
+| The food is not yet identified | Wait for identification and retain the wish context from the original handover |
+
+Actual eating is not required for the positive handover outcome. Subsequent
+consumption and nutrition remain separate and must not award the same wish
+again. Preserve one assigned wish/outcome per actual event and the agreed
+specificity/pin/progress priority. Mere cursor presentation, desktop placement
+or autonomous intake does not substitute for the personal handover.
+
+Use the existing single-tier positive food family: +5 for sixty minutes;
+another qualified fulfillment adds ten minutes of remaining duration, capped
+at ninety. No instantaneous friendship bonus is added. Ordinary nonmatching
+food offers are not explicit rejection violations: the negative outcome needs
+the saved excluded-food goal. Its previously agreed negative tiers/timing stay
+unchanged. This decision supersedes the earlier alternate-food-intake proposal
+and the historical positive award for handing over the excluded food.
+
+### Implementation readiness after the food-form decision
+
+The return/unpin rule and the positive food-form outcome/weights close the two
+remaining product decisions identified in the latest review. The agreed design
+is sufficiently specified to begin implementation when separately authorized.
+This records readiness, not runtime delivery or acceptance of the current code.
+Earlier chronological "next discuss" passages are superseded by their later
+specific decisions; do not reopen settled rules as new blockers.
+
+Use the following small delivery slices, with separate commits within a slice
+where catalogue, storage or interaction areas can be reviewed independently:
+
+1. Typed goal/Moodlet definitions and JSON catalogues, including flexible goals
+   and the negative food-wish family; validate catalogue contracts.
+2. State and existing codecs: multiple wishes per area, refresh scheduling,
+   per-tier remaining budgets and bounded activity/cause evidence. Preserve
+   original saved game goals/progress and real causes; verify old-save reads,
+   round trips and whole-Pet checkpoint restoration.
+3. Pure Moodlet progression: positive ascent budgets, two-tier outcomes,
+   capped renewals and single-tier food timing; preserve negative-family rules.
+4. Wish eligibility, area/form weights, three-slot rotation, return refresh and
+   pin/unpin lifecycle; check deterministic selection and elapsed boundaries.
+5. Shared matching/assignment and game/social completion, in separate commits:
+   bind the selected wish before the outcome and prevent duplicate progress.
+6. Food and affection integration, in separate commits: recognized handover,
+   full-need wish permission, explicit refusal and independent actual nutrition.
+7. The four qualified positive experiences without wishes and concrete causes
+   for negative/poor-care producers; keep bounded real evidence and prevent
+   duplicate emotional outcomes for the same event.
+8. Passive status/hover reads, then integrated generated-wish/day-balance
+   acceptance, the complete local suite, final OOP review and investigation of
+   tests exceeding ten seconds. Use targeted local checks during earlier slices.
+
+Keep Pet/domain state and rules, application interaction coordination,
+infrastructure persistence and UI projections with their existing owners.
+Exact migration mechanics and helper boundaries are engineering work within
+these owners, not reasons to create another history/reward engine or reopen
+product decisions. Old saves must not invent past qualifying experiences.
+
+The coupled day worksheets use supplied successes. Validate the actual weighted
+generator and interaction availability before claiming that average care reaches
+levels 7-8 and intensive care can maintain level 10. Need decay and friendship
+rates remain unchanged unless later evidence warrants a separate decision.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel documentation work is preserved. No Python/JSON changes, runtime tests,
+application windows, mouse control, live-save access or CI in this pass.
