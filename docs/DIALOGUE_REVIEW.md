@@ -142,7 +142,10 @@ use current observed context.
 - Story left-clicks advance to the next text, skipping intermediate emotes and
   pauses. They do not count as teasing clicks. Replacement/cancellation
   invalidates timers; uninterrupted playback includes all listed beats.
-- Current text duration: `min(8000, max(2800, characters * 58))` ms. Each text
+- Snapshot text duration: `min(8000, max(2800, characters * 58))` ms. The later
+  [social timing change](SOCIAL_CONTENT.md#bubble-reading-time) applies to
+  current `talk` sequences; this historical workbook retains its baseline.
+  Each text
   is limited to 125 characters. Short reactions allow <=2 text bubbles;
   stories <=5 (all current stories have four).
 - Workload comments require real fresh measurements. Occasional comments use

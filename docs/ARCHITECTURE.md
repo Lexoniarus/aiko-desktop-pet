@@ -705,8 +705,14 @@ Catalogue version 3 retains ordered text, emote and pause beats. Its explicit
 need conditions, short reaction tones, situation and sleep remain separate.
 The old `moods`/`needs` filters and mixed `EMOTIONS` vocabulary are retired. `Reaction` carries
 that immutable sequence and a short/story presentation mode. The UI only plays
-it: one speech surface, length-based reading time (58 ms/character, 1.8–8 s),
-800 ms default emotes and 600 ms deliberate pauses. There are 48 authored talk
+it on one speech surface. `Reaction` prepares `talk` text with 1,500 ms
+orientation plus 65 ms/character, clamped to 4–10 s; the final text gets an
+extra second within the same cap, even before a trailing emote. Other text
+feedback retains 58 ms/character clamped to 2.8–8 s. Emotes default to 800 ms
+and deliberate pauses to 600 ms; two-part API jokes use an explicit 800 ms
+punchline pause after the full setup reading time. The `conversation_*`
+parameters live in `data/balance.json`; display and advancement consume the
+same prepared cue durations. There are 48 authored talk
 stories, twelve per relationship stage, with independent emotional, need,
 short-reaction and situational variants.
 Stories exhaust their matching rotation pool before repeating. Warm moments

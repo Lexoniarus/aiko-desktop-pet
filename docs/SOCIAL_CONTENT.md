@@ -1,5 +1,12 @@
 # Conversations and API entertainment
 
+The [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md) records future
+Sprüche/quotation filtering, daily horoscope and tarot role performances,
+zero-cost/keyless provider rules and the approved reading-time policy. Only the
+shared bubble timing has subsequently been authorized and implemented. New
+providers/actions and genuine one-liner filtering remain planned; the existing
+Single behavior has not acquired those proposed one-liner restrictions.
+
 The **Unterhalten** toolbar button opens four choices: **Plaudern**,
 **Spruch erzählen**, **Witz erzählen** and **Kurioser Fakt**. Plaudern keeps the
 existing authored, context-sensitive conversations. The three new categories
@@ -20,7 +27,8 @@ API choices show disabled controls with a settings hint.
 
 Single means one provider text field; it can contain a longer joke or dialogue.
 It is not rewritten into a separate authored sayings catalogue. Two Parts keeps
-setup and delivery distinct, with a 700 ms pause before the delivery.
+setup and delivery distinct, with an 800 ms pause before the delivery, after the
+final setup bubble's complete reading time.
 Each category has three short German introductions in the existing text resource.
 A stable provider-text fingerprint varies the prepared introduction, sometimes
 adding a restrained happy/idea emote after the full content. No final emote
@@ -38,6 +46,30 @@ a valid response is not independent verification of their claims.
 The menu retains the most recently accepted item's source and API-entry links.
 Links open only when clicked. Source metadata remains attached to the prepared
 item; it is not added to Aiko's personal experiences or World knowledge.
+
+## Bubble reading time
+
+Spruch, Witz, Kurioser Fakt and Plaudern share one reading policy for each
+formatted, segmented text bubble: **1,500 ms + 65 ms per displayed character**,
+including spaces and punctuation, clamped to **4,000–10,000 ms**. The last text
+of the complete interaction receives **1,000 ms extra**, still capped at
+10,000 ms, even when an emote follows. This is visible text time before hiding
+or replacement, rather than a blank pause. A later credit/exit text would be
+the last text instead.
+
+The `Reaction` applies this policy to `talk` sequences before playback, using
+the `conversation_*` values in `data/balance.json`. Other feedback retains its
+existing timing. `ReactionPlayer` and `SpeechPresenter` receive the same
+prepared duration; authored emotes/thinking pauses retain their own durations.
+Two-part API jokes add one 800 ms pause between the complete setup and delivery.
+Existing story reading clicks can advance sooner, skipping intervening pauses
+and emotes, without extra care or wish effects.
+
+Deterministic tests cover clamp boundaries, the final-text allowance with
+trailing emotes/credits, segmented jokes, stale callbacks and completion.
+Native Windows/Tk tests check mapped bubbles through the full deadlines with
+a controlled clock, independently of any user save. These automated checks do
+not establish the owner's subjective reading comfort.
 
 The later owner-approved [settings/Credits design](UI_VN_DESIGN.md#approved-settings-and-separate-credits)
 places provider information and these per-item source/API-entry links in a

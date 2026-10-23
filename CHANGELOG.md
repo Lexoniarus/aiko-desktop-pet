@@ -8,6 +8,20 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Keep three wish cards fully visible at ordinary menu width by placing the
+  passive pin inside the title row. Preserve space between title, pin and
+  objective without changing card width on pin/unpin. Update stale contact,
+  catalogue, social-history and selector-admission test expectations; isolate
+  discrete withholding receipts from live/offline clock drift. Historical
+  need/mood schedules no longer assert retired friendship reward plateaus.
+
+- Give Spruch, Witz, Kurioser Fakt and Plaudern 1.5 seconds of orientation plus
+  65 ms per character, clamped to 4–10 seconds per text bubble. Keep the final
+  text visible for another second within the same cap, even before a trailing
+  emote. Pause 800 ms after the complete setup before a two-part punchline;
+  retain reading clicks and once-only care/wish completion. Quotations,
+  horoscope and tarot remain planned.
+
 - Retain the latest one/two/three concrete Moodlet causes according to current
   intensity. Renewing level three keeps the latest three; decay trims to the lower
   level. Preserve available old receipts without imposing historical stage slots.

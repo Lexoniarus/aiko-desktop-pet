@@ -1,6 +1,7 @@
 """Completed helpful actions match impressions without refunding direct loss."""
 
 import unittest
+from copy import deepcopy
 from dataclasses import replace
 
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
@@ -147,20 +148,29 @@ class InteractionReliefTests(unittest.TestCase):
         assert outcome.reaction is not None
         self.assertEqual(outcome.reaction.completed_social, SocialCompletion("chat"))
         self.assertEqual(pet.moodlets.active[0].remaining_seconds, 1200)
-        friendship = pet.friendship
+        elapsed_only = deepcopy(pet)
+        control = CareController(
+            elapsed_only, make_aiko_mind(started_at=0), AdaptiveRoutine(),
+            clock=ActiveSessionClock(lambda: uptime[0]),
+        )
         uptime[0] = 300
+        later = replace(inputs, wall_time=wall + 300, monotonic_time=300)
+        control.advance_time(later)
         controller.complete_social(
-            SocialCompletion("chat"),
-            replace(inputs, wall_time=wall + 300, monotonic_time=300),
+            SocialCompletion("chat"), later,
             arrangement_ready=False,
         )
         self.assertEqual(pet.lived_seconds, 300)
         self.assertEqual(pet.moodlets.active[0].remaining_seconds, 600)
-        self.assertEqual(pet.friendship, friendship)
+        self.assertEqual(pet.friendship, elapsed_only.friendship)
+        self.assertEqual(pet.social, elapsed_only.social)
+        self.assertEqual(pet.energy, elapsed_only.energy)
+        self.assertEqual(pet.friendship_history, elapsed_only.friendship_history)
+        completed = pet.capture_checkpoint()
         controller.complete_social(
-            SocialCompletion("chat"),
-            replace(inputs, wall_time=wall + 300, monotonic_time=300),
+            SocialCompletion("chat"), later,
             arrangement_ready=False,
         )
         self.assertEqual(pet.lived_seconds, 300)
         self.assertEqual(pet.moodlets.active[0].remaining_seconds, 600)
+        self.assertEqual(pet.capture_checkpoint(), completed)

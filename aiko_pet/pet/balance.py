@@ -214,6 +214,15 @@ def parse_balance(raw: Any) -> BalanceCatalog:
         )
     ):
         raise ValueError("Invalid dialogue defaults or presentation timing")
+    if (
+        not 250 <= dialogue["conversation_minimum_text_ms"]
+        <= dialogue["conversation_maximum_text_ms"] <= 10000
+        or dialogue["conversation_orientation_ms"] > 10000
+        or dialogue["conversation_reading_ms_per_character"] <= 0
+        or dialogue["conversation_final_text_ms"] > 10000
+        or not 250 <= dialogue["conversation_punchline_pause_ms"] <= 8000
+    ):
+        raise ValueError("Invalid conversation reading timing")
     mood = sections["mood"]
     names = ("zero", "critical", "low", "healthy")
     thresholds = [mood[f"{name}_need_threshold"] for name in names]

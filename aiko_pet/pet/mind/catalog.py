@@ -29,7 +29,7 @@ from .dialogue_context import (
     SituationalCondition,
 )
 from .dialogue_events import DIALOGUE_EVENTS
-from .reaction_sequence import Cue
+from .reaction_sequence import Cue, conversation_timing
 
 CATALOGUE = Path(__file__).resolve().parents[2] / "data" / "dialogues.de.json"
 ANIMATIONS = frozenset({
@@ -256,6 +256,10 @@ class Reaction:
     presentation: Literal["short", "story"] = "short"
     completed_social: SocialCompletion | None = None
     wish_instance_id: int | None = None
+
+    def __post_init__(self) -> None:
+        if self.event == "talk":
+            object.__setattr__(self, "beats", conversation_timing(self.beats))
 
     @property
     def text(self) -> str:

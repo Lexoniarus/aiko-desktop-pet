@@ -53,7 +53,9 @@ class MoodletMoodTests(unittest.TestCase):
         state = MoodletState(0, len(episodes) + 1, episodes)
         contributions = calculate_moodlet_contributions(state, definitions=DEFINITIONS)
         self.assertEqual(contributions, MoodletContributions(20, -30))
-        self.assertEqual(len(state.active), 18)
+        self.assertEqual(
+            tuple(e.definition_id for e in state.active), tuple(DEFINITIONS),
+        )
         for group, expected in ((MoodletGroup.GAME_WISH, (15, 0)),
                                 (MoodletGroup.SOCIAL_WISH, (15, 0)),
                                 (MoodletGroup.POOR_CARE, (0, -15))):

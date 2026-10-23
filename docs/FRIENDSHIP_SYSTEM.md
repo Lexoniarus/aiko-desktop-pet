@@ -159,9 +159,14 @@ history cannot invent earlier contact or unrecorded neglect; original corrupt
 bytes are preserved by the existing save recovery policy. Full-precision status
 and joint Pet/World rollback retain the existing save owner.
 
-Historical stage-3 schedule tests and their 96–100 / 69–71 plateau examples
-apply to the old capped-reward model. They are not evidence that current generated
+Historical stage-3 schedule results and their 96–100 / 69–71 plateau examples
+apply to the old capped-reward model. Current eight-/four-phase regression
+tests preserve the need/mood baseline and contact/neglect invariants; they do
+not assert those retired plateaus or bless new relationship target values.
+They do not generate wishes and are not evidence that current generated
 wishes and continuous flow achieve the intended level-7–8 average / level-10
-intensive care balance. That integrated acceptance, current full suite, slow-test
-audit and OOP review remain slice 9. Concrete cause recording for negative and
+intensive care balance. That integrated acceptance, slow-test audit and OOP
+review remain slice 9. Subsequent full-suite checks for assertion/layout
+repairs are recorded in the [social delivery follow-up](SOCIAL_EXPANSION_PLAN.md#test-and-wish-card-layout-follow-up-2026-10-23).
+Concrete cause recording for negative and
 poor-care Moodlets is also an open gap in the [documentation audit](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23).

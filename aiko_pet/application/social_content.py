@@ -9,6 +9,7 @@ from enum import StrEnum
 from typing import Any
 from urllib.parse import urlsplit
 
+from ..pet.balance import BALANCE
 from ..pet.content import GERMAN_TEXT
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.reaction_sequence import Cue
@@ -120,7 +121,10 @@ def prepare_social_content(
     beats = [Cue.text(GERMAN_TEXT.format(intro_key))]
     for index, part in enumerate(parts):
         if index:
-            beats.append(Cue("pause", "", 700))
+            beats.append(Cue(
+                "pause", "",
+                BALANCE.integer("dialogue", "conversation_punchline_pause_ms"),
+            ))
         beats.extend(_segments(part))
     if sum(beat.kind == "text" for beat in beats) > 5:
         raise ValueError("Social story exceeds five text bubbles")

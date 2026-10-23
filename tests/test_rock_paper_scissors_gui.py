@@ -92,7 +92,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
         self.pet._hover.dismiss_outside(-999, -999)
         self.assertIs(self.pet._hover.game_window, game)
         self.assertTrue(game.window.winfo_exists())
-        self.assertEqual(toolbar.buttons["play"].cget("state"), "disabled")
+        self.assertEqual(toolbar.buttons["play"].cget("state"), "normal")
         with (
             patch.object(game, "focus") as focus,
             patch("aiko_pet.ui.windows.hover_ui.RockPaperScissorsWindow") as create,
@@ -101,6 +101,7 @@ class RockPaperScissorsWindowTests(unittest.TestCase):
             self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         focus.assert_not_called()
         create.assert_not_called()
+        self.assertIsNone(self.pet._hover.game_menu)
         self.assertIs(self.pet._hover.game_window, game)
 
     def test_system_close_cancels_pending_round_and_releases_game_mode(self):

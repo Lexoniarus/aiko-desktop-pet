@@ -128,6 +128,8 @@ class Widget:
     def grid_columnconfigure(self, *args: Any, **kwargs: Any) -> None:
         pass
 
+    grid_rowconfigure = grid_columnconfigure
+
     def coords(self, *args: Any, **kwargs: Any) -> None:
         pass
 

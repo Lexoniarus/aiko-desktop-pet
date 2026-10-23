@@ -5,11 +5,13 @@ import time
 import tkinter as tk
 import unittest
 from dataclasses import replace
+from functools import partial
 from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.application.object_feedback import FeedbackReceipt
 from aiko_pet.application.object_interaction_state import SearchPosition
+from aiko_pet.application.session import PetSessionRestorer
 from aiko_pet.desktop.geometry import FOOT_BASELINE
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
@@ -1077,7 +1079,7 @@ class WorldGuiTests(unittest.TestCase):
                 world._sync_geometry()
                 app._place_x(world._track().left + 40)
                 set_test_pet_values(app.state, satiety=76, energy=65)
-                friendship = app.state.friendship
+                relationship = app.state.friendship_history
                 x = world._track().left + int(world._body_x())
                 with (
                     patch.object(app.root, "winfo_pointerx", return_value=x),
@@ -1095,7 +1097,10 @@ class WorldGuiTests(unittest.TestCase):
                     for _ in range(100):
                         world.now += .25
                         world.update(time.monotonic())
-                    self.assertEqual(app.state.friendship, friendship)
+                    self.assertEqual(app.state.friendship_history.penalties,
+                                     relationship.penalties)
+                    self.assertEqual(app.state.friendship_history.last_contact,
+                                     relationship.last_contact)
                     self.assertFalse(world.interaction.active)
                     if handover:
                         world.cursor.release()
@@ -1116,7 +1121,8 @@ class WorldGuiTests(unittest.TestCase):
                     self.assertEqual(cues[-1], "object_collect_wanted")
                     self.complete_feedback()
                     self.assertEqual(world.interaction.phase, "pick_up")
-                    self.assertEqual(app.state.friendship, friendship)
+                    self.assertEqual(app.state.friendship_history.penalties,
+                                     relationship.penalties)
                     self.finish_pickup()
                 else:
                     self.assertEqual(world.interaction.phase, "handover")
@@ -1127,7 +1133,10 @@ class WorldGuiTests(unittest.TestCase):
                 self.assertEqual(world.interaction.memory_id, record)
                 self.assertEqual(world._care is not None, handover)
                 if not handover:
-                    self.assertEqual(app.state.friendship, friendship)
+                    self.assertEqual(app.state.friendship_history.penalties,
+                                     relationship.penalties)
+                    self.assertEqual(app.state.friendship_history.last_contact,
+                                     relationship.last_contact)
                 self.assertFalse(set(cues) & {
                     "object_taken", "object_request_return", "object_withheld",
                     "object_returned", "object_inspect", "object_recognized",
@@ -1453,6 +1462,17 @@ class WorldGuiTests(unittest.TestCase):
                                  ObjectState.CONSUMED)
 
     def test_visible_withholding_changes_friendship_once_and_survives_restart(self):
+        # Isolate the discrete penalty and its persistence from elapsed flow.
+        # World phase time is advanced explicitly by this component fixture.
+        self.enterContext(patch(
+            "aiko_pet.application.active_time.ActiveSessionClock.consume",
+            return_value=0,
+        ))
+        # Reopening is instantaneous in this receipt test. Offline progression
+        # has separate coverage and must not add a real I/O-time Moodlet loss.
+        self.enterContext(patch("aiko_pet.gui.PetSessionRestorer", partial(
+            PetSessionRestorer, wall_time=lambda: self.app.state.updated_at,
+        )))
         world = self.app._world
         item = world.world.place_resting("apple", world._body_x() + 70,
                                          ObjectFootprint(8, 8))
@@ -1467,6 +1487,10 @@ class WorldGuiTests(unittest.TestCase):
             world.update(time.monotonic())
             self.complete_feedback()
         self.assertAlmostEqual(self.app.state.friendship, initial - .5)
+        self.assertEqual(
+            [(e.kind, e.amount) for e in self.app.state.friendship_history.penalties],
+            [("withholding", .5)],
+        )
         self.assertEqual(
             self.app.mind.emotional_state(self.app.state).primary,
             EmotionalState.FRUSTRATED,

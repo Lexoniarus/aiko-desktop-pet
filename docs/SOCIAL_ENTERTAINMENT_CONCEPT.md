@@ -31,6 +31,18 @@ feature branch; [current social behavior](SOCIAL_CONTENT.md) describes the
 runtime, and the plan records actual verification. Broader translation,
 horoscope and spontaneous-content ideas below remain future work.
 
+The later [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md), recorded
+on 2026-10-23, now defines the documentation-only scope for Sprüche with genuine
+one-liners and quotations, daily horoscope and tarot role performances, free
+keyless providers, request limits and a shared reading-time review. It retains
+the provider's Sie wording inside the announced role; proposed Sie-to-du
+conversion is withdrawn. This supersedes earlier ideas for that selected scope
+without selecting the remaining concepts below. Subsequently the owner
+authorized only the shared bubble timing: its final-text allowance and 800 ms
+punchline pause are now implemented, as described in the
+[current social behavior](SOCIAL_CONTENT.md#bubble-reading-time). New sources,
+actions and one-liner filtering remain planned.
+
 The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) records complete
 existing sequences and their conditions for individual editorial review before
 any wording changes. Its review status and proposals do not change runtime copy.

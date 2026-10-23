@@ -1,4 +1,4 @@
-"""Repeated approved schedules through production care and elapsed-time rules."""
+"""Historical care schedules retain their need/mood baseline, not reward plateaus."""
 
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ FOODS: dict[str, FoodId] = {
 
 
 class DailyNeedScheduleTests(unittest.TestCase):
-    def test_settled_eight_and_four_phase_days_match_discussion(self) -> None:
+    def test_settled_eight_and_four_phase_days_preserve_needs_and_mood(self) -> None:
         expectations = (
             ((57.5, 42.5, 80.5, 63, 67), (57.14, 77.93)),
             ((51.9, 42.5, 82, 50.8, 53), (47.79, 79.14)),
@@ -86,15 +86,12 @@ class DailyNeedScheduleTests(unittest.TestCase):
                                     accepted += 1
                             else:
                                 pet.interact(action, now=stamp)
-                if len(schedule) == 8:
-                    self.assertAlmostEqual(pet.friendship, 96, delta=.01)
-                    self.assertEqual(pet.friendship_level, 10)
-                else:
-                    self.assertGreater(pet.friendship, 69)
-                    self.assertLess(pet.friendship, 71)
+                # These schedules do not generate wishes or their impressions.
+                # They are not acceptance scenarios for relationship balance.
+                self.assertIsNotNone(pet.friendship_history.continuous_since)
+                self.assertIsNotNone(pet.friendship_history.last_contact)
                 self.assertEqual(pet.friendship_history.critical, ())
-                self.assertLessEqual(sum(e.amount for e in
-                                         pet.friendship_history.rewards), 5)
+                self.assertEqual(pet.friendship_history.rewards, ())
                 self.assertEqual(accepted, 5)
                 self.assertFalse(pet.sleeping)
                 self.assertEqual(pet.energy, 100)

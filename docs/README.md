@@ -131,6 +131,14 @@ separate native Windows acceptance. These additions are not merged into main.
 
 ## Preserved product concepts
 
+The [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md), recorded on
+2026-10-23, specifies short one-line jokes and quotations under Sprüche, daily
+horoscope and tarot role performances with original source address retained,
+mandatory free/keyless access, provider budgets and a shared bubble-duration
+review. Only the shared bubble timing has subsequently been authorized and
+implemented, including the final-text allowance and 800 ms punchline pause.
+The new content sources/actions and one-liner filtering remain planned.
+
 The following owner-supplied concepts were recorded on 2026-10-19. They preserve
 future product direction, with explicit comparisons against main after PR #10.
 They describe proposed extensions rather than currently implemented behavior;

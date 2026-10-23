@@ -14,6 +14,7 @@ from test_social_coordinator import ManualSocialWorker
 
 from aiko_pet.application.social_content import SocialCategory
 from aiko_pet.infrastructure.persistence import StateStore
+from aiko_pet.pet.content import GERMAN_TEXT
 from aiko_pet.ui.windows.social_menu import SocialMenu
 from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
@@ -159,15 +160,23 @@ class SocialGuiTests(unittest.TestCase):
         menu.choose(SocialCategory.TWO_PARTS)
         self.pet.root.update()
         cues = self.pet._reaction_player.cues
-        self.assertEqual(cues[0].content, "Hey, kennst du den schon?")
+        self.assertIn(cues[0].content, tuple(
+            GERMAN_TEXT.format(f"social.intro.twopart{suffix}")
+            for suffix in ("", "_alt1", "_alt2")
+        ))
+        self.assertEqual(cues[1].content, "Test 1.")
         self.assertEqual(cues[2].kind, "pause")
+        self.assertEqual(cues[2].duration_ms, 800)
+        self.assertEqual(cues[3].content, "Eine Testantwort.")
         self.pet._reaction_player.cancel()
         menu.choose(SocialCategory.FACT)
         self.pet.root.update()
-        self.assertEqual(
+        self.assertIn(
             self.pet._reaction_player.cues[0].content,
-            "Weißt du, was ich interessant finde?",
+            tuple(GERMAN_TEXT.format(f"social.intro.fact{suffix}")
+                  for suffix in ("", "_alt1", "_alt2")),
         )
+        self.assertEqual(self.pet._reaction_player.cues[1].content, "Test 2.")
         self.assertEqual(self.pet.state.social, 62)
 
     def test_menu_stays_bounded_and_escape_cancels_only_pending_content(self):
@@ -214,7 +223,15 @@ class SocialGuiTests(unittest.TestCase):
         saved = json.loads(store.path.read_text(encoding="utf-8"))
         self.assertEqual(saved["version"], 1)
         self.assertTrue(saved["settings"]["online_social"])
-        self.assertNotIn("jokeapi:", store.path.read_text(encoding="utf-8"))
+        history = saved["social_history"]
+        self.assertEqual(set(history), {"version", "entries"})
+        self.assertEqual(history["version"], 1)
+        self.assertEqual(len(history["entries"]), 1)
+        receipt = history["entries"][0]
+        self.assertEqual(set(receipt), {"category", "identity", "fingerprint"})
+        self.assertEqual(receipt["category"], "single")
+        self.assertEqual(receipt["identity"], "jokeapi:1")
+        self.assertEqual(len(receipt["fingerprint"]), 64)
         worker = ManualSocialWorker()
         reopened = create_test_desktop(store=store, social_worker=worker)
         reopened.root.report_callback_exception = lambda _kind, error, _trace: (

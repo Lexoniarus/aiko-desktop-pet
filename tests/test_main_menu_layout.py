@@ -67,7 +67,30 @@ class MainMenuLayoutTests(unittest.TestCase):
 
     def test_three_wishes_fit_and_empty_rows_release_space(self) -> None:
         wishes = self.toolbar.wishes._scroll
-        self.assertFalse(wishes.scrollbar.winfo_ismapped())
+        width = self.toolbar.window.winfo_width()
+        for pinned in (False, True, False):
+            with self.subTest(pinned=pinned):
+                self.view = replace(self.view, emotional=replace(
+                    self.view.emotional, wishes=tuple(
+                        replace(item, value=replace(item.value, pinned=pinned))
+                        for item in self.view.emotional.wishes
+                    ),
+                ))
+                self.toolbar.refresh()
+                self.root.update()
+                self.assertEqual(self.toolbar.window.winfo_width(), width)
+                self.assertFalse(wishes.scrollbar.winfo_ismapped())
+                self.assertLessEqual(wishes.body.winfo_reqwidth(),
+                                     wishes.canvas.winfo_width())
+                for key, label in self.toolbar.wishes._labels.items():
+                    pin = self.toolbar.wishes._pin_icons[key]
+                    objective = self.toolbar.wishes._objectives[key]
+                    self.assertEqual(pin.itemcget("pin", "state"),
+                                     "normal" if pinned else "hidden")
+                    self.assertLessEqual(label.winfo_x() + label.winfo_width(),
+                                         pin.winfo_x())
+                    self.assertLessEqual(pin.winfo_y() + pin.winfo_height(),
+                                         objective.winfo_y())
         for label in self.toolbar.wishes._meta.values():
             self.assertLessEqual(
                 label.winfo_y() + label.winfo_height(),

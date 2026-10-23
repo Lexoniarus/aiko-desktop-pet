@@ -139,6 +139,7 @@ class WishPanel:
         surface.frame.pack(side="left", padx=3, fill="y")
         card = surface.body
         card.grid_columnconfigure(1, minsize=132)
+        card.grid_rowconfigure(0, minsize=24)
         icon = tk.Canvas(
             card, width=42, height=42, bg=skin.background, highlightthickness=0,
         )
@@ -161,11 +162,11 @@ class WishPanel:
             bg=skin.background,
             fg=skin.text,
             font=(skin.font, 9, "bold"),
-            wraplength=132,
+            wraplength=104,
             justify="left",
             anchor="nw",
         )
-        label.grid(row=0, column=1, sticky="nw")
+        label.grid(row=0, column=1, sticky="nw", padx=(0, 28))
         objective = tk.Label(
             card, bg=skin.background, fg=skin.muted, font=(skin.font, 8),
             wraplength=132, justify="left", anchor="nw",
@@ -181,7 +182,9 @@ class WishPanel:
         )
         pin.create_image(12, 12, image=skin.images.icon("ui_pin", 24),
                          tags="pin", state="hidden")
-        pin.grid(row=0, column=2, sticky="ne", padx=(4, 0))
+        # Reserve space inside the title row, not a third card column. Pinning
+        # must not widen three ordinary cards beyond the shared viewport.
+        pin.place(relx=1, y=0, anchor="ne")
         self._pin_icons[item.value.instance_id] = pin
         self._labels[item.value.instance_id] = label
         self._objectives[item.value.instance_id] = objective

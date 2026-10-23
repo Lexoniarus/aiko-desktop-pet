@@ -201,6 +201,10 @@ original deadline can retire it immediately; supplied food/affection can also
 retire once unprotected. Reconciling that automatic retirement with the two-click
 expectation is an [open decision](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23), not a newly approved UI rule.
 There is no pin button: a passive pin symbol is visible only while pinned.
+The marker occupies reserved space within the title row, without an extra
+card column. Three ordinary cards fit the normal menu viewport; pinning and
+unpinning preserve their width. Title wrapping leaves the marker clear and
+the objective starts below it. Narrow viewports retain horizontal scrolling.
 Hover/focus and Enter/Space retain description access; card clicks take precedence
 over description tapping. Both panels retain widget identity and scroll position
 while read-side time changes.

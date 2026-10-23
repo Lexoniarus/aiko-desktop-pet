@@ -37,12 +37,12 @@ class EmotionalCompositionTests(unittest.TestCase):
         ):
             self.assertEqual(derive(mood=mood).primary, state)
 
-    def test_all_eighteen_families_have_the_documented_direction(self):
+    def test_every_catalogue_family_has_the_documented_direction(self):
+        self.assertEqual(set(DEFINITIONS), set(MoodletId))
         for key, definition in DEFINITIONS.items():
             value = derive(episode(key))
             self.assertEqual(value.primary.value, definition.direction.value)
             self.assertEqual(value.influences[0].cause, key)
-        self.assertEqual(len(DEFINITIONS), 18)
 
     def test_all_active_intensities_participate_without_numeric_caps(self):
         positive = [
