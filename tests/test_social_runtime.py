@@ -21,7 +21,9 @@ from aiko_pet.pet.mind.catalog import Reaction
 class SocialRuntimeTests(unittest.TestCase):
     def setUp(self) -> None:
         self.worker = ManualSocialWorker()
-        self.content = SocialContentCoordinator(self.worker)
+        self.content = SocialContentCoordinator(
+            self.worker, wall_time=self.worker.clock,
+        )
         self.started: list[PreparedSocialContent] = []
         self.holding: list[Reaction] = []
         self.deferred: list[Callable[[], None]] = []
@@ -96,9 +98,16 @@ class SocialRuntimeTests(unittest.TestCase):
         self.deferred.pop()()
         self.worker.complete(1, fail=True)
         self.runtime.poll()
+        self.assertTrue(self.runtime.waiting)
+        self.worker.complete(2, fail=True)
+        self.runtime.poll()
         self.assertFalse(self.holding)
         self.assertFalse(self.runtime.waiting)
         self.assertIn("erneuten", self.runtime.snapshot()[0])
+        self.runtime.select(SocialCategory.SINGLE)
+        self.assertFalse(self.runtime.waiting)
+        self.assertIn("Pause", self.runtime.snapshot()[0])
+        self.worker.clock.now += 60
         self.runtime.select(SocialCategory.SINGLE)
         self.assertTrue(self.runtime.waiting)
 

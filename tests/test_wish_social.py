@@ -5,6 +5,7 @@ import unittest
 from dataclasses import replace
 
 from test_social_content import fact_payload, joke_payload
+from test_social_sayings import quotation, quote_payload
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.commands import CareCommand
@@ -117,6 +118,43 @@ class SocialWishTests(unittest.TestCase):
         self.assertTrue(self.pet.wishes.active)
         self.assertFalse(self.pet.moodlets.active)
         self.assertEqual(self.pet.friendship, 50)
+
+    def test_quote_wish_waits_for_author_without_an_extra_reward(self):
+        for cancel in (False, True):
+            self.make(WishId.SINGLE)
+            outcome = self.controller.execute(
+                CareCommand("talk", conversation=quotation(quote_payload())),
+                self.inputs,
+            )
+            reaction = outcome.reaction
+            assert reaction is not None and reaction.completed_social is not None
+            self.assertEqual(reaction.completed_social, SocialCompletion("single", 1))
+            social, energy = self.pet.social, self.pet.energy
+            self.player.play(reaction)
+            # Advance introduction and body: author credit is now being read.
+            for _ in range(2):
+                assert self.player.pending_timer is not None
+                self.scheduler.fire(self.player.pending_timer)
+            self.assertTrue(self.pet.wishes.active)
+            self.assertFalse(self.pet.moodlets.active)
+            if cancel:
+                token = self.player.pending_timer
+                assert token is not None
+                stale = self.scheduler.callbacks[token][1]
+                self.player.cancel()
+                stale()
+                self.assertTrue(self.pet.wishes.active)
+                self.assertFalse(self.pet.moodlets.active)
+            else:
+                self.complete_playback()
+                self.assertFalse(self.pet.wishes.active)
+                self.assertEqual(self.pet.moodlets.active[0].definition_id,
+                                 MoodletId.CHEERFUL)
+                moodlets = self.pet.moodlets.active
+                self.finish(reaction.completed_social)
+                self.assertEqual(self.pet.moodlets.active, moodlets)
+            self.assertEqual((self.pet.social, self.pet.energy), (social, energy))
+            self.assertEqual(self.pet.friendship, 50)
 
     def test_wish_created_during_conversation_is_not_retrospectively_adopted(self):
         self.make(WishId.CHAT)

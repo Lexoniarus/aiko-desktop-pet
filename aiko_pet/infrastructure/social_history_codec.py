@@ -9,12 +9,17 @@ from ..application.social_history import (
     SocialContentReceipt,
 )
 from ..pet.catalog_validation import enum_value, object_fields
+from .social_request_codec import decode_social_requests, encode_social_requests
 
 
 def decode_social_history(raw: Any) -> SocialContentHistory:
-    row = object_fields(raw, ("version", "entries"), context="social history")
-    if type(row["version"]) is not int or row["version"] != 1:
+    if not isinstance(raw, dict) or type(raw.get("version")) is not int:
         raise ValueError("Unsupported social history version")
+    version = raw["version"]
+    if version not in (1, 2):
+        raise ValueError("Unsupported social history version")
+    row = object_fields(raw, ("version", "entries", "requests") if version == 2
+                        else ("version", "entries"), context="social history")
     entries = row["entries"]
     if (not isinstance(entries, list)
             or len(entries) > len(SocialCategory) * RECENT_CONTENTS_PER_CATEGORY):
@@ -30,7 +35,11 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
             item["category"], SocialCategory, context="social category",
         )
         identity, fingerprint = item["identity"], item["fingerprint"]
-        prefix = "uselessfacts:" if category == SocialCategory.FACT else "jokeapi:"
+        prefix = ("uselessfacts:" if category == SocialCategory.FACT else
+                  "zitat-service:" if category == SocialCategory.SINGLE
+                  and isinstance(identity, str)
+                  and identity.startswith("zitat-service:")
+                  else "jokeapi:")
         if (not isinstance(identity, str) or not identity.startswith(prefix)
                 or not 1 <= len(identity.removeprefix(prefix)) <= 128
                 or any(char.isspace() or ord(char) < 32 for char in identity)
@@ -47,14 +56,18 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
         identities.add(identity)
         fingerprints.add(fingerprint)
         result.append(SocialContentReceipt(category, identity, fingerprint))
+    if version == 2:
+        return SocialContentHistory(
+            tuple(result), decode_social_requests(row["requests"]),
+        )
     return SocialContentHistory(tuple(result))
 
 
 def encode_social_history(history: SocialContentHistory) -> dict[str, Any]:
-    return dict(version=1, entries=[
+    return dict(version=2, entries=[
         dict(category=e.category.value, identity=e.identity, fingerprint=e.fingerprint)
         for e in history.entries
-    ])
+    ], requests=encode_social_requests(history.requests))
 
 
 def valid_social_history(raw: Any) -> bool:

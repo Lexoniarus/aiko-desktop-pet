@@ -1,5 +1,6 @@
 """Actual local saves and playback admission without windows or live APIs."""
 
+import hashlib
 import json
 import tempfile
 import tkinter as tk
@@ -73,7 +74,7 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
 
     def test_restore_prevents_first_repeat_after_restart(self):
         history = SocialContentHistory((SocialContentReceipt(
-            SocialCategory.SINGLE, "jokeapi:1", "a" * 64,
+            SocialCategory.SINGLE, "jokeapi:1", hashlib.sha256(b"test 1.").hexdigest(),
         ),))
         persistence = DesktopPersistence(
             self.store, self.pet, self.settings, AdaptiveRoutine(),
@@ -86,26 +87,19 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
         restored = PetSessionRestorer(self.store, wall_time=lambda: self.wall).restore()
         self.assertEqual(restored.social_history, history)
         worker = ManualSocialWorker()
-        content = SocialContentCoordinator(worker, history=restored.social_history)
+        content = SocialContentCoordinator(worker, history=restored.social_history,
+                                           wall_time=worker.clock)
         content.set_enabled(True)
         content.select(SocialCategory.SINGLE)
-        for _ in range(3):
+        for _ in range(2):
             worker.complete(1)  # Same ID, changed body still cannot repeat.
             self.assertIsNone(content.poll())
-        worker.complete(1)
+        worker.complete(2)
         result = content.poll()
-        assert result is not None
-        self.assertEqual(result.status, "error")
-        self.assertEqual(content.history, history)
-        content.select(SocialCategory.SINGLE)
-        # Finish the unrelated background request before the selected retry.
-        if worker.requests[-1][0] != SocialCategory.SINGLE:
-            worker.complete(2)
-            content.poll()
-        worker.complete(3)
-        ready = content.poll()
-        assert ready is not None and ready.content is not None
-        content.accept(ready.content)
+        assert result is not None and result.content is not None
+        self.assertEqual(result.status, "ready")
+        self.assertEqual(content.history.entries, history.entries)
+        content.accept(result.content)
         self.assertEqual(len(content.history.entries), 2)
 
     def test_admission_saves_care_and_receipt_once_before_full_wish_completion(self):

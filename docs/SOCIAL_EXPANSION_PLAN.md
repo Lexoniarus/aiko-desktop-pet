@@ -1,20 +1,20 @@
 # Sayings, daily horoscope and tarot expansion plan
 
-> **Concrete expansion plan; shared bubble timing implemented separately.**
-> Recorded on 2026-10-23 at
-> checkout `f6ae2df`, on `feature/social-optimization`. The owner authorized
-> documentation only. This document does not authorize code, settings/catalogue
-> changes, save migration, asset generation/import, dependency installation,
-> purchases, CI, push or merge. The owner subsequently authorized implementation
-> of the selected bubble times only, including the final second and punchline
-> pause. New social actions/providers remain planned. Existing parallel work
-> must be preserved.
+> **Sprüche and shared bubble timing implemented; horoscope/tarot still planned.**
+> Initial documentation-only plan recorded on 2026-10-23 at checkout `f6ae2df`
+> on `feature/social-optimization`. The owner later authorized the shared bubble
+> times (including final second and punchline pause), followed by the Sprüche
+> slice: German one-liners, quotations and their request/save/Credits boundaries.
+> Daily horoscope and tarot remain planned. This does not authorize purchases,
+> asset work, CI setup, push or merge. Existing parallel work is preserved.
 
 This is the current planning authority for the selected social expansion.
 The [original concept](SOCIAL_ENTERTAINMENT_CONCEPT.md) preserves earlier ideas;
 the [jokes/facts delivery record](SOCIAL_CONTENT_IMPLEMENTATION_PLAN.md) and
 [current social behavior](SOCIAL_CONTENT.md) describe the implemented baseline.
-Decisions below supersede earlier proposals only for this future scope.
+Decisions below supersede earlier proposals for the selected scope. The current
+Sprüche delivery is described in [social content](SOCIAL_CONTENT.md); the reading
+and tarot sections below remain future work.
 
 ## Owner decisions
 
@@ -62,17 +62,25 @@ Zitat-Service quotations. The two sources feed one public action, with internal
 provider identity and attribution preserved. Witz retains its separate
 two-part setup/punchline flow; Kurioser Fakt and Plaudern retain their meanings.
 
-Planned eligibility:
+Approved Sprüche eligibility (implemented in this slice):
 
-1. One complete short content item must fit in one content bubble, using the
-   current 125-character limit. Introduction and quotation attribution are
-   separate framing. Visual word wrapping does not turn a long story into a
-   one-liner or require the text to occupy one physical screen line.
+1. Keep the confirmed 125-character limit for one complete short content item
+   in one content bubble, including spaces and punctuation. Introduction and
+   quotation attribution are separate framing. Visual word wrapping does not
+   turn a long story into a one-liner or require the text to occupy one physical
+   screen line.
 2. Reject multi-paragraph stories, multi-turn dialogue, separately staged
    setup/delivery and oversized content. Length alone does not establish genre;
-   review real accepted/rejected examples before finalizing format filters.
+   the live sample on 2026-10-23 qualified six of nine delivered JokeAPI entries
+   and ten of ten quotations. Implemented format checks do not claim general
+   semantic classification. Dialect remains unchanged; no standard-German-only
+   rule was approved.
 3. Preserve every word of an accepted item. Do not shorten a long joke, take
    only the opening sentence of a quotation or rewrite content to make it fit.
+   Preserve intentional literal HTML character sequences as part of the original
+   content; do not blanket-decode entities or interpret them as markup. For
+   example, JokeAPI's programming joke containing `gro&szlig;en` keeps that
+   sequence unchanged, and all of its literal characters count toward the limit.
 4. Keep quotation author, original entry/source link and provider/license
    attribution. An unknown author stays unknown. Credit the author in the
    performance and retain source/license details in the existing Credits view.
@@ -89,6 +97,43 @@ Illustrative framing, not approved catalogue copy:
 for a quotation, a short author attribution. Keep current action/wish semantics
 explicit when adding a provider subtype; quotations must not create a second
 care reward or a separate competing history for the same Sprüche action.
+
+## Sprüche delivery scope and initial client limits (2026-10-23)
+
+The owner authorized this slice after the sample and 125-character/HTML decisions.
+One public **Sprüche** choice now mixes JokeAPI and Zitat-Service, with two ready
+items total, one shared ten-admission window and the existing once-only `talk`
+care/wish semantics. Prefer alternating sources when both are ready; initial
+preference is JokeAPI. Available content is not delayed or fetched again solely
+to enforce a ratio. Authored introduction, original short content and separate
+quotation author use the approved bubble timing; the author receives the final
+second. Provider, original source, author/entry links and collection CC BY 4.0
+attribution remain available in the existing Credits view.
+
+Public access and provider terms were rechecked before this delivery. All selected
+URLs remain free and anonymous. No key, account, paid service or dependency was
+added. Refuse redirects and stop on access changes instead of following a new URL.
+Conservative **client caps** are now explicit; these are not undocumented provider
+quotas:
+
+| Provider | Spacing | Rolling hour | Rolling 24 hours |
+| --- | --- | --- | --- |
+| JokeAPI, shared by Sprüche and Witz | 5 s | 60 | 300 |
+| Zitat-Service | 10 s | 20 | 60 |
+| Random Useless Facts | 10 s | 20 | 60 |
+
+All attempts count. Stop each rejected/duplicate refill cycle after three attempts,
+with a ten-minute provider pause; failures require a deliberate retry. Transient
+HTTP/network errors pause at least one minute, access changes one day. HTTP 429
+uses Retry-After/reset metadata, defaulting to fifteen minutes if absent. Provider
+pauses and rolling counters survive restart and opt-out via the compatible
+version-two `social_history` section in the existing atomic save. No source words,
+source URLs, warm stock or pending playback are persisted. Reservation persistence
+runs before dispatch, without pet-time progression; a failed save prevents HTTP.
+
+Daily horoscope, tarot, zodiac/birthday options, role effects and card assets are
+not part of this implementation. The historical timing/test delivery records below
+retain their original scope and results.
 
 ## Daily horoscope and role performance
 
@@ -323,15 +368,13 @@ Ordinary tests use provider-shaped fixtures and temporary saves. Keep live
 provider checks separate and limited. No new reward formula or wish family is
 selected; adding two menu choices must not leave duplicate contact/need writers.
 
-Implementation planning order after separate authorization: settle reading
+Remaining implementation order after separate authorization: settle reading
 budget/daily interruption/required-hint presentation and tarot replay details;
-review providers and finite unknown-limit caps; extend the existing contracts;
-deliver Sprüche, then daily reading lifecycle and role presentation; assess
-subjective reading comfort with the delivered timing. Source weights, final
-menu copy and birthday-input retention remain explicit details to settle. Text-bubble
-timing, the final-text allowance and the punchline pause are selected above;
-their runtime timing implementation is delivered independently of the new
-content actions. Subjective practical acceptance remains pending.
+recheck reading providers, extend the daily persistence contracts and deliver
+the reading lifecycle and role presentation. Sprüche, its menu label, available-
+source alternation, finite client caps and shared bubble times are implemented
+above. Birthday-input retention and final reading menu copy remain to be settled.
+Subjective practical reading-comfort acceptance remains pending.
 
 ## Verification of this documentation pass
 
@@ -412,3 +455,25 @@ width; no horizontal scrollbar is shown. The previous content width was 705 px.
 These automated native checks do not claim every DPI/monitor configuration or
 subjective reading comfort. Integrated friendship-balance acceptance remains
 separate; no balance parameter or new social feature was changed in this follow-up.
+
+## Sprüche delivery verification (2026-10-23)
+
+- Windows / Python 3.11.9: full suite **1,756 tests passes in 297.568 seconds**.
+  After the final unquoted-dialogue and missing-source-link edge refinements,
+  all **97 focused social tests** pass again in 7.660 seconds. The quote-specific
+  wish check also covers full author delivery, cancellation and duplicate completion.
+- Whole-repository Ruff passes; strict Mypy passes all **260 source files**;
+  repository-wide Pyright reports zero errors/warnings. Relative documentation
+  links and scoped whitespace checks pass.
+- Native temporary-save Tk tests exercise the existing Sprüche choice, unchanged
+  care booking, author bubble/final second and separate provider/source/author/entry
+  Credits links. Ordinary tests use fixtures; the full suite emits non-failing
+  ttk ThemeChanged shutdown messages while destroying test windows.
+- Limited live checks retrieved an eligible 82-character JokeAPI one-liner and
+  a 52-character Zitat-Service quotation with author metadata; an ineligible
+  provider item was rejected rather than shortened. JokeAPI sends Retry-After
+  even with remaining budget: a regression test distinguishes ordinary reset
+  information from an exhausted quota. The adapter retains 429/reset pauses and
+  refuses HTTP redirects, separately tested against a local HTTP server.
+- No normal user save, dependency installation, horoscope/tarot implementation,
+  card/character asset work, CI setup, push or merge is part of this slice.

@@ -21,6 +21,17 @@ class SocialCategory(StrEnum):
     FACT = "fact"
 
 
+class SocialProvider(StrEnum):
+    JOKEAPI = "jokeapi"
+    QUOTATIONS = "zitat-service"
+    FACTS = "uselessfacts"
+
+
+def default_provider(category: SocialCategory) -> SocialProvider:
+    return (SocialProvider.FACTS if category == SocialCategory.FACT
+            else SocialProvider.JOKEAPI)
+
+
 @dataclass(frozen=True, slots=True)
 class PreparedSocialContent:
     category: SocialCategory
@@ -30,6 +41,11 @@ class PreparedSocialContent:
     source_url: str
     permalink: str
     reaction: Reaction
+    provider: SocialProvider
+    author: str = ""
+    author_url: str = ""
+    license_name: str = ""
+    license_url: str = ""
 
 
 def _text(value: object) -> str:
@@ -54,6 +70,41 @@ def _url(value: object) -> str:
     return value
 
 
+def _short_content(value: object, *, joke: bool) -> str:
+    """Inspect structure before whitespace normalization can conceal a story."""
+    text = _text(value)
+    assert isinstance(value, str)
+    value = value.replace("\r\n", "\n").replace("\r", "\n")
+    dialogue = re.findall(r'\b[\w-]+:(?:\s+|(?=["„»]))', value)
+    stages = re.findall(r"\b(?:Frage|Antwort|Pointe|Setup|Delivery)\s*:",
+                        value, re.IGNORECASE)
+    if (len(text) > 125 or re.search(r"\n\s*\n", value)
+            or len(dialogue) >= 2 or len(stages) >= 2):
+        raise ValueError("Saying must be one complete short content bubble")
+    if joke and ("\n" in value.strip() or "\r" in value.strip()):
+        raise ValueError("Multi-line joke setup/dialogue is not a one-liner")
+    return text
+
+
+def _quotation(payload: dict[str, Any]) -> tuple[str, str, str, str, str, str]:
+    if payload.get("language") != "de":
+        raise ValueError("Quotation is not German")
+    text = _short_content(payload.get("quote"), joke=False)
+    link = _url(payload.get("link"))
+    match = re.fullmatch(r"https://www\.zitat-service\.de/de/quotations/([0-9]+)", link)
+    if match is None or len(match[1]) > 128:
+        raise ValueError("Invalid quotation identity")
+    author = _text(payload.get("authorName"))
+    if len(GERMAN_TEXT.format("social.quote_author", author=author)) > 125:
+        raise ValueError("Author attribution exceeds one bubble")
+    author_url = _url(payload["authorLink"]) if payload.get("authorLink") else ""
+    source = _text(payload["source"]) if payload.get("source") else "Zitat-Service"
+    if len(source) > 1000:
+        raise ValueError("Oversized quotation source")
+    source_url = _url(payload["sourceLink"]) if payload.get("sourceLink") else ""
+    return text, match[1], author, author_url, source, source_url
+
+
 def _segments(text: str) -> tuple[Cue, ...]:
     """Keep every word, preferring sentence boundaries within the bubble limit."""
     remaining = text
@@ -72,12 +123,28 @@ def _segments(text: str) -> tuple[Cue, ...]:
 
 def prepare_social_content(
     category: SocialCategory, payload: Any,
+    *, provider: SocialProvider | None = None,
 ) -> PreparedSocialContent:
     """Validate provider fields before a buffer slot can become ready."""
     if not isinstance(category, SocialCategory) or not isinstance(payload, dict):
         raise ValueError("Invalid social content")
+    provider = provider or default_provider(category)
+    author, author_url, license_name, license_url = "", "", "", ""
     parts: tuple[str, ...]
-    if category == SocialCategory.FACT:
+    if provider == SocialProvider.QUOTATIONS:
+        if category != SocialCategory.SINGLE:
+            raise ValueError("Quotations belong to Sprüche only")
+        text, identifier_text, author, author_url, source, source_url = _quotation(
+            payload,
+        )
+        identity = f"zitat-service:{identifier_text}"
+        permalink = payload["link"]
+        parts = (text,)
+        license_name = "CC BY 4.0"
+        license_url = "https://creativecommons.org/licenses/by/4.0/"
+    elif provider != default_provider(category):
+        raise ValueError("Provider/category mismatch")
+    elif category == SocialCategory.FACT:
         if payload.get("language") != "de":
             raise ValueError("Fact is not German")
         identifier = payload.get("id")
@@ -109,7 +176,7 @@ def prepare_social_content(
         permalink = (
             f"https://v2.jokeapi.dev/joke/Any?lang=de&idRange={identifier}"
         )
-        parts = ((_text(payload.get("joke")),)
+        parts = ((_short_content(payload.get("joke"), joke=True),)
                  if category == SocialCategory.SINGLE else (
                      _text(payload.get("setup")), _text(payload.get("delivery")),
                  ))
@@ -126,6 +193,8 @@ def prepare_social_content(
                 BALANCE.integer("dialogue", "conversation_punchline_pause_ms"),
             ))
         beats.extend(_segments(part))
+    if author:
+        beats.append(Cue.text(GERMAN_TEXT.format("social.quote_author", author=author)))
     if sum(beat.kind == "text" for beat in beats) > 5:
         raise ValueError("Social story exceeds five text bubbles")
     # React after the complete provider content, never before a punchline.
@@ -136,4 +205,5 @@ def prepare_social_content(
     return PreparedSocialContent(
         category, identity, fingerprint, source, source_url, permalink,
         Reaction(identity, tuple(beats), "idle", "talk", presentation="story"),
+        provider, author, author_url, license_name, license_url,
     )

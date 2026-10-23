@@ -30,9 +30,16 @@ execution or extra pip dependency for this data layer.
 Optional [social API content](SOCIAL_CONTENT.md) is separate from the packaged
 catalogues. The existing settings owner persists `online_social`, default false;
 only a saved Boolean true enables it. Provider content, preparation buffers and
-pending requests are session-local and never enter the version-one save.
-The optional outer `social_history` version-one section stores only the last ten
-admitted provider IDs/text fingerprints per API category (thirty receipts total).
+pending playback are session-local and never enter the version-one save.
+The optional outer `social_history` version-two section stores the last ten
+admitted provider IDs/text fingerprints per API category (thirty receipts total),
+plus bounded expiring request timestamps and provider pauses. Both Sprüche sources
+use category `single`; quote IDs are namespaced `zitat-service:<entry-id>`.
+The request metadata contains at most 420 timestamp/provider receipts and three
+provider pauses, without payloads or credentials. The coordinator saves each
+reservation before HTTP through the existing atomic persistence owner; a failed
+write prevents dispatch. Restart/opt-out retain quotas. Version-one receipt-only
+histories remain readable, with empty request metadata.
 The existing session restorer returns these immutable values to the content
 coordinator before warming; opt-out keeps them. Old saves default to an empty
 history. Invalid/excessive/duplicate receipts do not discard valid pet values;

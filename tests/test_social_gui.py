@@ -8,11 +8,14 @@ import time
 import tkinter as tk
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from test_social_coordinator import ManualSocialWorker
+from test_social_sayings import quotation, quote_payload
 
 from aiko_pet.application.social_content import SocialCategory
+from aiko_pet.application.social_coordinator import SocialFetchResult
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.content import GERMAN_TEXT
 from aiko_pet.ui.windows.social_menu import SocialMenu
@@ -33,6 +36,10 @@ class SocialGuiTests(unittest.TestCase):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         self.worker = ManualSocialWorker()
+        clock_patch = patch("aiko_pet.application.social_coordinator.time",
+                            SimpleNamespace(time=self.worker.clock))
+        clock_patch.start()
+        self.addCleanup(clock_patch.stop)
         self.pet = create_test_desktop(
             store=StateStore(Path(folder.name) / "state.json"),
             social_worker=self.worker,
@@ -116,6 +123,45 @@ class SocialGuiTests(unittest.TestCase):
         self.assertFalse(self.pet._contact.can_interact("pet"))
         self.assertIsNotNone(self.pet._reaction_player.pending_timer)
 
+    def test_quote_uses_same_saying_choice_care_and_native_credits(self):
+        self.enable()
+        menu = self.menu()
+        self.assertEqual(menu.buttons[SocialCategory.SINGLE].cget("text"), "Sprüche")
+        self.assertEqual(len(menu.buttons), 4)
+        menu.choose(SocialCategory.SINGLE)
+        self.pet.root.update()
+        self.worker.complete(1, fail=True)
+        self.pet._social_runtime.poll()
+        category, token = self.worker.requests[-1]
+        item = quotation(quote_payload())
+        self.worker.result = SocialFetchResult(token, category, item)
+        self.pet._social_runtime.poll()
+        self.pet.root.update()
+        self.assertEqual(self.pet.state.social, 36)
+        cues = self.pet._reaction_player.cues
+        texts = [cue for cue in cues if cue.kind == "text"]
+        self.assertEqual(texts[1].content, quote_payload()["quote"])
+        self.assertEqual(texts[2].content, "Von René Descartes.")
+        self.assertEqual(texts[2].duration_ms, 5000)
+        self.assertEqual(len(self.pet._social_runtime.content.history.entries), 1)
+        self.pet._hover.open_settings(100, 100)
+        settings = self.pet._hover.settings_window
+        assert settings is not None
+        settings.select_section("credits")
+        self.pet.root.update_idletasks()
+        self.assertIn("René Descartes", settings.credits.accepted.cget("text"))
+        self.assertIn("CC BY 4.0", settings.credits.accepted.cget("text"))
+        self.assertEqual(settings.credits.author_button.cget("state"), "normal")
+        with patch("aiko_pet.ui.windows.credits_panel.webbrowser.open") as opened:
+            settings.credits._open_author()
+            settings.credits._open_source()
+            settings.credits._open_entry()
+        self.assertEqual([call.args[0] for call in opened.call_args_list], [
+            item.author_url, item.source_url, item.permalink,
+        ])
+        self.pet._social_runtime.poll()
+        self.assertEqual(self.pet.state.social, 36)
+
     def test_other_care_cancels_holding_and_late_reply_cannot_start(self) -> None:
         self.enable()
         self.menu().choose(SocialCategory.SINGLE)
@@ -137,6 +183,8 @@ class SocialGuiTests(unittest.TestCase):
         menu.choose(SocialCategory.SINGLE)
         self.pet.root.update()
         self.worker.complete(1, fail=True)
+        self.pet._social_runtime.poll()
+        self.worker.complete(2, fail=True)
         self.pet._social_runtime.poll()
         menu.refresh()
         self.assertIn("erneuten", menu.status.cget("text"))
@@ -224,15 +272,15 @@ class SocialGuiTests(unittest.TestCase):
         self.assertEqual(saved["version"], 1)
         self.assertTrue(saved["settings"]["online_social"])
         history = saved["social_history"]
-        self.assertEqual(set(history), {"version", "entries"})
-        self.assertEqual(history["version"], 1)
+        self.assertEqual(set(history), {"version", "entries", "requests"})
+        self.assertEqual(history["version"], 2)
         self.assertEqual(len(history["entries"]), 1)
         receipt = history["entries"][0]
         self.assertEqual(set(receipt), {"category", "identity", "fingerprint"})
         self.assertEqual(receipt["category"], "single")
         self.assertEqual(receipt["identity"], "jokeapi:1")
         self.assertEqual(len(receipt["fingerprint"]), 64)
-        worker = ManualSocialWorker()
+        worker = ManualSocialWorker(clock=self.worker.clock)
         reopened = create_test_desktop(store=store, social_worker=worker)
         reopened.root.report_callback_exception = lambda _kind, error, _trace: (
             self.callback_errors.append(error)

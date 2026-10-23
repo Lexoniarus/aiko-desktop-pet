@@ -6,21 +6,38 @@ import unittest
 
 from test_social_content import fact_payload, joke_payload
 
-from aiko_pet.application.social_content import SocialCategory, prepare_social_content
+from aiko_pet.application.social_content import (
+    SocialCategory,
+    SocialProvider,
+    default_provider,
+    prepare_social_content,
+)
 from aiko_pet.application.social_coordinator import (
     SocialContentCoordinator,
     SocialFetchResult,
 )
 
 
-class ManualSocialWorker:
+class SocialTestClock:
     def __init__(self) -> None:
+        self.now = 1800000000.0
+
+    def __call__(self) -> float:
+        return self.now
+
+
+class ManualSocialWorker:
+    def __init__(self, *, clock: SocialTestClock | None = None) -> None:
         self.requests: list[tuple[SocialCategory, object]] = []
+        self.providers: list[SocialProvider] = []
+        self.clock = clock or SocialTestClock()
         self.result: SocialFetchResult | None = None
         self.closed = False
 
-    def start(self, category: SocialCategory, token: object) -> None:
+    def start(self, category: SocialCategory, token: object,
+              provider: SocialProvider | None = None) -> None:
         self.requests.append((category, token))
+        self.providers.append(provider or default_provider(category))
 
     def poll(self) -> SocialFetchResult | None:
         result, self.result = self.result, None
@@ -28,14 +45,25 @@ class ManualSocialWorker:
 
     def complete(self, identifier: int, *, fail: bool = False) -> None:
         category, token = self.requests[-1]
+        provider = self.providers[-1]
         payload = (fact_payload(str(identifier)) if category == SocialCategory.FACT
                    else joke_payload(category, identifier))
         # Distinct content, not just distinct provider IDs.
         field = ("text" if category == SocialCategory.FACT else "joke"
                  if category == SocialCategory.SINGLE else "setup")
         payload[field] = f"Test {identifier}."
-        content = None if fail else prepare_social_content(category, payload)
-        self.result = SocialFetchResult(token, category, content)
+        if provider == SocialProvider.QUOTATIONS:
+            payload = dict(quote=f"Test {identifier}.", language="de",
+                           link=f"https://www.zitat-service.de/de/quotations/{identifier}",
+                           authorName="Testautor")
+        content = (None if fail else prepare_social_content(
+            category, payload, provider=provider,
+        ))
+        self.clock.now += 10
+        self.result = SocialFetchResult(
+            token, category, content, failure="temporary" if fail else None,
+            retry_at=self.clock.now + 60 if fail else None,
+        )
 
     def close(self) -> None:
         self.closed = True
@@ -44,7 +72,7 @@ class ManualSocialWorker:
 class SocialCoordinatorTests(unittest.TestCase):
     def setUp(self) -> None:
         self.worker = ManualSocialWorker()
-        self.social = SocialContentCoordinator(self.worker)
+        self.social = SocialContentCoordinator(self.worker, wall_time=self.worker.clock)
 
     def test_opt_in_individually_fills_two_slots_for_each_category(self) -> None:
         self.assertFalse(self.worker.requests)
@@ -102,6 +130,10 @@ class SocialCoordinatorTests(unittest.TestCase):
         self.social.set_enabled(True)
         self.social.select(SocialCategory.SINGLE)
         self.worker.complete(1, fail=True)
+        update = self.social.poll()
+        self.assertIsNone(update)  # The second Sprüche source is still available.
+        self.assertEqual(self.worker.providers[-1], SocialProvider.QUOTATIONS)
+        self.worker.complete(2, fail=True)
         update = self.social.poll()
         assert update is not None
         self.assertEqual(update.status, "error")
@@ -164,7 +196,7 @@ class SocialCoordinatorTests(unittest.TestCase):
         assert offered is not None and offered.content is not None
         self.social.accept(offered.content)
         self.social.select(SocialCategory.SINGLE)
-        for _ in range(3):
+        for _ in range(5):
             self.worker.complete(1)
             self.assertIsNone(self.social.poll())
             self.assertTrue(self.social.waiting)
@@ -196,7 +228,9 @@ class SocialCoordinatorTests(unittest.TestCase):
             self.social.accept(offered.content)
         history = self.social.history
         self.assertEqual(len(history.entries), 10)
-        restored = SocialContentCoordinator(ManualSocialWorker(), history=history)
+        worker = ManualSocialWorker()
+        restored = SocialContentCoordinator(worker, history=history,
+                                            wall_time=worker.clock)
         for entry in history.entries:
             # Same namespaced provider ID, different words and category.
             payload = joke_payload(SocialCategory.TWO_PARTS,

@@ -26,11 +26,23 @@ class CreditsPanel:
         for name, url in (
             ("JokeAPI", "https://jokeapi.dev/"),
             ("Random Useless Facts", "https://uselessfacts.jsph.pl/"),
+            ("Zitat-Service", "https://www.zitat-service.de/"),
         ):
             skin.button(
                 self.frame, name, partial(self._open_provider, url), size="wide"
             ).pack(anchor="w", pady=2)
+        skin.button(
+            self.frame, GERMAN_TEXT.format("social.quote_license"),
+            partial(self._open_provider,
+                    "https://creativecommons.org/licenses/by/4.0/"), size="wide",
+        ).pack(anchor="w", pady=2)
+        self._copy(GERMAN_TEXT.format("social.quote_collection_credit"))
         self.accepted = self._copy("")
+        self.author_button = skin.button(
+            self.frame, GERMAN_TEXT.format("social.author_entry"),
+            self._open_author, size="wide",
+        )
+        self.author_button.pack(anchor="w", pady=2)
         self.source_button = skin.button(self.frame, "", self._open_source, size="wide")
         self.source_button.pack(anchor="w", pady=2)
         self.entry_button = skin.button(
@@ -94,7 +106,9 @@ class CreditsPanel:
         source = view.accepted
         self._current = source
         text = (
-            f"{source.provider}\n{source.source}"
+            "\n".join(part for part in (
+                source.provider, source.author, source.source, source.license_name,
+            ) if part)
             if source is not None
             else GERMAN_TEXT.format("vn.credits.no_content")
         )
@@ -109,6 +123,9 @@ class CreditsPanel:
         self.entry_button.configure(
             state="normal" if source is not None and source.entry_url else "disabled"
         )
+        self.author_button.configure(
+            state="normal" if source is not None and source.author_url else "disabled"
+        )
 
     def _open_source(self) -> None:
         if self._current is not None and self._current.source_url:
@@ -117,3 +134,7 @@ class CreditsPanel:
     def _open_entry(self) -> None:
         if self._current is not None and self._current.entry_url:
             webbrowser.open(self._current.entry_url)
+
+    def _open_author(self) -> None:
+        if self._current is not None and self._current.author_url:
+            webbrowser.open(self._current.author_url)

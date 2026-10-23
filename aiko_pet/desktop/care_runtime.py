@@ -47,6 +47,7 @@ class DesktopCareRuntime:
         is_closed: Callable[[], bool], game_open: Callable[[], bool],
         social_worker: SocialContentWorker | None = None,
         social_history: SocialContentHistory = SocialContentHistory(),
+        persist_requests: Callable[[], OSError | None] = lambda: None,
     ) -> None:
         self._root, self._state, self._router = root, state, router
         self._world, self._contact = world, contact
@@ -64,7 +65,7 @@ class DesktopCareRuntime:
         self._is_closed = is_closed
         content = SocialContentCoordinator(
             social_worker if social_worker is not None else HttpSocialContentWorker(),
-            history=social_history,
+            history=social_history, persist_requests=persist_requests,
         )
         self.social = SocialConversationRuntime(content, SocialRuntimePorts(
             can_start=self._can_start_social,

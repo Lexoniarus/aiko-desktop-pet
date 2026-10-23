@@ -49,14 +49,18 @@ class SocialContentTests(unittest.TestCase):
             else:
                 self.assertEqual(texts[-1], payload["joke"])
 
-    def test_single_split_preserves_all_words_and_literal_entities(self) -> None:
+    def test_single_preserves_entities_but_never_splits_long_items(self) -> None:
         payload = joke_payload(SocialCategory.SINGLE)
-        text = "Ein Testwort &szlig; " * 15
+        text = ('Die Selbsthilfegruppe "HTML-Sonderzeichen-Probleme" trifft sich '
+                'heute im gro&szlig;en Saal.')
         payload["joke"] = text
         item = prepare_social_content(SocialCategory.SINGLE, payload)
         body = [b for b in item.reaction.beats[1:] if b.kind == "text"]
         self.assertEqual(" ".join(b.content for b in body), text.strip())
         self.assertTrue(all(len(b.content) <= 125 for b in body))
+        payload["joke"] = "Ein Testwort &szlig; " * 15
+        with self.assertRaises(ValueError):
+            prepare_social_content(SocialCategory.SINGLE, payload)
 
     def test_varied_framing_preserves_full_content_and_uses_only_a_final_emote(self):
         for category in SocialCategory:

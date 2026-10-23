@@ -65,7 +65,6 @@ from .ui.windows.hover_ui import HoverUi, HoverUiPorts
 
 class DesktopPet:
     """Compose one desktop session from its owning components.
-
     Character, settings, input, window and simulation behavior belong to
     their respective components, not to a second state stored on this shell.
     """
@@ -466,6 +465,7 @@ class DesktopPet:
             set_context=self._set_context, save=self._save,
             is_closed=lambda: self._closed, game_open=lambda: self._hover.game_open,
             social_worker=social_worker, social_history=session.social_history,
+            persist_requests=self._persistence.save,
         )
         self._social_runtime = self._care_runtime.social
         self._social_runtime.set_enabled(self.settings.online_social)

@@ -6,7 +6,11 @@ from typing import Any, cast
 from unittest.mock import Mock, patch
 
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.application.social_content import PreparedSocialContent, SocialCategory
+from aiko_pet.application.social_content import (
+    PreparedSocialContent,
+    SocialCategory,
+    SocialProvider,
+)
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.ui.view_models.credits import project_credits
 from aiko_pet.ui.view_models.projections import project_settings
@@ -82,6 +86,7 @@ class VnSettingsTests(unittest.TestCase):
             "https://example.test/source",
             "https://example.test/api-entry",
             Reaction.spoken("fixture", "Ein Fakt.", "idle", "talk"),
+            SocialProvider.FACTS,
         )
         credit = project_credits(content)
         assert credit.accepted

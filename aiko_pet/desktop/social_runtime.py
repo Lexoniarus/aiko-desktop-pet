@@ -92,7 +92,8 @@ class SocialConversationRuntime:
             self._phase = "idle"
             self._token = None
             self._ports.clear_wait()
-            self._status = ("social.disabled" if selection.status == "disabled"
+            self._status = ("social.disabled" if selection.status == "disabled" else
+                            "social.limited" if selection.status == "limited"
                             else "social.error")
             return
         item, token = selection.content, self._token

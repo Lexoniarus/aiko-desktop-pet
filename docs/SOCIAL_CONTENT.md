@@ -1,18 +1,16 @@
 # Conversations and API entertainment
 
-The [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md) records future
-Sprüche/quotation filtering, daily horoscope and tarot role performances,
-zero-cost/keyless provider rules and the approved reading-time policy. Only the
-shared bubble timing has subsequently been authorized and implemented. New
-providers/actions and genuine one-liner filtering remain planned; the existing
-Single behavior has not acquired those proposed one-liner restrictions.
+The [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md) records the
+implemented Sprüche/quotation slice, zero-cost/keyless boundaries and the shared
+reading-time policy. Daily horoscope and tarot role performances remain planned;
+this slice adds no zodiac settings, readings, card assets or new menu choice.
 
 The **Unterhalten** toolbar button opens four choices: **Plaudern**,
-**Spruch erzählen**, **Witz erzählen** and **Kurioser Fakt**. Plaudern keeps the
-existing authored, context-sensitive conversations. The three new categories
+**Sprüche**, **Witz erzählen** and **Kurioser Fakt**. Plaudern keeps the
+existing authored, context-sensitive conversations. The three online categories
 use API content exclusively.
 
-Enable **Onlinequellen für Witze und Fakten verwenden** in settings to use the
+Enable **Onlinequellen für Sprüche, Zitate, Witze und Fakten verwenden** in settings to use the
 API categories. It defaults to off, including when loading older saves without
 the option. With online sources off, Plaudern remains available and the three
 API choices show disabled controls with a settings hint.
@@ -21,14 +19,29 @@ API choices show disabled controls with a settings hint.
 
 | Selection | Provider | Success fields used |
 | --- | --- | --- |
-| Spruch erzählen | [JokeAPI](https://jokeapi.dev/), German `type=single`, Safe Mode and excluded flags | `joke`, numeric `id`, `lang`, `safe`, `flags` |
+| Sprüche: Einzeiler | [JokeAPI](https://jokeapi.dev/), German `type=single`, Safe Mode and excluded flags | `joke`, numeric `id`, `lang`, `safe`, `flags` |
+| Sprüche: Zitate | [Zitat-Service](https://api.zitat-service.de/), public `/v1/quote?language=de` | `quote`, `language`, stable `link`, `authorName`, optional `authorLink`, `source`, `sourceLink` |
 | Witz erzählen | JokeAPI with `type=twopart` and the same language/filter settings | `setup`, `delivery` and the same metadata |
 | Kurioser Fakt | [Random Useless Facts](https://uselessfacts.jsph.pl/), v2 random endpoint with `language=de` | `text`, string `id`, `source`, `source_url`, `language`, `permalink` |
 
-Single means one provider text field; it can contain a longer joke or dialogue.
-It is not rewritten into a separate authored sayings catalogue. Two Parts keeps
-setup and delivery distinct, with an 800 ms pause before the delivery, after the
-final setup bubble's complete reading time.
+A Sprüche item is complete and at most **125 characters**, including spaces and
+punctuation after whitespace normalization. Its introduction and quotation author
+are separate bubbles. Long sayings are rejected, never split, shortened or
+rewritten. Format checks inspect original structure before normalizing spaces:
+reject multi-paragraph text, multi-turn dialogue, explicitly staged setup/delivery
+and multi-line jokes. Multiple sentences or one colon alone are not rejections.
+These deterministic checks are format checks, not a general semantic classifier;
+provider `type=single` alone is insufficient. Dialect is not a new exclusion rule.
+
+Quotations retain source words (including Sie), author/unknown status, entry link,
+original source and any author link. A separate `Von {author}.` bubble ends the
+text sequence and receives the final second. Credits identify Zitat-Service's
+community collection, its [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+license and any normalized whitespace; author, original source and entry links
+remain separate. These metadata do not enter subjective pet knowledge.
+
+Two Parts keeps setup and delivery distinct, with an 800 ms pause before the
+delivery, after the final setup bubble's complete reading time.
 Each category has three short German introductions in the existing text resource.
 A stable provider-text fingerprint varies the prepared introduction, sometimes
 adding a restrained happy/idea emote after the full content. No final emote
@@ -37,13 +50,14 @@ presentation copy, not substitute entertainment or a personal-memory record.
 
 All items are prepared into the existing `Reaction`/`Cue` model, with at most
 125 characters per text beat and five text beats including the introduction.
-Preparation splits at sentence or word boundaries without discarding words.
+Two-part jokes and facts split at sentence or word boundaries without discarding
+words; Sprüche content always occupies exactly one content bubble.
 Provider-truncated, wrong-language, unsafe-flagged, malformed and oversized
 items are rejected. Plain text stays plain text, including literal HTML
 entities that can be part of a joke. Provider facts are entertainment inputs;
 a valid response is not independent verification of their claims.
 
-The menu retains the most recently accepted item's source and API-entry links.
+The Credits view retains the most recently accepted item's source and API-entry links.
 Links open only when clicked. Source metadata remains attached to the prepared
 item; it is not added to Aiko's personal experiences or World knowledge.
 
@@ -71,17 +85,19 @@ Native Windows/Tk tests check mapped bubbles through the full deadlines with
 a controlled clock, independently of any user save. These automated checks do
 not establish the owner's subjective reading comfort.
 
-The later owner-approved [settings/Credits design](UI_VN_DESIGN.md#approved-settings-and-separate-credits)
-places provider information and these per-item source/API-entry links in a
-dedicated Credits view rather than an interaction/game menu. This is a
-preview/documentation decision only: current runtime placement above remains
-unchanged until implementation is separately authorized. Retain the same
-accepted-item metadata and ownership; do not add a parallel attribution history.
+The implemented [settings/Credits design](UI_VN_DESIGN.md#approved-settings-and-separate-credits)
+places provider information and these per-item links in a dedicated Credits view.
+It reads accepted-item metadata without a parallel attribution history or new
+network requests.
 
 ## Warm buffers and waiting
 
 There are three independent in-memory buffers, each targeting two ready items:
-Single, Two Parts and facts. A ready slot contains a validated complete playback
+Sprüche, Two Parts and facts. Sprüche has two slots total across both providers;
+it is not a two-slot buffer per source. When both are ready, prefer the source
+other than the last admitted saying (initial preference: JokeAPI). If only one
+is ready, use it immediately. Warming prefers the source with less ready stock
+within the same bounded buffer; no fetch is made merely to force a ratio. A ready slot contains a validated complete playback
 sequence. One daemon worker fetches and prepares one item at a time; no bulk
 request, parallel per-category workers or owner-thread HTTP work is used.
 
@@ -106,16 +122,50 @@ restart. Namespaced provider IDs or normalized text fingerprints match across
 all three categories, including text split differently into setup/delivery.
 Only actual playback admission records a receipt; preparation, selection and
 cancellation do not. Ten newer admissions in its category release an older
-receipt, unless another category/buffer/offer still excludes it. Random-provider
-duplicates allow at most three further individual attempts per refill.
-Persistent duplicates pause that category instead of replaying a duplicate or
-creating an endless request loop. Explicit selection can retry later.
+receipt, unless another category/buffer/offer still excludes it. Both Sprüche
+providers share the same ten-content history. Every rejected, duplicate or failed
+attempt consumes the provider budget. A refill cycle stops after three rejected
+or duplicate attempts per source and pauses that provider for at least ten
+minutes. Transient HTTP/network failures pause it for at least one minute;
+access changes stop it for a day. Failed cycles require a new deliberate selection
+to retry, within the retained provider pause. No authored fallback is used.
 
 Closing the menu, choosing another care action, disabling sources and shutdown
 invalidate pending playback. Stale worker results never trigger a conversation.
 Ordinary selection cancellation may leave background warming enabled. Opt-out
 clears the online buffers; shutdown closes the worker without waiting on a
 network call or allowing it to touch destroyed Tk widgets.
+
+## Free endpoints and request discipline
+
+Only the reviewed public URLs are used, with no keys, account, billing path,
+paid fallback or new dependency. HTTP redirects are refused; changed access
+requirements remain unavailable. Provider documentation/terms were rechecked on
+2026-10-23: JokeAPI documents 120 requests/minute per client; Zitat-Service and
+Random Useless Facts have no numeric quota in the reviewed public documentation.
+Unknown limits are not treated as unlimited.
+
+These are **Aiko client caps**, not claims about undocumented provider quotas:
+
+| Provider | Minimum request spacing | Rolling hour | Rolling 24 hours |
+| --- | --- | --- | --- |
+| JokeAPI, shared by Einzeiler and Witz | 5 seconds | 60 | 300 |
+| Zitat-Service | 10 seconds | 20 | 60 |
+| Random Useless Facts | 10 seconds | 20 | 60 |
+
+HTTP 429 respects Retry-After (seconds or HTTP date) and JokeAPI's HTTP-date
+RateLimit-Reset; without usable metadata it pauses for fifteen minutes. A valid
+last response with remaining budget zero remains playable while its reset blocks
+further calls. Even a disabled/stale response can extend a provider-wide pause.
+A long budget wait returns a retry-later status instead of holding a conversation
+for hours. Normal short pacing is handled by the existing polling scheduler.
+
+Each reservation is atomically saved **before HTTP dispatch**, through the
+existing persistence owner without advancing pet time. A failed save prevents
+network dispatch. Restart and opt-out do not reset caps or provider pauses.
+Bounded bookkeeping expires after its rolling window; no permanent request log
+or provider payload cache is introduced. Shared-IP provider rejection remains
+possible even when this client's own cap is not exhausted.
 
 ## Care and persistence
 
@@ -133,12 +183,15 @@ receipt. A matching social wish still requires the complete sequence and may
 then create its existing fulfillment Moodlet.
 
 `settings.online_social` is an optional Boolean within the existing version-one
-save. Requests, ready buffers, source payloads and pending playback are never
-saved. The optional outer `social_history` version-one section stores only up to
-ten receipts per category (thirty total): category, namespaced provider identity
-and SHA-256 fingerprint of normalized provider words. No provider words, source
-URLs, frame variants, buffers or pending tokens are stored. Opt-out clears
-buffers and retains receipts.
+save. Ready buffers, source payloads and pending playback are never saved. The
+optional outer `social_history` section now uses version two: up to ten admission
+receipts per category (thirty total), plus bounded expiring request timestamps
+and provider pauses. Receipt fields remain category, namespaced provider identity
+and SHA-256 fingerprint of normalized provider words. Quote identities use
+`zitat-service:<entry-id>` in the existing `single` category. No provider words,
+source URLs, frame variants, buffers or pending tokens are stored. Version-one
+receipt-only histories remain readable; no history means empty defaults. Opt-out
+clears buffers and retains admission/request bookkeeping.
 
 The session restorer carries this value to the existing content coordinator
 before online warming starts. Actual admission saves care and its receipt
@@ -155,16 +208,20 @@ translation model or elapsed-time simulator is added.
 - `application/social_coordinator.py` owns the buffers, offers, selection and
   repetition history through the `SocialContentWorker` port.
 - `application/social_history.py` supplies immutable bounded admission receipts;
-  `infrastructure/social_history_codec.py` validates their version-one save
-  representation, independently of provider stories and pet experiences.
+  `infrastructure/social_history_codec.py` validates the compatible version-two
+  section, independently of provider stories and pet experiences.
+- `application/social_requests.py` supplies finite provider budgets and immutable
+  expiring metadata; `infrastructure/social_request_codec.py` validates it in the
+  existing save boundary.
 - `infrastructure/social_api.py` owns bounded HTTP reads and the data-only worker.
 - `desktop/social_runtime.py` coordinates holding and deferred admission through
   existing World, care and presentation callbacks.
 - `desktop/care_runtime.py` owns deliberate care dispatch, care presentation and
   Social-to-World admission wiring. `gui.py` composes that owner and keeps its
   existing public care entry point.
-- `ui/windows/social_menu.py` presents choices/status/source links; `HoverUi`
-  owns its stacking, hover, topmost, dismissal and cleanup.
+- `ui/windows/social_menu.py` presents choices and readiness/status; `HoverUi`
+  owns stacking, hover, topmost, dismissal and cleanup. The existing Credits view
+  projects accepted provider, author, source, entry and license metadata.
 
 Deterministic provider-shaped fixtures are tests only. Focused tests cover
 preparation, care, worker/coordinator lifecycle and real Tk selection/playback
@@ -201,3 +258,13 @@ temporary save files were isolated from the normal save. Scoped Ruff, strict
 Mypy and Pyright plus dependency/UI architecture checks pass. No native window,
 mouse control, live API request, CI or full-suite run was used for slice 8.
 The final integrated suite and OOP review remain slice 9.
+
+## Sprüche integration verification, 2026-10-23
+
+The complete Windows/Python 3.11.9 suite passes **1,756 tests** in 297.568 seconds.
+After the last format/link edge refinements, the **97 focused social tests** pass
+again, including native Tk selection, author delivery and Credits assertions.
+Whole-repository Ruff, strict Mypy (260 source files) and Pyright pass. Temporary
+saves cover restart, pre-dispatch quota persistence, failed writes and old-history
+compatibility. Separate bounded live checks validated short German provider data;
+normal tests do not depend on live endpoints. Horoscope and tarot remain planned.
