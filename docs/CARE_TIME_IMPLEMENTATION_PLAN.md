@@ -6611,3 +6611,78 @@ extensions remain discussion work, not approved catalogue/runtime additions.
 Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, tests, text and documentation changes are preserved. No runtime
 tests, application windows, mouse control, live-save access or CI in this pass.
+
+
+### Proposed longer-term Moodlet: Wertgeschaetzt
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Meaning: "What I want matters to you." Derive this impression
+from repeated personal attention to Aiko's wishes. Distinguish it from
+Vertrauensvoll, which represents longer-term reliability of care and treatment.
+
+#### Qualifying twenty-four-hour period
+
+All of the following must hold within a period of twenty-four real elapsed hours:
+
+| Evidence | Proposed qualification |
+| --- | --- |
+| Wishes considered | At least three actually fulfilled wishes |
+| Different kinds of attention | Fulfilled wishes from at least two areas: food, games, social or affection |
+| Distributed attention | Fulfillments in at least two encounters separated by at least two hours |
+| Boundaries respected | No confirmed disregard of an explicitly communicated boundary during the period |
+
+Both inner and expressed wishes count. A wish at an already full need counts
+when the interaction is welcome and actually fulfills that wish. A fair game
+defeat is not a boundary violation. Pinning, viewing, expressing, expiring or
+dismissing a wish does not count as fulfillment.
+
+Individual fulfillments still produce their own short-term impressions.
+Wertgeschaetzt qualifies once from the whole longer-term pattern; it is not an
+additional immediate award on every wish completion. Account for each period
+once, requiring another actual qualifying twenty-four-hour period for another
+increase. Re-reading a window or replaying a completion callback cannot award
+another level.
+
+#### Strength, stacking and decay
+
+| Intensity | Qualified buildup | Numeric mood-target contribution |
+| --- | --- | --- |
+| Level 1 | First qualifying twenty-four-hour period | +5 |
+| Level 2 | Another qualifying twenty-four-hour period | +10 |
+| Level 3 | A third qualifying twenty-four-hour period | +15 |
+
+Keep one active episode with a maximum of three intensity levels. It supports
+warmth toward the user in the emotional composition; its exact overall-label
+mapping remains part of the later composition review. Use emotional intensity
+one/two/three and existing numeric caps/response timing. Active intensity affects
+friendship through the normal continuous balance, with no extra instant bonus.
+
+Each stage lasts thirty real hours. Without reinforcement, lose one level after
+each thirty hours until the episode expires. A new qualifying period raises
+intensity by one, capped at three, and starts the current stage's thirty hours.
+At level three, renew only the current thirty hours. Do not bank further time
+or apply the positive wish-family 60/45/45 renewal policy to this family.
+Application closure and standby count toward decay.
+
+A period without sufficient confirmation does not instantly erase the feeling;
+it simply provides no reinforcement. Negative impressions can coexist. Existing
+boundaries and action admission remain in force even while feeling appreciated.
+Retain the qualifying-period cause with the existing bounded Moodlet evidence,
+not in a second permanent wish or relationship archive.
+
+Presentation example: "Wertgeschaetzt - Stufe 2: Es tut gut, dass meine Wuensche
+bei dir zaehlen." Keep player-facing wording about the feeling, rather than
+the numeric qualification formula.
+
+Recalculate the daily friendship examples with Wertgeschaetzt and Vertrauensvoll
+together before accepting their proposed strength. The prior day worksheets
+include neither longer-term family; do not claim their old level-seven/eight
+versus level-ten result remains established after these additions.
+
+Next discuss Zuversichtlich: qualifying experiences, strength, stacking and
+decay. Its thresholds and the remaining longer-term/overall-state additions are
+not selected by this documentation amendment.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, tests, text and documentation changes are preserved. No runtime
+tests, application windows, mouse control, live-save access or CI in this pass.
