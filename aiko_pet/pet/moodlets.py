@@ -9,13 +9,17 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, replace
 from enum import StrEnum
-from typing import Literal, Mapping
+from typing import TYPE_CHECKING, Literal, Mapping
 
 from .balance import BALANCE
+from .care_evidence import CareEvidenceState, CarePeriodSummary
 from .interaction_events import InteractionMemory
 from .moodlet_patterns import LongTermPatternParameters
 from .need_exposure import ExposureMark
 from .needs import NeedLevels
+
+if TYPE_CHECKING:
+    from .wishes import WishTarget
 
 MAX_MOODLET_CAUSES = 3
 
@@ -66,6 +70,7 @@ class MoodletCauseKind(StrEnum):
     WISH_FAILED = "wish_failed"
     INTERACTION = "interaction"
     POOR_CARE = "poor_care"
+    LONG_TERM = "long_term"
 
 
 class MoodletOutcome(StrEnum):
@@ -91,6 +96,7 @@ class MoodletWishCause:
     target_id: str
     objective: str
     required_count: int
+    target: WishTarget | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -114,6 +120,8 @@ class MoodletCause:
     outcome: MoodletOutcome = MoodletOutcome.UNKNOWN
     object_id: str | None = None
     game: MoodletGameResult | None = None
+    period: CarePeriodSummary | None = None
+    handed_over_at: float | None = None
 
     @property
     def receipt(self) -> tuple[MoodletCauseKind, str | None, int | None]:
@@ -260,6 +268,7 @@ class MoodletEpisode:
     recovery_since: float | None = None
     attribution: MoodletAttribution = MoodletAttribution.UNKNOWN
     causes: tuple[MoodletCause, ...] = ()
+    lower_stage_seconds: tuple[float, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.causes:
@@ -314,6 +323,7 @@ class MoodletState:
     active: tuple[MoodletEpisode, ...] = ()
     interactions: InteractionMemory = InteractionMemory()
     poor_care: PoorCareEvidence | None = None
+    care_evidence: CareEvidenceState | None = None
 
 
 @dataclass(frozen=True, slots=True)

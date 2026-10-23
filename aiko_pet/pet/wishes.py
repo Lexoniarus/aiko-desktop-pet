@@ -6,6 +6,7 @@ from enum import StrEnum
 from typing import Literal, Mapping
 
 from .balance import BALANCE
+from .food_handover import FoodHandoverReceipt
 from .moodlets import (
     MoodletCause,
     MoodletCauseKind,
@@ -227,10 +228,13 @@ class ActiveWish:
     game: GameWishProgress = GameWishProgress()
     goal: WishGoal | None = None
     pinned: bool = False
+    target: WishTarget | None = None
 
     def __post_init__(self) -> None:
         if self.goal is None:
             object.__setattr__(self, "goal", legacy_wish_goal(self.definition_id))
+        if self.target is not None and self.target_id != (self.target.target_id or ""):
+            raise ValueError("Wish reference must agree with its original typed target")
 
     @property
     def goal_snapshot(self) -> WishGoal:
@@ -257,6 +261,8 @@ class WishState:
     last_created_by_area: tuple[tuple[WishArea, float], ...] = ()
     last_expressed_at: float | None = None
     refill_not_before: float | None = None
+    refresh_at: float | None = None
+    food_handovers: tuple[FoodHandoverReceipt, ...] = ()
 
     @property
     def last_created_at(self) -> float | None:
