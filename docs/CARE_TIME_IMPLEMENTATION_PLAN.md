@@ -4,7 +4,8 @@
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
 > The [single-tier food timing proposal](#proposed-single-tier-food-moodlet-lifetime-and-renewal)
-> is recorded separately; full-need wish creation/admission remains open.
+> and [full-need wish rules](#proposed-full-need-food-and-affection-wishes)
+> are recorded separately as proposals, not implemented behavior.
 >
 > **Latest wish proposal, 2026-10-23:** the
 > [ten-minute rotation and additional objectives](#proposal-ten-minute-wish-rotation-and-additional-objectives-2026-10-23)
@@ -5641,6 +5642,10 @@ Documentation-only review: this amendment changes the master plan alone;
 
 ### Proposed need and experience selection weights
 
+**Later amendment:** the full-need proposal below replaces food/affection's
+above-70 weight of zero with one. The lower bands and area-first selection
+remain the proposed baseline; the earlier zero is historical.
+
 **Discussion proposal recorded at the owner's request, 2026-10-23.** Choose an
 area for each free slot first, then an eligible form/target within it. Multiple
 slots may use the same area, but exact objective/target duplicates remain
@@ -5957,3 +5962,97 @@ admission rules; do not infer approval from the timing proposal.
 Documentation-only scope: this amendment changes only the master plan.
 Parallel local work is preserved. Markdown whitespace/diff reviewed; no runtime
 tests, application windows, mouse control, live-save access or CI.
+
+
+### Proposed full-need food and affection wishes
+
+**Discussion proposal recorded at the owner's request, 2026-10-23.** Separate
+physical deficit from a personal desire. Existing need decay and care amounts
+stay unchanged. This proposal supersedes above-70 food/affection exclusion and
+automatic above-90 wish retirement, not the underlying runtime until authorized.
+
+| Corresponding need | Proposed food/affection area weight |
+| --- | --- |
+| Above 70, including 100 | 1 instead of zero |
+| Above 40 through 70 | 3 |
+| Above 25 through 40 | 5 |
+| 0 through 25 | 7 |
+
+Use existing area-first selection, allowing multiple different wishes per area.
+A full bar alone does not exclude a candidate. An active explicit petting
+refusal or Too Much Closeness impression still argues against creating a new
+affection wish; need fullness alone is not such an independent boundary.
+
+An existing food/affection wish survives rising need values, including 90/100.
+It otherwise follows the proposed ten-minute replacement/pin rules. Its matching
+action can be welcome despite a full need; actual wish completion still creates
+or reinforces its Moodlet while physical values clamp at 100. Do not create an
+instantaneous friendship award or emotional evidence merely for wanting.
+
+For an ordinary food-intake wish, Aiko actually accepts and eats the requested
+food; the portion is consumed. Menu selection, placement or a merely offered
+portion does not complete this ordinary intake objective. Existing nutrition/
+digestion ownership and bounded values remain; no parallel consumption path is
+introduced. The distinct food-avoidance handover-versus-intake conflict remains
+open rather than being silently decided by this ordinary-food rule.
+
+An affection wish completes on actual matching petting. That wished-for contact
+must not count as an excess stroke or cause a need-fullness boundary complaint.
+The wish then retires: it is not permission for unlimited subsequent feeding
+or strokes. A separately active explicit refusal temporarily blocks completion
+rather than granting blanket override; the saved wish can remain unavailable.
+Current sleep/action admission continues to belong to its existing owners.
+
+This proposal does not authorize runtime, catalogue, save or UI changes.
+
+### Remaining pre-implementation decisions after the full-need proposal
+
+This focused register supersedes earlier open questions about whether full
+needs may ever permit desire creation/completion: the proposed answer is now
+yes as above. Do not reopen settled timing/strength/need-decay decisions merely
+to enumerate hypothetical edge cases.
+
+| Relevant decision | Why it still changes implementation |
+| --- | --- |
+| Ten-minute refresh, absence and unpinning | Establish the shared refresh anchor, the single appropriate refresh on wake/return without offline wish generation, and whether an unpinned protected wish stays until the next refresh instead of disappearing on an old deadline. Left pins; right on pinned only unpins; right on unpinned dismisses remain the chosen gestures. |
+| New wish meanings and selection mix | Area weights and the 1.5 experience multiplier are proposed, but the new forms' base weights, experience validity and concrete goal scope are not. Define whether free-choice rounds can span different games and whether victory-oriented rematch targets the next round or a later win. Avoid arbitrarily filling these gaps in code. |
+| Food-avoidance / variety completion | Existing explicitly approved behavior counts perceived personal handover, even of the unwanted food and even if refused. The later replacement candidate asks for actual alternate-food intake. Choose the intended product rule; neither ordinary food-wish admission nor the timing proposal resolves this conflict. |
+| Tier budgets during re-escalation and stronger goals | Specify what happens to partly consumed and previously extended lower tiers on renewed ascent. Also resolve two-tier success overflow and its real cause count: one stronger event must not be fabricated into two events solely to fill intensity rows. |
+| Positive experiences without a wish: scope | Current eight positive families are wish-driven, while most negative families arise independently. Decide whether the present revision retains that scope or includes specific positive everyday experiences. Do not automatically turn every need refill into another positive Moodlet. |
+
+#### Known implementation work, not additional product questions
+
+- Remove the old one-per-area / above-70 generation / above-90 retirement gates
+  in the relevant domain and storage contracts when implementation is approved.
+  Introduce explicit flexible/experience goals without making UI own eligibility.
+- Persist bounded per-tier remaining budgets/extensions for the new renewal
+  policy through the existing Moodlet values/codec, shared elapsed axis and
+  whole-Pet checkpoints. The current one-current-tier timer is not proof that
+  future lower-tier extensions survive save/reload.
+- Preserve original saved game objective/progress and real cause receipts as
+  previously promised; plan the old-save transition without silent goal resets,
+  invented past events or another save/history owner.
+- Wire concrete cause snapshots for negative interaction and prolonged-poor-care
+  producers. Current `reinforce_moodlet` calls there still omit `cause=`, unlike
+  wish outcomes. Existing triggers/penalties are not missing just because their
+  cause descriptions are generic.
+- Update passive status/hover reads for the agreed timing and precise causes.
+  Wish creation, completion, renewal and friendship stay aggregate/domain owned.
+
+#### Acceptance once implementation is authorized
+
+The coupled daily arithmetic uses conditional fixed successes. After the actual
+wish distribution is defined and implemented, verify real opportunities,
+completions, full-need actions, saved goals/tier budgets and relationship flow
+together. Average levels 7–8 and intensive level 10 remain balance targets, not
+a general guarantee for every random mix. This is later validation, not a reason
+to run tests or launch the application during discussion.
+
+The original menu AppHang and final slice-9 suite/OOP/slow-test audit remain in
+their existing plan sections; they are not new wish-design decisions. Later
+conversations about concrete active Moodlet experiences remain separate future
+work. No new module/file names or extra state owners are selected in this pass.
+
+Documentation-only check: only this master plan is staged. Parallel local work
+is preserved; Markdown whitespace/diff reviewed. No runtime tests, application
+windows, pointer automation, live-save access or CI in this pass.
