@@ -8474,3 +8474,28 @@ commits the same care/Moodlet path, with no extra store or instantaneous bonus.
 seconds, slowest 0.041 seconds. Focused Ruff, strict Mypy and Pyright passed.
 Native Tk creation was blocked; no test windows, mouse, live-save access,
 full suite or CI was used. Food/recognition follows in separate commits.
+
+
+### Delivery slice 6B: original food-transfer context and recognition outcomes
+
+Pure `pet/food_wishes.py` captures up to three original food wishes at a confirmed
+handover, settles the snapshot on actual recognition and retains both handover
+and recognition times in the Moodlet cause. Wish rotation need not keep the old
+active row alive. Later wishes cannot be adopted. Cross-receipt accounted IDs
+prevent a goal settled elsewhere from being awarded again. Pending context and
+results reuse the existing bounded values/codecs and whole-Pet checkpoint.
+
+Recognized wanted/alternative food grants the original wish's positive outcome;
+explicitly excluded food fails that original wish and grants food-wish-disregarded
+(+one negative tier, thirty minutes each through three). Explicit exclusion takes
+precedence over a competing positive pin. Ordinary nonmatching food is neutral.
+These handover outcomes do not change nutrition, needs or instantaneous friendship.
+Repeated observations are neutral, while genuinely distinct gifts can stack.
+Withdrawal cancels pending context. The pure shared priority now also accepts
+original food snapshots; there is no separate priority or reward engine.
+
+Seven new handover tests plus matching/storage/food/persistence regressions passed:
+51 tests in 0.042 seconds, slowest 0.009 seconds. Native Tk creation was blocked.
+Application custody/recognition and full-need consumption wiring follows in the
+next commit; the old live handover entry point is replaced there as one coherent
+adapter change. No windows, mouse, personal-save access, full suite or CI.

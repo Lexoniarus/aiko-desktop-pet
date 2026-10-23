@@ -29,6 +29,12 @@ from .food import (
     FoodState,
 )
 from .food_catalog import DEFAULT_CATALOG
+from .food_wishes import (
+    account_food_wish,
+    begin_food_handover,
+    recognize_food_handover,
+    withdraw_food_handovers,
+)
 from .friendship import (
     apply_negative_event,
     begin_continuous_friendship,
@@ -74,6 +80,7 @@ from .wish_selection import replenish_wishes
 from .wishes import (
     WishArea,
     WishContext,
+    WishId,
     WishResolution,
     WishState,
     WishTargetKind,
@@ -386,13 +393,27 @@ class PetState:
         self, resolution: WishResolution, *, personal: bool,
     ) -> None:
         """Commit retirement and its lasting impression without an instant bonus."""
+        if (resolution.cause is not None and resolution.cause.wish is not None
+                and WISH_CATALOG.definitions[
+                    WishId(resolution.cause.wish.definition_id)
+                ].area == WishArea.FOOD):
+            resolution = replace(resolution, state=account_food_wish(
+                resolution.state, resolution.cause.wish.instance_id,
+            ))
         if resolution.fulfilled is None:
             moodlets = self.moodlets
             if (resolution.cause is not None
                     and resolution.cause.kind == MoodletCauseKind.WISH_FAILED):
+                food_failed = (resolution.cause.wish is not None
+                               and resolution.cause.wish.definition_id
+                               == WishId.AVOID_FOOD.value)
+                cause = (replace(resolution.cause, attribution=MoodletAttribution.USER)
+                         if food_failed else resolution.cause)
                 moodlets = reinforce_moodlet(
-                    moodlets, MoodletId.DISAPPOINTED, elapsed=self.lived_seconds,
-                    definitions=MOODLET_CATALOG.definitions, cause=resolution.cause,
+                    moodlets, MoodletId.FOOD_WISH_DISREGARDED if food_failed
+                    else MoodletId.DISAPPOINTED, elapsed=self.lived_seconds,
+                    definitions=MOODLET_CATALOG.definitions, cause=cause,
+                    attribution=cause.attribution,
                 )
             self._change(wishes=resolution.state, moodlets=moodlets)
             return
@@ -466,6 +487,23 @@ class PetState:
             round_id=round_id, started_at=started_at, elapsed=self.lived_seconds,
             outcome=outcome, definitions=WISH_CATALOG.definitions,
         ), personal=True)
+
+    def begin_food_handover(self, handover_id: str, *, object_id: str) -> None:
+        """Application confirmed custody; capture context without inferring identity."""
+        self._change(wishes=begin_food_handover(
+            self.wishes, handover_id=handover_id, object_id=object_id,
+            elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
+        ))
+
+    def recognize_food_handover(self, handover_id: str, food_id: str) -> None:
+        """Actual identification settles the original gift, independently of eating."""
+        self._apply_wish_resolution(recognize_food_handover(
+            self.wishes, handover_id=handover_id, food_id=food_id,
+            elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
+        ), personal=True)
+
+    def withdraw_food_handovers(self, object_ids: frozenset[str]) -> None:
+        self._change(wishes=withdraw_food_handovers(self.wishes, object_ids))
 
     def complete_food_handover(self, food_id: str, *, object_id: str) -> None:
         """An admitted personal offer is distinct from nutrition and accepted care."""

@@ -26,7 +26,7 @@ from .wishes import (
 )
 
 
-def _wish_cause(
+def wish_cause(
     wish: ActiveWish, *, elapsed: float, event_id: str, outcome: MoodletOutcome,
     failed: bool = False, target_id: str | None = None,
     object_id: str | None = None, game: MoodletGameResult | None = None,
@@ -62,7 +62,7 @@ def fulfill_activity_wish(
         return WishResolution(state)
     return _retire_wish(
         state, wish, definitions[wish.definition_id], elapsed=elapsed,
-        cause=_wish_cause(wish, elapsed=elapsed,
+        cause=wish_cause(wish, elapsed=elapsed,
                           event_id=event_id or f"wish:{wish.instance_id}:fulfilled",
                           target_id=target_id,
                           outcome=MoodletOutcome.INTAKE if area == WishArea.FOOD
@@ -84,7 +84,7 @@ def fulfill_food_handover_wish(
         return WishResolution(state)
     return _retire_wish(
         state, wish, definitions[wish.definition_id], elapsed=elapsed,
-        cause=_wish_cause(wish, elapsed=elapsed,
+        cause=wish_cause(wish, elapsed=elapsed,
                           event_id=f"wish:{wish.instance_id}:handover",
                           outcome=MoodletOutcome.HANDOVER, target_id=food_id,
                           object_id=object_id),
@@ -161,7 +161,7 @@ def progress_game_wish(
         disappointed = (not success and goal.objective in (
             WishObjective.NEXT_NON_LOSS, WishObjective.BLOCK_NON_LOSS,
         ))
-        cause = (_wish_cause(
+        cause = (wish_cause(
             wish, elapsed=elapsed, event_id=round_id, outcome=result,
             failed=disappointed, target_id=game_id, game=MoodletGameResult(
                 MoodletOutcome(outcome), progress.completed_rounds,

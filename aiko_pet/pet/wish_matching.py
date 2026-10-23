@@ -2,6 +2,7 @@
 
 from typing import Mapping
 
+from .food_handover import FoodWishSnapshot
 from .wishes import (
     ActiveWish,
     WishArea,
@@ -35,15 +36,19 @@ def assign_activity_wish(
     concrete goals use saved progress/age rather than an invented win-first rule.
     Handover-specific food treatment belongs to its separate admission boundary.
     """
-    def priority(wish: ActiveWish) -> tuple[bool, int, bool, float, int]:
-        mode = wish.target.mode if wish.target is not None else WishTargetMode.EXACT
-        specificity = {WishTargetMode.EXACT: 0, WishTargetMode.EXCLUDE: 1,
-                       WishTargetMode.ANY: 2}[mode]
-        return (not wish.pinned, specificity, not bool(wish.game.completed_rounds),
-                wish.created_at, wish.instance_id)
-
     return min((w for w in state.active
                 if w.is_active_at(elapsed)
                 and w.goal_snapshot.objective != WishObjective.FOOD_HANDOVER
                 and wish_matches_activity(w, area, target_id, definitions=definitions)),
-               key=priority, default=None)
+               key=wish_assignment_priority, default=None)
+
+
+def wish_assignment_priority(
+    wish: ActiveWish | FoodWishSnapshot,
+) -> tuple[bool, int, bool, float, int]:
+    mode = wish.target.mode if wish.target is not None else WishTargetMode.EXACT
+    specificity = {WishTargetMode.EXACT: 0, WishTargetMode.EXCLUDE: 1,
+                   WishTargetMode.ANY: 2}[mode]
+    progressed = isinstance(wish, ActiveWish) and bool(wish.game.completed_rounds)
+    return (not wish.pinned, specificity, not progressed,
+            wish.created_at, wish.instance_id)
