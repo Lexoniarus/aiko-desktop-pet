@@ -3,7 +3,8 @@
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
-> The single-tier food impression remains a separate open discussion.
+> The [single-tier food timing proposal](#proposed-single-tier-food-moodlet-lifetime-and-renewal)
+> is recorded separately; full-need wish creation/admission remains open.
 >
 > **Latest wish proposal, 2026-10-23:** the
 > [ten-minute rotation and additional objectives](#proposal-ten-minute-wish-rotation-and-additional-objectives-2026-10-23)
@@ -5912,3 +5913,47 @@ Documentation-only scope: only this master plan is staged for this change;
 parallel local runtime, catalogue, test and other documentation edits are
 preserved. Markdown whitespace/diff reviewed; no runtime tests, application
 windows, mouse control, live-save access or CI in this pass.
+
+
+### Proposed single-tier food Moodlet lifetime and renewal
+
+**Discussion proposal recorded at the owner's request, 2026-10-23.** This
+settles the timing candidate for `food_fulfilled` / Genau das Gewünschte
+separately from the positive multi-tier 60/45/45-minute proposal. Neither
+proposal is implemented by this documentation update; packaged food timing
+remains unchanged until implementation is authorized.
+
+| Condition | Proposed emotional result |
+| --- | --- |
+| First qualifying food-wish fulfillment with no active episode | Start level 1 with sixty minutes remaining |
+| Another qualifying food-wish fulfillment while active | Add ten minutes to remaining duration |
+| Renewal ceiling | At most ninety minutes remaining |
+| A new qualifying fulfillment after complete expiry | Start a new sixty-minute episode |
+
+Strength stays level 1 only, with the existing individual +5 numeric-mood
+contribution. Do not escalate to level 2/3 or create a parallel copy of the same
+family. Renewal adds time instead of resetting to sixty/ninety minutes: twenty-
+five minutes remaining becomes thirty-five after one new qualifying success.
+
+Only fulfillment of an actual pre-existing matching wish qualifies. Ordinary
+feeding, menu selection, placement or the mere existence/expression of a wish
+cannot grant the emotional renewal on their own. What counts as completion
+for ordinary food intake versus the special food-avoidance handover form
+remains governed by their separate discussed rules; this timing proposal does
+not silently replace either completion contract.
+
+The active episode's real latest cause follows the existing one-tier bounded
+cause contract; more renewals do not create a permanent wish archive. Nutrition,
+digestion, physical need bounds and continuous friendship rates/factors remain
+unchanged. The episode contributes through the existing elapsed relationship
+policy, with no new instantaneous point bonus.
+
+Next discuss when food/affection wishes may arise with already full needs,
+whether current above-70 zero selection weight changes, how existing wishes
+survive above-90 relevance retirement, and whether a matching wish can authorize
+otherwise need-based refusal. The owner has not yet selected those creation/
+admission rules; do not infer approval from the timing proposal.
+
+Documentation-only scope: this amendment changes only the master plan.
+Parallel local work is preserved. Markdown whitespace/diff reviewed; no runtime
+tests, application windows, mouse control, live-save access or CI.
