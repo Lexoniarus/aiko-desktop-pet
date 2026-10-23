@@ -6018,7 +6018,7 @@ to enumerate hypothetical edge cases.
 | New wish meanings and selection mix | The later variant-weight proposal below defines base weights, a thirty-minute experience window and flexible/rematch goal meanings. Remaining selection work is the priority among simultaneously matching wishes, without duplicating progress/outcomes or choosing retrospectively from a result. |
 | Food-avoidance / variety completion | The later food-wish-disregarded proposal below settles that expressly excluded food causes a negative outcome on recognized personal handover, even if put down; the former positive unwanted-handover rule is superseded. Keep the positive success condition for an alternative/variety objective explicit rather than inferring it from the negative outcome. |
 | Tier budgets during re-escalation and stronger goals | The later ascent-budget proposal below settles the candidate rule: raise remaining tier budgets to at least base duration while preserving longer residuals; choose ascent or capped level-3 renewal, not both; one stronger outcome remains one real cause. This is proposed behavior, not an implemented storage change. |
-| Positive experiences without a wish: scope | Current eight positive families are wish-driven, while most negative families arise independently. Decide whether the present revision retains that scope or includes specific positive everyday experiences. Do not automatically turn every need refill into another positive Moodlet. |
+| Positive experiences without a wish: scope | The later positive-experience proposal below adds four qualified everyday experiences using existing families, without making every need refill emotional evidence. Its triggers and no-double-reward rule are proposed, not implemented. |
 
 #### Known implementation work, not additional product questions
 
@@ -6313,3 +6313,87 @@ cooldown or duplicate-reward exception is selected by this amendment.
 Documentation-only check: only the master plan is staged; parallel local work
 is preserved. Markdown whitespace/diff reviewed; no runtime tests, app windows,
 mouse control, live-save access or CI.
+
+
+### Proposed positive experiences without a prior wish
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Permit four qualified positive experiences without requiring a
+pre-existing matching wish. Use existing families and precise real cause facts.
+
+| Actual experience | Proposed qualifying condition | Existing positive family |
+| --- | --- | --- |
+| Playing together again | After at least two hours without play, complete a session with at least two actual rounds | Gemeinsame Spielfreude / `shared_play` |
+| Overcoming a losing streak | After two consecutive defeats in the same game, Aiko actually wins | Stolz / `pride` |
+| Time to talk again | After at least four hours without a completed conversation/entertainment sequence, finish a full such sequence | Verbundenheit / `connection` |
+| Welcome closeness | After at least four hours without petting, actually receive welcome petting | Geborgen / `secure` |
+
+Each qualifies one intensity level in its existing family, using the proposed
+60/45/45 base, ascent floors and capped level-3 renewal. Full/empty need values
+alone are not emotional events. Petting willingness/friendship and other
+ordinary action admission still apply. Merely opening a game, incomplete social
+playback or refused petting does not provide the required event.
+
+The two/four-hour gaps refer to actual activities, not to how long ago a Moodlet
+was last awarded. Record actual completed activity even when its positive
+outcome is already accounted for by a wish. Do not turn technical notifications
+or repeated callbacks into another episode, chance or time credit.
+
+If the exact same event already grants a wish fulfillment Moodlet, use that
+wish outcome instead of granting a second positive everyday outcome. Existing
+other positive/negative episodes may coexist. The no-double-reward rule is per
+actual event: a comeback on a first round can be distinct from a shared-play
+wish completed by a subsequent second round. Retain distinct semantic receipts,
+not multiple labels for one physical event.
+
+### Additional effect on the coupled daily examples
+
+**Independent conditional discussion arithmetic, not runtime acceptance.** The
+same worksheet retains current need/food/care formulas, light-office assumptions,
+07:00/13:00/19:00/22:30 care, eight-hour sleep and proposed 60/45/45 timing. No
+application imports or tests are run. Physical care, action counts and supplied
+wish-success schedules are unchanged: twelve successes in the average case,
+thirty-six in the intensive case. The actual weighted wish generator remains
+outside the worksheet.
+
+Shared-play and social return events already complete wishes in these examples,
+so their everyday positives add nothing on those exact receipts. Four ordinary
+welcome strokes are not wish completions. Strokes at 07:00/13:00/19:00 qualify
+for Geborgen; 22:30 does not because only 3.5 hours have elapsed since the last
+stroke. This adds three level-1 sixty-minute impressions, not four extra wishes.
+
+| Same conditional daily schedule | Average: start 70 to next morning | Intensive: start 90 to next morning |
+| --- | --- | --- |
+| Before the four everyday triggers | 69.98 | 90.84 |
+| Add the three qualified closeness events | 70.51 | 91.21 |
+| Also assume one actual qualifying comeback win that does not itself fulfill a wish | 70.67 | 91.34 |
+
+With closeness alone and the same repeating physical day, average friendship
+settles around 71.7–73.8 (level 8); intensive remains around 96–100 (level 10).
+With the illustrative one-comeback-per-day outcome pattern, average settles
+around 72.3–74.4; intensive still around 96–100. Average care starting at 90
+ends around 84.60 with closeness / 84.70 with the extra comeback, so this
+ordinary schedule still does not maintain level 10.
+
+For that optional comeback example, set the first two morning RPS rounds to
+Aiko losses and a later session's first round to a win (13:00 average / 07:10
+intensive). That first round supplies the comeback; a separate second round
+completes the shared-play wish. Other outcomes do not create another losing
+streak. This is an explicit conditional outcome pattern, not an assumed win
+rate or a claim that every game session grants Stolz.
+
+Mean numeric mood changes from about 65.03 to 65.67 in the average example.
+The intensive example stays near 73.95 because its existing global numeric-mood
+cap and timed recovery already absorb the extra contribution at those times.
+Active tiers still contribute to friendship independently of that numeric cap.
+Needs, nutrition, play costs and the existing three intensive energy drinks are
+unchanged; no additional care is invented to produce these extra feelings.
+
+The additional triggers shift ordinary care toward level 8 without making its
+reference day maintain level 10. Actual random wish mixes and win/loss patterns
+can still change the outcome; no further decay/friendship adjustment is selected
+from this conditional arithmetic. Preserve integrated acceptance as later work.
+
+Documentation-only check: only this master plan is staged; concurrent work and
+existing commits are preserved. Markdown whitespace/diff reviewed; no runtime
+tests, application windows, mouse control, live-save access or CI in this pass.
