@@ -253,10 +253,13 @@ TEXT_FIELDS.update({
 TEXT_FIELDS.update({
     f"wish.{key}.utterance": (
         frozenset({"target", "rounds"})
-        if key in (WishId.PLAY_GAME, WishId.WIN_OVERALL, WishId.AVOID_OVERALL_LOSS)
+        if key in (WishId.PLAY_GAME, WishId.WIN_OVERALL, WishId.AVOID_OVERALL_LOSS,
+                   WishId.PLAY_OTHER_GAME)
         else frozenset({"target"})
         if key in (WishId.FOOD, WishId.AVOID_FOOD,
-                   WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS)
+                   WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS,
+                   WishId.REMATCH_GAME, WishId.COMEBACK_GAME)
+        else frozenset({"rounds"}) if key == WishId.PLAY_ANY_GAME
         else frozenset()
     )
     for key in WishId

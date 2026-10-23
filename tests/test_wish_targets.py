@@ -4,12 +4,15 @@ import unittest
 from dataclasses import FrozenInstanceError, replace
 from typing import cast
 
+from aiko_pet.infrastructure.wish_codec import decode_wish_goal
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import (
+    ActiveWish,
     WishId,
     WishTarget,
     WishTargetKind,
     WishTargetMode,
+    legacy_wish_goal,
 )
 
 
@@ -64,3 +67,20 @@ class WishTargetTests(unittest.TestCase):
         target = WishTarget(WishTargetKind.GAME, WishTargetMode.ANY)
         with self.assertRaises(FrozenInstanceError):
             setattr(target, "target_id", "blackjack")
+
+    def test_new_forms_require_explicit_original_goals_instead_of_legacy_guesses(self):
+        for key in (WishId.PLAY_ANY_GAME, WishId.PLAY_OTHER_GAME,
+                    WishId.REMATCH_GAME, WishId.COMEBACK_GAME, WishId.SOCIAL_ANY):
+            goal = WISH_CATALOG.definitions[key].goal
+            with self.subTest(wish=key):
+                with self.assertRaises(ValueError):
+                    legacy_wish_goal(key)
+                with self.assertRaises(ValueError):
+                    ActiveWish(1, key, "blackjack", 0, 100)
+                self.assertEqual(decode_wish_goal({
+                    "objective": goal.objective.value,
+                    "required_count": goal.required_count,
+                }, key), goal)
+        with self.assertRaises(ValueError):
+            decode_wish_goal({"objective": "retry_win", "required_count": 2},
+                             WishId.COMEBACK_GAME)

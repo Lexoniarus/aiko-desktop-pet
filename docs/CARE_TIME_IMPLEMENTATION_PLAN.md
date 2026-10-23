@@ -7994,3 +7994,61 @@ The existing status renderer still uses its Blackjack-card fallback for the
 two new game targets; target-specific status icons belong to the planned
 passive status/UI slice. Their localized game names and cause text are already
 resolved through the existing game-name keys.
+
+
+### Delivery slice 1B: typed flexible wish definitions
+
+The existing Pet-domain definition model now distinguishes target kind from
+`WishTargetMode` (`exact`, `any`, `exclude`). A frozen `WishTarget` binds a
+concrete/excluded reference or retains an empty reference for free choice;
+matching never silently fixes a free goal to the first chosen game. Definition
+binding validates the supported target pool. These are values, not another
+mutable wish collection, timer or progression owner. The first small type-only
+commit is `6e5b140`.
+
+The version-two authored wish catalogue defines seventeen forms, including:
+
+| Added form | Typed target | Original goal | Base form weight | Creation prerequisite |
+| --- | --- | --- | --- | --- |
+| `play_any_game` | Any supported game | Two total rounds, potentially across games | 30 | None |
+| `play_other_game` | Exclude the saved reference game | Two total rounds outside that game | 10 | Recent completed play |
+| `rematch_game` | Exact reference game | One completed round regardless of result | 10 | Last completed round was Aiko's loss |
+| `comeback_game` | Exact reference game | One victory, allowing retries | 5 | Last completed round was Aiko's loss |
+| `social_any` | Any supported ordinary social category | One complete conversation/entertainment sequence | 30 | None |
+
+Experience prerequisites are frozen typed data: thirty-minute validity and a
+one-time 1.5 form-weight multiplier. Definitions do not claim that such an event
+actually happened. Social free choice covers chat, saying, joke and fact, and
+does not invent a horoscope wish or a provider-specific duplicate wish. Reuse
+`shared_play`, `pride` and `connection` for the new forms' future completion.
+Food avoidance is explicitly typed as an excluded target; this amendment does
+not change its existing handover outcome or introduce the new negative family.
+
+Keep the new forms' own label/description/utterance keys, including flexible
+wording rather than the concrete-game wording of a shared round-count goal.
+German templates and strict placeholder contracts accompany the definitions.
+The catalogue rejects incompatible modes, prerequisites, goals, sources and
+malformed windows/multipliers. Catalogue version two does not change the saved
+game format; existing explicit/legacy goals retain their original semantics.
+New forms have no invented legacy objective when an original goal is absent.
+
+Activation remains in the already planned lifecycle/matching slices. The current
+single-target picker declines flexible game/social definitions and experience
+prerequisites it cannot yet resolve, rather than creating a misleading exact
+wish. Existing live form weights and care values remain unchanged; the complete
+area/form weighting, including the 30/30 concrete/free play split and social
+weights, belongs to the selection slice. No generic enable flag, second catalogue
+or duplicate active-wish store is added.
+
+Targeted local worktree validation passed **82 tests in 0.258 seconds** across
+wish targets/catalogue/lifecycle/games, emotional persistence and text catalogue.
+The slowest case took 0.068 seconds. Native Tk creation was blocked for the run.
+Focused Ruff, strict Mypy for four affected source files and focused Pyright
+passed. Preserve parallel horoscope/character edits; verify the isolated staged
+delivery before publishing. No full suite, test windows, mouse control or CI.
+
+The isolated staged delivery additionally passed **100 targeted tests in 0.370
+seconds**, including existing wish expression and emotional read-model tests.
+Its slowest individual case took 0.063 seconds, and native Tk creation remained
+blocked. Focused Ruff, strict Mypy and Pyright also passed on that isolated
+snapshot, independently of parallel uncommitted horoscope/character changes.

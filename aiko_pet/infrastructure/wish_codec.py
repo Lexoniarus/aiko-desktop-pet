@@ -34,12 +34,16 @@ def decode_wish_goal(raw: Any, key: WishId) -> WishGoal:
                       context="wish goal count"),
     )
     allowed: tuple[WishGoal, ...] = (WISH_CATALOG.definitions[key].goal,)
-    if key != WishId.AVOID_FOOD:
+    try:
         allowed += (legacy_wish_goal(key),)
+    except ValueError:
+        # Newly introduced forms have no historical goal to fabricate.
+        pass
     if (goal.objective not in {g.objective for g in allowed}
             or (WISH_CATALOG.definitions[key].area == WishArea.GAMES)
             != (goal.required_count > 0)
-            or key in (WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS)
+            or key in (WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS,
+                       WishId.REMATCH_GAME, WishId.COMEBACK_GAME)
             and goal.required_count != 1):
         raise ValueError("Incompatible saved wish objective/count")
     return goal

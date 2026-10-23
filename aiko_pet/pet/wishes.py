@@ -27,6 +27,11 @@ class WishId(StrEnum):
     AVOID_ROUND_LOSS = "avoid_round_loss"
     WIN_OVERALL = "win_overall"
     AVOID_OVERALL_LOSS = "avoid_overall_loss"
+    PLAY_ANY_GAME = "play_any_game"
+    PLAY_OTHER_GAME = "play_other_game"
+    REMATCH_GAME = "rematch_game"
+    COMEBACK_GAME = "comeback_game"
+    SOCIAL_ANY = "social_any"
     CHAT = "chat"
     SINGLE = "single"
     TWO_PARTS = "twopart"
@@ -131,6 +136,7 @@ def wish_text_key(
 ) -> str:
     """Preserve original goal wording when a catalogue ID acquires a new meaning."""
     prefix = (f"wish.goal.{goal.objective}" if goal is not None
+              and key in (WishId.PLAY_GAME, WishId.WIN_ROUND, WishId.WIN_OVERALL)
               and goal.objective in GAME_GOAL_TEXT_VARIANTS else f"wish.{key}")
     return f"{prefix}.{field}"
 
@@ -148,9 +154,9 @@ def legacy_wish_goal(key: WishId) -> WishGoal:
         return games[key]
     if key == WishId.FOOD:
         return WishGoal(WishObjective.FOOD_INTAKE, 0)
-    if key == WishId.AVOID_FOOD:
-        raise ValueError("Food avoidance has no legacy objective")
-    return WishGoal(WishObjective.ACTIVITY, 0)
+    if key in (WishId.CHAT, WishId.SINGLE, WishId.TWO_PARTS, WishId.FACT, WishId.PET):
+        return WishGoal(WishObjective.ACTIVITY, 0)
+    raise ValueError("Wish form has no legacy objective")
 
 
 @dataclass(frozen=True, slots=True)
@@ -496,6 +502,13 @@ def _candidate_targets(
     definition: WishDefinition, *, needs: NeedLevels, context: WishContext,
 ) -> tuple[str, ...]:
     """Current suitability never extends or replaces an existing objective."""
+    # The current picker binds one concrete game/category. Flexible references
+    # and real experience assignment are introduced by the lifecycle slice.
+    if definition.experience is not None or (
+        definition.area in (WishArea.GAMES, WishArea.SOCIAL)
+        and definition.target_mode != WishTargetMode.EXACT
+    ):
+        return ()
     threshold = BALANCE.number("wishes", "creation_need_threshold")
     if (definition.selection_weight == 0
             or definition.area == WishArea.FOOD and needs.satiety > threshold

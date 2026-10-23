@@ -384,6 +384,21 @@
     "mastermind.color.blue": "Blau",
     "mastermind.color.green": "Grün",
     "mastermind.color.purple": "Lila",
-    "mastermind.color.white": "Weiß"
+    "mastermind.color.white": "Weiß",
+    "wish.play_any_game.label": "Zusammen spielen",
+    "wish.play_any_game.description": "Aiko möchte zwei Runden mit dir spielen. Du kannst das Spiel frei wählen und die Runden auf verschiedene Spiele verteilen.",
+    "wish.play_any_game.utterance": "Ich hätte Lust auf {rounds} Runden mit dir. Suchst du ein Spiel aus?",
+    "wish.play_other_game.label": "Mal etwas anderes spielen",
+    "wish.play_other_game.description": "Aiko möchte zwei Runden in einem anderen Spiel als dem zuletzt gespielten sammeln.",
+    "wish.play_other_game.utterance": "Wie wäre es mit {rounds} Runden in einem anderen Spiel als {target}?",
+    "wish.rematch_game.label": "Eine Revanche",
+    "wish.rematch_game.description": "Nach einer Niederlage möchte Aiko noch eine Runde desselben Spiels mit dir spielen. Der Ausgang ist egal.",
+    "wish.rematch_game.utterance": "Bei {target} hätte ich gern eine Revanche. Spielst du noch eine Runde mit mir?",
+    "wish.comeback_game.label": "Diesmal gewinnen",
+    "wish.comeback_game.description": "Nach einer Niederlage möchte Aiko in diesem Spiel doch noch gewinnen. Sie darf es während ihres Wunsches erneut versuchen.",
+    "wish.comeback_game.utterance": "Bei {target} würde ich gern doch noch gewinnen. Versuchen wir es noch einmal?",
+    "wish.social_any.label": "Zeit miteinander verbringen",
+    "wish.social_any.description": "Aiko möchte mit dir plaudern oder einen Spruch, Witz oder kuriosen Fakt erzählen. Du kannst die Art der Unterhaltung wählen.",
+    "wish.social_any.utterance": "Ich würde gern ein bisschen Zeit mit dir verbringen. Worauf hast du Lust?"
   }
 }

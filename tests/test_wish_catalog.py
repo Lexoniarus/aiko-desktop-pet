@@ -27,10 +27,13 @@ from aiko_pet.pet.wish_catalog import (
 from aiko_pet.pet.wishes import (
     WishArea,
     WishContext,
+    WishExperienceKind,
     WishId,
     WishObjective,
     WishState,
+    WishTargetMode,
     replenish_wishes,
+    wish_text_key,
 )
 
 DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
@@ -40,10 +43,10 @@ class WishCatalogTests(unittest.TestCase):
     def setUp(self) -> None:
         self.raw = load_json(DATA / "wishes.json")
 
-    def test_twelve_forms_reference_the_actual_food_games_and_social_choices(self):
+    def test_seventeen_forms_reference_actual_food_games_and_social_choices(self):
         catalog = load_packaged_wish_catalog()
         self.assertEqual(catalog, WISH_CATALOG)
-        self.assertEqual(len(catalog.definitions), 12)
+        self.assertEqual(len(catalog.definitions), 17)
         self.assertEqual(set(catalog.definitions[WishId.FOOD].targets),
                          set(DEFAULT_CATALOG.foods))
         social = {t for d in catalog.definitions.values()
@@ -55,7 +58,7 @@ class WishCatalogTests(unittest.TestCase):
                     self.assertEqual(set(definition.targets),
                                      {game.value for game in GameId})
         self.assertEqual(sum(d.area == WishArea.GAMES
-                             for d in catalog.definitions.values()), 5)
+                             for d in catalog.definitions.values()), 9)
 
     def test_game_goal_scope_and_initial_impression_follow_the_agreed_variants(self):
         definitions = WISH_CATALOG.definitions
@@ -108,7 +111,7 @@ class WishCatalogTests(unittest.TestCase):
         self.assertIsInstance(WISH_CATALOG.definitions[WishId.FOOD].targets, tuple)
 
     def test_unknown_missing_duplicate_and_mistyped_objectives_are_rejected(self):
-        for version in (True, 1.0, 2):
+        for version in (True, 2.0, 1, 3):
             with self.subTest(version=version), self.assertRaises(ValueError):
                 parse_wish_catalog({**self.raw, "version": version})
         for rows in ([], self.raw["wishes"][:-1],
@@ -156,6 +159,91 @@ class WishCatalogTests(unittest.TestCase):
             parse_wish_catalog(self.raw,
                                text_keys=set(GERMAN_TEXT.messages)
                                - {"wish.pet.description"})
+
+    def test_flexible_and_experience_forms_have_distinct_typed_goal_contracts(self):
+        for key, mode, objective, count, moodlet, weight in (
+            (WishId.PLAY_ANY_GAME, WishTargetMode.ANY, WishObjective.TOTAL_ROUNDS,
+             2, MoodletId.SHARED_PLAY, 30),
+            (WishId.PLAY_OTHER_GAME, WishTargetMode.EXCLUDE, WishObjective.TOTAL_ROUNDS,
+             2, MoodletId.SHARED_PLAY, 10),
+            (WishId.REMATCH_GAME, WishTargetMode.EXACT, WishObjective.TOTAL_ROUNDS,
+             1, MoodletId.SHARED_PLAY, 10),
+            (WishId.COMEBACK_GAME, WishTargetMode.EXACT, WishObjective.RETRY_WIN,
+             1, MoodletId.PRIDE, 5),
+            (WishId.SOCIAL_ANY, WishTargetMode.ANY, WishObjective.ACTIVITY,
+             0, MoodletId.CONNECTION, 30),
+        ):
+            definition = WISH_CATALOG.definitions[key]
+            with self.subTest(wish=key):
+                self.assertEqual((definition.target_mode, definition.goal.objective,
+                                  definition.round_count,
+                                  definition.fulfillment_moodlet,
+                                  definition.selection_weight),
+                                 (mode, objective, count, moodlet, weight))
+                self.assertEqual(wish_text_key(key, definition.goal, "utterance"),
+                                 f"wish.{key}.utterance")
+        social = WISH_CATALOG.definitions[WishId.SOCIAL_ANY]
+        self.assertEqual(set(social.targets), {"chat", "single", "twopart", "fact"})
+        self.assertIsNone(social.bind_target().target_id)
+        other = WISH_CATALOG.definitions[WishId.PLAY_OTHER_GAME]
+        self.assertFalse(other.bind_target("blackjack").matches(
+            other.target_kind, "blackjack"))
+
+    def test_experience_is_a_bounded_prerequisite_not_a_claim_of_actual_history(self):
+        for key, kind in (
+            (WishId.PLAY_OTHER_GAME, WishExperienceKind.RECENT_PLAY),
+            (WishId.REMATCH_GAME, WishExperienceKind.LAST_ROUND_LOSS),
+            (WishId.COMEBACK_GAME, WishExperienceKind.LAST_ROUND_LOSS),
+        ):
+            requirement = WISH_CATALOG.definitions[key].experience
+            with self.subTest(wish=key):
+                self.assertIsNotNone(requirement)
+                assert requirement is not None
+                self.assertEqual(requirement.kind, kind)
+                self.assertEqual(requirement.window_seconds, 1800)
+                self.assertEqual(requirement.weight_multiplier, 1.5)
+                with self.assertRaises(FrozenInstanceError):
+                    setattr(requirement, "window_seconds", 0)
+        for key in (WishId.PLAY_ANY_GAME, WishId.SOCIAL_ANY, WishId.PLAY_GAME):
+            self.assertIsNone(WISH_CATALOG.definitions[key].experience)
+
+    def test_concrete_picker_does_not_misrepresent_flexible_or_experience_goals(self):
+        pending = {
+            key: WISH_CATALOG.definitions[key] for key in (
+                WishId.PLAY_ANY_GAME, WishId.PLAY_OTHER_GAME, WishId.REMATCH_GAME,
+                WishId.COMEBACK_GAME, WishId.SOCIAL_ANY,
+            )
+        }
+        state = WishState()
+        self.assertEqual(replenish_wishes(
+            state, elapsed=100, sleeping=False, context=WishContext(online_social=True),
+            needs=NeedLevels(0, 0, 0, 0, 0), definitions=pending, rng=random.Random(1),
+        ), state)
+
+    def test_invalid_target_modes_and_experience_requirements_are_rejected(self):
+        for key, field, value in (
+            ("play_any_game", "target_mode", "exact"),
+            ("play_other_game", "target_mode", "any"),
+            ("rematch_game", "experience", None),
+            ("play_game", "experience", {"kind": "recent_play"}),
+            ("social_any", "targets", ["horoscope"]),
+            ("rematch_game", "round_count", 2),
+            ("comeback_game", "objective", "next_win"),
+        ):
+            raw = copy.deepcopy(self.raw)
+            next(r for r in raw["wishes"] if r["id"] == key)[field] = value
+            with self.subTest(key=key, field=field), self.assertRaises(ValueError):
+                parse_wish_catalog(raw)
+        for field, value in (
+            ("kind", "recent_play"), ("window_seconds", True),
+            ("window_seconds", 0), ("weight_multiplier", float("nan")),
+            ("weight_multiplier", True), ("weight_multiplier", 0.5),
+        ):
+            raw = copy.deepcopy(self.raw)
+            row = next(r for r in raw["wishes"] if r["id"] == "rematch_game")
+            row["experience"][field] = value
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                parse_wish_catalog(raw)
 
     def test_shared_pacing_has_one_owner_and_rejects_the_retired_bonus(self):
         self.assertEqual(BALANCE.integer("wishes", "maximum_active"), 3)
