@@ -7058,3 +7058,92 @@ targets. This amendment changes neither contribution values nor friendship rates
 Documentation-only scope: only this master plan is changed and committed here.
 Parallel documentation work is preserved. No runtime tests, application windows,
 mouse control, live-save access or CI in this pass.
+
+
+### Proposed overall-state selection including mixed feelings
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Retain all active short/longer-term impressions in the
+composition and derive one primary overall label. Other feelings remain
+available for expression and independently defined interaction boundaries.
+This proposal supersedes the earlier exact-tie-only mixed-state selection when
+later implemented; it does not modify runtime emotion selection in this pass.
+
+#### Complete intensity totals and mixed-feeling band
+
+Each active Moodlet contributes its current intensity one/two/three once.
+Longer-term families receive no additional multiplier: their persistence already
+provides their sustained influence. Numeric mood points and emotional intensity
+remain distinct, and numeric contribution caps do not truncate emotional inputs.
+
+Let P be total positive intensity, N total negative intensity and T = P + N.
+For T greater than zero:
+
+| Composition | Primary selection branch |
+| --- | --- |
+| P is more than sixty percent of T | Positive side determines the main label |
+| N is more than sixty percent of T | Negative side determines the main label |
+| Each side is at least forty percent of T | Mixed overall feeling, including the exact forty/sixty boundaries |
+
+For a mixed composition, choose Reserviert when caution/uncertainty makes up at
+least half of the negative intensity. Otherwise choose Zwiegespalten. Thus P=3,
+N=2 is mixed, whereas P=5,N=1 has a positive primary label without deleting the
+negative influence. The band replaces the exact equality requirement.
+
+#### Dominant-side directions and qualified compound labels
+
+Within a clearly dominant side, normally use its strongest combined direction.
+The additional compounds below qualify within that side's branch:
+
+| Overall state | Proposed compound qualification |
+| --- | --- |
+| Unbeschwert | Positive branch; joy and safety both present, together at least sixty percent of positive intensity; negative intensity at most twenty percent of T; numeric mood at least seventy |
+| Zuversichtlich | Positive branch; positive expectation and pride both present, together at least sixty percent of positive intensity |
+| Angespannt | Negative branch; uncertainty plus at least one direction among irritation, crowding and frustration, together at least sixty percent of negative intensity |
+
+Use the contributing intensity only once in P/N/T. Evaluating a compound does
+not add another Moodlet or another emotional contribution. Safety can come from
+Vertrauensvoll or existing Geborgen; the same-named optimism Moodlet does not
+unconditionally override the complete composition.
+
+For a prevailing individual longer-term direction, use these mappings:
+
+| Longer-term influence | Individual-direction label |
+| --- | --- |
+| Vertrauensvoll / Wertgeschaetzt | Zugewandt |
+| Zuversichtlich | Zuversichtlich |
+| Verunsichert | Angespannt |
+| Uebersehen | Einsam |
+| Auf der Hut | Reserviert |
+
+Without a qualifying compound, retain the strongest-direction labels Froehlich,
+Stolz, Erleichtert, Zugewandt, Gereizt, Bedraengt, Frustriert, Niedergeschlagen
+and Einsam, together with the longer-term mappings above. Equal-ranked
+directions prefer the most recently triggered cause, then the strongest
+individual intensity, then stable declared order, as in the existing policy.
+
+#### No-impression fallback and scope
+
+If T is zero, retain the existing numeric-mood fallback:
+
+| Numeric mood | Overall state |
+| --- | --- |
+| Below forty | Gedrueckt |
+| Forty to below seventy | Gelassen |
+| Seventy or above | Zufrieden |
+
+This retains seventeen overall labels including the four additions Unbeschwert,
+Zuversichtlich, Reserviert and Angespannt. A reserved Aiko can still enjoy play;
+a warm Aiko can retain irritation. The primary label does not erase other
+influences, create another friendship effect or impose new interaction locks.
+Keep the full composition derived through existing Pet/domain and read-model
+owners, not as an independently mutable emotion store.
+
+Next calculate the six longer-term families' combined effects on numeric mood
+and progressive friendship using existing caps, rates and response timing.
+Their proposed strengths and the overall daily balance remain subject to that
+joint review. Recording these selection rules does not select a new rate.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, text and documentation work is preserved. No runtime tests,
+application windows, mouse control, live-save access or CI in this pass.
