@@ -20,6 +20,7 @@ from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.needs import NeedLevels
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
+from aiko_pet.pet.wish_fulfillment import fulfill_activity_wish
 from aiko_pet.pet.wish_selection import replenish_wishes
 from aiko_pet.pet.wishes import (
     ActiveWish,
@@ -30,7 +31,6 @@ from aiko_pet.pet.wishes import (
     WishState,
     acknowledge_wish_expression,
     dismiss_wish,
-    fulfill_activity_wish,
     set_wish_pinned,
     wish_to_express,
 )

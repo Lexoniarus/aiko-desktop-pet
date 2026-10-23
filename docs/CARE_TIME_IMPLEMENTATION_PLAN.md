@@ -8354,3 +8354,25 @@ files and the changed tests (Ruff). Native Tk creation was blocked throughout
 loading and execution. No windows, mouse control, live-save access, full suite
 or CI was used. Only this delivery's paths/hunks are committed; parallel
 horoscope, UI, character assets and related documentation remain untouched.
+
+
+### Delivery slice 5A: shared assignment and fulfillment ownership
+
+`pet/wish_matching.py` owns pure pre-outcome matching/priority. It checks the
+saved exact/any/excluded target against supported activities, then prefers a
+pin, a more constrained target (exact, exclusion, free choice), real saved
+progress, age and stable identity. Equally concrete outcome goals acquire no
+invented win-first ordering. Expired/future wishes and unsupported activities
+cannot match. Application admission will capture this returned identity before
+outcomes; no random selection, physical care effect or extra state is involved.
+
+Pure completion rules were moved from `pet/wishes.py` to
+`pet/wish_fulfillment.py`, with actual callers updated and no forwarding shim.
+Immutable wish values, lifecycle and disclosure keep their existing owner;
+`PetState` remains the only mutable aggregate. Game/social adapters follow in
+separate small commits; food/affection behavior is unchanged by this extraction.
+
+Eight priority/matching tests and existing lifecycle/game/food/affection checks
+passed (46 targeted tests in 0.172 seconds; slowest 0.073 seconds). Focused
+strict Mypy/Pyright passed. Native Tk creation was blocked. No test windows,
+mouse control, live-save access, full suite or CI was used.
