@@ -6766,3 +6766,80 @@ selected by this documentation amendment.
 Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, tests, text and documentation changes are preserved. No runtime
 tests, application windows, mouse control, live-save access or CI in this pass.
+
+
+### Proposed longer-term Moodlet: Verunsichert
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Meaning: "I am not sure where I stand with you." Derive this
+impression from repeated inconsistent treatment: pleasant personal attention
+followed by actual disregard of boundaries or qualified upsetting treatment.
+One bad moment alone does not establish the longer-term pattern.
+
+#### Qualifying twenty-four-hour pattern
+
+All of the following must hold within twenty-four real elapsed hours:
+
+| Evidence | Proposed qualification |
+| --- | --- |
+| Positive encounters | At least two actually pleasant personal encounters |
+| Repeated negative experience | Each of those encounters is followed by a confirmed boundary violation or a qualified upsetting interaction |
+| Distributed incidents | The two negative incidents are at least two hours apart |
+| Independent incidents | Two separate situations; escalation messages from one incident count only once |
+
+Example: shared play in the morning followed by continued poking despite a
+clear request to stop; welcome petting later followed by repeated withholding
+of a requested object. Qualified negative evidence can use the already defined
+repeated-poking, communicated petting-boundary, withholding and expressly
+unwanted-food-handover events. Use the real semantic incidents, not callback,
+speech or timer counts, and do not reuse one incident as both negative cases.
+
+A fair game defeat, ordinary absence or an isolated click does not qualify as
+negative treatment for this pattern. Positive attention alone does not create
+uncertainty: the repeated subsequent negative incidents are required. Application
+closure does not fabricate personal encounters or boundary violations.
+
+#### Strength, stacking and decay
+
+| Intensity | Qualified buildup | Numeric mood-target contribution |
+| --- | --- | --- |
+| Level 1 | First qualifying twenty-four-hour period | -5 |
+| Level 2 | Another qualifying twenty-four-hour period | -10 |
+| Level 3 | A third qualifying twenty-four-hour period | -15 |
+
+Keep one active episode with a maximum of three levels. Account for each
+period once; old incidents cannot provide further levels through repeated
+window reads. The immediate upsetting-interaction Moodlets remain independent:
+Verunsichert represents their longer-term inconsistent relationship pattern.
+
+Its emotional influence supports cautious, reserved or tense reactions; exact
+direction/overall-label mapping belongs to the upcoming composition discussion.
+Use current intensity one/two/three, normal numeric caps and timed mood response,
+and the existing continuous friendship balance. Add no separate instant
+friendship deduction and no new blanket interaction lock.
+
+Each stage lasts thirty real hours. Without another qualifying pattern, lose
+one level after each thirty hours until expiry. A new qualifying period raises
+intensity by one, capped at three, and starts the current stage's thirty hours.
+At level three renew only the current thirty hours; do not bank extra duration
+or apply the positive wish-family extension policy. Standby and application
+closure count toward decay.
+
+A friendly action does not instantly remove uncertainty. It may create its
+own positive impression and contribute to a future reliable-care pattern.
+Positive and negative long/shorter-term impressions may coexist. Keep the real
+qualifying-period cause in existing bounded Moodlet evidence, without creating
+another permanent interaction or relationship archive.
+
+Presentation example: "Verunsichert - Stufe 2: Manchmal bist du so lieb ... und
+dann verstehe ich dich wieder nicht." Describe the feeling rather than exposing
+the qualification formula.
+
+Include this additional long-lived negative family in the later joint daily
+balance review. The prior worksheets do not include the new longer-term scope.
+Next discuss Uebersehen: qualification, strength, stacking and decay, with a
+clear distinction from the existing need-based loneliness after-effect.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, tests, text and documentation changes are preserved. No runtime
+tests, application windows, mouse control, live-save access or CI in this pass.
