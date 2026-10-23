@@ -6686,3 +6686,83 @@ not selected by this documentation amendment.
 Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, tests, text and documentation changes are preserved. No runtime
 tests, application windows, mouse control, live-save access or CI in this pass.
+
+
+### Proposed longer-term Moodlet: Zuversichtlich
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Meaning: "Good things can happen, even when something goes
+wrong along the way." Derive it from repeated pleasant shared experiences and
+actual success. Distinguish it from Stolz, the immediate impression of a
+particular achievement. A previous setback is not required.
+
+#### Qualifying twenty-four-hour period
+
+All of the following must hold within twenty-four real elapsed hours:
+
+| Evidence | Proposed qualification |
+| --- | --- |
+| Positive shared experiences | At least three actually pleasant activities |
+| Different experiences | Activities in at least two areas: games, social, affection or personal food handover |
+| Distributed experience | At least two encounters separated by at least two hours |
+| Something succeeds | At least one own success: a won game round or an actually fulfilled game goal |
+
+Pleasant activities include two completed rounds of actual shared play, a full
+conversation/entertainment sequence, welcome petting or a positively received
+personal food handover. Count each activity kind at most once per encounter;
+repeated clicks or several consecutive strokes cannot manufacture multiple
+qualifying experiences. A success may belong to one of these activities; it
+does not by itself count the same activity twice.
+
+Do not require a prior defeat or encourage deliberately creating setbacks.
+Later actual success and pleasant encounters after defeats can qualify the
+same rule. Individual losses or active negative impressions do not automatically
+exclude optimism. Only real activity qualifies; no offline successes or positive
+encounters are invented. Existing action admission and willingness still apply.
+
+#### Strength, stacking and decay
+
+| Intensity | Qualified buildup | Numeric mood-target contribution |
+| --- | --- | --- |
+| Level 1 | First qualifying twenty-four-hour period | +5 |
+| Level 2 | Another qualifying twenty-four-hour period | +10 |
+| Level 3 | A third qualifying twenty-four-hour period | +15 |
+
+Keep one active episode with at most three levels. Each period is accounted
+for once; another increase requires another actual qualifying twenty-four-hour
+period. Do not turn repeated window reads or completion callbacks into extra
+reinforcement. Individual short-term impressions remain independent: the
+longer-term qualification is one evaluation of the overall period pattern.
+
+Use current emotional intensity one/two/three and existing numeric mood caps
+and response timing. Active intensity participates in the normal continuous
+friendship balance, with no additional instant bonus. Its precise emotional
+direction and overall-label mapping remain part of the later composition review.
+
+Each stage lasts thirty real hours. Without new confirmation, lose one level
+after each thirty hours until expiry. A qualifying period raises intensity by
+one, capped at three, and starts the current stage's thirty hours. At level
+three renew only the current thirty hours. Bank no additional duration and do
+not apply the positive wish-family 60/45/45 extension policy. Standby and
+application closure count toward decay.
+
+A later defeat does not instantly remove optimism. Aiko may be disappointed
+about a particular round while still feeling broadly optimistic. Preserve the
+real qualifying-period cause within existing bounded Pet/Moodlet evidence;
+do not introduce another score or permanent game-history owner.
+
+Presentation example: "Zuversichtlich - Stufe 2: Ich glaube, da kommen noch
+schoene Sachen auf uns zu." The player-facing description communicates the
+feeling rather than the underlying counters.
+
+Before accepting balance, evaluate all three proposed longer-term positive
+families together. Their contributions can accumulate; the earlier daily
+worksheets do not establish the friendship targets after these additions.
+
+Next discuss Verunsichert: qualifying patterns, strength, stacking and decay.
+Its thresholds and the remaining longer-term/overall-state additions are not
+selected by this documentation amendment.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, tests, text and documentation changes are preserved. No runtime
+tests, application windows, mouse control, live-save access or CI in this pass.
