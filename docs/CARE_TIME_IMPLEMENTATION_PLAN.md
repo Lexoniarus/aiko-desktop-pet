@@ -7958,3 +7958,39 @@ keep those adaptations narrow rather than introducing new storage machinery.
 All implementation remains separately authorized. Continue with small commits,
 targeted local tests and scoped pushes; no test windows, mouse control or
 GitHub CI. This amendment changes only the plan and runs no runtime tests.
+
+
+### Delivery slice 1A: existing game wishes include Connect Four and Mastermind
+
+The five existing game wish definitions now include `connect_four` and
+`mastermind` alongside Rock Paper Scissors, Tic-Tac-Toe and Blackjack. This
+changes eligible targets only: original objectives, saved progress, selection
+weights and fulfillment Moodlet families remain unchanged.
+
+Use the existing game-round coordinator and per-game round events. Catalogue
+coverage now checks every supported game for each game-wish form; the existing
+coordinator regression exercises every `GameId`, including start-before-result,
+player-to-Aiko result translation and duplicate-result rejection. No additional
+state owner, game-specific wish processor or UI change is introduced.
+
+Targeted local worktree validation: **28 tests passed** across
+`test_wish_catalog` (7), `test_wish_games` (14) and `test_game_experience` (7).
+Reported test runtimes were 0.006, 0.092 and 0.097 seconds respectively; the
+slowest individual case took 0.073 seconds. Changed-test Ruff and focused
+Pyright passed. No test windows, mouse control, full-suite run or CI.
+
+After securing the baseline, the exact staged 1A snapshot independently passed
+the same **28 tests in 0.178 seconds**, with native Tk creation blocked. The
+slowest case took 0.066 seconds; focused Ruff and Pyright passed again. This
+checks delivery without relying on the remaining parallel working-tree changes.
+
+The completed Mastermind implementation is secured separately in baseline
+commit `5602726`, including its assets and game-host wiring. Shared horoscope
+and character-asset changes remain outside that baseline and this slice.
+The new flexible wish forms, ten-minute lifecycle, Moodlet timing/longer-term
+families and SQLite migration remain separate subsequent slices.
+
+The existing status renderer still uses its Blackjack-card fallback for the
+two new game targets; target-specific status icons belong to the planned
+passive status/UI slice. Their localized game names and cause text are already
+resolved through the existing game-name keys.

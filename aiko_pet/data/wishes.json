@@ -52,7 +52,9 @@
       "targets": [
         "rock_paper_scissors",
         "tic_tac_toe",
-        "blackjack"
+        "blackjack",
+        "connect_four",
+        "mastermind"
       ],
       "fulfillment_moodlet": "shared_play",
       "fulfillment_level": 1,
@@ -67,7 +69,9 @@
       "targets": [
         "rock_paper_scissors",
         "tic_tac_toe",
-        "blackjack"
+        "blackjack",
+        "connect_four",
+        "mastermind"
       ],
       "fulfillment_moodlet": "pride",
       "fulfillment_level": 1,
@@ -82,7 +86,9 @@
       "targets": [
         "rock_paper_scissors",
         "tic_tac_toe",
-        "blackjack"
+        "blackjack",
+        "connect_four",
+        "mastermind"
       ],
       "fulfillment_moodlet": "relief",
       "fulfillment_level": 1,
@@ -97,7 +103,9 @@
       "targets": [
         "rock_paper_scissors",
         "tic_tac_toe",
-        "blackjack"
+        "blackjack",
+        "connect_four",
+        "mastermind"
       ],
       "fulfillment_moodlet": "pride",
       "fulfillment_level": 2,
@@ -112,7 +120,9 @@
       "targets": [
         "rock_paper_scissors",
         "tic_tac_toe",
-        "blackjack"
+        "blackjack",
+        "connect_four",
+        "mastermind"
       ],
       "fulfillment_moodlet": "relief",
       "fulfillment_level": 2,

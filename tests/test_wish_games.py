@@ -250,41 +250,39 @@ class GameWishTests(unittest.TestCase):
         self.assertFalse(pet.moodlets.active)
 
     def test_application_captures_existing_wish_and_translates_each_game_once(self):
-        # Connect Four adds play, not a new set of wish targets.
-        for target in WISH_CATALOG.definitions[WishId.WIN_ROUND].targets:
-            game = GameId(target)
-            pet = pet_with(WishId.WIN_ROUND)
-            pet.restore_checkpoint(
-                replace(
-                    pet.capture_checkpoint(),
-                    wishes=wish_state(WishId.WIN_ROUND, game.value),
+        for game in GameId:
+            with self.subTest(game=game):
+                pet = pet_with(WishId.WIN_ROUND)
+                pet.restore_checkpoint(
+                    replace(
+                        pet.capture_checkpoint(),
+                        wishes=wish_state(WishId.WIN_ROUND, game.value),
+                    )
                 )
-            )
-            coordinator = GameExperienceCoordinator(
-                pet,
-                make_aiko_mind(started_at=0),
-                AdaptiveRoutine(),
-                clock=ActiveSessionClock(lambda: 0),
-            )
-            inputs = SessionInputs(WALL, 0, False, None, False, False, None)
-            start = GameRoundEvent(game, "actual", 1)
-            finish = replace(start, outcome="loss")  # Player loss = Aiko victory.
-            coordinator.observe_round(finish, inputs)
-            self.assertTrue(pet.wishes.active)
-            coordinator.observe_round(start, inputs)
-            coordinator.observe_round(finish, inputs)
-            before = pet.capture_checkpoint()
-            coordinator.observe_round(finish, inputs)
-            self.assertEqual(pet.capture_checkpoint(), before)
-            self.assertFalse(pet.wishes.active)
-            self.assertEqual(pet.friendship, 50)
-            self.assertEqual(
-                pet.fun, 75
-            )  # Ordinary session effects still wait for close.
-            coordinator.complete(GameExperience(game.value, 2, 1, 0, 1), inputs)
-            self.assertLessEqual(
-                sum(e.amount for e in pet.friendship_history.rewards), 0.75
-            )
+                coordinator = GameExperienceCoordinator(
+                    pet,
+                    make_aiko_mind(started_at=0),
+                    AdaptiveRoutine(),
+                    clock=ActiveSessionClock(lambda: 0),
+                )
+                inputs = SessionInputs(WALL, 0, False, None, False, False, None)
+                start = GameRoundEvent(game, "actual", 1)
+                finish = replace(start, outcome="loss")  # Player loss = Aiko victory.
+                coordinator.observe_round(finish, inputs)
+                self.assertTrue(pet.wishes.active)
+                coordinator.observe_round(start, inputs)
+                coordinator.observe_round(finish, inputs)
+                before = pet.capture_checkpoint()
+                coordinator.observe_round(finish, inputs)
+                self.assertEqual(pet.capture_checkpoint(), before)
+                self.assertFalse(pet.wishes.active)
+                self.assertEqual(pet.friendship, 50)
+                # Ordinary session effects still wait for close.
+                self.assertEqual(pet.fun, 75)
+                coordinator.complete(GameExperience(game.value, 2, 1, 0, 1), inputs)
+                self.assertLessEqual(
+                    sum(e.amount for e in pet.friendship_history.rewards), 0.75
+                )
 
     def test_round_already_underway_does_not_adopt_a_later_wish(self):
         pet = PetState(updated_at=WALL, lived_seconds=100)
