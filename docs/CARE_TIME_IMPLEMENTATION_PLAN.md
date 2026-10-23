@@ -7672,3 +7672,76 @@ Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, assets, tests, text and documentation work is preserved. No
 runtime tests, application windows, mouse control, personal-save reads, database
 creation/migration or CI in this pass.
+
+
+### Proposed mapping of the remaining persisted fields to SQLite tables
+
+**Discussion proposal recorded at the owner's request, 2026-10-23; no runtime
+implementation.** Extend the logical table model with the remaining existing
+save fields. Wish instances, Moodlet causes, longer-term evidence and personal
+food handover receipts retain their preceding proposed contracts. This mapping
+does not yet select all primary keys, optional foreign keys or deletion rules.
+
+| Existing persisted area | Proposed destination | Values to preserve |
+| --- | --- | --- |
+| Shared save/time foundation | `save_state` | Save revision, UTC checkpoint and shared lived seconds |
+| Needs and mood | `pet_state` | Satiety, energy, fun, social, affection, mood and current friendship |
+| Nutrition | `pet_state`, `food_intake_receipts` | Digestion reserve, awake time since food/main meal, meal-day bookkeeping and existing ordered food history/eating evidence |
+| Sleep | `sleep_state` | Sleep kind/start, slept duration, wake/protection times, care break, search/intake deadlines, failed food sources and still-used legacy sleep markers |
+| Relationship progression | `relationship_state`, `relationship_entries` | Contact/continuous-care anchors, calculation baseline, eligibility bookkeeping and bounded direct reward/penalty entries |
+| Deficient-need exposure | `need_exposure_buckets`, additional `poor_care_cursors` | Existing per-need critical/zero durations and already-accounted/handled processing positions |
+| Interaction boundaries | `interaction_state` | Poke/petting boundaries, refusal deadline, excess attempts and food-variety request state |
+| Settings | `app_settings` | Pet/window geometry, toolbar coordinates, behavior switches, online permission and optional zodiac sign |
+| Actual World stock | `world_state`, `world_objects` | Surface, revision, allocation counter and saved object identity/definition/revision/ground position/footprint |
+| Subjective object knowledge | `object_memories`, `object_memory_sources`, additional `object_memory_state` | Acquired identity, remembered place, knowledge/missing state, possible associations, record allocation and World allocation provenance |
+| Learned habits | `adaptive_state`, `adaptive_hour_slots`, additional `adaptive_quiet_phases` | Existing learning scalars, hour-of-week aggregates, learned quiet window and bounded recent daily quiet phases |
+| API repetition suppression | `social_receipts` | Category, provider identity, fingerprint and existing order of the last ten contents per category |
+| API limits | `social_requests`, `provider_pauses` | Request timestamps and provider pause deadlines |
+| Current daily horoscope | Additional `horoscope_days` | Day, attempt count, optional reading, continuation position, admitted/completed flags |
+
+Include the actual parallel horoscope working contract before switching storage;
+this documentation does not modify that work. Retain its bounded current-day
+record rather than introducing a growing daily archive. Admission/continuation
+state must prevent duplicate participation credit after restart.
+
+#### Preserve existing meanings during the storage change
+
+- An acquired object-memory instance identity is historical knowledge. The
+  physical object may already be consumed/removed and absent from saved World
+  stock. Do not require a live `world_objects` row or delete knowledge merely
+  because stock disappears. Possible-source associations still relate
+  subjective records and must not reveal hidden World identity.
+- Preserve distinct time meanings: shared elapsed-domain deadlines, actual
+  wall-clock timestamps, durations, local days and minute-of-day quiet windows.
+  Object-memory active age must not silently become elapsed real time. API
+  limits retain their wall-clock meaning.
+- Ordered nutrition food IDs do not contain the same facts as timestamped
+  food-monotony intake evidence. Preserve their separate meanings and order;
+  do not invent event times or merge entries based only on matching food IDs.
+- Social repetition receipts likewise preserve order without inventing event
+  timestamps where the existing format provides none.
+- Preserve still-used meal/sleep bookkeeping and legacy relationship fields
+  during import. Storage conversion must not reactivate obsolete instant-care
+  reward rules or remove compatibility values without a separate usage review.
+- Keep the current World save/restore semantics: terminal objects are omitted
+  and nonterminal objects restore safely at ground level. Do not introduce
+  motion/animation continuation as an incidental SQLite feature. Technical
+  placement does not invalidate a pending real handover receipt.
+
+`PetState`, World, Memory and the existing settings/adaptive/social owners keep
+their responsibilities. Tables are persistence mappings, not another domain
+hierarchy; one table does not imply one new service class. Retain typed, bounded
+variant snapshots where appropriate rather than creating a table per small list.
+
+Overall emotion, display text, tooltips and status projections remain derived.
+Do not add a permanent row per thirty-second tick, raw input/hardware archive,
+ordinary animation/bubble playback state or a duplicate editable catalogue.
+
+Next discuss concrete keys, optional relationships and cleanup/retention rules
+for this model. Those additional choices are not approved by recording this
+field mapping, and no SQLite schema or database is created in this pass.
+
+Documentation-only scope: only this master plan is changed and committed here.
+Parallel runtime, assets, tests, text and documentation work is preserved. No
+runtime tests, application windows, mouse control, personal-save reads, database
+creation/migration or CI in this pass.
