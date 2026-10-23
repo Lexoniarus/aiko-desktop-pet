@@ -1,61 +1,71 @@
-# Progressive friendship, contact and neglect
+# Continuous friendship, contact and neglect
 
-This guide describes stage 3 on `feature/social-optimization`. The
-[active plan](CARE_TIME_IMPLEMENTATION_PLAN.md) records delivery; the
-[proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) preserves earlier alternatives.
-Friendship remains one 0–100 relationship value, initially 15. Display level
-is `min(10, 1 + floor(points / 10))`. Needs can reach zero without death.
+This guide describes the current `feature/social-optimization` runtime, checked
+against `5d20d9c` on 2026-10-23. The [active plan](CARE_TIME_IMPLEMENTATION_PLAN.md)
+records delivery and open decisions. The [original proposal](FRIENDSHIP_BALANCE_PROPOSAL.md)
+preserves historical care-reward alternatives; its capped reward model is superseded.
+Friendship remains one 0–100 relationship value, initially 15. Display level is
+`min(10, 1 + floor(points / 10))`. Needs can reach zero without death.
 
-## Personal care and rolling rewards
+## Continuous balance
 
-| Accepted personal action | Nominal gain | Evidence |
+Numeric mood, every active Moodlet's current tier, and absence/qualified neglect
+contribute over actual elapsed time. There is no instantaneous friendship gain
+for ordinary care or fulfilled wishes, and no current two-hour/daily reward pot.
+Care changes needs and renews accepted contact; fulfillment creates its defined
+Moodlet. Those changed facts affect subsequent elapsed balance.
+
+Raw emotional amounts per 30 seconds, before progressive factors:
+
+| Source | Positive amount | Negative amount |
 | --- | --- | --- |
-| Food | 0.9 | Actual personal intake, not placement or an unused offer |
-| Energy drink | 0.25 | Actual personal intake |
-| Talking / petting | 1.0 each | Accepted, committed care transition |
-| Shared play | 1.0 per session | At least two completed rounds, irrespective of outcome |
+| Numeric mood | 0 at 60 or below; linear to 0.002 at 80; capped there | 0 at 40 or above; linear to 0.004 at 20; capped there |
+| Each active Moodlet | 0.003 per positive tier | 0.006 per negative tier |
 
-Above 80 in the corresponding pre-care need, multiply the nominal award by
-0.25. Then enforce same-type eligibility once per two real hours, a shared
-0.75 per rolling two hours and a shared five points per rolling 24 hours.
-There is no variety bonus or midnight reset. Values and curves live only in
-`data/balance.json`; Python owns their validation and transition rules.
+Only the positive numeric-mood baseline requires accepted contact within the
+last four hours. Negative mood and active Moodlets contribute independently.
+The 40–60 mood band is neutral. Numeric-mood group/global caps do not suppress
+Moodlets' relationship contributions. Two negative impressions can outweigh
+otherwise good numeric mood; current tiers, not historical peak tiers, count.
 
-An eligible same-type attempt sets its two-hour anchor even if a shared
-budget or the 100-point limit leaves no award. Earlier repetitions do not
-move that anchor. Limits constrain actual credited gain, never need care or
-qualified contact. Loss does not reopen a reward budget.
+Interpolate each progressive factor linearly between point anchors:
 
-Accepted personal care renews contact even with no remaining reward. A
-completed one-round game is contact, but earns no ordinary friendship award. Opening
-a game, cancelling before any completed round, rejected food/drink, sleep,
+| Friendship points | 0 | 35 | 50 | 70 | 90–100 |
+| --- | --- | --- | --- | --- | --- |
+| Positive factor | 1 | 1 | 1 | 0.6 | 0.35 |
+| Negative factor | 0.05 | 0.15 | 0.35 | 0.75 | 2 |
+
+One solver integrates simultaneous positive and negative contributions across
+these anchors. The only hard point bounds are 0 and 100; there is no protected
+level floor. Direct event penalties remain separate and are not scaled by this
+elapsed policy. Values live in `aiko_pet/data/balance.json`.
+
+The existing shared session clock samples ordinary status every 30 seconds;
+actions and saves flush pending elapsed time immediately. Numeric progression
+uses intervals of at most 15 seconds and splits at relevant Moodlet/contact/need
+boundaries. This is neither another timer nor a fixed-size point jump.
+
+## Accepted contact
+
+| Personal action | Qualifying evidence |
+| --- | --- |
+| Food / energy drink | Actual personal intake, not placement or an unused/refused offer |
+| Talking / petting | Accepted, committed care transition |
+| Shared play | At least one actual completed round in the once-only session summary |
+
+Opening a menu/game, cancelling before completion, rejected food/drink, sleep,
 wake, hover, ordinary input, app opening and autonomous intake do not renew
-it. Autonomous consumption still supplies its actual need normally.
+contact. Talking/petting count at admission, not a later bubble receipt;
+interrupting presentation cannot undo or repeat accepted care. Session summaries
+remain once-only. Wish resolution can occur at an earlier actual round result
+without granting a second contact event or an instant friendship bonus.
 
-Talking/petting count at their existing committed care transition, rather
-than on a later bubble receipt. Interrupting presentation does not undo an
-already accepted interaction or credit it again. A blocked/pre-commit
-cancelled command never counts. Games keep their existing once-only close
-summary; handovers count only at committed consumption. Callers advance the
-shared session clock before committing care or completed play.
+The food-avoidance wish has a separate handover rule: a perceived personal
+handover can fulfill it even if refused. This does not invent intake or accepted
+contact. Autonomous food can fulfill an ordinary food wish and create its Moodlet,
+but cannot fabricate personal contact.
 
-Stage 5B.7 adds a separate nominal **0.25** reward for a personally fulfilled
-pre-existing wish: accepted matching food/petting, a qualifying game objective
-or the entire desired social sequence. It uses the same reward history and
-unchanged 0.75/two-hour and five/day ceilings, plus room below friendship 100.
-Ordinary credit is applied first when the same transition grants both. An
-ordinary action's interval can suppress its ordinary credit without excluding
-the wish bonus. Bonus exhaustion never prevents fulfillment or its Moodlet.
-
-Game wish credit occurs at its actual round/block result; ordinary session
-credit retains the separate once-only close boundary. The same common pot
-limits both; closing later cannot repeat the wish credit. Social care still
-commits at playback admission, with the wish bonus only after full completion.
-Autonomous food can fulfill and create an impression, including closed-time
-known-stock intake, but has no personal bonus. Ended identity and reward history
-persist together, with no later top-up or replay after reload.
-
-## Passive loss
+## Absence and neglect reference
 
 | Care-contact gap | Reference points lost per hour in that interval |
 | --- | --- |
@@ -65,47 +75,32 @@ persist together, with no later top-up or replay after reload.
 | After twenty-four through forty-eight hours | 1.5 |
 | After forty-eight hours | 2 |
 
-Sleep and standby do not pause this clock. Rates apply to their own
-intervals, without retroactive re-rating or an eight-hour cap.
-
-Passive scaling interpolates linearly between these anchors:
-
-| Friendship | 0 | 35 | 50 | 70 | 90–100 |
-| --- | --- | --- | --- | --- | --- |
-| Loss factor | 0.05 | 0.15 | 0.35 | 0.75 | 2.00 |
-
-The policy integrates the changing factor continuously, including crossings
-between anchors. Direct negative actions and positive gains are not scaled.
-Zero is a possible endpoint, not a protected floor or automatic refund.
+Sleep, closure and standby do not pause this elapsed axis. Rates apply only
+to their own intervals, without retroactive re-rating or an eight-hour cap.
 
 Each need keeps critical/zero exposure over the preceding 24 elapsed hours.
-Below 25, neglect becomes eligible after two accumulated critical hours;
-at zero it can qualify after one zero hour. Zero also counts as critical.
-Disjoint periods add up; contact and refilling do not erase prior exposure.
-At 25 or above, that need stops charging immediately.
+Below 25, neglect qualifies after two accumulated critical hours; at zero,
+after one zero hour. Zero also counts as critical. Disjoint periods add up;
+contact/refilling does not erase prior exposure. At 25 or above, charging for
+that need stops immediately.
 
 | Current eligible need | Reference rate | After six accumulated critical hours |
 | --- | --- | --- |
 | Above zero, below 25 | 0.25/hour | 0.5/hour |
 | Zero | 0.5/hour | 1/hour |
 
-While actual sleep increases energy, energy adds no new neglect and causes
-no energy-neglect charge; its old history still expires normally. Other
-needs remain eligible. Closed-app time is not itself proof of sleep.
-
-For each chronological interval, use the greater of the absence rate and
-the strongest eligible need rate, then apply the factor once. Neither sum
-all needs nor compare only whole-day totals. The need policy passes each
-existing numeric step to the friendship policy, without another simulator.
-Exposure is stored in bounded minute buckets; full identical buckets are
-coalesced into spans. Partial-bucket distribution/expiry has at most one-minute
-resolution. At most 1,441 bucket spans are needed for the default 24-hour
-window; sustained depletion normally coalesces to a handful of spans.
+Actual restorative sleep excludes new energy-neglect exposure and charges;
+other needs follow their actual sleep trajectories. Closure alone does not
+prove sleep. Use the greater of absence and the strongest eligible need rate,
+not their sum. Add that reference to negative emotional flow, then apply the
+progressive balance once. Exposure uses bounded minute buckets, coalescing
+identical spans; the default 24-hour window needs at most 1,441 spans.
 
 ## Negative interactions
 
-A selected `click_boundary`, `click_work_boundary` or
-`click_withdrawn_boundary` warns within the existing click burst. Only later
+An actually delivered boundary reply, including `click_last_word`, warns
+within the existing click burst. Selecting or queuing text alone is not
+communicated evidence. Only later
 admitted clicks in that burst deduct 0.25 each, at most one point per rolling
 minute. Reading clicks and blocked input never count. Remaining reply
 animations retain their ordinary input protection. Ending the burst resets
@@ -117,12 +112,15 @@ ten-second request cadence. Then a further 0.5 can be requested every thirty
 seconds, bounded globally to two points per rolling two minutes. Returning
 stops further holding charges and gives no refund. No delayed callback
 replays every missed charge. Unrelated object pickup is not withholding.
+A committed investigation of an
+unidentified object can establish claimed interest before a later assessment
+or food-consumption decision; these are distinct facts.
 
 The existing application coordinators admit evidence and deduplicate receipts;
 PetState applies durable caps. Restarting or beginning another episode cannot
 reset those caps. Offline time does not invent clicking/withholding events.
 
-Stage 5B.4 adds distinct event penalties, using that same persisted ledger:
+Negative interactions have distinct event penalties, using that same persisted ledger:
 
 | Perceived event | Separate loss | Rolling cap |
 | --- | --- | --- |
@@ -132,41 +130,38 @@ Stage 5B.4 adds distinct event penalties, using that same persisted ledger:
 
 A refused stroke grants no care reward/contact. Unknown causes of an empty
 familiar place can create an impression without blame. The same take is not
-charged both as withholding and relocation. Moodlet existence/stacking/expiry
-and helpful duration relief never add loss, refund it or create another reward.
+charged both as withholding and relocation. Moodlet creation/stacking/expiry
+and helpful relief add no second instant
+penalty or refund. Active tiers independently affect the continuous balance.
 Each penalty kind is pruned by its own window; longer food budgets do not retain
 unbounded minute-by-minute click history.
 
-Stage 5B.5 reads this same bounded history to qualify prolonged-poor-care
+Poor-care qualification reads this same bounded history to qualify prolonged-poor-care
 Moodlets. Processing watermarks are owned by MoodletState; the original care
 history is neither reset nor copied. Creating, escalating, recovering or keeping
-these after-effects adds no relationship penalty and no new contact/reward.
-Existing absence and neglect remain the sole passive friendship rules.
+these after-effects adds no instantaneous relationship penalty or new contact.
+Active poor-care Moodlets nevertheless contribute to the continuous emotional
+balance, alongside numeric mood and the absence/neglect reference.
 
-## Ownership and save compatibility
+## Ownership, saves and evidence
 
-`PetState` remains the sole mutable pet aggregate. Immutable
-`FriendshipHistory` lives in its complete `PetValues` checkpoint. Pure
-`friendship.py` calculates rewards/direct penalties; `friendship_decay.py`
-integrates passive loss alongside `progression.py`. There is no second clock,
-relationship service or mutable history store.
+`PetState` is the sole mutable pet aggregate. Frozen `FriendshipHistory` belongs
+to `PetValues` and complete checkpoints. `friendship.py` owns accepted contact
+and bounded direct consequences; `friendship_decay.py` integrates elapsed
+balance alongside `progression.py`. No second clock, simulator or history store
+is introduced.
 
-The optional `pet.relationship` v1 record uses `pet.time.lived_seconds` for
-baseline, contact, eligibility, actual credits, exposure and penalty windows.
-Outer save v1 is unchanged. Legacy calendar/reward fields remain compatibility
-metadata and do not participate in new eligibility or loss calculations.
+Optional `pet.relationship` v1 uses `pet.time.lived_seconds`. The optional
+`continuous_since` marks the accounted transition from older policy; old points,
+contact, exposure and historical credits survive without refunds or replay.
+Old reward fields/limits remain compatibility metadata only. Missing/invalid
+history cannot invent earlier contact or unrecorded neglect; original corrupt
+bytes are preserved by the existing save recovery policy. Full-precision status
+and joint Pet/World rollback retain the existing save owner.
 
-Missing/invalid history starts at first upgrade reconstruction completion:
-preserve existing points and needs, infer no old contact, and charge no
-unrecorded past neglect/absence. Subsequent saves retain that baseline.
-Corrupt/future relationship data is backed up before replacing the save.
-Wall-clock corrections and session rebasing do not reset elapsed-axis limits.
-Existing checkpoints and paired consumption rollback include every new field.
-
-Production-policy tests cover all six discussed contact schedules. The
-combined eight-phase day maintains level 10 around 96–100; the sufficiently
-supplied four-phase day stays around 69–71. Under the isolated adequate-care
-assumption, morning/evening visits settle around 34–36, rather than zero.
-Sparse contact is not a protected minimum against unmet needs or harassment.
-Adaptive sleep, finite closed-time stock consumption and negative Moodlets are
-delivered in their separate stages. Richer emotional expression remains later work.
+Historical stage-3 schedule tests and their 96–100 / 69–71 plateau examples
+apply to the old capped-reward model. They are not evidence that current generated
+wishes and continuous flow achieve the intended level-7–8 average / level-10
+intensive care balance. That integrated acceptance, current full suite, slow-test
+audit and OOP review remain slice 9. Concrete cause recording for negative and
+poor-care Moodlets is also an open gap in the [documentation audit](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23).

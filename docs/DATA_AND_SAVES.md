@@ -5,12 +5,12 @@
 | Resource | Owns |
 | --- | --- |
 | `aiko_pet/data/balance.json` | Initial values, care effects, hunger/digestion, fun/mood, friendship, movement, attention and adaptive behaviour parameters |
-| `aiko_pet/data/moodlets.json` | Eighteen typed Moodlet family definitions and per-type parameters |
-| `aiko_pet/data/wishes.json` | Eleven wish objectives, supported targets, round scope and positive fulfillment references |
+| `aiko_pet/data/moodlets.json` | Nineteen typed Moodlet family definitions and per-type parameters |
+| `aiko_pet/data/wishes.json` | Twelve wish objectives, supported targets, round scope and positive fulfillment references |
 | `aiko_pet/data/food_catalog.json` | Food IDs, display names, nutrition, categories and menu order |
 | `aiko_pet/data/texts.de.json` | UI wording, status templates, care fallback text, game labels and emergency farewell fallback |
 | `aiko_pet/data/object_grammar.de.json` | German grammatical gender and optional spoken-name override for every consumable; no duplicated nutrition/menu names |
-| `aiko_pet/data/dialogues.de.json` | Version-2 character sequences, relationship/state filters, stories and rotation |
+| `aiko_pet/data/dialogues.de.json` | Version-3 character sequences, relationship/state filters, stories and rotation |
 | `aiko_pet/data/routine.de.json` | Weekday/weekend schedules, activity labels and meal windows |
 | `aiko_pet/assets/animation_timing.json` | Frame holds and playback sequences |
 | `aiko_pet/assets/items/items.json` | Item images, icons and hand pivots |
@@ -167,6 +167,23 @@ checkpoint, save/reopen and paired Pet/World consumption rollback. Future marker
 invalid levels/flags, missing/unknown needs and malformed offsets invalidate the
 optional Moodlet section under the existing backup/preservation rules.
 
+Active episodes retain a bounded chronological `causes` tuple of language-neutral
+facts: semantic receipt, elapsed timestamp, attribution, actual outcome and, for
+wish results, the original target/objective/count snapshot and available game
+result/counts. Retention is at most the current intensity: one/two/three actual
+causes at level one/two/three. Renewal at level three retains the latest three;
+decay trims to the newest fitting the lower level. A stronger single event or
+incomplete old save may have fewer actual causes. Missing events are never
+fabricated and ended episodes have no separate archive.
+
+The codec accepts and validates obsolete optional per-cause `level` metadata,
+but ignores it; new saves omit it. Available old receipts survive within the
+current cap; already discarded receipts cannot be reconstructed. Wish results
+currently supply concrete causes. Negative-interaction and poor-care producers
+still omit them and use generic `legacy` evidence: this is a known recording
+gap, not proof that the original interaction/poor-care triggers are absent.
+See the [open audit](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23).
+
 Each active Moodlet may additionally store `attribution`: `user`, `autonomous`
 or `unknown`. This describes the latest qualifying cause's known origin;
 episodes saved before 5B.8 default to unknown. Loading never fabricates blame.
@@ -193,45 +210,46 @@ concrete target IDs, elapsed creation/expiry times and actual expression times.
 Keep original deadlines on load, even when already expired; domain progression
 will resolve expiry later. Do not infer speech from a queued/displayed status.
 
-Game wish progress stores only the objective's bounded round identities and
-Aiko's win/loss counts. Shared play includes a session token to distinguish its
-single-session requirement. Normal decks/boards/session scores remain transient.
-Creation evidence for at most four areas and the last actual wish expression
-survive ended wishes. The optional elapsed `refill_not_before` deadline also
-survives retirement and restart; legacy v1 records without it remain valid.
-The next instance ID is retained when the active collection becomes empty.
-These values support later duplicate-safe fulfillment; no reward is generated
-by decoding, and no parallel relationship accounting is stored in wishes.
+Game wish progress stores the original `WishGoal`/`WishObjective`, required
+count, bounded round receipts and Aiko-perspective results. New shared-play
+objectives count two rounds across sessions; cumulative wins count three wins
+across sessions. Next-win/non-loss objectives resolve on their next qualifying
+round; overall non-loss evaluates its three-round block. Saved older goals keep
+their original session/retry/block semantics and progress; decoding does not
+replace them with the current catalogue. Boards, decks, pending rounds and
+ordinary session scores remain transient.
 
-Awake live evaluation fills the normal three-wish stock, at most one per area.
-Retirement starts a twelve-minute refill pause; later vacancies do not postpone
-it. Expiry schedules from its original deadline, including closed time. No new
-save version, independent timer or retrospective wish sequence is introduced.
-All time paths remove a wish at its original four-hour deadline without a penalty,
-retaining its retired identity and creation evidence. A restart fills only current
-free slots after live evaluation resumes and any saved refill deadline is due.
+Creation evidence for at most four areas, the last actual expression anchor,
+next stable identity and optional `refill_not_before` survive retirement/restart.
+The twelve-minute vacancy deadline is shared: later vacancies do not postpone
+it. Awake live evaluation restores up to three wishes, one per area, after that
+deadline; closed time creates no backlog. Food/affection eligibility uses current
+needs at most 70 and petting willingness; unpinned supplied wishes retire at 90.
+Games/social have no corresponding need gate. Temporary unavailable wishes
+retain their identity rather than being replaced by easier objectives.
 
-Only an actually presented wish text records `expressed_at` and the shared
-thirty-minute expression anchor. Merely selecting text, showing status or
-canceling before text does not count. Temporary activity restrictions and low
-trust/mood preserve the original stored wish; they do not pause or extend it.
-Wording for all eleven forms is validated in `texts.de.json`, with canonical
-food/game labels and objective round counts interpolated at presentation.
+The persisted pin protects the original four-hour lifetime and food/affection
+relevance retirement. Left-click pins; first right-click unpins; a subsequent
+right-click on an unpinned wish dismisses. Current domain unpinning after the
+original deadline retires immediately, without renewing a deadline. Whether this
+should change to preserve the two-click interaction is an open product decision;
+this documentation does not introduce a new lifetime rule.
 
-Stage 5B.7 retires the matching stable identity on actual fulfillment, leaving
-creation/disclosure pacing intact. Its positive Moodlet and eligible personal
-bonus commit with that retirement in the existing aggregate/action transaction.
-Autonomous food intake has no personal bonus. `relationship.rewards` accepts
-`wish` alongside ordinary care kinds; both share the unchanged two-hour/day
-ceilings. The bounded reward-list capacity additionally allows the maximum
-creation cadence plus three wishes carried into the history window. No separate
-wish budget, completion archive, save file or top-up queue is introduced.
+Only actual text presentation records `expressed_at` and the shared thirty-minute
+expression anchor. Status display, queued text and cancelled playback do not.
+Low trust/mood restricts expression, not inner existence. All twelve forms use
+the existing German text catalogue and canonical food/game labels.
 
-Fixed game-block progress survives window closes and reloads. Shared play resets
-partial progress for a different session; an eventual round-win objective keeps
-only the last unsuccessful round identity while retrying. Actual pending rounds
-and social playback stay transient, so restart does not replay or complete them.
-Only qualifying started/settled rounds can extend persisted objective progress.
+Actual fulfillment atomically retires the stable wish identity and creates its
+Moodlet with a concrete original-goal cause snapshot. No current care/wish path
+consumes legacy reward pots or grants an instant friendship bonus. Ordinary food
+wishes require actual matching intake, including qualified autonomous/closed-time
+known-stock intake. Food avoidance instead requires perceived personal handover,
+even of the unwanted food and even if then refused; this is neither nutrition
+nor accepted contact. Welcome petting and complete matching social sequences
+use their existing owners. Failed non-loss game goals create `disappointed`;
+expiry/dismissal and other unsuccessful goals grant no fulfillment impression.
+Pending game rounds/social playback are not replayed or completed by loading.
 
 Missing old sections stay empty. Invalid sections preserve valid Moodlet/care
 values, and the existing atomic repository backs up the original bytes before
@@ -267,14 +285,14 @@ The existing top-level sections are unchanged:
 | Section | Stored information |
 | --- | --- |
 | `version` | Save schema number, currently 1 |
-| `pet` | Needs, friendship/reward limits, meal-day markers, sleep state, fun, food/digestion state and `updated_at` |
+| `pet` | Needs, continuous friendship/contact/penalties and legacy reward metadata, Moodlets/wishes, meal-day markers, sleep state, fun, food/digestion state and `updated_at` |
 | `settings` | Window positions, size and behaviour/observation preferences |
 | `adaptive` | Aggregated learned weekday/hour patterns and bounded rhythm state; optional in older saves |
 | `world` | Optional separately versioned World snapshot (`version: 1`), surface, active portions, revisions and next instance ID |
 | `object_memory` | Optional subjective records (`version: 3`, v1/v2 readable): learned type/assessment, relative active age, place status, possible source links, allocation provenance and own-placement disposition |
 
 `pet.updated_at` is a Unix wall-clock timestamp in seconds. Need values are
-saved to four decimal places. Older version-one saves missing newer optional
+saved at full precision. Older version-one saves missing newer optional
 fields retain their existing defaults. Raw hardware samples, window titles,
 keystrokes, pending dialogue and unfinished game rounds are not saved.
 
@@ -306,8 +324,9 @@ produce these backup files on every autosave.
 ## Relationship history
 
 Stage 3 adds optional `pet.relationship` v1 alongside the unchanged outer save
-v1. Baseline, last qualifying contact, per-type eligibility, actual rolling
-reward entries, per-need critical/zero exposure and direct-action budgets use
+v1. Baseline, last qualifying contact, compatibility-only per-type eligibility
+and historical reward entries, per-need critical/zero exposure and direct-action
+budgets use
 `pet.time.lived_seconds`, never inferred mouse activity or wall-clock age.
 Exposure has minute resolution and coalesces homogeneous buckets into spans;
 its default 24-hour history is bounded to 1,441 spans. Reward/event histories
@@ -360,8 +379,11 @@ into one `LoadedPetData` snapshot. The old partial `load()` and `load_memory()`
 wrappers have been retired; loading this snapshot never advances time itself.
 
 During this calculation there is no observed workload, inferred user input,
-human care reward, friendship gain or fabricated rhythm learning. Needs and
-digestion and the recorded relationship timeline still progress. No contact
+personal contact or fabricated rhythm learning. Needs, digestion, existing
+Moodlets and continuous friendship still progress. Existing emotional evidence
+can contribute positive or negative elapsed relationship flow; closure does
+not invent a human interaction. Qualified finite-stock intake may still fulfill
+a pre-existing food wish through its existing consumption owner. No contact
 clock is renewed merely by opening the app. Expected sleep can restore energy;
 manual commands retain 30 minutes of elapsed protection. Turning automatic
 routine off disables new automatic sleep, not elapsed time or an existing

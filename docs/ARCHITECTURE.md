@@ -184,12 +184,16 @@ catalogue meanings. Older saves migrate to their actual delivered objectives,
 and new creation snapshots the current catalogue goal: cumulative rounds/wins
 across sessions, strict next-round results or the fixed overall-result block.
 `GameWishRead.required_count` is interpreted in the original objective's unit.
-The persisted pin flag protects lifecycle now; pin/dismiss UI controls follow separately.
+The persisted pin protects lifetime and relevance retirement; the existing WishPanel
+projects it through card gestures without a separate state owner.
 
 `PetState` commits wish retirement and bounded concrete Moodlet causes together.
 Causes retain the original wish/target, semantic receipt, actor and actual outcome;
 game causes distinguish objective outcome from final-round result/counts. At most
-three actual causes live with each active Moodlet, without a completed-wish archive.
+three actual causes live with each active Moodlet, further bounded by current
+intensity, without a completed-wish archive. Wish outcomes provide concrete
+snapshots; interaction/poor-care producers still use generic fallback evidence,
+an open recording gap documented in the master plan.
 Duplicate receipts cannot reinforce or refresh the same impression.
 
 `ObjectConsumption` admits a personally perceived food release through the
@@ -258,7 +262,7 @@ state/history owner. Attention reads pure existing petting admission, game
 energy rules, Moodlet context and online opt-in. The existing social runtime
 exposes prepared categories without fetching or reserving a buffer item.
 Temporary restrictions retain each wish's identity, slot and original deadline;
-their typed reason can feed the later status projection.
+their typed reason feeds the existing status projection.
 
 At a free speech opportunity, care urgency precedes wishes and ordinary
 commentary. PetMind renders the concrete wish from `texts.de.json` and attaches
@@ -266,7 +270,7 @@ its instance ID to the existing immutable `Reaction`. The existing
 `ReactionPlayer` acknowledges that ID only after the text display succeeds;
 the aggregate ignores duplicate, absent and expired IDs. There is no second
 player or wish queue, and disclosure grants no contact, care or emotional
-reward. Fulfillment is delivered below; the combined status presentation remains 5C.
+reward. Fulfillment is described below; 5C supplies the existing combined status UI.
 
 Stage 5B.7 uses pure `fulfill_activity_wish()` and `progress_game_wish()` results
 in the existing `wishes.py`. `PetState._apply_wish_resolution()` commits retirement,
@@ -970,8 +974,8 @@ custody. `application/object_relationship.py` deduplicates social effects;
 `PetState` applies shared durable rolling penalty caps through the pure
 friendship policy. `PetMind` owns temporary irritation and the warning within
 its existing click burst; the contact coordinator admits later annoyance
-without counting story-reading or blocked input. Loss preserves reward history
-and creates no return bonus. Episode/request/cursor state stays session-local;
+without counting story-reading or blocked input. Loss preserves compatibility
+credit metadata and creates no return bonus. Episode/request/cursor state stays session-local;
 `pet.relationship` v1 saves contact, credit, neglect and penalty histories on
 `lived_seconds`, inside the existing outer save v1. See the
 [current friendship rules](FRIENDSHIP_SYSTEM.md).
@@ -985,8 +989,9 @@ then prepares the canonical pet effect through PetState-owned immutable checkpoi
 It commits World, PetState and ObjectMemory together on the owner thread,
 restoring the same pet object on failure and recording human contact only
 after a successful commit. Completed requests remain deduplicated. World `consume()`
-alone still cannot feed Aiko. Human-only care rewards are excluded for ground
-consumption, while canonical nutrition, repetition and food mood effects remain.
+alone still cannot feed Aiko. Ground consumption grants no personal contact
+or instant friendship bonus; canonical nutrition, repetition, wish matching and
+Moodlet effects remain within their existing owners.
 
 `application/object_behavior.py` coordinates object attention, checked-absence
 priority, shared missing-subject search, waiting for return and approach

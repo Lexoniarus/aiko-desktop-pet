@@ -1,12 +1,12 @@
 # Fun and mood — prototype tuning guide
 
-> This guide describes the care/fun/mood foundation and delivered stages 5B.3 through 5B.7 on
-> `feature/social-optimization`. The
-> [mood](MOOD_BALANCE_PROPOSAL.md) and [need proposals](NEEDS_BALANCE_PROPOSAL.md)
-> retain the agreed design evidence. Progressive friendship now follows the
-> [stage-3 rules](FRIENDSHIP_SYSTEM.md); stage 4 supplies [adaptive sleep](SLEEP_SYSTEM.md).
-> Expression tuning remains a later stage of the
-> [implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
+> Current `feature/social-optimization` guide, checked against `5d20d9c` on
+> 2026-10-23. The [mood](MOOD_BALANCE_PROPOSAL.md) and
+> [need proposals](NEEDS_BALANCE_PROPOSAL.md) preserve design history.
+> See [continuous friendship](FRIENDSHIP_SYSTEM.md), [adaptive sleep](SLEEP_SYSTEM.md)
+> and the [active implementation plan](CARE_TIME_IMPLEMENTATION_PLAN.md).
+> Delivery of foundations/UI is distinct from pending integrated acceptance and
+> later dialogue about concrete emotional experiences.
 
 Fun is one need; mood summarizes the five needs and active Moodlet contributions
 over time. Several short play
@@ -60,7 +60,7 @@ Deductions sum across needs, and the lowest need determines the decline
 ceiling. The need-only target is at most 80. Actual mood approaches the changing
 target without overshoot; recovery is 2 points/minute with no extra delay.
 Care, food, repeat food and completed games never change mood instantly.
-Mood has no feedback effect on needs or rewards. Stage 5B.3 now composes existing
+Mood does not change needs; it does contribute to continuous friendship. Stage 5B.3 now composes existing
 Moodlets through the same timed response; stage 5B.4 supplies direct negative
 interaction triggers and targeted helpful-action matching.
 
@@ -103,8 +103,8 @@ quiet/resolution/stable-recovery gates and per-level allowances still apply.
 These functions accept qualified facts at an already-advanced endpoint; they do
 not infer acceptance or user blame. Direct friendship consequences stay separate.
 Stage 5B.5 also creates the five poor-care after-effects from actual modeled
-need trajectories in live, closed and standby intervals. Wish lifecycle and
-fulfillment, overall emotional labels and the VN UI remain later plan slices.
+need trajectories in live, closed and standby intervals. Wish lifecycle,
+fulfillment, overall emotional interpretation and the VN status UI are delivered.
 
 ### Prolonged poor care
 
@@ -122,7 +122,8 @@ small processing markers distinguish handled burden from new residual time.
 The two routes are alternatives, not added durations or deductions. Existing
 strengths are -5/-10/-15 per family, with a -15 combined poor-care group cap.
 Needs continue to affect numeric mood directly; the emotional after-effect
-changes its target through the same timed response and adds no friendship loss.
+changes its target through the same timed response. Creation adds no instant
+friendship penalty; active tiers do contribute to continuous friendship.
 Actual restorative sleep does not add exhaustion exposure; other needs retain
 their actual sleep trajectories. Finite acquired food can prevent hunger burden.
 
@@ -163,31 +164,30 @@ and any fulfilled wish's Moodlet.
 
 Actual round start/result facts also reach the existing application coordinator
 through each game's sequence. Only the wish captured at round start can qualify.
-Result translation from player to Aiko occurs once. Shared play needs two rounds
-in one session; round wins can retry; next-round non-loss resolves on that one
-round; overall goals evaluate their full next-three-round block across sessions.
+Result translation from player to Aiko occurs once. New shared-play wishes need
+two cumulative rounds across sessions; next-win and next-non-loss wishes resolve
+on the next qualifying round. Overall wins need three cumulative wins, with no
+consecutive requirement; overall non-loss uses a three-round block. Saved older
+wishes retain their original objective/count and progress until retirement.
 Wish resolution is immediate at the actual result, independent of later window
-close. It does not duplicate ordinary session care. Failed goals end neutrally.
+close. It does not duplicate ordinary session care. Failed non-loss goals create
+`disappointed`; other unsuccessful goals grant no fulfillment impression.
 
 The game is closed before the final save both during Aiko's goodbye
 animation and on direct shutdown. It cannot credit a session twice.
 
 ## Presentation and compatibility
 
-The toolbar displays **Laune** as the wide overall bar above six individual
-indicators. **Spaß** has its own bar between satiety and energy; the second row
-contains social, affection and friendship. Fun is no longer repeated as a
-percentage line in the expandable details. Requests to play use *fun*, not mood.
-The legacy direct
-`interact("play")` is deliberately non-rewarding, since a real
-minigame must be completed.
+The combined VN status window presents numeric **Laune**, the five needs and
+friendship alongside active Moodlets and inner wishes. The separate emotional
+label interprets impressions rather than replacing any physical need.
+Requests to play use fun, not numeric mood. Legacy `interact("play")` grants no
+care: actual minigame completion remains necessary.
 
-Old saves without `fun` load at 75. Previously saved mood values
-are preserved initially and gradually follow the new formula.
-Full closed time and standby now advance needs and mood, using the existing
-stage-2 balance. Automatic routine can apply existing scheduled sleep; time alone no
-longer creates self-served catalogue meals. Adaptive sleep remains a later stage. Expression filters above 80 are
-explicitly pending stage 5; this numeric change does not retune dialogue labels. See [data and saves](DATA_AND_SAVES.md).
+Old saves without fun load at 75; existing mood is preserved and approaches the
+current target over time. Full closure/standby advances through the shared
+progression. Adaptive sleep and finite identified World-stock care are delivered;
+time alone cannot create food. See [data and saves](DATA_AND_SAVES.md).
 
 ## Overall emotional interpretation and reads
 
@@ -204,7 +204,7 @@ Physical needs, sleep, short irritation/warmth and friendship are separate facts
 They coexist in dialogue context rather than replacing one another with a
 mixed label. Existing need priority and interaction-specific boundaries remain;
 an overall label creates no reward or blanket refusal. Passive snapshots expose
-all eighteen families and eleven wish forms, including unspoken wishes, paused
+all nineteen families and twelve wish forms, including unspoken wishes, paused
 recovery, original deadlines, round progress and temporary restrictions. Reading
 never advances or fulfills them. Stage 5C now presents these records in the combined status UI. The pure
 numeric target, real sleep reason, relationship stage and known contact age
@@ -214,33 +214,48 @@ longer playful click sequence retains 82 and its existing boundaries. The
 same overall composition gates positive expression; hardware strain alone
 does not imply emotional offense or sleepy clicks.
 
-## Verification
+## Wishes and fulfillment
 
-Stage 5B.6 adds inner wishes without changing need, numeric mood, Moodlet or
-friendship values merely for wanting or speaking. Three wishes are the normal
-inner stock, one per area, for four real hours each. Awake live evaluation fills
-free slots at startup/return, or after the saved twelve-minute vacancy pause.
-Further retirements do not postpone that pause. Expiry uses the original real-time
-deadline and closed time never generates wishes. Low mood/trust does not suppress
-inner wishes. Disclosure needs level three, mood fifty, an available activity
-and a free speaking opportunity; urgent care retains priority. Only actual
-text presentation counts, once per wish and thirty minutes apart. Original
-deadlines continue through sleep, closure and standby, without offline
-generation or expiry penalties.
+Three inner wishes are the normal stock, at most one per area. Awake live
+evaluation fills available slots initially or after the saved twelve-minute
+vacancy pause; further vacancies do not postpone it. Closed time never generates
+new wishes. Original lifetime is four real hours, except while pinned.
 
-Stage 5B.7 resolves actual desired intake, welcome petting, qualifying game
-rounds/blocks and complete matching social sequences. The wish's catalogue
-selects one positive family and initial strength. Existing Moodlet rules own
-refresh/stacking, two-hour tiers and group/global caps. Food stays at one level;
-overall game goals add two levels of pride/relief; other fulfillment starts/adds
-one, up to the family's existing maximum. Numeric mood follows its timed response.
-Unspoken wishes qualify normally. Personal completion may add 0.25 friendship
-points from the same ordinary reward pot; autonomous food grants the impression
-without relationship credit. Aborted sequences and unsuccessful/expired goals
-grant no fulfillment effect or extra loss.
+Food/affection creation requires the respective need at most 70, and affection
+also requires actual petting willingness. Unpinned supplied food/affection wishes
+retire at 90; games and social are exempt from this need gating. Low mood/trust
+does not suppress inner wishes. Disclosure requires friendship level three,
+mood fifty, current capability and a free speech opportunity; urgent care takes
+priority. Actual text presentation counts once per wish, thirty minutes apart.
+Temporary unavailability keeps the wish and its original deadline.
 
-`tests/test_fun_mood.py` and `tests/test_game_experience.py` validate
-domain math, multiple sessions/day, game-neutral adapters and persistence.
-Existing UI, lifecycle, farewell and application tests validate the
-one-shot close callback and before-save processing. Values should be
-tuned after several normal desktop usage days.
+Left-click pins a card. Right-click unpins a pinned wish; right-click on an
+unpinned wish dismisses it. Current late unpinning can retire the wish immediately
+if its original deadline passed. That conflict with the two-click expectation
+remains an [open decision](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23).
+
+Actual desired intake, welcome petting, qualifying game results and complete
+matching social sequences can fulfill wishes, including unspoken ones. The
+food-avoidance form instead uses a perceived personal handover, even of the
+excluded food and even if subsequently refused. It does not fabricate nutrition.
+Fulfillment retires the stable identity and creates its defined positive Moodlet;
+there is no direct friendship bonus or reward pot. Numeric mood follows its
+timed response; friendship integrates active impressions over elapsed time.
+
+Food fulfillment remains at one tier; overall game success adds two tiers of
+pride/relief; other successes add one within family limits. Episodes retain the
+latest actual causes up to current intensity (maximum three), trimming on decay
+and rolling on renewal. A single two-tier success still has only one actual
+cause. Whether strength and displayed cause count should be changed is open;
+no event is invented to fill a row. Negative interaction and poor-care triggers
+currently lack structured concrete causes and fall back to generic evidence.
+
+## Verification scope
+
+Existing focused domain, persistence, game, social, UI-contract and hover checks
+are recorded by delivery in the master plan. These are historical results, not
+a fresh full-suite claim for current HEAD. Slice 9 still includes actual generated
+wish/balance integration, local suite/static gates, tests over ten seconds and
+OOP review. Native Windows/DPI/input acceptance remains separate; the original
+reported AppHang is not conclusively diagnosed. Later concrete-experience speech
+is deliberately outside this delivery.

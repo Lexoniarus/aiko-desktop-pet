@@ -196,7 +196,10 @@ or emotional selection.
 bounded progress, remaining original deadline, inner/spoken marker and temporary
 unavailability. Left-click anywhere on a wish card pins the wish; repeating
 left-click keeps it pinned. Right-click unpins a pinned wish; a further
-right-click dismisses the now unpinned wish.
+right-click dismisses the now unpinned wish. Current domain unpinning after the
+original deadline can retire it immediately; supplied food/affection can also
+retire once unprotected. Reconciling that automatic retirement with the two-click
+expectation is an [open decision](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23), not a newly approved UI rule.
 There is no pin button: a passive pin symbol is visible only while pinned.
 Hover/focus and Enter/Space retain description access; card clicks take precedence
 over description tapping. Both panels retain widget identity and scroll position
