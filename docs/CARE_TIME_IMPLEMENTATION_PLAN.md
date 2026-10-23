@@ -5631,3 +5631,61 @@ selects no new decay rates, quotas, interaction deadlines or friendship balance.
 
 Documentation-only review: this amendment changes the master plan alone;
 `git diff --check` passes. No app, tests, desktop input or CI are run.
+
+
+### Proposed need and experience selection weights
+
+**Discussion proposal recorded at the owner's request, 2026-10-23.** Choose an
+area for each free slot first, then an eligible form/target within it. Multiple
+slots may use the same area, but exact objective/target duplicates remain
+excluded. Do not multiply an area's chance by its number of catalogue forms.
+
+| Current corresponding need | Games/social area weight | Food/affection area weight |
+| --- | --- | --- |
+| Above 70 | 1 | 0 |
+| Above 40 through 70 | 3 | 3 |
+| Above 25 through 40 | 5 | 5 |
+| 0 through 25 | 7 | 7 |
+
+These are relative weights, not fixed percentages or promised wish counts.
+Affection's actual willingness remains an eligibility condition under this
+proposal. Games/social remain possible with full needs. Existing awake decay
+and care amounts remain the starting point; no faster consumption is selected
+merely because offers rotate every ten minutes.
+
+Within an area, a qualified experience-driven form receives 1.5 times its
+normal form weight, for example a rematch after a defeat or game change after
+actual play. The experience makes the candidate more likely, not mandatory.
+Its normal form weights and context lifetime still require agreement; no
+unbounded accumulation of event multipliers is specified by this proposal.
+
+The ten-minute refresh remains optional opportunity. Unfulfilled replacement
+alone creates no loss or disappointment; actual prolonged poor care and
+qualified negative interactions keep their separate consequences. Check the
+frequency and mixture of actual fulfillments against Moodlet duration/stacking
+and continuous friendship before deciding final balance.
+
+### Discussion option: fulfillment can override a need-based rejection
+
+The owner proposed that an existing concrete wish could make its matching
+activity welcome even when the corresponding need is already full: wanted
+petting at full affection or desired food at full satiety could still fulfill
+the wish and create its Moodlet. **This is a discussion option, not a finalized
+admission, consumption or lifecycle rule.** It may replace parts of the
+need-gated model above; do not silently implement both as if consistent.
+
+Separate candidate generation, current willingness, actual action completion,
+physical need changes and emotional fulfillment. Any adopted rule must keep
+numeric needs bounded at 100 without requiring artificial need depletion first.
+Clarify whether food is actually eaten, how an existing wish survives automatic
+90-point relevance retirement, whether new wishes can arise above 70 at lower
+weight, and which explicit refusal/sleep/activity boundaries still apply.
+A wish is not blanket permission for unrelated or repeatedly unwelcome actions.
+
+No new Moodlet strength, duration, friendship factor, quota or exception has
+been selected. Reuse the existing aggregate/action/consumption owners if this
+option is later authorized; do not add another care path or save store.
+
+Documentation-only amendment: Markdown diff/scope reviewed and
+`git diff --check` passes. No runtime changes, tests, app windows, pointer
+control, live-save access or CI.
