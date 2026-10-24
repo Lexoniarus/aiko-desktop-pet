@@ -28,7 +28,7 @@
 > [SQL-3 delivery record](#sqlite-delivery-sql-3-wishes-progress-pins-and-food-handovers)
 > separates original wish/progress storage from durable food-handover context.
 
-> **SQL-4 in progress, 2026-10-24:** the
+> **SQL-4 delivered, 2026-10-24:** the
 > [SQL-4 delivery record](#sqlite-delivery-sql-4-moodlets-and-care-evidence)
 > separates episode/cause mapping, interaction/poor-care evidence and bounded
 > encounter/long-term processing state. The active JSON store remains unchanged.
@@ -9290,3 +9290,50 @@ Four new SQL cases and ten existing poor-care/food-event cases passed:
 fresh strict Mypy (twenty-two SQLite sources) and Pyright including the new
 tests passed. Tk construction was blocked and saves/databases were temporary.
 The final SQL-4 portion adds shared encounters/evidence and long-term cursors.
+
+#### SQL-4C: shared care evidence, long-term cursors and full Moodlet snapshots
+
+`care_evidence_schema.py` adds shared encounters, semantic evidence and per-family
+long-term progress. `care_evidence_rows.py` preserves their original ordering,
+receipt/encounter identities, optional historical wish/object references,
+qualification flags and all period/accounting/contact-gap fields. Both shared
+allocation counters live once in `moodlet_state`; pruning rows never derives or
+resets those counters. A NULL reliable baseline means unknown history; baseline
+zero and empty rows remain known empty history with original counters.
+
+Retained evidence has an actual optional FK to its encounter, which cannot be
+deleted while referenced. Other families can use the same shared receipts;
+there is no shared consumed flag or duplicate need-exposure timeline. Replacing
+owned evidence clears receipt rows before encounters. Already awarded period
+causes remain episode-owned snapshots independent of raw evidence retention.
+
+`moodlet_rows.read_moodlets`/`write_moodlets` assemble the existing immutable
+MoodletState across core, interaction, poor-care and longer-term portions. Full
+validation occurs before any write, then every part uses the caller's one
+transaction. No mapper commits, advances time, qualifies a new period or grants
+an effect. Inconsistent present state fails instead of becoming fresh history.
+
+Six new care-storage cases exercise all six long-term family cursors, actual
+qualification flags and historical links, missing versus initialized history,
+pruned high counters, retained period summaries, encounter protection, invalid
+input and full-snapshot rollback including save time/revision. The episode
+fixture also explicitly round-trips settled game-result counts inside causes.
+
+Final combined local verification: **103 tests passed in 0.512 seconds**, longest
+**0.021 seconds** rounded to milliseconds. This includes sixteen SQL-4 cases,
+all previous SQL mapping/schema cases and affected existing emotional storage,
+care-evidence, poor-care, repeated-food and Moodlet timing checks. No skip or
+test exceeded ten seconds. Scoped Ruff, fresh strict Mypy for twenty-four SQLite
+production sources and Pyright including all three new test modules passed.
+Native Tk construction was blocked; every file fixture was temporary. The full
+suite remains SQL-9. No personal save, test window, mouse control or CI was used.
+
+SQL-4 focused OOP review: Pet's existing Moodlet/interaction/evidence values and
+strict codecs remain canonical. SQL modules own translation and actual child
+relationships only. There is no second mutable aggregate, evidence cache,
+emotional score, clock, qualification policy or active runtime writer. Computed
+overall feelings and status/hover wording remain derived. Ordinary episode
+upserts do not reset independent counters or cursor state. The active JSON
+store and parallel social/UI/animation/character/text work are preserved.
+SQL-4 is complete; SQL-5 adaptive/social storage is next. The initial schema
+stays at version one before the separately planned store/import/cutover work.

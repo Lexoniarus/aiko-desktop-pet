@@ -22,6 +22,7 @@ from aiko_pet.pet.moodlets import (
     MoodletCause,
     MoodletCauseKind,
     MoodletEpisode,
+    MoodletGameResult,
     MoodletId,
     MoodletOutcome,
     MoodletState,
@@ -118,6 +119,7 @@ class SqliteMoodletRowsTests(unittest.TestCase):
                 ),
                 target_id="blackjack",
                 outcome=MoodletOutcome.WIN,
+                game=MoodletGameResult(MoodletOutcome.WIN, 5, 3, 2),
             )
             for instance in (1, 2, 3)
         )

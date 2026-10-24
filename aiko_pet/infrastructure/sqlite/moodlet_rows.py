@@ -9,7 +9,10 @@ from typing import Any
 from ...pet.interaction_events import InteractionMemory
 from ...pet.moodlet_models import MoodletState
 from ..moodlet_codec import decode_moodlets, encode_moodlets
+from .care_evidence_rows import read_care_evidence, write_care_evidence
+from .interaction_rows import read_interactions, write_interactions
 from .moodlet_cause_rows import read_causes, write_causes
+from .poor_care_rows import read_poor_care, write_poor_care
 from .rows import boolean, read_rows, singleton, upsert_singleton
 
 _EPISODE_FIELDS = (
@@ -137,4 +140,23 @@ def read_moodlet_core(
         interactions=template.interactions,
         poor_care=template.poor_care,
         care_evidence=template.care_evidence,
+    )
+
+
+def write_moodlets(connection: sqlite3.Connection, state: MoodletState) -> None:
+    """Validate all portions before changing the caller's coordinated snapshot."""
+    elapsed = singleton(connection, "save_state")["lived_seconds"]
+    decode_moodlets(encode_moodlets(state), elapsed)
+    write_moodlet_core(connection, state)
+    write_interactions(connection, state.interactions)
+    write_poor_care(connection, state.poor_care)
+    write_care_evidence(connection, state.care_evidence)
+
+
+def read_moodlets(connection: sqlite3.Connection) -> MoodletState:
+    return replace(
+        read_moodlet_core(connection),
+        interactions=read_interactions(connection),
+        poor_care=read_poor_care(connection),
+        care_evidence=read_care_evidence(connection),
     )
