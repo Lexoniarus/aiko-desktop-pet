@@ -32,11 +32,14 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
-Current Social Optimization status (documentation audit, 2026-10-23): slices
-1–8 and later focused fixes are delivered. [Slice 9 and the open findings](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23)
-remain outstanding: concrete negative/poor-care causes, pin-expiry and weighted
-cause-count decisions, integrated balance/full-suite/OOP acceptance and the
-unconfirmed native AppHang. The historical results below apply to their named
+Current Social Optimization status (2026-10-24): the renewed wish/Moodlet
+slices 1–8 passed [local step-8 acceptance](CARE_TIME_IMPLEMENTATION_PLAN.md#delivery-slice-8d-generated-care-acceptance-and-final-oop-review).
+The isolated candidate completed 1,701 tests in 77.761 seconds with 111 explicit
+native-display skips, plus whole Ruff, strict Mypy and Pyright. Generated care
+scenarios support ordinary friendship level seven/eight and intensive level ten.
+Native visual/input acceptance and the reported AppHang remain separate; this
+no-window run does not verify them. [Earlier open-work reports](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23)
+are historical where superseded. The older results below apply to their named
 baselines, not automatically to current HEAD.
 
 - Social API delivery on 2026-10-19: frozen code `644c367` passed **1,371 native
@@ -191,14 +194,15 @@ assumptions and no current-runtime claim.
 The later [four-phase combined day](NEEDS_BALANCE_PROPOSAL.md#combined-four-phase-average-care-day)
 bundles sufficient care into four visits and settles around levels 7–8, with
 need minima above 40 and actual mood around 48–79. Four visits with insufficient
-food/talk do not produce the same result. Current generated wishes and continuous
-friendship must still be checked against the level-7–8/10 goals in slice 9.
+food/talk do not produce the same result. The later generated-wish scenarios and continuous friendship passed the
+[level-seven/eight versus level-ten acceptance](CARE_TIME_IMPLEMENTATION_PLAN.md#delivery-slice-8d-generated-care-acceptance-and-final-oop-review).
+New positive experiences change the old mood-only reference values.
 
 The [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) records the equal need
 contributions, deficit deductions and target limits, faster decline under severe
 deficits, two-point-per-minute recovery and real-time examples. Its current numeric rules are implemented in [Fun and mood](FUN_MOOD_SYSTEM.md);
-contextual Moodlets and the status UI are delivered; current open gaps and
-later experience-based dialogue are distinguished in the master plan.
+contextual Moodlets, wishes and the status UI are delivered. The master plan
+separates completed local acceptance from later experience-based dialogue.
 
 The [adaptive sleep proposal](ADAPTIVE_SLEEP_PROPOSAL.md) records the learned
 quiet window, three/seven-phase learning milestones, 15-minute sleep onset,

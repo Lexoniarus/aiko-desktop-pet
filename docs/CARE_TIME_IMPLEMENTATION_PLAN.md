@@ -1,13 +1,12 @@
 # Care, relationship and real-time implementation plan
 
-> **Current delivery, 2026-10-24:** the renewed wish/Moodlet implementation now
-> includes slices 1–7: typed forms, storage, lifetimes, ten-minute wish rotation,
-> matching, game/social/food/affection outcomes, qualified everyday positives,
-> concrete negative/poor-care causes and six longer-term care patterns. The
-> dated proposals and earlier completion reports below are historical; follow
-> the latest delivery receipts. Current step 8 remains passive-read integration,
-> generated-wish/day-balance acceptance, the full local suite and final OOP review.
-> No full-suite or integrated friendship-target acceptance is claimed for step 7.
+> **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
+> [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
+> records generated-wish care balances, all seventeen emotional labels, status/
+> hover reads, complete local suite scope and the remaining native-display skips.
+> The dated proposals and earlier open-work reports below are historical where
+> superseded by delivery. No SQLite migration or concrete-experience dialogue
+> rewrite is included. Native visual/input acceptance remains separate.
 
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
@@ -8767,3 +8766,67 @@ exceeded ten seconds. Repository-wide Ruff passed, strict Mypy passed on all
 zero errors/warnings. All checks were local, without desktop windows, pointer
 control, user-save access or CI. Native visual/input acceptance is outside this
 explicit no-window run; skipped fixtures are not claimed as executed UI tests.
+
+
+### Delivery slice 8D: generated-care acceptance and final OOP review
+
+`tools/care_balance_scenarios.py` exercises the actual weighted generator,
+original-wish assignment, food recognition/intake, welcome petting, completed
+social sequences, observed game rounds, ordinary care and shared progression.
+It never injects Moodlets, friendship credits or replacement need values. Two
+fixed seeds each run ten consecutive real elapsed days from an initial physical
+state, including eight-hour sleep. Four phases are 07:00, 13:00, 19:00 and 22:30.
+Average care visits once per phase; intensive care also visits at minute 10/20/30.
+Those intensive phases are intermittent opportunities, not an input-time quota.
+
+The fixture declares supported/prepared API categories without networking and
+balanced win/loss/draw round results. Each real session stays in one selected
+game, and only actual completion facts qualify goals. This validates generated
+desire opportunities and real completion policies; it is not a prediction of
+player skill, API uptime or native interaction speed. No care/decay/friendship
+rate or catalogue weight was changed to make the results pass.
+
+| Seed / scenario | Initial friendship | Next-morning range over ten days | Final morning | Successful wishes/day |
+| --- | --- | --- | --- | --- |
+| 7 / four visits | 70 | 70.2680–73.3161 | 70.9325 | 8–11 |
+| 42 / four visits | 70 | 70.3050–74.5280 | 74.1529 | 7–12 |
+| 7 / intensive phases | 90 | 88.7579–94.6773 | 94.3320 | 31–39 |
+| 42 / intensive phases | 90 | 90.3458–96.0756 | 96.0756 | 33–41 |
+| 7 / four visits, initially level ten | 90 | 71.2214–84.4480 | 71.2214 | 8–11 |
+| 42 / four visits, initially level ten | 90 | 73.7057–84.4690 | 74.5482 | 7–12 |
+
+These representative cases support average level seven/eight and intensive
+level ten after buildup; ordinary care does not maintain an initial level ten.
+The initial intensive dip in seed 7 starts without accumulated positive episodes,
+not with an artificial grace bonus. Both full reports remain temporary external
+artifacts, reproducible with `python tools/care_balance_scenarios.py --days 10
+--seed 7 --report <temporary-json-path>` and seed 42. The normal suite keeps a
+bounded three-day generated-care regression plus one initial-level-ten check;
+its longest case took 2.975 seconds in the final complete run.
+
+Final ownership review:
+
+- `PetState`/one frozen `PetValues` checkpoint remain the sole persisted aggregate.
+  All new numeric/qualification transitions are pure policies on the same elapsed
+  axis. No independent action loop, sleep simulator or relationship store exists.
+- Leaf value types and frozen Moodlet models remove annotation and runtime
+  import cycles. The repository's complete acyclic-dependency test passes without
+  exemptions. Existing callable/type bindings retain their original semantics.
+- Original wish meaning/progress, precise causes and bounded care evidence use
+  the same version-one save and rollback boundary. The deterministic counter
+  keeps prepared/direct care and closed/standby snapshots equal.
+- Physical World custody, subjective recognition and actual nutrition remain
+  distinct; cursor release alone supplies neither food identity nor gift reward.
+- Status/hover consume frozen reads, including typed free/excluded targets and
+  all active emotional influences. They create no history, permission or timer.
+- Long replay tests were narrowed to their distinct contracts. Complete suite
+  timings and native skips are explicit; genuine installer integration remains.
+
+Acceptance status: step 8 is complete for the requested local no-window scope.
+The exact staged source candidate passed 1,701 tests in 77.761 seconds with 111
+native-display skips, no failures/errors, and no case above ten seconds. Whole
+Ruff, strict Mypy (291 sources) and Pyright including tests passed. The subsequent
+changes only update maintained English documentation and this receipt. Native
+visual/input verification, future dialogue grounded in active causes, and the
+separately planned end-stage SQLite work are not claimed by this acceptance.
+Parallel horoscope/UI/character work is excluded and preserved. No CI was run.

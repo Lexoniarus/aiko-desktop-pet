@@ -200,6 +200,13 @@ countdowns are derived, never serialized as a second source of truth.
 
 ### Bounded actual care evidence
 
+The optional monotonic `next_experience_id` belongs to that same checkpoint.
+It supplies deterministic identities for personal intake/petting and immediate
+interaction causes, so preparing and directly executing identical care agree.
+Older saves default it to one; actual game/social/withholding receipts retain
+their original semantic identities. Cause timestamp identities normalize numeric
+integer/float representations across JSON save/reload.
+
 The optional Pet-owned `care_evidence` record stores at most 128 encounters and
 512 semantic experiences, plus one processing cursor for each of the six
 longer-term families. Encounter identities link welcome activities in two-hour

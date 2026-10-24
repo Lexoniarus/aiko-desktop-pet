@@ -161,50 +161,41 @@ whether to display a meal name or "Snack". Historical localized helpers
 `TimeContext.greeting()` have been removed; localized weekday/status display
 belongs to `ui/view_models/text_de.py`.
 
-`pet/moodlets.py` defines immutable Moodlet catalogue values and distinct
-emotional directions. `pet/moodlet_catalog.py` strictly loads nineteen
-families from `data/moodlets.json`, with shared caps/recovery settings in the
-existing balance catalogue and descriptions in the existing German text owner.
-`pet/wishes.py` and `pet/wish_catalog.py` provide twelve wish objective
-forms in `data/wishes.json`, referencing actual food/game targets and positive
-Moodlet definitions. Shared creation/disclosure settings and continuous
-relationship rates live in the existing balance catalogue. The pet package does
-not import application social preparation; social objective IDs are checked
-against supported categories in focused tests. Labels/descriptions stay in
-`texts.de.json`. Both catalogues detach nested values into frozen dataclasses,
-tuples and read-only mappings.
+`pet/moodlet_types.py` owns immutable Moodlet identity/outcome vocabulary;
+`pet/moodlet_models.py` owns frozen definitions, episodes, causes and state.
+`pet/wish_types.py` owns immutable wish identity, area, goal and target meaning.
+These leaf owners keep even annotation dependencies acyclic. `pet/moodlets.py`
+contains actual contribution, reinforcement and relief policies; timing imports
+models directly. Established public type imports remain bound to those same
+single definitions rather than parallel classes or forwarding behaviors.
 
-Food avoidance is eligible only with an actual repetitive-food reason and the
-food need gate. Failed non-loss game wishes create the downcast `disappointed`
-family without an instantaneous friendship penalty. Game selection applies
-catalogue weights within an eligible area; non-game forms retain equal selection.
-`WishGoal`/`WishObjective`
-preserve each active wish's original meaning and count independently of newer
-catalogue meanings. Older saves migrate to their actual delivered objectives,
-and new creation snapshots the current catalogue goal: cumulative rounds/wins
-across sessions, strict next-round results or the fixed overall-result block.
-`GameWishRead.required_count` is interpreted in the original objective's unit.
-The persisted pin protects lifetime and relevance retirement; the existing WishPanel
-projects it through card gestures without a separate state owner.
+`pet/moodlet_catalog.py` strictly loads twenty-six families from
+`data/moodlets.json`, including six longer-term patterns. `pet/wish_catalog.py`
+loads seventeen forms from `data/wishes.json`. Shared numeric parameters stay
+in the existing balance catalogue; labels/descriptions stay in `texts.de.json`.
+Both catalogues detach data into frozen dataclasses and read-only mappings.
+`WishGoal`/`WishObjective` preserve original saved meanings independently of
+newer catalogue definitions. Food avoidance requires real monotony evidence;
+full needs reduce area weights instead of excluding desires. Area-first and
+then form/target weights belong to `pet/wish_selection.py`.
 
 `PetState` commits wish retirement and bounded concrete Moodlet causes together.
 Causes retain the original wish/target, semantic receipt, actor and actual outcome;
 game causes distinguish objective outcome from final-round result/counts. At most
 three actual causes live with each active Moodlet, further bounded by current
-intensity, without a completed-wish archive. Wish outcomes provide concrete
-snapshots; interaction/poor-care producers still use generic fallback evidence,
-an open recording gap documented in the master plan.
+intensity, without a completed-wish archive. Wish, everyday positive, negative
+interaction, poor-care and longer-term producers retain concrete typed facts.
+Old generic evidence remains unknown.
 Duplicate receipts cannot reinforce or refresh the same impression.
 
-`ObjectConsumption` admits a personally perceived food release through the
-existing cursor/interaction handover owners, including a recognized refusal or
-identification after taking the food. This fulfills food avoidance once even if
-the offered food was unwanted, without fabricating nutrition or accepted contact.
-Preview, ground placement and autonomous intake cannot substitute for handover.
-Ordinary food wishes require actual matching intake; the existing prepared
-World/Pet/Memory consumption transaction includes the portion ID in its cause
-and preserves rollback and offline attribution. Physical care and food-monotony
-consequences remain independent. No extra event store or progression clock exists.
+`ObjectConsumption` confirms actual personal custody and delegates original
+food-wish snapshots to `pet/food_wishes.py`. Recognition of the desired gift or a
+matching alternative fulfills its original wish, even at full satiety; explicit
+excluded food creates the negative food-wish outcome even if put down. Merely
+seeing the cursor release, preview, ground placement and autonomous pickup cannot
+substitute for personal handover. Unknown food waits for acquired identification.
+Nutrition remains a distinct actual-intake transaction. Existing World/Pet/Memory
+checkpoints preserve rollback and prevent double consumption or emotional credit.
 
 Pet rules share only `games/contracts.py`'s immutable game IDs and outcome type;
 they never import game implementations, sessions or scores. The package boundary
@@ -233,29 +224,19 @@ without refunds, replay or fabricated contact. Current care/wish effects no long
 create credits or consume two-hour/daily pots. Those bounded old fields and their
 validation limits are legacy save metadata only; unused gain/bonus tuning is removed.
 
-`pet/wishes.py` also owns pure creation, original-deadline expiry, temporary
-restrictions and disclosure eligibility. The existing `PetState` progression
-expires wishes during live, closed and standby time. Creation is a separate
-live-endpoint operation: `DesktopAttentionRuntime.handle_time_progress()` asks
-the existing `AttentionCoordinator` to replenish the normal three inner wishes,
-even while presentation is occupied. `replenish_wishes()` fills available areas
-at the current endpoint using the existing Mind RNG and aggregate-owned current
-`NeedLevels`. Food/affection creation requires their need at most 70 and existing
-petting willingness. At 90, live evaluation neutrally retires an unpinned supplied
-wish; actual matching care resolves first in its existing transaction. Games/social
-have no fun/social gate. Retirement starts one saved
-twelve-minute refill pause; further vacancies do not postpone it. Four-hour
-expiry uses its original deadline unless pinned, including offline; generation remains
-awake/live only. Legacy saves without a refill deadline can fill available slots
-at the next live evaluation. The old global/hour and same-area/ninety-minute
-creation locks are removed; one wish per area and independent disclosure remain.
-
-`ActiveWish.is_active_at()` consistently applies protected lifetime to fulfillment,
-speech selection and actual expression receipts. `PetState.set_wish_pinned()` and
-`dismiss_wish()` expose neutral aggregate-owned operations without new care or
-reward events. Unpinning cannot renew the original deadline or revive an expired
-unprotected instance. A late unpin starts its vacancy now; dismissal neither clears
-Moodlets nor resets another pending refill. No extra store or clock is introduced.
+`pet/wishes.py` owns immutable active-wish values, expiry, neutral pin/dismiss
+commands and disclosure eligibility. `pet/wish_selection.py` owns awake/live
+replenishment on the shared six-hundred-second rotation. Attention supplies its
+existing Mind RNG and immutable current capabilities; closed time never generates
+fictional wishes. Three slots may contain multiple distinct game/social goals.
+Full needs do not retire wishes; current explicit petting refusal remains a
+separate restriction. All unpinned desires rotate together at the next deadline,
+and empty slots refill then. Pinned original identity, goal and progress persist
+through sleep and closure until fulfilled or unpinned. Unpinning preserves the
+wish until the next regular refresh; first right-click unpins and a later
+right-click dismisses, while left-click pins. UI commands never own another timer
+or grant care/contact/reward. Existing saved legacy game goals retain their
+original deadline and meaning until retired.
 
 `WishContext` is a frozen current capability/acceptance input, not another
 state/history owner. Attention reads pure existing petting admission, game
@@ -272,8 +253,8 @@ the aggregate ignores duplicate, absent and expired IDs. There is no second
 player or wish queue, and disclosure grants no contact, care or emotional
 reward. Fulfillment is described below; 5C supplies the existing combined status UI.
 
-Stage 5B.7 uses pure `fulfill_activity_wish()` and `progress_game_wish()` results
-in the existing `wishes.py`. `PetState._apply_wish_resolution()` commits retirement,
+`pet/wish_matching.py` selects one original goal before the outcome;
+`pet/wish_fulfillment.py` provides pure activity/game resolution results. `PetState._apply_wish_resolution()` commits retirement,
 the catalogue's one positive Moodlet family/strength together. There is no instant
 wish bonus. Creation anchors and allocation survive retirement. The existing
 Moodlet reinforcement/progression owners retain stacking, refresh, decay and
@@ -284,7 +265,7 @@ transition after accepted-contact accounting. Autonomous intake uses the same fo
 inside the existing World/Pet/Memory transaction, including finite known stock
 reconstructed before the deadline, without personal reward/contact.
 
-The three existing game sequences emit immutable player-perspective
+The five existing game sequences emit immutable player-perspective
 `games.contracts.GameRoundEvent` start/settled-result facts through typed window
 ports, the router and `GameExperienceCoordinator.observe_round()`. That existing
 coordinator holds one transient pending attempt (identity, elapsed start and
@@ -378,12 +359,25 @@ The existing Moodlet lifetime owner retains pause/resume and relief allowances;
 PetState remains the single mutation owner. Pure numeric calls without supplied
 relationship evidence do not invent an absent history or qualify poor-care events.
 
+`pet/care_experiences.py` and `pet/interaction_experiences.py` record qualified
+actual receipts in the existing bounded `CareEvidenceState`. One escalating
+incident does not become multiple long-term incidents. `pet/long_term_moodlets.py`
+evaluates the six authored care patterns once per completed twenty-four-hour
+period on `progression.py`'s existing elapsed boundaries. It reads canonical
+relationship need exposure, accounts awake gaps through sleep, evaluates before
+pruning and never simulates offline user actions. The existing frozen checkpoint
+owns its monotonic experience counter; active episodes own their bounded causes.
+
 Wish lifecycle/fulfillment and overall emotional interpretation are delivered.
 `pet/emotions.py` derives a frozen `EmotionalComposition` from every active
 Moodlet's intensity, retaining all directions, causes and known attribution.
 It owns no state, timer, reward or refusal. Positive/negative totals select the
-winning polarity; its strongest combined direction selects the label. Equal
-nonzero totals produce ambivalence. Without Moodlets, numeric mood supplies
+dominant side only above sixty percent, with an inclusive forty/sixty mixed
+band. Caution/uncertainty can select a reserved mixed state. Qualified joy/safety,
+expectation/pride and uncertainty/pressure compounds add carefree, optimistic and
+tense labels while retaining all opposing influences. Strongest-direction ties
+use recency, individual intensity and stable order. Without Moodlets, numeric
+mood supplies
 subdued below 40, calm below 70 and satisfied from 70. Numeric caps never
 truncate emotional evidence.
 

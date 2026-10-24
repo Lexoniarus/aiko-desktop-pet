@@ -230,10 +230,16 @@ time alone cannot create food. See [data and saves](DATA_AND_SAVES.md).
 Numeric mood remains the timed need/Moodlet wellbeing value. The separate
 `EmotionalComposition` is a pure interpretation of every active impression's
 current intensity (1/2/3), independent of numeric contribution caps. Sum each
-polarity and direction; the stronger polarity's greatest combined direction
-sets the primary state. Equal nonzero totals yield Zwiegespalten. Direction
-ties prefer the latest trigger, then strongest individual impression, then
-stable enum order. No-Moodlet fallback: Gedrückt below 40, Gelassen at 40–<70,
+polarity and direction. A side must exceed sixty percent to dominate; the
+inclusive forty/sixty band is mixed. Caution/uncertainty comprising at least
+half the negative side selects Reserviert in that band; other mixed compositions
+select Zwiegespalten. A dominant side normally selects its strongest direction.
+Joy plus safety can select Unbeschwert at numeric mood seventy or above with
+little negative burden; expectation plus pride selects Zuversichtlich; uncertainty
+plus irritation/crowding/frustration can select Angespannt. Compound membership
+uses the approved sixty-percent combined-direction thresholds, without counting
+any influence twice. Direction ties prefer the latest trigger, then strongest
+individual impression, then stable enum order. No-Moodlet fallback: Gedrückt below 40, Gelassen at 40–<70,
 Zufrieden from 70. All causes and secondary directions remain readable.
 
 Physical needs, sleep, short irritation/warmth and friendship are separate facts.
@@ -358,11 +364,18 @@ same real events without turning escalating messages into separate incidents.
 
 ## Verification scope
 
-Existing focused domain, persistence, game, social, UI-contract and hover checks
-are recorded by delivery in the master plan. These are historical results, not
-a fresh full-suite claim for current HEAD. Generated-wish/balance integration
-remains in the later feature acceptance; full-suite/static gates, tests over ten
-seconds and the final OOP review remain in the closing phase of the current
-master plan. Native Windows/DPI/input acceptance remains separate; the original
-reported AppHang is not conclusively diagnosed. Later concrete-experience speech
-is deliberately outside this delivery.
+The renewed wish/Moodlet delivery passed step-8 local acceptance: the isolated
+candidate completed 1,701 repository tests in 77.761 seconds with no failures or
+errors and 111 explicit native-display skips. Whole Ruff, strict Mypy and Pyright
+passed; no individual test exceeded ten seconds. The
+[master-plan acceptance receipt](CARE_TIME_IMPLEMENTATION_PLAN.md#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
+records ownership review, corrected fixtures and slow-test investigation.
+
+`tools/care_balance_scenarios.py` uses actual weighted wishes and completion/
+need/progression policies, with declared balanced round outcomes and prepared
+social capability. Two ten-day seeds support average friendship level seven/
+eight and intensive level ten without injecting credits or Moodlets. These
+representative fixture outcomes are not a forecast of player skill or provider
+availability. Native Windows/DPI/input acceptance remains separate; the original
+reported AppHang is not conclusively diagnosed. Later speech grounded in actual
+active causes remains outside this delivery.
