@@ -1,0 +1,329 @@
+{
+  "version": 2,
+  "wishes": [
+    {
+      "id": "food",
+      "area": "food",
+      "target_kind": "food",
+      "targets": [
+        "onigiri",
+        "sandwich",
+        "taiyaki",
+        "apple",
+        "dango",
+        "donut",
+        "cookie",
+        "melonpan",
+        "cupcake",
+        "dorayaki"
+      ],
+      "fulfillment_moodlet": "food_fulfilled",
+      "fulfillment_level": 1,
+      "round_count": 0,
+      "objective": "food_intake",
+      "selection_weight": 70,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "avoid_food",
+      "area": "food",
+      "target_kind": "food",
+      "targets": [
+        "onigiri",
+        "sandwich",
+        "taiyaki",
+        "apple",
+        "dango",
+        "donut",
+        "cookie",
+        "melonpan",
+        "cupcake",
+        "dorayaki"
+      ],
+      "fulfillment_moodlet": "food_fulfilled",
+      "fulfillment_level": 1,
+      "round_count": 0,
+      "objective": "food_handover",
+      "selection_weight": 30,
+      "target_mode": "exclude",
+      "experience": null
+    },
+    {
+      "id": "play_game",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack",
+        "connect_four",
+        "mastermind"
+      ],
+      "fulfillment_moodlet": "shared_play",
+      "fulfillment_level": 1,
+      "round_count": 2,
+      "objective": "total_rounds",
+      "selection_weight": 30,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "win_round",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack",
+        "connect_four",
+        "mastermind"
+      ],
+      "fulfillment_moodlet": "pride",
+      "fulfillment_level": 1,
+      "round_count": 1,
+      "objective": "next_win",
+      "selection_weight": 10,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "avoid_round_loss",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack",
+        "connect_four",
+        "mastermind"
+      ],
+      "fulfillment_moodlet": "relief",
+      "fulfillment_level": 1,
+      "round_count": 1,
+      "objective": "next_non_loss",
+      "selection_weight": 15,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "win_overall",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack",
+        "connect_four",
+        "mastermind"
+      ],
+      "fulfillment_moodlet": "pride",
+      "fulfillment_level": 2,
+      "round_count": 3,
+      "objective": "total_wins",
+      "selection_weight": 10,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "avoid_overall_loss",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack",
+        "connect_four",
+        "mastermind"
+      ],
+      "fulfillment_moodlet": "relief",
+      "fulfillment_level": 2,
+      "round_count": 3,
+      "objective": "block_non_loss",
+      "selection_weight": 5,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "chat",
+      "area": "social",
+      "target_kind": "social",
+      "targets": [
+        "chat"
+      ],
+      "fulfillment_moodlet": "connection",
+      "fulfillment_level": 1,
+      "round_count": 0,
+      "objective": "activity",
+      "selection_weight": 25,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "single",
+      "area": "social",
+      "target_kind": "social",
+      "targets": [
+        "single"
+      ],
+      "fulfillment_moodlet": "cheerful",
+      "fulfillment_level": 1,
+      "round_count": 0,
+      "objective": "activity",
+      "selection_weight": 15,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "twopart",
+      "area": "social",
+      "target_kind": "social",
+      "targets": [
+        "twopart"
+      ],
+      "fulfillment_moodlet": "cheerful",
+      "fulfillment_level": 1,
+      "round_count": 0,
+      "objective": "activity",
+      "selection_weight": 15,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "fact",
+      "area": "social",
+      "target_kind": "social",
+      "targets": [
+        "fact"
+      ],
+      "fulfillment_moodlet": "enthusiastic",
+      "fulfillment_level": 1,
+      "round_count": 0,
+      "objective": "activity",
+      "selection_weight": 15,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "pet",
+      "area": "affection",
+      "target_kind": "care",
+      "targets": [
+        "pet"
+      ],
+      "fulfillment_moodlet": "secure",
+      "fulfillment_level": 1,
+      "round_count": 0,
+      "objective": "activity",
+      "selection_weight": 1,
+      "target_mode": "exact",
+      "experience": null
+    },
+    {
+      "id": "play_any_game",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack",
+        "connect_four",
+        "mastermind"
+      ],
+      "fulfillment_moodlet": "shared_play",
+      "fulfillment_level": 1,
+      "round_count": 2,
+      "objective": "total_rounds",
+      "selection_weight": 30,
+      "target_mode": "any",
+      "experience": null
+    },
+    {
+      "id": "play_other_game",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack",
+        "connect_four",
+        "mastermind"
+      ],
+      "fulfillment_moodlet": "shared_play",
+      "fulfillment_level": 1,
+      "round_count": 2,
+      "objective": "total_rounds",
+      "selection_weight": 10,
+      "target_mode": "exclude",
+      "experience": {
+        "kind": "recent_play",
+        "window_seconds": 1800,
+        "weight_multiplier": 1.5
+      }
+    },
+    {
+      "id": "rematch_game",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack",
+        "connect_four",
+        "mastermind"
+      ],
+      "fulfillment_moodlet": "shared_play",
+      "fulfillment_level": 1,
+      "round_count": 1,
+      "objective": "total_rounds",
+      "selection_weight": 10,
+      "target_mode": "exact",
+      "experience": {
+        "kind": "last_round_loss",
+        "window_seconds": 1800,
+        "weight_multiplier": 1.5
+      }
+    },
+    {
+      "id": "comeback_game",
+      "area": "games",
+      "target_kind": "game",
+      "targets": [
+        "rock_paper_scissors",
+        "tic_tac_toe",
+        "blackjack",
+        "connect_four",
+        "mastermind"
+      ],
+      "fulfillment_moodlet": "pride",
+      "fulfillment_level": 1,
+      "round_count": 1,
+      "objective": "retry_win",
+      "selection_weight": 5,
+      "target_mode": "exact",
+      "experience": {
+        "kind": "last_round_loss",
+        "window_seconds": 1800,
+        "weight_multiplier": 1.5
+      }
+    },
+    {
+      "id": "social_any",
+      "area": "social",
+      "target_kind": "social",
+      "targets": [
+        "chat",
+        "single",
+        "twopart",
+        "fact"
+      ],
+      "fulfillment_moodlet": "connection",
+      "fulfillment_level": 1,
+      "round_count": 0,
+      "objective": "activity",
+      "selection_weight": 30,
+      "target_mode": "any",
+      "experience": null
+    }
+  ]
+}

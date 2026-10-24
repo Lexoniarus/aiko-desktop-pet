@@ -14,9 +14,15 @@ and test-cleanup plans.
 | Attention, identification, learned-place checks, search and custody | [World behavior](WORLD_OBJECT_CONTRACTS.md) |
 | Desktop acceptance and repeatable isolated-save checks | [World smoke guide](WORLD_SMOKE_TEST.md) |
 | Toolbar, action availability, details and native windows | [UI window contract](UI_WINDOW_CONTRACT.md) |
-| Packaged JSON, save versions, recovery and time | [Data and saves](DATA_AND_SAVES.md) |
+| Approved VN direction; main menu/settings delivered in 5C, native acceptance pending | [VN interface design](UI_VN_DESIGN.md) |
+| Approved local preview bundle, cross-chat handoff and asset readiness | [UI reference handoff](UI_PREVIEW_HANDOFF.md) |
+| Packaged JSON, SQLite saves, strict import, recovery and time | [Data and saves](DATA_AND_SAVES.md) |
+| SQL-9 field preservation, timings and final OOP review | [SQLite acceptance](SQLITE_ACCEPTANCE_REVIEW.md) |
 | Food, digestion, workload and item graphics | [Food system](FOOD_SYSTEM.md) |
+| Adaptive sleep, input learning and finite closed-time care | [Sleep rules](SLEEP_SYSTEM.md) |
+| Continuous friendship from mood/Moodlets, personal contact and neglect | [Friendship rules](FRIENDSHIP_SYSTEM.md) |
 | Need rewards and overall mood | [Fun and mood](FUN_MOOD_SYSTEM.md) |
+| Unterhalten, API-only Single/Two Parts/facts, warming and shared care | [Social content](SOCIAL_CONTENT.md) |
 | Animation profile and playback timing | [Animation timing](ANIMATION_TIMING_PROFILE.md) |
 | Source installation on Windows | [Windows setup](WINDOWS_SETUP.md) |
 | Branches, reviews and CI | [Development workflow](GITHUB_WORKFLOW.md) |
@@ -27,9 +33,85 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest runtime correction (2026-10-24): [shared fractional time contract](CARE_TIME_IMPLEMENTATION_PLAN.md#time-contract-correction-after-sql-9-runtime-report).
+The prior OOP acceptance missed inconsistent elapsed endpoints. Pet and World
+now use the same plan-owned endpoint; strict storage bounds remain unchanged.
+**226 affected-owner tests passed in 36.938 s**, no skips, longest **3.886 s**.
+The existing personal save is not reset or reimported.
+
+Historical SQLite acceptance (2026-10-24): **SQL-1 through SQL-9 delivered**.
+The complete local workspace run reported **1,844 tests in 95.936 seconds**,
+zero failures/errors and **112 display-dependent skips**. No test exceeded ten
+seconds; longest **8.657 s**. Whole Ruff, strict Mypy and Pyright passed after
+three stale horoscope test usages were corrected. The [SQL-9 review](SQLITE_ACCEPTANCE_REVIEW.md)
+records owner/field preservation, parallel-work scope and native limitations.
+No personal save, test windows, pointer automation or CI was used.
+
+Earlier Social Optimization status (2026-10-24): the renewed wish/Moodlet
+slices 1–8 passed [local step-8 acceptance](CARE_TIME_IMPLEMENTATION_PLAN.md#delivery-slice-8d-generated-care-acceptance-and-final-oop-review).
+The isolated candidate completed 1,701 tests in 77.761 seconds with 111 explicit
+native-display skips, plus whole Ruff, strict Mypy and Pyright. Generated care
+scenarios support ordinary friendship level seven/eight and intensive level ten.
+Native visual/input acceptance and the reported AppHang remain separate; this
+no-window run does not verify them. [Earlier open-work reports](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23)
+are historical where superseded. The older results below apply to their named
+baselines, not automatically to current HEAD.
+
+- Social API delivery on 2026-10-19: frozen code `644c367` passed **1,371 native
+  Windows tests in 301.549 seconds**, no failures/errors/skips, plus full pinned
+  Ruff, strict Mypy (218 source files) and Pyright. Separate live API checks
+  reached 2/2/2 ready buffers and exercised all three formats in an isolated
+  native Tk host. The [delivery record](SOCIAL_CONTENT_IMPLEMENTATION_PLAN.md#final-verification)
+  distinguishes focused checks, corrected failures and the final full gate.
+  Maintainer visual acceptance remains separate; no merge was performed.
+
+- Three-game delivery on 2026-10-19: the final `8dc61e7` snapshot passed
+  **1,318 local Python 3.11/Xvfb tests in 177.825 seconds**, eight platform
+  skips, no failures/errors. Full pinned Ruff/Mypy/Pyright passed (212 source
+  files for Mypy), alongside per-commit targeted checks and 94 headless Windows
+  cases. The [delivery record](MINIGAME_IMPLEMENTATION_PLAN.md#delivery-evidence)
+  includes corrections and actual Tk capture review. Native Windows card
+  transparency/focus/input acceptance remains separate; no merge was performed.
+
+- Stage 3 on 2026-10-19 passed **1,226 native Windows tests in 282.452
+  seconds**, no failures/errors/skips, plus pinned Ruff/Mypy/Pyright (193
+  application/tool source files). Six production-policy daily comparisons,
+  both actual care schedules, rolling caps, sustained neglect, migration and
+  restart passed. The isolated [native return/input/care probe](WORLD_SMOKE_TEST.md#stage-3-friendship-contact-and-neglect-2026-10-19)
+  also passed; the [active plan](CARE_TIME_IMPLEMENTATION_PLAN.md) records
+  stage 3 complete. Sleep and physical-standby acceptance remain separate.
+
+- B2 on 2026-10-19: `4757da7` adds subjective search reunion and `b984078`
+  adds natural German object phrases and integrated regression. **1,203 native
+  Windows tests in 271.518 seconds** passed without failures/errors/skips,
+  alongside pinned Ruff/Mypy/Pyright (190 source files). The separate
+  [real-timer Onigiri probe](WORLD_SMOKE_TEST.md#b2-subjective-reunion-and-german-dialogue-2026-10-19)
+  passed in 70.520 seconds with 21 rendered text labels. All 138 object
+  sequences were reviewed, 90 changed; the workbook preserves baseline copy
+  and records delivered replacements. Save versions and menu names are unchanged.
+
+- B1 direct-click verification on 2026-10-19 passed **1,185 tests in 269.433
+  seconds**, without failures, errors or skips, plus pinned Ruff/Mypy/Pyright.
+  Actual Windows-injected left-only and mixed-button bursts reached counts
+  1–6 and the existing irritation response in isolated sessions; care/game/
+  story/object exclusions remain covered by native Tk tests. See the
+  [B1 smoke record](WORLD_SMOKE_TEST.md#b1-direct-click-escalation-2026-10-19).
+- Stage-2 need/mood verification on 2026-10-19 passed **1,177 tests in 258.671
+  seconds**, with no failures, errors or skips. Ruff 0.13.2, strict Mypy 1.18.2
+  (188 application files) and Pyright 1.1.414 passed. Two isolated native Tk
+  launches verified restored values, care and save/reopen without replay;
+  [physical standby acceptance remains pending](WORLD_SMOKE_TEST.md#stage-2-numeric-balance-check-2026-10-19).
+  These are local results; ordinary feature pushes do not trigger full remote CI.
+
+- Local real-time/save-foundation verification on 2026-10-19 passed **1,166
+  tests in 259.455 seconds**, Ruff, strict Mypy and Pyright. A native isolated
+  launch/save/reopen check counted a substituted 12-hour absence once and
+  preserved finite stock. Actual physical standby/resume acceptance remains
+  [pending separately](WORLD_SMOKE_TEST.md#real-time-foundation-follow-up).
 - Maintainer-reported desktop acceptance for the current World interaction flow
   is **passed**, recorded 2026-10-18. This does not invent individual sign-offs for
-  every old matrix cell. The latest work after that report changed tests/docs only.
+  every old matrix cell. Later time-foundation changes have their own
+  [validation and resume checklist](WORLD_SMOKE_TEST.md#real-time-foundation-follow-up).
 - Local full verification at `5f1bdea`: **1,146 tests in 258.742 seconds**, no
   failures, errors or skips, using Python 3.11.9, Pillow 11.3.0 and native Tk.
   Ruff 0.13.2, strict Mypy 1.18.2 (188 source files) and Pyright 1.1.414 passed.
@@ -59,8 +141,21 @@ Detailed commit-specific evidence is in the
 application contracts and explicitly unimplemented external transports.
 [Minigame candidates](MINIGAME_CANDIDATES.md) are exploratory research, not an
 approved roadmap or a dependency list for the running application.
+The separate [three-game implementation plan](MINIGAME_IMPLEMENTATION_PLAN.md)
+records the selected Blackjack/Tic-Tac-Toe scope, the Spielen submenu and the
+player-window/desktop-card split, delivered on the current feature branch.
+Its per-commit evidence distinguishes targeted checks, final validation and
+separate native Windows acceptance. These additions are not merged into main.
 
 ## Preserved product concepts
+
+The [selected social expansion plan](SOCIAL_EXPANSION_PLAN.md), recorded on
+2026-10-23, specifies short one-line jokes and quotations under Sprüche, daily
+horoscope and tarot role performances with original source address retained,
+mandatory free/keyless access, provider budgets and a shared bubble-duration
+review. Only the shared bubble timing has subsequently been authorized and
+implemented, including the final-text allowance and 800 ms punchline pause.
+The new content sources/actions and one-liner filtering remain planned.
 
 The following owner-supplied concepts were recorded on 2026-10-19. They preserve
 future product direction, with explicit comparisons against main after PR #10.
@@ -75,6 +170,75 @@ recording them does not select the next feature or approve a delivery schedule.
 The social concept connects the [minigame catalogue](MINIGAME_CANDIDATES.md)
 to the proposed content/translation pipeline. Cursor behavior shares attention
 and presentation owners but does not depend on online sources or translation.
+
+## Balance proposals
+
+The latest discussed need, mood, friendship and simple sleep model has now been
+accepted as the basis for [implementation planning](CARE_TIME_IMPLEMENTATION_PLAN.md).
+The real-time/save foundation is committed and pushed (`59cab63`); stage 2
+now implements need/mood balance, and stage 3 supplies progressive friendship.
+Stage 4 supplies [adaptive sleep and finite unattended care](SLEEP_SYSTEM.md).
+The original discussion disclaimers and superseded examples remain historical context; the plan identifies the latest baseline
+and the small details to settle during delivery. Maintained guides distinguish
+implemented rules from remaining expression/context tuning. Separate
+fixes cover [idle repeated clicks](CARE_TIME_IMPLEMENTATION_PLAN.md#b1-restore-annoyance-from-repeated-direct-clicks-while-idle)
+and [subjective object reunion/German phrases](history/OBJECT_RECOGNITION_DIALOGUE_FIX_PLAN.md),
+both implemented and verified. The latter link is the completed delivery record.
+
+The [friendship balance proposal](FRIENDSHIP_BALANCE_PROPOSAL.md) preserves the
+candidate care gains, real-time absence losses and negative-interaction values
+discussed on 2026-10-19, including the later progressive upkeep factor and timed
+neglect rules. Its stage-3 revision used shared +0.75/two-hour and +5/24-hour gain ceilings,
+gentler lower upkeep and comparisons from two to eight care visits. Those are
+historical figures. Current [continuous friendship](FRIENDSHIP_SYSTEM.md) replaces
+instant care/wish rewards with elapsed mood/Moodlet flow and progressive factors;
+old reward fields survive only as save compatibility metadata.
+
+The [need balance and daily care proposal](NEEDS_BALANCE_PROPOSAL.md) records
+real-time need rates, care/food effects and an eight-period example day with
+eight hours of sleep. It connects demanding level-10 maintenance with a good
+relationship under average care. The arithmetic is illustrative, not a runtime
+playtest; revised energy values and withdrawn suggestions are explicit. The
+later consumption section records bounded hardware/input hunger surcharges,
+weaker digestion protection, a smaller energy surcharge and repeated-day food
+examples; normal elapsed time requires feeding independently of hardware load.
+The [combined example day](NEEDS_BALANCE_PROPOSAL.md#combined-example-day-with-needs-mood-sleep-and-friendship)
+now calculates the five needs, target/actual mood, normal sleep and individually
+credited friendship together under the historical reward model, with explicit
+assumptions and no current-runtime claim.
+The later [four-phase combined day](NEEDS_BALANCE_PROPOSAL.md#combined-four-phase-average-care-day)
+bundles sufficient care into four visits and settles around levels 7–8, with
+need minima above 40 and actual mood around 48–79. Four visits with insufficient
+food/talk do not produce the same result. The later generated-wish scenarios and continuous friendship passed the
+[level-seven/eight versus level-ten acceptance](CARE_TIME_IMPLEMENTATION_PLAN.md#delivery-slice-8d-generated-care-acceptance-and-final-oop-review).
+New positive experiences change the old mood-only reference values.
+
+The [mood balance proposal](MOOD_BALANCE_PROPOSAL.md) records the equal need
+contributions, deficit deductions and target limits, faster decline under severe
+deficits, two-point-per-minute recovery and real-time examples. Its current numeric rules are implemented in [Fun and mood](FUN_MOOD_SYSTEM.md);
+contextual Moodlets, wishes and the status UI are delivered. The master plan
+separates completed local acceptance from later experience-based dialogue.
+
+The [adaptive sleep proposal](ADAPTIVE_SLEEP_PROPOSAL.md) records the learned
+quiet window, three/seven-phase learning milestones, 15-minute sleep onset,
+nap/recovery rules, early-waking conditions and real-time continuation while
+closed or suspended. Habit learning uses only actual repeated mouse/keyboard
+input, inactivity and known off/standby state; app timestamps, manual commands
+and weighted scoring are excluded. It also records conflict priority, 30-minute
+manual-control protection and sleep-type wake thresholds. Food breaks use satiety thresholds
+20/40, one bounded zero-hunger search and identified available stock while closed.
+Expected rhythm remains distinct from observed activity, and remaining transition
+details are resolved in the [stage-4 runtime guide](SLEEP_SYSTEM.md).
+
+## Dialogue editorial review
+
+The [bubble dialogue review workbook](DIALOGUE_REVIEW.md) is a historical
+whole-sequence snapshot, preserving original rows and B2 review decisions.
+It does not mean all current dialogue is unreviewed. The subsequent complete
+German revision and schema migration are recorded in the
+[dialogue revision plan](DIALOGUE_REVISION_PLAN.md); runtime JSON remains the
+source of current text and filters. Future speech about concrete active Moodlet
+causes is a separate planned conversation feature.
 
 ## Keeping documentation current
 

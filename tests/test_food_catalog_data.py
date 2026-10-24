@@ -38,7 +38,7 @@ class FoodCatalogDataTests(unittest.TestCase):
             "foods": [{
                 "id": "apple", "display_name": "Apfel",
                 "category": "snack", "instant_satiety_points": 14,
-                "digest_reserve_minutes": 38, "normal_mood_bonus": 3,
+                "digest_reserve_minutes": 38,
             }],
         }
         self.assertEqual(parse_food_catalog(good).foods["apple"].display_name,
@@ -50,7 +50,7 @@ class FoodCatalogDataTests(unittest.TestCase):
             {**good, "menu_order": ["apple"]},
             {**good, "default_food_id": "missing"},
             {**good, "foods": [{**good["foods"][0],
-                                "normal_mood_bonus": float("nan")}]},
+                                "instant_satiety_points": float("nan")}]},
             {**good, "foods": [{**good["foods"][0],
                                 "digest_reserve_minutes": True}]},
         ):

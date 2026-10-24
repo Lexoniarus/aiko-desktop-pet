@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Literal
 
 from ..balance import BALANCE
@@ -39,7 +39,9 @@ class Cue:
     def __post_init__(self) -> None:
         if self.kind not in CUE_KINDS:
             raise ValueError("Invalid cue kind")
-        if type(self.duration_ms) is not int or not 250 <= self.duration_ms <= 8000:
+        maximum_ms = 10000 if self.kind == "text" else 8000
+        if (type(self.duration_ms) is not int
+                or not 250 <= self.duration_ms <= maximum_ms):
             raise ValueError("Cue duration out of range")
         if self.kind == "text" and not 1 <= len(self.content.strip()) <= 125:
             raise ValueError("Invalid dialogue text")
@@ -85,3 +87,28 @@ class Cue:
         if type(duration) is not int:
             raise ValueError("Invalid cue duration")
         return cls(kind, content, duration)
+
+
+def conversation_timing(beats: tuple[Cue, ...]) -> tuple[Cue, ...]:
+    """Prepare social reading time once, including the actual final text."""
+    last_text = next(
+        (index for index in range(len(beats) - 1, -1, -1)
+         if beats[index].kind == "text"),
+        None,
+    )
+    minimum = BALANCE.integer("dialogue", "conversation_minimum_text_ms")
+    maximum = BALANCE.integer("dialogue", "conversation_maximum_text_ms")
+    orientation = BALANCE.integer("dialogue", "conversation_orientation_ms")
+    per_character = BALANCE.integer("dialogue", "conversation_reading_ms_per_character")
+    final_allowance = BALANCE.integer("dialogue", "conversation_final_text_ms")
+    return tuple(
+        replace(
+            beat,
+            duration_ms=min(
+                maximum,
+                max(minimum, orientation + len(beat.content) * per_character)
+                + (final_allowance if index == last_text else 0),
+            ),
+        ) if beat.kind == "text" else beat
+        for index, beat in enumerate(beats)
+    )

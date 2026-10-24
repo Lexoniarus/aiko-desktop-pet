@@ -2,45 +2,100 @@
 
 from __future__ import annotations
 
+import random
 import time
 from copy import deepcopy
 from dataclasses import replace
 from typing import Any
 
+from ..games.contracts import RoundOutcome
 from .balance import BALANCE
 from .care_actions import (
     CareTransition,
     plan_care_action,
     resolve_care_time,
 )
-from .care_result import CareResult
+from .care_evidence import (
+    CareActivity,
+    CareExperience,
+)
+from .care_experiences import (
+    allocate_experience_receipt,
+    award_comeback,
+    award_everyday_experience,
+    complete_play_session,
+    record_experience,
+    record_personal_food,
+    record_wish_experience,
+)
+from .care_result import CareEffect, CareResult
 from .consumption import ConsumptionOrigin
 from .food import (
-    FOOD_CATALOG,
     FoodActivity,
     FoodId,
     FoodState,
-    advance_food,
-    eat_food,
+)
+from .food_catalog import DEFAULT_CATALOG
+from .food_wishes import (
+    account_food_wish,
+    begin_food_handover,
+    food_wish_permission,
+    recognize_food_handover,
+    withdraw_food_handovers,
 )
 from .friendship import (
-    calculate_friendship_reward,
-    friendship_after_withholding,
+    apply_negative_event,
+    begin_continuous_friendship,
+    record_accepted_contact,
 )
-from .fun import GameExperience, advance_fun, calculate_game_session_fun
+from .friendship_history import FriendshipHistory, FriendshipProgress
+from .fun import GameExperience, calculate_game_session_fun
+from .interaction_events import (
+    FoodConsumed,
+    HelpfulInteraction,
+    InteractionEvent,
+    SocialCompletion,
+)
+from .interaction_rules import InteractionConsequences, apply_interaction_event
 from .lifecycle import (
+    SimulationStep,
     calculate_daily_routine,
     plan_pet_time,
 )
-from .mood import MoodFactors, calculate_mood_target, reflect_care_in_mood
-from .need_decay import (
-    NeedLevels,
-    calculate_need_decay,
+from .moodlet_catalog import MOODLET_CATALOG
+from .moodlets import (
+    MoodletAttribution,
+    MoodletCauseKind,
+    MoodletId,
+    MoodletOutcome,
+    MoodletState,
+    reinforce_moodlet,
 )
+from .needs import NeedLevels
+from .progression import calculate_pet_progression
 from .routine import TimeContext, context_at, due_meal
+from .sleep import SleepContext, SleepEpisode, calculate_manual_sleep_transition
 from .state_values import PetValues, PreparedItemConsumption
-from .status_hints import MoodHint, choose_mood_hint
+from .status_hints import StatusHint, choose_status_hint
 from .value_rules import clamp_need_value
+from .wish_catalog import WISH_CATALOG
+from .wish_fulfillment import (
+    fulfill_activity_wish,
+    progress_game_wish,
+)
+from .wish_selection import replenish_wishes
+from .wishes import (
+    WishArea,
+    WishContext,
+    WishId,
+    WishResolution,
+    WishState,
+    WishTargetKind,
+    acknowledge_wish_expression,
+    dismiss_wish,
+    expire_wishes,
+    set_wish_pinned,
+)
 
 
 class PetState:
@@ -70,6 +125,11 @@ class PetState:
         auto_nap_day: str = "",
         food: FoodState | None = None,
         fun: float = BALANCE.number("initial", "fun"),
+        lived_seconds: float = 0.0,
+        relationship: FriendshipHistory | None = None,
+        sleep_episode: SleepEpisode | None = None,
+        moodlets: MoodletState | None = None,
+        wishes: WishState | None = None,
     ) -> None:
         self._values = PetValues(
             satiety=satiety, mood=mood, energy=energy, social=social,
@@ -84,6 +144,14 @@ class PetState:
             sleep_origin=sleep_origin, auto_sleep_night=auto_sleep_night,
             nap_until=nap_until, auto_nap_day=auto_nap_day,
             food=FoodState() if food is None else food, fun=fun,
+            lived_seconds=lived_seconds,
+            sleep_episode=sleep_episode or SleepEpisode(),
+            moodlets=(MoodletState(baseline=lived_seconds)
+                      if moodlets is None else moodlets),
+            wishes=WishState() if wishes is None else wishes,
+            relationship=(FriendshipHistory(baseline=lived_seconds,
+                                            continuous_since=lived_seconds)
+                          if relationship is None else relationship),
         )
 
     def __repr__(self) -> str:
@@ -120,6 +188,17 @@ class PetState:
         return list(self._values.meals_today)
 
     @property
+    def needs(self) -> NeedLevels:
+        """Detached five-need read; mood and relationship remain separate."""
+        return NeedLevels(
+            self.satiety,
+            self.energy,
+            self.fun,
+            self.social,
+            self.affection,
+        )
+
+    @property
     def satiety(self) -> float:
         return self._values.satiety
 
@@ -152,12 +231,21 @@ class PetState:
         return self._values.friendship_gained_today
 
     @property
+    def sleep_episode(self) -> SleepEpisode:
+        return self._values.sleep_episode
+
+    @property
     def sleeping(self) -> bool:
         return self._values.sleeping
 
     @property
     def updated_at(self) -> float:
         return self._values.updated_at
+
+    @property
+    def lived_seconds(self) -> float:
+        """Durable elapsed axis for future histories, independent of wall jumps."""
+        return self._values.lived_seconds
 
     @property
     def meals_date(self) -> str:
@@ -188,6 +276,20 @@ class PetState:
         return self._values.fun
 
     @property
+    def friendship_history(self) -> FriendshipHistory:
+        return self._values.relationship
+
+    @property
+    def moodlets(self) -> MoodletState:
+        """Immutable episode values, owned by the complete pet checkpoint."""
+        return self._values.moodlets
+
+    @property
+    def wishes(self) -> WishState:
+        """Immutable inner wishes; reading them neither expresses nor fulfills them."""
+        return self._values.wishes
+
+    @property
     def friendship_level(self) -> int:
         """Display level (1..10), derived from the durable 0..100 bond."""
         return min(10, 1 + int(self.friendship // 10))
@@ -199,7 +301,7 @@ class PetState:
     def _set_needs(self, values: NeedLevels) -> None:
         """Commit validated need values together inside the pet aggregate."""
         self._change(
-            satiety=values.satiety, mood=values.mood, energy=values.energy,
+            satiety=values.satiety, energy=values.energy, fun=values.fun,
             social=values.social, affection=values.affection,
         )
 
@@ -211,6 +313,8 @@ class PetState:
         allow_nap: bool = False,
         interrupt_nap: bool = False,
         effort: float | None = None,
+        sleep_context: SleepContext | None = None,
+        automatic: bool = True,
     ) -> None:
         """Apply an evaluated sleep transition without exposing private hooks."""
         self._roll_meals(context)
@@ -220,88 +324,230 @@ class PetState:
             allow_bedtime=allow_bedtime,
             allow_nap=allow_nap,
             interrupt_nap=interrupt_nap,
-            effort=effort,
+            effort=effort, sleep_context=sleep_context, automatic=automatic,
         )
         self._change(
             sleeping=transition.sleeping, sleep_origin=transition.sleep_origin,
             nap_until=transition.nap_until,
             auto_sleep_night=transition.auto_sleep_night,
-            auto_nap_day=transition.auto_nap_day,
+            auto_nap_day=transition.auto_nap_day, sleep_episode=transition.episode,
         )
 
-    def _decay(
+    def _advance_progression(
         self,
-        hours: float,
-        context: TimeContext | None,
+        end_elapsed: float,
         effort: float | None = None,
         food_activity: FoodActivity | None = None,
+        *, observed: bool = True,
     ) -> None:
-        """Update nutrition and the other needs in one aggregate transition."""
-        food_progress = advance_food(
-            self.food,
-            self.satiety,
-            hours,
-            sleeping=self.sleeping,
-            activity=(
-                food_activity
-                if food_activity is not None
-                else FoodActivity(hardware_load=effort or 0.0)
+        """Commit the pure policy's immutable result as one aggregate update."""
+        progress = calculate_pet_progression(
+            self, end_elapsed, effort, food_activity=food_activity,
+            observed=observed,
+            relationship=FriendshipProgress(
+                self.friendship, self.friendship_history, self.lived_seconds,
             ),
         )
-        self._set_needs(
-            calculate_need_decay(
-                self,
-                hours,
-                context,
-                effort,
-                food_progress=food_progress,
-            )
-        )
+        assert progress.relationship is not None
+        relationship = progress.relationship
+        if relationship.elapsed != progress.elapsed:
+            raise ValueError("Relationship does not match the progression endpoint")
+        needs = progress.needs
         self._change(
-            food=food_progress.food,
-            fun=advance_fun(self.fun, hours, sleeping=self.sleeping),
+            satiety=needs.satiety, mood=progress.mood, energy=needs.energy,
+            social=needs.social, affection=needs.affection,
+            food=progress.food, fun=needs.fun,
+            moodlets=progress.moodlets,
+            friendship=relationship.points, relationship=relationship.history,
+            lived_seconds=progress.elapsed,
+            wishes=expire_wishes(self.wishes, elapsed=progress.elapsed),
+            sleep_episode=(replace(
+                self.sleep_episode,
+                slept_seconds=(self.sleep_episode.slept_seconds
+                               + (progress.elapsed - self.lived_seconds)),
+            ) if self.sleeping else self.sleep_episode),
         )
 
-    def _mood_target(self) -> float:
-        """Read current needs; mood itself never feeds any of them back."""
-        return calculate_mood_target(
-            MoodFactors(
-                satiety=self.satiety,
-                energy=self.energy,
-                fun=self.fun,
-                social=self.social,
-                affection=self.affection,
-                friendship=self.friendship,
-            )
-        )
+    def evaluate_wishes(self, context: WishContext, *, rng: random.Random) -> None:
+        """Replenish current live desires; time reconstruction never calls this."""
+        evidence = self.moodlets.care_evidence
+        last_play = (next((e for e in reversed(evidence.experiences)
+                           if e.activity == CareActivity.PLAY), None)
+                     if evidence else None)
+        self._change(wishes=replenish_wishes(
+            self.wishes, elapsed=self.lived_seconds, sleeping=self.sleeping,
+            needs=self.needs,
+            context=replace(context, recent_play=last_play),
+            definitions=WISH_CATALOG.definitions, rng=rng,
+        ))
 
-    def _provide_own_meal(self, context: TimeContext) -> None:
-        """Eat a due main meal without crediting human attention or friendship."""
-        meal = self.due_meal(context)
-        if self.sleeping or meal is None:
+    def note_wish_expression(self, instance_id: int) -> None:
+        """Record actual presentation without granting care or relationship credit."""
+        self._change(wishes=acknowledge_wish_expression(
+            self.wishes, instance_id, elapsed=self.lived_seconds,
+        ))
+
+    def set_wish_pinned(self, instance_id: int, pinned: bool) -> None:
+        """Protect an existing wish; no care, speech or gameplay event is implied."""
+        self._change(wishes=set_wish_pinned(
+            self.wishes, instance_id, pinned, elapsed=self.lived_seconds,
+        ))
+
+    def dismiss_wish(self, instance_id: int) -> None:
+        """Retire a wish neutrally without erasing any existing impression."""
+        self._change(wishes=dismiss_wish(
+            self.wishes, instance_id, elapsed=self.lived_seconds,
+        ))
+
+    def _apply_wish_resolution(
+        self, resolution: WishResolution, *, personal: bool,
+    ) -> None:
+        """Commit retirement and its lasting impression without an instant bonus."""
+        if (resolution.cause is not None and resolution.cause.wish is not None
+                and WISH_CATALOG.definitions[
+                    WishId(resolution.cause.wish.definition_id)
+                ].area == WishArea.FOOD):
+            resolution = replace(resolution, state=account_food_wish(
+                resolution.state, resolution.cause.wish.instance_id,
+            ))
+        if resolution.fulfilled is None:
+            moodlets = self.moodlets
+            if (resolution.cause is not None
+                    and resolution.cause.kind == MoodletCauseKind.WISH_FAILED):
+                food_failed = (resolution.cause.wish is not None
+                               and resolution.cause.wish.definition_id
+                               == WishId.AVOID_FOOD.value)
+                cause = (replace(resolution.cause, attribution=MoodletAttribution.USER)
+                         if food_failed else resolution.cause)
+                moodlets = reinforce_moodlet(
+                    moodlets, MoodletId.FOOD_WISH_DISREGARDED if food_failed
+                    else MoodletId.DISAPPOINTED, elapsed=self.lived_seconds,
+                    definitions=MOODLET_CATALOG.definitions, cause=cause,
+                    attribution=cause.attribution,
+                )
+            self._change(wishes=resolution.state, moodlets=moodlets)
+            if personal:
+                self._change(moodlets=record_wish_experience(self.moodlets, resolution))
             return
-        meal_foods = tuple(
-            key for key, profile in FOOD_CATALOG.items() if profile.category == "meal"
+        definition = resolution.fulfilled
+        attribution = (MoodletAttribution.USER if personal
+                       else MoodletAttribution.AUTONOMOUS)
+        moodlets = reinforce_moodlet(
+            self.moodlets, definition.fulfillment_moodlet, elapsed=self.lived_seconds,
+            definitions=MOODLET_CATALOG.definitions, level=definition.fulfillment_level,
+            attribution=attribution,
+            cause=(replace(resolution.cause, attribution=attribution)
+                   if resolution.cause is not None else None),
         )
-        if not meal_foods:
+        self._change(wishes=resolution.state, moodlets=moodlets)
+        if personal and resolution.cause is not None:
+            self._change(moodlets=record_wish_experience(self.moodlets, resolution))
+
+    def complete_social_experience(
+        self, completion: SocialCompletion, *, arrangement_ready: bool = False,
+    ) -> None:
+        if (completion.started_at is not None
+                and completion.started_at > self.lived_seconds):
             return
-        # Prefer variety without inventing another nutrition/menu catalogue.
-        food_id = next(
-            (key for key in meal_foods if key != self.food.last_food_id),
-            meal_foods[0],
-        )
-        intake = eat_food(self.food, self.satiety, food_id)
-        if intake.accepted:
-            self._change(
-                satiety=intake.satiety, food=intake.food,
-                meals_today=(*self._values.meals_today, meal),
-            )
+        before = self.moodlets
+        receipt = (f"social:{completion.sequence_id}"
+                   if completion.sequence_id is not None else None)
+        if receipt is not None and not self._record_care_experience(CareExperience(
+            receipt, self.lived_seconds, CareActivity.SOCIAL, MoodletOutcome.COMPLETED,
+            WishArea.SOCIAL, WishTargetKind.SOCIAL, completion.category,
+            pleasant=True,
+        )):
+            return
+        self.experience_interaction(HelpfulInteraction(
+            completion.kind, arrangement_ready,
+        ))
+        if completion.wish_instance_id is not None:
+            self._apply_wish_resolution(fulfill_activity_wish(
+                self.wishes, WishArea.SOCIAL, completion.category,
+                elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
+                instance_id=completion.wish_instance_id, event_id=receipt,
+                started_at=completion.started_at,
+            ), personal=True)
+        if receipt is not None:
+            evidence = self.moodlets.care_evidence
+            assert evidence is not None
+            event = next(e for e in evidence.experiences
+                         if e.receipt_id == receipt)
+            self._change(moodlets=award_everyday_experience(
+                before, self.moodlets, event,
+            ))
+
+    def record_completed_game_round(
+        self, *, game_id: str, round_id: str, outcome: RoundOutcome,
+    ) -> bool:
+        """Retain one actual round fact for wish eligibility, even without a wish.
+
+        This is not a session score, positive encounter or emotional reward.
+        Later care qualification enriches the same owned evidence store.
+        """
+        return self._record_care_experience(CareExperience(
+            f"play:{game_id}:{round_id}", self.lived_seconds, CareActivity.PLAY,
+            MoodletOutcome(outcome), WishArea.GAMES, WishTargetKind.GAME, game_id,
+        ))
+
+    def _record_care_experience(self, event: CareExperience) -> bool:
+        """Use the existing bounded evidence store for unique actual completions."""
+        moodlets, recorded = record_experience(self.moodlets, event)
+        self._change(moodlets=moodlets)
+        return recorded
+
+    def finish_game_round_experience(self, *, game_id: str, round_id: str) -> None:
+        self._change(moodlets=award_comeback(
+            self.moodlets, f"play:{game_id}:{round_id}",
+        ))
+
+    def complete_play_session(
+        self, *, game_id: str, session_id: str, round_id: str,
+    ) -> None:
+        self._change(moodlets=complete_play_session(
+            self.moodlets, game_id=game_id, session_id=session_id,
+            last_receipt=f"play:{game_id}:{round_id}", elapsed=self.lived_seconds,
+        ))
+
+    def complete_wish_round(
+        self, instance_id: int, *, game_id: str, session_id: str, round_id: str,
+        started_at: float, outcome: RoundOutcome,
+    ) -> None:
+        self._apply_wish_resolution(progress_game_wish(
+            self.wishes, instance_id, game_id=game_id, session_id=session_id,
+            round_id=round_id, started_at=started_at, elapsed=self.lived_seconds,
+            outcome=outcome, definitions=WISH_CATALOG.definitions,
+        ), personal=True)
+
+    def begin_food_handover(self, handover_id: str, *, object_id: str) -> None:
+        """Application confirmed custody; capture context without inferring identity."""
+        self._change(wishes=begin_food_handover(
+            self.wishes, handover_id=handover_id, object_id=object_id,
+            elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
+        ))
+
+    def recognize_food_handover(self, handover_id: str, food_id: str) -> None:
+        """Actual identification settles the original gift, independently of eating."""
+        self._apply_wish_resolution(recognize_food_handover(
+            self.wishes, handover_id=handover_id, food_id=food_id,
+            elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
+        ), personal=True)
+
+    def withdraw_food_handovers(self, object_ids: frozenset[str]) -> None:
+        self._change(wishes=withdraw_food_handovers(self.wishes, object_ids))
+
+    def release_food_handovers(self, object_ids: frozenset[str]) -> None:
+        """Consumed/permanently removed objects no longer need technical markers."""
+        self._change(wishes=replace(self.wishes, food_handovers=tuple(
+            r for r in self.wishes.food_handovers if r.object_id not in object_ids
+        )))
 
     def record_game_experience(
         self,
         experience: GameExperience,
         *,
         now: float,
+        arrangement_ready: bool = False,
     ) -> float:
         """Commit one finished minigame, retaining no session statistics."""
         reward = calculate_game_session_fun(experience, self.fun)
@@ -313,8 +559,11 @@ class PetState:
             energy=clamp_need_value(self.energy - reward.energy_cost, 0.0),
             social=clamp_need_value(self.social + reward.social_gain, 0.0),
         )
-        self._credit_friendship("play", now, before)
-        self._change(mood=reflect_care_in_mood(self.mood, self._mood_target()))
+        self._record_accepted_contact("play", now)
+        if experience.completed_units >= BALANCE.integer(
+            "friendship", "minimum_play_rounds",
+        ):
+            self.experience_interaction(HelpfulInteraction("play", arrangement_ready))
         return self.fun - before
 
     def advance(
@@ -328,71 +577,121 @@ class PetState:
         effort: float | None = None,
         elapsed_seconds: float | None = None,
         food_activity: FoodActivity | None = None,
-        self_care: bool = False,
+        sleep_context: SleepContext | None = None,
+        observed: bool = True,
     ) -> None:
-        """Execute bounded time steps, keeping mutation inside PetState."""
+        """Execute all elapsed time; only recent observations affect its tail."""
         steps = plan_pet_time(
             self.updated_at,
             now,
-            auto_routine=auto_routine,
+            auto_routine=auto_routine or bool(self.sleep_episode.kind) or self.sleeping,
             effort=effort,
             elapsed_seconds=elapsed_seconds,
+            elapsed_start=self.lived_seconds,
+            food_activity=food_activity,
         )
         if steps is None:
             return
-        if not auto_routine:
-            for step in steps:
-                self._decay(step.hours, None, step.effort, food_activity)
-            self._roll_meals(context_at(now))
-        else:
-            for step in steps:
-                if step.context is None:
-                    continue
-                self.update_daily_routine(
-                    step.context,
-                    allow_bedtime=allow_bedtime is not False,
-                    allow_nap=allow_nap,
-                    interrupt_nap=interrupt_nap,
-                )
-                self._decay(step.hours, step.context, step.effort, food_activity)
-                if self_care:
-                    self._provide_own_meal(step.context)
-            self.update_daily_routine(
-                context_at(now),
-                allow_bedtime=allow_bedtime is not False,
-                allow_nap=allow_nap,
+        observation = sleep_context or SleepContext.permissions(
+            allow_bedtime, allow_nap, interrupt_nap,
+        )
+        for step in steps:
+            if not observed:
+                step = replace(step, observed=False)
+            self._apply_time_step(
+                step, auto_routine=auto_routine,
+                sleep_context=(observation.earlier(max(0, now - step.wall_end))
+                               if step.observed else observation.unobserved()),
             )
-            if self_care:
-                self._provide_own_meal(context_at(now))
-        self._change(updated_at=now)
+        self.finish_time_advance(
+            now, lived_seconds=steps.elapsed_end, auto_routine=auto_routine,
+            sleep_context=observation,
+        )
+
+    def advance_time_step(
+        self, step: SimulationStep, *, auto_routine: bool,
+        sleep_context: SleepContext,
+    ) -> None:
+        """Expose the completed boundary for application-owned resource effects."""
+        self._apply_time_step(
+            step, auto_routine=auto_routine, sleep_context=sleep_context,
+        )
+        self._update_sleep_endpoint(step.wall_end, auto_routine, sleep_context)
+
+    def _apply_time_step(
+        self, step: SimulationStep, *, auto_routine: bool,
+        sleep_context: SleepContext,
+    ) -> None:
+        """Apply one planned interval without planning or initializing history."""
+        if self.lived_seconds != step.elapsed_start:
+            raise ValueError("Time step does not start at the pet checkpoint")
+        if step.context is not None:
+            self.update_daily_routine(
+                step.context, automatic=auto_routine,
+                sleep_context=sleep_context.earlier(step.seconds),
+            )
+        self._advance_progression(step.elapsed_end, step.effort, step.food_activity,
+                                  observed=step.observed)
+        self._change(updated_at=step.wall_end)
+
+    def _update_sleep_endpoint(
+        self, now: float, automatic: bool, context: SleepContext,
+    ) -> None:
+        self._roll_meals(context_at(now))
+        if automatic or self.sleep_episode.kind or self.sleeping:
+            self.update_daily_routine(
+                context_at(now), automatic=automatic, sleep_context=context,
+            )
+
+    def finish_time_advance(
+        self, now: float, *, lived_seconds: float, auto_routine: bool,
+        sleep_context: SleepContext,
+    ) -> None:
+        """Verify the shared endpoint before finalizing calendar/legacy metadata."""
+        if self.lived_seconds != lived_seconds:
+            raise ValueError("Completed time plan does not match the pet checkpoint")
+        self._update_sleep_endpoint(now, auto_routine, sleep_context)
+        self._change(
+            updated_at=now,
+            wishes=expire_wishes(self.wishes, elapsed=lived_seconds),
+            relationship=begin_continuous_friendship(self.friendship_history,
+                                                      lived_seconds),
+        )
+
+    def experience_interaction(self, event: InteractionEvent) -> bool:
+        """Commit a perceived fact; continuing emotions never repeat direct loss."""
+        effects = apply_interaction_event(
+            self.moodlets, event, elapsed=self.lived_seconds,
+            definitions=MOODLET_CATALOG.definitions,
+        )
+        self._commit_interaction(effects)
+        return effects.refused
+
+    def _commit_interaction(self, effects: InteractionConsequences) -> None:
+        changes: dict[str, Any] = {"moodlets": effects.moodlets}
+        if effects.penalty_kind:
+            friendship = apply_negative_event(
+                self, effects.penalty_kind, effects.penalty_points,
+            )
+            changes.update(friendship=friendship.points,
+                           relationship=friendship.history)
+        self._change(**changes)
 
     def apply_object_withholding(self, loss: float) -> float:
         """Commit a bounded application decision without manufacturing care."""
+        return self.apply_relationship_penalty("withholding", loss)
+
+    def apply_relationship_penalty(self, kind: str, loss: float) -> float:
         previous = self.friendship
-        self._change(friendship=friendship_after_withholding(previous, loss))
+        progress = apply_negative_event(self, kind, loss)
+        self._change(friendship=progress.points, relationship=progress.history)
         return previous - self.friendship
 
-    def _credit_friendship(
-        self,
-        action: str,
-        stamp: float,
-        need_before: float,
-    ) -> None:
-        """Apply an immutable friendship decision to owned reward fields."""
-        transition = calculate_friendship_reward(
-            self,
-            action,
-            stamp,
-            need_before,
-        )
-        if transition is None:
-            return
-        self._change(
-            friendship=transition.friendship, friendship_day=transition.day,
-            friendship_gained_today=transition.gained_today,
-            care_types_today=transition.care_types,
-            care_last_rewards=transition.last_rewards,
-        )
+    def _record_accepted_contact(self, action: str, stamp: float) -> None:
+        """Commit personal contact without reviving the retired reward ledger."""
+        progress = record_accepted_contact(self, action, stamp)
+        if progress is not None:
+            self._change(relationship=progress.history)
 
     def interact(
         self,
@@ -400,6 +699,7 @@ class PetState:
         *,
         now: float | None = None,
         food_id: FoodId | None = None,
+        sleep_context: SleepContext | None = None,
     ) -> CareResult:
         """Commit one care transition and its friendship reward atomically."""
         stamp = resolve_care_time(now)
@@ -409,10 +709,51 @@ class PetState:
             now=stamp,
             food_id=food_id,
         )
-        return self._apply_care_transition(transition, stamp)
+        was_sleeping = self.sleeping
+        result = self._apply_care_transition(transition, stamp)
+        if transition.changed:
+            if action == "sleep":
+                decision = calculate_manual_sleep_transition(
+                    sleeping=not transition.sleeping,
+                    elapsed=self.lived_seconds, wall=stamp,
+                    context=sleep_context or SleepContext(),
+                )
+                self._change(sleeping=decision.sleeping, sleep_episode=decision.episode)
+            elif was_sleeping or self.sleep_episode.kind:
+                self._change(sleep_episode=SleepEpisode(
+                    protect_until=self.lived_seconds + BALANCE.number(
+                        "sleep", "manual_protection_seconds",
+                    ),
+                ))
+        return result
+
+    def begin_sleep_care(self, *, search: bool) -> None:
+        """Enter one bounded awake break without resetting the sleep episode."""
+        self._change(sleeping=False, sleep_origin="", sleep_episode=replace(
+            self.sleep_episode, care_break=True,
+            search_until=self.lived_seconds + BALANCE.number("sleep", "search_seconds")
+            if search else self.lived_seconds,
+        ))
+
+    def note_sleep_intake(self) -> None:
+        if self.sleep_episode.care_break:
+            self._change(sleep_episode=replace(
+                self.sleep_episode, intake_until=self.lived_seconds + BALANCE.number(
+                    "sleep", "portion_seconds",
+                ),
+            ))
+
+    def end_sleep_care(
+        self, *, failed: bool, sources: tuple[str, ...] = (),
+    ) -> None:
+        self._change(sleeping=True, sleep_episode=replace(
+            self.sleep_episode, care_break=False, search_until=0, intake_until=0,
+            food_failed=failed, failed_food_sources=sources if failed else (),
+        ))
 
     def consume_item(
         self, item_id: str, origin: ConsumptionOrigin, *, now: float,
+        object_id: str | None = None,
     ) -> CareResult | None:
         """Use canonical nutrition; autonomous intake is not human attention."""
         if self.sleeping:
@@ -421,13 +762,21 @@ class PetState:
         transition = plan_care_action(
             self, action, now=now,
             food_id=None if action == "energy_drink" else item_id,
+            food_permission=food_wish_permission(
+                self.wishes, item_id, elapsed=self.lived_seconds,
+                definitions=WISH_CATALOG.definitions, object_id=object_id,
+                personal=origin == ConsumptionOrigin.HANDOVER,
+            ),
         )
         if origin == ConsumptionOrigin.AUTONOMOUS:
             transition = replace(
-                transition, reward_action=None,
+                transition, contact_action=None,
                 needs=replace(transition.needs, social=self.social),
             )
-        return self._apply_care_transition(transition, now)
+        return self._apply_care_transition(
+            transition, now, personal=origin == ConsumptionOrigin.HANDOVER,
+            object_id=object_id,
+        )
 
     def capture_checkpoint(self) -> PetValues:
         """The already immutable complete value is a safe independent capture."""
@@ -439,10 +788,11 @@ class PetState:
 
     def prepare_item_consumption(
         self, item_id: str, origin: ConsumptionOrigin, *, now: float,
+        object_id: str | None = None,
     ) -> PreparedItemConsumption | None:
         """Plan a complete consumption transition without mutating this pet."""
         working = deepcopy(self)
-        result = working.consume_item(item_id, origin, now=now)
+        result = working.consume_item(item_id, origin, now=now, object_id=object_id)
         if result is None or result.consumed_item_id is None:
             return None
         return PreparedItemConsumption(working.capture_checkpoint(), result)
@@ -452,13 +802,17 @@ class PetState:
         self.restore_checkpoint(snapshot.capture_checkpoint())
 
     def anchor_live_session(self, now: float) -> None:
-        """Set the live wall-time anchor after bounded closed-time progression."""
-        self._change(updated_at=now)
+        """Rebase wall time without resetting the durable elapsed axis."""
+        self._change(updated_at=now, relationship=begin_continuous_friendship(
+            self.friendship_history, self.lived_seconds,
+        ))
 
     def _apply_care_transition(
-        self, transition: CareTransition, stamp: float,
+        self, transition: CareTransition, stamp: float, *, personal: bool = True,
+        object_id: str | None = None,
     ) -> CareResult:
-        action = transition.result.action
+        if transition.interaction is not None:
+            self._commit_interaction(transition.interaction)
         if not transition.changed:
             return transition.result
         self._set_needs(transition.needs)
@@ -477,17 +831,59 @@ class PetState:
                 meals_date=transition.meals_date,
                 meals_today=transition.meals_today,
             )
-        if transition.reward_action is not None:
-            self._credit_friendship(
-                transition.reward_action,
+        if transition.contact_action is not None:
+            self._record_accepted_contact(
+                transition.contact_action,
                 stamp,
-                transition.need_before,
             )
-        if action in ("feed", "pet", "talk", "energy_drink"):
-            self._change(mood=reflect_care_in_mood(
-                self.mood, self._mood_target(),
-                experience_points=transition.mood_experience,
+        if transition.result.food_consumed:
+            assert transition.result.food_id is not None
+            self.experience_interaction(FoodConsumed(
+                transition.result.food_id, personal,
             ))
+            if DEFAULT_CATALOG.foods[transition.result.food_id].category == "meal":
+                self.experience_interaction(HelpfulInteraction("meal"))
+            if transition.wish_instance_id is not None:
+                self._apply_wish_resolution(fulfill_activity_wish(
+                    self.wishes, WishArea.FOOD, transition.result.food_id,
+                    elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
+                    object_id=object_id, instance_id=transition.wish_instance_id,
+                ), personal=personal)
+            if personal:
+                self._change(moodlets=record_personal_food(
+                    self.moodlets, food_id=transition.result.food_id,
+                    elapsed=self.lived_seconds, object_id=object_id,
+                    wish_instance_id=transition.wish_instance_id,
+                    repetitive=transition.result.effect == CareEffect.FOOD_REPEAT,
+                ))
+            if object_id is not None:
+                self.release_food_handovers(frozenset((object_id,)))
+        elif transition.result.affection_accepted:
+            before = self.moodlets
+            self.experience_interaction(HelpfulInteraction("petting"))
+            if transition.wish_instance_id is not None:
+                self._apply_wish_resolution(fulfill_activity_wish(
+                    self.wishes, WishArea.AFFECTION, "pet", elapsed=self.lived_seconds,
+                    definitions=WISH_CATALOG.definitions,
+                    instance_id=transition.wish_instance_id,
+                ), personal=personal)
+            if personal and transition.result.effect == CareEffect.AFFECTION:
+                if transition.wish_instance_id is not None:
+                    receipt = f"wish:{transition.wish_instance_id}:fulfilled"
+                else:
+                    moodlets, receipt = allocate_experience_receipt(
+                        self.moodlets, elapsed=self.lived_seconds, prefix="petting",
+                    )
+                    self._change(moodlets=moodlets)
+                event = CareExperience(
+                    receipt, self.lived_seconds, CareActivity.PETTING,
+                    MoodletOutcome.COMPLETED, WishArea.AFFECTION,
+                    WishTargetKind.CARE, "pet", pleasant=True,
+                )
+                self._record_care_experience(event)
+                self._change(moodlets=award_everyday_experience(
+                    before, self.moodlets, event,
+                ))
         return transition.result
 
     def due_meal(self, context: TimeContext) -> str | None:
@@ -498,6 +894,6 @@ class PetState:
             meals_today=self.meals_today,
         )
 
-    def mood_hint(self, context: TimeContext | None = None) -> MoodHint:
+    def status_hint(self, context: TimeContext | None = None) -> StatusHint:
         """Return the semantic status hint, not a language-specific sentence."""
-        return choose_mood_hint(self, context)
+        return choose_status_hint(self, context)

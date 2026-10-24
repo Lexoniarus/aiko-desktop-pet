@@ -7,6 +7,7 @@ from pathlib import Path
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.state import PetState
+from tools.persistence_test_support import save_test_session
 
 # Early-epoch timestamps are not universally supported by Windows localtime.
 SAMPLE_TIMESTAMP = datetime(2026, 10, 12, 12).astimezone().timestamp()
@@ -32,13 +33,13 @@ class StateStoreTests(unittest.TestCase):
         settings = PetSettings(
             x=155, y=190, scale=2, always_on_top=False, auto_walk=False
         )
-        self.store.save(pet, settings)
+        save_test_session(self.store, pet, settings)
         session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
         loaded, other = session_data.state, session_data.settings
         self.assertEqual(loaded.satiety, 88)
         self.assertTrue(loaded.sleeping)
         self.assertEqual(other, settings)
-        self.assertEqual(json.loads(self.store.path.read_text())["version"], 1)
+        self.assertGreater(self.store.load_session().revision.value, 0)
         self.assertEqual(list(self.store.path.parent.glob("*.tmp")), [])
 
     def test_legacy_save_defaults_preserve_existing_needs(self):
@@ -46,7 +47,7 @@ class StateStoreTests(unittest.TestCase):
 
         timestamp = datetime(2026, 10, 12, 12).astimezone().timestamp()
         self.store.path.parent.mkdir(parents=True, exist_ok=True)
-        self.store.path.write_text(
+        self.store.paths.legacy_json.write_text(
             json.dumps({
                 "version": 1,
                 "pet": {
@@ -70,21 +71,6 @@ class StateStoreTests(unittest.TestCase):
         self.assertTrue(settings.spontaneous_talk)
         self.assertEqual(pet.meals_today, [])
 
-    def test_corrupted_json_is_ignored(self):
-        self.store.path.parent.mkdir(parents=True)
-        self.store.path.write_text("{not-json")
-        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
-        pet, settings = session_data.state, session_data.settings
-        self.assertEqual(pet.satiety, 75)
-        self.assertIsNone(settings.x)
-
-    def test_future_version_uses_defaults(self):
-        self.store.path.parent.mkdir(parents=True)
-        self.store.path.write_text('{"version": 999, "pet": {"mood":0}}')
-        session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
-        pet, _settings = session_data.state, session_data.settings
-        self.assertEqual(pet.mood, 75)
-
     def test_malformed_settings_are_rejected(self):
         settings = PetSettings.from_dict({
             "x": True,
@@ -102,22 +88,17 @@ class StateStoreTests(unittest.TestCase):
     def test_hardware_monitor_preference_is_optional_and_persisted(self):
         old = PetSettings.from_dict({"scale": 1})
         self.assertTrue(old.observe_computer)
-        self.store.save(
+        save_test_session(self.store,
             PetState(updated_at=SAMPLE_TIMESTAMP), PetSettings(observe_computer=False)
         )
         session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
         _pet, settings = session_data.state, session_data.settings
         self.assertFalse(settings.observe_computer)
-        saved = json.loads(self.store.path.read_text(encoding="utf-8"))
-        self.assertFalse(saved["settings"]["observe_computer"])
-        self.assertNotIn("cpu", saved)
-        self.assertNotIn("gpu", saved)
-        self.assertNotIn("ram", saved)
 
     def test_toolbar_location_is_optional_and_survives_restart(self):
         self.assertIsNone(PetSettings.from_dict({"scale": 1}).toolbar_x)
         settings = PetSettings(toolbar_x=77, toolbar_y=130)
-        self.store.save(PetState(updated_at=SAMPLE_TIMESTAMP), settings)
+        save_test_session(self.store, PetState(updated_at=SAMPLE_TIMESTAMP), settings)
         session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
         _, loaded = session_data.state, session_data.settings
         self.assertEqual((loaded.toolbar_x, loaded.toolbar_y), (77, 130))
@@ -127,7 +108,7 @@ class StateStoreTests(unittest.TestCase):
 
     def test_chatter_preference_survives_save_roundtrip(self):
         pet = PetState(updated_at=SAMPLE_TIMESTAMP)
-        self.store.save(pet, PetSettings(spontaneous_talk=False))
+        save_test_session(self.store, pet, PetSettings(spontaneous_talk=False))
         session_data = self.store.load_session(now=SAMPLE_TIMESTAMP)
         _pet, settings = session_data.state, session_data.settings
         self.assertFalse(settings.spontaneous_talk)

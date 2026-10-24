@@ -1,15 +1,14 @@
 """Joint Pet/World/memory saves retain subjective history across closed time."""
 
-import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.object_consumption import ObjectConsumption
 from aiko_pet.application.session import PetSessionRestorer, WorldSessionSnapshot
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.application.storage_contracts import StorageError
 from aiko_pet.desktop.persistence import DesktopPersistence
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.infrastructure.item_assets import load_item_catalog
@@ -23,6 +22,7 @@ from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldSurface
 from aiko_pet.world.state import WorldState
+from tools.persistence_test_support import save_test_session
 
 
 class ObjectMemoryPersistenceTests(unittest.TestCase):
@@ -45,14 +45,12 @@ class ObjectMemoryPersistenceTests(unittest.TestCase):
         self.settings = PetSettings(auto_routine=False)
 
     def save(self):
-        self.store.save(self.state, self.settings, world=self.world.snapshot(),
+        save_test_session(
+            self.store, self.state, self.settings, world=self.world.snapshot(),
                         object_memory=self.memory.export(now=1005))
 
     def test_joint_save_restores_facts_without_aging_during_closed_time(self):
         self.save()
-        raw = json.loads(self.store.path.read_text("utf-8"))
-        self.assertEqual((raw["version"], raw["object_memory"]["version"]), (1, 3))
-        self.assertNotIn("observed_at", raw["object_memory"]["entries"][0])
         restored = PetSessionRestorer(
             self.store, wall_time=lambda: self.state.updated_at + 3600,
         ).restore()
@@ -83,85 +81,24 @@ class ObjectMemoryPersistenceTests(unittest.TestCase):
                     assert loaded.world.objects[0].position is not None
                     self.assertNotEqual(loaded.world.objects[0].position.x, known.x)
 
-    def test_legacy_world_without_memory_does_not_grant_catalog_knowledge(self):
-        self.store.save(self.state, self.settings, world=self.world.snapshot())
+    def test_world_without_memory_does_not_grant_catalog_knowledge(self):
+        save_test_session(
+            self.store, self.state, self.settings, world=self.world.snapshot())
         loaded = self.store.load_session()
         self.assertIsNone(loaded.object_memory)
         self.assertEqual(ObjectMemory(loaded.object_memory).snapshot(), ())
 
-    def test_invalid_memory_preserves_valid_world_and_pet_and_backs_up_original(self):
-        for bad in ({"version": 999}, {"version": 1, "entries": "wrong"}):
-            with self.subTest(bad=bad):
-                self.save()
-                raw = json.loads(self.store.path.read_text("utf-8"))
-                raw["object_memory"] = bad
-                self.store.path.write_text(json.dumps(raw), encoding="utf-8")
-                original = self.store.path.read_bytes()
-                loaded = self.store.load_session()
-                self.assertEqual(loaded.state.satiety, 80)
-                self.assertIsNotNone(loaded.world)
-                self.assertIsNone(loaded.object_memory)
-                before = set(self.store.path.parent.glob("*.aiko-save-backup"))
-                self.store.save(loaded.state, loaded.settings, world=loaded.world)
-                after = set(self.store.path.parent.glob("*.aiko-save-backup"))
-                self.assertEqual(len(after - before), 1)
-                self.assertEqual((after - before).pop().read_bytes(), original)
-                self.store.save(loaded.state, loaded.settings, world=loaded.world)
-                self.assertEqual(set(self.store.path.parent.glob("*.aiko-save-backup")),
-                                 after)
-
-    def test_missing_or_invalid_world_cannot_attach_memories_to_new_instance_ids(self):
-        for missing in (False, True):
-            with self.subTest(missing=missing):
-                self.save()
-                raw = json.loads(self.store.path.read_text("utf-8"))
-                if missing:
-                    del raw["world"]
-                else:
-                    raw["world"] = {"version": 999}
-                self.store.path.write_text(json.dumps(raw), encoding="utf-8")
-                loaded = self.store.load_session()
-                self.assertIsNone(loaded.world)
-                self.assertIsNone(loaded.object_memory)
-                self.assertEqual(loaded.state.satiety, 80)
-
     def test_memory_requires_world_in_the_same_durable_snapshot(self):
-        with self.assertRaises(ValueError):
-            self.store.save(self.state, self.settings,
+        with self.assertRaises(StorageError):
+            save_test_session(self.store, self.state, self.settings,
                             object_memory=self.memory.export(now=1005))
         self.assertFalse(self.store.path.exists())
-
-    def test_reset_world_counter_cannot_rebind_prior_cognitive_instance_ids(self):
-        self.save()
-        raw = json.loads(self.store.path.read_text("utf-8"))
-        raw["world"]["objects"] = []
-        raw["world"]["next_instance_id"] = 1
-        self.store.path.write_text(json.dumps(raw), encoding="utf-8")
-        loaded = self.store.load_session()
-        self.assertIsNotNone(loaded.world)
-        self.assertEqual(loaded.state.satiety, 80)
-        self.assertIsNone(loaded.object_memory)
-        self.store.save(loaded.state, loaded.settings, world=loaded.world)
-        backups = tuple(self.store.path.parent.glob("*.aiko-save-backup"))
-        self.assertEqual(len(backups), 1)
-
-    def test_interrupted_write_preserves_all_previous_sections(self):
-        self.save()
-        original = self.store.path.read_bytes()
-        self.memory.forget(self.item.instance_id)
-        for operation in ("os.replace", "os.fsync"):
-            with self.subTest(operation=operation):
-                with patch(f"aiko_pet.infrastructure.persistence.{operation}",
-                           side_effect=OSError("injected write interruption")):
-                    with self.assertRaises(OSError):
-                        self.save()
-                self.assertEqual(self.store.path.read_bytes(), original)
-                self.assertEqual(tuple(self.store.path.parent.glob(".aiko-*.tmp")), ())
 
     def test_held_recovery_does_not_invent_a_subjectively_observed_ground_pose(self):
         self.world.collect_resting(self.item.instance_id, expected_revision=0)
         self.memory.note_acquired(self.item.instance_id, now=1001)
-        self.store.save(self.state, self.settings, world=self.world.snapshot(),
+        save_test_session(
+            self.store, self.state, self.settings, world=self.world.snapshot(),
                         world_recovery_x=800,
                         object_memory=self.memory.export(now=1005))
         loaded = self.store.load_session()

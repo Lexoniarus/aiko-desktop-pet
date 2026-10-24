@@ -16,10 +16,35 @@ UTILITY_VIEWS = (
     "ui/common/window_drag.py",
     "ui/windows/rock_paper_scissors_window.py",
     "ui/windows/hover_ui.py",
+    "ui/windows/game_menu.py",
+    "ui/windows/game_panel.py",
+    "ui/windows/tic_tac_toe_window.py",
+    "ui/windows/blackjack_window.py",
 )
 
 
 class UiDependencyRules(unittest.TestCase):
+    def test_new_game_rules_and_hand_preserve_dependency_boundaries(self) -> None:
+        rule_imports = (
+            "tkinter", "ui", "desktop", "pet", "world", "application", "infrastructure",
+        )
+        for relative, forbidden in (
+            ("games/blackjack.py", rule_imports),
+            ("games/tic_tac_toe.py", rule_imports),
+            ("ui/pet_view/blackjack_hand_presenter.py",
+             ("world", "gui", "ctypes", "state")),
+        ):
+            tree = ast.parse((ROOT / relative).read_text("utf-8"))
+            imports = [
+                node.module or "" for node in ast.walk(tree)
+                if isinstance(node, ast.ImportFrom)
+            ] + [
+                alias.name for node in ast.walk(tree) if isinstance(node, ast.Import)
+                for alias in node.names
+            ]
+            for module in imports:
+                self.assertFalse(set(module.split(".")).intersection(forbidden), module)
+
     def test_gui_composition_root_stays_bounded(self) -> None:
         source = (ROOT / "gui.py").read_text("utf-8")
         self.assertLessEqual(
@@ -158,7 +183,7 @@ class UiDependencyRules(unittest.TestCase):
         for relative in (
             "pet/care_actions.py",
             "pet/friendship.py",
-            "pet/need_decay.py",
+            "pet/progression.py",
             "pet/lifecycle.py",
         ):
             with self.subTest(policy=relative):
@@ -193,8 +218,8 @@ class UiDependencyRules(unittest.TestCase):
         self.assertFalse(calls.intersection(forbidden))
         for policy in (
             "plan_care_action",
-            "calculate_need_decay",
-            "calculate_friendship_reward",
+            "calculate_pet_progression",
+            "record_accepted_contact",
             "plan_pet_time",
             "calculate_daily_routine",
         ):
@@ -215,15 +240,14 @@ class UiDependencyRules(unittest.TestCase):
         )
         for relative in files:
             with self.subTest(module=relative):
-                source = (ROOT / relative).read_text("utf-8")
-                for expression in (
-                    ".mood_hint(",
-                    ".feed_label(",
-                    ".schedule_line",
-                    ".label",
-                    ".greeting(",
+                tree = ast.parse((ROOT / relative).read_text("utf-8"))
+                # Inspect Python access, not '.label' inside a localized JSON key.
+                accessed = {node.attr for node in ast.walk(tree)
+                            if isinstance(node, ast.Attribute)}
+                for name in (
+                    "status_hint", "feed_label", "schedule_line", "label", "greeting",
                 ):
-                    self.assertNotIn(expression, source)
+                    self.assertNotIn(name, accessed)
 
     def test_runtime_consumes_named_ports_not_legacy_private_stages(self) -> None:
         source = (ROOT / "desktop/runtime.py").read_text("utf-8")

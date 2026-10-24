@@ -1,0 +1,190 @@
+"""Coordinate deliberate care and social playback through existing owners."""
+
+from __future__ import annotations
+
+import time
+import tkinter as tk
+from collections.abc import Callable
+
+from ..application.active_time import SessionInputs
+from ..application.commands import CareCommand
+from ..application.contact import ContactCoordinator, acknowledge_interaction_text
+from ..application.game_experience import experience_from_session
+from ..application.router import ApplicationRouter
+from ..application.social_content import PreparedSocialContent
+from ..application.social_coordinator import (
+    SocialContentCoordinator,
+    SocialContentWorker,
+)
+from ..application.social_history import SocialContentHistory
+from ..application.storage_contracts import StorageError
+from ..games.contracts import GameRoundEvent, SessionSummary
+from ..infrastructure.social_api import HttpSocialContentWorker
+from ..pet.food import FoodId
+from ..pet.interaction_events import SocialCompletion
+from ..pet.mind.catalog import Reaction
+from ..pet.routine import TimeContext
+from ..pet.state import PetState
+from ..ui.pet_view.animated_pet import AnimatedPet
+from ..ui.pet_view.care_presenter import CarePresenter, CareViewPorts
+from ..ui.pet_view.reaction_player import ReactionPlayer
+from ..ui.pet_view.speech_presenter import SpeechPresenter
+from ..ui.windows.hover_ui import HoverUi
+from .horoscope_playback import HoroscopePlayback
+from .social_runtime import SocialConversationRuntime, SocialRuntimePorts
+from .world_runtime import DesktopWorldRuntime
+
+
+class DesktopCareRuntime:
+    def __init__(
+        self, *, root: tk.Tk, state: PetState, router: ApplicationRouter,
+        world: DesktopWorldRuntime, contact: ContactCoordinator,
+        animated: AnimatedPet, player: ReactionPlayer,
+        speech: SpeechPresenter, hover: HoverUi,
+        cancel_action: Callable[[float], None],
+        start_action: Callable[[str, float], None],
+        react: Callable[[Reaction, int], None],
+        inputs: Callable[[float, float], SessionInputs],
+        set_context: Callable[[TimeContext], None], save: Callable[[], None],
+        is_closed: Callable[[], bool], game_open: Callable[[], bool],
+        social_worker: SocialContentWorker | None = None,
+        social_history: SocialContentHistory = SocialContentHistory(),
+        persist_requests: Callable[[], StorageError | None] = lambda: None,
+        zodiac_sign: Callable[[], str | None] = lambda: None,
+    ) -> None:
+        self._root, self._state, self._router = root, state, router
+        self._world, self._contact = world, contact
+        self._hover = hover
+        self._player = player
+        self._cancel_action = cancel_action
+        self._presenter = CarePresenter(CareViewPorts(
+            set_item=animated.set_food_overlay, cancel_action=cancel_action,
+            start_action=start_action, cancel_followup=player.cancel,
+            react=react, show_text=speech.show_text,
+            refresh_toolbar=hover.refresh_toolbar, refresh_status=hover.refresh_status,
+            text_presented=lambda event: acknowledge_interaction_text(state, event),
+        ))
+        self._inputs, self._set_context, self._save = inputs, set_context, save
+        self._is_closed = is_closed
+        content = SocialContentCoordinator(
+            social_worker if social_worker is not None else HttpSocialContentWorker(),
+            history=social_history, persist_requests=persist_requests,
+            zodiac_sign=zodiac_sign,
+        )
+        self._horoscope = HoroscopePlayback(
+            content, player, speech, self._book_horoscope,
+        )
+        self.social = SocialConversationRuntime(content, SocialRuntimePorts(
+            can_start=self._can_start_social,
+            defer=self._defer_social, start=self._start_social,
+            show_wait=lambda reaction: player.play(reaction, animate=False),
+            clear_wait=self._clear_wait, persist_admission=save,
+            stop_reading=self._horoscope.stop,
+            reading_active=lambda: self._horoscope.active,
+            can_wait=lambda: (not is_closed() and not state.sleeping
+                              and not game_open()),
+        ))
+
+    def interact(
+        self, action: str, *, food_id: FoodId | None = None,
+        conversation: PreparedSocialContent | None = None,
+        wake_from_clicks: bool = False, persist: bool = True,
+    ) -> None:
+        if conversation is None:
+            self.social.cancel()
+        if self._world.cursor.carrying:
+            self._world.cursor.cancel()
+        if (self._world.interaction.active
+                or self._world.awareness.intentions.goal is not None):
+            self._world.interrupt(lambda: self.interact(
+                action, food_id=food_id, conversation=conversation,
+                wake_from_clicks=wake_from_clicks, persist=persist,
+            ))
+            return
+        stamp, now = time.time(), time.monotonic()
+        if self._player.interruptible:
+            self._player.cancel()
+            self._cancel_action(now)
+        outcome = self._router.dispatch(
+            CareCommand.from_action(action, food_id=food_id, conversation=conversation,
+                                    wake_from_clicks=wake_from_clicks),
+            inputs=self._inputs(stamp, now),
+        )
+        self._set_context(outcome.context)
+        self._presenter.present(outcome, now=now, sleeping=self._state.sleeping)
+        if persist:
+            self._save()
+
+    def advance_time(self) -> None:
+        self._router.advance_time(self._inputs(time.time(), time.monotonic()))
+
+    def set_wish_pinned(self, instance_id: int, pinned: bool) -> None:
+        self._router.set_wish_pinned(
+            instance_id, pinned, inputs=self._inputs(time.time(), time.monotonic()),
+        )
+        self._save()
+        self._hover.refresh_toolbar()
+
+    def dismiss_wish(self, instance_id: int) -> None:
+        self._router.dismiss_wish(
+            instance_id, inputs=self._inputs(time.time(), time.monotonic()),
+        )
+        self._save()
+        self._hover.refresh_toolbar()
+
+    def observe_game_round(self, event: GameRoundEvent) -> None:
+        self._router.observe_game_round(
+            event, inputs=self._inputs(time.time(), time.monotonic()),
+        )
+        if event.outcome is not None:
+            self._save()
+
+    def complete_game(self, summary: SessionSummary) -> None:
+        self._router.complete_game(
+            experience_from_session(summary),
+            inputs=self._inputs(time.time(), time.monotonic()),
+        )
+        self._save()
+
+    def complete_social(self, completion: SocialCompletion) -> None:
+        self._router.complete_social(
+            completion, inputs=self._inputs(time.time(), time.monotonic()),
+            arrangement_ready=self._world.arrangement_ready(),
+        )
+        self._save()
+
+    def wake_from_clicks(self) -> None:
+        """Present and persist deliberate waking through the normal care owner."""
+        self.interact("sleep", wake_from_clicks=True)
+
+    def _clear_wait(self) -> None:
+        if self._player.event == "social_wait":
+            self._player.cancel()
+
+    def _defer_social(self, action: Callable[[], None]) -> None:
+        # Admission is rechecked after World releases its pending-action marker.
+        def schedule() -> None:
+            self._root.after(0, action)
+
+        self._world.interrupt(schedule)
+
+    def _can_start_social(self) -> bool:
+        return not self._is_closed() and self._contact.can_interact("talk")
+
+    def _start_social(self, content: PreparedSocialContent) -> bool:
+        if not self._can_start_social():
+            return False
+        if content.horoscope is not None:
+            return self._horoscope.start(content)
+        # The runtime saves care and the admitted receipt together after accept().
+        self.interact("talk", conversation=content, persist=False)
+        return True
+
+    def _book_horoscope(self, content: PreparedSocialContent) -> None:
+        outcome = self._router.dispatch(
+            CareCommand.from_action("talk", conversation=content),
+            inputs=self._inputs(time.time(), time.monotonic()),
+        )
+        self._set_context(outcome.context)
+        self._hover.refresh_toolbar()
+        self._hover.refresh_status()

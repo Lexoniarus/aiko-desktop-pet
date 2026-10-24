@@ -25,6 +25,8 @@ class PetSettingsModelTests(unittest.TestCase):
                 "learn_rhythm": True,
                 "toolbar_x": None,
                 "toolbar_y": None,
+                "online_social": False,
+                "zodiac_sign": None,
             },
         )
 
@@ -46,6 +48,15 @@ class PetSettingsModelTests(unittest.TestCase):
         self.assertFalse(settings.auto_routine)
         self.assertEqual(settings.toolbar_x, 17)
         self.assertIsNone(settings.toolbar_y)
+        self.assertEqual(PetSettings.from_dict(settings.to_dict()), settings)
+
+    def test_online_content_requires_explicit_saved_boolean_opt_in(self) -> None:
+        for value in (None, False, 1, "true", {}, []):
+            settings = PetSettings.from_dict({"online_social": value})
+            self.assertFalse(settings.online_social)
+        settings = PetSettings.from_dict({"online_social": True})
+        self.assertTrue(settings.online_social)
+        self.assertTrue(settings.behavior.online_social)
         self.assertEqual(PetSettings.from_dict(settings.to_dict()), settings)
 
 

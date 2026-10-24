@@ -51,8 +51,7 @@ class ResourceValidationTests(unittest.TestCase):
     def test_normalized_weights_still_reject_values_above_one(self) -> None:
         original = load_json(DATA / "balance.json")
         for section, key in (
-            ("mood", "fun_weight"),
-            ("mood", "social_weight"),
+            ("mood", "need_weight"),
             ("food_activity", "short_window_weight"),
             ("dialogue", "spontaneous_story_probability"),
         ):
@@ -130,7 +129,7 @@ class ResourceValidationTests(unittest.TestCase):
         original = load_json(DATA / "dialogues.de.json")["lines"][0]
         for key, value in (
             ("event", "__misspelled_event__"),
-            ("moods", [{}]),
+            ("conditions", [{"emotional_states": [{}]}]),
             ("periods", [[]]),
             ("cooldown_seconds", float("nan")),
         ):
@@ -142,7 +141,7 @@ class ResourceValidationTests(unittest.TestCase):
     def test_boolean_and_float_versions_are_not_schema_versions(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
             file = Path(folder) / "dialogues.json"
-            for version in (True, 1.0):
+            for version in (True, 3.0, 2):
                 raw = load_json(DATA / "dialogues.de.json")
                 raw["catalogue_version"] = version
                 file.write_text(json.dumps(raw), encoding="utf-8")
@@ -170,15 +169,32 @@ class ResourceValidationTests(unittest.TestCase):
         for section, key, value in (
             ("food", "awake_hunger_points_per_hour", True),
             ("food", "awake_hunger_points_per_hour", -1),
-            ("food", "internal_simulation_step_minutes", 0),
+            ("simulation", "needs_step_seconds", 0),
             ("food", "maximum_recent_foods", 2.5),
-            ("mood", "fun_weight", 0.8),
+            ("mood", "need_weight", 0.8),
+            ("mood", "healthy_need_threshold", 25),
+            ("mood", "zero_need_threshold", 1),
+            ("mood", "critical_need_deduction", 4),
+            ("mood", "zero_need_target_limit", 65),
+            ("mood", "low_decline_points_per_minute", 0),
+            ("mood", "recovery_points_per_minute", 0),
+            ("simulation", "needs_step_seconds", 61),
+            ("needs", "hardware_intensity_span", 0.8),
+            ("food", "maximum_digest_hunger_reduction", 1.1),
+            ("food", "maximum_hardware_hunger_bonus", 1.1),
             ("walk", "pause_min_seconds", 181),
             ("fun", "late_unit_reward_fraction", float("inf")),
             ("ambient", "blink_gap_minimum_seconds", 9),
             ("adaptive_learning", "effort_smoothing_seconds", 0),
             ("attention", "cursor_comment_probability", 2),
-            ("simulation", "step_seconds", 1000),
+            ("simulation", "step_seconds", 1000),  # Retired routine interval.
+            ("sleep", "nap_seconds", 2700),
+            ("sleep", "manual_protection_seconds", 0),
+            ("sleep", "return_seconds", 0),
+            ("sleep", "minimum_input_events", 0),
+            ("sleep", "food_target", 15),
+            ("sleep", "learned_phases", 2),
+            ("sleep", "maximum_daily_shift_minutes", 31),
             ("object_behavior", "bounce_restitution_fraction", 1),
             ("object_behavior", "bounce_horizontal_damping_fraction", 1),
             ("object_behavior", "bounce_maximum_contacts", 33),

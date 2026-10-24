@@ -22,7 +22,7 @@ class AttentionRuntimePorts:
 
     context: Callable[[], TimeContext]
     game_open: Callable[[], bool]
-    toolbar_active: Callable[[], bool]
+    menu_engaged: Callable[[], bool]
     settings_engaged: Callable[[], bool]
     bubble_visible: Callable[[], bool]
     reaction_pending: Callable[[], bool]
@@ -47,6 +47,7 @@ class DesktopAttentionRuntime:
 
     def handle_time_progress(self, progress: TimeProgress, now: float) -> None:
         """Present period transitions, leaving domain dialogue to attention."""
+        self.attention.evaluate_wishes()
         if not progress.period_changed:
             return
         self._ports.refresh_toolbar()
@@ -72,7 +73,7 @@ class DesktopAttentionRuntime:
             screen_width,
             now,
             self._ports.context(),
-            toolbar_visible=self._ports.toolbar_active(),
+            toolbar_visible=self._ports.menu_engaged(),
         )
         if reaction is not None:
             self._presenter.show_reaction(reaction, 2600)
@@ -94,6 +95,7 @@ class DesktopAttentionRuntime:
             satiety=state.satiety,
             mood=state.mood,
             affection=state.affection,
+            emotions=self.attention.mind.emotional_state(state),
         )
         self._presenter.show_idle_emote(emote)
 
@@ -105,7 +107,7 @@ class DesktopAttentionRuntime:
             now,
             action_until=ports.action_until(),
             walking=ports.walking(),
-            toolbar_visible=ports.toolbar_active(),
+            toolbar_visible=ports.menu_engaged(),
         )
         if animation is not None:
             self._presenter.show_animation(animation, 1.6)
@@ -118,7 +120,7 @@ class DesktopAttentionRuntime:
         choice = self.attention.spontaneous(
             now,
             ports.context(),
-            toolbar_visible=ports.toolbar_active(),
+            toolbar_visible=ports.menu_engaged(),
             action_until=ports.action_until(),
             bubble_visible=ports.bubble_visible(),
             popup_visible=ports.settings_engaged(),
@@ -135,7 +137,7 @@ class DesktopAttentionRuntime:
             action_until=ports.action_until(),
             bubble_visible=ports.bubble_visible(),
             popup_visible=ports.settings_engaged(),
-            toolbar_visible=ports.toolbar_active(),
+            toolbar_visible=ports.menu_engaged(),
         )
         if note is None:
             return

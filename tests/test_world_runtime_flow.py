@@ -1,4 +1,4 @@
-"""Characterize object behavior through real Tk timers and desktop gates."""
+"""Exercise real Tk widgets and desktop gates with controlled event time."""
 
 import tempfile
 import time
@@ -8,7 +8,6 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
 from aiko_pet.pet.mind.catalog import Reaction
@@ -16,20 +15,27 @@ from aiko_pet.pet.mind.object_perception import ObjectObservation
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState
+from tools.desktop_test_support import create_test_desktop
+from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import set_test_pet_values
+from tools.tk_test_time import ControlledTkTime
 
 
 class WorldRuntimeFlowTests(unittest.TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         try:
             root = tk.Tk()
             root.destroy()
         except tk.TclError as error:
-            self.skipTest(str(error))
+            raise unittest.SkipTest(str(error)) from error
+
+    def setUp(self):
+        self.timing = self.enterContext(ControlledTkTime())
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         store = StateStore(Path(folder.name) / "state.json")
-        store.save(
+        save_test_session(store,
             PetState(satiety=76, energy=60),
             PetSettings(
                 auto_walk=False,
@@ -39,7 +45,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                 spontaneous_talk=False,
             ),
         )
-        self.app = DesktopPet(store=store)
+        self.app = create_test_desktop(store=store)
         self.addCleanup(self.app.quit)
         greeting = self.app._runtime.scheduled_greeting
         if greeting is not None:
@@ -97,31 +103,49 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         app.root.update_idletasks()
         pointer = (app.root.winfo_rootx() + app.root.winfo_width() // 2,
                    app.root.winfo_rooty() + app.root.winfo_height() // 2)
-        self.assertTrue(app._hover.pointer_inside(*pointer))
         direction = -1 if app._walk.movement.remaining_distance < 0 else 1
         candidate = world.world.place_resting(
             "onigiri", world._body_x() + direction * 1.5 * world.width,
             ObjectFootprint(8, 8),
         )
-        friendship = app.state.friendship
+        relationship = app.state.friendship_history
         with (
             patch.object(app.root, "winfo_pointerx", return_value=pointer[0]),
             patch.object(app.root, "winfo_pointery", return_value=pointer[1]),
+            # The simulated hover belongs to this sprite even when another
+            # application covers it on the machine running these timer tests.
+            patch.object(app.root, "winfo_containing", return_value=app.canvas),
         ):
+            self.assertTrue(app._hover.pointer_inside(*pointer))
             trace = self.run_until(lambda: world.interaction.phase == "approach", 3)
             self.assertEqual(world.interaction.phase, "approach", trace)
-            self.assertTrue(app._hover.interaction_active)
+            self.assertTrue(app._hover.menu_engaged)
             self.assertIsNotNone(app._hover.toolbar)
             toolbar = app._hover.toolbar
             assert toolbar is not None
             self.assertTrue(all(button.cget("state") == "disabled"
-                                for button in toolbar.buttons.values()))
+                                for action, button in toolbar.buttons.items()
+                                if action not in ("place_item", "play", "talk")))
+            self.assertTrue(all(toolbar.buttons[action].cget("state") == "normal"
+                                for action in ("place_item", "play", "talk")))
             social = app.state.social
             toolbar.buttons["talk"].invoke()
             app._hover._interact("talk")
-            app._hover._food_selected("energy_drink")
             self.assertEqual(app.state.social, social)
-            self.assertFalse(world.cursor.carrying)
+            menu = app._hover.social_menu
+            assert menu is not None
+            self.assertTrue(all(button.cget("state") == "disabled"
+                                for button in menu.buttons.values()))
+            before_choice = app.state.capture_checkpoint()
+            menu.choose(None)
+            app._hover._social_selected(None)
+            self.assertEqual(app.state.capture_checkpoint(), before_choice)
+            app._hover._food_selected("energy_drink")
+            # Placement saves and advances measured life time. Natural need
+            # decay is valid; blocked talk and stock placement grant no care.
+            self.assertLessEqual(app.state.social, social)
+            self.assertTrue(world.cursor.carrying)
+            world.cursor.cancel()
             before = app.settings.x
             self.run_for(.2)
             self.assertNotEqual(app.settings.x, before)
@@ -133,7 +157,9 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         missing = world.awareness.memory.get(record)
         assert missing is not None
         self.assertEqual(missing.place_status, "missing")
-        self.assertEqual(app.state.friendship, friendship)
+        self.assertEqual(app.state.friendship_history.last_contact,
+                         relationship.last_contact)
+        self.assertEqual(app.state.friendship_history.penalties, relationship.penalties)
         self.assertEqual(list(app.mind.clicks), [])
         self.assertEqual([event for _, event, _ in self.feedback], [
             "object_place_missing", "object_search", "object_approach",
@@ -143,7 +169,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         record = self.begin_native_search()
         app, world = self.app, self.app._world
         app.root.update_idletasks()
-        friendship, social = app.state.friendship, app.state.social
+        relationship, social = app.state.friendship_history, app.state.social
         for click in (app._on_click_left, app._on_click_right):
             pointer = (app.root.winfo_rootx() + app.root.winfo_width() // 2,
                        app.root.winfo_rooty() + app.root.winfo_height() // 2)
@@ -156,11 +182,14 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                 self.assertTrue(world.interaction.contact_feedback_active)
                 self.assertEqual(self.feedback[-1][1], "object_busy_search")
                 self.assertTrue(self.bubble_text())
-                self.assertTrue(app._hover.interaction_active)
+                self.assertTrue(app._hover.menu_engaged)
                 toolbar = app._hover.toolbar
                 assert toolbar is not None
                 self.assertTrue(all(button.cget("state") == "disabled"
-                                    for button in toolbar.buttons.values()))
+                                    for action, button in toolbar.buttons.items()
+                                    if action not in ("place_item", "play", "talk")))
+                self.assertTrue(all(toolbar.buttons[action].cget("state") == "normal"
+                                    for action in ("place_item", "play", "talk")))
                 before = app.settings.x
                 progress = world.interaction.search_progress
                 self.run_for(.35)
@@ -170,7 +199,10 @@ class WorldRuntimeFlowTests(unittest.TestCase):
                 self.assertEqual(world.interaction.search_progress, progress)
                 self.assertEqual(world.interaction.memory_id, record)
                 self.assertFalse(world.cursor.carrying)
-                self.assertEqual(app.state.friendship, friendship)
+                self.assertEqual(app.state.friendship_history.last_contact,
+                                 relationship.last_contact)
+                self.assertEqual(app.state.friendship_history.penalties,
+                                 relationship.penalties)
                 self.assertAlmostEqual(app.state.social, social, delta=.05)
                 self.assertEqual(list(app.mind.clicks), [])
         direction = -1 if app._walk.movement.remaining_distance < 0 else 1
@@ -199,10 +231,10 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         )
         world.awareness.memory.mark_assessed(record)
         original = world.awareness.memory.get(record)
-        # Keep the real care/focus/player wiring, without replaying a long
-        # catalogue story whose pacing is covered by scheduler tests.
+        # Keep the real care/focus/player wiring with a bounded conversation.
+        # Its text still receives the shared reading and final-text allowance.
         reaction = Reaction(
-            "focus-wiring", (Cue("pause", "", 250), Cue("text", "Moment.", 250),
+            "focus-wiring", (Cue("pause", "", 250), Cue.text("Moment."),
                              Cue("pause", "", 250)), "idle", "talk",
         )
         with patch.object(self.app.mind, "select_reaction", return_value=reaction):
@@ -227,6 +259,13 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.assertEqual(world.awareness.memory.get(record), original)
         self.assertEqual(len(world.awareness.memory.snapshot()), 1)
         self.assertEqual(self.feedback, [])
+        duration = sum(cue.duration_ms for cue in reaction.beats) / 1000
+        self.run_for(duration - .08 - .001)
+        self.assertTrue(self.app._reaction_player.active)
+        self.assertEqual(world._attention().mode, "unavailable")
+        self.assertEqual(self.feedback, [])
+        self.run_for(.001)
+        self.assertFalse(self.app._reaction_player.active)
         self.run_until(lambda: bool(self.feedback), 5)
         self.assertTrue(self.feedback)
         self.assertEqual(self.feedback[0][1], "object_place_missing")
@@ -258,7 +297,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         )
         store = self.app.store
         self.app.quit()
-        self.app = DesktopPet(store=store)
+        self.app = create_test_desktop(store=store)
         self.addCleanup(self.app.quit)
         greeting = self.app._runtime.scheduled_greeting
         if greeting is not None:
@@ -334,13 +373,12 @@ class WorldRuntimeFlowTests(unittest.TestCase):
             text = self.bubble_text()
             if text and (not self.bubbles or self.bubbles[-1][2] != text):
                 self.bubbles.append((world.now, world.interaction.phase, text))
-            if predicate() or time.monotonic() >= until:
-                self.app.root.quit()
-            else:
-                self.app.root.after(25, sample)
 
-        self.app.root.after(1, sample)
-        self.app.root.mainloop()
+        while True:
+            sample()
+            if predicate() or time.monotonic() + 1e-9 >= until:
+                break
+            self.timing.advance(min(.025, until - time.monotonic()))
         return trace
 
     def test_right_edge_scale_two_pickup_uses_actual_motion_and_attachment(self):
@@ -448,7 +486,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         self.assertIsNone(self.app.state.food.last_food_id)
         store = self.app.store
         self.app.quit()
-        restored = DesktopPet(store=store)
+        restored = create_test_desktop(store=store)
         self.addCleanup(restored.quit)
         saved = restored._world.world.get(item.instance_id)
         self.assertEqual(saved.state, ObjectState.RESTING)
@@ -456,18 +494,26 @@ class WorldRuntimeFlowTests(unittest.TestCase):
 
     def test_handover_is_staged_and_cursor_entry_preserves_full_drink_animation(self):
         world = self.app._world
+        self.app.root.update_idletasks()
+        eyes = self.app._animated.cursor_eye_position
+        image = world.view.image("energy_drink", self.app.settings.scale)
+        sprite = world.view.items.foods["energy_drink"].sprites[self.app.settings.scale]
+        # Present the item's displayed center at the actual eyes, independent
+        # of startup placement, desktop geometry and source sprite pivots.
+        pointer = (int(eyes[0] + sprite.pivot[0] - image.width() / 2),
+                   int(eyes[1] + sprite.pivot[1] - image.height() / 2))
         self.enterContext(
             patch.object(
                 self.app.root,
                 "winfo_pointerx",
-                return_value=(self.app.settings.x or 0) + 96,
+                return_value=pointer[0],
             )
         )
         self.enterContext(
             patch.object(
                 self.app.root,
                 "winfo_pointery",
-                return_value=world._track().ground_y - 80,
+                return_value=pointer[1],
             )
         )
         self.enterContext(

@@ -23,6 +23,7 @@ class CarePresenterTests(unittest.TestCase):
         self.show_text = Mock()
         self.refresh_toolbar = Mock()
         self.refresh_status = Mock()
+        self.text_presented = Mock()
         self.presenter = CarePresenter(
             CareViewPorts(
                 set_item=self.set_item,
@@ -33,6 +34,7 @@ class CarePresenterTests(unittest.TestCase):
                 show_text=self.show_text,
                 refresh_toolbar=self.refresh_toolbar,
                 refresh_status=self.refresh_status,
+                text_presented=self.text_presented,
             )
         )
         self.context = context_at(datetime(2026, 10, 12, 13).timestamp())
@@ -103,6 +105,35 @@ class CarePresenterTests(unittest.TestCase):
         self.assertEqual(displayed.text, "Hallo")
         self.assertEqual(reaction.animation, "idle")
         self.cancel_followup.assert_not_called()
+
+    def test_refused_petting_has_no_petting_animation(self):
+        outcome = CareOutcome(CareResult("pet", CareEffect.AFFECTION_REFUSED),
+                              None, self.context)
+        self.presenter.present(outcome, now=100, sleeping=False)
+        self.start_action.assert_not_called()
+        self.set_item.assert_not_called()
+        self.show_text.assert_called_once_with(
+            format_care_response(outcome.result), 2450,
+        )
+
+    def test_extra_strokes_animate_but_refusals_wait_for_visible_boundary(self):
+        delivered = self.text_presented
+        for effect in (CareEffect.AFFECTION_ENOUGH, CareEffect.AFFECTION_ENOUGH_FIRM):
+            self.presenter.present(CareOutcome(CareResult("pet", effect), None,
+                                               self.context), now=100, sleeping=False)
+        self.assertEqual(self.start_action.call_count, 2)
+        delivered.assert_not_called()
+        self.presenter.present(CareOutcome(
+            CareResult("pet", CareEffect.AFFECTION_REFUSED), None, self.context,
+        ), now=100, sleeping=False)
+        delivered.assert_called_once_with("pet_refused")
+        self.presenter.present(CareOutcome(
+            CareResult("pet", CareEffect.AFFECTION_BOUNDARY_IGNORED),
+            Reaction("ignored", (Cue.text("Bitte Abstand."),), "idle",
+                     "pet_boundary_ignored"), self.context,
+        ), now=100, sleeping=False)
+        self.assertEqual(self.start_action.call_count, 2)
+        self.assertEqual(self.react.call_args.args[0].animation, "idle")
 
 
 if __name__ == "__main__":

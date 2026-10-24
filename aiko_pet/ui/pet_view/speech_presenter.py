@@ -8,10 +8,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
-from ...asset_paths import EMOTE_IMAGE_DIR, GAME_HANDS_DIR
+from ...asset_paths import EMOTE_IMAGE_DIR
 from ...games.rock_paper_scissors import Move
 from ...pet.content import GERMAN_TEXT
 from ...pet.mind.reaction_sequence import EMOTES
+from ..common.icon_images import IconImages
+from ..common.rounded_panel import RoundedPanel
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,6 +42,7 @@ class SpeechPresenter:
         restore_stack: Callable[[], object],
         transparent_color: str = "#ff00ff",
         emote_assets: Path = EMOTE_IMAGE_DIR,
+        ui_images: IconImages | None = None,
     ) -> None:
         self._root = root
         self._anchor = anchor
@@ -48,10 +51,20 @@ class SpeechPresenter:
         self._restore_stack = restore_stack
         self._transparent_color = transparent_color
         self._emote_assets = emote_assets
+        self._ui_images = ui_images
         self.bubble: tk.Toplevel | None = None
         self.pending_timer: str | None = None
         self.emote_images: dict[str, tk.PhotoImage] = {}
         self.game_hand_images: dict[Move, tk.PhotoImage] = {}
+        self.attribution = ""
+        root.bind("<Destroy>", lambda event: (
+            self.release_images() if event.widget is root else None
+        ), add="+")
+
+    def release_images(self) -> None:
+        """Release cached images at root destruction on Tk's owner thread."""
+        self.emote_images.clear()
+        self.game_hand_images.clear()
 
     def _new_window(self) -> tk.Toplevel:
         window = tk.Toplevel(self._root)
@@ -139,6 +152,12 @@ class SpeechPresenter:
             padx=12,
             pady=8,
         ).pack(padx=1, pady=1)
+        if self.attribution:
+            tk.Label(
+                frame, text=self.attribution, font=(self._font_name, 7),
+                wraplength=235, bg="#f0f6fa", fg="#243247", justify="center",
+                padx=8, pady=4,
+            ).pack(padx=1, pady=(0, 1))
         transparent = self._transparent_color if sys.platform == "win32" else "#202733"
         tail = tk.Canvas(
             bubble,
@@ -171,15 +190,19 @@ class SpeechPresenter:
         if not isinstance(aiko, Move):
             raise ValueError("Unknown game hand")
         if aiko not in self.game_hand_images:
-            self.game_hand_images[aiko] = tk.PhotoImage(
-                file=str(GAME_HANDS_DIR / f"{aiko.value}.png"),
+            if self._ui_images is None:
+                self._ui_images = IconImages(self._root)
+            self.game_hand_images[aiko] = self._ui_images.icon(
+                f"play_rps_{aiko.value}", 64,
             )
         self.hide()
         bubble = self._new_window()
-        frame = tk.Frame(bubble, bg="#53687e", bd=0)
-        frame.pack()
-        panel = tk.Frame(frame, bg="#f0f6fa")
-        panel.pack(padx=1, pady=1)
+        transparent = self._transparent_color if sys.platform == "win32" else "#202733"
+        surface = RoundedPanel(
+            bubble, fill="#FFFCFD", border="#B8CDDF", background=transparent,
+        )
+        surface.frame.pack()
+        panel = surface.body
         names = {
             Move.ROCK: GERMAN_TEXT.format("rps.move.rock"),
             Move.PAPER: GERMAN_TEXT.format("rps.move.paper"),
@@ -188,25 +211,24 @@ class SpeechPresenter:
         tk.Label(
             panel,
             text=GERMAN_TEXT.format("rps.choose_own_hand"),
-            bg="#f0f6fa",
-            fg="#243247",
-            font=(self._font_name, 9, "bold"),
+            bg="#FFFCFD",
+            fg="#3E4C61",
+            font=("Segoe UI", 9, "bold"),
         ).pack(padx=12, pady=(8, 1))
         tk.Label(
             panel,
             image=self.game_hand_images[aiko],
-            bg="#f0f6fa",
+            bg="#FFFCFD",
             bd=0,
             highlightthickness=0,
         ).pack(padx=8)
         tk.Label(
             panel,
             text=names[aiko],
-            bg="#f0f6fa",
-            fg="#243247",
-            font=(self._font_name, 9),
+            bg="#FFFCFD",
+            fg="#3E4C61",
+            font=("Segoe UI", 9),
         ).pack(padx=12, pady=(1, 8))
-        transparent = self._transparent_color if sys.platform == "win32" else "#202733"
         tail = tk.Canvas(
             bubble,
             width=20,
@@ -223,8 +245,8 @@ class SpeechPresenter:
             0,
             10,
             10,
-            fill="#f0f6fa",
-            outline="#53687e",
+            fill="#FFFCFD",
+            outline="#B8CDDF",
             width=1,
         )
         self._present(bubble, duration_ms)

@@ -40,15 +40,18 @@ class IndependentHoverTests(unittest.TestCase):
         self.panel = ActionToolbar(
             self.root,
             snapshot=lambda: project_hover(
-                snapshot_pet(self.state), context_at(1_781_000_000),
-                ComputerSnapshot(cpu=42), observe_computer=True,
+                snapshot_pet(self.state),
+                context_at(1_781_000_000),
+                ComputerSnapshot(cpu=42),
+                observe_computer=True,
             ),
             anchor=lambda: self.anchor,
             actions=HoverActions(
                 interact=self.events.append,
                 toggle_pin=lambda: self.events.append("pin"),
                 open_settings=lambda _x, _y: self.events.append("settings"),
-                save_position=save, move_speech=lambda: None,
+                save_position=save,
+                move_speech=lambda: None,
                 restore_stack=lambda: True,
             ),
             always_on_top=False,
@@ -66,7 +69,7 @@ class IndependentHoverTests(unittest.TestCase):
     def test_rendering_updates_from_snapshot_not_game_object(self) -> None:
         set_test_pet_values(self.state, energy=14)
         self.panel.refresh()
-        self.assertIn("14%", self.panel.needs["energy"][2].cget("text"))
+        self.assertIn("14 / 100", self.panel.readouts["energy"].label.cget("text"))
         self.assertIn("CPU 42 %", self.panel.hardware.cget("text"))
 
     def test_saved_drag_and_reset_flow_through_callback(self) -> None:

@@ -80,6 +80,21 @@ class ObjectAwareness:
     def acknowledge_absence(self, record: str) -> None:
         self._absences.pop(record, None)
 
+    def suspend_absence(self, instance: str) -> frozenset[str]:
+        """Custody invalidates pending loss, without becoming sensory knowledge."""
+        bound = self.record_for_instance(instance)
+        records = frozenset(item.token for item in self.memory.snapshot()
+                            if item.instance_id == instance or item.token == bound)
+        for record in records:
+            self._absence.discard(record)
+            pending = self._absences.pop(record, None)
+            current = self.memory.get(record)
+            if (pending is not None and current is not None and current.at_place(
+                    x=pending.x, height=pending.height, resting=pending.resting,
+                )):
+                self.memory.retract_missing(record)
+        return records
+
     def record_for_instance(self, instance: str) -> str | None:
         return self._world_records.get(instance)
 
@@ -262,7 +277,18 @@ class ObjectAwareness:
         inspecting: str | None = None,
         known_coverage: KnownPlaceCoverage | None = None,
         defer_selection: bool = False,
+        custody: WorldSnapshot | None = None,
     ) -> ObjectGoal | None:
+        # A host may hide an off-screen cursor item from sensory candidates.
+        # Its physical custody must still exclude a premature missing-place check.
+        physical = world if custody is None else custody
+        nonresting_instances = (item.instance_id for item in physical.objects
+                               if item.state in (
+                                   ObjectState.USER_HELD, ObjectState.PET_HELD,
+                                   ObjectState.FALLING, ObjectState.BOUNCING,
+                               ))
+        excluded = frozenset(record for instance in nonresting_instances
+                             for record in self.suspend_absence(instance))
         candidates, own_actions, held = self._collect_candidates(
             world, held_pose=held_pose, presentation=presentation,
             inspecting=inspecting,
@@ -364,7 +390,8 @@ class ObjectAwareness:
                                   if seen.token not in previous_tokens),
         )
         places = tuple(item for item in self.memory.snapshot()
-                       if attention.mode != "object" or item.token == committed)
+                       if item.token not in excluded
+                       and (attention.mode != "object" or item.token == committed))
         for record in self._absence.observe(
             places, occupants, now=now, attention=attention,
             ground_bounds=(0, world.surface.width),
@@ -379,7 +406,7 @@ class ObjectAwareness:
                 self._absences[record] = known
         self._absences = {key: item for key, item in self._absences.items()
                           if (entry := self.memory.get(key)) is not None
-                          and entry.place_status == "missing"}
+                          and entry.resting and entry.place_status == "missing"}
         current = {(item.token, item.identity, item.x, item.height, item.resting,
                     item.assessed, item.disposition, item.place_status)
                    for item in self.memory.snapshot()}

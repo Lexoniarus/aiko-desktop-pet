@@ -293,8 +293,20 @@ function Start-Process {
     return [pscustomobject]@{ ExitCode = $code }
 }
 try {
-    if ($Scenario -eq 'no-install') { $script:NoPythonInstall = $true }
-    Invoke-AikoSetup
+    if ($Scenario -eq 'no-install') {
+        $script:NoPythonInstall = $true
+        Invoke-AikoSetup
+    } elseif ($Scenario -eq 'success') {
+        # One complete automatic-install path verifies the setup wiring.
+        Invoke-AikoSetup
+    } else {
+        # Repair, reboot and failure cases exercise the real download helper.
+        # Recreating venv/pip here repeats the complete setup integration above.
+        $installed = Install-PythonWithTk
+        if ($installed -ne $script:TestPythonExecutable) {
+            throw 'Did not return the discovered Python runtime'
+        }
+    }
     exit 0
 } catch {
     Write-Host $_.Exception.Message
@@ -335,7 +347,12 @@ try {
                         0,
                         result.stdout + result.stderr,
                     )
-                    shutil.rmtree(self.folder / ".venv")
+                    if scenario == "success":
+                        self.assertTrue(
+                            (self.folder / ".venv/Scripts/python.exe").is_file(),
+                        )
+                    else:
+                        self.assertFalse((self.folder / ".venv").exists())
                 installs = sorted(self.folder.glob("install-*.json"))
                 if scenario in ("no-install", "offline", "bad-hash"):
                     self.assertEqual(installs, [])

@@ -11,10 +11,12 @@ from unittest.mock import patch
 
 from aiko_pet.application.session import PetSessionRestorer
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.application.storage_contracts import StorageError
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory
 from aiko_pet.pet.state import PetState
+from tools.persistence_test_support import save_test_session
 
 # Choose a fixed local afternoon; DST and CI host timezone must not matter.
 NOW = datetime(2026, 10, 12, 15).astimezone().timestamp()
@@ -43,20 +45,20 @@ class SessionRestorationTests(unittest.TestCase):
         self.assertTrue(settings.auto_routine)
         self.assertEqual(sum(memory.hour_seconds), 0)
 
-    def test_corrupt_or_unsupported_save_does_not_simulate_time(self) -> None:
+    def test_corrupt_or_unsupported_save_stops_without_simulating_time(self) -> None:
         for invalid in ("{broken json", '{"version": 999}', "[]"):
             with self.subTest(invalid=invalid):
-                self.store.path.write_text(invalid, encoding="utf-8")
+                self.store.paths.legacy_json.write_text(invalid, encoding="utf-8")
                 with patch.object(PetState, "advance", autospec=True) as advance:
-                    state, _settings, _memory = self.restore()
+                    with self.assertRaises(StorageError):
+                        self.restore()
                 advance.assert_not_called()
-                self.assertEqual(state.updated_at, NOW)
-                self.assertEqual(state.meals_date, "")
+                self.assertFalse(self.store.path.exists())
 
     def test_session_snapshot_is_data_only_even_after_long_inactivity(self) -> None:
         saved = PetState(satiety=60, energy=35, updated_at=NOW - 3600)
         settings = PetSettings(auto_routine=False)
-        self.store.save(saved, settings)
+        save_test_session(self.store, saved, settings)
         with patch.object(PetState, "advance", autospec=True) as advance:
             session_data = self.store.load_session(now=NOW)
             decoded, restored_settings = session_data.state, session_data.settings
@@ -67,7 +69,7 @@ class SessionRestorationTests(unittest.TestCase):
 
     def test_existing_save_advances_closed_time_and_resets_anchor(self) -> None:
         saved = PetState(satiety=75, updated_at=NOW - 3600)
-        self.store.save(saved, PetSettings(auto_routine=False))
+        save_test_session(self.store, saved, PetSettings(auto_routine=False))
         state, _settings, _memory = self.restore()
         self.assertAlmostEqual(state.satiety, 67)
         self.assertEqual(state.updated_at, NOW)
@@ -80,9 +82,9 @@ class SessionRestorationTests(unittest.TestCase):
         )
         memory = AdaptiveMemory()
         memory.hour_seconds[42] = 32.5
-        self.store.save(saved, settings, adaptive=memory)
+        save_test_session(self.store, saved, settings, adaptive=memory)
         with patch.object(
-            self.store, "_read_payload", wraps=self.store._read_payload,
+            self.store, "load_session", wraps=self.store.load_session,
         ) as reader:
             actual, restored_settings, adaptive_memory = self.restore()
         reader.assert_called_once()
@@ -96,9 +98,9 @@ class SessionRestorationTests(unittest.TestCase):
     def test_daytime_offline_progress_has_no_unearned_energy_recovery(self) -> None:
         saved = PetState(energy=30, updated_at=NOW - 1800)
         settings = PetSettings(auto_routine=True)
-        self.store.save(saved, settings)
+        save_test_session(self.store, saved, settings)
         state, restored_settings, _memory = self.restore()
-        self.assertAlmostEqual(state.energy, 27)
+        self.assertAlmostEqual(state.energy, 28.5)
         self.assertTrue(restored_settings.auto_routine)
 
     def test_old_version_one_save_without_adaptive_data_still_loads(self) -> None:
@@ -107,7 +109,7 @@ class SessionRestorationTests(unittest.TestCase):
             "pet": {"satiety": 42, "updated_at": NOW},
             "settings": {"x": 240, "scale": 2},
         }
-        self.store.path.write_text(
+        self.store.paths.legacy_json.write_text(
             json.dumps(legacy), encoding="utf-8",
         )
         state, settings, memory = self.restore()

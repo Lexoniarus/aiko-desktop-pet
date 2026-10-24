@@ -30,6 +30,7 @@ class CursorItemPorts:
     sync_view: Callable[[], None]
     outside: Callable[[], None]
     finished: Callable[[], None] = lambda: None
+    existing_taken: Callable[[str], object] = lambda _instance: None
 
 
 class CursorItemGesture:
@@ -54,6 +55,16 @@ class CursorItemGesture:
     def carrying(self) -> bool:
         return self.instance_id is not None
 
+    @property
+    def can_begin(self) -> bool:
+        """Admit one gesture without replacing stock or taking another grab."""
+        if self.carrying:
+            return False
+        try:
+            return not self.root.tk.call("grab", "current", str(self.root))
+        except tk.TclError:
+            return False
+
     def presentation(
         self, eyes: tuple[float, float], width: float,
     ) -> tuple[str, ItemPresentation] | None:
@@ -71,7 +82,8 @@ class CursorItemGesture:
                 ItemPresentation(f"cursor_{self._offer_serial}", *offset))
 
     def begin(self, item_id: str) -> None:
-        self.cancel()
+        if not self.can_begin:
+            return
         self._return_x = None
         image = self.view.image(item_id, self.settings.scale)
         footprint = ObjectFootprint(image.width() / 2, image.width() / 2)
@@ -80,7 +92,7 @@ class CursorItemGesture:
         self._start(item.instance_id)
 
     def begin_existing(self, token: str, expected_revision: int) -> bool:
-        if self.carrying:
+        if not self.can_begin:
             return False
         try:
             item = self.world.take_resting(token, expected_revision=expected_revision)
@@ -88,6 +100,7 @@ class CursorItemGesture:
             return False
         assert item.position is not None
         self._return_x = item.position.x
+        self._ports.existing_taken(token)
         self._start(token)
         return self.carrying
 

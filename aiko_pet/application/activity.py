@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Callable
 
 from ..pet.balance import BALANCE
@@ -14,9 +14,15 @@ from ..pet.mind.adaptive_models import Observation
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.workload_events import WorkloadEventDetector
 from ..pet.routine import TimeContext, context_at
+from ..pet.sleep import SleepContext
 from ..pet.state import PetState
-from ..telemetry import workload_intensity
-from .active_time import ActiveSessionClock, SessionInputs, advance_session_time
+from ..telemetry import ComputerSnapshot, consumption_load, workload_intensity
+from .active_time import (
+    ActiveSessionClock,
+    SessionInputs,
+    TimeProgression,
+    advance_session_time,
+)
 from .food_activity import FoodActivityHistory
 from .ports import ComputerObservation
 from .settings import PetSettings
@@ -58,6 +64,7 @@ class ActivityCoordinator:
         callbacks: ActivityCallbacks,
         *,
         clock: ActiveSessionClock,
+        progression: TimeProgression | None = None,
     ) -> None:
         self.state = state
         self.settings = settings
@@ -67,10 +74,12 @@ class ActivityCoordinator:
         self.monitor = monitor
         self.callbacks = callbacks
         self._clock = clock
+        self._progression = progression
         self.last_hardware_sample = 0.0
         self.last_adaptive_sample = 0.0
         self.pending_computer_line: tuple[str, float] | None = None
         self.food_activity_history = FoodActivityHistory()
+        self._unavailable_seconds = 0.0
 
     def set_observation_enabled(self, enabled: bool) -> None:
         """Stop or restart measured workload and clear old session readings."""
@@ -82,34 +91,37 @@ class ActivityCoordinator:
         self.pending_computer_line = None
         if not enabled:
             self.mind.set_situation(None)
+            self.food_activity_history = FoodActivityHistory()
+
+    def note_unavailable(self, seconds: float) -> None:
+        """Accept only host-measured suspension, never app closure as evidence."""
+        self._unavailable_seconds = max(self._unavailable_seconds, seconds)
+
+    def sleep_context(self) -> SleepContext:
+        return replace(self.adaptive.sleep_context(observed=True),
+                       blocked=(self.callbacks.defer_routine()
+                                or time.monotonic() < self.callbacks.action_until()
+                                or self.callbacks.speech_busy()))
 
     def should_interrupt_nap(self) -> bool:
-        behaviour = self.adaptive.current
-        return bool(
-            self.settings.observe_computer
-            and behaviour is not None
-            and behaviour.should_wake
+        return self.sleep_context().active_seconds >= BALANCE.number(
+            "sleep", "return_seconds",
         )
 
     def allow_nap(self) -> bool:
-        if self.callbacks.defer_routine():
-            return False
-        behaviour = self.adaptive.current
-        return bool(
-            self.settings.observe_computer
-            and behaviour is not None
-            and behaviour.can_nap
-        )
+        context = self.sleep_context()
+        return (not context.blocked and context.idle_seconds is not None
+                and context.idle_seconds >= BALANCE.number("sleep", "quiet_seconds")
+                and self.state.energy <= BALANCE.number("sleep", "nap_energy"))
 
     def allow_bedtime(self) -> bool | None:
-        if self.callbacks.defer_routine():
+        context = self.sleep_context()
+        if context.blocked:
             return False
-        behaviour = self.adaptive.current
-        if not self.settings.observe_computer or behaviour is None:
-            return None
-        return behaviour.can_sleep
+        return (context.idle_seconds >= BALANCE.number("sleep", "quiet_seconds")
+                if context.idle_seconds is not None else None)
 
-    def live_effort(self) -> float | None:
+    def _live_reading(self) -> ComputerSnapshot | None:
         """Never project a stale hardware sample into unseen time."""
         if not self.settings.observe_computer:
             return None
@@ -121,7 +133,17 @@ class ActivityCoordinator:
             <= BALANCE.integer("activity", "live_effort_maximum_age_seconds")
         ):
             return None
-        return workload_intensity(reading)
+        return reading
+
+    def live_effort(self) -> float | None:
+        """Retain coarse observed workload for existing dialogue/routine policy."""
+        reading = self._live_reading()
+        return workload_intensity(reading) if reading is not None else None
+
+    def live_consumption_load(self) -> float | None:
+        """Only actual CPU/GPU utilization enters the smoothed need surcharge."""
+        reading = self._live_reading()
+        return consumption_load(reading) if reading is not None else None
 
     def session_inputs(
         self,
@@ -133,11 +155,10 @@ class ActivityCoordinator:
             wall_time=wall_time,
             monotonic_time=monotonic_time,
             auto_routine=self.settings.auto_routine,
-            allow_bedtime=self.allow_bedtime(),
-            allow_nap=self.allow_nap(),
-            interrupt_nap=self.should_interrupt_nap(),
+            allow_bedtime=None, allow_nap=False, interrupt_nap=False,
             effort=self.live_effort(),
             food_activity=self.observed_food_activity(),
+            sleep_context=self.sleep_context(),
         )
 
     def observe_adaptive(self, now: float, stamp: float) -> None:
@@ -170,10 +191,17 @@ class ActivityCoordinator:
         """Return recent measured work for a care command between ticks."""
         return self.food_activity_history.current_food_activity(time.monotonic())
 
-    def advance_state(self, wall_time: float) -> None:
+    def advance_state(self, wall_time: float, *, force: bool = True) -> None:
         """Sample real input and workload before progressing pet hunger."""
         now = time.monotonic()
-        machine_load = self.live_effort()
+        self.adaptive.observe_input(
+            wall=wall_time, monotonic=now,
+            idle_seconds=self.callbacks.read_idle_seconds(),
+            learn=self.settings.learn_rhythm,
+            unavailable_seconds=self._unavailable_seconds,
+        )
+        self._unavailable_seconds = 0.0
+        machine_load = self.live_consumption_load()
         self.food_activity_history.observe(
             now=now,
             pointer=(
@@ -189,17 +217,12 @@ class ActivityCoordinator:
             ),
             measured_hardware_load=machine_load,
         )
-        inputs = SessionInputs(
-            wall_time=wall_time,
-            monotonic_time=now,
-            auto_routine=self.settings.auto_routine,
-            allow_bedtime=self.allow_bedtime(),
-            allow_nap=self.allow_nap(),
-            interrupt_nap=self.should_interrupt_nap(),
-            effort=machine_load,
-            food_activity=self.food_activity_history.current_food_activity(now),
+        inputs = replace(self.session_inputs(wall_time, now), effort=machine_load)
+        advance_session_time(
+            self.state, self._clock, inputs, progression=self._progression,
+            minimum_seconds=(0 if force else
+                             BALANCE.number("simulation", "status_interval_seconds")),
         )
-        advance_session_time(self.state, self._clock, inputs)
 
     def advance_lifecycle(
         self,
@@ -211,7 +234,7 @@ class ActivityCoordinator:
         was_sleeping = self.state.sleeping
         previous_period = (previous.day_key, previous.period)
         self.observe_adaptive(now, wall_time)
-        self.advance_state(wall_time)
+        self.advance_state(wall_time, force=False)
         context = context_at(wall_time)
         return TimeProgress(
             context=context,

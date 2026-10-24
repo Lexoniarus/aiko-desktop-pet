@@ -10,6 +10,7 @@ from aiko_pet.desktop.attention_runtime import (
     AttentionRuntimePorts,
     DesktopAttentionRuntime,
 )
+from aiko_pet.pet.emotions import EmotionalComposition, EmotionalState
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.attention_presenter import AttentionPresenter
@@ -20,15 +21,20 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
     def setUp(self) -> None:
         self.attention = Mock(spec=AttentionCoordinator)
         self.attention.state = PetState()
+        self.attention.mind = Mock()
+        self.attention.mind.emotional_state.return_value = EmotionalComposition(
+            EmotionalState.SATISFIED
+        )
         self.presenter = Mock(spec=AttentionPresenter)
         self.context = context_at(1_781_000_000.0)
         self.toolbar_refresh = Mock()
         self.runtime = DesktopAttentionRuntime(
-            self.attention, self.presenter,
+            self.attention,
+            self.presenter,
             AttentionRuntimePorts(
                 context=lambda: self.context,
                 game_open=lambda: False,
-                toolbar_active=lambda: False,
+                menu_engaged=lambda: False,
                 settings_engaged=lambda: False,
                 bubble_visible=lambda: False,
                 reaction_pending=lambda: False,
@@ -47,7 +53,8 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         )
         self.toolbar_refresh.assert_called_once_with()
         self.attention.select_sleep_transition_reaction.assert_called_once_with(
-            123.0, self.context,
+            123.0,
+            self.context,
         )
         self.presenter.show_reaction.assert_called_once_with(reaction, 2600)
 
@@ -59,6 +66,7 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         self.toolbar_refresh.assert_not_called()
         self.attention.select_sleep_transition_reaction.assert_not_called()
         self.presenter.show_reaction.assert_not_called()
+        self.attention.evaluate_wishes.assert_called_once_with()
 
     def test_period_change_without_sleep_refreshes_only_toolbar(self) -> None:
         self.runtime.handle_time_progress(
@@ -73,7 +81,11 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
         self.attention.cursor_reaction.return_value = reaction
         self.runtime.cursor_moved(120.0, 1920, 100.0)
         self.attention.cursor_reaction.assert_called_once_with(
-            120.0, 1920, 100.0, self.context, toolbar_visible=False,
+            120.0,
+            1920,
+            100.0,
+            self.context,
+            toolbar_visible=False,
         )
         self.presenter.show_reaction.assert_called_once_with(reaction, 2600)
 
@@ -84,13 +96,16 @@ class DesktopAttentionRuntimeTests(unittest.TestCase):
 
     def test_notification_is_not_duplicated_or_changed(self) -> None:
         note = IncomingNotification(
-            event_id="test", source="test.browser",
-            title="Kalender", message="Termin gleich.",
+            event_id="test",
+            source="test.browser",
+            title="Kalender",
+            message="Termin gleich.",
         )
         self.attention.next_notification.return_value = note
         self.runtime.present_notification(100.0)
         self.presenter.show_notification.assert_called_once_with(
-            "Kalender: Termin gleich.", 3500,
+            "Kalender: Termin gleich.",
+            3500,
         )
         self.attention.mark_spoken.assert_called_once_with(100.0)
 

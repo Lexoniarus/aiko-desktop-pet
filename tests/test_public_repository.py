@@ -44,8 +44,8 @@ class PublicRepositoryTests(unittest.TestCase):
                 self.assertTrue(document.is_file())
                 for path in sorted(local_links(document)):
                     self.assertTrue(
-                        path.is_file(),
-                        f"{relative} has missing file: {path}",
+                        path.exists(),
+                        f"{relative} has missing target: {path}",
                     )
 
     def test_readme_uses_only_current_aiko_capture_and_animation(

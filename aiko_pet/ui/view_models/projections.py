@@ -9,19 +9,90 @@ from ...pet.content import GERMAN_TEXT
 from ...pet.food import FOOD_CATALOG
 from ...pet.mind.adaptive_models import Behaviour
 from ...pet.routine import TimeContext
+from ...pet.wishes import WishTargetKind, WishTargetMode, wish_text_key
 from ...telemetry import ComputerSnapshot
-from .contracts import HoverSnapshot, SettingsSnapshot, StatusSnapshot
+from .contracts import (
+    EmotionalSnapshot,
+    HoverSnapshot,
+    MoodletView,
+    SettingsSnapshot,
+    StatusSnapshot,
+    WishView,
+)
+from .emotional_text import duration_text
 from .text_de import (
     describe_workload,
     format_day_label,
-    format_emotion_label,
+    format_emotional_state,
     format_feed_label,
-    format_mood_hint,
     format_percent,
     format_schedule_line,
     format_sleep_label,
+    format_status_hint,
     observation_disabled_text,
 )
+
+
+def _status_values(pet: PetReadSnapshot) -> tuple[tuple[str, float], ...]:
+    """Presentation order for care, mood and relationship, not a need model."""
+    needs = pet.needs
+    return (
+        ("satiety", needs.satiety),
+        ("mood", pet.mood),
+        ("fun", needs.fun),
+        ("energy", needs.energy),
+        ("social", needs.social),
+        ("affection", needs.affection),
+        ("friendship", pet.friendship),
+    )
+
+
+def _emotional_snapshot(pet: PetReadSnapshot) -> EmotionalSnapshot:
+    wishes = []
+    for wish in pet.wishes:
+        label = GERMAN_TEXT.format(
+            wish_text_key(wish.definition_id, wish.goal, "label"),
+        )
+        target = (
+            FOOD_CATALOG[wish.target_id].display_name
+            if wish.target_kind == WishTargetKind.FOOD and wish.target_id
+            else GERMAN_TEXT.format(f"game.name.{wish.target_id}")
+            if wish.target_kind == WishTargetKind.GAME and wish.target_id
+            else label
+        )
+        if wish.target is not None:
+            if wish.target.mode == WishTargetMode.ANY:
+                target = GERMAN_TEXT.format(f"vn.wish_any.{wish.target_kind}")
+            elif wish.target.mode == WishTargetMode.EXCLUDE:
+                target = GERMAN_TEXT.format("vn.wish_exclude", target=target)
+        wishes.append(
+            WishView(
+                wish,
+                label,
+                GERMAN_TEXT.format(wish_text_key(wish.definition_id, wish.goal,
+                                                "description")),
+                target,
+                (
+                    GERMAN_TEXT.format(f"wish.restriction.{wish.restriction}")
+                    if wish.restriction is not None
+                    else ""
+                ),
+            )
+        )
+    return EmotionalSnapshot(
+        pet.emotions,
+        format_emotional_state(pet.emotions.primary),
+        pet.need_conditions,
+        tuple(
+            MoodletView(
+                m,
+                GERMAN_TEXT.format(f"moodlet.{m.definition_id}.label"),
+                GERMAN_TEXT.format(f"moodlet.{m.definition_id}.description"),
+            )
+            for m in pet.moodlets
+        ),
+        tuple(wishes),
+    )
 
 
 def project_hover(
@@ -50,8 +121,12 @@ def project_hover(
         ),
         sleep_label=format_sleep_label(pet.sleeping),
         feed_label=format_feed_label(pet, context),
-        needs=pet.needs,
+        status_values=_status_values(pet),
         friendship_level=pet.friendship_level,
+        emotional=_emotional_snapshot(pet),
+        wellbeing_line=GERMAN_TEXT.format(
+            "vn.wellbeing", target=f"{pet.mood_target:.0f}"
+        ),
         hardware_line=hardware,
         workload_line=workload,
         food_line=(
@@ -69,7 +144,6 @@ def project_hover(
 def project_status(
     pet: PetReadSnapshot,
     context: TimeContext,
-    emotion: str,
     situation: Behaviour | None,
     computer: ComputerSnapshot,
     *,
@@ -114,16 +188,38 @@ def project_status(
     return StatusSnapshot(
         today=format_day_label(context),
         next_event=format_schedule_line(context),
-        hint=format_mood_hint(pet, context),
-        emotion=format_emotion_label(emotion),
+        hint=format_status_hint(pet, context),
         sleep_label=format_sleep_label(pet.sleeping),
         hardware_line=hardware,
         activity_line=activity,
-        needs=pet.needs,
+        status_values=_status_values(pet),
         friendship_level=pet.friendship_level,
+        emotional=_emotional_snapshot(pet),
+        wellbeing_line=GERMAN_TEXT.format(
+            "vn.wellbeing", target=f"{pet.mood_target:.0f}"
+        ),
+        relationship_line=GERMAN_TEXT.format(
+            "vn.relationship",
+            stage=GERMAN_TEXT.format(f"vn.stage.{pet.friendship_stage}"),
+            level=str(pet.friendship_level),
+        ),
+        sleep_context_line=GERMAN_TEXT.format(f"vn.sleep.{pet.sleep_reason}"),
+        contact_line=(
+            GERMAN_TEXT.format(
+                "vn.contact_known", time=duration_text(pet.contact_absence_seconds)
+            )
+            if pet.contact_absence_seconds is not None
+            else GERMAN_TEXT.format("vn.contact_unknown")
+        ),
         objects_line=GERMAN_TEXT.format(
-            "ui.object_status", desktop=str(objects.desktop), known=str(objects.known),
-            assigned=str(objects.assigned), missing=str(objects.missing),
+            "ui.object_status",
+            desktop=str(objects.desktop),
+            undiscovered=str(objects.undiscovered),
+            unidentified=str(objects.unidentified),
+            unresolved=str(objects.unresolved),
+            known=str(objects.known),
+            assigned=str(objects.assigned),
+            missing=str(objects.missing),
         ),
     )
 
@@ -131,7 +227,7 @@ def project_status(
 def project_settings(settings: PetSettings) -> SettingsSnapshot:
     """Produce one authoritative desktop preferences view for every caller."""
     return SettingsSnapshot(
-        scale=settings.scale,
+        scale=settings.scale, zodiac_sign=settings.zodiac_sign,
         options=(
             ("always_on_top", settings.always_on_top),
             ("auto_walk", settings.auto_walk),
@@ -140,5 +236,6 @@ def project_settings(settings: PetSettings) -> SettingsSnapshot:
             ("spontaneous_talk", settings.spontaneous_talk),
             ("observe_computer", settings.observe_computer),
             ("learn_rhythm", settings.learn_rhythm),
+            ("online_social", settings.online_social),
         ),
     )

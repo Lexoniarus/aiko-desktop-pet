@@ -61,6 +61,15 @@ new ordinary goals also request fresh coverage. Each side needs its own
 continuous look. This covers already learned places across the taskbar without
 revealing distant unknown items. No eligible learned places means no empty scan.
 
+A selected investigation of a newly noticed unknown portion stays with
+`ObjectIntentions` during both looks. Afterwards Aiko looks back at that
+remembered place and waits for a fresh observation before beginning approach.
+The final scan direction must not discard the investigation on the other side.
+This is new-item curiosity, not a `SearchTask`: it grants no identity, follows no
+unobserved relocation and starts no lost-stock patrol. A checked empty unknown
+place uses the existing unknown-absence acknowledgement; an out-of-range place
+releases the attempt without claiming absence.
+
 All eligible old places are checked before the initial missing-item feedback
 seizes attention. Every confirmed missing known portion joins one SearchTask and
 gets its own readable, named bubble before candidate investigation begins.
@@ -80,8 +89,18 @@ SearchPhase describes patrol movement, rather than the whole recovery task.
 
 Aiko examines reachable unknown candidates through the ordinary hand-inspection
 path during the search. Valid hand/face identification can reunite a missing
-portion with its learned history and produce a grounded found bubble. A different
-learned portion of the same type cannot replace a bound missing subject.
+portion with its learned history and produce a grounded found bubble. During
+this search, a newly identified portion of the same identity/kind can resolve
+the oldest matching missing subject even when its physical instance differs.
+Unknown or wrong-kind candidates cannot resolve it. Existing known stock is
+excluded; a current observation is required, and each finding resolves at most
+one subject. A newly confirmed loss can reopen a portion for a later search.
+
+ObjectMemory transfers the missing subject's assessment and saved-for-later
+intention, retires that subjective record and keeps the finding's actual World
+reference, position and observation time. Ordinary stock recognition outside
+a search remains strict. Existing memory v3 / outer save v1 fields suffice;
+round-trip tests cover reference and source-association consistency.
 Nonmatching candidates are safely put down or remain in player custody before
 the same task continues. Unrelated appetite-driven consumption waits.
 
@@ -90,6 +109,33 @@ they do not restart its route. Finding one subject does not reset the search for
 the others. Actual endpoint coverage, completed local evidence and exhausted
 eligible candidates allow a final unsuccessful-search reaction. Time alone or
 one failed arrival does not manufacture confirmed absence or route completion.
+
+## Relationship consequences of personal contact
+
+Actual personal intake renews friendship contact and may earn bounded rolling
+credit; placing an item or autonomous eating does not. The existing observed
+withholding episode can request 0.5 loss after three takes or eighteen seconds
+held, then once per thirty seconds while it continues. PetState's saved rolling
+budget limits all episodes together to two points per two minutes. Returning
+stops future holding losses without refunding them. No physical item identity
+or custody change is inferred from a relationship consequence. See the
+[friendship guide](FRIENDSHIP_SYSTEM.md) for passive loss and qualification.
+
+## Grounded German object speech
+
+Noticing an unknown item says “Gegenstand”, without leaking its type. Actual
+identification selects `object_recognized` with an indefinite phrase such as
+“Ah, ein Onigiri!” A matching active search instead selects `object_found`,
+for example “Ah, da ist ja wohl mein Onigiri!” Later identification outside
+that search remains an ordinary new-portion reaction. These are distinct
+semantic events, not a formatter guessing which memory was found.
+
+Complete object sequences use explicit case/article/possessive/pronoun fields.
+The same renderer covers all eleven consumables, without changing menu labels,
+animation beats or selection conditions. Unknown possessive templates fall
+back to a definite “der Gegenstand” rather than claiming personal ownership.
+A safely completed found-item put-down preserves transferred saved-for-later
+intent; an actual interruption still records interrupted placement.
 
 ## Hover, controls and busy replies
 
@@ -133,5 +179,10 @@ uses its bounded, deduplicated social effects.
 Outer save v1 contains World v1 and optional memory v3, with legacy memory v1/v2
 readers. Learned facts survive restart; current observations, presentation clocks,
 tracking and action receipts do not. Transient surviving portions recover safely
-on ground without inventing witnessed positions. World consumption is not
-simulated while closed. See [data and saves](DATA_AND_SAVES.md).
+on ground without inventing witnessed positions. Stage 4 reconstructs finite
+closed-time intake only from previously identified, appraised portions still
+accessible at their acquired remembered places. It cannot discover unknown
+replacements. `ObjectConsumption.apply_portion` is the shared atomic intake
+owner; restoration loads World and memory before time progression. Live food
+breaks reuse the existing SearchTask and safe put-down path before sleep.
+See [sleep rules](SLEEP_SYSTEM.md) and [data and saves](DATA_AND_SAVES.md).

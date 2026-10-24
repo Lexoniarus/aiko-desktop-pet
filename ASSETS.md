@@ -2,6 +2,12 @@
 
 This repository includes original project content, AI-generated character artwork, and third-party Kenney game assets. Their origins are documented separately.
 
+The new [VN menu icon sources](assets/ui-vn/v1/README.md) are generated
+preparation artwork for the [approved UI direction](docs/UI_VN_DESIGN.md), not
+runtime replacements. Their prompts and file provenance are recorded with the
+sources. Existing playing cards/card frames and their Kenney attribution remain
+unchanged. This preparation pass does not amend existing license terms.
+
 ## 1. Project source code — MIT
 
 Unless a file identifies a different license, the project's own source code is distributed under the [MIT License](LICENSE). MIT permits copying, modification, redistribution, sublicensing, and commercial use, subject to preserving the required copyright and license notices. Public availability is not an additional usage restriction.
@@ -66,6 +72,10 @@ Original imported artwork is not cropped or overwritten. Preparation uses
 `python -m tools.prepare_character_assets`; Pillow is required only for that
 build step, not for running the desktop app.
 
+Known artwork work: the restored eating sequence remains in use, with
+regeneration required for its inconsistent proportions relative to idle and
+pickup. See the [eating regeneration backlog](docs/HD_CHARACTER_SPRITES.md#open-artwork-task-regenerate-a-cohesive-eating-sequence).
+
 The prepared eating anchors move six source pixels downward relative to the
 imported overlay hints, allowing native-size Onigiri to overlap the fingers
 instead of ending above them. Preparation records this calibration in runtime
@@ -122,10 +132,36 @@ available in Git history, for example the
 
 ## 3. Kenney game assets — CC0 1.0
 
+The **Playing Cards Pack (1.0)** contributes exactly 52 standard card faces and
+one back from `PNG/Cards (large)`, unmodified 64×64 PNG canvases under
+`aiko_pet/assets/playing_cards/`. The bundled
+[license](LICENSES/KENNEY_PLAYING_CARDS_CC0.txt) states CC0 and voluntary credit.
+`provenance.json` records the source pack, bundle, source subdirectory and
+SHA-256 for each selected original. No runtime Dropbox access is needed.
+The large 64×64 canvases are the largest PNG variant in this pack. Blackjack
+player cards use 2x integer scaling (128×128 canvases); the draw control layers
+the same scaled back at runtime. Aiko's hand retains its own 1x/2x scale.
+No additional asset export or modified source bitmap is distributed.
+
 The project uses artwork from these Kenney asset packs:
 
 - **Kenney Emote Pack (1.0):** pixel emotes under `aiko_pet/assets/emotes/`.
 - **Kenney UI Pack: Sci-fi (2.0):** source and adapted panel/button graphics under `aiko_pet/assets/kenney_ui/`.
+- **Kenney Boardgame Pack (1.0):** unmodified transparent yellow/red pieces for
+  Vier gewinnt under `aiko_pet/assets/connect_four/`. The red source is
+  orange-toned. Pack-relative source paths and SHA-256 hashes are recorded in
+  [provenance.json](aiko_pet/assets/connect_four/provenance.json); the original
+  pack [license](aiko_pet/assets/connect_four/LICENSE.txt) is included. The board
+  and highlights are drawn with Tk; runtime needs no Dropbox access.
+
+Mastermind reuses those red/yellow Boardgame pieces. Five additional unmodified
+64×64 PNGs from the same CC0 pack (blue, green, purple, white and black) are
+packaged under `aiko_pet/assets/mastermind/`, with their source paths and SHA-256
+hashes in [provenance.json](aiko_pet/assets/mastermind/provenance.json) and the
+supplied [license](aiko_pet/assets/mastermind/LICENSE.txt). License text whitespace
+is normalized; its legal wording is unchanged. The board, feedback marks,
+white-piece backing and cover labels are drawn in Tk. No new character artwork,
+paid dependency or online asset fetch is involved.
 
 The creator obtained the assets through a **paid Kenney Game Assets All-in-1 3.4.0 bundle**. The license files supplied with the packs identify the artwork as **Creative Commons Zero (CC0 1.0)**. Purchasing the bundle does not change those CC0 terms.
 

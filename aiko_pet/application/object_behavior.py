@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from ..pet.balance import BALANCE
+from ..pet.interaction_events import ArrangementDisrupted
 from ..pet.mind.object_attention import LookSide, ObjectAttention
 from ..pet.mind.object_decisions import (
     ObjectUseContext,
@@ -74,7 +76,7 @@ class BehaviorFacts:
     """Host facts sampled on the owner thread, without native object references."""
 
     game_open: bool = False
-    controls_active: bool = False
+    character_action_busy: bool = False
     carrying: bool = False
     playback_busy: bool = False
     user_action_pending: bool = False
@@ -135,6 +137,12 @@ class ObjectBehaviorCoordinator:
             ) else None,
         )
 
+    def refresh_after_placement(self) -> None:
+        """Notice changed stock when idle, preserving current looks and goals."""
+        if (self._orientation.complete and not self._interaction.active
+                and self._awareness.intentions.goal is None):
+            self.request_orientation()
+
     def _followed_knowledge(self) -> ObjectKnowledge | None:
         record = self._awareness.following_record
         return self._awareness.memory.get(record) if record is not None else None
@@ -175,18 +183,23 @@ class ObjectBehaviorCoordinator:
              and not interaction.searching and interaction.phase != "found")
             or (facts.carrying and interaction.focus_record is None)
             or facts.game_open
-            or (facts.controls_active and not interaction.active)
+            or (facts.character_action_busy and not interaction.active)
             or self._state.sleeping or facts.playback_busy
+            or (self._state.sleep_episode.care_break
+                and self._state.satiety >= BALANCE.number("sleep", "food_target"))
         )
+        revisit = (not blocked and not bound
+                   and self._pending_investigation() is not None)
         goal = awareness.update(
             snapshot, self._state, now=now, x=x, height=0, width=width,
             attention=attention,
             blocked=blocked or interaction.search_active, held_pose=(x, width * .4),
             committed=focus,
             inspecting=interaction.inspection_record,
+            custody=self._world.snapshot(),
             presentation=presentation if not pending or interaction.focus_record
             is not None or transport else None,
-            known_coverage=coverage, defer_selection=pending,
+            known_coverage=coverage, defer_selection=pending or revisit,
         )
         if pending and not bound:
             self._orientation = self._orientation.advance(
@@ -195,7 +208,7 @@ class ObjectBehaviorCoordinator:
                 duration=BALANCE.number("object_behavior", "absence_seconds"),
                 maximum_gap=BALANCE.number("object_behavior", "tracking_gap_seconds"),
             )
-            if self._orientation.complete:
+            if self._orientation.complete and not revisit:
                 goal = awareness.choose_goal(
                     self._state, x=x, now=now,
                     blocked=blocked or interaction.search_active, committed=focus,
@@ -223,6 +236,11 @@ class ObjectBehaviorCoordinator:
         absence_gaze = self._notice_absences(facts, attention=attention)
         if absence_gaze is not None:
             return BehaviorObservation(goal, blocked, absence_gaze, True, False)
+        if revisit and not interaction.active:
+            recheck = self._revisit_investigation(attention=attention, now=now)
+            if recheck is not None:
+                return recheck
+            goal = awareness.choose_goal(self._state, x=x, now=now, blocked=blocked)
         gaze_target = self._observation_gaze(
             goal, focus=focus, attention=attention, x=x,
         )
@@ -230,6 +248,45 @@ class ObjectBehaviorCoordinator:
             goal, blocked, gaze_target,
             False, not (awareness.checking_absence or awareness.absences),
         )
+
+    def _pending_investigation(self) -> ObjectKnowledge | None:
+        """Read a selected new find, never a missing-item search candidate."""
+        if self._interaction.active or self._interaction.search_active:
+            return None
+        goal = self._awareness.intentions.goal
+        known = (self._awareness.memory.get(goal.token)
+                 if goal is not None and goal.purpose == "investigate" else None)
+        if (known is not None and not known.recognized and known.resting
+                and known.place_status == "remembered"):
+            return known
+        return None
+
+    def _revisit_investigation(
+        self, *, attention: ObjectAttention, now: float,
+    ) -> BehaviorObservation | None:
+        """Look back after orientation; only fresh sensing can admit approach.
+
+        The intention remains with ObjectIntentions. Remembering this unknown
+        place grants neither an executable World binding nor a SearchTask.
+        """
+        awareness = self._awareness
+        known = self._pending_investigation()
+        if known is None or any(seen.token == known.token
+                                for seen in awareness.observations):
+            return None
+        distance = math.hypot(known.x - attention.origin[0],
+                              known.height - attention.origin[1])
+        if (distance <= attention.width * BALANCE.number(
+            "object_behavior", "notice_widths",
+        ) and (not attention.sees(known.x, known.height)
+               or awareness.checking_notice or awareness.checking_absence
+               or awareness.absences)):
+            return BehaviorObservation(None, True, GazeTarget(known.x, known.height),
+                                       False, False)
+        # Out of range or unresolved after a covered look: release curiosity
+        # without claiming a learned portion is missing or starting a patrol.
+        awareness.intentions.cancel(now)
+        return None
 
     def _check_approach_goal(
         self, goal: ObjectGoal | None, *, attention: ObjectAttention,
@@ -275,7 +332,7 @@ class ObjectBehaviorCoordinator:
         interaction, awareness = self._interaction, self._awareness
         can_react = (not self._state.sleeping and not facts.game_open
                      and attention.mode != "unavailable"
-                     and (not facts.controls_active or interaction.active)
+                     and (not facts.character_action_busy or interaction.active)
                      and not facts.user_action_pending
                      and not facts.playback_busy)
         losses = sorted(awareness.absences, key=lambda item: not item.recognized)
@@ -284,6 +341,8 @@ class ObjectBehaviorCoordinator:
             previous = interaction.phase
             if interaction.notice_absence(absent):
                 awareness.acknowledge_absence(absent.token)
+                if absent.recognized:
+                    self._state.experience_interaction(ArrangementDisrupted())
                 if previous != interaction.phase:
                     absence_gaze = GazeTarget(absent.x, absent.height)
         return absence_gaze
@@ -377,7 +436,9 @@ class ObjectBehaviorCoordinator:
         record = self._awareness.record_for_instance(instance)
         returning = (self._interaction.waiting_for_target
                      and record == self._interaction.memory_id)
-        if (facts.game_open or self._interaction.active and not returning
+        if (self._state.sleeping or facts.game_open
+                or self._interaction.active and not returning
+                or facts.character_action_busy and not returning
                 or facts.playback_busy):
             return None
         decision = (self._awareness.assess_offer(record, self._state)
@@ -391,7 +452,8 @@ class ObjectBehaviorCoordinator:
         offer_ready: bool, now: float, facts: BehaviorFacts,
     ) -> bool:
         """Combine current sensory/episode eligibility with native reach evidence."""
-        if self._state.sleeping or facts.game_open:
+        if (self._state.sleeping or facts.game_open
+                or facts.character_action_busy and not self._interaction.active):
             return False
         known = self._awareness.known_instance(instance)
         if known is None:
@@ -404,10 +466,9 @@ class ObjectBehaviorCoordinator:
             return (
                 (not self._interaction.active or self._interaction.waiting_for_target
                  and self._interaction.memory_id == known.token)
-                # An unidentified portion may enter Aiko's hands for her
-                # first examination; a previously identified one still
-                # requires its actual positive current offer assessment.
-                and (not known.recognized or (
+                # Food can be personally received for inspection or put-down
+                # even when unwanted; intake remains a separate decision.
+                and (not known.recognized or known.kind == "food" or (
                     offer_ready and decide_object_use(
                         known, self._state, ObjectUseContext.OFFER,
                     ).consume
@@ -417,8 +478,6 @@ class ObjectBehaviorCoordinator:
                         for seen in self._awareness.observations)
                 and reachable
             )
-        if facts.controls_active and not self._interaction.active:
-            return False
         return object_state == ObjectState.RESTING and reachable
 
     def advance_search(
@@ -431,12 +490,27 @@ class ObjectBehaviorCoordinator:
             return None
         if not interaction.search_ready:
             return Hold()
+        observed = {seen.token for seen in self._awareness.observations}
         for known in self._awareness.memory.snapshot():
-            if (known.place_status == "remembered"
+            if (known.token in observed and known.place_status == "remembered"
                     and interaction.found(known.token)):
                 return Hold()
         if blocked:
             return Hold()
+        if interaction.acute_food_search:
+            if self._state.satiety >= BALANCE.number("sleep", "food_target"):
+                return Hold()
+            for known in self._awareness.memory.snapshot():
+                if (known.token in observed and known.kind == "food" and known.resting
+                        and known.place_status == "remembered"
+                        and decide_object_use(known, self._state).consume):
+                    goal = ObjectGoal(
+                        known.token, known.identity, known.kind, known.x, known.height,
+                        known.observed_at,
+                    )
+                    self._awareness.intentions.adopt(goal)
+                    interaction.begin_goal(goal)
+                    return Hold()
         if self._awareness.checking_absence or self._awareness.checking_notice:
             return Hold()
         candidates = [item for item in self._awareness.memory.snapshot()

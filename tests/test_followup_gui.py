@@ -1,17 +1,17 @@
 """Real-Tk tests for readable sequential speech and deliberate interruption."""
 
 import tempfile
-import time
 import tkinter as tk
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
+from tools.tk_test_time import ControlledTkTime
 
 
 class FollowupGuiTests(unittest.TestCase):
@@ -24,9 +24,12 @@ class FollowupGuiTests(unittest.TestCase):
         probe.destroy()
 
     def setUp(self):
+        self.timing = self.enterContext(ControlledTkTime())
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.app = DesktopPet(store=StateStore(Path(self.temp.name) / "pet.json"))
+        self.app = create_test_desktop(
+            store=StateStore(Path(self.temp.name) / "pet.json"),
+        )
         self.addCleanup(self.app.quit)
         # Controlled speech tests should not be interrupted by the startup
         # greeting that normally runs asynchronously after the first frame.
@@ -44,8 +47,9 @@ class FollowupGuiTests(unittest.TestCase):
         )
 
     def pass_delay(self, seconds=None):
-        time.sleep(seconds or (Cue.text("Oh.").duration_ms / 1000 + 0.08))
-        self.app.root.update()
+        self.timing.advance(
+            seconds if seconds is not None else Cue.text("Oh.").duration_ms / 1000,
+        )
 
     def test_short_correction_becomes_second_bubble(self):
         self.app._react(
@@ -87,7 +91,7 @@ class FollowupGuiTests(unittest.TestCase):
         self.pass_delay(1.86)
         self.assertEqual(self.text(), "Eine neue Antwort, die jetzt lesbar bleibt.")
 
-    def test_direct_click_keeps_foreground_followup_running(self):
+    def test_direct_click_keeps_care_followup_running(self):
         self.app._react(
             Reaction(
                 "test",
@@ -96,7 +100,7 @@ class FollowupGuiTests(unittest.TestCase):
                     Cue.text("Die laufende Antwort geht weiter."),
                 ),
                 "idle",
-                "click_left",
+                "care_pet",
             )
         )
         with patch.object(self.app.mind, "click", return_value=None) as click:

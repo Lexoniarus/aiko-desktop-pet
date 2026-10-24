@@ -32,6 +32,7 @@ class DesktopTickPorts:
     present_notification: Callable[[float], None]
     refresh_overlays_and_save: Callable[[float], None]
     observe_objects: Callable[[float], None] = lambda _now: None
+    poll_social: Callable[[], None] = lambda: None
 
 
 class DesktopRuntime:
@@ -85,6 +86,7 @@ class DesktopRuntime:
             ports.refresh_taskbar(now)
             ports.poll_desktop_clicks()
             ports.refresh_hover(now)
+            ports.poll_social()
             ports.observe_computer(now)
             pointer = ports.observe_pointer(now)
             ports.observe_objects(now)

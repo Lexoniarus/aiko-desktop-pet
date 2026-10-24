@@ -97,7 +97,7 @@ class DesktopAnimationRuntimeTests(unittest.TestCase):
                            clear_action=True),
         )
         self.visual.observe.assert_called_once_with(
-            100.0, (100, 0), 99.0, False,
+            100.0, (100, 0), 99.0, False, cursor_gaze_point=None,
         )
 
     def test_fast_walk_callback_still_uses_attention_window(self) -> None:

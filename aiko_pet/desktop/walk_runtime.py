@@ -79,7 +79,7 @@ class WalkDriverPorts:
     """Host capabilities granted to the pet's walking adapter."""
 
     track: Callable[[], HorizontalTrack]
-    toolbar_visible: Callable[[], bool]
+    menu_engaged: Callable[[], bool]
     place_x: Callable[[float], None]
     walk_finished: Callable[[float], None]
     committed_goal: Callable[[], bool] = lambda: False
@@ -153,7 +153,7 @@ class WalkDriver:
                 auto_walk=self.settings.auto_walk,
                 sleeping=self.state.sleeping,
                 attention_active=attention_active and not committed,
-                toolbar_visible=self.ports.toolbar_visible() and not committed,
+                menu_engaged=self.ports.menu_engaged() and not committed,
                 observing_computer=self.settings.observe_computer,
                 computer_busy=busy,
                 quiet_period=bool(observed is not None and observed.quiet),

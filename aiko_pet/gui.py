@@ -1,28 +1,26 @@
-"""Frameless Windows desktop companion using only Tkinter and prepared PNGs.
-
-Aiko lives along the Windows taskbar, follows the cursor with 16 hand-authored
-gaze sprites and exposes her care actions in a mouse-hover toolbar.
-"""
+"""Compose the frameless Windows desktop companion and its existing owners."""
 
 from __future__ import annotations
 
 import time
 import tkinter as tk
-from tkinter import font as tkfont
+from functools import partial
 from tkinter import messagebox
 
 from .application.active_time import ActiveSessionClock
 from .application.activity import ActivityCallbacks
 from .application.assembly import assemble_application
 from .application.attention import AttentionCoordinator
-from .application.commands import CareCommand
 from .application.contact import ContactCoordinator, ContactPorts
-from .application.game_experience import experience_from_rock_paper_scissors
-from .application.session import PetSessionRestorer
+from .application.session import PetSessionRestorer, SavedPetStore
 from .application.settings import SettingKey
+from .application.social_content import PreparedSocialContent
+from .application.social_coordinator import SocialContentWorker
 from .config import load_env_file
+from .desktop import game_assembly
 from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation
 from .desktop.attention_runtime import AttentionRuntimePorts, DesktopAttentionRuntime
+from .desktop.care_runtime import DesktopCareRuntime
 from .desktop.farewell import FarewellSequence
 from .desktop.global_input import (
     idle_seconds_windows,
@@ -36,10 +34,12 @@ from .desktop.pointer_runtime import PointerRuntime, PointerRuntimePorts
 from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
 from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
+from .desktop.social_runtime import SocialConversationRuntime
+from .desktop.startup import run_desktop
 from .desktop.window_stack import WindowStack
 from .desktop.world_access import WorldRuntimeAccess
 from .desktop.world_runtime import DesktopWorldRuntime
-from .infrastructure.active_time import active_uptime_seconds
+from .infrastructure.active_time import elapsed_uptime_seconds
 from .infrastructure.character_assets import load_character_catalog
 from .infrastructure.character_mind import make_aiko_mind
 from .infrastructure.hardware.monitor import ActivityMonitor
@@ -50,7 +50,6 @@ from .pet.mind.catalog import Reaction
 from .pet.routine import TimeContext, context_at
 from .ui.pet_view.action_playback import ActionPlayback
 from .ui.pet_view.attention_presenter import AttentionPresenter, AttentionViewPorts
-from .ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 from .ui.pet_view.desktop_window import MAGENTA, DesktopWindow
 from .ui.pet_view.object_feedback_presenter import ObjectFeedbackPresenter
 from .ui.pet_view.reaction_player import ReactionPlayer
@@ -63,19 +62,21 @@ from .ui.windows.hover_ui import HoverUi, HoverUiPorts
 
 class DesktopPet:
     """Compose one desktop session from its owning components.
-
     Character, settings, input, window and simulation behavior belong to
     their respective components, not to a second state stored on this shell.
     """
 
     _overlay_stack: WindowStack
+    _social_runtime: SocialConversationRuntime
 
     def __init__(
-        self, *, store: StateStore | None = None,
+        self, *, store: SavedPetStore | None = None,
         activity_monitor: ActivityMonitor | None = None,
+        social_worker: SocialContentWorker | None = None,
     ) -> None:
         self.store = store or StateStore()
-        session = PetSessionRestorer(self.store).restore()
+        active_clock = ActiveSessionClock(elapsed_uptime_seconds, wall_time=time.time)
+        session = PetSessionRestorer(self.store, clock=active_clock).restore()
         self.state = session.state
         self.settings = session.settings
         self.adaptive = session.adaptive
@@ -86,11 +87,6 @@ class DesktopPet:
         self.canvas = self._window.canvas
         self.background = self._window.background
         self._world_access = WorldRuntimeAccess()
-        self._speech_font = (
-            "Kenney Mini"
-            if "Kenney Mini" in set(tkfont.families(root=self.root))
-            else "Segoe UI"
-        )
         self._runtime = DesktopRuntime(
             DesktopTickPorts(
                 is_closed=lambda: self._closed,
@@ -119,6 +115,7 @@ class DesktopPet:
                     self._session_runtime.refresh(now)
                 ),
                 observe_objects=lambda now: self._world.update(now),
+                poll_social=lambda: self._social_runtime.poll(),
             ),
             schedule=self.root.after,
             cancel=self.root.after_cancel,
@@ -130,17 +127,20 @@ class DesktopPet:
         )
         self._persistence = DesktopPersistence(
             self.store, self.state, self.settings, self.adaptive,
+            revision=session.revision,
+            social_history=lambda: self._social_runtime.content.history,
         )
         self.mind = make_aiko_mind(started_at=self._persistence.last_saved)
-        active_clock = ActiveSessionClock(active_uptime_seconds)
         self.activity_monitor = activity_monitor or ActivityMonitor()
         self.activity_monitor.set_enabled(self.settings.observe_computer)
         services = assemble_application(
             state=self.state, settings=self.settings, mind=self.mind,
             adaptive=self.adaptive, monitor=self.activity_monitor,
-            clock=active_clock,
+            clock=active_clock, progression=self._world_access,
+            arrangement_ready=self._world_access.arrangement_ready,
             callbacks=ActivityCallbacks(
-                speech_busy=lambda: self._reaction_player.pending_timer is not None,
+                speech_busy=lambda: (self._reaction_player.pending_timer is not None
+                                     or self._social_runtime.waiting),
                 read_idle_seconds=idle_seconds_windows,
                 start_review=lambda now: self._start_action(
                     "review", 1.4, started_at=now,
@@ -165,7 +165,7 @@ class DesktopPet:
             monitor=self.activity_monitor, assets=self._character_assets,
             ports=AnimationAssemblyPorts(
                 track=lambda: self._window.track,
-                toolbar_visible=lambda: self._hover.interaction_active,
+                menu_engaged=lambda: self._hover.menu_engaged,
                 place_x=self._place_x,
                 walk_finished=self._on_walk_finished,
                 gaze_origin=self._window.gaze_origin,
@@ -174,12 +174,10 @@ class DesktopPet:
                 action_clip_id=lambda: self._action_playback.clip_id,
                 attention_until=lambda: self.mind.cursor_attention.attention_until,
                 extend_action=self._action_playback.extend,
-                object_focus=self._world_access.focused,
-                object_phase=self._world_access.phase,
-                following_subject=self._world_access.following_record,
-                orientation_side=self._world_access.orientation_side,
+                world=self._world_access,
                 feedback_subject=lambda: self._reaction_player.subject,
                 activity_active=lambda: (time.monotonic() < self._action_playback.until
+                    or self._social_runtime.waiting
                     or ((self._reaction_player.pending_timer is not None
                          or self._speech.bubble is not None)
                         and not self._world_access.contact_feedback_active())),
@@ -196,30 +194,36 @@ class DesktopPet:
             self.state, self.settings, self.mind, self.workload_events,
             self.activity_monitor, self.application,
             started_at=self._persistence.last_saved,
+            prepared_social=lambda: self._social_runtime.prepared_categories,
         )
         self._speech = SpeechPresenter(
-            root=self.root,
-            anchor=lambda: SpeechAnchor(
+            root=self.root, anchor=lambda: SpeechAnchor(
                 x=self.settings.x or 0, y=self.settings.y or 0,
                 width=self._window.width,
             ),
-            font_name=self._speech_font,
+            font_name=self._window.skin.speech_font,
             always_on_top=lambda: self.settings.always_on_top,
             restore_stack=lambda: self._overlay_stack.restore(),
             transparent_color=MAGENTA,
+            ui_images=self._window.skin.images,
         )
         self._reaction_player = ReactionPlayer(
             hide_speech=self._speech.hide,
-            schedule=self.root.after,
-            cancel_timer=self.root.after_cancel,
+            schedule=self.root.after, cancel_timer=self.root.after_cancel,
             display_emote=self._speech.show_emote,
             display_text=self._speech.show_text,
+            on_text=lambda event: self._contact.note_text(event),
+            on_wish_text=self._attention.note_wish_text,
+            social_completed=lambda result: self._care_runtime.complete_social(result),
             start_action=self._start_action,
             mark_spoken=self._mark_reaction_spoken,
             is_closed=lambda: self._closed,
         )
         self._overlay_stack = WindowStack(
-            self._overlay_windows, enabled=self.settings.always_on_top,
+            self._overlay_windows, enabled=self.settings.always_on_top)
+        self._game_visuals = game_assembly.assemble_game_visuals(
+            self._window, self.settings, self._overlay_stack.restore,
+            occupied=lambda: game_assembly.occupied_bounds(self._hover, self._speech),
         )
         self._maintenance = DesktopMaintenance(
             check_taskbar=self._window.update_track,
@@ -230,11 +234,12 @@ class DesktopPet:
             started_at=self._runtime.last_tick,
         )
         self._views = DesktopPresentation(
-            self.state, self.settings, self.mind, self.adaptive,
+            self.state, self.settings, self.adaptive,
             self.activity_monitor,
             context=lambda: self.context,
             sprite_size=lambda: (self._window.width, self._window.height),
             object_status=self._world_access.object_status,
+            wish_context=self._attention.wish_context,
         )
         self._hover = HoverUi(
             self.root, self.canvas,
@@ -242,16 +247,28 @@ class DesktopPet:
                 hover_snapshot=self._views.hover,
                 status_snapshot=self._views.status,
                 settings_snapshot=self._views.settings_view,
+                set_zodiac=lambda sign: self._preferences.set_zodiac(sign),
                 anchor=self._views.anchor,
                 care=self.interact,
+                pin_wish=lambda key, pin: self._care_runtime.set_wish_pinned(key, pin),
+                dismiss_wish=lambda key: self._care_runtime.dismiss_wish(key),
                 can_interact=lambda action: self._contact.can_interact(action),
+                game_ready=lambda: self._contact.can_interact("play"),
+                cards=self._game_visuals.ports, codes=self._game_visuals.code_ports,
+                game_bounds_at=self._window.work_area_at,
+                social_selected=lambda category: self._social_runtime.select(category),
+                social_cancel=lambda: self._social_runtime.cancel(),
+                social_enabled=lambda: self.settings.online_social,
+                social_snapshot=lambda: self._social_runtime.snapshot(),
+                horoscope_choice=lambda: self._social_runtime.horoscope_choice(),
                 food_choices=self._food_choices,
-                feed=lambda selected: self._world.begin_carry(selected),
-                defer_game=lambda action: self._world.interrupt(action),
-                game_completed=lambda score: self.application.complete_game(
-                    experience_from_rock_paper_scissors(score),
-                    inputs=self._activity.session_inputs(time.time(), time.monotonic()),
+                place_item=lambda selected: self._world.begin_carry(selected),
+                can_place_item=lambda: self._world.can_place_item,
+                defer_game=lambda action: self._world.interrupt(
+                    action, after_release=True,
                 ),
+                game_completed=lambda score: self._care_runtime.complete_game(score),
+                game_round=lambda event: self._care_runtime.observe_game_round(event),
                 open_sprite_hover=self._on_enter,
                 record_contact=lambda now: self._contact.record_contact(now),
                 save_position=self._save_hover_position,
@@ -272,31 +289,38 @@ class DesktopPet:
                     self._set_game_mode,
                     lambda name: self._start_action(name, 0),
                 ),
-            ),
+            ), skin=self._window.skin,
         )
         self._contact = ContactCoordinator(
             state=self.state, mind=self.mind, adaptive=self.adaptive,
             ports=ContactPorts(
+                advance_time=lambda: self._care_runtime.advance_time(),
                 context=lambda: self.context,
                 toolbar_hidden=lambda: (
-                    self._hover.toolbar is None or not self._hover.toolbar.visible
-                ),
+                    self._hover.toolbar is None or not self._hover.toolbar.visible),
                 mark_hover=self._hover.note_sprite_hover,
                 interrupt_walk=lambda: self._world.interrupt(
                     self._walk.movement.interrupt),
                 show_toolbar=lambda: self._hover.show_toolbar(),
                 game_open=lambda: self._hover.game_open,
-                cancel_followup=lambda: self._cancel_followup(),
+                cancel_followup=self._reaction_player.cancel,
                 hide_speech=lambda: self._speech.hide(),
-                react=lambda reaction, duration: self._react(reaction, duration),
+                react=partial(self._react, incidental=True),
                 should_greet=lambda now: self._attention.should_greet(now),
                 story_active=lambda: self._reaction_player.story_active,
                 advance_story=self._reaction_player.advance_story,
                 foreground_active=lambda: (self._object_feedback_active()
                     or self._world_access.defer_routine()),
                 playback_active=lambda: (time.monotonic() < self._action_playback.until
+                    or self._social_runtime.waiting
                     or self._reaction_player.pending_timer is not None
                     or self._speech.bubble is not None),
+                interruptible_playback=lambda: self._reaction_player.interruptible,
+                reaction_event=lambda: self._reaction_player.event,
+                care_holding=lambda: (self._social_runtime.waiting
+                                      and self._reaction_player.event
+                                      in (None, "social_wait")),
+                wake_from_clicks=lambda: self._care_runtime.wake_from_clicks(),
             ),
         )
         self._input = DesktopInput(
@@ -316,7 +340,7 @@ class DesktopPet:
             start_action=lambda name, duration: self._start_action(
                 name, duration,
             ),
-            react=lambda reaction, duration: self._react(reaction, duration),
+            react=partial(self._react, incidental=True),
             show_emote=lambda emote, duration: self._speech.show_emote(
                 emote, duration,
             ),
@@ -329,38 +353,27 @@ class DesktopPet:
             AttentionRuntimePorts(
                 context=lambda: self.context,
                 game_open=lambda: self._hover.game_open,
-                toolbar_active=lambda: self._hover.interaction_active,
+                menu_engaged=lambda: self._hover.menu_engaged,
                 settings_engaged=lambda: self._hover.settings_engaged,
                 bubble_visible=lambda: self._speech.bubble is not None,
                 reaction_pending=lambda: (
                     self._reaction_player.pending_timer is not None
+                    or self._social_runtime.waiting
                 ),
                 walking=lambda: (
                     self._walk.movement.remaining_distance != 0
                 ),
                 action_until=lambda: self._action_playback.until,
-                refresh_toolbar=self._refresh_care_toolbar,
+                refresh_toolbar=self._hover.refresh_toolbar,
                 foreground_active=self._object_feedback_active,
             ),
         )
-        self._care_view = CarePresenter(CareViewPorts(
-            set_item=lambda item: self._animated.set_food_overlay(item),
-            cancel_action=self._action_playback.cancel_at,
-            start_action=self._start_action,
-            cancel_followup=self._cancel_followup,
-            react=lambda reaction, duration: self._react(reaction, duration),
-            show_text=lambda text, duration: self._speech.show_text(
-                text, duration,
-            ),
-            refresh_toolbar=self._refresh_care_toolbar,
-            refresh_status=lambda: self._hover.refresh_status(),
-        ))
         self._pointer_runtime = PointerRuntime(
             self._cursor_observation, PointerRuntimePorts(
                 sample=self._input.pointer_sample,
                 game_mode=lambda: self._animated.game_mode,
                 eyes=lambda: self._animated.cursor_eye_position,
-                on_motion=self._on_cursor_moved,
+                on_motion=self._attention_runtime.cursor_moved,
             ),
         )
         self._session_runtime = DesktopSessionRuntime(
@@ -372,7 +385,7 @@ class DesktopPet:
                 toolbar_visible=lambda: (
                     self._hover.toolbar is not None and self._hover.toolbar.visible
                 ),
-                refresh_toolbar=self._refresh_care_toolbar,
+                refresh_toolbar=self._hover.refresh_toolbar,
                 refresh_status=self._hover.refresh_status,
                 refresh_settings=self._hover.refresh_settings,
                 save=self._save,
@@ -392,6 +405,9 @@ class DesktopPet:
                 place_x=self._place_x,
                 save=self._save,
                 set_context=self._set_context,
+                social_sources_changed=lambda enabled: (
+                    self._social_runtime.set_enabled(enabled)
+                ),
             ),
         )
         self._lifecycle = DesktopLifecycle(
@@ -407,6 +423,7 @@ class DesktopPet:
             place_initially=self._place_initially,
             save=self._save,
             stop_animation=self._animated.close,
+            stop_social=lambda: self._social_runtime.close(),
         )
         self._farewell = FarewellSequence(
             wording=lambda: self.mind.contact_text(
@@ -417,6 +434,9 @@ class DesktopPet:
             say=self._speech.show_text, finish=self.quit,
             seconds=self._character_assets.clips["waving-greeting"].duration_seconds,
         )
+        object_feedback = ObjectFeedbackPresenter(
+            self._reaction_player, self._item_catalog,
+        )
         self._world = DesktopWorldRuntime(
             root=self.root, state=self.state, settings=self.settings,
             mind=self.mind, adaptive=self.adaptive, items=self._item_catalog,
@@ -424,19 +444,33 @@ class DesktopPet:
             walk=self._walk, visual=self._visual, animated=self._animated,
             playback=self._action_playback, inputs=self._activity.session_inputs,
             game_open=lambda: self._hover.game_open,
-            controls_active=lambda: (self._hover.interaction_active
-                                     or self._reaction_player.story_active),
-            present_feedback=ObjectFeedbackPresenter(
-                self._reaction_player, self._item_catalog,
-            ).show,
+            character_action_busy=lambda: (object_feedback.non_offer_playback_active
+                                         or self._social_runtime.waiting),
+            present_feedback=object_feedback.show,
             cancel_feedback=self._reaction_player.cancel,
+            cancel_offer_feedback=object_feedback.cancel_offer,
             feedback=lambda text: self._speech.show_text(text, 2450),
-            save=self._save,
-            restored_world=session.world,
+            save=self._save, restored_world=session.world,
             restored_memory=session.object_memory,
         )
         self._world_access.bind(self._world)
         self._persistence.attach_world(self._world.save_snapshot)
+        self._care_runtime = DesktopCareRuntime(
+            root=self.root, state=self.state, router=self.application,
+            world=self._world, contact=self._contact, animated=self._animated,
+            speech=self._speech, hover=self._hover,
+            cancel_action=self._action_playback.cancel_at,
+            start_action=self._start_action,
+            react=lambda reaction, duration: self._react(reaction, duration),
+            player=self._reaction_player, inputs=self._activity.session_inputs,
+            set_context=self._set_context, save=self._save,
+            is_closed=lambda: self._closed, game_open=lambda: self._hover.game_open,
+            social_worker=social_worker, social_history=session.social_history,
+            persist_requests=self._persistence.save,
+            zodiac_sign=lambda: self.settings.zodiac_sign,
+        )
+        self._social_runtime = self._care_runtime.social
+        self._social_runtime.set_enabled(self.settings.online_social)
         self._lifecycle.start()
 
     def _object_feedback_active(self) -> bool:
@@ -451,20 +485,10 @@ class DesktopPet:
 
     def _overlay_windows(self) -> list[tk.Tk | tk.Toplevel]:
         """Back-to-front display order, independent of Tk's focus state."""
-        windows: list[tk.Tk | tk.Toplevel] = [self.root]
-        if hasattr(self, "_world"):
-            windows.extend(self._world.view.windows)
-        if self._hover.toolbar is not None and self._hover.toolbar.visible:
-            windows.append(self._hover.toolbar.window)
-        if self._hover.game_window is not None:
-            windows.append(self._hover.game_window.window)
-        if self._hover.food_menu is not None:
-            windows.append(self._hover.food_menu.window)
-        if self._speech.bubble is not None:
-            windows.append(self._speech.bubble)
-        if self._hover.settings_window is not None:
-            windows.append(self._hover.settings_window.window)
-        return windows
+        return game_assembly.collect_overlay_windows(
+            self.root, self._world.view.windows if hasattr(self, "_world") else (),
+            self._hover, self._speech, self._game_visuals.hand, self._game_visuals.code,
+        )
 
     def _place_initially(self) -> None:
         self._place_x(self._window.initial_x())
@@ -475,6 +499,7 @@ class DesktopPet:
         if self._hover.toolbar is not None and self._hover.toolbar.visible:
             self._hover.toolbar.place()
         self._speech.move()
+        self._game_visuals.move()
 
     def _set_context(self, context: TimeContext) -> None:
         """Update the session's current local-time snapshot."""
@@ -501,16 +526,16 @@ class DesktopPet:
     def _mark_reaction_spoken(self) -> None:
         self._attention.mark_spoken(time.monotonic())
 
-    def _cancel_followup(self) -> None:
-        """Cancel an older reaction, including every pending follow-up."""
-        self._reaction_player.cancel()
-
-    def _react(self, reaction: Reaction | None, duration_ms: int = 2600) -> None:
+    def _react(
+        self, reaction: Reaction | None, duration_ms: int = 2600, *,
+        incidental: bool = False,
+    ) -> None:
         """Delegate the timeline; the GUI only renders visual effects."""
         if self._hover.game_open or self._object_feedback_active():
             return
         self._reaction_player.play(
             reaction, duration_ms, animate=not self.state.sleeping,
+            incidental=incidental,
         )
 
     def _apply_setting(self, name: SettingKey, value: bool) -> None:
@@ -526,32 +551,14 @@ class DesktopPet:
             state, duration, started_at=started_at,
         )
 
-    def _refresh_care_toolbar(self) -> None:
-        toolbar = self._hover.toolbar
-        if toolbar is not None:
-            toolbar.refresh()
-
     def interact(
         self, action: str, *, food_id: FoodId | None = None,
+        conversation: PreparedSocialContent | None = None,
     ) -> None:
         """Run a care command through the shared application boundary."""
-        if self._world.cursor.carrying:
-            self._world.cursor.cancel()
-        if (self._world.interaction.active
-                or self._world.awareness.intentions.goal is not None):
-            self._world.interrupt(lambda: self.interact(action, food_id=food_id))
-            return
-        stamp = time.time()
-        now = time.monotonic()
-        result = self.application.dispatch(
-            CareCommand.from_action(action, food_id=food_id),
-            inputs=self._activity.session_inputs(stamp, now),
+        self._care_runtime.interact(
+            action, food_id=food_id, conversation=conversation,
         )
-        self.context = result.context
-        self._care_view.present(
-            result, now=now, sleeping=self.state.sleeping,
-        )
-        self._save()
 
     def set_topmost(self, value: bool) -> None:
         self._preferences.set_topmost(value)
@@ -586,11 +593,6 @@ class DesktopPet:
     def center(self) -> None:
         self._preferences.center()
 
-    def _on_cursor_moved(
-        self, distance: float, screen_width: int, now: float,
-    ) -> None:
-        self._attention_runtime.cursor_moved(distance, screen_width, now)
-
     def _on_walk_finished(self, now: float) -> None:
         self._attention_runtime.walk_finished(now)
 
@@ -608,13 +610,12 @@ class DesktopPet:
         self._runtime.tick()
 
     def _save(self) -> None:
-        """Advance application state before writing it; report I/O failures."""
+        """Advance application state, save it and report storage failures."""
         failure = self._session_runtime.advance_and_save()
         if failure is not None:
             messagebox.showwarning(
-                GERMAN_TEXT.format("ui.application_name"), GERMAN_TEXT.format(
-                    "ui.save_failed", failure=str(failure),
-                ),
+                GERMAN_TEXT.format("ui.application_name"),
+                GERMAN_TEXT.format("ui.save_failed", failure=str(failure)),
             )
 
     def quit(self) -> None:
@@ -632,8 +633,7 @@ class DesktopPet:
 
 def main() -> None:
     load_env_file()
-    app = DesktopPet()
-    app.run()
+    run_desktop(DesktopPet)
 
 
 if __name__ == "__main__":

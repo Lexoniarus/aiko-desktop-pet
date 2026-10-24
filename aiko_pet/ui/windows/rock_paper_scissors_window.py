@@ -1,222 +1,121 @@
-"""Kenney-styled player panel: input, private hand, and session scoreboard."""
+"""VN player choices and revealed hand; Aiko's presentation stays on the desktop."""
 
 from __future__ import annotations
 
-import sys
 import tkinter as tk
 from collections.abc import Callable
 from functools import partial
 
-from ...asset_paths import GAME_HANDS_DIR
+from ...games.contracts import GameId, GameRoundEvent, SessionSummary
 from ...games.rock_paper_scissors import Move, Score
 from ...pet.content import GERMAN_TEXT
+from ..common.image_button import ImageButton, update_button_state
+from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
-from ..common.window_drag import WindowDrag
+from ..common.window_geometry import BoundsAt
+from .game_panel import GamePanel
 from .rock_paper_scissors_sequence import RockPaperScissorsSequence
 
-_BG = "#D7DCE8"
-_TEXT = "#414B5F"
-_MUTED = "#617189"
-_PANEL = "#E9ECF5"
-_ACCENT = "#2998D4"
 _MOVES: tuple[tuple[Move, str], ...] = (
-    (Move.ROCK, GERMAN_TEXT.format("rps.move.rock")),
-    (Move.PAPER, GERMAN_TEXT.format("rps.move.paper")),
-    (Move.SCISSORS, GERMAN_TEXT.format("rps.move.scissors")),
+    (Move.ROCK, GERMAN_TEXT.format('rps.move.rock')),
+    (Move.PAPER, GERMAN_TEXT.format('rps.move.paper')),
+    (Move.SCISSORS, GERMAN_TEXT.format('rps.move.scissors')),
 )
 _MOVE_NAMES = dict(_MOVES)
 
 
 class RockPaperScissorsWindow:
-    """Permanent player-only panel sharing Aiko's existing hover styling."""
-
     def __init__(
-        self,
-        root: tk.Tk,
-        *,
-        on_closed: Callable[[Score], None],
-        speak: Callable[[str, int], None],
-        emote: Callable[[str, int], None],
-        hand: Callable[[Move, int], None],
-        animate: Callable[[str], None],
-        always_on_top: bool,
-        skin: AikoSkin | None = None,
+        self, root: tk.Tk, *, on_closed: Callable[[SessionSummary], None],
+        speak: Callable[[str, int], None], emote: Callable[[str, int], None],
+        hand: Callable[[Move, int], None], animate: Callable[[str], None],
+        always_on_top: bool, skin: AikoSkin | None = None,
         dialogue: Callable[[str], str] | None = None,
+        round_event: Callable[[GameRoundEvent], None] = lambda _event: None,
+        bounds_at: BoundsAt | None = None,
     ) -> None:
         self._on_closed = on_closed
         self._closed = False
         self.skin = skin if skin is not None else AikoSkin(root)
-        self.window = tk.Toplevel(root)
-        self.window.withdraw()
-        self.window.overrideredirect(True)
-        self.window.configure(bg=self.skin.border)
-        self.window.wm_attributes("-topmost", always_on_top)
-        if sys.platform == "win32":
-            self.window.wm_attributes("-toolwindow", True)
-        self.window.bind("<Escape>", lambda _event: self.close())
-
-        title_font = self.skin.font
-        self.hand_images = {
-            move: tk.PhotoImage(
-                master=root,
-                file=str(GAME_HANDS_DIR / f"{move.value}.png"),
-            )
-            for move, _label in _MOVES
-        }
-
-        outer = self.skin.frame(self.window)
-        # Keep the layout filling the fixed shell during widget updates.
-        outer.pack(fill="both", expand=True, padx=3, pady=3)
-        header = self.skin.header(outer, GERMAN_TEXT.format("rps.header"))
-        header.pack(fill="x")
-        self._drag = WindowDrag(self.window, header)
-
-        tk.Label(
-            outer,
-            text=GERMAN_TEXT.format("rps.choose_hand"),
-            bg=_BG,
-            fg=_TEXT,
-            font=(title_font, 10, "bold"),
-        ).pack(padx=12, pady=(12, 3))
-        choices = tk.Frame(outer, bg=_BG)
-        choices.pack(padx=12, pady=(2, 10))
-        self.buttons: dict[Move, tk.Button] = {}
-        for move, label in _MOVES:
-            button = tk.Button(
-                choices,
-                text=label,
-                image=self.hand_images[move],
-                compound="top",
-                font=(title_font, 9),
-                bg=_BG,
-                fg=_TEXT,
-                activeforeground="#0B6DAA",
-                activebackground="#BED5E5",
-                bd=1,
-                relief="flat",
-                highlightthickness=1,
-                highlightbackground="#B3C2D8",
-                padx=8,
-                pady=5,
-                cursor="hand2",
-                command=partial(self.choose, move),
-            )
-            button.pack(side="left", padx=3)
-            self.buttons[move] = button
-
-        self.result_panel = tk.Frame(
-            outer,
-            bg=_PANEL,
-            highlightthickness=2,
-            highlightbackground="#A6B9CD",
+        self._panel = GamePanel(
+            root, GERMAN_TEXT.format('game.name.rock_paper_scissors'),
+            close=self.close, next_round=None, skin=self.skin,
+            always_on_top=always_on_top, game_id=GameId.ROCK_PAPER_SCISSORS,
+            bounds_at=bounds_at,
         )
-        self.result_panel.pack(fill="x", padx=12, pady=(0, 10))
-        self.result_title = tk.Label(
-            self.result_panel,
-            text=GERMAN_TEXT.format("rps.your_hand"),
-            bg=_PANEL,
-            fg=_TEXT,
-            font=(title_font, 10, "bold"),
-        )
-        self.result_title.pack(pady=(8, 2))
-        # Fixed pixel canvas: changing '?' to an image cannot shrink it.
-        self.player_hand = tk.Canvas(
-            self.result_panel,
-            width=120,
-            height=96,
-            bg=_PANEL,
-            bd=0,
-            highlightthickness=0,
-            relief="flat",
-        )
-        self.player_hand.pack(padx=8)
-        self._hand_image_item = self.player_hand.create_image(
-            60,
-            48,
-            anchor="center",
-            state="hidden",
-        )
-        self._hand_question_item = self.player_hand.create_text(
-            60,
-            48,
-            text="?",
-            fill=_MUTED,
-            font=(title_font, 22, "bold"),
-        )
-        self._last_revealed: Move | None = None
-        self.player_result_label = tk.Label(
-            self.result_panel,
-            text=GERMAN_TEXT.format("rps.no_rounds"),
-            bg=_PANEL,
-            fg=_MUTED,
-            font=(title_font, 9),
-        )
-        self.player_result_label.pack(pady=(2, 9))
-
-        score = tk.Frame(outer, bg=_BG)
-        score.pack(fill="x", padx=12, pady=(0, 8))
-        self.score_labels: dict[str, tk.Label] = {}
-        for column, (key, title) in enumerate((
-            ("games", GERMAN_TEXT.format("rps.score.games")),
-            ("wins", GERMAN_TEXT.format("rps.score.wins")),
-            ("losses", GERMAN_TEXT.format("rps.score.losses")),
-            ("draws", GERMAN_TEXT.format("rps.score.draws")),
-        )):
-            cell = tk.Frame(score, bg=_PANEL, bd=0)
-            cell.grid(row=0, column=column, padx=2, sticky="nsew")
-            score.grid_columnconfigure(column, weight=1)
+        self.window = self._panel.window
+        try:
+            self.hand_images = {
+                move: self.skin.images.icon(f'play_rps_{move.value}', 96)
+                for move, _label in _MOVES
+            }
+            self._last_revealed: Move | None = None
+            self._shown_score = Score()
             tk.Label(
-                cell,
-                text=title,
-                bg=_PANEL,
-                fg=_MUTED,
-                font=(title_font, 8),
-            ).pack(padx=4, pady=(5, 1))
-            count = tk.Label(
-                cell,
-                text="0",
-                bg=_PANEL,
-                fg=_TEXT,
-                font=(title_font, 14, "bold"),
+                self._panel.body, text=GERMAN_TEXT.format('rps.choose_hand'),
+                bg=self.skin.background, fg=self.skin.text,
+                font=(self.skin.font, 10, 'bold'), anchor='w',
+            ).pack(fill='x', pady=(0, 8))
+            self._choices_scroll = ScrollRegion(
+                self._panel.body, self.skin, width=self._panel.content_width,
+                height=116, horizontal=True, autohide=True,
             )
-            count.pack(padx=6, pady=(1, 5))
-            self.score_labels[key] = count
-
-        self.close_button = self.skin.button(
-            outer, GERMAN_TEXT.format("ui.close"), self.close
-        )
-        self.close_button.pack(anchor="e", padx=13, pady=(0, 9))
-        self._sequence = RockPaperScissorsSequence(
-            dialogue=dialogue,
-            schedule=self.window.after,
-            cancel=self.window.after_cancel,
-            say=speak,
-            show_emote=emote,
-            show_aiko_hand=hand,
-            reveal_player=self.reveal_player,
-            animate=animate,
-            set_busy=self._set_busy,
-        )
-        self.window.update_idletasks()
-        width = self.window.winfo_reqwidth()
-        height = self.window.winfo_reqheight()
-        x = max(
-            0,
-            min(
-                root.winfo_rootx() + root.winfo_width() + 12,
-                root.winfo_screenwidth() - width,
-            ),
-        )
-        y = max(
-            0,
-            min(
-                root.winfo_rooty() - height // 2,
-                root.winfo_screenheight() - height - 45,
-            ),
-        )
-        # Fix both dimensions; borderless Tk must not reflow on reveal.
-        self.window.geometry(f"{width}x{height}+{x}+{y}")
-        self.window.deiconify()
+            self._choices_scroll.frame.pack(fill='x')
+            choices = self._choices_scroll.body
+            self.buttons: dict[Move, ImageButton] = {}
+            for move, label in _MOVES:
+                button = self.skin.button(
+                    choices, label, partial(self.choose, move), size='game_choice',
+                    icon=self.skin.images.icon(f'play_rps_{move.value}', 64),
+                    stacked=True,
+                )
+                button.pack(side='left', padx=2)
+                self.buttons[move] = button
+            self._choices_scroll.adopt()
+            self._hand_panel = self._panel.passive(self._panel.body)
+            self.result_panel = self._hand_panel.frame
+            self.result_panel.pack(fill='x', pady=(12, 0))
+            body = self._hand_panel.body
+            self.result_title = tk.Label(
+                body, text=GERMAN_TEXT.format('rps.your_hand'), bg=self.skin.panel,
+                fg=self.skin.muted, font=(self.skin.font, 9),
+            )
+            self.result_title.pack()
+            self.player_hand = tk.Canvas(
+                body, width=120, height=96, bg=self.skin.panel,
+                bd=0, highlightthickness=0,
+            )
+            self.player_hand.pack()
+            self._hand_image_item = self.player_hand.create_image(
+                60, 48, anchor='center', state='hidden',
+            )
+            self._hand_question_item = self.player_hand.create_text(
+                60, 48, text='?', fill=self.skin.muted,
+                font=(self.skin.font, 22),
+            )
+            self.player_result_label = tk.Label(
+                body, text=GERMAN_TEXT.format('rps.no_rounds'), bg=self.skin.panel,
+                fg=self.skin.muted, font=(self.skin.font, 9),
+            )
+            self.player_result_label.pack()
+            self.score_labels = self._panel.score_labels
+            self.close_button = self._panel.close_button
+            self._sequence = RockPaperScissorsSequence(
+                dialogue=dialogue, round_event=round_event,
+                schedule=self.window.after, cancel=self.window.after_cancel,
+                say=speak, show_emote=emote, show_aiko_hand=hand,
+                reveal_player=self.reveal_player, animate=animate,
+                set_busy=self._set_busy,
+            )
+            self._panel.update(
+                SessionSummary(GameId.ROCK_PAPER_SCISSORS),
+                status=GERMAN_TEXT.format('rps.choose_hand'), finished=False,
+            )
+            self._panel.show(root)
+        except Exception:
+            self._closed = True
+            self._panel.destroy()
+            raise
 
     @property
     def score(self) -> Score:
@@ -227,45 +126,42 @@ class RockPaperScissorsWindow:
 
     def _set_busy(self, busy: bool) -> None:
         for button in self.buttons.values():
-            if busy:
-                button.configure(state="disabled")
-            else:
-                button.configure(state="normal")
+            update_button_state(button, enabled=not busy)
+        if busy:
+            self._panel.update(
+                SessionSummary(
+                    GameId.ROCK_PAPER_SCISSORS,
+                    self.score.wins, self.score.losses, self.score.draws,
+                ), status=GERMAN_TEXT.format('rps.waiting'), finished=False,
+            )
 
     def _clear_player_result(self) -> None:
-        self.result_panel.configure(highlightbackground="#A6B9CD")
-        if self._last_revealed is None:
-            self.player_result_label.configure(text=GERMAN_TEXT.format("rps.waiting"))
-        else:
-            # The previous full hand remains visible during a new countdown.
-            self.player_result_label.configure(
-                text=GERMAN_TEXT.format(
-                    "rps.previous_hand",
-                    hand=_MOVE_NAMES[self._last_revealed],
-                ),
-            )
+        self.player_result_label.configure(text=GERMAN_TEXT.format(
+            'rps.waiting' if self._last_revealed is None else 'rps.previous_hand',
+            hand=_MOVE_NAMES[self._last_revealed] if self._last_revealed else '',
+        ))
 
     def reveal_player(self, move: Move, score: Score) -> None:
-        """Keep the complete hand PNG visible at its original pixel size."""
         self._last_revealed = move
         self.player_hand.itemconfigure(
-            self._hand_image_item,
-            image=self.hand_images[move],
-            state="normal",
+            self._hand_image_item, image=self.hand_images[move], state='normal',
         )
-        self.player_hand.itemconfigure(
-            self._hand_question_item,
-            state="hidden",
+        self.player_hand.itemconfigure(self._hand_question_item, state='hidden')
+        self.player_result_label.configure(text=GERMAN_TEXT.format(
+            'rps.player_hand', hand=_MOVE_NAMES[move],
+        ))
+        result = (
+            'game.player_win' if score.wins > self._shown_score.wins
+            else 'game.aiko_win' if score.losses > self._shown_score.losses
+            else 'game.draw'
         )
-        self.result_panel.configure(highlightbackground=_ACCENT)
-        self.player_result_label.configure(
-            text=GERMAN_TEXT.format(
-                "rps.player_hand",
-                hand=_MOVE_NAMES[move],
-            )
+        self._shown_score = score
+        self._panel.update(
+            SessionSummary(
+                GameId.ROCK_PAPER_SCISSORS, score.wins, score.losses, score.draws,
+            ),
+            status=GERMAN_TEXT.format(result), finished=True,
         )
-        for key, label in self.score_labels.items():
-            label.configure(text=str(getattr(score, key)))
 
     def choose(self, move: Move) -> None:
         if not self._closed and not self._sequence.busy:
@@ -278,7 +174,7 @@ class RockPaperScissorsWindow:
         self.window.focus_set()
 
     def set_topmost(self, enabled: bool) -> None:
-        self.window.wm_attributes("-topmost", enabled)
+        self.window.wm_attributes('-topmost', enabled)
 
     def close(self) -> None:
         if self._closed:
@@ -286,6 +182,8 @@ class RockPaperScissorsWindow:
         self._closed = True
         completed = self._sequence.score
         self._sequence.close()
-        self._drag.close()
-        self.window.destroy()
-        self._on_closed(completed)
+        self._panel.destroy()
+        self._on_closed(SessionSummary(
+            GameId.ROCK_PAPER_SCISSORS,
+            completed.wins, completed.losses, completed.draws,
+        ))

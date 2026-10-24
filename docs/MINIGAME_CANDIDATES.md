@@ -2,11 +2,18 @@
 
 > **Exploratory reference only — not an approved roadmap.**
 >
-> No additional game has been selected for implementation. There is **no
-> implementation order**, schedule, milestone, commitment, or approved scope
-> attached to any candidate below. Inclusion of a game, algorithm, API, or
-> library is **not an implementation decision**. Candidate effort and duration
-> estimates are provisional comparison aids, not rankings or priorities.
+> Blackjack and Tic-Tac-Toe were explicitly selected on 2026-10-19; their
+> implementation is recorded in the separate
+> [delivery plan](MINIGAME_IMPLEMENTATION_PLAN.md). Both are implemented on
+> `feature/social-optimization`, not yet merged into main. On 2026-10-23,
+> Connect Four was subsequently authorized and [implemented locally](MINIGAME_IMPLEMENTATION_PLAN.md#connect-four-extension-vier-gewinnt):
+> yellow/red Kenney pieces, own local rules, bounded opponent search and Aiko
+> reactions. Mastermind was authorized and [implemented locally](MINIGAME_IMPLEMENTATION_PLAN.md#mastermind-extension):
+> Aiko sets the code, with a concealed desktop strip, Kenney pieces and local
+> Python-standard-library rules and ten prepared drag-and-drop rows. Other entries remain research.
+> Inclusion of a game, algorithm, API or library below does not select it.
+> Candidate effort and duration estimates are provisional comparison aids,
+> not rankings or priorities.
 
 This document records the game ideas, libraries, repositories, APIs, and
 evaluation criteria discussed for the Aiko Desktop Pet project in October 2026.
@@ -90,7 +97,7 @@ interest, approval or schedule.
 | --- | --- | --- | --- |
 | Hangman (German words) | 2–5 min | Local, licensed German vocabulary; drawn UI | Low |
 | Higher or lower (cards) | 30–90 sec | Python card deck and existing card assets | Very low |
-| Mastermind / code-breaking | 3–7 min | Local generation, scoring and optional opponent logic | Low–medium |
+| Mastermind / code-breaking | 3–7 min | Aiko sets the code; concealed desktop strip, Kenney pieces and local Python-standard-library rules; [implemented locally](MINIGAME_IMPLEMENTATION_PLAN.md#mastermind-extension) | Low–medium |
 | Nim / take-away sticks | 1–3 min | Small deterministic optimal-play policy | Very low |
 | Number guessing | 30–90 sec | Python standard library | Very low |
 | Pig (risk-based dice game) | 1–3 min | Local turn and simple bot rules | Low |
@@ -127,7 +134,7 @@ names, art and licensing must be assessed independently if bundled.
 | Backgammon | 10–20 min | OpenSpiel or another suitable rule engine | High |
 | Battleship | 10–20 min | Local hidden-board game; evaluate OpenSpiel coverage | Medium–high |
 | Checkers / draughts | 5–20 min | Game-search engine or suitable local library | Medium–high |
-| Connect Four | 2–6 min | Minimax / easyAI / OpenSpiel | Low–medium |
+| Connect Four | 2–6 min | Own local rules and bounded Minimax/Alpha-Beta; yellow/red Kenney pieces; [implementation](MINIGAME_IMPLEMENTATION_PLAN.md#connect-four-extension-vier-gewinnt) | Low–medium |
 | Dominoes | 5–12 min | Existing rule environment or local rules | Medium |
 | Dots and Boxes | 3–8 min | OpenSpiel or small local search | Medium |
 | Gomoku / Five in a Row | 5–15 min | Existing search algorithms and board UI | Medium–high |
@@ -242,9 +249,20 @@ sequence, deadline or acceptance decision.
 ## Decision status and how to update this reference
 
 - **Implemented today:** Rock–Paper–Scissors on `main`.
-- **All other entries:** optional research candidates only.
-- **Chosen next game:** none.
-- **Approved implementation order:** none.
+- **Implemented feature-branch additions:** Blackjack and Tic-Tac-Toe, with the Spielen submenu
+  and desktop-card presentation described in the
+  [implementation and delivery plan](MINIGAME_IMPLEMENTATION_PLAN.md).
+- **Implemented locally after authorization, 2026-10-23:** Connect Four / Vier gewinnt, with yellow/red
+  Kenney pieces, own rules and bounded local search, plus contextual Aiko reactions;
+  see its [implementation notes](MINIGAME_IMPLEMENTATION_PLAN.md#connect-four-extension-vier-gewinnt).
+- **Implemented locally after authorization, 2026-10-23:** Mastermind, with Aiko as code setter,
+  a concealed code strip beside her on the desktop, Kenney pieces and local
+  Python-standard-library rules. See the [plan](MINIGAME_IMPLEMENTATION_PLAN.md#mastermind-extension).
+  Ten prepared attempt rows accept dragged pins; no new external package is used.
+- **All remaining entries:** optional research candidates only.
+- **Implementation authorization:** granted on 2026-10-19 for the original
+  Blackjack/Tic-Tac-Toe delivery and on 2026-10-23 for Connect Four and Mastermind. No merge authorized.
+- **Proposed delivery stages:** see the separate plan; no schedule is committed.
 - **Approved additional APIs, engines or paid AI services:** none.
 - **Approved schedule, budget expenditure or dependency change:** none.
 

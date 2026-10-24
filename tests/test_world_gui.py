@@ -5,26 +5,231 @@ import time
 import tkinter as tk
 import unittest
 from dataclasses import replace
+from functools import partial
 from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.application.object_feedback import FeedbackReceipt
+from aiko_pet.application.object_interaction_state import SearchPosition
+from aiko_pet.application.session import PetSessionRestorer
 from aiko_pet.desktop.geometry import FOOT_BASELINE
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.balance import BALANCE
+from aiko_pet.pet.emotions import EmotionalState
 from aiko_pet.pet.mind.object_perception import ObjectObservation
+from aiko_pet.pet.sleep import SleepEpisode
+from aiko_pet.ui.view_models.object_reactions import format_object_reaction
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldPosition
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
 
 
 class WorldGuiTests(unittest.TestCase):
+    def sleeping_care_fixture(self):
+        now = time.time()
+        set_test_pet_values(
+            self.app.state, sleeping=True, satiety=0, energy=20, lived_seconds=1801,
+            sleep_episode=SleepEpisode("main", 0, 1801, now + 7200, 1800),
+        )
+
+    def test_sleep_food_break_uses_native_known_pickup_without_human_credit(self):
+        runtime = self.app._world
+        item = runtime.world.place_resting(
+            "sandwich", runtime._body_x(), ObjectFootprint(8, 8),
+        )
+        runtime._character_action_busy = lambda: True
+        self.observe_and_acknowledge()
+        self.seed_previous_identification(item.instance_id, "sandwich", "food")
+        record = runtime.awareness.record_for_instance(item.instance_id)
+        assert record is not None
+        runtime.awareness.memory.mark_assessed(record)
+        runtime._character_action_busy = lambda: False
+        self.sleeping_care_fixture()
+        before = self.app.state.friendship_history.last_contact
+        self.app._activity.advance_state(time.time())
+        self.assertTrue(self.app.state.sleep_episode.care_break)
+        self.assertFalse(self.app.state.sleeping)
+        self.look_at(runtime._body_x())
+        for _ in range(8):
+            runtime.now += .3
+            runtime.update(time.monotonic())
+            self.complete_feedback()
+        self.assertEqual(runtime.interaction.phase, "pick_up")
+        self.finish_pickup()
+        self.finish_inspection()
+        self.complete_feedback()
+        self.assertEqual(runtime.world.get(item.instance_id).state,
+                         ObjectState.CONSUMED)
+        self.assertGreater(self.app.state.satiety, 30)
+        self.assertEqual(self.app.state.friendship_history.last_contact, before)
+        self.assertEqual(self.app.state.sleep_episode.started, 0)
+
+    def test_sleep_break_timeout_puts_down_before_returning_to_sleep(self):
+        runtime = self.app._world
+        item = runtime.world.place_resting("sandwich", runtime._body_x(),
+                                           ObjectFootprint(8, 8))
+        self.observe_and_acknowledge()
+        self.finish_pickup()
+        self.assertEqual(runtime.world.get(item.instance_id).state,
+                         ObjectState.PET_HELD)
+        now = time.time()
+        set_test_pet_values(
+            self.app.state, sleeping=False, satiety=0, energy=20, lived_seconds=2200,
+            sleep_episode=SleepEpisode("main", 0, 1800, now + 7200,
+                                       care_break=True, search_until=2100),
+        )
+        self.app._activity.advance_state(time.time())
+        self.assertFalse(self.app.state.sleeping)
+        runtime.update(time.monotonic())
+        self.assertEqual(runtime.interaction.phase, "put_down")
+        self.assertFalse(self.app.state.sleeping)
+        self.finish_clip("put_down")
+        self.complete_feedback()
+        self.assertEqual(runtime.world.get(item.instance_id).state, ObjectState.RESTING)
+        self.assertTrue(self.app.state.sleeping)
+        self.assertTrue(self.app.state.sleep_episode.food_failed)
+
+    def test_zero_food_sleep_search_stops_after_one_route_and_restart(self):
+        runtime = self.app._world
+        self.sleeping_care_fixture()
+        self.app._activity.advance_state(time.time())
+        runtime.update(time.monotonic())
+        self.assertTrue(runtime.interaction.acute_food_search)
+        for _ in range(5):
+            if not runtime.interaction.searching:
+                break
+            track = runtime._track()
+            destination = runtime.interaction.search_destination(SearchPosition(
+                runtime.width / 2,
+                track.right - track.left - runtime.width / 2,
+                runtime._body_x(),
+            ))
+            assert destination is not None
+            self.app._place_x(track.left + destination - runtime.width / 2)
+            runtime.now += .3
+            runtime.update(time.monotonic())
+        self.assertTrue(self.app.state.sleeping)
+        self.assertTrue(self.app.state.sleep_episode.food_failed)
+        self.assertFalse(runtime.interaction.search_active)
+        self.restart()
+        self.assertTrue(self.app.state.sleep_episode.food_failed)
+        for _ in range(3):
+            self.app._activity.advance_state(time.time())
+            self.app._world.update(time.monotonic())
+            self.assertFalse(self.app._world.interaction.search_active)
+
+    def test_onigiri_subjective_reunion_keeps_new_world_identity(self):
+        app, runtime = self.app, self.app._world
+        app._place_x(runtime._track().left)
+        set_test_pet_values(app.state, satiety=100, energy=100)
+        self.look_at(runtime._body_x())
+        events, phrases = [], []
+        present = runtime._present_feedback
+
+        def capture(cue, reaction, done):
+            events.append(cue.event)
+            phrases.append(format_object_reaction(
+                reaction, cue.identity, runtime.view.items,
+            ).text)
+            present(cue, reaction, done)
+
+        runtime._present_feedback = capture
+        original = runtime.world.place_resting(
+            "onigiri", runtime._body_x(), ObjectFootprint(8, 8),
+        )
+        self.observe_and_acknowledge()
+        self.finish_pickup()
+        self.finish_inspection()
+        self.assertEqual(runtime.interaction.phase, "put_down")
+        self.finish_clip("put_down")
+        self.complete_feedback()
+        known = runtime.awareness.known_instance(original.instance_id)
+        assert known is not None
+        self.assertEqual((known.identity, known.assessed, known.disposition),
+                         ("onigiri", True, "deferred"))
+        self.assertEqual(events.count("object_recognized"), 1)
+        self.assertNotIn("object_found", events)
+        first_identification = next(phrase for event, phrase in zip(events, phrases)
+                                    if event == "object_recognized")
+        self.assertIn("ein Onigiri", first_identification)
+        # Unwitnessed movement changes real World facts, not Aiko's knowledge.
+        current = runtime.world.get(original.instance_id)
+        runtime.world.move_resting(
+            current.instance_id, runtime.world.snapshot().surface.width - 10,
+            expected_revision=current.revision,
+        )
+        replacement = runtime.world.place_resting(
+            "onigiri", runtime._body_x(), ObjectFootprint(8, 8),
+        )
+        self.observe_and_acknowledge()
+        for step in range(80):
+            runtime.now += .2
+            runtime.update(time.monotonic())
+            self.complete_feedback()
+            phase = runtime.interaction.phase
+            if phase == "pick_up":
+                self.finish_pickup()
+            elif phase == "inspect":
+                self.finish_inspection()
+            elif phase == "put_down":
+                self.finish_clip("put_down")
+            app._walk.step(time.monotonic() + step, .2,
+                           game_mode=False, attention_active=True)
+            if events.count("object_found") == 1 and phase == "idle":
+                break
+        self.assertEqual(events.count("object_place_missing"), 1)
+        self.assertEqual(events.count("object_found"), 1)
+        self.assertEqual(events.count("object_recognized"), 1)
+        self.assertFalse(runtime.interaction.search_active)
+        self.assertIsNone(runtime.awareness.memory.get(known.token))
+        found = runtime.awareness.known_instance(replacement.instance_id)
+        assert found is not None
+        self.assertEqual((found.instance_id, found.assessed, found.disposition),
+                         (replacement.instance_id, True, "deferred"))
+        self.assertEqual(runtime.world.get(original.instance_id).state,
+                         ObjectState.RESTING)
+        self.assertEqual(runtime.world.get(replacement.instance_id).state,
+                         ObjectState.RESTING)
+        for event, phrase in zip(events, phrases):
+            if event in ("object_place_missing", "object_found"):
+                self.assertIn("mein onigiri", phrase.casefold())
+        self.assertIsNone(app.state.food.last_food_id)
+        # The physically original portion is now another unknown exemplar.
+        current = runtime.world.get(original.instance_id)
+        runtime.world.move_resting(
+            current.instance_id, runtime._body_x() + .4 * runtime.width,
+            expected_revision=current.revision,
+        )
+        for step in range(80):
+            runtime.now += .2
+            runtime.update(time.monotonic())
+            self.complete_feedback()
+            phase = runtime.interaction.phase
+            if phase == "pick_up":
+                self.finish_pickup()
+            elif phase == "inspect":
+                self.finish_inspection()
+            elif phase == "put_down":
+                self.finish_clip("put_down")
+            app._walk.step(time.monotonic() + step, .2,
+                           game_mode=False, attention_active=True)
+            if events.count("object_recognized") == 2 and phase == "idle":
+                break
+        self.assertEqual(events.count("object_recognized"), 2,
+                         (runtime.interaction.phase, events,
+                          runtime.awareness.memory.snapshot()))
+        self.assertEqual(events.count("object_found"), 1)
+        learned = runtime.awareness.known_instance(original.instance_id)
+        assert learned is not None
+        self.assertNotEqual(learned.token, known.token)
+        self.assertEqual(learned.instance_id, original.instance_id)
+
     def _search_multiple_relocated_portions(self, scale):
         self._resize_for_search_test(scale)
         app, runtime = self.app, self.app._world
         app._place_x(runtime._track().left)
         set_test_pet_values(app.state, satiety=100, energy=100)
-        runtime._controls_active = lambda: True
+        runtime._character_action_busy = lambda: True
         self.look_at(runtime._body_x() + 3 * runtime.width)
         area = runtime.world.snapshot().surface.width
         portions = []
@@ -204,7 +409,7 @@ class WorldGuiTests(unittest.TestCase):
         app, runtime = self.app, self.app._world
         app._place_x(runtime._track().left + runtime.width)
         set_test_pet_values(app.state, satiety=100, energy=100)
-        runtime._controls_active = lambda: True
+        runtime._character_action_busy = lambda: True
         self.look_at(runtime._body_x() + runtime.width)
         known_item = runtime.world.place_resting(
             "cookie", runtime._body_x() + .2 * runtime.width, ObjectFootprint(8, 8),
@@ -215,8 +420,8 @@ class WorldGuiTests(unittest.TestCase):
         assert record is not None
         runtime.awareness.memory.mark_assessed(record)
         original = runtime.awareness.memory.get(record)
-        runtime._controls_active = lambda: (
-            app._hover.interaction_active or app._reaction_player.story_active
+        runtime._character_action_busy = lambda: (
+            app._reaction_player.story_active or app._social_runtime.waiting
         )
         app.interact(action)
         self.assertEqual(runtime._attention().mode, "unavailable")
@@ -275,7 +480,7 @@ class WorldGuiTests(unittest.TestCase):
         app, runtime = self.app, self.app._world
         app._place_x(runtime._track().left)
         set_test_pet_values(app.state, satiety=100, energy=100)
-        runtime._controls_active = lambda: True
+        runtime._character_action_busy = lambda: True
         drink = runtime.world.place_resting("energy_drink", runtime._body_x(),
                                             ObjectFootprint(8, 8))
         self.observe_and_acknowledge()
@@ -287,7 +492,7 @@ class WorldGuiTests(unittest.TestCase):
         runtime.world.move_resting(drink.instance_id,
                                    runtime.world.snapshot().surface.width * .9,
                                    expected_revision=current.revision)
-        runtime._controls_active = lambda: False
+        runtime._character_action_busy = lambda: False
         for _ in range(4):
             runtime.now += .3
             runtime.update(time.monotonic())
@@ -347,7 +552,7 @@ class WorldGuiTests(unittest.TestCase):
         app, runtime = self.app, self.app._world
         app._place_x(runtime._track().left)
         set_test_pet_values(app.state, satiety=100, energy=100)
-        runtime._controls_active = lambda: True
+        runtime._character_action_busy = lambda: True
         item = runtime.world.place_resting(
             "dango", runtime._body_x() + 2 * runtime.width, ObjectFootprint(8, 8),
         )
@@ -358,7 +563,7 @@ class WorldGuiTests(unittest.TestCase):
         record = runtime.awareness.record_for_instance(item.instance_id)
         assert record is not None
         runtime.awareness.memory.mark_assessed(record)
-        runtime._controls_active = lambda: False
+        runtime._character_action_busy = lambda: False
         self.look_at(runtime._body_x() - runtime.width)
         for _ in range(2):
             runtime.now += .3
@@ -562,6 +767,66 @@ class WorldGuiTests(unittest.TestCase):
         self.app._animated.reload_sprites()
         self.app._world._sync_geometry()
 
+    def _new_unknown_investigation_after_native_orientation(self, side):
+        self._resize_for_search_test(2)
+        app, runtime = self.app, self.app._world
+        set_test_pet_values(app.state, satiety=100, energy=100)
+        track = runtime._track()
+        app._place_x(track.left + (track.right - track.left - runtime.width) / 2)
+        base, width = runtime._body_x(), runtime.width
+        stock = runtime.world.place_resting("apple", base, ObjectFootprint(8, 8))
+        record = runtime.awareness.memory.observe_find(ObjectObservation(
+            "earlier", "apple", "food", base, 0, True, runtime.now,
+        ), now=runtime.now, record=None, claimed=frozenset(), maximum_distance=0,
+            instance_id=stock.instance_id)
+        runtime.awareness.memory.mark_assessed(record)
+        runtime._behavior.request_orientation()
+        target = runtime.world.place_resting(
+            # Beyond the near field, but inside the radial notice distance
+            # measured from the eyes (including their height above ground).
+            "dango", base + side * 1.25 * width, ObjectFootprint(8, 8),
+        )
+        runtime.world.place_resting(
+            "apple", runtime.world.snapshot().surface.ground_x(
+                max(0, base + side * 2.1 * width), ObjectFootprint(8, 8),
+            ), ObjectFootprint(8, 8),
+        )
+        assert target.position is not None
+        self.look_at(target.position.x)
+        looks = set()
+        for _ in range(60):
+            runtime.now += .1
+            runtime.update(time.monotonic())
+            self.assertFalse(runtime.interaction.search_active)
+            if runtime.orientation_side() is not None:
+                looks.add(runtime.orientation_side())
+                self.assertIsNone(app._walk.movement.goal_x)
+            if runtime.interaction.active:
+                break
+        self.assertEqual(looks, {-1, 1})
+        self.assertEqual(runtime.interaction.phase, "notice")
+        goal = runtime.awareness.intentions.goal
+        assert goal is not None
+        self.assertEqual(goal.purpose, "investigate")
+        self.assertEqual(runtime.awareness.instance_for_record(goal.token),
+                         target.instance_id)
+        known = runtime.awareness.memory.get(goal.token)
+        assert known is not None
+        self.assertIsNone(known.identity)
+        self.assertEqual(runtime._visual.object_target,
+                         (track.left + target.position.x, track.ground_y))
+        self.complete_feedback()
+        self.complete_feedback()
+        self.assertEqual(runtime.interaction.phase, "approach")
+        self.assertIsNotNone(app._walk.movement.goal_x)
+        self.assertFalse(runtime.interaction.search_active)
+
+    def test_new_unknown_left_item_resumes_after_native_orientation_at_scale_two(self):
+        self._new_unknown_investigation_after_native_orientation(-1)
+
+    def test_new_unknown_right_item_resumes_after_native_orientation_at_scale_two(self):
+        self._new_unknown_investigation_after_native_orientation(1)
+
     def _relocated_unknown_pair_after_inspection(self, scale):
         self._resize_for_search_test(scale)
         runtime = self.app._world
@@ -724,7 +989,7 @@ class WorldGuiTests(unittest.TestCase):
         world = self.app._world
         item = world.world.place_resting("cookie", world._body_x(),
                                          ObjectFootprint(8, 8))
-        world._controls_active = lambda: True
+        world._character_action_busy = lambda: True
         self.observe_and_acknowledge()
         self.seed_previous_identification(item.instance_id, "cookie", "food")
         known = world.awareness.known_instance(item.instance_id)
@@ -765,7 +1030,7 @@ class WorldGuiTests(unittest.TestCase):
         app, world = self.app, self.app._world
         item = world.world.place_resting("cookie", world._body_x(),
                                          ObjectFootprint(8, 8))
-        world._controls_active = lambda: True
+        world._character_action_busy = lambda: True
         self.observe_and_acknowledge()
         self.seed_previous_identification(item.instance_id, "cookie", "food")
         known = world.awareness.known_instance(item.instance_id)
@@ -773,7 +1038,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertEqual(known.identity, "cookie")
         self.assertFalse(known.assessed)
         self.assertFalse(world.interaction.active)
-        world._controls_active = lambda: False
+        world._character_action_busy = lambda: False
         with (
             patch.object(app.root, "winfo_pointerx",
                          return_value=world._track().right - 40),
@@ -814,7 +1079,7 @@ class WorldGuiTests(unittest.TestCase):
                 world._sync_geometry()
                 app._place_x(world._track().left + 40)
                 set_test_pet_values(app.state, satiety=76, energy=65)
-                friendship = app.state.friendship
+                relationship = app.state.friendship_history
                 x = world._track().left + int(world._body_x())
                 with (
                     patch.object(app.root, "winfo_pointerx", return_value=x),
@@ -832,7 +1097,10 @@ class WorldGuiTests(unittest.TestCase):
                     for _ in range(100):
                         world.now += .25
                         world.update(time.monotonic())
-                    self.assertEqual(app.state.friendship, friendship)
+                    self.assertEqual(app.state.friendship_history.penalties,
+                                     relationship.penalties)
+                    self.assertEqual(app.state.friendship_history.last_contact,
+                                     relationship.last_contact)
                     self.assertFalse(world.interaction.active)
                     if handover:
                         world.cursor.release()
@@ -853,7 +1121,8 @@ class WorldGuiTests(unittest.TestCase):
                     self.assertEqual(cues[-1], "object_collect_wanted")
                     self.complete_feedback()
                     self.assertEqual(world.interaction.phase, "pick_up")
-                    self.assertEqual(app.state.friendship, friendship)
+                    self.assertEqual(app.state.friendship_history.penalties,
+                                     relationship.penalties)
                     self.finish_pickup()
                 else:
                     self.assertEqual(world.interaction.phase, "handover")
@@ -864,7 +1133,10 @@ class WorldGuiTests(unittest.TestCase):
                 self.assertEqual(world.interaction.memory_id, record)
                 self.assertEqual(world._care is not None, handover)
                 if not handover:
-                    self.assertEqual(app.state.friendship, friendship)
+                    self.assertEqual(app.state.friendship_history.penalties,
+                                     relationship.penalties)
+                    self.assertEqual(app.state.friendship_history.last_contact,
+                                     relationship.last_contact)
                 self.assertFalse(set(cues) & {
                     "object_taken", "object_request_return", "object_withheld",
                     "object_returned", "object_inspect", "object_recognized",
@@ -901,16 +1173,21 @@ class WorldGuiTests(unittest.TestCase):
             done(FeedbackReceipt(current.key, True))
             self.assertTrue(world.cursor.offer_ready)
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         try:
             root = tk.Tk()
             root.update_idletasks()
             root.destroy()
         except tk.TclError as error:
-            self.skipTest(str(error))
+            raise unittest.SkipTest(str(error)) from error
+
+    def setUp(self):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.app = DesktopPet(store=StateStore(Path(folder.name) / "state.json"))
+        self.app = create_test_desktop(
+            store=StateStore(Path(folder.name) / "state.json"),
+        )
         self.addCleanup(self.app.quit)
         self.app._runtime.stop()
         self.settle_native_positions()
@@ -924,7 +1201,7 @@ class WorldGuiTests(unittest.TestCase):
         set_test_pet_values(self.app.state, sleeping=False)
         set_test_pet_values(self.app.state, satiety=50)
         self.app._action_playback.cancel_at(time.monotonic())
-        world._controls_active = lambda: False
+        world._character_action_busy = lambda: False
 
     def settle_native_positions(self):
         # Manual ticks must let Tk apply a requested move before reading eyes.
@@ -980,7 +1257,7 @@ class WorldGuiTests(unittest.TestCase):
     def restart(self):
         store = self.app.store
         self.app.quit()
-        self.app = DesktopPet(store=store)
+        self.app = create_test_desktop(store=store)
         self.addCleanup(self.app.quit)
         self.app._runtime.stop()
         self.settle_native_positions()
@@ -988,7 +1265,7 @@ class WorldGuiTests(unittest.TestCase):
         assert world._timer is not None
         self.app.root.after_cancel(world._timer)
         world._timer = None
-        world._controls_active = lambda: False
+        world._character_action_busy = lambda: False
         self.app._action_playback.cancel_at(time.monotonic())
 
     def test_deferred_drink_survives_cold_restore_and_known_retrieval(self):
@@ -1091,8 +1368,9 @@ class WorldGuiTests(unittest.TestCase):
         phase = world.interaction.phase
         friendship = self.app.state.friendship
         self.app._on_enter()
-        self.app._on_click_left()
-        self.app._on_click_right()
+        for _ in range(4):
+            self.app.canvas.event_generate("<Button-1>", x=90, y=90)
+            self.app.canvas.event_generate("<Button-3>", x=90, y=90)
         world.begin_carry("energy_drink")
         world.cursor.cancel()
         self.assertEqual(world.interaction.memory_id, record)
@@ -1120,6 +1398,7 @@ class WorldGuiTests(unittest.TestCase):
                 item = world.world.place_resting(
                     "apple", world._body_x() + 70 * scale, ObjectFootprint(8, 8),
                 )
+                self.look_at(world._body_x() + 70 * scale)
                 self.observe_and_acknowledge()
                 record = world.interaction.memory_id
                 episode = world.interaction.feedback_key.interaction_id
@@ -1132,22 +1411,25 @@ class WorldGuiTests(unittest.TestCase):
                     patch.object(self.app.root, "winfo_pointery", return_value=100),
                 ):
                     world.cursor._move_carry()
-                world.now += .15
-                world.update(time.monotonic())
-                self.assertEqual(world.interaction.phase, "await_return")
-                self.assertEqual(world.awareness.record_for_instance(item.instance_id),
-                                 record)
-                held = world.world.get(item.instance_id)
-                assert held.position is not None
-                self.assertEqual(world._visual.object_target, (
-                    world._track().left + held.position.x,
-                    world._track().ground_y - held.position.height,
-                ))
-                self.complete_feedback()
-                self.assertEqual(world.interaction.phase, "await_return")
-                known = world.awareness.memory.get(record)
-                assert known is not None
-                self.assertIsNone(known.identity)
+                    # Perception must see the same pointer that moved the item;
+                    # the user's live pointer can be anywhere during this test.
+                    world.now += .15
+                    world.update(time.monotonic())
+                    self.assertEqual(world.interaction.phase, "await_return")
+                    self.assertEqual(
+                        world.awareness.record_for_instance(item.instance_id), record,
+                    )
+                    held = world.world.get(item.instance_id)
+                    assert held.position is not None
+                    self.assertEqual(world._visual.object_target, (
+                        world._track().left + held.position.x,
+                        world._track().ground_y - held.position.height,
+                    ))
+                    self.complete_feedback()
+                    self.assertEqual(world.interaction.phase, "await_return")
+                    known = world.awareness.memory.get(record)
+                    assert known is not None
+                    self.assertIsNone(known.identity)
                 with (
                     patch.object(self.app.root, "winfo_pointerx",
                                  return_value=int(world._body_x()) + 120 * scale),
@@ -1180,10 +1462,22 @@ class WorldGuiTests(unittest.TestCase):
                                  ObjectState.CONSUMED)
 
     def test_visible_withholding_changes_friendship_once_and_survives_restart(self):
+        # Isolate the discrete penalty and its persistence from elapsed flow.
+        # World phase time is advanced explicitly by this component fixture.
+        self.enterContext(patch(
+            "aiko_pet.application.active_time.ActiveSessionClock.consume",
+            return_value=0,
+        ))
+        # Reopening is instantaneous in this receipt test. Offline progression
+        # has separate coverage and must not add a real I/O-time Moodlet loss.
+        self.enterContext(patch("aiko_pet.gui.PetSessionRestorer", partial(
+            PetSessionRestorer, wall_time=lambda: self.app.state.updated_at,
+        )))
         world = self.app._world
         item = world.world.place_resting("apple", world._body_x() + 70,
                                          ObjectFootprint(8, 8))
         self.observe_and_acknowledge()
+        self.seed_previous_identification(item.instance_id, "apple", "food")
         world.begin_relocate(item.instance_id, item.revision)
         self.complete_feedback()
         initial = self.app.state.friendship
@@ -1192,19 +1486,25 @@ class WorldGuiTests(unittest.TestCase):
             world.now += .5
             world.update(time.monotonic())
             self.complete_feedback()
-        self.assertAlmostEqual(self.app.state.friendship, initial - .15)
-        self.assertEqual(self.app.mind.emotion(self.app.state, time.monotonic()),
-                         "irritated")
+        self.assertAlmostEqual(self.app.state.friendship, initial - .5)
+        self.assertEqual(
+            [(e.kind, e.amount) for e in self.app.state.friendship_history.penalties],
+            [("withholding", .5)],
+        )
+        self.assertEqual(
+            self.app.mind.emotional_state(self.app.state).primary,
+            EmotionalState.FRUSTRATED,
+        )
         self.assertEqual(world.interaction.phase, "await_return")
         stored = self.app.store.load_session().state
-        self.assertAlmostEqual(stored.friendship, initial - .15)
+        self.assertAlmostEqual(stored.friendship, initial - .5)
         world.cursor.cancel()
         self.complete_feedback()
         self.complete_feedback()
-        self.assertAlmostEqual(self.app.state.friendship, initial - .15)
+        self.assertAlmostEqual(self.app.state.friendship, initial - .5)
         self.restart()
         self.assertFalse(self.app._world.interaction.active)
-        self.assertAlmostEqual(self.app.state.friendship, initial - .15)
+        self.assertAlmostEqual(self.app.state.friendship, initial - .5)
 
     def test_absent_remembered_instance_requires_deliberate_place_check(self):
         world = self.app._world
@@ -1337,7 +1637,8 @@ class WorldGuiTests(unittest.TestCase):
             world.update(time.monotonic())
 
     def complete_feedback(self):
-        # Component assertions skip cue dwell; runtime-flow tests use real timers.
+        # Component assertions skip cue dwell; runtime-flow tests drive the full
+        # callback sequence with controlled time and real Tk widgets.
         player = self.app._reaction_player
         if player.pending_timer is not None:
             self.app.root.after_cancel(player.pending_timer)
@@ -1518,7 +1819,7 @@ class WorldGuiTests(unittest.TestCase):
 
     def test_missing_apple_is_announced_before_unknown_replacement_inspection(self):
         world = self.app._world
-        world._controls_active = lambda: True
+        world._character_action_busy = lambda: True
         first = world.world.place_resting(
             "apple", world._body_x(), ObjectFootprint(8, 8),
         )
@@ -1541,7 +1842,7 @@ class WorldGuiTests(unittest.TestCase):
         self.assertNotEqual(recalled.token, record)
         # Loss priority applies even without appetite for the remembered apple.
         set_test_pet_values(self.app.state, satiety=100)
-        world._controls_active = lambda: False
+        world._character_action_busy = lambda: False
         world.now = .7
         world.update(time.monotonic())
         self.finish_orientation()
@@ -1666,7 +1967,7 @@ class WorldGuiTests(unittest.TestCase):
                                              ObjectFootprint(8, 8))
         store = app.store
         app.quit()
-        restored = DesktopPet(store=store)
+        restored = create_test_desktop(store=store)
         self.addCleanup(restored.quit)
         snapshot = restored._world.world.snapshot()
         self.assertEqual(len(snapshot.objects), 1)

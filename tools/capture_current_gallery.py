@@ -153,7 +153,7 @@ def capture_ui() -> None:
     """Capture the README overview, reaction GIF and ambient GIF only."""
     with tempfile.TemporaryDirectory(prefix="aiko-current-gallery-") as folder:
         pet = DesktopPet(
-            store=StateStore(Path(folder) / "media-preview-state.json"),
+            store=StateStore(Path(folder) / "media-preview-state.sqlite3"),
         )
         try:
             pet.settings.spontaneous_talk = False

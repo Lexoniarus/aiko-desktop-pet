@@ -128,16 +128,25 @@ class DesktopVisualObservation:
     def observe(
         self, now: float, pointer: tuple[int, int],
         last_pointer_move: float, game_mode: bool,
+        *, cursor_gaze_point: tuple[float, float] | None = None,
     ) -> PassiveObservation:
         """Return passive inputs; preserve gaze precedence over hardware."""
         attention = self.attention(
             pointer, pointer_recent=now - last_pointer_move < 4.0,
             game_mode=game_mode,
         )
+        if cursor_gaze_point is not None and attention.mode in ("object", "cursor"):
+            eyes_x, eyes_y = self._eyes()
+            width = FRAME_WIDTH * self._settings.scale
+            attention = replace(attention, direction=(
+                (cursor_gaze_point[0] - eyes_x) / width,
+                (eyes_y - cursor_gaze_point[1]) / width,
+            ))
         direction = self._gaze(attention)
+        forward = attention.direction is not None and direction is None
         busy = (
             self._monitor.latest().is_busy()
-            if attention.mode != "unavailable" and direction is None
+            if attention.mode != "unavailable" and direction is None and not forward
             and self._settings.observe_computer else False
         )
-        return PassiveObservation(direction, busy)
+        return PassiveObservation(direction, busy, forward_gaze=forward)

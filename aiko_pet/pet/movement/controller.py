@@ -52,7 +52,7 @@ class WalkController:
             conditions.attention_active and self.remaining_distance == 0
             and (conditions.auto_walk or self.goal_x is not None)
             and not conditions.sleeping
-            and not conditions.toolbar_visible
+            and not conditions.menu_engaged
             and not (conditions.observing_computer and conditions.computer_busy)
         ):
             # Brief cursor attention postpones departure, not the entire rest.
@@ -62,7 +62,7 @@ class WalkController:
             or (not conditions.auto_walk and self.goal_x is None)
             or conditions.sleeping
             or conditions.attention_active
-            or conditions.toolbar_visible
+            or conditions.menu_engaged
         ):
             self.interrupt()
             return None

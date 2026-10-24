@@ -33,6 +33,7 @@ class InteractionEpisode:
     identity: str | None = None
     kind: ConsumableKind | None = None
     retrieving: bool = False
+    handover_acknowledged: bool = False
     queued: Callable[[], None] | None = None
     seen: set[PlaybackEvent] = field(default_factory=set)
     effects: set[tuple[int, str]] = field(default_factory=set)
@@ -112,13 +113,24 @@ class SearchRoute:
 class SearchTask:
     """One pass and its missing portions, retained across candidate actions."""
 
-    __slots__ = ("_missing", "_route", "_unreachable")
+    __slots__ = ("_missing", "_route", "_unreachable", "_findings", "acute_food")
 
-    def __init__(self, subject: ObjectKnowledge) -> None:
+    def __init__(
+        self, subject: ObjectKnowledge | None, *,
+        known: tuple[ObjectKnowledge, ...] = (),
+    ) -> None:
         self._missing: dict[str, ObjectKnowledge] = {}
         self._route: SearchRoute | None = None
         self._unreachable: set[str] = set()
-        self.add(subject)
+        # Existing known stock is not a newly identified search finding. This
+        # also preserves one-find/one-loss accounting when a search is rebuilt
+        # after restart, without introducing another persisted history.
+        self._findings = {key for item in known if item.recognized
+                          and item.place_status == "remembered"
+                          for key in (item.token, item.instance_id) if key is not None}
+        self.acute_food = subject is None
+        if subject is not None:
+            self.add(subject)
 
     @property
     def next_subject(self) -> ObjectKnowledge | None:
@@ -154,27 +166,34 @@ class SearchTask:
         ):
             return False
         self._missing[known.token] = known
+        # A newly confirmed loss starts a new episode for that portion.
+        self._findings.discard(known.token)
+        if known.instance_id is not None:
+            self._findings.discard(known.instance_id)
         return True
 
     def resolve(self, known: ObjectKnowledge) -> ObjectKnowledge | None:
         """Remove one verified subject without changing the pass or other losses."""
         token = self._match(known)
-        return self._missing.pop(token) if token is not None else None
+        if token is None:
+            return None
+        self._findings.add(known.token)
+        if known.instance_id is not None:
+            self._findings.add(known.instance_id)
+        return self._missing.pop(token)
 
     def _match(self, known: ObjectKnowledge) -> str | None:
-        if not known.recognized:
+        if (not known.recognized or known.place_status == "superseded"
+                or known.token in self._findings
+                or known.instance_id is not None
+                and known.instance_id in self._findings):
             return None
-        legacy = []
         for token, subject in self._missing.items():
-            if (known.identity, known.kind) != (subject.identity, subject.kind):
-                continue
-            if subject.instance_id is not None:
-                if known.instance_id == subject.instance_id:
-                    return token
-            else:
-                legacy.append(token)
-        # One newly identified portion cannot resolve several ambiguous old ones.
-        return legacy[0] if len(legacy) == 1 else None
+            if (known.identity, known.kind) == (subject.identity, subject.kind):
+                # The oldest matching missing subject is her subjective reunion.
+                # Technical instance identity neither proves nor vetoes that belief.
+                return token
+        return None
 
 
 @dataclass(slots=True)

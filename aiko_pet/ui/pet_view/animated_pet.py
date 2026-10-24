@@ -221,7 +221,7 @@ class AnimatedPet:
                     self.frame_clock.finished,
                 ))
         image = self.sprites[state][source_index]
-        if (state == "idle" and fixed == 0) or (
+        if state == "idle" or (
             state == "look" and fixed is not None
         ):
             image = self._rest_renderer.resolve(
@@ -308,6 +308,10 @@ class AnimatedPet:
         )
         if decision.clear_action:
             self._active_action = None
+            if (decision.sprite.animation == "pick_up"
+                    and decision.sprite.fixed_frame is not None):
+                # Empty hands are a visual offer; the cursor still owns the item.
+                self.food_overlay.select(None)
         self.show_frame(
             decision.sprite.animation, now, fixed=decision.sprite.fixed_frame,
         )

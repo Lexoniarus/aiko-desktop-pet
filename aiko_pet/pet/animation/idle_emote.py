@@ -3,6 +3,11 @@
 from __future__ import annotations
 
 from ..balance import BALANCE
+from ..emotions import (
+    EmotionalComposition,
+    EmotionalState,
+    supports_positive_expression,
+)
 
 
 def choose_idle_emote(
@@ -11,16 +16,32 @@ def choose_idle_emote(
     satiety: float,
     mood: float,
     affection: float,
+    emotions: EmotionalComposition,
 ) -> str:
-    """Select the original need-dependent idle icon in priority order."""
+    """Keep direct physical cues and derive emotional cues from the shared feeling."""
     if energy < BALANCE.integer("idle_emotes", "tired_energy"):
         return "sleeps"
     if satiety < BALANCE.integer("idle_emotes", "hungry_satiety"):
         return "drops"
-    if mood < BALANCE.integer("idle_emotes", "sad_mood"):
+    if emotions.primary in (
+        EmotionalState.IRRITATED,
+        EmotionalState.CROWDED,
+        EmotionalState.FRUSTRATED,
+        EmotionalState.TENSE,
+    ):
+        return "anger"
+    if emotions.primary in (
+        EmotionalState.SUBDUED,
+        EmotionalState.DOWNCAST,
+        EmotionalState.LONELY,
+    ):
         return "faceSad"
+    if emotions.primary in (EmotionalState.AMBIVALENT, EmotionalState.RESERVED):
+        return "question"
     if affection < BALANCE.integer("idle_emotes", "low_affection"):
         return "heart"
-    if mood > BALANCE.integer("idle_emotes", "happy_mood"):
+    if mood >= BALANCE.integer(
+        "idle_emotes", "happy_mood"
+    ) and supports_positive_expression(emotions):
         return "star"
     return "idea"

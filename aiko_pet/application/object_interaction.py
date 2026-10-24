@@ -4,10 +4,17 @@ from __future__ import annotations
 
 from collections import deque
 from collections.abc import Callable
+from dataclasses import replace
+from uuid import uuid4
 
 from ..pet.animation.character import PlaybackEvent
 from ..pet.balance import BALANCE
 from ..pet.consumption import ConsumptionOrigin
+from ..pet.interaction_events import (
+    InteractionEvent,
+    WithholdingEnded,
+    WithholdingObserved,
+)
 from ..pet.mind.object_decisions import ObjectUseContext, ObjectUseDecision
 from ..pet.mind.object_events import ObjectEvent
 from ..pet.mind.object_intentions import ObjectGoal
@@ -55,7 +62,12 @@ class ObjectInteractionCoordinator:
         decide: Callable[[str, ObjectUseContext], ObjectUseDecision],
         feedback: Callable[[ObjectFeedback], None], cancel_feedback: Callable[[], None],
         now: Callable[[], float], inspection_seconds: float,
+        experience: Callable[[InteractionEvent], object] = lambda _event: None,
+        withholding_active: Callable[[], bool] = lambda: False,
         withholding: Callable[[str, float], None] = lambda _key, _loss: None,
+        acknowledge_handover: Callable[[str, str], None] = lambda _item, _record: None,
+        begin_handover: Callable[[str, str], None] = lambda _item, _record: None,
+        finish_handover: Callable[[str], None] = lambda _item: None,
     ) -> None:
         self.world = world
         self._custody = ObjectCustody(world, memory)
@@ -76,13 +88,25 @@ class ObjectInteractionCoordinator:
         self._auxiliary_serial = 0
         self._next_contact_feedback = 0.0
         self._withholding_serial = 0
+        self._care_session_id = uuid4().hex
         self._on_withholding = withholding
+        self._experience = experience
+        self._withholding_active = withholding_active
+        self._acknowledge_handover = acknowledge_handover
+        self._begin_handover = begin_handover
+        self._finish_handover = finish_handover
 
     @property
     def _episode(self) -> InteractionEpisode:
         """Require the canonical record inside an episode-owned operation."""
         assert self._active_episode is not None
         return self._active_episode
+
+    @property
+    def _withholding_incident_id(self) -> str:
+        episode = self._episode
+        return (f"{self._care_session_id}:{episode.interaction_id}:"
+                f"{episode.withholding.takes}")
 
     @property
     def memory_id(self) -> str | None:
@@ -143,6 +167,14 @@ class ObjectInteractionCoordinator:
         state.appraisal.latest = decision
         self.update()
 
+    def _wants_target(self, record: str) -> bool:
+        """Retain committed curiosity until identification permits a use decision."""
+        known = self._memory.get(record)
+        if record != self.focus_record or known is None:
+            return False
+        return (not known.recognized
+                or self._decide(record, self._episode.use_context).consume)
+
     def target_taken(self, record: str) -> bool:
         """Pause only an observed successful take before Aiko owns the item."""
         if self.focus_record != record or self.phase not in (
@@ -154,7 +186,19 @@ class ObjectInteractionCoordinator:
                 and self.world.get(self.instance_id).state == ObjectState.PET_HELD):
             return False
         self._episode.instance_id = None
+        wants = self._wants_target(record)
         self._episode.withholding = self._episode.withholding.taken(self._now())
+        if wants:
+            existing_impression = self._withholding_active()
+            self._experience(WithholdingObserved(
+                repeated_take=True, incident_id=self._withholding_incident_id,
+            ))
+            # A repeated take already reinforces an existing impression; the
+            # first subsequent complaint must not count the same take again.
+            if existing_impression:
+                self._episode.withholding = replace(
+                    self._episode.withholding, moodlet_trigger_at=self._now(),
+                )
         self._set_phase(WaitingPhase("await_return"))
         self._stop()
         self._announce("object_taken")
@@ -166,8 +210,10 @@ class ObjectInteractionCoordinator:
         if not isinstance(phase, WaitingPhase):
             return
         episode = self._episode
-        if state != ObjectState.USER_HELD:
+        if (state != ObjectState.USER_HELD
+                and episode.withholding.held_since is not None):
             episode.withholding = episode.withholding.returned()
+            self._experience(WithholdingEnded())
         if phase.name in ("recognize_offer", "decide_offer"):
             # Motion cannot replace an unfinished recognition/decision cue.
             return
@@ -195,11 +241,19 @@ class ObjectInteractionCoordinator:
             self._announce("object_returned")
         elif (state == ObjectState.USER_HELD and phase.feedback.completed
               and not phase.feedback.blocking_aside):
+            if not self._wants_target(episode.memory_id):
+                episode.withholding = episode.withholding.returned()
+                self._experience(WithholdingEnded())
+                return
             response = choose_withholding_response(episode.withholding, self._now())
             if response is not None:
                 episode.withholding = response.episode
                 self.request_feedback(response.event)
                 if response.irritated:
+                    self._experience(WithholdingObserved(
+                        response.reinforces_moodlet,
+                        incident_id=self._withholding_incident_id,
+                    ))
                     self._withholding_serial += 1
                     self._on_withholding(
                         f"{episode.interaction_id}/withholding_{self._withholding_serial}",
@@ -251,6 +305,11 @@ class ObjectInteractionCoordinator:
         if (self._search is None or not self.search_ready
                 or not self._search.route_complete):
             return
+        if self._search.acute_food:
+            self._search = None
+            self._finish(False)
+            self._stop()
+            return
         self._search = None
         self._set_phase(CuePhase("missing"))
         self._stop()
@@ -259,6 +318,11 @@ class ObjectInteractionCoordinator:
     def _resume_search(self) -> None:
         task = self._search
         subject = task.next_subject if task is not None else None
+        if task is not None and task.acute_food:
+            self._start("", ConsumptionOrigin.AUTONOMOUS)
+            self._set_phase(SearchPhase())
+            self._phase_feedback.completed = True
+            return
         if subject is None:
             self._search = None
             self._missing_feedback.clear()
@@ -371,6 +435,7 @@ class ObjectInteractionCoordinator:
 
     def _consider_use(self) -> None:
         assert self.memory_id is not None
+        self._acknowledge_known_handover()
         decision = self._decide(self.memory_id, self._episode.use_context)
         if decision.reason not in ("unrecognized", "unavailable"):
             self._memory.mark_assessed(self.memory_id)
@@ -397,13 +462,26 @@ class ObjectInteractionCoordinator:
             self._start(known.token, ConsumptionOrigin.AUTONOMOUS)
         self._episode.identity, self._episode.kind = known.identity, known.kind
         if known.recognized:
-            self._search = SearchTask(known)
+            self._search = SearchTask(known, known=self._memory.snapshot())
         # Confirmed absence comes before other discoveries even if Aiko
         # does not currently need to consume that remembered item.
         self._set_phase(CuePhase("notice_absence"))
         self._stop()
         self._announce("object_place_missing")
         return True
+
+    @property
+    def acute_food_search(self) -> bool:
+        return self._search is not None and self._search.acute_food
+
+    def start_food_search(self) -> None:
+        """Use the same route/investigation owner without a fictitious lost item."""
+        if self.active:
+            return
+        self._search = SearchTask(None, known=self._memory.snapshot())
+        self._start("", ConsumptionOrigin.AUTONOMOUS)
+        self._set_phase(SearchPhase())
+        self._phase_feedback.completed = True
 
     def start_search(self) -> None:
         """Start one task for confirmed missing learned portions."""
@@ -419,7 +497,7 @@ class ObjectInteractionCoordinator:
             return
         self._memory.mark_missing(self.memory_id)
         if self._search is None:
-            self._search = SearchTask(known)
+            self._search = SearchTask(known, known=self._memory.snapshot())
         self._set_phase(SearchPhase())
         self._stop()
         self._announce("object_search")
@@ -433,17 +511,26 @@ class ObjectInteractionCoordinator:
         self.update()
         return True
 
+    def _acknowledge_known_handover(self) -> None:
+        episode = self._episode
+        if (not episode.handover_acknowledged and self._known_identity()
+                and episode.instance_id is not None):
+            self._acknowledge_handover(episode.instance_id, episode.memory_id)
+            episode.handover_acknowledged = True
+
     def _reunite(self, known: ObjectKnowledge) -> bool:
         """Resolve one learned portion and announce its result for every entry."""
         subject = self._search.resolve(known) if self._search is not None else None
         if subject is None:
             return False
+        known = self._memory.reunite_search(subject, known.token)
         self._missing_feedback = deque(
             item for item in self._missing_feedback if item.token != subject.token
         )
         if self.searching:
             self._start(known.token, ConsumptionOrigin.AUTONOMOUS)
         self._episode.identity, self._episode.kind = known.identity, known.kind
+        self._acknowledge_known_handover()
         self._set_phase(CuePhase("found"))
         self._announce("object_found")
         return True
@@ -452,12 +539,16 @@ class ObjectInteractionCoordinator:
         """Choose the result cue once the hand/face evidence identifies a portion."""
         if not self._reunite(known):
             self._episode.identity, self._episode.kind = known.identity, known.kind
+            self._acknowledge_known_handover()
             self._set_phase(CuePhase("recognize"))
             self._announce("object_recognized")
 
     def _complete_recognition(self, token: str) -> None:
         """Recheck losses accepted while the recognition cue was being read."""
         if self._search is None:
+            self._consider_use()
+            return
+        if self._search.acute_food:
             self._consider_use()
             return
         known = self._memory.get(token)
@@ -499,10 +590,17 @@ class ObjectInteractionCoordinator:
                 or not self._can_acquire(instance_id)):
             return False
         item = self.world.get(instance_id)
-        self._custody.accept_handover_on_release(
-            instance_id, memory_id=record, expected_revision=item.revision,
-            now=self._now(),
-        )
+        physical, cognitive = self.world.snapshot(), self._memory.snapshot()
+        try:
+            self._custody.accept_handover_on_release(
+                instance_id, memory_id=record, expected_revision=item.revision,
+                now=self._now(),
+            )
+            self._begin_handover(instance_id, record)
+        except Exception:
+            self.world.restore_snapshot(physical)
+            self._memory.restore_snapshot(cognitive)
+            raise
         if not returning:
             self._start(record, ConsumptionOrigin.HANDOVER)
         episode = self._episode
@@ -516,6 +614,7 @@ class ObjectInteractionCoordinator:
         self._select_item(item.definition_id)
         self._play("hold_item")
         if self._known_identity():
+            self._acknowledge_known_handover()
             self._set_phase(CuePhase("handover"))
             self._announce("object_handover")
         else:
@@ -684,6 +783,8 @@ class ObjectInteractionCoordinator:
     ) -> None:
         """Finish eating or safe put-down separately from phase dispatch."""
         if isinstance(state, PutDownPhase):
+            if episode.instance_id is not None:
+                self._finish_handover(episode.instance_id)
             queued, episode.queued = episode.queued, None
             self._finish(False)
             self._stop()
@@ -777,7 +878,10 @@ class ObjectInteractionCoordinator:
                 if (self.instance_id is not None
                         and self.world.get(self.instance_id).state
                         == ObjectState.PET_HELD):
-                    self._put_down()
+                    known = self._memory.get(token)
+                    self._put_down(defer_if_uninterrupted=(
+                        known is not None and known.disposition == "deferred"
+                    ))
                 else:
                     self._finish(False)
             if self.phase == previous:
@@ -822,6 +926,10 @@ class ObjectInteractionCoordinator:
     def _finish(self, consumed: bool) -> None:
         token = self.instance_id
         record = self.memory_id
+        if self._active_episode is not None and (
+            self._episode.withholding.held_since is not None
+        ):
+            self._experience(WithholdingEnded())
         self._active_episode = None
         self._set_phase(IdlePhase())
         self._select_item(None)

@@ -23,9 +23,11 @@ class WorldRuntimeAccessTests(unittest.TestCase):
         )
         awareness = SimpleNamespace(following_record=None)
         side = [-1]
+        game = [False]
         stub = cast(DesktopWorldRuntime, SimpleNamespace(
             interaction=episode, user_action_pending=False,
             awareness=awareness, orientation_side=lambda: side[0],
+            defer_sleep=lambda: episode.active or stub.user_action_pending or game[0],
         ))
         access.bind(stub)
         self.assertEqual(access.orientation_side(), -1)
@@ -33,6 +35,9 @@ class WorldRuntimeAccessTests(unittest.TestCase):
         self.assertEqual(access.orientation_side(), 1)
         self.assertFalse(access.focused())
         self.assertFalse(access.defer_routine())
+        game[0] = True
+        self.assertTrue(access.defer_routine())
+        game[0] = False
         awareness.following_record = "memory_1"
         self.assertEqual(access.following_record(), "memory_1")
         episode.focus_record = "memory_1"

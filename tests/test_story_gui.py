@@ -9,22 +9,29 @@ import unittest
 from pathlib import Path
 
 from aiko_pet.application.settings import PetSettings
-from aiko_pet.gui import DesktopPet
+from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.state import PetState
+from tools.desktop_test_support import create_test_desktop
+from tools.persistence_test_support import save_test_session
+from tools.tk_test_time import ControlledTkTime
 
 
 class StoryGuiTests(unittest.TestCase):
-    def setUp(self) -> None:
+    @classmethod
+    def setUpClass(cls) -> None:
         try:
             probe = tk.Tk()
             probe.destroy()
         except tk.TclError as error:
-            self.skipTest(str(error))
+            raise unittest.SkipTest(str(error)) from error
+
+    def setUp(self) -> None:
+        self.timing = self.enterContext(ControlledTkTime())
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         store = StateStore(Path(directory.name) / "state.json")
-        store.save(
+        save_test_session(store,
             PetState(friendship=90, mood=65, energy=80, social=80, affection=80),
             PetSettings(
                 auto_routine=False,
@@ -32,7 +39,7 @@ class StoryGuiTests(unittest.TestCase):
                 auto_walk=False,
             ),
         )
-        self.pet = DesktopPet(store=store)
+        self.pet = create_test_desktop(store=store)
         self.addCleanup(self.pet.quit)
         self.pet._runtime.stop()
         self.pet.root.update()
@@ -88,7 +95,7 @@ class StoryGuiTests(unittest.TestCase):
         self.pet._attention.next_comment = -1000000
         self.pet._action_playback.until = 0
         self.pet._maybe_speak_spontaneously(time.monotonic())
-        self.pet._on_cursor_moved(200, 1920, time.monotonic())
+        self.pet._attention_runtime.cursor_moved(200, 1920, time.monotonic())
         self.pet._on_walk_finished(time.monotonic())
         self.assertEqual(tuple(self.pet.mind.book.recent), recent)
         self.assertTrue(player.story_active)
@@ -97,16 +104,18 @@ class StoryGuiTests(unittest.TestCase):
         self.pet.interact("talk")
         self.pet.interact("pet")
         self.assertFalse(self.pet._reaction_player.story_active)
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         self.assertFalse(self.pet._hover.game_open)
         # The next UI action starts after care playback and speech complete.
-        deadline = time.monotonic() + 6
+        # Exercise the authored sequence budget without waiting in real time.
+        deadline = time.monotonic() + 2 + sum(
+            cue.duration_ms for cue in self.pet._reaction_player.cues
+        ) / 1000
         while (not self.pet._contact.can_interact("play")
                and time.monotonic() < deadline):
-            self.pet.root.update()
-            time.sleep(.02)
+            self.timing.advance(.02)
         self.assertTrue(self.pet._contact.can_interact("play"))
-        self.pet._hover.open_game()
+        self.pet._hover.open_game(GameId.ROCK_PAPER_SCISSORS)
         chosen = next(
             line
             for line in self.pet.mind.book.lines

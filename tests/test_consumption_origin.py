@@ -1,4 +1,4 @@
-"""Nutrition is shared; social and friendship credit require human handover."""
+"""Nutrition is shared; social and accepted contact require human handover."""
 
 import unittest
 from copy import deepcopy
@@ -18,7 +18,9 @@ class ConsumptionOriginTests(unittest.TestCase):
         self.assertEqual(pet.social, 30)
         self.assertEqual(human.social, 31)
         self.assertEqual(pet.friendship, 15)
-        self.assertGreater(human.friendship, pet.friendship)
+        self.assertEqual(human.friendship, 15)
+        self.assertIsNone(pet.friendship_history.last_contact)
+        self.assertEqual(human.friendship_history.last_contact, human.lived_seconds)
 
     def test_drink_uses_existing_gain_and_sleeping_pet_does_not_accept(self):
         pet = PetState(energy=50)

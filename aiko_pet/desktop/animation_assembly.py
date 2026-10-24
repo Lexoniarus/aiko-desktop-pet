@@ -10,20 +10,19 @@ import tkinter as tk
 from dataclasses import dataclass
 from typing import Callable
 
-from ..application.object_feedback import InteractionPhase
 from ..application.settings import PetSettings
 from ..infrastructure.hardware.monitor import ActivityMonitor
 from ..infrastructure.item_assets import load_item_catalog
 from ..pet.animation.character import CharacterCatalog
 from ..pet.animation.item_assets import ItemCatalog
 from ..pet.mind.adaptive import AdaptiveRoutine
-from ..pet.mind.object_attention import LookSide
 from ..pet.movement.contracts import HorizontalTrack
 from ..pet.state import PetState
 from ..ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from .animation_runtime import AnimationRuntimePorts, DesktopAnimationRuntime
 from .visual_observation import DesktopVisualObservation, VisualAttentionPorts
 from .walk_runtime import WalkDriver, WalkDriverPorts
+from .world_access import WorldRuntimeAccess
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,7 +30,7 @@ class AnimationAssemblyPorts:
     """Host callbacks needed to connect the owners, not a GUI shell."""
 
     track: Callable[[], HorizontalTrack]
-    toolbar_visible: Callable[[], bool]
+    menu_engaged: Callable[[], bool]
     place_x: Callable[[float], None]
     walk_finished: Callable[[float], None]
     gaze_origin: Callable[[], tuple[float, float]]
@@ -40,12 +39,9 @@ class AnimationAssemblyPorts:
     action_clip_id: Callable[[], str]
     attention_until: Callable[[], float]
     extend_action: Callable[[float], None]
-    object_focus: Callable[[], bool] = lambda: False
-    object_phase: Callable[[], InteractionPhase] = lambda: "idle"
-    following_subject: Callable[[], str | None] = lambda: None
+    world: WorldRuntimeAccess
     feedback_subject: Callable[[], str | None] = lambda: None
     activity_active: Callable[[], bool] = lambda: False
-    orientation_side: Callable[[], LookSide | None] = lambda: None
 
 
 @dataclass(frozen=True, slots=True)
@@ -71,21 +67,21 @@ def assemble_animation(
         walk_cycle_seconds=assets.clips["running-left"].duration_seconds,
         ports=WalkDriverPorts(
             track=ports.track,
-            toolbar_visible=ports.toolbar_visible,
+            menu_engaged=ports.menu_engaged,
             place_x=ports.place_x,
             walk_finished=ports.walk_finished,
-            committed_goal=ports.object_focus,
+            committed_goal=ports.world.focused,
         ),
     )
     visual = DesktopVisualObservation(
         settings=settings, monitor=monitor, eyes=ports.gaze_origin,
         attention=VisualAttentionPorts(
-            phase=ports.object_phase, sleeping=lambda: state.sleeping,
+            phase=ports.world.phase, sleeping=lambda: state.sleeping,
             walking=lambda: walk.movement.remaining_distance,
-            following_subject=ports.following_subject,
+            following_subject=ports.world.following_record,
             feedback_subject=ports.feedback_subject,
             activity_active=ports.activity_active,
-            orientation_side=ports.orientation_side,
+            orientation_side=ports.world.orientation_side,
         ),
     )
     animation = DesktopAnimationRuntime(
@@ -94,6 +90,8 @@ def assemble_animation(
             action_until=ports.action_until,
             action_clip_id=ports.action_clip_id,
             attention_until=ports.attention_until,
+            ready_for_handover=ports.world.ready_for_handover,
+            cursor_gaze_point=ports.world.cursor_gaze_point,
         ),
     )
     items = load_item_catalog()

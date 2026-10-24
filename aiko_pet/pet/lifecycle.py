@@ -1,4 +1,4 @@
-"""Pure daily-routine and bounded-time planning for the pet aggregate.
+"""Pure daily-routine and streaming elapsed-time planning for the aggregate.
 
 Policies calculate transitions and time steps; PetState owns every mutation.
 """
@@ -6,14 +6,15 @@ Policies calculate transitions and time steps; PetState owns every mutation.
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 from dataclasses import dataclass
 from typing import Protocol
 
 from .balance import BALANCE
+from .food import FoodActivity
 from .routine import TimeContext, context_at
+from .sleep import SleepContext, SleepEpisode, sleep_transition
 
-MAX_CATCHUP_SECONDS = BALANCE.integer("simulation", "maximum_catchup_seconds")
-SIMULATION_STEP_SECONDS = BALANCE.integer("simulation", "step_seconds")
 # Live telemetry is never projected across a restart/suspend or offline gap.
 MAX_LIVE_EFFORT_SECONDS = BALANCE.number("simulation", "maximum_live_effort_seconds")
 
@@ -36,6 +37,15 @@ class RoutineValues(Protocol):
     @property
     def auto_nap_day(self) -> str: ...
 
+    @property
+    def energy(self) -> float: ...
+
+    @property
+    def lived_seconds(self) -> float: ...
+
+    @property
+    def sleep_episode(self) -> SleepEpisode: ...
+
 
 @dataclass(frozen=True, slots=True)
 class RoutineTransition:
@@ -46,15 +56,80 @@ class RoutineTransition:
     nap_until: float
     auto_sleep_night: str
     auto_nap_day: str
+    episode: SleepEpisode
 
 
 @dataclass(frozen=True, slots=True)
 class SimulationStep:
-    """One bounded interval and the workload actually known for that interval."""
+    """One authoritative elapsed interval, with calendar anchors for scheduling."""
 
-    hours: float
+    elapsed_start: float
+    elapsed_end: float
+    wall_start: float
+    wall_end: float
     context: TimeContext | None
     effort: float | None
+    food_activity: FoodActivity | None = None
+    observed: bool = False
+
+    def __post_init__(self) -> None:
+        if (any(not math.isfinite(v) for v in (
+            self.elapsed_start, self.elapsed_end, self.wall_start, self.wall_end,
+        )) or self.elapsed_start < 0 or self.elapsed_end <= self.elapsed_start
+                or self.wall_end < self.wall_start):
+            raise ValueError("Invalid simulation interval")
+
+    @property
+    def seconds(self) -> float:
+        return self.elapsed_end - self.elapsed_start
+
+    @property
+    def hours(self) -> float:
+        """A rate-conversion view, never the source of an elapsed endpoint."""
+        return self.seconds / 3600
+
+
+@dataclass(frozen=True, slots=True)
+class TimePlan:
+    """Full elapsed duration with constant-memory iteration, never an age cap."""
+
+    now: float
+    elapsed_seconds: float
+    elapsed_start: float
+    auto_routine: bool
+    effort: float | None
+    food_activity: FoodActivity | None
+
+    @property
+    def elapsed_end(self) -> float:
+        return self.elapsed_start + self.elapsed_seconds
+
+    def __iter__(self) -> Iterator[SimulationStep]:
+        offset = 0.0
+        known_since = max(0.0, self.elapsed_seconds - MAX_LIVE_EFFORT_SECONDS)
+        while offset < self.elapsed_seconds:
+            wall = self.now - (self.elapsed_seconds - offset)
+            end = self.elapsed_seconds
+            if self.auto_routine:
+                # Align the grid across calls instead of drifting after restart.
+                step_seconds = BALANCE.number("simulation", "needs_step_seconds")
+                boundary = (math.floor(wall / step_seconds) + 1) * step_seconds
+                end = min(end, offset + (boundary - wall))
+            if offset < known_since < end:
+                end = known_since
+            observed = offset >= known_since
+            start_elapsed = self.elapsed_start + offset
+            end_elapsed = self.elapsed_start + end
+            if end_elapsed > start_elapsed:
+                yield SimulationStep(
+                    elapsed_start=start_elapsed, elapsed_end=end_elapsed,
+                    wall_start=wall, wall_end=self.now - (self.elapsed_seconds - end),
+                    context=context_at(wall) if self.auto_routine else None,
+                    effort=self.effort if observed else None,
+                    food_activity=self.food_activity if observed else None,
+                    observed=observed,
+                )
+            offset = end
 
 
 def calculate_daily_routine(
@@ -65,48 +140,27 @@ def calculate_daily_routine(
     allow_nap: bool = False,
     interrupt_nap: bool = False,
     effort: float | None = None,
+    sleep_context: SleepContext | None = None,
+    automatic: bool = True,
 ) -> RoutineTransition:
-    """Apply the established sleep priority to local values, without writes."""
-    sleeping = record.sleeping
-    origin = record.sleep_origin
-    nap_until = record.nap_until
-    night = record.auto_sleep_night
-    nap_day = record.auto_nap_day
-    stamp = context.local.timestamp()
-    if origin == "nap" and (stamp >= nap_until or interrupt_nap):
-        sleeping = False
-        origin = ""
-        nap_until = 0.0
-    if not allow_bedtime and origin == "routine":
-        sleeping = False
-        origin = ""
-        night = ""
-    if context.night and allow_bedtime:
-        if origin == "nap":
-            origin = "routine"
-            nap_until = 0.0
-            night = context.night_key
-        if night != context.night_key:
-            night = context.night_key
-            if not sleeping:
-                sleeping = True
-                origin = "routine"
-    elif sleeping and origin == "routine":
-        sleeping = False
-        origin = ""
-    elif (
-        not context.night and allow_nap and not sleeping and nap_day != context.day_key
-    ):
-        sleeping = True
-        origin = "nap"
-        nap_until = stamp + BALANCE.integer("simulation", "nap_seconds")
-        nap_day = context.day_key
+    """Apply sleep priorities; legacy routine fields remain compatibility reads."""
+    observation = sleep_context or SleepContext.permissions(
+        allow_bedtime, allow_nap, interrupt_nap,
+    )
+    result = sleep_transition(
+        record.sleep_episode, sleeping=record.sleeping, energy=record.energy,
+        elapsed=record.lived_seconds, wall=context.local.timestamp(),
+        context=observation, automatic=automatic,
+    )
+    origin = {"main": "routine", "nap": "nap", "recovery": "recovery"}.get(
+        result.episode.kind, "",
+    ) if result.sleeping else ""
     return RoutineTransition(
-        sleeping=sleeping,
-        sleep_origin=origin,
-        nap_until=nap_until,
-        auto_sleep_night=night,
-        auto_nap_day=nap_day,
+        result.sleeping, origin,
+        result.episode.wake_wall if origin == "nap" else 0.0,
+        context.night_key if origin == "routine" else record.auto_sleep_night,
+        context.day_key if origin == "nap" else record.auto_nap_day,
+        result.episode,
     )
 
 
@@ -117,39 +171,21 @@ def plan_pet_time(
     auto_routine: bool = False,
     effort: float | None = None,
     elapsed_seconds: float | None = None,
-) -> tuple[SimulationStep, ...] | None:
-    """Plan the old bounded catch-up, never projecting stale telemetry."""
+    elapsed_start: float = 0.0,
+    food_activity: FoodActivity | None = None,
+) -> TimePlan | None:
+    """Plan all elapsed time; current observations cover only a recent tail."""
     if not math.isfinite(now):
         return None
     duration = now - updated_at if elapsed_seconds is None else elapsed_seconds
     if not math.isfinite(duration):
         return None
-    elapsed = max(0.0, min(MAX_CATCHUP_SECONDS, duration))
+    elapsed = max(0.0, duration)
+    if (not math.isfinite(elapsed_start) or elapsed_start < 0
+            or not math.isfinite(elapsed_start + elapsed)):
+        raise ValueError("Invalid pet elapsed-time interval")
     if type(effort) not in (int, float):
         effort = None
     elif effort is not None and (not math.isfinite(effort) or not 0.0 <= effort <= 1.0):
         effort = None
-    known_since = now - min(elapsed, MAX_LIVE_EFFORT_SECONDS)
-    if not auto_routine:
-        if effort is None:
-            return (SimulationStep(elapsed / 3600.0, None, None),)
-        unseen_seconds = max(0.0, known_since - (now - elapsed))
-        return (
-            SimulationStep(unseen_seconds / 3600.0, None, None),
-            SimulationStep((now - known_since) / 3600.0, None, effort),
-        )
-    steps: list[SimulationStep] = []
-    cursor = now - elapsed
-    while cursor < now:
-        next_cursor = min(now, cursor + SIMULATION_STEP_SECONDS)
-        if effort is not None and cursor < known_since < next_cursor:
-            next_cursor = known_since
-        steps.append(
-            SimulationStep(
-                hours=(next_cursor - cursor) / 3600.0,
-                context=context_at((cursor + next_cursor) / 2),
-                effort=effort if cursor >= known_since else None,
-            )
-        )
-        cursor = next_cursor
-    return tuple(steps)
+    return TimePlan(now, elapsed, elapsed_start, auto_routine, effort, food_activity)

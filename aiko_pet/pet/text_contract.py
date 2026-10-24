@@ -2,7 +2,129 @@
 
 from __future__ import annotations
 
+from .emotions import EmotionalState
+from .moodlets import MoodletId
+from .wishes import GAME_GOAL_TEXT_VARIANTS, WishId, WishObjective, WishRestriction
+
 TEXT_FIELDS: dict[str, frozenset[str]] = {
+    'game.name.mastermind': frozenset(set()),
+    'mastermind.code': frozenset(set()),
+    'mastermind.rules': frozenset(set()),
+    'mastermind.evaluating': frozenset(set()),
+    'mastermind.board.guesses': frozenset(set()),
+    'mastermind.board.feedback': frozenset(set()),
+    'mastermind.submit': frozenset(set()),
+    'mastermind.clear': frozenset(set()),
+    'mastermind.remaining': frozenset({'remaining'}),
+    'mastermind.feedback': frozenset({'misplaced', 'exact'}),
+    'mastermind.legend': frozenset(set()),
+    'mastermind.color.red': frozenset(set()),
+    'mastermind.color.yellow': frozenset(set()),
+    'mastermind.color.blue': frozenset(set()),
+    'mastermind.color.green': frozenset(set()),
+    'mastermind.color.purple': frozenset(set()),
+    'mastermind.color.white': frozenset(set()),
+    "social.horoscope.read": frozenset(),
+    "social.name.horoscope": frozenset(),
+    "settings.zodiac_sign": frozenset(),
+    "social.horoscope.enter": frozenset(),
+    "social.horoscope.exit": frozenset(),
+    "social.horoscope.sign": frozenset(),
+    "social.horoscope.completed": frozenset(),
+    "social.horoscope.resume": frozenset(),
+    "social.horoscope.paused": frozenset(),
+    "social.zodiac.none": frozenset(),
+    "social.zodiac.aries": frozenset(),
+    "social.zodiac.taurus": frozenset(),
+    "social.zodiac.gemini": frozenset(),
+    "social.zodiac.cancer": frozenset(),
+    "social.zodiac.leo": frozenset(),
+    "social.zodiac.virgo": frozenset(),
+    "social.zodiac.libra": frozenset(),
+    "social.zodiac.scorpio": frozenset(),
+    "social.zodiac.sagittarius": frozenset(),
+    "social.zodiac.capricorn": frozenset(),
+    "social.zodiac.aquarius": frozenset(),
+    "social.zodiac.pisces": frozenset(),
+
+    "social.intro.single_alt1": frozenset(),
+    "social.intro.single_alt2": frozenset(),
+    "social.intro.twopart_alt1": frozenset(),
+    "social.intro.twopart_alt2": frozenset(),
+    "social.intro.fact_alt1": frozenset(),
+    "social.intro.fact_alt2": frozenset(),
+
+    "vn.wish_pinned": frozenset([]),
+    "vn.wish_controls": frozenset([]),
+    "vn.cause_unknown_target": frozenset([]),
+    "vn.cause_entry": frozenset(['number', 'cause']),
+    "vn.cause_by.user": frozenset(),
+    "vn.cause_by.autonomous": frozenset(),
+    "vn.cause_wish": frozenset(['wish', 'target']),
+    "vn.cause_goal_count": frozenset(['count']),
+    "vn.cause_target": frozenset(['target']),
+    "vn.cause_result": frozenset(['result']),
+    "vn.cause_game": frozenset(['round', 'rounds', 'wins', 'losses']),
+    "vn.cause.legacy": frozenset([]),
+    "vn.cause.wish_fulfilled": frozenset([]),
+    "vn.cause.wish_failed": frozenset([]),
+    "vn.cause.interaction": frozenset([]),
+    "vn.cause.poor_care": frozenset([]),
+    "vn.cause.long_term": frozenset([]),
+    "vn.outcome.unknown": frozenset([]),
+    "vn.outcome.completed": frozenset([]),
+    "vn.outcome.win": frozenset([]),
+    "vn.outcome.loss": frozenset([]),
+    "vn.outcome.draw": frozenset([]),
+    "vn.outcome.handover": frozenset([]),
+    "vn.outcome.intake": frozenset([]),
+
+    "social.intro.single": frozenset(),
+    "social.intro.twopart": frozenset(),
+    "social.intro.fact": frozenset(),
+    "settings.online_social": frozenset(),
+    "social.hint": frozenset(),
+    "social.disabled": frozenset(),
+    "social.waiting": frozenset(),
+    "social.error": frozenset(),
+    "social.started": frozenset(),
+    "social.plain": frozenset(),
+    "social.name.single": frozenset(),
+    "social.name.twopart": frozenset(),
+    "social.name.fact": frozenset(),
+    "social.api_entry": frozenset(),
+    "social.source": frozenset({"source"}),
+    "social.quote_author": frozenset({"author"}),
+    "social.quote_license": frozenset(),
+    "social.quote_collection_credit": frozenset(),
+    "social.author_entry": frozenset(),
+    "social.limited": frozenset(),
+    "blackjack.hit": frozenset([]),
+    "blackjack.stand": frozenset([]),
+    "blackjack.total": frozenset(["total"]),
+    "game.next": frozenset([]),
+    "game.brand": frozenset(),
+    "game.score.player": frozenset(),
+    "game.score.aiko": frozenset(),
+    "game.score.draws": frozenset(),
+    "game.score.rounds": frozenset(),
+    "game.hand": frozenset(),
+    "game.rps_again": frozenset(),
+    "game.blackjack_again": frozenset(),
+    "game.score": frozenset(["player", "aiko", "draws"]),
+    "game.player_turn": frozenset([]),
+    "game.aiko_turn": frozenset([]),
+    "game.player_win": frozenset([]),
+    "game.aiko_win": frozenset([]),
+    "game.draw": frozenset([]),
+    "game.select": frozenset(),
+    "game.name.rock_paper_scissors": frozenset(),
+    "game.name.tic_tac_toe": frozenset(),
+    "game.name.blackjack": frozenset(),
+    "game.name.connect_four": frozenset(),
+    "connect_four.legend.player": frozenset(),
+    "connect_four.legend.aiko": frozenset(),
+    "connect_four.wait": frozenset(),
     "world.outside": frozenset(),
     "world.unknown_item": frozenset(),
     "care.sleep_start": frozenset([]),
@@ -12,24 +134,28 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "care.energy_full": frozenset([]),
     "care.energy_success": frozenset([]),
     "care.talk": frozenset([]),
+    "care.pet_refused": frozenset(),
+    "care.pet_enough": frozenset(),
+    "care.pet_enough_firm": frozenset(),
+    "care.pet_boundary_ignored": frozenset(),
     "care.pet": frozenset([]),
     "care.feed_satisfied": frozenset([]),
     "care.feed_repeat": frozenset(["food"]),
-    "care.feed_meal": frozenset(["meal"]),
+    "care.feed_meal": frozenset(["food"]),
     "care.feed_snack": frozenset(["food"]),
-    "mood.sleep_night": frozenset([]),
-    "mood.sleep_rest": frozenset([]),
-    "mood.hungry": frozenset([]),
-    "mood.tired": frozenset([]),
-    "mood.lonely": frozenset([]),
-    "mood.needs_affection": frozenset([]),
-    "mood.bored": frozenset([]),
-    "mood.meal_time": frozenset(["meal"]),
-    "mood.weekend": frozenset([]),
-    "mood.late_night": frozenset([]),
-    "mood.evening": frozenset([]),
-    "mood.good_day": frozenset([]),
-    "mood.content": frozenset([]),
+    "status_hint.sleep_night": frozenset([]),
+    "status_hint.sleep_rest": frozenset([]),
+    "status_hint.hungry": frozenset([]),
+    "status_hint.tired": frozenset([]),
+    "status_hint.lonely": frozenset([]),
+    "status_hint.needs_affection": frozenset([]),
+    "status_hint.bored": frozenset([]),
+    "status_hint.meal_time": frozenset(["meal"]),
+    "status_hint.weekend": frozenset([]),
+    "status_hint.late_night": frozenset([]),
+    "status_hint.evening": frozenset([]),
+    "status_hint.good_day": frozenset([]),
+    "status_hint.content": frozenset([]),
     "workload.unobserved": frozenset([]),
     "workload.high": frozenset([]),
     "workload.medium": frozenset([]),
@@ -59,16 +185,6 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "rps.countdown.1": frozenset([]),
     "rps.countdown.2": frozenset([]),
     "rps.countdown.3": frozenset([]),
-    "emotion.asleep": frozenset([]),
-    "emotion.irritated": frozenset([]),
-    "emotion.tired": frozenset([]),
-    "emotion.hungry": frozenset([]),
-    "emotion.withdrawn": frozenset([]),
-    "emotion.warm": frozenset([]),
-    "emotion.playful": frozenset([]),
-    "emotion.calm": frozenset([]),
-    "emotion.lonely": frozenset([]),
-    "emotion.seeking_affection": frozenset([]),
     "ui.emotion_label": frozenset(["emotion"]),
     "ui.sleep_wake": frozenset([]),
     "ui.sleep_start": frozenset([]),
@@ -77,12 +193,12 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "ui.quit": frozenset([]),
     "ui.application_name": frozenset([]),
     "need.satiety": frozenset([]),
-    "need.mood": frozenset([]),
+    "status.mood": frozenset([]),
     "need.fun": frozenset([]),
     "need.energy": frozenset([]),
     "need.social": frozenset([]),
     "need.affection": frozenset([]),
-    "need.friendship": frozenset([]),
+    "status.friendship": frozenset([]),
     "ui.play": frozenset([]),
     "ui.pet": frozenset([]),
     "ui.talk": frozenset([]),
@@ -134,13 +250,134 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "activity.familiar_suffix": frozenset([]),
     "activity.summary": frozenset(["strain", "summary"]),
     "activity.uptime_suffix": frozenset(["hours"]),
-    "ui.object_status": frozenset(["desktop", "known", "assigned", "missing"]),
-    "ui.need_value": frozenset(["percent", "title"]),
+    "ui.object_status": frozenset([
+        "desktop", "known", "assigned", "missing",
+        "undiscovered", "unidentified", "unresolved",
+    ]),
+    "ui.status_value": frozenset(["percent", "title"]),
     "ui.friendship_level_suffix": frozenset(["level"]),
     "settings.scale": frozenset(["scale"]),
     "food.choice_details": frozenset(["benefit", "category"]),
     "rps.previous_hand": frozenset(["hand"]),
     "rps.player_hand": frozenset(["hand"]),
+    "ui.load_failed": frozenset(["failure"]),
     "ui.save_failed": frozenset(["failure"]),
     "ui.window_title": frozenset([]),
 }
+
+TEXT_FIELDS.update({
+    f"moodlet.{key}.{field}": frozenset()
+    for key in MoodletId
+    for field in ("label", "description")
+})
+TEXT_FIELDS.update({
+    f"wish.{key}.{field}": frozenset()
+    for key in WishId
+    for field in ("label", "description")
+})
+TEXT_FIELDS.update({
+    f"wish.{key}.utterance": (
+        frozenset({"target", "rounds"})
+        if key in (WishId.PLAY_GAME, WishId.WIN_OVERALL, WishId.AVOID_OVERALL_LOSS,
+                   WishId.PLAY_OTHER_GAME)
+        else frozenset({"target"})
+        if key in (WishId.FOOD, WishId.AVOID_FOOD,
+                   WishId.WIN_ROUND, WishId.AVOID_ROUND_LOSS,
+                   WishId.REMATCH_GAME, WishId.COMEBACK_GAME)
+        else frozenset({"rounds"}) if key == WishId.PLAY_ANY_GAME
+        else frozenset()
+    )
+    for key in WishId
+})
+
+TEXT_FIELDS.update({f"emotion.{state}": frozenset() for state in EmotionalState})
+
+TEXT_FIELDS.update({
+    f"wish.goal.{goal}.{field}": (
+        frozenset({"target"}) if goal == WishObjective.NEXT_WIN
+        else frozenset({"target", "rounds"})
+    ) if field == "utterance" else frozenset()
+    for goal in GAME_GOAL_TEXT_VARIANTS
+    for field in ("label", "description", "utterance")
+})
+TEXT_FIELDS.update({
+    "vn.game_wins_progress": frozenset({"completed", "required", "wins", "losses"}),
+    "vn.wins_short": frozenset({"completed", "required"}),
+})
+
+TEXT_FIELDS.update({f"wish.restriction.{key}": frozenset() for key in WishRestriction})
+
+# VN presentation keys and their explicit interpolation contract.
+TEXT_FIELDS.update({
+    "vn.moodlets": frozenset([]),
+    "vn.wishes": frozenset([]),
+    "vn.no_moodlets": frozenset([]),
+    "vn.no_wishes": frozenset([]),
+    "vn.minutes": frozenset(["minutes"]),
+    "vn.moodlet_strength": frozenset(["level", "points"]),
+    "vn.attribution.user": frozenset([]),
+    "vn.attribution.autonomous": frozenset([]),
+    "vn.attribution.unknown": frozenset([]),
+    "vn.decay_paused": frozenset([]),
+    "vn.recovery_wait": frozenset(["time"]),
+    "vn.decay_work": frozenset(["stage", "total"]),
+    "vn.game_progress": frozenset(["completed", "required", "wins", "losses"]),
+    "vn.wish_remaining": frozenset(["time"]),
+    "vn.wish_spoken": frozenset([]),
+    "vn.wish_inner": frozenset([]),
+    "vn.brand": frozenset([]),
+    "vn.back": frozenset([]),
+    "vn.friendship_context": frozenset([]),
+    "vn.wellbeing": frozenset(["target"]),
+    "vn.relationship": frozenset(["stage", "level"]),
+    "vn.stage.acquaintance": frozenset([]),
+    "vn.stage.familiar": frozenset([]),
+    "vn.stage.friend": frozenset([]),
+    "vn.stage.close": frozenset([]),
+    "vn.contact_known": frozenset(["time"]),
+    "vn.contact_unknown": frozenset([]),
+    "vn.sleep.awake": frozenset([]),
+    "vn.sleep.main": frozenset([]),
+    "vn.sleep.nap": frozenset([]),
+    "vn.sleep.recovery": frozenset([]),
+    "vn.sleep.manual": frozenset([]),
+    "vn.sleep.care_break": frozenset([]),
+    "vn.sleep.unknown": frozenset([]),
+    "vn.details.wellbeing": frozenset([]),
+    "vn.details.rhythm": frozenset([]),
+    "vn.details.next": frozenset([]),
+    "vn.details.objects": frozenset([]),
+    "vn.credits": frozenset([]),
+    "vn.credits.apis": frozenset([]),
+    "vn.credits.graphics": frozenset([]),
+    "vn.credits.project": frozenset([]),
+    "vn.credits.no_content": frozenset([]),
+    "vn.credits.graphics_copy": frozenset([]),
+    "vn.credits.project_copy": frozenset([]),
+    "vn.settings.on": frozenset([]),
+    "vn.settings.off": frozenset([]),
+    "vn.sleep_context": frozenset(["reason"]),
+})
+
+TEXT_FIELDS.update({
+    "vn.graphic_licenses": frozenset(),
+    "vn.project_files": frozenset(),
+})
+
+TEXT_FIELDS.update({
+    "vn.rounds_short": frozenset({"completed", "required"}),
+    "vn.wish_meta": frozenset({"time", "state"}),
+    "vn.wish_spoken_tag": frozenset(),
+    "vn.wish_inner_tag": frozenset(),
+    "vn.wish_unavailable_tag": frozenset(),
+})
+
+TEXT_FIELDS["vn.status_value"] = frozenset({"title", "percent", "suffix"})
+
+TEXT_FIELDS.update({
+    "vn.hours": frozenset({"hours"}),
+    "vn.hours_minutes": frozenset({"hours", "minutes"}),
+    "vn.wish_any.game": frozenset(),
+    "vn.wish_any.social": frozenset(),
+    "vn.wish_exclude": frozenset({"target"}),
+})

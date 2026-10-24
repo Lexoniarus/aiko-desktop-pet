@@ -11,8 +11,8 @@ from unittest.mock import patch
 
 from aiko_pet.application.commands import CareCommand, NotificationCommand
 from aiko_pet.application.events import IncomingNotification
-from aiko_pet.gui import DesktopPet
 from aiko_pet.infrastructure.persistence import StateStore
+from tools.desktop_test_support import create_test_desktop
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -28,7 +28,9 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
     def setUp(self) -> None:
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.pet = DesktopPet(store=StateStore(Path(folder.name) / "state.json"))
+        self.pet = create_test_desktop(
+            store=StateStore(Path(folder.name) / "state.json"),
+        )
         self.addCleanup(self.pet.quit)
         # These command tests own pointer input; a real cursor over the sprite
         # legitimately opens controls and defers notifications on a live desktop.
@@ -73,6 +75,7 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         self.assertIsNotNone(self.pet._speech.bubble)
 
     def test_care_uses_new_one_shot_clips_and_sleep_cancels_them(self) -> None:
+        set_test_pet_values(self.pet.state, affection=10)
         self.pet.interact("feed")
         self.assertEqual(self.pet._action_playback.clip_id, "eat")
         self.assertEqual(self.pet._animated.frame_clock.active_key, ("eat", None))
@@ -153,12 +156,12 @@ class ApplicationGuiBoundaryTests(unittest.TestCase):
         with patch.object(self.pet.root, "winfo_containing",
                           return_value=self.pet.canvas):
             self.pet._tick()
-            self.assertTrue(self.pet._hover.interaction_active)
+            self.assertTrue(self.pet._hover.menu_engaged)
             self.assertIsNone(self._bubble_text())
         self.pet._hover.last_hover = time.monotonic() - 10
         self.pet._attention.last_spoken = time.monotonic() - 10
         self.pet._tick()
-        self.assertFalse(self.pet._hover.interaction_active)
+        self.assertFalse(self.pet._hover.menu_engaged)
         self.assertEqual(self._bubble_text(), "Kalender: Termin gleich.")
 
 

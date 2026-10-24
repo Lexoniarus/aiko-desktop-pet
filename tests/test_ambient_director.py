@@ -80,8 +80,62 @@ class AmbientDirectorTests(unittest.TestCase):
         self.policy.next_blink_at = 103
         self.policy.choose(105)
         self.assertTrue(self.policy.blinking)
+        offset_before_completion = self.policy.motion_offset(105.2)
+        self.assertNotEqual(offset_before_completion, 0)
         self.policy.finish_blink(105.2)
-        self.assertEqual(self.policy.motion_offset(105.2), 0)
+        self.assertEqual(self.policy.motion_offset(105.2), offset_before_completion)
+
+    def test_pointer_interruptions_do_not_starve_spontaneous_glances(self) -> None:
+        self.policy.next_blink_at = 1000
+        glances = []
+        for tick in range(430):
+            now = 100 + tick * .14
+            tracking_pointer = (now - 100) % 10 < 4
+            selected = self.policy.select_passive_animation(
+                now, gaze_direction=4 if tracking_pointer else None,
+                observing_computer=False, computer_busy=False,
+                energy=80, mood=80, satiety=80,
+            )
+            if tracking_pointer:
+                self.assertEqual(selected, SpriteSelection("look", 4))
+            elif selected.animation == "look":
+                glances.append(now)
+        self.assertTrue(glances, "Brief mouse activity must not postpone every glance")
+        self.assertLess(glances[0], 125)
+
+    def test_due_glance_waits_for_directional_and_forward_attention(self) -> None:
+        for gaze, forward, expected in (
+            (4, False, SpriteSelection("look", 4)),
+            (None, True, SpriteSelection("idle", 0)),
+        ):
+            with self.subTest(gaze=gaze, forward=forward):
+                policy = AmbientDirector(
+                    100, between=lambda low, _high: low,
+                    direction=lambda options: options[0],
+                )
+                for now in (125, 130):
+                    self.assertEqual(policy.select_passive_animation(
+                        now, gaze_direction=gaze, forward_gaze=forward,
+                        observing_computer=False, computer_busy=False,
+                        energy=80, mood=80, satiety=80,
+                    ), expected)
+                    self.assertFalse(policy.blinking)
+                self.assertEqual(policy.next_glance_at, 122)
+                self.assertEqual(policy.select_passive_animation(
+                    130.1, gaze_direction=None, observing_computer=False,
+                    computer_busy=False, energy=80, mood=80, satiety=80,
+                ), SpriteSelection("look", 2))
+
+    def test_interrupted_glance_is_cancelled_and_schedules_one_fresh_gap(self) -> None:
+        self.policy.next_blink_at = 1000
+        self.assertEqual(self.policy.choose(122), SpriteSelection("look", 2))
+        self.policy.suspend(122.2)
+        self.assertEqual(self.policy.next_glance_at, 144.2)
+        self.policy.suspend(130)
+        self.assertEqual(self.policy.next_glance_at, 144.2)
+        self.policy.next_blink_at = 1000
+        self.assertEqual(self.policy.choose(130), SpriteSelection("idle", 0))
+        self.assertEqual(self.policy.choose(144.2), SpriteSelection("look", 2))
 
     def test_external_gaze_keeps_sway_without_starting_ambient_blink(self) -> None:
         selected = self.policy.select_passive_animation(

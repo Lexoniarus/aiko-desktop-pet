@@ -50,38 +50,30 @@ FUN_BALANCE = FunBalance()
 
 @dataclass(frozen=True, slots=True)
 class GameFunProfile:
-    """Per-game meaning of one completed unit and of the game's outcomes."""
+    """Per-game need effects of completed units; outcomes belong to reactions."""
 
     base_fun_per_completed_unit: float
-    successful_unit_bonus: float
-    neutral_unit_bonus: float
-    setback_unit_bonus: float
     energy_cost_per_completed_unit: float
     social_gain_per_completed_unit: float
 
 
 GAME_FUN_PROFILES: dict[str, GameFunProfile] = {
-    "rock_paper_scissors": GameFunProfile(
+    game: GameFunProfile(
         base_fun_per_completed_unit=BALANCE.number(
-            "game_rock_paper_scissors", "base_fun_per_completed_unit"
-        ),
-        successful_unit_bonus=BALANCE.number(
-            "game_rock_paper_scissors", "successful_unit_bonus"
-        ),
-        neutral_unit_bonus=BALANCE.number(
-            "game_rock_paper_scissors", "neutral_unit_bonus"
-        ),
-        setback_unit_bonus=BALANCE.number(
-            "game_rock_paper_scissors", "setback_unit_bonus"
+            f"game_{game}", "base_fun_per_completed_unit"
         ),
         energy_cost_per_completed_unit=BALANCE.number(
-            "game_rock_paper_scissors", "energy_cost_per_completed_unit"
+            f"game_{game}", "energy_cost_per_completed_unit"
         ),
         social_gain_per_completed_unit=BALANCE.number(
-            "game_rock_paper_scissors", "social_gain_per_completed_unit"
+            f"game_{game}", "social_gain_per_completed_unit"
         ),
-    ),
+    )
+    for game in ("rock_paper_scissors", "tic_tac_toe", "blackjack")
 }
+# Reuse the completed-board-round profile without adding or changing balance values.
+GAME_FUN_PROFILES["connect_four"] = GAME_FUN_PROFILES["tic_tac_toe"]
+GAME_FUN_PROFILES["mastermind"] = GAME_FUN_PROFILES["tic_tac_toe"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -123,7 +115,7 @@ class FunReward:
 
 
 def advance_fun(current_fun: float, hours: float, *, sleeping: bool) -> float:
-    """Use only simulated active session time; sleeping cannot create boredom."""
+    """Use real elapsed awake time; sleeping cannot create boredom."""
     if not math.isfinite(hours) or hours <= 0:
         return clamp_need_value(current_fun)
     rate = (
@@ -171,12 +163,7 @@ def calculate_game_session_fun(
     if experience.completed_units == 0:
         return FunReward(0.0, 0.0, 0.0)
     profile = GAME_FUN_PROFILES[experience.game_id]
-    points = (
-        experience.completed_units * profile.base_fun_per_completed_unit
-        + experience.successful_units * profile.successful_unit_bonus
-        + experience.neutral_units * profile.neutral_unit_bonus
-        + experience.setback_units * profile.setback_unit_bonus
-    )
+    points = experience.completed_units * profile.base_fun_per_completed_unit
     points *= completed_unit_reward_fraction(experience.completed_units)
     points *= satisfaction_reward_fraction(current_fun)
     points = min(FUN_BALANCE.maximum_fun_gain_per_session, points)
