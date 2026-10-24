@@ -7,6 +7,7 @@ import time
 from copy import deepcopy
 from dataclasses import replace
 from typing import Any
+from uuid import uuid4
 
 from ..games.contracts import RoundOutcome
 from .balance import BALANCE
@@ -16,12 +17,16 @@ from .care_actions import (
     resolve_care_time,
 )
 from .care_evidence import (
-    MAX_CARE_EXPERIENCES,
     CareActivity,
-    CareEvidenceState,
     CareExperience,
 )
-from .care_result import CareResult
+from .care_experiences import (
+    award_comeback,
+    award_everyday_experience,
+    complete_play_session,
+    record_experience,
+)
+from .care_result import CareEffect, CareResult
 from .consumption import ConsumptionOrigin
 from .food import (
     FoodActivity,
@@ -428,6 +433,38 @@ class PetState:
                    if resolution.cause is not None else None),
         )
         self._change(wishes=resolution.state, moodlets=moodlets)
+        if personal and resolution.cause is not None:
+            self._record_wish_experience(resolution)
+
+    def _record_wish_experience(self, resolution: WishResolution) -> None:
+        """Successful personal wishes enrich the actual outcome, never assignment."""
+        cause, definition = resolution.cause, resolution.fulfilled
+        assert cause is not None and cause.wish is not None and definition is not None
+        receipt = cause.event_id or f"wish:{cause.wish.instance_id}"
+        if definition.area == WishArea.GAMES:
+            receipt = f"play:{cause.target_id}:{receipt}"
+        evidence = self.moodlets.care_evidence
+        existing = next((e for e in evidence.experiences if e.receipt_id == receipt),
+                        None) if evidence is not None else None
+        if existing is not None:
+            assert evidence is not None
+            self._change(moodlets=replace(self.moodlets, care_evidence=replace(
+                evidence, experiences=tuple(
+                    replace(e, wish_instance_id=cause.wish.instance_id)
+                    if e == existing else e for e in evidence.experiences
+                ),
+            )))
+            return
+        activity = {WishArea.GAMES: CareActivity.PLAY,
+                    WishArea.SOCIAL: CareActivity.SOCIAL,
+                    WishArea.AFFECTION: CareActivity.PETTING,
+                    WishArea.FOOD: CareActivity.FOOD_HANDOVER}[definition.area]
+        self._record_care_experience(CareExperience(
+            receipt, self.lived_seconds, activity, cause.outcome,
+            definition.area, definition.target_kind, cause.target_id,
+            wish_instance_id=cause.wish.instance_id,
+            pleasant=definition.area != WishArea.GAMES, object_id=cause.object_id,
+        ))
 
     def complete_social_experience(
         self, completion: SocialCompletion, *, arrangement_ready: bool = False,
@@ -435,12 +472,13 @@ class PetState:
         if (completion.started_at is not None
                 and completion.started_at > self.lived_seconds):
             return
+        before = self.moodlets
         receipt = (f"social:{completion.sequence_id}"
                    if completion.sequence_id is not None else None)
         if receipt is not None and not self._record_care_experience(CareExperience(
             receipt, self.lived_seconds, CareActivity.SOCIAL, MoodletOutcome.COMPLETED,
             WishArea.SOCIAL, WishTargetKind.SOCIAL, completion.category,
-            wish_instance_id=completion.wish_instance_id,
+            pleasant=True,
         )):
             return
         self.experience_interaction(HelpfulInteraction(
@@ -453,6 +491,14 @@ class PetState:
                 instance_id=completion.wish_instance_id, event_id=receipt,
                 started_at=completion.started_at,
             ), personal=True)
+        if receipt is not None:
+            evidence = self.moodlets.care_evidence
+            assert evidence is not None
+            event = next(e for e in evidence.experiences
+                         if e.receipt_id == receipt)
+            self._change(moodlets=award_everyday_experience(
+                before, self.moodlets, event,
+            ))
 
     def record_completed_game_round(
         self, *, game_id: str, round_id: str, outcome: RoundOutcome,
@@ -469,14 +515,22 @@ class PetState:
 
     def _record_care_experience(self, event: CareExperience) -> bool:
         """Use the existing bounded evidence store for unique actual completions."""
-        evidence = self.moodlets.care_evidence or CareEvidenceState(self.lived_seconds)
-        if any(e.receipt_id == event.receipt_id for e in evidence.experiences):
-            return False
-        self._change(moodlets=replace(self.moodlets, care_evidence=replace(
-            evidence,
-            experiences=(*evidence.experiences, event)[-MAX_CARE_EXPERIENCES:],
-        )))
-        return True
+        moodlets, recorded = record_experience(self.moodlets, event)
+        self._change(moodlets=moodlets)
+        return recorded
+
+    def finish_game_round_experience(self, *, game_id: str, round_id: str) -> None:
+        self._change(moodlets=award_comeback(
+            self.moodlets, f"play:{game_id}:{round_id}",
+        ))
+
+    def complete_play_session(
+        self, *, game_id: str, session_id: str, round_id: str,
+    ) -> None:
+        self._change(moodlets=complete_play_session(
+            self.moodlets, game_id=game_id, session_id=session_id,
+            last_receipt=f"play:{game_id}:{round_id}", elapsed=self.lived_seconds,
+        ))
 
     def complete_wish_round(
         self, instance_id: int, *, game_id: str, session_id: str, round_id: str,
@@ -819,6 +873,7 @@ class PetState:
             if object_id is not None:
                 self.release_food_handovers(frozenset((object_id,)))
         elif transition.result.affection_accepted:
+            before = self.moodlets
             self.experience_interaction(HelpfulInteraction("petting"))
             if transition.wish_instance_id is not None:
                 self._apply_wish_resolution(fulfill_activity_wish(
@@ -826,6 +881,19 @@ class PetState:
                     definitions=WISH_CATALOG.definitions,
                     instance_id=transition.wish_instance_id,
                 ), personal=personal)
+            if personal and transition.result.effect == CareEffect.AFFECTION:
+                receipt = (f"wish:{transition.wish_instance_id}:fulfilled"
+                           if transition.wish_instance_id is not None
+                           else f"petting:{uuid4().hex}")
+                event = CareExperience(
+                    receipt, self.lived_seconds, CareActivity.PETTING,
+                    MoodletOutcome.COMPLETED, WishArea.AFFECTION,
+                    WishTargetKind.CARE, "pet", pleasant=True,
+                )
+                self._record_care_experience(event)
+                self._change(moodlets=award_everyday_experience(
+                    before, self.moodlets, event,
+                ))
         return transition.result
 
     def due_meal(self, context: TimeContext) -> str | None:

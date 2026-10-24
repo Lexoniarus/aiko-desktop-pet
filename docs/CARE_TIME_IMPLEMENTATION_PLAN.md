@@ -8556,3 +8556,26 @@ files; Ruff also checked the changed tests. The index export excludes parallel
 horoscope, UI, character assets and related text/documentation edits. Native Tk
 creation was blocked during test discovery and execution. No test windows,
 mouse control, live-save access, full suite or GitHub CI was used.
+
+
+### Delivery slice 7A: qualified positive experiences without wishes
+
+Actual completed social sequences and welcome petting can qualify connection
+and security after four hours without the corresponding actual activity. A
+completed shared session requires at least two observed rounds and a two-hour
+play gap. Two consecutive defeats followed by a real win in the same game can
+qualify pride. Refusals, tolerated excess petting, empty sessions, mere admission
+and legacy values without a completion identity provide no positive evidence.
+
+Successful wishes enrich the same actual completion receipt. The same event
+receives either its wish impression or its everyday impression; a distinct
+comeback round can still precede a later shared-play fulfillment. Actual activity
+is retained even when a wish already supplied its emotional reward. The existing
+Pet aggregate owns this bounded evidence and encounter links; no UI clock or
+permanent game archive is introduced. Care visits group welcome activities until
+two hours without such contact, using the existing distributed-contact scale.
+
+Focused local tests: 35 passed in 0.345 seconds, slowest 0.059 seconds. Native Tk
+creation was blocked throughout discovery and execution. Focused Ruff and strict
+Mypy passed. Long-term qualification and concrete negative/poor-care causes
+remain the following step-7 slices. No desktop windows, mouse control or CI.

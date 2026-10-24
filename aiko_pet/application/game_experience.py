@@ -77,6 +77,7 @@ class GameExperienceCoordinator:
         self._progression = progression
         self._arrangement_ready = arrangement_ready
         self._round: _WishRoundAttempt | None = None
+        self._last_round: GameRoundEvent | None = None
 
     def observe_round(self, event: GameRoundEvent, inputs: SessionInputs) -> None:
         """Observe actual start/result; capture the existing wish before play."""
@@ -115,6 +116,10 @@ class GameExperienceCoordinator:
                 session_id=event.session_id, round_id=event.identity,
                 started_at=pending.elapsed, outcome=outcome,
             )
+        self._state.finish_game_round_experience(
+            game_id=event.game_id.value, round_id=event.identity,
+        )
+        self._last_round = event
         self._round = None  # Retire after a successful commit, before UI callbacks.
 
     def complete(
@@ -131,6 +136,12 @@ class GameExperienceCoordinator:
             experience, now=inputs.wall_time,
             arrangement_ready=self._arrangement_ready(),
         )
+        last, self._last_round = self._last_round, None
+        if last is not None and last.game_id.value == experience.game_id:
+            self._state.complete_play_session(
+                game_id=experience.game_id, session_id=last.session_id,
+                round_id=last.identity,
+            )
         self._adaptive.note_interaction(inputs.wall_time)
         self._mind.record_accepted_care("play", inputs.monotonic_time)
         return GameExperienceOutcome(gained, self._state.fun)
