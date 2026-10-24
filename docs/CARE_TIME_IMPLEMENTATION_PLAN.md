@@ -38,6 +38,11 @@
 > first secures the completed parallel horoscope baseline, then maps adaptive
 > memory, API histories/limits and the bounded current-day reading to SQLite.
 
+> **SQL-6 in progress, 2026-10-24:** the
+> [SQL-6 delivery record](#sqlite-delivery-sql-6-transactional-store-and-revision-protection)
+> records session revision metadata, complete transactions, first publication
+> and schema backup/error boundaries. Runtime cutover remains SQL-8.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -9460,3 +9465,30 @@ writer or SQL-driven rollover. The active store remains JSON until SQL-8.
 Parallel character/asset exports and their documentation remain untouched.
 SQL-5 is complete; SQL-6 transactional store assembly and expected-revision
 protection are next, followed by strict import and runtime cutover as planned.
+
+
+### SQLite delivery SQL-6: transactional store and revision protection
+
+The owner authorized SQL-6 on 2026-10-24 with small commits, targeted local
+tests and pushes, no windows, mouse control or CI. Strict JSON import and
+runtime cutover remain SQL-7 and SQL-8; the active JSON writer is unchanged.
+
+#### SQL-6A: existing session boundary and complete owner assembly
+
+`LoadedPetData` and `RestoredPetSession` now carry the existing immutable
+`SaveRevision`, defaulting to zero for unchanged JSON callers. Offline domain
+reconstruction preserves the loaded revision until a later successful save.
+`SavedPetWriter` defines complete owner inputs plus explicit expected revision
+and a committed revision result; it imports no SQL implementation.
+
+`sqlite/session_rows.py` composes all previously delivered mappers into one
+caller-owned transaction. Reading builds the existing PetState from its
+existing immutable checkpoint plus the settings/adaptive/social/World/Memory
+owners. It neither advances time nor fills missing required records with a
+replacement pet. Writing never commits or introduces another state aggregate.
+
+Two new assembly cases, seven existing restoration cases and two revision/error
+contract cases passed: **11 tests in 0.076 seconds**, longest 0.026 seconds rounded
+upward. Scoped Ruff, fresh strict Mypy and Pyright including new tests passed.
+Tk was blocked and saves were temporary. Transactional store and schema backup
+work follow in the next scoped commits; no runtime cutover is claimed here.

@@ -22,6 +22,7 @@ from .active_time import ActiveSessionClock, SessionInputs
 from .session_time import SessionTimeProgression
 from .settings import PetSettings
 from .social_history import SocialContentHistory
+from .storage_contracts import SaveRevision
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,12 +45,24 @@ class LoadedPetData:
     world: WorldSnapshot | None = None
     object_memory: ObjectMemorySnapshot | None = None
     social_history: SocialContentHistory = SocialContentHistory()
+    revision: SaveRevision = SaveRevision()
 
 
 class SavedPetReader(Protocol):
     """Read saved values without performing any domain simulation."""
 
     def load_session(self, *, now: float | None = None) -> LoadedPetData: ...
+
+
+class SavedPetWriter(Protocol):
+    """Save all owners together and return a revision only after successful commit."""
+
+    def save(
+        self, pet: PetState, settings: PetSettings, *,
+        expected_revision: SaveRevision, adaptive: AdaptiveMemory,
+        social_history: SocialContentHistory, world: WorldSnapshot | None = None,
+        world_recovery_x: float = 0, object_memory: ObjectMemorySnapshot | None = None,
+    ) -> SaveRevision: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,6 +75,7 @@ class RestoredPetSession:
     world: WorldSnapshot | None = None
     object_memory: ObjectMemorySnapshot | None = None
     social_history: SocialContentHistory = SocialContentHistory()
+    revision: SaveRevision = SaveRevision()
 
 
 class PetSessionRestorer:
@@ -114,4 +128,5 @@ class PetSessionRestorer:
             social_history=loaded.social_history,
             world=world.snapshot() if world is not None else None,
             object_memory=memory.export(now=0) if world is not None else None,
+            revision=loaded.revision,
         )
