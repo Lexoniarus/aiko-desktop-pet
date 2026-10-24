@@ -6,6 +6,8 @@ from typing import Mapping
 from .balance import BALANCE
 from .friendship_history import NEED_NAMES, FriendshipHistory
 from .moodlets import (
+    MoodletCause,
+    MoodletCauseKind,
     MoodletDefinition,
     MoodletId,
     MoodletState,
@@ -179,8 +181,15 @@ def qualify_poor_care(
         cursor = replace(cursor, exposed=True)
         if level > cursor.handled_level:
             if episode is None or level > episode.level:
-                state = reinforce_moodlet(state, definition.id, elapsed=elapsed,
-                                          definitions=definitions, level=level)
+                state = reinforce_moodlet(
+                    state, definition.id, elapsed=elapsed,
+                    definitions=definitions, level=level,
+                    cause=MoodletCause(
+                        MoodletCauseKind.POOR_CARE, elapsed,
+                        f"poor_care:{parameters.need}:{cursor.accounted.at}:{level}",
+                        target_id=parameters.need,
+                    ),
+                )
             cursor = replace(
                 cursor, handled=mark_exposure(history.critical, elapsed, i),
                 handled_level=level,

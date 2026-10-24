@@ -7,6 +7,9 @@ from ...pet.wishes import WishGoal, WishId, WishObjective, wish_text_key
 
 
 def _target_label(target: str) -> str:
+    for key in (f"need.{target}", f"moodlet.{target}.label"):
+        if key in GERMAN_TEXT.messages:
+            return GERMAN_TEXT.format(key)
     if target in FOOD_CATALOG:
         return FOOD_CATALOG[target].display_name
     game_key = f"game.name.{target}"

@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections import deque
 from collections.abc import Callable
 from dataclasses import replace
+from uuid import uuid4
 
 from ..pet.animation.character import PlaybackEvent
 from ..pet.balance import BALANCE
@@ -87,6 +88,7 @@ class ObjectInteractionCoordinator:
         self._auxiliary_serial = 0
         self._next_contact_feedback = 0.0
         self._withholding_serial = 0
+        self._care_session_id = uuid4().hex
         self._on_withholding = withholding
         self._experience = experience
         self._withholding_active = withholding_active
@@ -99,6 +101,12 @@ class ObjectInteractionCoordinator:
         """Require the canonical record inside an episode-owned operation."""
         assert self._active_episode is not None
         return self._active_episode
+
+    @property
+    def _withholding_incident_id(self) -> str:
+        episode = self._episode
+        return (f"{self._care_session_id}:{episode.interaction_id}:"
+                f"{episode.withholding.takes}")
 
     @property
     def memory_id(self) -> str | None:
@@ -182,7 +190,9 @@ class ObjectInteractionCoordinator:
         self._episode.withholding = self._episode.withholding.taken(self._now())
         if wants:
             existing_impression = self._withholding_active()
-            self._experience(WithholdingObserved(repeated_take=True))
+            self._experience(WithholdingObserved(
+                repeated_take=True, incident_id=self._withholding_incident_id,
+            ))
             # A repeated take already reinforces an existing impression; the
             # first subsequent complaint must not count the same take again.
             if existing_impression:
@@ -240,7 +250,10 @@ class ObjectInteractionCoordinator:
                 episode.withholding = response.episode
                 self.request_feedback(response.event)
                 if response.irritated:
-                    self._experience(WithholdingObserved(response.reinforces_moodlet))
+                    self._experience(WithholdingObserved(
+                        response.reinforces_moodlet,
+                        incident_id=self._withholding_incident_id,
+                    ))
                     self._withholding_serial += 1
                     self._on_withholding(
                         f"{episode.interaction_id}/withholding_{self._withholding_serial}",

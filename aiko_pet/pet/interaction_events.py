@@ -51,6 +51,8 @@ class FoodConsumed:
 class WithholdingObserved:
     reinforce: bool = True
     repeated_take: bool = False
+    incident_id: str | None = None
+    object_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -61,6 +63,7 @@ class WithholdingEnded:
 @dataclass(frozen=True, slots=True)
 class ArrangementDisrupted:
     attributed: bool = False
+    object_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

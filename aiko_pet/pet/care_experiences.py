@@ -1,11 +1,12 @@
 """Pure recording of real personal experiences in the existing Pet evidence.
 
-Encounters are care visits separated by two hours without pleasant contact.
+Encounters group welcome contact into visits anchored at least two hours apart.
 Wish assignment is not fulfillment: only a successful outcome sets the saved
 wish identity. No needs refill, timer or autonomous intake invents a visit.
 """
 
 from dataclasses import replace
+from uuid import uuid4
 
 from .care_evidence import (
     MAX_CARE_ENCOUNTERS,
@@ -25,6 +26,7 @@ from .moodlets import (
     MoodletState,
     reinforce_moodlet,
 )
+from .wishes import WishArea, WishId, WishResolution, WishTargetKind
 
 ENCOUNTER_GAP_SECONDS = 2 * 3600
 EVERYDAY_GAPS = {
@@ -46,8 +48,7 @@ def record_experience(
     if event.pleasant:
         if (
             encounters
-            and event.occurred_at - encounters[-1].last_activity_at
-            < ENCOUNTER_GAP_SECONDS
+            and event.occurred_at - encounters[-1].started_at < ENCOUNTER_GAP_SECONDS
         ):
             encounter = replace(
                 encounters[-1],
@@ -221,7 +222,9 @@ def complete_play_session(
     updated = state.care_evidence
     assert updated is not None
     # Earlier fulfilled round goals belong to this real shared visit too.
-    encounter_id = updated.experiences[-1].encounter_id
+    encounter_id = next(
+        e.encounter_id for e in updated.experiences if e.receipt_id == last_receipt
+    )
     encounters = tuple(
         replace(e, started_at=min(e.started_at, rounds[0].occurred_at))
         if e.instance_id == encounter_id
@@ -255,4 +258,133 @@ def complete_play_session(
     )
     if rounds[0].occurred_at - previous >= 2 * 3600 and not rewarded:
         state = award_positive(state, MoodletId.SHARED_PLAY, last, elapsed=elapsed)
+    return state
+
+
+def record_wish_experience(
+    state: MoodletState,
+    resolution: WishResolution,
+) -> MoodletState:
+    """Record successful personal outcomes, or an explicitly unwanted gift."""
+    cause, definition = resolution.cause, resolution.fulfilled
+    if cause is None or cause.wish is None:
+        return state
+    wish_id = cause.wish.instance_id
+    if definition is None:
+        if (
+            cause.kind != MoodletCauseKind.WISH_FAILED
+            or cause.wish.definition_id != WishId.AVOID_FOOD.value
+        ):
+            return state  # A fair game defeat is not upsetting treatment.
+        expressed = any(
+            w.instance_id == wish_id and w.expressed_at is not None
+            for r in resolution.state.food_handovers
+            for w in r.wishes
+        )
+        state, _ = record_experience(
+            state,
+            CareExperience(
+                cause.event_id or f"wish:{wish_id}:failed",
+                cause.occurred_at,
+                CareActivity.FOOD_HANDOVER,
+                cause.outcome,
+                WishArea.FOOD,
+                WishTargetKind.FOOD,
+                cause.target_id,
+                upsetting=True,
+                boundary_violated=expressed,
+                object_id=cause.object_id,
+            ),
+        )
+        return state
+    receipt = cause.event_id or f"wish:{wish_id}"
+    if definition.area == WishArea.SOCIAL and receipt.startswith("wish:"):
+        return state  # Legacy direct values have no original sequence identity.
+    if definition.area == WishArea.GAMES:
+        receipt = f"play:{cause.target_id}:{receipt}"
+    evidence = state.care_evidence
+    existing = (
+        next((e for e in evidence.experiences if e.receipt_id == receipt), None)
+        if evidence is not None
+        else None
+    )
+    if existing is not None:
+        assert evidence is not None
+        return replace(
+            state,
+            care_evidence=replace(
+                evidence,
+                experiences=tuple(
+                    replace(e, wish_instance_id=wish_id) if e == existing else e
+                    for e in evidence.experiences
+                ),
+            ),
+        )
+    activity = {
+        WishArea.GAMES: CareActivity.PLAY,
+        WishArea.SOCIAL: CareActivity.SOCIAL,
+        WishArea.AFFECTION: CareActivity.PETTING,
+        WishArea.FOOD: CareActivity.FOOD_HANDOVER,
+    }[definition.area]
+    state, _ = record_experience(
+        state,
+        CareExperience(
+            receipt,
+            cause.occurred_at,
+            activity,
+            cause.outcome,
+            definition.area,
+            definition.target_kind,
+            cause.target_id,
+            wish_instance_id=wish_id,
+            pleasant=definition.area != WishArea.GAMES,
+            object_id=cause.object_id,
+        ),
+    )
+    return state
+
+
+def record_personal_food(
+    state: MoodletState,
+    *,
+    food_id: str,
+    elapsed: float,
+    object_id: str | None,
+    wish_instance_id: int | None,
+    repetitive: bool,
+) -> MoodletState:
+    """An actual welcome intake can confirm contact, never a second gift outcome."""
+    evidence = state.care_evidence
+    if (
+        repetitive
+        or evidence is not None
+        and any(
+            e.activity == CareActivity.FOOD_HANDOVER
+            and (
+                object_id is not None
+                and e.object_id == object_id
+                or wish_instance_id is not None
+                and e.wish_instance_id == wish_instance_id
+                or e.occurred_at == elapsed
+                and e.upsetting
+                and e.target_id == food_id
+            )
+            for e in evidence.experiences
+        )
+    ):
+        return state
+    state, _ = record_experience(
+        state,
+        CareExperience(
+            f"food:{uuid4().hex}",
+            elapsed,
+            CareActivity.FOOD_HANDOVER,
+            MoodletOutcome.INTAKE,
+            WishArea.FOOD,
+            WishTargetKind.FOOD,
+            food_id,
+            pleasant=True,
+            object_id=object_id,
+        ),
+    )
     return state

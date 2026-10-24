@@ -17,6 +17,7 @@ from .interaction_events import (
     WithholdingEnded,
     WithholdingObserved,
 )
+from .interaction_experiences import record_upsetting_interaction
 from .moodlets import (
     FoodMonotonyParameters,
     MoodletAttribution,
@@ -25,7 +26,6 @@ from .moodlets import (
     MoodletState,
     PettingParameters,
     RelocationParameters,
-    reinforce_moodlet,
     relieve_moodlet,
     resolve_moodlet_cause,
 )
@@ -66,14 +66,19 @@ def apply_interaction_event(
     memory = state.interactions
     if isinstance(event, BoundaryCommunicated):
         if event.kind == "poking":
-            memory = replace(memory, poke_boundary_at=elapsed)
+            memory = replace(memory, poke_boundary_at=(
+                elapsed if memory.poke_boundary_at is None else memory.poke_boundary_at
+            ))
         elif event.kind == "petting":
             parameters = definitions[MoodletId.CROWDED].parameters
             assert isinstance(parameters, PettingParameters)
             if (memory.petting_excess_attempts <= parameters.accepted_excess_attempts
                     and elapsed >= memory.petting_refused_until):
                 return InteractionConsequences(state)
-            memory = replace(memory, petting_boundary_at=elapsed)
+            memory = replace(memory, petting_boundary_at=(
+                elapsed if memory.petting_boundary_at is None
+                else memory.petting_boundary_at
+            ))
         elif event.kind == "food_variety":
             if not memory.food.request_pending:
                 return InteractionConsequences(state)
@@ -90,9 +95,11 @@ def apply_interaction_event(
                 state, interactions=replace(memory, poke_boundary_at=None),
             ))
         if memory.poke_boundary_at is not None:
-            state = reinforce_moodlet(state, MoodletId.POKING, elapsed=elapsed,
-                                      definitions=definitions,
-                                      attribution=MoodletAttribution.USER)
+            state = record_upsetting_interaction(
+                state, MoodletId.POKING, elapsed=elapsed, definitions=definitions,
+                attribution=MoodletAttribution.USER,
+                incident_id=str(memory.poke_boundary_at), boundary_violated=True,
+            )
         return InteractionConsequences(state)
     if isinstance(event, FoodConsumed):
         return _consume_food(state, event, elapsed=elapsed, definitions=definitions)
@@ -124,9 +131,13 @@ def apply_interaction_event(
                                              definitions=definitions)
         elif episode is not None or not event.repeated_take:
             if event.reinforce or episode is None:
-                state = reinforce_moodlet(state, MoodletId.WITHHELD, elapsed=elapsed,
-                                          definitions=definitions,
-                                          attribution=MoodletAttribution.USER)
+                state = record_upsetting_interaction(
+                    state, MoodletId.WITHHELD, elapsed=elapsed, definitions=definitions,
+                    attribution=MoodletAttribution.USER,
+                    incident_id=(event.incident_id or str(
+                        episode.started_at if episode is not None else elapsed,
+                    )), object_id=event.object_id, boundary_violated=True,
+                )
             else:
                 state = replace(state, active=tuple(
                     replace(e, decay_paused=True) if e == episode else e
@@ -134,11 +145,11 @@ def apply_interaction_event(
                 ))
         return InteractionConsequences(state)
     if isinstance(event, ArrangementDisrupted):
-        state = reinforce_moodlet(state, MoodletId.DISRUPTED, elapsed=elapsed,
-                                  definitions=definitions,
-                                  attribution=(MoodletAttribution.USER
-                                               if event.attributed
-                                               else MoodletAttribution.UNKNOWN))
+        state = record_upsetting_interaction(
+            state, MoodletId.DISRUPTED, elapsed=elapsed, definitions=definitions,
+            attribution=(MoodletAttribution.USER if event.attributed
+                         else MoodletAttribution.UNKNOWN), object_id=event.object_id,
+        )
         relocation = definitions[MoodletId.DISRUPTED].parameters
         assert isinstance(relocation, RelocationParameters)
         return InteractionConsequences(
@@ -183,9 +194,11 @@ def _attempt_petting(
             effect = (CareEffect.AFFECTION_ENOUGH if attempts == 1 else
                       CareEffect.AFFECTION_ENOUGH_FIRM)
         return InteractionConsequences(state, petting_effect=effect)
-    state = reinforce_moodlet(state, MoodletId.CROWDED, elapsed=elapsed,
-                              definitions=definitions,
-                              attribution=MoodletAttribution.USER)
+    state = record_upsetting_interaction(
+        state, MoodletId.CROWDED, elapsed=elapsed, definitions=definitions,
+        attribution=MoodletAttribution.USER,
+        incident_id=str(memory.petting_boundary_at), boundary_violated=True,
+    )
     episode = next(e for e in state.active if e.definition_id == MoodletId.CROWDED)
     memory = replace(memory, petting_refused_until=(
         elapsed + parameters.refusal_seconds[episode.level - 1]
@@ -231,10 +244,12 @@ def _consume_food(
         if not requested:
             memory = replace(memory, request_pending=True, requested_at=None,
                              ignored_portions=0)
-        state = reinforce_moodlet(state, MoodletId.FOOD_MONOTONY, elapsed=elapsed,
-                                  definitions=definitions,
-                                  attribution=(MoodletAttribution.USER if event.personal
-                                               else MoodletAttribution.AUTONOMOUS))
+        state = record_upsetting_interaction(
+            state, MoodletId.FOOD_MONOTONY, elapsed=elapsed, definitions=definitions,
+            attribution=(MoodletAttribution.USER if event.personal
+                         else MoodletAttribution.AUTONOMOUS), target_id=event.food_id,
+            boundary_violated=requested and event.personal,
+        )
     state = replace(state, interactions=replace(state.interactions, food=memory))
     return InteractionConsequences(
         state, penalty_kind="food_variety" if penalty else "", penalty_points=penalty,

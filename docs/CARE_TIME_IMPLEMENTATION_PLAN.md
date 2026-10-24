@@ -8579,3 +8579,36 @@ Focused local tests: 35 passed in 0.345 seconds, slowest 0.059 seconds. Native T
 creation was blocked throughout discovery and execution. Focused Ruff and strict
 Mypy passed. Long-term qualification and concrete negative/poor-care causes
 remain the following step-7 slices. No desktop windows, mouse control or CI.
+
+
+### Delivery slice 7B: precise negative causes and real care encounters
+
+Negative interaction producers now retain their actual typed cause, including
+recognized food identity when known. Poor-care producers retain the actual need
+and newly qualified burden level. Existing immediate penalties, willingness,
+refusal, relief and nutrition remain with their existing policies.
+
+Repeated poking after a communicated boundary, petting-boundary disregard and
+escalated withholding provide one upsetting-pattern receipt per independent
+incident. Escalation still contributes real immediate Moodlet causes, capped by
+current intensity. Withholding identities distinguish actual renewed takes and
+application sessions. Fair game defeats, autonomous food intake and ordinary
+absence do not become bad-treatment evidence. An expressly unwanted gift only
+becomes upsetting when actually recognized; only an originally expressed wish
+constitutes a communicated boundary in that case. Unknown food is not inferred.
+
+Successful wishes retain their actual fulfillment identity rather than merely
+the admission assignment. Welcome personal food intake can confirm contact,
+while a recognized gift and its later consumption remain one experience. The
+aggregate delegates these rules to pure evidence policies. Existing hover
+localization recognizes stored need/family targets without adding text data.
+
+Clarification of 7A encounter grouping: each two-hour visit is anchored at its
+first welcome activity. Further activity extends its endpoint but does not slide
+the anchor indefinitely; continuous good care can therefore provide distributed
+contact too. This is separate from the catalogue's eight-hour trust span and
+two-hour distributed-encounter prerequisites.
+
+Focused local tests: 109 passed in 0.972 seconds, slowest 0.161 seconds. Native Tk
+creation was blocked. Focused Ruff and strict Mypy passed. Parallel horoscope and
+character-asset work remains outside these commits. No desktop automation or CI.
