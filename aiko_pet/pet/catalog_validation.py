@@ -34,14 +34,17 @@ def _finite_float(value: str) -> float:
 def load_json(path: Path) -> Any:
     """Report the resource path and reject silent key/number corruption."""
     try:
-        return json.loads(
-            path.read_text(encoding="utf-8"),
-            object_pairs_hook=_unique_object,
-            parse_constant=_reject_constant,
-            parse_float=_finite_float,
-        )
+        return decode_json(path.read_text(encoding="utf-8"))
     except (ValueError, OSError, UnicodeError) as error:
         raise ValueError(f"{path}: {error}") from error
+
+
+def decode_json(text: str) -> Any:
+    """Decode already-read JSON without silently replacing keys or numbers."""
+    return json.loads(
+        text, object_pairs_hook=_unique_object,
+        parse_constant=_reject_constant, parse_float=_finite_float,
+    )
 
 
 def object_fields(

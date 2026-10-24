@@ -43,6 +43,11 @@
 > records session revision metadata, complete transactions, first publication
 > and schema backup/error boundaries. Runtime cutover remains SQL-8.
 
+> **SQL-7 in progress, 2026-10-24:** the
+> [SQL-7 delivery record](#sqlite-delivery-sql-7-strict-legacy-json-import)
+> records strict legacy validation and the forthcoming backed-up import. Runtime
+> cutover remains SQL-8; development uses temporary fixtures only.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -9571,3 +9576,35 @@ automatic merge, mutable revision cache or alternate live writer was added.
 The current desktop still uses the original JSON store. SQL-6 is complete;
 SQL-7 strict legacy import and SQL-8 runtime cutover remain separate. Broader
 OOP/duplicate-test review and the full suite remain the final SQL-9 gate.
+
+
+### SQLite delivery SQL-7: strict legacy JSON import
+
+**Owner-authorized implementation, 2026-10-24.** Scope: checked legacy
+reading and one-time backed-up SQLite initialization, without runtime cutover.
+The existing JSON desktop backend stays active until SQL-8. Personal saves,
+parallel character assets and their tooling are outside this delivery.
+
+#### A. Strict supported legacy decoding
+
+`legacy_json_codec.py` composes the existing strict history/World/memory/social
+codecs into `LoadedPetData`; it never calls the forgiving `StateStore` reader.
+`legacy_pet_codec.py` checks present core values before accepting the older
+reader's defaults. Missing optional sections/fields remain supported: absent
+time is zero lived seconds, absent relationship history claims no earlier care,
+and absent wishes/Moodlets are neutral. Present null, invalid, coerced, clamped,
+filtered or unknown values stop import. Original list order, zero reward anchors
+and unrounded core values are retained. Existing strict subcodecs continue to
+define supported older wish, Moodlet, subjective-memory and social subformats.
+
+The shared JSON decoder rejects duplicate keys and nonfinite numbers, including
+exponent overflow. Complete settings validation is shared by SQLite and import
+through `settings_codec.py`; optional older settings/adaptive fields are filled
+before strict validation, never instead of checking present data. No catalogs,
+dialogue, care rules or time progression move into persistence.
+
+Targeted local acceptance: **20 tests passed in 2.323 s**, no skips; slowest
+case **1.013 s**, below ten seconds. The native Tk factory was blocked before
+discovery and the default save redirected into a temporary directory. Scoped
+Ruff, fresh strict Mypy (five sources) and Pyright including import tests passed.
+No application windows, mouse control, live-save access, HTTP or CI.
