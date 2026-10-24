@@ -11,10 +11,10 @@
 > **SQLite planning update, 2026-10-24:** the
 > [binding field mapping and delivery slices](#sqlite-field-mapping-reconciliation-and-delivery-slices-2026-10-24)
 > below reconcile the storage proposal with the delivered wish/Moodlet state.
-> They supersede incomplete earlier field lists, not domain behavior. This is
-> documentation only; SQLite implementation and migration remain unauthorized.
+> They supersede incomplete earlier field lists, not domain behavior. The review
+> itself authorized documentation only. Runtime cutover remains pending.
 
-> **SQL-1 delivery in progress, 2026-10-24:** the owner subsequently authorized
+> **SQL-1 delivered, 2026-10-24:** the owner subsequently authorized and received
 > contracts, errors, paths and schema foundation only. The
 > [SQL-1 delivery record](#sqlite-delivery-sql-1-contracts-paths-and-schema-foundation)
 > distinguishes completed groundwork from the later mapping and runtime cutover.
@@ -8997,5 +8997,49 @@ slices, personal-save migration and runtime cutover remain outside this scope.
   Scoped Ruff, strict Mypy (three production files) and Pyright including the
   new tests passed. No complete suite or personal save was opened.
 
-Schema/connection work is recorded separately when delivered; this first commit
-does not implement any SQL domain mapping, import or runtime writer.
+The first commit does not implement any SQL domain mapping, import or runtime
+writer. Schema/connection work is recorded separately below.
+
+#### SQL-1B: explicit SQLite connections and transactional schema foundation
+
+- `infrastructure/sqlite/connection.py` owns explicit-path connections with
+  foreign keys enabled on every connection and immediate lock failures.
+  Opening requires an existing database by default; initializing an empty
+  schema is explicit. No parent-directory creation, JSON lookup or alternative
+  save selection occurs. Caller transactions are not committed on context exit.
+- `sqlite/schema.py` owns the Aiko application ID, version-one migration and
+  schema-history validation. The foundation creates `schema_migrations` and
+  `save_state`, with singleton/revision/finite-time checks. A newly initialized
+  schema has no invented save checkpoint. Domain table definitions join this
+  same first schema in SQL-2 through SQL-5 before cutover, not as a migration
+  version per development commit.
+- DDL, history and version/identity markers are initialized in one transaction;
+  statement or final-validation failure rolls them back together. Foreign,
+  damaged, newer and incomplete databases are rejected without rewriting them.
+  This slice initializes/validates the first schema only; actual future user
+  schema upgrades require SQL-6's consistent backup/storage boundary first.
+- `sqlite/errors.py` translates SQLite extended error codes and OS failures
+  into the application contract. Locks, access/I/O, invalid data/database,
+  unsupported schema and remaining database failures retain distinct meanings.
+  Save-revision conflict handling itself remains SQL-6 work.
+- SQLite journal/WAL/shared-memory files are excluded alongside private
+  databases. No user database, backup, fixture database or generated sidecar
+  is committed.
+
+Final targeted local verification: **20 tests passed in 0.080 seconds**, longest
+**0.020 seconds**. The ten schema cases exercise real temporary SQLite files,
+including FK/check enforcement, foreign/newer/history rejection, failed-DDL and
+post-validation rollback, lock reporting and unfinished caller transactions.
+The other ten cases retain contract/path and existing JSON round-trip coverage.
+Scoped Ruff, fresh strict Mypy for seven production sources and Pyright including
+the three new test modules passed. Ignore rules were checked without creating
+repository database files. Native Tk creation was blocked throughout the tests.
+
+OOP review: the application gains values/errors, not another mutable state or
+SQL dependency. Infrastructure owns connection/schema/translation, and there is
+one canonical path owner with the existing public JSON binding preserved.
+No Pet, World, Memory, UI or desktop progression/save rules changed. Parallel
+horoscope, UI, character and text work remains uncommitted and untouched by
+these SQL-1 commits. No personal-save access, full suite, test windows, mouse
+control or CI. SQL-2 is next; no domain mapper, import or runtime cutover is
+claimed here.
