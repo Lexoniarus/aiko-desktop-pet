@@ -14,6 +14,7 @@ from pathlib import Path
 
 from ...application.storage_contracts import StorageError, StorageFailureKind
 from .pet_schema import PET_SCHEMA
+from .relationship_schema import RELATIONSHIP_SCHEMA
 
 APPLICATION_ID = 0x41494B4F  # AIKO, independent of schema version.
 SCHEMA_VERSION = 1
@@ -42,7 +43,7 @@ MIGRATIONS = (SchemaMigration(1, "initial_save_schema", (
         lived_seconds REAL NOT NULL
             CHECK (lived_seconds >= 0 AND lived_seconds <= 1.7976931348623157e308)
     )""",
-) + PET_SCHEMA),)
+) + PET_SCHEMA + RELATIONSHIP_SCHEMA),)
 
 
 def _pragma_integer(connection: sqlite3.Connection, name: str) -> int:

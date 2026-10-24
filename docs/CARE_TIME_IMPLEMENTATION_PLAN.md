@@ -9080,3 +9080,21 @@ existing JSON persistence cases passed: **18 tests in 0.087 seconds**, longest
 sources) and Pyright including the new test module passed. Native Tk creation
 was blocked; SQLite fixtures and default JSON paths were temporary. No personal
 save, import, runtime cutover or complete suite was used.
+
+#### SQL-2B: relationship history and named need exposure
+
+`relationship_rows.py` maps `FriendshipHistory` through the existing strict
+codec, preserving unknown versus initialized-empty baselines, contact and
+continuous-calculation anchors, eligibility and ordered reward/penalty entries.
+It changes no friendship amount or reward policy. `relationship_schema.py`
+adds the three planned tables to the initial schema. Exposure rows are keyed
+by need/start and retain interval width plus critical/zero durations. Reassembly
+requires all five needs and matching interval widths; no missing need is filled
+with invented zero exposure. Mapper writes require the caller's transaction,
+replace only owned evidence and do not commit or advance time.
+
+Four new SQL relationship cases and eight existing friendship-policy cases
+passed: **12 tests in 0.029 seconds**, longest 0.009 seconds rounded upward.
+Scoped Ruff, fresh strict Mypy (ten SQL production sources) and Pyright including
+the new relationship tests passed. Tests blocked native Tk and used temporary
+saves only. World/memory mapping and final combined SQL-2 checks follow.
