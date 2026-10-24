@@ -19,7 +19,7 @@
 > [SQL-1 delivery record](#sqlite-delivery-sql-1-contracts-paths-and-schema-foundation)
 > distinguishes completed groundwork from the later mapping and runtime cutover.
 
-> **SQL-2 in progress, 2026-10-24:** the
+> **SQL-2 delivered, 2026-10-24:** the
 > [SQL-2 delivery record](#sqlite-delivery-sql-2-core-relationship-and-worldmemory-mapping)
 > records core/sleep/settings, relationship/exposure and paired World/memory
 > mapping separately. The running JSON store remains active.
@@ -9098,3 +9098,46 @@ passed: **12 tests in 0.029 seconds**, longest 0.009 seconds rounded upward.
 Scoped Ruff, fresh strict Mypy (ten SQL production sources) and Pyright including
 the new relationship tests passed. Tests blocked native Tk and used temporary
 saves only. World/memory mapping and final combined SQL-2 checks follow.
+
+#### SQL-2C: paired World stock and subjective object memories
+
+`world_schema.py` adds the five planned stock/memory tables to the initial
+schema. `world_rows.py` uses the existing World codec's durable normalization:
+omit terminal stock, place transient objects safely on reachable ground and
+retain instance allocation, object revision/order and footprints. SQLite also
+retains the source surface's ground inset explicitly. It persists no movement,
+custody animation or in-progress UI action.
+
+The strict object-memory codec remains authoritative for learned identity,
+relative active age, assessment/disposition, remembered/missing/superseded
+places, possible-source graph and allocation provenance. Source edges are real
+foreign keys between subjective records. An acquired physical instance identity
+is historical and has no FK to surviving stock. Consuming/removing stock does
+not erase acquired knowledge; unknown sightings receive no identity from World.
+Absent memory and initialized empty memory remain distinct. Reads gather source
+edges in one query rather than querying separately for every remembered object.
+
+Six focused SQL World/memory cases cover safe interrupted stock, consumed-stock
+knowledge, unknown sightings, absent/empty state, forgetting/edge cleanup,
+invalid pairs/associations/provenance, and a joint transaction across all SQL-2
+owners. The latter commits core/sleep, relationship, settings and World/memory,
+then injects a later constraint failure: changed time/revision/core and deleted
+stock/memory all roll back to the previous coherent checkpoint. No store-level
+CAS or import behavior is claimed before their planned slices.
+
+Final combined local set: **49 tests passed in 0.301 seconds**, longest
+**0.049 seconds**. This includes fifteen new SQL-2 cases, ten SQL-1 schema cases,
+and 24 existing JSON persistence, friendship-policy, World persistence and
+object-memory-codec cases. No test exceeded ten seconds. Scoped Ruff, fresh
+strict Mypy for all twelve SQLite production modules and Pyright including the
+affected tests passed. Tk creation was blocked and every database/save fixture
+was temporary. No full suite, personal-save access, windows, mouse control or CI.
+
+SQL-2 OOP review: all SQL mapping operates on existing immutable Pet/World/Memory
+values inside a caller-owned transaction. The helpers introduce no state cache,
+progression, reward, perception or second aggregate. Mappers never commit and
+the active JSON store is not wired to them. Authored catalogues remain external
+JSON; bounded legacy/list values do not become a full-state JSON blob. Existing
+live classes and parallel horoscope/UI/character/text work are preserved.
+SQL-2 is complete; SQL-3 wish/food-handover mapping is next, with runtime cutover
+still reserved for SQL-8.
