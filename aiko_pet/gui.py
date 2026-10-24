@@ -16,7 +16,6 @@ from .application.session import PetSessionRestorer, SavedPetStore
 from .application.settings import SettingKey
 from .application.social_content import PreparedSocialContent
 from .application.social_coordinator import SocialContentWorker
-from .application.storage_contracts import StorageError
 from .config import load_env_file
 from .desktop import game_assembly
 from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation
@@ -36,6 +35,7 @@ from .desktop.preferences import DesktopPreferencePorts, DesktopPreferences
 from .desktop.runtime import DesktopRuntime, DesktopTickPorts
 from .desktop.session_runtime import DesktopSessionRuntime, SessionRuntimePorts
 from .desktop.social_runtime import SocialConversationRuntime
+from .desktop.startup import run_desktop
 from .desktop.window_stack import WindowStack
 from .desktop.world_access import WorldRuntimeAccess
 from .desktop.world_runtime import DesktopWorldRuntime
@@ -614,9 +614,8 @@ class DesktopPet:
         failure = self._session_runtime.advance_and_save()
         if failure is not None:
             messagebox.showwarning(
-                GERMAN_TEXT.format("ui.application_name"), GERMAN_TEXT.format(
-                    "ui.save_failed", failure=str(failure),
-                ),
+                GERMAN_TEXT.format("ui.application_name"),
+                GERMAN_TEXT.format("ui.save_failed", failure=str(failure)),
             )
 
     def quit(self) -> None:
@@ -634,15 +633,7 @@ class DesktopPet:
 
 def main() -> None:
     load_env_file()
-    try:
-        app = DesktopPet()
-    except StorageError as error:
-        messagebox.showerror(
-            GERMAN_TEXT.format("ui.application_name"),
-            GERMAN_TEXT.format("ui.load_failed", failure=str(error)),
-        )
-        raise SystemExit(1) from error
-    app.run()
+    run_desktop(DesktopPet)
 
 
 if __name__ == "__main__":

@@ -18,12 +18,14 @@ from aiko_pet.application.social_requests import (
     SocialRequestHistory,
     SocialRequestReceipt,
 )
+from aiko_pet.application.storage_contracts import StorageError, StorageFailureKind
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.social_history_codec import (
     decode_social_history,
     encode_social_history,
 )
 from aiko_pet.pet.state import PetState
+from tools.persistence_test_support import save_test_session
 
 
 class SocialRequestPolicyTests(unittest.TestCase):
@@ -132,7 +134,9 @@ class RequestAdmissionTests(unittest.TestCase):
 
             def persist():
                 self.assertFalse(self.worker.requests)
-                store.save(pet, PetSettings(), social_history=self.content.history)
+                save_test_session(
+                    store, pet, PetSettings(),
+                social_history=self.content.history)
                 return None
 
             self.content = SocialContentCoordinator(
@@ -157,7 +161,8 @@ class RequestAdmissionTests(unittest.TestCase):
         self.content = SocialContentCoordinator(
             self.worker,
             wall_time=self.worker.clock,
-            persist_requests=lambda: OSError("test save failure"),
+            persist_requests=lambda: StorageError(
+                StorageFailureKind.IO, Path("fixture.sqlite3"), "test save failure"),
         )
         self.content.set_enabled(True)
         self.assertFalse(self.worker.requests)

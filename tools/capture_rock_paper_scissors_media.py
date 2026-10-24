@@ -64,7 +64,7 @@ def record_media() -> None:
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="aiko-media-") as folder:
         pet = DesktopPet(
-            store=StateStore(Path(folder) / "preview-state.json"),
+            store=StateStore(Path(folder) / "preview-state.sqlite3"),
         )
         try:
             pet.settings.spontaneous_talk = False

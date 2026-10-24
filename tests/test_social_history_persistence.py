@@ -1,7 +1,6 @@
 """Actual local saves and playback admission without windows or live APIs."""
 
 import hashlib
-import json
 import tempfile
 import tkinter as tk
 import unittest
@@ -29,6 +28,7 @@ from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from tools.persistence_test_support import save_test_session
 from tools.reaction_test_support import FakeScheduler
 
 
@@ -45,7 +45,7 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
         self.settings = PetSettings(auto_routine=False)
 
     def test_old_saves_have_empty_history_without_changing_pet_values(self):
-        self.store.save(self.pet, self.settings)
+        save_test_session(self.store, self.pet, self.settings)
         before = self.pet.capture_checkpoint()
         loaded = self.store.load_session(now=self.wall)
         self.assertEqual(loaded.social_history, SocialContentHistory())
@@ -53,24 +53,6 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
         restored = PetSessionRestorer(self.store, wall_time=lambda: self.wall).restore()
         self.assertEqual(restored.social_history, SocialContentHistory())
         self.assertEqual(restored.state.social, 20)
-
-    def test_corrupt_history_isolated_and_original_backed_up_before_replacement(self):
-        self.store.save(self.pet, self.settings)
-        payload = json.loads(self.store.path.read_text("utf-8"))
-        payload["social_history"] = dict(version=1, entries=[dict(
-            category="single", identity="jokeapi:1", fingerprint="invalid",
-        )])
-        original = json.dumps(payload).encode()
-        self.store.path.write_bytes(original)
-        loaded = self.store.load_session(now=self.wall)
-        self.assertEqual(loaded.state.social, 20)
-        self.assertEqual(loaded.state.wishes, self.pet.wishes)
-        self.assertEqual(loaded.social_history, SocialContentHistory())
-        self.store.save(loaded.state, loaded.settings,
-                        social_history=loaded.social_history)
-        backups = list(self.store.path.parent.glob("*.aiko-save-backup"))
-        self.assertEqual(len(backups), 1)
-        self.assertEqual(backups[0].read_bytes(), original)
 
     def test_restore_prevents_first_repeat_after_restart(self):
         history = SocialContentHistory((SocialContentReceipt(
@@ -81,9 +63,7 @@ class SocialHistoryPersistenceTests(unittest.TestCase):
             social_history=lambda: history,
         )
         self.assertIsNone(persistence.save())
-        raw = json.loads(self.store.path.read_text("utf-8"))["social_history"]
-        self.assertEqual(set(raw["entries"][0]),
-                         {"category", "identity", "fingerprint"})
+        self.assertEqual(self.store.load_session().social_history, history)
         restored = PetSessionRestorer(self.store, wall_time=lambda: self.wall).restore()
         self.assertEqual(restored.social_history, history)
         worker = ManualSocialWorker()

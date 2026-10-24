@@ -20,9 +20,11 @@ from aiko_pet.application.session import PetSessionRestorer
 from aiko_pet.application.session_time import SessionTimeProgression
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.infrastructure.item_assets import load_item_catalog
+from aiko_pet.infrastructure.object_memory_codec import encode_object_memory
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.infrastructure.world_catalog import build_consumable_definitions
+from aiko_pet.infrastructure.world_codec import encode_world
 from aiko_pet.pet.food_catalog import DEFAULT_CATALOG
 from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory
 from aiko_pet.pet.mind.object_knowledge import ObjectKnowledge
@@ -33,6 +35,7 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState, WorldSurface
 from aiko_pet.world.state import WorldState
+from tools.persistence_test_support import save_test_session
 
 START = datetime(2026, 10, 12, 23).timestamp()
 
@@ -311,15 +314,16 @@ class SleepResourceTests(unittest.TestCase):
         self.food("sandwich")
         with tempfile.TemporaryDirectory() as folder:
             store = StateStore(Path(folder) / "state.json")
-            store.save(
-                self.pet,
-                PetSettings(),
-                world=self.world.snapshot(),
-                object_memory=self.memory.export(now=0),
-            )
-            raw = json.loads(store.path.read_text(encoding="utf-8"))
+            raw = {
+                "version": 1, "pet": encode_pet_state(self.pet),
+                "settings": PetSettings().to_dict(),
+                "world": encode_world(self.world.snapshot(), recovery_x=0),
+                "object_memory": encode_object_memory(
+                    self.memory.export(now=0),
+                    world_next_id=self.world.snapshot().next_instance_id),
+            }
             raw["pet"].pop("relationship")
-            store.path.write_text(json.dumps(raw), encoding="utf-8")
+            store.paths.legacy_json.write_text(json.dumps(raw), encoding="utf-8")
             first = PetSessionRestorer(
                 store, wall_time=lambda: START + 12 * 3600
             ).restore()
@@ -333,7 +337,7 @@ class SleepResourceTests(unittest.TestCase):
         self.food("sandwich")
         with tempfile.TemporaryDirectory() as folder:
             store = StateStore(Path(folder) / "state.json")
-            store.save(
+            save_test_session(store,
                 self.pet,
                 PetSettings(),
                 adaptive=AdaptiveMemory(),
@@ -344,7 +348,7 @@ class SleepResourceTests(unittest.TestCase):
             assert first.world is not None
             self.assertGreater(first.state.satiety, 40)
             self.assertFalse(first.world.objects[0].state == ObjectState.RESTING)
-            store.save(
+            save_test_session(store,
                 first.state,
                 first.settings,
                 adaptive=first.adaptive.memory,
@@ -357,27 +361,6 @@ class SleepResourceTests(unittest.TestCase):
             )
             assert second.world is not None
             self.assertEqual(second.world.objects, ())
-
-    def test_bad_future_episode_and_quiet_window_are_backed_up_without_resetting_needs(
-        self,
-    ):
-        for section in ("sleep_episode", "quiet_window"):
-            with self.subTest(section=section), tempfile.TemporaryDirectory() as folder:
-                store = StateStore(Path(folder) / "state.json")
-                store.save(self.pet, PetSettings(), adaptive=AdaptiveMemory())
-                raw = json.loads(store.path.read_text(encoding="utf-8"))
-                raw["pet" if section == "sleep_episode" else "adaptive"][section] = {
-                    "version": 999
-                }
-                original = json.dumps(raw).encode("utf-8")
-                store.path.write_bytes(original)
-                loaded = store.load_session(now=START)
-                self.assertEqual(loaded.state.satiety, self.pet.satiety)
-                store.save(
-                    loaded.state, loaded.settings, adaptive=loaded.adaptive_memory
-                )
-                backups = list(Path(folder).glob("*.aiko-save-backup"))
-                self.assertEqual(backups[0].read_bytes(), original)
 
     def test_prolonged_hunger_uses_only_actual_known_stock(self):
         self.food()

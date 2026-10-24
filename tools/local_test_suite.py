@@ -62,7 +62,7 @@ def main() -> int:
     args = parser.parse_args()
     with (
         tempfile.TemporaryDirectory(prefix="aiko-local-suite-") as folder,
-        patch.dict(os.environ, {"AIKO_SAVE_PATH": str(Path(folder) / "state.json")}),
+        patch.dict(os.environ, {"AIKO_SAVE_PATH": str(Path(folder) / "state.sqlite3")}),
         patch("_tkinter.create", side_effect=reject_native_tk),
     ):
         suite = unittest.defaultTestLoader.discover(str(ROOT / "tests"))

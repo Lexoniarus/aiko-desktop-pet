@@ -41,6 +41,7 @@ from aiko_pet.pet.wishes import (
     WishObjective,
     WishState,
 )
+from tools.persistence_test_support import save_test_session
 
 WALL = 1_800_000_000.0
 ELAPSED = 1000.0
@@ -100,7 +101,7 @@ class MoodletPersistenceTests(unittest.TestCase):
         checkpoint = pet.capture_checkpoint()
         with tempfile.TemporaryDirectory() as folder:
             store = StateStore(Path(folder) / "state.json")
-            store.save(pet, PetSettings())
+            save_test_session(store, pet, PetSettings())
             pet = store.load_session(now=WALL).state
         self.assertEqual(pet.capture_checkpoint(), checkpoint)
         self.assertFalse(pet.wishes.active)  # No ended-wish archive is necessary.
@@ -303,42 +304,6 @@ class MoodletPersistenceTests(unittest.TestCase):
             with self.subTest(duplicate=duplicate), self.assertRaises(ValueError):
                 decode_moodlets(raw, ELAPSED)
 
-    def test_store_uses_one_v1_save_and_preserves_corruption_before_replacement(self):
-        with tempfile.TemporaryDirectory() as folder:
-            store = StateStore(Path(folder) / "state.json")
-            pet = PetState(satiety=42, updated_at=WALL, lived_seconds=ELAPSED,
-                           moodlets=moodlet_state())
-            store.save(pet, PetSettings())
-            self.assertEqual(json.loads(store.path.read_text())["version"], 1)
-            loaded = store.load_session(now=WALL + 3600)
-            self.assertEqual(loaded.state.moodlets, pet.moodlets)
-            self.assertEqual(loaded.state.lived_seconds, ELAPSED)
-            for bad in (None, {"version": 999}):
-                raw = encode_pet_state(pet)
-                raw["moodlets"] = bad
-                original = json.dumps(dict(version=1, pet=raw)).encode()
-                store.path.write_bytes(original)
-                loaded = store.load_session(now=WALL)
-                self.assertEqual(loaded.state.satiety, 42)
-                self.assertEqual(loaded.state.moodlets, MoodletState(ELAPSED))
-                store.save(loaded.state, loaded.settings)
-                self.assertIn(original, [p.read_bytes() for p in
-                                         Path(folder).glob("*.aiko-save-backup")])
-
-    def test_unloaded_invalid_section_is_backed_up_and_missing_section_is_legacy(self):
-        with tempfile.TemporaryDirectory() as folder:
-            store = StateStore(Path(folder) / "state.json")
-            legacy = dict(version=1, pet={"satiety": 42})
-            store.path.write_text(json.dumps(legacy), encoding="utf-8")
-            loaded = store.load_session(now=WALL)
-            store.save(loaded.state, loaded.settings)
-            self.assertFalse(tuple(Path(folder).glob("*.aiko-save-backup")))
-            corrupt = json.dumps(dict(version=1, pet={"moodlets": []})).encode()
-            store.path.write_bytes(corrupt)
-            store.save(PetState(updated_at=WALL), PetSettings())
-            self.assertEqual([p.read_bytes() for p in
-                              Path(folder).glob("*.aiko-save-backup")], [corrupt])
-
 
 class WishPersistenceTests(unittest.TestCase):
     def test_legacy_game_goals_keep_their_original_meaning_and_progress(self):
@@ -539,28 +504,10 @@ class WishPersistenceTests(unittest.TestCase):
         self.assertEqual(copy.deepcopy(pet).capture_checkpoint(), before)
         self.assertEqual(pet.wishes, wish_state())
 
-    def test_store_restores_both_and_only_discards_an_invalid_wish_section(self):
+    def test_store_preserves_wishes_and_moodlets_together(self):
         with tempfile.TemporaryDirectory() as folder:
-            store = StateStore(Path(folder) / "state.json")
+            store = StateStore(Path(folder) / "state.sqlite3")
             pet = PetState(updated_at=WALL, lived_seconds=ELAPSED,
                            moodlets=moodlet_state(), wishes=wish_state())
-            store.save(pet, PetSettings())
-            self.assertEqual(store.load_session(now=WALL).state, pet)
-            for invalid in (None, {"version": 999}):
-                raw: dict[str, Any] = dict(version=1, pet=encode_pet_state(pet))
-                raw["pet"]["wishes"] = invalid
-                original = json.dumps(raw).encode()
-                store.path.write_bytes(original)
-                restored = store.load_session(now=WALL)
-                self.assertEqual(restored.state.wishes, WishState())
-                self.assertEqual(restored.state.moodlets, pet.moodlets)
-                store.save(restored.state, restored.settings)
-                self.assertIn(original, [p.read_bytes() for p in
-                                         Path(folder).glob("*.aiko-save-backup")])
-            # Cold replacement must also preserve invalid optional wish data.
-            store.path.write_bytes(original)
-            previous_backups = len(tuple(Path(folder).glob("*.aiko-save-backup")))
-            store.save(pet, PetSettings())
-            self.assertEqual(len(tuple(Path(folder).glob("*.aiko-save-backup"))),
-                             previous_backups + 1)
+            save_test_session(store, pet, PetSettings())
             self.assertEqual(store.load_session(now=WALL).state, pet)

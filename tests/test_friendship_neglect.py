@@ -6,7 +6,7 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from aiko_pet.application.settings import PetSettings
+from aiko_pet.application.storage_contracts import StorageError
 from aiko_pet.infrastructure.friendship_codec import (
     decode_friendship,
     encode_friendship,
@@ -137,19 +137,17 @@ class FriendshipNeglectTests(unittest.TestCase):
             self.assertIsNone(pet.friendship_history.baseline)
         self.assertEqual(decode_friendship(raw, 0), self.fresh().history)
 
-    def test_future_relationship_record_is_backed_up_before_atomic_save(self):
+    def test_future_relationship_record_stops_import_without_replacing_source(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "state.json"
             path.write_text('{"version":1,"pet":{"friendship":72,'
                             '"relationship":{"version":999}}}', encoding="utf-8")
             original = path.read_bytes()
             store = StateStore(path)
-            loaded = store.load_session(now=START)
-            store.save(loaded.state, PetSettings())
-            backups = list(path.parent.glob("*.aiko-save-backup"))
-            self.assertEqual(len(backups), 1)
-            self.assertEqual(backups[0].read_bytes(), original)
-            self.assertEqual(store.load_session(now=START).state.friendship, 72)
+            with self.assertRaises(StorageError):
+                store.load_session(now=START)
+            self.assertFalse(store.path.exists())
+            self.assertEqual(path.read_bytes(), original)
 
     def test_malformed_exposure_and_reward_evidence_is_rejected(self):
         valid = period(self.fresh(), 1, (0, 100, 100, 100, 100))

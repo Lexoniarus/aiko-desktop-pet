@@ -12,11 +12,13 @@ from unittest.mock import patch
 from aiko_pet.application.active_time import ActiveSessionClock
 from aiko_pet.application.session import PetSessionRestorer
 from aiko_pet.application.settings import PetSettings
+from aiko_pet.application.storage_contracts import StorageError
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.infrastructure.pet_codec import encode_pet_state
 from aiko_pet.pet.friendship_decay import passive_friendship
 from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory
 from aiko_pet.pet.state import PetState
+from tools.persistence_test_support import save_test_session
 
 
 def local_stamp(hour: int, *, day: int = 12) -> float:
@@ -31,7 +33,7 @@ class OfflineProgressTests(unittest.TestCase):
 
     def test_saved_hour_and_next_live_minute_are_consumed_once(self) -> None:
         now = local_stamp(15)
-        self.store.save(
+        save_test_session(self.store,
             PetState(satiety=100, energy=100, updated_at=now - 3600),
             PetSettings(auto_routine=False),
         )
@@ -50,7 +52,7 @@ class OfflineProgressTests(unittest.TestCase):
 
     def test_offline_routine_sleeps_at_night_and_recovers_energy(self) -> None:
         now = local_stamp(7, day=13)
-        self.store.save(
+        save_test_session(self.store,
             PetState(energy=20, updated_at=local_stamp(23)),
             PetSettings(auto_routine=True),
         )
@@ -74,7 +76,8 @@ class OfflineProgressTests(unittest.TestCase):
         )
         memory = AdaptiveMemory()
         memory.hour_seconds[42] = 60
-        self.store.save(saved, PetSettings(auto_routine=True), adaptive=memory)
+        save_test_session(
+            self.store, saved, PetSettings(auto_routine=True), adaptive=memory)
         original = self.store.path.read_bytes()
         session = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
         self.assertEqual(session.state.meals_today, [])
@@ -93,7 +96,7 @@ class OfflineProgressTests(unittest.TestCase):
 
     def test_disabled_routine_and_live_ticks_do_not_invent_meals(self) -> None:
         start, end = local_stamp(8), local_stamp(9)
-        self.store.save(
+        save_test_session(self.store,
             PetState(satiety=20, updated_at=start),
             PetSettings(auto_routine=False),
         )
@@ -109,7 +112,7 @@ class OfflineProgressTests(unittest.TestCase):
         now = local_stamp(15)
         for age, expected_energy in ((3 * 86400, 0), (-3600, 100)):
             with self.subTest(age=age):
-                self.store.save(
+                save_test_session(self.store,
                     PetState(energy=100, updated_at=now - age),
                     PetSettings(auto_routine=False),
                 )
@@ -120,39 +123,31 @@ class OfflineProgressTests(unittest.TestCase):
 
     def test_saving_and_restarting_does_not_repeat_the_closed_interval(self) -> None:
         now = local_stamp(15)
-        self.store.save(
+        save_test_session(self.store,
             PetState(satiety=100, updated_at=now - 3600),
             PetSettings(auto_routine=False),
         )
         first = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
-        self.store.save(first.state, first.settings, adaptive=first.adaptive.memory)
+        save_test_session(
+            self.store, first.state, first.settings, adaptive=first.adaptive.memory)
         second = PetSessionRestorer(self.store, wall_time=lambda: now).restore()
         self.assertEqual(encode_pet_state(second.state), encode_pet_state(first.state))
         self.assertAlmostEqual(second.state.satiety, 92)
 
-    def test_unreadable_and_future_saves_are_backed_up_before_replacement(self) -> None:
-        for contents in (b"{broken", b'{"version": 99, "future": "preserve"}', b"\xff"):
-            with self.subTest(contents=contents):
-                self.store.path.write_bytes(contents)
-                self.store.save(PetState(updated_at=local_stamp(15)), PetSettings())
-                backups = list(self.store.path.parent.glob("*.aiko-save-backup"))
-                self.assertIn(contents, [file.read_bytes() for file in backups])
-                self.assertEqual(self.store.load_session().state.satiety, 75)
-
     def test_failed_backup_preserves_original_and_existing_backup(self) -> None:
-        contents = b'{"version": 99, "future": "preserve"}'
-        self.store.path.write_bytes(contents)
+        contents = b'{"version": 1, "pet": {"satiety": 42}}'
+        self.store.paths.legacy_json.write_bytes(contents)
         identity = uuid.UUID(int=0)
         backup = self.store.path.with_name(
             f"{self.store.path.stem}-{identity.hex}.aiko-save-backup"
         )
         backup.write_bytes(b"earlier backup")
         with patch(
-            "aiko_pet.infrastructure.persistence.uuid.uuid4", return_value=identity
+            "aiko_pet.infrastructure.sqlite.backups.uuid.uuid4", return_value=identity
         ):
-            with self.assertRaises(FileExistsError):
-                self.store.save(PetState(), PetSettings())
-        self.assertEqual(self.store.path.read_bytes(), contents)
+            with self.assertRaises(StorageError):
+                save_test_session(self.store, PetState(), PetSettings())
+        self.assertEqual(self.store.paths.legacy_json.read_bytes(), contents)
         self.assertEqual(backup.read_bytes(), b"earlier backup")
 
 

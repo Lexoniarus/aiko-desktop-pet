@@ -122,7 +122,7 @@ class DesktopPersistenceTests(unittest.TestCase):
         with (
             patch("aiko_pet.gui.load_env_file"),
             patch("aiko_pet.gui.DesktopPet", side_effect=failure),
-            patch("aiko_pet.gui.messagebox.showerror") as report,
+            patch("aiko_pet.desktop.startup.messagebox.showerror") as report,
         ):
             with self.assertRaises(SystemExit) as stopped:
                 main()

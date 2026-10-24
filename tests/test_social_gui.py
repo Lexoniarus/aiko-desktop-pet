@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import tempfile
 import time
 import tkinter as tk
@@ -268,18 +267,13 @@ class SocialGuiTests(unittest.TestCase):
         friendship = self.pet.state.friendship
         store = self.pet.store
         self.pet.quit()
-        saved = json.loads(store.path.read_text(encoding="utf-8"))
-        self.assertEqual(saved["version"], 1)
-        self.assertTrue(saved["settings"]["online_social"])
-        history = saved["social_history"]
-        self.assertEqual(set(history), {"version", "entries", "requests", "horoscope"})
-        self.assertEqual(history["version"], 3)
-        self.assertEqual(len(history["entries"]), 1)
-        receipt = history["entries"][0]
-        self.assertEqual(set(receipt), {"category", "identity", "fingerprint"})
-        self.assertEqual(receipt["category"], "single")
-        self.assertEqual(receipt["identity"], "jokeapi:1")
-        self.assertEqual(len(receipt["fingerprint"]), 64)
+        saved = store.load_session()
+        self.assertTrue(saved.settings.online_social)
+        self.assertEqual(len(saved.social_history.entries), 1)
+        receipt = saved.social_history.entries[0]
+        self.assertEqual(receipt.category, SocialCategory.SINGLE)
+        self.assertEqual(receipt.identity, "jokeapi:1")
+        self.assertEqual(len(receipt.fingerprint), 64)
         worker = ManualSocialWorker(clock=self.worker.clock)
         reopened = create_test_desktop(store=store, social_worker=worker)
         reopened.root.report_callback_exception = lambda _kind, error, _trace: (

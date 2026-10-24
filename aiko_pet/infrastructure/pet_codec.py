@@ -1,4 +1,4 @@
-"""Version-one pet save translation, separate from mutable gameplay rules."""
+"""Legacy v1 pet translation; strict import validates before applying defaults."""
 
 from __future__ import annotations
 
@@ -64,7 +64,7 @@ def decode_pet_state(value: Any, *, now: float | None = None) -> PetState:
         try:
             moodlets = decode_moodlets(value["moodlets"], elapsed)
         except (ValueError, TypeError, OverflowError):
-            pass  # Preserve valid care; StateStore backs up the original on save.
+            pass  # Strict legacy import validates present sections before this decoder.
     wishes = None
     if "wishes" in value:
         try:
