@@ -6,10 +6,10 @@ must never replace the desktop's last-successful-checkpoint conflict protection.
 
 from __future__ import annotations
 
+from aiko_pet.application.session import SavedPetStore
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.application.social_history import SocialContentHistory
 from aiko_pet.application.storage_contracts import SaveRevision
-from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.adaptive_models import AdaptiveMemory
 from aiko_pet.pet.mind.object_knowledge import ObjectMemorySnapshot
 from aiko_pet.pet.state import PetState
@@ -17,7 +17,7 @@ from aiko_pet.world.contracts import WorldSnapshot
 
 
 def save_test_session(
-    store: StateStore,
+    store: SavedPetStore,
     pet: PetState,
     settings: PetSettings,
     *,

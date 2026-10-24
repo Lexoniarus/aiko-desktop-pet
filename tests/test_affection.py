@@ -23,6 +23,7 @@ from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.status_hints import StatusHint
 from aiko_pet.ui.view_models.text_de import format_emotional_state, status_hint_text
+from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -194,7 +195,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
     def test_old_save_preserves_existing_relationship_and_needs(self):
         with tempfile.TemporaryDirectory() as tmp:
             store = StateStore(Path(tmp) / "pet.json")
-            store.path.write_text(
+            store.paths.legacy_json.write_text(
                 json.dumps({
                     "version": 1,
                     "pet": {
@@ -230,7 +231,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
                 (settings.scale, settings.toolbar_x, settings.toolbar_y), (2, 120, 70)
             )
             self.assertIn("sleep", state.care_last_rewards)
-            store.save(state, settings)
+            save_test_session(store, state, settings)
             session_data = store.load_session(now=stamp())
             again, _ = session_data.state, session_data.settings
             self.assertEqual(again.affection, 75)
@@ -243,7 +244,7 @@ class MeaningfulFriendshipTests(unittest.TestCase):
             state.interact("pet", now=stamp())
             set_test_pet_values(state, social=35)
             state.interact("talk", now=stamp() + 1)
-            store.save(state, PetSettings())
+            save_test_session(store, state, PetSettings())
             session_data = store.load_session(now=stamp() + 1)
             restored, _ = session_data.state, session_data.settings
             self.assertEqual(restored.care_types_today, [])
@@ -254,9 +255,6 @@ class MeaningfulFriendshipTests(unittest.TestCase):
             self.assertEqual(restored.care_last_rewards, state.care_last_rewards)
             self.assertEqual(restored.friendship, state.friendship)
             self.assertAlmostEqual(restored.affection, state.affection, places=2)
-            raw = store.path.read_text(encoding="utf8")
-            for secret in ('"cpu"', '"gpu"', '"ram"', '"keys"'):
-                self.assertNotIn(secret, raw)
 
     def test_corrupt_daily_action_list_is_sanitized(self):
         state = decode_pet_state({

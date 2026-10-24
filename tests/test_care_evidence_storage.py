@@ -32,6 +32,7 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import WishArea, WishId, WishTargetKind
 from aiko_pet.ui.view_models.moodlet_causes import cause_description
+from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import require_test_value
 
 ELAPSED = 90000
@@ -186,7 +187,7 @@ class CareEvidenceStorageTests(unittest.TestCase):
         )
         with tempfile.TemporaryDirectory() as folder:
             store = StateStore(Path(folder) / "state.json")
-            store.save(pet, PetSettings())
+            save_test_session(store, pet, PetSettings())
             loaded = store.load_session(now=WALL).state
         self.assertEqual(loaded.capture_checkpoint(), checkpoint)
         loaded.restore_checkpoint(replace(checkpoint, moodlets=MoodletState()))

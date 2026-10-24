@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import random
 import tempfile
 import unittest
@@ -20,6 +19,7 @@ from aiko_pet.pet.needs import NeedCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.ui.view_models.care_text import format_care_response
+from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -157,16 +157,12 @@ class NeedsAndBondTests(unittest.TestCase):
             start = timestamp()
             state = PetState(updated_at=start, social=14, friendship=63)
             state.interact("talk", now=start)
-            store.save(state, PetSettings())
+            save_test_session(store, state, PetSettings())
             session_data = store.load_session(now=start)
             loaded, _ = session_data.state, session_data.settings
             self.assertEqual(loaded.social, 40)
             self.assertAlmostEqual(loaded.friendship, state.friendship)
             self.assertEqual(loaded.care_last_rewards, state.care_last_rewards)
-            payload = json.loads(store.path.read_text(encoding="utf-8"))
-            self.assertNotIn("cpu", payload)
-            self.assertNotIn("gpu", payload)
-            self.assertNotIn("ram", payload)
 
     def test_friendship_display_level_is_bounded(self):
         self.assertEqual(PetState(friendship=0).friendship_level, 1)

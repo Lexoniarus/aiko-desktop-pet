@@ -37,6 +37,7 @@ from aiko_pet.pet.wishes import (
 )
 from aiko_pet.world.contracts import WorldSurface
 from aiko_pet.world.state import WorldState
+from tools.persistence_test_support import save_test_session
 
 DEFINITIONS = WISH_CATALOG.definitions
 NEEDS = NeedLevels(50, 80, 100, 100, 50)
@@ -222,7 +223,8 @@ class WishLifecycleTests(unittest.TestCase):
                                if world is not None else None)
                 settings = PetSettings(auto_routine=False)
                 store = StateStore(Path(folder) / "state.json")
-                store.save(pet, settings, world=world.snapshot() if world else None)
+                save_test_session(
+                    store, pet, settings, world=world.snapshot() if world else None)
                 closed = PetSessionRestorer(
                     store, wall_time=lambda: wall + 400,
                 ).restore()

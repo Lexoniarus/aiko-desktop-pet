@@ -34,6 +34,7 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
+from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import require_test_value
 
 WALL = 1800000000
@@ -314,7 +315,7 @@ class FoodHandoverFlowTests(unittest.TestCase):
         flow.admit()
         with tempfile.TemporaryDirectory() as folder:
             store = StateStore(Path(folder) / "state.json")
-            store.save(
+            save_test_session(store,
                 flow.pet,
                 PetSettings(auto_routine=False),
                 world=flow.world.snapshot(),

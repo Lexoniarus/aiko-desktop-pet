@@ -19,6 +19,7 @@ from aiko_pet.pet.mind.dialogue_context import SituationalCondition
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.sleep import SleepContext
 from aiko_pet.pet.state import PetState
+from tools.persistence_test_support import save_test_session
 
 
 def local_stamp(day, hour, minute=0):
@@ -343,7 +344,7 @@ class AdaptiveBehaviourTests(unittest.TestCase):
             self.assertTrue(config.learn_rhythm)
             memory.hour_seconds[34] = 245.5
             memory.strain = 19
-            store.save(pet, config, adaptive=memory)
+            save_test_session(store, pet, config, adaptive=memory)
             session_data = store.load_session(now=123)
             pet2, config2 = session_data.state, session_data.settings
             memory2 = session_data.adaptive_memory

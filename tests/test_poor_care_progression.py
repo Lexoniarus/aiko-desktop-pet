@@ -19,6 +19,7 @@ from aiko_pet.pet.friendship_history import NEED_NAMES
 from aiko_pet.pet.moodlet_catalog import MOODLET_CATALOG
 from aiko_pet.pet.moodlets import MoodletId, reinforce_moodlet
 from aiko_pet.pet.state import PetState
+from tools.persistence_test_support import save_test_session
 
 WALL = 1_800_000_000.0
 
@@ -79,7 +80,7 @@ class PoorCareProgressionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             store = StateStore(Path(folder) / "state.json")
             settings = PetSettings(auto_routine=False)
-            store.save(original, settings)
+            save_test_session(store, original, settings)
             closed = PetSessionRestorer(store, wall_time=lambda: WALL + 7200).restore()
             uptime = [0.0]
             clock = ActiveSessionClock(lambda: uptime[0])
@@ -90,7 +91,7 @@ class PoorCareProgressionTests(unittest.TestCase):
             self.assertEqual(original.capture_checkpoint(),
                              closed.state.capture_checkpoint())
             self.assertEqual(closed.state.moodlets.active[0].level, 2)
-            store.save(closed.state, settings)
+            save_test_session(store, closed.state, settings)
             reopened = PetSessionRestorer(
                 store, wall_time=lambda: WALL + 7200,
             ).restore()

@@ -16,6 +16,7 @@ from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import ObjectFootprint, ObjectState
 from tools.desktop_test_support import create_test_desktop
+from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import set_test_pet_values
 from tools.tk_test_time import ControlledTkTime
 
@@ -34,7 +35,7 @@ class WorldRuntimeFlowTests(unittest.TestCase):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         store = StateStore(Path(folder.name) / "state.json")
-        store.save(
+        save_test_session(store,
             PetState(satiety=76, energy=60),
             PetSettings(
                 auto_walk=False,

@@ -33,6 +33,7 @@ from aiko_pet.pet.progression import calculate_pet_progression
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import WorldSurface
 from aiko_pet.world.state import WorldState
+from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import require_test_value
 
 WALL = 1_800_000_000.0
@@ -154,7 +155,7 @@ class MoodletMoodTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as folder:
                 store = StateStore(Path(folder) / "state.json")
                 settings = PetSettings(auto_routine=False)
-                store.save(original, settings)
+                save_test_session(store, original, settings)
                 closed = PetSessionRestorer(
                     store, wall_time=lambda: WALL + 3600,
                 ).restore()
@@ -173,7 +174,7 @@ class MoodletMoodTests(unittest.TestCase):
                                      (3600,))
                 else:
                     self.assertEqual(original.moodlets.active, ())
-                store.save(closed.state, settings)
+                save_test_session(store, closed.state, settings)
                 again = PetSessionRestorer(
                     store, wall_time=lambda: WALL + 3600,
                 ).restore()
@@ -192,7 +193,7 @@ class MoodletMoodTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as folder:
                 store = StateStore(Path(folder) / "state.json")
                 world = WorldState(WorldSurface(800, 600), ()) if with_world else None
-                store.save(pet, PetSettings(auto_routine=False),
+                save_test_session(store, pet, PetSettings(auto_routine=False),
                            world=world.snapshot() if world else None)
                 loaded = PetSessionRestorer(
                     store, wall_time=lambda: WALL + 10,

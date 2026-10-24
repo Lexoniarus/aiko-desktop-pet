@@ -34,6 +34,7 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.ui.pet_view.animated_pet import AnimatedPet, AnimatedPorts
 from aiko_pet.world.contracts import ObjectState
 from tools.desktop_test_support import create_test_desktop
+from tools.persistence_test_support import save_test_session
 from tools.pet_test_support import set_test_pet_values
 
 
@@ -195,7 +196,7 @@ class HandoverPreviewIntegrationTests(unittest.TestCase):
             self.skipTest(str(error))
         directory = self.enterContext(tempfile.TemporaryDirectory())
         store = StateStore(Path(directory) / "state.json")
-        store.save(PetState(satiety=76, energy=60), PetSettings(
+        save_test_session(store, PetState(satiety=76, energy=60), PetSettings(
             scale=scale, auto_walk=False, auto_routine=False, observe_computer=False,
             learn_rhythm=False, spontaneous_talk=False,
         ))

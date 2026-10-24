@@ -13,6 +13,7 @@ from aiko_pet.games.contracts import GameId
 from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.state import PetState
 from tools.desktop_test_support import create_test_desktop
+from tools.persistence_test_support import save_test_session
 from tools.tk_test_time import ControlledTkTime
 
 
@@ -30,7 +31,7 @@ class StoryGuiTests(unittest.TestCase):
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         store = StateStore(Path(directory.name) / "state.json")
-        store.save(
+        save_test_session(store,
             PetState(friendship=90, mood=65, energy=80, social=80, affection=80),
             PetSettings(
                 auto_routine=False,

@@ -16,6 +16,7 @@ from aiko_pet.infrastructure.persistence import StateStore
 from aiko_pet.pet.mind.catalog import Reaction
 from aiko_pet.pet.state import PetState
 from tools.desktop_test_support import create_test_desktop
+from tools.persistence_test_support import save_test_session
 from tools.tk_test_time import ControlledTkTime
 
 
@@ -30,7 +31,7 @@ class ClickGuiTests(unittest.TestCase):
         directory = tempfile.TemporaryDirectory(prefix="aiko-click-test-")
         self.addCleanup(directory.cleanup)
         store = StateStore(Path(directory.name) / "state.json")
-        store.save(
+        save_test_session(store,
             PetState(friendship=50, mood=60, energy=80, social=75, affection=75),
             PetSettings(auto_routine=False, observe_computer=False, auto_walk=False,
                         spontaneous_talk=False, learn_rhythm=False),
