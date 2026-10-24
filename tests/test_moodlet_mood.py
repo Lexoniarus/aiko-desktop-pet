@@ -102,7 +102,7 @@ class MoodletMoodTests(unittest.TestCase):
     def test_actual_mood_changes_over_time_not_on_target_composition(self):
         pet = seeded_pet(remaining=7200)
         before = pet.capture_checkpoint()
-        progress = calculate_pet_progression(pet, 30 / 3600)
+        progress = calculate_pet_progression(pet, pet.lived_seconds + 30)
         self.assertEqual(pet.capture_checkpoint(), before)
         self.assertGreater(progress.mood, pet.mood)
         self.assertLessEqual(progress.mood, pet.mood + 1)
@@ -113,9 +113,9 @@ class MoodletMoodTests(unittest.TestCase):
         pet.restore_checkpoint(replace(pet.capture_checkpoint(), energy=39.99,
                                        sleeping=True, sleep_origin="manual"))
         split = deepcopy(pet)
-        pet._advance_progression(1824 / 3600, observed=False)
+        pet._advance_progression(pet.lived_seconds + 1824, observed=False)
         for _ in range(1824):
-            split._advance_progression(1 / 3600, observed=False)
+            split._advance_progression(split.lived_seconds + 1, observed=False)
         episode = pet.moodlets.active[0]
         # Sleep restores 7.5 energy/hour: crossing 40 takes 4.8 seconds.
         assert episode.recovery_since is not None
@@ -132,7 +132,7 @@ class MoodletMoodTests(unittest.TestCase):
             pet.capture_checkpoint(), social=40.01, lived_seconds=1800,
             moodlets=replace(pet.moodlets, active=(episode,)),
         ))
-        pet._advance_progression(15 / 3600)
+        pet._advance_progression(pet.lived_seconds + 15)
         stored = pet.moodlets.active[0]
         # Social falls eight points/hour while awake: 0.01 takes 4.5 seconds.
         self.assertAlmostEqual(stored.remaining_seconds, 95.5, places=6)

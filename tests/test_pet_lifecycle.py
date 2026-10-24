@@ -42,7 +42,7 @@ def local_stamp(hour: int = 12, minute: int = 0) -> float:
 class PetProgressionTests(unittest.TestCase):
     def test_normal_waking_decay_does_not_require_pet_state(self) -> None:
         needs = Needs()
-        progress = calculate_pet_progression(needs, 1)
+        progress = calculate_pet_progression(needs, 3600)
         result = progress.needs
         self.assertAlmostEqual(result.satiety, 67.0)
         self.assertAlmostEqual(progress.mood, 55.52)
@@ -53,7 +53,7 @@ class PetProgressionTests(unittest.TestCase):
 
     def test_sleep_replenishes_energy_without_friendship_change(self) -> None:
         needs = Needs(sleeping=True, energy=40)
-        result = calculate_pet_progression(needs, 1, effort=1.0).needs
+        result = calculate_pet_progression(needs, 3600, effort=1.0).needs
         self.assertAlmostEqual(result.energy, 47.5)
         self.assertAlmostEqual(result.satiety, 73.6)
         self.assertAlmostEqual(result.affection, 74.75)
@@ -62,8 +62,8 @@ class PetProgressionTests(unittest.TestCase):
     def test_heavy_work_increases_waking_drain(self) -> None:
         relaxed = Needs()
         working = Needs()
-        relaxed_next = calculate_pet_progression(relaxed, 1, effort=0)
-        working_next = calculate_pet_progression(working, 1, effort=1)
+        relaxed_next = calculate_pet_progression(relaxed, 3600, effort=0)
+        working_next = calculate_pet_progression(working, 3600, effort=1)
         self.assertLess(working_next.needs.satiety, relaxed_next.needs.satiety)
         self.assertLess(working_next.needs.energy, relaxed_next.needs.energy)
         self.assertLess(working_next.mood, relaxed_next.mood)

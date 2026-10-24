@@ -335,14 +335,14 @@ class PetState:
 
     def _advance_progression(
         self,
-        hours: float,
+        end_elapsed: float,
         effort: float | None = None,
         food_activity: FoodActivity | None = None,
         *, observed: bool = True,
     ) -> None:
         """Commit the pure policy's immutable result as one aggregate update."""
         progress = calculate_pet_progression(
-            self, hours, effort, food_activity=food_activity,
+            self, end_elapsed, effort, food_activity=food_activity,
             observed=observed,
             relationship=FriendshipProgress(
                 self.friendship, self.friendship_history, self.lived_seconds,
@@ -350,6 +350,8 @@ class PetState:
         )
         assert progress.relationship is not None
         relationship = progress.relationship
+        if relationship.elapsed != progress.elapsed:
+            raise ValueError("Relationship does not match the progression endpoint")
         needs = progress.needs
         self._change(
             satiety=needs.satiety, mood=progress.mood, energy=needs.energy,
@@ -357,11 +359,12 @@ class PetState:
             food=progress.food, fun=needs.fun,
             moodlets=progress.moodlets,
             friendship=relationship.points, relationship=relationship.history,
-            lived_seconds=relationship.elapsed,
-            wishes=expire_wishes(self.wishes, elapsed=relationship.elapsed),
+            lived_seconds=progress.elapsed,
+            wishes=expire_wishes(self.wishes, elapsed=progress.elapsed),
             sleep_episode=(replace(
                 self.sleep_episode,
-                slept_seconds=self.sleep_episode.slept_seconds + hours * 3600,
+                slept_seconds=(self.sleep_episode.slept_seconds
+                               + (progress.elapsed - self.lived_seconds)),
             ) if self.sleeping else self.sleep_episode),
         )
 
@@ -584,52 +587,52 @@ class PetState:
             auto_routine=auto_routine or bool(self.sleep_episode.kind) or self.sleeping,
             effort=effort,
             elapsed_seconds=elapsed_seconds,
+            elapsed_start=self.lived_seconds,
             food_activity=food_activity,
         )
         if steps is None:
             return
-        end_elapsed = self.lived_seconds + steps.elapsed_seconds
         observation = sleep_context or SleepContext.permissions(
             allow_bedtime, allow_nap, interrupt_nap,
         )
-        wall = now - steps.elapsed_seconds
         for step in steps:
             if not observed:
                 step = replace(step, observed=False)
-            wall += step.hours * 3600
             self._apply_time_step(
-                step, now=wall, auto_routine=auto_routine,
-                sleep_context=(observation.earlier(max(0, now - wall))
+                step, auto_routine=auto_routine,
+                sleep_context=(observation.earlier(max(0, now - step.wall_end))
                                if step.observed else observation.unobserved()),
             )
         self.finish_time_advance(
-            now, lived_seconds=end_elapsed, auto_routine=auto_routine,
+            now, lived_seconds=steps.elapsed_end, auto_routine=auto_routine,
             sleep_context=observation,
         )
 
     def advance_time_step(
-        self, step: SimulationStep, *, now: float, auto_routine: bool,
+        self, step: SimulationStep, *, auto_routine: bool,
         sleep_context: SleepContext,
     ) -> None:
         """Expose the completed boundary for application-owned resource effects."""
         self._apply_time_step(
-            step, now=now, auto_routine=auto_routine, sleep_context=sleep_context,
+            step, auto_routine=auto_routine, sleep_context=sleep_context,
         )
-        self._update_sleep_endpoint(now, auto_routine, sleep_context)
+        self._update_sleep_endpoint(step.wall_end, auto_routine, sleep_context)
 
     def _apply_time_step(
-        self, step: SimulationStep, *, now: float, auto_routine: bool,
+        self, step: SimulationStep, *, auto_routine: bool,
         sleep_context: SleepContext,
     ) -> None:
         """Apply one planned interval without planning or initializing history."""
+        if self.lived_seconds != step.elapsed_start:
+            raise ValueError("Time step does not start at the pet checkpoint")
         if step.context is not None:
             self.update_daily_routine(
                 step.context, automatic=auto_routine,
-                sleep_context=sleep_context.earlier(step.hours * 3600),
+                sleep_context=sleep_context.earlier(step.seconds),
             )
-        self._advance_progression(step.hours, step.effort, step.food_activity,
+        self._advance_progression(step.elapsed_end, step.effort, step.food_activity,
                                   observed=step.observed)
-        self._change(updated_at=now)
+        self._change(updated_at=step.wall_end)
 
     def _update_sleep_endpoint(
         self, now: float, automatic: bool, context: SleepContext,
@@ -644,10 +647,12 @@ class PetState:
         self, now: float, *, lived_seconds: float, auto_routine: bool,
         sleep_context: SleepContext,
     ) -> None:
-        """Finalize a whole interval, including neutral first-save migration."""
+        """Verify the shared endpoint before finalizing calendar/legacy metadata."""
+        if self.lived_seconds != lived_seconds:
+            raise ValueError("Completed time plan does not match the pet checkpoint")
         self._update_sleep_endpoint(now, auto_routine, sleep_context)
         self._change(
-            updated_at=now, lived_seconds=lived_seconds,
+            updated_at=now,
             wishes=expire_wishes(self.wishes, elapsed=lived_seconds),
             relationship=begin_continuous_friendship(self.friendship_history,
                                                       lived_seconds),

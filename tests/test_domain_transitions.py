@@ -72,7 +72,7 @@ class DomainTransitionTests(unittest.TestCase):
             updated_at=START, friendship=40, affection=25, social=18,
         )
         previous = encode_pet_state(state)
-        needs = calculate_pet_progression(state, 1.0, effort=0.9)
+        needs = calculate_pet_progression(state, 3600, effort=0.9)
         friendship = record_accepted_contact(state, "pet", START)
         self.assertEqual(encode_pet_state(state), previous)
         self.assertNotEqual(needs.needs.energy, state.energy)
@@ -85,11 +85,11 @@ class DomainTransitionTests(unittest.TestCase):
         assert friendship is not None
         self.assertEqual(friendship.points, state.friendship)
 
-    def test_invalid_duration_preserves_the_pure_need_result(self) -> None:
+    def test_invalid_endpoint_preserves_the_pure_need_result(self) -> None:
         state = PetState(updated_at=START)
         baseline = calculate_pet_progression(state, 0)
         for duration in (-1, float("nan"), float("inf")):
-            with self.subTest(hours=duration):
+            with self.subTest(endpoint=duration):
                 self.assertEqual(calculate_pet_progression(state, duration), baseline)
 
     def test_need_policy_and_aggregate_use_identical_values(self) -> None:
@@ -103,9 +103,9 @@ class DomainTransitionTests(unittest.TestCase):
                         updated_at=START,
                     )
                     before = encode_pet_state(state)
-                    expected = calculate_pet_progression(state, 0.5, effort)
+                    expected = calculate_pet_progression(state, 1800, effort)
                     self.assertEqual(encode_pet_state(state), before)
-                    state._advance_progression(0.5, effort)
+                    state._advance_progression(1800, effort)
                     self.assertEqual(state.food, expected.food)
                     self.assertEqual(state.mood, expected.mood)
                     for key in ("satiety", "fun", "energy", "social", "affection"):

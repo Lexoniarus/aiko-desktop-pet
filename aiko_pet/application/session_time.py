@@ -45,12 +45,11 @@ class SessionTimeProgression:
         plan = plan_pet_time(
             state.updated_at, inputs.wall_time, auto_routine=True,
             elapsed_seconds=elapsed, effort=inputs.effort,
+            elapsed_start=state.lived_seconds,
             food_activity=inputs.food_activity,
         )
         if plan is None:
             return
-        end_elapsed = state.lived_seconds + plan.elapsed_seconds
-        wall = inputs.wall_time - plan.elapsed_seconds
         context = inputs.sleep_context or SleepContext.permissions(
             inputs.allow_bedtime, inputs.allow_nap, inputs.interrupt_nap,
         )
@@ -58,19 +57,18 @@ class SessionTimeProgression:
             observed = not reconstruct and step.observed
             held = self._holding_item()
             self._update_care(
-                state, wall=wall, observed=observed,
+                state, wall=step.wall_start, observed=observed,
                 can_finish=not held and not (observed and context.blocked),
             )
-            wall += step.hours * 3600
             state.advance_time_step(
-                replace(step, observed=observed), now=wall,
+                replace(step, observed=observed),
                 auto_routine=inputs.auto_routine,
-                sleep_context=(context.earlier(max(0, inputs.wall_time - wall))
+                sleep_context=(context.earlier(max(0, inputs.wall_time - step.wall_end))
                                if observed else replace(context.unobserved(),
                                                         blocked=held)),
             )
         state.finish_time_advance(
-            inputs.wall_time, lived_seconds=end_elapsed,
+            inputs.wall_time, lived_seconds=plan.elapsed_end,
             auto_routine=inputs.auto_routine,
             sleep_context=context.unobserved() if reconstruct else context,
         )

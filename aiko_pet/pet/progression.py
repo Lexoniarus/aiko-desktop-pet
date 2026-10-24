@@ -81,6 +81,7 @@ class PetProgress:
     mood: float
     food: FoodState
     moodlets: MoodletState
+    elapsed: float
     relationship: FriendshipProgress | None = None
 
 
@@ -133,7 +134,7 @@ def _need_crossing(
 
 def calculate_pet_progression(
     record: ProgressionValues,
-    hours: float,
+    end_elapsed: float,
     effort: float | None = None,
     *,
     food_activity: FoodActivity | None = None,
@@ -167,13 +168,14 @@ def calculate_pet_progression(
         )
         social_rate = BALANCE.number("needs", "awake_social_loss_per_hour")
         affection_rate = BALANCE.number("needs", "awake_affection_loss_per_hour")
-    remaining = hours * 3600 if math.isfinite(hours) and hours > 0 else 0.0
+    endpoint = (end_elapsed if math.isfinite(end_elapsed) and end_elapsed > elapsed
+                else elapsed)
+    remaining = endpoint - elapsed
     step_limit = BALANCE.number("simulation", "needs_step_seconds")
-    endpoint = elapsed + remaining
     represented = False
     if remaining > 0:
         moodlets = prepare_long_term(moodlets, elapsed=elapsed)
-    while remaining > 1e-9:
+    while elapsed < endpoint:
         before_needs = NeedLevels(satiety, energy, fun, social, affection)
         if relationship is not None and not represented:
             moodlets = prepare_poor_care(
@@ -214,6 +216,16 @@ def calculate_pet_progression(
                     before_needs, food, seconds / 3600, sleeping=record.sleeping,
                     activity=activity, rates=(energy_rate, social_rate, affection_rate),
                 )
+        next_elapsed = min(endpoint, elapsed + seconds)
+        if next_elapsed == elapsed:
+            next_elapsed = math.nextafter(elapsed, endpoint)
+        actual_seconds = next_elapsed - elapsed
+        if actual_seconds != seconds:
+            seconds = actual_seconds
+            after_needs, next_food = _advance_needs(
+                before_needs, food, seconds / 3600, sleeping=record.sleeping,
+                activity=activity, rates=(energy_rate, social_rate, affection_rate),
+            )
         step_hours = seconds / 3600
         before = (satiety, energy, fun, social, affection)
         satiety, energy, fun = after_needs.satiety, after_needs.energy, after_needs.fun
@@ -243,7 +255,7 @@ def calculate_pet_progression(
             )
         if relationship is not None and not represented:
             moodlets = qualify_poor_care(
-                moodlets, relationship.history, elapsed=elapsed + seconds,
+                moodlets, relationship.history, elapsed=next_elapsed,
                 before=before_needs, after=after_needs, sleeping=record.sleeping,
                 definitions=definitions,
             )
@@ -253,16 +265,16 @@ def calculate_pet_progression(
             )
         if relationship is not None:
             moodlets = advance_long_term(
-                moodlets, relationship.history, elapsed=elapsed + seconds,
+                moodlets, relationship.history, elapsed=next_elapsed,
                 sleeping=record.sleeping,
             )
             represented = represented and poor_care_at_capacity(
                 moodlets, after_needs, sleeping=record.sleeping,
                 definitions=definitions,
             )
-        elapsed += seconds
+        elapsed = next_elapsed
         remaining = max(0.0, endpoint - elapsed)
     return PetProgress(
         NeedLevels(satiety, energy, fun, social, affection), mood, food,
-        moodlets, relationship,
+        moodlets, endpoint, relationship,
     )

@@ -61,13 +61,32 @@ class RoutineTransition:
 
 @dataclass(frozen=True, slots=True)
 class SimulationStep:
-    """One bounded interval and the workload actually known for that interval."""
+    """One authoritative elapsed interval, with calendar anchors for scheduling."""
 
-    hours: float
+    elapsed_start: float
+    elapsed_end: float
+    wall_start: float
+    wall_end: float
     context: TimeContext | None
     effort: float | None
     food_activity: FoodActivity | None = None
     observed: bool = False
+
+    def __post_init__(self) -> None:
+        if (any(not math.isfinite(v) for v in (
+            self.elapsed_start, self.elapsed_end, self.wall_start, self.wall_end,
+        )) or self.elapsed_start < 0 or self.elapsed_end <= self.elapsed_start
+                or self.wall_end < self.wall_start):
+            raise ValueError("Invalid simulation interval")
+
+    @property
+    def seconds(self) -> float:
+        return self.elapsed_end - self.elapsed_start
+
+    @property
+    def hours(self) -> float:
+        """A rate-conversion view, never the source of an elapsed endpoint."""
+        return self.seconds / 3600
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,32 +95,41 @@ class TimePlan:
 
     now: float
     elapsed_seconds: float
+    elapsed_start: float
     auto_routine: bool
     effort: float | None
     food_activity: FoodActivity | None
 
+    @property
+    def elapsed_end(self) -> float:
+        return self.elapsed_start + self.elapsed_seconds
+
     def __iter__(self) -> Iterator[SimulationStep]:
-        cursor = self.now - self.elapsed_seconds
-        known_since = self.now - min(self.elapsed_seconds, MAX_LIVE_EFFORT_SECONDS)
-        while cursor < self.now:
+        offset = 0.0
+        known_since = max(0.0, self.elapsed_seconds - MAX_LIVE_EFFORT_SECONDS)
+        while offset < self.elapsed_seconds:
+            wall = self.now - (self.elapsed_seconds - offset)
+            end = self.elapsed_seconds
             if self.auto_routine:
                 # Align the grid across calls instead of drifting after restart.
                 step_seconds = BALANCE.number("simulation", "needs_step_seconds")
-                boundary = math.floor(cursor / step_seconds) + 1
-                end = min(self.now, boundary * step_seconds)
-            else:
-                end = self.now
-            if cursor < known_since < end:
+                boundary = (math.floor(wall / step_seconds) + 1) * step_seconds
+                end = min(end, offset + (boundary - wall))
+            if offset < known_since < end:
                 end = known_since
-            observed = cursor >= known_since
-            yield SimulationStep(
-                hours=(end - cursor) / 3600.0,
-                context=context_at(cursor) if self.auto_routine else None,
-                effort=self.effort if observed else None,
-                food_activity=self.food_activity if observed else None,
-                observed=observed,
-            )
-            cursor = end
+            observed = offset >= known_since
+            start_elapsed = self.elapsed_start + offset
+            end_elapsed = self.elapsed_start + end
+            if end_elapsed > start_elapsed:
+                yield SimulationStep(
+                    elapsed_start=start_elapsed, elapsed_end=end_elapsed,
+                    wall_start=wall, wall_end=self.now - (self.elapsed_seconds - end),
+                    context=context_at(wall) if self.auto_routine else None,
+                    effort=self.effort if observed else None,
+                    food_activity=self.food_activity if observed else None,
+                    observed=observed,
+                )
+            offset = end
 
 
 def calculate_daily_routine(
@@ -143,6 +171,7 @@ def plan_pet_time(
     auto_routine: bool = False,
     effort: float | None = None,
     elapsed_seconds: float | None = None,
+    elapsed_start: float = 0.0,
     food_activity: FoodActivity | None = None,
 ) -> TimePlan | None:
     """Plan all elapsed time; current observations cover only a recent tail."""
@@ -152,8 +181,11 @@ def plan_pet_time(
     if not math.isfinite(duration):
         return None
     elapsed = max(0.0, duration)
+    if (not math.isfinite(elapsed_start) or elapsed_start < 0
+            or not math.isfinite(elapsed_start + elapsed)):
+        raise ValueError("Invalid pet elapsed-time interval")
     if type(effort) not in (int, float):
         effort = None
     elif effort is not None and (not math.isfinite(effort) or not 0.0 <= effort <= 1.0):
         effort = None
-    return TimePlan(now, elapsed, auto_routine, effort, food_activity)
+    return TimePlan(now, elapsed, elapsed_start, auto_routine, effort, food_activity)

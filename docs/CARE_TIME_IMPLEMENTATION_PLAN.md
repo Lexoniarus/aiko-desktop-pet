@@ -58,6 +58,11 @@
 > and [final review](SQLITE_ACCEPTANCE_REVIEW.md) close SQL-1 through SQL-9.
 > Complete local no-window verification passed; native acceptance stays separate.
 
+> **Post-SQL-9 time-contract correction, 2026-10-24:** a runtime report exposed
+> inconsistent fractional elapsed endpoints despite the earlier green suite.
+> [The corrective delivery](#time-contract-correction-after-sql-9-runtime-report)
+> supersedes the earlier claim that the time path needed no further correction.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -9841,3 +9846,68 @@ scenarios merely for those fixture type corrections or documentation.
 refactor was justified by this review. No personal save, native test/pet windows,
 mouse control, live API call, CI or merge. Native visual/input acceptance and the
 previously reported AppHang are not certified by this no-window result.
+
+
+### Time-contract correction after SQL-9 runtime report
+
+**Owner-authorized correction, 2026-10-24.** The reported save rejection was
+reproduced with a fresh synthetic pet, independent of JSON import: an explicit
+0.016-second interval became 0.016000032424926758 seconds when reconstructed
+from large UTC timestamps. Finalization then reset only `lived_seconds` to the
+original endpoint, leaving long-term evidence ahead of the pet checkpoint.
+Both direct `PetState.advance` and `SessionTimeProgression` had this fault.
+The original SQL-9 OOP acceptance was insufficient at this time-contract boundary;
+formatting/type checks and whole-hour scenarios did not establish consistency.
+
+#### Shared plan and aggregate correction
+
+The existing immutable `TimePlan` owns the elapsed start/end and partitions
+relative offsets within the supplied duration. UTC provides calendar-grid and
+observation labels, not a recalculated elapsed duration. Its `SimulationStep`
+carries elapsed and wall endpoints; seconds/hours are read-only derived views.
+The two consumers use these same values rather than accumulating UTC or
+converting hours back into elapsed timestamps. No additional clock, progression
+loop, mutable pet or storage adapter is introduced.
+
+`calculate_pet_progression(record, end_elapsed, ...)` integrates up to the
+specified elapsed-axis endpoint and returns it in `PetProgress`. Numeric
+subintervals are clipped to that endpoint; all dependent policies use the
+represented interval and endpoint. Tiny representable remainders are consumed,
+not discarded by the former one-nanosecond loop condition. Friendship progress
+must agree before the aggregate commits. Actual sleep duration uses that same
+elapsed difference; wishes expire on that endpoint. Both time consumers supply
+`elapsed_start=state.lived_seconds` when planning.
+
+Pet step admission checks the starting checkpoint. `finish_time_advance` checks
+that the planned endpoint was reached before updating calendar/legacy metadata;
+it no longer rewrites only the pet lifetime after dependent records were updated.
+The existing World/Pet/memory/clock rollback owners remain unchanged.
+
+No SQLite schema, strict codec bound, import fallback or tolerance is changed.
+The existing personal save is not reset, rewritten or reimported. No new schema
+version or data-repair procedure is needed for this runtime contract correction.
+
+Regression coverage in `tests/test_time_contract.py` checks fractional and
+sub-UTC-resolution planning, exact endpoint continuity, direct and World paths,
+awake/sleeping checkpoints and recovery markers, all strict evidence codecs,
+actual SQLite save/reload and restorer restart. It also checks a fractional
+long-term period transition without duplicate causes, the actual live clock
+through UTC correction, zero-time repetition and rejected mismatched boundaries.
+Existing pure-policy callers were migrated from hours to explicit elapsed-axis
+endpoints; the call-site audit found no other repository consumers.
+
+The five new focused cases passed in **0.445 s**, no skips. Final affected-owner
+verification is recorded below. No personal-save
+access, test/pet windows, mouse control, live HTTP or GitHub CI in this fix.
+
+
+Final targeted acceptance: **226 tests passed in 36.938 s**, zero skips/failures/
+errors, slowest **3.886 s**, **no individual test over ten seconds**. Scope covers
+planner/direct/live/World elapsed paths, strict save/import/restart, relationship/
+exposure, poor-care recovery, long-term qualification, sleep/finite stock, daily
+need schedules, generated ordinary/intensive care balance and existing dependency/
+UI/owner guards. New regression tests additionally passed alone in 0.445 s.
+Native Tk was blocked before discovery and the default save redirected to a
+private temporary fixture. The complete suite was not rerun for this focused fix.
+Scoped Ruff and fresh strict Mypy (four production sources) pass; complete
+repository Pyright passes. Parallel character/export edits remain untouched.
