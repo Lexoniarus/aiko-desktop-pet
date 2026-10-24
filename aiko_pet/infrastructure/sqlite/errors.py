@@ -3,9 +3,28 @@
 from __future__ import annotations
 
 import sqlite3
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 from ...application.storage_contracts import StorageError, StorageFailureKind
+
+
+@contextmanager
+def storage_failures(path: Path) -> Iterator[None]:
+    """Translate a complete storage operation, retaining its selected path."""
+    try:
+        yield
+    except StorageError as error:
+        if error.path == path:
+            raise
+        raise StorageError(error.kind, path, error.message) from error
+    except (sqlite3.Error, OSError) as error:
+        raise translate_storage_error(error, path) from error
+    except (ValueError, TypeError, OverflowError, KeyError, RecursionError) as error:
+        raise StorageError(
+            StorageFailureKind.INVALID_DATA, path, f"Invalid saved data: {error}"
+        ) from error
 
 
 def translate_storage_error(error: sqlite3.Error | OSError, path: Path) -> StorageError:

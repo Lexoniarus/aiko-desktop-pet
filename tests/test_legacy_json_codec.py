@@ -23,9 +23,12 @@ from aiko_pet.infrastructure.social_history_codec import encode_social_history
 from aiko_pet.infrastructure.world_catalog import build_consumable_definitions
 from aiko_pet.infrastructure.world_codec import encode_world
 from aiko_pet.pet.food_catalog import DEFAULT_CATALOG
-from aiko_pet.pet.mind.object_knowledge import ObjectMemorySnapshot
+from aiko_pet.pet.mind.object_knowledge import (
+    ObjectMemorySnapshot,
+    SavedObjectKnowledge,
+)
 from aiko_pet.pet.state import PetState
-from aiko_pet.world.contracts import ObjectDefinition, WorldSurface
+from aiko_pet.world.contracts import ObjectDefinition, ObjectFootprint, WorldSurface
 from aiko_pet.world.state import WorldState
 
 WALL = 1_800_000_000.0
@@ -38,7 +41,13 @@ def definitions() -> tuple[ObjectDefinition, ...]:
 def legacy_payload() -> dict[str, Any]:
     pet = PetState(updated_at=WALL, lived_seconds=100000,
                    moodlets=complete_emotional_state(), wishes=handover_state())
-    world = WorldState(WorldSurface(800, 600), definitions()).snapshot()
+    stock = WorldState(WorldSurface(800, 600), definitions())
+    item = stock.place_resting("apple", 100, ObjectFootprint(8, 8))
+    world = stock.snapshot()
+    memory = ObjectMemorySnapshot((SavedObjectKnowledge(
+        "memory_1", "apple", "food", 100, 0, True, 80, True, None,
+        instance_id=item.instance_id,
+    ),), 2)
     return {
         "version": 1, "pet": encode_pet_state(pet),
         "settings": PetSettings(scale=2, zodiac_sign="leo").to_dict(),
@@ -46,7 +55,8 @@ def legacy_payload() -> dict[str, Any]:
         "social_history": encode_social_history(
             replace(social_history(), horoscope=admitted_day())),
         "world": encode_world(world, recovery_x=0),
-        "object_memory": encode_object_memory(ObjectMemorySnapshot(())),
+        "object_memory": encode_object_memory(
+            memory, world_next_id=world.next_instance_id),
     }
 
 

@@ -1,15 +1,35 @@
-"""Consistent private pre-migration backups, including committed WAL contents."""
+"""Unchanged legacy bytes and consistent private pre-schema-update backups."""
 
 from __future__ import annotations
 
 import os
 import sqlite3
 import tempfile
+import uuid
 from contextlib import closing, suppress
 from pathlib import Path
 
 from ...application.storage_contracts import StorageError, StorageFailureKind
 from .errors import translate_storage_error
+
+
+def backup_legacy_json(path: Path, contents: bytes) -> Path:
+    """Back up exactly the bytes validated for import; never alter the source."""
+    backup = path.with_name(f"{path.stem}-{uuid.uuid4().hex}.aiko-save-backup")
+    created = False
+    complete = False
+    try:
+        with backup.open("xb") as file:
+            created = True
+            file.write(contents)
+            file.flush()
+            os.fsync(file.fileno())
+        complete = True
+        return backup
+    finally:
+        if created and not complete:
+            with suppress(OSError):
+                backup.unlink(missing_ok=True)
 
 
 def backup_database(path: Path, version: int) -> Path:

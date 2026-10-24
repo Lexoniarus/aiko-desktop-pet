@@ -1,15 +1,13 @@
 """Complete revision-guarded SQLite store; not wired into the desktop yet.
 
-All domain progression remains in PetSessionRestorer and existing owners. A
-path is explicit until the planned import/bootstrap and runtime cutover slices.
+All domain progression remains in PetSessionRestorer and existing owners.
+Legacy initialization shares the same transactional writer/publication path.
 """
 
 from __future__ import annotations
 
 import sqlite3
 import time
-from collections.abc import Iterator
-from contextlib import contextmanager
 from copy import deepcopy
 from pathlib import Path
 
@@ -29,26 +27,10 @@ from ...world.contracts import ObjectDefinition, WorldSnapshot
 from ..item_assets import load_item_catalog
 from ..world_catalog import build_consumable_definitions
 from .connection import open_database
-from .errors import translate_storage_error
+from .errors import storage_failures
 from .publication import publish_database, temporary_database
 from .rows import nonnegative, read_rows
 from .session_rows import read_session_rows, write_session_rows
-
-
-@contextmanager
-def _storage_failures(path: Path) -> Iterator[None]:
-    try:
-        yield
-    except StorageError as error:
-        if error.path == path:
-            raise
-        raise StorageError(error.kind, path, error.message) from error
-    except (sqlite3.Error, OSError) as error:
-        raise translate_storage_error(error, path) from error
-    except (ValueError, TypeError, OverflowError, KeyError) as error:
-        raise StorageError(
-            StorageFailureKind.INVALID_DATA, path, "Invalid complete save snapshot"
-        ) from error
 
 
 class SqliteStateStore:
@@ -78,7 +60,7 @@ class SqliteStateStore:
         return True
 
     def load_session(self, *, now: float | None = None) -> LoadedPetData:
-        with _storage_failures(self.path):
+        with storage_failures(self.path):
             if not self._exists():
                 current = nonnegative(
                     time.time() if now is None else now, "fresh UTC time"
@@ -103,12 +85,38 @@ class SqliteStateStore:
         world_recovery_x: float = 0,
         object_memory: ObjectMemorySnapshot | None = None,
     ) -> SaveRevision:
-        with _storage_failures(self.path):
+        return self._save_snapshot(
+            LoadedPetData(pet, settings, adaptive, True, world, object_memory,
+                          social_history, expected_revision),
+            world_recovery_x=world_recovery_x,
+        )
+
+    def initialize_legacy_session(
+        self, session: LoadedPetData, *, imported_at: float,
+    ) -> SaveRevision:
+        """Publish a checked, backed-up import through the existing first writer.
+
+        Revision zero can never update an existing checkpoint. Publication also
+        rejects another initializer winning after our existence check.
+        """
+        with storage_failures(self.path):
+            if session.revision != SaveRevision() or not session.restored_from_save:
+                raise ValueError("Import requires an unsaved legacy checkpoint")
+            stamp = nonnegative(imported_at, "import UTC time")
+            return self._save_snapshot(session, world_recovery_x=0, imported_at=stamp)
+
+    def _save_snapshot(
+        self, session: LoadedPetData, *, world_recovery_x: float,
+        imported_at: float | None = None,
+    ) -> SaveRevision:
+        with storage_failures(self.path):
+            expected_revision = session.revision
             if not isinstance(expected_revision, SaveRevision):
                 raise ValueError("Expected revision must use the application contract")
             revision = SaveRevision(expected_revision.value + 1)
-            values = pet.capture_checkpoint()
-            saved_settings, saved_adaptive = deepcopy(settings), deepcopy(adaptive)
+            values = session.state.capture_checkpoint()
+            saved_settings = deepcopy(session.settings)
+            saved_adaptive = deepcopy(session.adaptive_memory)
 
             def commit_snapshot(
                 connection: sqlite3.Connection, *, initial: bool
@@ -118,6 +126,11 @@ class SqliteStateStore:
                         "INSERT INTO save_state VALUES (1, ?, ?, ?)",
                         (revision.value, values.updated_at, values.lived_seconds),
                     )
+                    if imported_at is not None:
+                        connection.execute(
+                            "INSERT INTO import_provenance VALUES (1, 'json-v1', ?)",
+                            (imported_at,),
+                        )
                 else:
                     changed = connection.execute(
                         "UPDATE save_state SET revision = ?, updated_at = ?, "
@@ -141,9 +154,9 @@ class SqliteStateStore:
                     values,
                     saved_settings,
                     adaptive=saved_adaptive,
-                    social_history=social_history,
-                    world=world,
-                    object_memory=object_memory,
+                    social_history=session.social_history,
+                    world=session.world,
+                    object_memory=session.object_memory,
                     world_recovery_x=world_recovery_x,
                 )
                 # Validate the complete result before commit or first publication.

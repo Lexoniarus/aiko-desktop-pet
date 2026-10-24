@@ -73,6 +73,13 @@ MIGRATIONS = (
         lived_seconds REAL NOT NULL
             CHECK (lived_seconds >= 0 AND lived_seconds <= 1.7976931348623157e308)
     )""",
+            """CREATE TABLE import_provenance (
+        save_id INTEGER PRIMARY KEY CHECK (save_id = 1)
+            REFERENCES save_state(id) ON DELETE CASCADE,
+        source_format TEXT NOT NULL CHECK (source_format = 'json-v1'),
+        imported_at REAL NOT NULL
+            CHECK (imported_at >= 0 AND imported_at <= 1.7976931348623157e308)
+    )""",
         )
         + _DOMAIN_SCHEMA,
     ),

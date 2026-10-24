@@ -43,10 +43,10 @@
 > records session revision metadata, complete transactions, first publication
 > and schema backup/error boundaries. Runtime cutover remains SQL-8.
 
-> **SQL-7 in progress, 2026-10-24:** the
+> **SQL-7 delivered, 2026-10-24:** the
 > [SQL-7 delivery record](#sqlite-delivery-sql-7-strict-legacy-json-import)
-> records strict legacy validation and the forthcoming backed-up import. Runtime
-> cutover remains SQL-8; development uses temporary fixtures only.
+> records strict validation, unchanged JSON backups, import provenance and atomic
+> publication. Existing SQLite remains authoritative. Runtime cutover is SQL-8.
 
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
@@ -9608,3 +9608,58 @@ case **1.013 s**, below ten seconds. The native Tk factory was blocked before
 discovery and the default save redirected into a temporary directory. Scoped
 Ruff, fresh strict Mypy (five sources) and Pyright including import tests passed.
 No application windows, mouse control, live-save access, HTTP or CI.
+
+
+#### B. Backed-up initialization through the complete SQLite writer
+
+`sqlite/legacy_import.py:load_or_import_session` accepts the selected `SavePaths`
+from SQL-1. It checks that database first and uses only its designated JSON
+candidate when the database is absent. Neither file existing means an unsaved
+fresh session, with no directories/database created. An inaccessible, damaged,
+newer, foreign or incomplete existing database stops loading; stale JSON never
+becomes an error fallback. Present invalid JSON stops before a backup or database
+is created. Supported legacy subformats use their established conversions.
+
+Before any import write, `backup_legacy_json` exclusively creates a private
+`*.aiko-save-backup`, flushes and syncs exactly the parsed source bytes, including
+original encoding/whitespace/line endings. Failed backup creation/sync stops the
+operation; an incomplete new backup is cleaned up. Original JSON is never
+modified, replaced or subsequently dual-written. Completed backups remain even
+if a later SQLite operation fails. Backup names are unique and never overwritten.
+
+`SqliteStateStore.initialize_legacy_session` shares the normal store's snapshot
+transaction, complete mapped-owner validation and atomic no-overwrite publication.
+It can only start from revision zero; a pre-existing or competing checkpoint
+causes a typed conflict, never replacement. No second session serializer or
+simulation loop is introduced. Failed writes/publication leave no active partial
+database and clean up temporary files. The shared storage-error boundary keeps
+JSON/backup errors attached to the source and SQLite errors to the destination.
+
+The initial, pre-cutover schema remains **version 1** as agreed. Its optional
+singleton `import_provenance` references `save_state`, constrains `source_format`
+to `json-v1` and retains `imported_at` in UTC. The record is written in the same
+initial transaction and survives subsequent normal saves. Personal source paths
+or a second copy of legacy JSON are not stored in the database. Schema sources
+and synthetic tests are committed; private databases/backups remain excluded.
+
+Import preserves the saved UTC/lived-time anchors, original wish identities,
+frozen goals/progress/pins, pending handovers, bounded Moodlet causes/stage
+budgets, care evidence, settings, adaptive memory, social/horoscope state and
+paired physical/subjective object data. It advances no time and grants no new
+knowledge. An isolated test verifies that the existing `PetSessionRestorer` alone
+then reconstructs one closed hour; merely reading/importing does not do so.
+
+Final targeted local acceptance: **155 tests passed in 5.170 s**, zero skips,
+slowest **0.995 s**, **no test over ten seconds**. Scope: SQLite mapping/store/
+schema/import tests, strict legacy decoding, path/revision contracts, existing
+JSON/session restoration, the affected authored catalog readers and subjective
+object-memory codecs. Full-suite acceptance remains SQL-9. Native Tk creation
+was blocked before discovery; the default save was temporary. Scoped Ruff,
+fresh strict Mypy (**39 source files**) and Pyright including new tests passed.
+No application/test windows, mouse control, personal-save access, HTTP or CI.
+Parallel character artwork/export changes remain untouched and uncommitted here.
+
+**SQL-7 complete.** SQL-8 remains the next separately authorized slice: connect
+startup, autosave/shutdown and error reporting to the SQLite reader/writer, audit
+remaining legacy consumers and retain exactly one active writer. This delivery
+does not switch the running application or migrate the owner's personal save.
