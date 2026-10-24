@@ -1,4 +1,4 @@
-"""Complete revision-guarded SQLite store; not wired into the desktop yet.
+"""Complete revision-guarded SQLite storage for runtime and imported sessions.
 
 All domain progression remains in PetSessionRestorer and existing owners.
 Legacy initialization shares the same transactional writer/publication path.

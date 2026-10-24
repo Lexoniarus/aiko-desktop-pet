@@ -36,7 +36,7 @@ flowchart TB
     Sprite["ui/pet_view/ — sprite, overlays and reaction playback"]
     Windows["ui/windows/ and ui/common/ — controls and reusable Tk helpers"]
     Desktop["desktop/ — timer, pointer/input and native Windows adapters"]
-    Infra["infrastructure/ — hardware, item/animation loaders and JSON save"]
+    Infra["infrastructure/ — hardware, item/animation loaders and SQLite save"]
     Ports["application/ports.py and telemetry.py — read contracts"]
 
     Shell --> App
@@ -559,23 +559,31 @@ Hardware implementation details live in `infrastructure/hardware/`. `telemetry.C
 
 ## Persistence, configuration and privacy
 
-`infrastructure/persistence.py — StateStore` is the only implementation of the version-one atomic local JSON repository. The default Windows file is `%LOCALAPPDATA%\AikoDesktopPet\state.json`. The sole optional environment override, `AIKO_SAVE_PATH`, selects another **file path**. No `.env` is required.
+`infrastructure/persistence.py:StateStore` resolves one `SavePaths` selection and
+loads through the strict legacy importer, inheriting the complete
+`sqlite/store.py:SqliteStateStore` writer. SQLite is the only live backend.
+The Windows destination is `%LOCALAPPDATA%/AikoDesktopPet/state.sqlite3`;
+`AIKO_SAVE_PATH` selects one file, with compatible `.json` import aliases.
+No database ships in Git. See [paths/import/errors](DATA_AND_SAVES.md).
 
-`infrastructure/pet_codec.py` owns pet/nutrition JSON translation: field names,
-legacy defaults and malformed-value handling. Status values retain full floating
-precision in saves; existing food-duration compatibility fields retain rounding.
-`PetState` and `FoodState` contain gameplay values and transitions, with no
-`from_dict`/`to_dict` methods. Existing saves retain their version-one shape.
+The application exposes `SavedPetReader`, `SavedPetWriter` and their combined
+`SavedPetStore` protocol. A load returns every owner and its `SaveRevision` in
+one snapshot. The desktop holds the expected revision; the writer compares it
+inside the same transaction and returns the next value only after commit.
+`DesktopPersistence` keeps the last successful checkpoint/revision on failure
+and paces failed attempts separately. It never reloads another writer's revision
+to force an overwrite. Startup storage errors stop before native desktop widgets;
+`desktop/startup.py` owns reporting/exit, not domain state or repair.
 
-- Storage decodes/writes data but does not simulate elapsed pet time.
-  - The application reconstructs full closed time after decoding. A shared
-    `ActiveSessionClock` consumes each interval once across ticks, care, settings
-    and saving. Life time uses suspend-inclusive `GetTickCount64` on Windows
-    and `CLOCK_BOOTTIME` on Linux, with wall-time fallback on missing reads.
-    Existing active uptime remains separate for observation/physics. A streaming
-    domain plan handles long gaps without truncating them or generating meals.
-    Optional `pet.time` persists the aggregate's elapsed axis; checkpoints and
-    joint atomic saves include it. See [time and migration](DATA_AND_SAVES.md).
+Strict supported JSON import retains the existing pet/history/World/memory/
+adaptive/social codecs. The forgiving pet codec supplies only already-validated
+older-field defaults; unchecked legacy loading is not a runtime path. SQLite
+mappers preserve fields and coherent relationships, without domain rules or a
+second mutable pet. Authored JSON remains independent of personal storage.
+`PetSessionRestorer` alone reconstructs closed time after loading, with the
+existing `ActiveSessionClock` consuming live/standby intervals exactly once.
+No schema/import/save operation advances needs or interprets observed activity.
+
 - Tests use temporary save files, never the user's production save.
 - No cloud, login, browser integration, microphone listener or network service is started.
 
@@ -604,7 +612,9 @@ The care/storage follow-up also changes these Python call contracts:
 | `FoodState.from_dict` / `to_dict` | `infrastructure.pet_codec.decode_food_state` / `encode_food_state` |
 | `CareRuntime`, router `runtime=` | `SessionInputs`, router `inputs=` |
 | `application.controller.CareInputs`, `ActivityCoordinator.care_inputs()` | `application.active_time.SessionInputs`, `ActivityCoordinator.session_inputs()` |
-| `StateStore.load()` / `load_memory()` | One `load_session()` snapshot: `.state`, `.settings`, `.adaptive_memory` |
+| `StateStore.load()` / `load_memory()` | One `load_session()` snapshot including all owners and `.revision` |
+| Legacy `StateStore.save()` without revision | SQLite `save(..., expected_revision=..., adaptive=..., social_history=...) -> SaveRevision`; desktop owns its last successful revision |
+| `StateStore.path` / `default_save_path()` returning JSON | Active SQLite destination; `.paths.legacy_json` identifies only the designated import source |
 | `asset_paths.ASSETS`, `EMOTE_ASSETS`, `SCI_FI_UI` | `SPRITE_FRAME_DIR`, `EMOTE_IMAGE_DIR`, `KENNEY_UI_DIR` |
 | `pet.value_rules.bounded` | `pet.value_rules.clamp_need_value` |
 | `ActionPlayback.state`, animation port `action_state` | `clip_id`, `action_clip_id` |
@@ -612,7 +622,8 @@ The care/storage follow-up also changes these Python call contracts:
 | `ActivityCoordinator.interrupt_nap()` | `should_interrupt_nap()`; a condition query without mutation |
 | `pet.mind.mind.AikoMind` | `pet.mind.PetMind` |
 
-The desktop entrypoints and on-disk save format remain compatible. Repository
+Desktop entrypoints remain stable; supported JSON saves import through the
+SQLite migration described above. Repository
 callers use these canonical owners directly; no reverse domain-to-storage import
 or compatibility registry is needed.
 
@@ -626,8 +637,8 @@ behavior tests now exercise their canonical owners directly.
 
 The source launchers (`main.py`, `Aiko_Pet.pyw`, `python -m aiko_pet` and both
 Windows batch files) use `aiko_pet.gui.main` and require no import migration.
-Version-one JSON saves, save-path configuration, sprites and authored dialogue
-are unchanged. The repository review cannot establish whether unknown external
+Sprites and authored dialogue are unchanged. Personal storage now uses SQLite
+with strict supported JSON import and compatible save-path aliases. The repository review cannot establish whether unknown external
 Python code imports the removed paths; such callers need the mappings below.
 
 | Removed path under `aiko_pet` | Canonical owner |

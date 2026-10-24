@@ -130,8 +130,8 @@ protection/search/intake deadlines, episode type, actual slept duration, expecte
 wake time and failed-source evidence. Optional `adaptive.quiet_window` v1 stores
 only coarse phase endpoints/dates and the expectation. Missing records preserve
 progress without inventing old sleep hours, observed quiet or manual protection.
-Invalid/future records preserve valid needs and require an original-byte backup
-before replacement. Relationship migration remains neutral during a first
+Present invalid/future legacy records stop strict import without replacing
+the source. Live sleep/adaptive values commit together in SQLite. Relationship migration remains neutral during a first
 legacy catch-up even when finite resource steps split that interval.
 
 Production time/stock equivalence uses the same known timeline and 15-second

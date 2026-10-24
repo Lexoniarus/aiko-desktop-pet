@@ -116,7 +116,7 @@ titles or unapproved personal activity details.
   advancing the pet or choosing sleep policy.
 - `PetSessionRestorer` decodes existing saves and applies bounded closed-time progression
   using the `SavedPetReader` port. `PetSettings` is owned by the application
-  settings module, and `StateStore` only decodes/encodes JSON data. Neither
+  settings module, and `StateStore` adapts strict import/SQLite snapshots. Neither
   application component imports the storage implementation.
 - The care toolbar, inline status details and persistent settings window
   use immutable view models and narrow callbacks through `HoverUi`; guard this direction
@@ -148,18 +148,23 @@ integration or network access were added.
 
 ## Persistence infrastructure contract
 
-`infrastructure/persistence.py` owns the only state JSON repository.
-Its `pet_codec.py` adapter translates pet and nutrition records without putting
-JSON decoding or formatting on the domain aggregates.
-Application session restoration
-consumes its typed load port and then simulates bounded closed time. Active-session time
-progression stays outside the repository. Old save path precedence and version-one schema are
-preserved, including relative environment-variable overrides.
+`infrastructure/persistence.py:StateStore` resolves paths and uses the strict
+legacy JSON importer plus the single complete SQLite writer. Application ports
+return all saved owners and a revision together; writes require that expected
+revision and commit related values transactionally. The desktop owns its last
+successful revision and never adopts a newer checkpoint to force a stale write.
+JSON is retained only as a supported import format and authored catalog source.
+No formatting, SQL or storage errors enter the domain aggregates.
+
+Session restoration reconstructs closed time once after decoding. Persistence
+itself never advances gameplay. Path/env precedence remains stable; `.json`
+configurations identify their original import source and same-stem SQLite save.
+See [data and saves](DATA_AND_SAVES.md) for initialization, backups and errors.
 
 ## Migration safety
 
-Existing entrypoints, stored JSON schema, dialogue catalogue, and user-facing
-care methods remain in place. Obsolete module paths and the desktop forwarding
+Existing entrypoints, dialogue catalogs and care methods remain in place.
+Personal storage now uses SQLite with strict supported legacy JSON import. Obsolete module paths and the desktop forwarding
 facade have been removed after the repository usage review; external Python
 callers should follow [the import migration table](ARCHITECTURE.md#import-migration).
 The animated character

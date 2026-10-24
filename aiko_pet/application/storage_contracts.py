@@ -1,7 +1,7 @@
 """Backend-independent failures and revision values for coherent saved sessions.
 
-These values do not write state or advance time. The active JSON store keeps
-its existing contract until the completed SQLite adapter replaces it.
+These values do not write state or advance time. The runtime SQLite adapter
+uses them for complete snapshot writes and last-successful revision ownership.
 """
 
 from __future__ import annotations

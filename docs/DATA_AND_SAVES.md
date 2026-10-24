@@ -1,5 +1,10 @@
 # Packaged data and local saves
 
+Personal progress uses private SQLite schema version 1. Authored catalogs and
+texts remain JSON resources in Git. JSON field paths below describe supported
+legacy import records and their domain meanings; live saves write the mapped
+SQLite tables, not new JSON checkpoints.
+
 ## Resource ownership
 
 | Resource | Owns |
@@ -27,25 +32,18 @@ Resource files are loaded once and exposed as immutable catalogues. Restart
 Aiko after editing them. There is no runtime network download, arbitrary code
 execution or extra pip dependency for this data layer.
 
-Optional [social API content](SOCIAL_CONTENT.md) is separate from the packaged
-catalogues. The existing settings owner persists `online_social`, default false;
-only a saved Boolean true enables it. Provider content, preparation buffers and
-pending playback are session-local and never enter the version-one save.
-The optional outer `social_history` version-two section stores the last ten
-admitted provider IDs/text fingerprints per API category (thirty receipts total),
-plus bounded expiring request timestamps and provider pauses. Both Sprüche sources
-use category `single`; quote IDs are namespaced `zitat-service:<entry-id>`.
-The request metadata contains at most 420 timestamp/provider receipts and three
-provider pauses, without payloads or credentials. The coordinator saves each
-reservation before HTTP through the existing atomic persistence owner; a failed
-write prevents dispatch. Restart/opt-out retain quotas. Version-one receipt-only
-histories remain readable, with empty request metadata.
-The existing session restorer returns these immutable values to the content
-coordinator before warming; opt-out keeps them. Old saves default to an empty
-history. Invalid/excessive/duplicate receipts do not discard valid pet values;
-the existing original-file backup precedes replacement. Actual admission saves
-care and receipts together in the same atomic file, without saving provider
-words, full reactions, source URLs, warm stock or pending selections.
+Optional [social API content](SOCIAL_CONTENT.md) is separate from packaged
+catalogs. The settings owner stores `online_social` (default false) and the
+optional zodiac sign. SQLite keeps the last ten admitted provider IDs/text
+fingerprints per API category, bounded provider request reservations/pauses,
+and the current-day horoscope's prepared reading, participation and paragraph
+cursor. Joke/quote/fact payloads, warm buffers, pending playback and credentials
+are not stored. Both Sprueche sources share category `single`; quote identities
+are namespaced `zitat-service:<entry-id>`. Reservations are committed before HTTP;
+a failed save prevents dispatch. Restart and opt-out retain quota metadata.
+The legacy social-history codecs support versions 1/2/3, with defaults only for
+fields absent from the supported older version. Present invalid, excessive or
+duplicate data stops import. Admission saves care and receipts in one transaction.
 
 RPS, Blackjack and Tic-Tac-Toe sessions are temporary. Their scores, decks,
 boards and hidden/revealed cards are not serialized. Closing reports completed
@@ -119,27 +117,26 @@ one standalone game instance; neither is a second source of authored copy.
 The editorial voice is quiet, dry, curious and sometimes cheeky. Clear wishes,
 charming competitiveness and sincere affection replace repeated denial of
 positive feelings. Relationship stages describe growing familiarity, not new
-care rules. Neither resource migration changes the version-one save schema;
+care rules. These authored resources remain independent of personal save schema changes;
 unfinished stories and rotation history remain session-local. B2 search
 reunion transfers assessment/placement intent to the actual identified finding
 and retires the old subjective subject. Its acquired World reference remains
-factual. Existing object memory v3 / outer save v1 round-trip without migration;
+factual. Legacy object memory v3 / outer save v1 import without inventing knowledge;
 the search's current findings remain task-local, with known stock excluded when
 a task is rebuilt from saved missing subjects.
 
 ## Optional Moodlet state
 
-The existing outer version-one save now includes optional `pet.moodlets` with
-its own version-one codec. Frozen episode values belong to `PetValues`, and the
+SQLite stores Moodlet episodes, stage budgets and causes in their owned tables.
+The legacy outer v1 format has optional `pet.moodlets` with a strict v1 codec. Frozen episode values belong to `PetValues`, and the
 complete existing checkpoint/restore path includes them. Store stable instance
 IDs, family IDs, intensity, elapsed timestamps, remaining stage time and consumed
 per-level relief allowances together. The latter survive refresh/escalation and
 recovery pauses; loading does not grant new allowances or advance the timers.
 
-Missing legacy sections start empty at the saved elapsed baseline. Invalid or
-future sections are not partially interpreted: other valid pet values survive,
-and StateStore preserves the original file before replacing it through its
-existing atomic-save path. No separate save, clock or emotional score is added.
+Missing legacy sections start empty at the saved elapsed baseline. Present
+invalid or future sections stop the complete import; no part is silently
+discarded and no fresh session replaces the source. No separate save, clock or emotional score is added.
 Stage 5B.3 now advances existing episodes and their numeric mood effects through
 the shared progression path. Stages 5B.4/5B.5 supply negative interaction and
 prolonged-poor-care triggers. Decoding never advances stored episodes or invents
@@ -151,7 +148,7 @@ evidence (current food, at most the configured repetition count of elapsed intak
 timestamps, pending/communicated variety request and saturated ignored-portion
 count). Earlier 5B saves lacking this extension start with neutral evidence.
 Unknown food IDs, future evidence, invalid counters and inconsistent request
-fields invalidate that optional Moodlet section, preserving unrelated pet values.
+fields invalidate import of the whole legacy save; the source is left intact.
 Relationship penalties remain in `relationship.penalties`: each kind retains
 only its own rolling window, including petting, food-variety and relocation
 caps. Request expiry/new episodes/restart do not refund those budgets. Transient
@@ -172,7 +169,7 @@ recovery closes already handled burden; the remaining amount stays in the same
 rolling 24-hour history. Markers, current stage progress and relief usage survive
 checkpoint, save/reopen and paired Pet/World consumption rollback. Future markers,
 invalid levels/flags, missing/unknown needs and malformed offsets invalidate the
-optional Moodlet section under the existing backup/preservation rules.
+entire legacy import; the original remains untouched.
 
 Active episodes retain a bounded chronological `causes` tuple of language-neutral
 facts: semantic receipt, elapsed timestamp, attribution, actual outcome and, for
@@ -194,7 +191,7 @@ See the [open audit](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-op
 Each active Moodlet may additionally store `attribution`: `user`, `autonomous`
 or `unknown`. This describes the latest qualifying cause's known origin;
 episodes saved before 5B.8 default to unknown. Loading never fabricates blame.
-The optional section and outer save remain version one. Overall emotional
+The supported legacy section and outer wire format remain version one. Overall emotional
 composition, localized labels, current wish restrictions and read-side
 countdowns are derived, never serialized as a second source of truth.
 
@@ -242,7 +239,8 @@ advances on the shared 30-second clock; actions and saves flush pending time.
 
 ## Optional wish state
 
-`pet.wishes` has a focused version-one codec in that same outer save. `WishState`
+SQLite stores wish instances, targets, original goals and progress in related
+tables. Its strict import reader retains the legacy `pet.wishes` v1 codec. `WishState`
 is frozen and owned in `PetValues` alongside Moodlets. Persist up to three active
 wishes, including multiple distinct goals per area, with stable instance IDs,
 original goals and typed exact/any/exclusion targets, elapsed creation/expiry
@@ -303,80 +301,94 @@ pending context. Actual withdrawal cancels it; consumption, completed put-down
 and permanent removal release no-longer-needed processing records. Whole-Pet
 checkpoints include receipts/permissions for joint consumption rollback.
 
-Missing old sections stay empty. Invalid sections preserve valid Moodlet/care
-values, and the existing atomic repository backs up the original bytes before
-replacement, including when saving without first loading. Whole-Pet checkpoints
+Missing old sections stay empty. Present invalid sections stop import without
+replacing the source or dropping valid adjacent data. A supported valid source
+is backed up unchanged before SQLite initialization. Whole-Pet checkpoints
 include both collections, so the existing joint consumption transaction can
 restore them together with World custody and subjective object memory.
 
 ## Where progress is stored
 
-On Windows, paste this into Explorer's address bar:
+Windows uses `%LOCALAPPDATA%/AikoDesktopPet/state.sqlite3`. Linux uses
+`$XDG_DATA_HOME/AikoDesktopPet/state.sqlite3`, or
+`~/.local/share/AikoDesktopPet/state.sqlite3` if that variable is unset.
+No database or personal backup is distributed in Git: the first successful save
+creates the database from the checked-in schema using Python's standard SQLite.
 
-```text
-%LOCALAPPDATA%\AikoDesktopPet
-```
+`AIKO_SAVE_PATH` selects one **file**, with OS environment precedence over the
+optional project `.env`. Relative paths resolve from the project root; quotes,
+home and environment expansion remain supported. No `.env` is required.
 
-The file is `state.json`. Linux uses
-`$XDG_DATA_HOME/AikoDesktopPet/state.json`, or
-`~/.local/share/AikoDesktopPet/state.json` when that variable is unset.
+| Configured suffix | Active save | One-time legacy candidate |
+| --- | --- | --- |
+| `.sqlite3`, `.sqlite`, `.db` | Exact configured path | Same-stem `.json` |
+| `.json` | Same-stem `.sqlite3` | Exact configured JSON path |
+| Other/extensionless | Configured path plus `.sqlite3` | Exact old path |
 
-An optional `AIKO_SAVE_PATH` overrides the complete **file path**. An existing
-environment variable wins over the optional project `.env` file. Relative
-overrides resolve from the project root. This is independent of the packaged
-JSON resources; personal progress is not a source asset.
+With no override the legacy candidate is the previous `state.json`. A custom
+selection never searches the default directory. `StateStore.path` and
+`default_save_path()` now identify the SQLite destination; `StateStore.paths`
+contains both resolved paths.
 
-Close Aiko before manually backing up or restoring `state.json`. Copy the file
-to a separate location; restoring it does not require reinstalling Aiko.
-Backups inside the repository must remain ignored. Aiko does not upload saves.
+## Import, transactions and errors
 
-## Version-one format and safe writes
+A supported existing SQLite database is authoritative; neighboring JSON is
+ignored, even if old or malformed. With no database, the designated source must
+pass complete strict validation. Only absent optional older fields receive
+neutral defaults. Unsupported formats, malformed present fields, duplicate keys
+and nonfinite numbers stop startup rather than silently resetting progress.
 
-The existing top-level sections are unchanged:
+Before import writing, an exclusive `*.aiko-save-backup` preserves exactly the
+validated JSON bytes and is flushed/synced. Failure stops the import. The
+original JSON is never overwritten or subsequently updated. The complete save
+is built and validated in a temporary database, then published atomically
+without overwriting a competing initialization. SQLite `import_provenance`
+retains source format and import UTC time, without a private source-path log.
+Neither import nor snapshot read advances pet time.
 
-| Section | Stored information |
-| --- | --- |
-| `version` | Save schema number, currently 1 |
-| `pet` | Needs, continuous friendship/contact/penalties and legacy reward metadata, Moodlets/wishes, meal-day markers, sleep state, fun, food/digestion state and `updated_at` |
-| `settings` | Window positions, size and behaviour/observation preferences |
-| `adaptive` | Aggregated learned weekday/hour patterns and bounded rhythm state; optional in older saves |
-| `world` | Optional separately versioned World snapshot (`version: 1`), surface, active portions, revisions and next instance ID |
-| `object_memory` | Optional subjective records (`version: 3`, v1/v2 readable): learned type/assessment, relative active age, place status, possible source links, allocation provenance and own-placement disposition |
+`infrastructure/persistence.py:StateStore` resolves paths and delegates to the
+strict importer and single `sqlite/store.py:SqliteStateStore` writer. A snapshot
+includes core/sleep/settings, relationship/exposure, World/subjective memory,
+wishes/handovers, Moodlets/causes/care evidence, adaptive memory and social/
+horoscope state. Related owners commit together; no second JSON writer remains.
+The schema stays version 1 before cutover. Future schema changes require a
+consistent pre-update database backup and transactional migration.
 
-`pet.updated_at` is a Unix wall-clock timestamp in seconds. Need values are
-saved at full precision. Older version-one saves missing newer optional
-fields retain their existing defaults. Raw hardware samples, window titles,
-keystrokes, pending dialogue and unfinished game rounds are not saved.
+Every write supplies the session's last successful `SaveRevision`. The writer
+compares it inside the same transaction and returns a newer revision only after
+commit/publication. A stale session cannot overwrite another writer and does
+not reload its revision to retry. Failed writes leave the last complete
+checkpoint and expected revision intact. Autosave remains about every 55 seconds,
+with the same care/settings/World/social and orderly shutdown save points.
+Failed attempts are paced independently from the last successful save time.
 
-The optional `pet.time` section has its own `version: 1` and nonnegative finite
-`lived_seconds`. This is the aggregate-owned elapsed axis since introducing
-this record, including subsequently reconstructed closed time. It is not an
-uptime, wall timestamp or claim about observed user activity. It survives
-wall-clock rebasing and checkpoints. Legacy saves start at zero without
-inventing earlier contact, rewards or neglect history; existing progress is
-retained. Malformed/future time sections start neutral, preserving pet progress,
-and the original file is backed up before replacement. Outer save version is 1.
+Locked, inaccessible, damaged, newer, foreign and incomplete databases stop
+loading. No error falls back to JSON, a different path or a fresh pet. Startup
+shows a storage error and exits before desktop windows; save failures are
+reported through the existing warning/social-admission paths. Fix access/locks
+or restore a known-good backup before restarting; no automatic repair/reset is
+attempted. The original error is not converted into successful persistence.
 
-Stage 3 now uses this elapsed axis for rolling relationship and critical-need
-histories inside `PetValues`. Sleep episodes share that owner; learned
-expectations remain in adaptive memory. Missing qualifying contact remains
-unknown, not inferred from an app timestamp or from the time record alone.
+Close every Aiko instance before manually copying/restoring a database. Copy the
+SQLite save and any existing `-wal`/`-shm` sidecars together; do not replace only
+one file while another instance is open. JSON files are import inputs, not
+ongoing backups of current progress. Databases, sidecars and private backups
+remain ignored by Git. Aiko does not upload saves.
 
-Normal saves occur about every 55 seconds and after the application's existing
-care, preference and orderly shutdown paths. `StateStore` writes a temporary
-UTF-8 JSON file beside the save, flushes and synchronizes it, then replaces
-`state.json` atomically. A failed write leaves the existing file intact.
+## Time anchors and legacy compatibility
 
-If an unreadable or unsupported-version file is about to be replaced by a new
-session, its original bytes are first preserved beside it under a unique
-`*.aiko-save-backup` name. Those backups are ignored by Git. Failure to create
-the backup prevents replacement of the original file. Valid saves do not
-produce these backup files on every autosave.
+`save_state.updated_at` is UTC seconds; `lived_seconds` is the pet's elapsed
+axis, including later reconstructed closed time. It is neither uptime nor proof
+of observed human activity. SQLite keeps status values at full precision.
+Legacy saves missing `pet.time` start at zero without inventing earlier care,
+contact or neglect. Present invalid time/history stops import. Raw sensor
+samples, window titles, typed keys, pending dialogue and unfinished rounds
+remain outside the save.
 
 ## Relationship history
 
-Stage 3 adds optional `pet.relationship` v1 alongside the unchanged outer save
-v1. Baseline, last qualifying contact, compatibility-only per-type eligibility
+SQLite stores relationship history and exposure buckets; the import reader
+accepts the legacy optional `pet.relationship` v1 record. Baseline, last qualifying contact, compatibility-only per-type eligibility
 and historical reward entries, per-need critical/zero exposure and direct-action
 budgets use
 `pet.time.lived_seconds`, never inferred mouse activity or wall-clock age.
@@ -386,11 +398,10 @@ are bounded by their finite action set, timing and caps. Legacy calendar
 reward fields remain compatibility metadata, not a second active calculation.
 
 New histories are part of the complete immutable checkpoint and joint rollback.
-Absent or malformed history preserves pet progress and starts tracking at
-first upgrade reconstruction completion, without retroactive loss or invented
-personal contact. Once saved, that baseline survives restart. Unsupported or
-invalid records cause the original bytes to be backed up before replacement,
-just like invalid time records. Strict validation rejects future timestamps,
+Absent legacy history preserves progress and starts tracking at first upgrade
+reconstruction completion, without retroactive loss or invented contact. Once
+saved, that baseline survives restart. Present unsupported or invalid records
+stop import without replacing the original, just like invalid time records. Strict validation rejects future timestamps,
 unknown fields/actions, invalid durations, overlapping spans and exceeded budgets.
 See [friendship rules](FRIENDSHIP_SYSTEM.md) for care/contact qualification.
 
@@ -406,9 +417,9 @@ coarse completed phases and the last adjustment day. Actual input sampling and
 current return detection remain session-local.
 
 Legacy records preserve needs/World/relationship without inferring historical
-sleep duration, manual grace or observed quiet. Corrupt/future optional records
-require preservation of original bytes before replacement. No new top-level
-schema or settings file is introduced. See [sleep rules](SLEEP_SYSTEM.md).
+sleep duration, manual grace or observed quiet. Present corrupt/future records
+stop import; sleep and learned expectation then live in their SQLite tables,
+not a separate settings file. See [sleep rules](SLEEP_SYSTEM.md).
 
 ## Real time, closed sessions and standby
 
@@ -416,11 +427,11 @@ schema or settings file is introduced. See [sleep rules](SLEEP_SYSTEM.md).
 > provide real time, need/mood balance, friendship and adaptive sleep with finite
 > stock. See the maintained [sleep guide](SLEEP_SYSTEM.md) for current priorities.
 
-Loading JSON only decodes data. `PetSessionRestorer` subsequently calculates
+Reading SQLite or importing supported JSON only decodes data. `PetSessionRestorer` subsequently calculates
 closed time from `pet.updated_at` to the current clock, without truncating the
 absence. `pet.lifecycle.TimePlan` streams chronological steps rather than
-allocating a list proportional to the gap. Missing or corrupt saves do not
-generate catch-up; a backwards clock produces zero elapsed time and rebases
+allocating a list proportional to the gap. Missing saves start fresh; corrupt
+saves stop loading without generating catch-up; a backwards clock produces zero elapsed time and rebases
 the next anchor. The obsolete `simulation.maximum_catchup_seconds` setting has
 been removed. Stage 2 applies the [need/mood rates](FUN_MOOD_SYSTEM.md) through
 the same pure domain path. Existing saved mood is preserved on load and
@@ -481,18 +492,17 @@ Reopening presents the result without historical Tk playback.
 
 ## Joint World recovery
 
-Pet and World are written together through the existing flush/fsync/atomic
-replacement path. Old version-one saves without `world` load an empty World.
-The optional World section is validated independently: unknown definitions,
-duplicate IDs, invalid geometry/revisions or unsupported versions require a
-backup before replacement while valid pet progress is retained.
+Pet and World commit together in one SQLite snapshot transaction. Supported
+legacy saves without `world` start with an empty World. Present unknown
+definitions, duplicate IDs, invalid geometry/revisions or unsupported versions
+stop import without replacing the source or dropping its World section.
 
 Only nonterminal portions are saved. Cursor-held, falling, bouncing and unconsumed pet-held
 portions normalize to reachable resting ground positions; pet-held recovery uses
 Aiko's position. IDs and the next-ID counter prevent accidental identity reuse.
 Consumed/removed instances, live capture, animations, pending user actions and
-interaction receipts are not resumed. No World consumption
-is simulated while closed. A completed meal and removal of its portion share
+interaction playback is not resumed. Existing application reconstruction uses
+only identified accessible saved stock during closed time, without UI playback. A completed meal and removal of its portion share
 the same durable snapshot, so restart cannot replay the meal from that snapshot.
 See [isolated restart testing](WORLD_SMOKE_TEST.md).
 
@@ -506,8 +516,8 @@ supported without claiming hidden identity. Only unidentified sightings expire a
 600 active seconds. Saved ages are relative active durations: closed time does
 not age memories, accumulate sensory evidence or produce observations.
 
-The optional `object_memory` section is captured with Pet/World and written by
-the same atomic replacement. Consumption resolves its remembered target before
+Subjective memory is captured with Pet/World and committed in the same SQLite
+transaction; the legacy `object_memory` section remains an import format. Consumption resolves its remembered target before
 that save; an ambiguous consumed-find witness remains unavailable until further
 evidence resolves its possible former places. It cannot be reused as supply.
 Confirmed own
@@ -519,10 +529,11 @@ Unseen relocation/removal can therefore leave outdated knowledge until fresh
 observation or deliberate learned-place orientation and search. Actual observations and sensory progress
 start empty; restored knowledge alone cannot claim current visibility.
 
-Older saves without memory start with empty knowledge. A malformed or unsupported
-memory section requires an original backup before replacement, retaining valid
-Pet/World sections. Without a valid paired World, old instance-bound knowledge
-is discarded rather than attaching to reused IDs in a fresh World.
+Older saves without memory start with empty knowledge. A present malformed or
+unsupported memory section stops import without replacing the source or
+discarding adjacent Pet/World data. A missing or invalid paired World also
+stops import when subjective records are present; they never attach to reused
+IDs in a fresh World.
 Version-one records convert to subjective history; their old object labels are
 never recognition evidence. Current bindings, observations and search budgets
 are not serialized. Runtime checkpoints retain exact motion, while durable

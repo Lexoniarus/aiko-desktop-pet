@@ -48,10 +48,10 @@
 > records strict validation, unchanged JSON backups, import provenance and atomic
 > publication. Existing SQLite remains authoritative. Runtime cutover is SQL-8.
 
-> **SQL-8 in progress, 2026-10-24:** the
+> **SQL-8 delivered, 2026-10-24:** the
 > [SQL-8 delivery record](#sqlite-delivery-sql-8-runtime-cutover-and-legacy-usage-cleanup)
-> records the runtime cutover, expected-revision ownership and usage cleanup.
-> Development checks remain restricted to temporary fixtures without native UI.
+> records the SQLite runtime cutover, expected-revision ownership and usage cleanup.
+> Final whole-suite/OOP acceptance remains the separately authorized SQL-9 slice.
 
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
@@ -9707,3 +9707,67 @@ discovery and save paths redirected to temporary fixtures. Scoped Ruff, fresh
 strict Mypy (nine sources) and Pyright passed. No windows, mouse control, live
 save access or CI. Remaining legacy test/tool consumers are updated next; the
 runtime retains no JSON writer for them.
+
+
+#### B. Repository usage audit, fixture migration and tooling
+
+Audited production, tests, development tools and maintained documentation before
+retiring the old implementation. No production JSON writer remains. Existing
+`StateStore` imports now refer to the configured SQLite adapter; explicit writes
+require the shared expected-revision/owner contract. Pure legacy codecs remain
+because strict import and codec-specific tests still consume them; do not delete
+them merely because live writing changed. Historical plan/proposal records remain
+historical rather than being rewritten as current runtime documentation.
+
+Domain/GUI fixtures now seed SQLite through the explicit test-only
+`tools/persistence_test_support.py` helper. It may read a disposable fixture's
+revision to replace it deliberately; production never imports this helper or
+automatically adopts a newer revision. The real desktop receives its revision
+from session restoration. `create_test_desktop` accepts the shared storage port.
+
+Fourteen obsolete tests for JSON replacement, silent section discard, or the
+retired JSON fsync/replace writer were consolidated into SQL-7's strict import
+checks and SQL-6's transactional rollback tests. They are not retained behind a
+second test-only JSON repository. Unique pure compatibility codecs and semantic
+round trips remain; malformed-data tests now require startup to stop and preserve
+source bytes. World/knowledge, care evidence, causes/stage budgets, handovers,
+closed-time restoration and social request/admission tests use actual SQLite.
+Native widget tests were adapted/type-checked but not executed in this slice.
+
+`tools/world_smoke.py` uses explicit revisions and preserves adaptive/social
+owners during a need override. It refuses either the normal database or its
+legacy alias before loading/writing, and restarting an existing fixture does not
+reseed it. Capture/local-suite defaults use temporary SQLite destinations. No
+smoke/capture tool was launched; no desktop input/window was created.
+
+The existing composition-root size guard initially detected the added startup
+error handling. `desktop/startup.py` now owns construction failure reporting and
+exit. The guard was preserved unchanged; targeted architecture checks pass.
+No app-owned repair, secondary state, write retry/revision adoption or time
+progression is added to that boundary.
+
+Final targeted local acceptance: **295 tests passed in 21.993 s**, zero skips,
+slowest **3.215 s**, **no individual test over ten seconds**. Scope: affected
+no-window SQLite-backed care/persistence/session tests, import/transaction cases,
+entrypoint/path contracts, social scheduler/admission, authored text validation,
+World smoke preparation and existing UI dependency/ownership guards. Full-suite
+execution remains SQL-9. Native Tk was blocked before discovery and default saves
+redirected to temporary directories. Scoped Ruff, fresh strict Mypy (**17 source
+files**) and Pyright including all changed Python tests/tools passed.
+
+#### C. Deployment and current storage documentation
+
+README, optional `.env` template, data/save guide, architecture/import contracts,
+integration guide, contribution/workflow/setup docs and affected sleep/friendship/
+social guides now describe the active SQLite path, strict JSON import, unchanged
+backup, authority/error rules, revision-bearing writes and private schema creation.
+Authored catalog JSON stays in Git; personal databases, sidecars and backups do
+not. Save-path aliases keep their designated source and never search another
+profile. Python's standard library creates the database locally: no server, pip
+dependency, populated database or manual deployment command is introduced.
+
+**SQL-8 complete.** The next separately authorized slice is SQL-9: complete local
+suite, final field/feature preservation and OOP/duplicate-consumer review with
+timing/skip evidence. This slice performs no personal-save import, native visual/
+input acceptance, mouse control, HTTP or GitHub CI. Parallel character artwork/
+export edits remain outside all storage commits.

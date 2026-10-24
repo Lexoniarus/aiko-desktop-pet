@@ -80,7 +80,7 @@ documentation with superseded task checklists.
 - **One mutable pet aggregate:** `pet/state.py`. Pure domain policies calculate transitions; `PetState` applies them.
 - **Typed application ports:** do not import or manipulate Tk from `application/` or put OS sensors in the pet domain.
 - **UI ownership:** `AnimatedPet` handles character animation; `HoverUi` handles accessory windows. Coordinate through named callbacks.
-- **Save compatibility:** preserve the version-one save schema and `AIKO_SAVE_PATH` behavior unless migration is explicitly designed.
+- **Save compatibility:** preserve SQLite snapshot/revision contracts and strict supported legacy JSON import. `AIKO_SAVE_PATH` keeps its designated-source alias behavior.
 - **Canonical imports:** import classes and functions from their owning packages. Removed flat-module paths and desktop forwarding attributes are listed in [the migration guide](docs/ARCHITECTURE.md#import-migration). Keep regression coverage and document changes to callable interfaces.
 - **Language:** technical docs and code identifiers in English; authored UI text and Aiko's dialogue remain in German.
 
@@ -88,7 +88,7 @@ A real Windows smoke test is required for window focus, transparency, taskbar pl
 
 ## Protect users and contributors
 
-Never commit a personal `.env`, tokens, save files, raw activity logs, privately obtained assets, fonts or build artifacts. Check `git diff --cached` in addition to the exclusions in `.gitignore`. Tests must use isolated temporary save paths and must not overwrite `%LOCALAPPDATA%\AikoDesktopPet\state.json`.
+Never commit a personal `.env`, tokens, save files, raw activity logs, privately obtained assets, fonts or build artifacts. Check `git diff --cached` in addition to the exclusions in `.gitignore`. Tests must use isolated temporary save paths and must not overwrite `%LOCALAPPDATA%\AikoDesktopPet\state.sqlite3` or its legacy `state.json`.
 
 Please avoid attaching unredacted system logs, window titles or personal file paths to public issues. For sensitive vulnerabilities, follow the
 [security reporting policy](SECURITY.md) rather than posting exploit

@@ -236,7 +236,7 @@ a fresh save; an existing save is not reseeded.
 To restart the same isolated session, use the printed path:
 
 ```powershell
-.\Aiko_World_Test.bat --save-path "C:/exact/printed/temp-folder/state.json"
+.\Aiko_World_Test.bat --save-path "C:/exact/printed/temp-folder/state.sqlite3"
 ```
 
 Add `--needs hungry` to change only the selected need values while retaining

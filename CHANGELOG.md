@@ -8,6 +8,12 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Store personal progress in transactional SQLite with expected-revision
+  protection across startup, autosave, settings/social saves and shutdown.
+  Import supported old JSON only after strict validation and an unchanged
+  backup; never fall back from a damaged existing database. Keep authored
+  catalogs in JSON and private databases/backups outside Git.
+
 - Keep three wish cards fully visible at ordinary menu width by placing the
   passive pin inside the title row. Preserve space between title, pin and
   objective without changing card width on pin/unpin. Update stale contact,

@@ -241,9 +241,11 @@ The session restorer carries this value to the existing content coordinator
 before online warming starts. Actual admission saves care and its receipt
 together once through DesktopPersistence/StateStore; full-sequence wish
 completion remains a separate later event. Missing legacy history starts empty.
-Invalid history leaves valid pet/world values intact and uses the existing
-original-file backup path before a replacement save. No new store, dependency,
-translation model or elapsed-time simulator is added.
+Present invalid legacy history stops the complete strict import without
+replacing the source or dropping adjacent pet/World data. Live care and receipts
+commit together in the revision-guarded SQLite store. Missing older optional
+fields receive neutral defaults. No translation model or second time simulator
+is added. See [storage and import](DATA_AND_SAVES.md).
 
 ## Owners and verification
 

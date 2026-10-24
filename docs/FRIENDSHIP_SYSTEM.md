@@ -154,10 +154,11 @@ is introduced.
 Optional `pet.relationship` v1 uses `pet.time.lived_seconds`. The optional
 `continuous_since` marks the accounted transition from older policy; old points,
 contact, exposure and historical credits survive without refunds or replay.
-Old reward fields/limits remain compatibility metadata only. Missing/invalid
-history cannot invent earlier contact or unrecorded neglect; original corrupt
-bytes are preserved by the existing save recovery policy. Full-precision status
-and joint Pet/World rollback retain the existing save owner.
+Old reward fields/limits remain compatibility metadata only. Missing older
+history cannot invent contact or unrecorded neglect. Present invalid legacy
+history stops strict import without replacing the source. Live relationship/
+exposure and full-precision status commit with Pet/World through the single
+SQLite writer; joint runtime rollback retains its existing owners.
 
 Historical stage-3 schedule results and their 96–100 / 69–71 plateau examples
 apply to the old capped-reward model. Current eight-/four-phase regression

@@ -74,7 +74,13 @@ folder, then delete the extracted Aiko folder (including `.venv`). Python
 is a separate shared installation; uninstall it through Windows settings
 only if you no longer need it for other applications.
 
-Progress remains at `%LOCALAPPDATA%\AikoDesktopPet\state.json`, or the
+Progress remains at `%LOCALAPPDATA%\AikoDesktopPet\state.sqlite3`, or the
 configured `AIKO_SAVE_PATH`. Setup and removal do not intentionally alter
 that file. If you configured a save inside the extracted source folder,
 move it elsewhere before deleting that folder.
+
+SQLite progress is created locally by Python's standard library; setup does not
+ship a populated database or require a database server. On the first updated
+application start, supported old JSON is backed up and imported. Existing
+`.json` overrides select a same-stem SQLite save. See [data and saves](DATA_AND_SAVES.md)
+for strict import, errors and backup/restore rules.

@@ -1,4 +1,4 @@
-"""One-time strict legacy import; no runtime cutover or offline simulation."""
+"""One-time strict legacy import, without offline simulation."""
 
 from __future__ import annotations
 

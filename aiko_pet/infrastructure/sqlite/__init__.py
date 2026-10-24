@@ -1,1 +1,1 @@
-"""SQLite mechanics; not yet connected to the active JSON session store."""
+"""SQLite mechanics behind the configured runtime session store."""

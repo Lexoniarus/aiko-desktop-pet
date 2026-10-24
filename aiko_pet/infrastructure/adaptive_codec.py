@@ -1,4 +1,4 @@
-"""Strict, lossless adaptive values for SQL mapping and later checked import.
+"""Strict, lossless adaptive values for SQL mapping and checked legacy import.
 
 The legacy model decoder remains forgiving. Check primitive types first, then
 reject anything it would normalize instead of duplicating its numeric limits.

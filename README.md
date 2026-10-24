@@ -125,10 +125,16 @@ If the optional Kenney Mini font is already installed, Aiko can use it; otherwis
 By default, Aiko stores progress outside the repository at:
 
 ```text
-%LOCALAPPDATA%\AikoDesktopPet\state.json
+%LOCALAPPDATA%\AikoDesktopPet\state.sqlite3
 ```
 
 **No `.env` file is needed.** The only optional setting is `AIKO_SAVE_PATH`, which changes the save *file* location. To use it, copy [.env.example](.env.example) to a local `.env` and edit the value. An existing OS environment variable takes precedence. The template contains no secrets and should remain unmodified when no override is wanted.
+
+On first launch after this update, an existing supported `state.json` is strictly
+validated, backed up unchanged and imported into SQLite. Existing `.json` path
+overrides remain aliases for the same-stem SQLite save. An existing database
+takes precedence; invalid saves stop startup instead of resetting progress.
+Python creates the private database locally; no database is shipped in Git.
 
 ## Privacy and local data
 
@@ -173,7 +179,7 @@ The source is organized by responsibility rather than by window or feature versi
 | `aiko_pet/ui/view_models/` | German display text and immutable UI projections |
 | `aiko_pet/ui/` | Tkinter character, one pinnable care toolbar, persistent settings, speech and shared window components |
 | `aiko_pet/desktop/` | Tk runtime, native Windows window/input handling and preferences |
-| `aiko_pet/infrastructure/` | Hardware providers and versioned local JSON persistence |
+| `aiko_pet/infrastructure/` | Hardware providers and transactional SQLite persistence |
 
 The bootstrap is `aiko_pet/gui.py`. Imports use the owning packages directly; obsolete flat-module paths have been removed. See the architecture guide for the import migration table. [Architecture and dependency rules →](docs/ARCHITECTURE.md)
 

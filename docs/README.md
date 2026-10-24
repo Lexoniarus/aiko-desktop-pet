@@ -16,7 +16,7 @@ and test-cleanup plans.
 | Toolbar, action availability, details and native windows | [UI window contract](UI_WINDOW_CONTRACT.md) |
 | Approved VN direction; main menu/settings delivered in 5C, native acceptance pending | [VN interface design](UI_VN_DESIGN.md) |
 | Approved local preview bundle, cross-chat handoff and asset readiness | [UI reference handoff](UI_PREVIEW_HANDOFF.md) |
-| Packaged JSON, save versions, recovery and time | [Data and saves](DATA_AND_SAVES.md) |
+| Packaged JSON, SQLite saves, strict import, recovery and time | [Data and saves](DATA_AND_SAVES.md) |
 | Food, digestion, workload and item graphics | [Food system](FOOD_SYSTEM.md) |
 | Adaptive sleep, input learning and finite closed-time care | [Sleep rules](SLEEP_SYSTEM.md) |
 | Continuous friendship from mood/Moodlets, personal contact and neglect | [Friendship rules](FRIENDSHIP_SYSTEM.md) |
