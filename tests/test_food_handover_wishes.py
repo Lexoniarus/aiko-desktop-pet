@@ -12,6 +12,7 @@ from aiko_pet.pet.moodlets import MoodletAttribution, MoodletId, MoodletOutcome
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import WishArea, WishId, WishState
+from tools.pet_test_support import require_test_value
 
 
 def pet_with(*wishes):
@@ -88,7 +89,9 @@ class FoodHandoverWishTests(unittest.TestCase):
         ))
         pet.recognize_food_handover("gift:1", "apple")
         self.assertEqual(pet.wishes.active, (later,))
-        self.assertEqual(pet.moodlets.active[0].causes[0].wish.instance_id, 1)
+        self.assertEqual(
+            require_test_value(pet.moodlets.active[0].causes[0].wish).instance_id, 1
+        )
 
     def test_two_actual_gifts_cannot_settle_the_same_original_wish_twice(self):
         pet = pet_with(wish(WishId.FOOD, "apple"))

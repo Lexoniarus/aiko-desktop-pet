@@ -2,6 +2,7 @@
 
 import unittest
 from dataclasses import replace
+from typing import Any, cast
 
 from test_social_content import fact_payload, joke_payload
 from test_wish_assignment import wish
@@ -18,6 +19,7 @@ from aiko_pet.pet.moodlets import MoodletEpisode, MoodletId, MoodletState
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import WishArea, WishId, WishState, WishTargetMode
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
+from tools.pet_test_support import require_test_value
 from tools.reaction_test_support import FakeScheduler
 
 WALL = 1800000000
@@ -72,7 +74,7 @@ class AssignedSocialWishTests(unittest.TestCase):
             with self.subTest(category=category):
                 harness = SocialHarness(wish(WishId.SOCIAL_ANY))
                 completion = harness.admit(category)
-                self.assertEqual(completion.wish_instance_id, 1)
+                self.assertEqual(require_test_value(completion).wish_instance_id, 1)
                 self.assertTrue(harness.pet.wishes.active)
                 self.assertFalse(harness.pet.moodlets.active)
                 self.assertIsNone(harness.pet.moodlets.care_evidence)
@@ -82,9 +84,15 @@ class AssignedSocialWishTests(unittest.TestCase):
                 episode = harness.pet.moodlets.active[0]
                 self.assertEqual(episode.definition_id, MoodletId.CONNECTION)
                 cause = episode.causes[0]
-                self.assertEqual(cause.wish.target.mode, WishTargetMode.ANY)
+                self.assertEqual(
+                    require_test_value(require_test_value(cause.wish).target).mode,
+                    WishTargetMode.ANY,
+                )
                 self.assertEqual(cause.target_id, category)
-                self.assertEqual(cause.event_id, f"social:{completion.sequence_id}")
+                self.assertEqual(
+                    cause.event_id,
+                    f"social:{require_test_value(completion).sequence_id}",
+                )
                 self.assertEqual((harness.pet.social, harness.pet.energy),
                                  (social, energy))
                 self.assertEqual(harness.pet.friendship, 50)
@@ -96,7 +104,7 @@ class AssignedSocialWishTests(unittest.TestCase):
         fact = wish(WishId.FACT, "fact", instance=2)
         harness = SocialHarness(free, fact)
         completion = harness.admit("fact")
-        self.assertEqual(completion.wish_instance_id, 2)
+        self.assertEqual(require_test_value(completion).wish_instance_id, 2)
         harness.finish()
         self.assertEqual(harness.pet.wishes.active, (free,))
         self.assertEqual(harness.pet.moodlets.active[0].definition_id,
@@ -107,7 +115,7 @@ class AssignedSocialWishTests(unittest.TestCase):
         fact = wish(WishId.FACT, "fact", instance=2)
         harness = SocialHarness(fact, free)
         completion = harness.admit("fact")
-        self.assertEqual(completion.wish_instance_id, 1)
+        self.assertEqual(require_test_value(completion).wish_instance_id, 1)
         harness.pet.set_wish_pinned(1, False)
         harness.pet.set_wish_pinned(2, True)
         harness.finish()
@@ -119,7 +127,7 @@ class AssignedSocialWishTests(unittest.TestCase):
         harness = SocialHarness(wish(WishId.SOCIAL_ANY))
         harness.admit("twopart")
         token = harness.player.pending_timer
-        stale = harness.scheduler.callbacks[token][1]
+        stale = harness.scheduler.callbacks[require_test_value(token)][1]
         before = harness.pet.capture_checkpoint()
         harness.player.cancel()
         stale()
@@ -135,12 +143,14 @@ class AssignedSocialWishTests(unittest.TestCase):
         harness.finish()
         self.assertEqual(harness.pet.wishes.active, (free,))
         self.assertFalse(harness.pet.moodlets.active)
-        self.assertEqual(len(harness.pet.moodlets.care_evidence.experiences), 1)
+        self.assertEqual(
+            len(require_test_value(harness.pet.moodlets.care_evidence).experiences), 1
+        )
 
     def test_unassigned_sequence_cannot_adopt_a_later_created_wish(self):
         harness = SocialHarness()
         completion = harness.admit("chat")
-        self.assertIsNone(completion.wish_instance_id)
+        self.assertIsNone(require_test_value(completion).wish_instance_id)
         later = wish(WishId.SOCIAL_ANY, at=100)
         harness.pet.restore_checkpoint(replace(harness.pet.capture_checkpoint(),
                                                wishes=WishState(
@@ -166,7 +176,7 @@ class AssignedSocialWishTests(unittest.TestCase):
         loaded.restore_checkpoint(replace(loaded.capture_checkpoint(),
                                           lived_seconds=2000))
         before = loaded.capture_checkpoint()
-        loaded.complete_social_experience(completion)
+        loaded.complete_social_experience(require_test_value(completion))
         self.assertEqual(loaded.capture_checkpoint(), before)
 
     def test_distinct_admissions_share_category_without_reusing_identity(self):
@@ -181,12 +191,17 @@ class AssignedSocialWishTests(unittest.TestCase):
                                                    refresh_at=600,
                                                )))
         second = harness.admit("chat")
-        self.assertNotEqual(first.sequence_id, second.sequence_id)
+        self.assertNotEqual(
+            require_test_value(first).sequence_id,
+            require_test_value(second).sequence_id,
+        )
         harness.finish()
         episode = harness.pet.moodlets.active[0]
         self.assertEqual(episode.level, 2)
         self.assertEqual(len(episode.causes), 2)
-        self.assertEqual(len(harness.pet.moodlets.care_evidence.experiences), 2)
+        self.assertEqual(
+            len(require_test_value(harness.pet.moodlets.care_evidence).experiences), 2
+        )
 
     def test_admission_metadata_requires_paired_finite_fields(self):
         for values in ({"sequence_id": "actual"}, {"started_at": 0},
@@ -194,4 +209,4 @@ class AssignedSocialWishTests(unittest.TestCase):
                        {"sequence_id": "actual", "started_at": -1},
                        {"sequence_id": "actual", "started_at": float("nan")}):
             with self.subTest(values=values), self.assertRaises(ValueError):
-                SocialCompletion("chat", **values)
+                SocialCompletion("chat", **cast(dict[str, Any], values))

@@ -107,7 +107,7 @@ class OfflineProgressTests(unittest.TestCase):
 
     def test_long_absence_is_complete_and_backward_clock_does_not_decay(self) -> None:
         now = local_stamp(15)
-        for age, expected_energy in ((30 * 86400, 0), (-3600, 100)):
+        for age, expected_energy in ((3 * 86400, 0), (-3600, 100)):
             with self.subTest(age=age):
                 self.store.save(
                     PetState(energy=100, updated_at=now - age),

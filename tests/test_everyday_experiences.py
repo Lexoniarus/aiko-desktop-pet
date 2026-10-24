@@ -14,6 +14,7 @@ from aiko_pet.pet.interaction_events import SocialCompletion
 from aiko_pet.pet.moodlets import MoodletId, MoodletState
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import WishId, WishState
+from tools.pet_test_support import require_test_value
 
 WALL = 1800000000
 
@@ -67,11 +68,15 @@ class EverydayExperienceTests(unittest.TestCase):
         self.assertEqual(families(pet), {MoodletId.SECURE})
         pet.interact("pet", now=WALL)
         self.assertEqual(pet.moodlets.active[0].level, 1)
-        self.assertEqual(len(pet.moodlets.care_evidence.encounters), 1)
+        self.assertEqual(
+            len(require_test_value(pet.moodlets.care_evidence).encounters), 1
+        )
         pet._change(lived_seconds=28800, affection=100, friendship=10)
         pet.interact("pet", now=WALL)  # Tolerated excess is not welcome closeness.
         self.assertEqual(pet.moodlets.active[0].level, 1)
-        self.assertEqual(len(pet.moodlets.care_evidence.encounters), 1)
+        self.assertEqual(
+            len(require_test_value(pet.moodlets.care_evidence).encounters), 1
+        )
 
     def test_two_round_session_after_gap_and_comeback_are_different_real_events(self):
         pet = pet_at(10000)
@@ -84,7 +89,9 @@ class EverydayExperienceTests(unittest.TestCase):
         runtime.complete(GameExperience("blackjack", 3, 1, 0, 2), INPUTS)
         # The last comeback round is not rewarded again as shared play.
         self.assertEqual(families(pet), {MoodletId.PRIDE})
-        self.assertEqual(len(pet.moodlets.care_evidence.encounters), 1)
+        self.assertEqual(
+            len(require_test_value(pet.moodlets.care_evidence).encounters), 1
+        )
         saved = decode_pet_state(encode_pet_state(pet), now=WALL)
         self.assertEqual(saved.moodlets, pet.moodlets)
 

@@ -16,6 +16,7 @@ from aiko_pet.pet.moodlets import MoodletCauseKind, MoodletId
 from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wishes import WishId, WishState
 from aiko_pet.ui.view_models.moodlet_causes import cause_description
+from tools.pet_test_support import require_test_value
 
 WALL = 1800000000
 
@@ -37,7 +38,9 @@ class InteractionExperienceTests(unittest.TestCase):
             all(c.kind == MoodletCauseKind.INTERACTION for c in episode.causes)
         )
         self.assertIn("Genervt vom Stupsen", cause_description(episode.causes[0]))
-        self.assertEqual(len(pet.moodlets.care_evidence.experiences), 1)
+        self.assertEqual(
+            len(require_test_value(pet.moodlets.care_evidence).experiences), 1
+        )
         saved = decode_pet_state(encode_pet_state(pet), now=WALL)
         self.assertEqual(saved.moodlets, pet.moodlets)
 
@@ -45,11 +48,15 @@ class InteractionExperienceTests(unittest.TestCase):
         pet = PetState(updated_at=WALL)
         for _ in range(3):
             pet.experience_interaction(WithholdingObserved(incident_id="one"))
-        self.assertEqual(len(pet.moodlets.care_evidence.experiences), 1)
+        self.assertEqual(
+            len(require_test_value(pet.moodlets.care_evidence).experiences), 1
+        )
         pet.experience_interaction(WithholdingEnded())
         pet._change(lived_seconds=20000)
         pet.experience_interaction(WithholdingObserved(incident_id="two"))
-        self.assertEqual(len(pet.moodlets.care_evidence.experiences), 2)
+        self.assertEqual(
+            len(require_test_value(pet.moodlets.care_evidence).experiences), 2
+        )
 
     def test_unidentified_gift_is_neutral_then_actual_excluded_food_is_upsetting(self):
         for expressed in (None, 0):
@@ -63,13 +70,15 @@ class InteractionExperienceTests(unittest.TestCase):
                 pet.begin_food_handover("gift", object_id="actual-apple")
                 self.assertIsNone(pet.moodlets.care_evidence)
                 pet.recognize_food_handover("gift", "apple")
-                event = pet.moodlets.care_evidence.experiences[0]
+                event = require_test_value(pet.moodlets.care_evidence).experiences[0]
                 self.assertTrue(event.upsetting)
                 self.assertFalse(event.pleasant)
                 self.assertEqual(event.boundary_violated, expressed is not None)
                 self.assertIsNone(event.wish_instance_id)  # Not a fulfillment.
                 pet.recognize_food_handover("gift", "apple")
-                self.assertEqual(len(pet.moodlets.care_evidence.experiences), 1)
+                self.assertEqual(
+                    len(require_test_value(pet.moodlets.care_evidence).experiences), 1
+                )
 
     def test_positive_food_handover_and_later_intake_do_not_count_two_visits(self):
         desired = wish(WishId.FOOD, "apple")
@@ -89,8 +98,12 @@ class InteractionExperienceTests(unittest.TestCase):
             origin=ConsumptionOrigin.HANDOVER,
             object_id="actual-apple",
         )
-        self.assertEqual(len(pet.moodlets.care_evidence.experiences), 1)
-        self.assertEqual(len(pet.moodlets.care_evidence.encounters), 1)
+        self.assertEqual(
+            len(require_test_value(pet.moodlets.care_evidence).experiences), 1
+        )
+        self.assertEqual(
+            len(require_test_value(pet.moodlets.care_evidence).encounters), 1
+        )
 
 
 if __name__ == "__main__":

@@ -16,6 +16,7 @@ from aiko_pet.pet.moodlets import (
     MoodletState,
 )
 from aiko_pet.pet.wishes import WishArea, WishTargetKind
+from tools.pet_test_support import require_test_value
 
 HOUR = 3600
 DAY = 24 * HOUR
@@ -103,10 +104,12 @@ class LongTermMoodletTests(unittest.TestCase):
         state, _ = record_experience(state, upsetting("bad", 0))
         for n in range(512):
             state, _ = record_experience(state, contact(str(n), n + 1))
-        self.assertEqual(state.care_evidence.baseline, 512)
-        self.assertFalse(state.care_evidence.progress)
+        self.assertEqual(require_test_value(state.care_evidence).baseline, 512)
+        self.assertFalse(require_test_value(state.care_evidence).progress)
         state = prepare_long_term(state, elapsed=512)
-        self.assertEqual(state.care_evidence.progress[0].period_start, 512)
+        self.assertEqual(
+            require_test_value(state.care_evidence).progress[0].period_start, 512
+        )
         self.assertEqual(decode_moodlets(encode_moodlets(state), elapsed=512), state)
 
     def test_current_and_longest_awake_gaps_survive_old_and_new_storage(self):
@@ -123,7 +126,7 @@ class LongTermMoodletTests(unittest.TestCase):
         self.assertTrue(
             all(
                 p.longest_awake_contact_gap_seconds == 0
-                for p in legacy.care_evidence.progress
+                for p in require_test_value(legacy.care_evidence).progress
             )
         )
 
@@ -148,8 +151,8 @@ class LongTermMoodletTests(unittest.TestCase):
         cause = next(
             e for e in state.active if e.definition_id == MoodletId.TRUSTING
         ).causes[0]
-        self.assertEqual(cause.period.encounters, 3)
-        self.assertEqual(cause.period.fulfilled_wishes, 3)
+        self.assertEqual(require_test_value(cause.period).encounters, 3)
+        self.assertEqual(require_test_value(cause.period).fulfilled_wishes, 3)
         self.assertEqual(decode_moodlets(encode_moodlets(state), elapsed=DAY), state)
 
     def test_repeated_actions_in_one_visit_cannot_manufacture_patterns(self):
@@ -232,7 +235,10 @@ class LongTermMoodletTests(unittest.TestCase):
             state = advance_long_term(state, HISTORY, elapsed=at, sleeping=sleep)
         self.assertEqual(families(state), {MoodletId.OVERLOOKED})
         self.assertEqual(
-            state.active[0].causes[0].period.awake_contact_gap_seconds, 8 * HOUR
+            require_test_value(
+                state.active[0].causes[0].period
+            ).awake_contact_gap_seconds,
+            8 * HOUR,
         )
         state = prepare_long_term(MoodletState(), elapsed=0)
         state = advance_long_term(state, HISTORY, elapsed=DAY, sleeping=True)
@@ -245,7 +251,10 @@ class LongTermMoodletTests(unittest.TestCase):
         state = advance_long_term(state, HISTORY, elapsed=DAY, sleeping=True)
         self.assertIn(MoodletId.OVERLOOKED, families(state))
         self.assertEqual(
-            state.active[0].causes[0].period.awake_contact_gap_seconds, 9 * HOUR
+            require_test_value(
+                state.active[0].causes[0].period
+            ).awake_contact_gap_seconds,
+            9 * HOUR,
         )
         self.assertNotIn(
             MoodletId.OVERLOOKED,
@@ -263,7 +272,7 @@ class LongTermMoodletTests(unittest.TestCase):
             state, HISTORY, elapsed=10 * DAY + HOUR, sleeping=False
         )
         self.assertFalse(state.active)
-        self.assertEqual(state.care_evidence.baseline, 10 * DAY)
+        self.assertEqual(require_test_value(state.care_evidence).baseline, 10 * DAY)
 
 
 if __name__ == "__main__":

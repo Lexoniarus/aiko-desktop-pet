@@ -33,6 +33,7 @@ from aiko_pet.pet.progression import calculate_pet_progression
 from aiko_pet.pet.state import PetState
 from aiko_pet.world.contracts import WorldSurface
 from aiko_pet.world.state import WorldState
+from tools.pet_test_support import require_test_value
 
 WALL = 1_800_000_000.0
 DEFINITIONS = MOODLET_CATALOG.definitions
@@ -230,8 +231,11 @@ class MoodletMoodTests(unittest.TestCase):
         overlooked = next(e for e in pet.moodlets.active
                           if e.definition_id == MoodletId.OVERLOOKED)
         self.assertFalse(overlooked.decay_paused)
-        self.assertEqual(overlooked.causes[0].period.encounters, 0)
-        self.assertEqual(overlooked.causes[0].period.awake_contact_gap_seconds, 86400)
-        self.assertFalse(pet.moodlets.care_evidence.experiences)
+        self.assertEqual(require_test_value(overlooked.causes[0].period).encounters, 0)
+        self.assertEqual(
+            require_test_value(overlooked.causes[0].period).awake_contact_gap_seconds,
+            86400,
+        )
+        self.assertFalse(require_test_value(pet.moodlets.care_evidence).experiences)
         self.assertEqual(pet.mood, 0)
         self.assertEqual(pet.lived_seconds, 86400)

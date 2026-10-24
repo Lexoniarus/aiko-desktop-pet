@@ -8727,3 +8727,43 @@ standby persistence comparisons now pass their targeted regression checks.
 The complete local suite also identified stale release-time food assumptions,
 bounded-evidence assumptions and fixture typing gaps; their corrections and
 final whole-candidate verification follow in the next reviewable slice.
+
+
+### Delivery slice 8C: complete local suite, fixture contracts and slow-test audit
+
+`tools/local_test_suite.py` discovers the whole repository suite, redirects its
+default save into a temporary directory and denies native Tk creation. Existing
+native-display skips are preserved; native-only cases without that guard receive
+an explicit skip for that exact denied operation. No other errors become skips.
+Each denial raises a fresh exception, preventing repeated native probes from
+accumulating huge shared tracebacks. Test/fixture durations and optional JSON
+reports make the no-window scope and cases above ten seconds reviewable.
+
+The first complete run exposed stale tests as well as real defects fixed in 8B.
+Cursor release alone no longer fulfills a food wish: the existing actual-custody
+and recognition integration tests own that contract. Saturated raw evidence is
+bounded but may restart reliable history, so its test checks the limit, latest
+real result and the new baseline rather than requiring a permanently full array.
+Fixture inspection now uses a checked generic required-value helper; intentionally
+malformed input dictionaries retain their real runtime rejection checks. No
+repository typing rule or architecture dependency exception was disabled.
+
+Three cases exceeded ten seconds in the initial measured run:
+
+| Case | Initial seconds | Final seconds | Investigation / retained contract |
+| --- | --- | --- | --- |
+| Repeated eight-/four-phase need day | 10.471 | 3.699 | Eight repetitions were redundant after the physical cycle settled. Three days retain the original 15-second observation cadence, exact need references and current positive-after-effect mood references. Coarser calls were rejected because they changed sleep endpoint observations. |
+| Long rolling friendship history | 13.349 | 1.284 in the focused correction run | Three days cover multiple complete rolling-history windows, bounded storage and round-trip consistency; replaying thirty days supplied no extra assertion. |
+| Offline absence / backward wall clock | 14.482 | 1.564 | A three-day gap still exceeds the old caps and covers complete catch-up plus unchanged backward-clock behavior. Separate full-week/long-gap contracts remain. |
+
+The real installer/launcher checks were retained: their environment creation,
+repair and stub launch paths are distinct integration obligations rather than
+repeated gameplay waits. Final longest individual case: 9.268 seconds.
+
+Final isolated staged candidate: **1,701 tests in 77.761 seconds, no failures or
+errors; 111 native-display skips explicitly recorded**. No individual test
+exceeded ten seconds. Repository-wide Ruff passed, strict Mypy passed on all
+291 production/tool sources, and repository-wide Pyright including tests reported
+zero errors/warnings. All checks were local, without desktop windows, pointer
+control, user-save access or CI. Native visual/input acceptance is outside this
+explicit no-window run; skipped fixtures are not claimed as executed UI tests.

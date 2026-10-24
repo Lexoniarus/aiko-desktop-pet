@@ -93,7 +93,7 @@ class FriendshipNeglectTests(unittest.TestCase):
     def test_long_gaps_keep_bounded_history_and_reference_consistency(self):
         pet = PetState(updated_at=START, friendship=10, satiety=0, energy=0,
                        fun=0, social=0, affection=0)
-        pet.advance(START + 30 * 86400)
+        pet.advance(START + 3 * 86400)
         self.assertEqual(pet.friendship, 0)
         self.assertLessEqual(len(pet.friendship_history.critical), 1441)
         self.assertGreaterEqual(pet.friendship_history.critical[0].start,

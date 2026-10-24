@@ -222,7 +222,7 @@ class SnackPlacementTests(unittest.TestCase):
         self.assertEqual(self.world.get(item.instance_id).position,
                          WorldPosition(100, 0))
 
-    def test_only_perceived_release_fulfills_avoidance_even_when_declined(self):
+    def test_release_without_actual_pet_custody_does_not_fulfill_food_wish(self):
         for mode in ("declined", "unperceived", "ground", "cancelled"):
             with self.subTest(mode=mode):
                 pet = PetState(updated_at=1800000000, lived_seconds=100, satiety=100,
@@ -267,15 +267,12 @@ class SnackPlacementTests(unittest.TestCase):
                         self.cursor.release()
                 self.assertEqual(pet.satiety, 100)
                 self.assertIsNone(pet.friendship_history.last_contact)
-                self.assertEqual(bool(pet.wishes.active), mode != "declined")
-                if mode == "declined":
-                    cause = pet.moodlets.active[0].causes[0]
-                    self.assertEqual(cause.object_id, token)
-                    self.assertEqual([r.kind for r in pet.friendship_history.rewards],
-                                     [])
-                    loaded = decode_pet_state(encode_pet_state(pet), now=1800000000)
-                    self.assertEqual(loaded.wishes, pet.wishes)
-                    self.assertEqual(loaded.moodlets, pet.moodlets)
+                self.assertTrue(pet.wishes.active)
+                self.assertFalse(pet.moodlets.active)
+                self.assertFalse(pet.wishes.food_handovers)
+                loaded = decode_pet_state(encode_pet_state(pet), now=1800000000)
+                self.assertEqual(loaded.wishes, pet.wishes)
+                self.assertEqual(loaded.moodlets, pet.moodlets)
 
     def test_busy_action_or_sleep_does_not_block_stock_or_interrupt_aiko(self):
         for sleeping in (False, True):

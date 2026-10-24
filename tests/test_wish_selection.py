@@ -29,6 +29,7 @@ from aiko_pet.pet.wishes import (
     WishTargetKind,
     WishTargetMode,
 )
+from tools.pet_test_support import require_test_value
 
 DEFINITIONS = WISH_CATALOG.definitions
 FULL = NeedLevels(100, 100, 100, 100, 100)
@@ -42,12 +43,19 @@ class SelectionRandom(random.Random):
         self.draws = []
 
     def choices(self, population, weights=None, *, cum_weights=None, k=1):
-        self.draws.append((tuple(population), tuple(weights)))
+        self.draws.append((tuple(population[i] for i in range(len(population))),
+                           tuple(weights) if weights is not None else None))
         return super().choices(population, weights, cum_weights=cum_weights, k=k)
 
 
-def pick(*keys, context=WishContext(), needs=FULL, elapsed=100, state=WishState(),
-         rng=None):
+def pick(
+    *keys,
+    context=WishContext(),
+    needs=FULL,
+    elapsed: float = 100,
+    state=WishState(),
+    rng=None,
+):
     return replenish_wishes(
         state, elapsed=elapsed, sleeping=False, context=context, needs=needs,
         definitions={k: DEFINITIONS[k] for k in keys} if keys else DEFINITIONS,
@@ -147,7 +155,9 @@ class WishSelectionTests(unittest.TestCase):
         state = pick(WishId.AVOID_FOOD,
                      context=WishContext(repetitive_food="apple"))
         self.assertEqual(len(state.active), 1)
-        self.assertEqual(state.active[0].target.mode, WishTargetMode.EXCLUDE)
+        self.assertEqual(
+            require_test_value(state.active[0].target).mode, WishTargetMode.EXCLUDE
+        )
         self.assertEqual(state.active[0].target_id, "apple")
 
     def test_online_capability_gates_specific_forms_but_not_free_choice_chat(self):
@@ -185,7 +195,7 @@ class WishSelectionTests(unittest.TestCase):
         self.assertTrue(all(w.target_id == "blackjack" for w in state.active))
         other = next(w for w in state.active
                      if w.definition_id == WishId.PLAY_OTHER_GAME)
-        self.assertEqual(other.target.mode, WishTargetMode.EXCLUDE)
+        self.assertEqual(require_test_value(other.target).mode, WishTargetMode.EXCLUDE)
 
     def test_later_nonloss_replaces_defeat_fact_and_pinned_goal_keeps_reference(self):
         keys = (WishId.REMATCH_GAME, WishId.COMEBACK_GAME)
@@ -219,10 +229,12 @@ class WishSelectionTests(unittest.TestCase):
         self.assertIsNone(pet.moodlets.care_evidence)
         coordinator.observe_round(finish, inputs)
         evidence = pet.moodlets.care_evidence
-        self.assertEqual(len(evidence.experiences), 1)
-        self.assertEqual(evidence.experiences[0].outcome, MoodletOutcome.LOSS)
-        self.assertFalse(evidence.experiences[0].pleasant)
-        self.assertFalse(evidence.encounters)
+        self.assertEqual(len(require_test_value(evidence).experiences), 1)
+        self.assertEqual(
+            require_test_value(evidence).experiences[0].outcome, MoodletOutcome.LOSS
+        )
+        self.assertFalse(require_test_value(evidence).experiences[0].pleasant)
+        self.assertFalse(require_test_value(evidence).encounters)
         self.assertFalse(pet.moodlets.active)
         self.assertEqual((pet.friendship, pet.fun), (before.friendship, before.fun))
         checkpoint = pet.capture_checkpoint()
@@ -265,8 +277,13 @@ class WishSelectionTests(unittest.TestCase):
         self.assertEqual(pet.capture_checkpoint(), checkpoint)
         loaded = decode_pet_state(encode_pet_state(pet), now=1800000000)
         evidence = loaded.moodlets.care_evidence
-        self.assertEqual(len(evidence.experiences), MAX_CARE_EXPERIENCES)
-        self.assertEqual(evidence.experiences[-1].outcome, MoodletOutcome.WIN)
+        self.assertLessEqual(
+            len(require_test_value(evidence).experiences), MAX_CARE_EXPERIENCES
+        )
+        self.assertGreater(require_test_value(evidence).baseline, 0)
+        self.assertEqual(
+            require_test_value(evidence).experiences[-1].outcome, MoodletOutcome.WIN
+        )
         rng = SelectionRandom()
         loaded.evaluate_wishes(WishContext(), rng=rng)
         forms = {c.definition.id for pop, _ in rng.draws

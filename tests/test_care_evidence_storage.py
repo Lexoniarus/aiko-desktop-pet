@@ -32,6 +32,7 @@ from aiko_pet.pet.state import PetState
 from aiko_pet.pet.wish_catalog import WISH_CATALOG
 from aiko_pet.pet.wishes import WishArea, WishId, WishTargetKind
 from aiko_pet.ui.view_models.moodlet_causes import cause_description
+from tools.pet_test_support import require_test_value
 
 ELAPSED = 90000
 WALL = 1800000000
@@ -223,13 +224,15 @@ class CareEvidenceStorageTests(unittest.TestCase):
         restored = decode_moodlets(encode_moodlets(original), ELAPSED)
         pending = replace(original, active=())
         self.assertFalse(decode_moodlets(encode_moodlets(pending), ELAPSED).active)
-        progress = restored.care_evidence.progress
+        progress = require_test_value(restored.care_evidence).progress
         self.assertEqual([p.processed_until for p in progress], [86400, 0])
         without_raw = replace(restored, care_evidence=None)
         self.assertEqual(
             decode_moodlets(encode_moodlets(without_raw), ELAPSED), without_raw
         )
-        self.assertEqual(without_raw.active[0].causes[0].period.encounters, 3)
+        self.assertEqual(
+            require_test_value(without_raw.active[0].causes[0].period).encounters, 3
+        )
 
     def test_bad_stage_budgets_and_mismatched_original_causes_are_rejected(self):
         original = encode_moodlets(emotional_state())

@@ -6,6 +6,7 @@ import unittest
 from aiko_pet.infrastructure.pet_codec import decode_pet_state, encode_pet_state
 from aiko_pet.pet.moodlets import MoodletCauseKind, MoodletId
 from aiko_pet.pet.state import PetState
+from tools.pet_test_support import require_test_value
 
 WALL = 1800000000
 DAY = 86400
@@ -35,7 +36,7 @@ class LongTermProgressionTests(unittest.TestCase):
         before = encode_pet_state(divided)
         divided.advance(divided.updated_at, observed=False)
         self.assertEqual(encode_pet_state(divided), before)
-        self.assertFalse(whole.moodlets.care_evidence.experiences)
+        self.assertFalse(require_test_value(whole.moodlets.care_evidence).experiences)
 
     def test_long_term_decay_is_not_frozen_by_capped_zero_need_optimization(self):
         pet = PetState(updated_at=WALL)
@@ -61,8 +62,10 @@ class LongTermProgressionTests(unittest.TestCase):
         self.assertEqual(episode.level, 3)
         self.assertEqual(len(episode.causes), 3)
         for cause, start in zip(episode.causes, (0, DAY, 2 * DAY), strict=True):
-            self.assertAlmostEqual(cause.period.started_at, start, places=5)
-        self.assertFalse(pet.moodlets.care_evidence.encounters)
+            self.assertAlmostEqual(
+                require_test_value(cause.period).started_at, start, places=5
+            )
+        self.assertFalse(require_test_value(pet.moodlets.care_evidence).encounters)
         self.assertEqual(
             decode_pet_state(encode_pet_state(pet), now=pet.updated_at).moodlets,
             pet.moodlets,

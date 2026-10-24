@@ -33,6 +33,13 @@ The baseline is Python 3.11+ with standard-library Tkinter on Windows 10/11. Run
 
 6. Open a pull request to `main`. Describe changed behavior, tests and any Windows-specific manual checks. Do not merge with failing CI.
 
+For a local run that must create no test windows, use
+`python tools/local_test_suite.py`. It blocks native Tk creation, redirects the
+default save into a temporary directory, reports per-case durations and records
+native-only fixtures as explicit skips. `--report <temporary-json-path>` writes
+the measured results outside the repository. This run does not replace native
+visual/input acceptance; inspect its reported skips when recording evidence.
+
 Test behavior and effects without waiting through gameplay timers, reading times
 or cooldowns. Use explicit timestamps, a controlled clock or the existing
 `FakeScheduler` in [tools/reaction_test_support.py](tools/reaction_test_support.py)

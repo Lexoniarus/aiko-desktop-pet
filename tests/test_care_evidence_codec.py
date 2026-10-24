@@ -46,9 +46,12 @@ class CareEvidenceCodecTests(unittest.TestCase):
         )
         original = json.loads(json.dumps(encode_care_evidence(state), allow_nan=False))
         self.assertEqual(decode_care_evidence(original, 0, 90000), state)
+        legacy = {k: v for k, v in original.items() if k != "next_experience_id"}
+        self.assertEqual(decode_care_evidence(legacy, 0, 90000), state)
         for mutate in (
             lambda e: e.update(baseline=90001),
             lambda e: e.update(next_encounter_id=1),
+            lambda e: e.update(next_experience_id=False),
             lambda e: e["experiences"][0].update(encounter_id=9),
             lambda e: e["experiences"][0].update(occurred_at=121),
             lambda e: e.update(experiences=e["experiences"] * 2),

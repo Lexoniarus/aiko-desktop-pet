@@ -35,6 +35,7 @@ from aiko_pet.pet.wishes import (
     WishTargetMode,
     wish_text_key,
 )
+from tools.pet_test_support import require_test_value
 
 DATA = Path(__file__).resolve().parents[1] / "aiko_pet/data"
 
@@ -222,7 +223,8 @@ class WishCatalogTests(unittest.TestCase):
         )
         self.assertEqual({w.definition_id for w in state.active},
                          {WishId.PLAY_ANY_GAME, WishId.SOCIAL_ANY})
-        self.assertTrue(all(w.target.mode == WishTargetMode.ANY for w in state.active))
+        self.assertTrue(all(require_test_value(w.target).mode == WishTargetMode.ANY
+                            for w in state.active))
         self.assertTrue(all(w.target_id == "" for w in state.active))
 
     def test_invalid_target_modes_and_experience_requirements_are_rejected(self):

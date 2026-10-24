@@ -34,6 +34,7 @@ from aiko_pet.world.contracts import (
     WorldSurface,
 )
 from aiko_pet.world.state import WorldState
+from tools.pet_test_support import require_test_value
 
 WALL = 1800000000
 
@@ -222,7 +223,7 @@ class FoodHandoverFlowTests(unittest.TestCase):
         flow.observe(True)
         flow.coordinator.update()
         cause = flow.pet.moodlets.active[0].causes[0]
-        self.assertEqual(cause.wish.instance_id, 1)
+        self.assertEqual(require_test_value(cause.wish).instance_id, 1)
         self.assertEqual((cause.handed_over_at, cause.occurred_at), (100, 101))
         flow.acknowledge()  # Recognition, then actual use decision.
         flow.acknowledge()  # Wanted-food cue, then actual consumption start.
@@ -276,12 +277,19 @@ class FoodHandoverFlowTests(unittest.TestCase):
         self.assertEqual(episode.causes[0].target_id, "cookie")
         flow.acknowledge()
         flow.acknowledge()
-        flow.coordinator.receive(PlaybackEvent(
-            len(flow.clips), "put_down", 2, ("detach_object",), finished=True,
-        ))
+        flow.coordinator.receive(
+            PlaybackEvent(
+                len(flow.clips),
+                "put_down",
+                2,
+                ("detach_object",),
+                finished=True,
+            )
+        )
         flow.acknowledge()
-        self.assertEqual(flow.world.get(flow.item.instance_id).state,
-                         ObjectState.RESTING)
+        self.assertEqual(
+            flow.world.get(flow.item.instance_id).state, ObjectState.RESTING
+        )
         self.assertFalse(flow.pet.food.recent_food_ids)
         self.assertEqual(flow.pet.moodlets.active[0], episode)
         self.assertFalse(flow.pet.wishes.food_handovers)
@@ -314,8 +322,11 @@ class FoodHandoverFlowTests(unittest.TestCase):
                 world_recovery_x=100,
             )
             restored = PetSessionRestorer(store, wall_time=lambda: WALL).restore()
-        world = WorldState(restored.world.surface, restored.world.definitions)
-        world.restore_snapshot(restored.world)
+        world = WorldState(
+            require_test_value(restored.world).surface,
+            require_test_value(restored.world).definitions,
+        )
+        world.restore_snapshot(require_test_value(restored.world))
         ObjectConsumption.reconcile_handovers(restored.state, world)
         self.assertFalse(restored.state.moodlets.active)
         receipt = restored.state.wishes.food_handovers[0]

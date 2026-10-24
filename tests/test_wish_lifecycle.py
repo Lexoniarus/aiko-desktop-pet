@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from typing import Any, cast
 
 from aiko_pet.application.active_time import (
     ActiveSessionClock,
@@ -42,7 +43,10 @@ NEEDS = NeedLevels(50, 80, 100, 100, 50)
 
 
 def create(
-    state=WishState(), elapsed=0, context=WishContext(), definitions=DEFINITIONS,
+    state=WishState(),
+    elapsed: float = 0,
+    context=WishContext(),
+    definitions=DEFINITIONS,
     needs=NEEDS,
 ):
     return replenish_wishes(
@@ -58,7 +62,7 @@ def create(
 
 def select(
     state,
-    elapsed=0,
+    elapsed: float = 0,
     *,
     sleeping=False,
     friendship_level=3,
@@ -194,7 +198,7 @@ class WishLifecycleTests(unittest.TestCase):
                          {"sleeping": True},
                          {"context": WishContext(petting_welcome=False)}):
             with self.subTest(settings=settings):
-                self.assertIsNone(select(state, **settings))
+                self.assertIsNone(select(state, **cast(dict[str, Any], settings)))
         self.assertEqual(select(state), state.active[0])
         spoken = acknowledge_wish_expression(state, 1, elapsed=0)
         self.assertEqual(acknowledge_wish_expression(spoken, 1, elapsed=1), spoken)
