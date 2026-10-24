@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from ...application.storage_contracts import StorageError, StorageFailureKind
+from .adaptive_schema import ADAPTIVE_SCHEMA
 from .care_evidence_schema import CARE_EVIDENCE_SCHEMA
 from .food_handover_schema import FOOD_HANDOVER_SCHEMA
 from .interaction_schema import INTERACTION_SCHEMA
@@ -28,6 +29,7 @@ SCHEMA_VERSION = 1
 _DOMAIN_SCHEMA = (
     PET_SCHEMA + RELATIONSHIP_SCHEMA + WORLD_SCHEMA + WISH_SCHEMA
     + FOOD_HANDOVER_SCHEMA + MOODLET_SCHEMA + INTERACTION_SCHEMA + CARE_EVIDENCE_SCHEMA
+    + ADAPTIVE_SCHEMA
 )
 
 

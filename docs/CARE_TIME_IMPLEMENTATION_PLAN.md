@@ -9371,3 +9371,25 @@ No full suite, real API request, personal save, window, mouse control or CI.
 
 The following SQL mapping commits build on this now-secured source contract;
 they do not redesign its provider limits or replay/admission behavior.
+
+#### SQL-5A: exact adaptive profiles and bounded quiet phases
+
+`adaptive_schema.py` adds the planned scalar state, all 168 hour-of-week slots
+and bounded quiet phases to the initial schema. `adaptive_rows.py` retains
+fractional observed days, numeric precision, wall-clock anchors, window minutes,
+phase order and adjustment day. Reads do not sample input, train a quiet window
+or count closed time as observation. Missing slots fail rather than filling in
+an invented zero profile.
+
+The shared strict `infrastructure/adaptive_codec.py` preserves full precision
+instead of calling the legacy rounded encoder. It validates primitive types
+and the existing strict quiet-window contract, then rejects values the existing
+model loader would normalize. The forgiving legacy decoder stays unchanged;
+later checked JSON import can reuse this codec without duplicating care rules.
+Only anonymous existing aggregates are mapped, never raw input/hardware logs.
+
+Four new SQL profile cases, thirteen existing model/quiet-rhythm cases and ten
+schema cases passed: **27 tests in 0.136 seconds**, longest 0.019 seconds rounded
+to milliseconds. Scoped Ruff, fresh strict Mypy for 27 affected storage sources
+and Pyright including new tests passed. Tk construction was blocked and all
+files were temporary. No personal save, real input, window, mouse control or CI.
