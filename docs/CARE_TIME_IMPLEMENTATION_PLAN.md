@@ -9393,3 +9393,24 @@ schema cases passed: **27 tests in 0.136 seconds**, longest 0.019 seconds rounde
 to milliseconds. Scoped Ruff, fresh strict Mypy for 27 affected storage sources
 and Pyright including new tests passed. Tk construction was blocked and all
 files were temporary. No personal save, real input, window, mouse control or CI.
+
+#### SQL-5B: provider-aware content receipts and wall-clock request limits
+
+`social_schema.py` adds `social_receipts`, `social_requests` and `provider_pauses`.
+`social_rows.py` maps the existing history through its strict codec, preserving
+global receipt order, ten-per-category limits, exact provider identities and
+fingerprints, original request ordering and pause deadlines. No provider text,
+buffer, invented receipt timestamp or new request is created. Expired requests
+and pauses are not silently pruned on read; the existing application owner
+continues to prune them on its own wall-clock boundary.
+
+The partial core mapper preserves the daily reading in a supplied template and
+does not touch its later dedicated table. It excludes Horoscope from ordinary
+last-ten receipt storage, as required by the secured source contract. All SQL
+writes remain inside the caller's transaction and never commit.
+
+Four new SQL receipt cases and thirteen existing social-history/request cases
+passed: **17 tests in 0.045 seconds**, longest 0.010 seconds rounded upward.
+Scoped Ruff, fresh strict Mypy for 29 storage sources and Pyright including the
+new tests passed. Tk was blocked; temporary saves only, no HTTP, window, mouse
+control or CI. The following commit adds the bounded daily horoscope mapping.

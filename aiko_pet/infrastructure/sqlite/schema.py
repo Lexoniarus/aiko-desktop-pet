@@ -20,6 +20,7 @@ from .interaction_schema import INTERACTION_SCHEMA
 from .moodlet_schema import MOODLET_SCHEMA
 from .pet_schema import PET_SCHEMA
 from .relationship_schema import RELATIONSHIP_SCHEMA
+from .social_schema import SOCIAL_SCHEMA
 from .wish_schema import WISH_SCHEMA
 from .world_schema import WORLD_SCHEMA
 
@@ -29,7 +30,7 @@ SCHEMA_VERSION = 1
 _DOMAIN_SCHEMA = (
     PET_SCHEMA + RELATIONSHIP_SCHEMA + WORLD_SCHEMA + WISH_SCHEMA
     + FOOD_HANDOVER_SCHEMA + MOODLET_SCHEMA + INTERACTION_SCHEMA + CARE_EVIDENCE_SCHEMA
-    + ADAPTIVE_SCHEMA
+    + ADAPTIVE_SCHEMA + SOCIAL_SCHEMA
 )
 
 
