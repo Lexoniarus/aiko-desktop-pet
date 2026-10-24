@@ -9919,3 +9919,26 @@ actual wish expiry as well as nonempty relationship/exposure and poor-care
 records, not only empty collections. These same five focused cases passed again
 in **0.468 s**, no skips; scoped Ruff/Pyright passed. No production logic changed
 after the 226-case run, and no broader suite repetition was necessary.
+
+### Follow-up: blank wish card (2026-10-24)
+
+The free-choice game wish projected the icon key `action_play`, which does not
+exist in the packaged UI catalog. `WishPanel` created its card surface before
+resolving this asset, so the resulting `KeyError` interrupted construction before
+the text widgets existed. The panel had already cached the new wish identities;
+subsequent refreshes therefore kept the incomplete card instead of rebuilding it.
+This is a presentation defect; it does not require wish or save migration.
+
+Use the existing `status_fun` icon for a game without a concrete target. Publish
+the rendered identity tuple only after a successful complete refresh. Domain
+wish ownership, deadlines, progress, pins and persistence remain unchanged.
+
+The earlier permissive image double accepted arbitrary icon keys and hid this
+integration failure. Targeted regression coverage now uses the real `IconImages`
+catalog lookup (only native image allocation is mocked), verifies every current
+wish target's text and icon paths, and checks recovery after interrupted card
+construction. Local acceptance: **17 tests passed in 0.279 s**, no skips, longest
+**0.167 s**; scoped Ruff and Pyright pass. Native Tk was blocked before discovery
+and the default save redirected to a temporary directory. No personal save was
+opened or changed; no test windows, mouse control, HTTP or GitHub CI. Parallel
+character/export changes are excluded from this fix. The full suite was not rerun.

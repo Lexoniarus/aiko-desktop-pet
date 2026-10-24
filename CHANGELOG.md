@@ -8,6 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Fix blank free-choice game wish cards by using the packaged fun icon.
+  Commit rendered wish identities only after a complete refresh so interrupted
+  card construction can recover on the next refresh.
+
 - Fix fractional-tick save rejection by sharing canonical elapsed endpoints
   across direct Pet and World progression. Keep relationship, Moodlet recovery,
   long-term evidence, actual sleep duration and wish expiry on the same time

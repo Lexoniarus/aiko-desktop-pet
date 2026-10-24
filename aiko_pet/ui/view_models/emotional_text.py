@@ -128,7 +128,7 @@ def wish_description(view: WishView) -> str:
 def wish_icon(view: WishView) -> str:
     if view.value.target_kind == WishTargetKind.GAME:
         return (view.value.target_id if view.value.target_id in GAME_FILES
-                else GAME_ICONS.get(view.value.target_id, "action_play"))
+                else GAME_ICONS.get(view.value.target_id, "status_fun"))
     if view.value.target_kind == WishTargetKind.SOCIAL:
         return {WishId.SINGLE: "wish_single", WishId.TWO_PARTS: "wish_twopart",
                 WishId.FACT: "wish_fact"}.get(view.value.definition_id, "status_social")

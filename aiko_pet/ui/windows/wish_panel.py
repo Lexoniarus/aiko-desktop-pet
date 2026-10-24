@@ -66,7 +66,6 @@ class WishPanel:
         layout_changed = ids != self._ids
         if layout_changed:
             self._tips.hide()
-            self._ids = ids
             self._labels.clear()
             self._objectives.clear()
             self._meta.clear()
@@ -127,6 +126,9 @@ class WishPanel:
             )
         if layout_changed:
             self._scroll.refresh_layout()
+        # Publish the rendered identity only after every card is complete. If an
+        # asset/widget fails, the next refresh must rebuild the partial layout.
+        self._ids = ids
 
     def _card(self, item: WishView) -> None:
         skin = self._skin
