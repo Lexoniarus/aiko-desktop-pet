@@ -86,8 +86,7 @@ class SqliteStateStore:
                 return LoadedPetData(
                     PetState(updated_at=current), PetSettings(), AdaptiveMemory(), False
                 )
-            with open_database(self.path) as connection:
-                connection.execute("BEGIN")
+            with open_database(self.path, transaction="read") as connection:
                 loaded = read_session_rows(connection, self._world_definitions())
                 connection.commit()
                 return loaded
@@ -114,7 +113,6 @@ class SqliteStateStore:
             def commit_snapshot(
                 connection: sqlite3.Connection, *, initial: bool
             ) -> SaveRevision:
-                connection.execute("BEGIN IMMEDIATE")
                 if initial:
                     connection.execute(
                         "INSERT INTO save_state VALUES (1, ?, ?, ?)",
@@ -156,7 +154,7 @@ class SqliteStateStore:
                 return revision
 
             if self._exists():
-                with open_database(self.path) as connection:
+                with open_database(self.path, transaction="write") as connection:
                     return commit_snapshot(connection, initial=False)
             if expected_revision.value != 0:
                 raise StorageError(
@@ -166,7 +164,9 @@ class SqliteStateStore:
                 )
             self.path.parent.mkdir(parents=True, exist_ok=True)
             with temporary_database(self.path) as temporary:
-                with open_database(temporary, initialize=True) as connection:
+                with open_database(
+                    temporary, initialize=True, transaction="write",
+                ) as connection:
                     commit_snapshot(connection, initial=True)
                 publish_database(temporary, self.path)
             return revision

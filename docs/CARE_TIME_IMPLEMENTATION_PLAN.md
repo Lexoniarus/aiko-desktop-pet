@@ -38,7 +38,7 @@
 > first secures the completed parallel horoscope baseline, then maps adaptive
 > memory, API histories/limits and the bounded current-day reading to SQLite.
 
-> **SQL-6 in progress, 2026-10-24:** the
+> **SQL-6 delivered, 2026-10-24:** the
 > [SQL-6 delivery record](#sqlite-delivery-sql-6-transactional-store-and-revision-protection)
 > records session revision metadata, complete transactions, first publication
 > and schema backup/error boundaries. Runtime cutover remains SQL-8.
@@ -9524,3 +9524,50 @@ coherent reads during an uncommitted write, injected partial failure/retry,
 immediate lock/access errors and preservation of invalid/missing destinations.
 Scoped Ruff, fresh strict Mypy and Pyright passed. Tk was blocked; all files
 were temporary. Schema completeness and consistent upgrade backups follow.
+
+#### SQL-6C: coherent schema validation and consistent upgrade backups
+
+`open_database` can retain a read/write snapshot transaction through schema
+validation and owner mapping. A reader no longer has an unlocked gap between
+checking the schema and reading data. A first writer commits initial DDL and
+the complete checkpoint together before publication. Existing low-level mapper
+callers keep the earlier default connection behavior.
+
+Schema validation checks the known migration-history prefix, required tables
+and named indexes derived from canonical DDL, SQLite quick integrity and owned
+foreign keys. Missing tables/indexes or orphaned records stop reads and writes
+before replacement. Unsupported/newer versions still stop rather than downgrade.
+No duplicate hand-maintained domain-field model is introduced by these checks.
+
+`backups.py` uses SQLite's backup API before applying an actual older-schema
+upgrade. The migration owner reserves the writer lock, rechecks the schema and
+backs up through a separate read-only connection before issuing DDL. It never
+backs up through its own active write transaction. Committed WAL rows are
+included; raw database/WAL files are not copied independently. Busy backup steps
+abort immediately with the typed lock error instead of a sleep/retry loop.
+Incomplete copies are cleaned up; valid backups survive a failed upgrade.
+DDL, history and version changes roll back together on any later failure.
+
+Six synthetic future-schema cases verify successful backup/upgrade exactly
+once, failed-DDL rollback, backup-failure refusal, WAL inclusion, immediate
+backup-lock failure and protection of missing structures/orphaned data. These
+tests patch a version-two fixture only: the actual initial schema remains
+version one; no production version-two migration is registered.
+
+Final targeted combined verification: **117 tests passed in 2.815 seconds**,
+no skips/failures/errors. Longest test was **0.154 seconds** rounded to
+milliseconds; none exceeded ten seconds. The set covers all SQLite mapping,
+store and schema cases plus affected session, error/revision, desktop save,
+legacy JSON, World/Memory and social-persistence contracts. Scoped Ruff, fresh
+strict Mypy for 37 sources and Pyright including the three new SQL-6 test
+modules passed. Tk construction was blocked; every database, backup and save
+fixture was temporary. No full suite, personal save, window, mouse control or CI.
+
+SQL-6 focused OOP review: the existing application session boundary carries the
+revision and complete owner inputs. SQLite owns transaction/revision comparison,
+schema/backup/publication and error translation; existing mappers and immutable
+values remain canonical. No progression, interaction replay, second aggregate,
+automatic merge, mutable revision cache or alternate live writer was added.
+The current desktop still uses the original JSON store. SQL-6 is complete;
+SQL-7 strict legacy import and SQL-8 runtime cutover remain separate. Broader
+OOP/duplicate-test review and the full suite remain the final SQL-9 gate.

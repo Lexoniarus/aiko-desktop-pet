@@ -14,12 +14,15 @@ from pathlib import Path
 
 from ...application.storage_contracts import StorageError, StorageFailureKind
 from .errors import translate_storage_error
-from .schema import prepare_schema
+from .schema import SnapshotTransaction, prepare_schema
 
 
 @contextmanager
 def open_database(
-    path: Path, *, initialize: bool = False,
+    path: Path,
+    *,
+    initialize: bool = False,
+    transaction: SnapshotTransaction | None = None,
 ) -> Iterator[sqlite3.Connection]:
     """Open an existing save; creating an empty schema requires explicit opt-in.
 
@@ -30,14 +33,21 @@ def open_database(
     try:
         connection = sqlite3.connect(
             path.absolute().as_uri() + f"?mode={mode}",
-            uri=True, isolation_level=None, timeout=0,
+            uri=True,
+            isolation_level=None,
+            timeout=0,
         )
         try:
             connection.execute("PRAGMA foreign_keys = ON")
             if connection.execute("PRAGMA foreign_keys").fetchone() != (1,):
-                raise StorageError(StorageFailureKind.DATABASE, path,
-                                   "SQLite foreign-key enforcement is unavailable")
-            prepare_schema(connection, path, initialize=initialize)
+                raise StorageError(
+                    StorageFailureKind.DATABASE,
+                    path,
+                    "SQLite foreign-key enforcement is unavailable",
+                )
+            prepare_schema(
+                connection, path, initialize=initialize, transaction=transaction
+            )
             yield connection
         finally:
             connection.close()
