@@ -65,6 +65,8 @@ class ObjectInteractionCoordinator:
         withholding_active: Callable[[], bool] = lambda: False,
         withholding: Callable[[str, float], None] = lambda _key, _loss: None,
         acknowledge_handover: Callable[[str, str], None] = lambda _item, _record: None,
+        begin_handover: Callable[[str, str], None] = lambda _item, _record: None,
+        finish_handover: Callable[[str], None] = lambda _item: None,
     ) -> None:
         self.world = world
         self._custody = ObjectCustody(world, memory)
@@ -89,6 +91,8 @@ class ObjectInteractionCoordinator:
         self._experience = experience
         self._withholding_active = withholding_active
         self._acknowledge_handover = acknowledge_handover
+        self._begin_handover = begin_handover
+        self._finish_handover = finish_handover
 
     @property
     def _episode(self) -> InteractionEpisode:
@@ -418,10 +422,10 @@ class ObjectInteractionCoordinator:
 
     def _consider_use(self) -> None:
         assert self.memory_id is not None
+        self._acknowledge_known_handover()
         decision = self._decide(self.memory_id, self._episode.use_context)
         if decision.reason not in ("unrecognized", "unavailable"):
             self._memory.mark_assessed(self.memory_id)
-            self._acknowledge_known_handover()
         self._set_phase(DecisionPhase(decision))
         self._announce(
             "object_want" if decision.consume else
@@ -496,8 +500,7 @@ class ObjectInteractionCoordinator:
 
     def _acknowledge_known_handover(self) -> None:
         episode = self._episode
-        if (episode.origin == ConsumptionOrigin.HANDOVER
-                and not episode.handover_acknowledged and self._known_identity()
+        if (not episode.handover_acknowledged and self._known_identity()
                 and episode.instance_id is not None):
             self._acknowledge_handover(episode.instance_id, episode.memory_id)
             episode.handover_acknowledged = True
@@ -514,6 +517,7 @@ class ObjectInteractionCoordinator:
         if self.searching:
             self._start(known.token, ConsumptionOrigin.AUTONOMOUS)
         self._episode.identity, self._episode.kind = known.identity, known.kind
+        self._acknowledge_known_handover()
         self._set_phase(CuePhase("found"))
         self._announce("object_found")
         return True
@@ -522,6 +526,7 @@ class ObjectInteractionCoordinator:
         """Choose the result cue once the hand/face evidence identifies a portion."""
         if not self._reunite(known):
             self._episode.identity, self._episode.kind = known.identity, known.kind
+            self._acknowledge_known_handover()
             self._set_phase(CuePhase("recognize"))
             self._announce("object_recognized")
 
@@ -572,10 +577,17 @@ class ObjectInteractionCoordinator:
                 or not self._can_acquire(instance_id)):
             return False
         item = self.world.get(instance_id)
-        self._custody.accept_handover_on_release(
-            instance_id, memory_id=record, expected_revision=item.revision,
-            now=self._now(),
-        )
+        physical, cognitive = self.world.snapshot(), self._memory.snapshot()
+        try:
+            self._custody.accept_handover_on_release(
+                instance_id, memory_id=record, expected_revision=item.revision,
+                now=self._now(),
+            )
+            self._begin_handover(instance_id, record)
+        except Exception:
+            self.world.restore_snapshot(physical)
+            self._memory.restore_snapshot(cognitive)
+            raise
         if not returning:
             self._start(record, ConsumptionOrigin.HANDOVER)
         episode = self._episode
@@ -758,6 +770,8 @@ class ObjectInteractionCoordinator:
     ) -> None:
         """Finish eating or safe put-down separately from phase dispatch."""
         if isinstance(state, PutDownPhase):
+            if episode.instance_id is not None:
+                self._finish_handover(episode.instance_id)
             queued, episode.queued = episode.queued, None
             self._finish(False)
             self._stop()

@@ -809,13 +809,13 @@ class ObjectBehaviorTests(unittest.TestCase):
 
         self.assertTrue(allowed())
         self.assertFalse(allowed(reachable=False))
-        self.assertFalse(allowed(ready=False))
+        self.assertTrue(allowed(ready=False))  # Receipt is distinct from appetite.
         self.assertFalse(allowed(now=.8))
         self.assertFalse(allowed(facts=BehaviorFacts(playback_busy=True)))
         self.assertFalse(allowed(facts=BehaviorFacts(game_open=True)))
         self.assertFalse(allowed(facts=BehaviorFacts(character_action_busy=True)))
         set_test_pet_values(self.state, satiety=100)
-        self.assertFalse(allowed())
+        self.assertTrue(allowed())  # Known food may enter her hand for put-down.
         set_test_pet_values(self.state, satiety=50)
         self.awareness.observations = ()
         self.assertFalse(allowed())

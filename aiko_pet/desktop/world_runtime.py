@@ -166,6 +166,10 @@ class DesktopWorldRuntime:
             withholding_active=lambda: any(
                 e.definition_id == MoodletId.WITHHELD for e in state.moodlets.active),
             acknowledge_handover=self._acknowledge_food_handover,
+            begin_handover=self._begin_food_handover,
+            finish_handover=lambda item: self._consumption.finish_handover(
+                self.world, item,
+            ),
         )
         self._behavior = ObjectBehaviorCoordinator(
             state, self.awareness, self.interaction, self.world,
@@ -350,13 +354,13 @@ class DesktopWorldRuntime:
                 and self.width * .05 <= item.position.height <= self.width * .9)
 
     def _handover_on_release(self, token: str) -> bool:
-        decision = (self._assess_offer(token)
-                    if self._within_handover_reach(token) else None)
-        if decision is not None and not decision.consume:
-            known = self.awareness.known_instance(token)
-            if known is not None:
-                self._acknowledge_food_handover(token, known.token)
         return self.interaction.offer_on_release(token)
+
+    def _begin_food_handover(self, token: str, record: str) -> None:
+        self._consumption.begin_handover(
+            self.world, token, self._inputs(time.time(), time.monotonic()),
+            memory_id=record,
+        )
 
     def _acknowledge_food_handover(self, token: str, record: str) -> None:
         self._consumption.acknowledge_handover(
@@ -435,6 +439,7 @@ class DesktopWorldRuntime:
     def update(self, _now: float) -> None:
         if self._closed:
             return
+        ObjectConsumption.reconcile_handovers(self.state, self.world)
         episode = self.state.sleep_episode
         if episode.care_break:
             finishing = sleep_care_complete(

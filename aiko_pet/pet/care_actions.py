@@ -20,6 +20,7 @@ from .food import (
     FoodState,
     eat_food,
 )
+from .food_wishes import FoodWishPermission, food_wish_permission
 from .interaction_events import PettingAttempted
 from .interaction_rules import InteractionConsequences, apply_interaction_event
 from .moodlet_catalog import MOODLET_CATALOG
@@ -109,6 +110,7 @@ def plan_care_action(
     *,
     now: float,
     food_id: FoodId | None = None,
+    food_permission: FoodWishPermission | None = None,
 ) -> CareTransition:
     """Decide care effects and rejection once, without writes or display text."""
     if action not in CARE_ACTIONS:
@@ -248,7 +250,14 @@ def plan_care_action(
         )
     selected_food = food_id if food_id is not None else DEFAULT_FOOD_ID
     profile = FOOD_CATALOG[selected_food]
-    intake = eat_food(state.food, state.satiety, selected_food)
+    permission = food_permission or food_wish_permission(
+        state.wishes, selected_food, elapsed=state.lived_seconds,
+        definitions=WISH_CATALOG.definitions,
+    )
+    if permission.excluded:
+        return replace(unchanged, result=CareResult("feed", CareEffect.FOOD_SATISFIED))
+    intake = eat_food(state.food, state.satiety, selected_food,
+                      requested=permission.requested)
     if not intake.accepted:
         return replace(
             unchanged,
@@ -278,6 +287,7 @@ def plan_care_action(
         meals_date=meals_date,
         meals_today=tuple(meals),
         food=intake.food,
+        wish_instance_id=permission.wish_instance_id,
         needs=replace(
             result.needs,
             satiety=intake.satiety,

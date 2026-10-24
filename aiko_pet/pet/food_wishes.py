@@ -183,7 +183,6 @@ class FoodWishPermission:
     wish_instance_id: int | None = None
     requested: bool = False
     excluded: bool = False
-    handover_id: str | None = None
 
 
 def food_wish_permission(
@@ -215,14 +214,18 @@ def food_wish_permission(
             None,
         )
         return FoodWishPermission(
-            requested=personal
-            and selected is not None
+            requested=selected is not None
             and selected.target.mode == WishTargetMode.EXACT,
             excluded=selected is not None
             and selected.target.mode == WishTargetMode.EXCLUDE
             and selected.target.target_id == food_id,
-            handover_id=receipt.handover_id,
         )
+    if personal and any(
+        w.is_active_at(elapsed) and w.definition_id == WishId.AVOID_FOOD
+        and (w.target.target_id if w.target else w.target_id) == food_id
+        for w in state.active
+    ):
+        return FoodWishPermission(excluded=True)
     wish = assign_activity_wish(
         state, WishArea.FOOD, food_id, elapsed=elapsed, definitions=definitions
     )

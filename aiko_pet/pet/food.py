@@ -125,10 +125,11 @@ def eat_food(
     food: FoodState,
     current_satiety: float,
     food_id: FoodId,
+    *, requested: bool = False,
 ) -> FoodIntake:
     """Add satiety and digest reserve; a snack does not count as a full meal."""
     profile = FOOD_CATALOG[food_id]
-    if current_satiety >= FOOD_BALANCE.too_full_to_eat_threshold:
+    if not requested and current_satiety >= FOOD_BALANCE.too_full_to_eat_threshold:
         return FoodIntake(False, current_satiety, food, False)
     repetitive = is_repeated_food(food, food_id)
     history = (*food.recent_food_ids, food_id)

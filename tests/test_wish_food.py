@@ -43,17 +43,21 @@ def food_pet(wish_id=WishId.FOOD, **values):
 
 
 class FoodWishTests(unittest.TestCase):
-    def test_avoidance_handover_accepts_any_food_without_intake(self):
+    def test_recognized_handover_distinguishes_alternative_and_excluded_food(self):
         for actual in ("apple", "cookie"):
             with self.subTest(actual=actual):
                 pet = food_pet(WishId.AVOID_FOOD)
                 needs, contact = pet.needs, pet.friendship_history.last_contact
-                pet.complete_food_handover(actual, object_id="portion:1")
+                pet.begin_food_handover("gift:1", object_id="portion:1")
+                pet.recognize_food_handover("gift:1", actual)
                 self.assertFalse(pet.wishes.active)
                 self.assertEqual(pet.needs, needs)
                 self.assertEqual(pet.friendship_history.last_contact, contact)
                 self.assertEqual([e.kind for e in pet.friendship_history.rewards],
                                  [])
+                self.assertEqual(pet.moodlets.active[0].definition_id,
+                                 MoodletId.FOOD_WISH_DISREGARDED if actual == "apple"
+                                 else MoodletId.FOOD_FULFILLED)
                 cause = pet.moodlets.active[0].causes[0]
                 self.assertEqual(cause.outcome, MoodletOutcome.HANDOVER)
                 self.assertEqual(cause.target_id, actual)
@@ -62,14 +66,17 @@ class FoodWishTests(unittest.TestCase):
                 self.assertEqual(cause.wish.target_id, "apple")
                 pet = decode_pet_state(encode_pet_state(pet), now=WALL)
                 before = pet.capture_checkpoint()
-                pet.complete_food_handover(actual, object_id="portion:1")
+                pet.begin_food_handover("gift:1", object_id="portion:1")
+                pet.recognize_food_handover("gift:1", actual)
                 self.assertEqual(pet.capture_checkpoint(), before)
 
     def test_food_intake_and_personal_handover_cannot_substitute_for_each_other(self):
         pet = food_pet()
-        pet.complete_food_handover("apple", object_id="portion:1")
-        self.assertTrue(pet.wishes.active)
-        self.assertFalse(pet.moodlets.active)
+        pet.begin_food_handover("gift:1", object_id="portion:1")
+        pet.recognize_food_handover("gift:1", "apple")
+        self.assertFalse(pet.wishes.active)
+        self.assertEqual(pet.satiety, 30)
+        self.assertEqual(pet.moodlets.active[0].definition_id, MoodletId.FOOD_FULFILLED)
         pet = food_pet(WishId.AVOID_FOOD)
         pet.consume_item("apple", ConsumptionOrigin.AUTONOMOUS, now=WALL,
                          object_id="portion:1")
@@ -82,10 +89,11 @@ class FoodWishTests(unittest.TestCase):
             pet.consume_item("apple", ConsumptionOrigin.AUTONOMOUS, now=WALL)
         self.assertIn(MoodletId.FOOD_MONOTONY,
                       {e.definition_id for e in pet.moodlets.active})
-        pet.complete_food_handover("apple", object_id="portion:4")
+        pet.begin_food_handover("gift:4", object_id="portion:4")
+        pet.recognize_food_handover("gift:4", "cookie")
         fulfillment = next(e for e in pet.moodlets.active
                            if e.definition_id == MoodletId.FOOD_FULFILLED)
-        pet.consume_item("apple", ConsumptionOrigin.HANDOVER, now=WALL,
+        pet.consume_item("cookie", ConsumptionOrigin.HANDOVER, now=WALL,
                          object_id="portion:4")
         self.assertFalse(pet.wishes.active)
         self.assertEqual(next(e for e in pet.moodlets.active
@@ -145,7 +153,6 @@ class FoodWishTests(unittest.TestCase):
     def test_wrong_food_rejection_and_deadline_do_not_fulfill(self):
         for target, satiety, elapsed in (
             ("cookie", 30, 100),
-            ("apple", 100, 100),
             ("apple", 30, 14400),
         ):
             pet = food_pet()

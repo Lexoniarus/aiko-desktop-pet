@@ -70,27 +70,6 @@ def fulfill_activity_wish(
     )
 
 
-def fulfill_food_handover_wish(
-    state: WishState, food_id: str, *, elapsed: float, object_id: str,
-    definitions: Mapping[WishId, WishDefinition],
-) -> WishResolution:
-    """A qualified personal offer resolves avoidance, never ordinary intake wishes."""
-    wish = next((w for w in state.active
-                 if w.goal_snapshot.objective == WishObjective.FOOD_HANDOVER
-                 and definitions[w.definition_id].area == WishArea.FOOD
-                 and food_id in definitions[w.definition_id].targets
-                 and w.is_active_at(elapsed)), None)
-    if wish is None:
-        return WishResolution(state)
-    return _retire_wish(
-        state, wish, definitions[wish.definition_id], elapsed=elapsed,
-        cause=wish_cause(wish, elapsed=elapsed,
-                          event_id=f"wish:{wish.instance_id}:handover",
-                          outcome=MoodletOutcome.HANDOVER, target_id=food_id,
-                          object_id=object_id),
-    )
-
-
 def _retire_wish(
     state: WishState, wish: ActiveWish, fulfilled: WishDefinition | None,
     *, elapsed: float, cause: MoodletCause | None = None,

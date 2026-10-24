@@ -287,8 +287,8 @@ then exact/excluded/free-choice target specificity, actual saved progress, age
 and stable identity. Equally concrete goals have no invented win-first ordering.
 Games capture the wish at round start; social sequences capture it at admission.
 Later pins, dismissal, expiry or creation cannot reassign an outcome or complete
-another matching wish as fallback. Full-need food/affection permission and revised
-food-handover outcomes remain the next delivery slice.
+another matching wish as fallback. Actual affection admission and food transfers
+now use these same original-wish boundaries.
 
 Free-choice play counts assigned completed rounds across supported games and
 sessions. Game-change excludes its saved reference; simple rematch accepts any
@@ -304,13 +304,32 @@ callbacks cannot award another wish or repeat helpful relief after a save/reload
 Original typed wish meaning and actual completing game/category both survive in
 Moodlet causes. Ordinary physical care and session effects remain separate.
 
-Actual desired intake, welcome petting, qualifying game results and complete
-matching social sequences can fulfill wishes, including unspoken ones. The
-food-avoidance form instead uses a perceived personal handover, even of the
-excluded food and even if subsequently refused. It does not fabricate nutrition.
-Fulfillment retires the stable identity and creates its defined positive Moodlet;
-there is no direct friendship bonus or reward pot. Numeric mood follows its
-timed response; friendship integrates active impressions over elapsed time.
+An actual wished-for stroke is welcome at full affection and never counts as
+an excess stroke. An explicit active refusal still blocks it; Too Much Closeness
+is not bypassed by wish permission. Physical values clamp at 100. Completion
+retires the captured wish, so later strokes return to ordinary tolerance rules.
+
+Food transfers capture the original food-wish context only after actual custody
+passes into Aiko's hand. Cursor presentation, ground placement and autonomous
+pickup cannot invent a personal gift. Unidentified food keeps this bounded
+snapshot through saves/rotation until genuine hand/face recognition. The latest
+approved recognized-handover rule supersedes the earlier intake-only requirement
+for personally given desired food: recognition of the desired food or a matching
+alternative fulfills its original wish without manufacturing nutrition. Explicitly
+excluded food fails the original wish and grants food-wish-disregarded even when
+put down uneaten; an ordinary nonmatching offer is neutral. Explicit rejection
+cannot be redirected into a competing positive pin. Other food wishes remain
+available to actual matching intake, including autonomous known-stock care.
+
+Desired personally received food can be eaten even at full satiety. Existing
+consumption commits one actual portion's nutrition/digestion at eating start;
+it does not award a second wish for that same processing. Excluded handed-over
+food is put down. Evaluated markers release after actual consumption or completed
+put-down; pending original context survives safe recovery placement on reload.
+Real user withdrawal cancels it, and permanent removal releases its records.
+Original handover and recognition times, original wish and actual food survive
+in the lasting Moodlet cause. No instant friendship bonus or reward pot is used;
+numeric mood approaches its timed target and friendship integrates active tiers.
 
 Food fulfillment remains at one tier; overall game success adds two tiers of
 pride/relief; other successes add one within family limits. Episodes retain the

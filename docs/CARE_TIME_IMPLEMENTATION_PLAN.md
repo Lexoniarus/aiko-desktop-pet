@@ -8499,3 +8499,60 @@ Seven new handover tests plus matching/storage/food/persistence regressions pass
 Application custody/recognition and full-need consumption wiring follows in the
 next commit; the old live handover entry point is replaced there as one coherent
 adapter change. No windows, mouse, personal-save access, full suite or CI.
+
+
+### Delivery slice 6C: actual handover, recognition and full-need consumption
+
+The existing World interaction now reports actual custody begin, genuine
+recognition and completed put-down through application ports. The old desktop
+pre-transfer acknowledgment path and superseded generic handover-completion
+entry point are removed. Cursor presentation, placement and autonomous pickup
+cannot fabricate personal food transfers. Known food may enter the hand for
+inspection/put-down without conflating appetite with custody; freshness, reach,
+visibility, action/game and sleep admission guards remain.
+
+`ObjectConsumption` captures the original context only after real transfer,
+including unknown items, and validates recognition against acquired Memory
+facts. A failed transfer rolls back its World/Memory/Pet effects. Original
+context survives technical safe-on-ground restore; actual withdrawal cancels
+pending receipts, and removed/consumed objects release their markers. Completed
+physical put-down releases evaluated records without removing the lasting cause.
+No permanent transfer archive, second recognition engine or hidden-World identity
+inference was introduced. Existing save codecs remain the persistence owner.
+
+Pure food permission is read by the existing care decision and object-use path.
+Wanted personal food is actually eaten at full satiety using the same nutrition,
+digestion and consumption transaction, clamped at 100. Explicitly excluded gifts
+are not eaten. Recognition has already settled that gift's emotional outcome;
+later intake cannot award another wish for the same processing. An alternative
+food can satisfy variety even when full satiety leads to put-down instead of
+intake. Ordinary nonmatching offers remain neutral. No need-decay/care amount,
+friendship bonus, offline user interaction or menu state was invented.
+
+Eight headless physical-flow checks cover presentation versus transfer, desired
+full-need consumption, alternatives without intake, unknown-then-identified food,
+unwanted put-down, rollback/retry and paired save/restore plus withdrawal.
+Existing tests were updated where the approved rules supersede positive awards
+for unwanted food or appetite-based custody rejection. Affection, shared
+assignment, persistence, ordinary food, finite offline resources and existing
+game/social outcomes remain in the targeted regression selection.
+
+257 targeted tests passed in 3.193 seconds, slowest 0.454 seconds. Focused Ruff,
+strict Mypy and Pyright passed for all fourteen affected production files.
+The exact staged integration is verified below before commit. Native Tk
+creation is blocked during discovery/execution. No test windows, mouse control,
+live-save access, full suite or GitHub CI; parallel UI/horoscope/assets work is
+preserved. System/data documentation now describes the delivered behavior.
+
+Step six is complete. Qualified independent positive/long-term experience
+producers remain step seven. Passive reads, generated-wish/day-balance
+acceptance and the final full-suite/OOP/slow-test review remain step eight.
+
+
+Final isolated staged integration for step six: **257 targeted tests passed in
+3.156 seconds**, slowest **0.453 seconds**; none exceeded ten seconds. Focused
+Ruff, fresh strict Mypy and Pyright passed for all fourteen affected production
+files; Ruff also checked the changed tests. The index export excludes parallel
+horoscope, UI, character assets and related text/documentation edits. Native Tk
+creation was blocked during test discovery and execution. No test windows,
+mouse control, live-save access, full suite or GitHub CI was used.

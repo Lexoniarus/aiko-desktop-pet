@@ -466,10 +466,9 @@ class ObjectBehaviorCoordinator:
             return (
                 (not self._interaction.active or self._interaction.waiting_for_target
                  and self._interaction.memory_id == known.token)
-                # An unidentified portion may enter Aiko's hands for her
-                # first examination; a previously identified one still
-                # requires its actual positive current offer assessment.
-                and (not known.recognized or (
+                # Food can be personally received for inspection or put-down
+                # even when unwanted; intake remains a separate decision.
+                and (not known.recognized or known.kind == "food" or (
                     offer_ready and decide_object_use(
                         known, self._state, ObjectUseContext.OFFER,
                     ).consume

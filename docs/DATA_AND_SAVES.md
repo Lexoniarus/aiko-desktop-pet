@@ -5,8 +5,8 @@
 | Resource | Owns |
 | --- | --- |
 | `aiko_pet/data/balance.json` | Initial values, care effects, hunger/digestion, fun/mood, friendship, movement, attention and adaptive behaviour parameters |
-| `aiko_pet/data/moodlets.json` | Nineteen typed Moodlet family definitions and per-type parameters |
-| `aiko_pet/data/wishes.json` | Twelve wish objectives, supported targets, round scope and positive fulfillment references |
+| `aiko_pet/data/moodlets.json` | Twenty-six typed Moodlet family definitions and per-type parameters |
+| `aiko_pet/data/wishes.json` | Seventeen typed wish forms, exact/flexible targets, original goals and fulfillment references |
 | `aiko_pet/data/food_catalog.json` | Food IDs, display names, nutrition, categories and menu order |
 | `aiko_pet/data/texts.de.json` | UI wording, status templates, care fallback text, game labels and emergency farewell fallback |
 | `aiko_pet/data/object_grammar.de.json` | German grammatical gender and optional spoken-name override for every consumable; no duplicated nutrition/menu names |
@@ -212,8 +212,9 @@ advances on the shared 30-second clock; actions and saves flush pending time.
 
 `pet.wishes` has a focused version-one codec in that same outer save. `WishState`
 is frozen and owned in `PetValues` alongside Moodlets. Persist up to three active
-wishes, at most one per area, with stable instance IDs, catalogue objective and
-concrete target IDs, elapsed creation/expiry times and actual expression times.
+wishes, including multiple distinct goals per area, with stable instance IDs,
+original goals and typed exact/any/exclusion targets, elapsed creation/expiry
+and actual expression times.
 Keep original deadlines on load, even when already expired; domain progression
 will resolve expiry later. Do not infer speech from a queued/displayed status.
 
@@ -227,36 +228,48 @@ replace them with the current catalogue. Boards, decks, pending rounds and
 ordinary session scores remain transient.
 
 Creation evidence for at most four areas, the last actual expression anchor,
-next stable identity and optional `refill_not_before` survive retirement/restart.
-The twelve-minute vacancy deadline is shared: later vacancies do not postpone
-it. Awake live evaluation restores up to three wishes, one per area, after that
-deadline; closed time creates no backlog. Food/affection eligibility uses current
-needs at most 70 and petting willingness; unpinned supplied wishes retire at 90.
-Games/social have no corresponding need gate. Temporary unavailable wishes
-retain their identity rather than being replaced by easier objectives.
+next stable identity and the shared `refresh_at` survive retirement/restart.
+The legacy `refill_not_before` field remains readable. Runtime uses one shared
+600-second rotation: retain pinned goals and replace expired unpinned goals,
+then fill to three at the awake due endpoint. Fulfillment/dismissal does not
+postpone it. Return/sleep closure never replays a backlog. Full needs influence
+area weights but alone neither exclude nor retire a desire. Temporary inability
+blocks disclosure/admission independently from original wish existence.
 
-The persisted pin protects the original four-hour lifetime and food/affection
-relevance retirement. Left-click pins; first right-click unpins; a subsequent
-right-click on an unpinned wish dismisses. Current domain unpinning after the
-original deadline retires immediately, without renewing a deadline. Whether this
-should change to preserve the two-click interaction is an open product decision;
-this documentation does not introduce a new lifetime rule.
+Pins preserve goals/progress across sleep and closure. Left pins; first right
+unpins; another right dismisses. Unpinning keeps the goal until the next regular
+refresh, including after an obsolete four-hour deadline. Existing saved game
+goals retain their original objective/progress and expiry. Old four-hour and
+twelve-minute parameters remain compatibility read bounds, not live timers.
 
 Only actual text presentation records `expressed_at` and the shared thirty-minute
 expression anchor. Status display, queued text and cancelled playback do not.
-Low trust/mood restricts expression, not inner existence. All twelve forms use
+Low trust/mood restricts expression, not inner existence. All seventeen forms use
 the existing German text catalogue and canonical food/game labels.
 
 Actual fulfillment atomically retires the stable wish identity and creates its
 Moodlet with a concrete original-goal cause snapshot. No current care/wish path
-consumes legacy reward pots or grants an instant friendship bonus. Ordinary food
-wishes require actual matching intake, including qualified autonomous/closed-time
-known-stock intake. Food avoidance instead requires perceived personal handover,
-even of the unwanted food and even if then refused; this is neither nutrition
-nor accepted contact. Welcome petting and complete matching social sequences
-use their existing owners. Failed non-loss game goals create `disappointed`;
+consumes legacy reward pots or grants an instant friendship bonus. Actual
+matching intake can fulfill an ordinary food goal; recognized personal handover
+now also qualifies desired/alternative food under the later approved rule.
+Explicit unwanted-food handover produces food-wish-disregarded, not a positive
+award, even when put down uneaten. Nutrition remains separate. Actual wished-for
+petting is allowed at full needs but cannot bypass explicit refusal. Complete
+matching social sequences and assigned game rounds use shared pre-outcome
+priority; bounded completion receipts prevent duplicate outcomes after reload. Failed non-loss game goals create `disappointed`;
 expiry/dismissal and other unsuccessful goals grant no fulfillment impression.
 Pending game rounds/social playback are not replayed or completed by loading.
+
+The optional `food_handovers` collection retains at most 32 actual-transfer
+receipts, each with up to three original food-wish snapshots, recognition facts,
+status and bounded accounted-wish markers. Recognition evaluates this original
+context even after rotation; a goal already settled elsewhere cannot repeat.
+It starts the Moodlet clock and preserves actual handover time in the cause.
+World/Memory application ports confirm custody and genuine identity; decoding
+itself supplies no recognition. Technical safe-on-ground recovery preserves
+pending context. Actual withdrawal cancels it; consumption, completed put-down
+and permanent removal release no-longer-needed processing records. Whole-Pet
+checkpoints include receipts/permissions for joint consumption rollback.
 
 Missing old sections stay empty. Invalid sections preserve valid Moodlet/care
 values, and the existing atomic repository backs up the original bytes before

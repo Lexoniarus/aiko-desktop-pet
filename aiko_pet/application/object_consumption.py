@@ -6,6 +6,7 @@ from collections import OrderedDict
 from dataclasses import dataclass
 
 from ..pet.consumption import ConsumptionOrigin
+from ..pet.food_handover import HandoverStatus
 from ..pet.mind import PetMind
 from ..pet.mind.adaptive import AdaptiveRoutine
 from ..pet.mind.object_knowledge import ObjectKnowledge
@@ -53,26 +54,74 @@ class ObjectConsumption:
             str, tuple[str, str, ConsumptionOrigin, ConsumptionOutcome]
         ] = OrderedDict()
 
+    def begin_handover(
+        self, world: WorldState, instance_id: str, inputs: SessionInputs, *,
+        memory_id: str,
+    ) -> None:
+        """Actual custody transfer captures wishes even before food recognition."""
+        advance_session_time(
+            self._state, self._clock, inputs, progression=self._progression,
+        )
+        item = world.get(instance_id)
+        if item.state != ObjectState.PET_HELD:
+            return
+        checkpoint = self._state.capture_checkpoint()
+        try:
+            self._state.begin_food_handover(
+                f"handover:{instance_id}:{item.revision}", object_id=instance_id,
+            )
+            self.acknowledge_handover(world, instance_id, inputs, memory_id=memory_id)
+        except Exception:
+            self._state.restore_checkpoint(checkpoint)
+            raise
+
     def acknowledge_handover(
         self, world: WorldState, instance_id: str, inputs: SessionInputs, *,
         memory_id: str,
     ) -> None:
-        """Caller admitted a perceived release; refusal is not successful intake."""
+        """Genuine recognition settles the original gift; presentation cannot do so."""
         advance_session_time(
             self._state, self._clock, inputs, progression=self._progression,
         )
         item, known = world.get(instance_id), self._memory.get(memory_id)
         if (self._state.sleeping or item.state not in (
-                ObjectState.USER_HELD, ObjectState.PET_HELD,
-            )
-                or known is None or not known.recognized or known.kind != "food"):
+                ObjectState.PET_HELD, ObjectState.RESTING,
+            ) or known is None or not known.recognized):
+            return
+        if known.kind != "food":
+            self._state.release_food_handovers(frozenset((instance_id,)))
             return
         definition = next(d for d in world.snapshot().definitions
                           if d.definition_id == item.definition_id)
-        if definition.food_id is not None and known.identity == definition.food_id:
-            self._state.complete_food_handover(
-                definition.food_id, object_id=instance_id,
-            )
+        if definition.food_id is None or known.identity != definition.food_id:
+            return
+        pending = tuple(r for r in self._state.wishes.food_handovers
+                        if r.object_id == instance_id)
+        for receipt in pending:
+            self._state.recognize_food_handover(receipt.handover_id, definition.food_id)
+
+    def finish_handover(self, world: WorldState, instance_id: str) -> None:
+        """Actual completed put-down releases evaluated transfer markers."""
+        if world.get(instance_id).state == ObjectState.RESTING and any(
+            r.object_id == instance_id and r.status == HandoverStatus.EVALUATED
+            for r in self._state.wishes.food_handovers
+        ):
+            self._state.release_food_handovers(frozenset((instance_id,)))
+
+    @staticmethod
+    def reconcile_handovers(state: PetState, world: WorldState) -> None:
+        """Physical withdrawal/removal cancels; safe recovery placement does not."""
+        if not state.wishes.food_handovers:
+            return
+        objects = {o.instance_id: o for o in world.snapshot().objects}
+        removed = frozenset(r.object_id for r in state.wishes.food_handovers
+                            if r.object_id not in objects or objects[r.object_id].state
+                            in (ObjectState.CONSUMED, ObjectState.REMOVED))
+        withdrawn = frozenset(r.object_id for r in state.wishes.food_handovers
+                              if r.object_id in objects and objects[r.object_id].state
+                              == ObjectState.USER_HELD)
+        state.withdraw_food_handovers(withdrawn)
+        state.release_food_handovers(removed)
 
     def commit(
         self,
@@ -94,6 +143,7 @@ class ObjectConsumption:
         item = world.get(instance_id)
         if item.state != ObjectState.PET_HELD:
             return ConsumptionOutcome(False)
+        self.acknowledge_handover(world, instance_id, inputs, memory_id=memory_id)
         context = context_at(inputs.wall_time)
         before = (
             self._mind.preview_care(self._state, context, inputs.monotonic_time)

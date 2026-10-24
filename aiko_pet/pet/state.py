@@ -32,6 +32,7 @@ from .food_catalog import DEFAULT_CATALOG
 from .food_wishes import (
     account_food_wish,
     begin_food_handover,
+    food_wish_permission,
     recognize_food_handover,
     withdraw_food_handovers,
 )
@@ -73,7 +74,6 @@ from .value_rules import clamp_need_value
 from .wish_catalog import WISH_CATALOG
 from .wish_fulfillment import (
     fulfill_activity_wish,
-    fulfill_food_handover_wish,
     progress_game_wish,
 )
 from .wish_selection import replenish_wishes
@@ -505,12 +505,11 @@ class PetState:
     def withdraw_food_handovers(self, object_ids: frozenset[str]) -> None:
         self._change(wishes=withdraw_food_handovers(self.wishes, object_ids))
 
-    def complete_food_handover(self, food_id: str, *, object_id: str) -> None:
-        """An admitted personal offer is distinct from nutrition and accepted care."""
-        self._apply_wish_resolution(fulfill_food_handover_wish(
-            self.wishes, food_id, elapsed=self.lived_seconds, object_id=object_id,
-            definitions=WISH_CATALOG.definitions,
-        ), personal=True)
+    def release_food_handovers(self, object_ids: frozenset[str]) -> None:
+        """Consumed/permanently removed objects no longer need technical markers."""
+        self._change(wishes=replace(self.wishes, food_handovers=tuple(
+            r for r in self.wishes.food_handovers if r.object_id not in object_ids
+        )))
 
     def record_game_experience(
         self,
@@ -730,6 +729,11 @@ class PetState:
         transition = plan_care_action(
             self, action, now=now,
             food_id=None if action == "energy_drink" else item_id,
+            food_permission=food_wish_permission(
+                self.wishes, item_id, elapsed=self.lived_seconds,
+                definitions=WISH_CATALOG.definitions, object_id=object_id,
+                personal=origin == ConsumptionOrigin.HANDOVER,
+            ),
         )
         if origin == ConsumptionOrigin.AUTONOMOUS:
             transition = replace(
@@ -806,11 +810,14 @@ class PetState:
             ))
             if DEFAULT_CATALOG.foods[transition.result.food_id].category == "meal":
                 self.experience_interaction(HelpfulInteraction("meal"))
-            self._apply_wish_resolution(fulfill_activity_wish(
-                self.wishes, WishArea.FOOD, transition.result.food_id,
-                elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
-                object_id=object_id,
-            ), personal=personal)
+            if transition.wish_instance_id is not None:
+                self._apply_wish_resolution(fulfill_activity_wish(
+                    self.wishes, WishArea.FOOD, transition.result.food_id,
+                    elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
+                    object_id=object_id, instance_id=transition.wish_instance_id,
+                ), personal=personal)
+            if object_id is not None:
+                self.release_food_handovers(frozenset((object_id,)))
         elif transition.result.affection_accepted:
             self.experience_interaction(HelpfulInteraction("petting"))
             if transition.wish_instance_id is not None:

@@ -30,6 +30,7 @@ class SessionTimeProgression:
         checkpoint = state.capture_checkpoint()
         physical, cognitive = self.world.snapshot(), self.memory.snapshot()
         try:
+            ObjectConsumption.reconcile_handovers(state, self.world)
             self._apply_interval(state, inputs, elapsed, reconstruct=reconstruct)
         except Exception:
             state.restore_checkpoint(checkpoint)

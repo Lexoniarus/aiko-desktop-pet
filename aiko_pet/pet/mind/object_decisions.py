@@ -8,7 +8,9 @@ from typing import Literal
 
 from ..balance import BALANCE
 from ..food import FOOD_BALANCE
+from ..food_wishes import food_wish_permission
 from ..state import PetState
+from ..wish_catalog import WISH_CATALOG
 from .object_knowledge import ObjectKnowledge
 
 
@@ -42,6 +44,16 @@ def decide_object_use(
     if (state.sleep_episode.care_break
             and level >= BALANCE.number("sleep", "food_target")):
         return ObjectUseDecision(False, "not_needed")
+    if not drink:
+        permission = food_wish_permission(
+            state.wishes, known.identity, elapsed=state.lived_seconds,
+            definitions=WISH_CATALOG.definitions, object_id=known.instance_id,
+            personal=context != ObjectUseContext.SUPPLY,
+        )
+        if permission.excluded:
+            return ObjectUseDecision(False, "not_needed")
+        if permission.requested:
+            return ObjectUseDecision(True, "hungry")
     capacity = 100 if drink else FOOD_BALANCE.too_full_to_eat_threshold
     threshold = (
         capacity
