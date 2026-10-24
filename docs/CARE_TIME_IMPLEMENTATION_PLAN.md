@@ -14,6 +14,11 @@
 > They supersede incomplete earlier field lists, not domain behavior. This is
 > documentation only; SQLite implementation and migration remain unauthorized.
 
+> **SQL-1 delivery in progress, 2026-10-24:** the owner subsequently authorized
+> contracts, errors, paths and schema foundation only. The
+> [SQL-1 delivery record](#sqlite-delivery-sql-1-contracts-paths-and-schema-foundation)
+> distinguishes completed groundwork from the later mapping and runtime cutover.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -8964,3 +8969,33 @@ changes only update maintained English documentation and this receipt. Native
 visual/input verification, future dialogue grounded in active causes, and the
 separately planned end-stage SQLite work are not claimed by this acceptance.
 Parallel horoscope/UI/character work is excluded and preserved. No CI was run.
+
+
+### SQLite delivery SQL-1: contracts, paths and schema foundation
+
+The owner authorized SQL-1 on 2026-10-24, with small commits, targeted local
+checks and pushes, no test windows, mouse control or GitHub CI. Later SQL
+slices, personal-save migration and runtime cutover remain outside this scope.
+
+#### SQL-1A: backend-independent contracts and side-effect-free paths
+
+- `application/storage_contracts.py` owns typed storage failures and immutable
+  `SaveRevision` metadata. Zero means no committed checkpoint; an actual writer
+  will advance revisions only on commit in SQL-6. These contracts do not alter
+  today's JSON exception or save behavior.
+- `infrastructure/save_paths.py` owns shared location resolution. The existing
+  `persistence.default_save_path` binding imports the same function from this
+  canonical owner, preserving JSON path behavior. The separate SQLite resolver
+  handles explicit/environment paths, quoting/expansion, private platform
+  defaults and the agreed JSON/database/other-filename suffix rules. It neither
+  touches the filesystem nor falls back to another save.
+- Five focused path cases cover platform defaults, the suffix matrix,
+  environment precedence/quoted expansion, explicit paths and public binding.
+  Two storage-value cases and three existing JSON persistence cases complete
+  the targeted set: **10 passed in 0.013 seconds**, longest 0.004 seconds rounded
+  upward. Native Tk creation was blocked and all fixture files were temporary.
+  Scoped Ruff, strict Mypy (three production files) and Pyright including the
+  new tests passed. No complete suite or personal save was opened.
+
+Schema/connection work is recorded separately when delivered; this first commit
+does not implement any SQL domain mapping, import or runtime writer.

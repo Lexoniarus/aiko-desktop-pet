@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import os
-import sys
 import tempfile
 import time
 import uuid
@@ -25,6 +24,7 @@ from .item_assets import load_item_catalog
 from .moodlet_codec import valid_moodlets
 from .object_memory_codec import decode_object_memory, encode_object_memory
 from .pet_codec import decode_pet_state, encode_pet_state, valid_pet_time
+from .save_paths import default_save_path
 from .sleep_codec import valid_sleep
 from .social_history_codec import (
     decode_social_history,
@@ -36,20 +36,6 @@ from .world_catalog import build_consumable_definitions
 from .world_codec import decode_world, encode_world
 
 SCHEMA_VERSION = 1
-
-
-def default_save_path() -> Path:
-    custom_path = os.environ.get("AIKO_SAVE_PATH", "").strip()
-    if custom_path:
-        candidate = Path(os.path.expandvars(os.path.expanduser(custom_path)))
-        if not candidate.is_absolute():
-            candidate = Path(__file__).resolve().parents[2] / candidate
-        return candidate
-    if sys.platform == "win32":
-        base = Path(os.environ.get("LOCALAPPDATA") or Path.home() / "AppData" / "Local")
-    else:
-        base = Path(os.environ.get("XDG_DATA_HOME") or Path.home() / ".local" / "share")
-    return base / "AikoDesktopPet" / "state.json"
 
 
 class StateStore:
