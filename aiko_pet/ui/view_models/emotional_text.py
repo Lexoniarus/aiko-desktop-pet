@@ -2,6 +2,7 @@
 
 import math
 
+from ...asset_paths import CONNECT_FOUR_DIR, MASTERMIND_DIR, PLAYING_CARDS_DIR
 from ...pet.content import GERMAN_TEXT
 from ...pet.wishes import WishId, WishObjective, WishTargetKind
 from .contracts import MoodletView, WishView
@@ -35,11 +36,23 @@ MOODLET_ICONS = {
     "overlooked": "moodlet_lonely",
     "guarded": "moodlet_annoyed",
 }
+GAME_FILES = {
+    "blackjack": PLAYING_CARDS_DIR / "card_spades_A.png",
+    "connect_four": CONNECT_FOUR_DIR / "red.png",
+    "mastermind": MASTERMIND_DIR / "blue.png",
+}
 GAME_ICONS = {"rock_paper_scissors": "game_rps", "tic_tac_toe": "game_tic_tac_toe"}
 
 
 def duration_text(seconds: float) -> str:
     minutes = max(0, math.ceil(seconds / 60))
+    if minutes >= 60:
+        hours, rest = divmod(minutes, 60)
+        return GERMAN_TEXT.format(
+            "vn.hours_minutes" if rest else "vn.hours",
+            **({"hours": str(hours), "minutes": str(rest)} if rest
+               else {"hours": str(hours)}),
+        )
     return GERMAN_TEXT.format("vn.minutes", minutes=str(minutes))
 
 
@@ -114,7 +127,11 @@ def wish_description(view: WishView) -> str:
 
 def wish_icon(view: WishView) -> str:
     if view.value.target_kind == WishTargetKind.GAME:
-        return GAME_ICONS.get(view.value.target_id, "blackjack")
+        return (view.value.target_id if view.value.target_id in GAME_FILES
+                else GAME_ICONS.get(view.value.target_id, "action_play"))
+    if view.value.target_kind == WishTargetKind.SOCIAL:
+        return {WishId.SINGLE: "wish_single", WishId.TWO_PARTS: "wish_twopart",
+                WishId.FACT: "wish_fact"}.get(view.value.definition_id, "status_social")
     return {
         WishId.PET: "action_pet",
         WishId.CHAT: "status_social",

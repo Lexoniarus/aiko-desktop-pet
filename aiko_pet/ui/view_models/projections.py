@@ -9,7 +9,7 @@ from ...pet.content import GERMAN_TEXT
 from ...pet.food import FOOD_CATALOG
 from ...pet.mind.adaptive_models import Behaviour
 from ...pet.routine import TimeContext
-from ...pet.wishes import WishTargetKind, wish_text_key
+from ...pet.wishes import WishTargetKind, WishTargetMode, wish_text_key
 from ...telemetry import ComputerSnapshot
 from .contracts import (
     EmotionalSnapshot,
@@ -55,11 +55,16 @@ def _emotional_snapshot(pet: PetReadSnapshot) -> EmotionalSnapshot:
         )
         target = (
             FOOD_CATALOG[wish.target_id].display_name
-            if wish.target_kind == WishTargetKind.FOOD
+            if wish.target_kind == WishTargetKind.FOOD and wish.target_id
             else GERMAN_TEXT.format(f"game.name.{wish.target_id}")
-            if wish.target_kind == WishTargetKind.GAME
+            if wish.target_kind == WishTargetKind.GAME and wish.target_id
             else label
         )
+        if wish.target is not None:
+            if wish.target.mode == WishTargetMode.ANY:
+                target = GERMAN_TEXT.format(f"vn.wish_any.{wish.target_kind}")
+            elif wish.target.mode == WishTargetMode.EXCLUDE:
+                target = GERMAN_TEXT.format("vn.wish_exclude", target=target)
         wishes.append(
             WishView(
                 wish,

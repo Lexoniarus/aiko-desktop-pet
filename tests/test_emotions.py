@@ -26,6 +26,44 @@ def derive(*episodes, mood: float = 60):
 
 
 class EmotionalCompositionTests(unittest.TestCase):
+    def test_mixed_band_includes_both_exact_forty_sixty_edges(self):
+        for good, bad in ((3, 2), (2, 3)):
+            value = derive(
+                episode(MoodletId.PRIDE, good), episode(MoodletId.POKING, bad, 2)
+            )
+            self.assertEqual(value.primary, EmotionalState.AMBIVALENT)
+        value = derive(episode(MoodletId.PRIDE, 3), episode(MoodletId.GUARDED, 2, 2))
+        self.assertEqual(value.primary, EmotionalState.RESERVED)
+
+    def test_compounds_require_their_complete_composition_and_mood(self):
+        joyful = episode(MoodletId.SHARED_PLAY, 2)
+        safe = episode(MoodletId.TRUSTING, 2, 2)
+        self.assertEqual(derive(joyful, safe, mood=70).primary, EmotionalState.CAREFREE)
+        self.assertNotEqual(
+            derive(joyful, safe, mood=69).primary, EmotionalState.CAREFREE
+        )
+        self.assertEqual(
+            derive(joyful, safe, episode(MoodletId.POKING, 1, 3), mood=80).primary,
+            EmotionalState.CAREFREE,
+        )
+        self.assertNotEqual(
+            derive(joyful, safe, episode(MoodletId.POKING, 2, 3), mood=80).primary,
+            EmotionalState.CAREFREE,
+        )
+        self.assertEqual(
+            derive(
+                episode(MoodletId.OPTIMISTIC), episode(MoodletId.PRIDE, 1, 2)
+            ).primary,
+            EmotionalState.OPTIMISTIC,
+        )
+        self.assertEqual(
+            derive(
+                episode(MoodletId.UNCERTAIN), episode(MoodletId.POKING, 2, 2)
+            ).primary,
+            EmotionalState.TENSE,
+        )
+        self.assertEqual(len(EmotionalState), 17)
+
     def test_no_moodlets_use_exact_numeric_boundaries(self):
         for mood, state in (
             (0, EmotionalState.SUBDUED),
@@ -46,8 +84,10 @@ class EmotionalCompositionTests(unittest.TestCase):
                 MoodletId.UNCERTAIN: EmotionalState.TENSE,
                 MoodletId.GUARDED: EmotionalState.RESERVED,
             }.get(key)
-            self.assertEqual(value.primary.value,
-                             expected.value if expected else definition.direction.value)
+            self.assertEqual(
+                value.primary.value,
+                expected.value if expected else definition.direction.value,
+            )
             self.assertEqual(value.influences[0].cause, key)
 
     def test_all_active_intensities_participate_without_numeric_caps(self):
@@ -68,7 +108,7 @@ class EmotionalCompositionTests(unittest.TestCase):
         self.assertEqual((value.positive_intensity, value.negative_intensity), (2, 2))
         self.assertEqual(len(value.directions), 2)
 
-    def test_four_positive_causes_outweigh_one_level_three_negative(self):
+    def test_four_positive_and_three_negative_intensities_are_mixed(self):
         keys = (
             MoodletId.FOOD_FULFILLED,
             MoodletId.SHARED_PLAY,
@@ -80,7 +120,7 @@ class EmotionalCompositionTests(unittest.TestCase):
             episode(MoodletId.POKING, 3, 5),
             mood=10,
         )
-        self.assertEqual(value.primary, EmotionalState.CHEERFUL)
+        self.assertEqual(value.primary, EmotionalState.AMBIVALENT)
         self.assertEqual(value.negative_intensity, 3)
         self.assertEqual(len(value.influences), 5)
 

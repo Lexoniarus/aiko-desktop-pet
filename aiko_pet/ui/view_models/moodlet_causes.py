@@ -3,7 +3,13 @@
 from ...pet.content import GERMAN_TEXT
 from ...pet.food import FOOD_CATALOG
 from ...pet.moodlets import MoodletAttribution, MoodletCause, MoodletCauseKind
-from ...pet.wishes import WishGoal, WishId, WishObjective, wish_text_key
+from ...pet.wishes import (
+    WishGoal,
+    WishId,
+    WishObjective,
+    WishTargetMode,
+    wish_text_key,
+)
 
 
 def _target_label(target: str) -> str:
@@ -29,12 +35,18 @@ def cause_description(cause: MoodletCause) -> str:
     wish = cause.wish
     if wish is not None:
         goal = WishGoal(WishObjective(wish.objective), wish.required_count)
+        target = _target_label(wish.target_id)
+        if wish.target is not None:
+            if wish.target.mode == WishTargetMode.ANY:
+                target = GERMAN_TEXT.format(f"vn.wish_any.{wish.target.kind}")
+            elif wish.target.mode == WishTargetMode.EXCLUDE:
+                target = GERMAN_TEXT.format("vn.wish_exclude", target=target)
         parts.append(GERMAN_TEXT.format(
             "vn.cause_wish",
             wish=GERMAN_TEXT.format(wish_text_key(
                 WishId(wish.definition_id), goal, "label",
             )),
-            target=_target_label(wish.target_id),
+            target=target,
         ))
         if goal.required_count > 1:
             parts.append(GERMAN_TEXT.format(
@@ -45,7 +57,8 @@ def cause_description(cause: MoodletCause) -> str:
         parts.append(GERMAN_TEXT.format(
             "vn.cause_target", target=_target_label(cause.target_id),
         ))
-    if (cause.kind != MoodletCauseKind.LEGACY
+    if (cause.kind not in (MoodletCauseKind.LEGACY, MoodletCauseKind.POOR_CARE,
+                           MoodletCauseKind.LONG_TERM)
             and (cause.game is None or cause.game.round_outcome != cause.outcome)):
         parts.append(GERMAN_TEXT.format(
             "vn.cause_result",

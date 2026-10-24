@@ -5,7 +5,6 @@ from functools import partial
 from pathlib import Path
 from typing import Callable, Mapping, cast
 
-from ...asset_paths import PLAYING_CARDS_DIR
 from ...pet.content import GERMAN_TEXT
 from ..common.description_tip import DescriptionTip
 from ..common.panel_surface import PanelSurface
@@ -13,6 +12,7 @@ from ..common.scroll_region import ScrollRegion
 from ..common.skin import AikoSkin
 from ..view_models.contracts import WishView
 from ..view_models.emotional_text import (
+    GAME_FILES,
     duration_text,
     wish_badge,
     wish_description,
@@ -149,8 +149,8 @@ class WishPanel:
         image = (
             skin.images.file(self._food_icons[item.value.target_id], 24)
             if key == "food"
-            else skin.images.file(PLAYING_CARDS_DIR / "card_spades_A.png", 24)
-            if key == "blackjack"
+            else skin.images.file(GAME_FILES[key], 24)
+            if key in GAME_FILES
             else skin.images.icon(key, 24)
         )
         icon.create_image(21, 18, image=image)

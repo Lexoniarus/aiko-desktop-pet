@@ -8678,3 +8678,25 @@ seconds. Focused Ruff, strict Mypy and Pyright passed for all thirteen affected
 production files, with test lint also green. Checks ran against an isolated
 export of the Git index, excluding parallel uncommitted horoscope/UI/assets.
 This is targeted step-7 evidence, not the pending complete-suite acceptance.
+
+
+### Delivery slice 8A: complete emotional composition and passive flexible reads
+
+Overall interpretation now follows the approved strict dominant-side / inclusive
+forty-sixty mixed band, caution-aware reserved mixed state, carefree optimism
+and tension compounds, existing direction tie-breaks and unchanged 40/70 fallback.
+All seventeen labels derive from all actual intensities; no extra score or lock
+is stored. Idle presentation uses the same positive, tense and reserved states.
+
+Status and hover preserve original typed ANY/EXCLUDE meanings. Free game/social
+wishes no longer look up an empty game ID or try to render a food item. Exclusions
+show their original reference as excluded. Existing saved concrete goals are not
+rebound through current catalogue defaults. Wish causes retain the distinction
+between a free/excluded objective and the actual completing activity. Game choice
+and wish cards reuse the same packaged game-file mapping, including Connect Four
+and Mastermind; no new artwork is needed. Long durations use compact hours/minutes.
+
+The isolated staged candidate passed 42 targeted read/composition/widget-command
+checks in 0.109 seconds, native Tk forbidden, and focused Ruff. Parallel horoscope,
+UI and character assets remain untouched and excluded. Balance acceptance and the
+complete local suite/OOP review are the remaining step-8 work.

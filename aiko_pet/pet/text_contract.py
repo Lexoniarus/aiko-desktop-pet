@@ -349,3 +349,11 @@ TEXT_FIELDS.update({
 })
 
 TEXT_FIELDS["vn.status_value"] = frozenset({"title", "percent", "suffix"})
+
+TEXT_FIELDS.update({
+    "vn.hours": frozenset({"hours"}),
+    "vn.hours_minutes": frozenset({"hours", "minutes"}),
+    "vn.wish_any.game": frozenset(),
+    "vn.wish_any.social": frozenset(),
+    "vn.wish_exclude": frozenset({"target"}),
+})

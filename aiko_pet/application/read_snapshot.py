@@ -28,6 +28,7 @@ from ..pet.wishes import (
     WishGoal,
     WishId,
     WishRestriction,
+    WishTarget,
     WishTargetKind,
     wish_restriction,
 )
@@ -75,6 +76,7 @@ class WishRead:
     game: GameWishRead | None
     goal: WishGoal | None = None
     pinned: bool = False
+    target: WishTarget | None = None
 
 
 def _moodlet_reads(state: PetState) -> tuple[MoodletRead, ...]:
@@ -136,6 +138,7 @@ def _wish_reads(state: PetState, context: WishContext) -> tuple[WishRead, ...]:
                 ),
                 wish.goal_snapshot,
                 wish.pinned,
+                wish.target,
             )
         )
     return tuple(result)

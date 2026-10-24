@@ -27,6 +27,7 @@ def choose_idle_emote(
         EmotionalState.IRRITATED,
         EmotionalState.CROWDED,
         EmotionalState.FRUSTRATED,
+        EmotionalState.TENSE,
     ):
         return "anger"
     if emotions.primary in (
@@ -35,7 +36,7 @@ def choose_idle_emote(
         EmotionalState.LONELY,
     ):
         return "faceSad"
-    if emotions.primary == EmotionalState.AMBIVALENT:
+    if emotions.primary in (EmotionalState.AMBIVALENT, EmotionalState.RESERVED):
         return "question"
     if affection < BALANCE.integer("idle_emotes", "low_affection"):
         return "heart"

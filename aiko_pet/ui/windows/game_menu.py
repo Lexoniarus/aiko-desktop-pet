@@ -6,12 +6,11 @@ import tkinter as tk
 from functools import partial
 from typing import Callable
 
-from ...asset_paths import CONNECT_FOUR_DIR, MASTERMIND_DIR, PLAYING_CARDS_DIR
 from ...games.contracts import GameId
 from ...pet.content import GERMAN_TEXT
 from ..common.image_button import ImageButton, update_button_state
 from ..common.skin import AikoSkin
-from ..view_models.emotional_text import GAME_ICONS
+from ..view_models.emotional_text import GAME_FILES, GAME_ICONS
 from .embedded_selector import EmbeddedSelector
 
 
@@ -33,12 +32,8 @@ class GameMenu(EmbeddedSelector):
         self.buttons: dict[GameId, ImageButton] = {}
         for game in choices:
             image = (
-                skin.images.file(PLAYING_CARDS_DIR / "card_spades_A.png", 40)
-                if game is GameId.BLACKJACK
-                else skin.images.file(CONNECT_FOUR_DIR / "red.png", 40)
-                if game is GameId.CONNECT_FOUR
-                else skin.images.file(MASTERMIND_DIR / "blue.png", 40)
-                if game is GameId.MASTERMIND
+                skin.images.file(GAME_FILES[game.value], 40)
+                if game.value in GAME_FILES
                 else skin.images.icon(GAME_ICONS[game.value], 40)
             )
             button = skin.button(
