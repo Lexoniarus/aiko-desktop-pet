@@ -6,7 +6,6 @@ wish identity. No needs refill, timer or autonomous intake invents a visit.
 """
 
 from dataclasses import replace
-from uuid import uuid4
 
 from .care_evidence import (
     MAX_CARE_ENCOUNTERS,
@@ -35,6 +34,26 @@ EVERYDAY_GAPS = {
 }
 
 
+def allocate_experience_receipt(
+    state: MoodletState,
+    *,
+    elapsed: float,
+    prefix: str,
+) -> tuple[MoodletState, str]:
+    """Allocate within the checkpoint, so preparation and execution agree."""
+    evidence = state.care_evidence or CareEvidenceState(elapsed)
+    identity = evidence.next_experience_id
+    if identity >= 2**63 - 1:
+        raise ValueError("Care experience allocation exhausted")
+    return replace(
+        state,
+        care_evidence=replace(
+            evidence,
+            next_experience_id=identity + 1,
+        ),
+    ), f"experience:{prefix}:{identity}"
+
+
 def record_experience(
     state: MoodletState,
     event: CareExperience,
@@ -46,7 +65,11 @@ def record_experience(
     # A saturated unprocessed window is incomplete. Start a fresh reliable
     # baseline instead of treating evicted bad treatment as a good care period.
     if len(evidence.experiences) >= MAX_CARE_EXPERIENCES:
-        evidence = CareEvidenceState(event.occurred_at, evidence.next_encounter_id)
+        evidence = CareEvidenceState(
+            event.occurred_at,
+            evidence.next_encounter_id,
+            next_experience_id=evidence.next_experience_id,
+        )
     encounters = evidence.encounters
     next_id = evidence.next_encounter_id
     if event.pleasant:
@@ -368,10 +391,11 @@ def record_personal_food(
         )
     ):
         return state
+    state, receipt = allocate_experience_receipt(state, elapsed=elapsed, prefix="food")
     state, _ = record_experience(
         state,
         CareExperience(
-            f"food:{uuid4().hex}",
+            receipt,
             elapsed,
             CareActivity.FOOD_HANDOVER,
             MoodletOutcome.INTAKE,

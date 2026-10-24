@@ -7,7 +7,7 @@ from enum import StrEnum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .wishes import WishGoal, WishId, WishTarget
+    from .wish_types import WishGoal, WishId, WishTarget
 
 MAX_FOOD_HANDOVERS = 32
 

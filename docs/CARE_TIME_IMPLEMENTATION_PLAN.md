@@ -8700,3 +8700,30 @@ The isolated staged candidate passed 42 targeted read/composition/widget-command
 checks in 0.109 seconds, native Tk forbidden, and focused Ruff. Parallel horoscope,
 UI and character assets remain untouched and excluded. Balance acceptance and the
 complete local suite/OOP review are the remaining step-8 work.
+
+
+### Delivery slice 8B: OOP dependency and deterministic checkpoint corrections
+
+The complete dependency graph exposed type-only cycles as well as runtime
+imports. Immutable Moodlet identities/outcomes, frozen Moodlet models and frozen
+wish target/goal types now have independent leaf owners in `moodlet_types.py`,
+`moodlet_models.py` and `wish_types.py`. Timing imports the value owner instead
+of importing its calling transition policy. Stored care evidence and food-gift
+snapshots no longer import the stateful wish/policy module for annotation types.
+Existing public type bindings remain usable, with exactly one definition each.
+No dependency exemption, duplicate aggregate or new progression owner is added.
+
+Prepared personal intake previously allocated random cause identities, so two
+identical checkpoint calculations differed. The existing care-evidence record
+now owns a monotonic optional `next_experience_id` counter. Personal intake,
+welcome petting and direct interaction cause allocation use this checkpointed
+identity; ports retain their actual game/social/withholding incident identities.
+Legacy saves default the new counter safely; all effects still use the existing
+single atomic save. Poor-care and period identity timestamps normalize integer
+and float inputs consistently, preserving equal closed/standby checkpoints.
+
+The dependency graph, prepared/direct care checkpoint comparisons and closed/
+standby persistence comparisons now pass their targeted regression checks.
+The complete local suite also identified stale release-time food assumptions,
+bounded-evidence assumptions and fixture typing gaps; their corrections and
+final whole-candidate verification follow in the next reviewable slice.

@@ -279,6 +279,7 @@ def decode_care_evidence(
             "progress",
         ),
         context="care evidence",
+        optional=("next_experience_id",),
     )
     integer_value(row["version"], minimum=1, maximum=1, context="care evidence version")
     start = number_value(
@@ -395,7 +396,9 @@ def decode_care_evidence(
         ))
         families.add(family)
     return CareEvidenceState(
-        start, next_id, tuple(encounters.values()), tuple(experiences), tuple(progress)
+        start, next_id, tuple(encounters.values()), tuple(experiences), tuple(progress),
+        integer_value(row.get("next_experience_id", 1), minimum=1,
+                      maximum=2**63 - 1, context="next care experience identity"),
     )
 
 
@@ -404,6 +407,7 @@ def encode_care_evidence(state: CareEvidenceState) -> dict[str, Any]:
         version=1,
         baseline=state.baseline,
         next_encounter_id=state.next_encounter_id,
+        next_experience_id=state.next_experience_id,
         encounters=[asdict(e) for e in state.encounters],
         experiences=[asdict(e) for e in state.experiences],
         progress=[asdict(p) for p in state.progress],

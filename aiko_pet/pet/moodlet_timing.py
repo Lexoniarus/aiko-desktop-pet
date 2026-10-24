@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from .balance import BALANCE
 
 if TYPE_CHECKING:
-    from .moodlets import MoodletDefinition, MoodletEpisode
+    from .moodlet_models import MoodletDefinition, MoodletEpisode
 
 
 def stage_seconds(

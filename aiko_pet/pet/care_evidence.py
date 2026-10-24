@@ -13,8 +13,8 @@ from enum import StrEnum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .moodlets import MoodletId, MoodletOutcome
-    from .wishes import WishArea, WishTargetKind
+    from .moodlet_types import MoodletId, MoodletOutcome
+    from .wish_types import WishArea, WishTargetKind
 
 MAX_CARE_ENCOUNTERS = 128
 MAX_CARE_EXPERIENCES = 512
@@ -71,6 +71,7 @@ class CareEvidenceState:
     encounters: tuple[CareEncounter, ...] = ()
     experiences: tuple[CareExperience, ...] = ()
     progress: tuple[LongTermProgress, ...] = ()
+    next_experience_id: int = 1
 
 
 @dataclass(frozen=True, slots=True)

@@ -186,7 +186,7 @@ def qualify_poor_care(
                     definitions=definitions, level=level,
                     cause=MoodletCause(
                         MoodletCauseKind.POOR_CARE, elapsed,
-                        f"poor_care:{parameters.need}:{cursor.accounted.at}:{level}",
+                        f"poor_care:{parameters.need}:{float(cursor.accounted.at)}:{level}",
                         target_id=parameters.need,
                     ),
                 )

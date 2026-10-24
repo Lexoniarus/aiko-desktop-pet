@@ -7,7 +7,6 @@ import time
 from copy import deepcopy
 from dataclasses import replace
 from typing import Any
-from uuid import uuid4
 
 from ..games.contracts import RoundOutcome
 from .balance import BALANCE
@@ -21,6 +20,7 @@ from .care_evidence import (
     CareExperience,
 )
 from .care_experiences import (
+    allocate_experience_receipt,
     award_comeback,
     award_everyday_experience,
     complete_play_session,
@@ -863,9 +863,13 @@ class PetState:
                     instance_id=transition.wish_instance_id,
                 ), personal=personal)
             if personal and transition.result.effect == CareEffect.AFFECTION:
-                receipt = (f"wish:{transition.wish_instance_id}:fulfilled"
-                           if transition.wish_instance_id is not None
-                           else f"petting:{uuid4().hex}")
+                if transition.wish_instance_id is not None:
+                    receipt = f"wish:{transition.wish_instance_id}:fulfilled"
+                else:
+                    moodlets, receipt = allocate_experience_receipt(
+                        self.moodlets, elapsed=self.lived_seconds, prefix="petting",
+                    )
+                    self._change(moodlets=moodlets)
                 event = CareExperience(
                     receipt, self.lived_seconds, CareActivity.PETTING,
                     MoodletOutcome.COMPLETED, WishArea.AFFECTION,

@@ -280,7 +280,7 @@ def advance_long_term(
                     cause=MoodletCause(
                         MoodletCauseKind.LONG_TERM,
                         elapsed,
-                        f"period:{definition.id}:{cursor.period_start}",
+                        f"period:{definition.id}:{float(cursor.period_start)}",
                         MoodletAttribution.USER,
                         outcome=MoodletOutcome.COMPLETED,
                         period=summary,

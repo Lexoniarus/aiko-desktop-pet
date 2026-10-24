@@ -98,7 +98,7 @@ def apply_interaction_event(
             state = record_upsetting_interaction(
                 state, MoodletId.POKING, elapsed=elapsed, definitions=definitions,
                 attribution=MoodletAttribution.USER,
-                incident_id=str(memory.poke_boundary_at), boundary_violated=True,
+                incident_id=str(float(memory.poke_boundary_at)), boundary_violated=True,
             )
         return InteractionConsequences(state)
     if isinstance(event, FoodConsumed):
@@ -197,7 +197,7 @@ def _attempt_petting(
     state = record_upsetting_interaction(
         state, MoodletId.CROWDED, elapsed=elapsed, definitions=definitions,
         attribution=MoodletAttribution.USER,
-        incident_id=str(memory.petting_boundary_at), boundary_violated=True,
+        incident_id=str(float(memory.petting_boundary_at or 0)), boundary_violated=True,
     )
     episode = next(e for e in state.active if e.definition_id == MoodletId.CROWDED)
     memory = replace(memory, petting_refused_until=(

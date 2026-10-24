@@ -1,10 +1,9 @@
 """Concrete immediate causes and one care-pattern fact per upsetting incident."""
 
 from typing import Mapping
-from uuid import uuid4
 
 from .care_evidence import CareActivity, CareExperience
-from .care_experiences import record_experience
+from .care_experiences import allocate_experience_receipt, record_experience
 from .moodlets import (
     MoodletAttribution,
     MoodletCause,
@@ -31,7 +30,9 @@ def record_upsetting_interaction(
     boundary_violated: bool = False,
 ) -> MoodletState:
     """Escalations retain real causes but do not manufacture independent incidents."""
-    receipt = f"interaction:{family}:{uuid4().hex}"
+    state, receipt = allocate_experience_receipt(
+        state, elapsed=elapsed, prefix=family.value,
+    )
     food = family == MoodletId.FOOD_MONOTONY
     state = reinforce_moodlet(
         state,
