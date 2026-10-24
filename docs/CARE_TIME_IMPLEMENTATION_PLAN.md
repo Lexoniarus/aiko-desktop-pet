@@ -8,6 +8,12 @@
 > superseded by delivery. No SQLite migration or concrete-experience dialogue
 > rewrite is included. Native visual/input acceptance remains separate.
 
+> **SQLite planning update, 2026-10-24:** the
+> [binding field mapping and delivery slices](#sqlite-field-mapping-reconciliation-and-delivery-slices-2026-10-24)
+> below reconcile the storage proposal with the delivered wish/Moodlet state.
+> They supersede incomplete earlier field lists, not domain behavior. This is
+> documentation only; SQLite implementation and migration remain unauthorized.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -7897,6 +7903,134 @@ Documentation-only scope: only this master plan is changed and committed here.
 Parallel runtime, assets, tests, text and documentation work is preserved. No
 runtime tests, application windows, mouse control, personal-save reads, database
 creation/migration or CI in this pass.
+
+
+### SQLite field-mapping reconciliation and delivery slices, 2026-10-24
+
+**Binding planning amendment recorded at the owner's request; documentation
+only.** Review baseline: committed feature delivery `b342ea5`, with the current
+parallel horoscope contract considered separately. The generic table model,
+private save location, JSON catalogue ownership, import/path rules and deletion
+contracts above remain valid. Complete the following mapping before deriving
+SQL columns; do not redesign care, wish, Moodlet or friendship behavior as part
+of storage conversion. These requirements supersede earlier abbreviated field
+lists wherever they omit a current persisted value.
+
+#### Binding mapping for current wishes, Moodlets and evidence
+
+Database names below are logical destinations; source field names identify the
+existing typed contracts. Preserve optionality, order, boundedness and time
+meaning as well as values. Renaming a column must not change its semantics.
+
+| Existing owner/value | Binding SQLite destination and preservation rule |
+| --- | --- |
+| `WishState.next_instance_id`, `last_created_by_area`, `last_expressed_at`, `refresh_at` | `wish_state`: one allocation counter, bounded area/time mapping, optional disclosure anchor and the single shared rotation deadline. No independent replacement refresh clock. |
+| `ActiveWish.instance_id`, `definition_id`, `target_id`, `goal`, `target`, `created_at`, `expires_at`, `expressed_at`, `pinned` | `wish_instances`: original definition, objective/count and target kind/mode/reference; creation, individual expiry and optional disclosure time; pin flag. Preserve whether the typed target was explicitly supplied or absent under the legacy contract. Free-choice absence of a concrete target is distinct from missing legacy target metadata. |
+| `GameWishProgress.completed_rounds`, `wins`, `losses`, `session_id`, `round_ids` | Counts and optional original session token in `wish_instances`; ordered, bounded round signatures in `wish_round_receipts`. Keep legacy single-session goals and original quantities; do not derive cumulative counts solely from the bounded receipts. |
+| `FoodHandoverReceipt` | `food_handover_receipts`: handover/object identity, `handed_over_at`, original ordered wish-context snapshots, optional recognized food and `recognized_at`, status, historical resolved wish identity and accounted wish IDs. Preserve each `FoodWishSnapshot`'s goal, typed target, creation/disclosure times and pin state. Retain current bounds and cancellation/evaluation semantics. |
+| `MoodletState.baseline`, `next_instance_id`, `active` | `moodlet_state` and owned `moodlet_episodes`: common reliable baseline and allocation counter, then actual active episodes. No separate mutable emotional aggregate. |
+| `MoodletEpisode.instance_id`, `definition_id`, `level`, `started_at`, `last_trigger_at`, `remaining_seconds`, `attribution` | `moodlet_episodes`: original identity/family, actual intensity, elapsed anchors, current-stage remaining duration and attribution. Duration remains anchored at the saved shared lived time. |
+| `lower_stage_seconds`, `relieved_levels` | `moodlet_stage_state`, with explicit episode metadata distinguishing legacy implicit lower-stage budgets from explicitly supplied budgets. Preserve zero durations. A used relief marker belongs to the entire episode: retain it even when its stage is above the current intensity after decay. Do not prune these markers with the current-stage cause limit. |
+| `pending_repetitions`, `decay_paused`, `recovery_since` | `moodlet_episodes`: repetition count, paused-decay flag and optional recovery anchor. Loading must not reset escalation, restart recovery or grant another shortening. |
+| `MoodletCause.kind`, `occurred_at`, `event_id`, `attribution`, `target_id`, `outcome`, `object_id`, `handed_over_at` | `moodlet_causes`: technical row identity plus the real source facts. Preserve physical object identity independently of food/catalogue target. Keep handover time distinct from the later recognition/event time. Do not manufacture missing legacy event IDs or infer unknown facts from World. |
+| `MoodletCause.wish`, `game`, `period` | Small typed, versioned snapshots in `moodlet_causes`: original wish identity/definition/goal/target, actual round outcome and cumulative counts, or complete `CarePeriodSummary`. Preserve optional typed wish targets. Causes survive source-wish retirement and raw-care-evidence cleanup. Store facts, not tooltip sentences. |
+| `InteractionMemory` and `FoodRepetitionMemory` | `interaction_state`, with ordered timestamped `food_intake_receipts`: both interaction boundary anchors, petting refusal deadline/excess count/last excess time, repeated food identity, request pending/time and ignored portions. Keep this separate from ordered recent food IDs in `pet_state`. |
+| `MoodletState.poor_care`, `PoorCareEvidence.baseline`, per-need `PoorCareCursor` | Initialization presence and baseline in `moodlet_state`; accounted and handled exposure marks, handled intensity and exposed flag in `poor_care_cursors`, keyed by need rather than tuple position. Existing `need_exposure_buckets` remain the only deficient-need timeline. |
+| `MoodletState.care_evidence`, `CareEvidenceState.baseline`, `next_encounter_id`, `next_experience_id` | Shared initialization presence, baseline and both allocation counters in `moodlet_state`. Store these once, not once per family. `None` means no reliable history yet; an initialized state with zero rows means known empty history. Never reconstruct the counters from retained row counts after pruning. |
+| `CareEncounter` | `care_encounters`: original encounter identity, start and last activity. Preserve the shared encounter across every family that uses it. |
+| `CareExperience` | `care_evidence`: semantic receipt, event time, activity/outcome, optional area/target kind/target ID, encounter/wish/object identities and all three flags `pleasant`, `upsetting`, `boundary_violated`. Historical wish/object IDs do not require live rows. Keep existing evidence/encounter limits. |
+| `LongTermProgress` | `long_term_progress`: family, `period_start`, `processed_until`, `last_accounted_at`, `awake_contact_gap_seconds` and `longest_awake_contact_gap_seconds`. Use the shared reliable baseline above. No family-wide consumed flag on underlying evidence and no second exposure log. |
+| Parallel horoscope additions | `app_settings` retains optional `zodiac_sign`; `horoscope_days` retains date, attempts, optional reading, continuation `index`, `admitted` and `completed`. The reading retains sign/date, overview, advice, disclaimer and footer. Reconcile the finished source contract before cutover; retain the bounded current-day record. |
+
+The earlier mapping of all other saved fields remains binding: shared UTC/lived
+time, needs/mood/nutrition, sleep, relationship entries and exposure buckets,
+settings, paired World/object memory, adaptive hour/quiet phases, API histories,
+request windows and provider pauses. Verify every field emitted by the final
+codecs against this combined mapping at implementation kickoff. Parallel work
+must be preserved and reconciled; a planning review is not its acceptance test.
+
+The shared ten-minute wish deadline does **not** authorize discarding
+`ActiveWish.expires_at` or the older `GameWishProgress.session_id`. Pins protect
+the original wish through sleep/closure; unpinning follows the existing shared
+refresh behavior. Loading never rewrites an original goal from today's catalogue.
+
+Cause deduplication follows `MoodletCause.receipt`: `(kind, event_id,
+source_wish_instance_id)` within the owning episode, not `event_id` alone or
+event time. Enforce equivalent comparisons for absent wish IDs; a nullable
+SQL unique key alone must not admit duplicates. Legacy causes without a real
+event ID retain technical row identity without inventing semantic evidence.
+Keep the current one/two/three **real available** causes, in order, at current
+intensity; a two-stage award is not two separate invented causes.
+
+#### Strict import and single-owner storage boundaries
+
+`StateStore.load_session()` currently tolerates malformed/missing sections by
+returning defaults or discarding invalid optional state. That is runtime
+recovery behavior, **not** the agreed strict one-time import contract. Do not
+call it unchecked to produce an apparently successful SQLite import.
+
+The importer must validate the designated raw legacy envelope and every present
+section before publication, reusing existing typed validation/codec helpers
+where their semantics fit. Absent supported older fields may take their
+documented migration defaults; present invalid sections must stop import.
+Validate settings/adaptive data before forgiving normalization as well. Unknown
+future formats, failed reads and invalid paired World/memory must not turn into
+a replacement game. Back up the unchanged source before importing and retain
+the source afterward. Preserve all previously agreed path/error/no-overwrite
+rules. Import and SQL reads advance no time; `PetSessionRestorer` performs the
+existing closed-time reconstruction once.
+
+Retain one public persistence entry point and the existing application session
+boundary. Infrastructure owns SQL, schema migration and row translation;
+application owns the typed storage failure/expected-revision contract and
+coordinates coherent snapshots. Desktop retains autosave cadence. Pet, World,
+Memory, settings, adaptive and social owners retain all business decisions.
+Use grouped mapping modules, not a repository/service per table. Keep any
+necessary shared source extraction narrow; no duplicate aggregate or parallel
+permanent JSON writer. Overall feelings, wording and status/hover projections
+remain derived. Do not broaden this work into a dialogue rewrite.
+
+#### Small SQLite implementation slices
+
+This documentation request authorizes no implementation. A later implementation
+request may cover one or several slices. Use small commits within a slice when
+it spans multiple existing owners; targeted local checks belong to those
+commits. SQL work before the cutover uses isolated temporary
+fixtures only and is not wired into the running application. Do not create,
+import, migrate or open the owner's personal save as a development check.
+
+| Slice | Implementation boundary | Targeted local acceptance |
+| --- | --- | --- |
+| **SQL-1: contracts and schema foundation** | Define application-facing storage errors and expected-revision metadata without moving domain rules. Establish private path resolution and the SQLite schema/migration runner, identity and foreign-key/check contracts. Keep the active JSON runtime unchanged. | Path/env precedence, supported/unsupported database identity/version, foreign-key enforcement and migration rollback on temporary fixtures. No app startup. |
+| **SQL-2: core, relationship and paired World/memory mapping** | Map pet/nutrition/sleep/settings/time, then relationship/exposure, then World and subjective knowledge in separate scoped commits. Preserve all existing identities, ordered histories, temporal meanings and safe ground restoration. | Representative round trips and relevant legacy/default distinctions; no loss of acquired knowledge when physical stock is gone. Reuse focused existing owner fixtures. |
+| **SQL-3: wishes and handover mapping** | Map shared lifecycle state, frozen flexible/legacy goals, pin/expiry/progress, round receipts and original food handovers. No eligibility, rotation, fulfillment or reward rule changes. | Pinned and legacy wishes, bounded cumulative receipts, exact/any/excluded targets, pending unknown-food handover across wish retirement and recognition. |
+| **SQL-4: Moodlets and care evidence mapping** | Map episodes/stages/causes, interaction boundaries, poor-care cursors, shared care metadata, encounters/evidence and all six long-term progress records. Split episode/cause and evidence work into scoped commits. | Extended/implicit stage budgets, used relief after decay/re-escalation, real cause ordering/deduplication, absent versus initialized history, pruned allocation counters and retained period summaries. |
+| **SQL-5: adaptive and social mapping** | Map learned rhythm/quiet phases, provider-aware repetition receipts/limits and final current-day horoscope state. Preserve finished parallel changes before declaring the mapping complete. | Rhythm/time-domain round trip, last-ten ordering, provider request/pause boundaries and horoscope continuation without duplicate participation. |
+| **SQL-6: complete transactional store** | Assemble the mapped owners behind the common reader/writer boundary. Read a coherent snapshot; save it with expected-revision comparison in one transaction. Translate backend failures and implement consistent schema-update backups. | Whole-snapshot round trip, injected partial-write failure/rollback, stale and competing first writes, lock/I/O errors and unchanged caller revision on failure. No domain progression on read/save. |
+| **SQL-7: strict legacy import** | Validate all current/older supported JSON sections, preserve original source/backup and import provenance, build/validate the temporary database and publish without overwriting a competing initialization. Existing valid SQLite remains authoritative. | Valid representative imports; absent optional older fields; present malformed sections; unreadable/newer/non-Aiko databases; backup/publication failure and no stale-JSON fallback. Use fixture files only. |
+| **SQL-8: runtime cutover and usage cleanup** | Connect startup/session restoration, autosave, shutdown and storage-error reporting to the completed SQLite store. Keep exactly one writer. Audit production, tools, tests and docs before retiring legacy writing paths; retain the import reader and still-used validation. Update save-path/deployment documentation. | Focused no-window session/desktop persistence tests: first save, restart, one closed-time reconstruction, save failure and unchanged last successful checkpoint. No UI automation or hidden retry of domain effects. |
+| **SQL-9: final acceptance and OOP review** | Review owner boundaries, names, dependencies, duplicate serialization and obsolete consumers. Verify migrated feature preservation, then run the complete permitted local suite once; correct findings in scoped commits. | Deterministic migration-plus-feature acceptance using existing care/balance scenarios, full local suite/type/format/architecture gates, redundant-test review and investigation of every test over ten seconds. Explicitly record native-display skips and remaining manual acceptance. |
+
+Build the first complete SQLite schema as **version 1** before runtime cutover;
+do not create a user migration version for each development commit or table
+group. Versioned migration support is still required for actual future schema
+changes. Keep schema/migration source and synthetic fixtures in Git; personal
+databases, backups and SQLite sidecar files remain private and excluded.
+
+Tests assert persistence invariants and actual field semantics, not a test per
+column or repeated long-day simulation in every mapper. Reuse/consolidate
+existing cases when switching the backend; keep genuine legacy-import tests
+separate from live SQLite writing. Use fake time and bounded fixtures; no real
+waiting or input-dependent checks. During slices run only affected local tests
+and relevant static checks. Run the complete suite at SQL-9, with timing output,
+and investigate tests over ten seconds rather than accepting a hanging test.
+No test windows, mouse control or GitHub CI. Implementation commits must be
+small and pushed cleanly with CI suppressed as previously requested.
+
+This amendment changes only this plan. It runs no tests and creates no schema,
+database or migration. It does not alter parallel runtime, asset or text work.
+The next discussion/authorization can start with SQL-1; none of SQL-1 through
+SQL-9 is delivered by documenting this sequence.
 
 
 ### Agreed delivery order: features before SQLite and final OOP work
