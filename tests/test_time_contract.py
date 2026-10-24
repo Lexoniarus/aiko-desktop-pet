@@ -34,6 +34,7 @@ from aiko_pet.pet.mind.object_memory import ObjectMemory
 from aiko_pet.pet.moodlets import MoodletEpisode, MoodletId, MoodletState
 from aiko_pet.pet.sleep import SleepContext, SleepEpisode
 from aiko_pet.pet.state import PetState
+from aiko_pet.pet.wishes import ActiveWish, WishArea, WishId, WishState
 from aiko_pet.world.contracts import WorldSurface
 from aiko_pet.world.state import WorldState
 
@@ -94,6 +95,8 @@ class TimeContractTests(unittest.TestCase):
                             updated_at=WALL,
                             lived_seconds=start,
                             energy=39.99,
+                            satiety=75 if sleeping else 0,
+                            affection=75 if sleeping else 0,
                             sleeping=sleeping,
                             sleep_origin="manual" if sleeping else "",
                             sleep_episode=SleepEpisode(
@@ -105,6 +108,15 @@ class TimeContractTests(unittest.TestCase):
                             )
                             if sleeping
                             else None,
+                            wishes=WishState(
+                                2,
+                                (
+                                    ActiveWish(
+                                        1, WishId.PET, "pet", start, start + 0.04
+                                    ),
+                                ),
+                                ((WishArea.AFFECTION, start),),
+                            ),
                             moodlets=MoodletState(
                                 start,
                                 2,
@@ -151,6 +163,9 @@ class TimeContractTests(unittest.TestCase):
                                     wall, elapsed_seconds=duration, observed=False
                                 )
                             self.assertEqual(pet.lived_seconds, expected)
+                            self.assertEqual(
+                                bool(pet.wishes.active), expected < start + 0.04
+                            )
                             validate_time_evidence(pet)
                             evidence = pet.moodlets.care_evidence
                             assert evidence is not None

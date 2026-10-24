@@ -9911,3 +9911,11 @@ Native Tk was blocked before discovery and the default save redirected to a
 private temporary fixture. The complete suite was not rerun for this focused fix.
 Scoped Ruff and fresh strict Mypy (four production sources) pass; complete
 repository Pyright passes. Parallel character/export edits remain untouched.
+
+
+Final fixture refinement also seeds an active wish with a fractional deadline
+and awake critical/zero needs in the existing save/restart matrix. It checks
+actual wish expiry as well as nonempty relationship/exposure and poor-care
+records, not only empty collections. These same five focused cases passed again
+in **0.468 s**, no skips; scoped Ruff/Pyright passed. No production logic changed
+after the 226-case run, and no broader suite repetition was necessary.
