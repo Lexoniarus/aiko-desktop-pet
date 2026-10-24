@@ -58,7 +58,7 @@
 > and [final review](SQLITE_ACCEPTANCE_REVIEW.md) close SQL-1 through SQL-9.
 > Complete local no-window verification passed; native acceptance stays separate.
 
-> **Post-SQL-9 time-contract correction, 2026-10-24:** a runtime report exposed
+> **Post-SQL-9 time-contract correction delivered, 2026-10-24:** a runtime report exposed
 > inconsistent fractional elapsed endpoints despite the earlier green suite.
 > [The corrective delivery](#time-contract-correction-after-sql-9-runtime-report)
 > supersedes the earlier claim that the time path needed no further correction.

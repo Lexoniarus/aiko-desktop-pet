@@ -584,6 +584,18 @@ second mutable pet. Authored JSON remains independent of personal storage.
 existing `ActiveSessionClock` consuming live/standby intervals exactly once.
 No schema/import/save operation advances needs or interprets observed activity.
 
+The elapsed plan owns one immutable interval on `lived_seconds`.
+`plan_pet_time(..., elapsed_start=...)` partitions relative duration offsets;
+UTC only selects calendar-grid/observation boundaries. `SimulationStep` carries
+`elapsed_start`, `elapsed_end`, `wall_start` and `wall_end`; `seconds`/`hours` are
+derived views. Pet and World coordination consume those endpoints directly.
+`calculate_pet_progression(record, end_elapsed, ...)` returns `PetProgress.elapsed`
+on that same axis. Relationship, Moodlet/poor-care/long-term records, sleep
+seconds and wish expiry share the represented subintervals. `PetState` checks
+step admission and the final endpoint; finalization never independently resets
+only the aggregate's lifetime. See the [runtime correction](CARE_TIME_IMPLEMENTATION_PLAN.md#time-contract-correction-after-sql-9-runtime-report).
+
+
 - Tests use temporary save files, never the user's production save.
 - No cloud, login, browser integration, microphone listener or network service is started.
 
@@ -615,6 +627,8 @@ The care/storage follow-up also changes these Python call contracts:
 | `StateStore.load()` / `load_memory()` | One `load_session()` snapshot including all owners and `.revision` |
 | Legacy `StateStore.save()` without revision | SQLite `save(..., expected_revision=..., adaptive=..., social_history=...) -> SaveRevision`; desktop owns its last successful revision |
 | `StateStore.path` / `default_save_path()` returning JSON | Active SQLite destination; `.paths.legacy_json` identifies only the designated import source |
+| `calculate_pet_progression(record, hours, ...)` / private `_advance_progression(hours, ...)` | Supply the absolute `end_elapsed` on the pet's elapsed-seconds axis; `PetProgress.elapsed` is the reached endpoint |
+| `SimulationStep(hours, ...)` / `advance_time_step(..., now=...)` | Plan-owned elapsed/wall endpoints; `advance_time_step` reads the step's wall endpoint and checks its elapsed start |
 | `asset_paths.ASSETS`, `EMOTE_ASSETS`, `SCI_FI_UI` | `SPRITE_FRAME_DIR`, `EMOTE_IMAGE_DIR`, `KENNEY_UI_DIR` |
 | `pet.value_rules.bounded` | `pet.value_rules.clamp_need_value` |
 | `ActionPlayback.state`, animation port `action_state` | `clip_id`, `action_clip_id` |

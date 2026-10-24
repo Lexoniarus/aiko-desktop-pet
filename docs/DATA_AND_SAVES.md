@@ -441,6 +441,14 @@ approaches its new target over elapsed time; no balance migration resets it.
 into one `LoadedPetData` snapshot. The old partial `load()` and `load_memory()`
 wrappers have been retired; loading this snapshot never advances time itself.
 
+Runtime progression now carries one plan-owned elapsed endpoint through the
+pet and World paths. Calendar timestamps do not redefine supplied uptime
+durations. Sleep, relationship/exposure, Moodlet recovery/long-term evidence
+and wish expiry use that same interval. Finalization checks consistency rather
+than rebasing only `lived_seconds`. This fixes fractional-tick save rejection
+without loosening strict codecs, changing schema or resetting old saves.
+
+
 During this calculation there is no observed workload, inferred user input,
 personal contact or fabricated rhythm learning. Needs, digestion, existing
 Moodlets and continuous friendship still progress. Existing emotional evidence

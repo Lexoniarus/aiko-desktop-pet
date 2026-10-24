@@ -33,7 +33,13 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
-Current SQLite acceptance (2026-10-24): **SQL-1 through SQL-9 delivered**.
+Latest runtime correction (2026-10-24): [shared fractional time contract](CARE_TIME_IMPLEMENTATION_PLAN.md#time-contract-correction-after-sql-9-runtime-report).
+The prior OOP acceptance missed inconsistent elapsed endpoints. Pet and World
+now use the same plan-owned endpoint; strict storage bounds remain unchanged.
+**226 affected-owner tests passed in 36.938 s**, no skips, longest **3.886 s**.
+The existing personal save is not reset or reimported.
+
+Historical SQLite acceptance (2026-10-24): **SQL-1 through SQL-9 delivered**.
 The complete local workspace run reported **1,844 tests in 95.936 seconds**,
 zero failures/errors and **112 display-dependent skips**. No test exceeded ten
 seconds; longest **8.657 s**. Whole Ruff, strict Mypy and Pyright passed after

@@ -8,6 +8,11 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Fix fractional-tick save rejection by sharing canonical elapsed endpoints
+  across direct Pet and World progression. Keep relationship, Moodlet recovery,
+  long-term evidence, actual sleep duration and wish expiry on the same time
+  axis; preserve strict validation and existing saves.
+
 - Store personal progress in transactional SQLite with expected-revision
   protection across startup, autosave, settings/social saves and shutdown.
   Import supported old JSON only after strict validation and an unchanged

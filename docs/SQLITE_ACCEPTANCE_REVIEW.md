@@ -1,5 +1,14 @@
 # SQLite acceptance and OOP review
 
+> **Subsequent runtime finding, corrected 2026-10-24:** the original acceptance
+> missed an inconsistent fractional time contract shared by Pet and World
+> progression. Its statement that no product correction was needed was too broad.
+> The [corrective delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#time-contract-correction-after-sql-9-runtime-report)
+> now records canonical elapsed endpoints, strict-save regression coverage and
+> **226 passing targeted tests in 36.938 s**, no skips or tests over ten seconds.
+> No new full-suite result is implied; the complete-run evidence below remains
+> the historical SQL-9 workspace run.
+
 Local SQL-9 review on 2026-10-24, on `feature/social-optimization` after SQL-8.
 This is storage acceptance under the requested no-window boundary, not native
 visual/input acceptance or a merge approval.
