@@ -24,6 +24,10 @@
 > records core/sleep/settings, relationship/exposure and paired World/memory
 > mapping separately. The running JSON store remains active.
 
+> **SQL-3 in progress, 2026-10-24:** the
+> [SQL-3 delivery record](#sqlite-delivery-sql-3-wishes-progress-pins-and-food-handovers)
+> separates original wish/progress storage from durable food-handover context.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -9141,3 +9145,36 @@ JSON; bounded legacy/list values do not become a full-state JSON blob. Existing
 live classes and parallel horoscope/UI/character/text work are preserved.
 SQL-2 is complete; SQL-3 wish/food-handover mapping is next, with runtime cutover
 still reserved for SQL-8.
+
+
+### SQLite delivery SQL-3: wishes, progress, pins and food handovers
+
+The owner authorized SQL-3 on 2026-10-24: small commits, targeted local tests and
+pushes, without windows, mouse control or CI. The active JSON store and all
+domain wish/fulfillment rules remain unchanged. Later slices are separate.
+
+#### SQL-3A: original wishes, lifecycle anchors and bounded round receipts
+
+`wish_schema.py` adds `wish_state`, `wish_instances` and `wish_round_receipts` to
+the unreleased version-one schema. `wish_rows.py` maps the existing immutable
+`WishState` through the strict wish codec. It preserves allocation/disclosure/
+rotation anchors, original goal/count, individual expiry, pin and active order,
+as well as exact/free/excluded targets. An explicit free target with no concrete
+identity remains distinct from absent legacy target metadata. Legacy session
+goals retain their session token, original quantity and deadline.
+
+Cumulative counts are saved separately from bounded recent round signatures;
+they are not recomputed from receipt row counts. Retiring a wish cascades only
+its owned round receipts. The partial core mapper preserves the independent
+handover portion of a supplied read template and never deletes handover facts.
+Reads do not expire overdue wishes, unpin, refill, generate rewards or advance
+time. Mapping requires the caller's transaction and never commits it.
+
+Six new SQL cases plus four existing wish-state storage and ten SQL-1 schema
+cases passed: **20 tests in 0.108 seconds**, longest 0.015 seconds rounded upward.
+Cases include three flexible targets, expired pins/overdue rotation, preserved
+legacy goals/session, a 50,000-round cumulative counter with one retained round
+receipt, retired allocation and strict rejection of incompatible present data.
+Scoped Ruff, fresh strict Mypy (fourteen SQLite production sources) and Pyright
+including the new tests passed. Native Tk was blocked; all saves were temporary.
+Food-handover mapping and combined SQL-3 acceptance follow in the next commit.
