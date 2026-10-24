@@ -9492,3 +9492,35 @@ contract cases passed: **11 tests in 0.076 seconds**, longest 0.026 seconds roun
 upward. Scoped Ruff, fresh strict Mypy and Pyright including new tests passed.
 Tk was blocked and saves were temporary. Transactional store and schema backup
 work follow in the next scoped commits; no runtime cutover is claimed here.
+
+#### SQL-6B: complete store, compare-and-save and first publication
+
+`sqlite/store.py` adds the explicit-path `SqliteStateStore` behind the existing
+reader/new writer contracts. Inputs capture Pet's immutable checkpoint and copy
+mutable settings/adaptive values on the caller's owner thread. Every existing
+save updates its revision conditionally inside `BEGIN IMMEDIATE`, writes all
+owners, validates the resulting coherent snapshot/foreign keys, then commits.
+Only successful completion returns the new immutable revision. The store keeps
+no mutable revision cache, persistent connection, domain clock or retry loop.
+
+First saves populate a private same-directory temporary database completely,
+close it and atomically publish with a non-replacing hard link. An existing or
+competing destination is never overwritten. Unsupported link/filesystem or
+access failures stop with a typed failure rather than falling back to an
+overwrite operation. `publication.py` is shared infrastructure for this boundary
+and later import. Cleanup cannot mask a failure or misreport a published save.
+The application error contract retains a message for rebasing temporary-file
+failures onto the actual selected save path.
+
+Missing reads return a fresh, revision-zero session without creating a file;
+existing invalid data never becomes a replacement pet. A nonzero expected
+revision with a missing destination fails stale instead of recreating progress.
+No JSON search/import or runtime selection is introduced before SQL-7/SQL-8.
+
+Eight new store cases plus two assembly and ten schema cases passed:
+**20 tests in 0.802 seconds**, longest 0.121 seconds rounded to milliseconds.
+They cover complete owner round trips, stale and first-publication races,
+coherent reads during an uncommitted write, injected partial failure/retry,
+immediate lock/access errors and preservation of invalid/missing destinations.
+Scoped Ruff, fresh strict Mypy and Pyright passed. Tk was blocked; all files
+were temporary. Schema completeness and consistent upgrade backups follow.

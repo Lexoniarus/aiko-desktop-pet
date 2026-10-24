@@ -32,6 +32,7 @@ class StorageError(Exception):
     ) -> None:
         self.kind = kind
         self.path = path
+        self.message = message
         super().__init__(f"{message} [{kind.value}: {path}]")
 
 
