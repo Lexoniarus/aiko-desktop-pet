@@ -1,4 +1,4 @@
-"""Side-effect-free legacy and planned SQLite save locations.
+"""Side-effect-free SQLite destinations and designated legacy import locations.
 
 Environment loading stays in config.py. Resolving a path never reads a save,
 creates a directory, imports JSON or selects another destination after failure.
@@ -29,9 +29,8 @@ def _expanded_path(value: str) -> Path:
 
 
 def default_save_path() -> Path:
-    """Keep the active JSON store's existing path behavior and public binding."""
-    custom = os.environ.get("AIKO_SAVE_PATH", "").strip()
-    return _expanded_path(custom) if custom else _user_data_directory() / "state.json"
+    """Return the active SQLite destination, including legacy-path aliases."""
+    return resolve_save_paths().database
 
 
 @dataclass(frozen=True, slots=True)

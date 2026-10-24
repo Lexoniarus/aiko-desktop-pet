@@ -12,10 +12,11 @@ from .application.activity import ActivityCallbacks
 from .application.assembly import assemble_application
 from .application.attention import AttentionCoordinator
 from .application.contact import ContactCoordinator, ContactPorts
-from .application.session import PetSessionRestorer
+from .application.session import PetSessionRestorer, SavedPetStore
 from .application.settings import SettingKey
 from .application.social_content import PreparedSocialContent
 from .application.social_coordinator import SocialContentWorker
+from .application.storage_contracts import StorageError
 from .config import load_env_file
 from .desktop import game_assembly
 from .desktop.animation_assembly import AnimationAssemblyPorts, assemble_animation
@@ -69,7 +70,7 @@ class DesktopPet:
     _social_runtime: SocialConversationRuntime
 
     def __init__(
-        self, *, store: StateStore | None = None,
+        self, *, store: SavedPetStore | None = None,
         activity_monitor: ActivityMonitor | None = None,
         social_worker: SocialContentWorker | None = None,
     ) -> None:
@@ -126,6 +127,7 @@ class DesktopPet:
         )
         self._persistence = DesktopPersistence(
             self.store, self.state, self.settings, self.adaptive,
+            revision=session.revision,
             social_history=lambda: self._social_runtime.content.history,
         )
         self.mind = make_aiko_mind(started_at=self._persistence.last_saved)
@@ -608,7 +610,7 @@ class DesktopPet:
         self._runtime.tick()
 
     def _save(self) -> None:
-        """Advance application state before writing it; report I/O failures."""
+        """Advance application state, save it and report storage failures."""
         failure = self._session_runtime.advance_and_save()
         if failure is not None:
             messagebox.showwarning(
@@ -632,7 +634,14 @@ class DesktopPet:
 
 def main() -> None:
     load_env_file()
-    app = DesktopPet()
+    try:
+        app = DesktopPet()
+    except StorageError as error:
+        messagebox.showerror(
+            GERMAN_TEXT.format("ui.application_name"),
+            GERMAN_TEXT.format("ui.load_failed", failure=str(error)),
+        )
+        raise SystemExit(1) from error
     app.run()
 
 

@@ -48,6 +48,11 @@
 > records strict validation, unchanged JSON backups, import provenance and atomic
 > publication. Existing SQLite remains authoritative. Runtime cutover is SQL-8.
 
+> **SQL-8 in progress, 2026-10-24:** the
+> [SQL-8 delivery record](#sqlite-delivery-sql-8-runtime-cutover-and-legacy-usage-cleanup)
+> records the runtime cutover, expected-revision ownership and usage cleanup.
+> Development checks remain restricted to temporary fixtures without native UI.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -9663,3 +9668,42 @@ Parallel character artwork/export changes remain untouched and uncommitted here.
 startup, autosave/shutdown and error reporting to the SQLite reader/writer, audit
 remaining legacy consumers and retain exactly one active writer. This delivery
 does not switch the running application or migrate the owner's personal save.
+
+
+### SQLite delivery SQL-8: runtime cutover and legacy usage cleanup
+
+**Owner-authorized implementation, 2026-10-24.** Scope: switch startup and all
+live writes to the delivered SQLite store/import path, keep one writer and audit
+remaining legacy consumers. Full-suite/final acceptance remains SQL-9. Parallel
+character/export work stays outside these commits; no personal save is accessed.
+
+#### A. Runtime storage and checkpoint/error ownership
+
+`infrastructure/persistence.py:StateStore` is now a thin configured SQLite adapter:
+resolve `SavePaths`, load via the strict backed-up importer and inherit the single
+complete `SqliteStateStore` writer. The production JSON reader/writer and its
+silent reset/partial-discard behavior are removed. Canonical `default_save_path`
+returns the SQLite destination; `.json` configurations still designate the exact
+legacy source and its SQLite sibling. Catalog JSON and import codecs remain.
+
+`DesktopPet` reads/restores once before creating native widgets, passes the
+restored revision to `DesktopPersistence` and uses the shared application ports.
+Autosave, immediate settings/World/social writes and shutdown share that same
+persistence owner. It advances its revision and successful-save time only after
+commit. Failure retains both, while an independent attempt timestamp preserves
+the existing 55-second retry cadence. It never reloads a newer revision to force
+a stale session's write through and never replays care as a storage retry.
+
+Storage failures propagate as the application `StorageError` contract, including
+social request reservations. Startup reports failure and exits without creating
+a replacement pet or opening the desktop. Existing save warnings retain the
+last checkpoint; the source/database is never silently switched after failure.
+The new German startup message is in the canonical text resource/contract.
+
+Targeted local acceptance: **35 tests passed in 3.114 s**, no skips; slowest
+**0.963 s**. Scope: no-window desktop persistence/startup, entrypoint/env, paths,
+transactional store and strict legacy decoder. Native Tk was blocked before
+discovery and save paths redirected to temporary fixtures. Scoped Ruff, fresh
+strict Mypy (nine sources) and Pyright passed. No windows, mouse control, live
+save access or CI. Remaining legacy test/tool consumers are updated next; the
+runtime retains no JSON writer for them.

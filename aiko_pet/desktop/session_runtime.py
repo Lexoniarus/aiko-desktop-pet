@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from ..application.activity import ActivityCoordinator
+from ..application.storage_contracts import StorageError
 from ..infrastructure.active_time import active_uptime_seconds, elapsed_uptime_seconds
 from ..pet.routine import TimeContext
 from .attention_runtime import DesktopAttentionRuntime
@@ -76,7 +77,7 @@ class DesktopSessionRuntime:
         if self._persistence.due(now):
             self._ports.save()
 
-    def advance_and_save(self) -> OSError | None:
+    def advance_and_save(self) -> StorageError | None:
         """Advance measured state exactly once before the persistence write."""
         self._activity.advance_state(time.time())
         return self._persistence.save()

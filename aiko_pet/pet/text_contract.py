@@ -260,6 +260,7 @@ TEXT_FIELDS: dict[str, frozenset[str]] = {
     "food.choice_details": frozenset(["benefit", "category"]),
     "rps.previous_hand": frozenset(["hand"]),
     "rps.player_hand": frozenset(["hand"]),
+    "ui.load_failed": frozenset(["failure"]),
     "ui.save_failed": frozenset(["failure"]),
     "ui.window_title": frozenset([]),
 }

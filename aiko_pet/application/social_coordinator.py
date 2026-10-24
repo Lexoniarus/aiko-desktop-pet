@@ -17,6 +17,7 @@ from .social_content import (
     default_provider,
 )
 from .social_history import SocialContentHistory, SocialContentReceipt
+from .storage_contracts import StorageError
 
 FetchFailure = Literal["invalid", "temporary", "rate", "access"]
 Job = tuple[SocialCategory, SocialProvider]
@@ -69,7 +70,7 @@ class SocialContentCoordinator:
         *,
         history: SocialContentHistory = SocialContentHistory(),
         wall_time: Callable[[], float] | None = None,
-        persist_requests: Callable[[], OSError | None] = lambda: None,
+        persist_requests: Callable[[], StorageError | None] = lambda: None,
         zodiac_sign: Callable[[], str | None] = lambda: None,
     ) -> None:
         self._worker, self._wall_time = worker, wall_time or time.time
@@ -276,7 +277,7 @@ class SocialContentCoordinator:
     def _persist(self) -> bool:
         try:
             self._storage_failed = self._persist_requests() is not None
-        except OSError:
+        except StorageError:
             self._storage_failed = True
         return not self._storage_failed
 

@@ -152,6 +152,7 @@
     "food.choice_details": "{benefit} · {category}",
     "rps.previous_hand": "Letzte Hand: {hand}",
     "rps.player_hand": "Du: {hand}",
+    "ui.load_failed": "Spielstand konnte nicht geladen werden. Aiko wurde nicht gestartet und der Spielstand nicht ersetzt.\n{failure}",
     "ui.save_failed": "Spielstand konnte nicht gespeichert werden:\n{failure}",
     "ui.window_title": "Aiko Desktop Pet",
     "world.outside": "Dort kann ich es nicht ablegen. Mein Weg endet vorher.",

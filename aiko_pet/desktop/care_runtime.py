@@ -17,6 +17,7 @@ from ..application.social_coordinator import (
     SocialContentWorker,
 )
 from ..application.social_history import SocialContentHistory
+from ..application.storage_contracts import StorageError
 from ..games.contracts import GameRoundEvent, SessionSummary
 from ..infrastructure.social_api import HttpSocialContentWorker
 from ..pet.food import FoodId
@@ -48,7 +49,7 @@ class DesktopCareRuntime:
         is_closed: Callable[[], bool], game_open: Callable[[], bool],
         social_worker: SocialContentWorker | None = None,
         social_history: SocialContentHistory = SocialContentHistory(),
-        persist_requests: Callable[[], OSError | None] = lambda: None,
+        persist_requests: Callable[[], StorageError | None] = lambda: None,
         zodiac_sign: Callable[[], str | None] = lambda: None,
     ) -> None:
         self._root, self._state, self._router = root, state, router

@@ -9,7 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from aiko_pet.config import load_env_file
-from aiko_pet.infrastructure.persistence import default_save_path as public_json_path
+from aiko_pet.infrastructure.persistence import default_save_path as public_save_path
 from aiko_pet.infrastructure.save_paths import (
     SavePaths,
     default_save_path,
@@ -33,7 +33,7 @@ class SavePathTests(unittest.TestCase):
                     self.assertEqual(resolve_save_paths(), SavePaths(
                         directory / "state.sqlite3", directory / "state.json",
                     ))
-                    self.assertEqual(default_save_path(), directory / "state.json")
+                    self.assertEqual(default_save_path(), directory / "state.sqlite3")
                     self.assertFalse(directory.exists())
 
     def test_suffix_rules_preserve_designated_source_and_destination(self) -> None:
@@ -80,8 +80,8 @@ class SavePathTests(unittest.TestCase):
             ))
             self.assertFalse(database.parent.exists())
 
-    def test_existing_json_public_import_keeps_the_same_owner(self) -> None:
-        self.assertIs(public_json_path, default_save_path)
+    def test_active_public_path_keeps_the_same_owner(self) -> None:
+        self.assertIs(public_save_path, default_save_path)
 
 
 if __name__ == "__main__":

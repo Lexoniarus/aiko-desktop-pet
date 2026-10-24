@@ -65,6 +65,10 @@ class SavedPetWriter(Protocol):
     ) -> SaveRevision: ...
 
 
+class SavedPetStore(SavedPetReader, SavedPetWriter, Protocol):
+    """One configured persistence adapter for session reads and guarded writes."""
+
+
 @dataclass(frozen=True, slots=True)
 class RestoredPetSession:
     """References to the mutable objects used for this desktop session."""
@@ -79,7 +83,7 @@ class RestoredPetSession:
 
 
 class PetSessionRestorer:
-    """Restore version-one data and advance all unobserved closed time once."""
+    """Restore saved values and advance all unobserved closed time once."""
 
     def __init__(
         self,
