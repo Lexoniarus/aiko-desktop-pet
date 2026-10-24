@@ -14,6 +14,7 @@ from ...pet.wish_catalog import WISH_CATALOG
 from ...pet.wish_types import WishId
 from ...pet.wishes import WishState
 from ..wish_codec import decode_wishes, encode_wishes
+from .food_handover_rows import read_food_handovers, write_food_handovers
 from .rows import (
     boolean,
     json_value,
@@ -144,3 +145,17 @@ def read_wish_core(
         elapsed,
     )
     return replace(core, food_handovers=template.food_handovers)
+
+
+def write_wishes(connection: sqlite3.Connection, state: WishState) -> None:
+    """Validate the complete owned value before replacing either mapped part."""
+    elapsed = singleton(connection, "save_state")["lived_seconds"]
+    decode_wishes(encode_wishes(state), elapsed)
+    write_wish_core(connection, state)
+    write_food_handovers(connection, state.food_handovers)
+
+
+def read_wishes(connection: sqlite3.Connection) -> WishState:
+    return replace(
+        read_wish_core(connection), food_handovers=read_food_handovers(connection)
+    )

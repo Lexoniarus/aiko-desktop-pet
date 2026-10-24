@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from ...application.storage_contracts import StorageError, StorageFailureKind
+from .food_handover_schema import FOOD_HANDOVER_SCHEMA
 from .pet_schema import PET_SCHEMA
 from .relationship_schema import RELATIONSHIP_SCHEMA
 from .wish_schema import WISH_SCHEMA
@@ -45,7 +46,8 @@ MIGRATIONS = (SchemaMigration(1, "initial_save_schema", (
         lived_seconds REAL NOT NULL
             CHECK (lived_seconds >= 0 AND lived_seconds <= 1.7976931348623157e308)
     )""",
-) + PET_SCHEMA + RELATIONSHIP_SCHEMA + WORLD_SCHEMA + WISH_SCHEMA),)
+) + PET_SCHEMA + RELATIONSHIP_SCHEMA + WORLD_SCHEMA + WISH_SCHEMA
+             + FOOD_HANDOVER_SCHEMA),)
 
 
 def _pragma_integer(connection: sqlite3.Connection, name: str) -> int:

@@ -24,7 +24,7 @@
 > records core/sleep/settings, relationship/exposure and paired World/memory
 > mapping separately. The running JSON store remains active.
 
-> **SQL-3 in progress, 2026-10-24:** the
+> **SQL-3 delivered, 2026-10-24:** the
 > [SQL-3 delivery record](#sqlite-delivery-sql-3-wishes-progress-pins-and-food-handovers)
 > separates original wish/progress storage from durable food-handover context.
 
@@ -9178,3 +9178,52 @@ receipt, retired allocation and strict rejection of incompatible present data.
 Scoped Ruff, fresh strict Mypy (fourteen SQLite production sources) and Pyright
 including the new tests passed. Native Tk was blocked; all saves were temporary.
 Food-handover mapping and combined SQL-3 acceptance follow in the next commit.
+
+#### SQL-3B: durable handover context and complete WishState mapping
+
+`food_handover_schema.py` adds the planned receipt table and a partial unique
+index allowing at most one pending receipt per physical object. Completed or
+cancelled receipts do not block another pending handover. The receipt belongs
+to `wish_state`; its object identity and original/resolved wish identities are
+historical, with no FK to surviving World stock or active wish instances.
+
+`food_handover_rows.py` preserves ordered receipt identities, original handover
+time, pending/evaluated/cancelled status, optional recognized food/time, resolved
+wish and accounted identities. Each bounded original-wish context has a typed
+version-one detail envelope retaining definition, goal, target, creation and
+disclosure times and pin priority. This is a bounded per-receipt snapshot, not
+another editable catalogue or whole-state blob. Existing strict codecs enforce
+the thirty-two receipt/three-context limits and consistent accounting.
+
+`wish_rows.read_wishes`/`write_wishes` compose the two existing owned parts of
+immutable `WishState`. Full write validation occurs before either part changes;
+the caller still owns one transaction and its commit/rollback. Core rotation or
+wish deletion leaves historical handover context intact. Reads neither identify
+food nor settle wishes or grant effects. Recognition continues to belong to the
+existing domain functions, using the restored original context and accounting.
+
+Seven new handover cases cover pending facts without live stock, actual source
+wish retirement, recognition after reload, duplicate-credit suppression across
+two gifts, unwanted-food and cancellation facts, invalid present context and
+accounting, partial-unique enforcement and joint rollback. The recognition case
+invokes the existing pure domain function after a SQL reload and preserves
+handover versus recognition times. It does not claim Moodlet SQL storage before
+SQL-4.
+
+Final combined local verification: **63 tests passed in 0.381 seconds**, longest
+**0.081 seconds** rounded to milliseconds. This includes thirteen new SQL-3
+cases, twenty-five SQL-1/SQL-2 cases and twenty-five existing wish-state,
+food-handover and game-wish cases. No skips or test over ten seconds. Scoped
+Ruff, fresh strict Mypy for sixteen SQLite production modules and Pyright
+including both new test modules passed. Tk construction was blocked throughout;
+all save/database fixtures were temporary. No full suite, personal save, test
+window, mouse control or CI was used.
+
+SQL-3 OOP review: the existing WishState/FoodHandoverReceipt values and codecs
+remain canonical. Infrastructure translates fields and relationships without
+new wish-selection, pin, expiry, recognition, reward or progression rules.
+Round evidence is owned by active wishes; durable handover facts have an
+independent lifetime. No live writer/cache or alternate aggregate was added.
+The JSON runtime and parallel social/UI/character/text work are preserved.
+SQL-3 is complete; SQL-4 Moodlet/care-evidence mapping is next. Schema version
+remains one until the first complete schema is ready for the later cutover.
