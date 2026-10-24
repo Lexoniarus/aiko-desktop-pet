@@ -17,6 +17,7 @@ and test-cleanup plans.
 | Approved VN direction; main menu/settings delivered in 5C, native acceptance pending | [VN interface design](UI_VN_DESIGN.md) |
 | Approved local preview bundle, cross-chat handoff and asset readiness | [UI reference handoff](UI_PREVIEW_HANDOFF.md) |
 | Packaged JSON, SQLite saves, strict import, recovery and time | [Data and saves](DATA_AND_SAVES.md) |
+| SQL-9 field preservation, timings and final OOP review | [SQLite acceptance](SQLITE_ACCEPTANCE_REVIEW.md) |
 | Food, digestion, workload and item graphics | [Food system](FOOD_SYSTEM.md) |
 | Adaptive sleep, input learning and finite closed-time care | [Sleep rules](SLEEP_SYSTEM.md) |
 | Continuous friendship from mood/Moodlets, personal contact and neglect | [Friendship rules](FRIENDSHIP_SYSTEM.md) |
@@ -32,7 +33,15 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
-Current Social Optimization status (2026-10-24): the renewed wish/Moodlet
+Current SQLite acceptance (2026-10-24): **SQL-1 through SQL-9 delivered**.
+The complete local workspace run reported **1,844 tests in 95.936 seconds**,
+zero failures/errors and **112 display-dependent skips**. No test exceeded ten
+seconds; longest **8.657 s**. Whole Ruff, strict Mypy and Pyright passed after
+three stale horoscope test usages were corrected. The [SQL-9 review](SQLITE_ACCEPTANCE_REVIEW.md)
+records owner/field preservation, parallel-work scope and native limitations.
+No personal save, test windows, pointer automation or CI was used.
+
+Earlier Social Optimization status (2026-10-24): the renewed wish/Moodlet
 slices 1–8 passed [local step-8 acceptance](CARE_TIME_IMPLEMENTATION_PLAN.md#delivery-slice-8d-generated-care-acceptance-and-final-oop-review).
 The isolated candidate completed 1,701 tests in 77.761 seconds with 111 explicit
 native-display skips, plus whole Ruff, strict Mypy and Pyright. Generated care

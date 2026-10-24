@@ -53,9 +53,10 @@
 > records the SQLite runtime cutover, expected-revision ownership and usage cleanup.
 > Final whole-suite/OOP acceptance remains the separately authorized SQL-9 slice.
 
-> **SQL-9 in progress, 2026-10-24:** the
+> **SQL-9 delivered, 2026-10-24:** the
 > [SQL-9 delivery record](#sqlite-delivery-sql-9-full-local-acceptance-and-oop-review)
-> records complete no-window verification, timing investigation and final owner review.
+> and [final review](SQLITE_ACCEPTANCE_REVIEW.md) close SQL-1 through SQL-9.
+> Complete local no-window verification passed; native acceptance stays separate.
 
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
@@ -9799,4 +9800,44 @@ fallback was added to silence typing.
 Targeted horoscope tests: **16 passed in 0.006 s**, one native-only class skipped
 under the no-window guard. Scoped Ruff and Pyright pass; subsequent complete
 Pyright also passes. The native restart case was type-checked, not visually run.
-Full-suite timing and review results follow below when the run completes.
+Full-suite timing and review results are recorded below.
+
+
+#### B. Complete local suite, timing and final OOP acceptance
+
+The complete current-workspace suite passed: **1,844 reported tests in 95.936 s**,
+zero failures/errors and **112 explicitly recorded display-dependent skips**.
+Native Tk was blocked before discovery, every case timed and default saves
+redirected to a temporary directory. The report remains outside Git. Review of
+all skip entries found only native/display dependencies, not skipped persistence
+or care-policy failures. Native Windows rendering/input remains separate.
+
+**No test exceeded ten seconds.** The longest setup integration cases were
+**8.657 s** and **8.178 s**; inspected subprocesses exercise isolated PowerShell/
+venv/install/launcher boundaries with replaced pet entrypoints and controlled
+runtime acquisition, not real UI or gameplay waits. Subsequent fake-time care/
+lifecycle scenarios were below four seconds. No timing-driven split, extra mock
+layer or redundant test suite was necessary. The complete run included parallel
+uncommitted character/export work; those files remain outside these commits.
+The count is workspace evidence, not an isolated-checkout claim.
+
+The [final acceptance and OOP review](SQLITE_ACCEPTANCE_REVIEW.md) records the
+25-field PetValues reconciliation and wish/Moodlet/long-term/adaptive/social
+preservation matrix. Existing domain aggregates, time progression, physical/
+subjective owners, application ports, configured store, single transaction writer
+and desktop revision owner remain separate. Retained strict JSON codecs are
+still consumed by import/validation; there is no second JSON repository, live
+revision cache or SQL-based care engine. Mapper, whole-store and legacy-import
+tests protect different invariants; SQL-8's fourteen obsolete JSON tests remain
+consolidated rather than reintroduced here.
+
+Complete Ruff, fresh strict Mypy (343 workspace application/tool sources) and
+complete Pyright are green after the recorded fixture-only correction. Its
+sixteen targeted horoscope cases pass under the same no-window boundary. No
+production behavior changed after the complete suite; do not rerun all gameplay
+scenarios merely for those fixture type corrections or documentation.
+
+**SQL-9 complete; SQL-1 through SQL-9 delivered.** No additional storage/domain
+refactor was justified by this review. No personal save, native test/pet windows,
+mouse control, live API call, CI or merge. Native visual/input acceptance and the
+previously reported AppHang are not certified by this no-window result.
