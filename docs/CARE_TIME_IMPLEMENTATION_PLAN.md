@@ -19,6 +19,11 @@
 > [SQL-1 delivery record](#sqlite-delivery-sql-1-contracts-paths-and-schema-foundation)
 > distinguishes completed groundwork from the later mapping and runtime cutover.
 
+> **SQL-2 in progress, 2026-10-24:** the
+> [SQL-2 delivery record](#sqlite-delivery-sql-2-core-relationship-and-worldmemory-mapping)
+> records core/sleep/settings, relationship/exposure and paired World/memory
+> mapping separately. The running JSON store remains active.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -9043,3 +9048,35 @@ horoscope, UI, character and text work remains uncommitted and untouched by
 these SQL-1 commits. No personal-save access, full suite, test windows, mouse
 control or CI. SQL-2 is next; no domain mapper, import or runtime cutover is
 claimed here.
+
+
+### SQLite delivery SQL-2: core, relationship and World/memory mapping
+
+The owner authorized SQL-2 on 2026-10-24 with small commits and targeted local
+checks, no windows, mouse control or CI. SQL-3 and later work remain separate.
+
+#### SQL-2A: core Pet values, sleep and application settings
+
+- Extend the unreleased initial schema (still version one) with `pet_state`,
+  `sleep_state` and `app_settings`. Shared UTC/lived time remains in `save_state`;
+  a core write requires matching checkpoint anchors, not another saved clock.
+- `pet_rows.py` maps the existing immutable `PetValues`. Partial assembly
+  replaces only its owned fields, preserving separately mapped relationship,
+  wish and Moodlet values. Sleep uses the existing strict codec; nutrition is
+  stored without the old JSON encoder's decimal rounding. Legacy meal/sleep/
+  care metadata and ordered food history remain distinct and unchanged.
+- `settings_rows.py` checks present values before using the existing settings
+  constructor. Invalid coordinates/flags cannot silently reset preferences.
+  The optional horoscope field is reserved without depending on an uncommitted
+  constructor argument; final parallel-contract reconciliation remains SQL-5.
+- Shared `rows.py` contains transaction-bound row operations and bounded JSON
+  list/map helpers, not business rules or a second persistence service. Mappers
+  never commit. Upserts update in place rather than cascading through SQLite
+  REPLACE. Domain collections retain their original owners.
+
+Verification: five new core/settings cases plus ten SQL-1 schema and three
+existing JSON persistence cases passed: **18 tests in 0.087 seconds**, longest
+0.013 seconds rounded upward. Scoped Ruff, fresh strict Mypy (eight production
+sources) and Pyright including the new test module passed. Native Tk creation
+was blocked; SQLite fixtures and default JSON paths were temporary. No personal
+save, import, runtime cutover or complete suite was used.
