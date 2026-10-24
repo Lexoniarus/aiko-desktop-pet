@@ -7,6 +7,7 @@ import unittest
 from copy import deepcopy
 from dataclasses import replace
 from datetime import datetime
+from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
 from unittest.mock import Mock, patch
@@ -27,6 +28,7 @@ from aiko_pet.application.social_coordinator import (
     SocialFetchResult,
 )
 from aiko_pet.application.social_history import SocialContentHistory
+from aiko_pet.application.storage_contracts import StorageError, StorageFailureKind
 from aiko_pet.desktop.horoscope_playback import HoroscopePlayback
 from aiko_pet.infrastructure.social_api import SocialFetchError, fetch_social_response
 from aiko_pet.infrastructure.social_history_codec import (
@@ -163,7 +165,9 @@ class HoroscopeLifecycleTests(unittest.TestCase):
     def make_social(self, history: SocialContentHistory = SocialContentHistory()):
         def persist():
             self.saved.append(self.social.history)
-            return OSError("disk") if self.failure else None
+            return StorageError(
+                StorageFailureKind.IO, Path("fixture.sqlite3"), "disk",
+            ) if self.failure else None
 
         return SocialContentCoordinator(
             self.worker,

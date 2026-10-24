@@ -84,7 +84,7 @@ class HoroscopeGuiTests(unittest.TestCase):
         self.pet._social_runtime.cancel()
         self.assertFalse(self.pet._reaction_player.active)
         self.assertEqual(self.pet._speech.attribution, "")
-        store = self.pet._persistence._store
+        store = self.pet.store
         self.pet.quit()
         self.worker = ManualSocialWorker(clock=self.worker.clock)
         reopened = create_test_desktop(store=store, social_worker=self.worker)

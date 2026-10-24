@@ -53,6 +53,10 @@
 > records the SQLite runtime cutover, expected-revision ownership and usage cleanup.
 > Final whole-suite/OOP acceptance remains the separately authorized SQL-9 slice.
 
+> **SQL-9 in progress, 2026-10-24:** the
+> [SQL-9 delivery record](#sqlite-delivery-sql-9-full-local-acceptance-and-oop-review)
+> records complete no-window verification, timing investigation and final owner review.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -9771,3 +9775,28 @@ suite, final field/feature preservation and OOP/duplicate-consumer review with
 timing/skip evidence. This slice performs no personal-save import, native visual/
 input acceptance, mouse control, HTTP or GitHub CI. Parallel character artwork/
 export edits remain outside all storage commits.
+
+
+### SQLite delivery SQL-9: full local acceptance and OOP review
+
+**Owner-authorized final acceptance, 2026-10-24.** Run the complete local suite
+with native Tk disabled before discovery, temporary default save paths and
+per-case duration reporting. Investigate every test above ten seconds. Review
+SQLite owner boundaries, retained compatibility consumers and feature preservation.
+No native windows, pointer/input automation, live personal save, API requests or
+GitHub CI. Parallel character/export files remain outside storage commits.
+
+#### A. Whole-repository typing correction
+
+The initial complete Ruff gate and fresh strict Mypy gate passed (343 source
+files in the current workspace). Whole-repository Pyright found three stale test
+usages: the horoscope failure fixture still returned `OSError`, and a native
+restart case obtained its reader through the private writer-only port. The
+fixtures now use `StorageError` and the desktop's public complete storage port.
+Production contracts remain narrow; no cast, duplicate adapter or compatibility
+fallback was added to silence typing.
+
+Targeted horoscope tests: **16 passed in 0.006 s**, one native-only class skipped
+under the no-window guard. Scoped Ruff and Pyright pass; subsequent complete
+Pyright also passes. The native restart case was type-checked, not visually run.
+Full-suite timing and review results follow below when the run completes.
