@@ -33,7 +33,7 @@
 > separates episode/cause mapping, interaction/poor-care evidence and bounded
 > encounter/long-term processing state. The active JSON store remains unchanged.
 
-> **SQL-5 in progress, 2026-10-24:** the
+> **SQL-5 delivered, 2026-10-24:** the
 > [SQL-5 delivery record](#sqlite-delivery-sql-5-adaptive-and-social-storage)
 > first secures the completed parallel horoscope baseline, then maps adaptive
 > memory, API histories/limits and the bounded current-day reading to SQLite.
@@ -9414,3 +9414,49 @@ passed: **17 tests in 0.045 seconds**, longest 0.010 seconds rounded upward.
 Scoped Ruff, fresh strict Mypy for 29 storage sources and Pyright including the
 new tests passed. Tk was blocked; temporary saves only, no HTTP, window, mouse
 control or CI. The following commit adds the bounded daily horoscope mapping.
+
+#### SQL-5C: bounded daily horoscope and complete social snapshots
+
+`horoscope_schema.py` adds the single current-day record, with its attempts,
+continuation index, admitted/completed flags and optional original reading.
+Sign/date, overview, advice, disclaimer and attribution footer are columns;
+the reading's original sign is independent of later settings changes. A unique
+save link prevents a growing calendar archive. Failed attempts without text,
+cached-but-unadmitted text, admitted progress, completion and absent history
+retain distinct values.
+
+`horoscope_rows.py` uses the secured strict horoscope codec. SQL never dispatches
+HTTP, increments attempts, chooses a new calendar day, books care or advances
+playback. `social_rows.read_social_history`/`write_social_history` compose the
+existing immutable history, with complete validation before writes and one
+caller-owned transaction. Application settings retain the optional zodiac sign
+through the existing SQL-2 mapping; no duplicate preference owner is added.
+
+Five new horoscope cases cover the daily states and bounded replacement,
+resume after a SQL reload with changed settings and no second HTTP/care credit,
+persisted three-attempt exhaustion, invalid progress/sign and joint rollback
+of adaptive, settings, social, horoscope and save-revision/time values. Fake
+workers exercise the existing coordinator; no real network or UI is used.
+
+Final targeted combined verification ran **118 cases in 0.663 seconds**:
+**117 passed, one explicit native-display skip**, no failures/errors. Longest
+executed case was **0.029 seconds** rounded to milliseconds; none exceeded ten
+seconds. The set covers all existing SQLite mapping/schema cases, thirteen new
+SQL-5 cases and affected adaptive/quiet, social-history/request, horoscope and
+settings contracts. Scoped Ruff, fresh strict Mypy for 31 storage sources and
+Pyright including the three new SQL test modules passed. The earlier secured
+horoscope baseline has its own scoped verification above. Tk creation was
+blocked and all files were temporary. No full suite, personal save, real API
+request, test window, mouse control or CI. Native skips remain separate manual
+acceptance; this receipt does not claim their execution.
+
+SQL-5 focused OOP review: existing AdaptiveMemory/QuietWindow and application
+social/horoscope values own behavior and interpretation. The strict adaptive
+codec adds checked translation, not another learning policy or mutable memory.
+SQL modules own scalar/row translation and actual relationships only; last-ten
+ordering, provider wall time and local-day continuation keep their existing
+meanings. There is no second content buffer, timer, HTTP worker, care-credit
+writer or SQL-driven rollover. The active store remains JSON until SQL-8.
+Parallel character/asset exports and their documentation remain untouched.
+SQL-5 is complete; SQL-6 transactional store assembly and expected-revision
+protection are next, followed by strict import and runtime cutover as planned.

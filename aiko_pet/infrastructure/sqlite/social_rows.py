@@ -6,6 +6,7 @@ from typing import Any
 
 from ...application.social_history import SocialContentHistory
 from ..social_history_codec import decode_social_history, encode_social_history
+from .horoscope_rows import read_horoscope, write_horoscope
 from .rows import read_rows, singleton
 
 
@@ -72,3 +73,17 @@ def read_social_core(
         )
     )
     return replace(history, horoscope=template.horoscope)
+
+
+def write_social_history(
+    connection: sqlite3.Connection,
+    history: SocialContentHistory,
+) -> None:
+    singleton(connection, "save_state")
+    decode_social_history(encode_social_history(history))
+    write_social_core(connection, history)
+    write_horoscope(connection, history.horoscope)
+
+
+def read_social_history(connection: sqlite3.Connection) -> SocialContentHistory:
+    return replace(read_social_core(connection), horoscope=read_horoscope(connection))
