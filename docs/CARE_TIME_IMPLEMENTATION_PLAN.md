@@ -28,6 +28,11 @@
 > [SQL-3 delivery record](#sqlite-delivery-sql-3-wishes-progress-pins-and-food-handovers)
 > separates original wish/progress storage from durable food-handover context.
 
+> **SQL-4 in progress, 2026-10-24:** the
+> [SQL-4 delivery record](#sqlite-delivery-sql-4-moodlets-and-care-evidence)
+> separates episode/cause mapping, interaction/poor-care evidence and bounded
+> encounter/long-term processing state. The active JSON store remains unchanged.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -9227,3 +9232,39 @@ independent lifetime. No live writer/cache or alternate aggregate was added.
 The JSON runtime and parallel social/UI/character/text work are preserved.
 SQL-3 is complete; SQL-4 Moodlet/care-evidence mapping is next. Schema version
 remains one until the first complete schema is ready for the later cutover.
+
+
+### SQLite delivery SQL-4: Moodlets and care evidence
+
+The owner authorized SQL-4 on 2026-10-24 with small commits, targeted local
+tests and pushes, no test windows, mouse control or CI. Later mapping/store,
+import and runtime cutover slices remain separate.
+
+#### SQL-4A: episodes, lower-stage budgets, relief and concrete causes
+
+`moodlet_schema.py` extends the initial version-one schema with shared Moodlet
+state, episodes, stage state and causes. Shared optional care metadata is
+reserved here without claiming its later evidence mapping. Core upserts change
+only owned baseline/allocation fields; they do not reset the other portions.
+
+`moodlet_rows.py` reuses the strict Moodlet codec. Explicit lower-stage budgets
+(including zero) stay distinct from legacy implicit budgets. Relief positions
+retain order and already-used allowances above the current level after decay.
+Remaining time, pause/recovery, pending repetitions, attribution, episode order
+and identities remain unchanged. Missing cause/stage rows fail rather than
+creating a legacy cause or discarding extra real causes.
+
+`moodlet_cause_rows.py` stores actual event facts, original wish/game/period
+snapshots and separate handover time. Common fields remain columns; small typed
+detail envelopes are versioned. Source wishes/objects and period evidence have
+no required live-row FK. A NULL-aware unique semantic receipt uses episode,
+kind, event and original wish identity, matching the existing domain key.
+Different original wishes may share an event; absent wish IDs do not bypass
+duplicate protection. Ending an episode cascades only its stages and causes.
+
+Six new SQL episode/cause cases, 23 existing emotional-persistence cases and
+ten SQL schema cases passed: **39 tests in 0.145 seconds**, longest 0.016 seconds
+rounded upward. Scoped Ruff, fresh strict Mypy (nineteen SQLite sources) and
+Pyright including the new tests passed. Tk construction was blocked and all
+database/save fixtures were temporary. No personal save or full suite was used.
+Interaction, poor-care and long-term evidence mapping follows in scoped commits.
