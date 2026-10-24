@@ -70,7 +70,7 @@ class SocialRequestPolicyTests(unittest.TestCase):
             .blocked(SocialProvider.JOKEAPI, 101000)
         )
         raw = encode_social_history(history)
-        self.assertEqual(raw["version"], 2)
+        self.assertEqual(raw["version"], 3)
         self.assertEqual(decode_social_history(raw), history)
         self.assertEqual(
             decode_social_history(dict(version=1, entries=[])), SocialContentHistory()

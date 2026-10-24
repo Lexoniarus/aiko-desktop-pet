@@ -8,7 +8,11 @@ from pathlib import Path
 from typing import Literal
 from unittest.mock import Mock
 
-from aiko_pet.application.social_content import SocialCategory, prepare_social_content
+from aiko_pet.application.social_content import (
+    BUFFERED_CATEGORIES,
+    SocialCategory,
+    prepare_social_content,
+)
 from aiko_pet.pet.balance import parse_balance
 from aiko_pet.pet.catalog_validation import load_json
 from aiko_pet.pet.interaction_events import SocialCompletion
@@ -56,7 +60,7 @@ class ConversationTimingTests(unittest.TestCase):
         self.assertEqual(Cue.text("x" * 125).duration_ms, 7250)
 
     def test_each_existing_social_format_receives_the_common_reading_policy(self):
-        for category in SocialCategory:
+        for category in BUFFERED_CATEGORIES:
             with self.subTest(category=category):
                 payload = (fact_payload() if category == SocialCategory.FACT
                            else joke_payload(category))

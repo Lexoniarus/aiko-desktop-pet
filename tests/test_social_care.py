@@ -12,7 +12,11 @@ from test_social_content import fact_payload, joke_payload
 from aiko_pet.application.active_time import ActiveSessionClock, SessionInputs
 from aiko_pet.application.commands import CareCommand
 from aiko_pet.application.controller import CareController
-from aiko_pet.application.social_content import SocialCategory, prepare_social_content
+from aiko_pet.application.social_content import (
+    BUFFERED_CATEGORIES,
+    SocialCategory,
+    prepare_social_content,
+)
 from aiko_pet.infrastructure.character_mind import make_aiko_mind
 from aiko_pet.pet.mind.adaptive import AdaptiveRoutine
 from aiko_pet.pet.state import PetState
@@ -31,7 +35,7 @@ class SocialCareTests(unittest.TestCase):
             wall_time=stamp, monotonic_time=100, auto_routine=False,
             allow_bedtime=None, allow_nap=False, interrupt_nap=False, effort=None,
         )
-        for index, category in enumerate(SocialCategory):
+        for index, category in enumerate(BUFFERED_CATEGORIES):
             payload = (fact_payload() if category == SocialCategory.FACT
                        else joke_payload(category))
             prepared = prepare_social_content(category, payload)

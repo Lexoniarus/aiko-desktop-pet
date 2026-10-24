@@ -134,7 +134,9 @@ class CareController:
                 inputs.monotonic_time,
                 dialogue=before.dialogue,
             )
-        if result.effect == CareEffect.CONVERSATION and reaction is not None:
+        if (result.effect == CareEffect.CONVERSATION and reaction is not None
+                and (command.conversation is None
+                     or command.conversation.horoscope is None)):
             category = (command.conversation.category.value
                         if command.conversation is not None else "chat")
             wish = assign_activity_wish(

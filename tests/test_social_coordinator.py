@@ -7,6 +7,7 @@ import unittest
 from test_social_content import fact_payload, joke_payload
 
 from aiko_pet.application.social_content import (
+    BUFFERED_CATEGORIES,
     SocialCategory,
     SocialProvider,
     default_provider,
@@ -82,7 +83,7 @@ class SocialCoordinatorTests(unittest.TestCase):
             self.worker.complete(identifier)
             self.assertIsNone(self.social.poll())
         self.assertEqual(len(self.worker.requests), 6)
-        for category in SocialCategory:
+        for category in BUFFERED_CATEGORIES:
             self.assertEqual(self.social.count(category), 2)
         selected = self.social.select(SocialCategory.FACT)
         self.assertEqual(selected.status, "ready")

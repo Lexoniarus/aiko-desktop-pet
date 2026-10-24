@@ -5,7 +5,11 @@ from __future__ import annotations
 import unittest
 from typing import Any
 
-from aiko_pet.application.social_content import SocialCategory, prepare_social_content
+from aiko_pet.application.social_content import (
+    BUFFERED_CATEGORIES,
+    SocialCategory,
+    prepare_social_content,
+)
 
 
 def joke_payload(category: SocialCategory, identifier: int = 1) -> dict[str, Any]:
@@ -30,7 +34,7 @@ def fact_payload(identifier: str = "test") -> dict[str, str]:
 
 class SocialContentTests(unittest.TestCase):
     def test_each_format_retains_source_and_uses_existing_story_model(self) -> None:
-        for category in SocialCategory:
+        for category in BUFFERED_CATEGORIES:
             payload = (fact_payload() if category == SocialCategory.FACT
                        else joke_payload(category))
             item = prepare_social_content(category, payload)
@@ -63,7 +67,7 @@ class SocialContentTests(unittest.TestCase):
             prepare_social_content(SocialCategory.SINGLE, payload)
 
     def test_varied_framing_preserves_full_content_and_uses_only_a_final_emote(self):
-        for category in SocialCategory:
+        for category in BUFFERED_CATEGORIES:
             intros, endings = set(), set()
             for i in range(24):
                 payload = (fact_payload(str(i)) if category == SocialCategory.FACT

@@ -5,7 +5,11 @@ from copy import deepcopy
 
 from test_social_content import joke_payload
 
-from aiko_pet.application.social_content import SocialCategory, prepare_social_content
+from aiko_pet.application.social_content import (
+    BUFFERED_CATEGORIES,
+    SocialCategory,
+    prepare_social_content,
+)
 from aiko_pet.application.social_history import (
     SocialContentHistory,
     SocialContentReceipt,
@@ -19,7 +23,7 @@ from aiko_pet.infrastructure.social_history_codec import (
 class SocialHistoryCodecTests(unittest.TestCase):
     def history(self):
         history = SocialContentHistory()
-        for category in SocialCategory:
+        for category in BUFFERED_CATEGORIES:
             for i in range(12):
                 prefix = ("uselessfacts:" if category == SocialCategory.FACT
                           else "jokeapi:")
@@ -32,7 +36,7 @@ class SocialHistoryCodecTests(unittest.TestCase):
     def test_each_category_keeps_ten_without_full_content(self):
         history = self.history()
         self.assertEqual(len(history.entries), 30)
-        for category in SocialCategory:
+        for category in BUFFERED_CATEGORIES:
             entries = [e for e in history.entries if e.category == category]
             self.assertEqual(len(entries), 10)
             self.assertTrue(entries[0].identity.endswith("2"))

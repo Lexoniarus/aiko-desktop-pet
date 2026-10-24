@@ -13,6 +13,12 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from ..application.horoscope import prepare_horoscope
+from ..application.horoscope_models import (
+    ZODIAC_SIGNS,
+    HoroscopeRequest,
+    checked_day,
+)
 from ..application.social_content import (
     PreparedSocialContent,
     SocialCategory,
@@ -27,8 +33,9 @@ REQUEST_TIMEOUT_SECONDS = 8
 
 
 class _NoRedirects(HTTPRedirectHandler):
-    def redirect_request(self, req: Any, fp: Any, code: int, msg: str,
-                         headers: Any, newurl: str) -> None:
+    def redirect_request(
+        self, req: Any, fp: Any, code: int, msg: str, headers: Any, newurl: str
+    ) -> None:
         # Access changes require review, never a request to another endpoint.
         return None
 
@@ -49,12 +56,30 @@ class SocialHttpResponse:
     retry_at: float | None = None
 
 
-def social_endpoint(category: SocialCategory,
-                    provider: SocialProvider | None = None) -> str:
-    if (not isinstance(category, SocialCategory)
-            or provider is not None and not isinstance(provider, SocialProvider)):
+def social_endpoint(
+    category: SocialCategory,
+    provider: SocialProvider | None = None,
+    horoscope: HoroscopeRequest | None = None,
+) -> str:
+    if (
+        not isinstance(category, SocialCategory)
+        or provider is not None
+        and not isinstance(provider, SocialProvider)
+    ):
         raise ValueError("Unknown social endpoint")
     provider = provider or default_provider(category)
+    if category == SocialCategory.HOROSCOPE:
+        if (
+            provider != SocialProvider.ASTROWAY
+            or horoscope is None
+            or horoscope.sign not in ZODIAC_SIGNS
+        ):
+            raise ValueError("Missing reviewed horoscope request")
+        checked_day(horoscope.date)
+        return (
+            "https://api.astroway.info/v1/public/horoscope/daily"
+            f"?sign={horoscope.sign}&lang=de&date={horoscope.date}"
+        )
     if provider == SocialProvider.QUOTATIONS and category == SocialCategory.SINGLE:
         return "https://api.zitat-service.de/v1/quote?language=de"
     if provider != default_provider(category):
@@ -78,51 +103,76 @@ def _date(value: str | None) -> float | None:
         return None
 
 
-def _retry_at(headers: Any, now: float, *, limited: bool = False,
-              success: bool = False) -> float | None:
+def _retry_at(
+    headers: Any, now: float, *, limited: bool = False, success: bool = False
+) -> float | None:
     remaining = headers.get("RateLimit-Remaining") if headers is not None else None
-    if (success and isinstance(remaining, str) and remaining.isascii()
-            and remaining.isdigit() and int(remaining) > 0):
+    if (
+        success
+        and isinstance(remaining, str)
+        and remaining.isascii()
+        and remaining.isdigit()
+        and int(remaining) > 0
+    ):
         # JokeAPI sends Retry-After on ordinary successes too: it describes the
         # next reset, not a mandatory wait while requests remain available.
         return None
     retry = headers.get("Retry-After") if headers is not None else None
     until = None
     if isinstance(retry, str):
-        until = (now + int(retry) if retry.isascii() and retry.isdigit()
-                 else _date(retry))
+        until = (
+            now + int(retry) if retry.isascii() and retry.isdigit() else _date(retry)
+        )
     exhausted = headers is not None and headers.get("RateLimit-Remaining") == "0"
     reset = _date(headers.get("RateLimit-Reset")) if headers is not None else None
     if limited or exhausted:
-        until = max((v for v in (until, reset) if v is not None and v > now),
-                    default=now + 900)
+        until = max(
+            (v for v in (until, reset) if v is not None and v > now), default=now + 900
+        )
     if until is not None and now < until <= 253402300799:
         return until
     return None
 
 
-def fetch_social_response(category: SocialCategory,
-                          provider: SocialProvider | None = None) -> SocialHttpResponse:
-    request = Request(social_endpoint(category, provider), headers={
-        "Accept": "application/json", "User-Agent": "AikoDesktopPet/1.0",
-    })
+def fetch_social_response(
+    category: SocialCategory,
+    provider: SocialProvider | None = None,
+    horoscope: HoroscopeRequest | None = None,
+) -> SocialHttpResponse:
+    request = Request(
+        social_endpoint(category, provider, horoscope),
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "AikoDesktopPet/1.0",
+        },
+    )
     retry_at = None
     try:
-        with urlopen(request, timeout=REQUEST_TIMEOUT_SECONDS) as response:
-            retry_at = _retry_at(getattr(response, "headers", None), time.time(),
-                                 success=True)
+        with urlopen(
+            request, timeout=25 if horoscope else REQUEST_TIMEOUT_SECONDS
+        ) as response:
+            retry_at = _retry_at(
+                getattr(response, "headers", None), time.time(), success=True
+            )
             body = response.read(MAX_RESPONSE_BYTES + 1)
+            if horoscope and response.headers.get("X-AI-Cache", "").upper() == "STALE":
+                raise ValueError("Stale horoscope fallback")
         if len(body) > MAX_RESPONSE_BYTES:
             raise ValueError("Social response exceeds size limit")
-        content = prepare_social_content(category, json.loads(body.decode("utf-8")),
-                                         provider=provider)
+        payload = json.loads(body.decode("utf-8"))
+        content = (
+            prepare_horoscope(payload, horoscope)
+            if horoscope
+            else prepare_social_content(category, payload, provider=provider)
+        )
         return SocialHttpResponse(content, retry_at)
     except HTTPError as error:
         try:
             now = time.time()
             if error.code == 429:
-                raise SocialFetchError("rate", _retry_at(error.headers, now,
-                                                        limited=True)) from None
+                raise SocialFetchError(
+                    "rate", _retry_at(error.headers, now, limited=True)
+                ) from None
             access = error.code in (401, 403, 404, 410) or 300 <= error.code < 400
             retry_at = _retry_at(error.headers, now)
             raise SocialFetchError(
@@ -138,7 +188,8 @@ def fetch_social_response(category: SocialCategory,
 
 
 def fetch_social_content(
-    category: SocialCategory, provider: SocialProvider | None = None,
+    category: SocialCategory,
+    provider: SocialProvider | None = None,
 ) -> PreparedSocialContent:
     return fetch_social_response(category, provider).content
 
@@ -151,24 +202,35 @@ class HttpSocialContentWorker:
         self._active = False
         self._closed = False
 
-    def start(self, category: SocialCategory, token: object,
-              provider: SocialProvider | None = None) -> None:
+    def start(
+        self,
+        category: SocialCategory,
+        token: object,
+        provider: SocialProvider | None = None,
+    ) -> None:
         if self._closed or self._active:
             raise RuntimeError("Social worker is closed or already fetching")
         self._active = True
 
         def fetch() -> None:
             try:
-                response = fetch_social_response(category, provider)
-                result = SocialFetchResult(token, category, response.content,
-                                           retry_at=response.retry_at)
+                response = (
+                    fetch_social_response(category, provider, token)
+                    if isinstance(token, HoroscopeRequest)
+                    else fetch_social_response(category, provider)
+                )
+                result = SocialFetchResult(
+                    token, category, response.content, retry_at=response.retry_at
+                )
             except SocialFetchError as error:
-                result = SocialFetchResult(token, category, failure=error.failure,
-                                           retry_at=error.retry_at)
+                result = SocialFetchResult(
+                    token, category, failure=error.failure, retry_at=error.retry_at
+                )
             except Exception:
                 # Never expose provider bodies or exception text to the UI.
-                result = SocialFetchResult(token, category, failure="temporary",
-                                           retry_at=time.time() + 60)
+                result = SocialFetchResult(
+                    token, category, failure="temporary", retry_at=time.time() + 60
+                )
             self._results.put(result)
 
         Thread(target=fetch, name="aiko-social-content", daemon=True).start()

@@ -33,6 +33,11 @@
 > separates episode/cause mapping, interaction/poor-care evidence and bounded
 > encounter/long-term processing state. The active JSON store remains unchanged.
 
+> **SQL-5 in progress, 2026-10-24:** the
+> [SQL-5 delivery record](#sqlite-delivery-sql-5-adaptive-and-social-storage)
+> first secures the completed parallel horoscope baseline, then maps adaptive
+> memory, API histories/limits and the bounded current-day reading to SQLite.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -9337,3 +9342,32 @@ upserts do not reset independent counters or cursor state. The active JSON
 store and parallel social/UI/animation/character/text work are preserved.
 SQL-4 is complete; SQL-5 adaptive/social storage is next. The initial schema
 stays at version one before the separately planned store/import/cutover work.
+
+
+### SQLite delivery SQL-5: adaptive and social storage
+
+The owner authorized SQL-5 on 2026-10-24 with small commits, targeted local
+checks and pushes, no test windows, mouse control or CI. On checking the shared
+worktree, the owner explicitly requested taking the completed uncommitted
+horoscope work into a separate baseline before mapping its final contracts.
+
+#### SQL-5 baseline: completed parallel horoscope integration
+
+Secure the existing horoscope models, dated preparation, bounded daily/request
+state, codec/settings extension, coordinator/HTTP paths, resumable playback,
+UI/settings/Credits attribution, authored text, supporting tests and docs as
+one coherent pre-existing feature baseline. Character graphics/exports and HD
+asset documentation remain outside this commit. No new horoscope wish or SQLite
+runtime cutover is implied by saving this completed work.
+
+Targeted verification of this baseline ran **100 cases in 0.125 seconds**, with
+**four explicit native-display skips**, no failure/error; longest executed case
+0.037 seconds rounded to milliseconds. These checks cover horoscope, affected
+social/settings contracts, playback and conversation timing. Native Tk creation
+was blocked and default saves were redirected to temporary paths; HTTP fixtures
+were mocked. Scoped Ruff, fresh strict Mypy for 28 production/tool sources and
+Pyright including affected tests passed. Native skips are not visual acceptance.
+No full suite, real API request, personal save, window, mouse control or CI.
+
+The following SQL mapping commits build on this now-secured source contract;
+they do not redesign its provider limits or replay/admission behavior.

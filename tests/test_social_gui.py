@@ -76,7 +76,7 @@ class SocialGuiTests(unittest.TestCase):
 
     def test_menu_opens_without_effect_and_offline_plain_talk_still_works(self):
         menu = self.menu()
-        self.assertEqual(len(menu.buttons), 4)
+        self.assertEqual(len(menu.buttons), 5)
         self.assertFalse(self.worker.requests)
         self.assertEqual(self.pet.state.social, 10)
         self.assertIn(menu.frame.winfo_toplevel(), self.pet._overlay_windows())
@@ -127,7 +127,7 @@ class SocialGuiTests(unittest.TestCase):
         self.enable()
         menu = self.menu()
         self.assertEqual(menu.buttons[SocialCategory.SINGLE].cget("text"), "Sprüche")
-        self.assertEqual(len(menu.buttons), 4)
+        self.assertEqual(len(menu.buttons), 5)
         menu.choose(SocialCategory.SINGLE)
         self.pet.root.update()
         self.worker.complete(1, fail=True)
@@ -272,8 +272,8 @@ class SocialGuiTests(unittest.TestCase):
         self.assertEqual(saved["version"], 1)
         self.assertTrue(saved["settings"]["online_social"])
         history = saved["social_history"]
-        self.assertEqual(set(history), {"version", "entries", "requests"})
-        self.assertEqual(history["version"], 2)
+        self.assertEqual(set(history), {"version", "entries", "requests", "horoscope"})
+        self.assertEqual(history["version"], 3)
         self.assertEqual(len(history["entries"]), 1)
         receipt = history["entries"][0]
         self.assertEqual(set(receipt), {"category", "identity", "fingerprint"})

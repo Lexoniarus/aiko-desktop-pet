@@ -49,6 +49,7 @@ class ReactionPlayer:
         self._cues: tuple[Cue, ...] = ()
         self._pending_timer: str | None = None
         self._completion: Callable[[bool], None] | None = None
+        self._progress: Callable[[int], bool] | None = None
         self._index = -1
         self._story = False
         self._subject: str | None = None
@@ -112,6 +113,7 @@ class ReactionPlayer:
         self._completed_social = None
         self._index = -1
         self._hide_speech()
+        self._progress = None
         completion, self._completion = self._completion, None
         if completion is not None:
             completion(False)
@@ -125,11 +127,13 @@ class ReactionPlayer:
         on_complete: Callable[[bool], None] | None = None,
         subject: str | None = None,
         incidental: bool = False,
+        on_progress: Callable[[int], bool] | None = None,
     ) -> None:
         if reaction is None:
             return
         self.cancel()
         self._completion = on_complete
+        self._progress = on_progress
         self._subject = subject
         self._event = reaction.event
         self._incidental = incidental
@@ -162,6 +166,11 @@ class ReactionPlayer:
         if self._is_closed() or generation != self._generation:
             return
         self._pending_timer = None
+        if self._progress is not None and not self._progress(index):
+            self.cancel()
+            return
+        if generation != self._generation:
+            return
         if index >= len(self._cues):
             self._complete(generation)
             return
@@ -192,6 +201,7 @@ class ReactionPlayer:
             return
         self._pending_timer = None
         self._cues = ()
+        self._progress = None
         self._story = False
         self._subject = None
         self._event = None

@@ -1,27 +1,31 @@
 # Sayings, daily horoscope and tarot expansion plan
 
-> **Sprüche and shared bubble timing implemented; horoscope/tarot still planned.**
+> **Sprüche, shared bubble timing and the daily horoscope baseline implemented;
+> horoscope gift/VN presentation and tarot planned.**
 > Initial documentation-only plan recorded on 2026-10-23 at checkout `f6ae2df`
 > on `feature/social-optimization`. The owner later authorized the shared bubble
 > times (including final second and punchline pause), followed by the Sprüche
 > slice: German one-liners, quotations and their request/save/Credits boundaries.
-> Daily horoscope and tarot remain planned. This does not authorize purchases,
-> asset work, CI setup, push or merge. Existing parallel work is preserved.
+> The owner subsequently authorized the daily horoscope slice below, then recorded
+> the future hat-gift and VN presentation concept. That extension remains planning
+> only. This documentation update authorizes no implementation, further asset
+> generation, purchases, CI setup, push or merge. Existing parallel work is preserved.
 
 This is the current planning authority for the selected social expansion.
 The [original concept](SOCIAL_ENTERTAINMENT_CONCEPT.md) preserves earlier ideas;
 the [jokes/facts delivery record](SOCIAL_CONTENT_IMPLEMENTATION_PLAN.md) and
 [current social behavior](SOCIAL_CONTENT.md) describe the implemented baseline.
 Decisions below supersede earlier proposals for the selected scope. The current
-Sprüche delivery is described in [social content](SOCIAL_CONTENT.md); the reading
-and tarot sections below remain future work.
+Sprüche and horoscope behavior are described in [social content](SOCIAL_CONTENT.md);
+the delivery records below retain their individual scope. Tarot remains future work.
 
 ## Owner decisions
 
 | Area | Selected direction |
 | --- | --- |
 | German UI label **Sprüche** | Mix genuine short one-line jokes from JokeAPI with short quotations from Zitat-Service behind one choice. A provider `single` field alone does not qualify as a one-liner. |
-| Daily horoscope | German AstroWay content, at most once per local calendar day; options provide the user's zodiac sign or a birthday-based selection aid. |
+| Daily horoscope baseline | German AstroWay content with direct zodiac selection, a role performance of at most twelve text bubbles and one resumable reading per local calendar day; at most three fetch attempts per day. Birthday assistance is later work. |
+| Planned horoscope gift and VN presentation | Receiving a permanent fortune-teller hat as a gift unlocks the horoscope. Aiko wears it only during the reading. Match its views to the scene's actual head poses and plan a separate floating book. See the [gift and presentation decision](#planned-horoscope-gift-and-vn-presentation). Implementation remains future work. |
 | Tarot | Aiko explicitly plays the fortune-teller/card-reader role and presents the source's card meaning. |
 | Address | Aiko's ordinary framing uses **du**; source text may retain **Sie** inside the announced role. Preserve source wording. |
 | Cost | Content acquisition and operation of these integrations must be free of provider charges. No API keys, accounts, paid fallback or subscriptions. |
@@ -131,11 +135,18 @@ version-two `social_history` section in the existing atomic save. No source word
 source URLs, warm stock or pending playback are persisted. Reservation persistence
 runs before dispatch, without pet-time progression; a failed save prevents HTTP.
 
-Daily horoscope, tarot, zodiac/birthday options, role effects and card assets are
-not part of this implementation. The historical timing/test delivery records below
-retain their original scope and results.
+Daily horoscope and direct zodiac options are now delivered in the separate slice
+below. Tarot, birthday assistance, role effects and card assets remain planned.
+The historical timing/test delivery records retain their original scope and results.
 
 ## Daily horoscope and role performance
+
+The owner confirmed this design on 2026-10-23 and subsequently explicitly
+authorized its implementation. The runtime, direct sign option and compatible
+daily save extension now implement these rules. Tarot remains separately planned.
+The [later gift and VN presentation decision](#planned-horoscope-gift-and-vn-presentation)
+is a future extension; the following sections describe the delivered API baseline,
+which does not yet require or display a hat.
 
 Use `GET https://api.astroway.info/v1/public/horoscope/daily` with an explicitly
 selected `sign`, `lang=de` and the intended local calendar `date`. The reviewed
@@ -143,60 +154,197 @@ endpoint needs a zodiac sign, not birth date, birth time or birthplace.
 
 Options belong to the existing `PetSettings` owner:
 
-- Direct zodiac selection is sufficient. No sign means the horoscope is
-  unavailable with an explanatory settings hint, rather than a guessed sign.
-- A birthday entry aid is a planned option. Prefer day/month to suggest a sign
-  for confirmation; a birth year is unnecessary for this endpoint. Exact UI and
-  retention of the input are still to be settled. Do not transmit the birthday.
-- Store one confirmed sign as the canonical choice, rather than independent
-  birthday-derived and manually selected signs that can disagree.
+- First version: a direct selection labelled "Sternzeichen fürs Tageshoroskop",
+  containing all twelve signs and "Nicht ausgewählt" as the default. No sign
+  means the horoscope choice is disabled with an explanatory settings hint;
+  never guess a sign.
+- Store one confirmed sign as the canonical choice. Choosing a sign or opening
+  settings/the menu performs no request and starts no reading.
+- Birthday assistance is later work, outside the first version. It could suggest
+  a sign locally from day/month for confirmation, without a birth year. Do not
+  transmit a birthday or introduce a second competing sign preference. Input
+  retention and exact assistance UI remain future decisions.
 - Tarot and Sprüche do not require a birthday or zodiac sign.
 
 Aiko announces entering the fortune-teller role, presents the original German
 provider text, then visibly returns to her ordinary voice. The formal address
 is part of this performance. Framing and role exit use du. Do not change
 pronouns, conjugate verbs, claim the reading is Aiko's own observation of the
-user or insert provider statements into subjective Mind/World knowledge.
+user or insert provider statements into subjective Mind/World knowledge. An
+interruption ends the role immediately; resuming briefly announces re-entry.
 
-Default content proposal: complete `sections.overview` and `sections.advice`,
-not all six horoscope topics. Validate German text, matching sign/date and
-complete fields before admission. No raw non-German fallback is allowed.
+Selected presentation order (framing examples, not runtime catalogue changes):
 
-The current five-text story budget is too small for some examples once role
-entry and exit are included. A dedicated bounded reading budget must be settled
-explicitly before implementation. A maximum of eight text beats for overview,
-advice and framing is a working proposal to evaluate against real segmentation,
-not an approved runtime change. Preserve the 125-character bubble size. Do not
-silently remove sentences, omit a required section, bypass the limit with
-unrelated reactions or globally enlarge every story budget.
+1. Role entry, for example: "Ich schlüpfe mal in die Rolle der Wahrsagerin. Mal
+   sehen, was heute für dein Sternzeichen geschrieben steht."
+2. Present the complete provider AI/entertainment disclaimer.
+3. Read the complete overview and daily advice, retaining original wording and
+   Sie address within the announced role.
+4. Return to Aiko's ordinary voice, for example: "So, die Sterne hatten ihren
+   Auftritt. Jetzt bin ich wieder deine Aiko."
+
+Keep the original provider footer and source attribution visible with the
+reading; Credits supplement them rather than replacing mandatory visible hints.
+Do not offer a key/payment flow or read an English fallback as horoscope content.
+
+### Content and twelve-bubble budget
+
+Use complete `data.sections.overview` and `data.sections.advice`, not all six
+topics or the full concatenated `data.horoscope`. Validate the successful response
+envelope, daily period, German language, requested sign/date, both complete
+sections, disclaimer and provider footer before admission. An HTTP 200 alone is
+insufficient: the provider can return older or non-German text with fallback
+metadata while computed fields still match the requested date. Check the text's
+actual date/language too; reject stale or non-German fallback content without
+consuming reading eligibility. See the
+[public daily endpoint contract](https://api.astroway.info/en/docs/api/operations/publichoroscopedaily/).
+
+The approved bound is **at most twelve text bubbles for one prepared horoscope
+sequence**, including role entry/exit, the complete AI/entertainment disclaimer
+and any spoken attribution. Every text bubble keeps the **125-character limit**.
+Use the existing common reading time, final-text second and reading clicks. The
+actual final text receives the allowance, normally the role exit. The earlier
+eight-bubble proposal is superseded; the five-text budget for other social
+content is not enlarged by this decision.
+
+The live Widder sample for 2026-10-23 has a 371-character overview and a
+201-character advice section: five content bubbles with current segmentation.
+Its 231-character disclaimer takes three more. With one role-entry and one exit
+bubble, that is ten text bubbles, roughly eighty seconds using the selected
+reading times. This is one sizing sample, not a guarantee for every sign/day.
+Reject content that cannot fit completely within twelve bubbles. Never shorten
+source text, omit a required section or bypass the budget with unrelated reactions.
 
 ### Once per day and interrupted delivery
 
-The owner-selected rule is at most one daily horoscope per local calendar day.
-Use the user's local date (Europe/Berlin in this planning session), with no
-24-hour cooldown, offline backlog or network fetch merely because midnight
-passes. Pass the chosen date explicitly because the provider defaults to UTC.
+The selected rule is **one resumable daily reading per local calendar day across
+all signs**, not one reading per sign. Use the user's local date (Europe/Berlin in
+this planning session), with no 24-hour cooldown, offline backlog or request merely
+because midnight passes. Pass the selected date explicitly; the provider's
+default is UTC.
 
-Working lifecycle proposal to confirm during detailed delivery design:
+| State | Planned selection behavior |
+| --- | --- |
+| Not begun | "Tageshoroskop anhören"; fetch only on deliberate selection if no eligible prepared item exists. |
+| Fetch/preparation failed or content rejected | Leave reading eligibility open, subject to the separate three-attempt request cap and provider pauses. |
+| Interrupted | "Tageshoroskop fortsetzen"; resume the same item's interrupted bubble, without another fetch or care booking. |
+| Full sequence completed, including role exit | "Heute bereits vorgelesen"; another reading is available tomorrow. |
+| Restart | Restore the same daily state and any eligible continuation, without automatic playback or completion. |
 
-- Prepare/cache one item for date, sign, language and presentation selection.
-  Opening menus and joining an in-flight request do not generate another fetch.
-- A successful full reading marks that local day completed. Failed preparation
-  does not consume it. An interrupted reading may resume the same prepared
-  item, without another care booking or new provider draw.
-- Persist bounded daily eligibility and the admitted item's continuation
-  state through the existing save owner. Restart must not create another
-  completed reading or duplicate care. A sign change must not reset completion
-  for the day; it also must not silently replace an admitted reading.
-- Day rollover and sign changes during a request must not admit a stale result
-  as the new day's reading. Exact unfinished-reading rollover/resume semantics
-  remain to be decided; there is no offline playback or completion.
+- First actual playback admission fixes that day's reading and books the existing
+  talk care once. Full-sequence completion marks the day completed. Continuing
+  the same item repeats neither the care booking nor already completed content
+  bubbles. No new reward formula or wish family is selected.
+- Before playback begins, the sign may change. Invalidate any mismatching
+  prepared item or in-flight result; a discarded request still counts. Once
+  playback has begun, changing the preference applies from tomorrow and neither
+  replaces the active item nor unlocks another reading after completion.
+- A reading already playing at midnight may finish as the previous day's item;
+  it must not mark the new day completed. A paused previous-day reading expires
+  instead of being resumed or completed offline. Today's reading is independently
+  eligible. Late fetch results must never become the new day's reading.
+- Disabling online sources prevents playback/continuation and further requests,
+  while retaining the daily status and already booked care. Re-enabling on the
+  same day can resume the same still-eligible item, without resetting anything.
 
-This requires an explicit extension to today's save contract: existing social
-receipts store hashes/identities, not provider text or pending playback. They
-cannot alone serve as a daily content cache or resume mechanism. Separate
-settings, bounded provider cache and admission/completion evidence in the
-existing atomic persistence path; do not create another mutable store or journal.
+Persist a bounded daily record containing date, selected sign, validated content,
+reading progress, admission/care status and completion evidence through the
+existing atomic save owner. Keep settings, provider content and lifecycle evidence
+distinct within that boundary, not in a second mutable store or journal. Existing
+social admission receipts contain hashes/identities, not content or continuation
+state. The implemented version-three social history adds exactly this bounded
+daily record, while continuing to read version-one and version-two histories.
+Development verification uses isolated temporary saves.
+
+### At most three horoscope fetch attempts per day
+
+- Normally fetch one successful item per used day and reuse it for playback or
+  continuation. Opening/reopening menus and repeated clicks coalesce matching
+  in-flight work; never fetch merely to prepare a second ready horoscope.
+- Allow **at most three dispatched horoscope HTTP attempts per local calendar
+  day**, shared across all signs. Count timeouts, HTTP errors, rejected/oversized
+  content and discarded stale/sign-mismatched responses as attempts too. Each
+  attempt uses the existing bounded request-admission and persistence boundary.
+- Persist the attempt count independently of successful reading/completion.
+  Restart, sign changes, cancellation and opt-out must not reset it. Once all
+  three attempts are spent, show a retry-later/tomorrow status; an already valid
+  cached reading may still play or resume within its daily eligibility.
+- Retries are deliberate and paced, subject to provider pauses/Retry-After and
+  the shared AstroWay public IP budget of 30 requests per sliding hour. No
+  automatic endless retries, new worker, credential, paid fallback or local
+  replacement horoscope is allowed. Tarot's eventual attempt policy remains
+  undecided and must share the provider budget without inheriting this rule.
+
+## Planned horoscope gift and VN presentation
+
+Owner decision recorded on **2026-10-23**. This is an approved product direction
+for later implementation, not a description of current runtime behavior or a
+production-asset approval.
+
+### Permanent gift and horoscope unlock
+
+- The fortune-teller hat is a **permanent gift/item** that the player gives Aiko.
+  Actual receipt unlocks the horoscope; choosing a zodiac sign or merely selecting
+  an item in a menu is not receipt. Before the gift, the future horoscope action
+  remains locked. The direct zodiac selection remains a separate prerequisite.
+- Keep the gift and resulting access across sessions. The hat is retained for
+  later readings and is not consumed by a reading. Its acquisition route and
+  concrete save representation remain future design work.
+- Aiko wears the hat **only while performing the horoscope reading**. At completion
+  or interruption she leaves the role and removes it from the scene while retaining
+  the item. Resuming the daily reading restores the role and hat without another
+  gift or a second reading admission.
+- The once-per-day/resumable-reading rule, twelve-text-bubble ceiling and common
+  reading times, including the final second, remain in place. This decision adds
+  no friendship, care or reward-balance changes.
+- Future implementation must respect the existing [World ownership boundaries](WORLD_OBJECT_CONTRACTS.md):
+  durable item receipt/possession and temporary scene appearance are distinct.
+  Do not make a visible hat overlay the authority for gift ownership or unlock.
+
+### Anime/VN scene and hat perspectives
+
+- Treat the reading as an activity in Aiko's Desktop-Tamagotchi life: the gift gives
+  her an occasion to try the fortune-teller role with the player. Coordinate her
+  existing poses, emotes, pauses and text bubbles as a small VN scene.
+- Aiko's own curiosity, pride, hesitation or spontaneous comments may emerge from
+  the particular reading. An apology or explicit return-to-role joke is not a
+  mandatory repeated step. Example dialogue and the exact choreography remain
+  drafts, not an approved text catalogue.
+- Limit the initial hat artwork to the head views actually selected for this
+  scene, such as facing the player, looking at the book and a chosen head tilt.
+  Standing at a fixed desktop position does not keep the head angle fixed.
+- Match hat perspective, position, scale and hair overlap to those poses and their
+  transitions; keep Aiko's face readable and her identity/proportions consistent.
+  One front-facing overlay must not be assumed to fit every gaze or animation
+  frame. Exact views, anchor data and production counts require a later review.
+- Emotes currently replace text on the same speech surface. Place them between
+  text bubbles; simultaneous surrounding particles would be additional presentation
+  work. Coordinated pose changes within the reading also need later orchestration.
+
+### Separate floating book
+
+- Plan the book as its **own scene asset**, with a perspective that lets Aiko
+  visibly look into the pages. The first placement candidate is slightly in front
+  of her on screen-right near chest level, matching the existing down-right gaze.
+  Keep her face, hands and speech area readable; final size and position are open.
+- Gentle floating motion and occasional page-turn animation are later asset and
+  choreography work. Opening/closing states are candidates to review with that
+  sequence, not a fixed frame-production order. Aiko need not hold the book.
+- The first concept image supports the hat/book direction only. Its malformed book
+  is a composition placeholder, not approved book artwork; it must not become a
+  runtime asset. The hat's fit and perspectives also still need a proper asset pass.
+- Follow the local character-asset workflow for any later authorized production:
+  inspect the selected existing poses, preserve originals outside Git and review
+  the complete composition and transitions before a separate integration decision.
+
+### Scope of this decision
+
+This records the hat gift/unlock, scene-only wearing, suitable hat perspectives
+and floating-book direction. It does not select a replacement horoscope provider,
+a local astronomical library or a generated-text system. Those options remain
+under discussion; the earlier AstroWay implementation and its delivery evidence
+are retained as the current baseline. Sprüche and tarot retain their separate
+existing scope. No code, saves, runtime assets or dependencies are changed here.
 
 ## Tarot
 
@@ -368,13 +516,17 @@ Ordinary tests use provider-shaped fixtures and temporary saves. Keep live
 provider checks separate and limited. No new reward formula or wish family is
 selected; adding two menu choices must not leave duplicate contact/need writers.
 
-Remaining implementation order after separate authorization: settle reading
-budget/daily interruption/required-hint presentation and tarot replay details;
-recheck reading providers, extend the daily persistence contracts and deliver
-the reading lifecycle and role presentation. Sprüche, its menu label, available-
-source alternation, finite client caps and shared bubble times are implemented
-above. Birthday-input retention and final reading menu copy remain to be settled.
-Subjective practical reading-comfort acceptance remains pending.
+The daily horoscope now uses the existing worker on demand, a visible original
+footer beneath every spoken bubble, and the existing atomic save for daily
+attempts, validated text, current bubble, care admission and full completion.
+Admission and care are persisted together before display; each bubble transition
+is persisted before the next bubble is shown. A failed write prevents dispatch
+or stops playback. A resumed role introduction does not advance provider-text
+progress. No additional completion reward or wish family is introduced.
+
+Remaining work after separate authorization: tarot lifecycle/presentation,
+birthday assistance, optional role effects and assets. Subjective practical
+reading-comfort acceptance remains pending.
 
 ## Verification of this documentation pass
 
@@ -477,3 +629,51 @@ separate; no balance parameter or new social feature was changed in this follow-
   refuses HTTP redirects, separately tested against a local HTTP server.
 - No normal user save, dependency installation, horoscope/tarot implementation,
   card/character asset work, CI setup, push or merge is part of this slice.
+
+## Daily horoscope implementation (2026-10-23)
+
+- Direct sign selection has twelve signs and an unselected default. The existing
+  online opt-in explicitly includes horoscope content. Selecting a sign or opening
+  a menu does not fetch a horoscope. Missing signs disable its menu choice and
+  show a settings hint.
+- The reviewed public daily path needs no key, registration or paid fallback.
+  Only explicit selections dispatch requests; matching in-flight selections join
+  the same request. There are at most three dispatched attempts per local day
+  across signs, plus a 60-second client spacing, provider pauses/Retry-After and
+  the provider-wide rolling-hour budget. An existing valid item remains usable
+  after the last attempt. No automatic horoscope refill/retry is introduced.
+- Successful replies must match sign/date/period/language, contain both complete
+  sections, disclaimer and attribution, and fit twelve 125-character bubbles.
+  Fallback metadata or a STALE cache header is rejected conservatively. Provider
+  wording/Sie is preserved; the role entry and exit use du. The original footer
+  is rendered as visible plain-text attribution, outside the spoken bubble budget,
+  and AstroWay is also listed in Credits.
+- A bounded version-three daily record extends the existing social history;
+  version-one and version-two saves remain readable. Care admission, continuation,
+  opt-out, sign changes and day boundaries follow the rules above. A running
+  old-day reading can complete without completing the new day. A paused old-day
+  reading is not offered again.
+- One separate live Widder request for 2026-10-23 passed validation in ten bubbles
+  with lengths 108/88/71/70/123/125/121/124/76/70. This is a sizing/contract
+  observation, not a guarantee for all future signs/days.
+- Fixture and native temporary-save tests cover full text/budget rejection,
+  quota persistence, stale replies, sign changes, same-request coalescing,
+  save failures, restart continuation, one-time care and opt-out. Tarot has no
+  runtime, endpoint call, menu choice or asset integration in this slice.
+
+### Horoscope verification
+
+- Windows / Python 3.11.9: **1,776 tests pass in 245.153 seconds**, including
+  sixteen new horoscope contract/lifecycle/playback tests and four native Tk
+  acceptance tests with temporary saves. The existing buffered formats and wish
+  catalogue remain covered; horoscope is explicitly outside social wish targets.
+- Whole-repository Ruff passes. Strict Mypy passes all **264 source files**;
+  repository-wide Pyright reports zero errors/warnings. The import-graph gate
+  confirms an acyclic graph after separating immutable horoscope models from
+  preparation. Relative documentation links and whitespace checks pass.
+- Native visual inspection confirms the direct sign selector, expanded opt-in
+  copy and the complete original footer below the speech text, without clipping.
+  This verifies layout; personal reading-comfort feedback remains open.
+- The single live sizing check is recorded above. Development did not use the
+  normal user save, install dependencies, implement tarot, change assets/CI,
+  commit, push or merge.

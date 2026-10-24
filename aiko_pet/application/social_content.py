@@ -13,21 +13,31 @@ from ..pet.balance import BALANCE
 from ..pet.content import GERMAN_TEXT
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.reaction_sequence import Cue
+from .horoscope_models import HoroscopeText
 
 
 class SocialCategory(StrEnum):
     SINGLE = "single"
     TWO_PARTS = "twopart"
     FACT = "fact"
+    HOROSCOPE = "horoscope"
+
+
+BUFFERED_CATEGORIES = (
+    SocialCategory.SINGLE, SocialCategory.TWO_PARTS, SocialCategory.FACT,
+)
 
 
 class SocialProvider(StrEnum):
     JOKEAPI = "jokeapi"
     QUOTATIONS = "zitat-service"
     FACTS = "uselessfacts"
+    ASTROWAY = "astroway"
 
 
 def default_provider(category: SocialCategory) -> SocialProvider:
+    if category == SocialCategory.HOROSCOPE:
+        return SocialProvider.ASTROWAY
     return (SocialProvider.FACTS if category == SocialCategory.FACT
             else SocialProvider.JOKEAPI)
 
@@ -46,6 +56,7 @@ class PreparedSocialContent:
     author_url: str = ""
     license_name: str = ""
     license_url: str = ""
+    horoscope: HoroscopeText | None = None
 
 
 def _text(value: object) -> str:
@@ -128,6 +139,8 @@ def prepare_social_content(
     """Validate provider fields before a buffer slot can become ready."""
     if not isinstance(category, SocialCategory) or not isinstance(payload, dict):
         raise ValueError("Invalid social content")
+    if category == SocialCategory.HOROSCOPE:
+        raise ValueError("Horoscope requires its dated validator")
     provider = provider or default_provider(category)
     author, author_url, license_name, license_url = "", "", "", ""
     parts: tuple[str, ...]

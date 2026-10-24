@@ -10,7 +10,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, cast
 
-from aiko_pet.application.social_content import SocialCategory
+from aiko_pet.application.social_content import BUFFERED_CATEGORIES, SocialCategory
 from aiko_pet.games.contracts import GameId
 from aiko_pet.pet.balance import BALANCE, parse_balance
 from aiko_pet.pet.catalog_validation import load_json
@@ -52,7 +52,8 @@ class WishCatalogTests(unittest.TestCase):
                          set(DEFAULT_CATALOG.foods))
         social = {t for d in catalog.definitions.values()
                   if d.area == WishArea.SOCIAL for t in d.targets}
-        self.assertEqual(social, {"chat", *(c.value for c in SocialCategory)})
+        self.assertEqual(social, {"chat", *(c.value for c in BUFFERED_CATEGORIES)})
+        self.assertNotIn(SocialCategory.HOROSCOPE.value, social)
         for definition in catalog.definitions.values():
             if definition.area == WishArea.GAMES:
                 with self.subTest(wish=definition.id):

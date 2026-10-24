@@ -29,6 +29,7 @@ from ..ui.pet_view.care_presenter import CarePresenter, CareViewPorts
 from ..ui.pet_view.reaction_player import ReactionPlayer
 from ..ui.pet_view.speech_presenter import SpeechPresenter
 from ..ui.windows.hover_ui import HoverUi
+from .horoscope_playback import HoroscopePlayback
 from .social_runtime import SocialConversationRuntime, SocialRuntimePorts
 from .world_runtime import DesktopWorldRuntime
 
@@ -48,6 +49,7 @@ class DesktopCareRuntime:
         social_worker: SocialContentWorker | None = None,
         social_history: SocialContentHistory = SocialContentHistory(),
         persist_requests: Callable[[], OSError | None] = lambda: None,
+        zodiac_sign: Callable[[], str | None] = lambda: None,
     ) -> None:
         self._root, self._state, self._router = root, state, router
         self._world, self._contact = world, contact
@@ -66,12 +68,18 @@ class DesktopCareRuntime:
         content = SocialContentCoordinator(
             social_worker if social_worker is not None else HttpSocialContentWorker(),
             history=social_history, persist_requests=persist_requests,
+            zodiac_sign=zodiac_sign,
+        )
+        self._horoscope = HoroscopePlayback(
+            content, player, speech, self._book_horoscope,
         )
         self.social = SocialConversationRuntime(content, SocialRuntimePorts(
             can_start=self._can_start_social,
             defer=self._defer_social, start=self._start_social,
             show_wait=lambda reaction: player.play(reaction, animate=False),
             clear_wait=self._clear_wait, persist_admission=save,
+            stop_reading=self._horoscope.stop,
+            reading_active=lambda: self._horoscope.active,
             can_wait=lambda: (not is_closed() and not state.sleeping
                               and not game_open()),
         ))
@@ -165,6 +173,17 @@ class DesktopCareRuntime:
     def _start_social(self, content: PreparedSocialContent) -> bool:
         if not self._can_start_social():
             return False
+        if content.horoscope is not None:
+            return self._horoscope.start(content)
         # The runtime saves care and the admitted receipt together after accept().
         self.interact("talk", conversation=content, persist=False)
         return True
+
+    def _book_horoscope(self, content: PreparedSocialContent) -> None:
+        outcome = self._router.dispatch(
+            CareCommand.from_action("talk", conversation=content),
+            inputs=self._inputs(time.time(), time.monotonic()),
+        )
+        self._set_context(outcome.context)
+        self._hover.refresh_toolbar()
+        self._hover.refresh_status()

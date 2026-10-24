@@ -154,6 +154,17 @@ class Widget:
             self.master.children.remove(self)
 
 
+class String:
+    def __init__(self, **kwargs: Any) -> None:
+        self._value = ""
+
+    def get(self) -> str:
+        return self._value
+
+    def set(self, value: str) -> None:
+        self._value = value
+
+
 class Boolean:
     def __init__(self, **kwargs: Any) -> None:
         self._value = False
@@ -216,8 +227,9 @@ def widgets() -> Iterator[None]:
             Toplevel=Widget,
             Button=Widget,
             Checkbutton=Widget,
-            BooleanVar=Boolean,
+            BooleanVar=Boolean, StringVar=String,
         ),
+        patch("tkinter.ttk.Combobox", Widget),
         patch("tkinter.Tk", side_effect=AssertionError("Native windows prohibited")),
     ):
         yield

@@ -1,4 +1,4 @@
-"""Versioned receipt-only social history in the existing local save."""
+"""Versioned social receipts and bounded daily reading in the existing save."""
 
 from typing import Any
 
@@ -9,6 +9,7 @@ from ..application.social_history import (
     SocialContentReceipt,
 )
 from ..pet.catalog_validation import enum_value, object_fields
+from .horoscope_codec import decode_horoscope, encode_horoscope
 from .social_request_codec import decode_social_requests, encode_social_requests
 
 
@@ -16,58 +17,96 @@ def decode_social_history(raw: Any) -> SocialContentHistory:
     if not isinstance(raw, dict) or type(raw.get("version")) is not int:
         raise ValueError("Unsupported social history version")
     version = raw["version"]
-    if version not in (1, 2):
+    if version not in (1, 2, 3):
         raise ValueError("Unsupported social history version")
-    row = object_fields(raw, ("version", "entries", "requests") if version == 2
-                        else ("version", "entries"), context="social history")
+    row = object_fields(
+        raw,
+        ("version", "entries", "requests", "horoscope")
+        if version == 3
+        else ("version", "entries", "requests")
+        if version == 2
+        else ("version", "entries"),
+        context="social history",
+    )
     entries = row["entries"]
-    if (not isinstance(entries, list)
-            or len(entries) > len(SocialCategory) * RECENT_CONTENTS_PER_CATEGORY):
+    if (
+        not isinstance(entries, list)
+        or len(entries) > len(SocialCategory) * RECENT_CONTENTS_PER_CATEGORY
+    ):
         raise ValueError("Unbounded social history")
     result = []
     counts = dict.fromkeys(SocialCategory, 0)
     identities: set[str] = set()
     fingerprints: set[str] = set()
     for entry in entries:
-        item = object_fields(entry, ("category", "identity", "fingerprint"),
-                             context="social receipt")
-        category = enum_value(
-            item["category"], SocialCategory, context="social category",
+        item = object_fields(
+            entry, ("category", "identity", "fingerprint"), context="social receipt"
         )
+        category = enum_value(
+            item["category"],
+            SocialCategory,
+            context="social category",
+        )
+        if category == SocialCategory.HOROSCOPE:
+            raise ValueError("Horoscope uses its bounded daily record")
         identity, fingerprint = item["identity"], item["fingerprint"]
-        prefix = ("uselessfacts:" if category == SocialCategory.FACT else
-                  "zitat-service:" if category == SocialCategory.SINGLE
-                  and isinstance(identity, str)
-                  and identity.startswith("zitat-service:")
-                  else "jokeapi:")
-        if (not isinstance(identity, str) or not identity.startswith(prefix)
-                or not 1 <= len(identity.removeprefix(prefix)) <= 128
-                or any(char.isspace() or ord(char) < 32 for char in identity)
-                or category != SocialCategory.FACT
-                and not all("0" <= char <= "9" for char in identity[len(prefix):])):
+        prefix = (
+            "uselessfacts:"
+            if category == SocialCategory.FACT
+            else "zitat-service:"
+            if category == SocialCategory.SINGLE
+            and isinstance(identity, str)
+            and identity.startswith("zitat-service:")
+            else "jokeapi:"
+        )
+        if (
+            not isinstance(identity, str)
+            or not identity.startswith(prefix)
+            or not 1 <= len(identity.removeprefix(prefix)) <= 128
+            or any(char.isspace() or ord(char) < 32 for char in identity)
+            or category != SocialCategory.FACT
+            and not all("0" <= char <= "9" for char in identity[len(prefix) :])
+        ):
             raise ValueError("Invalid social provider identity")
-        if (not isinstance(fingerprint, str) or len(fingerprint) != 64
-                or any(char not in "0123456789abcdef" for char in fingerprint)):
+        if (
+            not isinstance(fingerprint, str)
+            or len(fingerprint) != 64
+            or any(char not in "0123456789abcdef" for char in fingerprint)
+        ):
             raise ValueError("Invalid social content fingerprint")
         counts[category] += 1
-        if (counts[category] > RECENT_CONTENTS_PER_CATEGORY
-                or identity in identities or fingerprint in fingerprints):
+        if (
+            counts[category] > RECENT_CONTENTS_PER_CATEGORY
+            or identity in identities
+            or fingerprint in fingerprints
+        ):
             raise ValueError("Duplicate or excessive social history")
         identities.add(identity)
         fingerprints.add(fingerprint)
         result.append(SocialContentReceipt(category, identity, fingerprint))
-    if version == 2:
+    if version >= 2:
         return SocialContentHistory(
-            tuple(result), decode_social_requests(row["requests"]),
+            tuple(result),
+            decode_social_requests(row["requests"]),
+            decode_horoscope(row["horoscope"]) if version == 3 else None,
         )
     return SocialContentHistory(tuple(result))
 
 
 def encode_social_history(history: SocialContentHistory) -> dict[str, Any]:
-    return dict(version=2, entries=[
-        dict(category=e.category.value, identity=e.identity, fingerprint=e.fingerprint)
-        for e in history.entries
-    ], requests=encode_social_requests(history.requests))
+    return dict(
+        version=3,
+        entries=[
+            dict(
+                category=e.category.value,
+                identity=e.identity,
+                fingerprint=e.fingerprint,
+            )
+            for e in history.entries
+        ],
+        requests=encode_social_requests(history.requests),
+        horoscope=encode_horoscope(history.horoscope),
+    )
 
 
 def valid_social_history(raw: Any) -> bool:

@@ -72,6 +72,8 @@ class HoverUiPorts:
     cards: GameCardPorts | None = None
     codes: GameCodePorts | None = None
     game_bounds_at: BoundsAt | None = None
+    set_zodiac: Callable[[str | None], None] = lambda _sign: None
+    horoscope_choice: Callable[[], tuple[str, bool]] = lambda: ("", True)
     social_selected: Callable[[SocialCategory], None] | None = None
     social_cancel: Callable[[], None] = lambda: None
     social_enabled: Callable[[], bool] = lambda: False
@@ -392,6 +394,7 @@ class HoverUi:
             enabled=self._ports.social_enabled,
             can_interact=lambda: self._ports.can_interact("talk"),
             snapshot=self._ports.social_snapshot,
+            horoscope_choice=self._ports.horoscope_choice,
             skin=self._skin,
         )
         self.social_menu.focus()
@@ -483,7 +486,7 @@ class HoverUi:
                 reset_toolbar=self._ports.reset_toolbar,
                 center=self._ports.center,
                 quit=self._ports.quit,
-                closed=self._settings_closed,
+                closed=self._settings_closed, set_zodiac=self._ports.set_zodiac,
             ),
             always_on_top=self._ports.always_on_top(),
             skin=self._skin,

@@ -6,7 +6,11 @@ import tkinter as tk
 import unittest
 from dataclasses import replace
 
-from aiko_pet.application.social_content import SocialCategory, prepare_social_content
+from aiko_pet.application.social_content import (
+    BUFFERED_CATEGORIES,
+    SocialCategory,
+    prepare_social_content,
+)
 from aiko_pet.pet.mind.catalog import DialogueBook, Reaction
 from aiko_pet.pet.mind.reaction_sequence import Cue
 from aiko_pet.ui.pet_view.reaction_player import ReactionPlayer
@@ -44,7 +48,7 @@ class ConversationTimingTkTests(unittest.TestCase):
 
     def test_all_four_actions_keep_native_bubbles_until_their_full_deadline(self):
         reactions = []
-        for category in SocialCategory:
+        for category in BUFFERED_CATEGORIES:
             payload = (fact_payload() if category == SocialCategory.FACT
                        else joke_payload(category))
             reactions.append(prepare_social_content(category, payload).reaction)

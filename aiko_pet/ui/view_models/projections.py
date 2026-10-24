@@ -227,7 +227,7 @@ def project_status(
 def project_settings(settings: PetSettings) -> SettingsSnapshot:
     """Produce one authoritative desktop preferences view for every caller."""
     return SettingsSnapshot(
-        scale=settings.scale,
+        scale=settings.scale, zodiac_sign=settings.zodiac_sign,
         options=(
             ("always_on_top", settings.always_on_top),
             ("auto_walk", settings.auto_walk),

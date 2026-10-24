@@ -24,6 +24,7 @@ class SocialMenu(EmbeddedSelector):
         can_interact: Callable[[], bool],
         snapshot: Callable[[], tuple[str, PreparedSocialContent | None]],
         skin: AikoSkin,
+        horoscope_choice: Callable[[], tuple[str, bool]] = lambda: ("", True),
     ) -> None:
         super().__init__(
             parent, skin, title=GERMAN_TEXT.format("ui.talk"), closed=closed
@@ -34,12 +35,17 @@ class SocialMenu(EmbeddedSelector):
             can_interact,
         )
         self._snapshot = snapshot
+        self._horoscope_choice = horoscope_choice
         self.buttons: dict[SocialCategory | None, ImageButton] = {}
         for category in (None, *SocialCategory):
             key = (
                 "social.plain" if category is None else f"social.name.{category.value}"
             )
-            icon = "status_social" if category is None else f"wish_{category.value}"
+            icon = (
+                "status_social"
+                if category in (None, SocialCategory.HOROSCOPE)
+                else f"wish_{category.value}"
+            )
             button = skin.button(
                 self.scroll.body,
                 GERMAN_TEXT.format(key),
@@ -70,6 +76,8 @@ class SocialMenu(EmbeddedSelector):
             and not self._enabled()
         ):
             return
+        if category == SocialCategory.HOROSCOPE and not self._horoscope_choice()[1]:
+            return
         self._selected(category)
         self.refresh()
 
@@ -78,8 +86,14 @@ class SocialMenu(EmbeddedSelector):
             return
         allowed, enabled = self._can_interact(), self._enabled()
         for category, button in self.buttons.items():
+            category_allowed = True
+            if category == SocialCategory.HOROSCOPE:
+                label, category_allowed = self._horoscope_choice()
+                if label and button.cget("text") != label:
+                    button.configure(text=label)
             update_button_state(
-                button, enabled=allowed and (category is None or enabled)
+                button,
+                enabled=allowed and category_allowed and (category is None or enabled),
             )
         status, _source = self._snapshot()
         text = status if enabled else GERMAN_TEXT.format("social.disabled")

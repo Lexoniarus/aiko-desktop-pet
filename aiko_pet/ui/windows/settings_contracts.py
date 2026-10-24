@@ -17,3 +17,4 @@ class SettingsActions:
     center: Callable[[], None]
     quit: Callable[[], None]
     closed: Callable[[], None]
+    set_zodiac: Callable[[str | None], None] = lambda _sign: None

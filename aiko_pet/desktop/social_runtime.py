@@ -20,11 +20,15 @@ class SocialRuntimePorts:
     clear_wait: Callable[[], None]
     can_wait: Callable[[], bool] = lambda: True
     persist_admission: Callable[[], None] = lambda: None
+    stop_reading: Callable[[], None] = lambda: None
+    reading_active: Callable[[], bool] = lambda: False
 
 
 class SocialConversationRuntime:
     def __init__(
-        self, content: SocialContentCoordinator, ports: SocialRuntimePorts,
+        self,
+        content: SocialContentCoordinator,
+        ports: SocialRuntimePorts,
     ) -> None:
         self.content = content
         self._ports = ports
@@ -41,12 +45,49 @@ class SocialConversationRuntime:
     @property
     def prepared_categories(self) -> frozenset[str]:
         """Read existing warm stock without fetching, selecting or reserving it."""
-        return frozenset(c.value for c in SocialCategory
-                         if self.content.enabled and self.content.count(c))
+        return frozenset(
+            c.value
+            for c in SocialCategory
+            if self.content.enabled and self.content.count(c)
+        )
 
     def snapshot(self) -> tuple[str, PreparedSocialContent | None]:
         key = self._status if self.content.enabled else "social.disabled"
+        day = self.content.horoscope
+        if (
+            self.content.enabled
+            and (
+                key == "social.hint"
+                or key == "social.started"
+                and self._last_content is not None
+                and self._last_content.horoscope is not None
+            )
+            and day.admitted
+        ):
+            key = (
+                "social.horoscope.completed"
+                if day.completed
+                else "social.started"
+                if self._ports.reading_active()
+                else "social.horoscope.paused"
+            )
+        if (
+            key == "social.hint"
+            and self.content.enabled
+            and not self.content.horoscope_available
+        ):
+            key = "social.horoscope.sign"
         return GERMAN_TEXT.format(key), self._last_content
+
+    def horoscope_choice(self) -> tuple[str, bool]:
+        day = self.content.horoscope
+        return GERMAN_TEXT.format(
+            "social.horoscope.read"
+            if day.completed
+            else "social.horoscope.resume"
+            if day.admitted
+            else "social.name.horoscope",
+        ), self.content.horoscope_available
 
     def set_enabled(self, enabled: bool) -> None:
         self.cancel()
@@ -54,6 +95,7 @@ class SocialConversationRuntime:
         self.content.set_enabled(enabled)
 
     def cancel(self) -> None:
+        self._ports.stop_reading()
         self._token = None
         self._phase = "idle"
         self.content.cancel_selection()
@@ -73,15 +115,22 @@ class SocialConversationRuntime:
             self._status = "social.waiting"
 
             def wait() -> None:
-                if (self._token is token and self._phase == "fetching"
-                        and not self._closed):
+                if (
+                    self._token is token
+                    and self._phase == "fetching"
+                    and not self._closed
+                ):
                     if not self._ports.can_start():
                         self.cancel()
                         return
-                    self._ports.show_wait(Reaction.spoken(
-                        "social-wait", GERMAN_TEXT.format("social.waiting"),
-                        "idle", "social_wait",
-                    ))
+                    self._ports.show_wait(
+                        Reaction.spoken(
+                            "social-wait",
+                            GERMAN_TEXT.format("social.waiting"),
+                            "idle",
+                            "social_wait",
+                        )
+                    )
 
             self._ports.defer(wait)
         else:
@@ -92,9 +141,17 @@ class SocialConversationRuntime:
             self._phase = "idle"
             self._token = None
             self._ports.clear_wait()
-            self._status = ("social.disabled" if selection.status == "disabled" else
-                            "social.limited" if selection.status == "limited"
-                            else "social.error")
+            self._status = (
+                "social.disabled"
+                if selection.status == "disabled"
+                else "social.limited"
+                if selection.status == "limited"
+                else "social.horoscope.sign"
+                if selection.status == "sign"
+                else "social.horoscope.completed"
+                if selection.status == "completed"
+                else "social.error"
+            )
             return
         item, token = selection.content, self._token
         self._phase = "admitting"

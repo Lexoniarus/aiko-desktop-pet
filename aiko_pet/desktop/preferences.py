@@ -115,6 +115,10 @@ class DesktopPreferences:
         self._ports.social_sources_changed(self._settings.online_social)
         self._ports.save()
 
+    def set_zodiac(self, sign: str | None) -> None:
+        self._settings.zodiac_sign = sign
+        self._ports.save()
+
     def forget_rhythm(self) -> None:
         self._adaptive.forget_profile()
         self._hover.refresh_status()

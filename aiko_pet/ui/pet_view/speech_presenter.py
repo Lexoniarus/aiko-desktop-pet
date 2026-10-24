@@ -56,6 +56,7 @@ class SpeechPresenter:
         self.pending_timer: str | None = None
         self.emote_images: dict[str, tk.PhotoImage] = {}
         self.game_hand_images: dict[Move, tk.PhotoImage] = {}
+        self.attribution = ""
         root.bind("<Destroy>", lambda event: (
             self.release_images() if event.widget is root else None
         ), add="+")
@@ -151,6 +152,12 @@ class SpeechPresenter:
             padx=12,
             pady=8,
         ).pack(padx=1, pady=1)
+        if self.attribution:
+            tk.Label(
+                frame, text=self.attribution, font=(self._font_name, 7),
+                wraplength=235, bg="#f0f6fa", fg="#243247", justify="center",
+                padx=8, pady=4,
+            ).pack(padx=1, pady=(0, 1))
         transparent = self._transparent_color if sys.platform == "win32" else "#202733"
         tail = tk.Canvas(
             bubble,

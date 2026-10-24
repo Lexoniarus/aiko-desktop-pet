@@ -245,6 +245,7 @@ class DesktopPet:
                 hover_snapshot=self._views.hover,
                 status_snapshot=self._views.status,
                 settings_snapshot=self._views.settings_view,
+                set_zodiac=lambda sign: self._preferences.set_zodiac(sign),
                 anchor=self._views.anchor,
                 care=self.interact,
                 pin_wish=lambda key, pin: self._care_runtime.set_wish_pinned(key, pin),
@@ -257,6 +258,7 @@ class DesktopPet:
                 social_cancel=lambda: self._social_runtime.cancel(),
                 social_enabled=lambda: self.settings.online_social,
                 social_snapshot=lambda: self._social_runtime.snapshot(),
+                horoscope_choice=lambda: self._social_runtime.horoscope_choice(),
                 food_choices=self._food_choices,
                 place_item=lambda selected: self._world.begin_carry(selected),
                 can_place_item=lambda: self._world.can_place_item,
@@ -463,6 +465,7 @@ class DesktopPet:
             is_closed=lambda: self._closed, game_open=lambda: self._hover.game_open,
             social_worker=social_worker, social_history=session.social_history,
             persist_requests=self._persistence.save,
+            zodiac_sign=lambda: self.settings.zodiac_sign,
         )
         self._social_runtime = self._care_runtime.social
         self._social_runtime.set_enabled(self.settings.online_social)

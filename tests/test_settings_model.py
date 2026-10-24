@@ -26,6 +26,7 @@ class PetSettingsModelTests(unittest.TestCase):
                 "toolbar_x": None,
                 "toolbar_y": None,
                 "online_social": False,
+                "zodiac_sign": None,
             },
         )
 

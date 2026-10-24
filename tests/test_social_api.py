@@ -19,6 +19,7 @@ from test_social_content import fact_payload, joke_payload
 from test_social_sayings import quote_payload
 
 from aiko_pet.application.social_content import (
+    BUFFERED_CATEGORIES,
     SocialCategory,
     SocialProvider,
     prepare_social_content,
@@ -187,7 +188,7 @@ class SocialApiTests(unittest.TestCase):
         self.assertEqual(paths, ["/reviewed"])
 
     def test_each_request_is_one_german_item_with_a_finite_timeout(self) -> None:
-        for category in SocialCategory:
+        for category in BUFFERED_CATEGORIES:
             payload = (
                 fact_payload()
                 if category == SocialCategory.FACT

@@ -27,6 +27,7 @@ class CreditsPanel:
             ("JokeAPI", "https://jokeapi.dev/"),
             ("Random Useless Facts", "https://uselessfacts.jsph.pl/"),
             ("Zitat-Service", "https://www.zitat-service.de/"),
+            ("AstroWay", "https://api.astroway.info/en/free/"),
         ):
             skin.button(
                 self.frame, name, partial(self._open_provider, url), size="wide"
