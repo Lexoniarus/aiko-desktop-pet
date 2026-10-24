@@ -221,7 +221,7 @@ class AnimatedPet:
                     self.frame_clock.finished,
                 ))
         image = self.sprites[state][source_index]
-        if (state == "idle" and fixed == 0) or (
+        if state == "idle" or (
             state == "look" and fixed is not None
         ):
             image = self._rest_renderer.resolve(

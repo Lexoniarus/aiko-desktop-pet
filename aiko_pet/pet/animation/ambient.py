@@ -51,17 +51,20 @@ class AmbientDirector:
         return self._blink_active
 
     def suspend(self, now: float, *, keep_pose_motion: bool = False) -> None:
-        """Cancel autonomous cues; keep subtle sway under cursor gaze."""
+        """Yield to attention without repeatedly postponing a pending glance."""
         if not keep_pose_motion:
             self._motion_started_at = now
         self._blink_active = False
+        # An interrupted glance is consumed, not resumed as a stale held pose.
+        # A merely pending glance keeps its due time and waits for free Idle.
+        if self._glance_frame is not None:
+            self.next_glance_at = now + self._between(
+                BALANCE.number("ambient", "glance_gap_minimum_seconds"),
+                BALANCE.number("ambient", "glance_gap_maximum_seconds"),
+            )
         self._glance_frame = None
         self._glance_until = now
         self.next_blink_at = now + self._between(*_BLINK_GAP_SECONDS)
-        self.next_glance_at = now + self._between(
-            BALANCE.number("ambient", "glance_gap_minimum_seconds"),
-            BALANCE.number("ambient", "glance_gap_maximum_seconds"),
-        )
 
     def motion_offset(self, now: float) -> int:
         """Head sway relative to the selected pose, not the whole character."""
@@ -136,5 +139,4 @@ class AmbientDirector:
         """A full eight-frame blink ended; do not immediately repeat it."""
         if self._blink_active:
             self._blink_active = False
-            self._motion_started_at = now
             self.next_blink_at = now + self._between(*_BLINK_GAP_SECONDS)

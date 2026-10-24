@@ -311,6 +311,77 @@ class StandaloneAnimatedPetTests(unittest.TestCase):
         self.anim.render(self.anim._ambient._glance_until + 0.1, (0, 0))
         self.assertEqual(self.anim.frame_clock.active_key, ("idle", 0))
 
+    def test_blink_sways_through_every_frame_without_reset_at_both_sizes(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.observe_computer = False
+        self.settings.follow_cursor = False
+        for scale in (1, 2):
+            with self.subTest(scale=scale):
+                self.settings.scale = scale
+                self.anim.reload_sprites()
+                now = 100.0
+                self.anim._ambient.suspend(now - 1.5)
+                self.anim._ambient.next_blink_at = now
+                self.anim._ambient.next_glance_at = now + 200
+                self.anim.frame_clock.reset()
+                self.anim.render(now, (0, 0))
+                offsets = []
+                for frame in range(8):
+                    tick = now + frame * .16
+                    self.anim.show_frame("idle", tick)
+                    self.assertEqual(self.anim.frame_clock.frame_index, frame)
+                    offset = self.anim._ambient.motion_offset(tick)
+                    offsets.append(offset)
+                    expected = self.anim._rest_renderer.resolve(
+                        self.anim.sprites["idle"][frame], offset=offset, scale=scale,
+                    )
+                    self.assertEqual(
+                        self.canvas.tk.call(
+                            str(self.canvas), "itemcget",
+                            self.anim.image_item, "-image",
+                        ),
+                        str(expected),
+                    )
+                    self.assertEqual(self.canvas.coords(self.anim.image_item), [0, 0])
+                self.assertIn(1, offsets)
+                self.assertIn(-1, offsets)
+                end = now + 1.28
+                self.assertEqual(self.anim._ambient.motion_offset(end), -1)
+                self.anim.show_frame("idle", end)
+                self.assertFalse(self.anim._ambient.blinking)
+                self.assertEqual(self.anim.frame_clock.active_key, ("idle", 0))
+                self.assertEqual(self.anim._ambient.motion_offset(end), -1)
+                expected = self.anim._rest_renderer.resolve(
+                    self.anim.sprites["idle"][0], offset=-1, scale=scale,
+                )
+                self.assertEqual(
+                    self.canvas.tk.call(
+                        str(self.canvas), "itemcget", self.anim.image_item, "-image",
+                    ), str(expected),
+                )
+
+    def test_due_glance_yields_to_object_attention_until_it_is_free(self) -> None:
+        self.settings.auto_walk = False
+        self.settings.observe_computer = False
+        now = time.monotonic()
+        ambient = self.anim._ambient
+        ambient.next_blink_at = now + 200
+        ambient.next_glance_at = now - 1
+        ambient._direction = lambda _options: 12
+        eyes_x, eyes_y = self.visual._eyes()
+        self.visual.object_target = (eyes_x + 1000, eyes_y)
+        for tick in (now, now + 1, now + 2):
+            self.anim.render(tick, (0, 0))
+            self.assertEqual(self.anim.frame_clock.active_key, ("look", 4))
+            self.assertEqual(ambient.next_glance_at, now - 1)
+        self.visual.object_target = None
+        self.anim.render(now + 3, (0, 0))
+        self.assertEqual(self.anim.frame_clock.active_key, ("look", 12))
+        self.visual.object_target = (eyes_x + 1000, eyes_y)
+        self.anim.render(now + 3.1, (0, 0))
+        self.assertEqual(self.anim.frame_clock.active_key, ("look", 4))
+        self.assertGreater(ambient.next_glance_at, now + 3.1)
+
     def test_spontaneous_glance_never_overrides_sleep_or_game(self) -> None:
         now = time.monotonic()
         self.anim.set_game_mode(True)
