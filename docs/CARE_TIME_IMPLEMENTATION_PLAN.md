@@ -9268,3 +9268,25 @@ rounded upward. Scoped Ruff, fresh strict Mypy (nineteen SQLite sources) and
 Pyright including the new tests passed. Tk construction was blocked and all
 database/save fixtures were temporary. No personal save or full suite was used.
 Interaction, poor-care and long-term evidence mapping follows in scoped commits.
+
+#### SQL-4B: boundaries, repeated intake and poor-care processing cursors
+
+`interaction_schema.py` adds `interaction_state`, `food_intake_receipts` and
+`poor_care_cursors`. `interaction_rows.py` preserves actual poke/petting
+boundaries, refusal/excess state and communicated food-variety requests using
+the existing strict Moodlet validation. Ordered intake timestamps may share a
+time; they remain distinct from the short recent-food-ID list in `pet_state`.
+
+`poor_care_rows.py` maps accounted/handled marks, handled levels and exposed
+flags by the five named needs. A NULL baseline denotes unknown history;
+baseline zero with five empty cursors denotes initialized history. Present
+incomplete cursors fail validation. These rows refer to the existing exposure
+timeline and never duplicate `need_exposure_buckets` or qualify new neglect.
+Core episode updates preserve both independently mapped portions. All writes
+remain inside the caller's transaction without committing or advancing time.
+
+Four new SQL cases and ten existing poor-care/food-event cases passed:
+**14 tests in 0.036 seconds**, longest 0.010 seconds rounded upward. Scoped Ruff,
+fresh strict Mypy (twenty-two SQLite sources) and Pyright including the new
+tests passed. Tk construction was blocked and saves/databases were temporary.
+The final SQL-4 portion adds shared encounters/evidence and long-term cursors.
