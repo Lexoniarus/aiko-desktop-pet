@@ -1,5 +1,6 @@
 """Strict storage of bounded encounters, semantic receipts and period watermarks."""
 
+import math
 from dataclasses import asdict
 from typing import Any
 
@@ -70,7 +71,10 @@ def decode_period_summary(
     end = number_value(
         row["ended_at"], minimum=start, maximum=elapsed, context="care period end"
     )
-    if end - start != MOODLET_CATALOG.long_term_policy.period_seconds:
+    if not math.isclose(
+        end - start, MOODLET_CATALOG.long_term_policy.period_seconds,
+        rel_tol=0, abs_tol=1e-7,
+    ):
         raise ValueError("Care summary must describe one complete qualification period")
     kinds = tuple(
         enum_value(v, CareActivity, context="care summary activity")
@@ -348,6 +352,7 @@ def decode_care_evidence(
                 "awake_contact_gap_seconds",
             ),
             context="long-term progress",
+            optional=("longest_awake_contact_gap_seconds",),
         )
         family = enum_value(
             value["definition_id"], MoodletId, context="long-term family"
@@ -381,7 +386,13 @@ def decode_care_evidence(
             maximum=accounted - start,
             context="long-term awake gap",
         )
-        progress.append(LongTermProgress(family, period, processed, accounted, gap))
+        longest = number_value(
+            value.get("longest_awake_contact_gap_seconds", gap), minimum=0,
+            maximum=accounted - start, context="long-term longest awake gap",
+        )
+        progress.append(LongTermProgress(
+            family, period, processed, accounted, gap, longest,
+        ))
         families.add(family)
     return CareEvidenceState(
         start, next_id, tuple(encounters.values()), tuple(experiences), tuple(progress)

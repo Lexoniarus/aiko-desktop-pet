@@ -16,6 +16,11 @@ from .food import (
 from .friendship_decay import advance_friendship
 from .friendship_history import NEED_NAMES, FriendshipProgress
 from .fun import advance_fun
+from .long_term_moodlets import (
+    advance_long_term,
+    next_long_term_boundary,
+    prepare_long_term,
+)
 from .mood import NeedMoodFactors, advance_mood, calculate_mood_target
 from .moodlet_catalog import MOODLET_CATALOG
 from .moodlets import (
@@ -164,7 +169,10 @@ def calculate_pet_progression(
         affection_rate = BALANCE.number("needs", "awake_affection_loss_per_hour")
     remaining = hours * 3600 if math.isfinite(hours) and hours > 0 else 0.0
     step_limit = BALANCE.number("simulation", "needs_step_seconds")
+    endpoint = elapsed + remaining
     represented = False
+    if remaining > 0:
+        moodlets = prepare_long_term(moodlets, elapsed=elapsed)
     while remaining > 1e-9:
         before_needs = NeedLevels(satiety, energy, fun, social, affection)
         if relationship is not None and not represented:
@@ -172,6 +180,7 @@ def calculate_pet_progression(
                 moodlets, relationship.history, elapsed=elapsed,
             )
         seconds = min(remaining, step_limit)
+        seconds = min(seconds, next_long_term_boundary(moodlets, elapsed=elapsed))
         if moodlets.active and not represented:
             moodlets = advance_moodlets(
                 moodlets, 0, elapsed=elapsed, before=before_needs, after=before_needs,
@@ -242,8 +251,17 @@ def calculate_pet_progression(
                 moodlets, after_needs, sleeping=record.sleeping,
                 definitions=definitions,
             )
+        if relationship is not None:
+            moodlets = advance_long_term(
+                moodlets, relationship.history, elapsed=elapsed + seconds,
+                sleeping=record.sleeping,
+            )
+            represented = represented and poor_care_at_capacity(
+                moodlets, after_needs, sleeping=record.sleeping,
+                definitions=definitions,
+            )
         elapsed += seconds
-        remaining -= seconds
+        remaining = max(0.0, endpoint - elapsed)
     return PetProgress(
         NeedLevels(satiety, energy, fun, social, affection), mood, food,
         moodlets, relationship,

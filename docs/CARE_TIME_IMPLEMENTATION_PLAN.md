@@ -1,5 +1,14 @@
 # Care, relationship and real-time implementation plan
 
+> **Current delivery, 2026-10-24:** the renewed wish/Moodlet implementation now
+> includes slices 1–7: typed forms, storage, lifetimes, ten-minute wish rotation,
+> matching, game/social/food/affection outcomes, qualified everyday positives,
+> concrete negative/poor-care causes and six longer-term care patterns. The
+> dated proposals and earlier completion reports below are historical; follow
+> the latest delivery receipts. Current step 8 remains passive-read integration,
+> generated-wish/day-balance acceptance, the full local suite and final OOP review.
+> No full-suite or integrated friendship-target acceptance is claimed for step 7.
+
 > **Latest positive lifetime proposal, 2026-10-23:**
 > [60/45/45 minutes](#revised-positive-after-effect-proposal-604545-minutes)
 > replaces the earlier uniform 45-minute base for positive multi-tier families.
@@ -8612,3 +8621,60 @@ two-hour distributed-encounter prerequisites.
 Focused local tests: 109 passed in 0.972 seconds, slowest 0.161 seconds. Native Tk
 creation was blocked. Focused Ruff and strict Mypy passed. Parallel horoscope and
 character-asset work remains outside these commits. No desktop automation or CI.
+
+
+### Delivery slice 7C: six longer-term care patterns on shared elapsed time
+
+`pet/long_term_moodlets.py` is a pure qualification policy called by the existing
+numeric progression path. The existing authored pattern parameters determine
+trust, appreciation, optimism, uncertainty, overlooked and guarded qualification.
+Each family consumes one complete twenty-four-hour care period once, anchored
+at its reliable baseline/previous processed endpoint. Several independently
+qualified families may coexist; a single family cannot reuse its processed day.
+
+Only actual personal completions and independent qualified incidents supply
+interaction evidence. Unknown legacy history starts a new period at the current
+endpoint. Trust reads the canonical rolling need-exposure history; there is no
+second exposure ledger. Encounter/wish variety and real game successes determine
+the other positive patterns. Fair defeats and ordinary absence never become
+bad-treatment incidents. Missing counts, full needs or friendship alone do not
+create positive long-term feelings.
+
+Overlooked counts the longest awake contact gap with at most one encounter.
+Welcome contact ends the current gap; sleep pauses it. An unaccounted partial
+gap survives a sleeping period boundary, but an accounted period's burden cannot
+produce another level. Current and period-maximum gaps persist in the existing
+cursor, with backward-compatible optional decoding. Standby and closed time use
+the same existing sleep/progression boundaries, without actions or UI playback.
+
+Qualification boundaries split the existing integration interval so new tiers
+only affect later mood/friendship time. Existing thirty-/thirty-six-hour decay,
+three-stage limits, +5/-10 joint long-term mood caps and reduced continuous
+friendship rates are reused. The capped-poor-care optimization no longer skips
+new long-term decay. Numeric endpoints use the existing target endpoint rather
+than two independently accumulated float remainders; saved period-duration
+validation tolerates at most 1e-7 seconds of arithmetic error.
+
+Evaluate all families before pruning consumed facts. Keep the current period
+and bounded latest actual activity/round anchors. Saturation restarts reliable
+qualification rather than treating evicted bad treatment as good care. Causes
+remain with active episodes under the existing one/two/three-reason retention.
+
+Targeted period, persistence and timing tests: 24 passed in 3.175 seconds; slowest
+1.530 seconds. Native Tk creation was forbidden. Complete staged-snapshot checks
+are recorded below after verification. Integrated generated-wish daily balances,
+the complete suite, passive presentation refinements and final OOP review remain
+step 8; no balance-rate changes or SQLite migration are included here.
+
+
+Step-7 staged-snapshot verification: **259 targeted local tests passed in 5.584
+seconds**, slowest individual test **1.531 seconds**. Coverage includes actual
+completion/gap triggers, no double award, independent incidents, all six pattern
+conditions, continuous-contact visits, sleep across period boundaries, bounded
+overflow, old/new storage, checkpoint/reopen and shared closed-time progression.
+The prior full-day test now explicitly expects the actually qualified overlooked
+episode while continuing to forbid invented encounters. No test exceeded ten
+seconds. Focused Ruff, strict Mypy and Pyright passed for all thirteen affected
+production files, with test lint also green. Checks ran against an isolated
+export of the Git index, excluding parallel uncommitted horoscope/UI/assets.
+This is targeted step-7 evidence, not the pending complete-suite acceptance.

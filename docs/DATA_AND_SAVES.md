@@ -185,10 +185,10 @@ fabricated and ended episodes have no separate archive.
 
 The codec accepts and validates obsolete optional per-cause `level` metadata,
 but ignores it; new saves omit it. Available old receipts survive within the
-current cap; already discarded receipts cannot be reconstructed. Wish results
-currently supply concrete causes. Negative-interaction and poor-care producers
-still omit them and use generic `legacy` evidence: this is a known recording
-gap, not proof that the original interaction/poor-care triggers are absent.
+current cap; already discarded receipts cannot be reconstructed. Wish results,
+qualified everyday positives, negative interactions and poor-care producers now
+supply concrete causes. Longer-term causes retain the actual qualifying-period
+summary. Old `legacy` causes remain unknown and are never reconstructed.
 See the [open audit](CARE_TIME_IMPLEMENTATION_PLAN.md#documentation-audit-and-open-work-2026-10-23).
 
 Each active Moodlet may additionally store `attribution`: `user`, `autonomous`
@@ -197,6 +197,31 @@ episodes saved before 5B.8 default to unknown. Loading never fabricates blame.
 The optional section and outer save remain version one. Overall emotional
 composition, localized labels, current wish restrictions and read-side
 countdowns are derived, never serialized as a second source of truth.
+
+### Bounded actual care evidence
+
+The optional Pet-owned `care_evidence` record stores at most 128 encounters and
+512 semantic experiences, plus one processing cursor for each of the six
+longer-term families. Encounter identities link welcome activities in two-hour
+visits. Evidence distinguishes actual fulfilled wish identities from admission
+assignments, real wins from fair losses, upsetting incidents from escalation
+messages and communicated boundary disregard from unexpressed preferences.
+Autonomous intake and closed time do not invent personal care visits.
+
+Each family cursor accounts real elapsed time and completed twenty-four-hour
+periods once. Current and longest awake contact gaps survive checkpoints and
+saves; `longest_awake_contact_gap_seconds` is an optional additive field. Older
+records conservatively use their known current gap. Sleep pauses gap accumulation;
+qualified periods consume handled burden. The existing relationship need-exposure
+history supplies care quality, without a second need timeline. Period-duration
+validation permits only tiny floating-point integration error (1e-7 seconds).
+
+Evaluate before pruning raw facts. Keep the current period plus bounded latest
+activity/round anchors for gap and comeback queries. If an unprocessed window
+saturates, restart its reliable baseline rather than declaring missing evidence
+positive care. Old saves start new qualification from the observed endpoint;
+they receive no fictional prior periods. Active episodes keep their own bounded
+causes independently of raw-evidence cleanup, using the same atomic Pet save.
 
 ## Continuous relationship and status precision
 

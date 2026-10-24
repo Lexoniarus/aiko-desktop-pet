@@ -43,6 +43,10 @@ def record_experience(
     evidence = state.care_evidence or CareEvidenceState(event.occurred_at)
     if any(e.receipt_id == event.receipt_id for e in evidence.experiences):
         return state, False
+    # A saturated unprocessed window is incomplete. Start a fresh reliable
+    # baseline instead of treating evicted bad treatment as a good care period.
+    if len(evidence.experiences) >= MAX_CARE_EXPERIENCES:
+        evidence = CareEvidenceState(event.occurred_at, evidence.next_encounter_id)
     encounters = evidence.encounters
     next_id = evidence.next_encounter_id
     if event.pleasant:
@@ -77,15 +81,6 @@ def record_experience(
         replace(p, awake_contact_gap_seconds=0) if event.pleasant else p
         for p in evidence.progress
     )
-    if len(evidence.experiences) >= MAX_CARE_EXPERIENCES:
-        baseline = max(baseline, events[0].occurred_at)
-        progress = tuple(p for p in progress if p.period_start >= baseline)
-        encounters = tuple(e for e in encounters if e.started_at >= baseline)
-        retained_ids = {e.instance_id for e in encounters}
-        events = tuple(
-            replace(e, encounter_id=None) if e.encounter_id not in retained_ids else e
-            for e in events
-        )
     return replace(
         state,
         care_evidence=replace(

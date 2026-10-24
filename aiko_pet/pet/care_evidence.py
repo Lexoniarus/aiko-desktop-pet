@@ -61,6 +61,7 @@ class LongTermProgress:
     processed_until: float
     last_accounted_at: float
     awake_contact_gap_seconds: float = 0.0
+    longest_awake_contact_gap_seconds: float = 0.0
 
 
 @dataclass(frozen=True, slots=True)

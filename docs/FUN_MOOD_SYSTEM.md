@@ -107,8 +107,16 @@ qualified care period raises one level, up to three, and resets only the current
 stage. They never receive wish-family extensions. Their per-intensity friendship
 rates are +0.00005/-0.00010 per thirty seconds, replacing ordinary +0.003/-0.006
 rates for those families. Ordinary short-term rates and progressive factors
-remain unchanged. Pattern qualification itself is still a later feature slice;
-elapsed time alone does not create long-term feelings or imaginary encounters.
+remain unchanged. Pattern qualification now reads bounded actual care periods.
+Trust requires distributed, varied respectful contact and sufficient care;
+appreciation requires fulfilled wishes from different areas; optimism requires
+pleasant varied contact and an actual success. Uncertainty requires independent
+pleasant-then-upsetting pairs, guardedness requires repeated distributed upsetting
+incidents, and overlooked requires little contact plus eight accumulated awake
+contactless hours. One completed twenty-four-hour period counts once per family.
+Sleep pauses the current awake gap; unaccounted time survives a sleeping period
+boundary, while accounted burden cannot award another level. Sleep, standby and
+closure advance stage decay and real need exposure, never fictional interaction.
 
 The existing progression loop splits at tier/expiry, recovery qualification and
 need-crossing boundaries. Before a boundary, actual mood still approaches the
@@ -335,8 +343,18 @@ Food fulfillment remains at one tier; overall game success adds two tiers of
 pride/relief; other successes add one within family limits. Episodes retain the
 latest actual causes up to current intensity (maximum three), trimming on decay
 and rolling on renewal. A single two-tier success still has only one actual
-cause; no event is invented to fill a row. Negative interaction and poor-care triggers
-currently lack structured concrete causes and fall back to generic evidence.
+cause; no event is invented to fill a row. Negative interactions and poor-care
+triggers now retain concrete causes too; old generic causes remain unknown.
+
+Four everyday positive experiences require no wish: a completed two-round shared
+session after a two-hour play gap, victory after two consecutive same-game
+defeats, a full social sequence after a four-hour gap and welcome petting after
+a four-hour gap. Actual activity resets its gap even when a wish already supplied
+the positive impression. One actual event receives no duplicate everyday award
+alongside wish fulfillment. Tolerated excess/refused petting and incomplete
+playback do not qualify. These use existing families and timing, with no new
+instant friendship rewards. Long-term patterns can independently consider the
+same real events without turning escalating messages into separate incidents.
 
 ## Verification scope
 

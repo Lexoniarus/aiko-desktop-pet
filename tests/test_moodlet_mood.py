@@ -211,7 +211,7 @@ class MoodletMoodTests(unittest.TestCase):
         ), 15, reconstruct=True)
         self.assertEqual(pet.capture_checkpoint(), expected.capture_checkpoint())
 
-    def test_full_day_expires_short_quiet_families_without_creating_emotions(self):
+    def test_full_day_expires_short_families_and_qualifies_actual_contact_gap(self):
         episodes = tuple(MoodletEpisode(i, d.id, len(d.level_points), 0, 0,
                                        d.decay_stage_seconds)
                          for i, d in enumerate(DEFINITIONS.values(), 1)
@@ -223,8 +223,15 @@ class MoodletMoodTests(unittest.TestCase):
         pet.advance(WALL + 86400, observed=False)
         self.assertEqual({e.definition_id for e in pet.moodlets.active}, {
             d.id for d in DEFINITIONS.values() if d.group == MoodletGroup.POOR_CARE
-        })
-        self.assertEqual(pet.moodlets.next_instance_id, next_id)
-        self.assertTrue(all(e.decay_paused for e in pet.moodlets.active))
+        } | {MoodletId.OVERLOOKED})
+        self.assertEqual(pet.moodlets.next_instance_id, next_id + 1)
+        self.assertTrue(all(e.decay_paused for e in pet.moodlets.active
+                            if e.definition_id != MoodletId.OVERLOOKED))
+        overlooked = next(e for e in pet.moodlets.active
+                          if e.definition_id == MoodletId.OVERLOOKED)
+        self.assertFalse(overlooked.decay_paused)
+        self.assertEqual(overlooked.causes[0].period.encounters, 0)
+        self.assertEqual(overlooked.causes[0].period.awake_contact_gap_seconds, 86400)
+        self.assertFalse(pet.moodlets.care_evidence.experiences)
         self.assertEqual(pet.mood, 0)
         self.assertEqual(pet.lived_seconds, 86400)
