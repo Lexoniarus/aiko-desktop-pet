@@ -1,5 +1,11 @@
 # Aiko VN menu icons — source set v1
 
+**Moodlet addition (2026-10-25):** eight new transparent source icons and their
+24–128 px exports complete coverage of the current 26 Moodlet families. The
+[dated extension record](moodlets-2026-10-25/README.md) contains the inventory,
+prompts and validation. These new symbols are prepared for review; application
+icon assignments are unchanged. The older preparation notes below are historical.
+
 **Implementation update (5C, 2026-10-20):** main status/menu, embedded selectors,
 shared VN assets and settings/Credits are implemented on `feature/social-optimization`.
 The preparation-only authorization statements below describe the historical
@@ -103,12 +109,14 @@ Additional owner-approved gameplay source files:
 | [play_rps_rock.png](icons/play_rps_rock.png) | Blue rock symbol |
 | [play_rps_paper.png](icons/play_rps_paper.png) | Open palm |
 
-The icon catalogue contains 46 PNG sources; the separate controls folder adds
+The icon catalogue contains 54 PNG sources after the
+[2026-10-25 Moodlet extension](moodlets-2026-10-25/README.md); the separate controls folder adds
 eight selected control/panel sources. Four excluded exploratory drafts remain
 in the external local reference bundle, with their hashes/prompts retained here.
 The table above lists the initial 27 icons;
 the [extension inventory](MOODLETS_AND_WISHES.md) maps the 14 additional Moodlet
-motives and five wish components. Full combined checks are in provenance.json.
+motives and five wish components. Historical combined checks are in provenance.json;
+the new extension records its prompts and validation separately.
 The artwork covers the documented candidate catalogue without implementing
 triggers, rewards, duration or stacking. Keep those decisions in the existing
 care/time plan.

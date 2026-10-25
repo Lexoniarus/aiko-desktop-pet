@@ -17,8 +17,8 @@ class VnAssetTests(unittest.TestCase):
     def test_exports_cover_selected_masters_and_keep_original_hashes(self):
         catalog = load_json(ASSET_ROOT / "ui/catalog.json")
         root = Path(__file__).resolve().parents[1]
-        self.assertEqual(len(catalog["icons"]), 46)
-        self.assertEqual(len(catalog["source_sha256"]), 54)
+        self.assertEqual(len(catalog["icons"]), 54)
+        self.assertEqual(len(catalog["source_sha256"]), 62)
         for path, expected in catalog["source_sha256"].items():
             self.assertEqual(
                 hashlib.sha256((root / path).read_bytes()).hexdigest(), expected, path

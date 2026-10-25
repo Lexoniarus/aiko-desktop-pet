@@ -82,6 +82,15 @@
       "96": "moodlet_annoyed_96.png",
       "128": "moodlet_annoyed_128.png"
     },
+    "moodlet_appreciated": {
+      "24": "moodlet_appreciated_24.png",
+      "32": "moodlet_appreciated_32.png",
+      "40": "moodlet_appreciated_40.png",
+      "48": "moodlet_appreciated_48.png",
+      "64": "moodlet_appreciated_64.png",
+      "96": "moodlet_appreciated_96.png",
+      "128": "moodlet_appreciated_128.png"
+    },
     "moodlet_cheerful": {
       "24": "moodlet_cheerful_24.png",
       "32": "moodlet_cheerful_32.png",
@@ -108,6 +117,15 @@
       "64": "moodlet_crowded_64.png",
       "96": "moodlet_crowded_96.png",
       "128": "moodlet_crowded_128.png"
+    },
+    "moodlet_disappointed": {
+      "24": "moodlet_disappointed_24.png",
+      "32": "moodlet_disappointed_32.png",
+      "40": "moodlet_disappointed_40.png",
+      "48": "moodlet_disappointed_48.png",
+      "64": "moodlet_disappointed_64.png",
+      "96": "moodlet_disappointed_96.png",
+      "128": "moodlet_disappointed_128.png"
     },
     "moodlet_disrupted": {
       "24": "moodlet_disrupted_24.png",
@@ -154,6 +172,24 @@
       "96": "moodlet_food_monotony_96.png",
       "128": "moodlet_food_monotony_128.png"
     },
+    "moodlet_food_wish_disregarded": {
+      "24": "moodlet_food_wish_disregarded_24.png",
+      "32": "moodlet_food_wish_disregarded_32.png",
+      "40": "moodlet_food_wish_disregarded_40.png",
+      "48": "moodlet_food_wish_disregarded_48.png",
+      "64": "moodlet_food_wish_disregarded_64.png",
+      "96": "moodlet_food_wish_disregarded_96.png",
+      "128": "moodlet_food_wish_disregarded_128.png"
+    },
+    "moodlet_guarded": {
+      "24": "moodlet_guarded_24.png",
+      "32": "moodlet_guarded_32.png",
+      "40": "moodlet_guarded_40.png",
+      "48": "moodlet_guarded_48.png",
+      "64": "moodlet_guarded_64.png",
+      "96": "moodlet_guarded_96.png",
+      "128": "moodlet_guarded_128.png"
+    },
     "moodlet_hunger_worn": {
       "24": "moodlet_hunger_worn_24.png",
       "32": "moodlet_hunger_worn_32.png",
@@ -180,6 +216,24 @@
       "64": "moodlet_missing_closeness_64.png",
       "96": "moodlet_missing_closeness_96.png",
       "128": "moodlet_missing_closeness_128.png"
+    },
+    "moodlet_optimistic": {
+      "24": "moodlet_optimistic_24.png",
+      "32": "moodlet_optimistic_32.png",
+      "40": "moodlet_optimistic_40.png",
+      "48": "moodlet_optimistic_48.png",
+      "64": "moodlet_optimistic_64.png",
+      "96": "moodlet_optimistic_96.png",
+      "128": "moodlet_optimistic_128.png"
+    },
+    "moodlet_overlooked": {
+      "24": "moodlet_overlooked_24.png",
+      "32": "moodlet_overlooked_32.png",
+      "40": "moodlet_overlooked_40.png",
+      "48": "moodlet_overlooked_48.png",
+      "64": "moodlet_overlooked_64.png",
+      "96": "moodlet_overlooked_96.png",
+      "128": "moodlet_overlooked_128.png"
     },
     "moodlet_pride": {
       "24": "moodlet_pride_24.png",
@@ -216,6 +270,24 @@
       "64": "moodlet_shared_play_64.png",
       "96": "moodlet_shared_play_96.png",
       "128": "moodlet_shared_play_128.png"
+    },
+    "moodlet_trusting": {
+      "24": "moodlet_trusting_24.png",
+      "32": "moodlet_trusting_32.png",
+      "40": "moodlet_trusting_40.png",
+      "48": "moodlet_trusting_48.png",
+      "64": "moodlet_trusting_64.png",
+      "96": "moodlet_trusting_96.png",
+      "128": "moodlet_trusting_128.png"
+    },
+    "moodlet_uncertain": {
+      "24": "moodlet_uncertain_24.png",
+      "32": "moodlet_uncertain_32.png",
+      "40": "moodlet_uncertain_40.png",
+      "48": "moodlet_uncertain_48.png",
+      "64": "moodlet_uncertain_64.png",
+      "96": "moodlet_uncertain_96.png",
+      "128": "moodlet_uncertain_128.png"
     },
     "moodlet_unstimulated": {
       "24": "moodlet_unstimulated_24.png",
@@ -498,21 +570,29 @@
     "assets/ui-vn/v1/icons/game_rps.png": "68770e967715708a310ab02df2c11c8ddd01bf6ce80c8a00943ca8550aa8891a",
     "assets/ui-vn/v1/icons/game_tic_tac_toe.png": "89bce821f3698c324518ae16b01518be7d3c654b6da99fe4c8bb30be2bd820d5",
     "assets/ui-vn/v1/icons/moodlet_annoyed.png": "87a63b71c6c96229be81c37bf2740ffc4bca447ac3e247f08ce87ba7e49db703",
+    "assets/ui-vn/v1/icons/moodlet_appreciated.png": "fd088ad614ab6adb2378df092160b6928e90f4946d6e95ba6620190823ed80bd",
     "assets/ui-vn/v1/icons/moodlet_cheerful.png": "80af26d443cb35e8deeded9e50b0684a1b9208407c29da84cc29077c7853ab52",
     "assets/ui-vn/v1/icons/moodlet_connection.png": "01c524478818e01bdcfa5da539cd3d3bcc92c9da3fce134e13ddbc1a29a132c3",
     "assets/ui-vn/v1/icons/moodlet_crowded.png": "5b1c091503dc3e24a271c09dc3b764f2415225452fcbbac781eff5145db8e777",
+    "assets/ui-vn/v1/icons/moodlet_disappointed.png": "8be34c1611293afa58a518408865e3ae4df7d24a439d34ada1c5d353291531ba",
     "assets/ui-vn/v1/icons/moodlet_disrupted.png": "50cab2e9c01b2baa3023db2824402ee94044a4dee0806f1ba8bc79d07e724818",
     "assets/ui-vn/v1/icons/moodlet_enthusiastic.png": "bc49717f985f8f1ab63aa744cf2ebb9612d6b68dbb3b176bd453ac7741c37359",
     "assets/ui-vn/v1/icons/moodlet_exhaustion_irritated.png": "44debe72fb3599995cfdac929bb44f7017406113af0b2e26195c6d42c15d5033",
     "assets/ui-vn/v1/icons/moodlet_food_fulfilled.png": "cf0a8a64677cd05277c3163a906f401775196b58b6f0b58cf10d3f5155efb108",
     "assets/ui-vn/v1/icons/moodlet_food_monotony.png": "3da5ff8b90ddc02a7bf7201db73c4f3c0e0a50d2c38328cfe1a280074bdd8acf",
+    "assets/ui-vn/v1/icons/moodlet_food_wish_disregarded.png": "11c8117bf122a24212a446660da7597789823107a5177bbf1c546a9870b971c4",
+    "assets/ui-vn/v1/icons/moodlet_guarded.png": "1cca3423172bd5bab853e1090333470d7179d0ca443dd65cb4402a1f685ffd3a",
     "assets/ui-vn/v1/icons/moodlet_hunger_worn.png": "13eda7a3bd11d981d9b302d8ac59be242a0d6804be12f43ee0250447d23c304b",
     "assets/ui-vn/v1/icons/moodlet_lonely.png": "cc62a9fe33a3dc56513b675f79dfd9c13053eb4257a8260a8e0dcda442245ebc",
     "assets/ui-vn/v1/icons/moodlet_missing_closeness.png": "b100521cfbaf7f7366d90c1366333c981ceea50b409bb073bd330dfb47fc11d6",
+    "assets/ui-vn/v1/icons/moodlet_optimistic.png": "a39c1feccb63a19102fd50f6d2727473e16113c5036f24576a3d0690ae66293a",
+    "assets/ui-vn/v1/icons/moodlet_overlooked.png": "56089e93c2cd704ec91e2911ddd26521adb050b7007717826529c6dc24ad0446",
     "assets/ui-vn/v1/icons/moodlet_pride.png": "6af98a56c0d2f4bc4d6dad9afc913995e839d8ebc4e5251cf3fb511a07d69fb5",
     "assets/ui-vn/v1/icons/moodlet_relief.png": "8fe1264392669d64d0c98562dbbc593cf532208a0fb7839f99e0eaa249fc734f",
     "assets/ui-vn/v1/icons/moodlet_secure.png": "6a2223b00073a9402dcb85763e6946ebc31ffbbad909ff640f922ef4fd1f9d97",
     "assets/ui-vn/v1/icons/moodlet_shared_play.png": "7d5008c4434fbb55722d557cc3854080d7cf107c347abe683feccfe1998e5120",
+    "assets/ui-vn/v1/icons/moodlet_trusting.png": "a61926b01361dc9f62f7897fa7f77a123a99bcc4035c7da96c1106b479db0a06",
+    "assets/ui-vn/v1/icons/moodlet_uncertain.png": "1f0f9af6cb4f5cb4b1b9e9db2b9dcfc3bfe60d49ea61bdeaf5ae40c5970bee91",
     "assets/ui-vn/v1/icons/moodlet_unstimulated.png": "f48e111a7ec17adbaf1e47f2b83ba08c406ea17c04fda36e6627513efd29c6a1",
     "assets/ui-vn/v1/icons/moodlet_withheld.png": "f50b6eea8859876d40d752eb051a80d0cbcb06dc07d3a349b788a9aefe691858",
     "assets/ui-vn/v1/icons/play_rps_paper.png": "c6a48c78b9ba8ce3842f74146ff54eb851b103f1d5081f916ac991e1d62f83c1",
