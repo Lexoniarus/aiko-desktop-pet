@@ -7,7 +7,13 @@ from dataclasses import dataclass, replace
 from enum import Enum
 from random import shuffle
 
-from .contracts import GameId, SessionSummary
+from .contracts import (
+    BlackjackDecisionReason,
+    BlackjackDetails,
+    GameId,
+    RoundOutcome,
+    SessionSummary,
+)
 from .playing_cards import STANDARD_DECK, Card
 
 
@@ -34,7 +40,7 @@ class Table:
     dealer: tuple[Card | None, ...]
     player_total: int
     phase: Phase
-    result: str | None  # Player's win/loss/draw, only after settlement.
+    result: RoundOutcome | None  # Player's result, only after settlement.
 
 
 class Blackjack:
@@ -49,6 +55,11 @@ class Blackjack:
     @property
     def score(self) -> SessionSummary:
         return self._score
+
+    @property
+    def result_details(self) -> BlackjackDetails | None:
+        """Expose facts only after the existing reveal and score settlement."""
+        return self._result_details if self._settled else None
 
     @property
     def table(self) -> Table:
@@ -70,14 +81,21 @@ class Blackjack:
         self._dealer: tuple[Card, ...] = (first_dealer, self._draw())
         self._revealed = False
         self._settled = False
-        self._outcome: str | None = None
+        self._outcome: RoundOutcome | None = None
+        self._result_details: BlackjackDetails | None = None
         self._phase = Phase.PLAYER
         player_natural = hand_total(self._player) == 21
         dealer_natural = hand_total(self._dealer) == 21
         if player_natural or dealer_natural:
+            reason = (
+                BlackjackDecisionReason.BOTH_BLACKJACK
+                if player_natural and dealer_natural else
+                BlackjackDecisionReason.PLAYER_BLACKJACK if player_natural else
+                BlackjackDecisionReason.AIKO_BLACKJACK
+            )
             self._finish("draw" if player_natural and dealer_natural else (
                 "win" if player_natural else "loss"
-            ))
+            ), reason)
 
     def _draw(self) -> Card:
         return self._deck.pop()
@@ -87,7 +105,7 @@ class Blackjack:
         self._player += (self._draw(),)
         value = hand_total(self._player)
         if value > 21:
-            self._finish("loss")
+            self._finish("loss", BlackjackDecisionReason.PLAYER_BUST)
         elif value == 21:
             self._phase = Phase.DEALER
 
@@ -109,12 +127,23 @@ class Blackjack:
         value = hand_total(self._dealer)
         if value >= 17:
             player = hand_total(self._player)
+            reason = (
+                BlackjackDecisionReason.AIKO_BUST if value > 21 else
+                BlackjackDecisionReason.EQUAL_TOTAL if player == value else
+                BlackjackDecisionReason.HIGHER_TOTAL
+            )
             self._finish("win" if value > 21 or player > value else (
                 "loss" if player < value else "draw"
-            ))
+            ), reason)
 
-    def _finish(self, outcome: str) -> None:
+    def _finish(self, outcome: RoundOutcome, reason: BlackjackDecisionReason) -> None:
+        details = BlackjackDetails(
+            hand_total(self._player), hand_total(self._dealer), reason,
+        )
+        if details.player_outcome != outcome:
+            raise ValueError("Blackjack decision does not match its result")
         self._outcome = outcome
+        self._result_details = details
         self._phase = Phase.RESULT
 
     def settle(self) -> None:

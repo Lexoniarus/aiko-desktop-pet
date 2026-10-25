@@ -101,6 +101,7 @@ class BlackjackSequence:
             assert result is not None
             self._round_event(GameRoundEvent(
                 GameId.BLACKJACK, self._session_id, self.game.score.games, result,
+                self.game.result_details,
             ))
             clip = {"win": "failed", "loss": "jumping", "draw": "waving"}[result]
             self._animate(clip)

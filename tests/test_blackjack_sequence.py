@@ -5,6 +5,7 @@ import unittest
 from test_blackjack import arranged_game, card
 
 from aiko_pet.games.blackjack import Phase
+from aiko_pet.games.contracts import BlackjackDecisionReason, BlackjackDetails
 from aiko_pet.ui.windows.blackjack_sequence import BlackjackSequence
 
 
@@ -37,12 +38,17 @@ class BlackjackSequenceTests(unittest.TestCase):
         flow = self.make_flow(arranged_game(card('A'), card('8'), card('K'), card('9')))
         self.assertIsNone(self.hands[-1][0].cards[1])
         self.assertEqual(flow.game.score.games, 0)
+        self.assertIsNone(self.rounds[0].details)
+        self.assertIsNone(flow.game.result_details)
         flow.advance()
         self.assertTrue(self.hands[-1][1])
         self.assertEqual(flow.game.score.games, 0)
         flow.advance()
         self.assertEqual(self.views[-1][0].result, 'win')
         self.assertEqual([e.outcome for e in self.rounds], [None, 'win'])
+        self.assertEqual(self.rounds[1].details, BlackjackDetails(
+            21, 17, BlackjackDecisionReason.PLAYER_BLACKJACK,
+        ))
         self.assertEqual(self.rounds[0].identity, self.rounds[1].identity)
         self.assertEqual(flow.close().wins, 1)
         self.assertEqual(flow.close().games, 1)
@@ -57,6 +63,9 @@ class BlackjackSequenceTests(unittest.TestCase):
         self.assertEqual(self.tasks, {})
         self.assertEqual(self.hands[-1][0].cards, ())
 
+        self.assertEqual([event.details for event in self.rounds], [None])
+        self.assertIsNone(flow.game.result_details)
+
     def test_player_bust_reveals_but_dealer_does_not_draw(self):
         flow = self.make_flow(arranged_game(
             card('10'), card('2'), card('8'), card('3'), card('9'),
@@ -67,6 +76,9 @@ class BlackjackSequenceTests(unittest.TestCase):
         flow.advance()
         self.assertEqual(len(self.hands[-1][0].cards), 2)
         self.assertEqual(flow.game.score.losses, 1)
+        self.assertEqual(self.rounds[-1].details, BlackjackDetails(
+            27, 5, BlackjackDecisionReason.PLAYER_BUST,
+        ))
         self.assertIsNotNone(flow.pending_timer)
         self.tasks['turn']()
         self.assertIsNone(self.hands[-1][0].cards[1])
