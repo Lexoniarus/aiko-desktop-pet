@@ -13,6 +13,7 @@ from ..pet.content import GERMAN_TEXT
 from ..pet.mind.catalog import Reaction
 from ..pet.mind.reaction_sequence import Cue
 from ..pet.social_content_evidence import SocialCategory as SocialCategory
+from ..pet.social_content_evidence import SocialContentEvidence
 from ..pet.social_content_evidence import SocialProvider as SocialProvider
 from .horoscope_models import HoroscopeText
 
@@ -45,6 +46,7 @@ class PreparedSocialContent:
     license_url: str = ""
     horoscope: HoroscopeText | None = None
     intro_variant: int | None = None
+    evidence: SocialContentEvidence | None = None
 
 
 def _intro_cue(category: SocialCategory, variant: int) -> Cue:
@@ -227,4 +229,9 @@ def prepare_social_content(
         Reaction(identity, tuple(beats), "idle", "talk", presentation="story"),
         provider, author, author_url, license_name, license_url,
         intro_variant=variant,
+        evidence=SocialContentEvidence(
+            category, provider, identity, fingerprint, parts,
+            source, source_url, permalink, author, author_url,
+            license_name, license_url,
+        ),
     )

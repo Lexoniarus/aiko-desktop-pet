@@ -467,6 +467,7 @@ class PetState:
                 elapsed=self.lived_seconds, definitions=WISH_CATALOG.definitions,
                 instance_id=completion.wish_instance_id, event_id=receipt,
                 started_at=completion.started_at,
+                social_content=completion.content,
             ), personal=True)
         if receipt is not None:
             evidence = self.moodlets.care_evidence
@@ -474,7 +475,7 @@ class PetState:
             event = next(e for e in evidence.experiences
                          if e.receipt_id == receipt)
             self._change(moodlets=award_everyday_experience(
-                before, self.moodlets, event,
+                before, self.moodlets, event, social_content=completion.content,
             ))
 
     def record_completed_game_round(

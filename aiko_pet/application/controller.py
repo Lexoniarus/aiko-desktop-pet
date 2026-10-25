@@ -146,5 +146,7 @@ class CareController:
             reaction = replace(reaction, completed_social=SocialCompletion(
                 category, wish.instance_id if wish else None,
                 sequence_id=uuid4().hex, started_at=self._state.lived_seconds,
+                content=(command.conversation.evidence
+                         if command.conversation is not None else None),
             ))
         return CareOutcome(result, reaction, context)

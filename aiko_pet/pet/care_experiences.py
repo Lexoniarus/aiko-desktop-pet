@@ -26,6 +26,7 @@ from .moodlets import (
     MoodletState,
     reinforce_moodlet,
 )
+from .social_content_evidence import SocialContentEvidence
 from .wishes import WishArea, WishId, WishResolution, WishTargetKind
 
 ENCOUNTER_GAP_SECONDS = 2 * 3600
@@ -137,6 +138,7 @@ def award_everyday_experience(
     before: MoodletState,
     state: MoodletState,
     event: CareExperience,
+    *, social_content: SocialContentEvidence | None = None,
 ) -> MoodletState:
     """Gap credit uses actual activities, including previously wished-for ones."""
     rule = EVERYDAY_GAPS.get(event.activity)
@@ -159,7 +161,7 @@ def award_everyday_experience(
     seconds, family = rule
     if event.occurred_at - previous < seconds:
         return state
-    return award_positive(state, family, event)
+    return award_positive(state, family, event, social_content=social_content)
 
 
 def award_positive(
@@ -169,6 +171,7 @@ def award_positive(
     *,
     elapsed: float | None = None,
     game_details: GameResultDetails | None = None,
+    social_content: SocialContentEvidence | None = None,
 ) -> MoodletState:
     at = event.occurred_at if elapsed is None else elapsed
     return reinforce_moodlet(
@@ -186,6 +189,7 @@ def award_positive(
             outcome=event.outcome,
             object_id=event.object_id,
             game_details=game_details,
+            social_content=social_content,
         ),
     )
 

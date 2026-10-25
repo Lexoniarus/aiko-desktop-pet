@@ -11,6 +11,7 @@ from .moodlets import (
     MoodletOutcome,
     MoodletWishCause,
 )
+from .social_content_evidence import SocialContentEvidence
 from .wish_matching import assign_activity_wish, wish_matches_activity
 from .wishes import (
     MAX_WISH_ROUND_RECEIPTS,
@@ -32,6 +33,7 @@ def wish_cause(
     failed: bool = False, target_id: str | None = None,
     object_id: str | None = None, game: MoodletGameResult | None = None,
     game_details: GameResultDetails | None = None,
+    social_content: SocialContentEvidence | None = None,
 ) -> MoodletCause:
     goal = wish.goal_snapshot
     return MoodletCause(
@@ -42,6 +44,7 @@ def wish_cause(
                              target=wish.target),
         target_id=wish.target_id if target_id is None else target_id,
         outcome=outcome, object_id=object_id, game=game, game_details=game_details,
+        social_content=social_content,
     )
 
 
@@ -50,6 +53,7 @@ def fulfill_activity_wish(
     definitions: Mapping[WishId, WishDefinition], instance_id: int | None = None,
     object_id: str | None = None, event_id: str | None = None,
     started_at: float | None = None,
+    social_content: SocialContentEvidence | None = None,
 ) -> WishResolution:
     """Resolve the admitted identity; a stale assignment never chooses a fallback."""
     wish = (assign_activity_wish(state, area, target_id, elapsed=elapsed,
@@ -68,7 +72,8 @@ def fulfill_activity_wish(
                           event_id=event_id or f"wish:{wish.instance_id}:fulfilled",
                           target_id=target_id,
                           outcome=MoodletOutcome.INTAKE if area == WishArea.FOOD
-                          else MoodletOutcome.COMPLETED, object_id=object_id),
+                          else MoodletOutcome.COMPLETED, object_id=object_id,
+                          social_content=social_content),
     )
 
 

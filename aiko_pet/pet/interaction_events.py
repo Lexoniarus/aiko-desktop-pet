@@ -4,6 +4,8 @@ import math
 from dataclasses import dataclass
 from typing import Literal
 
+from .social_content_evidence import SocialContentEvidence
+
 
 @dataclass(frozen=True, slots=True)
 class FoodRepetitionMemory:
@@ -78,8 +80,15 @@ class SocialCompletion:
     wish_instance_id: int | None = None
     sequence_id: str | None = None
     started_at: float | None = None
+    content: SocialContentEvidence | None = None
 
     def __post_init__(self) -> None:
+        if self.content is not None and (
+            not isinstance(self.content, SocialContentEvidence)
+            or self.category != self.content.category.value
+            or self.sequence_id is None
+        ):
+            raise ValueError("Original social content requires its admitted sequence")
         if (self.category not in ("chat", "single", "twopart", "fact")
                 or self.wish_instance_id is not None
                 and (type(self.wish_instance_id) is not int
