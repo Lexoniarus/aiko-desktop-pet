@@ -10029,3 +10029,37 @@ mouse automation, HTTP or GitHub CI; no personal-save modification or full-suite
 rerun. Native Windows click delivery and appearance remain practical acceptance
 items, not claims derived from widget doubles. Parallel asset/export work is
 excluded from the commits.
+
+### Post-correction full suite and final OOP review (2026-10-25)
+
+Completed the separately authorized full local acceptance at **`40cf4fe`** after
+the common time contract, blank wish card, Mastermind input and remaining-game
+audit. **1,862 reported tests passed in 96.257 s**, zero failures/errors, with
+**112 display-dependent skips**. Native Tk was blocked before discovery and
+default saves redirected to a temporary directory; all skip reasons were reviewed.
+
+No test exceeded ten seconds. The longest three are temporary Windows setup
+integration **8.847 s**, replaced-provider install/repair paths **7.724 s**, and
+preserved broken-environment handling **5.659 s**. Their real subprocess/venv work
+checks installation boundaries, not gameplay waits. Existing explicit-time care
+scenarios remain below four seconds. No additional optimization/redundant test
+rewrite was warranted by the measured durations.
+
+Configured Ruff, fresh strict Mypy (**343 sources**) and repository Pyright pass.
+An extra scan outside the configured gate found **191 pre-existing style
+diagnostics** in the unchanged legacy `scripts/build_character_hd_2x.py`; these
+are recorded separately rather than folded into the parallel character/export
+work. The full run includes **53 pre-existing dirty/untracked paths**, left out
+of these commits, and is not presented as an isolated clean-checkout run.
+
+The [final post-correction OOP review](SQLITE_ACCEPTANCE_REVIEW.md#post-correction-local-acceptance-2026-10-25)
+records the common time endpoints, single aggregate/transaction ownership,
+closed/live reconstruction boundaries, projection-only wish rendering, game
+admission/timers and local pointer/draft/preview ownership. No further necessary
+product correction was found in those reviewed boundaries. Acceptance updates
+are documentation-only; the passing full suite is not rerun for that record.
+
+No personal-save access/change, test windows, mouse automation, live HTTP, CI or
+merge. Native Windows input/layout/preview and the reported AppHang remain
+practical acceptance items; headless checks do not certify them. Timing report:
+`%TEMP%/aiko-final-local-20261025-4f2951d9-3860-44a7-8c77-766bee195d38.json`.

@@ -33,6 +33,15 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest complete local acceptance (2026-10-25), after the time/save, wish-card and
+game input corrections: **1,862 reported tests in 96.257 s**, zero failures/errors,
+**112 display-dependent skips**. No test exceeded ten seconds; longest **8.847 s**.
+Configured Ruff, fresh strict Mypy (**343 sources**) and repository Pyright pass.
+The [post-correction OOP review](SQLITE_ACCEPTANCE_REVIEW.md#post-correction-local-acceptance-2026-10-25)
+records the reviewed owners, parallel workspace scope, legacy exporter lint
+findings and native Windows acceptance limits. No further product change was
+required by that review; no native test windows, mouse control or CI were used.
+
 Latest runtime correction (2026-10-24): [shared fractional time contract](CARE_TIME_IMPLEMENTATION_PLAN.md#time-contract-correction-after-sql-9-runtime-report).
 The prior OOP acceptance missed inconsistent elapsed endpoints. Pet and World
 now use the same plan-owned endpoint; strict storage bounds remain unchanged.

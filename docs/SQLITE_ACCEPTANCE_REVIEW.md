@@ -1,5 +1,69 @@
 # SQLite acceptance and OOP review
 
+## Post-correction local acceptance (2026-10-25)
+
+Reviewed `feature/social-optimization` at **`40cf4fe`**, including the fractional
+time/save correction, wish-card rendering and subsequent game input/focus fixes.
+The following acceptance covers the current workspace, including its **53
+pre-existing modified/untracked character/export paths**. Those parallel paths
+remain outside this delivery's commits. This is not a frozen clean-checkout run.
+
+- Full local suite: **1,862 reported tests in 96.257 s**, zero failures/errors;
+  **112 display-dependent skips**. Reviewed all recorded skip reasons: they
+  require native Tk/display access, which was intentionally blocked before
+  discovery. The report contains **1,862 individual timing records**.
+- **No test over ten seconds.** Longest: isolated Windows install/repeat/launcher
+  integration **8.847 s**; installer download/repair/failure-path fixture
+  **7.724 s**; preserved broken-environment fixture **5.659 s**. These subprocess
+  fixtures use temporary copies and substituted entrypoints/providers; they do
+  not start the real pet or download/install system Python. Real venv/setup work
+  verifies the installer boundary; no redundant simulation or delay was added.
+- Next longest are existing explicit-time care schedules **3.983 s**, a full-week
+  lifecycle **3.868 s**, and generated care/wish balance **3.242 s**. They advance
+  supplied timestamps, not a real-time gameplay loop. No timing-based test
+  rewrite or repeat run was justified.
+- Local configured quality gates pass: `ruff check aiko_pet tests main.py tools`,
+  fresh strict `mypy --no-incremental aiko_pet main.py tools` (**343 sources**),
+  and complete repository Pyright (**zero errors/warnings**).
+- An additional broader `ruff check .` found **191 existing style diagnostics**
+  in `scripts/build_character_hd_2x.py` (last changed by `e6dd310`). That legacy
+  exporter is outside the configured Ruff/Mypy source gate. It is unchanged here;
+  this review does not claim every tracked auxiliary script is lint-clean.
+
+The timing JSON remains outside Git at
+`%TEMP%/aiko-final-local-20261025-4f2951d9-3860-44a7-8c77-766bee195d38.json`.
+Default saves were redirected to a disposable directory before test discovery.
+No personal save, native test/pet windows, mouse automation, HTTP probe, GitHub
+CI or merge was used.
+
+### Reviewed ownership and contracts
+
+| Boundary | Source review and outcome |
+| --- | --- |
+| `TimePlan` / `SimulationStep` | Immutable interval definitions carry one elapsed axis and separate calendar anchors. Direct Pet progression and World coordination consume the same endpoints. `hours` is a rate conversion, not a second clock. |
+| `PetState` / pure progression | One mutable aggregate commits immutable policy results. Relationship, Moodlet/poor-care/long-term cursors, sleep duration and wish expiry share the represented intervals. Step/final guards reject mismatches; no tolerance, lifetime overwrite or second progression owner was introduced. |
+| Live clock / restorer / World coordination | The existing live clock consumes uptime once; the existing restorer reconstructs closed time once. The World coordinator handles finite resource effects and rollback with the existing aggregate, physical World and subjective memory owners. Storage does not simulate interactions or advance time. |
+| Configured store / SQLite / desktop persistence | The configured store reuses one transactional writer. Mappers translate complete checkpoints without independent commits. Expected revisions remain transaction-checked; the desktop adopts the returned revision only after success. No fallback JSON writer, revision repair cache or automatic reset was added. |
+| Wish projections / `WishPanel` | Authored target semantics and persisted identities remain domain-owned. UI uses the packaged icon catalog and only publishes a completed rendered identity set. Failed card construction can retry; UI does not invent or replace a wish. |
+| Hover admission / game sequences / game rules | Existing menu/deferred-admission tokens prevent duplicate/stale starts. Sequences own readiness/timers; rule engines own boards and scores. Connect Four's nonblocking player-first welcome retains move/AI/result guards. No game score or rule state was moved into the toolbar. |
+| `ScrollRegion` / Mastermind view / local drag | Pointer-focus suppression is local UI bookkeeping; keyboard reveal remains available. Selected color/draft are pending player input, not another completed-game state. The existing drag owner keeps a single gesture/preview and releases it before applying click/drop effects. The shared panel prepares its body before first mapping; no new polling/animation owner was added. |
+
+The review included the twelve changed production files since `d03f104` and their
+existing clock, restoration, storage, admission and rendering callers. Existing
+dependency/architecture guards passed as part of the full suite. Tests cover
+different boundaries: strict save/restart/time evidence, catalog-to-view assets,
+view commands/focus tags and sequence/rule admission. The added widget doubles
+do not recreate a gameplay simulation or establish native Windows input behavior.
+
+**No further product refactor was justified in these reviewed boundaries.** This
+is a bounded source/behavior review, not a guarantee about every possible runtime
+scenario. Native Windows click delivery, preview visibility/layout, and the
+previously reported AppHang remain practical acceptance items. The 112 display
+skips must not be described as executed visual tests. No full-suite rerun is
+needed for the documentation-only acceptance record below.
+
+## Historical SQL-9 acceptance (2026-10-24)
+
 > **Subsequent runtime finding, corrected 2026-10-24:** the original acceptance
 > missed an inconsistent fractional time contract shared by Pet and World
 > progression. Its statement that no product correction was needed was too broad.
