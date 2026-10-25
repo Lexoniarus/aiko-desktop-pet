@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from aiko_pet.application.read_snapshot import snapshot_pet
 from aiko_pet.application.settings import PetSettings
 from aiko_pet.application.social_content import SocialCategory
-from aiko_pet.games.contracts import GameId
+from aiko_pet.games.contracts import GameId, SessionSummary
 from aiko_pet.pet.routine import context_at
 from aiko_pet.pet.state import PetState
 from aiko_pet.telemetry import ComputerSnapshot
@@ -110,6 +110,42 @@ class EmbeddedSelectorTests(unittest.TestCase):
         self.assertIsNone(self.ui.game_window)
         cast(Mock, self.ports.game_speech.start).assert_not_called()
         self.assertEqual(self.toplevel.call_count, 0)
+
+    def test_each_other_game_starts_from_one_choice_and_one_deferred_admission(self):
+        self.ui._ports = replace(self.ports, cards=Mock())
+        for game, owner in (
+            (GameId.BLACKJACK, "BlackjackWindow"),
+            (GameId.TIC_TAC_TOE, "TicTacToeWindow"),
+            (GameId.CONNECT_FOUR, "ConnectFourWindow"),
+            (GameId.ROCK_PAPER_SCISSORS, "RockPaperScissorsWindow"),
+        ):
+            with self.subTest(game=game):
+                self.deferred.clear()
+                cast(Mock, self.ports.game_speech.start).reset_mock()
+
+                def create(_root, **kwargs):
+                    host = Mock()
+                    host.close.side_effect = lambda: kwargs["on_closed"](
+                        SessionSummary(game),
+                    )
+                    return host
+
+                with patch(f"aiko_pet.ui.windows.hover_ui.{owner}",
+                           side_effect=create) as factory:
+                    self.ui.open_game_menu()
+                    assert self.ui.game_menu is not None
+                    self.ui.game_menu.buttons[game].invoke()
+                    self.assertEqual(len(self.deferred), 1)
+                    self.assertIsNone(self.ui.game_menu)
+                    cast(Mock, self.ports.game_speech.start).assert_not_called()
+                    self.deferred[0]()
+                    factory.assert_called_once()
+                    assert self.ui.game_window is not None
+                    cast(Mock, self.ui.game_window.greet).assert_called_once()
+                    self.deferred[0]()
+                    factory.assert_called_once()
+                    self.ui.close_game()
+                    self.assertFalse(self.ui.game_open)
 
     def test_social_opt_out_loading_back_and_single_window_switching(self):
         self.ui.open_food_menu()

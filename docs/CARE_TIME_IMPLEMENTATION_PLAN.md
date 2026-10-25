@@ -9990,3 +9990,42 @@ Mypy on the four changed production modules pass. Repository Pyright passes;
 the final palette-focus adjustment and input tests also pass scoped Pyright.
 No test windows, mouse automation, live HTTP or CI were used. No full-suite
 rerun or personal-save change; parallel character/export work remains excluded.
+
+### Follow-up: remaining game click/focus audit (2026-10-25)
+
+Reviewed all four remaining `GameId` views and their sequences: Blackjack,
+Tic-Tac-Toe, Rock-Paper-Scissors and Connect Four. Followed embedded selection,
+deferred admission, initial view publication, pointer focus, disabled controls
+and pending-turn ownership. All views use the existing `GamePanel`/local
+`ScrollRegion` path. Its pointer-focus correction covers the Blackjack controls,
+Tic-Tac-Toe board buttons, Rock-Paper-Scissors hand choices and Connect Four canvas.
+No second input dispatcher, replacement native button or new gameplay owner is
+introduced. Unlike Mastermind, these views have no later board-fit callback
+which reveals an initially unconstrained board layout.
+
+Blackjack, Tic-Tac-Toe and Rock-Paper-Scissors already accept their first legal
+choice while greeting. No additional product change was justified there. Their
+dealer/AI/countdown guards remain in effect. Connect Four still rejected every
+click for the full greeting duration even on the player's turn. Its existing
+sequence now speaks the same welcome with the same reading duration and enables
+the player's turn immediately. Starting a move replaces no greeting timer because
+none is scheduled on that path. An Aiko-first greeting retains its existing paced
+transition; falling pieces, AI search, block commentary and outcome reading time
+are unchanged. The existing first-choice sequence test now asserts immediate
+acceptance, double-input protection and one AI search after the fall.
+
+Added targeted no-window integration checks using actual game-view constructors,
+game sequences and game rules. Only native widgets/images and the Connect Four
+executor are replaced. These check the installed pointer-focus bindings, first
+decisions, disabled controls during protected turns and return to input. A shared
+menu test covers each remaining game with one choice, exactly one deferred host
+construction/greeting and rejection of a stale admission callback.
+
+Acceptance: **108 targeted tests passed in 0.527 s**, zero failures/errors/skips;
+longest **0.090 s**, none over ten seconds. Scoped Ruff/Pyright and fresh strict
+Mypy for the changed production module pass. Native Tk was blocked before
+discovery, default saves redirected to a temporary fixture. No test windows,
+mouse automation, HTTP or GitHub CI; no personal-save modification or full-suite
+rerun. Native Windows click delivery and appearance remain practical acceptance
+items, not claims derived from widget doubles. Parallel asset/export work is
+excluded from the commits.

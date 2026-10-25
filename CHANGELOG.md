@@ -8,6 +8,10 @@ Windows release. The current documentation starts at [docs/README.md](docs/READM
 
 ### Added and changed
 
+- Accept the first legal Connect Four move during Aiko's welcome without
+  shortening the displayed line. Preserve fall animation, AI-turn and result
+  guards. Audit the other game choices and pointer-focus paths locally.
+
 - Support Mastermind color-then-slot clicks alongside visible capsule dragging.
   Distinguish clicks from drags, release capture on cancellation, and prepare
   the board's constrained layout before mapping. Allow draft editing during
