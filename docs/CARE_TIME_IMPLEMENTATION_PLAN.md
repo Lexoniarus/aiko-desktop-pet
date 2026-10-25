@@ -8,6 +8,9 @@
 > removes proposed discussed markers and conversation-history management.
 > The [replacement scope](#approved-replacement-scope-remove-ungrounded-generic-bubbles)
 > removes ungrounded generic speech rather than adding another dialogue layer.
+> **PL-1A delivered:** the [source/reference inventory](PLAUDERN_SOURCE_INVENTORY.md)
+> and exhaustive per-ID manifest document preservation/removal scope. No runtime
+> or catalogue change is included; PL-1B remains a separate implementation slice.
 
 > **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
 > [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
@@ -10740,3 +10743,38 @@ not block the independent catalogue inventory or game-evidence slices once they
 are explicitly authorized. Other exact catalogue text is reviewed within the
 small content commits rather than through an exhaustive pre-implementation
 cross-product of friendship, mood and causes.
+
+#### PL-1A delivery: source and reference inventory
+
+The owner authorized the static inventory, preservation of parallel work and
+documentation commits/push only. The previously agreed Plaudern direction and
+delivery plan were secured separately as `7a58367`.
+
+[The inventory](PLAUDERN_SOURCE_INVENTORY.md) and its
+[per-ID manifest](inventories/PL1A_DIALOGUE_IDS.tsv) cover the frozen shared-
+worktree snapshot: **1,153 sequences / 148 events**, schema 3, including 35
+uncommitted parallel Quiz additions. All 1,118 runtime-baseline definitions
+are unchanged in that snapshot; no parallel catalogue/runtime files are staged.
+The snapshot/hash provenance and later-reconciliation requirement are explicit.
+
+- **992 functional event sequences** and **43 grounded comments** are protected.
+  These include all **214 object sequences / 32 object events**.
+- **Eight fatigue-conditioned morning/night entries** must survive/rehome when
+  the calendar picker is retired; no event-name-only deletion is authorized.
+- **50 ungrounded idle/calendar sequences** are listed individually for PL-6C
+  removal, with current text and IDs.
+- **60 legacy `talk` sequences** have exact IDs and differentiated review reasons
+  for PL-5/PL-6 replacement; valid need/state wording is not called ungrounded
+  merely because it belongs to the old chat route.
+
+Reference review covers production, tests, tools/scripts, docs, workflow/root
+files and source-folder installation. The inventory lists 38 files for the
+narrow source-loader/spontaneous-story query and separately explains actual
+event producers, protected public `talk`/animation/routine meanings, direct-file
+fixtures, obsolete count assertions and balance-path assumptions. External
+copied consumers are not claimed absent; the loader facade remains supported.
+
+Verification is static raw JSON/AST, per-ID/hash/classification consistency,
+baseline/parallel comparison and documentation diff/link checks. No app imports,
+runtime tests, windows, mouse control, live API, personal-save changes or CI.
+No PL-1B source move, generic removal, schema or behavior change is performed.
