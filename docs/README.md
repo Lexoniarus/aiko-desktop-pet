@@ -33,6 +33,15 @@ and test-cleanup plans.
 
 ## Validation and acceptance
 
+Latest game/food/affection story slice (PL-6A): **240 targeted tests in 8.734 s**,
+zero failures/errors/skips, longest **0.595 s**, plus scoped Ruff, fresh strict
+Mypy for three production modules and Pyright for eight source/test files.
+The [delivery record](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6a-delivery-game-food-and-affection-story-families)
+covers concrete gameplay, original goals, intake/handover, welcome closeness and
+relationship/emotional coloring. All ten other catalogue sources and 1,093
+non-talk definitions remain unchanged. PL-6B/C and final PL-7 acceptance remain.
+No windows, mouse control, personal-save access, live API, CI or full-suite run.
+
 Latest Plaudern selection slice (PL-5): **202 targeted tests in 6.806 s**, zero
 failures/errors/skips, longest **0.586 s**, plus scoped Ruff, fresh strict Mypy
 for four production modules and Pyright for eight source/test files. The

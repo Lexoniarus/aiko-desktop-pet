@@ -4,6 +4,13 @@ Stand: 19. Oktober 2026. Grundlage ist die im Gespräch abgestimmte Stimme von
 Desktop-Aiko. Dieser Plan betrifft die vorhandenen gesprochenen Texte, nicht
 VN-Aiko oder eine Änderung des Verhaltenssystems.
 
+> Späterer Umsetzungsstand: PL-5 ersetzt den bisherigen Plaudern-Einstieg;
+> PL-6A vervollständigt Spiele, Essen und willkommene Zuwendung anhand echter
+> Erlebnisse. Die früheren Zahlen- und Erhaltungsziele dieses Papiers sind durch
+> diese Freigaben überholt. Die Charakterregeln bleiben die Grundlage. Den
+> aktuellen Umfang und die Prüfungen dokumentiert der
+> [englische Gesamtplan](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6a-delivery-game-food-and-affection-story-families).
+
 
 Aktueller technischer Stand (5B.8): Katalogschema 3 trennt emotionale
 Gesamtstimmung, Bedürfnisbedingungen, kurze Reaktionstöne und Situationen.

@@ -383,6 +383,15 @@ same real events without turning escalating messages into separate incidents.
 
 ## Verification scope
 
+PL-6A completes the game, food and welcome-affection story families through the
+same catalogue. Retained goals, actual last-round results and revealed details
+remain distinct. Food handover does not prove intake; autonomous intake does
+not prove a user gift. A pleasant petting recollection does not renew consent
+or make unwelcome contact secretly pleasant. Relationship and quiet/mixed
+emotional variants preserve those same facts without changing needs, wishes,
+Moodlet rewards or progression. See the
+[PL-6A delivery](CARE_TIME_IMPLEMENTATION_PLAN.md#pl-6a-delivery-game-food-and-affection-story-families).
+
 PL-5 derives requested Plaudern topics from existing active causes and original
 wish facts. Episode intensity supplies weight once before choosing a retained
 cause; multiple causes do not multiply episode weight, and shared events do not

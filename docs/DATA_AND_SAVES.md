@@ -119,6 +119,14 @@ semantic `conversation_topics`, `conversation_attributions` and
 `conversation_causes`. Their values are validated; every requested `talk` clause
 must bind a topic. Topic-bound placeholders are limited to proved fields
 (`target`, `count`, actual Blackjack totals or the existing `wish_text`).
+PL-6A adds typed `conversation_objectives`, `conversation_targets`,
+`conversation_outcomes`, `conversation_round_outcomes` and `conversation_wishes`.
+The aggregate goal outcome is distinct from its final round. Revealed RPS-hand
+topics may render `aiko_move`/`player_move` using existing German move labels;
+older missing-detail topics may not. These filters project saved causes and
+their original wish snapshots without new storage fields. Game, food and welcome-
+affection stories use their existing canonical topic files; further social and
+negative/long-term completion remains PL-6B.
 State/tone/topic/cause choices within one field are alternatives;
 directions/needs/situations require every listed fact. Topic selection reads
 existing wish/Moodlet facts; it adds no conversational storage or schema fields.

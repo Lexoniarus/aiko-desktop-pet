@@ -24,6 +24,10 @@
 > **PL-5 delivered:** [evidence-based Plaudern selection](#pl-5-delivery-evidence-based-requested-plaudern)
 > replaces the old requested-chat pool with a first grounded story set. Completing
 > the story families and replacing random spontaneous filler remain PL-6.
+> **PL-6A delivered:** [game, food and welcome-closeness stories](#pl-6a-delivery-game-food-and-affection-story-families)
+> now cover their concrete retained evidence, original goals and relationship/
+> emotional coloring. Social/negative/long-term stories remain PL-6B; spontaneous
+> cleanup remains PL-6C.
 
 > **Current delivery, 2026-10-24:** renewed wish/Moodlet slices 1–8 are delivered.
 > [Final acceptance and OOP review](#delivery-slice-8d-generated-care-acceptance-and-final-oop-review)
@@ -11121,3 +11125,90 @@ No windows, mouse control, live API, personal-save access/change, GitHub CI,
 full-suite run or merge. Wish/Moodlet timing, rewards, friendship balance and
 existing social completion/save ownership remain intact. Remaining story-family
 coverage is PL-6A/B; spontaneous cleanup is PL-6C; final integrated review is PL-7.
+
+#### PL-6A delivery: game, food and affection story families
+
+Delivered in area-separated commits: **`21b6992`** (games and factual conditions),
+**`08974db`** (food) and **`758dcbe`** (welcome affection). **`877cb0e`** corrects
+the complete-story uniqueness check and aggregate fixtures; **`e548ca9`** adds
+quiet/mixed aggregate-goal variants identified during editorial review. Parallel
+character/export, horoscope-documentation and social-plan work remains untouched.
+
+Ownership remains with the existing pure topic projection, immutable dialogue
+context/conditions and single `DialogueBook`. No new production module, dialogue
+engine, state owner, clock, save field, history, reward or schema is added.
+
+- `conversation_topics.py` distinguishes actual revealed RPS-hand topics from
+  old result-only causes. Its permitted `aiko_move`/`player_move` placeholders
+  use the existing `rps.move.*` German labels through the same catalogue renderer.
+  Missing saved hands never acquire invented moves.
+- The existing typed conditions add `conversation_objectives`,
+  `conversation_targets`, `conversation_outcomes`, `conversation_round_outcomes`
+  and `conversation_wishes`. Targets reference canonical IDs; objective, result
+  and source-wish vocabulary use the existing domain enums. Aggregate result and
+  actual final-round result stay separate. These are read-side filters only.
+- **Games:** Schere–Stein–Papier uses the actual opposing hands when available;
+  Tic-Tac-Toe uses actual three-in-a-row versus filled-board draw; Vier gewinnt
+  uses the completed connection without inventing its direction; Mastermind
+  retains the code-setter role and cracked/uncracked code. Blackjack covers all
+  seven reasons, both higher-total outcomes, naturals versus later 21, and early
+  player bust with Aiko's real undrawn total. Old missing-detail causes remain
+  result-only stories. Quiz stays shared question-solving without invented
+  opponent results, answer counts or scores.
+- Original next-win/retry and non-loss motives are selected only when retained.
+  Cumulative play, total wins, legacy majority and overall non-loss remain
+  distinct, with the original count and no fabricated streak. A concrete final
+  connection/code/hand completing a total-win goal requires the actual final
+  win; a block goal can succeed despite a final draw or loss. Quiet/mixed
+  variants also cover these aggregate goals. Positive shared play with a lost
+  final round is not rewritten as a failed wish.
+- **Food:** complete sequences distinguish a recognized handover from actual
+  intake, a specific desired food from an accepted alternative, and personal
+  USER attribution from autonomous/unknown origin. A handover never claims taste
+  or eating. A positive avoidance/variety fulfillment does not claim the received
+  food was the exact original preference or that Aiko had previously warned the
+  user. User-gift gratitude needs its retained attribution. Canonical food names
+  are rendered without duplicating grammatical metadata or a second name list.
+- **Affection:** welcome ordinary closeness and an actual fulfilled petting wish
+  have distinct complete stories. The original wanted contact can be remembered
+  even when the affection need is full. Unknown attribution does not invent a
+  specific giver, and unwelcome/crowded topics cannot match welcome stories.
+  Story selection supplies no new permission for the next petting attempt.
+- The five agreed game examples and food/affection motives have the four
+  relationship bands. Other result cases use restrained/familiar groupings
+  without enumerating every theoretical combination. Quiet or ambivalent
+  composition can color a complete positive account without forced jubilation
+  or invented secondary incidents. Negative cause text remains negative.
+
+The three canonical files now hold **158 game, 42 food and 18 affection stories**;
+these are delivery counts, not future minimum/maximum targets. The live catalogue
+has **1,324 entries**. All ten other source files, all **1,093 non-talk
+definitions** and their relative global order are unchanged. Social-content,
+negative/poor-care and six long-term story completion remain PL-6B, including
+unwanted food/crowding retrospectives; their direct functional feedback stays
+intact. Spontaneous idle/calendar cleanup remains PL-6C.
+
+Validation:
+
+- Games: **85 focused tests in 3.634 s**. Food: **41 in 1.752 s**. Affection:
+  **25 in 1.353 s**. All pass without errors or native-display skips.
+- Final combined targeted acceptance: **240 tests in 8.734 s**, zero failures,
+  errors or skips; longest **0.595 s**. No individual test exceeds ten seconds.
+  Cases cover actual RPS reveal-to-cause-to-story, all hand pairs, Blackjack
+  reasons, original aggregate goals/last results, all current food names,
+  recognized versus pending handover, autonomous intake, accepted alternatives,
+  full-need one-use petting permission, unknown attribution, mixed/quiet stories,
+  existing SQL restart, source boundaries and package dependency checks.
+- Scoped Ruff, fresh strict Mypy for the three changed production files, and
+  Pyright for those files plus five changed test files pass. The old global
+  first-bubble uniqueness rule now checks complete text sequences; short
+  functional first phrases retain their original uniqueness check. Actual
+  duplicated Blackjack defeat text was made reason-specific, not exempted.
+
+Reports and editorial exports remain outside Git in
+`%TEMP%/aiko-pl6a-source-9b8ft730/` (`games.json`, `final.json`, `before.json`,
+`preservation.json`). Native Tk creation was blocked before imports and default
+saves redirected to disposable paths. No windows, mouse control, live API,
+personal-save access/change, GitHub CI, full-suite run or merge. Existing need,
+friendship, wish/Moodlet and care/completion rules are unchanged. PL-7 remains
+the final whole-branch suite and OOP/PEP 8 acceptance.
