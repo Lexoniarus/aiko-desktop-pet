@@ -5316,6 +5316,940 @@
           "content": "drops"
         }
       ]
+    },
+    {
+      "id": "plaudern-goal-played-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "total_rounds",
+            "session_rounds"
+          ],
+          "conversation_outcomes": [
+            "completed"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die {count} Spielrunden, die ich mir gewünscht hatte, haben wir zusammen gespielt."
+        },
+        {
+          "kind": "text",
+          "content": "Die Zeit mit dir beim Spielen bleibt mir schön im Kopf. Auch wenn ich gerade stiller bin."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-played-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "total_rounds",
+            "session_rounds"
+          ],
+          "conversation_outcomes": [
+            "completed"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die {count} Spielrunden, die ich mir gewünscht hatte, haben wir zusammen gespielt."
+        },
+        {
+          "kind": "text",
+          "content": "Die gemeinsame Spielzeit bleibt schön. Auch wenn gerade nicht alles leicht ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe die {count} Siege zusammenbekommen, die ich schaffen wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Ich freue mich, dass ich diese Siege geschafft habe. Gerade eher mit einem kleinen Lächeln."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich habe die {count} Siege zusammenbekommen, die ich schaffen wollte."
+        },
+        {
+          "kind": "text",
+          "content": "Diese Siege freuen mich noch. Auch wenn ich mich gerade nicht nur unbeschwert fühle."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-majority-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "block_majority"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nach den {count} Spielrunden lag ich insgesamt vorne."
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin noch stolz darauf, insgesamt vorne gelegen zu haben. Gerade nur ein bisschen stiller."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-majority-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "block_majority"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nach den {count} Spielrunden lag ich insgesamt vorne."
+        },
+        {
+          "kind": "text",
+          "content": "Mein kleiner Stolz darauf ist noch da. Neben dem anderen, das mich gerade beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-nonloss-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "block_non_loss"
+          ],
+          "conversation_outcomes": [
+            "win",
+            "draw"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nach den {count} Spielrunden lag ich insgesamt nicht hinten."
+        },
+        {
+          "kind": "text",
+          "content": "Hach, dieses Aufatmen ist noch da. Gerade macht es mich eher ruhig."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-nonloss-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "block_non_loss"
+          ],
+          "conversation_outcomes": [
+            "win",
+            "draw"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Nach den {count} Spielrunden lag ich insgesamt nicht hinten."
+        },
+        {
+          "kind": "text",
+          "content": "Ich bin noch erleichtert darüber. Auch wenn gerade nicht alles unbeschwert ist."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-nonloss-failed-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "block_non_loss"
+          ],
+          "conversation_outcomes": [
+            "loss"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte nach unseren {count} Spielrunden insgesamt nicht hinten liegen."
+        },
+        {
+          "kind": "text",
+          "content": "Die Enttäuschung ist noch da. Gerade spreche ich eher leise darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-nonloss-failed-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "block_non_loss"
+          ],
+          "conversation_outcomes": [
+            "loss"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Ich wollte nach unseren {count} Spielrunden insgesamt nicht hinten liegen."
+        },
+        {
+          "kind": "text",
+          "content": "Hmpf, das wurmt mich noch. Dabei ist mir gerade nicht nur zum Schmollen."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-connect_four-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "connect_four"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Viererreihe bei Vier gewinnt hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Auf diesen Abschluss bin ich noch stolz. Gerade freue ich mich eher still darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-connect_four-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "connect_four"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Viererreihe bei Vier gewinnt hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Mein kleiner Stolz darauf ist noch da. Neben dem anderen, das mich gerade beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-mastermind-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "mastermind"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein ungeknackter Mastermind-Code hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Auf diesen Abschluss bin ich noch stolz. Gerade freue ich mich eher still darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-mastermind-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "mastermind"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein ungeknackter Mastermind-Code hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Mein kleiner Stolz darauf ist noch da. Neben dem anderen, das mich gerade beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-tic_tac_toe-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "tic_tac_toe"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Dreierreihe bei Tic-Tac-Toe hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Auf diesen Abschluss bin ich noch stolz. Gerade freue ich mich eher still darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-tic_tac_toe-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "tic_tac_toe"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Meine Dreierreihe bei Tic-Tac-Toe hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Mein kleiner Stolz darauf ist noch da. Neben dem anderen, das mich gerade beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-rock_paper_scissors-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "rock_paper_scissors"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Sieg bei Schere–Stein–Papier hat das letzte fehlende Stück beigetragen."
+        },
+        {
+          "kind": "text",
+          "content": "Auf diesen Abschluss bin ich noch stolz. Gerade freue ich mich eher still darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-rock_paper_scissors-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "rock_paper_scissors"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Mein Sieg bei Schere–Stein–Papier hat das letzte fehlende Stück beigetragen."
+        },
+        {
+          "kind": "text",
+          "content": "Mein kleiner Stolz darauf ist noch da. Neben dem anderen, das mich gerade beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-blackjack-quiet",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "subdued",
+            "downcast",
+            "lonely",
+            "irritated",
+            "crowded",
+            "frustrated",
+            "tense",
+            "reserved"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "blackjack"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die gewonnene Blackjack-Hand hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Auf diesen Abschluss bin ich noch stolz. Gerade freue ich mich eher still darüber."
+        },
+        {
+          "kind": "emote",
+          "content": "cloud"
+        }
+      ]
+    },
+    {
+      "id": "plaudern-goal-wins-blackjack-mixed",
+      "event": "talk",
+      "animation": "idle",
+      "presentation": "story",
+      "conditions": [
+        {
+          "conversation_topics": [
+            "game.cumulative"
+          ],
+          "sleeping": false,
+          "emotional_states": [
+            "ambivalent"
+          ],
+          "conversation_objectives": [
+            "total_wins"
+          ],
+          "conversation_outcomes": [
+            "win"
+          ],
+          "conversation_targets": [
+            "blackjack"
+          ],
+          "conversation_round_outcomes": [
+            "win"
+          ]
+        }
+      ],
+      "stages": [],
+      "periods": [],
+      "weekdays": [],
+      "beats": [
+        {
+          "kind": "text",
+          "content": "Die gewonnene Blackjack-Hand hat den letzten fehlenden Sieg gebracht."
+        },
+        {
+          "kind": "text",
+          "content": "Mein kleiner Stolz darauf ist noch da. Neben dem anderen, das mich gerade beschäftigt."
+        },
+        {
+          "kind": "emote",
+          "content": "swirl"
+        }
+      ]
     }
   ]
 }

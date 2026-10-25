@@ -270,6 +270,20 @@ class PlaudernGameTests(unittest.TestCase):
                     )
                 )
 
+    def test_aggregate_connection_keeps_its_facts_under_quiet_and_mixed_feelings(self):
+        cause = source("connect_four", objective="total_wins", count=3, final="win")
+        for stage in FriendshipStage:
+            for emotion, marker in (
+                (EmotionalState.DOWNCAST, "quiet"),
+                (EmotionalState.AMBIVALENT, "mixed"),
+            ):
+                reaction, text = choose_game(
+                    self.book, cause, stage=stage, emotion=emotion
+                )
+                self.assertIn(marker, reaction.line_id)
+                self.assertIn("Viererreihe", text)
+                self.assertNotIn("Hihi", text)
+
 
 if __name__ == "__main__":
     unittest.main()
