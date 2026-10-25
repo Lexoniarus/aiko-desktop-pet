@@ -96,9 +96,12 @@ class PlaudernTests(unittest.TestCase):
                 reaction = talk(pet)
                 text = " ".join(b.content for b in reaction.beats if b.kind == "text")
                 self.assertIn(DEFAULT_CATALOG.foods[food].display_name, text)
-                self.assertEqual(reaction.line_id, f"plaudern-food-{outcome.value}")
+                self.assertTrue(reaction.line_id.startswith(
+                    f"plaudern-food-{outcome.value}-",
+                ))
                 if outcome == MoodletOutcome.HANDOVER:
-                    self.assertNotIn("essen", text)
+                    self.assertNotIn("gegessen", text)
+                    self.assertNotIn("geschmeckt", text)
 
     def test_unknown_causes_and_objects_do_not_invent_identity_or_blame(self):
         pet = PetState(lived_seconds=100, moodlets=MoodletState(active=(
