@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "date": "2026-10-25",
+  "asset_id": "horoscope_book_v1",
+  "visual_design_approved_by_owner": true,
+  "independent_asset_review": "No material blocker for the four book-state assets",
+  "selected_native_states": 4,
+  "packaged_png_count": 18,
+  "native_source_and_export_hashes_match": true,
+  "all_pngs_load_in_native_tk": true,
+  "reconstructed_rgba_exports_pixel_identical": 8,
+  "display_rgb_unchanged": true,
+  "display_alpha_threshold": 128,
+  "display_alpha_values": [0, 255],
+  "visible_contours_unclipped": true,
+  "scale_2x_dimensions_and_pivots_exactly_doubled": true,
+  "maximum_pivot_rounding_error_px": 0.491,
+  "measured_front_cover_edge_1x_range_px": [41.747, 42.144],
+  "measured_front_cover_edge_2x_range_px": [83.898, 84.285],
+  "held_visible_heights_1x_px": [54, 58, 56],
+  "repository_asset_and_link_tests_passed": 10,
+  "scope": "Book-only asset V1; actual Aiko hand fitting, World registration and scene/runtime behavior remain separate implementation work",
+  "private_evidence": [
+    "pruefung/independent-review.md",
+    "pruefung/package-technical-review.json",
+    "pruefung/package-scale-review.png",
+    "pruefung/native-final-check.json"
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "created": "2026-10-25",
+  "generator": "OpenAI built-in image_gen.imagegen",
+  "private_authoring_run": "2026-10-25-horoskop-buch-v1-violett",
+  "native_originals_preserved": true,
+  "preparation": "Alpha32 optical crop; proportional Lanczos resizing; book-local pivot placement; alpha128 binary display copies.",
+  "export_script_sha256": "56a304f49957034de98187777c8d33d090bb384b7d25a17256dacd23bcaf4fb4",
+  "native_sources": [
+    {
+      "state": "closed_world",
+      "native_file": "closed_world.png",
+      "native_sha256": "a71e90a6e15cae04f7c9e9a6fb949e32fad67c6dab7c0ffd2b2469d34d88f214",
+      "native_size": [
+        1205,
+        1305
+      ],
+      "optical_bbox_alpha32": [
+        101,
+        176,
+        1147,
+        1134
+      ],
+      "source_anchor_native": [
+        623.5,
+        1133
+      ],
+      "cover_edge_native": null,
+      "uniform_scale_1x": 0.029227557411273485
+    },
+    {
+      "state": "carry_closed",
+      "native_file": "carry_closed.png",
+      "native_sha256": "26a65251f896d359c6d9c2ba6eb3774e00861212cd81ac0acce7dd992bcd2ff6",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "optical_bbox_alpha32": [
+        226,
+        98,
+        1107,
+        1164
+      ],
+      "source_anchor_native": [
+        386,
+        1141
+      ],
+      "cover_edge_native": [
+        [
+          939,
+          145
+        ],
+        [
+          1102,
+          957
+        ]
+      ],
+      "uniform_scale_1x": 0.05071247111817201
+    },
+    {
+      "state": "half_open",
+      "native_file": "half_open-02.png",
+      "native_sha256": "1cf2d64fc5425f3cec865f3ca8c198e4215429fe3f7ca57b6da11e012ef89770",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "optical_bbox_alpha32": [
+        226,
+        114,
+        1030,
+        1138
+      ],
+      "source_anchor_native": [
+        625,
+        1129
+      ],
+      "cover_edge_native": [
+        [
+          1024,
+          122
+        ],
+        [
+          1015,
+          859
+        ]
+      ],
+      "uniform_scale_1x": 0.056983539658331486
+    },
+    {
+      "state": "open_reading",
+      "native_file": "open_reading-02.png",
+      "native_sha256": "6f81176b5a65c4f089db7c8f6696b99b5c2a46875fed6d362abe29ec577c0a39",
+      "native_size": [
+        1254,
+        1254
+      ],
+      "optical_bbox_alpha32": [
+        19,
+        197,
+        1237,
+        1097
+      ],
+      "source_anchor_native": [
+        617,
+        1083
+      ],
+      "cover_edge_native": [
+        [
+          1230,
+          225
+        ],
+        [
+          1188,
+          901
+        ]
+      ],
+      "uniform_scale_1x": 0.062010607392761166
+    }
+  ],
+  "files_sha256": {
+    "display/1x/carry_closed.png": "3ca43b4457597defadb50de047bab3f00d84d2913a9cb18ab183976a4410e486",
+    "display/1x/closed_world.png": "3b0ab6f1c33d178fe193252d1a43a9dad06b739ee22acc00641b4e2c5054df9b",
+    "display/1x/half_open.png": "c7ead40a4500049396cefcdc9a6fa984f008d379aa5f9a1b9c01329152c27c9e",
+    "display/1x/open_reading.png": "9acaf2f039485a2659e541da3ca420478528cd96ae2fa63e9c170da95251fbfc",
+    "display/2x/carry_closed.png": "567cb6906b7a2413422a041b54bab4ebc753877f9b7f12b644d8d52412da50b1",
+    "display/2x/closed_world.png": "6d5a78a517c10921cb431aaeaab67f55a895c00b723a69b81d032b9741e8dfc1",
+    "display/2x/half_open.png": "9f8d5c23bb443763faf95631314c8560ffe7fa8336b3d862d22cb688eaad62e8",
+    "display/2x/open_reading.png": "12f799b5d98b04ad9fc16bc5f1a783d6e22ea2326825f5d7c759b2bbe181e8e9",
+    "icons/32.png": "4bdfefc38e9c5c7a47e59e1565d9745aac58790009aa66dcee26e0333627447b",
+    "icons/64.png": "5c6a682b8ea43543fa62fd1d98117cb720d5ecfd171d267389799da262c0c48a",
+    "rgba/1x/carry_closed.png": "fa0a3b2708ae7689f6d365f7c477237878f5f53718b240e578d2d1385611a84a",
+    "rgba/1x/closed_world.png": "57d5f996f0ce49fe9c2c187fab33d8d97985d51286333d978f6fffe6e20abcc7",
+    "rgba/1x/half_open.png": "0412a8ff702c7b583b90c72c688dd137b60cce51d573b06e4a76509abb9e3f18",
+    "rgba/1x/open_reading.png": "cae1d946ea3529a8fee10226a6db030793991788996c3141d6a3265178bda0a3",
+    "rgba/2x/carry_closed.png": "ccaf5e70d6e3f070f3e4246201879a2dbfa5c3816354f68e195efe5718414a69",
+    "rgba/2x/closed_world.png": "49f5d648d40f0e5fb3f4068cdac82042455a776746e6ac42e1467363a9bd716e",
+    "rgba/2x/half_open.png": "44a656d4d0466bb7fb9dd05ab1b918faeab19b713417d33317df23ecde3edd54",
+    "rgba/2x/open_reading.png": "c2b65bbd7fdf04c951be2b20cb6f228ab7063657fccefda21d26e89123ddc16d"
+  }
+}
